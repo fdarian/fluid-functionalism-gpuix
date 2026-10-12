@@ -161,6 +161,8 @@ export const motion = {
 	moderate: { type: "spring", duration: 0.16, bounce: 0 },
 	fastExit: { duration: 0.06 },
 	moderateExit: { duration: 0.12 },
+	slow: { type: "spring", duration: 0.24, bounce: 0.12 },
+	slowExit: { duration: 0.16 },
 	snap: { duration: 0 },
 } satisfies Record<string, MotionTransition>;
 

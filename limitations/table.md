@@ -15,7 +15,7 @@ Table, header/body rows, the fluid hover highlight, the fading row rules, the mu
 ## `transition-[border-color]` and `transition-colors` on the rule and cell text
 
 - **Original:** the row rules fade out over 80 ms as the highlight arrives, and cell text eases from muted to foreground.
-- **gpuix lacks:** colour transitions. Only `motion` animates, and only `width`/`height`/`opacity`/`top`/`left`/`right`/`bottom`/`borderRadius` (`MotionStyle`, `host.ts:20`). Missing feature, already listed in the README translation table for `transition-colors`.
+- **gpuix lacks:** colour transitions. Only `motion` animates, and only `width`/`height`/`opacity`/`top`/`left`/`right`/`bottom`/`borderRadius` (`MotionStyle`, `host.ts:27`). Missing feature, already listed in the README translation table for `transition-colors`.
 - **Workaround:** rule colour and text colour switch instantly with the highlighted row.
 - **Fidelity:** dropped (the fade only).
 - **Components it hits:** every component with `transition-colors`.
