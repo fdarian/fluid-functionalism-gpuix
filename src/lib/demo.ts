@@ -17,6 +17,10 @@ export interface ShotContext {
 	/** Pointer to a window position, e.g. to leave a popup. */
 	moveTo(x: number, y: number): Promise<void>;
 	clickAt(x: number, y: number): Promise<void>;
+	/** A wheel tick at a window position. Negative `deltaY` scrolls down, like a real wheel. */
+	scroll(x: number, y: number, deltaX: number, deltaY: number): Promise<void>;
+	/** Pointer to a window position with the left button held, e.g. mid-drag. */
+	moveHeld(x: number, y: number): Promise<void>;
 	/** Wait for timers and springs. */
 	settle(ms?: number): Promise<void>;
 	/** Throws if the painted text does not (or does) contain `text`. */

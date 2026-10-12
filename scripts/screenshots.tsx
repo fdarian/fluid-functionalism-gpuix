@@ -99,6 +99,14 @@ const shot: ShotContext = {
 		renderer.nativeSimulateClick(x, y);
 		await settle();
 	},
+	async scroll(x, y, deltaX, deltaY) {
+		renderer.nativeSimulateScrollWheel(x, y, deltaX, deltaY);
+		await settle();
+	},
+	async moveHeld(x, y) {
+		renderer.nativeSimulateMouseMove(x, y, 0);
+		await settle();
+	},
 	settle,
 	expectText(text, present) {
 		const found = renderer.getAllText().some((line) => line.includes(text));
