@@ -6,7 +6,7 @@ import {
 } from "@gpuix/solid";
 import { type Accessor, createSignal, type JSX, Show } from "solid-js";
 import { Icon } from "../lib/icon";
-import type { IconName } from "../lib/icons";
+import type { IconRef } from "../lib/icons";
 import { color, height, radius, type as scale, weight } from "../lib/theme";
 
 export type ButtonVariant = "primary" | "secondary" | "tertiary" | "ghost";
@@ -110,15 +110,17 @@ const surfaces = (): Record<ButtonVariant, Surface> => ({
 export function Button(props: {
 	variant?: ButtonVariant;
 	size?: ButtonSize;
-	leadingIcon?: IconName;
-	trailingIcon?: IconName;
+	leadingIcon?: IconRef;
+	trailingIcon?: IconRef;
 	loading?: boolean;
 	disabled?: boolean;
 	testId?: string;
 	onClick?: (event: EventPayload) => void;
 	/** The label, or the icon for an icon-only size. */
 	children?: JSX.Element;
-	icon?: IconName;
+	/** Anything after the label, e.g. a keycap. Takes the trailing icon's tighter padding. */
+	trailingContent?: JSX.Element;
+	icon?: IconRef;
 }) {
 	const variant = () => props.variant ?? "primary";
 	const size = () => sizes[props.size ?? "default"];
@@ -140,12 +142,14 @@ export function Button(props: {
 	const padLeft = () =>
 		(props.leadingIcon !== undefined ? size().padXIcon : size().padX) - 1;
 	const padRight = () =>
-		(props.trailingIcon !== undefined ? size().padXIcon : size().padX) - 1;
+		(props.trailingIcon !== undefined || props.trailingContent !== undefined
+			? size().padXIcon
+			: size().padX) - 1;
 
 	const content = () => (
 		<>
 			<Show when={props.leadingIcon}>
-				{(name: Accessor<IconName>) => (
+				{(name: Accessor<IconRef>) => (
 					<Icon
 						name={name()}
 						size={size().icon}
@@ -170,14 +174,15 @@ export function Button(props: {
 				}
 			>
 				<Icon
-					name={props.icon as IconName}
+					name={props.icon as IconRef}
 					size={size().icon}
 					strokeWidth={iconStroke()}
 					color={labelColor()}
 				/>
 			</Show>
+			{props.trailingContent}
 			<Show when={props.trailingIcon}>
-				{(name: Accessor<IconName>) => (
+				{(name: Accessor<IconRef>) => (
 					<Icon
 						name={name()}
 						size={size().icon}

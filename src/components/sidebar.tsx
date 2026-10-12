@@ -12,7 +12,7 @@ import {
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
-import type { IconName } from "../lib/icons";
+import type { IconRef } from "../lib/icons";
 import { createMeasuredHeight } from "../lib/measured-height";
 import {
 	color,
@@ -200,7 +200,7 @@ function RowLabel(props: {
 
 export function SidebarMenuButton(props: {
 	label: string;
-	icon?: IconName;
+	icon?: IconRef;
 	/** A status dot after the label. */
 	dot?: string;
 	level?: 0 | 1;
@@ -208,7 +208,7 @@ export function SidebarMenuButton(props: {
 	badge?: string;
 	/** A row clipped away by a collapsed sub-menu: stays registered, never a hover target. */
 	disabled?: () => boolean;
-	trailingIcon?: () => IconName;
+	trailingIcon?: () => IconRef;
 	onClick?: (event: EventPayload) => void;
 	testId?: string;
 }) {
@@ -260,7 +260,7 @@ export function SidebarMenuButton(props: {
 			}}
 		>
 			<Show when={props.icon}>
-				{(name: Accessor<IconName>) => (
+				{(name: Accessor<IconRef>) => (
 					<Icon
 						name={name()}
 						size={16}
@@ -293,7 +293,7 @@ export function SidebarMenuButton(props: {
 				)}
 			</Show>
 			<Show when={props.trailingIcon}>
-				{(name: Accessor<() => IconName>) => (
+				{(name: Accessor<() => IconRef>) => (
 					<Icon
 						name={name()()}
 						size={16}

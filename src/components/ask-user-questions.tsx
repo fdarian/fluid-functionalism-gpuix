@@ -1,5 +1,4 @@
 import {
-	buttonProps,
 	type EventPayload,
 	type HostElement,
 	type KeyEvent,
@@ -7,7 +6,6 @@ import {
 	useGpuixRequired,
 } from "@gpuix/solid";
 import {
-	type Accessor,
 	createEffect,
 	createMemo,
 	createSignal,
@@ -21,7 +19,7 @@ import {
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type ItemRect } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
-import { defineIcon, type IconRef } from "../lib/icons";
+import { defineIcon } from "../lib/icons";
 import { createMeasuredHeight, KickContext } from "../lib/measured-height";
 import {
 	color,
@@ -31,6 +29,7 @@ import {
 	motion as tween,
 	weight,
 } from "../lib/theme";
+import { Button } from "./button";
 
 const arrowLeftGlyph = defineIcon(
 	'<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
@@ -95,105 +94,6 @@ const SHORTCUT_GLYPH = IS_MAC ? "⌘↵" : "⌃↵";
 /** `bg-background/15` over the primary button. */
 const chipOnPrimary = () =>
 	scheme() === "dark" ? "rgba(23,23,23,0.15)" : "rgba(250,250,250,0.15)";
-
-// ─── Footer button ────────────────────────────────────────────────────────
-
-/** The compact (28px) ghost and primary buttons of the footer. */
-function FooterButton(props: {
-	variant: "ghost" | "primary";
-	leading?: IconRef;
-	trailing?: IconRef;
-	disabled?: boolean;
-	testId?: string;
-	onClick: () => void;
-	children: JSX.Element;
-}) {
-	const [hovered, setHovered] = createSignal(false);
-	const primary = () => props.variant === "primary";
-	const tint = () =>
-		primary()
-			? color.background
-			: hovered()
-				? color.foreground
-				: color.mutedForeground;
-	const stroke = () => (hovered() ? 2 : 1.5);
-	const padLeft = () => (props.leading !== undefined ? 8 : 12);
-	const padRight = () => (props.trailing !== undefined || primary() ? 8 : 12);
-	return (
-		<div
-			{...buttonProps({ disabled: props.disabled, onClick: props.onClick })}
-			testId={props.testId}
-			tabIndex={props.disabled ? -1 : 0}
-			onMouseEnter={() => setHovered(true)}
-			onMouseLeave={() => setHovered(false)}
-			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
-				flexShrink: 0,
-				gap: 4,
-				height: 28,
-				paddingLeft: padLeft(),
-				paddingRight: padRight(),
-				borderRadius: radius.item,
-				cursor: "pointer",
-				userSelect: "none",
-				keyboardFocusDim: false,
-				opacity: props.disabled ? 0.5 : 1,
-				pointerEvents: props.disabled ? "none" : "auto",
-				backgroundColor: primary() ? color.foreground : color.transparent,
-				hover: {
-					backgroundColor: primary() ? color.primaryHover : color.hover,
-				},
-				active: {
-					backgroundColor: primary() ? color.primaryActive : color.active,
-				},
-				focusVisible: {
-					outlineWidth: 1,
-					outlineColor: color.focusRing,
-					outlineOffset: 1,
-				},
-			}}
-		>
-			<Show when={props.leading}>
-				{(glyph: Accessor<IconRef>) => (
-					<Icon
-						name={glyph()}
-						size={14}
-						strokeWidth={stroke()}
-						color={tint()}
-					/>
-				)}
-			</Show>
-			{props.children}
-			<Show when={props.trailing}>
-				{(glyph: Accessor<IconRef>) => (
-					<Icon
-						name={glyph()}
-						size={14}
-						strokeWidth={stroke()}
-						color={tint()}
-					/>
-				)}
-			</Show>
-		</div>
-	);
-}
-
-function ButtonLabel(props: { tint: string; children: string }) {
-	return (
-		<text
-			style={{
-				...scale.bodyCompact,
-				color: props.tint,
-				fontWeight: weight.normal,
-				whiteSpace: "nowrap",
-			}}
-		>
-			{props.children}
-		</text>
-	);
-}
 
 /** Keycap for a shortcut, inside the primary button. */
 function ShortcutChip(props: { children: string }) {
@@ -1138,16 +1038,15 @@ export function AskUserQuestions(props: {
 							>
 								<Show when={showBack()}>
 									<FadeIn>
-										<FooterButton
+										<Button
+											size="compact"
 											variant="ghost"
-											leading={arrowLeftGlyph}
+											leadingIcon={arrowLeftGlyph}
 											testId={`${props.testId ?? "ask"}-back`}
 											onClick={back}
 										>
-											<ButtonLabel tint={color.mutedForeground}>
-												Back
-											</ButtonLabel>
-										</FooterButton>
+											Back
+										</Button>
 									</FadeIn>
 								</Show>
 								<Show when={freeTextError()}>
@@ -1174,22 +1073,21 @@ export function AskUserQuestions(props: {
 							>
 								<Show when={showSkip()}>
 									<FadeIn>
-										<FooterButton
+										<Button
+											size="compact"
 											variant="ghost"
-											trailing={arrowRightGlyph}
+											trailingIcon={arrowRightGlyph}
 											testId={`${props.testId ?? "ask"}-skip`}
 											onClick={skip}
 										>
-											<ButtonLabel tint={color.mutedForeground}>
-												{props.skipLabel ?? "Skip"}
-											</ButtonLabel>
-										</FooterButton>
+											{props.skipLabel ?? "Skip"}
+										</Button>
 									</FadeIn>
 								</Show>
 								<Show when={showSubmit()}>
 									<FadeIn>
-										<FooterButton
-											variant="primary"
+										<Button
+											size="compact"
 											testId={`${props.testId ?? "ask"}-continue`}
 											disabled={
 												isFreeText()
@@ -1197,12 +1095,12 @@ export function AskUserQuestions(props: {
 													: !hasAnswer()
 											}
 											onClick={isFreeText() ? submitOther : commitMulti}
+											trailingContent={
+												<ShortcutChip>{SHORTCUT_GLYPH}</ShortcutChip>
+											}
 										>
-											<ButtonLabel tint={color.background}>
-												{continueLabel()}
-											</ButtonLabel>
-											<ShortcutChip>{SHORTCUT_GLYPH}</ShortcutChip>
-										</FooterButton>
+											{continueLabel()}
+										</Button>
 									</FadeIn>
 								</Show>
 							</div>

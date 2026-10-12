@@ -17,7 +17,7 @@ import {
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
-import type { IconName } from "../lib/icons";
+import type { IconRef } from "../lib/icons";
 import { createPresence, POPUP_OFFSET, PopupSurface } from "../lib/popup";
 import {
 	color,
@@ -74,7 +74,7 @@ export function Combobox(props: {
 	items: readonly string[];
 	value: string | null;
 	onValueChange: (value: string | null) => void;
-	icon?: IconName;
+	icon?: IconRef;
 	placeholder?: string;
 	width?: number;
 	emptyText?: string;
@@ -292,7 +292,7 @@ export function Combobox(props: {
 					}}
 				>
 					<Show when={props.icon}>
-						{(name: Accessor<IconName>) => (
+						{(name: Accessor<IconRef>) => (
 							<Icon
 								name={name()}
 								size={16}
