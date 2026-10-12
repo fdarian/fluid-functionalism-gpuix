@@ -29,6 +29,11 @@ interface Palette {
 	/** --shadow-color in light, --dm-drop in dark. */
 	shadowColor: string;
 	transparent: string;
+	accent: string;
+	destructive: string;
+	info: string;
+	success: string;
+	warning: string;
 }
 
 /** Both columns of `light-dark()` in app/globals.css, resolved. `color-mix()` is mixed offline. */
@@ -52,6 +57,11 @@ const palettes: Record<Scheme, Palette> = {
 		popupBorder: "rgba(0,0,0,0.06)",
 		shadowColor: "rgba(0,0,0,0.06)",
 		transparent: "rgba(0,0,0,0)",
+		accent: "#E5E5E5",
+		destructive: "#EF4444",
+		info: "#3B82F6",
+		success: "#22C55E",
+		warning: "#F59E0B",
 	},
 	dark: {
 		background: "#171717",
@@ -72,6 +82,11 @@ const palettes: Record<Scheme, Palette> = {
 		popupBorder: "rgba(255,255,255,0.05)",
 		shadowColor: "rgba(0,0,0,0.18)",
 		transparent: "rgba(0,0,0,0)",
+		accent: "#525252",
+		destructive: "#FCA5A5",
+		info: "#93C5FD",
+		success: "#86EFAC",
+		warning: "#FCD34D",
 	},
 };
 
