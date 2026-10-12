@@ -7,6 +7,7 @@ import {
 	useGpuixRequired,
 } from "@gpuix/solid";
 import { createSignal, type JSX, onCleanup, onMount, Show } from "solid-js";
+import { awaitBounds, readBounds } from "../lib/bounds";
 import { color, withAlpha } from "../lib/theme";
 import { scheme } from "../lib/theme";
 
@@ -21,8 +22,6 @@ const THUMB_INSET = 4;
 const THUMB_MIN_PX = 20;
 /** How long Base UI keeps `data-scrolling` after the last wheel tick. */
 const SCROLLING_MS = 500;
-const MEASURE_ATTEMPTS = 12;
-const MEASURE_RETRY_MS = 16;
 /** The offset a wheel tick produces is readable a frame or two later. */
 const SYNC_DELAYS_MS = [0, 16, 48, 100];
 
@@ -100,8 +99,8 @@ export function ScrollArea(props: {
 		if (viewport === undefined || content === undefined) {
 			throw new Error("ScrollArea is not mounted");
 		}
-		const view = renderer.getElementBounds?.(viewport.id);
-		const inner = renderer.getElementBounds?.(content.id);
+		const view = readBounds(viewport);
+		const inner = readBounds(content);
 		const offset = renderer.getScrollOffset?.(viewport.id);
 		if (view == null || inner == null || offset == null) return null;
 		return {
@@ -129,19 +128,14 @@ export function ScrollArea(props: {
 	};
 
 	onMount(() => {
-		// The first bounds query only turns tracking on; boxes exist from the next painted frame.
-		const attempt = (count: number) => {
+		if (viewport === undefined || content === undefined) {
+			throw new Error("ScrollArea is not mounted");
+		}
+		void Promise.all([awaitBounds(viewport), awaitBounds(content)]).then(() => {
 			const next = read();
-			if (next !== null) {
-				setMetrics(next);
-				return;
-			}
-			if (count >= MEASURE_ATTEMPTS) {
-				throw new Error("ScrollArea bounds never became available");
-			}
-			setTimeout(() => attempt(count + 1), MEASURE_RETRY_MS);
-		};
-		setTimeout(() => attempt(0), MEASURE_RETRY_MS * 2);
+			if (next === null) throw new Error("ScrollArea has no scroll handle");
+			setMetrics(next);
+		});
 	});
 
 	// gpui hands one wheel tick to every scroll container under the pointer (no stop_propagation, no overscroll-behavior), so an enclosing scroller would move along with this one. Its offset is put back whenever this area moved, and left alone once this area is at its limit, which is what chaining does in a browser.
@@ -282,7 +276,7 @@ export function ScrollArea(props: {
 	) => {
 		const span = thumb(axis);
 		if (span === null || track === undefined) return;
-		const box = renderer.getElementBounds?.(track.id);
+		const box = readBounds(track);
 		if (box == null) return;
 		const along = pointerAlong(axis, event) - (axis === "y" ? box.y : box.x);
 		if (along >= span.start && along <= span.start + span.length) {

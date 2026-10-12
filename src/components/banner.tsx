@@ -2,7 +2,6 @@ import {
 	buttonProps,
 	type HostElement,
 	motion,
-	useGpuixRequired,
 } from "@gpuix/solid";
 import {
 	createContext,
@@ -18,6 +17,7 @@ import {
 	Switch,
 	useContext,
 } from "solid-js";
+import { awaitBounds, readBounds } from "../lib/bounds";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
 import {
@@ -120,33 +120,6 @@ function useBannerScope() {
 	return scope;
 }
 
-const MEASURE_ATTEMPTS = 12;
-const MEASURE_RETRY_MS = 16;
-
-/** Painted bounds lag the tree by a frame; the first read only turns tracking on. */
-function measureHeight(
-	getBounds: (id: number) => { height: number } | null | undefined,
-	element: HostElement,
-): Promise<number> {
-	return new Promise((resolve, reject) => {
-		let attempts = 0;
-		const attempt = () => {
-			const bounds = getBounds(element.id);
-			if (bounds != null) {
-				resolve(bounds.height);
-				return;
-			}
-			attempts += 1;
-			if (attempts >= MEASURE_ATTEMPTS) {
-				reject(new Error("Banner: painted bounds unavailable after 12 frames"));
-				return;
-			}
-			setTimeout(attempt, MEASURE_RETRY_MS);
-		};
-		attempt();
-	});
-}
-
 /**
  * The row's height and the banner's opacity move on their own tracks. gpuix
  * animates a pixel `height` but has no `fr` track, so the open height is
@@ -173,13 +146,6 @@ export function Banner(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
-	const renderer = useGpuixRequired();
-	const getBounds = (id: number) => {
-		if (renderer.getElementBounds === undefined) {
-			throw new Error("This renderer does not expose getElementBounds");
-		}
-		return renderer.getElementBounds(id);
-	};
 	const status = () => props.status ?? "default";
 	const contrast = () => props.contrast ?? "low";
 	const fixed = () => props.variant === "fixed";
@@ -213,9 +179,9 @@ export function Banner(props: {
 					if (restElement === undefined) {
 						throw new Error("Banner is not mounted");
 					}
-					void measureHeight(getBounds, restElement).then((height) => {
+					void awaitBounds(restElement).then((bounds) => {
 						if (mine !== generation) return;
-						setRowHeight(height);
+						setRowHeight(bounds.height);
 						setPhase("closing");
 					});
 					return;
@@ -226,9 +192,9 @@ export function Banner(props: {
 					if (measureElement === undefined) {
 						throw new Error("Banner measure layer is not mounted");
 					}
-					void measureHeight(getBounds, measureElement).then((height) => {
+					void awaitBounds(measureElement).then((bounds) => {
 						if (mine !== generation) return;
-						setRowHeight(height);
+						setRowHeight(bounds.height);
 						setPhase("opening");
 					});
 				});
@@ -360,7 +326,7 @@ export function Banner(props: {
 					ref={(element) => {
 						restElement = element;
 						// Turn bounds tracking on now so a dismiss can read the height.
-						getBounds(element.id);
+						queueMicrotask(() => readBounds(element));
 					}}
 					style={rowStyle}
 				>

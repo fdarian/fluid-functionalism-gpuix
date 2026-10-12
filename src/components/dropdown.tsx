@@ -21,6 +21,7 @@ import {
 	untrack,
 	useContext,
 } from "solid-js";
+import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import {
 	createFluidHover,
@@ -301,7 +302,7 @@ function createMenuList(options: {
 	const revealRow = (index: number) => {
 		const rect = hover.rects()[index];
 		if (rect === undefined || scroller === undefined) return;
-		const view = renderer.getElementBounds?.(scroller.id);
+		const view = readBounds(scroller);
 		const offset = renderer.getScrollOffset?.(scroller.id);
 		if (renderer.scrollTo === undefined) {
 			throw new Error("This renderer does not expose scrollTo");
@@ -779,7 +780,7 @@ export function DropdownMenu(props: {
 	let lastHeight = TYPICAL_HEIGHT;
 	const choose = (contentHeight: number) => {
 		if (wrapper === undefined) throw new Error("DropdownMenu is not mounted");
-		const trigger = renderer.getElementBounds?.(wrapper.id);
+		const trigger = readBounds(wrapper);
 		const window = renderer.getWindowSize?.();
 		if (trigger == null || window === undefined) {
 			throw new Error("Cannot place the popup without painted bounds");
@@ -823,7 +824,7 @@ export function DropdownMenu(props: {
 	});
 
 	const inside = (element: HostElement, event: EventPayload) => {
-		const bounds = renderer.getElementBounds?.(element.id);
+		const bounds = readBounds(element);
 		if (bounds == null || event.x === undefined || event.y === undefined) {
 			return false;
 		}
@@ -851,7 +852,7 @@ export function DropdownMenu(props: {
 		addRegion(element) {
 			regions.add(element);
 			// The first bounds read only switches tracking on, so take it before anyone presses.
-			renderer.getElementBounds?.(element.id);
+			readBounds(element);
 			return () => regions.delete(element);
 		},
 		outsidePress(event) {
@@ -887,7 +888,7 @@ export function DropdownMenu(props: {
 				ref={(element) => {
 					wrapper = element;
 					// The first bounds read only switches tracking on: do it early so the popup can place itself on open.
-					queueMicrotask(() => renderer.getElementBounds?.(element.id));
+					queueMicrotask(() => readBounds(element));
 				}}
 				testId={props.testId}
 				onKeyDown={onKeyDown}

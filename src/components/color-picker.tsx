@@ -16,6 +16,7 @@ import {
 	Show,
 	untrack,
 } from "solid-js";
+import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
@@ -259,7 +260,7 @@ function useFractionIn() {
 		if (event.x === undefined || event.y === undefined) {
 			throw new Error("Pointer event without coordinates");
 		}
-		const bounds = renderer.getElementBounds?.(element.id);
+		const bounds = readBounds(element);
 		if (bounds == null) throw new Error("Pointer target has no painted bounds");
 		return {
 			x: clamp01((event.x - bounds.x) / bounds.width),
@@ -467,7 +468,7 @@ function Rail(props: {
 	const apply = (event: EventPayload) => {
 		if (root === undefined) throw new Error("Rail is not mounted");
 		if (event.x === undefined) throw new Error("Pointer event without x");
-		const bounds = renderer.getElementBounds?.(root.id);
+		const bounds = readBounds(root);
 		if (bounds == null) throw new Error("Rail has no painted bounds");
 		const usable = bounds.width - RAIL_THUMB;
 		const along = clamp01((event.x - bounds.x - RAIL_THUMB / 2) / usable);
@@ -754,7 +755,7 @@ function useInside() {
 		}
 		return elements.some((element) => {
 			if (element === undefined) return false;
-			const bounds = renderer.getElementBounds?.(element.id);
+			const bounds = readBounds(element);
 			if (bounds == null) throw new Error("Element has no painted bounds");
 			return (
 				event.x !== undefined &&
@@ -773,7 +774,7 @@ function useSideFor() {
 	const renderer = useGpuixRequired();
 	return (element: HostElement | undefined, needed: number) => {
 		if (element === undefined) throw new Error("Trigger is not mounted");
-		const bounds = renderer.getElementBounds?.(element.id);
+		const bounds = readBounds(element);
 		const window = renderer.getWindowSize?.();
 		if (bounds == null || window === undefined) {
 			throw new Error("Cannot place the popup without painted bounds");

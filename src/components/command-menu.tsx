@@ -18,6 +18,7 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
+import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
@@ -394,8 +395,8 @@ export function CommandMenu(props: {
 			renderer.scrollTo?.(scroller.id, 0, 0);
 			return;
 		}
-		const rowBox = renderer.getElementBounds?.(row.id);
-		const box = renderer.getElementBounds?.(scroller.id);
+		const rowBox = readBounds(row);
+		const box = readBounds(scroller);
 		const offset = renderer.getScrollOffset?.(scroller.id);
 		if (rowBox == null || box == null || offset == null) {
 			throw new Error("Cannot centre the row without painted bounds");
@@ -481,7 +482,7 @@ export function CommandMenu(props: {
 		scrollerRef(element) {
 			scroller = element;
 			// The first bounds query turns tracking on.
-			renderer.getElementBounds?.(element.id);
+			readBounds(element);
 		},
 		leaveList() {
 			hover.handlers.onMouseLeave();

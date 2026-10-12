@@ -18,6 +18,7 @@ import {
 	Show,
 	untrack,
 } from "solid-js";
+import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
@@ -854,7 +855,7 @@ export function InputMessage(props: InputMessageProps) {
 	};
 	const dragQueued = (item: QueuedMessage, event: EventPayload) => {
 		if (queueList === undefined || event.y === undefined) return;
-		const bounds = renderer.getElementBounds?.(queueList.id);
+		const bounds = readBounds(queueList);
 		if (bounds == null) return;
 		const stride = step().row + 4;
 		const target = Math.floor((event.y - bounds.y) / stride);

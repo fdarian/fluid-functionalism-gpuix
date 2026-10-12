@@ -19,6 +19,7 @@ import {
 } from "solid-js";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
+import { readBounds } from "../lib/bounds";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
 import { color, radius, type as scale, scheme, weight, withAlpha } from "../lib/theme";
@@ -118,11 +119,6 @@ export function CardGroup(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
-	const renderer = useGpuixRequired();
-	const getBounds = renderer.getElementBounds;
-	if (getBounds === undefined) {
-		throw new Error("This renderer does not expose getElementBounds");
-	}
 	const columns = () => props.columns ?? 1;
 	const hover = createFluidHover({
 		// A grid resolves the pointer in two dimensions; one column is a plain list.
@@ -175,7 +171,7 @@ export function CardGroup(props: {
 
 	const boxOf = () => {
 		if (container === undefined) return null;
-		return getBounds.call(renderer, container.id) ?? null;
+		return readBounds(container);
 	};
 
 	const rectOfActive = () => {

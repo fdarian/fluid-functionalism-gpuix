@@ -14,6 +14,7 @@ import {
 	untrack,
 	useContext,
 } from "solid-js";
+import { readBounds } from "../lib/bounds";
 import { createPresence } from "../lib/popup";
 import { color, radius, type as scale, motion as tween } from "../lib/theme";
 
@@ -158,7 +159,7 @@ export function Tooltip(props: {
 	const onMouseMove = (event: EventPayload) => {
 		if (props.followCursor === undefined) return;
 		if (wrapper === undefined) throw new Error("Tooltip is not mounted");
-		const bounds = renderer.getElementBounds?.(wrapper.id);
+		const bounds = readBounds(wrapper);
 		if (bounds == null || event.x === undefined || event.y === undefined)
 			return;
 		setFollowOffset(

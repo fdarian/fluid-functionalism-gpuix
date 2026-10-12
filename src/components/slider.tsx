@@ -16,6 +16,7 @@ import {
 	Show,
 	untrack,
 } from "solid-js";
+import { awaitBounds, readBounds } from "../lib/bounds";
 import { createPresence } from "../lib/popup";
 import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha } from "../lib/theme";
 
@@ -92,50 +93,23 @@ function snapToStep(
 
 // ─── Painted bounds ──────────────────────────────────────────────────────────
 
-const MEASURE_ATTEMPTS = 12;
-const MEASURE_RETRY_MS = 16;
-
 /**
- * Reads an element's painted box. The first `getElementBounds` call only turns
- * tracking on and boxes exist from the next frame, so `onReady` waits for the
- * first one; later `read()` calls are synchronous.
+ * Reads an element's painted box. The first read only turns tracking on and
+ * boxes exist from the next frame, so `onReady` waits for the first one; later
+ * `read()` calls are synchronous.
  */
 function createPaintedBox(onReady: (box: ElementBounds) => void) {
-	const renderer = useGpuixRequired();
-	const getBounds = renderer.getElementBounds;
-	if (getBounds === undefined) {
-		throw new Error("This renderer does not expose getElementBounds");
-	}
 	let element: HostElement | undefined;
-	let timer: ReturnType<typeof setTimeout> | undefined;
-	onCleanup(() => clearTimeout(timer));
-
-	const read = () => {
-		if (element === undefined) throw new Error("Slider is not mounted");
-		const box = getBounds.call(renderer, element.id);
-		if (box == null) throw new Error("Slider has no painted bounds yet");
-		return box;
-	};
 	return {
-		read,
+		read() {
+			if (element === undefined) throw new Error("Slider is not mounted");
+			const box = readBounds(element);
+			if (box === null) throw new Error("Slider has no painted bounds yet");
+			return box;
+		},
 		ref(host: HostElement) {
 			element = host;
-			let attempts = 0;
-			const attempt = () => {
-				const box = getBounds.call(renderer, host.id);
-				if (box != null) {
-					onReady(box);
-					return;
-				}
-				attempts += 1;
-				if (attempts >= MEASURE_ATTEMPTS) {
-					throw new Error(
-						`Slider: painted bounds still unavailable after ${MEASURE_ATTEMPTS} frames`,
-					);
-				}
-				timer = setTimeout(attempt, MEASURE_RETRY_MS);
-			};
-			timer = setTimeout(attempt, MEASURE_RETRY_MS * 2);
+			void awaitBounds(host).then(onReady);
 		},
 	};
 }

@@ -20,6 +20,7 @@ import {
 	type FluidHover,
 	type ItemRect,
 } from "../lib/fluid-hover";
+import { awaitBounds } from "../lib/bounds";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import {
@@ -254,18 +255,8 @@ export function TabsSubtleItem(props: {
 	// The unfolding label's width is animated to a measured number: gpuix cannot animate `auto`.
 	onMount(() => {
 		if (!collapsible()) return;
-		const read = (attempts: number) => {
-			if (labelBox === undefined) throw new Error("Tab label is not mounted");
-			const bounds = renderer.getElementBounds?.(labelBox.id);
-			if (bounds != null) {
-				setLabelWidth(bounds.width);
-				return;
-			}
-			if (attempts > 12)
-				throw new Error("Tab label bounds never became available");
-			setTimeout(() => read(attempts + 1), 16);
-		};
-		setTimeout(() => read(0), 32);
+		if (labelBox === undefined) throw new Error("Tab label is not mounted");
+		void awaitBounds(labelBox).then((bounds) => setLabelWidth(bounds.width));
 	});
 
 	// The tab's own width changes as its label unfolds, so every row after it moves: re-read the rects for the length of the spring.

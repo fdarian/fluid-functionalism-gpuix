@@ -4,7 +4,6 @@ import {
 	type HostElement,
 	type MotionTransition,
 	motion,
-	useGpuixRequired,
 	useIsPresent,
 } from "@gpuix/solid";
 import {
@@ -15,6 +14,7 @@ import {
 	onCleanup,
 	Show,
 } from "solid-js";
+import { awaitBounds, readBounds } from "../lib/bounds";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
 import {
@@ -143,11 +143,6 @@ export function QueuedStack(props: {
 	bottom: number;
 	testId?: string;
 }) {
-	const renderer = useGpuixRequired();
-	const getBounds = renderer.getElementBounds;
-	if (getBounds === undefined) {
-		throw new Error("This renderer does not expose getElementBounds");
-	}
 	const count = () => props.queue.length;
 	const hiddenCount = () => Math.max(0, count() - (STACK_MAX_PEEK + 1));
 
@@ -187,25 +182,18 @@ export function QueuedStack(props: {
 
 	const stackBox = () => {
 		if (stackElement === undefined) throw new Error("Stack is not mounted");
-		const box = getBounds.call(renderer, stackElement.id);
-		if (box == null) throw new Error("Stack has no painted bounds");
+		const box = readBounds(stackElement);
+		if (box === null) throw new Error("Stack has no painted bounds");
 		return box;
 	};
 
 	const [stackWidth, setStackWidth] = createSignal<number>();
-	// The first bounds read only turns tracking on; the box is there a frame later.
-	const readWidth = (attempt: number) => {
-		if (stackElement === undefined) return;
-		const box = getBounds.call(renderer, stackElement.id);
-		if (box != null) {
-			setStackWidth(box.width);
-			return;
-		}
-		if (attempt < 12) setTimeout(() => readWidth(attempt + 1), 16);
-	};
 	createEffect(() => {
 		void [count() > 0, expanded()];
-		const timer = setTimeout(() => readWidth(0), 32);
+		const timer = setTimeout(() => {
+			if (stackElement === undefined) return;
+			void awaitBounds(stackElement).then((box) => setStackWidth(box.width));
+		}, 32);
 		onCleanup(() => clearTimeout(timer));
 	});
 	const cardWidth = () => Math.max(0, (stackWidth() ?? 0) - GUTTER * 2);

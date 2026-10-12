@@ -1,6 +1,6 @@
 import type { EventPayload, HostElement } from "@gpuix/solid";
-import { useGpuixRequired } from "@gpuix/solid";
 import { createSignal, onCleanup } from "solid-js";
+import { readBounds } from "./bounds";
 
 /** A row's box relative to the container's own top-left corner. */
 export interface ItemRect {
@@ -117,12 +117,6 @@ const MEASURE_RETRY_MS = 16;
  * `pickNearest`.
  */
 export function createFluidHover(options: FluidHoverOptions = {}) {
-	const renderer = useGpuixRequired();
-	const getBounds = renderer.getElementBounds;
-	if (getBounds === undefined) {
-		throw new Error("This renderer does not expose getElementBounds");
-	}
-
 	const items = new Map<number, HostElement>();
 	let container: HostElement | undefined;
 	let pointer: { x: number; y: number } | undefined;
@@ -139,12 +133,12 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 	const measureNow = () => {
 		missing = undefined;
 		if (container === undefined) return false;
-		const box = getBounds.call(renderer, container.id);
-		if (box == null) return false;
+		const box = readBounds(container);
+		if (box === null) return false;
 		const next: (ItemRect | undefined)[] = [];
 		for (const [index, element] of items) {
-			const bounds = getBounds.call(renderer, element.id);
-			if (bounds == null) {
+			const bounds = readBounds(element);
+			if (bounds === null) {
 				if (options.isItemDisabled?.(index)) continue;
 				missing = index;
 				return false;
@@ -163,8 +157,8 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 
 	const pick = () => {
 		if (container === undefined || pointer === undefined) return;
-		const box = getBounds.call(renderer, container.id);
-		if (box == null) return;
+		const box = readBounds(container);
+		if (box === null) return;
 		const next = pickNearest({
 			axis: options.axis ?? "y",
 			point: pointer,

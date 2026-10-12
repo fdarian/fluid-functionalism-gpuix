@@ -15,6 +15,7 @@ import {
 	onCleanup,
 	Show,
 } from "solid-js";
+import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
@@ -183,7 +184,7 @@ export function Select<Value extends string>(props: {
 	const open = () => {
 		if (props.disabled === true || presence.open()) return;
 		if (triggerWrapper === undefined) throw new Error("Select is not mounted");
-		const field = renderer.getElementBounds?.(triggerWrapper.id);
+		const field = readBounds(triggerWrapper);
 		const window = renderer.getWindowSize?.();
 		if (field == null || window === undefined) {
 			throw new Error("Cannot place the popup without painted bounds");
@@ -220,7 +221,7 @@ export function Select<Value extends string>(props: {
 		const rect = hover.rects()[index];
 		if (rect === undefined) return;
 		if (scroller === undefined) throw new Error("Select list is not mounted");
-		const view = renderer.getElementBounds?.(scroller.id);
+		const view = readBounds(scroller);
 		const offset = renderer.getScrollOffset?.(scroller.id);
 		if (renderer.scrollTo === undefined) {
 			throw new Error("This renderer does not expose scrollTo");
@@ -422,7 +423,7 @@ export function Select<Value extends string>(props: {
 				ref={(element) => {
 					triggerWrapper = element;
 					// The first bounds read only switches tracking on: do it early so the popup can place itself on open.
-					queueMicrotask(() => renderer.getElementBounds?.(element.id));
+					queueMicrotask(() => readBounds(element));
 				}}
 				testId={props.testId}
 				onMouseDownOutside={onOutside}

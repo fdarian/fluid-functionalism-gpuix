@@ -14,6 +14,7 @@ import {
 	on,
 	Show,
 } from "solid-js";
+import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
@@ -117,7 +118,7 @@ export function Combobox(props: {
 	const openPopup = () => {
 		if (open()) return;
 		if (rootElement === undefined) throw new Error("Combobox is not mounted");
-		const field = renderer.getElementBounds?.(rootElement.id);
+		const field = readBounds(rootElement);
 		const window = renderer.getWindowSize?.();
 		if (field == null || window === undefined) {
 			throw new Error("Cannot place the popup without painted bounds");

@@ -1,4 +1,4 @@
-import { type HostElement, useGpuixRequired } from "@gpuix/solid";
+import type { HostElement } from "@gpuix/solid";
 import {
 	createContext,
 	createEffect,
@@ -9,6 +9,7 @@ import {
 	children as resolveChildren,
 	useContext,
 } from "solid-js";
+import { readBounds } from "./bounds";
 
 const PROBE_MS = 33;
 /** How long a box keeps being re-read after the last thing that could have changed it: a spring's tail. */
@@ -64,11 +65,6 @@ export function Kicking(props: {
 export const KickContext = createContext<() => void>();
 
 export function createMeasuredHeight() {
-	const renderer = useGpuixRequired();
-	const getBounds = renderer.getElementBounds;
-	if (getBounds === undefined) {
-		throw new Error("This renderer does not expose getElementBounds");
-	}
 	const kickParent = useContext(KickContext);
 	let element: HostElement | undefined;
 	const [height, setHeight] = createSignal<number>();
@@ -77,8 +73,8 @@ export function createMeasuredHeight() {
 		hotUntil: 0,
 		read() {
 			if (element === undefined) return false;
-			const box = getBounds.call(renderer, element.id);
-			if (box == null) return false;
+			const box = readBounds(element);
+			if (box === null) return false;
 			const known = height();
 			if (known !== undefined && Math.abs(box.height - known) <= 0.25) {
 				return false;
