@@ -558,6 +558,9 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("menu-open");
 	await shot.hover("menu-3");
 	shot.capture("menu-hover");
+	const label = shot.centerOf("menu-1");
+	await shot.moveTo(label.x - 85, label.y);
+	shot.capture("menu-hover-label");
 	await shot.click("menu-3");
 	await shot.click("menu-trigger");
 	shot.capture("menu-picked");
