@@ -9,7 +9,6 @@ import {
 import { createSignal, type JSX, onCleanup, onMount, Show } from "solid-js";
 import { awaitBounds, readBounds } from "../lib/bounds";
 import { color, withAlpha } from "../lib/theme";
-import { scheme } from "../lib/theme";
 
 export type ScrollOrientation = "vertical" | "horizontal" | "both";
 
@@ -253,7 +252,7 @@ export function ScrollArea(props: {
 		setDragging(axis);
 	};
 	const dragTo = (event: EventPayload) => {
-		// A release that happened before the overlay mounted (a click faster than a frame) never reaches it; the first move with no button held ends the drag instead.
+		// A release the window never saw (outside it, or while it was inactive) is not delivered; the first move with no button held ends the drag instead.
 		if (event.pressedButton === undefined) {
 			setDragging(undefined);
 			return;
@@ -383,6 +382,8 @@ export function ScrollArea(props: {
 					onMouseDown={(event: EventPayload) =>
 						pressTrack(bar.axis, track, event)
 					}
+					onMouseMove={dragTo}
+					onMouseUp={() => setDragging(undefined)}
 					style={{
 						position: "absolute",
 						userSelect: "none",
@@ -492,22 +493,6 @@ export function ScrollArea(props: {
 			</Show>
 			<Show when={horizontal()}>
 				<Scrollbar axis="x" />
-			</Show>
-			<Show when={dragging() !== undefined}>
-				{/* A drag has no pointer capture in gpuix: a window-sized layer keeps the move and release events once the pointer leaves the thumb. */}
-				<anchored
-					fill="window"
-					occlude
-					deferred
-					priority={3}
-					style={{ backgroundColor: "rgba(0,0,0,0)" }}
-				>
-					<div
-						onMouseMove={dragTo}
-						onMouseUp={() => setDragging(undefined)}
-						style={{ width: "100%", height: "100%", userSelect: "none" }}
-					/>
-				</anchored>
 			</Show>
 		</div>
 	);

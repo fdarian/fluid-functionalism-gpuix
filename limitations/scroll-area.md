@@ -28,13 +28,13 @@ Ported: vertical, horizontal and both-axis areas, the hover / scroll-driven thum
 - **Fidelity:** approximated: exact over a flat surface, wrong elsewhere.
 - **Components it hits:** anything using `scroll-fade` / `scroll-divider` (sidebar scroll regions, command menu, select).
 
-## No pointer capture, and `<anchored>` swallows handlers
+## Pointer capture needs both handlers on the element
 
 - **Original:** a thumb drag keeps tracking after the pointer leaves the thumb (Base UI captures the pointer).
-- **gpuix lacks:** pointer capture: a `mouseMove` only reaches the element under the pointer. Missing feature.
-- **Workaround:** while dragging, a window-sized `<anchored fill="window" occlude>` mounts and catches the moves and the release. Four gotchas found on the way: a drag started on the thumb also began a text selection across the page (`userSelect: "none"` on the track and the overlay stops it); `<anchored>` paints an opaque backdrop unless `backgroundColor` is set to a transparent value (the first attempt blanked the window); handlers set on the `<anchored>` itself never fired, only those on a child `div` of `width/height: 100%`; and a release that lands before the overlay has mounted (a click faster than a frame) is lost, so the first move with no `pressedButton` ends the drag.
-- **Fidelity:** exact once working; a frame between press and overlay.
-- **Components it hits:** slider, color-picker, any drag handle.
+- **gpuix has it, but only implicitly:** an element that listens for both `mouseDown` and `mouseMove` captures the pointer, so its later moves and its release arrive wherever the pointer goes (`packages/native/src/renderer.rs:5663`, `el.capture_pointer()`). Nothing in the docs or types says so, and an element with only `onMouseDown` gets no capture.
+- **Workaround:** the track has `onMouseDown`, `onMouseMove` and `onMouseUp`, so a drag that leaves the track keeps working. An earlier version mounted a window-sized `<anchored fill="window" occlude>` while dragging to catch the moves; it is gone. Its gotchas, in case an overlay is ever needed again: a drag also began a text selection (`userSelect: "none"` stops it); `<anchored>` paints an opaque backdrop unless `backgroundColor` is a transparent value; handlers on the `<anchored>` itself never fire, only those on a child; and a release that lands before the overlay mounts is lost. A release the window never sees is still lost, so the first move with no `pressedButton` ends the drag. Verified headless with a held-button drag to 90px left of the track (`dragging.png` is identical with and without the overlay); not checked in the live window.
+- **Fidelity:** exact.
+- **Components it hits:** any drag handle: slider and color-picker rely on the same capture (element-local handlers), only the scroll bar ever needed the overlay.
 
 ## Absolute boxes block their parent's hover
 
