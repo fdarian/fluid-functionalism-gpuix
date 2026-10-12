@@ -142,6 +142,27 @@ export function DialogClose(props: { children: JSX.Element }) {
 	return <GpuixDialogClose asChild>{props.children}</GpuixDialogClose>;
 }
 
+/**
+ * Builds `make()` once per mount and hands the same value back until the
+ * mounting scope is disposed. gpuix's `DialogPortal` evaluates its children
+ * twice (`dialog.ts:117` spreads them, `dialog.ts:137` reads them again), so
+ * the content would otherwise exist twice and the discarded copy keep its
+ * timers and listeners alive.
+ */
+export function once<Value>(make: () => Value): () => Value {
+	let made: { value: Value } | undefined;
+	return () => {
+		if (made === undefined) {
+			made = { value: make() };
+			// The portal remounts on every open: a copy from the last open is dead.
+			onCleanup(() => {
+				made = undefined;
+			});
+		}
+		return made.value;
+	};
+}
+
 /** `bg-black/40`, and `dark:bg-black/80` in the dark scheme. */
 const scrim = () =>
 	scheme() === "dark" ? "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.4)";
@@ -172,6 +193,7 @@ export function DialogContent(props: {
 	children: JSX.Element;
 }) {
 	const scope = useDialogScope();
+	const content = once(() => props.children);
 	const windowSize = createWindowSize();
 	const maxWidth = () =>
 		widths[props.size ?? "sm"][props.compact ? "compact" : "default"];
@@ -233,7 +255,7 @@ export function DialogContent(props: {
 						boxShadow: shadow5(),
 					}}
 				>
-					{props.children}
+					{content()}
 					<Show when={props.showCloseButton ?? true}>
 						<div style={{ position: "absolute", top: 12, right: 12 }}>
 							<DialogClose>

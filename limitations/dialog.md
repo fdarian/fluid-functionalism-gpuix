@@ -45,6 +45,10 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 - **Fidelity:** approximated (no scale).
 - **Components it hits:** every popup that scales in.
 
+## `DialogPortal` builds its children twice
+
+- See `limitations/mobile-drawer.md`: `dialog.ts:117` and `dialog.ts:137` both read the portal's children, so the content exists twice and the discarded copy keeps its effects alive. `once()` in `components/dialog.tsx` builds `DialogContent`'s content once per open. Without it, a nested Dialog or a Select in the content was created twice, with separate state.
+
 ## Smaller notes
 
 - `w-[calc(100%-2rem)] max-w-[400px]` is a layer with 16px side padding and a popup of `width: "100%"; maxWidth`; `top-[12dvh]` reads the window height through `createWindowSize()` (live on resize). Both are exact.
