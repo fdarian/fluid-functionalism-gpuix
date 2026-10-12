@@ -195,6 +195,7 @@ export function Button(props: {
 				disabled: props.disabled || props.loading,
 				onClick: props.onClick,
 			})}
+			tabIndex={props.disabled || props.loading ? -1 : 0}
 			testId={props.testId}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
@@ -214,6 +215,8 @@ export function Button(props: {
 				borderRadius: radius.item,
 				cursor: "pointer",
 				userSelect: "none",
+				// gpuix dims every other focusable while one has keyboard focus; this design does not.
+				keyboardFocusDim: false,
 				opacity: props.disabled ? 0.5 : 1,
 				pointerEvents: props.disabled ? "none" : "auto",
 				...surfaces[variant()].rest,

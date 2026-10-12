@@ -89,6 +89,7 @@ function VariantRow(props: {
 			<For each={VARIANTS}>
 				{(variant) => (
 					<Button
+						testId={`${props.label}-${variant}`}
 						variant={variant}
 						size={props.size}
 						{...props.children?.(variant)}

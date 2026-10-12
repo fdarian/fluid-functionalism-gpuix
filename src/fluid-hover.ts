@@ -2,7 +2,7 @@ import type { EventPayload, HostElement } from "@gpuix/solid";
 import { useGpuixRequired } from "@gpuix/solid";
 import { createSignal, onCleanup } from "solid-js";
 
-/** A row's box in the container's content space: scrolling does not move it. */
+/** A row's box relative to the container's own top-left corner. */
 export interface ItemRect {
 	top: number;
 	height: number;
@@ -98,8 +98,6 @@ export function pickNearest(input: PickNearestInput): number | null {
 export interface FluidHoverOptions {
 	/** Rows that stay mounted but are clipped away (a collapsed sub-menu). */
 	isItemDisabled?: (index: number) => boolean;
-	/** Whether the container scrolls, so rects are kept in content space. */
-	scrolls?: boolean;
 }
 
 /**
@@ -122,7 +120,6 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 	if (getBounds === undefined) {
 		throw new Error("This renderer does not expose getElementBounds");
 	}
-	const getScroll = renderer.getScrollOffset;
 
 	const items = new Map<number, HostElement>();
 	let container: HostElement | undefined;
@@ -136,32 +133,23 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 	const [session, setSession] = createSignal(0);
 	const [isMeasured, setIsMeasured] = createSignal(false);
 
-	const scrollOffset = () => {
-		if (!options.scrolls || container === undefined) {
-			return { x: 0, y: 0 };
-		}
-		const offset = getScroll?.call(renderer, container.id);
-		if (offset == null) {
-			throw new Error("The container has no scroll handle");
-		}
-		return { x: -offset[0], y: -offset[1] };
-	};
-
+	let missing: number | undefined;
 	const measureNow = () => {
+		missing = undefined;
 		if (container === undefined) return false;
 		const box = getBounds.call(renderer, container.id);
 		if (box == null) return false;
-		const scroll = scrollOffset();
 		const next: (ItemRect | undefined)[] = [];
 		for (const [index, element] of items) {
 			const bounds = getBounds.call(renderer, element.id);
 			if (bounds == null) {
 				if (options.isItemDisabled?.(index)) continue;
+				missing = index;
 				return false;
 			}
 			next[index] = {
-				top: bounds.y - box.y + scroll.y,
-				left: bounds.x - box.x + scroll.x,
+				top: bounds.y - box.y,
+				left: bounds.x - box.x,
 				width: bounds.width,
 				height: bounds.height,
 			};
@@ -175,7 +163,6 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 		if (container === undefined || pointer === undefined) return;
 		const box = getBounds.call(renderer, container.id);
 		if (box == null) return;
-		const scroll = scrollOffset();
 		const next = pickNearest({
 			axis: "y",
 			point: pointer,
@@ -186,7 +173,7 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 				width: box.width,
 				height: box.height,
 			},
-			scroll,
+			scroll: { x: 0, y: 0 },
 			border: { x: 0, y: 0 },
 			layoutSize: { width: box.width, height: box.height },
 			isDisabled: options.isItemDisabled,
@@ -217,7 +204,7 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 			attempts += 1;
 			if (attempts >= MEASURE_ATTEMPTS) {
 				throw new Error(
-					`Fluid hover: painted bounds still unavailable after ${MEASURE_ATTEMPTS} frames`,
+					`Fluid hover: painted bounds still unavailable after ${MEASURE_ATTEMPTS} frames (${missing === undefined ? "container" : `row ${missing}`})`,
 				);
 			}
 			measureTimer = setTimeout(attempt, MEASURE_RETRY_MS);
@@ -248,6 +235,11 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 		isMeasured,
 		remeasure,
 		remeasureFor,
+		/** The container is going away (an empty state replaced the rows): drop pending reads of it. */
+		cancelMeasure() {
+			clearTimeout(measureTimer);
+			clearInterval(trackTimer);
+		},
 		containerRef(element: HostElement) {
 			container = element;
 		},
@@ -268,6 +260,10 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 					throw new Error("mouseMove without coordinates");
 				}
 				pointer = { x: event.x, y: event.y };
+				pick();
+			},
+			/** Rows moved under a stationary pointer. */
+			onScroll() {
 				pick();
 			},
 			onMouseLeave() {

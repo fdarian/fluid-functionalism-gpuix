@@ -1,4 +1,4 @@
-import { type EventPayload, motion } from "@gpuix/solid";
+import { type EventPayload, type HostElement, motion } from "@gpuix/solid";
 import {
 	type Accessor,
 	createContext,
@@ -87,7 +87,7 @@ export function SidebarMenu(props: { children: JSX.Element }) {
 		rowsVersion();
 		if (!hover.isMeasured()) return null;
 		for (const [index, entry] of rows) {
-			if (entry.level === level && entry.active()) {
+			if (entry.level === level && entry.active() && !entry.disabled()) {
 				return hover.rects()[index] ?? null;
 			}
 		}
@@ -196,9 +196,22 @@ export function SidebarMenuButton(props: {
 }) {
 	const scope = useMenuScope();
 	const level = props.level ?? 0;
-	let index: number | undefined;
-	const isHovered = () =>
-		index !== undefined && scope.hover.activeIndex() === index;
+	let rowElement: HostElement | undefined;
+	const [index, setIndex] = createSignal<number>();
+	onMount(() => {
+		if (rowElement === undefined) throw new Error("Row is not mounted");
+		setIndex(
+			scope.registerRow(rowElement, {
+				level,
+				active: () => props.active === true,
+				disabled: props.disabled ?? (() => false),
+			}),
+		);
+	});
+	const isHovered = () => {
+		const own = index();
+		return own !== undefined && scope.hover.activeIndex() === own;
+	};
 	const lit = () =>
 		props.active === true || props.strong === true || isHovered();
 	const rowHeight = level === 0 ? height.menuRow : height.menuSubRow;
@@ -208,11 +221,7 @@ export function SidebarMenuButton(props: {
 	return (
 		<div
 			ref={(element) => {
-				index = scope.registerRow(element, {
-					level,
-					active: () => props.active === true,
-					disabled: props.disabled ?? (() => false),
-				});
+				rowElement = element;
 			}}
 			testId={props.testId}
 			role="button"
@@ -494,6 +503,7 @@ export function SidebarSearchField(props: {
 					fontSize: scale.body.fontSize,
 					color: color.foreground,
 					backgroundColor: color.transparent,
+					keyboardFocusDim: false,
 					borderRadius: radius.item,
 				}}
 			/>

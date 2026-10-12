@@ -112,7 +112,7 @@ export function Combobox(props: {
 		return index === -1 ? null : index;
 	});
 
-	const hover = createFluidHover({ scrolls: true });
+	const hover = createFluidHover();
 
 	const openPopup = () => {
 		if (open()) return;
@@ -148,7 +148,12 @@ export function Combobox(props: {
 			() => {
 				if (!mounted()) return;
 				setReflow(true);
-				hover.setActiveIndex(filtered().length === 0 ? null : 0);
+				if (filtered().length === 0) {
+					hover.setActiveIndex(null);
+					hover.cancelMeasure();
+					return;
+				}
+				hover.setActiveIndex(0);
 				hover.remeasure();
 			},
 			{ defer: true },
@@ -318,6 +323,7 @@ export function Combobox(props: {
 							fontWeight: weight.normal,
 							color: color.foreground,
 							backgroundColor: color.transparent,
+							keyboardFocusDim: false,
 						}}
 					/>
 				</div>
@@ -418,96 +424,108 @@ export function Combobox(props: {
 							}
 						>
 							<div
-								ref={(element) => {
-									hover.containerRef(element);
-									queueMicrotask(hover.remeasure);
-								}}
-								onMouseEnter={hover.handlers.onMouseEnter}
-								onMouseMove={hover.handlers.onMouseMove}
-								onMouseLeave={hover.handlers.onMouseLeave}
+								onScroll={hover.handlers.onScroll}
 								style={{
-									position: "relative",
 									display: "flex",
 									flexDirection: "column",
-									padding: 4,
 									overflowY: "scroll",
 									maxHeight: POPUP_MAX_HEIGHT - 2,
 								}}
 							>
-								<FluidHighlight
-									rect={checkedRect}
-									session={() => 0}
-									radius={radius.item}
-									background={color.active}
-									glide={tween.moderate}
-									fade={tween.moderateExit}
-									travel={() => !reflow()}
-								/>
-								<FluidHighlight
-									rect={hoverRect}
-									session={hover.session}
-									radius={radius.item}
-									background={color.hover}
-									travel={() => !reflow()}
-								/>
-								<For each={filtered()}>
-									{(item, index) => {
-										const lit = () =>
-											hover.activeIndex() === index() || props.value === item;
-										return (
-											<div
-												ref={(element) => {
-													createEffect(() => {
-														const i = index();
-														hover.registerItem(i, element);
-														rowElements.set(i, element);
-													});
-												}}
-												role="option"
-												aria-selected={props.value === item}
-												onClick={() => select(item)}
-												style={{
-													height: ROW_HEIGHT,
-													flexShrink: 0,
-													display: "flex",
-													flexDirection: "row",
-													alignItems: "center",
-													gap: 8,
-													paddingLeft: 8,
-													paddingRight: 8,
-													borderRadius: radius.item,
-													cursor: "pointer",
-												}}
-											>
-												<text
+								{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
+								<div
+									ref={(element) => {
+										hover.containerRef(element);
+										queueMicrotask(hover.remeasure);
+									}}
+									onMouseEnter={hover.handlers.onMouseEnter}
+									onMouseMove={hover.handlers.onMouseMove}
+									onMouseLeave={hover.handlers.onMouseLeave}
+									style={{
+										position: "relative",
+										display: "flex",
+										flexDirection: "column",
+										padding: 4,
+									}}
+								>
+									<FluidHighlight
+										rect={checkedRect}
+										session={() => 0}
+										radius={radius.item}
+										background={color.active}
+										glide={tween.moderate}
+										fade={tween.moderateExit}
+										travel={() => !reflow()}
+									/>
+									<FluidHighlight
+										rect={hoverRect}
+										session={hover.session}
+										radius={radius.item}
+										background={color.hover}
+										travel={() => !reflow()}
+									/>
+									<For each={filtered()}>
+										{(item, index) => {
+											const lit = () =>
+												hover.activeIndex() === index() || props.value === item;
+											let rowElement: HostElement | undefined;
+											createEffect(() => {
+												if (rowElement === undefined)
+													throw new Error("Row is not mounted");
+												hover.registerItem(index(), rowElement);
+												rowElements.set(index(), rowElement);
+											});
+											return (
+												<div
+													ref={(element) => {
+														rowElement = element;
+													}}
+													role="option"
+													aria-selected={props.value === item}
+													onClick={() => select(item)}
 													style={{
-														flexGrow: 1,
-														minWidth: 0,
-														...scale.body,
-														color: lit()
-															? color.foreground
-															: color.mutedForeground,
-														whiteSpace: "nowrap",
-														textOverflow: "ellipsis",
-														overflow: "hidden",
+														height: ROW_HEIGHT,
+														flexShrink: 0,
+														display: "flex",
+														flexDirection: "row",
+														alignItems: "center",
+														gap: 8,
+														paddingLeft: 8,
+														paddingRight: 8,
+														borderRadius: radius.item,
+														cursor: "pointer",
 													}}
 												>
-													{item}
-												</text>
-												<div style={{ width: 16, height: 16, flexShrink: 0 }}>
-													<Show when={props.value === item}>
-														<Icon
-															name="check"
-															size={16}
-															strokeWidth={2}
-															color={color.foreground}
-														/>
-													</Show>
+													<text
+														style={{
+															flexGrow: 1,
+															minWidth: 0,
+															...scale.body,
+															color: lit()
+																? color.foreground
+																: color.mutedForeground,
+															whiteSpace: "nowrap",
+															textOverflow: "ellipsis",
+															overflow: "hidden",
+														}}
+													>
+														{item}
+													</text>
+													<div style={{ width: 16, height: 16, flexShrink: 0 }}>
+														<Show when={props.value === item}>
+															<Icon
+																name="check"
+																size={16}
+																strokeWidth={2}
+																color={color.foreground}
+															/>
+														</Show>
+													</div>
 												</div>
-											</div>
-										);
-									}}
-								</For>
+											);
+										}}
+									</For>
+								</div>
 							</div>
 						</Show>
 					</motion.div>
