@@ -9,6 +9,7 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
+import { useHoverItem } from "../lib/fluid-hover";
 import type { FluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
@@ -160,10 +161,11 @@ export function MenuItem(props: {
 		if (props.closeOnClick ?? !context.multiple()) context.close();
 	};
 
-	createEffect(() => {
-		if (rowElement === undefined) throw new Error("Row is not mounted");
-		context.hover.registerItem(props.index, rowElement);
-	});
+	useHoverItem(
+		context.hover,
+		() => props.index,
+		() => rowElement,
+	);
 	createEffect(() => {
 		const index = props.index;
 		const row: MenuRow = {

@@ -1,5 +1,5 @@
 import type { EventPayload, HostElement } from "@gpuix/solid";
-import { createSignal, onCleanup } from "solid-js";
+import { createEffect, createSignal, onCleanup } from "solid-js";
 import { readBounds } from "./bounds";
 
 /** A row's box relative to the container's own top-left corner. */
@@ -226,6 +226,29 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 		clearInterval(trackTimer);
 	});
 
+	const handlers = {
+		onMouseEnter() {
+			sessionPending = true;
+			// Layout may have settled since the last measurement; what is painted now is current.
+			commit();
+		},
+		onMouseMove(event: EventPayload) {
+			if (event.x === undefined || event.y === undefined) {
+				throw new Error("mouseMove without coordinates");
+			}
+			pointer = { x: event.x, y: event.y };
+			pick();
+		},
+		/** Rows moved under a stationary pointer. */
+		onScroll() {
+			pick();
+		},
+		onMouseLeave() {
+			pointer = undefined;
+			setActiveIndex(null);
+		},
+	};
+
 	return {
 		activeIndex,
 		setActiveIndex,
@@ -248,29 +271,37 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 				if (items.get(index) === element) items.delete(index);
 			});
 		},
-		handlers: {
-			onMouseEnter() {
-				sessionPending = true;
-				// Layout may have settled since the last measurement; what is painted now is current.
-				commit();
+		handlers,
+		/** Spread onto the rows' container: registers it, re-measures once it mounts, and wires the pointer. */
+		containerProps: {
+			ref(element: HostElement) {
+				container = element;
+				queueMicrotask(remeasure);
 			},
-			onMouseMove(event: EventPayload) {
-				if (event.x === undefined || event.y === undefined) {
-					throw new Error("mouseMove without coordinates");
-				}
-				pointer = { x: event.x, y: event.y };
-				pick();
-			},
-			/** Rows moved under a stationary pointer. */
-			onScroll() {
-				pick();
-			},
-			onMouseLeave() {
-				pointer = undefined;
-				setActiveIndex(null);
-			},
+			onMouseEnter: handlers.onMouseEnter,
+			onMouseMove: handlers.onMouseMove,
+			onMouseLeave: handlers.onMouseLeave,
 		},
 	};
 }
 
 export type FluidHover = ReturnType<typeof createFluidHover>;
+
+/**
+ * Registers a row with the hover. `index` may be reactive (a filtered list
+ * moves its rows); an `undefined` index leaves the row out. The element is read
+ * once the row has mounted, and a row that never mounts is a bug.
+ */
+export function useHoverItem(
+	hover: FluidHover,
+	index: () => number | undefined,
+	element: () => HostElement | undefined,
+) {
+	createEffect(() => {
+		const own = index();
+		if (own === undefined) return;
+		const row = element();
+		if (row === undefined) throw new Error("Row is not mounted");
+		hover.registerItem(own, row);
+	});
+}

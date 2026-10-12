@@ -20,7 +20,7 @@ import {
 } from "solid-js";
 import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
+import { createFluidHover, type FluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
 import { createPresence } from "../lib/popup";
@@ -727,10 +727,7 @@ export function CommandMenuTabs(props: {
 			}}
 		>
 			<div
-				ref={(element) => {
-					hover.containerRef(element);
-					queueMicrotask(hover.remeasure);
-				}}
+				ref={hover.containerProps.ref}
 				onMouseEnter={() => setEntered(entered() + 1)}
 				onMouseLeave={() => setHovered(null)}
 				style={{
@@ -760,10 +757,7 @@ export function CommandMenuTabs(props: {
 				<For each={props.tabs}>
 					{(tab, index) => {
 						let element: HostElement | undefined;
-						createEffect(() => {
-							if (element === undefined) throw new Error("Tab is not mounted");
-							hover.registerItem(index(), element);
-						});
+						useHoverItem(hover, index, () => element);
 						const selected = () => index() === selectedIndex();
 						return (
 							<div
@@ -914,13 +908,8 @@ export function CommandMenuList(props: {
 		>
 			{/* The overlay lives inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
 			<div
-				ref={(element) => {
-					hover.containerRef(element);
-					queueMicrotask(hover.remeasure);
-				}}
+				{...hover.containerProps}
 				role="listbox"
-				onMouseEnter={hover.handlers.onMouseEnter}
-				onMouseMove={hover.handlers.onMouseMove}
 				onMouseLeave={menu.leaveList}
 				style={{
 					position: "relative",

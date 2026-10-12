@@ -420,13 +420,7 @@ export function Combobox(props: {
 					>
 						{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
 						<div
-							ref={(element) => {
-								hover.containerRef(element);
-								queueMicrotask(hover.remeasure);
-							}}
-							onMouseEnter={hover.handlers.onMouseEnter}
-							onMouseMove={hover.handlers.onMouseMove}
-							onMouseLeave={hover.handlers.onMouseLeave}
+							{...hover.containerProps}
 							style={{
 								position: "relative",
 								display: "flex",

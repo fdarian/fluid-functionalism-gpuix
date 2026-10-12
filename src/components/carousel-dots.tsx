@@ -120,13 +120,7 @@ export function CarouselDots(props: {
 			testId={props.testId}
 			role="group"
 			aria-label="Slides"
-			ref={(element) => {
-				hover.containerRef(element);
-				queueMicrotask(hover.remeasure);
-			}}
-			onMouseEnter={hover.handlers.onMouseEnter}
-			onMouseMove={hover.handlers.onMouseMove}
-			onMouseLeave={hover.handlers.onMouseLeave}
+			{...hover.containerProps}
 			style={{
 				position: "relative",
 				alignSelf: "flex-start",

@@ -9,7 +9,7 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
-import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
+import { createFluidHover, type FluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconName } from "../lib/icons";
 import { color, height, radius, type as scale, scheme, weight, withAlpha } from "../lib/theme";
@@ -73,13 +73,7 @@ export function InputGroup(props: {
 	return (
 		<GroupContext.Provider value={scope}>
 			<div
-				ref={(element) => {
-					hover.containerRef(element);
-					queueMicrotask(hover.remeasure);
-				}}
-				onMouseEnter={hover.handlers.onMouseEnter}
-				onMouseMove={hover.handlers.onMouseMove}
-				onMouseLeave={hover.handlers.onMouseLeave}
+				{...hover.containerProps}
 				style={{
 					position: "relative",
 					display: "flex",
@@ -117,10 +111,11 @@ export function InputField(props: {
 	let rootElement: HostElement | undefined;
 	let inputElement: HostElement | undefined;
 
-	createEffect(() => {
-		if (rootElement === undefined) throw new Error("InputField is not mounted");
-		group.hover.registerItem(props.index, rootElement);
-	});
+	useHoverItem(
+		group.hover,
+		() => props.index,
+		() => rootElement,
+	);
 
 	// The error row changes the field's height, so the group's rects are stale.
 	createEffect(

@@ -18,7 +18,7 @@ import {
 } from "solid-js";
 import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover } from "../lib/fluid-hover";
+import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import {
@@ -538,13 +538,7 @@ export function Select<Value extends string>(props: {
 					>
 						{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
 						<div
-							ref={(element) => {
-								hover.containerRef(element);
-								queueMicrotask(hover.remeasure);
-							}}
-							onMouseEnter={hover.handlers.onMouseEnter}
-							onMouseMove={hover.handlers.onMouseMove}
-							onMouseLeave={hover.handlers.onMouseLeave}
+							{...hover.containerProps}
 							style={{
 								position: "relative",
 								display: "flex",
@@ -596,10 +590,11 @@ function Row<Value extends string>(props: {
 	onPick: () => void;
 }): JSX.Element {
 	let rowElement: HostElement | undefined;
-	createEffect(() => {
-		if (rowElement === undefined) throw new Error("Row is not mounted");
-		props.hover.registerItem(props.index, rowElement);
-	});
+	useHoverItem(
+		props.hover,
+		() => props.index,
+		() => rowElement,
+	);
 	return (
 		<div
 			ref={(element) => {

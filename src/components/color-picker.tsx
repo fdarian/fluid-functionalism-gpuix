@@ -18,7 +18,7 @@ import {
 } from "solid-js";
 import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover } from "../lib/fluid-hover";
+import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
 import {
@@ -902,13 +902,7 @@ function FormatDropdown(props: {
 				}}
 			>
 				<div
-					ref={(element) => {
-						hover.containerRef(element);
-						queueMicrotask(hover.remeasure);
-					}}
-					onMouseEnter={hover.handlers.onMouseEnter}
-					onMouseMove={hover.handlers.onMouseMove}
-					onMouseLeave={hover.handlers.onMouseLeave}
+					{...hover.containerProps}
 					style={{
 						position: "relative",
 						display: "flex",
@@ -934,10 +928,7 @@ function FormatDropdown(props: {
 					<For each={FORMATS}>
 						{(format: ColorFormat, index: Accessor<number>) => {
 							let row: HostElement | undefined;
-							createEffect(() => {
-								if (row === undefined) throw new Error("Row is not mounted");
-								hover.registerItem(index(), row);
-							});
+							useHoverItem(hover, index, () => row);
 							const checked = () => props.value === format;
 							const lit = () => hover.activeIndex() === index() || checked();
 							return (

@@ -179,15 +179,11 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 			<div
 				testId={props.testId}
 				role="tablist"
-				ref={(element) => {
-					hover.containerRef(element);
-					queueMicrotask(hover.remeasure);
-				}}
+				{...hover.containerProps}
 				onMouseEnter={() => {
 					setMouseInside(true);
 					hover.handlers.onMouseEnter();
 				}}
-				onMouseMove={hover.handlers.onMouseMove}
 				onMouseLeave={() => {
 					setMouseInside(false);
 					hover.handlers.onMouseLeave();

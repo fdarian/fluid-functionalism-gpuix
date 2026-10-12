@@ -6,7 +6,7 @@ import {
 	useContext,
 } from "solid-js";
 import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
+import { createFluidHover, type FluidHover, useHoverItem } from "../lib/fluid-hover";
 import { color, type as scale, weight } from "../lib/theme";
 
 export type TableSize = "default" | "compact";
@@ -67,13 +67,7 @@ export function Table(props: {
 		<TableScopeContext.Provider value={scope}>
 			<div
 				testId={props.testId}
-				ref={(element) => {
-					hover.containerRef(element);
-					queueMicrotask(hover.remeasure);
-				}}
-				onMouseEnter={hover.handlers.onMouseEnter}
-				onMouseMove={hover.handlers.onMouseMove}
-				onMouseLeave={hover.handlers.onMouseLeave}
+				{...hover.containerProps}
 				style={{
 					position: "relative",
 					display: "flex",
@@ -132,11 +126,11 @@ export function TableRow(props: {
 	};
 
 	let rowElement: HostElement | undefined;
-	createEffect(() => {
-		if (props.index === undefined) return;
-		if (rowElement === undefined) throw new Error("Row is not mounted");
-		scope.hover.registerItem(props.index, rowElement);
-	});
+	useHoverItem(
+		scope.hover,
+		() => props.index,
+		() => rowElement,
+	);
 
 	return (
 		<RowContext.Provider value={{ lit, header }}>

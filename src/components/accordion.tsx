@@ -237,11 +237,7 @@ export function AccordionGroup(props: RootProps) {
 		<RootContext.Provider value={root}>
 			<GroupContext.Provider value={scope}>
 				<div
-					ref={(element) => {
-						hover.containerRef(element);
-						queueMicrotask(hover.remeasure);
-					}}
-					onMouseEnter={hover.handlers.onMouseEnter}
+					{...hover.containerProps}
 					onMouseMove={(event: EventPayload) => {
 						// The pointer over an open panel belongs to no row.
 						if (contentOver !== null) return;

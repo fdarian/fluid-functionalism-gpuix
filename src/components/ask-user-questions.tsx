@@ -666,13 +666,7 @@ export function AskUserQuestions(props: {
 	const rows = () => (
 		<div
 			role={isMulti() ? "group" : "radiogroup"}
-			ref={(element) => {
-				hover.containerRef(element);
-				queueMicrotask(hover.remeasure);
-			}}
-			onMouseEnter={hover.handlers.onMouseEnter}
-			onMouseMove={hover.handlers.onMouseMove}
-			onMouseLeave={hover.handlers.onMouseLeave}
+			{...hover.containerProps}
 			style={{
 				position: "relative",
 				display: "flex",

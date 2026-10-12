@@ -192,13 +192,7 @@ export function ChoiceGroup(props: {
 			<div
 				testId={props.testId}
 				role={props.role}
-				ref={(element) => {
-					hover.containerRef(element);
-					queueMicrotask(hover.remeasure);
-				}}
-				onMouseEnter={hover.handlers.onMouseEnter}
-				onMouseMove={hover.handlers.onMouseMove}
-				onMouseLeave={hover.handlers.onMouseLeave}
+				{...hover.containerProps}
 				style={{
 					position: "relative",
 					display: "flex",

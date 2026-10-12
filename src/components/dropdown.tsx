@@ -183,10 +183,7 @@ function MenuBody(props: {
 
 	return (
 		<div
-			ref={(element) => {
-				props.hover.containerRef(element);
-				queueMicrotask(props.hover.remeasure);
-			}}
+			ref={props.hover.containerProps.ref}
 			onMouseEnter={props.handlers.onMouseEnter}
 			onMouseMove={props.handlers.onMouseMove}
 			onMouseLeave={props.handlers.onMouseLeave}

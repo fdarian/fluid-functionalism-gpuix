@@ -109,13 +109,7 @@ export function SidebarMenu(props: { children: JSX.Element }) {
 	return (
 		<MenuScopeContext.Provider value={scope}>
 			<div
-				ref={(element) => {
-					hover.containerRef(element);
-					queueMicrotask(hover.remeasure);
-				}}
-				onMouseEnter={hover.handlers.onMouseEnter}
-				onMouseMove={hover.handlers.onMouseMove}
-				onMouseLeave={hover.handlers.onMouseLeave}
+				{...hover.containerProps}
 				style={{
 					position: "relative",
 					display: "flex",

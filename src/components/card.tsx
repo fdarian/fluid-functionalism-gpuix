@@ -200,14 +200,11 @@ export function CardGroup(props: {
 		<GroupContext.Provider value={scope}>
 			<div
 				testId={props.testId}
+				{...hover.containerProps}
 				ref={(element) => {
 					container = element;
-					hover.containerRef(element);
-					queueMicrotask(hover.remeasure);
+					hover.containerProps.ref(element);
 				}}
-				onMouseEnter={hover.handlers.onMouseEnter}
-				onMouseMove={hover.handlers.onMouseMove}
-				onMouseLeave={hover.handlers.onMouseLeave}
 				onClick={fluid() ? onGapClick : undefined}
 				style={{
 					position: "relative",
