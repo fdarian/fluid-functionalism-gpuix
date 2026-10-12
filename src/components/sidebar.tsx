@@ -164,6 +164,7 @@ export function SidebarMenu(props: { children: JSX.Element }) {
 
 /** Row label that keeps its width when the weight steps up: a hidden copy at the heavy weight reserves the space. */
 function RowLabel(props: {
+	testId?: string;
 	text: string;
 	lit: boolean;
 	emphasized: boolean;
@@ -184,11 +185,14 @@ function RowLabel(props: {
 		>
 			<text style={{ ...textStyle(true), opacity: 0 }}>{props.text}</text>
 			<text
+				testId={props.testId}
 				style={{
 					...textStyle(props.emphasized),
 					position: "absolute",
 					top: 0,
 					left: 0,
+					// An absolute box blocks the mouse by default, which would starve the menu's hover while the pointer is over the label.
+					pointerEvents: "none",
 					color: props.lit ? color.foreground : color.mutedForeground,
 				}}
 			>
@@ -270,6 +274,9 @@ export function SidebarMenuButton(props: {
 				)}
 			</Show>
 			<RowLabel
+				testId={
+					props.testId === undefined ? undefined : `${props.testId}-label`
+				}
 				text={props.label}
 				lit={lit()}
 				emphasized={props.active === true}
@@ -284,6 +291,7 @@ export function SidebarMenuButton(props: {
 							flexShrink: 0,
 							borderRadius: 3,
 							backgroundColor: dot(),
+							pointerEvents: "none",
 						}}
 					/>
 				)}

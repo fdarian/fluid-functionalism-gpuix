@@ -251,6 +251,7 @@ export function Button(props: {
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
+						pointerEvents: "none",
 					}}
 				>
 					<Icon

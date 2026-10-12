@@ -117,6 +117,10 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.hover("sidebar-demo-Motion");
 	shot.capture("hover");
 
+	// Over the label text, not the row's centre: an absolute label must not occlude the menu's mouse events.
+	await shot.hover("sidebar-demo-Scrollbars-label");
+	shot.capture("hover-label");
+
 	await shot.click("sidebar-demo-Sizes");
 	await shot.hover("sidebar-demo-Icons");
 	shot.capture("sub-menu");
