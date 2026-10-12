@@ -30,6 +30,10 @@ interface Palette {
 	shadowColor: string;
 	transparent: string;
 	accent: string;
+	/** bg-accent/40: the table's row rules. */
+	accentFaint: string;
+	/** border-border/60: card dividers and frames. */
+	borderFaint: string;
 	destructive: string;
 	info: string;
 	success: string;
@@ -58,6 +62,8 @@ const palettes: Record<Scheme, Palette> = {
 		shadowColor: "rgba(0,0,0,0.06)",
 		transparent: "rgba(0,0,0,0)",
 		accent: "#E5E5E5",
+		accentFaint: "rgba(229,229,229,0.4)",
+		borderFaint: "rgba(23,23,23,0.072)",
 		destructive: "#EF4444",
 		info: "#3B82F6",
 		success: "#22C55E",
@@ -83,6 +89,8 @@ const palettes: Record<Scheme, Palette> = {
 		shadowColor: "rgba(0,0,0,0.18)",
 		transparent: "rgba(0,0,0,0)",
 		accent: "#525252",
+		accentFaint: "rgba(82,82,82,0.4)",
+		borderFaint: "rgba(245,245,245,0.072)",
 		destructive: "#FCA5A5",
 		info: "#93C5FD",
 		success: "#86EFAC",
