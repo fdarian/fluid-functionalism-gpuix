@@ -22,6 +22,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type ItemRect } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
+import { createMeasuredHeight, KickContext } from "../lib/measured-height";
 import {
 	color,
 	radius,
@@ -30,7 +31,6 @@ import {
 	motion as tween,
 	weight,
 } from "../lib/theme";
-import { createMeasuredHeight, KickContext } from "./thinking-steps";
 
 const arrowLeftGlyph = defineIcon(
 	'<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
