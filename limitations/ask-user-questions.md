@@ -10,7 +10,7 @@ Transforms and font loading are already known gaps and are not repeated here. Po
 - **gpuix lacks:** a window-level key subscription for a component. Window key events are wired to the options of the root (`packages/solid/src/root.ts:85`, `rootHandlers.onKeyDown`), not to anything a component can add. Element `onKeyDown` fires for the focused element and its ancestors that declare it.
 - **Workaround:** the card is focusable (`tabIndex 0`) and one `onKeyDown` on it handles everything that bubbles up from a focused row or field. Digits work once focus is in the card, and several cards on one page never answer together, which the original needed its registry for.
 - **Fidelity:** approximated: a digit does nothing until the card has focus (a click on it, or a Tab).
-- **Components it hits:** command-menu (its global shortcuts), any component with a page-level hotkey.
+- **Components it hits:** any component with a page-level hotkey.
 
 ## Inline text that wraps as one paragraph
 
@@ -26,7 +26,7 @@ Transforms and font loading are already known gaps and are not repeated here. Po
 - **gpuix lacks:** caret and selection access: a `<textarea>`'s events carry the whole `value` and nothing about the cursor (`EventPayload`, `packages/native/index.d.ts`).
 - **Workaround:** up / down move to the neighbouring row only when the draft has no newline; with one the editor keeps the key. A draft that merely wraps on screen counts as one line, so up and down leave it.
 - **Fidelity:** approximated.
-- **Components it hits:** input-message (if it hands arrow keys to a history or a queue).
+- **Components it hits:** any text field that hands arrow keys to its surroundings.
 
 ## Focus events arrive out of order
 
@@ -58,7 +58,7 @@ Transforms and font loading are already known gaps and are not repeated here. Po
 - **gpuix lacks:** `scale` and `popLayout` (an exiting node stays in flow until it is gone; see [thinking-indicator.md](thinking-indicator.md)).
 - **Workaround:** a 100 ms fade-in on mount and no exit animation: a button that goes away is removed at once.
 - **Fidelity:** approximated.
-- **Components it hits:** banner (dismiss), any list whose items leave.
+- **Components it hits:** any list whose items leave.
 
 ## `aria-checked` and `aria-pressed` do not exist
 
@@ -66,7 +66,7 @@ Transforms and font loading are already known gaps and are not repeated here. Po
 - **gpuix lacks:** `aria-checked` (the `HostProps` accessibility props are `role`, `aria-label`, `aria-description`, `aria-id`, `aria-expanded`, `aria-selected`, `aria-valuetext`, `aria-level`, `packages/native/js/host.ts`).
 - **Workaround:** `aria-selected` on the same rows. Assistive technology hears "selected" where it would have heard "checked".
 - **Fidelity:** approximated.
-- **Components it hits:** switch, checkbox-group, radio-group.
+- **Components it hits:** any checkbox- or radio-like row.
 
 ## Shared fluid hover and a question with no rows
 

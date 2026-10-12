@@ -18,7 +18,7 @@ Transforms and font loading are already known gaps and are not repeated here.
 - **gpuix lacks:** layout animations. `README.md:1101`: "Keyframes, variants, and shared layout animations are not available yet." Missing feature.
 - **Workaround:** none. A new message appears at its final slot and the rest of the list jumps.
 - **Fidelity:** dropped. The entrance itself (opacity and an 8px rise on `top`, spring `moderate`) is kept; the `scale: 0.96` and `transform-origin` are the known transform gap.
-- **Components it hits:** queued-stack (reorder), accordion-style lists.
+- **Components it hits:** queued-stack (reorder).
 
 ## `group-focus-within`
 

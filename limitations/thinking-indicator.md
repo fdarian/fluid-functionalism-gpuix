@@ -10,7 +10,7 @@ Transforms and font loading are already known gaps and are not repeated here. Th
 - **gpuix lacks:** keyframe arrays, `repeat`, and animating anything but `width` / `height` / `opacity` / `top` / `right` / `bottom` / `left` / `borderRadius` (`packages/native/js/host.ts:27`, `MotionStyle`). `README.md:1101`: "Keyframes, variants, and shared layout animations are not available yet." A native track runs to one target and settles. Missing feature.
 - **Workaround:** a shared JS clock (`setInterval`, 33 ms) that every looping thing subscribes to. The glyph's path is interpolated in JS (same easeInOut cubic-bezier, 1.5s per segment) and written as a new `<svg source>` string every frame. The clock only runs while something is mounted.
 - **Fidelity:** approximated. About 30 steps a second on the JS thread instead of the native frame pump, each frame a new SVG string for GPUI to parse and rasterise. GPUI caches the mask in its sprite atlas under a hash of the bytes (`zed/crates/gpui/src/elements/svg.rs:53`), so a path that varies continuously would add a tile per frame and never reuse one; the port quantises the time to whole frames so the loop repeats about 180 distinct strings. The motion is visually right; it costs CPU while it runs, and it stalls with the JS thread.
-- **Components it hits:** file-thumbnail (spinner), thinking-steps (shimmer), queued-stack (the enqueue recoil).
+- **Components it hits:** file-thumbnail (spinner), thinking-steps (shimmer, and the chevron's rotation by the same SVG rewrite).
 
 ## No gradient-clipped text (shimmer)
 
@@ -26,7 +26,7 @@ Transforms and font loading are already known gaps and are not repeated here. Th
 - **gpuix lacks:** percentage targets and translates (`MotionStyle` numbers only), one `transition` for the whole `motion.div` rather than one per target (`host.ts:98-103`, `MotionProps`), and a `popLayout` mode: an exiting node stays in flow until it is gone.
 - **Workaround:** the words are absolutely positioned in a relatively positioned, `overflow: hidden` cell and move on `top` in pixels (80% of the 20px line). The `transition` prop is switched on `useIsPresent()` so the exiting word uses the 0.16s tween. A hidden copy of the longest word reserves the width. Each word is a fresh element (`<Show keyed>`) because Solid's `AnimatePresence` tracks elements, not keys.
 - **Fidelity:** exact for the visible result. `top` re-lays out per frame where a translate would not.
-- **Components it hits:** thinking-steps indirectly (shares the shimmer), queued-stack (card `y` is a `bottom` offset).
+- **Components it hits:** queued-stack (a card's `y` is likewise a `bottom` offset).
 
 ## `useReducedMotion`
 
@@ -34,4 +34,4 @@ Transforms and font loading are already known gaps and are not repeated here. Th
 - **gpuix lacks:** any read of the OS accessibility settings.
 - **Workaround:** none; the indicator always animates.
 - **Fidelity:** dropped.
-- **Components it hits:** thinking-steps, queued-stack, any component with a loop.
+- **Components it hits:** thinking-steps (shimmer), and any component with a loop.

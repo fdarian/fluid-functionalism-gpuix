@@ -26,7 +26,7 @@ Transforms and font loading are already known gaps and are not repeated here.
 - **gpuix lacks:** the same for a filled or absolute child (`packages/native/src/style.rs:317`, `renderer.rs:5335`): over a card the stack's own `onMouseEnter` / `onMouseLeave` say the pointer left. See [chat-message.md](chat-message.md).
 - **Workaround:** the stack and every card report enter and leave to one counter, and the stack collapses 40 ms after the counter reaches zero, which bridges the frame between one leaving and the next entering. (`pointerEvents: "none"` is not an option: the cards are the drag and click targets.)
 - **Fidelity:** approximated: collapsing is 40 ms late.
-- **Components it hits:** any popup or card made of filled rows (the same bridge is implicit in the combobox's popup hover).
+- **Components it hits:** any card whose children are filled.
 
 ## A press and a move on one element arm pointer capture, and capture eats the release of its neighbours
 
@@ -37,7 +37,7 @@ Transforms and font loading are already known gaps and are not repeated here.
   3. A standalone element with press, move, release and click handlers works, so the loss needs the neighbour or wrapper arrangement; the exact rule was not traced further.
 - **Workaround:** drag handlers live on a region that excludes the buttons (the thumbnails and text) rather than on the card, and the buttons take only the tooltip's enter / leave handlers.
 - **Fidelity:** exact for the two actions; the tooltip does not close on press.
-- **Components it hits:** tooltip (its default trigger form), any draggable row with buttons: slider, accordion with a drag handle, tabs.
+- **Components it hits:** tooltip (its default trigger form); any draggable element that holds buttons.
 
 ## Drag needs painted bounds on every move
 
@@ -45,7 +45,7 @@ Transforms and font loading are already known gaps and are not repeated here.
 - **gpuix lacks:** pointer coordinates relative to the container, and a bounds read that is cheap in tests. The slot under the pointer comes from `getElementBounds` of the stack on each move (`renderer.rs:2333`), which on the headless renderer draws a frame per call (`test_renderer.rs:1118`).
 - **Workaround:** none; one bounds read per move.
 - **Fidelity:** exact in a window.
-- **Components it hits:** slider, color-picker, any drag.
+- **Components it hits:** any drag handler that needs the container's box.
 
 ## `layoutId` morph, touch mode, `tabular-nums`
 
