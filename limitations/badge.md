@@ -23,3 +23,11 @@ Badge is nearly a pure-style component; it hit only two gaps. Both variants (sol
 ## Pill shape
 
 Not ported, a deliberate scope cut from the plan (rounded only); gpuix has `borderRadius`, so a pill is just a larger radius.
+
+## A `Show` among siblings leaves an empty text node that eats a flex `gap`
+
+- **Original:** `{!isSolid && <span dot/>}` followed by the label: a falsy child renders nothing, so the flex `gap` only separates what is there.
+- **gpuix:** Solid's universal compiler gives every dynamic child that is not the last one a `createTextNode("")` marker, and gpuix lays that empty text node out as a flex item, so each marker adds one `gap`. In the first version of this port every solid badge had its label pushed right by one `gap`. Not a gpuix bug as such (the renderer is doing what the tree says), but a trap for any port of conditional rendering inside a `gap` container.
+- **Workaround:** put the conditional children in one fragment returned from a function (`{content()}`), which makes them a single dynamic child with no marker; or use margins instead of `gap`; or park decorations in one absolute layer.
+- **Fidelity:** exact once worked around.
+- **Components it hits:** every component with a `Show` / ternary among siblings inside a `gap` row or column (card and its parts, button, anything with optional icons).

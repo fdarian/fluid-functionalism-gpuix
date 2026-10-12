@@ -63,23 +63,8 @@ export function Badge(props: {
 			? color.mutedForeground
 			: hue();
 
-	return (
-		<div
-			testId={props.testId}
-			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
-				flexShrink: 0,
-				height: size().height,
-				paddingLeft: size().padX,
-				paddingRight: size().padX,
-				gap: size().gap,
-				borderRadius: radius.item,
-				backgroundColor: fill(),
-				...(solid() ? {} : { borderWidth: 1, borderColor: color.border }),
-			}}
-		>
+	const content = () => (
+		<>
 			<Show when={!solid()}>
 				<div
 					style={{
@@ -101,6 +86,28 @@ export function Badge(props: {
 			>
 				{props.children}
 			</text>
+		</>
+	);
+
+	return (
+		<div
+			testId={props.testId}
+			style={{
+				display: "flex",
+				flexDirection: "row",
+				alignItems: "center",
+				flexShrink: 0,
+				height: size().height,
+				paddingLeft: size().padX,
+				paddingRight: size().padX,
+				gap: size().gap,
+				borderRadius: radius.item,
+				backgroundColor: fill(),
+				...(solid() ? {} : { borderWidth: 1, borderColor: color.border }),
+			}}
+		>
+			{/* One fragment: a Show among siblings leaves an empty text node that eats a `gap`. */}
+			{content()}
 		</div>
 	);
 }
