@@ -29,6 +29,9 @@ import {
 
 export const SIDEBAR_WIDTH = 256;
 
+/** How long rows keep moving after a sub-menu toggles: the spring's perceived duration plus its tail. */
+const SPRING_TRACK_MS = 400;
+
 // ─── Menu scope ──────────────────────────────────────────────────────────────
 //
 // One scope per SidebarMenu: a single fluid-hover system plus the traveling
@@ -160,14 +163,25 @@ export function SidebarMenu(props: { children: JSX.Element }) {
 // ─── Rows ────────────────────────────────────────────────────────────────────
 
 /** Row label that keeps its width when the weight steps up: a hidden copy at the heavy weight reserves the space. */
-function RowLabel(props: { text: string; lit: boolean; emphasized: boolean }) {
+function RowLabel(props: {
+	text: string;
+	lit: boolean;
+	emphasized: boolean;
+	grow: boolean;
+}) {
 	const textStyle = (heavy: boolean) => ({
 		...scale.body,
 		fontWeight: heavy ? weight.semibold : weight.normal,
 		whiteSpace: "nowrap" as const,
 	});
 	return (
-		<div style={{ position: "relative", flexGrow: 1, minWidth: 0 }}>
+		<div
+			style={{
+				position: "relative",
+				flexGrow: props.grow ? 1 : 0,
+				minWidth: 0,
+			}}
+		>
 			<text style={{ ...textStyle(true), opacity: 0 }}>{props.text}</text>
 			<text
 				style={{
@@ -187,12 +201,8 @@ function RowLabel(props: { text: string; lit: boolean; emphasized: boolean }) {
 export function SidebarMenuButton(props: {
 	label: string;
 	icon?: IconName;
-	/** Replaces the icon, e.g. a letter tile. */
-	leading?: JSX.Element;
-	/** Left padding and icon gap when a 20px leading mark must land the label on the 32px axis. */
-	inset?: { left: number; gap: number };
-	/** Always-foreground semibold label (workspace name), independent of hover. */
-	strong?: boolean;
+	/** A status dot after the label. */
+	dot?: string;
 	level?: 0 | 1;
 	active?: boolean;
 	badge?: string;
@@ -220,8 +230,7 @@ export function SidebarMenuButton(props: {
 		const own = index();
 		return own !== undefined && scope.hover.activeIndex() === own;
 	};
-	const lit = () =>
-		props.active === true || props.strong === true || isHovered();
+	const lit = () => props.active === true || isHovered();
 	const rowHeight = level === 0 ? height.menuRow : height.menuSubRow;
 	// Trailing reservation: the badge's 24px slot, its 8px inset and a 4px gap.
 	const paddingRight = props.badge === undefined ? 8 : 36;
@@ -242,15 +251,14 @@ export function SidebarMenuButton(props: {
 				display: "flex",
 				flexDirection: "row",
 				alignItems: "center",
-				gap: props.inset?.gap ?? 8,
-				paddingLeft: props.inset?.left ?? 8,
+				gap: 8,
+				paddingLeft: 8,
 				paddingRight,
 				borderRadius: radius.item,
 				cursor: "pointer",
 				userSelect: "none",
 			}}
 		>
-			{props.leading}
 			<Show when={props.icon}>
 				{(name: Accessor<IconName>) => (
 					<Icon
@@ -264,8 +272,22 @@ export function SidebarMenuButton(props: {
 			<RowLabel
 				text={props.label}
 				lit={lit()}
-				emphasized={props.active === true || props.strong === true}
+				emphasized={props.active === true}
+				grow={props.dot === undefined}
 			/>
+			<Show when={props.dot}>
+				{(dot: Accessor<string>) => (
+					<div
+						style={{
+							width: 6,
+							height: 6,
+							flexShrink: 0,
+							borderRadius: 3,
+							backgroundColor: dot(),
+						}}
+					/>
+				)}
+			</Show>
 			<Show when={props.trailingIcon}>
 				{(name: Accessor<() => IconName>) => (
 					<Icon
@@ -341,8 +363,7 @@ export function SidebarMenuSub(props: {
 
 	createEffect(() => {
 		props.open;
-		if (contentHeight() !== undefined)
-			scope.trackReflow(tween.moderate.duration * 1000);
+		if (contentHeight() !== undefined) scope.trackReflow(SPRING_TRACK_MS);
 	});
 
 	return (
@@ -391,8 +412,6 @@ export function Sidebar(props: { children: JSX.Element }) {
 				display: "flex",
 				flexDirection: "column",
 				backgroundColor: color.background,
-				borderRightWidth: 1,
-				borderColor: color.border,
 			}}
 		>
 			{props.children}
@@ -426,6 +445,7 @@ export function SidebarContent(props: { children: JSX.Element }) {
 				flexDirection: "column",
 				padding: 8,
 				paddingTop: 0,
+				overflowY: "scroll",
 			}}
 		>
 			{props.children}
@@ -433,37 +453,29 @@ export function SidebarContent(props: { children: JSX.Element }) {
 	);
 }
 
-export function SidebarFooter(props: { children: JSX.Element }) {
-	return (
-		<div
-			style={{
-				flexShrink: 0,
-				display: "flex",
-				flexDirection: "column",
-				gap: 8,
-				padding: 8,
-			}}
-		>
-			{props.children}
-		</div>
-	);
-}
-
-export function SidebarGroupLabel(props: { children: string }) {
+export function SidebarGroupLabel(props: { children: string; count?: number }) {
 	return (
 		<div
 			style={{
 				height: height.groupLabel,
 				flexShrink: 0,
 				display: "flex",
+				flexDirection: "row",
 				alignItems: "center",
 				paddingLeft: 8,
 				paddingRight: 8,
 			}}
 		>
-			<text style={{ ...scale.caption, color: color.mutedForeground }}>
+			<text
+				style={{ ...scale.caption, color: color.mutedForeground, flexGrow: 1 }}
+			>
 				{props.children}
 			</text>
+			<Show when={props.count}>
+				<text style={{ ...scale.caption, color: color.mutedForeground }}>
+					{props.count}
+				</text>
+			</Show>
 		</div>
 	);
 }
@@ -543,34 +555,6 @@ export function SidebarSearchField(props: {
 					{props.shortcut}
 				</text>
 			</div>
-		</div>
-	);
-}
-
-/** The 20px letter tile of the workspace switcher and the user avatar. */
-export function LetterTile(props: { letter: string; round?: boolean }) {
-	return (
-		<div
-			style={{
-				width: 20,
-				height: 20,
-				flexShrink: 0,
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
-				backgroundColor: props.round ? color.mutedForeground : color.foreground,
-				borderRadius: props.round ? 10 : 6,
-			}}
-		>
-			<text
-				style={{
-					...scale.microCompact,
-					fontWeight: weight.semibold,
-					color: color.background,
-				}}
-			>
-				{props.letter}
-			</text>
 		</div>
 	);
 }

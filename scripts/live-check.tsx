@@ -23,9 +23,9 @@ const watchdog = setTimeout(async () => {
 }, 120_000);
 
 try {
-	await app.getByTestId("nav-Inbox").waitFor({ timeoutMs: 30_000 });
+	await app.getByTestId("nav-Motion").waitFor({ timeoutMs: 30_000 });
 	await new Promise((resolve) => setTimeout(resolve, 600));
-	await app.getByTestId("nav-Inbox").hover();
+	await app.getByTestId("nav-Motion").hover();
 	await new Promise((resolve) => setTimeout(resolve, 500));
 	await app.screenshot({ path: `${outDir}live-sidebar-hover.png` });
 	await app.getByTestId("framework-input").click();

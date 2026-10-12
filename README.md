@@ -1,10 +1,11 @@
 # gpuix + fluid functionalism
 
 Can [gpuix](https://github.com/remorses/gpuix), a GPUI-backed renderer with no DOM and no CSS engine, draw the
-[fluidfunctionalism.com](https://fluidfunctionalism.com) components? This ports three of them, light theme,
-default size, rounded shape: **Button** (four variants, compact, icons, disabled, loading), **Combobox**
-(single-select, filtering, keyboard, empty state) and **Sidebar** (with the shared fluid hover, a gliding
-active background and a collapsible sub-menu).
+[fluidfunctionalism.com](https://fluidfunctionalism.com) components? This ports three of them at the default size and
+rounded shape, laid out like the site's showcase page: **Button** (four variants, compact, icons, disabled,
+loading), **Combobox** (single-select, filtering, keyboard, empty state) and **Sidebar** (with the shared fluid
+hover, a gliding active background and a collapsible sub-menu). Both colour schemes are ported, dark by default,
+and the top-right "Make them yours" card has a Theme select (Light / Dark) that re-colours everything live.
 
 Answer: yes, all three render and behave like the originals. The gaps are in the details, and they are listed in
 the [translation table](#translation-table) below.
@@ -14,8 +15,8 @@ the [translation table](#translation-table) below.
 | ![initial](screenshots/initial.png) | ![sidebar hover](screenshots/sidebar-hover.png) |
 | ![combobox open](screenshots/combobox-open.png) | ![combobox filtered](screenshots/combobox-filtered.png) |
 
-More in [`screenshots/`](screenshots): a collapsed sub-menu, a pressed button, the empty state, and two captures
-of the live window (`live-*.png`).
+More in [`screenshots/`](screenshots): the light scheme (`light-*.png`), the theme select, a collapsed sub-menu, a
+pressed button, the empty state, and two captures of the live window (`live-*.png`).
 
 ## Run it
 
@@ -25,7 +26,9 @@ bun --hot src/main.tsx
 ```
 
 `@gpuix/native` and `@gpuix/solid` are bun workspaces pointing at the fork at `~/code/fdarian/gpuix`, wired like
-[`../gpuix-pierre-diffs`](../gpuix-pierre-diffs) (see its README for building the native addon). The Solid JSX
+[`../gpuix-pierre-diffs`](../gpuix-pierre-diffs) (see its README for building the native addon). The fork must be
+at `poc` a02ec23 or later: the highlight and popups use its native `motion` springs, so rebuild the addon and the
+`@gpuix/solid` dist after pulling it. The Solid JSX
 transform is a Bun preload (`bunfig.toml`), so there is no build step. `solid-js` is pinned to the version
 gpuix resolves: two copies of Solid give two reactive systems and nothing updates.
 
@@ -37,14 +40,17 @@ bun scripts/live-check.tsx        # the same flow against the real window, via g
 
 ## How it is put together
 
-- `src/theme.ts` holds the resolved design tokens: colours from `app/globals.css` with every `light-dark()` and
-  `color-mix()` folded to a constant, the type scale, radii, heights and the motion tweens.
-- `src/button.tsx`, `src/combobox.tsx`, `src/sidebar.tsx` are the components.
+- `src/theme.ts` holds the resolved design tokens: both columns of every `light-dark()` in `app/globals.css`
+  (with `color-mix()` mixed offline), the type scale, radii, heights and the springs. `color.x` reads a `scheme`
+  signal, so any JSX prop that touches it re-colours on a theme change; tokens must be read inside JSX or a
+  function, never at module scope.
+- `src/button.tsx`, `src/combobox.tsx`, `src/select.tsx`, `src/sidebar.tsx` are the components; `src/popup.tsx`
+  is the popup chrome the combobox and select share.
 - `src/fluid-hover.ts` is `use-fluid-hover.ts`: rows register, their painted boxes are read with
   `renderer.getElementBounds`, and `pickNearest` (ported verbatim) resolves the pointer to a row, including gaps.
 - `src/fluid-highlight.tsx` is the one absolutely positioned highlight that glides between rows with the native
-  `motion` prop. The sidebar's active backgrounds and the combobox's checked background reuse it with a slower
-  tween.
+  `motion` spring. The sidebar's active backgrounds and the combobox's checked background reuse it with a slower
+  spring.
 - `src/icons.ts` holds the lucide glyphs as SVG strings, drawn with `<svg source>` and tinted by `style.color`.
 
 Fluid hover is the part that depends on gpuix internals. The first `getElementBounds` call only turns bounds
@@ -61,7 +67,9 @@ filter changes, and every frame for the length of a sub-menu animation.
 | `focus-visible:ring-1` | `style.focusVisible` outline, offset 1 | Exact |
 | `ring-1 ring-border` | `outlineWidth` / `outlineColor`: outside the box, takes no layout | Exact |
 | `transition-colors duration-80`, `transition-[box-shadow]` | none: state styles switch instantly. Only `motion` animates | Dropped |
-| spring `fast` / `moderate` (`motion/react`) | native `motion` tween, ease-out `[0.23, 1, 0.32, 1]`: 120 ms / 200 ms, exits 60 / 120 ms | Approximated, no spring, no overshoot |
+| spring `fast` / `moderate` (`motion/react`) | native `motion` spring, `{ type: "spring", duration: 0.08 / 0.16, bounce: 0 }`, velocity kept when the target changes mid-flight | Exact; `slow` is unused |
+| exits (`spring.fast.exit` …) | plain tweens, 60 ms / 120 ms, like the source | Exact |
+| "snap, don't spring" on a reflow | a zero-length tween | Exact |
 | `translate` / `x`,`y` travel of the highlight | `motion` on `top` / `left` / `width` / `height` (the only layout props it animates) | Equivalent, but it re-lays out per frame |
 | `scaleY: 0.96` on popup enter | not possible, no transforms. Opacity plus the 4px slide stay (`top` −4 → 0) | Partly dropped |
 | `z-index` (overlays under rows) | document order: the highlights are the container's first children and rows keep transparent backgrounds | Equivalent |
@@ -69,9 +77,11 @@ filter changes, and every frame for the length of a sub-menu animation.
 | translucent fill (`--tint`, `bg-hover`) over that shadow | gpuix paints a shadow under its element with no knock-out, so a background on top doubles up. Fills are the shadow alone, with no `backgroundColor` | Exact, but a different mechanism |
 | tertiary ring that moves inward on press (outer to inset shadow) | outline, offset 0 at rest and −1 pressed | Exact |
 | `shadow-surface-3` (1px ring + two stacked drops) | `borderWidth: 1` plus one drop shadow. gpuix paints a single non-inset shadow | Approximated |
-| `color-mix(in oklab, …)`, `light-dark()` | folded into constants; light theme only | Exact for light |
-| Base UI `Positioner` (flip, `--anchor-width`) | `<anchored side="bottom" gap={6} deferred>`; the popup width is a constant, and gpuix snaps it into the window rather than flipping | Approximated |
-| `ScrollArea` (hover thumb, scroll fade) | a plain `overflowY: "scroll"` | Dropped |
+| `color-mix(in oklab, …)`, `light-dark()` | both columns kept as a token table; the scheme is a signal | Exact |
+| dark `--shadow-3` (inset hairline + ring + drops) | popup `borderColor` of white at 5% plus the one drop shadow | Approximated |
+| `prefers-color-scheme` ("System" theme) | gpuix exposes no OS appearance, so the select offers Light and Dark only | Dropped |
+| Base UI `Positioner` (flip, `--anchor-width`) | `<anchored gap={6} deferred>`; the popup width is a constant. gpuix snaps an overflowing popup into the window, and its `switch` flip anchors to the far edge of the field and covers it, so the combobox picks `top` or `bottom` itself from the painted bounds and the window height | Approximated |
+| `ScrollArea` (hover thumb, scroll fade) | a plain `overflowY: "scroll"`, on the combobox list and the sidebar | Dropped |
 | absolute child of a scroll container | gpuix paints it where it was placed, not where the content has scrolled to, so rows and overlays share a relative wrapper *inside* the scroller | Needed workaround |
 | `getBoundingClientRect`, `ResizeObserver` | `getElementBounds` (last painted frame) read on timers | Approximated, up to a frame stale |
 | `text-[length:…] leading-[…]` | `fontSize` + `lineHeight` | Exact |
@@ -89,6 +99,6 @@ dismiss layer, and clicking outside closes it through `onMouseDownOutside` on th
 
 ## Not ported
 
-Dark theme, pill shape, multiple-select combobox, chips, the clear-on-blur details of Base UI's primitive, rail
+Pill shape, the Radius / Size / Icons / Primitive rows of the customise card, the card's GitHub badge, multiple-select combobox, chips, the clear-on-blur details of Base UI's primitive, rail
 resize, the mobile sheet, the traveling keyboard focus ring in the sidebar, row actions, and `gapClick` (a click
 between rows is not routed to the highlighted row). The combobox has no `aria-activedescendant` wiring.

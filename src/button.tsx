@@ -75,7 +75,7 @@ interface Surface {
  * (the button's own edge), pressed it moves 1px inside, like the inset
  * shadow it replaces.
  */
-const surfaces: Record<ButtonVariant, Surface> = {
+const surfaces = (): Record<ButtonVariant, Surface> => ({
 	primary: {
 		rest: { boxShadow: fill(color.foreground, 1) },
 		hover: { boxShadow: fill(color.primaryHover, 1) },
@@ -105,7 +105,7 @@ const surfaces: Record<ButtonVariant, Surface> = {
 		hover: { boxShadow: fill(color.hover, 1) },
 		active: { boxShadow: fill(color.active, 0) },
 	},
-};
+});
 
 export function Button(props: {
 	variant?: ButtonVariant;
@@ -219,9 +219,9 @@ export function Button(props: {
 				keyboardFocusDim: false,
 				opacity: props.disabled ? 0.5 : 1,
 				pointerEvents: props.disabled ? "none" : "auto",
-				...surfaces[variant()].rest,
-				hover: surfaces[variant()].hover,
-				active: surfaces[variant()].active,
+				...surfaces()[variant()].rest,
+				hover: surfaces()[variant()].hover,
+				active: surfaces()[variant()].active,
 				focusVisible: {
 					outlineWidth: 1,
 					outlineColor: color.focusRing,

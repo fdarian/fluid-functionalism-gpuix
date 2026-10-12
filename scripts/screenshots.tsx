@@ -12,7 +12,7 @@ import { App } from "../src/app";
 const outDir = new URL("../screenshots/", import.meta.url).pathname;
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const test = createTestRoot({ width: 1100, height: 720 });
+const test = createTestRoot({ width: 1240, height: 780 });
 const renderer = test.renderer;
 
 async function settle(ms = 400) {
@@ -50,18 +50,18 @@ renderer.getElementBounds(1);
 await settle();
 capture("initial");
 
-const inbox = centerOf("nav-Inbox");
+const inbox = centerOf("nav-Motion");
 renderer.nativeSimulateMouseMove(inbox.x, inbox.y);
 await settle();
 capture("sidebar-hover");
 
-const mobileApp = centerOf("nav-Mobile app");
+const mobileApp = centerOf("nav-Sizes");
 renderer.nativeSimulateClick(mobileApp.x, mobileApp.y);
 await settle();
-const projects = centerOf("nav-Projects");
+const projects = centerOf("nav-Button");
 renderer.nativeSimulateClick(projects.x, projects.y);
 await settle(600);
-const members = centerOf("nav-Members");
+const members = centerOf("nav-Typography");
 renderer.nativeSimulateMouseMove(members.x, members.y);
 await settle();
 capture("sidebar-submenu-collapsed");
@@ -94,9 +94,27 @@ await settle(500);
 expectText("No framework found.", true);
 capture("combobox-empty");
 
-renderer.nativeSimulateClick(900, 600);
+renderer.nativeSimulateClick(700, 760);
 await settle();
 expectText("No framework found.", false);
+
+const theme = centerOf("theme");
+renderer.nativeSimulateClick(theme.x, theme.y);
+await settle(600);
+expectText("Light", true);
+capture("theme-select-open");
+const light = renderer.findByText("Light");
+if (light === undefined) throw new Error("no Light row");
+const lightBounds = renderer.getElementBounds(light.id);
+if (lightBounds === null) throw new Error("no bounds for the Light row");
+renderer.nativeSimulateClick(lightBounds.x + 4, lightBounds.y + 4);
+await settle(600);
+capture("light-initial");
+
+const lightField = centerOf("framework-input");
+renderer.nativeSimulateClick(lightField.x, lightField.y);
+await settle(600);
+capture("light-combobox-open");
 
 console.log("screenshots written to", outDir);
 process.exit(0);

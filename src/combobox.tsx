@@ -18,6 +18,7 @@ import { FluidHighlight } from "./fluid-highlight";
 import { createFluidHover } from "./fluid-hover";
 import { Icon } from "./icon";
 import type { IconName } from "./icons";
+import { createPresence, POPUP_OFFSET, PopupSurface } from "./popup";
 import {
 	color,
 	radius,
@@ -30,9 +31,7 @@ import {
 const FIELD_HEIGHT = 36;
 const ROW_HEIGHT = 36;
 const POPUP_MAX_HEIGHT = 300;
-const POPUP_OFFSET = 6;
-/** Time the popup keeps painting its exit fade before unmounting. */
-const EXIT_MS = 60;
+const POPUP_MARGIN = 8;
 
 function ClearButton(props: { onClick: () => void }) {
 	const [hovered, setHovered] = createSignal(false);
@@ -84,9 +83,9 @@ export function Combobox(props: {
 	const renderer = useGpuixRequired();
 	const width = () => props.width ?? 280;
 
-	const [open, setOpen] = createSignal(false);
-	/** Whether the popup is still painted: it outlives `open` by the exit fade. */
-	const [mounted, setMounted] = createSignal(false);
+	const presence = createPresence();
+	const open = presence.open;
+	const mounted = presence.mounted;
 	const [inputText, setInputText] = createSignal(props.value ?? "");
 	// What the list filters by. The text field shows the selected label while
 	// closed, but opening it must still list every item.
@@ -98,8 +97,9 @@ export function Combobox(props: {
 	/** Armed while typing re-filters the rows under the highlights: those frames snap, not glide. */
 	const [reflow, setReflow] = createSignal(false);
 
+	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
+	let rootElement: HostElement | undefined;
 	let inputElement: HostElement | undefined;
-	let exitTimer: ReturnType<typeof setTimeout> | undefined;
 	const rowElements = new Map<number, HostElement>();
 
 	const filtered = createMemo(() => {
@@ -116,18 +116,26 @@ export function Combobox(props: {
 
 	const openPopup = () => {
 		if (open()) return;
-		clearTimeout(exitTimer);
+		if (rootElement === undefined) throw new Error("Combobox is not mounted");
+		const field = renderer.getElementBounds?.(rootElement.id);
+		const window = renderer.getWindowSize?.();
+		if (field == null || window === undefined) {
+			throw new Error("Cannot place the popup without painted bounds");
+		}
+		const roomBelow = window.height - (field.y + field.height);
+		setSide(
+			roomBelow >= POPUP_MAX_HEIGHT + POPUP_OFFSET + POPUP_MARGIN
+				? "bottom"
+				: "top",
+		);
 		setQuery("");
-		setOpen(true);
-		setMounted(true);
+		presence.show();
 		hover.setActiveIndex(0);
 	};
 	const closePopup = () => {
 		if (!open()) return;
-		setOpen(false);
+		presence.hide();
 		setInputText(props.value ?? "");
-		clearTimeout(exitTimer);
-		exitTimer = setTimeout(() => setMounted(false), EXIT_MS);
 	};
 	const focusInput = () => {
 		if (inputElement === undefined)
@@ -231,6 +239,9 @@ export function Combobox(props: {
 
 	return (
 		<div
+			ref={(element) => {
+				rootElement = element;
+			}}
 			testId={props.testId}
 			onMouseDownOutside={onMouseDownOutside}
 			style={{
@@ -369,165 +380,141 @@ export function Combobox(props: {
 				</div>
 			</div>
 
-			<Show when={mounted()}>
-				<anchored
-					side="bottom"
-					align="start"
-					gap={POPUP_OFFSET}
-					deferred
-					priority={1}
-					occlude
-					onMouseDownOutside={onMouseDownOutside}
-					style={{ backgroundColor: color.transparent }}
+			<PopupSurface
+				presence={presence}
+				side={side()}
+				align="start"
+				width={width()}
+				maxHeight={POPUP_MAX_HEIGHT}
+				onMouseDownOutside={onMouseDownOutside}
+				onHoverChange={setPopupHovered}
+			>
+				<Show
+					when={filtered().length > 0}
+					fallback={
+						<div
+							style={{
+								paddingTop: 24,
+								paddingBottom: 24,
+								paddingLeft: 12,
+								paddingRight: 12,
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center",
+							}}
+						>
+							<text style={{ ...scale.body, color: color.mutedForeground }}>
+								{props.emptyText ?? "No results found."}
+							</text>
+						</div>
+					}
 				>
-					<motion.div
-						initial={{ opacity: 0, top: -4 }}
-						animate={open() ? { opacity: 1, top: 0 } : { opacity: 0, top: -4 }}
-						transition={open() ? tween.fast : tween.fastExit}
-						onMouseEnter={() => setPopupHovered(true)}
-						onMouseLeave={() => setPopupHovered(false)}
+					<div
+						onScroll={hover.handlers.onScroll}
 						style={{
-							position: "relative",
-							width: width(),
 							display: "flex",
 							flexDirection: "column",
-							backgroundColor: color.card,
-							borderRadius: radius.container,
-							borderWidth: 1,
-							borderColor: "rgba(0,0,0,0.06)",
-							boxShadow: shadow3,
-							overflow: "hidden",
-							maxHeight: POPUP_MAX_HEIGHT,
+							overflowY: "scroll",
+							maxHeight: POPUP_MAX_HEIGHT - 2,
 						}}
 					>
-						<Show
-							when={filtered().length > 0}
-							fallback={
-								<div
-									style={{
-										paddingTop: 24,
-										paddingBottom: 24,
-										paddingLeft: 12,
-										paddingRight: 12,
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-									}}
-								>
-									<text style={{ ...scale.body, color: color.mutedForeground }}>
-										{props.emptyText ?? "No results found."}
-									</text>
-								</div>
-							}
+						{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
+						<div
+							ref={(element) => {
+								hover.containerRef(element);
+								queueMicrotask(hover.remeasure);
+							}}
+							onMouseEnter={hover.handlers.onMouseEnter}
+							onMouseMove={hover.handlers.onMouseMove}
+							onMouseLeave={hover.handlers.onMouseLeave}
+							style={{
+								position: "relative",
+								display: "flex",
+								flexDirection: "column",
+								padding: 4,
+							}}
 						>
-							<div
-								onScroll={hover.handlers.onScroll}
-								style={{
-									display: "flex",
-									flexDirection: "column",
-									overflowY: "scroll",
-									maxHeight: POPUP_MAX_HEIGHT - 2,
+							<FluidHighlight
+								rect={checkedRect}
+								session={() => 0}
+								radius={radius.item}
+								background={color.active}
+								glide={tween.moderate}
+								fade={tween.moderateExit}
+								travel={() => !reflow()}
+							/>
+							<FluidHighlight
+								rect={hoverRect}
+								session={hover.session}
+								radius={radius.item}
+								background={color.hover}
+								travel={() => !reflow()}
+							/>
+							<For each={filtered()}>
+								{(item, index) => {
+									const lit = () =>
+										hover.activeIndex() === index() || props.value === item;
+									let rowElement: HostElement | undefined;
+									createEffect(() => {
+										if (rowElement === undefined)
+											throw new Error("Row is not mounted");
+										hover.registerItem(index(), rowElement);
+										rowElements.set(index(), rowElement);
+									});
+									return (
+										<div
+											ref={(element) => {
+												rowElement = element;
+											}}
+											role="option"
+											aria-selected={props.value === item}
+											onClick={() => select(item)}
+											style={{
+												height: ROW_HEIGHT,
+												flexShrink: 0,
+												display: "flex",
+												flexDirection: "row",
+												alignItems: "center",
+												gap: 8,
+												paddingLeft: 8,
+												paddingRight: 8,
+												borderRadius: radius.item,
+												cursor: "pointer",
+											}}
+										>
+											<text
+												style={{
+													flexGrow: 1,
+													minWidth: 0,
+													...scale.body,
+													color: lit()
+														? color.foreground
+														: color.mutedForeground,
+													whiteSpace: "nowrap",
+													textOverflow: "ellipsis",
+													overflow: "hidden",
+												}}
+											>
+												{item}
+											</text>
+											<div style={{ width: 16, height: 16, flexShrink: 0 }}>
+												<Show when={props.value === item}>
+													<Icon
+														name="check"
+														size={16}
+														strokeWidth={2}
+														color={color.foreground}
+													/>
+												</Show>
+											</div>
+										</div>
+									);
 								}}
-							>
-								{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
-								<div
-									ref={(element) => {
-										hover.containerRef(element);
-										queueMicrotask(hover.remeasure);
-									}}
-									onMouseEnter={hover.handlers.onMouseEnter}
-									onMouseMove={hover.handlers.onMouseMove}
-									onMouseLeave={hover.handlers.onMouseLeave}
-									style={{
-										position: "relative",
-										display: "flex",
-										flexDirection: "column",
-										padding: 4,
-									}}
-								>
-									<FluidHighlight
-										rect={checkedRect}
-										session={() => 0}
-										radius={radius.item}
-										background={color.active}
-										glide={tween.moderate}
-										fade={tween.moderateExit}
-										travel={() => !reflow()}
-									/>
-									<FluidHighlight
-										rect={hoverRect}
-										session={hover.session}
-										radius={radius.item}
-										background={color.hover}
-										travel={() => !reflow()}
-									/>
-									<For each={filtered()}>
-										{(item, index) => {
-											const lit = () =>
-												hover.activeIndex() === index() || props.value === item;
-											let rowElement: HostElement | undefined;
-											createEffect(() => {
-												if (rowElement === undefined)
-													throw new Error("Row is not mounted");
-												hover.registerItem(index(), rowElement);
-												rowElements.set(index(), rowElement);
-											});
-											return (
-												<div
-													ref={(element) => {
-														rowElement = element;
-													}}
-													role="option"
-													aria-selected={props.value === item}
-													onClick={() => select(item)}
-													style={{
-														height: ROW_HEIGHT,
-														flexShrink: 0,
-														display: "flex",
-														flexDirection: "row",
-														alignItems: "center",
-														gap: 8,
-														paddingLeft: 8,
-														paddingRight: 8,
-														borderRadius: radius.item,
-														cursor: "pointer",
-													}}
-												>
-													<text
-														style={{
-															flexGrow: 1,
-															minWidth: 0,
-															...scale.body,
-															color: lit()
-																? color.foreground
-																: color.mutedForeground,
-															whiteSpace: "nowrap",
-															textOverflow: "ellipsis",
-															overflow: "hidden",
-														}}
-													>
-														{item}
-													</text>
-													<div style={{ width: 16, height: 16, flexShrink: 0 }}>
-														<Show when={props.value === item}>
-															<Icon
-																name="check"
-																size={16}
-																strokeWidth={2}
-																color={color.foreground}
-															/>
-														</Show>
-													</div>
-												</div>
-											);
-										}}
-									</For>
-								</div>
-							</div>
-						</Show>
-					</motion.div>
-				</anchored>
-			</Show>
+							</For>
+						</div>
+					</div>
+				</Show>
+			</PopupSurface>
 		</div>
 	);
 }

@@ -7,6 +7,6 @@ import { App } from "./app";
 
 render(() => <App />, {
 	title: "gpuix + fluid functionalism",
-	width: 1100,
-	height: 720,
+	width: 1240,
+	height: 780,
 });
