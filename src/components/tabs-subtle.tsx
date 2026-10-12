@@ -25,14 +25,7 @@ import { awaitBounds } from "../lib/bounds";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { moveIndex } from "../lib/list-nav";
-import {
-	color,
-	height,
-	radius,
-	type as scale,
-	motion as tween,
-	weight,
-} from "../lib/theme";
+import { color, height, radius, type as scale, motion as tween, weight, focusRing, trackMs } from "../lib/theme";
 
 export type TabsSubtleSize = "default" | "compact";
 
@@ -52,9 +45,6 @@ const sizes = {
 		icon: 14,
 	},
 } as const;
-
-/** Rows move while a label unfolds: the spring's perceived duration plus its tail. */
-const REFLOW_TRACK_MS = 300;
 
 interface SubtleScope {
 	selectedIndex: () => number;
@@ -263,7 +253,7 @@ export function TabsSubtleItem(props: {
 		const selected = isSelected();
 		if (selected === previousSelected) return;
 		previousSelected = selected;
-		if (collapsible()) scope.hover.remeasureFor(REFLOW_TRACK_MS);
+		if (collapsible()) scope.hover.remeasureFor(trackMs.reflow);
 	});
 
 	const onKeyDown = (event: KeyEvent) => {
@@ -341,11 +331,7 @@ export function TabsSubtleItem(props: {
 				borderRadius: radius.item,
 				cursor: "pointer",
 				keyboardFocusDim: false,
-				focusVisible: {
-					outlineWidth: 1,
-					outlineColor: color.focusRing,
-					outlineOffset: 1,
-				},
+				focusVisible: focusRing(1),
 			}}
 		>
 			<Show when={props.icon}>

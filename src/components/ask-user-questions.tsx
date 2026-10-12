@@ -23,7 +23,7 @@ import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
 import { createMeasuredHeight, KickContext } from "../lib/measured-height";
 import { moveIndex } from "../lib/list-nav";
-import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha } from "../lib/theme";
+import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 import { Button } from "./button";
 
 const arrowLeftGlyph = defineIcon(
@@ -275,11 +275,7 @@ function Row(props: RowProps) {
 				cursor: "pointer",
 				userSelect: "none",
 				keyboardFocusDim: false,
-				focusVisible: {
-					outlineWidth: 1,
-					outlineColor: color.focusRing,
-					outlineOffset: 2,
-				},
+				focusVisible: focusRing(2),
 			}}
 		>
 			<Show when={props.chipPosition === "left"}>{chipSlot()}</Show>

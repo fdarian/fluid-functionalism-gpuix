@@ -8,8 +8,8 @@ import {
 	Show,
 } from "solid-js";
 import { Icon } from "../lib/icon";
-import type { IconName } from "../lib/icons";
-import { color, height, radius, motion as tween, weight } from "../lib/theme";
+import type { IconRef } from "../lib/icons";
+import { color, height, radius, motion as tween, weight, focusRing } from "../lib/theme";
 import type { InputSize } from "./input-group";
 import { Tooltip, type TooltipTrigger } from "./tooltip";
 
@@ -149,7 +149,7 @@ export function InputCopy(props: {
 		return status() === "error" ? "Copy failed" : "Copied";
 	};
 
-	const glyph = (): { name: IconName; color: string } => {
+	const glyph = (): { name: IconRef; color: string } => {
 		switch (status()) {
 			case "error":
 				return { name: "x", color: color.destructive };
@@ -308,11 +308,7 @@ export function InputCopy(props: {
 				cursor: "pointer",
 				userSelect: "none",
 				keyboardFocusDim: false,
-				focusVisible: {
-					outlineWidth: 1,
-					outlineColor: color.focusRing,
-					outlineOffset: 0,
-				},
+				focusVisible: focusRing(0),
 			}}
 		>
 			{align() === "left" ? (

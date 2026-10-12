@@ -6,8 +6,9 @@ import {
 } from "@gpuix/solid";
 import { type Accessor, createSignal, type JSX, Show } from "solid-js";
 import { Icon } from "../lib/icon";
+import { fill } from "../lib/press";
 import type { IconRef } from "../lib/icons";
-import { color, height, radius, type as scale, weight } from "../lib/theme";
+import { color, height, radius, type as scale, weight, focusRing } from "../lib/theme";
 
 export type ButtonVariant = "primary" | "secondary" | "tertiary" | "ghost";
 export type ButtonSize = "default" | "compact" | "icon" | "icon-compact";
@@ -46,23 +47,6 @@ const sizes = {
 		icon: 14,
 	},
 } as const;
-
-/**
- * The press effect from button.tsx: the surface sits 1px inside the button's
- * bounds and a same-colour spread fills it back out; pressing collapses the
- * spread. gpuix paints a shadow under its element rather than around it, so a
- * translucent fill must be the shadow alone: a background on top of it would
- * double up.
- */
-function fill(fillColor: string, spread: number): BoxShadow {
-	return {
-		offsetX: 0,
-		offsetY: 0,
-		blurRadius: 0,
-		spreadRadius: spread,
-		color: fillColor,
-	};
-}
 
 interface Surface {
 	rest: StateStyleDesc;
@@ -227,11 +211,7 @@ export function Button(props: {
 				...surfaces()[variant()].rest,
 				hover: surfaces()[variant()].hover,
 				active: surfaces()[variant()].active,
-				focusVisible: {
-					outlineWidth: 1,
-					outlineColor: color.focusRing,
-					outlineOffset: 1,
-				},
+				focusVisible: focusRing(1),
 			}}
 		>
 			<Show when={props.loading} fallback={content()}>

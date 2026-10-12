@@ -10,7 +10,7 @@ import {
 import { onFrame } from "../lib/clock";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
-import { color, scheme, motion as tween, withAlpha } from "../lib/theme";
+import { color, scheme, motion as tween, withAlpha, focusRing } from "../lib/theme";
 
 /** Dot height, and the diameter of every resting dot. */
 const DOT_PX = 6;
@@ -173,11 +173,7 @@ function Dot(props: {
 				borderRadius: DOT_PX / 2 + CLICK_PAD,
 				cursor: "pointer",
 				keyboardFocusDim: false,
-				focusVisible: {
-					outlineWidth: 1,
-					outlineColor: color.focusRing,
-					outlineOffset: 0,
-				},
+				focusVisible: focusRing(0),
 			}}
 		>
 			<motion.div

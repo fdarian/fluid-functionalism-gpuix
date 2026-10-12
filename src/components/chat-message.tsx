@@ -2,13 +2,7 @@ import { buttonProps, motion } from "@gpuix/solid";
 import { createSignal, type JSX, Show } from "solid-js";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
-import {
-	color,
-	radius,
-	type as scale,
-	scheme,
-	motion as tween,
-} from "../lib/theme";
+import { color, radius, type as scale, scheme, motion as tween, focusRing } from "../lib/theme";
 import { type FileLike, FileThumbnail } from "./file-thumbnail";
 
 const copyGlyph = defineIcon(
@@ -61,11 +55,7 @@ export function ChatMessageAction(props: {
 				cursor: "pointer",
 				keyboardFocusDim: false,
 				hover: { backgroundColor: color.hover },
-				focusVisible: {
-					outlineWidth: 1,
-					outlineColor: color.focusRing,
-					outlineOffset: 0,
-				},
+				focusVisible: focusRing(0),
 			}}
 		>
 			<Icon

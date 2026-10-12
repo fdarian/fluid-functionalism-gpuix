@@ -20,13 +20,7 @@ import {
 import { awaitBounds, readBounds } from "../lib/bounds";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
-import {
-	color,
-	radius,
-	type as scale,
-	motion as tween,
-	weight,
-} from "../lib/theme";
+import { color, radius, type as scale, motion as tween, weight, focusRing } from "../lib/theme";
 import { Button } from "./button";
 
 export type BannerStatus = "default" | "info" | "success" | "warning" | "error";
@@ -426,11 +420,7 @@ function DismissButton(props: {
 				cursor: "pointer",
 				keyboardFocusDim: false,
 				hover: { backgroundColor: color.hover },
-				focusVisible: {
-					outlineWidth: 1,
-					outlineColor: color.focusRing,
-					outlineOffset: 0,
-				},
+				focusVisible: focusRing(0),
 			}}
 		>
 			<Icon

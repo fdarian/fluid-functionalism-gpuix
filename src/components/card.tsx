@@ -22,7 +22,7 @@ import { createFluidHover } from "../lib/fluid-hover";
 import { readBounds } from "../lib/bounds";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
-import { color, radius, type as scale, scheme, weight, withAlpha } from "../lib/theme";
+import { color, radius, type as scale, scheme, weight, withAlpha, focusRing } from "../lib/theme";
 
 export type CardOrientation = "card" | "inline";
 export type CardBorder = "none" | "outlined";
@@ -381,11 +381,7 @@ export function Card(props: {
 						: {}),
 					...(clickable() && !props.disabled ? { cursor: "pointer" } : {}),
 					keyboardFocusDim: false,
-					focusVisible: {
-						outlineWidth: 1,
-						outlineColor: color.focusRing,
-						outlineOffset: 0,
-					},
+					focusVisible: focusRing(0),
 					...(props.disabled ? { opacity: 0.5, pointerEvents: "none" } : {}),
 				}}
 			>
@@ -546,11 +542,7 @@ function DismissChip(props: {
 					: hovered()
 						? color.hover
 						: color.transparent,
-				focusVisible: {
-					outlineWidth: 1,
-					outlineColor: color.focusRing,
-					outlineOffset: 0,
-				},
+				focusVisible: focusRing(0),
 			}}
 		>
 			<Icon
@@ -1010,11 +1002,7 @@ export function CardButton(props: {
 					: { height: 28, paddingLeft: 10, paddingRight: 10 }),
 				...surface(),
 				...(props.disabled ? { opacity: 0.5, pointerEvents: "none" } : {}),
-				focusVisible: {
-					outlineWidth: 1,
-					outlineColor: color.focusRing,
-					outlineOffset: 0,
-				},
+				focusVisible: focusRing(0),
 			}}
 		>
 			{/* One fragment: a Show among siblings leaves an empty text node that eats a `gap`. */}

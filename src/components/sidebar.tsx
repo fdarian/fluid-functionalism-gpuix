@@ -15,19 +15,9 @@ import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { createMeasuredHeight } from "../lib/measured-height";
-import {
-	color,
-	height,
-	radius,
-	type as scale,
-	motion as tween,
-	weight,
-} from "../lib/theme";
+import { color, height, radius, type as scale, motion as tween, weight, trackMs } from "../lib/theme";
 
 export const SIDEBAR_WIDTH = 256;
-
-/** How long rows keep moving after a sub-menu toggles: the spring's perceived duration plus its tail. */
-const SPRING_TRACK_MS = 400;
 
 // ─── Menu scope ──────────────────────────────────────────────────────────────
 //
@@ -305,7 +295,7 @@ export function SidebarMenuSub(props: {
 
 	createEffect(() => {
 		props.open;
-		if (contentHeight() !== undefined) scope.trackReflow(SPRING_TRACK_MS);
+		if (contentHeight() !== undefined) scope.trackReflow(trackMs.spring);
 	});
 
 	return (

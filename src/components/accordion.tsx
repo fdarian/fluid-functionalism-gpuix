@@ -18,14 +18,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { createMeasuredHeight } from "../lib/measured-height";
-import {
-	color,
-	radius,
-	type as scale,
-	scheme,
-	motion as tween,
-	weight,
-} from "../lib/theme";
+import { color, radius, type as scale, scheme, motion as tween, weight, focusRing, trackMs } from "../lib/theme";
 
 export type AccordionSize = "default" | "compact";
 export type AccordionHighlight = "trigger" | "item";
@@ -48,9 +41,6 @@ const sizes = {
 		contentBottom: 10,
 	},
 } as const;
-
-/** How long rows keep moving after a panel toggles: the spring's perceived duration plus its tail. */
-const SPRING_TRACK_MS = 400;
 
 // ─── State ───────────────────────────────────────────────────────────────────
 
@@ -206,8 +196,8 @@ export function AccordionGroup(props: RootProps) {
 		trackReflow() {
 			clearTimeout(reflowTimer);
 			setReflow(true);
-			hover.remeasureFor(SPRING_TRACK_MS);
-			reflowTimer = setTimeout(() => setReflow(false), SPRING_TRACK_MS + 48);
+			hover.remeasureFor(trackMs.spring);
+			reflowTimer = setTimeout(() => setReflow(false), trackMs.spring + 48);
 		},
 		overContent(index) {
 			contentOver = index;
@@ -471,11 +461,7 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					userSelect: "none",
 					keyboardFocusDim: false,
 					opacity: item.disabled() ? 0.5 : 1,
-					focusVisible: {
-						outlineWidth: 1,
-						outlineColor: color.focusRing,
-						outlineOffset: 1,
-					},
+					focusVisible: focusRing(1),
 				}}
 			>
 				<StableLabel

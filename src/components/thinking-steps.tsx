@@ -23,13 +23,7 @@ import {
 	KickContext,
 	Kicking,
 } from "../lib/measured-height";
-import {
-	color,
-	radius,
-	type as scale,
-	motion as tween,
-	weight,
-} from "../lib/theme";
+import { color, radius, type as scale, motion as tween, weight, focusRing } from "../lib/theme";
 import { Badge, type BadgeColor } from "./badge";
 import { Shimmer } from "./thinking-indicator";
 
@@ -157,11 +151,7 @@ function TriggerRow(props: {
 					cursor: "pointer",
 					userSelect: "none",
 					keyboardFocusDim: false,
-					focusVisible: {
-						outlineWidth: 1,
-						outlineColor: color.focusRing,
-						outlineOffset: 0,
-					},
+					focusVisible: focusRing(0),
 				}}
 			>
 				<StableLabel

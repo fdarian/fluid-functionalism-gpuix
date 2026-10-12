@@ -1,13 +1,7 @@
 import type { EventPayload, KeyEvent } from "@gpuix/solid";
 import { motion } from "@gpuix/solid";
 import { createSignal } from "solid-js";
-import {
-	color,
-	type as scale,
-	scheme,
-	motion as tween,
-	weight,
-} from "../lib/theme";
+import { color, type as scale, scheme, motion as tween, weight, focusRing } from "../lib/theme";
 
 export type SwitchSize = "default" | "compact";
 
@@ -176,11 +170,7 @@ export function Switch(props: {
 					backgroundColor: trackColor(),
 					cursor: "pointer",
 					keyboardFocusDim: false,
-					focusVisible: {
-						outlineWidth: 1,
-						outlineColor: color.focusRing,
-						outlineOffset: 2,
-					},
+					focusVisible: focusRing(2),
 				}}
 			>
 				<motion.div

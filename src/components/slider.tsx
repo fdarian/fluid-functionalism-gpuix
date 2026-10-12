@@ -18,7 +18,7 @@ import {
 } from "solid-js";
 import { awaitBounds, readBounds } from "../lib/bounds";
 import { createPresence } from "../lib/presence";
-import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha } from "../lib/theme";
+import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 
 export type SliderValue = number | [number, number];
 export type ValuePosition = "left" | "right" | "top" | "bottom" | "tooltip";
@@ -688,11 +688,7 @@ function CompactSlider(props: CompactProps) {
 						justifyContent: "center",
 						pointerEvents: "none",
 						keyboardFocusDim: false,
-						focusVisible: {
-							outlineWidth: 1,
-							outlineColor: color.focusRing,
-							outlineOffset: 1,
-						},
+						focusVisible: focusRing(1),
 					}}
 				>
 					<div

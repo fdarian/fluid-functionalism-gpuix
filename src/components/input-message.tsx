@@ -23,9 +23,10 @@ import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
+import { fill } from "../lib/press";
 import { defineIcon } from "../lib/icons";
 import { createMeasuredHeight } from "../lib/measured-height";
-import { color, height, radius, type as scale, scheme, motion as tween, weight, withAlpha } from "../lib/theme";
+import { color, height, radius, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 import { FileThumbnail } from "./file-thumbnail";
 import type { InputSize } from "./input-group";
 import { Tooltip, type TooltipTrigger } from "./tooltip";
@@ -187,17 +188,6 @@ function Collapse(props: {
 	);
 }
 
-/** The press effect of the primary Button: the surface sits 1px inside, a same-colour spread fills it back out. */
-function fill(fillColor: string, spread: number): BoxShadow {
-	return {
-		offsetX: 0,
-		offsetY: 0,
-		blurRadius: 0,
-		spreadRadius: spread,
-		color: fillColor,
-	};
-}
-
 function SendButton(props: {
 	mode: "send" | "queue" | "stop";
 	label: string;
@@ -230,11 +220,7 @@ function SendButton(props: {
 				boxShadow: fill(color.foreground, 1),
 				hover: { boxShadow: fill(color.primaryHover, 1) },
 				active: { boxShadow: fill(color.primaryActive, 0) },
-				focusVisible: {
-					outlineWidth: 1,
-					outlineColor: color.focusRing,
-					outlineOffset: 1,
-				},
+				focusVisible: focusRing(1),
 			}}
 		>
 			<For each={[props.mode === "stop" ? "stop" : "arrow"]}>
@@ -309,11 +295,7 @@ function RemoveBadge(props: {
 						cursor: "pointer",
 						opacity: props.visible ? 1 : 0,
 						keyboardFocusDim: false,
-						focusVisible: {
-							outlineWidth: 1,
-							outlineColor: color.focusRing,
-							outlineOffset: 0,
-						},
+						focusVisible: focusRing(0),
 					}}
 				>
 					<Icon name="x" size={12} strokeWidth={2.5} color="#ffffff" />
@@ -434,11 +416,7 @@ function QueuedRow(props: {
 				paddingRight: 6,
 				borderRadius: radius.item,
 				keyboardFocusDim: false,
-				focusVisible: {
-					outlineWidth: 1,
-					outlineColor: color.focusRing,
-					outlineOffset: 0,
-				},
+				focusVisible: focusRing(0),
 			}}
 		>
 			{/* The recessed fill is its own layer: a filled row would take the pointer from the composer around it. */}
@@ -545,11 +523,7 @@ function QueuedRow(props: {
 							opacity: hovered() || closeHovered() ? 1 : 0,
 							keyboardFocusDim: false,
 							hover: { backgroundColor: color.hover },
-							focusVisible: {
-								outlineWidth: 1,
-								outlineColor: color.focusRing,
-								outlineOffset: 0,
-							},
+							focusVisible: focusRing(0),
 						}}
 					>
 						<Icon

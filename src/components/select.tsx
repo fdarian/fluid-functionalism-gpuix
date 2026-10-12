@@ -24,7 +24,7 @@ import type { IconRef } from "../lib/icons";
 import { moveIndex, revealRow } from "../lib/list-nav";
 import { isInside, placePopup, PopupSurface } from "../lib/popup";
 import { createPresence } from "../lib/presence";
-import { color, radius, type as scale, scheme, motion as tween, withAlpha } from "../lib/theme";
+import { color, radius, type as scale, scheme, motion as tween, withAlpha, focusRing } from "../lib/theme";
 
 /** How long a pick holds the popup open so the check and the checked background are seen arriving. */
 const ACK_MS = 300;
@@ -430,11 +430,7 @@ export function Select<Value extends string>(props: {
 						keyboardFocusDim: false,
 						hover: { backgroundColor: color.hover },
 						active: { backgroundColor: color.active },
-						focusVisible: {
-							outlineWidth: 1,
-							outlineColor: color.focusRing,
-							outlineOffset: 0,
-						},
+						focusVisible: focusRing(0),
 					}}
 				>
 					<div

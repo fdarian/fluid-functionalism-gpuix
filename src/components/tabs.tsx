@@ -22,15 +22,7 @@ import {
 import { StableLabel } from "../lib/stable-label";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import {
-	color,
-	radius,
-	type as scale,
-	scheme,
-	shadow3,
-	motion as tween,
-	weight,
-} from "../lib/theme";
+import { color, radius, type as scale, scheme, shadow3, motion as tween, weight, focusRing } from "../lib/theme";
 
 export type TabsSize = "default" | "compact";
 
@@ -353,11 +345,7 @@ export function TabItem(props: {
 				borderRadius: radius.item,
 				cursor: "pointer",
 				keyboardFocusDim: false,
-				focusVisible: {
-					outlineWidth: 1,
-					outlineColor: color.focusRing,
-					outlineOffset: 1,
-				},
+				focusVisible: focusRing(1),
 			}}
 		>
 			<Show when={props.icon}>

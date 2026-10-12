@@ -1,4 +1,8 @@
-import type { BoxShadow, MotionTransition } from "@gpuix/solid";
+import type {
+	BoxShadow,
+	MotionTransition,
+	StateStyleDesc,
+} from "@gpuix/solid";
 import { createSignal } from "solid-js";
 
 export type Scheme = "light" | "dark";
@@ -274,6 +278,22 @@ export const motion = {
 	slowExit: { duration: 0.16 },
 	snap: { duration: 0 },
 } satisfies Record<string, MotionTransition>;
+
+/** The `focus-visible` ring: a 1px outline `offset` px from the box (negative draws inside). */
+export function focusRing(offset: number): StateStyleDesc {
+	return {
+		outlineWidth: 1,
+		outlineColor: color.focusRing,
+		outlineOffset: offset,
+	};
+}
+
+/**
+ * How long rows keep being re-measured after something moved them: a spring's
+ * perceived duration plus its tail, and a shorter reflow. Fluid hover's
+ * `remeasureFor` takes these.
+ */
+export const trackMs = { spring: 400, reflow: 300 } as const;
 
 /**
  * gpuix paints one outer shadow, so --shadow-3 (a 1px ring plus two stacked

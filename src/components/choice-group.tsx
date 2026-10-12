@@ -16,14 +16,7 @@ import {
 import { StableLabel } from "../lib/stable-label";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
-import {
-	color,
-	radius,
-	scheme,
-	type as scale,
-	motion as tween,
-	weight,
-} from "../lib/theme";
+import { color, radius, scheme, type as scale, motion as tween, weight, focusRing } from "../lib/theme";
 
 /**
  * What checkbox-group and radio-group share: a vertical list of focusable
@@ -310,11 +303,7 @@ export function ChoiceRow(props: {
 				borderRadius: radius.item,
 				cursor: "pointer",
 				keyboardFocusDim: false,
-				focusVisible: {
-					outlineWidth: 1,
-					outlineColor: color.focusRing,
-					outlineOffset: 1,
-				},
+				focusVisible: focusRing(1),
 			}}
 		>
 			{props.indicator(active)}

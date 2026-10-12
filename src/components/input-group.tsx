@@ -11,7 +11,7 @@ import {
 } from "solid-js";
 import { createFluidHover, type FluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
-import type { IconName } from "../lib/icons";
+import type { IconRef } from "../lib/icons";
 import { color, height, radius, type as scale, scheme, weight, withAlpha } from "../lib/theme";
 
 export type InputSize = "default" | "compact";
@@ -95,7 +95,7 @@ export function InputField(props: {
 	/** Keeps the field's accessible name but draws no label. */
 	labelHidden?: boolean;
 	placeholder?: string;
-	icon?: IconName;
+	icon?: IconRef;
 	/** Position within the group. */
 	index: number;
 	value: string;
@@ -212,7 +212,7 @@ export function InputField(props: {
 					}}
 				/>
 				<Show when={props.icon}>
-					{(name: Accessor<IconName>) => (
+					{(name: Accessor<IconRef>) => (
 						<Icon
 							name={name()}
 							size={step().icon}

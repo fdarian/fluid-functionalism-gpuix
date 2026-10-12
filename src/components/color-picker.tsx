@@ -25,9 +25,10 @@ import { defineIcon } from "../lib/icons";
 import { moveIndex } from "../lib/list-nav";
 import { isInside, placePopup, POPUP_OFFSET } from "../lib/popup";
 import { createPresence } from "../lib/presence";
-import { color, height, radius, type as scale, scheme, shadow3, motion as tween, weight, surface } from "../lib/theme";
+import { color, height, radius, type as scale, scheme, shadow3, motion as tween, weight, surface, focusRing } from "../lib/theme";
 import {
 	buildParsed,
+	clamp01,
 	type ColorFormat,
 	formatValueByFormat,
 	hslToRgb,
@@ -70,7 +71,6 @@ const FORMAT_LABELS: Record<ColorFormat, string> = {
 
 const chevronUp = defineIcon('<path d="m18 15-6-6-6 6"/>');
 
-const clamp01 = (value: number) => Math.max(0, Math.min(1, value));
 
 /** The squares of a 4px checkerboard that take `--checker-a`, as one path. */
 function checkerSource(width: number, size: number) {
@@ -551,11 +551,7 @@ function Rail(props: {
 					justifyContent: "center",
 					pointerEvents: "none",
 					keyboardFocusDim: false,
-					focusVisible: {
-						outlineWidth: 1,
-						outlineColor: color.focusRing,
-						outlineOffset: 2,
-					},
+					focusVisible: focusRing(2),
 				}}
 			>
 				<div
