@@ -160,7 +160,6 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("enqueue");
 	shot.capture("enqueued");
 	await shot.hover("queued-1");
-	console.log("== click remove-1");
 	await shot.click("remove-1");
 	shot.capture("removed");
 	// The pencil takes the card back into the composer.

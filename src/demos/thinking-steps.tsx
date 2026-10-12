@@ -525,8 +525,6 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("with-images");
 	await scrollTo(shot, "full-playback");
 	shot.capture("full");
-	console.log("=== click full-details");
-	console.log("=== click full-details");
 	await shot.click("full-details");
 	shot.capture("full-details-open");
 };
