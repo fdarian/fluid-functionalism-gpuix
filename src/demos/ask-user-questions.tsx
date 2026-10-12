@@ -1,4 +1,3 @@
-import { useGpuixRequired } from "@gpuix/solid";
 import { createSignal, For } from "solid-js";
 import {
 	type AskUserAnswer,
@@ -599,12 +598,6 @@ const skipQuestions: AskUserQuestion[] = [
 	},
 ];
 
-/**
- * The page is taller than the window, and ShotContext has no scroll. The test
- * renderer behind `useGpuixRequired()` does, so the scenarios reach it here.
- */
-let scrollPage: ((deltaY: number) => void) | undefined;
-
 export const title = "Ask User Questions";
 export const group = "Components";
 
@@ -717,16 +710,6 @@ function ControlledExample() {
 }
 
 export function Demo() {
-	const renderer = useGpuixRequired();
-	if ("nativeSimulateScrollWheel" in renderer) {
-		const wheel = renderer.nativeSimulateScrollWheel as (
-			x: number,
-			y: number,
-			deltaX: number,
-			deltaY: number,
-		) => void;
-		scrollPage = (deltaY) => wheel.call(renderer, 600, 400, 0, deltaY);
-	}
 	return (
 		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 			<Example
@@ -764,11 +747,8 @@ export function Demo() {
 
 /** Scrolls the page until the element with this test id is mid-window. */
 async function scrollTo(shot: ShotContext, testId: string) {
-	if (scrollPage === undefined) {
-		throw new Error("scrolling needs the test renderer");
-	}
 	for (let attempt = 0; attempt < 2; attempt++) {
-		scrollPage(-(shot.centerOf(testId).y - 300));
+		await shot.scroll(600, 400, 0, -(shot.centerOf(testId).y - 300));
 		await shot.settle();
 	}
 }

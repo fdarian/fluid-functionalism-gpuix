@@ -1,4 +1,3 @@
-import { useGpuixRequired } from "@gpuix/solid";
 import { createSignal, For } from "solid-js";
 import { Button } from "../components/button";
 import { ChatMessage, ChatMessageAction } from "../components/chat-message";
@@ -97,23 +96,7 @@ function Transcript(props: { messages: Message[]; testPrefix: string }) {
 export const title = "Chat Message";
 export const group = "Components";
 
-/**
- * The page is taller than the window, and ShotContext has no scroll. The test
- * renderer behind `useGpuixRequired()` does, so the scenarios reach it here.
- */
-let scrollPage: ((deltaY: number) => void) | undefined;
-
 export function Demo() {
-	const renderer = useGpuixRequired();
-	if ("nativeSimulateScrollWheel" in renderer) {
-		const wheel = renderer.nativeSimulateScrollWheel as (
-			x: number,
-			y: number,
-			deltaX: number,
-			deltaY: number,
-		) => void;
-		scrollPage = (deltaY) => wheel.call(renderer, 600, 400, 0, deltaY);
-	}
 	const [messages, setMessages] = createSignal(CONVERSATION);
 	return (
 		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -184,10 +167,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(1180, 700);
 	await shot.click("add-message");
 	shot.capture("added");
-	if (scrollPage === undefined) {
-		throw new Error("scrolling needs the test renderer");
-	}
-	scrollPage(-700);
+	await shot.scroll(600, 400, 0, -700);
 	await shot.settle();
 	shot.capture("attachments");
 };
