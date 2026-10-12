@@ -29,7 +29,12 @@ import {
 	type ItemRect,
 } from "../lib/fluid-hover";
 import type { IconRef } from "../lib/icons";
-import { createPresence, POPUP_OFFSET, PopupSurface } from "../lib/popup";
+import {
+	createPresence,
+	placePopup,
+	POPUP_OFFSET,
+	PopupSurface,
+} from "../lib/popup";
 import { color, radius, shadow3, motion as tween } from "../lib/theme";
 import {
 	DropdownSearchHostContext,
@@ -50,7 +55,6 @@ export { DropdownLabel, DropdownSeparator, MenuItem } from "./menu-item";
 const PANEL_WIDTH = 288;
 const SUB_WIDTH = 224;
 const POPUP_MAX_HEIGHT = 480;
-const POPUP_MARGIN = 8;
 const PADDING = 4;
 /** Distance from the trigger row to its submenu. The row sits inside the popup's padding, so this leaves a 2px gap between the surfaces. */
 const SUBMENU_SIDE_OFFSET = 6;
@@ -780,23 +784,10 @@ export function DropdownMenu(props: {
 	let lastHeight = TYPICAL_HEIGHT;
 	const choose = (contentHeight: number) => {
 		if (wrapper === undefined) throw new Error("DropdownMenu is not mounted");
-		const trigger = readBounds(wrapper);
-		const window = renderer.getWindowSize?.();
-		if (trigger == null || window === undefined) {
-			throw new Error("Cannot place the popup without painted bounds");
-		}
-		const below = window.height - (trigger.y + trigger.height);
-		const above = trigger.y;
-		const need = contentHeight + POPUP_OFFSET + POPUP_MARGIN;
-		const side = below >= need || below >= above ? "bottom" : "top";
-		setSide(side);
-		setMaxHeight(
-			Math.min(
-				POPUP_MAX_HEIGHT,
-				(side === "bottom" ? below : above) - POPUP_OFFSET - POPUP_MARGIN,
-			),
-		);
-		setWidth(Math.max(PANEL_WIDTH, trigger.width));
+		const placement = placePopup(wrapper, contentHeight, POPUP_MAX_HEIGHT);
+		setSide(placement.side);
+		setMaxHeight(placement.maxHeight);
+		setWidth(Math.max(PANEL_WIDTH, placement.triggerWidth));
 	};
 	const place = () => choose(lastHeight);
 

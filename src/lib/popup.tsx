@@ -1,10 +1,51 @@
-import { DismissableLayer, motion } from "@gpuix/solid";
+import { DismissableLayer, type HostElement, motion } from "@gpuix/solid";
 import { createSignal, type JSX, onCleanup, Show } from "solid-js";
+import { readBounds } from "./bounds";
 import { color, radius, shadow3, motion as tween } from "./theme";
 
 /** Time the popup keeps painting its exit fade before unmounting. */
 const EXIT_MS = 60;
 export const POPUP_OFFSET = 6;
+/** The gap a popup keeps from the window edge. */
+export const POPUP_MARGIN = 8;
+
+export interface PopupPlacement {
+	side: "top" | "bottom";
+	/** The popup's height cap: the room on its side, up to `maxHeight`. */
+	maxHeight: number;
+	/** The trigger's width, for popups at least as wide as it. */
+	triggerWidth: number;
+}
+
+/**
+ * Chooses the side of `trigger` with room for `contentHeight` px: below when
+ * it fits or has more room than above, else above. gpuix flips an
+ * overflowing `<anchored>` from the far edge of the trigger, which would
+ * cover it, so the side is picked here and passed to `PopupSurface`.
+ */
+export function placePopup(
+	trigger: HostElement,
+	contentHeight: number,
+	maxHeight: number,
+): PopupPlacement {
+	const box = readBounds(trigger);
+	const window = trigger.root?.nativeRenderer.getWindowSize?.();
+	if (box === null || window === undefined) {
+		throw new Error("Cannot place the popup without painted bounds");
+	}
+	const below = window.height - (box.y + box.height);
+	const above = box.y;
+	const need = contentHeight + POPUP_OFFSET + POPUP_MARGIN;
+	const side = below >= need || below >= above ? "bottom" : "top";
+	return {
+		side,
+		maxHeight: Math.min(
+			maxHeight,
+			(side === "bottom" ? below : above) - POPUP_OFFSET - POPUP_MARGIN,
+		),
+		triggerWidth: box.width,
+	};
+}
 
 /** `open` drives the animation; `mounted` outlives it by the exit fade. */
 export function createPresence() {

@@ -19,7 +19,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { createPresence, POPUP_OFFSET, PopupSurface } from "../lib/popup";
+import { createPresence, placePopup, PopupSurface } from "../lib/popup";
 import {
 	color,
 	radius,
@@ -32,7 +32,6 @@ import {
 const FIELD_HEIGHT = 36;
 const ROW_HEIGHT = 36;
 const POPUP_MAX_HEIGHT = 300;
-const POPUP_MARGIN = 8;
 
 function ClearButton(props: { onClick: () => void }) {
 	const [hovered, setHovered] = createSignal(false);
@@ -99,6 +98,7 @@ export function Combobox(props: {
 	const [reflow, setReflow] = createSignal(false);
 
 	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
+	const [maxHeight, setMaxHeight] = createSignal(POPUP_MAX_HEIGHT);
 	let rootElement: HostElement | undefined;
 	let inputElement: HostElement | undefined;
 	const rowElements = new Map<number, HostElement>();
@@ -118,17 +118,9 @@ export function Combobox(props: {
 	const openPopup = () => {
 		if (open()) return;
 		if (rootElement === undefined) throw new Error("Combobox is not mounted");
-		const field = readBounds(rootElement);
-		const window = renderer.getWindowSize?.();
-		if (field == null || window === undefined) {
-			throw new Error("Cannot place the popup without painted bounds");
-		}
-		const roomBelow = window.height - (field.y + field.height);
-		setSide(
-			roomBelow >= POPUP_MAX_HEIGHT + POPUP_OFFSET + POPUP_MARGIN
-				? "bottom"
-				: "top",
-		);
+		const placement = placePopup(rootElement, POPUP_MAX_HEIGHT, POPUP_MAX_HEIGHT);
+		setSide(placement.side);
+		setMaxHeight(placement.maxHeight);
 		setQuery("");
 		presence.show();
 		hover.setActiveIndex(0);
@@ -388,7 +380,7 @@ export function Combobox(props: {
 				side={side()}
 				align="start"
 				width={width()}
-				maxHeight={POPUP_MAX_HEIGHT}
+				maxHeight={maxHeight()}
 				onDismiss={closePopup}
 				onMouseDownOutside={onMouseDownOutside}
 				onHoverChange={setPopupHovered}
@@ -419,7 +411,7 @@ export function Combobox(props: {
 							display: "flex",
 							flexDirection: "column",
 							overflowY: "scroll",
-							maxHeight: POPUP_MAX_HEIGHT - 2,
+							maxHeight: maxHeight() - 2,
 						}}
 					>
 						{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}

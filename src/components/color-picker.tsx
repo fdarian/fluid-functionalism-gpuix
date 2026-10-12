@@ -21,7 +21,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
-import { createPresence, POPUP_OFFSET } from "../lib/popup";
+import { createPresence, placePopup, POPUP_OFFSET } from "../lib/popup";
 import { color, height, radius, type as scale, scheme, shadow3, motion as tween, weight, surface } from "../lib/theme";
 import {
 	buildParsed,
@@ -769,21 +769,6 @@ function useInside() {
 	};
 }
 
-/** Picks the side of a trigger that has room for `needed` px, as the combobox does. */
-function useSideFor() {
-	const renderer = useGpuixRequired();
-	return (element: HostElement | undefined, needed: number) => {
-		if (element === undefined) throw new Error("Trigger is not mounted");
-		const bounds = readBounds(element);
-		const window = renderer.getWindowSize?.();
-		if (bounds == null || window === undefined) {
-			throw new Error("Cannot place the popup without painted bounds");
-		}
-		const below = window.height - (bounds.y + bounds.height);
-		return below >= needed + POPUP_OFFSET + 8 ? "bottom" : "top";
-	};
-}
-
 const MENU_ROW = 36;
 
 function FormatDropdown(props: {
@@ -795,7 +780,6 @@ function FormatDropdown(props: {
 	onOpenChange?: (open: boolean) => void;
 	testId: string;
 }) {
-	const sideFor = useSideFor();
 	const presence = createPresence();
 	const hover = createFluidHover();
 	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
@@ -808,7 +792,14 @@ function FormatDropdown(props: {
 
 	const open = () => {
 		if (presence.open()) return;
-		setSide(sideFor(trigger, FORMATS.length * MENU_ROW + 8));
+		if (trigger === undefined) throw new Error("Trigger is not mounted");
+		setSide(
+			placePopup(
+				trigger,
+				FORMATS.length * MENU_ROW + 8,
+				Number.POSITIVE_INFINITY,
+			).side,
+		);
 		presence.show();
 		hover.setActiveIndex(checkedIndex());
 		props.onOpenChange?.(true);
@@ -1706,7 +1697,6 @@ export function ColorPickerPopover(
 		defaultOpen?: boolean;
 	},
 ) {
-	const sideFor = useSideFor();
 	const presence = createPresence();
 	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
 	const inside = useInside();
@@ -1724,7 +1714,8 @@ export function ColorPickerPopover(
 
 	const open = () => {
 		if (presence.open()) return;
-		setSide(sideFor(trigger, 420));
+		if (trigger === undefined) throw new Error("Trigger is not mounted");
+		setSide(placePopup(trigger, 420, Number.POSITIVE_INFINITY).side);
 		presence.show();
 	};
 	const close = () => {

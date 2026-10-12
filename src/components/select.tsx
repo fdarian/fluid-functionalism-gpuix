@@ -20,14 +20,13 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { createPresence, POPUP_OFFSET, PopupSurface } from "../lib/popup";
+import { createPresence, placePopup, PopupSurface } from "../lib/popup";
 import { color, radius, type as scale, scheme, motion as tween, withAlpha } from "../lib/theme";
 
 /** How long a pick holds the popup open so the check and the checked background are seen arriving. */
 const ACK_MS = 300;
 const TYPEAHEAD_MS = 500;
 const POPUP_MAX_HEIGHT = 300;
-const POPUP_MARGIN = 8;
 const POPUP_PADDING = 4;
 
 export interface SelectItem<Value extends string> {
@@ -149,6 +148,7 @@ export function Select<Value extends string>(props: {
 	const [triggerHovered, setTriggerHovered] = createSignal(false);
 	const [popupHovered, setPopupHovered] = createSignal(false);
 	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
+	const [maxHeight, setMaxHeight] = createSignal(POPUP_MAX_HEIGHT);
 	const [popupWidth, setPopupWidth] = createSignal(0);
 	/** Set by a pick, so only a check that arrives after the open fades in. */
 	const [picked, setPicked] = createSignal(false);
@@ -184,17 +184,14 @@ export function Select<Value extends string>(props: {
 	const open = () => {
 		if (props.disabled === true || presence.open()) return;
 		if (triggerWrapper === undefined) throw new Error("Select is not mounted");
-		const field = readBounds(triggerWrapper);
-		const window = renderer.getWindowSize?.();
-		if (field == null || window === undefined) {
-			throw new Error("Cannot place the popup without painted bounds");
-		}
-		const height = Math.min(POPUP_MAX_HEIGHT, listHeight());
-		const roomBelow = window.height - (field.y + field.height);
-		setSide(
-			roomBelow >= height + POPUP_OFFSET + POPUP_MARGIN ? "bottom" : "top",
+		const placement = placePopup(
+			triggerWrapper,
+			Math.min(POPUP_MAX_HEIGHT, listHeight()),
+			POPUP_MAX_HEIGHT,
 		);
-		setPopupWidth(Math.max(field.width, props.popupWidth ?? 0));
+		setSide(placement.side);
+		setMaxHeight(placement.maxHeight);
+		setPopupWidth(Math.max(placement.triggerWidth, props.popupWidth ?? 0));
 		setPicked(false);
 		revealOnMeasure = true;
 		presence.show();
@@ -514,7 +511,7 @@ export function Select<Value extends string>(props: {
 					side={side()}
 					align={inline() ? "end" : "start"}
 					width={inline() ? (props.popupWidth ?? 160) : popupWidth()}
-					maxHeight={POPUP_MAX_HEIGHT}
+					maxHeight={maxHeight()}
 					onDismiss={close}
 					onMouseDownOutside={onOutside}
 					onHoverChange={setPopupHovered}
@@ -528,7 +525,7 @@ export function Select<Value extends string>(props: {
 							display: "flex",
 							flexDirection: "column",
 							overflowY: "scroll",
-							maxHeight: POPUP_MAX_HEIGHT - 2,
+							maxHeight: maxHeight() - 2,
 						}}
 					>
 						{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
