@@ -1,0 +1,25 @@
+{
+	"name": "gpuix-fluid-functionalism",
+	"private": true,
+	"version": "0.1.0",
+	"type": "module",
+	"description": "Experiment: fluidfunctionalism.com's Button, Combobox and Sidebar (with fluid hover) ported to @gpuix/solid.",
+	"scripts": {
+		"start": "bun --hot src/main.tsx",
+		"typecheck": "tsc",
+		"screenshots": "bun scripts/screenshots.tsx"
+	},
+	"dependencies": {
+		"@gpuix/native": "workspace:*",
+		"@gpuix/solid": "workspace:*",
+		"solid-js": "1.9.15"
+	},
+	"devDependencies": {
+		"@types/bun": "^1.4.2",
+		"typescript": "^7.0.2"
+	},
+	"workspaces": [
+		"../../../code/fdarian/gpuix/packages/native",
+		"../../../code/fdarian/gpuix/packages/solid"
+	]
+}
