@@ -16,7 +16,7 @@ Original: `registry/default/input-copy.tsx`. Ported in `src/components/input-cop
 - **gpuix lacks:** the event model allows it: `packages/native/src/renderer.rs:5663` calls `capture_pointer()` on every element that has both a `mouseDown` and a `mouseMove` listener, so the pointer is captured by that ancestor and the child's `mouseUp` / `click` never fire (I saw `mouseDown` on the child and nothing after). Nothing in the props says that pairing has this side effect. A bug, or at least a trap.
 - **Workaround:** the shared Tooltip spreads those two handlers on its wrapper, which broke the click on the copy row. InputCopy uses the Tooltip's function-children form, so the handlers sit on the row itself (the element that wants the click), and passes no `onMouseMove`.
 - **Fidelity:** exact once worked around.
-- **Components it hits:** tooltip (wrapper form), anything that listens for both on a container (fluid-hover lists capture the pointer too, which is harmless only because their rows take no clicks of their own: the rows' `onClick` still fire because gpui hit-tests clicks by hitbox, so check this per component).
+- **Components it hits:** tooltip (wrapper form), color-picker's channel tooltips, anything that puts both listeners on a container.
 
 ## Hover tint behind the value (`<mark>`)
 

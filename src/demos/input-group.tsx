@@ -133,5 +133,4 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(1180, 700);
 	await pointAt(shot, "compact-email");
 	shot.capture("compact-hover");
-
 };

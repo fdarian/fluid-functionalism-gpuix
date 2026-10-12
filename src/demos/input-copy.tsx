@@ -35,7 +35,11 @@ export function Demo() {
 		<DemoCard title="Input Copy">
 			<div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
 				<Field label="Basic">
-					<InputCopy testId="basic" value={COMMAND} copy={copyUnlessCapturing} />
+					<InputCopy
+						testId="basic"
+						value={COMMAND}
+						copy={copyUnlessCapturing}
+					/>
 				</Field>
 				<Field label="With label">
 					<InputCopy
