@@ -30,13 +30,8 @@ import {
 } from "../lib/fluid-hover";
 import type { IconRef } from "../lib/icons";
 import { moveIndex, revealRow } from "../lib/list-nav";
-import {
-	createPresence,
-	isInside,
-	placePopup,
-	POPUP_OFFSET,
-	PopupSurface,
-} from "../lib/popup";
+import { isInside, placePopup, POPUP_OFFSET, PopupSurface } from "../lib/popup";
+import { createPresence } from "../lib/presence";
 import { color, radius, shadow3, motion as tween } from "../lib/theme";
 import {
 	DropdownSearchHostContext,

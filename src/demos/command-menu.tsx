@@ -20,7 +20,8 @@ import type { DemoModule } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
-import { createPresence, isInside, PopupSurface } from "../lib/popup";
+import { isInside, PopupSurface } from "../lib/popup";
+import { createPresence } from "../lib/presence";
 import { color, radius, type as scale } from "../lib/theme";
 
 const link = defineIcon(

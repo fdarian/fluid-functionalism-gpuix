@@ -15,7 +15,7 @@ import {
 	useContext,
 } from "solid-js";
 import { readBounds } from "../lib/bounds";
-import { createPresence } from "../lib/popup";
+import { createPresence } from "../lib/presence";
 import { color, radius, type as scale, motion as tween } from "../lib/theme";
 
 export type TooltipSide = "top" | "right" | "bottom" | "left";

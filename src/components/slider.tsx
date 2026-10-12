@@ -17,7 +17,7 @@ import {
 	untrack,
 } from "solid-js";
 import { awaitBounds, readBounds } from "../lib/bounds";
-import { createPresence } from "../lib/popup";
+import { createPresence } from "../lib/presence";
 import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha } from "../lib/theme";
 
 export type SliderValue = number | [number, number];

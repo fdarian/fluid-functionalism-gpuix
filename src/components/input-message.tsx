@@ -18,6 +18,7 @@ import {
 	Show,
 	untrack,
 } from "solid-js";
+import { createPresence } from "../lib/presence";
 import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
@@ -128,6 +129,9 @@ const steps = {
 /** The focused composer's ring: foreground at 20%. */
 const focusEdge = () => withAlpha(color.foreground, 0.2);
 
+/** The collapse's exit tween (`tween.moderateExit`, 120 ms) plus a frame. */
+const COLLAPSE_EXIT_MS = 130;
+
 /**
  * A region that opens and closes by height. gpuix animates `height` to a
  * number only, so the content's own painted height is read and the region
@@ -138,22 +142,15 @@ function Collapse(props: {
 	revision?: unknown;
 	children: JSX.Element;
 }) {
-	const [mounted, setMounted] = createSignal(props.open);
+	const presence = createPresence(COLLAPSE_EXIT_MS, props.open);
+	presence.follow(() => props.open);
+	const mounted = presence.mounted;
 	const measured = createMeasuredHeight();
-	let timer: ReturnType<typeof setTimeout> | undefined;
-	onCleanup(() => clearTimeout(timer));
-
 	createEffect(
 		on(
 			() => props.open,
 			(open) => {
-				clearTimeout(timer);
-				if (open) {
-					setMounted(true);
-					measured.kick();
-				} else {
-					timer = setTimeout(() => setMounted(false), 130);
-				}
+				if (open) measured.kick();
 			},
 			{ defer: true },
 		),

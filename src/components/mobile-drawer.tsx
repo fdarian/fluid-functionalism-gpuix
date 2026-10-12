@@ -14,6 +14,7 @@ import {
 	onCleanup,
 	Show,
 } from "solid-js";
+import { createPresence } from "../lib/presence";
 import { once } from "./dialog";
 import {
 	color,
@@ -44,7 +45,10 @@ export function MobileDrawer(props: {
 	children: JSX.Element;
 }) {
 	const content = once(() => props.children);
-	const [mounted, setMounted] = createSignal(props.open);
+	// onMotionComplete is the primary release; the timer covers an exit that never animates.
+	const presence = createPresence(EXIT_FALLBACK_MS, props.open);
+	presence.follow(() => props.open);
+	const mounted = presence.mounted;
 	/**
 	 * The panel slides empty and its content arrives once it has stopped. gpuix
 	 * reports a nested element's painted bounds up to a frame apart from its
@@ -54,24 +58,9 @@ export function MobileDrawer(props: {
 	 */
 	const [settled, setSettled] = createSignal(false);
 	const finish = () => {
-		setMounted(false);
+		presence.release();
 		setSettled(false);
 	};
-	createEffect(
-		on(
-			() => props.open,
-			(isOpen) => {
-				if (isOpen) {
-					setMounted(true);
-					return;
-				}
-				// onMotionComplete is the primary release; this covers an exit that never animates.
-				const timer = setTimeout(finish, EXIT_FALLBACK_MS);
-				onCleanup(() => clearTimeout(timer));
-			},
-			{ defer: true },
-		),
-	);
 
 	return (
 		<GpuixDialog

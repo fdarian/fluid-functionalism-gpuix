@@ -21,6 +21,7 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
+import { createPresence } from "../lib/presence";
 import {
 	color,
 	radius,
@@ -94,23 +95,11 @@ export function Dialog(props: {
 		props.defaultOpen ?? false,
 	);
 	const shown = () => props.open ?? uncontrolled();
-	const [mounted, setMounted] = createSignal(shown());
-	createEffect(
-		on(
-			shown,
-			(isShown) => {
-				if (isShown) {
-					setMounted(true);
-					return;
-				}
-				// onMotionComplete is the primary release; this covers an exit that
-				// never animates (closed before it ever painted).
-				const timer = setTimeout(() => setMounted(false), EXIT_FALLBACK_MS);
-				onCleanup(() => clearTimeout(timer));
-			},
-			{ defer: true },
-		),
-	);
+	// onMotionComplete is the primary release; the timer covers an exit that
+	// never animates (closed before it ever painted).
+	const presence = createPresence(EXIT_FALLBACK_MS, shown());
+	presence.follow(shown);
+	const mounted = presence.mounted;
 
 	const setOpen = (next: boolean) => {
 		if (props.open === undefined) setUncontrolled(next);
@@ -121,7 +110,7 @@ export function Dialog(props: {
 		shown,
 		mounted,
 		scoped: () => props.scoped ?? false,
-		finish: () => setMounted(false),
+		finish: presence.release,
 	};
 
 	return (

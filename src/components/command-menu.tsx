@@ -23,7 +23,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type FluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
-import { createPresence } from "../lib/popup";
+import { createPresence } from "../lib/presence";
 import { moveIndex, revealRow } from "../lib/list-nav";
 import {
 	color,

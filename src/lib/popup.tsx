@@ -6,10 +6,9 @@ import {
 } from "@gpuix/solid";
 import { createSignal, type JSX, onCleanup, Show } from "solid-js";
 import { readBounds } from "./bounds";
+import type { createPresence } from "./presence";
 import { color, radius, shadow3, motion as tween } from "./theme";
 
-/** Time the popup keeps painting its exit fade before unmounting. */
-const EXIT_MS = 60;
 export const POPUP_OFFSET = 6;
 /** The gap a popup keeps from the window edge. */
 export const POPUP_MARGIN = 8;
@@ -69,28 +68,6 @@ export function placePopup(
 			(side === "bottom" ? below : above) - POPUP_OFFSET - POPUP_MARGIN,
 		),
 		triggerWidth: box.width,
-	};
-}
-
-/** `open` drives the animation; `mounted` outlives it by the exit fade. */
-export function createPresence() {
-	const [open, setOpen] = createSignal(false);
-	const [mounted, setMounted] = createSignal(false);
-	let exitTimer: ReturnType<typeof setTimeout> | undefined;
-	onCleanup(() => clearTimeout(exitTimer));
-	return {
-		open,
-		mounted,
-		show() {
-			clearTimeout(exitTimer);
-			setOpen(true);
-			setMounted(true);
-		},
-		hide() {
-			setOpen(false);
-			clearTimeout(exitTimer);
-			exitTimer = setTimeout(() => setMounted(false), EXIT_MS);
-		},
 	};
 }
 

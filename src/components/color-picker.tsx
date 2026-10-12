@@ -23,12 +23,8 @@ import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
 import { moveIndex } from "../lib/list-nav";
-import {
-	createPresence,
-	isInside,
-	placePopup,
-	POPUP_OFFSET,
-} from "../lib/popup";
+import { isInside, placePopup, POPUP_OFFSET } from "../lib/popup";
+import { createPresence } from "../lib/presence";
 import { color, height, radius, type as scale, scheme, shadow3, motion as tween, weight, surface } from "../lib/theme";
 import {
 	buildParsed,
