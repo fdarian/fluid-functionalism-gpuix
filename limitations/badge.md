@@ -7,7 +7,7 @@ Badge is nearly a pure-style component; it hit only two gaps. Both variants (sol
 ## `color-mix()` against a runtime colour
 
 - **Original:** `color-mix(in srgb, <hue> 15%, var(--background))` for the solid tint, resolved by the browser against whichever theme is live.
-- **gpuix lacks:** any colour function. `StyleDesc` colours are literals (`packages/native/js/host.ts:221` onward), so a mix cannot reference another colour or a theme variable. `LinearGradientBackground.colorSpace: "oklab"` exists (`host.ts:157`) but only interpolates two stops, it is not a mix operator.
+- **gpuix lacks:** any colour function. `StyleDesc` colours are literals (`packages/native/js/host.ts:209`), so a mix cannot reference another colour or a theme variable. `LinearGradientBackground.colorSpace: "oklab"` exists (`host.ts:160`) but only interpolates two stops, it is not a mix operator.
 - **Workaround:** a small `mix()` in `src/components/badge.tsx` that blends the hue with `color.background` in sRGB at render time. It reads the `scheme` signal, so it re-mixes on a theme change. Missing feature.
 - **Fidelity:** exact (same sRGB maths as the browser).
 - **Components it hits:** any with a derived tint (banner high-contrast wash uses an oklab mix of a status colour over `transparent`, which is solved by emitting an rgba literal instead).
