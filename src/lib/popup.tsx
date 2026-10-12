@@ -1,4 +1,4 @@
-import { motion } from "@gpuix/solid";
+import { DismissableLayer, motion } from "@gpuix/solid";
 import { createSignal, type JSX, onCleanup, Show } from "solid-js";
 import { color, radius, shadow3, motion as tween } from "./theme";
 
@@ -44,12 +44,19 @@ export function PopupSurface(props: {
 	width: number;
 	maxHeight?: number;
 	onMouseDownOutside: () => void;
+	/** Escape while this popup is the top layer. The popup joins gpuix's dismiss-layer stack, so a dialog around it stays open. */
+	onDismiss: () => void;
 	onHoverChange: (hovered: boolean) => void;
 	children: JSX.Element;
 }) {
 	/** The popup slides in from the field: down from above, up from below. */
 	const slide = () => (props.side === "top" ? 4 : -4);
 	return (
+		<>
+		{/* A layer only while open, not while the exit fade plays: a second Escape in that window belongs to the dialog behind. It is a sibling because the layer needs no children, only its place in the stack. */}
+		<Show when={props.presence.open()}>
+			<DismissableLayer onEscapeKeyDown={props.onDismiss} />
+		</Show>
 		<Show when={props.presence.mounted()}>
 			<anchored
 				side={props.side ?? "bottom"}
@@ -89,5 +96,6 @@ export function PopupSurface(props: {
 				</motion.div>
 			</anchored>
 		</Show>
+		</>
 	);
 }

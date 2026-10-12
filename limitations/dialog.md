@@ -14,15 +14,16 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 | Hover behind the backdrop | Blocked: the sidebar's fluid hover does not follow the pointer under the layer. |
 | Scroll lock | Works for free: `occlude` also takes the wheel, so wheeling over the backdrop or the panel does not scroll the page. |
 | Stacking | A Select opened inside the dialog paints over it, even where it leaves the panel (popups are priority 1, the dialog 0), and a row picked over the backdrop is the topmost hit. A dialog opened from a dialog paints over the first, Escape or a backdrop press closes only the top one. |
-| Escape with a Select open inside a dialog | Closes **both**, see below. |
+| Escape with a Select open inside a dialog | Closes only the popup, then the dialog on the next press. |
 
-## Escape is not routed through the dismiss-layer stack for the shared popups
+## Escape and the dismiss-layer stack (fixed in the shared popup)
 
 - **Original:** Base UI stacks layers; Escape closes only the topmost (the open Select), then the dialog on the next press.
-- **gpuix:** gpuix's own `Select`, `Combobox` and `Dialog` push a `DismissableLayer` (`packages/solid/src/components/floating.ts`), so Escape closes only the top layer. This port's shared `Select` / `Combobox` (`lib/popup.tsx`, `components/select.tsx`) handle Escape on their own field and never join that stack, so the same keypress also reaches the dialog's layer and closes it. Not a gpuix gap: the fix is in the shared popups (`pushDismissLayer`), which this group does not own.
-- **Workaround:** none in the dialog.
-- **Fidelity:** approximated (one Escape closes the select and the dialog).
-- **Components it hits:** select, combobox, command-menu, dropdown, tooltip: anything that opens a popup from inside a dialog.
+- **gpuix:** its own `Select`, `Combobox` and `Dialog` push a `DismissableLayer` (`packages/solid/src/components/floating.ts`), and the window's Escape default action closes only the top layer (`packages/native/js/renderer-state.ts:205`).
+- **Fix:** `PopupSurface` (`src/lib/popup.tsx`) now takes `onDismiss` and registers a `DismissableLayer` while the popup is open, so Select, Combobox and Dropdown all join the stack. Two traps: the default action reads the stack *after* element handlers run, so a component that closes itself on Escape pops its layer first and the same keystroke then reaches the dialog; those handlers call `preventDefault()` while open (a closed select still lets Escape through to the dialog). And the layer is a sibling that exists only while `open`, not through the 60 ms exit fade, so a second Escape in that window is not swallowed.
+- **Verified:** the dialog demo's scenarios: Escape with a Select open closes only the popup, the next one closes the dialog.
+- **Fidelity:** exact.
+- **Components it hits:** select, combobox, dropdown (command-menu's filter select via the same surface); tooltip does not join the stack.
 
 ## `position: absolute` is relative to the parent element
 

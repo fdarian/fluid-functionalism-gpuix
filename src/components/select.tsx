@@ -305,6 +305,10 @@ export function Select<Value extends string>(props: {
 				else open();
 				return;
 			case "escape":
+				// Closing pops the popup's dismiss layer before the window sees this Escape, which would then close the dialog behind.
+				if (presence.open()) event.preventDefault();
+				close();
+				return;
 			case "tab":
 				close();
 				return;
@@ -518,6 +522,7 @@ export function Select<Value extends string>(props: {
 					align={inline() ? "end" : "start"}
 					width={inline() ? (props.popupWidth ?? 160) : popupWidth()}
 					maxHeight={POPUP_MAX_HEIGHT}
+					onDismiss={close}
 					onMouseDownOutside={onOutside}
 					onHoverChange={setPopupHovered}
 				>

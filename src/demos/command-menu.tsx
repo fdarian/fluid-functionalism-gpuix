@@ -300,6 +300,7 @@ function FilterSelect(props: {
 				presence={presence}
 				align="start"
 				width={150}
+				onDismiss={() => presence.hide()}
 				onMouseDownOutside={() => {
 					if (!hovered() && !popupHovered()) presence.hide();
 				}}

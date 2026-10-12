@@ -393,6 +393,8 @@ function createMenuList(options: {
 				if (options.isSub) options.closeSelf();
 				return;
 			case "escape":
+				// The window-level dismiss stack must not also close the whole menu.
+				event.preventDefault();
 				options.closeSelf();
 				return;
 			case "tab":
@@ -983,6 +985,7 @@ export function DropdownContent(props: {
 			width={scope.width()}
 			maxHeight={scope.maxHeight()}
 			onMouseDownOutside={scope.outsidePress}
+			onDismiss={() => scope.setOpen(false)}
 			onHoverChange={() => {}}
 		>
 			<MenuPanel

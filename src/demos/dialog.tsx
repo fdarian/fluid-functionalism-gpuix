@@ -242,6 +242,12 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("stack-open");
 	await shot.click("stack-select");
 	shot.capture("select-over-dialog");
+	shot.expectText("Viewer", true);
+	// Escape closes only the popup: it is the top layer of the dismiss stack.
+	await shot.press("escape");
+	shot.expectText("Viewer", false);
+	shot.expectText("Invite a teammate", true);
+	await shot.click("stack-select");
 	// "Viewer" lies below the panel, over the backdrop, and is still the topmost layer.
 	const viewer = shot.centerOf("stack-select");
 	await shot.clickAt(viewer.x, viewer.y + 118);
@@ -272,7 +278,9 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("stack-open");
 	await shot.click("stack-select");
 	shot.capture("select-over-dialog-light");
-	await shot.press("escape");
+	await shot.press("escape escape");
+	shot.expectText("Invite a teammate", false);
+	shot.expectText("Viewer", false);
 	setScheme("dark");
 	await shot.settle(300);
 };

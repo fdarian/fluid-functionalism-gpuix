@@ -201,6 +201,8 @@ export function Combobox(props: {
 				if (open()) move(-1);
 				return;
 			case "escape":
+				// Closing pops the popup's dismiss layer before the window sees this Escape, which would then close the dialog behind.
+				if (open()) event.preventDefault();
 				closePopup();
 				return;
 			case "tab":
@@ -386,6 +388,7 @@ export function Combobox(props: {
 				align="start"
 				width={width()}
 				maxHeight={POPUP_MAX_HEIGHT}
+				onDismiss={closePopup}
 				onMouseDownOutside={onMouseDownOutside}
 				onHoverChange={setPopupHovered}
 			>
