@@ -334,14 +334,18 @@ export function InputCopy(props: {
 			style={{
 				display: "flex",
 				flexDirection: "column",
-				gap: 2,
 				opacity: props.disabled ? 0.5 : 1,
 				pointerEvents: props.disabled ? "none" : undefined,
 			}}
 		>
 			<Show when={props.label}>
 				{(text: Accessor<string>) => (
-					<div style={{ paddingLeft: align() === "left" ? 4 : 0 }}>
+					<div
+						style={{
+							paddingLeft: align() === "left" ? 4 : 0,
+							paddingBottom: 2,
+						}}
+					>
 						<text
 							style={{
 								fontSize: step().text,

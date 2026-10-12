@@ -172,14 +172,16 @@ export function InputField(props: {
 			style={{
 				display: "flex",
 				flexDirection: "column",
-				gap: 4,
 				cursor: "text",
 				opacity: props.disabled ? 0.5 : 1,
 				pointerEvents: props.disabled ? "none" : undefined,
 			}}
 		>
 			<Show when={!props.labelHidden}>
-				<div onClick={focusInput} style={{ paddingLeft: step().labelInset }}>
+				<div
+					onClick={focusInput}
+					style={{ paddingLeft: step().labelInset, paddingBottom: 4 }}
+				>
 					<text
 						style={{
 							...step().text,
@@ -273,7 +275,7 @@ export function InputField(props: {
 			</div>
 			<Show when={props.error}>
 				{(message: Accessor<string>) => (
-					<div style={{ paddingLeft: step().labelInset }}>
+					<div style={{ paddingLeft: step().labelInset, paddingTop: 4 }}>
 						<text
 							style={{
 								...step().caption,
