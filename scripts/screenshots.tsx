@@ -8,7 +8,7 @@
  * theme with the "Make them yours" select.
  *
  * Real time, not the test clock: fluid hover measures on timers and motion
- * samples a wall clock, so each step sleeps for them to settle.
+ * samples a wall clock, so each step runs frames until they settle.
  */
 import { mkdirSync } from "node:fs";
 import { createTestRoot } from "@gpuix/solid/testing";
@@ -29,13 +29,25 @@ const demo: Demo | undefined = demos.find(
 const outDir = new URL(`../screenshots/${slug}/`, import.meta.url).pathname;
 mkdirSync(outDir, { recursive: true });
 
+const FRAME_MS = 16;
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const test = createTestRoot({ width: 1240, height: 780 });
 const renderer = test.renderer;
 
+/**
+ * Runs the UI for `ms`: each frame flushes the tree and drains native events,
+ * so `onMotionComplete` reaches JS and an `AnimatePresence` exit unmounts
+ * within one settle. A bare `flush()` never drains them.
+ */
 async function settle(ms = 400) {
-	await sleep(ms);
+	const until = performance.now() + ms;
+	do {
+		renderer.flush();
+		renderer.dispatchNativeEvents();
+		await sleep(FRAME_MS);
+	} while (performance.now() < until);
 	renderer.flush();
+	renderer.dispatchNativeEvents();
 }
 
 function centerOf(testId: string) {
