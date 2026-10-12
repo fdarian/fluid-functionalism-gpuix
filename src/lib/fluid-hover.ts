@@ -196,12 +196,15 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 	/**
 	 * Painted bounds lag the tree by a frame, so a measurement taken in the
 	 * same tick as a mutation would read the old layout. The first read waits
-	 * two frames, then retries until every row has a box.
+	 * two frames, then retries until every row has a box. A list with no
+	 * container on screen (an empty state, a hidden question) has nothing to
+	 * measure, which is not an error.
 	 */
 	const remeasure = () => {
 		clearTimeout(measureTimer);
 		let attempts = 0;
 		const attempt = () => {
+			if (container === undefined || !container.mounted) return;
 			if (commit()) return;
 			attempts += 1;
 			if (attempts >= MEASURE_ATTEMPTS) {

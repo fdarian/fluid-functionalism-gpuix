@@ -415,10 +415,6 @@ export function AskUserQuestions(props: {
 	let keyboardDriving = false;
 
 	const hover = createFluidHover();
-	// A free-text question has no rows, and fluid hover treats a missing container as an error.
-	const remeasure = () => {
-		if (!isFreeText()) hover.remeasure();
-	};
 
 	// ── Answer actions.
 	const goNext = (snapshot: Answers) => {
@@ -650,7 +646,7 @@ export function AskUserQuestions(props: {
 			focusedRow(),
 		];
 		content.kick();
-		remeasure();
+		hover.remeasure();
 	});
 
 	const showBack = () => total() > 1 && safeIndex() > 0;
@@ -672,7 +668,7 @@ export function AskUserQuestions(props: {
 			role={isMulti() ? "group" : "radiogroup"}
 			ref={(element) => {
 				hover.containerRef(element);
-				queueMicrotask(remeasure);
+				queueMicrotask(hover.remeasure);
 			}}
 			onMouseEnter={hover.handlers.onMouseEnter}
 			onMouseMove={hover.handlers.onMouseMove}
