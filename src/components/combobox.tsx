@@ -16,9 +16,10 @@ import {
 } from "solid-js";
 import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover } from "../lib/fluid-hover";
+import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
+import { moveIndex, revealRow } from "../lib/list-nav";
 import {
 	createPresence,
 	isInside,
@@ -37,6 +38,8 @@ import {
 const FIELD_HEIGHT = 36;
 const ROW_HEIGHT = 36;
 const POPUP_MAX_HEIGHT = 300;
+/** The list's padding inside its scroller. */
+const LIST_PADDING = 4;
 
 function ClearButton(props: { onClick: () => void }) {
 	const [hovered, setHovered] = createSignal(false);
@@ -105,7 +108,7 @@ export function Combobox(props: {
 	let rootElement: HostElement | undefined;
 	let popupElement: HostElement | undefined;
 	let inputElement: HostElement | undefined;
-	const rowElements = new Map<number, HostElement>();
+	let scroller: HostElement | undefined;
 
 	const filtered = createMemo(() => {
 		const needle = query().trim().toLowerCase();
@@ -174,18 +177,20 @@ export function Combobox(props: {
 		),
 	);
 
-	const move = (delta: number) => {
-		const count = filtered().length;
-		if (count === 0) return;
-		const current = hover.activeIndex();
-		const next =
-			current === null
-				? delta > 0
-					? 0
-					: count - 1
-				: Math.min(count - 1, Math.max(0, current + delta));
+	const move = (delta: 1 | -1) => {
+		const next = moveIndex(
+			hover.activeIndex(),
+			delta,
+			filtered().length,
+			undefined,
+			false,
+		);
+		if (next === null) return;
 		hover.setActiveIndex(next);
-		rowElements.get(next)?.scrollIntoView();
+		const row = hover.rects()[next];
+		if (scroller !== undefined && row !== undefined) {
+			revealRow(scroller, row, "nearest", LIST_PADDING);
+		}
 	};
 
 	const onKeyDown = (event: KeyEvent) => {
@@ -410,6 +415,9 @@ export function Combobox(props: {
 					}
 				>
 					<div
+						ref={(element) => {
+							scroller = element;
+						}}
 						onScroll={hover.handlers.onScroll}
 						style={{
 							display: "flex",
@@ -449,12 +457,7 @@ export function Combobox(props: {
 									const lit = () =>
 										hover.activeIndex() === index() || props.value === item;
 									let rowElement: HostElement | undefined;
-									createEffect(() => {
-										if (rowElement === undefined)
-											throw new Error("Row is not mounted");
-										hover.registerItem(index(), rowElement);
-										rowElements.set(index(), rowElement);
-									});
+									useHoverItem(hover, index, () => rowElement);
 									return (
 										<div
 											ref={(element) => {

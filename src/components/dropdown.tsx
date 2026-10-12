@@ -29,6 +29,7 @@ import {
 	type ItemRect,
 } from "../lib/fluid-hover";
 import type { IconRef } from "../lib/icons";
+import { moveIndex, revealRow } from "../lib/list-nav";
 import {
 	createPresence,
 	isInside,
@@ -301,29 +302,16 @@ function createMenuList(options: {
 			.map((entry) => entry[0])
 			.sort((a, b) => a - b);
 
-	const revealRow = (index: number) => {
-		const rect = hover.rects()[index];
-		if (rect === undefined || scroller === undefined) return;
-		const view = readBounds(scroller);
-		const offset = renderer.getScrollOffset?.(scroller.id);
-		if (renderer.scrollTo === undefined) {
-			throw new Error("This renderer does not expose scrollTo");
-		}
-		if (view == null || offset == null) return;
-		const scrollTop = -offset[1];
-		const bottom = rect.top + rect.height;
-		if (rect.top >= scrollTop && bottom <= scrollTop + view.height) return;
-		const target =
-			rect.top < scrollTop
-				? rect.top - PADDING
-				: bottom + PADDING - view.height;
-		renderer.scrollTo(scroller.id, 0, -Math.max(0, target));
+	const revealIndex = (index: number) => {
+		const row = hover.rects()[index];
+		if (scroller === undefined || row === undefined) return;
+		revealRow(scroller, row, "nearest", PADDING);
 	};
 
 	const highlight = (index: number | null) => {
 		setLitBy("keyboard");
 		hover.setActiveIndex(index);
-		if (index !== null) revealRow(index);
+		if (index !== null) revealIndex(index);
 	};
 
 	/** The field is a stop of its own, before the first row. */
@@ -333,13 +321,13 @@ function createMenuList(options: {
 			...enabledRows(),
 		];
 		if (stops.length === 0) return;
-		const current = hover.activeIndex();
-		const position = stops.indexOf(current);
-		let next: number | null;
-		if (position === -1)
-			next = delta === 1 ? stops[0] : stops[stops.length - 1];
-		else next = stops[(position + delta + stops.length) % stops.length];
-		highlight(next);
+		const position = stops.indexOf(hover.activeIndex());
+		const next = moveIndex(
+			position === -1 ? null : position,
+			delta,
+			stops.length,
+		);
+		if (next !== null) highlight(stops[next]);
 	};
 
 	const activateActive = () => {

@@ -24,6 +24,7 @@ import { createFluidHover, type FluidHover, useHoverItem } from "../lib/fluid-ho
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
 import { createPresence } from "../lib/popup";
+import { moveIndex, revealRow } from "../lib/list-nav";
 import {
 	color,
 	radius,
@@ -387,27 +388,11 @@ export function CommandMenu(props: {
 
 	const firstEnabled = () => rows().findIndex((row) => !row.disabled);
 
-	/** Keeps the keyboard row at the middle of the viewport, as far as the ends allow. gpuix's own scrollIntoView does not reach the list's scroller here. */
+	/** Keeps the keyboard row at the middle of the viewport, as far as the ends allow. */
 	const centerRow = (index: number) => {
-		const row = rowElements.get(index);
+		const row = hover.rects()[index];
 		if (row === undefined || scroller === undefined) return;
-		if (index === 0) {
-			renderer.scrollTo?.(scroller.id, 0, 0);
-			return;
-		}
-		const rowBox = readBounds(row);
-		const box = readBounds(scroller);
-		const offset = renderer.getScrollOffset?.(scroller.id);
-		if (rowBox == null || box == null || offset == null) {
-			throw new Error("Cannot centre the row without painted bounds");
-		}
-		const scrollTop = -offset[1];
-		const rowCentre = rowBox.y - box.y + scrollTop + rowBox.height / 2;
-		renderer.scrollTo?.(
-			scroller.id,
-			0,
-			-Math.max(0, rowCentre - box.height / 2),
-		);
+		revealRow(scroller, row, "center");
 	};
 
 	// The first enabled row is highlighted whenever the row set changes, so Enter always has a target.
@@ -432,20 +417,19 @@ export function CommandMenu(props: {
 	);
 
 	const move = (to: 1 | -1 | "first" | "last") => {
+		const all = rows();
 		const enabled: number[] = [];
-		rows().forEach((row, index) => {
+		all.forEach((row, index) => {
 			if (!row.disabled) enabled.push(index);
 		});
 		if (enabled.length === 0) return;
-		let next: number;
-		if (to === "first") next = enabled[0];
-		else if (to === "last") next = enabled[enabled.length - 1];
-		else {
-			const current = hover.activeIndex();
-			const position = current === null ? -1 : enabled.indexOf(current);
-			if (position === -1) next = to === 1 ? enabled[0] : (enabled.at(-1) ?? 0);
-			else next = enabled[(position + to + enabled.length) % enabled.length];
-		}
+		const next =
+			to === "first"
+				? enabled[0]
+				: to === "last"
+					? enabled[enabled.length - 1]
+					: moveIndex(hover.activeIndex(), to, all.length, (index) => all[index].disabled);
+		if (next === null) return;
 		hover.setActiveIndex(next);
 		lastActive = next;
 		centerRow(next);

@@ -21,6 +21,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
+import { moveIndex, revealRow } from "../lib/list-nav";
 import {
 	createPresence,
 	isInside,
@@ -215,47 +216,23 @@ export function Select<Value extends string>(props: {
 		ackTimer = setTimeout(close, ACK_MS);
 	};
 
-	/**
-	 * `scrollIntoView` only aligns a direct child of the scroller, and every
-	 * row sits inside the overlay wrapper, so the offset is set by hand from the
-	 * measured rects (which are in scrolled-content space).
-	 */
-	const revealRow = (index: number) => {
-		const rect = hover.rects()[index];
-		if (rect === undefined) return;
+	const revealIndex = (index: number) => {
+		const row = hover.rects()[index];
 		if (scroller === undefined) throw new Error("Select list is not mounted");
-		const view = readBounds(scroller);
-		const offset = renderer.getScrollOffset?.(scroller.id);
-		if (renderer.scrollTo === undefined) {
-			throw new Error("This renderer does not expose scrollTo");
-		}
-		if (view == null || offset == null) {
-			throw new Error("Cannot scroll the list without painted bounds");
-		}
-		const scrollTop = -offset[1];
-		const bottom = rect.top + rect.height;
-		if (rect.top >= scrollTop && bottom <= scrollTop + view.height) return;
-		const target =
-			rect.top < scrollTop
-				? rect.top - POPUP_PADDING
-				: bottom + POPUP_PADDING - view.height;
-		renderer.scrollTo(scroller.id, 0, -Math.max(0, target));
+		if (row !== undefined) revealRow(scroller, row, "nearest", POPUP_PADDING);
 	};
 
-	const enabledAfter = (from: number, delta: 1 | -1) => {
-		const all = rows();
-		for (let step = 1; step <= all.length; step++) {
-			const index = (from + delta * step + all.length * step) % all.length;
-			if (all[index].disabled !== true) return index;
-		}
-		return null;
-	};
 	const move = (delta: 1 | -1) => {
-		const current = hover.activeIndex() ?? (delta === 1 ? -1 : 0);
-		const next = enabledAfter(current, delta);
+		const all = rows();
+		const next = moveIndex(
+			hover.activeIndex(),
+			delta,
+			all.length,
+			(index) => all[index].disabled === true,
+		);
 		if (next === null) return;
 		hover.setActiveIndex(next);
-		revealRow(next);
+		revealIndex(next);
 	};
 	const typeAhead = (char: string) => {
 		clearTimeout(typeaheadTimer);
@@ -275,7 +252,7 @@ export function Select<Value extends string>(props: {
 			) {
 				if (!presence.open()) open();
 				hover.setActiveIndex(index);
-				revealRow(index);
+				revealIndex(index);
 				return;
 			}
 		}
@@ -318,7 +295,7 @@ export function Select<Value extends string>(props: {
 		on(hover.rects, () => {
 			if (!revealOnMeasure) return;
 			revealOnMeasure = false;
-			if (selectedIndex() !== -1) revealRow(selectedIndex());
+			if (selectedIndex() !== -1) revealIndex(selectedIndex());
 		}),
 	);
 	/** A pick moved the checked row; the highlight follows the pointer again. */

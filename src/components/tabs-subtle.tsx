@@ -24,6 +24,7 @@ import { StableLabel } from "../lib/stable-label";
 import { awaitBounds } from "../lib/bounds";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
+import { moveIndex } from "../lib/list-nav";
 import {
 	color,
 	height,
@@ -267,12 +268,12 @@ export function TabsSubtleItem(props: {
 
 	const onKeyDown = (event: KeyEvent) => {
 		const count = scope.elements.size;
-		const move = ({ right: 1, left: -1 } as Record<string, number | undefined>)[
+		const move = ({ right: 1, left: -1 } as Record<string, 1 | -1 | undefined>)[
 			event.key ?? ""
 		];
 		const target =
 			move !== undefined
-				? (props.index + move + count) % count
+				? (moveIndex(props.index, move, count) ?? undefined)
 				: event.key === "home"
 					? 0
 					: event.key === "end"

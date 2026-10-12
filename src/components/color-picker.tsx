@@ -22,6 +22,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
+import { moveIndex } from "../lib/list-nav";
 import {
 	createPresence,
 	isInside,
@@ -791,10 +792,15 @@ function FormatDropdown(props: {
 		queueMicrotask(open);
 	}
 
-	const move = (delta: number) => {
-		const current = hover.activeIndex() ?? checkedIndex();
+	const move = (delta: 1 | -1) => {
 		hover.setActiveIndex(
-			Math.min(FORMATS.length - 1, Math.max(0, current + delta)),
+			moveIndex(
+				hover.activeIndex() ?? checkedIndex(),
+				delta,
+				FORMATS.length,
+				undefined,
+				false,
+			),
 		);
 	};
 	const onKeyDown = (event: KeyEvent) => {

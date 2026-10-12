@@ -22,6 +22,7 @@ import { createFluidHover, type ItemRect } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
 import { createMeasuredHeight, KickContext } from "../lib/measured-height";
+import { moveIndex } from "../lib/list-nav";
 import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha } from "../lib/theme";
 import { Button } from "./button";
 
@@ -544,9 +545,13 @@ export function AskUserQuestions(props: {
 			if (key === "home") next = 0;
 			else if (key === "end") next = rowCount() - 1;
 			else {
-				const base = inText ? otherIndex() : (hover.activeIndex() ?? -1);
-				next = key === "down" ? base + 1 : base - 1;
-				next = (next + rowCount()) % rowCount();
+				const stepped = moveIndex(
+					inText ? otherIndex() : hover.activeIndex(),
+					key === "down" ? 1 : -1,
+					rowCount(),
+				);
+				if (stepped === null) return;
+				next = stepped;
 			}
 			moveActive(next);
 		}
