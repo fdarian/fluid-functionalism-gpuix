@@ -391,6 +391,7 @@ export function ScrollArea(props: {
 					}
 					style={{
 						position: "absolute",
+						userSelect: "none",
 						...(bar.axis === "y"
 							? {
 									top: 0,
@@ -510,7 +511,7 @@ export function ScrollArea(props: {
 					<div
 						onMouseMove={dragTo}
 						onMouseUp={() => setDragging(undefined)}
-						style={{ width: "100%", height: "100%" }}
+						style={{ width: "100%", height: "100%", userSelect: "none" }}
 					/>
 				</anchored>
 			</Show>

@@ -259,22 +259,30 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("hover-scrollbar");
 	await shot.hover("area-y-thumb");
 	shot.capture("hover-thumb");
-	await shot.clickAt(trackX(area.x), area.y);
-	shot.capture("scrolled-both-fades");
+
+	// Real wheel ticks over the area: both edges fade once it is mid-scroll.
+	await shot.scroll(area.x, area.y, 0, -120);
+	shot.capture("wheel-scrolled-both-fades");
+
+	// Drag the thumb, with the pointer leaving the track mid-drag.
 	await shot.down("area-y-thumb");
+	await shot.moveHeld(trackX(area.x) - 90, area.y + 40);
 	shot.capture("dragging");
+	await shot.moveTo(trackX(area.x) - 90, area.y + 40);
 	await shot.up("area-y-thumb");
+
 	await shot.clickAt(trackX(area.x), area.y + 78);
-	shot.capture("scrolled-to-end");
+	shot.capture("track-jump-to-end");
+	await shot.scroll(area.x, area.y, 0, -400);
+	shot.capture("wheel-past-end");
 
 	const strip = shot.centerOf("horizontal");
 	await shot.moveTo(strip.x, strip.y);
-	await shot.clickAt(strip.x + 100, strip.y + 52 - 5);
-	shot.capture("horizontal-scrolled");
+	await shot.scroll(strip.x, strip.y, -200, 0);
+	shot.capture("horizontal-wheel");
 
 	const grid = shot.centerOf("both");
 	await shot.moveTo(grid.x, grid.y);
-	await shot.clickAt(grid.x + 100, grid.y + 66 - 5);
-	await shot.clickAt(grid.x + 279 - 5, grid.y + 20);
-	shot.capture("both-scrolled");
+	await shot.scroll(grid.x, grid.y, -240, -90);
+	shot.capture("both-wheel");
 };

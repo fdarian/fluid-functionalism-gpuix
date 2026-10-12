@@ -2,7 +2,7 @@
 
 Original: `registry/base/tabs-subtle.tsx`. Ported in `src/components/tabs-subtle.tsx`, demo in `src/demos/tabs-subtle.tsx`.
 
-Ported: `TabsSubtle` / `TabsSubtleItem` / `TabsSubtlePanel` with the same index-based API, the selected pill, the hover preview born at the selected pill, manual activation (arrows move focus, Enter / Space select), icons, `activeLabel` (only the selected tab shows its label, which unfolds), the compact size. The gaps shared with [tabs.md](tabs.md) apply unchanged: no focus-visible in JS (per-tab outline, no traveling ring), an empty `<Show>` takes a flex gap, hover set per tab because the shared `createFluidHover` only picks vertically, opacity on its own nested element, instant colour changes, one drop shadow.
+Ported: `TabsSubtle` / `TabsSubtleItem` / `TabsSubtlePanel` with the same index-based API, the selected pill, the hover preview born at the selected pill, manual activation (arrows move focus, Enter / Space select), icons, `activeLabel` (only the selected tab shows its label, which unfolds), the compact size. The gaps shared with [tabs.md](tabs.md) apply unchanged: no focus-visible in JS (per-tab outline, no traveling ring), an empty `<Show>` takes a flex gap, opacity on its own nested element, instant colour changes, one drop shadow.
 
 Not ported: the list's `overflow-x-auto max-w-[calc(100%+8px)] scrollbar-hide -mx-1 px-1 -my-1 py-1` (a horizontally scrolling list that leaves room for the 2px focus ring). It needs negative margins plus an x-only scroller that scrolls the absolutely positioned pills with it; see [scroll-area.md](scroll-area.md) for why absolute layers inside a scroller are awkward. Tabs wider than their container overflow instead of scrolling.
 

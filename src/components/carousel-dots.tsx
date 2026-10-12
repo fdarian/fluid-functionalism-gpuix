@@ -54,8 +54,7 @@ export function CarouselDots(props: {
 	getLabel?: (index: number) => string;
 	testId?: string;
 }) {
-	const hover = createFluidHover();
-	const [session, setSession] = createSignal(0);
+	const hover = createFluidHover({ axis: "x" });
 	const [clock, setClock] = createSignal(0);
 
 	const options = (): CarouselDotsAutoplay | null => {
@@ -127,10 +126,8 @@ export function CarouselDots(props: {
 				hover.containerRef(element);
 				queueMicrotask(hover.remeasure);
 			}}
-			onMouseEnter={() => {
-				setSession(session() + 1);
-				hover.handlers.onMouseEnter();
-			}}
+			onMouseEnter={hover.handlers.onMouseEnter}
+			onMouseMove={hover.handlers.onMouseMove}
 			onMouseLeave={hover.handlers.onMouseLeave}
 			style={{
 				position: "relative",
@@ -143,7 +140,7 @@ export function CarouselDots(props: {
 			{/* First child: gpuix has no zIndex, so the dots paint over the highlight by document order. */}
 			<FluidHighlight
 				rect={hoverRect}
-				session={session}
+				session={hover.session}
 				radius={DOT_PX / 2 + CLICK_PAD}
 				background={color.hover}
 			/>
@@ -155,7 +152,6 @@ export function CarouselDots(props: {
 						current={index === props.value}
 						fill={fill}
 						register={hover.registerItem}
-						onEnter={() => hover.setActiveIndex(index)}
 						onSelect={() => props.onValueChange?.(index)}
 					/>
 				)}
@@ -170,7 +166,6 @@ function Dot(props: {
 	current: boolean;
 	fill: () => number;
 	register: (index: number, element: HostElement) => void;
-	onEnter: () => void;
 	onSelect: () => void;
 }) {
 	let element: HostElement | undefined;
@@ -187,7 +182,6 @@ function Dot(props: {
 			{...buttonProps({ onClick: props.onSelect })}
 			aria-label={props.label}
 			aria-selected={props.current}
-			onMouseEnter={props.onEnter}
 			style={{
 				position: "relative",
 				display: "flex",

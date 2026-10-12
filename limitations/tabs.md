@@ -4,7 +4,7 @@ Original: `registry/base/tabs.tsx`. Ported in `src/components/tabs.tsx`, demo in
 
 Ported: `Tabs` (controlled, `defaultValue`, first-tab fallback), `TabsList` (muted track, raised selected pill, dimming, hover preview that is born at the selected pill and glides home when the pointer leaves), `TabItem` (with and without icon, ghost-span label, stroke 1.5 / 2), `TabPanel`, the compact size, arrow / Home / End selection. Not ported: the `selectedIndex` / `onSelect` index API (value-based only), the elevation ladder (`useSurface`): the pill is always surface 4.
 
-Transforms and fonts are already known and not repeated.
+Hover uses the shared `createFluidHover` with `axis: "x"` (the option was added for this group), so the track's padding resolves to the nearest tab like the original. Transforms and fonts are already known and not repeated.
 
 ## No `:focus-visible` in JS, so the focus ring does not travel
 
@@ -21,14 +21,6 @@ Transforms and fonts are already known and not repeated.
 - **Workaround:** `gap` is set only when the icon exists (`gap: icon === undefined ? 0 : 8`).
 - **Fidelity:** exact.
 - **Components it hits:** anything with a conditional child in a flex row with `gap`: buttons with optional icons, menu rows, tabs-subtle.
-
-## Fluid hover is vertical only
-
-- **Original:** `useFluidHover(containerRef, { axis: "x" })`: the tab nearest the pointer horizontally wins, so the list's padding never leaves the preview without a target.
-- **gpuix lacks:** nothing: this is the shared `createFluidHover`, whose `pick()` hard-codes `axis: "y"` (`src/lib/fluid-hover.ts:167`). With it every tab contains the pointer's y, so the last one always wins.
-- **Workaround:** the list uses `createFluidHover` only for measured rects and the active index, and sets the index from each tab's own `onMouseEnter`; the index is cleared on the list's `onMouseLeave`. The 4px padding keeps the last tab, which is what "nearest" gives.
-- **Fidelity:** exact for a gapless row.
-- **Components it hits:** tabs-subtle, carousel-dots (any horizontal list). A shared `axis` option would remove the workaround.
 
 ## Layer opacity needs its own element
 

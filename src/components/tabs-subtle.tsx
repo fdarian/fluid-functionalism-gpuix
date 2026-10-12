@@ -95,7 +95,7 @@ export function TabsSubtle(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
-	const hover = createFluidHover();
+	const hover = createFluidHover({ axis: "x" });
 	const [mouseInside, setMouseInside] = createSignal(false);
 	const scope: SubtleScope = {
 		selectedIndex: () => props.selectedIndex,
@@ -148,6 +148,7 @@ export function TabsSubtle(props: {
 					setMouseInside(true);
 					hover.handlers.onMouseEnter();
 				}}
+				onMouseMove={hover.handlers.onMouseMove}
 				onMouseLeave={() => {
 					setMouseInside(false);
 					hover.handlers.onMouseLeave();
@@ -346,7 +347,6 @@ export function TabsSubtleItem(props: {
 					: `${scope.idPrefix()}-tab-${props.index}`
 			}
 			testId={props.testId}
-			onMouseEnter={() => scope.hover.setActiveIndex(props.index)}
 			onFocus={() => scope.hover.setActiveIndex(props.index)}
 			onBlur={() =>
 				// Focus moving to a sibling tab stays inside the list: only a real exit drops the highlight.

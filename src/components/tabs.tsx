@@ -124,13 +124,13 @@ const rectStyle = (rect: ItemRect) => ({
  * The track: a muted segmented control holding one raised pill for the
  * selected tab and a faint pill that previews the next click. Both pills are
  * absolutely positioned layers that glide across the tab rects measured by
- * fluid hover, and the tabs themselves stay transparent. Hover is driven by
- * each tab's own enter event (the shared pointer handler picks vertically),
- * which is equivalent for a row with no gaps.
+ * fluid hover (axis "x": the tab nearest the pointer horizontally wins, so
+ * the track's padding never leaves the preview without a target), and the
+ * tabs themselves stay transparent.
  */
 export function TabsList(props: { children: JSX.Element; testId?: string }) {
 	const tabs = useTabs();
-	const hover = createFluidHover();
+	const hover = createFluidHover({ axis: "x" });
 	const [mouseInside, setMouseInside] = createSignal(false);
 	let counter = 0;
 	const scope: ListScope = {
@@ -190,6 +190,7 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 					setMouseInside(true);
 					hover.handlers.onMouseEnter();
 				}}
+				onMouseMove={hover.handlers.onMouseMove}
 				onMouseLeave={() => {
 					setMouseInside(false);
 					hover.handlers.onMouseLeave();
@@ -341,7 +342,6 @@ export function TabItem(props: {
 			role="tab"
 			aria-selected={isSelected()}
 			testId={props.testId}
-			onMouseEnter={() => list.hover.setActiveIndex(index)}
 			onFocus={() => list.hover.setActiveIndex(index)}
 			onBlur={() =>
 				// Focus moving to a sibling tab stays inside the list: only a real exit drops the highlight.

@@ -32,7 +32,7 @@ Ported: vertical, horizontal and both-axis areas, the hover / scroll-driven thum
 
 - **Original:** a thumb drag keeps tracking after the pointer leaves the thumb (Base UI captures the pointer).
 - **gpuix lacks:** pointer capture: a `mouseMove` only reaches the element under the pointer. Missing feature.
-- **Workaround:** while dragging, a window-sized `<anchored fill="window" occlude>` mounts and catches the moves and the release. Three gotchas found on the way: `<anchored>` paints an opaque backdrop unless `backgroundColor` is set to a transparent value (the first attempt blanked the window); handlers set on the `<anchored>` itself never fired, only those on a child `div` of `width/height: 100%`; and a release that lands before the overlay has mounted (a click faster than a frame) is lost, so the first move with no `pressedButton` ends the drag.
+- **Workaround:** while dragging, a window-sized `<anchored fill="window" occlude>` mounts and catches the moves and the release. Four gotchas found on the way: a drag started on the thumb also began a text selection across the page (`userSelect: "none"` on the track and the overlay stops it); `<anchored>` paints an opaque backdrop unless `backgroundColor` is set to a transparent value (the first attempt blanked the window); handlers set on the `<anchored>` itself never fired, only those on a child `div` of `width/height: 100%`; and a release that lands before the overlay has mounted (a click faster than a frame) is lost, so the first move with no `pressedButton` ends the drag.
 - **Fidelity:** exact once working; a frame between press and overlay.
 - **Components it hits:** slider, color-picker, any drag handle.
 
