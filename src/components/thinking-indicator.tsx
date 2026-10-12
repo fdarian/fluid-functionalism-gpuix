@@ -6,6 +6,7 @@ import {
 	useIsPresent,
 } from "@gpuix/solid";
 import { createSignal, For, onCleanup, onMount, Show } from "solid-js";
+import { onFrame } from "../lib/clock";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
 import { color, type as scale, scheme } from "../lib/theme";
@@ -18,20 +19,15 @@ const FRAME_MS = 33;
  * while something is subscribed to it.
  */
 const [clock, setClock] = createSignal(0);
-let subscribers = 0;
-let clockTimer: ReturnType<typeof setInterval> | undefined;
 
 /** The animation time in ms; reading it inside an effect or JSX re-runs every frame. */
 export function useClock(): () => number {
-	onMount(() => {
-		subscribers += 1;
-		if (subscribers === 1) {
-			clockTimer = setInterval(() => setClock(performance.now()), FRAME_MS);
-		}
-	});
-	onCleanup(() => {
-		subscribers -= 1;
-		if (subscribers === 0) clearInterval(clockTimer);
+	let sinceTick = FRAME_MS;
+	onFrame((dt, now) => {
+		sinceTick += dt;
+		if (sinceTick < FRAME_MS) return;
+		sinceTick = 0;
+		setClock(now);
 	});
 	return clock;
 }
@@ -223,11 +219,13 @@ export function ThinkingIndicator(props: {
 	testId?: string;
 }) {
 	const [index, setIndex] = createSignal(0);
-	const timer = setInterval(
-		() => setIndex((current) => (current + 1) % words.length),
-		WORD_INTERVAL_MS,
-	);
-	onCleanup(() => clearInterval(timer));
+	let sinceWord = 0;
+	onFrame((dt) => {
+		sinceWord += dt;
+		if (sinceWord < WORD_INTERVAL_MS) return;
+		sinceWord -= WORD_INTERVAL_MS;
+		setIndex((current) => (current + 1) % words.length);
+	});
 	return (
 		<div
 			role="status"

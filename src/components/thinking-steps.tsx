@@ -14,6 +14,7 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
+import { onFrame } from "../lib/clock";
 import { StableLabel } from "../lib/stable-label";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
@@ -71,18 +72,16 @@ const TURN_MS = 100;
  */
 function Chevron(props: { open: boolean; stroke: number; color: string }) {
 	const [angle, setAngle] = createSignal(props.open ? 90 : 0);
-	let timer: ReturnType<typeof setInterval> | undefined;
-	onCleanup(() => clearInterval(timer));
 	createEffect(() => {
 		const target = props.open ? 90 : 0;
 		const from = angle();
-		const started = performance.now();
-		clearInterval(timer);
-		timer = setInterval(() => {
-			const progress = Math.min((performance.now() - started) / TURN_MS, 1);
+		let elapsed = 0;
+		const stop = onFrame((dt) => {
+			elapsed += dt;
+			const progress = Math.min(elapsed / TURN_MS, 1);
 			setAngle(Math.round(from + (target - from) * (1 - (1 - progress) ** 3)));
-			if (progress === 1) clearInterval(timer);
-		}, 16);
+			if (progress === 1) stop();
+		});
 	});
 	return (
 		<Icon

@@ -7,6 +7,7 @@ import {
 	onCleanup,
 	untrack,
 } from "solid-js";
+import { onFrame } from "../lib/clock";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { color, scheme, motion as tween, withAlpha } from "../lib/theme";
@@ -18,10 +19,6 @@ const PILL_PX = 24;
 /** Every dot sits in an equal 6px padding: an 18px round click area. */
 const CLICK_PAD = 6;
 const DEFAULT_DURATION_MS = 3000;
-const FRAME_MS = 16;
-/** A frame longer than this is a stall, not playback. */
-const MAX_FRAME_MS = 100;
-
 /** `color-mix(in oklab, var(--foreground), transparent 85% / 60%)`. */
 const trackColor = () => withAlpha(color.foreground, 0.15);
 const fillColor = () => withAlpha(color.foreground, 0.4);
@@ -84,14 +81,9 @@ export function CarouselDots(props: {
 
 	createEffect(() => {
 		if (!autoplaying()) return;
-		let last = performance.now();
-		const timer = setInterval(() => {
-			const now = performance.now();
-			const delta = now - last;
-			last = now;
+		onFrame((delta) => {
 			const live = untrack(options);
 			if (live === null || (live.paused ?? false) || waiting) return;
-			if (delta >= MAX_FRAME_MS) return;
 			const next =
 				untrack(clock) + delta / (live.duration ?? DEFAULT_DURATION_MS);
 			if (next < 1) {
@@ -103,8 +95,7 @@ export function CarouselDots(props: {
 			} else {
 				setClock(1);
 			}
-		}, FRAME_MS);
-		onCleanup(() => clearInterval(timer));
+		});
 	});
 
 	const hoverRect = () => {

@@ -1,4 +1,5 @@
 import { createSignal, type JSX, onCleanup, Show } from "solid-js";
+import { onFrame } from "../lib/clock";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
 import { color, radius, scheme, withAlpha } from "../lib/theme";
@@ -16,8 +17,8 @@ export interface FileLike {
 }
 
 const SPINNER_SIZE = 24;
-/** Frames per second of the arc, as steps of a JS timer: `animate-spin` has no native counterpart. */
-const SPINNER_FRAME_MS = 33;
+/** `animate-spin` is one turn a second; gpuix cannot rotate, so a frame clock rewrites the arc. */
+const SPINNER_DEGREES_PER_MS = 0.36;
 
 /** The arc of `border-t-muted-foreground`, a quarter of the ring, at `degrees` clockwise from the top. */
 function spinnerArc(degrees: number) {
@@ -37,11 +38,12 @@ function spinnerArc(degrees: number) {
  */
 export function Spinner() {
 	const [degrees, setDegrees] = createSignal(0);
-	const timer = setInterval(
-		() => setDegrees((current) => (current + 12) % 360),
-		SPINNER_FRAME_MS,
-	);
-	onCleanup(() => clearInterval(timer));
+	let angle = 0;
+	onFrame((dt) => {
+		angle = (angle + dt * SPINNER_DEGREES_PER_MS) % 360;
+		// Whole degrees, so the SVG cache sees at most 360 distinct sources.
+		setDegrees(Math.round(angle) % 360);
+	});
 	return (
 		<div
 			style={{
