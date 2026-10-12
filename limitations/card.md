@@ -39,7 +39,7 @@ Card, CardGroup (stacked / inline, 1 or 2+ columns, borderless / outlined, separ
 ## No `aspect-ratio`
 
 - **Original:** `CardImage` stacked is `w-full aspect-[16/9]`.
-- **gpuix lacks:** `aspectRatio` in `StyleDesc` (`packages/native/js/host.ts:162`-`249`). Missing feature.
+- **gpuix lacks:** `aspectRatio` in `StyleDesc` (not among the `StyleDesc` fields, `packages/native/js/host.ts:163`-`249`). Missing feature.
 - **Workaround:** `CardImage` takes a pixel `height` (the demo passes 155 for the grid tiles, 168 for the 300px promo, matching 16:9 at those widths). The inline image is a fixed 160px square as in the original.
 - **Fidelity:** approximated (right at the demo widths, wrong if the card resizes).
 - **Components it hits:** any media tile (file-thumbnail, chat-message attachments).
@@ -55,7 +55,7 @@ Card, CardGroup (stacked / inline, 1 or 2+ columns, borderless / outlined, separ
 ## `margin-left: auto`
 
 - **Original:** the inline footer is `shrink-0 ml-auto`.
-- **gpuix lacks:** `auto` margins: `margin*` is `number` only (`host.ts:236`-`240`). Missing feature.
+- **gpuix lacks:** `auto` margins: `margin*` is `number` only (`host.ts:196`). Missing feature.
 - **Workaround:** the header takes `flexGrow: 1; flexBasis: 0`, which pushes the footer to the end.
 - **Fidelity:** exact.
 - **Components it hits:** any row that pushes an item to the far edge.
@@ -64,6 +64,6 @@ Card, CardGroup (stacked / inline, 1 or 2+ columns, borderless / outlined, separ
 
 - Both `transition-[font-variation-settings]` (the title weight easing) and `transition-colors` are dropped: the weight and colours switch instantly. The ghost-span trick (invisible semibold copy in flow, visible copy absolutely positioned) keeps the row from reflowing.
 - The external-link arrow is `-rotate-45` on an arrow-right; with no transforms (known) it is the arrow-up-right glyph instead.
-- Pointer-enter / leave handlers are delivered to JS when the next native event drains (`dispatchNativeEvents()`), and the headless harness only drains on `simulate*` calls, so a hover that drives a signal (the dismiss reveal, the button label colour) shows one input late in `scripts/screenshots.tsx`. The demo's scenario nudges the pointer by 1px. In the real window it is immediate. See also `limitations/banner.md`.
+- Pointer-enter / leave and motion-complete events reach JS only when native events are drained; the screenshot harness's `settle()` now does that (commit 585c165), so a hover that drives a signal (the dismiss reveal, the button label colour) shows in the capture like it does live.
 - Native `hover` / `active` / `focusVisible` styles cover the standalone card, `CardButton` surfaces and the dismiss chip with no JS round trip.
 - Positive: `display: grid` with `gridTemplateColumns: n` gives equal columns, absolute children do not occupy cells, `objectFit: "cover"`, `outlineOffset: -1` on images and `data:image/svg+xml` image sources all work.

@@ -13,7 +13,7 @@ import {
 	CardMedia,
 	CardTitle,
 } from "../components/card";
-import type { DemoModule, ShotContext } from "../lib/demo";
+import type { DemoModule } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
 import { defineIcon } from "../lib/icons";
 
@@ -223,22 +223,12 @@ export function Demo() {
 	);
 }
 
-/**
- * Pointer-enter handlers reach JS when the next input drains native events, so
- * a hover that drives a signal (a button's label colour) needs a nudge to show.
- */
-async function hoverAndNudge(shot: ShotContext, testId: string) {
-	const point = shot.centerOf(testId);
-	await shot.moveTo(point.x, point.y);
-	await shot.moveTo(point.x + 1, point.y);
-}
-
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.hover("basic-1");
 	shot.capture("basic-hover");
 	await shot.hover("basic-3");
 	shot.capture("basic-hover-last");
-	await hoverAndNudge(shot, "basic-2-connect");
+	await shot.hover("basic-2-connect");
 	shot.capture("basic-action-hover");
 	await shot.click("selected-3");
 	await shot.hover("selected-0");
