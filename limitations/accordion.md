@@ -4,13 +4,13 @@ Original: `registry/base/accordion.tsx`. Ported in `src/components/accordion.tsx
 
 Transforms (the chevron's 90 degree rotation becomes a `chevron-right` / `chevron-down` swap) and fonts are already known and not repeated here. The docs playground (live controls) is not ported.
 
-## Absolute elements block their parent's mouse events
+## Absolute or filled elements block their parent's mouse events
 
-- **Original:** an absolutely positioned child (the ghost-span label trick, an overlay) never affects hover: DOM mouse events bubble through it, so the row's `mousemove` still fires over its own label.
-- **gpuix lacks:** any `position: absolute` / `fixed` box inserts a mouse hitbox, so the pointer over it never reaches an ancestor's `onMouseMove` / `onMouseEnter`. `should_occlude` in `packages/native/src/style.rs:317` returns true for absolute boxes unless `pointerEvents: "none"`, and `renderer.rs:5335` turns that into `block_mouse_except_scroll`. A bug-shaped difference from the DOM rather than a missing feature: the opt-out exists, but the default is the opposite of HTML. It showed up as fluid hover going dead exactly over the visible label of a row (the label `<text>` is absolute over its hidden bold copy).
-- **Workaround:** `pointerEvents: "none"` on every absolute label and overlay inside a hover container.
+- **Original:** a child (an absolutely positioned label, an overlay, a coloured dot) never affects its parent's hover or click: DOM mouse events bubble through it, so the row's `mousemove` still fires over its own label and a button is clickable over its own icon.
+- **gpuix lacks:** any `position: absolute` / `fixed` box, and any box with a non-transparent fill, inserts a mouse hitbox, so the pointer over it never reaches an ancestor's `onMouseMove` / `onMouseEnter` / `onClick`. `should_occlude` in `packages/native/src/style.rs:317` returns true for those unless `pointerEvents: "none"`, and `renderer.rs:5335` turns that into `block_mouse_except_scroll`. A bug-shaped difference from the DOM: the opt-out exists, but the default is the opposite of HTML. It showed up here as fluid hover going dead exactly over the visible label of a row (the label `<text>` is absolute over its hidden bold copy), and in carousel-dots as dots that ignored hover and clicks over their own coloured pill (see [carousel-dots.md](carousel-dots.md)).
+- **Workaround:** `pointerEvents: "none"` on every absolute or filled decoration inside a hover or click target.
 - **Fidelity:** exact once applied.
-- **Components it hits:** any component using the ghost-span label (sidebar, tabs, tabs-subtle, nav rows). `src/components/sidebar.tsx` `RowLabel` has the same absolute `<text>` without `pointerEvents: "none"`.
+- **Components it hits:** any component using the ghost-span label (sidebar, tabs, tabs-subtle, nav rows), and any button or row with a filled child. `src/components/sidebar.tsx` `RowLabel` has the same absolute `<text>` without `pointerEvents: "none"`.
 
 ## `motion` animates eight numbers, not colours
 
