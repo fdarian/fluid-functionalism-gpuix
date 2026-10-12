@@ -133,6 +133,10 @@ export function ChoiceGroup(props: {
 	children: JSX.Element;
 }) {
 	const renderer = useGpuixRequired();
+	const focusElement = renderer.focusElement;
+	if (focusElement === undefined) {
+		throw new Error("This renderer does not expose focusElement");
+	}
 	const hover = createFluidHover();
 	const rows = new Map<number, RowEntry>();
 
@@ -178,7 +182,7 @@ export function ChoiceGroup(props: {
 						: (position + step + order.length) % order.length;
 			const entry = rows.get(order[target]);
 			if (entry === undefined) throw new Error(`No row at ${order[target]}`);
-			renderer.focusElement(entry.element.id);
+			focusElement.call(renderer, entry.element.id);
 			if (context.arrowsSelect) entry.activate();
 		},
 	};
