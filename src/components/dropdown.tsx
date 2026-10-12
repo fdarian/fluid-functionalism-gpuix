@@ -31,6 +31,7 @@ import {
 import type { IconRef } from "../lib/icons";
 import {
 	createPresence,
+	isInside,
 	placePopup,
 	POPUP_OFFSET,
 	PopupSurface,
@@ -814,19 +815,6 @@ export function DropdownMenu(props: {
 		if (props.defaultOpen === true) setTimeout(() => setOpen(true), 64);
 	});
 
-	const inside = (element: HostElement, event: EventPayload) => {
-		const bounds = readBounds(element);
-		if (bounds == null || event.x === undefined || event.y === undefined) {
-			return false;
-		}
-		return (
-			event.x >= bounds.x &&
-			event.x <= bounds.x + bounds.width &&
-			event.y >= bounds.y &&
-			event.y <= bounds.y + bounds.height
-		);
-	};
-
 	const scope: MenuScope = {
 		presence,
 		setOpen,
@@ -849,8 +837,7 @@ export function DropdownMenu(props: {
 		outsidePress(event) {
 			if (event === undefined) throw new Error("Outside press without a payload");
 			if (!presence.open()) return;
-			if (wrapper !== undefined && inside(wrapper, event)) return;
-			for (const region of regions) if (inside(region, event)) return;
+			if (isInside(event, [wrapper, ...regions])) return;
 			setOpen(false);
 		},
 	};
@@ -978,7 +965,6 @@ export function DropdownContent(props: {
 			maxHeight={scope.maxHeight()}
 			onMouseDownOutside={scope.outsidePress}
 			onDismiss={() => scope.setOpen(false)}
-			onHoverChange={() => {}}
 		>
 			<MenuPanel
 				list={list}

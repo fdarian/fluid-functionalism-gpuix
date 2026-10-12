@@ -19,7 +19,12 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { createPresence, placePopup, PopupSurface } from "../lib/popup";
+import {
+	createPresence,
+	isInside,
+	placePopup,
+	PopupSurface,
+} from "../lib/popup";
 import {
 	color,
 	radius,
@@ -91,8 +96,6 @@ export function Combobox(props: {
 	// closed, but opening it must still list every item.
 	const [query, setQuery] = createSignal("");
 	const [focused, setFocused] = createSignal(false);
-	const [fieldHovered, setFieldHovered] = createSignal(false);
-	const [popupHovered, setPopupHovered] = createSignal(false);
 	const [chevronHovered, setChevronHovered] = createSignal(false);
 	/** Armed while typing re-filters the rows under the highlights: those frames snap, not glide. */
 	const [reflow, setReflow] = createSignal(false);
@@ -100,6 +103,7 @@ export function Combobox(props: {
 	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
 	const [maxHeight, setMaxHeight] = createSignal(POPUP_MAX_HEIGHT);
 	let rootElement: HostElement | undefined;
+	let popupElement: HostElement | undefined;
 	let inputElement: HostElement | undefined;
 	const rowElements = new Map<number, HostElement>();
 
@@ -216,8 +220,8 @@ export function Combobox(props: {
 		openPopup();
 		setQuery(text);
 	};
-	const onMouseDownOutside = () => {
-		if (!fieldHovered() && !popupHovered()) closePopup();
+	const onMouseDownOutside = (event: EventPayload) => {
+		if (!isInside(event, [rootElement, popupElement])) closePopup();
 	};
 
 	const checkedRect = () => {
@@ -247,8 +251,6 @@ export function Combobox(props: {
 			}}
 		>
 			<div
-				onMouseEnter={() => setFieldHovered(true)}
-				onMouseLeave={() => setFieldHovered(false)}
 				style={{
 					width: "100%",
 					height: FIELD_HEIGHT,
@@ -383,7 +385,9 @@ export function Combobox(props: {
 				maxHeight={maxHeight()}
 				onDismiss={closePopup}
 				onMouseDownOutside={onMouseDownOutside}
-				onHoverChange={setPopupHovered}
+				popupRef={(element) => {
+					popupElement = element;
+				}}
 			>
 				<Show
 					when={filtered().length > 0}

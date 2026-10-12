@@ -21,7 +21,12 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
-import { createPresence, placePopup, POPUP_OFFSET } from "../lib/popup";
+import {
+	createPresence,
+	isInside,
+	placePopup,
+	POPUP_OFFSET,
+} from "../lib/popup";
 import { color, height, radius, type as scale, scheme, shadow3, motion as tween, weight, surface } from "../lib/theme";
 import {
 	buildParsed,
@@ -738,37 +743,6 @@ function Popup(props: {
 	);
 }
 
-/**
- * Whether a press landed on one of these elements. gpuix reports an outside
- * press per element, and a popup's trigger and card are two of them, so the
- * caller asks by painted bounds rather than by hover state, which trails the
- * pointer by an event.
- */
-function useInside() {
-	const renderer = useGpuixRequired();
-	return (
-		event: EventPayload,
-		elements: readonly (HostElement | undefined)[],
-	) => {
-		if (event.x === undefined || event.y === undefined) {
-			throw new Error("Outside press without coordinates");
-		}
-		return elements.some((element) => {
-			if (element === undefined) return false;
-			const bounds = readBounds(element);
-			if (bounds == null) throw new Error("Element has no painted bounds");
-			return (
-				event.x !== undefined &&
-				event.y !== undefined &&
-				event.x >= bounds.x &&
-				event.x <= bounds.x + bounds.width &&
-				event.y >= bounds.y &&
-				event.y <= bounds.y + bounds.height
-			);
-		});
-	};
-}
-
 const MENU_ROW = 36;
 
 function FormatDropdown(props: {
@@ -783,7 +757,6 @@ function FormatDropdown(props: {
 	const presence = createPresence();
 	const hover = createFluidHover();
 	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
-	const inside = useInside();
 	const [triggerHovered, setTriggerHovered] = createSignal(false);
 	let trigger: HostElement | undefined;
 	let card: HostElement | undefined;
@@ -925,7 +898,7 @@ function FormatDropdown(props: {
 					card = element;
 				}}
 				onMouseDownOutside={(event) => {
-					if (!inside(event, [trigger, card])) close();
+					if (!isInside(event, [trigger, card])) close();
 				}}
 			>
 				<div
@@ -1699,7 +1672,6 @@ export function ColorPickerPopover(
 ) {
 	const presence = createPresence();
 	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
-	const inside = useInside();
 	const [removeHovered, setRemoveHovered] = createSignal(false);
 	const [formatMenuOpen, setFormatMenuOpen] = createSignal(false);
 	let trigger: HostElement | undefined;
@@ -1870,7 +1842,7 @@ export function ColorPickerPopover(
 					card = element;
 				}}
 				onMouseDownOutside={(event) => {
-					if (!formatMenuOpen() && !inside(event, [trigger, card])) close();
+					if (!formatMenuOpen() && !isInside(event, [trigger, card])) close();
 				}}
 			>
 				<ColorPickerPanel

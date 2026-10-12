@@ -1,4 +1,5 @@
 import {
+	type EventPayload,
 	type HostElement,
 	type KeyEvent,
 	motion,
@@ -20,7 +21,12 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { createPresence, placePopup, PopupSurface } from "../lib/popup";
+import {
+	createPresence,
+	isInside,
+	placePopup,
+	PopupSurface,
+} from "../lib/popup";
 import { color, radius, type as scale, scheme, motion as tween, withAlpha } from "../lib/theme";
 
 /** How long a pick holds the popup open so the check and the checked background are seen arriving. */
@@ -146,13 +152,13 @@ export function Select<Value extends string>(props: {
 		isItemDisabled: (index) => rows()[index]?.disabled === true,
 	});
 	const [triggerHovered, setTriggerHovered] = createSignal(false);
-	const [popupHovered, setPopupHovered] = createSignal(false);
 	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
 	const [maxHeight, setMaxHeight] = createSignal(POPUP_MAX_HEIGHT);
 	const [popupWidth, setPopupWidth] = createSignal(0);
 	/** Set by a pick, so only a check that arrives after the open fades in. */
 	const [picked, setPicked] = createSignal(false);
 	let triggerWrapper: HostElement | undefined;
+	let popupElement: HostElement | undefined;
 	let scroller: HostElement | undefined;
 	/** Set on open: the checked row is scrolled into view once its rect has been measured. */
 	let revealOnMeasure = false;
@@ -325,8 +331,8 @@ export function Select<Value extends string>(props: {
 		return hover.rects()[index] ?? null;
 	};
 	const hoverRect = () => rectOf(hover.activeIndex())();
-	const onOutside = () => {
-		if (!triggerHovered() && !popupHovered()) close();
+	const onOutside = (event: EventPayload) => {
+		if (!isInside(event, [triggerWrapper, popupElement])) close();
 	};
 
 	const triggerIcon = (): IconRef | undefined => {
@@ -514,7 +520,9 @@ export function Select<Value extends string>(props: {
 					maxHeight={maxHeight()}
 					onDismiss={close}
 					onMouseDownOutside={onOutside}
-					onHoverChange={setPopupHovered}
+					popupRef={(element) => {
+						popupElement = element;
+					}}
 				>
 					<div
 						ref={(element) => {
