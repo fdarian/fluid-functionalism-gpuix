@@ -116,9 +116,21 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("hover");
 	// Between the two fields the pointer still resolves to the nearest one.
 	const name = shot.centerOf("name");
-	const email = shot.centerOf("email");
-	await shot.moveTo(name.x, (name.y + email.y) / 2 + 2);
+	const emailCenter = shot.centerOf("email");
+	await shot.moveTo(name.x, (name.y + emailCenter.y) / 2 + 2);
 	shot.capture("hover-gap");
+
+	// Over the label text and over the icon, not the field's middle.
+	await shot.moveTo(1180, 700);
+	const email = shot.centerOf("email");
+	await shot.moveTo(email.x - 100, email.y - 20);
+	await shot.moveTo(email.x - 96, email.y - 20);
+	await shot.moveTo(email.x - 92, email.y - 20);
+	shot.capture("hover-label");
+	await shot.moveTo(email.x - 118, email.y + 8);
+	await shot.moveTo(email.x - 117, email.y + 8);
+	await shot.moveTo(email.x - 116, email.y + 8);
+	shot.capture("hover-icon");
 
 	await shot.click("email-input");
 	await shot.press("a @");

@@ -353,6 +353,13 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.settle(900);
 	shot.capture("suggestions");
 	await shot.click("suggestions-textarea");
+	// The pointer on a prompt's text, not its middle.
+	const prompt = shot.centerOf("suggestions-suggestion-2");
+	await shot.moveTo(prompt.x - 200, prompt.y);
+	await shot.moveTo(prompt.x - 196, prompt.y);
+	await shot.moveTo(prompt.x - 192, prompt.y);
+	shot.capture("suggestion-hover");
+	await shot.moveTo(1180, 700);
 	await shot.press("ctrl-n ctrl-n");
 	shot.capture("suggestion-keyboard");
 	await shot.press("enter");
@@ -382,6 +389,10 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.press("enter");
 	await shot.settle(600);
 	shot.capture("queued");
+	const row = shot.centerOf("queued-queued-0");
+	await shot.moveTo(row.x - 240, row.y);
+	await shot.moveTo(row.x - 236, row.y);
+	shot.capture("queued-hover-label");
 	await shot.hover("queued-queued-0");
 	shot.capture("queued-hover");
 	await shot.moveTo(1180, 700);

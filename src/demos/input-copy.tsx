@@ -132,6 +132,16 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.settle(2300);
 	shot.capture("reset");
 
+	// The pointer on the value's own glyphs, then on the icon.
+	await shot.moveTo(1180, 700);
+	const labelled = shot.centerOf("label");
+	await shot.moveTo(labelled.x - 100, labelled.y + 12);
+	await shot.moveTo(labelled.x - 96, labelled.y + 12);
+	shot.capture("hover-value-text");
+	await shot.moveTo(labelled.x + 134, labelled.y + 12);
+	await shot.moveTo(labelled.x + 133, labelled.y + 12);
+	shot.capture("hover-icon");
+
 	await shot.moveTo(1180, 700);
 	await shot.hover("button");
 	shot.capture("button-hover");

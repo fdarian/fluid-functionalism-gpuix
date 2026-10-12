@@ -153,9 +153,12 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(square.x - 50, square.y - 15);
 	shot.capture("square-hover");
 	await shot.down("default-square");
-	await shot.moveTo(square.x + 70, square.y + 40);
-	await shot.moveTo(square.x + 80, square.y + 45);
+	await shot.moveHeld(square.x + 70, square.y + 40);
+	await shot.moveHeld(square.x + 80, square.y + 45);
 	shot.capture("square-drag");
+	// Past the edge the thumb pins to the border.
+	await shot.moveHeld(square.x + 400, square.y + 300);
+	shot.capture("square-drag-past-edge");
 	await shot.up("default-square");
 	shot.expectText("#", true);
 
@@ -165,6 +168,16 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	const alpha = shot.centerOf("default-alpha");
 	await shot.clickAt(alpha.x + 30, alpha.y);
 	shot.capture("hue-and-alpha");
+	await shot.down("default-hue");
+	await shot.moveHeld(hue.x + 60, hue.y);
+	await shot.moveHeld(hue.x + 90, hue.y + 30);
+	shot.capture("hue-drag");
+	await shot.up("default-hue");
+	await shot.down("default-alpha");
+	await shot.moveHeld(alpha.x - 60, alpha.y);
+	await shot.moveHeld(alpha.x - 400, alpha.y);
+	shot.capture("alpha-drag-past-edge");
+	await shot.up("default-alpha");
 
 	// The hex field: replace its text.
 	await shot.click("default-hex-input");
@@ -199,12 +212,29 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(1180, 700);
 	const red = shot.centerOf("default-r");
 	await shot.down("default-r");
-	await shot.moveTo(red.x - 30, red.y);
-	await shot.moveTo(red.x - 60, red.y);
+	await shot.moveHeld(red.x - 30, red.y);
+	await shot.moveHeld(red.x - 60, red.y);
 	shot.capture("scrub");
 	await shot.up("default-r");
 
+	// Over text: a channel's digits, then the format trigger's label.
+	await shot.moveTo(1180, 700);
+	const green = shot.centerOf("default-g");
+	await shot.moveTo(green.x - 6, green.y);
+	await shot.moveTo(green.x - 4, green.y);
+	await shot.moveTo(green.x - 2, green.y);
+	shot.capture("hover-channel-text");
+	const format = shot.centerOf("default-format");
+	await shot.moveTo(format.x - 40, format.y);
+	await shot.moveTo(format.x - 38, format.y);
+	shot.capture("hover-format-text");
+
 	// The popover.
+	// The trigger's label and value text.
+	const trigger = shot.centerOf("popover-trigger");
+	await shot.moveTo(trigger.x - 40, trigger.y);
+	await shot.moveTo(trigger.x - 38, trigger.y);
+	shot.capture("hover-trigger-text");
 	await shot.click("popover-trigger");
 	shot.capture("popover-open");
 	await shot.moveTo(1180, 700);
