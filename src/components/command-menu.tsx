@@ -1336,7 +1336,7 @@ export function CommandMenuDialog(props: {
 				<motion.div
 					initial={{ opacity: 0 }}
 					animate={{
-						opacity: presence.open() ? (scheme() === "dark" ? 0.8 : 0.4) : 0,
+						opacity: presence.open() ? 1 : 0,
 					}}
 					transition={presence.open() ? tween.moderate : tween.moderateExit}
 					style={{
@@ -1345,7 +1345,7 @@ export function CommandMenuDialog(props: {
 						left: 0,
 						right: 0,
 						bottom: 0,
-						backgroundColor: "#000000",
+						backgroundColor: color.scrim,
 					}}
 				/>
 				<motion.div

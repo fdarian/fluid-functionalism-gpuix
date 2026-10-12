@@ -17,14 +17,7 @@ import {
 	untrack,
 } from "solid-js";
 import { createPresence } from "../lib/popup";
-import {
-	color,
-	radius,
-	type as scale,
-	scheme,
-	motion as tween,
-	weight,
-} from "../lib/theme";
+import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha } from "../lib/theme";
 
 export type SliderValue = number | [number, number];
 export type ValuePosition = "left" | "right" | "top" | "bottom" | "tooltip";
@@ -46,18 +39,10 @@ const PIP_SIZE = 5;
 const HOVER_TOOLTIP_DELAY_MS = 100;
 
 /** `--accent`, `--selected`: the compact track's fill and hover preview colours. */
-function trackFill() {
-	return scheme() === "light" ? "rgba(212,212,212,0.5)" : "rgba(82,82,82,0.4)";
-}
-function hoverPreviewFill() {
-	return scheme() === "light" ? "rgba(229,229,229,0.4)" : "rgba(82,82,82,0.4)";
-}
+const trackFill = () => color.selectedWash;
+const hoverPreviewFill = () => color.accentFaint;
 /** `color-mix(foreground N%, transparent)` for the handle line's rest and hover steps. */
-function foregroundAlpha(alpha: number) {
-	return scheme() === "light"
-		? `rgba(23,23,23,${alpha})`
-		: `rgba(245,245,245,${alpha})`;
-}
+const foregroundAlpha = (alpha: number) => withAlpha(color.foreground, alpha);
 
 // ─── Value maths ─────────────────────────────────────────────────────────────
 

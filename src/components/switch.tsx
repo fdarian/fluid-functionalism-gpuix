@@ -43,15 +43,6 @@ const THUMB_OFFSET = 2;
 /** Pointer travel before a press turns into a drag; under it the gesture stays a click. */
 const DRAG_DEAD_ZONE = 2;
 
-const ON = "#6B97FF";
-const ON_HOVER = "#5C89F2";
-
-/** `--accent`, and that mixed with 10% of the overlay colour for hover (black in light, white in dark). */
-function trackOff(hovered: boolean) {
-	if (scheme() === "light") return hovered ? "#CECECE" : "#E5E5E5";
-	return hovered ? "#636363" : "#525252";
-}
-
 export function Switch(props: {
 	label: string;
 	checked: boolean;
@@ -145,8 +136,8 @@ export function Switch(props: {
 	};
 
 	const trackColor = () => {
-		if (props.checked) return hovered() ? ON_HOVER : ON;
-		return trackOff(hovered());
+		if (props.checked) return hovered() ? color.switchOnHover : color.switchOn;
+		return hovered() ? color.switchOffHover : color.accent;
 	};
 
 	return (

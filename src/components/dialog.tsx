@@ -163,10 +163,6 @@ export function once<Value>(make: () => Value): () => Value {
 	};
 }
 
-/** `bg-black/40`, and `dark:bg-black/80` in the dark scheme. */
-const scrim = () =>
-	scheme() === "dark" ? "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.4)";
-
 /**
  * surface-5's shadow: a 1px ring plus drops up to 12px. gpuix paints one
  * outer shadow, so the ring is the border and the largest drop is kept.
@@ -225,7 +221,7 @@ export function DialogContent(props: {
 						left: 0,
 						right: 0,
 						bottom: 0,
-						backgroundColor: scrim(),
+						backgroundColor: color.scrim,
 						// A filled child would swallow the press meant for the backdrop behind it.
 						pointerEvents: "none",
 					}}

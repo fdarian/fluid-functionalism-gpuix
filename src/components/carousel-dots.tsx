@@ -9,7 +9,7 @@ import {
 } from "solid-js";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
-import { color, scheme, motion as tween } from "../lib/theme";
+import { color, scheme, motion as tween, withAlpha } from "../lib/theme";
 
 /** Dot height, and the diameter of every resting dot. */
 const DOT_PX = 6;
@@ -23,10 +23,8 @@ const FRAME_MS = 16;
 const MAX_FRAME_MS = 100;
 
 /** `color-mix(in oklab, var(--foreground), transparent 85% / 60%)`. */
-const trackColor = () =>
-	scheme() === "light" ? "rgba(23,23,23,0.15)" : "rgba(245,245,245,0.15)";
-const fillColor = () =>
-	scheme() === "light" ? "rgba(23,23,23,0.4)" : "rgba(245,245,245,0.4)";
+const trackColor = () => withAlpha(color.foreground, 0.15);
+const fillColor = () => withAlpha(color.foreground, 0.4);
 
 export interface CarouselDotsAutoplay {
 	/** How long each slide plays before the next one, in ms. Default 3000. */

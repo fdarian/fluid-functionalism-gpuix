@@ -21,7 +21,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
-import { color, radius, type as scale, scheme, weight } from "../lib/theme";
+import { color, radius, type as scale, scheme, weight, withAlpha } from "../lib/theme";
 
 export type CardOrientation = "card" | "inline";
 export type CardBorder = "none" | "outlined";
@@ -36,22 +36,17 @@ const subtitle = {
 } as const;
 
 /** A fixed hairline over an image: `outline-black/10`, `dark:outline-white/10`. */
-const imageOutline = () =>
-	scheme() === "light" ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.1)";
+const imageOutline = () => withAlpha(color.overlay, 0.1);
 
 /** `bg-card/70`: the dismiss chip over media. gpuix has no backdrop blur, so the alpha carries it alone. */
-const cardChip = () =>
-	scheme() === "light" ? "rgba(255,255,255,0.7)" : "rgba(37,37,37,0.7)";
+const cardChip = () => withAlpha(color.card, 0.7);
 
 /** `hover:bg-accent/80` over the surface behind it. */
-const accentHover = () =>
-	scheme() === "light" ? "rgba(229,229,229,0.8)" : "rgba(82,82,82,0.8)";
+const accentHover = () => withAlpha(color.accent, 0.8);
 
 /** `hover:bg-foreground/90` and `active:bg-foreground/80`. */
-const inkHover = () =>
-	scheme() === "light" ? "rgba(23,23,23,0.9)" : "rgba(245,245,245,0.9)";
-const inkActive = () =>
-	scheme() === "light" ? "rgba(23,23,23,0.8)" : "rgba(245,245,245,0.8)";
+const inkHover = () => withAlpha(color.foreground, 0.9);
+const inkActive = () => withAlpha(color.foreground, 0.8);
 
 // ─── Group scope ─────────────────────────────────────────────────────────────
 

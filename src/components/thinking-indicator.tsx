@@ -73,10 +73,10 @@ function hexToRgb(hex: string) {
 export function Shimmer(props: { children: string; style?: StyleDesc }) {
 	const time = useClock();
 	const letters = () => [...props.children];
-	const stops = () =>
-		scheme() === "dark"
-			? { base: hexToRgb("#525252"), bright: hexToRgb("#a3a3a3") }
-			: { base: hexToRgb("#a3a3a3"), bright: hexToRgb("#525252") };
+	const stops = () => ({
+		base: hexToRgb(color.shimmerBase),
+		bright: hexToRgb(color.shimmerBright),
+	});
 
 	const colorAt = (index: number) => {
 		const phase = easeInOut((time() % SHIMMER_PERIOD_MS) / SHIMMER_PERIOD_MS);

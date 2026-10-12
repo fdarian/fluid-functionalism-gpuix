@@ -63,8 +63,6 @@ const recoil = {
 } satisfies MotionTransition;
 const RECOIL_DISTANCE = 7;
 
-/** `color-mix(in oklab, accent, background 68%)`, mixed offline for each scheme. */
-const cardFill = () => (scheme() === "dark" ? "#292929" : "#f3f3f3");
 
 /** Height of the collapsed pile: consumers reserve transcript padding with it. */
 export function collapsedStackHeight(count: number) {
@@ -521,7 +519,7 @@ function QueueCard(props: {
 				borderWidth: 1,
 				borderColor: color.popupBorder,
 				boxShadow: shadow3(),
-				backgroundColor: cardFill(),
+				backgroundColor: color.queuedCard,
 				userSelect: "none",
 				cursor: props.expanded() ? "grab" : "default",
 				active: { cursor: "grabbing" },

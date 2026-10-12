@@ -38,9 +38,6 @@ const sizes = {
 	compact: { pad: 2, item: 24, gap: 4, text: scale.bodyCompact, icon: 14 },
 } as const;
 
-/** `--surface-4`: the raised pill the selected tab sits on. */
-const surface4 = () => (scheme() === "light" ? "#FFFFFF" : "#2C2C2C");
-
 // ─── State ───────────────────────────────────────────────────────────────────
 
 interface TabsState {
@@ -229,7 +226,7 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 									bottom: 0,
 									pointerEvents: "none",
 									borderRadius: radius.item,
-									backgroundColor: surface4(),
+									backgroundColor: color.surface4,
 									borderWidth: 1,
 									borderColor: color.popupBorder,
 									boxShadow: shadow3(),

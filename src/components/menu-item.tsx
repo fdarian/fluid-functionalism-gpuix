@@ -54,9 +54,8 @@ export function useDropdown() {
 	return context;
 }
 
-/** `bg-border/60`, resolved: the palette has the solid colour only. */
-export const separatorColor = () =>
-	scheme() === "light" ? "rgba(23,23,23,0.072)" : "rgba(245,245,245,0.072)";
+/** `bg-border/60`. */
+export const separatorColor = () => color.borderFaint;
 
 /**
  * A label that keeps its width when the weight steps up: a hidden copy at the

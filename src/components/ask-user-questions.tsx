@@ -21,14 +21,7 @@ import { createFluidHover, type ItemRect } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
 import { createMeasuredHeight, KickContext } from "../lib/measured-height";
-import {
-	color,
-	radius,
-	type as scale,
-	scheme,
-	motion as tween,
-	weight,
-} from "../lib/theme";
+import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha } from "../lib/theme";
 import { Button } from "./button";
 
 const arrowLeftGlyph = defineIcon(
@@ -91,10 +84,6 @@ const optionKey = (option: AskUserOption, index: number) =>
 const IS_MAC = process.platform === "darwin";
 const SHORTCUT_GLYPH = IS_MAC ? "⌘↵" : "⌃↵";
 
-/** `bg-background/15` over the primary button. */
-const chipOnPrimary = () =>
-	scheme() === "dark" ? "rgba(23,23,23,0.15)" : "rgba(250,250,250,0.15)";
-
 /** Keycap for a shortcut, inside the primary button. */
 function ShortcutChip(props: { children: string }) {
 	return (
@@ -109,7 +98,8 @@ function ShortcutChip(props: { children: string }) {
 				alignItems: "center",
 				justifyContent: "center",
 				borderRadius: radius.item,
-				backgroundColor: chipOnPrimary(),
+				// bg-background/15 over the primary button.
+				backgroundColor: withAlpha(color.background, 0.15),
 				pointerEvents: "none",
 			}}
 		>

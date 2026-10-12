@@ -27,10 +27,6 @@ export const DRAWER_WIDTH = 256;
 /** The panel's exit tween plus a buffer: `exitFallbackMs(spring.moderate)`. */
 const EXIT_FALLBACK_MS = 220;
 
-/** The same scrim as the dialogs: `bg-black/40`, `dark:bg-black/80`. */
-const scrim = () =>
-	scheme() === "dark" ? "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.4)";
-
 /**
  * A left navigation panel over a dimmed window. Built on gpuix's headless
  * `Dialog` for the layer, the focus trap, Escape and focus return; the panel
@@ -96,7 +92,7 @@ export function MobileDrawer(props: {
 							left: 0,
 							right: 0,
 							bottom: 0,
-							backgroundColor: scrim(),
+							backgroundColor: color.scrim,
 							// A filled child would swallow the press meant for the backdrop behind it.
 							pointerEvents: "none",
 						}}

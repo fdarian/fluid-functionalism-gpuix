@@ -23,15 +23,7 @@ import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
 import { createMeasuredHeight } from "../lib/measured-height";
-import {
-	color,
-	height,
-	radius,
-	type as scale,
-	scheme,
-	motion as tween,
-	weight,
-} from "../lib/theme";
+import { color, height, radius, type as scale, scheme, motion as tween, weight, withAlpha } from "../lib/theme";
 import { FileThumbnail } from "./file-thumbnail";
 import type { InputSize } from "./input-group";
 import { Tooltip, type TooltipTrigger } from "./tooltip";
@@ -132,12 +124,8 @@ const steps = {
 	},
 } as const;
 
-/** `border-border/60`, mixed offline. */
-const divider = () =>
-	scheme() === "light" ? "rgba(23,23,23,0.072)" : "rgba(245,245,245,0.072)";
 /** The focused composer's ring: foreground at 20%. */
-const focusEdge = () =>
-	scheme() === "light" ? "rgba(23,23,23,0.2)" : "rgba(245,245,245,0.2)";
+const focusEdge = () => withAlpha(color.foreground, 0.2);
 
 /**
  * A region that opens and closes by height. gpuix animates `height` to a
@@ -1285,7 +1273,7 @@ export function InputMessage(props: InputMessageProps) {
 								display: "flex",
 								flexDirection: "column",
 								borderTopWidth: 1,
-								borderColor: divider(),
+								borderColor: color.borderFaint,
 								paddingLeft: 6,
 								paddingRight: 6,
 								paddingTop: 6,

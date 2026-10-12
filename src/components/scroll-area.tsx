@@ -7,6 +7,7 @@ import {
 	useGpuixRequired,
 } from "@gpuix/solid";
 import { createSignal, type JSX, onCleanup, onMount, Show } from "solid-js";
+import { color, withAlpha } from "../lib/theme";
 import { scheme } from "../lib/theme";
 
 export type ScrollOrientation = "vertical" | "horizontal" | "both";
@@ -38,8 +39,7 @@ interface Metrics {
 type Axis = "x" | "y";
 
 /** `rgb(var(--overlay) / a)`: black on light surfaces, white on dark. */
-const overlay = (alpha: number) =>
-	scheme() === "light" ? `rgba(0,0,0,${alpha})` : `rgba(255,255,255,${alpha})`;
+const overlay = (alpha: number) => withAlpha(color.overlay, alpha);
 
 /** The same colour at alpha 0, so a gradient to "transparent" does not pass through grey. */
 function clear(cssColor: string): string {

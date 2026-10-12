@@ -51,10 +51,6 @@ const sizes = {
 /** How long rows keep moving after a panel toggles: the spring's perceived duration plus its tail. */
 const SPRING_TRACK_MS = 400;
 
-/** `bg-accent/20` in light, `dark:bg-accent/12`: the tint an open item holds. */
-const openTint = () =>
-	scheme() === "light" ? "rgba(229,229,229,0.2)" : "rgba(82,82,82,0.12)";
-
 // ─── State ───────────────────────────────────────────────────────────────────
 
 interface RootState {
@@ -350,7 +346,7 @@ export function AccordionItem(props: {
 						right: 0,
 						bottom: 0,
 						borderRadius: radius.item,
-						backgroundColor: openTint(),
+						backgroundColor: color.accentWash,
 						pointerEvents: "none",
 					}}
 				/>
@@ -462,7 +458,7 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					right: 0,
 					bottom: 0,
 					borderRadius: radius.item,
-					backgroundColor: openTint(),
+					backgroundColor: color.accentWash,
 					pointerEvents: "none",
 				}}
 			/>

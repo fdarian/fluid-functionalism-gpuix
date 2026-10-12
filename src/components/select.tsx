@@ -20,13 +20,7 @@ import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { createPresence, POPUP_OFFSET, PopupSurface } from "../lib/popup";
-import {
-	color,
-	radius,
-	type as scale,
-	scheme,
-	motion as tween,
-} from "../lib/theme";
+import { color, radius, type as scale, scheme, motion as tween, withAlpha } from "../lib/theme";
 
 /** How long a pick holds the popup open so the check and the checked background are seen arriving. */
 const ACK_MS = 300;
@@ -93,12 +87,10 @@ const specs: Record<SelectSize, Spec> = {
 const LABEL_HEIGHT = 28;
 const SEPARATOR_HEIGHT = 9;
 
-/** `border-destructive/50`, resolved: the palette has the solid colour only. */
-const destructiveHalf = () =>
-	scheme() === "light" ? "rgba(239,68,68,0.5)" : "rgba(252,165,165,0.5)";
+/** `border-destructive/50`. */
+const destructiveHalf = () => withAlpha(color.destructive, 0.5);
 /** `bg-border/60`. */
-const separatorColor = () =>
-	scheme() === "light" ? "rgba(23,23,23,0.072)" : "rgba(245,245,245,0.072)";
+const separatorColor = () => color.borderFaint;
 
 function isItem<Value extends string>(
 	entry: SelectEntry<Value>,

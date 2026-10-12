@@ -21,16 +21,7 @@ import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
 import { createPresence, POPUP_OFFSET } from "../lib/popup";
-import {
-	color,
-	height,
-	radius,
-	type as scale,
-	scheme,
-	shadow3,
-	motion as tween,
-	weight,
-} from "../lib/theme";
+import { color, height, radius, type as scale, scheme, shadow3, motion as tween, weight, surface } from "../lib/theme";
 import {
 	buildParsed,
 	type ColorFormat,
@@ -77,22 +68,6 @@ const chevronUp = defineIcon('<path d="m18 15-6-6-6 6"/>');
 
 const clamp01 = (value: number) => Math.max(0, Math.min(1, value));
 
-/** `--surface-N`: the ladder is only visible in dark; light is white at every level above 2. */
-const darkSurfaces: Record<number, string> = {
-	3: "#252525",
-	4: "#2C2C2C",
-	5: "#333333",
-	6: "#3A3A3A",
-	7: "#414141",
-	8: "#484848",
-};
-const surface = (level: number) =>
-	scheme() === "dark" ? darkSurfaces[level] : "#FFFFFF";
-
-/** `--checker-a` / `--checker-b`. */
-const checkerA = () => (scheme() === "light" ? "#bbbbbb" : "#1f1f1f");
-const checkerB = () => (scheme() === "light" ? "#ffffff" : "#2a2a2a");
-
 /** The squares of a 4px checkerboard that take `--checker-a`, as one path. */
 function checkerSource(width: number, size: number) {
 	const cell = 4;
@@ -122,7 +97,7 @@ function Checker(props: { width: number; height: number }) {
 				left: 0,
 				width: props.width,
 				height: props.height,
-				backgroundColor: checkerB(),
+				backgroundColor: color.checkerB,
 				pointerEvents: "none",
 			}}
 		>
@@ -134,7 +109,7 @@ function Checker(props: { width: number; height: number }) {
 					left: 0,
 					width: props.width,
 					height: props.height,
-					color: checkerA(),
+					color: color.checkerA,
 					pointerEvents: "none",
 				}}
 			/>
@@ -200,7 +175,7 @@ export function ColorSwatch(props: {
 	const size = () => props.size ?? 28;
 	const [hovered, setHovered] = createSignal(false);
 	const ring = () => {
-		if (props.selected === true) return "#6B97FF";
+		if (props.selected === true) return color.focusRing;
 		if (hovered()) return "rgba(127,127,127,0.4)";
 		return undefined;
 	};

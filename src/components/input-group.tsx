@@ -12,14 +12,7 @@ import {
 import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconName } from "../lib/icons";
-import {
-	color,
-	height,
-	radius,
-	type as scale,
-	scheme,
-	weight,
-} from "../lib/theme";
+import { color, height, radius, type as scale, scheme, weight, withAlpha } from "../lib/theme";
 
 export type InputSize = "default" | "compact";
 
@@ -44,11 +37,9 @@ const steps = {
 	},
 } as const;
 
-/** `bg-destructive-light/60` and `ring-destructive/50`, mixed offline. */
-const errorWash = () =>
-	scheme() === "light" ? "rgba(254,242,242,0.6)" : "rgba(69,10,10,0.6)";
-const errorRing = () =>
-	scheme() === "light" ? "rgba(239,68,68,0.5)" : "rgba(252,165,165,0.5)";
+/** `bg-destructive-light/60` and `ring-destructive/50`. */
+const errorWash = () => withAlpha(color.destructiveLight, 0.6);
+const errorRing = () => withAlpha(color.destructive, 0.5);
 
 type GroupScope = {
 	hover: FluidHover;

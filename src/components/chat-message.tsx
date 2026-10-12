@@ -26,8 +26,6 @@ const ENTRANCE_RISE = 8;
 /** group-hover's `transition-opacity duration-150`. */
 const META_FADE = { duration: 0.15, ease: "easeOut" } as const;
 
-/** `color-mix(in oklab, accent, background 45%)`, mixed offline for each scheme. */
-const bubbleFill = () => (scheme() === "dark" ? "#363636" : "#eeeeee");
 
 export type ChatAction = "copy" | "edit" | "regenerate";
 
@@ -144,7 +142,7 @@ export function ChatMessage(props: {
 									paddingLeft: 14,
 									paddingRight: 14,
 									borderRadius: radius.item,
-									backgroundColor: bubbleFill(),
+									backgroundColor: color.chatBubble,
 								}
 							: {}),
 					}}

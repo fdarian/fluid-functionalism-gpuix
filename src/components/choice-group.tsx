@@ -369,5 +369,5 @@ export function ChoiceRow(props: {
 export function indicatorBorder(selected: boolean, active: boolean) {
 	if (selected) return color.transparent;
 	if (!active) return color.border;
-	return scheme() === "light" ? "#A3A3A3" : "#737373";
+	return color.borderStrong;
 }
