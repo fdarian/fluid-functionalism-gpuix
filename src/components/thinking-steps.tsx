@@ -108,9 +108,9 @@ function Kicking(props: { kick: () => void; children?: JSX.Element }) {
 }
 
 /** Re-reads the nearest measured ancestor too: its content just changed size. */
-const KickContext = createContext<() => void>();
+export const KickContext = createContext<() => void>();
 
-function createMeasuredHeight() {
+export function createMeasuredHeight() {
 	const renderer = useGpuixRequired();
 	const getBounds = renderer.getElementBounds;
 	if (getBounds === undefined) {

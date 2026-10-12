@@ -14,7 +14,6 @@ import {
 } from "../components/thinking-steps";
 import type { DemoModule, ShotContext } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
-import { color } from "../lib/theme";
 
 const ogImage = new URL("../../assets/chat-ai/og.png", import.meta.url)
 	.pathname;

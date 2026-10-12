@@ -1,0 +1,1253 @@
+import {
+	buttonProps,
+	type EventPayload,
+	type HostElement,
+	type KeyEvent,
+	motion,
+	useGpuixRequired,
+} from "@gpuix/solid";
+import {
+	type Accessor,
+	createEffect,
+	createMemo,
+	createSignal,
+	For,
+	Index,
+	type JSX,
+	on,
+	onCleanup,
+	Show,
+} from "solid-js";
+import { FluidHighlight } from "../lib/fluid-highlight";
+import { createFluidHover, type ItemRect } from "../lib/fluid-hover";
+import { Icon } from "../lib/icon";
+import { defineIcon, type IconRef } from "../lib/icons";
+import {
+	color,
+	radius,
+	type as scale,
+	scheme,
+	motion as tween,
+	weight,
+} from "../lib/theme";
+import { createMeasuredHeight, KickContext } from "./thinking-steps";
+
+const arrowLeftGlyph = defineIcon(
+	'<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
+);
+const arrowRightGlyph = defineIcon(
+	'<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
+);
+
+export interface AskUserOption {
+	id?: string;
+	title: string;
+	description?: string;
+}
+
+export interface AskUserQuestion {
+	id?: string;
+	title: string;
+	/** Optional only because a `freeText` question has none. */
+	options?: AskUserOption[];
+	multiSelect?: boolean;
+	allowOther?: boolean;
+	otherPlaceholder?: string;
+	skippable?: boolean;
+	nextLabel?: string;
+	/** "inline" keeps title and description together; "stacked" puts the description under the title. */
+	layout?: "inline" | "stacked";
+	/** Which side of the row the numbered chip sits on. */
+	chipPosition?: "left" | "right";
+	/** One multi-line textarea as the whole answer, no option rows. The text is returned in `otherText`. */
+	freeText?: boolean;
+	freeTextPlaceholder?: string;
+	/** Defaults to `true`. `false` is one row tall, and plain Enter submits. */
+	freeTextMultiline?: boolean;
+	/** Runs on submit; a message blocks it and shows in the footer until the field is edited. */
+	freeTextValidate?: (value: string) => string | null | undefined;
+}
+
+export interface AskUserAnswer {
+	questionId: string;
+	selectedIds: string[];
+	otherText?: string;
+	skipped?: boolean;
+}
+
+type Answers = Record<string, AskUserAnswer>;
+
+const NO_OPTIONS: AskUserOption[] = [];
+const slowSpring = {
+	type: "spring",
+	duration: 0.24,
+	bounce: 0.12,
+} as const;
+
+const questionKey = (question: AskUserQuestion, index: number) =>
+	question.id ?? `q-${index}`;
+const optionKey = (option: AskUserOption, index: number) =>
+	option.id ?? `o-${index}`;
+
+const IS_MAC = process.platform === "darwin";
+const SHORTCUT_GLYPH = IS_MAC ? "⌘↵" : "⌃↵";
+
+/** `bg-background/15` over the primary button. */
+const chipOnPrimary = () =>
+	scheme() === "dark" ? "rgba(23,23,23,0.15)" : "rgba(250,250,250,0.15)";
+
+// ─── Footer button ────────────────────────────────────────────────────────
+
+/** The compact (28px) ghost and primary buttons of the footer. */
+function FooterButton(props: {
+	variant: "ghost" | "primary";
+	leading?: IconRef;
+	trailing?: IconRef;
+	disabled?: boolean;
+	testId?: string;
+	onClick: () => void;
+	children: JSX.Element;
+}) {
+	const [hovered, setHovered] = createSignal(false);
+	const primary = () => props.variant === "primary";
+	const tint = () =>
+		primary()
+			? color.background
+			: hovered()
+				? color.foreground
+				: color.mutedForeground;
+	const stroke = () => (hovered() ? 2 : 1.5);
+	const padLeft = () => (props.leading !== undefined ? 8 : 12);
+	const padRight = () => (props.trailing !== undefined || primary() ? 8 : 12);
+	return (
+		<div
+			{...buttonProps({ disabled: props.disabled, onClick: props.onClick })}
+			testId={props.testId}
+			tabIndex={props.disabled ? -1 : 0}
+			onMouseEnter={() => setHovered(true)}
+			onMouseLeave={() => setHovered(false)}
+			style={{
+				display: "flex",
+				flexDirection: "row",
+				alignItems: "center",
+				flexShrink: 0,
+				gap: 4,
+				height: 28,
+				paddingLeft: padLeft(),
+				paddingRight: padRight(),
+				borderRadius: radius.item,
+				cursor: "pointer",
+				userSelect: "none",
+				keyboardFocusDim: false,
+				opacity: props.disabled ? 0.5 : 1,
+				pointerEvents: props.disabled ? "none" : "auto",
+				backgroundColor: primary() ? color.foreground : color.transparent,
+				hover: {
+					backgroundColor: primary() ? color.primaryHover : color.hover,
+				},
+				active: {
+					backgroundColor: primary() ? color.primaryActive : color.active,
+				},
+				focusVisible: {
+					outlineWidth: 1,
+					outlineColor: color.focusRing,
+					outlineOffset: 1,
+				},
+			}}
+		>
+			<Show when={props.leading}>
+				{(glyph: Accessor<IconRef>) => (
+					<Icon
+						name={glyph()}
+						size={14}
+						strokeWidth={stroke()}
+						color={tint()}
+					/>
+				)}
+			</Show>
+			{props.children}
+			<Show when={props.trailing}>
+				{(glyph: Accessor<IconRef>) => (
+					<Icon
+						name={glyph()}
+						size={14}
+						strokeWidth={stroke()}
+						color={tint()}
+					/>
+				)}
+			</Show>
+		</div>
+	);
+}
+
+function ButtonLabel(props: { tint: string; children: string }) {
+	return (
+		<text
+			style={{
+				...scale.bodyCompact,
+				color: props.tint,
+				fontWeight: weight.normal,
+				whiteSpace: "nowrap",
+			}}
+		>
+			{props.children}
+		</text>
+	);
+}
+
+/** Keycap for a shortcut, inside the primary button. */
+function ShortcutChip(props: { children: string }) {
+	return (
+		<div
+			style={{
+				minWidth: 18,
+				height: 18,
+				paddingLeft: 4,
+				paddingRight: 4,
+				marginLeft: 2,
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "center",
+				borderRadius: radius.item,
+				backgroundColor: chipOnPrimary(),
+				pointerEvents: "none",
+			}}
+		>
+			<text style={{ ...scale.micro, lineHeight: 11, color: color.background }}>
+				{props.children}
+			</text>
+		</div>
+	);
+}
+
+// ─── Option row ───────────────────────────────────────────────────────────
+
+interface RowProps {
+	index: number;
+	registerItem: (index: number, element: HostElement) => void;
+	rowRef: (index: number, element: HostElement) => void;
+	role: "radio" | "checkbox" | null;
+	isSelected: boolean;
+	tabIndex: number;
+	onClick: () => void;
+	onFocus: () => void;
+	onBlur: () => void;
+	chipContent: number;
+	chipFilled: boolean;
+	isMulti: boolean;
+	showArrow: boolean;
+	onArrowClick?: () => void;
+	bodyLayout: "inline" | "stacked";
+	topAlign: boolean;
+	chipPosition: "left" | "right";
+	testId?: string;
+	children: JSX.Element;
+}
+
+function Row(props: RowProps) {
+	let rowElement: HostElement | undefined;
+	createEffect(() => {
+		if (rowElement === undefined) throw new Error("Row is not mounted");
+		props.registerItem(props.index, rowElement);
+		props.rowRef(props.index, rowElement);
+	});
+	const stacked = () => props.bodyLayout === "stacked";
+	const chipNudge = () => (props.topAlign ? (stacked() ? -1 : -5) : 0);
+
+	const arrowOverlay = () => (
+		<Show when={props.showArrow}>
+			<motion.div
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={{ duration: 0.08 }}
+				{...(props.onArrowClick
+					? { role: "button", onClick: props.onArrowClick }
+					: {})}
+				style={{
+					position: "absolute",
+					top: 0,
+					left: 0,
+					right: 0,
+					bottom: 0,
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					borderRadius: radius.item,
+					backgroundColor: color.foreground,
+					// Decorative unless it carries its own click: a filled absolute child takes hits from the row.
+					pointerEvents: props.onArrowClick ? "auto" : "none",
+					cursor: props.onArrowClick ? "pointer" : "default",
+				}}
+			>
+				<Icon
+					name={arrowRightGlyph}
+					size={14}
+					strokeWidth={2}
+					color={color.background}
+				/>
+			</motion.div>
+		</Show>
+	);
+
+	const chipSlot = () => (
+		<div
+			style={{
+				position: "relative",
+				flexShrink: 0,
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "center",
+				width: 28,
+				height: 28,
+				marginTop: chipNudge(),
+			}}
+		>
+			<div
+				style={{
+					position: "absolute",
+					width: 20,
+					height: 20,
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					borderRadius: radius.item,
+					pointerEvents: "none",
+					opacity: props.chipPosition === "right" && props.showArrow ? 0 : 1,
+					...(props.isMulti
+						? props.chipFilled
+							? { backgroundColor: color.foreground }
+							: { borderWidth: 1, borderColor: color.border }
+						: {}),
+				}}
+			>
+				<text
+					style={{
+						...scale.micro,
+						fontWeight: props.chipFilled ? weight.semibold : weight.normal,
+						color: props.isMulti
+							? props.chipFilled
+								? color.background
+								: color.mutedForeground
+							: props.chipFilled
+								? color.foreground
+								: color.mutedForeground,
+					}}
+				>
+					{String(props.chipContent)}
+				</text>
+			</div>
+			<Show when={props.chipPosition === "right"}>{arrowOverlay()}</Show>
+		</div>
+	);
+
+	const rightArrowSlot = () => (
+		<Show when={props.chipPosition === "left" && !props.isMulti}>
+			<div
+				style={{
+					position: "relative",
+					flexShrink: 0,
+					width: 28,
+					height: 28,
+					marginTop: chipNudge(),
+				}}
+			>
+				{arrowOverlay()}
+			</div>
+		</Show>
+	);
+
+	return (
+		<div
+			ref={(element) => {
+				rowElement = element;
+			}}
+			testId={props.testId}
+			role={props.role ?? undefined}
+			aria-selected={props.isSelected}
+			tabIndex={props.tabIndex}
+			onClick={props.onClick}
+			onFocus={props.onFocus}
+			onBlur={props.onBlur}
+			style={{
+				position: "relative",
+				display: "flex",
+				flexDirection: "row",
+				alignItems: props.topAlign ? "flex-start" : "center",
+				gap: props.chipPosition === "left" ? 8 : 12,
+				minHeight: stacked() ? 56 : 40,
+				paddingTop: stacked() ? 8 : 6,
+				paddingBottom: stacked() ? 8 : 6,
+				paddingLeft: props.chipPosition === "left" ? 6 : 12,
+				paddingRight: props.chipPosition === "left" && props.isMulti ? 12 : 6,
+				borderRadius: radius.item,
+				cursor: "pointer",
+				userSelect: "none",
+				keyboardFocusDim: false,
+				focusVisible: {
+					outlineWidth: 1,
+					outlineColor: color.focusRing,
+					outlineOffset: 2,
+				},
+			}}
+		>
+			<Show when={props.chipPosition === "left"}>{chipSlot()}</Show>
+			<div
+				style={{
+					display: "flex",
+					flexDirection: stacked() ? "column" : "row",
+					flexWrap: stacked() ? "nowrap" : "wrap",
+					alignItems: stacked() ? "flex-start" : "center",
+					columnGap: 4,
+					rowGap: 0,
+					gap: stacked() ? 2 : undefined,
+					flexGrow: 1,
+					minWidth: 0,
+				}}
+			>
+				{props.children}
+			</div>
+			<Show when={props.chipPosition === "right"}>{chipSlot()}</Show>
+			{rightArrowSlot()}
+		</div>
+	);
+}
+
+/** The title with a hidden semibold copy reserving its width, so it can go semibold in place. */
+function OptionTitle(props: { selected: boolean; children: string }) {
+	return (
+		<div style={{ position: "relative", flexShrink: 0 }}>
+			<text
+				style={{
+					...scale.body,
+					opacity: 0,
+					fontWeight: weight.semibold,
+					whiteSpace: "nowrap",
+					color: color.foreground,
+				}}
+			>
+				{props.children}
+			</text>
+			{/* Absolute children take the pointer from the row, so this layer takes none. */}
+			<div
+				style={{
+					position: "absolute",
+					top: 0,
+					left: 0,
+					pointerEvents: "none",
+				}}
+			>
+				<text
+					style={{
+						...scale.body,
+						whiteSpace: "nowrap",
+						color: color.foreground,
+						fontWeight: props.selected ? weight.semibold : weight.normal,
+					}}
+				>
+					{props.children}
+				</text>
+			</div>
+		</div>
+	);
+}
+
+// ─── AskUserQuestions ─────────────────────────────────────────────────────
+
+export function AskUserQuestions(props: {
+	questions: AskUserQuestion[];
+	currentIndex?: number;
+	defaultCurrentIndex?: number;
+	onCurrentIndexChange?: (index: number) => void;
+	answers?: Answers;
+	defaultAnswers?: Answers;
+	onAnswersChange?: (answers: Answers) => void;
+	onComplete?: (answers: Answers) => void;
+	onSkip?: (questionId: string, currentIndex: number) => void;
+	skipLabel?: string;
+	/** Focus a `freeText` field on the first question too. Later questions always take focus. */
+	autoFocus?: boolean;
+	testId?: string;
+}) {
+	const renderer = useGpuixRequired();
+
+	// ── Controlled / uncontrolled state.
+	const [internalIndex, setInternalIndex] = createSignal(
+		props.defaultCurrentIndex ?? 0,
+	);
+	const index = () => props.currentIndex ?? internalIndex();
+	const setIndex = (next: number) => {
+		if (props.currentIndex === undefined) setInternalIndex(next);
+		props.onCurrentIndexChange?.(next);
+	};
+	const [internalAnswers, setInternalAnswers] = createSignal<Answers>(
+		props.defaultAnswers ?? {},
+	);
+	const answers = () => props.answers ?? internalAnswers();
+	// Read through this, not the signal: a write earlier in the same tick must not be missed.
+	let latestAnswers = answers();
+	createEffect(() => {
+		latestAnswers = answers();
+	});
+	const writeAnswers = (update: (previous: Answers) => Answers) => {
+		const next = update(latestAnswers);
+		latestAnswers = next;
+		if (props.answers === undefined) setInternalAnswers(next);
+		props.onAnswersChange?.(next);
+		return next;
+	};
+
+	const total = () => props.questions.length;
+	const safeIndex = () =>
+		Math.max(0, Math.min(index(), Math.max(0, total() - 1)));
+	const question = (): AskUserQuestion | undefined =>
+		props.questions[safeIndex()];
+	const qId = () => {
+		const current = question();
+		return current === undefined ? "" : questionKey(current, safeIndex());
+	};
+	const currentAnswer = () => answers()[qId()];
+	const isMulti = () => question()?.multiSelect === true;
+	const isSkippable = () => question()?.skippable !== false;
+	const isFreeText = () => question()?.freeText === true;
+	const isFreeTextMultiline = () => question()?.freeTextMultiline !== false;
+	const allowOther = () => !isFreeText() && question()?.allowOther === true;
+	const selectedIds = () => currentAnswer()?.selectedIds ?? [];
+	const otherText = () => currentAnswer()?.otherText ?? "";
+	const options = () => question()?.options ?? NO_OPTIONS;
+	const otherIndex = () => (allowOther() ? options().length : -1);
+	const rowCount = () => options().length + (allowOther() ? 1 : 0);
+
+	// ── Focus bookkeeping.
+	const [focusedRow, setFocusedRow] = createSignal<number | null>(null);
+	const [textFocused, setTextFocused] = createSignal(false);
+	const [freeTextError, setFreeTextError] = createSignal<string | null>(null);
+	const rowElements = new Map<number, HostElement>();
+	let keyboardDriving = false;
+
+	const hover = createFluidHover();
+	// A free-text question has no rows, and fluid hover treats a missing container as an error.
+	const remeasure = () => {
+		if (!isFreeText()) hover.remeasure();
+	};
+
+	// ── Answer actions.
+	const goNext = (snapshot: Answers) => {
+		if (safeIndex() >= total() - 1) props.onComplete?.(snapshot);
+		else setIndex(safeIndex() + 1);
+	};
+	const patch = (
+		update: (existing: AskUserAnswer | undefined) => Partial<AskUserAnswer>,
+	) =>
+		writeAnswers((previous) => ({
+			...previous,
+			[qId()]: {
+				questionId: qId(),
+				selectedIds: previous[qId()]?.selectedIds ?? [],
+				otherText: previous[qId()]?.otherText,
+				skipped: false,
+				...update(previous[qId()]),
+			},
+		}));
+	const selectSingle = (optionId: string) => {
+		const text = latestAnswers[qId()]?.otherText;
+		goNext(
+			patch(() => ({ selectedIds: [optionId], otherText: text || undefined })),
+		);
+	};
+	const toggleMulti = (optionId: string) => {
+		patch((existing) => {
+			const ids = new Set(existing?.selectedIds ?? []);
+			if (ids.has(optionId)) ids.delete(optionId);
+			else ids.add(optionId);
+			return { selectedIds: [...ids] };
+		});
+	};
+	const setOther = (text: string) => {
+		setFreeTextError(null);
+		patch(() => ({ otherText: text }));
+	};
+	const submitOther = () => {
+		const current = question();
+		if (current === undefined) return;
+		const text = (latestAnswers[qId()]?.otherText ?? "").trim();
+		if (text === "") return;
+		if (current.freeText && current.freeTextValidate) {
+			const message = current.freeTextValidate(text);
+			if (message) {
+				setFreeTextError(message);
+				return;
+			}
+		}
+		setFreeTextError(null);
+		goNext(patch(() => ({ otherText: text })));
+	};
+	const skip = () => {
+		const current = question();
+		if (current === undefined) return;
+		const snapshot = writeAnswers((previous) => ({
+			...previous,
+			[qId()]: {
+				questionId: qId(),
+				selectedIds: previous[qId()]?.selectedIds ?? [],
+				otherText: previous[qId()]?.otherText,
+				skipped: true,
+			},
+		}));
+		props.onSkip?.(qId(), safeIndex());
+		goNext(snapshot);
+	};
+	const back = () => {
+		if (safeIndex() > 0) setIndex(safeIndex() - 1);
+	};
+	const commitMulti = () => goNext(answers());
+	const hasAnswer = () =>
+		selectedIds().length > 0 || otherText().trim().length > 0;
+
+	// A new question starts clean; a keyboard-driven flow keeps focus on the rows.
+	createEffect(
+		on(
+			safeIndex,
+			() => {
+				hover.setActiveIndex(null);
+				setFocusedRow(null);
+				setFreeTextError(null);
+				if (!keyboardDriving) return;
+				const timer = setTimeout(() => focusRow(0), 48);
+				onCleanup(() => clearTimeout(timer));
+			},
+			{ defer: true },
+		),
+	);
+
+	const focusRow = (target: number) => {
+		const element = rowElements.get(target);
+		if (element === undefined) return;
+		renderer.focusElement?.(element.id);
+	};
+	let otherElement: HostElement | undefined;
+	const focusOther = () => {
+		if (otherElement === undefined) return;
+		renderer.focusElement?.(otherElement.id);
+	};
+	const moveActive = (next: number) => {
+		hover.setActiveIndex(next);
+		if (allowOther() && next === otherIndex()) focusOther();
+		else focusRow(next);
+	};
+
+	// ── Keyboard. One handler on the card: the focused row or field bubbles here.
+	const onKeyDown = (event: KeyEvent) => {
+		const mod = IS_MAC ? event.modifiers?.cmd : event.modifiers?.ctrl;
+		keyboardDriving = true;
+		if (event.key === "enter" && mod) {
+			if (!(isMulti() || isFreeText())) return;
+			event.preventDefault();
+			if (isFreeText()) {
+				if (otherText().trim().length > 0) submitOther();
+			} else if (hasAnswer()) commitMulti();
+			return;
+		}
+		if (event.modifiers?.cmd || event.modifiers?.ctrl || event.modifiers?.alt) {
+			return;
+		}
+		const inText = textFocused();
+		const key = event.key;
+		if (inText) {
+			// Caret movement is the editor's, except up and down off a one-line draft.
+			if (isFreeText() || (key !== "up" && key !== "down")) return;
+			if (otherText().includes("\n")) return;
+		}
+		if (!inText && key !== undefined && key >= "1" && key <= "9") {
+			const slot = Number.parseInt(key, 10) - 1;
+			if (slot < options().length) {
+				event.preventDefault();
+				const id = optionKey(options()[slot], slot);
+				if (isMulti()) toggleMulti(id);
+				else selectSingle(id);
+			} else if (slot === options().length && allowOther()) {
+				event.preventDefault();
+				focusOther();
+			}
+			return;
+		}
+		const focused = focusedRow();
+		if (
+			!inText &&
+			focused !== null &&
+			focused < options().length &&
+			(key === "space" || key === "enter")
+		) {
+			event.preventDefault();
+			const id = optionKey(options()[focused], focused);
+			if (isMulti()) toggleMulti(id);
+			else selectSingle(id);
+			return;
+		}
+		if (key === "left" || key === "right") {
+			event.preventDefault();
+			if (key === "left") back();
+			else if (isSkippable() && total() > 1) skip();
+			return;
+		}
+		if (rowCount() === 0) return;
+		if (key === "down" || key === "up" || key === "home" || key === "end") {
+			event.preventDefault();
+			let next: number;
+			if (key === "home") next = 0;
+			else if (key === "end") next = rowCount() - 1;
+			else {
+				const base = inText ? otherIndex() : (hover.activeIndex() ?? -1);
+				next = key === "down" ? base + 1 : base - 1;
+				next = (next + rowCount()) % rowCount();
+			}
+			moveActive(next);
+		}
+	};
+
+	// ── Selected-row backgrounds: contiguous selections merge into one block.
+	const selectedRows = createMemo(() => {
+		const rows: number[] = [];
+		options().forEach((option, i) => {
+			if (selectedIds().includes(optionKey(option, i))) rows.push(i);
+		});
+		if (allowOther() && otherText().length > 0) rows.push(otherIndex());
+		return rows;
+	});
+	const runs = createMemo(() => {
+		const found: { start: number; end: number }[] = [];
+		for (const row of selectedRows()) {
+			const last = found[found.length - 1];
+			if (last !== undefined && row === last.end + 1) last.end = row;
+			else found.push({ start: row, end: row });
+		}
+		return found;
+	});
+	const runRect = (run: { start: number; end: number }): ItemRect | null => {
+		const rects = hover.rects();
+		const first = rects[run.start];
+		const last = rects[run.end];
+		if (!hover.isMeasured() || first === undefined || last === undefined) {
+			return null;
+		}
+		return {
+			top: first.top,
+			left: first.left,
+			width: first.width,
+			height: last.top + last.height - first.top,
+		};
+	};
+	const hoverRect = () => {
+		const active = hover.activeIndex();
+		if (active === null || !hover.isMeasured()) return null;
+		return hover.rects()[active] ?? null;
+	};
+	const otherHintRect = () => {
+		if (!allowOther() || !hover.isMeasured()) return null;
+		if (!(focusedRow() === otherIndex() && otherText().length === 0)) {
+			return null;
+		}
+		return hover.rects()[otherIndex()] ?? null;
+	};
+
+	// ── Content height: the Q/A region animates to its content's measured height.
+	const content = createMeasuredHeight();
+	createEffect(() => {
+		void [
+			qId(),
+			selectedIds().length,
+			otherText(),
+			freeTextError(),
+			focusedRow(),
+		];
+		content.kick();
+		remeasure();
+	});
+
+	const showBack = () => total() > 1 && safeIndex() > 0;
+	const showSkip = () => total() > 1 && isSkippable();
+	const showSubmit = () => isMulti() || isFreeText();
+	const showFooter = () => showBack() || showSkip() || showSubmit();
+	const firstSelectedRow = () =>
+		options().findIndex((option, i) =>
+			selectedIds().includes(optionKey(option, i)),
+		);
+	const rovingRow = () => (firstSelectedRow() === -1 ? 0 : firstSelectedRow());
+
+	const continueLabel = () =>
+		question()?.nextLabel ??
+		(safeIndex() >= total() - 1 ? "Finish" : "Continue");
+
+	const rows = () => (
+		<div
+			role={isMulti() ? "group" : "radiogroup"}
+			ref={(element) => {
+				hover.containerRef(element);
+				queueMicrotask(remeasure);
+			}}
+			onMouseEnter={hover.handlers.onMouseEnter}
+			onMouseMove={hover.handlers.onMouseMove}
+			onMouseLeave={hover.handlers.onMouseLeave}
+			style={{
+				position: "relative",
+				display: "flex",
+				flexDirection: "column",
+				marginLeft: -12,
+				marginRight: -12,
+			}}
+		>
+			{/* The empty Other field shows a quiet "type here" outline. */}
+			<motion.div
+				initial={false}
+				animate={{
+					opacity: otherHintRect() === null ? 0 : 1,
+					top: otherHintRect()?.top ?? 0,
+					left: otherHintRect()?.left ?? 0,
+					width: otherHintRect()?.width ?? 0,
+					height: otherHintRect()?.height ?? 0,
+				}}
+				transition={{ ...tween.fast, duration: 0.08 }}
+				style={{
+					position: "absolute",
+					borderRadius: radius.item,
+					backgroundColor: color.card,
+					outlineWidth: 1,
+					outlineOffset: -1,
+					outlineColor: color.border,
+					pointerEvents: "none",
+				}}
+			/>
+			{/* Below the selection, so a hovered selected row still reads as selected. */}
+			<FluidHighlight
+				rect={hoverRect}
+				session={hover.session}
+				radius={radius.item}
+				background={color.hover}
+			/>
+			<Index each={runs()}>
+				{(run) => (
+					<FluidHighlight
+						rect={() => runRect(run())}
+						session={() => 0}
+						radius={radius.item}
+						background={color.active}
+						glide={tween.moderate}
+						fade={tween.moderateExit}
+					/>
+				)}
+			</Index>
+			<For each={options()}>
+				{(option, i) => {
+					const id = () => optionKey(option, i());
+					const selected = () => selectedIds().includes(id());
+					const stacked = () => question()?.layout === "stacked";
+					return (
+						<Row
+							index={i()}
+							testId={`${props.testId ?? "ask"}-option-${i()}`}
+							registerItem={hover.registerItem}
+							rowRef={(rowIndex, element) => rowElements.set(rowIndex, element)}
+							role={isMulti() ? "checkbox" : "radio"}
+							isSelected={selected()}
+							tabIndex={i() === rovingRow() ? 0 : -1}
+							onClick={() =>
+								isMulti() ? toggleMulti(id()) : selectSingle(id())
+							}
+							onFocus={() => {
+								hover.setActiveIndex(i());
+								setFocusedRow(i());
+							}}
+							// The old row's blur can arrive after the new row's focus.
+							onBlur={() =>
+								setFocusedRow((current) => (current === i() ? null : current))
+							}
+							chipContent={i() + 1}
+							chipFilled={selected()}
+							isMulti={isMulti()}
+							showArrow={!isMulti() && hover.activeIndex() === i()}
+							bodyLayout={stacked() ? "stacked" : "inline"}
+							topAlign={stacked()}
+							chipPosition={question()?.chipPosition ?? "right"}
+						>
+							<OptionTitle selected={selected()}>{option.title}</OptionTitle>
+							<Show when={option.description}>
+								<text
+									style={{
+										...(stacked() ? scale.caption : scale.body),
+										color: color.mutedForeground,
+									}}
+								>
+									{option.description}
+								</text>
+							</Show>
+						</Row>
+					);
+				}}
+			</For>
+			<Show when={allowOther()}>
+				<Row
+					index={otherIndex()}
+					testId={`${props.testId ?? "ask"}-other`}
+					registerItem={hover.registerItem}
+					rowRef={(rowIndex, element) => rowElements.set(rowIndex, element)}
+					role={null}
+					isSelected={otherText().length > 0}
+					tabIndex={-1}
+					onClick={focusOther}
+					onFocus={() => {
+						hover.setActiveIndex(otherIndex());
+						setFocusedRow(otherIndex());
+					}}
+					onBlur={() =>
+						setFocusedRow((current) =>
+							current === otherIndex() ? null : current,
+						)
+					}
+					chipContent={otherIndex() + 1}
+					chipFilled={otherText().length > 0}
+					isMulti={isMulti()}
+					showArrow={
+						!isMulti() &&
+						(focusedRow() === otherIndex() ||
+							hover.activeIndex() === otherIndex()) &&
+						otherText().trim().length > 0
+					}
+					onArrowClick={
+						!isMulti() && otherText().trim().length > 0
+							? submitOther
+							: undefined
+					}
+					bodyLayout="inline"
+					topAlign={otherText().includes("\n")}
+					chipPosition={question()?.chipPosition ?? "right"}
+				>
+					<textarea
+						ref={(element) => {
+							otherElement = element;
+						}}
+						testId={`${props.testId ?? "ask"}-other-input`}
+						minRows={1}
+						value={otherText()}
+						placeholder={
+							question()?.otherPlaceholder ?? "Describe in your own words…"
+						}
+						aria-label={
+							question()?.otherPlaceholder ?? "Describe in your own words"
+						}
+						theme={fieldTheme()}
+						onChange={(event: EventPayload) => setOther(event.value ?? "")}
+						onFocus={() => {
+							setTextFocused(true);
+							hover.setActiveIndex(otherIndex());
+							setFocusedRow(otherIndex());
+						}}
+						onBlur={() => {
+							setTextFocused(false);
+							setFocusedRow((current) =>
+								current === otherIndex() ? null : current,
+							);
+						}}
+						{...(isMulti() ? {} : { onSubmit: submitOther })}
+						style={{
+							...scale.body,
+							flexGrow: 1,
+							width: "100%",
+							minWidth: 0,
+							color: color.foreground,
+							backgroundColor: color.transparent,
+							keyboardFocusDim: false,
+						}}
+					/>
+				</Row>
+			</Show>
+		</div>
+	);
+
+	const freeTextField = () => {
+		const [hovered, setHovered] = createSignal(false);
+		const multiline = isFreeTextMultiline();
+		return (
+			<div
+				onMouseEnter={() => setHovered(true)}
+				onMouseLeave={() => setHovered(false)}
+				onClick={focusFreeText}
+				style={{
+					position: "relative",
+					marginTop: 4,
+					marginLeft: -12,
+					marginRight: -12,
+					paddingTop: 10,
+					paddingBottom: 10,
+					paddingLeft: 12,
+					paddingRight: 12,
+					minHeight: multiline ? 76 : 40,
+					borderRadius: radius.item,
+					cursor: "text",
+					backgroundColor:
+						otherText().length > 0
+							? color.active
+							: textFocused()
+								? color.card
+								: hovered()
+									? color.hover
+									: color.transparent,
+					...(textFocused() && otherText().length === 0
+						? {
+								outlineWidth: 1,
+								outlineOffset: -1,
+								outlineColor: color.border,
+							}
+						: {}),
+				}}
+			>
+				<textarea
+					ref={(element) => {
+						otherElement = element;
+					}}
+					testId={`${props.testId ?? "ask"}-free-input`}
+					autoFocus={safeIndex() > 0 || props.autoFocus !== false}
+					minRows={1}
+					value={otherText()}
+					placeholder={question()?.freeTextPlaceholder ?? "Type your answer…"}
+					aria-label={question()?.title}
+					theme={fieldTheme()}
+					onChange={(event: EventPayload) => setOther(event.value ?? "")}
+					onFocus={() => setTextFocused(true)}
+					onBlur={() => setTextFocused(false)}
+					{...(multiline ? {} : { onSubmit: submitOther })}
+					style={{
+						...scale.body,
+						width: "100%",
+						color: color.foreground,
+						backgroundColor: color.transparent,
+						keyboardFocusDim: false,
+					}}
+				/>
+			</div>
+		);
+	};
+	const focusFreeText = () => focusOther();
+
+	return (
+		<Show
+			when={question()}
+			fallback={
+				<div style={cardStyle()}>
+					<div style={{ padding: 20 }}>
+						<text style={{ ...scale.body, color: color.mutedForeground }}>
+							No questions.
+						</text>
+					</div>
+				</div>
+			}
+		>
+			<div
+				testId={props.testId}
+				tabIndex={0}
+				onKeyDown={onKeyDown}
+				onMouseDown={() => {
+					keyboardDriving = false;
+				}}
+				style={{ ...cardStyle(), keyboardFocusDim: false }}
+			>
+				{/* Static header: only the number changes. */}
+				<div
+					style={{
+						paddingLeft: 20,
+						paddingRight: 20,
+						paddingTop: 16,
+						paddingBottom: 8,
+					}}
+				>
+					<text style={{ ...scale.caption, color: color.mutedForeground }}>
+						{`Question ${safeIndex() + 1} of ${total()}`}
+					</text>
+				</div>
+				{/* The Q/A region: its height animates to the content's, so the footer rides along. */}
+				<motion.div
+					initial={false}
+					animate={{ height: content.height() ?? 0 }}
+					transition={content.height() === undefined ? tween.snap : slowSpring}
+					style={{
+						display: "flex",
+						flexDirection: "column",
+						overflow: "hidden",
+						// Until the content is measured the region keeps its natural height.
+						...(content.height() === undefined ? { height: "auto" } : {}),
+					}}
+				>
+					<div ref={content.ref} style={{ flexShrink: 0 }}>
+						<KickContext.Provider value={content.kick}>
+							<div
+								style={{
+									paddingLeft: 20,
+									paddingRight: 20,
+									paddingBottom: showFooter() ? 4 : 12,
+								}}
+							>
+								<Show when={qId()} keyed>
+									<div
+										style={{ display: "flex", flexDirection: "column", gap: 8 }}
+									>
+										<text
+											style={{
+												...scale.title,
+												fontWeight: weight.semibold,
+												color: color.foreground,
+											}}
+										>
+											{question()?.title}
+										</text>
+										<Show when={isFreeText()} fallback={rows()}>
+											{freeTextField()}
+										</Show>
+									</div>
+								</Show>
+							</div>
+						</KickContext.Provider>
+					</div>
+				</motion.div>
+				<Show when={showFooter()}>
+					<div
+						style={{
+							paddingLeft: 20,
+							paddingRight: 20,
+							paddingTop: 4,
+							paddingBottom: 8,
+						}}
+					>
+						<div
+							style={{
+								display: "flex",
+								flexDirection: "row",
+								alignItems: "center",
+								justifyContent: "space-between",
+								gap: 8,
+								marginLeft: -12,
+								marginRight: -12,
+							}}
+						>
+							<div
+								style={{
+									display: "flex",
+									flexDirection: "row",
+									alignItems: "center",
+									flexGrow: 1,
+									minWidth: 0,
+									gap: 8,
+								}}
+							>
+								<Show when={showBack()}>
+									<FadeIn>
+										<FooterButton
+											variant="ghost"
+											leading={arrowLeftGlyph}
+											testId={`${props.testId ?? "ask"}-back`}
+											onClick={back}
+										>
+											<ButtonLabel tint={color.mutedForeground}>
+												Back
+											</ButtonLabel>
+										</FooterButton>
+									</FadeIn>
+								</Show>
+								<Show when={freeTextError()}>
+									<text
+										style={{
+											...scale.caption,
+											color: color.destructive,
+											paddingLeft: 12,
+											flexShrink: 1,
+											minWidth: 0,
+										}}
+									>
+										{freeTextError()}
+									</text>
+								</Show>
+							</div>
+							<div
+								style={{
+									display: "flex",
+									flexDirection: "row",
+									alignItems: "center",
+									gap: 8,
+								}}
+							>
+								<Show when={showSkip()}>
+									<FadeIn>
+										<FooterButton
+											variant="ghost"
+											trailing={arrowRightGlyph}
+											testId={`${props.testId ?? "ask"}-skip`}
+											onClick={skip}
+										>
+											<ButtonLabel tint={color.mutedForeground}>
+												{props.skipLabel ?? "Skip"}
+											</ButtonLabel>
+										</FooterButton>
+									</FadeIn>
+								</Show>
+								<Show when={showSubmit()}>
+									<FadeIn>
+										<FooterButton
+											variant="primary"
+											testId={`${props.testId ?? "ask"}-continue`}
+											disabled={
+												isFreeText()
+													? otherText().trim().length === 0
+													: !hasAnswer()
+											}
+											onClick={isFreeText() ? submitOther : commitMulti}
+										>
+											<ButtonLabel tint={color.background}>
+												{continueLabel()}
+											</ButtonLabel>
+											<ShortcutChip>{SHORTCUT_GLYPH}</ShortcutChip>
+										</FooterButton>
+									</FadeIn>
+								</Show>
+							</div>
+						</div>
+					</div>
+				</Show>
+			</div>
+		</Show>
+	);
+}
+
+/** Footer buttons fade in when they appear; the source also scales them from 0.85 and animates them out. */
+function FadeIn(props: { children: JSX.Element }) {
+	return (
+		<motion.div
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			transition={{ duration: 0.1 }}
+		>
+			{props.children}
+		</motion.div>
+	);
+}
+
+function fieldTheme() {
+	return {
+		text: color.foreground,
+		textMuted: color.mutedForeground,
+		textFaint: color.mutedForeground,
+		textDim: color.mutedForeground,
+		caret: color.foreground,
+	};
+}
+
+function cardStyle() {
+	return {
+		position: "relative",
+		display: "flex",
+		flexDirection: "column",
+		width: "100%",
+		maxWidth: 520,
+		overflow: "hidden",
+		backgroundColor: color.card,
+		borderRadius: radius.container,
+		borderWidth: 1,
+		borderColor: color.border,
+	} as const;
+}
