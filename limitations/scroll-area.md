@@ -16,7 +16,7 @@ Ported: vertical, horizontal and both-axis areas, the hover / scroll-driven thum
 
 - **Original:** a wheel tick scrolls the innermost scroller that can still move; at its end the tick chains to the parent (unless `overscroll-behavior` stops it).
 - **gpuix lacks:** every scroll container under the pointer applies the tick. gpui's scroll listener (`zed/crates/gpui/src/elements/div.rs:3266`) never calls `stop_propagation`, and gpuix has no `overscrollBehavior`. A ScrollArea inside the (scrolling) demo page moved both. Missing feature in gpui; gpuix could expose it.
-- **Workaround:** `containWheel`: the area remembers the nearest scrolling ancestor (walking `HostElement.parent`) and its offset, and puts the ancestor's offset back after any tick that moved the area. Once the area is at its limit the tick is left alone, so chaining works. The correction runs in JS after the native handler, so a frame of the ancestor moving is possible live; headless captures cannot show it.
+- **Workaround:** `containWheel`: the area remembers the nearest scrolling ancestor (walking `HostElement.parent`) and its offset, and puts the ancestor's offset back after any tick that moved the area. Once the area is at its limit the tick is left alone, so chaining works. The correction runs in JS after the native handler, so a frame of the ancestor moving is possible live; headless captures cannot show it. Verified with real wheel ticks on the page, an outer ScrollArea and an inner one (`nested-*` screenshots): the inner moves and the enclosing scrollers stay put, and once the inner is at its end the outer follows.
 - **Fidelity:** approximated.
 - **Components it hits:** every scroller inside the demo page (combobox / select lists inside a page, sidebar).
 

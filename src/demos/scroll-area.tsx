@@ -126,6 +126,7 @@ export const group = "Components";
 
 export function Demo() {
 	return (
+		<>
 		<DemoCard title="Scroll Area">
 			<div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 				<div style={{ display: "flex", flexDirection: "row", gap: 24 }}>
@@ -247,6 +248,32 @@ export function Demo() {
 				</ScrollArea>
 			</div>
 		</DemoCard>
+		<DemoCard title="Nested scroll areas">
+			<ScrollArea
+				testId="outer"
+				width={280}
+				height={160}
+				fadeColor={color.surface2}
+				style={box()}
+			>
+				<div style={{ display: "flex", flexDirection: "column", padding: 12, gap: 8 }}>
+					<text style={{ ...scale.body, color: color.mutedForeground }}>
+						Outer area. Scroll the inner one to its end: the outer follows.
+					</text>
+					<ScrollArea testId="inner" width={256} height={96} style={box()}>
+						<ReleaseRows />
+					</ScrollArea>
+					<For each={RELEASES.slice(0, 6)}>
+						{(release: string) => (
+							<text style={{ ...scale.body, color: color.foreground }}>
+								{release}
+							</text>
+						)}
+					</For>
+				</div>
+			</ScrollArea>
+		</DemoCard>
+		</>
 	);
 }
 
@@ -280,6 +307,18 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(strip.x, strip.y);
 	await shot.scroll(strip.x, strip.y, -200, 0);
 	shot.capture("horizontal-wheel");
+
+	// Nested: the page itself scrolls first, then a wheel over the inner area must move the inner area and leave its enclosing scrollers put.
+	await shot.scroll(930, 400, 0, -400);
+	shot.capture("page-scrolled");
+	const inner = shot.centerOf("inner");
+	await shot.moveTo(inner.x, inner.y);
+	await shot.scroll(inner.x, inner.y, 0, -150);
+	shot.capture("nested-inner-scrolled-outer-stays");
+	await shot.scroll(inner.x, inner.y, 0, -2000);
+	await shot.scroll(inner.x, inner.y, 0, -150);
+	shot.capture("nested-inner-at-end-outer-follows");
+	await shot.scroll(930, 400, 0, 2000);
 
 	const grid = shot.centerOf("both");
 	await shot.moveTo(grid.x, grid.y);
