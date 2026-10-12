@@ -29,7 +29,20 @@ const nodes = {
 
 export type IconName = keyof typeof nodes;
 
+/** A glyph a component defines itself: lucide's inner markup, e.g. `defineIcon('<path d="m6 9 6 6 6-6"/>')`. */
+export interface IconNodes {
+	readonly nodes: string;
+}
+
+export function defineIcon(nodes: string): IconNodes {
+	return { nodes };
+}
+
+/** What `<Icon name>` and the components' icon props accept: a shared glyph by name, or one defined next to the component. */
+export type IconRef = IconName | IconNodes;
+
 /** lucide glyph as an SVG string. gpuix tints it by the element's `style.color`, so the stroke colour is irrelevant. */
-export function iconSource(name: IconName, strokeWidth: number) {
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">${nodes[name]}</svg>`;
+export function iconSource(icon: IconRef, strokeWidth: number) {
+	const nodesOf = typeof icon === "string" ? nodes[icon] : icon.nodes;
+	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">${nodesOf}</svg>`;
 }

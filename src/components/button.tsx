@@ -5,9 +5,9 @@ import {
 	type StateStyleDesc,
 } from "@gpuix/solid";
 import { type Accessor, createSignal, type JSX, Show } from "solid-js";
-import { Icon } from "./icon";
-import type { IconName } from "./icons";
-import { color, height, radius, type as scale, weight } from "./theme";
+import { Icon } from "../lib/icon";
+import type { IconName } from "../lib/icons";
+import { color, height, radius, type as scale, weight } from "../lib/theme";
 
 export type ButtonVariant = "primary" | "secondary" | "tertiary" | "ghost";
 export type ButtonSize = "default" | "compact" | "icon" | "icon-compact";

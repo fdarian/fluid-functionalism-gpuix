@@ -5,7 +5,7 @@
  */
 import { launch } from "@gpuix/solid/automation";
 
-const outDir = new URL("../screenshots/", import.meta.url).pathname;
+const outDir = new URL("../screenshots/live/", import.meta.url).pathname;
 const root = new URL("..", import.meta.url).pathname;
 
 const app = await launch({
@@ -23,9 +23,10 @@ const watchdog = setTimeout(async () => {
 }, 120_000);
 
 try {
-	await app.getByTestId("nav-Motion").waitFor({ timeoutMs: 30_000 });
+	await app.getByTestId("nav-combobox").waitFor({ timeoutMs: 30_000 });
+	await app.getByTestId("nav-combobox").click();
 	await new Promise((resolve) => setTimeout(resolve, 600));
-	await app.getByTestId("nav-Motion").hover();
+	await app.getByTestId("nav-button").hover();
 	await new Promise((resolve) => setTimeout(resolve, 500));
 	await app.screenshot({ path: `${outDir}live-sidebar-hover.png` });
 	await app.getByTestId("framework-input").click();

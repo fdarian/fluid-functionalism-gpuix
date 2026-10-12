@@ -14,11 +14,11 @@ import {
 	on,
 	Show,
 } from "solid-js";
-import { FluidHighlight } from "./fluid-highlight";
-import { createFluidHover } from "./fluid-hover";
-import { Icon } from "./icon";
-import type { IconName } from "./icons";
-import { createPresence, POPUP_OFFSET, PopupSurface } from "./popup";
+import { FluidHighlight } from "../lib/fluid-highlight";
+import { createFluidHover } from "../lib/fluid-hover";
+import { Icon } from "../lib/icon";
+import type { IconName } from "../lib/icons";
+import { createPresence, POPUP_OFFSET, PopupSurface } from "../lib/popup";
 import {
 	color,
 	radius,
@@ -26,7 +26,7 @@ import {
 	shadow3,
 	motion as tween,
 	weight,
-} from "./theme";
+} from "../lib/theme";
 
 const FIELD_HEIGHT = 36;
 const ROW_HEIGHT = 36;

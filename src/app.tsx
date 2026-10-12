@@ -1,7 +1,6 @@
-import { createSignal, For, type JSX } from "solid-js";
-import { Button, type ButtonSize, type ButtonVariant } from "./button";
-import { Combobox } from "./combobox";
-import { Select } from "./select";
+import { createSignal, For, type JSX, Match, Show, Switch } from "solid-js";
+import { Button } from "./components/button";
+import { Select } from "./components/select";
 import {
 	Sidebar,
 	SidebarContent,
@@ -9,9 +8,9 @@ import {
 	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuButton,
-	SidebarMenuSub,
 	SidebarSearchField,
-} from "./sidebar";
+} from "./components/sidebar";
+import type { Demo } from "./lib/demo";
 import {
 	color,
 	fontFamily,
@@ -20,72 +19,35 @@ import {
 	scheme,
 	setScheme,
 	weight,
-} from "./theme";
+} from "./lib/theme";
 
-const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost"];
-
-const BLUE = "#3B82F6";
-const YELLOW = "#FBBF24";
-
-const SYSTEM_ROWS: { label: string; dot?: string }[] = [
-	{ label: "Fluid Hover", dot: BLUE },
-	{ label: "Motion" },
-	{ label: "Scrollbars" },
-	{ label: "Sizes" },
-	{ label: "Skill", dot: YELLOW },
-	{ label: "Surfaces" },
-	{ label: "Typography", dot: YELLOW },
-];
-
-const COMPONENT_ROWS: { label: string; dot?: string }[] = [
-	{ label: "Accordion" },
-	{ label: "AskUserQuestions" },
-	{ label: "Badge" },
-	{ label: "Banner", dot: BLUE },
-	{ label: "Card" },
-	{ label: "CarouselDots", dot: BLUE },
-	{ label: "ChatMessage" },
-	{ label: "CheckboxGroup" },
-	{ label: "ColorPicker" },
-	{ label: "Combobox", dot: BLUE },
-	{ label: "CommandMenu", dot: BLUE },
-	{ label: "Dialog" },
-];
-
-const BUTTON_PAGES = ["Variants", "Sizes", "Icons"];
-
-const FRAMEWORKS = [
-	"Astro",
-	"Angular",
-	"Next.js",
-	"Nuxt",
-	"Qwik",
-	"Remix",
-	"Solid",
-	"SolidStart",
-	"Svelte",
-	"SvelteKit",
-	"TanStack Start",
-	"Vue",
-];
+const SHOWCASE = "showcase";
+const PAGE_WIDTH = 600;
 
 const THEMES = [
 	{ value: "light", label: "Light", icon: "sun" },
 	{ value: "dark", label: "Dark", icon: "moon" },
 ] as const;
 
-function AppSidebar() {
-	const [active, setActive] = createSignal("Showcase");
-	const [buttonOpen, setButtonOpen] = createSignal(true);
-	const row = (label: string, dot?: string) => (
-		<SidebarMenuButton
-			testId={`nav-${label}`}
-			label={label}
-			dot={dot}
-			active={active() === label}
-			onClick={() => setActive(label)}
-		/>
+function Heading(props: { children: string }) {
+	return (
+		<text
+			style={{
+				...scale.display,
+				fontWeight: weight.semibold,
+				color: color.foreground,
+			}}
+		>
+			{props.children}
+		</text>
 	);
+}
+
+function AppSidebar(props: {
+	demos: readonly Demo[];
+	page: string;
+	onPage: (page: string) => void;
+}) {
 	return (
 		<Sidebar>
 			<SidebarHeader>
@@ -93,45 +55,26 @@ function AppSidebar() {
 			</SidebarHeader>
 			<SidebarContent>
 				<SidebarMenu>
-					{row("Showcase")}
-					{row("Introduction")}
+					<SidebarMenuButton
+						testId="nav-showcase"
+						label="Showcase"
+						active={props.page === SHOWCASE}
+						onClick={() => props.onPage(SHOWCASE)}
+					/>
 				</SidebarMenu>
-				<SidebarGroupLabel count={SYSTEM_ROWS.length}>System</SidebarGroupLabel>
-				<SidebarMenu>
-					<For each={SYSTEM_ROWS}>{(item) => row(item.label, item.dot)}</For>
-				</SidebarMenu>
-				<SidebarGroupLabel count={COMPONENT_ROWS.length + 1}>
+				<SidebarGroupLabel count={props.demos.length}>
 					Components
 				</SidebarGroupLabel>
 				<SidebarMenu>
-					<For each={COMPONENT_ROWS.slice(0, 4)}>
-						{(item) => row(item.label, item.dot)}
-					</For>
-					<SidebarMenuButton
-						testId="nav-Button"
-						label="Button"
-						active={BUTTON_PAGES.includes(active())}
-						trailingIcon={() =>
-							buttonOpen() ? "chevron-down" : "chevron-right"
-						}
-						onClick={() => setButtonOpen(!buttonOpen())}
-					/>
-					<SidebarMenuSub open={buttonOpen()}>
-						<For each={BUTTON_PAGES}>
-							{(page) => (
-								<SidebarMenuButton
-									testId={`nav-${page}`}
-									level={1}
-									label={page}
-									active={active() === page}
-									disabled={() => !buttonOpen()}
-									onClick={() => setActive(page)}
-								/>
-							)}
-						</For>
-					</SidebarMenuSub>
-					<For each={COMPONENT_ROWS.slice(4)}>
-						{(item) => row(item.label, item.dot)}
+					<For each={props.demos}>
+						{(demo) => (
+							<SidebarMenuButton
+								testId={`nav-${demo.slug}`}
+								label={demo.title}
+								active={props.page === demo.slug}
+								onClick={() => props.onPage(demo.slug)}
+							/>
+						)}
 					</For>
 				</SidebarMenu>
 			</SidebarContent>
@@ -139,162 +82,10 @@ function AppSidebar() {
 	);
 }
 
-function Card(props: { title: string; children: JSX.Element }) {
-	return (
-		<div
-			style={{
-				display: "flex",
-				flexDirection: "column",
-				borderRadius: 12,
-				borderWidth: 1,
-				borderColor: color.border,
-				backgroundColor: color.surface2,
-			}}
-		>
-			<div style={{ padding: 20 }}>{props.children}</div>
-			<div
-				style={{
-					height: 44,
-					display: "flex",
-					alignItems: "center",
-					paddingLeft: 16,
-					borderTopWidth: 1,
-					borderColor: color.border,
-				}}
-			>
-				<text style={{ ...scale.body, color: color.mutedForeground }}>
-					{props.title}
-				</text>
-			</div>
-		</div>
-	);
-}
-
-function Row(props: { label: string; children: JSX.Element }) {
-	return (
-		<div
-			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
-				gap: 16,
-				minHeight: 36,
-			}}
-		>
-			<div style={{ width: 96, flexShrink: 0 }}>
-				<text style={{ ...scale.caption, color: color.mutedForeground }}>
-					{props.label}
-				</text>
-			</div>
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					gap: 10,
-				}}
-			>
-				{props.children}
-			</div>
-		</div>
-	);
-}
-
-function VariantRow(props: {
-	label: string;
-	size: ButtonSize;
-	extra?: Partial<Parameters<typeof Button>[0]>;
-}) {
-	return (
-		<Row label={props.label}>
-			<For each={VARIANTS}>
-				{(variant: ButtonVariant) => (
-					<Button
-						testId={`${props.label}-${variant}`}
-						variant={variant}
-						size={props.size}
-						{...props.extra}
-					>
-						{variant[0].toUpperCase() + variant.slice(1)}
-					</Button>
-				)}
-			</For>
-		</Row>
-	);
-}
-
-function ButtonCard() {
-	return (
-		<Card title="Button">
-			<div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-				<VariantRow label="Default" size="default" />
-				<VariantRow label="Compact" size="compact" />
-				<VariantRow
-					label="Leading icon"
-					size="default"
-					extra={{ leadingIcon: "plus" }}
-				/>
-				<Row label="Icon only">
-					<For each={VARIANTS}>
-						{(variant: ButtonVariant) => (
-							<Button variant={variant} size="icon" icon="settings" />
-						)}
-					</For>
-					<For each={VARIANTS}>
-						{(variant: ButtonVariant) => (
-							<Button variant={variant} size="icon-compact" icon="plus" />
-						)}
-					</For>
-				</Row>
-				<VariantRow
-					label="Disabled"
-					size="default"
-					extra={{ disabled: true }}
-				/>
-				<VariantRow label="Loading" size="default" extra={{ loading: true }} />
-			</div>
-		</Card>
-	);
-}
-
-function ComboboxCard() {
-	const [framework, setFramework] = createSignal<string | null>("Solid");
-	return (
-		<Card title="Combobox">
-			<div
-				style={{
-					display: "flex",
-					justifyContent: "center",
-					paddingTop: 12,
-					paddingBottom: 12,
-				}}
-			>
-				<Combobox
-					testId="framework"
-					items={FRAMEWORKS}
-					value={framework()}
-					onValueChange={setFramework}
-					icon="search"
-					placeholder="Select framework…"
-					emptyText="No framework found."
-				/>
-			</div>
-		</Card>
-	);
-}
-
 function Hero() {
 	return (
 		<div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-			<text
-				style={{
-					...scale.display,
-					fontWeight: weight.semibold,
-					color: color.foreground,
-				}}
-			>
-				Fluid Functionalism
-			</text>
+			<Heading>Fluid Functionalism</Heading>
 			<text style={{ ...scale.body, color: color.mutedForeground }}>
 				Refined UI components with satisfying hover.
 			</text>
@@ -316,6 +107,53 @@ function Hero() {
 				<Button size="compact" variant="ghost">
 					See demo
 				</Button>
+			</div>
+		</div>
+	);
+}
+
+/** A card per discovered demo; the landing page is a table of contents. */
+function Showcase(props: {
+	demos: readonly Demo[];
+	onPage: (page: string) => void;
+}) {
+	return (
+		<div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+			<Hero />
+			<div
+				style={{
+					display: "flex",
+					flexDirection: "row",
+					flexWrap: "wrap",
+					gap: 12,
+				}}
+			>
+				<For each={props.demos}>
+					{(demo) => (
+						<div
+							testId={`card-${demo.slug}`}
+							role="button"
+							onClick={() => props.onPage(demo.slug)}
+							style={{
+								width: 144,
+								height: 72,
+								display: "flex",
+								alignItems: "flex-end",
+								padding: 12,
+								borderRadius: 12,
+								borderWidth: 1,
+								borderColor: color.border,
+								backgroundColor: color.surface2,
+								cursor: "pointer",
+								hover: { backgroundColor: color.hover },
+							}}
+						>
+							<text style={{ ...scale.body, color: color.foreground }}>
+								{demo.title}
+							</text>
+						</div>
+					)}
+				</For>
 			</div>
 		</div>
 	);
@@ -365,7 +203,10 @@ function CustomizeCard() {
 	);
 }
 
-export function App() {
+export function App(props: { demos: readonly Demo[]; initialPage?: string }) {
+	const [page, setPage] = createSignal(props.initialPage ?? SHOWCASE);
+	const current = (): Demo | undefined =>
+		props.demos.find((demo) => demo.slug === page());
 	return (
 		<div
 			style={{
@@ -377,7 +218,7 @@ export function App() {
 				fontFamily,
 			}}
 		>
-			<AppSidebar />
+			<AppSidebar demos={props.demos} page={page()} onPage={setPage} />
 			<div
 				style={{
 					flexGrow: 1,
@@ -385,27 +226,42 @@ export function App() {
 					display: "flex",
 					flexDirection: "column",
 					alignItems: "center",
-					paddingTop: 40,
+					overflowY: "scroll",
 				}}
 			>
 				<div
 					style={{
-						width: 600,
+						width: PAGE_WIDTH,
+						flexShrink: 0,
 						display: "flex",
 						flexDirection: "column",
-						gap: 32,
+						gap: 24,
+						paddingTop: 40,
+						paddingBottom: 40,
 					}}
 				>
-					<Hero />
-					<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-						<ButtonCard />
-						<ComboboxCard />
-					</div>
+					<Switch>
+						<Match when={page() === SHOWCASE}>
+							<Showcase demos={props.demos} onPage={setPage} />
+						</Match>
+						<Match when={current()}>
+							{(demo: () => Demo) => <DemoPage demo={demo()} />}
+						</Match>
+					</Switch>
 				</div>
 			</div>
 			<div style={{ width: 296, flexShrink: 0, padding: 16 }}>
 				<CustomizeCard />
 			</div>
 		</div>
+	);
+}
+
+function DemoPage(props: { demo: Demo }): JSX.Element {
+	return (
+		<>
+			<Heading>{props.demo.title}</Heading>
+			<props.demo.Demo />
+		</>
 	);
 }

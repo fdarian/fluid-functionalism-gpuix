@@ -1,7 +1,7 @@
-import { type IconName, iconSource } from "./icons";
+import { type IconRef, iconSource } from "./icons";
 
 export function Icon(props: {
-	name: IconName;
+	name: IconRef;
 	size: number;
 	strokeWidth: number;
 	color: string;

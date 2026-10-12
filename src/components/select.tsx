@@ -1,11 +1,11 @@
 import type { HostElement, KeyEvent } from "@gpuix/solid";
 import { createEffect, createSignal, For, Show } from "solid-js";
-import { FluidHighlight } from "./fluid-highlight";
-import { createFluidHover } from "./fluid-hover";
-import { Icon } from "./icon";
-import type { IconName } from "./icons";
-import { createPresence, PopupSurface } from "./popup";
-import { color, radius, type as scale, motion as tween } from "./theme";
+import { FluidHighlight } from "../lib/fluid-highlight";
+import { createFluidHover } from "../lib/fluid-hover";
+import { Icon } from "../lib/icon";
+import type { IconName } from "../lib/icons";
+import { createPresence, PopupSurface } from "../lib/popup";
+import { color, radius, type as scale, motion as tween } from "../lib/theme";
 
 const ROW_HEIGHT = 36;
 const POPUP_WIDTH = 160;

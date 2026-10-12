@@ -12,11 +12,12 @@ the [translation table](#translation-table) below.
 
 | | |
 |---|---|
-| ![initial](screenshots/initial.png) | ![sidebar hover](screenshots/sidebar-hover.png) |
-| ![combobox open](screenshots/combobox-open.png) | ![combobox filtered](screenshots/combobox-filtered.png) |
+| ![showcase](screenshots/showcase/initial.png) | ![button hover](screenshots/button/hover.png) |
+| ![combobox open](screenshots/combobox/open.png) | ![sidebar sub-menu](screenshots/sidebar/sub-menu.png) |
 
-More in [`screenshots/`](screenshots): the light scheme (`light-*.png`), the theme select, a collapsed sub-menu, a
-pressed button, the empty state, and two captures of the live window (`live-*.png`).
+Every page has an `initial.png` and a `light.png` (the same page after flipping the theme) in
+`screenshots/<demo>/`, plus the states its demo captures. `screenshots/live/` holds two captures of the real
+window.
 
 ## Run it
 
@@ -33,25 +34,49 @@ transform is a Bun preload (`bunfig.toml`), so there is no build step. `solid-js
 gpuix resolves: two copies of Solid give two reactive systems and nothing updates.
 
 ```bash
-bun run typecheck                 # tsc
-bun scripts/screenshots.tsx       # headless captures through gpuix's offscreen test renderer
-bun scripts/live-check.tsx        # the same flow against the real window, via gpuix's automation client
+bun run typecheck                      # tsc
+bun scripts/screenshots.tsx <demo>     # headless captures of one page, into screenshots/<demo>/
+bun scripts/live-check.tsx             # the same flow against the real window, via gpuix's automation client
 ```
+
+## Layout
+
+```
+src/lib/          shared primitives: theme, icons, icon, fluid-hover, fluid-highlight, popup, demo-kit, demo
+src/components/   one file per component: button, combobox, select, sidebar
+src/demos/        one page per component, discovered at startup
+src/app.tsx       sidebar + page host + the "Make them yours" card
+limitations/      one file per component: each gpuix gap, the workaround and its fidelity
+```
+
+A new component adds `src/components/<name>.tsx`, `src/demos/<name>.tsx` and `limitations/<name>.md`, and edits no
+shared file: `src/lib/demo.ts` finds every `src/demos/*.tsx` with `Bun.Glob` and a dynamic `import` when the app
+starts (restart `--hot` to pick up a new file), and the sidebar lists them by title. A demo file exports:
+
+```ts
+export const title = "Button";
+export const group = "Components";
+export function Demo(): JSX.Element {}              // one or more <DemoCard>s from src/lib/demo-kit
+export const scenarios: DemoModule["scenarios"] = async (shot) => {};  // optional
+```
+
+`scenarios` drives `bun scripts/screenshots.tsx <demo>` with `shot.hover / click / down / up / press / moveTo /
+clickAt / settle / expectText / capture`; see `ShotContext` in `src/lib/demo.ts`. Give elements a `testId` to
+target them.
 
 ## How it is put together
 
-- `src/theme.ts` holds the resolved design tokens: both columns of every `light-dark()` in `app/globals.css`
+- `src/lib/theme.ts` holds the resolved design tokens: both columns of every `light-dark()` in `app/globals.css`
   (with `color-mix()` mixed offline), the type scale, radii, heights and the springs. `color.x` reads a `scheme`
   signal, so any JSX prop that touches it re-colours on a theme change; tokens must be read inside JSX or a
   function, never at module scope.
-- `src/button.tsx`, `src/combobox.tsx`, `src/select.tsx`, `src/sidebar.tsx` are the components; `src/popup.tsx`
-  is the popup chrome the combobox and select share.
-- `src/fluid-hover.ts` is `use-fluid-hover.ts`: rows register, their painted boxes are read with
+- `src/components/` are the components; `src/lib/popup.tsx` is the popup chrome the combobox and select share.
+- `src/lib/fluid-hover.ts` is `use-fluid-hover.ts`: rows register, their painted boxes are read with
   `renderer.getElementBounds`, and `pickNearest` (ported verbatim) resolves the pointer to a row, including gaps.
-- `src/fluid-highlight.tsx` is the one absolutely positioned highlight that glides between rows with the native
+- `src/lib/fluid-highlight.tsx` is the one absolutely positioned highlight that glides between rows with the native
   `motion` spring. The sidebar's active backgrounds and the combobox's checked background reuse it with a slower
   spring.
-- `src/icons.ts` holds the lucide glyphs as SVG strings, drawn with `<svg source>` and tinted by `style.color`.
+- `src/lib/icons.ts` holds the shared lucide glyphs as SVG strings (a component can `defineIcon(...)` its own), drawn with `<svg source>` and tinted by `style.color`.
 
 Fluid hover is the part that depends on gpuix internals. The first `getElementBounds` call only turns bounds
 tracking on, and bounds exist from the next painted frame, so measuring waits two frames and retries for up to
