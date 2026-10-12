@@ -1,4 +1,9 @@
-import { type EventPayload, type HostElement, motion } from "@gpuix/solid";
+import {
+	type EventPayload,
+	type HostElement,
+	motion,
+	useGpuixRequired,
+} from "@gpuix/solid";
 import {
 	type Accessor,
 	createContext,
@@ -16,12 +21,11 @@ import type { IconName } from "./icons";
 import {
 	color,
 	height,
-	motion as tween,
 	radius,
 	type as scale,
+	motion as tween,
 	weight,
 } from "./theme";
-import { useGpuixRequired } from "@gpuix/solid";
 
 export const SIDEBAR_WIDTH = 256;
 
@@ -63,7 +67,11 @@ export function SidebarMenu(props: { children: JSX.Element }) {
 	let reflowTimer: ReturnType<typeof setTimeout> | undefined;
 
 	const hover = createFluidHover({
-		isItemDisabled: (index) => rows.get(index)?.disabled() ?? false,
+		isItemDisabled: (index) => {
+			const row = rows.get(index);
+			if (row === undefined) throw new Error(`No row registered at ${index}`);
+			return row.disabled();
+		},
 	});
 
 	const scope: MenuScope = {

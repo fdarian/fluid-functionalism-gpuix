@@ -20,10 +20,10 @@ import { Icon } from "./icon";
 import type { IconName } from "./icons";
 import {
 	color,
-	motion as tween,
 	radius,
-	shadow3,
 	type as scale,
+	shadow3,
+	motion as tween,
 	weight,
 } from "./theme";
 
@@ -210,10 +210,7 @@ export function Combobox(props: {
 		const text = event.value;
 		if (text === undefined) throw new Error("Combobox change without a value");
 		setInputText(text);
-		if (!open()) {
-			openPopup();
-			// The popup just opened for this keystroke: filter immediately.
-		}
+		openPopup();
 		setQuery(text);
 	};
 	const onMouseDownOutside = () => {

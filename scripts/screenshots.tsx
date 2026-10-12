@@ -1,7 +1,10 @@
 /**
- * Headless captures through gpuix's offscreen test renderer: the initial
- * state, a hovered sidebar row, a pressed button and the open combobox.
- * `bun scripts/screenshots.tsx`
+ * Headless captures through gpuix's offscreen test renderer: initial state,
+ * a hovered sidebar row, a collapsed sub-menu, a pressed button and the open
+ * combobox (open, filtered, empty). `bun scripts/screenshots.tsx`
+ *
+ * Real time, not the test clock: fluid hover measures on timers and motion
+ * samples a wall clock, so each step sleeps for them to settle.
  */
 import { createTestRoot } from "@gpuix/solid/testing";
 import { App } from "../src/app";
@@ -12,7 +15,6 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const test = createTestRoot({ width: 1100, height: 720 });
 const renderer = test.renderer;
 
-/** Real time, not the test clock: fluid hover measures on timers and motion samples a wall clock. */
 async function settle(ms = 400) {
 	await sleep(ms);
 	renderer.flush();
@@ -27,28 +29,74 @@ function centerOf(testId: string) {
 	return { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 };
 }
 
+function expectText(text: string, present: boolean) {
+	const found = renderer.getAllText().some((line) => line.includes(text));
+	if (found !== present) {
+		throw new Error(
+			`expected "${text}" to be ${present ? "present" : "absent"}`,
+		);
+	}
+}
+
+function capture(name: string) {
+	renderer.captureScreenshot(`${outDir}${name}.png`);
+	console.log(`captured ${name}`);
+}
+
 test.render(() => <App />);
 await settle();
 // The first bounds query turns tracking on; the next frame fills them in.
 renderer.getElementBounds(1);
 await settle();
-renderer.captureScreenshot(`${outDir}initial.png`);
+capture("initial");
 
 const inbox = centerOf("nav-Inbox");
 renderer.nativeSimulateMouseMove(inbox.x, inbox.y);
 await settle();
-renderer.captureScreenshot(`${outDir}sidebar-hover.png`);
+capture("sidebar-hover");
 
-const calendar = centerOf("nav-Calendar");
-renderer.nativeSimulateMouseMove(calendar.x, calendar.y);
-await settle(90);
-renderer.captureScreenshot(`${outDir}sidebar-hover-gliding.png`);
+const mobileApp = centerOf("nav-Mobile app");
+renderer.nativeSimulateClick(mobileApp.x, mobileApp.y);
 await settle();
+const projects = centerOf("nav-Projects");
+renderer.nativeSimulateClick(projects.x, projects.y);
+await settle(600);
+const members = centerOf("nav-Members");
+renderer.nativeSimulateMouseMove(members.x, members.y);
+await settle();
+capture("sidebar-submenu-collapsed");
+renderer.nativeSimulateClick(projects.x, projects.y);
+await settle(600);
+
+const primary = centerOf("Default-primary");
+renderer.nativeSimulateMouseMove(primary.x, primary.y);
+renderer.nativeSimulateMouseDown(primary.x, primary.y);
+await settle();
+capture("button-pressed");
+renderer.nativeSimulateMouseUp(primary.x, primary.y);
 
 const field = centerOf("framework-input");
 renderer.nativeSimulateClick(field.x, field.y);
 await settle(600);
-renderer.captureScreenshot(`${outDir}combobox-open.png`);
+expectText("Angular", true);
+capture("combobox-open");
+
+renderer.simulateKeystrokes(
+	"backspace backspace backspace backspace backspace",
+);
+renderer.simulateKeystrokes("s o l");
+await settle(500);
+expectText("Angular", false);
+capture("combobox-filtered");
+
+renderer.simulateKeystrokes("z z");
+await settle(500);
+expectText("No framework found.", true);
+capture("combobox-empty");
+
+renderer.nativeSimulateClick(900, 600);
+await settle();
+expectText("No framework found.", false);
 
 console.log("screenshots written to", outDir);
 process.exit(0);
