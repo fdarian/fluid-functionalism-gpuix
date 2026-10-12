@@ -1,0 +1,245 @@
+import { For } from "solid-js";
+import {
+	Tooltip,
+	TooltipProvider,
+	type TooltipSide,
+	type TooltipTrigger,
+} from "../components/tooltip";
+import type { DemoModule } from "../lib/demo";
+import { DemoCard, DemoRow } from "../lib/demo-kit";
+import { color, height, radius, type as scale, weight } from "../lib/theme";
+
+const SIDES: TooltipSide[] = ["top", "right", "bottom", "left"];
+
+function sideLabel(side: TooltipSide) {
+	return side[0].toUpperCase() + side.slice(1);
+}
+
+/** Button's look, but with the tooltip's handlers on the filled element itself. */
+function TriggerButton(props: {
+	trigger: TooltipTrigger;
+	primary?: boolean;
+	compact?: boolean;
+	children: string;
+}) {
+	return (
+		<div
+			{...props.trigger}
+			style={{
+				height: props.compact ? height.controlCompact : height.control,
+				paddingLeft: props.compact ? 12 : 16,
+				paddingRight: props.compact ? 12 : 16,
+				display: "flex",
+				alignItems: "center",
+				borderRadius: radius.item,
+				cursor: "pointer",
+				userSelect: "none",
+				backgroundColor: props.primary ? color.foreground : color.tint,
+				hover: {
+					backgroundColor: props.primary ? color.primaryHover : color.tintHover,
+				},
+			}}
+		>
+			<text
+				style={{
+					...(props.compact ? scale.bodyCompact : scale.body),
+					color: props.primary ? color.background : color.foreground,
+					whiteSpace: "nowrap",
+				}}
+			>
+				{props.children}
+			</text>
+		</div>
+	);
+}
+
+function FollowArea(props: {
+	axis: "x" | "y";
+	side: TooltipSide;
+	width: number;
+	height: number;
+}) {
+	return (
+		<Tooltip
+			testId={`follow-${props.axis}`}
+			content={`Following ${props.axis}`}
+			side={props.side}
+			followCursor={props.axis}
+		>
+			<div
+				style={{
+					width: props.width,
+					height: props.height,
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					borderRadius: 8,
+					borderWidth: 1,
+					borderColor: color.border,
+					cursor: "default",
+				}}
+			>
+				<div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+					<For each={props.axis === "x" ? ["Move along me"] : ["Move", "along", "me"]}>
+						{(word) => (
+							<text style={{ ...scale.caption, color: color.mutedForeground }}>
+								{word}
+							</text>
+						)}
+					</For>
+				</div>
+			</div>
+		</Tooltip>
+	);
+}
+
+export const title = "Tooltip";
+export const group = "Components";
+
+export function Demo() {
+	return (
+		<>
+			<DemoCard title="Tooltip">
+				<TooltipProvider>
+					<div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+						<DemoRow label="Basic">
+							<Tooltip testId="basic" content="Save your changes">
+								{(trigger: TooltipTrigger) => (
+									<TriggerButton trigger={trigger} primary>
+										Hover me
+									</TriggerButton>
+								)}
+							</Tooltip>
+						</DemoRow>
+						<DemoRow label="Rich content">
+							<Tooltip
+								testId="rich"
+								content={
+									<div
+										style={{ display: "flex", flexDirection: "column", gap: 4 }}
+									>
+										<text
+											style={{
+												...scale.caption,
+												color: color.background,
+												fontWeight: weight.semibold,
+											}}
+										>
+											Keyboard shortcut
+										</text>
+										<text
+											style={{ ...scale.caption, color: color.mutedForeground }}
+										>
+											⌘ + S
+										</text>
+									</div>
+								}
+							>
+								{(trigger: TooltipTrigger) => (
+									<TriggerButton trigger={trigger} primary>
+										Save
+									</TriggerButton>
+								)}
+							</Tooltip>
+						</DemoRow>
+						<DemoRow label="Delay">
+							<Tooltip testId="delay-0" content="Instant" delayDuration={0}>
+								{(trigger: TooltipTrigger) => <TriggerButton trigger={trigger}>No delay</TriggerButton>}
+							</Tooltip>
+							<Tooltip testId="delay-500" content="Slow" delayDuration={500}>
+								{(trigger: TooltipTrigger) => <TriggerButton trigger={trigger}>500ms delay</TriggerButton>}
+							</Tooltip>
+						</DemoRow>
+						<DemoRow label="Placement">
+							{SIDES.map((side) => (
+								<Tooltip testId={`side-${side}`} content={sideLabel(side)} side={side}>
+									{(trigger: TooltipTrigger) => (
+										<TriggerButton trigger={trigger}>{sideLabel(side)}</TriggerButton>
+									)}
+								</Tooltip>
+							))}
+						</DemoRow>
+					</div>
+				</TooltipProvider>
+			</DemoCard>
+			<DemoCard title="Follow cursor">
+				<div
+					style={{
+						display: "flex",
+						flexDirection: "row",
+						alignItems: "center",
+						justifyContent: "center",
+						gap: 24,
+					}}
+				>
+					<FollowArea axis="x" side="top" width={248} height={48} />
+					<FollowArea axis="y" side="right" width={48} height={96} />
+				</div>
+			</DemoCard>
+			<DemoCard title="Forced open">
+				<div
+					style={{
+						display: "flex",
+						flexDirection: "row",
+						justifyContent: "center",
+						gap: 76,
+						paddingTop: 20,
+						paddingBottom: 20,
+					}}
+				>
+					{SIDES.map((side) => (
+						<Tooltip content={sideLabel(side)} side={side} forceOpen>
+							{(trigger: TooltipTrigger) => (
+								<TriggerButton trigger={trigger} compact>
+									{sideLabel(side)}
+								</TriggerButton>
+							)}
+						</Tooltip>
+					))}
+				</div>
+			</DemoCard>
+		</>
+	);
+}
+
+export const scenarios: DemoModule["scenarios"] = async (shot) => {
+	await shot.hover("basic");
+	shot.expectText("Save your changes", true);
+	await shot.settle(300);
+	shot.capture("basic");
+
+	await shot.hover("rich");
+	await shot.settle(300);
+	shot.capture("rich");
+
+	for (const side of SIDES) {
+		await shot.hover(`side-${side}`);
+		await shot.settle(300);
+	shot.capture(`placement-${side}`);
+	}
+
+	await shot.moveTo(900, 700);
+	await shot.hover("delay-500");
+	shot.expectText("Slow", false);
+	await shot.settle(500);
+	shot.expectText("Slow", true);
+	await shot.settle(300);
+	shot.capture("delay-500");
+
+	await shot.hover("follow-x");
+	await shot.settle(300);
+	shot.capture("follow-x-centre");
+	const area = shot.centerOf("follow-x");
+	await shot.moveTo(area.x - 90, area.y);
+	await shot.settle(200);
+	await shot.settle(300);
+	shot.capture("follow-x-left");
+	const tall = shot.centerOf("follow-y");
+	await shot.moveTo(tall.x, tall.y + 30);
+	await shot.settle(300);
+	await shot.settle(300);
+	shot.capture("follow-y-low");
+
+	await shot.moveTo(900, 700);
+	shot.expectText("Following y", false);
+};
