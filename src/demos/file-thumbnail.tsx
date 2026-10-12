@@ -1,8 +1,5 @@
 import { For } from "solid-js";
-import {
-	FileThumbnail,
-	type FileLike,
-} from "../components/file-thumbnail";
+import { type FileLike, FileThumbnail } from "../components/file-thumbnail";
 import type { DemoModule } from "../lib/demo";
 import { DemoCard, DemoRow } from "../lib/demo-kit";
 
