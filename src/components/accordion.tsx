@@ -11,12 +11,12 @@ import {
 	createEffect,
 	createSignal,
 	type JSX,
-	onMount,
 	useContext,
 } from "solid-js";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
+import { createMeasuredHeight } from "../lib/measured-height";
 import {
 	color,
 	radius,
@@ -309,7 +309,9 @@ export function AccordionItem(props: {
 	const group = useContext(GroupContext);
 	const [index, setIndex] = createSignal<number>();
 	const highlight = () =>
-		group === undefined ? (props.highlight ?? root.highlight()) : root.highlight();
+		group === undefined
+			? (props.highlight ?? root.highlight())
+			: root.highlight();
 	const item: ItemState = {
 		highlight,
 		value: props.value,
@@ -543,25 +545,9 @@ export function AccordionContent(props: { children: JSX.Element }) {
 	const root = useRoot();
 	const group = useContext(GroupContext);
 	const item = useItem();
-	const renderer = useGpuixRequired();
 	const metrics = () => sizes[root.size()];
-	const [contentHeight, setContentHeight] = createSignal<number>();
-	let inner: HostElement | undefined;
-
-	onMount(() => {
-		const read = (attempts: number) => {
-			if (inner === undefined) throw new Error("Panel content is not mounted");
-			const bounds = renderer.getElementBounds?.(inner.id);
-			if (bounds != null) {
-				setContentHeight(bounds.height);
-				return;
-			}
-			if (attempts > 12)
-				throw new Error("Panel content bounds never became available");
-			setTimeout(() => read(attempts + 1), 16);
-		};
-		setTimeout(() => read(0), 32);
-	});
+	const measured = createMeasuredHeight();
+	const contentHeight = measured.height;
 
 	return (
 		<motion.div
@@ -590,9 +576,7 @@ export function AccordionContent(props: { children: JSX.Element }) {
 				transition={item.isOpen() ? { duration: 0.06 } : { duration: 0.04 }}
 			>
 				<div
-					ref={(element) => {
-						inner = element;
-					}}
+					ref={measured.ref}
 					style={{
 						display: "flex",
 						flexDirection: "column",

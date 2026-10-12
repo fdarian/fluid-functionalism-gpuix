@@ -1,9 +1,4 @@
-import {
-	type EventPayload,
-	type HostElement,
-	motion,
-	useGpuixRequired,
-} from "@gpuix/solid";
+import { type EventPayload, type HostElement, motion } from "@gpuix/solid";
 import {
 	type Accessor,
 	createContext,
@@ -18,6 +13,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconName } from "../lib/icons";
+import { createMeasuredHeight } from "../lib/measured-height";
 import {
 	color,
 	height,
@@ -348,26 +344,9 @@ export function SidebarMenuSub(props: {
 	open: boolean;
 	children: JSX.Element;
 }) {
-	const renderer = useGpuixRequired();
 	const scope = useMenuScope();
-	const [contentHeight, setContentHeight] = createSignal<number>();
-	let content: { id: number } | undefined;
-
-	onMount(() => {
-		const read = (attempts: number) => {
-			if (content === undefined)
-				throw new Error("Sub-menu content is not mounted");
-			const bounds = renderer.getElementBounds?.(content.id);
-			if (bounds != null) {
-				setContentHeight(bounds.height);
-				return;
-			}
-			if (attempts > 12)
-				throw new Error("Sub-menu bounds never became available");
-			setTimeout(() => read(attempts + 1), 16);
-		};
-		setTimeout(() => read(0), 32);
-	});
+	const measured = createMeasuredHeight();
+	const contentHeight = measured.height;
 
 	createEffect(() => {
 		props.open;
@@ -389,9 +368,7 @@ export function SidebarMenuSub(props: {
 			}}
 		>
 			<div
-				ref={(element) => {
-					content = element;
-				}}
+				ref={measured.ref}
 				style={{
 					display: "flex",
 					flexDirection: "column",

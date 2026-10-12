@@ -22,6 +22,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
+import { createMeasuredHeight } from "../lib/measured-height";
 import {
 	color,
 	height,
@@ -148,26 +149,10 @@ function Collapse(props: {
 	revision?: unknown;
 	children: JSX.Element;
 }) {
-	const renderer = useGpuixRequired();
 	const [mounted, setMounted] = createSignal(props.open);
-	const [measured, setMeasured] = createSignal<number>();
-	let content: HostElement | undefined;
+	const measured = createMeasuredHeight();
 	let timer: ReturnType<typeof setTimeout> | undefined;
 	onCleanup(() => clearTimeout(timer));
-
-	const measure = (attempts: number) => {
-		clearTimeout(timer);
-		if (content === undefined) return;
-		const bounds = renderer.getElementBounds?.(content.id);
-		if (bounds != null && bounds.height > 0) {
-			setMeasured(bounds.height);
-			return;
-		}
-		if (attempts <= 0) {
-			throw new Error("Collapse: painted height still unavailable");
-		}
-		timer = setTimeout(() => measure(attempts - 1), 16);
-	};
 
 	createEffect(
 		on(
@@ -176,7 +161,7 @@ function Collapse(props: {
 				clearTimeout(timer);
 				if (open) {
 					setMounted(true);
-					timer = setTimeout(() => measure(12), 32);
+					measured.kick();
 				} else {
 					timer = setTimeout(() => setMounted(false), 130);
 				}
@@ -188,28 +173,25 @@ function Collapse(props: {
 		on(
 			() => props.revision,
 			() => {
-				if (props.open && mounted()) measure(12);
+				if (props.open && mounted()) measured.kick();
 			},
 			{ defer: true },
 		),
 	);
-	if (props.open) queueMicrotask(() => measure(12));
 
 	return (
 		<Show when={mounted()}>
 			<motion.div
 				initial={{ height: 0, opacity: 0 }}
 				animate={{
-					height: props.open ? (measured() ?? 0) : 0,
+					height: props.open ? (measured.height() ?? 0) : 0,
 					opacity: props.open ? 1 : 0,
 				}}
 				transition={props.open ? tween.moderate : tween.moderateExit}
 				style={{ overflow: "hidden", flexShrink: 0 }}
 			>
 				<div
-					ref={(element) => {
-						content = element;
-					}}
+					ref={measured.ref}
 					style={{ display: "flex", flexDirection: "column", flexShrink: 0 }}
 				>
 					{props.children}
