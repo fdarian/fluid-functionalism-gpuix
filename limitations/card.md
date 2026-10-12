@@ -2,7 +2,7 @@
 
 Original: `registry/default/card.tsx`. Ported in `src/components/card.tsx`, demo in `src/demos/card.tsx`.
 
-Card, CardGroup (stacked / inline, 1 or 2+ columns, borderless / outlined, separated), the magnetic fluid hover in one and two dimensions, gap click, selected fill with the weight-changing title, hairline dividers that drop beside the lit or selected card, dismissible cards, CardMedia (icon tile, logo, logo pair), CardImage, CardFeature and CardButton (primary, secondary, ghost, link) are ported. The deprecated `CardEyebrow` is not. The demo is the docs page minus the playground. `screenshots/card/` has the standard captures plus `grid-*`, `separated-and-outlined` and `promo-chip-hover` (the lower cards, captured with a scroll the scenario API does not have).
+Card, CardGroup (stacked / inline, 1 or 2+ columns, borderless / outlined, separated), the magnetic fluid hover in one and two dimensions (`createFluidHover` with `axis: "xy"` for grids), gap click, selected fill with the weight-changing title, hairline dividers that drop beside the lit or selected card, dismissible cards, CardMedia (icon tile, logo, logo pair), CardImage, CardFeature and CardButton (primary, secondary, ghost, link) are ported. The deprecated `CardEyebrow` is not. The demo is the docs page minus the playground. `screenshots/card/` has the standard captures plus `grid-*`, `separated-and-outlined` and `promo-chip-hover`.
 
 ## `overflow: hidden` does not follow `border-radius`
 
@@ -28,14 +28,6 @@ Card, CardGroup (stacked / inline, 1 or 2+ columns, borderless / outlined, separ
 - The same rule applies to hover: a filled or absolute child also blocks its parent's `onMouseEnter` / `onMouseMove` (`style.rs:317` `should_occlude`), so the decorative layers are `pointerEvents: "none"` too. It also means the card is not "hovered" while the pointer is over its own dismiss chip (the chip's hitbox takes it), so the chip keeps itself shown with its own hover signal; the original's `group-hover` keeps the group lit.
 - **Fidelity:** exact.
 - **Components it hits:** any card-like row with nested actions (dropdown rows with trailing buttons, chat message actions).
-
-## `createFluidHover` only picks along `y`
-
-- **Original:** `useFluidHover(ref, { axis: "xy", gapClick: { maxDistance: 16 } })` for a grid.
-- **Shared lib:** `src/lib/fluid-hover.ts` calls `pickNearest` with `axis: "y"` hard-coded (`pick()`), though `pickNearest` itself is the verbatim port and supports `x` and `xy`. Not a gpuix gap.
-- **Workaround:** `CardGroup` uses `createFluidHover` for registration, measuring and the rect store, and runs its own pointer handling with `pickNearest` (`xy` when `columns > 1`) and its own session counter. The gap click is reimplemented the same way: a press on the group that no card claimed goes to the highlighted card if it lands within 16px of it. A one-line `axis` option on `createFluidHover` would remove the duplication; I did not touch the shared file.
-- **Fidelity:** exact.
-- **Components it hits:** any 2-D grid with fluid hover (carousel-dots, color-picker swatches).
 
 ## No `aspect-ratio`
 

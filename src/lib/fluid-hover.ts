@@ -99,7 +99,7 @@ export interface FluidHoverOptions {
 	/** Rows that stay mounted but are clipped away (a collapsed sub-menu). */
 	isItemDisabled?: (index: number) => boolean;
 	/** The direction rows run in: the pointer resolves to the row nearest along it. Default "y". */
-	axis?: "x" | "y";
+	axis?: "x" | "y" | "xy";
 }
 
 /**

@@ -18,7 +18,7 @@ import {
 	useContext,
 } from "solid-js";
 import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover, pickNearest } from "../lib/fluid-hover";
+import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
 import { color, radius, type as scale, scheme, weight } from "../lib/theme";
@@ -111,9 +111,8 @@ const GAP_CLICK_DISTANCE = 16;
 
 /**
  * Lays its cards out on a grid and owns the magnetic hover highlight that
- * previews where a click will land. Same pick as the shared fluid hover, but
- * with the 2-D `xy` axis a multi-column grid needs, which `createFluidHover`
- * does not expose.
+ * previews where a click will land: the shared fluid hover, on the 2-D `xy`
+ * axis when there is more than one column.
  */
 export function CardGroup(props: {
 	orientation?: CardOrientation;
@@ -129,16 +128,18 @@ export function CardGroup(props: {
 	if (getBounds === undefined) {
 		throw new Error("This renderer does not expose getElementBounds");
 	}
-	const hover = createFluidHover();
+	const columns = () => props.columns ?? 1;
+	const hover = createFluidHover({
+		// A grid resolves the pointer in two dimensions; one column is a plain list.
+		get axis() {
+			return columns() > 1 ? "xy" : "y";
+		},
+	});
 	const entries = new Map<number, CardEntry>();
 	const [count, setCount] = createSignal(0);
-	const [session, setSession] = createSignal(0);
 	let nextIndex = 0;
 	let container: HostElement | undefined;
-	let pointer: { x: number; y: number } | undefined;
-	let sessionPending = false;
 
-	const columns = () => props.columns ?? 1;
 	const fluid = () => props.fluidHover ?? true;
 	const separated = () => props.separated ?? false;
 	const outlined = () => (props.border ?? "none") === "outlined";
@@ -182,31 +183,6 @@ export function CardGroup(props: {
 		return getBounds.call(renderer, container.id) ?? null;
 	};
 
-	const pick = () => {
-		if (pointer === undefined) return;
-		const box = boxOf();
-		if (box === null) return;
-		const next = pickNearest({
-			axis: columns() > 1 ? "xy" : "y",
-			point: pointer,
-			rects: hover.rects(),
-			containerRect: {
-				left: box.x,
-				top: box.y,
-				width: box.width,
-				height: box.height,
-			},
-			scroll: { x: 0, y: 0 },
-			border: { x: 0, y: 0 },
-			layoutSize: { width: box.width, height: box.height },
-		});
-		if (sessionPending && next !== hover.activeIndex()) {
-			sessionPending = false;
-			setSession(session() + 1);
-		}
-		hover.setActiveIndex(next);
-	};
-
 	const rectOfActive = () => {
 		const index = hover.activeIndex();
 		if (index === null || !hover.isMeasured() || !fluid()) return null;
@@ -238,21 +214,9 @@ export function CardGroup(props: {
 					hover.containerRef(element);
 					queueMicrotask(hover.remeasure);
 				}}
-				onMouseEnter={() => {
-					sessionPending = true;
-					hover.handlers.onMouseEnter();
-				}}
-				onMouseMove={(event) => {
-					if (event.x === undefined || event.y === undefined) {
-						throw new Error("mouseMove without coordinates");
-					}
-					pointer = { x: event.x, y: event.y };
-					pick();
-				}}
-				onMouseLeave={() => {
-					pointer = undefined;
-					hover.handlers.onMouseLeave();
-				}}
+				onMouseEnter={hover.handlers.onMouseEnter}
+				onMouseMove={hover.handlers.onMouseMove}
+				onMouseLeave={hover.handlers.onMouseLeave}
 				onClick={fluid() ? onGapClick : undefined}
 				style={{
 					position: "relative",
@@ -283,7 +247,7 @@ export function CardGroup(props: {
 				>
 					<FluidHighlight
 						rect={rectOfActive}
-						session={session}
+						session={hover.session}
 						radius={radius.container}
 						background={color.hover}
 					/>
