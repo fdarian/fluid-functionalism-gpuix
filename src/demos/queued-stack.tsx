@@ -148,10 +148,10 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	const top = shot.centerOf("queued-4");
 	await shot.down("queued-2");
 	const grab = shot.centerOf("queued-2");
-	await shot.moveTo(grab.x, grab.y - 40);
-	await shot.moveTo(grab.x, (grab.y + top.y) / 2);
+	await shot.moveHeld(grab.x, grab.y - 40);
+	await shot.moveHeld(grab.x, (grab.y + top.y) / 2);
 	shot.capture("drag-middle");
-	await shot.moveTo(grab.x, top.y);
+	await shot.moveHeld(grab.x, top.y);
 	shot.capture("drag-top");
 	await shot.up("queued-2");
 	shot.capture("dragged");
