@@ -168,9 +168,12 @@ function morphedPath(time: number) {
 
 function MorphingGlyph(props: { size: number }) {
 	const time = useClock();
+	// GPUI caches a rasterised SVG by the hash of its bytes, so a path that varies
+	// freely would add a new atlas tile every frame. Whole frames repeat every loop.
+	const frameTime = () => Math.floor(time() / FRAME_MS) * FRAME_MS;
 	return (
 		<Icon
-			name={defineIcon(`<path d="${morphedPath(time())}"/>`)}
+			name={defineIcon(`<path d="${morphedPath(frameTime())}"/>`)}
 			size={props.size}
 			strokeWidth={1.5}
 			color={color.mutedForeground}
