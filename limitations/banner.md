@@ -44,11 +44,11 @@ All five statuses, both contrasts, inline and fixed, title / description / actio
 - **Fidelity:** exact.
 - **Components it hits:** any translucent fill over a solid one (card's selected fill, banner).
 
-## Headless harness: `onMotionComplete` is never delivered
+## Headless harness: `onMotionComplete` needed a drain
 
 - **Original:** Motion's `AnimatePresence` / `onAnimationComplete` unmounts an exiting banner.
-- **gpuix:** `renderer.flush()` (`packages/native/js/testing.ts:207`) does not drain native events; only `simulate*` calls drain them via `dispatchNativeEvents()` (`testing.ts:227`). `motionComplete` events (`renderer.rs:3537`) therefore never reach JS in `scripts/screenshots.tsx`, so `AnimatePresence` exits and `onMotionComplete` never fire there. In the real window they fire normally. A harness gap, not a renderer bug.
-- **Workaround:** the banner's phase changes run on timers (like `lib/popup.tsx`), so it behaves the same headless and live. The scenarios wait three `settle`s per animation (start, end, unmount) because a motion only advances on painted frames.
+- **gpuix:** `renderer.flush()` (`packages/native/js/testing.ts:207`) does not drain native events; only `simulate*` calls drain them via `dispatchNativeEvents()` (`testing.ts:227`). `motionComplete` events (`renderer.rs:3537`) therefore never reached JS in the first version of `scripts/screenshots.tsx`, so an `AnimatePresence` exit or `onMotionComplete` never fired there. A harness gap, not a renderer bug; the harness's `settle()` now drains (commit 585c165) and the banner uses `onMotionComplete` directly.
+- **Workaround:** none needed now. A motion only advances on painted frames, which `settle()` provides.
 - **Fidelity:** exact.
 - **Components it hits:** every component with an animated exit.
 

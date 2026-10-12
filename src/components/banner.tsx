@@ -158,14 +158,6 @@ const appearBanner = { ...tween.slow, delay: 0.08 } as const;
 const dismissRow = { duration: 0.24, ease: "easeInOut" } as const;
 const dismissFade = { duration: 0.16, ease: "easeOut" } as const;
 
-/**
- * How long each animation runs. A timer, not `onMotionComplete`: that event is
- * only drained by `dispatchNativeEvents()`, which the headless screenshot
- * harness never calls, so a presence driven by it never unmounts there.
- */
-const APPEAR_MS = 360;
-const DISMISS_MS = 280;
-
 type Phase = "rest" | "measuring" | "opening" | "closing" | "gone";
 
 export function Banner(props: {
@@ -208,14 +200,6 @@ export function Banner(props: {
 	let restElement: HostElement | undefined;
 	let measureElement: HostElement | undefined;
 	let generation = 0;
-	let settleTimer: ReturnType<typeof setTimeout> | undefined;
-	onCleanup(() => clearTimeout(settleTimer));
-	const settleAfter = (mine: number, next: Phase, ms: number) => {
-		clearTimeout(settleTimer);
-		settleTimer = setTimeout(() => {
-			if (mine === generation) setPhase(next);
-		}, ms);
-	};
 
 	// A banner that is open on first render arrives in place; only a change plays.
 	createEffect(
@@ -233,7 +217,6 @@ export function Banner(props: {
 						if (mine !== generation) return;
 						setRowHeight(height);
 						setPhase("closing");
-						settleAfter(mine, "gone", DISMISS_MS);
 					});
 					return;
 				}
@@ -247,7 +230,6 @@ export function Banner(props: {
 						if (mine !== generation) return;
 						setRowHeight(height);
 						setPhase("opening");
-						settleAfter(mine, "rest", APPEAR_MS);
 					});
 				});
 			},
@@ -409,6 +391,7 @@ export function Banner(props: {
 					initial={{ height: 0 }}
 					animate={{ height: rowHeight() }}
 					transition={appearRow}
+					onMotionComplete={() => setPhase("rest")}
 					style={{ ...rowStyle, overflow: "hidden" }}
 				>
 					<motion.div
@@ -428,6 +411,7 @@ export function Banner(props: {
 					initial={{ height: rowHeight() }}
 					animate={{ height: 0 }}
 					transition={dismissRow}
+					onMotionComplete={() => setPhase("gone")}
 					style={{ ...rowStyle, overflow: "hidden" }}
 				>
 					<motion.div

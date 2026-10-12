@@ -8,7 +8,7 @@ import {
 	BannerTitle,
 } from "../components/banner";
 import { Button } from "../components/button";
-import type { DemoModule, ShotContext } from "../lib/demo";
+import type { DemoModule } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
 import { color, type as scale } from "../lib/theme";
 
@@ -203,30 +203,19 @@ export function Demo() {
 	);
 }
 
-/** A banner animation only advances on painted frames: one to start, one past its end, one to unmount. */
-async function play(shot: ShotContext) {
-	await shot.settle(300);
-	await shot.settle(300);
-	await shot.settle(300);
-}
-
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.hover("inline-banner-dismiss");
 	shot.capture("dismiss-hover");
 	await shot.click("inline-banner-dismiss");
-	await play(shot);
 	shot.expectText("Changes saved", false);
 	shot.capture("dismissed");
 	await shot.click("inline-replay");
-	await play(shot);
 	shot.expectText("Changes saved", true);
 	shot.capture("replayed");
 	await shot.click("fixed-banner-dismiss");
-	await play(shot);
 	shot.expectText("Registry maintenance tonight at 22:00 UTC", false);
 	shot.capture("fixed-dismissed");
 	await shot.click("fixed-replay");
-	await play(shot);
 	shot.expectText("Registry maintenance tonight at 22:00 UTC", true);
 	shot.capture("fixed-replayed");
 };
