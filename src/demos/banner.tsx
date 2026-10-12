@@ -218,4 +218,9 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("fixed-replay");
 	shot.expectText("Registry maintenance tonight at 22:00 UTC", true);
 	shot.capture("fixed-replayed");
+	// The statuses and actions cards are below the fold.
+	await shot.scroll(600, 400, 0, -620);
+	shot.capture("scrolled-statuses");
+	await shot.scroll(600, 400, 0, -620);
+	shot.capture("scrolled-actions");
 };

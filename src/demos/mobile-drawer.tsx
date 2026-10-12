@@ -5,7 +5,7 @@ import { SidebarMenu, SidebarMenuButton } from "../components/sidebar";
 import type { DemoModule } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
 import type { IconName } from "../lib/icons";
-import { color, type as scale, weight } from "../lib/theme";
+import { color, type as scale, setScheme, weight } from "../lib/theme";
 
 const ROWS: { label: string; icon: IconName }[] = [
 	{ label: "Overview", icon: "globe" },
@@ -97,4 +97,12 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectText("Current page: Projects", true);
 	shot.expectText("Navigation", false);
 	shot.capture("picked");
+
+	setScheme("light");
+	await shot.settle(300);
+	await shot.click("drawer-open");
+	shot.capture("open-light");
+	await shot.press("escape");
+	setScheme("dark");
+	await shot.settle(300);
 };

@@ -584,8 +584,9 @@ function DismissChip(props: {
 				borderRadius: radius.item,
 				cursor: "pointer",
 				keyboardFocusDim: false,
-				opacity: props.visible ? 1 : 0,
-				pointerEvents: props.visible ? "auto" : "none",
+				// Over the chip the card itself is no longer hovered (the chip's hitbox takes the pointer), so the chip keeps itself shown.
+				opacity: props.visible || hovered() ? 1 : 0,
+				pointerEvents: props.visible || hovered() ? "auto" : "none",
 				backgroundColor: props.overMedia
 					? hovered()
 						? color.card
