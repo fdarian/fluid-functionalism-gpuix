@@ -60,9 +60,12 @@ export function Demo() {
 }
 
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
-	await shot.hover("box-2");
+	// The label is the likeliest thing under the pointer: hover and click must work over it.
+	const row = shot.centerOf("box-2");
+	await shot.moveTo(row.x - 144 + 60, row.y);
 	shot.capture("hover");
-	await shot.click("box-1");
+	await shot.clickAt(shot.centerOf("box-1").x - 144 + 60, shot.centerOf("box-1").y);
+	shot.expectText("Bananas", true);
 	await shot.hover("box-2");
 	shot.capture("checked-pair");
 	// Checking the row between two checked runs merges them.

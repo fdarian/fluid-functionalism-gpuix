@@ -253,6 +253,8 @@ function ChoiceLabel(props: {
 					position: "absolute",
 					top: 0,
 					left: 0,
+					// An absolute box blocks the mouse by default, which would starve the group's hover and the row's click while the pointer is over the label.
+					pointerEvents: "none",
 					color: props.lit ? color.foreground : color.mutedForeground,
 				}}
 			>
