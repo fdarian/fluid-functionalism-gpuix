@@ -25,6 +25,7 @@ Card, CardGroup (stacked / inline, 1 or 2+ columns, borderless / outlined, separ
 - **Original:** a stretched `<button>` overlay (`absolute inset-0 z-20`) makes the whole card the click target while footer buttons (`z-30`) stay independently clickable.
 - **gpuix:** a click goes to the topmost element that has a listener, and an element that paints a fill blocks the click from reaching an ancestor (verified: a filled child with no handler swallows the parent's `onClick`; `pointerEvents: "none"` or an unfilled child lets it through). There is no bubbling to opt into and no stacking-order control (no `zIndex`, already known).
 - **Workaround:** the card root carries `onClick` (via `buttonProps`, so it is also the tab stop and Space / Enter work), and every non-interactive child that paints (media tile, image, selected fill, dividers) is `pointerEvents: "none"`. Footer buttons own their clicks, which is exactly the original's z-30 behaviour.
+- The same rule applies to hover: a filled or absolute child also blocks its parent's `onMouseEnter` / `onMouseMove` (`style.rs:317` `should_occlude`), so the decorative layers are `pointerEvents: "none"` too.
 - **Fidelity:** exact.
 - **Components it hits:** any card-like row with nested actions (dropdown rows with trailing buttons, chat message actions).
 
