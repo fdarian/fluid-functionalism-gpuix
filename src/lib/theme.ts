@@ -10,6 +10,8 @@ interface Palette {
 	surface2: string;
 	/** surface-3: popups. */
 	card: string;
+	/** surface-5: dialogs. */
+	surface5: string;
 	foreground: string;
 	mutedForeground: string;
 	muted: string;
@@ -46,6 +48,7 @@ const palettes: Record<Scheme, Palette> = {
 		background: "#FAFAFA",
 		surface2: "#FCFCFC",
 		card: "#FFFFFF",
+		surface5: "#FFFFFF",
 		foreground: "#171717",
 		mutedForeground: "#737373",
 		muted: "#F4F4F5",
@@ -73,6 +76,7 @@ const palettes: Record<Scheme, Palette> = {
 		background: "#171717",
 		surface2: "#1E1E1E",
 		card: "#252525",
+		surface5: "#333333",
 		foreground: "#F5F5F5",
 		mutedForeground: "#A3A3A3",
 		muted: "#1E1E1E",
