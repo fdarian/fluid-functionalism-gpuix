@@ -1,4 +1,4 @@
-import { For } from "solid-js";
+import { createSignal, For } from "solid-js";
 import {
 	Tooltip,
 	TooltipProvider,
@@ -20,11 +20,13 @@ function TriggerButton(props: {
 	trigger: TooltipTrigger;
 	primary?: boolean;
 	compact?: boolean;
+	onClick?: () => void;
 	children: string;
 }) {
 	return (
 		<div
 			{...props.trigger}
+			onClick={props.onClick}
 			style={{
 				height: props.compact ? height.controlCompact : height.control,
 				paddingLeft: props.compact ? 12 : 16,
@@ -97,6 +99,7 @@ export const title = "Tooltip";
 export const group = "Components";
 
 export function Demo() {
+	const [saves, setSaves] = createSignal(0);
 	return (
 		<>
 			<DemoCard title="Tooltip">
@@ -105,11 +108,18 @@ export function Demo() {
 						<DemoRow label="Basic">
 							<Tooltip testId="basic" content="Save your changes">
 								{(trigger: TooltipTrigger) => (
-									<TriggerButton trigger={trigger} primary>
+									<TriggerButton
+										trigger={trigger}
+										primary
+										onClick={() => setSaves(saves() + 1)}
+									>
 										Hover me
 									</TriggerButton>
 								)}
 							</Tooltip>
+							<text style={{ ...scale.caption, color: color.mutedForeground }}>
+								{`Clicked ${saves()} times`}
+							</text>
 						</DemoRow>
 						<DemoRow label="Rich content">
 							<Tooltip
@@ -207,6 +217,8 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectText("Save your changes", true);
 	await shot.settle(300);
 	shot.capture("basic");
+	await shot.click("basic");
+	shot.expectText("Clicked 1 times", true);
 
 	await shot.hover("rich");
 	await shot.settle(300);
@@ -231,12 +243,10 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("follow-x-centre");
 	const area = shot.centerOf("follow-x");
 	await shot.moveTo(area.x - 90, area.y);
-	await shot.settle(200);
 	await shot.settle(300);
 	shot.capture("follow-x-left");
 	const tall = shot.centerOf("follow-y");
 	await shot.moveTo(tall.x, tall.y + 30);
-	await shot.settle(300);
 	await shot.settle(300);
 	shot.capture("follow-y-low");
 

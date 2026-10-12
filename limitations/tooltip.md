@@ -12,6 +12,14 @@ All four sides, rich content, per-tooltip and provider delay with skip-delay gro
 - **Fidelity:** approximated (different API, same behaviour).
 - **Components it hits:** any wrapper that needs hover on a filled or `auto` child: dropdown triggers, tabs with tooltips, sidebar rail handle.
 
+## mouseDown plus mouseMove on one element captures the pointer
+
+- **Original:** the trigger's handlers are passive; the child's click always arrives.
+- **gpuix lacks:** the same. gpuix calls `capture_pointer()` on any element that has both `onMouseDown` and `onMouseMove` (`packages/native/src/renderer.rs:5663`), so mouseUp and click go to that element instead of the child under it. The first version of the wrapper listened to both on every tooltip and swallowed the clicks of buttons and rows inside it (reported by the input and chat groups). A surprise: nothing signals that listening to both changes where the release goes. Bug-shaped trap.
+- **Workaround:** `onMouseMove` is attached only when `followCursor` is set; `onMouseDown` (dismiss on press) stays.
+- **Fidelity:** exact, except that a follow-cursor tooltip still captures the press of its own trigger.
+- **Components it hits:** any wrapper that tracks the pointer and also listens for a press.
+
 ## `<anchored align="center">` offsets the layer twice
 
 - **Original:** Base UI's `Positioner side="top"` centres the popup on the trigger.

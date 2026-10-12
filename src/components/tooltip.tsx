@@ -78,7 +78,8 @@ function slideFrom(side: TooltipSide) {
  */
 export interface TooltipTrigger {
 	onMouseEnter: () => void;
-	onMouseMove: (event: EventPayload) => void;
+	/** Only present with `followCursor`: gpuix captures the pointer on any element that listens to both mouseDown and mouseMove, and the child's click would never arrive. */
+	onMouseMove?: (event: EventPayload) => void;
 	onMouseLeave: () => void;
 	onMouseDown: () => void;
 }
@@ -169,7 +170,9 @@ export function Tooltip(props: {
 
 	const trigger: TooltipTrigger = {
 		onMouseEnter,
-		onMouseMove,
+		get onMouseMove() {
+			return props.followCursor === undefined ? undefined : onMouseMove;
+		},
 		onMouseLeave: dismiss,
 		onMouseDown: dismiss,
 	};
