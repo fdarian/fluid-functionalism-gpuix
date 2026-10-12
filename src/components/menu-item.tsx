@@ -9,6 +9,7 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
+import { StableLabel } from "../lib/stable-label";
 import { useHoverItem } from "../lib/fluid-hover";
 import type { FluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
@@ -57,43 +58,6 @@ export function useDropdown() {
 
 /** `bg-border/60`. */
 export const separatorColor = () => color.borderFaint;
-
-/**
- * A label that keeps its width when the weight steps up: a hidden copy at the
- * heavy weight reserves the space. Both layers opt out of the mouse, because
- * gpuix hit-tests a positioned element as the end of the line.
- */
-function RowLabel(props: { text: string; lit: boolean; heavy: boolean }) {
-	const textStyle = (heavy: boolean) => ({
-		...scale.body,
-		fontWeight: heavy ? weight.semibold : weight.normal,
-		whiteSpace: "nowrap" as const,
-		pointerEvents: "none" as const,
-	});
-	return (
-		<div
-			style={{
-				position: "relative",
-				flexGrow: 1,
-				minWidth: 0,
-				pointerEvents: "none",
-			}}
-		>
-			<text style={{ ...textStyle(true), opacity: 0 }}>{props.text}</text>
-			<text
-				style={{
-					...textStyle(props.heavy),
-					position: "absolute",
-					top: 0,
-					left: 0,
-					color: props.lit ? color.foreground : color.mutedForeground,
-				}}
-			>
-				{props.text}
-			</text>
-		</div>
-	);
-}
 
 export function DropdownLabel(props: { children: string }) {
 	return (
@@ -223,7 +187,12 @@ export function MenuItem(props: {
 					/>
 				)}
 			</Show>
-			<RowLabel text={props.label} lit={lit()} heavy={checked()} />
+			<StableLabel
+				text={props.label}
+				heavy={checked()}
+				color={lit() ? color.foreground : color.mutedForeground}
+				grow
+			/>
 			<Show when={props.chevron}>
 				<Icon
 					name="chevron-right"

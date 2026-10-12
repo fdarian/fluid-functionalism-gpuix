@@ -20,6 +20,7 @@ import {
 	type FluidHover,
 	type ItemRect,
 } from "../lib/fluid-hover";
+import { StableLabel } from "../lib/stable-label";
 import { awaitBounds } from "../lib/bounds";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
@@ -284,35 +285,16 @@ export function TabsSubtleItem(props: {
 		if (next !== undefined) renderer.focusElement?.(next.id);
 	};
 
-	const textStyle = (heavy: boolean) => ({
-		...metrics().text,
-		fontWeight: heavy ? weight.semibold : weight.normal,
-		whiteSpace: "nowrap" as const,
-	});
-
 	const label = (
-		<div
-			ref={(node) => {
+		<StableLabel
+			labelRef={(node) => {
 				labelBox = node;
 			}}
-			style={{ position: "relative", flexShrink: 0 }}
-		>
-			{/* A hidden semibold copy reserves the heavy width, so selecting a tab never moves the pills. */}
-			<text style={{ ...textStyle(true), opacity: 0 }}>{props.label}</text>
-			<text
-				style={{
-					...textStyle(isSelected()),
-					position: "absolute",
-					top: 0,
-					left: 0,
-					// An absolute box blocks hits behind it, which would kill the tab's own hover.
-					pointerEvents: "none",
-					color: isActive() ? color.foreground : color.mutedForeground,
-				}}
-			>
-				{props.label}
-			</text>
-		</div>
+			text={props.label}
+			heavy={isSelected()}
+			color={isActive() ? color.foreground : color.mutedForeground}
+			textStyle={metrics().text}
+		/>
 	);
 
 	return (

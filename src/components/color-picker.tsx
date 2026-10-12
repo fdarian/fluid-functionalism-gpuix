@@ -16,6 +16,7 @@ import {
 	Show,
 	untrack,
 } from "solid-js";
+import { StableLabel } from "../lib/stable-label";
 import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
@@ -952,33 +953,11 @@ function FormatDropdown(props: {
 										cursor: "pointer",
 									}}
 								>
-									{/* A hidden semibold copy reserves the checked width, so the label can gain weight without moving the row. */}
-									<div style={{ position: "relative" }}>
-										<text
-											style={{
-												...scale.body,
-												fontWeight: weight.semibold,
-												color: color.transparent,
-											}}
-										>
-											{FORMAT_LABELS[format]}
-										</text>
-										<div style={{ position: "absolute", top: 0, left: 0 }}>
-											<text
-												style={{
-													...scale.body,
-													fontWeight: checked()
-														? weight.semibold
-														: weight.normal,
-													color: lit()
-														? color.foreground
-														: color.mutedForeground,
-												}}
-											>
-												{FORMAT_LABELS[format]}
-											</text>
-										</div>
-									</div>
+									<StableLabel
+										text={FORMAT_LABELS[format]}
+										heavy={checked()}
+										color={lit() ? color.foreground : color.mutedForeground}
+									/>
 								</div>
 							);
 						}}

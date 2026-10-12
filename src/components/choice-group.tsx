@@ -13,6 +13,7 @@ import {
 	onCleanup,
 	useContext,
 } from "solid-js";
+import { StableLabel } from "../lib/stable-label";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
 import {
@@ -226,38 +227,6 @@ export function ChoiceGroup(props: {
 	);
 }
 
-/** A label that keeps its width when the weight steps up: a hidden copy at the heavy weight reserves the space. */
-function ChoiceLabel(props: {
-	text: string;
-	lit: boolean;
-	heavy: boolean;
-	textStyle: typeof scale.body | typeof scale.bodyCompact;
-}) {
-	const textStyle = (heavy: boolean) => ({
-		...props.textStyle,
-		fontWeight: heavy ? weight.semibold : weight.normal,
-		whiteSpace: "nowrap" as const,
-	});
-	return (
-		<div style={{ position: "relative", flexShrink: 0, pointerEvents: "none" }}>
-			<text style={{ ...textStyle(true), opacity: 0 }}>{props.text}</text>
-			<text
-				style={{
-					...textStyle(props.heavy),
-					position: "absolute",
-					top: 0,
-					left: 0,
-					// An absolute box blocks the mouse by default, which would starve the group's hover and the row's click while the pointer is over the label.
-					pointerEvents: "none",
-					color: props.lit ? color.foreground : color.mutedForeground,
-				}}
-			>
-				{props.text}
-			</text>
-		</div>
-	);
-}
-
 export function ChoiceRow(props: {
 	index: number;
 	label: string;
@@ -349,10 +318,12 @@ export function ChoiceRow(props: {
 			}}
 		>
 			{props.indicator(active)}
-			<ChoiceLabel
+			<StableLabel
 				text={props.label}
-				lit={props.checked || active()}
 				heavy={props.checked}
+				color={
+					props.checked || active() ? color.foreground : color.mutedForeground
+				}
 				textStyle={size().text}
 			/>
 		</div>

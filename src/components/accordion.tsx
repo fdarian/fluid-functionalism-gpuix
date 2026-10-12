@@ -13,6 +13,7 @@ import {
 	type JSX,
 	useContext,
 } from "solid-js";
+import { StableLabel } from "../lib/stable-label";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
@@ -354,38 +355,6 @@ export function AccordionItem(props: {
 
 // ─── Trigger ─────────────────────────────────────────────────────────────────
 
-/** Label that keeps its width when the weight steps up: a hidden copy at the heavy weight reserves the space. */
-function TriggerLabel(props: {
-	text: JSX.Element;
-	lit: boolean;
-	emphasized: boolean;
-	textStyle: (typeof sizes)[AccordionSize]["text"];
-}) {
-	const textStyle = (heavy: boolean) => ({
-		...props.textStyle,
-		fontWeight: heavy ? weight.semibold : weight.normal,
-		whiteSpace: "nowrap" as const,
-	});
-	return (
-		<div style={{ position: "relative", flexGrow: 1, minWidth: 0 }}>
-			<text style={{ ...textStyle(true), opacity: 0 }}>{props.text}</text>
-			<text
-				style={{
-					...textStyle(props.emphasized),
-					position: "absolute",
-					top: 0,
-					left: 0,
-					// An absolute box blocks hits behind it, which would kill the row's hover over its own label.
-					pointerEvents: "none",
-					color: props.lit ? color.foreground : color.mutedForeground,
-				}}
-			>
-				{props.text}
-			</text>
-		</div>
-	);
-}
-
 export function AccordionTrigger(props: { children: string; testId?: string }) {
 	const root = useRoot();
 	const group = useContext(GroupContext);
@@ -509,11 +478,12 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					},
 				}}
 			>
-				<TriggerLabel
+				<StableLabel
 					text={props.children}
-					lit={lit()}
-					emphasized={item.isOpen()}
+					heavy={item.isOpen()}
+					color={lit() ? color.foreground : color.mutedForeground}
 					textStyle={metrics().text}
+					grow
 				/>
 				<Icon
 					name={item.isOpen() ? "chevron-down" : "chevron-right"}

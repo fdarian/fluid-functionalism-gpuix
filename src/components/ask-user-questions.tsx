@@ -16,6 +16,7 @@ import {
 	onCleanup,
 	Show,
 } from "solid-js";
+import { StableLabel } from "../lib/stable-label";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type ItemRect } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
@@ -298,45 +299,6 @@ function Row(props: RowProps) {
 			</div>
 			<Show when={props.chipPosition === "right"}>{chipSlot()}</Show>
 			{rightArrowSlot()}
-		</div>
-	);
-}
-
-/** The title with a hidden semibold copy reserving its width, so it can go semibold in place. */
-function OptionTitle(props: { selected: boolean; children: string }) {
-	return (
-		<div style={{ position: "relative", flexShrink: 0 }}>
-			<text
-				style={{
-					...scale.body,
-					opacity: 0,
-					fontWeight: weight.semibold,
-					whiteSpace: "nowrap",
-					color: color.foreground,
-				}}
-			>
-				{props.children}
-			</text>
-			{/* Absolute children take the pointer from the row, so this layer takes none. */}
-			<div
-				style={{
-					position: "absolute",
-					top: 0,
-					left: 0,
-					pointerEvents: "none",
-				}}
-			>
-				<text
-					style={{
-						...scale.body,
-						whiteSpace: "nowrap",
-						color: color.foreground,
-						fontWeight: props.selected ? weight.semibold : weight.normal,
-					}}
-				>
-					{props.children}
-				</text>
-			</div>
 		</div>
 	);
 }
@@ -748,7 +710,11 @@ export function AskUserQuestions(props: {
 							topAlign={stacked()}
 							chipPosition={question()?.chipPosition ?? "right"}
 						>
-							<OptionTitle selected={selected()}>{option.title}</OptionTitle>
+							<StableLabel
+								text={option.title}
+								heavy={selected()}
+								color={color.foreground}
+							/>
 							<Show when={option.description}>
 								<text
 									style={{

@@ -14,6 +14,7 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
+import { StableLabel } from "../lib/stable-label";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
 import {
@@ -164,39 +165,11 @@ function TriggerRow(props: {
 					},
 				}}
 			>
-				<div style={{ position: "relative" }}>
-					<text
-						style={{
-							...scale.body,
-							opacity: 0,
-							fontWeight: weight.semibold,
-							whiteSpace: "nowrap",
-							color: color.foreground,
-						}}
-					>
-						{props.children}
-					</text>
-					{/* An absolute child takes the pointer from the trigger around it, so it must not take hits. */}
-					<div
-						style={{
-							position: "absolute",
-							top: 0,
-							left: 0,
-							pointerEvents: "none",
-						}}
-					>
-						<text
-							style={{
-								...scale.body,
-								whiteSpace: "nowrap",
-								fontWeight: props.open ? weight.semibold : weight.normal,
-								color: highlighted() ? color.foreground : color.mutedForeground,
-							}}
-						>
-							{props.children}
-						</text>
-					</div>
-				</div>
+				<StableLabel
+					text={props.children}
+					heavy={props.open}
+					color={highlighted() ? color.foreground : color.mutedForeground}
+				/>
 				<Chevron
 					open={props.open}
 					stroke={highlighted() ? 2 : 1.5}

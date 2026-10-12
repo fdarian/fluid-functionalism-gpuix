@@ -9,6 +9,7 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
+import { StableLabel } from "../lib/stable-label";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
@@ -152,46 +153,6 @@ export function SidebarMenu(props: { children: JSX.Element }) {
 
 // ─── Rows ────────────────────────────────────────────────────────────────────
 
-/** Row label that keeps its width when the weight steps up: a hidden copy at the heavy weight reserves the space. */
-function RowLabel(props: {
-	testId?: string;
-	text: string;
-	lit: boolean;
-	emphasized: boolean;
-	grow: boolean;
-}) {
-	const textStyle = (heavy: boolean) => ({
-		...scale.body,
-		fontWeight: heavy ? weight.semibold : weight.normal,
-		whiteSpace: "nowrap" as const,
-	});
-	return (
-		<div
-			style={{
-				position: "relative",
-				flexGrow: props.grow ? 1 : 0,
-				minWidth: 0,
-			}}
-		>
-			<text style={{ ...textStyle(true), opacity: 0 }}>{props.text}</text>
-			<text
-				testId={props.testId}
-				style={{
-					...textStyle(props.emphasized),
-					position: "absolute",
-					top: 0,
-					left: 0,
-					// An absolute box blocks the mouse by default, which would starve the menu's hover while the pointer is over the label.
-					pointerEvents: "none",
-					color: props.lit ? color.foreground : color.mutedForeground,
-				}}
-			>
-				{props.text}
-			</text>
-		</div>
-	);
-}
-
 export function SidebarMenuButton(props: {
 	label: string;
 	icon?: IconRef;
@@ -263,13 +224,13 @@ export function SidebarMenuButton(props: {
 					/>
 				)}
 			</Show>
-			<RowLabel
+			<StableLabel
 				testId={
 					props.testId === undefined ? undefined : `${props.testId}-label`
 				}
 				text={props.label}
-				lit={lit()}
-				emphasized={props.active === true}
+				heavy={props.active === true}
+				color={lit() ? color.foreground : color.mutedForeground}
 				grow={props.dot === undefined}
 			/>
 			<Show when={props.dot}>
