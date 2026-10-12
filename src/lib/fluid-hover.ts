@@ -98,6 +98,8 @@ export function pickNearest(input: PickNearestInput): number | null {
 export interface FluidHoverOptions {
 	/** Rows that stay mounted but are clipped away (a collapsed sub-menu). */
 	isItemDisabled?: (index: number) => boolean;
+	/** The direction rows run in: the pointer resolves to the row nearest along it. Default "y". */
+	axis?: "x" | "y";
 }
 
 /**
@@ -164,7 +166,7 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 		const box = getBounds.call(renderer, container.id);
 		if (box == null) return;
 		const next = pickNearest({
-			axis: "y",
+			axis: options.axis ?? "y",
 			point: pointer,
 			rects: rects(),
 			containerRect: {
