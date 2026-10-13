@@ -244,8 +244,8 @@ export function App(props: { demos: readonly Demo[]; initialPage?: string }) {
 						<Match when={page() === SHOWCASE}>
 							<Showcase demos={props.demos} onPage={setPage} />
 						</Match>
-						<Match when={current()}>
-							{(demo: () => Demo) => <DemoPage demo={demo()} />}
+						<Match when={current()} keyed>
+							{(demo: Demo) => <DemoPage demo={demo} />}
 						</Match>
 					</Switch>
 				</div>
