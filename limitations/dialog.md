@@ -7,7 +7,7 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 | Probe | Result |
 |---|---|
 | Overlay within the app window | The layer covers the whole window including the sidebar and the customise card. `scoped` renders it inside one region instead (needs a direct-child placement, below). |
-| Focus on open | Lands on the popup itself (`tabIndex -1`), so the first Tab enters it. |
+| Focus on open | gpuix lands it on the popup itself (`tabIndex -1`); `FocusFirst` then moves it to the first tab stop in the popup with `focusNextWithin`, as Base UI does. It is a tick later (the popup's tree is committed natively after the mount) and must be built through `once()`, or the discarded copy of the portal's children takes a second step and skips the first stop. |
 | Focus trap | Works. Tab cycles Cancel, Create, ✕ and wraps; Shift+Tab reverses. The page behind is never reached (`focusNextWithin`, `dialog.ts` popup `onKeyDown`). |
 | Focus return | Escape returns focus to the trigger; a nested dialog returns it to the nested trigger. |
 | Backdrop | A press closes it (on mouse **down**, not up: down on the backdrop and up on the panel still closes). The click does not reach the page: pressing a sidebar row behind it closes the dialog and does not navigate. |
@@ -56,6 +56,10 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 - `surface-5` and its shadow: the 1px ring is a border and the stack of drops is the single largest one (see the README's `shadow-surface-3` row); the dark inset highlight is dropped.
 - `bg-black/40`, `dark:bg-black/80`: `rgba(0,0,0,.4 / .8)` by scheme.
 - Base UI's `actionsRef` / `preventUnmountOnClose` bookkeeping is replaced by a `mounted` signal that outlives `shown` by the fade, because gpuix's `DialogPortal` unmounts the instant `open` goes false.
-- A trigger pressed while the exit fade plays is ignored (gpuix's `Dialog` sees `open` still true).
+- A trigger pressed while the exit fade plays reopens it, and one pressed while the dialog is open closes it (Base UI's `useClick` toggles): `DialogTrigger` adds an `onClick` that decides before gpuix's own `setOpen(true)`, which is a no-op while `open` (= `mounted`) is true.
+- gpuix keeps its layer up through the exit, so a second close request (backdrop, ✕) arrives after the dialog closed: `setOpen` ignores it, so `onOpenChange(false)` fires once. A second Escape in that window is handed on to the dialog behind: the popup's `onKeyDown` takes the layer down (`finish()`), and gpuix reads the stack after element handlers, so the key reaches the parent.
+- A nested dialog paints no second scrim (Base UI's `Backdrop` is off for nested dialogs): the child reads the parent's scope.
+- `modal={false}`: gpuix's backdrop dismissal is switched off (`disablePointerDismissal`) and the popup's `onMouseDownOutside` closes on a press anywhere outside it (the scrim takes a press on the trigger too, so that closes it), except, for a scoped dialog, on a trigger outside the overlay (it toggles the dialog itself) and while a dialog opened from it is mounted. Nested non-modal dialogs would need group-aware outside press (README). The scrim still takes the press, as in the original, so a page control under it is not pressed.
+- The ✕ is labelled "Close" through `Button`'s `aria-label`.
 - Trigger and Close compose through gpuix's `asChild`, so `<DialogTrigger><Button/></DialogTrigger>` spreads the handlers onto the Button's root element; the child must be a single host element.
 - Positive: a dialog's DOM-order tab stops (content, then the ✕ last) match the original, and every focus ring is the shared `focusVisible` outline.

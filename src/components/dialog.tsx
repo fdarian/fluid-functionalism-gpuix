@@ -9,7 +9,10 @@ import {
 	DialogDescription as GpuixDialogDescription,
 	DialogTitle as GpuixDialogTitle,
 	DialogTrigger as GpuixDialogTrigger,
+	type EventPayload,
+	type HostElement,
 	motion,
+	useGpuixRequired,
 } from "@gpuix/solid";
 import {
 	createContext,
@@ -18,9 +21,11 @@ import {
 	type JSX,
 	on,
 	onCleanup,
+	onMount,
 	Show,
 	useContext,
 } from "solid-js";
+import { isInside } from "../lib/popup";
 import { createPresence } from "../lib/presence";
 import {
 	color,
@@ -59,6 +64,17 @@ interface DialogScope {
 	scoped: () => boolean;
 	/** The exit fade ended: take the layer down. */
 	finish: () => void;
+	/** Inside another dialog: the parent's scrim already dims the page. */
+	nested: boolean;
+	/** Dialogs opened inside this one that are still mounted. */
+	openChildren: () => number;
+	trackChild: (by: 1 | -1) => void;
+	/** A trigger press: closes an open dialog, reopens one that is fading out. */
+	pressTrigger: () => void;
+	/** The trigger's box, which an outside press must not count as outside. */
+	trigger: { current: HostElement | undefined };
+	modal: () => boolean;
+	setOpen: (open: boolean) => void;
 }
 
 const DialogScopeContext = createContext<DialogScope>();
@@ -91,6 +107,7 @@ export function Dialog(props: {
 	scoped?: boolean;
 	children: JSX.Element;
 }) {
+	const parent = useContext(DialogScopeContext);
 	const [uncontrolled, setUncontrolled] = createSignal(
 		props.defaultOpen ?? false,
 	);
@@ -102,20 +119,52 @@ export function Dialog(props: {
 	const mounted = presence.mounted;
 
 	const setOpen = (next: boolean) => {
+		// gpuix keeps its layer up through the exit fade, so a second close request (a press on the backdrop or the ✕) can arrive when the dialog is already closed. Nothing to report.
+		if (!next && !shown()) return;
 		if (props.open === undefined) setUncontrolled(next);
 		props.onOpenChange?.(next);
 	};
+
+	const [openChildren, setOpenChildren] = createSignal(0);
+	if (parent !== undefined) {
+		createEffect(
+			on(mounted, (isMounted) => parent.trackChild(isMounted ? 1 : -1), {
+				defer: true,
+			}),
+		);
+		onCleanup(() => {
+			if (mounted()) parent.trackChild(-1);
+		});
+	}
+	const trigger: { current: HostElement | undefined } = { current: undefined };
 
 	const scope: DialogScope = {
 		shown,
 		mounted,
 		scoped: () => props.scoped ?? false,
 		finish: presence.release,
+		nested: parent !== undefined,
+		openChildren,
+		trackChild: (by) => setOpenChildren((count) => count + by),
+		trigger,
+		modal: () => props.modal ?? true,
+		setOpen,
+		pressTrigger() {
+			if (shown()) setOpen(false);
+			// Pressed while the exit fade plays: gpuix still sees the dialog open and ignores it.
+			else if (mounted()) setOpen(true);
+		},
 	};
 
 	return (
 		<DialogScopeContext.Provider value={scope}>
-			<GpuixDialog open={mounted()} modal={props.modal} onOpenChange={setOpen}>
+			<GpuixDialog
+				open={mounted()}
+				modal={props.modal}
+				// A non-modal dialog closes on a press anywhere outside it, so `DialogContent` takes that over from the backdrop.
+				disablePointerDismissal={!scope.modal()}
+				onOpenChange={setOpen}
+			>
 				{props.children}
 			</GpuixDialog>
 		</DialogScopeContext.Provider>
@@ -124,7 +173,34 @@ export function Dialog(props: {
 
 /** The single child becomes the trigger, like `render={<Button/>}`. */
 export function DialogTrigger(props: { children: JSX.Element }) {
-	return <GpuixDialogTrigger asChild>{props.children}</GpuixDialogTrigger>;
+	const scope = useDialogScope();
+	return (
+		<GpuixDialogTrigger
+			asChild
+			ref={(element) => {
+				scope.trigger.current = element;
+			}}
+			onClick={scope.pressTrigger}
+		>
+			{props.children}
+		</GpuixDialogTrigger>
+	);
+}
+
+/**
+ * Moves focus from the popup to its first tab stop once it is up, which is
+ * where Base UI puts it. gpuix focuses the popup itself.
+ */
+export function FocusFirst(props: { popup: () => HostElement | undefined }) {
+	const renderer = useGpuixRequired();
+	onMount(() => {
+		const popup = props.popup();
+		if (popup === undefined) throw new Error("FocusFirst: the popup is not mounted");
+		// A tick later: the tree the popup holds is only committed natively after this mount.
+		const timer = setTimeout(() => renderer.focusNextWithin?.(popup.id), 0);
+		onCleanup(() => clearTimeout(timer));
+	});
+	return null;
 }
 
 export function DialogClose(props: { children: JSX.Element }) {
@@ -197,29 +273,59 @@ export function DialogContent(props: {
 			overflow: "hidden",
 		}) as const;
 
+	let popup: HostElement | undefined;
+	/** The scoped overlay's box: a trigger outside it is not under the backdrop. */
+	let region: HostElement | undefined;
+	// gpuix builds the popup's children twice (see `once`), and a second focus step would skip the first tab stop.
+	const focusFirst = once(() => <FocusFirst popup={() => popup} />);
+	/** A non-modal dialog closes on a press anywhere outside it, except, for a scoped dialog, on a trigger outside the overlay (it toggles the dialog itself) or inside a dialog opened from it. */
+	const closeOnOutsidePress = (event: EventPayload) => {
+		if (scope.modal() || !scope.shown() || scope.openChildren() > 0) return;
+		if (
+			scope.scoped() &&
+			isInside(event, [scope.trigger.current]) &&
+			!isInside(event, [region])
+		) {
+			return;
+		}
+		scope.setOpen(false);
+	};
+
 	const body = () => (
 		<>
 			<DialogBackdrop>
-				<motion.div
-					initial={{ opacity: 0 }}
-					animate={{ opacity: scope.shown() ? 1 : 0 }}
-					transition={scope.shown() ? tween.slow : tween.slowExit}
-					style={{
-						position: "absolute",
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						backgroundColor: color.scrim,
-						// A filled child would swallow the press meant for the backdrop behind it.
-						pointerEvents: "none",
-					}}
-				/>
+				{/* Base UI renders no second backdrop for a nested dialog: the parent's already dims the page. */}
+				<Show when={!scope.nested}>
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: scope.shown() ? 1 : 0 }}
+						transition={scope.shown() ? tween.slow : tween.slowExit}
+						style={{
+							position: "absolute",
+							top: 0,
+							left: 0,
+							right: 0,
+							bottom: 0,
+							backgroundColor: color.scrim,
+							// A filled child would swallow the press meant for the backdrop behind it.
+							pointerEvents: "none",
+						}}
+					/>
+				</Show>
 			</DialogBackdrop>
 			<DialogPopup
 				style={{ width: "100%", maxWidth: maxWidth() }}
 				testId={props.testId}
+				ref={(element) => {
+					popup = element;
+				}}
+				onMouseDownOutside={closeOnOutsidePress}
+				// Escape while this dialog fades out belongs to the dialog behind it. gpuix hands the key to the top layer once the element handlers have run, so taking this layer down here lets it through.
+				onKeyDown={(event) => {
+					if (event.key === "escape" && !scope.shown()) scope.finish();
+				}}
 			>
+				{focusFirst()}
 				{/* The original also scales 0.97 to 1; gpuix has no transforms, so the panel only fades. */}
 				<motion.div
 					initial={{ opacity: 0 }}
@@ -248,6 +354,7 @@ export function DialogContent(props: {
 									variant="ghost"
 									size="icon-compact"
 									icon="x"
+									aria-label="Close"
 									testId="dialog-close"
 								/>
 							</DialogClose>
@@ -265,6 +372,9 @@ export function DialogContent(props: {
 		>
 			<Show when={scope.mounted()}>
 				<div
+					ref={(element) => {
+						region = element;
+					}}
 					style={{
 						position: "absolute",
 						top: 0,

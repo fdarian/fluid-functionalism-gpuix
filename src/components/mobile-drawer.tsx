@@ -15,7 +15,7 @@ import {
 	Show,
 } from "solid-js";
 import { createPresence } from "../lib/presence";
-import { once } from "./dialog";
+import { FocusFirst, once } from "./dialog";
 import {
 	color,
 	scheme,
@@ -45,6 +45,8 @@ export function MobileDrawer(props: {
 	children: JSX.Element;
 }) {
 	const content = once(() => props.children);
+	let popup: HostElement | undefined;
+	const focusFirst = once(() => <FocusFirst popup={() => popup} />);
 	// onMotionComplete is the primary release; the timer covers an exit that never animates.
 	const presence = createPresence(EXIT_FALLBACK_MS, props.open);
 	presence.follow(() => props.open);
@@ -66,7 +68,8 @@ export function MobileDrawer(props: {
 		<GpuixDialog
 			open={mounted()}
 			onOpenChange={(next) => {
-				if (!next) props.onClose();
+				// gpuix keeps the layer up through the exit, so Escape and backdrop presses still arrive then; the drawer has already been told.
+				if (!next && props.open) props.onClose();
 			}}
 		>
 			<DialogPortal>
@@ -90,6 +93,9 @@ export function MobileDrawer(props: {
 				{/* The popup is only the focus scope: the panel is what the pointer hits. */}
 				<DialogPopup
 					finalFocus={props.triggerRef}
+					ref={(element) => {
+						popup = element;
+					}}
 					testId={props.testId}
 					aria-label="Navigation"
 					style={{
@@ -127,6 +133,8 @@ export function MobileDrawer(props: {
 						{/* The padding lives on an inner box: a scroller's own padding is counted twice in its scroll extent, so a short panel would still scroll by 2 x 16. */}
 						<div style={{ display: "flex", flexDirection: "column", padding: 16 }}>
 							<Show when={settled()}>
+								{/* The content mounts only once the panel has stopped, so focus moves into it then. */}
+								{focusFirst()}
 								<motion.div
 									initial={{ opacity: 0 }}
 									animate={{ opacity: 1 }}
