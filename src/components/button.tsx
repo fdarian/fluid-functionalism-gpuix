@@ -99,6 +99,8 @@ export function Button(props: {
 	loading?: boolean;
 	disabled?: boolean;
 	testId?: string;
+	"aria-label"?: string;
+	"aria-expanded"?: boolean;
 	onClick?: (event: EventPayload) => void;
 	/** The label, or the icon for an icon-only size. */
 	children?: JSX.Element;
@@ -186,6 +188,8 @@ export function Button(props: {
 			})}
 			tabIndex={props.disabled || props.loading ? -1 : 0}
 			testId={props.testId}
+			aria-label={props["aria-label"]}
+			aria-expanded={props["aria-expanded"]}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			style={{

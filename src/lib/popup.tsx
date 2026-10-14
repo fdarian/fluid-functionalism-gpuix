@@ -10,8 +10,8 @@ import type { createPresence } from "./presence";
 import { color, radius, shadow3, motion as tween } from "./theme";
 
 export const POPUP_OFFSET = 6;
-/** The gap a popup keeps from the window edge. */
-export const POPUP_MARGIN = 8;
+/** The gap a popup keeps from the window edge: Base UI's default collision padding. */
+export const POPUP_MARGIN = 5;
 
 /** Whether a press landed inside any of the elements' painted boxes. An unmounted or unpainted element cannot have been pressed. */
 export function isInside(
