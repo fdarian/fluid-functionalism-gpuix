@@ -229,8 +229,6 @@ export function Tooltip(props: {
 	const onMouseEnter = () => {
 		clearTimeout(delayTimer);
 		clearTimeout(closeTimer);
-		// The first bounds read only switches tracking on, so the side can be chosen when it opens.
-		if (wrapper !== undefined) readBounds(wrapper);
 		// Coming back while the chip is still fading out brings it straight back.
 		const fadingOut = presence.mounted() && !presence.open();
 		const wait = fadingOut ? 0 : delay();
