@@ -94,9 +94,8 @@ function snapToStep(
 // ─── Painted bounds ──────────────────────────────────────────────────────────
 
 /**
- * Reads an element's painted box. The first read only turns tracking on and
- * boxes exist from the next frame, so `onReady` waits for the first one; later
- * `read()` calls are synchronous.
+ * Reads an element's painted box. Nothing is recorded before the first paint,
+ * so `onReady` waits for it; later `read()` calls are synchronous.
  */
 function createPaintedBox(onReady: (box: ElementBounds) => void) {
 	let element: HostElement | undefined;
@@ -941,7 +940,9 @@ function ComfortableSlider(props: ComfortableProps) {
 		props.formatValue === undefined ? String(v) : props.formatValue(v);
 
 	const [rowWidth, setRowWidth] = createSignal<number>();
-	const box = createPaintedBox((measured) => setRowWidth(measured.width));
+	const box = createPaintedBox((measured) =>
+		setRowWidth(measured.width - ROW_BORDER * 2),
+	);
 	const hover = createHover();
 	const [pressed, setPressed] = createSignal(false);
 	const [focused, setFocused] = createSignal(false);
@@ -964,7 +965,7 @@ function ComfortableSlider(props: ComfortableProps) {
 		max() === min()
 			? 0
 			: Math.max(0, Math.min(1, (v - min()) / (max() - min())));
-	/** Painted bounds are the padding box, inside the border, which is what the absolute layers measure from. */
+	/** Painted bounds are the border box; the absolute layers measure from inside the border. */
 	const inner = () => rowWidth();
 	const atMin = () => props.value === min();
 
@@ -1018,9 +1019,10 @@ function ComfortableSlider(props: ComfortableProps) {
 	const syncBox = () => {
 		const painted = box.read();
 		// A press maps over the border box, like the DOM version's getBoundingClientRect.
-		rowLeft = painted.x - ROW_BORDER;
-		liveWidth = painted.width + ROW_BORDER * 2;
-		if (rowWidth() !== painted.width) setRowWidth(painted.width);
+		rowLeft = painted.x;
+		liveWidth = painted.width;
+		const inside = painted.width - ROW_BORDER * 2;
+		if (rowWidth() !== inside) setRowWidth(inside);
 	};
 
 	const emit = (next: number) => {

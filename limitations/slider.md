@@ -14,11 +14,11 @@ Good. `onMouseDown` / `onMouseMove` / `onMouseUp` on one element give a full dra
 - **What was not measured:** latency and frame pacing in a real window. Every move is a native-to-JS event, a Solid update and a JS-to-native retarget; the headless run is not a measure of that. Releasing outside the *OS window* could not be driven headless.
 - **Rough edges:** the pointer is a window coordinate, and pointer-to-value needs the track's painted bounds (next item). `click` is a mouse-up with no press-origin check (checkbox-group.md), which does not matter for a slider because presses are handled on `mouseDown`.
 
-## No element-local pointer coordinates, and bounds are stale and padding-box
+## No element-local pointer coordinates, and bounds are one frame stale
 
 - **Original:** `getBoundingClientRect()` and `offsetWidth` read the live border box; a `ResizeObserver` keeps the width current.
-- **gpuix lacks:** `EventPayload` carries window `x` / `y` only. The element's box comes from `getElementBounds` (`packages/native/src/automation.rs:83`, a tracker child inside the element), which: returns `null` on the first call (that call turns tracking on), has the box only from the next painted frame, is the *padding* box (a 288px element with a 1px border reports 286), and never notifies on resize. Missing feature (events with element-local coordinates, a resize signal).
-- **Workaround:** the slider polls for its first box (up to 12 frames, then throws), re-reads on `mouseEnter` and on every press, and the default row adds back its 1px border to match the DOM maths. A window resize while nothing is hovered leaves the thumbs at their old pixels until the next hover.
+- **gpuix lacks:** `EventPayload` carries window `x` / `y` only. The element's box comes from `getElementBounds` (`packages/native/src/automation.rs:83`, a tracker child inside the element), which: is `null` until the element has painted once, is the last painted frame (a read in the commit that mutates sees the old layout), is the border box, and never notifies on resize. Missing feature (events with element-local coordinates, a resize signal).
+- **Workaround:** the slider polls for its first box (up to 12 frames, then throws), re-reads on `mouseEnter` and on every press, and the default row takes its 1px border off the painted width to size its absolute layers (presses map over the whole border box). A window resize while nothing is hovered leaves the thumbs at their old pixels until the next hover.
 - **Fidelity:** approximated.
 - **Components it hits:** fluid-hover (every list), carousel-dots, scroll-area, anything that maps the pointer onto geometry.
 

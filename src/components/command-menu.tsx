@@ -18,7 +18,6 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
-import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type FluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
@@ -465,8 +464,6 @@ export function CommandMenu(props: {
 		testId: props.testId,
 		scrollerRef(element) {
 			scroller = element;
-			// The first bounds query turns tracking on.
-			readBounds(element);
 		},
 		leaveList() {
 			hover.handlers.onMouseLeave();

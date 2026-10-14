@@ -103,9 +103,9 @@ export interface FluidHoverOptions {
 }
 
 /**
- * Attempts to wait for painted bounds. The first `getElementBounds` call only
- * turns tracking on, and bounds exist from the next frame, so a frame or two
- * of nulls is normal. A tree that stays null is a bug, not a state.
+ * Attempts to wait for painted bounds. A box is recorded on every paint and
+ * read a frame stale, so a frame or two of nulls before the first paint is
+ * normal. A tree that stays null is a bug, not a state.
  */
 const MEASURE_ATTEMPTS = 12;
 const MEASURE_RETRY_MS = 16;

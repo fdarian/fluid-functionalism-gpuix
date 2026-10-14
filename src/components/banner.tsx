@@ -17,7 +17,7 @@ import {
 	Switch,
 	useContext,
 } from "solid-js";
-import { awaitBounds, readBounds } from "../lib/bounds";
+import { awaitBounds } from "../lib/bounds";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
 import { color, radius, type as scale, motion as tween, weight, focusRing } from "../lib/theme";
@@ -319,8 +319,6 @@ export function Banner(props: {
 				<div
 					ref={(element) => {
 						restElement = element;
-						// Turn bounds tracking on now so a dismiss can read the height.
-						queueMicrotask(() => readBounds(element));
 					}}
 					style={rowStyle}
 				>

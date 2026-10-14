@@ -16,7 +16,7 @@ The component is data-driven (`items`, `value`, `onValueChange`) so the Theme pi
 
 - **Original:** `min-w-[var(--anchor-width)]` on the popup, which then grows to its widest option.
 - **gpuix lacks:** a size relation between an anchored layer and its anchor (`anchored.rs` has position props only) and an intrinsic-width popup that also respects a minimum. `PopupSurface` takes a fixed `width`.
-- **Workaround:** on open, `getElementBounds` of the trigger wrapper gives the width; `popupWidth` is a manual minimum for long labels (the timezone list). The first bounds read of an element only switches tracking on and returns null, so the wrapper is primed from a microtask at mount; opening before a frame has painted would throw. Missing feature, plus a trap: nothing in the type says the read can be null.
+- **Workaround:** on open, `getElementBounds` of the trigger wrapper gives the width; `popupWidth` is a manual minimum for long labels (the timezone list). The read is null until the wrapper has painted once, so opening before the first frame would throw. Missing feature, plus a trap: nothing in the type says the read can be null.
 - **Fidelity:** approximated (popup never grows past the width it was given, long labels ellipsize).
 - **Components it hits:** combobox (constant width), dropdown (`min-w` anchor), and every popup sized to its trigger.
 

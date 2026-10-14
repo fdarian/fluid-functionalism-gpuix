@@ -46,6 +46,6 @@ All four sides, rich content, per-tooltip and provider delay with skip-delay gro
 
 ## Smaller notes
 
-- `followCursor` is `offset` on the layer, set from `onMouseMove` against `getElementBounds` of the wrapper (null on the first call, which only switches tracking on, so the first move is skipped). Exact, with a frame of lag.
+- `followCursor` is `offset` on the layer, set from `onMouseMove` against `getElementBounds` of the wrapper (null until the wrapper has painted, so a move before that is skipped). Exact, with a frame of lag.
 - The `scaleY` of the popup enter and the rotated "Move along me" label of the vertical follow area need transforms (already known); the label is stacked in three lines instead.
 - Headless screenshots only advance a `motion` spring when a frame is drawn, so scenarios settle twice after a hover to capture the finished state.
