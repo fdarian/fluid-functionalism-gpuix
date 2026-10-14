@@ -22,7 +22,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
-import { moveIndex } from "../lib/list-nav";
+import { isChord, moveIndex } from "../lib/list-nav";
 import { isInside, placePopup, POPUP_OFFSET } from "../lib/popup";
 import { createPresence } from "../lib/presence";
 import { createTypeahead } from "../lib/typeahead";
@@ -809,10 +809,7 @@ function FormatDropdown(props: {
 		onMatch: hover.setActiveIndex,
 	});
 	const onKeyDown = (event: KeyEvent) => {
-		const modifiers = event.modifiers;
-		if (modifiers !== undefined && (modifiers.ctrl || modifiers.alt || modifiers.cmd)) {
-			return;
-		}
+		if (isChord(event)) return;
 		if (presence.open() && typeahead.handleKey(event)) {
 			event.preventDefault();
 			event.stopPropagation();

@@ -9,6 +9,7 @@ import {
 } from "@gpuix/solid";
 import { createSignal, type JSX, onCleanup, Show } from "solid-js";
 import { readBounds } from "../lib/bounds";
+import { isChord } from "../lib/list-nav";
 import { color, withAlpha } from "../lib/theme";
 
 export type ScrollOrientation = "vertical" | "horizontal" | "both";
@@ -338,8 +339,7 @@ export function ScrollArea(props: {
 
 	/** What a browser does for a focused scroller: arrows by 40px, pages by 87.5% of the view, Home and End to the ends. */
 	const onKeyDown = (event: KeyEvent) => {
-		const modifiers = event.modifiers;
-		if (modifiers?.ctrl || modifiers?.alt || modifiers?.cmd) return;
+		if (isChord(event)) return;
 		const size = view();
 		if (size === undefined) return;
 		const now = offset();
@@ -362,7 +362,7 @@ export function ScrollArea(props: {
 				axis = "y";
 				const back =
 					event.key === "pageup" ||
-					(event.key === "space" && modifiers?.shift === true);
+					(event.key === "space" && event.modifiers?.shift === true);
 				target = now.y + (back ? -1 : 1) * size.h * PAGE_SHARE;
 				break;
 			}

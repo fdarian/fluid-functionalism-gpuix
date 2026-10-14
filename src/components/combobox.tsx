@@ -19,7 +19,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { moveIndex, revealRow } from "../lib/list-nav";
+import { isChord, moveIndex, revealRow } from "../lib/list-nav";
 import { isInside, placePopup, PopupSurface } from "../lib/popup";
 import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import {
@@ -296,10 +296,7 @@ export function Combobox(props: {
 	};
 
 	const onKeyDown = (event: KeyEvent) => {
-		const modifiers = event.modifiers;
-		if (modifiers !== undefined && (modifiers.ctrl || modifiers.alt || modifiers.cmd)) {
-			return;
-		}
+		if (isChord(event)) return;
 		switch (event.key) {
 			case "down":
 			case "up":

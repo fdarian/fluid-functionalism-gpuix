@@ -28,7 +28,7 @@ import {
 	type ItemRect,
 } from "../lib/fluid-hover";
 import type { IconRef } from "../lib/icons";
-import { moveIndex, revealRow } from "../lib/list-nav";
+import { isChord, moveIndex, revealRow } from "../lib/list-nav";
 import { isInside, placePopup, POPUP_OFFSET, PopupSurface } from "../lib/popup";
 import { createPresence } from "../lib/presence";
 import { createTypeahead } from "../lib/typeahead";
@@ -350,9 +350,6 @@ function createMenuList(options: {
 
 	const onKey: KeyHandler = (event) => {
 		const typing = search() !== undefined;
-		const chord =
-			event.modifiers !== undefined &&
-			(event.modifiers.ctrl || event.modifiers.alt || event.modifiers.cmd);
 		if (event.key === "escape") {
 			// The window-level dismiss stack must not also close the whole menu.
 			event.preventDefault();
@@ -364,7 +361,7 @@ function createMenuList(options: {
 			options.leave();
 			return;
 		}
-		if (chord) return;
+		if (isChord(event)) return;
 		if (!typing && typeahead.handleKey(event)) {
 			event.stopPropagation();
 			return;
@@ -934,10 +931,7 @@ export function DropdownMenu(props: {
 
 	const onKeyDown = (event: KeyEvent) => {
 		if (props.disabled === true) return;
-		const modifiers = event.modifiers;
-		if (modifiers !== undefined && (modifiers.ctrl || modifiers.alt || modifiers.cmd)) {
-			return;
-		}
+		if (isChord(event)) return;
 		if (!presence.open()) {
 			if (
 				event.key === "down" ||

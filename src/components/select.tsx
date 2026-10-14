@@ -20,7 +20,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { moveIndex, revealRow } from "../lib/list-nav";
+import { isChord, moveIndex, revealRow } from "../lib/list-nav";
 import { isInside, placePopup, PopupSurface } from "../lib/popup";
 import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import { createTypeahead } from "../lib/typeahead";
@@ -305,10 +305,7 @@ export function Select<Value extends string>(props: {
 		revealIndex(index);
 	};
 	const onKeyDown = (event: KeyEvent) => {
-		const modifiers = event.modifiers;
-		if (modifiers !== undefined && (modifiers.ctrl || modifiers.alt || modifiers.cmd)) {
-			return;
-		}
+		if (isChord(event)) return;
 		// Typeahead first: Space inside a session continues it instead of opening or picking.
 		if (typeahead.handleKey(event)) {
 			event.preventDefault();
