@@ -70,8 +70,12 @@ export function RadioGroup(props: {
 		}
 		return undefined;
 	});
+	// FF paints the selected background only for the `value` and `selectedIndex` APIs; a group driven by per-item `selected` has none.
 	const runs = createMemo(() => {
-		const index = selectedIndex();
+		const index =
+			props.value !== undefined
+				? selectedIndex()
+				: props.selectedIndex;
 		return index === undefined ? [] : [{ start: index, end: index, id: 0 }];
 	});
 

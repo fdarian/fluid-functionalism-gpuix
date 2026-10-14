@@ -208,6 +208,26 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("oklch");
 	await pickFormat(shot, "default", "rgb");
 
+	// The format menu by keyboard: closing returned focus to the trigger, a
+	// keyboard open lights the first row (Up: the last), Down wraps, End /
+	// Home / typeahead move.
+	await shot.press("up");
+	shot.capture("format-up-opens-last");
+	await shot.press("enter");
+	shot.expectText("OKLCH", true);
+	await shot.press("down h enter");
+	shot.expectText("OKLCH", false);
+	await shot.press("down up enter");
+	shot.expectText("OKLCH", true);
+	await shot.press("down end up enter");
+	shot.expectText("OKLCH", false);
+	// A pointer open lights nothing until the pointer moves in.
+	await shot.moveTo(1180, 700);
+	await shot.click("default-format");
+	shot.capture("format-pointer-open");
+	await shot.press("escape");
+	await pickFormat(shot, "default", "rgb");
+
 	// A channel scrubs by dragging sideways.
 	await shot.moveTo(1180, 700);
 	const red = shot.centerOf("default-r");

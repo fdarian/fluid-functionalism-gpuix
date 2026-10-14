@@ -43,3 +43,5 @@ A 256px left panel (surface-3 and its shadow) over a dimmed window, opened and c
 - Tab: the shared sidebar rows are not tab stops (that port skips the traveling focus ring), so inside the drawer Tab leaves focus on the popup. The trap itself is the same one that cycles correctly in the dialog.
 - `triggerRef` maps to `DialogPopup`'s `finalFocus`; without it focus goes back to whatever held it before the drawer opened, which was the trigger in the probe.
 - `useSurface` / `SurfaceProvider` (the surface level a nested panel inherits) is not ported: the panel is fixed at surface-3 as in the original's default substrate.
+- Initial focus goes to the first tab stop inside the drawer once the content has mounted (after the slide settles), like Base UI's default; with no tab stop (the shared sidebar rows are not) it stays on the popup, which is Base UI's fallback too. The demo's "Done" button is the first stop and proves it.
+- `onClose` fires once: gpuix keeps its layer up through the exit, so Escape and backdrop presses still arrive then, and are ignored while `open` is false.

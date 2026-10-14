@@ -21,7 +21,7 @@ import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { moveIndex, revealRow } from "../lib/list-nav";
 import { isInside, placePopup, PopupSurface } from "../lib/popup";
-import { createPresence } from "../lib/presence";
+import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import {
 	color,
 	radius,
@@ -37,12 +37,13 @@ const POPUP_MAX_HEIGHT = 300;
 /** The list's padding inside its scroller. */
 const LIST_PADDING = 4;
 
-function ClearButton(props: { onClick: () => void }) {
+function ClearButton(props: { onClick: () => void; testId?: string }) {
 	const [hovered, setHovered] = createSignal(false);
 	return (
 		<div
 			role="button"
 			aria-label="Clear"
+			testId={props.testId}
 			onClick={props.onClick}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
@@ -69,28 +70,83 @@ function ClearButton(props: { onClick: () => void }) {
 	);
 }
 
+/** An item is its own value and label, or carries them. */
+export type ComboboxItem =
+	| string
+	| { value: string; label: string; icon?: IconRef; disabled?: boolean };
+
+export interface ComboboxRow {
+	value: string;
+	label: string;
+	icon?: IconRef;
+	disabled?: boolean;
+}
+
+function toRow(item: ComboboxItem): ComboboxRow {
+	return typeof item === "string" ? { value: item, label: item } : item;
+}
+
+/** Base UI's default match: `Intl.Collator`, ignoring case, accents and punctuation. */
+const collator = new Intl.Collator(undefined, {
+	usage: "search",
+	sensitivity: "base",
+	ignorePunctuation: true,
+});
+function contains(text: string, query: string) {
+	if (query === "") return true;
+	for (let start = 0; start <= text.length - query.length; start++) {
+		if (collator.compare(text.slice(start, start + query.length), query) === 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/** Rows a list of this many items needs: for choosing which side of the field has room. */
+function listHeight(count: number) {
+	return count === 0 ? 74 : count * ROW_HEIGHT + 2 * LIST_PADDING + 2;
+}
+
 /**
  * Single-select Combobox from base/combobox.tsx: a text field that filters a
  * list as you type, a popup of fluid-hover rows, and a checked row whose
- * background glides between picks.
+ * background glides between picks. Multiple selection (chips) is out of scope.
  */
 export function Combobox(props: {
-	items: readonly string[];
-	value: string | null;
-	onValueChange: (value: string | null) => void;
+	items: readonly ComboboxItem[];
+	/** Controlled value. Omitted, the combobox keeps its own, starting at `defaultValue`. */
+	value?: string | null;
+	defaultValue?: string | null;
+	onValueChange?: (value: string | null) => void;
 	icon?: IconRef;
 	placeholder?: string;
 	width?: number;
 	emptyText?: string;
 	testId?: string;
+	disabled?: boolean;
+	/** A ✕ that clears the pick and the query. Its slot is only reserved when set. */
+	clearable?: boolean;
+	/** Whether a row matches the typed query. Default: Base UI's collator `contains` on the label. */
+	filter?: (item: ComboboxRow, query: string) => boolean;
 }) {
 	const renderer = useGpuixRequired();
 	const width = () => props.width ?? 280;
 
-	const presence = createPresence();
+	const presence = createPresence(POPUP_EXIT_FALLBACK_MS);
 	const open = presence.open;
 	const mounted = presence.mounted;
-	const [inputText, setInputText] = createSignal(props.value ?? "");
+	const rows = createMemo(() => props.items.map(toRow));
+	const [ownValue, setOwnValue] = createSignal<string | null>(
+		props.defaultValue ?? null,
+	);
+	const value = () => (props.value === undefined ? ownValue() : props.value);
+	const labelOf = (current: string | null) => {
+		if (current === null) return "";
+		const row = rows().find((candidate) => candidate.value === current);
+		if (row === undefined) throw new Error(`No item for ${current}`);
+		return row.label;
+	};
+	const [inputText, setInputText] = createSignal(labelOf(value()));
 	// What the list filters by. The text field shows the selected label while
 	// closed, but opening it must still list every item.
 	const [query, setQuery] = createSignal("");
@@ -105,59 +161,107 @@ export function Combobox(props: {
 	let popupElement: HostElement | undefined;
 	let inputElement: HostElement | undefined;
 	let scroller: HostElement | undefined;
+	/** Set on open: the highlighted row is scrolled into view once its rect has been measured. */
+	let revealOnMeasure = false;
 
 	const filtered = createMemo(() => {
-		const needle = query().trim().toLowerCase();
-		if (needle === "") return props.items;
-		return props.items.filter((item) => item.toLowerCase().includes(needle));
+		const needle = query().trim();
+		if (needle === "") return rows();
+		const matches = props.filter ?? ((row, text) => contains(row.label, text));
+		return rows().filter((row) => matches(row, needle));
 	});
 	const checkedIndex = createMemo(() => {
-		const index = filtered().findIndex((item) => item === props.value);
+		const index = filtered().findIndex((row) => row.value === value());
 		return index === -1 ? null : index;
 	});
 
-	const hover = createFluidHover();
+	const hover = createFluidHover({
+		isItemDisabled: (index) => filtered()[index]?.disabled === true,
+	});
 
-	const openPopup = () => {
-		if (open()) return;
+	const commitValue = (next: string | null) => {
+		if (props.value === undefined) setOwnValue(next);
+		props.onValueChange?.(next);
+	};
+	/** Where the highlight starts on open: the picked row, else the first (`autoHighlight="always"`). */
+	const openHighlight = () => {
+		const picked = rows().findIndex((row) => row.value === value());
+		if (picked !== -1) return picked;
+		return rows().length === 0 ? null : 0;
+	};
+	const place = (count: number) => {
 		if (rootElement === undefined) throw new Error("Combobox is not mounted");
-		const placement = placePopup(rootElement, POPUP_MAX_HEIGHT, POPUP_MAX_HEIGHT);
+		const placement = placePopup(
+			rootElement,
+			Math.min(POPUP_MAX_HEIGHT, listHeight(count)),
+			POPUP_MAX_HEIGHT,
+		);
 		setSide(placement.side);
 		setMaxHeight(placement.maxHeight);
+	};
+	const openPopup = () => {
+		if (open() || props.disabled === true) return;
 		setQuery("");
+		place(rows().length);
+		revealOnMeasure = true;
 		presence.show();
-		hover.setActiveIndex(0);
+		hover.setActiveIndex(openHighlight());
 	};
 	const closePopup = () => {
 		if (!open()) return;
 		presence.hide();
-		setInputText(props.value ?? "");
+		setInputText(labelOf(value()));
 	};
 	const focusInput = () => {
 		if (inputElement === undefined)
 			throw new Error("Combobox input is not mounted");
 		renderer.focusElement?.(inputElement.id);
 	};
-	const select = (item: string) => {
-		props.onValueChange(item);
-		setInputText(item);
+	const select = (row: ComboboxRow) => {
+		if (row.disabled === true) return;
+		commitValue(row.value);
+		setInputText(row.label);
 		closePopup();
 	};
+	const clear = () => {
+		commitValue(null);
+		setInputText("");
+		setQuery("");
+		focusInput();
+	};
+
+	// The field follows a value that changed from outside.
+	createEffect(
+		on(
+			value,
+			(next) => {
+				const label = labelOf(next);
+				if (inputText() !== label) setInputText(label);
+			},
+			{ defer: true },
+		),
+	);
 
 	// Typing re-filters rows underneath the overlays, so the first row is the
-	// target again and the new rects replace the old ones without a glide.
+	// target again (the picked row once the text is emptied) and the new rects
+	// replace the old ones without a glide.
 	createEffect(
 		on(
 			filtered,
 			() => {
 				if (!mounted()) return;
 				setReflow(true);
+				if (scroller !== undefined && scroller.mounted) {
+					renderer.scrollTo?.(scroller.id, 0, 0);
+				}
+				if (open()) place(filtered().length);
 				if (filtered().length === 0) {
 					hover.setActiveIndex(null);
 					hover.cancelMeasure();
 					return;
 				}
-				hover.setActiveIndex(0);
+				const picked = query().trim() === "" ? checkedIndex() : null;
+				hover.setActiveIndex(picked ?? 0);
 				hover.remeasure();
 			},
 			{ defer: true },
@@ -168,40 +272,58 @@ export function Combobox(props: {
 			hover.rects,
 			() => {
 				if (reflow()) setTimeout(() => setReflow(false), 48);
+				if (!revealOnMeasure) return;
+				revealOnMeasure = false;
+				const index = hover.activeIndex();
+				if (index !== null) revealIndex(index);
 			},
 			{ defer: true },
 		),
 	);
 
-	const move = (delta: 1 | -1) => {
-		const next = moveIndex(
-			hover.activeIndex(),
-			delta,
-			filtered().length,
-			undefined,
-			false,
-		);
-		if (next === null) return;
-		hover.setActiveIndex(next);
-		const row = hover.rects()[next];
+	const revealIndex = (index: number) => {
+		const row = hover.rects()[index];
 		if (scroller !== undefined && row !== undefined) {
 			revealRow(scroller, row, "nearest", LIST_PADDING);
 		}
 	};
+	/** Arrows loop (`loopFocus` is on) and visit disabled rows (`disabledIndices: []`). */
+	const move = (delta: 1 | -1) => {
+		const next = moveIndex(hover.activeIndex(), delta, filtered().length);
+		if (next === null) return;
+		hover.setActiveIndex(next);
+		revealIndex(next);
+	};
 
 	const onKeyDown = (event: KeyEvent) => {
+		const modifiers = event.modifiers;
+		if (modifiers !== undefined && (modifiers.ctrl || modifiers.alt || modifiers.cmd)) {
+			return;
+		}
 		switch (event.key) {
 			case "down":
-				if (!open()) openPopup();
-				else move(1);
-				return;
 			case "up":
-				if (open()) move(-1);
+				event.preventDefault();
+				event.stopPropagation();
+				if (!open()) openPopup();
+				else move(event.key === "down" ? 1 : -1);
 				return;
 			case "escape":
-				// Closing pops the popup's dismiss layer before the window sees this Escape, which would then close the dialog behind.
-				if (open()) event.preventDefault();
-				closePopup();
+				if (open()) {
+					// Closing pops the popup's dismiss layer before the window sees this Escape, which would then close the dialog behind.
+					event.preventDefault();
+					closePopup();
+					return;
+				}
+				if (mounted()) return;
+				// Closed: Escape empties the field and the pick. With a pick to clear it is consumed, so a dialog behind stays open.
+				setInputText("");
+				setQuery("");
+				if (value() !== null) {
+					commitValue(null);
+					event.preventDefault();
+					event.stopPropagation();
+				}
 				return;
 			case "tab":
 				closePopup();
@@ -209,20 +331,37 @@ export function Combobox(props: {
 		}
 	};
 	const onSubmit = () => {
+		if (!open()) return;
 		const index = hover.activeIndex();
-		if (!open() || index === null) return;
-		const item = filtered()[index];
-		if (item !== undefined) select(item);
+		// Nothing highlighted (no results): Enter closes, so a form can submit.
+		if (index === null) {
+			closePopup();
+			return;
+		}
+		const row = filtered()[index];
+		if (row !== undefined) select(row);
 	};
 	const onChange = (event: EventPayload) => {
 		const text = event.value;
 		if (text === undefined) throw new Error("Combobox change without a value");
 		setInputText(text);
+		// Emptying the field drops the pick.
+		if (text === "" && value() !== null) commitValue(null);
+		if (open()) {
+			setQuery(text);
+			return;
+		}
+		if (text.trim() === "") return;
 		openPopup();
 		setQuery(text);
 	};
 	const onMouseDownOutside = (event: EventPayload) => {
 		if (!isInside(event, [rootElement, popupElement])) closePopup();
+	};
+	const onListMouseLeave = () => {
+		hover.handlers.onMouseLeave();
+		// `autoHighlight="always"` refills a dropped highlight with the first row, so Enter always has a target.
+		if (filtered().length > 0) hover.setActiveIndex(0);
 	};
 
 	const checkedRect = () => {
@@ -235,7 +374,8 @@ export function Combobox(props: {
 		if (index === null || !hover.isMeasured()) return null;
 		return hover.rects()[index] ?? null;
 	};
-	const clearable = () => inputText() !== "" || props.value !== null;
+	/** The ✕ shows while there is a pick to clear. */
+	const clearVisible = () => value() !== null;
 
 	return (
 		<div
@@ -249,6 +389,8 @@ export function Combobox(props: {
 				width: width(),
 				height: FIELD_HEIGHT,
 				flexShrink: 0,
+				opacity: props.disabled === true ? 0.5 : 1,
+				pointerEvents: props.disabled === true ? "none" : "auto",
 			}}
 		>
 			<div
@@ -273,7 +415,7 @@ export function Combobox(props: {
 				}}
 			>
 				<div
-					onClick={() => {
+					onMouseDown={() => {
 						focusInput();
 						openPopup();
 					}}
@@ -306,6 +448,10 @@ export function Combobox(props: {
 						}
 						value={inputText()}
 						placeholder={props.placeholder ?? "Search…"}
+						role="combobox"
+						aria-expanded={open()}
+						readOnly={props.disabled === true}
+						tabIndex={props.disabled === true ? -1 : undefined}
 						theme={{
 							text: color.foreground,
 							textMuted: color.mutedForeground,
@@ -313,10 +459,8 @@ export function Combobox(props: {
 							textDim: color.mutedForeground,
 							caret: color.foreground,
 						}}
-						onFocus={() => {
-							setFocused(true);
-							openPopup();
-						}}
+						onFocus={() => setFocused(true)}
+						onMouseDown={openPopup}
 						onBlur={() => setFocused(false)}
 						onChange={onChange}
 						onKeyDown={onKeyDown}
@@ -333,30 +477,28 @@ export function Combobox(props: {
 						}}
 					/>
 				</div>
-				{/* The clear slot is always reserved so the field never changes width. */}
-				<div style={{ width: 24, height: 24, flexShrink: 0 }}>
-					<Show when={clearable()}>
-						<ClearButton
-							onClick={() => {
-								props.onValueChange(null);
-								setInputText("");
-								setQuery("");
-								focusInput();
-							}}
-						/>
-					</Show>
-				</div>
+				{/* The clear slot is reserved only when the field is clearable, and then always, so the field never changes width. */}
+				<Show when={props.clearable === true}>
+					<div style={{ width: 24, height: 24, flexShrink: 0 }}>
+						<Show when={clearVisible()}>
+							<ClearButton
+								onClick={clear}
+								testId={
+									props.testId === undefined ? undefined : `${props.testId}-clear`
+								}
+							/>
+						</Show>
+					</div>
+				</Show>
 				<div
 					role="button"
 					aria-label="Open"
 					onMouseEnter={() => setChevronHovered(true)}
 					onMouseLeave={() => setChevronHovered(false)}
-					onClick={() => {
+					onMouseDown={() => {
+						focusInput();
 						if (open()) closePopup();
-						else {
-							focusInput();
-							openPopup();
-						}
+						else openPopup();
 					}}
 					style={{
 						width: 24,
@@ -414,6 +556,7 @@ export function Combobox(props: {
 						ref={(element) => {
 							scroller = element;
 						}}
+						role="listbox"
 						onScroll={hover.handlers.onScroll}
 						style={{
 							display: "flex",
@@ -425,6 +568,7 @@ export function Combobox(props: {
 						{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
 						<div
 							{...hover.containerProps}
+							onMouseLeave={onListMouseLeave}
 							style={{
 								position: "relative",
 								display: "flex",
@@ -449,9 +593,9 @@ export function Combobox(props: {
 								travel={() => !reflow()}
 							/>
 							<For each={filtered()}>
-								{(item, index) => {
+								{(row, index) => {
 									const lit = () =>
-										hover.activeIndex() === index() || props.value === item;
+										hover.activeIndex() === index() || value() === row.value;
 									let rowElement: HostElement | undefined;
 									useHoverItem(hover, index, () => rowElement);
 									return (
@@ -460,8 +604,13 @@ export function Combobox(props: {
 												rowElement = element;
 											}}
 											role="option"
-											aria-selected={props.value === item}
-											onClick={() => select(item)}
+											testId={
+												props.testId === undefined
+													? undefined
+													: `${props.testId}-option-${row.value}`
+											}
+											aria-selected={value() === row.value}
+											onClick={() => select(row)}
 											style={{
 												height: ROW_HEIGHT,
 												flexShrink: 0,
@@ -473,25 +622,35 @@ export function Combobox(props: {
 												paddingRight: 8,
 												borderRadius: radius.item,
 												cursor: "pointer",
+												opacity: row.disabled === true ? 0.5 : 1,
+												pointerEvents: row.disabled === true ? "none" : undefined,
 											}}
 										>
+											<Show when={row.icon}>
+												{(name: Accessor<IconRef>) => (
+													<Icon
+														name={name()}
+														size={16}
+														strokeWidth={lit() ? 2 : 1.5}
+														color={lit() ? color.foreground : color.mutedForeground}
+													/>
+												)}
+											</Show>
 											<text
 												style={{
 													flexGrow: 1,
 													minWidth: 0,
 													...scale.body,
-													color: lit()
-														? color.foreground
-														: color.mutedForeground,
+													color: lit() ? color.foreground : color.mutedForeground,
 													whiteSpace: "nowrap",
 													textOverflow: "ellipsis",
 													overflow: "hidden",
 												}}
 											>
-												{item}
+												{row.label}
 											</text>
 											<div style={{ width: 16, height: 16, flexShrink: 0 }}>
-												<Show when={props.value === item}>
+												<Show when={value() === row.value}>
 													<Icon
 														name="check"
 														size={16}

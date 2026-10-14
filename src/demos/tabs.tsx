@@ -125,6 +125,24 @@ export function Demo() {
 						</TabsList>
 					</Tabs>
 				</Section>
+				<Section caption="Keyboard: the arrows land on a disabled tab but never select it">
+					<Tabs defaultValue="one">
+						<TabsList>
+							<TabItem testId="kb-one" value="one" label="One" />
+							<TabItem testId="kb-two" value="two" label="Two" disabled />
+							<TabItem testId="kb-three" value="three" label="Three" />
+						</TabsList>
+						<TabPanel value="one">
+							<Content>Panel one</Content>
+						</TabPanel>
+						<TabPanel value="two">
+							<Content>Panel two</Content>
+						</TabPanel>
+						<TabPanel value="three">
+							<Content>Panel three</Content>
+						</TabPanel>
+					</Tabs>
+				</Section>
 			</div>
 		</DemoCard>
 	);
@@ -142,4 +160,28 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("basic-library");
 	await shot.press("right");
 	shot.capture("keyboard-arrow");
+
+	await shot.click("kb-one");
+	shot.expectText("Panel one", true);
+	// The arrow lands on the disabled tab; the selection stays.
+	await shot.press("right");
+	shot.expectText("Panel one", true);
+	shot.expectText("Panel two", false);
+	await shot.press("enter");
+	shot.expectText("Panel two", false);
+	// The next arrow selects Three; one more wraps round to One.
+	await shot.press("right");
+	shot.expectText("Panel three", true);
+	await shot.press("right");
+	shot.expectText("Panel one", true);
+	await shot.press("left");
+	shot.expectText("Panel three", true);
+	await shot.press("home");
+	shot.expectText("Panel one", true);
+	// A modifier chord is not a navigation key.
+	await shot.press("cmd-right");
+	shot.expectText("Panel one", true);
+	shot.capture("keyboard-disabled");
+	await shot.click("kb-two");
+	shot.expectText("Panel two", false);
 };

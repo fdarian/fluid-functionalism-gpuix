@@ -31,6 +31,7 @@ import type { IconRef } from "../lib/icons";
 import { moveIndex, revealRow } from "../lib/list-nav";
 import { isInside, placePopup, POPUP_OFFSET, PopupSurface } from "../lib/popup";
 import { createPresence } from "../lib/presence";
+import { createTypeahead } from "../lib/typeahead";
 import { color, radius, shadow3, motion as tween } from "../lib/theme";
 import {
 	DropdownSearchHostContext,
@@ -59,7 +60,6 @@ const SUBMENU_ALIGN_OFFSET = -PADDING;
 const HOVER_OPEN_MS = 100;
 /** A pointer that stops on another row for this long leaves an open submenu. */
 const SUBMENU_DWELL_MS = 120;
-const TYPEAHEAD_MS = 500;
 /** Until a menu has been measured: about six rows. */
 const TYPICAL_HEIGHT = 240;
 
@@ -269,8 +269,12 @@ function createMenuList(options: {
 	multiple: Accessor<boolean>;
 	keyboardActive: Accessor<boolean>;
 	setKeyboardActive: (active: boolean) => void;
+	/** Tab: close the whole menu and let focus move on. */
+	leave: () => void;
+	/** Which end an open lights: ArrowUp on the trigger opens on the last row. */
+	openFrom: Accessor<"first" | "last">;
 }) {
-	const renderer = useGpuixRequired();
+	const menu = useMenuScope();
 	const rows = new Map<number, MenuRow>();
 	const hover = createFluidHover({
 		isItemDisabled: (index) => rows.get(index)?.disabled() === true,
@@ -281,20 +285,23 @@ function createMenuList(options: {
 	const [openSubIndex, setOpenSubIndex] = createSignal<number | null>(null);
 	let scroller: HostElement | undefined;
 	let dwellTimer: ReturnType<typeof setTimeout> | undefined;
-	let typeahead = "";
-	let typeaheadTimer: ReturnType<typeof setTimeout> | undefined;
 	let lastMove: EventPayload | undefined;
+	let lastSearch: DropdownSearchProps | undefined;
 	onCleanup(() => {
 		clearTimeout(dwellTimer);
-		clearTimeout(typeaheadTimer);
+		typeahead.reset();
 		hover.cancelMeasure();
 	});
 
+	const sortedRows = () =>
+		[...rows.entries()].sort((a, b) => a[0] - b[0]);
+	/** Base UI lets the keyboard land on a disabled row: only activation refuses it. */
+	const allRows = () => sortedRows().map((entry) => entry[0]);
+	/** Where a fresh open starts: the first row that can be picked. */
 	const enabledRows = () =>
-		[...rows.entries()]
+		sortedRows()
 			.filter((entry) => !entry[1].disabled())
-			.map((entry) => entry[0])
-			.sort((a, b) => a - b);
+			.map((entry) => entry[0]);
 
 	const revealIndex = (index: number) => {
 		const row = hover.rects()[index];
@@ -312,7 +319,7 @@ function createMenuList(options: {
 	const move = (delta: 1 | -1) => {
 		const stops: (number | null)[] = [
 			...(search() === undefined ? [] : [null]),
-			...enabledRows(),
+			...allRows(),
 		];
 		if (stops.length === 0) return;
 		const position = stops.indexOf(hover.activeIndex());
@@ -330,40 +337,56 @@ function createMenuList(options: {
 		rows.get(index)?.activate();
 	};
 
-	const typeAhead = (char: string) => {
-		clearTimeout(typeaheadTimer);
-		typeahead += char.toLowerCase();
-		typeaheadTimer = setTimeout(() => {
-			typeahead = "";
-		}, TYPEAHEAD_MS);
-		const indices = enabledRows();
-		if (indices.length === 0) return;
-		const current = hover.activeIndex();
-		const startAt = current === null ? -1 : indices.indexOf(current);
-		const offset = typeahead.length === 1 ? startAt + 1 : Math.max(startAt, 0);
-		for (let step = 0; step < indices.length; step++) {
-			const index = indices[(offset + step) % indices.length];
-			if (rows.get(index)?.label.toLowerCase().startsWith(typeahead) === true) {
-				highlight(index);
-				return;
-			}
-		}
-	};
+	const typeahead = createTypeahead({
+		labels: () => {
+			const last = allRows().at(-1);
+			return Array.from({ length: last === undefined ? 0 : last + 1 }, (_, index) =>
+				rows.get(index)?.label,
+			);
+		},
+		current: () => hover.activeIndex(),
+		onMatch: highlight,
+	});
 
 	const onKey: KeyHandler = (event) => {
 		const typing = search() !== undefined;
+		const chord =
+			event.modifiers !== undefined &&
+			(event.modifiers.ctrl || event.modifiers.alt || event.modifiers.cmd);
+		if (event.key === "escape") {
+			// The window-level dismiss stack must not also close the whole menu.
+			event.preventDefault();
+			event.stopPropagation();
+			options.closeSelf();
+			return;
+		}
+		if (event.key === "tab") {
+			options.leave();
+			return;
+		}
+		if (chord) return;
+		if (!typing && typeahead.handleKey(event)) {
+			event.stopPropagation();
+			return;
+		}
 		switch (event.key) {
 			case "down":
+				event.stopPropagation();
 				move(1);
 				return;
 			case "up":
+				event.stopPropagation();
 				move(-1);
 				return;
 			case "home":
-				if (!typing) highlight(enabledRows()[0] ?? null);
+				if (typing) return;
+				event.stopPropagation();
+				highlight(allRows()[0] ?? null);
 				return;
 			case "end":
-				if (!typing) highlight(enabledRows().at(-1) ?? null);
+				if (typing) return;
+				event.stopPropagation();
+				highlight(allRows().at(-1) ?? null);
 				return;
 			case "enter":
 			case "space":
@@ -375,19 +398,11 @@ function createMenuList(options: {
 				return;
 			}
 			case "left":
-				if (options.isSub) options.closeSelf();
+				if (options.isSub) {
+					event.stopPropagation();
+					options.closeSelf();
+				}
 				return;
-			case "escape":
-				// The window-level dismiss stack must not also close the whole menu.
-				event.preventDefault();
-				options.closeSelf();
-				return;
-			case "tab":
-				options.closeAll();
-				return;
-		}
-		if (!typing && event.key !== undefined && event.key.length === 1) {
-			typeAhead(event.key);
 		}
 	};
 
@@ -416,6 +431,9 @@ function createMenuList(options: {
 		},
 		onMouseLeave() {
 			clearTimeout(dwellTimer);
+			// Base UI resets the highlight on pointer leave only while the pointer was the last
+			// thing used: closing a submenu under a resting pointer reports a leave too.
+			if (litBy() === "keyboard") return;
 			if (openSubIndex() === null) hover.handlers.onMouseLeave();
 		},
 	};
@@ -432,6 +450,8 @@ function createMenuList(options: {
 			hover.remeasure();
 		},
 		close: options.closeAll,
+		pressPick: menu.pressPick,
+		releasePress: menu.releasePress,
 	};
 
 	createEffect(
@@ -451,9 +471,13 @@ function createMenuList(options: {
 			setLitBy("open");
 			setTimeout(() => {
 				if (options.isSub && !options.keyboardActive()) return;
-				hover.setActiveIndex(
-					search() === undefined ? (enabledRows()[0] ?? null) : null,
-				);
+				if (search() !== undefined) {
+					hover.setActiveIndex(null);
+					return;
+				}
+				const start =
+					options.openFrom() === "last" ? enabledRows().at(-1) : enabledRows()[0];
+				hover.setActiveIndex(start ?? null);
 			}, 0);
 		}),
 	);
@@ -464,21 +488,33 @@ function createMenuList(options: {
 	const searchHost = {
 		register(props: DropdownSearchProps) {
 			setSearch(props);
+			lastSearch = props;
 			return () => {
 				if (search() === props) setSearch(undefined);
 			};
 		},
 	};
 
+	// The query is cleared once the popup has finished closing, so the rows do
+	// not refill while it fades out. The field is already gone by then, hence
+	// the props it last registered.
 	createEffect(
-		on(options.open, (isOpen) => {
-			if (isOpen) return;
-			const current = search();
-			if (current === undefined) return;
+		on(options.mounted, (isMounted) => {
+			if (isMounted || lastSearch === undefined) return;
+			const current = lastSearch;
+			lastSearch = undefined;
 			if ((current.clearOnClose ?? true) && current.value !== "") {
 				current.onValueChange("");
 			}
 		}),
+	);
+	// Typing returns to the field: no row stays lit under a re-filtered list.
+	createEffect(
+		on(
+			() => search()?.value,
+			() => hover.setActiveIndex(null),
+			{ defer: true },
+		),
 	);
 
 	const submenuHost: SubmenuHost = {
@@ -499,6 +535,9 @@ function createMenuList(options: {
 		handlers,
 		onKey,
 		activateActive,
+		lightFirst() {
+			highlight(enabledRows()[0] ?? null);
+		},
 		setScroller(element: HostElement) {
 			scroller = element;
 		},
@@ -523,6 +562,7 @@ function MenuPanel(props: {
 			<DropdownSearchHostContext.Provider value={list.searchHost}>
 				<SubmenuHostContext.Provider value={list.submenuHost}>
 					<div
+						role="menu"
 						ref={(element) => {
 							onCleanup(menu.addRegion(element));
 						}}
@@ -537,6 +577,7 @@ function MenuPanel(props: {
 									list.onKey(event);
 								}}
 								onSubmit={list.activateActive}
+								onFocusChange={menu.setSearchFocused}
 							/>
 						)}
 					</Show>
@@ -601,20 +642,27 @@ export function Dropdown(props: {
 		pointerLit: () => true,
 		rowsChanged: () => hover.remeasure(),
 		close: () => {},
+		pressPick: () => false,
+		releasePress: () => {},
 	};
 
-	const enabled = () =>
-		[...rows.entries()]
-			.filter((entry) => !entry[1].disabled())
-			.map((entry) => entry[0])
-			.sort((a, b) => a - b);
+	/** Arrows land on disabled rows too, as FF's panel focuses every row; only activation refuses them. */
+	const all = () => [...rows.keys()].sort((a, b) => a - b);
+	/** Tab lands on the checked row, else the first one that can be picked. */
+	const entryRow = () => {
+		const checked = props.checkedIndex ?? props.checkedIndices?.[0];
+		if (checked !== undefined && rows.get(checked)?.disabled() === false) {
+			return checked;
+		}
+		return all().find((index) => rows.get(index)?.disabled() === false) ?? null;
+	};
 	const go = (index: number | null) => {
 		setLitBy("keyboard");
 		hover.setActiveIndex(index);
 		setFocusIndex(index);
 	};
 	const step = (delta: 1 | -1) => {
-		const indices = enabled();
+		const indices = all();
 		if (indices.length === 0) return;
 		const current = hover.activeIndex();
 		const position = current === null ? -1 : indices.indexOf(current);
@@ -635,10 +683,10 @@ export function Dropdown(props: {
 				step(-1);
 				return;
 			case "home":
-				go(enabled()[0] ?? null);
+				go(all()[0] ?? null);
 				return;
 			case "end":
-				go(enabled().at(-1) ?? null);
+				go(all().at(-1) ?? null);
 				return;
 			case "enter":
 			case "space": {
@@ -657,8 +705,9 @@ export function Dropdown(props: {
 				tabIndex={0}
 				onKeyDown={onKeyDown}
 				onFocus={() => {
-					if (hover.activeIndex() === null) return;
-					setFocusIndex(hover.activeIndex());
+					const active = hover.activeIndex();
+					if (active === null) go(entryRow());
+					else setFocusIndex(active);
 				}}
 				onBlur={() => {
 					setFocusIndex(null);
@@ -724,7 +773,21 @@ interface MenuScope {
 	addRegion: (element: HostElement) => () => void;
 	/** `PopupSurface` types its outside-press prop without the payload, though gpuix passes it. */
 	outsidePress: (event?: EventPayload) => void;
+	openFrom: Accessor<"first" | "last">;
+	/** The trigger was pressed and the button is still down. */
+	startPress: () => void;
+	/** A row released under a press that began on the trigger at least 200 ms ago picks (once). */
+	pressPick: () => boolean;
+	releasePress: () => void;
+	/** Remember the trigger element the menu opened from, to hand focus back to it. */
+	noteTrigger: (elementId: number) => void;
+	setSearchFocused: (focused: boolean) => void;
+	/** Tab leaves for the next control: close without taking focus back. */
+	closeKeepingFocus: () => void;
 }
+
+/** Base UI keeps a press-drag-release from opening a menu from picking a row for this long. */
+const PRESS_PICK_MS = 200;
 
 const MenuScopeContext = createContext<MenuScope>();
 
@@ -737,7 +800,9 @@ function useMenuScope() {
 }
 
 export interface DropdownTriggerState {
-	/** Mouse clicks toggle the menu. Keyboard-originated clicks are ignored: the menu answers those itself. */
+	/** Opens on press, like Base UI: put this on the element that opens the menu. */
+	onMouseDown: (event: EventPayload) => void;
+	/** The release of that press, or a screen reader's press. Keyboard-originated clicks are ignored: the menu answers those itself. */
 	onClick: (event: EventPayload) => void;
 	readonly expanded: boolean;
 }
@@ -771,14 +836,38 @@ export function DropdownMenu(props: {
 	};
 	const place = () => choose(lastHeight);
 
+	const [openFrom, setOpenFrom] = createSignal<"first" | "last">("first");
+	let pressedAt: number | null = null;
+	let pendingTrigger: number | null = null;
+	let triggerId: number | null = null;
+	let searchFocused = false;
+	let keepFocus = false;
+
+	/** Closing hands focus back to the trigger unless it already moved to another control (Base UI's returnFocus). */
+	const returnFocus = () => {
+		const target = triggerId;
+		triggerId = null;
+		const skip = keepFocus;
+		keepFocus = false;
+		if (skip || target === null) return;
+		const focused = renderer.getFocusedElementId?.();
+		if (focused === undefined || focused === null || searchFocused) {
+			renderer.focusElement?.(target);
+		}
+	};
+
 	const apply = (next: boolean) => {
 		if (next === presence.open()) return;
 		if (next) {
+			triggerId = pendingTrigger ?? renderer.getFocusedElementId?.() ?? null;
+			pendingTrigger = null;
 			place();
 			presence.show();
 		} else {
+			pressedAt = null;
 			presence.hide();
 			keyStack.length = 0;
+			returnFocus();
 		}
 	};
 	const setOpen = (next: boolean) => {
@@ -791,7 +880,8 @@ export function DropdownMenu(props: {
 		if (controlled !== undefined) untrack(() => apply(controlled));
 	});
 	onMount(() => {
-		if (props.defaultOpen === true) setTimeout(() => setOpen(true), 64);
+		// Opens like the initial state would: no `onOpenChange`.
+		if (props.defaultOpen === true) setTimeout(() => apply(true), 64);
 	});
 
 	const scope: MenuScope = {
@@ -817,17 +907,47 @@ export function DropdownMenu(props: {
 			if (isInside(event, [wrapper, ...regions])) return;
 			setOpen(false);
 		},
+		openFrom,
+		startPress() {
+			setOpenFrom("first");
+			pressedAt = performance.now();
+		},
+		pressPick() {
+			const at = pressedAt;
+			pressedAt = null;
+			return at !== null && performance.now() - at >= PRESS_PICK_MS;
+		},
+		releasePress() {
+			pressedAt = null;
+		},
+		noteTrigger(elementId) {
+			pendingTrigger = elementId;
+		},
+		setSearchFocused(focused) {
+			searchFocused = focused;
+		},
+		closeKeepingFocus() {
+			keepFocus = true;
+			setOpen(false);
+		},
 	};
 
 	const onKeyDown = (event: KeyEvent) => {
 		if (props.disabled === true) return;
+		const modifiers = event.modifiers;
+		if (modifiers !== undefined && (modifiers.ctrl || modifiers.alt || modifiers.cmd)) {
+			return;
+		}
 		if (!presence.open()) {
 			if (
 				event.key === "down" ||
+				event.key === "up" ||
 				event.key === "enter" ||
 				event.key === "space"
 			) {
 				event.preventDefault();
+				if (event.key === "down" || event.key === "up") event.stopPropagation();
+				setOpenFrom(event.key === "up" ? "last" : "first");
 				setKeyboardActive(true);
 				setOpen(true);
 			}
@@ -864,9 +984,28 @@ export function DropdownTrigger(props: {
 	children: (trigger: DropdownTriggerState) => JSX.Element;
 }) {
 	const scope = useMenuScope();
+	/** The press already toggled the menu: its click must not toggle it back. */
+	let pressHandled = false;
 	const trigger: DropdownTriggerState = {
+		onMouseDown(event) {
+			if (event.button !== undefined && event.button !== 0) return;
+			pressHandled = true;
+			scope.setKeyboardActive(false);
+			if (scope.presence.open()) {
+				scope.setOpen(false);
+				return;
+			}
+			scope.noteTrigger(event.elementId);
+			scope.startPress();
+			scope.setOpen(true);
+		},
 		onClick(event) {
 			if (event.key !== undefined) return;
+			scope.releasePress();
+			if (pressHandled) {
+				pressHandled = false;
+				return;
+			}
 			scope.setKeyboardActive(false);
 			scope.setOpen(!scope.presence.open());
 		},
@@ -896,6 +1035,8 @@ export function DropdownContent(props: {
 		multiple: () => props.checkedIndices !== undefined,
 		keyboardActive: scope.keyboardActive,
 		setKeyboardActive: scope.setKeyboardActive,
+		openFrom: scope.openFrom,
+		leave: scope.closeKeepingFocus,
 	});
 
 	let fitted = false;
@@ -967,6 +1108,9 @@ interface SubScope {
 	setOpen: (next: boolean) => void;
 	content: Accessor<SubContentProps | undefined>;
 	setContent: (props: SubContentProps | undefined) => void;
+	/** The keys are in the submenu: it opened from the keyboard, or Right / Enter went into it. A hover-opened submenu leaves them with its parent. */
+	entered: Accessor<boolean>;
+	enter: () => void;
 }
 
 const SubScopeContext = createContext<SubScope>();
@@ -988,10 +1132,14 @@ export function DropdownSub(props: {
 }) {
 	const presence = createPresence();
 	const [content, setContent] = createSignal<SubContentProps>();
+	const [entered, setEntered] = createSignal(false);
 	const apply = (next: boolean) => {
 		if (next === presence.open()) return;
 		if (next) presence.show();
-		else presence.hide();
+		else {
+			presence.hide();
+			setEntered(false);
+		}
 	};
 	const scope: SubScope = {
 		presence,
@@ -1002,13 +1150,15 @@ export function DropdownSub(props: {
 		},
 		content,
 		setContent,
+		entered,
+		enter: () => setEntered(true),
 	};
 	createEffect(() => {
 		const controlled = props.open;
 		if (controlled !== undefined) untrack(() => apply(controlled));
 	});
 	onMount(() => {
-		if (props.defaultOpen === true) scope.setOpen(true);
+		if (props.defaultOpen === true) apply(true);
 	});
 	return (
 		<SubScopeContext.Provider value={scope}>
@@ -1072,6 +1222,7 @@ export function DropdownSubTrigger(props: {
 			onOpenSubmenu={() => {
 				menu.setKeyboardActive(true);
 				show();
+				sub.enter();
 			}}
 		>
 			<Show when={sub.presence.mounted()}>
@@ -1110,10 +1261,22 @@ function SubPopup() {
 		multiple: () => content().checkedIndices !== undefined,
 		keyboardActive: menu.keyboardActive,
 		setKeyboardActive: menu.setKeyboardActive,
+		openFrom: () => "first",
+		leave: menu.closeKeepingFocus,
 	});
 
+	// Right / Enter on an already open (hover-opened) submenu goes in: light its first row.
+	createEffect(
+		on(
+			sub.entered,
+			(entered) => {
+				if (entered) list.lightFirst();
+			},
+			{ defer: true },
+		),
+	);
 	createEffect(() => {
-		if (!sub.open()) return;
+		if (!sub.open() || !sub.entered()) return;
 		menu.keyStack.push(list.onKey);
 		onCleanup(() => {
 			const at = menu.keyStack.indexOf(list.onKey);

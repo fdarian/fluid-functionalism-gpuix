@@ -1,4 +1,5 @@
 import {
+	DismissableLayer,
 	type EventPayload,
 	type HostElement,
 	motion,
@@ -22,6 +23,13 @@ export type TooltipSide = "top" | "right" | "bottom" | "left";
 
 const DEFAULT_DELAY = 200;
 const SLIDE = 4;
+/** A bare tooltip's own group lasts as long as Base UI's provider default. */
+const BARE_SKIP_DELAY = 400;
+/** How long the tooltip stays after the pointer leaves, so it can cross the gap to the chip: Base UI's safe polygon, approximated with a timer. */
+const GRACE_MS = 80;
+/** Base UI's default collision padding. */
+const WINDOW_MARGIN = 5;
+const CHIP_HEIGHT = 24;
 
 /** What tooltips under one provider share: the hover delay, and when the last one closed so a neighbour can skip it. */
 interface TooltipGroup {
@@ -57,6 +65,13 @@ export function TooltipProvider(props: {
 		</TooltipGroupContext.Provider>
 	);
 }
+
+const OPPOSITE: Record<TooltipSide, TooltipSide> = {
+	top: "bottom",
+	bottom: "top",
+	left: "right",
+	right: "left",
+};
 
 /** Where the chip starts, relative to where it rests: it slides in from the trigger's side. */
 function slideFrom(side: TooltipSide) {
@@ -110,16 +125,20 @@ export function Tooltip(props: {
 	forceOpen?: boolean;
 	/** Track the pointer along one axis; the other stays anchored by `side`. */
 	followCursor?: "x" | "y";
+	/** The tooltip opened or closed by hover (not by `forceOpen`). */
+	onOpenChange?: (open: boolean) => void;
 	testId?: string;
 }) {
 	const renderer = useGpuixRequired();
 	const ambient = useContext(TooltipGroupContext);
 	const group: TooltipGroup = ambient ?? {
 		delay: DEFAULT_DELAY,
-		skipDelay: 0,
+		skipDelay: BARE_SKIP_DELAY,
 		closedAt: undefined,
 	};
-	const side = () => props.side ?? "top";
+	/** The side that has room for the chip, chosen each time it opens. */
+	const [placed, setPlaced] = createSignal<TooltipSide>();
+	const side = () => placed() ?? props.side ?? "top";
 
 	const presence = createPresence();
 	const [hovered, setHovered] = createSignal(false);
@@ -127,12 +146,60 @@ export function Tooltip(props: {
 	const [followOffset, setFollowOffset] = createSignal({ x: 0, y: 0 });
 	let wrapper: HostElement | undefined;
 	let delayTimer: ReturnType<typeof setTimeout> | undefined;
-	onCleanup(() => clearTimeout(delayTimer));
+	let closeTimer: ReturnType<typeof setTimeout> | undefined;
+	/** The pointer is on the chip. It enters the chip before the trigger reports it left, so the trigger's leave must not start the close. */
+	let overChip = false;
+	/** The chip's last painted size, for deciding which side it fits on. */
+	let chipSize: { width: number; height: number } | undefined;
+	onCleanup(() => {
+		clearTimeout(delayTimer);
+		clearTimeout(closeTimer);
+	});
+
+	/**
+	 * Base UI flips to the opposite side when the preferred one has no room.
+	 * gpuix's own flip anchors to the far edge of the trigger and covers it, so
+	 * the side is chosen here from the trigger's painted box and the window.
+	 */
+	const placeChip = (): TooltipSide => {
+		const preferred = props.side ?? "top";
+		const box = wrapper === undefined ? null : readBounds(wrapper);
+		const window = renderer.getWindowSize?.();
+		if (box == null || window == null) return preferred;
+		const chip =
+			chipSize ??
+			(typeof props.content === "string"
+				? { width: props.content.length * 6.5 + 16, height: CHIP_HEIGHT }
+				: { width: 160, height: 48 });
+		const room = {
+			top: box.y,
+			bottom: window.height - (box.y + box.height),
+			left: box.x,
+			right: window.width - (box.x + box.width),
+		};
+		const need =
+			(preferred === "top" || preferred === "bottom"
+				? chip.height
+				: chip.width) +
+			(props.sideOffset ?? 8) +
+			WINDOW_MARGIN;
+		if (room[preferred] >= need) return preferred;
+		const opposite = OPPOSITE[preferred];
+		return room[opposite] > room[preferred] ? opposite : preferred;
+	};
 
 	createEffect(() => {
-		if (open()) presence.show();
-		else if (untrack(presence.mounted)) presence.hide();
+		if (open()) {
+			untrack(() => setPlaced(placeChip()));
+			presence.show();
+		} else if (untrack(presence.mounted)) presence.hide();
 	});
+
+	const setOpen = (next: boolean) => {
+		if (hovered() === next) return;
+		setHovered(next);
+		props.onOpenChange?.(next);
+	};
 
 	const delay = () => {
 		const closedAt = group.closedAt;
@@ -145,16 +212,28 @@ export function Tooltip(props: {
 	};
 	const dismiss = () => {
 		clearTimeout(delayTimer);
+		clearTimeout(closeTimer);
+		overChip = false;
 		if (!hovered()) return;
 		group.closedAt = performance.now();
-		setHovered(false);
+		setOpen(false);
+	};
+	/** The pointer left the trigger or the chip: a pending open is dropped, an open tooltip closes unless the pointer reaches the chip (or comes back) first. */
+	const scheduleClose = () => {
+		clearTimeout(delayTimer);
+		clearTimeout(closeTimer);
+		if (!hovered() || overChip) return;
+		closeTimer = setTimeout(dismiss, GRACE_MS);
 	};
 
 	const onMouseEnter = () => {
 		clearTimeout(delayTimer);
-		const wait = delay();
-		if (wait === 0) setHovered(true);
-		else delayTimer = setTimeout(() => setHovered(true), wait);
+		clearTimeout(closeTimer);
+		// Coming back while the chip is still fading out brings it straight back.
+		const fadingOut = presence.mounted() && !presence.open();
+		const wait = fadingOut ? 0 : delay();
+		if (wait === 0) setOpen(true);
+		else delayTimer = setTimeout(() => setOpen(true), wait);
 	};
 	const onMouseMove = (event: EventPayload) => {
 		if (props.followCursor === undefined) return;
@@ -174,7 +253,7 @@ export function Tooltip(props: {
 		get onMouseMove() {
 			return props.followCursor === undefined ? undefined : onMouseMove;
 		},
-		onMouseLeave: dismiss,
+		onMouseLeave: scheduleClose,
 		onMouseDown: dismiss,
 	};
 	const render = props.children;
@@ -189,6 +268,10 @@ export function Tooltip(props: {
 			style={{ position: "relative", display: "flex", flexShrink: 0 }}
 		>
 			{typeof render === "function" ? render(trigger) : render}
+			{/* Escape closes a hover-opened tooltip before it reaches a dialog behind it; a pinned one is not a layer. */}
+			<Show when={hovered() && props.forceOpen === undefined}>
+				<DismissableLayer onEscapeKeyDown={dismiss} />
+			</Show>
 			<Show when={presence.mounted()}>
 				<anchored
 					side={side()}
@@ -196,12 +279,29 @@ export function Tooltip(props: {
 					anchor={centredAnchor(side())}
 					gap={props.sideOffset ?? 8}
 					offset={props.forceOpen === true ? undefined : followOffset()}
+					snapMargin={WINDOW_MARGIN}
 					deferred
 					priority={2}
 					occlude={false}
-					style={{ backgroundColor: color.transparent, pointerEvents: "none" }}
+					style={{ backgroundColor: color.transparent }}
 				>
 					<motion.div
+						testId={props.testId === undefined ? undefined : `${props.testId}-chip`}
+						// The chip is hoverable, like Base UI's popup: reaching it keeps the tooltip open.
+						onMouseEnter={() => {
+							overChip = true;
+							clearTimeout(closeTimer);
+						}}
+						onMouseLeave={() => {
+							overChip = false;
+							scheduleClose();
+						}}
+						onLayout={(event: EventPayload) => {
+							if (event.width === undefined || event.height === undefined) {
+								throw new Error("layout event without a size");
+							}
+							chipSize = { width: event.width, height: event.height };
+						}}
 						initial={{ opacity: 0, ...slideFrom(side()) }}
 						animate={
 							presence.open()

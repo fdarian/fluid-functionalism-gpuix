@@ -2,6 +2,7 @@ import { createSignal, For } from "solid-js";
 import { RadioGroup, RadioItem } from "../components/radio-group";
 import type { DemoModule } from "../lib/demo";
 import { DemoCard, DemoRow } from "../lib/demo-kit";
+import { color, type as scale } from "../lib/theme";
 
 const OPTIONS = ["Option A", "Option B", "Option C"];
 
@@ -31,14 +32,39 @@ function ByIndex(props: { testId: string; size?: "default" | "compact" }) {
 function ByValue(props: { testId: string }) {
 	const [plan, setPlan] = createSignal<string | undefined>(undefined);
 	return (
-		<RadioGroup testId={props.testId} value={plan()} onValueChange={setPlan}>
-			<For each={["free", "pro", "team"]}>
-				{(value: string, index) => (
+		<>
+			<RadioGroup testId={props.testId} value={plan()} onValueChange={setPlan}>
+				<For each={["free", "pro", "team"]}>
+					{(value: string, index) => (
+						<RadioItem
+							testId={`${props.testId}-${index()}`}
+							index={index()}
+							label={`${value[0].toUpperCase()}${value.slice(1)} plan`}
+							value={value}
+						/>
+					)}
+				</For>
+			</RadioGroup>
+			<text style={{ ...scale.caption, color: color.mutedForeground }}>
+				{`Plan: ${plan() ?? "none"}`}
+			</text>
+		</>
+	);
+}
+
+/** Only the per-item API: no `value` or `selectedIndex`, so FF paints no selected background. */
+function PerItem(props: { testId: string }) {
+	const [selected, setSelected] = createSignal(1);
+	return (
+		<RadioGroup testId={props.testId}>
+			<For each={OPTIONS}>
+				{(label: string, index) => (
 					<RadioItem
 						testId={`${props.testId}-${index()}`}
 						index={index()}
-						label={`${value[0].toUpperCase()}${value.slice(1)} plan`}
-						value={value}
+						label={label}
+						selected={selected() === index()}
+						onSelect={() => setSelected(index())}
 					/>
 				)}
 			</For>
@@ -58,6 +84,9 @@ export function Demo() {
 				</DemoRow>
 				<DemoRow label="Compact">
 					<ByIndex testId="small" size="compact" />
+				</DemoRow>
+				<DemoRow label="Per item">
+					<PerItem testId="item" />
 				</DemoRow>
 				<DemoRow label="By value">
 					<ByValue testId="plan" />
@@ -81,4 +110,16 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("plan-1");
 	await shot.moveTo(1180, 700);
 	shot.capture("by-value");
+	// Arrows select and wrap, Home / End jump; a re-press of the selected plan keeps it.
+	await shot.press("down");
+	shot.expectText("Plan: team", true);
+	await shot.press("down");
+	shot.expectText("Plan: free", true);
+	await shot.press("end");
+	shot.expectText("Plan: team", true);
+	await shot.press("home");
+	shot.expectText("Plan: free", true);
+	await shot.press("left");
+	shot.expectText("Plan: team", true);
+	shot.capture("by-value-keys");
 };

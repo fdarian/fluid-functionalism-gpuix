@@ -78,6 +78,15 @@ export function Demo() {
 						)}
 					</For>
 				</SidebarMenu>
+				<div style={{ display: "flex", flexDirection: "row", paddingTop: 12 }}>
+					<Button
+						testId="drawer-done"
+						variant="ghost"
+						onClick={() => setOpen(false)}
+					>
+						Done
+					</Button>
+				</div>
 			</MobileDrawer>
 		</DemoCard>
 	);
@@ -97,6 +106,12 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectText("Current page: Projects", true);
 	shot.expectText("Navigation", false);
 	shot.capture("picked");
+
+	// Focus moves into the drawer once it has settled, onto its first tab stop (the rows are not tab stops yet): Enter presses Done.
+	await shot.click("drawer-open");
+	await shot.settle(800);
+	await shot.press("enter");
+	shot.expectText("Navigation", false);
 
 	setThemeChoice("light");
 	await shot.settle(300);

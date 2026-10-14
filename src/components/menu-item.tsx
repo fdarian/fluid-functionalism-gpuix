@@ -44,6 +44,10 @@ export interface DropdownContextValue {
 	rowsChanged: () => void;
 	/** Closes the whole menu. A no-op for the inline panel. */
 	close: () => void;
+	/** A row released under a press that began on the menu's trigger picks, once. Always false for the inline panel. */
+	pressPick: () => boolean;
+	/** Any other press on a row ends that trigger press. */
+	releasePress: () => void;
 }
 
 export const DropdownContext = createContext<DropdownContextValue>();
@@ -119,11 +123,18 @@ export function MenuItem(props: {
 		settled = true;
 	});
 
-	const activate = () => {
+	/** A keyboard activation of a submenu trigger goes into the submenu; a click opens it through `onSelect`. */
+	const activate = (fromKeyboard: boolean) => {
 		if (props.disabled === true) return;
+		if (fromKeyboard && props.onOpenSubmenu !== undefined) {
+			props.onOpenSubmenu();
+			return;
+		}
 		props.onSelect?.();
 		if (props.closeOnClick ?? !context.multiple()) context.close();
 	};
+	/** The release already picked the row; the click that may follow it must not pick twice. */
+	let pickedOnRelease = false;
 
 	useHoverItem(
 		context.hover,
@@ -135,7 +146,7 @@ export function MenuItem(props: {
 		const row: MenuRow = {
 			label: props.label,
 			disabled: () => props.disabled === true,
-			activate,
+			activate: () => activate(true),
 			openSubmenu: props.onOpenSubmenu,
 		};
 		context.rows.set(index, row);
@@ -161,7 +172,22 @@ export function MenuItem(props: {
 			role={role()}
 			testId={props.testId}
 			aria-selected={props.checked}
-			onClick={activate}
+			onMouseDown={() => {
+				pickedOnRelease = false;
+				context.releasePress();
+			}}
+			onMouseUp={() => {
+				if (!context.pressPick()) return;
+				pickedOnRelease = true;
+				activate(false);
+			}}
+			onClick={() => {
+				if (pickedOnRelease) {
+					pickedOnRelease = false;
+					return;
+				}
+				activate(false);
+			}}
 			style={{
 				height: height.control,
 				flexShrink: 0,

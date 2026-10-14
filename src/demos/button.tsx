@@ -75,4 +75,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.down("Default-primary");
 	shot.capture("pressed");
 	await shot.up("Default-primary");
+	// A loading button is disabled: dimmed, and the pointer does nothing to it.
+	await shot.hover("Loading-secondary");
+	shot.capture("loading-hover");
 };

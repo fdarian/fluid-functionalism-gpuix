@@ -16,7 +16,7 @@ Most of what the port hits is in [checkbox-group.md](checkbox-group.md): the sha
 
 - **Original:** the group reads its children (`Children.toArray`) to find the index of the row whose `value` matches, so the selected background can sit on it.
 - **gpuix lacks:** nothing in gpuix; Solid has no children introspection that survives reactivity. Listed because it shapes the API.
-- **Workaround:** each `RadioItem` registers its `value` and `selected` accessor with the group, which derives the selected index from the registrations.
+- **Workaround:** each `RadioItem` registers its `value` and `selected` accessor with the group, which derives the selected index from the registrations (used for the tab stop). As in FF, the selected background follows only `value` or `selectedIndex`; a group driven by per-item `selected` alone paints none.
 - **Fidelity:** exact.
 - **Components it hits:** none.
 

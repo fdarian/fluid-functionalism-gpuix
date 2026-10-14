@@ -4,21 +4,29 @@ Original: `registry/base/thinking-steps.tsx` (Base UI `Collapsible`) and `app/do
 
 Transforms are already a known gap and are not repeated here. The shimmer and the looping clock are in [thinking-indicator.md](thinking-indicator.md).
 
-## No `height: auto` and no layout observer
+## No `height: auto`
 
 - **Original:** the panel and every step spring their height to a pixel value measured with `offsetHeight` and kept current by a `ResizeObserver`, so a step that grows (sources appear, an image loads, text streams in) pushes the panel with it.
-- **gpuix lacks:** a `height: auto` target (`motion` animates numbers only, `packages/native/js/host.ts:27`, `MotionStyle`) and any layout-change event. The only measurement is `getElementBounds`, the last painted frame, and nothing is recorded for an element before its first paint (`packages/native/src/renderer.rs:2333`). Missing feature.
-- **Workaround:** each animated box reads its content's painted bounds from one shared 33 ms timer, and only while it is "hot": just mounted, kicked by a prop or child change, or its last read differed. A step kicks on `label` / `description` / `status` / `isLast` and when its children are replaced; a collapse kicks on `open` and tells the boxes around it, because opening changes its own height, which only its parent can see. Nothing is polled when everything is settled. A panel that mounts open takes its first height with a zero-length tween.
-- **Fidelity:** approximated. Heights lag the content by up to a frame plus the spring, and a size change nobody kicks (text typed by a child component that is not a prop of the step) is missed. This is why the streaming-text demo passes the typed text as `description` rather than as a child.
-- **Components it hits:** accordion (its port reads a panel's height once, so it cannot follow later growth), queued-stack (reads the stack's width).
+- **gpuix lacks:** a `height: auto` target (`motion` animates numbers only, `packages/native/js/host.ts:27`, `MotionStyle`). Missing feature.
+- **Workaround:** each animated box puts `onLayout` (`host.ts:494-500`: border box after the first paint and on every size change) on its content, and the outer box tweens to the reported height (`src/lib/measured-height.ts`). A step that grows, sources appearing, an image loading or text streaming in all resize the content and report themselves; so does a nested collapse, because its box is part of its parent's content. A panel that mounts open takes its first height with a zero-length tween.
+- **Fidelity:** exact for height; the report arrives a frame after the layout, so a spring starts one frame late.
+- **Components it hits:** accordion, sidebar sub-menus, input-message and ask-user-questions, through the same helper.
+
+## A closed panel is still painted and still tabbable
+
+- **Original:** the closed panel is `hidden` (Base UI keeps it mounted through the exit, then FF applies `hidden`), so nothing in it can be focused or read.
+- **gpuix lacks:** `display: none`. `apply_styles` only reads `flex` and `grid` (`packages/native/src/renderer.rs:6384-6388`), so a clipped panel is still laid out, painted into an empty mask, read out by assistive tech, and its focusable children stay in the Tab order. Missing feature.
+- **Workaround:** a trigger inside a closed `Collapse` is inert: a context makes `buttonProps` disabled, so it leaves the tab order and ignores clicks and keys. Its text stays in the accessibility tree.
+- **Fidelity:** approximated: keyboard exact, screen-reader exposure of closed text not.
+- **Components it hits:** accordion (unmounts its text-only panel instead), any collapse with controls inside.
 
 ## A headless `getElementBounds` draws a frame
 
 - **Original:** n/a (a test-harness effect).
 - **gpuix lacks:** a cheap bounds read on the test renderer. `TestRenderer.getElementBounds` calls `self.flush()` first (`packages/native/src/test_renderer.rs:1118-1121`), a full draw: about 28 ms per call in the 1240x780 screenshot window, against a table lookup on the real renderer (`renderer.rs:2333-2336`). Polling every box every 33 ms, which a first draft did, starved the event loop (about 450 ms of lag, the demo's timers running at half speed) in the screenshots. The hot/cold scheme above exists because of it.
-- **Workaround:** the hot/cold timer. Any component that reads bounds on a timer will be much slower under `scripts/screenshots.tsx` than in a window; poll only when something may have changed.
+- **Workaround:** the collapses no longer read bounds on a timer (they use `onLayout`); the cost remains for fluid hover's `remeasureFor`. Poll only when something may have changed.
 - **Fidelity:** exact in the real window; the headless numbers are a harness cost, not a product cost.
-- **Components it hits:** anything that reads bounds on a timer: combobox, sidebar and accordion all do.
+- **Components it hits:** anything that reads bounds on a timer: combobox and sidebar's fluid hover.
 
 ## An absolutely positioned child takes the pointer from its parent
 

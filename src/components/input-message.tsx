@@ -135,36 +135,16 @@ const COLLAPSE_EXIT_MS = 130;
 
 /**
  * A region that opens and closes by height. gpuix animates `height` to a
- * number only, so the content's own painted height is read and the region
- * tweens to it; `revision` asks for a new reading when the content changed.
+ * number only, so the content reports its own height and the region tweens to it.
  */
 function Collapse(props: {
 	open: boolean;
-	revision?: unknown;
 	children: JSX.Element;
 }) {
 	const presence = createPresence(COLLAPSE_EXIT_MS, props.open);
 	presence.follow(() => props.open);
 	const mounted = presence.mounted;
 	const measured = createMeasuredHeight();
-	createEffect(
-		on(
-			() => props.open,
-			(open) => {
-				if (open) measured.kick();
-			},
-			{ defer: true },
-		),
-	);
-	createEffect(
-		on(
-			() => props.revision,
-			() => {
-				if (props.open && mounted()) measured.kick();
-			},
-			{ defer: true },
-		),
-	);
 
 	return (
 		<Show when={mounted()}>
@@ -178,7 +158,7 @@ function Collapse(props: {
 				style={{ overflow: "hidden", flexShrink: 0 }}
 			>
 				<div
-					ref={measured.ref}
+					onLayout={measured.onLayout}
 					style={{ display: "flex", flexDirection: "column", flexShrink: 0 }}
 				>
 					{props.children}
@@ -1005,7 +985,7 @@ export function InputMessage(props: InputMessageProps) {
 				},
 			}}
 		>
-			<Collapse open={files().length > 0} revision={files().length}>
+			<Collapse open={files().length > 0}>
 				<div
 					style={{
 						display: "flex",
@@ -1029,7 +1009,7 @@ export function InputMessage(props: InputMessageProps) {
 			</Collapse>
 
 			<Show when={supportsQueue() && props.showQueue !== false}>
-				<Collapse open={queue().length > 0} revision={queue().length}>
+				<Collapse open={queue().length > 0}>
 					<div
 						ref={(element) => {
 							queueList = element;
@@ -1221,7 +1201,7 @@ export function InputMessage(props: InputMessageProps) {
 			</div>
 
 			<Show when={suggestions().length > 0}>
-				<Collapse open={suggestionsOpen()} revision={suggestions().length}>
+				<Collapse open={suggestionsOpen()}>
 					<div
 						role="listbox"
 						aria-label="Suggested prompts"

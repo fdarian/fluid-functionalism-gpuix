@@ -158,6 +158,24 @@ export function Demo() {
 						</AccordionGroup>
 					</Section>
 				</Row>
+				<Row>
+					<Section caption="Keyboard: Tab reaches each trigger, a disabled item stays shut">
+						<AccordionGroup type="multiple">
+							<AccordionItem value="alpha">
+								<AccordionTrigger testId="kb-1">Alpha</AccordionTrigger>
+								<AccordionContent>Alpha body</AccordionContent>
+							</AccordionItem>
+							<AccordionItem value="beta">
+								<AccordionTrigger testId="kb-2">Beta</AccordionTrigger>
+								<AccordionContent>Beta body</AccordionContent>
+							</AccordionItem>
+							<AccordionItem value="gamma" disabled>
+								<AccordionTrigger testId="kb-3">Gamma (disabled)</AccordionTrigger>
+								<AccordionContent>Gamma body</AccordionContent>
+							</AccordionItem>
+						</AccordionGroup>
+					</Section>
+				</Row>
 			</div>
 		</DemoCard>
 	);
@@ -180,4 +198,20 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(1180, 700);
 	await shot.press("down");
 	shot.capture("keyboard-focus");
+
+	// Closed panels leave the tree once their exit is over.
+	await shot.click("kb-1");
+	shot.expectText("Alpha body", true);
+	await shot.click("kb-1");
+	await shot.settle(300);
+	shot.expectText("Alpha body", false);
+	// Focus is on kb-1: Tab walks to the next trigger and Enter opens it.
+	await shot.press("tab");
+	await shot.press("enter");
+	shot.expectText("Beta body", true);
+	shot.capture("keyboard-tab");
+	await shot.click("kb-3");
+	shot.expectText("Gamma body", false);
+	await shot.press("enter");
+	shot.expectText("Gamma body", false);
 };

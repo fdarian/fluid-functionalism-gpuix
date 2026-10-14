@@ -1,7 +1,8 @@
-import { createSignal, For } from "solid-js";
+import { createSignal, For, Show } from "solid-js";
 import { CheckboxGroup, CheckboxItem } from "../components/checkbox-group";
 import type { DemoModule } from "../lib/demo";
 import { DemoCard, DemoRow } from "../lib/demo-kit";
+import { color, type as scale } from "../lib/theme";
 
 const ITEMS = ["Apples", "Bananas", "Cherries", "Dates"];
 
@@ -9,6 +10,7 @@ function Group(props: {
 	testId: string;
 	initial: number[];
 	size?: "default" | "compact";
+	readout?: boolean;
 }) {
 	const [checked, setChecked] = createSignal<ReadonlySet<number>>(
 		new Set(props.initial),
@@ -20,24 +22,31 @@ function Group(props: {
 		setChecked(next);
 	};
 	return (
-		<CheckboxGroup
-			testId={props.testId}
-			checkedIndices={checked()}
-			size={props.size}
-		>
-			<For each={ITEMS}>
-				{(label: string, index) => (
-					<CheckboxItem
-						testId={`${props.testId}-${index()}`}
-						index={index()}
-						label={label}
-						size={props.size}
-						checked={checked().has(index())}
-						onToggle={() => toggle(index())}
-					/>
-				)}
-			</For>
-		</CheckboxGroup>
+		<>
+			<CheckboxGroup
+				testId={props.testId}
+				checkedIndices={checked()}
+				size={props.size}
+			>
+				<For each={ITEMS}>
+					{(label: string, index) => (
+						<CheckboxItem
+							testId={`${props.testId}-${index()}`}
+							index={index()}
+							label={label}
+							size={props.size}
+							checked={checked().has(index())}
+							onToggle={() => toggle(index())}
+						/>
+					)}
+				</For>
+			</CheckboxGroup>
+			<Show when={props.readout === true}>
+				<text style={{ ...scale.caption, color: color.mutedForeground }}>
+					{`Checked: ${[...checked()].sort().join(",")}`}
+				</text>
+			</Show>
+		</>
 	);
 }
 
@@ -49,7 +58,7 @@ export function Demo() {
 		<DemoCard title="CheckboxGroup">
 			<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
 				<DemoRow label="Default">
-					<Group testId="box" initial={[0]} />
+					<Group testId="box" initial={[0]} readout />
 				</DemoRow>
 				<DemoRow label="Compact">
 					<Group testId="small" initial={[1, 2]} size="compact" />
@@ -81,4 +90,15 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("keyboard-focus");
 	await shot.press("space");
 	shot.capture("keyboard-toggled");
+	// Enter and Space both toggle the focused row; End and Home jump to the last and first row without toggling.
+	shot.expectText("Checked: 1,2,3", true);
+	await shot.press("enter");
+	shot.expectText("Checked: 2,3", true);
+	await shot.press("end");
+	shot.expectText("Checked: 2,3", true);
+	await shot.press("space");
+	shot.expectText("Checked: 2", true);
+	await shot.press("home");
+	await shot.press("space");
+	shot.expectText("Checked: 0,2", true);
 };

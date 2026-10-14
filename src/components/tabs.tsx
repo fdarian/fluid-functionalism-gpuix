@@ -11,6 +11,7 @@ import {
 	createMemo,
 	createSignal,
 	type JSX,
+	on,
 	Show,
 	useContext,
 } from "solid-js";
@@ -48,6 +49,9 @@ interface ListScope {
 	elements: Map<number, HostElement>;
 	nextIndex: () => number;
 	mouseInside: () => boolean;
+	/** The tab that holds the roving tab stop. */
+	tabStop: () => number;
+	focusTab: (index: number) => void;
 }
 
 const TabsContext = createContext<TabsState>();
@@ -77,12 +81,15 @@ export function Tabs(props: {
 		props.defaultValue,
 	);
 	const [order, setOrder] = createSignal<readonly string[]>([]);
+	// Uncontrolled with no defaultValue falls back to the first tab.
+	const selected = () => props.value ?? uncontrolled() ?? order()[0];
 	const state: TabsState = {
 		order,
 		size: () => props.size ?? "default",
-		// Uncontrolled with no defaultValue falls back to the first tab.
-		selected: () => props.value ?? uncontrolled() ?? order()[0],
+		selected,
 		select(value) {
+			// Base UI never re-commits the active tab.
+			if (selected() === value) return;
 			if (props.value === undefined) setUncontrolled(value);
 			props.onValueChange?.(value);
 		},
@@ -123,18 +130,23 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 	const hover = createFluidHover({ axis: "x" });
 	const [mouseInside, setMouseInside] = createSignal(false);
 	let counter = 0;
-	const scope: ListScope = {
-		hover,
-		elements: new Map(),
-		nextIndex: () => counter++,
-		mouseInside,
-	};
 	const metrics = () => sizes[tabs.size()];
 
 	const selectedIndex = () => {
 		const selected = tabs.selected();
 		if (selected === undefined) return -1;
 		return tabs.order().indexOf(selected);
+	};
+	/** The last-focused tab keeps the tab stop (a focused disabled tab, say); a new selection takes it back. */
+	const [focusedTab, setFocusedTab] = createSignal<number>();
+	createEffect(on(selectedIndex, () => setFocusedTab(undefined), { defer: true }));
+	const scope: ListScope = {
+		hover,
+		elements: new Map(),
+		nextIndex: () => counter++,
+		mouseInside,
+		tabStop: () => focusedTab() ?? Math.max(selectedIndex(), 0),
+		focusTab: setFocusedTab,
 	};
 	const rectOf = (index: number | null): ItemRect | undefined => {
 		if (index === null || index < 0 || !hover.isMeasured()) return undefined;
@@ -261,6 +273,7 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 
 export function TabItem(props: {
 	value: string;
+	disabled?: boolean;
 	icon?: IconRef;
 	label: string;
 	testId?: string;
@@ -298,14 +311,20 @@ export function TabItem(props: {
 		}
 	};
 	const onKeyDown = (event: KeyEvent) => {
+		const modifiers = event.modifiers;
+		if (
+			modifiers !== undefined &&
+			(modifiers.shift || modifiers.ctrl || modifiers.alt || modifiers.cmd)
+		) {
+			return;
+		}
 		const target = keyTarget(event.key ?? "");
-		if (target === undefined) return;
+		if (target === undefined || target === index) return;
 		event.preventDefault();
-		const value = tabs.order()[target];
+		event.stopPropagation();
 		const next = list.elements.get(target);
-		if (value === undefined || next === undefined) return;
-		// Arrow keys move focus and select in one step, so the pill follows the keyboard the way it follows a click.
-		tabs.select(value);
+		if (next === undefined) return;
+		// Focus moves, and focusing an enabled tab selects it (activateOnFocus), so the pill follows the keyboard the way it follows a click. A disabled tab takes the focus and nothing else.
 		renderer.focusElement?.(next.id);
 	};
 
@@ -315,14 +334,21 @@ export function TabItem(props: {
 				element = node;
 			}}
 			{...buttonProps({
+				disabled: props.disabled,
+				// Base UI tabs stay focusable when disabled: arrows land on them, nothing activates.
+				focusableWhenDisabled: true,
 				onClick: () => tabs.select(props.value),
 				onKeyDown,
-				tabIndex: isSelected() ? 0 : -1,
+				tabIndex: list.tabStop() === index ? 0 : -1,
 			})}
 			role="tab"
 			aria-selected={isSelected()}
 			testId={props.testId}
-			onFocus={() => list.hover.setActiveIndex(index)}
+			onFocus={() => {
+				list.focusTab(index);
+				list.hover.setActiveIndex(index);
+				if (props.disabled !== true) tabs.select(props.value);
+			}}
 			onBlur={() =>
 				// Focus moving to a sibling tab stays inside the list: only a real exit drops the highlight.
 				queueMicrotask(() => {
@@ -374,7 +400,10 @@ export function TabPanel(props: { value: string; children: JSX.Element }) {
 	const tabs = useTabs();
 	return (
 		<Show when={tabs.selected() === props.value}>
-			<div role="tabpanel">{props.children}</div>
+			{/* A tab stop, like Base UI's panel; the dim is off because FF draws no ring on it. */}
+			<div role="tabpanel" tabIndex={0} style={{ keyboardFocusDim: false }}>
+				{props.children}
+			</div>
 		</Show>
 	);
 }

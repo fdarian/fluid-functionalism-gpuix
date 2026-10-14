@@ -31,9 +31,9 @@ All four sides, rich content, per-tooltip and provider delay with skip-delay gro
 ## No collision flip
 
 - **Original:** Base UI flips the tooltip to the opposite side when it would leave the viewport and shifts it along the edge.
-- **gpuix lacks:** a flip that keeps clear of the trigger. `fit="snap"` (the default, `anchored.rs:352`) slides the layer back inside the window and so can cover the trigger; `fit="switch"` flips to the far edge of the trigger, which the README already notes covers it.
-- **Workaround:** `fit` stays at its snap default; the demo keeps triggers clear of the window edge. Missing feature.
-- **Fidelity:** approximated.
+- **gpuix lacks:** a flip that keeps clear of the trigger. `fit="snap"` slides the layer back inside the window and so can cover the trigger; `fit="switch"` flips to the far edge of the trigger, which the README already notes covers it. Missing feature.
+- **Workaround:** the side is chosen when the tooltip opens, from the trigger's painted box, the window size and the chip's last painted size (`onLayout`; a string's width is estimated the first time): the preferred side if it has room for the chip plus the offset plus 5px, else the opposite side when that has more room. Snap (with `snapMargin` 5, Base UI's collision padding) still does the shifting along the edge. The first hover of a tooltip primes the bounds read, so a tooltip that opens at once on its very first hover keeps its preferred side.
+- **Fidelity:** approximated (no flip after the window resizes while it is open).
 - **Components it hits:** every anchored popup.
 
 ## Focus opens the tooltip
@@ -43,6 +43,12 @@ All four sides, rich content, per-tooltip and provider delay with skip-delay gro
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** any component whose focus has a side effect (dropdown typeahead, combobox).
+
+## Escape and a hoverable chip
+
+- **Original:** `useDismiss` closes on Escape; the popup is hoverable (`safePolygon`) so the pointer can cross the gap to it.
+- **Port:** a hover-opened tooltip joins gpuix's dismiss-layer stack (`DismissableLayer`), so Escape closes the tooltip first and a dialog behind it on the next press. Base UI's dialog and tooltip listen separately, so one Escape there probably closes both; this is a deliberate deviation. A pinned (`forceOpen`) tooltip is not a layer. The pointer leaving the trigger or the chip closes after an 80 ms grace unless it reaches the chip or comes back; the exact safe polygon needs pointer positions outside every element, which gpuix does not report. The chip is a hit target now, so it blocks what it overlaps.
+- **Also:** a bare `Tooltip` has its own group with Base UI's 400 ms timeout, so coming back within it, or while the chip fades out, opens at once; `onOpenChange` reports hover opens and closes.
 
 ## Smaller notes
 

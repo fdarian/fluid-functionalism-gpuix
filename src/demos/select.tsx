@@ -65,6 +65,20 @@ const SOME_DISABLED = [
 	{ value: "c", label: "Also available" },
 ];
 
+const KEYS = [
+	{ value: "kiwi", label: "Kiwi" },
+	{ value: "lemon", label: "Lemon" },
+	{ value: "lime", label: "Lime juice" },
+	{ value: "melon", label: "Melon" },
+];
+
+const FIGS = [
+	{ value: "fig", label: "Fig" },
+	{ value: "grape", label: "Grape" },
+	{ value: "guava", label: "Guava" },
+	{ value: "honey", label: "Honey" },
+];
+
 export const title = "Select";
 export const group = "Components";
 
@@ -193,6 +207,29 @@ export function Demo() {
 							placeholder="Some disabled…"
 						/>
 					</DemoRow>
+					<DemoRow label="Uncontrolled">
+						<Select
+							testId="keys"
+							variant="bordered"
+							size="compact"
+							items={KEYS}
+							placeholder="Keys…"
+						/>
+						<Select
+							testId="keys-up"
+							variant="bordered"
+							size="compact"
+							items={FIGS}
+							placeholder="Keys up…"
+						/>
+						<Select
+							testId="default"
+							variant="bordered"
+							size="compact"
+							items={KEYS}
+							defaultValue="lemon"
+						/>
+					</DemoRow>
 				</div>
 			</DemoCard>
 		</>
@@ -247,9 +284,90 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("timezone-reopened");
 	await shot.press("escape");
 
+	// Arrows land on disabled rows, Enter refuses them, the popup stays open.
 	await shot.click("some-disabled");
-	await shot.settle(300);
-	shot.capture("some-disabled-open");
 	await shot.press("escape");
+	await shot.press("down down");
+	shot.expectText("Unavailable", true);
+	shot.capture("some-disabled-keyboard");
+	await shot.press("enter");
+	await shot.settle(500);
+	shot.expectText("Unavailable", true);
+	await shot.press("down enter");
+	await shot.settle(600);
+	shot.expectText("Unavailable", false);
+	shot.expectText("Also available", true);
+
+	// Uncontrolled: `defaultValue` shows without any state of ours.
+	shot.expectText("Lemon", true);
+	shot.expectText("Kiwi", false);
+
+	// Opens on mouse-down; the release on the trigger leaves it open.
+	await shot.down("keys");
+	shot.expectText("Kiwi", true);
+	shot.capture("keys-mouse-down");
+	await shot.up("keys");
+	shot.expectText("Kiwi", true);
+	await shot.press("escape");
+	shot.expectText("Kiwi", false);
+
+	// A keyboard open highlights the first row, and the arrows stop at the ends.
+	await shot.press("down");
+	shot.expectText("Kiwi", true);
+	await shot.press("up");
+	await shot.press("enter");
+	await shot.settle(500);
+	shot.expectText("Kiwi", true);
+	shot.expectText("Melon", false);
+
+	// Home and End jump to the ends.
+	await shot.press("down end");
+	shot.capture("keys-end");
+	await shot.press("enter");
+	await shot.settle(500);
+	shot.expectText("Melon", true);
+	shot.expectText("Kiwi", false);
+	await shot.press("down home enter");
+	await shot.settle(500);
+	shot.expectText("Kiwi", true);
+	shot.expectText("Melon", false);
+
+	// Typeahead on a closed trigger commits and does not open; Space continues the session.
+	await shot.press("l i m e space j");
+	await shot.settle(300);
+	shot.expectText("Lime juice", true);
+	shot.expectText("Melon", false);
+
+	// Press the trigger, hold past 400 ms, release over a row: it picks.
+	await shot.down("keys");
+	shot.expectText("Melon", true);
+	await shot.up("keys-option-melon");
+	await shot.settle(600);
+	shot.expectText("Kiwi", false);
+	shot.expectText("Melon", true);
+	// Focus came back to the trigger, so a key opens it again.
+	await shot.press("down");
+	shot.expectText("Kiwi", true);
+	await shot.press("escape");
+
+	// ArrowUp opens on the last row.
+	await shot.click("keys-up");
+	await shot.press("escape");
+	await shot.press("up");
+	shot.expectText("Fig", true);
+	await shot.press("enter");
+	await shot.settle(500);
+	shot.expectText("Honey", true);
+	shot.expectText("Fig", false);
+	await shot.press("f");
+	shot.expectText("Fig", true);
+	shot.expectText("Grape", false);
+	// The same letter twice cycles; a chord is not typeahead. Wait out the "f" session first.
+	await shot.settle(800);
+	await shot.press("g g");
+	shot.expectText("Guava", true);
+	shot.expectText("Grape", false);
+	await shot.press("cmd-h");
+	shot.expectText("Honey", false);
 	await shot.moveTo(1180, 700);
 };

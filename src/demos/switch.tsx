@@ -2,6 +2,7 @@ import { createSignal } from "solid-js";
 import { Switch } from "../components/switch";
 import type { DemoModule } from "../lib/demo";
 import { DemoCard, DemoRow } from "../lib/demo-kit";
+import { color, type as scale } from "../lib/theme";
 
 export const title = "Switch";
 export const group = "Components";
@@ -9,6 +10,7 @@ export const group = "Components";
 export function Demo() {
 	const [basic, setBasic] = createSignal(false);
 	const [compact, setCompact] = createSignal(true);
+	const [keyboard, setKeyboard] = createSignal(false);
 	return (
 		<>
 			<DemoCard title="Switch">
@@ -36,6 +38,19 @@ export function Demo() {
 							onToggle={() => {}}
 							disabled
 						/>
+					</DemoRow>
+					<DemoRow label="Keyboard">
+						<div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 12 }}>
+							<Switch
+								testId="kb"
+								label="Keys"
+								checked={keyboard()}
+								onToggle={() => setKeyboard(!keyboard())}
+							/>
+							<text style={{ ...scale.caption, color: color.mutedForeground }}>
+								{`Keys ${keyboard() ? "on" : "off"}`}
+							</text>
+						</div>
 					</DemoRow>
 					<DemoRow label="Compact">
 						<Switch
@@ -85,4 +100,14 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("focus");
 	await shot.press("enter");
 	shot.capture("focus-off");
+
+	// Enter toggles on keydown. Space toggles on keyup, which `press` cannot send (the test renderer
+	// dispatches key-down only); it was checked with the native simulateKeyDown / simulateKeyUp pair.
+	shot.expectText("Keys off", true);
+	await shot.click("kb-track");
+	shot.expectText("Keys on", true);
+	await shot.press("enter");
+	shot.expectText("Keys off", true);
+	await shot.press("space");
+	shot.expectText("Keys off", true);
 };

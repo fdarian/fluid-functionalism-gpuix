@@ -1,5 +1,6 @@
 import {
 	buttonProps,
+	type EventPayload,
 	type HostElement,
 	type KeyEvent,
 	motion,
@@ -11,7 +12,7 @@ import {
 	createMemo,
 	createSignal,
 	type JSX,
-	onMount,
+	on,
 	Show,
 	useContext,
 } from "solid-js";
@@ -21,7 +22,6 @@ import {
 	type ItemRect,
 } from "../lib/fluid-hover";
 import { StableLabel } from "../lib/stable-label";
-import { awaitBounds } from "../lib/bounds";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { moveIndex } from "../lib/list-nav";
@@ -55,6 +55,9 @@ interface SubtleScope {
 	hover: FluidHover;
 	elements: Map<number, HostElement>;
 	mouseInside: () => boolean;
+	/** The tab that holds the roving tab stop. */
+	tabStop: () => number;
+	focusTab: (index: number) => void;
 }
 
 const SubtleContext = createContext<SubtleScope>();
@@ -90,15 +93,29 @@ export function TabsSubtle(props: {
 }) {
 	const hover = createFluidHover({ axis: "x" });
 	const [mouseInside, setMouseInside] = createSignal(false);
+	/** Manual activation: arrows move focus, and the focused tab keeps the tab stop until the selection changes. */
+	const [focusedTab, setFocusedTab] = createSignal<number>();
+	createEffect(
+		on(
+			() => props.selectedIndex,
+			() => setFocusedTab(undefined),
+			{ defer: true },
+		),
+	);
 	const scope: SubtleScope = {
 		selectedIndex: () => props.selectedIndex,
-		onSelect: (index) => props.onSelect(index),
+		onSelect(index) {
+			// Base UI never re-commits the active tab.
+			if (index !== props.selectedIndex) props.onSelect(index);
+		},
 		activeLabel: () => props.activeLabel === true,
 		idPrefix: () => props.idPrefix,
 		size: () => props.size ?? "default",
 		hover,
 		elements: new Map(),
 		mouseInside,
+		tabStop: () => focusedTab() ?? Math.max(props.selectedIndex, 0),
+		focusTab: setFocusedTab,
 	};
 
 	const rectOf = (index: number | null): ItemRect | undefined => {
@@ -220,8 +237,7 @@ export function TabsSubtleItem(props: {
 	const renderer = useGpuixRequired();
 	const metrics = () => sizes[scope.size()];
 	let element: HostElement | undefined;
-	let labelBox: HostElement | undefined;
-	const [labelWidth, setLabelWidth] = createSignal<number>();
+	const [unfoldedWidth, setUnfoldedWidth] = createSignal<number>();
 
 	createEffect(() => {
 		if (element === undefined) throw new Error("Tab is not mounted");
@@ -234,18 +250,7 @@ export function TabsSubtleItem(props: {
 		scope.hover.activeIndex() === props.index || isSelected();
 	const collapsible = () => scope.activeLabel() && props.icon !== undefined;
 	const showLabel = () => !collapsible() || isSelected();
-	/** The label's own width plus its gap to the icon, which folds into the animated width. */
-	const unfoldedWidth = () => {
-		const width = labelWidth();
-		return width === undefined ? undefined : width + metrics().gap;
-	};
-
-	// The unfolding label's width is animated to a measured number: gpuix cannot animate `auto`.
-	onMount(() => {
-		if (!collapsible()) return;
-		if (labelBox === undefined) throw new Error("Tab label is not mounted");
-		void awaitBounds(labelBox).then((bounds) => setLabelWidth(bounds.width));
-	});
+	// The unfolding label's width is animated to a measured number (gpuix cannot animate `auto`): the box holding the label and its gap to the icon reports it.
 
 	// The tab's own width changes as its label unfolds, so every row after it moves: re-read the rects for the length of the spring.
 	let previousSelected = isSelected();
@@ -257,6 +262,13 @@ export function TabsSubtleItem(props: {
 	});
 
 	const onKeyDown = (event: KeyEvent) => {
+		const modifiers = event.modifiers;
+		if (
+			modifiers !== undefined &&
+			(modifiers.shift || modifiers.ctrl || modifiers.alt || modifiers.cmd)
+		) {
+			return;
+		}
 		const count = scope.elements.size;
 		const move = ({ right: 1, left: -1 } as Record<string, 1 | -1 | undefined>)[
 			event.key ?? ""
@@ -269,8 +281,9 @@ export function TabsSubtleItem(props: {
 					: event.key === "end"
 						? count - 1
 						: undefined;
-		if (target === undefined) return;
+		if (target === undefined || target === props.index) return;
 		event.preventDefault();
+		event.stopPropagation();
 		const next = scope.elements.get(target);
 		// Manual activation: focus moves, selection waits for Enter / Space.
 		if (next !== undefined) renderer.focusElement?.(next.id);
@@ -278,9 +291,6 @@ export function TabsSubtleItem(props: {
 
 	const label = (
 		<StableLabel
-			labelRef={(node) => {
-				labelBox = node;
-			}}
 			text={props.label}
 			heavy={isSelected()}
 			color={isActive() ? color.foreground : color.mutedForeground}
@@ -296,7 +306,7 @@ export function TabsSubtleItem(props: {
 			{...buttonProps({
 				onClick: () => scope.onSelect(props.index),
 				onKeyDown,
-				tabIndex: isSelected() ? 0 : -1,
+				tabIndex: scope.tabStop() === props.index ? 0 : -1,
 			})}
 			role="tab"
 			aria-selected={isSelected()}
@@ -307,7 +317,10 @@ export function TabsSubtleItem(props: {
 					: `${scope.idPrefix()}-tab-${props.index}`
 			}
 			testId={props.testId}
-			onFocus={() => scope.hover.setActiveIndex(props.index)}
+			onFocus={() => {
+				scope.focusTab(props.index);
+				scope.hover.setActiveIndex(props.index);
+			}}
 			onBlur={() =>
 				// Focus moving to a sibling tab stays inside the list: only a real exit drops the highlight.
 				queueMicrotask(() => {
@@ -363,6 +376,10 @@ export function TabsSubtleItem(props: {
 						initial={false}
 						animate={{ opacity: showLabel() ? 1 : 0 }}
 						transition={{ duration: 0.06 }}
+						onLayout={(event: EventPayload) => {
+							if (event.width === undefined) throw new Error("onLayout reported no width");
+							setUnfoldedWidth(event.width);
+						}}
 						style={{
 							display: "flex",
 							flexDirection: "row",

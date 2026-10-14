@@ -10,7 +10,7 @@ Hover uses the shared `createFluidHover` with `axis: "x"` (the option was added 
 
 - **Original:** one ring in the list springs from tab to tab and is drawn only when the focused tab matches `:focus-visible`.
 - **gpuix lacks:** a way to read the focus modality (see [accordion.md](accordion.md)). `onFocus` / `onBlur` carry no `relatedTarget` either (`EventPayload` in `packages/native/index.d.ts`), so "focus left the list" is not answerable from the event. Missing feature.
-- **Workaround:** each tab has a native `focusVisible` outline (1px, offset 1, which is where the ring sits). A tab's blur defers one microtask and asks `getFocusedElementId()` whether focus landed on a sibling before dropping the highlight. Arrow keys move focus with `renderer.focusElement`, since there is no roving tabindex either; non-selected tabs are `tabIndex: -1`.
+- **Workaround:** each tab has a native `focusVisible` outline (1px, offset 1, which is where the ring sits). A tab's blur defers one microtask and asks `getFocusedElementId()` whether focus landed on a sibling before dropping the highlight. Arrow keys move focus with `renderer.focusElement` (focusing an enabled tab selects it, as `activateOnFocus` does), since there is no roving tabindex either; the last-focused tab holds the `tabIndex: 0` and the rest are `-1`.
 - **Fidelity:** approximated: right look and keyboard behaviour, but the ring appears per tab instead of gliding.
 - **Components it hits:** tabs-subtle, accordion, sidebar, nav menus.
 

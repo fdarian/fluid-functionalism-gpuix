@@ -99,7 +99,11 @@ export function Button(props: {
 	loading?: boolean;
 	disabled?: boolean;
 	testId?: string;
+	"aria-label"?: string;
+	"aria-expanded"?: boolean;
 	onClick?: (event: EventPayload) => void;
+	/** Never pair with onMouseMove: down plus move on one element makes gpuix capture the pointer. */
+	onMouseDown?: (event: EventPayload) => void;
 	/** The label, or the icon for an icon-only size. */
 	children?: JSX.Element;
 	/** Anything after the label, e.g. a keycap. Takes the trailing icon's tighter padding. */
@@ -108,6 +112,8 @@ export function Button(props: {
 }) {
 	const variant = () => props.variant ?? "primary";
 	const size = () => sizes[props.size ?? "default"];
+	/** Base UI disables the button while it loads: FF passes `disabled || loading`, and its `disabled:` classes dim it and drop pointer events. */
+	const inert = () => props.disabled === true || props.loading === true;
 	const iconOnly = () => props.size === "icon" || props.size === "icon-compact";
 	const [hovered, setHovered] = createSignal(false);
 
@@ -181,11 +187,14 @@ export function Button(props: {
 	return (
 		<div
 			{...buttonProps({
-				disabled: props.disabled || props.loading,
+				disabled: inert(),
 				onClick: props.onClick,
 			})}
-			tabIndex={props.disabled || props.loading ? -1 : 0}
+			tabIndex={inert() ? -1 : 0}
 			testId={props.testId}
+			aria-label={props["aria-label"]}
+			aria-expanded={props["aria-expanded"]}
+			onMouseDown={props.onMouseDown}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			style={{
@@ -206,8 +215,8 @@ export function Button(props: {
 				userSelect: "none",
 				// gpuix dims every other focusable while one has keyboard focus; this design does not.
 				keyboardFocusDim: false,
-				opacity: props.disabled ? 0.5 : 1,
-				pointerEvents: props.disabled ? "none" : "auto",
+				opacity: inert() ? 0.5 : 1,
+				pointerEvents: inert() ? "none" : "auto",
 				...surfaces()[variant()].rest,
 				hover: surfaces()[variant()].hover,
 				active: surfaces()[variant()].active,

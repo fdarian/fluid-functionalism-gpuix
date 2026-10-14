@@ -121,6 +121,37 @@ function StackingDemo() {
 	);
 }
 
+/** modal={false}: no focus trap and no scroll lock, and a press anywhere outside the dialog closes it. */
+function NonModalDemo() {
+	const [pressed, setPressed] = createSignal(0);
+	return (
+		<>
+			<Dialog modal={false}>
+				<DialogTrigger>
+					<Button testId="nonmodal-open" variant="secondary">
+						Open non-modal
+					</Button>
+				</DialogTrigger>
+				<DialogContent size="sm" testId="nonmodal-popup">
+					<DialogHeader>
+						<DialogTitle>Non-modal dialog</DialogTitle>
+						<DialogDescription>
+							Press outside it, or the trigger again, to close it.
+						</DialogDescription>
+					</DialogHeader>
+				</DialogContent>
+			</Dialog>
+			<Button
+				testId="nonmodal-other"
+				variant="ghost"
+				onClick={() => setPressed((count) => count + 1)}
+			>
+				{`Page button: ${pressed()}`}
+			</Button>
+		</>
+	);
+}
+
 /** Keeps a trigger at its own width: a column would stretch it. */
 function Row(props: { children: JSX.Element }) {
 	return (
@@ -160,6 +191,7 @@ export function Demo() {
 						</DialogFooter>
 					</DialogContent>
 				</Dialog>
+				<NonModalDemo />
 				</Row>
 			</DemoCard>
 			<DemoCard title="Stacking">
@@ -232,6 +264,11 @@ export function Demo() {
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("basic-open");
 	shot.expectText("Create teamspace", true);
+	// Focus opens on the first tab stop in the popup (Cancel), not on the popup: Enter presses it.
+	await shot.press("enter");
+	shot.expectText("Create teamspace", false);
+	await shot.click("basic-open");
+	shot.expectText("Create teamspace", true);
 	shot.capture("basic-open");
 	await shot.press("tab");
 	shot.capture("focus-first-tab");
@@ -241,6 +278,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 
 	await shot.click("stack-open");
 	await shot.click("stack-select");
+	await shot.settle(1200);
 	shot.capture("select-over-dialog");
 	shot.expectText("Viewer", true);
 	// Escape closes only the popup: it is the top layer of the dismiss stack.
@@ -251,6 +289,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	// "Viewer" lies below the panel, over the backdrop, and is still the topmost layer.
 	const viewer = shot.centerOf("stack-select");
 	await shot.clickAt(viewer.x, viewer.y + 118);
+	await shot.settle(1200);
 	shot.expectText("Invite a teammate", true);
 	await shot.click("stack-nested-open");
 	shot.expectText("Discard the invite?", true);
@@ -260,6 +299,30 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectText("Invite a teammate", true);
 	await shot.press("escape");
 	shot.expectText("Invite a teammate", false);
+
+	// Two Escapes in one go: the second arrives while the nested dialog still fades, and must reach the dialog behind it.
+	await shot.click("stack-open");
+	await shot.click("stack-nested-open");
+	await shot.press("escape escape");
+	shot.expectText("Discard the invite?", false);
+	shot.expectText("Invite a teammate", false);
+
+	// Non-modal: any outside press closes (the scrim takes it, as in the original, so the page button is not pressed), the trigger toggles.
+	await shot.click("nonmodal-open");
+	shot.expectText("Non-modal dialog", true);
+	shot.capture("non-modal");
+	await shot.click("nonmodal-other");
+	shot.expectText("Non-modal dialog", false);
+	shot.expectText("Page button: 0", true);
+	await shot.click("nonmodal-open");
+	await shot.click("nonmodal-open");
+	shot.expectText("Non-modal dialog", false);
+	await shot.click("nonmodal-open");
+	await shot.clickAt(1100, 600);
+	shot.expectText("Non-modal dialog", false);
+	await shot.click("nonmodal-open");
+	await shot.press("escape");
+	shot.expectText("Non-modal dialog", false);
 
 	await shot.click("size-xl");
 	shot.capture("size-xl");

@@ -17,8 +17,8 @@ Good. `onMouseDown` / `onMouseMove` / `onMouseUp` on one element give a full dra
 ## No element-local pointer coordinates, and bounds are one frame stale
 
 - **Original:** `getBoundingClientRect()` and `offsetWidth` read the live border box; a `ResizeObserver` keeps the width current.
-- **gpuix lacks:** `EventPayload` carries window `x` / `y` only. The element's box comes from `getElementBounds` (`packages/native/src/automation.rs:83`, a tracker child inside the element), which: is `null` until the element has painted once, is the last painted frame (a read in the commit that mutates sees the old layout), is the border box, and never notifies on resize. Missing feature (events with element-local coordinates, a resize signal).
-- **Workaround:** the slider polls for its first box (up to 12 frames, then throws), re-reads on `mouseEnter` and on every press, and the default row takes its 1px border off the painted width to size its absolute layers (presses map over the whole border box). A window resize while nothing is hovered leaves the thumbs at their old pixels until the next hover.
+- **gpuix lacks:** `EventPayload` carries window `x` / `y` only. The element's box comes from `getElementBounds` (`packages/native/src/automation.rs:83`, a tracker child inside the element), which: is `null` until the element has painted once, is the last painted frame (a read in the commit that mutates sees the old layout), is the border box, and does not notify on resize (the host's `onLayout` does report size changes, but not position). Missing feature (events with element-local coordinates).
+- **Workaround:** the slider polls for its first box (up to 12 frames, then throws), re-reads on `mouseEnter` and on every press, and the default row takes its 1px border off the painted width to size its absolute layers (presses map over the whole border box). The track (compact) and the row (default) also take their width from `onLayout`, so a container resize re-places the thumbs and fill at once; the position is still read on enter and press.
 - **Fidelity:** approximated.
 - **Components it hits:** fluid-hover (every list), carousel-dots, scroll-area, anything that maps the pointer onto geometry.
 
@@ -66,7 +66,7 @@ Good. `onMouseDown` / `onMouseMove` / `onMouseUp` on one element give a full dra
 
 - **Original:** the Base UI thumb is `pointer-events-none`, so only Tab focuses it; `:focus-visible` drives the ring and the brighter label.
 - **gpuix lacks:** nothing here, but it only works because of that: the `focus` event has no keyboard-or-pointer flag (checkbox-group.md). The compact thumbs use native `focusVisible`; the default row's ring and its brighter label follow `onFocus` / `onBlur` on a 1px hidden thumb that nothing can press.
-- **Workaround:** a `pointerEvents: "none"`, `tabIndex: 0` element that handles Arrow, Home, End and Page keys.
+- **Workaround:** a `pointerEvents: "none"`, `tabIndex: 0` element that handles Arrow (Shift for `largeStep`), Home, End and Page keys with Base UI's step maths.
 - **Fidelity:** exact.
 - **Components it hits:** none other.
 

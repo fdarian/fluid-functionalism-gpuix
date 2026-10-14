@@ -113,12 +113,19 @@ export function Switch(props: {
 		if (shouldBeOn !== props.checked) props.onToggle();
 	};
 
+	// Base UI's switch root owns the keys: Enter clicks on keydown, Space on keyup (a keydown only keeps the page from scrolling).
 	const onKeyDown = (event: KeyEvent) => {
-		if (props.disabled || event.isHeld) return;
-		if (event.key === "enter" || event.key === "space") {
+		if (props.disabled) return;
+		if (event.key === "enter") {
 			event.preventDefault();
 			props.onToggle();
+		} else if (event.key === "space") {
+			event.preventDefault();
 		}
+	};
+	const onKeyUp = (event: KeyEvent) => {
+		if (props.disabled || event.key !== "space" || event.defaultPrevented) return;
+		props.onToggle();
 	};
 
 	const hoverHandlers = {
@@ -155,12 +162,14 @@ export function Switch(props: {
 		>
 			<div
 				role="switch"
+				aria-label={props.label}
 				tabIndex={props.disabled ? -1 : 0}
 				testId={
 					props.testId === undefined ? undefined : `${props.testId}-track`
 				}
 				{...hoverHandlers}
 				onKeyDown={onKeyDown}
+				onKeyUp={onKeyUp}
 				style={{
 					position: "relative",
 					flexShrink: 0,

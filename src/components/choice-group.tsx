@@ -246,8 +246,8 @@ export function ChoiceRow(props: {
 		});
 	});
 
+	// No `isHeld` guard: as in FF, a held arrow keeps walking and a held Space or Enter repeats.
 	const onKeyDown = (event: KeyEvent) => {
-		if (event.isHeld) return;
 		switch (event.key) {
 			case "space":
 			case "enter":
@@ -279,6 +279,7 @@ export function ChoiceRow(props: {
 		<div
 			testId={props.testId}
 			role={props.role}
+			aria-label={props.label}
 			ref={(row) => {
 				element = row;
 			}}
