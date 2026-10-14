@@ -298,6 +298,45 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(trackX(area.x) - 90, area.y + 40);
 	await shot.up("area-y-thumb");
 
+	// Keyboard: a press inside puts focus in the viewport, then the keys scroll it like a browser would.
+	const thumbY = () => shot.centerOf("area-y-thumb").y;
+	const expectBelow = (label: string, lower: number, higher: number) => {
+		if (!(higher > lower)) {
+			throw new Error(`${label}: thumb stayed at ${lower} -> ${higher}`);
+		}
+	};
+	await shot.clickAt(area.x - 60, area.y);
+	await shot.press("home");
+	const atHome = thumbY();
+	shot.capture("key-home");
+	await shot.press("pagedown");
+	const afterPage = thumbY();
+	expectBelow("pagedown", atHome, afterPage);
+	await shot.press("down down down");
+	expectBelow("arrows", afterPage, thumbY());
+	await shot.press("end");
+	const atEnd = thumbY();
+	expectBelow("end", afterPage, atEnd);
+	shot.capture("key-end");
+
+	// A wheel tick over the track itself scrolls the viewport.
+	await shot.press("home");
+	const homeAgain = thumbY();
+	await shot.scroll(trackX(area.x), area.y, 0, -60);
+	expectBelow("wheel over the track", homeAgain, thumbY());
+	shot.capture("wheel-over-track");
+
+	// A press on the bare track jumps, and holding it carries on as a drag from there.
+	await shot.press("home");
+	await shot.down("area-y-track");
+	const jumped = thumbY();
+	expectBelow("track press", homeAgain, jumped);
+	const track = shot.centerOf("area-y-track");
+	await shot.moveHeld(track.x, track.y + 30);
+	expectBelow("drag after the jump", jumped, thumbY());
+	shot.capture("track-jump-then-drag");
+	await shot.up("area-y-track");
+
 	await shot.clickAt(trackX(area.x), area.y + 78);
 	shot.capture("track-jump-to-end");
 	await shot.scroll(area.x, area.y, 0, -400);

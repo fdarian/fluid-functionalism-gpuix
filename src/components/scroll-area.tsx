@@ -2,12 +2,13 @@ import {
 	type DimensionValue,
 	type EventPayload,
 	type HostElement,
+	type KeyEvent,
 	motion,
 	type StyleDesc,
 	useGpuixRequired,
 } from "@gpuix/solid";
-import { createSignal, type JSX, onCleanup, onMount, Show } from "solid-js";
-import { awaitBounds, readBounds } from "../lib/bounds";
+import { createSignal, type JSX, onCleanup, Show } from "solid-js";
+import { readBounds } from "../lib/bounds";
 import { color, withAlpha } from "../lib/theme";
 
 export type ScrollOrientation = "vertical" | "horizontal" | "both";
@@ -18,20 +19,20 @@ const FADE_PX = 48;
 const TRACK_PX = 10;
 /** The thumb keeps 4px off each end of its track (`my-1`). */
 const THUMB_INSET = 4;
-const THUMB_MIN_PX = 20;
-/** How long Base UI keeps `data-scrolling` after the last wheel tick. */
+/** Base UI's `MIN_THUMB_SIZE`. */
+const THUMB_MIN_PX = 16;
+/** How long Base UI keeps `data-scrolling` after the last user scroll. */
 const SCROLLING_MS = 500;
-/** The offset a wheel tick produces is readable a frame or two later. */
-const SYNC_DELAYS_MS = [0, 16, 48, 100];
+/** How long after a wheel tick, key or press an offset change still counts as the user's (Base UI's 100 ms scroll-end debounce, plus a frame for the offset to report). */
+const USER_SCROLL_MS = 150;
+/** The distance a browser scrolls for one arrow key. */
+const ARROW_PX = 40;
+/** A page key scrolls this share of the viewport. */
+const PAGE_SHARE = 0.875;
 
-interface Metrics {
-	viewW: number;
-	viewH: number;
-	contentW: number;
-	contentH: number;
-	/** Scrolled distance, positive. */
-	x: number;
-	y: number;
+interface Size {
+	w: number;
+	h: number;
 }
 
 type Axis = "x" | "y";
@@ -51,14 +52,22 @@ function clear(cssColor: string): string {
 	throw new Error(`Cannot fade from ${cssColor}`);
 }
 
+function sizeOf(event: EventPayload): Size {
+	if (event.width === undefined || event.height === undefined) {
+		throw new Error("layout event without a size");
+	}
+	return { w: event.width, h: event.height };
+}
+
 function clamp(value: number, min: number, max: number) {
 	return Math.min(max, Math.max(min, value));
 }
 
 /**
  * Scrollbar and edge fade over a gpuix scroller. gpuix paints no scrollbar and
- * has no mask, so the thumb is read from `getScrollOffset` after each wheel
- * tick and the fade is an opaque-to-clear gradient in the surface's own colour.
+ * has no mask, so the thumb follows the viewport's `onLayout` and
+ * `onScrollChange`, and the fade is an opaque-to-clear gradient in the
+ * surface's own colour.
  */
 export function ScrollArea(props: {
 	orientation?: ScrollOrientation;
@@ -80,62 +89,59 @@ export function ScrollArea(props: {
 	const both = () => orientation() === "both";
 
 	let viewport: HostElement | undefined;
-	let content: HostElement | undefined;
-	const timers = new Set<ReturnType<typeof setTimeout>>();
-	let scrollingTimer: ReturnType<typeof setTimeout> | undefined;
+	const scrollingTimer: Record<Axis, ReturnType<typeof setTimeout> | undefined> =
+		{ x: undefined, y: undefined };
+	let userTimer: ReturnType<typeof setTimeout> | undefined;
+	let userScroll = false;
 	onCleanup(() => {
-		for (const timer of timers) clearTimeout(timer);
-		clearTimeout(scrollingTimer);
+		clearTimeout(scrollingTimer.x);
+		clearTimeout(scrollingTimer.y);
+		clearTimeout(userTimer);
 	});
 
-	const [metrics, setMetrics] = createSignal<Metrics>();
+	// Sizes come from `onLayout` (border box, reported after the first paint and on every resize) and the offset from `onScrollChange`, so nothing here is polled.
+	const [view, setView] = createSignal<Size>();
+	const [content, setContent] = createSignal<Size>();
+	/** Scrolled distance, positive. */
+	const [offset, setOffset] = createSignal({ x: 0, y: 0 });
 	const [rootHovered, setRootHovered] = createSignal(false);
 	const [trackHovered, setTrackHovered] = createSignal<Axis>();
-	const [scrolling, setScrolling] = createSignal(false);
+	const [scrolling, setScrolling] = createSignal({ x: false, y: false });
 	const [dragging, setDragging] = createSignal<Axis>();
 
-	const read = (): Metrics | null => {
-		if (viewport === undefined || content === undefined) {
-			throw new Error("ScrollArea is not mounted");
-		}
-		const view = readBounds(viewport);
-		const inner = readBounds(content);
-		const offset = renderer.getScrollOffset?.(viewport.id);
-		if (view == null || inner == null || offset == null) return null;
-		return {
-			viewW: view.width,
-			viewH: view.height,
-			contentW: inner.width,
-			contentH: inner.height,
-			x: -offset[0],
-			y: -offset[1],
-		};
+	/** Base UI counts a scroll as the user's only after a wheel tick, key or press on the area. */
+	const markUserScroll = () => {
+		userScroll = true;
+		clearTimeout(userTimer);
+		userTimer = setTimeout(() => {
+			userScroll = false;
+		}, USER_SCROLL_MS);
+	};
+	const startScrolling = (axis: Axis) => {
+		setScrolling((now) => ({ ...now, [axis]: true }));
+		clearTimeout(scrollingTimer[axis]);
+		scrollingTimer[axis] = setTimeout(
+			() => setScrolling((now) => ({ ...now, [axis]: false })),
+			SCROLLING_MS,
+		);
+	};
+	const stopScrolling = (axis: Axis) => {
+		clearTimeout(scrollingTimer[axis]);
+		setScrolling((now) => ({ ...now, [axis]: false }));
 	};
 
-	const syncNow = () => {
-		const next = read();
-		if (next !== null) setMetrics(next);
-	};
-	const scheduleSync = () => {
-		for (const delay of SYNC_DELAYS_MS) {
-			const timer = setTimeout(() => {
-				timers.delete(timer);
-				syncNow();
-			}, delay);
-			timers.add(timer);
+	const onScrollChange = (event: EventPayload) => {
+		if (event.scrollX === undefined || event.scrollY === undefined) {
+			throw new Error("scrollChange without an offset");
 		}
-	};
-
-	onMount(() => {
-		if (viewport === undefined || content === undefined) {
-			throw new Error("ScrollArea is not mounted");
+		const next = { x: -event.scrollX, y: -event.scrollY };
+		const before = offset();
+		if (userScroll || dragging() !== undefined) {
+			if (next.y !== before.y) startScrolling("y");
+			if (next.x !== before.x) startScrolling("x");
 		}
-		void Promise.all([awaitBounds(viewport), awaitBounds(content)]).then(() => {
-			const next = read();
-			if (next === null) throw new Error("ScrollArea has no scroll handle");
-			setMetrics(next);
-		});
-	});
+		setOffset(next);
+	};
 
 	// gpui hands one wheel tick to every scroll container under the pointer (no stop_propagation, no overscroll-behavior), so an enclosing scroller would move along with this one. Its offset is put back whenever this area moved, and left alone once this area is at its limit, which is what chaining does in a browser.
 	let outer: HostElement | undefined;
@@ -163,6 +169,11 @@ export function ScrollArea(props: {
 		const above = outer && renderer.getScrollOffset?.(outer.id);
 		outerAnchor = above == null ? undefined : [above[0], above[1]];
 	};
+	const putOuterBack = () => {
+		if (outer !== undefined && outerAnchor !== undefined) {
+			renderer.scrollTo?.(outer.id, outerAnchor[0], outerAnchor[1]);
+		}
+	};
 	const containWheel = () => {
 		if (
 			viewport === undefined ||
@@ -177,7 +188,7 @@ export function ScrollArea(props: {
 		const moved = inner[0] !== innerOffset[0] || inner[1] !== innerOffset[1];
 		innerOffset = [inner[0], inner[1]];
 		if (moved) {
-			renderer.scrollTo?.(outer.id, outerAnchor[0], outerAnchor[1]);
+			putOuterBack();
 			return;
 		}
 		const above = renderer.getScrollOffset?.(outer.id);
@@ -185,53 +196,69 @@ export function ScrollArea(props: {
 	};
 
 	const onScroll = () => {
+		markUserScroll();
 		containWheel();
-		setScrolling(true);
-		clearTimeout(scrollingTimer);
-		scrollingTimer = setTimeout(() => setScrolling(false), SCROLLING_MS);
-		scheduleSync();
 	};
 
-	const scrollTo = (x: number, y: number) => {
+	const scrollTo = (x: number, y: number, containOuter = false) => {
 		if (viewport === undefined) throw new Error("ScrollArea is not mounted");
 		if (renderer.scrollTo === undefined) {
 			throw new Error("This renderer does not expose scrollTo");
 		}
 		renderer.scrollTo(viewport.id, -x, -y);
+		if (containOuter) putOuterBack();
 		recordOffsets();
-		syncNow();
+		setOffset({ x, y });
 	};
 
 	// ── Thumb geometry ──────────────────────────────────────────────────────
 
+	const overflows = (axis: Axis) => {
+		const size = view();
+		const inner = content();
+		if (size === undefined || inner === undefined) return false;
+		return axis === "y" ? inner.h > size.h + 0.5 : inner.w > size.w + 0.5;
+	};
+	/** The corner square exists only while both scrollbars do, and takes the end of both tracks. */
+	const corner = () =>
+		both() && overflows("x") && overflows("y") ? TRACK_PX : 0;
+
 	/** The thumb's span along its track, or `null` when there is nothing to scroll. */
 	const thumb = (axis: Axis) => {
-		const m = metrics();
-		if (m === undefined) return null;
-		const view = axis === "y" ? m.viewH : m.viewW;
-		const total = axis === "y" ? m.contentH : m.contentW;
-		const scrolled = axis === "y" ? m.y : m.x;
-		if (total <= view + 0.5) return null;
-		const track = view - (both() ? TRACK_PX : 0);
-		const usable = track - THUMB_INSET * 2;
-		const length = Math.max(THUMB_MIN_PX, (view / total) * usable);
-		const maxScroll = total - view;
+		const size = view();
+		const inner = content();
+		if (size === undefined || inner === undefined || !overflows(axis)) {
+			return null;
+		}
+		const viewLength = axis === "y" ? size.h : size.w;
+		const total = axis === "y" ? inner.h : inner.w;
+		const scrolled = axis === "y" ? offset().y : offset().x;
+		const track = viewLength - corner();
+		const length = Math.max(
+			THUMB_MIN_PX,
+			Math.min(track, viewLength - THUMB_INSET * 2) * (viewLength / total),
+		);
+		/** How far the thumb can travel: the track less the thumb and its margins. */
+		const travel = track - length - THUMB_INSET * 2;
+		const maxScroll = total - viewLength;
 		return {
 			length,
-			start: THUMB_INSET + (scrolled / maxScroll) * (usable - length),
-			/** Scroll distance per pixel of thumb travel. */
-			ratio: maxScroll / (usable - length),
-			usable,
+			start: THUMB_INSET + (travel > 0 ? (scrolled / maxScroll) * travel : 0),
+			travel,
 			maxScroll,
 		};
 	};
 
-	const scrollAlong = (axis: Axis, distance: number) => {
-		const m = metrics();
+	const scrollAlong = (axis: Axis, distance: number, containOuter = false) => {
 		const span = thumb(axis);
-		if (m === undefined || span === null) return;
+		if (span === null) return;
+		const now = offset();
 		const next = clamp(distance, 0, span.maxScroll);
-		scrollTo(axis === "x" ? next : m.x, axis === "y" ? next : m.y);
+		scrollTo(
+			axis === "x" ? next : now.x,
+			axis === "y" ? next : now.y,
+			containOuter,
+		);
 	};
 
 	// ── Dragging ────────────────────────────────────────────────────────────
@@ -242,68 +269,142 @@ export function ScrollArea(props: {
 		if (value === undefined) throw new Error("mouse event without coordinates");
 		return value;
 	};
-	const startDrag = (axis: Axis, event: EventPayload) => {
-		const m = metrics();
-		if (m === undefined) return;
-		dragOrigin = {
-			pointer: pointerAlong(axis, event),
-			scrolled: axis === "y" ? m.y : m.x,
-		};
+	const startDrag = (axis: Axis, event: EventPayload, scrolled: number) => {
+		dragOrigin = { pointer: pointerAlong(axis, event), scrolled };
 		setDragging(axis);
+	};
+	const stopDrag = () => {
+		const axis = dragging();
+		if (axis === undefined) return;
+		setDragging(undefined);
+		stopScrolling(axis);
 	};
 	const dragTo = (event: EventPayload) => {
 		// A release the window never saw (outside it, or while it was inactive) is not delivered; the first move with no button held ends the drag instead.
 		if (event.pressedButton === undefined) {
-			setDragging(undefined);
+			stopDrag();
 			return;
 		}
 		const axis = dragging();
 		const span = axis === undefined ? null : thumb(axis);
-		if (axis === undefined || span === null) return;
+		if (axis === undefined || span === null || span.travel <= 0) return;
 		scrollAlong(
 			axis,
 			dragOrigin.scrolled +
-				(pointerAlong(axis, event) - dragOrigin.pointer) * span.ratio,
+				((pointerAlong(axis, event) - dragOrigin.pointer) / span.travel) *
+					span.maxScroll,
 		);
 	};
 
-	/** A press on the thumb starts a drag; one on the bare track jumps so the thumb centres under the pointer. */
+	/** A press on the thumb starts a drag; one on the bare track jumps the way Base UI does and goes on as a drag from there. */
 	const pressTrack = (
 		axis: Axis,
 		track: HostElement | undefined,
 		event: EventPayload,
 	) => {
+		// Only the primary button presses a scrollbar.
+		if (event.button !== undefined && event.button !== 0) return;
 		const span = thumb(axis);
 		if (span === null || track === undefined) return;
 		const box = readBounds(track);
 		if (box == null) return;
+		markUserScroll();
 		const along = pointerAlong(axis, event) - (axis === "y" ? box.y : box.x);
 		if (along >= span.start && along <= span.start + span.length) {
-			startDrag(axis, event);
+			startDrag(axis, event, axis === "y" ? offset().y : offset().x);
 			return;
 		}
-		scrollAlong(axis, (along - THUMB_INSET - span.length / 2) * span.ratio);
+		if (span.travel <= 0) return;
+		// Base UI's `clickPosition`: the thumb's centre under the pointer, offset by half the thumb margins.
+		const clickPosition = along - span.length / 2 + THUMB_INSET;
+		const target = clamp(
+			(clickPosition / span.travel) * span.maxScroll,
+			0,
+			span.maxScroll,
+		);
+		scrollAlong(axis, target);
+		startDrag(axis, event, target);
 	};
 
-	const visible = () =>
+	/** A wheel tick over the track scrolls the viewport, which is not under the pointer. */
+	const wheelTrack = (axis: Axis, event: EventPayload) => {
+		const delta = axis === "y" ? event.deltaY : event.deltaX;
+		if (delta === undefined || delta === 0) return;
+		markUserScroll();
+		scrollAlong(axis, (axis === "y" ? offset().y : offset().x) - delta, true);
+	};
+
+	// ── Keyboard ────────────────────────────────────────────────────────────
+
+	/** What a browser does for a focused scroller: arrows by 40px, pages by 87.5% of the view, Home and End to the ends. */
+	const onKeyDown = (event: KeyEvent) => {
+		const modifiers = event.modifiers;
+		if (modifiers?.ctrl || modifiers?.alt || modifiers?.cmd) return;
+		const size = view();
+		if (size === undefined) return;
+		const now = offset();
+		let axis: Axis | undefined;
+		let target: number | undefined;
+		switch (event.key) {
+			case "down":
+			case "up":
+				axis = "y";
+				target = now.y + (event.key === "down" ? ARROW_PX : -ARROW_PX);
+				break;
+			case "right":
+			case "left":
+				axis = "x";
+				target = now.x + (event.key === "right" ? ARROW_PX : -ARROW_PX);
+				break;
+			case "pagedown":
+			case "pageup":
+			case "space": {
+				axis = "y";
+				const back =
+					event.key === "pageup" ||
+					(event.key === "space" && modifiers?.shift === true);
+				target = now.y + (back ? -1 : 1) * size.h * PAGE_SHARE;
+				break;
+			}
+			case "home":
+				axis = "y";
+				target = 0;
+				break;
+			case "end":
+				axis = "y";
+				target = Number.POSITIVE_INFINITY;
+				break;
+		}
+		if (axis === undefined || target === undefined || thumb(axis) === null) {
+			return;
+		}
+		event.preventDefault();
+		markUserScroll();
+		scrollAlong(axis, target);
+	};
+
+	const visible = (axis: Axis) =>
 		rootHovered() ||
 		trackHovered() !== undefined ||
-		scrolling() ||
-		dragging() !== undefined;
+		scrolling()[axis] ||
+		dragging() === axis;
 
 	// ── Fade ────────────────────────────────────────────────────────────────
 
 	const fadeAmount = (axis: Axis, edge: "start" | "end") => {
-		const m = metrics();
-		if (props.fade !== true || m === undefined) return 0;
-		const view = axis === "y" ? m.viewH : m.viewW;
-		const total = axis === "y" ? m.contentH : m.contentW;
-		const scrolled = axis === "y" ? m.y : m.x;
-		if (total <= view + 0.5) return 0;
+		const size = view();
+		const inner = content();
+		if (props.fade !== true || size === undefined || inner === undefined) {
+			return 0;
+		}
+		if (!overflows(axis)) return 0;
+		const viewLength = axis === "y" ? size.h : size.w;
+		const total = axis === "y" ? inner.h : inner.w;
+		const scrolled = axis === "y" ? offset().y : offset().x;
 		return clamp(
 			edge === "start"
 				? scrolled / FADE_PX
-				: (total - view - scrolled) / FADE_PX,
+				: (total - viewLength - scrolled) / FADE_PX,
 			0,
 			1,
 		);
@@ -369,11 +470,16 @@ export function ScrollArea(props: {
 					ref={(element) => {
 						track = element;
 					}}
+					testId={
+						props.testId === undefined
+							? undefined
+							: `${props.testId}-${bar.axis}-track`
+					}
 					initial={false}
-					animate={{ opacity: visible() ? 1 : 0 }}
+					animate={{ opacity: visible(bar.axis) ? 1 : 0 }}
 					// Shows at once; on hide waits out the thumb's shrink before fading.
 					transition={
-						visible()
+						visible(bar.axis)
 							? { duration: 0.16, ease: "easeOut" }
 							: { duration: 0.12, delay: 0.16, ease: "easeOut" }
 					}
@@ -383,7 +489,8 @@ export function ScrollArea(props: {
 						pressTrack(bar.axis, track, event)
 					}
 					onMouseMove={dragTo}
-					onMouseUp={() => setDragging(undefined)}
+					onMouseUp={stopDrag}
+					onScroll={(event: EventPayload) => wheelTrack(bar.axis, event)}
 					style={{
 						position: "absolute",
 						userSelect: "none",
@@ -392,13 +499,13 @@ export function ScrollArea(props: {
 									top: 0,
 									right: 0,
 									width: TRACK_PX,
-									bottom: both() ? TRACK_PX : 0,
+									bottom: corner(),
 								}
 							: {
 									left: 0,
 									bottom: 0,
 									height: TRACK_PX,
-									right: both() ? TRACK_PX : 0,
+									right: corner(),
 								}),
 					}}
 				>
@@ -438,7 +545,6 @@ export function ScrollArea(props: {
 			onMouseEnter={() => {
 				setRootHovered(true);
 				recordOffsets();
-				scheduleSync();
 			}}
 			onMouseLeave={() => setRootHovered(false)}
 			style={{
@@ -454,7 +560,15 @@ export function ScrollArea(props: {
 					viewport = element;
 				}}
 				onScroll={onScroll}
+				onScrollChange={onScrollChange}
+				onLayout={(event: EventPayload) =>
+					setView(sizeOf(event))
+				}
+				// A viewport that overflows is a tab stop and scrolls with the keys, like a focused scroller in a browser.
+				tabIndex={overflows("x") || overflows("y") ? 0 : -1}
+				onKeyDown={onKeyDown}
 				style={{
+					keyboardFocusDim: false,
 					width: "100%",
 					height: "100%",
 					overflowY: vertical() ? "scroll" : "hidden",
@@ -470,9 +584,7 @@ export function ScrollArea(props: {
 				}}
 			>
 				<div
-					ref={(element) => {
-						content = element;
-					}}
+					onLayout={(event: EventPayload) => setContent(sizeOf(event))}
 					style={{
 						display: "flex",
 						flexDirection: "column",

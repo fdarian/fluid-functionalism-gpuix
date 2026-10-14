@@ -4,12 +4,13 @@ Original: `registry/base/scroll-area.tsx` plus the `scroll-fade` utility in `app
 
 Ported: vertical, horizontal and both-axis areas, the hover / scroll-driven thumb (4px resting, 6px on hover, three tints), thumb drag, track jump, and the scroll-aware edge fade. Not ported: the touch-primary native-overflow fallback (there is no touch input) and the scripted fake cursor of the docs page.
 
-## gpuix paints no scrollbar and reports no scroll position
+## gpuix paints no scrollbar
 
 - **Original:** Base UI's `Scrollbar` / `Thumb` follow the viewport's `scroll` event and expose `--scroll-area-thumb-height`; `data-hovering` / `data-scrolling` drive the fade.
-- **gpuix lacks:** `overflow: "scroll"` paints nothing, so there is no scrollbar to restyle. `onScroll` is the *wheel* event: it carries `deltaX` / `deltaY` only (`packages/native/src/renderer.rs:5605`), not an offset, and it does not fire for `scrollTo`, a thumb drag or a keyboard scroll. The offset is only readable by polling `renderer.getScrollOffset`. Missing feature.
-- **Workaround:** the thumb is drawn by the component. After each wheel tick it reads `getElementBounds` (viewport, content) and `getScrollOffset`, at 0 / 16 / 48 / 100 ms, because the offset a tick produces is not readable in the same turn. Content that changes size is only picked up on the next hover or scroll (no `ResizeObserver`).
-- **Fidelity:** approximated: right look, a frame or two of lag, no response to content resizing on its own.
+- **gpuix lacks:** a painted scrollbar: `overflow: "scroll"` draws nothing, so there is none to restyle. Missing feature.
+- **Workaround:** the thumb is drawn by the component. Sizes come from `onLayout` on the viewport and the content (reported after the first paint and on every resize, so content or window resizes are followed) and the offset from `onScrollChange` (every change, whether wheel, drag, key, `scrollTo` or `scrollIntoView`). Nothing is polled. `onScroll` (the wheel event) only marks the scroll as the user's and keeps the nested-scroller containment below. An earlier version polled `getScrollOffset` at 0 / 16 / 48 / 100 ms after each wheel tick because gpuix had neither event.
+- **Behaviours ported from Base UI:** thumb length `max(16, min(track, view - 8) * view / content)`, the corner square only while both scrollbars exist, `data-scrolling` per axis (500 ms after a user-driven offset change, cleared at once on drag release; a programmatic `scrollTo` from elsewhere does not show the bar), a press on the bare track jumping with Base UI's formula (thumb centre plus half the 8px thumb margins, so it lands about 8px low) and carrying on as a drag, primary button only, wheel over the track scrolling the viewport, a focusable viewport (tab stop while it overflows) that scrolls with arrows (40px), Page Up / Down and Space (87.5% of the view), Home and End.
+- **Fidelity:** exact, up to a frame of event latency.
 - **Components it hits:** any scroll surface that wants a styled scrollbar (combobox, select and sidebar lists use the bare scroller instead).
 
 ## Nested scrollers all scroll at once
