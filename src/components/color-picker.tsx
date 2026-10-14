@@ -762,7 +762,8 @@ function FormatDropdown(props: {
 	const checkedIndex = () => FORMATS.indexOf(props.value);
 	const width = (INNER_WIDTH - 8) / 2;
 
-	const open = (from: "checked" | "last" = "checked") => {
+	/** A pointer open lights nothing until the pointer moves in; a keyboard open lights the first row, or the last on ArrowUp. */
+	const open = (from: "pointer" | "first" | "last" = "pointer") => {
 		if (presence.open()) return;
 		if (trigger === undefined) throw new Error("Trigger is not mounted");
 		setSide(
@@ -773,7 +774,9 @@ function FormatDropdown(props: {
 			).side,
 		);
 		presence.show();
-		hover.setActiveIndex(from === "last" ? FORMATS.length - 1 : checkedIndex());
+		hover.setActiveIndex(
+			from === "pointer" ? null : from === "last" ? FORMATS.length - 1 : 0,
+		);
 		props.onOpenChange?.(true);
 	};
 	/** Closing hands focus back to the trigger unless it already moved to another control; Tab lets it move on. */
@@ -819,7 +822,7 @@ function FormatDropdown(props: {
 			case "enter":
 			case "space": {
 				if (!presence.open()) {
-					open();
+					open("first");
 				} else {
 					const index = hover.activeIndex();
 					if (index !== null) choose(FORMATS[index]);
@@ -829,7 +832,7 @@ function FormatDropdown(props: {
 			}
 			case "down":
 				if (presence.open()) move(1);
-				else open();
+				else open("first");
 				event.preventDefault();
 				event.stopPropagation();
 				return;
