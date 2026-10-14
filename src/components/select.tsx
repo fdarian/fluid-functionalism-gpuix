@@ -20,7 +20,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { isChord, moveIndex, revealRow } from "../lib/list-nav";
+import { edgeIndex, isChord, moveIndex, revealRow } from "../lib/list-nav";
 import { isInside, placePopup, PopupSurface } from "../lib/popup";
 import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import { createTypeahead } from "../lib/typeahead";
@@ -201,19 +201,12 @@ export function Select<Value extends string>(props: {
 		if (props.value === undefined) setOwnValue(() => row.value);
 		props.onValueChange?.(row.value);
 	};
-	const firstEnabled = () => rows().findIndex((row) => row.disabled !== true);
-	const lastEnabled = () => {
-		const all = rows();
-		for (let index = all.length - 1; index >= 0; index--) {
-			if (all[index].disabled !== true) return index;
-		}
-		return -1;
-	};
+	const isRowDisabled = (index: number) => rows()[index].disabled === true;
 
 	const typeahead = createTypeahead({
 		labels: () => rows().map((row) => row.label),
 		current: () => (selectedIndex() === -1 ? hover.activeIndex() : selectedIndex()),
-		isDisabled: (index) => rows()[index].disabled === true,
+		isDisabled: isRowDisabled,
 		onMatch: (index) => {
 			// Closed, Base UI commits the match as the value and does not open.
 			if (!presence.open()) {
@@ -230,8 +223,7 @@ export function Select<Value extends string>(props: {
 	const openHighlight = (from: "pointer" | "down" | "up") => {
 		if (selectedIndex() !== -1) return selectedIndex();
 		if (from === "pointer") return null;
-		const index = from === "down" ? firstEnabled() : lastEnabled();
-		return index === -1 ? null : index;
+		return edgeIndex(from === "down" ? "first" : "last", rows().length, isRowDisabled);
 	};
 	const open = (from: "pointer" | "down" | "up" = "pointer") => {
 		if (props.disabled === true || presence.open()) return;

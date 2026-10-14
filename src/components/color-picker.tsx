@@ -22,7 +22,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
-import { isChord, moveIndex } from "../lib/list-nav";
+import { edgeIndex, isChord, moveIndex } from "../lib/list-nav";
 import { isInside, placePopup, POPUP_OFFSET } from "../lib/popup";
 import { createPresence } from "../lib/presence";
 import { createTypeahead } from "../lib/typeahead";
@@ -775,7 +775,7 @@ function FormatDropdown(props: {
 		);
 		presence.show();
 		hover.setActiveIndex(
-			from === "pointer" ? null : from === "last" ? FORMATS.length - 1 : 0,
+			from === "pointer" ? null : edgeIndex(from, FORMATS.length),
 		);
 		props.onOpenChange?.(true);
 	};
@@ -842,7 +842,9 @@ function FormatDropdown(props: {
 			case "home":
 			case "end":
 				if (!presence.open()) return;
-				hover.setActiveIndex(event.key === "home" ? 0 : FORMATS.length - 1);
+				hover.setActiveIndex(
+					edgeIndex(event.key === "home" ? "first" : "last", FORMATS.length),
+				);
 				event.preventDefault();
 				event.stopPropagation();
 				return;
