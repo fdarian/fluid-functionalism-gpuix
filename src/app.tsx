@@ -1,4 +1,13 @@
-import { createSignal, For, type JSX, Match, Show, Switch } from "solid-js";
+import { createAppearance, useGpuixRequired } from "@gpuix/solid";
+import {
+	createEffect,
+	createSignal,
+	For,
+	type JSX,
+	Match,
+	Show,
+	Switch,
+} from "solid-js";
 import { Button } from "./components/button";
 import { Select } from "./components/select";
 import {
@@ -14,10 +23,11 @@ import type { Demo } from "./lib/demo";
 import {
 	color,
 	fontFamily,
-	type Scheme,
+	bindSystemScheme,
+	setThemeChoice,
+	type ThemeChoice,
+	themeChoice,
 	type as scale,
-	scheme,
-	setScheme,
 	weight,
 } from "./lib/theme";
 
@@ -25,6 +35,7 @@ const SHOWCASE = "showcase";
 const PAGE_WIDTH = 600;
 
 const THEMES = [
+	{ value: "system", label: "System", icon: "monitor" },
 	{ value: "light", label: "Light", icon: "sun" },
 	{ value: "dark", label: "Dark", icon: "moon" },
 ] as const;
@@ -195,8 +206,8 @@ function CustomizeCard() {
 				<Select
 					testId="theme"
 					items={THEMES}
-					value={scheme()}
-					onValueChange={(value: Scheme) => setScheme(value)}
+					value={themeChoice()}
+					onValueChange={(value: ThemeChoice) => setThemeChoice(value)}
 				/>
 			</div>
 		</div>
@@ -207,6 +218,14 @@ export function App(props: { demos: readonly Demo[]; initialPage?: string }) {
 	const [page, setPage] = createSignal(props.initialPage ?? SHOWCASE);
 	const current = (): Demo | undefined =>
 		props.demos.find((demo) => demo.slug === page());
+	bindSystemScheme(createAppearance());
+	const renderer = useGpuixRequired();
+	const setAppearance = renderer.setAppearance;
+	if (setAppearance === undefined) {
+		throw new Error("This renderer does not expose setAppearance");
+	}
+	// Native chrome and traffic lights follow the override; "system" clears it.
+	createEffect(() => setAppearance.call(renderer, themeChoice()));
 	return (
 		<div
 			style={{

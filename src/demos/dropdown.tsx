@@ -17,7 +17,7 @@ import {
 import type { DemoModule, ShotContext } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
 import { defineIcon } from "../lib/icons";
-import { color, setScheme, type as scale } from "../lib/theme";
+import { color, setThemeChoice, type as scale } from "../lib/theme";
 
 const squareLibrary = defineIcon(
 	'<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7v10"/><path d="M11 7v10"/><path d="m15 7 2 10"/>',
@@ -622,7 +622,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("create-row");
 	await shot.press("escape");
 
-	setScheme("light");
+	setThemeChoice("light");
 	await reveal(shot, "menu-trigger");
 	await shot.click("menu-trigger");
 	await shot.hover("menu-2");
@@ -637,5 +637,5 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("multi-trigger");
 	shot.capture("light-multi");
 	await shot.press("escape");
-	setScheme("dark");
+	setThemeChoice("dark");
 };

@@ -3,7 +3,7 @@ import type {
 	MotionTransition,
 	StateStyleDesc,
 } from "@gpuix/solid";
-import { createSignal } from "solid-js";
+import { type Accessor, createSignal } from "solid-js";
 
 export type Scheme = "light" | "dark";
 
@@ -176,11 +176,31 @@ const palettes: Record<Scheme, Palette> = {
 	},
 };
 
+export type ThemeChoice = "system" | "light" | "dark";
+
+export const [themeChoice, setThemeChoice] =
+	createSignal<ThemeChoice>("system");
+
+let systemScheme: Accessor<Scheme> | undefined;
+
 /**
- * gpuix has no `prefers-color-scheme` to read, so the theme is a choice
- * between light and dark only; there is no "System".
+ * `createAppearance()` throws outside a gpuix root, so the App root binds it
+ * once here and "system" reads it through `scheme()`.
  */
-export const [scheme, setScheme] = createSignal<Scheme>("dark");
+export function bindSystemScheme(accessor: Accessor<Scheme>) {
+	systemScheme = accessor;
+}
+
+export function scheme(): Scheme {
+	const choice = themeChoice();
+	if (choice !== "system") return choice;
+	if (systemScheme === undefined) {
+		throw new Error(
+			"The system scheme is unbound: call bindSystemScheme first",
+		);
+	}
+	return systemScheme();
+}
 
 /**
  * Every token reads the scheme signal, so any JSX expression or `createEffect`
