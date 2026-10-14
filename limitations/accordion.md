@@ -32,7 +32,7 @@ Transforms (the chevron's 90 degree rotation becomes a `chevron-right` / `chevro
 
 - **Original:** the panel animates to a measured layout height; framer would otherwise resolve `auto`.
 - **gpuix lacks:** `motion` interpolates plain pixel numbers; there is no `auto` target and no layout-animation measure (`packages/native/src/motion.rs:14`, `apply_to` writes `DimensionValue::Pixels`). Missing feature.
-- **Workaround:** the inner box is measured once with `getElementBounds` (the first call enables tracking, so it retries per frame, like fluid hover) and the outer box animates between 0 and that number. An open panel keeps `height: auto` until the first measurement lands. A panel whose content later changes size is not re-measured (the original's ResizeObserver).
+- **Workaround:** the inner box is measured once with `getElementBounds` (nothing is recorded before the first paint, so it retries per frame, like fluid hover) and the outer box animates between 0 and that number. An open panel keeps `height: auto` until the first measurement lands. A panel whose content later changes size is not re-measured (the original's ResizeObserver).
 - **Fidelity:** approximated: static content only.
 - **Components it hits:** accordion, the sidebar sub-menu (same workaround), tabs-subtle's collapsing labels.
 

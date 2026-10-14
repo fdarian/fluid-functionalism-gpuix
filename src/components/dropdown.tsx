@@ -21,7 +21,6 @@ import {
 	untrack,
 	useContext,
 } from "solid-js";
-import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import {
 	createFluidHover,
@@ -810,8 +809,6 @@ export function DropdownMenu(props: {
 		keyStack,
 		addRegion(element) {
 			regions.add(element);
-			// The first bounds read only switches tracking on, so take it before anyone presses.
-			readBounds(element);
 			return () => regions.delete(element);
 		},
 		outsidePress(event) {
@@ -845,8 +842,6 @@ export function DropdownMenu(props: {
 			<div
 				ref={(element) => {
 					wrapper = element;
-					// The first bounds read only switches tracking on: do it early so the popup can place itself on open.
-					queueMicrotask(() => readBounds(element));
 				}}
 				testId={props.testId}
 				onKeyDown={onKeyDown}

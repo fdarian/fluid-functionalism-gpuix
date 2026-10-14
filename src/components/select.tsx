@@ -16,7 +16,6 @@ import {
 	onCleanup,
 	Show,
 } from "solid-js";
-import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
@@ -398,8 +397,6 @@ export function Select<Value extends string>(props: {
 			<div
 				ref={(element) => {
 					triggerWrapper = element;
-					// The first bounds read only switches tracking on: do it early so the popup can place itself on open.
-					queueMicrotask(() => readBounds(element));
 				}}
 				testId={props.testId}
 				onMouseDownOutside={onOutside}

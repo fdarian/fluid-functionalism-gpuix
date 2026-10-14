@@ -68,7 +68,7 @@ export function createMeasuredHeight() {
 	const kickParent = useContext(KickContext);
 	let element: HostElement | undefined;
 	const [height, setHeight] = createSignal<number>();
-	// The first read only turns bounds tracking on: null until a frame is painted.
+	// Null until the element has painted once.
 	const probe: Probe = {
 		hotUntil: 0,
 		read() {

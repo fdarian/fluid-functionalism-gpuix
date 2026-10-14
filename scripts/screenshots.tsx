@@ -124,10 +124,8 @@ const shot: ShotContext = {
 // The test renderer reports the machine's appearance; pin the scheme so captures are reproducible.
 setThemeChoice("dark");
 test.render(() => <App demos={demos} initialPage={slug} />);
-await settle();
-// The first bounds query turns tracking on; the next frame fills them in.
-renderer.getElementBounds(1);
-await settle();
+// Fluid hover measures on timers after the first frame; 400 ms leaves the first highlight unpainted.
+await settle(800);
 capture("initial");
 
 await demo?.scenarios?.(shot);

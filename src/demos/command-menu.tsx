@@ -229,13 +229,10 @@ let scrollRenderer: ScrollRenderer | undefined;
 const sections = new Map<string, HostElement>();
 
 function Section(props: { id: string; title: string; children: JSX.Element }) {
-	const renderer = useGpuixRequired();
 	return (
 		<div
 			ref={(element) => {
 				sections.set(props.id, element);
-				// The first bounds query turns tracking on, so a scenario can read it.
-				renderer.getElementBounds?.(element.id);
 			}}
 		>
 			<DemoCard title={props.title}>{props.children}</DemoCard>

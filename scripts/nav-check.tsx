@@ -31,8 +31,6 @@ async function click(testId: string) {
 setThemeChoice("dark");
 test.render(() => <App demos={demos} />);
 await settle();
-renderer.getElementBounds(1);
-await settle();
 
 const first = process.argv[2];
 const second = process.argv[3];

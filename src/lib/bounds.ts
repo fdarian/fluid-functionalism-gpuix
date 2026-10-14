@@ -1,6 +1,6 @@
 import type { ElementBounds, HostElement } from "@gpuix/solid";
 
-/** Frames to wait for a first paint: the first read only turns bounds tracking on, and boxes exist from the next painted frame. */
+/** Frames to wait for a first paint: a box is recorded on every paint, so it exists from the first painted frame, and null means this element has not painted yet. */
 const ATTEMPTS = 12;
 const RETRY_MS = 16;
 

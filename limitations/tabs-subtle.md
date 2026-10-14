@@ -18,7 +18,7 @@ Not ported: the list's `overflow-x-auto max-w-[calc(100%+8px)] scrollbar-hide -m
 
 - **Original:** `width` animates to `offsetWidth` read through a `ResizeObserver`, and the pills follow because the list's observer re-measures each tab as it resizes.
 - **gpuix lacks:** `ResizeObserver`, and a way to animate to `auto` (see the accordion). Missing feature.
-- **Workaround:** the label's painted width is read once on mount (the first `getElementBounds` call turns tracking on, so it retries per frame), and while a label unfolds `remeasureFor(300)` re-reads every tab rect each frame so the pills keep following. Until the measurement lands an unfolded label keeps its natural width.
+- **Workaround:** the label's painted width is read once on mount (nothing is recorded before the first paint, so it retries per frame), and while a label unfolds `remeasureFor(300)` re-reads every tab rect each frame so the pills keep following. Until the measurement lands an unfolded label keeps its natural width.
 - **Fidelity:** approximated: a label whose text changes later is not re-measured.
 - **Components it hits:** accordion, sidebar sub-menu, any component that animates to a content size.
 

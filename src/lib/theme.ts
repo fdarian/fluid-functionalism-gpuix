@@ -267,9 +267,9 @@ export const type = {
 	microCompact: { fontSize: 10, lineHeight: 12 },
 } as const;
 
-/** The static cuts are loaded in `lib/fonts.ts`; gpuix has no variable weights, so 550 resolves to a neighbouring cut. */
+/** The static cuts are loaded in `lib/fonts.ts`. The site's semibold is variable `wght 550`; with static cuts only, SemiBold 600 is the nearest. */
 export const fontFamily = "Inter";
-export const weight = { normal: 400, medium: 500, semibold: 550 } as const;
+export const weight = { normal: 400, medium: 500, semibold: 600 } as const;
 
 export const radius = {
 	item: 8,
