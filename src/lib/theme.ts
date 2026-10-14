@@ -243,11 +243,8 @@ export const type = {
 	microCompact: { fontSize: 10, lineHeight: 12 },
 } as const;
 
-/**
- * Inter is not loadable (gpuix has no font API), so this resolves to the macOS
- * system face. Variable-font weights 400 / 550 become the nearest cut.
- */
-export const fontFamily = "Helvetica Neue";
+/** The static cuts are loaded in `lib/fonts.ts`; gpuix has no variable weights, so 550 resolves to a neighbouring cut. */
+export const fontFamily = "Inter";
 export const weight = { normal: 400, semibold: 550 } as const;
 
 export const radius = {

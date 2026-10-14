@@ -1,9 +1,10 @@
 import { createTestRoot } from "@gpuix/solid/testing";
 import { App } from "../src/app";
 import { loadDemos } from "../src/lib/demo";
+import { fonts } from "../src/lib/fonts";
 
 const demos = await loadDemos();
-const test = createTestRoot({ width: 1240, height: 780 });
+const test = createTestRoot({ width: 1240, height: 780, fonts });
 const renderer = test.renderer;
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
