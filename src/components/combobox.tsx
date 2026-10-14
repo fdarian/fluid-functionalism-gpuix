@@ -20,7 +20,7 @@ import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { isChord, moveIndex, revealRow } from "../lib/list-nav";
-import { isInside, placePopup, PopupSurface } from "../lib/popup";
+import { createPlacement, isInside, PopupSurface } from "../lib/popup";
 import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import {
 	color,
@@ -155,8 +155,7 @@ export function Combobox(props: {
 	/** Armed while typing re-filters the rows under the highlights: those frames snap, not glide. */
 	const [reflow, setReflow] = createSignal(false);
 
-	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
-	const [maxHeight, setMaxHeight] = createSignal(POPUP_MAX_HEIGHT);
+	const placement = createPlacement(POPUP_MAX_HEIGHT);
 	let rootElement: HostElement | undefined;
 	let popupElement: HostElement | undefined;
 	let inputElement: HostElement | undefined;
@@ -191,13 +190,7 @@ export function Combobox(props: {
 	};
 	const place = (count: number) => {
 		if (rootElement === undefined) throw new Error("Combobox is not mounted");
-		const placement = placePopup(
-			rootElement,
-			Math.min(POPUP_MAX_HEIGHT, listHeight(count)),
-			POPUP_MAX_HEIGHT,
-		);
-		setSide(placement.side);
-		setMaxHeight(placement.maxHeight);
+		placement.place(rootElement, listHeight(count));
 	};
 	const openPopup = () => {
 		if (open() || props.disabled === true) return;
@@ -519,10 +512,10 @@ export function Combobox(props: {
 
 			<PopupSurface
 				presence={presence}
-				side={side()}
+				side={placement.side()}
 				align="start"
 				width={width()}
-				maxHeight={maxHeight()}
+				maxHeight={placement.maxHeight()}
 				onDismiss={closePopup}
 				onMouseDownOutside={onMouseDownOutside}
 				popupRef={(element) => {
@@ -559,7 +552,7 @@ export function Combobox(props: {
 							display: "flex",
 							flexDirection: "column",
 							overflowY: "scroll",
-							maxHeight: maxHeight() - 2,
+							maxHeight: placement.maxHeight() - 2,
 						}}
 					>
 						{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}

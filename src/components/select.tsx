@@ -21,7 +21,7 @@ import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { edgeIndex, isChord, moveIndex, revealRow } from "../lib/list-nav";
-import { isInside, placePopup, PopupSurface } from "../lib/popup";
+import { createPlacement, isInside, PopupSurface } from "../lib/popup";
 import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import { returnFocusTo } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
@@ -155,8 +155,7 @@ export function Select<Value extends string>(props: {
 		isItemDisabled: (index) => rows()[index]?.disabled === true,
 	});
 	const [triggerHovered, setTriggerHovered] = createSignal(false);
-	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
-	const [maxHeight, setMaxHeight] = createSignal(POPUP_MAX_HEIGHT);
+	const placement = createPlacement(POPUP_MAX_HEIGHT);
 	const [popupWidth, setPopupWidth] = createSignal(0);
 	/** Set by a pick, so only a check that arrives after the open fades in. */
 	const [picked, setPicked] = createSignal(false);
@@ -229,14 +228,8 @@ export function Select<Value extends string>(props: {
 	const open = (from: "pointer" | "down" | "up" = "pointer") => {
 		if (props.disabled === true || presence.open()) return;
 		if (triggerWrapper === undefined) throw new Error("Select is not mounted");
-		const placement = placePopup(
-			triggerWrapper,
-			Math.min(POPUP_MAX_HEIGHT, listHeight()),
-			POPUP_MAX_HEIGHT,
-		);
-		setSide(placement.side);
-		setMaxHeight(placement.maxHeight);
-		setPopupWidth(Math.max(placement.triggerWidth, props.popupWidth ?? 0));
+		const placed = placement.place(triggerWrapper, listHeight());
+		setPopupWidth(Math.max(placed.triggerWidth, props.popupWidth ?? 0));
 		setPicked(false);
 		revealOnMeasure = true;
 		openedAt = performance.now();
@@ -572,10 +565,10 @@ export function Select<Value extends string>(props: {
 				</div>
 				<PopupSurface
 					presence={presence}
-					side={side()}
+					side={placement.side()}
 					align={inline() ? "end" : "start"}
 					width={inline() ? (props.popupWidth ?? 160) : popupWidth()}
-					maxHeight={maxHeight()}
+					maxHeight={placement.maxHeight()}
 					onDismiss={close}
 					onMouseDownOutside={onOutside}
 					popupRef={(element) => {
@@ -592,7 +585,7 @@ export function Select<Value extends string>(props: {
 							display: "flex",
 							flexDirection: "column",
 							overflowY: "scroll",
-							maxHeight: maxHeight() - 2,
+							maxHeight: placement.maxHeight() - 2,
 						}}
 					>
 						{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}

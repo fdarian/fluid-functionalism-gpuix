@@ -29,7 +29,7 @@ import {
 } from "../lib/fluid-hover";
 import type { IconRef } from "../lib/icons";
 import { isChord, moveIndex, revealRow } from "../lib/list-nav";
-import { isInside, placePopup, POPUP_OFFSET, PopupSurface } from "../lib/popup";
+import { createPlacement, isInside, POPUP_OFFSET, PopupSurface } from "../lib/popup";
 import { createPresence } from "../lib/presence";
 import { createPressToggle, returnFocusTo } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
@@ -816,8 +816,7 @@ export function DropdownMenu(props: {
 	const renderer = useGpuixRequired();
 	const presence = createPresence();
 	const [width, setWidth] = createSignal(PANEL_WIDTH);
-	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
-	const [maxHeight, setMaxHeight] = createSignal(POPUP_MAX_HEIGHT);
+	const placement = createPlacement(POPUP_MAX_HEIGHT);
 	const [keyboardActive, setKeyboardActive] = createSignal(false);
 	const regions = new Set<HostElement>();
 	const keyStack: KeyHandler[] = [];
@@ -827,10 +826,8 @@ export function DropdownMenu(props: {
 	let lastHeight = TYPICAL_HEIGHT;
 	const choose = (contentHeight: number) => {
 		if (wrapper === undefined) throw new Error("DropdownMenu is not mounted");
-		const placement = placePopup(wrapper, contentHeight, POPUP_MAX_HEIGHT);
-		setSide(placement.side);
-		setMaxHeight(placement.maxHeight);
-		setWidth(Math.max(PANEL_WIDTH, placement.triggerWidth));
+		const placed = placement.place(wrapper, contentHeight);
+		setWidth(Math.max(PANEL_WIDTH, placed.triggerWidth));
 	};
 	const place = () => choose(lastHeight);
 
@@ -883,8 +880,8 @@ export function DropdownMenu(props: {
 		presence,
 		setOpen,
 		width,
-		side,
-		maxHeight,
+		side: placement.side,
+		maxHeight: placement.maxHeight,
 		fitSide(contentHeight) {
 			lastHeight = contentHeight;
 			choose(contentHeight);

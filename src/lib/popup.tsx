@@ -72,6 +72,30 @@ export function placePopup(
 }
 
 /**
+ * The side and height cap a popup anchored to a trigger gets, kept as signals
+ * for `PopupSurface`. `place` measures against the trigger and returns the
+ * placement for callers that also want the trigger's width.
+ */
+export function createPlacement(maxHeight: number) {
+	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
+	const [height, setHeight] = createSignal(maxHeight);
+	return {
+		side,
+		maxHeight: height,
+		place(trigger: HostElement, contentHeight: number) {
+			const placement = placePopup(
+				trigger,
+				Math.min(maxHeight, contentHeight),
+				maxHeight,
+			);
+			setSide(placement.side);
+			setHeight(placement.maxHeight);
+			return placement;
+		},
+	};
+}
+
+/**
  * The shared popup chrome of the combobox and select: an `<anchored>` layer
  * under its parent, with the surface-3 card, the 4px slide and the fade.
  *
