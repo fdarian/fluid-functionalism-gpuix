@@ -100,13 +100,18 @@ export const group = "Components";
 
 export function Demo() {
 	const [saves, setSaves] = createSignal(0);
+	const [opened, setOpened] = createSignal(0);
 	return (
 		<>
 			<DemoCard title="Tooltip">
 				<TooltipProvider>
 					<div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
 						<DemoRow label="Basic">
-							<Tooltip testId="basic" content="Save your changes">
+							<Tooltip
+								testId="basic"
+								content="Save your changes"
+								onOpenChange={(open) => open && setOpened(opened() + 1)}
+							>
 								{(trigger: TooltipTrigger) => (
 									<TriggerButton
 										trigger={trigger}
@@ -118,7 +123,7 @@ export function Demo() {
 								)}
 							</Tooltip>
 							<text style={{ ...scale.caption, color: color.mutedForeground }}>
-								{`Clicked ${saves()} times`}
+								{`Clicked ${saves()} times, opened ${opened()}`}
 							</text>
 						</DemoRow>
 						<DemoRow label="Rich content">
@@ -172,6 +177,20 @@ export function Demo() {
 					</div>
 				</TooltipProvider>
 			</DemoCard>
+			<DemoCard title="Near the window edge">
+				{/* The chip is wider than the room right of the trigger, so it flips to its left. */}
+				<div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
+					<Tooltip
+						testId="collide"
+						content="This label is far too wide to fit between the trigger and the right edge of the window"
+						side="right"
+					>
+						{(trigger: TooltipTrigger) => (
+							<TriggerButton trigger={trigger}>Right edge</TriggerButton>
+						)}
+					</Tooltip>
+				</div>
+			</DemoCard>
 			<DemoCard title="Follow cursor">
 				<div
 					style={{
@@ -218,7 +237,27 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.settle(300);
 	shot.capture("basic");
 	await shot.click("basic");
-	shot.expectText("Clicked 1 times", true);
+	shot.expectText("Clicked 1 times, opened", true);
+	shot.expectText("opened 1", true);
+
+	// Escape closes it, and the pointer reaching the chip keeps it open.
+	await shot.moveTo(900, 700);
+	await shot.hover("basic");
+	await shot.settle(300);
+	shot.expectText("Save your changes", true);
+	await shot.press("escape");
+	shot.expectText("Save your changes", false);
+	await shot.moveTo(900, 700);
+	await shot.hover("basic");
+	await shot.settle(300);
+	const chip = shot.centerOf("basic-chip");
+	await shot.moveTo(chip.x, chip.y);
+	await shot.settle(400);
+	shot.expectText("Save your changes", true);
+	shot.capture("hover-chip");
+	await shot.moveTo(900, 700);
+	await shot.settle(300);
+	shot.expectText("Save your changes", false);
 
 	await shot.hover("rich");
 	await shot.settle(300);
@@ -230,7 +269,17 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture(`placement-${side}`);
 	}
 
+	// Too wide for the room on its right: the chip flips to the left of the trigger.
+	await shot.hover("collide");
+	await shot.settle(300);
+	shot.capture("flipped-left");
+	if (!(shot.centerOf("collide-chip").x < shot.centerOf("collide").x)) {
+		throw new Error("the wide tooltip did not flip to the left");
+	}
+
 	await shot.moveTo(900, 700);
+	// Let the provider's skip window (300 ms after a close) run out, or the slow tooltip would open at once.
+	await shot.settle(600);
 	await shot.hover("delay-500");
 	shot.expectText("Slow", false);
 	await shot.settle(500);
