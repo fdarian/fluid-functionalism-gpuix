@@ -49,6 +49,7 @@ const ITEMS = [
 	{ icon: lock, label: "Private" },
 ] as const;
 
+const KEY_ROWS = ["Alpha", "Beta", "Bravo", "Charlie", "Charter"];
 const FOLDERS = ["Inbox", "Design", "Engineering", "Marketing", "Archive"];
 const STATUSES = [
 	"Open",
@@ -198,6 +199,8 @@ function Triggered() {
 							<Button
 								testId="menu-trigger"
 								variant="ghost"
+								aria-expanded={trigger.expanded}
+								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
 								Open menu
@@ -235,6 +238,8 @@ function Submenus() {
 							<Button
 								testId="sub-trigger"
 								variant="ghost"
+								aria-expanded={trigger.expanded}
+								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
 								Q3 report.pdf
@@ -301,6 +306,51 @@ function Submenus() {
 	);
 }
 
+function Keyboard() {
+	const [picked, setPicked] = createSignal("");
+	const [changes, setChanges] = createSignal(0);
+	return (
+		<DemoCard title="Dropdown, keyboard">
+			<div style={{ ...row, alignItems: "center", minHeight: 56 }}>
+				<DropdownMenu
+					testId="keys"
+					onOpenChange={() => setChanges(changes() + 1)}
+				>
+					<DropdownTrigger>
+						{(trigger) => (
+							<Button
+								testId="keys-trigger"
+								variant="ghost"
+								aria-expanded={trigger.expanded}
+								onMouseDown={trigger.onMouseDown}
+								onClick={trigger.onClick}
+							>
+								Keys
+							</Button>
+						)}
+					</DropdownTrigger>
+					<DropdownContent>
+						<For each={KEY_ROWS}>
+							{(label, index) => (
+								<MenuItem
+									testId={`keys-${index()}`}
+									index={index()}
+									label={label}
+									disabled={label === "Beta"}
+									onSelect={() => setPicked(label)}
+								/>
+							)}
+						</For>
+					</DropdownContent>
+				</DropdownMenu>
+				<text style={{ ...scale.caption, color: color.mutedForeground }}>
+					{`picked: ${picked()} changes: ${changes()}`}
+				</text>
+			</div>
+		</DemoCard>
+	);
+}
+
 function Multiple() {
 	const [checked, setChecked] = createSignal<number[]>([0, 1, 2]);
 	return (
@@ -312,6 +362,8 @@ function Multiple() {
 							<Button
 								testId="multi-trigger"
 								variant="ghost"
+								aria-expanded={trigger.expanded}
+								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
 								Status
@@ -353,6 +405,8 @@ function Searchable() {
 								testId="search-trigger"
 								variant="ghost"
 								trailingIcon="chevron-down"
+								aria-expanded={trigger.expanded}
+								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
 								{language()}
@@ -401,6 +455,8 @@ function SearchableMultiple() {
 							<Button
 								testId="labels-trigger"
 								variant="ghost"
+								aria-expanded={trigger.expanded}
+								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
 								{`Labels · ${labels().length}`}
@@ -460,6 +516,8 @@ function Creatable() {
 							<Button
 								testId="create-trigger"
 								variant="ghost"
+								aria-expanded={trigger.expanded}
+								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
 								{`Components · ${used().length}`}
@@ -521,6 +579,7 @@ export function Demo() {
 			<Groups />
 			<Triggered />
 			<Submenus />
+			<Keyboard />
 			<Multiple />
 			<Searchable />
 			<SearchableMultiple />
@@ -552,6 +611,8 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("groups-0");
 	await shot.press("down down");
 	shot.capture("inline-keyboard");
+	await shot.press("down down down down down");
+	shot.capture("inline-disabled-lit");
 
 	await reveal(shot, "menu-trigger");
 	await shot.click("menu-trigger");
@@ -588,6 +649,47 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("sub-keyboard-left");
 	await shot.press("escape");
 
+	// A hover-opened submenu leaves the keys with its parent until Right goes in.
+	await shot.click("sub-trigger");
+	await shot.hover("sub-move");
+	await shot.settle(300);
+	shot.expectText("Inbox", true);
+	await shot.press("down");
+	await shot.settle(300);
+	shot.expectText("Inbox", false);
+	await shot.press("right");
+	await shot.settle(300);
+	shot.capture("sub-hover-then-right");
+	shot.expectText("Copy link", true);
+	await shot.press("escape escape");
+
+	await reveal(shot, "keys-trigger");
+	await shot.click("keys-trigger");
+	shot.expectText("changes: 1", true);
+	// Arrows land on the disabled "Beta"; Enter on it picks nothing.
+	await shot.press("down enter");
+	shot.expectText("picked:  changes", true);
+	shot.capture("keys-disabled-lit");
+	await shot.press("down enter");
+	shot.expectText("picked: Bravo", true);
+	// Closing hands focus back to the trigger, so Up opens on the last row.
+	await shot.press("up");
+	shot.capture("keys-up-opens-last");
+	await shot.press("enter");
+	shot.expectText("picked: Charter", true);
+	await shot.click("keys-trigger");
+	await shot.press("c enter");
+	shot.expectText("picked: Charlie", true);
+	await shot.click("keys-trigger");
+	await shot.press("c c enter");
+	shot.expectText("picked: Charter", true);
+	// Press on the trigger, hold, release on a row: it picks.
+	await shot.down("keys-trigger");
+	await shot.settle(300);
+	shot.capture("keys-press-held");
+	await shot.up("keys-2");
+	shot.expectText("picked: Bravo", true);
+
 	await reveal(shot, "multi-trigger");
 	await shot.click("multi-trigger");
 	shot.capture("multi-open");
@@ -600,6 +702,8 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await reveal(shot, "search-trigger");
 	await shot.click("search-trigger");
 	shot.capture("search-open");
+	await shot.press("down");
+	shot.capture("search-row-lit");
 	await shot.press("f r");
 	shot.capture("search-filtered");
 	await shot.press("z z z");

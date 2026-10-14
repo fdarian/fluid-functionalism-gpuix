@@ -70,6 +70,8 @@ export function SearchField(props: {
 	search: DropdownSearchProps;
 	onKeyDown: (event: KeyEvent) => void;
 	onSubmit: () => void;
+	/** The field gained or lost keyboard focus. */
+	onFocusChange?: (focused: boolean) => void;
 	testId?: string;
 }) {
 	const [focused, setFocused] = createSignal(false);
@@ -106,8 +108,14 @@ export function SearchField(props: {
 					textDim: color.mutedForeground,
 					caret: color.foreground,
 				}}
-				onFocus={() => setFocused(true)}
-				onBlur={() => setFocused(false)}
+				onFocus={() => {
+					setFocused(true);
+					props.onFocusChange?.(true);
+				}}
+				onBlur={() => {
+					setFocused(false);
+					props.onFocusChange?.(false);
+				}}
 				onChange={(event: EventPayload) => {
 					if (event.value === undefined) {
 						throw new Error("Search change without a value");
