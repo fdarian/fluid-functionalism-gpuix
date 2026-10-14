@@ -2,7 +2,7 @@
 
 Original: `registry/base/accordion.tsx`. Ported in `src/components/accordion.tsx`, demo in `src/demos/accordion.tsx`.
 
-Transforms (the chevron's 90 degree rotation becomes a `chevron-right` / `chevron-down` swap) and fonts are already known and not repeated here. The docs playground (live controls) is not ported.
+Transforms (the chevron's 90 degree rotation becomes a `chevron-right` / `chevron-down` swap) are already known and not repeated here. The docs playground (live controls) is not ported.
 
 ## Absolute or filled elements block their parent's mouse events
 

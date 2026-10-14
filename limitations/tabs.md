@@ -4,7 +4,7 @@ Original: `registry/base/tabs.tsx`. Ported in `src/components/tabs.tsx`, demo in
 
 Ported: `Tabs` (controlled, `defaultValue`, first-tab fallback), `TabsList` (muted track, raised selected pill, dimming, hover preview that is born at the selected pill and glides home when the pointer leaves), `TabItem` (with and without icon, ghost-span label, stroke 1.5 / 2), `TabPanel`, the compact size, arrow / Home / End selection. Not ported: the `selectedIndex` / `onSelect` index API (value-based only), the elevation ladder (`useSurface`): the pill is always surface 4.
 
-Hover uses the shared `createFluidHover` with `axis: "x"` (the option was added for this group), so the track's padding resolves to the nearest tab like the original. Transforms and fonts are already known and not repeated.
+Hover uses the shared `createFluidHover` with `axis: "x"` (the option was added for this group), so the track's padding resolves to the nearest tab like the original. Transforms are already a known gap and are not repeated.
 
 ## No `:focus-visible` in JS, so the focus ring does not travel
 

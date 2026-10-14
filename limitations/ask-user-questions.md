@@ -2,7 +2,7 @@
 
 Original: `registry/default/ask-user-questions.tsx` (1,880 lines, on Base UI `RadioGroup` / `CheckboxGroup` / `Field`) and `app/docs/ask-user-questions/page.tsx`. Ported in `src/components/ask-user-questions.tsx`, demo in `src/demos/ask-user-questions.tsx` (every docs example except the playground).
 
-Transforms and font loading are already known gaps and are not repeated here. Ported: single and multi-select, `allowOther`, `freeText` (single and multi-line) with validation, skippable, chip on either side, inline and stacked layouts, controlled and uncontrolled index and answers, Back / Skip / Continue, the 1-9, arrow, Home / End, Enter, Space and Cmd+Enter keys, the shared fluid hover, merged selection blocks and the animated height of the question region.
+Transforms are already a known gap and are not repeated here. Ported: single and multi-select, `allowOther`, `freeText` (single and multi-line) with validation, skippable, chip on either side, inline and stacked layouts, controlled and uncontrolled index and answers, Back / Skip / Continue, the 1-9, arrow, Home / End, Enter, Space and Cmd+Enter keys, the shared fluid hover, merged selection blocks and the animated height of the question region.
 
 ## Keyboard shortcuts can only be card-scoped
 

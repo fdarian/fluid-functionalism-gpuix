@@ -2,7 +2,7 @@
 
 Original: `registry/base/thinking-steps.tsx` (Base UI `Collapsible`) and `app/docs/thinking-steps/page.tsx`. Ported in `src/components/thinking-steps.tsx`, demo in `src/demos/thinking-steps.tsx`.
 
-Transforms and font loading are already known gaps and are not repeated here. The shimmer and the looping clock are in [thinking-indicator.md](thinking-indicator.md).
+Transforms are already a known gap and are not repeated here. The shimmer and the looping clock are in [thinking-indicator.md](thinking-indicator.md).
 
 ## No `height: auto` and no layout observer
 

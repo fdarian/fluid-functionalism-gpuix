@@ -2,7 +2,7 @@
 
 Original: `registry/base/<component>.tsx` (or `registry/default/`). Ported in `src/components/<component>.tsx`, demo in `src/demos/<component>.tsx`.
 
-One entry per gap. Only gpuix gaps worth knowing about: transforms and font loading are already known, so link to them rather than re-reporting.
+One entry per gap. Only gpuix gaps worth knowing about: transforms are already known, so link to them rather than re-reporting.
 
 ## <short name of the gap>
 
