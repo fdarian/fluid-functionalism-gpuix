@@ -246,7 +246,7 @@ generalised into the limitations above.
 | `getBoundingClientRect`, `ResizeObserver` | `getElementBounds` (last painted frame) read on timers | Approximated, up to a frame stale |
 | `text-[length:…] leading-[…]` | `fontSize` + `lineHeight` | Exact |
 | `[text-box:trim-both_cap_alphabetic]` | none: labels are centred by their line box | Dropped, a pixel of optical drift |
-| Inter variable (`wght 550`, `opsz`) | static Inter TTFs (400, 500, 600, 700) passed as `fonts` to `render()`; the family is `Inter` for every weight. 550 resolves to SemiBold 600, there is no `opsz` | Approximated, one weight step |
+| Inter variable (`wght 550`, `opsz`) | static Inter TTFs (400, 500, 600, 700) passed as `fonts` to `render()`; the family is `Inter` for every weight. the site's 550 is set as SemiBold 600, there is no `opsz` | Approximated, one weight step |
 | ghost-span that reserves the semibold width | the same trick: a hidden copy in flow, the visible label absolutely positioned over it | Exact |
 | `truncate` | `whiteSpace: "nowrap"` + `textOverflow: "ellipsis"` on the combobox rows | Exact; sidebar labels are not truncated |
 | icon stroke 1.5 → 2 on hover | the SVG string is swapped | Exact, instant |
