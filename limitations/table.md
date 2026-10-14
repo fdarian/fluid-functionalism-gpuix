@@ -30,4 +30,4 @@ Table, header/body rows, the fluid hover highlight, the fading row rules, the mu
 
 ## `fontVariationSettings` weight on the row
 
-- Known: no variable-font axis. The header is `fontWeight: 550` and body `400`, nearest cut of the system face.
+- Known: no variable-font axis. The header is `fontWeight: 550` and body `400`, Inter has static cuts only, so 550 resolves to SemiBold 600.

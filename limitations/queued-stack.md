@@ -2,7 +2,7 @@
 
 Original: `registry/blocks/queued-stack.tsx` (used by the InputMessage docs, which have no page of their own for it). Ported in `src/components/queued-stack.tsx`, demo in `src/demos/queued-stack.tsx`. The demo stands in a plain box for the composer; the real one is the input-message port.
 
-Transforms and font loading are already known gaps and are not repeated here.
+Transforms are already a known gap and are not repeated here.
 
 ## A card's `y` and `scale` as box properties
 

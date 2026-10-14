@@ -2,7 +2,7 @@
 
 Original: `registry/default/thinking-indicator.tsx` plus `.shimmer-text` in `app/globals.css`. Ported in `src/components/thinking-indicator.tsx`, demo in `src/demos/thinking-indicator.tsx`.
 
-Transforms and font loading are already known gaps and are not repeated here. This component is the main probe for gpuix's looping animation limits.
+Transforms are already a known gap and are not repeated here. This component is the main probe for gpuix's looping animation limits.
 
 ## No keyframes, no repeat, no path morph
 

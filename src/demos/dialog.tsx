@@ -14,7 +14,7 @@ import {
 import { Select } from "../components/select";
 import type { DemoModule } from "../lib/demo";
 import { DemoCard, DemoRow } from "../lib/demo-kit";
-import { color, type as scale, setScheme } from "../lib/theme";
+import { color, type as scale, setThemeChoice } from "../lib/theme";
 
 const SIZE_COPY: Record<DialogSize, { label: string; text: string }> = {
 	sm: {
@@ -270,7 +270,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.press("escape");
 
 	// Both schemes: the scrim, surface-5 and the popup over it.
-	setScheme("light");
+	setThemeChoice("light");
 	await shot.settle(300);
 	await shot.click("basic-open");
 	shot.capture("basic-open-light");
@@ -281,6 +281,6 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.press("escape escape");
 	shot.expectText("Invite a teammate", false);
 	shot.expectText("Viewer", false);
-	setScheme("dark");
+	setThemeChoice("dark");
 	await shot.settle(300);
 };

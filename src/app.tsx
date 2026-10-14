@@ -1,4 +1,13 @@
-import { createSignal, For, type JSX, Match, Show, Switch } from "solid-js";
+import { createAppearance, useGpuixRequired } from "@gpuix/solid";
+import {
+	createEffect,
+	createSignal,
+	For,
+	type JSX,
+	Match,
+	Show,
+	Switch,
+} from "solid-js";
 import { Button } from "./components/button";
 import { Select } from "./components/select";
 import {
@@ -10,21 +19,24 @@ import {
 	SidebarMenuButton,
 	SidebarSearchField,
 } from "./components/sidebar";
+import { AppFrame, PANEL_INNER_RADIUS } from "./lib/app-frame";
 import type { Demo } from "./lib/demo";
 import {
+	bindSystemScheme,
 	color,
-	fontFamily,
-	type Scheme,
+	setThemeChoice,
+	type ThemeChoice,
+	themeChoice,
 	type as scale,
-	scheme,
-	setScheme,
 	weight,
 } from "./lib/theme";
 
 const SHOWCASE = "showcase";
 const PAGE_WIDTH = 600;
+export const WINDOW_TITLE = "Fluid Functionalism on gpuix";
 
 const THEMES = [
+	{ value: "system", label: "System", icon: "monitor" },
 	{ value: "light", label: "Light", icon: "sun" },
 	{ value: "dark", label: "Dark", icon: "moon" },
 ] as const;
@@ -49,7 +61,7 @@ function AppSidebar(props: {
 	onPage: (page: string) => void;
 }) {
 	return (
-		<Sidebar>
+		<Sidebar leftCornerRadius={PANEL_INNER_RADIUS}>
 			<SidebarHeader>
 				<SidebarSearchField placeholder="Search" shortcut="⌘K" />
 			</SidebarHeader>
@@ -195,8 +207,8 @@ function CustomizeCard() {
 				<Select
 					testId="theme"
 					items={THEMES}
-					value={scheme()}
-					onValueChange={(value: Scheme) => setScheme(value)}
+					value={themeChoice()}
+					onValueChange={(value: ThemeChoice) => setThemeChoice(value)}
 				/>
 			</div>
 		</div>
@@ -207,53 +219,63 @@ export function App(props: { demos: readonly Demo[]; initialPage?: string }) {
 	const [page, setPage] = createSignal(props.initialPage ?? SHOWCASE);
 	const current = (): Demo | undefined =>
 		props.demos.find((demo) => demo.slug === page());
+	bindSystemScheme(createAppearance());
+	const renderer = useGpuixRequired();
+	const setAppearance = renderer.setAppearance;
+	if (setAppearance === undefined) {
+		throw new Error("This renderer does not expose setAppearance");
+	}
+	// Native chrome and traffic lights follow the override; "system" clears it.
+	createEffect(() => setAppearance.call(renderer, themeChoice()));
 	return (
-		<div
-			style={{
-				display: "flex",
-				flexDirection: "row",
-				width: "100%",
-				height: "100%",
-				backgroundColor: color.background,
-				fontFamily,
-			}}
-		>
-			<AppSidebar demos={props.demos} page={page()} onPage={setPage} />
+		<AppFrame title={WINDOW_TITLE}>
 			<div
 				style={{
-					flexGrow: 1,
-					minWidth: 0,
 					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
-					overflowY: "scroll",
+					flexDirection: "row",
+					width: "100%",
+					height: "100%",
+					backgroundColor: color.background,
+					borderRadius: PANEL_INNER_RADIUS,
 				}}
 			>
+				<AppSidebar demos={props.demos} page={page()} onPage={setPage} />
 				<div
 					style={{
-						width: PAGE_WIDTH,
-						flexShrink: 0,
+						flexGrow: 1,
+						minWidth: 0,
 						display: "flex",
 						flexDirection: "column",
-						gap: 24,
-						paddingTop: 40,
-						paddingBottom: 40,
+						alignItems: "center",
+						overflowY: "scroll",
 					}}
 				>
-					<Switch>
-						<Match when={page() === SHOWCASE}>
-							<Showcase demos={props.demos} onPage={setPage} />
-						</Match>
-						<Match when={current()} keyed>
-							{(demo: Demo) => <DemoPage demo={demo} />}
-						</Match>
-					</Switch>
+					<div
+						style={{
+							width: PAGE_WIDTH,
+							flexShrink: 0,
+							display: "flex",
+							flexDirection: "column",
+							gap: 24,
+							paddingTop: 40,
+							paddingBottom: 40,
+						}}
+					>
+						<Switch>
+							<Match when={page() === SHOWCASE}>
+								<Showcase demos={props.demos} onPage={setPage} />
+							</Match>
+							<Match when={current()} keyed>
+								{(demo: Demo) => <DemoPage demo={demo} />}
+							</Match>
+						</Switch>
+					</div>
+				</div>
+				<div style={{ width: 296, flexShrink: 0, padding: 16 }}>
+					<CustomizeCard />
 				</div>
 			</div>
-			<div style={{ width: 296, flexShrink: 0, padding: 16 }}>
-				<CustomizeCard />
-			</div>
-		</div>
+		</AppFrame>
 	);
 }
 

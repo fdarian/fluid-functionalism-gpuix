@@ -5,7 +5,7 @@ Can [gpuix](https://github.com/remorses/gpuix), a GPUI-backed renderer with no D
 
 Yes. 32 demo pages cover every component of the library (36 component files, counting shared parts such as
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
-behaviour. What does not carry over is catalogued below: [7 gpuix bugs and 55 missing features](#gpuix-limitations),
+behaviour. What does not carry over is catalogued below: [7 gpuix bugs and 57 missing features](#gpuix-limitations),
 ranked by how many components each one hurts.
 
 | | |
@@ -20,7 +20,9 @@ bun install
 bun --hot src/main.tsx
 ```
 
-The app is a sidebar of demo pages (one per component) plus a "Make them yours" card with a Light / Dark switch.
+The app is a sidebar of demo pages (one per component) plus a "Make them yours" card with a System / Light / Dark
+switch (System follows the OS appearance). It sits in a browser-style frame: a transparent titlebar with the
+traffic lights, a title across the top bar, and the page in a rounded panel. Inter is loaded from `assets/fonts/`.
 
 `@gpuix/native` and `@gpuix/solid` are bun workspaces pointing at the fork at `~/code/fdarian/gpuix`, wired like
 [`../gpuix-pierre-diffs`](../gpuix-pierre-diffs) (see its README for building the native addon). The fork must be
@@ -79,14 +81,15 @@ settle / expectText / capture`; see `ShotContext` in `src/lib/demo.ts`. Give ele
 | `list-nav.ts` | `moveIndex` (skip disabled, wrap or clamp) and `revealRow` (scroll a row into view by hand). |
 | `stable-label.tsx` | A label that gains weight without moving its neighbours: a hidden semibold copy reserves the width. |
 | `clock.ts` | One shared, ref-counted frame clock for every JS-driven loop. |
+| `fonts.ts`, `app-frame.tsx` | The static Inter files passed to `render()` and the test renderer; the window frame (chrome-coloured bar, rounded page panel). |
 | `press.ts`, `icons.ts`, `icon.tsx` | The press-shrink shadow; lucide glyphs as SVG strings (`defineIcon` for a component's own). |
 | `demo.ts`, `demo-kit.tsx` | The demo contract and the card every page is made of. |
 </details>
 
 ## gpuix limitations
 
-What gpuix lacks or gets wrong, found by porting every component. Transforms (no rotate, scale or translate) and
-font loading are known and not repeated here. An entry counts the components that hit it; each component's own file
+What gpuix lacks or gets wrong, found by porting every component. Transforms (no rotate, scale or translate) are
+known and not repeated here. An entry counts the components that hit it; each component's own file
 in [`limitations/`](limitations) has the detail, the original behaviour and the fidelity of its workaround.
 "Bug" means gpuix does something wrong or inconsistent; "missing" means it simply does not offer it. When unsure I
 called it missing. A few entries were disputed between component files: the occlusion rule below is documented in
@@ -114,9 +117,9 @@ The 33 that hit four or more components:
 | **14**: accordion, banner, command-menu, dropdown, input-message, queued-stack, scroll-area, select, slider, tabs-subtle, thinking-steps, tooltip, combobox, sidebar | getElementBounds first call returns null (only turns tracking on), box exists from next painted frame, is last-frame stale and the padding box | `packages/native/src/automation.rs:83`<br>`packages/native/src/renderer.rs:2333` | Prime at mount, retry per frame (up to 12, then throw), re-read on enter/press, timers |
 | **11**: accordion, card, color-picker, input-copy, input-group, scroll-area, switch, table, tabs, tabs-subtle, sidebar | No colour transitions: colour/background/border/shadow are not in MotionStyle and hover/active/focusVisible state styles switch instantly (transition-colors dropped) | `packages/native/src/motion.rs:14`<br>`packages/native/js/host.ts:27` | Instant switch, or an always-mounted absolute layer whose opacity is animated |
 | **10**: ask-user-questions, tabs-subtle, thinking-steps, input-group, color-picker, combobox, input-copy, tabs, accordion, slider | No ARIA beyond role/aria-label/-description/-id/-expanded/-selected/-valuetext/-level: no aria-checked, -controls, -labelledby, -describedby, -invalid, -valuenow/min/max, no label-for | not traced | aria-selected / aria-id / aria-valuetext substitutes; label onClick focuses input |
+| **9**: card, carousel-dots, dialog, file-thumbnail, mobile-drawer, table, scroll-area, banner, app-frame | overflow:hidden clips to a rectangle, not the rounded box (ContentMask is bounds-only); flush children show square corners | `zed/crates/gpui/src/window.rs:1930` | Child rounds its own corners (img borderRadius, tileCorner, the app frame's row and sidebar); pill that grows instead of a clipped slide |
 | **8**: switch, slider, scroll-area, color-picker, input-copy, tooltip, queued-stack, input-message | Pointer capture is only implicit: an element with both onMouseDown and onMouseMove gets capture_pointer(); undocumented, no explicit API, and it swallows descendants' mouseUp/click | `packages/native/src/renderer.rs:5663`<br>`GPUI window.rs:2874, elements/div.rs:2724` | Put all three handlers on the dragged element only; drag region excludes child buttons; Tooltip function-children form |
 | **8**: accordion, command-menu, input-message, scroll-area, slider, thinking-steps, tabs-subtle, sidebar | No ResizeObserver / layout-change signal: content or window resize is never reported, so measured heights, widths and thumbs go stale | `packages/native/src/automation.rs:83`<br>`packages/native/src/renderer.rs:2333` | Re-measure on hover/scroll/prop change, remeasureFor timers, hot/cold poll; some cases left stale |
-| **8**: card, carousel-dots, dialog, file-thumbnail, mobile-drawer, table, scroll-area, banner | overflow:hidden clips to a rectangle, not the rounded box (ContentMask is bounds-only); flush children show square corners | `zed/crates/gpui/src/window.rs:1930` | Child rounds its own corners (img borderRadius, tileCorner); pill that grows instead of a clipped slide |
 | **8**: checkbox-group, select, input-copy, thinking-indicator, dropdown, switch, command-menu, accordion | No SVG internals animation: no stroke-dash/pathLength draw, no path morph, svg is one tinted glyph | `packages/native/js/host.ts:22`<br>`packages/native/js/host.ts:27` | Fade in, left-to-right clip wipe, or JS timer rewriting the svg source string |
 | **7**: accordion, banner, command-menu, input-message, tabs-subtle, thinking-steps, sidebar | motion cannot target height:auto, fr tracks or layout size; only plain pixel numbers (apply_to writes DimensionValue::Pixels) | `packages/native/src/motion.rs:14`<br>`packages/native/src/motion.rs:740`<br>`packages/native/js/host.ts:27` | Measure content with getElementBounds and tween 0 to the pixel value |
 | **7**: accordion, checkbox-group, radio-group, tabs, tabs-subtle, tooltip, sidebar | No focus modality in JS: onFocus/onBlur carry no payload (no keyboard-vs-pointer, no relatedTarget); focusVisible exists only as a native style on the focused element, so no traveling ring and no focus-opens-tooltip | `packages/native/js/host.ts:262`<br>`packages/native/src/renderer.rs:4841`<br>`EventPayload in packages/native/index.d.ts` | Per-element native focusVisible outline; microtask + getFocusedElementId; renderer.focusElement |
@@ -145,7 +148,7 @@ The 33 that hit four or more components:
 | **4**: dialog, banner, card, sidebar | position:absolute resolves against the parent element, not the nearest positioned ancestor | not traced | Render the overlay as a direct child of the region (scoped prop) |
 
 <details>
-<summary>The 22 that hit three or fewer</summary>
+<summary>The 24 that hit three or fewer</summary>
 
 | Used by | What | gpuix source | Workaround here |
 |---|---|---|---|
@@ -163,6 +166,8 @@ The 33 that hit four or more components:
 | **2**: input-copy, chat-message | No clipboard write from JS | `packages/native/index.d.ts` | Spawns pbcopy / wl-copy via Bun.spawn |
 | **2**: carousel-dots, input-message | No capture-phase handlers or event target/closest(): a handler cannot tell which descendant took the press | `packages/native/js/host.ts (HostProps)` | Bubbling handlers on wrapper; handler on the textarea wrapper only |
 | **2**: color-picker, table | No conic gradient, background-size/repeat or tiling (alpha checkerboard) | not traced | Backing div + generated monochrome SVG path of squares |
+| **1**: app-frame | No window drag region: `Window::start_window_move` and `WindowControlArea` are not plumbed to JS, so the top bar cannot drag the window or zoom it on double-click (the native titlebar strip may still drag; unverified) | `zed/crates/gpui/src/window.rs:2607`<br>`zed/crates/gpui/src/window.rs:744` | none |
+| **1**: app-frame | The test renderer ignores window options (titlebar, traffic lights) and `setAppearance`, and `createAppearance` there is the machine's appearance and never changes | `packages/native/js/testing.ts:120` | Captures pin the scheme with `setThemeChoice` and show no traffic lights |
 | **1**: file-thumbnail | <img> has no onLoad/onError, no File/blob URL, no canvas pixel path (PDF preview) | `ImgProps in packages/native/js/host.ts` | Caller passes {name,type,src} and a pending flag; PDF shows glyph |
 | **1**: file-thumbnail | No per-side border colour (borderColor is one value) | not traced | Stacked static ring + rotating SVG arc |
 | **1**: slider | opacity is applied per primitive, not as an offscreen group, so overlapping children of a translucent parent show through each other | not traced | none |
@@ -198,6 +203,9 @@ Quirks of this repo's own code, kept apart from the gpuix list above.
 - **Hover-reveal groups** (chat-message actions) use `pointerEvents: "none"` until hovered, so a keyboard user can
   tab to an invisible, unclickable action: there is no focus-within.
 - **Screenshots run on the test renderer.**
+  - Captures show no traffic lights or native titlebar: the test renderer ignores the window options, so the top bar
+    is empty apart from the title. They pin the theme to Dark (`setThemeChoice`) because its appearance is the
+    machine's.
   - `settle()` sleeps real time and drains native events each frame; a bare `flush()` never delivers
     `onMotionComplete`, so presence exits would never unmount.
   - `TestRenderer.getElementBounds` triggers a full draw (about 28 ms), so timer-polled bounds can starve a run.
@@ -231,14 +239,14 @@ generalised into the limitations above.
 | `shadow-surface-3` (1px ring + two stacked drops) | `borderWidth: 1` plus one drop shadow. gpuix paints a single non-inset shadow | Approximated |
 | `color-mix(in oklab, …)`, `light-dark()` | both columns kept as a token table; the scheme is a signal | Exact |
 | dark `--shadow-3` (inset hairline + ring + drops) | popup `borderColor` of white at 5% plus the one drop shadow | Approximated |
-| `prefers-color-scheme` ("System" theme) | gpuix exposes no OS appearance, so the select offers Light and Dark only | Dropped |
+| `prefers-color-scheme` ("System" theme) | `createAppearance()` reads the OS appearance and `bindSystemScheme` feeds it to the `scheme` token. System / Light / Dark are one `themeChoice` signal, and `renderer.setAppearance` mirrors Light / Dark so the native chrome follows | Exact in the window; captures run on the test renderer, whose appearance is fixed, so they pin Dark |
 | Base UI `Positioner` (flip, `--anchor-width`) | `<anchored gap={6} deferred>`; the popup width is a constant. gpuix snaps an overflowing popup into the window, and its `switch` flip anchors to the far edge of the field and covers it, so the combobox picks `top` or `bottom` itself from the painted bounds and the window height | Approximated |
 | `ScrollArea` (hover thumb, scroll fade) | a plain `overflowY: "scroll"`, on the combobox list and the sidebar | Dropped |
 | absolute child of a scroll container | gpuix paints it where it was placed, not where the content has scrolled to, so rows and overlays share a relative wrapper *inside* the scroller | Needed workaround |
 | `getBoundingClientRect`, `ResizeObserver` | `getElementBounds` (last painted frame) read on timers | Approximated, up to a frame stale |
 | `text-[length:…] leading-[…]` | `fontSize` + `lineHeight` | Exact |
 | `[text-box:trim-both_cap_alphabetic]` | none: labels are centred by their line box | Dropped, a pixel of optical drift |
-| Inter variable (`wght 550`, `opsz`) | gpuix cannot load fonts, so this is `Helvetica Neue`; 400 / 550 map to the nearest cut, no `opsz` | Dropped |
+| Inter variable (`wght 550`, `opsz`) | static Inter TTFs (400, 500, 600, 700) passed as `fonts` to `render()`; the family is `Inter` for every weight. 550 resolves to SemiBold 600, there is no `opsz` | Approximated, one weight step |
 | ghost-span that reserves the semibold width | the same trick: a hidden copy in flow, the visible label absolutely positioned over it | Exact |
 | `truncate` | `whiteSpace: "nowrap"` + `textOverflow: "ellipsis"` on the combobox rows | Exact; sidebar labels are not truncated |
 | icon stroke 1.5 → 2 on hover | the SVG string is swapped | Exact, instant |

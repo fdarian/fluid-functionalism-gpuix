@@ -3,13 +3,15 @@ import type {
 	MotionTransition,
 	StateStyleDesc,
 } from "@gpuix/solid";
-import { createSignal } from "solid-js";
+import { type Accessor, createSignal } from "solid-js";
 
 export type Scheme = "light" | "dark";
 
 interface Palette {
 	/** surface-1: the page. */
 	background: string;
+	/** The window frame around the page panel; this port's own, not in globals.css. */
+	chrome: string;
 	/** surface-2: cards that sit on the page. */
 	surface2: string;
 	/** surface-3: popups. */
@@ -80,6 +82,7 @@ interface Palette {
 const palettes: Record<Scheme, Palette> = {
 	light: {
 		background: "#FAFAFA",
+		chrome: "#EFEFEF",
 		surface2: "#FCFCFC",
 		card: "#FFFFFF",
 		surface5: "#FFFFFF",
@@ -128,6 +131,7 @@ const palettes: Record<Scheme, Palette> = {
 	},
 	dark: {
 		background: "#171717",
+		chrome: "#0E0E0E",
 		surface2: "#1E1E1E",
 		card: "#252525",
 		surface5: "#333333",
@@ -176,11 +180,31 @@ const palettes: Record<Scheme, Palette> = {
 	},
 };
 
+export type ThemeChoice = "system" | "light" | "dark";
+
+export const [themeChoice, setThemeChoice] =
+	createSignal<ThemeChoice>("system");
+
+let systemScheme: Accessor<Scheme> | undefined;
+
 /**
- * gpuix has no `prefers-color-scheme` to read, so the theme is a choice
- * between light and dark only; there is no "System".
+ * `createAppearance()` throws outside a gpuix root, so the App root binds it
+ * once here and "system" reads it through `scheme()`.
  */
-export const [scheme, setScheme] = createSignal<Scheme>("dark");
+export function bindSystemScheme(accessor: Accessor<Scheme>) {
+	systemScheme = accessor;
+}
+
+export function scheme(): Scheme {
+	const choice = themeChoice();
+	if (choice !== "system") return choice;
+	if (systemScheme === undefined) {
+		throw new Error(
+			"The system scheme is unbound: call bindSystemScheme first",
+		);
+	}
+	return systemScheme();
+}
 
 /**
  * Every token reads the scheme signal, so any JSX expression or `createEffect`
@@ -243,12 +267,9 @@ export const type = {
 	microCompact: { fontSize: 10, lineHeight: 12 },
 } as const;
 
-/**
- * Inter is not loadable (gpuix has no font API), so this resolves to the macOS
- * system face. Variable-font weights 400 / 550 become the nearest cut.
- */
-export const fontFamily = "Helvetica Neue";
-export const weight = { normal: 400, semibold: 550 } as const;
+/** The static cuts are loaded in `lib/fonts.ts`; gpuix has no variable weights, so 550 resolves to a neighbouring cut. */
+export const fontFamily = "Inter";
+export const weight = { normal: 400, medium: 500, semibold: 550 } as const;
 
 export const radius = {
 	item: 8,

@@ -332,7 +332,11 @@ export function SidebarMenuSub(props: {
 
 // ─── Structure ───────────────────────────────────────────────────────────────
 
-export function Sidebar(props: { children: JSX.Element }) {
+export function Sidebar(props: {
+	children: JSX.Element;
+	/** Rounds the left corners, for a sidebar whose fill meets a rounded container's corners. */
+	leftCornerRadius?: number;
+}) {
 	return (
 		<div
 			style={{
@@ -342,6 +346,8 @@ export function Sidebar(props: { children: JSX.Element }) {
 				display: "flex",
 				flexDirection: "column",
 				backgroundColor: color.background,
+				borderTopLeftRadius: props.leftCornerRadius,
+				borderBottomLeftRadius: props.leftCornerRadius,
 			}}
 		>
 			{props.children}

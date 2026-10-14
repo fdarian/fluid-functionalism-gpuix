@@ -14,6 +14,8 @@ import { mkdirSync } from "node:fs";
 import { createTestRoot } from "@gpuix/solid/testing";
 import { App } from "../src/app";
 import { type Demo, loadDemos, type ShotContext } from "../src/lib/demo";
+import { fonts } from "../src/lib/fonts";
+import { setThemeChoice } from "../src/lib/theme";
 
 const slug = process.argv[2];
 const demos = await loadDemos();
@@ -31,7 +33,7 @@ mkdirSync(outDir, { recursive: true });
 
 const FRAME_MS = 16;
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-const test = createTestRoot({ width: 1240, height: 780 });
+const test = createTestRoot({ width: 1240, height: 780, fonts });
 const renderer = test.renderer;
 
 /**
@@ -119,6 +121,8 @@ const shot: ShotContext = {
 	capture,
 };
 
+// The test renderer reports the machine's appearance; pin the scheme so captures are reproducible.
+setThemeChoice("dark");
 test.render(() => <App demos={demos} initialPage={slug} />);
 await settle();
 // The first bounds query turns tracking on; the next frame fills them in.

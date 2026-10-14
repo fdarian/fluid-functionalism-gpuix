@@ -2,7 +2,7 @@
 
 Original: `registry/default/chat-message.tsx`. Ported in `src/components/chat-message.tsx`, demo in `src/demos/chat-message.tsx`.
 
-Transforms and font loading are already known gaps and are not repeated here.
+Transforms are already a known gap and are not repeated here.
 
 ## A filled or positioned child takes the hover from its parent
 
@@ -32,8 +32,8 @@ Transforms and font loading are already known gaps and are not repeated here.
 
 - **Original:** the timestamp uses `tabular-nums` so digits do not jitter.
 - **gpuix lacks:** OpenType feature control (`font-variant-numeric` / `font-feature-settings`) in `StyleDesc`.
-- **Workaround:** none; the system face's default figures are used.
-- **Fidelity:** dropped. Not a font-loading gap: the feature would work on a loaded face.
+- **Workaround:** none; Inter's default proportional figures are used.
+- **Fidelity:** dropped. Inter is loaded, but gpuix cannot switch on its tabular-figures feature.
 - **Components it hits:** queued-stack (the count badge).
 
 ## Notes that were not gaps

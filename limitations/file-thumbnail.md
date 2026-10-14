@@ -2,7 +2,7 @@
 
 Original: `registry/default/file-thumbnail.tsx`. Ported in `src/components/file-thumbnail.tsx`, demo in `src/demos/file-thumbnail.tsx`.
 
-Transforms and font loading are already known gaps and are not repeated here.
+Transforms are already a known gap and are not repeated here.
 
 ## `overflow: hidden` clips to the rectangle, not the rounded box
 
