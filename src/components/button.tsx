@@ -102,6 +102,8 @@ export function Button(props: {
 	"aria-label"?: string;
 	"aria-expanded"?: boolean;
 	onClick?: (event: EventPayload) => void;
+	/** Never pair with onMouseMove: down plus move on one element makes gpuix capture the pointer. */
+	onMouseDown?: (event: EventPayload) => void;
 	/** The label, or the icon for an icon-only size. */
 	children?: JSX.Element;
 	/** Anything after the label, e.g. a keycap. Takes the trailing icon's tighter padding. */
@@ -190,6 +192,7 @@ export function Button(props: {
 			testId={props.testId}
 			aria-label={props["aria-label"]}
 			aria-expanded={props["aria-expanded"]}
+			onMouseDown={props.onMouseDown}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			style={{
