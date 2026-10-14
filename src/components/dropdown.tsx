@@ -31,6 +31,7 @@ import type { IconRef } from "../lib/icons";
 import { isChord, moveIndex, revealRow } from "../lib/list-nav";
 import { isInside, placePopup, POPUP_OFFSET, PopupSurface } from "../lib/popup";
 import { createPresence } from "../lib/presence";
+import { createPressToggle, returnFocusTo } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
 import { color, radius, shadow3, motion as tween } from "../lib/theme";
 import {
@@ -847,10 +848,7 @@ export function DropdownMenu(props: {
 		const skip = keepFocus;
 		keepFocus = false;
 		if (skip || target === null) return;
-		const focused = renderer.getFocusedElementId?.();
-		if (focused === undefined || focused === null || searchFocused) {
-			renderer.focusElement?.(target);
-		}
+		returnFocusTo(renderer, target, searchFocused);
 	};
 
 	const apply = (next: boolean) => {
@@ -978,31 +976,22 @@ export function DropdownTrigger(props: {
 	children: (trigger: DropdownTriggerState) => JSX.Element;
 }) {
 	const scope = useMenuScope();
-	/** The press already toggled the menu: its click must not toggle it back. */
-	let pressHandled = false;
-	const trigger: DropdownTriggerState = {
-		onMouseDown(event) {
-			if (event.button !== undefined && event.button !== 0) return;
-			pressHandled = true;
-			scope.setKeyboardActive(false);
-			if (scope.presence.open()) {
-				scope.setOpen(false);
-				return;
+	const press = createPressToggle({
+		isOpen: scope.presence.open,
+		open(event, pressed) {
+			if (pressed) {
+				scope.noteTrigger(event.elementId);
+				scope.startPress();
 			}
-			scope.noteTrigger(event.elementId);
-			scope.startPress();
 			scope.setOpen(true);
 		},
-		onClick(event) {
-			if (event.key !== undefined) return;
-			scope.releasePress();
-			if (pressHandled) {
-				pressHandled = false;
-				return;
-			}
-			scope.setKeyboardActive(false);
-			scope.setOpen(!scope.presence.open());
-		},
+		close: () => scope.setOpen(false),
+		onPointer: () => scope.setKeyboardActive(false),
+		onClickEnd: scope.releasePress,
+	});
+	const trigger: DropdownTriggerState = {
+		onMouseDown: press.onMouseDown,
+		onClick: press.onClick,
 		get expanded() {
 			return scope.presence.open();
 		},

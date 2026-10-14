@@ -23,6 +23,7 @@ import type { IconRef } from "../lib/icons";
 import { edgeIndex, isChord, moveIndex, revealRow } from "../lib/list-nav";
 import { isInside, placePopup, PopupSurface } from "../lib/popup";
 import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
+import { returnFocusTo } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
 import { color, radius, type as scale, scheme, motion as tween, withAlpha, focusRing } from "../lib/theme";
 
@@ -247,15 +248,10 @@ export function Select<Value extends string>(props: {
 		presence.show();
 		hover.setActiveIndex(openHighlight(from));
 	};
-	/**
-	 * Base UI hands focus back to the trigger unless it moved somewhere else
-	 * (an outside press on another control keeps that control's focus).
-	 */
 	const returnFocus = () => {
 		setTimeout(() => {
 			if (triggerElement === undefined || !triggerElement.mounted) return;
-			const focused = renderer.getFocusedElementId?.() ?? null;
-			if (focused === null) renderer.focusElement?.(triggerElement.id);
+			returnFocusTo(renderer, triggerElement.id);
 		}, 0);
 	};
 	const close = () => {

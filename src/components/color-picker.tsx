@@ -25,6 +25,7 @@ import { defineIcon } from "../lib/icons";
 import { edgeIndex, isChord, moveIndex } from "../lib/list-nav";
 import { isInside, placePopup, POPUP_OFFSET } from "../lib/popup";
 import { createPresence } from "../lib/presence";
+import { createPressToggle, returnFocusTo } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
 import { color, height, radius, type as scale, scheme, shadow3, motion as tween, weight, surface, focusRing } from "../lib/theme";
 import {
@@ -757,8 +758,6 @@ function FormatDropdown(props: {
 	let trigger: HostElement | undefined;
 	let button: HostElement | undefined;
 	let card: HostElement | undefined;
-	/** The press already toggled the menu: its click must not toggle it back. */
-	let pressHandled = false;
 	const checkedIndex = () => FORMATS.indexOf(props.value);
 	const width = (INNER_WIDTH - 8) / 2;
 
@@ -785,10 +784,7 @@ function FormatDropdown(props: {
 		presence.hide();
 		props.onOpenChange?.(false);
 		if (!returnFocus || button === undefined) return;
-		const focused = renderer.getFocusedElementId?.();
-		if (focused === undefined || focused === null) {
-			renderer.focusElement?.(button.id);
-		}
+		returnFocusTo(renderer, button.id);
 	};
 	const choose = (format: ColorFormat) => {
 		props.onChange(format);
@@ -797,6 +793,11 @@ function FormatDropdown(props: {
 	if (props.defaultOpen === true) {
 		queueMicrotask(open);
 	}
+	const press = createPressToggle({
+		isOpen: presence.open,
+		open: () => open(),
+		close: () => close(),
+	});
 
 	const move = (delta: 1 | -1) => {
 		hover.setActiveIndex(
@@ -878,21 +879,8 @@ function FormatDropdown(props: {
 				aria-expanded={presence.open()}
 				testId={props.testId}
 				tabIndex={0}
-				onMouseDown={(event) => {
-					if (event.button !== undefined && event.button !== 0) return;
-					pressHandled = true;
-					if (presence.open()) close();
-					else open();
-				}}
-				onClick={(event) => {
-					if (event.key !== undefined) return;
-					if (pressHandled) {
-						pressHandled = false;
-						return;
-					}
-					if (presence.open()) close();
-					else open();
-				}}
+				onMouseDown={press.onMouseDown}
+				onClick={press.onClick}
 				onKeyDown={onKeyDown}
 				onMouseEnter={() => setTriggerHovered(true)}
 				onMouseLeave={() => setTriggerHovered(false)}
