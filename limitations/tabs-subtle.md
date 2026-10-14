@@ -17,9 +17,9 @@ Not ported: the list's `overflow-x-auto max-w-[calc(100%+8px)] scrollbar-hide -m
 ## The label's width has to be measured, and tab rects chase it
 
 - **Original:** `width` animates to `offsetWidth` read through a `ResizeObserver`, and the pills follow because the list's observer re-measures each tab as it resizes.
-- **gpuix lacks:** `ResizeObserver`, and a way to animate to `auto` (see the accordion). Missing feature.
-- **Workaround:** the label's painted width is read once on mount (nothing is recorded before the first paint, so it retries per frame), and while a label unfolds `remeasureFor(300)` re-reads every tab rect each frame so the pills keep following. Until the measurement lands an unfolded label keeps its natural width.
-- **Fidelity:** approximated: a label whose text changes later is not re-measured.
+- **gpuix lacks:** a way to animate to `auto` (see the accordion), and a signal for a box that moves without resizing: `onLayout` reports size changes only (`packages/native/js/host.ts:494-500`). Missing feature.
+- **Workaround:** the box holding the label and its gap reports its width through `onLayout`, and the label animates to it. While a label unfolds `remeasureFor(300)` re-reads every tab rect each frame, because the tabs after it move without resizing and so report nothing, so the pills keep following. Until the first report an unfolded label keeps its natural width.
+- **Fidelity:** exact for the label width; the pill tracking is sampled each frame.
 - **Components it hits:** accordion, sidebar sub-menu, any component that animates to a content size.
 
 ## ARIA wiring is thinner

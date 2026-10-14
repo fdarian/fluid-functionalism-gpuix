@@ -50,6 +50,7 @@ export function Demo() {
 	const [icons, setIcons] = createSignal(0);
 	const [activeLabel, setActiveLabel] = createSignal(0);
 	const [compact, setCompact] = createSignal(0);
+	const [keyboard, setKeyboard] = createSignal(0);
 	return (
 		<DemoCard title="TabsSubtle">
 			<div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -158,6 +159,34 @@ export function Demo() {
 						</For>
 					</TabsSubtle>
 				</Section>
+				<Section caption="Keyboard: arrows move focus, Enter selects">
+					<TabsSubtle
+						idPrefix="keyboard-demo"
+						selectedIndex={keyboard()}
+						onSelect={setKeyboard}
+					>
+						<For each={["A", "B", "C"]}>
+							{(label: string, index: () => number) => (
+								<TabsSubtleItem
+									testId={`kb-${index()}`}
+									index={index()}
+									label={label}
+								/>
+							)}
+						</For>
+					</TabsSubtle>
+					<For each={["A", "B", "C"]}>
+						{(label: string, index: () => number) => (
+							<TabsSubtlePanel
+								index={index()}
+								selectedIndex={keyboard()}
+								idPrefix="keyboard-demo"
+							>
+								<Content>{`Kb panel ${label}`}</Content>
+							</TabsSubtlePanel>
+						)}
+					</For>
+				</Section>
 			</div>
 		</DemoCard>
 	);
@@ -178,4 +207,22 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("keyboard-focus-moved");
 	await shot.press("enter");
 	shot.capture("keyboard-selected");
+
+	await shot.click("kb-0");
+	shot.expectText("Kb panel A", true);
+	// Manual activation: the arrow moves focus only.
+	await shot.press("right");
+	shot.expectText("Kb panel A", true);
+	shot.expectText("Kb panel B", false);
+	await shot.press("end");
+	await shot.press("enter");
+	shot.expectText("Kb panel C", true);
+	// A modifier chord is not a navigation key.
+	await shot.press("cmd-left");
+	await shot.press("enter");
+	shot.expectText("Kb panel C", true);
+	await shot.press("left");
+	await shot.press("enter");
+	shot.expectText("Kb panel B", true);
+	shot.capture("keyboard-manual");
 };
