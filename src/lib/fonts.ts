@@ -1,6 +1,6 @@
-/** Inter's static cuts, one file per weight: gpuix loads no variable fonts. */
-const dir = new URL("../../assets/fonts/", import.meta.url).pathname;
+import { join } from "node:path";
 
-export const fonts = ["Regular", "Medium", "SemiBold", "Bold"].map(
-	(cut) => `${dir}Inter-${cut}.ttf`,
+/** Inter's static cuts, one file per weight: gpuix loads no variable fonts. */
+export const fonts = ["Regular", "Medium", "SemiBold", "Bold"].map((cut) =>
+	join(import.meta.dir, "../../assets/fonts", `Inter-${cut}.ttf`),
 );
