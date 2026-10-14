@@ -25,6 +25,7 @@ import { defineIcon } from "../lib/icons";
 import { moveIndex } from "../lib/list-nav";
 import { isInside, placePopup, POPUP_OFFSET } from "../lib/popup";
 import { createPresence } from "../lib/presence";
+import { createTypeahead } from "../lib/typeahead";
 import { color, height, radius, type as scale, scheme, shadow3, motion as tween, weight, surface, focusRing } from "../lib/theme";
 import {
 	buildParsed,
@@ -748,16 +749,20 @@ function FormatDropdown(props: {
 	onOpenChange?: (open: boolean) => void;
 	testId: string;
 }) {
+	const renderer = useGpuixRequired();
 	const presence = createPresence();
 	const hover = createFluidHover();
 	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
 	const [triggerHovered, setTriggerHovered] = createSignal(false);
 	let trigger: HostElement | undefined;
+	let button: HostElement | undefined;
 	let card: HostElement | undefined;
+	/** The press already toggled the menu: its click must not toggle it back. */
+	let pressHandled = false;
 	const checkedIndex = () => FORMATS.indexOf(props.value);
 	const width = (INNER_WIDTH - 8) / 2;
 
-	const open = () => {
+	const open = (from: "checked" | "last" = "checked") => {
 		if (presence.open()) return;
 		if (trigger === undefined) throw new Error("Trigger is not mounted");
 		setSide(
@@ -768,13 +773,19 @@ function FormatDropdown(props: {
 			).side,
 		);
 		presence.show();
-		hover.setActiveIndex(checkedIndex());
+		hover.setActiveIndex(from === "last" ? FORMATS.length - 1 : checkedIndex());
 		props.onOpenChange?.(true);
 	};
-	const close = () => {
+	/** Closing hands focus back to the trigger unless it already moved to another control; Tab lets it move on. */
+	const close = (returnFocus = true) => {
 		if (!presence.open()) return;
 		presence.hide();
 		props.onOpenChange?.(false);
+		if (!returnFocus || button === undefined) return;
+		const focused = renderer.getFocusedElementId?.();
+		if (focused === undefined || focused === null) {
+			renderer.focusElement?.(button.id);
+		}
 	};
 	const choose = (format: ColorFormat) => {
 		props.onChange(format);
@@ -786,16 +797,24 @@ function FormatDropdown(props: {
 
 	const move = (delta: 1 | -1) => {
 		hover.setActiveIndex(
-			moveIndex(
-				hover.activeIndex() ?? checkedIndex(),
-				delta,
-				FORMATS.length,
-				undefined,
-				false,
-			),
+			moveIndex(hover.activeIndex(), delta, FORMATS.length),
 		);
 	};
+	const typeahead = createTypeahead({
+		labels: () => FORMATS.map((format) => FORMAT_LABELS[format]),
+		current: hover.activeIndex,
+		onMatch: hover.setActiveIndex,
+	});
 	const onKeyDown = (event: KeyEvent) => {
+		const modifiers = event.modifiers;
+		if (modifiers !== undefined && (modifiers.ctrl || modifiers.alt || modifiers.cmd)) {
+			return;
+		}
+		if (presence.open() && typeahead.handleKey(event)) {
+			event.preventDefault();
+			event.stopPropagation();
+			return;
+		}
 		switch (event.key) {
 			case "enter":
 			case "space": {
@@ -812,14 +831,26 @@ function FormatDropdown(props: {
 				if (presence.open()) move(1);
 				else open();
 				event.preventDefault();
+				event.stopPropagation();
 				return;
 			case "up":
 				if (presence.open()) move(-1);
+				else open("last");
 				event.preventDefault();
+				event.stopPropagation();
+				return;
+			case "home":
+			case "end":
+				if (!presence.open()) return;
+				hover.setActiveIndex(event.key === "home" ? 0 : FORMATS.length - 1);
+				event.preventDefault();
+				event.stopPropagation();
 				return;
 			case "escape":
-			case "tab":
 				close();
+				return;
+			case "tab":
+				close(false);
 				return;
 		}
 	};
@@ -837,12 +868,26 @@ function FormatDropdown(props: {
 			style={{ position: "relative", width, height: height.control }}
 		>
 			<div
+				ref={(node) => {
+					button = node;
+				}}
 				role="button"
 				aria-label="Color format"
 				aria-expanded={presence.open()}
 				testId={props.testId}
 				tabIndex={0}
-				onClick={() => {
+				onMouseDown={(event) => {
+					if (event.button !== undefined && event.button !== 0) return;
+					pressHandled = true;
+					if (presence.open()) close();
+					else open();
+				}}
+				onClick={(event) => {
+					if (event.key !== undefined) return;
+					if (pressHandled) {
+						pressHandled = false;
+						return;
+					}
 					if (presence.open()) close();
 					else open();
 				}}
@@ -902,6 +947,7 @@ function FormatDropdown(props: {
 			>
 				<div
 					{...hover.containerProps}
+					role="menu"
 					style={{
 						position: "relative",
 						display: "flex",
@@ -935,7 +981,7 @@ function FormatDropdown(props: {
 									ref={(element) => {
 										row = element;
 									}}
-									role="option"
+									role="menuitemradio"
 									aria-selected={checked()}
 									testId={`${props.testId}-${format}`}
 									onClick={() => choose(format)}
