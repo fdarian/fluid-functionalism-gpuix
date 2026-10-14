@@ -19,11 +19,11 @@ import {
 	SidebarMenuButton,
 	SidebarSearchField,
 } from "./components/sidebar";
+import { AppFrame, PANEL_INNER_RADIUS } from "./lib/app-frame";
 import type { Demo } from "./lib/demo";
 import {
-	color,
-	fontFamily,
 	bindSystemScheme,
+	color,
 	setThemeChoice,
 	type ThemeChoice,
 	themeChoice,
@@ -33,6 +33,7 @@ import {
 
 const SHOWCASE = "showcase";
 const PAGE_WIDTH = 600;
+export const WINDOW_TITLE = "Fluid Functionalism on gpuix";
 
 const THEMES = [
 	{ value: "system", label: "System", icon: "monitor" },
@@ -60,7 +61,7 @@ function AppSidebar(props: {
 	onPage: (page: string) => void;
 }) {
 	return (
-		<Sidebar>
+		<Sidebar leftCornerRadius={PANEL_INNER_RADIUS}>
 			<SidebarHeader>
 				<SidebarSearchField placeholder="Search" shortcut="⌘K" />
 			</SidebarHeader>
@@ -227,52 +228,54 @@ export function App(props: { demos: readonly Demo[]; initialPage?: string }) {
 	// Native chrome and traffic lights follow the override; "system" clears it.
 	createEffect(() => setAppearance.call(renderer, themeChoice()));
 	return (
-		<div
-			style={{
-				display: "flex",
-				flexDirection: "row",
-				width: "100%",
-				height: "100%",
-				backgroundColor: color.background,
-				fontFamily,
-			}}
-		>
-			<AppSidebar demos={props.demos} page={page()} onPage={setPage} />
+		<AppFrame title={WINDOW_TITLE}>
 			<div
 				style={{
-					flexGrow: 1,
-					minWidth: 0,
 					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
-					overflowY: "scroll",
+					flexDirection: "row",
+					width: "100%",
+					height: "100%",
+					backgroundColor: color.background,
+					borderRadius: PANEL_INNER_RADIUS,
 				}}
 			>
+				<AppSidebar demos={props.demos} page={page()} onPage={setPage} />
 				<div
 					style={{
-						width: PAGE_WIDTH,
-						flexShrink: 0,
+						flexGrow: 1,
+						minWidth: 0,
 						display: "flex",
 						flexDirection: "column",
-						gap: 24,
-						paddingTop: 40,
-						paddingBottom: 40,
+						alignItems: "center",
+						overflowY: "scroll",
 					}}
 				>
-					<Switch>
-						<Match when={page() === SHOWCASE}>
-							<Showcase demos={props.demos} onPage={setPage} />
-						</Match>
-						<Match when={current()} keyed>
-							{(demo: Demo) => <DemoPage demo={demo} />}
-						</Match>
-					</Switch>
+					<div
+						style={{
+							width: PAGE_WIDTH,
+							flexShrink: 0,
+							display: "flex",
+							flexDirection: "column",
+							gap: 24,
+							paddingTop: 40,
+							paddingBottom: 40,
+						}}
+					>
+						<Switch>
+							<Match when={page() === SHOWCASE}>
+								<Showcase demos={props.demos} onPage={setPage} />
+							</Match>
+							<Match when={current()} keyed>
+								{(demo: Demo) => <DemoPage demo={demo} />}
+							</Match>
+						</Switch>
+					</div>
+				</div>
+				<div style={{ width: 296, flexShrink: 0, padding: 16 }}>
+					<CustomizeCard />
 				</div>
 			</div>
-			<div style={{ width: 296, flexShrink: 0, padding: 16 }}>
-				<CustomizeCard />
-			</div>
-		</div>
+		</AppFrame>
 	);
 }
 

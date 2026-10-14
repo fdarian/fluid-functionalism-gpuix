@@ -10,6 +10,8 @@ export type Scheme = "light" | "dark";
 interface Palette {
 	/** surface-1: the page. */
 	background: string;
+	/** The window frame around the page panel; this port's own, not in globals.css. */
+	chrome: string;
 	/** surface-2: cards that sit on the page. */
 	surface2: string;
 	/** surface-3: popups. */
@@ -80,6 +82,7 @@ interface Palette {
 const palettes: Record<Scheme, Palette> = {
 	light: {
 		background: "#FAFAFA",
+		chrome: "#EFEFEF",
 		surface2: "#FCFCFC",
 		card: "#FFFFFF",
 		surface5: "#FFFFFF",
@@ -128,6 +131,7 @@ const palettes: Record<Scheme, Palette> = {
 	},
 	dark: {
 		background: "#171717",
+		chrome: "#0E0E0E",
 		surface2: "#1E1E1E",
 		card: "#252525",
 		surface5: "#333333",
@@ -265,7 +269,7 @@ export const type = {
 
 /** The static cuts are loaded in `lib/fonts.ts`; gpuix has no variable weights, so 550 resolves to a neighbouring cut. */
 export const fontFamily = "Inter";
-export const weight = { normal: 400, semibold: 550 } as const;
+export const weight = { normal: 400, medium: 500, semibold: 550 } as const;
 
 export const radius = {
 	item: 8,

@@ -240,7 +240,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.hover("grid-3");
 	shot.capture("grid-2d-hover");
 	// The gap between two tiles still resolves to the nearest one.
-	await shot.moveTo(600, 300);
+	await shot.moveTo(600, 341);
 	shot.capture("grid-gap-hover");
 	await shot.scroll(600, 400, 0, -560);
 	await shot.scroll(600, 400, 0, -560);
@@ -248,6 +248,6 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	for (let tick = 0; tick < 4; tick++) await shot.scroll(600, 400, 0, -560);
 	await shot.hover("promo");
 	shot.capture("promo-hover");
-	await shot.moveTo(599, 288);
+	await shot.moveTo(599, 262);
 	shot.capture("promo-chip-hover");
 };

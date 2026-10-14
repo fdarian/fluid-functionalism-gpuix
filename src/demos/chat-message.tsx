@@ -156,8 +156,8 @@ export function Demo() {
 }
 
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
-	await shot.moveTo(650, 20);
-	await shot.moveTo(650, 20);
+	await shot.moveTo(650, 60);
+	await shot.moveTo(650, 60);
 	await shot.hover("chat-0");
 	shot.capture("hover-user");
 	await shot.hover("chat-0-copy");

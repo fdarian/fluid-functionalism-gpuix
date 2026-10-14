@@ -546,7 +546,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.hover("basic-2");
 	shot.capture("inline-hover");
 	await shot.click("basic-3");
-	await shot.moveTo(700, 40);
+	await shot.moveTo(700, 80);
 	shot.capture("inline-checked");
 	await reveal(shot, "groups-0");
 	await shot.click("groups-0");

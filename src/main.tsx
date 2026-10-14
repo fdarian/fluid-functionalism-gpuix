@@ -4,14 +4,17 @@
  * startup, so a new one shows up after a restart.
  */
 import { render } from "@gpuix/solid";
-import { App } from "./app";
+import { App, WINDOW_TITLE } from "./app";
 import { loadDemos } from "./lib/demo";
 import { fonts } from "./lib/fonts";
 
 const demos = await loadDemos();
 
 render(() => <App demos={demos} />, {
-	title: "gpuix + fluid functionalism",
+	title: WINDOW_TITLE,
+	titlebarTransparent: true,
+	trafficLightX: 14,
+	trafficLightY: 13,
 	width: 1240,
 	height: 780,
 	fonts,
