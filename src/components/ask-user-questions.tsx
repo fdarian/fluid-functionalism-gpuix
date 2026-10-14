@@ -21,7 +21,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type ItemRect } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
-import { createMeasuredHeight, KickContext } from "../lib/measured-height";
+import { createMeasuredHeight } from "../lib/measured-height";
 import { moveIndex } from "../lib/list-nav";
 import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 import { Button } from "./button";
@@ -608,7 +608,6 @@ export function AskUserQuestions(props: {
 			freeTextError(),
 			focusedRow(),
 		];
-		content.kick();
 		hover.remeasure();
 	});
 
@@ -922,35 +921,33 @@ export function AskUserQuestions(props: {
 						...(content.height() === undefined ? { height: "auto" } : {}),
 					}}
 				>
-					<div ref={content.ref} style={{ flexShrink: 0 }}>
-						<KickContext.Provider value={content.kick}>
-							<div
-								style={{
-									paddingLeft: 20,
-									paddingRight: 20,
-									paddingBottom: showFooter() ? 4 : 12,
-								}}
-							>
-								<Show when={qId()} keyed>
-									<div
-										style={{ display: "flex", flexDirection: "column", gap: 8 }}
+					<div onLayout={content.onLayout} style={{ flexShrink: 0 }}>
+						<div
+							style={{
+								paddingLeft: 20,
+								paddingRight: 20,
+								paddingBottom: showFooter() ? 4 : 12,
+							}}
+						>
+							<Show when={qId()} keyed>
+								<div
+									style={{ display: "flex", flexDirection: "column", gap: 8 }}
+								>
+									<text
+										style={{
+											...scale.title,
+											fontWeight: weight.semibold,
+											color: color.foreground,
+										}}
 									>
-										<text
-											style={{
-												...scale.title,
-												fontWeight: weight.semibold,
-												color: color.foreground,
-											}}
-										>
-											{question()?.title}
-										</text>
-										<Show when={isFreeText()} fallback={rows()}>
-											{freeTextField()}
-										</Show>
-									</div>
-								</Show>
-							</div>
-						</KickContext.Provider>
+										{question()?.title}
+									</text>
+									<Show when={isFreeText()} fallback={rows()}>
+										{freeTextField()}
+									</Show>
+								</div>
+							</Show>
+						</div>
 					</div>
 				</motion.div>
 				<Show when={showFooter()}>

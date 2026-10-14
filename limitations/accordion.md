@@ -31,16 +31,23 @@ Transforms (the chevron's 90 degree rotation becomes a `chevron-right` / `chevro
 ## `height: auto` cannot be animated
 
 - **Original:** the panel animates to a measured layout height; framer would otherwise resolve `auto`.
-- **gpuix lacks:** `motion` interpolates plain pixel numbers; there is no `auto` target and no layout-animation measure (`packages/native/src/motion.rs:14`, `apply_to` writes `DimensionValue::Pixels`). Missing feature.
-- **Workaround:** the inner box is measured once with `getElementBounds` (nothing is recorded before the first paint, so it retries per frame, like fluid hover) and the outer box animates between 0 and that number. An open panel keeps `height: auto` until the first measurement lands. A panel whose content later changes size is not re-measured (the original's ResizeObserver).
-- **Fidelity:** approximated: static content only.
+- **gpuix lacks:** `motion` interpolates plain pixel numbers; there is no `auto` target (`packages/native/src/motion.rs:14`, `apply_to` writes `DimensionValue::Pixels`). Missing feature.
+- **Workaround:** the inner box reports its height through `onLayout` (`src/lib/measured-height.ts`) and the outer box animates between 0 and that number. An open panel keeps `height: auto` until the first report lands. Content that later changes size reports again.
+- **Fidelity:** exact; the spring starts a frame after the layout.
+
+## A closed panel cannot be `display: none`
+
+- **Original:** the closed panel is `hidden` once its exit is over, so nothing in it is read out.
+- **gpuix lacks:** `display: none` (`apply_styles` reads only `flex` and `grid`, `packages/native/src/renderer.rs:6384-6388`). Missing feature.
+- **Workaround:** the panel's text is unmounted when the exit is over (and for a panel that mounts closed, after its first paint), and mounted again on open; the measured height is kept, so the spring still runs. The region keeps its trigger's text as `aria-label` since `aria-labelledby` is not available.
+- **Fidelity:** exact for reading and focus, as the panel holds text only.
 - **Components it hits:** accordion, the sidebar sub-menu (same workaround), tabs-subtle's collapsing labels.
 
 ## No `:focus-visible` in JS, so no traveling focus ring
 
 - **Original:** one focus ring in the group springs between rows, drawn only when the focused row matches `:focus-visible`.
 - **gpuix lacks:** `focusVisible` is a native state style on one element (`packages/native/js/host.ts:262`); `onFocus` carries no modality, so JS cannot tell a keyboard focus from a click focus and cannot drive a shared, moving ring. Missing feature.
-- **Workaround:** each trigger carries its own `focusVisible` outline (1px, offset 1, which is where the original ring sits). It appears and disappears per row instead of gliding. Arrow / Home / End move focus with `renderer.focusElement` since gpuix has no roving tabindex.
+- **Workaround:** each trigger carries its own `focusVisible` outline (1px, offset 1, which is where the original ring sits). It appears and disappears per row instead of gliding. Arrow / Home / End (group only: Base UI 1.9.0 has none, the Radix variant the FF site shows does) move focus with `renderer.focusElement`, and every trigger is a tab stop through `tabIndex: 0`; keyboard focus also drives the shared hover highlight as in the original.
 - **Fidelity:** approximated: right look, no travel.
 - **Components it hits:** tabs, tabs-subtle, sidebar and every list with the shared ring.
 

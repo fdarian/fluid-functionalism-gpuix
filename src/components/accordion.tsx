@@ -11,6 +11,9 @@ import {
 	createEffect,
 	createSignal,
 	type JSX,
+	on,
+	onCleanup,
+	Show,
 	useContext,
 } from "solid-js";
 import { StableLabel } from "../lib/stable-label";
@@ -64,6 +67,8 @@ interface GroupScope {
 	/** The pointer is on a row whose item is closed: open tints dim to let it read. */
 	hoveringClosedRow: () => boolean;
 	overContent: (index: number | null) => void;
+	focusRow: (index: number) => void;
+	blurRow: () => void;
 	focusSibling: (
 		index: number,
 		step: "next" | "previous" | "first" | "last",
@@ -80,6 +85,9 @@ interface ItemState {
 	/** Set once the trigger registers with a group. */
 	index: () => number | undefined;
 	setIndex: (index: number) => void;
+	/** The trigger's text, which names the panel region. */
+	label: () => string | undefined;
+	setLabel: (label: string) => void;
 	highlight: () => AccordionHighlight;
 }
 const ItemContext = createContext<ItemState>();
@@ -155,6 +163,7 @@ type RootProps = ValueProps & {
 
 export function AccordionGroup(props: RootProps) {
 	const root = createRootState(props);
+	const renderer = useGpuixRequired();
 	const triggers = new Map<
 		number,
 		{
@@ -169,14 +178,8 @@ export function AccordionGroup(props: RootProps) {
 	let contentOver: number | null = null;
 	const [reflow, setReflow] = createSignal(false);
 
-	const hover = createFluidHover({
-		isItemDisabled: (index) => {
-			const trigger = triggers.get(index);
-			if (trigger === undefined)
-				throw new Error(`No accordion trigger registered at ${index}`);
-			return trigger.disabled();
-		},
-	});
+	const hover = createFluidHover();
+	let mouseInside = false;
 
 	const scope: GroupScope = {
 		hover,
@@ -191,7 +194,21 @@ export function AccordionGroup(props: RootProps) {
 			const index = nextIndex++;
 			triggers.set(index, { element, ...entry });
 			hover.registerItem(index, element);
+			onCleanup(() => triggers.delete(index));
 			return index;
+		},
+		focusRow(index) {
+			hover.setActiveIndex(index);
+		},
+		blurRow() {
+			// Focus moving to a sibling trigger arrives as its focus right after this blur.
+			queueMicrotask(() => {
+				const focused = renderer.getFocusedElementId?.();
+				for (const trigger of triggers.values()) {
+					if (trigger.element.id === focused) return;
+				}
+				if (!mouseInside) hover.setActiveIndex(null);
+			});
 		},
 		trackReflow() {
 			clearTimeout(reflowTimer);
@@ -229,12 +246,17 @@ export function AccordionGroup(props: RootProps) {
 			<GroupContext.Provider value={scope}>
 				<div
 					{...hover.containerProps}
+					onMouseEnter={() => {
+						mouseInside = true;
+						hover.handlers.onMouseEnter();
+					}}
 					onMouseMove={(event: EventPayload) => {
 						// The pointer over an open panel belongs to no row.
 						if (contentOver !== null) return;
 						hover.handlers.onMouseMove(event);
 					}}
 					onMouseLeave={() => {
+						mouseInside = false;
 						contentOver = null;
 						hover.handlers.onMouseLeave();
 					}}
@@ -291,6 +313,7 @@ export function AccordionItem(props: {
 	const root = useRoot();
 	const group = useContext(GroupContext);
 	const [index, setIndex] = createSignal<number>();
+	const [label, setLabel] = createSignal<string>();
 	const highlight = () =>
 		group === undefined
 			? (props.highlight ?? root.highlight())
@@ -302,6 +325,8 @@ export function AccordionItem(props: {
 		isOpen: () => root.isOpen(props.value),
 		index,
 		setIndex,
+		label,
+		setLabel,
 	};
 
 	return (
@@ -354,6 +379,8 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 	let triggerElement: HostElement | undefined;
 	const renderer = useGpuixRequired();
 
+	createEffect(() => item.setLabel(props.children));
+
 	createEffect(() => {
 		if (group === undefined) return;
 		if (triggerElement === undefined) throw new Error("Trigger is not mounted");
@@ -382,11 +409,19 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 	const onKeyDown = (event: KeyEvent) => {
 		const own = item.index();
 		if (group === undefined || own === undefined) return;
+		const modifiers = event.modifiers;
+		if (
+			modifiers !== undefined &&
+			(modifiers.shift || modifiers.ctrl || modifiers.alt || modifiers.cmd)
+		) {
+			return;
+		}
 		const step = (
 			{ down: "next", up: "previous", home: "first", end: "last" } as const
 		)[event.key as "down" | "up" | "home" | "end"];
 		if (step === undefined) return;
 		event.preventDefault();
+		event.stopPropagation();
 		group.focusSibling(own, step);
 	};
 
@@ -442,8 +477,14 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					disabled: item.disabled(),
 					onClick: toggle,
 					onKeyDown,
+					tabIndex: 0,
 				})}
 				aria-expanded={item.isOpen()}
+				onFocus={() => {
+					const own = item.index();
+					if (own !== undefined) group?.focusRow(own);
+				}}
+				onBlur={() => group?.blurRow()}
 				testId={props.testId}
 				style={{
 					position: "relative",
@@ -460,8 +501,7 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					cursor: "pointer",
 					userSelect: "none",
 					keyboardFocusDim: false,
-					opacity: item.disabled() ? 0.5 : 1,
-					focusVisible: focusRing(1),
+					focusVisible: focusRing(group === undefined ? 0 : 1),
 				}}
 			>
 				<StableLabel
@@ -486,8 +526,8 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 
 /**
  * The panel's height springs between 0 and the measured content height: gpuix
- * cannot animate `height: auto`, so the inner box is measured from painted
- * bounds once and the outer box tweens to it.
+ * cannot animate `height: auto`, so the inner box reports its size through
+ * `onLayout` and the outer box tweens to it.
  */
 export function AccordionContent(props: { children: JSX.Element }) {
 	const root = useRoot();
@@ -496,12 +536,30 @@ export function AccordionContent(props: { children: JSX.Element }) {
 	const metrics = () => sizes[root.size()];
 	const measured = createMeasuredHeight();
 	const contentHeight = measured.height;
+	// gpuix has no `display: none`, so a closed panel's text leaves the accessibility tree by unmounting once the exit is over (Base UI hides the panel). It paints once first, or it would never report its height.
+	const [retired, setRetired] = createSignal(false);
+	let toggled = false;
+	createEffect(
+		on(
+			item.isOpen,
+			(open) => {
+				toggled = true;
+				if (open) setRetired(false);
+			},
+			{ defer: true },
+		),
+	);
 
 	return (
 		<motion.div
+			role="region"
+			aria-label={item.label()}
 			initial={false}
 			animate={{ height: item.isOpen() ? (contentHeight() ?? 0) : 0 }}
 			transition={item.isOpen() ? tween.fast : tween.fastExit}
+			onMotionComplete={() => {
+				if (!item.isOpen()) setRetired(true);
+			}}
 			onMouseEnter={() => {
 				const own = item.index();
 				if (group !== undefined && own !== undefined && item.isOpen())
@@ -523,22 +581,27 @@ export function AccordionContent(props: { children: JSX.Element }) {
 				animate={{ opacity: item.isOpen() ? 1 : 0 }}
 				transition={item.isOpen() ? { duration: 0.06 } : { duration: 0.04 }}
 			>
-				<div
-					ref={measured.ref}
-					style={{
-						display: "flex",
-						flexDirection: "column",
-						flexShrink: 0,
-						paddingTop: 4,
-						paddingLeft: metrics().padX,
-						paddingRight: metrics().padX,
-						paddingBottom: metrics().contentBottom,
-					}}
-				>
-					<text style={{ ...metrics().text, color: color.mutedForeground }}>
-						{props.children}
-					</text>
-				</div>
+				<Show when={!retired()}>
+					<div
+						onLayout={(event: EventPayload) => {
+							measured.onLayout(event);
+							if (!toggled && !item.isOpen()) setRetired(true);
+						}}
+						style={{
+							display: "flex",
+							flexDirection: "column",
+							flexShrink: 0,
+							paddingTop: 4,
+							paddingLeft: metrics().padX,
+							paddingRight: metrics().padX,
+							paddingBottom: metrics().contentBottom,
+						}}
+					>
+						<text style={{ ...metrics().text, color: color.mutedForeground }}>
+							{props.children}
+						</text>
+					</div>
+				</Show>
 			</motion.div>
 		</motion.div>
 	);

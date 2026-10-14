@@ -313,7 +313,7 @@ export function SidebarMenuSub(props: {
 			}}
 		>
 			<div
-				ref={measured.ref}
+				onLayout={measured.onLayout}
 				style={{
 					display: "flex",
 					flexDirection: "column",

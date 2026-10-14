@@ -18,11 +18,7 @@ import { onFrame } from "../lib/clock";
 import { StableLabel } from "../lib/stable-label";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
-import {
-	createMeasuredHeight,
-	KickContext,
-	Kicking,
-} from "../lib/measured-height";
+import { createMeasuredHeight } from "../lib/measured-height";
 import { color, radius, type as scale, motion as tween, weight, focusRing } from "../lib/theme";
 import { Badge, type BadgeColor } from "./badge";
 import { Shimmer } from "./thinking-indicator";
@@ -104,6 +100,7 @@ function TriggerRow(props: {
 	testId?: string;
 	children: string;
 }) {
+	const inert = useContext(InertContext);
 	const [hovered, setHovered] = createSignal(false);
 	const highlighted = () => props.open || hovered();
 	return (
@@ -133,10 +130,9 @@ function TriggerRow(props: {
 				</Show>
 			</AnimatePresence>
 			<div
-				{...buttonProps({ onClick: props.onToggle })}
+				{...buttonProps({ disabled: inert(), onClick: props.onToggle, tabIndex: 0 })}
 				testId={props.testId}
 				aria-expanded={props.open}
-				tabIndex={0}
 				style={{
 					position: "relative",
 					display: "flex",
@@ -172,18 +168,20 @@ function TriggerRow(props: {
 // ─── Collapse ─────────────────────────────────────────────────────────────
 
 /**
+ * Whether a trigger sits inside a closed panel. Base UI hides a closed panel,
+ * which takes its triggers out of the tab order; gpuix has no `display: none`,
+ * so a trigger in a clipped panel would still be tabbable and Enter-activatable.
+ */
+const InertContext = createContext<() => boolean>(() => false);
+
+/**
  * A box whose height springs between 0 and its content's. gpuix cannot animate
- * `height: auto`, so the content is measured from painted bounds and the
+ * `height: auto`, so the content reports its size through `onLayout` and the
  * outer box tweens to that number.
  */
 function Collapse(props: { open: boolean; children: JSX.Element }) {
 	const measured = createMeasuredHeight();
-	createEffect(() => {
-		void props.open;
-		measured.kick();
-		// Opening changes this box's own height, which only the boxes around it can see.
-		measured.kickParent?.();
-	});
+	const parentInert = useContext(InertContext);
 	// A panel that mounts open takes its first height with no spring.
 	const [needsSnap, setNeedsSnap] = createSignal(props.open);
 	createEffect(() => {
@@ -203,10 +201,12 @@ function Collapse(props: { open: boolean; children: JSX.Element }) {
 				overflow: "hidden",
 			}}
 		>
-			<div ref={measured.ref} style={{ flexShrink: 0 }}>
-				<KickContext.Provider value={measured.kick}>
+			<div onLayout={measured.onLayout} style={{ flexShrink: 0 }}>
+				<InertContext.Provider
+					value={() => parentInert() || !props.open}
+				>
 					{props.children}
-				</KickContext.Provider>
+				</InertContext.Provider>
 			</div>
 		</motion.div>
 	);
@@ -319,11 +319,6 @@ export function ThinkingStep(props: {
 	children?: JSX.Element;
 }) {
 	const measured = createMeasuredHeight();
-	// What the ResizeObserver would have caught: any change to what the step shows.
-	createEffect(() => {
-		void [props.label, props.description, props.status, props.isLast];
-		measured.kick();
-	});
 	const status = () => props.status ?? "complete";
 	const labelStyle = { ...scale.body, fontWeight: weight.semibold };
 	return (
@@ -346,7 +341,7 @@ export function ThinkingStep(props: {
 						ease: "easeOut",
 					}}
 				>
-					<div ref={measured.ref}>
+					<div onLayout={measured.onLayout}>
 						<div
 							style={{
 								display: "flex",
@@ -438,9 +433,7 @@ export function ThinkingStep(props: {
 										{props.description}
 									</text>
 								</Show>
-								<KickContext.Provider value={measured.kick}>
-									<Kicking kick={measured.kick}>{props.children}</Kicking>
-								</KickContext.Provider>
+								{props.children}
 							</div>
 						</div>
 					</div>
