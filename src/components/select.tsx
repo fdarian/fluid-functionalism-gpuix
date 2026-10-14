@@ -22,12 +22,16 @@ import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { moveIndex, revealRow } from "../lib/list-nav";
 import { isInside, placePopup, PopupSurface } from "../lib/popup";
-import { createPresence } from "../lib/presence";
+import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
+import { createTypeahead } from "../lib/typeahead";
 import { color, radius, type as scale, scheme, motion as tween, withAlpha, focusRing } from "../lib/theme";
 
 /** How long a pick holds the popup open so the check and the checked background are seen arriving. */
 const ACK_MS = 300;
-const TYPEAHEAD_MS = 500;
+/** Base UI `SELECTED_DELAY`: a release over a row commits only after the popup has been open this long, or after a drag. */
+const PRESS_DRAG_MS = 400;
+/** Base UI: a drag of 8px over the rows enables the release commit early. */
+const PRESS_DRAG_PX = 8;
 const POPUP_MAX_HEIGHT = 300;
 const POPUP_PADDING = 4;
 
@@ -115,8 +119,10 @@ function entryHeight<Value extends string>(
 
 export function Select<Value extends string>(props: {
 	items: readonly SelectEntry<Value>[];
-	value: Value | null;
-	onValueChange: (value: Value) => void;
+	/** Controlled value. Omitted, the select keeps its own, starting at `defaultValue`. */
+	value?: Value | null;
+	defaultValue?: Value | null;
+	onValueChange?: (value: Value) => void;
 	testId?: string;
 	variant?: SelectVariant;
 	size?: SelectSize;
@@ -143,7 +149,7 @@ export function Select<Value extends string>(props: {
 				}
 			: spec();
 
-	const presence = createPresence();
+	const presence = createPresence(POPUP_EXIT_FALLBACK_MS);
 	const hover = createFluidHover({
 		isItemDisabled: (index) => rows()[index]?.disabled === true,
 	});
@@ -153,28 +159,36 @@ export function Select<Value extends string>(props: {
 	const [popupWidth, setPopupWidth] = createSignal(0);
 	/** Set by a pick, so only a check that arrives after the open fades in. */
 	const [picked, setPicked] = createSignal(false);
+	const [ownValue, setOwnValue] = createSignal<Value | null>(
+		props.defaultValue ?? null,
+	);
+	const value = () => (props.value === undefined ? ownValue() : props.value);
 	let triggerWrapper: HostElement | undefined;
+	let triggerElement: HostElement | undefined;
 	let popupElement: HostElement | undefined;
 	let scroller: HostElement | undefined;
-	/** Set on open: the checked row is scrolled into view once its rect has been measured. */
+	/** Set on open: the highlighted row is scrolled into view once its rect has been measured. */
 	let revealOnMeasure = false;
 	let ackTimer: ReturnType<typeof setTimeout> | undefined;
-	let typeahead = "";
-	let typeaheadTimer: ReturnType<typeof setTimeout> | undefined;
-	onCleanup(() => {
-		clearTimeout(ackTimer);
-		clearTimeout(typeaheadTimer);
-	});
+	let openedAt = 0;
+	/** The row a press began on, so its click commits but a release that began elsewhere is judged by the drag rules. */
+	let pressedIndex: number | null = null;
+	let dragY = 0;
+	let dragFromY: number | undefined;
+	let dragCommits = false;
+	onCleanup(() => clearTimeout(ackTimer));
 
 	const rows = createMemo(() => props.items.filter(isItem));
 	const selectedIndex = () => {
-		if (props.value === null) return -1;
-		return rows().findIndex((row) => row.value === props.value);
+		const current = value();
+		if (current === null) return -1;
+		return rows().findIndex((row) => row.value === current);
 	};
 	const selected = () => {
-		if (props.value === null) return undefined;
+		const current = value();
+		if (current === null) return undefined;
 		const row = rows()[selectedIndex()];
-		if (row === undefined) throw new Error(`No item for ${props.value}`);
+		if (row === undefined) throw new Error(`No item for ${current}`);
 		return row;
 	};
 	const listHeight = () =>
@@ -183,7 +197,43 @@ export function Select<Value extends string>(props: {
 			2 * POPUP_PADDING + 2,
 		);
 
-	const open = () => {
+	const commitValue = (row: SelectItem<Value>) => {
+		if (props.value === undefined) setOwnValue(() => row.value);
+		props.onValueChange?.(row.value);
+	};
+	const firstEnabled = () => rows().findIndex((row) => row.disabled !== true);
+	const lastEnabled = () => {
+		const all = rows();
+		for (let index = all.length - 1; index >= 0; index--) {
+			if (all[index].disabled !== true) return index;
+		}
+		return -1;
+	};
+
+	const typeahead = createTypeahead({
+		labels: () => rows().map((row) => row.label),
+		current: () => (selectedIndex() === -1 ? hover.activeIndex() : selectedIndex()),
+		isDisabled: (index) => rows()[index].disabled === true,
+		onMatch: (index) => {
+			// Closed, Base UI commits the match as the value and does not open.
+			if (!presence.open()) {
+				commitValue(rows()[index]);
+				return;
+			}
+			hover.setActiveIndex(index);
+			revealIndex(index);
+		},
+	});
+	onCleanup(typeahead.reset);
+
+	/** Where the highlight starts: the picked row; else, for a keyboard open, the first (or last) enabled one. */
+	const openHighlight = (from: "pointer" | "down" | "up") => {
+		if (selectedIndex() !== -1) return selectedIndex();
+		if (from === "pointer") return null;
+		const index = from === "down" ? firstEnabled() : lastEnabled();
+		return index === -1 ? null : index;
+	};
+	const open = (from: "pointer" | "down" | "up" = "pointer") => {
 		if (props.disabled === true || presence.open()) return;
 		if (triggerWrapper === undefined) throw new Error("Select is not mounted");
 		const placement = placePopup(
@@ -196,17 +246,37 @@ export function Select<Value extends string>(props: {
 		setPopupWidth(Math.max(placement.triggerWidth, props.popupWidth ?? 0));
 		setPicked(false);
 		revealOnMeasure = true;
+		openedAt = performance.now();
+		pressedIndex = null;
+		dragY = 0;
+		dragFromY = undefined;
+		dragCommits = false;
+		typeahead.reset();
 		presence.show();
-		hover.setActiveIndex(selectedIndex() === -1 ? null : selectedIndex());
+		hover.setActiveIndex(openHighlight(from));
+	};
+	/**
+	 * Base UI hands focus back to the trigger unless it moved somewhere else
+	 * (an outside press on another control keeps that control's focus).
+	 */
+	const returnFocus = () => {
+		setTimeout(() => {
+			if (triggerElement === undefined || !triggerElement.mounted) return;
+			const focused = renderer.getFocusedElementId?.() ?? null;
+			if (focused === null) renderer.focusElement?.(triggerElement.id);
+		}, 0);
 	};
 	const close = () => {
 		clearTimeout(ackTimer);
-		if (presence.open()) presence.hide();
+		if (!presence.open()) return;
+		presence.hide();
+		typeahead.reset();
+		returnFocus();
 	};
 	const pick = (row: SelectItem<Value>) => {
 		if (row.disabled === true) return;
 		setPicked(true);
-		props.onValueChange(row.value);
+		commitValue(row);
 		clearTimeout(ackTimer);
 		ackTimer = setTimeout(close, ACK_MS);
 	};
@@ -217,47 +287,39 @@ export function Select<Value extends string>(props: {
 		if (row !== undefined) revealRow(scroller, row, "nearest", POPUP_PADDING);
 	};
 
+	/** Arrow keys stop at the ends and visit disabled rows, like Base UI's `loopFocus: false` with `disabledIndices: []`. */
 	const move = (delta: 1 | -1) => {
-		const all = rows();
 		const next = moveIndex(
 			hover.activeIndex(),
 			delta,
-			all.length,
-			(index) => all[index].disabled === true,
+			rows().length,
+			undefined,
+			false,
 		);
 		if (next === null) return;
 		hover.setActiveIndex(next);
 		revealIndex(next);
 	};
-	const typeAhead = (char: string) => {
-		clearTimeout(typeaheadTimer);
-		typeahead += char.toLowerCase();
-		typeaheadTimer = setTimeout(() => {
-			typeahead = "";
-		}, TYPEAHEAD_MS);
-		const all = rows();
-		const current = hover.activeIndex() ?? selectedIndex();
-		const start = typeahead.length === 1 ? current + 1 : Math.max(current, 0);
-		for (let step = 0; step < all.length; step++) {
-			const index = (start + step) % all.length;
-			const row = all[index];
-			if (
-				row.disabled !== true &&
-				row.label.toLowerCase().startsWith(typeahead)
-			) {
-				if (!presence.open()) open();
-				hover.setActiveIndex(index);
-				revealIndex(index);
-				return;
-			}
-		}
+	const jump = (index: number) => {
+		hover.setActiveIndex(index);
+		revealIndex(index);
 	};
 	const onKeyDown = (event: KeyEvent) => {
+		const modifiers = event.modifiers;
+		if (modifiers !== undefined && (modifiers.ctrl || modifiers.alt || modifiers.cmd)) {
+			return;
+		}
+		// Typeahead first: Space inside a session continues it instead of opening or picking.
+		if (typeahead.handleKey(event)) {
+			event.preventDefault();
+			event.stopPropagation();
+			return;
+		}
 		switch (event.key) {
 			case "enter":
 			case "space": {
 				if (!presence.open()) {
-					open();
+					open("down");
 					return;
 				}
 				const index = hover.activeIndex();
@@ -265,12 +327,23 @@ export function Select<Value extends string>(props: {
 				return;
 			}
 			case "down":
+				event.preventDefault();
+				event.stopPropagation();
 				if (presence.open()) move(1);
-				else open();
+				else open("down");
 				return;
 			case "up":
+				event.preventDefault();
+				event.stopPropagation();
 				if (presence.open()) move(-1);
-				else open();
+				else open("up");
+				return;
+			case "home":
+			case "end":
+				if (!presence.open() || rows().length === 0) return;
+				event.preventDefault();
+				event.stopPropagation();
+				jump(event.key === "home" ? 0 : rows().length - 1);
 				return;
 			case "escape":
 				// Closing pops the popup's dismiss layer before the window sees this Escape, which would then close the dialog behind.
@@ -281,16 +354,38 @@ export function Select<Value extends string>(props: {
 				close();
 				return;
 		}
-		if (event.key !== undefined && event.key.length === 1) {
-			typeAhead(event.key);
+	};
+	const onTriggerMouseDown = (event: EventPayload) => {
+		if (event.button !== undefined && event.button !== 0) return;
+		if (presence.open()) close();
+		else open("pointer");
+	};
+	/** Press on the trigger, drag onto a row and release picks it: at once after a drag of 8px, else after 400 ms. */
+	const onRowMouseUp = (row: SelectItem<Value>, index: number) => {
+		dragY = 0;
+		dragFromY = undefined;
+		if (row.disabled === true || pressedIndex === index) return;
+		const settled = performance.now() - openedAt >= PRESS_DRAG_MS;
+		const allowed = value() === row.value ? settled : settled || dragCommits;
+		if (allowed) pick(row);
+	};
+	const onListMouseMove = (event: EventPayload) => {
+		hover.handlers.onMouseMove(event);
+		if (event.pressedButton !== 0 || event.y === undefined) {
+			dragFromY = undefined;
+			return;
 		}
+		if (dragFromY !== undefined) dragY += event.y - dragFromY;
+		dragFromY = event.y;
+		if (dragY ** 2 >= PRESS_DRAG_PX ** 2) dragCommits = true;
 	};
 
 	createEffect(
 		on(hover.rects, () => {
 			if (!revealOnMeasure) return;
 			revealOnMeasure = false;
-			if (selectedIndex() !== -1) revealIndex(selectedIndex());
+			const index = hover.activeIndex();
+			if (index !== null) revealIndex(index);
 		}),
 	);
 	/** A pick moved the checked row; the highlight follows the pointer again. */
@@ -337,9 +432,9 @@ export function Select<Value extends string>(props: {
 						index={slot.index}
 						spec={spec()}
 						lit={
-							hover.activeIndex() === slot.index || props.value === slot.row.value
+							hover.activeIndex() === slot.index || value() === slot.row.value
 						}
-						checked={props.value === slot.row.value}
+						checked={value() === slot.row.value}
 						fadeCheck={picked()}
 						hover={hover}
 						testId={
@@ -347,7 +442,16 @@ export function Select<Value extends string>(props: {
 								? undefined
 								: `${props.testId}-option-${slot.row.value}`
 						}
-						onPick={() => pick(slot.row)}
+						onPress={() => {
+							pressedIndex = slot.index;
+							dragY = 0;
+						}}
+						onPick={() => {
+							if (pressedIndex !== slot.index) return;
+							pressedIndex = null;
+							pick(slot.row);
+						}}
+						onRelease={() => onRowMouseUp(slot.row, slot.index)}
 					/>
 				);
 			case "label":
@@ -403,10 +507,13 @@ export function Select<Value extends string>(props: {
 				style={{ position: "relative" }}
 			>
 				<div
-					role="button"
+					ref={(element) => {
+						triggerElement = element;
+					}}
+					role="combobox"
 					aria-expanded={presence.open()}
 					tabIndex={props.disabled === true ? -1 : 0}
-					onClick={() => (presence.open() ? close() : open())}
+					onMouseDown={onTriggerMouseDown}
 					onKeyDown={onKeyDown}
 					onMouseEnter={() => setTriggerHovered(true)}
 					onMouseLeave={() => setTriggerHovered(false)}
@@ -494,6 +601,7 @@ export function Select<Value extends string>(props: {
 						ref={(element) => {
 							scroller = element;
 						}}
+						role="listbox"
 						onScroll={hover.handlers.onScroll}
 						style={{
 							display: "flex",
@@ -505,6 +613,7 @@ export function Select<Value extends string>(props: {
 						{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
 						<div
 							{...hover.containerProps}
+							onMouseMove={onListMouseMove}
 							style={{
 								position: "relative",
 								display: "flex",
@@ -554,6 +663,8 @@ function Row<Value extends string>(props: {
 	hover: ReturnType<typeof createFluidHover>;
 	testId?: string;
 	onPick: () => void;
+	onPress: () => void;
+	onRelease: () => void;
 }): JSX.Element {
 	let rowElement: HostElement | undefined;
 	useHoverItem(
@@ -569,6 +680,8 @@ function Row<Value extends string>(props: {
 			role="option"
 			testId={props.testId}
 			aria-selected={props.checked}
+			onMouseDown={props.onPress}
+			onMouseUp={props.onRelease}
 			onClick={props.onPick}
 			style={{
 				height: props.spec.height,

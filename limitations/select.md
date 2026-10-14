@@ -47,6 +47,8 @@ The component is data-driven (`items`, `value`, `onValueChange`) so the Theme pi
 ## Smaller notes
 
 - **Border alpha tokens:** `border-destructive/50` and `bg-border/60` have no runtime mix, so both are resolved to rgba literals per scheme next to the component. Already known (`color-mix`); no theme token added.
-- **Focus lives on the trigger:** gpuix rows are not focusable, so the keyboard drives a highlight index while focus stays on the trigger (Base UI moves real focus into the popup). Typeahead listens for single-character `event.key` on the trigger.
+- **Focus lives on the trigger:** gpuix rows are not focusable, so the keyboard drives a highlight index while focus stays on the trigger (Base UI moves real focus into the popup). Typeahead listens on the trigger through `src/lib/typeahead.ts` (Base UI's `useTypeahead` rules); a closed trigger commits the match without opening, like Base UI. On close, focus goes back to the trigger only if nothing else took it.
+- **Press, drag, release:** the popup opens on mouse-down; a release over a row picks it after 400 ms or an 8px drag. Base UI also closes the popup when that release lands outside the trigger and popup; gpuix has no mouse-up-outside event, so the popup stays open there.
+- **Not ported (FF styling layer):** the keyboard focus ring that springs between rows and the click-in-the-gap-picks-the-nearest-row handler.
 - **Scrollbar and scroll fade:** the list is a bare `overflowY: "scroll"` (see the README's ScrollArea row).
 - **Form props** (`name`, `required`, the hidden input): no form integration in gpuix, not ported.
