@@ -37,9 +37,9 @@ Original: `registry/default/input-message.tsx`. Ported in `src/components/input-
 ## Height animation needs the content measured by hand
 
 - **Original:** the attachments, queue and suggestions regions animate to a self-measured pixel height (`useRegionHeight`, a `ResizeObserver` on the content), on `spring.moderate`.
-- **gpuix lacks:** `height: auto` in `motion` (`MotionStyle` takes numbers) and a resize observer.
-- **Workaround:** `Collapse` reads the content's painted height with `getElementBounds` on a 16ms retry and tweens the clip to it, taking a new reading when `revision` changes. It throws if the box never paints. The spring enter is `tween.moderate`; the exit is the 120ms tween.
-- **Fidelity:** approximated: a frame or two late on a content change, and no re-measure when the content wraps differently on resize.
+- **gpuix lacks:** `height: auto` in `motion` (`MotionStyle` takes numbers).
+- **Workaround:** `Collapse` puts `onLayout` on the content box (`src/lib/measured-height.ts`), which reports its height after the first paint and on every size change, a wrap on resize included, and tweens the clip to it. The spring enter is `tween.moderate`; the exit is the 120ms tween.
+- **Fidelity:** exact for size changes.
 - **Components it hits:** accordion, queued-stack, any collapsing region.
 
 ## Reordering has no layout animation or drag primitive

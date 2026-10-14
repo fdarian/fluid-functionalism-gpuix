@@ -39,10 +39,10 @@ Everything the docs page shows is ported and renders in both themes: the field, 
 ## Panel height does not follow its rows
 
 - **Original:** the panel measures its column (`ResizeObserver`) and springs `height` to it on `moderate`, so filtering shrinks the panel smoothly.
-- **gpuix lacks:** a layout observer. `motion` can animate `height`, but the target must be known, and the only source is `getElementBounds` read on a timer, one frame stale (see README, `ResizeObserver` row). Missing feature.
+- **gpuix lacks:** nothing now: `motion` can animate `height` and `onLayout` reports the column's height after the first paint and on every change (`src/lib/measured-height.ts`, as the accordion does). Not ported yet.
 - **Workaround:** none; the panel snaps to its new height when the rows change.
 - **Fidelity:** dropped.
-- **Components it hits:** accordion, any auto-height reveal; the sidebar sub-menu tracks it with `remeasureFor`.
+- **Components it hits:** none in gpuix terms; the accordion, the sidebar sub-menu, input-message and thinking-steps already use `onLayout` for the same job.
 
 ## Scroll divider and scroll fade
 

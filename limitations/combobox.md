@@ -13,7 +13,7 @@ Original: `registry/base/combobox.tsx`. Ported in `src/components/combobox.tsx`,
 ## Live placement
 
 - **Original:** the Positioner re-flips and re-caps the popup as it resizes, scrolls or the window changes.
-- **gpuix lacks:** a flip that clears the anchor and a layout signal for the window (README placement and ResizeObserver rows).
+- **gpuix lacks:** a flip that clears the anchor and a signal for the field moving (`onLayout` reports size changes only; README placement and layout rows).
 - **Workaround:** `place()` runs on open and again whenever the filtered row count changes, from the field's painted bounds.
 - **Fidelity:** approximated.
 - **Components it hits:** select, dropdown.
