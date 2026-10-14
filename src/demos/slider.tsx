@@ -16,6 +16,9 @@ const [only, setOnly] = createSignal<"compact" | "display" | "default">();
 const visible = (card: "compact" | "display" | "default") => () =>
 	only() === undefined || only() === card;
 
+/** The resize rows' width: a scenario narrows it to show the thumbs and fill follow the layout. */
+const [resizeWidth, setResizeWidth] = createSignal(288);
+
 export const title = "Slider";
 export const group = "Components";
 
@@ -24,6 +27,9 @@ export function Demo() {
 	const [range, setRange] = createSignal<SliderValue>([25, 75]);
 	const [stepped, setStepped] = createSignal<SliderValue>(50);
 	const [stepped10, setStepped10] = createSignal<SliderValue>(50);
+	const [decimal, setDecimal] = createSignal<SliderValue>(0.2);
+	const [resizable, setResizable] = createSignal<SliderValue>(50);
+	const [resizablePips, setResizablePips] = createSignal(2);
 	const [rating, setRating] = createSignal<SliderValue>(0.7);
 	const [left, setLeft] = createSignal<SliderValue>(40);
 	const [right, setRight] = createSignal<SliderValue>(60);
@@ -74,6 +80,30 @@ export function Demo() {
 									showSteps
 								/>
 							</Well>
+						</DemoRow>
+						<DemoRow label="Decimal">
+							<Well>
+								<Slider
+									testId="decimal"
+									size="compact"
+									value={decimal()}
+									onChange={setDecimal}
+									min={0}
+									max={100}
+									step={0.1}
+								/>
+							</Well>
+						</DemoRow>
+						<DemoRow label="Resize">
+							<div style={{ width: resizeWidth() }}>
+								<Slider
+									testId="resize"
+									size="compact"
+									value={resizable()}
+									onChange={setResizable}
+									showValue={false}
+								/>
+							</div>
 						</DemoRow>
 						<DemoRow label="Non-uniform">
 							<Well>
@@ -182,6 +212,19 @@ export function Demo() {
 								/>
 							</Well>
 						</DemoRow>
+						<DemoRow label="Resize">
+							<div style={{ width: resizeWidth() }}>
+								<Slider
+									testId="resize-pips"
+									size="default"
+									label="Roundness"
+									value={resizablePips()}
+									onChange={setResizablePips}
+									min={0}
+									max={4}
+								/>
+							</div>
+						</DemoRow>
 						<DemoRow label="Format">
 							<Well>
 								<Slider
@@ -246,6 +289,24 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	setOnly("compact");
 	await shot.settle(300);
 	shot.capture("compact");
+	// Keys, reached by walking back through the tab order from cold: theme, rating, resize, decimal, steps10, steps25, range, basic.
+	await shot.press("shift-tab shift-tab shift-tab shift-tab");
+	await shot.press("right");
+	shot.expectText("0.3", true);
+	shot.expectText("0.30000", false);
+	await shot.press("shift-tab shift-tab");
+	// Page Up is 10 value units whatever the step, so step 25 lands off the grid, as in FF.
+	await shot.press("pageup");
+	shot.expectText("60", true);
+	await shot.press("pagedown pagedown");
+	shot.expectText("40", true);
+	await shot.press("shift-tab shift-tab shift-tab");
+	await shot.press("shift-right");
+	shot.expectText("35", true);
+	await shot.press("pageup");
+	shot.expectText("45", true);
+	shot.capture("compact-keys");
+	await shot.clickAt(1180, 700);
 	await hoverAt(shot, "basic-track", 40, "compact-hover");
 	await drag(shot, "basic-track", [60, 100], "compact-drag");
 	await shot.moveTo(1180, 700);
@@ -259,6 +320,12 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await drag(shot, "rating-track", [-30, -90], "list-drag");
 	await shot.moveTo(1180, 700);
 	shot.capture("compact-after");
+
+	// The track follows its container: narrower, the thumb and fill stay on the value.
+	setResizeWidth(160);
+	await shot.settle(400);
+	shot.capture("compact-resized");
+	setResizeWidth(288);
 
 	setOnly("display");
 	await shot.settle(300);
@@ -288,5 +355,16 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("keyboard-focus");
 	await shot.press("right");
 	shot.capture("keyboard-moved");
+	shot.expectText("High", true);
+	// Shift jumps 10 and clamps to the end; Page Down jumps back past the start.
+	await shot.press("shift-right");
+	shot.expectText("Ultra", true);
+	await shot.press("pagedown");
+	shot.expectText("Off", true);
+	await shot.clickAt(1180, 700);
+	setResizeWidth(160);
+	await shot.settle(400);
+	shot.capture("default-resized");
+	setResizeWidth(288);
 	setOnly(undefined);
 };

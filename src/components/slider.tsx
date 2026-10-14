@@ -91,6 +91,43 @@ function snapToStep(
 	return Math.round((clamped - min) / step) * step + min;
 }
 
+/** Base UI's `largeStep` default: Shift+arrow and Page Up / Down move this many value units (or list entries). It is independent of `step`, so FF's off-grid result for step 25 is kept. */
+const LARGE_STEP = 10;
+
+/** Decimal digits of a number, so a keyboard step can be rounded without float noise (Base UI's `getDecimalPrecision`). */
+function decimalPlaces(n: number) {
+	if (n === 0) return 0;
+	if (Math.abs(n) < 1) {
+		const [mantissa, exponent] = n.toExponential().split("e-");
+		const fraction = mantissa.split(".")[1];
+		return (fraction === undefined ? 0 : fraction.length) + Number.parseInt(exponent, 10);
+	}
+	const fraction = n.toString().split(".")[1];
+	return fraction === undefined ? 0 : fraction.length;
+}
+
+/** One keyboard move from `current` by `increment`: the current value is first rounded onto the step grid, the result is rounded to the widest precision involved and clamped (Base UI's `roundValueToStep` + `getNewValue`). */
+function keyboardStep(
+	current: number,
+	increment: number,
+	direction: 1 | -1,
+	min: number,
+	max: number,
+	step: number,
+) {
+	const onGrid = Number(
+		(Math.round((current - min) / step) * step + min).toFixed(
+			Math.max(decimalPlaces(step), decimalPlaces(min)),
+		),
+	);
+	const moved = Number(
+		(onGrid + increment * direction).toFixed(
+			Math.max(decimalPlaces(onGrid), decimalPlaces(increment), decimalPlaces(min)),
+		),
+	);
+	return Math.max(min, Math.min(max, moved));
+}
+
 // ─── Painted bounds ──────────────────────────────────────────────────────────
 
 /**
@@ -199,6 +236,11 @@ function createHover() {
 		enter: () => setOverCount(overCount() + 1),
 		leave: () => setOverCount(overCount() - 1),
 	};
+}
+
+function layoutWidth(event: EventPayload) {
+	if (event.width === undefined) throw new Error("Layout event without a width");
+	return event.width;
 }
 
 function pointerX(event: EventPayload) {
@@ -581,16 +623,26 @@ function CompactSlider(props: CompactProps) {
 		onMouseLeave: onLeave,
 	};
 
-	/** Arrow keys, Home / End and Page Up / Down walk the thumb along the step list or grid. */
+	/** Base UI's thumb keys: arrows by `step` (Shift: `largeStep`), Page Up / Down by `largeStep`, Home / End to the bound or the neighbouring thumb. A `steps` list runs on indices, like FF's primitive. */
 	const onThumbKey = (thumb: number) => (event: KeyEvent) => {
+		if (props.disabled || event.defaultPrevented) return;
 		const list = stepValues();
 		const current = values()[thumb];
-		const move = (count: number) => {
-			if (list !== null) {
-				const next = list[nearestStepIndex(current, list) + count];
-				return next === undefined ? current : next;
+		const large = event.modifiers?.shift === true;
+		const walk = (direction: 1 | -1, jump: boolean) => {
+			if (list === null) {
+				return keyboardStep(
+					current,
+					jump ? LARGE_STEP : step(),
+					direction,
+					min(),
+					max(),
+					step(),
+				);
 			}
-			return snapToStep(current + count * step(), min(), max(), step(), null);
+			const index =
+				nearestStepIndex(current, list) + direction * (jump ? LARGE_STEP : 1);
+			return list[Math.max(0, Math.min(list.length - 1, index))];
 		};
 		const lower = thumb === 1 ? values()[0] : min();
 		const upper = thumb === 0 && isRange() ? values()[1] : max();
@@ -598,17 +650,17 @@ function CompactSlider(props: CompactProps) {
 		switch (event.key) {
 			case "right":
 			case "up":
-				next = move(1);
+				next = walk(1, large);
 				break;
 			case "left":
 			case "down":
-				next = move(-1);
+				next = walk(-1, large);
 				break;
 			case "pageup":
-				next = move(list === null ? 10 : 1);
+				next = walk(1, true);
 				break;
 			case "pagedown":
-				next = move(list === null ? -10 : -1);
+				next = walk(-1, true);
 				break;
 			case "home":
 				next = lower;
@@ -620,7 +672,26 @@ function CompactSlider(props: CompactProps) {
 				return;
 		}
 		event.preventDefault();
+		// Base UI keeps its composite keys from reaching ancestors; Page Up / Down still bubble.
+		if (event.key !== "pageup" && event.key !== "pagedown") {
+			event.stopPropagation();
+		}
 		emitChange(thumb, Math.max(lower, Math.min(upper, next)));
+	};
+
+	/** FF's per-thumb names: "<label> minimum" / "<label> maximum", or bare "Minimum" / "Maximum". */
+	const thumbLabel = (index: number) => {
+		if (!isRange()) return props.label;
+		const side = index === 0 ? "Minimum" : "Maximum";
+		return props.label === undefined
+			? side
+			: `${props.label} ${side.toLowerCase()}`;
+	};
+	/** Base UI + FF: a list announces `formatValue`, a range its default "N start range" / "N end range". gpuix has no `aria-valuenow`, so a single thumb announces `formatValue` where Base UI would leave it to the number. */
+	const thumbValueText = (index: number) => {
+		const value = values()[index];
+		if (stepValues() !== null || !isRange()) return formatValue(value);
+		return `${value.toLocaleString()} ${index === 0 ? "start" : "end"} range`;
 	};
 
 	const stepDots = createMemo(() => {
@@ -768,6 +839,7 @@ function CompactSlider(props: CompactProps) {
 					testId={
 						props.testId === undefined ? undefined : `${props.testId}-track`
 					}
+					onLayout={(event: EventPayload) => setTrackWidth(layoutWidth(event))}
 					style={{
 						position: "relative",
 						width: "100%",
@@ -1091,22 +1163,34 @@ function ComfortableSlider(props: ComfortableProps) {
 		onMouseLeave: onLeave,
 	};
 
+	/** The compact thumb's keys (Base UI's, reached in FF through its invisible primitive). */
 	const onKey = (event: KeyEvent) => {
+		if (props.disabled || event.defaultPrevented) return;
+		const large = event.modifiers?.shift === true;
+		const move = (direction: 1 | -1, jump: boolean) =>
+			keyboardStep(
+				props.value,
+				jump ? LARGE_STEP : step(),
+				direction,
+				min(),
+				max(),
+				step(),
+			);
 		let next: number;
 		switch (event.key) {
 			case "right":
 			case "up":
-				next = props.value + step();
+				next = move(1, large);
 				break;
 			case "left":
 			case "down":
-				next = props.value - step();
+				next = move(-1, large);
 				break;
 			case "pageup":
-				next = props.value + step() * 10;
+				next = move(1, true);
 				break;
 			case "pagedown":
-				next = props.value - step() * 10;
+				next = move(-1, true);
 				break;
 			case "home":
 				next = min();
@@ -1118,7 +1202,10 @@ function ComfortableSlider(props: ComfortableProps) {
 				return;
 		}
 		event.preventDefault();
-		emit(Math.max(min(), Math.min(max(), next)));
+		if (event.key !== "pageup" && event.key !== "pagedown") {
+			event.stopPropagation();
+		}
+		emit(next);
 	};
 
 	const glide = () => (placing() ? tween.snap : tween.fast);
@@ -1178,6 +1265,9 @@ function ComfortableSlider(props: ComfortableProps) {
 			<div
 				ref={box.ref}
 				testId={props.testId === undefined ? undefined : `${props.testId}-row`}
+				onLayout={(event: EventPayload) =>
+					setRowWidth(layoutWidth(event) - ROW_BORDER * 2)
+				}
 				{...pointer}
 				style={{
 					position: "relative",
@@ -1397,7 +1487,9 @@ function ComfortableSlider(props: ComfortableProps) {
 			<div
 				tabIndex={props.disabled ? -1 : 0}
 				role="slider"
+				testId={props.testId === undefined ? undefined : `${props.testId}-thumb`}
 				aria-label={props.label}
+				aria-valuetext={formatValue(props.value)}
 				onKeyDown={onKey}
 				onFocus={() => setFocused(true)}
 				onBlur={() => setFocused(false)}
