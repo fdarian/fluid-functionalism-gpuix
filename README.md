@@ -76,7 +76,7 @@ settle / expectText / capture`; see `ShotContext` in `src/lib/demo.ts`. Give ele
 | `theme.ts` | Both columns of every `light-dark()` in `app/globals.css` (`color-mix()` mixed offline), type scale, radii, springs. `color.x` reads a `scheme` signal, so a JSX prop that touches it re-colours on a theme change; read tokens inside JSX or a function, never at module scope. `withAlpha`, `surface(level)`, `focusRing(offset)`. |
 | `fluid-hover.ts`, `fluid-highlight.tsx` | The site's `use-fluid-hover`: rows register with a `ResizeObserver`, their boxes are read with `getBoundingClientRect` when one reports, `pickNearest` (ported verbatim) resolves the pointer to a row including gaps, and one highlight glides between rows. `hover.containerProps` and `useHoverItem` wire a list. |
 | `measured-height.ts` | A box whose height springs to its content's: re-reads while "hot", used by every collapse. |
-| `popup.tsx`, `presence.ts` | Popup chrome on `<anchored>`, `placePopup` (side from bounds, capped height), `isInside` (outside presses by bounds), and `createPresence` (mounted outlives open so an exit can play). |
+| `popup.tsx`, `presence.ts` | Popup chrome on `<anchored fit="flip">` (`PopupSurface`; `createPlacementState` keeps the reported side and available height), and `createPresence` (mounted outlives open so an exit can play). |
 | `list-nav.ts` | `moveIndex` (skip disabled, wrap or clamp) and `revealRow` (scroll a row into view by hand). |
 | `stable-label.tsx` | A label that gains weight without moving its neighbours: a hidden semibold copy reserves the width. |
 | `clock.ts` | One shared, ref-counted frame clock for every JS-driven loop. |

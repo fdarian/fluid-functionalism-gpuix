@@ -19,7 +19,7 @@ import { createFluidHover, createReflowGate, useHoverItem } from "../lib/fluid-h
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { isChord, moveIndex, revealRow } from "../lib/list-nav";
-import { isInside, PopupSurface } from "../lib/popup";
+import { PopupSurface } from "../lib/popup";
 import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import {
 	color,
@@ -148,8 +148,6 @@ export function Combobox(props: {
 	/** Armed while typing re-filters the rows under the highlights: those frames snap, not glide. */
 	const reflow = createReflowGate();
 
-	let rootElement: HostElement | undefined;
-	let popupElement: HostElement | undefined;
 	let inputElement: HostElement | undefined;
 	let scroller: HostElement | undefined;
 	/** Set on open: the highlighted row is scrolled into view once its rect has been measured. */
@@ -332,9 +330,6 @@ export function Combobox(props: {
 		openPopup();
 		setQuery(text);
 	};
-	const onMouseDownOutside = (event: EventPayload) => {
-		if (!isInside(event, [rootElement, popupElement])) closePopup();
-	};
 	const onListMouseLeave = () => {
 		hover.handlers.onMouseLeave();
 		// `autoHighlight="always"` refills a dropped highlight with the first row, so Enter always has a target.
@@ -356,11 +351,8 @@ export function Combobox(props: {
 
 	return (
 		<div
-			ref={(element) => {
-				rootElement = element;
-			}}
 			testId={props.testId}
-			onMouseDownOutside={onMouseDownOutside}
+			onMouseDownOutside={closePopup}
 			style={{
 				position: "relative",
 				width: width(),
@@ -502,10 +494,6 @@ export function Combobox(props: {
 				width={width()}
 				maxHeight={POPUP_MAX_HEIGHT}
 				onDismiss={closePopup}
-				onMouseDownOutside={onMouseDownOutside}
-				popupRef={(element) => {
-					popupElement = element;
-				}}
 			>
 				{(popupMaxHeight) => (
 				<Show

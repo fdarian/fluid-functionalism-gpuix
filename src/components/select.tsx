@@ -21,7 +21,7 @@ import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { edgeIndex, isChord, moveIndex, revealRow } from "../lib/list-nav";
-import { isInside, PopupSurface } from "../lib/popup";
+import { PopupSurface } from "../lib/popup";
 import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import { returnFocusTo } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
@@ -152,9 +152,7 @@ export function Select<Value extends string>(props: {
 		props.defaultValue ?? null,
 	);
 	const value = () => (props.value === undefined ? ownValue() : props.value);
-	let triggerWrapper: HostElement | undefined;
 	let triggerElement: HostElement | undefined;
-	let popupElement: HostElement | undefined;
 	let scroller: HostElement | undefined;
 	/** Set on open: the highlighted row is scrolled into view once its rect has been measured. */
 	let revealOnMeasure = false;
@@ -358,10 +356,6 @@ export function Select<Value extends string>(props: {
 	};
 	const hoverRect = () => rectOf(hover.activeIndex())();
 
-	const onOutside = (event: EventPayload) => {
-		if (!isInside(event, [triggerWrapper, popupElement])) close();
-	};
-
 	const triggerIcon = (): IconRef | undefined => {
 		if (inline()) return selected()?.icon;
 		return props.icon;
@@ -459,11 +453,8 @@ export function Select<Value extends string>(props: {
 			}}
 		>
 			<div
-				ref={(element) => {
-					triggerWrapper = element;
-				}}
 				testId={props.testId}
-				onMouseDownOutside={onOutside}
+				onMouseDownOutside={close}
 				style={{ position: "relative" }}
 			>
 				<div
@@ -551,10 +542,6 @@ export function Select<Value extends string>(props: {
 					width={props.popupWidth ?? (inline() ? 160 : "anchor-size(width)")}
 					maxHeight={POPUP_MAX_HEIGHT}
 					onDismiss={close}
-					onMouseDownOutside={onOutside}
-					popupRef={(element) => {
-						popupElement = element;
-					}}
 				>
 					{(popupMaxHeight) => (
 					<div

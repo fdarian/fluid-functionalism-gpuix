@@ -25,7 +25,6 @@ import { defineIcon } from "../lib/icons";
 import { edgeIndex, isChord, moveIndex } from "../lib/list-nav";
 import {
 	createPlacementState,
-	isInside,
 	POPUP_MARGIN,
 	POPUP_OFFSET,
 } from "../lib/popup";
@@ -692,9 +691,6 @@ function Popup(props: {
 	presence: ReturnType<typeof createPresence>;
 	width: number;
 	level: number;
-	onMouseDownOutside?: (event: EventPayload) => void;
-	/** The card, for callers that ask whether a press landed on it. */
-	cardRef?: (element: HostElement) => void;
 	children: JSX.Element;
 }) {
 	const placement = createPlacementState("bottom");
@@ -710,11 +706,9 @@ function Popup(props: {
 				onPlacement={placement.onPlacement}
 				deferred
 				priority={2}
-				onMouseDownOutside={props.onMouseDownOutside}
 				style={{ backgroundColor: color.transparent }}
 			>
 				<motion.div
-					ref={props.cardRef}
 					initial={{ opacity: 0, top: slide() }}
 					animate={
 						props.presence.open()
@@ -749,16 +743,13 @@ function FormatDropdown(props: {
 	defaultOpen?: boolean;
 	/** The surface the menu rises above: it sits two levels higher. */
 	level: number;
-	onOpenChange?: (open: boolean) => void;
 	testId: string;
 }) {
 	const renderer = useGpuixRequired();
 	const presence = createPresence();
 	const hover = createFluidHover();
 	const [triggerHovered, setTriggerHovered] = createSignal(false);
-	let trigger: HostElement | undefined;
 	let button: HostElement | undefined;
-	let card: HostElement | undefined;
 	const checkedIndex = () => FORMATS.indexOf(props.value);
 	const width = (INNER_WIDTH - 8) / 2;
 
@@ -769,13 +760,11 @@ function FormatDropdown(props: {
 		hover.setActiveIndex(
 			from === "pointer" ? null : edgeIndex(from, FORMATS.length),
 		);
-		props.onOpenChange?.(true);
 	};
 	/** Closing hands focus back to the trigger unless it already moved to another control; Tab lets it move on. */
 	const close = (returnFocus = true) => {
 		if (!presence.open()) return;
 		presence.hide();
-		props.onOpenChange?.(false);
 		if (!returnFocus || button === undefined) return;
 		returnFocusTo(renderer, button.id);
 	};
@@ -858,9 +847,7 @@ function FormatDropdown(props: {
 
 	return (
 		<div
-			ref={(node) => {
-				trigger = node;
-			}}
+			onMouseDownOutside={() => close()}
 			style={{ position: "relative", width, height: height.control }}
 		>
 			<div
@@ -916,17 +903,7 @@ function FormatDropdown(props: {
 					color={color.mutedForeground}
 				/>
 			</div>
-			<Popup
-				presence={presence}
-				width={width}
-				level={props.level + 2}
-				cardRef={(element) => {
-					card = element;
-				}}
-				onMouseDownOutside={(event) => {
-					if (!isInside(event, [trigger, card])) close();
-				}}
-			>
+			<Popup presence={presence} width={width} level={props.level + 2}>
 				<div
 					{...hover.containerProps}
 					role="menu"
@@ -1415,7 +1392,6 @@ export type ColorPickerProps = {
 	testId?: string;
 	/** Surface level the panel's own card sits on. Defaults to 3. */
 	level?: number;
-	onFormatMenuOpenChange?: (open: boolean) => void;
 };
 
 /** The panel itself: no card around it, so a popover can supply its own. */
@@ -1608,7 +1584,6 @@ function ColorPickerPanel(props: ColorPickerProps) {
 					onChange={handleFormatChange}
 					defaultOpen={props.defaultFormatOpen}
 					level={props.level ?? 3}
-					onOpenChange={props.onFormatMenuOpenChange}
 				/>
 			</div>
 			<ColorInputsRow
@@ -1675,9 +1650,6 @@ export function ColorPickerPopover(
 ) {
 	const presence = createPresence();
 	const [removeHovered, setRemoveHovered] = createSignal(false);
-	const [formatMenuOpen, setFormatMenuOpen] = createSignal(false);
-	let trigger: HostElement | undefined;
-	let card: HostElement | undefined;
 
 	const isControlled = () => props.value !== undefined;
 	const [internalValue, setInternalValue] = createSignal(
@@ -1728,9 +1700,7 @@ export function ColorPickerPopover(
 
 	return (
 		<div
-			ref={(node) => {
-				trigger = node;
-			}}
+			onMouseDownOutside={close}
 			style={{
 				position: "relative",
 				display: "flex",
@@ -1834,17 +1804,7 @@ export function ColorPickerPopover(
 					</div>
 				</Show>
 			</div>
-			<Popup
-				presence={presence}
-				width={PANEL_WIDTH}
-				level={5}
-				cardRef={(element) => {
-					card = element;
-				}}
-				onMouseDownOutside={(event) => {
-					if (!formatMenuOpen() && !isInside(event, [trigger, card])) close();
-				}}
-			>
+			<Popup presence={presence} width={PANEL_WIDTH} level={5}>
 				<ColorPickerPanel
 					{...props}
 					level={5}
@@ -1853,7 +1813,6 @@ export function ColorPickerPopover(
 						if (!isControlled()) setInternalValue(next);
 						props.onValueChange?.(next, result);
 					}}
-					onFormatMenuOpenChange={setFormatMenuOpen}
 				/>
 			</Popup>
 		</div>

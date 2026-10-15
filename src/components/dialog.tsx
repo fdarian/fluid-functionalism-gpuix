@@ -24,7 +24,6 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
-import { isInside } from "../lib/popup";
 import { createPresence } from "../lib/presence";
 import {
 	color,
@@ -70,7 +69,7 @@ interface DialogScope {
 	trackChild: (by: 1 | -1) => void;
 	/** A trigger press: closes an open dialog, reopens one that is fading out. */
 	pressTrigger: () => void;
-	/** The trigger's box, which an outside press must not count as outside. */
+	/** The trigger, which a press must not count as outside. */
 	trigger: { current: HostElement | undefined };
 	modal: () => boolean;
 	setOpen: (open: boolean) => void;
@@ -277,11 +276,12 @@ export function DialogContent(props: {
 	/** A non-modal dialog closes on a press anywhere outside it, except, for a scoped dialog, on a trigger outside the overlay (it toggles the dialog itself) or inside a dialog opened from it. */
 	const closeOnOutsidePress = (event: EventPayload) => {
 		if (scope.modal() || !scope.shown() || scope.openChildren() > 0) return;
-		if (
-			scope.scoped() &&
-			isInside(event, [scope.trigger.current]) &&
-			!isInside(event, [region])
-		) {
+		if (event.path === undefined) {
+			throw new Error("Outside press without a propagation path");
+		}
+		const pressed = (element: HostElement | undefined) =>
+			element !== undefined && event.path?.includes(element.id) === true;
+		if (scope.scoped() && pressed(scope.trigger.current) && !pressed(region)) {
 			return;
 		}
 		scope.setOpen(false);

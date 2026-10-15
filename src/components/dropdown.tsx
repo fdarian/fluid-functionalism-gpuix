@@ -33,7 +33,6 @@ import type { IconRef } from "../lib/icons";
 import { isChord, moveIndex, revealRow } from "../lib/list-nav";
 import {
 	createPlacementState,
-	isInside,
 	POPUP_MARGIN,
 	PopupSurface,
 } from "../lib/popup";
@@ -557,9 +556,6 @@ function MenuPanel(props: {
 				<SubmenuHostContext.Provider value={list.submenuHost}>
 					<div
 						role="menu"
-						ref={(element) => {
-							onCleanup(menu.addRegion(element));
-						}}
 						style={{ display: "flex", flexDirection: "column" }}
 					>
 					<Show when={field()}>
@@ -752,10 +748,6 @@ interface MenuScope {
 	setKeyboardActive: (active: boolean) => void;
 	/** The deepest open list takes the keys. */
 	keyStack: KeyHandler[];
-	/** The popup and its submenus: a press inside any of them is not an outside press. */
-	addRegion: (element: HostElement) => () => void;
-	/** `PopupSurface` types its outside-press prop without the payload, though gpuix passes it. */
-	outsidePress: (event?: EventPayload) => void;
 	openFrom: Accessor<"first" | "last">;
 	/** The trigger was pressed and the button is still down. */
 	startPress: () => void;
@@ -802,8 +794,6 @@ export function DropdownMenu(props: {
 	const presence = createPresence();
 	const [keyboardActive, setKeyboardActive] = createSignal(false);
 	const keyStack: KeyHandler[] = [];
-	const regions = new Set<HostElement>();
-	let wrapper: HostElement | undefined;
 
 	const [openFrom, setOpenFrom] = createSignal<"first" | "last">("first");
 	let pressedAt: number | null = null;
@@ -855,16 +845,6 @@ export function DropdownMenu(props: {
 		keyboardActive,
 		setKeyboardActive,
 		keyStack,
-		addRegion(element) {
-			regions.add(element);
-			return () => regions.delete(element);
-		},
-		outsidePress(event) {
-			if (event === undefined) throw new Error("Outside press without a payload");
-			if (!presence.open()) return;
-			if (isInside(event, [wrapper, ...regions])) return;
-			setOpen(false);
-		},
 		openFrom,
 		startPress() {
 			setOpenFrom("first");
@@ -915,14 +895,13 @@ export function DropdownMenu(props: {
 	return (
 		<MenuScopeContext.Provider value={scope}>
 			<div
-				ref={(element) => {
-					wrapper = element;
-				}}
 				testId={props.testId}
 				// A press on the menu's bare content lands focus here, so the keys still reach onKeyDown.
 				tabIndex={-1}
 				onKeyDown={onKeyDown}
-				onMouseDownOutside={scope.outsidePress}
+				onMouseDownOutside={() => {
+					if (presence.open()) setOpen(false);
+				}}
 				style={{
 					position: "relative",
 					display: "flex",
@@ -1002,7 +981,6 @@ export function DropdownContent(props: {
 			align={props.align ?? "start"}
 			width={PANEL_WIDTH}
 			maxHeight={POPUP_MAX_HEIGHT}
-			onMouseDownOutside={scope.outsidePress}
 			onDismiss={() => scope.setOpen(false)}
 		>
 			{(maxHeight) => (

@@ -20,7 +20,7 @@ import type { DemoModule } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
-import { isInside, PopupSurface } from "../lib/popup";
+import { PopupSurface } from "../lib/popup";
 import { createPresence } from "../lib/presence";
 import { color, radius, type as scale } from "../lib/theme";
 
@@ -249,18 +249,11 @@ function FilterSelect(props: {
 }) {
 	const presence = createPresence();
 	const [hovered, setHovered] = createSignal(false);
-	let root: HostElement | undefined;
-	let popup: HostElement | undefined;
 	const label = () =>
 		props.options.find((option) => option.value === props.value)?.label;
 	return (
 		<div
-			ref={(element) => {
-				root = element;
-			}}
-			onMouseDownOutside={(event) => {
-				if (!isInside(event, [root, popup])) presence.hide();
-			}}
+			onMouseDownOutside={presence.hide}
 			style={{ position: "relative" }}
 		>
 			<div
@@ -304,12 +297,6 @@ function FilterSelect(props: {
 				width={150}
 				maxHeight={200}
 				onDismiss={() => presence.hide()}
-				onMouseDownOutside={(event) => {
-					if (!isInside(event, [root, popup])) presence.hide();
-				}}
-				popupRef={(element) => {
-					popup = element;
-				}}
 			>
 				{() => (
 				<div style={{ display: "flex", flexDirection: "column", padding: 4 }}>

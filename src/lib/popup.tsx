@@ -2,8 +2,6 @@ import {
 	type AnchoredPlacementEvent,
 	DismissableLayer,
 	type DimensionValue,
-	type EventPayload,
-	type HostElement,
 	motion,
 } from "@gpuix/solid";
 import { type Accessor, createSignal, type JSX, Show } from "solid-js";
@@ -13,25 +11,6 @@ import { color, radius, shadow3, motion as tween } from "./theme";
 export const POPUP_OFFSET = 6;
 /** The gap a popup keeps from the window edge: Base UI's default collision padding. */
 export const POPUP_MARGIN = 5;
-
-/** Whether a press landed inside any of the elements' painted boxes. An unmounted or unpainted element cannot have been pressed. */
-export function isInside(
-	event: EventPayload,
-	elements: readonly (HostElement | undefined)[],
-) {
-	if (event.x === undefined || event.y === undefined) {
-		throw new Error("Outside press without coordinates");
-	}
-	const x = event.x;
-	const y = event.y;
-	return elements.some((element) => {
-		if (element === undefined || !element.mounted) return false;
-		const box = element.getBoundingClientRect();
-		return (
-			x >= box.x && x <= box.x + box.width && y >= box.y && y <= box.y + box.height
-		);
-	});
-}
 
 type Side = AnchoredPlacementEvent["side"];
 
@@ -62,9 +41,8 @@ export function createPlacementState(preferred: Side) {
  * The layer flips to the far side of the trigger when `side` has no room, and
  * the card is at least as wide as the trigger.
  *
- * Closing on an outside press needs both the field and the popup: gpuix
- * reports "outside" per element, so callers also pass `onMouseDownOutside` to
- * their field and ask `isInside` whether the press landed in either.
+ * It sits in the logical subtree of its trigger, so an outside press is
+ * judged on the element that holds both.
  */
 export function PopupSurface(props: {
 	presence: ReturnType<typeof createPresence>;
@@ -75,11 +53,8 @@ export function PopupSurface(props: {
 	width: DimensionValue;
 	/** The tallest the card gets; the room on its side caps it further. */
 	maxHeight: number;
-	onMouseDownOutside: (event: EventPayload) => void;
 	/** Escape while this popup is the top layer. The popup joins gpuix's dismiss-layer stack, so a dialog around it stays open. */
 	onDismiss: () => void;
-	/** The popup's box, for `isInside`. */
-	popupRef?: (element: HostElement) => void;
 	/** Called with the height the card may use, for a scroller inside it. */
 	children: (maxHeight: Accessor<number>) => JSX.Element;
 }) {
@@ -103,7 +78,6 @@ export function PopupSurface(props: {
 				onPlacement={placement.onPlacement}
 				deferred
 				priority={1}
-				onMouseDownOutside={props.onMouseDownOutside}
 				style={{ backgroundColor: color.transparent }}
 			>
 				<motion.div
@@ -114,7 +88,6 @@ export function PopupSurface(props: {
 							: { opacity: 0, top: slide() }
 					}
 					transition={props.presence.open() ? tween.fast : tween.fastExit}
-					ref={props.popupRef}
 					style={{
 						position: "relative",
 						width: props.width,
