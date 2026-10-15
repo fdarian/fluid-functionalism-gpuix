@@ -33,6 +33,7 @@ export function Demo() {
 					</DemoRow>
 					<DemoRow label="Disabled">
 						<Switch
+							testId="disabled"
 							label="Disabled option"
 							checked={false}
 							onToggle={() => {}}
@@ -110,4 +111,12 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectText("Keys off", true);
 	await shot.press("space");
 	shot.expectText("Keys off", true);
+
+	shot.expectAria("kb-track", { role: "Switch", toggled: "False" });
+	const labelledBy = shot.aria("kb-track").labelled_by;
+	if (!Array.isArray(labelledBy) || labelledBy.length !== 1)
+		throw new Error("the switch is named by its label");
+	shot.expectAria(String(labelledBy[0]), { value: "Keys" });
+	shot.expectAria("on-track", { toggled: "True" });
+	shot.expectAria("disabled-track", { disabled: true });
 };

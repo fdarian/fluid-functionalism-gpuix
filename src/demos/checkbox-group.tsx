@@ -101,4 +101,6 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.press("home");
 	await shot.press("space");
 	shot.expectText("Checked: 0,2", true);
+	shot.expectAria("box-0", { role: "CheckBox", toggled: "True" });
+	shot.expectAria("box-1", { toggled: "False" });
 };

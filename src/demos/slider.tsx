@@ -320,6 +320,25 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await drag(shot, "rating-track", [-30, -90], "list-drag");
 	await shot.moveTo(1180, 700);
 	shot.capture("compact-after");
+	// A lone thumb leaves the announcement to its number; a range names its ends; a step list runs on indices and announces the entry.
+	shot.expectAria("basic-thumb-0", {
+		role: "Slider",
+		orientation: "Horizontal",
+		min_numeric_value: 0,
+		max_numeric_value: 100,
+		value: undefined,
+	});
+	shot.expectAria("range-thumb-0", {
+		label: "Minimum",
+		value: "4 start range",
+	});
+	shot.expectAria("range-thumb-1", { label: "Maximum", value: "9 end range" });
+	shot.expectAria("rating-thumb-0", {
+		label: "Rating",
+		min_numeric_value: 0,
+		max_numeric_value: 4,
+		value: "0.1 A",
+	});
 
 	// The track follows its container: narrower, the thumb and fill stay on the value.
 	setResizeWidth(160);
@@ -363,6 +382,11 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectText("Ultra", true);
 	await shot.press("pagedown");
 	shot.expectText("Off", true);
+	shot.expectAria("quality-thumb", {
+		role: "Slider",
+		orientation: "Horizontal",
+		value: undefined,
+	});
 	await shot.clickAt(1180, 700);
 	setResizeWidth(160);
 	await shot.settle(400);

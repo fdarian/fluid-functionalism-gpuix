@@ -8,6 +8,7 @@ import {
 	createContext,
 	createEffect,
 	createMemo,
+	createUniqueId,
 	For,
 	type JSX,
 	onCleanup,
@@ -278,8 +279,10 @@ export function ChoiceRow(props: {
 	return (
 		<div
 			testId={props.testId}
+			id={createUniqueId()}
 			role={props.role}
 			aria-label={props.label}
+			aria-checked={props.checked}
 			ref={(row) => {
 				element = row;
 			}}

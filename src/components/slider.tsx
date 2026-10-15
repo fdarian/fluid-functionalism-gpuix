@@ -13,6 +13,7 @@ import {
 	createEffect,
 	createMemo,
 	createSignal,
+	createUniqueId,
 	For,
 	onCleanup,
 	Show,
@@ -687,11 +688,26 @@ function CompactSlider(props: CompactProps) {
 			? side
 			: `${props.label} ${side.toLowerCase()}`;
 	};
-	/** Base UI + FF: a list announces `formatValue`, a range its default "N start range" / "N end range". gpuix has no `aria-valuenow`, so a single thumb announces `formatValue` where Base UI would leave it to the number. */
-	const thumbValueText = (index: number) => {
+	/** Base UI's thumb values: a `steps` list runs on indices, so FF announces the entry through `aria-valuetext`; a range says which end it is; a lone thumb is left to the number. */
+	const thumbAria = (index: number) => {
 		const value = values()[index];
-		if (stepValues() !== null || !isRange()) return formatValue(value);
-		return `${value.toLocaleString()} ${index === 0 ? "start" : "end"} range`;
+		const list = stepValues();
+		if (list !== null) {
+			return {
+				now: nearestStepIndex(value, list),
+				min: 0,
+				max: list.length - 1,
+				text: formatValue(value),
+			};
+		}
+		return {
+			now: value,
+			min: min(),
+			max: max(),
+			text: isRange()
+				? `${value.toLocaleString()} ${index === 0 ? "start" : "end"} range`
+				: undefined,
+		};
 	};
 
 	const stepDots = createMemo(() => {
@@ -735,6 +751,7 @@ function CompactSlider(props: CompactProps) {
 		</Show>
 	);
 
+	const thumbIds = [createUniqueId(), createUniqueId()];
 	const thumb = (index: number) => (
 		<Show when={trackWidth()}>
 			{(width: Accessor<number>) => (
@@ -743,9 +760,20 @@ function CompactSlider(props: CompactProps) {
 					animate={{ left: thumbLeft(values()[index], width()) }}
 					transition={springOrPlace()}
 					tabIndex={props.disabled ? -1 : 0}
+					id={thumbIds[index]}
+					testId={
+						props.testId === undefined
+							? undefined
+							: `${props.testId}-thumb-${index}`
+					}
 					role="slider"
-					aria-label={props.label}
-					aria-valuetext={formatValue(values()[index])}
+					aria-label={thumbLabel(index)}
+					aria-orientation="horizontal"
+					aria-valuenow={thumbAria(index).now}
+					aria-valuemin={thumbAria(index).min}
+					aria-valuemax={thumbAria(index).max}
+					aria-valuetext={thumbAria(index).text}
+					aria-disabled={props.disabled === true}
 					onKeyDown={onThumbKey(index)}
 					style={{
 						position: "absolute",
@@ -1482,11 +1510,16 @@ function ComfortableSlider(props: ComfortableProps) {
 			</div>
 			{/* Hidden thumb: the only thing Tab reaches, so focus (and the ring) is keyboard-only like the primitive's thumb. */}
 			<div
+				id={createUniqueId()}
 				tabIndex={props.disabled ? -1 : 0}
 				role="slider"
 				testId={props.testId === undefined ? undefined : `${props.testId}-thumb`}
 				aria-label={props.label}
-				aria-valuetext={formatValue(props.value)}
+				aria-orientation="horizontal"
+				aria-valuenow={props.value}
+				aria-valuemin={min()}
+				aria-valuemax={max()}
+				aria-disabled={props.disabled === true}
 				onKeyDown={onKey}
 				onFocus={() => setFocused(true)}
 				onBlur={() => setFocused(false)}

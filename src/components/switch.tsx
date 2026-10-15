@@ -1,6 +1,6 @@
 import type { HostMouseEvent, HostMouseMoveEvent, KeyEvent } from "@gpuix/solid";
 import { motion } from "@gpuix/solid";
-import { createSignal } from "solid-js";
+import { createSignal, createUniqueId } from "solid-js";
 import { createPointerCapture } from "../lib/pointer-capture";
 import { color, type as scale, scheme, motion as tween, weight, focusRing } from "../lib/theme";
 
@@ -47,6 +47,8 @@ export function Switch(props: {
 	testId?: string;
 }) {
 	const m = () => METRICS[props.size ?? "default"];
+	const trackId = createUniqueId();
+	const labelId = createUniqueId();
 	const thumbTravel = () => m().trackWidth - m().thumbSize - THUMB_OFFSET * 2;
 	const pressedThumbWidth = () => m().thumbSize + m().pressExtend;
 	const dragMin = THUMB_OFFSET;
@@ -165,8 +167,11 @@ export function Switch(props: {
 			}}
 		>
 			<div
+				id={trackId}
 				role="switch"
-				aria-label={props.label}
+				aria-checked={props.checked}
+				aria-labelledby={labelId}
+				aria-disabled={props.disabled === true}
 				tabIndex={props.disabled ? -1 : 0}
 				testId={
 					props.testId === undefined ? undefined : `${props.testId}-track`
@@ -210,6 +215,7 @@ export function Switch(props: {
 				/>
 			</div>
 			<text
+				id={labelId}
 				style={{
 					...m().text,
 					fontWeight: weight.normal,
