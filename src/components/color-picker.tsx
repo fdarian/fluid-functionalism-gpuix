@@ -86,13 +86,13 @@ function checkerSource(width: number, size: number) {
 			}
 		}
 	}
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${size}"><path d="${path}" fill="#000"/></svg>`;
+	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${size}"><path d="${path}" fill="currentColor"/></svg>`;
 }
 
 /**
  * The alpha checkerboard. gpuix has no conic gradients or tiled backgrounds,
- * so it is a backing fill plus a monochrome SVG of the other squares, tinted
- * by `style.color`.
+ * so it is a backing fill plus a monochrome SVG of the other squares, filled
+ * with `style.color`.
  */
 function Checker(props: { width: number; height: number }) {
 	const source = createMemo(() => checkerSource(props.width, props.height));

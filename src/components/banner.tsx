@@ -81,8 +81,8 @@ const fill = (status: BannerStatus, contrast: BannerContrast) => {
 
 /**
  * The coloured statuses are a filled shape with the mark cut out, so the
- * banner's fill shows through the mark. gpuix tints an SVG by its alpha only,
- * so the cut-out is an SVG mask instead of a page-coloured stroke.
+ * banner's fill shows through the mark. The cut-out is an SVG mask instead of
+ * a page-coloured stroke, so it works on any banner background.
  */
 const glyphMarks = {
 	success: '<path d="m8.5 12.25 2.5 2.5 4.5-5"/>',
@@ -95,8 +95,8 @@ function glyphSource(status: Exclude<BannerStatus, "default">) {
 	const mark = `<g stroke="#000" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" fill="none">${glyphMarks[status]}</g>`;
 	const shape =
 		status === "warning"
-			? '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" fill="#000" stroke="#000" stroke-width="1.5" stroke-linejoin="round" mask="url(#cut)"/>'
-			: '<circle cx="12" cy="12" r="10.5" fill="#000" mask="url(#cut)"/>';
+			? '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" mask="url(#cut)"/>'
+			: '<circle cx="12" cy="12" r="10.5" fill="currentColor" mask="url(#cut)"/>';
 	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><defs><mask id="cut" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="#fff"/>${mark}</mask></defs>${shape}</svg>`;
 }
 
