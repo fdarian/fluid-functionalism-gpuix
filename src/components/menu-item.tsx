@@ -189,6 +189,7 @@ export function MenuItem(props: {
 				activate(false);
 			}}
 			style={{
+				position: "relative",
 				height: height.control,
 				flexShrink: 0,
 				display: "flex",
