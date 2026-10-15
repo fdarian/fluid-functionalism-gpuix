@@ -18,6 +18,7 @@ import {
 	Show,
 	untrack,
 } from "solid-js";
+import { createPointerCapture } from "../lib/pointer-capture";
 import { createPresence } from "../lib/presence";
 import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
@@ -352,6 +353,7 @@ function QueuedRow(props: {
 	const [hovered, setHovered] = createSignal(false);
 	const [closeHovered, setCloseHovered] = createSignal(false);
 	const [grabbing, setGrabbing] = createSignal(false);
+	const grabRegion = createPointerCapture("QueuedRow");
 	const files = () => props.item.files.length;
 	const label = () =>
 		props.item.text !== ""
@@ -438,20 +440,23 @@ function QueuedRow(props: {
 					</Show>
 				</div>
 			</Show>
-			{/* Drag and double-click live here, not on the row: a pointer-capturing ancestor would swallow the close button's click. */}
+			{/* Drag and double-click live here, not on the row, so a press on the close button neither starts a drag nor is captured away from it. */}
 			<div
+				ref={grabRegion.ref}
 				onMouseDown={(event) => {
 					if (event.button !== 0) return;
 					if (event.clickCount === 2) {
 						props.onEdit(props.item);
 						return;
 					}
+					grabRegion.capture(event);
 					setGrabbing(true);
 				}}
 				onMouseMove={(event) => {
 					if (grabbing()) props.onDragMove(props.item, event);
 				}}
 				onMouseUp={() => setGrabbing(false)}
+				onLostPointerCapture={() => setGrabbing(false)}
 				style={{
 					flexGrow: 1,
 					minWidth: 0,
