@@ -99,19 +99,6 @@ export interface TooltipTrigger {
 	onMouseDown: () => void;
 }
 
-/** The anchor that centres the chip on its side. gpuix's `align="center"` offsets the layer by half its own size twice, so the corner anchor is picked by hand and the layer's centring does the rest. */
-function centredAnchor(side: TooltipSide) {
-	switch (side) {
-		case "top":
-			return "bottomLeft";
-		case "bottom":
-		case "right":
-			return "topLeft";
-		case "left":
-			return "topRight";
-	}
-}
-
 export function Tooltip(props: {
 	content: JSX.Element;
 	/** An unfilled element, or a function receiving the handlers for a trigger that paints a fill. */
@@ -275,7 +262,8 @@ export function Tooltip(props: {
 				<anchored
 					side={side()}
 					align="center"
-					anchor={centredAnchor(side())}
+					// The side is chosen above from the trigger's box, so gpuix only shifts along the edge.
+					fit="snap"
 					gap={props.sideOffset ?? 8}
 					offset={props.forceOpen === true ? undefined : followOffset()}
 					snapMargin={WINDOW_MARGIN}

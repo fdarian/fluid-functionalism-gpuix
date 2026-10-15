@@ -172,8 +172,7 @@ function ValueBubble(props: {
 			<anchored
 				side="top"
 				align="center"
-				// gpuix's align="center" offsets the layer by half its size twice, so the corner anchor is picked by hand.
-				anchor="bottomLeft"
+				fit="snap"
 				gap={props.gap}
 				deferred
 				priority={2}
