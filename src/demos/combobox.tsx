@@ -1,7 +1,8 @@
+import type { HostElement } from "@gpuix/solid";
 import { createSignal } from "solid-js";
 import { Button } from "../components/button";
 import { Combobox, type ComboboxItem } from "../components/combobox";
-import type { DemoModule } from "../lib/demo";
+import type { DemoModule, ShotContext } from "../lib/demo";
 import { DemoCard, DemoRow } from "../lib/demo-kit";
 import { color, type as scale } from "../lib/theme";
 
@@ -34,6 +35,9 @@ export const group = "Components";
 export function Demo() {
 	const [framework, setFramework] = createSignal<string | null>("Solid");
 	const [view, setView] = createSignal<string | null>(null);
+	const [stack, setStack] = createSignal<string | null>(null);
+	const [submitted, setSubmitted] = createSignal("");
+	let form: HostElement | undefined;
 	return (
 		<>
 		<DemoCard title="Combobox">
@@ -94,11 +98,88 @@ export function Demo() {
 				</DemoRow>
 			</div>
 		</DemoCard>
+		<DemoCard title="Combobox, in a form">
+			<form
+				ref={form}
+				testId="form"
+				onSubmit={(event) =>
+					setSubmitted(
+						Array.from(event.formData.entries(), (entry) => `${entry[0]}=${entry[1]}`).join("&"),
+					)
+				}
+				style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 10 }}
+			>
+				<text id="form-stack-label" style={{ ...scale.caption, color: color.mutedForeground }}>
+					Stack
+				</text>
+				<Combobox
+					testId="form-stack"
+					items={FRAMEWORKS}
+					value={stack()}
+					onValueChange={setStack}
+					name="stack"
+					required
+					labelledBy="form-stack-label"
+					placeholder="Pick one…"
+				/>
+				<Button
+					testId="form-submit"
+					variant="secondary"
+					size="compact"
+					onClick={() => form?.requestSubmit()}
+				>
+					Submit
+				</Button>
+				<text style={{ ...scale.caption, color: color.mutedForeground }}>
+					{`submitted: ${submitted()}`}
+				</text>
+			</form>
+		</DemoCard>
 		</>
 	);
 }
 
+/** The page is taller than the window: scroll an element to the upper part of it. */
+async function reveal(shot: ShotContext, testId: string) {
+	let previous = Number.NaN;
+	for (let attempt = 0; attempt < 8; attempt++) {
+		const y = shot.centerOf(testId).y;
+		if ((y > 120 && y < 320) || y === previous) return;
+		previous = y;
+		await shot.scroll(700, 400, 0, -(y - 200));
+	}
+	throw new Error(`could not scroll ${testId} into view`);
+}
+
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
+	// Form and ARIA, opened by key: an empty required combobox blocks the submit and takes the focus; the input names its list and the lit row.
+	await reveal(shot, "form-submit");
+	await shot.click("form-submit");
+	shot.expectText("submitted: stack=", false);
+	shot.expectAria("form-stack-input", {
+		role: "ComboBox",
+		has_popup: "Listbox",
+		auto_complete: "List",
+		required: true,
+		expanded: false,
+		labelled_by: ["form-stack-label"],
+		controls: undefined,
+	});
+	await shot.press("down");
+	shot.expectAria("form-stack-input", { expanded: true });
+	const listbox = shot.aria("form-stack-input").controls;
+	if (!Array.isArray(listbox) || listbox.length !== 1)
+		throw new Error("an open combobox controls its list");
+	shot.expectAria(String(listbox[0]), { role: "ListBox" });
+	shot.expectAria("form-stack-input", {
+		active_descendant: shot.idOf("form-stack-option-Astro"),
+	});
+	await shot.press("enter");
+	await shot.settle(300);
+	await shot.click("form-submit");
+	shot.expectText("submitted: stack=Astro", true);
+	await shot.scroll(700, 400, 0, 2000);
+
 	// Opens on mouse-down; the release leaves it open.
 	await shot.down("framework-input");
 	shot.expectText("Angular", true);

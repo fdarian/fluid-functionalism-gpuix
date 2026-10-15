@@ -10,12 +10,14 @@ import {
 	createEffect,
 	createMemo,
 	createSignal,
+	createUniqueId,
 	For,
 	on,
 	Show,
 } from "solid-js";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, createReflowGate, useHoverItem } from "../lib/fluid-hover";
+import { FormValue } from "../lib/form-value";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { isChord, moveIndex, revealRow } from "../lib/list-nav";
@@ -117,6 +119,12 @@ export function Combobox(props: {
 	emptyText?: string;
 	testId?: string;
 	disabled?: boolean;
+	/** Makes an empty combobox block its form's submission. */
+	required?: boolean;
+	/** The key the picked value is submitted under in the enclosing `<form>`'s `FormData`. */
+	name?: string;
+	/** The `id` of the element that labels the field. */
+	labelledBy?: string;
 	/** A ✕ that clears the pick and the query. Its slot is only reserved when set. */
 	clearable?: boolean;
 	/** Whether a row matches the typed query. Default: Base UI's collator `contains` on the label. */
@@ -126,6 +134,8 @@ export function Combobox(props: {
 	const width = () => props.width ?? 280;
 
 	const presence = createPresence(POPUP_EXIT_FALLBACK_MS);
+	const listId = createUniqueId();
+	const rowId = (index: number) => `${listId}-row-${index}`;
 	const open = presence.open;
 	const mounted = presence.mounted;
 	const rows = createMemo(() => props.items.map(toRow));
@@ -167,6 +177,12 @@ export function Combobox(props: {
 	const hover = createFluidHover({
 		isItemDisabled: (index) => filtered()[index]?.disabled === true,
 	});
+	/** Focus stays in the field while the arrows walk the rows, so it names the lit one. */
+	const litRowId = () => {
+		const index = hover.activeIndex();
+		return open() && index !== null ? rowId(index) : undefined;
+	};
+	const listShown = () => open() && filtered().length > 0;
 
 	const commitValue = (next: string | null) => {
 		if (props.value === undefined) setOwnValue(next);
@@ -362,6 +378,15 @@ export function Combobox(props: {
 				pointerEvents: props.disabled === true ? "none" : "auto",
 			}}
 		>
+			<Show when={props.name !== undefined || props.required === true}>
+				<FormValue
+					name={props.name}
+					value={value() ?? ""}
+					required={props.required === true}
+					disabled={props.disabled === true}
+					focusTarget={() => inputElement}
+				/>
+			</Show>
 			<div
 				style={{
 					width: "100%",
@@ -415,10 +440,18 @@ export function Combobox(props: {
 						testId={
 							props.testId === undefined ? undefined : `${props.testId}-input`
 						}
+						id={createUniqueId()}
 						value={inputText()}
 						placeholder={props.placeholder ?? "Search…"}
 						role="combobox"
+						aria-haspopup="listbox"
 						aria-expanded={open()}
+						aria-controls={listShown() ? listId : undefined}
+						aria-autocomplete="list"
+						aria-activedescendant={litRowId()}
+						aria-labelledby={props.labelledBy}
+						aria-required={props.required}
+						aria-disabled={props.disabled === true}
 						readOnly={props.disabled === true}
 						tabIndex={props.disabled === true ? -1 : undefined}
 						theme={{
@@ -520,6 +553,7 @@ export function Combobox(props: {
 						ref={(element) => {
 							scroller = element;
 						}}
+						id={listId}
 						role="listbox"
 						onScroll={hover.handlers.onScroll}
 						style={{
@@ -567,6 +601,7 @@ export function Combobox(props: {
 											ref={(element) => {
 												rowElement = element;
 											}}
+											id={rowId(index())}
 											role="option"
 											testId={
 												props.testId === undefined
@@ -574,6 +609,7 @@ export function Combobox(props: {
 													: `${props.testId}-option-${row.value}`
 											}
 											aria-selected={value() === row.value}
+											aria-disabled={row.disabled === true}
 											onClick={() => select(row)}
 											style={{
 												height: ROW_HEIGHT,
