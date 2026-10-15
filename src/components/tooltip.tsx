@@ -88,9 +88,8 @@ function slideFrom(side: TooltipSide) {
 }
 
 /**
- * The hover handlers a trigger element takes. gpuix hit-tests a filled or
- * `pointerEvents: "auto"` element as the end of the line, so its ancestors
- * never see the pointer: such a trigger must carry these itself.
+ * The hover handlers, for a trigger that carries them itself instead of
+ * leaving them to the wrapper, which hears them through bubbling anyway.
  */
 export interface TooltipTrigger {
 	onMouseEnter: () => void;
@@ -282,7 +281,6 @@ export function Tooltip(props: {
 					snapMargin={WINDOW_MARGIN}
 					deferred
 					priority={2}
-					occlude={false}
 					style={{ backgroundColor: color.transparent }}
 				>
 					<motion.div

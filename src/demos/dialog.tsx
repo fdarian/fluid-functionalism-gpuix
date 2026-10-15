@@ -207,7 +207,7 @@ export function Demo() {
 				</DemoRow>
 			</DemoCard>
 			<DemoCard title="Scoped to a container">
-				{/* gpuix's `position: absolute` is relative to the parent element, not the nearest positioned ancestor, so the scoped overlay must be a direct child of this region. Dialog renders no element of its own, which allows that. */}
+				{/* The scoped overlay is absolute against the nearest positioned ancestor, so this region is `position: relative`. */}
 				<div
 					testId="scoped-region"
 					style={{

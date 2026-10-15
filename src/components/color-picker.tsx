@@ -707,7 +707,6 @@ function Popup(props: {
 				gap={POPUP_OFFSET}
 				deferred
 				priority={2}
-				occlude
 				onMouseDownOutside={props.onMouseDownOutside}
 				style={{ backgroundColor: color.transparent }}
 			>

@@ -132,7 +132,6 @@ export function PopupSurface(props: {
 				gap={POPUP_OFFSET}
 				deferred
 				priority={1}
-				occlude
 				onMouseDownOutside={props.onMouseDownOutside}
 				style={{ backgroundColor: color.transparent }}
 			>

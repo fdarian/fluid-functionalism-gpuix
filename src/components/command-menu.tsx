@@ -1299,7 +1299,6 @@ export function CommandMenuDialog(props: {
 				fill="window"
 				deferred
 				priority={2}
-				occlude
 				style={{
 					backgroundColor: color.transparent,
 					display: "flex",

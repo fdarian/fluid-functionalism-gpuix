@@ -51,8 +51,7 @@ export function Switch(props: {
 	const dragMin = THUMB_OFFSET;
 	const dragMax = () => m().trackWidth - THUMB_OFFSET - pressedThumbWidth();
 
-	// The row and the track both take presses, and the track blocks the row
-	// behind it, so hover is a count of the elements the pointer is over.
+	// The row and the track each report their own enter and leave, so hover is a count of the elements the pointer is over.
 	const [overCount, setOverCount] = createSignal(0);
 	const hovered = () => overCount() > 0;
 	const [pressed, setPressed] = createSignal(false);

@@ -1,7 +1,7 @@
 import {
 	buttonProps,
-	type EventPayload,
 	type HostElement,
+	type HostPointerEvent,
 	useGpuixRequired,
 } from "@gpuix/solid";
 import {
@@ -180,7 +180,9 @@ export function CardGroup(props: {
 		return hover.rects()[index] ?? null;
 	};
 
-	const onGapClick = (event: EventPayload) => {
+	const onGapClick = (event: HostPointerEvent) => {
+		// A click on a card bubbles up to here; only one on the group's own box is a gap.
+		if (container === undefined || event.target !== container.id) return;
 		const index = hover.activeIndex();
 		const box = boxOf();
 		const rect = index === null ? undefined : hover.rects()[index];
@@ -515,7 +517,16 @@ function DismissChip(props: {
 	const [hovered, setHovered] = createSignal(false);
 	return (
 		<div
-			{...buttonProps({ onClick: () => props.onDismiss?.() }, renderer)}
+			{...buttonProps(
+				{
+					onClick: (event) => {
+						// The card behind the chip is clickable too.
+						event.stopPropagation();
+						props.onDismiss?.();
+					},
+				},
+				renderer,
+			)}
 			aria-label="Dismiss"
 			tabIndex={0}
 			onMouseEnter={() => setHovered(true)}
@@ -534,7 +545,7 @@ function DismissChip(props: {
 				borderRadius: radius.item,
 				cursor: "pointer",
 				keyboardFocusDim: false,
-				// Over the chip the card itself is no longer hovered (the chip's hitbox takes the pointer), so the chip keeps itself shown.
+				// The chip stays shown while the pointer is on it, whatever the card's own hover says.
 				opacity: props.visible || hovered() ? 1 : 0,
 				pointerEvents: props.visible || hovered() ? "auto" : "none",
 				backgroundColor: props.overMedia

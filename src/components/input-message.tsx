@@ -963,10 +963,14 @@ export function InputMessage(props: InputMessageProps) {
 			testId={testId()}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
-			onFileDrop={(event) => {
+			// A drop is delivered only to a target whose dragover was cancelled.
+			onDragOver={(event) => {
+				if (supportsFiles() && props.disabled !== true) event.preventDefault();
+			}}
+			onDrop={(event) => {
 				if (!supportsFiles() || props.disabled === true) return;
-				if (event.paths === undefined) throw new Error("Drop without paths");
-				addFiles(event.paths.map(fileFromPath));
+				if (event.dataTransfer === undefined) throw new Error("Drop without dataTransfer");
+				addFiles(event.dataTransfer.files.map((file) => fileFromPath(file.path)));
 			}}
 			style={{
 				position: "relative",

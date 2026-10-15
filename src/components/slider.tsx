@@ -2,6 +2,7 @@ import {
 	type ElementBounds,
 	type EventPayload,
 	type HostElement,
+	type HostPointerEvent,
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
@@ -173,7 +174,6 @@ function ValueBubble(props: {
 				gap={props.gap}
 				deferred
 				priority={2}
-				occlude={false}
 				style={{ backgroundColor: color.transparent, pointerEvents: "none" }}
 			>
 				<motion.div
@@ -214,7 +214,7 @@ interface HoverPreview {
 	cursorX: number;
 }
 
-/** Hover over a slider: a count of the pressable elements the pointer is over (one of them blocks the other behind it), and the tooltip's 100 ms delay. */
+/** Hover over a slider: a count of the elements the pointer is over (the row, the track and the handle each report their own enter and leave), and the tooltip's 100 ms delay. */
 function createHover() {
 	const [overCount, setOverCount] = createSignal(0);
 	const [delayDone, setDelayDone] = createSignal(false);
@@ -1129,8 +1129,10 @@ function ComfortableSlider(props: ComfortableProps) {
 		setPreview(null);
 	};
 	// Grabbing the scrubber's handle sets the fill from the first event, with no spring.
-	const onHandlePress = (event: EventPayload) => {
+	const onHandlePress = (event: HostPointerEvent) => {
 		if (props.disabled || event.button !== 0) return;
+		// The row's own press would end the placing this one starts.
+		event.stopPropagation();
 		syncBox();
 		handleDragging = true;
 		setPressed(true);

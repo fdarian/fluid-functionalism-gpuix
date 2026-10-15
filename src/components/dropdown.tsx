@@ -1,5 +1,6 @@
 import {
 	type EventPayload,
+	type HostDomEvent,
 	type HostElement,
 	type KeyEvent,
 	motion,
@@ -1226,6 +1227,8 @@ export function DropdownSubContent(props: SubContentProps) {
 	return null;
 }
 
+const stopPropagation = (event: HostDomEvent) => event.stopPropagation();
+
 function SubPopup() {
 	const sub = useSubScope();
 	const menu = useMenuScope();
@@ -1287,14 +1290,20 @@ function SubPopup() {
 				offset={{ x: 0, y: SUBMENU_ALIGN_OFFSET }}
 				deferred
 				priority={2}
-				occlude
 				style={{ backgroundColor: color.transparent }}
 			>
 				<motion.div
 					initial={{ opacity: 0 }}
 					animate={{ opacity: sub.open() ? 1 : 0 }}
 					transition={sub.open() ? tween.fast : tween.fastExit}
+					// The panel is a child of the trigger row, so its events would bubble into the row and the parent menu behind it.
+					onMouseDown={stopPropagation}
+					onMouseUp={stopPropagation}
+					onClick={stopPropagation}
+					onMouseMove={stopPropagation}
 					style={{
+						// The layer around the anchored popup is `none`, which inherits.
+						pointerEvents: "auto",
 						position: "relative",
 						width: SUB_WIDTH,
 						display: "flex",

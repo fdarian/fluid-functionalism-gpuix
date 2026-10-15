@@ -1,6 +1,7 @@
 import {
 	type EventPayload,
 	type HostElement,
+	type HostPointerEvent,
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
@@ -153,7 +154,14 @@ function Row(props: RowProps) {
 				animate={{ opacity: 1 }}
 				transition={{ duration: 0.08 }}
 				{...(props.onArrowClick
-					? { role: "button", onClick: props.onArrowClick }
+					? {
+							role: "button",
+							onClick: (event: HostPointerEvent) => {
+								// The row behind the arrow handles clicks too.
+								event.stopPropagation();
+								props.onArrowClick?.();
+							},
+						}
 					: {})}
 				style={{
 					position: "absolute",

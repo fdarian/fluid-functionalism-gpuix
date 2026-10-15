@@ -99,10 +99,9 @@ export function Dialog(props: {
 	/** Block the page behind and keep Tab inside. */
 	modal?: boolean;
 	/**
-	 * Draw the overlay inside the parent element instead of over the whole window
-	 * (the original's `container`). gpuix places an absolute child against its
-	 * parent, not the nearest positioned ancestor, so `DialogContent` must be a
-	 * direct child of the region: Dialog renders no element of its own.
+	 * Draw the overlay inside the nearest positioned ancestor instead of over the
+	 * whole window (the original's `container`). The region must be
+	 * `position: relative`; Dialog renders no element of its own.
 	 */
 	scoped?: boolean;
 	children: JSX.Element;
@@ -307,7 +306,7 @@ export function DialogContent(props: {
 							right: 0,
 							bottom: 0,
 							backgroundColor: color.scrim,
-							// A filled child would swallow the press meant for the backdrop behind it.
+							// A press on the scrim bubbles to the backdrop anyway, so this is redundant.
 							pointerEvents: "none",
 						}}
 					/>
