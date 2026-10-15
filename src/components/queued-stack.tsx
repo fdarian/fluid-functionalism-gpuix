@@ -2,6 +2,7 @@ import {
 	AnimatePresence,
 	type EventPayload,
 	type HostElement,
+	type HostMouseEvent,
 	type MotionTransition,
 	motion,
 	useIsPresent,
@@ -17,6 +18,7 @@ import {
 import { awaitBounds, readBounds } from "../lib/bounds";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
+import { createPointerCapture } from "../lib/pointer-capture";
 import {
 	color,
 	radius,
@@ -86,7 +88,7 @@ function CardAction(props: {
 	return (
 		<Tooltip content={props.label} side="top">
 			{(trigger: TooltipTrigger) => (
-				// The tooltip's wrapper arms pointer capture (it listens for press and move), which takes the release from this button and loses its click, so the button takes only the enter and leave handlers. See limitations/queued-stack.md.
+				// The button takes only the tooltip's enter and leave handlers: its click needs no press or move handler.
 				<div
 					role="button"
 					aria-label={props.label}
@@ -410,7 +412,6 @@ export function QueuedStack(props: {
 										onHoverEnter={hover.enter}
 										onHoverLeave={hover.leave}
 										onPress={(event) => {
-											if (!expanded() || event.button !== 0) return;
 											if (event.y === undefined) {
 												throw new Error("mouseDown without coordinates");
 											}
@@ -460,13 +461,14 @@ function QueueCard(props: {
 	expanded: () => boolean;
 	onHoverEnter: () => void;
 	onHoverLeave: () => void;
-	onPress: (event: EventPayload) => void;
+	onPress: (event: HostMouseEvent) => void;
 	onDragMove: (event: EventPayload) => void;
 	onRelease: () => void;
 	onEdit: () => void;
 	onRemove: () => void;
 }) {
 	const [hovered, setHovered] = createSignal(false);
+	const region = createPointerCapture("QueueCard");
 	const present = useIsPresent();
 	const files = () => props.item.files;
 	const label = () =>
@@ -514,14 +516,20 @@ function QueueCard(props: {
 			}}
 		>
 			{/*
-				The press, drag and double click live on this region, not on the card:
-				a card that listens for press, move and release captures the release,
-				and the buttons beside it would never get their click.
+				The press, drag and double click live on this region, not on the card,
+				so a press on the buttons beside it neither starts a drag nor is
+				captured away from them.
 			*/}
 			<div
-				onMouseDown={props.onPress}
+				ref={region.ref}
+				onMouseDown={(event) => {
+					if (!props.expanded() || event.button !== 0) return;
+					region.capture(event);
+					props.onPress(event);
+				}}
 				onMouseMove={props.onDragMove}
 				onMouseUp={props.onRelease}
+				onLostPointerCapture={props.onRelease}
 				onClick={(event: EventPayload) => {
 					if (event.clickCount === 2) props.onEdit();
 				}}
