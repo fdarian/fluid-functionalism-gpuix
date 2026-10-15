@@ -16,6 +16,7 @@ import {
 	Show,
 	untrack,
 } from "solid-js";
+import { createPointerCapture } from "../lib/pointer-capture";
 import { StableLabel } from "../lib/stable-label";
 import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
@@ -342,6 +343,7 @@ function SaturationSquare(props: {
 			}}
 			onMouseDown={(event) => {
 				if (event.button !== 0) return;
+				element?.setPointerCapture(event.pointerId);
 				setDragging(true);
 				apply(event);
 			}}
@@ -351,6 +353,7 @@ function SaturationSquare(props: {
 				if (dragging()) props.onChange(point.x, 1 - point.y);
 			}}
 			onMouseUp={() => setDragging(false)}
+			onLostPointerCapture={() => setDragging(false)}
 			onKeyDown={onKeyDown}
 			style={{
 				position: "relative",
@@ -467,6 +470,7 @@ function Rail(props: {
 	const renderer = useGpuixRequired();
 	let root: HostElement | undefined;
 	let thumb: HostElement | undefined;
+	const press = createPointerCapture("Rail");
 	const [dragging, setDragging] = createSignal(false);
 
 	const fraction = () => (props.value - props.min) / (props.max - props.min);
@@ -575,8 +579,10 @@ function Rail(props: {
 				/>
 			</div>
 			<div
+				ref={press.ref}
 				onMouseDown={(event) => {
 					if (event.button !== 0) return;
+					press.capture(event);
 					setDragging(true);
 					apply(event);
 					if (thumb !== undefined) renderer.focusElement?.(thumb.id);
@@ -585,6 +591,7 @@ function Rail(props: {
 					if (dragging()) apply(event);
 				}}
 				onMouseUp={() => setDragging(false)}
+				onLostPointerCapture={() => setDragging(false)}
 				style={{
 					position: "absolute",
 					top: 0,
@@ -1035,6 +1042,7 @@ function ColorInput(props: {
 	const [editing, setEditing] = createSignal(props.scrubbable !== true);
 	let input: HostElement | undefined;
 	let press: { x: number; value: number; scrubbed: boolean } | undefined;
+	const field = createPointerCapture("ColorInput");
 
 	// While the field has focus, outside changes leave the draft alone.
 	createEffect(
@@ -1116,6 +1124,7 @@ function ColorInput(props: {
 	const scrub = props.scrubbable === true;
 	return (
 		<div
+			ref={field.ref}
 			testId={props.testId}
 			onMouseEnter={() => props.tooltip?.onMouseEnter()}
 			onMouseLeave={() => props.tooltip?.onMouseLeave()}
@@ -1124,6 +1133,9 @@ function ColorInput(props: {
 					? (event) => {
 							props.tooltip?.onMouseDown();
 							if (editing() || event.x === undefined) return;
+							// Pressing the field would focus its input; only a press that never scrubs does that, on release.
+							event.preventDefault();
+							field.capture(event);
 							press = {
 								x: event.x,
 								value: numberOf(props.value),
@@ -1143,7 +1155,8 @@ function ColorInput(props: {
 						}
 					: undefined
 			}
-			onMouseUp={
+			// pointerup, not mouseup: the capture ends between the two, and its lost-capture handler clears `press`.
+			onPointerUp={
 				scrub
 					? () => {
 							const pressed = press;
@@ -1154,6 +1167,9 @@ function ColorInput(props: {
 						}
 					: undefined
 			}
+			onLostPointerCapture={() => {
+				press = undefined;
+			}}
 			style={{
 				width: props.width,
 				height: height.control,
@@ -1294,7 +1310,7 @@ function ColorInputsRow(props: {
 	const whole = (
 		name: string,
 		key: ChannelKey,
-		value: number,
+		value: () => number,
 		min: number,
 		max: number,
 		wrap?: boolean,
@@ -1303,7 +1319,7 @@ function ColorInputsRow(props: {
 			name={name}
 			testId={id(key)}
 			width={four}
-			value={String(value)}
+			value={String(value())}
 			onCommit={(next) => props.onChannelChange(key, next)}
 			align="center"
 			nudgeStep={1}
@@ -1340,9 +1356,9 @@ function ColorInputsRow(props: {
 				{alpha(half)}
 			</Show>
 			<Show when={props.format === "rgb"}>
-				{whole("Red", "r", props.parsed.r, 0, 255)}
-				{whole("Green", "g", props.parsed.g, 0, 255)}
-				{whole("Blue", "b", props.parsed.b, 0, 255)}
+				{whole("Red", "r", () => props.parsed.r, 0, 255)}
+				{whole("Green", "g", () => props.parsed.g, 0, 255)}
+				{whole("Blue", "b", () => props.parsed.b, 0, 255)}
 				{alpha(four)}
 			</Show>
 			<Show when={props.format === "hsl"}>
@@ -1351,9 +1367,9 @@ function ColorInputsRow(props: {
 						rgbToHsl(props.parsed.r, props.parsed.g, props.parsed.b);
 					return (
 						<>
-							{whole("Hue", "hSL", Math.round(hsl().h), 0, 360, true)}
-							{whole("Saturation", "sSL", Math.round(hsl().s * 100), 0, 100)}
-							{whole("Lightness", "lSL", Math.round(hsl().l * 100), 0, 100)}
+							{whole("Hue", "hSL", () => Math.round(hsl().h), 0, 360, true)}
+							{whole("Saturation", "sSL", () => Math.round(hsl().s * 100), 0, 100)}
+							{whole("Lightness", "lSL", () => Math.round(hsl().l * 100), 0, 100)}
 							{alpha(four)}
 						</>
 					);
@@ -1365,7 +1381,7 @@ function ColorInputsRow(props: {
 						rgbToOklch(props.parsed.r, props.parsed.g, props.parsed.b);
 					return (
 						<>
-							{whole("Lightness", "L", Math.round(oklch().L * 100), 0, 100)}
+							{whole("Lightness", "L", () => Math.round(oklch().L * 100), 0, 100)}
 							<Channel
 								name="Chroma"
 								testId={id("C")}
@@ -1383,7 +1399,7 @@ function ColorInputsRow(props: {
 							{whole(
 								"Hue",
 								"H",
-								Math.round(props.oklchHue ?? oklch().H),
+								() => Math.round(props.oklchHue ?? oklch().H),
 								0,
 								360,
 								true,
