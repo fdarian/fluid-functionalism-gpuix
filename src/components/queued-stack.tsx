@@ -29,7 +29,7 @@ import {
 	weight,
 } from "../lib/theme";
 import { type FileLike, FileThumbnail } from "./file-thumbnail";
-import { Tooltip, type TooltipTrigger } from "./tooltip";
+import { Tooltip } from "./tooltip";
 
 const pencilGlyph = defineIcon(
 	'<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
@@ -87,41 +87,32 @@ function CardAction(props: {
 	const [hovered, setHovered] = createSignal(false);
 	return (
 		<Tooltip content={props.label} side="top">
-			{(trigger: TooltipTrigger) => (
-				// The button takes only the tooltip's enter and leave handlers: its click needs no press or move handler.
-				<div
-					role="button"
-					aria-label={props.label}
-					testId={props.testId}
-					onClick={props.onClick}
-					onMouseEnter={() => {
-						setHovered(true);
-						trigger.onMouseEnter();
-					}}
-					onMouseLeave={() => {
-						setHovered(false);
-						trigger.onMouseLeave();
-					}}
-					style={{
-						width: 32,
-						height: 32,
-						flexShrink: 0,
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						borderRadius: radius.item,
-						cursor: "pointer",
-						hover: { backgroundColor: color.hover },
-					}}
-				>
-					<Icon
-						name={props.glyph}
-						size={14}
-						strokeWidth={props.stroke}
-						color={hovered() ? color.foreground : color.mutedForeground}
-					/>
-				</div>
-			)}
+			<div
+				role="button"
+				aria-label={props.label}
+				testId={props.testId}
+				onClick={props.onClick}
+				onMouseEnter={() => setHovered(true)}
+				onMouseLeave={() => setHovered(false)}
+				style={{
+					width: 32,
+					height: 32,
+					flexShrink: 0,
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					borderRadius: radius.item,
+					cursor: "pointer",
+					hover: { backgroundColor: color.hover },
+				}}
+			>
+				<Icon
+					name={props.glyph}
+					size={14}
+					strokeWidth={props.stroke}
+					color={hovered() ? color.foreground : color.mutedForeground}
+				/>
+			</div>
 		</Tooltip>
 	);
 }

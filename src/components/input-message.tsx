@@ -30,7 +30,7 @@ import { createMeasuredHeight } from "../lib/measured-height";
 import { color, height, radius, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 import { FileThumbnail } from "./file-thumbnail";
 import type { InputSize } from "./input-group";
-import { Tooltip, type TooltipTrigger } from "./tooltip";
+import { Tooltip } from "./tooltip";
 
 const arrowUp = defineIcon('<path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>');
 const arrowDown = defineIcon('<path d="M12 5v14"/><path d="m19 12-7 7-7-7"/>');
@@ -251,38 +251,29 @@ function RemoveBadge(props: {
 	const renderer = useGpuixRequired();
 	return (
 		<Tooltip content="Remove" side="top">
-			{(tooltip: TooltipTrigger) => (
-				<div
-					{...buttonProps({ onClick: props.onClick }, renderer)}
-					aria-label={props.label}
-					testId={props.testId}
-					tabIndex={0}
-					onMouseEnter={() => {
-						props.onHoverChange(true);
-						tooltip.onMouseEnter();
-					}}
-					onMouseLeave={() => {
-						props.onHoverChange(false);
-						tooltip.onMouseLeave();
-					}}
-					onMouseDown={tooltip.onMouseDown}
-					style={{
-						width: 20,
-						height: 20,
-						borderRadius: 10,
-						backgroundColor: "#171717",
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						cursor: "pointer",
-						opacity: props.visible ? 1 : 0,
-						keyboardFocusDim: false,
-						focusVisible: focusRing(0),
-					}}
-				>
-					<Icon name="x" size={12} strokeWidth={2.5} color="#ffffff" />
-				</div>
-			)}
+			<div
+				{...buttonProps({ onClick: props.onClick }, renderer)}
+				aria-label={props.label}
+				testId={props.testId}
+				tabIndex={0}
+				onMouseEnter={() => props.onHoverChange(true)}
+				onMouseLeave={() => props.onHoverChange(false)}
+				style={{
+					width: 20,
+					height: 20,
+					borderRadius: 10,
+					backgroundColor: "#171717",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					cursor: "pointer",
+					opacity: props.visible ? 1 : 0,
+					keyboardFocusDim: false,
+					focusVisible: focusRing(0),
+				}}
+			>
+				<Icon name="x" size={12} strokeWidth={2.5} color="#ffffff" />
+			</div>
 		</Tooltip>
 	);
 }
@@ -481,47 +472,38 @@ function QueuedRow(props: {
 				</text>
 			</div>
 			<Tooltip content="Remove" side="top">
-				{(tooltip: TooltipTrigger) => (
-					<div
-						{...buttonProps({ onClick: () => props.onRemove(props.item) }, renderer)}
-						aria-label={`Remove queued message: ${label()}`}
-						testId={
-							props.testId === undefined ? undefined : `${props.testId}-remove`
-						}
-						tabIndex={0}
-						onMouseEnter={() => {
-							setCloseHovered(true);
-							tooltip.onMouseEnter();
-						}}
-						onMouseLeave={() => {
-							setCloseHovered(false);
-							tooltip.onMouseLeave();
-						}}
-						onMouseDown={tooltip.onMouseDown}
-						style={{
-							position: "relative",
-							width: 20,
-							height: 20,
-							flexShrink: 0,
-							borderRadius: 10,
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-							cursor: "pointer",
-							opacity: hovered() || closeHovered() ? 1 : 0,
-							keyboardFocusDim: false,
-							hover: { backgroundColor: color.hover },
-							focusVisible: focusRing(0),
-						}}
-					>
-						<Icon
-							name="x"
-							size={13}
-							strokeWidth={2.5}
-							color={closeHovered() ? color.foreground : color.mutedForeground}
-						/>
-					</div>
-				)}
+				<div
+					{...buttonProps({ onClick: () => props.onRemove(props.item) }, renderer)}
+					aria-label={`Remove queued message: ${label()}`}
+					testId={
+						props.testId === undefined ? undefined : `${props.testId}-remove`
+					}
+					tabIndex={0}
+					onMouseEnter={() => setCloseHovered(true)}
+					onMouseLeave={() => setCloseHovered(false)}
+					style={{
+						position: "relative",
+						width: 20,
+						height: 20,
+						flexShrink: 0,
+						borderRadius: 10,
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						cursor: "pointer",
+						opacity: hovered() || closeHovered() ? 1 : 0,
+						keyboardFocusDim: false,
+						hover: { backgroundColor: color.hover },
+						focusVisible: focusRing(0),
+					}}
+				>
+					<Icon
+						name="x"
+						size={13}
+						strokeWidth={2.5}
+						color={closeHovered() ? color.foreground : color.mutedForeground}
+					/>
+				</div>
 			</Tooltip>
 		</motion.div>
 	);

@@ -44,7 +44,7 @@ import {
 	rgbToHsv,
 	rgbToOklch,
 } from "./color-picker-math";
-import { Tooltip, type TooltipTrigger } from "./tooltip";
+import { Tooltip } from "./tooltip";
 
 export type { ColorFormat, ParsedColor } from "./color-picker-math";
 export { buildParsed, parseColor } from "./color-picker-math";
@@ -1021,7 +1021,6 @@ function ColorInput(props: {
 	max?: number;
 	/** Wraps (modulo) instead of clamping: hue is an angle. */
 	wrap?: boolean;
-	tooltip?: TooltipTrigger;
 }) {
 	const renderer = useGpuixRequired();
 	const [draft, setDraft] = createSignal(props.value);
@@ -1113,12 +1112,9 @@ function ColorInput(props: {
 		<div
 			ref={field.ref}
 			testId={props.testId}
-			onMouseEnter={() => props.tooltip?.onMouseEnter()}
-			onMouseLeave={() => props.tooltip?.onMouseLeave()}
 			onMouseDown={
 				scrub
 					? (event) => {
-							props.tooltip?.onMouseDown();
 							if (editing() || event.x === undefined) return;
 							// Pressing the field would focus its input; only a press that never scrubs does that, on release.
 							event.preventDefault();
@@ -1232,17 +1228,15 @@ function ColorInput(props: {
 	);
 }
 
-/** A channel field with a 300ms name tooltip. The tooltip's handlers go on the field itself: see limitations/color-picker.md. */
+/** A channel field with a 300ms name tooltip. */
 function Channel(
-	props: Omit<Parameters<typeof ColorInput>[0], "tooltip" | "ariaLabel"> & {
+	props: Omit<Parameters<typeof ColorInput>[0], "ariaLabel"> & {
 		name: string;
 	},
 ) {
 	return (
 		<Tooltip content={props.name} delayDuration={300}>
-			{(tooltip: TooltipTrigger) => (
-				<ColorInput {...props} ariaLabel={props.name} tooltip={tooltip} />
-			)}
+			<ColorInput {...props} ariaLabel={props.name} />
 		</Tooltip>
 	);
 }

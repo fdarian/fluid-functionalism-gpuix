@@ -87,22 +87,10 @@ function slideFrom(side: TooltipSide) {
 	}
 }
 
-/**
- * The hover handlers, for a trigger that carries them itself instead of
- * leaving them to the wrapper, which hears them through bubbling anyway.
- */
-export interface TooltipTrigger {
-	onMouseEnter: () => void;
-	/** Only present with `followCursor`: gpuix captures the pointer on any element that listens to both mouseDown and mouseMove, and the child's click would never arrive. */
-	onMouseMove?: (event: EventPayload) => void;
-	onMouseLeave: () => void;
-	onMouseDown: () => void;
-}
-
 export function Tooltip(props: {
 	content: JSX.Element;
-	/** An unfilled element, or a function receiving the handlers for a trigger that paints a fill. */
-	children: JSX.Element | ((trigger: TooltipTrigger) => JSX.Element);
+	/** The trigger: the wrapper hears its hover and press through bubbling. */
+	children: JSX.Element;
 	side?: TooltipSide;
 	sideOffset?: number;
 	/** Hover delay in ms. Defaults to the provider's, or 200. */
@@ -234,26 +222,19 @@ export function Tooltip(props: {
 		);
 	};
 
-	const trigger: TooltipTrigger = {
-		onMouseEnter,
-		get onMouseMove() {
-			return props.followCursor === undefined ? undefined : onMouseMove;
-		},
-		onMouseLeave: scheduleClose,
-		onMouseDown: dismiss,
-	};
-	const render = props.children;
-
 	return (
 		<div
 			ref={(element) => {
 				wrapper = element;
 			}}
 			testId={props.testId}
-			{...(typeof render === "function" ? {} : trigger)}
+			onMouseEnter={onMouseEnter}
+			onMouseMove={onMouseMove}
+			onMouseLeave={scheduleClose}
+			onMouseDown={dismiss}
 			style={{ position: "relative", display: "flex", flexShrink: 0 }}
 		>
-			{typeof render === "function" ? render(trigger) : render}
+			{props.children}
 			{/* Escape closes a hover-opened tooltip before it reaches a dialog behind it; a pinned one is not a layer. */}
 			<Show when={hovered() && props.forceOpen === undefined}>
 				<DismissableLayer onEscapeKeyDown={dismiss} />
