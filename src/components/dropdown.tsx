@@ -652,6 +652,11 @@ export function Dropdown(props: {
 		releasePress: () => {},
 	};
 
+	const ringRowId = () => {
+		const index = focusIndex();
+		return index === null ? undefined : context.rowId(index);
+	};
+
 	/** Arrows land on disabled rows too, as FF's panel focuses every row; only activation refuses them. */
 	const all = () => [...rows.keys()].sort((a, b) => a - b);
 	/** Tab lands on the checked row, else the first one that can be picked. */
@@ -709,9 +714,7 @@ export function Dropdown(props: {
 				testId={props.testId}
 				id={listId}
 				role="group"
-				aria-activedescendant={
-					focusIndex() === null ? undefined : context.rowId(focusIndex() as number)
-				}
+				aria-activedescendant={ringRowId()}
 				tabIndex={0}
 				onKeyDown={onKeyDown}
 				onFocus={() => {
