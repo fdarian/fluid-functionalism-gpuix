@@ -404,7 +404,7 @@ function QueuedRow(props: {
 				focusVisible: focusRing(0),
 			}}
 		>
-			{/* The recessed fill is its own layer: a filled row would take the pointer from the composer around it. */}
+			{/* The recessed fill is its own layer: a filled row would take the pointer from the composer around it. The siblings after it are `position: relative` so the fill paints under them. */}
 			<div
 				style={{
 					position: "absolute",
@@ -420,6 +420,7 @@ function QueuedRow(props: {
 			<Show when={files() > 0}>
 				<div
 					style={{
+						position: "relative",
 						display: "flex",
 						flexDirection: "row",
 						alignItems: "center",
@@ -458,6 +459,7 @@ function QueuedRow(props: {
 				onMouseUp={() => setGrabbing(false)}
 				onLostPointerCapture={() => setGrabbing(false)}
 				style={{
+					position: "relative",
 					flexGrow: 1,
 					minWidth: 0,
 					height: step().row,
@@ -500,6 +502,7 @@ function QueuedRow(props: {
 						}}
 						onMouseDown={tooltip.onMouseDown}
 						style={{
+							position: "relative",
 							width: 20,
 							height: 20,
 							flexShrink: 0,
