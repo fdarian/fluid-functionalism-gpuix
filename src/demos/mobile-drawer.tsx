@@ -101,6 +101,15 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.press("escape");
 	shot.expectText("Navigation", false);
 	shot.capture("closed");
+
+	// A press inside the panel keeps it open; a click that presses and releases on the backdrop closes it.
+	await shot.click("drawer-open");
+	await shot.settle(800);
+	await shot.clickAt(120, 700);
+	shot.expectText("Navigation", true);
+	await shot.clickAt(700, 400);
+	shot.expectText("Navigation", false);
+
 	await shot.click("drawer-open");
 	await shot.click("drawer-row-Projects");
 	shot.expectText("Current page: Projects", true);

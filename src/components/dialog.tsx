@@ -1,7 +1,6 @@
 import {
 	type BoxShadow,
 	createWindowSize,
-	DialogBackdrop,
 	DialogPopup,
 	DialogPortal,
 	Dialog as GpuixDialog,
@@ -160,8 +159,6 @@ export function Dialog(props: {
 			<GpuixDialog
 				open={mounted()}
 				modal={props.modal}
-				// A non-modal dialog closes on a press anywhere outside it, so `DialogContent` takes that over from the backdrop.
-				disablePointerDismissal={!scope.modal()}
 				onOpenChange={setOpen}
 			>
 				{props.children}
@@ -292,7 +289,13 @@ export function DialogContent(props: {
 
 	const body = () => (
 		<>
-			<DialogBackdrop>
+			{/* gpuix's own DialogBackdrop closes on mousedown; a backdrop closes on a click that presses and releases on it, as in a browser. */}
+			<div
+				onClick={() => {
+					if (scope.modal()) scope.setOpen(false);
+				}}
+				style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
+			>
 				{/* Base UI renders no second backdrop for a nested dialog: the parent's already dims the page. */}
 				<Show when={!scope.nested}>
 					<motion.div
@@ -309,9 +312,10 @@ export function DialogContent(props: {
 						}}
 					/>
 				</Show>
-			</DialogBackdrop>
+			</div>
 			<DialogPopup
-				style={{ width: "100%", maxWidth: maxWidth() }}
+				// Positioned so it paints and hit-tests above the absolute backdrop, which would otherwise take a press inside the dialog and close it.
+				style={{ position: "relative", width: "100%", maxWidth: maxWidth() }}
 				testId={props.testId}
 				ref={(element) => {
 					popup = element;

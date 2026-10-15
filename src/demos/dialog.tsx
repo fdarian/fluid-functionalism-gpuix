@@ -276,6 +276,14 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectText("Create teamspace", false);
 	shot.capture("basic-closed");
 
+	// A press inside the dialog keeps it open; a click that presses and releases on the backdrop closes it.
+	await shot.click("basic-open");
+	const dialog = shot.centerOf("basic-popup");
+	await shot.clickAt(dialog.x, dialog.y);
+	shot.expectText("Create teamspace", true);
+	await shot.clickAt(1100, 740);
+	shot.expectText("Create teamspace", false);
+
 	await shot.click("stack-open");
 	await shot.click("stack-select");
 	await shot.settle(1200);
