@@ -1,6 +1,7 @@
-import type { HostElement, HostMouseEvent, HostMouseMoveEvent, KeyEvent } from "@gpuix/solid";
+import type { HostMouseEvent, HostMouseMoveEvent, KeyEvent } from "@gpuix/solid";
 import { motion } from "@gpuix/solid";
 import { createSignal } from "solid-js";
+import { createPointerCapture } from "../lib/pointer-capture";
 import { color, type as scale, scheme, motion as tween, weight, focusRing } from "../lib/theme";
 
 export type SwitchSize = "default" | "compact";
@@ -58,7 +59,7 @@ export function Switch(props: {
 	const [dragX, setDragX] = createSignal<number | null>(null);
 	let press: { startX: number; originX: number } | undefined;
 	let dragging = false;
-	let row: HostElement | undefined;
+	const row = createPointerCapture("Switch");
 
 	const thumbWidth = () =>
 		pressed()
@@ -79,9 +80,7 @@ export function Switch(props: {
 	const onPressStart = (event: HostMouseEvent) => {
 		if (props.disabled || event.button !== 0) return;
 		if (event.x === undefined) throw new Error("mouseDown without coordinates");
-		if (row === undefined) throw new Error("Switch pressed before its row mounted");
-		// The drag keeps getting moves and the release after the pointer leaves the row.
-		row.setPointerCapture(event.pointerId);
+		row.capture(event);
 		setPressed(true);
 		dragging = false;
 		press = { startX: event.x, originX: restX() };
@@ -143,9 +142,7 @@ export function Switch(props: {
 
 	return (
 		<div
-			ref={(element) => {
-				row = element;
-			}}
+			ref={row.ref}
 			testId={props.testId}
 			{...hoverHandlers}
 			onMouseDown={onPressStart}

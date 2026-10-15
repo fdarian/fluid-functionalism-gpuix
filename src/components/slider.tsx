@@ -2,6 +2,8 @@ import {
 	type ElementBounds,
 	type EventPayload,
 	type HostElement,
+	type HostMouseEvent,
+	type HostMouseMoveEvent,
 	type HostPointerEvent,
 	type KeyEvent,
 	motion,
@@ -18,6 +20,7 @@ import {
 	untrack,
 } from "solid-js";
 import { awaitBounds, readBounds } from "../lib/bounds";
+import { createPointerCapture } from "../lib/pointer-capture";
 import { createPresence } from "../lib/presence";
 import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 
@@ -477,6 +480,7 @@ function CompactSlider(props: CompactProps) {
 		valueToPixel(value, min(), max(), width);
 
 	const hover = createHover();
+	const pressTarget = createPointerCapture("Slider");
 	const [pressed, setPressed] = createSignal(false);
 	/** True once a press has moved: from then on the thumb is placed, not sprung. */
 	const [moving, setMoving] = createSignal(false);
@@ -571,8 +575,9 @@ function CompactSlider(props: CompactProps) {
 		if (trackWidth() !== painted.width) setTrackWidth(painted.width);
 	};
 
-	const onPress = (event: EventPayload) => {
+	const onPress = (event: HostMouseEvent) => {
 		if (props.disabled || event.button !== 0) return;
+		pressTarget.capture(event);
 		syncBox();
 		const x = pointerX(event);
 		const local = Math.max(
@@ -622,6 +627,7 @@ function CompactSlider(props: CompactProps) {
 		onMouseDown: onPress,
 		onMouseMove: onMove,
 		onMouseUp: onRelease,
+		onLostPointerCapture: onRelease,
 		onMouseEnter: onEnter,
 		onMouseLeave: onLeave,
 	};
@@ -855,6 +861,7 @@ function CompactSlider(props: CompactProps) {
 						testId={
 							props.testId === undefined ? undefined : `${props.testId}-press`
 						}
+						ref={pressTarget.ref}
 						{...pointer}
 						style={{
 							position: "absolute",
@@ -1019,6 +1026,9 @@ function ComfortableSlider(props: ComfortableProps) {
 		setRowWidth(measured.width - ROW_BORDER * 2),
 	);
 	const hover = createHover();
+	// The gutter spans the row and 8px past each end, so it takes the row's drags too.
+	const gutter = createPointerCapture("Slider");
+	const handle = createPointerCapture("Slider handle");
 	const [pressed, setPressed] = createSignal(false);
 	const [focused, setFocused] = createSignal(false);
 	const [preview, setPreview] = createSignal<HoverPreview | null>(null);
@@ -1103,8 +1113,9 @@ function ComfortableSlider(props: ComfortableProps) {
 	const emit = (next: number) => {
 		if (next !== props.value) props.onChange(next);
 	};
-	const onPress = (event: EventPayload) => {
+	const onPress = (event: HostMouseEvent) => {
 		if (props.disabled || event.button !== 0) return;
+		gutter.capture(event);
 		syncBox();
 		dragging = true;
 		setPressed(true);
@@ -1133,13 +1144,14 @@ function ComfortableSlider(props: ComfortableProps) {
 		if (props.disabled || event.button !== 0) return;
 		// The row's own press would end the placing this one starts.
 		event.stopPropagation();
+		handle.capture(event);
 		syncBox();
 		handleDragging = true;
 		setPressed(true);
 		setPlacing(true);
 		emit(valueAtX(pointerX(event)));
 	};
-	const onHandleMove = (event: EventPayload) => {
+	const onHandleMove = (event: HostMouseMoveEvent) => {
 		if (!handleDragging) return;
 		emit(valueAtX(pointerX(event)));
 	};
@@ -1164,6 +1176,7 @@ function ComfortableSlider(props: ComfortableProps) {
 		onMouseDown: onPress,
 		onMouseMove: onMove,
 		onMouseUp: onRelease,
+		onLostPointerCapture: onRelease,
 		onMouseEnter: onEnter,
 		onMouseLeave: onLeave,
 	};
@@ -1257,6 +1270,7 @@ function ComfortableSlider(props: ComfortableProps) {
 				testId={
 					props.testId === undefined ? undefined : `${props.testId}-gutter`
 				}
+				ref={gutter.ref}
 				{...pointer}
 				style={{
 					position: "absolute",
@@ -1475,6 +1489,8 @@ function ComfortableSlider(props: ComfortableProps) {
 							onMouseDown={onHandlePress}
 							onMouseMove={onHandleMove}
 							onMouseUp={onHandleRelease}
+							onLostPointerCapture={onHandleRelease}
+							ref={handle.ref}
 							onMouseEnter={onEnter}
 							onMouseLeave={onLeave}
 							style={{
