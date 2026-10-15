@@ -13,6 +13,7 @@ import {
 	onCleanup,
 	Show,
 } from "solid-js";
+import { HideOutside } from "../lib/modal";
 import { createPresence } from "../lib/presence";
 import { FocusFirst, once } from "./dialog";
 import {
@@ -46,6 +47,7 @@ export function MobileDrawer(props: {
 	const content = once(() => props.children);
 	let popup: HostElement | undefined;
 	const focusFirst = once(() => <FocusFirst popup={() => popup} />);
+	const hideOutside = once(() => <HideOutside popup={() => popup} />);
 	// onMotionComplete is the primary release; the timer covers an exit that never animates.
 	const presence = createPresence(EXIT_FALLBACK_MS, props.open);
 	presence.follow(() => props.open);
@@ -110,6 +112,7 @@ export function MobileDrawer(props: {
 						pointerEvents: "none",
 					}}
 				>
+					{hideOutside()}
 					<motion.div
 						initial={{ left: -DRAWER_WIDTH }}
 						animate={{ left: props.open ? 0 : -DRAWER_WIDTH }}

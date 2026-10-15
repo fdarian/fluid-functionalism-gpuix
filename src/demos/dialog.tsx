@@ -169,7 +169,7 @@ export function Demo() {
 				<Row>
 				<Dialog>
 					<DialogTrigger>
-						<Button testId="basic-open" variant="tertiary">
+						<Button testId="basic-open" id="basic-open" variant="tertiary">
 							Open dialog
 						</Button>
 					</DialogTrigger>
@@ -183,7 +183,7 @@ export function Demo() {
 						</DialogHeader>
 						<DialogFooter>
 							<DialogClose>
-								<Button testId="basic-cancel" variant="ghost">
+								<Button testId="basic-cancel" id="basic-cancel" variant="ghost">
 									Cancel
 								</Button>
 							</DialogClose>
@@ -262,11 +262,37 @@ export function Demo() {
 }
 
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
+	shot.expectAria("basic-open", {
+		role: "Button",
+		has_popup: "Dialog",
+		expanded: false,
+		controls: undefined,
+	});
 	await shot.click("basic-open");
 	shot.expectText("Create teamspace", true);
+	// A modal leaves the page out of the accessibility tree; the popup is named by its title and described by its description.
+	shot.expectAria("basic-open", {
+		hidden: true,
+		expanded: true,
+		controls: [shot.idOf("basic-popup")],
+	});
+	const labelledBy = shot.aria("basic-popup").labelled_by;
+	if (!Array.isArray(labelledBy) || labelledBy.length !== 1)
+		throw new Error("the dialog is named by its title");
+	shot.expectAria(String(labelledBy[0]), { role: "Heading", level: 2 });
+	const describedBy = shot.aria("basic-popup").described_by;
+	if (!Array.isArray(describedBy) || describedBy.length !== 1)
+		throw new Error("the dialog is described by its description");
+	shot.expectAria("basic-popup", { role: "Dialog" });
+	shot.expectAria("basic-cancel", { role: "Button", hidden: undefined });
 	// Focus opens on the first tab stop in the popup (Cancel), not on the popup: Enter presses it.
 	await shot.press("enter");
 	shot.expectText("Create teamspace", false);
+	shot.expectAria("basic-open", {
+		has_popup: "Dialog",
+		expanded: false,
+		hidden: undefined,
+	});
 	await shot.click("basic-open");
 	shot.expectText("Create teamspace", true);
 	shot.capture("basic-open");

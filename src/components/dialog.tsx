@@ -17,6 +17,7 @@ import {
 	createContext,
 	createEffect,
 	createSignal,
+	createUniqueId,
 	type JSX,
 	on,
 	onCleanup,
@@ -24,6 +25,7 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
+import { HideOutside } from "../lib/modal";
 import { createPresence } from "../lib/presence";
 import {
 	color,
@@ -73,6 +75,9 @@ interface DialogScope {
 	trigger: { current: HostElement | undefined };
 	modal: () => boolean;
 	setOpen: (open: boolean) => void;
+	popupId: string;
+	titleId: string;
+	descriptionId: string;
 }
 
 const DialogScopeContext = createContext<DialogScope>();
@@ -136,6 +141,9 @@ export function Dialog(props: {
 	const trigger: { current: HostElement | undefined } = { current: undefined };
 
 	const scope: DialogScope = {
+		popupId: createUniqueId(),
+		titleId: createUniqueId(),
+		descriptionId: createUniqueId(),
 		shown,
 		mounted,
 		scoped: () => props.scoped ?? false,
@@ -175,6 +183,8 @@ export function DialogTrigger(props: { children: JSX.Element }) {
 			ref={(element) => {
 				scope.trigger.current = element;
 			}}
+			aria-haspopup="dialog"
+			aria-controls={scope.mounted() ? scope.popupId : undefined}
 			onClick={scope.pressTrigger}
 		>
 			{props.children}
@@ -273,6 +283,7 @@ export function DialogContent(props: {
 	let region: HostElement | undefined;
 	// gpuix builds the popup's children twice (see `once`), and a second focus step would skip the first tab stop.
 	const focusFirst = once(() => <FocusFirst popup={() => popup} />);
+	const hideOutside = once(() => <HideOutside popup={() => popup} />);
 	/** A non-modal dialog closes on a press anywhere outside it, except, for a scoped dialog, on a trigger outside the overlay (it toggles the dialog itself) or inside a dialog opened from it. */
 	const closeOnOutsidePress = (event: EventPayload) => {
 		if (scope.modal() || !scope.shown() || scope.openChildren() > 0) return;
@@ -317,6 +328,10 @@ export function DialogContent(props: {
 				// Positioned so it paints and hit-tests above the absolute backdrop, which would otherwise take a press inside the dialog and close it.
 				style={{ position: "relative", width: "100%", maxWidth: maxWidth() }}
 				testId={props.testId}
+				id={scope.popupId}
+				// Static: gpuix's popup re-creates itself when a prop it spreads changes. A reference to a title or description that is not rendered resolves to nothing.
+				aria-labelledby={scope.titleId}
+				aria-describedby={scope.descriptionId}
 				ref={(element) => {
 					popup = element;
 				}}
@@ -327,6 +342,7 @@ export function DialogContent(props: {
 				}}
 			>
 				{focusFirst()}
+				<Show when={scope.modal()}>{hideOutside()}</Show>
 				{/* The original also scales 0.97 to 1; gpuix has no transforms, so the panel only fades. */}
 				<motion.div
 					initial={{ opacity: 0 }}
@@ -425,8 +441,9 @@ export function DialogFooter(props: { children: JSX.Element }) {
 }
 
 export function DialogTitle(props: { compact?: boolean; children: string }) {
+	const scope = useDialogScope();
 	return (
-		<GpuixDialogTitle>
+		<GpuixDialogTitle id={scope.titleId}>
 			<text
 				style={{
 					...(props.compact ? { fontSize: 15, lineHeight: 20 } : scale.title),
@@ -444,8 +461,9 @@ export function DialogDescription(props: {
 	compact?: boolean;
 	children: string;
 }) {
+	const scope = useDialogScope();
 	return (
-		<GpuixDialogDescription>
+		<GpuixDialogDescription id={scope.descriptionId}>
 			<text
 				style={{
 					...(props.compact ? scale.bodyCompact : scale.body),
