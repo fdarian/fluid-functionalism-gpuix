@@ -547,9 +547,13 @@ export function CommandMenuInput(props: {
 				event.preventDefault();
 				menu.setQuery("");
 				return;
+			case "Enter":
+				event.preventDefault();
+				submit();
+				return;
 		}
 	};
-	const onSubmit = () => {
+	const submit = () => {
 		const index = menu.hover.activeIndex();
 		if (index === null) return;
 		const row = menu.rows()[index];
@@ -611,7 +615,6 @@ export function CommandMenuInput(props: {
 				onBlur={() => setFocused(false)}
 				onChange={onChange}
 				onKeyDown={onKeyDown}
-				onSubmit={onSubmit}
 				style={{
 					flexGrow: 1,
 					minWidth: 0,

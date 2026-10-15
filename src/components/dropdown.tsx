@@ -387,6 +387,9 @@ function createMenuList(options: {
 				highlight(allRows().at(-1) ?? null);
 				return;
 			case "Enter":
+				event.preventDefault();
+				activateActive();
+				return;
 			case " ":
 				if (!typing) activateActive();
 				return;
@@ -574,7 +577,6 @@ function MenuPanel(props: {
 									event.stopPropagation();
 									list.onKey(event);
 								}}
-								onSubmit={list.activateActive}
 								onFocusChange={menu.setSearchFocused}
 							/>
 						)}

@@ -1100,6 +1100,11 @@ function ColorInput(props: {
 			renderer.blur?.();
 			return;
 		}
+		if (event.key === "Enter") {
+			event.preventDefault();
+			renderer.blur?.();
+			return;
+		}
 		if (
 			(event.key === "ArrowUp" || event.key === "ArrowDown") &&
 			(props.nudgeStep !== undefined || props.nudgeShiftStep !== undefined)
@@ -1208,7 +1213,6 @@ function ColorInput(props: {
 					commitDraft();
 				}}
 				onKeyDown={onKeyDown}
-				onSubmit={() => renderer.blur?.()}
 				style={{
 					flexGrow: 1,
 					minWidth: 0,

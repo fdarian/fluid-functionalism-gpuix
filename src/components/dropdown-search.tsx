@@ -69,7 +69,6 @@ export const SEARCH_HEIGHT = height.control;
 export function SearchField(props: {
 	search: DropdownSearchProps;
 	onKeyDown: (event: KeyEvent) => void;
-	onSubmit: () => void;
 	/** The field gained or lost keyboard focus. */
 	onFocusChange?: (focused: boolean) => void;
 	testId?: string;
@@ -123,7 +122,6 @@ export function SearchField(props: {
 					props.search.onValueChange(event.value);
 				}}
 				onKeyDown={props.onKeyDown}
-				onSubmit={props.onSubmit}
 				style={{
 					flexGrow: 1,
 					minWidth: 0,

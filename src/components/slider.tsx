@@ -362,10 +362,13 @@ function ValueDisplay(props: {
 						}
 						setDraft(event.value);
 					}}
-					onSubmit={() => commit(index)}
 					onBlur={() => commit(index)}
 					onKeyDown={(event: KeyEvent) => {
 						if (event.key === "Escape") cancel();
+						else if (event.key === "Enter") {
+							event.preventDefault();
+							commit(index);
+						}
 					}}
 					style={{
 						width: 40,

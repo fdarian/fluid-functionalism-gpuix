@@ -22,7 +22,7 @@ import { createFluidHover, type ItemRect } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
 import { createMeasuredHeight } from "../lib/measured-height";
-import { moveIndex } from "../lib/list-nav";
+import { isChord, moveIndex } from "../lib/list-nav";
 import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 import { Button } from "./button";
 
@@ -426,6 +426,12 @@ export function AskUserQuestions(props: {
 		setFreeTextError(null);
 		goNext(patch(() => ({ otherText: text })));
 	};
+	/** Enter on a one-line answer field; Shift+Enter and the chords stay with the editor and the card. */
+	const submitOtherOnEnter = (event: KeyEvent) => {
+		if (event.key !== "Enter" || event.shiftKey === true || isChord(event)) return;
+		event.preventDefault();
+		submitOther();
+	};
 	const skip = () => {
 		const current = question();
 		if (current === undefined) return;
@@ -792,7 +798,9 @@ export function AskUserQuestions(props: {
 								current === otherIndex() ? null : current,
 							);
 						}}
-						{...(isMulti() ? {} : { onSubmit: submitOther })}
+						onKeyDown={(event: KeyEvent) => {
+							if (!isMulti()) submitOtherOnEnter(event);
+						}}
 						style={{
 							...scale.body,
 							flexGrow: 1,
@@ -859,7 +867,7 @@ export function AskUserQuestions(props: {
 					onChange={(event: EventPayload) => setOther(event.value ?? "")}
 					onFocus={() => setTextFocused(true)}
 					onBlur={() => setTextFocused(false)}
-					{...(multiline ? {} : { onSubmit: submitOther })}
+					onKeyDown={multiline ? undefined : submitOtherOnEnter}
 					style={{
 						...scale.body,
 						width: "100%",

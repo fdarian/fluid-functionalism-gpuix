@@ -833,6 +833,12 @@ export function InputMessage(props: InputMessageProps) {
 	};
 
 	const onKeyDown = (event: KeyEvent) => {
+		// Enter sends, Shift+Enter is left to the textarea for a newline.
+		if (event.key === "Enter" && event.shiftKey !== true) {
+			event.preventDefault();
+			onSubmit();
+			return;
+		}
 		// gpuix's textarea binds the arrow keys as editor actions and never reports them
 		// here, so Ctrl-P / Ctrl-N walk the lists too (see limitations/input-message.md).
 		const plain =
@@ -1082,7 +1088,6 @@ export function InputMessage(props: InputMessageProps) {
 						props.onValueChange(event.value);
 					}}
 					onKeyDown={onKeyDown}
-					onSubmit={onSubmit}
 					onFocus={() => setFocused(true)}
 					onBlur={() => {
 						setFocused(false);

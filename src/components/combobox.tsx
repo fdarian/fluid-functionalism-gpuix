@@ -318,9 +318,13 @@ export function Combobox(props: {
 			case "Tab":
 				closePopup();
 				return;
+			case "Enter":
+				event.preventDefault();
+				submit();
+				return;
 		}
 	};
-	const onSubmit = () => {
+	const submit = () => {
 		if (!open()) return;
 		const index = hover.activeIndex();
 		// Nothing highlighted (no results): Enter closes, so a form can submit.
@@ -454,7 +458,6 @@ export function Combobox(props: {
 						onBlur={() => setFocused(false)}
 						onChange={onChange}
 						onKeyDown={onKeyDown}
-						onSubmit={onSubmit}
 						style={{
 							flexGrow: 1,
 							minWidth: 0,

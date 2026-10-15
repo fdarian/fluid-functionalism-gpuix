@@ -334,7 +334,9 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(1180, 700);
 	await shot.click("left-value-0");
 	shot.capture("editing");
-	await shot.press("backspace backspace backspace 7 2 enter");
+	// onChange reaches JS after the whole press; Enter is a keydown now, so it needs its own press to see the typed draft.
+	await shot.press("backspace backspace backspace 7 2");
+	await shot.press("enter");
 	await shot.settle(300);
 	shot.expectText("72", true);
 	shot.capture("edited");
