@@ -197,6 +197,15 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("hover-other-tab");
 	await shot.click("basic-1");
 	shot.capture("selected-second");
+	shot.expectAria("basic-1", {
+		selected: true,
+		controls: ["basic-demo-panel-1"],
+	});
+	shot.expectAria("basic-demo-panel-1", {
+		role: "TabPanel",
+		labelled_by: ["basic-demo-tab-1"],
+	});
+	shot.expectAria("basic-0", { selected: false, controls: undefined });
 	await shot.moveTo(1180, 700);
 	shot.capture("pointer-left-list");
 	await shot.click("active-2");

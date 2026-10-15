@@ -248,6 +248,14 @@ export function TabsSubtleItem(props: {
 		scope.hover.activeIndex() === props.index || isSelected();
 	const collapsible = () => scope.activeLabel() && props.icon !== undefined;
 	const showLabel = () => !collapsible() || isSelected();
+	const tabId = () =>
+		scope.idPrefix() === undefined
+			? undefined
+			: `${scope.idPrefix()}-tab-${props.index}`;
+	const panelId = () =>
+		scope.idPrefix() === undefined
+			? undefined
+			: `${scope.idPrefix()}-panel-${props.index}`;
 	// The unfolding label's width is animated to a measured number (gpuix cannot animate `auto`): the box holding the label and its gap to the icon reports it.
 
 	const onKeyDown = (event: KeyEvent) => {
@@ -296,11 +304,8 @@ export function TabsSubtleItem(props: {
 			role="tab"
 			aria-selected={isSelected()}
 			aria-label={collapsible() && !showLabel() ? props.label : undefined}
-			aria-id={
-				scope.idPrefix() === undefined
-					? undefined
-					: `${scope.idPrefix()}-tab-${props.index}`
-			}
+			id={tabId()}
+			aria-controls={isSelected() ? panelId() : undefined}
 			testId={props.testId}
 			onFocus={() => {
 				scope.focusTab(props.index);
@@ -390,7 +395,11 @@ export function TabsSubtlePanel(props: {
 }) {
 	return (
 		<Show when={props.selectedIndex === props.index}>
-			<div role="tabpanel" aria-id={`${props.idPrefix}-panel-${props.index}`}>
+			<div
+				role="tabpanel"
+				id={`${props.idPrefix}-panel-${props.index}`}
+				aria-labelledby={`${props.idPrefix}-tab-${props.index}`}
+			>
 				{props.children}
 			</div>
 		</Show>

@@ -478,8 +478,18 @@ async function scrollTo(shot: ShotContext, testId: string) {
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.hover("basic-header");
 	shot.capture("header-hover");
+	const openTabStops = shot.tabStopCount();
+	const panel = shot.aria("basic-header").controls;
+	if (!Array.isArray(panel) || panel.length !== 1)
+		throw new Error("an open trigger controls its panel");
+	if (!shot.hasAriaNode(String(panel[0])))
+		throw new Error("the controlled panel is not in the accessibility tree");
 	await shot.click("basic-header");
 	shot.capture("basic-collapsed");
+	shot.expectAria("basic-header", { expanded: false, controls: undefined });
+	// The closed panel's own trigger leaves the tab order with it.
+	if (shot.tabStopCount() !== openTabStops - 1)
+		throw new Error("a closed panel's trigger is still a tab stop");
 	await shot.click("basic-header");
 	await shot.click("basic-details");
 	shot.capture("basic-details-open");

@@ -27,7 +27,24 @@ export interface ShotContext {
 	expectText(text: string, present: boolean): void;
 	/** Writes `screenshots/<demo>/<name>.png`. */
 	capture(name: string): void;
+	/** The DOM `id` of the element with this `testId`; throws when it has none. */
+	idOf(testId: string): string;
+	/**
+	 * What assistive technology gets for an element, from the last painted
+	 * frame: given as a `testId`, or as a DOM `id` (e.g. a panel a trigger
+	 * `controls`). Relations (`controls`, `labelled_by`, ...) are lists of DOM
+	 * `id`s. Throws when the element has no node.
+	 */
+	aria(target: string): AriaSnapshot;
+	/** Whether the element is in the accessibility tree. */
+	hasAriaNode(target: string): boolean;
+	/** How many elements Tab reaches in the last painted frame. */
+	tabStopCount(): number;
+	/** Throws unless every given key of `aria(target)` equals the expected value. */
+	expectAria(target: string, expected: AriaSnapshot): void;
 }
+
+export type AriaSnapshot = Record<string, unknown>;
 
 /**
  * What a file in `src/demos/` exports. The app finds these at startup, so a

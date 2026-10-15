@@ -9,6 +9,7 @@ import {
 	createContext,
 	createEffect,
 	createSignal,
+	createUniqueId,
 	For,
 	type JSX,
 	onCleanup,
@@ -95,6 +96,7 @@ function Chevron(props: { open: boolean; stroke: number; color: string }) {
 function TriggerRow(props: {
 	open: boolean;
 	onToggle: () => void;
+	panelId: string;
 	paddingX: number;
 	paddingY: number;
 	gap: number;
@@ -102,7 +104,6 @@ function TriggerRow(props: {
 	children: string;
 }) {
 	const renderer = useGpuixRequired();
-	const inert = useContext(InertContext);
 	const [hovered, setHovered] = createSignal(false);
 	const highlighted = () => props.open || hovered();
 	return (
@@ -131,9 +132,11 @@ function TriggerRow(props: {
 				</Show>
 			</AnimatePresence>
 			<div
-				{...buttonProps({ disabled: inert(), onClick: props.onToggle, tabIndex: 0 }, renderer)}
+				{...buttonProps({ onClick: props.onToggle, tabIndex: 0 }, renderer)}
 				testId={props.testId}
+				id={createUniqueId()}
 				aria-expanded={props.open}
+				aria-controls={props.open ? props.panelId : undefined}
 				style={{
 					position: "relative",
 					display: "flex",
@@ -169,20 +172,16 @@ function TriggerRow(props: {
 // ─── Collapse ─────────────────────────────────────────────────────────────
 
 /**
- * Whether a trigger sits inside a closed panel. Base UI hides a closed panel,
- * which takes its triggers out of the tab order; gpuix has no `display: none`,
- * so a trigger in a clipped panel would still be tabbable and Enter-activatable.
- */
-const InertContext = createContext<() => boolean>(() => false);
-
-/**
  * A box whose height springs between 0 and its content's. gpuix cannot animate
  * `height: auto`, so the content reports its size through `onLayout` and the
  * outer box tweens to that number.
  */
-function Collapse(props: { open: boolean; children: JSX.Element }) {
+function Collapse(props: {
+	id: string;
+	open: boolean;
+	children: JSX.Element;
+}) {
 	const measured = createMeasuredHeight();
-	const parentInert = useContext(InertContext);
 	// A panel that mounts open takes its first height with no spring.
 	const [needsSnap, setNeedsSnap] = createSignal(props.open);
 	createEffect(() => {
@@ -193,6 +192,7 @@ function Collapse(props: { open: boolean; children: JSX.Element }) {
 	const target = () => (props.open ? (measured.height() ?? 0) : 0);
 	return (
 		<motion.div
+			id={props.id}
 			initial={{ height: 0 }}
 			animate={{ height: target() }}
 			transition={needsSnap() ? tween.snap : panelSpring}
@@ -202,12 +202,13 @@ function Collapse(props: { open: boolean; children: JSX.Element }) {
 				overflow: "hidden",
 			}}
 		>
-			<div onLayout={measured.onLayout} style={{ flexShrink: 0 }}>
-				<InertContext.Provider
-					value={() => parentInert() || !props.open}
-				>
-					{props.children}
-				</InertContext.Provider>
+			{/* Base UI hides a closed panel, and gpuix has no `display: none`: inert takes its triggers out of the tab order and the text out of the accessibility tree. */}
+			<div
+				inert={!props.open}
+				onLayout={measured.onLayout}
+				style={{ flexShrink: 0 }}
+			>
+				{props.children}
 			</div>
 		</motion.div>
 	);
@@ -216,6 +217,7 @@ function Collapse(props: { open: boolean; children: JSX.Element }) {
 // ─── ThinkingSteps (root) ─────────────────────────────────────────────────
 
 interface OpenState {
+	panelId: string;
 	open: () => boolean;
 	toggle: () => void;
 }
@@ -250,7 +252,7 @@ export function ThinkingSteps(props: {
 		props.onOpenChange?.(next);
 	};
 	return (
-		<OpenContext.Provider value={{ open, toggle }}>
+		<OpenContext.Provider value={{ panelId: createUniqueId(), open, toggle }}>
 			<div
 				testId={props.testId}
 				style={{
@@ -275,6 +277,7 @@ export function ThinkingStepsHeader(props: {
 		<TriggerRow
 			open={state.open()}
 			onToggle={state.toggle}
+			panelId={state.panelId}
 			testId={props.testId}
 			paddingX={12}
 			paddingY={8}
@@ -288,7 +291,7 @@ export function ThinkingStepsHeader(props: {
 export function ThinkingStepsContent(props: { children: JSX.Element }) {
 	const state = useOpen();
 	return (
-		<Collapse open={state.open()}>
+		<Collapse id={state.panelId} open={state.open()}>
 			<div
 				style={{
 					display: "flex",
@@ -454,6 +457,7 @@ export function ThinkingStepDetails(props: {
 	children?: JSX.Element;
 }) {
 	const [open, setOpen] = createSignal(props.defaultOpen ?? false);
+	const panelId = createUniqueId();
 	return (
 		<div
 			style={{
@@ -466,6 +470,7 @@ export function ThinkingStepDetails(props: {
 			<TriggerRow
 				open={open()}
 				onToggle={() => setOpen(!open())}
+				panelId={panelId}
 				testId={props.testId}
 				paddingX={12}
 				paddingY={4}
@@ -473,7 +478,7 @@ export function ThinkingStepDetails(props: {
 			>
 				{props.summary}
 			</TriggerRow>
-			<Collapse open={open()}>
+			<Collapse id={panelId} open={open()}>
 				<div
 					style={{
 						paddingLeft: 12,

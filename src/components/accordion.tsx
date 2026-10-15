@@ -10,6 +10,7 @@ import {
 	createContext,
 	createEffect,
 	createSignal,
+	createUniqueId,
 	type JSX,
 	on,
 	onCleanup,
@@ -85,9 +86,8 @@ interface ItemState {
 	/** Set once the trigger registers with a group. */
 	index: () => number | undefined;
 	setIndex: (index: number) => void;
-	/** The trigger's text, which names the panel region. */
-	label: () => string | undefined;
-	setLabel: (label: string) => void;
+	triggerId: string;
+	panelId: string;
 	highlight: () => AccordionHighlight;
 }
 const ItemContext = createContext<ItemState>();
@@ -312,7 +312,6 @@ export function AccordionItem(props: {
 	const root = useRoot();
 	const group = useContext(GroupContext);
 	const [index, setIndex] = createSignal<number>();
-	const [label, setLabel] = createSignal<string>();
 	const highlight = () =>
 		group === undefined
 			? (props.highlight ?? root.highlight())
@@ -324,8 +323,8 @@ export function AccordionItem(props: {
 		isOpen: () => root.isOpen(props.value),
 		index,
 		setIndex,
-		label,
-		setLabel,
+		triggerId: createUniqueId(),
+		panelId: createUniqueId(),
 	};
 
 	return (
@@ -378,8 +377,6 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 	const [standaloneHovered, setStandaloneHovered] = createSignal(false);
 	let triggerElement: HostElement | undefined;
 	const renderer = useGpuixRequired();
-
-	createEffect(() => item.setLabel(props.children));
 
 	createEffect(() => {
 		if (group === undefined) return;
@@ -473,7 +470,10 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					onKeyDown,
 					tabIndex: 0,
 				}, renderer)}
+				id={item.triggerId}
 				aria-expanded={item.isOpen()}
+				aria-controls={item.isOpen() ? item.panelId : undefined}
+				aria-disabled={item.disabled()}
 				onFocus={() => {
 					const own = item.index();
 					if (own !== undefined) group?.focusRow(own);
@@ -546,8 +546,9 @@ export function AccordionContent(props: { children: JSX.Element }) {
 
 	return (
 		<motion.div
+			id={item.panelId}
 			role="region"
-			aria-label={item.label()}
+			aria-labelledby={item.triggerId}
 			initial={false}
 			animate={{ height: item.isOpen() ? (contentHeight() ?? 0) : 0 }}
 			transition={item.isOpen() ? tween.fast : tween.fastExit}

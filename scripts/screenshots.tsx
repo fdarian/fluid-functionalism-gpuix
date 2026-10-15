@@ -66,7 +66,76 @@ function capture(name: string) {
 	console.log(`captured ${slug}/${name}`);
 }
 
+const relationKeys = [
+	"labelled_by",
+	"described_by",
+	"controls",
+	"owns",
+	"details",
+	"flow_to",
+] as const;
+
+function idOf(testId: string) {
+	const id = renderer.findByTestId(testId)?.customProps?.id;
+	if (typeof id !== "string") throw new Error(`${testId} has no id`);
+	return id;
+}
+
+function ariaNode(target: string) {
+	const element = renderer.findByTestId(target);
+	const id = element === undefined ? target : idOf(target);
+	const tree = renderer.getA11yTree();
+	const nodes = tree.nodes ?? {};
+	const keyToId = new Map<string, string>();
+	for (const [key, node] of Object.entries(nodes)) {
+		if (node.aria?.author_id !== undefined)
+			keyToId.set(key, node.aria.author_id);
+	}
+	for (const node of Object.values(nodes)) {
+		if (node.aria?.author_id !== id) continue;
+		const aria: Record<string, unknown> = { ...node.aria };
+		for (const relation of relationKeys) {
+			const targets = node.aria[relation];
+			if (targets === undefined) continue;
+			aria[relation] = targets.map((key) => keyToId.get(key) ?? key);
+		}
+		const active = node.aria.active_descendant;
+		if (active !== undefined) aria.active_descendant = keyToId.get(active) ?? active;
+		return aria;
+	}
+	return undefined;
+}
+
 const shot: ShotContext = {
+	idOf,
+	aria(target) {
+		const aria = ariaNode(target);
+		if (aria === undefined)
+			throw new Error(`no accessibility node for ${target}`);
+		return aria;
+	},
+	expectAria(target, expected) {
+		const aria = shot.aria(target);
+		for (const [key, value] of Object.entries(expected)) {
+			if (JSON.stringify(aria[key]) !== JSON.stringify(value)) {
+				throw new Error(
+					`aria ${target}.${key}: expected ${JSON.stringify(value)}, got ${JSON.stringify(aria[key])}`,
+				);
+			}
+		}
+	},
+	tabStopCount() {
+		// `A11yTreeDump` omits the frame header that the native dump carries.
+		const tree = renderer.getA11yTree() as {
+			frame?: { tab_stop_count?: number };
+		};
+		const count = tree.frame?.tab_stop_count;
+		if (count === undefined) throw new Error("the frame reports no tab stops");
+		return count;
+	},
+	hasAriaNode(target) {
+		return ariaNode(target) !== undefined;
+	},
 	centerOf,
 	async hover(testId) {
 		const point = centerOf(testId);

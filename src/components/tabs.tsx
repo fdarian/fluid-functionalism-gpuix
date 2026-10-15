@@ -10,8 +10,10 @@ import {
 	createEffect,
 	createMemo,
 	createSignal,
+	createUniqueId,
 	type JSX,
 	on,
+	onCleanup,
 	Show,
 	useContext,
 } from "solid-js";
@@ -41,6 +43,12 @@ interface TabsState {
 	order: () => readonly string[];
 	reportValue: (index: number, value: string) => void;
 	size: () => TabsSize;
+	tabId: (value: string) => string;
+	panelId: (value: string) => string;
+	/** Panels mount only while selected, so only a mounted one can be a tab's `aria-controls`. */
+	hasPanel: (value: string) => boolean;
+	registerPanel: (value: string) => void;
+	unregisterPanel: (value: string) => void;
 }
 
 interface ListScope {
@@ -81,11 +89,19 @@ export function Tabs(props: {
 		props.defaultValue,
 	);
 	const [order, setOrder] = createSignal<readonly string[]>([]);
+	const [panels, setPanels] = createSignal<readonly string[]>([]);
+	const idPrefix = createUniqueId();
 	// Uncontrolled with no defaultValue falls back to the first tab.
 	const selected = () => props.value ?? uncontrolled() ?? order()[0];
 	const state: TabsState = {
 		order,
 		size: () => props.size ?? "default",
+		tabId: (value) => `${idPrefix}-tab-${encodeURIComponent(value)}`,
+		panelId: (value) => `${idPrefix}-panel-${encodeURIComponent(value)}`,
+		hasPanel: (value) => panels().includes(value),
+		registerPanel: (value) => setPanels((current) => [...current, value]),
+		unregisterPanel: (value) =>
+			setPanels((current) => current.filter((entry) => entry !== value)),
 		selected,
 		select(value) {
 			// Base UI never re-commits the active tab.
@@ -336,7 +352,12 @@ export function TabItem(props: {
 				tabIndex: list.tabStop() === index ? 0 : -1,
 			}, renderer)}
 			role="tab"
+			id={tabs.tabId(props.value)}
 			aria-selected={isSelected()}
+			aria-controls={
+				tabs.hasPanel(props.value) ? tabs.panelId(props.value) : undefined
+			}
+			aria-disabled={props.disabled === true}
 			testId={props.testId}
 			onFocus={() => {
 				list.focusTab(index);
@@ -394,10 +415,25 @@ export function TabPanel(props: { value: string; children: JSX.Element }) {
 	const tabs = useTabs();
 	return (
 		<Show when={tabs.selected() === props.value}>
-			{/* A tab stop, like Base UI's panel; the dim is off because FF draws no ring on it. */}
-			<div role="tabpanel" tabIndex={0} style={{ keyboardFocusDim: false }}>
-				{props.children}
-			</div>
+			<MountedPanel value={props.value}>{props.children}</MountedPanel>
 		</Show>
+	);
+}
+
+function MountedPanel(props: { value: string; children: JSX.Element }) {
+	const tabs = useTabs();
+	tabs.registerPanel(props.value);
+	onCleanup(() => tabs.unregisterPanel(props.value));
+	return (
+		// A tab stop, like Base UI's panel; the dim is off because FF draws no ring on it.
+		<div
+			role="tabpanel"
+			id={tabs.panelId(props.value)}
+			aria-labelledby={tabs.tabId(props.value)}
+			tabIndex={0}
+			style={{ keyboardFocusDim: false }}
+		>
+			{props.children}
+		</div>
 	);
 }
