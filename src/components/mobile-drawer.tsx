@@ -85,8 +85,6 @@ export function MobileDrawer(props: {
 							right: 0,
 							bottom: 0,
 							backgroundColor: color.scrim,
-							// A filled child would swallow the press meant for the backdrop behind it.
-							pointerEvents: "none",
 						}}
 					/>
 				</DialogBackdrop>

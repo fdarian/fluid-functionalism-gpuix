@@ -148,9 +148,8 @@ export function QueuedStack(props: {
 	const count = () => props.queue.length;
 	const hiddenCount = () => Math.max(0, count() - (STACK_MAX_PEEK + 1));
 
-	// ── Hover. A filled card takes the pointer from the stack under it, so the
-	// stack and each card report enter / leave and a short hold bridges the gap
-	// between one leaving and the next entering.
+	// ── Hover. The stack and each card report enter / leave, and a short hold
+	// bridges the gap between one leaving and the next entering.
 	const [overStack, setOverStack] = createSignal(false);
 	let overCount = 0;
 	let leaveTimer: ReturnType<typeof setTimeout> | undefined;
@@ -369,7 +368,6 @@ export function QueuedStack(props: {
 												animate={{ opacity: 1 }}
 												exit={{ opacity: 0 }}
 												transition={tween.fast}
-												style={{ pointerEvents: "none" }}
 											>
 												<text
 													style={{
@@ -517,8 +515,7 @@ function QueueCard(props: {
 		>
 			{/*
 				The press, drag and double click live on this region, not on the card,
-				so a press on the buttons beside it neither starts a drag nor is
-				captured away from them.
+				so a press on the buttons beside it does not start a drag.
 			*/}
 			<div
 				ref={region.ref}
@@ -551,7 +548,6 @@ function QueueCard(props: {
 							flexShrink: 0,
 							gap: 4,
 							marginRight: 8,
-							pointerEvents: "none",
 						}}
 					>
 						<For each={files().slice(0, 3)}>
@@ -566,7 +562,6 @@ function QueueCard(props: {
 									alignItems: "center",
 									justifyContent: "center",
 									backgroundColor: color.hover,
-									pointerEvents: "none",
 								}}
 							>
 								<text style={{ ...scale.micro, color: color.foreground }}>
@@ -576,7 +571,7 @@ function QueueCard(props: {
 						</Show>
 					</div>
 				</Show>
-				<div style={{ flexGrow: 1, minWidth: 0, pointerEvents: "none" }}>
+				<div style={{ flexGrow: 1, minWidth: 0 }}>
 					<text
 						style={{
 							fontSize: 14,

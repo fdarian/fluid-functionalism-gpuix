@@ -14,7 +14,6 @@ export function Icon(props: {
 				height: props.size,
 				flexShrink: 0,
 				color: props.color,
-				pointerEvents: "none",
 			}}
 		/>
 	);

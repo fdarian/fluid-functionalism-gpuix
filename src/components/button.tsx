@@ -103,7 +103,6 @@ export function Button(props: {
 	"aria-label"?: string;
 	"aria-expanded"?: boolean;
 	onClick?: (event: EventPayload) => void;
-	/** Never pair with onMouseMove: down plus move on one element makes gpuix capture the pointer. */
 	onMouseDown?: (event: EventPayload) => void;
 	/** The label, or the icon for an icon-only size. */
 	children?: JSX.Element;
@@ -247,7 +246,6 @@ export function Button(props: {
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
-						pointerEvents: "none",
 					}}
 				>
 					<Icon

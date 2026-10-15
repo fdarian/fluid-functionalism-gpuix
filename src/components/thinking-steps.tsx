@@ -126,7 +126,6 @@ function TriggerRow(props: {
 							bottom: 0,
 							borderRadius: radius.item,
 							backgroundColor: color.hover,
-							pointerEvents: "none",
 						}}
 					/>
 				</Show>
@@ -574,7 +573,6 @@ export function ThinkingStepImage(props: {
 						width: IMAGE_WIDTH,
 						height: height(),
 						borderRadius: radius.container,
-						pointerEvents: "none",
 					}}
 				/>
 				{/* An inset hairline keeps the edge of a pale screenshot visible. */}
@@ -589,7 +587,6 @@ export function ThinkingStepImage(props: {
 						outlineWidth: 1,
 						outlineOffset: -1,
 						outlineColor: color.border,
-						pointerEvents: "none",
 					}}
 				/>
 			</div>

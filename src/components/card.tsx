@@ -82,9 +82,8 @@ interface CardScope {
 	inlineImage: () => boolean;
 	setHasImage: (value: boolean) => void;
 	/**
-	 * The radius a tile clips its media to, or 0 when the card is not a tile.
-	 * gpuix's `overflow: hidden` clips to the rectangle, not the rounded
-	 * corners, so the image rounds its own outer corners instead.
+	 * The radius a tile clips its media to, or 0 when the card is not a tile;
+	 * the image rounds its own outer corners to match.
 	 */
 	tileCorner: () => number;
 }
@@ -232,7 +231,6 @@ export function CardGroup(props: {
 						left: 0,
 						right: 0,
 						bottom: 0,
-						pointerEvents: "none",
 					}}
 				>
 					<FluidHighlight
@@ -409,7 +407,6 @@ export function Card(props: {
 							bottom: 0,
 							borderRadius: radius.container,
 							backgroundColor: color.active,
-							pointerEvents: "none",
 						}}
 					/>
 				</Show>
@@ -423,7 +420,6 @@ export function Card(props: {
 							bottom: 0,
 							height: 1,
 							backgroundColor: color.borderFaint,
-							pointerEvents: "none",
 						}}
 					/>
 				</Show>
@@ -436,7 +432,6 @@ export function Card(props: {
 							bottom: showBottom() ? 1 : 0,
 							width: 1,
 							backgroundColor: color.borderFaint,
-							pointerEvents: "none",
 						}}
 					/>
 				</Show>
@@ -731,7 +726,6 @@ export function CardMedia(props: {
 								height: 32,
 								borderRadius: radius.item,
 								backgroundColor: color.hover,
-								pointerEvents: "none",
 								...(scope.orientation() === "inline"
 									? {}
 									: { marginBottom: 8 }),
@@ -755,7 +749,6 @@ export function CardMedia(props: {
 					alignItems: "center",
 					flexShrink: 0,
 					gap: 6,
-					pointerEvents: "none",
 					...(scope.orientation() === "inline" ? {} : { marginBottom: 8 }),
 				}}
 			>
@@ -821,7 +814,6 @@ export function CardImage(props: { src: string; height?: number }) {
 				outlineWidth: 1,
 				outlineOffset: -1,
 				outlineColor: imageOutline(),
-				pointerEvents: "none",
 				...(inline()
 					? { width: 160, height: 160, flexShrink: 0 }
 					: { width: "100%", height: props.height ?? 160, flexShrink: 0 }),

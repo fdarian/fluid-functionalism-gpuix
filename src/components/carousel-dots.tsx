@@ -187,12 +187,10 @@ function Dot(props: {
 					overflow: "hidden",
 					borderRadius: DOT_PX / 2,
 					backgroundColor: trackColor(),
-					// A filled box blocks hits behind it, which would leave only the dot's padding clickable.
-					pointerEvents: "none",
 				}}
 			>
 				{props.current && (
-					// The original slides a full-width pill in from the left behind the dot's rounded clip, so the fill always ends in a round cap. gpui clips to a rectangle, which would leave a square left edge, so the fill is a pill that grows from a dot (p = 0) to the whole pill (p = 1).
+					// The original slides a full-width pill in from the left behind the dot's rounded clip, so the fill always ends in a round cap. Here the fill is a pill that grows from a dot (p = 0) to the whole pill (p = 1).
 					<div
 						style={{
 							position: "absolute",
@@ -204,7 +202,6 @@ function Dot(props: {
 							height: DOT_PX,
 							borderRadius: DOT_PX / 2,
 							backgroundColor: fillColor(),
-							pointerEvents: "none",
 						}}
 					/>
 				)}

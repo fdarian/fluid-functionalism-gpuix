@@ -105,7 +105,6 @@ function Checker(props: { width: number; height: number }) {
 				width: props.width,
 				height: props.height,
 				backgroundColor: color.checkerB,
-				pointerEvents: "none",
 			}}
 		>
 			<svg
@@ -117,7 +116,6 @@ function Checker(props: { width: number; height: number }) {
 					width: props.width,
 					height: props.height,
 					color: color.checkerA,
-					pointerEvents: "none",
 				}}
 			/>
 		</div>
@@ -147,7 +145,6 @@ export function ColorTile(props: { color: string; size?: number }) {
 					width: size(),
 					height: size(),
 					backgroundColor: props.color,
-					pointerEvents: "none",
 				}}
 			/>
 			<div
@@ -160,7 +157,6 @@ export function ColorTile(props: { color: string; size?: number }) {
 					borderRadius: radius.item,
 					borderWidth: 1,
 					borderColor: HAIRLINE,
-					pointerEvents: "none",
 				}}
 			/>
 		</div>
@@ -225,7 +221,6 @@ export function ColorSwatch(props: {
 					height: size(),
 					borderRadius: radius.item,
 					overflow: "hidden",
-					pointerEvents: "none",
 				}}
 			>
 				<Checker width={size()} height={size()} />
@@ -237,7 +232,6 @@ export function ColorSwatch(props: {
 						width: size(),
 						height: size(),
 						backgroundColor: props.color,
-						pointerEvents: "none",
 					}}
 				/>
 			</div>
@@ -251,7 +245,6 @@ export function ColorSwatch(props: {
 					borderRadius: radius.item,
 					borderWidth: 1,
 					borderColor: HAIRLINE,
-					pointerEvents: "none",
 				}}
 			/>
 		</div>
@@ -379,7 +372,6 @@ function SaturationSquare(props: {
 					left: 0,
 					width: INNER_WIDTH,
 					height: SQUARE_HEIGHT,
-					pointerEvents: "none",
 					background: {
 						type: "linear-gradient",
 						angle: 90,
@@ -398,7 +390,6 @@ function SaturationSquare(props: {
 					left: 0,
 					width: INNER_WIDTH,
 					height: SQUARE_HEIGHT,
-					pointerEvents: "none",
 					background: {
 						type: "linear-gradient",
 						angle: 0,
@@ -425,7 +416,6 @@ function SaturationSquare(props: {
 							outlineWidth: 1,
 							outlineColor: "rgba(0,0,0,0.2)",
 							outlineOffset: 0,
-							pointerEvents: "none",
 						}}
 					/>
 				)}
@@ -444,7 +434,6 @@ function SaturationSquare(props: {
 					outlineWidth: 1,
 					outlineColor: "#000000",
 					outlineOffset: 0,
-					pointerEvents: "none",
 				}}
 			/>
 		</div>
@@ -531,7 +520,6 @@ function Rail(props: {
 					height: RAIL_TRACK,
 					borderRadius: RAIL_TRACK / 2,
 					overflow: "hidden",
-					pointerEvents: "none",
 				}}
 			>
 				{props.children}
@@ -555,7 +543,6 @@ function Rail(props: {
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
-					pointerEvents: "none",
 					keyboardFocusDim: false,
 					focusVisible: focusRing(2),
 				}}

@@ -64,7 +64,6 @@ export function Spinner() {
 					position: "absolute",
 					top: 0,
 					left: 0,
-					pointerEvents: "none",
 				}}
 			>
 				<Icon
@@ -90,7 +89,6 @@ function centered(children: JSX.Element) {
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",
-				pointerEvents: "none",
 			}}
 		>
 			{children}
@@ -124,8 +122,6 @@ export function FileThumbnail(props: {
 				height: props.size,
 				backgroundColor: color.accent,
 				borderRadius: props.radius ?? radius.item,
-				// Read-only: a fill would otherwise take the hover away from the message or card around it.
-				pointerEvents: "none",
 			}}
 		>
 			<Show when={!props.pending} fallback={centered(<Spinner />)}>
@@ -150,7 +146,6 @@ export function FileThumbnail(props: {
 							width: props.size,
 							height: props.size,
 							borderRadius: props.radius ?? radius.item,
-							pointerEvents: "none",
 						}}
 						objectFit="cover"
 					/>
@@ -168,7 +163,6 @@ export function FileThumbnail(props: {
 					outlineWidth: 1,
 					outlineOffset: -1,
 					outlineColor: withAlpha(color.overlay, 0.1),
-					pointerEvents: "none",
 				}}
 			/>
 		</div>

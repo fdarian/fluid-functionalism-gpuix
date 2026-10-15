@@ -175,7 +175,7 @@ export function TabsSubtle(props: {
 							initial={false}
 							animate={rectStyle(rect())}
 							transition={tween.moderate}
-							style={{ position: "absolute", pointerEvents: "none" }}
+							style={{ position: "absolute" }}
 						>
 							<motion.div
 								initial={false}
@@ -187,7 +187,6 @@ export function TabsSubtle(props: {
 									left: 0,
 									right: 0,
 									bottom: 0,
-									pointerEvents: "none",
 									borderRadius: radius.item,
 									backgroundColor: color.active,
 								}}
@@ -201,7 +200,7 @@ export function TabsSubtle(props: {
 							initial={false}
 							animate={rectStyle(shown().rect)}
 							transition={hoveringOther() ? tween.fast : tween.moderate}
-							style={{ position: "absolute", pointerEvents: "none" }}
+							style={{ position: "absolute" }}
 						>
 							<motion.div
 								initial={false}
@@ -213,7 +212,6 @@ export function TabsSubtle(props: {
 									left: 0,
 									right: 0,
 									bottom: 0,
-									pointerEvents: "none",
 									borderRadius: radius.item,
 									backgroundColor: color.active,
 								}}

@@ -470,8 +470,6 @@ export function ScrollArea(props: {
 						transition={{ duration: 0.16, ease: "easeInOut" }}
 						style={{
 							position: "absolute",
-							// An absolute box would block the track's own hover and press, so the track hit-tests the thumb by coordinates.
-							pointerEvents: "none",
 							borderRadius: 3,
 							backgroundColor: thumbColor(),
 							...(bar.axis === "y"

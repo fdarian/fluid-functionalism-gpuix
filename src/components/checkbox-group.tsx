@@ -54,7 +54,6 @@ function Checkbox(props: {
 				flexShrink: 0,
 				width: box(),
 				height: box(),
-				pointerEvents: "none",
 			}}
 		>
 			<div
@@ -83,7 +82,6 @@ function Checkbox(props: {
 							left: inset(),
 							height: glyph(),
 							overflow: "hidden",
-							pointerEvents: "none",
 						}}
 					>
 						<Icon

@@ -199,7 +199,6 @@ export function Switch(props: {
 						position: "absolute",
 						backgroundColor: "#FFFFFF",
 						borderRadius: 9999,
-						pointerEvents: "none",
 						boxShadow: {
 							offsetX: 0,
 							offsetY: 1,

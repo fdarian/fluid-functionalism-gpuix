@@ -306,8 +306,6 @@ export function DialogContent(props: {
 							right: 0,
 							bottom: 0,
 							backgroundColor: color.scrim,
-							// A press on the scrim bubbles to the backdrop anyway, so this is redundant.
-							pointerEvents: "none",
 						}}
 					/>
 				</Show>

@@ -103,7 +103,6 @@ function ShortcutChip(props: { children: string }) {
 				borderRadius: radius.item,
 				// bg-background/15 over the primary button.
 				backgroundColor: withAlpha(color.background, 0.15),
-				pointerEvents: "none",
 			}}
 		>
 			<text style={{ ...scale.micro, lineHeight: 11, color: color.background }}>
@@ -174,8 +173,6 @@ function Row(props: RowProps) {
 					justifyContent: "center",
 					borderRadius: radius.item,
 					backgroundColor: color.foreground,
-					// Decorative unless it carries its own click: a filled absolute child takes hits from the row.
-					pointerEvents: props.onArrowClick ? "auto" : "none",
 					cursor: props.onArrowClick ? "pointer" : "default",
 				}}
 			>
@@ -211,7 +208,6 @@ function Row(props: RowProps) {
 					alignItems: "center",
 					justifyContent: "center",
 					borderRadius: radius.item,
-					pointerEvents: "none",
 					opacity: props.chipPosition === "right" && props.showArrow ? 0 : 1,
 					...(props.isMulti
 						? props.chipFilled

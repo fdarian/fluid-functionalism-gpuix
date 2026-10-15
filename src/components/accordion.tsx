@@ -359,6 +359,7 @@ export function AccordionItem(props: {
 						bottom: 0,
 						borderRadius: radius.item,
 						backgroundColor: color.accentWash,
+						// Removing this lights the row under the pointer after a single-expand click moves the rows, though the pointer is over the open panel, which belongs to no row.
 						pointerEvents: "none",
 					}}
 				/>
@@ -445,7 +446,6 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					bottom: 0,
 					borderRadius: radius.item,
 					backgroundColor: color.accentWash,
-					pointerEvents: "none",
 				}}
 			/>
 			<motion.div
@@ -462,7 +462,6 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					bottom: 0,
 					borderRadius: radius.item,
 					backgroundColor: color.hover,
-					pointerEvents: "none",
 				}}
 			/>
 			<div

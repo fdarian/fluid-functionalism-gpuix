@@ -323,7 +323,6 @@ function ValueDisplay(props: {
 						...textStyle(props.interacting()),
 						color: color.mutedForeground,
 						cursor: "text",
-						pointerEvents: "auto",
 					}}
 				>
 					{props.formatValue(props.values[index])}
@@ -402,7 +401,6 @@ function ValueDisplay(props: {
 					display: "flex",
 					flexDirection: "row",
 					alignItems: "center",
-					pointerEvents: "none",
 				}}
 			>
 				<Show when={props.label !== undefined && props.editingIndex() === null}>
@@ -775,7 +773,6 @@ function CompactSlider(props: CompactProps) {
 							height: THUMB_SIZE_REST,
 							borderRadius: THUMB_SIZE_REST / 2,
 							backgroundColor: "#FFFFFF",
-							pointerEvents: "none",
 							boxShadow: {
 								offsetX: 0,
 								offsetY: 1,
@@ -897,7 +894,6 @@ function CompactSlider(props: CompactProps) {
 										top: 0,
 										bottom: 0,
 										backgroundColor: trackFill(),
-										pointerEvents: "none",
 									}}
 								/>
 							)}
@@ -922,7 +918,6 @@ function CompactSlider(props: CompactProps) {
 											borderBottomLeftRadius: 9999,
 										}),
 								backgroundColor: hoverPreviewFill(),
-								pointerEvents: "none",
 							}}
 						/>
 					</div>
@@ -971,7 +966,6 @@ function CompactSlider(props: CompactProps) {
 										top: 4,
 										width: 0,
 										height: 0,
-										pointerEvents: "none",
 									}}
 								>
 									<ValueBubble
@@ -1315,7 +1309,6 @@ function ComfortableSlider(props: ComfortableProps) {
 							alignItems: "center",
 							paddingLeft: 12,
 							paddingRight: 12,
-							pointerEvents: "none",
 						}}
 					>
 						<For each={pips()}>
@@ -1329,7 +1322,6 @@ function ComfortableSlider(props: ComfortableProps) {
 										style={{
 											width: PIP_SIZE,
 											height: PIP_SIZE,
-											pointerEvents: "none",
 											borderRadius: PIP_SIZE / 2,
 											backgroundColor: active()
 												? color.foreground
@@ -1356,7 +1348,6 @@ function ComfortableSlider(props: ComfortableProps) {
 							alignItems: "center",
 							paddingLeft: 8,
 							paddingRight: 8,
-							pointerEvents: "none",
 						}}
 					>
 						<Show when={props.label !== undefined}>
@@ -1365,7 +1356,6 @@ function ComfortableSlider(props: ComfortableProps) {
 									paddingLeft: 8,
 									paddingRight: 8,
 									backgroundColor: color.surface2,
-									pointerEvents: "none",
 								}}
 							>
 								<text style={{ ...textStyle, opacity: 0 }}>{props.label}</text>
@@ -1377,7 +1367,6 @@ function ComfortableSlider(props: ComfortableProps) {
 								paddingLeft: 8,
 								paddingRight: 8,
 								backgroundColor: color.surface2,
-								pointerEvents: "none",
 							}}
 						>
 							<text style={{ ...textStyle, opacity: 0 }}>
@@ -1397,7 +1386,6 @@ function ComfortableSlider(props: ComfortableProps) {
 						left: preview()?.left ?? 0,
 						width: preview()?.width ?? 0,
 						backgroundColor: hoverPreviewFill(),
-						pointerEvents: "none",
 					}}
 				/>
 				<Show when={fillTarget()}>
@@ -1412,7 +1400,6 @@ function ComfortableSlider(props: ComfortableProps) {
 								bottom: 0,
 								left: 0,
 								backgroundColor: color.active,
-								pointerEvents: "none",
 							}}
 						/>
 					)}
@@ -1432,7 +1419,6 @@ function ComfortableSlider(props: ComfortableProps) {
 								width: 2,
 								borderRadius: 1,
 								backgroundColor: lineColor(),
-								pointerEvents: "none",
 							}}
 						/>
 					)}
@@ -1449,7 +1435,6 @@ function ComfortableSlider(props: ComfortableProps) {
 						alignItems: "center",
 						paddingLeft: 16,
 						paddingRight: 16,
-						pointerEvents: "none",
 					}}
 				>
 					<Show when={props.label !== undefined}>
@@ -1533,7 +1518,6 @@ function ComfortableSlider(props: ComfortableProps) {
 							top: -6,
 							width: 0,
 							height: 0,
-							pointerEvents: "none",
 						}}
 					>
 						<ValueBubble

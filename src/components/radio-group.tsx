@@ -129,7 +129,6 @@ function Radio(props: { selected: boolean; active: boolean; size: ChoiceSize }) 
 				flexShrink: 0,
 				width: box(),
 				height: box(),
-				pointerEvents: "none",
 			}}
 		>
 			<div
@@ -155,7 +154,6 @@ function Radio(props: { selected: boolean; active: boolean; size: ChoiceSize }) 
 							position: "absolute",
 							borderRadius: 9999,
 							backgroundColor: color.foreground,
-							pointerEvents: "none",
 						}}
 					/>
 				</Show>

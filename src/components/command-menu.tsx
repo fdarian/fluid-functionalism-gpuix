@@ -638,12 +638,9 @@ function TabLabel(props: { text: string; selected: boolean; lit: boolean }) {
 		...scale.bodyCompact,
 		fontWeight: heavy ? weight.semibold : weight.normal,
 		whiteSpace: "nowrap" as const,
-		pointerEvents: "none" as const,
 	});
 	return (
-		<div
-			style={{ position: "relative", flexShrink: 0, pointerEvents: "none" }}
-		>
+		<div style={{ position: "relative", flexShrink: 0 }}>
 			<text style={{ ...textStyle(true), opacity: 0 }}>{props.text}</text>
 			<text
 				style={{

@@ -233,7 +233,6 @@ export function Banner(props: {
 					height: metrics().icon,
 					flexShrink: 0,
 					color: tone(current),
-					pointerEvents: "none",
 				}}
 			/>
 		);
@@ -268,7 +267,6 @@ export function Banner(props: {
 						bottom: 0,
 						borderRadius: fixed() ? 0 : radius.container,
 						backgroundColor: fill(status(), contrast()),
-						pointerEvents: "none",
 					}}
 				/>
 				<div
@@ -405,6 +403,8 @@ function DismissButton(props: {
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			style={{
+				// Above the fill layer, which paints over its in-flow siblings.
+				position: "relative",
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",

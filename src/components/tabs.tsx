@@ -212,7 +212,7 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 							initial={false}
 							animate={rectStyle(rect())}
 							transition={tween.moderate}
-							style={{ position: "absolute", pointerEvents: "none" }}
+							style={{ position: "absolute" }}
 						>
 							<motion.div
 								initial={false}
@@ -225,7 +225,6 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 									left: 0,
 									right: 0,
 									bottom: 0,
-									pointerEvents: "none",
 									borderRadius: radius.item,
 									backgroundColor: color.surface4,
 									borderWidth: 1,
@@ -243,7 +242,7 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 							animate={rectStyle(shown().rect)}
 							// The preview keeps up with the pointer on fast; its way home takes the moderate spring.
 							transition={hoveringOther() ? tween.fast : tween.moderate}
-							style={{ position: "absolute", pointerEvents: "none" }}
+							style={{ position: "absolute" }}
 						>
 							<motion.div
 								initial={false}
@@ -255,7 +254,6 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 									left: 0,
 									right: 0,
 									bottom: 0,
-									pointerEvents: "none",
 									borderRadius: radius.item,
 									backgroundColor: color.hover,
 								}}

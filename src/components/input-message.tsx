@@ -230,7 +230,6 @@ function SendButton(props: {
 									height: 12,
 									borderRadius: 3,
 									backgroundColor: color.background,
-									pointerEvents: "none",
 								}}
 							/>
 						</Show>
@@ -404,7 +403,7 @@ function QueuedRow(props: {
 				focusVisible: focusRing(0),
 			}}
 		>
-			{/* The recessed fill is its own layer: a filled row would take the pointer from the composer around it. The siblings after it are `position: relative` so the fill paints under them. */}
+			{/* The recessed fill is its own layer; the siblings after it are `position: relative` so the fill paints under them. */}
 			<div
 				style={{
 					position: "absolute",
@@ -414,7 +413,6 @@ function QueuedRow(props: {
 					bottom: 0,
 					borderRadius: radius.item,
 					backgroundColor: color.muted,
-					pointerEvents: "none",
 				}}
 			/>
 			<Show when={files() > 0}>
@@ -441,7 +439,7 @@ function QueuedRow(props: {
 					</Show>
 				</div>
 			</Show>
-			{/* Drag and double-click live here, not on the row, so a press on the close button neither starts a drag nor is captured away from it. */}
+			{/* Drag and double-click live here, not on the row, so a press on the close button does not start a drag. */}
 			<div
 				ref={grabRegion.ref}
 				onMouseDown={(event) => {
@@ -477,7 +475,6 @@ function QueuedRow(props: {
 						whiteSpace: "nowrap",
 						textOverflow: "ellipsis",
 						overflow: "hidden",
-						pointerEvents: "none",
 					}}
 				>
 					{label()}
@@ -1161,7 +1158,6 @@ export function InputMessage(props: InputMessageProps) {
 								borderWidth: 1,
 								borderColor: color.border,
 								backgroundColor: color.background,
-								pointerEvents: "none",
 							}}
 						>
 							<text

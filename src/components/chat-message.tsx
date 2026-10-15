@@ -124,8 +124,6 @@ export function ChatMessage(props: {
 			<Show when={props.children !== undefined && props.children !== ""}>
 				<div
 					style={{
-						// A filled child takes the pointer from the message around it, and with it the hover that reveals the meta row.
-						pointerEvents: "none",
 						paddingTop: 8,
 						paddingBottom: 8,
 						...(isUser()
