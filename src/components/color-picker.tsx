@@ -10,6 +10,7 @@ import {
 	createEffect,
 	createMemo,
 	createSignal,
+	createUniqueId,
 	For,
 	type JSX,
 	on,
@@ -749,6 +750,14 @@ function FormatDropdown(props: {
 	const presence = createPresence();
 	const hover = createFluidHover();
 	const [triggerHovered, setTriggerHovered] = createSignal(false);
+	const triggerId = createUniqueId();
+	const menuId = createUniqueId();
+	const rowId = (index: number) => `${menuId}-row-${index}`;
+	/** Focus stays on the trigger while the arrows walk the rows. */
+	const litRowId = () => {
+		const index = hover.activeIndex();
+		return presence.open() && index !== null ? rowId(index) : undefined;
+	};
 	let button: HostElement | undefined;
 	const checkedIndex = () => FORMATS.indexOf(props.value);
 	const width = (INNER_WIDTH - 8) / 2;
@@ -854,9 +863,13 @@ function FormatDropdown(props: {
 				ref={(node) => {
 					button = node;
 				}}
+				id={triggerId}
 				role="button"
 				aria-label="Color format"
+				aria-haspopup="menu"
 				aria-expanded={presence.open()}
+				aria-controls={presence.open() ? menuId : undefined}
+				aria-activedescendant={litRowId()}
 				testId={props.testId}
 				tabIndex={0}
 				onMouseDown={press.onMouseDown}
@@ -906,7 +919,9 @@ function FormatDropdown(props: {
 			<Popup presence={presence} width={width} level={props.level + 2}>
 				<div
 					{...hover.containerProps}
+					id={menuId}
 					role="menu"
+					aria-labelledby={triggerId}
 					style={{
 						position: "relative",
 						display: "flex",
@@ -940,8 +955,9 @@ function FormatDropdown(props: {
 									ref={(element) => {
 										row = element;
 									}}
+									id={rowId(index())}
 									role="menuitemradio"
-									aria-selected={checked()}
+									aria-checked={checked()}
 									testId={`${props.testId}-${format}`}
 									onClick={() => choose(format)}
 									style={{

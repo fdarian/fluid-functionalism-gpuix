@@ -147,6 +147,27 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.settle(500);
 	shot.capture("default");
 
+	// The format menu opened by key: the trigger names the menu and the lit row, a radio row says whether it is checked.
+	await shot.focus("default-format");
+	shot.expectAria("default-format", { has_popup: "Menu", expanded: false });
+	await shot.press("down");
+	const menu = shot.aria("default-format").controls;
+	if (!Array.isArray(menu) || menu.length !== 1)
+		throw new Error("an open format trigger controls its menu");
+	shot.expectAria(String(menu[0]), {
+		role: "Menu",
+		labelled_by: [shot.idOf("default-format")],
+	});
+	shot.expectAria("default-format", {
+		active_descendant: shot.idOf("default-format-hex"),
+	});
+	shot.expectAria("default-format-hex", {
+		role: "MenuItemRadio",
+		toggled: "True",
+	});
+	shot.expectAria("default-format-rgb", { toggled: "False" });
+	await shot.press("escape");
+
 	// The square: hover ghost, a press, a drag.
 	const square = shot.centerOf("default-square");
 	await shot.moveTo(square.x - 60, square.y - 20);

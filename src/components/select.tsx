@@ -10,6 +10,7 @@ import {
 	createEffect,
 	createMemo,
 	createSignal,
+	createUniqueId,
 	on,
 	For,
 	type JSX,
@@ -18,6 +19,7 @@ import {
 } from "solid-js";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
+import { FormValue } from "../lib/form-value";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { edgeIndex, isChord, moveIndex, revealRow } from "../lib/list-nav";
@@ -123,6 +125,12 @@ export function Select<Value extends string>(props: {
 	icon?: IconRef;
 	error?: string;
 	disabled?: boolean;
+	/** Makes an empty select block its form's submission. */
+	required?: boolean;
+	/** The key the value is submitted under in the enclosing `<form>`'s `FormData`. */
+	name?: string;
+	/** The `id` of the element that labels the trigger. */
+	labelledBy?: string;
 	/** The popup is as wide as the trigger, or this, whichever is larger. */
 	popupWidth?: number;
 }) {
@@ -142,6 +150,9 @@ export function Select<Value extends string>(props: {
 			: spec();
 
 	const presence = createPresence(POPUP_EXIT_FALLBACK_MS);
+	const triggerId = createUniqueId();
+	const popupId = createUniqueId();
+	const rowId = (index: number) => `${popupId}-row-${index}`;
 	const hover = createFluidHover({
 		isItemDisabled: (index) => rows()[index]?.disabled === true,
 	});
@@ -170,6 +181,11 @@ export function Select<Value extends string>(props: {
 		const current = value();
 		if (current === null) return -1;
 		return rows().findIndex((row) => row.value === current);
+	};
+	/** Focus stays on the trigger while the arrows walk the rows, so it names the lit one. */
+	const litRowId = () => {
+		const index = hover.activeIndex();
+		return presence.open() && index !== null ? rowId(index) : undefined;
 	};
 	const selected = () => {
 		const current = value();
@@ -391,6 +407,7 @@ export function Select<Value extends string>(props: {
 						checked={value() === slot.row.value}
 						fadeCheck={picked()}
 						hover={hover}
+						id={rowId(slot.index)}
 						testId={
 							props.testId === undefined
 								? undefined
@@ -461,8 +478,19 @@ export function Select<Value extends string>(props: {
 					ref={(element) => {
 						triggerElement = element;
 					}}
+					id={triggerId}
+					testId={
+						props.testId === undefined ? undefined : `${props.testId}-trigger`
+					}
 					role="combobox"
+					aria-haspopup="listbox"
 					aria-expanded={presence.open()}
+					aria-controls={presence.open() ? popupId : undefined}
+					aria-activedescendant={litRowId()}
+					aria-labelledby={props.labelledBy}
+					aria-required={props.required}
+					aria-invalid={props.error !== undefined}
+					aria-disabled={props.disabled === true}
 					tabIndex={props.disabled === true ? -1 : 0}
 					onMouseDown={onTriggerMouseDown}
 					onKeyDown={onKeyDown}
@@ -536,6 +564,15 @@ export function Select<Value extends string>(props: {
 						color={triggerHovered() ? color.foreground : color.mutedForeground}
 					/>
 				</div>
+				<Show when={props.name !== undefined || props.required === true}>
+					<FormValue
+						name={props.name}
+						value={value() ?? ""}
+						required={props.required === true}
+						disabled={props.disabled === true}
+						focusTarget={() => triggerElement}
+					/>
+				</Show>
 				<PopupSurface
 					presence={presence}
 					align={inline() ? "end" : "start"}
@@ -548,6 +585,7 @@ export function Select<Value extends string>(props: {
 						ref={(element) => {
 							scroller = element;
 						}}
+						id={popupId}
 						role="listbox"
 						onScroll={hover.handlers.onScroll}
 						style={{
@@ -609,6 +647,7 @@ function Row<Value extends string>(props: {
 	checked: boolean;
 	fadeCheck: boolean;
 	hover: ReturnType<typeof createFluidHover>;
+	id: string;
 	testId?: string;
 	onPick: () => void;
 	onPress: () => void;
@@ -625,9 +664,11 @@ function Row<Value extends string>(props: {
 			ref={(element) => {
 				rowElement = element;
 			}}
+			id={props.id}
 			role="option"
 			testId={props.testId}
 			aria-selected={props.checked}
+			aria-disabled={props.row.disabled === true}
 			onMouseDown={props.onPress}
 			onMouseUp={props.onRelease}
 			onClick={props.onPick}
