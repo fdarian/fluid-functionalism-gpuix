@@ -701,7 +701,13 @@ function ControlledExample() {
 						autoFocus={false}
 					/>
 				</div>
-				<text style={{ ...scale.caption, color: color.mutedForeground }}>
+				<text
+					style={{
+						...scale.caption,
+						color: color.mutedForeground,
+						whiteSpace: "pre-line",
+					}}
+				>
 					{readout()}
 				</text>
 			</div>
