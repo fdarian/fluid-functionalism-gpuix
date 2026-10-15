@@ -592,7 +592,7 @@ export function Demo() {
 	);
 }
 
-/** Wheels the page until the card's top edge sits under the heading. gpuix's scrollIntoView does not reach the page's scroller from here. */
+/** Wheels the page until the card's top edge sits under the heading (negative delta is down, as for `ShotContext.scroll`). gpuix's scrollIntoView does not reach the page's scroller from here. */
 async function reveal(
 	shot: Parameters<NonNullable<DemoModule["scenarios"]>>[0],
 	id: string,

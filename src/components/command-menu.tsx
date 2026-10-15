@@ -336,7 +336,6 @@ export function CommandMenu(props: {
 	testId: string;
 	children: JSX.Element;
 }) {
-	const renderer = useGpuixRequired();
 	const dialog = useContext(DialogContext);
 	const [internalQuery, setInternalQuery] = createSignal(
 		props.defaultQuery ?? "",
@@ -401,7 +400,7 @@ export function CommandMenu(props: {
 			hover.setActiveIndex(first === -1 ? null : first);
 			lastActive = first === -1 ? null : first;
 			setReflow(true);
-			if (scroller !== undefined) renderer.scrollTo?.(scroller.id, 0, 0);
+			if (scroller !== undefined) scroller.scrollTo({ top: 0, left: 0 });
 			hover.remeasure();
 		}),
 	);

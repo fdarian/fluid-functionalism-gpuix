@@ -17,7 +17,7 @@ export interface ShotContext {
 	/** Pointer to a window position, e.g. to leave a popup. */
 	moveTo(x: number, y: number): Promise<void>;
 	clickAt(x: number, y: number): Promise<void>;
-	/** A wheel tick at a window position. Negative `deltaY` scrolls down, like a real wheel. */
+	/** A wheel tick at a window position. The test harness keeps GPUI's sign, so negative `deltaY` scrolls down and negative `deltaX` scrolls right: the reverse of the positive-down deltas `onWheel` handlers see. */
 	scroll(x: number, y: number, deltaX: number, deltaY: number): Promise<void>;
 	/** Pointer to a window position with the left button held, e.g. mid-drag. */
 	moveHeld(x: number, y: number): Promise<void>;

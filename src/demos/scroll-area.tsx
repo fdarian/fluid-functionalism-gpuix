@@ -347,14 +347,17 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.scroll(strip.x, strip.y, -200, 0);
 	shot.capture("horizontal-wheel");
 
-	// Nested: the page itself scrolls first, then a wheel over the inner area must move the inner area and leave its enclosing scrollers put.
+	// Nested, as in a browser: a wheel over the inner area scrolls the inner area first; once it is at its limit, a wheel in a new gesture chains to the area around it.
 	await shot.scroll(930, 400, 0, -400);
 	shot.capture("page-scrolled");
 	const inner = shot.centerOf("inner");
 	await shot.moveTo(inner.x, inner.y);
 	await shot.scroll(inner.x, inner.y, 0, -150);
 	shot.capture("nested-inner-scrolled-outer-stays");
-	await shot.scroll(inner.x, inner.y, 0, -2000);
+	// 794px is the inner area's scroll range: ticks that stop at it, since a tick that overshoots passes its remainder on to the outer area within the same event.
+	for (let tick = 0; tick < 4; tick++) await shot.scroll(inner.x, inner.y, 0, -150);
+	await shot.scroll(inner.x, inner.y, 0, -44);
+	shot.capture("nested-inner-at-end-outer-stays");
 	await shot.scroll(inner.x, inner.y, 0, -150);
 	shot.capture("nested-inner-at-end-outer-follows");
 	await shot.scroll(930, 400, 0, 2000);

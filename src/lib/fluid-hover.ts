@@ -239,7 +239,7 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 			pointer = { x: event.x, y: event.y };
 			pick();
 		},
-		/** Rows moved under a stationary pointer. */
+		/** Rows moved under a stationary pointer: a scroll event carries no pointer position, so this picks at the last one seen. */
 		onScroll() {
 			pick();
 		},

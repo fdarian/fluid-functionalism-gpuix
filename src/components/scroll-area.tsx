@@ -3,10 +3,11 @@ import {
 	type EventPayload,
 	type HostElement,
 	type HostMouseEvent,
+	type HostWheelEvent,
 	type KeyEvent,
 	motion,
+	type ScrollEvent,
 	type StyleDesc,
-	useGpuixRequired,
 } from "@gpuix/solid";
 import { createSignal, type JSX, onCleanup, Show } from "solid-js";
 import { readBounds } from "../lib/bounds";
@@ -66,10 +67,10 @@ function clamp(value: number, min: number, max: number) {
 }
 
 /**
- * Scrollbar and edge fade over a gpuix scroller. gpuix paints no scrollbar and
- * has no mask, so the thumb follows the viewport's `onLayout` and
- * `onScrollChange`, and the fade is an opaque-to-clear gradient in the
- * surface's own colour.
+ * Scrollbar and edge fade over a gpuix scroller. The viewport hides gpuix's own
+ * overlay bar and the thumb is drawn here from the viewport's `onLayout` and
+ * `onScroll`; the fade is an opaque-to-clear gradient in the surface's own
+ * colour.
  */
 export function ScrollArea(props: {
 	orientation?: ScrollOrientation;
@@ -84,7 +85,6 @@ export function ScrollArea(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
-	const renderer = useGpuixRequired();
 	const orientation = () => props.orientation ?? "vertical";
 	const vertical = () => orientation() !== "horizontal";
 	const horizontal = () => orientation() !== "vertical";
@@ -101,7 +101,7 @@ export function ScrollArea(props: {
 		clearTimeout(userTimer);
 	});
 
-	// Sizes come from `onLayout` (border box, reported after the first paint and on every resize) and the offset from `onScrollChange`, so nothing here is polled.
+	// Sizes come from `onLayout` (border box, reported after the first paint and on every resize) and the offset from `onScroll`, so nothing here is polled.
 	const [view, setView] = createSignal<Size>();
 	const [content, setContent] = createSignal<Size>();
 	/** Scrolled distance, positive. */
@@ -132,11 +132,8 @@ export function ScrollArea(props: {
 		setScrolling((now) => ({ ...now, [axis]: false }));
 	};
 
-	const onScrollChange = (event: EventPayload) => {
-		if (event.scrollX === undefined || event.scrollY === undefined) {
-			throw new Error("scrollChange without an offset");
-		}
-		const next = { x: -event.scrollX, y: -event.scrollY };
+	const onScroll = (event: ScrollEvent) => {
+		const next = { x: event.scrollLeft, y: event.scrollTop };
 		const before = offset();
 		if (userScroll || dragging() !== undefined) {
 			if (next.y !== before.y) startScrolling("y");
@@ -145,73 +142,13 @@ export function ScrollArea(props: {
 		setOffset(next);
 	};
 
-	// gpui hands one wheel tick to every scroll container under the pointer (no stop_propagation, no overscroll-behavior), so an enclosing scroller would move along with this one. Its offset is put back whenever this area moved, and left alone once this area is at its limit, which is what chaining does in a browser.
-	let outer: HostElement | undefined;
-	let outerAnchor: [number, number] | undefined;
-	let innerOffset: [number, number] | undefined;
-	const nearestScroller = (): HostElement | undefined => {
-		let node = viewport?.parent;
-		while (node?.kind === "element") {
-			const style = node.style;
-			if (
-				(style.overflowY ?? style.overflow) === "scroll" ||
-				(style.overflowX ?? style.overflow) === "scroll"
-			) {
-				return node;
-			}
-			node = node.parent;
-		}
-		return undefined;
-	};
-	const recordOffsets = () => {
+	const mountedViewport = () => {
 		if (viewport === undefined) throw new Error("ScrollArea is not mounted");
-		const inner = renderer.getScrollOffset?.(viewport.id);
-		innerOffset = inner == null ? undefined : [inner[0], inner[1]];
-		outer = nearestScroller();
-		const above = outer && renderer.getScrollOffset?.(outer.id);
-		outerAnchor = above == null ? undefined : [above[0], above[1]];
+		return viewport;
 	};
-	const putOuterBack = () => {
-		if (outer !== undefined && outerAnchor !== undefined) {
-			renderer.scrollTo?.(outer.id, outerAnchor[0], outerAnchor[1]);
-		}
-	};
-	const containWheel = () => {
-		if (
-			viewport === undefined ||
-			outer === undefined ||
-			outerAnchor === undefined ||
-			innerOffset === undefined
-		) {
-			return;
-		}
-		const inner = renderer.getScrollOffset?.(viewport.id);
-		if (inner == null) return;
-		const moved = inner[0] !== innerOffset[0] || inner[1] !== innerOffset[1];
-		innerOffset = [inner[0], inner[1]];
-		if (moved) {
-			putOuterBack();
-			return;
-		}
-		const above = renderer.getScrollOffset?.(outer.id);
-		if (above != null) outerAnchor = [above[0], above[1]];
-	};
-
-	const onScroll = () => {
-		markUserScroll();
-		containWheel();
-	};
-
-	const scrollTo = (x: number, y: number, containOuter = false) => {
-		if (viewport === undefined) throw new Error("ScrollArea is not mounted");
-		if (renderer.scrollTo === undefined) {
-			throw new Error("This renderer does not expose scrollTo");
-		}
-		renderer.scrollTo(viewport.id, -x, -y);
-		if (containOuter) putOuterBack();
-		recordOffsets();
-		setOffset({ x, y });
-	};
+	/** Read from the element, so it is current inside an input handler before `onScroll` has reported. */
+	const positionOf = (axis: Axis) =>
+		axis === "x" ? mountedViewport().scrollLeft : mountedViewport().scrollTop;
 
 	// ── Thumb geometry ──────────────────────────────────────────────────────
 
@@ -251,16 +188,16 @@ export function ScrollArea(props: {
 		};
 	};
 
-	const scrollAlong = (axis: Axis, distance: number, containOuter = false) => {
+	/** Scrolls the viewport along `axis`; false when there is nothing to scroll or it is already there. */
+	const scrollAlong = (axis: Axis, distance: number) => {
 		const span = thumb(axis);
-		if (span === null) return;
-		const now = offset();
+		if (span === null) return false;
 		const next = clamp(distance, 0, span.maxScroll);
-		scrollTo(
-			axis === "x" ? next : now.x,
-			axis === "y" ? next : now.y,
-			containOuter,
+		if (next === positionOf(axis)) return false;
+		mountedViewport().scrollTo(
+			axis === "x" ? { left: next } : { top: next },
 		);
+		return true;
 	};
 
 	// ── Dragging ────────────────────────────────────────────────────────────
@@ -320,7 +257,7 @@ export function ScrollArea(props: {
 		markUserScroll();
 		const along = pointerAlong(axis, event) - (axis === "y" ? box.y : box.x);
 		if (along >= span.start && along <= span.start + span.length) {
-			startDrag(axis, track, event, axis === "y" ? offset().y : offset().x);
+			startDrag(axis, track, event, positionOf(axis));
 			return;
 		}
 		if (span.travel <= 0) return;
@@ -335,12 +272,12 @@ export function ScrollArea(props: {
 		startDrag(axis, track, event, target);
 	};
 
-	/** A wheel tick over the track scrolls the viewport, which is not under the pointer. */
-	const wheelTrack = (axis: Axis, event: EventPayload) => {
+	/** A wheel tick over the track scrolls the viewport, which is not under the pointer. Once the viewport is at its limit the tick is left to chain to the scroller around it. */
+	const wheelTrack = (axis: Axis, event: HostWheelEvent) => {
 		const delta = axis === "y" ? event.deltaY : event.deltaX;
-		if (delta === undefined || delta === 0) return;
+		if (delta === 0) return;
 		markUserScroll();
-		scrollAlong(axis, (axis === "y" ? offset().y : offset().x) - delta, true);
+		if (scrollAlong(axis, positionOf(axis) + delta)) event.preventDefault();
 	};
 
 	// ── Keyboard ────────────────────────────────────────────────────────────
@@ -350,19 +287,18 @@ export function ScrollArea(props: {
 		if (isChord(event)) return;
 		const size = view();
 		if (size === undefined) return;
-		const now = offset();
 		let axis: Axis | undefined;
 		let target: number | undefined;
 		switch (event.key) {
 			case "ArrowDown":
 			case "ArrowUp":
 				axis = "y";
-				target = now.y + (event.key === "ArrowDown" ? ARROW_PX : -ARROW_PX);
+				target = positionOf("y") + (event.key === "ArrowDown" ? ARROW_PX : -ARROW_PX);
 				break;
 			case "ArrowRight":
 			case "ArrowLeft":
 				axis = "x";
-				target = now.x + (event.key === "ArrowRight" ? ARROW_PX : -ARROW_PX);
+				target = positionOf("x") + (event.key === "ArrowRight" ? ARROW_PX : -ARROW_PX);
 				break;
 			case "PageDown":
 			case "PageUp":
@@ -371,7 +307,7 @@ export function ScrollArea(props: {
 				const back =
 					event.key === "PageUp" ||
 					(event.key === " " && event.shiftKey === true);
-				target = now.y + (back ? -1 : 1) * size.h * PAGE_SHARE;
+				target = positionOf("y") + (back ? -1 : 1) * size.h * PAGE_SHARE;
 				break;
 			}
 			case "Home":
@@ -499,7 +435,7 @@ export function ScrollArea(props: {
 					onMouseMove={dragTo}
 					onMouseUp={stopDrag}
 					onLostPointerCapture={stopDrag}
-					onScroll={(event: EventPayload) => wheelTrack(bar.axis, event)}
+					onWheel={(event: HostWheelEvent) => wheelTrack(bar.axis, event)}
 					style={{
 						position: "absolute",
 						userSelect: "none",
@@ -551,10 +487,7 @@ export function ScrollArea(props: {
 	return (
 		<div
 			testId={props.testId}
-			onMouseEnter={() => {
-				setRootHovered(true);
-				recordOffsets();
-			}}
+			onMouseEnter={() => setRootHovered(true)}
 			onMouseLeave={() => setRootHovered(false)}
 			style={{
 				position: "relative",
@@ -569,7 +502,7 @@ export function ScrollArea(props: {
 					viewport = element;
 				}}
 				onScroll={onScroll}
-				onScrollChange={onScrollChange}
+				onWheel={markUserScroll}
 				onLayout={(event: EventPayload) =>
 					setView(sizeOf(event))
 				}
@@ -582,8 +515,10 @@ export function ScrollArea(props: {
 					height: "100%",
 					overflowY: vertical() ? "scroll" : "hidden",
 					overflowX: horizontal() ? "scroll" : "hidden",
-					// gpuix only lets a child overflow sideways inside a flex viewport; it sets that up for x-only scrollers but not for both axes.
-					...(both()
+					// The thumbs are drawn by this component.
+					scrollbarWidth: "none",
+					// There is no `width: max-content`, and `overflowX: "scroll"` no longer makes the viewport a flex row: without one the content box is clamped to the viewport and nothing overflows.
+					...(horizontal()
 						? {
 								display: "flex",
 								flexDirection: "row",

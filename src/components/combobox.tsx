@@ -245,7 +245,7 @@ export function Combobox(props: {
 				if (!mounted()) return;
 				setReflow(true);
 				if (scroller !== undefined && scroller.mounted) {
-					renderer.scrollTo?.(scroller.id, 0, 0);
+					scroller.scrollTo({ top: 0, left: 0 });
 				}
 				if (open()) place(filtered().length);
 				if (filtered().length === 0) {
