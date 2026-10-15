@@ -13,6 +13,7 @@ import {
 	createEffect,
 	createMemo,
 	createSignal,
+	createUniqueId,
 	For,
 	type JSX,
 	on,
@@ -255,6 +256,11 @@ function MenuBody(props: {
 
 type KeyHandler = (event: KeyEvent) => void;
 
+interface KeyTarget {
+	onKey: KeyHandler;
+	activeRowId: Accessor<string | undefined>;
+}
+
 interface SubmenuHost {
 	openIndex: Accessor<number | null>;
 	setOpenIndex: (index: number | null) => void;
@@ -281,6 +287,7 @@ function createMenuList(options: {
 }) {
 	const menu = useMenuScope();
 	const rows = new Map<number, MenuRow>();
+	const listId = createUniqueId();
 	const hover = createFluidHover({
 		isItemDisabled: (index) => rows.get(index)?.disabled() === true,
 	});
@@ -447,6 +454,7 @@ function createMenuList(options: {
 		checkedIndex: options.checkedIndex,
 		multiple: options.multiple,
 		rows,
+		rowId: (index) => `${listId}-row-${index}`,
 		pointerLit: () => litBy() === "pointer",
 		rowsChanged() {
 			if (!options.mounted()) return;
@@ -520,6 +528,10 @@ function createMenuList(options: {
 	return {
 		hover,
 		context,
+		activeRowId: () => {
+			const index = hover.activeIndex();
+			return index === null ? undefined : context.rowId(index);
+		},
 		litBy,
 		travel: () => !reflow.reflowing(),
 		search,
@@ -541,6 +553,9 @@ type MenuList = ReturnType<typeof createMenuList>;
 
 /** The search field row, the scroller and the rows: what a popup holds. */
 function MenuPanel(props: {
+	id: string;
+	/** The `id` of the element that opens this menu. */
+	labelledBy: string;
 	list: MenuList;
 	checkedIndex: Accessor<number | undefined>;
 	checkedIndices: Accessor<readonly number[] | undefined>;
@@ -555,7 +570,9 @@ function MenuPanel(props: {
 			<DropdownSearchHostContext.Provider value={list.searchHost}>
 				<SubmenuHostContext.Provider value={list.submenuHost}>
 					<div
+						id={props.id}
 						role="menu"
+						aria-labelledby={props.labelledBy}
 						style={{ display: "flex", flexDirection: "column" }}
 					>
 					<Show when={field()}>
@@ -567,6 +584,7 @@ function MenuPanel(props: {
 									list.onKey(event);
 								}}
 								onFocusChange={menu.setSearchFocused}
+								activeDescendant={list.activeRowId()}
 							/>
 						)}
 					</Show>
@@ -616,6 +634,7 @@ export function Dropdown(props: {
 	children: JSX.Element;
 }) {
 	const rows = new Map<number, MenuRow>();
+	const listId = createUniqueId();
 	const hover = createFluidHover({
 		isItemDisabled: (index) => rows.get(index)?.disabled() === true,
 	});
@@ -626,6 +645,7 @@ export function Dropdown(props: {
 		checkedIndex: () => props.checkedIndex,
 		multiple: () => props.checkedIndices !== undefined,
 		rows,
+		rowId: (index) => `${listId}-row-${index}`,
 		pointerLit: () => true,
 		close: () => {},
 		pressPick: () => false,
@@ -687,7 +707,11 @@ export function Dropdown(props: {
 		<DropdownContext.Provider value={context}>
 			<div
 				testId={props.testId}
+				id={listId}
 				role="group"
+				aria-activedescendant={
+					focusIndex() === null ? undefined : context.rowId(focusIndex() as number)
+				}
 				tabIndex={0}
 				onKeyDown={onKeyDown}
 				onFocus={() => {
@@ -746,8 +770,11 @@ interface MenuScope {
 	setOpen: (next: boolean) => void;
 	keyboardActive: Accessor<boolean>;
 	setKeyboardActive: (active: boolean) => void;
-	/** The deepest open list takes the keys. */
-	keyStack: KeyHandler[];
+	/** The deepest open list takes the keys, and its lit row is the one assistive technology hears. Returns the remover. */
+	pushKeys: (target: KeyTarget) => () => void;
+	activeRowId: Accessor<string | undefined>;
+	triggerId: string;
+	popupId: string;
 	openFrom: Accessor<"first" | "last">;
 	/** The trigger was pressed and the button is still down. */
 	startPress: () => void;
@@ -780,6 +807,16 @@ export interface DropdownTriggerState {
 	/** The release of that press, or a screen reader's press. Keyboard-originated clicks are ignored: the menu answers those itself. */
 	onClick: (event: EventPayload) => void;
 	readonly expanded: boolean;
+	/** Put these on the element that opens the menu, with the handlers above. */
+	readonly attributes: {
+		readonly id: string;
+		readonly "aria-expanded": boolean;
+		readonly "aria-haspopup": "menu";
+		/** Base UI names the popup only while it is open. */
+		readonly "aria-controls": string | undefined;
+		/** Focus stays on the trigger while the arrows walk the rows, so it names the lit one. */
+		readonly "aria-activedescendant": string | undefined;
+	};
 }
 
 export function DropdownMenu(props: {
@@ -793,7 +830,7 @@ export function DropdownMenu(props: {
 	const renderer = useGpuixRequired();
 	const presence = createPresence();
 	const [keyboardActive, setKeyboardActive] = createSignal(false);
-	const keyStack: KeyHandler[] = [];
+	const [keyStack, setKeyStack] = createSignal<readonly KeyTarget[]>([]);
 
 	const [openFrom, setOpenFrom] = createSignal<"first" | "last">("first");
 	let pressedAt: number | null = null;
@@ -821,7 +858,7 @@ export function DropdownMenu(props: {
 		} else {
 			pressedAt = null;
 			presence.hide();
-			keyStack.length = 0;
+			setKeyStack([]);
 			returnFocus();
 		}
 	};
@@ -844,7 +881,13 @@ export function DropdownMenu(props: {
 		setOpen,
 		keyboardActive,
 		setKeyboardActive,
-		keyStack,
+		pushKeys(target) {
+			setKeyStack((stack) => [...stack, target]);
+			return () => setKeyStack((stack) => stack.filter((entry) => entry !== target));
+		},
+		activeRowId: () => keyStack().at(-1)?.activeRowId(),
+		triggerId: createUniqueId(),
+		popupId: createUniqueId(),
 		openFrom,
 		startPress() {
 			setOpenFrom("first");
@@ -889,7 +932,7 @@ export function DropdownMenu(props: {
 			return;
 		}
 		setKeyboardActive(true);
-		keyStack[keyStack.length - 1]?.(event);
+		keyStack().at(-1)?.onKey(event);
 	};
 
 	return (
@@ -898,6 +941,7 @@ export function DropdownMenu(props: {
 				testId={props.testId}
 				// A press on the menu's bare content lands focus here, so the keys still reach onKeyDown.
 				tabIndex={-1}
+				aria-activedescendant={scope.activeRowId()}
 				onKeyDown={onKeyDown}
 				onMouseDownOutside={() => {
 					if (presence.open()) setOpen(false);
@@ -939,6 +983,19 @@ export function DropdownTrigger(props: {
 		get expanded() {
 			return scope.presence.open();
 		},
+		attributes: {
+			id: scope.triggerId,
+			get "aria-expanded"() {
+				return scope.presence.open();
+			},
+			"aria-haspopup": "menu",
+			get "aria-controls"() {
+				return scope.presence.open() ? scope.popupId : undefined;
+			},
+			get "aria-activedescendant"() {
+				return scope.presence.open() ? scope.activeRowId() : undefined;
+			},
+		},
 	};
 	return props.children(trigger);
 }
@@ -968,11 +1025,9 @@ export function DropdownContent(props: {
 
 	createEffect(() => {
 		if (!scope.presence.open()) return;
-		scope.keyStack.push(list.onKey);
-		onCleanup(() => {
-			const at = scope.keyStack.indexOf(list.onKey);
-			if (at !== -1) scope.keyStack.splice(at, 1);
-		});
+		onCleanup(
+			scope.pushKeys({ onKey: list.onKey, activeRowId: list.activeRowId }),
+		);
 	});
 
 	return (
@@ -985,6 +1040,8 @@ export function DropdownContent(props: {
 		>
 			{(maxHeight) => (
 				<MenuPanel
+					id={scope.popupId}
+					labelledBy={scope.triggerId}
 					list={list}
 					checkedIndex={() => props.checkedIndex}
 					checkedIndices={() => props.checkedIndices}
@@ -1009,6 +1066,7 @@ interface SubScope {
 	presence: ReturnType<typeof createPresence>;
 	open: Accessor<boolean>;
 	setOpen: (next: boolean) => void;
+	popupId: string;
 	content: Accessor<SubContentProps | undefined>;
 	setContent: (props: SubContentProps | undefined) => void;
 	/** The keys are in the submenu: it opened from the keyboard, or Right / Enter went into it. A hover-opened submenu leaves them with its parent. */
@@ -1047,6 +1105,7 @@ export function DropdownSub(props: {
 	const scope: SubScope = {
 		presence,
 		open: presence.open,
+		popupId: createUniqueId(),
 		setOpen(next) {
 			if (props.open === undefined) apply(next);
 			props.onOpenChange?.(next);
@@ -1120,6 +1179,7 @@ export function DropdownSubTrigger(props: {
 			disabled={props.disabled}
 			testId={props.testId}
 			chevron
+			submenu={{ open: sub.open(), popupId: sub.popupId }}
 			closeOnClick={false}
 			onSelect={show}
 			onOpenSubmenu={() => {
@@ -1129,7 +1189,7 @@ export function DropdownSubTrigger(props: {
 			}}
 		>
 			<Show when={sub.presence.mounted()}>
-				<SubPopup />
+				<SubPopup triggerId={parent.rowId(props.index)} />
 			</Show>
 		</MenuItem>
 	);
@@ -1147,7 +1207,7 @@ export function DropdownSubContent(props: SubContentProps) {
 
 const stopPropagation = (event: HostDomEvent) => event.stopPropagation();
 
-function SubPopup() {
+function SubPopup(props: { triggerId: string }) {
 	const sub = useSubScope();
 	const menu = useMenuScope();
 	const content = () => {
@@ -1182,11 +1242,9 @@ function SubPopup() {
 	);
 	createEffect(() => {
 		if (!sub.open() || !sub.entered()) return;
-		menu.keyStack.push(list.onKey);
-		onCleanup(() => {
-			const at = menu.keyStack.indexOf(list.onKey);
-			if (at !== -1) menu.keyStack.splice(at, 1);
-		});
+		onCleanup(
+			menu.pushKeys({ onKey: list.onKey, activeRowId: list.activeRowId }),
+		);
 	});
 
 	const placement = createPlacementState("right");
@@ -1242,6 +1300,8 @@ function SubPopup() {
 					}}
 				>
 					<MenuPanel
+						id={sub.popupId}
+						labelledBy={props.triggerId}
 						list={list}
 						checkedIndex={() => content().checkedIndex}
 						checkedIndices={() => content().checkedIndices}

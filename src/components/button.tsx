@@ -100,8 +100,12 @@ export function Button(props: {
 	loading?: boolean;
 	disabled?: boolean;
 	testId?: string;
+	id?: string;
 	"aria-label"?: string;
+	"aria-activedescendant"?: string;
 	"aria-expanded"?: boolean;
+	"aria-haspopup"?: "menu" | "listbox" | "dialog";
+	"aria-controls"?: string;
 	onClick?: (event: EventPayload) => void;
 	onMouseDown?: (event: EventPayload) => void;
 	/** The label, or the icon for an icon-only size. */
@@ -193,8 +197,13 @@ export function Button(props: {
 			}, renderer)}
 			tabIndex={inert() ? -1 : 0}
 			testId={props.testId}
+			id={props.id}
 			aria-label={props["aria-label"]}
+			aria-activedescendant={props["aria-activedescendant"]}
 			aria-expanded={props["aria-expanded"]}
+			aria-haspopup={props["aria-haspopup"]}
+			aria-controls={props["aria-controls"]}
+			aria-disabled={inert()}
 			onMouseDown={props.onMouseDown}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}

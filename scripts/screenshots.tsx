@@ -137,6 +137,13 @@ const shot: ShotContext = {
 		return ariaNode(target) !== undefined;
 	},
 	centerOf,
+	async focus(testId) {
+		const element = renderer.findByTestId(testId);
+		if (element === undefined)
+			throw new Error(`no element with testId ${testId}`);
+		renderer.focusElement(element.id);
+		await settle();
+	},
 	async hover(testId) {
 		const point = centerOf(testId);
 		renderer.nativeSimulateMouseMove(point.x, point.y);

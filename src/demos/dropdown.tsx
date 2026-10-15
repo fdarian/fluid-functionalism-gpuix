@@ -199,7 +199,7 @@ function Triggered() {
 							<Button
 								testId="menu-trigger"
 								variant="ghost"
-								aria-expanded={trigger.expanded}
+								{...trigger.attributes}
 								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
@@ -238,7 +238,7 @@ function Submenus() {
 							<Button
 								testId="sub-trigger"
 								variant="ghost"
-								aria-expanded={trigger.expanded}
+								{...trigger.attributes}
 								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
@@ -321,7 +321,7 @@ function Keyboard() {
 							<Button
 								testId="keys-trigger"
 								variant="ghost"
-								aria-expanded={trigger.expanded}
+								{...trigger.attributes}
 								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
@@ -362,7 +362,7 @@ function Multiple() {
 							<Button
 								testId="multi-trigger"
 								variant="ghost"
-								aria-expanded={trigger.expanded}
+								{...trigger.attributes}
 								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
@@ -405,7 +405,7 @@ function Searchable() {
 								testId="search-trigger"
 								variant="ghost"
 								trailingIcon="chevron-down"
-								aria-expanded={trigger.expanded}
+								{...trigger.attributes}
 								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
@@ -455,7 +455,7 @@ function SearchableMultiple() {
 							<Button
 								testId="labels-trigger"
 								variant="ghost"
-								aria-expanded={trigger.expanded}
+								{...trigger.attributes}
 								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
@@ -516,7 +516,7 @@ function Creatable() {
 							<Button
 								testId="create-trigger"
 								variant="ghost"
-								aria-expanded={trigger.expanded}
+								{...trigger.attributes}
 								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
@@ -601,6 +601,58 @@ async function reveal(shot: ShotContext, testId: string) {
 }
 
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
+	// The inline panel holds the focus itself and names the row its ring is on.
+	await shot.focus("groups");
+	shot.expectAria("groups", { active_descendant: shot.idOf("groups-0") });
+	await shot.press("down");
+	await shot.press("up");
+	shot.expectAria("groups", { active_descendant: shot.idOf("groups-0") });
+	// Opened by key, which the test renderer can run: the trigger names its popup and the row the keys lit.
+	await shot.focus("menu-trigger");
+	shot.expectAria("menu-trigger", {
+		role: "Button",
+		expanded: false,
+		has_popup: "Menu",
+		controls: undefined,
+		active_descendant: undefined,
+	});
+	await shot.press("enter");
+	shot.expectAria("menu-trigger", { expanded: true });
+	const popup = shot.aria("menu-trigger").controls;
+	if (!Array.isArray(popup) || popup.length !== 1)
+		throw new Error("an open trigger controls its popup");
+	shot.expectAria(String(popup[0]), {
+		role: "Menu",
+		labelled_by: [shot.idOf("menu-trigger")],
+	});
+	shot.expectAria("menu-trigger", { active_descendant: shot.idOf("menu-0") });
+	await shot.press("down");
+	shot.expectAria("menu-trigger", { active_descendant: shot.idOf("menu-1") });
+	shot.expectAria("menu-1", { role: "MenuItemRadio", toggled: "False" });
+	await shot.press("escape");
+	// Submenu: the trigger row names its popup, and once the keys are inside the lit row is the submenu's.
+	await shot.focus("sub-trigger");
+	await shot.press("enter");
+	shot.expectAria("sub-move", { has_popup: "Menu", expanded: false });
+	await shot.press("right");
+	await shot.settle(300);
+	const subPopup = shot.aria("sub-move").controls;
+	if (!Array.isArray(subPopup) || subPopup.length !== 1)
+		throw new Error("an open submenu trigger controls its popup");
+	shot.expectAria(String(subPopup[0]), {
+		role: "Menu",
+		labelled_by: [shot.idOf("sub-move")],
+	});
+	shot.expectAria("sub-trigger", {
+		active_descendant: shot.idOf("sub-folder-Inbox"),
+	});
+	await shot.press("escape escape");
+	// Arrows land on a disabled row; it says so.
+	await shot.focus("keys-trigger");
+	await shot.press("enter");
+	shot.expectAria("keys-1", { disabled: true });
+	await shot.press("escape");
+
 	await reveal(shot, "basic-0");
 	await shot.hover("basic-2");
 	shot.capture("inline-hover");

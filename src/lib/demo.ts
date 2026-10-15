@@ -7,6 +7,8 @@ import type { JSX } from "solid-js";
 export interface ShotContext {
 	/** Window-space centre of the element with this `testId`. */
 	centerOf(testId: string): { x: number; y: number };
+	/** Focus the element, as a script would: a pointer press that opens a popup cannot run in the test renderer. */
+	focus(testId: string): Promise<void>;
 	hover(testId: string): Promise<void>;
 	click(testId: string): Promise<void>;
 	/** Mouse button down / up on an element (hold a press while capturing). */
