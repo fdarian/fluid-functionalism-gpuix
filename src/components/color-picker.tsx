@@ -23,7 +23,12 @@ import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
 import { edgeIndex, isChord, moveIndex } from "../lib/list-nav";
-import { isInside, placePopup, POPUP_OFFSET } from "../lib/popup";
+import {
+	createPlacementState,
+	isInside,
+	POPUP_MARGIN,
+	POPUP_OFFSET,
+} from "../lib/popup";
 import { createPresence } from "../lib/presence";
 import { createPressToggle, returnFocusTo } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
@@ -682,10 +687,9 @@ function AlphaRail(props: {
 	);
 }
 
-/** An anchored card of a given surface level, with the same slide and fade as the shared popup. */
+/** An anchored card of a given surface level, with the same slide and fade as the shared popup. Opens below its trigger, or above when there is no room. */
 function Popup(props: {
 	presence: ReturnType<typeof createPresence>;
-	side: "top" | "bottom";
 	width: number;
 	level: number;
 	onMouseDownOutside?: (event: EventPayload) => void;
@@ -693,13 +697,17 @@ function Popup(props: {
 	cardRef?: (element: HostElement) => void;
 	children: JSX.Element;
 }) {
-	const slide = () => (props.side === "top" ? 4 : -4);
+	const placement = createPlacementState("bottom");
+	const slide = () => (placement.side() === "top" ? 4 : -4);
 	return (
 		<Show when={props.presence.mounted()}>
 			<anchored
-				side={props.side}
+				side="bottom"
 				align="start"
 				gap={POPUP_OFFSET}
+				fit="flip"
+				snapMargin={POPUP_MARGIN}
+				onPlacement={placement.onPlacement}
 				deferred
 				priority={2}
 				onMouseDownOutside={props.onMouseDownOutside}
@@ -747,7 +755,6 @@ function FormatDropdown(props: {
 	const renderer = useGpuixRequired();
 	const presence = createPresence();
 	const hover = createFluidHover();
-	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
 	const [triggerHovered, setTriggerHovered] = createSignal(false);
 	let trigger: HostElement | undefined;
 	let button: HostElement | undefined;
@@ -758,14 +765,6 @@ function FormatDropdown(props: {
 	/** A pointer open lights nothing until the pointer moves in; a keyboard open lights the first row, or the last on ArrowUp. */
 	const open = (from: "pointer" | "first" | "last" = "pointer") => {
 		if (presence.open()) return;
-		if (trigger === undefined) throw new Error("Trigger is not mounted");
-		setSide(
-			placePopup(
-				trigger,
-				FORMATS.length * MENU_ROW + 8,
-				Number.POSITIVE_INFINITY,
-			).side,
-		);
 		presence.show();
 		hover.setActiveIndex(
 			from === "pointer" ? null : edgeIndex(from, FORMATS.length),
@@ -919,7 +918,6 @@ function FormatDropdown(props: {
 			</div>
 			<Popup
 				presence={presence}
-				side={side()}
 				width={width}
 				level={props.level + 2}
 				cardRef={(element) => {
@@ -1676,7 +1674,6 @@ export function ColorPickerPopover(
 	},
 ) {
 	const presence = createPresence();
-	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
 	const [removeHovered, setRemoveHovered] = createSignal(false);
 	const [formatMenuOpen, setFormatMenuOpen] = createSignal(false);
 	let trigger: HostElement | undefined;
@@ -1691,8 +1688,6 @@ export function ColorPickerPopover(
 
 	const open = () => {
 		if (presence.open()) return;
-		if (trigger === undefined) throw new Error("Trigger is not mounted");
-		setSide(placePopup(trigger, 420, Number.POSITIVE_INFINITY).side);
 		presence.show();
 	};
 	const close = () => {
@@ -1841,7 +1836,6 @@ export function ColorPickerPopover(
 			</div>
 			<Popup
 				presence={presence}
-				side={side()}
 				width={PANEL_WIDTH}
 				level={5}
 				cardRef={(element) => {

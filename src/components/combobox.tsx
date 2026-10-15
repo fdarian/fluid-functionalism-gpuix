@@ -19,13 +19,12 @@ import { createFluidHover, createReflowGate, useHoverItem } from "../lib/fluid-h
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { isChord, moveIndex, revealRow } from "../lib/list-nav";
-import { createPlacement, isInside, PopupSurface } from "../lib/popup";
+import { isInside, PopupSurface } from "../lib/popup";
 import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import {
 	color,
 	radius,
 	type as scale,
-	shadow3,
 	motion as tween,
 	weight,
 } from "../lib/theme";
@@ -101,11 +100,6 @@ function contains(text: string, query: string) {
 	return false;
 }
 
-/** Rows a list of this many items needs: for choosing which side of the field has room. */
-function listHeight(count: number) {
-	return count === 0 ? 74 : count * ROW_HEIGHT + 2 * LIST_PADDING + 2;
-}
-
 /**
  * Single-select Combobox from base/combobox.tsx: a text field that filters a
  * list as you type, a popup of fluid-hover rows, and a checked row whose
@@ -154,7 +148,6 @@ export function Combobox(props: {
 	/** Armed while typing re-filters the rows under the highlights: those frames snap, not glide. */
 	const reflow = createReflowGate();
 
-	const placement = createPlacement(POPUP_MAX_HEIGHT);
 	let rootElement: HostElement | undefined;
 	let popupElement: HostElement | undefined;
 	let inputElement: HostElement | undefined;
@@ -187,14 +180,9 @@ export function Combobox(props: {
 		if (picked !== -1) return picked;
 		return rows().length === 0 ? null : 0;
 	};
-	const place = (count: number) => {
-		if (rootElement === undefined) throw new Error("Combobox is not mounted");
-		placement.place(rootElement, listHeight(count));
-	};
 	const openPopup = () => {
 		if (open() || props.disabled === true) return;
 		setQuery("");
-		place(rows().length);
 		revealOnMeasure = true;
 		presence.show();
 		hover.setActiveIndex(openHighlight());
@@ -246,7 +234,6 @@ export function Combobox(props: {
 				if (scroller !== undefined && scroller.mounted) {
 					scroller.scrollTo({ top: 0, left: 0 });
 				}
-				if (open()) place(filtered().length);
 				if (filtered().length === 0) {
 					hover.setActiveIndex(null);
 					return;
@@ -511,16 +498,16 @@ export function Combobox(props: {
 
 			<PopupSurface
 				presence={presence}
-				side={placement.side()}
 				align="start"
 				width={width()}
-				maxHeight={placement.maxHeight()}
+				maxHeight={POPUP_MAX_HEIGHT}
 				onDismiss={closePopup}
 				onMouseDownOutside={onMouseDownOutside}
 				popupRef={(element) => {
 					popupElement = element;
 				}}
 			>
+				{(popupMaxHeight) => (
 				<Show
 					when={filtered().length > 0}
 					fallback={
@@ -551,7 +538,7 @@ export function Combobox(props: {
 							display: "flex",
 							flexDirection: "column",
 							overflowY: "scroll",
-							maxHeight: placement.maxHeight() - 2,
+							maxHeight: popupMaxHeight() - 2,
 						}}
 					>
 						{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
@@ -655,6 +642,7 @@ export function Combobox(props: {
 						</div>
 					</div>
 				</Show>
+				)}
 			</PopupSurface>
 		</div>
 	);

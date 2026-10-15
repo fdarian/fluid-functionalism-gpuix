@@ -302,6 +302,7 @@ function FilterSelect(props: {
 				presence={presence}
 				align="start"
 				width={150}
+				maxHeight={200}
 				onDismiss={() => presence.hide()}
 				onMouseDownOutside={(event) => {
 					if (!isInside(event, [root, popup])) presence.hide();
@@ -310,6 +311,7 @@ function FilterSelect(props: {
 					popup = element;
 				}}
 			>
+				{() => (
 				<div style={{ display: "flex", flexDirection: "column", padding: 4 }}>
 					<For each={props.options}>
 						{(option) => (
@@ -345,6 +347,7 @@ function FilterSelect(props: {
 						)}
 					</For>
 				</div>
+				)}
 			</PopupSurface>
 		</div>
 	);

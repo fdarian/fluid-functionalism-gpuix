@@ -31,7 +31,12 @@ import {
 } from "../lib/fluid-hover";
 import type { IconRef } from "../lib/icons";
 import { isChord, moveIndex, revealRow } from "../lib/list-nav";
-import { createPlacement, isInside, POPUP_OFFSET, PopupSurface } from "../lib/popup";
+import {
+	createPlacementState,
+	isInside,
+	POPUP_MARGIN,
+	PopupSurface,
+} from "../lib/popup";
 import { createPresence } from "../lib/presence";
 import { createPressToggle, returnFocusTo } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
@@ -63,8 +68,6 @@ const SUBMENU_ALIGN_OFFSET = -PADDING;
 const HOVER_OPEN_MS = 100;
 /** A pointer that stops on another row for this long leaves an open submenu. */
 const SUBMENU_DWELL_MS = 120;
-/** Until a menu has been measured: about six rows. */
-const TYPICAL_HEIGHT = 240;
 
 type LitBy = "open" | "pointer" | "keyboard";
 
@@ -745,13 +748,6 @@ export function Dropdown(props: {
 interface MenuScope {
 	presence: ReturnType<typeof createPresence>;
 	setOpen: (next: boolean) => void;
-	/** The popup is as wide as its panel, or the trigger if that is wider. */
-	width: Accessor<number>;
-	side: Accessor<"top" | "bottom">;
-	/** What the popup may be tall: the room on its side, up to the cap. */
-	maxHeight: Accessor<number>;
-	/** The content is measured: flip to the side where it fits, if either does. */
-	fitSide: (contentHeight: number) => void;
 	keyboardActive: Accessor<boolean>;
 	setKeyboardActive: (active: boolean) => void;
 	/** The deepest open list takes the keys. */
@@ -804,21 +800,10 @@ export function DropdownMenu(props: {
 }) {
 	const renderer = useGpuixRequired();
 	const presence = createPresence();
-	const [width, setWidth] = createSignal(PANEL_WIDTH);
-	const placement = createPlacement(POPUP_MAX_HEIGHT);
 	const [keyboardActive, setKeyboardActive] = createSignal(false);
-	const regions = new Set<HostElement>();
 	const keyStack: KeyHandler[] = [];
+	const regions = new Set<HostElement>();
 	let wrapper: HostElement | undefined;
-
-	/** The popup's height as last measured: a good guess for the next open. */
-	let lastHeight = TYPICAL_HEIGHT;
-	const choose = (contentHeight: number) => {
-		if (wrapper === undefined) throw new Error("DropdownMenu is not mounted");
-		const placed = placement.place(wrapper, contentHeight);
-		setWidth(Math.max(PANEL_WIDTH, placed.triggerWidth));
-	};
-	const place = () => choose(lastHeight);
 
 	const [openFrom, setOpenFrom] = createSignal<"first" | "last">("first");
 	let pressedAt: number | null = null;
@@ -842,7 +827,6 @@ export function DropdownMenu(props: {
 		if (next) {
 			triggerId = pendingTrigger ?? renderer.getFocusedElementId?.() ?? null;
 			pendingTrigger = null;
-			place();
 			presence.show();
 		} else {
 			pressedAt = null;
@@ -868,13 +852,6 @@ export function DropdownMenu(props: {
 	const scope: MenuScope = {
 		presence,
 		setOpen,
-		width,
-		side: placement.side,
-		maxHeight: placement.maxHeight,
-		fitSide(contentHeight) {
-			lastHeight = contentHeight;
-			choose(contentHeight);
-		},
 		keyboardActive,
 		setKeyboardActive,
 		keyStack,
@@ -1010,30 +987,6 @@ export function DropdownContent(props: {
 		leave: scope.closeKeepingFocus,
 	});
 
-	let fitted = false;
-	createEffect(
-		on(scope.presence.open, (isOpen) => {
-			if (isOpen) fitted = false;
-		}),
-	);
-	createEffect(
-		on(
-			list.hover.rects,
-			(rects) => {
-				if (fitted || !scope.presence.open()) return;
-				const bottom = rects.reduce(
-					(max, rect) => (rect === undefined ? max : Math.max(max, rect.top + rect.height)),
-					0,
-				);
-				if (bottom === 0) return;
-				fitted = true;
-				const search = list.search() === undefined ? 0 : SEARCH_HEIGHT;
-				scope.fitSide(Math.min(POPUP_MAX_HEIGHT, bottom + PADDING + 2 + search));
-			},
-			{ defer: true },
-		),
-	);
-
 	createEffect(() => {
 		if (!scope.presence.open()) return;
 		scope.keyStack.push(list.onKey);
@@ -1046,21 +999,22 @@ export function DropdownContent(props: {
 	return (
 		<PopupSurface
 			presence={scope.presence}
-			side={scope.side()}
 			align={props.align ?? "start"}
-			width={scope.width()}
-			maxHeight={scope.maxHeight()}
+			width={PANEL_WIDTH}
+			maxHeight={POPUP_MAX_HEIGHT}
 			onMouseDownOutside={scope.outsidePress}
 			onDismiss={() => scope.setOpen(false)}
 		>
-			<MenuPanel
-				list={list}
-				checkedIndex={() => props.checkedIndex}
-				checkedIndices={() => props.checkedIndices}
-				maxHeight={scope.maxHeight}
-			>
-				{props.children}
-			</MenuPanel>
+			{(maxHeight) => (
+				<MenuPanel
+					list={list}
+					checkedIndex={() => props.checkedIndex}
+					checkedIndices={() => props.checkedIndices}
+					maxHeight={maxHeight}
+				>
+					{props.children}
+				</MenuPanel>
+			)}
 		</PopupSurface>
 	);
 }
@@ -1257,6 +1211,9 @@ function SubPopup() {
 		});
 	});
 
+	const placement = createPlacementState("right");
+	const maxHeight = () => placement.maxHeight(POPUP_MAX_HEIGHT);
+
 	return (
 		// The layer fills the trigger row so the popup anchors to it, and takes no flex slot or mouse of its own.
 		<div
@@ -1274,6 +1231,9 @@ function SubPopup() {
 				align="start"
 				gap={SUBMENU_SIDE_OFFSET}
 				offset={{ x: 0, y: SUBMENU_ALIGN_OFFSET }}
+				fit="flip"
+				snapMargin={POPUP_MARGIN}
+				onPlacement={placement.onPlacement}
 				deferred
 				priority={2}
 				style={{ backgroundColor: color.transparent }}
@@ -1300,14 +1260,14 @@ function SubPopup() {
 						borderColor: color.popupBorder,
 						boxShadow: shadow3(),
 						overflow: "hidden",
-						maxHeight: POPUP_MAX_HEIGHT,
+						maxHeight: maxHeight(),
 					}}
 				>
 					<MenuPanel
 						list={list}
 						checkedIndex={() => content().checkedIndex}
 						checkedIndices={() => content().checkedIndices}
-						maxHeight={() => POPUP_MAX_HEIGHT}
+						maxHeight={maxHeight}
 					>
 						{content().children}
 					</MenuPanel>

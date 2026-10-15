@@ -3,7 +3,6 @@ import {
 	type EventPayload,
 	type HostElement,
 	motion,
-	useGpuixRequired,
 } from "@gpuix/solid";
 import {
 	createContext,
@@ -15,6 +14,7 @@ import {
 	untrack,
 	useContext,
 } from "solid-js";
+import { createPlacementState, POPUP_MARGIN } from "../lib/popup";
 import { createPresence } from "../lib/presence";
 import { color, radius, type as scale, motion as tween } from "../lib/theme";
 
@@ -26,9 +26,6 @@ const SLIDE = 4;
 const BARE_SKIP_DELAY = 400;
 /** How long the tooltip stays after the pointer leaves, so it can cross the gap to the chip: Base UI's safe polygon, approximated with a timer. */
 const GRACE_MS = 80;
-/** Base UI's default collision padding. */
-const WINDOW_MARGIN = 5;
-const CHIP_HEIGHT = 24;
 
 /** What tooltips under one provider share: the hover delay, and when the last one closed so a neighbour can skip it. */
 interface TooltipGroup {
@@ -65,13 +62,6 @@ export function TooltipProvider(props: {
 	);
 }
 
-const OPPOSITE: Record<TooltipSide, TooltipSide> = {
-	top: "bottom",
-	bottom: "top",
-	left: "right",
-	right: "left",
-};
-
 /** Where the chip starts, relative to where it rests: it slides in from the trigger's side. */
 function slideFrom(side: TooltipSide) {
 	switch (side) {
@@ -102,16 +92,13 @@ export function Tooltip(props: {
 	onOpenChange?: (open: boolean) => void;
 	testId?: string;
 }) {
-	const renderer = useGpuixRequired();
 	const ambient = useContext(TooltipGroupContext);
 	const group: TooltipGroup = ambient ?? {
 		delay: DEFAULT_DELAY,
 		skipDelay: BARE_SKIP_DELAY,
 		closedAt: undefined,
 	};
-	/** The side that has room for the chip, chosen each time it opens. */
-	const [placed, setPlaced] = createSignal<TooltipSide>();
-	const side = () => placed() ?? props.side ?? "top";
+	const placement = createPlacementState(props.side ?? "top");
 
 	const presence = createPresence();
 	const [hovered, setHovered] = createSignal(false);
@@ -122,52 +109,14 @@ export function Tooltip(props: {
 	let closeTimer: ReturnType<typeof setTimeout> | undefined;
 	/** The pointer is on the chip. It enters the chip before the trigger reports it left, so the trigger's leave must not start the close. */
 	let overChip = false;
-	/** The chip's last painted size, for deciding which side it fits on. */
-	let chipSize: { width: number; height: number } | undefined;
 	onCleanup(() => {
 		clearTimeout(delayTimer);
 		clearTimeout(closeTimer);
 	});
 
-	/**
-	 * Base UI flips to the opposite side when the preferred one has no room.
-	 * gpuix's own flip anchors to the far edge of the trigger and covers it, so
-	 * the side is chosen here from the trigger's painted box and the window.
-	 */
-	const placeChip = (): TooltipSide => {
-		const preferred = props.side ?? "top";
-		const window = renderer.getWindowSize?.();
-		if (wrapper === undefined || !wrapper.mounted || window == null) {
-			return preferred;
-		}
-		const box = wrapper.getBoundingClientRect();
-		const chip =
-			chipSize ??
-			(typeof props.content === "string"
-				? { width: props.content.length * 6.5 + 16, height: CHIP_HEIGHT }
-				: { width: 160, height: 48 });
-		const room = {
-			top: box.y,
-			bottom: window.height - (box.y + box.height),
-			left: box.x,
-			right: window.width - (box.x + box.width),
-		};
-		const need =
-			(preferred === "top" || preferred === "bottom"
-				? chip.height
-				: chip.width) +
-			(props.sideOffset ?? 8) +
-			WINDOW_MARGIN;
-		if (room[preferred] >= need) return preferred;
-		const opposite = OPPOSITE[preferred];
-		return room[opposite] > room[preferred] ? opposite : preferred;
-	};
-
 	createEffect(() => {
-		if (open()) {
-			untrack(() => setPlaced(placeChip()));
-			presence.show();
-		} else if (untrack(presence.mounted)) presence.hide();
+		if (open()) presence.show();
+		else if (untrack(presence.mounted)) presence.hide();
 	});
 
 	const setOpen = (next: boolean) => {
@@ -241,13 +190,13 @@ export function Tooltip(props: {
 			</Show>
 			<Show when={presence.mounted()}>
 				<anchored
-					side={side()}
+					side={props.side ?? "top"}
 					align="center"
-					// The side is chosen above from the trigger's box, so gpuix only shifts along the edge.
-					fit="snap"
+					fit="flip"
 					gap={props.sideOffset ?? 8}
 					offset={props.forceOpen === true ? undefined : followOffset()}
-					snapMargin={WINDOW_MARGIN}
+					snapMargin={POPUP_MARGIN}
+					onPlacement={placement.onPlacement}
 					deferred
 					priority={2}
 					style={{ backgroundColor: color.transparent }}
@@ -263,17 +212,11 @@ export function Tooltip(props: {
 							overChip = false;
 							scheduleClose();
 						}}
-						onLayout={(event: EventPayload) => {
-							if (event.width === undefined || event.height === undefined) {
-								throw new Error("layout event without a size");
-							}
-							chipSize = { width: event.width, height: event.height };
-						}}
-						initial={{ opacity: 0, ...slideFrom(side()) }}
+						initial={{ opacity: 0, ...slideFrom(placement.side()) }}
 						animate={
 							presence.open()
 								? { opacity: 1, top: 0, left: 0 }
-								: { opacity: 0, ...slideFrom(side()) }
+								: { opacity: 0, ...slideFrom(placement.side()) }
 						}
 						transition={presence.open() ? tween.fast : tween.fastExit}
 						style={{

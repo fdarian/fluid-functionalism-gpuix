@@ -21,7 +21,7 @@ import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { edgeIndex, isChord, moveIndex, revealRow } from "../lib/list-nav";
-import { createPlacement, isInside, PopupSurface } from "../lib/popup";
+import { isInside, PopupSurface } from "../lib/popup";
 import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import { returnFocusTo } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
@@ -92,7 +92,6 @@ const specs: Record<SelectSize, Spec> = {
 };
 
 const LABEL_HEIGHT = 28;
-const SEPARATOR_HEIGHT = 9;
 
 /** `border-destructive/50`. */
 const destructiveHalf = () => withAlpha(color.destructive, 0.5);
@@ -109,14 +108,6 @@ type Slot<Value extends string> =
 	| { kind: "item"; row: SelectItem<Value>; index: number }
 	| { kind: "label"; label: string }
 	| { kind: "separator" };
-
-function entryHeight<Value extends string>(
-	entry: SelectEntry<Value>,
-	spec: Spec,
-) {
-	if (isItem(entry)) return spec.height;
-	return "label" in entry ? LABEL_HEIGHT : SEPARATOR_HEIGHT;
-}
 
 export function Select<Value extends string>(props: {
 	items: readonly SelectEntry<Value>[];
@@ -155,8 +146,6 @@ export function Select<Value extends string>(props: {
 		isItemDisabled: (index) => rows()[index]?.disabled === true,
 	});
 	const [triggerHovered, setTriggerHovered] = createSignal(false);
-	const placement = createPlacement(POPUP_MAX_HEIGHT);
-	const [popupWidth, setPopupWidth] = createSignal(0);
 	/** Set by a pick, so only a check that arrives after the open fades in. */
 	const [picked, setPicked] = createSignal(false);
 	const [ownValue, setOwnValue] = createSignal<Value | null>(
@@ -191,11 +180,6 @@ export function Select<Value extends string>(props: {
 		if (row === undefined) throw new Error(`No item for ${current}`);
 		return row;
 	};
-	const listHeight = () =>
-		props.items.reduce(
-			(sum, entry) => sum + entryHeight(entry, spec()),
-			2 * POPUP_PADDING + 2,
-		);
 
 	const commitValue = (row: SelectItem<Value>) => {
 		if (props.value === undefined) setOwnValue(() => row.value);
@@ -227,9 +211,6 @@ export function Select<Value extends string>(props: {
 	};
 	const open = (from: "pointer" | "down" | "up" = "pointer") => {
 		if (props.disabled === true || presence.open()) return;
-		if (triggerWrapper === undefined) throw new Error("Select is not mounted");
-		const placed = placement.place(triggerWrapper, listHeight());
-		setPopupWidth(Math.max(placed.triggerWidth, props.popupWidth ?? 0));
 		setPicked(false);
 		revealOnMeasure = true;
 		openedAt = performance.now();
@@ -376,6 +357,7 @@ export function Select<Value extends string>(props: {
 		return hover.rects()[index] ?? null;
 	};
 	const hoverRect = () => rectOf(hover.activeIndex())();
+
 	const onOutside = (event: EventPayload) => {
 		if (!isInside(event, [triggerWrapper, popupElement])) close();
 	};
@@ -565,16 +547,16 @@ export function Select<Value extends string>(props: {
 				</div>
 				<PopupSurface
 					presence={presence}
-					side={placement.side()}
 					align={inline() ? "end" : "start"}
-					width={inline() ? (props.popupWidth ?? 160) : popupWidth()}
-					maxHeight={placement.maxHeight()}
+					width={props.popupWidth ?? (inline() ? 160 : "anchor-size(width)")}
+					maxHeight={POPUP_MAX_HEIGHT}
 					onDismiss={close}
 					onMouseDownOutside={onOutside}
 					popupRef={(element) => {
 						popupElement = element;
 					}}
 				>
+					{(popupMaxHeight) => (
 					<div
 						ref={(element) => {
 							scroller = element;
@@ -585,7 +567,7 @@ export function Select<Value extends string>(props: {
 							display: "flex",
 							flexDirection: "column",
 							overflowY: "scroll",
-							maxHeight: placement.maxHeight() - 2,
+							maxHeight: popupMaxHeight() - 2,
 						}}
 					>
 						{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
@@ -616,6 +598,7 @@ export function Select<Value extends string>(props: {
 							<For each={indexed()}>{(slot) => renderSlot(slot)}</For>
 						</div>
 					</div>
+					)}
 				</PopupSurface>
 			</div>
 			<Show when={props.error}>
