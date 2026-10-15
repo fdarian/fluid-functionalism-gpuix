@@ -3,6 +3,7 @@ import {
 	buttonProps,
 	type EventPayload,
 	type StateStyleDesc,
+	useGpuixRequired,
 } from "@gpuix/solid";
 import { type Accessor, createSignal, type JSX, Show } from "solid-js";
 import { Icon } from "../lib/icon";
@@ -110,6 +111,7 @@ export function Button(props: {
 	trailingContent?: JSX.Element;
 	icon?: IconRef;
 }) {
+	const renderer = useGpuixRequired();
 	const variant = () => props.variant ?? "primary";
 	const size = () => sizes[props.size ?? "default"];
 	/** Base UI disables the button while it loads: FF passes `disabled || loading`, and its `disabled:` classes dim it and drop pointer events. */
@@ -189,7 +191,7 @@ export function Button(props: {
 			{...buttonProps({
 				disabled: inert(),
 				onClick: props.onClick,
-			})}
+			}, renderer)}
 			tabIndex={inert() ? -1 : 0}
 			testId={props.testId}
 			aria-label={props["aria-label"]}

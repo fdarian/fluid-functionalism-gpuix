@@ -1,4 +1,4 @@
-import { buttonProps, motion } from "@gpuix/solid";
+import { buttonProps, motion, useGpuixRequired } from "@gpuix/solid";
 import {
 	type Accessor,
 	createSignal,
@@ -82,6 +82,7 @@ export function InputCopy(props: {
 	copy?: (text: string) => Promise<void>;
 	testId?: string;
 }) {
+	const renderer = useGpuixRequired();
 	const variant = () => props.variant ?? "icon";
 	const align = () => props.align ?? "right";
 	const step = () => steps[props.size ?? "default"];
@@ -281,7 +282,7 @@ export function InputCopy(props: {
 
 	const row = (tooltip?: TooltipTrigger) => (
 		<div
-			{...buttonProps({ disabled: props.disabled, onClick: handleCopy })}
+			{...buttonProps({ disabled: props.disabled, onClick: handleCopy, tabIndex: 0 }, renderer)}
 			aria-label={
 				status() === "copied"
 					? "Copied"

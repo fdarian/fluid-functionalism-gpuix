@@ -409,16 +409,12 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 	const onKeyDown = (event: KeyEvent) => {
 		const own = item.index();
 		if (group === undefined || own === undefined) return;
-		const modifiers = event.modifiers;
-		if (
-			modifiers !== undefined &&
-			(modifiers.shift || modifiers.ctrl || modifiers.alt || modifiers.cmd)
-		) {
+		if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) {
 			return;
 		}
 		const step = (
-			{ down: "next", up: "previous", home: "first", end: "last" } as const
-		)[event.key as "down" | "up" | "home" | "end"];
+			{ ArrowDown: "next", ArrowUp: "previous", Home: "first", End: "last" } as const
+		)[event.key as "ArrowDown" | "ArrowUp" | "Home" | "End"];
 		if (step === undefined) return;
 		event.preventDefault();
 		event.stopPropagation();
@@ -478,7 +474,7 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					onClick: toggle,
 					onKeyDown,
 					tabIndex: 0,
-				})}
+				}, renderer)}
 				aria-expanded={item.isOpen()}
 				onFocus={() => {
 					const own = item.index();

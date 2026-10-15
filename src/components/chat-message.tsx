@@ -1,4 +1,4 @@
-import { buttonProps, motion } from "@gpuix/solid";
+import { buttonProps, motion, useGpuixRequired } from "@gpuix/solid";
 import { createSignal, type JSX, Show } from "solid-js";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
@@ -30,6 +30,7 @@ export function ChatMessageAction(props: {
 	testId?: string;
 	onClick?: () => void;
 }) {
+	const renderer = useGpuixRequired();
 	const [hovered, setHovered] = createSignal(false);
 	const glyph = () =>
 		props.action === "copy"
@@ -39,7 +40,7 @@ export function ChatMessageAction(props: {
 				: regenerateGlyph;
 	return (
 		<div
-			{...buttonProps({ onClick: props.onClick })}
+			{...buttonProps({ onClick: props.onClick }, renderer)}
 			aria-label={props.label}
 			testId={props.testId}
 			tabIndex={0}

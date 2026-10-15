@@ -291,14 +291,14 @@ export function Combobox(props: {
 	const onKeyDown = (event: KeyEvent) => {
 		if (isChord(event)) return;
 		switch (event.key) {
-			case "down":
-			case "up":
+			case "ArrowDown":
+			case "ArrowUp":
 				event.preventDefault();
 				event.stopPropagation();
 				if (!open()) openPopup();
-				else move(event.key === "down" ? 1 : -1);
+				else move(event.key === "ArrowDown" ? 1 : -1);
 				return;
-			case "escape":
+			case "Escape":
 				if (open()) {
 					// Closing pops the popup's dismiss layer before the window sees this Escape, which would then close the dialog behind.
 					event.preventDefault();
@@ -315,7 +315,7 @@ export function Combobox(props: {
 					event.stopPropagation();
 				}
 				return;
-			case "tab":
+			case "Tab":
 				closePopup();
 				return;
 		}

@@ -506,8 +506,8 @@ export function CommandMenuInput(props: {
 
 	const onKeyDown = (event: KeyEvent) => {
 		switch (event.key) {
-			case "left":
-			case "right": {
+			case "ArrowLeft":
+			case "ArrowRight": {
 				const handle = menu.tabs();
 				if (handle === undefined || handle.tabs.length === 0) return;
 				event.preventDefault();
@@ -515,30 +515,30 @@ export function CommandMenuInput(props: {
 				const current = handle.tabs.findIndex(
 					(tab) => tab.value === handle.value,
 				);
-				const step = event.key === "right" ? 1 : -1;
+				const step = event.key === "ArrowRight" ? 1 : -1;
 				const next = ((current === -1 ? 0 : current) + step + count) % count;
 				handle.onValueChange(handle.tabs[next].value);
 				return;
 			}
-			case "down":
+			case "ArrowDown":
 				event.preventDefault();
 				menu.move(1);
 				return;
-			case "up":
+			case "ArrowUp":
 				event.preventDefault();
 				menu.move(-1);
 				return;
-			case "home":
+			case "Home":
 				if (menu.query() !== "") return;
 				event.preventDefault();
 				menu.move("first");
 				return;
-			case "end":
+			case "End":
 				if (menu.query() !== "") return;
 				event.preventDefault();
 				menu.move("last");
 				return;
-			case "escape":
+			case "Escape":
 				if (menu.dialog !== undefined) {
 					menu.dialog.close();
 					return;

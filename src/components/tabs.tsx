@@ -298,24 +298,20 @@ export function TabItem(props: {
 	const keyTarget = (key: string): number | undefined => {
 		const last = tabs.order().length - 1;
 		switch (key) {
-			case "right":
+			case "ArrowRight":
 				return index === last ? 0 : index + 1;
-			case "left":
+			case "ArrowLeft":
 				return index === 0 ? last : index - 1;
-			case "home":
+			case "Home":
 				return 0;
-			case "end":
+			case "End":
 				return last;
 			default:
 				return undefined;
 		}
 	};
 	const onKeyDown = (event: KeyEvent) => {
-		const modifiers = event.modifiers;
-		if (
-			modifiers !== undefined &&
-			(modifiers.shift || modifiers.ctrl || modifiers.alt || modifiers.cmd)
-		) {
+		if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) {
 			return;
 		}
 		const target = keyTarget(event.key ?? "");
@@ -340,7 +336,7 @@ export function TabItem(props: {
 				onClick: () => tabs.select(props.value),
 				onKeyDown,
 				tabIndex: list.tabStop() === index ? 0 : -1,
-			})}
+			}, renderer)}
 			role="tab"
 			aria-selected={isSelected()}
 			testId={props.testId}

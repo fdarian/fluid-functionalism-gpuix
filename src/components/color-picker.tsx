@@ -300,18 +300,18 @@ function SaturationSquare(props: {
 	};
 
 	const onKeyDown = (event: KeyEvent) => {
-		const step = event.modifiers?.shift === true ? 0.1 : 0.01;
+		const step = event.shiftKey === true ? 0.1 : 0.01;
 		switch (event.key) {
-			case "left":
+			case "ArrowLeft":
 				props.onChange(clamp01(props.s - step), props.v);
 				break;
-			case "right":
+			case "ArrowRight":
 				props.onChange(clamp01(props.s + step), props.v);
 				break;
-			case "up":
+			case "ArrowUp":
 				props.onChange(props.s, clamp01(props.v + step));
 				break;
-			case "down":
+			case "ArrowDown":
 				props.onChange(props.s, clamp01(props.v - step));
 				break;
 			default:
@@ -481,22 +481,22 @@ function Rail(props: {
 	};
 
 	const onKeyDown = (event: KeyEvent) => {
-		const step = event.modifiers?.shift === true ? 10 : 1;
+		const step = event.shiftKey === true ? 10 : 1;
 		const clamp = (value: number) =>
 			Math.max(props.min, Math.min(props.max, value));
 		switch (event.key) {
-			case "left":
-			case "down":
+			case "ArrowLeft":
+			case "ArrowDown":
 				props.onChange(clamp(props.value - step));
 				break;
-			case "right":
-			case "up":
+			case "ArrowRight":
+			case "ArrowUp":
 				props.onChange(clamp(props.value + step));
 				break;
-			case "home":
+			case "Home":
 				props.onChange(props.min);
 				break;
-			case "end":
+			case "End":
 				props.onChange(props.max);
 				break;
 			default:
@@ -817,8 +817,8 @@ function FormatDropdown(props: {
 			return;
 		}
 		switch (event.key) {
-			case "enter":
-			case "space": {
+			case "Enter":
+			case " ": {
 				if (!presence.open()) {
 					open("first");
 				} else {
@@ -828,31 +828,31 @@ function FormatDropdown(props: {
 				event.preventDefault();
 				return;
 			}
-			case "down":
+			case "ArrowDown":
 				if (presence.open()) move(1);
 				else open("first");
 				event.preventDefault();
 				event.stopPropagation();
 				return;
-			case "up":
+			case "ArrowUp":
 				if (presence.open()) move(-1);
 				else open("last");
 				event.preventDefault();
 				event.stopPropagation();
 				return;
-			case "home":
-			case "end":
+			case "Home":
+			case "End":
 				if (!presence.open()) return;
 				hover.setActiveIndex(
-					edgeIndex(event.key === "home" ? "first" : "last", FORMATS.length),
+					edgeIndex(event.key === "Home" ? "first" : "last", FORMATS.length),
 				);
 				event.preventDefault();
 				event.stopPropagation();
 				return;
-			case "escape":
+			case "Escape":
 				close();
 				return;
-			case "tab":
+			case "Tab":
 				close(false);
 				return;
 		}
@@ -1095,17 +1095,17 @@ function ColorInput(props: {
 	};
 
 	const onKeyDown = (event: KeyEvent) => {
-		if (event.key === "escape") {
+		if (event.key === "Escape") {
 			setDraft(props.value);
 			renderer.blur?.();
 			return;
 		}
 		if (
-			(event.key === "up" || event.key === "down") &&
+			(event.key === "ArrowUp" || event.key === "ArrowDown") &&
 			(props.nudgeStep !== undefined || props.nudgeShiftStep !== undefined)
 		) {
 			event.preventDefault();
-			nudge(event.key === "up" ? 1 : -1, event.modifiers?.shift === true);
+			nudge(event.key === "ArrowUp" ? 1 : -1, event.shiftKey === true);
 		}
 	};
 
@@ -1739,11 +1739,12 @@ export function ColorPickerPopover(
 				position: "relative",
 				display: "flex",
 				alignSelf: "flex-start",
-				// A key listener makes this wrapper focusable, so it would dim with its descendants.
+				// A press on the popover's bare content lands focus here, so Escape still reaches the handler below; the wrapper dims with its descendants unless this is off.
 				keyboardFocusDim: false,
 			}}
+			tabIndex={-1}
 			onKeyDown={(event) => {
-				if (event.key === "escape" && presence.open()) close();
+				if (event.key === "Escape" && presence.open()) close();
 			}}
 		>
 			<div
@@ -1760,7 +1761,7 @@ export function ColorPickerPopover(
 					else open();
 				}}
 				onKeyDown={(event) => {
-					if (event.key === "enter" || event.key === "space") {
+					if (event.key === "Enter" || event.key === " ") {
 						event.preventDefault();
 						if (presence.open()) close();
 						else open();

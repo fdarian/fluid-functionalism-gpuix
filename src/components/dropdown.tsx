@@ -351,14 +351,14 @@ function createMenuList(options: {
 
 	const onKey: KeyHandler = (event) => {
 		const typing = search() !== undefined;
-		if (event.key === "escape") {
+		if (event.key === "Escape") {
 			// The window-level dismiss stack must not also close the whole menu.
 			event.preventDefault();
 			event.stopPropagation();
 			options.closeSelf();
 			return;
 		}
-		if (event.key === "tab") {
+		if (event.key === "Tab") {
 			options.leave();
 			return;
 		}
@@ -368,34 +368,34 @@ function createMenuList(options: {
 			return;
 		}
 		switch (event.key) {
-			case "down":
+			case "ArrowDown":
 				event.stopPropagation();
 				move(1);
 				return;
-			case "up":
+			case "ArrowUp":
 				event.stopPropagation();
 				move(-1);
 				return;
-			case "home":
+			case "Home":
 				if (typing) return;
 				event.stopPropagation();
 				highlight(allRows()[0] ?? null);
 				return;
-			case "end":
+			case "End":
 				if (typing) return;
 				event.stopPropagation();
 				highlight(allRows().at(-1) ?? null);
 				return;
-			case "enter":
-			case "space":
+			case "Enter":
+			case " ":
 				if (!typing) activateActive();
 				return;
-			case "right": {
+			case "ArrowRight": {
 				const index = hover.activeIndex();
 				if (index !== null) rows.get(index)?.openSubmenu?.();
 				return;
 			}
-			case "left":
+			case "ArrowLeft":
 				if (options.isSub) {
 					event.stopPropagation();
 					options.closeSelf();
@@ -672,22 +672,22 @@ export function Dropdown(props: {
 	};
 	const onKeyDown = (event: KeyEvent) => {
 		switch (event.key) {
-			case "down":
-			case "right":
+			case "ArrowDown":
+			case "ArrowRight":
 				step(1);
 				return;
-			case "up":
-			case "left":
+			case "ArrowUp":
+			case "ArrowLeft":
 				step(-1);
 				return;
-			case "home":
+			case "Home":
 				go(all()[0] ?? null);
 				return;
-			case "end":
+			case "End":
 				go(all().at(-1) ?? null);
 				return;
-			case "enter":
-			case "space": {
+			case "Enter":
+			case " ": {
 				const index = hover.activeIndex();
 				if (index !== null) rows.get(index)?.activate();
 				return;
@@ -929,14 +929,14 @@ export function DropdownMenu(props: {
 		if (isChord(event)) return;
 		if (!presence.open()) {
 			if (
-				event.key === "down" ||
-				event.key === "up" ||
-				event.key === "enter" ||
-				event.key === "space"
+				event.key === "ArrowDown" ||
+				event.key === "ArrowUp" ||
+				event.key === "Enter" ||
+				event.key === " "
 			) {
 				event.preventDefault();
-				if (event.key === "down" || event.key === "up") event.stopPropagation();
-				setOpenFrom(event.key === "up" ? "last" : "first");
+				if (event.key === "ArrowDown" || event.key === "ArrowUp") event.stopPropagation();
+				setOpenFrom(event.key === "ArrowUp" ? "last" : "first");
 				setKeyboardActive(true);
 				setOpen(true);
 			}
@@ -953,6 +953,8 @@ export function DropdownMenu(props: {
 					wrapper = element;
 				}}
 				testId={props.testId}
+				// A press on the menu's bare content lands focus here, so the keys still reach onKeyDown.
+				tabIndex={-1}
 				onKeyDown={onKeyDown}
 				onMouseDownOutside={scope.outsidePress}
 				style={{

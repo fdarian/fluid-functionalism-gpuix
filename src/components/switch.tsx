@@ -116,15 +116,15 @@ export function Switch(props: {
 	// Base UI's switch root owns the keys: Enter clicks on keydown, Space on keyup (a keydown only keeps the page from scrolling).
 	const onKeyDown = (event: KeyEvent) => {
 		if (props.disabled) return;
-		if (event.key === "enter") {
+		if (event.key === "Enter") {
 			event.preventDefault();
 			props.onToggle();
-		} else if (event.key === "space") {
+		} else if (event.key === " ") {
 			event.preventDefault();
 		}
 	};
 	const onKeyUp = (event: KeyEvent) => {
-		if (props.disabled || event.key !== "space" || event.defaultPrevented) return;
+		if (props.disabled || event.key !== " " || event.defaultPrevented) return;
 		props.onToggle();
 	};
 

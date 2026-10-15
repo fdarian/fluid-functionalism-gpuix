@@ -482,9 +482,9 @@ export function AskUserQuestions(props: {
 
 	// ── Keyboard. One handler on the card: the focused row or field bubbles here.
 	const onKeyDown = (event: KeyEvent) => {
-		const mod = IS_MAC ? event.modifiers?.cmd : event.modifiers?.ctrl;
+		const mod = IS_MAC ? event.metaKey : event.ctrlKey;
 		keyboardDriving = true;
-		if (event.key === "enter" && mod) {
+		if (event.key === "Enter" && mod) {
 			if (!(isMulti() || isFreeText())) return;
 			event.preventDefault();
 			if (isFreeText()) {
@@ -492,14 +492,14 @@ export function AskUserQuestions(props: {
 			} else if (hasAnswer()) commitMulti();
 			return;
 		}
-		if (event.modifiers?.cmd || event.modifiers?.ctrl || event.modifiers?.alt) {
+		if (event.metaKey || event.ctrlKey || event.altKey) {
 			return;
 		}
 		const inText = textFocused();
 		const key = event.key;
 		if (inText) {
 			// Caret movement is the editor's, except up and down off a one-line draft.
-			if (isFreeText() || (key !== "up" && key !== "down")) return;
+			if (isFreeText() || (key !== "ArrowUp" && key !== "ArrowDown")) return;
 			if (otherText().includes("\n")) return;
 		}
 		if (!inText && key !== undefined && key >= "1" && key <= "9") {
@@ -520,7 +520,7 @@ export function AskUserQuestions(props: {
 			!inText &&
 			focused !== null &&
 			focused < options().length &&
-			(key === "space" || key === "enter")
+			(key === " " || key === "Enter")
 		) {
 			event.preventDefault();
 			const id = optionKey(options()[focused], focused);
@@ -528,22 +528,22 @@ export function AskUserQuestions(props: {
 			else selectSingle(id);
 			return;
 		}
-		if (key === "left" || key === "right") {
+		if (key === "ArrowLeft" || key === "ArrowRight") {
 			event.preventDefault();
-			if (key === "left") back();
+			if (key === "ArrowLeft") back();
 			else if (isSkippable() && total() > 1) skip();
 			return;
 		}
 		if (rowCount() === 0) return;
-		if (key === "down" || key === "up" || key === "home" || key === "end") {
+		if (key === "ArrowDown" || key === "ArrowUp" || key === "Home" || key === "End") {
 			event.preventDefault();
 			let next: number;
-			if (key === "home") next = 0;
-			else if (key === "end") next = rowCount() - 1;
+			if (key === "Home") next = 0;
+			else if (key === "End") next = rowCount() - 1;
 			else {
 				const stepped = moveIndex(
 					inText ? otherIndex() : hover.activeIndex(),
-					key === "down" ? 1 : -1,
+					key === "ArrowDown" ? 1 : -1,
 					rowCount(),
 				);
 				if (stepped === null) return;

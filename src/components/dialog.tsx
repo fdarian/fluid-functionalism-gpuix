@@ -322,7 +322,7 @@ export function DialogContent(props: {
 				onMouseDownOutside={closeOnOutsidePress}
 				// Escape while this dialog fades out belongs to the dialog behind it. gpuix hands the key to the top layer once the element handlers have run, so taking this layer down here lets it through.
 				onKeyDown={(event) => {
-					if (event.key === "escape" && !scope.shown()) scope.finish();
+					if (event.key === "Escape" && !scope.shown()) scope.finish();
 				}}
 			>
 				{focusFirst()}

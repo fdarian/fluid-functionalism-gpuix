@@ -1,4 +1,4 @@
-import { buttonProps, type HostElement, motion } from "@gpuix/solid";
+import { buttonProps, type HostElement, motion, useGpuixRequired } from "@gpuix/solid";
 import {
 	createEffect,
 	createSignal,
@@ -151,6 +151,7 @@ function Dot(props: {
 	register: (index: number, element: HostElement) => void;
 	onSelect: () => void;
 }) {
+	const renderer = useGpuixRequired();
 	let element: HostElement | undefined;
 	createEffect(() => {
 		if (element === undefined) throw new Error("Dot is not mounted");
@@ -162,7 +163,7 @@ function Dot(props: {
 			ref={(node) => {
 				element = node;
 			}}
-			{...buttonProps({ onClick: props.onSelect })}
+			{...buttonProps({ onClick: props.onSelect, tabIndex: 0 }, renderer)}
 			aria-label={props.label}
 			aria-selected={props.current}
 			style={{

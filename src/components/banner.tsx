@@ -2,6 +2,7 @@ import {
 	buttonProps,
 	type HostElement,
 	motion,
+	useGpuixRequired,
 } from "@gpuix/solid";
 import {
 	createContext,
@@ -393,10 +394,11 @@ function DismissButton(props: {
 	testId?: string;
 	onClick: () => void;
 }) {
+	const renderer = useGpuixRequired();
 	const [hovered, setHovered] = createSignal(false);
 	return (
 		<div
-			{...buttonProps({ onClick: props.onClick })}
+			{...buttonProps({ onClick: props.onClick }, renderer)}
 			tabIndex={0}
 			aria-label="Dismiss"
 			testId={props.testId}

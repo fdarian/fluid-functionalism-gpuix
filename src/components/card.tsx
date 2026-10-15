@@ -263,6 +263,7 @@ export function Card(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
+	const renderer = useGpuixRequired();
 	const group = useContext(GroupContext);
 	const [hasImage, setHasImage] = createSignal(false);
 	const [hovered, setHovered] = createSignal(false);
@@ -341,7 +342,7 @@ export function Card(props: {
 				testId={props.testId}
 				ref={setRootElement}
 				{...(clickable() && !props.disabled
-					? buttonProps({ onClick: props.onClick })
+					? buttonProps({ onClick: props.onClick, tabIndex: 0 }, renderer)
 					: {})}
 				aria-label={props.label}
 				aria-selected={selected()}
@@ -510,10 +511,11 @@ function DismissChip(props: {
 	onFocusChange: (focused: boolean) => void;
 	onDismiss?: () => void;
 }) {
+	const renderer = useGpuixRequired();
 	const [hovered, setHovered] = createSignal(false);
 	return (
 		<div
-			{...buttonProps({ onClick: () => props.onDismiss?.() })}
+			{...buttonProps({ onClick: () => props.onDismiss?.() }, renderer)}
 			aria-label="Dismiss"
 			tabIndex={0}
 			onMouseEnter={() => setHovered(true)}
@@ -898,6 +900,7 @@ export function CardButton(props: {
 	testId?: string;
 	children: string;
 }) {
+	const renderer = useGpuixRequired();
 	const scope = useContext(CardContext);
 	const [hovered, setHovered] = createSignal(false);
 	const variant = () => props.variant ?? "ghost";
@@ -983,7 +986,7 @@ export function CardButton(props: {
 
 	return (
 		<div
-			{...buttonProps({ disabled: props.disabled, onClick: props.onClick })}
+			{...buttonProps({ disabled: props.disabled, onClick: props.onClick, tabIndex: 0 }, renderer)}
 			testId={props.testId}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}

@@ -346,31 +346,31 @@ export function ScrollArea(props: {
 		let axis: Axis | undefined;
 		let target: number | undefined;
 		switch (event.key) {
-			case "down":
-			case "up":
+			case "ArrowDown":
+			case "ArrowUp":
 				axis = "y";
-				target = now.y + (event.key === "down" ? ARROW_PX : -ARROW_PX);
+				target = now.y + (event.key === "ArrowDown" ? ARROW_PX : -ARROW_PX);
 				break;
-			case "right":
-			case "left":
+			case "ArrowRight":
+			case "ArrowLeft":
 				axis = "x";
-				target = now.x + (event.key === "right" ? ARROW_PX : -ARROW_PX);
+				target = now.x + (event.key === "ArrowRight" ? ARROW_PX : -ARROW_PX);
 				break;
-			case "pagedown":
-			case "pageup":
-			case "space": {
+			case "PageDown":
+			case "PageUp":
+			case " ": {
 				axis = "y";
 				const back =
-					event.key === "pageup" ||
-					(event.key === "space" && event.modifiers?.shift === true);
+					event.key === "PageUp" ||
+					(event.key === " " && event.shiftKey === true);
 				target = now.y + (back ? -1 : 1) * size.h * PAGE_SHARE;
 				break;
 			}
-			case "home":
+			case "Home":
 				axis = "y";
 				target = 0;
 				break;
-			case "end":
+			case "End":
 				axis = "y";
 				target = Number.POSITIVE_INFINITY;
 				break;

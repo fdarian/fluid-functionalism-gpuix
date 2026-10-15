@@ -177,9 +177,10 @@ function SendButton(props: {
 	size: number;
 	testId?: string;
 }) {
+	const renderer = useGpuixRequired();
 	return (
 		<div
-			{...buttonProps({ disabled: props.disabled, onClick: props.onClick })}
+			{...buttonProps({ disabled: props.disabled, onClick: props.onClick }, renderer)}
 			aria-label={props.label}
 			testId={props.testId}
 			tabIndex={props.disabled ? -1 : 0}
@@ -247,11 +248,12 @@ function RemoveBadge(props: {
 	onHoverChange: (hovered: boolean) => void;
 	testId?: string;
 }) {
+	const renderer = useGpuixRequired();
 	return (
 		<Tooltip content="Remove" side="top">
 			{(tooltip: TooltipTrigger) => (
 				<div
-					{...buttonProps({ onClick: props.onClick })}
+					{...buttonProps({ onClick: props.onClick }, renderer)}
 					aria-label={props.label}
 					testId={props.testId}
 					tabIndex={0}
@@ -345,6 +347,7 @@ function QueuedRow(props: {
 	onDragMove: (item: QueuedMessage, event: EventPayload) => void;
 	testId?: string;
 }) {
+	const renderer = useGpuixRequired();
 	const step = () => steps[props.size];
 	const [hovered, setHovered] = createSignal(false);
 	const [closeHovered, setCloseHovered] = createSignal(false);
@@ -356,18 +359,18 @@ function QueuedRow(props: {
 			: `${files()} attachment${files() === 1 ? "" : "s"}`;
 
 	const onKeyDown = (event: KeyEvent) => {
-		if (event.key === "enter" || event.key === "f2") {
+		if (event.key === "Enter" || event.key === "F2") {
 			event.preventDefault();
 			props.onEdit(props.item);
-		} else if (event.key === "delete" || event.key === "backspace") {
+		} else if (event.key === "Delete" || event.key === "Backspace") {
 			event.preventDefault();
 			props.onRemove(props.item);
 		} else if (
-			event.modifiers?.alt === true &&
-			(event.key === "up" || event.key === "down")
+			event.altKey === true &&
+			(event.key === "ArrowUp" || event.key === "ArrowDown")
 		) {
 			event.preventDefault();
-			props.onMove(props.item, event.key === "up" ? -1 : 1);
+			props.onMove(props.item, event.key === "ArrowUp" ? -1 : 1);
 		}
 	};
 
@@ -476,7 +479,7 @@ function QueuedRow(props: {
 			<Tooltip content="Remove" side="top">
 				{(tooltip: TooltipTrigger) => (
 					<div
-						{...buttonProps({ onClick: () => props.onRemove(props.item) })}
+						{...buttonProps({ onClick: () => props.onRemove(props.item) }, renderer)}
 						aria-label={`Remove queued message: ${label()}`}
 						testId={
 							props.testId === undefined ? undefined : `${props.testId}-remove`
@@ -833,14 +836,14 @@ export function InputMessage(props: InputMessageProps) {
 		// gpuix's textarea binds the arrow keys as editor actions and never reports them
 		// here, so Ctrl-P / Ctrl-N walk the lists too (see limitations/input-message.md).
 		const plain =
-			event.modifiers?.shift !== true &&
-			event.modifiers?.alt !== true &&
-			event.modifiers?.cmd !== true;
-		const control = event.modifiers?.ctrl === true;
+			event.shiftKey !== true &&
+			event.altKey !== true &&
+			event.metaKey !== true;
+		const control = event.ctrlKey === true;
 		const direction =
-			plain && !control && event.key === "down"
+			plain && !control && event.key === "ArrowDown"
 				? 1
-				: plain && !control && event.key === "up"
+				: plain && !control && event.key === "ArrowUp"
 					? -1
 					: plain && control && event.key === "n"
 						? 1
@@ -869,7 +872,7 @@ export function InputMessage(props: InputMessageProps) {
 					);
 					return;
 				}
-				if (event.key === "escape") {
+				if (event.key === "Escape") {
 					hover.setActiveIndex(null);
 					return;
 				}
@@ -879,8 +882,8 @@ export function InputMessage(props: InputMessageProps) {
 		// Tab fills the suggested placeholder into an empty composer.
 		const suggested = props.placeholderSuggestion;
 		if (
-			event.key === "tab" &&
-			event.modifiers?.shift !== true &&
+			event.key === "Tab" &&
+			event.shiftKey !== true &&
 			suggested !== undefined &&
 			props.value === ""
 		) {

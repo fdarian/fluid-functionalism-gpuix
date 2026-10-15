@@ -3,6 +3,7 @@ import {
 	buttonProps,
 	type MotionTransition,
 	motion,
+	useGpuixRequired,
 } from "@gpuix/solid";
 import {
 	createContext,
@@ -100,6 +101,7 @@ function TriggerRow(props: {
 	testId?: string;
 	children: string;
 }) {
+	const renderer = useGpuixRequired();
 	const inert = useContext(InertContext);
 	const [hovered, setHovered] = createSignal(false);
 	const highlighted = () => props.open || hovered();
@@ -130,7 +132,7 @@ function TriggerRow(props: {
 				</Show>
 			</AnimatePresence>
 			<div
-				{...buttonProps({ disabled: inert(), onClick: props.onToggle, tabIndex: 0 })}
+				{...buttonProps({ disabled: inert(), onClick: props.onToggle, tabIndex: 0 }, renderer)}
 				testId={props.testId}
 				aria-expanded={props.open}
 				style={{

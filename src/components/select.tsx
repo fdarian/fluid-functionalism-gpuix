@@ -294,8 +294,8 @@ export function Select<Value extends string>(props: {
 			return;
 		}
 		switch (event.key) {
-			case "enter":
-			case "space": {
+			case "Enter":
+			case " ": {
 				if (!presence.open()) {
 					open("down");
 					return;
@@ -304,31 +304,31 @@ export function Select<Value extends string>(props: {
 				if (index !== null) pick(rows()[index]);
 				return;
 			}
-			case "down":
+			case "ArrowDown":
 				event.preventDefault();
 				event.stopPropagation();
 				if (presence.open()) move(1);
 				else open("down");
 				return;
-			case "up":
+			case "ArrowUp":
 				event.preventDefault();
 				event.stopPropagation();
 				if (presence.open()) move(-1);
 				else open("up");
 				return;
-			case "home":
-			case "end":
+			case "Home":
+			case "End":
 				if (!presence.open() || rows().length === 0) return;
 				event.preventDefault();
 				event.stopPropagation();
-				jump(event.key === "home" ? 0 : rows().length - 1);
+				jump(event.key === "Home" ? 0 : rows().length - 1);
 				return;
-			case "escape":
+			case "Escape":
 				// Closing pops the popup's dismiss layer before the window sees this Escape, which would then close the dialog behind.
 				if (presence.open()) event.preventDefault();
 				close();
 				return;
-			case "tab":
+			case "Tab":
 				close();
 				return;
 		}

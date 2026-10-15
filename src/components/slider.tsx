@@ -365,7 +365,7 @@ function ValueDisplay(props: {
 					onSubmit={() => commit(index)}
 					onBlur={() => commit(index)}
 					onKeyDown={(event: KeyEvent) => {
-						if (event.key === "escape") cancel();
+						if (event.key === "Escape") cancel();
 					}}
 					style={{
 						width: 40,
@@ -628,7 +628,7 @@ function CompactSlider(props: CompactProps) {
 		if (props.disabled || event.defaultPrevented) return;
 		const list = stepValues();
 		const current = values()[thumb];
-		const large = event.modifiers?.shift === true;
+		const large = event.shiftKey === true;
 		const walk = (direction: 1 | -1, jump: boolean) => {
 			if (list === null) {
 				return keyboardStep(
@@ -648,24 +648,24 @@ function CompactSlider(props: CompactProps) {
 		const upper = thumb === 0 && isRange() ? values()[1] : max();
 		let next: number;
 		switch (event.key) {
-			case "right":
-			case "up":
+			case "ArrowRight":
+			case "ArrowUp":
 				next = walk(1, large);
 				break;
-			case "left":
-			case "down":
+			case "ArrowLeft":
+			case "ArrowDown":
 				next = walk(-1, large);
 				break;
-			case "pageup":
+			case "PageUp":
 				next = walk(1, true);
 				break;
-			case "pagedown":
+			case "PageDown":
 				next = walk(-1, true);
 				break;
-			case "home":
+			case "Home":
 				next = lower;
 				break;
-			case "end":
+			case "End":
 				next = upper;
 				break;
 			default:
@@ -673,7 +673,7 @@ function CompactSlider(props: CompactProps) {
 		}
 		event.preventDefault();
 		// Base UI keeps its composite keys from reaching ancestors; Page Up / Down still bubble.
-		if (event.key !== "pageup" && event.key !== "pagedown") {
+		if (event.key !== "PageUp" && event.key !== "PageDown") {
 			event.stopPropagation();
 		}
 		emitChange(thumb, Math.max(lower, Math.min(upper, next)));
@@ -1166,7 +1166,7 @@ function ComfortableSlider(props: ComfortableProps) {
 	/** The compact thumb's keys (Base UI's, reached in FF through its invisible primitive). */
 	const onKey = (event: KeyEvent) => {
 		if (props.disabled || event.defaultPrevented) return;
-		const large = event.modifiers?.shift === true;
+		const large = event.shiftKey === true;
 		const move = (direction: 1 | -1, jump: boolean) =>
 			keyboardStep(
 				props.value,
@@ -1178,31 +1178,31 @@ function ComfortableSlider(props: ComfortableProps) {
 			);
 		let next: number;
 		switch (event.key) {
-			case "right":
-			case "up":
+			case "ArrowRight":
+			case "ArrowUp":
 				next = move(1, large);
 				break;
-			case "left":
-			case "down":
+			case "ArrowLeft":
+			case "ArrowDown":
 				next = move(-1, large);
 				break;
-			case "pageup":
+			case "PageUp":
 				next = move(1, true);
 				break;
-			case "pagedown":
+			case "PageDown":
 				next = move(-1, true);
 				break;
-			case "home":
+			case "Home":
 				next = min();
 				break;
-			case "end":
+			case "End":
 				next = max();
 				break;
 			default:
 				return;
 		}
 		event.preventDefault();
-		if (event.key !== "pageup" && event.key !== "pagedown") {
+		if (event.key !== "PageUp" && event.key !== "PageDown") {
 			event.stopPropagation();
 		}
 		emit(next);

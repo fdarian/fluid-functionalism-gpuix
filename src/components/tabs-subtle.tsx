@@ -262,23 +262,19 @@ export function TabsSubtleItem(props: {
 	});
 
 	const onKeyDown = (event: KeyEvent) => {
-		const modifiers = event.modifiers;
-		if (
-			modifiers !== undefined &&
-			(modifiers.shift || modifiers.ctrl || modifiers.alt || modifiers.cmd)
-		) {
+		if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) {
 			return;
 		}
 		const count = scope.elements.size;
-		const move = ({ right: 1, left: -1 } as Record<string, 1 | -1 | undefined>)[
+		const move = ({ ArrowRight: 1, ArrowLeft: -1 } as Record<string, 1 | -1 | undefined>)[
 			event.key ?? ""
 		];
 		const target =
 			move !== undefined
 				? (moveIndex(props.index, move, count) ?? undefined)
-				: event.key === "home"
+				: event.key === "Home"
 					? 0
-					: event.key === "end"
+					: event.key === "End"
 						? count - 1
 						: undefined;
 		if (target === undefined || target === props.index) return;
@@ -307,7 +303,7 @@ export function TabsSubtleItem(props: {
 				onClick: () => scope.onSelect(props.index),
 				onKeyDown,
 				tabIndex: scope.tabStop() === props.index ? 0 : -1,
-			})}
+			}, renderer)}
 			role="tab"
 			aria-selected={isSelected()}
 			aria-label={collapsible() && !showLabel() ? props.label : undefined}
