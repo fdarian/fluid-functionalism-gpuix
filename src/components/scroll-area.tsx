@@ -2,6 +2,7 @@ import {
 	type DimensionValue,
 	type EventPayload,
 	type HostElement,
+	type HostMouseEvent,
 	type KeyEvent,
 	motion,
 	type StyleDesc,
@@ -270,7 +271,14 @@ export function ScrollArea(props: {
 		if (value === undefined) throw new Error("mouse event without coordinates");
 		return value;
 	};
-	const startDrag = (axis: Axis, event: EventPayload, scrolled: number) => {
+	const startDrag = (
+		axis: Axis,
+		track: HostElement,
+		event: HostMouseEvent,
+		scrolled: number,
+	) => {
+		// The thumb keeps following the pointer once it leaves the narrow track.
+		track.setPointerCapture(event.pointerId);
 		dragOrigin = { pointer: pointerAlong(axis, event), scrolled };
 		setDragging(axis);
 	};
@@ -281,7 +289,7 @@ export function ScrollArea(props: {
 		stopScrolling(axis);
 	};
 	const dragTo = (event: EventPayload) => {
-		// A release the window never saw (outside it, or while it was inactive) is not delivered; the first move with no button held ends the drag instead.
+		// Capture ends the drag on release and on lost capture; this stays for a release the window never saw (outside it, or while it was inactive), which may not be delivered even to a capturing element.
 		if (event.pressedButton === undefined) {
 			stopDrag();
 			return;
@@ -301,7 +309,7 @@ export function ScrollArea(props: {
 	const pressTrack = (
 		axis: Axis,
 		track: HostElement | undefined,
-		event: EventPayload,
+		event: HostMouseEvent,
 	) => {
 		// Only the primary button presses a scrollbar.
 		if (event.button !== undefined && event.button !== 0) return;
@@ -312,7 +320,7 @@ export function ScrollArea(props: {
 		markUserScroll();
 		const along = pointerAlong(axis, event) - (axis === "y" ? box.y : box.x);
 		if (along >= span.start && along <= span.start + span.length) {
-			startDrag(axis, event, axis === "y" ? offset().y : offset().x);
+			startDrag(axis, track, event, axis === "y" ? offset().y : offset().x);
 			return;
 		}
 		if (span.travel <= 0) return;
@@ -324,7 +332,7 @@ export function ScrollArea(props: {
 			span.maxScroll,
 		);
 		scrollAlong(axis, target);
-		startDrag(axis, event, target);
+		startDrag(axis, track, event, target);
 	};
 
 	/** A wheel tick over the track scrolls the viewport, which is not under the pointer. */
@@ -485,11 +493,12 @@ export function ScrollArea(props: {
 					}
 					onMouseEnter={() => setTrackHovered(bar.axis)}
 					onMouseLeave={() => setTrackHovered(undefined)}
-					onMouseDown={(event: EventPayload) =>
+					onMouseDown={(event: HostMouseEvent) =>
 						pressTrack(bar.axis, track, event)
 					}
 					onMouseMove={dragTo}
 					onMouseUp={stopDrag}
+					onLostPointerCapture={stopDrag}
 					onScroll={(event: EventPayload) => wheelTrack(bar.axis, event)}
 					style={{
 						position: "absolute",
