@@ -259,7 +259,7 @@ function Row(props: RowProps) {
 			}}
 			testId={props.testId}
 			role={props.role ?? undefined}
-			aria-selected={props.isSelected}
+			aria-checked={props.role === null ? undefined : props.isSelected}
 			tabIndex={props.tabIndex}
 			onClick={props.onClick}
 			onFocus={props.onFocus}
