@@ -68,7 +68,9 @@ function hexToRgb(hex: string) {
  */
 export function Shimmer(props: { children: string; style?: StyleDesc }) {
 	const time = useClock();
-	const letters = () => [...props.children];
+	// A flex item holding only a collapsible space draws nothing, so a space becomes a no-break space to keep the gap between words.
+	const letters = () =>
+		[...props.children].map((letter) => (letter === " " ? "\u00a0" : letter));
 	const stops = () => ({
 		base: hexToRgb(color.shimmerBase),
 		bright: hexToRgb(color.shimmerBright),
