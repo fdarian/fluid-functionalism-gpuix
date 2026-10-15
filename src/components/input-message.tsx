@@ -20,7 +20,6 @@ import {
 } from "solid-js";
 import { createPointerCapture } from "../lib/pointer-capture";
 import { createPresence } from "../lib/presence";
-import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
@@ -667,11 +666,6 @@ export function InputMessage(props: InputMessageProps) {
 	createEffect(() => {
 		if (!suggestionsOpen()) hover.setActiveIndex(null);
 	});
-	createEffect(
-		on(suggestionsOpen, (open) => {
-			if (open) hover.remeasure();
-		}),
-	);
 
 	const focusTextarea = () => {
 		if (textarea === undefined) throw new Error("InputMessage is not mounted");
@@ -796,8 +790,7 @@ export function InputMessage(props: InputMessageProps) {
 	};
 	const dragQueued = (item: QueuedMessage, event: EventPayload) => {
 		if (queueList === undefined || event.y === undefined) return;
-		const bounds = readBounds(queueList);
-		if (bounds == null) return;
+		const bounds = queueList.getBoundingClientRect();
 		const stride = step().row + 4;
 		const target = Math.floor((event.y - bounds.y) / stride);
 		moveQueuedTo(item, Math.max(0, Math.min(queue().length - 1, target)));

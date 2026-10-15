@@ -5,7 +5,6 @@ import {
 	motion,
 } from "@gpuix/solid";
 import { createSignal, type JSX, onCleanup, Show } from "solid-js";
-import { readBounds } from "./bounds";
 import type { createPresence } from "./presence";
 import { color, radius, shadow3, motion as tween } from "./theme";
 
@@ -24,9 +23,8 @@ export function isInside(
 	const x = event.x;
 	const y = event.y;
 	return elements.some((element) => {
-		if (element === undefined) return false;
-		const box = readBounds(element);
-		if (box === null) return false;
+		if (element === undefined || !element.mounted) return false;
+		const box = element.getBoundingClientRect();
 		return (
 			x >= box.x && x <= box.x + box.width && y >= box.y && y <= box.y + box.height
 		);
@@ -52,11 +50,11 @@ export function placePopup(
 	contentHeight: number,
 	maxHeight: number,
 ): PopupPlacement {
-	const box = readBounds(trigger);
 	const window = trigger.root?.nativeRenderer.getWindowSize?.();
-	if (box === null || window === undefined) {
-		throw new Error("Cannot place the popup without painted bounds");
+	if (!trigger.mounted || window === undefined) {
+		throw new Error("Cannot place the popup without a mounted trigger");
 	}
+	const box = trigger.getBoundingClientRect();
 	const below = window.height - (box.y + box.height);
 	const above = box.y;
 	const need = contentHeight + POPUP_OFFSET + POPUP_MARGIN;

@@ -2,10 +2,8 @@ import { type HostElement, useGpuixRequired } from "@gpuix/solid";
 import {
 	type Accessor,
 	createContext,
-	createEffect,
 	createSignal,
 	type JSX,
-	on,
 	Show,
 	useContext,
 } from "solid-js";
@@ -115,15 +113,6 @@ export function InputField(props: {
 		group.hover,
 		() => props.index,
 		() => rootElement,
-	);
-
-	// The error row changes the field's height, so the group's rects are stale.
-	createEffect(
-		on(
-			() => [props.error, props.labelHidden],
-			() => group.hover.remeasure(),
-			{ defer: true },
-		),
 	);
 
 	const active = () => group.hover.activeIndex() === props.index;

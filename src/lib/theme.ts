@@ -309,12 +309,8 @@ export function focusRing(offset: number): StateStyleDesc {
 	};
 }
 
-/**
- * How long rows keep being re-measured after something moved them: a spring's
- * perceived duration plus its tail, and a shorter reflow. Fluid hover's
- * `remeasureFor` takes these.
- */
-export const trackMs = { spring: 400, reflow: 300 } as const;
+/** How long rows keep moving after something resized them: a spring's perceived duration plus its tail. */
+export const trackMs = { spring: 400 } as const;
 
 /**
  * gpuix paints one outer shadow, so --shadow-3 (a 1px ring plus two stacked

@@ -5,6 +5,7 @@ import {
 	type HostMouseEvent,
 	type MotionTransition,
 	motion,
+	ResizeObserver,
 	useIsPresent,
 } from "@gpuix/solid";
 import {
@@ -15,7 +16,6 @@ import {
 	onCleanup,
 	Show,
 } from "solid-js";
-import { awaitBounds, readBounds } from "../lib/bounds";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
 import { createPointerCapture } from "../lib/pointer-capture";
@@ -173,21 +173,17 @@ export function QueuedStack(props: {
 	const slotBottom = (index: number) => index * (QUEUE_CARD_H + STACK_GAP);
 
 	const stackBox = () => {
-		if (stackElement === undefined) throw new Error("Stack is not mounted");
-		const box = readBounds(stackElement);
-		if (box === null) throw new Error("Stack has no painted bounds");
-		return box;
+		if (stackElement === undefined || !stackElement.mounted) {
+			throw new Error("Stack is not mounted");
+		}
+		return stackElement.getBoundingClientRect();
 	};
 
 	const [stackWidth, setStackWidth] = createSignal<number>();
-	createEffect(() => {
-		void [count() > 0, expanded()];
-		const timer = setTimeout(() => {
-			if (stackElement === undefined) return;
-			void awaitBounds(stackElement).then((box) => setStackWidth(box.width));
-		}, 32);
-		onCleanup(() => clearTimeout(timer));
+	const widthObserver = new ResizeObserver((entries) => {
+		setStackWidth(entries[entries.length - 1].borderBoxSize[0].inlineSize);
 	});
+	onCleanup(() => widthObserver.disconnect());
 	const cardWidth = () => Math.max(0, (stackWidth() ?? 0) - GUTTER * 2);
 
 	const onDragMove = (event: EventPayload) => {
@@ -294,7 +290,9 @@ export function QueuedStack(props: {
 				<motion.div
 					testId={props.testId}
 					ref={(element: HostElement) => {
+						if (stackElement !== undefined) widthObserver.unobserve(stackElement);
 						stackElement = element;
+						widthObserver.observe(element, { box: "border-box" });
 					}}
 					initial={{ opacity: 0 }}
 					animate={{

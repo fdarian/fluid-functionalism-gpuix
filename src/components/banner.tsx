@@ -18,7 +18,6 @@ import {
 	Switch,
 	useContext,
 } from "solid-js";
-import { awaitBounds } from "../lib/bounds";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
 import { color, radius, type as scale, motion as tween, weight, focusRing } from "../lib/theme";
@@ -171,27 +170,23 @@ export function Banner(props: {
 				const mine = generation;
 				if (!isOpen) {
 					if (phase() === "gone") return;
-					if (restElement === undefined) {
+					if (restElement === undefined || !restElement.mounted) {
 						throw new Error("Banner is not mounted");
 					}
-					void awaitBounds(restElement).then((bounds) => {
-						if (mine !== generation) return;
-						setRowHeight(bounds.height);
-						setPhase("closing");
-					});
+					setRowHeight(restElement.getBoundingClientRect().height);
+					setPhase("closing");
 					return;
 				}
 				if (phase() === "rest") return;
 				setPhase("measuring");
+				// The measure layer mounts once this effect's writes have flushed.
 				queueMicrotask(() => {
-					if (measureElement === undefined) {
+					if (mine !== generation) return;
+					if (measureElement === undefined || !measureElement.mounted) {
 						throw new Error("Banner measure layer is not mounted");
 					}
-					void awaitBounds(measureElement).then((bounds) => {
-						if (mine !== generation) return;
-						setRowHeight(bounds.height);
-						setPhase("opening");
-					});
+					setRowHeight(measureElement.getBoundingClientRect().height);
+					setPhase("opening");
 				});
 			},
 			{ defer: true },

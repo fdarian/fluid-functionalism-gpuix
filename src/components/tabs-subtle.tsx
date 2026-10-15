@@ -25,7 +25,7 @@ import { StableLabel } from "../lib/stable-label";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { moveIndex } from "../lib/list-nav";
-import { color, height, radius, type as scale, motion as tween, weight, focusRing, trackMs } from "../lib/theme";
+import { color, height, radius, type as scale, motion as tween, weight, focusRing } from "../lib/theme";
 
 export type TabsSubtleSize = "default" | "compact";
 
@@ -249,15 +249,6 @@ export function TabsSubtleItem(props: {
 	const collapsible = () => scope.activeLabel() && props.icon !== undefined;
 	const showLabel = () => !collapsible() || isSelected();
 	// The unfolding label's width is animated to a measured number (gpuix cannot animate `auto`): the box holding the label and its gap to the icon reports it.
-
-	// The tab's own width changes as its label unfolds, so every row after it moves: re-read the rects for the length of the spring.
-	let previousSelected = isSelected();
-	createEffect(() => {
-		const selected = isSelected();
-		if (selected === previousSelected) return;
-		previousSelected = selected;
-		if (collapsible()) scope.hover.remeasureFor(trackMs.reflow);
-	});
 
 	const onKeyDown = (event: KeyEvent) => {
 		if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) {

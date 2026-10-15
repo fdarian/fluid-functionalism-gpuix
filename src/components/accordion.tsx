@@ -213,7 +213,6 @@ export function AccordionGroup(props: RootProps) {
 		trackReflow() {
 			clearTimeout(reflowTimer);
 			setReflow(true);
-			hover.remeasureFor(trackMs.spring);
 			reflowTimer = setTimeout(() => setReflow(false), trackMs.spring + 48);
 		},
 		overContent(index) {

@@ -19,7 +19,7 @@ import {
 	useContext,
 } from "solid-js";
 import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover, type FluidHover, useHoverItem } from "../lib/fluid-hover";
+import { createFluidHover, createReflowGate, type FluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
 import { createPresence } from "../lib/presence";
@@ -373,7 +373,7 @@ export function CommandMenu(props: {
 	const hover = createFluidHover({
 		isItemDisabled: (index) => rows()[index]?.disabled === true,
 	});
-	const [reflow, setReflow] = createSignal(false);
+	const reflow = createReflowGate();
 	const [tabs, setTabs] = createSignal<TabsHandle>();
 	const rowElements = new Map<number, HostElement>();
 	let scroller: HostElement | undefined;
@@ -399,19 +399,9 @@ export function CommandMenu(props: {
 			const first = firstEnabled();
 			hover.setActiveIndex(first === -1 ? null : first);
 			lastActive = first === -1 ? null : first;
-			setReflow(true);
+			reflow.raise();
 			if (scroller !== undefined) scroller.scrollTo({ top: 0, left: 0 });
-			hover.remeasure();
 		}),
-	);
-	createEffect(
-		on(
-			hover.rects,
-			() => {
-				if (reflow()) setTimeout(() => setReflow(false), 48);
-			},
-			{ defer: true },
-		),
 	);
 
 	const move = (to: 1 | -1 | "first" | "last") => {
@@ -448,7 +438,7 @@ export function CommandMenu(props: {
 		rows,
 		itemsByValue,
 		hover,
-		reflow,
+		reflow: reflow.reflowing,
 		select,
 		move,
 		tabs,

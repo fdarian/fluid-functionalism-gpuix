@@ -76,7 +76,6 @@ export function SidebarMenu(props: { children: JSX.Element }) {
 		trackReflow(ms) {
 			clearTimeout(reflowTimer);
 			setReflow(true);
-			hover.remeasureFor(ms);
 			reflowTimer = setTimeout(() => setReflow(false), ms + 48);
 		},
 	};

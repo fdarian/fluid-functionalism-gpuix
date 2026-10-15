@@ -41,7 +41,8 @@ export interface DropdownContextValue {
 	/** The highlight is where the pointer put it, not the keyboard or the open itself. */
 	pointerLit: Accessor<boolean>;
 	/** A row mounted or went: the measured rects are stale. */
-	rowsChanged: () => void;
+	/** Rows were added or removed: set by lists whose rows come and go under the highlight. */
+	rowsChanged?: () => void;
 	/** Closes the whole menu. A no-op for the inline panel. */
 	close: () => void;
 	/** A row released under a press that began on the menu's trigger picks, once. Always false for the inline panel. */
@@ -150,10 +151,10 @@ export function MenuItem(props: {
 			openSubmenu: props.onOpenSubmenu,
 		};
 		context.rows.set(index, row);
-		context.rowsChanged();
+		context.rowsChanged?.();
 		onCleanup(() => {
 			if (context.rows.get(index) === row) context.rows.delete(index);
-			context.rowsChanged();
+			context.rowsChanged?.();
 		});
 	});
 

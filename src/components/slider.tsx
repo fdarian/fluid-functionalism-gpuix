@@ -1,5 +1,4 @@
 import {
-	type ElementBounds,
 	type EventPayload,
 	type HostElement,
 	type HostMouseEvent,
@@ -19,7 +18,6 @@ import {
 	Show,
 	untrack,
 } from "solid-js";
-import { awaitBounds, readBounds } from "../lib/bounds";
 import { createPointerCapture } from "../lib/pointer-capture";
 import { createPresence } from "../lib/presence";
 import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
@@ -132,24 +130,20 @@ function keyboardStep(
 	return Math.max(min, Math.min(max, moved));
 }
 
-// ─── Painted bounds ──────────────────────────────────────────────────────────
+// ─── Element box ─────────────────────────────────────────────────────────────
 
-/**
- * Reads an element's painted box. Nothing is recorded before the first paint,
- * so `onReady` waits for it; later `read()` calls are synchronous.
- */
-function createPaintedBox(onReady: (box: ElementBounds) => void) {
+/** The element's box at the moment of a press. The width the render uses comes from the element's `onLayout`. */
+function createBoxRef() {
 	let element: HostElement | undefined;
 	return {
 		read() {
-			if (element === undefined) throw new Error("Slider is not mounted");
-			const box = readBounds(element);
-			if (box === null) throw new Error("Slider has no painted bounds yet");
-			return box;
+			if (element === undefined || !element.mounted) {
+				throw new Error("Slider is not mounted");
+			}
+			return element.getBoundingClientRect();
 		},
 		ref(host: HostElement) {
 			element = host;
-			void awaitBounds(host).then(onReady);
 		},
 	};
 }
@@ -471,7 +465,7 @@ function CompactSlider(props: CompactProps) {
 		valuePosition() === "left" || valuePosition() === "right";
 
 	const [trackWidth, setTrackWidth] = createSignal<number>();
-	const box = createPaintedBox((measured) => setTrackWidth(measured.width));
+	const box = createBoxRef();
 	/** The thumb's left offset for a value: the target the spring chases. */
 	const thumbLeft = (value: number, width: number) =>
 		valueToPixel(value, min(), max(), width);
@@ -1015,9 +1009,7 @@ function ComfortableSlider(props: ComfortableProps) {
 		props.formatValue === undefined ? String(v) : props.formatValue(v);
 
 	const [rowWidth, setRowWidth] = createSignal<number>();
-	const box = createPaintedBox((measured) =>
-		setRowWidth(measured.width - ROW_BORDER * 2),
-	);
+	const box = createBoxRef();
 	const hover = createHover();
 	// The gutter spans the row and 8px past each end, so it takes the row's drags too.
 	const gutter = createPointerCapture("Slider");

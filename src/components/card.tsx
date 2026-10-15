@@ -19,7 +19,6 @@ import {
 } from "solid-js";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
-import { readBounds } from "../lib/bounds";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
 import { color, radius, type as scale, scheme, weight, withAlpha, focusRing } from "../lib/theme";
@@ -145,7 +144,6 @@ export function CardGroup(props: {
 				const target = element();
 				if (target === undefined || entry.onClick === undefined) return;
 				hover.registerItem(index, target);
-				hover.remeasure();
 			});
 			onCleanup(() => {
 				entries.delete(index);
@@ -168,11 +166,6 @@ export function CardGroup(props: {
 		},
 	};
 
-	const boxOf = () => {
-		if (container === undefined) return null;
-		return readBounds(container);
-	};
-
 	const rectOfActive = () => {
 		const index = hover.activeIndex();
 		if (index === null || !hover.isMeasured() || !fluid()) return null;
@@ -183,9 +176,9 @@ export function CardGroup(props: {
 		// A click on a card bubbles up to here; only one on the group's own box is a gap.
 		if (container === undefined || event.target !== container.id) return;
 		const index = hover.activeIndex();
-		const box = boxOf();
 		const rect = index === null ? undefined : hover.rects()[index];
-		if (index === null || box === null || rect === undefined) return;
+		if (index === null || rect === undefined) return;
+		const box = container.getBoundingClientRect();
 		if (event.x === undefined || event.y === undefined) {
 			throw new Error("click without coordinates");
 		}

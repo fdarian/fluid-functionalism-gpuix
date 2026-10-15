@@ -10,7 +10,6 @@ import {
 	type StyleDesc,
 } from "@gpuix/solid";
 import { createSignal, type JSX, onCleanup, Show } from "solid-js";
-import { readBounds } from "../lib/bounds";
 import { isChord } from "../lib/list-nav";
 import { color, withAlpha } from "../lib/theme";
 
@@ -252,8 +251,7 @@ export function ScrollArea(props: {
 		if (event.button !== undefined && event.button !== 0) return;
 		const span = thumb(axis);
 		if (span === null || track === undefined) return;
-		const box = readBounds(track);
-		if (box == null) return;
+		const box = track.getBoundingClientRect();
 		markUserScroll();
 		const along = pointerAlong(axis, event) - (axis === "y" ? box.y : box.x);
 		if (along >= span.start && along <= span.start + span.length) {

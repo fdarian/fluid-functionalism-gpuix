@@ -18,7 +18,6 @@ import {
 } from "solid-js";
 import { createPointerCapture } from "../lib/pointer-capture";
 import { StableLabel } from "../lib/stable-label";
-import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
@@ -255,12 +254,13 @@ export function ColorSwatch(props: {
 function useFractionIn() {
 	const renderer = useGpuixRequired();
 	return (element: HostElement | undefined, event: EventPayload) => {
-		if (element === undefined) throw new Error("Pointer target is not mounted");
+		if (element === undefined || !element.mounted) {
+			throw new Error("Pointer target is not mounted");
+		}
 		if (event.x === undefined || event.y === undefined) {
 			throw new Error("Pointer event without coordinates");
 		}
-		const bounds = readBounds(element);
-		if (bounds == null) throw new Error("Pointer target has no painted bounds");
+		const bounds = element.getBoundingClientRect();
 		return {
 			x: clamp01((event.x - bounds.x) / bounds.width),
 			y: clamp01((event.y - bounds.y) / bounds.height),
@@ -464,10 +464,11 @@ function Rail(props: {
 
 	const fraction = () => (props.value - props.min) / (props.max - props.min);
 	const apply = (event: EventPayload) => {
-		if (root === undefined) throw new Error("Rail is not mounted");
+		if (root === undefined || !root.mounted) {
+			throw new Error("Rail is not mounted");
+		}
 		if (event.x === undefined) throw new Error("Pointer event without x");
-		const bounds = readBounds(root);
-		if (bounds == null) throw new Error("Rail has no painted bounds");
+		const bounds = root.getBoundingClientRect();
 		const usable = bounds.width - RAIL_THUMB;
 		const along = clamp01((event.x - bounds.x - RAIL_THUMB / 2) / usable);
 		props.onChange(Math.round(props.min + along * (props.max - props.min)));

@@ -15,7 +15,6 @@ import {
 	untrack,
 	useContext,
 } from "solid-js";
-import { readBounds } from "../lib/bounds";
 import { createPresence } from "../lib/presence";
 import { color, radius, type as scale, motion as tween } from "../lib/theme";
 
@@ -137,9 +136,11 @@ export function Tooltip(props: {
 	 */
 	const placeChip = (): TooltipSide => {
 		const preferred = props.side ?? "top";
-		const box = wrapper === undefined ? null : readBounds(wrapper);
 		const window = renderer.getWindowSize?.();
-		if (box == null || window == null) return preferred;
+		if (wrapper === undefined || !wrapper.mounted || window == null) {
+			return preferred;
+		}
+		const box = wrapper.getBoundingClientRect();
 		const chip =
 			chipSize ??
 			(typeof props.content === "string"
@@ -212,9 +213,8 @@ export function Tooltip(props: {
 	const onMouseMove = (event: EventPayload) => {
 		if (props.followCursor === undefined) return;
 		if (wrapper === undefined) throw new Error("Tooltip is not mounted");
-		const bounds = readBounds(wrapper);
-		if (bounds == null || event.x === undefined || event.y === undefined)
-			return;
+		const bounds = wrapper.getBoundingClientRect();
+		if (event.x === undefined || event.y === undefined) return;
 		setFollowOffset(
 			props.followCursor === "x"
 				? { x: event.x - (bounds.x + bounds.width / 2), y: 0 }

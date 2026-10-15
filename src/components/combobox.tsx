@@ -14,9 +14,8 @@ import {
 	on,
 	Show,
 } from "solid-js";
-import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
+import { createFluidHover, createReflowGate, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { isChord, moveIndex, revealRow } from "../lib/list-nav";
@@ -153,7 +152,7 @@ export function Combobox(props: {
 	const [focused, setFocused] = createSignal(false);
 	const [chevronHovered, setChevronHovered] = createSignal(false);
 	/** Armed while typing re-filters the rows under the highlights: those frames snap, not glide. */
-	const [reflow, setReflow] = createSignal(false);
+	const reflow = createReflowGate();
 
 	const placement = createPlacement(POPUP_MAX_HEIGHT);
 	let rootElement: HostElement | undefined;
@@ -243,19 +242,17 @@ export function Combobox(props: {
 			filtered,
 			() => {
 				if (!mounted()) return;
-				setReflow(true);
+				reflow.raise();
 				if (scroller !== undefined && scroller.mounted) {
 					scroller.scrollTo({ top: 0, left: 0 });
 				}
 				if (open()) place(filtered().length);
 				if (filtered().length === 0) {
 					hover.setActiveIndex(null);
-					hover.cancelMeasure();
 					return;
 				}
 				const picked = query().trim() === "" ? checkedIndex() : null;
 				hover.setActiveIndex(picked ?? 0);
-				hover.remeasure();
 			},
 			{ defer: true },
 		),
@@ -264,7 +261,6 @@ export function Combobox(props: {
 		on(
 			hover.rects,
 			() => {
-				if (reflow()) setTimeout(() => setReflow(false), 48);
 				if (!revealOnMeasure) return;
 				revealOnMeasure = false;
 				const index = hover.activeIndex();
@@ -576,14 +572,14 @@ export function Combobox(props: {
 								background={color.active}
 								glide={tween.moderate}
 								fade={tween.moderateExit}
-								travel={() => !reflow()}
+								travel={() => !reflow.reflowing()}
 							/>
 							<FluidHighlight
 								rect={hoverRect}
 								session={hover.session}
 								radius={radius.item}
 								background={color.hover}
-								travel={() => !reflow()}
+								travel={() => !reflow.reflowing()}
 							/>
 							<For each={filtered()}>
 								{(row, index) => {

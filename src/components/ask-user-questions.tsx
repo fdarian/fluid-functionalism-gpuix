@@ -610,17 +610,6 @@ export function AskUserQuestions(props: {
 
 	// ── Content height: the Q/A region animates to its content's measured height.
 	const content = createMeasuredHeight();
-	createEffect(() => {
-		void [
-			qId(),
-			selectedIds().length,
-			otherText(),
-			freeTextError(),
-			focusedRow(),
-		];
-		hover.remeasure();
-	});
-
 	const showBack = () => total() > 1 && safeIndex() > 0;
 	const showSkip = () => total() > 1 && isSkippable();
 	const showSubmit = () => isMulti() || isFreeText();

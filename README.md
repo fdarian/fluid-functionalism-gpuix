@@ -74,8 +74,7 @@ settle / expectText / capture`; see `ShotContext` in `src/lib/demo.ts`. Give ele
 | File | What it holds |
 |---|---|
 | `theme.ts` | Both columns of every `light-dark()` in `app/globals.css` (`color-mix()` mixed offline), type scale, radii, springs. `color.x` reads a `scheme` signal, so a JSX prop that touches it re-colours on a theme change; read tokens inside JSX or a function, never at module scope. `withAlpha`, `surface(level)`, `focusRing(offset)`. |
-| `fluid-hover.ts`, `fluid-highlight.tsx` | The site's `use-fluid-hover`: rows register, their painted boxes are read, `pickNearest` (ported verbatim) resolves the pointer to a row including gaps, and one highlight glides between rows. `hover.containerProps` and `useHoverItem` wire a list. |
-| `bounds.ts` | `readBounds` (sync, null until the element has painted once) and `awaitBounds` (12 tries x 16 ms, then throws). Bounds are recorded on every paint, so a read is one frame stale. |
+| `fluid-hover.ts`, `fluid-highlight.tsx` | The site's `use-fluid-hover`: rows register with a `ResizeObserver`, their boxes are read with `getBoundingClientRect` when one reports, `pickNearest` (ported verbatim) resolves the pointer to a row including gaps, and one highlight glides between rows. `hover.containerProps` and `useHoverItem` wire a list. |
 | `measured-height.ts` | A box whose height springs to its content's: re-reads while "hot", used by every collapse. |
 | `popup.tsx`, `presence.ts` | Popup chrome on `<anchored>`, `placePopup` (side from bounds, capped height), `isInside` (outside presses by bounds), and `createPresence` (mounted outlives open so an exit can play). |
 | `list-nav.ts` | `moveIndex` (skip disabled, wrap or clamp) and `revealRow` (scroll a row into view by hand). |
@@ -243,7 +242,7 @@ generalised into the limitations above.
 | Base UI `Positioner` (flip, `--anchor-width`) | `<anchored gap={6} deferred>`; the popup width is a constant. gpuix snaps an overflowing popup into the window, and its `switch` flip anchors to the far edge of the field and covers it, so the combobox picks `top` or `bottom` itself from the painted bounds and the window height | Approximated |
 | `ScrollArea` (hover thumb, scroll fade) | a plain `overflowY: "scroll"`, on the combobox list and the sidebar | Dropped |
 | absolute child of a scroll container | gpuix paints it where it was placed, not where the content has scrolled to, so rows and overlays share a relative wrapper *inside* the scroller | Needed workaround |
-| `getBoundingClientRect` | `getElementBounds` (last painted frame) read on timers | Approximated, up to a frame stale |
+| `getBoundingClientRect` | `element.getBoundingClientRect()`, read when needed (layout is flushed first, so it is never stale); `ResizeObserver` where a size change must be followed | Native |
 | `ResizeObserver` | `onLayout` (size, after the first paint and on every change); a box that only moves is re-read with `getElementBounds` | Exact for size, approximated for moves |
 | `text-[length:…] leading-[…]` | `fontSize` + `lineHeight` | Exact |
 | `[text-box:trim-both_cap_alphabetic]` | none: labels are centred by their line box | Dropped, a pixel of optical drift |

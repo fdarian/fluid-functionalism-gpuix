@@ -25,6 +25,7 @@ import {
 import { FluidHighlight } from "../lib/fluid-highlight";
 import {
 	createFluidHover,
+	createReflowGate,
 	type FluidHover,
 	type ItemRect,
 } from "../lib/fluid-hover";
@@ -282,7 +283,7 @@ function createMenuList(options: {
 		isItemDisabled: (index) => rows.get(index)?.disabled() === true,
 	});
 	const [litBy, setLitBy] = createSignal<LitBy>("open");
-	const [reflow, setReflow] = createSignal(false);
+	const reflow = createReflowGate();
 	const [search, setSearch] = createSignal<DropdownSearchProps>();
 	const [openSubIndex, setOpenSubIndex] = createSignal<number | null>(null);
 	let scroller: HostElement | undefined;
@@ -292,7 +293,6 @@ function createMenuList(options: {
 	onCleanup(() => {
 		clearTimeout(dwellTimer);
 		typeahead.reset();
-		hover.cancelMeasure();
 	});
 
 	const sortedRows = () =>
@@ -448,23 +448,12 @@ function createMenuList(options: {
 		pointerLit: () => litBy() === "pointer",
 		rowsChanged() {
 			if (!options.mounted()) return;
-			setReflow(true);
-			hover.remeasure();
+			reflow.raise();
 		},
 		close: options.closeAll,
 		pressPick: menu.pressPick,
 		releasePress: menu.releasePress,
 	};
-
-	createEffect(
-		on(
-			hover.rects,
-			() => {
-				if (reflow()) setTimeout(() => setReflow(false), 48);
-			},
-			{ defer: true },
-		),
-	);
 
 	// Open ready to act: the first row is lit, unless a search field takes the keyboard.
 	createEffect(
@@ -530,7 +519,7 @@ function createMenuList(options: {
 		hover,
 		context,
 		litBy,
-		travel: () => !reflow(),
+		travel: () => !reflow.reflowing(),
 		search,
 		searchHost,
 		submenuHost,
@@ -633,15 +622,12 @@ export function Dropdown(props: {
 	});
 	const [focusIndex, setFocusIndex] = createSignal<number | null>(null);
 	const [litBy, setLitBy] = createSignal<LitBy>("pointer");
-	onCleanup(() => hover.cancelMeasure());
-
 	const context: DropdownContextValue = {
 		hover,
 		checkedIndex: () => props.checkedIndex,
 		multiple: () => props.checkedIndices !== undefined,
 		rows,
 		pointerLit: () => true,
-		rowsChanged: () => hover.remeasure(),
 		close: () => {},
 		pressPick: () => false,
 		releasePress: () => {},
