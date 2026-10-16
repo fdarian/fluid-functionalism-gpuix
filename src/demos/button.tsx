@@ -320,6 +320,14 @@ export function Demo() {
 					/>
 					<DemoRow label="Click to load">
 						<ClickToLoad />
+						<Button
+							testId="saving-secondary"
+							variant="secondary"
+							loading
+							leadingIcon="loader"
+						>
+							Saving
+						</Button>
 					</DemoRow>
 				</div>
 			</DemoCard>

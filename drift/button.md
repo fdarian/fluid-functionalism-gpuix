@@ -110,9 +110,9 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 ## Demo: variants that exist and are missing
 
-- **Cause:** `port choice` (no prop to drive it) for full-width; `not ported yet` for the `Saving` button.
+- **Cause:** `port choice` (no prop to drive it).
 - **Original:** `app/docs/button/page.tsx:95-148`: Variants (four inline plus four `w-full`), With Icons (`Create` leading `plus`, secondary `Next` trailing `arrow-right`, tertiary `Search` leading `search` and trailing `arrow-right`), Loading & Disabled (a `Click me` button that loads for 2s, secondary `Saving` loading with a leading `loader`, `Disabled`).
-- **Port:** `src/demos/button.tsx`: Default and Compact rows of the four variants, a Leading icon row (`plus` on all four), a Trailing icon row (secondary `Next`, tertiary `Search` on both sides), Icon only (both sizes), Disabled and Loading rows of the four variants, and a Click to load row (the 2s button). Missing: the four `w-full` buttons (`Button` has no width prop), the `Saving` button (a loading button with a leading `loader`). Added: the Compact, Icon only and per-variant Disabled / Loading rows. The icon-only buttons have no `aria-label` (the source playground sets one, `playgrounds/button.tsx:55`, `:222`). Copy matches.
+- **Port:** `src/demos/button.tsx`: Default and Compact rows of the four variants, a Leading icon row (`plus` on all four), a Trailing icon row (secondary `Next`, tertiary `Search` on both sides), Icon only (both sizes), Disabled and Loading rows of the four variants, and a Click to load row (the 2s button and the loading secondary `Saving` with a leading `loader`). Missing: the four `w-full` buttons (`Button` has no width prop). Added: the Compact, Icon only and per-variant Disabled / Loading rows. The icon-only buttons have no `aria-label` (the source playground sets one, `playgrounds/button.tsx:55`, `:222`). Copy matches.
 - **Workaround:** n/a.
 - **Fidelity:** n/a.
 - **Components it hits:** just this one.
