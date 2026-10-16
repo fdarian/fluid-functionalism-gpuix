@@ -149,6 +149,7 @@ export function Button(props: {
 						name={name()}
 						size={size().icon}
 						strokeWidth={iconStroke()}
+						easeStroke
 						color={labelColor()}
 					/>
 				)}
@@ -172,6 +173,7 @@ export function Button(props: {
 					name={props.icon as IconRef}
 					size={size().icon}
 					strokeWidth={iconStroke()}
+					easeStroke
 					color={labelColor()}
 				/>
 			</Show>
@@ -182,6 +184,7 @@ export function Button(props: {
 						name={name()}
 						size={size().icon}
 						strokeWidth={iconStroke()}
+						easeStroke
 						color={labelColor()}
 					/>
 				)}
