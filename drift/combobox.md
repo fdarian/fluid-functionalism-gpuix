@@ -124,6 +124,15 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Fidelity:** approximated.
 - **Components it hits:** select, dropdown (every `FluidHighlight` user).
 
+## The highlight resets on leaving the list, not on leaving a row
+
+- **Cause:** `port choice` (the hover state belongs to the list container, as in `createFluidHover`).
+- **Original:** `useListNavigation` resets the highlight from each item's `onPointerLeave` unless the pointer went to another item (`floating-ui-react/hooks/useListNavigation.ts:709-743`), so moving from a row into the list's 4px padding drops it, and `autoHighlight="always"` refills row 0 (`AriaCombobox.tsx:1198-1207`). Read from source, not seen in a browser.
+- **Port:** `onMouseLeave` on the list container (`src/components/combobox.tsx:357-361`), where the padding counts as inside, so the lit row stays while the pointer is over the padding and resets to row 0 only once it leaves the list.
+- **Workaround:** none; a row-level leave would also need the fluid hover to ignore the padding.
+- **Fidelity:** approximated (a few pixels of padding).
+- **Components it hits:** just this one.
+
 ## Reduced motion is not honoured
 
 - **Cause:** `not ported yet`.
