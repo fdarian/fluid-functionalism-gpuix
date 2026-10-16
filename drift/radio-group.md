@@ -39,7 +39,7 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 - **Cause:** `gpuix gap`. CSS transforms (README "Missing features" row, `README.md:151`; `FORK.md:876-887`).
 - **Original:** the highlight is moved with an `x` / `y` transform (`registry/default/fluid-hover-highlight.tsx:74-76,126-131`).
-- **Port:** `FluidHighlight` animates `top` / `left` / `width` / `height` (`fluid-highlight.tsx:78-85`). The look is the same.
+- **Port:** `FluidHighlight` animates `top` / `left` / `width` / `height` (`fluid-highlight.tsx:81-88`). The look is the same.
 - **Workaround:** layout properties.
 - **Fidelity:** exact in look.
 - **Components it hits:** every `FluidHighlight` list.
@@ -55,7 +55,7 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 ## Props: `className`, `ref`, HTML attributes
 
-- **Cause:** `not ported yet`. Same drift as [checkbox-group.md, "Props: `className`, `ref`, HTML attributes"](checkbox-group.md#props-classname-ref-html-attributes), where the entry lives. Here: source `radio-group.tsx:61-70,300-306`; the port's fixed `width: 288` is `choice-group.tsx:200-201`.
+- **Cause:** `not ported yet`. Same drift as [checkbox-group.md, "Props: `className`, `ref`, HTML attributes"](checkbox-group.md#props-classname-ref-html-attributes), where the entry lives. Here: source `radio-group.tsx:61-70,300-306`; the port's fixed `width: 288` is `choice-group.tsx:178`.
 
 ## Long labels
 

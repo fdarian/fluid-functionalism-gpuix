@@ -20,7 +20,7 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 
 - **Cause:** `gpuix gap`.
 - **Original:** header rows set `fontVariationSettings` to `fontWeights.semibold` (`wght 550, opsz 18`) and body rows to `fontWeights.normal` (`wght 400, opsz 14`) on the `<tr>` (`table.tsx:158-165`).
-- **Port:** `fontWeight: weight.semibold` (600) for header cells, 400 for body, on the cell `<text>` (`table.tsx:178`, `src/lib/theme.ts:372`).
+- **Port:** `fontWeight: weight.semibold` (600) for header cells, 400 for body, on the cell `<text>` (`table.tsx:178`, `src/lib/theme.ts:375`).
 - **gpuix lacks:** variable-font axes (`StyleDesc` has `fontWeight` and `fontFeatureSettings`, no `fontVariationSettings`); `README.md:171`, `:252`.
 - **Workaround:** Inter's static cuts only; no `opsz`.
 - **Fidelity:** approximated (600 for 550, no optical size).
@@ -30,7 +30,7 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 
 - **Cause:** `gpuix gap` (no transforms; `README.md:236`).
 - **Original:** the highlight is pinned to the corner and moved with `x` / `y` transforms on `spring.fast`, width and height as layout (`registry/default/fluid-hover-highlight.tsx:74-77`, `:130-133`).
-- **Port:** `top` / `left` / `width` / `height` on the same spring (`src/lib/fluid-highlight.tsx:6-13`, `:78-85`).
+- **Port:** `top` / `left` / `width` / `height` on the same spring (`src/lib/fluid-highlight.tsx:6-13`, `:81-88`).
 - **gpuix lacks:** CSS transforms.
 - **Workaround:** the layout properties `motion` can animate.
 - **Fidelity:** approximated (same motion, but it re-lays out each frame).
@@ -40,7 +40,7 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 
 - **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
 - **Original:** `size` wraps the table in a `SizeProvider`, and its cells read the context (`registry/default/table.tsx:41-44`, `:49`, `:90-91`, `:180`, `:203`).
-- **Port:** An omitted `size` follows the Size row (`src/components/table.tsx:51`, `:58`); a table inside a compact surface stays at 36px unless `size` is passed.
+- **Port:** An omitted `size` follows the Size row (`src/components/table.tsx:50`, `:57`); a table inside a compact surface stays at 36px unless `size` is passed.
 - **Workaround:** pass `size` to each nested component.
 - **Fidelity:** approximated.
 - **Components it hits:** every component that reads `useSize`.
@@ -59,7 +59,7 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** the docs page has one preview, "Basic" (Name / Role / Status, Alice, Bob, Carol), a description "Data table with row hover effects and semantic markup.", a code tab and API tables for `Table` and `TableRow` (`app/docs/table/page.tsx:56-103`).
-- **Port:** the same three rows in a "Basic" card, plus a "Compact" card the source page lacks (`src/demos/table.tsx:45-55`); no description, code or API tables.
+- **Port:** the same three rows in a "Basic" card, plus a "Compact" card the source page lacks (`src/demos/table.tsx:46-55`); no description, code or API tables.
 - **Workaround:** n/a.
 - **Fidelity:** exact for Basic; Compact is an addition.
 - **Components it hits:** every demo (docs chrome).

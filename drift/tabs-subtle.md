@@ -78,7 +78,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `port choice` (README: a demo is a `DemoCard` of live variants) for the missing page furniture; `port choice` (reason not stated) for the spacing; the extra variants are port-only.
 - **Original:** three variants: Basic, With Icons, Active Label. Panels are `px-3` under a `gap-4` (16px) column. The page has a description ("Tab navigation with smooth pill animations."), code snippets and API tables for TabsSubtle, TabsSubtleItem, TabsSubtlePanel (`app/docs/tabs-subtle/page.tsx:147`, `:149-242`, `:244-254`, `:151`, `:168`).
-- **Port:** Basic, With icons and Active label match in copy (`TABS`, "{label} content goes here."). It adds Compact and a Keyboard section (`src/demos/tabs-subtle.tsx:142-188`). A panel is 8px (section gap) + 4px (`paddingTop`) under the list, 12px not 16, with `paddingLeft` 12 (`:26`, `:37`). The card title is `TabsSubtle`, the nav title `Tabs Subtle` (`:45`, `:55`). No description, snippets or props tables.
+- **Port:** Basic, With icons and Active label match in copy (`TABS`, "{label} content goes here."). It adds Compact and a Keyboard section (`src/demos/tabs-subtle.tsx:141-187`). A panel is 8px (section gap) + 4px (`paddingTop`) under the list, 12px not 16, with `paddingLeft` 12 (`:25`, `:36`). The card title is `TabsSubtle`, the nav title `Tabs Subtle` (`:45`, `:54`). No description, snippets or props tables.
 - **Workaround:** none.
 - **Fidelity:** dropped (docs furniture), approximated (spacing).
 - **Components it hits:** every demo.

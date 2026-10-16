@@ -50,7 +50,7 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 - **Cause:** `not ported yet`.
 - **Original:** the slide box is `size-40 border border-border/60 bg-background` with the shape's container radius (`app/docs/carousel-dots/page.tsx:51-52`): the border at 60% of `--border`.
 - **Port:** `borderColor: color.border` at full strength, 12% foreground rather than about 7% (`src/demos/carousel-dots.tsx:55-57`).
-- **gpuix lacks:** nothing; `color.border` is an rgba token (`src/lib/theme.ts:100`, `:149`), so the 60% value needs its own token.
+- **gpuix lacks:** nothing; `color.border` is an rgba token (`src/lib/theme.ts:97`, `:146`), so the 60% value needs its own token.
 - **Workaround:** none.
 - **Fidelity:** approximated (a stronger edge).
 - **Components it hits:** just this demo.
@@ -79,7 +79,7 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** two sections, "Static" and "Autoplay", one preview each, stacked, with prose ("Hover a dot to see its click area, then click it. The highlight glides from dot to dot." and "Add `autoplay` and the pill fills, then the next slide comes in. Hover the slide to pause. Reduced motion turns the timer off."), a code tab per preview and an API table (`app/docs/carousel-dots/page.tsx:125-147`). Both variants are present in the port.
-- **Port:** one "CarouselDots" card with the two variants side by side under short captions, "Static: hover a dot to see its click area" and "Autoplay: hover the slide to pause" (`src/demos/carousel-dots.tsx:119-165`). No code tab, API table or reduced-motion remark.
+- **Port:** one "CarouselDots" card with the two variants side by side under short captions, "Static: hover a dot to see its click area" and "Autoplay: hover the slide to pause" (`src/demos/carousel-dots.tsx:120-165`). No code tab, API table or reduced-motion remark.
 - **Workaround:** n/a.
 - **Fidelity:** exact for the variants; the prose is shortened.
 - **Components it hits:** every demo (docs chrome).

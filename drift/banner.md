@@ -94,9 +94,9 @@ repeating it.
 
 ## Ghost action colour
 
-- **Cause:** `not ported yet`. The port's `Button` has no colour override (`labelColor` is internal, `src/components/button.tsx:149-158`); a `Button` prop for it would close this.
+- **Cause:** `not ported yet`. The port's `Button` has no colour override (`labelColor` is internal, `src/components/button.tsx:148-157`); a `Button` prop for it would close this.
 - **Original:** a ghost `BannerAction` adds `text-foreground`, which overrides the ghost button's muted rest colour, so it reads foreground at rest and on hover, with no colour change to ease (`banner.tsx:648-652`; its comment at `:618-619` describes "70% foreground", the code does not).
-- **Port:** the plain ghost `Button`: muted at rest, foreground on hover, eased over 80 ms like the source's other ghost buttons (`banner.tsx:490-506`; `src/components/button.tsx:129-130`).
+- **Port:** the plain ghost `Button`: muted at rest, foreground on hover, eased over 80 ms like the source's other ghost buttons (`banner.tsx:490-506`; `src/components/button.tsx:128-129`).
 - **Workaround:** none.
 - **Fidelity:** approximated (the rest colour, and the hover fade the source does not have here).
 - **Components it hits:** just this one.
@@ -132,7 +132,7 @@ repeating it.
 
 - **Cause:** `port choice` (to exercise the controlled `open` prop and compact in the harness).
 - **Original:** no "Dismissible" card (a success, high-contrast "Changes saved" with ✕) and no compact banner.
-- **Port:** both: "Dismissible" (`src/demos/banner.tsx:485-510`) and a compact error banner with a description and two actions in "Custom icon and compact" (`:587-606`).
+- **Port:** both: "Dismissible" (`src/demos/banner.tsx:478-503`) and a compact error banner with a description and two actions in "Custom icon and compact" (`:580-599`).
 - **Workaround:** none.
 - **Fidelity:** exact (the compact metrics follow the source's `compact` branches, `banner.tsx:433`, `:479`, `:500` against `src/components/banner.tsx:37-58`).
 - **Components it hits:** just this one.

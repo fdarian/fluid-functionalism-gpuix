@@ -22,7 +22,7 @@ light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 
 - **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
 - **Original:** `size` wraps the tabs in a `SizeProvider` (`registry/base/tabs.tsx:80-83`, `:173-174`).
-- **Port:** An omitted `size` follows the Size row (`src/components/tabs.tsx:103`).
+- **Port:** An omitted `size` follows the Size row (`src/components/tabs.tsx:85`).
 - **Workaround:** pass `size` to each nested component.
 - **Fidelity:** approximated.
 - **Components it hits:** every component with a `size` variant.
@@ -60,7 +60,7 @@ light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 
 - **Cause:** `port choice` (README: a demo is a `DemoCard` of live variants) for the missing page furniture; `port choice` (reason not stated) for the spacing; the extra variants are port-only.
 - **Original:** three variants: Basic, With Icons, Controlled with the `Active:` line. The tabs (list and panel) and the `Active:` line below them are `gap-4` (16px) apart. The page has a description, a code snippet per preview and API tables for Tabs, TabsList, TabItem, TabPanel (`app/docs/tabs/page.tsx:100`, `:102-202`, `:204-218`, `:174`, `:197`).
-- **Port:** Basic, With icons and Controlled match in copy. It adds Compact and a Keyboard section with a disabled tab (`src/demos/tabs.tsx:115-141`). The `Active:` line sits 8px under the panel (`:14`, `:110`). No description, snippets or props tables.
+- **Port:** Basic, With icons and Controlled match in copy. It adds Compact and a Keyboard section with a disabled tab (`src/demos/tabs.tsx:114-139`). The `Active:` line sits 8px under the panel (`:13`, `:109`). No description, snippets or props tables.
 - **Workaround:** none.
 - **Fidelity:** dropped (docs furniture), approximated (spacing).
 - **Components it hits:** every demo.

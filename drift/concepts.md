@@ -32,7 +32,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the window is a fixed panel, not a scrolling document; each screen scrolls itself in a `height: 100%` `ScrollArea`, so a sticky nav and card would only restate what the frame's height already does, and adopting the source means turning the four screens into page-scroll layouts).
 - **Original:** the nav is `sticky top-0 h-screen`, the right panel is its own component, and the page scrolls as a whole (`concept-frame.tsx:53`, `:41-46`). The nav is `hidden lg:flex`.
-- **Port:** the frame is the panel's height, so the nav and the card stay put and the screen scrolls inside the centre column (`src/pages/concepts/frame.tsx:30-62`). A full-layout page's wrapper now has the panel's height (`src/app.tsx`, the `App` page column). The nav is always shown, at 224px; there is no `lg` breakpoint.
+- **Port:** the frame is the panel's height, so the nav and the card stay put and the screen scrolls inside the centre column (`src/pages/concepts/frame.tsx:30-61`). A full-layout page's wrapper now has the panel's height (`src/app.tsx`, the `App` page column). The nav is always shown, at 224px; there is no `lg` breakpoint.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** every concept page.
@@ -59,7 +59,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `ChatMessage` took a string).
 - **Original:** `Answer` passes `className="max-w-full"` and a block of three paragraphs to `ChatMessage` (`lumen/page.tsx:76-111`).
-- **Port:** `ChatMessage` gained two additive props: `children` accepts any element (a string is still set in the message style) and `fullWidth` lifts the 80% cap (`src/components/chat-message.tsx:80-84`, `:142-147`). Lumen builds three `<text>` paragraphs with 12px between them (`src/pages/concepts-lumen.tsx:168-200`).
+- **Port:** `ChatMessage` gained two additive props: `children` accepts any element (a string is still set in the message style) and `fullWidth` lifts the 80% cap (`src/components/chat-message.tsx:79-83`, `:141-146`). Lumen builds three `<text>` paragraphs with 12px between them (`src/pages/concepts-lumen.tsx:168-199`).
 - **Workaround:** none needed.
 - **Fidelity:** exact for the layout.
 - **Components it hits:** chat-message (the extra props are the only change to it).
@@ -68,7 +68,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `gpuix gap`.
 - **Original:** `Cite` is a `Badge` (`size="sm"`, `px-1.5`, `mx-0.5`, `-translate-y-px`) set inline in the paragraph (`lumen/page.tsx:62-73`).
-- **Port:** a `<span>` with the accent fill around a no-break-spaced number, between two more no-break spaces (`src/pages/concepts-lumen.tsx:139-156`): the chip is square-cornered, takes the paragraph's 14px size and sits on the text line.
+- **Port:** a `<span>` with the accent fill around a no-break-spaced number, between two more no-break spaces (`src/pages/concepts-lumen.tsx:139-155`): the chip is square-cornered, takes the paragraph's 14px size and sits on the text line.
 - **gpuix lacks:** padding, margin, radius and `fontSize` on an inline `<span>`, and a block (the `Badge`) flowing inside a paragraph (`~/code/fdarian/gpuix/FORK.md:765`, `:772`).
 - **Workaround:** the no-break spaces, as the doc pages' inline code does (`src/lib/doc-page.tsx`, `Code`).
 - **Fidelity:** approximated (no rounding, 14px not 11px digits).
@@ -87,7 +87,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `not ported yet` for the shadow transition; `port choice` for the link.
 - **Original:** each row is `<a href="#answer">` (jumps to the question heading) with `transition-shadow duration-100 hover:shadow-surface-4` (`lumen/page.tsx:114-140`).
-- **Port:** a `div` with the `surface-2` fill and `shadow(2)`, and `hover: { boxShadow: shadow(4) }`, which switches at once (`src/pages/concepts-lumen.tsx:204-262`; `shadow` is the `--shadow-N` helper in `src/lib/theme.ts`). A click does nothing.
+- **Port:** a `div` with the `surface-2` fill and `shadow(2)`, and `hover: { boxShadow: shadow(4) }`, which switches at once (`src/pages/concepts-lumen.tsx:204-261`; `shadow` is the `--shadow-N` helper in `src/lib/theme.ts`). A click does nothing.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -175,7 +175,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `Button` has no `sm`; the source buttons have no handlers either).
 - **Original:** `<Button variant="ghost" size="icon-sm">` with a `useIcon("copy" | "rotate-ccw" | "image")` child (`atlas/page.tsx:178-185`, `:207-212`).
-- **Port:** `size="icon-compact"` (28px) with `icon="copy"`, `"rotate-ccw"`, `"image"`, so they follow the Icons row (`src/pages/concepts-atlas.tsx:117-135`, `:276-285`). The attach button opens the platform file picker.
+- **Port:** `size="icon-compact"` (28px) with `icon="copy"`, `"rotate-ccw"`, `"image"`, so they follow the Icons row (`src/pages/concepts-atlas.tsx:117-134`, `:276-285`). The attach button opens the platform file picker.
 - **Workaround:** none.
 - **Fidelity:** approximated (button size).
 - **Components it hits:** just this one.
@@ -193,7 +193,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `TableCell` sets only text, in the muted colour).
 - **Original:** `TableCell` takes any children and a `className`: the Status and Priority badges, the Owner avatar, the mono muted ID and the always-foreground title (`beacon/page.tsx:135-153`).
-- **Port:** the header uses `TableHead`; every body cell is a local `BodyCell` with `TableCell`'s padding (12 / 8, or 10 / 5 in Compact, read from `sizeChoice()`) and the cell text set in the page. The row is still a `TableRow` with an `index`, so the fluid hover highlight and the hidden borders work (`src/pages/concepts-beacon.tsx:302-405`). The lit row does not brighten the muted ID: `TableCell`'s lit-row colour is not reachable from a hand-drawn cell (the source's ID cell is `text-muted-foreground` throughout, so this matches it).
+- **Port:** the header uses `TableHead`; every body cell is a local `BodyCell` with `TableCell`'s padding (12 / 8, or 10 / 5 in Compact, read from `sizeChoice()`) and the cell text set in the page. The row is still a `TableRow` with an `index`, so the fluid hover highlight and the hidden borders work (`src/pages/concepts-beacon.tsx:309-412`). The lit row does not brighten the muted ID: `TableCell`'s lit-row colour is not reachable from a hand-drawn cell (the source's ID cell is `text-muted-foreground` throughout, so this matches it).
 - **gpuix lacks:** nothing.
 - **Workaround:** none. `TableCell` would need a non-text `children` and `color` / `mono` props.
 - **Fidelity:** exact in the look; the padding duplicates `cellMetrics` in `src/components/table.tsx`.
@@ -203,7 +203,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `gpuix gap` (paint order is per parent: a positioned `Table` root in the content paints above a static toolbar's absolute popover).
 - **Original:** `absolute right-0 top-full z-50 mt-1.5` around `Dropdown` (`beacon/page.tsx:240`).
-- **Port:** the same absolute box (`right: 0`, `top: 100%`, `marginTop: 6`) with `Dropdown` as the panel; the toolbar row is `position: relative; zIndex: 1` so the box paints over the table (`src/pages/concepts-beacon.tsx:516-560`, `:760-768`). A press outside the button wrapper closes it (`onMouseDownOutside`, standing for the source's `document` `mousedown` listener). Escape does not close it, as in the source.
+- **Port:** the same absolute box (`right: 0`, `top: 100%`, `marginTop: 6`) with `Dropdown` as the panel; the toolbar row is `position: relative; zIndex: 1` so the box paints over the table (`src/pages/concepts-beacon.tsx:523-567`, `:767-775`). A press outside the button wrapper closes it (`onMouseDownOutside`, standing for the source's `document` `mousedown` listener). Escape does not close it, as in the source.
 - **gpuix lacks:** a global stacking order (FORK.md: `zIndex` orders siblings only).
 - **Workaround:** the toolbar's `zIndex`.
 - **Fidelity:** exact.
@@ -213,7 +213,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `Button` has no `active` prop).
 - **Original:** `<Button variant="tertiary" size="sm" active={open}>` (`beacon/page.tsx:228-236`).
-- **Port:** `variant="tertiary" size="compact"`; the button keeps its resting look while the panel is open (`src/pages/concepts-beacon.tsx:527-537`).
+- **Port:** `variant="tertiary" size="compact"`; the button keeps its resting look while the panel is open (`src/pages/concepts-beacon.tsx:534-544`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** `Button`.
@@ -231,7 +231,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice`.
 - **Original:** `InputGroup className="w-56"` and `SelectTrigger className="min-w-[150px]"` (`beacon/page.tsx:407-418`); the Select starts empty (`value=""`) and shows "Priority".
-- **Port:** the `InputGroup` is a fixed 288px, so it sits in a 224px wrapper and shrinks to it; `Select` has no width prop, so a wrapper gives it `minWidth: 150`. `variant="bordered"` (the port's default is `inline`) and `value={null}` for the placeholder (`src/pages/concepts-beacon.tsx:822-846`). The search matches title or key, case-insensitively, as in the source. The screenshot scenario drives the select by keyboard (a pointer press on a select crashes the test renderer).
+- **Port:** the `InputGroup` is a fixed 288px, so it sits in a 224px wrapper and shrinks to it; `Select` has no width prop, so a wrapper gives it `minWidth: 150`. `variant="bordered"` (the port's default is `inline`) and `value={null}` for the placeholder (`src/pages/concepts-beacon.tsx:829-852`). The search matches title or key, case-insensitively, as in the source. The screenshot scenario drives the select by keyboard (a pointer press on a select crashes the test renderer).
 - **Workaround:** the wrappers.
 - **Fidelity:** exact in the layout.
 - **Components it hits:** `InputGroup`, `Select`.
@@ -240,7 +240,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `ThinkingIndicator` takes no `className`).
 - **Original:** `<ThinkingIndicator className="!px-0" />` (`beacon/page.tsx:303`).
-- **Port:** `<ThinkingIndicator />` with its own horizontal padding, so the glyph sits about 16px right of the panel's title (`src/pages/concepts-beacon.tsx:644`).
+- **Port:** `<ThinkingIndicator />` with its own horizontal padding, so the glyph sits about 16px right of the panel's title (`src/pages/concepts-beacon.tsx:651`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** `ThinkingIndicator`.
@@ -249,7 +249,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the source has a latent bug).
 - **Original:** `startTriage` sets a 1500 ms `setTimeout` to "asking" that nothing clears, so a Dismiss during "analyzing" brings the panel back at the question (`beacon/page.tsx:375-378`).
-- **Port:** Dismiss and unmount clear the timer (`src/pages/concepts-beacon.tsx:713`, `:730-737`).
+- **Port:** Dismiss and unmount clear the timer (`src/pages/concepts-beacon.tsx:713`, `:737-743`).
 - **Workaround:** none needed.
 - **Fidelity:** differs on purpose.
 - **Components it hits:** just this one.
@@ -285,7 +285,7 @@ Original: `app/concepts/quill/page.tsx`. Ported in `src/pages/concepts-quill.tsx
 
 - **Cause:** `port choice` (the port's `TableCell` / `TableHead` wrap their children in one `<text>`; the cell colour is fixed: muted unless the row is lit, foreground in the header).
 - **Original:** the name cell is `text-foreground`, the owner and target `text-muted-foreground`, status a `Badge variant="dot" size="sm"` (`quill/page.tsx:228-246`).
-- **Port:** the name cell is muted like the others (lit rows go foreground). The status Badge sits in a row `div` inside the cell so it hugs its width instead of stretching (`src/pages/concepts-quill.tsx:425-445`); `size="compact"` stands for `sm`.
+- **Port:** the name cell is muted like the others (lit rows go foreground). The status Badge sits in a row `div` inside the cell so it hugs its width instead of stretching (`src/pages/concepts-quill.tsx:425-444`); `size="compact"` stands for `sm`.
 - **Components it hits:** table (a cell colour prop would close it).
 - **Fidelity:** approximated.
 
@@ -301,7 +301,7 @@ Original: `app/concepts/quill/page.tsx`. Ported in `src/pages/concepts-quill.tsx
 
 - **Cause:** `port choice`.
 - **Original:** `setTimeout` 1700 ms that appends the draft; the "Sparkle" is `useIcon("brain")` (`quill/page.tsx:117-148`).
-- **Port:** the same timer, cleared on unmount (`src/pages/concepts-quill.tsx:227-250`); the icon is the port's `brain` at 16px in the drafted block and 14px next to "Quill AI" in the composer's left slot. The page does not scroll to the new block, as in the source.
+- **Port:** the same timer, cleared on unmount (`src/pages/concepts-quill.tsx:227-249`); the icon is the port's `brain` at 16px in the drafted block and 14px next to "Quill AI" in the composer's left slot. The page does not scroll to the new block, as in the source.
 - **Fidelity:** exact for the flow.
 - **Components it hits:** just this one.
 

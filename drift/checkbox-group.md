@@ -9,7 +9,7 @@ Same in both (checked against the code): row height, gap and padding per size (3
 
 - **Cause:** `not ported yet`. `motion` animates per-corner radii and per-property transitions (`~/code/fdarian/gpuix/FORK.md:819-821`), so nothing stops it.
 - **Original:** `useMergeSplitBlocks` (`use-merge-split.tsx:144-340`, used at `checkbox-group.tsx:98`): when one unchecked row bridges two checked runs, the two blocks glide their inner edges to the bridge row's midpoint with the facing corners straightening, then swap to one block with no visible motion. Unchecking a middle row plays it backwards. `SelectionBackgrounds` draws the blocks with per-corner radii (`use-merge-split.tsx:392-452`).
-- **Port:** one `FluidHighlight` per run, keyed by a stable run id (`createSelectionRuns`, `choice-group.tsx:86-98`; render in `ChoiceGroup`). Checking a bridge row makes the upper run spring (`moderate`) over the whole union, while the lower run's highlight fades out in place. Unchecking a middle row springs the one block shorter and a new block for the lower run appears at once.
+- **Port:** one `FluidHighlight` per run, keyed by a stable run id (`createSelectionRuns`, `choice-group.tsx:80-92`; render in `ChoiceGroup`). Checking a bridge row makes the upper run spring (`moderate`) over the whole union, while the lower run's highlight fades out in place. Unchecking a middle row springs the one block shorter and a new block for the lower run appears at once.
 - **Workaround:** run ids survive a change, so a block that grows or shrinks at one end moves in place, as in FF.
 - **Fidelity:** approximated (growing, shrinking and moving runs match; merge and split lose the meeting-in-the-middle choreography).
 - **Components it hits:** just this one (radio-group has a single run). `BASE-UI-AUDIT.md` lists merge/split as out of scope only for combobox.
@@ -38,7 +38,7 @@ Same in both (checked against the code): row height, gap and padding per size (3
 
 - **Cause:** `gpuix gap`. CSS transforms are missing (README "Missing features" row for transforms, `README.md:151`; `FORK.md:876-887`).
 - **Original:** the highlight is pinned at 0,0 and moved with an `x` / `y` transform (`registry/default/fluid-hover-highlight.tsx:74-76,126-131`).
-- **Port:** `FluidHighlight` animates `top` / `left` / `width` / `height` (`fluid-highlight.tsx:78-85`), re-laid out per frame. The look is the same.
+- **Port:** `FluidHighlight` animates `top` / `left` / `width` / `height` (`fluid-highlight.tsx:81-88`), re-laid out per frame. The look is the same.
 - **Workaround:** layout properties.
 - **Fidelity:** exact in look.
 - **Components it hits:** every `FluidHighlight` list.
@@ -47,7 +47,7 @@ Same in both (checked against the code): row height, gap and padding per size (3
 
 - **Cause:** `not ported yet`.
 - **Original:** `size` on the group pins every row through a `SizeProvider`; omitted, the group follows the surrounding provider (`checkbox-group.tsx:64-67,212-213`). Items take no `size`.
-- **Port:** `size` on the group is the only way to choose compact for that group; omitted, it follows the Size row (`sizeChoice()`, `choice-group.tsx:209`). The rows and the square both read it (`choice-group.tsx` `ChoiceRow` hands it to the indicator). No surrounding size provider is read.
+- **Port:** `size` on the group is the only way to choose compact for that group; omitted, it follows the Size row (`sizeChoice()`, `choice-group.tsx:187`). The rows and the square both read it (`choice-group.tsx` `ChoiceRow` hands it to the indicator). No surrounding size provider is read.
 - **Workaround:** pass `size` to the group.
 - **Fidelity:** approximated.
 - **Components it hits:** every component with a `size`.
@@ -56,7 +56,7 @@ Same in both (checked against the code): row height, gap and padding per size (3
 
 - **Cause:** `not ported yet`.
 - **Original:** both components forward `ref`, `className` and the rest of the `div` props (`checkbox-group.tsx:59-70,219-227`); the sizes page narrows the group to `w-44`, the bento preview to 220 px.
-- **Port:** a fixed `width: 288, maxWidth: "100%"` (`choice-group.tsx:244-245`); `testId` is the only pass-through.
+- **Port:** a fixed `width: 288, maxWidth: "100%"` (`choice-group.tsx:200-201`); `testId` is the only pass-through.
 - **Workaround:** none.
 - **Fidelity:** dropped (cannot restyle).
 - **Components it hits:** radio-group.

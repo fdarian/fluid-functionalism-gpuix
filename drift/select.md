@@ -8,9 +8,9 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 - **Cause:** `gpuix gap`.
 - **Original:** `min-w-[var(--anchor-width)]` on the popup, which then grows to its widest option (`select.tsx:530`).
-- **Port:** the card is `popupWidth` when given, else `"anchor-size(width)"` (`select.tsx:586`, prop at `:134-135`), and never narrower than the trigger (`minWidth: "anchor-size(width)"`, `popup.tsx:103`). The inline variant is 160 wide.
+- **Port:** the card is `popupWidth` when given, else `"anchor-size(width)"` (`select.tsx:586`, prop at `:134-135`), and never narrower than the trigger (`minWidth: "anchor-size(width)"`, `popup.tsx:77`). The inline variant is 160 wide.
 - **gpuix lacks:** an intrinsic (`max-content`) width; `width: "max-content"` is rejected (README "Missing features", intrinsic `width` row; see scroll-area.md).
-- **Workaround:** `popupWidth` is a manual width for long labels (the timezone demo passes 220, `demos/select.tsx:183`). Without it a label wider than the trigger ellipsizes. A `hug` trigger (the command menu's filters, where the source trigger is `w-auto`) is only as wide as its label, so it always needs `popupWidth`.
+- **Workaround:** `popupWidth` is a manual width for long labels (the timezone demo passes 220, `demos/select.tsx:182`). Without it a label wider than the trigger ellipsizes. A `hug` trigger (the command menu's filters, where the source trigger is `w-auto`) is only as wide as its label, so it always needs `popupWidth`.
 - **Fidelity:** approximated.
 - **Components it hits:** combobox, dropdown, scroll-area; every popup sized to its trigger and its content.
 
@@ -18,7 +18,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 - **Cause:** `gpuix gap`.
 - **Original:** enters with `opacity 0, y -4, scaleY 0.96` to rest, `spring.fast`; exits on `spring.fast.exit` (`select.tsx:470-478`, `popup.ts:16-23`).
-- **Port:** opacity plus a 4px slide on `top`, no scale (`popup.tsx:88-96`).
+- **Port:** opacity plus a 4px slide on `top`, no scale (`popup.tsx:62-70`).
 - **gpuix lacks:** CSS transforms; see README "Missing features", CSS transforms row.
 - **Workaround:** the slide.
 - **Fidelity:** approximated.
@@ -28,7 +28,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 - **Cause:** `gpuix gap`.
 - **Original:** the hover pill is pinned at 0,0 and moved with `x` / `y` transforms, so travel stays on the compositor (`fluid-hover-highlight.tsx:121-131`).
-- **Port:** the pill animates `top` / `left` / `width` / `height`, which re-lays out per frame (`fluid-highlight.tsx:78-85`).
+- **Port:** the pill animates `top` / `left` / `width` / `height`, which re-lays out per frame (`fluid-highlight.tsx:81-88`).
 - **gpuix lacks:** transforms (README, CSS transforms row; translation table "translate / x,y travel").
 - **Workaround:** none needed visually.
 - **Fidelity:** approximated (same path, different cost).
@@ -58,7 +58,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 - **Cause:** `gpuix gap`.
 - **Original:** Enter in a form control submits and an empty `required` select blocks it and takes focus.
-- **Port:** only `form.requestSubmit()` validates; the demo calls it from the Submit button (`demos/select.tsx:286`).
+- **Port:** only `form.requestSubmit()` validates; the demo calls it from the Submit button (`demos/select.tsx:285`).
 - **gpuix lacks:** implicit-submission validation and `SubmitEvent.submitter` (README Bugs row "select, combobox" and Missing features "combobox, select (any form)").
 - **Workaround:** `requestSubmit()`.
 - **Fidelity:** exact for `requestSubmit()`, dropped for implicit submission.
@@ -96,7 +96,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 - **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
 - **Original:** `size` wraps the select in a `SizeProvider` and `SelectTrigger` takes its own `size`, so trigger and popup follow together (`registry/base/select.tsx:99-102`, `:223`, `:278-281`).
-- **Port:** `size?: "default" | "compact"` on `Select` only; omitted, it follows the Size row (`src/components/select.tsx:122`, `:140`).
+- **Port:** `size?: "default" | "compact"` on `Select` only; omitted, it follows the Size row (`src/components/select.tsx:94`, `:112`).
 - **Workaround:** pass `size` to each nested component. `CommandMenuFilters` in the source wraps its children in `SizeProvider size="compact"` and forces `w-auto min-w-0` on every `[role=combobox]` (`command-menu.tsx:994-1019`); the port has neither, so each filter select passes `size="compact"` and `hug` itself.
 - **Fidelity:** approximated.
 - **Components it hits:** every component that reads `useSize`.
@@ -123,7 +123,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** only `hover:bg-hover`; no pressed style (`select.tsx:243-246`).
-- **Port:** `active: { backgroundColor: color.active }` (`src/components/select.tsx:603`).
+- **Port:** `active: { backgroundColor: color.active }` (`src/components/select.tsx:326`).
 - **Workaround:** none.
 - **Fidelity:** approximated (extra state; the popup opens on mouse-down, so it shows briefly).
 - **Components it hits:** just this one.
@@ -144,7 +144,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 - **Cause:** `port choice` (reason not stated) for the copy and counts; `not ported yet` for the code snippets and API tables.
 - **Original:** sections Basic, Variants (bordered + borderless, 3 fruits), With Icons, Groups, Scrollable List, Error State, Disabled; each has a code snippet, and the page ends with four props tables (`page.tsx:278-428`).
-- **Port:** the same seven, as rows in cards (`demos/select.tsx:110-239`), plus three the source lacks: Compact, Uncontrolled (keyboard, typeahead and `defaultValue` selects), and a Form card with a required select. Differences: Variants and Basic use four fruits (Apple, Banana, Cherry, Mango) where the source's Variants has three (`:17-22`, `:122-137`); the disabled select holds Admin / Editor / Viewer, the source's one "Option A" (`:197-206`); "Some disabled" lists "Also available" where the source repeats "Available" (`:65-69`); Basic sets `variant="bordered"` explicitly. No code snippets, no props tables, no page description.
+- **Port:** the same seven, as rows in cards (`demos/select.tsx:109-238`), plus three the source lacks: Compact, Uncontrolled (keyboard, typeahead and `defaultValue` selects), and a Form card with a required select. Differences: Variants and Basic use four fruits (Apple, Banana, Cherry, Mango) where the source's Variants has three (`:16-20`, `:121-136`); the disabled select holds Admin / Editor / Viewer, the source's one "Option A" (`:196-205`); "Some disabled" lists "Also available" where the source repeats "Available" (`:64-68`); Basic sets `variant="bordered"` explicitly. No code snippets, no props tables, no page description.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** every demo page shares the card layout and lacks the snippets.

@@ -9,7 +9,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `gpuix gap`.
 - **Original:** a native `<button>` matches `:active` while Space is held, so the press-shrink (`group-active:`, `registry/base/button.tsx:115-127`) plays for a keyboard activation too.
-- **Port:** the pressed look is `style.active` (`src/components/button.tsx:232`); Space still activates on key-up through `buttonProps` (`:194-197`).
+- **Port:** the pressed look is `style.active` (`src/components/button.tsx:234`); Space still activates on key-up through `buttonProps` (`:193-196`).
 - **gpuix lacks:** a keyboard `:active` state. `active` styles come from the pointer's press chain only (`~/code/fdarian/gpuix/FORK.md:305-306`). Rechecked on the test renderer: with a focused `buttonProps` element carrying `active: { backgroundColor }`, the capture while `nativeSimulateKeyDown(id, "space")` is held is byte-identical to the resting one.
 - **Workaround:** none.
 - **Fidelity:** approximated: the activation is exact, the pressed look is missing for the keyboard.
@@ -19,7 +19,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `gpuix gap` (test harness only).
 - **Original:** n/a.
-- **Port:** `press` in `scripts/screenshots.tsx:186-189` calls `simulateKeystrokes`; `ShotContext` has no helper for `nativeSimulateKeyDown` / `nativeSimulateKeyUp`.
+- **Port:** `press` in `scripts/screenshots.tsx:182-185` calls `simulateKeystrokes`; `ShotContext` has no helper for `nativeSimulateKeyDown` / `nativeSimulateKeyUp`.
 - **gpuix lacks:** a key-up from `simulateKeystrokes`: it makes one native call (`packages/native/js/testing.ts:441-450`), so a focused `buttonProps` element sees a keydown for `" "` and neither `keyup` nor `click`, while `nativeSimulateKeyDown` then `nativeSimulateKeyUp` gives keydown, click, keyup. The helper also still takes GPUI key names (`space`, `cmd-shift-p`; `~/code/fdarian/gpuix/README.md:3186`).
 - **Workaround:** scenarios press Enter, which activates on key-down. `nativeSimulateKeyDown` / `nativeSimulateKeyUp` would do it.
 - **Fidelity:** exact in the real window; a harness gap only.
@@ -29,7 +29,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `gpuix gap`.
 - **Original:** surface layer inset 1px (`:211`) with `bg-[var(--btn-bg)]` plus a same-colour `shadow-[0_0_0_1px_...]` that collapses on press (`:113-128`). Secondary's `--tint` and ghost's `--hover` are translucent; an outer CSS shadow paints only outside the box, so fill and ring never double up (comment `:105-112`).
-- **Port:** the element is the inset surface (`margin: 1`, height and padding give 1px back, `:137-142`, `:217-221`) and carries no `backgroundColor`; the fill is `boxShadow: fill(colour, 1)`, press sets spread 0 (`src/lib/press.ts:10-18`, `src/components/button.tsx:63-93`). Tertiary's ring is an outline, 0 offset at rest and -1 pressed (`:74-87`).
+- **Port:** the element is the inset surface (`margin: 1`, height and padding give 1px back, `:137-142`, `:217-221`) and carries no `backgroundColor`; the fill is `boxShadow: fill(colour, 1)`, press sets spread 0 (`src/lib/press.ts:10-18`, `src/components/button.tsx:63-92`). Tertiary's ring is an outline, 0 offset at rest and -1 pressed (`:73-86`).
 - **gpuix lacks:** the knock-out of an outer `box-shadow` under its own box. `shadow_fragment` covers the whole rounded rect, so a background on top of a translucent shadow doubles up (`~/code/fdarian/gpuix/zed/crates/gpui_apple/src/shaders.metal:628`; inset shadows are clipped to the element, `:648-654`).
 - **Workaround:** the shadow is the fill; outline for the tertiary ring. Hover and press ease like the source (`boxShadow` 180ms on `cubic-bezier(0.23,1,0.32,1)`, `backgroundColor` 80ms, both 80ms while pressed; label colour and icons over 80ms), but the tertiary ring's 1px move inward on press (`outlineOffset` 0 to -1) switches at once: a transition on `outline-offset` would also ease the focus ring's offset when the button gains keyboard focus, which the source does not.
 - **Fidelity:** exact in colour and geometry; a different mechanism. The tertiary ring's press move is instant.
@@ -39,7 +39,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `not ported yet`.
 - **Original:** an infinity-shaped path in a 24 viewBox drawn at 36px (28px compact), `strokeDasharray` 15 85, `spinner-move 2s linear infinite` (dash offset to -100) and `spinner-dash 4s ease-in-out infinite` (dash 15 to 40), stroke 1.125 (`:199-201`, `:228-246`, `app/globals.css:998-1005`).
-- **Port:** the `loader` glyph of the Icons row's library (lucide spokes by default) at the icon size (16 / 14), stroke 1.5, no motion (`src/components/button.tsx:248-266`, `src/lib/icons/lucide.ts:21`).
+- **Port:** the `loader` glyph of the Icons row's library (lucide spokes by default) at the icon size (16 / 14), stroke 1.5, no motion (`src/components/button.tsx:250-268`, `src/lib/icons/lucide.ts:21`).
 - **Workaround:** none. README calls this "Dropped" but it needs no transform: gpuix animates SVG `strokeDasharray` / `strokeDashoffset` with repeating keyframes (`FORK.md:828-829`, `:822-823`), and `file-thumbnail.tsx` already draws a moving arc.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -48,7 +48,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `gpuix gap`.
 - **Original:** `[text-box:trim-both_cap_alphabetic]` on the label span (`:265`).
-- **Port:** the label keeps its 20px (18 compact) line box inside the flex-centred button (`src/components/button.tsx:159-168`).
+- **Port:** the label keeps its 20px (18 compact) line box inside the flex-centred button (`src/components/button.tsx:158-167`).
 - **gpuix lacks:** `text-box-trim`; see the badge row in README "gpuix gaps" and `drift/badge.md`.
 - **Workaround:** none.
 - **Fidelity:** approximated (about a pixel of optical drift).
@@ -67,7 +67,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `port choice` (out of scope per the lead's decision, `BASE-UI-AUDIT.md:176`).
 - **Original:** `active` forces the pressed look while a menu the button opened is showing (`:99-102`, `:130-141`); `asChild` / `render` make another element the root (`:86-95`, `:163-186`, `:290-302`); `sm` / `md` / `lg` / `icon-sm` / `icon-lg` resolve onto the ladder (`:61-78`).
-- **Port:** none of them (`src/components/button.tsx:95-116`). A dropdown trigger does not look engaged while its menu is open.
+- **Port:** none of them (`src/components/button.tsx:94-115`). A dropdown trigger does not look engaged while its menu is open.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** every popup trigger that is a `Button` (dropdown, select).
@@ -85,7 +85,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `size="icon"` renders `children` (any element, usually an icon) inside the label wrapper (`:248-251`).
-- **Port:** the glyph is the `icon` prop and `children` is ignored for icon sizes (`src/components/button.tsx:156-177`); `trailingContent` is a port-only slot for a keycap (`:113-114`).
+- **Port:** the glyph is the `icon` prop and `children` is ignored for icon sizes (`src/components/button.tsx:156-176`); `trailingContent` is a port-only slot for a keycap (`:112-113`).
 - **Workaround:** n/a.
 - **Fidelity:** exact in look.
 - **Components it hits:** just this one.

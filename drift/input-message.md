@@ -56,7 +56,7 @@ repeating it.
 - **Original:** `File[]`, identity `name-size-lastModified`, type from the browser (`input-message.tsx:946-967`).
 - **Workaround:** `ComposerFile { path, name, type }`, identity is the path, and the type comes from a ten-entry extension table; anything else is `application/octet-stream` and fails the default `accept` (`input-message.tsx:43-103`). `onSend`, `files` and `QueuedMessage.files` carry `ComposerFile`.
 - **Fidelity:** approximated.
-- **Components it hits:** any component taking a `File`; the demo maps `ComposerFile` to chat-message's `{ name, type, src }` by hand (`src/lib/composer-stage.tsx:36-40`).
+- **Components it hits:** any component taking a `File`; the demo maps `ComposerFile` to chat-message's `{ name, type, src }` by hand (`src/lib/composer-stage.tsx:39-43`).
 
 ## The file picker is not filtered by `accept`
 

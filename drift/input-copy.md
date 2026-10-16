@@ -99,5 +99,5 @@ repeating it.
 
 - **Cause:** `port choice` (the demo is a showcase card, not a docs page; reason not stated beyond that).
 - **Original:** `app/docs/input-copy/page.tsx`: Basic, With Label, Button Variant, Left Aligned (icon and button, `gap-4`), Disabled, Copy Callback (`gap-2` to a caption with `px-1`), each in a `ComponentPreview` with its code, then a props table.
-- **Port:** all six variants exist (`src/demos/input-copy.tsx:37-101`), stacked in one card at `gap: 8` (`:36`), the callback caption at `gap: 4` (`:87`). Extra: "Compact". The code snippets and props table are not ported.
+- **Port:** all six variants exist (`src/demos/input-copy.tsx:31-86`), stacked in one card at `gap: 8` (`:31`), the callback caption at `gap: 4` (`:72`). Extra: "Compact". The code snippets and props table are not ported.
 - **Fidelity:** all source variants present; one extra.

@@ -17,7 +17,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `not ported yet`.
 - **Original:** the list is a `ScrollArea` with `scroll-fade` (32 px mask, crisp at the true ends) and `scroll-divider`: a static `border-border/60` top line, a stronger hairline on top that grows as rows pass under it, a bottom hairline that stands while rows continue and goes at the end. The footer draws no line of its own; with no footer the bottom hairline is hidden (`:1069-1072`; `app/globals.css:1087-1236`). The thumb is FF's `w-2.5` track.
-- **Port:** a bare `overflowY: "scroll"` div with a fixed `borderTopWidth: 1` in `color.border` (0.12 alpha, where `/60` is `color.borderFaint`, 0.072) (`:866-877`); gpuix's overlay scrollbar; the footer always draws a `color.border` line on top (`:1186-1187`), so a short list that never scrolls still has a line above the footer where the source has none. `ScrollArea` already offers `fade`, `fadeSize` and `divider` (`src/components/scroll-area.tsx:64-70`, `:358-391`, its own divider also uses `color.border`) and is simply not used here.
+- **Port:** a bare `overflowY: "scroll"` div with a fixed `borderTopWidth: 1` in `color.border` (0.12 alpha, where `/60` is `color.borderFaint`, 0.072) (`:866-877`); gpuix's overlay scrollbar; the footer always draws a `color.border` line on top (`:1186-1187`), so a short list that never scrolls still has a line above the footer where the source has none. `ScrollArea` already offers `fade`, `fadeSize` and `divider` (`src/components/scroll-area.tsx:35-41`, `:88-121`, its own divider also uses `color.border`) and is simply not used here.
 - **Workaround:** none.
 - **Fidelity:** dropped (fade, scroll-aware lines, thumb); approximated (static lines).
 - **Components it hits:** sidebar (also a bare scroller).
@@ -36,7 +36,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `not ported yet`.
 - **Original:** `TabsSubtle` on Base UI Tabs: `role="tablist"` / `tab` / `aria-selected`, roving tab stop, a travelling focus ring for keyboard focus, `aria-label="Filter results"`, a `icon` per tab, horizontal scroll when the tabs overflow; the hover pill is `bg-active` at 0.4 opacity, the selected pill dims to 0.8 under another tab's hover, and when the pointer leaves the hover pill glides back to the selected tab (`:951-973`; `registry/base/tabs-subtle.tsx:178-255`).
-- **Port:** plain `div`s with `onClick` and no role, tabindex or focus ring (`src/components/command-menu.tsx:764-787`); the hover pill is a plain `color.hover` fill (0.04 / 0.06 alpha, where 0.4 of `active` is 0.028 / 0.04) and fades out in place; the selected pill never dims; `CommandMenuTab` has no `icon` (`:62-65`); no overflow scrolling (`:699-710`). Tab labels do keep the selected-pill glide on `moderate` and the hover pill's start from the selected tab (`:712-726`). The focus ring that `createFocusRing` gives tabs-subtle (`src/lib/focus-ring.tsx`) is not wired here.
+- **Port:** plain `div`s with `onClick` and no role, tabindex or focus ring (`src/components/command-menu.tsx:764-787`); the hover pill is a plain `color.hover` fill (0.04 / 0.06 alpha, where 0.4 of `active` is 0.028 / 0.04) and fades out in place; the selected pill never dims; `CommandMenuTab` has no `icon` (`:62-65`); no overflow scrolling (`:700-710`). Tab labels do keep the selected-pill glide on `moderate` and the hover pill's start from the selected tab (`:712-726`). The focus ring that `createFocusRing` gives tabs-subtle (`src/lib/focus-ring.tsx`) is not wired here.
 - **Workaround:** none; ← → in the field switch tabs.
 - **Fidelity:** approximated (looks the same at rest, no keyboard or semantics).
 - **Components it hits:** just this one.
@@ -104,7 +104,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `gpuix gap` (shared; transforms, see README "Missing features" row "CSS transforms").
 - **Original:** the fill is pinned to the padding corner and moved with `x` / `y` on the compositor (`registry/default/fluid-hover-highlight.tsx:74-76`, `:128-134`).
-- **Port:** `motion` on `top` / `left` / `width` / `height`, re-laying out per frame (`src/lib/fluid-highlight.tsx:69-86`).
+- **Port:** `motion` on `top` / `left` / `width` / `height`, re-laying out per frame (`src/lib/fluid-highlight.tsx:72-89`).
 - **Workaround:** n/a.
 - **Fidelity:** approximated.
 - **Components it hits:** every fluid list.
@@ -113,7 +113,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `gpuix gap` (the scale).
 - **Original:** the backdrop fades on `spring.slow` (240 ms, exit 160 ms tween); the panel springs from `scale: 0.97` with opacity on `spring.slow` (`registry/base/dialog.tsx:228-239`, `:286-293`).
-- **Port:** the scrim and the panel both use `slow` in / `slowExit` out (240 / 160 ms), as in the source; the panel slides 4 px down in place of the scale (`src/components/command-menu.tsx:1349-1433`). The layer unmounts when the scrim's exit completes (`onMotionComplete`, with a 260 ms timer for an exit that never animates) (`:1346`, `:1355`).
+- **Port:** the scrim and the panel both use `slow` in / `slowExit` out (240 / 160 ms), as in the source; the panel slides 4 px down in place of the scale (`src/components/command-menu.tsx:1349-1430`). The layer unmounts when the scrim's exit completes (`onMotionComplete`, with a 260 ms timer for an exit that never animates) (`:1346`, `:1355`).
 - **gpuix lacks:** `scale` (no transforms, `~/code/fdarian/gpuix/FORK.md:876-887`).
 - **Workaround:** the 4 px slide stands in for the scale.
 - **Fidelity:** approximated (no scale).
@@ -141,7 +141,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `not ported yet`.
 - **Original:** exports `parseShortcut`, `matchesShortcut` (layout-aware, falls back to the physical key), `hasModifier`, `isMacPlatform`, `useIsMac`; `formatShortcut(shortcut, mac)` accepts aliases (`command`, `win`, `super`, `control`, `opt`, `del`, `plus`, `spacebar`, `arrowup`...) and keeps a trailing `+` as the key (`:118-303`).
-- **Port:** only `formatShortcut(shortcut)` with `IS_MAC` baked in; `CAP_LABELS` knows `cmd`, `option`, `return`, `esc`, `space`, `up` / `down` / `left` / `right` but not the other aliases, so `"command+k"` draws "Command" (`src/components/command-menu.tsx:81-136`). A trailing `+` is kept as the key, as in the source (`"mod++"` draws the modifier and `+`, `shortcutTokens`, `:113-125`). The site menu carries its own `isModK` (`src/lib/site-command-menu.tsx:60-64`).
+- **Port:** only `formatShortcut(shortcut)` with `IS_MAC` baked in; `CAP_LABELS` knows `cmd`, `option`, `return`, `esc`, `space`, `up` / `down` / `left` / `right` but not the other aliases, so `"command+k"` draws "Command" (`src/components/command-menu.tsx:81-136`). A trailing `+` is kept as the key, as in the source (`"mod++"` draws the modifier and `+`, `shortcutTokens`, `:114-125`). The site menu carries its own `isModK` (`src/lib/site-command-menu.tsx:60-63`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -168,7 +168,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `not ported yet`.
 - **Original:** the field is 14 / 24 px (default) and 13 / 20 px (compact, `leading-5`); 16 px on a coarse pointer (`:877-878`).
-- **Port:** the field's box is a fixed 24 px high and only `fontSize` is applied, so in compact the line box is 24 where the source has 20; `SUBTITLE_COMPACT`'s 18 line height is never used (`src/components/command-menu.tsx:208-209`, `:639-640`). The touch size does not apply on desktop.
+- **Port:** the field's box is a fixed 24 px high and only `fontSize` is applied, so in compact the line box is 24 where the source has 20; `SUBTITLE_COMPACT`'s 18 line height is never used (`src/components/command-menu.tsx:208`, `:639-640`). The touch size does not apply on desktop.
 - **Workaround:** none.
 - **Fidelity:** approximated (the caret is taller in compact).
 - **Components it hits:** just this one.
@@ -177,9 +177,9 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `gpuix gap`.
 - **Original:** a browser skips paint for content a scroller clips away, and `content-visibility: auto` skips layout too, so a page of eight menus costs about what one does.
-- **Port:** the whole page is built, laid out and painted each frame (checked in `src/lib/demo-kit.tsx:17-73`, the workaround below).
+- **Port:** the whole page is built, laid out and painted each frame (checked in `src/lib/demo-kit.tsx:18-75`, the workaround below).
 - **gpuix lacks:** culling. Every element, including rows and cards outside a scroller's viewport, is built, laid out and painted each frame. Only `<virtual-list>` skips them (`~/code/fdarian/gpuix/README.md:2519-2530` "Performance model", `:2602` "Pannable surfaces must cull"; the README row "Culling"). The command-menu page has about 1,400 elements and 800 text runs, which cost 57 ms of CPU a frame (18 ms in the native draw) against 10 ms (3.6 ms) on the dropdown page; the 80 ms highlight spring got one or two frames, so it read as a jump, and a wheel tick cost 110 to 135 ms (numbers from the earlier measurement, not re-run in this audit).
-- **Workaround:** `DemoCard` (`src/lib/demo-kit.tsx:30-73`) watches its content with an `IntersectionObserver` rooted at the page scroller (`rootMargin: "25% 0px"`, `:27`, `:50`) and, once the card is more than a quarter of the scroller away, sets its content to `display: none` (no box is built for it or anything inside) and pins the height it had (`:47`, `:71-73`). The card stays mounted, so typed text and tabs survive a scroll away and back. This brought the frame to 20 ms (6.6 ms native). A `<virtual-list>` page was not used: it needs each card as a direct child of the list, which no demo's markup is, and the scenario helper `reveal()` (`src/demos/command-menu.tsx:828-851`) reads bounds a row outside the window does not have. The menu's own list is not virtualised either: the highlight lives inside the scrolled content and fluid hover measures every row, so a menu's 15 clipped rows still cost a few ms each.
+- **Workaround:** `DemoCard` (`src/lib/demo-kit.tsx:32-75`) watches its content with an `IntersectionObserver` rooted at the page scroller (`rootMargin: "25% 0px"`, `:29`, `:52`) and, once the card is more than a quarter of the scroller away, sets its content to `display: none` (no box is built for it or anything inside) and pins the height it had (`:49`, `:73-75`). The card stays mounted, so typed text and tabs survive a scroll away and back. This brought the frame to 20 ms (6.6 ms native). A `<virtual-list>` page was not used: it needs each card as a direct child of the list, which no demo's markup is, and the scenario helper `reveal()` (`src/demos/command-menu.tsx:828-851`) reads bounds a row outside the window does not have. The menu's own list is not virtualised either: the highlight lives inside the scrolled content and fluid hover measures every row, so a menu's 15 clipped rows still cost a few ms each.
 - **Fidelity:** approximated (same output, a hitch of a frame or two when a card far from the scroller is jumped to).
 - **Components it hits:** any long page or list; the other demo pages gain the same card hiding.
 

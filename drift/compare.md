@@ -39,7 +39,7 @@ repeating it.
 
 - **Cause:** `gpuix gap`: one `outline` per element, no second ring.
 - **Original:** `focus-visible:ring-2 ring-ring ring-offset-2 ring-offset-background`: a 2px background-coloured gap, then the 2px ring.
-- **Port:** a 2px outline at a 2px offset (`scRing`, `src/pages/compare/shadcn/theme.ts:73-76`); the gap shows what is behind, the page, where the source paints `--background`. The slider thumb's `ring-1` is a 1px outline at offset 0. The input shows it while it has focus.
+- **Port:** a 2px outline at a 2px offset (`scRing`, `src/pages/compare/shadcn/theme.ts:73-74`); the gap shows what is behind, the page, where the source paints `--background`. The slider thumb's `ring-1` is a 1px outline at offset 0. The input shows it while it has focus.
 - **Fidelity:** approximated.
 
 ## The table's columns are sized from estimated text widths
@@ -99,7 +99,7 @@ repeating it.
 
 - **Cause:** `gpuix gap`: a shadow paints under its element, not around it.
 - **Original:** `BentoCard` has no background; `.bento-card-border` is a 1px border plus `0 1px 2px` shadow, changing on hover and on `:focus-within` (`app/components/bento-card.tsx:62-66`, `app/globals.css:1244-1269`).
-- **Port:** the card fills with the page colour so the shadow does not darken it through a transparent fill, then sets the rest, hover and focus-within border colours and shadows from the same values per scheme (`src/pages/compare/card.tsx:5-33, 56-72`). `min-h-[420px]`, `px-6 py-16` and the 44px footer match.
+- **Port:** the card fills with the page colour so the shadow does not darken it through a transparent fill, then sets the rest, hover and focus-within border colours and shadows from the same values per scheme (`src/pages/compare/card.tsx:3-26, 49-65`). `min-h-[420px]`, `px-6 py-16` and the 44px footer match.
 - **gpuix lacks:** an outer box shadow clipped out of the border box: `shadow_fragment` clips only `inset` shadows to the element (`~/code/fdarian/gpuix/zed/crates/gpui_apple/src/shaders.metal:600-654`).
 - **Fidelity:** exact for what is seen.
 
@@ -107,7 +107,7 @@ repeating it.
 
 - **Cause:** `port choice`.
 - **Original:** `<button class="h-1.5 rounded-full transition-all duration-150">`, 24px wide current and 6px others, `foreground` at 40% (`app/compare/page.tsx:217-234`).
-- **Port:** a pressable `div` (Enter, Space, a click) holding a `motion.div` that animates `width` over 0.15s (`src/pages/compare.tsx:166-195`). The 6px-tall hit area is the source's.
+- **Port:** a pressable `div` (Enter, Space, a click) holding a `motion.div` that animates `width` over 0.15s (`src/pages/compare.tsx:166-194`). The 6px-tall hit area is the source's.
 - **Fidelity:** approximated.
 
 ## Fluid side: the port's component widths and Slider engine
@@ -122,5 +122,5 @@ repeating it.
 
 - **Cause:** `port choice` (same set the source shows).
 - **Original:** `SLIDE_ORDER` lists 14 slugs; color-picker, thinking-indicator, thinking-steps and input-copy have no shadcn original, so they are filtered out at runtime (`app/compare/page.tsx:19-71`).
-- **Port:** the ten that render: dropdown, checkbox-group, accordion, tabs, radio-group, slider, input-group, switch, table, tabs-subtle (`src/pages/compare.tsx:31-42`).
+- **Port:** the ten that render: dropdown, checkbox-group, accordion, tabs, radio-group, slider, input-group, switch, table, tabs-subtle (`src/pages/compare.tsx:31-41`).
 - **Fidelity:** exact.

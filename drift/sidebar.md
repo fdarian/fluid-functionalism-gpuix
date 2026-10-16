@@ -129,7 +129,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `not ported yet`.
 - **Original:** the hover highlight keeps its positional spring but fades on `{ duration: 0.08 }` (`fluid-hover-highlight.tsx:resolveHighlightTransition`); the active background moves on `spring.moderate` with `opacity: { duration: 0.08 }` (`sidebar-menu.tsx:520-524`). Reduced motion keeps the fade and drops the travel.
-- **Port:** `FluidHighlight` passes one transition for both position and opacity (`src/lib/fluid-highlight.tsx:55-59,84`), so the fade runs on the spring (0.08 s hover, 0.16 s active). gpuix accepts per-property transitions (`MotionTransition` `{ [prop]: curve }`, `packages/native/js/host.ts:256-260`).
+- **Port:** `FluidHighlight` passes one transition for both position and opacity (`src/lib/fluid-highlight.tsx:58-62,87`), so the fade runs on the spring (0.08 s hover, 0.16 s active). gpuix accepts per-property transitions (`MotionTransition` `{ [prop]: curve }`, `packages/native/js/host.ts:256-260`).
 - **Workaround:** none.
 - **Fidelity:** approximated (the fade is about the same length for hover, twice as long for the active background).
 - **Components it hits:** every `FluidHighlight` user.
@@ -157,7 +157,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `port choice` (the site's header is built in the app, as `NavGroup`; the library `SidebarGroupLabel` keeps its own plainer look).
 - **Original:** the site's count is a `h-5 min-w-5 px-1` centred box in the label row, `tabular-nums`, `text-site-caption` (12/16), so its digits share the badge column (centre 18px from the right edge); the name is `text-foreground`; a `h-px bg-border` hairline (`ml-2 mr-3 mb-1`) sits under both, and a labelled `SidebarGroup` is `p-2 pt-4`, so groups are 16px apart below the first (`app/components/sidebar.tsx:55-74`).
-- **Port:** the site nav is exact: `NavGroup` has the foreground name, the 20px count box, the hairline and the 16px top padding (`src/app.tsx:101-177`). The library `SidebarGroupLabel` (the demo page's) keeps its `count` prop as a bare `caption` text right-aligned at 8px, so a two-digit count ends 4px right of the badge column; it has no hairline, and its groups touch (`src/components/sidebar.tsx:633-664`).
+- **Port:** the site nav is exact: `NavGroup` has the foreground name, the 20px count box, the hairline and the 16px top padding (`src/app.tsx:101-177`). The library `SidebarGroupLabel` (the demo page's) keeps its `count` prop as a bare `caption` text right-aligned at 8px, so a two-digit count ends 4px right of the badge column; it has no hairline, and its groups touch (`src/components/sidebar.tsx:636-667`).
 - **Workaround:** none.
 - **Fidelity:** exact in the site nav; approximated in the library label.
 - **Components it hits:** just this one.
@@ -166,7 +166,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `not ported yet`.
 - **Original:** `SidebarInput` is `h-8` (`h-7` compact), `px-3`, `bg-transparent` with `ring-1 ring-transparent`; hover `bg-muted/50` + `ring-border`; focus `bg-card` + `ring-border`; and `focus-visible:ring-[--focus-ring]` (a text input matches `:focus-visible` on any focus, so a focused field shows the blue ring). Fill and ring ease over 80 ms (`sidebar-core.tsx:1165-1195`). The block adds the icon at `left-2`, `pl-8 pr-12`, `aria-label="Search"`, default placeholder `Search…` and a chip `⌘K` that fades in on hover or focus over 80 ms, or `shortcut={null}` to drop it (`registry/blocks/sidebar-app/search-field.tsx`).
-- **Port:** hover fill `mutedHalf`, focus fill `card`, and the outline is `color.border` for both hover and focus, never the focus-ring colour (`src/components/sidebar.tsx:667-746`). Fill, outline and chip ease over 80 ms (the outline stands in for the source's `ring-1` box shadow). No `aria-label`; the demo passes `placeholder="Search"` without the ellipsis (`src/demos/sidebar.tsx:73`); the chip cannot be dropped (`shortcut` is required). Size is fixed at 32 (`height.menuRow`).
+- **Port:** hover fill `mutedHalf`, focus fill `card`, and the outline is `color.border` for both hover and focus, never the focus-ring colour (`src/components/sidebar.tsx:670-749`). Fill, outline and chip ease over 80 ms (the outline stands in for the source's `ring-1` box shadow). No `aria-label`; the demo passes `placeholder="Search"` without the ellipsis (`src/demos/sidebar.tsx:73`); the chip cannot be dropped (`shortcut` is required). Size is fixed at 32 (`height.menuRow`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -175,7 +175,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `not ported yet`.
 - **Original:** `SidebarContent` is a `ScrollArea` with `scroll-fade` (48px edge mask) and `scroll-divider` hairlines inset 8px at the top and bottom edges while there is more to scroll (`registry/base/sidebar.tsx:276-304`, `app/globals.css:1128-1196`). `.scroll-divider:first-child::before` hides the top one when nothing sits above the scroller, which is the site nav's case (its Search row scrolls inside it) but not a sidebar with a `SidebarHeader` over its content (`app/globals.css:1184`).
-- **Port:** `SidebarContent` is a `ScrollArea` with `fade` and `divider={{ start: false }}`: the 48px fade follows the scroll, and the end hairline fades in over the last 48px (`src/components/sidebar.tsx:606-631`). The start hairline is dropped for every use, so the demo page's sidebar, which has a header above its content, lacks the top one the source draws there. The site nav matches the source, Search row inside the scroller (`src/app.tsx:205-217`).
+- **Port:** `SidebarContent` is a `ScrollArea` with `fade` and `divider={{ start: false }}`: the 48px fade follows the scroll, and the end hairline fades in over the last 48px (`src/components/sidebar.tsx:609-634`). The start hairline is dropped for every use, so the demo page's sidebar, which has a header above its content, lacks the top one the source draws there. The site nav matches the source, Search row inside the scroller (`src/app.tsx:205-217`).
 - **Workaround:** none.
 - **Fidelity:** exact for the site nav; approximated for the demo's sidebar.
 - **Components it hits:** just this one.
@@ -232,7 +232,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `port choice` (the port has four more demos than the source has components, and keeps them out of the nav).
 - **Original:** Search, then Showcase, Introduction and Changelog, then a "System" group (Fluid Hover, Motion, Scrollbars, Sizes, Skill, Surfaces, Typography) and a "Components" group of 28, each with a count; the labels are the component names (`app/components/sidebar.tsx:99-141`, `lib/docs/components.ts`).
-- **Port:** the same rows in the same order: Search, the "Pages" modules listed `"sidebar"` (Showcase, then Introduction and Changelog by `order`), "System" with 7 and "Components" with 28, the demos listed `"sidebar"`, labelled with their titles, which are the component names as written in code. The four port-only demos, file-thumbnail, mobile-drawer, queued-stack and scroll-area, are listed `"menu"`: in the site menu, absent from the nav, the count and the prev / next order. The Compare, Audio Mixer and Concepts pages have no row, as in the source (`src/app.tsx:179-253`, `src/lib/page-nav.ts:5-21`; `drift/site.md`).
+- **Port:** the same rows in the same order: Search, the "Pages" modules listed `"sidebar"` (Showcase, then Introduction and Changelog by `order`), "System" with 7 and "Components" with 28, the demos listed `"sidebar"`, labelled with their titles, which are the component names as written in code. The four port-only demos, file-thumbnail, mobile-drawer, queued-stack and scroll-area, are listed `"menu"`: in the site menu, absent from the nav, the count and the prev / next order. The Compare, Audio Mixer and Concepts pages have no row, as in the source (`src/app.tsx:179-253`, `src/lib/page-nav.ts:5-23`; `drift/site.md`).
 - **Workaround:** none.
 - **Fidelity:** exact for the nav; approximated overall (four demos are reachable from the site menu only).
 - **Components it hits:** just this one.
@@ -250,7 +250,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `not ported yet`.
 - **Original:** `SidebarLayout` runs `SidebarProvider` with the cookie-read `defaultOpen`; `[` collapses and a `showShortcutToast("[", "Sidebar expanded" | "Sidebar collapsed")` follows a key-driven change; a `DesktopReopenTrigger` fades in at the top-left (opacity and scale 0.95 on `spring.fast`) with its own tooltip; the page's `SidebarInset` reflows (`app/components/sidebar-layout.tsx:31-90,184-198`).
-- **Port:** the sidebar is always open at 256px; no key, no toast, no trigger, no persistence (`src/app.tsx:497-653`).
+- **Port:** the sidebar is always open at 256px; no key, no toast, no trigger, no persistence (`src/app.tsx:497-654`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** app frame.
@@ -259,7 +259,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `port choice` (reason not stated; the app is a desktop window, so the breakpoint is never crossed).
 - **Original:** below 1280 the sidebar is a drawer opened by a fixed top-left `SidebarTrigger` ("Open navigation"), closing on route change, with a footer holding "Make them yours" (title, GitHub star button, settings) (`app/components/sidebar.tsx:143-160`, `sidebar-layout.tsx:93-102,184-196`).
-- **Port:** none; "Make them yours" is the right-hand `CustomizeCard` with a Theme select only (`src/app.tsx:396-495`, mounted at `:628`).
+- **Port:** none; "Make them yours" is the right-hand `CustomizeCard` with a Theme select only (`src/app.tsx:396-495`, mounted at `:629`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** app frame.
