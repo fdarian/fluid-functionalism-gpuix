@@ -1,4 +1,8 @@
-import { createAppearance, useGpuixRequired } from "@gpuix/solid";
+import {
+	createAppearance,
+	type HostElement,
+	useGpuixRequired,
+} from "@gpuix/solid";
 import {
 	createEffect,
 	createSignal,
@@ -17,15 +21,21 @@ import {
 	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuButton,
-	SidebarSearchField,
 } from "./components/sidebar";
 import { AppFrame, PANEL_INNER_RADIUS } from "./lib/app-frame";
 import type { Demo } from "./lib/demo";
+import { PageScrollerContext } from "./lib/demo-kit";
+import {
+	createSiteMenu,
+	SITE_MENU_SHORTCUT,
+	SiteCommandMenu,
+} from "./lib/site-command-menu";
 import {
 	bindSystemScheme,
 	color,
 	setThemeChoice,
 	type ThemeChoice,
+	THEMES,
 	themeChoice,
 	type as scale,
 	weight,
@@ -34,12 +44,6 @@ import {
 const SHOWCASE = "showcase";
 const PAGE_WIDTH = 600;
 export const WINDOW_TITLE = "Fluid Functionalism on gpuix";
-
-const THEMES = [
-	{ value: "system", label: "System", icon: "monitor" },
-	{ value: "light", label: "Light", icon: "sun" },
-	{ value: "dark", label: "Dark", icon: "moon" },
-] as const;
 
 function Heading(props: { children: string }) {
 	return (
@@ -59,11 +63,20 @@ function AppSidebar(props: {
 	demos: readonly Demo[];
 	page: string;
 	onPage: (page: string) => void;
+	onSearch: () => void;
 }) {
 	return (
 		<Sidebar leftCornerRadius={PANEL_INNER_RADIUS}>
 			<SidebarHeader>
-				<SidebarSearchField placeholder="Search" shortcut="⌘K" />
+				<SidebarMenu>
+					<SidebarMenuButton
+						testId="nav-search"
+						icon="search"
+						label="Search"
+						badge={SITE_MENU_SHORTCUT}
+						onClick={props.onSearch}
+					/>
+				</SidebarMenu>
 			</SidebarHeader>
 			<SidebarContent>
 				<SidebarMenu>
@@ -220,6 +233,8 @@ export function App(props: { demos: readonly Demo[]; initialPage?: string }) {
 	const current = (): Demo | undefined =>
 		props.demos.find((demo) => demo.slug === page());
 	bindSystemScheme(createAppearance());
+	const siteMenu = createSiteMenu();
+	const [pageScroller, setPageScroller] = createSignal<HostElement>();
 	const renderer = useGpuixRequired();
 	const setAppearance = renderer.setAppearance;
 	if (setAppearance === undefined) {
@@ -239,8 +254,14 @@ export function App(props: { demos: readonly Demo[]; initialPage?: string }) {
 					borderRadius: PANEL_INNER_RADIUS,
 				}}
 			>
-				<AppSidebar demos={props.demos} page={page()} onPage={setPage} />
+				<AppSidebar
+					demos={props.demos}
+					page={page()}
+					onPage={setPage}
+					onSearch={() => siteMenu.setOpen(true)}
+				/>
 				<div
+					ref={setPageScroller}
 					style={{
 						flexGrow: 1,
 						minWidth: 0,
@@ -261,20 +282,28 @@ export function App(props: { demos: readonly Demo[]; initialPage?: string }) {
 							paddingBottom: 40,
 						}}
 					>
-						<Switch>
-							<Match when={page() === SHOWCASE}>
-								<Showcase demos={props.demos} onPage={setPage} />
-							</Match>
-							<Match when={current()} keyed>
-								{(demo: Demo) => <DemoPage demo={demo} />}
-							</Match>
-						</Switch>
+						<PageScrollerContext.Provider value={pageScroller}>
+							<Switch>
+								<Match when={page() === SHOWCASE}>
+									<Showcase demos={props.demos} onPage={setPage} />
+								</Match>
+								<Match when={current()} keyed>
+									{(demo: Demo) => <DemoPage demo={demo} />}
+								</Match>
+							</Switch>
+						</PageScrollerContext.Provider>
 					</div>
 				</div>
 				<div style={{ width: 296, flexShrink: 0, padding: 16 }}>
 					<CustomizeCard />
 				</div>
 			</div>
+			<SiteCommandMenu
+				menu={siteMenu}
+				demos={props.demos}
+				showcase={SHOWCASE}
+				onPage={setPage}
+			/>
 		</AppFrame>
 	);
 }

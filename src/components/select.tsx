@@ -2,7 +2,6 @@ import {
 	type EventPayload,
 	type HostElement,
 	type KeyEvent,
-	motion,
 	useGpuixRequired,
 } from "@gpuix/solid";
 import {
@@ -17,17 +16,18 @@ import {
 	onCleanup,
 	Show,
 } from "solid-js";
+import { FocusRing } from "../lib/focus-ring";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { FormValue } from "../lib/form-value";
-import { Icon } from "../lib/icon";
+import { CheckMark, Icon, LIST_CHECK } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { edgeIndex, isChord, moveIndex, revealRow } from "../lib/list-nav";
 import { PopupSurface } from "../lib/popup";
 import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import { returnFocusTo } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
-import { color, radius, type as scale, scheme, motion as tween, withAlpha, focusRing } from "../lib/theme";
+import { color, colorFade, radius, type as scale, scheme, motion as tween, withAlpha, focusRing } from "../lib/theme";
 
 /** How long a pick holds the popup open so the check and the checked background are seen arriving. */
 const ACK_MS = 300;
@@ -157,8 +157,8 @@ export function Select<Value extends string>(props: {
 		isItemDisabled: (index) => rows()[index]?.disabled === true,
 	});
 	const [triggerHovered, setTriggerHovered] = createSignal(false);
-	/** Set by a pick, so only a check that arrives after the open fades in. */
-	const [picked, setPicked] = createSignal(false);
+	/** The lit row got there by a key (a keyboard open, arrows, Home/End, typeahead): FF draws its focus ring only then, and the pointer takes it away. */
+	const [keyboardNav, setKeyboardNav] = createSignal(false);
 	const [ownValue, setOwnValue] = createSignal<Value | null>(
 		props.defaultValue ?? null,
 	);
@@ -211,6 +211,7 @@ export function Select<Value extends string>(props: {
 				commitValue(rows()[index]);
 				return;
 			}
+			setKeyboardNav(true);
 			hover.setActiveIndex(index);
 			revealIndex(index);
 		},
@@ -225,7 +226,6 @@ export function Select<Value extends string>(props: {
 	};
 	const open = (from: "pointer" | "down" | "up" = "pointer") => {
 		if (props.disabled === true || presence.open()) return;
-		setPicked(false);
 		revealOnMeasure = true;
 		openedAt = performance.now();
 		pressedIndex = null;
@@ -234,6 +234,7 @@ export function Select<Value extends string>(props: {
 		dragCommits = false;
 		typeahead.reset();
 		presence.show();
+		setKeyboardNav(from !== "pointer");
 		hover.setActiveIndex(openHighlight(from));
 	};
 	const returnFocus = () => {
@@ -251,7 +252,6 @@ export function Select<Value extends string>(props: {
 	};
 	const pick = (row: SelectItem<Value>) => {
 		if (row.disabled === true) return;
-		setPicked(true);
 		commitValue(row);
 		clearTimeout(ackTimer);
 		ackTimer = setTimeout(close, ACK_MS);
@@ -273,10 +273,12 @@ export function Select<Value extends string>(props: {
 			false,
 		);
 		if (next === null) return;
+		setKeyboardNav(true);
 		hover.setActiveIndex(next);
 		revealIndex(next);
 	};
 	const jump = (index: number) => {
+		setKeyboardNav(true);
 		hover.setActiveIndex(index);
 		revealIndex(index);
 	};
@@ -343,6 +345,7 @@ export function Select<Value extends string>(props: {
 		if (allowed) pick(row);
 	};
 	const onListMouseMove = (event: EventPayload) => {
+		setKeyboardNav(false);
 		hover.handlers.onMouseMove(event);
 		if (event.pressedButton !== 0 || event.y === undefined) {
 			dragFromY = undefined;
@@ -363,7 +366,9 @@ export function Select<Value extends string>(props: {
 	);
 	/** A pick moved the checked row; the highlight follows the pointer again. */
 	createEffect(() => {
-		if (!presence.mounted()) hover.setActiveIndex(null);
+		if (presence.mounted()) return;
+		hover.setActiveIndex(null);
+		setKeyboardNav(false);
 	});
 
 	const rectOf = (index: number | null) => () => {
@@ -405,7 +410,6 @@ export function Select<Value extends string>(props: {
 							hover.activeIndex() === slot.index || value() === slot.row.value
 						}
 						checked={value() === slot.row.value}
-						fadeCheck={picked()}
 						hover={hover}
 						id={rowId(slot.index)}
 						testId={
@@ -513,7 +517,8 @@ export function Select<Value extends string>(props: {
 						keyboardFocusDim: false,
 						hover: { backgroundColor: color.hover },
 						active: { backgroundColor: color.active },
-						focusVisible: focusRing(0),
+						// FF's focus moves into the popup while it is open, so the trigger's ring waits for the close; here the trigger keeps focus and the popup's own ring takes over.
+						...(presence.open() ? {} : { focusVisible: focusRing(0) }),
 					}}
 				>
 					<div
@@ -561,6 +566,7 @@ export function Select<Value extends string>(props: {
 						name="chevron-down"
 						size={triggerSpec().icon}
 						strokeWidth={2}
+						fade
 						color={triggerHovered() ? color.foreground : color.mutedForeground}
 					/>
 				</div>
@@ -620,6 +626,14 @@ export function Select<Value extends string>(props: {
 								radius={radius.item}
 								background={color.hover}
 							/>
+							<FocusRing
+								ring={{ rect: () => (keyboardNav() ? hoverRect() : null) }}
+								testId={
+									props.testId === undefined
+										? undefined
+										: `${props.testId}-focus-ring`
+								}
+							/>
 							<For each={indexed()}>{(slot) => renderSlot(slot)}</For>
 						</div>
 					</div>
@@ -645,7 +659,6 @@ function Row<Value extends string>(props: {
 	spec: Spec;
 	lit: boolean;
 	checked: boolean;
-	fadeCheck: boolean;
 	hover: ReturnType<typeof createFluidHover>;
 	id: string;
 	testId?: string;
@@ -693,6 +706,7 @@ function Row<Value extends string>(props: {
 						name={name()}
 						size={props.spec.icon}
 						strokeWidth={props.lit ? 2 : 1.5}
+						fade
 						color={props.lit ? color.foreground : color.mutedForeground}
 					/>
 				)}
@@ -706,6 +720,7 @@ function Row<Value extends string>(props: {
 					textOverflow: "ellipsis",
 					overflow: "hidden",
 					color: props.lit ? color.foreground : color.mutedForeground,
+					...colorFade,
 				}}
 			>
 				{props.row.label}
@@ -717,20 +732,13 @@ function Row<Value extends string>(props: {
 					flexShrink: 0,
 				}}
 			>
-				<Show when={props.checked}>
-					<motion.div
-						initial={props.fadeCheck ? { opacity: 0 } : false}
-						animate={{ opacity: 1 }}
-						transition={{ duration: 0.08, ease: "easeOut" }}
-					>
-						<Icon
-							name="check"
-							size={props.spec.icon}
-							strokeWidth={2}
-							color={color.foreground}
-						/>
-					</motion.div>
-				</Show>
+				<CheckMark
+					checked={props.checked}
+					path={LIST_CHECK}
+					size={props.spec.icon}
+					strokeWidth={2}
+					color={color.foreground}
+				/>
 			</div>
 		</div>
 	);

@@ -22,6 +22,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, createReflowGate, type FluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
+import { IS_MAC } from "../lib/platform";
 import { createPresence } from "../lib/presence";
 import { moveIndex, revealRow } from "../lib/list-nav";
 import {
@@ -79,8 +80,6 @@ interface CommandMenuSection {
 
 // ─── Shortcut caps ───────────────────────────────────────────────────────────
 
-const MAC = process.platform === "darwin";
-
 const CAP_LABELS: Record<string, { mac: string; other: string }> = {
 	mod: { mac: "⌘", other: "Ctrl" },
 	meta: { mac: "⌘", other: "Win" },
@@ -116,7 +115,7 @@ export function formatShortcut(shortcut: string): string[] {
 			continue;
 		}
 		const cap = CAP_LABELS[token.toLowerCase()];
-		if (cap !== undefined) caps.push(MAC ? cap.mac : cap.other);
+		if (cap !== undefined) caps.push(IS_MAC ? cap.mac : cap.other);
 		else if (token.length === 1) caps.push(token.toUpperCase());
 		else caps.push(token.charAt(0).toUpperCase() + token.slice(1));
 	}
@@ -418,6 +417,7 @@ export function CommandMenu(props: {
 					? enabled[enabled.length - 1]
 					: moveIndex(hover.activeIndex(), to, all.length, (index) => all[index].disabled);
 		if (next === null) return;
+		hover.releasePointer();
 		hover.setActiveIndex(next);
 		lastActive = next;
 		centerRow(next);
@@ -1249,11 +1249,7 @@ export function CommandMenuFooter(props: {
 const DIALOG_WIDTH = 540;
 const DIALOG_MAX_HEIGHT = 440;
 
-/**
- * The modal shell. Escape (from the field), a press outside the panel and a
- * pick all close it. There is no global shortcut: gpuix only routes window key
- * events to the handlers passed to `render()`, which a component cannot reach.
- */
+/** The modal shell. Escape (from the field), a press outside the panel and a pick all close it. Opening it from a key is the caller's: see `createSiteMenu`. */
 export function CommandMenuDialog(props: {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;

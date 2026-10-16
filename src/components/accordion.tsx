@@ -19,6 +19,7 @@ import {
 } from "solid-js";
 import { StableLabel } from "../lib/stable-label";
 import { FluidHighlight } from "../lib/fluid-highlight";
+import { createFocusRing, FocusRing, type FocusRingState } from "../lib/focus-ring";
 import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { createMeasuredHeight } from "../lib/measured-height";
@@ -58,6 +59,7 @@ interface RootState {
 
 interface GroupScope {
 	hover: FluidHover;
+	focusRing: FocusRingState;
 	registerTrigger: (
 		element: HostElement,
 		entry: { value: string; disabled: () => boolean; focus: () => void },
@@ -68,8 +70,8 @@ interface GroupScope {
 	/** The pointer is on a row whose item is closed: open tints dim to let it read. */
 	hoveringClosedRow: () => boolean;
 	overContent: (index: number | null) => void;
-	focusRow: (index: number) => void;
-	blurRow: () => void;
+	focusRow: (index: number, event: EventPayload) => void;
+	blurRow: (index: number) => void;
 	focusSibling: (
 		index: number,
 		step: "next" | "previous" | "first" | "last",
@@ -158,6 +160,7 @@ function createRootState(
 type RootProps = ValueProps & {
 	size?: AccordionSize;
 	highlight?: AccordionHighlight;
+	testId?: string;
 	children: JSX.Element;
 };
 
@@ -179,10 +182,12 @@ export function AccordionGroup(props: RootProps) {
 	const [reflow, setReflow] = createSignal(false);
 
 	const hover = createFluidHover();
+	const focusRing = createFocusRing(hover);
 	let mouseInside = false;
 
 	const scope: GroupScope = {
 		hover,
+		focusRing,
 		reflow,
 		hoveringClosedRow() {
 			const active = hover.activeIndex();
@@ -197,10 +202,12 @@ export function AccordionGroup(props: RootProps) {
 			onCleanup(() => triggers.delete(index));
 			return index;
 		},
-		focusRow(index) {
+		focusRow(index, event) {
 			hover.setActiveIndex(index);
+			focusRing.focus(index, event);
 		},
-		blurRow() {
+		blurRow(index) {
+			focusRing.blur(index);
 			// Focus moving to a sibling trigger arrives as its focus right after this blur.
 			queueMicrotask(() => {
 				const focused = renderer.getFocusedElementId?.();
@@ -244,6 +251,7 @@ export function AccordionGroup(props: RootProps) {
 		<RootContext.Provider value={root}>
 			<GroupContext.Provider value={scope}>
 				<div
+					testId={props.testId}
 					{...hover.containerProps}
 					onMouseEnter={() => {
 						mouseInside = true;
@@ -273,6 +281,11 @@ export function AccordionGroup(props: RootProps) {
 						session={hover.session}
 						radius={radius.item}
 						background={color.hover}
+						travel={() => !reflow()}
+					/>
+					<FocusRing
+						ring={focusRing}
+						testId={props.testId && `${props.testId}-focus-ring`}
 						travel={() => !reflow()}
 					/>
 					{props.children}
@@ -474,11 +487,14 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 				aria-expanded={item.isOpen()}
 				aria-controls={item.isOpen() ? item.panelId : undefined}
 				aria-disabled={item.disabled()}
-				onFocus={() => {
+				onFocus={(event: EventPayload) => {
 					const own = item.index();
-					if (own !== undefined) group?.focusRow(own);
+					if (own !== undefined) group?.focusRow(own, event);
 				}}
-				onBlur={() => group?.blurRow()}
+				onBlur={() => {
+					const own = item.index();
+					if (own !== undefined) group?.blurRow(own);
+				}}
 				testId={props.testId}
 				style={{
 					position: "relative",
@@ -495,7 +511,8 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					cursor: "pointer",
 					userSelect: "none",
 					keyboardFocusDim: false,
-					focusVisible: focusRing(group === undefined ? 0 : 1),
+					// A group's one shared ring is drawn by AccordionGroup.
+					...(group === undefined ? { focusVisible: focusRing(0) } : {}),
 				}}
 			>
 				<StableLabel

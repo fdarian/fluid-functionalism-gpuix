@@ -5,7 +5,7 @@ Can [gpuix](https://github.com/remorses/gpuix), a GPUI-backed renderer with no D
 
 Yes. 32 demo pages cover every component of the library (36 component files, counting shared parts such as
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
-behaviour. What does not carry over is catalogued below: [15 gpuix bugs and 23 missing features](#gpuix-limitations).
+behaviour. What does not carry over is catalogued below: [15 gpuix bugs and 24 missing features](#gpuix-limitations).
 
 | | |
 |---|---|
@@ -20,7 +20,8 @@ bun --hot src/main.tsx
 ```
 
 The app is a sidebar of demo pages (one per component) plus a "Make them yours" card with a System / Light / Dark
-switch (System follows the OS appearance). It sits in a browser-style frame: a transparent titlebar with the
+switch (System follows the OS appearance). The sidebar's Search row, or ⌘K / Ctrl+K anywhere, opens the site menu:
+every page and the theme in one field. It sits in a browser-style frame: a transparent titlebar with the
 traffic lights, a title across the top bar, and the page in a rounded panel. Inter is loaded from `assets/fonts/`.
 
 `@gpuix/native` and `@gpuix/solid` are bun workspaces pointing at the fork at `~/code/fdarian/gpuix`, wired like
@@ -74,6 +75,7 @@ settle / expectText / capture`; see `ShotContext` in `src/lib/demo.ts`. Give ele
 |---|---|
 | `theme.ts` | Both columns of every `light-dark()` in `app/globals.css` (`color-mix()` mixed offline), type scale, radii, springs. `color.x` reads a `scheme` signal, so a JSX prop that touches it re-colours on a theme change; read tokens inside JSX or a function, never at module scope. `withAlpha`, `surface(level)`, `focusRing(offset)`. |
 | `fluid-hover.ts`, `fluid-highlight.tsx` | The site's `use-fluid-hover`: rows register with a `ResizeObserver`, their boxes are read with `getBoundingClientRect` when one reports, `pickNearest` (ported verbatim) resolves the pointer to a row including gaps, and one highlight glides between rows. `hover.containerProps` and `useHoverItem` wire a list. |
+| `focus-ring.tsx` | The shared keyboard focus ring of accordion groups, tabs, tabs-subtle, checkbox, radio and select: one outline box 2px outside the focused row that springs between the rects fluid hover measures. `createFocusRing(hover)` collects `onFocus` / `onBlur` from the rows and counts only `event.focusVisible`, so a click draws none; the ring fades out 60 ms after the last blur and appears in place, not travelling from where it was. |
 | `measured-height.ts` | A box whose height springs to its content's: the content box reports its size through `onLayout`, used by every collapse. |
 | `popup.tsx`, `presence.ts` | Popup chrome on `<anchored fit="flip">` (`PopupSurface`; `createPlacementState` keeps the reported side and available height), and `createPresence` (mounted outlives open so an exit can play). |
 | `list-nav.ts` | `moveIndex` (skip disabled, wrap or clamp) and `revealRow` (scroll a row into view by hand). |
@@ -81,6 +83,7 @@ settle / expectText / capture`; see `ShotContext` in `src/lib/demo.ts`. Give ele
 | `clock.ts` | One shared, ref-counted frame clock for every JS-driven loop. |
 | `fonts.ts`, `app-frame.tsx` | The static Inter files passed to `render()` and the test renderer; the window frame (chrome-coloured bar, rounded page panel). |
 | `press.ts`, `icons.ts`, `icon.tsx` | The press-shrink shadow; lucide glyphs as SVG strings (`defineIcon` for a component's own). |
+| `site-command-menu.tsx`, `platform.ts` | The site menu (a `CommandMenuDialog` of pages and theme) and the window-wide Mod+K that toggles it, through gpuix's `window` event target; `IS_MAC`. |
 | `demo.ts`, `demo-kit.tsx` | The demo contract and the card every page is made of. |
 </details>
 
@@ -99,6 +102,7 @@ own file in [`limitations/`](limitations) has the detail. "Bug" means gpuix does
 | Used by | What | Workaround here |
 |---|---|---|
 | combobox, dropdown, select, tooltip (every popup on gpuix's `DismissableLayer`), and `returnFocusTo` in dropdown, select, color-picker | `VIEW_BUSY`: reading focus state (`getFocusedElementId`, `matches(":focus")`) inside a mousedown, mouseup, click or wheel handler throws on macOS, because those run in synchronous dispatch. gpuix's own `DismissableLayer` does it, so a pointer-opened popup fails to open (seen headless, likely live too). There is no `document.activeElement` | none yet |
+| slider | `MotionValue.animate` and `jump` throw inside a press, release or key handler ("This renderer call cannot run inside an event handler that native called synchronously"), where Framer's `animate` and `set` run freely. Values derived in JS (`createTransform` of several values) trail their inputs by one frame (FORK.md:915-917) | `createMotionWrites` queues each write in a microtask (`limitations/slider.md`) |
 | accordion, banner, button, card, carousel-dots, chat-message, input-copy, input-message, tabs, tabs-subtle, thinking-steps (all use `buttonProps`) | `buttonProps` handles keydown on the way up, so a `buttonProps` element nested in another is clicked twice on Enter: the inner one clicks itself and the outer one clicks the same target. The fix is to act only when `target === currentTarget` | none; nested cases are not counted |
 | dialog, mobile-drawer | `DialogBackdrop` closes on mousedown; the DOM and Base UI close on click | The app's own backdrop div closes on a click that presses and releases on it |
 | dialog, mobile-drawer | A reactive prop change on `DialogPopup` re-creates the popup and loses focus | `aria-labelledby` and `-describedby` are static ids |
@@ -128,6 +132,7 @@ own file in [`limitations/`](limitations) has the detail. "Bug" means gpuix does
 | not counted | `em`, `rem`, `vw` and `vh` units | Pixel numbers |
 | not counted | `disabled` on anything but an input: other elements get `aria-disabled` only, so they stay focusable and clickable | `aria-disabled` plus the component's own guard |
 | not counted | `url()` backgrounds and masks | `<img>` elements and SVG `<mask>` |
+| command-menu (and every long demo page) | Culling: elements a scroller clips away are still built, laid out and painted each frame, so a page of many menus costs several times a short one (`<virtual-list>` is the only exception) | `DemoCard` hides its content with `display: none` while it is far from the page scroller (`limitations/command-menu.md`) |
 | file-thumbnail | A canvas pixel path (a PDF page preview) | The caller passes a type and the thumbnail shows a glyph |
 | not counted | Effect groups (`filter`, `backdrop-filter`, `mask`, `clip`, group opacity) off macOS | none |
 | carousel-dots, file-thumbnail, thinking-indicator, thinking-steps | `requestAnimationFrame` | `lib/clock.ts`: one shared, ref-counted `setInterval` frame clock |

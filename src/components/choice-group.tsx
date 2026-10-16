@@ -1,4 +1,5 @@
 import {
+	type EventPayload,
 	type HostElement,
 	type KeyEvent,
 	useGpuixRequired,
@@ -16,8 +17,9 @@ import {
 } from "solid-js";
 import { StableLabel } from "../lib/stable-label";
 import { FluidHighlight } from "../lib/fluid-highlight";
+import { createFocusRing, FocusRing, type FocusRingState } from "../lib/focus-ring";
 import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
-import { color, radius, scheme, type as scale, motion as tween, weight, focusRing } from "../lib/theme";
+import { color, radius, scheme, type as scale, motion as tween, weight } from "../lib/theme";
 
 /**
  * What checkbox-group and radio-group share: a vertical list of focusable
@@ -101,6 +103,7 @@ interface RowEntry {
 
 interface ChoiceContextValue {
 	hover: FluidHover;
+	focusRing: FocusRingState;
 	size: Accessor<ChoiceSize>;
 	arrowsSelect: boolean;
 	registerRow(index: number, entry: RowEntry): void;
@@ -133,6 +136,7 @@ export function ChoiceGroup(props: {
 		throw new Error("This renderer does not expose focusElement");
 	}
 	const hover = createFluidHover();
+	const focusRing = createFocusRing(hover);
 	const rows = new Map<number, RowEntry>();
 
 	const rectOf = (index: number | null) => () => {
@@ -157,6 +161,7 @@ export function ChoiceGroup(props: {
 
 	const context: ChoiceContextValue = {
 		hover,
+		focusRing,
 		size: () => props.size ?? "default",
 		arrowsSelect: props.arrowsSelect ?? false,
 		registerRow(index, entry) {
@@ -214,6 +219,10 @@ export function ChoiceGroup(props: {
 					session={hover.session}
 					radius={radius.item}
 					background={color.hover}
+				/>
+				<FocusRing
+					ring={focusRing}
+					testId={props.testId && `${props.testId}-focus-ring`}
 				/>
 				{props.children}
 			</div>
@@ -289,8 +298,12 @@ export function ChoiceRow(props: {
 			tabIndex={props.tabbable ? 0 : -1}
 			onClick={props.onActivate}
 			onKeyDown={onKeyDown}
-			onFocus={() => context.hover.setActiveIndex(props.index)}
+			onFocus={(event: EventPayload) => {
+				context.hover.setActiveIndex(props.index);
+				context.focusRing.focus(props.index, event);
+			}}
 			onBlur={() => {
+				context.focusRing.blur(props.index);
 				if (context.hover.activeIndex() === props.index) {
 					context.hover.setActiveIndex(null);
 				}
@@ -307,7 +320,6 @@ export function ChoiceRow(props: {
 				borderRadius: radius.item,
 				cursor: "pointer",
 				keyboardFocusDim: false,
-				focusVisible: focusRing(1),
 			}}
 		>
 			{props.indicator(active)}

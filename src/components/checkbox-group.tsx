@@ -1,7 +1,5 @@
-import { AnimatePresence, motion } from "@gpuix/solid";
-import { type JSX, Show } from "solid-js";
-import { Icon } from "../lib/icon";
-import { defineIcon } from "../lib/icons";
+import type { JSX } from "solid-js";
+import { CheckMark } from "../lib/icon";
 import { color } from "../lib/theme";
 import {
 	ChoiceGroup,
@@ -12,11 +10,7 @@ import {
 	ROW,
 } from "./choice-group";
 
-const CHECK = defineIcon('<path d="M6 12L10 16L18 8"/>');
-
-/** The check draws in 80 ms ease-out and retracts in 40 ms ease-in. */
-const DRAW_IN = { duration: 0.08, ease: "easeOut" } as const;
-const DRAW_OUT = { duration: 0.04, ease: "easeIn" } as const;
+const CHECK = "M6 12L10 16L18 8";
 
 export function CheckboxGroup(props: {
 	/** The whole checked set: the group merges contiguous checked rows into one background. */
@@ -68,31 +62,15 @@ function Checkbox(props: {
 					borderColor: indicatorBorder(props.checked, props.active),
 				}}
 			/>
-			<AnimatePresence initial={false}>
-				<Show when={props.checked}>
-					{/* gpuix cannot animate a stroke, so the check is wiped in from the left under a clip, which reads as the draw. */}
-					<motion.div
-						initial={{ width: 0 }}
-						animate={{ width: glyph() }}
-						exit={{ width: 0 }}
-						transition={props.checked ? DRAW_IN : DRAW_OUT}
-						style={{
-							position: "absolute",
-							top: inset(),
-							left: inset(),
-							height: glyph(),
-							overflow: "hidden",
-						}}
-					>
-						<Icon
-							name={CHECK}
-							size={glyph()}
-							strokeWidth={2}
-							color={color.foreground}
-						/>
-					</motion.div>
-				</Show>
-			</AnimatePresence>
+			<div style={{ position: "absolute", top: inset(), left: inset() }}>
+				<CheckMark
+					checked={props.checked}
+					path={CHECK}
+					size={glyph()}
+					strokeWidth={2}
+					color={color.foreground}
+				/>
+			</div>
 		</div>
 	);
 }

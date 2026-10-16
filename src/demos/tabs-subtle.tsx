@@ -56,6 +56,7 @@ export function Demo() {
 			<div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
 				<Section caption="Basic">
 					<TabsSubtle
+						testId="basic-list"
 						idPrefix="basic-demo"
 						selectedIndex={basic()}
 						onSelect={setBasic}
@@ -161,6 +162,7 @@ export function Demo() {
 				</Section>
 				<Section caption="Keyboard: arrows move focus, Enter selects">
 					<TabsSubtle
+						testId="kb-list"
 						idPrefix="keyboard-demo"
 						selectedIndex={keyboard()}
 						onSelect={setKeyboard}

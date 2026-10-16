@@ -18,13 +18,14 @@ import {
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, createReflowGate, useHoverItem } from "../lib/fluid-hover";
 import { FormValue } from "../lib/form-value";
-import { Icon } from "../lib/icon";
+import { CheckMark, Icon, LIST_CHECK } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { isChord, moveIndex, revealRow } from "../lib/list-nav";
 import { PopupSurface } from "../lib/popup";
 import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import {
 	color,
+	colorFade,
 	radius,
 	type as scale,
 	motion as tween,
@@ -516,6 +517,7 @@ export function Combobox(props: {
 						name="chevron-down"
 						size={16}
 						strokeWidth={2}
+						fade
 						color={chevronHovered() ? color.foreground : color.mutedForeground}
 					/>
 				</div>
@@ -632,6 +634,7 @@ export function Combobox(props: {
 														name={name()}
 														size={16}
 														strokeWidth={lit() ? 2 : 1.5}
+														fade
 														color={lit() ? color.foreground : color.mutedForeground}
 													/>
 												)}
@@ -642,6 +645,7 @@ export function Combobox(props: {
 													minWidth: 0,
 													...scale.body,
 													color: lit() ? color.foreground : color.mutedForeground,
+													...colorFade,
 													whiteSpace: "nowrap",
 													textOverflow: "ellipsis",
 													overflow: "hidden",
@@ -650,14 +654,13 @@ export function Combobox(props: {
 												{row.label}
 											</text>
 											<div style={{ width: 16, height: 16, flexShrink: 0 }}>
-												<Show when={value() === row.value}>
-													<Icon
-														name="check"
-														size={16}
-														strokeWidth={2}
-														color={color.foreground}
-													/>
-												</Show>
+												<CheckMark
+													checked={value() === row.value}
+													path={LIST_CHECK}
+													size={16}
+													strokeWidth={2}
+													color={color.foreground}
+												/>
 											</div>
 										</div>
 									);

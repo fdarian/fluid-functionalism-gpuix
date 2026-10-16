@@ -8,6 +8,7 @@ import {
 } from "@gpuix/solid";
 import {
 	createContext,
+	createComputed,
 	createEffect,
 	createMemo,
 	createSignal,
@@ -16,6 +17,7 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
+import { createFocusRing, FocusRing, type FocusRingState } from "../lib/focus-ring";
 import {
 	createFluidHover,
 	type FluidHover,
@@ -25,7 +27,7 @@ import { StableLabel } from "../lib/stable-label";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { moveIndex } from "../lib/list-nav";
-import { color, height, radius, type as scale, motion as tween, weight, focusRing } from "../lib/theme";
+import { color, height, radius, type as scale, motion as tween, weight } from "../lib/theme";
 
 export type TabsSubtleSize = "default" | "compact";
 
@@ -53,6 +55,7 @@ interface SubtleScope {
 	idPrefix: () => string | undefined;
 	size: () => TabsSubtleSize;
 	hover: FluidHover;
+	focusRing: FocusRingState;
 	elements: Map<number, HostElement>;
 	mouseInside: () => boolean;
 	/** The tab that holds the roving tab stop. */
@@ -92,6 +95,7 @@ export function TabsSubtle(props: {
 	children: JSX.Element;
 }) {
 	const hover = createFluidHover({ axis: "x" });
+	const focusRing = createFocusRing(hover);
 	const [mouseInside, setMouseInside] = createSignal(false);
 	/** Manual activation: arrows move focus, and the focused tab keeps the tab stop until the selection changes. */
 	const [focusedTab, setFocusedTab] = createSignal<number>();
@@ -112,6 +116,7 @@ export function TabsSubtle(props: {
 		idPrefix: () => props.idPrefix,
 		size: () => props.size ?? "default",
 		hover,
+		focusRing,
 		elements: new Map(),
 		mouseInside,
 		tabStop: () => focusedTab() ?? Math.max(props.selectedIndex, 0),
@@ -219,6 +224,10 @@ export function TabsSubtle(props: {
 						</motion.div>
 					)}
 				</Show>
+				<FocusRing
+					ring={focusRing}
+					testId={props.testId && `${props.testId}-focus-ring`}
+				/>
 				{props.children}
 			</div>
 		</SubtleContext.Provider>
@@ -236,6 +245,15 @@ export function TabsSubtleItem(props: {
 	const metrics = () => sizes[scope.size()];
 	let element: HostElement | undefined;
 	const [unfoldedWidth, setUnfoldedWidth] = createSignal<number>();
+	/** The tab selected at mount is born unfolded: its first measured width is placed, not tweened. */
+	const [selectionChanged, setSelectionChanged] = createSignal(false);
+	createComputed(
+		on(
+			() => scope.selectedIndex() === props.index,
+			() => setSelectionChanged(true),
+			{ defer: true },
+		),
+	);
 
 	createEffect(() => {
 		if (element === undefined) throw new Error("Tab is not mounted");
@@ -257,6 +275,15 @@ export function TabsSubtleItem(props: {
 			? undefined
 			: `${scope.idPrefix()}-panel-${props.index}`;
 	// The unfolding label's width is animated to a measured number (gpuix cannot animate `auto`): the box holding the label and its gap to the icon reports it.
+	const labelWidthTarget = () => {
+		if (!showLabel()) return { width: 0 };
+		const measured = unfoldedWidth();
+		return measured === undefined ? {} : { width: measured };
+	};
+	const labelWidthTransition = () => {
+		if (!selectionChanged()) return { duration: 0 };
+		return showLabel() ? tween.fast : tween.fastExit;
+	};
 
 	const onKeyDown = (event: KeyEvent) => {
 		if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) {
@@ -307,11 +334,13 @@ export function TabsSubtleItem(props: {
 			id={tabId()}
 			aria-controls={isSelected() ? panelId() : undefined}
 			testId={props.testId}
-			onFocus={() => {
+			onFocus={(event: EventPayload) => {
+				scope.focusRing.focus(props.index, event);
 				scope.focusTab(props.index);
 				scope.hover.setActiveIndex(props.index);
 			}}
-			onBlur={() =>
+			onBlur={() => {
+				scope.focusRing.blur(props.index);
 				// Focus moving to a sibling tab stays inside the list: only a real exit drops the highlight.
 				queueMicrotask(() => {
 					const focused = renderer.getFocusedElementId?.();
@@ -319,8 +348,8 @@ export function TabsSubtleItem(props: {
 						if (tab.id === focused) return;
 					}
 					if (!scope.mouseInside()) scope.hover.setActiveIndex(null);
-				})
-			}
+				});
+			}}
 			style={{
 				position: "relative",
 				display: "flex",
@@ -334,7 +363,6 @@ export function TabsSubtleItem(props: {
 				borderRadius: radius.item,
 				cursor: "pointer",
 				keyboardFocusDim: false,
-				focusVisible: focusRing(1),
 			}}
 		>
 			<Show when={props.icon}>
@@ -350,8 +378,9 @@ export function TabsSubtleItem(props: {
 			{collapsible() ? (
 				<motion.div
 					initial={false}
-					animate={{ width: showLabel() ? (unfoldedWidth() ?? 0) : 0 }}
-					transition={showLabel() ? tween.fast : tween.fastExit}
+					animate={labelWidthTarget()}
+					transition={labelWidthTransition()}
+					onMotionComplete={() => scope.hover.remeasure()}
 					style={{
 						display: "flex",
 						flexDirection: "row",
