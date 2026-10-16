@@ -1,8 +1,20 @@
-import { buttonProps, motion, useGpuixRequired } from "@gpuix/solid";
+import {
+	buttonProps,
+	type MotionTransition,
+	motion,
+	useGpuixRequired,
+} from "@gpuix/solid";
 import { createSignal, type JSX, Show } from "solid-js";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
-import { color, radius, type as scale, scheme, motion as tween, focusRing } from "../lib/theme";
+import {
+	color,
+	focusRing,
+	radius,
+	type as scale,
+	scheme,
+	motion as tween,
+} from "../lib/theme";
 import { type FileLike, FileThumbnail } from "./file-thumbnail";
 
 const copyGlyph = defineIcon(
@@ -17,9 +29,8 @@ const regenerateGlyph = defineIcon(
 
 const subtitle = { fontSize: 14, lineHeight: 20 } as const;
 const ENTRANCE_RISE = 8;
-/** group-hover's `transition-opacity duration-150`. */
-const META_FADE = { duration: 0.15, ease: "easeOut" } as const;
-
+/** group-hover's `transition-opacity duration-150`, Tailwind's default curve. */
+const META_FADE: MotionTransition = { duration: 0.15, ease: [0.4, 0, 0.2, 1] };
 
 export type ChatAction = "copy" | "edit" | "regenerate";
 
