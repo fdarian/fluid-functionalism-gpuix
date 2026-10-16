@@ -7,8 +7,12 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 602 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 607 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
+
+The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
+[base-ui-solid-gpuix](../base-ui-solid-gpuix), headless Base UI primitives for Solid, a sibling repository this one
+consumes as source. This repository keeps the styling, the springs and the fluid hover.
 
 | | |
 |---|---|
@@ -17,8 +21,11 @@ by cause (gpuix gap, port choice or not ported yet).
 
 ## Run it
 
+Needs Bun, pnpm, and two sibling checkouts next to this repository: the gpuix fork (`../gpuix`, `~/code/fdarian/gpuix`) and
+`../base-ui-solid-gpuix`.
+
 ```bash
-pnpm install
+pnpm install    # from this directory only; see below
 pnpm start
 ```
 
@@ -29,20 +36,33 @@ Compare, Concepts and Audio Mixer are reached from it. It sits in a browser-styl
 the traffic lights, a title across the top bar, and the page in a rounded panel. Inter is loaded from
 `assets/fonts/`.
 
-`@gpuix/native` and `@gpuix/solid` come from the fork at `~/code/fdarian/gpuix`, a sibling checkout (`../gpuix`): native is
-a `link:`, solid is a `file:` copy. The fork must be at `poc` a02ec23 or later: the highlights and popups use its native
-`motion` springs, so rebuild the addon and the `@gpuix/solid` dist after pulling it (see the fork's `FORK.md`, "Building"),
-then run `pnpm install` here to refresh the copy. The Solid JSX transform is a Bun preload (`bunfig.toml`), so there is
-no build step. Two copies of Solid give two reactive systems and nothing updates, so `solid-js` is pinned to the version
-gpuix uses and `@gpuix/solid` is a `file:` copy rather than a `link:`: through a link it would resolve `solid-js` from the
-fork's own `node_modules`, a different file from this app's. The copy resolves its `solid-js` peer from this app, and
-`pnpm-workspace.yaml` points the copy's `@gpuix/native` dependency back at the fork.
-
 ```bash
-pnpm check                             # check:type (tsc) then check:scenarios (every scripts/check-*)
-pnpm screenshots [slug]                # headless captures of every demo and page, or of one, into screenshots/<slug>/
-bun scripts/live-check.tsx             # the same flow against the real window, via gpuix's automation client
+pnpm check                  # check:type (tsc), then check:scenarios
+pnpm check:type             # tsc over src/ and scripts/, base-ui-solid-gpuix's source included
+pnpm check:scenarios        # every scripts/check-*, about 30 minutes
+pnpm screenshots [slug]     # headless captures of every demo and page into screenshots/<slug>/, about 25 minutes for all; or one slug
+bun scripts/live-check.tsx  # the same flow against the real window, via gpuix's automation client
 ```
+
+<details>
+<summary>How gpuix and base-ui-solid-gpuix are wired in</summary>
+
+- **gpuix.** `@gpuix/native` and `@gpuix/solid` come from the fork at `~/code/fdarian/gpuix`: native is a `link:`, solid is a
+  `file:` copy. The fork must be at `poc` a02ec23 or later: the highlights and popups use its native `motion` springs,
+  so rebuild the addon and the `@gpuix/solid` dist after pulling it (see the fork's `FORK.md`, "Building"), then run
+  `pnpm install` here to refresh the copy. The Solid JSX transform is a Bun preload (`bunfig.toml`), so there is no
+  build step.
+- **base-ui-solid-gpuix.** A `link:../base-ui-solid-gpuix` dependency, and `pnpm-workspace.yaml` lists that folder as a
+  workspace member. Its source is compiled with this repository's tsconfig and run by Bun directly.
+- **One runtime instance.** Two copies of `solid-js` give two reactive systems and nothing updates; two of `@gpuix/solid`
+  give two renderer registries. A `link:` of `@gpuix/solid` would resolve `solid-js` from the fork's own
+  `node_modules`, so it is a `file:` copy whose peer resolves from this app, and `pnpm-workspace.yaml` points the
+  copy's `@gpuix/native` back at the fork. A `file:` dependency gets a store path per project directory, so installing
+  from `../base-ui-solid-gpuix` links a second `@gpuix/solid`: always install from this repository's root.
+  `scripts/check-single-instance.ts` (one of the `check:scenarios` scripts) fails when either package resolves to more than one file.
+- `pnpm` scripts run in `../base-ui-solid-gpuix` never auto-install (its `verifyDepsBeforeRun` is off); a bare
+  `pnpm install` there links a second `@gpuix/solid`.
+</details>
 
 `scripts/screenshots.tsx <slug>` takes a file name from `src/demos/` or `src/pages/` (or `showcase`) and writes `initial.png`,
 whatever the page's `scenarios` capture, `pill.png` (Radius on Pill), `compact.png` (Size on Compact) and `light.png`
@@ -77,6 +97,23 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {};  // option
 settle / expectText / capture`; see `ShotContext` in `src/lib/demo.ts`. Give elements a `testId` to target them.
 `drift/_TEMPLATE.md` is the shape of a drift file.
 
+**Behaviour comes from base-ui-solid-gpuix, looks from here.** A component's keys, selection, open state, focus and ARIA
+come from a `create*` primitive in `base-ui-solid-gpuix/<folder>` (`createSelectRoot`, `createMenuList`,
+`createTabsRoot`, ...), which returns state accessors and prop objects to spread on gpuix elements. It has no styling,
+tokens or animation. The component here adds what the site owns: tokens from `src/lib/theme.ts`, springs, the popup
+chrome (`PopupSurface`, with `POPUP_EXIT_MS` from `src/lib/popup-timing.ts` handed to the primitive as an option), the
+focus ring and fluid hover.
+
+- **Fluid hover owns the highlighted row.** Pass `hover.activeIndex` as the primitive's `highlightedIndex` and
+  `onHighlightChange(index, reason)` back into the hover; on a keyboard `reason`, call `hover.releasePointer()`. Picking
+  the row nearest the pointer in the gap between rows (`pickNearest`) stays in `src/lib/fluid-hover.ts`.
+- **A missing primitive goes into base-ui-solid-gpuix**, not into `src/`: its `UPSTREAM.md` says how to port one from
+  Base UI, and its [BASE-UI-AUDIT.md](../base-ui-solid-gpuix/BASE-UI-AUDIT.md) records where it differs.
+- **Components of this site's own** (command-menu, sidebar, nav-item, input-message, ask-user-questions, queued-stack)
+  take shared helpers from base-ui where their behaviour matches: `moveIndex` and `edgeIndex` from
+  `base-ui-solid-gpuix/internals/composite`, `createPresence` from `/internals`, `createPointerCapture` from `/utils`.
+  Nested folders import the same way: `exports` maps `./*` to `./src/*/index.ts`.
+
 A page (Introduction, a system page, a concept) is a file in `src/pages/` instead: it exports `title`, `group`
 (`"Pages"` or `"System"`), `order`, `layout` (`"docs"` keeps the sidebar and right column, `"full"` fills the
 window), `listed` (`"sidebar"`, `"menu"` for the site menu only, or `"none"`), `Page`, and optionally `Rail` (the right
@@ -92,8 +129,7 @@ column's card in place of "Make them yours"), `scenarios`, `menuIcon` and `menuK
 | `fluid-hover.ts`, `fluid-highlight.tsx` | The site's `use-fluid-hover`: rows register with a `ResizeObserver`, their boxes are read with `getBoundingClientRect` when one reports, `pickNearest` (ported verbatim) resolves the pointer to a row including gaps, and one highlight glides between rows. `hover.containerProps` and `useHoverItem` wire a list. |
 | `focus-ring.tsx` | The shared keyboard focus ring of accordion groups, tabs, tabs-subtle, checkbox, radio, select and the sidebar menu: one outline box 2px outside the focused row that springs between the rects fluid hover measures. `createFocusRing(hover)` collects `onFocus` / `onBlur` from the rows and counts only `event.focusVisible`, so a click draws none; the ring fades out 60 ms after the last blur and appears in place, not travelling from where it was. |
 | `measured-height.ts` | A box whose height springs to its content's: the content box reports its size through `onLayout`, used by every collapse. |
-| `popup.tsx`, `presence.ts` | Popup chrome on `<anchored fit="flip">` (`PopupSurface`; `createPlacementState` keeps the reported side and available height), and `createPresence` (mounted outlives open so an exit can play). |
-| `list-nav.ts` | `moveIndex` (skip disabled, wrap or clamp) and `revealRow` (scroll a row into view by hand). |
+| `popup.tsx`, `popup-timing.ts` | Popup chrome on `<anchored fit="flip">` (`PopupSurface`, which takes a `createPresence` from base-ui and keeps its reported side and available height in `createPlacementState`), and the exit durations passed to the primitives. |
 | `stable-label.tsx` | A label that gains weight without moving its neighbours: a hidden semibold copy reserves the width. |
 | `clock.ts` | One shared, ref-counted frame clock for every JS-driven loop. |
 | `fonts.ts`, `app-frame.tsx` | The static Inter files passed to `render()` and the test renderer; the window frame (chrome-coloured bar, rounded page panel). |
@@ -102,6 +138,9 @@ column's card in place of "Make them yours"), `scenarios`, `menuIcon` and `menuK
 | `demo.ts`, `demo-kit.tsx`, `page-nav.ts` | The demo and page contracts, the card every demo page is made of, and `navigate` / `current` for pages. |
 | `doc-page.tsx`, `playground.tsx` | The docs chrome (`DocPage`, `DocSection`, `ComponentPreview`, `Code`) and the playground scaffolding (`PlaygroundLayout`, `PlaygroundPanel`, the control rows, the right-rail slot). |
 | `icons.ts`, `icons/` | The Icons row: one glyph table per library, `iconSource` reads the picked one. |
+
+Presence, list navigation (`moveIndex`, `revealRow`), typeahead, pointer capture, the hidden form value and the modal
+`aria-hidden` marking are in base-ui-solid-gpuix (`internals/`, `floating-ui-solid/`, `utils/`), not in this folder.
 </details>
 
 ## Drift from the source
@@ -111,7 +150,7 @@ a copy is kept at `~/.claude/notes/ff-source/`. Each file in [`drift/`](drift) l
 behaves differently from it, whatever the cause. A cause is one of: **gpuix gap**, gpuix lacks it or gets it wrong;
 **port choice**, the port differs on purpose; **not ported yet**, nothing stops the port doing it. An entry that
 names two causes counts as mixed; an entry with no cause (an exact or additive note) is not counted. Base UI
-behaviour, row by row, is in [`BASE-UI-AUDIT.md`](BASE-UI-AUDIT.md). Files named after a component are that
+behaviour, row by row, is in [`BASE-UI-AUDIT.md`](../base-ui-solid-gpuix/BASE-UI-AUDIT.md) in the sibling repository. Files named after a component are that
 component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `concepts`, `audio-mixer`,
 `nav-menu`, `fluid-hover`, `motion-page`, `scrollbars-page`, `sizes-page`, `skill-page`, `surfaces` and
 `typography` are the pages.
@@ -182,7 +221,7 @@ offer it. A count is given only where the code shows it.
 | accordion, banner, button, carousel-dots, chat-message, input-copy, input-message, tabs, tabs-subtle, thinking-steps (all use `buttonProps`) | `buttonProps` handles keydown on the way up, so a `buttonProps` element nested in another is clicked twice on Enter: the inner one clicks itself and the outer one clicks the same target. The fix is to act only when `target === currentTarget` | none; nested cases are not counted |
 | scroll-area | A horizontal or both-axis scroller has no `min-width: fit-content` content wrapper (gpuix rejects intrinsic width keywords). `scrollWidth` counts overflowing descendants now, but a block wrapper is clamped to the viewport width and its `onLayout` reports that, so the area has no content size to draw a horizontal thumb from | The viewport is a flex row with `alignItems: "flex-start"` and the content wrapper is `flexShrink: 0`, so the wrapper takes its content's width |
 | select, combobox | Enter in a form `<input>` with an empty `required` control does nothing; HTML implicit submission validates, sets `invalid` and moves focus. Only `requestSubmit()` validates | The demos submit through `requestSubmit()` |
-| dropdown submenus (audit rows 386, 721), tooltip | `window` and `document` mousemove listeners fire only when an element on the hit path has a mousemove listener, never over bare window background, so a safe polygon between trigger and popup cannot be tracked | A dwell timer for submenus (`SUBMENU_DWELL_MS`), a grace timer for the tooltip |
+| dropdown submenus (Base UI audit rows 389, 735), tooltip | `window` and `document` mousemove listeners fire only when an element on the hit path has a mousemove listener, never over bare window background, so a safe polygon between trigger and popup cannot be tracked | A dwell timer for submenus (`SUBMENU_DWELL_MS`), a grace timer for the tooltip |
 | any `<input>` with `textAlign: "right"` (the Button playground's Label field) | The style is accepted and does nothing in the test renderer (`drift/button.md`, "Playground: no Active switch, Label field not right-aligned"); unverified in a live window | none: left-aligned |
 | color-picker's value fields | `fontVariantNumeric` set in an `<input>`'s own style does nothing (measured: ten "1"s are the same width with `normal` and `tabular-nums`); set on a parent, the input inherits it | the property on the field's wrapper div (`src/components/color-picker.tsx`, `ColorInput`) |
 | dropdown search field | A sticky box with a negative margin is held at its parent's content box, not at the border box the margin puts it (`drift/dropdown.md`, "Search field is a child of the scroller"): a `marginTop: -4` child of a `padding: 4` parent sits 4px low until the scroller moves it. Measured on the test renderer | The field is the scroller's first child, ahead of the padded list |
@@ -195,9 +234,9 @@ offer it. A count is given only where the code shows it.
 
 | Used by | What | Workaround here |
 |---|---|---|
-| popups (select, combobox, dropdown, color-picker, dialog), tooltip, chevrons (accordion, card, color-picker, thinking-steps), scale-in entrances (banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack, radio-group), spinners (file-thumbnail), the changelog's month dot (scale) and entry-name arrow (translate) | CSS transforms: no scale, rotate or translate, so the popups' `scaleY: 0.96` entrance and every turn and pop is impossible (audit rows 525, 606). The tooltip has no scale in the source (`tooltip.tsx:282-291`); it only slides on x / y, which is a transform too | Popups and the tooltip slide from the reported side and fade; glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom` |
+| popups (select, combobox, dropdown, color-picker, dialog), tooltip, chevrons (accordion, card, color-picker, thinking-steps), scale-in entrances (banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack, radio-group), spinners (file-thumbnail), the changelog's month dot (scale) and entry-name arrow (translate) | CSS transforms: no scale, rotate or translate, so the popups' `scaleY: 0.96` entrance and every turn and pop is impossible (Base UI audit rows 528, 609). The tooltip has no scale in the source (`tooltip.tsx:282-291`); it only slides on x / y, which is a transform too | Popups and the tooltip slide from the reported side and fade; glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom` |
 | input-copy, doc-page, site-command-menu, app, skill copy example (`navigator.clipboard`) | gpuix installs `navigator.clipboard` at runtime but ships no TypeScript declaration for it, and Bun's types have none | `src/navigator.d.ts` declares it as gpuix's `clipboard` |
-| slider | `<input type="range">` (audit row 310) | A pointer-handled track and thumbs |
+| slider | `<input type="range">` (Base UI audit row 313) | A pointer-handled track and thumbs |
 | select, combobox (`FormValue`) | `<input type="hidden">` | A real input that is invisible, unreachable and `aria-hidden` |
 | accordion, ask-user-questions, input-message, sidebar, thinking-steps (`createMeasuredHeight`) | Motion on `width: auto`, and layout size morphs | The content box reports its size through `onLayout` and the outer box tweens to that number |
 | not counted | Container queries | none |
@@ -209,7 +248,7 @@ offer it. A count is given only where the code shows it.
 | command-menu (and every long demo page) | Culling: elements a scroller clips away are still built, laid out and painted each frame, so a page of many menus costs several times a short one (`<virtual-list>` is the only exception) | `DemoCard` hides its content with `display: none` while it is far from the page scroller (`drift/command-menu.md`) |
 | file-thumbnail | A canvas pixel path (a PDF page preview) | The caller passes a type and the thumbnail shows a glyph |
 | not counted | Effect groups (`filter`, `backdrop-filter`, `mask`, `clip`, group opacity) off macOS | none |
-| carousel-dots, file-thumbnail, thinking-indicator, thinking-steps | `requestAnimationFrame` itself (only `setTimeout`, FORK.md:207). The animations are possible without it, through motion values and keyframes (FORK.md:822-826) | `lib/clock.ts`: one shared, ref-counted `setInterval` frame clock |
+| carousel-dots, file-thumbnail, thinking-indicator, thinking-steps | `requestAnimationFrame` itself (only `setTimeout`, FORK.md:207). The animations are possible without it, through motion values and keyframes (FORK.md:846-850) | `lib/clock.ts`: one shared, ref-counted `setInterval` frame clock |
 | dropdown, select, combobox, scroll-area | Intrinsic `width`: `max-content`, `min-content` and `fit-content` are rejected outside grid tracks, so a popup cannot grow to its widest row | A fixed panel width (288px, 224px for submenus), `popupWidth`, `minWidth: "anchor-size(width)"` |
 | badge | `text-box-trim` / `text-box-edge`: a label is centred by its full line box | Flex centring in a fixed-height pill (about a pixel of drift) |
 | card, table (every `StableLabel`: tabs, tabs-subtle, sidebar, menu rows) | Variable-font axes (`fontVariationSettings`): only a font's default instance renders, so the weight cannot ease between 400 and 550 | Static cuts; the weight switches at once, SemiBold 600 for 550 |
@@ -220,8 +259,8 @@ offer it. A count is given only where the code shows it.
 | color-picker | A JS-visible CSS colour resolver: named colours and `color-mix()` resolve natively for styles only | `parseColor` reads hex, `rgb(a)`, `hsl(a)` and `oklch`; a name is rejected |
 | queued-stack | An input-device signal: `matchMedia` fixes `hover` to `hover` and `pointer` to `fine`, so `(hover: none)` never matches | none; desktop only |
 | combobox, select (any form) | A submit button: `SubmitEvent.submitter` is always `null` | The demos call `form.requestSubmit()` |
-| fluid-hover, motion, scrollbars and sizes pages (every `Code` chip, the Scrollbars links) | Inline `<span>` boxes take no padding, margin, border radius, per-run `fontSize` or click events (`~/code/fdarian/gpuix/FORK.md:765-773`) | The chip's padding is no-break spaces around a Menlo run at the paragraph's size (`src/lib/doc-page.tsx:58-75`); links are underlined text that goes nowhere |
-| surfaces and fluid-hover pages (the annotation arrows) | `<svg>` has no `marker` (`FORK.md:762`) | The arrowhead is two extra strokes laid along the curve's end tangent |
+| fluid-hover, motion, scrollbars and sizes pages (every `Code` chip, the Scrollbars links) | Inline `<span>` boxes take no padding, margin, border radius, per-run `fontSize` or click events (`~/code/fdarian/gpuix/FORK.md:789-800`) | The chip's padding is no-break spaces around a Menlo run at the paragraph's size (`src/lib/doc-page.tsx:58-74`); links are underlined text that goes nowhere |
+| surfaces and fluid-hover pages (the annotation arrows) | `<svg>` has no `marker` (`FORK.md:786`) | The arrowhead is two extra strokes laid along the curve's end tangent |
 | concepts (Lumen's image swatches) | `<img>` takes `file://` and `blob:` URLs, not `data:` ones | A `linear-gradient` box instead of an SVG data URI |
 | button, home bento cards, compare | An outer `box-shadow` paints under the whole border box with no knock-out (only `inset` shadows are clipped to the element, `shaders.metal:600-654`): a translucent fill over it doubles up | An opaque fill over the shadow, or the shadow alone as the fill (`drift/button.md`, `drift/home.md`, `drift/compare.md`) |
 | skill page (the scripted-cursor examples) | Dispatching a synthetic pointer event, or setting `:hover`, on one element: the native simulate calls move the window's one pointer | The page calls the elements' `onMouseEnter` / `onMouseLeave` / `onMouseMove` props and `click()` directly (`drift/skill-page.md`, `src/pages/skill/scripted-pointer.ts`) |
@@ -242,8 +281,8 @@ Quirks of this repo's own code, kept apart from the gpuix gaps above.
   scroll with the content. Rows are measured relative to that wrapper, so rects do not change as the list scrolls.
 - **Escape.** `PopupSurface` joins gpuix's dismiss-layer stack while open, so Escape closes only the topmost popup,
   even inside a dialog.
-- **Dialog.** gpuix's `Dialog` unmounts the instant `open` goes false, so a local `mounted` signal keeps the
-  content through the fade. A non-modal dialog keeps its scrim, as in the source: gpuix's portal sets `pointerEvents: "none"` on a non-modal layer, so the backdrop opts back in with `"auto"`, and an outside press, the trigger included, lands on it and closes the dialog without reaching the page.
+- **Dialog.** gpuix's `Dialog` unmounts the instant `open` goes false, so `createDialogRoot`'s `mounted`
+  (base-ui-solid-gpuix) outlives `open` and keeps the content through the fade. A non-modal dialog keeps its scrim, as in the source: gpuix's portal sets `pointerEvents: "none"` on a non-modal layer, so the backdrop opts back in with `"auto"`, and an outside press, the trigger included, lands on it and closes the dialog without reaching the page.
 - **Screenshots run on the test renderer** (`scripts/screenshots.tsx`).
   - Captures show no traffic lights or native titlebar, because the test renderer ignores the window options.
   - The window is created with `appearance: "dark"` and the theme stays on System, so `initial.png` and every
@@ -255,8 +294,8 @@ Quirks of this repo's own code, kept apart from the gpuix gaps above.
     takes Playwright key names (`ArrowDown`, `Shift+Tab`) and `shot.scroll` the DOM's sign (positive scrolls down).
     There is no double-click or file-drop helper.
   - `shot.aria`, `expectAria`, `idOf`, `hasAriaNode` and `tabStopCount` assert on the accessibility tree.
-  - Captures are not byte-stable: the text caret, timing-driven demos (thinking steps, shimmer, spinner) and
-    queue text vary run to run. Compare the content area with a pixel diff, not file hashes.
+  - Captures are not byte-stable: the text caret, timing-driven demos (thinking steps, shimmer, spinner), queue text
+    and the playgrounds' `Math.random` variants vary run to run. Compare the content area with a pixel diff, not file hashes.
 
 <details>
 <summary>How the first three components translate (Tailwind to gpuix)</summary>
@@ -296,7 +335,7 @@ now does that the port has not picked up.
 | ghost-span that reserves the semibold width | the same trick: a hidden copy in flow, the visible label absolutely positioned over it | Exact |
 | `truncate` | `whiteSpace: "nowrap"` + `textOverflow: "ellipsis"` on the combobox rows | Exact; sidebar labels are not truncated |
 | icon stroke 1.5 → 2 on hover | `<Icon easeStroke>` (`src/lib/icon.tsx`) animates `strokeWidth` on a `motion.g` over 80 ms: accordion, button, card, tabs, tabs-subtle, nav-item, sidebar, thinking-steps, input-copy, input-group, and the dropdown, dropdown-search, menu-item, select, combobox and command-menu icons. Everywhere else the SVG string is swapped | Exact where `easeStroke` is set, except with the phosphor library (filled paths, the weight switches at once); instant elsewhere |
-| `animation: spinner-move` | a static lucide `loader`: no rotation, no animation. gpuix now has keyframes and `strokeDasharray` / `strokeDashoffset` motion (FORK.md:822, :829); not adopted yet | Dropped, now possible |
+| `animation: spinner-move` | a static lucide `loader`: no rotation, no animation. gpuix now has keyframes and `strokeDasharray` / `strokeDashoffset` motion (FORK.md:846, :853); not adopted yet | Dropped, now possible |
 | `AnimatePresence` exit of the popup | the popup stays mounted for 60 ms while its opacity fades | Approximated |
 
 Not ported there (pill shape and the Radius, Size and Icons rows have landed since; Primitive is not ported):
