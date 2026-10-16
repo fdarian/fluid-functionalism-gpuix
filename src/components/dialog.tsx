@@ -27,11 +27,13 @@ import {
 } from "solid-js";
 import { HideOutside } from "../lib/modal";
 import { createPresence } from "../lib/presence";
+import { SurfaceContext, useElevatedSurface } from "../lib/surface-context";
 import {
 	color,
 	radius,
 	type as scale,
 	scheme,
+	surface,
 	motion as tween,
 	weight,
 } from "../lib/theme";
@@ -46,6 +48,9 @@ const widths = {
 	lg: { default: 540, compact: 480 },
 	xl: { default: 880, compact: 800 },
 } as const;
+
+/** Steps above its substrate the panel sits: `DIALOG_OFFSET` in the source. */
+const DIALOG_SURFACE_OFFSET = 4;
 
 /** Space the panel keeps from the window edge: `w-[calc(100%-2rem)]`. */
 const EDGE = 16;
@@ -238,6 +243,7 @@ export function DialogContent(props: {
 	children: JSX.Element;
 }) {
 	const scope = useDialogScope();
+	const level = useElevatedSurface(DIALOG_SURFACE_OFFSET);
 	const windowSize = createWindowSize();
 	const maxWidth = () =>
 		widths[props.size ?? "sm"][props.compact ? "compact" : "default"];
@@ -332,13 +338,15 @@ export function DialogContent(props: {
 						flexDirection: "column",
 						padding: 24,
 						borderRadius: radius.container,
-						backgroundColor: color.surface5,
+						backgroundColor: surface(level),
 						borderWidth: 1,
 						borderColor: color.popupBorder,
 						boxShadow: shadow5(),
 					}}
 				>
-					{props.children}
+					<SurfaceContext.Provider value={level}>
+						{props.children}
+					</SurfaceContext.Provider>
 					<Show when={props.showCloseButton ?? true}>
 						<div style={{ position: "absolute", top: 12, right: 12 }}>
 							<DialogClose>

@@ -125,7 +125,7 @@ function BasicDemo() {
 	return (
 		<ThinkingSteps testId="basic">
 			<ThinkingStepsHeader testId="basic-header" />
-			<ThinkingStepsContent>
+			<ThinkingStepsContent testId="basic-panel">
 				<ThinkingStep icon="search" label="Searched the web" />
 				<ThinkingStep icon="globe" label="Read 3 sources">
 					<ThinkingStepDetails

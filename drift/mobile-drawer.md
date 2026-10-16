@@ -45,7 +45,7 @@ Matches the source: 256px wide, top / left / bottom edges, `aria-label="Navigati
 
 ## No surface context for the panel's contents
 
-- **Cause:** `not ported yet`. The port has no `useSurface` / `SurfaceProvider`.
+- **Cause:** `not ported yet`. The ladder exists (`src/lib/surface-context.ts`, read by dialog and popups); the drawer neither reads nor provides it.
 - **Original:** the level is `min(substrate + 2, 8)` and the children get it as their substrate (`registry/base/mobile-drawer.tsx:82-83`, `:161`).
 - **Port:** the panel is always `color.card`, surface-3 (`src/components/mobile-drawer.tsx:107`). Opened over the page (substrate 1) that is the same colour; opened over a raised surface it would be too low.
 - **Workaround:** none.

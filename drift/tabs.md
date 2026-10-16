@@ -20,7 +20,7 @@ light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 
 ## Pill does not lift with the surrounding surface
 
-- **Cause:** `not ported yet`. The port has no surface context.
+- **Cause:** `not ported yet`. The ladder exists (`src/lib/surface-context.ts`, read by dialog and popups); tabs does not read it.
 - **Original:** the level is `min(useSurface() + 3, 8)`, so inside a dialog (substrate 5) the pill is surface 8, not 4 (`tabs.tsx:194-198`).
 - **Port:** always `color.surface4` (`tabs.tsx:250`); in a dialog the pill is the page's step.
 - **Workaround:** none.
@@ -64,15 +64,6 @@ light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 - **Workaround:** flex centring in the fixed-height tab.
 - **Fidelity:** approximated.
 - **Components it hits:** badge, tabs-subtle, anything with a trimmed label.
-
-## Preview pill after resting on the selected tab starts at the old rect
-
-- **Cause:** `not ported yet`.
-- **Original:** with the pointer over the selected tab the preview fades in place and unmounts, so the next hover mounts it again at the selected pill and slides it out (`tabs.tsx:391-437`).
-- **Port:** the preview stays mounted; with the pointer inside it keeps the rect it last had, invisible (`tabs.tsx:196-198`). Hovering Favorites, then the selected Library, then Settings slides it from Favorites to Settings, not from Library.
-- **Workaround:** none; it only shows when the pointer rests on the selected tab between two other tabs.
-- **Fidelity:** approximated.
-- **Components it hits:** tabs-subtle (same memo).
 
 ## No optimistic pill on click
 

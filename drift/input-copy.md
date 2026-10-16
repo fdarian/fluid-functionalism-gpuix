@@ -52,13 +52,6 @@ repeating it.
 - **Port:** `highlight` with `radius: 2` (`input-copy.tsx:254-264`). How tall the tinted box is next to an inline `<mark>` was not compared.
 - **Fidelity:** approximated.
 
-## Compact height is 28, the source's classes give 26
-
-- **Cause:** `port choice` (reason not stated; the port follows the source's comment, not its classes).
-- **Original:** `rowPy` is `py-1` for compact (`input-copy.tsx:61`) around an 18px line (`lib/type-scale.ts`, body compact), so the row is 4 + 18 + 4 = 26px, though the comment says 28 (`:59-60`). Default is 8 + 20 + 8 = 36.
-- **Port:** `steps.compact.height` is `height.controlCompact`, 28 (`input-copy.tsx:29`).
-- **Fidelity:** approximated (2px taller than the source renders).
-
 ## The monospace face is Menlo
 
 - **Cause:** `port choice` (reason not stated).
@@ -66,13 +59,12 @@ repeating it.
 - **Port:** `MONO = "Menlo"` (`input-copy.tsx:22,267`).
 - **Fidelity:** approximated (same face in Chrome on macOS, not in Safari, where `ui-monospace` is SF Mono).
 
-## The tooltip state is guessed from a timer, not read from the tooltip
+## The tooltip's "Copied" reset runs on the row, not the whole field
 
-- **Cause:** `not ported yet`. A bug in behaviour, listed in the report.
-- **Original:** `onPointerDown` snapshots whether the tooltip was visible, fed by the tooltip's `onOpenChange` (`input-copy.tsx:56,69-72,126-128,417`). "Copied" shows only if it was already open at the press. The mouse-enter reset runs on the whole field, label included (`:138-140,399`).
-- **Port:** its own 500 ms timer started on mouse enter of the row sets `tooltipShown` (`input-copy.tsx:94-95,125-136`); `handleCopy` reads it (`:105`). The port's `Tooltip` has `onOpenChange` (`tooltip.tsx:92-93`) but opens only after the pointer rests, restarting on moves over 1.4px (`tooltip.tsx:180-200`), skips the delay shortly after another closed (`:135-143`), and opens on keyboard focus (`:218-225`).
-- **Effect:** a pointer still moving at the press leaves `tooltipShown` true while no tooltip is open, so the "Copied" tooltip is forced open where the source keeps it shut. A tooltip opened by keyboard focus is not counted.
-- **Fidelity:** approximated.
+- **Cause:** `not ported yet`.
+- **Original:** `onMouseEnter` / `onMouseLeave` sit on the wrapper, so entering the label re-arms the tooltip and leaving it closes a "Copied" one (`input-copy.tsx:138-140,399`).
+- **Port:** the handlers are on the row (`input-copy.tsx:290-291`), so the label does not count. The press snapshot (`tooltipOpenAtPress`) is read from the tooltip's `onOpenChange` like the source's ref, and a keyboard press reuses the last pointer snapshot as the source does.
+- **Fidelity:** approximated (label hover only).
 
 ## The label is not part of the accessible name
 
@@ -85,7 +77,7 @@ repeating it.
 
 - **Cause:** `not ported yet`.
 - **Original:** `navigator.clipboard.writeText`, then an off-screen textarea and `execCommand("copy")` as fallback (`input-copy.tsx:77-110`).
-- **Port:** `copyToClipboard` spawns `pbcopy` on macOS and `wl-copy` on everything else (`input-copy.tsx:32-41`), and its comment says gpuix has no clipboard API. The fork has `navigator.clipboard.writeText` (`FORK.md:458`). On Windows and X11 without `wl-copy` every copy ends in the red cross.
+- **Port:** `copyToClipboard` spawns `pbcopy` on macOS and `wl-copy` on everything else (`input-copy.tsx:32-42`). gpuix has `navigator.clipboard.writeText` (`FORK.md:458`) and exports `clipboard` from `@gpuix/solid`, which `src/app.tsx:121` already uses. On Windows and X11 without `wl-copy` every copy ends in the red cross.
 - **Fidelity:** approximated (works on macOS only).
 
 ## Ambient size and shape, passthrough props

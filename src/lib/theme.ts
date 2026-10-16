@@ -269,6 +269,7 @@ export const type = {
 	body: { fontSize: 13, lineHeight: 20 },
 	bodyCompact: { fontSize: 12, lineHeight: 18 },
 	caption: { fontSize: 12, lineHeight: 16 },
+	captionCompact: { fontSize: 11, lineHeight: 14 },
 	micro: { fontSize: 11, lineHeight: 14 },
 	microCompact: { fontSize: 10, lineHeight: 12 },
 } as const;

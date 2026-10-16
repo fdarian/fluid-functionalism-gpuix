@@ -1,4 +1,9 @@
-import { buttonProps, type HostElement, motion, useGpuixRequired } from "@gpuix/solid";
+import {
+	buttonProps,
+	type HostElement,
+	motion,
+	useGpuixRequired,
+} from "@gpuix/solid";
 import {
 	createEffect,
 	createSignal,
@@ -10,7 +15,13 @@ import {
 import { onFrame } from "../lib/clock";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
-import { color, scheme, motion as tween, withAlpha, focusRing } from "../lib/theme";
+import {
+	color,
+	focusRing,
+	scheme,
+	motion as tween,
+	withAlpha,
+} from "../lib/theme";
 
 /** Dot height, and the diameter of every resting dot. */
 const DOT_PX = 6;
@@ -165,7 +176,7 @@ function Dot(props: {
 			}}
 			{...buttonProps({ onClick: props.onSelect, tabIndex: 0 }, renderer)}
 			aria-label={props.label}
-			aria-selected={props.current}
+			aria-current={props.current ? true : undefined}
 			style={{
 				position: "relative",
 				display: "flex",

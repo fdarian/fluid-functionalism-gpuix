@@ -16,7 +16,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `gpuix gap`.
 - **Original:** a swatch such as `tomato` resolves through a canvas 2D context (`fillStyle`), which accepts every CSS colour syntax (`color-picker.tsx:420-440`); the strip marks the matching swatch and a click commits it (`:1748-1758`, `:1895-1902`). `swatches` is documented as "Any CSS color" (`:103`).
-- **Port:** `parseColor` reads hex, `rgb(a)`, `hsl(a)` and `oklch` only (`src/components/color-picker-math.ts:304-306`). A named entry in `swatches` throws while the panel renders (`normalizedHex`, `src/components/color-picker.tsx:1389-1393`, called at `:1626`), so it takes the whole panel with it; the prop is documented as "named colours are not parsed" (`:1404`). A typed name is rejected as before (the hex field prefixes `#`, `:1321`). A bare `ColorSwatch` or `ColorTile` still paints a name, because styles resolve it natively.
+- **Port:** `parseColor` reads hex, `rgb(a)`, `hsl(a)` and `oklch` only (`src/components/color-picker-math.ts:304-306`). A named entry in `swatches` still paints (styles resolve the name natively) but is never marked selected, and clicking or pressing it does nothing (`normalizedHex` returns `undefined`, `isSelectedSwatch`; `commitColor` drops an unreadable string); the source resolves it and picks it. The prop says so (`swatches`). A typed name is rejected as in the source (the hex field prefixes `#`).
 - **gpuix lacks:** a JS-visible colour resolver. Named colours, `color-mix()` and the rest resolve natively for style values only (`~/code/fdarian/gpuix/FORK.md:661-662`), and nothing hands the resolved colour back to JS.
 - **Workaround:** none. A static table of the CSS colour names inside `parseColor` would close most of it without gpuix.
 - **Fidelity:** dropped.
@@ -71,9 +71,9 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 ## Popover surface level is 5, not substrate + 2
 
-- **Cause:** `port choice` (reason not stated; the port has no surface context).
+- **Cause:** `port choice` (reason not stated; the ladder in `src/lib/surface-context.ts` is not read here).
 - **Original:** the popover panel sits at `min(substrate + 2, 8)` and the format menu two above it (`color-picker.tsx:2247`, `:1025`); a standalone panel is `max(substrate, 3)` (`:1948`). On the docs page the substrate is 1, so the popover is surface 3 and its menu surface 5.
-- **Port:** the popover card and its panel are hard-coded to level 5 and the menu is 7 (`src/components/color-picker.tsx:1823-1827`); a standalone panel takes a port-only `level` prop (default 3, `:1409-1410`, `:1643`). In `screenshots/color-picker/popover-open.png` the popover is visibly lighter than the inline panel; select and combobox popups use surface 3 (`src/lib/popup.tsx:97`).
+- **Port:** the popover card and its panel are hard-coded to level 5 and the menu is 7 (`src/components/color-picker.tsx:1823-1827`); a standalone panel takes a port-only `level` prop (default 3, `:1409-1410`, `:1643`). In `screenshots/color-picker/popover-open.png` the popover is visibly lighter than the inline panel; select and combobox popups use surface 3 on the page (`src/lib/popup.tsx`).
 - **Workaround:** none.
 - **Fidelity:** approximated (two steps lighter in the popover).
 - **Components it hits:** just this one.
@@ -86,15 +86,6 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
-
-## Rails are 20px tall, the source's are 36px
-
-- **Cause:** `port choice` (reason not stated; looks unintended).
-- **Original:** each rail is the compact slider with the default `valuePosition="left"`, whose track area is `THUMB_SIZE + 16` = 36px high, the 18px pill centred in it (`registry/radix/slider.tsx:402`, `:981-983`, `:1121-1130`); the picker stacks two with a -1px overlap (`color-picker.tsx:1971`), so the block is 71px, and the press target is that full height (`slider.tsx:1086-1092`).
-- **Port:** a rail is `RAIL_THUMB` = 20px high, the pill 18px (`src/components/color-picker.tsx:61-63`, `:513-531`), the block 39px, and the press area 20px (`:574-596`). The pills sit 3px apart where the source's are 17px apart, and the panel is about 32px shorter.
-- **Workaround:** none.
-- **Fidelity:** approximated.
-- **Components it hits:** just this one (the slider port is separate).
 
 ## Rails: hover preview and value bubble
 
@@ -213,15 +204,6 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
-## Escape in the open format menu also closes the popover (suspected bug)
-
-- **Cause:** `not ported yet` (`PopupSurface` joins gpuix's dismiss-layer stack, `src/lib/popup.tsx:68-73`; this file's `Popup` does not).
-- **Original:** Escape closes the innermost open layer, the menu, and a second Escape closes the popover (Base UI Menu inside Popover; `color-picker.tsx:961-971`, `:2304-2311`).
-- **Port:** the trigger's Escape handler closes the menu and does not stop the event (`src/components/color-picker.tsx:843-845`); events follow the logical tree, so the popover wrapper's own Escape handler (`:1728-1730`) sees it as well and closes the popover too. Read from the code, not run; no scenario covers Escape with the menu open.
-- **Workaround:** none.
-- **Fidelity:** approximated.
-- **Components it hits:** just this one.
-
 ## Popover: focus is not moved in, restored or lost
 
 - **Cause:** `not ported yet`.
@@ -236,15 +218,6 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Cause:** `not ported yet`.
 - **Original:** a `span role="button" tabIndex={0}`; Enter and Space remove without toggling the popover (`color-picker.tsx:2343-2363`).
 - **Port:** a `div role="button"` with no `tabIndex` or key handler; a pointer click is kept off the trigger by a hover flag (`src/components/color-picker.tsx:1797-1821`, `:1741`).
-- **Workaround:** none.
-- **Fidelity:** approximated (pointer only).
-- **Components it hits:** just this one.
-
-## Swatches are not keyboard reachable
-
-- **Cause:** `not ported yet`.
-- **Original:** each swatch is a `<button>`, so Tab reaches it and Enter or Space picks it (`color-picker.tsx:1694-1717`).
-- **Port:** a `div role="button"` with `onClick` only, no `tabIndex` and no key handler (`src/components/color-picker.tsx:189-218`).
 - **Workaround:** none.
 - **Fidelity:** approximated (pointer only).
 - **Components it hits:** just this one.
@@ -275,15 +248,6 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Port:** ArrowUp/Down and Shift+arrow only; Home/End do nothing; no modifier during a scrub; any text can be typed (`src/components/color-picker.tsx:1082-1100`, `:1127-1129`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
-- **Components it hits:** just this one.
-
-## Channel fields: unreadable or empty text commits NaN or 0 (bug)
-
-- **Cause:** `not ported yet` (the source ignores them).
-- **Original:** `NumberField` reports `null` for empty text and ignores it (`color-picker.tsx:1433-1435`), and an unparseable draft is dropped on blur, so the field reverts and the colour is untouched.
-- **Port:** on blur a bounded field whose draft does not parse hands the raw text to `onCommit` (`src/components/color-picker.tsx:1074-1080`), and `onChannelChange` turns it into `Number(value)` (`:1518-1520`, `:1530-1532`, `:1543-1545`). Text such as `abc` becomes NaN, which flows through `rgbToHsv` into the state and the emitted string; an empty draft becomes 0 (red, green or blue goes to 0). The alpha field is guarded (`:1266-1272`); red, green, blue, hue, saturation, lightness, L, C and H are not. Read from the code, not run.
-- **Workaround:** none.
-- **Fidelity:** dropped.
 - **Components it hits:** just this one.
 
 ## Channel fields: hue wraps at its maximum

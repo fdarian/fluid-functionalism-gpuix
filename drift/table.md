@@ -71,7 +71,7 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 - **Cause:** `not ported yet`.
 - **Original:** real `<table>`, `<thead>`, `<tbody>`, `<tr>`, `<th>`, `<td>`; every part takes `className`, a `ref` and the element's HTML attributes (`table.tsx:39-47`, `:99-117`, `:125-170`, `:176-217`), which the site's pages use to align and size columns (`text-center`, `w-[180px]`, `whitespace-nowrap` in `app/table/page.tsx`).
 - **Port:** plain `<div>` rows and cells with no `role`, only `testId` and the `width` prop (`table.tsx:50-54`, `:107-111`, `:155`, `:187-199`). There is no cell alignment option and no `className` / `ref`.
-- **gpuix lacks:** nothing: `role` and `aria-*` work on any element (`src/components/sidebar.tsx:186-187` sets both).
+- **gpuix lacks:** nothing: `role` and `aria-*` work on any element (`src/components/sidebar.tsx:311` sets `aria-current`; `src/components/tabs.tsx` sets `role`).
 - **Workaround:** none.
 - **Fidelity:** approximated (looks the same; the table is anonymous to assistive tech, columns cannot be centred or kept on one line).
 - **Components it hits:** any ported component that dropped `className` passthrough.

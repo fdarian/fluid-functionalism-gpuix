@@ -69,7 +69,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Cause:** `gpuix gap`.
 - **Original:** Base UI returns focus to the trigger on close.
 - **Port:** `returnFocus` defers the focus read to a `setTimeout(..., 0)` (`select.tsx:240-245`, `popup-trigger.ts:11-18`).
-- **gpuix lacks:** a focus read inside mousedown / mouseup / click handlers (README Bugs, `VIEW_BUSY` row). That row also says a pointer-opened popup can fail to open because `DismissableLayer` does the same read (`popup.tsx:69`); not reproduced for select here.
+- **gpuix lacks:** a focus read inside mousedown / mouseup / click handlers (README Bugs, `VIEW_BUSY` row). `DismissableLayer` does the same read while it mounts (`popup.tsx:74`), so a pointer press that opens the select throws (reproduced: `bun scripts/screenshots.tsx button` fails in `onTriggerMouseDown`, `select.tsx:253`; README Bugs row "every popup on gpuix's `DismissableLayer`").
 - **Workaround:** the deferred read; the rest is open.
 - **Fidelity:** exact for the focus return.
 - **Components it hits:** dropdown, color-picker, combobox, tooltip.
@@ -183,19 +183,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Fidelity:** approximated (extra state; the popup opens on mouse-down, so it shows briefly).
 - **Components it hits:** just this one.
 
-## Disabled dims and blocks the error message too
-
-- **Cause:** `not ported yet` (a bug: the port dims more than FF).
-- **Original:** `disabled:opacity-50 disabled:pointer-events-none` on the trigger only; the error text beneath is outside it (`select.tsx:236`, `:332-334`).
-- **Port:** the outer wrapper, which holds the trigger and the error text, takes `opacity: 0.5` and `pointerEvents: "none"` (`select.tsx:467-474`).
-- **Workaround:** none.
-- **Fidelity:** approximated (a disabled select with an error shows the message at half opacity).
-- **Components it hits:** just this one.
-
-## Popup surface does not follow the substrate
-
-- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup surface colour is fixed at surface-3"](dropdown.md#popup-surface-colour-is-fixed-at-surface-3), where the entry lives. Here: original `select.tsx:486-493`, `elevated.tsx:37-52`, `dialog.tsx:189-190`; port `popup.tsx:97`. The select inside the dialog demo (`demos/dialog.tsx:84`) opens surface-3 on a surface-5 dialog (dark: `#252525` against `#414141`).
-
 ## Popup ring is a layout-taking border and the shadow is one drop
 
 - **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup shadow is one drop and a border"](dropdown.md#popup-shadow-is-one-drop-and-a-border), where the entry lives. Here: `popup.tsx:99-101`, `theme.ts:332-340`; the border takes layout, so the card is 2px taller and `select.tsx:601` subtracts 2 from the rows. API to use: multi-layer `boxShadow` (`~/code/fdarian/gpuix/FORK.md:646-649`).
@@ -211,15 +198,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 ## The selected background fades in on every open
 
 - **Cause:** `not ported yet`. Same drift as [dropdown.md, "Checked background appears with a fade instead of already being there"](dropdown.md#checked-background-appears-with-a-fade-instead-of-already-being-there), where the entry lives. Here: original `select.tsx:548-575`; port `select.tsx:615-622`. (Was recorded as `port choice`; the blocker is the shared `FluidHighlight`, which `motion`'s `initial={false}` could serve.)
-
-## Exit unmounts on a timer, not on completion
-
-- **Cause:** `not ported yet` (`BASE-UI-AUDIT.md:525` lists this as fixed; `popup.tsx` has no `onMotionComplete` and nothing in the popup path calls `presence.release()`, though `dialog.tsx:326` and `mobile-drawer.tsx:96` do).
-- **Original:** `onAnimationComplete` releases the unmount after the 60 ms exit; `exitFallbackMs` (160 ms) is the fallback only (`select.tsx:377-389`, `:481-483`).
-- **Port:** the card stays mounted 160 ms after `open` goes false (`presence.ts:10`, `select.tsx:152`); the exit fade is 60 ms, so it sits invisible for about 100 ms.
-- **Workaround:** none.
-- **Fidelity:** approximated (invisible).
-- **Components it hits:** combobox, dropdown.
 
 ## No reduced-motion handling
 

@@ -58,24 +58,6 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 - **Fidelity:** approximated.
 - **Components it hits:** possibly checkbox-group (it merges contiguous checked rows; not checked here).
 
-## Other-row hint grows from the corner (bug)
-
-- **Cause:** `not ported yet`.
-- **Original:** the "type here" outline mounts under `AnimatePresence` at the Other row's rect and only fades (`:478-914`).
-- **Port:** it is always mounted and, when hidden, animates `top`, `left`, `width` and `height` to 0 (`ask-user-questions.tsx:640-659`). Showing it again grows it from the card's top-left corner while it fades in over 80 ms.
-- **Workaround:** none.
-- **Fidelity:** approximated.
-- **Components it hits:** just this one.
-
-## Row highlight stays after focus leaves the group (probable bug)
-
-- **Cause:** `not ported yet`.
-- **Original:** the rows container clears both `activeIndex` and `focusedIndex` when focus leaves the whole group (`:461-469`).
-- **Port:** a row's `onBlur` clears `focusedRow` only (`ask-user-questions.tsx:701-703`, `:745-749`); `hover.activeIndex` is cleared by `onMouseLeave` and a question change alone (`src/lib/fluid-hover.ts:207-210`), so tabbing out of the rows should leave the last row lit. Read from code, not run.
-- **Workaround:** none.
-- **Fidelity:** approximated.
-- **Components it hits:** just this one.
-
 ## Digit shortcuts are card-scoped, and the card is a tab stop
 
 - **Cause:** `port choice` (reason not stated; the port routes all keys through one `onKeyDown` on the card).

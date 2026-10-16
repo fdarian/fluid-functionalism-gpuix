@@ -237,22 +237,31 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** dropped (11 rows); approximated (label).
 - **Components it hits:** just the site menu.
 
-## Site menu: dialog title and description, ⌘K matching
+## Site menu: dialog title and description, shortcut routing
 
-- **Cause:** `not ported yet` (title / description, shortcut routing); the key match is a bug.
-- **Original:** `CommandMenuDialog` takes `title="Site menu"` and `description="Jump to a page or change a setting."` as the dialog's accessible name, and binds `shortcut="mod+k"` itself; `matchesShortcut` reads the physical key only when Alt is held or `key` is not a Latin letter or digit, so on Dvorak the key that types "t" is never taken for K (`app/components/site-command-menu.tsx:385-390`, `registry/default/command-menu.tsx:195-230, 1425-1540`).
-- **Port:** the dialog has no title or description props (`src/components/command-menu.tsx:1253-1257`). A separate window listener toggles the menu (`src/lib/site-command-menu.tsx:43-54`). Its doc comment says the physical key counts only "when Alt or a non-Latin layout changes the character", but `isModK` returns `key === "k" || code === "KeyK"` unconditionally (`:35-40`), so on a layout where the K position types another letter, Mod plus that key opens the menu.
+- **Cause:** `not ported yet`.
+- **Original:** `CommandMenuDialog` takes `title="Site menu"` and `description="Jump to a page or change a setting."` as the dialog's accessible name, and binds `shortcut="mod+k"` itself (`app/components/site-command-menu.tsx:385-390`, `registry/default/command-menu.tsx:1425-1540`).
+- **Port:** the dialog has no title or description props (`src/components/command-menu.tsx:1290-1294`). A separate window listener toggles the menu (`src/lib/site-command-menu.tsx:49-60`); `isModK` matches Meta or Ctrl, no Alt, on `event.key` alone (`:42-46`). On Dvorak the key that types "t" does not open it: gpuix derives `code` from `key`, so there is no physical K to match (`scripts/check-command-menu.tsx` checks ⌘T and ⌘⌥K stay closed and ⌘K toggles; the layout itself needs a live check).
 - **Workaround:** none.
-- **Fidelity:** exact on QWERTY; wrong on other layouts (bug).
+- **Fidelity:** exact on macOS.
 - **Components it hits:** just the site menu.
 
+## Site menu: ⌘K has no physical-key fallback for non-Latin layouts off macOS
+
+- **Cause:** `gpuix gap`.
+- **Original:** `matchesShortcut` reads the physical key (`code`) when `key` is not a Latin letter or digit, so Ctrl+K opens the menu on a Cyrillic or Greek layout (`registry/default/command-menu.tsx:195-230`).
+- **Port:** `isModK` reads `key` only (`src/lib/site-command-menu.tsx:42-46`).
+- **gpuix lacks:** a physical key. `code` is "derived from GPUI's `key`, which is layout-dependent on every platform", so a Cyrillic key reports `code` `""` (`~/code/fdarian/gpuix/packages/native/src/events/key_names.rs:9-12`, `:138-160`). On macOS this does not bite: GPUI reports the layout's Cmd letter, so ⌘K works on Cyrillic, Armenian and Dvorak-QWERTY (`~/code/fdarian/gpuix/zed/crates/gpui_macos/src/events.rs:425-439`). On Windows and Linux, Ctrl plus a non-Latin letter does not match (README Missing features row "site menu (`isModK`)"). Not run there.
+- **Workaround:** none; the sidebar's Search row opens the menu.
+- **Fidelity:** exact on macOS; dropped for non-Latin layouts on Windows and Linux.
+- **Components it hits:** just the site menu.
 ## Pages not ported: home bento grid and the home hero
 
 - **Cause:** `not ported yet`. The bento grid is previews of the live components; the port's Showcase is a card per demo.
 - **Original:** `/` is the hero (h1 bold, tagline, a "Copy install prompt" button that copies the starter prompt with the visitor's settings, "Learn more" to `/docs`, "See demo" to `/demo`, and prev / next arrows) over a `BentoGrid` of one `BentoCard` per component, sized large / medium / small, each with a live preview from `previewMap` and a `PlaygroundMenu` pen (`app/page.tsx:12-62`, `app/components/bento-grid.tsx`, `bento-card.tsx`, `bento-previews.tsx` (916 lines), `starter-install.tsx`).
-- **Port:** the hero has the same three buttons but none has an `onClick`, so they do nothing (`src/app.tsx:110-139`); no arrows. Below it 144x72 text-only cards, one per demo, that open the page on click (`src/app.tsx:141-185`).
+- **Port:** the hero has the same three buttons. "Copy install prompt" writes the source's starter prompt for the port's settings (Base UI, rounded, default size, Lucide icons, the current theme; `src/lib/starter-prompt.ts`) and its icon turns into a check for 2 s, without the crossfade (`src/app.tsx:116-130`). The source's "Learn more" and "See demo" go to `/docs` and `/demo`, which are not ported, so they open those pages of fluidfunctionalism.com in the default browser through `open` / `xdg-open` (`src/lib/open-url.ts`; gpuix has no link opener). No arrows. Below it 144x72 text-only cards, one per demo, that open the page on click (`src/app.tsx:141-185`).
 - **Workaround:** none.
-- **Fidelity:** dropped (previews, sizes, playground menus); the dead buttons are a defect.
+- **Fidelity:** dropped (previews, sizes, playground menus).
 - **Components it hits:** just the home page.
 
 ## Pages not ported: Introduction and the system pages
@@ -303,7 +312,7 @@ One entry per place the port looks or behaves differently from the source, whate
 ## Registry items with no port
 
 - **Cause:** `not ported yet` for each item below, unless stated.
-- **Original:** every component in `registry/base` and `registry/default` has a port except: `nav-item.tsx` and `nav-menu.tsx` (only the `/concepts` index uses them, `app/concepts/page.tsx:4-5`); and the blocks `sidebar-workspace-header`, `sidebar-user-footer`, `dialog-sidebar/settings-dialog`, and the `sidebar-app` composition (`app-sidebar`, `inset-topbar`, `nav-data`, `page`) (`registry/blocks/`). `search-field` is ported (`src/components/sidebar.tsx:416`); check `drift/sidebar.md` for the blocks. Ported as part of another file rather than on their own: `dropdown-sub` inside `src/components/dropdown.tsx` and `menu-item.tsx`; `fluid-hover-highlight` as `src/lib/fluid-highlight.tsx`; `sidebar-core` and `sidebar-menu` inside `src/components/sidebar.tsx`; `scroll-area` and `queued-stack` have their own files.
+- **Original:** every component in `registry/base` and `registry/default` has a port except: `nav-item.tsx` and `nav-menu.tsx` (only the `/concepts` index uses them, `app/concepts/page.tsx:4-5`); and the blocks `sidebar-workspace-header`, `sidebar-user-footer`, `dialog-sidebar/settings-dialog`, and the `sidebar-app` composition (`app-sidebar`, `inset-topbar`, `nav-data`, `page`) (`registry/blocks/`). `search-field` is ported (`src/components/sidebar.tsx:547`); check `drift/sidebar.md` for the blocks. Ported as part of another file rather than on their own: `dropdown-sub` inside `src/components/dropdown.tsx` and `menu-item.tsx`; `fluid-hover-highlight` as `src/lib/fluid-highlight.tsx`; `sidebar-core` and `sidebar-menu` inside `src/components/sidebar.tsx`; `scroll-area` and `queued-stack` have their own files.
 - **Port:** none for the items above. The `registry/radix` flavour of all 17 dual-flavour components is not ported on purpose (`port choice`; the port is Base UI only, see `BASE-UI-AUDIT.md`), and the registry lib items `elevated`, `surface-classes`, `shape-context`, `size-context`, `icon-context` and the four extra icon libraries, `typography` and `type-scale` have no port beyond the tokens in `src/lib/theme.ts`.
 - **Workaround:** none.
 - **Fidelity:** dropped.

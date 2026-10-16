@@ -11,14 +11,14 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 - **Cause:** `gpuix gap` (`requestAnimationFrame` itself); driving the fill natively instead is `not ported yet`.
 - **Original:** a `requestAnimationFrame` loop advances a `MotionValue` that drives the fill's `transform`, with no re-render (`carousel-dots.tsx:134-159`, `:161-162`).
 - **Port:** one shared 16 ms `setInterval` (`src/lib/clock.ts:27`, `onFrame`) advances a signal (`carousel-dots.tsx:82-99`); stalled frames over 100 ms are dropped, like the original's stall guard (`clock.ts:15`, source `:82`). The fill's `width` is rewritten every frame (`:199-202`), one style mutation per frame per playing carousel.
-- **gpuix lacks:** `requestAnimationFrame`: no display-synced JS frame callback, only `setTimeout` / `setInterval` (`~/code/fdarian/gpuix/FORK.md:205-208`; `README.md:138`). gpuix does have native, JS-free motion values (`createMotionValue`, `packages/solid/src/index.ts:36`; `FORK.md:824`), so the timer is not the only route; the port has not tried driving the fill natively.
+- **gpuix lacks:** `requestAnimationFrame`: no display-synced JS frame callback, only `setTimeout` / `setInterval` (`~/code/fdarian/gpuix/FORK.md:205-208`; README "Missing features" row "`requestAnimationFrame` itself"). gpuix does have native, JS-free motion values (`createMotionValue`, `packages/solid/src/index.ts:36`; `FORK.md:824`), so the timer is not the only route; the port has not tried driving the fill natively.
 - **Workaround:** the shared frame clock.
 - **Fidelity:** approximated (timer jitter instead of frame-locked updates).
 - **Components it hits:** every JS-driven loop: thinking-indicator, thinking-steps, file-thumbnail.
 
 ## The fill grows instead of sliding
 
-- **Cause:** `gpuix gap` (no transforms; `README.md:125`).
+- **Cause:** `gpuix gap` (no transforms; README "Missing features" row "CSS transforms").
 - **Original:** the fill is a full-width pill slid in from the left with `translateX(calc((p - 1) * (100% - 6px)))`, never scaled, so its round end stays round and it tracks the pill's animating width (`carousel-dots.tsx:42-48`, `:236-242`).
 - **Port:** a pill whose `width` goes from 6px to the 24px target, clipped by the dot's `overflow: hidden` (`carousel-dots.tsx:193-206`).
 - **gpuix lacks:** CSS transforms.
@@ -46,16 +46,6 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 - **Fidelity:** dropped.
 - **Components it hits:** every animated component.
 
-## Dots are `aria-selected`, not `aria-current`
-
-- **Cause:** `port choice` (reason not stated); the port is wrong here.
-- **Original:** a native `<button>` with `aria-current="true"` on the current dot only and nothing on the others (`carousel-dots.tsx:217-222`).
-- **Port:** a `div` made a button by `buttonProps` (`role="button"`, `packages/solid/src/components/button.ts:36`) carrying `aria-selected={props.current}` on every dot, so the others read `false` (`carousel-dots.tsx:166-168`). `aria-selected` is not valid on a button, and `aria-current` works on gpuix (`src/components/sidebar.tsx:187`).
-- **gpuix lacks:** nothing.
-- **Workaround:** none.
-- **Fidelity:** approximated (looks the same; assistive tech is told the wrong thing).
-- **Components it hits:** card (`card.tsx:341`), tabs, tabs-subtle and others use `aria-selected` on a `buttonProps` element too; not checked against their sources.
-
 ## Container and extra props
 
 - **Cause:** `port choice` (reason not stated).
@@ -80,7 +70,7 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 - **Cause:** `not ported yet`.
 - **Original:** `slideVariants`: enter at `x = dir * 24` with opacity 0, centre on `spring.moderate`, exit to `x = -dir * 24` on `spring.moderate.exit` (a 120 ms tween), `AnimatePresence mode="popLayout"` (`lib/docs/slide-direction.ts:16-18`; `page.tsx:55-64`).
 - **Port:** one `transition={tween.moderate}` (the 160 ms spring) for enter and exit, with the offset moved on `left` / `right` instead of `x` (`src/demos/carousel-dots.tsx:55-84`). No `popLayout`: both labels are absolutely positioned.
-- **gpuix lacks:** transforms (the `left` / `right` offset; `README.md:196`). A per-target transition inside `exit` is not used (`tween.moderateExit` exists at `src/lib/theme.ts:303`); whether gpuix accepts one there was not checked.
+- **gpuix lacks:** transforms (the `left` / `right` offset; README "Missing features" row "CSS transforms"). A per-target transition inside `exit` is not used (`tween.moderateExit` exists at `src/lib/theme.ts:304`); whether gpuix accepts one there was not checked.
 - **Workaround:** `left` / `right` offsets.
 - **Fidelity:** approximated (the leaving label is slower than the source's 120 ms).
 - **Components it hits:** just this demo.
