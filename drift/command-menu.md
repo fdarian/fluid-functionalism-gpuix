@@ -32,23 +32,15 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 - **Fidelity:** dropped (fade, scroll-aware lines, thumb); approximated (static lines).
 - **Components it hits:** sidebar (also a bare scroller).
 
-## A press on a row, a tab or the list takes focus from the field
+## A press on a row, a tab or the list takes focus from the field on Windows and Linux
 
-- **Cause:** `not ported yet`.
+- **Cause:** `gpuix gap`.
 - **Original:** the list and the tab row call `preventDefault()` on `mousedown`, so a pick or a tab click leaves DOM focus in the field and the keyboard keeps working (`:1090`, `:957`).
-- **Port:** rows, tabs and the list have no `onMouseDown` (`src/components/command-menu.tsx:1024-1030`, `:733-756`, `:866-878`). gpuix blurs the focused element on a press on something not focusable and `preventDefault()` in `onMouseDown` keeps it (`~/code/fdarian/gpuix/README.md:3260-3263`). So after clicking a tab, ↑ ↓ Enter and Esc go nowhere until the field is clicked again; in the dialog Escape is handled only by the field's key handler (`:530-534`). Not run, read from the code and the gpuix README.
+- **Port:** the list and the tab row call `preventDefault()` in `onMouseDown` (`src/components/command-menu.tsx:735`, `:918`), which keeps focus in the field on macOS and in the test renderer (`scripts/check-command-menu.tsx`: after a tab click the field is still focused and ← → still switch tabs).
+- **gpuix lacks:** on Windows and Linux a press reaches JavaScript through a queue after native has moved focus, so `preventDefault()` in `onMouseDown` has no effect (`~/code/fdarian/gpuix/README.md:3259-3266`). There, a tab click blurs the field and ↑ ↓ Enter and Esc go nowhere until the field is clicked again. Not run on those platforms.
 - **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** just this one.
-
-## Shift, Alt, Ctrl or Cmd with ← → still switch tabs
-
-- **Cause:** `not ported yet`.
-- **Original:** with tabs mounted, only a bare ← or → switches tabs; a modified press keeps its editing meaning, so Shift+Arrow extends the selection (`:778-800`, test `tests/command-menu.test.tsx:239`).
-- **Port:** the case has no modifier check, so Shift+← with tabs mounted switches tabs instead of selecting (`src/components/command-menu.tsx:498-511`).
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** just this one.
+- **Fidelity:** exact on macOS; approximated on Windows and Linux.
+- **Components it hits:** combobox and any list that keeps focus in a field on a press.
 
 ## Tabs cannot take focus and carry no tab semantics
 
@@ -167,20 +159,11 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `gpuix gap` for the scale; `port choice` (reason not stated) for the timing.
 - **Original:** the backdrop fades on `spring.slow` (240 ms, exit 160 ms tween); the panel springs from `scale: 0.97` with opacity on `spring.slow` (`registry/base/dialog.tsx:228-239`, `:286-293`).
-- **Port:** the scrim fades on `moderate` in / `moderateExit` out (160 / 120 ms); the panel fades and slides 4 px down on `fast` in / `fastExit` out (80 / 60 ms) (`src/components/command-menu.tsx:1291-1319`). `src/components/dialog.tsx` uses `slow` for the same shell.
+- **Port:** the scrim fades on `moderate` in / `moderateExit` out (160 / 120 ms); the panel fades and slides 4 px down on `fast` in / `fastExit` out (80 / 60 ms) (`src/components/command-menu.tsx:1291-1319`). The layer unmounts when the scrim's exit completes (`onMotionComplete`, with a 220 ms timer for an exit that never animates), so the longer scrim fade is not cut short (`:1287`, `:1296`). `src/components/dialog.tsx` uses `slow` for the same shell.
 - **gpuix lacks:** `scale` (no transforms, `~/code/fdarian/gpuix/FORK.md:876-887`).
 - **Workaround:** the 4 px slide stands in for the scale.
 - **Fidelity:** approximated (faster, no scale).
 - **Components it hits:** every popup that scales in.
-
-## The scrim's exit is cut short
-
-- **Cause:** `not ported yet` (a bug, not a deliberate change).
-- **Original:** the backdrop fades out in full before the dialog unmounts (`registry/base/dialog.tsx:236`, unmount released by the exit).
-- **Port:** `createPresence()` unmounts 60 ms after `hide()` (`src/lib/presence.ts:4`, `:17`, `:31`), but the scrim's exit tween is 120 ms (`src/components/command-menu.tsx:1259`, `:1296`), so it disappears at about half opacity.
-- **Workaround:** none.
-- **Fidelity:** approximated.
-- **Components it hits:** just this one.
 
 ## Dialog shell: no modal semantics, closes on mousedown, thinner props
 
@@ -204,7 +187,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `not ported yet`.
 - **Original:** exports `parseShortcut`, `matchesShortcut` (layout-aware, falls back to the physical key), `hasModifier`, `isMacPlatform`, `useIsMac`; `formatShortcut(shortcut, mac)` accepts aliases (`command`, `win`, `super`, `control`, `opt`, `del`, `plus`, `spacebar`, `arrowup`...) and keeps a trailing `+` as the key (`:118-303`).
-- **Port:** only `formatShortcut(shortcut)` with `IS_MAC` baked in; `CAP_LABELS` knows `cmd`, `option`, `return`, `esc`, `space`, `up` / `down` / `left` / `right` but not the other aliases, so `"command+k"` draws "Command" (`src/components/command-menu.tsx:83-123`). The `"mod++"` case in its comment is not handled: `filter` drops the empty tokens, so the `+` key is lost (`:110-111`). The site menu carries its own `isModK` (`src/lib/site-command-menu.tsx:39-43`).
+- **Port:** only `formatShortcut(shortcut)` with `IS_MAC` baked in; `CAP_LABELS` knows `cmd`, `option`, `return`, `esc`, `space`, `up` / `down` / `left` / `right` but not the other aliases, so `"command+k"` draws "Command" (`src/components/command-menu.tsx:83-138`). A trailing `+` is kept as the key, as in the source (`"mod++"` draws the modifier and `+`, `shortcutTokens`, `:113-125`). The site menu carries its own `isModK` (`src/lib/site-command-menu.tsx:42-46`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
