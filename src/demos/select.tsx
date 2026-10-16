@@ -4,15 +4,8 @@ import { Button } from "../components/button";
 import { Select, type SelectEntry } from "../components/select";
 import type { DemoModule, ShotContext } from "../lib/demo";
 import { DemoCard, DemoRow } from "../lib/demo-kit";
-import { defineIcon } from "../lib/icons";
 import { color, type as scale } from "../lib/theme";
 
-const monitor = defineIcon(
-	'<rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/>',
-);
-const shield = defineIcon(
-	'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
-);
 
 const FRUITS = [
 	{ value: "apple", label: "Apple" },
@@ -22,7 +15,7 @@ const FRUITS = [
 ] as const;
 
 const THEMES = [
-	{ value: "system", label: "System", icon: monitor },
+	{ value: "system", label: "System", icon: "monitor" },
 	{ value: "light", label: "Light", icon: "sun" },
 	{ value: "dark", label: "Dark", icon: "moon" },
 ] as const;
@@ -34,7 +27,7 @@ const GROUPS: readonly SelectEntry<string>[] = [
 	{ type: "separator" },
 	{ type: "label", label: "Preferences" },
 	{ value: "notifications", label: "Notifications", icon: "bell" },
-	{ value: "privacy", label: "Privacy", icon: shield },
+	{ value: "privacy", label: "Privacy", icon: "shield" },
 ];
 
 const TIMEZONES = [

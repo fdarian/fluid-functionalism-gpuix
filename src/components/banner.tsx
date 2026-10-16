@@ -17,11 +17,12 @@ import {
 	useContext,
 } from "solid-js";
 import { Icon } from "../lib/icon";
-import { defineIcon, type IconRef } from "../lib/icons";
+import type { IconRef } from "../lib/icons";
 import {
 	color,
 	focusRing,
-	radius,
+	shape,
+	sizeChoice,
 	type as scale,
 	motion as tween,
 	weight,
@@ -56,9 +57,6 @@ const sizes = {
 	},
 } as const;
 
-const infoIcon = defineIcon(
-	'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
-);
 
 const tone = (status: BannerStatus) => {
 	switch (status) {
@@ -146,7 +144,8 @@ export function Banner(props: {
 	const status = () => props.status ?? "default";
 	const contrast = () => props.contrast ?? "low";
 	const fixed = () => props.variant === "fixed";
-	const metrics = () => sizes[props.size ?? "default"];
+	const size = () => props.size ?? sizeChoice();
+	const metrics = () => sizes[size()];
 
 	const [openState, setOpenState] = createSignal(true);
 	const open = () => props.open ?? openState();
@@ -186,7 +185,7 @@ export function Banner(props: {
 	);
 
 	const scope: BannerScope = {
-		compact: () => props.size === "compact",
+		compact: () => size() === "compact",
 		hasDescription,
 		setHasDescription,
 	};
@@ -211,7 +210,7 @@ export function Banner(props: {
 		if (current === "default") {
 			return (
 				<Icon
-					name={infoIcon}
+					name="info"
 					size={metrics().icon}
 					strokeWidth={1.5}
 					color={tone(current)}
@@ -245,7 +244,7 @@ export function Banner(props: {
 					flexShrink: 0,
 					alignItems: hasDescription() ? "flex-start" : "center",
 					padding: metrics().pad,
-					borderRadius: fixed() ? 0 : radius.container,
+					borderRadius: fixed() ? 0 : shape.container,
 					// A fixed bar stays opaque over the page scrolling under it.
 					backgroundColor: fixed() ? color.background : color.transparent,
 				}}
@@ -258,7 +257,7 @@ export function Banner(props: {
 						left: 0,
 						right: 0,
 						bottom: 0,
-						borderRadius: fixed() ? 0 : radius.container,
+						borderRadius: fixed() ? 0 : shape.container,
 						backgroundColor: fill(status(), contrast()),
 					}}
 				/>
@@ -290,7 +289,7 @@ export function Banner(props: {
 				</div>
 				<Show when={props.dismissible}>
 					<DismissButton
-						compact={props.size === "compact"}
+						compact={size() === "compact"}
 						testId={
 							props.testId === undefined ? undefined : `${props.testId}-dismiss`
 						}
@@ -388,7 +387,7 @@ function DismissButton(props: {
 				marginBottom: props.compact ? -5 : -4,
 				marginRight: -6,
 				marginLeft: props.compact ? 6 : 8,
-				borderRadius: radius.item,
+				borderRadius: shape.button,
 				cursor: "pointer",
 				keyboardFocusDim: false,
 				hover: { backgroundColor: color.hover },

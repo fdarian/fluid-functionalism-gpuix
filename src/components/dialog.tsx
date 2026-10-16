@@ -30,7 +30,8 @@ import { createPresence } from "../lib/presence";
 import { SurfaceContext, useElevatedSurface } from "../lib/surface-context";
 import {
 	color,
-	radius,
+	shape,
+	sizeChoice,
 	type as scale,
 	scheme,
 	surface,
@@ -48,6 +49,10 @@ const widths = {
 	lg: { default: 540, compact: 480 },
 	xl: { default: 880, compact: 800 },
 } as const;
+
+function isCompact(compact: boolean | undefined) {
+	return compact ?? sizeChoice() === "compact";
+}
 
 /** Steps above its substrate the panel sits: `DIALOG_OFFSET` in the source. */
 const DIALOG_SURFACE_OFFSET = 4;
@@ -246,7 +251,7 @@ export function DialogContent(props: {
 	const level = useElevatedSurface(DIALOG_SURFACE_OFFSET);
 	const windowSize = createWindowSize();
 	const maxWidth = () =>
-		widths[props.size ?? "sm"][props.compact ? "compact" : "default"];
+		widths[props.size ?? "sm"][isCompact(props.compact) ? "compact" : "default"];
 	const top = () => (props.position ?? "center") === "top";
 	const topOffset = () =>
 		scope.scoped() ? 24 : Math.round(windowSize().height * TOP_OFFSET);
@@ -337,7 +342,7 @@ export function DialogContent(props: {
 						display: "flex",
 						flexDirection: "column",
 						padding: 24,
-						borderRadius: radius.container,
+						borderRadius: shape.container,
 						backgroundColor: surface(level),
 						borderWidth: 1,
 						borderColor: color.popupBorder,
@@ -429,7 +434,7 @@ export function DialogTitle(props: { compact?: boolean; children: string }) {
 		<GpuixDialogTitle id={scope.titleId}>
 			<text
 				style={{
-					...(props.compact ? { fontSize: 15, lineHeight: 20 } : scale.title),
+					...(isCompact(props.compact) ? { fontSize: 15, lineHeight: 20 } : scale.title),
 					color: color.foreground,
 					fontWeight: weight.semibold,
 				}}
@@ -449,7 +454,7 @@ export function DialogDescription(props: {
 		<GpuixDialogDescription id={scope.descriptionId}>
 			<text
 				style={{
-					...(props.compact ? scale.bodyCompact : scale.body),
+					...(isCompact(props.compact) ? scale.bodyCompact : scale.body),
 					color: color.mutedForeground,
 				}}
 			>

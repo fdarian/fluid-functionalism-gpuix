@@ -24,21 +24,12 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { fill } from "../lib/press";
-import { defineIcon } from "../lib/icons";
 import { createMeasuredHeight } from "../lib/measured-height";
-import { color, height, radius, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
+import { color, sizeChoice, height, nestedRadius, radius, shape, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 import { FileThumbnail } from "./file-thumbnail";
 import type { InputSize } from "./input-group";
 import { Tooltip } from "./tooltip";
 
-const arrowUp = defineIcon('<path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>');
-const arrowDown = defineIcon('<path d="M12 5v14"/><path d="m19 12-7 7-7-7"/>');
-const cornerDownLeft = defineIcon(
-	'<polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/>',
-);
-const imageGlyph = defineIcon(
-	'<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
-);
 
 /** A file the composer holds. gpuix hands over paths from a drop or the picker, never a `File`. */
 export type ComposerFile = {
@@ -193,7 +184,7 @@ function SendButton(props: {
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",
-				borderRadius: radius.item,
+				borderRadius: shape.button,
 				cursor: "pointer",
 				keyboardFocusDim: false,
 				opacity: props.disabled ? 0.5 : 1,
@@ -216,7 +207,7 @@ function SendButton(props: {
 							when={glyph === "stop"}
 							fallback={
 								<Icon
-									name={arrowUp}
+									name="arrow-up"
 									size={props.arrowSize}
 									strokeWidth={2}
 									color={color.background}
@@ -311,8 +302,8 @@ function FilePreviewTile(props: {
 					src: props.file.path,
 				}}
 				size={props.size}
-				// The tile sits 8px inside the container's 12px radius.
-				radius={4}
+				// The tile sits 8px inside the composer's edge.
+				radius={nestedRadius(shape.container, 8)}
 			/>
 			<div style={{ position: "absolute", top: 4, right: 4 }}>
 				<RemoveBadge
@@ -421,7 +412,7 @@ function QueuedRow(props: {
 					}}
 				>
 					<Icon
-						name={imageGlyph}
+						name="image"
 						size={13}
 						strokeWidth={1.5}
 						color={color.mutedForeground}
@@ -573,7 +564,7 @@ function SuggestionRow(props: {
 					fallback={
 						<Show when={props.active}>
 							<Icon
-								name={cornerDownLeft}
+								name="corner-down-left"
 								size={13}
 								strokeWidth={1.5}
 								color={color.foreground}
@@ -582,7 +573,7 @@ function SuggestionRow(props: {
 					}
 				>
 					<Icon
-						name={arrowDown}
+						name="arrow-down"
 						size={13}
 						strokeWidth={1.5}
 						color={color.mutedForeground}
@@ -640,7 +631,7 @@ export type InputMessageProps = {
 
 export function InputMessage(props: InputMessageProps) {
 	const renderer = useGpuixRequired();
-	const size = () => props.size ?? "default";
+	const size = () => props.size ?? sizeChoice();
 	const step = () => steps[size()];
 	const files = () => props.files ?? [];
 	const queue = () => props.queue ?? [];
@@ -964,7 +955,7 @@ export function InputMessage(props: InputMessageProps) {
 				flexDirection: "column",
 				padding: 8,
 				width: "100%",
-				borderRadius: radius.container,
+				borderRadius: shape.container,
 				backgroundColor: color.surface2,
 				outlineWidth: 1,
 				outlineColor: ring(),
@@ -1225,7 +1216,7 @@ export function InputMessage(props: InputMessageProps) {
 							<FluidHighlight
 								rect={() => rectFor(hover.activeIndex())}
 								session={hover.session}
-								radius={radius.item}
+								radius={shape.bg}
 								background={color.hover}
 							/>
 							<For each={suggestions()}>

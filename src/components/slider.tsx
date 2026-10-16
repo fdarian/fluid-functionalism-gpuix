@@ -27,7 +27,8 @@ import { createPresence } from "../lib/presence";
 import {
 	color,
 	focusRing,
-	radius,
+	shape,
+	sizeChoice,
 	type as scale,
 	scheme,
 	motion as tween,
@@ -218,7 +219,7 @@ function ValueBubble(props: {
 					style={{
 						position: "relative",
 						backgroundColor: color.foreground,
-						borderRadius: radius.item,
+						borderRadius: shape.bg,
 						paddingLeft: 8,
 						paddingRight: 8,
 						paddingTop: 4,
@@ -1392,7 +1393,7 @@ function ComfortableSlider(props: ComfortableProps) {
 					width: "100%",
 					borderWidth: ROW_BORDER,
 					borderColor: color.border,
-					borderRadius: radius.item,
+					borderRadius: shape.bg,
 					overflow: "hidden",
 					cursor: "ew-resize",
 					outlineWidth: focused() ? 1 : 0,
@@ -1647,7 +1648,7 @@ export interface SliderProps extends CompactProps {
 /** One slider, two engines. Features only the compact engine implements (a range, a step list, value display) force it whatever the size, so no capability is lost. */
 export function Slider(props: SliderProps) {
 	const needsCompact = () =>
-		props.size === "compact" ||
+		(props.size ?? sizeChoice()) === "compact" ||
 		Array.isArray(props.value) ||
 		props.steps !== undefined ||
 		props.showSteps !== undefined ||

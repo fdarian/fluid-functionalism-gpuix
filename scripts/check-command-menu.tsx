@@ -11,7 +11,7 @@ import { clipboard } from "@gpuix/solid";
 import { createTestRoot } from "@gpuix/solid/testing";
 import { App } from "../src/app";
 import { formatShortcut } from "../src/components/command-menu";
-import { loadDemos } from "../src/lib/demo";
+import { loadDemos, loadPages } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
 import { IS_MAC } from "../src/lib/platform";
 import { setThemeChoice } from "../src/lib/theme";
@@ -91,8 +91,9 @@ check(
 check("a bare + is one cap", JSON.stringify(formatShortcut("+")) === '["+"]');
 
 const demos = await loadDemos();
+const pages = await loadPages(demos);
 setThemeChoice("dark");
-test.render(() => <App demos={demos} />);
+test.render(() => <App demos={demos} pages={pages} />);
 await settle(800);
 
 // ─── The site menu ───────────────────────────────────────────────────────────

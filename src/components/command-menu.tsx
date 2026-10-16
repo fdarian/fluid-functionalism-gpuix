@@ -26,23 +26,21 @@ import {
 	useHoverItem,
 } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
-import { defineIcon, type IconRef } from "../lib/icons";
+import type { IconRef } from "../lib/icons";
 import { moveIndex, revealRow } from "../lib/list-nav";
 import { IS_MAC } from "../lib/platform";
 import { createPresence } from "../lib/presence";
 import {
 	color,
 	radius,
+	shape,
+	sizeChoice,
 	type as scale,
 	scheme,
 	shadow3,
 	motion as tween,
 	weight,
 } from "../lib/theme";
-
-export const searchIcon = defineIcon(
-	'<path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>',
-);
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -321,7 +319,7 @@ export function CommandMenuPanel(props: {
 				maxWidth: 520,
 				maxHeight: props.maxHeight,
 				backgroundColor: color.card,
-				borderRadius: radius.container,
+				borderRadius: shape.container,
 				borderWidth: 1,
 				borderColor: color.popupBorder,
 				boxShadow: shadow3(),
@@ -453,7 +451,7 @@ export function CommandMenu(props: {
 	};
 
 	const context: CommandMenuContextValue = {
-		compact: () => props.size === "compact",
+		compact: () => (props.size ?? sizeChoice()) === "compact",
 		query,
 		setQuery,
 		sections,
@@ -512,7 +510,7 @@ export function CommandMenuInput(props: {
 	const [focused, setFocused] = createSignal(false);
 	const layout = () => metrics(menu.compact());
 	const icon = (): IconRef | null =>
-		props.icon === undefined ? searchIcon : props.icon;
+		props.icon === undefined ? "search" : props.icon;
 	let inputElement: HostElement | undefined;
 
 	const onKeyDown = (event: KeyEvent) => {
@@ -745,7 +743,7 @@ export function CommandMenuTabs(props: {
 				<FluidHighlight
 					rect={rectOf(selectedIndex())}
 					session={() => 0}
-					radius={radius.item}
+					radius={shape.bg}
 					background={color.active}
 					glide={tween.moderate}
 					fade={tween.moderateExit}
@@ -754,7 +752,7 @@ export function CommandMenuTabs(props: {
 					rect={() => rectOf(hoverIndex())()}
 					from={rectOf(selectedIndex())}
 					session={entered}
-					radius={radius.item}
+					radius={shape.bg}
 					background={color.hover}
 				/>
 				<For each={props.tabs}>
@@ -777,7 +775,7 @@ export function CommandMenuTabs(props: {
 									height: 28,
 									paddingLeft: 10,
 									paddingRight: 10,
-									borderRadius: radius.item,
+									borderRadius: shape.bg,
 									cursor: "pointer",
 								}}
 							>

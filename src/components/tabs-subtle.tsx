@@ -29,7 +29,7 @@ import { StableLabel } from "../lib/stable-label";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { moveIndex } from "../lib/list-nav";
-import { color, height, radius, type as scale, motion as tween, weight } from "../lib/theme";
+import { color, sizeChoice, height, shape, type as scale, motion as tween, weight } from "../lib/theme";
 
 export type TabsSubtleSize = "default" | "compact";
 
@@ -119,7 +119,7 @@ export function TabsSubtle(props: {
 		},
 		activeLabel: () => props.activeLabel === true,
 		idPrefix: () => props.idPrefix,
-		size: () => props.size ?? "default",
+		size: () => props.size ?? sizeChoice(),
 		hover,
 		focusRing,
 		elements: new Map(),
@@ -192,7 +192,7 @@ export function TabsSubtle(props: {
 									left: 0,
 									right: 0,
 									bottom: 0,
-									borderRadius: radius.item,
+									borderRadius: shape.bg,
 									backgroundColor: color.active,
 								}}
 							/>
@@ -227,7 +227,7 @@ export function TabsSubtle(props: {
 									left: 0,
 									right: 0,
 									bottom: 0,
-									borderRadius: radius.item,
+									borderRadius: shape.bg,
 									backgroundColor: color.active,
 								}}
 							/>
@@ -237,6 +237,7 @@ export function TabsSubtle(props: {
 				</For>
 				<FocusRing
 					ring={focusRing}
+					radius={shape.focusRing}
 					testId={props.testId && `${props.testId}-focus-ring`}
 				/>
 				{props.children}
@@ -371,7 +372,7 @@ export function TabsSubtleItem(props: {
 				paddingLeft: metrics().padX,
 				paddingRight: metrics().padX,
 				gap: collapsible() || props.icon === undefined ? 0 : metrics().gap,
-				borderRadius: radius.item,
+				borderRadius: shape.bg,
 				cursor: "pointer",
 				keyboardFocusDim: false,
 			}}

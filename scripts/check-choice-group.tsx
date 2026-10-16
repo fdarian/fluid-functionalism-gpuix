@@ -10,7 +10,7 @@
 import { mkdirSync } from "node:fs";
 import { createTestRoot } from "@gpuix/solid/testing";
 import { App } from "../src/app";
-import { loadDemos } from "../src/lib/demo";
+import { loadDemos, loadPages } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
 import { readPng } from "./png-pixels";
@@ -90,11 +90,12 @@ const show = (samples: Sample[]) =>
 	samples.map((sample) => `${sample.ms}:${sample.value}`).join(" ");
 
 const demos = await loadDemos();
+const pages = await loadPages(demos);
 setThemeChoice("dark");
 
 // Mount: checked row 0 against unchecked row 3, from the first frame.
 const mountStart = performance.now();
-test.render(() => <App demos={demos} initialPage="checkbox-group" />);
+test.render(() => <App demos={demos} pages={pages} initialPage="checkbox-group" />);
 const optional = (testId: string) => () => {
 	const element = renderer.findByTestId(testId);
 	if (element === undefined || renderer.getElementBounds(element.id) === null) {

@@ -33,7 +33,7 @@ import {
 import { createPresence } from "../lib/presence";
 import { createPressToggle, returnFocusTo } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
-import { color, height, radius, type as scale, scheme, shadow3, motion as tween, weight, surface, focusRing } from "../lib/theme";
+import { color, height, nestedRadius, radius, shape, type as scale, scheme, shadow3, motion as tween, weight, surface, focusRing } from "../lib/theme";
 import {
 	buildParsed,
 	clamp01,
@@ -140,7 +140,7 @@ export function ColorTile(props: { color: string; size?: number }) {
 				width: size(),
 				height: size(),
 				flexShrink: 0,
-				borderRadius: radius.item,
+				borderRadius: shape.bg,
 				overflow: "hidden",
 			}}
 		>
@@ -162,7 +162,7 @@ export function ColorTile(props: { color: string; size?: number }) {
 					left: 0,
 					width: size(),
 					height: size(),
-					borderRadius: radius.item,
+					borderRadius: shape.bg,
 					borderWidth: 1,
 					borderColor: HAIRLINE,
 				}}
@@ -203,7 +203,7 @@ export function ColorSwatch(props: {
 				width: size(),
 				height: size(),
 				flexShrink: 0,
-				borderRadius: radius.item,
+				borderRadius: shape.bg,
 				cursor: "pointer",
 				boxShadow:
 					ring() === undefined
@@ -227,7 +227,7 @@ export function ColorSwatch(props: {
 					left: 0,
 					width: size(),
 					height: size(),
-					borderRadius: radius.item,
+					borderRadius: shape.bg,
 					overflow: "hidden",
 				}}
 			>
@@ -250,7 +250,7 @@ export function ColorSwatch(props: {
 					left: 0,
 					width: size(),
 					height: size(),
-					borderRadius: radius.item,
+					borderRadius: shape.bg,
 					borderWidth: 1,
 					borderColor: HAIRLINE,
 				}}
@@ -361,6 +361,7 @@ function SaturationSquare(props: {
 				position: "relative",
 				width: INNER_WIDTH,
 				height: SQUARE_HEIGHT,
+				borderRadius: nestedRadius(shape.container, 12),
 				flexShrink: 0,
 				// gpuix has no `cursor: none`, so the ghost ring and the pointer both show.
 				cursor: "crosshair",
@@ -381,6 +382,7 @@ function SaturationSquare(props: {
 					left: 0,
 					width: INNER_WIDTH,
 					height: SQUARE_HEIGHT,
+					borderRadius: nestedRadius(shape.container, 12),
 					background: {
 						type: "linear-gradient",
 						angle: 90,
@@ -399,6 +401,7 @@ function SaturationSquare(props: {
 					left: 0,
 					width: INNER_WIDTH,
 					height: SQUARE_HEIGHT,
+					borderRadius: nestedRadius(shape.container, 12),
 					background: {
 						type: "linear-gradient",
 						angle: 0,
@@ -893,7 +896,7 @@ function FormatDropdown(props: {
 					justifyContent: "space-between",
 					paddingLeft: 12,
 					paddingRight: 12,
-					borderRadius: radius.item,
+					borderRadius: shape.input,
 					cursor: "pointer",
 					keyboardFocusDim: false,
 					backgroundColor: presence.open() ? color.active : color.transparent,
@@ -975,7 +978,7 @@ function FormatDropdown(props: {
 										alignItems: "center",
 										paddingLeft: 12,
 										paddingRight: 12,
-										borderRadius: radius.item,
+										borderRadius: shape.item,
 										cursor: "pointer",
 									}}
 								>
@@ -1166,7 +1169,7 @@ function ColorInput(props: {
 				alignItems: "center",
 				paddingLeft: 8,
 				paddingRight: 8,
-				borderRadius: radius.item,
+				borderRadius: shape.input,
 				cursor: scrub && !editing() ? "ew-resize" : "text",
 				userSelect: "none",
 				outlineWidth: focused() ? 1 : 0,
@@ -1659,7 +1662,7 @@ export function ColorPicker(props: ColorPickerProps) {
 			style={{
 				width: PANEL_WIDTH,
 				backgroundColor: surface(props.level ?? 3),
-				borderRadius: radius.container,
+				borderRadius: shape.container,
 				borderWidth: 1,
 				borderColor: color.popupBorder,
 			}}
@@ -1775,7 +1778,7 @@ export function ColorPickerPopover(
 					height: height.control,
 					paddingLeft: 8,
 					paddingRight: 8,
-					borderRadius: radius.item,
+					borderRadius: shape.input,
 					borderWidth: 1,
 					borderColor: color.border,
 					cursor: "pointer",

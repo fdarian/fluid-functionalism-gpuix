@@ -16,7 +16,7 @@ import {
 } from "solid-js";
 import { createPlacementState, POPUP_MARGIN } from "../lib/popup";
 import { createPresence } from "../lib/presence";
-import { color, radius, type as scale, motion as tween } from "../lib/theme";
+import { color, shape, type as scale, motion as tween } from "../lib/theme";
 
 export type TooltipSide = "top" | "right" | "bottom" | "left";
 
@@ -282,7 +282,7 @@ export function Tooltip(props: {
 						style={{
 							position: "relative",
 							backgroundColor: color.foreground,
-							borderRadius: radius.item,
+							borderRadius: shape.bg,
 							paddingLeft: 8,
 							paddingRight: 8,
 							paddingTop: 4,

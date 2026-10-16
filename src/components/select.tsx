@@ -27,7 +27,7 @@ import { PopupSurface } from "../lib/popup";
 import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import { returnFocusTo } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
-import { color, colorFade, radius, type as scale, scheme, motion as tween, withAlpha, focusRing } from "../lib/theme";
+import { color, sizeChoice, colorFade, radius, shape, type as scale, scheme, motion as tween, withAlpha, focusRing } from "../lib/theme";
 
 /** How long a pick holds the popup open so the check and the checked background are seen arriving. */
 const ACK_MS = 300;
@@ -137,7 +137,7 @@ export function Select<Value extends string>(props: {
 	const renderer = useGpuixRequired();
 	const variant = () => props.variant ?? "inline";
 	const inline = () => variant() === "inline";
-	const spec = () => specs[props.size ?? "default"];
+	const spec = () => specs[props.size ?? sizeChoice()];
 	const triggerSpec = (): Spec =>
 		inline()
 			? {
@@ -510,7 +510,7 @@ export function Select<Value extends string>(props: {
 						paddingRight: inline() ? 6 : triggerSpec().padX,
 						borderWidth: inline() ? 0 : 1,
 						borderColor: borderColor(),
-						borderRadius: radius.item,
+						borderRadius: shape.input,
 						cursor: "pointer",
 						keyboardFocusDim: false,
 						opacity: props.disabled === true ? 0.5 : 1,
@@ -629,6 +629,7 @@ export function Select<Value extends string>(props: {
 							/>
 							<FocusRing
 								ring={{ rect: () => (keyboardNav() ? hoverRect() : null) }}
+								radius={radius.focusRing}
 								testId={
 									props.testId === undefined
 										? undefined

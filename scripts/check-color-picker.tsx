@@ -8,7 +8,7 @@
 import { createTestRoot } from "@gpuix/solid/testing";
 import { App } from "../src/app";
 import { ColorPicker } from "../src/components/color-picker";
-import { loadDemos } from "../src/lib/demo";
+import { loadDemos, loadPages } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
 
@@ -77,7 +77,8 @@ setThemeChoice("dark");
 {
 	const page = harness();
 	const demos = await loadDemos();
-	page.test.render(() => <App demos={demos} initialPage="color-picker" />);
+	const pages = await loadPages(demos);
+	page.test.render(() => <App demos={demos} pages={pages} initialPage="color-picker" />);
 	await page.settle(800);
 
 	// The rails are the source's 36px tall compact sliders, overlapping by 1px.

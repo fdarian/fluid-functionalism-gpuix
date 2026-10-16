@@ -8,7 +8,7 @@
  */
 import { createTestRoot } from "@gpuix/solid/testing";
 import { App } from "../src/app";
-import { loadDemos } from "../src/lib/demo";
+import { loadDemos, loadPages } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
 
@@ -46,8 +46,9 @@ function report(name: string, ok: boolean, detail: string) {
 }
 
 const demos = await loadDemos();
+const pages = await loadPages(demos);
 setThemeChoice("dark");
-test.render(() => <App demos={demos} initialPage="input-group" />);
+test.render(() => <App demos={demos} pages={pages} initialPage="input-group" />);
 await settle(800);
 
 const disabledInput = element("disabled-input").id;

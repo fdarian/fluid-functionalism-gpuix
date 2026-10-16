@@ -9,6 +9,7 @@ import { createPointerCapture } from "../lib/pointer-capture";
 import {
 	color,
 	focusRing,
+	sizeChoice,
 	type as scale,
 	scheme,
 	motion as tween,
@@ -55,9 +56,11 @@ export function Switch(props: {
 	onToggle: () => void;
 	disabled?: boolean;
 	size?: SwitchSize;
+	/** A settings row: the label at the left, the track at the right, across the whole width, 36 px tall (the playground panels' `flex-row-reverse justify-between h-9 px-1 py-0`). */
+	settingsRow?: boolean;
 	testId?: string;
 }) {
-	const m = () => METRICS[props.size ?? "default"];
+	const m = () => METRICS[props.size ?? sizeChoice()];
 	const trackId = createUniqueId();
 	const labelId = createUniqueId();
 	const thumbTravel = () => m().trackWidth - m().thumbSize - THUMB_OFFSET * 2;
@@ -173,13 +176,16 @@ export function Switch(props: {
 			onLostPointerCapture={onPressCancel}
 			style={{
 				display: "flex",
-				flexDirection: "row",
+				flexDirection: props.settingsRow === true ? "row-reverse" : "row",
 				alignItems: "center",
 				gap: m().gap,
-				paddingLeft: m().padX,
-				paddingRight: m().padX,
-				paddingTop: m().padY,
-				paddingBottom: m().padY,
+				paddingLeft: props.settingsRow === true ? 4 : m().padX,
+				paddingRight: props.settingsRow === true ? 4 : m().padX,
+				paddingTop: props.settingsRow === true ? 0 : m().padY,
+				paddingBottom: props.settingsRow === true ? 0 : m().padY,
+				...(props.settingsRow === true
+					? { justifyContent: "space-between", width: "100%", height: 36 }
+					: {}),
 				cursor: "pointer",
 				userSelect: "none",
 				opacity: props.disabled ? 0.5 : 1,

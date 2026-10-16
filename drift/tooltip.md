@@ -24,20 +24,11 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 - **Fidelity:** approximated (same distance and timing; a layout change per frame instead of a compositor transform).
 - **Components it hits:** every popup that slides in (select, combobox, dropdown, color-picker, dialog).
 
-## Pill shape is not ported
-
-- **Cause:** `not ported yet` (README "Not ported there: pill shape").
-- **Original:** the chip uses `shape.bg`: `rounded-lg` (8px) or `rounded-[20px]` under a pill `ShapeProvider` (`registry/base/tooltip.tsx:278`, `registry/default/lib/shape-context.tsx:51-79`).
-- **Port:** a fixed `radius.item` = 8px (`src/components/tooltip.tsx:285`, `src/lib/theme.ts:281`).
-- **Workaround:** none.
-- **Fidelity:** exact in the default shape; dropped for pill.
-- **Components it hits:** every component that reads `useShape`.
-
 ## The label is centred by its full line box
 
 - **Cause:** `gpuix gap` ([README, badge row](../README.md#missing-features): `text-box-trim`).
 - **Original:** `[text-box:trim-both_cap_alphabetic]` with `py-2` where supported, `py-1` elsewhere, for about 24px overall (`registry/base/tooltip.tsx:273-277`).
-- **Port:** `paddingTop` / `paddingBottom` 4 around the caption's 16px line, 24px overall (`src/components/tooltip.tsx:286-289`, `src/lib/theme.ts:271`).
+- **Port:** `paddingTop` / `paddingBottom` 4 around the caption's 16px line, 24px overall (`src/components/tooltip.tsx:286-289`, `src/lib/theme.ts:311`).
 - **gpuix lacks:** `text-box-trim` / `text-box-edge`.
 - **Workaround:** the height matches; the glyphs sit about a pixel off the trimmed centre.
 - **Fidelity:** approximated.
@@ -81,7 +72,7 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 
 ## The slide follows the side the popup landed on
 
-- **Cause:** `port choice` (reason not stated; `PopupSurface` does the same, `src/lib/popup.tsx:73-74`).
+- **Cause:** `port choice` (reason not stated; `PopupSurface` does the same, `src/lib/popup.tsx:78-79`).
 - **Original:** the slide offset comes from the `side` prop (`registry/base/tooltip.tsx:201`), so a tooltip Base UI flips still slides in from the side it did not land on.
 - **Port:** `slideFrom(placement.side())` uses the side `<anchored fit="flip">` reports (`src/components/tooltip.tsx:275-279`).
 - **Workaround:** n/a.

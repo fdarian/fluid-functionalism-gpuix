@@ -5,12 +5,13 @@
  */
 import { render } from "@gpuix/solid";
 import { App, WINDOW_TITLE } from "./app";
-import { loadDemos } from "./lib/demo";
+import { loadDemos, loadPages } from "./lib/demo";
 import { fonts } from "./lib/fonts";
 
 const demos = await loadDemos();
+const pages = await loadPages(demos);
 
-render(() => <App demos={demos} />, {
+render(() => <App demos={demos} pages={pages} />, {
 	title: WINDOW_TITLE,
 	titlebarTransparent: true,
 	trafficLightX: 14,

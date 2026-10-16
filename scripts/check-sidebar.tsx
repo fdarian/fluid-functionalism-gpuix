@@ -6,8 +6,9 @@
  * Prints PASS / FAIL lines; exits 1 on any FAIL.
  */
 import { createTestRoot } from "@gpuix/solid/testing";
+import { scrollIntoView } from "./check-kit";
 import { App } from "../src/app";
-import { loadDemos } from "../src/lib/demo";
+import { loadDemos, loadPages } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
 
@@ -49,6 +50,7 @@ async function clickAt(x: number, y: number) {
 	await settle(600);
 }
 async function click(testId: string) {
+	await scrollIntoView(renderer, testId);
 	const box = bounds(testId);
 	await clickAt(box.x + box.width / 2, box.y + box.height / 2);
 }
@@ -96,8 +98,9 @@ const ROWS = [
 ];
 
 const demos = await loadDemos();
+const pages = await loadPages(demos);
 setThemeChoice("dark");
-test.render(() => <App demos={demos} initialPage="sidebar" />);
+test.render(() => <App demos={demos} pages={pages} initialPage="sidebar" />);
 await settle(800);
 
 // aria-current: absent on an inactive row, "page" on the active one.
@@ -116,6 +119,7 @@ check(
 // over empty content, so nothing else paints where it would be hit.
 await click("sidebar-demo-Button");
 await settle(600);
+await scrollIntoView(renderer, "sidebar-demo-Icons");
 const icons = bounds("sidebar-demo-Icons");
 await clickAt(icons.x + icons.width / 2, icons.y + icons.height - 4);
 check(
@@ -125,6 +129,7 @@ check(
 );
 await click("sidebar-demo-Button");
 await settle(600);
+await scrollIntoView(renderer, "sidebar-demo-Icons");
 const open = bounds("sidebar-demo-Icons");
 await clickAt(open.x + open.width / 2, open.y + open.height - 4);
 check("click on an open sub-row activates it", current("sidebar-demo-Icons") === "Page", String(current("sidebar-demo-Icons")));

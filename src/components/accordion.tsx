@@ -36,7 +36,8 @@ import { StableLabel } from "../lib/stable-label";
 import {
 	color,
 	focusRing,
-	radius,
+	shape,
+	sizeChoice,
 	type as scale,
 	scheme,
 	trackMs,
@@ -165,7 +166,7 @@ function createRootState(
 		isOpen: (value) => open().includes(value),
 		anyOpen: () => open().length > 0,
 		highlight: () => props.highlight ?? "item",
-		size: () => props.size ?? "default",
+		size: () => props.size ?? sizeChoice(),
 		toggle(value) {
 			const current = open();
 			if (props.type === "multiple") {
@@ -366,12 +367,13 @@ export function AccordionGroup(props: RootProps) {
 					<FluidHighlight
 						rect={hoverRect}
 						session={hover.session}
-						radius={radius.item}
+						radius={shape.bg}
 						background={color.hover}
 						travel={() => !reflow()}
 					/>
 					<FocusRing
 						ring={focusRing}
+						radius={shape.focusRing}
 						testId={props.testId && `${props.testId}-focus-ring`}
 						travel={() => !reflow()}
 					/>
@@ -430,7 +432,7 @@ function GroupTint(props: {
 					}}
 					style={{
 						position: "absolute",
-						borderRadius: radius.item,
+						borderRadius: shape.bg,
 						backgroundColor: color.accentWash,
 						// Removing this lights the row under the pointer after a single-expand click moves the rows, though the pointer is over the open panel, which belongs to no row.
 						pointerEvents: "none",
@@ -499,7 +501,7 @@ export function AccordionItem(props: {
 							left: 0,
 							right: 0,
 							bottom: 0,
-							borderRadius: radius.item,
+							borderRadius: shape.bg,
 							backgroundColor: color.accentWash,
 							pointerEvents: "none",
 						}}
@@ -590,7 +592,7 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 						left: 0,
 						right: 0,
 						bottom: 0,
-						borderRadius: radius.item,
+						borderRadius: shape.bg,
 						backgroundColor: color.accentWash,
 					}}
 				/>
@@ -607,7 +609,7 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					left: 0,
 					right: 0,
 					bottom: 0,
-					borderRadius: radius.item,
+					borderRadius: shape.bg,
 					backgroundColor: color.hover,
 				}}
 			/>
@@ -648,7 +650,7 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					paddingTop: metrics().padY,
 					paddingBottom: metrics().padY,
 					width: "100%",
-					borderRadius: radius.item,
+					borderRadius: shape.item,
 					cursor: "pointer",
 					userSelect: "none",
 					keyboardFocusDim: false,

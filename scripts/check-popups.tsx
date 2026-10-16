@@ -9,7 +9,7 @@ import { createSignal } from "solid-js";
 import { App } from "../src/app";
 import { Combobox } from "../src/components/combobox";
 import { Select } from "../src/components/select";
-import { loadDemos } from "../src/lib/demo";
+import { loadDemos, loadPages } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
 import { color, setThemeChoice } from "../src/lib/theme";
 
@@ -105,8 +105,9 @@ async function popupExit() {
 	setThemeChoice("light");
 	const ui = session();
 	const demos = await loadDemos();
+	const pages = await loadPages(demos);
 	for (const slug of ["select", "combobox"]) {
-		ui.test.render(() => <App demos={demos} initialPage={slug} />);
+		ui.test.render(() => <App demos={demos} pages={pages} initialPage={slug} />);
 		await ui.settle(800);
 		const id = slug === "select" ? "basic" : "framework";
 		const trigger = slug === "select" ? `${id}-trigger` : `${id}-input`;
@@ -136,7 +137,8 @@ async function dialogSurface() {
 	setThemeChoice("dark");
 	const ui = session();
 	const demos = await loadDemos();
-	ui.test.render(() => <App demos={demos} initialPage="dialog" />);
+	const pages = await loadPages(demos);
+	ui.test.render(() => <App demos={demos} pages={pages} initialPage="dialog" />);
 	await ui.settle(800);
 	await ui.click("stack-open");
 	await ui.focus("stack-select-trigger");

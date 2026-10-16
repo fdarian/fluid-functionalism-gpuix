@@ -9,7 +9,7 @@ import {
 } from "solid-js";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { color, radius, motion as tween, weight, focusRing } from "../lib/theme";
+import { color, shape, sizeChoice, motion as tween, weight, focusRing } from "../lib/theme";
 import type { InputSize } from "./input-group";
 import { Tooltip } from "./tooltip";
 
@@ -86,7 +86,7 @@ export function InputCopy(props: {
 	const renderer = useGpuixRequired();
 	const variant = () => props.variant ?? "icon";
 	const align = () => props.align ?? "right";
-	const step = () => steps[props.size ?? "default"];
+	const step = () => steps[props.size ?? sizeChoice()];
 	const [status, setStatus] = createSignal<Status>("idle");
 	/** Keys the result glyph: copying again while "Copied" shows replays it. */
 	const [copyCount, setCopyCount] = createSignal(0);
@@ -295,7 +295,7 @@ export function InputCopy(props: {
 				flexDirection: "row",
 				alignItems: "center",
 				width: "100%",
-				borderRadius: radius.item,
+				borderRadius: shape.input,
 				cursor: "pointer",
 				userSelect: "none",
 				keyboardFocusDim: false,

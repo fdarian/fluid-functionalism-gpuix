@@ -18,13 +18,13 @@ import {
 } from "solid-js";
 import { onFrame } from "../lib/clock";
 import { Icon } from "../lib/icon";
-import { defineIcon, type IconRef } from "../lib/icons";
+import { defineIcon, type IconName } from "../lib/icons";
 import { createMeasuredHeight } from "../lib/measured-height";
 import { StableLabel } from "../lib/stable-label";
 import {
 	color,
 	focusRing,
-	radius,
+	shape,
 	type as scale,
 	motion as tween,
 	weight,
@@ -41,21 +41,13 @@ const slowSpring = {
 const panelSpring = tween.moderate;
 
 const glyphs = {
-	dot: defineIcon('<circle cx="12" cy="12" r="1"/>'),
-	search: defineIcon(
-		'<path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>',
-	),
-	globe: defineIcon(
-		'<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
-	),
-	brain: defineIcon(
-		'<path d="M12 18V5"/><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4"/><path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"/><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"/><path d="M18 18a4 4 0 0 0 2-7.464"/><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"/><path d="M6 18a4 4 0 0 1-2-7.464"/><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"/>',
-	),
-	image: defineIcon(
-		'<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
-	),
-	check: defineIcon('<path d="M20 6 9 17l-5-5"/>'),
-} as const satisfies Record<string, IconRef>;
+	dot: "dot",
+	search: "search",
+	globe: "globe",
+	brain: "brain",
+	image: "image",
+	check: "check",
+} as const satisfies Record<string, IconName>;
 
 export type StepIcon = keyof typeof glyphs;
 export type StepStatus = "complete" | "active" | "pending";
@@ -132,7 +124,7 @@ function TriggerRow(props: {
 							left: 0,
 							right: 0,
 							bottom: 0,
-							borderRadius: radius.item,
+							borderRadius: shape.bg,
 							backgroundColor: color.hover,
 						}}
 					/>
@@ -154,7 +146,7 @@ function TriggerRow(props: {
 					paddingRight: props.paddingX,
 					paddingTop: props.paddingY,
 					paddingBottom: props.paddingY,
-					borderRadius: radius.item,
+					borderRadius: shape.item,
 					cursor: "pointer",
 					userSelect: "none",
 					keyboardFocusDim: false,
@@ -372,7 +364,7 @@ export function ThinkingStep(props: {
 								paddingRight: 8,
 								paddingTop: 6,
 								paddingBottom: 6,
-								borderRadius: radius.item,
+								borderRadius: shape.item,
 							}}
 						>
 							{/* Icon column with a connector that runs to the bottom of the step. */}
@@ -594,7 +586,7 @@ export function ThinkingStepImage(props: {
 					style={{
 						width: IMAGE_WIDTH,
 						height: height(),
-						borderRadius: radius.container,
+						borderRadius: shape.container,
 					}}
 				/>
 				{/* An inset hairline keeps the edge of a pale screenshot visible. */}
@@ -605,7 +597,7 @@ export function ThinkingStepImage(props: {
 						left: 0,
 						width: IMAGE_WIDTH,
 						height: height(),
-						borderRadius: radius.container,
+						borderRadius: shape.container,
 						outlineWidth: 1,
 						outlineOffset: -1,
 						outlineColor: color.border,
