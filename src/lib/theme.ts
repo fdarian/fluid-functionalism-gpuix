@@ -442,12 +442,33 @@ export const motion = {
 	snap: { duration: 0 },
 } satisfies Record<string, MotionTransition>;
 
-/** FF's `transition-colors duration-80`: the colour eases to its new value instead of switching. */
-export const colorFade = {
-	transitionProperty: "color",
-	transitionDuration: "80ms",
-	transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-} as const;
+/**
+ * A Tailwind `transition-[a,b]`: the listed properties ease to a new value, whether it came from a signal or a
+ * state style (`hover`, `active`, `focusVisible`), on Tailwind's default curve unless the source names its own. Names are kebab-case CSS.
+ */
+export function fade(
+	properties: readonly string[],
+	ms: number,
+	ease = "cubic-bezier(0.4, 0, 0.2, 1)",
+) {
+	return {
+		transitionProperty: properties.join(","),
+		transitionDuration: `${ms}ms`,
+		transitionTimingFunction: ease,
+	};
+}
+
+/**
+ * Tailwind v4's `transition-colors` list. `text-decoration-color`, `fill` and `stroke` are left out: gpuix's CSS
+ * transitions do not animate them, and an icon's strokes follow `color` through `currentColor`.
+ */
+const COLORS = ["color", "background-color", "border-color", "outline-color"];
+
+/** `transition-colors duration-80`, the source's usual: Tailwind's default curve over 80 ms. */
+export const colorFade = fade(COLORS, 80);
+
+/** `transition-colors` with no duration class: Tailwind's default 150 ms. */
+export const colorFadeDefault = fade(COLORS, 150);
 
 /** The `focus-visible` ring: a 1px outline `offset` px from the box (negative draws inside). */
 export function focusRing(offset: number): StateStyleDesc {

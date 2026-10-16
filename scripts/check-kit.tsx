@@ -11,7 +11,7 @@ import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
 import { readPng } from "./png-pixels";
 
-const INK_PATH = "/tmp/check-kit-ink.png";
+const INK_PATH = `/tmp/check-kit-ink-${process.pid}.png`;
 
 type CheckOptions = {
 	width?: number;
