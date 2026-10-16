@@ -21,7 +21,6 @@ import { Select } from "./components/select";
 import {
 	Sidebar,
 	SidebarContent,
-	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuButton,
 } from "./components/sidebar";
@@ -198,8 +197,10 @@ function AppSidebar(props: {
 	);
 	return (
 		<Sidebar leftCornerRadius={PANEL_INNER_RADIUS}>
-			<SidebarHeader>
-				<SidebarMenu>
+			<SidebarContent>
+				{/* The source's SidebarContent is `py-2`: the first group starts 8px lower than the library's content does. */}
+				<div style={{ height: 8, flexShrink: 0 }} />
+				<NavGroup>
 					<SidebarMenuButton
 						testId="nav-search"
 						icon="search"
@@ -208,9 +209,7 @@ function AppSidebar(props: {
 						badgeType={siteType.caption}
 						onClick={props.onSearch}
 					/>
-				</SidebarMenu>
-			</SidebarHeader>
-			<SidebarContent>
+				</NavGroup>
 				<NavGroup>
 					<SidebarMenuButton
 						testId="nav-showcase"
