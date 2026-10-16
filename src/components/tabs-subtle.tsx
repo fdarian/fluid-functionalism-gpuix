@@ -1,12 +1,11 @@
+import { type DomEvent, type HostElement, motion } from '@gpuix/solid';
 import {
-	buttonProps,
-	type DomEvent,
-	type HostElement,
-	type KeyEvent,
-	motion,
-	useGpuixRequired,
-} from '@gpuix/solid';
-import { moveIndex } from 'base-ui-solid-gpuix/internals/composite';
+	createTabsList,
+	createTabsRoot,
+	createTabsTab,
+	type TabsList,
+	type TabsRoot,
+} from 'base-ui-solid-gpuix/tabs';
 import {
 	createComputed,
 	createContext,
@@ -65,18 +64,13 @@ const sizes = {
 } as const;
 
 interface SubtleScope {
-	selectedIndex: () => number;
-	onSelect: (index: number) => void;
+	root: TabsRoot<number>;
+	tabsList: TabsList;
 	activeLabel: () => boolean;
-	idPrefix: () => string | undefined;
 	size: () => TabsSubtleSize;
 	hover: FluidHover;
 	focusRing: FocusRingState;
-	elements: Map<number, HostElement>;
 	mouseInside: () => boolean;
-	/** The tab that holds the roving tab stop. */
-	tabStop: () => number;
-	focusTab: (index: number) => void;
 }
 
 const SubtleContext = createContext<SubtleScope>();
@@ -113,30 +107,29 @@ export function TabsSubtle(props: {
 	const hover = createFluidHover({ axis: 'x' });
 	const focusRing = createFocusRing(hover);
 	const [mouseInside, setMouseInside] = createSignal(false);
-	/** Manual activation: arrows move focus, and the focused tab keeps the tab stop until the selection changes. */
-	const [focusedTab, setFocusedTab] = createSignal<number>();
-	createEffect(
-		on(
-			() => props.selectedIndex,
-			() => setFocusedTab(undefined),
-			{ defer: true },
-		),
-	);
 	const scope: SubtleScope = {
-		selectedIndex: () => props.selectedIndex,
-		onSelect(index) {
-			// Base UI never re-commits the active tab.
-			if (index !== props.selectedIndex) props.onSelect(index);
-		},
+		root: createTabsRoot<number>({
+			value: () => props.selectedIndex,
+			onValueChange: (index) => props.onSelect(index),
+			tabId: (index) =>
+				props.idPrefix === undefined
+					? undefined
+					: `${props.idPrefix}-tab-${index}`,
+			panelId: (index) =>
+				props.idPrefix === undefined
+					? undefined
+					: `${props.idPrefix}-panel-${index}`,
+		}),
+		// Manual activation: arrows move focus, and the focused tab keeps the tab stop until the selection changes.
+		tabsList: createTabsList({
+			selectedIndex: () => props.selectedIndex,
+			activateOnFocus: false,
+		}),
 		activeLabel: () => props.activeLabel === true,
-		idPrefix: () => props.idPrefix,
 		size: () => props.size ?? sizeChoice(),
 		hover,
 		focusRing,
-		elements: new Map(),
 		mouseInside,
-		tabStop: () => focusedTab() ?? Math.max(props.selectedIndex, 0),
-		focusTab: setFocusedTab,
 	};
 
 	const rectOf = (index: number | null): ItemRect | undefined => {
@@ -165,7 +158,7 @@ export function TabsSubtle(props: {
 		<SubtleContext.Provider value={scope}>
 			<div
 				testId={props.testId}
-				role="tablist"
+				{...scope.tabsList.props}
 				{...hover.containerProps}
 				onMouseEnter={() => {
 					setMouseInside(true);
@@ -265,39 +258,32 @@ export function TabsSubtleItem(props: {
 	testId?: string;
 }) {
 	const scope = useSubtle();
-	const renderer = useGpuixRequired();
+	const tab = createTabsTab(scope.root, scope.tabsList, {
+		value: () => props.index,
+		index: () => props.index,
+		// A panel is a plain component here, not registered with the root: the selected tab is the one that has it.
+		controlsPanel: () => scope.root.isSelected(props.index),
+	});
 	const metrics = () => sizes[scope.size()];
 	let element: HostElement | undefined;
 	const [unfoldedWidth, setUnfoldedWidth] = createSignal<number>();
 	/** The tab selected at mount is born unfolded: its first measured width is placed, not tweened. */
 	const [selectionChanged, setSelectionChanged] = createSignal(false);
 	createComputed(
-		on(
-			() => scope.selectedIndex() === props.index,
-			() => setSelectionChanged(true),
-			{ defer: true },
-		),
+		on(tab.isSelected, () => setSelectionChanged(true), { defer: true }),
 	);
 
 	createEffect(() => {
 		if (element === undefined) throw new Error('Tab is not mounted');
 		scope.hover.registerItem(props.index, element);
-		scope.elements.set(props.index, element);
+		tab.register(element);
 	});
 
-	const isSelected = () => scope.selectedIndex() === props.index;
+	const isSelected = tab.isSelected;
 	const isActive = () =>
 		scope.hover.activeIndex() === props.index || isSelected();
 	const collapsible = () => scope.activeLabel() && props.icon !== undefined;
 	const showLabel = () => !collapsible() || isSelected();
-	const tabId = () =>
-		scope.idPrefix() === undefined
-			? undefined
-			: `${scope.idPrefix()}-tab-${props.index}`;
-	const panelId = () =>
-		scope.idPrefix() === undefined
-			? undefined
-			: `${scope.idPrefix()}-panel-${props.index}`;
 	// The unfolding label's width is animated to a measured number (gpuix cannot animate `auto`): the box holding the label reports it.
 	const labelTarget = () => {
 		if (!showLabel()) return { width: 0, marginLeft: 0, opacity: 0 };
@@ -309,30 +295,6 @@ export function TabsSubtleItem(props: {
 	const labelTransition = () => {
 		if (!selectionChanged()) return tween.snap;
 		return { ...tween.fast, opacity: { duration: 0.06 } };
-	};
-
-	const onKeyDown = (event: KeyEvent) => {
-		if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) {
-			return;
-		}
-		const count = scope.elements.size;
-		const move = (
-			{ ArrowRight: 1, ArrowLeft: -1 } as Record<string, 1 | -1 | undefined>
-		)[event.key ?? ''];
-		const target =
-			move !== undefined
-				? (moveIndex(props.index, move, count) ?? undefined)
-				: event.key === 'Home'
-					? 0
-					: event.key === 'End'
-						? count - 1
-						: undefined;
-		if (target === undefined || target === props.index) return;
-		event.preventDefault();
-		event.stopPropagation();
-		const next = scope.elements.get(target);
-		// Manual activation: focus moves, selection waits for Enter / Space.
-		if (next !== undefined) renderer.focusElement?.(next.id);
 	};
 
 	const label = (
@@ -350,31 +312,18 @@ export function TabsSubtleItem(props: {
 			ref={(node) => {
 				element = node;
 			}}
-			{...buttonProps(
-				{
-					onClick: () => scope.onSelect(props.index),
-					onKeyDown,
-					tabIndex: scope.tabStop() === props.index ? 0 : -1,
-				},
-				renderer,
-			)}
-			role="tab"
-			aria-selected={isSelected()}
+			{...tab.props}
 			aria-label={collapsible() && !showLabel() ? props.label : undefined}
-			id={tabId()}
-			aria-controls={isSelected() ? panelId() : undefined}
 			testId={props.testId}
 			onFocus={(event: DomEvent) => {
 				scope.focusRing.focus(props.index, event);
-				scope.focusTab(props.index);
+				tab.onFocus();
 				scope.hover.setActiveIndex(props.index);
 			}}
 			onBlur={(event: DomEvent) => {
 				scope.focusRing.blur(props.index);
 				// Focus moving to a sibling tab stays inside the list: only a real exit drops the highlight.
-				for (const tab of scope.elements.values()) {
-					if (tab === event.relatedTarget) return;
-				}
+				if (scope.tabsList.composite.isItem(event.relatedTarget)) return;
 				if (!scope.mouseInside()) scope.hover.setActiveIndex(null);
 			}}
 			style={{

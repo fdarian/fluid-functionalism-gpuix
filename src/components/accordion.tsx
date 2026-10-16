@@ -1,5 +1,4 @@
 import {
-	buttonProps,
 	createReducedMotion,
 	type DomEvent,
 	type HostElement,
@@ -7,16 +6,22 @@ import {
 	type KeyEvent,
 	motion,
 	ResizeObserver,
-	useGpuixRequired,
 } from '@gpuix/solid';
+import {
+	type AccordionItem as AccordionItemPrimitive,
+	type AccordionRoot,
+	createAccordionItem,
+	createAccordionPanel,
+	createAccordionRoot,
+	createAccordionTrigger,
+} from 'base-ui-solid-gpuix/accordion';
+import { createCompositeRoot } from 'base-ui-solid-gpuix/tabs';
 import {
 	createContext,
 	createEffect,
 	createSignal,
-	createUniqueId,
 	For,
 	type JSX,
-	on,
 	onCleanup,
 	Show,
 	useContext,
@@ -69,9 +74,7 @@ const sizes = {
 // ─── State ───────────────────────────────────────────────────────────────────
 
 interface RootState {
-	isOpen: (value: string) => boolean;
-	toggle: (value: string) => void;
-	anyOpen: () => boolean;
+	accordion: AccordionRoot;
 	highlight: () => AccordionHighlight;
 	size: () => AccordionSize;
 }
@@ -81,7 +84,7 @@ interface GroupScope {
 	focusRing: FocusRingState;
 	registerTrigger: (
 		element: HostElement,
-		entry: { value: string; disabled: () => boolean; focus: () => void },
+		entry: { value: string; disabled: () => boolean },
 	) => number;
 	/** The item's box, for the open tint the group paints under its hover fill. */
 	registerItem: (element: HostElement, entry: TintEntry) => void;
@@ -90,10 +93,7 @@ interface GroupScope {
 	overContent: (index: number | null) => void;
 	focusRow: (index: number, event: DomEvent) => void;
 	blurRow: (index: number, event: DomEvent) => void;
-	focusSibling: (
-		index: number,
-		step: 'next' | 'previous' | 'first' | 'last',
-	) => void;
+	onKeyDown: (index: number, event: KeyEvent) => void;
 }
 
 interface TintEntry {
@@ -107,14 +107,13 @@ const RootContext = createContext<RootState>();
 const GroupContext = createContext<GroupScope>();
 
 interface ItemState {
+	accordion: AccordionItemPrimitive;
 	value: string;
 	disabled: () => boolean;
 	isOpen: () => boolean;
 	/** Set once the trigger registers with a group. */
 	index: () => number | undefined;
 	setIndex: (index: number) => void;
-	triggerId: string;
-	panelId: string;
 	highlight: () => AccordionHighlight;
 }
 const ItemContext = createContext<ItemState>();
@@ -152,31 +151,26 @@ function createRootState(
 		if (value === undefined || value === '') return [];
 		return typeof value === 'string' ? [value] : value;
 	};
-	const [internal, setInternal] = createSignal<string[]>(
-		toList(props.defaultValue),
-	);
-	const open = () =>
-		props.value !== undefined ? toList(props.value) : internal();
 
 	return {
-		isOpen: (value) => open().includes(value),
-		anyOpen: () => open().length > 0,
+		accordion: createAccordionRoot({
+			value() {
+				if (props.value !== undefined) return toList(props.value);
+				// An `onValueChange` without a `value` never updates the open items: the callback is all that runs.
+				if (props.onValueChange !== undefined)
+					return toList(props.defaultValue);
+				return undefined;
+			},
+			defaultValue: toList(props.defaultValue),
+			multiple: () => props.type === 'multiple',
+			onValueChange(next) {
+				if (props.onValueChange === undefined) return;
+				if (props.type === 'multiple') props.onValueChange(next);
+				else props.onValueChange(next.length === 0 ? '' : next[0]);
+			},
+		}),
 		highlight: () => props.highlight ?? 'item',
 		size: () => props.size ?? sizeChoice(),
-		toggle(value) {
-			const current = open();
-			if (props.type === 'multiple') {
-				const next = current.includes(value)
-					? current.filter((entry) => entry !== value)
-					: [...current, value];
-				if (props.onValueChange === undefined) setInternal(next);
-				else props.onValueChange(next);
-				return;
-			}
-			const next = current.includes(value) ? '' : value;
-			if (props.onValueChange === undefined) setInternal(toList(next));
-			else props.onValueChange(next);
-		},
 	};
 }
 
@@ -191,15 +185,11 @@ type RootProps = ValueProps & {
 
 export function AccordionGroup(props: RootProps) {
 	const root = createRootState(props);
-	const triggers = new Map<
-		number,
-		{
-			element: HostElement;
-			value: string;
-			disabled: () => boolean;
-			focus: () => void;
-		}
-	>();
+	const composite = createCompositeRoot({
+		orientation: 'vertical',
+		consumeSelfTarget: true,
+	});
+	const triggerValues = new Map<number, string>();
 	let nextIndex = 0;
 	let contentOver: number | null = null;
 
@@ -249,14 +239,20 @@ export function AccordionGroup(props: RootProps) {
 		hoveringClosedRow() {
 			const active = hover.activeIndex();
 			if (active === null) return false;
-			const trigger = triggers.get(active);
-			return trigger !== undefined && !root.isOpen(trigger.value);
+			const value = triggerValues.get(active);
+			return value !== undefined && !root.accordion.isOpen(value);
 		},
 		registerTrigger(element, entry) {
 			const index = nextIndex++;
-			triggers.set(index, { element, ...entry });
+			const unregister = composite.register(index, element, {
+				disabled: entry.disabled,
+			});
+			triggerValues.set(index, entry.value);
 			hover.registerItem(index, element);
-			onCleanup(() => triggers.delete(index));
+			onCleanup(() => {
+				unregister();
+				triggerValues.delete(index);
+			});
 			return index;
 		},
 		focusRow(index, event) {
@@ -265,28 +261,14 @@ export function AccordionGroup(props: RootProps) {
 		},
 		blurRow(index, event) {
 			focusRing.blur(index);
-			for (const trigger of triggers.values()) {
-				if (trigger.element === event.relatedTarget) return;
-			}
+			if (composite.isItem(event.relatedTarget)) return;
 			if (!mouseInside) hover.setActiveIndex(null);
 		},
 		overContent(index) {
 			contentOver = index;
 			if (index !== null) hover.setActiveIndex(null);
 		},
-		focusSibling(index, step) {
-			const order = [...triggers.keys()].filter(
-				(key) => !triggers.get(key)?.disabled(),
-			);
-			const position = order.indexOf(index);
-			const target = {
-				next: order[(position + 1) % order.length],
-				previous: order[(position - 1 + order.length) % order.length],
-				first: order[0],
-				last: order[order.length - 1],
-			}[step];
-			triggers.get(target)?.focus();
-		},
+		onKeyDown: composite.onKeyDown,
 	};
 
 	const hoverRect = () => {
@@ -437,15 +419,18 @@ export function AccordionItem(props: {
 		group === undefined
 			? (props.highlight ?? root.highlight())
 			: root.highlight();
+	const accordion = createAccordionItem(root.accordion, {
+		value: () => props.value,
+		disabled: () => props.disabled === true,
+	});
 	const item: ItemState = {
+		accordion,
 		highlight,
 		value: props.value,
-		disabled: () => props.disabled === true,
-		isOpen: () => root.isOpen(props.value),
+		disabled: accordion.disabled,
+		isOpen: accordion.open,
 		index,
 		setIndex,
-		triggerId: createUniqueId(),
-		panelId: createUniqueId(),
 	};
 	const tint: TintEntry = {
 		id: nextTintId++,
@@ -503,7 +488,6 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 	const metrics = () => sizes[root.size()];
 	const [standaloneHovered, setStandaloneHovered] = createSignal(false);
 	let triggerElement: HostElement | undefined;
-	const renderer = useGpuixRequired();
 
 	createEffect(() => {
 		if (group === undefined) return;
@@ -513,7 +497,6 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 			group.registerTrigger(element, {
 				value: item.value,
 				disabled: item.disabled,
-				focus: () => renderer.focusElement?.(element.id),
 			}),
 		);
 	});
@@ -525,29 +508,13 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 	};
 	const lit = () => item.isOpen() || hovered();
 
-	const toggle = () => {
-		if (item.disabled()) return;
-		root.toggle(item.value);
-	};
-	const onKeyDown = (event: KeyEvent) => {
-		const own = item.index();
-		if (group === undefined || own === undefined) return;
-		if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) {
-			return;
-		}
-		const step = (
-			{
-				ArrowDown: 'next',
-				ArrowUp: 'previous',
-				Home: 'first',
-				End: 'last',
-			} as const
-		)[event.key as 'ArrowDown' | 'ArrowUp' | 'Home' | 'End'];
-		if (step === undefined) return;
-		event.preventDefault();
-		event.stopPropagation();
-		group.focusSibling(own, step);
-	};
+	const trigger = createAccordionTrigger(item.accordion, {
+		onKeyDown(event) {
+			const own = item.index();
+			if (group === undefined || own === undefined) return;
+			group.onKeyDown(own, event);
+		},
+	});
 
 	return (
 		<div
@@ -597,19 +564,7 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 				ref={(element) => {
 					triggerElement = element;
 				}}
-				{...buttonProps(
-					{
-						disabled: item.disabled(),
-						onClick: toggle,
-						onKeyDown,
-						tabIndex: 0,
-					},
-					renderer,
-				)}
-				id={item.triggerId}
-				aria-expanded={item.isOpen()}
-				aria-controls={item.isOpen() ? item.panelId : undefined}
-				aria-disabled={item.disabled()}
+				{...trigger.props}
 				onFocus={(event: DomEvent) => {
 					const own = item.index();
 					if (own !== undefined) group?.focusRow(own, event);
@@ -674,33 +629,17 @@ export function AccordionContent(props: { children: JSX.Element }) {
 	const measured = createMeasuredHeight();
 	const contentHeight = measured.height;
 	const reduced = createReducedMotion();
-	// gpuix has no `display: none`, so a closed panel's text leaves the accessibility tree by unmounting once the exit is over (Base UI hides the panel). It paints once first, or it would never report its height.
-	const [retired, setRetired] = createSignal(false);
-	let toggled = false;
-	createEffect(
-		on(
-			item.isOpen,
-			(open) => {
-				toggled = true;
-				if (open) setRetired(false);
-			},
-			{ defer: true },
-		),
-	);
+	const panel = createAccordionPanel(item.accordion);
 
 	return (
 		<motion.div
-			id={item.panelId}
-			role="region"
-			aria-labelledby={item.triggerId}
+			{...panel.props}
 			initial={false}
 			animate={{ height: item.isOpen() ? (contentHeight() ?? 0) : 0 }}
 			transition={
 				reduced() ? tween.snap : item.isOpen() ? tween.fast : tween.fastExit
 			}
-			onMotionComplete={() => {
-				if (!item.isOpen()) setRetired(true);
-			}}
+			onMotionComplete={panel.onExitComplete}
 			onMouseEnter={() => {
 				const own = item.index();
 				if (group !== undefined && own !== undefined && item.isOpen())
@@ -728,11 +667,11 @@ export function AccordionContent(props: { children: JSX.Element }) {
 							: { duration: 0.04 }
 				}
 			>
-				<Show when={!retired()}>
+				<Show when={!panel.retired()}>
 					<div
 						onLayout={(event: DomEvent) => {
 							measured.onLayout(event);
-							if (!toggled && !item.isOpen()) setRetired(true);
+							panel.onContentLayout();
 						}}
 						style={{
 							display: 'flex',

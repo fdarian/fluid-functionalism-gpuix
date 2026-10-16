@@ -1,15 +1,14 @@
+import { AnimatePresence, type MotionTransition, motion } from '@gpuix/solid';
 import {
-	AnimatePresence,
-	buttonProps,
-	type MotionTransition,
-	motion,
-	useGpuixRequired,
-} from '@gpuix/solid';
+	type CollapsibleRoot,
+	createCollapsiblePanel,
+	createCollapsibleRoot,
+	createCollapsibleTrigger,
+} from 'base-ui-solid-gpuix/collapsible';
 import {
 	createContext,
 	createEffect,
 	createSignal,
-	createUniqueId,
 	For,
 	type JSX,
 	onCleanup,
@@ -110,18 +109,17 @@ function Chevron(props: { open: boolean; stroke: number; color: string }) {
  * copy reserves the width), and the chevron. Mirrors the accordion trigger.
  */
 function TriggerRow(props: {
-	open: boolean;
-	onToggle: () => void;
-	panelId: string;
+	collapsible: CollapsibleRoot;
 	paddingX: number;
 	paddingY: number;
 	gap: number;
 	testId?: string;
 	children: string;
 }) {
-	const renderer = useGpuixRequired();
+	const trigger = createCollapsibleTrigger(props.collapsible);
 	const [hovered, setHovered] = createSignal(false);
-	const highlighted = () => props.open || hovered();
+	const open = props.collapsible.open;
+	const highlighted = () => open() || hovered();
 	return (
 		<div
 			style={{ position: 'relative', alignSelf: 'flex-start' }}
@@ -148,11 +146,8 @@ function TriggerRow(props: {
 				</Show>
 			</AnimatePresence>
 			<div
-				{...buttonProps({ onClick: props.onToggle, tabIndex: 0 }, renderer)}
+				{...trigger.props}
 				testId={props.testId}
-				id={createUniqueId()}
-				aria-expanded={props.open}
-				aria-controls={props.open ? props.panelId : undefined}
 				style={{
 					position: 'relative',
 					zIndex: 10,
@@ -173,12 +168,12 @@ function TriggerRow(props: {
 			>
 				<StableLabel
 					text={props.children}
-					heavy={props.open}
+					heavy={open()}
 					color={highlighted() ? color.foreground : color.mutedForeground}
 					fade
 				/>
 				<Chevron
-					open={props.open}
+					open={open()}
 					stroke={highlighted() ? 2 : 1.5}
 					color={highlighted() ? color.foreground : color.mutedForeground}
 				/>
@@ -196,13 +191,13 @@ function TriggerRow(props: {
  * paints collapsed and then grows.
  */
 function Collapse(props: {
-	id: string;
+	collapsible: CollapsibleRoot;
 	testId?: string;
-	open: boolean;
 	children: JSX.Element;
 }) {
+	const panel = createCollapsiblePanel(props.collapsible);
 	const measured = createMeasuredHeight();
-	const mountedOpen = props.open;
+	const mountedOpen = props.collapsible.open();
 	// A panel that mounts open takes its first height with no spring.
 	const [needsSnap, setNeedsSnap] = createSignal(mountedOpen);
 	createEffect(() => {
@@ -211,12 +206,12 @@ function Collapse(props: {
 		onCleanup(() => clearTimeout(timer));
 	});
 	const target = () => {
-		if (!props.open) return 0;
+		if (!props.collapsible.open()) return 0;
 		return measured.height() ?? 'auto';
 	};
 	return (
 		<motion.div
-			id={props.id}
+			id={panel.id}
 			testId={props.testId}
 			initial={mountedOpen ? false : { height: 0 }}
 			animate={{ height: target() }}
@@ -227,9 +222,8 @@ function Collapse(props: {
 				overflow: 'hidden',
 			}}
 		>
-			{/* Base UI hides a closed panel, and gpuix has no `display: none`: inert takes its triggers out of the tab order and the text out of the accessibility tree. */}
 			<div
-				inert={!props.open}
+				inert={panel.inert()}
 				onLayout={measured.onLayout}
 				style={{ flexShrink: 0 }}
 			>
@@ -241,15 +235,9 @@ function Collapse(props: {
 
 // ─── ThinkingSteps (root) ─────────────────────────────────────────────────
 
-interface OpenState {
-	panelId: string;
-	open: () => boolean;
-	toggle: () => void;
-}
+const OpenContext = createContext<CollapsibleRoot>();
 
-const OpenContext = createContext<OpenState>();
-
-function useOpen(): OpenState {
+function useOpen() {
 	const state = useContext(OpenContext);
 	if (state === undefined) {
 		throw new Error(
@@ -267,17 +255,13 @@ export function ThinkingSteps(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
-	const [internalOpen, setInternalOpen] = createSignal(
-		props.defaultOpen ?? true,
-	);
-	const open = () => props.open ?? internalOpen();
-	const toggle = () => {
-		const next = !open();
-		if (props.open === undefined) setInternalOpen(next);
-		props.onOpenChange?.(next);
-	};
+	const collapsible = createCollapsibleRoot({
+		open: () => props.open,
+		defaultOpen: props.defaultOpen ?? true,
+		onOpenChange: (open) => props.onOpenChange?.(open),
+	});
 	return (
-		<OpenContext.Provider value={{ panelId: createUniqueId(), open, toggle }}>
+		<OpenContext.Provider value={collapsible}>
 			<div
 				testId={props.testId}
 				style={{
@@ -297,12 +281,10 @@ export function ThinkingStepsHeader(props: {
 	testId?: string;
 	children?: string;
 }) {
-	const state = useOpen();
+	const collapsible = useOpen();
 	return (
 		<TriggerRow
-			open={state.open()}
-			onToggle={state.toggle}
-			panelId={state.panelId}
+			collapsible={collapsible}
 			testId={props.testId}
 			paddingX={12}
 			paddingY={8}
@@ -317,9 +299,9 @@ export function ThinkingStepsContent(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
-	const state = useOpen();
+	const collapsible = useOpen();
 	return (
-		<Collapse id={state.panelId} testId={props.testId} open={state.open()}>
+		<Collapse collapsible={collapsible} testId={props.testId}>
 			<div
 				style={{
 					display: 'flex',
@@ -484,8 +466,9 @@ export function ThinkingStepDetails(props: {
 	testId?: string;
 	children?: JSX.Element;
 }) {
-	const [open, setOpen] = createSignal(props.defaultOpen ?? false);
-	const panelId = createUniqueId();
+	const collapsible = createCollapsibleRoot({
+		defaultOpen: props.defaultOpen ?? false,
+	});
 	return (
 		<div
 			style={{
@@ -496,9 +479,7 @@ export function ThinkingStepDetails(props: {
 			}}
 		>
 			<TriggerRow
-				open={open()}
-				onToggle={() => setOpen(!open())}
-				panelId={panelId}
+				collapsible={collapsible}
 				testId={props.testId}
 				paddingX={12}
 				paddingY={4}
@@ -506,7 +487,7 @@ export function ThinkingStepDetails(props: {
 			>
 				{props.summary}
 			</TriggerRow>
-			<Collapse id={panelId} open={open()}>
+			<Collapse collapsible={collapsible}>
 				<div
 					style={{
 						paddingLeft: 12,

@@ -1,21 +1,20 @@
+import { type DomEvent, type HostElement, motion } from '@gpuix/solid';
 import {
-	buttonProps,
-	type DomEvent,
-	type HostElement,
-	type KeyEvent,
-	motion,
-	useGpuixRequired,
-} from '@gpuix/solid';
+	createTabsList,
+	createTabsPanel,
+	createTabsRoot,
+	createTabsTab,
+	type TabsList as TabsListPrimitive,
+	type TabsRoot,
+} from 'base-ui-solid-gpuix/tabs';
 import {
 	createComputed,
 	createContext,
 	createEffect,
 	createSignal,
-	createUniqueId,
 	For,
 	type JSX,
 	on,
-	onCleanup,
 	Show,
 	untrack,
 	useContext,
@@ -53,30 +52,15 @@ const sizes = {
 // ─── State ───────────────────────────────────────────────────────────────────
 
 interface TabsState {
-	selected: () => string | undefined;
-	select: (value: string) => void;
-	/** Tab values in document order, reported by the items as they mount. */
-	order: () => readonly string[];
-	reportValue: (index: number, value: string) => void;
+	root: TabsRoot;
 	size: () => TabsSize;
-	tabId: (value: string) => string;
-	panelId: (value: string) => string;
-	/** Panels mount only while selected, so only a mounted one can be a tab's `aria-controls`. */
-	hasPanel: (value: string) => boolean;
-	registerPanel: (value: string) => void;
-	unregisterPanel: (value: string) => void;
 }
 
 interface ListScope {
 	hover: FluidHover;
 	focusRing: FocusRingState;
-	/** Every tab element by index, for moving focus with the keyboard. */
-	elements: Map<number, HostElement>;
-	nextIndex: () => number;
+	tabsList: TabsListPrimitive;
 	mouseInside: () => boolean;
-	/** The tab that holds the roving tab stop. */
-	tabStop: () => number;
-	focusTab: (index: number) => void;
 	/** A click moves the pills to the tab at once, before a controlled parent has answered. */
 	moveToClicked: (index: number) => void;
 }
@@ -104,35 +88,13 @@ export function Tabs(props: {
 	size?: TabsSize;
 	children: JSX.Element;
 }) {
-	const [uncontrolled, setUncontrolled] = createSignal<string | undefined>(
-		props.defaultValue,
-	);
-	const [order, setOrder] = createSignal<readonly string[]>([]);
-	const [panels, setPanels] = createSignal<readonly string[]>([]);
-	const idPrefix = createUniqueId();
-	// Uncontrolled with no defaultValue falls back to the first tab.
-	const selected = () => props.value ?? uncontrolled() ?? order()[0];
 	const state: TabsState = {
-		order,
+		root: createTabsRoot<string>({
+			value: () => props.value,
+			defaultValue: props.defaultValue,
+			onValueChange: (value) => props.onValueChange?.(value),
+		}),
 		size: () => props.size ?? sizeChoice(),
-		tabId: (value) => `${idPrefix}-tab-${encodeURIComponent(value)}`,
-		panelId: (value) => `${idPrefix}-panel-${encodeURIComponent(value)}`,
-		hasPanel: (value) => panels().includes(value),
-		registerPanel: (value) => setPanels((current) => [...current, value]),
-		unregisterPanel: (value) =>
-			setPanels((current) => current.filter((entry) => entry !== value)),
-		selected,
-		select(value) {
-			// Base UI never re-commits the active tab.
-			if (selected() === value) return;
-			if (props.value === undefined) setUncontrolled(value);
-			props.onValueChange?.(value);
-		},
-		reportValue(index, value) {
-			const next = [...order()];
-			next[index] = value;
-			setOrder(next);
-		},
 	};
 	return (
 		<TabsContext.Provider value={state}>
@@ -165,30 +127,18 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 	const hover = createFluidHover({ axis: 'x' });
 	const focusRing = createFocusRing(hover);
 	const [mouseInside, setMouseInside] = createSignal(false);
-	let counter = 0;
 	const metrics = () => sizes[tabs.size()];
 
-	const selectedIndex = () => {
-		const selected = tabs.selected();
-		if (selected === undefined) return -1;
-		return tabs.order().indexOf(selected);
-	};
+	const selectedIndex = tabs.root.selectedIndex;
 	// The pills follow the clicked tab, not the resolved selection: a click moves them before a controlled parent answers, and they re-sync only when the resolved selection changes, so a parent that vetoes the click leaves them on the clicked tab (`registry/base/tabs.tsx:266-277`).
 	const [pillIndex, setPillIndex] = createSignal(-1);
 	createComputed(on(selectedIndex, setPillIndex));
-	/** The last-focused tab keeps the tab stop (a focused disabled tab, say); a new selection takes it back. */
-	const [focusedTab, setFocusedTab] = createSignal<number>();
-	createEffect(
-		on(selectedIndex, () => setFocusedTab(undefined), { defer: true }),
-	);
+	const tabsList = createTabsList({ selectedIndex, activateOnFocus: true });
 	const scope: ListScope = {
 		hover,
 		focusRing,
-		elements: new Map(),
-		nextIndex: () => counter++,
+		tabsList,
 		mouseInside,
-		tabStop: () => focusedTab() ?? Math.max(selectedIndex(), 0),
-		focusTab: setFocusedTab,
 		moveToClicked: setPillIndex,
 	};
 	const rectOf = (index: number | null): ItemRect | undefined => {
@@ -217,7 +167,7 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 		<ListContext.Provider value={scope}>
 			<div
 				testId={props.testId}
-				role="tablist"
+				{...tabsList.props}
 				{...hover.containerProps}
 				onMouseEnter={() => {
 					setMouseInside(true);
@@ -328,89 +278,40 @@ export function TabItem(props: {
 }) {
 	const tabs = useTabs();
 	const list = useList();
-	const renderer = useGpuixRequired();
-	const index = list.nextIndex();
-	tabs.reportValue(index, props.value);
+	const tab = createTabsTab(tabs.root, list.tabsList, {
+		value: () => props.value,
+		disabled: () => props.disabled,
+		onClick: list.moveToClicked,
+	});
+	const index = tab.index();
 	let element: HostElement | undefined;
 	const metrics = () => sizes[tabs.size()];
 
 	createEffect(() => {
 		if (element === undefined) throw new Error('Tab is not mounted');
 		list.hover.registerItem(index, element);
-		list.elements.set(index, element);
+		tab.register(element);
 	});
 
-	const isSelected = () => tabs.selected() === props.value;
+	const isSelected = tab.isSelected;
 	const isActive = () => list.hover.activeIndex() === index || isSelected();
-
-	const keyTarget = (key: string): number | undefined => {
-		const last = tabs.order().length - 1;
-		switch (key) {
-			case 'ArrowRight':
-				return index === last ? 0 : index + 1;
-			case 'ArrowLeft':
-				return index === 0 ? last : index - 1;
-			case 'Home':
-				return 0;
-			case 'End':
-				return last;
-			default:
-				return undefined;
-		}
-	};
-	const onKeyDown = (event: KeyEvent) => {
-		if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) {
-			return;
-		}
-		const target = keyTarget(event.key ?? '');
-		if (target === undefined || target === index) return;
-		event.preventDefault();
-		event.stopPropagation();
-		const next = list.elements.get(target);
-		if (next === undefined) return;
-		// Focus moves, and focusing an enabled tab selects it (activateOnFocus), so the pill follows the keyboard the way it follows a click. A disabled tab takes the focus and nothing else.
-		renderer.focusElement?.(next.id);
-	};
 
 	return (
 		<div
 			ref={(node) => {
 				element = node;
 			}}
-			{...buttonProps(
-				{
-					disabled: props.disabled,
-					// Base UI tabs stay focusable when disabled: arrows land on them, nothing activates.
-					focusableWhenDisabled: true,
-					onClick: () => {
-						list.moveToClicked(index);
-						tabs.select(props.value);
-					},
-					onKeyDown,
-					tabIndex: list.tabStop() === index ? 0 : -1,
-				},
-				renderer,
-			)}
-			role="tab"
-			id={tabs.tabId(props.value)}
-			aria-selected={isSelected()}
-			aria-controls={
-				tabs.hasPanel(props.value) ? tabs.panelId(props.value) : undefined
-			}
-			aria-disabled={props.disabled === true}
+			{...tab.props}
 			testId={props.testId}
 			onFocus={(event: DomEvent) => {
 				list.focusRing.focus(index, event);
-				list.focusTab(index);
 				list.hover.setActiveIndex(index);
-				if (props.disabled !== true) tabs.select(props.value);
+				tab.onFocus();
 			}}
 			onBlur={(event: DomEvent) => {
 				list.focusRing.blur(index);
 				// Focus moving to a sibling tab stays inside the list: only a real exit drops the highlight.
-				for (const tab of list.elements.values()) {
-					if (tab === event.relatedTarget) return;
-				}
+				if (list.tabsList.composite.isItem(event.relatedTarget)) return;
 				if (!list.mouseInside()) list.hover.setActiveIndex(null);
 			}}
 			style={{
@@ -456,7 +357,7 @@ export function TabItem(props: {
 export function TabPanel(props: { value: string; children: JSX.Element }) {
 	const tabs = useTabs();
 	return (
-		<Show when={tabs.selected() === props.value}>
+		<Show when={tabs.root.isSelected(props.value)}>
 			<MountedPanel value={props.value}>{props.children}</MountedPanel>
 		</Show>
 	);
@@ -464,17 +365,10 @@ export function TabPanel(props: { value: string; children: JSX.Element }) {
 
 function MountedPanel(props: { value: string; children: JSX.Element }) {
 	const tabs = useTabs();
-	tabs.registerPanel(props.value);
-	onCleanup(() => tabs.unregisterPanel(props.value));
+	const panel = createTabsPanel(tabs.root, { value: () => props.value });
 	return (
-		// A tab stop, like Base UI's panel; the dim is off because FF draws no ring on it.
-		<div
-			role="tabpanel"
-			id={tabs.panelId(props.value)}
-			aria-labelledby={tabs.tabId(props.value)}
-			tabIndex={0}
-			style={{ keyboardFocusDim: false }}
-		>
+		// The dim is off because FF draws no ring on the panel's focus.
+		<div {...panel.props} style={{ keyboardFocusDim: false }}>
 			{props.children}
 		</div>
 	);
