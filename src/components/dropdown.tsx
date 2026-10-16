@@ -8,15 +8,17 @@ import {
 } from '@gpuix/solid';
 import {
 	createPlacementState,
-	createPresence,
 	POPUP_MARGIN,
 } from 'base-ui-solid-gpuix/internals';
 import {
 	createMenuList,
 	createMenuRoot,
+	createMenuSubmenuRoot,
+	createMenuSubmenuTrigger,
 	createMenuTrigger,
 	type MenuRoot,
 	type MenuRow,
+	type MenuSubmenuRoot,
 	type MenuTriggerState,
 } from 'base-ui-solid-gpuix/menu';
 import {
@@ -30,9 +32,7 @@ import {
 	type JSX,
 	on,
 	onCleanup,
-	onMount,
 	Show,
-	untrack,
 	useContext,
 } from 'solid-js';
 import { FluidHighlight } from '#/lib/fluid-highlight';
@@ -743,16 +743,9 @@ interface SubContentProps {
 	children: JSX.Element;
 }
 
-interface SubScope {
-	presence: ReturnType<typeof createPresence>;
-	open: Accessor<boolean>;
-	setOpen: (next: boolean) => void;
-	popupId: string;
+interface SubScope extends MenuSubmenuRoot {
 	content: Accessor<SubContentProps | undefined>;
 	setContent: (props: SubContentProps | undefined) => void;
-	/** Right / Enter went into the submenu, which may already be open from a hover: focus its first row. */
-	entered: Accessor<boolean>;
-	enter: () => void;
 }
 
 const SubScopeContext = createContext<SubScope>();
@@ -772,37 +765,12 @@ export function DropdownSub(props: {
 	onOpenChange?: (open: boolean) => void;
 	children: JSX.Element;
 }) {
-	const presence = createPresence(POPUP_EXIT_MS);
 	const [content, setContent] = createSignal<SubContentProps>();
-	const [entered, setEntered] = createSignal(false);
-	const apply = (next: boolean) => {
-		if (next === presence.open()) return;
-		if (next) presence.show();
-		else {
-			presence.hide();
-			setEntered(false);
-		}
-	};
 	const scope: SubScope = {
-		presence,
-		open: presence.open,
-		popupId: createUniqueId(),
-		setOpen(next) {
-			if (props.open === undefined) apply(next);
-			props.onOpenChange?.(next);
-		},
+		...createMenuSubmenuRoot(props, { exitMs: POPUP_EXIT_MS }),
 		content,
 		setContent,
-		entered,
-		enter: () => setEntered(true),
 	};
-	createEffect(() => {
-		const controlled = props.open;
-		if (controlled !== undefined) untrack(() => apply(controlled));
-	});
-	onMount(() => {
-		if (props.defaultOpen === true) apply(true);
-	});
 	return (
 		<SubScopeContext.Provider value={scope}>
 			{props.children}
@@ -824,32 +792,16 @@ export function DropdownSubTrigger(props: {
 	if (parent === undefined || host === undefined) {
 		throw new Error('DropdownSubTrigger must be inside a DropdownContent');
 	}
-	let hoverTimer: ReturnType<typeof setTimeout> | undefined;
-	onCleanup(() => clearTimeout(hoverTimer));
-
-	const show = () => {
-		if (props.disabled === true) return;
-		sub.setOpen(true);
-	};
-
-	// The parent keeps its highlight on the trigger while the submenu is open.
-	createEffect(() => {
-		if (!sub.open()) return;
-		host.setOpenIndex(props.index);
-		onCleanup(() => {
-			if (host.openIndex() === props.index) host.setOpenIndex(null);
-		});
-	});
-	// Hovering the trigger opens its submenu after a beat; moving the highlight away closes it.
-	createEffect(() => {
-		const lit = parent.hover.activeIndex() === props.index;
-		clearTimeout(hoverTimer);
-		if (!lit) {
-			if (untrack(sub.open)) sub.setOpen(false);
-			return;
-		}
-		if (untrack(sub.open) || !parent.pointerLit()) return;
-		hoverTimer = setTimeout(show, HOVER_OPEN_MS);
+	const trigger = createMenuSubmenuTrigger({
+		sub,
+		host,
+		parent: {
+			highlightedIndex: parent.hover.activeIndex,
+			pointerLit: parent.pointerLit,
+		},
+		props,
+		setKeyboardActive: menu.setKeyboardActive,
+		hoverOpenMs: HOVER_OPEN_MS,
 	});
 
 	return (
@@ -862,12 +814,8 @@ export function DropdownSubTrigger(props: {
 			chevron
 			submenu={{ open: sub.open(), popupId: sub.popupId }}
 			closeOnClick={false}
-			onSelect={show}
-			onOpenSubmenu={() => {
-				menu.setKeyboardActive(true);
-				show();
-				sub.enter();
-			}}
+			onSelect={trigger.onSelect}
+			onOpenSubmenu={trigger.onOpenSubmenu}
 		>
 			<Show when={sub.presence.mounted()}>
 				<SubPopup
