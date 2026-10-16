@@ -357,11 +357,7 @@ function SaturationSquare(props: {
 				cursor: "crosshair",
 				userSelect: "none",
 				keyboardFocusDim: false,
-				focusVisible: {
-					outlineWidth: 2,
-					outlineColor: color.focusRing,
-					outlineOffset: 0,
-				},
+				focusVisible: { boxShadow: `0 0 0 2px ${color.focusRing}` },
 			}}
 		>
 			{/* Black rising from the bottom over white to the pure hue: the plane, as two stacked gradients. */}
@@ -414,9 +410,7 @@ function SaturationSquare(props: {
 					borderWidth: 1,
 					borderColor: "#ffffff",
 					backgroundColor: thumbColor(),
-					outlineWidth: 1,
-					outlineColor: "#000000",
-					outlineOffset: 0,
+					boxShadow: "0 0 0 1px rgba(0,0,0,1)",
 				}}
 			/>
 			<Show when={hovered() && !dragging() ? cursor() : undefined}>
@@ -431,9 +425,7 @@ function SaturationSquare(props: {
 							borderRadius: THUMB / 2,
 							borderWidth: 2,
 							borderColor: "rgba(255,255,255,0.55)",
-							outlineWidth: 1,
-							outlineColor: "rgba(0,0,0,0.2)",
-							outlineOffset: 0,
+							boxShadow: "0 0 0 1px rgba(0,0,0,0.2)",
 							pointerEvents: "none",
 						}}
 					/>
