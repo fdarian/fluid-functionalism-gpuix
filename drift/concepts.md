@@ -121,3 +121,72 @@ Checked and equal: the index is four rows centred in the window at 224px (`w-56`
 - **Cause:** `port choice`. See [thinking-steps.md](thinking-steps.md) and [tabs-subtle.md](tabs-subtle.md): only the selected panel mounts (the source's panels mount hidden), the source entrances' blur and scale are opacity only, and `ThinkingSteps width="100%"` stands for `className="w-full max-w-full"`.
 - **Fidelity:** approximated.
 - **Components it hits:** those two.
+
+# Atlas
+
+Original: `app/concepts/atlas/page.tsx`. Ported in `src/pages/concepts-atlas.tsx` (group "Pages", order 32, layout "full", listed "none"), inside `ConceptFrame`.
+
+Checked and equal: the three seeded messages and their text, the "Just now" time on user messages, the copy and regenerate actions on assistant messages, the 720px column (`max-w-[720px]`) with 24px side padding, 48px top and bottom and 20px between messages, the composer's `Message Atlas…` placeholder, 1 to 6 rows, the image button in the left slot, the footnote "Atlas can make mistakes. This is a concept screen." (11px / 14, muted, centred), the 1800 ms reply, the `ThinkingIndicator` while responding, the reply text echoing the first 40 characters, and a second message sent while answering joining the composer's queue.
+
+## Atlas: the attachment is a temp file, not an in-memory `File`
+
+- **Cause:** `port choice` (gpuix reads images from paths; `ChatMessage` takes `FileLike`, not `File`: see [chat-message.md](chat-message.md)).
+- **Original:** `makeDemoFile()` builds an SVG `Blob` in a `File` named `architecture.svg` and attaches it to the first message in an effect (`atlas/page.tsx:48-53`, `:71-76`).
+- **Port:** the same SVG string is written to `os.tmpdir()/atlas-*/architecture.svg` when the page mounts, and the message carries `{ name, type, src }` (`src/pages/concepts-atlas.tsx:87-98`). A message sent from the composer maps its `ComposerFile`s the same way.
+- **Workaround:** n/a.
+- **Fidelity:** exact for the thumbnail.
+- **Components it hits:** file-thumbnail, input-message.
+
+## Atlas: message text keeps its line breaks through a local `Lines`
+
+- **Cause:** `not ported yet` (`ChatMessage` has no `whiteSpace: pre-wrap`; see "Message body" in [chat-message.md](chat-message.md)).
+- **Original:** the string is the child and the bubble is `whitespace-pre-wrap` (`atlas/page.tsx:147`).
+- **Port:** each `\n`-separated line is its own `<text>` in a column, and an empty line is a 20px spacer (`src/pages/concepts-atlas.tsx:101-115`). The body style is repeated as `MESSAGE_TYPE` 14 / 20 (`:29`) because a node child does not get the component's own.
+- **Workaround:** the above; closes if `ChatMessage` sets `whiteSpace: "pre-wrap"` on string children.
+- **Fidelity:** approximated (the same lines; wrap points can differ by a word).
+- **Components it hits:** chat-message.
+
+## Atlas: the thinking indicator's padding is cancelled with a negative margin
+
+- **Cause:** `port choice` (the port's `ThinkingIndicator` has no `className`; its 12px side padding is fixed).
+- **Original:** `<ThinkingIndicator className="!px-0" />` inside `ChatMessage className="max-w-full"` (`atlas/page.tsx:151-153`).
+- **Port:** `ChatMessage fullWidth` and a wrapper with `marginLeft: -12` (`src/pages/concepts-atlas.tsx:241-244`), so the glyph lines up with the message text. The right 12px stays; nothing sits there.
+- **Workaround:** the margin; a padding prop on `ThinkingIndicator` would replace it.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
+
+## Atlas: the transcript does not follow a new message
+
+- **Cause:** `gpuix gap` (the port's `ScrollArea` exposes no viewport ref or scroll-to-end; the viewport is internal, `src/components/scroll-area.tsx:482-486`).
+- **Original:** a `requestAnimationFrame` smooth `scrollTo` the bottom when a message is sent and again when the reply lands (`atlas/page.tsx:78-83`, `:89`, `:103`).
+- **Port:** nothing; once the transcript is taller than the column, a new message and the thinking indicator land below the fold and the user scrolls. The screenshot script scrolls to them.
+- **Workaround:** none. Needs a `ScrollArea` prop (`stickToEnd`, or an `onViewport` ref) to scroll to the end after the content grows.
+- **Fidelity:** dropped (follow-the-latest behaviour).
+- **Components it hits:** just this one.
+
+## Atlas: Stop cancels the pending reply
+
+- **Cause:** `port choice` (the source looks like a bug).
+- **Original:** `onStop` sets `responding` and `status` back to idle but the `setTimeout` is not cleared, so the reply still lands afterwards (`atlas/page.tsx:90-104`, `:169-172`).
+- **Port:** the timer is cleared on Stop and on unmount (`src/pages/concepts-atlas.tsx:154`, `:192-196`).
+- **Workaround:** n/a.
+- **Fidelity:** approximated (Stop works).
+- **Components it hits:** just this one.
+
+## Atlas: the buttons are `icon-compact`, not `icon-sm`, and copy / regenerate do nothing
+
+- **Cause:** `port choice` (the port's `Button` has no `sm`; the source buttons have no handlers either).
+- **Original:** `<Button variant="ghost" size="icon-sm">` with a `useIcon("copy" | "rotate-ccw" | "image")` child (`atlas/page.tsx:178-185`, `:207-212`).
+- **Port:** `size="icon-compact"` (28px) with `icon="copy"`, `"rotate-ccw"`, `"image"`, so they follow the Icons row (`src/pages/concepts-atlas.tsx:117-135`, `:276-285`). The attach button opens the platform file picker.
+- **Workaround:** none.
+- **Fidelity:** approximated (button size).
+- **Components it hits:** just this one.
+
+## Atlas: the transcript is the port's `ScrollArea`
+
+- **Cause:** `port choice` (as in Lumen).
+- **Original:** `h-screen` column, `flex-1 overflow-y-auto` transcript, ids from `Date.now()` (`atlas/page.tsx:94`, `:116`, `:131-133`).
+- **Port:** a `flexGrow: 1` box in the frame's column holding a `ScrollArea` (a drawn scrollbar); ids come from a counter (`src/pages/concepts-atlas.tsx:143`, `:207-211`).
+- **Workaround:** none.
+- **Fidelity:** approximated (scrollbar look).
+- **Components it hits:** just this one.
