@@ -2,14 +2,14 @@ import type { EventPayload, HostElement } from "@gpuix/solid";
 import { createEffect, createSignal, For } from "solid-js";
 import { onFrame } from "../../lib/clock";
 import { createFluidHover, pickNearest } from "../../lib/fluid-hover";
+import { ComponentPreview, MONO } from "../../lib/doc-page";
 import { color, type as scale, weight } from "../../lib/theme";
 import {
 	FluidRow,
 	ListFrame,
 	ListHighlight,
-	MONO,
-	PreviewFrame,
 } from "./parts";
+import { COST_CODE } from "./snippets";
 
 const COST_ROW_COUNT = 200;
 const COST_ROWS = Array.from(
@@ -183,7 +183,7 @@ export function CostDemo() {
 	};
 
 	return (
-		<PreviewFrame>
+		<ComponentPreview testId="cost-preview" code={COST_CODE} cull>
 			<div
 				style={{
 					width: "100%",
@@ -223,6 +223,6 @@ export function CostDemo() {
 					/>
 				</div>
 			</div>
-		</PreviewFrame>
+		</ComponentPreview>
 	);
 }

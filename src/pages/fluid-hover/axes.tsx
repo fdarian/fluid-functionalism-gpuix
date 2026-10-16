@@ -8,8 +8,9 @@ import {
 } from "../../components/card";
 import { Dropdown, MenuItem } from "../../components/dropdown";
 import { TabItem, Tabs, TabsList } from "../../components/tabs";
+import { ComponentPreview, MONO } from "../../lib/doc-page";
 import { color, type as scale, weight } from "../../lib/theme";
-import { MONO, PreviewFrame } from "./parts";
+import { AXES_CODE } from "./snippets";
 import { ROWS } from "./plain-vs-fluid";
 
 const TAB_ITEMS = ["Library", "Recents", "Favorites", "Settings"];
@@ -58,7 +59,7 @@ function AxisBlock(props: {
 
 export function AxesDemo() {
 	return (
-		<PreviewFrame>
+		<ComponentPreview testId="axes-preview" code={AXES_CODE} cull>
 			<div
 				style={{
 					width: "100%",
@@ -114,6 +115,6 @@ export function AxesDemo() {
 					</CardGroup>
 				</AxisBlock>
 			</div>
-		</PreviewFrame>
+		</ComponentPreview>
 	);
 }

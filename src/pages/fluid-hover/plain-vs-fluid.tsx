@@ -11,25 +11,23 @@ import {
 	onCleanup,
 	useContext,
 } from "solid-js";
-import { Button } from "../../components/button";
-import { Tooltip } from "../../components/tooltip";
 import { onFrame } from "../../lib/clock";
 import { PageScrollerContext } from "../../lib/demo-kit";
+import { Code, ComponentPreview } from "../../lib/doc-page";
 import { createFluidHover } from "../../lib/fluid-hover";
 import { defineIcon } from "../../lib/icons";
 import { color, type as scale } from "../../lib/theme";
 import {
-	Code,
 	FakeCursor,
 	FluidRow,
 	LIST_PADDING,
 	ListFrame,
 	ListHighlight,
 	PlainRow,
-	PreviewFrame,
 	ROW_GAP,
 	ROW_HEIGHT,
 } from "./parts";
+import { FLUID_HOVER_CODE } from "./snippets";
 
 export const ROWS = ["Inbox", "Drafts", "Sent", "Archive", "Trash"];
 
@@ -246,25 +244,22 @@ function Stage(props: { paused: () => boolean }) {
 	);
 }
 
-/** The comparison's frame: the pause button in its corner holds the cursors on any frame. */
+/** The comparison's frame: the pause button in the preview header holds the cursors on any frame. */
 export function PlainVsFluidDemo() {
 	const [paused, setPaused] = createSignal(false);
 	return (
-		<PreviewFrame
-			corner={
-				<Tooltip content={paused() ? "Play" : "Pause"}>
-					<Button
-						variant="ghost"
-						size="icon"
-						icon={paused() ? PLAY : PAUSE}
-						aria-label={paused() ? "Play" : "Pause"}
-						testId="plain-vs-fluid-playback"
-						onClick={() => setPaused(!paused())}
-					/>
-				</Tooltip>
-			}
+		<ComponentPreview
+			testId="plain-vs-fluid-preview"
+			code={FLUID_HOVER_CODE}
+			cull
+			playback={{
+				icon: paused() ? PLAY : PAUSE,
+				tooltip: paused() ? "Play" : "Pause",
+				testId: "plain-vs-fluid-playback",
+				onClick: () => setPaused(!paused()),
+			}}
 		>
 			<Stage paused={paused} />
-		</PreviewFrame>
+		</ComponentPreview>
 	);
 }
