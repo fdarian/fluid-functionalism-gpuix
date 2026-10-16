@@ -271,7 +271,7 @@ export function ScrollArea(props: {
 		startDrag(axis, track, event, target);
 	};
 
-	/** A wheel tick over the track scrolls the viewport, which is not under the pointer. Once the viewport is at its limit the tick is left to chain to the scroller around it. */
+	/** A wheel event over the track scrolls the viewport, which is not under the pointer, and is prevented so the scroller around the area does not take it too. A viewport already at its limit leaves the event alone: gpuix gives one event to the innermost scroller that can use it, which is then the scroller around the area. */
 	const wheelTrack = (axis: Axis, event: HostWheelEvent) => {
 		const delta = axis === "y" ? event.deltaY : event.deltaX;
 		if (delta === 0) return;
@@ -510,7 +510,7 @@ export function ScrollArea(props: {
 					overflowX: horizontal() ? "scroll" : "hidden",
 					// The thumbs are drawn by this component.
 					scrollbarWidth: "none",
-					// There is no `width: max-content`, and `overflowX: "scroll"` no longer makes the viewport a flex row: without one the content box is clamped to the viewport and nothing overflows.
+					// Base UI's Content has `min-width: fit-content`, which gpuix rejects. As a non-shrinking item of a flex row the wrapper takes its content's width instead, and its `onLayout` is where the content size comes from. As a block child it is clamped to the viewport width, `onLayout` reports that, and the area draws no horizontal thumb (the scroller itself still scrolls, since `scrollWidth` counts descendants).
 					...(horizontal()
 						? {
 								display: "flex",
