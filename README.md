@@ -6,7 +6,7 @@ Can [gpuix](https://github.com/remorses/gpuix), a GPUI-backed renderer with no D
 Yes. 32 demo pages cover every component of the library (36 component files, counting shared parts such as
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Every place the port looks or behaves differently from the source is recorded in
-[Drift from the source](#drift-from-the-source): 543 entries, each tagged by cause (gpuix gap, port choice or not
+[Drift from the source](#drift-from-the-source): 523 entries, each tagged by cause (gpuix gap, port choice or not
 ported yet).
 
 | | |
@@ -99,40 +99,40 @@ names two causes counts as mixed. Base UI behaviour, row by row, is in [`BASE-UI
 
 | Component | gpuix gap | port choice | not ported yet | mixed | total |
 |---|---:|---:|---:|---:|---:|
-| [accordion](drift/accordion.md) | 3 | 7 | 12 | 0 | 22 |
+| [accordion](drift/accordion.md) | 3 | 7 | 11 | 0 | 21 |
 | [ask-user-questions](drift/ask-user-questions.md) | 2 | 5 | 9 | 3 | 19 |
 | [badge](drift/badge.md) | 1 | 2 | 2 | 0 | 5 |
 | [banner](drift/banner.md) | 3 | 3 | 11 | 0 | 17 |
-| [button](drift/button.md) | 4 | 3 | 5 | 0 | 12 |
+| [button](drift/button.md) | 4 | 3 | 4 | 0 | 11 |
 | [card](drift/card.md) | 6 | 7 | 12 | 1 | 26 |
 | [carousel-dots](drift/carousel-dots.md) | 2 | 3 | 3 | 1 | 9 |
-| [chat-message](drift/chat-message.md) | 2 | 4 | 4 | 2 | 12 |
+| [chat-message](drift/chat-message.md) | 2 | 3 | 4 | 2 | 11 |
 | [checkbox-group](drift/checkbox-group.md) | 3 | 0 | 8 | 0 | 11 |
-| [color-picker](drift/color-picker.md) | 3 | 8 | 21 | 1 | 33 |
-| [combobox](drift/combobox.md) | 7 | 12 | 10 | 1 | 30 |
-| [command-menu](drift/command-menu.md) | 6 | 3 | 17 | 2 | 28 |
+| [color-picker](drift/color-picker.md) | 4 | 6 | 21 | 1 | 32 |
+| [combobox](drift/combobox.md) | 7 | 13 | 9 | 1 | 30 |
+| [command-menu](drift/command-menu.md) | 8 | 2 | 15 | 1 | 26 |
 | [dialog](drift/dialog.md) | 8 | 2 | 4 | 1 | 15 |
-| [dropdown](drift/dropdown.md) | 7 | 5 | 12 | 2 | 26 |
+| [dropdown](drift/dropdown.md) | 8 | 4 | 12 | 1 | 25 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
-| [input-copy](drift/input-copy.md) | 2 | 3 | 7 | 1 | 13 |
+| [input-copy](drift/input-copy.md) | 2 | 3 | 8 | 0 | 13 |
 | [input-group](drift/input-group.md) | 1 | 1 | 4 | 1 | 7 |
 | [input-message](drift/input-message.md) | 4 | 1 | 16 | 1 | 22 |
 | [mobile-drawer](drift/mobile-drawer.md) | 4 | 2 | 2 | 0 | 8 |
-| [queued-stack](drift/queued-stack.md) | 4 | 4 | 5 | 0 | 13 |
+| [queued-stack](drift/queued-stack.md) | 4 | 3 | 5 | 0 | 12 |
 | [radio-group](drift/radio-group.md) | 4 | 1 | 7 | 0 | 12 |
 | [scroll-area](drift/scroll-area.md) | 3 | 6 | 3 | 1 | 13 |
-| [select](drift/select.md) | 8 | 7 | 8 | 2 | 25 |
+| [select](drift/select.md) | 9 | 3 | 8 | 2 | 22 |
 | [sidebar](drift/sidebar.md) | 1 | 5 | 26 | 0 | 32 |
 | [site](drift/site.md) | 4 | 4 | 24 | 3 | 35 |
-| [slider](drift/slider.md) | 4 | 5 | 4 | 3 | 16 |
-| [switch](drift/switch.md) | 2 | 2 | 3 | 2 | 9 |
+| [slider](drift/slider.md) | 5 | 3 | 4 | 3 | 15 |
+| [switch](drift/switch.md) | 2 | 1 | 3 | 2 | 8 |
 | [table](drift/table.md) | 3 | 1 | 5 | 0 | 9 |
 | [tabs-subtle](drift/tabs-subtle.md) | 1 | 4 | 2 | 1 | 8 |
 | [tabs](drift/tabs.md) | 2 | 2 | 4 | 0 | 8 |
 | [thinking-indicator](drift/thinking-indicator.md) | 1 | 2 | 4 | 0 | 7 |
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 7 | 1 | 15 |
-| [tooltip](drift/tooltip.md) | 4 | 7 | 2 | 1 | 14 |
-| **Total** | **113** | **133** | **265** | **32** | **543** |
+| [tooltip](drift/tooltip.md) | 4 | 5 | 2 | 1 | 12 |
+| **Total** | **120** | **114** | **260** | **29** | **523** |
 
 ### gpuix gaps across components
 
@@ -238,7 +238,7 @@ now does that the port has not picked up.
 | `focus-visible:ring-1` | `style.focusVisible` outline, offset 1 | Exact |
 | `ring-1 ring-border` | `outlineWidth` / `outlineColor`: outside the box, takes no layout | Exact |
 | `transition-colors duration-80`, `transition-[box-shadow]` | none then: state styles switched instantly, only `motion` animated. gpuix now animates colour and `boxShadow` and has CSS `transition` (FORK.md:814-818); not adopted yet | Dropped, now possible |
-| spring `fast` / `moderate` (`motion/react`) | native `motion` spring, `{ type: "spring", duration: 0.08 / 0.16, bounce: 0 }`, velocity kept when the target changes mid-flight | Exact; `slow` is unused |
+| spring `fast` / `moderate` (`motion/react`) | native `motion` spring, `{ type: "spring", duration: 0.08 / 0.16, bounce: 0 }`, velocity kept when the target changes mid-flight | Exact; `slow` (bounce 0.12, the exit 160 ms) drives the command menu's dialog and the banner |
 | exits (`spring.fast.exit` …) | plain tweens, 60 ms / 120 ms, like the source | Exact |
 | "snap, don't spring" on a reflow | a zero-length tween | Exact |
 | `translate` / `x`,`y` travel of the highlight | `motion` on `top` / `left` / `width` / `height` (the only layout props it animates) | Equivalent, but it re-lays out per frame |

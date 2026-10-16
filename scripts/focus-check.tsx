@@ -107,7 +107,7 @@ if (process.env.TAB !== undefined) {
 			console.log(`tab #${presses} shows the ring: ${fmt(ring())}`);
 	}
 } else if (process.env.FOCUS !== undefined) {
-	// Virtual highlight (select): the trigger keeps focus, keys drive the ring.
+	// Tab onto the first element, then let the keys drive the ring.
 	const element = renderer.findByTestId(first);
 	if (element === undefined) throw new Error(`no element ${first}`);
 	for (let presses = 1; presses <= 60; presses++) {

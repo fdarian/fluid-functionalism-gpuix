@@ -126,7 +126,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 - **gpuix lacks:** a motion value cannot be created, driven or released inside a handler that native called synchronously (a key, a press): the renderer throws "This renderer call cannot run inside an event handler that native called synchronously". A menu mounts from ⌘K and unmounts on Esc, so a value made at mount would throw.
 - **Workaround:** `queueMicrotask`; one microtask is under a frame, so nothing shows. Each `scrollTop` write during the travel is a renderer call (about 7 ms apiece in the offscreen renderer); a live frame-rate check is open.
 - **Fidelity:** exact in effect.
-- **Components it hits:** slider (its `createMotionWrites`), and any component that animates a motion value from a key or press.
+- **Components it hits:** slider (its `createAnimateQueue`), and any component that animates a motion value from a key or press.
 
 ## Reduced motion reaches only the list scroll
 
