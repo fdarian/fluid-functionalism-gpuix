@@ -225,25 +225,16 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `not ported yet`.
 - **Original:** the page has a Playground (rail: trigger shortcut, descriptions, shortcut caps, suggestions first, tabs, filters, footer hints; "Open as a dialog"; Get code presets), Basic, Descriptions / shortcuts / disabled rows, Suggestions, Tabs, Filters, "Dialog and trigger shortcut" with two dialogs (⌘P bound, and "Open, no shortcut"), Footer hints, Custom rows, and eight API reference tables; each section has a sentence of prose (`app/docs/command-menu/page.tsx:389-596`, `:598-634`; `lib/docs/playgrounds/command-menu.tsx`).
-- **Port:** Basic, Descriptions / shortcuts / disabled rows, Suggestions, Tabs, Filters, Dialog, Footer hints, Custom rows, in the same order and with the same 15 rows, groups, keywords, suggestions and copy ("Type a command or search…", "No results.", the "Recent" label) (`src/demos/command-menu.tsx:50-212`, `:569-583`). Missing: the Playground and presets, the second dialog (no shortcut), tabs and filters sharing one row (the playground's both-on state; `CommandMenuTabs` takes children, no demo uses it), a compact or pill state, the API tables, the prose, and the page title "CommandMenu" and description ("1 field over every action. Type, arrow, Enter."): the port's title is "Command Menu" with no description.
+- **Port:** Basic, Descriptions / shortcuts / disabled rows, Suggestions, Tabs, Filters, Dialog, Footer hints, Custom rows, in the same order and with the same 15 rows, groups, keywords, suggestions and copy ("Type a command or search…", "No results.", the "Recent" label) (`src/demos/command-menu.tsx:48-212`, `:478-492`). Missing: the Playground and presets, the second dialog (no shortcut), tabs and filters sharing one row (the playground's both-on state; `CommandMenuTabs` takes children, no demo uses it), a compact or pill state, the API tables, the prose, and the page title "CommandMenu" and description ("1 field over every action. Type, arrow, Enter."): the port's title is "Command Menu" with no description.
 - **Workaround:** none.
 - **Fidelity:** dropped.
-- **Components it hits:** just this one.
-
-## Demo: Filters use a hand-built select
-
-- **Cause:** `not ported yet`.
-- **Original:** two real `Select`s with `variant="borderless"`, the full fluid popup and keyboard (`app/docs/command-menu/page.tsx:469-505`).
-- **Port:** a local `FilterSelect`: a hover-tinted button and a popup of plain rows with hover colour, no fluid highlight, no selected mark, no keyboard (arrows, Escape, typeahead), no focus ring, a fixed 150 px / 200 px popup (`src/demos/command-menu.tsx:243-341`). The port's `Select` already has `variant="borderless"` (`src/components/select.tsx:58`).
-- **Workaround:** none.
-- **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
 ## Demo: dialog and footer sections differ in small ways
 
 - **Cause:** `not ported yet` for the toast and the shortcut; `port choice` (reason not stated) for the extra footer panel and footer in the dialog.
 - **Original:** a pick shows a toast, `Ran “<label>”`; the Open button holds the `⌘P` cap and ⌘P really opens the dialog; the dialog has no footer; the footer section is one panel with tabs and suggestions (`page.tsx:364`, `:508-545`, `:547-566`).
-- **Port:** a pick sets a line of text, `Ran: <label>` (`src/demos/command-menu.tsx:476`, `:484-487`; the `setOpen(false)` there duplicates `closeOnSelect`); the `⌘K` cap sits beside the button, not in it, and ⌘K opens the site menu, not this dialog, so the cap is wrong (`:467-474`; `src/lib/site-command-menu.tsx:44-57`); the dialog carries a `CommandMenuFooter` (`:493`); the footer section adds a second panel with custom hints (`:522-534`); the section is titled "Dialog", not "Dialog and trigger shortcut" (`:458`).
+- **Port:** a pick sets a line of text, `Ran: <label>` (`src/demos/command-menu.tsx:385`, `:393-396`; the `setOpen(false)` there duplicates `closeOnSelect`); the `⌘K` cap sits beside the button, not in it, and ⌘K opens the site menu, not this dialog, so the cap is wrong (`:376-383`; `src/lib/site-command-menu.tsx:44-57`); the dialog carries a `CommandMenuFooter` (`:402`); the footer section adds a second panel with custom hints (`:431-443`); the section is titled "Dialog", not "Dialog and trigger shortcut" (`:367`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

@@ -182,6 +182,58 @@ kit.check(
 );
 renderer.clockResume();
 
+// ─── The filter select ───────────────────────────────────────────────────────
+
+const TYPE_VALUES = ["all", "Actions", "Go to", "Help"];
+/** Where focus is within the type filter: its trigger, panel or one of its rows. */
+const typeFocus = () => {
+	const focused = renderer.getFocusedElementId();
+	if (focused === null) return null;
+	return (
+		[
+			"filters-type-trigger",
+			"filters-type-list",
+			...TYPE_VALUES.map((value) => `filters-type-option-${value}`),
+		].find(
+			(testId) => kit.exists(testId) && kit.element(testId).id === focused,
+		) ?? null
+	);
+};
+
+await kit.focus("filters-type-trigger");
+await kit.press("enter");
+kit.check("Enter opens the type filter", kit.exists("filters-type-list"));
+kit.expect(
+	"Enter focuses the checked row",
+	typeFocus(),
+	"filters-type-option-all",
+);
+await kit.press("down");
+kit.expect(
+	"ArrowDown focuses the next row",
+	typeFocus(),
+	"filters-type-option-Actions",
+);
+await kit.press("escape");
+kit.check("Escape closes the type filter", !kit.exists("filters-type-list"));
+kit.expect(
+	"Escape returns focus to the trigger",
+	typeFocus(),
+	"filters-type-trigger",
+);
+await kit.press("enter");
+await kit.press("down enter");
+await kit.settle(500);
+kit.expect(
+	"a pick returns focus to the trigger",
+	typeFocus(),
+	"filters-type-trigger",
+);
+kit.check(
+	"picking Actions filters the rows",
+	kit.exists("filters-row-new-file") && !kit.exists("filters-row-home"),
+);
+
 // ─── The site menu ───────────────────────────────────────────────────────────
 
 const isOpen = () => kit.exists("site-menu-input");
