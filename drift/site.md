@@ -101,11 +101,11 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** dropped (Code tab, inline fallback); approximated (frame, shuffle glyph).
 - **Components it hits:** the ten above; `drift/<component>.md` lists each playground's own differences.
 
-## Customise card: collapse and sticky column
+## Customise card: no collapse
 
 - **Cause:** `not ported yet`.
 - **Original:** the panel is a 256px sticky column with a 16px right margin whose width, margin and opacity spring to 0 when `]` is pressed (toast "Properties panel expanded / collapsed"); a fixed top-right ghost button with the tooltip "Expand properties panel" `]` brings it back; the content scrolls in a `ScrollArea` with a scroll fade at `100svh - 2rem`; the card is `rounded-lg p-4 bg-muted` and hidden on the 404 page and on the full-screen routes (`app/components/right-panel.tsx:285-428`, `app/components/sidebar-layout.tsx:111-115, 184`).
-- **Port:** a fixed 296px column with 16px padding, so a 264px card, in the port's `ScrollArea` with a fade; the playground rail sits under the card in the same scroller. Always visible on a docs page, hidden on a "full" page, no collapse and no key (`src/app.tsx:484-500`). The card is radius 12 on `surface2` with a 16px padding and 12px gap (`src/app.tsx:296-307`); the source's `rounded-lg` is 8px on `bg-muted`.
+- **Port:** a 296px column with 16px padding, so a 264px card, in the port's `ScrollArea` with a fade, `position: sticky; top: 0` beside the page column inside the page scroller as the source's is, at the scroller's own height (measured with `onLayout`: gpuix has no `100svh`, and the source's `top-4` and `max-h` are the column's padding here); the playground rail sits under the card in the same scroller. Always visible on a docs page, hidden on a "full" page, no collapse and no key (`src/app.tsx:451-531`). The card is radius 12 on `surface2` with a 16px padding and 12px gap (`src/app.tsx:296-307`); the source's `rounded-lg` is 8px on `bg-muted`.
 - **Workaround:** none.
 - **Fidelity:** approximated (card), dropped (collapse).
 - **Components it hits:** just the shell.

@@ -41,6 +41,7 @@ import { createPresence } from "../lib/presence";
 import { color, radius, shadow, motion as tween } from "../lib/theme";
 import { createTypeahead } from "../lib/typeahead";
 import {
+	type DropdownSearchHost,
 	DropdownSearchHostContext,
 	type DropdownSearchProps,
 	SEARCH_HEIGHT,
@@ -314,7 +315,13 @@ function createMenuList(options: {
 	const revealIndex = (index: number) => {
 		const row = hover.rects()[index];
 		if (scroller === undefined || row === undefined) return;
-		revealRow(scroller, row, "nearest", PADDING);
+		revealRow(
+			scroller,
+			row,
+			"nearest",
+			PADDING,
+			search() === undefined ? 0 : SEARCH_HEIGHT,
+		);
 	};
 
 	/** A field that takes focus on open leaves the rows unlit and unfocused. */
@@ -670,15 +677,6 @@ function MenuPanel(props: {
 							keyboardFocusDim: false,
 						}}
 					>
-						<Show when={field()}>
-							{(search: Accessor<DropdownSearchProps>) => (
-								<SearchField
-									search={search()}
-									testId={props.searchTestId}
-									fieldRef={list.setField}
-								/>
-							)}
-						</Show>
 						<div
 							ref={(element) => {
 								list.setScroller(element);
@@ -688,11 +686,19 @@ function MenuPanel(props: {
 								display: "flex",
 								flexDirection: "column",
 								overflowY: "scroll",
-								maxHeight:
-									props.maxHeight() -
-									(field() === undefined ? 0 : SEARCH_HEIGHT),
+								maxHeight: props.maxHeight(),
 							}}
 						>
+							<Show when={field()}>
+								{(search: Accessor<DropdownSearchProps>) => (
+									<SearchField
+										sticky
+										search={search()}
+										testId={props.searchTestId}
+										fieldRef={list.setField}
+									/>
+								)}
+							</Show>
 							<MenuBody
 								hover={list.hover}
 								checkedIndex={props.checkedIndex}
@@ -780,7 +786,25 @@ export function Dropdown(props: {
 		if (position === -1) return;
 		focusRow(indices[(position + delta + indices.length) % indices.length]);
 	};
+	const [search, setSearch] = createSignal<DropdownSearchProps>();
+	let field: HostElement | undefined;
+	const searchHost: DropdownSearchHost = {
+		register(props) {
+			setSearch(props);
+			return () => {
+				if (search() === props) setSearch(undefined);
+			};
+		},
+	};
 	const onKeyDown = (event: KeyEvent) => {
+		// The field's keys are its own, apart from the arrows, which leave it for the rows.
+		if (field !== undefined && event.target === field) {
+			if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+				event.preventDefault();
+				focusRow(event.key === "ArrowDown" ? all()[0] : all().at(-1));
+			}
+			return;
+		}
 		switch (event.key) {
 			case "ArrowDown":
 			case "ArrowRight":
@@ -812,6 +836,7 @@ export function Dropdown(props: {
 
 	return (
 		<DropdownContext.Provider value={context}>
+			<DropdownSearchHostContext.Provider value={searchHost}>
 			<div
 				testId={props.testId}
 				id={listId}
@@ -840,12 +865,27 @@ export function Dropdown(props: {
 					keyboardFocusDim: false,
 				}}
 			>
+				<Show when={search()}>
+					{(query: Accessor<DropdownSearchProps>) => (
+						<SearchField
+							sticky={false}
+							search={query()}
+							testId={
+								props.testId === undefined ? undefined : `${props.testId}-field`
+							}
+							fieldRef={(element) => {
+								field = element;
+							}}
+						/>
+					)}
+				</Show>
 				<MenuBody
 					hover={hover}
 					checkedIndex={() => props.checkedIndex}
 					checkedIndices={() => props.checkedIndices}
 					litBy={litBy}
 					travel={() => true}
+					paddingTop={search() === undefined ? undefined : 2}
 					focusIndex={() => (ringShown() ? focused() : null)}
 					focusRingTestId={
 						props.testId === undefined ? undefined : `${props.testId}-ring`
@@ -866,6 +906,7 @@ export function Dropdown(props: {
 					{props.children}
 				</MenuBody>
 			</div>
+			</DropdownSearchHostContext.Provider>
 		</DropdownContext.Provider>
 	);
 }

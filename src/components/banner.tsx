@@ -326,7 +326,13 @@ export function Banner(props: {
 				onMotionComplete={() => {
 					if (!open() && !reduced()) setMounted(false);
 				}}
-				style={{ ...rowStyle, overflow: "hidden" }}
+				style={{
+					...rowStyle,
+					overflow: "hidden",
+					...(fixed()
+						? { position: "sticky" as const, top: 0, zIndex: 40 }
+						: {}),
+				}}
 			>
 				<motion.div
 					ref={(element: HostElement) => {

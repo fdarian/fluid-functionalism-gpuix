@@ -5,6 +5,7 @@ import {
 	useGpuixRequired,
 } from "@gpuix/solid";
 import {
+	type Accessor,
 	createEffect,
 	createSignal,
 	For,
@@ -30,6 +31,7 @@ import { BentoGrid } from "./home/bento-grid";
 import { AppFrame, PANEL_INNER_RADIUS } from "./lib/app-frame";
 import { type Demo, type Page, SHOWCASE_SLUG } from "./lib/demo";
 import { PageScrollerContext } from "./lib/demo-kit";
+import { createMeasuredHeight } from "./lib/measured-height";
 import { MONO } from "./lib/doc-page";
 import { type PageNav, PageNavContext, usePageNav } from "./lib/page-nav";
 import {
@@ -416,6 +418,7 @@ export function App(props: {
 	const siteMenu = createSiteMenu();
 	const rail = createRightRail();
 	const [pageScroller, setPageScroller] = createSignal<HostElement>();
+	const viewport = createMeasuredHeight();
 	const renderer = useGpuixRequired();
 	const setAppearance = renderer.setAppearance;
 	if (setAppearance === undefined) {
@@ -448,61 +451,83 @@ export function App(props: {
 					</Show>
 					<div
 						ref={setPageScroller}
+						onLayout={viewport.onLayout}
 						style={{
 							flexGrow: 1,
 							minWidth: 0,
 							display: "flex",
-							flexDirection: "column",
-							alignItems: "center",
+							flexDirection: "row",
 							overflowY: "scroll",
 						}}
 					>
 						<div
 							style={{
-								width: isFull() || page() === SHOWCASE ? "100%" : PAGE_WIDTH,
-								...(isFull() ? { height: "100%" } : {}),
-								flexShrink: 0,
+								flexGrow: 1,
+								minWidth: 0,
 								display: "flex",
 								flexDirection: "column",
-								gap: isFull() ? 0 : 24,
-								paddingTop: isFull() ? 0 : 40,
-								paddingBottom: isFull() ? 0 : 40,
+								alignItems: "center",
 							}}
 						>
-							<PageScrollerContext.Provider value={pageScroller}>
-								<PageNavContext.Provider value={nav}>
-									<Switch>
-										<Match when={page() === SHOWCASE}>
-											<Showcase />
-										</Match>
-										<Match when={current()} keyed>
-											{(demo: Demo) => <DemoPage demo={demo} />}
-										</Match>
-										<Match when={currentPage()} keyed>
-											{(entry: Page) => <PageBody page={entry} />}
-										</Match>
-									</Switch>
-								</PageNavContext.Provider>
-							</PageScrollerContext.Provider>
+							<div
+								style={{
+									width: isFull() || page() === SHOWCASE ? "100%" : PAGE_WIDTH,
+									...(isFull() ? { height: "100%" } : {}),
+									flexShrink: 0,
+									display: "flex",
+									flexDirection: "column",
+									gap: isFull() ? 0 : 24,
+									paddingTop: isFull() ? 0 : 40,
+									paddingBottom: isFull() ? 0 : 40,
+								}}
+							>
+								<PageScrollerContext.Provider value={pageScroller}>
+									<PageNavContext.Provider value={nav}>
+										<Switch>
+											<Match when={page() === SHOWCASE}>
+												<Showcase />
+											</Match>
+											<Match when={current()} keyed>
+												{(demo: Demo) => <DemoPage demo={demo} />}
+											</Match>
+											<Match when={currentPage()} keyed>
+												{(entry: Page) => <PageBody page={entry} />}
+											</Match>
+										</Switch>
+									</PageNavContext.Provider>
+								</PageScrollerContext.Provider>
+							</div>
 						</div>
-					</div>
-					<Show when={!isFull()}>
-						<div style={{ width: 296, flexShrink: 0 }}>
-							<ScrollArea height="100%" fade>
+						{/* Sticky needs a definite height to stick at, and gpuix has no `100svh`: it is the scroller's own, measured. */}
+						<Show when={!isFull() && viewport.height()}>
+							{(height: Accessor<number>) => (
 								<div
 									style={{
-										display: "flex",
-										flexDirection: "column",
-										gap: 12,
-										padding: 16,
+										position: "sticky",
+										top: 0,
+										alignSelf: "flex-start",
+										width: 296,
+										height: height(),
+										flexShrink: 0,
 									}}
 								>
-									<CustomizeCard />
-									<RightRailTarget />
+									<ScrollArea height="100%" fade>
+										<div
+											style={{
+												display: "flex",
+												flexDirection: "column",
+												gap: 12,
+												padding: 16,
+											}}
+										>
+											<CustomizeCard />
+											<RightRailTarget />
+										</div>
+									</ScrollArea>
 								</div>
-							</ScrollArea>
-						</div>
-					</Show>
+							)}
+						</Show>
+					</div>
 				</div>
 				</RightRailContext.Provider>
 				<SiteCommandMenu

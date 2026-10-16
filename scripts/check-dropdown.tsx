@@ -13,6 +13,7 @@ import {
 	Dropdown,
 	DropdownContent,
 	DropdownMenu,
+	DropdownSearch,
 	DropdownTrigger,
 	MenuItem,
 } from "../src/components/dropdown";
@@ -411,6 +412,8 @@ k.expect(
 	searchFocus(),
 	"search-field",
 );
+await k.settle(400);
+const fieldRest = k.bounds("search-field");
 const searchBoxes = Object.values(renderer.getA11yTree().nodes ?? {}).filter(
 	(node) => node.aria?.role === "SearchInput",
 );
@@ -437,7 +440,21 @@ k.expect(
 	searchFocus(),
 	lastSearchRow(),
 );
-await k.press("ArrowDown");
+// The field sticks to the top edge of the scroller.
+await k.settle(400);
+k.check(
+	"search: the field stays at the top while the rows scroll under it",
+	k.bounds("search-field").y === fieldRest.y &&
+		k.bounds("search-0").y < fieldRest.y,
+);
+await k.press("Home");
+k.check(
+	"search: Home reveals the first row below the field",
+	k.bounds("search-field").y === fieldRest.y &&
+		// The input sits 6px inside the 36px field row.
+		k.bounds("search-0").y >= fieldRest.y - 6 + 36,
+);
+await k.press("End ArrowDown");
 k.expect(
 	"search: ArrowDown past the last row returns to the field",
 	searchFocus(),
@@ -601,6 +618,55 @@ k.expect(
 	"idle-0",
 );
 idle.unmount();
+
+// ─── A search field in the inline panel is simply open ──────────────────────
+
+const inlineSearch = await createCheck(
+	() => (
+		<div style={{ padding: 20, width: 320 }}>
+			<Dropdown testId="inline-search">
+				<DropdownSearch value="" onValueChange={() => {}} />
+				<MenuItem testId="inline-search-0" index={0} label="One" />
+				<MenuItem testId="inline-search-1" index={1} label="Two" />
+			</Dropdown>
+		</div>
+	),
+	{ width: 400, height: 300, initialSettleMs: 600 },
+);
+inlineSearch.check(
+	"inline search: the field is drawn above the rows",
+	inlineSearch.exists("inline-search-field") &&
+		inlineSearch.bounds("inline-search-field").y <
+			inlineSearch.bounds("inline-search-0").y,
+);
+{
+	const rowIds = ["inline-search-0", "inline-search-1"];
+	const rowFocus = () => {
+		const focused = inlineSearch.renderer.getFocusedElementId();
+		return (
+			["inline-search-field", ...rowIds].find(
+				(id) => inlineSearch.element(id).id === focused,
+			) ?? null
+		);
+	};
+	inlineSearch.expect(
+		"inline search: the field takes focus",
+		rowFocus(),
+		"inline-search-field",
+	);
+	await inlineSearch.press("ArrowDown");
+	inlineSearch.expect(
+		"inline search: ArrowDown in the field focuses the first row",
+		rowFocus(),
+		"inline-search-0",
+	);
+	await inlineSearch.press("ArrowUp");
+	inlineSearch.expect(
+		"inline search: ArrowUp from the first row steps on, as the rows do alone",
+		rowFocus(),
+		"inline-search-1",
+	);
+}
 
 // ─── Lighting a row eases its icon stroke and colour and its label colour over 80 ms ─
 

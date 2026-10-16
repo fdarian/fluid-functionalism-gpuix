@@ -30,7 +30,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 ## The frame fills the window and scrolls its centre column
 
-- **Cause:** `port choice` (the window is a fixed panel, not a scrolling document).
+- **Cause:** `port choice` (the window is a fixed panel, not a scrolling document; each screen scrolls itself in a `height: 100%` `ScrollArea`, so a sticky nav and card would only restate what the frame's height already does, and adopting the source means turning the four screens into page-scroll layouts).
 - **Original:** the nav is `sticky top-0 h-screen`, the right panel is its own component, and the page scrolls as a whole (`concept-frame.tsx:53`, `:41-46`). The nav is `hidden lg:flex`.
 - **Port:** the frame is the panel's height, so the nav and the card stay put and the screen scrolls inside the centre column (`src/pages/concepts/frame.tsx:30-62`). A full-layout page's wrapper now has the panel's height (`src/app.tsx`, the `App` page column). The nav is always shown, at 224px; there is no `lg` breakpoint.
 - **Workaround:** none.

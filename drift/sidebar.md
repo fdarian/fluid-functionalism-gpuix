@@ -259,7 +259,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `port choice` (the sidebar sits inside the app frame's rounded panel; reason for the fill not stated).
 - **Original:** `Sidebar className="ml-2"`, `rail={false}`, no fill of its own, sticky `h-svh`, content `py-2` (`app/components/sidebar.tsx:90-91`).
-- **Port:** no left margin; the column paints `color.background` and takes `leftCornerRadius={PANEL_INNER_RADIUS}` (9) so the fill follows the panel's corner (`src/app.tsx:110`, `src/components/sidebar.tsx:512-533`); content padding is `8 / 8 / 0` rather than `py-2`.
+- **Port:** no left margin; the column paints `color.background` and takes `leftCornerRadius={PANEL_INNER_RADIUS}` (9) so the fill follows the panel's corner (`src/app.tsx:110`, `src/components/sidebar.tsx:512-533`); content padding is `8 / 8 / 0` rather than `py-2`. The column is a sibling of the page scroller, not inside it, so it needs no `sticky h-svh` to stay put.
 - **Workaround:** n/a.
 - **Fidelity:** approximated.
 - **Components it hits:** app frame.

@@ -74,15 +74,6 @@ repeating it.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
 
-## The fixed bar does not stick
-
-- **Cause:** `not ported yet`. gpuix has `position: sticky` (`FORK.md:560`).
-- **Original:** `sticky top-0 z-40` on the row, so the bar stays at the top of its scroll container and pushes the content down (`banner.tsx:353`).
-- **Port:** the fixed variant is square corners and an opaque background; it is an ordinary flex child (`banner.tsx:240-250`). In the demo the page scrolls in a sibling below the bar, so the bar stays put either way (`src/demos/banner.tsx:108-189`). Placed first inside a scrolling container it would scroll away.
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** just this one.
-
 ## Status glyph mark is a mask
 
 - **Cause:** `port choice` (the comment says the cut-out "works on any banner background").

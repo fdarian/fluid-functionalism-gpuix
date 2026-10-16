@@ -113,12 +113,14 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** approximated for the fade and the clearing.
 - **Components it hits:** just this one (popup menus draw no ring in either build).
 
-## Search field is not sticky and cannot sit in an inline panel
+## Search field is a child of the scroller, not of the list
 
-- **Cause:** `not ported yet`. gpuix has `position: sticky` (`~/code/fdarian/gpuix/FORK.md:560`; README gpuix gaps intro); the comment at `src/components/dropdown-search.tsx:24-28` ("gpuix has no `position: sticky`") is stale. BASE-UI-AUDIT.md row 415 records it as not adopted.
-- **Original:** the field is `sticky top-0 z-20 -mx-1 -mt-1 mb-0.5` inside the scrolling list, `border-b border-border/60`, painted with the surface so rows scroll underneath; `DropdownSearch` in an inline `Dropdown` is simply open (`registry/default/dropdown-search.tsx:228-231`, `:317-331`).
-- **Port:** `DropdownSearch` renders nothing and hands its props to `DropdownContent`, which draws the field above the scroller (`src/components/dropdown-search.tsx:35-44`, `:69-134`; `src/components/dropdown.tsx:669-677`) with the rows' top padding cut to 2px (`:699`). Placed in an inline `Dropdown` it throws "DropdownSearch must be inside a DropdownContent" (`dropdown-search.tsx:36-39`). Visually the first frame matches; rows no longer slide under the field, and the thumb (if any) would start below it.
-- **Fidelity:** approximated.
+- **Cause:** `gpuix gap`.
+- **Original:** the field is `sticky top-0 z-20 -mx-1 -mt-1 mb-0.5` inside the padded `p-1` list, `border-b border-border/60`, painted with the surface so rows scroll underneath; `DropdownSearch` in an inline `Dropdown` is simply open (`registry/default/dropdown-search.tsx:228-231`, `:317-331`).
+- **Port:** `DropdownSearch` renders nothing and registers its props with the list around it, which draws the field as the first child of the scroller, ahead of the padded rows: `position: sticky`, `top: 0`, `zIndex: 20`, the popup's `surface(level)` fill, the rows' top padding cut to 2px (`src/components/dropdown-search.tsx:75-135`; `src/components/dropdown.tsx:692-701`). A row the keyboard reveals stops below the field (`revealRow`'s `topInset`, `src/lib/list-nav.ts`); the source's `scrollIntoView` lets it slide under. An inline `Dropdown` hosts `DropdownSearch` the same way and draws the field above the rows, not sticky (`dropdown.tsx:868-881`); ArrowDown and ArrowUp leave it for the first and last row.
+- **gpuix lacks:** a negative margin on a sticky box does not bleed over its parent's padding. A sticky `marginTop: -4` child of a `padding: 4` box is held at the parent's content box (y 54 where its layout slot is 50) until the scroller moves it, then pinned at 50; a CSS sticky box keeps its border box where the margin puts it. So the field cannot sit in the padded list as the source has it. Measured on the test renderer, not traced in gpuix's `sticky.rs`.
+- **Workaround:** the field is the scroller's child, where the parent has no padding.
+- **Fidelity:** exact visually; the DOM structure differs.
 - **Components it hits:** command-menu draws its own field.
 
 ## Compact size is not ported
