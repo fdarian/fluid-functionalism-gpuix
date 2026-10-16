@@ -27,16 +27,6 @@ repeating it.
 - **Fidelity:** exact for what is seen.
 - **Components it hits:** every spring FF runs on a transform.
 
-## `animate` is started in a microtask
-
-- **Cause:** `gpuix gap`.
-- **Original:** `animate(motionX, px, spring.moderate)` runs straight from the pointer and key handlers (`slider.tsx:722`, `:1475-1476`).
-- **Port:** `createAnimateQueue` (`src/components/slider.tsx:159-169`) starts every `animate` in a microtask, one microtask after the event, before the next frame (thumbs `:797`, comfortable fill `:1325-1327`). `set` and `jump` are written directly: the fork defers them until the input returns, and the slider's scenarios drive them from press and key handlers without a throw.
-- **gpuix lacks:** an `animate` that can start inside a press, release or key handler. `MotionValue.animate` reads `this.get()` for its start value (`packages/native/js/motion-value.ts:358`), which asks the renderer, and a renderer read there throws "This renderer call cannot run inside an event handler that native called synchronously" (found by calling it directly from a value change in a key handler, `scripts/check-slider.tsx` click-to-edit). The deferral that covers `set` / `jump` (`write_motion_values`, `packages/native/src/renderer.rs:1389-1412`) does not cover this read.
-- **Workaround:** the microtask queue; an animation that outlives its slider is dropped.
-- **Fidelity:** exact for what is seen.
-- **Components it hits:** none other (the switch avoids motion values altogether).
-
 ## Derived layers trail their inputs by a frame, and the comfortable row is built in pixels
 
 - **Cause:** `gpuix gap`.

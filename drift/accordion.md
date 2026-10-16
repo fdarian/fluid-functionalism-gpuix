@@ -69,9 +69,9 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 ## Blur keeps the hover while the pointer is inside
 
-- **Cause:** `port choice` (reason not stated; the microtask guards a sibling's focus arriving right after the blur, `src/components/accordion.tsx:276`).
+- **Cause:** `port choice` (reason not stated).
 - **Original:** focus leaving the group clears the hover and the ring even with the pointer inside (`registry/base/accordion.tsx:396-403`).
-- **Port:** the hover is cleared only if no trigger took focus and the pointer is outside (`src/components/accordion.tsx:274-284`), so Tab out with the pointer in the group leaves the last row lit until the pointer moves.
+- **Port:** the hover is cleared only if the blur's `relatedTarget` is not a trigger and the pointer is outside (`blurRow`, `src/components/accordion.tsx`), so Tab out with the pointer in the group leaves the last row lit until the pointer moves.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

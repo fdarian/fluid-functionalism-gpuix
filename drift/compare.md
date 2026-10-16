@@ -74,16 +74,6 @@ repeating it.
 - **Workaround:** the wrapper regions.
 - **Fidelity:** approximated (same outcome for these ten slides; a widget added later needs wrapping by hand).
 
-## A slide change runs in a microtask
-
-- **Cause:** `gpuix gap`.
-- **Original:** `setCurrentIndex` and `router.replace` straight from the handler (`app/compare/page.tsx:82-90`).
-- **Port:** `goTo` queues `setIndex` with `queueMicrotask` (`src/pages/compare.tsx:237-243`): the Slider creates motion values as it mounts, and gpuix throws "This renderer call cannot run inside an event handler that native called synchronously" if a key or press handler mounts it. A `target` mirror keeps two arrows pressed in one tick counting from the slide they are heading to.
-- **gpuix lacks:** the test renderer refuses `createMotionValue` while a key or press handler is running (`packages/native/src/test_renderer.rs:106`); a component mounted from a handler has no way to know it is inside one, and the windowed renderer was not tried.
-- **Workaround:** the microtask.
-- **Fidelity:** exact for what is seen.
-- **Components it hits:** any page that swaps in a component that creates a motion value from a press or key.
-
 ## The slide is not in the URL
 
 - **Cause:** `port choice`: the port has page slugs, no query string or history.

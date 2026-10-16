@@ -37,16 +37,6 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`. Same drift as [sidebar.md, "Collapse, reopen trigger, `[` toast, persistence"](sidebar.md#collapse-reopen-trigger--toast-persistence), where the entry lives.
 
-## Page navigation is deferred a microtask
-
-- **Cause:** `gpuix gap`.
-- **Original:** n/a; the browser has no such rule for a route change.
-- **Port:** `navigate` runs `setPage` in `queueMicrotask` (`src/app.tsx:403-404`), so a sidebar click, a menu pick, a hero arrow and an in-page link all change the page one microtask after the handler returns.
-- **gpuix lacks:** renderer calls inside a key or press handler that native dispatched synchronously: a page that mounts a motion value there throws "This renderer call cannot run inside an event handler that native called synchronously" (`~/code/fdarian/gpuix/AGENTS.md:127-129`, `packages/native/src/test_renderer.rs:104-108`). Surfaces and Audio Mixer threw before the deferral.
-- **Workaround:** the microtask.
-- **Fidelity:** exact to the eye.
-- **Components it hits:** every page change; `drift/compare.md` "A slide change runs in a microtask" is the same rule for the slides.
-
 ## Arrow keys do not step through the pages
 
 - **Cause:** `not ported yet`.

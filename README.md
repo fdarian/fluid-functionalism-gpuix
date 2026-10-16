@@ -97,7 +97,7 @@ window), `listed` (`"sidebar"`, `"menu"` for the site menu only, or `"none"`), `
 | `fonts.ts`, `app-frame.tsx` | The static Inter files passed to `render()` and the test renderer; the window frame (chrome-coloured bar, rounded page panel). |
 | `press.ts`, `icons.ts`, `icon.tsx` | The press-shrink shadow; lucide glyphs as SVG strings (`defineIcon` for a component's own). |
 | `site-command-menu.tsx`, `install-url.ts`, `platform.ts` | The site menu (a `CommandMenuDialog` of pages, theme, Recent and actions) and the window-wide Mod+K that toggles it, through gpuix's `window` event target; the registry URL the copy action writes; `IS_MAC` and `openUrl`. |
-| `demo.ts`, `demo-kit.tsx`, `page-nav.ts` | The demo and page contracts, the card every demo page is made of, and `navigate` / `current` for pages (deferred a microtask, see `drift/site.md`). |
+| `demo.ts`, `demo-kit.tsx`, `page-nav.ts` | The demo and page contracts, the card every demo page is made of, and `navigate` / `current` for pages. |
 | `doc-page.tsx`, `playground.tsx` | The docs chrome (`DocPage`, `DocSection`, `ComponentPreview`, `Code`) and the playground scaffolding (`PlaygroundLayout`, `PlaygroundPanel`, the control rows, the right-rail slot). |
 | `icons.ts`, `icons/` | The Icons row: one glyph table per library, `iconSource` reads the picked one. |
 </details>
@@ -126,13 +126,13 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [carousel-dots](drift/carousel-dots.md) | 2 | 3 | 3 | 1 | 9 |
 | [chat-message](drift/chat-message.md) | 2 | 3 | 4 | 2 | 11 |
 | [checkbox-group](drift/checkbox-group.md) | 3 | 0 | 6 | 1 | 10 |
-| [color-picker](drift/color-picker.md) | 4 | 6 | 20 | 1 | 31 |
+| [color-picker](drift/color-picker.md) | 3 | 6 | 20 | 1 | 30 |
 | [combobox](drift/combobox.md) | 7 | 13 | 8 | 1 | 29 |
-| [command-menu](drift/command-menu.md) | 8 | 2 | 15 | 1 | 26 |
-| [compare](drift/compare.md) | 6 | 9 | 0 | 2 | 17 |
+| [command-menu](drift/command-menu.md) | 7 | 2 | 15 | 1 | 25 |
+| [compare](drift/compare.md) | 5 | 9 | 0 | 2 | 16 |
 | [concepts](drift/concepts.md) | 4 | 26 | 2 | 2 | 34 |
-| [dialog](drift/dialog.md) | 8 | 2 | 3 | 1 | 14 |
-| [dropdown](drift/dropdown.md) | 8 | 4 | 13 | 1 | 26 |
+| [dialog](drift/dialog.md) | 6 | 2 | 3 | 1 | 12 |
+| [dropdown](drift/dropdown.md) | 6 | 4 | 13 | 1 | 24 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
 | [fluid-hover](drift/fluid-hover.md) | 3 | 4 | 2 | 4 | 13 |
 | [home](drift/home.md) | 1 | 1 | 1 | 2 | 5 |
@@ -140,19 +140,19 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [input-group](drift/input-group.md) | 1 | 1 | 4 | 1 | 7 |
 | [input-message](drift/input-message.md) | 4 | 1 | 15 | 3 | 23 |
 | [introduction](drift/introduction.md) | 1 | 4 | 2 | 1 | 8 |
-| [mobile-drawer](drift/mobile-drawer.md) | 4 | 2 | 2 | 0 | 8 |
+| [mobile-drawer](drift/mobile-drawer.md) | 3 | 2 | 2 | 0 | 7 |
 | [motion-page](drift/motion-page.md) | 4 | 3 | 2 | 3 | 12 |
 | [nav-menu](drift/nav-menu.md) | 0 | 5 | 1 | 1 | 7 |
 | [queued-stack](drift/queued-stack.md) | 4 | 2 | 5 | 1 | 12 |
 | [radio-group](drift/radio-group.md) | 4 | 2 | 5 | 0 | 11 |
 | [scroll-area](drift/scroll-area.md) | 3 | 6 | 2 | 1 | 12 |
 | [scrollbars-page](drift/scrollbars-page.md) | 1 | 4 | 2 | 1 | 8 |
-| [select](drift/select.md) | 9 | 3 | 8 | 2 | 22 |
+| [select](drift/select.md) | 7 | 3 | 8 | 2 | 20 |
 | [sidebar](drift/sidebar.md) | 1 | 6 | 25 | 1 | 33 |
-| [site](drift/site.md) | 5 | 6 | 22 | 6 | 39 |
+| [site](drift/site.md) | 4 | 6 | 22 | 6 | 38 |
 | [sizes-page](drift/sizes-page.md) | 0 | 5 | 2 | 4 | 11 |
 | [skill-page](drift/skill-page.md) | 3 | 5 | 0 | 1 | 9 |
-| [slider](drift/slider.md) | 5 | 3 | 4 | 2 | 14 |
+| [slider](drift/slider.md) | 4 | 3 | 4 | 2 | 13 |
 | [surfaces](drift/surfaces.md) | 1 | 3 | 4 | 4 | 12 |
 | [switch](drift/switch.md) | 2 | 1 | 4 | 1 | 8 |
 | [table](drift/table.md) | 3 | 1 | 5 | 0 | 9 |
@@ -162,7 +162,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 7 | 1 | 15 |
 | [tooltip](drift/tooltip.md) | 4 | 5 | 1 | 1 | 11 |
 | [typography](drift/typography.md) | 4 | 0 | 1 | 6 | 11 |
-| **Total** | **149** | **194** | **260** | **67** | **670** |
+| **Total** | **137** | **194** | **260** | **67** | **658** |
 
 ### gpuix gaps across components
 
@@ -175,22 +175,17 @@ offer it. A count is given only where the code shows it.
 
 | Used by | What | Workaround here |
 |---|---|---|
-| combobox, dropdown, select, tooltip (every popup on gpuix's `DismissableLayer`), and `returnFocusTo` in dropdown, select, color-picker | `VIEW_BUSY`: reading focus state (`getFocusedElementId`, `matches(":focus")`) inside a mousedown, mouseup, click or wheel handler throws on macOS and in the test renderer, because those run in synchronous dispatch. gpuix's own `DismissableLayer` does it too, see the next row. There is no `document.activeElement` | none yet |
-| every popup on gpuix's `DismissableLayer` (select, combobox, dropdown, color-picker, the customise card's selects), when a pointer press opens it, and the screenshots' light step (its click on the theme select throws) | Since gpuix `aae8c790` a press dispatches synchronously on macOS and in the test renderer. `DismissableLayer` reads `renderer.getFocusedElementId()` while it mounts (`packages/solid/src/components/floating.ts:80`), and a popup that a press handler opens mounts inside that dispatch, so the read throws `VIEW_BUSY` (`packages/native/src/events/sync_dispatch.rs:154`). Reproduced in the test renderer through `select.tsx`'s `onMouseDown` (`bun scripts/screenshots.tsx button`); not run in the live window. Windows and Linux queue the press, so the read is outside the dispatch there (not run) | none yet. `scripts/screenshots.tsx` fails at its final theme-switch step (a press on the theme select) for every demo, so the `light.png` files are stale; the scenario scripts open popups by keyboard (`scripts/check-popups.tsx`, `scripts/check-dropdown.tsx`) |
 | command-menu, and any list that keeps focus in a field while it is pressed | On Windows and Linux the press reaches JavaScript through a queue after native has already moved focus, so `preventDefault()` in `onMouseDown` or `onPointerDown` has no effect and a press on something not focusable still blurs the field (gpuix `README.md:3259-3266`). Seen in the command menu: clicking a tab blurs the field. macOS and the test renderer apply it | `preventDefault()` in `onMouseDown` on the list and the tab row (`drift/command-menu.md`); it works on macOS only. Not run on Windows or Linux |
-| slider | `MotionValue.animate` still throws inside a press, release or key handler ("This renderer call cannot run inside an event handler that native called synchronously"): it reads the value's current state from the renderer to start from. `set` and `jump` work there: the fork defers a motion-value write made there until the input returns (`renderer.rs:1389-1412`, FORK.md:361-363). Values derived in JS (`createTransform` of several values) still trail their inputs by one frame (FORK.md:915-917) | `createAnimateQueue` starts each `animate` in a microtask; `set` and `jump` are written directly (`drift/slider.md`) |
+| slider | Values derived in JS (`createTransform` of several values) still trail their inputs by one frame (FORK.md:915-917) | none (`drift/slider.md`) |
 | accordion, banner, button, card, carousel-dots, chat-message, input-copy, input-message, tabs, tabs-subtle, thinking-steps (all use `buttonProps`) | `buttonProps` handles keydown on the way up, so a `buttonProps` element nested in another is clicked twice on Enter: the inner one clicks itself and the outer one clicks the same target. The fix is to act only when `target === currentTarget` | none; nested cases are not counted |
-| dialog, mobile-drawer | `DialogBackdrop` closes on mousedown; the DOM and Base UI close on click | The app's own backdrop div closes on a click that presses and releases on it |
-| dialog, mobile-drawer | A reactive prop change on `DialogPopup` re-creates the popup and loses focus | `aria-labelledby` and `-describedby` are static ids |
-| scroll-area | A horizontal or both-axis scroller does not extend its scroll width for content that overflows through descendants (a block wrapper clamps to the viewport width) | The viewport is a flex row with `alignItems: "flex-start"` |
-| any nested scrollers (scroll-area, combobox, select, sidebar) | One large wheel event chains its remainder to the outer scroller in the same event; a browser latches the whole event to the first scroller | none |
+| scroll-area | A horizontal or both-axis scroller has no `min-width: fit-content` content wrapper (gpuix rejects intrinsic width keywords). `scrollWidth` counts overflowing descendants now, but a block wrapper is clamped to the viewport width and its `onLayout` reports that, so the area has no content size to draw a horizontal thumb from | The viewport is a flex row with `alignItems: "flex-start"` and the content wrapper is `flexShrink: 0`, so the wrapper takes its content's width |
 | select, combobox | Enter in a form `<input>` with an empty `required` control does nothing; HTML implicit submission validates, sets `invalid` and moves focus. Only `requestSubmit()` validates | The demos submit through `requestSubmit()` |
 | dropdown submenus (audit rows 386, 721), tooltip | `window` and `document` mousemove listeners fire only when an element on the hit path has a mousemove listener, never over bare window background, so a safe polygon between trigger and popup cannot be tracked | A dwell timer for submenus (`SUBMENU_DWELL_MS`), a grace timer for the tooltip |
 | slider (Audio Mixer's `Volume: 78%` labels) | A trailing space at the end of a text run is not drawn: the label text `"Volume: "` renders as `Volume:` and the value touches it (`src/components/slider.tsx:346`, `:453-455`, visible in `screenshots/audio-mixer/initial.png`). Observed; not traced to gpuix's source | none |
 | any `<input>` with `textAlign: "right"` (the Button playground's Label field) | The style is accepted and does nothing in the test renderer (`drift/button.md`, "Playground: no Active switch, Label field not right-aligned"); unverified in a live window | none: left-aligned |
 | tooltip and dialog demos | After a failed script run Bun aborts with `thread local panicked on drop` | none; the harness only |
 | screenshots, app-frame | The test renderer ignores the window options (titlebar, traffic lights), `setAppearance` changes nothing and `onAppearanceChange` never fires; `createAppearance` is the machine's | Captures pin the scheme with `setThemeChoice` and show no traffic lights |
-| screenshots | A mouse move without a held button is not delivered to an element that holds pointer capture; batched keystrokes deliver an input's `onChange` after the whole batch | `shot.moveHeld` sends the move with a button held; none for the batch |
+| screenshots | Batched keystrokes deliver an input's `onChange` after the whole batch | none |
 | screenshots | The accessibility dump flags an `aria-hidden` node as hidden but not its descendants, and `A11yTreeDump` lacks `frame` | `scripts/screenshots.tsx` reads `frame.tab_stop_count` through a cast |
 
 #### Missing features
@@ -244,8 +239,7 @@ Quirks of this repo's own code, kept apart from the gpuix gaps above.
 - **Escape.** `PopupSurface` joins gpuix's dismiss-layer stack while open, so Escape closes only the topmost popup,
   even inside a dialog.
 - **Dialog.** gpuix's `Dialog` unmounts the instant `open` goes false, so a local `mounted` signal keeps the
-  content through the fade; a trigger pressed during the fade is ignored. The backdrop is the app's own,
-  because gpuix's closes on mousedown.
+  content through the fade; a trigger pressed during the fade is ignored.
 - **Screenshots run on the test renderer** (`scripts/screenshots.tsx`).
   - Captures show no traffic lights or native titlebar, and pin the theme to Dark (`setThemeChoice`), because the
     test renderer ignores the window options and its appearance is the machine's.

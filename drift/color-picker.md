@@ -82,7 +82,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** a press springs the thumb to the pressed spot on `spring.moderate`, a drag sets it directly, release and keyboard or programmatic changes spring again (`registry/radix/slider.tsx:721-723`, `:763-766`, `:799-815`, and the value-sync effect at `:611-625`).
-- **Port:** `left` is a plain style from the value, so every change jumps (`src/components/color-picker.tsx:553`). The slider port animates its thumb through `createAnimateQueue` (`src/components/slider.tsx:159`; README "Bugs", slider row), which the rails do not use.
+- **Port:** `left` is a plain style from the value, so every change jumps (`src/components/color-picker.tsx:553`). The slider port animates its thumb with `animate` on a motion value (`src/components/slider.tsx`), which the rails do not use.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -176,16 +176,6 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
-
-## Tab from a popup row does not continue after the trigger
-
-- **Cause:** `gpuix gap`; same as `drift/dropdown.md` "Tab from a popup row does not continue after the trigger".
-- **Original:** Tab in the open format menu closes it and focus moves to the next tabbable after the trigger; Shift+Tab closes and focuses the trigger (Base UI `FloatingFocusManager`).
-- **Port:** the panel's Tab handler cancels the default, closes, hands focus to the trigger and calls `renderer.focusNext()` from there (`tabbingOn`, `onPanelKeyDown` and `close` in `src/components/color-picker.tsx:811-835`, `:910-952`); Shift+Tab stops on the trigger.
-- **gpuix lacks:** a tab order that puts a floating layer where its trigger is.
-- **Workaround:** the explicit `focusNext()`.
-- **Fidelity:** exact for the target, approximated for the mechanism.
-- **Components it hits:** dropdown (same workaround); select closes on Tab by other means.
 
 ## Popover: focus is not moved in, restored or lost
 

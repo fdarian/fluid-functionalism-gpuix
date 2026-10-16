@@ -4,16 +4,6 @@ Original: `registry/base/mobile-drawer.tsx` (Base UI Dialog + Motion). The sourc
 
 Matches the source: 256px wide, top / left / bottom edges, `aria-label="Navigation"`, a 16px inset, the scrim values, the backdrop fade (`{ duration: 0.16 }` in, the 120ms `moderate` exit tween out), the critically damped `moderate` slide in and 120ms tween out, the 220ms unmount fallback, Escape and backdrop click closing, focus returning to `triggerRef`, and "the drawer only reports closes".
 
-## `DialogBackdrop` closes on mousedown, not click
-
-- **Cause:** `gpuix gap`. Same as [dialog](dialog.md).
-- **Original:** Base UI closes the drawer on a click that presses and releases on the backdrop; a press that starts elsewhere and releases there does not close it.
-- **Port:** its own full-window `div` with `onClick` closes the drawer, ignoring a click that arrives while the exit plays (`src/components/mobile-drawer.tsx:53-73`).
-- **gpuix lacks:** the DOM rule: `DialogBackdrop` closes in `onMouseDown` (`packages/solid/src/components/dialog.ts:145-157`).
-- **Workaround:** the own backdrop.
-- **Fidelity:** exact.
-- **Components it hits:** dialog, and anything built on `DialogBackdrop`.
-
 ## No `x: -100%`; the slide animates `left`
 
 - **Cause:** `gpuix gap`. [README "Missing features": CSS transforms](../README.md#missing-features).

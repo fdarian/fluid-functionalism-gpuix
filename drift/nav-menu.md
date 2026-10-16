@@ -55,7 +55,7 @@ Checked and equal: row height 32 / 28 (compact), `px` 12, icon 16 / 14 with an 8
 
 - **Cause:** `port choice` (the pattern `tabs-subtle.tsx` uses).
 - **Original:** a blur to somewhere outside the `nav` clears the hover target and the ring (`nav-menu.tsx:121-126`), whatever the pointer does.
-- **Port:** a blur clears the ring at once; the hover target is cleared in a microtask, and only if focus left every item and the pointer is outside the menu (`nav-item.tsx:122-133`). gpuix dispatches a blur before the next row's focus, so the check cannot read the new focus synchronously.
+- **Port:** a blur clears the ring at once; the hover target is cleared only if the blur's `relatedTarget` is not an item and the pointer is outside the menu (`nav-item.tsx`).
 - **Workaround:** none.
 - **Fidelity:** approximated (a pointer resting on the menu keeps its hover fill after Tab leaves).
 - **Components it hits:** tabs-subtle.

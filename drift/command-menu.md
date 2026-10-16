@@ -118,16 +118,6 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 - **Fidelity:** approximated.
 - **Components it hits:** every fluid list.
 
-## Scroll travel starts a microtask after the key
-
-- **Cause:** `gpuix gap`.
-- **Original:** the key handler starts the scroll animation in the same call (`registry/default/command-menu.tsx:569-602`).
-- **Port:** the motion value that carries the travel is created at the first travel and its calls wait for a microtask (`src/components/command-menu.tsx:410-436`, `:465-470`); the menu's release of it waits too, so closing on Esc or leaving the page from a click does not throw.
-- **gpuix lacks:** a motion value cannot be created, driven or released inside a handler that native called synchronously (a key, a press): the renderer throws "This renderer call cannot run inside an event handler that native called synchronously". A menu mounts from ⌘K and unmounts on Esc, so a value made at mount would throw.
-- **Workaround:** `queueMicrotask`; one microtask is under a frame, so nothing shows. Each `scrollTop` write during the travel is a renderer call (about 7 ms apiece in the offscreen renderer); a live frame-rate check is open.
-- **Fidelity:** exact in effect.
-- **Components it hits:** slider (its `createAnimateQueue`), and any component that animates a motion value from a key or press.
-
 ## Reduced motion reaches only the list scroll
 
 - **Cause:** `not ported yet`.

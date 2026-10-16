@@ -25,32 +25,12 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 - **Fidelity:** exact while the root font size is 16px.
 - **Components it hits:** any component sized in `rem` or viewport units.
 
-## `DialogBackdrop` closes on mousedown
-
-- **Cause:** `gpuix gap`.
-- **Original:** a backdrop closes on a click that presses and releases on it (Base UI's outside press; not rechecked against Base UI, its source is not on this machine), so pressing on the backdrop and releasing on the panel does not close.
-- **Port:** its own backdrop `div` with `onClick`, modal only (`src/components/dialog.tsx:290-295`); the same in `src/components/mobile-drawer.tsx:54-59`.
-- **gpuix lacks:** that rule: `DialogBackdrop` closes from `onMouseDown` (`packages/solid/src/components/dialog.ts:145-157`).
-- **Workaround:** the own backdrop; it also ignores a request that arrives while the exit plays (`:123-128`), since gpuix keeps the layer up through it.
-- **Fidelity:** exact.
-- **Components it hits:** mobile-drawer.
-
-## A reactive prop change re-creates `DialogPopup`
-
-- **Cause:** `gpuix gap`.
-- **Original:** the popup's `aria-labelledby` / `aria-describedby` can change while it is open.
-- **Port:** static ids, always passed, even when no title or description is rendered (`src/components/dialog.tsx:317-320`; the ids at `:144-146`).
-- **gpuix lacks:** a stable popup under changing props: `DialogPopup` sits inside a keyed `Show` and builds its element from a spread of its props, so a prop that changes re-creates the element and drops focus (`packages/solid/src/components/dialog.ts:169-209`).
-- **Workaround:** the static ids; a reference to a missing id resolves to nothing.
-- **Fidelity:** exact.
-- **Components it hits:** mobile-drawer, and any gpuix popup given a reactive prop.
-
 ## Focus lands on the first tab stop one tick after open
 
 - **Cause:** `gpuix gap`.
 - **Original:** Base UI focuses the first tabbable inside the popup as it opens.
 - **Port:** `FocusFirst` calls `focusNextWithin(popup.id)` in a `setTimeout(0)` (`src/components/dialog.tsx:209-219`).
-- **gpuix lacks:** a first-tabbable initial focus: `DialogPopup` focuses the popup itself by default (`packages/solid/src/components/dialog.ts:162`), and the popup's children are only committed natively after the mount (port comment, `:204`).
+- **gpuix lacks:** a first-tabbable initial focus: `DialogPopup` focuses the popup itself by default (`packages/solid/src/components/dialog.ts:162`), and native's tab order exists only once the popup has painted (gpuix README, Dialog), so `focusNextWithin` from mount finds no stop and gpuix's own focus on the popup lands after that mount (checked: calling it synchronously left focus on the popup).
 - **Workaround:** the deferred `focusNextWithin`; for one tick the popup holds focus.
 - **Fidelity:** approximated (one tick late).
 - **Components it hits:** mobile-drawer (reuses `FocusFirst`).

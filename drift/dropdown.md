@@ -14,26 +14,6 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** approximated (dwell timer instead of a safe area).
 - **Components it hits:** any popup with a nested popup; tooltip has the same gap.
 
-## Reading focus state inside a mousedown handler throws `VIEW_BUSY`
-
-- **Cause:** `gpuix gap`.
-- **Original:** `document.activeElement` is readable anywhere, including in a pointer handler, so a popup can note which element had focus when it opened and hand focus back on close (Base UI `returnFocus`).
-- **Port:** the pressed trigger's element id is recorded from the press event (`noteTrigger(event.elementId)`, `src/components/dropdown.tsx:947`, `:1010`) and used when the menu opens, falling back to the focused element only for a keyboard open (`:901`). Closing calls `returnFocusTo` (`:895`; `src/lib/popup-trigger.ts:8`) with `popup.matches(":focus-within")` as `force`, so focus goes back to the trigger when it sat in the popup (gpuix drops it silently when the popup unmounts) or nowhere.
-- **gpuix lacks:** that read: `mousedown` and `pointerdown` (and, per `~/code/fdarian/gpuix/FORK.md:359-364`, `mouseup`, `click` and `wheel`) handlers run inside the synchronous input dispatch on macOS and in the test renderer, where `getFocusedElementId` throws "The root view is being updated by the input" (`packages/native/src/events/sync_dispatch.rs:154`). An earlier probe on the test renderer found it throws in `onMouseDown` and answers in `onClick` and `onKeyDown`; that was not re-run for this audit, and the README row says click throws too. gpuix's own `DismissableLayer` makes the same read while it mounts, so a pointer press that opens a popup throws (README Bugs row "every popup on gpuix's `DismissableLayer`").
-- **Workaround:** the recorded id above.
-- **Fidelity:** exact for the open; unverified for the close. A press closes the menu from a `mousedown` handler in two places: the trigger's second press (`createPressToggle` `onMouseDown`, `src/lib/popup-trigger.ts:43-47` into `scope.setOpen(false)`) and an outside press (`onMouseDownOutside`, `dropdown.tsx:985`). Both reach `returnFocusTo`, which reads focus first (`popup-trigger.ts:13`), and `popup.matches(":focus-within")` before that, which may throw the same way. No scenario in `src/demos/dropdown.tsx` closes the menu that way (row picks close from `click` and `mouseup`, which the scenarios do run), so whether those two closes throw is not known.
-- **Components it hits:** any popup opened or closed on press: select (`src/components/select.tsx:243`) and color-picker (`src/components/color-picker.tsx:820`) also call `returnFocusTo`.
-
-## Tab from a popup row does not continue after the trigger
-
-- **Cause:** `gpuix gap`.
-- **Original:** Tab in an open Base UI menu closes it and focus moves to the next tabbable after the trigger (`FloatingFocusManager`, BASE-UI-AUDIT.md "Menu"); Shift+Tab closes and focuses the trigger.
-- **Port:** the menu's Tab handler cancels the default, closes, hands focus to the trigger and calls `renderer.focusNext()` from there (`tabbingOn`, `src/components/dropdown.tsx:888`, `:909`, `:954`); Shift+Tab does the same without the `focusNext` (`:373-377`).
-- **gpuix lacks:** a tab order that puts a floating layer where its trigger is: Tab pressed on a row inside an `<anchored>` popup jumps to the first tab stop of the page (`nav-search` in the demo app) rather than the stop after the trigger, as the check scenario found (`scripts/check-dropdown.tsx`, "Tab focuses what follows the trigger").
-- **Workaround:** the explicit `focusNext()` from the trigger.
-- **Fidelity:** exact for the target, approximated for the mechanism.
-- **Components it hits:** select and color-picker's format menu close on Tab by other means (not re-checked here).
-
 ## No `width: max-content` / `fit-content`
 
 - **Cause:** `gpuix gap`. README "Missing features" row "Intrinsic width".

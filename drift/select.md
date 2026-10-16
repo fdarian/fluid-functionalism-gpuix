@@ -64,20 +64,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Fidelity:** exact for `requestSubmit()`, dropped for implicit submission.
 - **Components it hits:** combobox.
 
-## Reading focus in a mouse handler throws `VIEW_BUSY`
-
-- **Cause:** `gpuix gap`.
-- **Original:** Base UI returns focus to the trigger on close, in the same tick (`SelectPopup.tsx:479-488`).
-- **Port:** `returnFocus` defers the focus read to a `setTimeout(..., 0)` (`select.tsx:266-277`; `popup-trigger.ts:11-18`). The popup is still mounted then (held by its exit), so `matches(":focus-within")` on the panel tells whether focus sat inside it.
-- **gpuix lacks:** a focus read inside mousedown / mouseup / click handlers (README Bugs, `VIEW_BUSY` row). `DismissableLayer` does the same read while it mounts (`popup.tsx:74`), so a pointer press that opens the select throws (reproduced: `bun scripts/screenshots.tsx button` fails in `onTriggerMouseDown`, `select.tsx:381`; README Bugs row "every popup on gpuix's `DismissableLayer`"). The pointer open path (panel or checked row takes focus) is therefore not covered by `scripts/check-select.tsx`.
-- **Workaround:** the deferred read; the rest is open.
-- **Fidelity:** exact for the focus return.
-- **Components it hits:** dropdown, color-picker, combobox, tooltip.
-
-## Tab from a popup row does not continue after the trigger
-
-- **Cause:** `gpuix gap`. Same drift as [dropdown.md, "Tab from a popup row does not continue after the trigger"](dropdown.md#tab-from-a-popup-row-does-not-continue-after-the-trigger), where the entry lives. Here: Tab on the panel cancels the default, closes, hands focus to the trigger and calls `renderer.focusNext()` (`select.tsx:266-277`, `:371-375`); Shift+Tab does the same without `focusNext()`. Checked in `scripts/check-select.tsx` ("Tab focuses what follows the trigger").
-
 ## Releasing the press outside the popup does not cancel
 
 - **Cause:** `gpuix gap`.
