@@ -65,15 +65,6 @@ light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 - **Fidelity:** approximated.
 - **Components it hits:** badge, tabs-subtle, anything with a trimmed label.
 
-## Preview pill after resting on the selected tab starts at the old rect
-
-- **Cause:** `not ported yet`.
-- **Original:** with the pointer over the selected tab the preview fades in place and unmounts, so the next hover mounts it again at the selected pill and slides it out (`tabs.tsx:391-437`).
-- **Port:** the preview stays mounted; with the pointer inside it keeps the rect it last had, invisible (`tabs.tsx:196-198`). Hovering Favorites, then the selected Library, then Settings slides it from Favorites to Settings, not from Library.
-- **Workaround:** none; it only shows when the pointer rests on the selected tab between two other tabs.
-- **Fidelity:** approximated.
-- **Components it hits:** tabs-subtle (same memo).
-
 ## No optimistic pill on click
 
 - **Cause:** `port choice` (reason not stated; Solid signals commit synchronously, so a click already moves the pill).

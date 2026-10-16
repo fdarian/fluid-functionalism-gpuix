@@ -30,6 +30,8 @@ export function FluidHighlight(props: {
 	background: string;
 	/** `false` snaps to the new rect: a reflow moved the row, not the pointer. */
 	travel?: () => boolean;
+	/** `false` mounts at full opacity, so the fill is simply there (a selected background), instead of fading in. Defaults to `true`. */
+	fadeIn?: boolean;
 	/** The glide between rects. Hover uses `fast`; a selection background uses `moderate`. */
 	glide?: MotionTransition;
 	fade?: MotionTransition;
@@ -71,7 +73,10 @@ export function FluidHighlight(props: {
 							borderRadius: props.radius,
 							pointerEvents: "none",
 						}}
-						initial={{ opacity: 0, ...target(initial) }}
+						initial={{
+							opacity: props.fadeIn === false ? 1 : 0,
+							...target(initial),
+						}}
 						animate={{
 							opacity: props.rect() === null ? 0 : 1,
 							...target(sitsOn()),

@@ -10,11 +10,12 @@ import {
 	createContext,
 	createComputed,
 	createEffect,
-	createMemo,
 	createSignal,
 	type JSX,
 	on,
+	For,
 	Show,
+	untrack,
 	useContext,
 } from "solid-js";
 import { createFocusRing, FocusRing, type FocusRingState } from "../lib/focus-ring";
@@ -23,6 +24,7 @@ import {
 	type FluidHover,
 	type ItemRect,
 } from "../lib/fluid-hover";
+import { createPreviewPill } from "../lib/preview-pill";
 import { StableLabel } from "../lib/stable-label";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
@@ -36,6 +38,7 @@ const sizes = {
 		height: height.control,
 		padX: 12,
 		gap: 8,
+		labelGap: 8,
 		text: scale.body,
 		icon: 16,
 	},
@@ -43,6 +46,8 @@ const sizes = {
 		height: height.controlCompact,
 		padX: 10,
 		gap: 4,
+		// The source's own value, 2px wider than the compact icon gap.
+		labelGap: 6,
 		text: scale.bodyCompact,
 		icon: 14,
 	},
@@ -133,22 +138,17 @@ export function TabsSubtle(props: {
 		return active !== null && active !== props.selectedIndex;
 	};
 
-	/** Hovering another tab the preview sits on it; with the pointer over the selected tab it fades in place, and with the pointer gone it glides back into the selected pill. */
-	const preview = createMemo<{ rect: ItemRect; visible: boolean } | undefined>(
-		(previous) => {
-			const selected = selectedRect();
-			if (selected === undefined) return undefined;
-			const active = hover.activeIndex();
-			if (active !== null && active !== props.selectedIndex) {
-				const rect = rectOf(active);
-				return rect === undefined ? previous : { rect, visible: true };
-			}
-			if (mouseInside() && previous !== undefined) {
-				return { rect: previous.rect, visible: false };
-			}
-			return { rect: selected, visible: false };
-		},
-	);
+	const preview = createPreviewPill({
+		selectedRect,
+		selectedIndex: () => props.selectedIndex,
+		activeIndex: hover.activeIndex,
+		rectOf,
+		mouseInside,
+	});
+	const previewMounts = () => {
+		const shown = preview();
+		return shown === undefined ? [] : [shown.mount];
+	};
 
 	return (
 		<SubtleContext.Provider value={scope}>
@@ -199,16 +199,26 @@ export function TabsSubtle(props: {
 						</motion.div>
 					)}
 				</Show>
-				<Show when={preview()}>
-					{(shown: () => { rect: ItemRect; visible: boolean }) => (
+				<For each={previewMounts()}>
+					{() => {
+						// Born at the selected pill, as the source mounts it, then slides out to the hovered tab.
+						const born = untrack(selectedRect);
+						if (born === undefined) throw new Error("Preview pill mounted without a selected pill");
+						const shown = () => {
+							const pill = preview();
+							if (pill === undefined) throw new Error("Preview pill has no state");
+							return pill;
+						};
+						return (
 						<motion.div
-							initial={false}
+							testId={props.testId && `${props.testId}-preview`}
+							initial={rectStyle(born)}
 							animate={rectStyle(shown().rect)}
 							transition={hoveringOther() ? tween.fast : tween.moderate}
 							style={{ position: "absolute" }}
 						>
 							<motion.div
-								initial={false}
+								initial={{ opacity: 0 }}
 								animate={{ opacity: shown().visible ? 0.4 : 0 }}
 								transition={{ duration: shown().visible ? 0.08 : 0.06 }}
 								style={{
@@ -222,8 +232,9 @@ export function TabsSubtle(props: {
 								}}
 							/>
 						</motion.div>
-					)}
-				</Show>
+						);
+					}}
+				</For>
 				<FocusRing
 					ring={focusRing}
 					testId={props.testId && `${props.testId}-focus-ring`}
@@ -403,7 +414,7 @@ export function TabsSubtleItem(props: {
 							display: "flex",
 							flexDirection: "row",
 							flexShrink: 0,
-							paddingLeft: metrics().gap,
+							paddingLeft: metrics().labelGap,
 						}}
 					>
 						{label}

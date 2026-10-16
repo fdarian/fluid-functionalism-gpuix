@@ -67,20 +67,11 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 - **Fidelity:** approximated.
 - **Components it hits:** any list whose rows resize under the highlight (thinking-steps, sidebar).
 
-## Paint order of the shared layers
-
-- **Cause:** `not ported yet` (the comments say gpuix has no `zIndex`; it does: `FORK.md:561`, orders siblings only).
-- **Original:** expanded tints, then the hover fill, all under the rows; the focus ring sits above everything at `z-20` (`registry/base/accordion.tsx:411-472`). The hover fill paints over the open tint; the ring is never covered.
-- **Port:** the group is `FluidHighlight`, `FocusRing`, then the items (`src/components/accordion.tsx:279-291`). Each item's tint (`:354-376`, and `highlight="trigger"`'s tint inside the trigger, `:441-459`) paints over the hover fill and over the ring, whose bottom edge on an open row and top edge under an open neighbour sit inside a tint (alpha 0.2 light, 0.12 dark). `focus-ring.tsx:51` itself says to place the ring after the fills.
-- **Workaround:** document order.
-- **Fidelity:** approximated (a few percent of tint over the fill and the ring edge).
-- **Components it hits:** none other; stale "no zIndex" comments are also at `src/lib/fluid-highlight.tsx:19` and `src/components/accordion.tsx:278`.
-
 ## Pill shape
 
 - **Cause:** `not ported yet` (README lists "pill shape" as not ported).
 - **Original:** highlight, tints and trigger radius follow `shape.bg` / `shape.item` (20 px pill, 8 px rounded), the ring `shape.focusRing` (22 px pill, 10 px rounded) (`registry/default/lib/shape-context.tsx:53-85`). The site default is rounded.
-- **Port:** fixed `radius.item` 8 and `radius.focusRing` 10 (`src/lib/theme.ts:280-284`, `src/components/accordion.tsx:371`, `src/lib/focus-ring.tsx:92`).
+- **Port:** fixed `radius.item` 8 and `radius.focusRing` 10 (`src/lib/theme.ts:280-284`, `src/components/accordion.tsx` (`GroupTint`), `src/lib/focus-ring.tsx:92`).
 - **Workaround:** none; the rounded default is exact.
 - **Fidelity:** exact for rounded, dropped for pill.
 - **Components it hits:** every component.
