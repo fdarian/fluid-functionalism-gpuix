@@ -774,8 +774,11 @@ export function CardMedia(props: {
 	);
 }
 
-/** Full-bleed image: a 16:9 banner when stacked, a square when inline. */
-export function CardImage(props: { src: string }) {
+/**
+ * Full-bleed image: a 16:9 banner when stacked, a square when inline. `height`
+ * pins a stacked banner's height instead of the 16:9 ratio, for a narrow host.
+ */
+export function CardImage(props: { src: string; height?: number }) {
 	const scope = useContext(CardContext);
 	const inline = () => scope.orientation() === "inline";
 	/** The outer corners a tile would have clipped; the rest keep the original's 2px. */
@@ -809,7 +812,9 @@ export function CardImage(props: { src: string }) {
 				outlineColor: imageOutline(),
 				...(inline()
 					? { width: 160, height: 160, flexShrink: 0 }
-					: { width: "100%", aspectRatio: 16 / 9, flexShrink: 0 }),
+					: props.height === undefined
+						? { width: "100%", aspectRatio: 16 / 9, flexShrink: 0 }
+						: { width: "100%", height: props.height, flexShrink: 0 }),
 			}}
 		/>
 	);
