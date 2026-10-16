@@ -30,6 +30,7 @@ export function AppFrame(props: { title: string; children: JSX.Element }) {
 					position: "relative",
 					height: BAR_HEIGHT,
 					flexShrink: 0,
+					appRegion: "drag",
 				}}
 			>
 				{/* Full width, so the traffic-light inset does not shift the title. */}
