@@ -62,15 +62,6 @@ repeating it.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
-## Thumb size and height snap while dragging
-
-- **Cause:** `port choice` (reason not stated).
-- **Original:** only x is written by the pointer; width, height and y keep springing on `thumbTransition ?? spring.moderate` during the drag (`switch.tsx:341-343`).
-- **Port:** one `transition` for all four props, `tween.snap` while `dragX()` is set (`src/components/switch.tsx:231`). A drag that begins before the press squash (160 ms spring) has finished cuts that spring short.
-- **Workaround:** none.
-- **Fidelity:** approximated (a press-and-drag within about 160 ms shows the squash landing at once).
-- **Components it hits:** just this one.
-
 ## Props not ported: `thumbTransition`, `className`, `ref`, HTML attributes
 
 - **Cause:** `not ported yet`.

@@ -30,8 +30,12 @@ function element(testId: string) {
 	if (found === undefined) throw new Error(`no element ${testId}`);
 	return found;
 }
-/** The opacity the meta row animates to: the grandparent of the time's text. */
-function metaOpacity() {
+type MetaMotion = {
+	animate?: { opacity?: number };
+	transition?: { duration?: number; ease?: unknown };
+};
+/** The motion props of the meta row: the grandparent of the time's text. */
+function metaMotion() {
 	const text = renderer.findByText("09:41");
 	if (text === undefined || text.parentId === null)
 		throw new Error("no timestamp");
@@ -40,12 +44,15 @@ function metaOpacity() {
 		throw new Error("no timestamp label");
 	const row = renderer.getElement(label.parentId);
 	if (row === undefined) throw new Error("no meta row");
-	const motion = row.customProps?.motion as
-		| { animate?: { opacity?: number } }
-		| undefined;
-	if (motion?.animate?.opacity === undefined)
+	const motion = row.customProps?.motion as MetaMotion | undefined;
+	if (motion === undefined) throw new Error("the meta row has no motion");
+	return motion;
+}
+function metaOpacity() {
+	const opacity = metaMotion().animate?.opacity;
+	if (opacity === undefined)
 		throw new Error("the meta row has no opacity target");
-	return motion.animate.opacity;
+	return opacity;
 }
 let failed = false;
 function report(name: string, ok: boolean, detail: string) {
@@ -84,6 +91,14 @@ await settle(800);
 
 const resting = metaOpacity();
 report("meta row is hidden at rest", resting === 0, `opacity ${resting}`);
+
+const fade = metaMotion().transition;
+report(
+	"meta row fades over 150 ms on Tailwind's default curve",
+	fade?.duration === 0.15 &&
+		JSON.stringify(fade.ease) === JSON.stringify([0.4, 0, 0.2, 1]),
+	JSON.stringify(fade),
+);
 
 renderer.simulateKeystrokes("tab");
 await settle(500);

@@ -64,6 +64,32 @@ const sources: Record<
 	untitledui: (name, strokeWidth) => stroked(untitledui[name], strokeWidth),
 };
 
+/** Whether the glyph is stroked shapes, so `iconNodes` can draw it: phosphor's named glyphs are filled paths, a component's own `defineIcon` glyph is always stroked. */
+export function hasStrokeNodes(icon: IconRef) {
+	return typeof icon !== "string" || iconLibrary() !== "phosphor";
+}
+
+/**
+ * The glyph's stroked inner markup, for drawing shapes one by one (`Icon easeStroke`).
+ * Follows the picked library. Phosphor is filled paths with no stroke to ease, so a
+ * named glyph throws there: check `hasStrokeNodes` first and draw `iconSource` instead.
+ */
+export function iconNodes(icon: IconRef) {
+	if (typeof icon !== "string") return icon.nodes;
+	switch (iconLibrary()) {
+		case "lucide":
+			return lucide[icon];
+		case "tabler":
+			return tabler[icon];
+		case "hugeicons":
+			return hugeicons[icon];
+		case "untitledui":
+			return untitledui[icon];
+		case "phosphor":
+			throw new Error(`phosphor has no stroked nodes for "${icon}"`);
+	}
+}
+
 /**
  * The glyph as an SVG string, from the picked library. `currentColor` resolves
  * to the element's `style.color`. Reads `iconLibrary()`, so an icon that calls

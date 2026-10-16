@@ -38,11 +38,11 @@ repeating it.
 - **Fidelity:** approximated (colour fade dropped).
 - **Components it hits:** input-group (icon colour, its own entry).
 
-## Icon stroke 1.5 to 2 on hover is instant, and applies to the wrong glyphs in the button variant
+## Icon stroke 1.5 to 2 on hover applies to the wrong glyphs in the button variant
 
-- **Cause:** `port choice` (instant: the stroke width is part of the SVG source string, README `group-hover` and "icon stroke 1.5 to 2" rows). The variant mismatch is `not ported yet`.
+- **Cause:** `not ported yet`.
 - **Original:** the stroke eases over 80 ms (`input-copy.tsx:159,187,217`). In the `button` variant only the copy icon changes with hover (`:317`); the check and cross are fixed at `strokeWidth={2}` (`:250,288`).
-- **Port:** one `strokeWidth={hovered() ? 2 : 1.5}` for every glyph in both variants (`input-copy.tsx:180-187`), so the button variant's check and cross draw at 1.5 at rest.
+- **Port:** one `strokeWidth={hovered() ? 2 : 1.5}` for every glyph in both variants (`input-copy.tsx:186-193`), so the button variant's check and cross draw at 1.5 at rest. The ease itself is ported: `<Icon easeStroke>` (`src/lib/icon.tsx`) draws the glyph's shapes in one `motion.g` and animates its `strokeWidth` over 80 ms on Tailwind's curve.
 - **Fidelity:** approximated.
 
 ## The value tint has a corner radius

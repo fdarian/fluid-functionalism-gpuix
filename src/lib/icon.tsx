@@ -1,26 +1,92 @@
-import { motion } from "@gpuix/solid";
-import { type IconRef, iconSource } from "./icons";
+import { type MotionTransition, motion } from "@gpuix/solid";
+import { For } from "solid-js";
+import { hasStrokeNodes, type IconRef, iconNodes, iconSource } from "./icons";
 import { colorFade } from "./theme";
+
+/** FF's `transition-[stroke-width] duration-80`: Tailwind's default curve. */
+const STROKE_EASE: MotionTransition = {
+	duration: 0.08,
+	ease: [0.4, 0, 0.2, 1],
+};
+
+interface Shape {
+	tag: string;
+	attrs: Record<string, string>;
+}
+
+/** The glyph's inner markup (lucide's `<path/>`, `<rect/>`, `<circle/>`, `<line/>` nodes) as shapes. */
+function parseShapes(nodes: string): Shape[] {
+	return Array.from(nodes.matchAll(/<(\w+)\s+([^>]*?)\s*\/>/g)).map((match) => {
+		const attrs: Record<string, string> = {};
+		for (const attr of match[2].matchAll(/([\w-]+)="([^"]*)"/g))
+			attrs[attr[1]] = attr[2];
+		return { tag: match[1], attrs };
+	});
+}
+
+function ShapeNode(props: { shape: Shape }) {
+	const attrs = props.shape.attrs;
+	switch (props.shape.tag) {
+		case "path":
+			return <path d={attrs.d} />;
+		case "circle":
+			return <circle cx={attrs.cx} cy={attrs.cy} r={attrs.r} />;
+		case "rect":
+			return (
+				<rect
+					x={attrs.x}
+					y={attrs.y}
+					width={attrs.width}
+					height={attrs.height}
+					rx={attrs.rx}
+					ry={attrs.ry}
+				/>
+			);
+		case "line":
+			return <line x1={attrs.x1} y1={attrs.y1} x2={attrs.x2} y2={attrs.y2} />;
+		default:
+			throw new Error(
+				`Icon does not draw <${props.shape.tag}> with easeStroke`,
+			);
+	}
+}
 
 export function Icon(props: {
 	name: IconRef;
 	size: number;
 	strokeWidth: number;
 	color: string;
-	/** Ease a colour change over 80 ms. The stroke width still switches at once: it is part of the SVG source. */
+	/** Ease a colour change over 80 ms. */
 	fade?: boolean;
+	/**
+	 * Ease a stroke-width change over 80 ms. `Icon` otherwise bakes the width into its SVG source and can only switch; this draws the glyph as shapes inside one animated group that they inherit the width from. Phosphor's glyphs are filled paths whose weight is picked by the width, so there the weight switches at once.
+	 */
+	easeStroke?: boolean;
 }) {
-	return (
-		<svg
-			source={iconSource(props.name, props.strokeWidth)}
-			style={{
-				width: props.size,
-				height: props.size,
-				flexShrink: 0,
-				color: props.color,
-				...(props.fade === true ? colorFade : {}),
-			}}
-		/>
+	const style = () => ({
+		width: props.size,
+		height: props.size,
+		flexShrink: 0,
+		color: props.color,
+		...(props.fade === true ? colorFade : {}),
+	});
+	const shapes = () => parseShapes(iconNodes(props.name));
+	return props.easeStroke === true && hasStrokeNodes(props.name) ? (
+		<svg viewBox="0 0 24 24" style={style()}>
+			<motion.g
+				fill="none"
+				stroke="currentColor"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				initial={false}
+				animate={{ strokeWidth: props.strokeWidth }}
+				transition={STROKE_EASE}
+			>
+				<For each={shapes()}>{(shape) => <ShapeNode shape={shape} />}</For>
+			</motion.g>
+		</svg>
+	) : (
+		<svg source={iconSource(props.name, props.strokeWidth)} style={style()} />
 	);
 }
 

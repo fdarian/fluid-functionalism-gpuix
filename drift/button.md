@@ -42,16 +42,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 - **Port:** every state switches at once: `hover` / `active` style objects with no `transition*` (`src/components/button.tsx:210-233`); the ghost label colour follows the `hovered` signal (`:125-134`) and `<text>` carries no `colorFade` (`src/lib/theme.ts:451-455`, used only by `Icon fade`, which the button does not pass).
 - **Workaround:** none. README's "gpuix gaps" no longer lists colour transitions; gpuix animates `color`, `backgroundColor`, `outlineColor` and `boxShadow` on state-style changes (`FORK.md:815-818`). The README's "How the first three components translate" row ("none: state styles switch instantly") is stale.
 - **Fidelity:** dropped.
-- **Components it hits:** every component with a hover or press fill; `Icon` has `fade` for colour only.
-
-## Icon stroke width switches at once
-
-- **Cause:** `not ported yet`.
-- **Original:** `transition-[stroke-width] duration-80` and `group-hover:stroke-[2]` (`:249`, `:258`, `:270`).
-- **Port:** `iconStroke()` swaps the SVG source between 1.5 and 2 (`src/components/button.tsx:135`, `src/lib/icon.tsx:11-24`).
-- **Workaround:** none. `BASE-UI-AUDIT.md:529` has the plan: build `Icon` from parsed shape children so `motion.path` animates `strokeWidth` (`packages/native/js/host.ts:296-298`).
-- **Fidelity:** approximated (right end states, no easing).
-- **Components it hits:** every `<Icon>` that changes stroke on hover (67 uses per the audit).
+- **Components it hits:** every component with a hover or press fill; `Icon` has `fade` for colour (the button's icons use only `easeStroke`, as the source eases only the stroke width).
 
 ## Loading spinner is a static glyph
 

@@ -2,7 +2,6 @@ import {
 	type EventPayload,
 	type HostElement,
 	type KeyEvent,
-	motion,
 	useGpuixRequired,
 } from "@gpuix/solid";
 import {
@@ -16,7 +15,11 @@ import {
 	Show,
 } from "solid-js";
 import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover, createReflowGate, useHoverItem } from "../lib/fluid-hover";
+import {
+	createFluidHover,
+	createReflowGate,
+	useHoverItem,
+} from "../lib/fluid-hover";
 import { FormValue } from "../lib/form-value";
 import { CheckMark, Icon, LIST_CHECK } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
@@ -67,6 +70,7 @@ function ClearButton(props: { onClick: () => void; testId?: string }) {
 				name="x"
 				size={16}
 				strokeWidth={1.5}
+				fade
 				color={hovered() ? color.foreground : color.mutedForeground}
 			/>
 		</div>
@@ -98,7 +102,9 @@ const collator = new Intl.Collator(undefined, {
 function contains(text: string, query: string) {
 	if (query === "") return true;
 	for (let start = 0; start <= text.length - query.length; start++) {
-		if (collator.compare(text.slice(start, start + query.length), query) === 0) {
+		if (
+			collator.compare(text.slice(start, start + query.length), query) === 0
+		) {
 			return true;
 		}
 	}
@@ -138,6 +144,8 @@ export function Combobox(props: {
 
 	const presence = createPresence(POPUP_EXIT_FALLBACK_MS);
 	const listId = createUniqueId();
+	// Not inline in the JSX: that prop re-evaluates with the others, so the input would get a new id on every highlight change.
+	const inputId = createUniqueId();
 	const rowId = (index: number) => `${listId}-row-${index}`;
 	const open = presence.open;
 	const mounted = presence.mounted;
@@ -432,6 +440,8 @@ export function Combobox(props: {
 								name={name()}
 								size={16}
 								strokeWidth={focused() ? 2 : 1.5}
+								fade
+								easeStroke
 								color={focused() ? color.foreground : color.mutedForeground}
 							/>
 						)}
@@ -443,7 +453,7 @@ export function Combobox(props: {
 						testId={
 							props.testId === undefined ? undefined : `${props.testId}-input`
 						}
-						id={createUniqueId()}
+						id={inputId}
 						value={inputText()}
 						placeholder={props.placeholder ?? "Search…"}
 						role="combobox"
@@ -488,7 +498,9 @@ export function Combobox(props: {
 							<ClearButton
 								onClick={clear}
 								testId={
-									props.testId === undefined ? undefined : `${props.testId}-clear`
+									props.testId === undefined
+										? undefined
+										: `${props.testId}-clear`
 								}
 							/>
 						</Show>
@@ -527,151 +539,161 @@ export function Combobox(props: {
 
 			<PopupSurface
 				presence={presence}
-				testId={props.testId === undefined ? undefined : `${props.testId}-popup`}
+				testId={
+					props.testId === undefined ? undefined : `${props.testId}-popup`
+				}
 				align="start"
 				width={width()}
 				maxHeight={POPUP_MAX_HEIGHT}
 				onDismiss={closePopup}
 			>
 				{(popupMaxHeight) => (
-				<Show
-					when={filtered().length > 0}
-					fallback={
-						<div
-							style={{
-								paddingTop: 24,
-								paddingBottom: 24,
-								paddingLeft: 12,
-								paddingRight: 12,
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
-							}}
-						>
-							<text style={{ ...scale.body, color: color.mutedForeground }}>
-								{props.emptyText ?? "No results found."}
-							</text>
-						</div>
-					}
-				>
-					<div
-						ref={(element) => {
-							scroller = element;
-						}}
-						id={listId}
-						role="listbox"
-						onScroll={hover.handlers.onScroll}
-						style={{
-							display: "flex",
-							flexDirection: "column",
-							overflowY: "scroll",
-							maxHeight: popupMaxHeight() - 2,
-						}}
+					<Show
+						when={filtered().length > 0}
+						fallback={
+							<div
+								style={{
+									paddingTop: 24,
+									paddingBottom: 24,
+									paddingLeft: 12,
+									paddingRight: 12,
+									display: "flex",
+									alignItems: "center",
+									justifyContent: "center",
+								}}
+							>
+								<text style={{ ...scale.body, color: color.mutedForeground }}>
+									{props.emptyText ?? "No results found."}
+								</text>
+							</div>
+						}
 					>
-						{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
 						<div
-							{...hover.containerProps}
-							onMouseLeave={onListMouseLeave}
+							ref={(element) => {
+								scroller = element;
+							}}
+							id={listId}
+							role="listbox"
+							onScroll={hover.handlers.onScroll}
 							style={{
-								position: "relative",
 								display: "flex",
 								flexDirection: "column",
-								padding: 4,
+								overflowY: "scroll",
+								maxHeight: popupMaxHeight() - 2,
 							}}
 						>
-							<FluidHighlight
-								rect={checkedRect}
-								session={() => 0}
-								radius={radius.item}
-								background={color.active}
-								glide={tween.moderate}
-								fade={tween.moderateExit}
-								travel={() => !reflow.reflowing()}
-							/>
-							<FluidHighlight
-								rect={hoverRect}
-								session={hover.session}
-								radius={radius.item}
-								background={color.hover}
-								travel={() => !reflow.reflowing()}
-							/>
-							<For each={filtered()}>
-								{(row, index) => {
-									const lit = () =>
-										hover.activeIndex() === index() || value() === row.value;
-									let rowElement: HostElement | undefined;
-									useHoverItem(hover, index, () => rowElement);
-									return (
-										<div
-											ref={(element) => {
-												rowElement = element;
-											}}
-											id={rowId(index())}
-											role="option"
-											testId={
-												props.testId === undefined
-													? undefined
-													: `${props.testId}-option-${row.value}`
-											}
-											aria-selected={value() === row.value}
-											aria-disabled={row.disabled === true}
-											onClick={() => select(row)}
-											style={{
-												height: ROW_HEIGHT,
-												flexShrink: 0,
-												display: "flex",
-												flexDirection: "row",
-												alignItems: "center",
-												gap: 8,
-												paddingLeft: 8,
-												paddingRight: 8,
-												borderRadius: radius.item,
-												cursor: "pointer",
-												opacity: row.disabled === true ? 0.5 : 1,
-												pointerEvents: row.disabled === true ? "none" : undefined,
-											}}
-										>
-											<Show when={row.icon}>
-												{(name: Accessor<IconRef>) => (
-													<Icon
-														name={name()}
-														size={16}
-														strokeWidth={lit() ? 2 : 1.5}
-														fade
-														color={lit() ? color.foreground : color.mutedForeground}
-													/>
-												)}
-											</Show>
-											<text
+							{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
+							<div
+								{...hover.containerProps}
+								onMouseLeave={onListMouseLeave}
+								style={{
+									position: "relative",
+									display: "flex",
+									flexDirection: "column",
+									padding: 4,
+								}}
+							>
+								<FluidHighlight
+									rect={checkedRect}
+									session={() => 0}
+									radius={radius.item}
+									background={color.active}
+									glide={tween.moderate}
+									fade={tween.moderateExit}
+									travel={() => !reflow.reflowing()}
+								/>
+								<FluidHighlight
+									rect={hoverRect}
+									session={hover.session}
+									radius={radius.item}
+									background={color.hover}
+									travel={() => !reflow.reflowing()}
+								/>
+								<For each={filtered()}>
+									{(row, index) => {
+										const lit = () =>
+											hover.activeIndex() === index() || value() === row.value;
+										let rowElement: HostElement | undefined;
+										useHoverItem(hover, index, () => rowElement);
+										return (
+											<div
+												ref={(element) => {
+													rowElement = element;
+												}}
+												id={rowId(index())}
+												role="option"
+												testId={
+													props.testId === undefined
+														? undefined
+														: `${props.testId}-option-${row.value}`
+												}
+												aria-selected={value() === row.value}
+												aria-disabled={row.disabled === true}
+												// A press on a row must not take focus from the input (Base UI `ComboboxItem`).
+												onMouseDown={(event) => event.preventDefault()}
+												onClick={() => select(row)}
 												style={{
-													flexGrow: 1,
-													minWidth: 0,
-													...scale.body,
-													color: lit() ? color.foreground : color.mutedForeground,
-													...colorFade,
-													whiteSpace: "nowrap",
-													textOverflow: "ellipsis",
-													overflow: "hidden",
+													height: ROW_HEIGHT,
+													flexShrink: 0,
+													display: "flex",
+													flexDirection: "row",
+													alignItems: "center",
+													gap: 8,
+													paddingLeft: 8,
+													paddingRight: 8,
+													borderRadius: radius.item,
+													cursor: "pointer",
+													opacity: row.disabled === true ? 0.5 : 1,
+													pointerEvents:
+														row.disabled === true ? "none" : undefined,
 												}}
 											>
-												{row.label}
-											</text>
-											<div style={{ width: 16, height: 16, flexShrink: 0 }}>
-												<CheckMark
-													checked={value() === row.value}
-													path={LIST_CHECK}
-													size={16}
-													strokeWidth={2}
-													color={color.foreground}
-												/>
+												<Show when={row.icon}>
+													{(name: Accessor<IconRef>) => (
+														<Icon
+															name={name()}
+															size={16}
+															strokeWidth={lit() ? 2 : 1.5}
+															fade
+															easeStroke
+															color={
+																lit() ? color.foreground : color.mutedForeground
+															}
+														/>
+													)}
+												</Show>
+												<text
+													style={{
+														flexGrow: 1,
+														minWidth: 0,
+														...scale.body,
+														color: lit()
+															? color.foreground
+															: color.mutedForeground,
+														...colorFade,
+														whiteSpace: "nowrap",
+														textOverflow: "ellipsis",
+														overflow: "hidden",
+													}}
+												>
+													{row.label}
+												</text>
+												<div style={{ width: 16, height: 16, flexShrink: 0 }}>
+													<CheckMark
+														checked={value() === row.value}
+														path={LIST_CHECK}
+														size={16}
+														strokeWidth={2}
+														color={color.foreground}
+													/>
+												</div>
 											</div>
-										</div>
-									);
-								}}
-							</For>
+										);
+									}}
+								</For>
+							</div>
 						</div>
-					</div>
-				</Show>
+					</Show>
 				)}
 			</PopupSurface>
 		</div>

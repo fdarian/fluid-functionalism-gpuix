@@ -1,5 +1,5 @@
 import type { HostElement } from "@gpuix/solid";
-import { type as scale, weight } from "./theme";
+import { colorFade, type as scale, weight } from "./theme";
 
 /**
  * A label that gains weight in place. A hidden semibold copy sits in the flow
@@ -14,6 +14,8 @@ export function StableLabel(props: {
 	grow?: boolean;
 	/** Defaults to the body role. */
 	textStyle?: { fontSize: number; lineHeight: number };
+	/** Ease a colour change over 80 ms (the weight still switches at once). */
+	fade?: boolean;
 	/** A label wider than its row ends in an ellipsis instead of running under what follows it. */
 	truncate?: boolean;
 	/** The wrapper, for a caller that measures the label's width. */
@@ -48,6 +50,7 @@ export function StableLabel(props: {
 						? { right: 0, overflow: "hidden", textOverflow: "ellipsis" }
 						: {}),
 					color: props.color,
+					...(props.fade === true ? colorFade : {}),
 				}}
 			>
 				{props.text}

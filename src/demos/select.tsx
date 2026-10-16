@@ -237,9 +237,10 @@ export function Demo() {
 					testId="form"
 					onSubmit={(event) =>
 						setSubmitted(
-							Array.from(event.formData.entries(), (entry) => `${entry[0]}=${entry[1]}`).join(
-								"&",
-							),
+							Array.from(
+								event.formData.entries(),
+								(entry) => `${entry[0]}=${entry[1]}`,
+							).join("&"),
 						)
 					}
 					style={{ display: "flex", flexDirection: "column", gap: 8 }}
@@ -324,9 +325,6 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectAria("form-plan-option-apple", {
 		role: "ListBoxOption",
 		selected: false,
-	});
-	shot.expectAria("form-plan-trigger", {
-		active_descendant: shot.idOf("form-plan-option-apple"),
 	});
 	await shot.press("enter");
 	await shot.settle(600);

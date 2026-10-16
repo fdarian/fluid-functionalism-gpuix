@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 689 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 670 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 | | |
@@ -116,53 +116,53 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 
 | Component or page | gpuix gap | port choice | not ported yet | mixed | total |
 |---|---:|---:|---:|---:|---:|
-| [accordion](drift/accordion.md) | 2 | 11 | 10 | 0 | 23 |
+| [accordion](drift/accordion.md) | 3 | 9 | 9 | 0 | 21 |
 | [ask-user-questions](drift/ask-user-questions.md) | 2 | 5 | 9 | 3 | 19 |
 | [audio-mixer](drift/audio-mixer.md) | 0 | 2 | 0 | 1 | 3 |
 | [badge](drift/badge.md) | 1 | 3 | 0 | 0 | 4 |
 | [banner](drift/banner.md) | 3 | 4 | 10 | 0 | 17 |
-| [button](drift/button.md) | 4 | 4 | 4 | 1 | 13 |
+| [button](drift/button.md) | 4 | 4 | 3 | 1 | 12 |
 | [card](drift/card.md) | 6 | 8 | 10 | 0 | 24 |
 | [carousel-dots](drift/carousel-dots.md) | 2 | 3 | 3 | 1 | 9 |
-| [chat-message](drift/chat-message.md) | 2 | 3 | 4 | 3 | 12 |
+| [chat-message](drift/chat-message.md) | 2 | 3 | 4 | 2 | 11 |
 | [checkbox-group](drift/checkbox-group.md) | 3 | 0 | 6 | 1 | 10 |
-| [color-picker](drift/color-picker.md) | 3 | 8 | 20 | 1 | 32 |
-| [combobox](drift/combobox.md) | 7 | 12 | 9 | 1 | 29 |
-| [command-menu](drift/command-menu.md) | 6 | 3 | 16 | 2 | 27 |
+| [color-picker](drift/color-picker.md) | 4 | 6 | 20 | 1 | 31 |
+| [combobox](drift/combobox.md) | 7 | 13 | 8 | 1 | 29 |
+| [command-menu](drift/command-menu.md) | 8 | 2 | 15 | 1 | 26 |
 | [compare](drift/compare.md) | 6 | 9 | 0 | 2 | 17 |
 | [concepts](drift/concepts.md) | 4 | 26 | 2 | 2 | 34 |
 | [dialog](drift/dialog.md) | 8 | 2 | 3 | 1 | 14 |
-| [dropdown](drift/dropdown.md) | 7 | 5 | 12 | 3 | 27 |
+| [dropdown](drift/dropdown.md) | 8 | 4 | 13 | 1 | 26 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
 | [fluid-hover](drift/fluid-hover.md) | 3 | 4 | 2 | 4 | 13 |
 | [home](drift/home.md) | 1 | 1 | 1 | 2 | 5 |
-| [input-copy](drift/input-copy.md) | 2 | 3 | 7 | 1 | 13 |
+| [input-copy](drift/input-copy.md) | 2 | 3 | 8 | 0 | 13 |
 | [input-group](drift/input-group.md) | 1 | 1 | 4 | 1 | 7 |
 | [input-message](drift/input-message.md) | 4 | 1 | 15 | 3 | 23 |
 | [introduction](drift/introduction.md) | 1 | 4 | 2 | 1 | 8 |
 | [mobile-drawer](drift/mobile-drawer.md) | 4 | 2 | 2 | 0 | 8 |
 | [motion-page](drift/motion-page.md) | 4 | 3 | 2 | 3 | 12 |
 | [nav-menu](drift/nav-menu.md) | 0 | 5 | 1 | 1 | 7 |
-| [queued-stack](drift/queued-stack.md) | 4 | 3 | 5 | 1 | 13 |
+| [queued-stack](drift/queued-stack.md) | 4 | 2 | 5 | 1 | 12 |
 | [radio-group](drift/radio-group.md) | 4 | 2 | 5 | 0 | 11 |
 | [scroll-area](drift/scroll-area.md) | 3 | 6 | 2 | 1 | 12 |
 | [scrollbars-page](drift/scrollbars-page.md) | 1 | 4 | 2 | 1 | 8 |
-| [select](drift/select.md) | 8 | 7 | 8 | 2 | 25 |
-| [sidebar](drift/sidebar.md) | 1 | 7 | 26 | 1 | 35 |
+| [select](drift/select.md) | 9 | 3 | 8 | 2 | 22 |
+| [sidebar](drift/sidebar.md) | 1 | 6 | 25 | 1 | 33 |
 | [site](drift/site.md) | 5 | 6 | 22 | 6 | 39 |
 | [sizes-page](drift/sizes-page.md) | 0 | 5 | 2 | 4 | 11 |
 | [skill-page](drift/skill-page.md) | 3 | 5 | 0 | 1 | 9 |
-| [slider](drift/slider.md) | 4 | 5 | 4 | 2 | 15 |
+| [slider](drift/slider.md) | 5 | 3 | 4 | 2 | 14 |
 | [surfaces](drift/surfaces.md) | 1 | 3 | 4 | 4 | 12 |
-| [switch](drift/switch.md) | 2 | 2 | 4 | 1 | 9 |
+| [switch](drift/switch.md) | 2 | 1 | 4 | 1 | 8 |
 | [table](drift/table.md) | 3 | 1 | 5 | 0 | 9 |
-| [tabs-subtle](drift/tabs-subtle.md) | 1 | 5 | 2 | 1 | 9 |
-| [tabs](drift/tabs.md) | 2 | 3 | 4 | 0 | 9 |
+| [tabs-subtle](drift/tabs-subtle.md) | 1 | 4 | 2 | 1 | 8 |
+| [tabs](drift/tabs.md) | 2 | 2 | 4 | 0 | 8 |
 | [thinking-indicator](drift/thinking-indicator.md) | 1 | 2 | 4 | 0 | 7 |
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 7 | 1 | 15 |
-| [tooltip](drift/tooltip.md) | 4 | 7 | 1 | 1 | 13 |
+| [tooltip](drift/tooltip.md) | 4 | 5 | 1 | 1 | 11 |
 | [typography](drift/typography.md) | 4 | 0 | 1 | 6 | 11 |
-| **Total** | **142** | **212** | **263** | **72** | **689** |
+| **Total** | **149** | **194** | **260** | **67** | **670** |
 
 ### gpuix gaps across components
 
@@ -178,7 +178,7 @@ offer it. A count is given only where the code shows it.
 | combobox, dropdown, select, tooltip (every popup on gpuix's `DismissableLayer`), and `returnFocusTo` in dropdown, select, color-picker | `VIEW_BUSY`: reading focus state (`getFocusedElementId`, `matches(":focus")`) inside a mousedown, mouseup, click or wheel handler throws on macOS and in the test renderer, because those run in synchronous dispatch. gpuix's own `DismissableLayer` does it too, see the next row. There is no `document.activeElement` | none yet |
 | every popup on gpuix's `DismissableLayer` (select, combobox, dropdown, color-picker, the customise card's selects), when a pointer press opens it, and the screenshots' light step (its click on the theme select throws) | Since gpuix `aae8c790` a press dispatches synchronously on macOS and in the test renderer. `DismissableLayer` reads `renderer.getFocusedElementId()` while it mounts (`packages/solid/src/components/floating.ts:80`), and a popup that a press handler opens mounts inside that dispatch, so the read throws `VIEW_BUSY` (`packages/native/src/events/sync_dispatch.rs:154`). Reproduced in the test renderer through `select.tsx`'s `onMouseDown` (`bun scripts/screenshots.tsx button`); not run in the live window. Windows and Linux queue the press, so the read is outside the dispatch there (not run) | none yet. `scripts/screenshots.tsx` fails at its final theme-switch step (a press on the theme select) for every demo, so the `light.png` files are stale; the scenario scripts open popups by keyboard (`scripts/check-popups.tsx`, `scripts/check-dropdown.tsx`) |
 | command-menu, and any list that keeps focus in a field while it is pressed | On Windows and Linux the press reaches JavaScript through a queue after native has already moved focus, so `preventDefault()` in `onMouseDown` or `onPointerDown` has no effect and a press on something not focusable still blurs the field (gpuix `README.md:3259-3266`). Seen in the command menu: clicking a tab blurs the field. macOS and the test renderer apply it | `preventDefault()` in `onMouseDown` on the list and the tab row (`drift/command-menu.md`); it works on macOS only. Not run on Windows or Linux |
-| slider | `MotionValue.animate` and `jump` used to throw inside a press, release or key handler ("This renderer call cannot run inside an event handler that native called synchronously"). The fork now defers a motion-value write made there until the input returns (`renderer.rs:1389-1412`, FORK.md:361-363). Values derived in JS (`createTransform` of several values) still trail their inputs by one frame (FORK.md:915-917) | `createMotionWrites` queues each write in a microtask (`drift/slider.md`); it predates the fork's deferral and is not re-tested against it |
+| slider | `MotionValue.animate` still throws inside a press, release or key handler ("This renderer call cannot run inside an event handler that native called synchronously"): it reads the value's current state from the renderer to start from. `set` and `jump` work there: the fork defers a motion-value write made there until the input returns (`renderer.rs:1389-1412`, FORK.md:361-363). Values derived in JS (`createTransform` of several values) still trail their inputs by one frame (FORK.md:915-917) | `createAnimateQueue` starts each `animate` in a microtask; `set` and `jump` are written directly (`drift/slider.md`) |
 | accordion, banner, button, card, carousel-dots, chat-message, input-copy, input-message, tabs, tabs-subtle, thinking-steps (all use `buttonProps`) | `buttonProps` handles keydown on the way up, so a `buttonProps` element nested in another is clicked twice on Enter: the inner one clicks itself and the outer one clicks the same target. The fix is to act only when `target === currentTarget` | none; nested cases are not counted |
 | dialog, mobile-drawer | `DialogBackdrop` closes on mousedown; the DOM and Base UI close on click | The app's own backdrop div closes on a click that presses and releases on it |
 | dialog, mobile-drawer | A reactive prop change on `DialogPopup` re-creates the popup and loses focus | `aria-labelledby` and `-describedby` are static ids |
@@ -275,7 +275,7 @@ now does that the port has not picked up.
 | `focus-visible:ring-1` | `style.focusVisible` outline, offset 1 | Exact |
 | `ring-1 ring-border` | `outlineWidth` / `outlineColor`: outside the box, takes no layout | Exact |
 | `transition-colors duration-80`, `transition-[box-shadow]` | none then: state styles switched instantly, only `motion` animated. gpuix now animates colour and `boxShadow` and has CSS `transition` (FORK.md:814-818); not adopted yet | Dropped, now possible |
-| spring `fast` / `moderate` (`motion/react`) | native `motion` spring, `{ type: "spring", duration: 0.08 / 0.16, bounce: 0 }`, velocity kept when the target changes mid-flight | Exact; `slow` is unused |
+| spring `fast` / `moderate` (`motion/react`) | native `motion` spring, `{ type: "spring", duration: 0.08 / 0.16, bounce: 0 }`, velocity kept when the target changes mid-flight | Exact; `slow` (bounce 0.12, the exit 160 ms) drives the command menu's dialog and the banner |
 | exits (`spring.fast.exit` …) | plain tweens, 60 ms / 120 ms, like the source | Exact |
 | "snap, don't spring" on a reflow | a zero-length tween | Exact |
 | `translate` / `x`,`y` travel of the highlight | `motion` on `top` / `left` / `width` / `height` (the only layout props it animates) | Equivalent, but it re-lays out per frame |
@@ -297,7 +297,7 @@ now does that the port has not picked up.
 | Inter variable (`wght 550`, `opsz`) | static Inter TTFs (400, 500, 600, 700) passed as `fonts` to `render()`; the family is `Inter` for every weight. the site's 550 is set as SemiBold 600, there is no `opsz` | Approximated, one weight step |
 | ghost-span that reserves the semibold width | the same trick: a hidden copy in flow, the visible label absolutely positioned over it | Exact |
 | `truncate` | `whiteSpace: "nowrap"` + `textOverflow: "ellipsis"` on the combobox rows | Exact; sidebar labels are not truncated |
-| icon stroke 1.5 → 2 on hover | the SVG string is swapped | Exact, instant |
+| icon stroke 1.5 → 2 on hover | `<Icon easeStroke>` (`src/lib/icon.tsx`) animates `strokeWidth` on a `motion.g` over 80 ms: input-copy, button, accordion, and the dropdown, select and combobox icons. Everywhere else the SVG string is swapped | Exact where `easeStroke` is set, except with the phosphor library (filled paths, the weight switches at once); instant elsewhere |
 | `animation: spinner-move` | a static lucide `loader`: no rotation, no animation. gpuix now has keyframes and `strokeDasharray` / `strokeDashoffset` motion (FORK.md:822, :829); not adopted yet | Dropped, now possible |
 | `AnimatePresence` exit of the popup | the popup stays mounted for 60 ms while its opacity fades | Approximated |
 

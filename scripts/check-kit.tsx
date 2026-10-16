@@ -9,6 +9,9 @@ import { App } from "../src/app";
 import { loadDemos, loadPages } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
+import { readPng } from "./png-pixels";
+
+const INK_PATH = "/tmp/check-kit-ink.png";
 
 type CheckOptions = {
 	width?: number;
@@ -99,6 +102,69 @@ export async function createCheck(
 		return undefined;
 	}
 
+	/**
+	 * How much of `box` differs from the pixel at its top-left corner, summed over the channels: a measure of how
+	 * much ink a glyph or label leaves on its own background, so it grows with stroke width and with contrast.
+	 */
+	function ink(box: { x: number; y: number; width: number; height: number }) {
+		renderer.captureScreenshot(INK_PATH);
+		const pixels = readPng(INK_PATH);
+		const left = Math.round(box.x);
+		const top = Math.round(box.y);
+		const ground = pixels.at(left, top);
+		let total = 0;
+		for (let y = top; y < Math.round(box.y + box.height); y++)
+			for (let x = left; x < Math.round(box.x + box.width); x++) {
+				const pixel = pixels.at(x, y);
+				total +=
+					Math.abs(pixel[0] - ground[0]) +
+					Math.abs(pixel[1] - ground[1]) +
+					Math.abs(pixel[2] - ground[2]);
+			}
+		return total;
+	}
+
+	/**
+	 * How much area of `box` the glyph covers: each pixel counts by its difference from the corner pixel as a share
+	 * of the largest difference in the box. Unlike `ink` it does not move when only the colour or the background
+	 * changes, so it isolates a stroke width.
+	 */
+	function coverage(box: {
+		x: number;
+		y: number;
+		width: number;
+		height: number;
+	}) {
+		renderer.captureScreenshot(INK_PATH);
+		const pixels = readPng(INK_PATH);
+		const left = Math.round(box.x);
+		const top = Math.round(box.y);
+		const ground = pixels.at(left, top);
+		const diffs: number[] = [];
+		for (let y = top; y < Math.round(box.y + box.height); y++)
+			for (let x = left; x < Math.round(box.x + box.width); x++) {
+				const pixel = pixels.at(x, y);
+				diffs.push(
+					Math.abs(pixel[0] - ground[0]) +
+						Math.abs(pixel[1] - ground[1]) +
+						Math.abs(pixel[2] - ground[2]),
+				);
+			}
+		const strongest = Math.max(...diffs);
+		return diffs.reduce((sum, diff) => sum + diff / strongest, 0);
+	}
+
+	/** Moves the pointer onto `point` and returns once `afterMs` have passed, the frames flushed by hand. */
+	async function hoverFor(point: { x: number; y: number }, afterMs: number) {
+		renderer.nativeSimulateMouseMove(point.x - 1, point.y);
+		renderer.nativeSimulateMouseMove(point.x, point.y);
+		renderer.flush();
+		renderer.dispatchNativeEvents();
+		await sleep(afterMs);
+		renderer.flush();
+		renderer.dispatchNativeEvents();
+	}
+
 	setThemeChoice("dark");
 	if (isPage) {
 		const demos = await loadDemos();
@@ -117,6 +183,9 @@ export async function createCheck(
 		bounds,
 		center,
 		aria,
+		ink,
+		coverage,
+		hoverFor,
 		scrollIntoView: (testId: string) => scrollIntoView(renderer, testId),
 		exists: (testId: string) => renderer.findByTestId(testId) !== undefined,
 		async click(testId: string) {
@@ -149,7 +218,10 @@ export async function createCheck(
 				`${ok ? "PASS" : "FAIL"} ${label}: ${JSON.stringify(actual)}${ok ? "" : ` (expected ${JSON.stringify(expected)})`}`,
 			);
 		},
-		finish() {
+		async finish() {
+			// Unmount first: with the tree alive, Bun can abort at exit ("Thread Local Storage", exit 134) after every check passed.
+			test.root.unmount();
+			await settle(100);
 			console.log(failures === 0 ? "all passed" : `${failures} failed`);
 			process.exit(failures === 0 ? 0 : 1);
 		},

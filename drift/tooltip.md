@@ -8,7 +8,7 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 
 - **Cause:** `gpuix gap`.
 - **Original:** the popup is hoverable and Base UI's `safePolygon()` keeps it open while the pointer crosses the gap between trigger and popup, whatever is under the pointer there (`registry/base/tooltip.tsx:222-233`; the polygon is Base UI's default).
-- **Port:** a grace timer. Leaving the trigger or the chip schedules a close after `GRACE_MS` (80 ms) unless the pointer reaches the chip or comes back (`src/components/tooltip.tsx:28`, `scheduleClose` `:160-166`, wrapper leave `:237-240`, chip enter / leave `:267-274`).
+- **Port:** a grace timer. Leaving the trigger or the chip schedules a close after `GRACE_MS` (80 ms) unless the pointer reaches the chip or comes back (`src/components/tooltip.tsx:28`, `scheduleClose` `:162-168`, wrapper leave `:239-242`, chip enter / leave `:271-278`).
 - **gpuix lacks:** pointer moves over empty space. `window` / `document` `mousemove` listeners fire only when some element on the hit path has a mousemove listener, never over the bare window background, so the polygon cannot be tracked (README "Bugs" table, tooltip row).
 - **Workaround:** the grace timer above.
 - **Fidelity:** approximated (a pointer that takes longer than 80 ms to cross the 8px gap loses the tooltip).
@@ -18,7 +18,7 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 
 - **Cause:** `gpuix gap` (no transforms: [README "Missing features", first row](../README.md#missing-features)).
 - **Original:** the chip enters and exits with `x` / `y` (4px) plus opacity (`registry/base/tooltip.tsx:282-291`); `followCursor` drives a `y` / `x` motion value on the outer box (`:205-219`, `:262-269`). There is no scale on the tooltip, so the README row's "`scaleY: 0.96`" does not apply to it.
-- **Port:** the chip animates `top` / `left` (`slideFrom`, `src/components/tooltip.tsx:66-77`, chip `initial` / `animate` `:275-280`); `followCursor` passes the pointer offset to `<anchored offset>` (`:200-210`, `:257`).
+- **Port:** the chip animates `top` / `left` (`slideFrom`, `src/components/tooltip.tsx:66-77`, chip `initial` / `animate` `:279-284`); `followCursor` passes the pointer offset to `<anchored offset>` (`:202-212`, `:259`).
 - **gpuix lacks:** `transform`, so `translate` / `x` / `y` cannot animate; only layout props can.
 - **Workaround:** `top` / `left` tweens, which re-lay out per frame.
 - **Fidelity:** approximated (same distance and timing; a layout change per frame instead of a compositor transform).
@@ -28,7 +28,7 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 
 - **Cause:** `gpuix gap` ([README, badge row](../README.md#missing-features): `text-box-trim`).
 - **Original:** `[text-box:trim-both_cap_alphabetic]` with `py-2` where supported, `py-1` elsewhere, for about 24px overall (`registry/base/tooltip.tsx:273-277`).
-- **Port:** `paddingTop` / `paddingBottom` 4 around the caption's 16px line, 24px overall (`src/components/tooltip.tsx:286-289`, `src/lib/theme.ts:311`).
+- **Port:** `paddingTop` / `paddingBottom` 4 around the caption's 16px line, 24px overall (`src/components/tooltip.tsx:293-296`, `src/lib/theme.ts:311`).
 - **gpuix lacks:** `text-box-trim` / `text-box-edge`.
 - **Workaround:** the height matches; the glyphs sit about a pixel off the trimmed centre.
 - **Fidelity:** approximated.
@@ -47,7 +47,7 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 
 - **Cause:** `port choice` (the wrapper hears hover, press and focus through bubbling, `src/components/tooltip.tsx:81`; there is no `render={children}` / ref merging).
 - **Original:** `TooltipPrimitive.Trigger render={children}` puts the handlers on the child itself, with no extra box (`registry/base/tooltip.tsx:229-233`).
-- **Port:** a `display: flex; flexShrink: 0; position: relative` wrapper around the child (`src/components/tooltip.tsx:229-245`).
+- **Port:** a `display: flex; flexShrink: 0; position: relative` wrapper around the child (`src/components/tooltip.tsx:231-247`).
 - **Workaround:** none. A trigger that relied on `flex: 1`, `width: 100%` or a parent's `gap` / `:first-child` rules sees the wrapper instead of itself.
 - **Fidelity:** approximated.
 - **Components it hits:** every tooltip trigger (queued-stack, input-copy, input-message, color-picker).
@@ -56,34 +56,16 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** the label wraps at the room the popup has (`registry/base/tooltip.tsx:276`, no `whitespace-nowrap`).
-- **Port:** `whiteSpace: "nowrap"` on the caption text (`src/components/tooltip.tsx:296-301`), so a long label flips to the far side (demo "Near the window edge", `src/demos/tooltip.tsx:132-143`) or runs off the window instead of wrapping.
+- **Port:** `whiteSpace: "nowrap"` on the caption text (`src/components/tooltip.tsx:303-308`), so a long label flips to the far side (demo "Near the window edge", `src/demos/tooltip.tsx:132-143`) or runs off the window instead of wrapping.
 - **Workaround:** none; rich content (JSX) wraps as its own text does.
 - **Fidelity:** approximated.
-- **Components it hits:** just this one.
-
-## The exit unmounts on a 60 ms timer, not when the animation finishes
-
-- **Cause:** `port choice` (README: "`AnimatePresence` exit of the popup: the popup stays mounted for 60 ms while its opacity fades").
-- **Original:** the unmount waits for the chip's `onAnimationComplete`, with a fallback of `exitFallbackMs(spring.fast)` = 160 ms (`registry/base/tooltip.tsx:183-196`, `:292-294`).
-- **Port:** `createPresence()` unmounts after `POPUP_EXIT_MS` = 60 ms (`src/components/tooltip.tsx:103`, `src/lib/presence.ts:4`); the exit tween is also 60 ms (`tween.fastExit`, `:281`), and the chip's `onMotionComplete` is not used to release it.
-- **Workaround:** the timer equals the tween, so the last frame can be cut.
-- **Fidelity:** approximated.
-- **Components it hits:** every presence-based popup.
-
-## The slide follows the side the popup landed on
-
-- **Cause:** `port choice` (reason not stated; `PopupSurface` does the same, `src/lib/popup.tsx:78-79`).
-- **Original:** the slide offset comes from the `side` prop (`registry/base/tooltip.tsx:201`), so a tooltip Base UI flips still slides in from the side it did not land on.
-- **Port:** `slideFrom(placement.side())` uses the side `<anchored fit="flip">` reports (`src/components/tooltip.tsx:275-279`).
-- **Workaround:** n/a.
-- **Fidelity:** the port is the more correct one; differs only after a flip.
 - **Components it hits:** just this one.
 
 ## Escape closes the tooltip before a dialog behind it
 
 - **Cause:** `port choice` (settled in `BASE-UI-AUDIT.md` "Tooltip", the tooltip joins gpuix's dismiss-layer stack).
 - **Original:** Base UI's tooltip and dialog are separate document-level listeners, so one Escape most likely closes both (`BASE-UI-AUDIT.md` reading; not run).
-- **Port:** `<DismissableLayer onEscapeKeyDown={dismiss}>` while a hover-opened tooltip is open; a `forceOpen` one is not a layer (`src/components/tooltip.tsx:247-250`).
+- **Port:** `<DismissableLayer onEscapeKeyDown={dismiss}>` while a hover-opened tooltip is open; a `forceOpen` one is not a layer (`src/components/tooltip.tsx:249-252`).
 - **Workaround:** n/a.
 - **Fidelity:** approximated (two Escapes to close both).
 - **Components it hits:** dialog, mobile-drawer.
@@ -92,7 +74,7 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 
 - **Cause:** `not ported yet`.
 - **Original:** Base UI keeps a focus-opened tooltip when focus moves between elements inside one trigger (`BASE-UI-AUDIT.md` "Tooltip", keyboard row).
-- **Port:** `onFocusOut` closes on any focus-out (`src/components/tooltip.tsx:224-227`).
+- **Port:** `onFocusOut` closes on any focus-out (`src/components/tooltip.tsx:226-229`).
 - **Workaround:** none; every port trigger is one control.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

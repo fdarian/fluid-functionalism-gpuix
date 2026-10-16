@@ -12,21 +12,12 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 ## `width` cannot animate to `auto`, so the unfolding label's width is measured
 
 - **Cause:** `gpuix gap`.
-- **Original:** `width` animates to `offsetWidth` read through a `ResizeObserver`, with a separate `marginLeft` (`tabs-subtle.tsx:286-296`, `:396-409`).
-- **Port:** the box holding the label and its gap reports its width through `onLayout` (`tabs-subtle.tsx:410-414`) and the outer box animates `width` to that number (`labelWidthTarget`, `:278-282`). The tab selected at mount is born unfolded: until the first report it keeps a plain `width: "auto"` style (`:388-392`), and the first measured width is placed with a zero-duration transition (`:248-256`, `:283-286`). `onMotionComplete` calls `hover.remeasure()` (`:383`) so the pill and neighbours refresh once the label settles.
+- **Original:** `width` animates to `offsetWidth` read through a `ResizeObserver`, with a separate `marginLeft` (`tabs-subtle.tsx:286-296`, `:396-410`).
+- **Port:** the box holding the label reports its width through `onLayout` (`tabs-subtle.tsx:429-434`) and the outer box animates `width` to that number, with `marginLeft` 0 to 8 (6 compact) and `opacity` on the same box (`labelTarget`, `:302-307`, `:410`). The tab selected at mount is born unfolded: until the first report it keeps a plain `width: "auto"` style (`:417-421`), and the first measured width is placed with a snap (`labelTransition`, `:309-312`). `onMotionComplete` calls `hover.remeasure()` (`:412`) so the pill and neighbours refresh once the label settles. Width and margin ride `spring.fast` both ways with opacity on a 0.06 tween, as the source does (`:309-312`).
 - **gpuix lacks:** `width: "auto"` as a motion target (it throws; `~/code/fdarian/gpuix/FORK.md:867-871`: taffy reports a content size inside a width already decided, not a max-content width). `height: "auto"` works.
 - **Workaround:** as above.
 - **Fidelity:** exact for the label width.
 - **Components it hits:** accordion, sidebar sub-menu, any component that animates width to a content size.
-
-## Collapsing a label is a 60 ms tween, not the `fast` spring
-
-- **Cause:** `port choice` (reason not stated).
-- **Original:** the exit has no transition of its own, so width, margin and opacity leave on the component's `transition`: `spring.fast` for width and margin, 60 ms for opacity (`tabs-subtle.tsx:405-409`).
-- **Port:** unfolding uses `tween.fast`; folding uses `tween.fastExit`, a 60 ms tween (`tabs-subtle.tsx:295-298`).
-- **Workaround:** none.
-- **Fidelity:** approximated (80 ms spring against a 60 ms tween on fold).
-- **Components it hits:** just this one.
 
 ## Hover region: the list hugs its tabs
 

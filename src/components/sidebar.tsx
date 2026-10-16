@@ -8,18 +8,23 @@ import {
 } from "@gpuix/solid";
 import {
 	type Accessor,
+	createComputed,
 	createContext,
-	createEffect,
 	createSignal,
 	createUniqueId,
 	type JSX,
+	on,
 	onCleanup,
 	onMount,
 	Show,
 	useContext,
 } from "solid-js";
 import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
+import {
+	createFluidHover,
+	type FluidHover,
+	type ItemRect,
+} from "../lib/fluid-hover";
 import {
 	createFocusRing,
 	FocusRing,
@@ -35,7 +40,6 @@ import {
 	height,
 	shape,
 	type as scale,
-	trackMs,
 	motion as tween,
 	weight,
 } from "../lib/theme";
@@ -61,8 +65,6 @@ interface MenuScope {
 	hover: FluidHover;
 	focusRing: FocusRingState;
 	registerRow: (entry: RowEntry) => number;
-	/** A sub-menu is changing height: rows reflow every frame and the overlays must follow without gliding. */
-	trackReflow: (ms: number) => void;
 	/** Roving tabindex: the active rows are the tab stops, or the first row while none is active. */
 	isTabStop: (index: number | undefined) => boolean;
 	focusRow: (index: number, event: EventPayload) => void;
@@ -78,13 +80,46 @@ function useMenuScope() {
 	return scope;
 }
 
+/**
+ * Whether an overlay's last change moved it to a different row (it springs) or
+ * only moved the row it sits on (it snaps), like the source's `retarget`
+ * (`registry/default/sidebar-menu.tsx:183-186`). A row that reflows every frame
+ * under a sibling sub-menu collapsing would otherwise be chased by a spring.
+ */
+function createOverlayTravel(
+	row: () => number | null,
+	rect: () => ItemRect | null,
+) {
+	let lastRow: number | null = null;
+	let lastRect: ItemRect | null = null;
+	const [travels, setTravels] = createSignal(false);
+	createComputed(() => {
+		const nextRow = row();
+		const nextRect = rect();
+		if (lastRow === nextRow && sameRect(lastRect, nextRect)) return;
+		setTravels(lastRow !== nextRow);
+		lastRow = nextRow;
+		lastRect = nextRect;
+	});
+	return travels;
+}
+
+function sameRect(a: ItemRect | null, b: ItemRect | null) {
+	if (a === b) return true;
+	if (a === null || b === null) return false;
+	return (
+		a.top === b.top &&
+		a.left === b.left &&
+		a.width === b.width &&
+		a.height === b.height
+	);
+}
+
 export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 	const renderer = useGpuixRequired();
 	const rows = new Map<number, RowEntry>();
 	const [rowsVersion, setRowsVersion] = createSignal(0);
-	const [reflow, setReflow] = createSignal(false);
 	let nextIndex = 0;
-	let reflowTimer: ReturnType<typeof setTimeout> | undefined;
 
 	const hover = createFluidHover({
 		isItemDisabled: (index) => {
@@ -169,28 +204,31 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 			});
 			return index;
 		},
-		trackReflow(ms) {
-			clearTimeout(reflowTimer);
-			setReflow(true);
-			reflowTimer = setTimeout(() => setReflow(false), ms + 48);
-		},
 	};
 
-	const activeRect = (level: 0 | 1) => () => {
+	const activeRow = (level: 0 | 1) => () => {
 		rowsVersion();
-		if (!hover.isMeasured()) return null;
 		for (const [index, entry] of rows) {
 			if (entry.level === level && entry.active() && !entry.disabled()) {
-				return hover.rects()[index] ?? null;
+				return index;
 			}
 		}
 		return null;
 	};
-	const hoverRect = () => {
-		const index = hover.activeIndex();
+	const rectOf = (row: () => number | null) => () => {
+		const index = row();
 		if (index === null || !hover.isMeasured()) return null;
 		return hover.rects()[index] ?? null;
 	};
+	const activeRowRoot = activeRow(0);
+	const activeRowSub = activeRow(1);
+	const activeRectRoot = rectOf(activeRowRoot);
+	const activeRectSub = rectOf(activeRowSub);
+	const hoverRect = rectOf(hover.activeIndex);
+	const activeTravelRoot = createOverlayTravel(activeRowRoot, activeRectRoot);
+	const activeTravelSub = createOverlayTravel(activeRowSub, activeRectSub);
+	const hoverTravel = createOverlayTravel(hover.activeIndex, hoverRect);
+	const ringTravel = createOverlayTravel(focusRing.index, focusRing.rect);
 
 	return (
 		<MenuScopeContext.Provider value={scope}>
@@ -215,35 +253,35 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 			>
 				{/* Overlays first: no zIndex in gpuix, so rows paint over them by document order. */}
 				<FluidHighlight
-					rect={activeRect(0)}
+					rect={activeRectRoot}
 					session={() => 0}
 					radius={shape.bg}
 					background={color.active}
 					glide={tween.moderate}
 					fade={tween.moderateExit}
-					travel={() => !reflow()}
+					travel={activeTravelRoot}
 				/>
 				<FluidHighlight
-					rect={activeRect(1)}
+					rect={activeRectSub}
 					session={() => 0}
 					radius={shape.bg}
 					background={color.active}
 					glide={tween.moderate}
 					fade={tween.moderateExit}
-					travel={() => !reflow()}
+					travel={activeTravelSub}
 				/>
 				<FluidHighlight
 					rect={hoverRect}
 					session={hover.session}
 					radius={shape.bg}
 					background={color.hover}
-					travel={() => !reflow()}
+					travel={hoverTravel}
 				/>
 				<FocusRing
 					ring={focusRing}
 					radius={shape.focusRing}
 					testId={props.testId && `${props.testId}-focus-ring`}
-					travel={() => !reflow()}
+					travel={ringTravel}
 				/>
 				{props.children}
 			</div>
@@ -442,14 +480,18 @@ export function SidebarMenuSub(props: {
 	open: boolean;
 	children: JSX.Element;
 }) {
-	const scope = useMenuScope();
 	const measured = createMeasuredHeight();
 	const contentHeight = measured.height;
 
-	createEffect(() => {
-		props.open;
-		if (contentHeight() !== undefined) scope.trackReflow(trackMs.spring);
-	});
+	// The wrapper springs only for its own toggle: a height change from content underneath it must snap, or a spring retargeted every frame chases the child's own animation and drags everything below it late (`registry/default/sidebar-menu.tsx:1363-1370`).
+	const [toggling, setToggling] = createSignal(false);
+	createComputed(
+		on(
+			() => props.open,
+			() => setToggling(true),
+			{ defer: true },
+		),
+	);
 
 	return (
 		<motion.div
@@ -458,7 +500,14 @@ export function SidebarMenuSub(props: {
 				height: props.open ? (contentHeight() ?? 0) : 0,
 				opacity: props.open ? 1 : 0,
 			}}
-			transition={props.open ? tween.moderate : tween.moderateExit}
+			transition={
+				toggling()
+					? props.open
+						? tween.moderate
+						: tween.moderateExit
+					: tween.snap
+			}
+			onMotionComplete={() => setToggling(false)}
 			style={{
 				overflow: "hidden",
 				// Until the content is measured an open sub-menu keeps its natural height.

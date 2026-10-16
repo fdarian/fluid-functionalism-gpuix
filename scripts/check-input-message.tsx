@@ -160,4 +160,7 @@ for (const [composer, expected] of [
 	);
 }
 
+// Unmount before exiting: with the tree alive, Bun aborts at exit ("Thread Local Storage", exit 134) after every check passed.
+test.root.unmount();
+await settle(100);
 process.exit(failed ? 1 : 0);

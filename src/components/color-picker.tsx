@@ -15,6 +15,7 @@ import {
 	For,
 	type JSX,
 	on,
+	onCleanup,
 	Show,
 	untrack,
 } from "solid-js";
@@ -694,9 +695,14 @@ function AlphaRail(props: {
 	);
 }
 
-/** An anchored card of a given surface level, with the same slide and fade as the shared popup. Opens below its trigger, or above when there is no room. */
+/** The source's own fallback for an exit that never reports completing: `spring.moderate.exit` is 120 ms, `spring.fast.exit` 60 ms. */
+const POPOVER_EXIT_FALLBACK_MS = 150;
+const FORMAT_MENU_EXIT_FALLBACK_MS = 120;
+
+/** An anchored card of a given surface level that slides and fades like the shared popup, at the speed the source gives it: the popover is `moderate`, the format menu `fast`. Opens below its trigger, or above when there is no room. */
 function Popup(props: {
 	presence: ReturnType<typeof createPresence>;
+	speed: "fast" | "moderate";
 	width: number;
 	level: number;
 	children: JSX.Element;
@@ -723,7 +729,14 @@ function Popup(props: {
 							? { opacity: 1, top: 0 }
 							: { opacity: 0, top: slide() }
 					}
-					transition={props.presence.open() ? tween.fast : tween.fastExit}
+					transition={
+						props.presence.open()
+							? tween[props.speed]
+							: tween[`${props.speed}Exit`]
+					}
+					onMotionComplete={() => {
+						if (!props.presence.open()) props.presence.release();
+					}}
 					style={{
 						position: "relative",
 						width: props.width,
@@ -754,108 +767,189 @@ function FormatDropdown(props: {
 	testId: string;
 }) {
 	const renderer = useGpuixRequired();
-	const presence = createPresence();
+	const presence = createPresence(FORMAT_MENU_EXIT_FALLBACK_MS);
 	const hover = createFluidHover();
 	const [triggerHovered, setTriggerHovered] = createSignal(false);
+	/** The pointer lit the row (or none), not a key: leaving the rows hands focus to the panel. */
+	const [pointerLit, setPointerLit] = createSignal(false);
+	/** Opened from the first render, so the page keeps focus until the reader reaches into the menu (the source's `openWithPageRef`). */
+	const [pageHoldsFocus, setPageHoldsFocus] = createSignal(false);
 	const triggerId = createUniqueId();
 	const menuId = createUniqueId();
 	const rowId = (index: number) => `${menuId}-row-${index}`;
-	/** Focus stays on the trigger while the arrows walk the rows. */
-	const litRowId = () => {
-		const index = hover.activeIndex();
-		return presence.open() && index !== null ? rowId(index) : undefined;
-	};
+	const rowElements = new Map<number, HostElement>();
 	let button: HostElement | undefined;
+	let panel: HostElement | undefined;
+	/** Tab closed the menu: once focus is back on the trigger it moves on to the next tab stop. */
+	let tabbingOn = false;
 	const checkedIndex = () => FORMATS.indexOf(props.value);
 	const width = (INNER_WIDTH - 8) / 2;
 
-	/** A pointer open lights nothing until the pointer moves in; a keyboard open lights the first row, or the last on ArrowUp. */
+	const focusPanel = () => panel?.focus({ preventScroll: true });
+	const focusRow = (index: number) =>
+		rowElements.get(index)?.focus({ preventScroll: true });
+	/** A key lights a row (or none) and the focus effect below moves focus to it. */
+	const highlight = (index: number | null) => {
+		setPointerLit(false);
+		hover.releasePointer();
+		hover.setActiveIndex(index);
+	};
+
+	/** A keyboard open focuses the first row (ArrowUp: the last); a pointer open focuses the panel and lights nothing. */
 	const open = (from: "pointer" | "first" | "last" = "pointer") => {
 		if (presence.open()) return;
 		presence.show();
-		hover.setActiveIndex(
-			from === "pointer" ? null : edgeIndex(from, FORMATS.length),
-		);
+		setPageHoldsFocus(false);
+		setPointerLit(false);
+		const start = from === "pointer" ? null : edgeIndex(from, FORMATS.length);
+		hover.setActiveIndex(start);
+		// The rows mount with the popup: focus them once they have.
+		setTimeout(() => {
+			if (!presence.open()) return;
+			if (start === null) focusPanel();
+			else focusRow(start);
+		}, 0);
 	};
-	/** Closing hands focus back to the trigger unless it already moved to another control; Tab lets it move on. */
-	const close = (returnFocus = true) => {
+	/** Closing hands focus back to the trigger when it sat in the popup, which is about to unmount and drop it, or nowhere; a control that took it since keeps it (Base UI's returnFocus). */
+	const close = () => {
 		if (!presence.open()) return;
+		const popupHasFocus =
+			panel !== undefined && panel.mounted && panel.matches(":focus-within");
 		presence.hide();
-		if (!returnFocus || button === undefined) return;
-		returnFocusTo(renderer, button.id);
+		setPageHoldsFocus(false);
+		if (button !== undefined) returnFocusTo(renderer, button.id, popupHasFocus);
+		// The default Tab would start from the popup row, whose floating layer wraps to the start of the page.
+		if (tabbingOn) renderer.focusNext?.();
+	};
+	/** Tab closes the menu: forward moves on from the trigger, backward leaves focus on it. */
+	const leave = (backwards: boolean) => {
+		tabbingOn = !backwards;
+		close();
+		tabbingOn = false;
 	};
 	const choose = (format: ColorFormat) => {
 		props.onChange(format);
 		close();
 	};
 	if (props.defaultOpen === true) {
-		queueMicrotask(open);
+		queueMicrotask(() => {
+			if (presence.open()) return;
+			presence.show();
+			setPageHoldsFocus(true);
+		});
 	}
 	const press = createPressToggle({
 		isOpen: presence.open,
 		open: () => open(),
-		close: () => close(),
+		close,
 	});
 
+	// Highlight follows focus and focus follows the highlight: a hover or a key lights
+	// a row and the row takes focus. Leaving every row hands focus to the panel.
+	createEffect(
+		on(hover.activeIndex, (index) => {
+			if (!presence.open() || pageHoldsFocus()) return;
+			if (index === null) {
+				if (pointerLit()) focusPanel();
+				return;
+			}
+			focusRow(index);
+		}),
+	);
+
 	const move = (delta: 1 | -1) => {
-		hover.setActiveIndex(
-			moveIndex(hover.activeIndex(), delta, FORMATS.length),
-		);
+		highlight(moveIndex(hover.activeIndex(), delta, FORMATS.length));
 	};
 	const typeahead = createTypeahead({
 		labels: () => FORMATS.map((format) => FORMAT_LABELS[format]),
 		current: hover.activeIndex,
-		onMatch: hover.setActiveIndex,
+		onMatch: highlight,
 	});
-	const onKeyDown = (event: KeyEvent) => {
+
+	/** The closed trigger's keys. An open menu only hears the trigger while the page holds focus, and the reader reaching in from it is what hands focus over. */
+	const onTriggerKeyDown = (event: KeyEvent) => {
 		if (isChord(event)) return;
-		if (presence.open() && typeahead.handleKey(event)) {
-			event.preventDefault();
-			event.stopPropagation();
+		if (!presence.open()) {
+			if (
+				event.key === "ArrowDown" ||
+				event.key === "ArrowUp" ||
+				event.key === "Enter" ||
+				event.key === " "
+			) {
+				event.preventDefault();
+				if (event.key === "ArrowDown" || event.key === "ArrowUp")
+					event.stopPropagation();
+				open(event.key === "ArrowUp" ? "last" : "first");
+			}
 			return;
 		}
 		switch (event.key) {
-			case "Enter":
-			case " ": {
-				if (!presence.open()) {
-					open("first");
-				} else {
-					const index = hover.activeIndex();
-					if (index !== null) choose(FORMATS[index]);
-				}
-				event.preventDefault();
-				return;
-			}
 			case "ArrowDown":
-				if (presence.open()) move(1);
-				else open("first");
+			case "ArrowUp":
 				event.preventDefault();
 				event.stopPropagation();
+				setPageHoldsFocus(false);
+				highlight(
+					edgeIndex(event.key === "ArrowUp" ? "last" : "first", FORMATS.length),
+				);
+				return;
+			case "Enter":
+			case " ":
+				event.preventDefault();
+				close();
+				return;
+			case "Escape":
+				event.preventDefault();
+				event.stopPropagation();
+				close();
+				return;
+			case "Tab":
+				close();
+				return;
+		}
+	};
+
+	/** The popup's keys; focus is on a row or the panel, so nothing reaches the trigger or the popover around it. */
+	const onPanelKeyDown = (event: KeyEvent) => {
+		if (isChord(event)) return;
+		event.stopPropagation();
+		if (event.key === "Escape") {
+			event.preventDefault();
+			close();
+			return;
+		}
+		if (event.key === "Tab") {
+			event.preventDefault();
+			leave(event.shiftKey === true);
+			return;
+		}
+		if (typeahead.handleKey(event)) {
+			event.preventDefault();
+			return;
+		}
+		switch (event.key) {
+			case "ArrowDown":
+				event.preventDefault();
+				move(1);
 				return;
 			case "ArrowUp":
-				if (presence.open()) move(-1);
-				else open("last");
 				event.preventDefault();
-				event.stopPropagation();
+				move(-1);
 				return;
 			case "Home":
 			case "End":
-				if (!presence.open()) return;
-				hover.setActiveIndex(
+				event.preventDefault();
+				highlight(
 					edgeIndex(event.key === "Home" ? "first" : "last", FORMATS.length),
 				);
+				return;
+			case "Enter":
+			case " ": {
 				event.preventDefault();
-				event.stopPropagation();
+				const index = hover.activeIndex();
+				if (index !== null) choose(FORMATS[index]);
 				return;
-			case "Escape":
-				if (!presence.open()) return;
-				close();
-				event.preventDefault();
-				event.stopPropagation();
-				return;
-			case "Tab":
-				close(false);
-				return;
+			}
 		}
 	};
 
@@ -866,7 +960,7 @@ function FormatDropdown(props: {
 
 	return (
 		<div
-			onMouseDownOutside={() => close()}
+			onMouseDownOutside={close}
 			style={{ position: "relative", width, height: height.control }}
 		>
 			<div
@@ -879,12 +973,11 @@ function FormatDropdown(props: {
 				aria-haspopup="menu"
 				aria-expanded={presence.open()}
 				aria-controls={presence.open() ? menuId : undefined}
-				aria-activedescendant={litRowId()}
 				testId={props.testId}
 				tabIndex={0}
 				onMouseDown={press.onMouseDown}
 				onClick={press.onClick}
-				onKeyDown={onKeyDown}
+				onKeyDown={onTriggerKeyDown}
 				onMouseEnter={() => setTriggerHovered(true)}
 				onMouseLeave={() => setTriggerHovered(false)}
 				style={{
@@ -926,17 +1019,40 @@ function FormatDropdown(props: {
 					color={color.mutedForeground}
 				/>
 			</div>
-			<Popup presence={presence} width={width} level={props.level + 2}>
+			<Popup
+				presence={presence}
+				speed="fast"
+				width={width}
+				level={props.level + 2}
+			>
 				<div
-					{...hover.containerProps}
+					ref={(element) => {
+						panel = element;
+						hover.containerRef(element);
+					}}
 					id={menuId}
+					testId={`${props.testId}-popup`}
 					role="menu"
 					aria-labelledby={triggerId}
+					// A pointer open, or leaving the rows, lands focus here so the keys still reach it.
+					tabIndex={-1}
+					onKeyDown={onPanelKeyDown}
+					onMouseDown={() => setPageHoldsFocus(false)}
+					onMouseEnter={() => {
+						setPointerLit(true);
+						hover.handlers.onMouseEnter();
+					}}
+					onMouseMove={(event) => {
+						setPointerLit(true);
+						hover.handlers.onMouseMove(event);
+					}}
+					onMouseLeave={hover.handlers.onMouseLeave}
 					style={{
 						position: "relative",
 						display: "flex",
 						flexDirection: "column",
 						padding: 4,
+						keyboardFocusDim: false,
 					}}
 				>
 					<FluidHighlight
@@ -964,11 +1080,20 @@ function FormatDropdown(props: {
 								<div
 									ref={(element) => {
 										row = element;
+										rowElements.set(index(), element);
+										onCleanup(() => {
+											if (rowElements.get(index()) === element)
+												rowElements.delete(index());
+										});
 									}}
 									id={rowId(index())}
 									role="menuitemradio"
 									aria-checked={checked()}
 									testId={`${props.testId}-${format}`}
+									tabIndex={
+										presence.open() && hover.activeIndex() === index() ? 0 : -1
+									}
+									onFocus={() => hover.setActiveIndex(index())}
 									onClick={() => choose(format)}
 									style={{
 										height: MENU_ROW,
@@ -980,6 +1105,7 @@ function FormatDropdown(props: {
 										paddingRight: 12,
 										borderRadius: shape.item,
 										cursor: "pointer",
+										keyboardFocusDim: false,
 									}}
 								>
 									<StableLabel
@@ -1685,7 +1811,7 @@ export function ColorPickerPopover(
 		defaultOpen?: boolean;
 	},
 ) {
-	const presence = createPresence();
+	const presence = createPresence(POPOVER_EXIT_FALLBACK_MS);
 	const [removeHovered, setRemoveHovered] = createSignal(false);
 
 	const isControlled = () => props.value !== undefined;
@@ -1841,7 +1967,12 @@ export function ColorPickerPopover(
 					</div>
 				</Show>
 			</div>
-			<Popup presence={presence} width={PANEL_WIDTH} level={5}>
+			<Popup
+				presence={presence}
+				speed="moderate"
+				width={PANEL_WIDTH}
+				level={5}
+			>
 				<ColorPickerPanel
 					{...props}
 					level={5}

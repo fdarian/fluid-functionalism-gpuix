@@ -147,7 +147,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.settle(500);
 	shot.capture("default");
 
-	// The format menu opened by key: the trigger names the menu and the lit row, a radio row says whether it is checked.
+	// The format menu opened by key: the trigger names the menu, a radio row says whether it is checked.
 	await shot.focus("default-format");
 	shot.expectAria("default-format", { has_popup: "Menu", expanded: false });
 	await shot.press("down");
@@ -158,9 +158,8 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 		role: "Menu",
 		labelled_by: [shot.idOf("default-format")],
 	});
-	shot.expectAria("default-format", {
-		active_descendant: shot.idOf("default-format-hex"),
-	});
+	// The first row holds focus, so the trigger names no lit row.
+	shot.expectAria("default-format", { active_descendant: undefined });
 	shot.expectAria("default-format-hex", {
 		role: "MenuItemRadio",
 		toggled: "True",

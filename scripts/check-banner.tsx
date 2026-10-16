@@ -9,19 +9,22 @@ import { createCheck } from "./check-kit";
 
 const kit = await createCheck("banner");
 const renderer = kit.renderer;
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const replayY = () => kit.bounds("inline-replay").y;
 const bannerShown = () =>
 	renderer.getAllText().some((line) => line.includes("Changes saved"));
 
+const FRAME_MS = 16;
+// The motion clock is stepped by hand: against wall time a slow frame lands the
+// mid-close sample at a different point of the spring on every run.
+renderer.clockPause();
+
 async function frames(ms: number, onFrame?: () => void) {
-	const until = performance.now() + ms;
-	do {
+	for (let elapsed = 0; elapsed < ms; elapsed += FRAME_MS) {
+		renderer.clockFastForward(FRAME_MS);
 		renderer.flush();
 		renderer.dispatchNativeEvents();
 		onFrame?.();
-		await sleep(16);
-	} while (performance.now() < until);
+	}
 }
 
 async function press(testId: string) {

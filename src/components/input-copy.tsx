@@ -9,7 +9,14 @@ import {
 } from "solid-js";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { color, shape, sizeChoice, motion as tween, weight, focusRing } from "../lib/theme";
+import {
+	color,
+	focusRing,
+	shape,
+	sizeChoice,
+	motion as tween,
+	weight,
+} from "../lib/theme";
 import type { InputSize } from "./input-group";
 import { Tooltip } from "./tooltip";
 
@@ -182,6 +189,7 @@ export function InputCopy(props: {
 			name={glyph().name}
 			size={step().icon}
 			strokeWidth={hovered() ? 2 : 1.5}
+			easeStroke
 			color={glyph().color}
 		/>
 	);
@@ -276,7 +284,10 @@ export function InputCopy(props: {
 
 	const row = () => (
 		<div
-			{...buttonProps({ disabled: props.disabled, onClick: handleCopy, tabIndex: 0 }, renderer)}
+			{...buttonProps(
+				{ disabled: props.disabled, onClick: handleCopy, tabIndex: 0 },
+				renderer,
+			)}
 			aria-label={
 				status() === "copied"
 					? "Copied"
@@ -355,7 +366,9 @@ export function InputCopy(props: {
 					onOpenChange={(open) => {
 						tooltipOpen = open;
 					}}
-					testId={props.testId === undefined ? undefined : `${props.testId}-tooltip`}
+					testId={
+						props.testId === undefined ? undefined : `${props.testId}-tooltip`
+					}
 				>
 					{row()}
 				</Tooltip>

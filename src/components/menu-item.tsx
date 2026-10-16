@@ -9,11 +9,11 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
-import { StableLabel } from "../lib/stable-label";
-import { useHoverItem } from "../lib/fluid-hover";
 import type { FluidHover } from "../lib/fluid-hover";
+import { useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
+import { StableLabel } from "../lib/stable-label";
 import {
 	color,
 	height,
@@ -30,6 +30,10 @@ export interface MenuRow {
 	activate: () => void;
 	/** ArrowRight on a submenu trigger. */
 	openSubmenu?: () => void;
+	/** Moves real focus to the row without scrolling it into view. */
+	focus: () => void;
+	/** The row's element id, to tell whether a focus move stayed among the rows. */
+	elementId: () => number | undefined;
 }
 
 export interface DropdownContextValue {
@@ -38,12 +42,15 @@ export interface DropdownContextValue {
 	/** `checkedIndices` was given: rows are checkboxes and stay open on select. */
 	multiple: Accessor<boolean>;
 	rows: Map<number, MenuRow>;
-	/** The DOM `id` of a row: what `aria-activedescendant` names when the keyboard has lit it. */
+	/** The DOM `id` of a row. */
 	rowId: (index: number) => string;
+	/** The roving `tabIndex`: 0 on the one tab stop, -1 on every other row. */
+	rowTabIndex: (index: number) => 0 | -1;
+	/** A row took focus (arrows, hover, Tab or a press): it becomes the lit one. `focusVisible` is false for a press. */
+	rowFocused: (index: number, focusVisible: boolean) => void;
 	/** The highlight is where the pointer put it, not the keyboard or the open itself. */
 	pointerLit: Accessor<boolean>;
-	/** A row mounted or went: the measured rects are stale. */
-	/** Rows were added or removed: set by lists whose rows come and go under the highlight. */
+	/** Rows were added or removed: the measured rects are stale, and the tab stop may have moved. */
 	rowsChanged?: () => void;
 	/** Closes the whole menu. A no-op for the inline panel. */
 	close: () => void;
@@ -153,6 +160,8 @@ export function MenuItem(props: {
 			disabled: () => props.disabled === true,
 			activate: () => activate(true),
 			openSubmenu: props.onOpenSubmenu,
+			focus: () => rowElement?.focus({ preventScroll: true }),
+			elementId: () => rowElement?.id,
 		};
 		context.rows.set(index, row);
 		context.rowsChanged?.();
@@ -176,6 +185,10 @@ export function MenuItem(props: {
 			}}
 			id={context.rowId(props.index)}
 			role={role()}
+			tabIndex={context.rowTabIndex(props.index)}
+			onFocus={(event) =>
+				context.rowFocused(props.index, event.focusVisible === true)
+			}
 			testId={props.testId}
 			aria-checked={props.checked}
 			aria-disabled={props.disabled === true}
@@ -212,6 +225,7 @@ export function MenuItem(props: {
 				cursor: "pointer",
 				opacity: props.disabled === true ? 0.5 : 1,
 				pointerEvents: props.disabled === true ? "none" : undefined,
+				keyboardFocusDim: false,
 			}}
 		>
 			<Show when={props.icon}>
@@ -220,6 +234,8 @@ export function MenuItem(props: {
 						name={name()}
 						size={16}
 						strokeWidth={lit() ? 2 : 1.5}
+						fade
+						easeStroke
 						color={lit() ? color.foreground : color.mutedForeground}
 					/>
 				)}
@@ -228,6 +244,7 @@ export function MenuItem(props: {
 				text={props.label}
 				heavy={checked()}
 				color={lit() ? color.foreground : color.mutedForeground}
+				fade
 				grow
 			/>
 			<Show when={props.chevron}>
@@ -235,6 +252,8 @@ export function MenuItem(props: {
 					name="chevron-right"
 					size={16}
 					strokeWidth={lit() ? 2 : 1.5}
+					fade
+					easeStroke
 					color={lit() ? color.foreground : color.mutedForeground}
 				/>
 			</Show>

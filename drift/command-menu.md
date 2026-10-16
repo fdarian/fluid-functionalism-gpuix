@@ -4,16 +4,6 @@ Original: `registry/default/command-menu.tsx`, demo in `app/docs/command-menu/pa
 
 Ported: items as data with groups, suggestions, filter and keywords, the fluid highlight, the keyboard (arrows with wrap and disabled skipping, Home / End, Enter, Escape, ← → across tabs), tabs, filters row, footer hints with the Enter action, custom rows, the dialog shell. Sizes, spacing and type of the field, tabs, rows, headings, caps and footer match the source in both steps (`metrics`, `command-menu.tsx:196-242`).
 
-## Arrow keys jump to the row instead of scrolling to it
-
-- **Cause:** `not ported yet`.
-- **Original:** a keyboard move keeps the row at the centre of the viewport and the viewport travels there on `spring.fast` (80 ms), so row and fill move together; a new animation stops the running one; a move to row 0, a query reset and reduced motion snap (`registry/default/command-menu.tsx:569-602`, the spring at `:594-599`).
-- **Port:** `move` calls `centerRow`, which calls `revealRow(..., "center")`, and that is an instant `scroller.scrollTo({ top })` (`src/components/command-menu.tsx:404-408`, `:443`; `src/lib/list-nav.ts:65-69`). The list jumps a row while the fill springs over 80 ms, so the fill chases a row that already moved. Home, End and the wrap at either end jump the same way.
-- **Workaround:** none.
-- **Fidelity:** dropped (the scroll is instant, the centring is exact).
-- **Components it hits:** just this one; combobox and select use `revealRow` with `"nearest"`.
-- **Note:** nothing stops a port. gpuix's `scrollTo({ behavior: "smooth" })` is no substitute, it runs 300 to 450 ms (`~/code/fdarian/gpuix/README.md:2264`) against 80 ms. Writing `scrollTop` each frame from the shared clock (`src/lib/clock.ts`) with the `fast` spring would match; `scrollTop` is settable and clamped (README `:2255`).
-
 ## The panel's height does not spring to its rows
 
 - **Cause:** `not ported yet`.
@@ -63,10 +53,10 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 ## Accessibility tree is thinner
 
 - **Cause:** `not ported yet`.
-- **Original:** the field is `role="combobox"` with `aria-expanded`, `aria-controls`, `aria-autocomplete="list"` and `aria-activedescendant` pointing at the highlighted row's id; rows have `id` and `aria-disabled`; sections are `role="group"` labelled by their heading; the empty state is `role="status" aria-live="polite"` (`:858-863`, `:1105-1110`, `:1286-1289`, `:1159-1160`).
-- **Port:** rows carry `role="option"` and `aria-selected`, the wrapper `role="listbox"` (`src/components/command-menu.tsx:911-914`, `:1060-1061`); the input, rows' ids, groups, `aria-disabled` and the empty status have none. gpuix does expose these (`~/code/fdarian/gpuix/README.md:2965-2985`); the combobox port uses them (`src/components/combobox.tsx:450-457`).
+- **Original:** rows have `id` and `aria-disabled`; sections are `role="group"` labelled by their heading; the empty state is `role="status" aria-live="polite"` (`:1105-1110`, `:1286-1289`, `:1159-1160`). The field's `role="combobox"`, `aria-expanded`, `aria-controls`, `aria-autocomplete` and `aria-activedescendant` are ported (`:858-863`).
+- **Port:** the field and the rows' `id` / `aria-selected` follow the source (`src/components/command-menu.tsx:695-700`, `:993-994`, `:1140-1142`); disabled rows carry no `aria-disabled`, sections no group role or label, and the empty state no status role. gpuix does expose these (`~/code/fdarian/gpuix/README.md:2965-2985`); the combobox port uses them (`src/components/combobox.tsx:448-455`).
 - **Workaround:** none.
-- **Fidelity:** dropped.
+- **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
 ## IME composition is invisible to JS
@@ -110,15 +100,6 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
 
-## The highlight snaps while the rows re-filter
-
-- **Cause:** `port choice` (the code comment: the row moved, not the pointer).
-- **Original:** when the query changes the highlight springs on `spring.fast` to the new first row, like any move (`:605-615`; no snap passed to `FluidHoverHighlight`).
-- **Port:** `reflow.raise()` on every row-set change turns the glide into a zero-length tween for 100 ms (`src/components/command-menu.tsx:279`, `:390`, `:416`, `:931`; `src/lib/fluid-hover.ts:246-270`).
-- **Workaround:** n/a.
-- **Fidelity:** approximated.
-- **Components it hits:** any fluid list that filters (combobox, dropdown-search).
-
 ## A wheel scroll re-picks the row under a stationary pointer
 
 - **Cause:** `port choice` (stated in `src/lib/fluid-hover.ts:202-206`: a scroll event carries no pointer position, so the port re-picks at the last one seen).
@@ -137,14 +118,25 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 - **Fidelity:** approximated.
 - **Components it hits:** every fluid list.
 
-## Reduced motion is not honoured
+## Scroll travel starts a microtask after the key
+
+- **Cause:** `gpuix gap`.
+- **Original:** the key handler starts the scroll animation in the same call (`registry/default/command-menu.tsx:569-602`).
+- **Port:** the motion value that carries the travel is created at the first travel and its calls wait for a microtask (`src/components/command-menu.tsx:410-436`, `:465-470`); the menu's release of it waits too, so closing on Esc or leaving the page from a click does not throw.
+- **gpuix lacks:** a motion value cannot be created, driven or released inside a handler that native called synchronously (a key, a press): the renderer throws "This renderer call cannot run inside an event handler that native called synchronously". A menu mounts from ⌘K and unmounts on Esc, so a value made at mount would throw.
+- **Workaround:** `queueMicrotask`; one microtask is under a frame, so nothing shows. Each `scrollTop` write during the travel is a renderer call (about 7 ms apiece in the offscreen renderer); a live frame-rate check is open.
+- **Fidelity:** exact in effect.
+- **Components it hits:** slider (its `createAnimateQueue`), and any component that animates a motion value from a key or press.
+
+## Reduced motion reaches only the list scroll
 
 - **Cause:** `not ported yet`.
-- **Original:** the highlight travel, the list scroll and the height spring snap under the OS setting; the opacity fade stays (`:567`, `:590`, `:723`; `registry/default/fluid-hover-highlight.tsx:83-91`).
-- **Port:** nothing reads it; `createReducedMotion()` exists in gpuix (`~/code/fdarian/gpuix/README.md:998`) and is not used anywhere in `src/`.
+- **Original:** the highlight travel, the list scroll and the height spring snap under the OS setting; the opacity fade stays (`registry/default/command-menu.tsx:567`, `:590`, `:723`; `registry/default/fluid-hover-highlight.tsx:83-91`).
+- **Port:** the arrow-key scroll reads `createReducedMotion()` and jumps (`src/components/command-menu.tsx:407`, `:460-463`). The fill's travel and the dialog's fades ignore it; nothing else in `src/` reads the setting.
 - **Workaround:** none.
-- **Fidelity:** dropped.
+- **Fidelity:** approximated (the scroll snaps, the fill still glides).
 - **Components it hits:** every component with motion.
+- **Note:** gpuix's `MotionConfig reducedMotion="user"` makes `motion.*` position and size properties jump (`~/code/fdarian/gpuix/README.md:1953-1966`); the fill is a `motion.div`, so one wrapper at the app root would cover it.
 
 ## Panel frame: a border and one shadow, and the dialog uses surface 3
 
@@ -157,12 +149,12 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 ## Dialog enter and exit
 
-- **Cause:** `gpuix gap` for the scale; `port choice` (reason not stated) for the timing.
+- **Cause:** `gpuix gap` (the scale).
 - **Original:** the backdrop fades on `spring.slow` (240 ms, exit 160 ms tween); the panel springs from `scale: 0.97` with opacity on `spring.slow` (`registry/base/dialog.tsx:228-239`, `:286-293`).
-- **Port:** the scrim fades on `moderate` in / `moderateExit` out (160 / 120 ms); the panel fades and slides 4 px down on `fast` in / `fastExit` out (80 / 60 ms) (`src/components/command-menu.tsx:1289-1317`). The layer unmounts when the scrim's exit completes (`onMotionComplete`, with a 220 ms timer for an exit that never animates), so the longer scrim fade is not cut short (`:1287`, `:1296`). `src/components/dialog.tsx` uses `slow` for the same shell.
+- **Port:** the scrim and the panel both use `slow` in / `slowExit` out (240 / 160 ms), as in the source; the panel slides 4 px down in place of the scale (`src/components/command-menu.tsx:1349-1433`). The layer unmounts when the scrim's exit completes (`onMotionComplete`, with a 260 ms timer for an exit that never animates) (`:1346`, `:1355`).
 - **gpuix lacks:** `scale` (no transforms, `~/code/fdarian/gpuix/FORK.md:876-887`).
 - **Workaround:** the 4 px slide stands in for the scale.
-- **Fidelity:** approximated (faster, no scale).
+- **Fidelity:** approximated (no scale).
 - **Components it hits:** every popup that scales in.
 
 ## Dialog shell: no modal semantics, closes on mousedown, thinner props

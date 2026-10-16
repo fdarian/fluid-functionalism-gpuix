@@ -131,27 +131,7 @@ export function QueuedStack(props: {
 	const count = () => props.queue.length;
 	const hiddenCount = () => Math.max(0, count() - (STACK_MAX_PEEK + 1));
 
-	// ── Hover. The stack and each card report enter / leave, and a short hold
-	// bridges the gap between one leaving and the next entering.
 	const [overStack, setOverStack] = createSignal(false);
-	let overCount = 0;
-	let leaveTimer: ReturnType<typeof setTimeout> | undefined;
-	onCleanup(() => clearTimeout(leaveTimer));
-	const hover = {
-		enter() {
-			overCount += 1;
-			clearTimeout(leaveTimer);
-			setOverStack(true);
-		},
-		leave() {
-			overCount = Math.max(0, overCount - 1);
-			if (overCount > 0) return;
-			clearTimeout(leaveTimer);
-			leaveTimer = setTimeout(() => {
-				if (overCount === 0) setOverStack(false);
-			}, 40);
-		},
-	};
 
 	// ── Drag to reorder (expanded only).
 	const [pointerDownId, setPointerDownId] = createSignal<string | null>(null);
@@ -296,8 +276,8 @@ export function QueuedStack(props: {
 					}}
 					exit={{ opacity: 0 }}
 					transition={settle}
-					onMouseEnter={hover.enter}
-					onMouseLeave={hover.leave}
+					onMouseEnter={() => setOverStack(true)}
+					onMouseLeave={() => setOverStack(false)}
 					style={{
 						position: "absolute",
 						left: 0,
@@ -389,8 +369,6 @@ export function QueuedStack(props: {
 										})}
 										dragging={() => draggingId() === item.id}
 										expanded={expanded}
-										onHoverEnter={hover.enter}
-										onHoverLeave={hover.leave}
 										onPress={(event) => {
 											if (event.y === undefined) {
 												throw new Error("mouseDown without coordinates");
@@ -439,8 +417,6 @@ function QueueCard(props: {
 	};
 	dragging: () => boolean;
 	expanded: () => boolean;
-	onHoverEnter: () => void;
-	onHoverLeave: () => void;
 	onPress: (event: HostMouseEvent) => void;
 	onDragMove: (event: EventPayload) => void;
 	onRelease: () => void;
@@ -470,11 +446,9 @@ function QueueCard(props: {
 			}
 			onMouseEnter={() => {
 				setHovered(true);
-				props.onHoverEnter();
 			}}
 			onMouseLeave={() => {
 				setHovered(false);
-				props.onHoverLeave();
 			}}
 			style={{
 				position: "absolute",

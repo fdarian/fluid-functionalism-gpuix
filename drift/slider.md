@@ -27,12 +27,13 @@ repeating it.
 - **Fidelity:** exact for what is seen.
 - **Components it hits:** every spring FF runs on a transform.
 
-## Motion writes are queued in a microtask
+## `animate` is started in a microtask
 
-- **Cause:** `port choice` (written when gpuix threw on these calls; the fork now defers them, so the queue looks unnecessary, not re-tested).
-- **Original:** `animate(motionX, px, spring.moderate)` and `motionX.set(px)` run straight from the pointer and key handlers (`slider.tsx:722`, `:778`, `:1475-1476`).
-- **Port:** `createMotionWrites` (`src/components/slider.tsx:159-169`) queues every `animate` / `jump` in a microtask, one microtask after the event, before the next frame. Its comment and the README bug row say gpuix refuses these writes inside a press, release or key handler. The fork's `write_motion_values` (`packages/native/src/renderer.rs:1389-1412`, `packages/native/src/test_renderer.rs:1825`) and FORK.md:361-363 say a motion-value write made inside such a handler is deferred until the input returns. Reads (`get()`) were not checked.
-- **Workaround:** the microtask queue.
+- **Cause:** `gpuix gap`.
+- **Original:** `animate(motionX, px, spring.moderate)` runs straight from the pointer and key handlers (`slider.tsx:722`, `:1475-1476`).
+- **Port:** `createAnimateQueue` (`src/components/slider.tsx:159-169`) starts every `animate` in a microtask, one microtask after the event, before the next frame (thumbs `:797`, comfortable fill `:1325-1327`). `set` and `jump` are written directly: the fork defers them until the input returns, and the slider's scenarios drive them from press and key handlers without a throw.
+- **gpuix lacks:** an `animate` that can start inside a press, release or key handler. `MotionValue.animate` reads `this.get()` for its start value (`packages/native/js/motion-value.ts:358`), which asks the renderer, and a renderer read there throws "This renderer call cannot run inside an event handler that native called synchronously" (found by calling it directly from a value change in a key handler, `scripts/check-slider.tsx` click-to-edit). The deferral that covers `set` / `jump` (`write_motion_values`, `packages/native/src/renderer.rs:1389-1412`) does not cover this read.
+- **Workaround:** the microtask queue; an animation that outlives its slider is dropped.
 - **Fidelity:** exact for what is seen.
 - **Components it hits:** none other (the switch avoids motion values altogether).
 
@@ -40,7 +41,7 @@ repeating it.
 
 - **Cause:** `gpuix gap`.
 - **Original:** the fill, handle, pips fill and masks are `useTransform` strings such as `calc(p * 100% + 20px - ...)` that mix a percentage with pixels (`slider.tsx:493-501`, `:1342-1376`), evaluated by the browser against the row's live width.
-- **Port:** a range fill's `second - first` (`src/components/slider.tsx:808-811`) and every comfortable layer (`:1316-1330`) are `createTransform` functions that multiply by a measured `widthValue` (`:1297`, written from `onLayout`). Function-form transforms are computed in JS and run one frame behind their inputs (FORK.md:915-917, README bugs table), and a resize reaches the layers a frame after layout. The fill and handle line of the comfortable row are not rendered until the first `onLayout` (`:1483`), so they appear one frame after the row. The single compact fill is a range-form transform of the thumb's x (`:788-793`) and does not trail.
+- **Port:** a range fill's `second - first` (`src/components/slider.tsx:808-811`) and every comfortable layer (`:1329-1343`) are `createTransform` functions that multiply by a measured `widthValue` (`:1297`, written from `onLayout`). Function-form transforms are computed in JS and run one frame behind their inputs (FORK.md:915-917, README bugs table), and a resize reaches the layers a frame after layout. The fill and handle line of the comfortable row are not rendered until the first `onLayout` (`:1483`), so they appear one frame after the row. The single compact fill is a range-form transform of the thumb's x (`:788-793`) and does not trail.
 - **gpuix lacks:** a motion value that mixes `%` and `px` (motion values hold numbers, colours, lists or shadows: README "Motion values"), and a function-form transform that is not one frame late.
 - **Workaround:** pixel maths from the measured width.
 - **Fidelity:** approximated: a very fast drag can show a range fill or a pips fill one frame behind its thumb or handle.
@@ -116,15 +117,6 @@ repeating it.
 - **Port:** `emitChange` returns when `next === values()[thumb]` (`src/components/slider.tsx:539-548`); the comfortable `emit` does the same (`:1176-1178`).
 - **Workaround:** none.
 - **Fidelity:** approximated (the same sequence of distinct values; fewer calls).
-- **Components it hits:** none other.
-
-## A drag takes the thumb at once; the source's press spring keeps running
-
-- **Cause:** `port choice` (reason not stated). Unverified against the DOM: `MotionValue.set` does not stop a running animation in Motion, as in gpuix (README "Motion values"), which is what the source relies on.
-- **Original:** a press springs the thumb to the snapped spot (`slider.tsx:722`) and drag moves call `motionX.set(finalPx)` (`:778`). A move that arrives while the 160 ms spring is running is overwritten by the spring each frame, so a press-and-drag within that time eases to the press point first.
-- **Port:** the first move turns `moving()` on and the effect `jump`s the thumb to the cursor's value (`src/components/slider.tsx:642-651`, `:785-799`), stopping the spring.
-- **Workaround:** none.
-- **Fidelity:** approximated (the port follows the cursor from the first move).
 - **Components it hits:** none other.
 
 ## Default row: the label and value blocks are the card colour, sized by the max

@@ -35,19 +35,10 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `not ported yet`.
 - **Original:** label colour and the chevron's colour ease over 80 ms (`:754`, `:778`).
-- **Port:** the colour changes in one frame: `StableLabel` takes no `colorFade` and `Icon` is not given `fade` (`src/components/accordion.tsx:661-673`; `fade` exists at `src/lib/icon.tsx:11`, `colorFade` at `src/lib/theme.ts:451`). gpuix animates `color` (`FORK.md:815-820`).
+- **Port:** the colour changes in one frame: the accordion passes neither `StableLabel` nor `Icon` a `fade` (`src/components/accordion.tsx:640-657`; both props exist, `src/lib/stable-label.tsx`, `src/lib/icon.tsx`). The chevron's stroke width does ease (`easeStroke`). gpuix animates `color` (`FORK.md:815-820`).
 - **Workaround:** none.
 - **Fidelity:** dropped (the ease), exact end colours.
 - **Components it hits:** any `StableLabel` row (tabs, sidebar, menus).
-
-## Chevron stroke width switches at once
-
-- **Cause:** `not ported yet`.
-- **Original:** the chevron's stroke eases 1.5 to 2 with the colour (`:778`, `transition-[color,stroke-width]`).
-- **Port:** `strokeWidth={lit() ? 2 : 1.5}` swaps the SVG source (`src/components/accordion.tsx:671`). gpuix animates `strokeWidth` on `motion.path` (`BASE-UI-AUDIT.md:529`), but `Icon` bakes the width into a source string.
-- **Workaround:** none.
-- **Fidelity:** dropped (the ease).
-- **Components it hits:** every `<Icon>` that changes stroke on hover (select, combobox, menus, tabs, sidebar).
 
 ## Labels do not wrap
 
@@ -57,15 +48,6 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 - **Workaround:** none.
 - **Fidelity:** dropped for long titles.
 - **Components it hits:** every `StableLabel`.
-
-## Highlight and ring snap for 448 ms after a toggle
-
-- **Cause:** `port choice` (the code comment: rows reflow every frame while a panel changes height and the highlight must follow without gliding, `src/components/accordion.tsx:89`).
-- **Original:** the hover fill and the ring keep their `spring.fast` glide while the panel height animates; the group re-measures every frame via `onUpdate` and the fill chases the moving row (`registry/base/accordion.tsx:959-966`, `FluidHoverHighlight` default transition).
-- **Port:** `travel={() => !reflow()}` makes both snap (`tween.snap`) for `trackMs.spring + 48` = 448 ms after any toggle (`src/components/accordion.tsx:285-289`, `:372`, `:378`). The panel's own spring is 80 ms, so a pointer that moves to another row within that window snaps there instead of gliding.
-- **Workaround:** the timer.
-- **Fidelity:** approximated.
-- **Components it hits:** any list whose rows resize under the highlight (thinking-steps, sidebar).
 
 ## Standalone hover fill fades in 20 ms faster
 
@@ -94,14 +76,15 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
-## Focus ring motion
+## Focus ring exit waits 60 ms
 
-- **Cause:** `port choice` (the shared ring; gpuix has no `AnimatePresence`, so a `createPresence` timer stands in for the exit).
-- **Original:** a 1 px `--focus-ring` box at left/top -2, size +4, travels on `spring.fast` with opacity on a 0.08 tween, appears in place (`initial={false}`) and exits on `spring.fast.exit` 0.06 (`registry/base/accordion.tsx:455-472`).
-- **Port:** the same box and offsets (`src/lib/focus-ring.tsx:8`, `:75-99`); opacity rides the same spring as the position (`tween.fast`, not a 0.08 tween), and the exit is `tween.fastExit` 0.06 started 60 ms after the last blur, so a blur followed by the next row's focus glides instead of fading (`:63-71`, `src/lib/presence.ts:6`).
+- **Cause:** `gpuix gap` (no `AnimatePresence`, so a `createPresence` timer stands in for the exit).
+- **Original:** a 1 px `--focus-ring` box at left/top -2, size +4, travels on `spring.fast` with opacity on a 0.08 tween, appears in place (`initial={false}`) and exits on `spring.fast.exit` 0.06 (`registry/base/accordion.tsx:455-472`). A blur followed by the next row's focus keeps the same element, so it glides.
+- **Port:** the same box, offsets and motion (`src/lib/focus-ring.tsx:8` `ENTER_FADE`, `:11`, `:86-94`). The one difference is that the exit fade starts 60 ms after the last blur, so a blur followed by the next row's focus glides instead of fading and reappearing (`:66-69`, `src/lib/presence.ts:6`).
+- **gpuix lacks:** an exit-presence primitive for a conditionally rendered `motion.div`; `onMotionComplete` plus a timer is the stand-in.
 - **Workaround:** the 60 ms presence delay.
-- **Fidelity:** approximated (opacity curve, 60 ms extra before a fade).
-- **Components it hits:** checkbox, radio, select, tabs, tabs-subtle.
+- **Fidelity:** approximated (60 ms extra before a fade).
+- **Components it hits:** checkbox, radio, select, tabs, tabs-subtle, sidebar.
 
 ## Up/Down/Home/End between triggers (group)
 

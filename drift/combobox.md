@@ -80,15 +80,6 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup shadow is one drop and a border"](dropdown.md#popup-shadow-is-one-drop-and-a-border), where the entry lives. Here: `src/lib/popup.tsx:107-111`; the border takes 2px of layout, so the list's `maxHeight` is the card's minus 2 (`src/components/combobox.tsx:568`); original `combobox.tsx:827`. API to use: multi-layer `boxShadow` with `inset` (`~/code/fdarian/gpuix/FORK.md:646-649`).
 
-## Row icon stroke-width does not ease
-
-- **Cause:** `not ported yet`.
-- **Original:** row icons and the field icon use `transition-[color,stroke-width] duration-80`; the stroke goes 1.5 to 2 when lit or focused (`combobox.tsx:527-528,1146-1151`).
-- **Port:** the stroke width is part of the SVG `source`, so it switches at once; only colour eases, on row icons (`<Icon fade>`, `src/components/combobox.tsx:636-642`). The field icon (`:429-435`) and the clear icon (`:64-69`) have no `fade`, so their colour switches at once as well.
-- **Workaround:** none for the width; `fade` for colour on the row icons and the chevron (`:516-522`).
-- **Fidelity:** approximated.
-- **Components it hits:** select, dropdown (rows with an icon).
-
 ## The field's fill and ring do not fade
 
 - **Cause:** `not ported yet`.
@@ -123,6 +114,15 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Workaround:** none; the popup's own 80ms fade covers most of it.
 - **Fidelity:** approximated.
 - **Components it hits:** select, dropdown (every `FluidHighlight` user).
+
+## The highlight resets on leaving the list, not on leaving a row
+
+- **Cause:** `port choice` (the hover state belongs to the list container, as in `createFluidHover`).
+- **Original:** `useListNavigation` resets the highlight from each item's `onPointerLeave` unless the pointer went to another item (`floating-ui-react/hooks/useListNavigation.ts:709-743`), so moving from a row into the list's 4px padding drops it, and `autoHighlight="always"` refills row 0 (`AriaCombobox.tsx:1198-1207`). Read from source, not seen in a browser.
+- **Port:** `onMouseLeave` on the list container (`src/components/combobox.tsx:357-361`), where the padding counts as inside, so the lit row stays while the pointer is over the padding and resets to row 0 only once it leaves the list.
+- **Workaround:** none; a row-level leave would also need the fluid hover to ignore the padding.
+- **Fidelity:** approximated (a few pixels of padding).
+- **Components it hits:** just this one.
 
 ## Reduced motion is not honoured
 
