@@ -10,7 +10,6 @@
  * home hero's buttons.
  */
 
-import { clipboard } from "@gpuix/solid";
 import { createHostElement } from "../node_modules/@gpuix/solid/dist/host.js";
 import { formatShortcut } from "../src/components/command-menu";
 import { createCheck } from "./check-kit";
@@ -412,9 +411,9 @@ await kit.click("nav-showcase");
 // The page keeps the scroll position the list checks left it at.
 renderer.nativeSimulateScrollWheel(700, 400, 0, -10000);
 await kit.settle(300);
-await clipboard.writeText("untouched");
+await navigator.clipboard.writeText("untouched");
 await kit.click("hero-copy");
-const copied = await clipboard.readText();
+const copied = await navigator.clipboard.readText();
 kit.check(
 	"Copy install prompt writes the starter prompt",
 	copied.startsWith("Start a new React app with Fluid Functionalism"),

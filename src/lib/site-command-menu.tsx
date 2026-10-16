@@ -12,7 +12,6 @@ import {
 } from "../components/command-menu";
 import type { Demo, Page } from "./demo";
 import type { IconRef } from "./icons";
-import { copyToClipboard } from "../components/input-copy";
 import { installUrl } from "./install-url";
 import { pageOrder } from "./page-nav";
 import { IS_MAC, openUrl } from "./platform";
@@ -165,11 +164,13 @@ export function SiteCommandMenu(props: {
 							icon: "copy",
 							keywords: ["npx", "shadcn", "add", "registry"],
 							onSelect: () => {
-								copyToClipboard(
-									`npx shadcn@latest add ${installUrl(component.slug)}`,
-								).catch((error: unknown) =>
-									console.error("Copy install command failed", error),
-								);
+								navigator.clipboard
+									.writeText(
+										`npx shadcn@latest add ${installUrl(component.slug)}`,
+									)
+									.catch((error: unknown) =>
+										console.error("Copy install command failed", error),
+									);
 							},
 						}),
 					]),

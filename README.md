@@ -136,7 +136,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
 | [fluid-hover](drift/fluid-hover.md) | 4 | 5 | 2 | 2 | 13 |
 | [home](drift/home.md) | 1 | 1 | 1 | 2 | 5 |
-| [input-copy](drift/input-copy.md) | 3 | 3 | 7 | 0 | 13 |
+| [input-copy](drift/input-copy.md) | 3 | 4 | 6 | 0 | 13 |
 | [input-group](drift/input-group.md) | 1 | 1 | 3 | 1 | 6 |
 | [input-message](drift/input-message.md) | 4 | 0 | 14 | 3 | 21 |
 | [introduction](drift/introduction.md) | 1 | 4 | 2 | 1 | 8 |
@@ -162,7 +162,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
 | [tooltip](drift/tooltip.md) | 4 | 5 | 1 | 1 | 11 |
 | [typography](drift/typography.md) | 4 | 0 | 1 | 6 | 11 |
-| **Total** | **143** | **195** | **206** | **64** | **608** |
+| **Total** | **143** | **196** | **205** | **64** | **608** |
 
 ### gpuix gaps across components
 
@@ -194,6 +194,7 @@ offer it. A count is given only where the code shows it.
 | Used by | What | Workaround here |
 |---|---|---|
 | popups (select, combobox, dropdown, color-picker, dialog), tooltip, chevrons (accordion, card, color-picker, thinking-steps), scale-in entrances (banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack, radio-group), spinners (file-thumbnail) | CSS transforms: no scale, rotate or translate, so the popups' `scaleY: 0.96` entrance and every turn and pop is impossible (audit rows 525, 606). The tooltip has no scale in the source (`tooltip.tsx:282-291`); it only slides on x / y, which is a transform too | Popups and the tooltip slide from the reported side and fade; glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom` |
+| input-copy, doc-page, site-command-menu, app, skill copy example (`navigator.clipboard`) | gpuix installs `navigator.clipboard` at runtime but ships no TypeScript declaration for it, and Bun's types have none | `src/navigator.d.ts` declares it as gpuix's `clipboard` |
 | slider | `<input type="range">` (audit row 310) | A pointer-handled track and thumbs |
 | select, combobox (`FormValue`) | `<input type="hidden">` | A real input that is invisible, unreachable and `aria-hidden` |
 | accordion, ask-user-questions, input-message, sidebar, thinking-steps (`createMeasuredHeight`) | Motion on `width: auto`, and layout size morphs | The content box reports its size through `onLayout` and the outer box tweens to that number |

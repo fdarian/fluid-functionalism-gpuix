@@ -3,12 +3,13 @@
  *
  *   bun scripts/check-input-copy.tsx
  *
- * The component is mounted on its own with a no-op copy, so the clipboard is never touched.
+ * The component is mounted on its own; the test renderer's in-memory clipboard takes the copies, so the system pasteboard is never touched.
  *
  * - A press on a resting pointer with the tooltip open says "Copied".
  * - A press while the pointer is still moving (the tooltip never opened) keeps the tooltip shut.
  * - Enter while the tooltip is open from keyboard focus closes it, as the source does.
  * - The compact row is 26px tall (4 + 18 + 4), the default row 36px.
+ * - A press writes the value to `navigator.clipboard`; a refused write shows "Failed".
  */
 import { createTestRoot } from "@gpuix/solid/testing";
 import { InputCopy } from "../src/components/input-copy";
@@ -80,14 +81,12 @@ test.render(() => (
 			<InputCopy
 				testId="subject"
 				value="npx shadcn@latest add input-copy"
-				copy={async () => {}}
 			/>
 			<InputCopy
 				testId="compact"
 				size="compact"
 				variant="button"
 				value="ABCD-1234"
-				copy={async () => {}}
 			/>
 		</div>
 	</TooltipProvider>
@@ -107,8 +106,15 @@ await settle(500);
 if (renderer.getFocusedElementId() !== row.id)
 	throw new Error("Tab did not reach the row");
 const keyboardBefore = tooltipText();
+await navigator.clipboard.writeText("untouched");
 renderer.simulateKeystrokes("Enter");
 await settle(400);
+const keyboardCopied = await navigator.clipboard.readText();
+report(
+	"Enter copies the value to navigator.clipboard",
+	keyboardCopied === "npx shadcn@latest add input-copy",
+	JSON.stringify(keyboardCopied),
+);
 report(
 	"keyboard press: the source snapshots pointer presses only, so the tooltip closes",
 	keyboardBefore === "Copy to clipboard" && tooltipText() === undefined,
@@ -129,6 +135,36 @@ report(
 	"resting press: tooltip shows Copied",
 	idleTooltip === "Copy to clipboard" && tooltipText() === "Copied",
 	`before ${idleTooltip}, after ${tooltipText()}`,
+);
+await reset();
+
+// A refused write: the button variant shows "Failed".
+const writeText = navigator.clipboard.writeText;
+navigator.clipboard.writeText = async () => {
+	throw new Error("Clipboard access denied");
+};
+try {
+	const compactBox = centerOf("compact");
+	renderer.nativeSimulateMouseDown(compactBox.x, compactBox.y);
+	renderer.nativeSimulateMouseUp(compactBox.x, compactBox.y);
+	await settle(400);
+	report(
+		"a refused write shows Failed",
+		renderer.getAllText().includes("Failed"),
+		JSON.stringify(renderer.getAllText()),
+	);
+} finally {
+	navigator.clipboard.writeText = writeText;
+}
+await reset();
+renderer.nativeSimulateMouseDown(compact.x, compact.y);
+renderer.nativeSimulateMouseUp(compact.x, compact.y);
+await settle(400);
+const compactCopied = await navigator.clipboard.readText();
+report(
+	"the compact button copies its value",
+	compactCopied === "ABCD-1234",
+	JSON.stringify(compactCopied),
 );
 await reset();
 

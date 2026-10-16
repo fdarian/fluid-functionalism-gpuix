@@ -1,5 +1,4 @@
 import {
-	clipboard,
 	createAppearance,
 	type HostElement,
 	MotionConfig,
@@ -166,7 +165,12 @@ function Hero() {
 	let resetTimer: ReturnType<typeof setTimeout> | undefined;
 	onCleanup(() => clearTimeout(resetTimer));
 	const copyPrompt = async () => {
-		await clipboard.writeText(buildStarterPrompt(themeChoice()));
+		try {
+			await navigator.clipboard.writeText(buildStarterPrompt(themeChoice()));
+		} catch (error) {
+			console.error("Copy install prompt failed", error);
+			return;
+		}
 		setCopied(true);
 		clearTimeout(resetTimer);
 		resetTimer = setTimeout(() => setCopied(false), COPIED_MS);

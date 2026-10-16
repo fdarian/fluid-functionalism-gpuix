@@ -1,6 +1,6 @@
 import { buttonProps, useGpuixRequired } from "@gpuix/solid";
 import { createSignal } from "solid-js";
-import { copyToClipboard, InputCopy } from "../../components/input-copy";
+import { InputCopy } from "../../components/input-copy";
 import { MONO } from "../../lib/doc-page";
 import { Icon } from "../../lib/icon";
 import { color, focusRing, shape, siteType, weight } from "../../lib/theme";
@@ -10,12 +10,36 @@ import {
 	createLoop,
 	createPlayback,
 	createScriptCursor,
+	glideStep,
 	type Side,
 	turns,
 } from "./playback";
 
 const COMMAND = "npx skills add mickadesign/fluid-functionalism";
 const FIELD_WIDTH = 240;
+
+/**
+ * Runs the scripted click so InputCopy plays its own feedback without writing the visitor's clipboard. A stand-in
+ * `writeText` swallows the one write of `value` that click makes and passes any other write through; it steps aside
+ * after that write, or after 1s.
+ */
+function clickWithoutClipboard(click: () => void, value: string) {
+	const clipboard = navigator.clipboard;
+	const writeText = clipboard.writeText;
+	let restored = false;
+	const restore = () => {
+		if (restored) return;
+		restored = true;
+		clipboard.writeText = writeText;
+	};
+	clipboard.writeText = (text: string) => {
+		if (text !== value) return writeText.call(clipboard, text);
+		restore();
+		return Promise.resolve();
+	};
+	setTimeout(restore, 1000);
+	click();
+}
 
 /** Generic: the icon snaps to a check and "Copy" turns into "Copied!", which is wider, so the action grows and eats into the command text. */
 function GenericCopy(props: { copied: boolean; onCopy: () => void }) {
@@ -114,7 +138,13 @@ export function CopyExample() {
 						{ ms: 600, run: () => setGeneric(false) },
 					]
 				: // Click the command itself: the whole field copies.
-					clickStep(cursor, "copy-skill", () => {}, 2300),
+					[
+						glideStep(cursor, "copy-skill"),
+						{
+							ms: 2300,
+							run: () => clickWithoutClipboard(() => cursor.click(), COMMAND),
+						},
+					],
 		),
 		// InputCopy reverts on its own timer; the generic "Copied!" waits on the script.
 		() => setGeneric(false),
@@ -134,10 +164,6 @@ export function CopyExample() {
 						value={COMMAND}
 						align="left"
 						testId="copy-skill"
-						// The script's click must not write the visitor's clipboard. A visitor's own click always lands while the script is paused.
-						copy={(text) =>
-							playback.playing() ? Promise.resolve() : copyToClipboard(text)
-						}
 					/>
 				</div>
 			}

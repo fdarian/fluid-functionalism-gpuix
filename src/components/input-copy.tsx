@@ -38,18 +38,6 @@ const steps = {
 	compact: { height: 4 + 18 + 4, text: 12, line: 18, icon: 14 },
 } as const;
 
-/**
- * Writes through the system command, not gpuix's `clipboard` (`@gpuix/solid`),
- * which this component has not adopted yet. Rejects when the command is
- * missing or fails, which InputCopy shows as a red cross.
- */
-export async function copyToClipboard(text: string) {
-	const command = process.platform === "darwin" ? "pbcopy" : "wl-copy";
-	const child = Bun.spawn([command], { stdin: new Blob([text]) });
-	const code = await child.exited;
-	if (code !== 0) throw new Error(`${command} exited with ${code}`);
-}
-
 /** Remounts on a new `key`, so the fade replays when the glyph is the same one as before. */
 function Swap(props: { key: string; children: JSX.Element }) {
 	return (
@@ -88,8 +76,6 @@ export function InputCopy(props: {
 	/** Where the copy action sits relative to the value. */
 	align?: "right" | "left";
 	size?: InputSize;
-	/** Defaults to the system clipboard command. */
-	copy?: (text: string) => Promise<void>;
 	testId?: string;
 }) {
 	const renderer = useGpuixRequired();
@@ -110,10 +96,9 @@ export function InputCopy(props: {
 
 	const handleCopy = async () => {
 		if (props.disabled) return;
-		const copy = props.copy ?? copyToClipboard;
 		let ok = true;
 		try {
-			await copy(props.value);
+			await navigator.clipboard.writeText(props.value);
 		} catch {
 			ok = false;
 		}
