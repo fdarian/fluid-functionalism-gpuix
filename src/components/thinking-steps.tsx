@@ -557,7 +557,7 @@ export function ThinkingStepImage(props: {
 	alt?: string;
 	caption?: string;
 	delay?: number;
-	/** Width over height. The box is sized outright: see limitations/thinking-steps.md. */
+	/** Width over height. The box is sized outright: see drift/thinking-steps.md. */
 	aspectRatio?: number;
 }) {
 	const height = () => IMAGE_WIDTH / (props.aspectRatio ?? 2);

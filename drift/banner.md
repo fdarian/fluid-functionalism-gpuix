@@ -1,0 +1,174 @@
+# banner
+
+Original: `registry/default/banner.tsx`, demo in `app/docs/banner/page.tsx` and `lib/docs/playgrounds/banner.tsx` of the source
+(fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/banner.tsx`,
+demo in `src/demos/banner.tsx`. Screenshots: `screenshots/banner/` (`scrolled-*.png` are the lower cards, captured with a taller scroll).
+
+One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
+(transforms, intrinsic width, variable fonts) get a one-line entry here that links to the README row instead of
+repeating it.
+
+## CSS transforms (the banner scales in and out)
+
+- **Cause:** `gpuix gap`.
+- **Original:** inline, the banner inside its row scales from 0.4 to 1 on appear (slow spring, a fast tier after the row) and shrinks from 1 to 0.6 from its top edge on dismiss, `transformOrigin: "top"` (`banner.tsx:177-189`, `:245`, `:298`, `:323-332`, `:356`).
+- **Port:** the banner only fades (`banner.tsx:341-380`).
+- **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:876-887`; README "gpuix gaps", CSS transforms row).
+- **Workaround:** none; the row's height tween and the fade carry the motion.
+- **Fidelity:** approximated (height and fade, no scale).
+- **Components it hits:** any enter or exit that scales.
+
+## The fixed bar rides its row on `top`
+
+- **Cause:** `gpuix gap`.
+- **Original:** a fixed bar slides with `y: (row - 1) * 100%` while the row opens or closes, opacity following the row (`banner.tsx:236-238`, `:257`, `:290-296`).
+- **Port:** `top` from `-rowHeight` to 0 and back, the same springs and curve (`banner.tsx:349-355`, `:369-378`).
+- **gpuix lacks:** translate (README CSS transforms row), and `%` for insets in `motion` (`FORK.md:901`).
+- **Workaround:** the measured row height in pixels stands in for `100%`.
+- **Fidelity:** exact for the visible result; `top` re-lays out each frame.
+- **Components it hits:** thinking-indicator, queued-stack, mobile-drawer.
+
+## Container queries and `:has()`
+
+- **Cause:** `gpuix gap`.
+- **Original:** `@max-sm/banner` (a container query at 24rem) drops the actions under the text, and `has-data-[slot=banner-description]` switches the layout when a description exists (`banner.tsx:450`, `:453`, `:597-603`).
+- **Port:** the `:has()` switch is a context flag; the narrow layout does not exist (`banner.tsx:102-115`, `:154-158`, `:457-462`).
+- **gpuix lacks:** container queries (they need a layout feedback pass that taffy and gpuix do not have) and `:has()` (no selector engine; gpuix has no stylesheet): `~/code/fdarian/gpuix/FORK.md:619-623`. README rows "Container queries" and "`:has()`".
+- **Workaround:** `BannerDescription` registers itself in a context and the content flips between a row and a column from that flag. The narrow-container layout is not ported.
+- **Fidelity:** exact for the wide layout and the `:has()` switch, dropped for `@max-sm`.
+- **Components it hits:** card (grid header), dialog footer, any part-composed layout that reacts to its own width or to a child.
+
+## Dismiss fade is its own tween
+
+- **Cause:** `not ported yet`. gpuix has motion values and `useTransform` (`FORK.md:824`).
+- **Original:** inline, the banner's opacity is the row's progress mapped from 1 (open) to 0.6 (the row is `shrinkTo` open) onto 1 to 0, so it is gone by the time the row is 60% open and always the row's height (`banner.tsx:317-332`). The fixed bar's opacity is the row's value outright.
+- **Port:** inline, a separate 0.16s `easeOut` tween (`dismissFade`, `banner.tsx:126`, `:369-378`); the row runs 0.24s `easeInOut`. The fixed bar fades on the row's tween, as in the source.
+- **Workaround:** none.
+- **Fidelity:** approximated (same end points, different curve).
+- **Components it hits:** just this one.
+
+## Row does not give back the parent's gap
+
+- **Cause:** `not ported yet`. `marginBottom` is animatable in `motion` (`packages/native/js/host.ts:107`).
+- **Original:** in a flex column with a gap, the row also takes back one gap (`marginBottom: (row - 1) * gap`), measured at mount, so nothing jumps when the banner mounts or unmounts (`banner.tsx:148-152`, `:246-256`, `:270-279`, `:344`). The playground's inline page is a `gap-3` column (`lib/docs/playgrounds/banner.tsx:359-363`).
+- **Port:** no margin. The "gone" phase renders nothing and the "measuring" phase renders a zero-height row, so the parent's gap appears when an appear starts and disappears when a dismiss ends: content below jumps by one gap (by reading; the demo's dismissable banner sits in a column without a gap, `src/demos/banner.tsx:103`).
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
+
+## Interrupting an appear or dismiss
+
+- **Cause:** `not ported yet`.
+- **Original:** the effect re-runs on every `isPresent` change from wherever the values are: coming back mid-dismiss reverses, and dismissing mid-appear does not jump (`banner.tsx:281-339`).
+- **Port:** the phases are separate branches of a `<Switch>` (`banner.tsx:310-381`). Reopening during "closing" goes back to "measuring", which collapses the row to 0 and opens it again (a jump). Closing during "opening" (or "measuring") throws `Banner is not mounted` (`banner.tsx:172-175`): `restElement` was assigned in the "rest" branch, which is gone, and its `mounted` is false. The throw leaves the phase at "opening" while `open` is false, so the banner stays up. Reading, not run.
+- **Workaround:** none.
+- **Fidelity:** dropped.
+- **Components it hits:** just this one.
+
+## Focus after a dismiss, and rebuilt subtree
+
+- **Cause:** handoff `not ported yet` (gpuix has `focus({ preventScroll })`, `FORK.md:444`); rebuilding `port choice` (reason not stated; each phase has its own wrapper).
+- **Original:** if keyboard focus is inside the banner when it leaves, `focusNeighbour` moves it to the next focusable element after it, else the last one before it (`banner.tsx:200-213`, `:306-309`). The body is one element throughout.
+- **Port:** `body()` is called again in every phase branch, so the ✕ and the actions are new elements at the start of a dismiss and again when an appear ends (`banner.tsx:236-302`, `:310-381`). A focused ✕ loses focus at once, to nothing; hover and press state also reset.
+- **Workaround:** none.
+- **Fidelity:** dropped.
+- **Components it hits:** just this one.
+
+## Pointer events while faded
+
+- **Cause:** `not ported yet`. `pointerEvents` is a style property (`~/code/fdarian/gpuix/README.md:4918`).
+- **Original:** `pointerEvents` is `none` while the banner's opacity is under 0.5, so an appearing banner cannot catch clicks meant for what is under it and a leaving one cannot be hit twice (`banner.tsx:258-260`).
+- **Port:** no gate. The banner is clickable at opacity 0 during an appear, and the ✕ of a closing banner calls `onDismiss` again (`banner.tsx:369-380`).
+- **Workaround:** none.
+- **Fidelity:** dropped.
+- **Components it hits:** just this one.
+
+## Reduced motion is ignored
+
+- **Cause:** `not ported yet`. gpuix has `matchMedia("(prefers-reduced-motion)")` and `MotionConfig reducedMotion="user"` (`FORK.md:831`).
+- **Original:** `useReducedMotion()` drops the scale and the slide, keeps the fades, and snaps the row (`banner.tsx:235-238`, `:289`, `:297`, `:311-315`).
+- **Port:** no check (`banner.tsx:123-126`, `:310-381`).
+- **Workaround:** none.
+- **Fidelity:** dropped.
+- **Components it hits:** thinking-indicator, and every component whose source reads `useReducedMotion`.
+
+## The fixed bar does not stick
+
+- **Cause:** `not ported yet`. gpuix has `position: sticky` (`FORK.md:560`).
+- **Original:** `sticky top-0 z-40` on the row, so the bar stays at the top of its scroll container and pushes the content down (`banner.tsx:353`).
+- **Port:** the fixed variant is square corners and an opaque background; it is an ordinary flex child (`banner.tsx:243-253`). In the demo the page scrolls in a sibling below the bar, so the bar stays put either way (`src/demos/banner.tsx:51-91`). Placed first inside a scrolling container it would scroll away.
+- **Workaround:** none.
+- **Fidelity:** dropped.
+- **Components it hits:** just this one.
+
+## Status glyph mark is a mask
+
+- **Cause:** `port choice` (the comment says the cut-out "works on any banner background").
+- **Original:** the coloured statuses are a filled shape with the mark stroked in `--background`, the page colour (`banner.tsx:91-130`).
+- **Port:** the mark is cut out with an SVG `<mask>`, so what shows through it is the banner's own fill over the surface (`banner.tsx:81-100`, `:223-232`).
+- **Workaround:** the mask.
+- **Fidelity:** approximated. The mark is pure page colour in the source and a tinted one in the port on a high-contrast banner, and on a surface that is not the page background.
+- **Components it hits:** just this one.
+
+## Dismiss button fades
+
+- **Cause:** `not ported yet`. `colorFade` exists (`src/lib/theme.ts:310`) and `Icon` takes `fade` (`src/lib/icon.tsx:6-12`).
+- **Original:** `transition-colors duration-80 hover:bg-hover hover:text-foreground` (`banner.tsx:497`).
+- **Port:** the hover background is a state style and the icon colour comes from a signal, so both switch at once (`banner.tsx:417`, `:425`).
+- **Workaround:** none.
+- **Fidelity:** approximated (80ms fades dropped).
+- **Components it hits:** any control with `transition-colors duration-80`.
+
+## Action order is done by reversing the elements
+
+- **Cause:** `not ported yet`. gpuix has `order` and `flexDirection: "row-reverse"`, and `order` keeps focus order in document order, as the DOM does (`packages/native/js/host.ts:399`, `:413-415`). The port's comment that it has neither (`banner.tsx:474-478`) is out of date.
+- **Original:** every `BannerAction` places itself with CSS `order` by variant, while the markup stays primary first, so Tab visits primary, then secondary, then ghost in both layouts (`banner.tsx:628-634`, `:586-610`).
+- **Port:** trailing the title, `BannerActions` reverses the resolved children (`banner.tsx:480-509`, `:484-487`), so Tab visits ghost, then secondary, then primary there. Under a description the order is as written.
+- **Workaround:** the reversal.
+- **Fidelity:** exact visually; the keyboard order differs in the trailing layout.
+- **Components it hits:** just this one.
+
+## Ghost action colour
+
+- **Cause:** `not ported yet`.
+- **Original:** a ghost `BannerAction` adds `text-foreground`, which overrides the ghost button's muted rest colour, so it reads foreground at rest and on hover (`banner.tsx:648-652`; its comment at `:618-619` describes "70% foreground", the code does not).
+- **Port:** the plain ghost `Button`: muted at rest, foreground on hover (`banner.tsx:514-530`; `src/components/button.tsx:129-130`).
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
+
+## Props and parts the port does not take
+
+- **Cause:** `not ported yet`.
+- **Original:** `Banner` takes `dismissLabel` (default "Dismiss"), `motion` (a `BannerMotionConfig` that overrides the appear and dismiss values) with the exported `bannerMotion`, `role`, `className`, `style`, `ref` and HTML attributes, and wraps its children in `SizeProvider` when `size` is set (`banner.tsx:154-195`, `:366-393`, `:407-413`, `:525`, `:694`). `BannerAction` takes any `Button` prop, `href` (renders a link) and `external` (`banner.tsx:636-690`). The parts take `className` and HTML attributes. `useShape()` sets the radii.
+- **Port:** the ✕ label is the literal "Dismiss" (`banner.tsx:396`); the motion values are module constants (`:123-126`); the role is derived from `status` only (`:240-242`); `BannerAction` takes `variant`, `testId`, `onClick` and children (`:514-530`); the parts take children only. Radii are fixed (`radius.container` 12, `radius.item` 8, `:250`, `:414`).
+- **Workaround:** none.
+- **Fidelity:** dropped.
+- **Components it hits:** every component without `className` and `ref` passthrough.
+
+## Demo: no playground
+
+- **Cause:** `not ported yet`.
+- **Original:** the page opens with a playground: variant (inline, fixed), status, contrast, switches for description, primary, secondary and ghost actions and dismissible, a shuffle, a code tab, and a "Show banner" ghost button after a dismiss. The inline page is a column with skeleton lines above and below the banner so the appear and dismiss move real content; the held page height keeps it from re-centring (`app/docs/banner/page.tsx:110-126`, `lib/docs/playgrounds/banner.tsx:32-375`). Per-status copy is in `BANNER_COPY` (`:32-71`).
+- **Port:** none of it. The demo is five fixed cards (`src/demos/banner.tsx:96-203`).
+- **Workaround:** none.
+- **Fidelity:** dropped.
+- **Components it hits:** every component whose source page has a playground.
+
+## Demo: cards, mock page and widths
+
+- **Cause:** `port choice` (reason not stated; the cards are tuned for the harness).
+- **Original:** sections "Statuses", "Actions", "Fixed", "Custom icon", each with a lead sentence (`app/docs/banner/page.tsx:220-256`). Statuses is a 2-column grid, `max-w-[560px]`, `gap-x-3 gap-y-5`; Actions and Custom icon are `max-w-[520px]`; Fixed is `max-w-[560px]` in a 300px `MockPage` with a header skeleton (44px, a bottom rule, a logo square, three nav pills, an avatar) and muted pill-shaped skeleton lines (`:136-205`, `lib/docs/playgrounds/banner.tsx:112-159`). The Fixed demo's Replay remounts it, so the banner arrives in place.
+- **Port:** "Dismissible", "Fixed", "Statuses", "Actions", "Custom icon and compact". Cards fill the card width (no `max-w`). Statuses is two columns with `gap: 12` (`src/demos/banner.tsx:157-160`). The `MockPage` is 260px, has no header skeleton, and has eight 14px bars at `radius 4` in `color.hover` (`:51-91`). A "Replay" `Button` sets `open` back to true, so the banner plays its appear animation again (`:97-155`). Lead sentences and the code and API tables are dropped.
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** every demo (lead sentences, code tab, API tables).
+
+## Demo: port-only variants
+
+- **Cause:** `port choice` (to exercise the controlled `open` prop and compact in the harness).
+- **Original:** no "Dismissible" card (a success, high-contrast "Changes saved" with ✕) and no compact banner.
+- **Port:** both: "Dismissible" (`src/demos/banner.tsx:101-126`) and a compact error banner with a description and two actions in "Custom icon and compact" (`:185-201`).
+- **Workaround:** none.
+- **Fidelity:** exact (the compact metrics follow the source's `compact` branches, `banner.tsx:433`, `:479`, `:500` against `src/components/banner.tsx:31-52`).
+- **Components it hits:** just this one.

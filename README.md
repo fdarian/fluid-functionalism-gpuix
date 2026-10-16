@@ -5,7 +5,9 @@ Can [gpuix](https://github.com/remorses/gpuix), a GPUI-backed renderer with no D
 
 Yes. 32 demo pages cover every component of the library (36 component files, counting shared parts such as
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
-behaviour. What does not carry over is catalogued below: [15 gpuix bugs and 24 missing features](#gpuix-limitations).
+behaviour. Every place the port looks or behaves differently from the source is recorded in
+[Drift from the source](#drift-from-the-source): 576 entries, each tagged by cause (gpuix gap, port choice or not
+ported yet).
 
 | | |
 |---|---|
@@ -53,7 +55,7 @@ while the display sleeps, but that is unconfirmed. Run it with the screen awake.
 
 ## Adding a component
 
-A component adds `src/components/<name>.tsx`, `src/demos/<name>.tsx` and `limitations/<name>.md`, and edits no shared
+A component adds `src/components/<name>.tsx`, `src/demos/<name>.tsx` and `drift/<name>.md`, and edits no shared
 file. `src/lib/demo.ts` finds every `src/demos/*.tsx` with `Bun.Glob` and a dynamic `import` at startup (restart
 `--hot` to pick up a new file), and the sidebar lists the demos by title. A demo file exports:
 
@@ -66,7 +68,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {};  // option
 
 `scenarios` drives `screenshots.tsx` with `shot.hover / click / down / up / press / moveTo / clickAt / scroll /
 settle / expectText / capture`; see `ShotContext` in `src/lib/demo.ts`. Give elements a `testId` to target them.
-`limitations/_TEMPLATE.md` is the shape of a limitations file.
+`drift/_TEMPLATE.md` is the shape of a drift file.
 
 <details>
 <summary>Shared code in <code>src/lib/</code></summary>
@@ -87,22 +89,64 @@ settle / expectText / capture`; see `ShotContext` in `src/lib/demo.ts`. Give ele
 | `demo.ts`, `demo-kit.tsx` | The demo contract and the card every page is made of. |
 </details>
 
-## gpuix limitations
+## Drift from the source
 
-What gpuix still lacks or gets wrong, as of the DOM-parity release of the fork (`~/code/fdarian/gpuix/FORK.md`).
-Everything the port used to work around and gpuix now does (bubbling hover and press, explicit pointer capture,
-focus modality, ARIA and `inert`, forms, `fit="flip"` placement, motion values, colour transitions, gradients,
-sticky, masks and the rest) is gone from this list. Where the port still does not use such a feature, that is a gap
-in the port, tracked row by row in [`BASE-UI-AUDIT.md`](BASE-UI-AUDIT.md), not a gpuix limitation. Each component's
-own file in [`limitations/`](limitations) has the detail. "Bug" means gpuix does something wrong or inconsistent;
-"missing" means it does not offer it. A count is given only where the code shows it.
+The source is fluidfunctionalism.com at commit `0a0377e` (mickadesign/fluidfunctionalism, "Merge pull request #69");
+a copy is kept at `~/.claude/notes/ff-source/`. Each file in [`drift/`](drift) lists every place the port looks or
+behaves differently from it, whatever the cause. A cause is one of: **gpuix gap**, gpuix lacks it or gets it wrong;
+**port choice**, the port differs on purpose; **not ported yet**, nothing stops the port doing it. An entry that
+names two causes counts as mixed. Base UI behaviour, row by row, is in [`BASE-UI-AUDIT.md`](BASE-UI-AUDIT.md).
 
-### Bugs
+| Component | gpuix gap | port choice | not ported yet | mixed | total |
+|---|---:|---:|---:|---:|---:|
+| [accordion](drift/accordion.md) | 2 | 9 | 13 | 0 | 24 |
+| [ask-user-questions](drift/ask-user-questions.md) | 2 | 5 | 11 | 3 | 21 |
+| [badge](drift/badge.md) | 1 | 2 | 2 | 0 | 5 |
+| [banner](drift/banner.md) | 3 | 3 | 11 | 1 | 18 |
+| [button](drift/button.md) | 4 | 3 | 5 | 0 | 12 |
+| [card](drift/card.md) | 6 | 8 | 12 | 1 | 27 |
+| [carousel-dots](drift/carousel-dots.md) | 2 | 4 | 3 | 1 | 10 |
+| [chat-message](drift/chat-message.md) | 2 | 4 | 5 | 2 | 13 |
+| [checkbox-group](drift/checkbox-group.md) | 3 | 0 | 10 | 0 | 13 |
+| [color-picker](drift/color-picker.md) | 3 | 9 | 24 | 1 | 37 |
+| [combobox](drift/combobox.md) | 7 | 12 | 13 | 1 | 33 |
+| [command-menu](drift/command-menu.md) | 5 | 3 | 20 | 2 | 30 |
+| [dialog](drift/dialog.md) | 8 | 2 | 4 | 1 | 15 |
+| [dropdown](drift/dropdown.md) | 7 | 5 | 12 | 2 | 26 |
+| [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
+| [input-copy](drift/input-copy.md) | 2 | 4 | 7 | 1 | 14 |
+| [input-group](drift/input-group.md) | 1 | 1 | 6 | 1 | 9 |
+| [input-message](drift/input-message.md) | 4 | 1 | 17 | 2 | 24 |
+| [mobile-drawer](drift/mobile-drawer.md) | 4 | 2 | 2 | 0 | 8 |
+| [queued-stack](drift/queued-stack.md) | 4 | 4 | 5 | 0 | 13 |
+| [radio-group](drift/radio-group.md) | 4 | 1 | 8 | 0 | 13 |
+| [scroll-area](drift/scroll-area.md) | 3 | 6 | 3 | 1 | 13 |
+| [select](drift/select.md) | 8 | 7 | 11 | 2 | 28 |
+| [sidebar](drift/sidebar.md) | 1 | 6 | 29 | 0 | 36 |
+| [site](drift/site.md) | 3 | 4 | 24 | 3 | 34 |
+| [slider](drift/slider.md) | 5 | 5 | 4 | 3 | 17 |
+| [switch](drift/switch.md) | 2 | 2 | 4 | 2 | 10 |
+| [table](drift/table.md) | 3 | 1 | 5 | 0 | 9 |
+| [tabs-subtle](drift/tabs-subtle.md) | 1 | 5 | 4 | 1 | 11 |
+| [tabs](drift/tabs.md) | 2 | 3 | 5 | 0 | 10 |
+| [thinking-indicator](drift/thinking-indicator.md) | 1 | 2 | 4 | 0 | 7 |
+| [thinking-steps](drift/thinking-steps.md) | 3 | 3 | 8 | 1 | 15 |
+| [tooltip](drift/tooltip.md) | 4 | 7 | 2 | 1 | 14 |
+| **Total** | **111** | **137** | **294** | **34** | **576** |
+
+### gpuix gaps across components
+
+These are the gpuix gaps that hit several components; the per-component files link here. They are as of the
+DOM-parity release of the fork (`~/code/fdarian/gpuix/FORK.md`): what the port used to work around and gpuix now
+does is gone from this list. "Bug" means gpuix does something wrong or inconsistent; "missing" means it does not
+offer it. A count is given only where the code shows it.
+
+#### Bugs
 
 | Used by | What | Workaround here |
 |---|---|---|
 | combobox, dropdown, select, tooltip (every popup on gpuix's `DismissableLayer`), and `returnFocusTo` in dropdown, select, color-picker | `VIEW_BUSY`: reading focus state (`getFocusedElementId`, `matches(":focus")`) inside a mousedown, mouseup, click or wheel handler throws on macOS, because those run in synchronous dispatch. gpuix's own `DismissableLayer` does it, so a pointer-opened popup fails to open (seen headless, likely live too). There is no `document.activeElement` | none yet |
-| slider | `MotionValue.animate` and `jump` throw inside a press, release or key handler ("This renderer call cannot run inside an event handler that native called synchronously"), where Framer's `animate` and `set` run freely. Values derived in JS (`createTransform` of several values) trail their inputs by one frame (FORK.md:915-917) | `createMotionWrites` queues each write in a microtask (`limitations/slider.md`) |
+| slider | `MotionValue.animate` and `jump` used to throw inside a press, release or key handler ("This renderer call cannot run inside an event handler that native called synchronously"). The fork now defers a motion-value write made there until the input returns (`renderer.rs:1389-1412`, FORK.md:361-363). Values derived in JS (`createTransform` of several values) still trail their inputs by one frame (FORK.md:915-917) | `createMotionWrites` queues each write in a microtask (`drift/slider.md`); it predates the fork's deferral and is not re-tested against it |
 | accordion, banner, button, card, carousel-dots, chat-message, input-copy, input-message, tabs, tabs-subtle, thinking-steps (all use `buttonProps`) | `buttonProps` handles keydown on the way up, so a `buttonProps` element nested in another is clicked twice on Enter: the inner one clicks itself and the outer one clicks the same target. The fix is to act only when `target === currentTarget` | none; nested cases are not counted |
 | dialog, mobile-drawer | `DialogBackdrop` closes on mousedown; the DOM and Base UI close on click | The app's own backdrop div closes on a click that presses and releases on it |
 | dialog, mobile-drawer | A reactive prop change on `DialogPopup` re-creates the popup and loses focus | `aria-labelledby` and `-describedby` are static ids |
@@ -118,11 +162,11 @@ own file in [`limitations/`](limitations) has the detail. "Bug" means gpuix does
 | not counted | `relatedTarget` and `target` on focus events are element ids (numbers), not elements | none |
 | screenshots | The accessibility dump flags an `aria-hidden` node as hidden but not its descendants, and `A11yTreeDump` lacks `frame` | `scripts/screenshots.tsx` reads `frame.tab_stop_count` through a cast |
 
-### Missing features
+#### Missing features
 
 | Used by | What | Workaround here |
 |---|---|---|
-| popups (select, combobox, dropdown, color-picker, tooltip, dialog), chevrons (accordion, card, color-picker, thinking-steps), scale-in entrances (banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack, radio-group), spinners (file-thumbnail) | CSS transforms: no scale, rotate or translate, so the popup's `scaleY: 0.96` entrance and every turn and pop is impossible (audit rows 525, 606) | Popups slide from the reported side and fade; glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom` |
+| popups (select, combobox, dropdown, color-picker, dialog), tooltip, chevrons (accordion, card, color-picker, thinking-steps), scale-in entrances (banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack, radio-group), spinners (file-thumbnail) | CSS transforms: no scale, rotate or translate, so the popups' `scaleY: 0.96` entrance and every turn and pop is impossible (audit rows 525, 606). The tooltip has no scale in the source (`tooltip.tsx:282-291`); it only slides on x / y, which is a transform too | Popups and the tooltip slide from the reported side and fade; glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom` |
 | slider | `<input type="range">` (audit row 310) | A pointer-handled track and thumbs |
 | select, combobox (`FormValue`) | `<input type="hidden">` | A real input that is invisible, unreachable and `aria-hidden` |
 | accordion, ask-user-questions, input-message, sidebar, thinking-steps (`createMeasuredHeight`) | Motion on `width: auto`, and layout size morphs | The content box reports its size through `onLayout` and the outer box tweens to that number |
@@ -132,10 +176,10 @@ own file in [`limitations/`](limitations) has the detail. "Bug" means gpuix does
 | not counted | `em`, `rem`, `vw` and `vh` units | Pixel numbers |
 | not counted | `disabled` on anything but an input: other elements get `aria-disabled` only, so they stay focusable and clickable | `aria-disabled` plus the component's own guard |
 | not counted | `url()` backgrounds and masks | `<img>` elements and SVG `<mask>` |
-| command-menu (and every long demo page) | Culling: elements a scroller clips away are still built, laid out and painted each frame, so a page of many menus costs several times a short one (`<virtual-list>` is the only exception) | `DemoCard` hides its content with `display: none` while it is far from the page scroller (`limitations/command-menu.md`) |
+| command-menu (and every long demo page) | Culling: elements a scroller clips away are still built, laid out and painted each frame, so a page of many menus costs several times a short one (`<virtual-list>` is the only exception) | `DemoCard` hides its content with `display: none` while it is far from the page scroller (`drift/command-menu.md`) |
 | file-thumbnail | A canvas pixel path (a PDF page preview) | The caller passes a type and the thumbnail shows a glyph |
 | not counted | Effect groups (`filter`, `backdrop-filter`, `mask`, `clip`, group opacity) off macOS | none |
-| carousel-dots, file-thumbnail, thinking-indicator, thinking-steps | `requestAnimationFrame` | `lib/clock.ts`: one shared, ref-counted `setInterval` frame clock |
+| carousel-dots, file-thumbnail, thinking-indicator, thinking-steps | `requestAnimationFrame` itself (only `setTimeout`, FORK.md:207). The animations are possible without it, through motion values and keyframes (FORK.md:822-826) | `lib/clock.ts`: one shared, ref-counted `setInterval` frame clock |
 | dropdown, select, combobox, scroll-area | Intrinsic `width`: `max-content`, `min-content` and `fit-content` are rejected outside grid tracks, so a popup cannot grow to its widest row | A fixed panel width (288px, 224px for submenus), `popupWidth`, `minWidth: "anchor-size(width)"` |
 | badge | `text-box-trim` / `text-box-edge`: a label is centred by its full line box | Flex centring in a fixed-height pill (about a pixel of drift) |
 | card, table (every `StableLabel`: tabs, tabs-subtle, sidebar, menu rows) | Variable-font axes (`fontVariationSettings`): only a font's default instance renders, so the weight cannot ease between 400 and 550 | Static cuts; the weight switches at once, SemiBold 600 for 550 |
@@ -149,7 +193,7 @@ own file in [`limitations/`](limitations) has the detail. "Bug" means gpuix does
 
 ## Harness and shared-lib notes
 
-Quirks of this repo's own code, kept apart from the gpuix list above.
+Quirks of this repo's own code, kept apart from the gpuix gaps above.
 
 - **Focus dimming.** gpuix dims every other focusable control while one has keyboard focus, so buttons, inputs and
   the tab and card wrappers set `keyboardFocusDim: false`.
@@ -181,7 +225,8 @@ Quirks of this repo's own code, kept apart from the gpuix list above.
 <summary>How the first three components translate (Tailwind to gpuix)</summary>
 
 The Button, Combobox and Sidebar were ported first, with this table kept as they went. Most rows have since
-were later fixed in gpuix or generalised into the limitations above.
+been fixed in gpuix or generalised into the gpuix gaps above. Rows that say "not adopted yet" are things gpuix
+now does that the port has not picked up.
 
 | Tailwind / CSS | gpuix | Fidelity |
 |---|---|---|
@@ -189,7 +234,7 @@ were later fixed in gpuix or generalised into the limitations above.
 | `group-hover:` (icon stroke, label colour) | `onMouseEnter` / `onMouseLeave` plus a signal | Exact, one JS round trip |
 | `focus-visible:ring-1` | `style.focusVisible` outline, offset 1 | Exact |
 | `ring-1 ring-border` | `outlineWidth` / `outlineColor`: outside the box, takes no layout | Exact |
-| `transition-colors duration-80`, `transition-[box-shadow]` | none: state styles switch instantly. Only `motion` animates | Dropped |
+| `transition-colors duration-80`, `transition-[box-shadow]` | none then: state styles switched instantly, only `motion` animated. gpuix now animates colour and `boxShadow` and has CSS `transition` (FORK.md:814-818); not adopted yet | Dropped, now possible |
 | spring `fast` / `moderate` (`motion/react`) | native `motion` spring, `{ type: "spring", duration: 0.08 / 0.16, bounce: 0 }`, velocity kept when the target changes mid-flight | Exact; `slow` is unused |
 | exits (`spring.fast.exit` …) | plain tweens, 60 ms / 120 ms, like the source | Exact |
 | "snap, don't spring" on a reflow | a zero-length tween | Exact |
@@ -199,9 +244,9 @@ were later fixed in gpuix or generalised into the limitations above.
 | press-shrink: inset-px layer plus same-colour `box-shadow` spread | the element carries `margin: 1` and a spread-1 shadow, and `active` sets spread 0 | Exact for flat fills |
 | translucent fill (`--tint`, `bg-hover`) over that shadow | gpuix paints a shadow under its element with no knock-out, so a background on top doubles up. Fills are the shadow alone, with no `backgroundColor` | Exact, but a different mechanism |
 | tertiary ring that moves inward on press (outer to inset shadow) | outline, offset 0 at rest and −1 pressed | Exact |
-| `shadow-surface-3` (1px ring + two stacked drops) | `borderWidth: 1` plus one drop shadow. gpuix paints a single non-inset shadow | Approximated |
+| `shadow-surface-3` (1px ring + two stacked drops) | `borderWidth: 1` plus one drop shadow. gpuix then painted a single non-inset shadow; it now takes multi-layer and `inset` `boxShadow` strings (FORK.md:646-649); not adopted yet | Approximated, now possible |
 | `color-mix(in oklab, …)`, `light-dark()` | both columns kept as a token table; the scheme is a signal | Exact |
-| dark `--shadow-3` (inset hairline + ring + drops) | popup `borderColor` of white at 5% plus the one drop shadow | Approximated |
+| dark `--shadow-3` (inset hairline + ring + drops) | popup `borderColor` of white at 5% plus the one drop shadow, for the same reason (multi-layer and `inset` shadows exist now, FORK.md:646-649; not adopted yet) | Approximated, now possible |
 | `prefers-color-scheme` ("System" theme) | `createAppearance()` reads the OS appearance and `bindSystemScheme` feeds it to the `scheme` token. System / Light / Dark are one `themeChoice` signal, and `renderer.setAppearance` mirrors Light / Dark so the native chrome follows | Exact in the window; captures run on the test renderer, whose appearance is fixed, so they pin Dark |
 | Base UI `Positioner` (flip, `--anchor-width`, `--available-height`) | `<anchored fit="flip" deferred>`: gpuix picks the side and reports it with the room left (`onPlacement`), and `PopupSurface` caps the card to that room, slides from the reported side and is at least the trigger's width | Equivalent |
 | `ScrollArea` (hover thumb, scroll fade) | a plain `overflowY: "scroll"`, on the combobox list and the sidebar | Dropped |
@@ -213,7 +258,7 @@ were later fixed in gpuix or generalised into the limitations above.
 | ghost-span that reserves the semibold width | the same trick: a hidden copy in flow, the visible label absolutely positioned over it | Exact |
 | `truncate` | `whiteSpace: "nowrap"` + `textOverflow: "ellipsis"` on the combobox rows | Exact; sidebar labels are not truncated |
 | icon stroke 1.5 → 2 on hover | the SVG string is swapped | Exact, instant |
-| `animation: spinner-move` | a static lucide `loader`: no rotation, no animation | Dropped |
+| `animation: spinner-move` | a static lucide `loader`: no rotation, no animation. gpuix now has keyframes and `strokeDasharray` / `strokeDashoffset` motion (FORK.md:822, :829); not adopted yet | Dropped, now possible |
 | `AnimatePresence` exit of the popup | the popup stays mounted for 60 ms while its opacity fades | Approximated |
 
 Not ported there: pill shape, the Radius / Size / Icons / Primitive rows of the customise card, multiple-select
