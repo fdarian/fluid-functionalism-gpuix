@@ -84,6 +84,8 @@ export function ChatMessage(props: {
 	fullWidth?: boolean;
 }) {
 	const [hovered, setHovered] = createSignal(false);
+	const [focusWithin, setFocusWithin] = createSignal(false);
+	const revealed = () => hovered() || focusWithin();
 	const isUser = () => props.from === "user";
 	const showTime = () => isUser() && props.time !== undefined;
 	const hasMeta = () => showTime() || props.actions !== undefined;
@@ -95,6 +97,8 @@ export function ChatMessage(props: {
 			transition={tween.moderate}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
+			onFocusIn={() => setFocusWithin(true)}
+			onFocusOut={() => setFocusWithin(false)}
 			style={{
 				position: "relative",
 				display: "flex",
@@ -148,7 +152,7 @@ export function ChatMessage(props: {
 				{/* Always laid out, so revealing it never shifts the gap between bubbles. */}
 				<motion.div
 					initial={false}
-					animate={{ opacity: hovered() ? 1 : 0 }}
+					animate={{ opacity: revealed() ? 1 : 0 }}
 					transition={META_FADE}
 					style={{
 						display: "flex",
@@ -158,7 +162,7 @@ export function ChatMessage(props: {
 						paddingLeft: 4,
 						paddingRight: 4,
 						userSelect: "none",
-						pointerEvents: hovered() ? "auto" : "none",
+						pointerEvents: revealed() ? "auto" : "none",
 					}}
 				>
 					<Show when={showTime()}>

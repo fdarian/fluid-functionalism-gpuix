@@ -26,7 +26,7 @@ repeating it.
 
 - **Cause:** `gpuix gap` for the weight (variable font: README "Drift from the source", variable-font rows) and `port choice` for the rest.
 - **Original:** `h1` `text-site-display leading-none mb-2` at `fontWeights.bold` (`app/docs/page.tsx:23-30`): a 28px line, 8px above the subtitle.
-- **Port:** `App`'s shared `Heading` (`src/app.tsx:49-60`) is semibold 600 with a 34px line and sits a 24px column gap above the page, which the subtitle cancels with `marginTop: -16` (`src/pages/introduction.tsx:209`), so the gap reads 8px past the taller line box.
+- **Port:** `App`'s shared `Heading` (`src/app.tsx:53-64`) is semibold 600 with a 34px line and sits a 24px column gap above the page, which the subtitle cancels with `marginTop: -16` (`src/pages/introduction.tsx:209`), so the gap reads 8px past the taller line box.
 - **Workaround:** the negative margin.
 - **Fidelity:** approximated.
 - **Components it hits:** every page and demo heading (semibold, 34px line).
@@ -48,7 +48,7 @@ repeating it.
 
 ## The code block overflows the 600px column and scrolls
 
-- **Cause:** `port choice` (the page column width, `src/app.tsx:45`).
+- **Cause:** `port choice` (the page column width, `src/app.tsx:48`).
 - **Original:** `<pre class="text-site-caption bg-muted/60 rounded-lg px-4 py-3 overflow-x-auto w-fit max-w-full">` (`app/docs/page.tsx:186`), in the source's own column. Its width was not measured.
 - **Port:** the same box with `overflowX: "scroll"` (`src/pages/introduction.tsx:162-203`). The longest line is 80 characters of 12px Menlo, about 578px, plus 32px of padding, so it overflows the 600px column by about 10px: the last characters of the `IconProvider` line need a scroll, and gpuix draws the scrollbar. No syntax highlighting, as in the source.
 - **Fidelity:** approximated.

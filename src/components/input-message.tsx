@@ -239,6 +239,7 @@ function RemoveBadge(props: {
 	testId?: string;
 }) {
 	const renderer = useGpuixRequired();
+	const [focusVisible, setFocusVisible] = createSignal(false);
 	return (
 		<Tooltip content="Remove" side="top">
 			<div
@@ -248,6 +249,8 @@ function RemoveBadge(props: {
 				tabIndex={0}
 				onMouseEnter={() => props.onHoverChange(true)}
 				onMouseLeave={() => props.onHoverChange(false)}
+				onFocus={(event) => setFocusVisible(event.focusVisible === true)}
+				onBlur={() => setFocusVisible(false)}
 				style={{
 					width: 20,
 					height: 20,
@@ -257,7 +260,7 @@ function RemoveBadge(props: {
 					alignItems: "center",
 					justifyContent: "center",
 					cursor: "pointer",
-					opacity: props.visible ? 1 : 0,
+					opacity: props.visible || focusVisible() ? 1 : 0,
 					keyboardFocusDim: false,
 					focusVisible: focusRing(0),
 				}}
@@ -332,6 +335,7 @@ function QueuedRow(props: {
 	const step = () => steps[props.size];
 	const [hovered, setHovered] = createSignal(false);
 	const [closeHovered, setCloseHovered] = createSignal(false);
+	const [closeFocusVisible, setCloseFocusVisible] = createSignal(false);
 	const [grabbing, setGrabbing] = createSignal(false);
 	const grabRegion = createPointerCapture("QueuedRow");
 	const files = () => props.item.files.length;
@@ -378,7 +382,7 @@ function QueuedRow(props: {
 				alignItems: "center",
 				gap: 8,
 				paddingLeft: step().rowPadX,
-				paddingRight: 6,
+				paddingRight: step().rowPadX,
 				borderRadius: radius.item,
 				keyboardFocusDim: false,
 				focusVisible: focusRing(0),
@@ -471,6 +475,8 @@ function QueuedRow(props: {
 					tabIndex={0}
 					onMouseEnter={() => setCloseHovered(true)}
 					onMouseLeave={() => setCloseHovered(false)}
+					onFocus={(event) => setCloseFocusVisible(event.focusVisible === true)}
+					onBlur={() => setCloseFocusVisible(false)}
 					style={{
 						position: "relative",
 						width: 20,
@@ -481,7 +487,7 @@ function QueuedRow(props: {
 						alignItems: "center",
 						justifyContent: "center",
 						cursor: "pointer",
-						opacity: hovered() || closeHovered() ? 1 : 0,
+						opacity: hovered() || closeHovered() || closeFocusVisible() ? 1 : 0,
 						keyboardFocusDim: false,
 						hover: { backgroundColor: color.hover },
 						focusVisible: focusRing(0),
@@ -1046,7 +1052,7 @@ export function InputMessage(props: InputMessageProps) {
 					}
 					minRows={props.minRows ?? 1}
 					maxRows={props.maxRows ?? 8}
-					readOnly={props.disabled === true}
+					disabled={props.disabled === true}
 					theme={{
 						text: color.foreground,
 						textMuted: color.mutedForeground,

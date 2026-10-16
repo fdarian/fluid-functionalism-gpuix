@@ -171,24 +171,35 @@ function TriggerRow(props: {
 // ─── Collapse ─────────────────────────────────────────────────────────────
 
 /**
- * A box whose height springs between 0 and its content's. gpuix cannot animate
- * `height: auto`, so the content reports its size through `onLayout` and the
- * outer box tweens to that number.
+ * A box whose height springs between 0 and its content's. The content reports
+ * its size through `onLayout` and the outer box tweens to that number; until
+ * the first report an open panel is `auto` high, so one that mounts open never
+ * paints collapsed and then grows.
  */
-function Collapse(props: { id: string; open: boolean; children: JSX.Element }) {
+function Collapse(props: {
+	id: string;
+	testId?: string;
+	open: boolean;
+	children: JSX.Element;
+}) {
 	const measured = createMeasuredHeight();
+	const mountedOpen = props.open;
 	// A panel that mounts open takes its first height with no spring.
-	const [needsSnap, setNeedsSnap] = createSignal(props.open);
+	const [needsSnap, setNeedsSnap] = createSignal(mountedOpen);
 	createEffect(() => {
 		if (!needsSnap() || measured.height() === undefined) return;
 		const timer = setTimeout(() => setNeedsSnap(false), 100);
 		onCleanup(() => clearTimeout(timer));
 	});
-	const target = () => (props.open ? (measured.height() ?? 0) : 0);
+	const target = () => {
+		if (!props.open) return 0;
+		return measured.height() ?? "auto";
+	};
 	return (
 		<motion.div
 			id={props.id}
-			initial={{ height: 0 }}
+			testId={props.testId}
+			initial={mountedOpen ? false : { height: 0 }}
 			animate={{ height: target() }}
 			transition={needsSnap() ? tween.snap : panelSpring}
 			style={{
@@ -283,10 +294,13 @@ export function ThinkingStepsHeader(props: {
 	);
 }
 
-export function ThinkingStepsContent(props: { children: JSX.Element }) {
+export function ThinkingStepsContent(props: {
+	testId?: string;
+	children: JSX.Element;
+}) {
 	const state = useOpen();
 	return (
-		<Collapse id={state.panelId} open={state.open()}>
+		<Collapse id={state.panelId} testId={props.testId} open={state.open()}>
 			<div
 				style={{
 					display: "flex",

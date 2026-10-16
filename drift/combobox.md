@@ -10,7 +10,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `gpuix gap`.
 - **Original:** Base UI's `Combobox.Input` handles composition (`compositionstart` / `compositionend`, `which === 229` on keydown), so Enter or arrows during composition do not pick or move (Base UI `combobox/input/ComboboxInput.tsx:100-101,223-233,~413`).
-- **Port:** the field filters on every `onChange` (`src/components/combobox.tsx:336-349`); Enter and arrows are handled without an IME guard (`:289-324`).
+- **Port:** the field filters on every `onChange` (`src/components/combobox.tsx:338-351`); Enter and arrows are handled without an IME guard (`:289-324`).
 - **gpuix lacks:** composition events and a truthful `isComposing`: a key that feeds an IME is consumed by the platform before GPUI sees it, so `keydown` cannot cancel it, `isComposing` is always `false` and no `composition*` events exist (`~/code/fdarian/gpuix/FORK.md:499-505`).
 - **Workaround:** none; IME input is untested.
 - **Fidelity:** approximated (unverified for composed input).
@@ -20,7 +20,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `gpuix gap`.
 - **Original:** Base UI renders hidden inputs carrying the picked value, so a `<form>` submits it under `name` and an empty `required` one blocks the submit (Base UI `combobox/root/AriaCombobox.tsx:1592-1706`; FF passes `name`, `required` at `combobox.tsx:348-349`).
-- **Port:** `FormValue` (`src/lib/form-value.tsx`, used at `src/components/combobox.tsx:382-390`).
+- **Port:** `FormValue` (`src/lib/form-value.tsx`, used at `src/components/combobox.tsx:384-392`).
 - **gpuix lacks:** `type="hidden"`: `InputType` is `text | password | number | email | search | tel | url` (`packages/native/js/host.ts:1175`), and `FormData` reads only named, enabled `<input>`s.
 - **Workaround:** `FormValue` is a real input kept 1px, transparent, pointer-less and out of the tab order; when an empty required one takes focus it hands it to the combobox's input.
 - **Fidelity:** exact.
@@ -30,7 +30,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `gpuix gap`.
 - **Original:** a `<button type="submit">`, or Enter in a form control, submits the form; an empty `required` control blocks it, fires `invalid` and takes focus.
-- **Port:** the demo's Submit button calls `form.requestSubmit()` (`src/demos/combobox.tsx:125-132`).
+- **Port:** the demo's Submit button calls `form.requestSubmit()` (`src/demos/combobox.tsx:251-258`).
 - **gpuix lacks:** a submit button (`SubmitEvent.submitter` is always `null`, `packages/native/js/host.ts:1209`), and Enter in a form `<input>` with an empty `required` control does nothing instead of validating; only `requestSubmit()` validates. A form with two or more `<input>`s does not submit on Enter at all (gpuix `README.md:3051-3055`), and a combobox with `name` or `required` adds `FormValue` as a second input, so Enter in it never submits.
 - **Workaround:** `requestSubmit()` from a button.
 - **Fidelity:** exact for `requestSubmit()`, dropped for implicit submission.
@@ -40,7 +40,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `gpuix gap`.
 - **Original:** the popup enters from `opacity 0, y -4 (4 when flipped above), scaleY 0.96` with `origin-top` (`origin-bottom` above) on `spring.fast`, exits on `spring.fast.exit` (`combobox.tsx:811-824`, `popup.ts:16-23`).
-- **Port:** `PopupSurface` slides the card 4px from the reported side on `top` and fades it, no scale (`src/lib/popup.tsx:64`, `:83-90`).
+- **Port:** `PopupSurface` slides the card 4px from the reported side on `top` and fades it, no scale (`src/lib/popup.tsx:69`, `:88-96`).
 - **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:876-887`; README "Missing features", CSS transforms row).
 - **Workaround:** the slide.
 - **Fidelity:** approximated.
@@ -50,7 +50,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `gpuix gap`.
 - **Original:** the hover and checked pills are pinned at 0,0 and moved with `x` / `y` (`fluid-hover-highlight.tsx:121-131`; checked marker `combobox.tsx:1022-1038`).
-- **Port:** both animate `top` / `left` / `width` / `height` (`src/lib/fluid-highlight.tsx:74-80`, used at `src/components/combobox.tsx:579-594`).
+- **Port:** both animate `top` / `left` / `width` / `height` (`src/lib/fluid-highlight.tsx:78-85`, used at `src/components/combobox.tsx:582-597`).
 - **gpuix lacks:** transforms; see README "Missing features", CSS transforms row, and `drift/select.md`.
 - **Workaround:** none needed visually.
 - **Fidelity:** approximated (same path, different cost).
@@ -60,7 +60,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `gpuix gap`.
 - **Original:** `min-w-[var(--anchor-width)]` on the popup, which then grows to its widest row (`combobox.tsx:831`).
-- **Port:** a fixed `width` equal to the field's, and never narrower than the field (`src/lib/popup.tsx:92-94`, `src/components/combobox.tsx:526-530`). A longer label ellipsizes (`:649-651`).
+- **Port:** a fixed `width` equal to the field's, and never narrower than the field (`src/lib/popup.tsx:101-103`, `src/components/combobox.tsx:528-533`). A longer label ellipsizes (`:649-651`).
 - **gpuix lacks:** an intrinsic (`max-content`) width; see README "Missing features", intrinsic `width` row, and `drift/select.md`.
 - **Workaround:** none; the combobox has no `popupWidth` prop.
 - **Fidelity:** approximated.
@@ -70,7 +70,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `gpuix gap`.
 - **Original:** each row label uses `[text-box:trim-both_cap_alphabetic]` with `py-1 -my-1` (`combobox.tsx:1156`).
-- **Port:** the label is centred by its full line box (`src/components/combobox.tsx:642-655`).
+- **Port:** the label is centred by its full line box (`src/components/combobox.tsx:645-658`).
 - **gpuix lacks:** `text-box-trim` / `text-box-edge`; README "Missing features", badge row, and `drift/select.md`.
 - **Workaround:** none; about a pixel of drift.
 - **Fidelity:** approximated.
@@ -78,13 +78,13 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 ## `shadow-surface-3` is one shadow, and the ring is a real border
 
-- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup shadow is one drop and a border"](dropdown.md#popup-shadow-is-one-drop-and-a-border), where the entry lives. Here: `src/lib/popup.tsx:98-102`; the border takes 2px of layout, so the list's `maxHeight` is the card's minus 2 (`src/components/combobox.tsx:565`); original `combobox.tsx:827`. API to use: multi-layer `boxShadow` with `inset` (`~/code/fdarian/gpuix/FORK.md:646-649`).
+- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup shadow is one drop and a border"](dropdown.md#popup-shadow-is-one-drop-and-a-border), where the entry lives. Here: `src/lib/popup.tsx:107-111`; the border takes 2px of layout, so the list's `maxHeight` is the card's minus 2 (`src/components/combobox.tsx:568`); original `combobox.tsx:827`. API to use: multi-layer `boxShadow` with `inset` (`~/code/fdarian/gpuix/FORK.md:646-649`).
 
 ## Row icon stroke-width does not ease
 
 - **Cause:** `not ported yet`.
 - **Original:** row icons and the field icon use `transition-[color,stroke-width] duration-80`; the stroke goes 1.5 to 2 when lit or focused (`combobox.tsx:527-528,1146-1151`).
-- **Port:** the stroke width is part of the SVG `source`, so it switches at once; only colour eases, on row icons (`<Icon fade>`, `src/components/combobox.tsx:633-639`). The field icon (`:429-435`) and the clear icon (`:64-69`) have no `fade`, so their colour switches at once as well.
+- **Port:** the stroke width is part of the SVG `source`, so it switches at once; only colour eases, on row icons (`<Icon fade>`, `src/components/combobox.tsx:636-642`). The field icon (`:429-435`) and the clear icon (`:64-69`) have no `fade`, so their colour switches at once as well.
 - **Workaround:** none for the width; `fade` for colour on the row icons and the chevron (`:516-522`).
 - **Fidelity:** approximated.
 - **Components it hits:** select, dropdown (rows with an icon).
@@ -93,7 +93,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `not ported yet`.
 - **Original:** the field has `transition-all duration-80`, so the hover fill (`muted/50`), the focus fill (`card`) and the icon colour ease over 80ms (`combobox.tsx:380-384`); the clear and chevron buttons ease their colour and clear's fill too (`:407-412`).
-- **Port:** `hover` / `focused()` swap `backgroundColor` at once (`src/components/combobox.tsx:406-409`); the clear fill is a state style (`:60-61`).
+- **Port:** `hover` / `focused()` swap `backgroundColor` at once (`src/components/combobox.tsx:408-411`); the clear fill is a state style (`:60-61`).
 - **Workaround:** none. gpuix can do it: it animates colours and state styles with `transition` (`~/code/fdarian/gpuix/FORK.md:814-818`), and the port already uses `colorFade` on row text.
 - **Fidelity:** approximated (the end states are right).
 - **Components it hits:** any field with a hover or focus fill (input-group, input-message).
@@ -102,35 +102,27 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `hover:bg-muted/50 focus-within:bg-card` (`combobox.tsx:392`). Tailwind v4 emits `hover` after `focus-within`, so by cascade order a hovered, focused field should show `muted/50`, not `card` (read from the variant order, not seen in a browser).
-- **Port:** a hovered, focused field stays `card` (`src/components/combobox.tsx:407-409`).
+- **Port:** a hovered, focused field stays `card` (`src/components/combobox.tsx:409-411`).
 - **Workaround:** n/a.
 - **Fidelity:** approximated (unverified against the browser).
 - **Components it hits:** just this one.
 
 ## Scrolling list: no `ScrollArea` thumb or scroll fade
 
-- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup list scrolls in plain `overflow`, not ScrollArea"](dropdown.md#popup-list-scrolls-in-plain-overflow-not-scrollarea), where the entry lives. Here: original `combobox.tsx:989,1075`; port `src/components/combobox.tsx:554-567`.
+- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup list scrolls in plain `overflow`, not ScrollArea"](dropdown.md#popup-list-scrolls-in-plain-overflow-not-scrollarea), where the entry lives. Here: original `combobox.tsx:989,1075`; port `src/components/combobox.tsx:557-570`.
 
 ## A click between rows is not routed to the highlighted row
 
-- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Clicks in the padding and between rows are not routed to the lit row"](dropdown.md#clicks-in-the-padding-and-between-rows-are-not-routed-to-the-lit-row), where the entry lives. Here: original `combobox.tsx:1001`; port list padding `src/components/combobox.tsx:569-578`.
+- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Clicks in the padding and between rows are not routed to the lit row"](dropdown.md#clicks-in-the-padding-and-between-rows-are-not-routed-to-the-lit-row), where the entry lives. Here: original `combobox.tsx:1001`; port list padding `src/components/combobox.tsx:572-581`.
 
 ## Highlight opacity and lifecycle
 
 - **Cause:** `not ported yet`.
 - **Original:** the hover and checked pills fade their opacity on a fixed 0.08s tween whatever the positional spring (`fluid-hover-highlight.tsx:82-96`; checked: `combobox.tsx:1034-1040`). The checked pill mounts with `initial={false}`, so it is simply there when the popup opens. All three overlays are torn down as the close begins (`open && ...`, `combobox.tsx:1009-1045`).
-- **Port:** one transition covers position and opacity (`src/lib/fluid-highlight.tsx:53-58`), so the checked pill's fade is the 160ms `moderate` spring and it fades in from `opacity: 0` on every open (`:74`). The overlays stay mounted through the exit fade (`src/components/combobox.tsx:579-594`).
+- **Port:** one transition covers position and opacity (`src/lib/fluid-highlight.tsx:55-60`), so the checked pill's fade is the 160ms `moderate` spring and it fades in from `opacity: 0` on every open (`:74`). The overlays stay mounted through the exit fade (`src/components/combobox.tsx:582-597`).
 - **Workaround:** none; the popup's own 80ms fade covers most of it.
 - **Fidelity:** approximated.
 - **Components it hits:** select, dropdown (every `FluidHighlight` user).
-
-## Popup exit is released by the timer only
-
-- **Cause:** `not ported yet`. Same drift as [select.md, "Exit unmounts on a timer, not on completion"](select.md#exit-unmounts-on-a-timer-not-on-completion), where the entry lives. Here: regression, 65e350b added `onMotionComplete` and `presence.release()` and 7464e6c dropped them; original `combobox.tsx:787-796,820-824`; port `createPresence(POPUP_EXIT_FALLBACK_MS)` at `src/components/combobox.tsx:137`, `src/lib/popup.tsx:83-90`, `src/lib/presence.ts:39`.
-
-## The popup surface does not track its substrate
-
-- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup surface colour is fixed at surface-3"](dropdown.md#popup-surface-colour-is-fixed-at-surface-3), where the entry lives. Here: original `combobox.tsx:827`; port `src/lib/popup.tsx:97`.
 
 ## Reduced motion is not honoured
 
@@ -145,25 +137,16 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `not ported yet`.
 - **Original:** Base UI `disabled`: the input is disabled and unfocusable, the field is `opacity-50 pointer-events-none` (`combobox.tsx:384`).
-- **Port:** the root is `opacity: 0.5` with `pointerEvents: "none"` (`src/components/combobox.tsx:378-379`), the input is `readOnly` with `tabIndex` -1 and `aria-disabled` (`:455-457`).
+- **Port:** the root is `opacity: 0.5` with `pointerEvents: "none"` (`src/components/combobox.tsx:380-381`), the input is `readOnly` with `tabIndex` -1 and `aria-disabled` (`:455-457`).
 - **Workaround:** the stand-in. gpuix has `<input disabled>` now (never focusable; `FORK.md:451`).
 - **Fidelity:** approximated (looks the same; assistive tech sees `aria-disabled`, not a disabled input).
-- **Components it hits:** just this one.
-
-## Bug: Enter always cancels the key's default
-
-- **Cause:** `not ported yet` (a defect, not a deliberate difference).
-- **Original:** Enter is stopped only when the popup is open with a highlighted row; closed, or open with no row, it passes through so the form can submit (Base UI `ComboboxInput.tsx:404-420`).
-- **Port:** `case "Enter": event.preventDefault(); submit()` for every Enter (`src/components/combobox.tsx:319-322`), though the comment at `:328` says Enter with no row closes "so a form can submit". gpuix cancels implicit submission on `preventDefault` (README:3057).
-- **Workaround:** none. Today masked: with `name` or `required` the form has a second input and never implicit-submits (see above).
-- **Fidelity:** dropped (Enter never reaches the form).
 - **Components it hits:** just this one.
 
 ## Pressing the icon area focuses and opens the field
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** only the `<input>` opens the popup on press (`openOnInputClick`); the icon and padding do nothing (`ComboboxInput.tsx:188-207`).
-- **Port:** the icon plus input box also focuses the input and opens the popup (`src/components/combobox.tsx:412-416`).
+- **Port:** the icon plus input box also focuses the input and opens the popup (`src/components/combobox.tsx:414-418`).
 - **Workaround:** n/a.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -172,7 +155,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `port choice` (judgement call 2, `BASE-UI-AUDIT.md:623`: "visually minor, left").
 - **Original:** the typed text reverts to the picked label after the popup unmounts; a frozen `closeQuery` keeps the list steady during the exit (Base UI `AriaCombobox.tsx:800-831`).
-- **Port:** `closePopup` resets the text at once (`src/components/combobox.tsx:205-209`); the list keeps its old query through the fade, so only the input text differs.
+- **Port:** `closePopup` resets the text at once (`src/components/combobox.tsx:207-211`); the list keeps its old query through the fade, so only the input text differs.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
@@ -180,7 +163,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `port choice` (reason not stated; `LIST_PADDING` is the list's own padding).
 - **Original:** Base UI scrolls the highlighted row into view, nearest edge (`useListNavigation.ts` `scrollIntoView`), which in a `p-1` list lands flush with the viewport edge.
-- **Port:** `revealRow(..., "nearest", LIST_PADDING)` leaves 4px beyond the row (`src/components/combobox.tsx:39,275-287`, `src/lib/list-nav.ts:54-75`).
+- **Port:** `revealRow(..., "nearest", LIST_PADDING)` leaves 4px beyond the row (`src/components/combobox.tsx:41,277-289`, `src/lib/list-nav.ts:54-75`).
 - **Fidelity:** approximated (unverified against the browser).
 - **Components it hits:** select.
 
@@ -188,7 +171,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** compound components (`Combobox`, `ComboboxInput`, `ComboboxContent`, `ComboboxList`, `ComboboxItem`, `ComboboxEmpty`); `items` of `string | { value, label }`, rows rendered by the caller with `icon` / `disabled` on `ComboboxItem`; no value is `""` (`combobox.tsx:127-216,1094-1215`).
-- **Port:** one `Combobox` with props; items are `string | { value, label, icon?, disabled? }`; no value is `null`; adds `width`, `testId`, `labelledBy`, `emptyText` (`src/components/combobox.tsx:75-133`).
+- **Port:** one `Combobox` with props; items are `string | { value, label, icon?, disabled? }`; no value is `null`; adds `width`, `testId`, `labelledBy`, `emptyText` (`src/components/combobox.tsx:77-135`).
 - **Fidelity:** approximated.
 - **Components it hits:** all ported compound components (select, dropdown).
 
@@ -196,7 +179,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** the field sizes to its content with `min-w-[160px]` (128px compact); a width comes from the caller's `className` (`combobox.tsx:518`; docs `w-[280px]` on the long list).
-- **Port:** a fixed 280px default and no minimum (`src/components/combobox.tsx:135,376`).
+- **Port:** a fixed 280px default and no minimum (`src/components/combobox.tsx:137,378`).
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
@@ -204,7 +187,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `ComboboxEmpty` shows its children and nothing when there are none; the docs always pass text (`combobox.tsx:1219-1239`).
-- **Port:** `emptyText` defaults to "No results found." (`src/components/combobox.tsx:549`); the views demo shows it where the source says "No view matches." (`src/demos/combobox.tsx:66-73`).
+- **Port:** `emptyText` defaults to "No results found." (`src/components/combobox.tsx:552`); the views demo shows it where the source says "No view matches." (`src/demos/combobox.tsx:179-186`).
 - **Fidelity:** exact for the layout (`px-3 py-6`, centred, body text).
 - **Components it hits:** just this one.
 
@@ -212,7 +195,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `not ported yet`.
 - **Original:** `ComboboxContent` takes `side` (bottom), `align` (start) and `sideOffset` (6) (`combobox.tsx:773-782`).
-- **Port:** `PopupSurface` is called with `align="start"` only, `side` defaults to bottom, gap 6 (`src/components/combobox.tsx:526-531`, `src/lib/popup.tsx:50,75`). No docs demo uses them (`BASE-UI-AUDIT.md:625`).
+- **Port:** `PopupSurface` is called with `align="start"` only, `side` defaults to bottom, gap 6 (`src/components/combobox.tsx:528-534`, `src/lib/popup.tsx:54,80`). No docs demo uses them (`BASE-UI-AUDIT.md:625`).
 - **Fidelity:** approximated.
 - **Components it hits:** select (same popup).
 
@@ -236,7 +219,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `port choice` (FF styling layer, not Base UI; lead decision, `BASE-UI-AUDIT.md:597`).
 - **Original:** `bordered` (ring at rest) or `borderless` (ring only on hover and focus) (`combobox.tsx:380-403`).
-- **Port:** bordered only (`src/components/combobox.tsx:403-405`).
+- **Port:** bordered only (`src/components/combobox.tsx:405-407`).
 - **Fidelity:** dropped.
 - **Components it hits:** input-group has its own ladder.
 
@@ -252,7 +235,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `port choice` (FF styling layer, not Base UI; lead decision, `BASE-UI-AUDIT.md:597`).
 - **Original:** `size="compact"` or a surrounding `SizeProvider`: 28px field and rows, 12px text, 14px icons, `gap-1`, `px-2` / `px-1.5` (`combobox.tsx:488-530`, `size-context.tsx`).
-- **Port:** the default step only (`FIELD_HEIGHT` / `ROW_HEIGHT` 36, `src/components/combobox.tsx:35-36`).
+- **Port:** the default step only (`FIELD_HEIGHT` / `ROW_HEIGHT` 36, `src/components/combobox.tsx:37-38`).
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
 

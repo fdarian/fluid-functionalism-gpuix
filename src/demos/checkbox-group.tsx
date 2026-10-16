@@ -44,7 +44,6 @@ function Group(props: {
 							testId={`${props.testId}-${index()}`}
 							index={index()}
 							label={label}
-							size={props.size}
 							checked={checked().has(index())}
 							onToggle={() => toggle(index())}
 						/>

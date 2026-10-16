@@ -1,4 +1,5 @@
 import {
+	buttonProps,
 	type EventPayload,
 	type HostElement,
 	type KeyEvent,
@@ -59,6 +60,9 @@ const INNER_WIDTH = PANEL_WIDTH - PANEL_PADDING * 2;
 const SQUARE_HEIGHT = 156;
 const THUMB = 18;
 const RAIL_THUMB = 20;
+/** The source slider's track area: the thumb row plus 8px above and below. */
+const RAIL_HEIGHT = RAIL_THUMB + 16;
+const RAIL_PAD = 8;
 const RAIL_KNOB = 16;
 const RAIL_TRACK = 18;
 const HAIRLINE = "rgba(127,127,127,0.25)";
@@ -179,6 +183,7 @@ export function ColorSwatch(props: {
 	onClick?: () => void;
 	testId?: string;
 }) {
+	const renderer = useGpuixRequired();
 	const size = () => props.size ?? 28;
 	const [hovered, setHovered] = createSignal(false);
 	const ring = () => {
@@ -188,10 +193,9 @@ export function ColorSwatch(props: {
 	};
 	return (
 		<div
-			role="button"
+			{...buttonProps({ onClick: props.onClick, tabIndex: 0 }, renderer)}
 			aria-label={`Select color ${props.color}`}
 			testId={props.testId}
-			onClick={props.onClick}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			style={{
@@ -516,14 +520,14 @@ function Rail(props: {
 			style={{
 				position: "relative",
 				width: INNER_WIDTH,
-				height: RAIL_THUMB,
+				height: RAIL_HEIGHT,
 				flexShrink: 0,
 			}}
 		>
 			<div
 				style={{
 					position: "absolute",
-					top: (RAIL_THUMB - RAIL_TRACK) / 2,
+					top: RAIL_PAD + (RAIL_THUMB - RAIL_TRACK) / 2,
 					left: (RAIL_THUMB - RAIL_TRACK) / 2,
 					width: INNER_WIDTH - (RAIL_THUMB - RAIL_TRACK),
 					height: RAIL_TRACK,
@@ -544,7 +548,7 @@ function Rail(props: {
 				onKeyDown={onKeyDown}
 				style={{
 					position: "absolute",
-					top: 0,
+					top: RAIL_PAD,
 					left: fraction() * (INNER_WIDTH - RAIL_THUMB),
 					width: RAIL_THUMB,
 					height: RAIL_THUMB,
@@ -844,7 +848,10 @@ function FormatDropdown(props: {
 				event.stopPropagation();
 				return;
 			case "Escape":
+				if (!presence.open()) return;
 				close();
+				event.preventDefault();
+				event.stopPropagation();
 				return;
 			case "Tab":
 				close(false);
@@ -1078,8 +1085,13 @@ function ColorInput(props: {
 		if (draft() === props.value) return;
 		const numeric = numberOf(draft());
 		const bounded = props.min !== undefined || props.max !== undefined;
-		if (!Number.isNaN(numeric) && bounded) commitNumber(numeric);
-		else props.onCommit(draft());
+		if (!bounded) {
+			props.onCommit(draft());
+			return;
+		}
+		// Text that is not a number is dropped and the field shows the colour's value again, like the source's NumberField.
+		if (Number.isNaN(numeric)) setDraft(props.value);
+		else commitNumber(numeric);
 	};
 
 	const onKeyDown = (event: KeyEvent) => {
@@ -1389,10 +1401,16 @@ function ColorInputsRow(props: {
 	);
 }
 
+/** A swatch that cannot be read (a CSS colour name) matches nothing, and clicking it does nothing, as in the source for a colour it cannot resolve. */
 function normalizedHex(input: string) {
 	const parsed = parseColor(input);
-	if (parsed === null) throw new Error(`Cannot read the color "${input}"`);
+	if (parsed === null) return undefined;
 	return rgbToHexStr(parsed.r, parsed.g, parsed.b, parsed.a).toLowerCase();
+}
+
+function isSelectedSwatch(swatch: string, current: string) {
+	const swatchHex = normalizedHex(swatch);
+	return swatchHex !== undefined && swatchHex === normalizedHex(current);
 }
 
 export type ColorPickerProps = {
@@ -1404,7 +1422,7 @@ export type ColorPickerProps = {
 	format?: ColorFormat;
 	defaultFormat?: ColorFormat;
 	onFormatChange?: (format: ColorFormat) => void;
-	/** Hex, rgb(a), hsl(a) or oklch: named colours are not parsed. */
+	/** Hex, rgb(a), hsl(a) or oklch. A named colour paints but is never marked selected and picking it does nothing: gpuix has no JS colour resolver. */
 	swatches?: string[];
 	/** Opens the format menu from the first render. */
 	defaultFormatOpen?: boolean;
@@ -1626,7 +1644,7 @@ function ColorPickerPanel(props: ColorPickerProps) {
 							<ColorSwatch
 								testId={`${testId()}-swatch-${index()}`}
 								color={swatch}
-								selected={normalizedHex(swatch) === normalizedHex(parsed().hex)}
+								selected={isSelectedSwatch(swatch, parsed().hex)}
 								onClick={() => commitColor(swatch)}
 							/>
 						)}

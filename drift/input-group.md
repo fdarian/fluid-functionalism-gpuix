@@ -8,13 +8,6 @@ One entry per place the port looks or behaves differently from the source, whate
 (transforms, intrinsic width, variable fonts) get a one-line entry here that links to the README row instead of
 repeating it.
 
-## The compact error message is a size too small
-
-- **Cause:** `not ported yet` (the wrong token is used). A bug, listed in the report.
-- **Original:** compact uses the caption role at its compact step, 11px on a 14px line (`input-group.tsx:282`; `lib/type-scale.ts`).
-- **Port:** `steps.compact.caption` is `scale.microCompact`, 10px on a 12px line (`input-group.tsx:34`). `lib/theme.ts:265-274` has no compact caption token. Default is right: `scale.caption`, 12/16.
-- **Fidelity:** approximated (1px smaller, 2px shorter line).
-
 ## Fill, ring and icon colour change instantly
 
 - **Cause:** `not ported yet`.
@@ -22,14 +15,6 @@ repeating it.
 - **Port:** `fill()` switches the layer's `backgroundColor` and `outlineColor` at once (`input-group.tsx:122-132,188-202`), and `Icon` is used without its `fade` prop (`:205-211`, `lib/icon.tsx:11`). The fork animates colours, `backgroundColor` and `outlineColor` included (`~/code/fdarian/gpuix/FORK.md:814-815`).
 - **Fidelity:** approximated (the 80 ms fade is dropped). The stroke 1.5 to 2 is instant by design: README "icon stroke 1.5 to 2 on hover".
 - **Components it hits:** input-copy, input-message.
-
-## A disabled field is read-only, not disabled
-
-- **Cause:** `not ported yet`. A bug, listed in the report.
-- **Original:** `Field.Root disabled` disables the input, which leaves the Tab order (`input-group.tsx:177-189`).
-- **Port:** `readOnly={props.disabled}` (`input-group.tsx:223`). The wrapper's `pointerEvents: "none"` stops the mouse, but Tab still focuses the field and shows the caret. gpuix has `disabled` on inputs, never focusable (`FORK.md:451,481`).
-- **Fidelity:** approximated.
-- **Components it hits:** input-message (textarea, `readOnly` at `input-message.tsx:1058`).
 
 ## A press on the field's padding or label focuses on release
 
@@ -42,7 +27,7 @@ repeating it.
 
 - **Cause:** `not ported yet`.
 - **Original:** `Field.Root` / `Label` / `Control` / `Error` give `htmlFor`, `aria-invalid`, and `aria-describedby` pointing at the error message (`input-group.tsx:173-190,258-288`).
-- **Port:** `aria-label={props.label}` only (`input-group.tsx:220`); no `aria-invalid`, no description link to the error. gpuix accepts `aria-*` and `<label htmlFor>` (`FORK.md:455`).
+- **Port:** `aria-label={props.label}` only (`input-group.tsx:222`); no `aria-invalid`, no description link to the error. gpuix accepts `aria-*` and `<label htmlFor>` (`FORK.md:455`).
 - **Fidelity:** approximated (the name is right, the error is not announced with the field).
 
 ## Props are fixed, not passed through
@@ -69,5 +54,5 @@ repeating it.
 
 - **Cause:** `port choice` (the demo is a showcase card, not a docs page; reason not stated beyond that).
 - **Original:** `app/docs/input-group/page.tsx`: Basic (one field, Search icon), Multiple Fields (Name, Email with Mail icon), Error State (`bad@`), each in a `ComponentPreview` with code, then two props tables.
-- **Port:** the same three, in `DemoCard`s (`src/demos/input-group.tsx:20,33,75`), with the default and a compact group side by side (`:33-74`) and the error field next to a disabled one (`:75-100`). Extras: compact, disabled. `labelHidden` is not shown in either demo. Code snippets and props tables are not ported.
-- **Fidelity:** all source variants present; two extra.
+- **Port:** the same three, in `DemoCard`s (`src/demos/input-group.tsx`), with the default and a compact group side by side and the default error field next to a compact one and a disabled one. Extras: compact, compact error, disabled. `labelHidden` is not shown in either demo. Code snippets and props tables are not ported.
+- **Fidelity:** all source variants present; three extra.

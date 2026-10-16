@@ -19,12 +19,17 @@ import {
 	useContext,
 } from "solid-js";
 import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover, createReflowGate, type FluidHover, useHoverItem } from "../lib/fluid-hover";
+import {
+	createFluidHover,
+	createReflowGate,
+	type FluidHover,
+	useHoverItem,
+} from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
+import { moveIndex, revealRow } from "../lib/list-nav";
 import { IS_MAC } from "../lib/platform";
 import { createPresence } from "../lib/presence";
-import { moveIndex, revealRow } from "../lib/list-nav";
 import {
 	color,
 	radius,
@@ -102,12 +107,24 @@ const CAP_LABELS: Record<string, { mac: string; other: string }> = {
 
 const PREFORMATTED = /^[⌘⌃⌥⇧↵⌫⌦⇥↑↓←→]+[A-Za-z0-9]?$/;
 
+/** Splits a combo on "+", keeping a trailing "+" as the key itself. */
+function shortcutTokens(shortcut: string): string[] {
+	const trimmed = shortcut.trim();
+	if (trimmed === "") return [];
+	const parts = trimmed.split("+").map((part) => part.trim());
+	// "mod++" splits into ["mod", "", ""]: the empties are a literal "+".
+	const tokens: string[] = [];
+	parts.forEach((part, index) => {
+		if (part !== "") tokens.push(part);
+		else if (index > 0 && tokens[tokens.length - 1] !== "+") tokens.push("+");
+	});
+	return tokens;
+}
+
 /** The caps a shortcut displays: modifiers as symbols on a Mac, words elsewhere, letters upper-cased. */
 export function formatShortcut(shortcut: string): string[] {
 	const caps: string[] = [];
-	// "mod++" and "mod+," keep the key after the last separator.
-	const tokens = shortcut.split("+").filter((token) => token !== "");
-	for (const token of tokens) {
+	for (const token of shortcutTokens(shortcut)) {
 		if (PREFORMATTED.test(token)) {
 			caps.push(...Array.from(token));
 			continue;
@@ -413,7 +430,12 @@ export function CommandMenu(props: {
 				? enabled[0]
 				: to === "last"
 					? enabled[enabled.length - 1]
-					: moveIndex(hover.activeIndex(), to, all.length, (index) => all[index].disabled);
+					: moveIndex(
+							hover.activeIndex(),
+							to,
+							all.length,
+							(index) => all[index].disabled,
+						);
 		if (next === null) return;
 		hover.releasePointer();
 		hover.setActiveIndex(next);
@@ -495,6 +517,15 @@ export function CommandMenuInput(props: {
 		switch (event.key) {
 			case "ArrowLeft":
 			case "ArrowRight": {
+				// A modified arrow keeps its editing meaning: Shift extends the selection.
+				if (
+					event.shiftKey === true ||
+					event.altKey === true ||
+					event.ctrlKey === true ||
+					event.metaKey === true
+				) {
+					return;
+				}
 				const handle = menu.tabs();
 				if (handle === undefined || handle.tabs.length === 0) return;
 				event.preventDefault();
@@ -698,6 +729,8 @@ export function CommandMenuTabs(props: {
 				ref={hover.containerProps.ref}
 				onMouseEnter={() => setEntered(entered() + 1)}
 				onMouseLeave={() => setHovered(null)}
+				// A tab press leaves focus in the field, so the keyboard keeps working.
+				onMouseDown={(event) => event.preventDefault()}
 				style={{
 					position: "relative",
 					display: "flex",
@@ -732,7 +765,7 @@ export function CommandMenuTabs(props: {
 								ref={(host) => {
 									element = host;
 								}}
-																								testId={`${menu.testId}-tab-${tab.value}`}
+								testId={`${menu.testId}-tab-${tab.value}`}
 								onClick={() => props.onValueChange(tab.value)}
 								onMouseEnter={() => setHovered(index())}
 								style={{
@@ -879,6 +912,8 @@ export function CommandMenuList(props: {
 				{...hover.containerProps}
 				role="listbox"
 				onMouseLeave={menu.leaveList}
+				// A row press leaves focus in the field, so the keyboard keeps working.
+				onMouseDown={(event) => event.preventDefault()}
 				style={{
 					position: "relative",
 					display: "flex",
@@ -1246,6 +1281,8 @@ export function CommandMenuFooter(props: {
 
 const DIALOG_WIDTH = 540;
 const DIALOG_MAX_HEIGHT = 440;
+// The scrim's exit is the longest of the shell's fades. Its completion unmounts the layer; the timer only covers an exit that never animated.
+const SCRIM_EXIT_FALLBACK_MS = tween.moderateExit.duration * 1000 + 100;
 
 /** The modal shell. Escape (from the field), a press outside the panel and a pick all close it. Opening it from a key is the caller's: see `createSiteMenu`. */
 export function CommandMenuDialog(props: {
@@ -1254,7 +1291,7 @@ export function CommandMenuDialog(props: {
 	children: JSX.Element;
 }) {
 	const renderer = useGpuixRequired();
-	const presence = createPresence();
+	const presence = createPresence(SCRIM_EXIT_FALLBACK_MS);
 	createEffect(() => {
 		if (props.open) presence.show();
 		else presence.hide();
@@ -1292,6 +1329,9 @@ export function CommandMenuDialog(props: {
 						opacity: presence.open() ? 1 : 0,
 					}}
 					transition={presence.open() ? tween.moderate : tween.moderateExit}
+					onMotionComplete={() => {
+						if (!presence.open()) presence.release();
+					}}
 					style={{
 						position: "absolute",
 						top: 0,

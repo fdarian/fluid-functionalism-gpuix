@@ -59,7 +59,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `ChatMessage` took a string).
 - **Original:** `Answer` passes `className="max-w-full"` and a block of three paragraphs to `ChatMessage` (`lumen/page.tsx:76-111`).
-- **Port:** `ChatMessage` gained two additive props: `children` accepts any element (a string is still set in the message style) and `fullWidth` lifts the 80% cap (`src/components/chat-message.tsx:80-84`, `:138-143`). Lumen builds three `<text>` paragraphs with 12px between them (`src/pages/concepts-lumen.tsx:168-200`).
+- **Port:** `ChatMessage` gained two additive props: `children` accepts any element (a string is still set in the message style) and `fullWidth` lifts the 80% cap (`src/components/chat-message.tsx:80-84`, `:142-147`). Lumen builds three `<text>` paragraphs with 12px between them (`src/pages/concepts-lumen.tsx:168-200`).
 - **Workaround:** none needed.
 - **Fidelity:** exact for the layout.
 - **Components it hits:** chat-message (the extra props are the only change to it).
@@ -155,7 +155,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 ## Atlas: the transcript does not follow a new message
 
-- **Cause:** `gpuix gap` (the port's `ScrollArea` exposes no viewport ref or scroll-to-end; the viewport is internal, `src/components/scroll-area.tsx:482-486`).
+- **Cause:** `gpuix gap` (the port's `ScrollArea` exposes no viewport ref or scroll-to-end; the viewport is internal, `src/components/scroll-area.tsx:490-494`).
 - **Original:** a `requestAnimationFrame` smooth `scrollTo` the bottom when a message is sent and again when the reply lands (`atlas/page.tsx:78-83`, `:89`, `:103`).
 - **Port:** nothing; once the transcript is taller than the column, a new message and the thinking indicator land below the fold and the user scrolls. The screenshot script scrolls to them.
 - **Workaround:** none. Needs a `ScrollArea` prop (`stickToEnd`, or an `onViewport` ref) to scroll to the end after the content grows.

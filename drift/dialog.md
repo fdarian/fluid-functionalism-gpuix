@@ -9,7 +9,7 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 
 - **Cause:** `gpuix gap`. [README "Missing features": CSS transforms](../README.md#missing-features).
 - **Original:** the panel springs from `scale: 0.97` on enter and back to it on exit, and `x: -50%` / `y: -50%` centre it (`registry/base/dialog.tsx:286-293`, `:271-273`).
-- **Port:** the panel only fades, on `tween.slow` in and `tween.slowExit` out (`src/components/dialog.tsx:322-326`); the scrim fades on the same pair (`:287-291`). A flex layer centres the panel, not a translation (`:248-257`).
+- **Port:** the panel only fades, on `tween.slow` in and `tween.slowExit` out (`src/components/dialog.tsx:333-337`); the scrim fades on the same pair (`:287-291`). A flex layer centres the panel, not a translation (`:248-257`).
 - **gpuix lacks:** `scale` and `translate` as styles (`~/code/fdarian/gpuix/FORK.md:876-887`).
 - **Workaround:** the flex layer and the fade.
 - **Fidelity:** approximated (no scale).
@@ -19,7 +19,7 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 
 - **Cause:** `gpuix gap`.
 - **Original:** `w-[calc(100%-2rem)] max-w-[...]` and `top-[12dvh]` (`registry/base/dialog.tsx:272-273`).
-- **Port:** 16px side padding on the layer (`EDGE`, `src/components/dialog.tsx:51`, `:253-254`) and the window height read through `createWindowSize()` (`:57`, `:241`, `:245-246`), which follows a resize.
+- **Port:** 16px side padding on the layer (`EDGE`, `src/components/dialog.tsx:61`, `:264-265`) and the window height read through `createWindowSize()` (`:57`, `:241`, `:245-246`), which follows a resize.
 - **gpuix lacks:** `em`, `rem`, `vw`, `vh`, `vmin` and `vmax` in value strings: the parsers are handed neither the inherited font size nor the window size (`~/code/fdarian/gpuix/FORK.md:749-754`).
 - **Workaround:** as above.
 - **Fidelity:** exact while the root font size is 16px.
@@ -29,7 +29,7 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 
 - **Cause:** `gpuix gap`.
 - **Original:** a backdrop closes on a click that presses and releases on it (Base UI's outside press; not rechecked against Base UI, its source is not on this machine), so pressing on the backdrop and releasing on the panel does not close.
-- **Port:** its own backdrop `div` with `onClick`, modal only (`src/components/dialog.tsx:279-284`); the same in `src/components/mobile-drawer.tsx:54-59`.
+- **Port:** its own backdrop `div` with `onClick`, modal only (`src/components/dialog.tsx:290-295`); the same in `src/components/mobile-drawer.tsx:54-59`.
 - **gpuix lacks:** that rule: `DialogBackdrop` closes from `onMouseDown` (`packages/solid/src/components/dialog.ts:145-157`).
 - **Workaround:** the own backdrop; it also ignores a request that arrives while the exit plays (`:123-128`), since gpuix keeps the layer up through it.
 - **Fidelity:** exact.
@@ -39,7 +39,7 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 
 - **Cause:** `gpuix gap`.
 - **Original:** the popup's `aria-labelledby` / `aria-describedby` can change while it is open.
-- **Port:** static ids, always passed, even when no title or description is rendered (`src/components/dialog.tsx:306-309`; the ids at `:144-146`).
+- **Port:** static ids, always passed, even when no title or description is rendered (`src/components/dialog.tsx:317-320`; the ids at `:144-146`).
 - **gpuix lacks:** a stable popup under changing props: `DialogPopup` sits inside a keyed `Show` and builds its element from a spread of its props, so a prop that changes re-creates the element and drops focus (`packages/solid/src/components/dialog.ts:169-209`).
 - **Workaround:** the static ids; a reference to a missing id resolves to nothing.
 - **Fidelity:** exact.
@@ -49,34 +49,34 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 
 - **Cause:** `gpuix gap`.
 - **Original:** Base UI focuses the first tabbable inside the popup as it opens.
-- **Port:** `FocusFirst` calls `focusNextWithin(popup.id)` in a `setTimeout(0)` (`src/components/dialog.tsx:199-209`).
+- **Port:** `FocusFirst` calls `focusNextWithin(popup.id)` in a `setTimeout(0)` (`src/components/dialog.tsx:209-219`).
 - **gpuix lacks:** a first-tabbable initial focus: `DialogPopup` focuses the popup itself by default (`packages/solid/src/components/dialog.ts:162`), and the popup's children are only committed natively after the mount (port comment, `:204`).
 - **Workaround:** the deferred `focusNextWithin`; for one tick the popup holds focus.
 - **Fidelity:** approximated (one tick late).
 - **Components it hits:** mobile-drawer (reuses `FocusFirst`).
 
-## Surface levels: the dialog does not step up from its substrate
+## Surface levels: only the dialog and popups read the ladder
 
-- **Cause:** `not ported yet`. The port has no surface-context ladder (`useSurface` / `SurfaceProvider`); `surface(level)` in `src/lib/theme.ts:242` is called with fixed levels.
-- **Original:** the panel is `min(substrate + 4, 8)` and provides that level to its children (`registry/base/dialog.tsx:189-190`, `:274`, `:298`). A dialog on the page is surface-5; a dialog opened from a dialog is surface-8 (dark `#484848`); a Select or Dropdown inside it (`Elevated` offset 2, `registry/default/lib/elevated.tsx:39-41`) is surface-7 (dark `#414141`).
-- **Port:** the panel is always `color.surface5` (`src/components/dialog.tsx:335`), a nested dialog included; popups inside it are `color.card`, surface-3 (`src/lib/popup.tsx:97`, `src/components/dropdown.tsx:734`), which in dark mode is darker (`#252525`) than the dialog (`#333333`) they sit on.
+- **Cause:** `not ported yet`. The ladder is `src/lib/surface-context.ts` (`SurfaceContext`, `useElevatedSurface`). `DialogContent` (`min(substrate + 4, 8)`) and `PopupSurface` (`+ 2`) read and provide it, so a dialog on the page is surface-5, a dialog from a dialog surface-8 and a select or combobox inside a dialog surface-7 (`registry/base/dialog.tsx:189-190`, `registry/default/lib/elevated.tsx:39-41`). Nothing else reads it.
+- **Original:** every surface component reads `useSurface()` and provides its own level to its children.
+- **Port:** tabs (`+ 3`), the mobile drawer (`+ 2`), the color picker, the dropdown submenu and inline panel and the cards use fixed levels, so inside a dialog they sit lower than they do in the source (dark mode only; light mode is `#FFFFFF` at every level).
 - **Fidelity:** approximated in dark mode (light mode is `#FFFFFF` at every level; only the shadow weight differs).
-- **Components it hits:** select, dropdown, combobox, color-picker, sidebar, mobile-drawer (any surface that reads `useSurface`).
+- **Components it hits:** tabs, mobile-drawer, color-picker, dropdown (submenu, inline panel), sidebar, card.
 
 ## `shadow-surface-5` painted as a border and one drop
 
-- **Cause:** `not ported yet`. The comment at `src/lib/theme.ts:328-331` ("gpuix paints one outer shadow") is out of date: `boxShadow` takes `BoxShadow[]` or a CSS string with several layers and `inset` (`~/code/fdarian/gpuix/FORK.md:646-649`, `packages/native/js/host.ts:369-377`, `:558`).
+- **Cause:** `not ported yet`. The comment at `src/lib/theme.ts:469-472` ("gpuix paints one outer shadow") is out of date: `boxShadow` takes `BoxShadow[]` or a CSS string with several layers and `inset` (`~/code/fdarian/gpuix/FORK.md:646-649`, `packages/native/js/host.ts:369-377`, `:558`).
 - **Original:** `--shadow-5`: light, a 1px ring plus four stacked drops (1, 3, 6, 12px); dark, an inset top highlight, an inset ring, a 1px black outer ring and the same drops (`app/globals.css:141`, `:164`). No border, so the box keeps its full content size.
-- **Port:** a 1px `popupBorder` border plus only the 12px drop, `shadow5()` (`src/components/dialog.tsx:219-227`, `:335-338`). The border takes 1px of layout on each side, so the content is 2px narrower than in the source at every size.
+- **Port:** a 1px `popupBorder` border plus only the 12px drop, `shadow5()` (`src/components/dialog.tsx:229-237`, `:346-349`). The border takes 1px of layout on each side, so the content is 2px narrower than in the source at every size.
 - **Workaround:** none.
 - **Fidelity:** approximated (the small drops, the dark highlights and the outer ring are dropped).
-- **Components it hits:** every surface-3 to surface-8 shadow in the port (`shadow3()` in `src/lib/theme.ts:332-340` is the same).
+- **Components it hits:** every surface-3 to surface-8 shadow in the port (`shadow3()` in `src/lib/theme.ts:473-481` is the same).
 
 ## Scoped dialog: no portal target, and the top offset is 24px
 
-- **Cause:** `port choice` (the overlay is drawn in place because gpuix's `Dialog` renders no element of its own, `src/components/dialog.tsx:104-108`; the 24px reason is not stated).
+- **Cause:** `port choice` (the overlay is drawn in place because gpuix's `Dialog` renders no element of its own, `src/components/dialog.tsx:114-118`; the 24px reason is not stated).
 - **Original:** `container={element}` portals the overlay and panel into that element, `absolute` instead of `fixed` (`registry/base/dialog.tsx:168-173`, `:213`, `:231`, `:271`). `position="top"` still sits `12dvh` of the viewport down (`:273`).
-- **Port:** `<Dialog scoped>` draws into the nearest `position: relative` ancestor (`src/components/dialog.tsx:360-384`), and `position="top"` sits 24px down when scoped (`:245-246`). The prop is a boolean, not an element.
+- **Port:** `<Dialog scoped>` draws into the nearest `position: relative` ancestor (`src/components/dialog.tsx:373-397`), and `position="top"` sits 24px down when scoped (`:245-246`). The prop is a boolean, not an element.
 - **Workaround:** n/a.
 - **Fidelity:** approximated (same layering; different API and offset).
 - **Components it hits:** just this one.
@@ -85,16 +85,16 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 
 - **Cause:** `not ported yet`.
 - **Original:** `className`, `style`, `ref` and every div attribute pass through, and the docs say `xl` is a canvas for composed layouts: `className="p-0"` plus a fixed height (`registry/base/dialog.tsx:163-166`, `:261-285`, docs `app/docs/dialog/page.tsx:70`). Header, Footer, Title and Description take `className` too (`:325-381`).
-- **Port:** the props are fixed (`size`, `compact`, `showCloseButton`, `position`, `testId`; `src/components/dialog.tsx:229-239`), padding is 24 (`:333`), and Header, Footer, Title and Description take only children (`:387-452`).
+- **Port:** the props are fixed (`size`, `compact`, `showCloseButton`, `position`, `testId`; `src/components/dialog.tsx:239-249`), padding is 24 (`:333`), and Header, Footer, Title and Description take only children (`:387-452`).
 - **Workaround:** none.
 - **Fidelity:** dropped (no zero-padding canvas, so the sidebar block cannot be built).
 - **Components it hits:** just this one.
 
 ## `DialogTrigger` and `DialogClose` take one child only
 
-- **Cause:** `port choice` (the single child becomes the control through gpuix's `asChild`; the children-as-label form has no use there; reason not stated beyond the comment at `src/components/dialog.tsx:177`).
+- **Cause:** `port choice` (the single child becomes the control through gpuix's `asChild`; the children-as-label form has no use there; reason not stated beyond the comment at `src/components/dialog.tsx:187`).
 - **Original:** `render={<Button/>}`, `asChild`, or plain children, plus any button attribute (`registry/base/dialog.tsx:118-160`).
-- **Port:** `props.children` is the control; no `render`, no `asChild`, no other props (`src/components/dialog.tsx:178-193`, `:211-213`).
+- **Port:** `props.children` is the control; no `render`, no `asChild`, no other props (`src/components/dialog.tsx:188-203`, `:221-223`).
 - **Workaround:** n/a.
 - **Fidelity:** dropped (the surface), exact for the single-child case.
 - **Components it hits:** just this one.
@@ -103,7 +103,7 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 
 - **Cause:** `gpuix gap`. [README "Missing features": variable-font axes](../README.md#missing-features).
 - **Original:** `fontWeights.semibold` through `fontVariationSettings` (`registry/base/dialog.tsx:357`).
-- **Port:** `weight.semibold` (`src/components/dialog.tsx:426`).
+- **Port:** `weight.semibold` (`src/components/dialog.tsx:439`).
 - **Fidelity:** approximated.
 
 ## Demo variants
@@ -119,7 +119,7 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 
 - **Cause:** `gpuix gap`.
 - **Original:** n/a (a test-harness effect): a modal hides everything outside it with `aria-hidden`, which hides the subtree.
-- **Port:** the harness casts the dump to read `frame` (`scripts/screenshots.tsx:128-133`), and the demo asserts `hidden` on the page elements `HideOutside` marks themselves, not on their descendants (`src/lib/modal.tsx`, `src/demos/dialog.tsx:274-277`).
+- **Port:** the harness casts the dump to read `frame` (`scripts/screenshots.tsx:146-151`), and the demo asserts `hidden` on the page elements `HideOutside` marks themselves, not on their descendants (`src/lib/modal.tsx`, `src/demos/dialog.tsx:274-277`).
 - **gpuix lacks:** an `A11yTreeDump` type that matches the native dump (`frame`, with the tab-stop count, is not declared, `packages/native/js/testing.ts:314-317`), and a `hidden` flag on the descendants of an `aria-hidden` node: only the node that carries the attribute is flagged.
 - **Workaround:** the cast and the narrower assertion.
 - **Fidelity:** exact; the descendants' flag is unverified.
@@ -129,7 +129,7 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 
 - **Cause:** `gpuix gap`.
 - **Original:** n/a (a harness effect).
-- **Port:** `scripts/screenshots.tsx:224` ends with `process.exit(0)`; a failed scenario that throws still aborts.
+- **Port:** `scripts/screenshots.tsx:262` ends with `process.exit(0)`; a failed scenario that throws still aborts.
 - **gpuix lacks:** a clean teardown: a script that renders a Dialog, leaves it open and returns without `process.exit` ends in "thread local panicked on drop" and a Bun abort. Reproduced earlier with `createTestRoot` and `<Dialog defaultOpen>`; the same script exits cleanly once it calls `process.exit(0)`. The tooltip demo was reported to hit it as well (not rechecked).
 - **Workaround:** `process.exit(0)`.
 - **Fidelity:** exact; the abort is noise after the output.

@@ -4,6 +4,7 @@ import {
 	type HostElement,
 	type KeyEvent,
 	motion,
+	ResizeObserver,
 	useGpuixRequired,
 } from "@gpuix/solid";
 import {
@@ -11,19 +12,38 @@ import {
 	createEffect,
 	createSignal,
 	createUniqueId,
+	For,
 	type JSX,
 	on,
 	onCleanup,
 	Show,
 	useContext,
 } from "solid-js";
-import { StableLabel } from "../lib/stable-label";
 import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFocusRing, FocusRing, type FocusRingState } from "../lib/focus-ring";
-import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
+import {
+	createFluidHover,
+	type FluidHover,
+	type ItemRect,
+} from "../lib/fluid-hover";
+import {
+	createFocusRing,
+	FocusRing,
+	type FocusRingState,
+} from "../lib/focus-ring";
 import { Icon } from "../lib/icon";
 import { createMeasuredHeight } from "../lib/measured-height";
-import { color, sizeChoice, shape, type as scale, scheme, motion as tween, weight, focusRing, trackMs } from "../lib/theme";
+import { StableLabel } from "../lib/stable-label";
+import {
+	color,
+	focusRing,
+	shape,
+	sizeChoice,
+	type as scale,
+	scheme,
+	trackMs,
+	motion as tween,
+	weight,
+} from "../lib/theme";
 
 export type AccordionSize = "default" | "compact";
 export type AccordionHighlight = "trigger" | "item";
@@ -64,6 +84,8 @@ interface GroupScope {
 		element: HostElement,
 		entry: { value: string; disabled: () => boolean; focus: () => void },
 	) => number;
+	/** The item's box, for the open tint the group paints under its hover fill. */
+	registerItem: (element: HostElement, entry: TintEntry) => void;
 	/** Panels are changing height: rows reflow every frame and the highlight must follow without gliding. */
 	trackReflow: () => void;
 	reflow: () => boolean;
@@ -76,6 +98,13 @@ interface GroupScope {
 		index: number,
 		step: "next" | "previous" | "first" | "last",
 	) => void;
+}
+
+interface TintEntry {
+	id: number;
+	isOpen: () => boolean;
+	/** The trigger's index in the hover; undefined until it registers. */
+	index: () => number | undefined;
 }
 
 const RootContext = createContext<RootState>();
@@ -185,10 +214,46 @@ export function AccordionGroup(props: RootProps) {
 	const focusRing = createFocusRing(hover);
 	let mouseInside = false;
 
+	let container: HostElement | undefined;
+	const tintElements = new Map<number, HostElement>();
+	const [tints, setTints] = createSignal<readonly TintEntry[]>([]);
+	const [itemRects, setItemRects] = createSignal<ReadonlyMap<number, ItemRect>>(
+		new Map(),
+	);
+	const measureItems = () => {
+		if (container === undefined || !container.mounted) return;
+		const box = container.getBoundingClientRect();
+		const next = new Map<number, ItemRect>();
+		for (const [id, element] of tintElements) {
+			if (!element.mounted) continue;
+			const bounds = element.getBoundingClientRect();
+			next.set(id, {
+				top: bounds.y - box.y,
+				left: bounds.x - box.x,
+				width: bounds.width,
+				height: bounds.height,
+			});
+		}
+		setItemRects(next);
+	};
+	const itemObserver = new ResizeObserver(measureItems);
+	onCleanup(() => itemObserver.disconnect());
+
 	const scope: GroupScope = {
 		hover,
 		focusRing,
 		reflow,
+		registerItem(element, entry) {
+			tintElements.set(entry.id, element);
+			setTints([...tints(), entry]);
+			itemObserver.observe(element, { box: "border-box" });
+			measureItems();
+			onCleanup(() => {
+				tintElements.delete(entry.id);
+				itemObserver.unobserve(element);
+				setTints(tints().filter((candidate) => candidate !== entry));
+			});
+		},
 		hoveringClosedRow() {
 			const active = hover.activeIndex();
 			if (active === null) return false;
@@ -253,6 +318,10 @@ export function AccordionGroup(props: RootProps) {
 				<div
 					testId={props.testId}
 					{...hover.containerProps}
+					ref={(element: HostElement) => {
+						container = element;
+						hover.containerRef(element);
+					}}
 					onMouseEnter={() => {
 						mouseInside = true;
 						hover.handlers.onMouseEnter();
@@ -275,7 +344,26 @@ export function AccordionGroup(props: RootProps) {
 						maxWidth: "100%",
 					}}
 				>
-					{/* First child: gpuix has no zIndex, so rows paint over the highlight by document order. */}
+					{/* Layers first, in the source's order (open tints, hover fill, ring): the items paint after them by document order, so the ring is never under a tint. */}
+					<For each={tints()}>
+						{(entry) => (
+							<GroupTint
+								rect={() => {
+									if (root.highlight() === "item")
+										return itemRects().get(entry.id);
+									const own = entry.index();
+									return own === undefined ? undefined : hover.rects()[own];
+								}}
+								opacity={() => {
+									if (!entry.isOpen()) return 0;
+									if (root.highlight() === "item") {
+										return scope.hoveringClosedRow() ? 0.7 : 1;
+									}
+									return hover.activeIndex() === entry.index() ? 1 : 0;
+								}}
+							/>
+						)}
+					</For>
 					<FluidHighlight
 						rect={hoverRect}
 						session={hover.session}
@@ -316,6 +404,45 @@ export function Accordion(props: RootProps) {
 
 // ─── Item ────────────────────────────────────────────────────────────────────
 
+let nextTintId = 0;
+
+/** A grouped open tint: it hugs its rect without gliding (a panel resizing under it moves the box every frame) and only its opacity eases. */
+function GroupTint(props: {
+	rect: () => ItemRect | undefined;
+	opacity: () => number;
+}) {
+	return (
+		<Show when={props.rect()}>
+			{(rect: () => ItemRect) => (
+				<motion.div
+					initial={false}
+					animate={{
+						top: rect().top,
+						left: rect().left,
+						width: rect().width,
+						height: rect().height,
+						opacity: props.opacity(),
+					}}
+					transition={{
+						top: tween.snap,
+						left: tween.snap,
+						width: tween.snap,
+						height: tween.snap,
+						opacity: tween.moderateExit,
+					}}
+					style={{
+						position: "absolute",
+						borderRadius: shape.bg,
+						backgroundColor: color.accentWash,
+						// Removing this lights the row under the pointer after a single-expand click moves the rows, though the pointer is over the open panel, which belongs to no row.
+						pointerEvents: "none",
+					}}
+				/>
+			)}
+		</Show>
+	);
+}
+
 export function AccordionItem(props: {
 	value: string;
 	disabled?: boolean;
@@ -340,10 +467,19 @@ export function AccordionItem(props: {
 		triggerId: createUniqueId(),
 		panelId: createUniqueId(),
 	};
+	const tint: TintEntry = {
+		id: nextTintId++,
+		isOpen: item.isOpen,
+		index,
+	};
 
 	return (
 		<ItemContext.Provider value={item}>
 			<div
+				ref={(element: HostElement) => {
+					// Grouped tints are drawn by AccordionGroup, under its hover fill.
+					group?.registerItem(element, tint);
+				}}
 				style={{
 					position: "relative",
 					display: "flex",
@@ -351,30 +487,26 @@ export function AccordionItem(props: {
 					flexShrink: 0,
 				}}
 			>
-				{/* The item-wide tint sits under the trigger and panel, fading with the open state. */}
-				<motion.div
-					initial={false}
-					animate={{
-						opacity:
-							item.highlight() === "item" && item.isOpen()
-								? (group?.hoveringClosedRow() ?? false)
-									? 0.7
-									: 1
-								: 0,
-					}}
-					transition={tween.moderateExit}
-					style={{
-						position: "absolute",
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						borderRadius: shape.bg,
-						backgroundColor: color.accentWash,
-						// Removing this lights the row under the pointer after a single-expand click moves the rows, though the pointer is over the open panel, which belongs to no row.
-						pointerEvents: "none",
-					}}
-				/>
+				{/* A standalone item's tint sits under the trigger and panel, fading with the open state. */}
+				<Show when={group === undefined}>
+					<motion.div
+						initial={false}
+						animate={{
+							opacity: item.highlight() === "item" && item.isOpen() ? 1 : 0,
+						}}
+						transition={tween.moderateExit}
+						style={{
+							position: "absolute",
+							top: 0,
+							left: 0,
+							right: 0,
+							bottom: 0,
+							borderRadius: shape.bg,
+							backgroundColor: color.accentWash,
+							pointerEvents: "none",
+						}}
+					/>
+				</Show>
 				{props.children}
 			</div>
 		</ItemContext.Provider>
@@ -424,7 +556,12 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 			return;
 		}
 		const step = (
-			{ ArrowDown: "next", ArrowUp: "previous", Home: "first", End: "last" } as const
+			{
+				ArrowDown: "next",
+				ArrowUp: "previous",
+				Home: "first",
+				End: "last",
+			} as const
 		)[event.key as "ArrowDown" | "ArrowUp" | "Home" | "End"];
 		if (step === undefined) return;
 		event.preventDefault();
@@ -438,26 +575,28 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 			onMouseLeave={() => setStandaloneHovered(false)}
 			style={{ position: "relative", flexShrink: 0 }}
 		>
-			{/* Standalone rows carry their own highlights; a group's one shared highlight is drawn by AccordionGroup. */}
-			<motion.div
-				initial={false}
-				animate={{
-					opacity:
-						item.highlight() === "trigger" && item.isOpen() && hovered()
-							? 1
-							: 0,
-				}}
-				transition={tween.moderateExit}
-				style={{
-					position: "absolute",
-					top: 0,
-					left: 0,
-					right: 0,
-					bottom: 0,
-					borderRadius: shape.bg,
-					backgroundColor: color.accentWash,
-				}}
-			/>
+			{/* Standalone rows carry their own highlights; a group's tints and shared highlight are drawn by AccordionGroup. */}
+			<Show when={group === undefined}>
+				<motion.div
+					initial={false}
+					animate={{
+						opacity:
+							item.highlight() === "trigger" && item.isOpen() && hovered()
+								? 1
+								: 0,
+					}}
+					transition={tween.moderateExit}
+					style={{
+						position: "absolute",
+						top: 0,
+						left: 0,
+						right: 0,
+						bottom: 0,
+						borderRadius: shape.bg,
+						backgroundColor: color.accentWash,
+					}}
+				/>
+			</Show>
 			<motion.div
 				initial={false}
 				animate={{
@@ -478,12 +617,15 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 				ref={(element) => {
 					triggerElement = element;
 				}}
-				{...buttonProps({
-					disabled: item.disabled(),
-					onClick: toggle,
-					onKeyDown,
-					tabIndex: 0,
-				}, renderer)}
+				{...buttonProps(
+					{
+						disabled: item.disabled(),
+						onClick: toggle,
+						onKeyDown,
+						tabIndex: 0,
+					},
+					renderer,
+				)}
 				id={item.triggerId}
 				aria-expanded={item.isOpen()}
 				aria-controls={item.isOpen() ? item.panelId : undefined}

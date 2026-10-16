@@ -345,7 +345,6 @@ export function TokenInspectorDemo() {
 									testId={`inspect-row-${index()}`}
 								>
 									<CheckboxItem
-										size={step()}
 										index={index()}
 										label={label}
 										checked={checked().has(index())}

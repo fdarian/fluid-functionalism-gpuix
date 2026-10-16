@@ -1,8 +1,20 @@
-import type { HostMouseEvent, HostMouseMoveEvent, KeyEvent } from "@gpuix/solid";
+import type {
+	HostMouseEvent,
+	HostMouseMoveEvent,
+	KeyEvent,
+} from "@gpuix/solid";
 import { motion } from "@gpuix/solid";
 import { createSignal, createUniqueId } from "solid-js";
 import { createPointerCapture } from "../lib/pointer-capture";
-import { color, sizeChoice, type as scale, scheme, motion as tween, weight, focusRing } from "../lib/theme";
+import {
+	color,
+	focusRing,
+	sizeChoice,
+	type as scale,
+	scheme,
+	motion as tween,
+	weight,
+} from "../lib/theme";
 
 export type SwitchSize = "default" | "compact";
 
@@ -101,7 +113,7 @@ export function Switch(props: {
 		setDragX(Math.max(dragMin, Math.min(dragMax(), press.originX + delta)));
 	};
 
-	const onPressEnd = () => {
+	const onRelease = () => {
 		if (press === undefined) return;
 		const wasDragging = dragging;
 		const releasedAt = dragX();
@@ -117,6 +129,15 @@ export function Switch(props: {
 		// Past the midpoint of the drag range is on, short of it off, whichever side it started from.
 		const shouldBeOn = releasedAt > (dragMin + dragMax()) / 2;
 		if (shouldBeOn !== props.checked) props.onToggle();
+	};
+
+	// The release ends the capture, so it arrives as pointerup, then lostpointercapture, then mouseup: only a capture lost with the press still down is a cancel.
+	const onPressCancel = () => {
+		if (press === undefined) return;
+		press = undefined;
+		dragging = false;
+		setPressed(false);
+		setDragX(null);
 	};
 
 	// Base UI's switch root owns the keys: Enter clicks on keydown, Space on keyup (a keydown only keeps the page from scrolling).
@@ -151,8 +172,8 @@ export function Switch(props: {
 			{...hoverHandlers}
 			onMouseDown={onPressStart}
 			onMouseMove={onPressMove}
-			onMouseUp={onPressEnd}
-			onLostPointerCapture={onPressEnd}
+			onPointerUp={onRelease}
+			onLostPointerCapture={onPressCancel}
 			style={{
 				display: "flex",
 				flexDirection: props.settingsRow === true ? "row-reverse" : "row",
@@ -198,6 +219,9 @@ export function Switch(props: {
 			>
 				<motion.div
 					initial={false}
+					testId={
+						props.testId === undefined ? undefined : `${props.testId}-thumb`
+					}
 					animate={{
 						left: dragX() ?? restX(),
 						top: thumbY(),

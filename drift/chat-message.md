@@ -6,26 +6,17 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 - **Cause:** `gpuix gap`. Shared: CSS transforms ([README, Missing features, first row](../README.md)).
 - **Original:** `initial {opacity 0, y 8, scale .96}` to `{1, 0, 1}` on `spring.moderate`, `transform-origin` bottom right for the user and bottom left for the assistant (`chat-message.tsx:57-60`).
-- **Port:** `initial {opacity 0, top 8}` to `{1, 0}` on `tween.moderate` (`chat-message.tsx:94-96`); `top` needs `position: relative` (`:100`).
+- **Port:** `initial {opacity 0, top 8}` to `{1, 0}` on `tween.moderate` (`chat-message.tsx:95-97`); `top` needs `position: relative` (`:100`).
 - **gpuix lacks:** `scale` and `transform-origin` (`~/code/fdarian/gpuix/FORK.md:876-887`).
 - **Workaround:** opacity and the 8px rise on `top`, no scale.
 - **Fidelity:** approximated.
 - **Components it hits:** banner, ask-user-questions, input-copy, input-message, queued-stack, radio-group.
 
-## Meta row stays hidden while an action has keyboard focus (bug)
-
-- **Cause:** `not ported yet`.
-- **Original:** the row is revealed by `group-hover` and `group-focus-within`, so tabbing to an action shows the row and its focus ring (`chat-message.tsx:120-124`).
-- **Port:** the row fades on the `hovered` signal alone (`chat-message.tsx:87`, `:148`). `ChatMessageAction` is focusable (`tabIndex={0}`, `:46`) and has a focus ring (`:59`), but the row is at opacity 0 until the pointer is over the message, so a keyboard user focuses an invisible button.
-- **Workaround:** none.
-- **Fidelity:** dropped (keyboard reveal).
-- **Components it hits:** just this one.
-
 ## Meta row on touch
 
 - **Cause:** `gpuix gap` (no input-device signal; see queued-stack's `(hover: none)` entry in `drift/queued-stack.md`).
 - **Original:** `useTouchPrimary()` keeps the row always visible on touch (`chat-message.tsx:49`, `:120`).
-- **Port:** the row is hover-only everywhere (`chat-message.tsx:148`).
+- **Port:** the row is hover-only everywhere (`chat-message.tsx:155`).
 - **gpuix lacks:** `(hover: none)` / `(pointer: coarse)` never match.
 - **Workaround:** none; the port is desktop-only.
 - **Fidelity:** dropped.
@@ -35,7 +26,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `transition-opacity duration-150`, Tailwind's default `cubic-bezier(0.4, 0, 0.2, 1)` (`chat-message.tsx:121`).
-- **Port:** `{ duration: 0.15, ease: "easeOut" }` (`chat-message.tsx:21`). `colorFade` in `src/lib/theme.ts:311-313` already carries the exact bezier.
+- **Port:** `{ duration: 0.15, ease: "easeOut" }` (`chat-message.tsx:18`). `colorFade` in `src/lib/theme.ts:452-454` already carries the exact bezier.
 - **Workaround:** a 150 ms tween with a different curve.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -44,7 +35,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 - **Cause:** `not ported yet`.
 - **Original:** the docs page's buttons use `transition-colors duration-100` for the hover background and the icon colour (`app/docs/chat-message/page.tsx:20`).
-- **Port:** the hover background is a state style and the icon colour follows a `hovered` signal, both with no transition (`chat-message.tsx:48`, `:58`, `:66`).
+- **Port:** the hover background is a state style and the icon colour follows a `hovered` signal, both with no transition (`chat-message.tsx:44`, `:54`, `:62`).
 - **Workaround:** none.
 - **Fidelity:** approximated (switches at once).
 - **Components it hits:** just this one.
@@ -62,7 +53,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 - **Cause:** `not ported yet` (README: "Not ported there: ... the Size / Icons / Primitive rows").
 - **Original:** `size` prop and `SizeProvider` pick compact type (13/18 bubble, 11/14 caption), `py-1.5`, `px-3` (`chat-message.tsx:30-33`, `:46`, `:88-95`).
-- **Port:** one step only: 14/20 bubble, `py` 8, `px` 14 (`chat-message.tsx:18`, `:127-134`); no `size` prop.
+- **Port:** one step only: 14/20 bubble, `py` 8, `px` 14 (`chat-message.tsx:15`, `:130-137`); no `size` prop.
 - **Workaround:** none.
 - **Fidelity:** dropped (compact).
 - **Components it hits:** every component with a `size` variant.
@@ -71,7 +62,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 - **Cause:** `not ported yet` for `pre-wrap` and `break-words` (gpuix has `whiteSpace` `pre-wrap`, `FORK.md:658-659`); `gpuix gap` for `text-pretty` (no `text-wrap` in `FORK.md`).
 - **Original:** the body is `whitespace-pre-wrap break-words`, the user bubble adds `text-pretty`, and `children` is any `ReactNode` (`chat-message.tsx:87`, `:96-102`, `:28`).
-- **Port:** the body is one `<text>` with no `whiteSpace` or overflow-wrap, so newlines collapse and a long unbroken token is not broken; `children` is `string` only (`chat-message.tsx:85`, `:139`).
+- **Port:** the body is one `<text>` with no `whiteSpace` or overflow-wrap, so newlines collapse and a long unbroken token is not broken; `children` is `string` only (`chat-message.tsx:82`, `:143`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -80,7 +71,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 - **Cause:** `not ported yet` (gpuix has `fontVariantNumeric`, `FORK.md:657`).
 - **Original:** the time span is `tabular-nums`; `time` is a `ReactNode` (`chat-message.tsx:127`, `:24`).
-- **Port:** proportional digits, `time` is `string` (`chat-message.tsx:162`, `:82`).
+- **Port:** proportional digits, `time` is `string` (`chat-message.tsx:169`, `:78`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -89,7 +80,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 - **Cause:** `not ported yet` (gpuix has `layout`, `FORK.md:827`).
 - **Original:** `layout="position"` so earlier messages slide when a message is added (`chat-message.tsx:56`).
-- **Port:** no `layout` on the message; siblings jump (`chat-message.tsx:92-98`). Invisible in the demo, where "Add message" appends at the bottom.
+- **Port:** no `layout` on the message; siblings jump (`chat-message.tsx:93-99`). Invisible in the demo, where "Add message" appends at the bottom.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -98,7 +89,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 - **Cause:** `port choice` (the thumbnail needs a type and a path, not a `File`; PDF preview is a gpuix gap, see `drift/file-thumbnail.md`).
 - **Original:** `files?: File[]`, keyed by name, size, mtime and index (`chat-message.tsx:18`, `:77`).
-- **Port:** `FileLike[]` with `{ name, type, src }`, no key (`chat-message.tsx:79`, `:119-121`).
+- **Port:** `FileLike[]` with `{ name, type, src }`, no key (`chat-message.tsx:75`, `:122-124`).
 - **Workaround:** n/a.
 - **Fidelity:** exact for images.
 - **Components it hits:** file-thumbnail, input-message.
@@ -107,7 +98,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 - **Cause:** `port choice` (reason not stated; the port takes `testId` instead).
 - **Original:** `forwardRef`, `className` and `...props` land on the outer wrapper (`chat-message.tsx:40-42`, `:66`).
-- **Port:** props are `from`, `files`, `thumbnailSize`, `time`, `actions`, `testId`, `children` (`chat-message.tsx:77-86`).
+- **Port:** props are `from`, `files`, `thumbnailSize`, `time`, `actions`, `testId`, `children` (`chat-message.tsx:73-85`).
 - **Workaround:** n/a.
 - **Fidelity:** dropped (API only).
 - **Components it hits:** most ports.

@@ -54,7 +54,7 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 
 - **Cause:** `not ported yet` (reduced motion, README "Drift from the source" site rows) and `port choice` (captions).
 - **Original:** the play / pause icon button is the right end of the preview header, 40px square, through `ComponentPreview`'s `playbackButton`; `useReducedMotion()` stops the script (`demos.tsx:288-292`, `:380-400`, `lib/docs/ComponentPreview.tsx:140-170`); the two captions are flex rows whose text and `<code>` runs are separate flex items 8px apart (`demos.tsx:344-376`).
-- **Port:** the pause button is the same 40px header button, through the shared `ComponentPreview`'s `playback` option (icon, tooltip and click; `src/lib/doc-page.tsx:204-249`, `src/pages/fluid-hover/plain-vs-fluid.tsx:247-267`). There is no `prefers-reduced-motion` check (`matchMedia` exists in the fork, nothing reads it); each caption is one centred `<text>` with inline runs, so the gaps around the chip are a normal space.
+- **Port:** the pause button is the same 40px header button, through the shared `ComponentPreview`'s `playback` option (icon, tooltip and click; `src/lib/doc-page.tsx:204-249`, `src/pages/fluid-hover/plain-vs-fluid.tsx:247-265`). There is no `prefers-reduced-motion` check (`matchMedia` exists in the fork, nothing reads it); each caption is one centred `<text>` with inline runs, so the gaps around the chip are a normal space.
 - **Fidelity:** approximated.
 
 ## "Show the math": dashed rules are a gradient, the dots do not fade
@@ -74,7 +74,7 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 
 ## "When to split a list": narrower canvas, a hand-built sidebar, hand-broken callouts
 
-- **Cause:** `port choice` (the 600px page column, `src/app.tsx:45`), `gpuix gap` (no balanced text wrap; a wrapped `<text>` is as wide as its container, so there is no per-line extent to read: `FORK.md:765`) and `not ported yet` (sidebar parts).
+- **Cause:** `port choice` (the 600px page column, `src/app.tsx:48`), `gpuix gap` (no balanced text wrap; a wrapped `<text>` is as wide as its container, so there is no per-line extent to read: `FORK.md:765`) and `not ported yet` (sidebar parts).
 - **Original:** a 640 x 400 canvas, scrolled sideways when narrower, with a 260px framed `Sidebar` (`SidebarProvider`, `SidebarGroup`, `SidebarMenuSub`, `SidebarMenuSubButton href`, a `SidebarSeparator`, a disabled `SidebarMenuButton` at 50% opacity) and three callouts whose arrows are SVG `<marker>` paths measured against the real rows with a `MutationObserver` / `ResizeObserver` and a `Range` over the glyphs' line boxes (`demos.tsx:866-1246`).
 - **Port:**
   - The frame's inner width is 598px, so the canvas is 598 wide and the sidebar sits 179px from the left (the source's 200 less 21), keeping the left labels, the arrows and the right label inside the frame (`src/pages/fluid-hover/lists.tsx:41-50`).

@@ -305,6 +305,15 @@ function ValueDisplay(props: {
 }) {
 	const [draft, setDraft] = createSignal("");
 	let settled = false;
+	const fields: HostElement[] = [];
+
+	// So typing replaces the number, as the source's field does.
+	const selectField = (index: number) => {
+		const field = fields[index];
+		if (field === undefined)
+			throw new Error("Slider edit focused before it mounted");
+		field.select();
+	};
 
 	const startEdit = (index: number) => {
 		settled = false;
@@ -382,6 +391,10 @@ function ValueDisplay(props: {
 							: `${props.testId}-edit-${index}`
 					}
 					autoFocus
+					ref={(host: HostElement) => {
+						fields[index] = host;
+					}}
+					onFocus={() => selectField(index)}
 					value={draft()}
 					theme={{
 						text: color.foreground,

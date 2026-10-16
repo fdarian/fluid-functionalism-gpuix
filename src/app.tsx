@@ -1,4 +1,5 @@
 import {
+	clipboard,
 	createAppearance,
 	type HostElement,
 	useGpuixRequired,
@@ -9,6 +10,7 @@ import {
 	For,
 	type JSX,
 	Match,
+	onCleanup,
 	Show,
 	Switch,
 } from "solid-js";
@@ -41,11 +43,13 @@ import {
 	iconLibrary,
 	setIconLibrary,
 } from "./lib/icons";
+import { openUrl } from "./lib/open-url";
 import {
 	createSiteMenu,
 	SITE_MENU_SHORTCUT,
 	SiteCommandMenu,
 } from "./lib/site-command-menu";
+import { buildStarterPrompt, SITE_URL } from "./lib/starter-prompt";
 import {
 	bindSystemScheme,
 	color,
@@ -153,7 +157,19 @@ function AppSidebar(props: {
 	);
 }
 
+const COPIED_MS = 2000;
+
 function Hero() {
+	const nav = usePageNav();
+	const [copied, setCopied] = createSignal(false);
+	let resetTimer: ReturnType<typeof setTimeout> | undefined;
+	onCleanup(() => clearTimeout(resetTimer));
+	const copyPrompt = async () => {
+		await clipboard.writeText(buildStarterPrompt(themeChoice()));
+		setCopied(true);
+		clearTimeout(resetTimer);
+		resetTimer = setTimeout(() => setCopied(false), COPIED_MS);
+	};
 	return (
 		<div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
 			<Heading>Fluid Functionalism</Heading>
@@ -169,13 +185,28 @@ function Hero() {
 					paddingTop: 12,
 				}}
 			>
-				<Button size="compact" leadingIcon="copy">
+				<Button
+					testId="hero-copy"
+					size="compact"
+					leadingIcon={copied() ? "check" : "copy"}
+					onClick={copyPrompt}
+				>
 					Copy install prompt
 				</Button>
-				<Button size="compact" variant="secondary">
+				<Button
+					testId="hero-learn-more"
+					size="compact"
+					variant="secondary"
+					onClick={() => nav.navigate("introduction")}
+				>
 					Learn more
 				</Button>
-				<Button size="compact" variant="ghost">
+				<Button
+					testId="hero-see-demo"
+					size="compact"
+					variant="ghost"
+					onClick={() => openUrl(`${SITE_URL}/demo`)}
+				>
 					See demo
 				</Button>
 			</div>

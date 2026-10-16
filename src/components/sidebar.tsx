@@ -1,22 +1,44 @@
-import { type EventPayload, type HostElement, motion } from "@gpuix/solid";
+import {
+	buttonProps,
+	type EventPayload,
+	type HostElement,
+	type KeyEvent,
+	motion,
+	useGpuixRequired,
+} from "@gpuix/solid";
 import {
 	type Accessor,
 	createContext,
 	createEffect,
 	createSignal,
+	createUniqueId,
 	type JSX,
 	onCleanup,
 	onMount,
 	Show,
 	useContext,
 } from "solid-js";
-import { StableLabel } from "../lib/stable-label";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
+import {
+	createFocusRing,
+	FocusRing,
+	type FocusRingState,
+} from "../lib/focus-ring";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
+import { edgeIndex, moveIndex } from "../lib/list-nav";
 import { createMeasuredHeight } from "../lib/measured-height";
-import { color, height, shape, type as scale, motion as tween, weight, trackMs } from "../lib/theme";
+import { StableLabel } from "../lib/stable-label";
+import {
+	color,
+	height,
+	shape,
+	type as scale,
+	trackMs,
+	motion as tween,
+	weight,
+} from "../lib/theme";
 
 export const SIDEBAR_WIDTH = 256;
 
@@ -30,16 +52,22 @@ interface RowEntry {
 	level: 0 | 1;
 	active: () => boolean;
 	disabled: () => boolean;
+	element: HostElement;
 }
+
+type KeyStep = "next" | "previous" | "first" | "last";
 
 interface MenuScope {
 	hover: FluidHover;
-	registerRow: (
-		element: Parameters<FluidHover["registerItem"]>[1],
-		entry: RowEntry,
-	) => number;
+	focusRing: FocusRingState;
+	registerRow: (entry: RowEntry) => number;
 	/** A sub-menu is changing height: rows reflow every frame and the overlays must follow without gliding. */
 	trackReflow: (ms: number) => void;
+	/** Roving tabindex: the active rows are the tab stops, or the first row while none is active. */
+	isTabStop: (index: number | undefined) => boolean;
+	focusRow: (index: number, event: EventPayload) => void;
+	blurRow: (index: number) => void;
+	focusSibling: (index: number, step: KeyStep) => void;
 }
 
 const MenuScopeContext = createContext<MenuScope>();
@@ -50,7 +78,8 @@ function useMenuScope() {
 	return scope;
 }
 
-export function SidebarMenu(props: { children: JSX.Element }) {
+export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
+	const renderer = useGpuixRequired();
 	const rows = new Map<number, RowEntry>();
 	const [rowsVersion, setRowsVersion] = createSignal(0);
 	const [reflow, setReflow] = createSignal(false);
@@ -65,12 +94,73 @@ export function SidebarMenu(props: { children: JSX.Element }) {
 		},
 	});
 
+	const focusRing = createFocusRing(hover);
+	let mouseInside = false;
+	const isDisabled = (index: number) => {
+		const row = rows.get(index);
+		if (row === undefined) throw new Error(`No row registered at ${index}`);
+		return row.disabled();
+	};
+	const registeredIndices = () => [...rows.keys()].sort((a, b) => a - b);
+	const edgeRegistered = (edge: "first" | "last") => {
+		const indices = registeredIndices();
+		const position = edgeIndex(edge, indices.length, (at) =>
+			isDisabled(indices[at]),
+		);
+		return position === null ? null : indices[position];
+	};
+	const moveRegistered = (index: number, delta: 1 | -1) => {
+		const indices = registeredIndices();
+		const from = indices.indexOf(index);
+		if (from === -1) throw new Error(`No row registered at ${index}`);
+		const position = moveIndex(from, delta, indices.length, (at) =>
+			isDisabled(indices[at]),
+		);
+		return position === null ? null : indices[position];
+	};
+
 	const scope: MenuScope = {
 		hover,
-		registerRow(element, entry) {
+		focusRing,
+		isTabStop(index) {
+			rowsVersion();
+			if (index === undefined || isDisabled(index)) return false;
+			if (rows.get(index)?.active()) return true;
+			for (const entry of rows.values()) {
+				if (entry.active() && !entry.disabled()) return false;
+			}
+			return edgeRegistered("first") === index;
+		},
+		focusRow(index, event) {
+			hover.setActiveIndex(index);
+			focusRing.focus(index, event);
+		},
+		blurRow(index) {
+			focusRing.blur(index);
+			// Focus moving to a sibling row arrives as its focus right after this blur.
+			queueMicrotask(() => {
+				const focused = renderer.getFocusedElementId?.();
+				for (const row of rows.values()) {
+					if (row.element.id === focused) return;
+				}
+				if (!mouseInside) hover.setActiveIndex(null);
+			});
+		},
+		focusSibling(index, step) {
+			const target =
+				step === "first" || step === "last"
+					? edgeRegistered(step)
+					: moveRegistered(index, step === "next" ? 1 : -1);
+			if (target === null) return;
+			const row = rows.get(target);
+			if (row === undefined) throw new Error(`No row registered at ${target}`);
+			// The element's own focus() scrolls the row into view like a browser; the renderer's focusElement does not.
+			row.element.focus();
+		},
+		registerRow(entry) {
 			const index = nextIndex++;
 			rows.set(index, entry);
-			hover.registerItem(index, element);
+			hover.registerItem(index, entry.element);
 			setRowsVersion(rowsVersion() + 1);
 			// A removed row must leave the map: the active overlay returns at the first entry that claims to be active.
 			onCleanup(() => {
@@ -105,7 +195,16 @@ export function SidebarMenu(props: { children: JSX.Element }) {
 	return (
 		<MenuScopeContext.Provider value={scope}>
 			<div
+				testId={props.testId}
 				{...hover.containerProps}
+				onMouseEnter={() => {
+					mouseInside = true;
+					hover.handlers.onMouseEnter();
+				}}
+				onMouseLeave={() => {
+					mouseInside = false;
+					hover.handlers.onMouseLeave();
+				}}
 				style={{
 					position: "relative",
 					display: "flex",
@@ -140,6 +239,12 @@ export function SidebarMenu(props: { children: JSX.Element }) {
 					background={color.hover}
 					travel={() => !reflow()}
 				/>
+				<FocusRing
+					ring={focusRing}
+					radius={shape.focusRing}
+					testId={props.testId && `${props.testId}-focus-ring`}
+					travel={() => !reflow()}
+				/>
 				{props.children}
 			</div>
 		</MenuScopeContext.Provider>
@@ -163,19 +268,41 @@ export function SidebarMenuButton(props: {
 	testId?: string;
 }) {
 	const scope = useMenuScope();
+	const renderer = useGpuixRequired();
 	const level = props.level ?? 0;
 	let rowElement: HostElement | undefined;
 	const [index, setIndex] = createSignal<number>();
 	onMount(() => {
 		if (rowElement === undefined) throw new Error("Row is not mounted");
 		setIndex(
-			scope.registerRow(rowElement, {
+			scope.registerRow({
 				level,
 				active: () => props.active === true,
-				disabled: props.disabled ?? (() => false),
+				disabled: isDisabled,
+				element: rowElement,
 			}),
 		);
 	});
+	const isDisabled = () => props.disabled?.() === true;
+	// Arrows, Home and End move over every visible row in order; the keys the source does not bind are left alone.
+	const onKeyDown = (event: KeyEvent) => {
+		const own = index();
+		if (own === undefined) return;
+		const step = (
+			{
+				ArrowDown: "next",
+				ArrowRight: "next",
+				ArrowUp: "previous",
+				ArrowLeft: "previous",
+				Home: "first",
+				End: "last",
+			} as const
+		)[event.key as "ArrowDown"];
+		if (step === undefined) return;
+		event.preventDefault();
+		event.stopPropagation();
+		scope.focusSibling(own, step);
+	};
 	const isHovered = () => {
 		const own = index();
 		return own !== undefined && scope.hover.activeIndex() === own;
@@ -190,10 +317,30 @@ export function SidebarMenuButton(props: {
 			ref={(element) => {
 				rowElement = element;
 			}}
+			{...buttonProps(
+				{
+					get disabled() {
+						return isDisabled();
+					},
+					onClick: props.onClick,
+					onKeyDown,
+					get tabIndex() {
+						return scope.isTabStop(index()) ? 0 : -1;
+					},
+				},
+				renderer,
+			)}
+			id={createUniqueId()}
 			testId={props.testId}
-			role="button"
-			aria-current={props.active === true}
-			onClick={props.onClick}
+			aria-current={props.active === true ? "page" : undefined}
+			onFocus={(event: EventPayload) => {
+				const own = index();
+				if (own !== undefined) scope.focusRow(own, event);
+			}}
+			onBlur={() => {
+				const own = index();
+				if (own !== undefined) scope.blurRow(own);
+			}}
 			style={{
 				position: "relative",
 				height: rowHeight,
@@ -207,6 +354,8 @@ export function SidebarMenuButton(props: {
 				borderRadius: shape.item,
 				cursor: "pointer",
 				userSelect: "none",
+				// The menu's one shared ring is drawn by SidebarMenu.
+				keyboardFocusDim: false,
 			}}
 		>
 			<Show when={props.icon}>

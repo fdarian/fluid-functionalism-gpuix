@@ -10,17 +10,23 @@ import {
 	createRenderEffect,
 	createSignal,
 	type JSX,
-	Match,
 	on,
 	onCleanup,
 	children as resolveChildren,
 	Show,
-	Switch,
 	useContext,
 } from "solid-js";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { color, sizeChoice, shape, type as scale, motion as tween, weight, focusRing } from "../lib/theme";
+import {
+	color,
+	focusRing,
+	shape,
+	sizeChoice,
+	type as scale,
+	motion as tween,
+	weight,
+} from "../lib/theme";
 import { Button } from "./button";
 
 export type BannerStatus = "default" | "info" | "success" | "warning" | "error";
@@ -112,17 +118,15 @@ function useBannerScope() {
 }
 
 /**
- * The row's height and the banner's opacity move on their own tracks. gpuix
- * animates a pixel `height` but has no `fr` track, so the open height is
- * measured. A fixed bar also rides its row with `top`, standing in for the
- * translate the DOM version uses.
+ * The row's height and the banner's opacity move on their own tracks. The row
+ * animates between 0 and `auto`, so a reversal continues from where it is. A
+ * fixed bar rides its row by sitting at the row's bottom edge while the row
+ * clips it, standing in for the translate the DOM version uses.
  */
 const appearRow = { type: "spring", duration: 0.32, bounce: 0 } as const;
 const appearBanner = { ...tween.slow, delay: 0.08 } as const;
 const dismissRow = { duration: 0.24, ease: "easeInOut" } as const;
 const dismissFade = { duration: 0.16, ease: "easeOut" } as const;
-
-type Phase = "rest" | "measuring" | "opening" | "closing" | "gone";
 
 export function Banner(props: {
 	status?: BannerStatus;
@@ -146,50 +150,45 @@ export function Banner(props: {
 	const [openState, setOpenState] = createSignal(true);
 	const open = () => props.open ?? openState();
 	const [hasDescription, setHasDescription] = createSignal(false);
-	const [phase, setPhase] = createSignal<Phase>(open() ? "rest" : "gone");
-	const [rowHeight, setRowHeight] = createSignal(0);
+
+	// Mounted through the dismiss, so the ✕ and the actions are the same elements from the first paint to the end of the exit and a reopen mid-exit keeps their focus.
+	const [mounted, setMounted] = createSignal(open());
+	// A banner that is open on first render arrives in place; only a change plays.
+	let arrivesInPlace = open();
+	let rowElement: HostElement | undefined;
+	let barElement: HostElement | undefined;
+	// A fixed bar leaves upward by its own height, measured as the exit starts; 0 until it has been seen.
+	const [exitOffset, setExitOffset] = createSignal(0);
+	createEffect(
+		on(
+			open,
+			(isOpen) => {
+				if (isOpen) {
+					setMounted(true);
+					return;
+				}
+				if (
+					rowElement === undefined ||
+					barElement === undefined ||
+					!rowElement.mounted ||
+					!barElement.mounted ||
+					rowElement.getBoundingClientRect().height === 0
+				) {
+					// Closed before the row had any height: no exit to play, and none would report completing.
+					setMounted(false);
+					return;
+				}
+				setExitOffset(-barElement.getBoundingClientRect().height);
+			},
+			{ defer: true },
+		),
+	);
 
 	const scope: BannerScope = {
 		compact: () => size() === "compact",
 		hasDescription,
 		setHasDescription,
 	};
-
-	let restElement: HostElement | undefined;
-	let measureElement: HostElement | undefined;
-	let generation = 0;
-
-	// A banner that is open on first render arrives in place; only a change plays.
-	createEffect(
-		on(
-			open,
-			(isOpen) => {
-				generation += 1;
-				const mine = generation;
-				if (!isOpen) {
-					if (phase() === "gone") return;
-					if (restElement === undefined || !restElement.mounted) {
-						throw new Error("Banner is not mounted");
-					}
-					setRowHeight(restElement.getBoundingClientRect().height);
-					setPhase("closing");
-					return;
-				}
-				if (phase() === "rest") return;
-				setPhase("measuring");
-				// The measure layer mounts once this effect's writes have flushed.
-				queueMicrotask(() => {
-					if (mine !== generation) return;
-					if (measureElement === undefined || !measureElement.mounted) {
-						throw new Error("Banner measure layer is not mounted");
-					}
-					setRowHeight(measureElement.getBoundingClientRect().height);
-					setPhase("opening");
-				});
-			},
-			{ defer: true },
-		),
-	);
 
 	const dismiss = () => {
 		props.onDismiss?.();
@@ -291,7 +290,9 @@ export function Banner(props: {
 				<Show when={props.dismissible}>
 					<DismissButton
 						compact={size() === "compact"}
-						testId={props.testId === undefined ? undefined : `${props.testId}-dismiss`}
+						testId={
+							props.testId === undefined ? undefined : `${props.testId}-dismiss`
+						}
 						onClick={dismiss}
 					/>
 				</Show>
@@ -305,79 +306,56 @@ export function Banner(props: {
 		width: "100%",
 	} as const;
 
-	return (
-		<Switch>
-			<Match when={phase() === "rest"}>
-				<div
-					ref={(element) => {
-						restElement = element;
+	const row = () => {
+		const inPlace = arrivesInPlace;
+		arrivesInPlace = false;
+		return (
+			<motion.div
+				ref={(element: HostElement) => {
+					rowElement = element;
+				}}
+				initial={inPlace ? false : { height: 0 }}
+				animate={{ height: open() ? "auto" : 0 }}
+				transition={open() ? appearRow : dismissRow}
+				onMotionComplete={() => {
+					if (!open()) setMounted(false);
+				}}
+				style={{ ...rowStyle, overflow: "hidden" }}
+			>
+				<motion.div
+					ref={(element: HostElement) => {
+						barElement = element;
 					}}
-					style={rowStyle}
+					initial={
+						inPlace
+							? false
+							: fixed()
+								? { opacity: 0, top: exitOffset() }
+								: { opacity: 0 }
+					}
+					animate={
+						fixed()
+							? { opacity: open() ? 1 : 0, top: open() ? 0 : exitOffset() }
+							: { opacity: open() ? 1 : 0 }
+					}
+					transition={
+						open()
+							? fixed()
+								? appearRow
+								: appearBanner
+							: fixed()
+								? dismissRow
+								: dismissFade
+					}
+					style={{ ...rowStyle, position: "relative", flexShrink: 0 }}
 				>
 					{body()}
-				</div>
-			</Match>
-			<Match when={phase() === "measuring"}>
-				<div style={{ ...rowStyle, height: 0, position: "relative" }}>
-					<div
-						ref={(element) => {
-							measureElement = element;
-						}}
-						style={{
-							position: "absolute",
-							top: 0,
-							left: 0,
-							right: 0,
-							opacity: 0,
-							pointerEvents: "none",
-						}}
-					>
-						{body()}
-					</div>
-				</div>
-			</Match>
-			<Match when={phase() === "opening"}>
-				<motion.div
-					initial={{ height: 0 }}
-					animate={{ height: rowHeight() }}
-					transition={appearRow}
-					onMotionComplete={() => setPhase("rest")}
-					style={{ ...rowStyle, overflow: "hidden" }}
-				>
-					<motion.div
-						initial={
-							fixed() ? { opacity: 0, top: -rowHeight() } : { opacity: 0 }
-						}
-						animate={fixed() ? { opacity: 1, top: 0 } : { opacity: 1 }}
-						transition={fixed() ? appearRow : appearBanner}
-						style={{ ...rowStyle, position: "relative", flexShrink: 0 }}
-					>
-						{body()}
-					</motion.div>
 				</motion.div>
-			</Match>
-			<Match when={phase() === "closing"}>
-				<motion.div
-					initial={{ height: rowHeight() }}
-					animate={{ height: 0 }}
-					transition={dismissRow}
-					onMotionComplete={() => setPhase("gone")}
-					style={{ ...rowStyle, overflow: "hidden" }}
-				>
-					<motion.div
-						initial={fixed() ? { opacity: 1, top: 0 } : { opacity: 1 }}
-						animate={
-							fixed() ? { opacity: 0, top: -rowHeight() } : { opacity: 0 }
-						}
-						transition={fixed() ? dismissRow : dismissFade}
-						style={{ ...rowStyle, position: "relative", flexShrink: 0 }}
-					>
-						{body()}
-					</motion.div>
-				</motion.div>
-			</Match>
-		</Switch>
-	);
+			</motion.div>
+		);
+	};
+
+	return <Show when={mounted()}>{row()}</Show>;
 }
 
 function DismissButton(props: {

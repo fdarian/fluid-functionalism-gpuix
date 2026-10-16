@@ -16,17 +16,26 @@ import {
 	on,
 	onCleanup,
 	Show,
+	untrack,
 } from "solid-js";
-import { StableLabel } from "../lib/stable-label";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type ItemRect } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
-import { createMeasuredHeight } from "../lib/measured-height";
 import { isChord, moveIndex } from "../lib/list-nav";
+import { createMeasuredHeight } from "../lib/measured-height";
 import { IS_MAC } from "../lib/platform";
-import { color, shape, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
+import { StableLabel } from "../lib/stable-label";
+import {
+	color,
+	focusRing,
+	shape,
+	type as scale,
+	scheme,
+	motion as tween,
+	weight,
+	withAlpha,
+} from "../lib/theme";
 import { Button } from "./button";
-
 
 export interface AskUserOption {
 	id?: string;
@@ -142,6 +151,9 @@ function Row(props: RowProps) {
 	const arrowOverlay = () => (
 		<Show when={props.showArrow}>
 			<motion.div
+				testId={
+					props.testId === undefined ? undefined : `${props.testId}-arrow`
+				}
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
 				transition={{ duration: 0.08 }}
@@ -425,7 +437,8 @@ export function AskUserQuestions(props: {
 	};
 	/** Enter on a one-line answer field; Shift+Enter and the chords stay with the editor and the card. */
 	const submitOtherOnEnter = (event: KeyEvent) => {
-		if (event.key !== "Enter" || event.shiftKey === true || isChord(event)) return;
+		if (event.key !== "Enter" || event.shiftKey === true || isChord(event))
+			return;
 		event.preventDefault();
 		submitOther();
 	};
@@ -476,6 +489,22 @@ export function AskUserQuestions(props: {
 	const focusOther = () => {
 		if (otherElement === undefined) return;
 		renderer.focusElement?.(otherElement.id);
+	};
+	const groupHasFocus = () => {
+		const focused = renderer.getFocusedElementId?.();
+		if (focused === undefined || focused === null) return false;
+		if (otherElement?.id === focused) return true;
+		for (const element of rowElements.values()) {
+			if (element.id === focused) return true;
+		}
+		return false;
+	};
+	/** A blur is followed at once by the next row's focus, so the highlight is only dropped once focus is known to have left the group. */
+	const rowBlurred = (row: number) => {
+		setFocusedRow((current) => (current === row ? null : current));
+		queueMicrotask(() => {
+			if (!groupHasFocus()) hover.setActiveIndex(null);
+		});
 	};
 	const moveActive = (next: number) => {
 		hover.setActiveIndex(next);
@@ -538,7 +567,12 @@ export function AskUserQuestions(props: {
 			return;
 		}
 		if (rowCount() === 0) return;
-		if (key === "ArrowDown" || key === "ArrowUp" || key === "Home" || key === "End") {
+		if (
+			key === "ArrowDown" ||
+			key === "ArrowUp" ||
+			key === "Home" ||
+			key === "End"
+		) {
 			event.preventDefault();
 			let next: number;
 			if (key === "Home") next = 0;
@@ -593,13 +627,12 @@ export function AskUserQuestions(props: {
 		if (active === null || !hover.isMeasured()) return null;
 		return hover.rects()[active] ?? null;
 	};
-	const otherHintRect = () => {
+	const otherRect = () => {
 		if (!allowOther() || !hover.isMeasured()) return null;
-		if (!(focusedRow() === otherIndex() && otherText().length === 0)) {
-			return null;
-		}
 		return hover.rects()[otherIndex()] ?? null;
 	};
+	const otherHintShown = () =>
+		focusedRow() === otherIndex() && otherText().length === 0;
 
 	// ── Content height: the Q/A region animates to its content's measured height.
 	const content = createMeasuredHeight();
@@ -630,26 +663,37 @@ export function AskUserQuestions(props: {
 			}}
 		>
 			{/* The empty Other field shows a quiet "type here" outline. */}
-			<motion.div
-				initial={false}
-				animate={{
-					opacity: otherHintRect() === null ? 0 : 1,
-					top: otherHintRect()?.top ?? 0,
-					left: otherHintRect()?.left ?? 0,
-					width: otherHintRect()?.width ?? 0,
-					height: otherHintRect()?.height ?? 0,
-				}}
-				transition={{ ...tween.fast, duration: 0.08 }}
-				style={{
-					position: "absolute",
-					borderRadius: shape.bg,
-					backgroundColor: color.card,
-					outlineWidth: 1,
-					outlineOffset: -1,
-					outlineColor: color.border,
-					pointerEvents: "none",
-				}}
-			/>
+			<Show when={otherRect()}>
+				{(rect: () => ItemRect) => (
+					<motion.div
+						testId={`${props.testId ?? "ask"}-other-hint`}
+						initial={{
+							opacity: 0,
+							top: untrack(rect).top,
+							left: untrack(rect).left,
+							width: untrack(rect).width,
+							height: untrack(rect).height,
+						}}
+						animate={{
+							opacity: otherHintShown() ? 1 : 0,
+							top: rect().top,
+							left: rect().left,
+							width: rect().width,
+							height: rect().height,
+						}}
+						transition={{ ...tween.fast, duration: 0.08 }}
+						style={{
+							position: "absolute",
+							borderRadius: shape.bg,
+							backgroundColor: color.card,
+							outlineWidth: 1,
+							outlineOffset: -1,
+							outlineColor: color.border,
+							pointerEvents: "none",
+						}}
+					/>
+				)}
+			</Show>
 			{/* Below the selection, so a hovered selected row still reads as selected. */}
 			<FluidHighlight
 				rect={hoverRect}
@@ -690,10 +734,7 @@ export function AskUserQuestions(props: {
 								hover.setActiveIndex(i());
 								setFocusedRow(i());
 							}}
-							// The old row's blur can arrive after the new row's focus.
-							onBlur={() =>
-								setFocusedRow((current) => (current === i() ? null : current))
-							}
+							onBlur={() => rowBlurred(i())}
 							chipContent={i() + 1}
 							chipFilled={selected()}
 							isMulti={isMulti()}
@@ -735,11 +776,7 @@ export function AskUserQuestions(props: {
 						hover.setActiveIndex(otherIndex());
 						setFocusedRow(otherIndex());
 					}}
-					onBlur={() =>
-						setFocusedRow((current) =>
-							current === otherIndex() ? null : current,
-						)
-					}
+					onBlur={() => rowBlurred(otherIndex())}
 					chipContent={otherIndex() + 1}
 					chipFilled={otherText().length > 0}
 					isMulti={isMulti()}
@@ -780,9 +817,7 @@ export function AskUserQuestions(props: {
 						}}
 						onBlur={() => {
 							setTextFocused(false);
-							setFocusedRow((current) =>
-								current === otherIndex() ? null : current,
-							);
+							rowBlurred(otherIndex());
 						}}
 						onKeyDown={(event: KeyEvent) => {
 							if (!isMulti()) submitOtherOnEnter(event);

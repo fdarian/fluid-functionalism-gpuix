@@ -1,6 +1,6 @@
 import type { JSX } from "solid-js";
 import { CheckMark } from "../lib/icon";
-import { color, sizeChoice } from "../lib/theme";
+import { color } from "../lib/theme";
 import {
 	ChoiceGroup,
 	ChoiceRow,
@@ -37,12 +37,14 @@ function Checkbox(props: {
 	checked: boolean;
 	active: boolean;
 	size: ChoiceSize;
+	testId?: string;
 }) {
 	const box = () => ROW[props.size].box;
 	const glyph = () => (props.size === "compact" ? 16 : 18);
 	const inset = () => (box() - glyph()) / 2;
 	return (
 		<div
+			testId={props.testId}
 			style={{
 				position: "relative",
 				flexShrink: 0,
@@ -80,7 +82,6 @@ export function CheckboxItem(props: {
 	index: number;
 	checked: boolean;
 	onToggle: () => void;
-	size?: ChoiceSize;
 	testId?: string;
 }) {
 	return (
@@ -92,11 +93,12 @@ export function CheckboxItem(props: {
 			tabbable
 			onActivate={props.onToggle}
 			testId={props.testId}
-			indicator={(active) => (
+			indicator={(active, size) => (
 				<Checkbox
 					checked={props.checked}
 					active={active()}
-					size={props.size ?? sizeChoice()}
+					size={size()}
+					testId={props.testId && `${props.testId}-box`}
 				/>
 			)}
 		/>

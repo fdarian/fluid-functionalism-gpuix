@@ -36,16 +36,16 @@ Matches the source: 256px wide, top / left / bottom edges, `aria-label="Navigati
 
 ## `shadow-surface-3` painted as a border
 
-- **Cause:** `not ported yet`. gpuix takes `BoxShadow[]` or a CSS string with several layers and `inset` (`~/code/fdarian/gpuix/FORK.md:646-649`, `packages/native/js/host.ts:558`); the comment at `src/lib/theme.ts:328-331` saying it paints one shadow is out of date.
+- **Cause:** `not ported yet`. gpuix takes `BoxShadow[]` or a CSS string with several layers and `inset` (`~/code/fdarian/gpuix/FORK.md:646-649`, `packages/native/js/host.ts:558`); the comment at `src/lib/theme.ts:469-472` saying it paints one shadow is out of date.
 - **Original:** `surfaceClasses(level, 3)` (`registry/base/mobile-drawer.tsx:147`): the `--shadow-3` ring and drops; in dark mode also an inset top highlight, an inset ring and a 1px black outer ring (`app/globals.css:162`). No border.
-- **Port:** a `borderRightWidth: 1` in `popupBorder` and `shadow3()`, one drop (`src/components/mobile-drawer.tsx:107-110`; `src/lib/theme.ts:332-340`). The ring shows only on the right edge, so the dark highlights and outer ring are the visible loss.
+- **Port:** a `borderRightWidth: 1` in `popupBorder` and `shadow3()`, one drop (`src/components/mobile-drawer.tsx:107-110`; `src/lib/theme.ts:473-481`). The ring shows only on the right edge, so the dark highlights and outer ring are the visible loss.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** every surface-3 or higher shadow (dialog has the same entry).
 
 ## No surface context for the panel's contents
 
-- **Cause:** `not ported yet`. The port has no `useSurface` / `SurfaceProvider`.
+- **Cause:** `not ported yet`. The ladder exists (`src/lib/surface-context.ts`, read by dialog and popups); the drawer neither reads nor provides it.
 - **Original:** the level is `min(substrate + 2, 8)` and the children get it as their substrate (`registry/base/mobile-drawer.tsx:82-83`, `:161`).
 - **Port:** the panel is always `color.card`, surface-3 (`src/components/mobile-drawer.tsx:107`). Opened over the page (substrate 1) that is the same colour; opened over a raised surface it would be too low.
 - **Workaround:** none.
@@ -65,7 +65,7 @@ Matches the source: 256px wide, top / left / bottom edges, `aria-label="Navigati
 
 - **Cause:** `gpuix gap`. Same as [dialog](dialog.md).
 - **Original:** Base UI focuses the first tabbable as the drawer opens.
-- **Port:** `FocusFirst` from `dialog.tsx` runs `focusNextWithin` in a `setTimeout(0)` (`src/components/mobile-drawer.tsx:116`, `src/components/dialog.tsx:199-209`), while the panel is still sliding in.
+- **Port:** `FocusFirst` from `dialog.tsx` runs `focusNextWithin` in a `setTimeout(0)` (`src/components/mobile-drawer.tsx:116`, `src/components/dialog.tsx:209-219`), while the panel is still sliding in.
 - **Workaround:** the deferred call.
 - **Fidelity:** approximated.
 - **Components it hits:** dialog.

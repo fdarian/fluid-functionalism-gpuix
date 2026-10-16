@@ -8,7 +8,7 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 
 - **Cause:** `gpuix gap`. Shared: CSS transforms ([README, Missing features, first row](../README.md)).
 - **Original:** each card is a `motion.div` animating `y`, `scale` and `opacity` with `transform-origin: bottom center`; drag moves `y`, a lifted card is `scale: 1.03`, an entering card starts at `y: 14, scale: .96` (`:270-280`, `:315-325`). The pile's recoil is `stackBump.set({ y: -7 })` then a spring to 0 (`:140-146`).
-- **Port:** a card is absolutely positioned and `y` is its `bottom` offset. Scaling about the bottom centre is the same card with its left and right insets widened by `(1 - scale) * cardWidth / 2` and its height multiplied, which needs the stack's painted width (`box` at `queued-stack.tsx:258`, `target` at `:268`, the width from a `ResizeObserver` at `:183`). The recoil is `top: -bump, bottom: bump` on a wrapper (`:318`): it jumps with `tween.snap`, and 16 ms later springs back on the source's transition (`:230-243`).
+- **Port:** a card is absolutely positioned and `y` is its `bottom` offset. Scaling about the bottom centre is the same card with its left and right insets widened by `(1 - scale) * cardWidth / 2` and its height multiplied, which needs the stack's painted width (`box` at `queued-stack.tsx:250`, `target` at `:268`, the width from a `ResizeObserver` at `:183`). The recoil is `top: -bump, bottom: bump` on a wrapper (`:318`): it jumps with `tween.snap`, and 16 ms later springs back on the source's transition (`:230-243`).
 - **gpuix lacks:** translate and scale (`~/code/fdarian/gpuix/FORK.md:876-887`).
 - **Workaround:** the box maths above.
 - **Fidelity:** approximated. A receding card's box shrinks but its text and thumbnails do not, which only shows where a back card's content pokes into its strip: the card is 44px, a back card shows the top 9.8px, and a 28px thumbnail (26.6px scaled in the source) sits about 7px from its top, so it pokes by a couple of pixels in the collapsed pile. Five properties animate per card instead of one transform, and each re-lays out.
@@ -18,7 +18,7 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 
 - **Cause:** `gpuix gap` (the same transforms row).
 - **Original:** the gutter count enters and exits at `scale: .6` with `spring.fast` (`:251-254`).
-- **Port:** opacity only (`queued-stack.tsx:355-359`).
+- **Port:** opacity only (`queued-stack.tsx:348-352`).
 - **Workaround:** fade.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -35,9 +35,9 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 
 ## Card shadow ring is a border
 
-- **Cause:** `not ported yet`. gpuix paints multi-layer and `inset` `boxShadow` (`~/code/fdarian/gpuix/FORK.md:646-649`); `src/lib/theme.ts:328-340` still says it paints one outer shadow. To port: a `boxShadow` CSS string with the `0 0 0 1px` ring and both drops, and no `borderWidth`.
+- **Cause:** `not ported yet`. gpuix paints multi-layer and `inset` `boxShadow` (`~/code/fdarian/gpuix/FORK.md:646-649`); `src/lib/theme.ts:469-481` still says it paints one outer shadow. To port: a `boxShadow` CSS string with the `0 0 0 1px` ring and both drops, and no `borderWidth`.
 - **Original:** `shadow-surface-3`, a 1px ring plus two drops, none of it in layout (`:342`).
-- **Port:** `shadow3()` plus `borderWidth: 1` in `popupBorder` (`queued-stack.tsx:496-498`).
+- **Port:** `shadow3()` plus `borderWidth: 1` in `popupBorder` (`queued-stack.tsx:489-491`).
 - **Workaround:** a real border inside the card's box, where the source's ring is outside it.
 - **Fidelity:** approximated (one drop, not two).
 - **Components it hits:** every popup and card that uses `shadow3`.
@@ -46,7 +46,7 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 
 - **Cause:** `not ported yet` (README: "Not ported there: ... the Size ... rows").
 - **Original:** at the compact step the card is 38px, the text 13/18, the thumbnails 24px, padding `pl-1.5` / `pl-3` and `pr-1`; the hooks `useQueueCardHeight` and `QUEUE_CARD_H_COMPACT` are exported, and `collapsedStackHeight(count, cardH)` takes the height (`:25-41`, `:68-76`, `:338-342`, `:350`, `:356`).
-- **Port:** one step at 44px; `collapsedStackHeight(count)` has no height argument and the other two exports do not exist (`queued-stack.tsx:49`, `:69-74`). The attachment radius is `nestedRadius(shape.bg, 8)` at every step; the source nests 7 at the compact step (`:543`).
+- **Port:** one step at 44px; `collapsedStackHeight(count)` has no height argument and the other two exports do not exist (`queued-stack.tsx:42`, `:61-66`). The attachment radius is `nestedRadius(shape.bg, 8)` at every step; the source nests 7 at the compact step (`:543`).
 - **Workaround:** none.
 - **Fidelity:** dropped (compact).
 - **Components it hits:** every component with a `size` prop.
@@ -55,7 +55,7 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 
 - **Cause:** `not ported yet` (gpuix has `layoutId`, `FORK.md:827`).
 - **Original:** `morphLayoutId` gives a text-only card a `layoutId` (dropped while a press is down) so the dispatched card morphs into its sent bubble (`:53-56`, `:295-301`).
-- **Port:** no such prop; a dispatched card only fades out (`queued-stack.tsx:130-138`).
+- **Port:** no such prop; a dispatched card only fades out (`queued-stack.tsx:122-130`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** input-message, chat-message.
@@ -64,7 +64,7 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 
 - **Cause:** `port choice` (stated at `queued-stack.tsx:142-143`: a short hold bridges the gap between one element leaving and the next entering).
 - **Original:** `onMouseEnter` / `onMouseLeave` on the stack's wrapper alone (`:209-210`).
-- **Port:** the wrapper and every card report enter and leave to a counter, and the stack collapses 40 ms after the count reaches 0 (`queued-stack.tsx:142-162`, `:306-307`, `:478-485`).
+- **Port:** the wrapper and every card report enter and leave to a counter, and the stack collapses 40 ms after the count reaches 0 (`queued-stack.tsx:134-154`, `:299-300`, `:471-478`).
 - **Workaround:** a 40 ms timer.
 - **Fidelity:** approximated (collapses 40 ms later).
 - **Components it hits:** just this one.
@@ -73,7 +73,7 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 
 - **Cause:** `port choice` (stated at `queued-stack.tsx:505-508`: a press on the buttons must not start a drag, and gpuix captures the pointer only when asked, `src/lib/pointer-capture.ts:3-9`).
 - **Original:** `onPointerDown` and `onDoubleClick` are on the whole card, with window `pointermove` / `pointerup` listeners; the buttons stop their own pointer-down (`:302-314`, `:185-187`, `:382`).
-- **Port:** the press, move, release and double click are on an inner region with pointer capture (`queued-stack.tsx:509-530`), so a press or double click on the card's 14px (or 8px) left padding, its 6px right padding or its border does nothing. The drag position is the same maths.
+- **Port:** the press, move, release and double click are on an inner region with pointer capture (`queued-stack.tsx:502-523`), so a press or double click on the card's 14px (or 8px) left padding, its 6px right padding or its border does nothing. The drag position is the same maths.
 - **Workaround:** pointer capture.
 - **Fidelity:** approximated (the card edge is not part of the grip).
 - **Components it hits:** none other.
@@ -82,7 +82,7 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 
 - **Cause:** `not ported yet`. gpuix has `zIndex` on positioned siblings (`~/code/fdarian/gpuix/FORK.md:561`, `:603`), and every card is `position: absolute`; the comment at `queued-stack.tsx:245` is stale. To port: `zIndex: dragging ? 200 : 100 - i` on each card, as in the source.
 - **Original:** `zIndex: isDragging ? 200 : 100 - i` (`:326`).
-- **Port:** the cards render back to front with the dragged one last (`queued-stack.tsx:245-255`, `:384`).
+- **Port:** the cards render back to front with the dragged one last (`queued-stack.tsx:237-247`, `:377`).
 - **Workaround:** document order.
 - **Fidelity:** exact.
 - **Components it hits:** none other.
@@ -91,7 +91,7 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 
 - **Cause:** `not ported yet`.
 - **Original:** the "+n" chip is `bg-background/40`, `tabular-nums`, radius `attachmentRadius` (`:355-360`); the count is `tabular-nums` (`:255`); Edit and Remove are focusable buttons with a `focus-visible:ring-1` ring and labels `Edit queued message: <text>` / `Remove queued message: <text>` (`:387-388`, `:401-402`).
-- **Port:** the chip is `color.hover` (a 4% black wash, not 40% of the background), proportional digits (`queued-stack.tsx:553`, `:556`, `:361-368`); Edit and Remove are `role="button"` divs with no `tabIndex`, no focus ring, and the labels `Edit` / `Remove` (`:90-92`, `:80-118`).
+- **Port:** the chip is `color.hover` (a 4% black wash, not 40% of the background), proportional digits (`queued-stack.tsx:546`, `:549`, `:354-361`); Edit and Remove are `role="button"` divs with no `tabIndex`, no focus ring, and the labels `Edit` / `Remove` (`:90-92`, `:80-118`).
 - **Workaround:** none.
 - **Fidelity:** approximated (chip tint, digits); dropped (keyboard focus ring, longer labels).
 - **Components it hits:** none other.
@@ -100,7 +100,7 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 
 - **Cause:** `gpuix gap`. Shared: variable-font axes ([README, Missing features, variable-font row](../README.md)).
 - **Original:** the count is `fontVariationSettings` 550 (`:256`).
-- **Port:** SemiBold 600 (`queued-stack.tsx:365`).
+- **Port:** SemiBold 600 (`queued-stack.tsx:358`).
 - **Fidelity:** approximated.
 - **Components it hits:** card, table, tabs, tabs-subtle, sidebar, ask-user-questions.
 
@@ -108,7 +108,7 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 
 - **Cause:** `port choice` (reason not stated; the port has no `File` and its `InputMessage` is a separate module).
 - **Original:** `QueuedMessage` is imported from `input-message`, and its `files` are `File[]` (`:8`).
-- **Port:** `QueuedMessage` is defined and exported here with `files: FileLike[]`, and the stack takes a `testId` (`queued-stack.tsx:43-47`, `:137`).
+- **Port:** `QueuedMessage` is defined and exported here with `files: FileLike[]`, and the stack takes a `testId` (`queued-stack.tsx:36-40`, `:129`).
 - **Fidelity:** exact for images.
 - **Components it hits:** input-message, file-thumbnail.
 

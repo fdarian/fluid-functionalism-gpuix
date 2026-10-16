@@ -9,13 +9,14 @@ import {
 import {
 	createContext,
 	createEffect,
-	createMemo,
 	createSignal,
 	createUniqueId,
 	type JSX,
 	on,
 	onCleanup,
+	For,
 	Show,
+	untrack,
 	useContext,
 } from "solid-js";
 import { createFocusRing, FocusRing, type FocusRingState } from "../lib/focus-ring";
@@ -24,6 +25,7 @@ import {
 	type FluidHover,
 	type ItemRect,
 } from "../lib/fluid-hover";
+import { createPreviewPill } from "../lib/preview-pill";
 import { StableLabel } from "../lib/stable-label";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
@@ -179,26 +181,17 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 		return active !== null && active !== selectedIndex();
 	};
 
-	/**
-	 * Where the preview pill sits. Hovering another tab it is on that tab. When
-	 * the pointer is over the selected tab it fades in place, and when the
-	 * pointer has left the list it glides back into the selected pill.
-	 */
-	const preview = createMemo<{ rect: ItemRect; visible: boolean } | undefined>(
-		(previous) => {
-			const selected = selectedRect();
-			if (selected === undefined) return undefined;
-			const active = hover.activeIndex();
-			if (active !== null && active !== selectedIndex()) {
-				const rect = rectOf(active);
-				return rect === undefined ? previous : { rect, visible: true };
-			}
-			if (mouseInside() && previous !== undefined) {
-				return { rect: previous.rect, visible: false };
-			}
-			return { rect: selected, visible: false };
-		},
-	);
+	const preview = createPreviewPill({
+		selectedRect,
+		selectedIndex,
+		activeIndex: hover.activeIndex,
+		rectOf,
+		mouseInside,
+	});
+	const previewMounts = () => {
+		const shown = preview();
+		return shown === undefined ? [] : [shown.mount];
+	};
 
 	return (
 		<ListContext.Provider value={scope}>
@@ -256,17 +249,27 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 						</motion.div>
 					)}
 				</Show>
-				<Show when={preview()}>
-					{(shown: () => { rect: ItemRect; visible: boolean }) => (
+				<For each={previewMounts()}>
+					{() => {
+						// Born at the selected pill, as the source mounts it, then slides out to the hovered tab.
+						const born = untrack(selectedRect);
+						if (born === undefined) throw new Error("Preview pill mounted without a selected pill");
+						const shown = () => {
+							const pill = preview();
+							if (pill === undefined) throw new Error("Preview pill has no state");
+							return pill;
+						};
+						return (
 						<motion.div
-							initial={false}
+							testId={props.testId && `${props.testId}-preview`}
+							initial={rectStyle(born)}
 							animate={rectStyle(shown().rect)}
 							// The preview keeps up with the pointer on fast; its way home takes the moderate spring.
 							transition={hoveringOther() ? tween.fast : tween.moderate}
 							style={{ position: "absolute" }}
 						>
 							<motion.div
-								initial={false}
+								initial={{ opacity: 0 }}
 								animate={{ opacity: shown().visible ? 0.4 : 0 }}
 								transition={{ duration: shown().visible ? 0.08 : 0.06 }}
 								style={{
@@ -280,8 +283,9 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 								}}
 							/>
 						</motion.div>
-					)}
-				</Show>
+						);
+					}}
+				</For>
 				<FocusRing
 					ring={focusRing}
 					radius={shape.focusRing}

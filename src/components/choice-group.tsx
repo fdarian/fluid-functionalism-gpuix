@@ -6,20 +6,35 @@ import {
 } from "@gpuix/solid";
 import {
 	type Accessor,
+	createComputed,
 	createContext,
 	createEffect,
 	createMemo,
+	createSignal,
 	createUniqueId,
 	For,
 	type JSX,
 	onCleanup,
+	untrack,
 	useContext,
 } from "solid-js";
-import { StableLabel } from "../lib/stable-label";
 import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFocusRing, FocusRing, type FocusRingState } from "../lib/focus-ring";
 import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
-import { color, sizeChoice, shape, scheme, type as scale, motion as tween, weight } from "../lib/theme";
+import {
+	createFocusRing,
+	FocusRing,
+	type FocusRingState,
+} from "../lib/focus-ring";
+import { StableLabel } from "../lib/stable-label";
+import {
+	color,
+	shape,
+	sizeChoice,
+	type as scale,
+	scheme,
+	motion as tween,
+	weight,
+} from "../lib/theme";
 
 /**
  * What checkbox-group and radio-group share: a vertical list of focusable
@@ -33,6 +48,9 @@ export const ROW = {
 	default: { height: 36, gap: 8, padX: 12, box: 16, text: scale.body },
 	compact: { height: 28, gap: 4, padX: 10, box: 14, text: scale.bodyCompact },
 } as const;
+
+/** `tween.moderateExit` plus a frame: when a vanished run's fade is over. */
+const RUN_EXIT_MS = 160;
 
 /** A contiguous run of selected rows. The id stays with the run while its rows change, so the background grows or shrinks in place instead of being replaced. */
 export interface Run {
@@ -127,6 +145,8 @@ export function ChoiceGroup(props: {
 	runs: Accessor<readonly Run[]>;
 	/** Arrow keys select the row they land on, as native radios do. */
 	arrowsSelect?: boolean;
+	/** Whether a run that leaves `runs` fades out (checkbox) or is gone at once (radio, whose one fill is placed, not faded). Defaults to `true`. */
+	fadeOutRuns?: boolean;
 	testId?: string;
 	children: JSX.Element;
 }) {
@@ -157,7 +177,31 @@ export function ChoiceGroup(props: {
 			height: last.top + last.height - first.top,
 		};
 	};
-	const runIds = createMemo(() => props.runs().map((run) => run.id));
+	// A run that left `runs` keeps its highlight mounted for its exit fade (it sits on its last rect and fades), as the source's AnimatePresence does.
+	const [shownRunIds, setShownRunIds] = createSignal<readonly number[]>([]);
+	const retireTimers = new Set<ReturnType<typeof setTimeout>>();
+	onCleanup(() => {
+		for (const timer of retireTimers) clearTimeout(timer);
+	});
+	createComputed(() => {
+		const live = props.runs().map((run) => run.id);
+		const retiring =
+			props.fadeOutRuns === false
+				? []
+				: untrack(shownRunIds).filter((id) => !live.includes(id));
+		setShownRunIds([...live, ...retiring]);
+		if (retiring.length === 0) return;
+		const timer = setTimeout(() => {
+			retireTimers.delete(timer);
+			setShownRunIds(
+				shownRunIds().filter(
+					(id) =>
+						!retiring.includes(id) || props.runs().some((run) => run.id === id),
+				),
+			);
+		}, RUN_EXIT_MS);
+		retireTimers.add(timer);
+	});
 
 	const context: ChoiceContextValue = {
 		hover,
@@ -202,11 +246,12 @@ export function ChoiceGroup(props: {
 					userSelect: "none",
 				}}
 			>
-				<For each={runIds()}>
+				<For each={shownRunIds()}>
 					{(id: number) => (
 						<FluidHighlight
 							rect={runRect(id)}
 							session={() => 0}
+							fadeIn={false}
 							radius={props.role === "radiogroup" ? shape.bg : shape.mergedBg}
 							background={color.active}
 							glide={tween.moderate}
@@ -240,8 +285,11 @@ export function ChoiceRow(props: {
 	tabbable: boolean;
 	onActivate: () => void;
 	testId?: string;
-	/** The 16px indicator beside the label; `active` is hover or focus. */
-	indicator: (active: Accessor<boolean>) => JSX.Element;
+	/** The indicator beside the label; `active` is hover or focus, `size` the group's. */
+	indicator: (
+		active: Accessor<boolean>,
+		size: Accessor<ChoiceSize>,
+	) => JSX.Element;
 }) {
 	const context = useChoice();
 	const size = () => ROW[context.size()];
@@ -323,7 +371,7 @@ export function ChoiceRow(props: {
 				keyboardFocusDim: false,
 			}}
 		>
-			{props.indicator(active)}
+			{props.indicator(active, context.size)}
 			<StableLabel
 				text={props.label}
 				heavy={props.checked}

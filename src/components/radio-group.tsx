@@ -104,6 +104,7 @@ export function RadioGroup(props: {
 				size={props.size}
 				runs={runs}
 				arrowsSelect
+				fadeOutRuns={false}
 				testId={props.testId}
 			>
 				{props.children}

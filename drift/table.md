@@ -11,7 +11,7 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 - **Cause:** `gpuix gap`.
 - **Original:** a real `<table>` with `w-full border-collapse` (`table.tsx:81`): columns auto-size to their widest cell and line up across rows; one rule is shared between adjacent rows.
 - **Port:** a column of flex rows, each cell `flexGrow: 1; flexBasis: 0` (`table.tsx:107-153`, `:162-173`), so columns are equal width. `TableHead` / `TableCell` take an optional fixed `width` (`:164-166`). Each row draws its own bottom border (`:145`); the port's rows are 36px + a 1px rule, the collapsed original's row height was not measured.
-- **gpuix lacks:** `display: table` and `border-collapse` (taffy has no table boxes, `~/code/fdarian/gpuix/FORK.md` area C; README row `README.md:131`). Grid tracks (`auto`, `max-content`, `fr`) exist and could size columns across rows if every cell sat in one grid; the port has not moved to that.
+- **gpuix lacks:** `display: table` and `border-collapse` (taffy has no table boxes, `~/code/fdarian/gpuix/FORK.md` area C; README row `README.md:160`). Grid tracks (`auto`, `max-content`, `fr`) exist and could size columns across rows if every cell sat in one grid; the port has not moved to that.
 - **Workaround:** equal columns plus the optional fixed `width`.
 - **Fidelity:** approximated (equal columns instead of content-sized ones).
 - **Components it hits:** just this one.
@@ -20,8 +20,8 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 
 - **Cause:** `gpuix gap`.
 - **Original:** header rows set `fontVariationSettings` to `fontWeights.semibold` (`wght 550, opsz 18`) and body rows to `fontWeights.normal` (`wght 400, opsz 14`) on the `<tr>` (`table.tsx:158-165`).
-- **Port:** `fontWeight: weight.semibold` (600) for header cells, 400 for body, on the cell `<text>` (`table.tsx:178`, `src/lib/theme.ts:278`).
-- **gpuix lacks:** variable-font axes (`StyleDesc` has `fontWeight` and `fontFeatureSettings`, no `fontVariationSettings`); `README.md:141`, `:212`.
+- **Port:** `fontWeight: weight.semibold` (600) for header cells, 400 for body, on the cell `<text>` (`table.tsx:178`, `src/lib/theme.ts:372`).
+- **gpuix lacks:** variable-font axes (`StyleDesc` has `fontWeight` and `fontFeatureSettings`, no `fontVariationSettings`); `README.md:171`, `:252`.
 - **Workaround:** Inter's static cuts only; no `opsz`.
 - **Fidelity:** approximated (600 for 550, no optical size).
 - **Components it hits:** every component using `font-variation-settings`.
@@ -31,16 +31,16 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 - **Cause:** `not ported yet`.
 - **Original:** the row border fades to transparent over 80ms (`transition-[border-color] duration-80`, `table.tsx:153-154`) and the cell text eases from muted to foreground over the same 80ms (`transition-colors duration-80 group-[.is-active]/row:text-foreground`, `table.tsx:210`).
 - **Port:** both switch at once: `borderColor` is set from `hideBorder()` (`table.tsx:146`) and the text `color` from `textColor()` (`:159-160`, `:177`), with no transition.
-- **gpuix lacks:** nothing. gpuix animates `color` and `borderColor` with CSS transitions (`FORK.md:816-818`); the port already does it for text in select and combobox with `colorFade` (`src/lib/theme.ts:310`, `src/components/select.tsx:723`, `src/components/combobox.tsx:648`). A border needs `transitionProperty: "border-color"` (kebab-case, `FORK.md:895`). `README.md:192` still says state styles switch instantly, which is stale.
+- **gpuix lacks:** nothing. gpuix animates `color` and `borderColor` with CSS transitions (`FORK.md:816-818`); the port already does it for text in select and combobox with `colorFade` (`src/lib/theme.ts:451`, `src/components/select.tsx:728`, `src/components/combobox.tsx:651`). A border needs `transitionProperty: "border-color"` (kebab-case, `FORK.md:895`). `README.md:226` still says state styles switch instantly, which is stale.
 - **Workaround:** none.
 - **Fidelity:** dropped (the lit row's rules and text snap).
 - **Components it hits:** just this one.
 
 ## Highlight travel runs on `top` / `left`
 
-- **Cause:** `gpuix gap` (no transforms; `README.md:196`).
+- **Cause:** `gpuix gap` (no transforms; `README.md:236`).
 - **Original:** the highlight is pinned to the corner and moved with `x` / `y` transforms on `spring.fast`, width and height as layout (`registry/default/fluid-hover-highlight.tsx:74-77`, `:130-133`).
-- **Port:** `top` / `left` / `width` / `height` on the same spring (`src/lib/fluid-highlight.tsx:6-13`, `:74-80`).
+- **Port:** `top` / `left` / `width` / `height` on the same spring (`src/lib/fluid-highlight.tsx:6-13`, `:78-85`).
 - **gpuix lacks:** CSS transforms.
 - **Workaround:** the layout properties `motion` can animate.
 - **Fidelity:** approximated (same motion, but it re-lays out each frame).
@@ -50,7 +50,7 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 
 - **Cause:** `not ported yet`.
 - **Original:** the highlight keeps its 80ms opacity fade but snaps its position under `prefers-reduced-motion` (`fluid-hover-highlight.tsx:83-90`, `:114`, `:133`).
-- **Port:** always travels; nothing in `src` reads reduced motion (`src/lib/fluid-highlight.tsx:53-58`).
+- **Port:** always travels; nothing in `src` reads reduced motion (`src/lib/fluid-highlight.tsx:55-60`).
 - **gpuix lacks:** nothing: `matchMedia` with `prefers-reduced-motion` and `MotionConfig reducedMotion="user"` exist (`FORK.md:831-833`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
@@ -70,7 +70,7 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 - **Cause:** `not ported yet`.
 - **Original:** real `<table>`, `<thead>`, `<tbody>`, `<tr>`, `<th>`, `<td>`; every part takes `className`, a `ref` and the element's HTML attributes (`table.tsx:39-47`, `:99-117`, `:125-170`, `:176-217`), which the site's pages use to align and size columns (`text-center`, `w-[180px]`, `whitespace-nowrap` in `app/table/page.tsx`).
 - **Port:** plain `<div>` rows and cells with no `role`, only `testId` and the `width` prop (`table.tsx:50-54`, `:107-111`, `:155`, `:187-199`). There is no cell alignment option and no `className` / `ref`.
-- **gpuix lacks:** nothing: `role` and `aria-*` work on any element (`src/components/sidebar.tsx:186-187` sets both).
+- **gpuix lacks:** nothing: `role` and `aria-*` work on any element (`src/components/sidebar.tsx:312` sets `aria-current`; `src/components/tabs.tsx` sets `role`).
 - **Workaround:** none.
 - **Fidelity:** approximated (looks the same; the table is anonymous to assistive tech, columns cannot be centred or kept on one line).
 - **Components it hits:** any ported component that dropped `className` passthrough.

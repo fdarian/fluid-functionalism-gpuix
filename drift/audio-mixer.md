@@ -11,7 +11,7 @@ repeating it.
 
 - **Cause:** `port choice` (the port keeps the docs layout; the page is `layout: "docs"`).
 - **Original:** `w-full max-w-[720px] mx-auto px-10 py-10`, a 640px content column, no sidebar or right column (`app/slider/page.tsx:66`).
-- **Port:** the docs column, 600 wide, with the sidebar on the left and the customise card on the right (`src/app.tsx:305-312`, `PAGE_WIDTH`). Sliders are 40px narrower, and the page sits inside the app frame rather than alone in the window.
+- **Port:** the docs column, 600 wide, with the sidebar on the left and the customise card on the right (`src/app.tsx:336-343`, `PAGE_WIDTH`). Sliders are 40px narrower, and the page sits inside the app frame rather than alone in the window.
 - **Fidelity:** approximated (same rows, narrower tracks).
 - **Components it hits:** every `layout: "docs"` page.
 
@@ -19,7 +19,7 @@ repeating it.
 
 - **Cause:** `gpuix gap` for the weight (variable font: README "Drift from the source", variable-font rows) and `port choice` for the size.
 - **Original:** `h1` `text-[22px]` at `fontWeights.bold`, 4px above the subtitle (`app/slider/page.tsx:68-77`); section titles are `text-[15px] leading-5.5` at `fontWeights.semibold` (`:84-87`).
-- **Port:** `App`'s shared `Heading` (`src/app.tsx:49-60`), 28px with a 34px line, a 24px column gap above the page, cancelled to 4px by `marginTop: -20` on the subtitle (`src/pages/audio-mixer.tsx:146`). Section titles are 15 / 22 at SemiBold 600 (`:78-90`).
+- **Port:** `App`'s shared `Heading` (`src/app.tsx:53-64`), 28px with a 34px line, a 24px column gap above the page, cancelled to 4px by `marginTop: -20` on the subtitle (`src/pages/audio-mixer.tsx:146`). Section titles are 15 / 22 at SemiBold 600 (`:78-90`).
 - **Workaround:** the negative margin.
 - **Fidelity:** approximated.
 - **Components it hits:** every docs page.

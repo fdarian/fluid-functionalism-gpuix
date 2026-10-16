@@ -8,9 +8,9 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 - **Cause:** `gpuix gap` (README "Bugs" table, scroll-area row; "Missing features", intrinsic width row).
 - **Original:** `overflow: auto` with a `w-max` child scrolls in both axes (`app/docs/scrollbars/page.tsx:393`, `:426`); `Content` keeps `min-width: fit-content`.
-- **Port:** the viewport of a horizontal or both-axis area is a flex row (`display: flex; flexDirection: row; alignItems: flex-start`, `src/components/scroll-area.tsx:504-510`) and its content box is `flexShrink: 0` (`:513-522`); a vertical area keeps `width: "100%"`.
+- **Port:** the viewport of a horizontal or both-axis area is a flex row (`display: flex; flexDirection: row; alignItems: flex-start`, `src/components/scroll-area.tsx:510-516`) and its content box is `flexShrink: 0` (`:513-522`); a vertical area keeps `width: "100%"`.
 - **gpuix lacks:** a content-sized width. `width: "max-content"` is rejected (only grid tracks take `max-content`; `FORK.md` area E, `:866-871`: it needs a layout run with max-content available space), and since the DOM-parity release `overflowX: "scroll"` no longer makes the viewport a flex row (`FORK.md:580-582`), so a block child is clamped to the viewport width and a wide descendant does not extend the scroll width. Overflow only happens when the child is a flex item with `flexShrink: 0`.
-- **Workaround:** the flex row above; callers give wide content `flexShrink: 0` or an explicit width (the demo's tiles and cells do, `src/demos/scroll-area.tsx:170`, `:181`, `:112`).
+- **Workaround:** the flex row above; callers give wide content `flexShrink: 0` or an explicit width (the demo's tiles and cells do, `src/demos/scroll-area.tsx:176`, `:187`, `:118`).
 - **Fidelity:** exact.
 - **Components it hits:** any two-axis scroller. The port's `Table` root is `width: "100%"` (`src/components/table.tsx:75`) but it does grow inside one when every cell carries a `width`, since each row's width is then the sum of its cells (the Scrollbars page's "Double overflow", `src/pages/scrollbars/demos.tsx:251-292`, `drift/scrollbars-page.md`).
 
@@ -18,7 +18,7 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 - **Cause:** `gpuix gap` (README "Missing features": effect groups off macOS).
 - **Original:** `.scroll-fade` / `.scroll-fade-x` are a CSS `mask-image` on the viewport whose end alphas follow a scroll timeline; browsers without scroll timelines (Firefox) get no fade (`app/globals.css:1087-1093`, `:1198-1235`).
-- **Port:** `maskImage` on the viewport, a linear gradient rebuilt from the `onScroll` offset with the same ramps (alpha 1 at the true start / end, 0 once 48px lie past the edge, `src/components/scroll-area.tsx:333-361`, `:496`). The earlier overlay gradient in the surface colour is gone, so the content itself dissolves, as on the web.
+- **Port:** `maskImage` on the viewport, a linear gradient rebuilt from the `onScroll` offset with the same ramps (alpha 1 at the true start / end, 0 once 48px lie past the edge, `src/components/scroll-area.tsx:339-369`, `:502`). The earlier overlay gradient in the surface colour is gone, so the content itself dissolves, as on the web.
 - **gpuix lacks:** a mask on Windows and Linux. `maskImage` is an effect group (`FORK.md` area D), built on macOS in zed's `gpui_apple`; the WGSL and HLSL paths are unproven. There a masked viewport paints without the fade.
 - **Workaround:** none needed on macOS.
 - **Fidelity:** exact on macOS (apart from `Math.min(fadeSize, length / 2)` at `:359`, which the CSS does not do for a viewport under 96px); no fade elsewhere. A new gradient string is built on every scroll event. A `both` area fades vertically only, as the single class does on the web.
@@ -26,9 +26,9 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 ## The thumb colour switches instantly
 
-- **Cause:** `not ported yet` (gpuix transitions colours: `colorFade`, `src/lib/theme.ts:309`).
+- **Cause:** `not ported yet` (gpuix transitions colours: `colorFade`, `src/lib/theme.ts:450`).
 - **Original:** `transition-[background-color,width,height] duration-160 ease-in-out` on the thumb, so the 8 / 12 / 16% tint eases (`registry/base/scroll-area.tsx:147-148`).
-- **Port:** `thumbColor()` is a plain style (`src/components/scroll-area.tsx:393-394`, `:458`); only the width / height and the nudge ease (`:449-454`).
+- **Port:** `thumbColor()` is a plain style (`src/components/scroll-area.tsx:401-402`, `:466`); only the width / height and the nudge ease (`:449-454`).
 - **Workaround:** none.
 - **Fidelity:** approximated (tint steps, 160ms).
 - **Components it hits:** just this one.
@@ -37,7 +37,7 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 - **Cause:** `gpuix gap` (no transforms: [README "Missing features", first row](../README.md#missing-features)).
 - **Original:** `-translate-x-0.5` / `-translate-y-0.5` on the thumb (`registry/base/scroll-area.tsx:152-155`).
-- **Port:** `left` / `top` animates 1 to 0 with the width / height (`src/components/scroll-area.tsx:449-454`).
+- **Port:** `left` / `top` animates 1 to 0 with the width / height (`src/components/scroll-area.tsx:457-462`).
 - **Workaround:** the same offset on a layout prop.
 - **Fidelity:** exact (end states and timing match).
 - **Components it hits:** just this one.
@@ -46,18 +46,18 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 - **Cause:** `port choice` (desktop only: the audit notes gpuix has no touch input; `useTouchPrimary` is not ported).
 - **Original:** on touch-primary devices the Base UI tree is replaced by a native-overflow `div` (`role="group"`, `aria-roledescription="scroll area"`, `tabIndex=0`) and `ScrollBar` renders nothing (`registry/base/scroll-area.tsx:49-75`, `:109-112`; `registry/default/hooks/use-touch-primary.tsx`).
-- **Port:** one path, the drawn scrollbar (`src/components/scroll-area.tsx:469-535`).
+- **Port:** one path, the drawn scrollbar (`src/components/scroll-area.tsx:477-541`).
 - **Workaround:** n/a.
 - **Fidelity:** dropped (no touch path).
 - **Components it hits:** just this one.
 
-## Keyboard scrolling is re-implemented, and also fires for keys from descendants
+## Keyboard scrolling is re-implemented
 
 - **Cause:** `port choice` (reason not stated). gpuix already scrolls the nearest scroller on arrows, Page, Home, End and Space unless `preventDefault`ed (`FORK.md:584-586`), so the handler duplicates a default.
 - **Original:** the viewport is a tab stop while it overflows and the browser scrolls it with the keys (Base UI `Viewport:367-369`; FF sets no `tabIndex` of its own on the Base UI path, `registry/base/scroll-area.tsx:83-92`); keys typed in a descendant input or listbox do not scroll it.
-- **Port:** `onKeyDown` on the viewport maps arrows (40px), Page keys and Space (87.5% of the view), Home and End to `scrollTo`, and calls `preventDefault` (`src/components/scroll-area.tsx:281-323`, `:492-493`). It runs for every bubbled keydown and does not check `event.target === event.currentTarget` or `event.defaultPrevented`.
-- **Workaround:** none.
-- **Fidelity:** approximated. Likely a bug (not run): a text input inside a `ScrollArea` loses Space, arrows and Home / End to the scroller, and a child that handles arrows itself (a listbox) also scrolls the area.
+- **Port:** `onKeyDown` on the viewport maps arrows (40px), Page keys and Space (87.5% of the view), Home and End to `scrollTo`, and calls `preventDefault` (`src/components/scroll-area.tsx`, `onKeyDown`). It acts only when the viewport itself is the focused element and the key is not already `defaultPrevented`, so an input inside keeps Space, arrows and Home / End, and a child that handles arrows itself does not also scroll the area (`scripts/check-scroll-area.tsx`).
+- **Workaround:** n/a.
+- **Fidelity:** exact for the keys it maps; the rest of gpuix's own defaults are unreachable because the handler `preventDefault`s the mapped keys.
 - **Components it hits:** just this one.
 
 ## Props: class names, `ref` and div props are gone
@@ -73,7 +73,7 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 - **Cause:** `not ported yet`.
 - **Original:** the sidebar content and the command-menu list are a `ScrollArea` with `scroll-divider` and `scroll-fade` (`registry/base/sidebar.tsx:297-301`, `registry/default/command-menu.tsx:1069-1138`).
-- **Port:** both use a bare `overflowY: "scroll"` scroller (`src/components/sidebar.tsx:381`, `src/components/command-menu.tsx:874`); the `divider` prop has no consumer.
+- **Port:** both use a bare `overflowY: "scroll"` scroller (`src/components/sidebar.tsx:532`, `src/components/command-menu.tsx:905`); the `divider` prop has no consumer.
 - **Workaround:** gpuix's own overlay bar; the sidebar draws fixed hairlines.
 - **Fidelity:** dropped for those two components.
 - **Components it hits:** sidebar, command-menu (see their drift files).
@@ -82,7 +82,7 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 - **Cause:** the script is `not ported yet` (the component has no way to be driven, below); the size and copy are `port choice` (reason not stated).
 - **Original:** two 256 x 224 lists (`h-56 w-64`) with a scripted fake cursor that slides in, scrolls down and back and leaves, feeding pointer events to the `ScrollArea` (`app/docs/scrollbars/page.tsx:248-262`, `:262-370`). Captions: "The native scrollbar hides until you scroll, so the list looks cut off" and "ScrollArea shows its scrollbar on hover and fades the edges", each with a leading X / check mark (`:347-366`).
-- **Port:** 256 x 168, no cursor script; captions "Plain overflow: nothing says there is more below" and "ScrollArea: scrollbar on hover, faded edges" (`src/demos/scroll-area.tsx:132-156`). The plain panel is `overflowY: "scroll"`, so it shows gpuix's overlay bar, not a hidden macOS one.
+- **Port:** 256 x 168, no cursor script; captions "Plain overflow: nothing says there is more below" and "ScrollArea: scrollbar on hover, faded edges" (`src/demos/scroll-area.tsx:138-162`). The plain panel is `overflowY: "scroll"`, so it shows gpuix's overlay bar, not a hidden macOS one.
 - **Why not in the demo:** `ScrollArea` takes its hover and scroll offset only from real pointer and wheel events: no `ref`, no hover prop, no controlled offset (`src/components/scroll-area.tsx:62-83`). A demo cannot feed it a scripted cursor the way the source dispatches `pointermove` and sets `scrollTop` (`page.tsx:292-318`), and a cursor drawn over the lists with the thumb left unshown would be fake.
 - **Workaround:** none without a component change.
 - **Fidelity:** approximated.
@@ -90,9 +90,9 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 ## Demo: the horizontal strip needs an explicit height
 
-- **Cause:** `port choice` (reason not stated; the viewport is `height: 100%` of the root, `src/components/scroll-area.tsx:497-498`).
+- **Cause:** `port choice` (reason not stated; the viewport is `height: 100%` of the root, `src/components/scroll-area.tsx:503-504`).
 - **Original:** `className="w-full"`, no height; the strip is as tall as its tiles (80 + 24 padding, `app/docs/scrollbars/page.tsx:380-405`).
-- **Port:** `height={104}` (`src/demos/scroll-area.tsx:162`). Tiles, gap, padding, radius and the faded edges match.
+- **Port:** `height={104}` (`src/demos/scroll-area.tsx:168`). Tiles, gap, padding, radius and the faded edges match.
 - **Workaround:** the caller passes the height.
 - **Fidelity:** exact at that height; an auto-height area is not supported.
 - **Components it hits:** just this one.
@@ -101,7 +101,7 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 - **Cause:** `port choice` (reason not stated; the port's `Table` can overflow the viewport when its cells carry widths, as the Scrollbars page's "Double overflow" does, `src/pages/scrollbars/demos.tsx:251-292`, so the hand-built rows are not needed).
 - **Original:** the real `Table` / `TableRow index` / `TableCell` inside `ScrollArea orientation="both"`, `h-80 w-full` = 320px tall, no frame, full month names, `text-right tabular-nums` cells, row hover from the table (`app/docs/scrollbars/page.tsx:422-462`, snippet `:149-180`).
-- **Port:** flex rows of local `Cell`s (36px rows, 104 / 80px columns), 132px tall, inside a bordered 12px-radius frame, month names cut to three letters, no `tabular-nums`, no row hover (`src/demos/scroll-area.tsx:98-122`, `:195-246`).
+- **Port:** flex rows of local `Cell`s (36px rows, 104 / 80px columns), 132px tall, inside a bordered 12px-radius frame, month names cut to three letters, no `tabular-nums`, no row hover (`src/demos/scroll-area.tsx:99-128`, `:201-261`).
 - **Workaround:** fixed column widths, `flexShrink: 0` rows.
 - **Fidelity:** approximated.
 - **Components it hits:** table (README "Missing features": `display: table`).
@@ -110,7 +110,7 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 - **Cause:** `port choice` (the extra cards are test fixtures; reason for dropping the prose not stated).
 - **Original:** sections The problem, The scrollbar, The fade, Examples (Horizontal, Double overflow), API reference, with code snippets and a PropsTable; no divider, rounded-clip or nested examples (`app/docs/scrollbars/page.tsx:492-580`).
-- **Port:** the first, horizontal and both-axis cards, plus "Rounded clip" (28px radius, with and without the fade), "Scroll divider" and "Nested scroll areas" (`src/demos/scroll-area.tsx:249-304`). No prose, no snippets, no API table, no `R` shape toggle hint.
+- **Port:** the first, horizontal and both-axis cards, plus "Rounded clip" (28px radius, with and without the fade), "Scroll divider" and "Nested scroll areas" (`src/demos/scroll-area.tsx:264-321`). No prose, no snippets, no API table, no `R` shape toggle hint.
 - **Workaround:** n/a.
 - **Fidelity:** all source variants present (the standalone fade is the last card, 288 x 256 as `w-72 h-64`), except the cursor script (above).
 - **Components it hits:** every demo.
