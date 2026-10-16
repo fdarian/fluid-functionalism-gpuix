@@ -56,7 +56,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `not ported yet`.
 - **Original:** `bg-card/70 backdrop-blur-sm hover:bg-card` when the card has a `CardImage` (`:492-494`).
-- **Port:** the 70% alpha alone (`src/components/card.tsx:40`, `:569-573`). The comment says gpuix has no backdrop blur; it has `backdropFilter` (`packages/native/js/host.ts:567-570`, `FORK.md:651`, effect groups, macOS).
+- **Port:** the 70% alpha alone (`src/components/card.tsx:51-52`, `:576-582`). The comment says gpuix has no backdrop blur; it has `backdropFilter` (`packages/native/js/host.ts:567-570`, `FORK.md:651`, effect groups, macOS).
 - **Workaround:** the alpha.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -102,7 +102,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `gpuix gap`.
 - **Original:** the link button's arrow is an arrow-right with `-rotate-45` (`:958`).
-- **Port:** the arrow-up-right glyph is drawn instead (`src/components/card.tsx:31`, `:1008-1016`).
+- **Port:** the arrow-up-right glyph is drawn instead (`src/components/card.tsx:40`, `:1031-1041`).
 - **gpuix lacks:** `rotate` (no `transform`; `~/code/fdarian/gpuix/FORK.md:876-887`). README "gpuix gaps", CSS transforms row.
 - **Workaround:** the glyph swap.
 - **Fidelity:** exact for the resting pose, no rotation tween.

@@ -54,7 +54,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `not ported yet`.
 - **Original:** rows have `id` and `aria-disabled`; sections are `role="group"` labelled by their heading; the empty state is `role="status" aria-live="polite"` (`:1105-1110`, `:1286-1289`, `:1159-1160`). The field's `role="combobox"`, `aria-expanded`, `aria-controls`, `aria-autocomplete` and `aria-activedescendant` are ported (`:858-863`).
-- **Port:** the field and the rows' `id` / `aria-selected` follow the source (`src/components/command-menu.tsx:695-700`, `:993-994`, `:1140-1142`); disabled rows carry no `aria-disabled`, sections no group role or label, and the empty state no status role. gpuix does expose these (`~/code/fdarian/gpuix/README.md:2965-2985`); the combobox port uses them (`src/components/combobox.tsx:448-455`).
+- **Port:** the field and the rows' `id` / `aria-selected` follow the source (`src/components/command-menu.tsx:667-672`, `:966-967`, `:1113-1115`); disabled rows carry no `aria-disabled`, sections no group role or label, and the empty state no status role. gpuix does expose these (`~/code/fdarian/gpuix/README.md:2965-2985`); the combobox port uses them (`src/components/combobox.tsx:374`, `base-ui:src/combobox/root/use-combobox-root.ts:387-400`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -123,7 +123,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `not ported yet`.
 - **Original:** Base UI Dialog: `role="dialog"` named by a screen-reader-only `title` and `description` props, focus trapped and returned to the trigger on close, page scroll locked and the page hidden from the accessibility tree, Escape closes from anywhere, an outside press closes (a click that presses and releases on the backdrop in `drift/dialog.md`), `defaultOpen` and an uncontrolled mode, `modal`, `container` and `className` props (`:1449-1568`).
-- **Port:** its own `<anchored fill="window">` layer, not the ported `Dialog` (`src/components/command-menu.tsx:1288-1372`): no role, title or description; `HideOutside` (`src/lib/modal.tsx`, used by `src/components/dialog.tsx:331`) is not used; no focus return; `open` and `onOpenChange` are required; the scrim closes on `mousedown` through `onMouseDownOutside` (`:1321`; the dialog port uses gpuix's `DialogBackdrop`, which closes on a click); Escape works from the field only (`:530-534`).
+- **Port:** its own `<anchored fill="window">` layer, not the ported `Dialog` (`src/components/command-menu.tsx:1345-1428`): no role, title or description; `HideOutside` (`base-ui:src/floating-ui-solid/utils/mark-others.ts:35`, used by `src/components/dialog.tsx:201`) is not used; no focus return; `open` and `onOpenChange` are required; the scrim closes on `mousedown` through `onMouseDownOutside` (`src/components/command-menu.tsx:1417`; the dialog port uses gpuix's `DialogBackdrop`, which closes on a click); Escape works from the field only (`src/components/command-menu.tsx:602-610`).
 - **Workaround:** none.
 - **Fidelity:** approximated (looks and closes the same with the pointer and the field focused).
 - **Components it hits:** just this one.
