@@ -207,7 +207,7 @@ function HeroArrows() {
 			/>
 			<Tooltip
 				content={
-					<text style={{ ...siteType.caption, color: color.foreground }}>
+					<text style={{ ...siteType.caption, color: color.background }}>
 						{"Introduction  "}
 						<span style={{ fontFamily: MONO, opacity: 0.5 }}>{"\u2192"}</span>
 					</text>

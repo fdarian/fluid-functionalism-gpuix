@@ -11,11 +11,18 @@ export async function showcaseScenarios(shot: ShotContext) {
 	shot.capture("grid-2");
 	await shot.scroll(PAGE_X, PAGE_Y, 0, -520);
 	shot.capture("grid-3");
+	await shot.scroll(PAGE_X, PAGE_Y, 0, -520);
+	shot.capture("grid-4");
+	await shot.scroll(PAGE_X, PAGE_Y, 0, -520);
+	shot.capture("grid-5");
+	await shot.scroll(PAGE_X, PAGE_Y, 0, -520);
+	shot.capture("grid-6");
 	await shot.scroll(PAGE_X, PAGE_Y, 0, 4000);
 	await shot.hover("hero-next");
 	await shot.settle(700);
 	shot.capture("hero-next-tooltip");
 	await shot.moveTo(PAGE_X, PAGE_Y);
+	await shot.scroll(PAGE_X, PAGE_Y, 0, -1300);
 	await shot.hover("card-switch-open");
 	shot.capture("footer-hover");
 }
