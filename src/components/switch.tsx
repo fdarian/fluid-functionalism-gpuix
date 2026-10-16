@@ -1,10 +1,8 @@
-import type {
-	HostMouseEvent,
-	HostMouseMoveEvent,
-	KeyEvent,
-} from '@gpuix/solid';
 import { motion } from '@gpuix/solid';
-import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
+import {
+	createSwitchRoot,
+	createSwitchThumb,
+} from 'base-ui-solid-gpuix/switch';
 import { createSignal, createUniqueId } from 'solid-js';
 import {
 	color,
@@ -62,99 +60,45 @@ export function Switch(props: {
 	testId?: string;
 }) {
 	const m = () => METRICS[props.size ?? sizeChoice()];
-	const trackId = createUniqueId();
 	const labelId = createUniqueId();
 	const thumbTravel = () => m().trackWidth - m().thumbSize - THUMB_OFFSET * 2;
 	const pressedThumbWidth = () => m().thumbSize + m().pressExtend;
-	const dragMin = THUMB_OFFSET;
-	const dragMax = () => m().trackWidth - THUMB_OFFSET - pressedThumbWidth();
 
 	// The row and the track each report their own enter and leave, so hover is a count of the elements the pointer is over.
 	const [overCount, setOverCount] = createSignal(0);
 	const hovered = () => overCount() > 0;
-	const [pressed, setPressed] = createSignal(false);
-	const [dragX, setDragX] = createSignal<number | null>(null);
-	let press: { startX: number; originX: number } | undefined;
-	let dragging = false;
-	const row = createPointerCapture('Switch');
 
 	const thumbWidth = () =>
-		pressed()
+		thumb.pressed()
 			? pressedThumbWidth()
 			: hovered()
 				? m().thumbSize + m().pillExtend
 				: m().thumbSize;
 	const thumbHeight = () =>
-		pressed() ? m().thumbSize - m().pressShrink : m().thumbSize;
+		thumb.pressed() ? m().thumbSize - m().pressShrink : m().thumbSize;
 	const thumbY = () =>
-		pressed() ? THUMB_OFFSET + m().pressShrink / 2 : THUMB_OFFSET;
+		thumb.pressed() ? THUMB_OFFSET + m().pressShrink / 2 : THUMB_OFFSET;
 	// Checked, the extra width grows leftward so the outer edge stays pinned to the track end.
 	const restX = () =>
 		props.checked
 			? THUMB_OFFSET + thumbTravel() - (thumbWidth() - m().thumbSize)
 			: THUMB_OFFSET;
 
-	const onPressStart = (event: HostMouseEvent) => {
-		if (props.disabled || event.button !== 0) return;
-		if (event.x === undefined) throw new Error('mouseDown without coordinates');
-		row.capture(event);
-		setPressed(true);
-		dragging = false;
-		press = { startX: event.x, originX: restX() };
-	};
-
-	const onPressMove = (event: HostMouseMoveEvent) => {
-		if (press === undefined) return;
-		if (event.x === undefined) throw new Error('mouseMove without coordinates');
-		const delta = event.x - press.startX;
-		if (!dragging) {
-			if (Math.abs(delta) < DRAG_DEAD_ZONE) return;
-			dragging = true;
-		}
-		setDragX(Math.max(dragMin, Math.min(dragMax(), press.originX + delta)));
-	};
-
-	const onRelease = () => {
-		if (press === undefined) return;
-		const wasDragging = dragging;
-		const releasedAt = dragX();
-		press = undefined;
-		dragging = false;
-		setPressed(false);
-		setDragX(null);
-		if (!wasDragging) {
-			props.onToggle();
-			return;
-		}
-		if (releasedAt === null) throw new Error('drag ended without a position');
-		// Past the midpoint of the drag range is on, short of it off, whichever side it started from.
-		const shouldBeOn = releasedAt > (dragMin + dragMax()) / 2;
-		if (shouldBeOn !== props.checked) props.onToggle();
-	};
-
-	// The release ends the capture, so it arrives as pointerup, then lostpointercapture, then mouseup: only a capture lost with the press still down is a cancel.
-	const onPressCancel = () => {
-		if (press === undefined) return;
-		press = undefined;
-		dragging = false;
-		setPressed(false);
-		setDragX(null);
-	};
-
-	// Base UI's switch root owns the keys: Enter clicks on keydown, Space on keyup (a keydown only keeps the page from scrolling).
-	const onKeyDown = (event: KeyEvent) => {
-		if (props.disabled) return;
-		if (event.key === 'Enter') {
-			event.preventDefault();
-			props.onToggle();
-		} else if (event.key === ' ') {
-			event.preventDefault();
-		}
-	};
-	const onKeyUp = (event: KeyEvent) => {
-		if (props.disabled || event.key !== ' ' || event.defaultPrevented) return;
-		props.onToggle();
-	};
+	const root = createSwitchRoot({
+		checked: () => props.checked,
+		disabled: () => props.disabled,
+		onCheckedChange: () => props.onToggle(),
+		labelId: () => labelId,
+	});
+	const thumb = createSwitchThumb({
+		checked: () => props.checked,
+		disabled: () => props.disabled,
+		onCheckedChange: () => props.onToggle(),
+		restX,
+		dragMin: () => THUMB_OFFSET,
+		dragMax: () => m().trackWidth - THUMB_OFFSET - pressedThumbWidth(),
+		deadZone: DRAG_DEAD_ZONE,
+	});
 
 	const hoverHandlers = {
 		onMouseEnter: () => setOverCount(overCount() + 1),
@@ -168,13 +112,10 @@ export function Switch(props: {
 
 	return (
 		<div
-			ref={row.ref}
+			ref={thumb.ref}
 			testId={props.testId}
 			{...hoverHandlers}
-			onMouseDown={onPressStart}
-			onMouseMove={onPressMove}
-			onPointerUp={onRelease}
-			onLostPointerCapture={onPressCancel}
+			{...thumb.pressProps}
 			style={{
 				display: 'flex',
 				flexDirection: props.settingsRow === true ? 'row-reverse' : 'row',
@@ -194,18 +135,11 @@ export function Switch(props: {
 			}}
 		>
 			<div
-				id={trackId}
-				role="switch"
-				aria-checked={props.checked}
-				aria-labelledby={labelId}
-				aria-disabled={props.disabled === true}
-				tabIndex={props.disabled ? -1 : 0}
+				{...root.rootProps}
 				testId={
 					props.testId === undefined ? undefined : `${props.testId}-track`
 				}
 				{...hoverHandlers}
-				onKeyDown={onKeyDown}
-				onKeyUp={onKeyUp}
 				style={{
 					position: 'relative',
 					flexShrink: 0,
@@ -227,14 +161,14 @@ export function Switch(props: {
 						props.testId === undefined ? undefined : `${props.testId}-thumb`
 					}
 					animate={{
-						left: dragX() ?? restX(),
+						left: thumb.dragX() ?? restX(),
 						top: thumbY(),
 						width: thumbWidth(),
 						height: thumbHeight(),
 					}}
 					// While dragging only x follows the pointer; width, height and y keep springing.
 					transition={
-						dragX() === null
+						thumb.dragX() === null
 							? tween.moderate
 							: { ...tween.moderate, left: tween.snap }
 					}
