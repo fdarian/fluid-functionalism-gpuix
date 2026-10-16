@@ -332,7 +332,9 @@ export function App(props: {
 	initialPage?: string;
 }) {
 	const [page, setPage] = createSignal(props.initialPage ?? SHOWCASE);
-	const nav: PageNav = { navigate: setPage, current: page };
+	// A page mounts motion values, and gpuix rejects renderer creates inside the key or press handler that navigates; a microtask runs after it returns.
+	const navigate = (slug: string) => queueMicrotask(() => setPage(slug));
+	const nav: PageNav = { navigate, current: page };
 	const current = (): Demo | undefined =>
 		props.demos.find((demo) => demo.slug === page());
 	const currentPage = (): Page | undefined =>
@@ -367,7 +369,7 @@ export function App(props: {
 						demos={props.demos}
 						pages={props.pages}
 						page={page()}
-						onPage={setPage}
+						onPage={navigate}
 						onSearch={() => siteMenu.setOpen(true)}
 					/>
 				</Show>
@@ -435,7 +437,7 @@ export function App(props: {
 				pages={props.pages}
 				showcase={SHOWCASE}
 				current={page()}
-				onPage={setPage}
+				onPage={navigate}
 			/>
 		</AppFrame>
 	);
