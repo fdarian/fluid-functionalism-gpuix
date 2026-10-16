@@ -80,6 +80,42 @@ k.check("inline: no ring after a pointer move", !k.exists("basic-ring"));
 await k.press("down");
 k.check("inline: ring after an arrow key", k.exists("basic-ring"));
 
+// Roving tab stop: Tab from outside lands on the checked row, whichever row had focus
+// before. The click above left the second row checked.
+const BASIC_ROWS = Array.from(
+	{ length: 40 },
+	(_, index) => `basic-${index}`,
+).filter((testId) => k.exists(testId));
+const basicFocus = () => focusedAmong(BASIC_ROWS);
+// Shift+Tab from the first row, which is not the tab stop, leaves the panel.
+await k.focus("basic-0");
+await k.press("shift-tab");
+k.check("inline: Shift+Tab from the first row leaves the panel", basicFocus() === null);
+for (let presses = 0; presses < 60 && basicFocus() === null; presses++) {
+	await k.press("tab");
+}
+k.expect("inline: Tab lands on the checked row", basicFocus(), "basic-1");
+k.check("inline: the ring shows on a keyboard-visible focus", k.exists("basic-ring"));
+await k.press("up");
+k.expect("inline: ArrowUp focuses the previous row", basicFocus(), "basic-0");
+await k.press("up");
+k.expect(
+	"inline: ArrowUp from the first row wraps to the last",
+	basicFocus(),
+	BASIC_ROWS.at(-1),
+);
+await k.press("down");
+k.expect("inline: ArrowDown from the last row wraps to the first", basicFocus(), "basic-0");
+await k.press("right");
+k.expect("inline: ArrowRight is ArrowDown", basicFocus(), "basic-1");
+await k.press("left");
+k.expect("inline: ArrowLeft is ArrowUp", basicFocus(), "basic-0");
+await k.press("end");
+k.expect("inline: End focuses the last row", basicFocus(), BASIC_ROWS.at(-1));
+await k.press("home");
+k.expect("inline: Home focuses the first row", basicFocus(), "basic-0");
+k.check("inline: the ring follows the focus", k.exists("basic-ring"));
+
 // Keyboard entry: Tab into the group draws the ring.
 await scrollIntoView("groups-0");
 for (let presses = 0; presses < 40 && !k.exists("groups-ring"); presses++) {
@@ -244,7 +280,7 @@ k.expect("sub: ArrowRight then enters the hover-opened submenu", subFocus(), "su
 await k.press("escape");
 await k.press("escape");
 
-// ─── Searchable menu: the field keeps focus (F2 moves the rows onto it) ─────
+// ─── Searchable menu: the field and the rows are all real focus targets ─────
 
 const shown = (text: string) =>
 	renderer.getAllText().some((line) => line === text);
@@ -291,54 +327,138 @@ k.expect(
 	"search-trigger",
 );
 
+const SEARCH_ROWS = Array.from(
+	{ length: 80 },
+	(_, index) => `search-${index}`,
+);
+const searchFocus = () => focusedAmong(["search-field", ...SEARCH_ROWS]);
+const lastSearchRow = () => {
+	const rows = SEARCH_ROWS.filter((testId) => k.exists(testId));
+	return rows[rows.length - 1];
+};
+
+await openSearch();
+k.expect("search: the field takes focus on open", searchFocus(), "search-field");
+const searchBoxes = Object.values(renderer.getA11yTree().nodes ?? {}).filter(
+	(node) => node.aria?.role === "SearchInput",
+);
+k.check("search: the field is a search box", searchBoxes.length === 1);
+k.check(
+	"search: the field names no active descendant",
+	searchBoxes[0]?.aria?.active_descendant === undefined,
+);
+await k.press("down");
+k.expect("search: ArrowDown in the field focuses the first row", searchFocus(), "search-0");
+await k.press("up");
+k.expect("search: ArrowUp from the first row returns to the field", searchFocus(), "search-field");
+await k.press("up");
+k.expect("search: ArrowUp in the field focuses the last row", searchFocus(), lastSearchRow());
+await k.press("down");
+k.expect("search: ArrowDown past the last row returns to the field", searchFocus(), "search-field");
+await k.press("down down");
+k.expect("search: arrows walk the rows", searchFocus(), "search-1");
+await k.press("f");
+k.expect("search: a key typed on a row moves focus to the field", searchFocus(), "search-field");
+await k.press("r");
+k.check(
+	"search: typing goes into the query in order",
+	shown("French") && !shown("Finnish") && !shown("Arabic"),
+);
+await k.press("enter");
+k.check(
+	"search: Enter in the field picks nothing",
+	k.exists("search-0") && shown("French"),
+);
+await k.press("down backspace");
+k.expect("search: Backspace on a row goes to the field", searchFocus(), "search-field");
+k.check("search: Backspace shortens the query", shown("Finnish"));
+await k.press("escape");
+k.expect(
+	"search: Escape returns focus to the trigger",
+	focusedAmong(["search-trigger"]),
+	"search-trigger",
+);
+
 // ─── A menu opened with no key (what a pointer open does) ────────────────────
 
 // A pointer press that opens a popup throws in the test renderer; `defaultOpen`
 // takes the same path through the menu: no keyboard, nothing focused before.
-const bare = createTestRoot({ width: 600, height: 400, fonts });
-bare.render(() => (
-	<DropdownMenu testId="bare" defaultOpen>
-		<DropdownTrigger>
-			{(trigger) => (
-				<Button
-					testId="bare-trigger"
-					{...trigger.attributes}
-					onMouseDown={trigger.onMouseDown}
-					onClick={trigger.onClick}
-				>
-					Open
-				</Button>
-			)}
-		</DropdownTrigger>
-		<DropdownContent>
-			<MenuItem testId="bare-0" index={0} label="One" />
-			<MenuItem testId="bare-1" index={1} label="Two" />
-			<MenuItem testId="bare-2" index={2} label="Three" />
-		</DropdownContent>
-	</DropdownMenu>
-));
-async function settleBare(ms: number) {
-	const until = performance.now() + ms;
-	do {
-		bare.renderer.flush();
-		bare.renderer.dispatchNativeEvents();
-		await sleep(16);
-	} while (performance.now() < until);
+async function openBare(testId: string, rows: readonly { label: string; disabled?: boolean }[]) {
+	const root = createTestRoot({ width: 600, height: 400, fonts });
+	root.render(() => (
+		<DropdownMenu testId={testId} defaultOpen>
+			<DropdownTrigger>
+				{(trigger) => (
+					<Button
+						testId={`${testId}-trigger`}
+						{...trigger.attributes}
+						onMouseDown={trigger.onMouseDown}
+						onClick={trigger.onClick}
+					>
+						Open
+					</Button>
+				)}
+			</DropdownTrigger>
+			<DropdownContent>
+				{rows.map((row, index) => (
+					<MenuItem
+						testId={`${testId}-${index}`}
+						index={index}
+						label={row.label}
+						disabled={row.disabled}
+					/>
+				))}
+			</DropdownContent>
+		</DropdownMenu>
+	));
+	const candidates = [
+		`${testId}-popup`,
+		...rows.map((_, index) => `${testId}-${index}`),
+	];
+	return {
+		async settle(ms: number) {
+			const until = performance.now() + ms;
+			do {
+				root.renderer.flush();
+				root.renderer.dispatchNativeEvents();
+				await sleep(16);
+			} while (performance.now() < until);
+		},
+		focus() {
+			const focused = root.renderer.getFocusedElementId();
+			return (
+				candidates.find((candidate) => {
+					const element = root.renderer.findByTestId(candidate);
+					return element !== undefined && element.id === focused;
+				}) ?? null
+			);
+		},
+		keys: (keystrokes: string) => root.renderer.simulateKeystrokes(keystrokes),
+		unmount: () => root.unmount(),
+	};
 }
-const bareFocus = () => {
-	const focused = bare.renderer.getFocusedElementId();
-	return (
-		["bare-popup", "bare-0", "bare-1", "bare-2"].find((testId) => {
-			const element = bare.renderer.findByTestId(testId);
-			return element !== undefined && element.id === focused;
-		}) ?? null
-	);
-};
-await settleBare(600);
-k.expect("pointer open: the popup panel is focused, no row", bareFocus(), "bare-popup");
-bare.renderer.simulateKeystrokes("down");
-await settleBare(300);
-k.expect("pointer open: ArrowDown focuses the first row", bareFocus(), "bare-0");
+
+const bare = await openBare("bare", [
+	{ label: "One" },
+	{ label: "Two" },
+	{ label: "Three" },
+]);
+await bare.settle(600);
+k.expect("pointer open: the first enabled row is focused two frames later", bare.focus(), "bare-0");
+bare.keys("down");
+await bare.settle(300);
+k.expect("pointer open: ArrowDown moves on from the first row", bare.focus(), "bare-1");
 bare.unmount();
+
+const idle = await openBare("idle", [
+	{ label: "One", disabled: true },
+	{ label: "Two", disabled: true },
+]);
+await idle.settle(600);
+k.expect("pointer open: with no enabled row the popup panel keeps focus", idle.focus(), "idle-popup");
+idle.keys("down");
+await idle.settle(300);
+k.expect("pointer open: ArrowDown on the panel reaches a disabled row", idle.focus(), "idle-0");
+idle.unmount();
 
 k.finish();

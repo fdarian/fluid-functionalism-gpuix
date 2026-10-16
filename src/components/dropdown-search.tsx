@@ -1,4 +1,4 @@
-import type { EventPayload, KeyEvent } from "@gpuix/solid";
+import type { EventPayload, HostElement } from "@gpuix/solid";
 import {
 	createContext,
 	createEffect,
@@ -68,11 +68,8 @@ export const SEARCH_HEIGHT = height.control;
 /** The field row `DropdownContent` draws above its rows. */
 export function SearchField(props: {
 	search: DropdownSearchProps;
-	onKeyDown: (event: KeyEvent) => void;
-	/** The field gained or lost keyboard focus. */
-	onFocusChange?: (focused: boolean) => void;
-	/** The `id` of the lit row: focus stays in the field while the arrows walk the rows. */
-	activeDescendant: string | undefined;
+	/** The list moves focus here: back from past either end of the rows, or when a key typed on a row goes into the query. */
+	fieldRef: (element: HostElement) => void;
 	testId?: string;
 }) {
 	const [focused, setFocused] = createSignal(false);
@@ -98,8 +95,11 @@ export function SearchField(props: {
 				color={focused() ? color.foreground : color.mutedForeground}
 			/>
 			<input
+				ref={(element) => {
+					props.fieldRef(element);
+				}}
 				testId={props.testId}
-				aria-activedescendant={props.activeDescendant}
+				role="searchbox"
 				autoFocus={props.search.autoFocus ?? true}
 				value={props.search.value}
 				placeholder={props.search.placeholder ?? "Search…"}
@@ -110,21 +110,14 @@ export function SearchField(props: {
 					textDim: color.mutedForeground,
 					caret: color.foreground,
 				}}
-				onFocus={() => {
-					setFocused(true);
-					props.onFocusChange?.(true);
-				}}
-				onBlur={() => {
-					setFocused(false);
-					props.onFocusChange?.(false);
-				}}
+				onFocus={() => setFocused(true)}
+				onBlur={() => setFocused(false)}
 				onChange={(event: EventPayload) => {
 					if (event.value === undefined) {
 						throw new Error("Search change without a value");
 					}
 					props.search.onValueChange(event.value);
 				}}
-				onKeyDown={props.onKeyDown}
 				style={{
 					flexGrow: 1,
 					minWidth: 0,
