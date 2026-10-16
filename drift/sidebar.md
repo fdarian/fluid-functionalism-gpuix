@@ -47,8 +47,8 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 ## Parts that are not ported
 
 - **Cause:** `not ported yet`.
-- **Original:** `SidebarInset` (`sidebar-core.tsx:1132`), `SidebarFooter` (`mt-auto`, `:1209`), `SidebarSeparator` (`:1221`), `SidebarGroup` (`p-2` wrapper, `collapsible` accordion with `open` / `defaultOpen` / `onOpenChange`, measured-height collapse, label turns into a toggle with a hover-revealed chevron on `spring.fast`, `:1258-1417,1419-1520`), `SidebarGroupAction` / `SidebarGroupActions` (24px icon buttons overlaid on the label row, up to 3, `:1558-1650`), `SidebarGroupContent`, `SidebarMenuItem` / `SidebarMenuSubItem` (the `li` rows), `SidebarMenuAction` / `SidebarMenuActions` (`showOnHover`, `sidebar-menu.tsx:1089-1260`), `SidebarMenuSkeleton` (pulsing placeholder rows, `sidebar-menu.tsx:1266`), `SidebarMenuSubButton` as its own part with `size sm | md`.
-- **Port:** the menu button, sub-menu, group label and the header / content frame only (`src/components/sidebar.tsx`). Item and sub-item are folded into `SidebarMenuButton` (`level={1}`), the badge into its `badge` prop.
+- **Original:** `SidebarInset` (`sidebar-core.tsx:1132`), `SidebarSeparator` (`:1221`), `SidebarGroup` (`p-2` wrapper, `collapsible` accordion with `open` / `defaultOpen` / `onOpenChange`, measured-height collapse, label turns into a toggle with a hover-revealed chevron on `spring.fast`, `:1258-1417,1419-1520`), `SidebarGroupAction` / `SidebarGroupActions` (24px icon buttons overlaid on the label row, up to 3, `:1558-1650`), `SidebarGroupContent`, `SidebarMenuItem` / `SidebarMenuSubItem` (the `li` rows), `SidebarMenuAction` / `SidebarMenuActions` (`showOnHover`, `sidebar-menu.tsx:1089-1260`), `SidebarMenuSkeleton` (pulsing placeholder rows, `sidebar-menu.tsx:1266`), `SidebarMenuSubButton` as its own part with `size sm | md`.
+- **Port:** the menu button, sub-menu, group label and the header / content / footer frame only (`src/components/sidebar.tsx`); `SidebarFooter` is `p 8 gap 8` without the source's `mt-auto` (the content column grows, so it lands at the bottom anyway). Item and sub-item are folded into `SidebarMenuButton` (`level={1}`), the badge into its `badge` prop.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -136,12 +136,12 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 ## Label truncation
 
-- **Cause:** `not ported yet`.
+- **Cause:** `not ported yet` (everywhere but the menu row).
 - **Original:** the label and its ghost both `truncate`, so a long label ends in an ellipsis and never wraps the row (`sidebar-menu.tsx:864-885`).
-- **Port:** `StableLabel` sets `whiteSpace: "nowrap"` only and the row has no `overflow: hidden` or `textOverflow`, so a long label is not ellipsized (`src/lib/stable-label.tsx:26`); not exercised, the demo labels are short. The README names ellipsis as available (`textOverflow`).
+- **Port:** `SidebarMenuButton` passes `truncate` to `StableLabel` (an optional prop added for it: the wrapper clips, the visible text spans it and gets `textOverflow: "ellipsis"`), so a long thread title ends in an ellipsis before the badge (`src/components/sidebar.tsx`, `src/lib/stable-label.tsx`). A row with a `dot` hugs its text and does not truncate. Every other `StableLabel` user (tabs, tabs-subtle, card) still runs long text past its box.
 - **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** just this one.
+- **Fidelity:** exact for a plain or badged row; dropped for a dotted row and the other `StableLabel` users.
+- **Components it hits:** `StableLabel` users (tabs, tabs-subtle, card).
 
 ## Badge: `tabular-nums`, `pointer-events-none`
 
@@ -238,16 +238,26 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `not ported yet`.
 - **Original:** the docs page (`app/docs/sidebar/page.tsx:1836-1992`) has: Playground (provider / sidebar / layout options), Layouts (sidebar, floating, inset, each a 640px shell with a `SidebarInset` beside it), Nesting (two levels, one section level and one parent level), Actions and badges (up to 3 actions, `showOnHover`), Header and footer (vertical and horizontal stacking), Callouts (stacked inlines and banners), Resize / collapse / peek (on hover, on click, with the rail tooltip pinned), Inside a dialog (`collapsible="none"` in a settings dialog), No icon rail version (scripted icon-rail vs peek comparison), Functional and perfectly aligned (alignment guides), and five API reference tables.
-- **Port:** one card, "Sidebar", with a search field, a flat `Showcase` row, a "System" group of four rows, a "Components" group with a collapsible "Button" row (`Variants`, `Sizes`, `Icons`) (`src/demos/sidebar.tsx:42-111`). It covers Nesting only. Scenarios: hover, hover over a label, sub-menu, sub-menu collapsed (`:116-132`).
+- **Port:** two cards. The Playground (see "Playground" below) covers Nesting, badges, Header and footer stacking and Callouts. The "Sidebar" card keeps the site-nav sample: a search field, a flat `Showcase` row, a "System" group of four rows, a "Components" group with a collapsible "Button" row (`Variants`, `Sizes`, `Icons`) (`src/demos/sidebar.tsx`). Scenarios: the playground's controls, then hover, hover over a label, sub-menu, sub-menu collapsed. Not ported as their own sections: Layouts, Actions (the actions need `SidebarMenuAction`), Resize / collapse / peek, Inside a dialog, the icon-rail comparison, the alignment guides, the API tables.
 - **Workaround:** none.
-- **Fidelity:** dropped for every section but a small slice of Nesting.
+- **Fidelity:** dropped for every section but Nesting, badges, Header and footer and Callouts.
+- **Components it hits:** just this one.
+
+## Playground
+
+- **Cause:** `not ported yet` (the controls below), `port choice` (the preview shell).
+- **Original:** `lib/docs/playgrounds/sidebar.tsx`: Layout (Design, Collapsed behavior, State), Header (Primary element, Stacking, Header actions), Sections (Collapsible, Section actions), Content level 1 (Primary element, Has children, Actions, Badges), Content level 2 (Leading icon, Actions, Badges), Footer (Primary element, Stacking, Footer actions, Callout, Stacked), a "Get code" dialog and a generated snippet.
+- **Port:** the controls with a part behind them: Header Stacking and Header actions, Content level 1 Primary element / Has children / Badges, Content level 2 Leading icon / Badges, Footer Stacking / Footer actions / Callout / Stacked, with the source's defaults, disabled rules (threads do not nest, level 2 needs children, Stacked needs a callout) and shuffle odds (`src/demos/sidebar/playground.tsx`). **Left out:** Design (floating / inset / sidebar: no `variant`), Collapsed behavior (no peek), State (no open state, no `SidebarMenuSkeleton` for Loading), Header Primary element (no workspace-header block), Sections Collapsible and Section actions (no `SidebarGroup` / `SidebarGroupAction`), Content level 1 and 2 Actions (no `SidebarMenuAction`), Footer Primary element (no user-footer block), Get code, the snippet. Also differs: the shell is always the inset look, drawn in the demo as the rail beside a plain rounded `surface(2)` div (no `SidebarInset`, no trigger in a topbar, no shadow); the frame is a fixed 520px tall (source: the stage's height); the thread rows have no leading status dot (no `status`, see "Status dot"); the vertical header's action rows have no hover-revealed shortcut chip and the horizontal buttons' tooltips no shortcut; a parent row's chevron swaps glyphs and never hides at rest (see "Sub-menu chevron"); no tooltips on the footer rows; the sub-menu is not removed from the tree while collapsed (clipped to 0 height).
+- **Callout:** `Card size="compact" dismissible` on a `surface(2)` wrapper (`src/demos/sidebar/callout.tsx`). Differs from the source's card: no `href` (it is a no-op `onClick` so the card still lights), no `surfaceHoverClasses` rise or inset-shadow ring (a flat `surface(2)` fill; the banner card lights with the card's own hover fill, the inline card, inside a `CardGroup` with its hover off, does not light at all), the inline tile has no brand-blue tint or glyph colour, the inline card is 12px left padded (source 10) with a 60px floor (source `min-h-0`), the title / description gap is 4 (source 2), and the banner mesh is rebuilt from the card demo's data URI with scaled opacities. The stacked pile follows the source geometry (peek 12, scale 0.05, gap 4, two peeks) with `bottom` offsets and box insets standing in for `y` and `scale`, so a receding card keeps its full-size contents and its visible strip is the top of the card.
+- **Workaround:** none.
+- **Fidelity:** approximated for the controls ported, dropped for those left out.
 - **Components it hits:** just this one.
 
 ## Demo: frame and data
 
 - **Cause:** `port choice` (reason not stated; the data is the site's nav rather than the docs page's "Aurora AI" product).
 - **Original:** each preview is a full shell (sidebar and `SidebarInset` content) 640px tall (560 on a phone), `bg-background`, workspace header with a switcher, a user footer with a dropdown, rows with icons (`app/docs/sidebar/page.tsx:SHELL_HEIGHT`, `example-data.ts`: Chat, Agents, Knowledge, Runs, Evals, with sub-rows and badges).
-- **Port:** the sidebar alone in a 480px-tall `shape.container`-radius box inside a `DemoCard` (`src/demos/sidebar.tsx:50-59`), no inset content, no header brand row, no footer, icon-less rows, no badges (the `badge` prop is never demoed). The dot colours are fixed hex (`BLUE` `#3B82F6`, `YELLOW` `#FBBF24`, `:16-17`); the site's second dot is `var(--warning)` (`#F59E0B` light, `#FCD34D` dark, `app/globals.css:102`), so in light mode the yellow dot differs and does not follow the theme (`color.warning` exists in `src/lib/theme.ts`).
+- **Port:** the sidebar alone in a 480px-tall `shape.container`-radius box inside a `DemoCard` (`src/demos/sidebar.tsx:50-59`), no inset content, no header brand row, no footer, icon-less rows, no badges (the `badge` prop is demoed only by the Playground). The dot colours are fixed hex (`BLUE` `#3B82F6`, `YELLOW` `#FBBF24`, `:16-17`); the site's second dot is `var(--warning)` (`#F59E0B` light, `#FCD34D` dark, `app/globals.css:102`), so in light mode the yellow dot differs and does not follow the theme (`color.warning` exists in `src/lib/theme.ts`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
