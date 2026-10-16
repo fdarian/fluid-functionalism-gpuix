@@ -326,7 +326,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `port choice` (reason not stated; the file says only that the page is taller than the window, so scenarios show one card at a time).
 - **Original:** six sections: Default, Popover, With Swatches, OKLCH Format, Controlled, Removable Trigger, then an "Eyedropper Support" note and two props tables (`app/docs/color-picker/page.tsx:96-179`).
-- **Port:** four cards: "Default and popover" (the inline panel, the popover and the removable trigger side by side under captions), "With swatches", "OKLCH format", "Controlled" (`src/demos/color-picker.tsx:40-133`). Every variant the source demos exists; the Eyedropper section has no feature to describe. No Preview / Code tabs and no props tables: see `drift/site.md` ("Preview frame: no Preview / Code tabs", "API Reference props tables"). Section and card titles differ in case ("With Swatches" / "With swatches").
+- **Port:** four cards: "Default and popover" (the inline panel, the popover and the removable trigger side by side under captions), "With swatches", "OKLCH format", "Controlled" (`src/demos/color-picker.tsx:40-133`). Every variant the source demos exists; the Eyedropper section has no feature to describe. No Preview / Code tabs and no props tables: see `drift/site.md` ("Preview frame: Inspect, highlighted code, and tabs on component pages", "API Reference props tables"). Section and card titles differ in case ("With Swatches" / "With swatches").
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

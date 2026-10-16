@@ -1,10 +1,14 @@
-# concepts (index, frame, Lumen)
+# concepts (index, frame, Lumen, Atlas, Beacon, Quill)
 
 Original: `app/concepts/page.tsx`, `app/concepts/layout.tsx`, `app/concepts/_components/concept-frame.tsx` and `app/concepts/lumen/page.tsx` of the source (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/pages/concepts.tsx` (group "Pages", order 30, layout "full", listed "menu"), `src/pages/concepts/frame.tsx` (`ConceptFrame`) and `src/pages/concepts-lumen.tsx` (order 31, layout "full", listed "none"). The nav is `NavMenu` / `NavItem`: see [nav-menu.md](nav-menu.md). Atlas, Beacon and Quill are other pages (`concepts-atlas`, `concepts-beacon`, `concepts-quill`).
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps (transforms, intrinsic width, variable fonts) get a one-line entry here that links to the README row instead of repeating it.
 
 Checked and equal: the index is four rows centred in the window at 224px (`w-56`), with no nav or card (`bare`); the frame is a 224px nav (Home, then Lumen, Atlas, Beacon, Quill), a centre column and the customise card; Lumen's copy (question, step labels, description, the four sources and their site names, the three answer paragraphs, the four image captions, "Ask a follow-up…"), its 760px column with 24px side padding and 48px top and bottom, 40px between turns, 16px inside a turn, the tab icons (brain, globe, image), the badge colours per source, the thinking to answer beat of 1600 ms, and the source rows' 14 / 12 padding, 12px radius and `surface-2` fill.
+
+Atlas. Original: `app/concepts/atlas/page.tsx`. Ported in `src/pages/concepts-atlas.tsx` (group "Pages", order 32, layout "full", listed "none"), inside `ConceptFrame`.
+
+Checked and equal: the three seeded messages and their text, the "Just now" time on user messages, the copy and regenerate actions on assistant messages, the 720px column (`max-w-[720px]`) with 24px side padding, 48px top and bottom and 20px between messages, the composer's `Message Atlas…` placeholder, 1 to 6 rows, the image button in the left slot, the footnote "Atlas can make mistakes. This is a concept screen." (11px / 14, muted, centred), the 1800 ms reply, the `ThinkingIndicator` while responding, the reply text echoing the first 40 characters, and a second message sent while answering joining the composer's queue.
 
 ## Route paths, `robots` and `layout.tsx`
 
@@ -122,12 +126,6 @@ Checked and equal: the index is four rows centred in the window at 224px (`w-56`
 - **Fidelity:** approximated.
 - **Components it hits:** those two.
 
-## Atlas: page, copy and layout
-
-Original: `app/concepts/atlas/page.tsx`. Ported in `src/pages/concepts-atlas.tsx` (group "Pages", order 32, layout "full", listed "none"), inside `ConceptFrame`.
-
-Checked and equal: the three seeded messages and their text, the "Just now" time on user messages, the copy and regenerate actions on assistant messages, the 720px column (`max-w-[720px]`) with 24px side padding, 48px top and bottom and 20px between messages, the composer's `Message Atlas…` placeholder, 1 to 6 rows, the image button in the left slot, the footnote "Atlas can make mistakes. This is a concept screen." (11px / 14, muted, centred), the 1800 ms reply, the `ThinkingIndicator` while responding, the reply text echoing the first 40 characters, and a second message sent while answering joining the composer's queue.
-
 ## Atlas: the attachment is a temp file, not an in-memory `File`
 
 - **Cause:** `port choice` (gpuix reads images from paths; `ChatMessage` takes `FileLike`, not `File`: see [chat-message.md](chat-message.md)).
@@ -203,7 +201,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 ## Beacon: the Display popover sits above the table through a `zIndex` on the toolbar
 
-- **Cause:** `gpuix limit` (paint order is per parent: a positioned `Table` root in the content paints above a static toolbar's absolute popover).
+- **Cause:** `gpuix gap` (paint order is per parent: a positioned `Table` root in the content paints above a static toolbar's absolute popover).
 - **Original:** `absolute right-0 top-full z-50 mt-1.5` around `Dropdown` (`beacon/page.tsx:240`).
 - **Port:** the same absolute box (`right: 0`, `top: 100%`, `marginTop: 6`) with `Dropdown` as the panel; the toolbar row is `position: relative; zIndex: 1` so the box paints over the table (`src/pages/concepts-beacon.tsx:516-560`, `:760-768`). A press outside the button wrapper closes it (`onMouseDownOutside`, standing for the source's `document` `mousedown` listener). Escape does not close it, as in the source.
 - **gpuix lacks:** a global stacking order (FORK.md: `zIndex` orders siblings only).

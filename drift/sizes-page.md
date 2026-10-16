@@ -12,7 +12,7 @@ repeating it.
 
 ## No `SizeProvider`: every control in a region gets `size` explicitly
 
-- **Cause:** `port choice` (the port has only the global Size row, `sizeChoice` in `src/lib/theme.ts`, and per-component `size` props; see `drift/site.md`, "Customise rows not ported").
+- **Cause:** `port choice` (the port has only the global Size row, `sizeChoice` in `src/lib/theme.ts`, and per-component `size` props; see `drift/site.md`, "Size row: components with no compact step do not follow it").
 - **Original:** `<SizeProvider size={variant}>` pins the toolbar rows, the compact region and the token inspector, and everything inside follows, the `Dropdown` panel included (`app/docs/sizes/page.tsx:218, 313, 481`). The gap between controls comes from `sizeMap[variant].gap`.
 - **Port:** each component in those regions is passed `size={step}` (`TabsSubtle`, `InputGroup`, `Select`, `Button`, `CheckboxGroup`, `CheckboxItem`), and the icon-only Filter button takes `size="icon"` / `"icon-compact"`. The row gap is `LADDER[step].gap` (`src/pages/sizes/ladder.ts`), the 8 / 4 the components share.
 - **Workaround:** the explicit props above.

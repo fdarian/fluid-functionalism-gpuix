@@ -59,7 +59,7 @@ repeating it.
 
 ## Page header: no prev / next arrows
 
-- **Cause:** `not ported yet` (arrows), `port choice` (Installation block, see [site.md](site.md#no-installation-block)).
+- **Cause:** `not ported yet` (arrows), `port choice` (Installation block, see [site.md](site.md#no-installation-block-on-component-pages)).
 - **Original:** `DocPage` with `title`, `description`, `intro`, `installNote` and the prev / next arrows (`app/docs/typography/page.tsx:96-103`).
 - **Port:** `DocPage` from `src/lib/doc-page.tsx`, which gained an optional `intro` paragraph (16px under the description, additive; motion's call is unchanged). The Copy prompt button copies `TYPOGRAPHY_INSTALL_PROMPT`, `buildInstallPrompt({ slug: "typography" })` written out. No arrows, as on [introduction.md](introduction.md#the-previous--next-arrows-are-missing).
 - **Fidelity:** dropped (arrows).

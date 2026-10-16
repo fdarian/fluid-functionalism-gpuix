@@ -26,7 +26,7 @@ repeating it.
 
 ## The preview frame has no Inspect switch and an unhighlighted Code tab
 
-- **Cause:** `not ported yet`. Same drift as [site.md, "Preview frame"](site.md#preview-frame-no-preview--code-tabs-inspect-replay), narrowed to what this page ports.
+- **Cause:** `not ported yet`. Same drift as [site.md, "Preview frame"](site.md#preview-frame-inspect-highlighted-code-and-tabs-on-component-pages), narrowed to what this page ports.
 - **Original:** `ComponentPreview` (52px header, `TabsSubtle` Preview / Code, Inspect `Switch`, shiki-highlighted code, `foreground/40` border on `:focus-within`, keyboard routing into the demo on a press of empty space) (`lib/docs/ComponentPreview.tsx:85-250`).
 - **Port:** the shared `ComponentPreview` (`src/lib/doc-page.tsx`) keeps the border, the `foreground/40` focus-within border, the 52px header, the Preview / Code `TabsSubtle` and the Code tab, drawn in plain `foreground` Menlo 13/20 with a horizontal scroll. The Inspect switch, the highlighting and the keyboard routing are not ported. The page passes `padding="compact"` (`px-4 py-4`) or `"none"`, and `scheme="dark"` (next entry).
 - **Fidelity:** approximated (Code tab uncoloured); dropped (Inspect).

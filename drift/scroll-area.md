@@ -12,7 +12,7 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 - **gpuix lacks:** a content-sized width. `width: "max-content"` is rejected (only grid tracks take `max-content`; `FORK.md` area E, `:866-871`: it needs a layout run with max-content available space), and since the DOM-parity release `overflowX: "scroll"` no longer makes the viewport a flex row (`FORK.md:580-582`), so a block child is clamped to the viewport width and a wide descendant does not extend the scroll width. Overflow only happens when the child is a flex item with `flexShrink: 0`.
 - **Workaround:** the flex row above; callers give wide content `flexShrink: 0` or an explicit width (the demo's tiles and cells do, `src/demos/scroll-area.tsx:170`, `:181`, `:112`).
 - **Fidelity:** exact.
-- **Components it hits:** any two-axis scroller. No other port component uses `ScrollArea`; the port's `Table` root is `width: "100%"` (`src/components/table.tsx:75`), so it could not grow inside one anyway.
+- **Components it hits:** any two-axis scroller. The port's `Table` root is `width: "100%"` (`src/components/table.tsx:75`) but it does grow inside one when every cell carries a `width`, since each row's width is then the sum of its cells (the Scrollbars page's "Double overflow", `src/pages/scrollbars/demos.tsx:251-292`, `drift/scrollbars-page.md`).
 
 ## The edge fade is a mask, and masks are drawn on macOS only
 
@@ -99,7 +99,7 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 ## Demo: the both-axis table is hand-built, shorter, and framed
 
-- **Cause:** `port choice` (reason not stated; `Table` is `width: "100%"`, `src/components/table.tsx:75`, so it cannot grow past the viewport).
+- **Cause:** `port choice` (reason not stated; the port's `Table` can overflow the viewport when its cells carry widths, as the Scrollbars page's "Double overflow" does, `src/pages/scrollbars/demos.tsx:251-292`, so the hand-built rows are not needed).
 - **Original:** the real `Table` / `TableRow index` / `TableCell` inside `ScrollArea orientation="both"`, `h-80 w-full` = 320px tall, no frame, full month names, `text-right tabular-nums` cells, row hover from the table (`app/docs/scrollbars/page.tsx:422-462`, snippet `:149-180`).
 - **Port:** flex rows of local `Cell`s (36px rows, 104 / 80px columns), 132px tall, inside a bordered 12px-radius frame, month names cut to three letters, no `tabular-nums`, no row hover (`src/demos/scroll-area.tsx:98-122`, `:195-246`).
 - **Workaround:** fixed column widths, `flexShrink: 0` rows.

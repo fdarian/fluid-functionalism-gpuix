@@ -2,7 +2,7 @@
 
 Original: `registry/base/sidebar.tsx` over `registry/default/sidebar-core.tsx` and `sidebar-menu.tsx` (plus the older `nav-menu.tsx` / `nav-item.tsx` and `registry/blocks/sidebar-*`), demo in `app/docs/sidebar/page.tsx` of the source
 (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/sidebar.tsx`, demo in `src/demos/sidebar.tsx`.
-The site's own navigation sidebar is covered at the end: source `app/components/sidebar.tsx` and `sidebar-layout.tsx`, port `AppSidebar` in `src/app.tsx:62`.
+The site's own navigation sidebar is covered at the end: source `app/components/sidebar.tsx` and `sidebar-layout.tsx`, port `AppSidebar` in `src/app.tsx:86`.
 
 The port is the menu only: `SidebarMenu` (one fluid-hover scope with a hover, an active-per-level and no focus overlay), `SidebarMenuButton` (`label`, `icon`, `dot`, `badge`, `trailingIcon`), `SidebarMenuSub`, and a fixed 256px `Sidebar` with `SidebarHeader`, `SidebarContent`, `SidebarGroupLabel` and `SidebarSearchField`. Everything else in the source is absent. Numbers that match (row 32 / sub-row 28 / label 32 high, 8px gap and left pad, radius 8, 16px icons, sub-menu `ml 15 + 1px border + pl 8`, badge slot 24 at right 8 with a 36px reserved pad, 256px width, header `p 8 gap 8`, hover / active tokens) are not listed.
 
@@ -284,9 +284,9 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 ## Pages and groups
 
-- **Cause:** `not ported yet` (the pages themselves are another agent's, see `drift/site.md`).
-- **Original:** Search, then Showcase and Introduction, then a "System" group (Fluid Hover, Motion, Scrollbars, Skill, Sizes, Surfaces, Typography) and a "Components" group of 28, each with a count (`app/components/sidebar.tsx:91-124`, `lib/docs/components.ts:23-59,75`).
-- **Port:** Search, Showcase, and one "Components" group listing every discovered demo with a count (32 in the screenshot, `src/app.tsx:62-111`). No Introduction row, no System group.
+- **Cause:** `port choice` (the port has four more demos than the source has components).
+- **Original:** Search, then Showcase and Introduction, then a "System" group (Fluid Hover, Motion, Scrollbars, Sizes, Skill, Surfaces, Typography) and a "Components" group of 28, each with a count (`app/components/sidebar.tsx:91-124`, `lib/docs/components.ts:23-59,75`).
+- **Port:** Search, Showcase, Introduction, a "System" group of the seven system pages with a count, and a "Components" group listing every discovered demo with a count: 32, the extra four being file-thumbnail, mobile-drawer, queued-stack and scroll-area (`src/app.tsx:86-154`). The Compare, Audio Mixer and Concepts pages have no sidebar row, as in the source; they are in the site menu (`drift/site.md`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
