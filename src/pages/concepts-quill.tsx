@@ -33,9 +33,8 @@ import {
 import type { ShotContext } from "../lib/demo";
 import { Icon } from "../lib/icon";
 import type { IconName } from "../lib/icons";
-import { color, siteType, weight } from "../lib/theme";
+import { color, shadow, siteType, weight } from "../lib/theme";
 import { ConceptFrame } from "./concepts/frame";
-import { shadowSurface } from "./surfaces/elevated";
 
 export const title = "Quill";
 export const group = "Pages";
@@ -214,7 +213,7 @@ function SurfaceCard(props: {
 				padding: props.padding,
 				borderRadius: 12,
 				backgroundColor: color.surface2,
-				boxShadow: shadowSurface(2),
+				boxShadow: shadow(2),
 			}}
 		>
 			{props.children}

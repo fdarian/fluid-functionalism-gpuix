@@ -95,12 +95,12 @@ repeating it.
 - **Port:** `alignItems: "center"` (`src/pages/motion/spring-tokens.tsx`). With 20px, 14px and 16px line boxes the baselines land within a pixel of each other.
 - **Fidelity:** approximated.
 
-## Section spacing, heading weight and the box shadow
+## Section spacing and heading weight
 
-- **Cause:** `port choice` (spacing, shadow); `gpuix gap` (weight).
-- **Original:** `DocSection` is `gap-4 pt-6` with a `-mb-2` title; the `h3` is `mt-8`; the modal card is `shadow-xl` (two drops).
-- **Port:** the same numbers as margins and padding (`src/lib/doc-page.tsx:92-126`); the page's description is tucked under `App`'s heading with `marginTop: -16`, as in `drift/introduction.md`. Titles are SemiBold 600 where the source's variable font is 550 (README variable-font rows), the `h3` is `SubHeading` on `siteType.subtitle` (14/20), and the card's shadow is the larger drop alone (`boxShadow` takes one shadow).
-- **Fidelity:** exact spacing, approximated weight and shadow.
+- **Cause:** `port choice` (spacing); `gpuix gap` (weight).
+- **Original:** `DocSection` is `gap-4 pt-6` with a `-mb-2` title; the `h3` is `mt-8`.
+- **Port:** the same numbers as margins and padding (`src/lib/doc-page.tsx:92-126`); the page's description is tucked under `App`'s heading with `marginTop: -16`, as in `drift/introduction.md`. Titles are SemiBold 600 where the source's variable font is 550 (README variable-font rows), the `h3` is `SubHeading` on `siteType.subtitle` (14/20).
+- **Fidelity:** exact spacing, approximated weight.
 
 ## The ⌘K row
 

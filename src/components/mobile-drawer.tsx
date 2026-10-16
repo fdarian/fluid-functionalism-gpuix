@@ -12,7 +12,7 @@ import { createPresence } from "../lib/presence";
 import { FocusFirst } from "./dialog";
 import {
 	color,
-	shadow3,
+	shadow,
 	motion as tween,
 } from "../lib/theme";
 
@@ -100,9 +100,7 @@ export function MobileDrawer(props: {
 							flexDirection: "column",
 							overflowY: "scroll",
 							backgroundColor: color.card,
-							borderRightWidth: 1,
-							borderColor: color.popupBorder,
-							boxShadow: shadow3(),
+							boxShadow: shadow(3),
 							pointerEvents: "auto",
 						}}
 					>

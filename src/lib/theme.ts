@@ -1,5 +1,4 @@
 import type {
-	BoxShadow,
 	MotionTransition,
 	StateStyleDesc,
 } from "@gpuix/solid";
@@ -40,8 +39,6 @@ interface Palette {
 	primaryActive: string;
 	/** bg-muted/50 */
 	mutedHalf: string;
-	/** The popup edge that stands in for the --shadow-3 ring. */
-	popupBorder: string;
 	/** --shadow-color in light, --dm-drop in dark. */
 	shadowColor: string;
 	transparent: string;
@@ -106,7 +103,6 @@ const palettes: Record<Scheme, Palette> = {
 		primaryHover: "#292929",
 		primaryActive: "#3d3d3d",
 		mutedHalf: "rgba(244,244,245,0.5)",
-		popupBorder: "rgba(0,0,0,0.06)",
 		shadowColor: "rgba(0,0,0,0.06)",
 		transparent: "rgba(0,0,0,0)",
 		accent: "#E5E5E5",
@@ -155,7 +151,6 @@ const palettes: Record<Scheme, Palette> = {
 		primaryHover: "#dcdcdc",
 		primaryActive: "#c3c3c3",
 		mutedHalf: "rgba(30,30,30,0.5)",
-		popupBorder: "rgba(255,255,255,0.05)",
 		shadowColor: "rgba(0,0,0,0.18)",
 		transparent: "rgba(0,0,0,0)",
 		accent: "#525252",
@@ -463,16 +458,58 @@ export function focusRing(offset: number): StateStyleDesc {
 	};
 }
 
-/**
- * gpuix paints one outer shadow, so --shadow-3 (a 1px ring plus two stacked
- * drops) is its largest drop alone; the ring becomes a real border.
- */
-export function shadow3(): BoxShadow {
-	return {
-		offsetX: 0,
-		offsetY: 3,
-		blurRadius: 3,
-		spreadRadius: -1.5,
-		color: color.shadowColor,
-	};
+/** The drops of the ladder, level 2 up: offset, blur and spread each double from 1px. */
+const DROPS = [
+	"0 1px 1px -0.5px",
+	"0 3px 3px -1.5px",
+	"0 6px 6px -3px",
+	"0 12px 12px -6px",
+	"0 24px 24px -12px",
+	"0 48px 48px -24px",
+	"0 96px 96px -48px",
+] as const;
+
+/** The dark ladder per level: the inset highlight and ring alphas, and the outer hairline's. */
+const DARK_STEPS = [
+	{ highlight: null, ring: 0.02, hairline: null },
+	{ highlight: 0.01, ring: 0.02, hairline: null },
+	{ highlight: 0.02, ring: 0.02, hairline: 0.12 },
+	{ highlight: 0.02, ring: 0.04, hairline: 0.14 },
+	{ highlight: 0.04, ring: 0.04, hairline: 0.16 },
+	{ highlight: 0.04, ring: 0.06, hairline: 0.18 },
+	{ highlight: 0.06, ring: 0.06, hairline: 0.2 },
+	{ highlight: 0.06, ring: 0.06, hairline: 0.22 },
+] as const;
+
+/** `--shadow-N` of app/globals.css for the scheme in scope, written out as a multi-layer `boxShadow`. */
+export function shadow(level: number): string {
+	if (!Number.isInteger(level) || level < 1 || level > 8) {
+		throw new Error(`There is no shadow level ${level}`);
+	}
+	const drops = DROPS.slice(0, level - 1);
+	if (scheme() === "light") {
+		return [
+			`0 0 0 1px ${color.shadowColor}`,
+			...drops.map((drop) => `${drop} ${color.shadowColor}`),
+		].join(", ");
+	}
+	const step = DARK_STEPS[level - 1];
+	const layers: string[] = [];
+	if (step.highlight !== null) {
+		layers.push(`inset 0 1px 0 0 rgba(255,255,255,${step.highlight})`);
+	}
+	layers.push(`inset 0 0 0 1px rgba(255,255,255,${step.ring})`);
+	if (step.hairline !== null) {
+		layers.push(`0 0 0 1px rgba(0,0,0,${step.hairline})`);
+	}
+	for (const drop of drops) layers.push(`${drop} ${color.shadowColor}`);
+	return layers.join(", ");
 }
+
+/** Tailwind v4's `shadow-sm`, `shadow-md`, `shadow-lg` and `shadow-xl`, both drops of each (`shadow-sm` is also the bare `shadow`). */
+export const twShadow = {
+	sm: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+	md: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+	lg: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+	xl: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
+} as const;

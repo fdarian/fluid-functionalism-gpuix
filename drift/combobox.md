@@ -76,10 +76,6 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Fidelity:** approximated.
 - **Components it hits:** badge, select, every trimmed label.
 
-## `shadow-surface-3` is one shadow, and the ring is a real border
-
-- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup shadow is one drop and a border"](dropdown.md#popup-shadow-is-one-drop-and-a-border), where the entry lives. Here: `src/lib/popup.tsx:107-111`; the border takes 2px of layout, so the list's `maxHeight` is the card's minus 2 (`src/components/combobox.tsx:568`); original `combobox.tsx:827`. API to use: multi-layer `boxShadow` with `inset` (`~/code/fdarian/gpuix/FORK.md:646-649`).
-
 ## The field's fill and ring do not fade
 
 - **Cause:** `not ported yet`.

@@ -38,7 +38,7 @@ import { isChord, moveIndex, revealRow } from "../lib/list-nav";
 import { createPlacementState, POPUP_MARGIN, PopupSurface } from "../lib/popup";
 import { createPressToggle, refocusAfterPress } from "../lib/popup-trigger";
 import { createPresence } from "../lib/presence";
-import { color, radius, shadow3, motion as tween } from "../lib/theme";
+import { color, radius, shadow, motion as tween } from "../lib/theme";
 import { createTypeahead } from "../lib/typeahead";
 import {
 	DropdownSearchHostContext,
@@ -690,7 +690,6 @@ function MenuPanel(props: {
 								overflowY: "scroll",
 								maxHeight:
 									props.maxHeight() -
-									2 -
 									(field() === undefined ? 0 : SEARCH_HEIGHT),
 							}}
 						>
@@ -837,9 +836,7 @@ export function Dropdown(props: {
 					flexDirection: "column",
 					backgroundColor: color.card,
 					borderRadius: radius.container,
-					borderWidth: 1,
-					borderColor: color.popupBorder,
-					boxShadow: shadow3(),
+					boxShadow: shadow(3),
 					keyboardFocusDim: false,
 				}}
 			>
@@ -1386,9 +1383,7 @@ function SubPopup(props: {
 						flexDirection: "column",
 						backgroundColor: color.card,
 						borderRadius: radius.container,
-						borderWidth: 1,
-						borderColor: color.popupBorder,
-						boxShadow: shadow3(),
+						boxShadow: shadow(3),
 						overflow: "hidden",
 						maxHeight: maxHeight(),
 					}}

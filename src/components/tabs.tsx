@@ -40,7 +40,7 @@ import {
 	sizeChoice,
 	type as scale,
 	scheme,
-	shadow3,
+	shadow,
 	motion as tween,
 	weight,
 } from "../lib/theme";
@@ -264,9 +264,7 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 									bottom: 0,
 									borderRadius: shape.bg,
 									backgroundColor: color.surface4,
-									borderWidth: 1,
-									borderColor: color.popupBorder,
-									boxShadow: shadow3(),
+									boxShadow: shadow(4),
 								}}
 							/>
 						</motion.div>

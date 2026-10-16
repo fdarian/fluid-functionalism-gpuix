@@ -33,15 +33,6 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 - **Fidelity:** dropped.
 - **Components it hits:** chat-message (meta row), ask-user-questions, any touch-aware component.
 
-## Card shadow ring is a border
-
-- **Cause:** `not ported yet`. gpuix paints multi-layer and `inset` `boxShadow` (`~/code/fdarian/gpuix/FORK.md:646-649`); `src/lib/theme.ts:469-481` still says it paints one outer shadow. To port: a `boxShadow` CSS string with the `0 0 0 1px` ring and both drops, and no `borderWidth`.
-- **Original:** `shadow-surface-3`, a 1px ring plus two drops, none of it in layout (`:342`).
-- **Port:** `shadow3()` plus `borderWidth: 1` in `popupBorder` (`queued-stack.tsx:489-491`).
-- **Workaround:** a real border inside the card's box, where the source's ring is outside it.
-- **Fidelity:** approximated (one drop, not two).
-- **Components it hits:** every popup and card that uses `shadow3`.
-
 ## No size ladder
 
 - **Cause:** `not ported yet` (README: "Not ported there: ... the Size ... rows").

@@ -1,8 +1,8 @@
 import { For, Show } from "solid-js";
 import type { IconName } from "../../../lib/icons";
-import { weight } from "../../../lib/theme";
+import { twShadow, weight } from "../../../lib/theme";
 import { LUCIDE, LucideIcon, lucideGlyph, pressProps } from "./parts";
-import { sc, scRadius, scShadow } from "./theme";
+import { sc, scRadius } from "./theme";
 
 /**
  * The preview's static-open `DropdownMenu`: the content markup with no portal, so it sits inside the shadcn scope.
@@ -28,7 +28,7 @@ export function ScDropdownMenu(props: {
 				borderWidth: 1,
 				borderColor: sc.border,
 				backgroundColor: sc.popover,
-				boxShadow: scShadow.md,
+				boxShadow: twShadow.md,
 			}}
 		>
 			<For each={props.items}>

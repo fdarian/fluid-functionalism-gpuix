@@ -4,11 +4,12 @@ import { Icon } from "../../lib/icon";
 import {
 	color,
 	colorFade,
+	shadow,
 	siteType,
 	surface,
 	weight,
 } from "../../lib/theme";
-import { SurfaceProvider, shadowSurface } from "./elevated";
+import { SurfaceProvider } from "./elevated";
 import {
 	CHEVRON_UP_ICON,
 	ROLES,
@@ -253,7 +254,7 @@ export function InviteDialog(props: {
 					padding: 24,
 					borderRadius: 16,
 					backgroundColor: surface(5),
-					boxShadow: shadowSurface(5),
+					boxShadow: shadow(5),
 					...props.style,
 				}}
 			>
@@ -276,7 +277,7 @@ export function InviteDialog(props: {
 										padding: 4,
 										borderRadius: 16,
 										backgroundColor: surface(5),
-										boxShadow: shadowSurface(3),
+										boxShadow: shadow(3),
 									}}
 								>
 									<StaticRoleItem role={ROLES[0]} checked={false} />

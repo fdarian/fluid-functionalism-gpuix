@@ -44,7 +44,7 @@ repeating it.
 
 - **Cause:** `not ported yet` (surface context in the components, see [dropdown.md](dropdown.md#popup-surface-colour-is-fixed-at-surface-3) and [color-picker.md](color-picker.md#popover-surface-level-is-5-not-substrate--2)).
 - **Original:** `registry/default/lib/elevated.tsx`, `surface-context.tsx` and `surface-classes.ts`: every component reads `useSurface()` and sits at `min(substrate + offset, 8)`, with `shadow-surface-N` from `app/globals.css:137-162`.
-- **Port:** `SurfaceProvider`, `useSurface` (an accessor), `Elevated` (`offset`, `shadowLevel`) and `shadowSurface(level)` live in `src/pages/surfaces/elevated.tsx`. `shadowSurface` writes the whole `--shadow-N` recipe, light and dark (inset highlight and ring, hairline, stacked drops of 1 to 96px), as one multi-layer `boxShadow` string, which gpuix now accepts (`FORK.md:646-649`), so the ladder's shadows are exact here where the components still use `shadow3()` (README "shadow-surface-3" row). Nothing in `src/components/` reads the context, so only this page's own panels lift.
+- **Port:** `SurfaceProvider`, `useSurface` (an accessor), `Elevated` (`offset`, `shadowLevel`) live in `src/pages/surfaces/elevated.tsx`; `shadow(level)` in `src/lib/theme.ts` writes the whole `--shadow-N` recipe, light and dark (inset highlight and ring, hairline, stacked drops of 1 to 96px), as one multi-layer `boxShadow` string, and the components use it at the source's levels. Nothing in `src/components/` reads the context, so only this page's own panels lift.
 - **Fidelity:** exact for the page's panels; the components do not lift.
 - **Components it hits:** dropdown, select, combobox, color-picker, dialog (as above).
 

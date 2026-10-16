@@ -7,8 +7,8 @@ import type {
 } from "@gpuix/solid";
 import { createSignal } from "solid-js";
 import { createPointerCapture } from "../../../lib/pointer-capture";
-import { withAlpha } from "../../../lib/theme";
-import { sc, scRing, scShadow } from "./theme";
+import { twShadow, withAlpha } from "../../../lib/theme";
+import { sc, scRing } from "./theme";
 
 const THUMB = 12;
 const TRACK_HEIGHT = 4;
@@ -152,7 +152,7 @@ export function ScSlider(props: {
 					borderWidth: 1,
 					borderColor: withAlpha(sc.primary, 0.5),
 					backgroundColor: "#FFFFFF",
-					boxShadow: scShadow.base,
+					boxShadow: twShadow.sm,
 					keyboardFocusDim: false,
 					focusVisible: { ...scRing(), outlineWidth: 1, outlineOffset: 0 },
 				}}

@@ -35,15 +35,6 @@ repeating it.
 - **Fidelity:** approximated (compact rows are 2px taller; the stack of compact switches grows by 2px each).
 - **Components it hits:** any component whose layout relies on a trimmed label.
 
-## Thumb shadow is one layer
-
-- **Cause:** `not ported yet`.
-- **Original:** `shadow-sm` on the thumb (`switch.tsx:330`), Tailwind 4's `0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1)`.
-- **Port:** the first layer only (`src/components/switch.tsx:236-242`). `boxShadow` takes a list (`packages/native/js/host.ts:558`), so the second layer can be added. The README rows that say gpuix paints a single shadow (and the comment at `src/lib/theme.ts:470`) are out of date.
-- **Workaround:** none.
-- **Fidelity:** approximated (the tighter second layer is missing).
-- **Components it hits:** any port that copied a multi-layer FF shadow down to one (`shadow3()` in `src/lib/theme.ts:473`).
-
 ## Focus ring gap is not filled with the background
 
 - **Cause:** `port choice` (reason not stated; `focusRing()` is the shared outline helper).

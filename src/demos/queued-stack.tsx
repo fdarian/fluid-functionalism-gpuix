@@ -5,7 +5,7 @@ import { type QueuedMessage, QueuedStack } from "../components/queued-stack";
 import type { DemoModule } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
 import { QueuedChat } from "../lib/queued-chat";
-import { color, radius, type as scale, shadow3 } from "../lib/theme";
+import { color, radius, type as scale, shadow } from "../lib/theme";
 
 const asset = (name: string) =>
 	new URL(`../../assets/chat-ai/${name}`, import.meta.url).pathname;
@@ -112,9 +112,7 @@ function QueuedStackCard() {
 							padding: 14,
 							borderRadius: radius.container,
 							backgroundColor: color.card,
-							borderWidth: 1,
-							borderColor: color.popupBorder,
-							boxShadow: shadow3(),
+							boxShadow: shadow(3),
 						}}
 					>
 						<text

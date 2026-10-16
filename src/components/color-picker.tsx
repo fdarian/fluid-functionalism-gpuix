@@ -35,7 +35,7 @@ import {
 import { createPresence } from "../lib/presence";
 import { createPressToggle, refocusAfterPress } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
-import { color, height, nestedRadius, radius, shape, type as scale, scheme, shadow3, motion as tween, weight, surface, focusRing } from "../lib/theme";
+import { color, height, nestedRadius, radius, shape, type as scale, scheme, shadow, motion as tween, weight, surface, focusRing } from "../lib/theme";
 import {
 	buildParsed,
 	clamp01,
@@ -165,19 +165,14 @@ export function ColorTile(props: { color: string; size?: number }) {
 					width: size(),
 					height: size(),
 					borderRadius: shape.bg,
-					borderWidth: 1,
-					borderColor: HAIRLINE,
+					boxShadow: `inset 0 0 0 1px ${HAIRLINE}`,
 				}}
 			/>
 		</div>
 	);
 }
 
-/**
- * The accent ring sits outside a 2px gap: an outline offset by 2, over a
- * background-coloured spread. gpuix has one box shadow, so the original's
- * stack of three rings is this pair.
- */
+/** The accent ring sits outside a 2px gap in the page colour, as the source stacks them. */
 export function ColorSwatch(props: {
 	color: string;
 	size?: number;
@@ -188,10 +183,10 @@ export function ColorSwatch(props: {
 	const renderer = useGpuixRequired();
 	const size = () => props.size ?? 28;
 	const [hovered, setHovered] = createSignal(false);
-	const ring = () => {
-		if (props.selected === true) return color.focusRing;
-		if (hovered()) return "rgba(127,127,127,0.4)";
-		return undefined;
+	const ringShadow = () => {
+		if (props.selected !== true && !hovered()) return undefined;
+		const ring = props.selected === true ? color.focusRing : "rgba(127,127,127,0.4)";
+		return `0 0 0 2px ${color.background}, 0 0 0 4px ${ring}`;
 	};
 	return (
 		<div
@@ -207,19 +202,7 @@ export function ColorSwatch(props: {
 				flexShrink: 0,
 				borderRadius: shape.bg,
 				cursor: "pointer",
-				boxShadow:
-					ring() === undefined
-						? undefined
-						: {
-								offsetX: 0,
-								offsetY: 0,
-								blurRadius: 0,
-								spreadRadius: 2,
-								color: color.background,
-							},
-				outlineWidth: ring() === undefined ? 0 : 2,
-				outlineColor: ring(),
-				outlineOffset: 2,
+				boxShadow: ringShadow(),
 			}}
 		>
 			<div
@@ -253,8 +236,7 @@ export function ColorSwatch(props: {
 					width: size(),
 					height: size(),
 					borderRadius: shape.bg,
-					borderWidth: 1,
-					borderColor: HAIRLINE,
+					boxShadow: `inset 0 0 0 1px ${HAIRLINE}`,
 				}}
 			/>
 		</div>
@@ -573,13 +555,7 @@ function Rail(props: {
 						borderWidth: 1,
 						borderColor: "rgba(255,255,255,0.9)",
 						backgroundColor: props.thumbColor,
-						boxShadow: {
-							offsetX: 0,
-							offsetY: 1,
-							blurRadius: 2,
-							spreadRadius: 0,
-							color: "rgba(0,0,0,0.1)",
-						},
+						boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
 					}}
 				/>
 			</div>
@@ -748,9 +724,7 @@ function Popup(props: {
 						flexDirection: "column",
 						backgroundColor: surface(props.level),
 						borderRadius: radius.container,
-						borderWidth: 1,
-						borderColor: color.popupBorder,
-						boxShadow: shadow3(),
+						boxShadow: shadow(3),
 					}}
 				>
 					{props.children}
@@ -1781,7 +1755,7 @@ function ColorPickerPanel(props: ColorPickerProps) {
 	);
 }
 
-/** The panel on its own card: surface level 3, a hairline edge and no drop. */
+/** The panel on its own card: surface level 3 with `--shadow-1`, the hairline ring and no drop. */
 export function ColorPicker(props: ColorPickerProps) {
 	return (
 		<div
@@ -1789,8 +1763,7 @@ export function ColorPicker(props: ColorPickerProps) {
 				width: PANEL_WIDTH,
 				backgroundColor: surface(props.level ?? 3),
 				borderRadius: shape.container,
-				borderWidth: 1,
-				borderColor: color.popupBorder,
+				boxShadow: shadow(1),
 			}}
 		>
 			<ColorPickerPanel {...props} />

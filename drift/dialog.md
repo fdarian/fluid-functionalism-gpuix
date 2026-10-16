@@ -43,15 +43,6 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 - **Fidelity:** approximated in dark mode (light mode is `#FFFFFF` at every level; only the shadow weight differs).
 - **Components it hits:** tabs, mobile-drawer, color-picker, dropdown (submenu, inline panel), sidebar, card.
 
-## `shadow-surface-5` painted as a border and one drop
-
-- **Cause:** `not ported yet`. The comment at `src/lib/theme.ts:469-472` ("gpuix paints one outer shadow") is out of date: `boxShadow` takes `BoxShadow[]` or a CSS string with several layers and `inset` (`~/code/fdarian/gpuix/FORK.md:646-649`, `packages/native/js/host.ts:369-377`, `:558`).
-- **Original:** `--shadow-5`: light, a 1px ring plus four stacked drops (1, 3, 6, 12px); dark, an inset top highlight, an inset ring, a 1px black outer ring and the same drops (`app/globals.css:141`, `:164`). No border, so the box keeps its full content size.
-- **Port:** a 1px `popupBorder` border plus only the 12px drop, `shadow5()` (`src/components/dialog.tsx:229-237`, `:346-349`). The border takes 1px of layout on each side, so the content is 2px narrower than in the source at every size.
-- **Workaround:** none.
-- **Fidelity:** approximated (the small drops, the dark highlights and the outer ring are dropped).
-- **Components it hits:** every surface-3 to surface-8 shadow in the port (`shadow3()` in `src/lib/theme.ts:473-481` is the same).
-
 ## Scoped dialog: no portal target, and the top offset is 24px
 
 - **Cause:** `port choice` (the overlay is drawn in place because gpuix's `Dialog` renders no element of its own, `src/components/dialog.tsx:114-118`; the 24px reason is not stated).

@@ -58,15 +58,6 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** exact for Latin input, unknown for IME.
 - **Components it hits:** combobox, command-menu, input-group, input-message.
 
-## Popup shadow is one drop and a border
-
-- **Cause:** `not ported yet`. gpuix paints multi-layer and inset `boxShadow` (`~/code/fdarian/gpuix/FORK.md:646-649`); the comment above `shadow3` in `src/lib/theme.ts:470` ("gpuix paints one outer shadow") is stale.
-- **Original:** `Elevated shadowLevel={3}` (`registry/base/dropdown.tsx:133-135`, `:641-645`): `--shadow-3` is a 1px ring, a `0 1px 1px -0.5px` drop and a `0 3px 3px -1.5px` drop in light (`app/globals.css:139`); in dark it adds an inset top highlight, an inset ring and a 1px outer ring (`:162`).
-- **Port:** a 1px `popupBorder` border plus one `0 3px 3px -1.5px` drop (`src/lib/popup.tsx:106-110`, `src/components/dropdown.tsx:778-784`, `:1327-1333`; `src/lib/theme.ts:470`). No `1px` drop and no dark-mode inset highlight, so the dark popup edge reads flatter.
-- **Workaround:** the border stands in for the ring.
-- **Fidelity:** approximated.
-- **Components it hits:** every popup and card (select, combobox, dialog, color-picker, tooltip).
-
 ## Submenu and inline panel colour is fixed at surface-3
 
 - **Cause:** `not ported yet`. `PopupSurface` (the main popup) follows its substrate through `src/lib/surface-context.ts`; the submenu and inline panel do not read it.

@@ -1,7 +1,8 @@
 import { motion } from "@gpuix/solid";
 import { createUniqueId } from "solid-js";
 import { pressProps, ScLabel } from "./parts";
-import { sc, scRing, scShadow } from "./theme";
+import { twShadow } from "../../../lib/theme";
+import { sc, scRing } from "./theme";
 
 const TRACK_WIDTH = 36;
 const TRACK_HEIGHT = 20;
@@ -43,7 +44,7 @@ export function ScSwitch(props: {
 					borderWidth: 1,
 					borderColor: sc.input,
 					backgroundColor: props.checked ? sc.primary : sc.input,
-					boxShadow: scShadow.sm,
+					boxShadow: twShadow.sm,
 					cursor: "pointer",
 					keyboardFocusDim: false,
 					focusVisible: scRing(),
@@ -60,7 +61,7 @@ export function ScSwitch(props: {
 						height: THUMB,
 						borderRadius: THUMB / 2,
 						backgroundColor: props.checked ? sc.primaryForeground : "#FFFFFF",
-						boxShadow: scShadow.lg,
+						boxShadow: twShadow.lg,
 						pointerEvents: "none",
 					}}
 				/>

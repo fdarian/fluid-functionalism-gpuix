@@ -857,13 +857,7 @@ function CompactSlider(props: CompactProps) {
 						height: THUMB_SIZE_REST,
 						borderRadius: THUMB_SIZE_REST / 2,
 						backgroundColor: "#FFFFFF",
-						boxShadow: {
-							offsetX: 0,
-							offsetY: 1,
-							blurRadius: 2,
-							spreadRadius: 0,
-							color: "rgba(0,0,0,0.1)",
-						},
+						boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
 					}}
 				/>
 				<Show when={valuePosition() === "tooltip"}>

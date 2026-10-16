@@ -13,6 +13,7 @@ import {
 	type as scale,
 	scheme,
 	motion as tween,
+	twShadow,
 	weight,
 } from "../lib/theme";
 
@@ -238,13 +239,7 @@ export function Switch(props: {
 						position: "absolute",
 						backgroundColor: "#FFFFFF",
 						borderRadius: 9999,
-						boxShadow: {
-							offsetX: 0,
-							offsetY: 1,
-							blurRadius: 3,
-							spreadRadius: 0,
-							color: "rgba(0,0,0,0.1)",
-						},
+						boxShadow: twShadow.sm,
 					}}
 				/>
 			</div>

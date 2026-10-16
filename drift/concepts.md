@@ -87,7 +87,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `not ported yet` for the shadow transition; `port choice` for the link.
 - **Original:** each row is `<a href="#answer">` (jumps to the question heading) with `transition-shadow duration-100 hover:shadow-surface-4` (`lumen/page.tsx:114-140`).
-- **Port:** a `div` with the `surface-2` fill and `shadowSurface(2)`, and `hover: { boxShadow: shadowSurface(4) }`, which switches at once (`src/pages/concepts-lumen.tsx:204-262`; `shadowSurface` is the surfaces page's helper, `src/pages/surfaces/elevated.tsx`). A click does nothing.
+- **Port:** a `div` with the `surface-2` fill and `shadow(2)`, and `hover: { boxShadow: shadow(4) }`, which switches at once (`src/pages/concepts-lumen.tsx:204-262`; `shadow` is the `--shadow-N` helper in `src/lib/theme.ts`). A click does nothing.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -258,7 +258,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice`.
 - **Original:** `h-screen` column, `max-w-[960px]`, `flex-1 overflow-y-auto` content; the board is `grid-cols-1 md:grid-cols-3`; the triage panel is `rounded-2xl`; avatars and ID text are `bg-blue-500` ... `text-[10px]`, `font-mono`; surfaces are `surfaceClasses(2, 2)` (`beacon/page.tsx:107-118`, `:168`, `:184`, `:286`, `:382`).
-- **Port:** the column is the frame's height with the issue list in the port's `ScrollArea` (a drawn scrollbar); the board is always three columns (no breakpoint); the panel radius is `shape.container + 4` (16 rounded, 28 pill; the source's `rounded-2xl` is an unchecked guess at its shape-map value); avatar colours are the badge palette's blue, violet, emerald and rose, which are Tailwind's 500s; mono text is Menlo; surfaces are `surface2` with `shadowSurface(2)`, as in Lumen. The triage panel's "done" check is the palette's emerald.
+- **Port:** the column is the frame's height with the issue list in the port's `ScrollArea` (a drawn scrollbar); the board is always three columns (no breakpoint); the panel radius is `shape.container + 4` (16 rounded, 28 pill; the source's `rounded-2xl` is an unchecked guess at its shape-map value); avatar colours are the badge palette's blue, violet, emerald and rose, which are Tailwind's 500s; mono text is Menlo; surfaces are `surface2` with `shadow(2)`, as in Lumen. The triage panel's "done" check is the palette's emerald.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

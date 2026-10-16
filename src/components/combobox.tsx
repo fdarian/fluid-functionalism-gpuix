@@ -579,7 +579,7 @@ export function Combobox(props: {
 								display: "flex",
 								flexDirection: "column",
 								overflowY: "scroll",
-								maxHeight: popupMaxHeight() - 2,
+								maxHeight: popupMaxHeight(),
 							}}
 						>
 							{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}

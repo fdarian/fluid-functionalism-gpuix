@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 670 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 646 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 | | |
@@ -126,43 +126,43 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [carousel-dots](drift/carousel-dots.md) | 2 | 3 | 3 | 1 | 9 |
 | [chat-message](drift/chat-message.md) | 2 | 3 | 4 | 2 | 11 |
 | [checkbox-group](drift/checkbox-group.md) | 3 | 0 | 6 | 1 | 10 |
-| [color-picker](drift/color-picker.md) | 3 | 6 | 20 | 1 | 30 |
-| [combobox](drift/combobox.md) | 7 | 13 | 8 | 1 | 29 |
-| [command-menu](drift/command-menu.md) | 7 | 2 | 15 | 1 | 25 |
-| [compare](drift/compare.md) | 5 | 9 | 0 | 2 | 16 |
+| [color-picker](drift/color-picker.md) | 3 | 6 | 19 | 1 | 29 |
+| [combobox](drift/combobox.md) | 7 | 13 | 7 | 1 | 28 |
+| [command-menu](drift/command-menu.md) | 7 | 2 | 14 | 1 | 24 |
+| [compare](drift/compare.md) | 4 | 9 | 0 | 2 | 15 |
 | [concepts](drift/concepts.md) | 4 | 26 | 2 | 2 | 34 |
-| [dialog](drift/dialog.md) | 6 | 2 | 3 | 1 | 12 |
-| [dropdown](drift/dropdown.md) | 6 | 4 | 13 | 1 | 24 |
+| [dialog](drift/dialog.md) | 6 | 2 | 2 | 1 | 11 |
+| [dropdown](drift/dropdown.md) | 6 | 4 | 12 | 1 | 23 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
 | [fluid-hover](drift/fluid-hover.md) | 3 | 4 | 2 | 4 | 13 |
 | [home](drift/home.md) | 1 | 1 | 1 | 2 | 5 |
 | [input-copy](drift/input-copy.md) | 2 | 3 | 8 | 0 | 13 |
 | [input-group](drift/input-group.md) | 1 | 1 | 4 | 1 | 7 |
-| [input-message](drift/input-message.md) | 4 | 1 | 15 | 3 | 23 |
+| [input-message](drift/input-message.md) | 4 | 0 | 15 | 3 | 22 |
 | [introduction](drift/introduction.md) | 1 | 4 | 2 | 1 | 8 |
-| [mobile-drawer](drift/mobile-drawer.md) | 3 | 2 | 2 | 0 | 7 |
+| [mobile-drawer](drift/mobile-drawer.md) | 3 | 2 | 1 | 0 | 6 |
 | [motion-page](drift/motion-page.md) | 4 | 3 | 2 | 3 | 12 |
 | [nav-menu](drift/nav-menu.md) | 0 | 5 | 1 | 1 | 7 |
-| [queued-stack](drift/queued-stack.md) | 4 | 2 | 5 | 1 | 12 |
+| [queued-stack](drift/queued-stack.md) | 4 | 2 | 4 | 1 | 11 |
 | [radio-group](drift/radio-group.md) | 4 | 2 | 5 | 0 | 11 |
 | [scroll-area](drift/scroll-area.md) | 3 | 6 | 2 | 1 | 12 |
 | [scrollbars-page](drift/scrollbars-page.md) | 1 | 4 | 2 | 1 | 8 |
-| [select](drift/select.md) | 7 | 3 | 8 | 2 | 20 |
+| [select](drift/select.md) | 7 | 3 | 7 | 2 | 19 |
 | [sidebar](drift/sidebar.md) | 1 | 6 | 25 | 1 | 33 |
 | [site](drift/site.md) | 4 | 6 | 22 | 6 | 38 |
 | [sizes-page](drift/sizes-page.md) | 0 | 5 | 2 | 4 | 11 |
 | [skill-page](drift/skill-page.md) | 3 | 5 | 0 | 1 | 9 |
 | [slider](drift/slider.md) | 4 | 3 | 4 | 2 | 13 |
 | [surfaces](drift/surfaces.md) | 1 | 3 | 4 | 4 | 12 |
-| [switch](drift/switch.md) | 2 | 1 | 4 | 1 | 8 |
+| [switch](drift/switch.md) | 2 | 1 | 3 | 1 | 7 |
 | [table](drift/table.md) | 3 | 1 | 5 | 0 | 9 |
 | [tabs-subtle](drift/tabs-subtle.md) | 1 | 4 | 2 | 1 | 8 |
-| [tabs](drift/tabs.md) | 2 | 2 | 4 | 0 | 8 |
+| [tabs](drift/tabs.md) | 2 | 2 | 3 | 0 | 7 |
 | [thinking-indicator](drift/thinking-indicator.md) | 1 | 2 | 4 | 0 | 7 |
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 7 | 1 | 15 |
 | [tooltip](drift/tooltip.md) | 4 | 5 | 1 | 1 | 11 |
 | [typography](drift/typography.md) | 4 | 0 | 1 | 6 | 11 |
-| **Total** | **137** | **194** | **260** | **67** | **658** |
+| **Total** | **136** | **193** | **250** | **67** | **646** |
 
 ### gpuix gaps across components
 
@@ -219,7 +219,7 @@ offer it. A count is given only where the code shows it.
 | fluid-hover, motion, scrollbars and sizes pages (every `Code` chip, the Scrollbars links) | Inline `<span>` boxes take no padding, margin, border radius, per-run `fontSize` or click events (`~/code/fdarian/gpuix/FORK.md:765-773`) | The chip's padding is no-break spaces around a Menlo run at the paragraph's size (`src/lib/doc-page.tsx:58-75`); links are underlined text that goes nowhere |
 | surfaces and fluid-hover pages (the annotation arrows) | `<svg>` has no `marker` (`FORK.md:762`) | The arrowhead is two extra strokes laid along the curve's end tangent |
 | concepts (Lumen's image swatches) | `<img>` takes `file://` and `blob:` URLs, not `data:` ones | A `linear-gradient` box instead of an SVG data URI |
-| button, home bento cards, compare | `box-shadow` paints under the whole border box with no knock-out, and one outer shadow per element: a translucent fill over it doubles up, and the source's stacked drops (`shadow-sm` to `shadow-lg`) keep one | An opaque fill over the shadow, or the shadow alone as the fill (`drift/button.md`, `drift/home.md`, `drift/compare.md`) |
+| button, home bento cards, compare | An outer `box-shadow` paints under the whole border box with no knock-out (only `inset` shadows are clipped to the element, `shaders.metal:600-654`): a translucent fill over it doubles up | An opaque fill over the shadow, or the shadow alone as the fill (`drift/button.md`, `drift/home.md`, `drift/compare.md`) |
 | skill page (the scripted-cursor examples) | Dispatching a synthetic pointer event, or setting `:hover`, on one element: the native simulate calls move the window's one pointer | The page calls the elements' `onMouseEnter` / `onMouseLeave` / `onMouseMove` props and `click()` directly (`drift/skill-page.md`, `src/pages/skill/scripted-pointer.ts`) |
 | site menu (`isModK`) | A physical key: gpuix derives `code` from GPUI's layout-dependent `key`, so a non-Latin letter reports `code` `""` (`packages/native/src/events/key_names.rs:9-12`, `:138-160`). On Windows and Linux, Ctrl plus a Cyrillic or Greek letter cannot match a shortcut through `code`, as the source's `matchesShortcut` does. macOS reports the layout's Cmd letter, so ⌘K works there | none; the sidebar's Search row opens the menu (`drift/site.md`). Not run on Windows or Linux |
 
@@ -275,9 +275,9 @@ now does that the port has not picked up.
 | press-shrink: inset-px layer plus same-colour `box-shadow` spread | the element carries `margin: 1` and a spread-1 shadow, and `active` sets spread 0 | Exact for flat fills |
 | translucent fill (`--tint`, `bg-hover`) over that shadow | gpuix paints a shadow under its element with no knock-out, so a background on top doubles up. Fills are the shadow alone, with no `backgroundColor` | Exact, but a different mechanism |
 | tertiary ring that moves inward on press (outer to inset shadow) | outline, offset 0 at rest and −1 pressed | Exact |
-| `shadow-surface-3` (1px ring + two stacked drops) | `borderWidth: 1` plus one drop shadow. gpuix then painted a single non-inset shadow; it now takes multi-layer and `inset` `boxShadow` strings (FORK.md:646-649); not adopted yet | Approximated, now possible |
+| `shadow-surface-N` (1px ring plus stacked drops; in dark an inset highlight and ring, and a 1px outer hairline) | `shadow(N)` (`src/lib/theme.ts`): the `--shadow-N` recipe as one multi-layer, scheme-aware `boxShadow` string, with no border. The popups, dialog, drawer, queued card, tab pill and composer use it at the source's levels | Exact |
+| Tailwind `shadow-sm` to `shadow-xl` | `twShadow` (`src/lib/theme.ts`): both drops of each, as the CSS strings | Exact |
 | `color-mix(in oklab, …)`, `light-dark()` | both columns kept as a token table; the scheme is a signal | Exact |
-| dark `--shadow-3` (inset hairline + ring + drops) | popup `borderColor` of white at 5% plus the one drop shadow, for the same reason (multi-layer and `inset` shadows exist now, FORK.md:646-649; not adopted yet) | Approximated, now possible |
 | `prefers-color-scheme` ("System" theme) | `createAppearance()` reads the OS appearance and `bindSystemScheme` feeds it to the `scheme` token. System / Light / Dark are one `themeChoice` signal, and `renderer.setAppearance` mirrors Light / Dark so the native chrome follows | Exact in the window; captures run on the test renderer, whose appearance is fixed, so they pin Dark |
 | Base UI `Positioner` (flip, `--anchor-width`, `--available-height`) | `<anchored fit="flip" deferred>`: gpuix picks the side and reports it with the room left (`onPlacement`), and `PopupSurface` caps the card to that room, slides from the reported side and is at least the trigger's width | Equivalent |
 | `ScrollArea` (hover thumb, scroll fade) | a plain `overflowY: "scroll"`, on the combobox list and the sidebar | Dropped |

@@ -7,12 +7,13 @@ import {
 	color,
 	radius,
 	SchemeScope,
+	shadow,
 	type as scale,
 	siteType,
 	surface,
 	weight,
 } from "../../lib/theme";
-import { Elevated, SurfaceProvider, shadowSurface } from "./elevated";
+import { Elevated, SurfaceProvider } from "./elevated";
 import { LOCK_ICON, type MenuOption, SurfaceMenu } from "./role-menu";
 import {
 	ELEVATED_SOURCE,
@@ -75,7 +76,7 @@ function SurfaceChip(props: { level: number }) {
 					height: 56,
 					borderRadius: radius.container,
 					backgroundColor: surface(props.level),
-					boxShadow: shadowSurface(props.level),
+					boxShadow: shadow(props.level),
 				}}
 			/>
 			<MicroText mono color={color.mutedForeground}>
@@ -323,7 +324,7 @@ export function ElevatedDemo() {
 					maxWidth: 480,
 					...panel,
 					backgroundColor: surface(1),
-					boxShadow: shadowSurface(1),
+					boxShadow: shadow(1),
 				}}
 			>
 				<PanelLabel>Page</PanelLabel>
@@ -404,7 +405,7 @@ function LayerBox(props: {
 					style={{
 						...style(),
 						backgroundColor: surface(props.level),
-						boxShadow: shadowSurface(props.level),
+						boxShadow: shadow(props.level),
 					}}
 				>
 					{label}

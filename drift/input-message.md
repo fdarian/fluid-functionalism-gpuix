@@ -47,7 +47,7 @@ repeating it.
 
 - **Cause:** `not ported yet`.
 - **Original:** `transition-opacity duration-80` on the badge and close button (`input-message.tsx:257,370`), `transition-colors duration-80` on a suggestion row's text and `transition-opacity` on its icon (`:429,445,451`), `transition-[box-shadow,color] duration-80` on the composer's ring (`:1060`).
-- **Port:** the badge, close button and suggestion icon are shown or hidden at once (`input-message.tsx:263,490,561-581`), the row colour switches (`:556`), and `ring()` switches the outline colour (`:928-934`). The fork animates colours, `outlineColor` and `boxShadow` (`FORK.md:814-815`).
+- **Port:** the badge, close button and suggestion icon are shown or hidden at once (`input-message.tsx:263,490,561-581`), the row colour switches (`:556`), and `edgeShadow()` switches the ring's shadow (`:928-936`). The fork animates colours, `outlineColor` and `boxShadow` (`FORK.md:814-815`).
 - **Fidelity:** approximated.
 
 ## Drag-over has no state
@@ -98,13 +98,6 @@ repeating it.
 - **Original:** plain ArrowUp / ArrowDown drive the suggestion list and history (`input-message.tsx:788-889`).
 - **Port:** the same handler also accepts Ctrl-P / Ctrl-N (`input-message.tsx:812-836`), and the demo's scenarios use `ctrl-n` / `ctrl-p` (`src/demos/input-message.tsx:644,763`). If the arrows really are swallowed, the keyboard path in the real window is Ctrl-P / Ctrl-N only.
 - **Fidelity:** approximated.
-
-## The resting ring in dark mode
-
-- **Cause:** `port choice` (`popupBorder` "stands in for the shadow ring", `lib/theme.ts:35`).
-- **Original:** `surfaceClasses(2, 2)` (`input-message.tsx:1057`): `--shadow-light-2` in light (1px ring plus a drop) and `--shadow-dark-2` in dark, an inset 1px ring at 2% white and an inset top highlight at 1% (`app/globals.css:138,161`).
-- **Port:** an outline outside the box in `color.popupBorder` (6% black in light, 5% white in dark) plus the drop (`input-message.tsx:925-931,959-975`). Light is the same; dark has a stronger, outer ring and no top highlight.
-- **Fidelity:** approximated in dark.
 
 ## Slot buttons are not scaled down in compact
 

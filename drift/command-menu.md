@@ -128,15 +128,6 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 - **Components it hits:** every component with motion.
 - **Note:** gpuix's `MotionConfig reducedMotion="user"` makes `motion.*` position and size properties jump (`~/code/fdarian/gpuix/README.md:1953-1966`); the fill is a `motion.div`, so one wrapper at the app root would cover it.
 
-## Panel frame: a border and one shadow, and the dialog uses surface 3
-
-- **Cause:** `not ported yet` (the stated reason, "gpuix paints one outer shadow", no longer holds: `boxShadow` takes a list, `~/code/fdarian/gpuix/README.md:5192`).
-- **Original:** `Elevated offset=2 shadowLevel=3` for the inline panel (surface 3, `--shadow-3`: a 1 px ring plus two drops, with an inset highlight and ring in dark). The dialog panel is `surfaceClasses(substrate + 4)`, surface 5 with `--shadow-5` (`app/docs/command-menu/page.tsx:344-354`; `registry/base/dialog.tsx:30`, `:190`, `:274`).
-- **Port:** `CommandMenuPanel` is `color.card` (surface 3) with a real 1 px `popupBorder` (it takes layout, the ring does not) and `shadow3()` (the 3 px drop alone) for both the inline panel and the dialog (`src/components/command-menu.tsx:314-328`, `:1363`; `src/lib/theme.ts:469-481`). In dark mode the dialog is `#252525` where the source draws `#333333`.
-- **Workaround:** `popupBorder` stands in for the ring.
-- **Fidelity:** approximated.
-- **Components it hits:** every popup, dialog and mobile-drawer.
-
 ## Dialog enter and exit
 
 - **Cause:** `gpuix gap` (the scale).

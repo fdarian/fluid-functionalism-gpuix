@@ -19,9 +19,8 @@ import {
 	ThinkingStepsHeader,
 } from "../components/thinking-steps";
 import type { ShotContext } from "../lib/demo";
-import { color, shape, siteType, weight } from "../lib/theme";
+import { color, shadow, shape, siteType, weight } from "../lib/theme";
 import { ConceptFrame } from "./concepts/frame";
-import { shadowSurface } from "./surfaces/elevated";
 
 export const title = "Lumen";
 export const group = "Pages";
@@ -218,8 +217,8 @@ function SourcesPanel() {
 							paddingBottom: 12,
 							borderRadius: 12,
 							backgroundColor: color.surface2,
-							boxShadow: shadowSurface(2),
-							hover: { boxShadow: shadowSurface(4) },
+							boxShadow: shadow(2),
+							hover: { boxShadow: shadow(4) },
 						}}
 					>
 						<Badge color={source.color} size="compact">

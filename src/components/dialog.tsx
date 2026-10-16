@@ -1,5 +1,4 @@
 import {
-	type BoxShadow,
 	createWindowSize,
 	DialogBackdrop,
 	DialogPopup,
@@ -35,6 +34,7 @@ import {
 	sizeChoice,
 	type as scale,
 	scheme,
+	shadow,
 	surface,
 	motion as tween,
 	weight,
@@ -242,20 +242,6 @@ export function DialogClose(props: { children: JSX.Element }) {
 	return <GpuixDialogClose asChild>{props.children}</GpuixDialogClose>;
 }
 
-/**
- * surface-5's shadow: a 1px ring plus drops up to 12px. gpuix paints one
- * outer shadow, so the ring is the border and the largest drop is kept.
- */
-function shadow5(): BoxShadow {
-	return {
-		offsetX: 0,
-		offsetY: 12,
-		blurRadius: 12,
-		spreadRadius: -6,
-		color: color.shadowColor,
-	};
-}
-
 export function DialogContent(props: {
 	size?: DialogSize;
 	/** One notch narrower, like a dialog opened from a compact region. */
@@ -355,9 +341,7 @@ export function DialogContent(props: {
 						padding: 24,
 						borderRadius: shape.container,
 						backgroundColor: surface(level),
-						borderWidth: 1,
-						borderColor: color.popupBorder,
-						boxShadow: shadow5(),
+						boxShadow: shadow(level),
 					}}
 				>
 					<SurfaceContext.Provider value={level}>

@@ -137,10 +137,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Fidelity:** approximated (extra state; the popup opens on mouse-down, so it shows briefly).
 - **Components it hits:** just this one.
 
-## Popup ring is a layout-taking border and the shadow is one drop
-
-- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup shadow is one drop and a border"](dropdown.md#popup-shadow-is-one-drop-and-a-border), where the entry lives. Here: `popup.tsx:99-101`, `theme.ts:332-340`; the border takes layout, so the card is 2px taller and `select.tsx:601` subtracts 2 from the rows. API to use: multi-layer `boxShadow` (`~/code/fdarian/gpuix/FORK.md:646-649`).
-
 ## The list scrolls in a bare scroller
 
 - **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup list scrolls in plain `overflow`, not ScrollArea"](dropdown.md#popup-list-scrolls-in-plain-overflow-not-scrollarea), where the entry lives. Here: original `select.tsx:536`; port `select.tsx:596-603` (`BASE-UI-AUDIT.md:530`: gpuix has `scrollbarWidth: "none"`, `onScroll` offsets and `maskImage`).

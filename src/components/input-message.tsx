@@ -25,7 +25,7 @@ import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { fill } from "../lib/press";
 import { createMeasuredHeight } from "../lib/measured-height";
-import { color, sizeChoice, height, nestedRadius, radius, shape, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
+import { color, sizeChoice, height, nestedRadius, radius, shape, type as scale, scheme, shadow, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 import { FileThumbnail } from "./file-thumbnail";
 import type { InputSize } from "./input-group";
 import { Tooltip } from "./tooltip";
@@ -117,6 +117,9 @@ const steps = {
 		arrow: 15,
 	},
 } as const;
+
+/** The drop under a recoloured edge: `--shadow-color`, which stays 6% black in dark too. */
+const EDGE_DROP = "0 1px 1px -0.5px rgba(0,0,0,0.06)";
 
 /** The focused composer's ring: foreground at 20%. */
 const focusEdge = () => withAlpha(color.foreground, 0.2);
@@ -922,12 +925,13 @@ export function InputMessage(props: InputMessageProps) {
 	const renderSlot = (slot: InputMessageSlot | undefined) =>
 		typeof slot === "function" ? slot(slotContext()) : slot;
 
-	const ring = () => {
-		if (focused()) return focusEdge();
-		if (hovered() && props.clickToFocus !== false && props.disabled !== true) {
-			return color.border;
-		}
-		return color.popupBorder;
+	const edgeShadow = () => {
+		let edge: string;
+		if (focused()) edge = focusEdge();
+		else if (hovered() && props.clickToFocus !== false && props.disabled !== true) {
+			edge = color.border;
+		} else return shadow(2);
+		return `0 0 0 1px ${edge}, ${EDGE_DROP}`;
 	};
 
 	const rectFor = (index: number | null) => {
@@ -957,22 +961,13 @@ export function InputMessage(props: InputMessageProps) {
 				width: "100%",
 				borderRadius: shape.container,
 				backgroundColor: color.surface2,
-				outlineWidth: 1,
-				outlineColor: ring(),
-				outlineOffset: 0,
 				cursor:
 					props.clickToFocus !== false && props.disabled !== true
 						? "text"
 						: undefined,
 				opacity: props.disabled === true ? 0.5 : 1,
 				pointerEvents: props.disabled === true ? "none" : undefined,
-				boxShadow: {
-					offsetX: 0,
-					offsetY: 1,
-					blurRadius: 1,
-					spreadRadius: -0.5,
-					color: color.shadowColor,
-				},
+				boxShadow: edgeShadow(),
 			}}
 		>
 			<Collapse open={files().length > 0}>

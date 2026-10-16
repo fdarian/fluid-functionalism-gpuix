@@ -51,15 +51,6 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Fidelity:** approximated (1px).
 - **Components it hits:** just this one.
 
-## Card edge and shadow
-
-- **Cause:** `not ported yet`.
-- **Original:** the panel carries `shadow-surface-1` (a 1px ring) and the popover and format menu `shadow-surface-3` (ring plus two stacked drops, inset hairline and highlight in dark) (`color-picker.tsx:1958`, `:2405`, `:1025-1027`; tokens in `app/globals.css:137-162`).
-- **Port:** a 1px `borderColor: popupBorder` plus one drop (`shadow3()`, `src/lib/theme.ts:470-478`; `src/components/color-picker.tsx:748-749`, `:1793`). The README row says gpuix paints a single non-inset shadow, but `boxShadow` takes a list and `inset` (`~/code/fdarian/gpuix/packages/native/js/host.ts:369-377`, `:558`; `FORK.md:646-649`).
-- **Workaround:** border plus one drop; README "shadow-surface-3" row.
-- **Fidelity:** approximated.
-- **Components it hits:** every popup and card.
-
 ## Popover surface level is 5, not substrate + 2
 
 - **Cause:** `port choice` (reason not stated; the ladder in `src/lib/surface-context.ts` is not read here).
@@ -118,18 +109,18 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `port choice` (follows the source comment's intent, not its rendering).
 - **Original:** the 25% grey hairline is an `inset` box-shadow on the tile and swatch button, and the colour is an `absolute inset-0` child above it (`color-picker.tsx:1665-1672`, `:1692`, `:1713-1716`). By CSS paint order the child covers an inset shadow, so on an opaque colour the hairline does not show; it shows only through translucent ones. This was reasoned from the stacking rules, not checked in a browser.
-- **Port:** a separate bordered overlay is painted after the colour, so the hairline is always visible (`src/components/color-picker.tsx:158-169`, `:246-257`).
+- **Port:** the same `inset 0 0 0 1px` shadow, but on a separate overlay painted after the colour, so the hairline is always visible (`src/components/color-picker.tsx:158-169`, `:229-241`). On the tile or button itself it would sit under the checker, which is a child box here, not the parent's background, and would never show.
 - **Workaround:** n/a.
 - **Fidelity:** approximated (a hairline the source may not draw on opaque colours).
 - **Components it hits:** just this one.
 
-## Swatch ring stack, and its fade
+## Swatch ring does not fade
 
 - **Cause:** `not ported yet`.
 - **Original:** three stacked box-shadows (inset hairline, 2px background gap, 2px outer ring: `#6B97FF` selected, 40% grey hovered), fading over 100ms (`color-picker.tsx:1688-1699`).
-- **Port:** a 2px background-coloured spread shadow plus a 2px outline offset by 2, switching at once (`src/components/color-picker.tsx:175-220`), on the stated ground that gpuix has one box shadow. It takes a list (`host.ts:558`), and CSS transitions apply to state-style changes (`FORK.md:816-818`). README row "transition-colors duration-80, transition-[box-shadow]: Dropped" predates that.
-- **Workaround:** the pair.
-- **Fidelity:** approximated.
+- **Port:** the gap and the ring as one `0 0 0 2px background, 0 0 0 4px ring` shadow (the hairline is the overlay above), switching at once (`src/components/color-picker.tsx:176-206`). CSS transitions apply to state-style changes (`FORK.md:816-818`). README row "transition-colors duration-80, transition-[box-shadow]: Dropped" predates that.
+- **Workaround:** none.
+- **Fidelity:** approximated (the ring switches at once).
 - **Components it hits:** just this one.
 
 ## Colour fades (`transition-colors duration-80`) are not ported

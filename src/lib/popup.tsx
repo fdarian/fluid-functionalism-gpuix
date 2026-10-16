@@ -7,7 +7,7 @@ import {
 import { type Accessor, createSignal, type JSX, Show } from "solid-js";
 import type { createPresence } from "./presence";
 import { SurfaceContext, useElevatedSurface } from "./surface-context";
-import { color, radius, shadow3, surface, motion as tween } from "./theme";
+import { color, radius, shadow, surface, motion as tween } from "./theme";
 
 export const POPUP_OFFSET = 6;
 /** Steps above its substrate a popup sits: `Elevated offset={2}` in the source. */
@@ -105,9 +105,7 @@ export function PopupSurface(props: {
 						flexDirection: "column",
 						backgroundColor: surface(level),
 						borderRadius: radius.container,
-						borderWidth: 1,
-						borderColor: color.popupBorder,
-						boxShadow: shadow3(),
+						boxShadow: shadow(3),
 						overflow: "hidden",
 						maxHeight: maxHeight(),
 					}}

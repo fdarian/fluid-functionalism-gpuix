@@ -39,7 +39,8 @@ import {
 	shape,
 	sizeChoice,
 	type as scale,
-	shadow3,
+	shadow,
+	surface,
 	motion as tween,
 	weight,
 } from "../lib/theme";
@@ -307,8 +308,9 @@ function useCommandMenu() {
 
 // ─── Panel ───────────────────────────────────────────────────────────────────
 
-/** The surface-3 card an inline menu sits in. It caps the height; the list scrolls past it. */
+/** The card a menu sits in: surface 3 inline, surface 5 in a dialog. It caps the height; the list scrolls past it. */
 export function CommandMenuPanel(props: {
+	level?: number;
 	width?: number | string;
 	maxHeight?: number;
 	children: JSX.Element;
@@ -321,11 +323,9 @@ export function CommandMenuPanel(props: {
 				width: props.width ?? "100%",
 				maxWidth: 520,
 				maxHeight: props.maxHeight,
-				backgroundColor: color.card,
+				backgroundColor: surface(props.level ?? 3),
 				borderRadius: shape.container,
-				borderWidth: 1,
-				borderColor: color.popupBorder,
-				boxShadow: shadow3(),
+				boxShadow: shadow(props.level ?? 3),
 				overflow: "hidden",
 			}}
 		>
@@ -1410,7 +1410,7 @@ export function CommandMenuDialog(props: {
 						style={{ display: "flex", flexDirection: "column" }}
 					>
 						<DialogContext.Provider value={handle}>
-							<CommandMenuPanel width="100%" maxHeight={maxHeight()}>
+							<CommandMenuPanel level={5} width="100%" maxHeight={maxHeight()}>
 								{props.children}
 							</CommandMenuPanel>
 						</DialogContext.Provider>
