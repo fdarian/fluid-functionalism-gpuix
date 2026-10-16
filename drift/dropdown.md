@@ -74,7 +74,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `gpuix gap`. README "Missing features" row "IME composition".
 - **Original:** a native `<input>`; composition works (`registry/default/dropdown-search.tsx:337-364`).
-- **Port:** gpuix `<input>` (`src/components/dropdown-search.tsx:100-138`); no `composition*` events, so the field's Escape/Tab/arrow handling cannot tell a key an IME consumed. Untested.
+- **Port:** gpuix `<input>` (`src/components/dropdown-search.tsx:97-131`); no `composition*` events, so the field's Escape/Tab/arrow handling cannot tell a key an IME consumed. Untested.
 - **Fidelity:** exact for Latin input, unknown for IME.
 - **Components it hits:** combobox, command-menu, input-group, input-message.
 
@@ -147,27 +147,15 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`. The ring has no `AnimatePresence`-style fade, and the panel clears it on any pointer move.
 - **Original:** the ring is a `motion.div` in `AnimatePresence` that springs `left/top/width/height` on `spring.fast`, fades 0.08 s and exits on `spring.fast.exit` (`registry/base/dropdown.tsx:224-243`). It is set from `onFocus` only when the target `:focus-visible` (`:145-156`) and stays until focus leaves the panel (`:157-161`); a mouse move changes the hover highlight, not the ring.
-- **Port:** `Show` mounts and unmounts the ring with no fade either way (`src/components/dropdown.tsx:226-247`), though it springs between rows. Any pointer move over the panel clears it (`:799`, `:803`). The group's `onFocus` reads `event.focusVisible` and draws the ring only for keyboard focus, as the source does (`:762-768`); a press that focuses the group lights the hovered row and draws no ring.
+- **Port:** `Show` mounts and unmounts the ring with no fade either way (`src/components/dropdown.tsx:228-249`), though it springs between rows. Any pointer move over the panel clears it (`:855`, `:859`). The rows are the focus targets (the group is not focusable), and a row's `onFocus` draws the ring only for `event.focusVisible` (`src/components/menu-item.tsx:187-189`, `dropdown.tsx:756-761`), as the source does (`:145-156`); a press that focuses a row lights it and draws no ring. Focus leaving the rows clears the ring and the highlight (`:817-829`).
 - **Fidelity:** approximated for the fade and the clearing.
 - **Components it hits:** just this one (popup menus draw no ring in either build).
-
-## Search field keeps focus; rows are a virtual highlight while it is open
-
-- **Cause:** `not ported yet` (the search lane, F2). The popup menu and submenus are already on the source's model: rows take real focus with a roving `tabIndex` (0 on the lit row, -1 on the others), the lit row is the focused row, the keys live on the popup panel, and hover moves focus to the row.
-- **Original:** Base UI `Menu.Item` rows take real focus with roving `tabindex` (`registry/base/dropdown.tsx:554-587`); `onFocus` lights the row (`:672-693`), typing on a focused row is redirected into the field (`registry/default/dropdown-search.tsx:132-168`), and Space on a row activates it (`:127-131`).
-- **Port:** with a `DropdownSearch` the field keeps focus while arrows move `hover.activeIndex` (`src/components/dropdown.tsx:325-338`, `:358-417`; `src/components/dropdown-search.tsx:74-77`), and rows take no `tabIndex` (`rowsTakeFocus`, `src/components/dropdown.tsx:315`). The field forwards its keys to the list's handler. Consequences, with a search field and a row lit by arrow:
-  - Space, Home and End act on the lit row, as they do on a focused row in the source: while a row is lit the handler activates it or jumps to the first or last row (`fieldOwnsKey`, `src/components/dropdown.tsx:368`, `:388-406`). With no row lit the field keeps them (a space types, Home and End move the caret), which is also what the source's field does.
-  - Typing on a lit row is not redirected into the field (the field already has focus, so a printable key types there; the row stays lit until the query changes and clears it).
-  - Returning to the field from the bottom does not scroll the list to its top (source `scrollToTop`, `dropdown-search.tsx:86-100`, `:155`); the next arrow reveals the row.
-  - The field has no `role="searchbox"`, `autoComplete="off"` or `spellCheck={false}` (source `registry/default/dropdown-search.tsx:343-347`); the port sets `aria-activedescendant` (`src/components/dropdown-search.tsx:102`), which the source does not.
-- **Fidelity:** approximated.
-- **Components it hits:** color-picker's format menu is hand-written on the same virtual-highlight idea (audit "Color picker format menu"); the inline `Dropdown` panel keeps a virtual ring on its group (see "Inline panel focus ring").
 
 ## Search field is not sticky and cannot sit in an inline panel
 
 - **Cause:** `not ported yet`. gpuix has `position: sticky` (`~/code/fdarian/gpuix/FORK.md:560`; README gpuix gaps intro); the comment at `src/components/dropdown-search.tsx:24-28` ("gpuix has no `position: sticky`") is stale. BASE-UI-AUDIT.md row 415 records it as not adopted.
 - **Original:** the field is `sticky top-0 z-20 -mx-1 -mt-1 mb-0.5` inside the scrolling list, `border-b border-border/60`, painted with the surface so rows scroll underneath; `DropdownSearch` in an inline `Dropdown` is simply open (`registry/default/dropdown-search.tsx:228-231`, `:317-331`).
-- **Port:** `DropdownSearch` renders nothing and hands its props to `DropdownContent`, which draws the field above the scroller (`src/components/dropdown-search.tsx:35-44`, `:69-141`; `src/components/dropdown.tsx:610-625`) with the rows' top padding cut to 2px (`:652`). Placed in an inline `Dropdown` it throws "DropdownSearch must be inside a DropdownContent" (`dropdown-search.tsx:36-39`). Visually the first frame matches; rows no longer slide under the field, and the thumb (if any) would start below it.
+- **Port:** `DropdownSearch` renders nothing and hands its props to `DropdownContent`, which draws the field above the scroller (`src/components/dropdown-search.tsx:35-44`, `:69-134`; `src/components/dropdown.tsx:669-677`) with the rows' top padding cut to 2px (`:699`). Placed in an inline `Dropdown` it throws "DropdownSearch must be inside a DropdownContent" (`dropdown-search.tsx:36-39`). Visually the first frame matches; rows no longer slide under the field, and the thumb (if any) would start below it.
 - **Fidelity:** approximated.
 - **Components it hits:** command-menu draws its own field.
 
