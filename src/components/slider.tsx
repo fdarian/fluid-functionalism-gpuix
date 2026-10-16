@@ -1,4 +1,6 @@
 import {
+	createMotionValue,
+	createTransform,
 	type EventPayload,
 	type HostElement,
 	type HostMouseEvent,
@@ -12,6 +14,7 @@ import {
 	type Accessor,
 	createEffect,
 	createMemo,
+	createRenderEffect,
 	createSignal,
 	createUniqueId,
 	For,
@@ -21,7 +24,16 @@ import {
 } from "solid-js";
 import { createPointerCapture } from "../lib/pointer-capture";
 import { createPresence } from "../lib/presence";
-import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
+import {
+	color,
+	focusRing,
+	radius,
+	type as scale,
+	scheme,
+	motion as tween,
+	weight,
+	withAlpha,
+} from "../lib/theme";
 
 export type SliderValue = number | [number, number];
 export type ValuePosition = "left" | "right" | "top" | "bottom" | "tooltip";
@@ -103,7 +115,10 @@ function decimalPlaces(n: number) {
 	if (Math.abs(n) < 1) {
 		const [mantissa, exponent] = n.toExponential().split("e-");
 		const fraction = mantissa.split(".")[1];
-		return (fraction === undefined ? 0 : fraction.length) + Number.parseInt(exponent, 10);
+		return (
+			(fraction === undefined ? 0 : fraction.length) +
+			Number.parseInt(exponent, 10)
+		);
 	}
 	const fraction = n.toString().split(".")[1];
 	return fraction === undefined ? 0 : fraction.length;
@@ -125,10 +140,31 @@ function keyboardStep(
 	);
 	const moved = Number(
 		(onGrid + increment * direction).toFixed(
-			Math.max(decimalPlaces(onGrid), decimalPlaces(increment), decimalPlaces(min)),
+			Math.max(
+				decimalPlaces(onGrid),
+				decimalPlaces(increment),
+				decimalPlaces(min),
+			),
 		),
 	);
 	return Math.max(min, Math.min(max, moved));
+}
+
+// ─── Motion ──────────────────────────────────────────────────────────────────
+
+/**
+ * Runs motion value writes outside the event that caused them. gpuix refuses `animate` and `jump` inside a press, release or key handler (native calls those synchronously), and a slider's value change lands in exactly those. A write that outlives its owner is dropped.
+ */
+function createMotionWrites() {
+	let disposed = false;
+	onCleanup(() => {
+		disposed = true;
+	});
+	return (write: () => void) => {
+		queueMicrotask(() => {
+			if (!disposed) write();
+		});
+	};
 }
 
 // ─── Element box ─────────────────────────────────────────────────────────────
@@ -236,7 +272,8 @@ function createHover() {
 }
 
 function layoutWidth(event: EventPayload) {
-	if (event.width === undefined) throw new Error("Layout event without a width");
+	if (event.width === undefined)
+		throw new Error("Layout event without a width");
 	return event.width;
 }
 
@@ -725,7 +762,39 @@ function CompactSlider(props: CompactProps) {
 		return isRange() ? dot > first && dot < second : dot <= first;
 	};
 
-	const springOrPlace = () => (moving() ? tween.snap : tween.moderate);
+	/**
+	 * Each thumb's left offset, one motion value the thumb, the fill and a tooltip riding the thumb all read, so they move together mid-spring. A press or a key springs it to the new value (retargeting a spring in flight keeps its velocity); a drag places it.
+	 */
+	const thumbX = [createMotionValue(0), createMotionValue(0)];
+	const writeMotion = createMotionWrites();
+	let placed = false;
+	createRenderEffect(() => {
+		const width = trackWidth();
+		if (width === undefined) return;
+		const dragged = moving();
+		const place = !placed || dragged;
+		placed = true;
+		const count = isRange() ? 2 : 1;
+		for (let index = 0; index < count; index++) {
+			const target = thumbLeft(values()[index], width);
+			writeMotion(() => {
+				if (place) thumbX[index].jump(target);
+				else thumbX[index].animate(target, tween.moderate);
+			});
+		}
+	});
+	/** The fill's pixels follow the thumbs natively: its right edge is the thumb centre, in the pill's own coordinates. */
+	const FILL_EDGE = THUMB_SIZE / 2 - TRACK_INSET;
+	const fillEdge0 = createTransform(
+		thumbX[0],
+		[0, 1],
+		[FILL_EDGE, FILL_EDGE + 1],
+		{ clamp: false },
+	);
+	const rangeSpan = createTransform(
+		[thumbX[0], thumbX[1]],
+		([first, second]) => second - first,
+	);
 
 	const display = () => (
 		<Show when={props.showValue !== false && valuePosition() !== "tooltip"}>
@@ -753,81 +822,64 @@ function CompactSlider(props: CompactProps) {
 
 	const thumbIds = [createUniqueId(), createUniqueId()];
 	const thumb = (index: number) => (
-		<Show when={trackWidth()}>
-			{(width: Accessor<number>) => (
-				<motion.div
-					initial={false}
-					animate={{ left: thumbLeft(values()[index], width()) }}
-					transition={springOrPlace()}
-					tabIndex={props.disabled ? -1 : 0}
-					id={thumbIds[index]}
-					testId={
-						props.testId === undefined
-							? undefined
-							: `${props.testId}-thumb-${index}`
-					}
-					role="slider"
-					aria-label={thumbLabel(index)}
-					aria-orientation="horizontal"
-					aria-valuenow={thumbAria(index).now}
-					aria-valuemin={thumbAria(index).min}
-					aria-valuemax={thumbAria(index).max}
-					aria-valuetext={thumbAria(index).text}
-					aria-disabled={props.disabled === true}
-					onKeyDown={onThumbKey(index)}
+		<Show when={trackWidth() !== undefined}>
+			<div
+				tabIndex={props.disabled ? -1 : 0}
+				id={thumbIds[index]}
+				testId={
+					props.testId === undefined
+						? undefined
+						: `${props.testId}-thumb-${index}`
+				}
+				role="slider"
+				aria-label={thumbLabel(index)}
+				aria-orientation="horizontal"
+				aria-valuenow={thumbAria(index).now}
+				aria-valuemin={thumbAria(index).min}
+				aria-valuemax={thumbAria(index).max}
+				aria-valuetext={thumbAria(index).text}
+				aria-disabled={props.disabled === true}
+				onKeyDown={onThumbKey(index)}
+				style={{
+					position: "absolute",
+					left: thumbX[index],
+					top: PRESS_PAD,
+					width: THUMB_SIZE,
+					height: THUMB_SIZE,
+					borderRadius: THUMB_SIZE / 2,
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					pointerEvents: "none",
+					keyboardFocusDim: false,
+					focusVisible: focusRing(1),
+				}}
+			>
+				<div
 					style={{
-						position: "absolute",
-						top: PRESS_PAD,
-						width: THUMB_SIZE,
-						height: THUMB_SIZE,
-						borderRadius: THUMB_SIZE / 2,
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						pointerEvents: "none",
-						keyboardFocusDim: false,
-						focusVisible: focusRing(1),
+						width: THUMB_SIZE_REST,
+						height: THUMB_SIZE_REST,
+						borderRadius: THUMB_SIZE_REST / 2,
+						backgroundColor: "#FFFFFF",
+						boxShadow: {
+							offsetX: 0,
+							offsetY: 1,
+							blurRadius: 2,
+							spreadRadius: 0,
+							color: "rgba(0,0,0,0.1)",
+						},
 					}}
-				>
-					<div
-						style={{
-							width: THUMB_SIZE_REST,
-							height: THUMB_SIZE_REST,
-							borderRadius: THUMB_SIZE_REST / 2,
-							backgroundColor: "#FFFFFF",
-							boxShadow: {
-								offsetX: 0,
-								offsetY: 1,
-								blurRadius: 2,
-								spreadRadius: 0,
-								color: "rgba(0,0,0,0.1)",
-							},
-						}}
+				/>
+				<Show when={valuePosition() === "tooltip"}>
+					<ValueBubble
+						text={() => formatValue(values()[index])}
+						visible={interacting}
+						gap={PRESS_PAD}
 					/>
-					<Show when={valuePosition() === "tooltip"}>
-						<ValueBubble
-							text={() => formatValue(values()[index])}
-							visible={interacting}
-							gap={PRESS_PAD}
-						/>
-					</Show>
-				</motion.div>
-			)}
+				</Show>
+			</div>
 		</Show>
 	);
-
-	const fill = () => {
-		const width = trackWidth();
-		if (width === undefined) return null;
-		const first = thumbLeft(values()[0], width);
-		if (!isRange())
-			return { left: 0, width: first + THUMB_SIZE / 2 - TRACK_INSET };
-		const second = thumbLeft(values()[1], width);
-		return {
-			left: first + THUMB_SIZE / 2 - TRACK_INSET,
-			width: second - first,
-		};
-	};
 
 	const areaHeight = () =>
 		inline()
@@ -905,21 +957,19 @@ function CompactSlider(props: CompactProps) {
 							pointerEvents: "none",
 						}}
 					>
-						<Show when={fill()}>
-							{(target: Accessor<{ left: number; width: number }>) => (
-								<motion.div
-									initial={false}
-									animate={{ left: target().left, width: target().width }}
-									transition={springOrPlace()}
-									style={{
-										position: "absolute",
-										top: 0,
-										bottom: 0,
-										backgroundColor: trackFill(),
-									}}
-								/>
-							)}
-						</Show>
+						<div
+							testId={
+								props.testId === undefined ? undefined : `${props.testId}-fill`
+							}
+							style={{
+								position: "absolute",
+								top: 0,
+								bottom: 0,
+								left: isRange() ? fillEdge0 : 0,
+								width: isRange() ? rangeSpan : fillEdge0,
+								backgroundColor: trackFill(),
+							}}
+						/>
 						<motion.div
 							initial={false}
 							animate={{ opacity: preview() !== null && !pressed() ? 1 : 0 }}
@@ -1239,23 +1289,45 @@ function ComfortableSlider(props: ComfortableProps) {
 		emit(next);
 	};
 
-	const glide = () => (placing() ? tween.snap : tween.fast);
-
-	const fillTarget = () => {
+	/**
+	 * The fill, the handle line and the scrubber's handle strip all read these three, so a press, a key or a drag moves them together. The fill and the line are `percent` (0..1) of the row's width plus offsets; `atMinValue` (0..1) is FF's `zeroOffset`, which keeps the line visible at min and empties the pips fill there.
+	 */
+	const percent = createMotionValue(0);
+	const atMinValue = createMotionValue(0);
+	const widthValue = createMotionValue(0);
+	const writeMotion = createMotionWrites();
+	let placed = false;
+	createRenderEffect(() => {
 		const width = inner();
-		if (width === undefined) return undefined;
-		const p = percentOf(props.value);
-		if (variant() === "scrubber") return { width: p * width };
-		return { width: atMin() ? 0 : p * width + 20 - 20 * p };
-	};
-	const lineLeft = () => {
-		const width = inner();
-		if (width === undefined) return undefined;
-		const p = percentOf(props.value);
-		return variant() === "pips"
-			? p * width + 11 - 24 * p
-			: p * width - 9 + (atMin() ? 17 : 0);
-	};
+		if (width === undefined) return;
+		const target = percentOf(props.value);
+		const zero = atMin() ? 1 : 0;
+		const first = !placed;
+		const place = first || placing();
+		placed = true;
+		writeMotion(() => {
+			widthValue.jump(width);
+			if (place) percent.jump(target);
+			else percent.animate(target, tween.fast);
+			if (first) atMinValue.jump(zero);
+			else atMinValue.animate(zero, tween.fast);
+		});
+	});
+	const fillWidth = createTransform(
+		[percent, atMinValue, widthValue],
+		([p, zero, width]) =>
+			variant() === "scrubber"
+				? p * width
+				: p * width + 20 - 20 * p - 20 * zero,
+	);
+	const lineLeft = createTransform(
+		[percent, atMinValue, widthValue],
+		([p, zero, width]) =>
+			variant() === "pips"
+				? p * width + 11 - 24 * p
+				: p * width - 9 + 17 * zero,
+	);
+	const handleLeft = createTransform([lineLeft], ([left]) => left + 1);
 	const lineColor = () => {
 		if (focused()) return color.foreground;
 		return foregroundAlpha(hover.hovered() ? 0.5 : 0.25);
@@ -1408,40 +1480,35 @@ function ComfortableSlider(props: ComfortableProps) {
 						backgroundColor: hoverPreviewFill(),
 					}}
 				/>
-				<Show when={fillTarget()}>
-					{(target: Accessor<{ width: number }>) => (
-						<motion.div
-							initial={false}
-							animate={{ width: target().width }}
-							transition={glide()}
-							style={{
-								position: "absolute",
-								top: 0,
-								bottom: 0,
-								left: 0,
-								backgroundColor: color.active,
-							}}
-						/>
-					)}
-				</Show>
-				<Show when={lineLeft()}>
-					{(left: Accessor<number>) => (
-						<motion.div
-							initial={false}
-							animate={{
-								left: left(),
-								top: isActive() ? 7 : 8,
-								bottom: isActive() ? 7 : 8,
-							}}
-							transition={glide()}
-							style={{
-								position: "absolute",
-								width: 2,
-								borderRadius: 1,
-								backgroundColor: lineColor(),
-							}}
-						/>
-					)}
+				<Show when={inner() !== undefined}>
+					<div
+						testId={
+							props.testId === undefined ? undefined : `${props.testId}-fill`
+						}
+						style={{
+							position: "absolute",
+							top: 0,
+							bottom: 0,
+							left: 0,
+							width: fillWidth,
+							backgroundColor: color.active,
+						}}
+					/>
+					<motion.div
+						initial={false}
+						animate={{
+							top: isActive() ? 7 : 8,
+							bottom: isActive() ? 7 : 8,
+						}}
+						transition={tween.fast}
+						style={{
+							position: "absolute",
+							left: lineLeft,
+							width: 2,
+							borderRadius: 1,
+							backgroundColor: lineColor(),
+						}}
+					/>
 				</Show>
 				<div
 					style={{
@@ -1481,31 +1548,27 @@ function ComfortableSlider(props: ComfortableProps) {
 						</text>
 					</div>
 				</div>
-				<Show when={variant() === "scrubber" ? lineLeft() : undefined}>
-					{(left: Accessor<number>) => (
-						<motion.div
-							testId={
-								props.testId === undefined ? undefined : `${props.testId}-handle`
-							}
-							initial={false}
-							animate={{ left: left() + 1 }}
-							transition={glide()}
-							onMouseDown={onHandlePress}
-							onMouseMove={onHandleMove}
-							onMouseUp={onHandleRelease}
-							onLostPointerCapture={onHandleRelease}
-							ref={handle.ref}
-							onMouseEnter={onEnter}
-							onMouseLeave={onLeave}
-							style={{
-								position: "absolute",
-								top: 0,
-								bottom: 0,
-								width: 8,
-								cursor: "ew-resize",
-							}}
-						/>
-					)}
+				<Show when={variant() === "scrubber" && inner() !== undefined}>
+					<div
+						testId={
+							props.testId === undefined ? undefined : `${props.testId}-handle`
+						}
+						onMouseDown={onHandlePress}
+						onMouseMove={onHandleMove}
+						onMouseUp={onHandleRelease}
+						onLostPointerCapture={onHandleRelease}
+						ref={handle.ref}
+						onMouseEnter={onEnter}
+						onMouseLeave={onLeave}
+						style={{
+							position: "absolute",
+							top: 0,
+							bottom: 0,
+							left: handleLeft,
+							width: 8,
+							cursor: "ew-resize",
+						}}
+					/>
 				</Show>
 			</div>
 			{/* Hidden thumb: the only thing Tab reaches, so focus (and the ring) is keyboard-only like the primitive's thumb. */}
@@ -1513,7 +1576,9 @@ function ComfortableSlider(props: ComfortableProps) {
 				id={createUniqueId()}
 				tabIndex={props.disabled ? -1 : 0}
 				role="slider"
-				testId={props.testId === undefined ? undefined : `${props.testId}-thumb`}
+				testId={
+					props.testId === undefined ? undefined : `${props.testId}-thumb`
+				}
 				aria-label={props.label}
 				aria-orientation="horizontal"
 				aria-valuenow={props.value}
@@ -1619,4 +1684,3 @@ function scalar(value: SliderValue): number {
 	}
 	return value;
 }
-
