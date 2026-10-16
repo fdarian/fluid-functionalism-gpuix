@@ -1,25 +1,22 @@
 import {
 	DismissableLayer,
-	type DomEvent,
 	type HostElement,
 	type HostMouseMoveEvent,
 	motion,
 } from '@gpuix/solid';
 import {
 	createPlacementState,
-	createPresence,
 	POPUP_MARGIN,
 } from 'base-ui-solid-gpuix/internals';
 import {
-	createContext,
-	createEffect,
-	createSignal,
-	type JSX,
-	onCleanup,
-	Show,
-	untrack,
-	useContext,
-} from 'solid-js';
+	createTooltipPopup,
+	createTooltipProvider,
+	createTooltipRoot,
+	createTooltipTrigger,
+	TooltipProviderContext,
+	useTooltipProvider,
+} from 'base-ui-solid-gpuix/tooltip';
+import { createSignal, type JSX, Show } from 'solid-js';
 import { POPUP_EXIT_FALLBACK_MS } from '#/lib/popup-timing';
 import { color, type as scale, shape, motion as tween } from '#/lib/theme';
 
@@ -32,15 +29,6 @@ const BARE_SKIP_DELAY = 400;
 /** How long the tooltip stays after the pointer leaves, so it can cross the gap to the chip: Base UI's safe polygon, approximated with a timer. */
 const GRACE_MS = 80;
 
-/** What tooltips under one provider share: the hover delay, and when the last one closed so a neighbour can skip it. */
-interface TooltipGroup {
-	readonly delay: number;
-	readonly skipDelay: number;
-	closedAt: number | undefined;
-}
-
-const TooltipGroupContext = createContext<TooltipGroup>();
-
 /**
  * Moving from one trigger to the next within `skipDelayDuration` of a close
  * opens the next tooltip at once. Without a provider each tooltip is on its
@@ -51,19 +39,14 @@ export function TooltipProvider(props: {
 	skipDelayDuration?: number;
 	children: JSX.Element;
 }) {
-	const group: TooltipGroup = {
-		get delay() {
-			return props.delayDuration ?? DEFAULT_DELAY;
-		},
-		get skipDelay() {
-			return props.skipDelayDuration ?? 300;
-		},
-		closedAt: undefined,
-	};
+	const group = createTooltipProvider({
+		delay: () => props.delayDuration ?? DEFAULT_DELAY,
+		skipDelay: () => props.skipDelayDuration ?? 300,
+	});
 	return (
-		<TooltipGroupContext.Provider value={group}>
+		<TooltipProviderContext.Provider value={group}>
 			{props.children}
-		</TooltipGroupContext.Provider>
+		</TooltipProviderContext.Provider>
 	);
 }
 
@@ -97,113 +80,36 @@ export function Tooltip(props: {
 	onOpenChange?: (open: boolean) => void;
 	testId?: string;
 }) {
-	const ambient = useContext(TooltipGroupContext);
-	const group: TooltipGroup = ambient ?? {
-		delay: DEFAULT_DELAY,
-		skipDelay: BARE_SKIP_DELAY,
-		closedAt: undefined,
-	};
+	const ambient = useTooltipProvider();
+	const group =
+		ambient ??
+		createTooltipProvider({
+			delay: () => DEFAULT_DELAY,
+			skipDelay: () => BARE_SKIP_DELAY,
+		});
 	const placement = createPlacementState(props.side ?? 'top');
 	const side = () => props.side ?? 'top';
 
-	// onMotionComplete is the primary release; the timer covers an exit that never animates.
-	const presence = createPresence(POPUP_EXIT_FALLBACK_MS);
-	const [opened, setHovered] = createSignal(false);
-	const open = () => props.forceOpen ?? opened();
+	const root = createTooltipRoot(
+		{
+			get delayDuration() {
+				return props.delayDuration;
+			},
+			get open() {
+				return props.forceOpen;
+			},
+			get onOpenChange() {
+				return props.onOpenChange;
+			},
+		},
+		{ group, exitMs: POPUP_EXIT_FALLBACK_MS },
+	);
+	const presence = root.presence;
+	const trigger = createTooltipTrigger(root, { graceMs: GRACE_MS });
+	const popup = createTooltipPopup(trigger);
 	const [followOffset, setFollowOffset] = createSignal({ x: 0, y: 0 });
 	let wrapper: HostElement | undefined;
-	let delayTimer: ReturnType<typeof setTimeout> | undefined;
-	let closeTimer: ReturnType<typeof setTimeout> | undefined;
-	/** A rest timer is running: moves of under ~1.4 px leave it alone, anything bigger restarts it. */
-	let restPending = false;
-	let lastPointer: { x: number; y: number } | undefined;
-	/** Set by a close, cleared by the next enter: the pointer moving inside the trigger after a press must not reopen. */
-	let blockMove = false;
-	/** A press or Escape closed the tooltip: the trigger still holds focus, which must not reopen it until the pointer leaves or focus moves on. */
-	let blockFocus = false;
-	/** The pointer is on the chip. It enters the chip before the trigger reports it left, so the trigger's leave must not start the close. */
-	let overChip = false;
-	onCleanup(() => {
-		clearTimeout(delayTimer);
-		clearTimeout(closeTimer);
-	});
 
-	createEffect(() => {
-		if (open()) presence.show();
-		else if (untrack(presence.mounted)) presence.hide();
-	});
-
-	const setOpen = (next: boolean) => {
-		if (opened() === next) return;
-		setHovered(next);
-		props.onOpenChange?.(next);
-	};
-
-	const delay = () => {
-		const closedAt = group.closedAt;
-		if (
-			closedAt !== undefined &&
-			performance.now() - closedAt < group.skipDelay
-		)
-			return 0;
-		return props.delayDuration ?? group.delay;
-	};
-	const close = () => {
-		clearTimeout(delayTimer);
-		clearTimeout(closeTimer);
-		restPending = false;
-		blockMove = true;
-		overChip = false;
-		if (!opened()) return;
-		group.closedAt = performance.now();
-		setOpen(false);
-	};
-	/** A press or Escape: closes, and keyboard focus on the trigger no longer reopens it. */
-	const dismiss = () => {
-		blockFocus = opened();
-		close();
-	};
-	/** The pointer left the trigger or the chip: a pending open is dropped, an open tooltip closes unless the pointer reaches the chip (or comes back) first. */
-	const scheduleClose = () => {
-		clearTimeout(delayTimer);
-		clearTimeout(closeTimer);
-		restPending = false;
-		if (!opened() || overChip) return;
-		closeTimer = setTimeout(close, GRACE_MS);
-	};
-
-	const onMouseEnter = () => {
-		clearTimeout(delayTimer);
-		clearTimeout(closeTimer);
-		restPending = false;
-		blockMove = false;
-		lastPointer = undefined;
-		// Coming back while the chip is still fading out brings it straight back.
-		const fadingOut = presence.mounted() && !presence.open();
-		// With a delay, entering starts nothing: the timer runs from the pointer's moves (`restIntent`).
-		if (fadingOut || delay() === 0) setOpen(true);
-	};
-	/** Base UI's `restMs`: the tooltip opens once the pointer has rested on the trigger for the delay. */
-	const restIntent = (event: HostMouseMoveEvent) => {
-		if (event.x === undefined || event.y === undefined) return;
-		const last = lastPointer;
-		lastPointer = { x: event.x, y: event.y };
-		if (opened() || blockMove) return;
-		const wait = delay();
-		if (wait === 0) return;
-		if (
-			restPending &&
-			last !== undefined &&
-			(event.x - last.x) ** 2 + (event.y - last.y) ** 2 < 2
-		)
-			return;
-		clearTimeout(delayTimer);
-		restPending = true;
-		delayTimer = setTimeout(() => {
-			restPending = false;
-			if (!blockMove) setOpen(true);
-		}, wait);
-	};
 	const followPointer = (event: HostMouseMoveEvent) => {
 		if (props.followCursor === undefined) return;
 		if (wrapper === undefined) throw new Error('Tooltip is not mounted');
@@ -218,19 +124,7 @@ export function Tooltip(props: {
 
 	const onMouseMove = (event: HostMouseMoveEvent) => {
 		followPointer(event);
-		restIntent(event);
-	};
-
-	// The child takes focus, not the wrapper, and `focus` does not bubble: `focusin` does.
-	const onFocusIn = (event: DomEvent) => {
-		if (!event.focusVisible || blockFocus) return;
-		clearTimeout(delayTimer);
-		clearTimeout(closeTimer);
-		setOpen(true);
-	};
-	const onFocusOut = () => {
-		blockFocus = false;
-		close();
+		trigger.onMouseMove(event);
 	};
 
 	return (
@@ -239,21 +133,18 @@ export function Tooltip(props: {
 				wrapper = element;
 			}}
 			testId={props.testId}
-			onMouseEnter={onMouseEnter}
+			onMouseEnter={trigger.onMouseEnter}
 			onMouseMove={onMouseMove}
-			onMouseLeave={() => {
-				blockFocus = false;
-				scheduleClose();
-			}}
-			onMouseDown={dismiss}
-			onFocusIn={onFocusIn}
-			onFocusOut={onFocusOut}
+			onMouseLeave={trigger.onMouseLeave}
+			onMouseDown={trigger.onMouseDown}
+			onFocusIn={trigger.onFocusIn}
+			onFocusOut={trigger.onFocusOut}
 			style={{ position: 'relative', display: 'flex', flexShrink: 0 }}
 		>
 			{props.children}
 			{/* Escape closes a hover-opened tooltip before it reaches a dialog behind it; a pinned one is not a layer. */}
-			<Show when={opened() && props.forceOpen === undefined}>
-				<DismissableLayer onEscapeKeyDown={dismiss} />
+			<Show when={root.opened() && props.forceOpen === undefined}>
+				<DismissableLayer onEscapeKeyDown={trigger.dismiss} />
 			</Show>
 			<Show when={presence.mounted()}>
 				<anchored
@@ -273,14 +164,7 @@ export function Tooltip(props: {
 							props.testId === undefined ? undefined : `${props.testId}-chip`
 						}
 						// The chip is hoverable, like Base UI's popup: reaching it keeps the tooltip open.
-						onMouseEnter={() => {
-							overChip = true;
-							clearTimeout(closeTimer);
-						}}
-						onMouseLeave={() => {
-							overChip = false;
-							scheduleClose();
-						}}
+						{...popup.props}
 						initial={{ opacity: 0, ...slideFrom(side()) }}
 						animate={
 							presence.open()
