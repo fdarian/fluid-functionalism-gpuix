@@ -1,6 +1,9 @@
 /**
- * Site nav hover: the highlight follows the pointer and keyboard focus, and never
- * sits on a row the pointer is not over once focus has left the menu.
+ * Site nav: the New dots follow the latest release (and the Changelog row has
+ * its own), the Changelog page sits under Introduction in the nav, the page
+ * order and the site menu, and the hover highlight follows the pointer and
+ * keyboard focus, never sitting on a row the pointer is not over once focus
+ * has left the menu.
  *
  *   bun scripts/check-site-nav.tsx
  *
@@ -8,8 +11,10 @@
  */
 import { createTestRoot } from "@gpuix/solid/testing";
 import { App } from "../src/app";
+import { marks } from "../src/lib/changelog/releases";
 import { loadDemos, loadPages } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
+import { pageOrder } from "../src/lib/page-nav";
 import { setThemeChoice } from "../src/lib/theme";
 import { readPng } from "./png-pixels";
 
@@ -74,6 +79,41 @@ setThemeChoice("dark");
 test.render(() => <App demos={demos} pages={pages} initialPage="showcase" />);
 await settle(800);
 
+// New dots: the latest release's New entries, plus the Changelog row's own; pages listed ahead of the release get none.
+const dotOf = (testId: string) =>
+	element(testId)
+		.children.map((child) => renderer.getElement(child))
+		.find((child) => child?.customProps?.["aria-label"] === "New");
+const listed = [...pages, ...demos].filter((entry) => entry.listed === "sidebar");
+const dotted = listed
+	.filter((entry) => dotOf(`nav-${entry.slug}`) !== undefined)
+	.map((entry) => entry.slug)
+	.sort();
+const expectedDots = [
+	"changelog",
+	...marks.new.filter((slug) => listed.some((entry) => entry.slug === slug)),
+].sort();
+check("the New dots are the latest release's New entries and Changelog", dotted.join() === expectedDots.join(), dotted.join());
+check("pages listed ahead of the release have no dot", marks.ahead.length > 0 && marks.ahead.every((slug) => !dotted.includes(slug)));
+const dot = dotOf("nav-changelog");
+check("a dot is 6px, in the info colour, after the label at the row's 8px gap", dot !== undefined && dot.style.width === 6 && dot.style.height === 6 && dot.style.backgroundColor === "#93C5FD");
+if (dot !== undefined) {
+	const label = bounds("nav-changelog-label");
+	const box = renderer.getElementBounds(dot.id);
+	check("the dot sits one 8px gap after the label", box !== null && Math.abs(box.x - (label.x + label.width + 8)) < 1, `${box?.x} vs ${label.x + label.width}`);
+}
+
+// Changelog sits under Introduction, in the nav and in the page order.
+check(
+	"the page order runs Showcase, Introduction, Changelog, then System",
+	pageOrder(pages, demos).slice(0, 3).join() === "showcase,introduction,changelog",
+	pageOrder(pages, demos).slice(0, 4).join(),
+);
+check(
+	"the Changelog row is the third row, under Introduction",
+	bounds("nav-showcase").y < bounds("nav-introduction").y && bounds("nav-introduction").y < bounds("nav-changelog").y && bounds("nav-changelog").y < bounds("nav-fluid-hover").y,
+);
+
 // Focus leaving the menu takes the highlight with it, as the source's onBlur does.
 await click("nav-sizes");
 const lit = fillOf("nav-sizes");
@@ -109,6 +149,13 @@ check(
 	under,
 );
 check("the row that left the pointer is not", fillOf("nav-skill") === UNLIT);
+
+// The site menu finds Changelog by its keywords.
+renderer.simulateKeystrokes("ControlOrMeta+k");
+await settle(600);
+renderer.simulateKeystrokes("w h a t ' s");
+await settle(600);
+check("the site menu lists Changelog for \"what's\"", renderer.getAllText().includes("Open Changelog"));
 
 test.unmount();
 process.exit(failed ? 1 : 0);
