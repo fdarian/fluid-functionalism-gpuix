@@ -56,13 +56,13 @@ repeating it.
 - **Fidelity:** approximated.
 - **Components it hits:** any component that copied the same hover layer.
 
-## Panel mounted open starts collapsed
+## A panel mounted open snaps for 100 ms after its first measure
 
-- **Cause:** `not ported yet`. `motion` takes `height: "auto"` (`packages/native/js/host.ts:136`).
+- **Cause:** `gpuix gap` for the timer (no `requestAnimationFrame`; see the README row on `requestAnimationFrame`). The panel itself arrives at full height from the first frame.
 - **Original:** a panel open at mount renders `initial={{ height: "auto" }}`, takes its measured pixel height with `duration: 0` and clears the snap one `requestAnimationFrame` after the first measure (`thinking-steps.tsx:160-163`, `:187-193`, `:221-228`).
-- **Port:** `initial={{ height: 0 }}` always, the snap is on until a 100ms timer after `onLayout` reports a height (`thinking-steps.tsx:186-191`, `:195-203`). A panel open at mount therefore paints collapsed until the first layout report, then jumps open (by reading, not captured); a spring started within 100ms of that report also snaps.
-- **Workaround:** `tween.snap` for the first height.
-- **Fidelity:** approximated.
+- **Port:** the same: `initial={false}` with an `auto` target until `onLayout` reports a height, then the measured number on `tween.snap`, cleared by a 100 ms timer after that report (`Collapse` in `src/components/thinking-steps.tsx`). A toggle within 100 ms of the first report snaps instead of springing. `scripts/check-thinking-steps.tsx` samples the panel from the first frame.
+- **Workaround:** `setTimeout`.
+- **Fidelity:** approximated (the snap window is 100 ms, not one frame).
 - **Components it hits:** accordion (same measured-height pattern).
 
 ## Closed panel is `inert`, not `hidden`
