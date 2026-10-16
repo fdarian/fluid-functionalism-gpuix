@@ -34,8 +34,9 @@ const COMPOSER_H = 76;
 const STAGE_H = 330;
 const PLACEHOLDER = "Send while I’m responding to queue a message…";
 
-export const title = "Queued Stack";
+export const title = "QueuedStack";
 export const group = "Components";
+export const listed = "menu";
 
 export function Demo() {
 	return (

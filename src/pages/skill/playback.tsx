@@ -14,6 +14,7 @@ import {
 	untrack,
 } from "solid-js";
 import { onFrame } from "../../lib/clock";
+import { usePreviewPlayback } from "../../lib/preview-playback";
 import { color, shape, siteType } from "../../lib/theme";
 import {
 	createScriptedPointer,
@@ -30,8 +31,8 @@ const IN_VIEW_RATIO = 0.35;
 export type Side = "generic" | "skill";
 
 /**
- * Whether an example should play its script: on screen, motion allowed, and
- * no visitor inside. A real pointer takes over until it leaves, and keyboard
+ * Whether an example should play its script: on screen, motion allowed (by
+ * the OS and by the page's `PreviewPlaybackContext`), and no visitor inside. A real pointer takes over until it leaves, and keyboard
  * focus until it moves out, so the script never changes what someone is
  * tabbing through. Only keyboard focus counts: a mouse click leaves focus on
  * its button after the pointer has gone.
@@ -42,6 +43,7 @@ export function createPlayback() {
 	const [pointerInside, setPointerInside] = createSignal(false);
 	const [keyboardInside, setKeyboardInside] = createSignal(false);
 	const reducedMotion = createReducedMotion();
+	const allowed = usePreviewPlayback();
 
 	createEffect(() => {
 		const element = root();
@@ -83,7 +85,11 @@ export function createPlayback() {
 		setRoot,
 		bind,
 		playing: () =>
-			inView() && !reducedMotion() && !pointerInside() && !keyboardInside(),
+			inView() &&
+			allowed() &&
+			!reducedMotion() &&
+			!pointerInside() &&
+			!keyboardInside(),
 	};
 }
 

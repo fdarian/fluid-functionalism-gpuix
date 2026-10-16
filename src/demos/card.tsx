@@ -523,6 +523,7 @@ function Playground() {
 
 export const title = "Card";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	return (

@@ -59,8 +59,9 @@ function Group(props: {
 	);
 }
 
-export const title = "Checkbox Group";
+export const title = "CheckboxGroup";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	return (

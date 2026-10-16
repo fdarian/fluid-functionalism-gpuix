@@ -877,6 +877,7 @@ function Creatable() {
 
 export const title = "Dropdown";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	return (

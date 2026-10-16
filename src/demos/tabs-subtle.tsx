@@ -39,8 +39,9 @@ function Content(props: { children: string }) {
 	);
 }
 
-export const title = "Tabs Subtle";
+export const title = "TabsSubtle";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	const [basic, setBasic] = createSignal(0);

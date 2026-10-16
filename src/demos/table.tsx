@@ -41,6 +41,7 @@ function PeopleTable(props: { size?: TableSize; testId: string }) {
 
 export const title = "Table";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	return (

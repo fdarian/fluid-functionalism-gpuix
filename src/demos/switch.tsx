@@ -6,6 +6,7 @@ import { color, type as scale } from "../lib/theme";
 
 export const title = "Switch";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	const [basic, setBasic] = createSignal(false);

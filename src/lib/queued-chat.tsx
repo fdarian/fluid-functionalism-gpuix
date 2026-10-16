@@ -21,20 +21,14 @@ import {
 	Transcript,
 	type Turn,
 } from "./composer-stage";
-import { defineIcon, type IconRef } from "./icons";
+import type { IconRef } from "./icons";
+import { PAUSE_ICON, PLAY_ICON } from "./playback-icons";
 
 const MODELS = ["Sonnet 5", "Sonnet 4.6", "Sonnet 4.5", "Haiku 4"] as const;
 const STAGE_HEIGHT = 440;
 const PLACEHOLDER = "Send while I’m responding to queue a message…";
 const THINK_MS = 4000;
 const WORD_MS = 150;
-
-const PLAY = defineIcon(
-	'<path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/>',
-);
-const PAUSE = defineIcon(
-	'<rect x="14" y="3" width="5" height="18" rx="1"/><rect x="5" y="3" width="5" height="18" rx="1"/>',
-);
 
 const assets = new URL("../../assets/chat-ai/", import.meta.url).pathname;
 const PHOTO = fileFromPath(`${assets}micka.png`);
@@ -196,10 +190,10 @@ export function QueuedChat(props: { testId: string; rich?: boolean }) {
 
 	const playback = (): Playback | undefined => {
 		if (stepper.paused()) {
-			return { label: "Resume", icon: PLAY, onClick: stepper.resume };
+			return { label: "Resume", icon: PLAY_ICON, onClick: stepper.resume };
 		}
 		if (status() === "streaming") {
-			return { label: "Pause", icon: PAUSE, onClick: stepper.pause };
+			return { label: "Pause", icon: PAUSE_ICON, onClick: stepper.pause };
 		}
 		if (chat().length > 0 || queue().length > 0) {
 			return { label: "Reset", icon: "rotate-ccw", onClick: reset };

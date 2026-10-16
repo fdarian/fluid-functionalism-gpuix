@@ -207,6 +207,24 @@ function ToolbarRow(props: { step: SizeChoice }) {
 	);
 }
 
+/** The toolbar at each step of the ladder, for a host with its own frame. */
+export function ToolbarRows() {
+	return (
+		<div
+			style={{
+				minWidth: 0,
+				display: "flex",
+				flexDirection: "column",
+				gap: 32,
+			}}
+		>
+			<For each={["default", "compact"] as const}>
+				{(step) => <ToolbarRow step={step} />}
+			</For>
+		</div>
+	);
+}
+
 export function ToolbarDemo() {
 	return (
 		<ComponentPreview
@@ -222,16 +240,13 @@ export function ToolbarDemo() {
 					minWidth: 0,
 					display: "flex",
 					flexDirection: "column",
-					gap: 32,
 					paddingLeft: 16,
 					paddingRight: 16,
 					paddingTop: 48,
 					paddingBottom: 48,
 				}}
 			>
-				<For each={["default", "compact"] as const}>
-					{(step) => <ToolbarRow step={step} />}
-				</For>
+				<ToolbarRows />
 			</div>
 		</ComponentPreview>
 	);

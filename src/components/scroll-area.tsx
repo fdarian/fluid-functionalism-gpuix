@@ -75,6 +75,8 @@ export function ScrollArea(props: {
 		/** False drops the hairline at the bottom, as `:last-child` does in the command menu. */
 		end?: boolean;
 	};
+	/** After the offset changes, for what depends on where the content sits under the pointer. */
+	onScroll?: () => void;
 	width?: DimensionValue;
 	height?: DimensionValue;
 	/** Border and radius of the outer box. */
@@ -139,6 +141,7 @@ export function ScrollArea(props: {
 			if (next.x !== before.x) startScrolling("x");
 		}
 		setOffset(next);
+		props.onScroll?.();
 	};
 
 	const mountedViewport = () => {

@@ -129,8 +129,9 @@ function Cell(props: {
 	);
 }
 
-export const title = "Scroll Area";
+export const title = "ScrollArea";
 export const group = "Components";
+export const listed = "menu";
 
 export function Demo() {
 	return (

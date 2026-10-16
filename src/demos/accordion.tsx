@@ -55,6 +55,7 @@ function Row(props: { children: JSX.Element }) {
 
 export const title = "Accordion";
 export const group = "Components";
+export const listed = "sidebar";
 
 const PLAY_ITEMS = [
 	{

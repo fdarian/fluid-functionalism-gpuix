@@ -221,7 +221,7 @@ await settle(300);
 check("pointer click leaves no ring", ringBounds() === undefined);
 
 // The page's own sidebar scrolls: keyboard focus brings the row into view.
-const lastNav = demos[demos.length - 1];
+const lastNav = demos.filter((demo) => demo.listed === "sidebar").at(-1);
 if (lastNav === undefined) throw new Error("no demos");
 focus("nav-accordion");
 await settle();

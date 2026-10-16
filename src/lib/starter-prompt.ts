@@ -2,7 +2,7 @@ import type { ThemeChoice } from "./theme";
 
 export const SITE_URL = "https://www.fluidfunctionalism.com";
 
-const OVERWRITE_NOTE =
+export const OVERWRITE_NOTE =
 	"--overwrite replaces same-named stock shadcn files (button.tsx, dialog.tsx, ...) with this library's versions. Without it the CLI prompts per existing file and exits in a non-interactive shell before any component is written.";
 
 const SKILL_LINE =

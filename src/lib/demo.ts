@@ -52,9 +52,11 @@ export type AriaSnapshot = Record<string, unknown>;
  * new component adds a demo file and never edits a shared one.
  */
 export interface DemoModule {
-	/** Sidebar label and page heading. */
+	/** Sidebar label, menu row and page heading: the component's name, as written in code. */
 	title: string;
 	group: "Components";
+	/** Where the demo is linked: sidebar and site menu, the site menu only, or neither (reached by `navigate`). */
+	listed: "sidebar" | "menu" | "none";
 	/** The page body: one or more `DemoCard`s. */
 	Demo: () => JSX.Element;
 	/** Optional states beyond the first paint for `scripts/screenshots.tsx <demo>` to capture. */
@@ -81,6 +83,15 @@ function assertDemoModule(
 			`src/demos/${slug}.tsx must export \`group: "Components"\``,
 		);
 	}
+	if (
+		candidate.listed !== "sidebar" &&
+		candidate.listed !== "menu" &&
+		candidate.listed !== "none"
+	) {
+		throw new Error(
+			`src/demos/${slug}.tsx must export \`listed: "sidebar" | "menu" | "none"\``,
+		);
+	}
 	if (typeof candidate.Demo !== "function") {
 		throw new Error(`src/demos/${slug}.tsx must export a \`Demo\` component`);
 	}
@@ -100,6 +111,7 @@ export async function loadDemos(): Promise<Demo[]> {
 			slug,
 			title: module.title,
 			group: module.group,
+			listed: module.listed,
 			Demo: module.Demo,
 			scenarios: module.scenarios,
 		});
@@ -128,6 +140,10 @@ export interface PageModule {
 	/** Where the page is linked: sidebar and site menu, the site menu only, or neither (reached by `navigate`). */
 	listed: "sidebar" | "menu" | "none";
 	Page: () => JSX.Element;
+	/**
+	 * What a "docs" page's right column shows in place of "Make them yours". The page and its rail are siblings in `App`, so they share state through the page's own module.
+	 */
+	Rail?: () => JSX.Element;
 	/** Optional states beyond the first paint for `scripts/screenshots.tsx <page>` to capture. */
 	scenarios?: (shot: ShotContext) => Promise<void>;
 	/** The site menu row's glyph. */
@@ -170,6 +186,12 @@ function assertPageModule(
 		fail('`listed: "sidebar" | "menu" | "none"`');
 	}
 	if (typeof candidate.Page !== "function") fail("a `Page` component");
+	if (candidate.Rail !== undefined && typeof candidate.Rail !== "function") {
+		fail("`Rail` as a component, or not at all");
+	}
+	if (candidate.Rail !== undefined && candidate.layout !== "docs") {
+		fail('`Rail` only with `layout: "docs"`: a "full" page has no right column');
+	}
 	if (
 		candidate.scenarios !== undefined &&
 		typeof candidate.scenarios !== "function"
@@ -223,6 +245,7 @@ export async function loadPages(demos: readonly Demo[]): Promise<Page[]> {
 			layout: module.layout,
 			listed: module.listed,
 			Page: module.Page,
+			Rail: module.Rail,
 			scenarios: module.scenarios,
 			menuIcon: module.menuIcon,
 			menuKeywords: module.menuKeywords,

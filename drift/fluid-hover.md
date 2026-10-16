@@ -25,13 +25,13 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 - **Fidelity:** approximated.
 - **Components it hits:** the Installation block of every docs page.
 
-## The sidebar has no "New" dot and the site menu no "New" tag
+## The site menu has no "New" tag
 
-- **Cause:** `not ported yet` (`PageModule` has no `isNew` / `dotColor`; `src/lib/demo.ts`).
-- **Original:** `systemList` marks Fluid Hover `isNew: true` (`lib/docs/components.ts:23`): a blue dot in the sidebar and a "New" description in the site menu (`app/components/site-command-menu.tsx:206-217`).
-- **Port:** a plain "Fluid Hover" row and a plain menu row. The menu row has no icon, as in the source (`icon` is only set for the Pages group, `:200-202`), and `menuKeywords` is the slug plus the description's words, as the source builds them (`src/pages/fluid-hover.tsx:24-31`). It sorts first in System (`order = 1`), where the source sorts the System list alphabetically.
+- **Cause:** `not ported yet` (the menu reads no release marks; the sidebar's dot does, `drift/sidebar.md`).
+- **Original:** the latest changelog release lists Fluid Hover as New (`content/changelog/2026-09.md`): a blue dot in the sidebar and a "New" description in the site menu (`app/components/sidebar.tsx:82`, `app/components/site-command-menu.tsx:194-217`).
+- **Port:** the sidebar row has the dot (`src/app.tsx:225-243`); the menu row is plain. It has no icon, as in the source (`icon` is only set for the Pages group, `:200-202`), and `menuKeywords` is the slug plus the description's words, as the source builds them (`src/pages/fluid-hover.tsx:24-31`). It sorts first in System (`order = 1`), where the source sorts the System list alphabetically.
 - **Fidelity:** approximated.
-- **Components it hits:** every System page the source marks new (typography, with its warning dot).
+- **Components it hits:** every System page the latest release marks New or Updated (Skill, and Typography once its release lands).
 
 ## Inline code chips have no radius or smaller type, and one can strand at a line end
 

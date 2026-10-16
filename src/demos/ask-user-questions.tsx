@@ -608,8 +608,9 @@ const skipQuestions: AskUserQuestion[] = [
 	},
 ];
 
-export const title = "Ask User Questions";
+export const title = "AskUserQuestions";
 export const group = "Components";
+export const listed = "sidebar";
 
 const PLAY_OPTION_QUESTIONS = [
 	{

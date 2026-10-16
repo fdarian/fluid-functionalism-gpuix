@@ -57,6 +57,7 @@ function FollowArea(props: {
 
 export const title = "Tooltip";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	const [saves, setSaves] = createSignal(0);

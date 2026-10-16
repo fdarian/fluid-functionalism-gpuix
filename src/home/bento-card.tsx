@@ -23,7 +23,7 @@ export const BENTO_ROW = 300;
  * `.bento-card-border` in `app/globals.css:1244-1269`: three states of the border and the 1px drop under it.
  * `light-dark()` becomes the scheme read here, so call it inside a style.
  */
-function frame(state: "rest" | "hover" | "focus") {
+export function bentoFrame(state: "rest" | "hover" | "focus") {
 	const light = scheme() === "light";
 	const border = {
 		rest: light ? "rgba(23,23,23,0.12)" : "rgba(245,245,245,0.072)",
@@ -73,11 +73,11 @@ export function BentoCard(props: {
 				overflow: "hidden",
 				// A box shadow is not clipped out of the border box here, so over a transparent fill it darkens the whole card.
 				backgroundColor: color.background,
-				...frame("rest"),
+				...bentoFrame("rest"),
 				// `transition-[shadow,border-color]`: `shadow` is not a CSS property, so only the border eases.
 				...fade(["border-color"], 80),
-				hover: frame("hover"),
-				focusWithin: frame("focus"),
+				hover: bentoFrame("hover"),
+				focusWithin: bentoFrame("focus"),
 			}}
 		>
 			<div

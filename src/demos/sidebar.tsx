@@ -40,6 +40,7 @@ const BUTTON_PAGES = ["Variants", "Sizes", "Icons"];
 
 export const title = "Sidebar";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	const [active, setActive] = createSignal("Showcase");

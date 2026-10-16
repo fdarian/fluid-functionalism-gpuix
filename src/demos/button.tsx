@@ -46,6 +46,7 @@ function VariantRow(props: {
 
 export const title = "Button";
 export const group = "Components";
+export const listed = "sidebar";
 
 const PLAY_VARIANTS = [
 	{ value: "primary", label: "Primary" },

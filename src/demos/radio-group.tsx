@@ -105,8 +105,9 @@ function PerItem(props: { testId: string }) {
 	);
 }
 
-export const title = "Radio Group";
+export const title = "RadioGroup";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	return (

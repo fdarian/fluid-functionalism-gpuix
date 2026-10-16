@@ -113,8 +113,9 @@ function Section(props: { caption: string; children: JSX.Element }) {
 	);
 }
 
-export const title = "Carousel Dots";
+export const title = "CarouselDots";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	const staticSlides = createSlides();

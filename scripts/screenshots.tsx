@@ -251,8 +251,12 @@ await settle(600);
 
 // Back to a neutral pointer, then flip the theme through the real control.
 await shot.moveTo(1180, 700);
-if (demo !== undefined && "layout" in demo && demo.layout === "full") {
-	// A full-layout page has no right column, so no theme select to drive.
+if (
+	demo !== undefined &&
+	"layout" in demo &&
+	(demo.layout === "full" || demo.Rail !== undefined)
+) {
+	// A full-layout page has no right column, and a page with its own rail has no theme select: neither has a control to drive.
 	setThemeChoice("light");
 	await settle(600);
 } else {

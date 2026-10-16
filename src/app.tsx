@@ -21,16 +21,16 @@ import { Select } from "./components/select";
 import {
 	Sidebar,
 	SidebarContent,
-	SidebarGroupLabel,
-	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuButton,
 } from "./components/sidebar";
 import { Tooltip } from "./components/tooltip";
 import { BentoGrid } from "./home/bento-grid";
 import { AppFrame, PANEL_INNER_RADIUS } from "./lib/app-frame";
+import { kindDotColor } from "./lib/changelog/kind-style";
+import { marks } from "./lib/changelog/releases";
 import { type Demo, type Page, SHOWCASE_SLUG } from "./lib/demo";
-import { PageScrollerContext } from "./lib/demo-kit";
+import { PageScrollContext, PageScrollerContext } from "./lib/demo-kit";
 import { createMeasuredHeight } from "./lib/measured-height";
 import { MONO } from "./lib/doc-page";
 import { type PageNav, PageNavContext, usePageNav } from "./lib/page-nav";
@@ -55,7 +55,9 @@ import { buildStarterPrompt, SITE_URL } from "./lib/starter-prompt";
 import {
 	bindSystemScheme,
 	color,
+	height,
 	siteType,
+	type as scale,
 	setShapeChoice,
 	setSizeChoice,
 	setThemeChoice,
@@ -89,6 +91,91 @@ function Heading(props: { children: string }) {
 	);
 }
 
+/**
+ * One section of the site nav, as `NavGroup` in the source's `app/components/sidebar.tsx`: an
+ * 8px-padded group, 16px above a labelled one. The name is foreground, not the
+ * library label's muted, with the count muted beside it and a hairline under
+ * both. The hairline runs from the name's first letter to the count's last
+ * digit and leaves 4px before the first row, so its hover fill clears the line.
+ */
+function NavGroup(props: {
+	label?: string;
+	count?: number;
+	children: JSX.Element;
+}) {
+	return (
+		<div
+			style={{
+				display: "flex",
+				flexDirection: "column",
+				flexShrink: 0,
+				paddingTop: props.label === undefined ? 8 : 16,
+				paddingBottom: 8,
+			}}
+		>
+			<Show when={props.label}>
+				{(label: Accessor<string>) => (
+					<>
+						<div
+							style={{
+								height: height.groupLabel,
+								flexShrink: 0,
+								display: "flex",
+								flexDirection: "row",
+								alignItems: "center",
+								paddingLeft: 8,
+								paddingRight: 8,
+							}}
+						>
+							<text
+								style={{
+									...scale.caption,
+									color: color.foreground,
+									flexGrow: 1,
+								}}
+							>
+								{label()}
+							</text>
+							<div
+								style={{
+									height: 20,
+									minWidth: 20,
+									paddingLeft: 4,
+									paddingRight: 4,
+									display: "flex",
+									alignItems: "center",
+									justifyContent: "center",
+								}}
+							>
+								<text
+									style={{
+										...siteType.caption,
+										color: color.mutedForeground,
+										fontVariantNumeric: "tabular-nums",
+									}}
+								>
+									{props.count}
+								</text>
+							</div>
+						</div>
+						<div
+							style={{
+								height: 1,
+								flexShrink: 0,
+								marginLeft: 8,
+								marginRight: 12,
+								marginBottom: 4,
+								backgroundColor: color.border,
+							}}
+						/>
+					</>
+				)}
+			</Show>
+			<SidebarMenu>{props.children}</SidebarMenu>
+		</div>
+	);
+}
+
 function AppSidebar(props: {
 	demos: readonly Demo[];
 	pages: readonly Page[];
@@ -100,60 +187,66 @@ function AppSidebar(props: {
 		props.pages.filter(
 			(page) => page.group === group && page.listed === "sidebar",
 		);
-	const row = (page: Page) => (
+	const sidebarDemos = () =>
+		props.demos.filter((demo) => demo.listed === "sidebar");
+	const newDot = (isNew: boolean) =>
+		isNew ? { dot: kindDotColor("new"), dotLabel: "New" } : {};
+	const row = (page: Page, isNew: boolean) => (
 		<SidebarMenuButton
 			testId={`nav-${page.slug}`}
 			label={page.title}
+			{...newDot(isNew)}
 			active={props.page === page.slug}
 			onClick={() => props.onPage(page.slug)}
 		/>
 	);
 	return (
 		<Sidebar leftCornerRadius={PANEL_INNER_RADIUS}>
-			<SidebarHeader>
-				<SidebarMenu>
+			<SidebarContent>
+				{/* The source's SidebarContent is `py-2`: the first group starts 8px lower than the library's content does. */}
+				<div style={{ height: 8, flexShrink: 0 }} />
+				<NavGroup>
 					<SidebarMenuButton
 						testId="nav-search"
 						icon="search"
 						label="Search"
 						badge={SITE_MENU_SHORTCUT}
+						badgeType={siteType.caption}
 						onClick={props.onSearch}
 					/>
-				</SidebarMenu>
-			</SidebarHeader>
-			<SidebarContent>
-				<SidebarMenu>
+				</NavGroup>
+				<NavGroup>
 					<SidebarMenuButton
 						testId="nav-showcase"
 						label="Showcase"
 						active={props.page === SHOWCASE}
 						onClick={() => props.onPage(SHOWCASE)}
 					/>
-					<For each={sidebarPages("Pages")}>{row}</For>
-				</SidebarMenu>
+					<For each={sidebarPages("Pages")}>
+						{/* The Changelog page itself is new: dotted by hand, unlike the docs rows, which follow the latest release. */}
+						{(page) => row(page, page.slug === "changelog")}
+					</For>
+				</NavGroup>
 				<Show when={sidebarPages("System").length > 0}>
-					<SidebarGroupLabel count={sidebarPages("System").length}>
-						System
-					</SidebarGroupLabel>
-					<SidebarMenu>
-						<For each={sidebarPages("System")}>{row}</For>
-					</SidebarMenu>
+					<NavGroup label="System" count={sidebarPages("System").length}>
+						<For each={sidebarPages("System")}>
+							{(page) => row(page, marks.new.includes(page.slug))}
+						</For>
+					</NavGroup>
 				</Show>
-				<SidebarGroupLabel count={props.demos.length}>
-					Components
-				</SidebarGroupLabel>
-				<SidebarMenu>
-					<For each={props.demos}>
+				<NavGroup label="Components" count={sidebarDemos().length}>
+					<For each={sidebarDemos()}>
 						{(demo) => (
 							<SidebarMenuButton
 								testId={`nav-${demo.slug}`}
 								label={demo.title}
+								{...newDot(marks.new.includes(demo.slug))}
 								active={props.page === demo.slug}
 								onClick={() => props.onPage(demo.slug)}
 							/>
 						)}
 					</For>
-				</SidebarMenu>
+				</NavGroup>
 			</SidebarContent>
 		</Sidebar>
 	);
@@ -418,6 +511,11 @@ export function App(props: {
 	const siteMenu = createSiteMenu();
 	const rail = createRightRail();
 	const [pageScroller, setPageScroller] = createSignal<HostElement>();
+	const scrollListeners = new Set<() => void>();
+	const onPageScroll = (listener: () => void) => {
+		scrollListeners.add(listener);
+		return () => scrollListeners.delete(listener);
+	};
 	const viewport = createMeasuredHeight();
 	const renderer = useGpuixRequired();
 	const setAppearance = renderer.setAppearance;
@@ -452,6 +550,9 @@ export function App(props: {
 					<div
 						ref={setPageScroller}
 						onLayout={viewport.onLayout}
+						onScroll={() => {
+							for (const listener of scrollListeners) listener();
+						}}
 						style={{
 							flexGrow: 1,
 							minWidth: 0,
@@ -482,19 +583,21 @@ export function App(props: {
 								}}
 							>
 								<PageScrollerContext.Provider value={pageScroller}>
-									<PageNavContext.Provider value={nav}>
-										<Switch>
-											<Match when={page() === SHOWCASE}>
-												<Showcase />
-											</Match>
-											<Match when={current()} keyed>
-												{(demo: Demo) => <DemoPage demo={demo} />}
-											</Match>
-											<Match when={currentPage()} keyed>
-												{(entry: Page) => <PageBody page={entry} />}
-											</Match>
-										</Switch>
-									</PageNavContext.Provider>
+									<PageScrollContext.Provider value={onPageScroll}>
+										<PageNavContext.Provider value={nav}>
+											<Switch>
+												<Match when={page() === SHOWCASE}>
+													<Showcase />
+												</Match>
+												<Match when={current()} keyed>
+													{(demo: Demo) => <DemoPage demo={demo} />}
+												</Match>
+												<Match when={currentPage()} keyed>
+													{(entry: Page) => <PageBody page={entry} />}
+												</Match>
+											</Switch>
+										</PageNavContext.Provider>
+									</PageScrollContext.Provider>
 								</PageScrollerContext.Provider>
 							</div>
 						</div>
@@ -520,7 +623,13 @@ export function App(props: {
 												padding: 16,
 											}}
 										>
-											<CustomizeCard />
+											<Show
+												when={currentPage()?.Rail}
+												fallback={<CustomizeCard />}
+												keyed
+											>
+												{(Rail: () => JSX.Element) => <Rail />}
+											</Show>
 											<RightRailTarget />
 										</div>
 									</ScrollArea>

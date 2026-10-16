@@ -14,7 +14,7 @@ export function pageOrder(
 		SHOWCASE_SLUG,
 		...listed("Pages"),
 		...listed("System"),
-		...demos.map((demo) => demo.slug),
+		...demos.filter((demo) => demo.listed === "sidebar").map((demo) => demo.slug),
 	];
 }
 

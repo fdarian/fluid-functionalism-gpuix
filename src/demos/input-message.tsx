@@ -65,8 +65,9 @@ const shows = (section: Section) => only() === null || only() === section;
 let capturing = false;
 const STREAM_MS = 3000;
 
-export const title = "Input Message";
+export const title = "InputMessage";
 export const group = "Components";
+export const listed = "sidebar";
 
 type PlayStatus = "off" | "idle" | "streaming";
 

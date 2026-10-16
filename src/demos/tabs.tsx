@@ -28,6 +28,7 @@ function Content(props: { children: string }) {
 
 export const title = "Tabs";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	const [controlled, setControlled] = createSignal("library");
