@@ -71,15 +71,6 @@ repeating it.
 - **Fidelity:** approximated (a press-and-drag within about 160 ms shows the squash landing at once).
 - **Components it hits:** just this one.
 
-## A lost pointer capture counts as a release
-
-- **Cause:** `not ported yet`. gpuix has `onPointerCancel` (`packages/native/js/events/event-props.ts:27`).
-- **Original:** `pointercancel` clears the press and, if dragging, springs the thumb home without toggling (`switch.tsx:224-241`).
-- **Port:** `onLostPointerCapture={onPressEnd}` (`src/components/switch.tsx:153`) is the only cancel path, and `onPressEnd` toggles (a plain press toggles on release, a drag toggles past the midpoint). A capture lost for any reason other than the release (the switch disabled or unmounted mid-press) toggles it.
-- **Workaround:** none.
-- **Fidelity:** approximated (the normal release path is exact).
-- **Components it hits:** any port that ends a drag on `onLostPointerCapture` (slider, scroll area).
-
 ## Props not ported: `thumbTransition`, `className`, `ref`, HTML attributes, the size ladder
 
 - **Cause:** `not ported yet` for `thumbTransition`, `className`, `ref` and rest props; `port choice` (reason not stated, the port has no `SizeProvider`) for the size ladder.
