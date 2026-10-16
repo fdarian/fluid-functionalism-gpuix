@@ -6,7 +6,7 @@ import {
 	on,
 	onCleanup,
 } from "solid-js";
-import { color, type as scale, shape, weight } from "../../lib/theme";
+import { color, fade, type as scale, shape, weight } from "../../lib/theme";
 import { createVisibility } from "../surfaces/visibility";
 import { MARK_BLUE, MARK_RED, Specimen, TweakFrame } from "./specimen";
 
@@ -101,8 +101,7 @@ function WeightItem(props: {
 					borderRadius: shape.bg,
 					backgroundColor: color.active,
 					opacity: props.selected ? 1 : 0,
-					transitionProperty: "opacity",
-					transitionDuration: "80ms",
+					...fade(["opacity"], 80),
 				}}
 			/>
 			<div
@@ -115,8 +114,7 @@ function WeightItem(props: {
 					borderRadius: shape.bg,
 					backgroundColor: color.hover,
 					opacity: hovered() ? 1 : 0,
-					transitionProperty: "opacity",
-					transitionDuration: "80ms",
+					...fade(["opacity"], 80),
 				}}
 			/>
 			<div
@@ -141,8 +139,7 @@ function WeightItem(props: {
 							props.selected || hovered()
 								? color.foreground
 								: color.mutedForeground,
-						transitionProperty: "color",
-						transitionDuration: "80ms",
+						...fade(["color"], 80),
 					}}
 				>
 					{MENU_LABEL}

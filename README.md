@@ -265,7 +265,7 @@ now does that the port has not picked up.
 | `group-hover:` (icon stroke, label colour) | `onMouseEnter` / `onMouseLeave` plus a signal | Exact, one JS round trip |
 | `focus-visible:ring-1` | `style.focusVisible` outline, offset 1 | Exact |
 | `ring-1 ring-border` | `outlineWidth` / `outlineColor`: outside the box, takes no layout | Exact |
-| `transition-colors duration-80`, `transition-[box-shadow]` | none then: state styles switched instantly, only `motion` animated. gpuix now animates colour and `boxShadow` and has CSS `transition` (FORK.md:814-818); not adopted yet | Dropped, now possible |
+| `transition-colors` (`duration-80`, or Tailwind's 150 ms), `transition-[box-shadow]` and the other lists | CSS `transition` on the element: `colorFade` (`src/lib/theme.ts`) is Tailwind's `transition-colors` list that gpuix animates (`color`, `background-color`, `border-color`, `outline-color`) over 80 ms on Tailwind's curve, `colorFadeDefault` the same over 150 ms, and `fade([...], ms, ease?)` any other list (`box-shadow`, one colour, the source's own curve). A signal-driven change and a `hover` / `active` / `focusVisible` change both ease (`scripts/check-color-fade.tsx`). `text-decoration-color`, `fill` and `stroke` are not CSS-transitionable here; an icon's strokes follow `color` through `currentColor` (`<Icon fade>`) | Exact |
 | spring `fast` / `moderate` (`motion/react`) | native `motion` spring, `{ type: "spring", duration: 0.08 / 0.16, bounce: 0 }`, velocity kept when the target changes mid-flight | Exact; `slow` (bounce 0.12, the exit 160 ms) drives the command menu's dialog and the banner |
 | exits (`spring.fast.exit` …) | plain tweens, 60 ms / 120 ms, like the source | Exact |
 | "snap, don't spring" on a reflow | a zero-length tween | Exact |

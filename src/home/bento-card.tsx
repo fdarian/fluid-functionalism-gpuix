@@ -4,6 +4,7 @@ import { Badge } from "../components/badge";
 import {
 	color,
 	colorFade,
+	fade,
 	focusRing,
 	scheme,
 	siteType,
@@ -73,6 +74,8 @@ export function BentoCard(props: {
 				// A box shadow is not clipped out of the border box here, so over a transparent fill it darkens the whole card.
 				backgroundColor: color.background,
 				...frame("rest"),
+				// `transition-[shadow,border-color]`: `shadow` is not a CSS property, so only the border eases.
+				...fade(["border-color"], 80),
 				hover: frame("hover"),
 				focusWithin: frame("focus"),
 			}}
@@ -121,6 +124,7 @@ export function BentoCard(props: {
 					borderBottomRightRadius: 11,
 					cursor: "pointer",
 					keyboardFocusDim: false,
+					...colorFade,
 					hover: { backgroundColor: color.hover },
 					focusVisible: focusRing(-1),
 				}}

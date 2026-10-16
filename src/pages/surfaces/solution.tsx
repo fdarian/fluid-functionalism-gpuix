@@ -5,6 +5,7 @@ import { Slider, type SliderValue } from "../../components/slider";
 import { ComponentPreview, MONO } from "../../lib/doc-page";
 import {
 	color,
+	fade,
 	radius,
 	SchemeScope,
 	shadow,
@@ -381,8 +382,7 @@ function LayerBox(props: {
 					...siteType.caption,
 					color: color.mutedForeground,
 					opacity: !props.ghost && hoveredLevel() === props.level ? 1 : 0,
-					transitionProperty: "opacity",
-					transitionDuration: "150ms",
+					...fade(["opacity"], 150),
 				}}
 			>
 				{`surface-${props.level}`}
