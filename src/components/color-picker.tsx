@@ -33,7 +33,7 @@ import {
 	POPUP_OFFSET,
 } from "../lib/popup";
 import { createPresence } from "../lib/presence";
-import { createPressToggle } from "../lib/popup-trigger";
+import { createPressToggle, refocusAfterPress } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
 import { color, height, nestedRadius, radius, shape, type as scale, scheme, shadow3, motion as tween, weight, surface, focusRing } from "../lib/theme";
 import {
@@ -956,7 +956,11 @@ function FormatDropdown(props: {
 
 	return (
 		<div
-			onMouseDownOutside={close}
+			onMouseDownOutside={() => {
+				if (!presence.open()) return;
+				close();
+				refocusAfterPress(button);
+			}}
 			style={{ position: "relative", width, height: height.control }}
 		>
 			<div

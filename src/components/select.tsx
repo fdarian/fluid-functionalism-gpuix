@@ -26,6 +26,7 @@ import { CheckMark, Icon, LIST_CHECK } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { edgeIndex, isChord, moveIndex, revealRow } from "../lib/list-nav";
 import { PopupSurface } from "../lib/popup";
+import { refocusAfterPress } from "../lib/popup-trigger";
 import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import {
 	color,
@@ -389,6 +390,8 @@ export function Select<Value extends string>(props: {
 	};
 	const onTriggerMouseDown = (event: HostMouseEvent) => {
 		if (event.button !== undefined && event.button !== 0) return;
+		// A press moves focus to the trigger after its handlers have run, which would pull it back from the popup `open` just focused. Windows and Linux run the handler after that move, where this changes nothing.
+		event.preventDefault();
 		if (presence.open()) close();
 		else open("pointer");
 	};
@@ -549,7 +552,11 @@ export function Select<Value extends string>(props: {
 		>
 			<div
 				testId={props.testId}
-				onMouseDownOutside={close}
+				onMouseDownOutside={() => {
+					if (!presence.open()) return;
+					close();
+					refocusAfterPress(triggerElement);
+				}}
 				style={{ position: "relative" }}
 			>
 				<div

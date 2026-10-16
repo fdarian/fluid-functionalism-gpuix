@@ -3,8 +3,8 @@
  *
  *   bun scripts/check-dropdown.tsx
  *
- * A pointer press that opens a popup throws in the test renderer, so every open
- * here starts from the keyboard; the pointer paths are for a live check.
+ * Most opens start from the keyboard; "A menu opened with a pointer press"
+ * presses the trigger for real.
  */
 import { mkdirSync } from "node:fs";
 import { createTestRoot } from "@gpuix/solid/testing";
@@ -475,17 +475,16 @@ k.expect(
 	"search-trigger",
 );
 
-// ─── A menu opened with no key (what a pointer open does) ────────────────────
+// ─── A menu opened with a pointer press ──────────────────────────────────────
 
-// A pointer press that opens a popup throws in the test renderer; `defaultOpen`
-// takes the same path through the menu: no keyboard, nothing focused before.
+// A real press on the trigger: no keyboard, nothing focused before.
 async function openBare(
 	testId: string,
 	rows: readonly { label: string; disabled?: boolean }[],
 ) {
 	const root = createTestRoot({ width: 600, height: 400, fonts });
 	root.render(() => (
-		<DropdownMenu testId={testId} defaultOpen>
+		<DropdownMenu testId={testId}>
 			<DropdownTrigger>
 				{(trigger) => (
 					<Button
@@ -511,6 +510,7 @@ async function openBare(
 		</DropdownMenu>
 	));
 	const candidates = [
+		`${testId}-trigger`,
 		`${testId}-popup`,
 		...rows.map((_, index) => `${testId}-${index}`),
 	];
@@ -532,6 +532,20 @@ async function openBare(
 				}) ?? null
 			);
 		},
+		async open() {
+			const trigger = root.renderer.findByTestId(`${testId}-trigger`);
+			if (trigger === undefined) throw new Error(`no ${testId}-trigger`);
+			const box = root.renderer.getElementBounds(trigger.id);
+			if (box === null) throw new Error(`no bounds for ${testId}-trigger`);
+			root.renderer.nativeSimulateClick(
+				box.x + box.width / 2,
+				box.y + box.height / 2,
+			);
+		},
+		clickAt(x: number, y: number) {
+			root.renderer.nativeSimulateClick(x, y);
+		},
+		isOpen: () => root.renderer.findByTestId(`${testId}-popup`) !== undefined,
 		keys: (keystrokes: string) => root.renderer.simulateKeystrokes(keystrokes),
 		unmount: () => root.unmount(),
 	};
@@ -542,6 +556,8 @@ const bare = await openBare("bare", [
 	{ label: "Two" },
 	{ label: "Three" },
 ]);
+await bare.settle(300);
+await bare.open();
 await bare.settle(600);
 k.expect(
 	"pointer open: the first enabled row is focused two frames later",
@@ -555,12 +571,22 @@ k.expect(
 	bare.focus(),
 	"bare-1",
 );
+bare.clickAt(560, 380);
+await bare.settle(400);
+k.check("pointer open: a press on bare background closes it", !bare.isOpen());
+k.expect(
+	"pointer open: the trigger takes focus back after that press",
+	bare.focus(),
+	"bare-trigger",
+);
 bare.unmount();
 
 const idle = await openBare("idle", [
 	{ label: "One", disabled: true },
 	{ label: "Two", disabled: true },
 ]);
+await idle.settle(300);
+await idle.open();
 await idle.settle(600);
 k.expect(
 	"pointer open: with no enabled row the popup panel keeps focus",

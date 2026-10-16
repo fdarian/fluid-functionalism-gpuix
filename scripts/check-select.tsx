@@ -3,8 +3,7 @@
  *
  *   bun scripts/check-select.tsx
  *
- * A pointer press that opens a popup throws in the test renderer, so every open
- * here starts from the keyboard; the pointer paths are for a live check.
+ * Most opens start from the keyboard; "Open with the pointer" presses for real.
  */
 import { createSignal } from "solid-js";
 import { Button } from "../src/components/button";
@@ -453,6 +452,42 @@ k.expect(
 await k.press("Escape");
 await k.settle(400);
 k.check("dialog: the next Escape closes the dialog", !k.exists("dialog"));
+
+// ─── Open with the pointer ───────────────────────────────────────────────────
+
+const point = (testId: string) => k.center(testId);
+await k.clickAt(point("invalid-trigger").x, point("invalid-trigger").y);
+k.check("press: pressing the trigger opens the popup", isOpen("invalid"));
+k.expect(
+	"press: with no value the panel takes focus",
+	fruitFocus("invalid"),
+	"invalid-list",
+);
+await k.clickAt(790, 890);
+await k.settle(300);
+k.check("press: a press on bare background closes it", !isOpen("invalid"));
+k.expect(
+	"press: the trigger takes focus back",
+	fruitFocus("invalid"),
+	"invalid-trigger",
+);
+await k.clickAt(point("filter-trigger").x, point("filter-trigger").y);
+k.expect(
+	"press: with a value the checked row takes focus",
+	fruitFocus("filter"),
+	"filter-option-banana",
+);
+await k.clickAt(
+	point("filter-option-mango").x,
+	point("filter-option-mango").y,
+);
+await k.settle(600);
+k.check("press: pressing a row picks it and closes", !isOpen("filter"));
+k.expect(
+	"press: focus is back on the trigger after a pick",
+	fruitFocus("filter"),
+	"filter-trigger",
+);
 
 // ─── Lighting a row eases its icon stroke and colour over 80 ms ──────────────
 

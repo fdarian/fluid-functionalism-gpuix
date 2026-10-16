@@ -36,7 +36,7 @@ import {
 import type { IconRef } from "../lib/icons";
 import { isChord, moveIndex, revealRow } from "../lib/list-nav";
 import { createPlacementState, POPUP_MARGIN, PopupSurface } from "../lib/popup";
-import { createPressToggle } from "../lib/popup-trigger";
+import { createPressToggle, refocusAfterPress } from "../lib/popup-trigger";
 import { createPresence } from "../lib/presence";
 import { color, radius, shadow3, motion as tween } from "../lib/theme";
 import { createTypeahead } from "../lib/typeahead";
@@ -1039,7 +1039,10 @@ export function DropdownMenu(props: {
 				testId={props.testId}
 				onKeyDown={onKeyDown}
 				onMouseDownOutside={() => {
-					if (presence.open()) setOpen(false);
+					if (!presence.open()) return;
+					const trigger = triggerElement;
+					setOpen(false);
+					refocusAfterPress(trigger);
 				}}
 				style={{
 					position: "relative",
