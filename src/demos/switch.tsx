@@ -81,16 +81,16 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	// Drag the thumb from the on end back to the off end, releasing past the midpoint.
 	const track = shot.centerOf("basic-track");
 	await shot.down("basic-track");
-	await shot.moveHeld(track.x + 10, track.y);
-	await shot.moveHeld(track.x - 6, track.y);
+	await shot.moveTo(track.x + 10, track.y);
+	await shot.moveTo(track.x - 6, track.y);
 	shot.capture("dragging");
-	await shot.moveHeld(track.x - 14, track.y);
+	await shot.moveTo(track.x - 14, track.y);
 	await shot.up("basic-track");
 	shot.capture("dragged-off");
 
 	// Past the row, the thumb should still follow: the press owns the pointer until release.
 	await shot.down("basic-track");
-	await shot.moveHeld(track.x + 300, track.y + 150);
+	await shot.moveTo(track.x + 300, track.y + 150);
 	shot.capture("drag-outside");
 	await shot.up("basic-track");
 

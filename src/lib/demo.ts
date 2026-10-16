@@ -8,7 +8,7 @@ import type { IconRef } from "./icons";
 export interface ShotContext {
 	/** Window-space centre of the element with this `testId`. */
 	centerOf(testId: string): { x: number; y: number };
-	/** Focus the element, as a script would: a pointer press that opens a popup cannot run in the test renderer. */
+	/** Focus the element, as a keyboard user would arrive at it. */
 	focus(testId: string): Promise<void>;
 	hover(testId: string): Promise<void>;
 	click(testId: string): Promise<void>;
@@ -17,13 +17,11 @@ export interface ShotContext {
 	up(testId: string): Promise<void>;
 	/** Space-separated Playwright key names, e.g. `"s o l"` or `"ArrowDown Enter"`; `Shift+Tab` and `ControlOrMeta+k` press a chord. Each is a key-down then a key-up. Unknown names throw. */
 	press(keystrokes: string): Promise<void>;
-	/** Pointer to a window position, e.g. to leave a popup. */
+	/** Pointer to a window position, e.g. to leave a popup or mid-drag: a button held down stays held. */
 	moveTo(x: number, y: number): Promise<void>;
 	clickAt(x: number, y: number): Promise<void>;
 	/** A wheel tick at a window position. Deltas have the DOM's sign, the same as `onWheel` sees: positive `deltaY` scrolls down, positive `deltaX` scrolls right. */
 	scroll(x: number, y: number, deltaX: number, deltaY: number): Promise<void>;
-	/** Pointer to a window position with the left button held, e.g. mid-drag. */
-	moveHeld(x: number, y: number): Promise<void>;
 	/** Wait for timers and springs. */
 	settle(ms?: number): Promise<void>;
 	/** Throws if the painted text does not (or does) contain `text`. */

@@ -702,7 +702,6 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	setOnly("queued-rich");
 	await shot.settle(900);
 	shot.capture("queued-rich");
-	// A pointer press that opens a popup cannot run in the test renderer: open the menus from the keyboard.
 	await shot.focus("rich-model-trigger");
 	await shot.press("Enter");
 	await shot.settle(300);
@@ -731,8 +730,8 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	// Drag the first row down past the last one and out of the list: the move and the release still reach the row.
 	const last = shot.centerOf("queued-queued-1");
 	await shot.down("queued-queued-0");
-	await shot.moveHeld(last.x, last.y);
-	await shot.moveHeld(last.x + 300, last.y + 400);
+	await shot.moveTo(last.x, last.y);
+	await shot.moveTo(last.x + 300, last.y + 400);
 	shot.capture("queued-dragged");
 	await shot.up("queued-queued-0");
 	const row = shot.centerOf("queued-queued-0");

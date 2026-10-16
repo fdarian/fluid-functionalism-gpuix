@@ -5,8 +5,7 @@
  *
  * Focus stays in the input the whole time and the lit row is named by
  * `aria-activedescendant` (Base UI with `autoHighlight="always"`, `modal={false}`).
- * A pointer press that opens a popup throws in the test renderer, so every open
- * here starts from the keyboard; the pointer paths are for a live check.
+ * Most opens start from the keyboard; "Open with the pointer" presses for real.
  */
 import { createSignal } from "solid-js";
 import { Button } from "../src/components/button";
@@ -314,6 +313,20 @@ await k.settle(300);
 	await k.press("Escape");
 	await k.settle(300);
 }
+
+// ─── Open with the pointer ───────────────────────────────────────────────────
+
+await k.press("Escape");
+await k.clickAt(k.center("gaps-input").x, k.center("gaps-input").y);
+k.check("press: pressing the field opens the popup", isOpen("gaps"));
+k.expect(
+	"press: focus is in the input",
+	focusAt("gaps", ["a", "b", "c"]),
+	"gaps-input",
+);
+await k.clickAt(790, 890);
+await k.settle(300);
+k.check("press: a press outside closes it", !isOpen("gaps"));
 
 // ─── Escape inside a dialog stops at the combobox ────────────────────────────
 

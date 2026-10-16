@@ -199,10 +199,6 @@ const shot: ShotContext = {
 		renderer.nativeSimulateScrollWheel(x, y, deltaX, deltaY);
 		await settle();
 	},
-	async moveHeld(x, y) {
-		renderer.nativeSimulateMouseMove(x, y);
-		await settle();
-	},
 	settle,
 	expectText(text, present) {
 		const found = renderer.getAllText().some((line) => line.includes(text));
@@ -246,14 +242,7 @@ if (demo !== undefined && "layout" in demo && demo.layout === "full") {
 	await settle(600);
 } else {
 	await shot.click("theme");
-	const lightRow = renderer.findByText("Light");
-	if (lightRow === undefined)
-		throw new Error("the theme select has no Light row");
-	const lightBounds = renderer.getElementBounds(lightRow.id);
-	if (lightBounds === null)
-		throw new Error("no painted bounds for the Light row");
-	renderer.nativeSimulateClick(lightBounds.x + 4, lightBounds.y + 4);
-	await settle(600);
+	await shot.click("theme-option-light");
 }
 await shot.moveTo(1180, 700);
 capture("light");

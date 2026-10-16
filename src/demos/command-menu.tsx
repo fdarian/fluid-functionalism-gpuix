@@ -900,9 +900,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("tabs-hover");
 
 	await reveal(shot, "filters");
-	// A pointer press that opens a popup cannot run in the test renderer: drive the select by key.
-	await shot.focus("filters-sort-trigger");
-	await shot.press("ArrowDown");
+	await shot.click("filters-sort-trigger");
 	shot.capture("filters-open");
 	await shot.press("ArrowDown Enter");
 	await shot.settle(500);

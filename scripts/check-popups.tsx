@@ -50,7 +50,6 @@ function session() {
 		if (bounds === null) throw new Error(`no bounds for ${testId}`);
 		return { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 };
 	};
-	/** Keyboard stand-in for a click: a pointer press that mounts a dismiss layer throws in the test renderer (the root view is held during the press), though the live window opens it. */
 	const focus = async (testId: string) => {
 		renderer.focusElement(need(testId).id);
 		await settle(100);
@@ -114,11 +113,10 @@ async function popupExit() {
 		await ui.settle(800);
 		const id = slug === "select" ? "basic" : "framework";
 		const trigger = slug === "select" ? `${id}-trigger` : `${id}-input`;
-		await ui.focus(trigger);
 		// The first open pays for cold rendering; the fastest of three is the exit itself.
 		const times: number[] = [];
 		for (let round = 0; round < 3; round++) {
-			await ui.press("ArrowDown");
+			await ui.click(trigger);
 			if (ui.find(`${id}-popup`) === undefined)
 				throw new Error(`${slug} popup did not open`);
 			const took = await ui.timeToUnmount(`${id}-popup`, () =>
@@ -144,8 +142,7 @@ async function dialogSurface() {
 	ui.test.render(() => <App demos={demos} pages={pages} initialPage="dialog" />);
 	await ui.settle(800);
 	await ui.click("stack-open");
-	await ui.focus("stack-select-trigger");
-	await ui.press("ArrowDown");
+	await ui.click("stack-select-trigger");
 	const popup = ui.need("stack-select-popup").style.backgroundColor;
 	report(
 		popup === color.surface7,

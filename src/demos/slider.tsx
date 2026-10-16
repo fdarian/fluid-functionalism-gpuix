@@ -270,7 +270,7 @@ async function drag(
 ) {
 	const start = shot.centerOf(testId);
 	await shot.down(testId);
-	for (const dx of moves) await shot.moveHeld(start.x + dx, start.y);
+	for (const dx of moves) await shot.moveTo(start.x + dx, start.y);
 	shot.capture(capture);
 	await shot.up(testId);
 }

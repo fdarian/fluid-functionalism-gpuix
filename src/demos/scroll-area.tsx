@@ -345,7 +345,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 
 	// Drag the thumb, with the pointer leaving the track mid-drag.
 	await shot.down("area-y-thumb");
-	await shot.moveHeld(trackX(area.x) - 90, area.y + 40);
+	await shot.moveTo(trackX(area.x) - 90, area.y + 40);
 	shot.capture("dragging");
 	await shot.moveTo(trackX(area.x) - 90, area.y + 40);
 	await shot.up("area-y-thumb");
@@ -384,7 +384,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	const jumped = thumbY();
 	expectBelow("track press", homeAgain, jumped);
 	const track = shot.centerOf("area-y-track");
-	await shot.moveHeld(track.x, track.y + 30);
+	await shot.moveTo(track.x, track.y + 30);
 	expectBelow("drag after the jump", jumped, thumbY());
 	shot.capture("track-jump-then-drag");
 	await shot.up("area-y-track");

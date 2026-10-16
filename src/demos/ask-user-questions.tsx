@@ -1086,7 +1086,7 @@ async function scrollTo(shot: ShotContext, testId: string) {
 	}
 }
 
-/** Opens a playground select from the keyboard (a pointer press that opens a popup cannot run in the test renderer) and walks `steps` rows. */
+/** Opens a playground select from the keyboard and walks `steps` rows. */
 async function pickPlay(shot: ShotContext, testId: string, steps: string) {
 	await shot.focus(`${testId}-trigger`);
 	await shot.press(`ArrowDown ${steps} Enter`);

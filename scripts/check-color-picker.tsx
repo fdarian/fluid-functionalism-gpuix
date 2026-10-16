@@ -3,9 +3,8 @@
  *
  *   bun scripts/check-color-picker.tsx
  *
- * Prints PASS / FAIL lines and exits non-zero on any FAIL. A pointer press that
- * opens a popup throws in the test renderer, so the format menu's scenarios open
- * it from the keyboard; its pointer open is for a live check.
+ * Prints PASS / FAIL lines and exits non-zero on any FAIL. The format menu's
+ * scenarios open it from the keyboard, then "pressing the trigger" presses it.
  */
 import { createTestRoot } from "@gpuix/solid/testing";
 import { createSignal, Show } from "solid-js";
@@ -337,6 +336,24 @@ setThemeChoice("dark");
 		"cp-format-hex",
 	);
 	await k.press("Escape");
+
+	// Pressing the trigger for real.
+	const press = (testId: string) =>
+		k.clickAt(k.center(testId).x, k.center(testId).y);
+	await press("cp-format");
+	k.check("pressing the trigger opens the menu", menuOpen());
+	k.expect("a pointer open focuses the panel", focused(), "cp-format-popup");
+	await k.clickAt(790, 690);
+	await k.settle(300);
+	k.check("a press on bare background closes it", !menuOpen());
+	k.expect("the trigger takes focus back", focused(), "cp-format");
+	k.check("the format is not OKLCH yet", !k.exists("cp-C"));
+	await press("cp-format");
+	await press("cp-format-oklch");
+	await k.settle(300);
+	k.check("pressing a row closes the menu", !menuOpen());
+	k.check("the press picked the format", k.exists("cp-C"));
+	k.expect("a press pick returns focus to the trigger", focused(), "cp-format");
 
 	// A menu that opened with the page keeps the page's focus until the reader reaches in.
 	setSecond(true);

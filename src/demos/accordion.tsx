@@ -322,7 +322,7 @@ async function reveal(shot: ShotContext, testId: string) {
 	throw new Error(`could not scroll ${testId} into view`);
 }
 
-/** Opens the Expand select from the keyboard (a pointer press that opens a popup cannot run in the test renderer) and walks `steps` rows. */
+/** Opens the Expand select from the keyboard and walks `steps` rows. */
 async function pickExpand(shot: ShotContext, steps: string) {
 	await shot.focus("play-expand-trigger");
 	await shot.press(`ArrowDown ${steps} Enter`);

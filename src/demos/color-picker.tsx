@@ -173,11 +173,11 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(square.x - 50, square.y - 15);
 	shot.capture("square-hover");
 	await shot.down("default-square");
-	await shot.moveHeld(square.x + 70, square.y + 40);
-	await shot.moveHeld(square.x + 80, square.y + 45);
+	await shot.moveTo(square.x + 70, square.y + 40);
+	await shot.moveTo(square.x + 80, square.y + 45);
 	shot.capture("square-drag");
 	// Past the edge the thumb pins to the border.
-	await shot.moveHeld(square.x + 400, square.y + 300);
+	await shot.moveTo(square.x + 400, square.y + 300);
 	shot.capture("square-drag-past-edge");
 	await shot.up("default-square");
 	shot.expectText("#", true);
@@ -189,13 +189,13 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.clickAt(alpha.x + 30, alpha.y);
 	shot.capture("hue-and-alpha");
 	await shot.down("default-hue");
-	await shot.moveHeld(hue.x + 60, hue.y);
-	await shot.moveHeld(hue.x + 90, hue.y + 30);
+	await shot.moveTo(hue.x + 60, hue.y);
+	await shot.moveTo(hue.x + 90, hue.y + 30);
 	shot.capture("hue-drag");
 	await shot.up("default-hue");
 	await shot.down("default-alpha");
-	await shot.moveHeld(alpha.x - 60, alpha.y);
-	await shot.moveHeld(alpha.x - 400, alpha.y);
+	await shot.moveTo(alpha.x - 60, alpha.y);
+	await shot.moveTo(alpha.x - 400, alpha.y);
 	shot.capture("alpha-drag-past-edge");
 	await shot.up("default-alpha");
 
@@ -252,8 +252,8 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(1180, 700);
 	const red = shot.centerOf("default-r");
 	await shot.down("default-r");
-	await shot.moveHeld(red.x - 30, red.y);
-	await shot.moveHeld(red.x - 60, red.y);
+	await shot.moveTo(red.x - 30, red.y);
+	await shot.moveTo(red.x - 60, red.y);
 	shot.capture("scrub");
 	await shot.up("default-r");
 
