@@ -359,7 +359,6 @@ function createMenuList(options: {
 
 	const onKey: KeyHandler = (event) => {
 		const typing = search() !== undefined;
-		console.log("KEY", JSON.stringify(event.key), "typing", typing, "active", hover.activeIndex());
 		// In the source a lit row holds real focus, so Space, Home and End act on it;
 		// here the field keeps focus, so they only belong to the field while no row is lit.
 		const fieldOwnsKey = typing && hover.activeIndex() === null;
