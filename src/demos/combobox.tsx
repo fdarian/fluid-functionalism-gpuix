@@ -279,18 +279,26 @@ async function reveal(shot: ShotContext, testId: string) {
 }
 
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
+	// The sidebar names RadioGroup too, so the list is read by its option's node, not by the page's text.
+	const expectOption = (present: boolean) => {
+		if (shot.hasAriaNode("play-option-radiogroup") !== present) {
+			throw new Error(
+				`expected the RadioGroup option to be ${present ? "listed" : "absent"}`,
+			);
+		}
+	};
 	// The playground's switches drive the field above the demos.
 	shot.capture("playground");
 	await shot.click("play-icon-track");
 	await shot.click("play-clearable-track");
 	await shot.focus("play-input");
 	await shot.press("ArrowDown");
-	shot.expectText("RadioGroup", true);
+	expectOption(true);
 	await shot.press("b u");
-	shot.expectText("RadioGroup", false);
+	expectOption(false);
 	await shot.press("ArrowDown Enter");
 	await shot.settle(400);
-	shot.expectText("RadioGroup", false);
+	expectOption(false);
 	shot.capture("playground-icon-clearable");
 	await shot.click("play-disabled-track");
 	shot.capture("playground-disabled");
