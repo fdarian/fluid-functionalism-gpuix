@@ -65,15 +65,6 @@ light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 - **Fidelity:** approximated.
 - **Components it hits:** badge, tabs-subtle, anything with a trimmed label.
 
-## No optimistic pill on click
-
-- **Cause:** `port choice` (reason not stated; Solid signals commit synchronously, so a click already moves the pill).
-- **Original:** a click sets `optimisticIdx` so the pill moves before a controlled parent round-trips, and it re-syncs only when the resolved selection changes (`tabs.tsx:266-277`, `:511-514`). A parent that vetoes the change leaves the pill on the clicked tab.
-- **Port:** the pill follows `selected()` (`tabs.tsx:98`, `:176`), so a vetoed click leaves it on the selected tab.
-- **Workaround:** none.
-- **Fidelity:** exact except for the vetoed-change case.
-- **Components it hits:** just this one.
-
 ## API surface: index props, `className`, ref and Base UI props
 
 - **Cause:** `port choice` for `selectedIndex` / `onSelect` (BASE-UI-AUDIT: FF-only layer, out of scope per lead decision); reason not stated for the rest.

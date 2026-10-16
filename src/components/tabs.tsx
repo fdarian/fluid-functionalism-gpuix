@@ -7,29 +7,42 @@ import {
 	useGpuixRequired,
 } from "@gpuix/solid";
 import {
+	createComputed,
 	createContext,
 	createEffect,
 	createSignal,
 	createUniqueId,
+	For,
 	type JSX,
 	on,
 	onCleanup,
-	For,
 	Show,
 	untrack,
 	useContext,
 } from "solid-js";
-import { createFocusRing, FocusRing, type FocusRingState } from "../lib/focus-ring";
 import {
 	createFluidHover,
 	type FluidHover,
 	type ItemRect,
 } from "../lib/fluid-hover";
-import { createPreviewPill } from "../lib/preview-pill";
-import { StableLabel } from "../lib/stable-label";
+import {
+	createFocusRing,
+	FocusRing,
+	type FocusRingState,
+} from "../lib/focus-ring";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { color, radius, type as scale, scheme, shadow3, motion as tween, weight } from "../lib/theme";
+import { createPreviewPill } from "../lib/preview-pill";
+import { StableLabel } from "../lib/stable-label";
+import {
+	color,
+	radius,
+	type as scale,
+	scheme,
+	shadow3,
+	motion as tween,
+	weight,
+} from "../lib/theme";
 
 export type TabsSize = "default" | "compact";
 
@@ -65,6 +78,8 @@ interface ListScope {
 	/** The tab that holds the roving tab stop. */
 	tabStop: () => number;
 	focusTab: (index: number) => void;
+	/** A click moves the pills to the tab at once, before a controlled parent has answered. */
+	moveToClicked: (index: number) => void;
 }
 
 const TabsContext = createContext<TabsState>();
@@ -159,9 +174,14 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 		if (selected === undefined) return -1;
 		return tabs.order().indexOf(selected);
 	};
+	// The pills follow the clicked tab, not the resolved selection: a click moves them before a controlled parent answers, and they re-sync only when the resolved selection changes, so a parent that vetoes the click leaves them on the clicked tab (`registry/base/tabs.tsx:266-277`).
+	const [pillIndex, setPillIndex] = createSignal(-1);
+	createComputed(on(selectedIndex, setPillIndex));
 	/** The last-focused tab keeps the tab stop (a focused disabled tab, say); a new selection takes it back. */
 	const [focusedTab, setFocusedTab] = createSignal<number>();
-	createEffect(on(selectedIndex, () => setFocusedTab(undefined), { defer: true }));
+	createEffect(
+		on(selectedIndex, () => setFocusedTab(undefined), { defer: true }),
+	);
 	const scope: ListScope = {
 		hover,
 		focusRing,
@@ -170,20 +190,21 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 		mouseInside,
 		tabStop: () => focusedTab() ?? Math.max(selectedIndex(), 0),
 		focusTab: setFocusedTab,
+		moveToClicked: setPillIndex,
 	};
 	const rectOf = (index: number | null): ItemRect | undefined => {
 		if (index === null || index < 0 || !hover.isMeasured()) return undefined;
 		return hover.rects()[index];
 	};
-	const selectedRect = () => rectOf(selectedIndex());
+	const selectedRect = () => rectOf(pillIndex());
 	const hoveringOther = () => {
 		const active = hover.activeIndex();
-		return active !== null && active !== selectedIndex();
+		return active !== null && active !== pillIndex();
 	};
 
 	const preview = createPreviewPill({
 		selectedRect,
-		selectedIndex,
+		selectedIndex: pillIndex,
 		activeIndex: hover.activeIndex,
 		rectOf,
 		mouseInside,
@@ -223,6 +244,7 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 				<Show when={selectedRect()}>
 					{(rect: () => ItemRect) => (
 						<motion.div
+							testId={props.testId && `${props.testId}-selected`}
 							initial={false}
 							animate={rectStyle(rect())}
 							transition={tween.moderate}
@@ -253,36 +275,38 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 					{() => {
 						// Born at the selected pill, as the source mounts it, then slides out to the hovered tab.
 						const born = untrack(selectedRect);
-						if (born === undefined) throw new Error("Preview pill mounted without a selected pill");
+						if (born === undefined)
+							throw new Error("Preview pill mounted without a selected pill");
 						const shown = () => {
 							const pill = preview();
-							if (pill === undefined) throw new Error("Preview pill has no state");
+							if (pill === undefined)
+								throw new Error("Preview pill has no state");
 							return pill;
 						};
 						return (
-						<motion.div
-							testId={props.testId && `${props.testId}-preview`}
-							initial={rectStyle(born)}
-							animate={rectStyle(shown().rect)}
-							// The preview keeps up with the pointer on fast; its way home takes the moderate spring.
-							transition={hoveringOther() ? tween.fast : tween.moderate}
-							style={{ position: "absolute" }}
-						>
 							<motion.div
-								initial={{ opacity: 0 }}
-								animate={{ opacity: shown().visible ? 0.4 : 0 }}
-								transition={{ duration: shown().visible ? 0.08 : 0.06 }}
-								style={{
-									position: "absolute",
-									top: 0,
-									left: 0,
-									right: 0,
-									bottom: 0,
-									borderRadius: radius.item,
-									backgroundColor: color.hover,
-								}}
-							/>
-						</motion.div>
+								testId={props.testId && `${props.testId}-preview`}
+								initial={rectStyle(born)}
+								animate={rectStyle(shown().rect)}
+								// The preview keeps up with the pointer on fast; its way home takes the moderate spring.
+								transition={hoveringOther() ? tween.fast : tween.moderate}
+								style={{ position: "absolute" }}
+							>
+								<motion.div
+									initial={{ opacity: 0 }}
+									animate={{ opacity: shown().visible ? 0.4 : 0 }}
+									transition={{ duration: shown().visible ? 0.08 : 0.06 }}
+									style={{
+										position: "absolute",
+										top: 0,
+										left: 0,
+										right: 0,
+										bottom: 0,
+										borderRadius: radius.item,
+										backgroundColor: color.hover,
+									}}
+								/>
+							</motion.div>
 						);
 					}}
 				</For>
@@ -356,14 +380,20 @@ export function TabItem(props: {
 			ref={(node) => {
 				element = node;
 			}}
-			{...buttonProps({
-				disabled: props.disabled,
-				// Base UI tabs stay focusable when disabled: arrows land on them, nothing activates.
-				focusableWhenDisabled: true,
-				onClick: () => tabs.select(props.value),
-				onKeyDown,
-				tabIndex: list.tabStop() === index ? 0 : -1,
-			}, renderer)}
+			{...buttonProps(
+				{
+					disabled: props.disabled,
+					// Base UI tabs stay focusable when disabled: arrows land on them, nothing activates.
+					focusableWhenDisabled: true,
+					onClick: () => {
+						list.moveToClicked(index);
+						tabs.select(props.value);
+					},
+					onKeyDown,
+					tabIndex: list.tabStop() === index ? 0 : -1,
+				},
+				renderer,
+			)}
 			role="tab"
 			id={tabs.tabId(props.value)}
 			aria-selected={isSelected()}

@@ -99,7 +99,7 @@ names two causes counts as mixed. Base UI behaviour, row by row, is in [`BASE-UI
 
 | Component | gpuix gap | port choice | not ported yet | mixed | total |
 |---|---:|---:|---:|---:|---:|
-| [accordion](drift/accordion.md) | 2 | 9 | 12 | 0 | 23 |
+| [accordion](drift/accordion.md) | 3 | 7 | 12 | 0 | 22 |
 | [ask-user-questions](drift/ask-user-questions.md) | 2 | 5 | 9 | 3 | 19 |
 | [badge](drift/badge.md) | 1 | 2 | 2 | 0 | 5 |
 | [banner](drift/banner.md) | 3 | 3 | 11 | 0 | 17 |
@@ -122,13 +122,13 @@ names two causes counts as mixed. Base UI behaviour, row by row, is in [`BASE-UI
 | [radio-group](drift/radio-group.md) | 4 | 1 | 7 | 0 | 12 |
 | [scroll-area](drift/scroll-area.md) | 3 | 6 | 3 | 1 | 13 |
 | [select](drift/select.md) | 8 | 7 | 8 | 2 | 25 |
-| [sidebar](drift/sidebar.md) | 1 | 6 | 27 | 0 | 34 |
+| [sidebar](drift/sidebar.md) | 1 | 5 | 26 | 0 | 32 |
 | [site](drift/site.md) | 4 | 4 | 24 | 3 | 35 |
 | [slider](drift/slider.md) | 4 | 5 | 4 | 3 | 16 |
 | [switch](drift/switch.md) | 2 | 2 | 3 | 2 | 9 |
 | [table](drift/table.md) | 3 | 1 | 5 | 0 | 9 |
-| [tabs-subtle](drift/tabs-subtle.md) | 1 | 5 | 2 | 1 | 9 |
-| [tabs](drift/tabs.md) | 2 | 3 | 4 | 0 | 9 |
+| [tabs-subtle](drift/tabs-subtle.md) | 1 | 4 | 2 | 1 | 8 |
+| [tabs](drift/tabs.md) | 2 | 2 | 4 | 0 | 8 |
 | [thinking-indicator](drift/thinking-indicator.md) | 1 | 2 | 4 | 0 | 7 |
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 7 | 1 | 15 |
 | [tooltip](drift/tooltip.md) | 4 | 7 | 2 | 1 | 14 |

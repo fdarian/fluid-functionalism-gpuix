@@ -4,6 +4,9 @@ import type { FluidHover, ItemRect } from "./fluid-hover";
 import { createPresence } from "./presence";
 import { color, radius, motion as tween } from "./theme";
 
+/** The ring's box rides `spring.fast` but its opacity is a plain tween (`registry/base/accordion.tsx:465-468`). */
+const ENTER_FADE = { duration: 0.08 } as const;
+
 /** How far the ring stands off the row: its box is the row grown by this on every side. */
 const OUTSET = 2;
 
@@ -15,6 +18,8 @@ const OUTSET = 2;
 export function createFocusRing(hover: FluidHover) {
 	const [index, setIndex] = createSignal<number | null>(null);
 	return {
+		/** The ringed row, or `null` while no row shows the ring. */
+		index,
 		/** The measured box of the ringed row, or `null` while no row shows the ring. */
 		rect(): ItemRect | null {
 			const current = index();
@@ -82,9 +87,10 @@ export function FocusRing(props: {
 					}}
 					transition={
 						presence.open()
-							? props.travel?.() === false
-								? tween.snap
-								: tween.fast
+							? {
+									...(props.travel?.() === false ? tween.snap : tween.fast),
+									opacity: ENTER_FADE,
+								}
 							: tween.fastExit
 					}
 					style={{

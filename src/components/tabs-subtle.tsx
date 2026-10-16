@@ -7,29 +7,40 @@ import {
 	useGpuixRequired,
 } from "@gpuix/solid";
 import {
-	createContext,
 	createComputed,
+	createContext,
 	createEffect,
 	createSignal,
+	For,
 	type JSX,
 	on,
-	For,
 	Show,
 	untrack,
 	useContext,
 } from "solid-js";
-import { createFocusRing, FocusRing, type FocusRingState } from "../lib/focus-ring";
 import {
 	createFluidHover,
 	type FluidHover,
 	type ItemRect,
 } from "../lib/fluid-hover";
-import { createPreviewPill } from "../lib/preview-pill";
-import { StableLabel } from "../lib/stable-label";
+import {
+	createFocusRing,
+	FocusRing,
+	type FocusRingState,
+} from "../lib/focus-ring";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { moveIndex } from "../lib/list-nav";
-import { color, height, radius, type as scale, motion as tween, weight } from "../lib/theme";
+import { createPreviewPill } from "../lib/preview-pill";
+import { StableLabel } from "../lib/stable-label";
+import {
+	color,
+	height,
+	radius,
+	type as scale,
+	motion as tween,
+	weight,
+} from "../lib/theme";
 
 export type TabsSubtleSize = "default" | "compact";
 
@@ -203,35 +214,37 @@ export function TabsSubtle(props: {
 					{() => {
 						// Born at the selected pill, as the source mounts it, then slides out to the hovered tab.
 						const born = untrack(selectedRect);
-						if (born === undefined) throw new Error("Preview pill mounted without a selected pill");
+						if (born === undefined)
+							throw new Error("Preview pill mounted without a selected pill");
 						const shown = () => {
 							const pill = preview();
-							if (pill === undefined) throw new Error("Preview pill has no state");
+							if (pill === undefined)
+								throw new Error("Preview pill has no state");
 							return pill;
 						};
 						return (
-						<motion.div
-							testId={props.testId && `${props.testId}-preview`}
-							initial={rectStyle(born)}
-							animate={rectStyle(shown().rect)}
-							transition={hoveringOther() ? tween.fast : tween.moderate}
-							style={{ position: "absolute" }}
-						>
 							<motion.div
-								initial={{ opacity: 0 }}
-								animate={{ opacity: shown().visible ? 0.4 : 0 }}
-								transition={{ duration: shown().visible ? 0.08 : 0.06 }}
-								style={{
-									position: "absolute",
-									top: 0,
-									left: 0,
-									right: 0,
-									bottom: 0,
-									borderRadius: radius.item,
-									backgroundColor: color.active,
-								}}
-							/>
-						</motion.div>
+								testId={props.testId && `${props.testId}-preview`}
+								initial={rectStyle(born)}
+								animate={rectStyle(shown().rect)}
+								transition={hoveringOther() ? tween.fast : tween.moderate}
+								style={{ position: "absolute" }}
+							>
+								<motion.div
+									initial={{ opacity: 0 }}
+									animate={{ opacity: shown().visible ? 0.4 : 0 }}
+									transition={{ duration: shown().visible ? 0.08 : 0.06 }}
+									style={{
+										position: "absolute",
+										top: 0,
+										left: 0,
+										right: 0,
+										bottom: 0,
+										borderRadius: radius.item,
+										backgroundColor: color.active,
+									}}
+								/>
+							</motion.div>
 						);
 					}}
 				</For>
@@ -285,15 +298,17 @@ export function TabsSubtleItem(props: {
 		scope.idPrefix() === undefined
 			? undefined
 			: `${scope.idPrefix()}-panel-${props.index}`;
-	// The unfolding label's width is animated to a measured number (gpuix cannot animate `auto`): the box holding the label and its gap to the icon reports it.
-	const labelWidthTarget = () => {
-		if (!showLabel()) return { width: 0 };
+	// The unfolding label's width is animated to a measured number (gpuix cannot animate `auto`): the box holding the label reports it.
+	const labelTarget = () => {
+		if (!showLabel()) return { width: 0, marginLeft: 0, opacity: 0 };
 		const measured = unfoldedWidth();
-		return measured === undefined ? {} : { width: measured };
+		const unfolded = { marginLeft: metrics().labelGap, opacity: 1 };
+		return measured === undefined ? unfolded : { ...unfolded, width: measured };
 	};
-	const labelWidthTransition = () => {
-		if (!selectionChanged()) return { duration: 0 };
-		return showLabel() ? tween.fast : tween.fastExit;
+	// Width and margin ride `spring.fast` both ways and opacity is a 0.06 tween (`registry/base/tabs-subtle.tsx:397-410`).
+	const labelTransition = () => {
+		if (!selectionChanged()) return tween.snap;
+		return { ...tween.fast, opacity: { duration: 0.06 } };
 	};
 
 	const onKeyDown = (event: KeyEvent) => {
@@ -301,9 +316,9 @@ export function TabsSubtleItem(props: {
 			return;
 		}
 		const count = scope.elements.size;
-		const move = ({ ArrowRight: 1, ArrowLeft: -1 } as Record<string, 1 | -1 | undefined>)[
-			event.key ?? ""
-		];
+		const move = (
+			{ ArrowRight: 1, ArrowLeft: -1 } as Record<string, 1 | -1 | undefined>
+		)[event.key ?? ""];
 		const target =
 			move !== undefined
 				? (moveIndex(props.index, move, count) ?? undefined)
@@ -334,11 +349,14 @@ export function TabsSubtleItem(props: {
 			ref={(node) => {
 				element = node;
 			}}
-			{...buttonProps({
-				onClick: () => scope.onSelect(props.index),
-				onKeyDown,
-				tabIndex: scope.tabStop() === props.index ? 0 : -1,
-			}, renderer)}
+			{...buttonProps(
+				{
+					onClick: () => scope.onSelect(props.index),
+					onKeyDown,
+					tabIndex: scope.tabStop() === props.index ? 0 : -1,
+				},
+				renderer,
+			)}
 			role="tab"
 			aria-selected={isSelected()}
 			aria-label={collapsible() && !showLabel() ? props.label : undefined}
@@ -389,8 +407,8 @@ export function TabsSubtleItem(props: {
 			{collapsible() ? (
 				<motion.div
 					initial={false}
-					animate={labelWidthTarget()}
-					transition={labelWidthTransition()}
+					animate={labelTarget()}
+					transition={labelTransition()}
 					onMotionComplete={() => scope.hover.remeasure()}
 					style={{
 						display: "flex",
@@ -402,23 +420,20 @@ export function TabsSubtleItem(props: {
 							: {}),
 					}}
 				>
-					<motion.div
-						initial={false}
-						animate={{ opacity: showLabel() ? 1 : 0 }}
-						transition={{ duration: 0.06 }}
+					<div
 						onLayout={(event: EventPayload) => {
-							if (event.width === undefined) throw new Error("onLayout reported no width");
+							if (event.width === undefined)
+								throw new Error("onLayout reported no width");
 							setUnfoldedWidth(event.width);
 						}}
 						style={{
 							display: "flex",
 							flexDirection: "row",
 							flexShrink: 0,
-							paddingLeft: metrics().labelGap,
 						}}
 					>
 						{label}
-					</motion.div>
+					</div>
 				</motion.div>
 			) : (
 				label
