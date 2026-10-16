@@ -5,6 +5,7 @@
  */
 import { mkdirSync } from "node:fs";
 import { createTestRoot } from "@gpuix/solid/testing";
+import { scrollIntoView } from "./check-kit";
 import { App } from "../src/app";
 import { loadDemos, loadPages } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
@@ -50,24 +51,6 @@ function check(label: string, ok: boolean, detail?: string) {
 	);
 	if (!ok) process.exitCode = 1;
 }
-async function scrollIntoView(testId: string) {
-	for (let attempts = 0; attempts < 30; attempts++) {
-		const element = renderer.findByTestId(testId);
-		const bounds =
-			element === undefined ? null : renderer.getElementBounds(element.id);
-		const center = bounds === null ? null : bounds.y + bounds.height / 2;
-		console.log(`scroll ${testId}: ${center}`);
-		if (center !== null && center > 120 && center < 600) return;
-		renderer.nativeSimulateScrollWheel(
-			700,
-			400,
-			0,
-			center === null ? -400 : -(center - 200),
-		);
-		await settle(150);
-	}
-	throw new Error(`could not scroll ${testId} into view`);
-}
 
 const demos = await loadDemos();
 const pages = await loadPages(demos);
@@ -76,7 +59,7 @@ test.render(() => <App demos={demos} pages={pages} initialPage="dropdown" />);
 await settle(800);
 
 // Inline panel: a pointer click must not draw the keyboard ring.
-await scrollIntoView("basic-0");
+await scrollIntoView(renderer, "basic-0");
 // The same steps as the `inline-checked` capture of scripts/screenshots.tsx, which
 // cannot run past its submenu step in some environments.
 const hovered = boundsOf("basic-2");
@@ -101,7 +84,7 @@ await press("down");
 check("inline: ring after an arrow key", exists("basic-ring"));
 
 // Inline panel, keyboard entry: Tab into the group draws the ring.
-await scrollIntoView("groups-0");
+await scrollIntoView(renderer, "groups-0");
 for (let presses = 0; presses < 40 && !exists("groups-ring"); presses++) {
 	await press("tab");
 }
@@ -111,7 +94,7 @@ check("inline: ring after Tab entry", exists("groups-ring"));
 const shown = (text: string) =>
 	renderer.getAllText().some((line) => line === text);
 async function openSearch() {
-	await scrollIntoView("search-trigger");
+	await scrollIntoView(renderer, "search-trigger");
 	// A pointer open reads focus inside a mousedown handler, which the test renderer refuses.
 	const trigger = renderer.findByTestId("search-trigger");
 	if (trigger === undefined) throw new Error("no search-trigger");

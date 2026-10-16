@@ -15,6 +15,7 @@ import { App } from "../src/app";
 import { loadDemos, loadPages } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
+import { scrollIntoView } from "./check-kit";
 import { readPng } from "./png-pixels";
 
 const outDir = "/tmp/check-accordion/";
@@ -52,6 +53,8 @@ setThemeChoice("light");
 test.render(() => <App demos={demos} pages={pages} initialPage="accordion" />);
 await settle(800);
 
+await scrollIntoView(renderer, "single-1");
+await settle(300);
 const row = bounds("single-1");
 // Right of the label, left of the chevron: bare row surface.
 const sample = {
@@ -90,14 +93,18 @@ for (let presses = 0; presses < 60; presses++) {
 if (renderer.getFocusedElementId() !== element.id)
 	throw new Error("Tab never reached single-1");
 await settle(500);
+// Tabbing scrolled the page to the focused row: measure it where it is now.
+await scrollIntoView(renderer, "single-1");
+await settle(300);
+const focusedRow = bounds("single-1");
 renderer.captureScreenshot(`${outDir}ring.png`);
 const ring = readPng(`${outDir}ring.png`);
-const column = Math.round(row.x + row.width / 2);
+const column = Math.round(focusedRow.x + focusedRow.width / 2);
 let best = Infinity;
 let bestAt = 0;
 for (
-	let y = Math.round(row.y + row.height) - 1;
-	y <= Math.round(row.y + row.height) + 4;
+	let y = Math.round(focusedRow.y + focusedRow.height) - 1;
+	y <= Math.round(focusedRow.y + focusedRow.height) + 4;
 	y++
 ) {
 	const pixel = ring.at(column, y);
