@@ -121,3 +121,77 @@ Checked and equal: the index is four rows centred in the window at 224px (`w-56`
 - **Cause:** `port choice`. See [thinking-steps.md](thinking-steps.md) and [tabs-subtle.md](tabs-subtle.md): only the selected panel mounts (the source's panels mount hidden), the source entrances' blur and scale are opacity only, and `ThinkingSteps width="100%"` stands for `className="w-full max-w-full"`.
 - **Fidelity:** approximated.
 - **Components it hits:** those two.
+
+## Beacon: body cells with a badge or an avatar are drawn by hand
+
+- **Cause:** `port choice` (the port's `TableCell` sets only text, in the muted colour).
+- **Original:** `TableCell` takes any children and a `className`: the Status and Priority badges, the Owner avatar, the mono muted ID and the always-foreground title (`beacon/page.tsx:135-153`).
+- **Port:** the header uses `TableHead`; every body cell is a local `BodyCell` with `TableCell`'s padding (12 / 8, or 10 / 5 in Compact, read from `sizeChoice()`) and the cell text set in the page. The row is still a `TableRow` with an `index`, so the fluid hover highlight and the hidden borders work (`src/pages/concepts-beacon.tsx:302-405`). The lit row does not brighten the muted ID: `TableCell`'s lit-row colour is not reachable from a hand-drawn cell (the source's ID cell is `text-muted-foreground` throughout, so this matches it).
+- **gpuix lacks:** nothing.
+- **Workaround:** none. `TableCell` would need a non-text `children` and `color` / `mono` props.
+- **Fidelity:** exact in the look; the padding duplicates `cellMetrics` in `src/components/table.tsx`.
+- **Components it hits:** `Table`.
+
+## Beacon: the Display popover sits above the table through a `zIndex` on the toolbar
+
+- **Cause:** `gpuix limit` (paint order is per parent: a positioned `Table` root in the content paints above a static toolbar's absolute popover).
+- **Original:** `absolute right-0 top-full z-50 mt-1.5` around `Dropdown` (`beacon/page.tsx:240`).
+- **Port:** the same absolute box (`right: 0`, `top: 100%`, `marginTop: 6`) with `Dropdown` as the panel; the toolbar row is `position: relative; zIndex: 1` so the box paints over the table (`src/pages/concepts-beacon.tsx:516-560`, `:760-768`). A press outside the button wrapper closes it (`onMouseDownOutside`, standing for the source's `document` `mousedown` listener). Escape does not close it, as in the source.
+- **gpuix lacks:** a global stacking order (FORK.md: `zIndex` orders siblings only).
+- **Workaround:** the toolbar's `zIndex`.
+- **Fidelity:** exact.
+- **Components it hits:** `Dropdown`.
+
+## Beacon: the Display button does not stay lit while the menu is open
+
+- **Cause:** `port choice` (the port's `Button` has no `active` prop).
+- **Original:** `<Button variant="tertiary" size="sm" active={open}>` (`beacon/page.tsx:228-236`).
+- **Port:** `variant="tertiary" size="compact"`; the button keeps its resting look while the panel is open (`src/pages/concepts-beacon.tsx:527-537`).
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** `Button`.
+
+## Beacon: `Button` and `Badge` `sm` are `compact`
+
+- **Cause:** `port choice` (the port has `default`, `compact`, `icon`, `icon-compact` buttons and `default`, `compact` badges).
+- **Original:** `size="sm"` on the toolbar buttons, the Dismiss button and every badge (`beacon/page.tsx:136`, `:174`, `:231`, `:297`).
+- **Port:** `size="compact"` throughout.
+- **Workaround:** none.
+- **Fidelity:** approximated (a compact button is 28px, a compact badge 20px).
+- **Components it hits:** `Button`, `Badge`.
+
+## Beacon: the filters row
+
+- **Cause:** `port choice`.
+- **Original:** `InputGroup className="w-56"` and `SelectTrigger className="min-w-[150px]"` (`beacon/page.tsx:407-418`); the Select starts empty (`value=""`) and shows "Priority".
+- **Port:** the `InputGroup` is a fixed 288px, so it sits in a 224px wrapper and shrinks to it; `Select` has no width prop, so a wrapper gives it `minWidth: 150`. `variant="bordered"` (the port's default is `inline`) and `value={null}` for the placeholder (`src/pages/concepts-beacon.tsx:822-846`). The search matches title or key, case-insensitively, as in the source. The screenshot scenario drives the select by keyboard (a pointer press on a select crashes the test renderer).
+- **Workaround:** the wrappers.
+- **Fidelity:** exact in the layout.
+- **Components it hits:** `InputGroup`, `Select`.
+
+## Beacon: the thinking indicator is indented inside the triage panel
+
+- **Cause:** `port choice` (the port's `ThinkingIndicator` takes no `className`).
+- **Original:** `<ThinkingIndicator className="!px-0" />` (`beacon/page.tsx:303`).
+- **Port:** `<ThinkingIndicator />` with its own horizontal padding, so the glyph sits about 16px right of the panel's title (`src/pages/concepts-beacon.tsx:644`).
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** `ThinkingIndicator`.
+
+## Beacon: Dismissing the triage during "analyzing" cancels the timer
+
+- **Cause:** `port choice` (the source has a latent bug).
+- **Original:** `startTriage` sets a 1500 ms `setTimeout` to "asking" that nothing clears, so a Dismiss during "analyzing" brings the panel back at the question (`beacon/page.tsx:375-378`).
+- **Port:** Dismiss and unmount clear the timer (`src/pages/concepts-beacon.tsx:713`, `:730-737`).
+- **Workaround:** none needed.
+- **Fidelity:** differs on purpose.
+- **Components it hits:** just this one.
+
+## Beacon: layout and small values
+
+- **Cause:** `port choice`.
+- **Original:** `h-screen` column, `max-w-[960px]`, `flex-1 overflow-y-auto` content; the board is `grid-cols-1 md:grid-cols-3`; the triage panel is `rounded-2xl`; avatars and ID text are `bg-blue-500` ... `text-[10px]`, `font-mono`; surfaces are `surfaceClasses(2, 2)` (`beacon/page.tsx:107-118`, `:168`, `:184`, `:286`, `:382`).
+- **Port:** the column is the frame's height with the issue list in the port's `ScrollArea` (a drawn scrollbar); the board is always three columns (no breakpoint); the panel radius is `shape.container + 4` (16 rounded, 28 pill; the source's `rounded-2xl` is an unchecked guess at its shape-map value); avatar colours are the badge palette's blue, violet, emerald and rose, which are Tailwind's 500s; mono text is Menlo; surfaces are `surface2` with `shadowSurface(2)`, as in Lumen. The triage panel's "done" check is the palette's emerald.
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
