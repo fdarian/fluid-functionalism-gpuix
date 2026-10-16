@@ -151,23 +151,6 @@ function keyboardStep(
 	return Math.max(min, Math.min(max, moved));
 }
 
-// ─── Motion ──────────────────────────────────────────────────────────────────
-
-/**
- * Starts motion value animations outside the event that caused them. `animate` reads the value's current state from the renderer, which gpuix refuses inside a press, release or key handler (native calls those synchronously), and a slider's value change lands in exactly those. `set` and `jump` are deferred by gpuix itself, so they are written directly. An animation that outlives its owner is dropped.
- */
-function createAnimateQueue() {
-	let disposed = false;
-	onCleanup(() => {
-		disposed = true;
-	});
-	return (start: () => void) => {
-		queueMicrotask(() => {
-			if (!disposed) start();
-		});
-	};
-}
-
 // ─── Element box ─────────────────────────────────────────────────────────────
 
 /** The element's box at the moment of a press. The width the render uses comes from the element's `onLayout`. */
@@ -780,7 +763,6 @@ function CompactSlider(props: CompactProps) {
 	 * Each thumb's left offset, one motion value the thumb, the fill and a tooltip riding the thumb all read, so they move together mid-spring. A press or a key springs it to the new value (retargeting a spring in flight keeps its velocity); a drag places it.
 	 */
 	const thumbX = [createMotionValue(0), createMotionValue(0)];
-	const startAnimation = createAnimateQueue();
 	let placed = false;
 	createRenderEffect(() => {
 		const width = trackWidth();
@@ -794,7 +776,7 @@ function CompactSlider(props: CompactProps) {
 			if (first) thumbX[index].jump(target);
 			// `set` leaves the press spring running, which keeps overwriting it until it settles, as in the source.
 			else if (dragged) thumbX[index].set(target);
-			else startAnimation(() => thumbX[index].animate(target, tween.moderate));
+			else thumbX[index].animate(target, tween.moderate);
 		}
 	});
 	/** The fill's pixels follow the thumbs natively: its right edge is the thumb centre, in the pill's own coordinates. */
@@ -1309,7 +1291,6 @@ function ComfortableSlider(props: ComfortableProps) {
 	const percent = createMotionValue(0);
 	const atMinValue = createMotionValue(0);
 	const widthValue = createMotionValue(0);
-	const startAnimation = createAnimateQueue();
 	let placed = false;
 	createRenderEffect(() => {
 		const width = inner();
@@ -1322,9 +1303,9 @@ function ComfortableSlider(props: ComfortableProps) {
 		if (first) percent.jump(target);
 		// `set` leaves a press spring running, which keeps overwriting it until it settles, as in the source.
 		else if (placing()) percent.set(target);
-		else startAnimation(() => percent.animate(target, tween.fast));
+		else percent.animate(target, tween.fast);
 		if (first) atMinValue.jump(zero);
-		else startAnimation(() => atMinValue.animate(zero, tween.fast));
+		else atMinValue.animate(zero, tween.fast);
 	});
 	const fillWidth = createTransform(
 		[percent, atMinValue, widthValue],

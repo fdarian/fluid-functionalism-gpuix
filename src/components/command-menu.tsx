@@ -6,7 +6,6 @@ import {
 	type HostElement,
 	type KeyEvent,
 	motion,
-	type MotionValue,
 	useGpuixRequired,
 } from "@gpuix/solid";
 import {
@@ -14,11 +13,9 @@ import {
 	createContext,
 	createEffect,
 	createMemo,
-	createRoot,
 	createSignal,
 	createUniqueId,
 	For,
-	getOwner,
 	type JSX,
 	on,
 	onCleanup,
@@ -407,39 +404,16 @@ export function CommandMenu(props: {
 
 	// The list's scrollTop travels on the fill's spring so row and fill arrive together. The motion value only carries the animation: the scroller is the source of truth, so every run starts by jumping the value to where the wheel or the scrollbar left it.
 	const reduceMotion = createReducedMotion();
-	const owner = getOwner();
-	let scrollPosition: MotionValue<number> | undefined;
-	let disposeScrollMotion: (() => void) | undefined;
-	let disposed = false;
-	onCleanup(() => {
-		disposed = true;
-		queueMicrotask(() => disposeScrollMotion?.());
+	const scrollPosition = createMotionValue(0);
+	createMotionValueEvent(scrollPosition, "change", (top) => {
+		if (scroller !== undefined) scroller.scrollTop = top;
 	});
-	// A key or press handler is native-synchronous, and the renderer refuses to create, drive or release a motion value inside one (the menu mounts from ⌘K and unmounts on Esc): those calls wait for a microtask. The value is made at the first travel, in a root of its own that the menu's cleanup disposes after the handler returns.
-	const afterHandler = (write: () => void) => {
-		queueMicrotask(() => {
-			if (!disposed) write();
-		});
-	};
-	const scrollMotion = () => {
-		if (scrollPosition === undefined) {
-			scrollPosition = createRoot((dispose) => {
-				disposeScrollMotion = dispose;
-				const position = createMotionValue(0);
-				createMotionValueEvent(position, "change", (top) => {
-					if (scroller !== undefined) scroller.scrollTop = top;
-				});
-				return position;
-			}, owner);
-		}
-		return scrollPosition;
-	};
 
 	/** Puts the list at `top` now and ends any running scroll animation. */
 	const snapScroll = (top: number) => {
 		if (scroller === undefined) return;
 		scroller.scrollTo({ top, left: 0 });
-		afterHandler(() => scrollPosition?.jump(top));
+		scrollPosition.jump(top);
 	};
 
 	/** Keeps the keyboard row at the middle of the viewport, as far as the ends allow. */
@@ -463,13 +437,10 @@ export function CommandMenu(props: {
 			snapScroll(target);
 			return;
 		}
-		afterHandler(() => {
-			const position = scrollMotion();
-			// A running travel is taken over where it is (its own value is the live one; the scroller's read can trail a frame). Otherwise the wheel or the scrollbar may have moved the list since.
-			if (position.isAnimating()) position.stop();
-			else position.jump(list.scrollTop);
-			position.animate(target, tween.fast);
-		});
+		// A running travel is taken over where it is (its own value is the live one; the scroller's read can trail a frame). Otherwise the wheel or the scrollbar may have moved the list since.
+		if (scrollPosition.isAnimating()) scrollPosition.stop();
+		else scrollPosition.jump(list.scrollTop);
+		scrollPosition.animate(target, tween.fast);
 	};
 
 	// The first enabled row is highlighted whenever the row set changes, so Enter always has a target.

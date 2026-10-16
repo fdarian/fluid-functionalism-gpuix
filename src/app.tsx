@@ -400,8 +400,7 @@ export function App(props: {
 	initialPage?: string;
 }) {
 	const [page, setPage] = createSignal(props.initialPage ?? SHOWCASE);
-	// A page mounts motion values, and gpuix rejects renderer creates inside the key or press handler that navigates; a microtask runs after it returns.
-	const navigate = (slug: string) => queueMicrotask(() => setPage(slug));
+	const navigate = (slug: string) => setPage(slug);
 	const nav: PageNav = { navigate, current: page };
 	const current = (): Demo | undefined =>
 		props.demos.find((demo) => demo.slug === page());

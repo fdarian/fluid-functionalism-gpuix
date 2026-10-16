@@ -238,8 +238,7 @@ export function Page(): JSX.Element {
 	const goTo = (next: number) => {
 		if (next < 0 || next >= SLIDES.length) return;
 		target = next;
-		// The slider creates motion values as it mounts, which gpuix refuses inside a key or press handler.
-		queueMicrotask(() => setIndex(next));
+		setIndex(next);
 	};
 	// A slide that unmounts with focus inside never reports the blur.
 	createEffect(on(index, () => setCapturing(0), { defer: true }));

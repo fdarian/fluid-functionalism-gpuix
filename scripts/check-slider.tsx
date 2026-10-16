@@ -36,10 +36,10 @@ kit.check(
 // A move right after a press does not cancel the press spring: the thumb eases to the press point first, as the source does (`slider.tsx:722`, `:778`).
 showOnly("compact");
 await kit.settle(400);
-async function frame() {
+function step(ms: number) {
+	renderer.clockFastForward(ms);
 	renderer.flush();
 	renderer.dispatchNativeEvents();
-	await new Promise((resolve) => setTimeout(resolve, 8));
 }
 const thumbCentre = () => {
 	const box = kit.bounds("basic-thumb-0");
@@ -48,12 +48,15 @@ const thumbCentre = () => {
 const track = kit.bounds("basic-track");
 const pressX = track.x + track.width * 0.8;
 const dragX = track.x + track.width * 0.2;
+// The press spring starts inside the press handler, so the clock is held to land the move mid-spring.
+renderer.clockPause();
 renderer.nativeSimulateMouseMove(pressX, track.y + track.height / 2);
 renderer.nativeSimulateMouseDown(pressX, track.y + track.height / 2);
-await frame();
+step(16);
 renderer.nativeSimulateMouseMove(dragX, track.y + track.height / 2);
-await frame();
+step(16);
 const eased = thumbCentre();
+renderer.clockResume();
 kit.check(
 	"a move during the press spring leaves the thumb easing to the press point",
 	Math.abs(eased - dragX) > 10,
