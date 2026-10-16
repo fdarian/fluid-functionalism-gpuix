@@ -146,15 +146,6 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Fidelity:** approximated (looks the same; assistive tech sees `aria-disabled`, not a disabled input).
 - **Components it hits:** just this one.
 
-## Bug: Enter always cancels the key's default
-
-- **Cause:** `not ported yet` (a defect, not a deliberate difference).
-- **Original:** Enter is stopped only when the popup is open with a highlighted row; closed, or open with no row, it passes through so the form can submit (Base UI `ComboboxInput.tsx:404-420`).
-- **Port:** `case "Enter": event.preventDefault(); submit()` for every Enter (`src/components/combobox.tsx:319-322`), though the comment at `:328` says Enter with no row closes "so a form can submit". gpuix cancels implicit submission on `preventDefault` (README:3057).
-- **Workaround:** none. Today masked: with `name` or `required` the form has a second input and never implicit-submits (see above).
-- **Fidelity:** dropped (Enter never reaches the form).
-- **Components it hits:** just this one.
-
 ## Pressing the icon area focuses and opens the field
 
 - **Cause:** `port choice` (reason not stated).

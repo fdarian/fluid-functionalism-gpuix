@@ -317,19 +317,19 @@ export function Combobox(props: {
 				closePopup();
 				return;
 			case "Enter":
-				event.preventDefault();
-				submit();
+				submit(event);
 				return;
 		}
 	};
-	const submit = () => {
+	/** Enter only belongs to the combobox when it picks a row; closed, or with no row lit, it passes on so the form submits. */
+	const submit = (event: KeyEvent) => {
 		if (!open()) return;
 		const index = hover.activeIndex();
-		// Nothing highlighted (no results): Enter closes, so a form can submit.
 		if (index === null) {
 			closePopup();
 			return;
 		}
+		event.preventDefault();
 		const row = filtered()[index];
 		if (row !== undefined) select(row);
 	};
