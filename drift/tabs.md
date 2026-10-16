@@ -20,7 +20,7 @@ light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 
 ## Pill does not lift with the surrounding surface
 
-- **Cause:** `not ported yet`. The port has no surface context.
+- **Cause:** `not ported yet`. The ladder exists (`src/lib/surface-context.ts`, read by dialog and popups); tabs does not read it.
 - **Original:** the level is `min(useSurface() + 3, 8)`, so inside a dialog (substrate 5) the pill is surface 8, not 4 (`tabs.tsx:194-198`).
 - **Port:** always `color.surface4` (`tabs.tsx:250`); in a dialog the pill is the page's step.
 - **Workaround:** none.

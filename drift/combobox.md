@@ -124,10 +124,6 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Fidelity:** approximated.
 - **Components it hits:** select, dropdown (every `FluidHighlight` user).
 
-## The popup surface does not track its substrate
-
-- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup surface colour is fixed at surface-3"](dropdown.md#popup-surface-colour-is-fixed-at-surface-3), where the entry lives. Here: original `combobox.tsx:827`; port `src/lib/popup.tsx:97`.
-
 ## Reduced motion is not honoured
 
 - **Cause:** `not ported yet`.

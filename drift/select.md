@@ -183,10 +183,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Fidelity:** approximated (extra state; the popup opens on mouse-down, so it shows briefly).
 - **Components it hits:** just this one.
 
-## Popup surface does not follow the substrate
-
-- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup surface colour is fixed at surface-3"](dropdown.md#popup-surface-colour-is-fixed-at-surface-3), where the entry lives. Here: original `select.tsx:486-493`, `elevated.tsx:37-52`, `dialog.tsx:189-190`; port `popup.tsx:97`. The select inside the dialog demo (`demos/dialog.tsx:84`) opens surface-3 on a surface-5 dialog (dark: `#252525` against `#414141`).
-
 ## Popup ring is a layout-taking border and the shadow is one drop
 
 - **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup shadow is one drop and a border"](dropdown.md#popup-shadow-is-one-drop-and-a-border), where the entry lives. Here: `popup.tsx:99-101`, `theme.ts:332-340`; the border takes layout, so the card is 2px taller and `select.tsx:601` subtracts 2 from the rows. API to use: multi-layer `boxShadow` (`~/code/fdarian/gpuix/FORK.md:646-649`).

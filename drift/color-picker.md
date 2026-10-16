@@ -71,9 +71,9 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 ## Popover surface level is 5, not substrate + 2
 
-- **Cause:** `port choice` (reason not stated; the port has no surface context).
+- **Cause:** `port choice` (reason not stated; the ladder in `src/lib/surface-context.ts` is not read here).
 - **Original:** the popover panel sits at `min(substrate + 2, 8)` and the format menu two above it (`color-picker.tsx:2247`, `:1025`); a standalone panel is `max(substrate, 3)` (`:1948`). On the docs page the substrate is 1, so the popover is surface 3 and its menu surface 5.
-- **Port:** the popover card and its panel are hard-coded to level 5 and the menu is 7 (`src/components/color-picker.tsx:1823-1827`); a standalone panel takes a port-only `level` prop (default 3, `:1409-1410`, `:1643`). In `screenshots/color-picker/popover-open.png` the popover is visibly lighter than the inline panel; select and combobox popups use surface 3 (`src/lib/popup.tsx:97`).
+- **Port:** the popover card and its panel are hard-coded to level 5 and the menu is 7 (`src/components/color-picker.tsx:1823-1827`); a standalone panel takes a port-only `level` prop (default 3, `:1409-1410`, `:1643`). In `screenshots/color-picker/popover-open.png` the popover is visibly lighter than the inline panel; select and combobox popups use surface 3 on the page (`src/lib/popup.tsx`).
 - **Workaround:** none.
 - **Fidelity:** approximated (two steps lighter in the popover).
 - **Components it hits:** just this one.

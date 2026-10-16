@@ -6,9 +6,12 @@ import {
 } from "@gpuix/solid";
 import { type Accessor, createSignal, type JSX, Show } from "solid-js";
 import type { createPresence } from "./presence";
-import { color, radius, shadow3, motion as tween } from "./theme";
+import { SurfaceContext, useElevatedSurface } from "./surface-context";
+import { color, radius, shadow3, surface, motion as tween } from "./theme";
 
 export const POPUP_OFFSET = 6;
+/** Steps above its substrate a popup sits: `Elevated offset={2}` in the source. */
+const POPUP_SURFACE_OFFSET = 2;
 /** The gap a popup keeps from the window edge: Base UI's default collision padding. */
 export const POPUP_MARGIN = 5;
 
@@ -37,7 +40,7 @@ export function createPlacementState(preferred: Side) {
 
 /**
  * The shared popup chrome of the combobox, select and dropdown: an `<anchored>`
- * layer under its parent, with the surface-3 card, the 4px slide and the fade.
+ * layer under its parent, with a card two surface steps above what it opens from (surface-3 on the page), the 4px slide and the fade.
  * The layer flips to the far side of the trigger when `side` has no room, and
  * the card is at least as wide as the trigger.
  *
@@ -59,6 +62,7 @@ export function PopupSurface(props: {
 	/** Called with the height the card may use, for a scroller inside it. */
 	children: (maxHeight: Accessor<number>) => JSX.Element;
 }) {
+	const level = useElevatedSurface(POPUP_SURFACE_OFFSET);
 	const placement = createPlacementState(props.side ?? "bottom");
 	const maxHeight = () => placement.maxHeight(props.maxHeight);
 	/** The popup slides in from the trigger: down from above, up from below. */
@@ -99,7 +103,7 @@ export function PopupSurface(props: {
 						minWidth: "anchor-size(width)",
 						display: "flex",
 						flexDirection: "column",
-						backgroundColor: color.card,
+						backgroundColor: surface(level),
 						borderRadius: radius.container,
 						borderWidth: 1,
 						borderColor: color.popupBorder,
@@ -108,7 +112,9 @@ export function PopupSurface(props: {
 						maxHeight: maxHeight(),
 					}}
 				>
-					{props.children(maxHeight)}
+					<SurfaceContext.Provider value={level}>
+						{props.children(maxHeight)}
+					</SurfaceContext.Provider>
 				</motion.div>
 			</anchored>
 		</Show>

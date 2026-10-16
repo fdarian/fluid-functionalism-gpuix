@@ -141,12 +141,11 @@ async function dialogSurface() {
 	await ui.click("stack-open");
 	await ui.focus("stack-select-trigger");
 	await ui.press("down");
-	const dialog = ui.need("stack-popup").style.backgroundColor;
 	const popup = ui.need("stack-select-popup").style.backgroundColor;
 	report(
 		popup === color.surface7,
-		"select popup in a dialog sits two levels above it",
-		`dialog ${String(dialog)}, popup ${String(popup)}, surface-7 ${color.surface7}`,
+		"select popup in a dialog (surface-5) sits on surface-7",
+		`popup ${String(popup)}, surface-7 ${color.surface7}, the dialog is ${color.surface5}`,
 	);
 }
 
