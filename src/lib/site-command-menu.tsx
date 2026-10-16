@@ -25,6 +25,17 @@ const TABS = [
 	{ value: "setting", label: "Settings" },
 ];
 
+const RECENT_MAX = 3;
+
+/** Pages opened through the menu, newest first. Lives for the session: the port persists no settings. */
+const [recent, setRecent] = createSignal<readonly string[]>([]);
+
+function remember(slug: string) {
+	setRecent(
+		[slug, ...recent().filter((value) => value !== slug)].slice(0, RECENT_MAX),
+	);
+}
+
 /** What the sidebar's Search row shows next to the label. */
 export const SITE_MENU_SHORTCUT = IS_MAC ? "⌘K" : "Ctrl K";
 
@@ -78,7 +89,10 @@ export function SiteCommandMenu(props: {
 			icon,
 			keywords,
 			group,
-			onSelect: () => props.onPage(value),
+			onSelect: () => {
+				remember(value);
+				props.onPage(value);
+			},
 		});
 		const listedPages = (group: Page["group"]) =>
 			props.pages
@@ -128,7 +142,12 @@ export function SiteCommandMenu(props: {
 			open={props.menu.open()}
 			onOpenChange={props.menu.setOpen}
 		>
-			<CommandMenu testId="site-menu" items={visible()}>
+			<CommandMenu
+				testId="site-menu"
+				items={visible()}
+				suggestions={recent()}
+				suggestionsLabel="Recent"
+			>
 				<CommandMenuInput
 					testId="site-menu-input"
 					placeholder="Go to a page, change a setting…"
