@@ -10,7 +10,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Original:** `min-w-[var(--anchor-width)]` on the popup, which then grows to its widest option (`select.tsx:530`).
 - **Port:** the card is `popupWidth` when given, else `"anchor-size(width)"` (`select.tsx:585`, prop at `:134-135`), and never narrower than the trigger (`minWidth: "anchor-size(width)"`, `popup.tsx:94`). The inline variant is 160 wide.
 - **gpuix lacks:** an intrinsic (`max-content`) width; `width: "max-content"` is rejected (README "Missing features", intrinsic `width` row; see scroll-area.md).
-- **Workaround:** `popupWidth` is a manual width for long labels (the timezone demo passes 220, `demos/select.tsx:183`). Without it a label wider than the trigger ellipsizes.
+- **Workaround:** `popupWidth` is a manual width for long labels (the timezone demo passes 220, `demos/select.tsx:183`). Without it a label wider than the trigger ellipsizes. A `hug` trigger (the command menu's filters, where the source trigger is `w-auto`) is only as wide as its label, so it always needs `popupWidth`.
 - **Fidelity:** approximated.
 - **Components it hits:** combobox, dropdown, scroll-area; every popup sized to its trigger and its content.
 
@@ -67,12 +67,16 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 ## Reading focus in a mouse handler throws `VIEW_BUSY`
 
 - **Cause:** `gpuix gap`.
-- **Original:** Base UI returns focus to the trigger on close.
-- **Port:** `returnFocus` defers the focus read to a `setTimeout(..., 0)` (`select.tsx:240-245`, `popup-trigger.ts:11-18`).
-- **gpuix lacks:** a focus read inside mousedown / mouseup / click handlers (README Bugs, `VIEW_BUSY` row). `DismissableLayer` does the same read while it mounts (`popup.tsx:74`), so a pointer press that opens the select throws (reproduced: `bun scripts/screenshots.tsx button` fails in `onTriggerMouseDown`, `select.tsx:253`; README Bugs row "every popup on gpuix's `DismissableLayer`").
+- **Original:** Base UI returns focus to the trigger on close, in the same tick (`SelectPopup.tsx:479-488`).
+- **Port:** `returnFocus` defers the focus read to a `setTimeout(..., 0)` (`select.tsx:266-277`; `popup-trigger.ts:11-18`). The popup is still mounted then (held by its exit), so `matches(":focus-within")` on the panel tells whether focus sat inside it.
+- **gpuix lacks:** a focus read inside mousedown / mouseup / click handlers (README Bugs, `VIEW_BUSY` row). `DismissableLayer` does the same read while it mounts (`popup.tsx:74`), so a pointer press that opens the select throws (reproduced: `bun scripts/screenshots.tsx button` fails in `onTriggerMouseDown`, `select.tsx:381`; README Bugs row "every popup on gpuix's `DismissableLayer`"). The pointer open path (panel or checked row takes focus) is therefore not covered by `scripts/check-select.tsx`.
 - **Workaround:** the deferred read; the rest is open.
 - **Fidelity:** exact for the focus return.
 - **Components it hits:** dropdown, color-picker, combobox, tooltip.
+
+## Tab from a popup row does not continue after the trigger
+
+- **Cause:** `gpuix gap`. Same drift as [dropdown.md, "Tab from a popup row does not continue after the trigger"](dropdown.md#tab-from-a-popup-row-does-not-continue-after-the-trigger), where the entry lives. Here: Tab on the panel cancels the default, closes, hands focus to the trigger and calls `renderer.focusNext()` (`select.tsx:266-277`, `:371-375`); Shift+Tab does the same without `focusNext()`. Checked in `scripts/check-select.tsx` ("Tab focuses what follows the trigger").
 
 ## Releasing the press outside the popup does not cancel
 
@@ -83,33 +87,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Workaround:** none; the press-and-drag commit itself is ported (400 ms or 8px, `select.tsx:34-37`).
 - **Fidelity:** dropped (the cancel).
 - **Components it hits:** just this one.
-
-## Focus stays on the trigger; rows are virtual
-
-- **Cause:** `port choice` (reason not stated beyond the comment at `select.tsx:185`; `BASE-UI-AUDIT.md:536` calls it "virtual highlight").
-- **Original:** Base UI moves real focus into the popup and onto the lit row (`select.tsx:486-518`).
-- **Port:** the trigger keeps focus; `aria-activedescendant` names the lit row (`select.tsx:186-189`, `:493`) and the rows are not focusable.
-- **Workaround:** `aria-activedescendant`, a `keyboardNav` flag for the ring (next entries).
-- **Fidelity:** approximated (the screen-reader model is `activedescendant`, not roving focus).
-- **Components it hits:** combobox shares the model by design.
-
-## The trigger's focus ring is hidden while the popup is open
-
-- **Cause:** `port choice` (FF's trigger loses focus to the popup, so the ring is gone there too; the port keeps focus on the trigger and hides the ring to match).
-- **Original:** `focus-visible:ring-1` on the trigger (`select.tsx:237`); while open, focus is in the popup so only the row ring shows, and the trigger's ring returns when focus does.
-- **Port:** `focusVisible: focusRing(0)` is applied only when `!presence.open()` (`select.tsx:520-521`), so it returns the instant `open` goes false, at the start of the exit fade.
-- **Workaround:** none needed.
-- **Fidelity:** approximated (the ring comes back at the start of the close, FF at focus return; not compared frame by frame).
-- **Components it hits:** just this one.
-
-## The row focus ring is a flag, not `:focus-visible`
-
-- **Cause:** `port choice` (reason not stated; follows from the virtual focus above).
-- **Original:** the ring is seeded at open from the trigger's `:focus-visible` and earned by Arrow, Home, End, PageUp, PageDown, Tab keys inside the popup; typeahead letters are not among them, and moving the pointer does not clear it (`use-keyboard-nav-gate.ts:19-37`, `popup.ts:40-50`, `select.tsx:372`, `:504-518`).
-- **Port:** `keyboardNav` is set on a keyboard open, arrows, Home/End and typeahead, and cleared on any pointer move over the list (`select.tsx:160-161`, `:208-217`, `:347-349`, `:630`). Typeahead after a pointer open draws the ring here and does not in FF. PageUp, PageDown, Left, Right and Tab do not set it.
-- **Workaround:** none needed.
-- **Fidelity:** approximated.
-- **Components it hits:** combobox.
 
 ## Group labels are not a group
 
@@ -134,7 +111,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Cause:** `not ported yet`.
 - **Original:** `useSize(size)` reads the surrounding `SizeProvider`, so trigger and popup follow a compact region; `SelectTrigger` also takes its own `size`. The trigger follows the global pill shape (`shape.input`), the popup stays rounded (`select.tsx:99-102`, `:278-281`, `:84-89`).
 - **Port:** `size?: "default" | "compact"` on `Select` only (`select.tsx:122`, `:140`); corners are always `radius.item` (8) and `radius.container` (12); no pill shape.
-- **Workaround:** the demo passes `size="compact"` where needed.
+- **Workaround:** the demo passes `size="compact"` where needed. `CommandMenuFilters` in the source wraps its children in `SizeProvider size="compact"` and forces `w-auto min-w-0` on every `[role=combobox]` (`command-menu.tsx:994-1019`); the port has neither, so each filter select passes `size="compact"` and `hug` itself.
 - **Fidelity:** dropped (context and pill shape).
 - **Components it hits:** every component that reads `useSize` / `useShape`.
 
@@ -142,7 +119,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 - **Cause:** `port choice` (data-driven `items`, not compound, per `BASE-UI-AUDIT.md:493`; reason otherwise not stated).
 - **Original:** compound `Select` / `SelectTrigger` / `SelectContent` / `SelectItem index` / `SelectGroup` / `SelectLabel` / `SelectSeparator`; `variant`, `icon`, `placeholder`, `error`, `size` on the trigger; value is a string, `""` for none; `className` and `ref` forwarded (`select.tsx:91-103`, `:254-263`, `:625-630`).
-- **Port:** one `Select` taking `items` (items, `{ type: "label" }`, `{ type: "separator" }`), `variant`, `size`, `placeholder`, `icon`, `error`, `popupWidth`, `labelledBy`; value is `Value | null`; no `className` or `ref` (`select.tsx:114-136`).
+- **Port:** one `Select` taking `items` (items, `{ type: "label" }`, `{ type: "separator" }`), `variant`, `size`, `placeholder`, `icon`, `error`, `popupWidth`, `labelledBy`, `label` (the trigger's `aria-label`; the source passes it to `SelectTrigger` as a prop), `hug` (port-only: the trigger is as wide as its content); value is `Value | null`; no `className` or `ref` (`select.tsx:114-136`).
 - **Workaround:** none.
 - **Fidelity:** approximated (API shape; row `index` is computed, not passed).
 - **Components it hits:** combobox, dropdown.
@@ -153,7 +130,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Original:** `variant` is `"bordered"` (default) or `"borderless"` (`select.tsx:241-249`).
 - **Port:** `variant` defaults to `"inline"` (`select.tsx:138`): borderless, compact trigger, 13px text, shows the picked item's icon, popup right-aligned at 160 wide (`select.tsx:141-150`, `:584-585`). Every demo passes `bordered` explicitly.
 - **Workaround:** none.
-- **Fidelity:** exact for `bordered` and `borderless`.
+- **Fidelity:** exact for `bordered` and `borderless` (an `error` draws the destructive border on both, as the source does).
 - **Components it hits:** just this one.
 
 ## Trigger background and leading icon do not fade
