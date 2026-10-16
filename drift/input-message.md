@@ -43,13 +43,6 @@ repeating it.
 - **Port:** `Collapse` exits on the 120 ms tween (`tween.moderateExit`, `input-message.tsx:134,157`), fades opacity on exit for every region including suggestions (`:153-156`), and its `initial` is always `{ height: 0, opacity: 0 }` (`:152`), so a region open at mount (the Attachments demo's two files) animates in.
 - **Fidelity:** approximated (the divider vanishing mid-collapse is what the source comment avoids).
 
-## Remove badges stay invisible under keyboard focus
-
-- **Cause:** `not ported yet`. A bug, listed in the report.
-- **Original:** the tile's badge and the queued row's close button reveal on `focus-visible:opacity-100` as well as hover (`input-message.tsx:257,369`).
-- **Port:** opacity follows hover only (`input-message.tsx:269,493`), but both are tab stops (`:257,480`), so Tab lands on an invisible button whose focus ring is invisible too.
-- **Fidelity:** approximated.
-
 ## 80 ms fades are instant
 
 - **Cause:** `not ported yet`.
@@ -106,12 +99,6 @@ repeating it.
 - **Port:** the same handler also accepts Ctrl-P / Ctrl-N (`input-message.tsx:815-839`), and the demo's scenarios use `ctrl-n` / `ctrl-p` (`src/demos/input-message.tsx:363,424`). If the arrows really are swallowed, the keyboard path in the real window is Ctrl-P / Ctrl-N only.
 - **Fidelity:** approximated.
 
-## A disabled composer is read-only, not disabled
-
-- **Cause:** `not ported yet`. A bug, listed in the report. Same as `drift/input-group.md`.
-- **Original:** `disabled` on the textarea (`input-message.tsx:1196`) takes it out of the Tab order.
-- **Port:** `readOnly` (`input-message.tsx:1058`) with `pointerEvents: "none"` on the wrapper (`:971`): Tab still focuses the textarea. Unverified for a textarea; `FORK.md:451,481` says a disabled input is never focusable.
-
 ## The resting ring in dark mode
 
 - **Cause:** `port choice` (`popupBorder` "stands in for the shadow ring", `lib/theme.ts:35`).
@@ -126,11 +113,11 @@ repeating it.
 - **Port:** only the send button is 24 (`steps.compact.button`, `input-message.tsx:120`); slot content keeps its own size.
 - **Fidelity:** approximated.
 
-## Queued row padding and icon strokes
+## Queued row icon strokes
 
-- **Cause:** `port choice` (reason not stated) for the padding; `not ported yet` for the strokes.
-- **Original:** the row is `px-2.5` / `px-2` on both sides (`input-message.tsx:333-335`). The image, enter and down-arrow icons pass no `strokeWidth`, so they draw at lucide's 2 (`:344,443,448`).
-- **Port:** `paddingRight: 6` at both steps (`input-message.tsx:390`), and strokes of 1.5 (`:422,571,581`). The file count lacks `tabular-nums` (`:426`).
+- **Cause:** `not ported yet`.
+- **Original:** the image, enter and down-arrow icons pass no `strokeWidth`, so they draw at lucide's 2 (`input-message.tsx:344,443,448`). The file count is `tabular-nums` (`:345`).
+- **Port:** strokes of 1.5 (`input-message.tsx:426,578,587`); the file count lacks `tabular-nums` (`:431`).
 - **Fidelity:** approximated.
 
 ## The ghost placeholder
