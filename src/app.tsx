@@ -13,6 +13,7 @@ import {
 	Switch,
 } from "solid-js";
 import { Button } from "./components/button";
+import { ScrollArea } from "./components/scroll-area";
 import { Select } from "./components/select";
 import {
 	Sidebar,
@@ -26,6 +27,11 @@ import { AppFrame, PANEL_INNER_RADIUS } from "./lib/app-frame";
 import { type Demo, type Page, SHOWCASE_SLUG } from "./lib/demo";
 import { PageScrollerContext } from "./lib/demo-kit";
 import { type PageNav, PageNavContext, usePageNav } from "./lib/page-nav";
+import {
+	createRightRail,
+	RightRailContext,
+	RightRailTarget,
+} from "./lib/playground";
 import {
 	createSiteMenu,
 	SITE_MENU_SHORTCUT,
@@ -263,6 +269,7 @@ export function App(props: {
 	const isFull = () => currentPage()?.layout === "full";
 	bindSystemScheme(createAppearance());
 	const siteMenu = createSiteMenu();
+	const rail = createRightRail();
 	const [pageScroller, setPageScroller] = createSignal<HostElement>();
 	const renderer = useGpuixRequired();
 	const setAppearance = renderer.setAppearance;
@@ -273,6 +280,7 @@ export function App(props: {
 	createEffect(() => setAppearance.call(renderer, themeChoice()));
 	return (
 		<AppFrame title={WINDOW_TITLE}>
+			<RightRailContext.Provider value={rail}>
 			<div
 				style={{
 					display: "flex",
@@ -332,11 +340,24 @@ export function App(props: {
 					</div>
 				</div>
 				<Show when={!isFull()}>
-					<div style={{ width: 296, flexShrink: 0, padding: 16 }}>
-						<CustomizeCard />
+					<div style={{ width: 296, flexShrink: 0 }}>
+						<ScrollArea height="100%" fade>
+							<div
+								style={{
+									display: "flex",
+									flexDirection: "column",
+									gap: 12,
+									padding: 16,
+								}}
+							>
+								<CustomizeCard />
+								<RightRailTarget />
+							</div>
+						</ScrollArea>
 					</div>
 				</Show>
 			</div>
+			</RightRailContext.Provider>
 			<SiteCommandMenu
 				menu={siteMenu}
 				demos={props.demos}
