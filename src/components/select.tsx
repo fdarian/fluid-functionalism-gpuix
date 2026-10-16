@@ -16,6 +16,7 @@ import {
 	onCleanup,
 	Show,
 } from "solid-js";
+import { FocusRing } from "../lib/focus-ring";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { FormValue } from "../lib/form-value";
@@ -156,6 +157,8 @@ export function Select<Value extends string>(props: {
 		isItemDisabled: (index) => rows()[index]?.disabled === true,
 	});
 	const [triggerHovered, setTriggerHovered] = createSignal(false);
+	/** The lit row got there by a key (a keyboard open, arrows, Home/End, typeahead): FF draws its focus ring only then, and the pointer takes it away. */
+	const [keyboardNav, setKeyboardNav] = createSignal(false);
 	const [ownValue, setOwnValue] = createSignal<Value | null>(
 		props.defaultValue ?? null,
 	);
@@ -208,6 +211,7 @@ export function Select<Value extends string>(props: {
 				commitValue(rows()[index]);
 				return;
 			}
+			setKeyboardNav(true);
 			hover.setActiveIndex(index);
 			revealIndex(index);
 		},
@@ -230,6 +234,7 @@ export function Select<Value extends string>(props: {
 		dragCommits = false;
 		typeahead.reset();
 		presence.show();
+		setKeyboardNav(from !== "pointer");
 		hover.setActiveIndex(openHighlight(from));
 	};
 	const returnFocus = () => {
@@ -268,10 +273,12 @@ export function Select<Value extends string>(props: {
 			false,
 		);
 		if (next === null) return;
+		setKeyboardNav(true);
 		hover.setActiveIndex(next);
 		revealIndex(next);
 	};
 	const jump = (index: number) => {
+		setKeyboardNav(true);
 		hover.setActiveIndex(index);
 		revealIndex(index);
 	};
@@ -338,6 +345,7 @@ export function Select<Value extends string>(props: {
 		if (allowed) pick(row);
 	};
 	const onListMouseMove = (event: EventPayload) => {
+		setKeyboardNav(false);
 		hover.handlers.onMouseMove(event);
 		if (event.pressedButton !== 0 || event.y === undefined) {
 			dragFromY = undefined;
@@ -358,7 +366,9 @@ export function Select<Value extends string>(props: {
 	);
 	/** A pick moved the checked row; the highlight follows the pointer again. */
 	createEffect(() => {
-		if (!presence.mounted()) hover.setActiveIndex(null);
+		if (presence.mounted()) return;
+		hover.setActiveIndex(null);
+		setKeyboardNav(false);
 	});
 
 	const rectOf = (index: number | null) => () => {
@@ -507,7 +517,8 @@ export function Select<Value extends string>(props: {
 						keyboardFocusDim: false,
 						hover: { backgroundColor: color.hover },
 						active: { backgroundColor: color.active },
-						focusVisible: focusRing(0),
+						// FF's focus moves into the popup while it is open, so the trigger's ring waits for the close; here the trigger keeps focus and the popup's own ring takes over.
+						...(presence.open() ? {} : { focusVisible: focusRing(0) }),
 					}}
 				>
 					<div
@@ -614,6 +625,14 @@ export function Select<Value extends string>(props: {
 								session={hover.session}
 								radius={radius.item}
 								background={color.hover}
+							/>
+							<FocusRing
+								ring={{ rect: () => (keyboardNav() ? hoverRect() : null) }}
+								testId={
+									props.testId === undefined
+										? undefined
+										: `${props.testId}-focus-ring`
+								}
 							/>
 							<For each={indexed()}>{(slot) => renderSlot(slot)}</For>
 						</div>

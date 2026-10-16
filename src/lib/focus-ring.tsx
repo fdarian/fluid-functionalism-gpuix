@@ -36,6 +36,11 @@ export function createFocusRing(hover: FluidHover) {
 
 export type FocusRingState = ReturnType<typeof createFocusRing>;
 
+/** What a `FocusRing` draws around: `createFocusRing`, or any list whose highlight is virtual and decides for itself when keyboard navigation owns it. */
+export interface FocusRingSource {
+	rect(): ItemRect | null;
+}
+
 /**
  * FF's shared keyboard focus ring: one 1px outline `OUTSET` px outside the
  * focused row that springs between rows. It shows only for keyboard focus,
@@ -47,7 +52,7 @@ export type FocusRingState = ReturnType<typeof createFocusRing>;
  * whatever comes before it and under whatever follows.
  */
 export function FocusRing(props: {
-	ring: FocusRingState;
+	ring: FocusRingSource;
 	testId?: string;
 	/** `false` snaps to the new rect: a reflow moved the row, not the focus. */
 	travel?: () => boolean;

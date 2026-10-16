@@ -6,7 +6,7 @@
  * A pointer click on the first row must show no ring. Then `key` is pressed
  * `steps` times (default 2), printing the ring's painted bounds per frame so
  * the spring between rows is visible, and a final click back on the first row must
- * clear the ring. Captures land in `/tmp/focus-check/<demo>/`; set TAB=1 to enter the group with Tab instead of a click.
+ * clear the ring. Captures land in `/tmp/focus-check/<demo>/`; set TAB=1 to enter the group with Tab instead of a click, FOCUS=1 to Tab until the first id has focus, POINT=<id> to end with a pointer move there.
  */
 import { mkdirSync } from "node:fs";
 import { createTestRoot } from "@gpuix/solid/testing";
@@ -106,6 +106,18 @@ if (process.env.TAB !== undefined) {
 		if (ring() !== undefined)
 			console.log(`tab #${presses} shows the ring: ${fmt(ring())}`);
 	}
+} else if (process.env.FOCUS !== undefined) {
+	// Virtual highlight (select): the trigger keeps focus, keys drive the ring.
+	const element = renderer.findByTestId(first);
+	if (element === undefined) throw new Error(`no element ${first}`);
+	for (let presses = 1; presses <= 60; presses++) {
+		if (renderer.getFocusedElementId() === element.id) break;
+		renderer.simulateKeystrokes("tab");
+		await settle(60);
+	}
+	if (renderer.getFocusedElementId() !== element.id) {
+		throw new Error(`Tab never reached ${first}`);
+	}
 } else {
 	await click(first);
 	console.log(`after pointer click on ${first}: ring ${fmt(ring())}`);
@@ -114,7 +126,14 @@ for (let step = 0; step < steps; step++) {
 	await trace(`${key} #${step + 1}`, key);
 	renderer.captureScreenshot(`${outDir}focus-${step + 1}.png`);
 }
-await click(last);
-console.log(`after pointer click on ${last}: ring ${fmt(ring())}`);
+if (process.env.POINT !== undefined) {
+	const bounds = rowBounds(process.env.POINT);
+	renderer.nativeSimulateMouseMove(bounds.x + 20, bounds.y + bounds.height / 2);
+	await settle(300);
+	console.log(`after pointer move over ${process.env.POINT}: ring ${fmt(ring())}`);
+} else {
+	await click(last);
+	console.log(`after pointer click on ${last}: ring ${fmt(ring())}`);
+}
 renderer.captureScreenshot(`${outDir}focus-pointer.png`);
 process.exit(0);
