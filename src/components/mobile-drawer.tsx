@@ -6,11 +6,11 @@ import {
 	type HostElement,
 	motion,
 } from '@gpuix/solid';
+import { FocusFirst } from 'base-ui-solid-gpuix/dialog';
+import { createDrawerRoot } from 'base-ui-solid-gpuix/drawer';
 import { HideOutside } from 'base-ui-solid-gpuix/floating-ui-solid/utils';
-import { createPresence } from 'base-ui-solid-gpuix/internals';
 import type { JSX } from 'solid-js';
 import { color, shadow, motion as tween } from '#/lib/theme';
-import { FocusFirst } from './dialog';
 
 export const DRAWER_WIDTH = 256;
 
@@ -34,18 +34,13 @@ export function MobileDrawer(props: {
 	children: JSX.Element;
 }) {
 	let popup: HostElement | undefined;
-	// onMotionComplete is the primary release; the timer covers an exit that never animates.
-	const presence = createPresence(EXIT_FALLBACK_MS, props.open);
-	presence.follow(() => props.open);
-	const mounted = presence.mounted;
+	const root = createDrawerRoot({
+		open: () => props.open,
+		onClose: () => props.onClose(),
+		exitMs: EXIT_FALLBACK_MS,
+	});
 	return (
-		<GpuixDialog
-			open={mounted()}
-			onOpenChange={(next) => {
-				// gpuix keeps the layer up through the exit, so Escape still arrives then; the drawer has already been told.
-				if (!next && props.open) props.onClose();
-			}}
-		>
+		<GpuixDialog open={root.mounted()} onOpenChange={root.onOpenChange}>
 			<DialogPortal>
 				<DialogBackdrop>
 					<motion.div
@@ -85,7 +80,7 @@ export function MobileDrawer(props: {
 						animate={{ left: props.open ? 0 : -DRAWER_WIDTH }}
 						transition={props.open ? tween.moderate : tween.moderateExit}
 						onMotionComplete={() => {
-							if (!props.open) presence.release();
+							if (!props.open) root.finish();
 						}}
 						style={{
 							position: 'absolute',
