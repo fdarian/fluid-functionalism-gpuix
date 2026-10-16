@@ -12,15 +12,6 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 - **Fidelity:** approximated.
 - **Components it hits:** banner, ask-user-questions, input-copy, input-message, queued-stack, radio-group.
 
-## Meta row stays hidden while an action has keyboard focus (bug)
-
-- **Cause:** `not ported yet`.
-- **Original:** the row is revealed by `group-hover` and `group-focus-within`, so tabbing to an action shows the row and its focus ring (`chat-message.tsx:120-124`).
-- **Port:** the row fades on the `hovered` signal alone (`chat-message.tsx:87`, `:148`). `ChatMessageAction` is focusable (`tabIndex={0}`, `:46`) and has a focus ring (`:59`), but the row is at opacity 0 until the pointer is over the message, so a keyboard user focuses an invisible button.
-- **Workaround:** none.
-- **Fidelity:** dropped (keyboard reveal).
-- **Components it hits:** just this one.
-
 ## Meta row on touch
 
 - **Cause:** `gpuix gap` (no input-device signal; see queued-stack's `(hover: none)` entry in `drift/queued-stack.md`).
