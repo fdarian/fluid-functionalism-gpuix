@@ -182,6 +182,136 @@ kit.check(
 );
 renderer.clockResume();
 
+// ─── The input's ARIA ────────────────────────────────────────────────────────
+
+/** Relations in the accessibility tree name other nodes by tree key; this maps them back to the authored `id`. */
+function ariaOf(authorId: string) {
+	const nodes = renderer.getA11yTree().nodes ?? {};
+	const byKey = new Map<string, string>();
+	for (const [key, node] of Object.entries(nodes)) {
+		if (node.aria?.author_id !== undefined) byKey.set(key, node.aria.author_id);
+	}
+	const named = (key: string) => byKey.get(key) ?? key;
+	for (const node of Object.values(nodes)) {
+		if (node.aria?.author_id !== authorId) continue;
+		return {
+			role: node.aria.role,
+			expanded: node.aria.expanded,
+			controls: (node.aria.controls ?? []).map(named),
+			active:
+				node.aria.active_descendant === undefined
+					? undefined
+					: named(node.aria.active_descendant),
+		};
+	}
+	throw new Error(`no accessibility node with id ${authorId}`);
+}
+const idOf = (testId: string) => {
+	const id = kit.element(testId).customProps?.id;
+	if (typeof id !== "string") throw new Error(`${testId} has no id`);
+	return id;
+};
+const inputAria = (testId: string) => ariaOf(idOf(testId));
+
+await kit.focus("details-input");
+await kit.press("home");
+const combobox = inputAria("details-input");
+kit.expect("the input is a combobox", combobox.role, "ComboBox");
+kit.expect("the input reports expanded", combobox.expanded, true);
+kit.check(
+	"the input controls one node, a listbox",
+	combobox.controls.length === 1 &&
+		ariaOf(combobox.controls[0]).role === "ListBox",
+	JSON.stringify(combobox.controls),
+);
+kit.expect(
+	"Home lights the first row and the input names it",
+	inputAria("details-input").active,
+	idOf("details-row-new-file"),
+);
+await kit.press("down");
+kit.expect(
+	"ArrowDown moves aria-activedescendant to the next row",
+	inputAria("details-input").active,
+	idOf("details-row-search"),
+);
+await kit.press("down");
+kit.expect(
+	"ArrowDown again follows",
+	inputAria("details-input").active,
+	idOf("details-row-theme"),
+);
+await kit.press("up");
+kit.expect(
+	"ArrowUp moves it back",
+	inputAria("details-input").active,
+	idOf("details-row-search"),
+);
+kit.expect(
+	"the input keeps focus while the descendant moves",
+	renderer.getFocusedElementId(),
+	kit.element("details-input").id,
+);
+await kit.press("z z z z z");
+kit.expect(
+	"no matching row: no active descendant",
+	inputAria("details-input").active,
+	undefined,
+);
+await kit.press("escape");
+
+// ─── The filter select ───────────────────────────────────────────────────────
+
+const TYPE_VALUES = ["all", "Actions", "Go to", "Help"];
+/** Where focus is within the type filter: its trigger, panel or one of its rows. */
+const typeFocus = () => {
+	const focused = renderer.getFocusedElementId();
+	if (focused === null) return null;
+	return (
+		[
+			"filters-type-trigger",
+			"filters-type-list",
+			...TYPE_VALUES.map((value) => `filters-type-option-${value}`),
+		].find(
+			(testId) => kit.exists(testId) && kit.element(testId).id === focused,
+		) ?? null
+	);
+};
+
+await kit.focus("filters-type-trigger");
+await kit.press("enter");
+kit.check("Enter opens the type filter", kit.exists("filters-type-list"));
+kit.expect(
+	"Enter focuses the checked row",
+	typeFocus(),
+	"filters-type-option-all",
+);
+await kit.press("down");
+kit.expect(
+	"ArrowDown focuses the next row",
+	typeFocus(),
+	"filters-type-option-Actions",
+);
+await kit.press("escape");
+kit.check("Escape closes the type filter", !kit.exists("filters-type-list"));
+kit.expect(
+	"Escape returns focus to the trigger",
+	typeFocus(),
+	"filters-type-trigger",
+);
+await kit.press("enter");
+await kit.press("down enter");
+await kit.settle(500);
+kit.expect(
+	"a pick returns focus to the trigger",
+	typeFocus(),
+	"filters-type-trigger",
+);
+kit.check(
+	"picking Actions filters the rows",
+	kit.exists("filters-row-new-file") && !kit.exists("filters-row-home"),
+);
+
 // ─── The site menu ───────────────────────────────────────────────────────────
 
 const isOpen = () => kit.exists("site-menu-input");

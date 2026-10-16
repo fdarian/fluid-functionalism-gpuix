@@ -16,6 +16,7 @@ import {
 	createMemo,
 	createRoot,
 	createSignal,
+	createUniqueId,
 	For,
 	getOwner,
 	type JSX,
@@ -288,6 +289,9 @@ interface CommandMenuContextValue {
 	setTabs: (handle: TabsHandle | undefined) => void;
 	registerRow: (index: number, element: HostElement) => void;
 	testId: string;
+	/** The listbox's id, for the input's `aria-controls`. */
+	listId: string;
+	rowId: (index: number) => string;
 	scrollerRef: (element: HostElement) => void;
 	/** The pointer leaving the list keeps the highlight where it was: Enter still has a target. */
 	leaveList: () => void;
@@ -512,6 +516,8 @@ export function CommandMenu(props: {
 		if (props.closeOnSelect !== false) dialog?.close();
 	};
 
+	const listId = createUniqueId();
+	const rowId = (index: number) => `${listId}-${index}`;
 	const context: CommandMenuContextValue = {
 		compact: () => props.size === "compact",
 		query,
@@ -532,6 +538,8 @@ export function CommandMenu(props: {
 			});
 		},
 		testId: props.testId,
+		listId,
+		rowId,
 		scrollerRef(element) {
 			scroller = element;
 		},
@@ -573,6 +581,10 @@ export function CommandMenuInput(props: {
 	const icon = (): IconRef | null =>
 		props.icon === undefined ? searchIcon : props.icon;
 	let inputElement: HostElement | undefined;
+	const litRowId = () => {
+		const index = menu.hover.activeIndex();
+		return index === null ? undefined : menu.rowId(index);
+	};
 
 	const onKeyDown = (event: KeyEvent) => {
 		switch (event.key) {
@@ -680,6 +692,12 @@ export function CommandMenuInput(props: {
 					inputElement = element;
 				}}
 				testId={props.testId}
+				id={createUniqueId()}
+				role="combobox"
+				aria-expanded
+				aria-controls={menu.listId}
+				aria-autocomplete="list"
+				aria-activedescendant={litRowId()}
 				autoFocus={menu.dialog !== undefined}
 				value={menu.query()}
 				placeholder={props.placeholder ?? "Type a command or search…"}
@@ -972,6 +990,7 @@ export function CommandMenuList(props: {
 			{/* The overlay lives inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
 			<div
 				{...hover.containerProps}
+				id={menu.listId}
 				role="listbox"
 				onMouseLeave={menu.leaveList}
 				// A row press leaves focus in the field, so the keyboard keeps working.
@@ -1118,6 +1137,7 @@ export function CommandMenuItem(props: {
 			ref={(element) => {
 				rowElement = element;
 			}}
+			id={menu.rowId(index)}
 			role="option"
 			aria-selected={active()}
 			testId={`${menu.testId}-row-${props.value}`}

@@ -1,5 +1,5 @@
 import { type HostElement, useGpuixRequired } from "@gpuix/solid";
-import { createMemo, createSignal, For, type JSX, Show } from "solid-js";
+import { createMemo, createSignal, type JSX, Show } from "solid-js";
 import { Button } from "../components/button";
 import {
 	CommandMenu,
@@ -16,13 +16,11 @@ import {
 	CommandMenuShortcut,
 	CommandMenuTabs,
 } from "../components/command-menu";
+import { Select } from "../components/select";
 import type { DemoModule } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
-import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
-import { PopupSurface } from "../lib/popup";
-import { createPresence } from "../lib/presence";
-import { color, radius, type as scale } from "../lib/theme";
+import { color, type as scale } from "../lib/theme";
 
 const link = defineIcon(
 	'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
@@ -194,6 +192,7 @@ const SUGGESTIONS = ["calendar", "new-file", "settings"];
 const PLACEHOLDER = "Type a command or search…";
 const EMPTY = "No results.";
 const PANEL_HEIGHT = 360;
+const FILTER_POPUP_WIDTH = 150;
 
 const TABS = [
 	{ value: "all", label: "All" },
@@ -236,106 +235,6 @@ function Section(props: { id: string; title: string; children: JSX.Element }) {
 			}}
 		>
 			<DemoCard title={props.title}>{props.children}</DemoCard>
-		</div>
-	);
-}
-
-/** A borderless select for the filter row: label, chevron, and a small fluid-less popup. */
-function FilterSelect(props: {
-	testId: string;
-	options: readonly { value: string; label: string }[];
-	value: string;
-	onValueChange: (value: string) => void;
-}) {
-	const presence = createPresence();
-	const [hovered, setHovered] = createSignal(false);
-	const label = () =>
-		props.options.find((option) => option.value === props.value)?.label;
-	return (
-		<div
-			onMouseDownOutside={presence.hide}
-			style={{ position: "relative" }}
-		>
-			<div
-				testId={props.testId}
-				role="button"
-				onClick={() => (presence.open() ? presence.hide() : presence.show())}
-				onMouseEnter={() => setHovered(true)}
-				onMouseLeave={() => setHovered(false)}
-				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					gap: 4,
-					height: 28,
-					paddingLeft: 10,
-					paddingRight: 8,
-					borderRadius: radius.item,
-					cursor: "pointer",
-					hover: { backgroundColor: color.hover },
-				}}
-			>
-				<text
-					style={{
-						...scale.bodyCompact,
-						color: hovered() ? color.foreground : color.mutedForeground,
-						whiteSpace: "nowrap",
-					}}
-				>
-					{label()}
-				</text>
-				<Icon
-					name="chevron-down"
-					size={14}
-					strokeWidth={2}
-					color={hovered() ? color.foreground : color.mutedForeground}
-				/>
-			</div>
-			<PopupSurface
-				presence={presence}
-				align="start"
-				width={150}
-				maxHeight={200}
-				onDismiss={() => presence.hide()}
-			>
-				{() => (
-				<div style={{ display: "flex", flexDirection: "column", padding: 4 }}>
-					<For each={props.options}>
-						{(option) => (
-							<div
-								role="option"
-								onClick={() => {
-									props.onValueChange(option.value);
-									presence.hide();
-								}}
-								style={{
-									display: "flex",
-									alignItems: "center",
-									height: 28,
-									paddingLeft: 6,
-									paddingRight: 6,
-									borderRadius: radius.item,
-									cursor: "pointer",
-									hover: { backgroundColor: color.hover },
-								}}
-							>
-								<text
-									style={{
-										...scale.bodyCompact,
-										color:
-											option.value === props.value
-												? color.foreground
-												: color.mutedForeground,
-									}}
-								>
-									{option.label}
-								</text>
-							</div>
-						)}
-					</For>
-				</div>
-				)}
-			</PopupSurface>
 		</div>
 	);
 }
@@ -429,15 +328,25 @@ function Filters() {
 				<CommandMenu testId="filters" items={visible()}>
 					<CommandMenuInput testId="filters-input" placeholder={PLACEHOLDER} />
 					<CommandMenuFilters>
-						<FilterSelect
+						<Select
 							testId="filters-type"
-							options={TYPES}
+							variant="borderless"
+							size="compact"
+							hug
+							label="Type"
+							popupWidth={FILTER_POPUP_WIDTH}
+							items={TYPES}
 							value={type()}
 							onValueChange={setType}
 						/>
-						<FilterSelect
+						<Select
 							testId="filters-sort"
-							options={SORTS}
+							variant="borderless"
+							size="compact"
+							hug
+							label="Sort"
+							popupWidth={FILTER_POPUP_WIDTH}
+							items={SORTS}
 							value={sort()}
 							onValueChange={setSort}
 						/>
@@ -638,7 +547,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("tabs-hover");
 
 	await reveal(shot, "filters");
-	await shot.click("filters-sort");
+	await shot.click("filters-sort-trigger");
 	shot.capture("filters-open");
 	await shot.clickAt(1000, 700);
 
