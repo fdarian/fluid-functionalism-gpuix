@@ -202,14 +202,23 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 - **Fidelity:** dropped.
 - **Components it hits:** every component.
 
-## Demo: playground missing
+## Playground: "One at a time" is a controlled value
 
-- **Cause:** `not ported yet`.
-- **Original:** a playground with an Expand select (one at a time / one or none / any number) and a "Highlight expanded" switch over four items (`lib/docs/playgrounds/accordion.tsx:28-148`, `app/docs/accordion/page.tsx:129-150`).
-- **Port:** no playground; `highlight="trigger"` and the single and multiple modes are shown as fixed variants (`src/demos/accordion.tsx:51-178`).
-- **Workaround:** the fixed variants.
-- **Fidelity:** dropped.
-- **Components it hits:** every component with a playground (card, button, dropdown, and others).
+- **Cause:** `port choice` (the port's single mode is always collapsible, `BASE-UI-AUDIT.md:83`, so there is no `collapsible` prop to turn off).
+- **Original:** the Expand select maps to `type` and `collapsible`; "One at a time" is a non-collapsible single group (`lib/docs/playgrounds/accordion.tsx:28-34`, `:78-92`).
+- **Port:** the playground controls the group's value and drops the close of the open item while "One at a time" is chosen (`src/demos/accordion.tsx`, `Playground`). Switching Expand resets the open set to the first item, as the source's `key` remount does.
+- **Workaround:** the controlled value.
+- **Fidelity:** exact in what it does; the group itself still has no non-collapsible mode.
+- **Components it hits:** just this one.
+
+## Playground: frame and preview
+
+- **Cause:** `port choice` (the preview sits in the shared demo card, so it lines up with the page's other cards).
+- **Original:** `ComponentPreview` with no padding, `h-[420px]`, top-aligned, the group centred at the card's width with `px-6 py-10`, and Preview / Code tabs with the snippet kept in sync (`app/docs/accordion/page.tsx:129-150`, `lib/docs/playgrounds/accordion.tsx:36-65`, `:130-137`).
+- **Port:** the `DemoCard` frame titled "Playground" in its footer, a 420 px minimum, the group 288 px wide (its fixed width) centred with 20 px above it; no Code tab and no generated snippet (`src/lib/playground.tsx`, `src/demos/accordion.tsx`). The four items and their texts match the source.
+- **Workaround:** none.
+- **Fidelity:** approximated (frame chrome), dropped (the code snippet).
+- **Components it hits:** every playground.
 
 ## Demo: Row highlight has two items, not three
 
