@@ -55,13 +55,13 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 - **Fidelity:** approximated (one tick late).
 - **Components it hits:** mobile-drawer (reuses `FocusFirst`).
 
-## Surface levels: the dialog does not step up from its substrate
+## Surface levels: only the dialog and popups read the ladder
 
-- **Cause:** `not ported yet`. The port has no surface-context ladder (`useSurface` / `SurfaceProvider`); `surface(level)` in `src/lib/theme.ts:242` is called with fixed levels.
-- **Original:** the panel is `min(substrate + 4, 8)` and provides that level to its children (`registry/base/dialog.tsx:189-190`, `:274`, `:298`). A dialog on the page is surface-5; a dialog opened from a dialog is surface-8 (dark `#484848`); a Select or Dropdown inside it (`Elevated` offset 2, `registry/default/lib/elevated.tsx:39-41`) is surface-7 (dark `#414141`).
-- **Port:** the panel is always `color.surface5` (`src/components/dialog.tsx:335`), a nested dialog included; popups inside it are `color.card`, surface-3 (`src/lib/popup.tsx:97`, `src/components/dropdown.tsx:734`), which in dark mode is darker (`#252525`) than the dialog (`#333333`) they sit on.
+- **Cause:** `not ported yet`. The ladder is `src/lib/surface-context.ts` (`SurfaceContext`, `useElevatedSurface`). `DialogContent` (`min(substrate + 4, 8)`) and `PopupSurface` (`+ 2`) read and provide it, so a dialog on the page is surface-5, a dialog from a dialog surface-8 and a select or combobox inside a dialog surface-7 (`registry/base/dialog.tsx:189-190`, `registry/default/lib/elevated.tsx:39-41`). Nothing else reads it.
+- **Original:** every surface component reads `useSurface()` and provides its own level to its children.
+- **Port:** tabs (`+ 3`), the mobile drawer (`+ 2`), the color picker, the dropdown submenu and inline panel and the cards use fixed levels, so inside a dialog they sit lower than they do in the source (dark mode only; light mode is `#FFFFFF` at every level).
 - **Fidelity:** approximated in dark mode (light mode is `#FFFFFF` at every level; only the shadow weight differs).
-- **Components it hits:** select, dropdown, combobox, color-picker, sidebar, mobile-drawer (any surface that reads `useSurface`).
+- **Components it hits:** tabs, mobile-drawer, color-picker, dropdown (submenu, inline panel), sidebar, card.
 
 ## `shadow-surface-5` painted as a border and one drop
 

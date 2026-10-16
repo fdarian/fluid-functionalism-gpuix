@@ -124,14 +124,6 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Fidelity:** approximated.
 - **Components it hits:** select, dropdown (every `FluidHighlight` user).
 
-## Popup exit is released by the timer only
-
-- **Cause:** `not ported yet`. Same drift as [select.md, "Exit unmounts on a timer, not on completion"](select.md#exit-unmounts-on-a-timer-not-on-completion), where the entry lives. Here: regression, 65e350b added `onMotionComplete` and `presence.release()` and 7464e6c dropped them; original `combobox.tsx:787-796,820-824`; port `createPresence(POPUP_EXIT_FALLBACK_MS)` at `src/components/combobox.tsx:137`, `src/lib/popup.tsx:83-90`, `src/lib/presence.ts:39`.
-
-## The popup surface does not track its substrate
-
-- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup surface colour is fixed at surface-3"](dropdown.md#popup-surface-colour-is-fixed-at-surface-3), where the entry lives. Here: original `combobox.tsx:827`; port `src/lib/popup.tsx:97`.
-
 ## Reduced motion is not honoured
 
 - **Cause:** `not ported yet`.
@@ -148,15 +140,6 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Port:** the root is `opacity: 0.5` with `pointerEvents: "none"` (`src/components/combobox.tsx:378-379`), the input is `readOnly` with `tabIndex` -1 and `aria-disabled` (`:455-457`).
 - **Workaround:** the stand-in. gpuix has `<input disabled>` now (never focusable; `FORK.md:451`).
 - **Fidelity:** approximated (looks the same; assistive tech sees `aria-disabled`, not a disabled input).
-- **Components it hits:** just this one.
-
-## Bug: Enter always cancels the key's default
-
-- **Cause:** `not ported yet` (a defect, not a deliberate difference).
-- **Original:** Enter is stopped only when the popup is open with a highlighted row; closed, or open with no row, it passes through so the form can submit (Base UI `ComboboxInput.tsx:404-420`).
-- **Port:** `case "Enter": event.preventDefault(); submit()` for every Enter (`src/components/combobox.tsx:319-322`), though the comment at `:328` says Enter with no row closes "so a form can submit". gpuix cancels implicit submission on `preventDefault` (README:3057).
-- **Workaround:** none. Today masked: with `name` or `required` the form has a second input and never implicit-submits (see above).
-- **Fidelity:** dropped (Enter never reaches the form).
 - **Components it hits:** just this one.
 
 ## Pressing the icon area focuses and opens the field

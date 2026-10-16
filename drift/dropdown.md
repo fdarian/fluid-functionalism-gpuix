@@ -77,13 +77,13 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** approximated.
 - **Components it hits:** every popup and card (select, combobox, dialog, color-picker, tooltip).
 
-## Popup surface colour is fixed at surface-3
+## Submenu and inline panel colour is fixed at surface-3
 
-- **Cause:** `not ported yet`. The port has no surface context.
+- **Cause:** `not ported yet`. `PopupSurface` (the main popup) follows its substrate through `src/lib/surface-context.ts`; the submenu and inline panel do not read it.
 - **Original:** `Elevated offset={2}` is `min(substrate + 2, 8)`, so a dropdown opened inside a dialog or a raised card sits on a lighter surface; only its shadow level is pinned (`registry/default/lib/elevated.tsx`, `registry/base/dropdown.tsx:133-135`). The search field paints the same level (`registry/default/dropdown-search.tsx:233`).
-- **Port:** always `color.card` (surface-3) for the popup, submenu and inline panel (`src/lib/popup.tsx:97`, `src/components/dropdown.tsx:733`, `:1296`).
-- **Fidelity:** exact on the page, approximated inside a raised surface.
-- **Components it hits:** select, combobox, color-picker, any popup opened from a raised surface.
+- **Port:** the main popup is `min(substrate + 2, 8)` (`src/lib/popup.tsx`); the submenu and inline panel are always `color.card` (surface-3, `src/components/dropdown.tsx:733`, `:1296`).
+- **Fidelity:** exact on the page, approximated for a submenu or inline panel inside a raised surface.
+- **Components it hits:** just this one.
 
 ## Popup list scrolls in plain `overflow`, not ScrollArea
 
