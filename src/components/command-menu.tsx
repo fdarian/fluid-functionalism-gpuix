@@ -1,7 +1,11 @@
 import {
+	createMotionValue,
+	createMotionValueEvent,
+	createReducedMotion,
 	type EventPayload,
 	type HostElement,
 	type KeyEvent,
+	type MotionValue,
 	motion,
 	useGpuixRequired,
 } from "@gpuix/solid";
@@ -10,8 +14,10 @@ import {
 	createContext,
 	createEffect,
 	createMemo,
+	createRoot,
 	createSignal,
 	For,
+	getOwner,
 	type JSX,
 	on,
 	onCleanup,
@@ -21,20 +27,18 @@ import {
 import { FluidHighlight } from "../lib/fluid-highlight";
 import {
 	createFluidHover,
-	createReflowGate,
 	type FluidHover,
 	useHoverItem,
 } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
-import { moveIndex, revealRow } from "../lib/list-nav";
+import { moveIndex } from "../lib/list-nav";
 import { IS_MAC } from "../lib/platform";
 import { createPresence } from "../lib/presence";
 import {
 	color,
 	radius,
 	type as scale,
-	scheme,
 	shadow3,
 	motion as tween,
 	weight,
@@ -278,8 +282,6 @@ interface CommandMenuContextValue {
 	rows: Accessor<readonly CommandMenuItemData[]>;
 	itemsByValue: Accessor<ReadonlyMap<string, CommandMenuItemData>>;
 	hover: FluidHover;
-	/** Typing re-filters the rows under the highlight: its frames snap, they do not glide. */
-	reflow: Accessor<boolean>;
 	select: (item: CommandMenuItemData) => void;
 	move: (to: 1 | -1 | "first" | "last") => void;
 	tabs: Accessor<TabsHandle | undefined>;
@@ -389,7 +391,6 @@ export function CommandMenu(props: {
 	const hover = createFluidHover({
 		isItemDisabled: (index) => rows()[index]?.disabled === true,
 	});
-	const reflow = createReflowGate();
 	const [tabs, setTabs] = createSignal<TabsHandle>();
 	const rowElements = new Map<number, HostElement>();
 	let scroller: HostElement | undefined;
@@ -402,11 +403,71 @@ export function CommandMenu(props: {
 
 	const firstEnabled = () => rows().findIndex((row) => !row.disabled);
 
+	// The list's scrollTop travels on the fill's spring so row and fill arrive together. The motion value only carries the animation: the scroller is the source of truth, so every run starts by jumping the value to where the wheel or the scrollbar left it.
+	const reduceMotion = createReducedMotion();
+	const owner = getOwner();
+	let scrollPosition: MotionValue<number> | undefined;
+	let disposeScrollMotion: (() => void) | undefined;
+	let disposed = false;
+	onCleanup(() => {
+		disposed = true;
+		queueMicrotask(() => disposeScrollMotion?.());
+	});
+	// A key or press handler is native-synchronous, and the renderer refuses to create, drive or release a motion value inside one (the menu mounts from ⌘K and unmounts on Esc): those calls wait for a microtask. The value is made at the first travel, in a root of its own that the menu's cleanup disposes after the handler returns.
+	const afterHandler = (write: () => void) => {
+		queueMicrotask(() => {
+			if (!disposed) write();
+		});
+	};
+	const scrollMotion = () => {
+		if (scrollPosition === undefined) {
+			scrollPosition = createRoot((dispose) => {
+				disposeScrollMotion = dispose;
+				const position = createMotionValue(0);
+				createMotionValueEvent(position, "change", (top) => {
+					if (scroller !== undefined) scroller.scrollTop = top;
+				});
+				return position;
+			}, owner);
+		}
+		return scrollPosition;
+	};
+
+	/** Puts the list at `top` now and ends any running scroll animation. */
+	const snapScroll = (top: number) => {
+		if (scroller === undefined) return;
+		scroller.scrollTo({ top, left: 0 });
+		afterHandler(() => scrollPosition?.jump(top));
+	};
+
 	/** Keeps the keyboard row at the middle of the viewport, as far as the ends allow. */
 	const centerRow = (index: number) => {
 		const row = hover.rects()[index];
 		if (row === undefined || scroller === undefined) return;
-		revealRow(scroller, row, "center");
+		const list = scroller;
+		if (list.clientHeight === 0) return;
+		if (index === 0) {
+			snapScroll(0);
+			return;
+		}
+		const target = Math.max(
+			0,
+			Math.min(
+				row.top + row.height / 2 - list.clientHeight / 2,
+				list.scrollHeight - list.clientHeight,
+			),
+		);
+		if (reduceMotion()) {
+			snapScroll(target);
+			return;
+		}
+		afterHandler(() => {
+			const position = scrollMotion();
+			// A running travel is taken over where it is (its own value is the live one; the scroller's read can trail a frame). Otherwise the wheel or the scrollbar may have moved the list since.
+			if (position.isAnimating()) position.stop();
+			else position.jump(list.scrollTop);
+			position.animate(target, tween.fast);
+		});
 	};
 
 	// The first enabled row is highlighted whenever the row set changes, so Enter always has a target.
@@ -415,8 +476,7 @@ export function CommandMenu(props: {
 			const first = firstEnabled();
 			hover.setActiveIndex(first === -1 ? null : first);
 			lastActive = first === -1 ? null : first;
-			reflow.raise();
-			if (scroller !== undefined) scroller.scrollTo({ top: 0, left: 0 });
+			snapScroll(0);
 		}),
 	);
 
@@ -460,7 +520,6 @@ export function CommandMenu(props: {
 		rows,
 		itemsByValue,
 		hover,
-		reflow: reflow.reflowing,
 		select,
 		move,
 		tabs,
@@ -898,6 +957,7 @@ export function CommandMenuList(props: {
 	return (
 		<div
 			ref={menu.scrollerRef}
+			testId={`${menu.testId}-list`}
 			onScroll={hover.handlers.onScroll}
 			style={{
 				display: "flex",
@@ -930,7 +990,6 @@ export function CommandMenuList(props: {
 					session={hover.session}
 					radius={radius.item}
 					background={color.hover}
-					travel={() => !menu.reflow()}
 				/>
 				{props.children}
 				<For each={menu.sections()}>
@@ -1283,8 +1342,8 @@ export function CommandMenuFooter(props: {
 
 const DIALOG_WIDTH = 540;
 const DIALOG_MAX_HEIGHT = 440;
-// The scrim's exit is the longest of the shell's fades. Its completion unmounts the layer; the timer only covers an exit that never animated.
-const SCRIM_EXIT_FALLBACK_MS = tween.moderateExit.duration * 1000 + 100;
+// The scrim's exit completing unmounts the layer; the timer only covers an exit that never animated.
+const SCRIM_EXIT_FALLBACK_MS = tween.slowExit.duration * 1000 + 100;
 
 /** The modal shell. Escape (from the field), a press outside the panel and a pick all close it. Opening it from a key is the caller's: see `createSiteMenu`. */
 export function CommandMenuDialog(props: {
@@ -1330,7 +1389,7 @@ export function CommandMenuDialog(props: {
 					animate={{
 						opacity: presence.open() ? 1 : 0,
 					}}
-					transition={presence.open() ? tween.moderate : tween.moderateExit}
+					transition={presence.open() ? tween.slow : tween.slowExit}
 					onMotionComplete={() => {
 						if (!presence.open()) presence.release();
 					}}
@@ -1348,7 +1407,7 @@ export function CommandMenuDialog(props: {
 					animate={
 						presence.open() ? { opacity: 1, top: 0 } : { opacity: 0, top: -4 }
 					}
-					transition={presence.open() ? tween.fast : tween.fastExit}
+					transition={presence.open() ? tween.slow : tween.slowExit}
 					style={{
 						position: "relative",
 						marginTop: top(),
