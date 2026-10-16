@@ -93,9 +93,9 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 ## Demo variants
 
-- **Cause:** `not ported yet` for the missing one; the extras are port additions.
+- **Cause:** `port choice` (the extras are port additions).
 - **Original:** the docs page has one example, Basic: `selectedIndex` mode, Option A/B/C, A selected (`app/docs/radio-group/page.tsx:50-64`). The bento preview uses `value` mode with a default selected, at 220 px (`app/components/bento-previews.tsx:386-396`).
-- **Port:** Default (by index), Compact, Per item (Option B selected, no fill) and By value (nothing selected, "Plan: none" readout) (`src/demos/radio-group.tsx:78-97`). Missing: by value with a default selected, narrow width.
-- **Workaround:** none.
+- **Port:** Default (by index), Compact, Per item (Option B selected, no fill), By value (nothing selected, "Plan: none" readout) and "Narrow, default" (the bento preview's five rows in `value` mode, "Moderate spring" selected, in a 220 px wrapper the group's `maxWidth: 100%` shrinks to) (`src/demos/radio-group.tsx`).
+- **Workaround:** n/a.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

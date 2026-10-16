@@ -52,6 +52,39 @@ function ByValue(props: { testId: string }) {
 	);
 }
 
+/** The bento preview's rows and default (`app/components/demo-data.ts:107-115`). */
+const SPRINGS = [
+	{ value: "fast", label: "Fast spring" },
+	{ value: "moderate", label: "Moderate spring" },
+	{ value: "slow", label: "Slow spring" },
+	{ value: "comfortable", label: "Comfortable" },
+	{ value: "none", label: "No animation" },
+];
+
+function NarrowByValue(props: { testId: string }) {
+	const [spring, setSpring] = createSignal("moderate");
+	return (
+		<div style={{ display: "flex", flexDirection: "column", width: 220 }}>
+			<RadioGroup
+				testId={props.testId}
+				value={spring()}
+				onValueChange={setSpring}
+			>
+				<For each={SPRINGS}>
+					{(item: (typeof SPRINGS)[number], index) => (
+						<RadioItem
+							testId={`${props.testId}-${index()}`}
+							index={index()}
+							label={item.label}
+							value={item.value}
+						/>
+					)}
+				</For>
+			</RadioGroup>
+		</div>
+	);
+}
+
 /** Only the per-item API: no `value` or `selectedIndex`, so FF paints no selected background. */
 function PerItem(props: { testId: string }) {
 	const [selected, setSelected] = createSignal(1);
@@ -91,6 +124,9 @@ export function Demo() {
 				<DemoRow label="By value">
 					<ByValue testId="plan" />
 				</DemoRow>
+				<DemoRow label="Narrow, default">
+					<NarrowByValue testId="narrow" />
+				</DemoRow>
 			</div>
 		</DemoCard>
 	);
@@ -124,4 +160,9 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("by-value-keys");
 	shot.expectAria("plan-0", { role: "RadioButton", toggled: "False" });
 	shot.expectAria("plan-2", { toggled: "True" });
+	// The narrow group starts on "Moderate spring"; a click moves the fill, and the fill shows the 220px width.
+	shot.expectAria("narrow-1", { toggled: "True" });
+	await shot.click("narrow-3");
+	shot.expectAria("narrow-3", { toggled: "True" });
+	shot.capture("narrow-selected");
 };
