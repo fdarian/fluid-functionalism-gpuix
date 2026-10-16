@@ -92,6 +92,8 @@ export function SearchField(props: {
 				name="search"
 				size={16}
 				strokeWidth={focused() ? 2 : 1.5}
+				fade
+				easeStroke
 				color={focused() ? color.foreground : color.mutedForeground}
 			/>
 			<input

@@ -9,11 +9,11 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
-import { StableLabel } from "../lib/stable-label";
-import { useHoverItem } from "../lib/fluid-hover";
 import type { FluidHover } from "../lib/fluid-hover";
+import { useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
+import { StableLabel } from "../lib/stable-label";
 import {
 	color,
 	height,
@@ -234,6 +234,8 @@ export function MenuItem(props: {
 						name={name()}
 						size={16}
 						strokeWidth={lit() ? 2 : 1.5}
+						fade
+						easeStroke
 						color={lit() ? color.foreground : color.mutedForeground}
 					/>
 				)}
@@ -242,6 +244,7 @@ export function MenuItem(props: {
 				text={props.label}
 				heavy={checked()}
 				color={lit() ? color.foreground : color.mutedForeground}
+				fade
 				grow
 			/>
 			<Show when={props.chevron}>
@@ -249,6 +252,8 @@ export function MenuItem(props: {
 					name="chevron-right"
 					size={16}
 					strokeWidth={lit() ? 2 : 1.5}
+					fade
+					easeStroke
 					color={lit() ? color.foreground : color.mutedForeground}
 				/>
 			</Show>

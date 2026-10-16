@@ -652,6 +652,7 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					name={item.isOpen() ? "chevron-down" : "chevron-right"}
 					size={metrics().icon}
 					strokeWidth={lit() ? 2 : 1.5}
+					easeStroke
 					color={lit() ? color.foreground : color.mutedForeground}
 				/>
 			</div>
