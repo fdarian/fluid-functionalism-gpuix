@@ -7,7 +7,14 @@ import {
 } from "solid-js";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type FluidHover, useHoverItem } from "../lib/fluid-hover";
-import { color, sizeChoice, type as scale, weight } from "../lib/theme";
+import {
+	color,
+	colorFade,
+	fade,
+	sizeChoice,
+	type as scale,
+	weight,
+} from "../lib/theme";
 
 export type TableSize = "default" | "compact";
 
@@ -75,12 +82,14 @@ export function Table(props: {
 					width: "100%",
 				}}
 			>
-				{/* First child: no zIndex in gpuix, so the rows paint over it by document order. */}
 				<FluidHighlight
 					rect={hoverRect}
 					session={hover.session}
 					radius={0}
 					background={color.hover}
+					testId={
+						props.testId === undefined ? undefined : `${props.testId}-highlight`
+					}
 				/>
 				{props.children}
 			</div>
@@ -140,10 +149,13 @@ export function TableRow(props: {
 					rowElement = element;
 				}}
 				style={{
+					position: "relative",
+					zIndex: 10,
 					display: "flex",
 					flexDirection: "row",
 					borderBottomWidth: 1,
 					borderColor: hideBorder() ? color.transparent : color.accentFaint,
+					...fade(["border-color"], 80),
 				}}
 			>
 				{props.children}
@@ -152,7 +164,16 @@ export function TableRow(props: {
 	);
 }
 
-function Cell(props: { header: boolean; width?: number; children: JSX.Element }) {
+interface CellOptions {
+	width?: number;
+	/** The source's `text-right`. */
+	alignRight?: boolean;
+	/** The source's `tabular-nums`. */
+	tabularNums?: boolean;
+	children: JSX.Element;
+}
+
+function Cell(props: CellOptions & { header: boolean }) {
 	const scope = useTableScope();
 	const row = useRowState();
 	const metrics = () => cellMetrics[scope.size()];
@@ -175,7 +196,10 @@ function Cell(props: { header: boolean; width?: number; children: JSX.Element })
 				style={{
 					...metrics().text,
 					color: textColor(),
+					...(props.header ? {} : colorFade),
 					fontWeight: props.header ? weight.semibold : weight.normal,
+					textAlign: props.alignRight ? "right" : "left",
+					fontVariantNumeric: props.tabularNums ? "tabular-nums" : "normal",
 				}}
 			>
 				{props.children}
@@ -184,17 +208,27 @@ function Cell(props: { header: boolean; width?: number; children: JSX.Element })
 	);
 }
 
-export function TableHead(props: { width?: number; children: JSX.Element }) {
+export function TableHead(props: CellOptions) {
 	return (
-		<Cell header width={props.width}>
+		<Cell
+			header
+			width={props.width}
+			alignRight={props.alignRight}
+			tabularNums={props.tabularNums}
+		>
 			{props.children}
 		</Cell>
 	);
 }
 
-export function TableCell(props: { width?: number; children: JSX.Element }) {
+export function TableCell(props: CellOptions) {
 	return (
-		<Cell header={false} width={props.width}>
+		<Cell
+			header={false}
+			width={props.width}
+			alignRight={props.alignRight}
+			tabularNums={props.tabularNums}
+		>
 			{props.children}
 		</Cell>
 	);

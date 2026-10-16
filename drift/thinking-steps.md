@@ -12,9 +12,9 @@ repeating it.
 
 - **Cause:** `gpuix gap`.
 - **Original:** `motion.span animate={{ rotate: open ? 90 : 0 }}` with `spring.fast` (0.08s, no bounce) (`thinking-steps.tsx:112-125`).
-- **Port:** `Chevron` rewrites an SVG `<g transform="rotate(a 12 12)">` from a 100ms ease-out on the shared frame clock (`thinking-steps.tsx:55-87`).
+- **Port:** `Chevron` rotates the path's own points (`chevronPath`) from a 100ms ease-out on the shared frame clock and draws them through `Icon easeStroke` (`thinking-steps.tsx:59-104`).
 - **gpuix lacks:** rotation (README "gpuix gaps", CSS transforms row; no `transform`, `~/code/fdarian/gpuix/FORK.md:876`). `motion.path` animates `d`, `strokeWidth` and the other shape attributes but not a `transform` (`packages/native/js/host.ts:292-322`).
-- **Workaround:** whole degrees, so GPUI's SVG cache (keyed by the bytes) holds at most 91 entries. The effect reads `angle()` inside `createEffect` (`:69`), so by reading it re-subscribes after every step and restarts the tween from the current angle; the move is then closer to an exponential ease-out than to a 100ms cubic, with a final snap when the original 100ms elapses.
+- **Workaround:** the points are rotated in JS, whole degrees, and redrawn as shapes (no SVG source per angle). The effect reads `angle()` inside `createEffect` (`:84`), so by reading it re-subscribes after every step and restarts the tween from the current angle; the move is then closer to an exponential ease-out than to a 100ms cubic, with a final snap when the original 100ms elapses.
 - **Fidelity:** approximated. A tween rather than the critically damped spring, driven from JS.
 - **Components it hits:** any disclosure chevron (accordion, card, color-picker); file-thumbnail's spinner uses the same SVG-rewrite technique.
 
@@ -37,15 +37,6 @@ repeating it.
 - **Workaround:** static cuts; a hidden semibold copy reserves the width.
 - **Fidelity:** approximated.
 - **Components it hits:** every `StableLabel` (tabs, tabs-subtle, sidebar, menu rows), card, table, banner.
-
-## Colour and stroke fades on the trigger
-
-- **Cause:** `not ported yet`. `colorFade` exists (`src/lib/theme.ts:451`) and `Icon` takes `fade` (`src/lib/icon.tsx:6-12`).
-- **Original:** label `transition-[color,font-variation-settings] duration-80` (`thinking-steps.tsx:98`); chevron `transition-[color,stroke-width] duration-80` (`:121`). Hover and open both lighten the label and chevron and take the chevron from stroke 1.5 to 2.
-- **Port:** the label colour (`stable-label.tsx` has no fade, `thinking-steps.tsx:156-160`), the chevron colour and the stroke width (`:162-166`, `:79-86`) all switch at once. `Icon` notes the stroke width is part of the SVG source; `Chevron` already rewrites its source every frame, so it could tween the stroke too.
-- **Workaround:** none.
-- **Fidelity:** approximated (80ms fades dropped).
-- **Components it hits:** accordion's trigger is the same pattern.
 
 ## Hover background exit
 

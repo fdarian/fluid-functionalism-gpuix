@@ -1,4 +1,9 @@
-import { type HostElement, IntersectionObserver, motion } from "@gpuix/solid";
+import {
+	createReducedMotion,
+	type HostElement,
+	IntersectionObserver,
+	motion,
+} from "@gpuix/solid";
 import {
 	type Accessor,
 	children,
@@ -250,6 +255,7 @@ export function PlaygroundLayout(props: {
 		throw new Error("PlaygroundLayout must be inside the page's PageScrollerContext");
 	}
 	const [inView, setInView] = createSignal(true);
+	const reduced = createReducedMotion();
 	let frame: HostElement | undefined;
 
 	createEffect(() => {
@@ -271,7 +277,7 @@ export function PlaygroundLayout(props: {
 		<motion.div
 			initial={false}
 			animate={{ opacity: inView() ? 1 : 0 }}
-			transition={tween.moderate}
+			transition={reduced() ? tween.snap : tween.moderate}
 			style={{ pointerEvents: inView() ? "auto" : "none" }}
 		>
 			{controls()}

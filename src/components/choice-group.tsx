@@ -1,5 +1,5 @@
 import {
-	type EventPayload,
+	type DomEvent,
 	type HostElement,
 	type KeyEvent,
 	useGpuixRequired,
@@ -28,6 +28,7 @@ import {
 import { StableLabel } from "../lib/stable-label";
 import {
 	color,
+	fade,
 	shape,
 	sizeChoice,
 	type as scale,
@@ -347,7 +348,7 @@ export function ChoiceRow(props: {
 			tabIndex={props.tabbable ? 0 : -1}
 			onClick={props.onActivate}
 			onKeyDown={onKeyDown}
-			onFocus={(event: EventPayload) => {
+			onFocus={(event: DomEvent) => {
 				context.hover.setActiveIndex(props.index);
 				context.focusRing.focus(props.index, event);
 			}}
@@ -358,6 +359,8 @@ export function ChoiceRow(props: {
 				}
 			}}
 			style={{
+				position: "relative",
+				zIndex: 10,
 				height: size().height,
 				flexShrink: 0,
 				display: "flex",
@@ -375,6 +378,7 @@ export function ChoiceRow(props: {
 			<StableLabel
 				text={props.label}
 				heavy={props.checked}
+				fade
 				color={
 					props.checked || active() ? color.foreground : color.mutedForeground
 				}
@@ -384,9 +388,12 @@ export function ChoiceRow(props: {
 	);
 }
 
-/** The indicator's border: `--border` at rest, neutral-400 (neutral-500 dark) on hover or focus, transparent once selected. */
+/** The indicator's border: `--border` at rest, neutral-400 (neutral-500 dark) on hover or focus, transparent once selected. It eases over 80 ms: spread `indicatorFade` on the same element. */
 export function indicatorBorder(selected: boolean, active: boolean) {
 	if (selected) return color.transparent;
 	if (!active) return color.border;
 	return color.borderStrong;
 }
+
+/** The source's `transition-all duration-80` on the indicator: the border colour is the one property that changes. */
+export const indicatorFade = fade(["border-color"], 80);

@@ -25,19 +25,18 @@ function Link(props: { children: string }) {
 }
 
 export async function scenarios(shot: ShotContext) {
-	// The wheel keeps GPUI's sign: negative scrolls down.
 	shot.capture("top");
 	await shot.click("toolbar-code-tab");
 	shot.capture("toolbar-code");
 	await shot.click("toolbar-preview-tab");
 
-	await shot.scroll(600, 400, 0, -700);
+	await shot.scroll(600, 400, 0, 700);
 	shot.capture("compact-region");
 	await shot.click("compact-region-default");
 	shot.capture("compact-region-default");
 	await shot.click("compact-region-compact");
 
-	await shot.scroll(600, 400, 0, -500);
+	await shot.scroll(600, 400, 0, 500);
 	shot.capture("token-inspector");
 	await shot.hover("inspect-button");
 	shot.capture("inspect-button");
@@ -52,7 +51,7 @@ export async function scenarios(shot: ShotContext) {
 	shot.capture("inspect-row-compact");
 	await shot.click("token-inspector-default");
 
-	await shot.scroll(600, 400, 0, -500);
+	await shot.scroll(600, 400, 0, 500);
 	shot.capture("token-table");
 }
 

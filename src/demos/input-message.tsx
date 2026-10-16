@@ -606,15 +606,15 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("play-right-track");
 	shot.capture("playground-attachments-right");
 	await shot.focus("play-status-trigger");
-	await shot.press("down down down enter");
+	await shot.press("ArrowDown ArrowDown ArrowDown Enter");
 	await shot.settle(300);
 	await shot.click("play-textarea");
 	await shot.press("f i r s t");
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.press("s e c o n d");
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.press("t h i r d");
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.settle(600);
 	shot.capture("playground-queued");
 	await shot.moveTo(1180, 700);
@@ -641,12 +641,12 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(prompt.x - 192, prompt.y);
 	shot.capture("suggestion-hover");
 	await shot.moveTo(1180, 700);
-	await shot.press("ctrl-n ctrl-n");
+	await shot.press("Control+n Control+n");
 	shot.capture("suggestion-keyboard");
-	await shot.press("enter");
+	await shot.press("Enter");
 	shot.capture("suggestion-filled");
-	await shot.press("cmd-a backspace");
-	await shot.press("tab");
+	await shot.press("Meta+a Backspace");
+	await shot.press("Tab");
 	shot.capture("tab-filled");
 
 	setOnly("attachments");
@@ -661,7 +661,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("attachments-textarea");
 	for (const word of ["one", "two", "three", "four", "five", "six", "seven"]) {
 		await shot.press(word.split("").join(" "));
-		await shot.press("enter");
+		await shot.press("Enter");
 	}
 	await shot.settle(600);
 	shot.capture("attachments-scrolled");
@@ -702,37 +702,36 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	setOnly("queued-rich");
 	await shot.settle(900);
 	shot.capture("queued-rich");
-	// A pointer press that opens a popup cannot run in the test renderer: open the menus from the keyboard.
 	await shot.focus("rich-model-trigger");
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.settle(300);
 	shot.capture("queued-rich-model-menu");
-	await shot.press("down enter");
+	await shot.press("ArrowDown Enter");
 	await shot.settle(300);
 	shot.expectText("Sonnet 4.6", true);
 	await shot.focus("rich-attach-trigger");
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.settle(300);
 	shot.capture("queued-rich-attach-menu");
-	await shot.press("escape");
+	await shot.press("Escape");
 
 	setOnly("queued");
 	await shot.settle(500);
 	await shot.click("queued-textarea");
 	await shot.press("f i r s t");
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.press("s e c o n d");
 	shot.capture("queue-button");
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.press("t h i r d");
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.settle(600);
 	shot.capture("queued");
 	// Drag the first row down past the last one and out of the list: the move and the release still reach the row.
 	const last = shot.centerOf("queued-queued-1");
 	await shot.down("queued-queued-0");
-	await shot.moveHeld(last.x, last.y);
-	await shot.moveHeld(last.x + 300, last.y + 400);
+	await shot.moveTo(last.x, last.y);
+	await shot.moveTo(last.x + 300, last.y + 400);
 	shot.capture("queued-dragged");
 	await shot.up("queued-queued-0");
 	const row = shot.centerOf("queued-queued-0");
@@ -757,12 +756,12 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.settle(500);
 	await shot.click("send-textarea");
 	await shot.press("o n e");
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.press("t w o");
-	await shot.press("enter");
-	await shot.press("ctrl-p");
+	await shot.press("Enter");
+	await shot.press("Control+p");
 	shot.capture("history");
-	await shot.press("ctrl-p");
+	await shot.press("Control+p");
 	shot.capture("history-back");
 
 	setOnly("disabled");

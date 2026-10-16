@@ -1081,15 +1081,15 @@ export function Demo() {
 /** Scrolls the page until the element with this test id is mid-window. */
 async function scrollTo(shot: ShotContext, testId: string) {
 	for (let attempt = 0; attempt < 2; attempt++) {
-		await shot.scroll(600, 400, 0, -(shot.centerOf(testId).y - 300));
+		await shot.scroll(600, 400, 0, shot.centerOf(testId).y - 300);
 		await shot.settle();
 	}
 }
 
-/** Opens a playground select from the keyboard (a pointer press that opens a popup cannot run in the test renderer) and walks `steps` rows. */
+/** Opens a playground select from the keyboard and walks `steps` rows. */
 async function pickPlay(shot: ShotContext, testId: string, steps: string) {
 	await shot.focus(`${testId}-trigger`);
-	await shot.press(`down ${steps} enter`);
+	await shot.press(`ArrowDown ${steps} Enter`);
 	await shot.settle(300);
 }
 
@@ -1100,10 +1100,10 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectText("What drew you to Fluid Functionalism?", true);
 	await shot.click("play-multi-track");
 	shot.expectText("How do you plan to use Fluid Functionalism?", true);
-	await pickPlay(shot, "play-layout", "down");
+	await pickPlay(shot, "play-layout", "ArrowDown");
 	await shot.click("play-other-track");
 	shot.capture("playground-stacked-multi-other");
-	await pickPlay(shot, "play-type", "down");
+	await pickPlay(shot, "play-type", "ArrowDown");
 	shot.expectText("What should we call your workspace?", true);
 	shot.capture("playground-free-text");
 	await shot.click("playground-shuffle");
@@ -1126,13 +1126,13 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("multi-option-3");
 	shot.capture("multi-two-runs");
 	// Keyboard: the arrows move the highlight and focus, space toggles.
-	await shot.press("up");
-	await shot.press("space");
+	await shot.press("ArrowUp");
+	await shot.press("Space");
 	shot.capture("multi-keyboard");
 	await shot.press("2");
 	shot.capture("multi-digit");
 	// The shortcut commits from anywhere in the card.
-	await shot.press("cmd-enter");
+	await shot.press("Meta+Enter");
 	shot.expectText("Which platforms do you target?", true);
 	shot.capture("multi-next");
 
@@ -1140,7 +1140,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await scrollTo(shot, "other-other");
 	await shot.click("other-other-input");
 	shot.capture("other-focused");
-	await shot.press("h i space t h e r e");
+	await shot.press("h i Space t h e r e");
 	shot.capture("other-typed");
 
 	// Free text, and validation on submit.

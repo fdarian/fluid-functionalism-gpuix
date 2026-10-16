@@ -1,10 +1,13 @@
 import {
-	type EventPayload,
+	document,
+	type DomEvent,
 	type HostDomEvent,
 	type HostElement,
+	type HostMouseEvent,
+	type HostMouseMoveEvent,
+	type HostPointerEvent,
 	type KeyEvent,
 	motion,
-	useGpuixRequired,
 } from "@gpuix/solid";
 import {
 	type Accessor,
@@ -33,11 +36,12 @@ import {
 import type { IconRef } from "../lib/icons";
 import { isChord, moveIndex, revealRow } from "../lib/list-nav";
 import { createPlacementState, POPUP_MARGIN, PopupSurface } from "../lib/popup";
-import { createPressToggle, returnFocusTo } from "../lib/popup-trigger";
+import { createPressToggle, refocusAfterPress } from "../lib/popup-trigger";
 import { createPresence } from "../lib/presence";
-import { color, radius, shadow3, motion as tween } from "../lib/theme";
+import { color, radius, shadow, motion as tween } from "../lib/theme";
 import { createTypeahead } from "../lib/typeahead";
 import {
+	type DropdownSearchHost,
 	DropdownSearchHostContext,
 	type DropdownSearchProps,
 	SEARCH_HEIGHT,
@@ -137,7 +141,7 @@ function MenuBody(props: {
 	paddingTop?: number;
 	handlers: {
 		onMouseEnter: () => void;
-		onMouseMove: (event: EventPayload) => void;
+		onMouseMove: (event: HostMouseMoveEvent) => void;
 		onMouseLeave: () => void;
 	};
 	children: JSX.Element;
@@ -273,8 +277,8 @@ function createMenuList(options: {
 	multiple: Accessor<boolean>;
 	keyboardActive: Accessor<boolean>;
 	setKeyboardActive: (active: boolean) => void;
-	/** Tab closes the whole menu: forward lets focus move on, backward hands it to the trigger. */
-	leave: (backwards: boolean) => void;
+	/** Tab closes the whole menu; the key handler decides whether focus moves on from the trigger. */
+	leave: () => void;
 	/** Which end an open lights: ArrowUp on the trigger opens on the last row. */
 	openFrom: Accessor<"first" | "last">;
 }) {
@@ -292,7 +296,7 @@ function createMenuList(options: {
 	let panel: HostElement | undefined;
 	let field: HostElement | undefined;
 	let dwellTimer: ReturnType<typeof setTimeout> | undefined;
-	let lastMove: EventPayload | undefined;
+	let lastMove: HostMouseMoveEvent | undefined;
 	let lastSearch: DropdownSearchProps | undefined;
 	onCleanup(() => {
 		clearTimeout(dwellTimer);
@@ -311,7 +315,13 @@ function createMenuList(options: {
 	const revealIndex = (index: number) => {
 		const row = hover.rects()[index];
 		if (scroller === undefined || row === undefined) return;
-		revealRow(scroller, row, "nearest", PADDING);
+		revealRow(
+			scroller,
+			row,
+			"nearest",
+			PADDING,
+			search() === undefined ? 0 : SEARCH_HEIGHT,
+		);
 	};
 
 	/** A field that takes focus on open leaves the rows unlit and unfocused. */
@@ -395,15 +405,16 @@ function createMenuList(options: {
 		const query = search();
 		// Space, Home, End and the sideways arrows are the field's own while it has focus.
 		const inField =
-			field !== undefined && (event.target ?? event.elementId) === field.id;
+			field !== undefined && event.target === field;
 		if (event.key === "Escape") {
 			event.preventDefault();
 			options.closeSelf();
 			return;
 		}
 		if (event.key === "Tab") {
-			event.preventDefault();
-			options.leave(event.shiftKey === true);
+			// Forward: the trigger takes focus as the menu closes, so the default Tab moves on from it. Backward leaves it on the trigger.
+			if (event.shiftKey === true) event.preventDefault();
+			options.leave();
 			return;
 		}
 		if (query === undefined) {
@@ -459,7 +470,7 @@ function createMenuList(options: {
 			options.setKeyboardActive(false);
 			if (openSubIndex() === null) hover.handlers.onMouseEnter();
 		},
-		onMouseMove(event: EventPayload) {
+		onMouseMove(event: HostMouseMoveEvent) {
 			setLitBy("pointer");
 			options.setKeyboardActive(false);
 			if (openSubIndex() === null) {
@@ -666,15 +677,6 @@ function MenuPanel(props: {
 							keyboardFocusDim: false,
 						}}
 					>
-						<Show when={field()}>
-							{(search: Accessor<DropdownSearchProps>) => (
-								<SearchField
-									search={search()}
-									testId={props.searchTestId}
-									fieldRef={list.setField}
-								/>
-							)}
-						</Show>
 						<div
 							ref={(element) => {
 								list.setScroller(element);
@@ -684,12 +686,19 @@ function MenuPanel(props: {
 								display: "flex",
 								flexDirection: "column",
 								overflowY: "scroll",
-								maxHeight:
-									props.maxHeight() -
-									2 -
-									(field() === undefined ? 0 : SEARCH_HEIGHT),
+								maxHeight: props.maxHeight(),
 							}}
 						>
+							<Show when={field()}>
+								{(search: Accessor<DropdownSearchProps>) => (
+									<SearchField
+										sticky
+										search={search()}
+										testId={props.searchTestId}
+										fieldRef={list.setField}
+									/>
+								)}
+							</Show>
 							<MenuBody
 								hover={list.hover}
 								checkedIndex={props.checkedIndex}
@@ -777,7 +786,25 @@ export function Dropdown(props: {
 		if (position === -1) return;
 		focusRow(indices[(position + delta + indices.length) % indices.length]);
 	};
+	const [search, setSearch] = createSignal<DropdownSearchProps>();
+	let field: HostElement | undefined;
+	const searchHost: DropdownSearchHost = {
+		register(props) {
+			setSearch(props);
+			return () => {
+				if (search() === props) setSearch(undefined);
+			};
+		},
+	};
 	const onKeyDown = (event: KeyEvent) => {
+		// The field's keys are its own, apart from the arrows, which leave it for the rows.
+		if (field !== undefined && event.target === field) {
+			if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+				event.preventDefault();
+				focusRow(event.key === "ArrowDown" ? all()[0] : all().at(-1));
+			}
+			return;
+		}
 		switch (event.key) {
 			case "ArrowDown":
 			case "ArrowRight":
@@ -809,16 +836,17 @@ export function Dropdown(props: {
 
 	return (
 		<DropdownContext.Provider value={context}>
+			<DropdownSearchHostContext.Provider value={searchHost}>
 			<div
 				testId={props.testId}
 				id={listId}
 				role="group"
 				onKeyDown={onKeyDown}
-				onFocusOut={(event: EventPayload) => {
+				onFocusOut={(event: DomEvent) => {
 					const next = event.relatedTarget;
 					if (
-						next !== undefined &&
-						[...rows.values()].some((row) => row.elementId() === next)
+						next !== null &&
+						[...rows.values()].some((row) => row.element() === next)
 					) {
 						return;
 					}
@@ -833,18 +861,31 @@ export function Dropdown(props: {
 					flexDirection: "column",
 					backgroundColor: color.card,
 					borderRadius: radius.container,
-					borderWidth: 1,
-					borderColor: color.popupBorder,
-					boxShadow: shadow3(),
+					boxShadow: shadow(3),
 					keyboardFocusDim: false,
 				}}
 			>
+				<Show when={search()}>
+					{(query: Accessor<DropdownSearchProps>) => (
+						<SearchField
+							sticky={false}
+							search={query()}
+							testId={
+								props.testId === undefined ? undefined : `${props.testId}-field`
+							}
+							fieldRef={(element) => {
+								field = element;
+							}}
+						/>
+					)}
+				</Show>
 				<MenuBody
 					hover={hover}
 					checkedIndex={() => props.checkedIndex}
 					checkedIndices={() => props.checkedIndices}
 					litBy={litBy}
 					travel={() => true}
+					paddingTop={search() === undefined ? undefined : 2}
 					focusIndex={() => (ringShown() ? focused() : null)}
 					focusRingTestId={
 						props.testId === undefined ? undefined : `${props.testId}-ring`
@@ -865,6 +906,7 @@ export function Dropdown(props: {
 					{props.children}
 				</MenuBody>
 			</div>
+			</DropdownSearchHostContext.Provider>
 		</DropdownContext.Provider>
 	);
 }
@@ -889,11 +931,11 @@ interface MenuScope {
 	pressPick: () => boolean;
 	releasePress: () => void;
 	/** Remember the trigger element the menu opened from, to hand focus back to it. */
-	noteTrigger: (elementId: number) => void;
+	noteTrigger: (element: HostElement) => void;
 	/** The root popup says how to tell whether focus sits inside it, so a close knows whether the trigger should get focus back. */
 	watchPopupFocus: (containsFocus: () => boolean) => void;
-	/** Tab closes the menu: forward moves focus on from the trigger to the next control, backward leaves it on the trigger. */
-	leave: (backwards: boolean) => void;
+	/** Tab closes the menu. */
+	leave: () => void;
 }
 
 /** Base UI keeps a press-drag-release from opening a menu from picking a row for this long. */
@@ -911,9 +953,9 @@ function useMenuScope() {
 
 export interface DropdownTriggerState {
 	/** Opens on press, like Base UI: put this on the element that opens the menu. */
-	onMouseDown: (event: EventPayload) => void;
+	onMouseDown: (event: HostMouseEvent) => void;
 	/** The release of that press, or a screen reader's press. Keyboard-originated clicks are ignored: the menu answers those itself. */
-	onClick: (event: EventPayload) => void;
+	onClick: (event: HostPointerEvent) => void;
 	readonly expanded: boolean;
 	/** Put these on the element that opens the menu, with the handlers above. */
 	readonly attributes: {
@@ -933,38 +975,33 @@ export function DropdownMenu(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
-	const renderer = useGpuixRequired();
 	const presence = createPresence();
 	const [keyboardActive, setKeyboardActive] = createSignal(false);
 
 	const [openFrom, setOpenFrom] = createSignal<"first" | "last">("first");
 	let pressedAt: number | null = null;
-	let pendingTrigger: number | null = null;
-	let triggerId: number | null = null;
+	let pendingTrigger: HostElement | null = null;
+	let triggerElement: HostElement | null = null;
 	let popupHasFocus: () => boolean = () => false;
-	/** Tab closed the menu: once focus is back on the trigger it moves on to the next tab stop. */
-	let tabbingOn = false;
 
 	/** Closing hands focus back to the trigger when it sat in the popup, which is about to unmount and drop it, or nowhere; a control that took it since keeps it (Base UI's returnFocus). */
 	const returnFocus = () => {
-		const target = triggerId;
-		triggerId = null;
-		if (target === null) return;
-		returnFocusTo(renderer, target, popupHasFocus());
+		const target = triggerElement;
+		triggerElement = null;
+		if (target === null || !target.mounted) return;
+		if (popupHasFocus() || document.activeElement === null) target.focus();
 	};
 
 	const apply = (next: boolean) => {
 		if (next === presence.open()) return;
 		if (next) {
-			triggerId = pendingTrigger ?? renderer.getFocusedElementId?.() ?? null;
+			triggerElement = pendingTrigger ?? document.activeElement;
 			pendingTrigger = null;
 			presence.show();
 		} else {
 			pressedAt = null;
 			presence.hide();
 			returnFocus();
-			// The default Tab would start from the popup row, whose floating layer wraps to the start of the page.
-			if (tabbingOn) renderer.focusNext?.();
 		}
 	};
 	const setOpen = (next: boolean) => {
@@ -1003,16 +1040,14 @@ export function DropdownMenu(props: {
 		releasePress() {
 			pressedAt = null;
 		},
-		noteTrigger(elementId) {
-			pendingTrigger = elementId;
+		noteTrigger(element) {
+			pendingTrigger = element;
 		},
 		watchPopupFocus(containsFocus) {
 			popupHasFocus = containsFocus;
 		},
-		leave(backwards) {
-			tabbingOn = !backwards;
+		leave() {
 			setOpen(false);
-			tabbingOn = false;
 		},
 	};
 
@@ -1042,7 +1077,10 @@ export function DropdownMenu(props: {
 				testId={props.testId}
 				onKeyDown={onKeyDown}
 				onMouseDownOutside={() => {
-					if (presence.open()) setOpen(false);
+					if (!presence.open()) return;
+					const trigger = triggerElement;
+					setOpen(false);
+					refocusAfterPress(trigger);
 				}}
 				style={{
 					position: "relative",
@@ -1066,7 +1104,7 @@ export function DropdownTrigger(props: {
 		isOpen: scope.presence.open,
 		open(event, pressed) {
 			if (pressed) {
-				scope.noteTrigger(event.elementId);
+				scope.noteTrigger(event.currentTarget as HostElement);
 				scope.startPress();
 			}
 			scope.setOpen(true);
@@ -1386,9 +1424,7 @@ function SubPopup(props: {
 						flexDirection: "column",
 						backgroundColor: color.card,
 						borderRadius: radius.container,
-						borderWidth: 1,
-						borderColor: color.popupBorder,
-						boxShadow: shadow3(),
+						boxShadow: shadow(3),
 						overflow: "hidden",
 						maxHeight: maxHeight(),
 					}}

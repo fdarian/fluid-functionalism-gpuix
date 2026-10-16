@@ -15,14 +15,13 @@ export const menuKeywords = ["mixer", "eq", "audio", "slider"];
 const SCROLL_STEP = 560;
 
 export async function scenarios(shot: ShotContext) {
-	// The wheel keeps GPUI's sign: negative scrolls down.
 	for (const name of [
 		"parametric-eq",
 		"compressor",
 		"effects-sends",
 		"settings",
 	]) {
-		await shot.scroll(400, 400, 0, -SCROLL_STEP);
+		await shot.scroll(400, 400, 0, SCROLL_STEP);
 		await shot.settle(200);
 		shot.capture(name);
 	}

@@ -557,18 +557,18 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("playground-hover");
 
 	// Image forces Separated on; Inline forces one column.
-	await pickOption(shot, "play-media", "down down");
+	await pickOption(shot, "play-media", "ArrowDown ArrowDown");
 	shot.capture("playground-image");
 	await shot.click("play-primary-track");
 	await shot.click("play-secondary-track");
-	await pickOption(shot, "play-columns", "down");
+	await pickOption(shot, "play-columns", "ArrowDown");
 	await shot.click("play-selected-track");
 	await shot.click("play-2");
 	shot.capture("playground-image-three-columns-selected");
-	await pickOption(shot, "play-media", "up");
-	await pickOption(shot, "play-orientation", "down");
+	await pickOption(shot, "play-media", "ArrowUp");
+	await pickOption(shot, "play-orientation", "ArrowDown");
 	shot.capture("playground-inline-logo");
-	await pickOption(shot, "play-border", "down");
+	await pickOption(shot, "play-border", "ArrowDown");
 	await shot.click("play-ghost-track");
 	await shot.click("play-0");
 	shot.capture("playground-inline-outlined-selected");
@@ -597,7 +597,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 
 	await reveal(shot, "promo");
 	// The promo is taller than the window's upper band: bring its top (and the chip) into view.
-	await shot.scroll(700, 400, 0, 160);
+	await shot.scroll(700, 400, 0, -160);
 	await shot.hover("promo");
 	shot.capture("promo-hover");
 	await shot.hover("promo-dismiss");
@@ -621,14 +621,14 @@ async function reveal(shot: ShotContext, testId: string) {
 		const y = shot.centerOf(testId).y;
 		if ((y > 120 && y < 320) || y === previous) return;
 		previous = y;
-		await shot.scroll(700, 400, 0, -(y - 200));
+		await shot.scroll(700, 400, 0, y - 200);
 	}
 	throw new Error(`could not scroll ${testId} into view`);
 }
 
-/** Opens a playground select from the keyboard (a pointer press that opens a popup cannot run in the test renderer) and walks `steps` rows. */
+/** Opens a playground select from the keyboard and walks `steps` rows. */
 async function pickOption(shot: ShotContext, testId: string, steps: string) {
 	await shot.focus(`${testId}-trigger`);
-	await shot.press(`down ${steps} enter`);
+	await shot.press(`ArrowDown ${steps} Enter`);
 	await shot.settle(300);
 }

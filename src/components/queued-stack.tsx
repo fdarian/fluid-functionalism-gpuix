@@ -1,16 +1,16 @@
 import {
 	AnimatePresence,
-	type EventPayload,
 	type HostElement,
 	type HostMouseEvent,
-	type MotionTransition,
+	type HostMouseMoveEvent,
+	type HostPointerEvent,
 	motion,
+	type MotionTransition,
 	ResizeObserver,
 	useIsPresent,
 } from "@gpuix/solid";
 import {
 	createEffect,
-	createMemo,
 	createSignal,
 	For,
 	onCleanup,
@@ -25,7 +25,7 @@ import {
 	shape,
 	type as scale,
 	scheme,
-	shadow3,
+	shadow,
 	motion as tween,
 	weight,
 } from "../lib/theme";
@@ -158,7 +158,7 @@ export function QueuedStack(props: {
 	onCleanup(() => widthObserver.disconnect());
 	const cardWidth = () => Math.max(0, (stackWidth() ?? 0) - GUTTER * 2);
 
-	const onDragMove = (event: EventPayload) => {
+	const onDragMove = (event: HostMouseMoveEvent) => {
 		const downId = pointerDownId();
 		if (downId === null) return;
 		if (event.y === undefined) throw new Error("mouseMove without coordinates");
@@ -212,18 +212,6 @@ export function QueuedStack(props: {
 			}, 16);
 			onCleanup(() => clearTimeout(timer));
 		}
-	});
-
-	/** Cards painted back to front, the dragged one last: gpuix has no z-index, so paint order is document order. */
-	const paintOrder = createMemo(() => {
-		const dragged = draggingId();
-		const ordered = [...props.queue].reverse();
-		return dragged === null
-			? ordered
-			: [
-					...ordered.filter((item) => item.id !== dragged),
-					...ordered.filter((item) => item.id === dragged),
-				];
 	});
 
 	/** `y` and `scale` of the source, as a box: translating up is `bottom`, scaling about the bottom centre is insets and height. */
@@ -337,6 +325,7 @@ export function QueuedStack(props: {
 														lineHeight: 10,
 														fontWeight: weight.semibold,
 														color: color.mutedForeground,
+														fontVariantNumeric: "tabular-nums",
 													}}
 												>
 													{String(count())}
@@ -354,10 +343,11 @@ export function QueuedStack(props: {
 							</Tooltip>
 						</div>
 						<AnimatePresence initial={false}>
-							<For each={paintOrder()}>
-								{(item) => (
+							<For each={props.queue}>
+								{(item, index) => (
 									<QueueCard
 										item={item}
+										index={index}
 										target={() => target(item)}
 										entering={() => ({
 											opacity: 0,
@@ -394,6 +384,7 @@ export function QueuedStack(props: {
 
 function QueueCard(props: {
 	item: QueuedMessage;
+	index: () => number;
 	target: () => {
 		opacity: number;
 		bottom: number;
@@ -418,7 +409,7 @@ function QueueCard(props: {
 	dragging: () => boolean;
 	expanded: () => boolean;
 	onPress: (event: HostMouseEvent) => void;
-	onDragMove: (event: EventPayload) => void;
+	onDragMove: (event: HostMouseMoveEvent) => void;
 	onRelease: () => void;
 	onEdit: () => void;
 	onRemove: () => void;
@@ -452,6 +443,7 @@ function QueueCard(props: {
 			}}
 			style={{
 				position: "absolute",
+				zIndex: props.dragging() ? 200 : 100 - props.index(),
 				display: "flex",
 				flexDirection: "row",
 				alignItems: "center",
@@ -460,9 +452,7 @@ function QueueCard(props: {
 				paddingRight: 6,
 				overflow: "hidden",
 				borderRadius: shape.bg,
-				borderWidth: 1,
-				borderColor: color.popupBorder,
-				boxShadow: shadow3(),
+				boxShadow: shadow(3),
 				backgroundColor: color.queuedCard,
 				userSelect: "none",
 				cursor: props.expanded() ? "grab" : "default",
@@ -483,7 +473,7 @@ function QueueCard(props: {
 				onMouseMove={props.onDragMove}
 				onMouseUp={props.onRelease}
 				onLostPointerCapture={props.onRelease}
-				onClick={(event: EventPayload) => {
+				onClick={(event: HostPointerEvent) => {
 					if (event.clickCount === 2) props.onEdit();
 				}}
 				style={{
@@ -520,7 +510,13 @@ function QueueCard(props: {
 									backgroundColor: color.hover,
 								}}
 							>
-								<text style={{ ...scale.micro, color: color.foreground }}>
+								<text
+									style={{
+										...scale.micro,
+										color: color.foreground,
+										fontVariantNumeric: "tabular-nums",
+									}}
+								>
 									{`+${files().length - 3}`}
 								</text>
 							</div>

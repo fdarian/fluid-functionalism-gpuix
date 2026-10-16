@@ -37,16 +37,6 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`. Same drift as [sidebar.md, "Collapse, reopen trigger, `[` toast, persistence"](sidebar.md#collapse-reopen-trigger--toast-persistence), where the entry lives.
 
-## Page navigation is deferred a microtask
-
-- **Cause:** `gpuix gap`.
-- **Original:** n/a; the browser has no such rule for a route change.
-- **Port:** `navigate` runs `setPage` in `queueMicrotask` (`src/app.tsx:403-404`), so a sidebar click, a menu pick, a hero arrow and an in-page link all change the page one microtask after the handler returns.
-- **gpuix lacks:** renderer calls inside a key or press handler that native dispatched synchronously: a page that mounts a motion value there throws "This renderer call cannot run inside an event handler that native called synchronously" (`~/code/fdarian/gpuix/AGENTS.md:127-129`, `packages/native/src/test_renderer.rs:104-108`). Surfaces and Audio Mixer threw before the deferral.
-- **Workaround:** the microtask.
-- **Fidelity:** exact to the eye.
-- **Components it hits:** every page change; `drift/compare.md` "A slide change runs in a microtask" is the same rule for the slides.
-
 ## Arrow keys do not step through the pages
 
 - **Cause:** `not ported yet`.
@@ -111,11 +101,11 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** dropped (Code tab, inline fallback); approximated (frame, shuffle glyph).
 - **Components it hits:** the ten above; `drift/<component>.md` lists each playground's own differences.
 
-## Customise card: collapse and sticky column
+## Customise card: no collapse
 
 - **Cause:** `not ported yet`.
 - **Original:** the panel is a 256px sticky column with a 16px right margin whose width, margin and opacity spring to 0 when `]` is pressed (toast "Properties panel expanded / collapsed"); a fixed top-right ghost button with the tooltip "Expand properties panel" `]` brings it back; the content scrolls in a `ScrollArea` with a scroll fade at `100svh - 2rem`; the card is `rounded-lg p-4 bg-muted` and hidden on the 404 page and on the full-screen routes (`app/components/right-panel.tsx:285-428`, `app/components/sidebar-layout.tsx:111-115, 184`).
-- **Port:** a fixed 296px column with 16px padding, so a 264px card, in the port's `ScrollArea` with a fade; the playground rail sits under the card in the same scroller. Always visible on a docs page, hidden on a "full" page, no collapse and no key (`src/app.tsx:484-500`). The card is radius 12 on `surface2` with a 16px padding and 12px gap (`src/app.tsx:296-307`); the source's `rounded-lg` is 8px on `bg-muted`.
+- **Port:** a 296px column with 16px padding, so a 264px card, in the port's `ScrollArea` with a fade, `position: sticky; top: 0` beside the page column inside the page scroller as the source's is, at the scroller's own height (measured with `onLayout`: gpuix has no `100svh`, and the source's `top-4` and `max-h` are the column's padding here); the playground rail sits under the card in the same scroller. Always visible on a docs page, hidden on a "full" page, no collapse and no key (`src/app.tsx:451-531`). The card is radius 12 on `surface2` with a 16px padding and 12px gap (`src/app.tsx:296-307`); the source's `rounded-lg` is 8px on `bg-muted`.
 - **Workaround:** none.
 - **Fidelity:** approximated (card), dropped (collapse).
 - **Components it hits:** just the shell.
@@ -167,11 +157,12 @@ One entry per place the port looks or behaves differently from the source, whate
 
 ## Theme change is not cross-faded
 
-- **Cause:** `not ported yet`.
-- **Original:** `ThemeProvider` adds `.transitioning` around the class swap, so border-radius, background, colour, border, fill and stroke ease over 180ms; the first apply is skipped (`registry/default/lib/theme-context.tsx:40-67`, `app/globals.css:856-866`).
-- **Port:** `themeChoice` flips the palette signal and every `color.*` getter re-reads (`src/lib/theme.ts:199-253`); no colour transition is declared on the frame, panels or text (`src/app.tsx` and `src/lib/app-frame.tsx` declare none). Gpuix has colour transitions (`colorFade`, `src/lib/theme.ts:451-455`, README "gpuix gaps" preface), so nothing stops it. Not checked live.
+- **Cause:** `gpuix gap`. The source puts one rule on every element; gpuix has no stylesheet or universal selector to put it on, only a `transition` per element.
+- **Original:** `ThemeProvider` adds `.transitioning` around the class swap, and `html.transitioning *` eases border-radius, background, colour, border, fill and stroke over 180ms ease-in-out on every element; the first apply is skipped (`registry/default/lib/theme-context.tsx:40-67`, `app/globals.css:856-866`).
+- **Port:** `themeChoice` flips the palette signal and every `color.*` getter re-reads (`src/lib/theme.ts:199-253`). Components that declare a `transition` (mostly 80ms) ease the swap; the chrome, panel, headings, cards, sidebar and undeclared text cut at once. A 180ms fade on only the chrome and panel was tried and removed: with the text and cards still cutting, mid-swap shows new-theme text on a part-way background.
+- **gpuix lacks:** a global transition rule (an inherited or universal `transition`).
 - **Workaround:** none.
-- **Fidelity:** dropped (the swap is a hard cut).
+- **Fidelity:** approximated (declared component fades only, the rest cuts).
 - **Components it hits:** every page.
 
 ## Theme and settings are not persisted
@@ -202,14 +193,15 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** approximated.
 - **Components it hits:** every component and page heading.
 
-## Reduced motion is not honoured
+## Reduced motion reaches different properties than the source's
 
-- **Cause:** `not ported yet` (`MotionConfig reducedMotion="user"` exists in the fork, `~/code/fdarian/gpuix/FORK.md:831-832`; `grep MotionConfig src` finds only prose on the Motion and Fluid Hover pages).
-- **Original:** `<MotionConfig reducedMotion="user">` wraps the app, so transform, scale, position and layout animations drop while opacity and colour fades stay (`app/layout.tsx:73-77`).
-- **Port:** every spring plays regardless of the OS setting. The one exception is the Skill page's looping examples, which pause under `createReducedMotion()` (`src/pages/skill/playback.tsx:45, 92`).
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every animated component.
+- **Cause:** `gpuix gap`.
+- **Original:** `<MotionConfig reducedMotion="user">` wraps the app and drops transform and layout animations (`app/layout.tsx:73-77`). A `width` / `height` / `top` / `left` animation is not reduced unless the component reads `useReducedMotion()` itself (`motion-guidelines.md:270-286` lists the tabs hover pill, the selected backgrounds and the focus rings as stragglers), and `animate()` on a motion value ignores the config.
+- **Port:** `App` wraps the tree in `<MotionConfig reducedMotion="user">` (`src/app.tsx:423`). gpuix reduces every `motion.*` position and size property (`width`, `height`, min/max, insets, margins, paddings, `gap`, `flexBasis`), and nothing else: opacity, colours, shadows and SVG geometry (`CheckMark`'s `pathLength`, `Icon`'s `easeStroke`) keep animating. The port has no transforms, so the source's `x` / `y` / `scale` travel is already one of those properties; but a source `animate` on a layout property that is not gated (the tabs pill, the sidebar sub-menu and thinking-steps collapses, the input-message collapse) glides there and jumps here. A motion value bound to a plain `div` (the slider's thumb and fill) keeps springing, as in the source. The source's own gates in `right-panel`, `sidebar-layout`, `playground-menu` and `not-found` have no counterpart: those pieces are not ported.
+- **gpuix lacks:** a choice of which properties a config reduces, so a layout animation the source leaves moving cannot be left moving without a nested `<MotionConfig reducedMotion="never">` per site (`~/code/fdarian/gpuix/README.md:1953-1975`).
+- **Workaround:** none; the port reduces more than the source.
+- **Fidelity:** approximated (jumps where the source glides).
+- **Components it hits:** tabs, tabs-subtle, sidebar, thinking-steps, input-message, scroll-area.
 
 ## Page scroller and base styles
 
@@ -279,7 +271,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (the toast, the arrow keys); `port choice` (the install flavour: the port has no Primitive row).
 - **Original:** the Actions group offers "Copy install command" on a component page (writes `npx shadcn@latest add <url>` with the flavour the Primitive row picked, then toasts "Install command copied"), "Previous page" and "Next page" (shortcut caps `←` / `→`, which the sidebar layout's arrow keys honour), and "Open on GitHub" (`app/components/site-command-menu.tsx:299-360`, `lib/base-context.tsx:76-84`).
-- **Port:** the same four rows, with the same descriptions, keywords and order (`src/lib/site-command-menu.tsx:158-207`, tab `:25-30`). The copy writes the Base UI URL always (`src/lib/install-url.ts:1-39`) and shows no toast (the port has no toast component). The `←` / `→` caps are drawn but nothing binds the keys (see "Arrow keys do not step through the pages"). "Open on GitHub" hands the URL to the OS (`src/lib/platform.ts:3-5`).
+- **Port:** the same four rows, with the same descriptions, keywords and order (`src/lib/site-command-menu.tsx:158-207`, tab `:25-30`). The copy writes the Base UI URL always (`src/lib/install-url.ts:1-39`) and shows no toast (the port has no toast component); a refused write logs, the source swallows it. The `←` / `→` caps are drawn but nothing binds the keys (see "Arrow keys do not step through the pages"). "Open on GitHub" hands the URL to the OS (`src/lib/platform.ts:3-5`).
 - **Workaround:** none.
 - **Fidelity:** approximated (no confirmation after a copy; caps that promise keys that do nothing).
 - **Components it hits:** just the site menu.
@@ -288,7 +280,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (`/demo`).
 - **Original:** the hero's buttons are a "Copy install prompt" button that copies the starter prompt with the visitor's settings, "Learn more" to `/docs` and "See demo" to `/demo` (`app/page.tsx:12-62`, `app/components/starter-install.tsx`).
-- **Port:** "Copy install prompt" writes the source's starter prompt for the port's settings (Base UI, rounded, default size, Lucide icons, the current theme; `src/lib/starter-prompt.ts`) and its icon turns into a check for 2 s, without the crossfade (`src/app.tsx`, `Hero`). "Learn more" opens the Introduction page, the port's `/docs`. "See demo" goes to `/demo`, which is not ported, so it opens fluidfunctionalism.com/demo in the default browser through `open` / `xdg-open` (`src/lib/open-url.ts`; gpuix has no link opener); it is the one control that leaves the app. The bento grid and the prev / next arrows are ported (`src/home/`; differences in `drift/home.md`).
+- **Port:** "Copy install prompt" writes the source's starter prompt for the port's settings (Base UI, rounded, default size, Lucide icons, the current theme; `src/lib/starter-prompt.ts`) and its icon turns into a check for 2 s, without the crossfade; a refused write logs and leaves the icon alone, as the source's `CopyPromptButton` does (`src/app.tsx`, `Hero`). "Learn more" opens the Introduction page, the port's `/docs`. "See demo" goes to `/demo`, which is not ported, so it opens fluidfunctionalism.com/demo in the default browser through `open` / `xdg-open` (`src/lib/open-url.ts`; gpuix has no link opener); it is the one control that leaves the app. The bento grid and the prev / next arrows are ported (`src/home/`; differences in `drift/home.md`).
 - **Workaround:** none.
 - **Fidelity:** exact for Copy install prompt and Learn more; approximated for See demo (the browser, not an in-app page).
 - **Components it hits:** just the home page.

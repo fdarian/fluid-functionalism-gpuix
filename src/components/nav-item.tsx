@@ -1,6 +1,6 @@
 import {
 	buttonProps,
-	type EventPayload,
+	type DomEvent,
 	type HostElement,
 	type KeyEvent,
 	useGpuixRequired,
@@ -115,23 +115,21 @@ export function NavItem(props: {
 			role="link"
 			aria-current={isActiveRoute() ? "page" : undefined}
 			testId={props.testId}
-			onFocus={(event: EventPayload) => {
+			onFocus={(event: DomEvent) => {
 				scope.focusRing.focus(props.index, event);
 				scope.hover.setActiveIndex(props.index);
 			}}
-			onBlur={() => {
+			onBlur={(event: DomEvent) => {
 				scope.focusRing.blur(props.index);
 				// Focus moving to a sibling item stays inside the menu: only a real exit drops the highlight.
-				queueMicrotask(() => {
-					const focused = renderer.getFocusedElementId?.();
-					for (const item of scope.elements.values()) {
-						if (item.id === focused) return;
-					}
-					if (!scope.mouseInside()) scope.hover.setActiveIndex(null);
-				});
+				for (const item of scope.elements.values()) {
+					if (item === event.relatedTarget) return;
+				}
+				if (!scope.mouseInside()) scope.hover.setActiveIndex(null);
 			}}
 			style={{
 				position: "relative",
+				zIndex: 10,
 				display: "flex",
 				flexDirection: "row",
 				alignItems: "center",
@@ -151,6 +149,8 @@ export function NavItem(props: {
 						name={icon()}
 						size={metrics().icon}
 						strokeWidth={lit() ? 2 : 1.5}
+						easeStroke
+						fade
 						color={lit() ? color.foreground : color.mutedForeground}
 					/>
 				)}
@@ -160,6 +160,7 @@ export function NavItem(props: {
 				heavy={isActiveRoute()}
 				color={lit() ? color.foreground : color.mutedForeground}
 				textStyle={metrics().text}
+				fade
 				grow={dot() === undefined}
 				truncate
 			/>

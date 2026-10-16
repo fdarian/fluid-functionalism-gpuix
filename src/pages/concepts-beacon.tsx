@@ -35,9 +35,8 @@ import { ThinkingIndicator } from "../components/thinking-indicator";
 import type { ShotContext } from "../lib/demo";
 import { MONO } from "../lib/doc-page";
 import { Icon } from "../lib/icon";
-import { color, shape, siteType, sizeChoice, weight } from "../lib/theme";
+import { color, shadow, shape, siteType, sizeChoice, weight } from "../lib/theme";
 import { ConceptFrame } from "./concepts/frame";
-import { shadowSurface } from "./surfaces/elevated";
 
 export const title = "Beacon";
 export const group = "Pages";
@@ -62,9 +61,9 @@ export async function scenarios(shot: ShotContext) {
 	shot.expectText("ENG-131", true);
 	shot.expectText("ENG-128", false);
 	shot.capture("search");
-	await shot.press("backspace backspace");
+	await shot.press("Backspace Backspace");
 	await shot.focus("beacon-priority-trigger");
-	await shot.press("enter down down enter");
+	await shot.press("Enter ArrowDown ArrowDown Enter");
 	shot.expectText("ENG-131", true);
 	shot.expectText("ENG-124", false);
 	shot.capture("priority");
@@ -469,7 +468,7 @@ function BoardCard(props: { issue: Issue }) {
 				padding: 12,
 				borderRadius: shape.container,
 				backgroundColor: color.surface2,
-				boxShadow: shadowSurface(2),
+				boxShadow: shadow(2),
 			}}
 		>
 			<text style={{ ...siteType.body, color: color.foreground }}>
@@ -595,7 +594,7 @@ function TriagePanel(props: {
 				padding: 16,
 				borderRadius: shape.container + 4,
 				backgroundColor: color.surface2,
-				boxShadow: shadowSurface(2),
+				boxShadow: shadow(2),
 			}}
 		>
 			<div

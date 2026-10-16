@@ -98,7 +98,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("open");
 	await shot.hover("drawer-row-Team");
 	shot.capture("row-hover");
-	await shot.press("escape");
+	await shot.press("Escape");
 	shot.expectText("Navigation", false);
 	shot.capture("closed");
 
@@ -119,14 +119,14 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	// Focus moves into the drawer once it has settled, onto its first tab stop (the rows are not tab stops yet): Enter presses Done.
 	await shot.click("drawer-open");
 	await shot.settle(800);
-	await shot.press("enter");
+	await shot.press("Enter");
 	shot.expectText("Navigation", false);
 
 	setThemeChoice("light");
 	await shot.settle(300);
 	await shot.click("drawer-open");
 	shot.capture("open-light");
-	await shot.press("escape");
+	await shot.press("Escape");
 	setThemeChoice("dark");
 	await shot.settle(300);
 };

@@ -8,14 +8,6 @@ One entry per place the port looks or behaves differently from the source, whate
 (transforms, intrinsic width, variable fonts) get a one-line entry here that links to the README row instead of
 repeating it.
 
-## Fill, ring and icon colour change instantly
-
-- **Cause:** `not ported yet`.
-- **Original:** the field box has `transition-all duration-80` (`input-group.tsx:239`), so the fill and ring colours ease; the icon has `transition-[color,stroke-width] duration-80` (`:251`).
-- **Port:** `fill()` switches the layer's `backgroundColor` and `outlineColor` at once (`input-group.tsx:122-132,188-202`), and `Icon` is used without its `fade` prop (`:205-211`, `lib/icon.tsx:11`). The fork animates colours, `backgroundColor` and `outlineColor` included (`~/code/fdarian/gpuix/FORK.md:814-815`).
-- **Fidelity:** approximated (the 80 ms fade is dropped). The stroke 1.5 to 2 is instant by design: README "icon stroke 1.5 to 2 on hover".
-- **Components it hits:** input-copy, input-message.
-
 ## A press on the field's padding or label focuses on release
 
 - **Cause:** `not ported yet`.

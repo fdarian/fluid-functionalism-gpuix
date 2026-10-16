@@ -18,8 +18,7 @@ const LIST_DESCRIPTION =
 export const menuKeywords = ["motion", ...LIST_DESCRIPTION.split(/\W+/)];
 
 export async function scenarios(shot: ShotContext) {
-	// The wheel keeps GPUI's sign: negative scrolls down.
-	await shot.scroll(600, 400, 0, -420);
+	await shot.scroll(600, 400, 0, 420);
 	shot.capture("tokens");
 	await shot.click("spring-token-moderate");
 	shot.capture("tokens-at-end");
@@ -28,7 +27,7 @@ export async function scenarios(shot: ShotContext) {
 	shot.capture("tokens-code");
 	await shot.click("spring-tokens-preview-tab");
 
-	await shot.scroll(600, 400, 0, -560);
+	await shot.scroll(600, 400, 0, 560);
 	shot.capture("modal-exit");
 	await shot.click("modal-same-toggle");
 	await shot.click("modal-faster-toggle");
@@ -37,13 +36,13 @@ export async function scenarios(shot: ShotContext) {
 	await shot.click("modal-faster-toggle");
 	shot.capture("modals-closed");
 
-	await shot.scroll(600, 400, 0, -900);
+	await shot.scroll(600, 400, 0, 900);
 	shot.capture("reference");
 	await shot.hover("chip-dropdown");
 	shot.capture("reference-chip-hover");
 	await shot.click("reference-moderate");
 	shot.capture("reference-played");
-	await shot.scroll(600, 400, 0, -2000);
+	await shot.scroll(600, 400, 0, 2000);
 	shot.capture("reduced-motion");
 }
 

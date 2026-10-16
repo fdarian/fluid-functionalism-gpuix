@@ -41,12 +41,11 @@ export const menuKeywords = [
 ];
 
 export async function scenarios(shot: ShotContext) {
-	// The wheel keeps GPUI's sign: negative scrolls down.
 	const scrollTo = async (testId: string) => {
 		for (let tick = 0; tick < 40; tick++) {
 			const centre = shot.centerOf(testId);
 			if (centre.y < 460) return;
-			await shot.scroll(600, 400, 0, -300);
+			await shot.scroll(600, 400, 0, 300);
 		}
 		throw new Error(`${testId} never scrolled into view`);
 	};

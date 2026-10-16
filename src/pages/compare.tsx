@@ -69,7 +69,7 @@ export async function scenarios(shot: ShotContext) {
 	shot.capture("checkbox-group");
 
 	// Arrows step the slides while no widget holds focus; the checkbox rows are not among them.
-	await shot.press("right");
+	await shot.press("ArrowRight");
 	await shot.click("sc-accordion-item-3");
 	await shot.click("fl-accordion-item-3");
 	await shot.settle(500);
@@ -238,8 +238,7 @@ export function Page(): JSX.Element {
 	const goTo = (next: number) => {
 		if (next < 0 || next >= SLIDES.length) return;
 		target = next;
-		// The slider creates motion values as it mounts, which gpuix refuses inside a key or press handler.
-		queueMicrotask(() => setIndex(next));
+		setIndex(next);
 	};
 	// A slide that unmounts with focus inside never reports the blur.
 	createEffect(on(index, () => setCapturing(0), { defer: true }));

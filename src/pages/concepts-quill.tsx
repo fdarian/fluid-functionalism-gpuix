@@ -33,9 +33,8 @@ import {
 import type { ShotContext } from "../lib/demo";
 import { Icon } from "../lib/icon";
 import type { IconName } from "../lib/icons";
-import { color, siteType, weight } from "../lib/theme";
+import { color, shadow, siteType, weight } from "../lib/theme";
 import { ConceptFrame } from "./concepts/frame";
-import { shadowSurface } from "./surfaces/elevated";
 
 export const title = "Quill";
 export const group = "Pages";
@@ -50,27 +49,27 @@ const BOLD = 700;
 export async function scenarios(shot: ShotContext) {
 	shot.capture("document");
 	await shot.focus("quill-add-block");
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.settle(300);
 	shot.capture("add-block-menu");
-	await shot.press("down down");
+	await shot.press("ArrowDown ArrowDown");
 	shot.capture("add-block-menu-keyboard");
-	await shot.press("escape");
+	await shot.press("Escape");
 	await shot.click("quill-tab-1");
 	shot.capture("comments");
 	await shot.click("quill-tab-2");
 	shot.capture("activity");
 	await shot.click("quill-tab-0");
-	await shot.scroll(580, 400, 0, -2000);
+	await shot.scroll(580, 400, 0, 2000);
 	await shot.click("input-message-textarea");
 	await shot.press("p l a n");
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.settle(300);
-	await shot.scroll(580, 400, 0, -2000);
+	await shot.scroll(580, 400, 0, 2000);
 	shot.expectText("Drafting with Quill AI", true);
 	shot.capture("drafting");
 	await shot.settle(DRAFTING_MS + 600);
-	await shot.scroll(580, 400, 0, -2000);
+	await shot.scroll(580, 400, 0, 2000);
 	shot.expectText("Draft — plan", true);
 	shot.capture("drafted");
 }
@@ -214,7 +213,7 @@ function SurfaceCard(props: {
 				padding: props.padding,
 				borderRadius: 12,
 				backgroundColor: color.surface2,
-				boxShadow: shadowSurface(2),
+				boxShadow: shadow(2),
 			}}
 		>
 			{props.children}
@@ -435,7 +434,9 @@ function DocumentBody() {
 										</Badge>
 									</div>
 								</TableCell>
-								<TableCell width={110}>{initiative.target}</TableCell>
+								<TableCell width={110} tabularNums>
+									{initiative.target}
+								</TableCell>
 							</TableRow>
 						)}
 					</For>

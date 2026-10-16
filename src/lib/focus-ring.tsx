@@ -1,4 +1,4 @@
-import { type EventPayload, motion } from "@gpuix/solid";
+import { type DomEvent, motion } from "@gpuix/solid";
 import { createComputed, createSignal, Show } from "solid-js";
 import type { FluidHover, ItemRect } from "./fluid-hover";
 import { createPresence } from "./presence";
@@ -26,7 +26,7 @@ export function createFocusRing(hover: FluidHover) {
 			if (current === null || !hover.isMeasured()) return null;
 			return hover.rects()[current] ?? null;
 		},
-		focus(row: number, event: EventPayload) {
+		focus(row: number, event: DomEvent) {
 			if (event.focusVisible === undefined) {
 				throw new Error("A focus event carries no focusVisible");
 			}
@@ -53,8 +53,8 @@ export interface FocusRingSource {
  * after the last row loses focus, so a blur followed at once by the next
  * row's focus is a glide, not a fade and reappearance.
  *
- * Place it after the list's fills: gpuix has no zIndex, so it paints over
- * whatever comes before it and under whatever follows.
+ * It is `z-20` as in the source, above the rows' `z-10`, wherever it sits
+ * among them.
  */
 export function FocusRing(props: {
 	ring: FocusRingSource;
@@ -97,6 +97,7 @@ export function FocusRing(props: {
 					}
 					style={{
 						position: "absolute",
+						zIndex: 20,
 						borderRadius: props.radius,
 						borderWidth: 1,
 						borderColor: color.focusRing,

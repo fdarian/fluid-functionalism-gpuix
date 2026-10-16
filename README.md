@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 670 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 602 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 | | |
@@ -97,7 +97,7 @@ window), `listed` (`"sidebar"`, `"menu"` for the site menu only, or `"none"`), `
 | `fonts.ts`, `app-frame.tsx` | The static Inter files passed to `render()` and the test renderer; the window frame (chrome-coloured bar, rounded page panel). |
 | `press.ts`, `icons.ts`, `icon.tsx` | The press-shrink shadow; lucide glyphs as SVG strings (`defineIcon` for a component's own). |
 | `site-command-menu.tsx`, `install-url.ts`, `platform.ts` | The site menu (a `CommandMenuDialog` of pages, theme, Recent and actions) and the window-wide Mod+K that toggles it, through gpuix's `window` event target; the registry URL the copy action writes; `IS_MAC` and `openUrl`. |
-| `demo.ts`, `demo-kit.tsx`, `page-nav.ts` | The demo and page contracts, the card every demo page is made of, and `navigate` / `current` for pages (deferred a microtask, see `drift/site.md`). |
+| `demo.ts`, `demo-kit.tsx`, `page-nav.ts` | The demo and page contracts, the card every demo page is made of, and `navigate` / `current` for pages. |
 | `doc-page.tsx`, `playground.tsx` | The docs chrome (`DocPage`, `DocSection`, `ComponentPreview`, `Code`) and the playground scaffolding (`PlaygroundLayout`, `PlaygroundPanel`, the control rows, the right-rail slot). |
 | `icons.ts`, `icons/` | The Icons row: one glyph table per library, `iconSource` reads the picked one. |
 </details>
@@ -116,53 +116,53 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 
 | Component or page | gpuix gap | port choice | not ported yet | mixed | total |
 |---|---:|---:|---:|---:|---:|
-| [accordion](drift/accordion.md) | 3 | 9 | 9 | 0 | 21 |
-| [ask-user-questions](drift/ask-user-questions.md) | 2 | 5 | 9 | 3 | 19 |
+| [accordion](drift/accordion.md) | 3 | 9 | 7 | 0 | 19 |
+| [ask-user-questions](drift/ask-user-questions.md) | 2 | 5 | 7 | 3 | 17 |
 | [audio-mixer](drift/audio-mixer.md) | 0 | 2 | 0 | 1 | 3 |
 | [badge](drift/badge.md) | 1 | 3 | 0 | 0 | 4 |
-| [banner](drift/banner.md) | 3 | 4 | 10 | 0 | 17 |
-| [button](drift/button.md) | 4 | 4 | 3 | 1 | 12 |
-| [card](drift/card.md) | 6 | 8 | 10 | 0 | 24 |
-| [carousel-dots](drift/carousel-dots.md) | 2 | 3 | 3 | 1 | 9 |
-| [chat-message](drift/chat-message.md) | 2 | 3 | 4 | 2 | 11 |
-| [checkbox-group](drift/checkbox-group.md) | 3 | 0 | 6 | 1 | 10 |
-| [color-picker](drift/color-picker.md) | 4 | 6 | 20 | 1 | 31 |
-| [combobox](drift/combobox.md) | 7 | 13 | 8 | 1 | 29 |
-| [command-menu](drift/command-menu.md) | 8 | 2 | 15 | 1 | 26 |
-| [compare](drift/compare.md) | 6 | 9 | 0 | 2 | 17 |
-| [concepts](drift/concepts.md) | 4 | 26 | 2 | 2 | 34 |
-| [dialog](drift/dialog.md) | 8 | 2 | 3 | 1 | 14 |
-| [dropdown](drift/dropdown.md) | 8 | 4 | 13 | 1 | 26 |
+| [banner](drift/banner.md) | 3 | 4 | 7 | 0 | 14 |
+| [button](drift/button.md) | 4 | 4 | 2 | 1 | 11 |
+| [card](drift/card.md) | 5 | 7 | 7 | 0 | 19 |
+| [carousel-dots](drift/carousel-dots.md) | 2 | 3 | 2 | 1 | 8 |
+| [chat-message](drift/chat-message.md) | 2 | 3 | 2 | 3 | 10 |
+| [checkbox-group](drift/checkbox-group.md) | 3 | 0 | 4 | 1 | 8 |
+| [color-picker](drift/color-picker.md) | 3 | 6 | 15 | 1 | 25 |
+| [combobox](drift/combobox.md) | 7 | 13 | 5 | 1 | 26 |
+| [command-menu](drift/command-menu.md) | 7 | 2 | 12 | 1 | 22 |
+| [compare](drift/compare.md) | 4 | 9 | 0 | 2 | 15 |
+| [concepts](drift/concepts.md) | 4 | 27 | 2 | 1 | 34 |
+| [dialog](drift/dialog.md) | 6 | 2 | 2 | 1 | 11 |
+| [dropdown](drift/dropdown.md) | 7 | 4 | 10 | 2 | 23 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
-| [fluid-hover](drift/fluid-hover.md) | 3 | 4 | 2 | 4 | 13 |
+| [fluid-hover](drift/fluid-hover.md) | 4 | 5 | 2 | 2 | 13 |
 | [home](drift/home.md) | 1 | 1 | 1 | 2 | 5 |
-| [input-copy](drift/input-copy.md) | 2 | 3 | 8 | 0 | 13 |
-| [input-group](drift/input-group.md) | 1 | 1 | 4 | 1 | 7 |
-| [input-message](drift/input-message.md) | 4 | 1 | 15 | 3 | 23 |
+| [input-copy](drift/input-copy.md) | 3 | 4 | 6 | 0 | 13 |
+| [input-group](drift/input-group.md) | 1 | 1 | 3 | 1 | 6 |
+| [input-message](drift/input-message.md) | 4 | 0 | 14 | 3 | 21 |
 | [introduction](drift/introduction.md) | 1 | 4 | 2 | 1 | 8 |
-| [mobile-drawer](drift/mobile-drawer.md) | 4 | 2 | 2 | 0 | 8 |
-| [motion-page](drift/motion-page.md) | 4 | 3 | 2 | 3 | 12 |
-| [nav-menu](drift/nav-menu.md) | 0 | 5 | 1 | 1 | 7 |
-| [queued-stack](drift/queued-stack.md) | 4 | 2 | 5 | 1 | 12 |
-| [radio-group](drift/radio-group.md) | 4 | 2 | 5 | 0 | 11 |
-| [scroll-area](drift/scroll-area.md) | 3 | 6 | 2 | 1 | 12 |
+| [mobile-drawer](drift/mobile-drawer.md) | 3 | 2 | 1 | 0 | 6 |
+| [motion-page](drift/motion-page.md) | 4 | 3 | 1 | 3 | 11 |
+| [nav-menu](drift/nav-menu.md) | 1 | 5 | 1 | 0 | 7 |
+| [queued-stack](drift/queued-stack.md) | 4 | 2 | 3 | 1 | 10 |
+| [radio-group](drift/radio-group.md) | 4 | 2 | 3 | 0 | 9 |
+| [scroll-area](drift/scroll-area.md) | 3 | 6 | 1 | 1 | 11 |
 | [scrollbars-page](drift/scrollbars-page.md) | 1 | 4 | 2 | 1 | 8 |
-| [select](drift/select.md) | 9 | 3 | 8 | 2 | 22 |
-| [sidebar](drift/sidebar.md) | 1 | 6 | 25 | 1 | 33 |
-| [site](drift/site.md) | 5 | 6 | 22 | 6 | 39 |
+| [select](drift/select.md) | 7 | 3 | 5 | 2 | 17 |
+| [sidebar](drift/sidebar.md) | 1 | 7 | 22 | 1 | 31 |
+| [site](drift/site.md) | 6 | 6 | 20 | 6 | 38 |
 | [sizes-page](drift/sizes-page.md) | 0 | 5 | 2 | 4 | 11 |
 | [skill-page](drift/skill-page.md) | 3 | 5 | 0 | 1 | 9 |
-| [slider](drift/slider.md) | 5 | 3 | 4 | 2 | 14 |
+| [slider](drift/slider.md) | 5 | 3 | 2 | 1 | 11 |
 | [surfaces](drift/surfaces.md) | 1 | 3 | 4 | 4 | 12 |
-| [switch](drift/switch.md) | 2 | 1 | 4 | 1 | 8 |
-| [table](drift/table.md) | 3 | 1 | 5 | 0 | 9 |
-| [tabs-subtle](drift/tabs-subtle.md) | 1 | 4 | 2 | 1 | 8 |
-| [tabs](drift/tabs.md) | 2 | 2 | 4 | 0 | 8 |
-| [thinking-indicator](drift/thinking-indicator.md) | 1 | 2 | 4 | 0 | 7 |
-| [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 7 | 1 | 15 |
+| [switch](drift/switch.md) | 2 | 1 | 2 | 1 | 6 |
+| [table](drift/table.md) | 3 | 1 | 3 | 0 | 7 |
+| [tabs-subtle](drift/tabs-subtle.md) | 2 | 4 | 2 | 0 | 8 |
+| [tabs](drift/tabs.md) | 2 | 2 | 2 | 0 | 6 |
+| [thinking-indicator](drift/thinking-indicator.md) | 1 | 2 | 3 | 0 | 6 |
+| [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
 | [tooltip](drift/tooltip.md) | 4 | 5 | 1 | 1 | 11 |
 | [typography](drift/typography.md) | 4 | 0 | 1 | 6 | 11 |
-| **Total** | **149** | **194** | **260** | **67** | **670** |
+| **Total** | **143** | **196** | **200** | **63** | **602** |
 
 ### gpuix gaps across components
 
@@ -175,25 +175,18 @@ offer it. A count is given only where the code shows it.
 
 | Used by | What | Workaround here |
 |---|---|---|
-| combobox, dropdown, select, tooltip (every popup on gpuix's `DismissableLayer`), and `returnFocusTo` in dropdown, select, color-picker | `VIEW_BUSY`: reading focus state (`getFocusedElementId`, `matches(":focus")`) inside a mousedown, mouseup, click or wheel handler throws on macOS and in the test renderer, because those run in synchronous dispatch. gpuix's own `DismissableLayer` does it too, see the next row. There is no `document.activeElement` | none yet |
-| every popup on gpuix's `DismissableLayer` (select, combobox, dropdown, color-picker, the customise card's selects), when a pointer press opens it, and the screenshots' light step (its click on the theme select throws) | Since gpuix `aae8c790` a press dispatches synchronously on macOS and in the test renderer. `DismissableLayer` reads `renderer.getFocusedElementId()` while it mounts (`packages/solid/src/components/floating.ts:80`), and a popup that a press handler opens mounts inside that dispatch, so the read throws `VIEW_BUSY` (`packages/native/src/events/sync_dispatch.rs:154`). Reproduced in the test renderer through `select.tsx`'s `onMouseDown` (`bun scripts/screenshots.tsx button`); not run in the live window. Windows and Linux queue the press, so the read is outside the dispatch there (not run) | none yet. `scripts/screenshots.tsx` fails at its final theme-switch step (a press on the theme select) for every demo, so the `light.png` files are stale; the scenario scripts open popups by keyboard (`scripts/check-popups.tsx`, `scripts/check-dropdown.tsx`) |
 | command-menu, and any list that keeps focus in a field while it is pressed | On Windows and Linux the press reaches JavaScript through a queue after native has already moved focus, so `preventDefault()` in `onMouseDown` or `onPointerDown` has no effect and a press on something not focusable still blurs the field (gpuix `README.md:3259-3266`). Seen in the command menu: clicking a tab blurs the field. macOS and the test renderer apply it | `preventDefault()` in `onMouseDown` on the list and the tab row (`drift/command-menu.md`); it works on macOS only. Not run on Windows or Linux |
-| slider | `MotionValue.animate` still throws inside a press, release or key handler ("This renderer call cannot run inside an event handler that native called synchronously"): it reads the value's current state from the renderer to start from. `set` and `jump` work there: the fork defers a motion-value write made there until the input returns (`renderer.rs:1389-1412`, FORK.md:361-363). Values derived in JS (`createTransform` of several values) still trail their inputs by one frame (FORK.md:915-917) | `createAnimateQueue` starts each `animate` in a microtask; `set` and `jump` are written directly (`drift/slider.md`) |
-| accordion, banner, button, card, carousel-dots, chat-message, input-copy, input-message, tabs, tabs-subtle, thinking-steps (all use `buttonProps`) | `buttonProps` handles keydown on the way up, so a `buttonProps` element nested in another is clicked twice on Enter: the inner one clicks itself and the outer one clicks the same target. The fix is to act only when `target === currentTarget` | none; nested cases are not counted |
-| dialog, mobile-drawer | `DialogBackdrop` closes on mousedown; the DOM and Base UI close on click | The app's own backdrop div closes on a click that presses and releases on it |
-| dialog, mobile-drawer | A reactive prop change on `DialogPopup` re-creates the popup and loses focus | `aria-labelledby` and `-describedby` are static ids |
-| scroll-area | A horizontal or both-axis scroller does not extend its scroll width for content that overflows through descendants (a block wrapper clamps to the viewport width) | The viewport is a flex row with `alignItems: "flex-start"` |
-| any nested scrollers (scroll-area, combobox, select, sidebar) | One large wheel event chains its remainder to the outer scroller in the same event; a browser latches the whole event to the first scroller | none |
+| slider | Values derived in JS (`createTransform` of several values) still trail their inputs by one frame (FORK.md:915-917) | none (`drift/slider.md`) |
+| accordion, banner, button, carousel-dots, chat-message, input-copy, input-message, tabs, tabs-subtle, thinking-steps (all use `buttonProps`) | `buttonProps` handles keydown on the way up, so a `buttonProps` element nested in another is clicked twice on Enter: the inner one clicks itself and the outer one clicks the same target. The fix is to act only when `target === currentTarget` | none; nested cases are not counted |
+| scroll-area | A horizontal or both-axis scroller has no `min-width: fit-content` content wrapper (gpuix rejects intrinsic width keywords). `scrollWidth` counts overflowing descendants now, but a block wrapper is clamped to the viewport width and its `onLayout` reports that, so the area has no content size to draw a horizontal thumb from | The viewport is a flex row with `alignItems: "flex-start"` and the content wrapper is `flexShrink: 0`, so the wrapper takes its content's width |
 | select, combobox | Enter in a form `<input>` with an empty `required` control does nothing; HTML implicit submission validates, sets `invalid` and moves focus. Only `requestSubmit()` validates | The demos submit through `requestSubmit()` |
 | dropdown submenus (audit rows 386, 721), tooltip | `window` and `document` mousemove listeners fire only when an element on the hit path has a mousemove listener, never over bare window background, so a safe polygon between trigger and popup cannot be tracked | A dwell timer for submenus (`SUBMENU_DWELL_MS`), a grace timer for the tooltip |
-| slider (Audio Mixer's `Volume: 78%` labels) | A trailing space at the end of a text run is not drawn: the label text `"Volume: "` renders as `Volume:` and the value touches it (`src/components/slider.tsx:346`, `:453-455`, visible in `screenshots/audio-mixer/initial.png`). Observed; not traced to gpuix's source | none |
 | any `<input>` with `textAlign: "right"` (the Button playground's Label field) | The style is accepted and does nothing in the test renderer (`drift/button.md`, "Playground: no Active switch, Label field not right-aligned"); unverified in a live window | none: left-aligned |
+| color-picker's value fields | `fontVariantNumeric` set in an `<input>`'s own style does nothing (measured: ten "1"s are the same width with `normal` and `tabular-nums`); set on a parent, the input inherits it | the property on the field's wrapper div (`src/components/color-picker.tsx`, `ColorInput`) |
+| dropdown search field | A sticky box with a negative margin is held at its parent's content box, not at the border box the margin puts it (`drift/dropdown.md`, "Search field is a child of the scroller"): a `marginTop: -4` child of a `padding: 4` parent sits 4px low until the scroller moves it. Measured on the test renderer | The field is the scroller's first child, ahead of the padded list |
 | tooltip and dialog demos | After a failed script run Bun aborts with `thread local panicked on drop` | none; the harness only |
-| screenshots, app-frame | The test renderer ignores the window options (titlebar, traffic lights), `setAppearance` changes nothing and `onAppearanceChange` never fires; `createAppearance` is the machine's | Captures pin the scheme with `setThemeChoice` and show no traffic lights |
-| screenshots | `simulateKeystrokes` takes GPUI key names (`down`, `tab`, `enter`), not DOM ones, and delivers a keydown only: `space` never gets its key-up or click | `shot.press` passes the names through; scenarios press Enter, which activates on keydown |
-| screenshots | `nativeSimulateScrollWheel` keeps GPUI's sign: negative `deltaY` scrolls down, where `onWheel` sees positive-down | Scenarios pass negative deltas |
-| screenshots | A mouse move without a held button is not delivered to an element that holds pointer capture; batched keystrokes deliver an input's `onChange` after the whole batch | `shot.moveHeld` sends the move with a button held; none for the batch |
-| not counted | `relatedTarget` and `target` on focus events are element ids (numbers), not elements | none |
+| screenshots, app-frame | The test renderer ignores the window options (titlebar, traffic lights) | Captures show no traffic lights |
+| screenshots | Batched keystrokes deliver an input's `onChange` after the whole batch | none |
 | screenshots | The accessibility dump flags an `aria-hidden` node as hidden but not its descendants, and `A11yTreeDump` lacks `frame` | `scripts/screenshots.tsx` reads `frame.tab_stop_count` through a cast |
 
 #### Missing features
@@ -201,6 +194,7 @@ offer it. A count is given only where the code shows it.
 | Used by | What | Workaround here |
 |---|---|---|
 | popups (select, combobox, dropdown, color-picker, dialog), tooltip, chevrons (accordion, card, color-picker, thinking-steps), scale-in entrances (banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack, radio-group), spinners (file-thumbnail) | CSS transforms: no scale, rotate or translate, so the popups' `scaleY: 0.96` entrance and every turn and pop is impossible (audit rows 525, 606). The tooltip has no scale in the source (`tooltip.tsx:282-291`); it only slides on x / y, which is a transform too | Popups and the tooltip slide from the reported side and fade; glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom` |
+| input-copy, doc-page, site-command-menu, app, skill copy example (`navigator.clipboard`) | gpuix installs `navigator.clipboard` at runtime but ships no TypeScript declaration for it, and Bun's types have none | `src/navigator.d.ts` declares it as gpuix's `clipboard` |
 | slider | `<input type="range">` (audit row 310) | A pointer-handled track and thumbs |
 | select, combobox (`FormValue`) | `<input type="hidden">` | A real input that is invisible, unreachable and `aria-hidden` |
 | accordion, ask-user-questions, input-message, sidebar, thinking-steps (`createMeasuredHeight`) | Motion on `width: auto`, and layout size morphs | The content box reports its size through `onLayout` and the outer box tweens to that number |
@@ -227,7 +221,7 @@ offer it. A count is given only where the code shows it.
 | fluid-hover, motion, scrollbars and sizes pages (every `Code` chip, the Scrollbars links) | Inline `<span>` boxes take no padding, margin, border radius, per-run `fontSize` or click events (`~/code/fdarian/gpuix/FORK.md:765-773`) | The chip's padding is no-break spaces around a Menlo run at the paragraph's size (`src/lib/doc-page.tsx:58-75`); links are underlined text that goes nowhere |
 | surfaces and fluid-hover pages (the annotation arrows) | `<svg>` has no `marker` (`FORK.md:762`) | The arrowhead is two extra strokes laid along the curve's end tangent |
 | concepts (Lumen's image swatches) | `<img>` takes `file://` and `blob:` URLs, not `data:` ones | A `linear-gradient` box instead of an SVG data URI |
-| button, home bento cards, compare | `box-shadow` paints under the whole border box with no knock-out, and one outer shadow per element: a translucent fill over it doubles up, and the source's stacked drops (`shadow-sm` to `shadow-lg`) keep one | An opaque fill over the shadow, or the shadow alone as the fill (`drift/button.md`, `drift/home.md`, `drift/compare.md`) |
+| button, home bento cards, compare | An outer `box-shadow` paints under the whole border box with no knock-out (only `inset` shadows are clipped to the element, `shaders.metal:600-654`): a translucent fill over it doubles up | An opaque fill over the shadow, or the shadow alone as the fill (`drift/button.md`, `drift/home.md`, `drift/compare.md`) |
 | skill page (the scripted-cursor examples) | Dispatching a synthetic pointer event, or setting `:hover`, on one element: the native simulate calls move the window's one pointer | The page calls the elements' `onMouseEnter` / `onMouseLeave` / `onMouseMove` props and `click()` directly (`drift/skill-page.md`, `src/pages/skill/scripted-pointer.ts`) |
 | site menu (`isModK`) | A physical key: gpuix derives `code` from GPUI's layout-dependent `key`, so a non-Latin letter reports `code` `""` (`packages/native/src/events/key_names.rs:9-12`, `:138-160`). On Windows and Linux, Ctrl plus a Cyrillic or Greek letter cannot match a shortcut through `code`, as the source's `matchesShortcut` does. macOS reports the layout's Cmd letter, so ⌘K works there | none; the sidebar's Search row opens the menu (`drift/site.md`). Not run on Windows or Linux |
 
@@ -247,16 +241,17 @@ Quirks of this repo's own code, kept apart from the gpuix gaps above.
 - **Escape.** `PopupSurface` joins gpuix's dismiss-layer stack while open, so Escape closes only the topmost popup,
   even inside a dialog.
 - **Dialog.** gpuix's `Dialog` unmounts the instant `open` goes false, so a local `mounted` signal keeps the
-  content through the fade; a trigger pressed during the fade is ignored. The backdrop is the app's own,
-  because gpuix's closes on mousedown.
+  content through the fade. A non-modal dialog keeps its scrim, as in the source: gpuix's portal sets `pointerEvents: "none"` on a non-modal layer, so the backdrop opts back in with `"auto"`, and an outside press, the trigger included, lands on it and closes the dialog without reaching the page.
 - **Screenshots run on the test renderer** (`scripts/screenshots.tsx`).
-  - Captures show no traffic lights or native titlebar, and pin the theme to Dark (`setThemeChoice`), because the
-    test renderer ignores the window options and its appearance is the machine's.
+  - Captures show no traffic lights or native titlebar, because the test renderer ignores the window options.
+  - The window is created with `appearance: "dark"` and the theme stays on System, so `initial.png` and every
+    scenario capture are dark through `createAppearance`; `light.png` switches the theme with the real select, which
+    calls `setAppearance("light")`. The script asserts `getAppearance()` for both and throws if the window disagrees.
   - `settle()` runs frames for real time, flushing the tree and draining native events each frame; a bare `flush()`
     never delivers `onMotionComplete`, so presence exits would never unmount. The first capture waits 800 ms.
   - Helpers read `getElementBounds` once per step to find an element's centre; nothing polls bounds. `shot.press`
-    takes GPUI key names and `shot.scroll` GPUI's sign (negative scrolls down). There is no double-click or
-    file-drop helper.
+    takes Playwright key names (`ArrowDown`, `Shift+Tab`) and `shot.scroll` the DOM's sign (positive scrolls down).
+    There is no double-click or file-drop helper.
   - `shot.aria`, `expectAria`, `idOf`, `hasAriaNode` and `tabStopCount` assert on the accessibility tree.
   - Captures are not byte-stable: the text caret, timing-driven demos (thinking steps, shimmer, spinner) and
     queue text vary run to run. Compare the content area with a pixel diff, not file hashes.
@@ -274,20 +269,21 @@ now does that the port has not picked up.
 | `group-hover:` (icon stroke, label colour) | `onMouseEnter` / `onMouseLeave` plus a signal | Exact, one JS round trip |
 | `focus-visible:ring-1` | `style.focusVisible` outline, offset 1 | Exact |
 | `ring-1 ring-border` | `outlineWidth` / `outlineColor`: outside the box, takes no layout | Exact |
-| `transition-colors duration-80`, `transition-[box-shadow]` | none then: state styles switched instantly, only `motion` animated. gpuix now animates colour and `boxShadow` and has CSS `transition` (FORK.md:814-818); not adopted yet | Dropped, now possible |
+| `transition-colors` (`duration-80`, or Tailwind's 150 ms), `transition-[box-shadow]` and the other lists | CSS `transition` on the element: `colorFade` (`src/lib/theme.ts`) is Tailwind's `transition-colors` list that gpuix animates (`color`, `background-color`, `border-color`, `outline-color`) over 80 ms on Tailwind's curve, `colorFadeDefault` the same over 150 ms, `colorFadeNoRing(ms)` the list without `outline-color` for a box-shadow focus ring, `springFade([...])` an 80 ms colour or outline fade on a curve fitted to `spring.fast` where the source animates it with a spring, and `fade([...], ms, ease?)` any other list (`box-shadow`, one colour, the source's own curve). Button's two-speed surface layer is `surfaceFade` / `pressFade`. A signal-driven change and a `hover` / `active` / `focusVisible` change both ease (`scripts/check-color-fade.tsx`). `text-decoration-color`, `fill` and `stroke` are not CSS-transitionable here; an icon's strokes follow `color` through `currentColor` (`<Icon fade>`) | Exact |
 | spring `fast` / `moderate` (`motion/react`) | native `motion` spring, `{ type: "spring", duration: 0.08 / 0.16, bounce: 0 }`, velocity kept when the target changes mid-flight | Exact; `slow` (bounce 0.12, the exit 160 ms) drives the command menu's dialog and the banner |
 | exits (`spring.fast.exit` …) | plain tweens, 60 ms / 120 ms, like the source | Exact |
 | "snap, don't spring" on a reflow | a zero-length tween | Exact |
 | `translate` / `x`,`y` travel of the highlight | `motion` on `top` / `left` / `width` / `height` (the only layout props it animates) | Equivalent, but it re-lays out per frame |
 | `scaleY: 0.96` on popup enter | not possible, no transforms. Opacity plus the 4px slide stay (`top` −4 → 0) | Partly dropped |
-| `z-index` (overlays under rows) | document order: the highlights are the container's first children and rows keep transparent backgrounds | Equivalent |
+| `z-index` (`z-10` rows over the highlights, `z-20` rings, `z-30` card actions, `-z-10` fills) | `zIndex` on the positioned element, as in the source. It orders siblings only: where the source's z-indexed control sits in a plain wrapper, the wrapper takes the `zIndex` (and `pointerEvents: none` over an overlay, the control `auto`), and a popover in a positioned box over a later sibling needs its wrapper to take one too (`drift/concepts.md`, Beacon) | Exact within a parent; per-parent stacking is a gpuix gap |
 | press-shrink: inset-px layer plus same-colour `box-shadow` spread | the element carries `margin: 1` and a spread-1 shadow, and `active` sets spread 0 | Exact for flat fills |
 | translucent fill (`--tint`, `bg-hover`) over that shadow | gpuix paints a shadow under its element with no knock-out, so a background on top doubles up. Fills are the shadow alone, with no `backgroundColor` | Exact, but a different mechanism |
 | tertiary ring that moves inward on press (outer to inset shadow) | outline, offset 0 at rest and −1 pressed | Exact |
-| `shadow-surface-3` (1px ring + two stacked drops) | `borderWidth: 1` plus one drop shadow. gpuix then painted a single non-inset shadow; it now takes multi-layer and `inset` `boxShadow` strings (FORK.md:646-649); not adopted yet | Approximated, now possible |
+| `shadow-surface-N` (1px ring plus stacked drops; in dark an inset highlight and ring, and a 1px outer hairline) | `shadow(N)` (`src/lib/theme.ts`): the `--shadow-N` recipe as one multi-layer, scheme-aware `boxShadow` string, with no border. The popups, dialog, drawer, queued card, tab pill and composer use it at the source's levels | Exact |
+| Tailwind `shadow-sm` to `shadow-xl` | `twShadow` (`src/lib/theme.ts`): both drops of each, as the CSS strings | Exact |
 | `color-mix(in oklab, …)`, `light-dark()` | both columns kept as a token table; the scheme is a signal | Exact |
-| dark `--shadow-3` (inset hairline + ring + drops) | popup `borderColor` of white at 5% plus the one drop shadow, for the same reason (multi-layer and `inset` shadows exist now, FORK.md:646-649; not adopted yet) | Approximated, now possible |
-| `prefers-color-scheme` ("System" theme) | `createAppearance()` reads the OS appearance and `bindSystemScheme` feeds it to the `scheme` token. System / Light / Dark are one `themeChoice` signal, and `renderer.setAppearance` mirrors Light / Dark so the native chrome follows | Exact in the window; captures run on the test renderer, whose appearance is fixed, so they pin Dark |
+| `prefers-color-scheme` ("System" theme) | `createAppearance()` reads the OS appearance and `bindSystemScheme` feeds it to the `scheme` token. System / Light / Dark are one `themeChoice` signal, and `renderer.setAppearance` mirrors Light / Dark so the native chrome follows | Exact in the window and on the test renderer, which honours `appearance` and `setAppearance` |
+| `prefers-reduced-motion`, `<MotionConfig reducedMotion="user">`, `useReducedMotion()` | `App` wraps the tree in gpuix's `<MotionConfig reducedMotion="user">`, which makes every `motion.*` position and size property jump (opacity and colour keep fading). Where the source reads `useReducedMotion()` itself, the port reads `createReducedMotion()` at the same site: the fluid highlight, the accordion panel, the banner, the carousel timer, the thinking indicator, the command-menu scroll and the scripted demos. Pinned by `scripts/check-reduced-motion.tsx` | Approximated: gpuix reduces layout properties the source animates (`drift/site.md`); the OS setting is read on macOS only |
 | Base UI `Positioner` (flip, `--anchor-width`, `--available-height`) | `<anchored fit="flip" deferred>`: gpuix picks the side and reports it with the room left (`onPlacement`), and `PopupSurface` caps the card to that room, slides from the reported side and is at least the trigger's width | Equivalent |
 | `ScrollArea` (hover thumb, scroll fade) | a plain `overflowY: "scroll"`, on the combobox list and the sidebar | Dropped |
 | `getBoundingClientRect` | `element.getBoundingClientRect()`, read when needed (layout is flushed first, so it is never stale) | Native |
@@ -297,7 +293,7 @@ now does that the port has not picked up.
 | Inter variable (`wght 550`, `opsz`) | static Inter TTFs (400, 500, 600, 700) passed as `fonts` to `render()`; the family is `Inter` for every weight. the site's 550 is set as SemiBold 600, there is no `opsz` | Approximated, one weight step |
 | ghost-span that reserves the semibold width | the same trick: a hidden copy in flow, the visible label absolutely positioned over it | Exact |
 | `truncate` | `whiteSpace: "nowrap"` + `textOverflow: "ellipsis"` on the combobox rows | Exact; sidebar labels are not truncated |
-| icon stroke 1.5 → 2 on hover | `<Icon easeStroke>` (`src/lib/icon.tsx`) animates `strokeWidth` on a `motion.g` over 80 ms: input-copy, button, accordion, and the dropdown, select and combobox icons. Everywhere else the SVG string is swapped | Exact where `easeStroke` is set, except with the phosphor library (filled paths, the weight switches at once); instant elsewhere |
+| icon stroke 1.5 → 2 on hover | `<Icon easeStroke>` (`src/lib/icon.tsx`) animates `strokeWidth` on a `motion.g` over 80 ms: accordion, button, card, tabs, tabs-subtle, nav-item, sidebar, thinking-steps, input-copy, input-group, and the dropdown, dropdown-search, menu-item, select, combobox and command-menu icons. Everywhere else the SVG string is swapped | Exact where `easeStroke` is set, except with the phosphor library (filled paths, the weight switches at once); instant elsewhere |
 | `animation: spinner-move` | a static lucide `loader`: no rotation, no animation. gpuix now has keyframes and `strokeDasharray` / `strokeDashoffset` motion (FORK.md:822, :829); not adopted yet | Dropped, now possible |
 | `AnimatePresence` exit of the popup | the popup stays mounted for 60 ms while its opacity fades | Approximated |
 

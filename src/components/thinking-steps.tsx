@@ -56,10 +56,27 @@ export type StepStatus = "complete" | "active" | "pending";
 
 const TURN_MS = 100;
 
+/** Lucide's `chevron-right` points, rotated about the 24 x 24 centre. */
+function chevronPath(degrees: number) {
+	const radians = (degrees * Math.PI) / 180;
+	const cos = Math.cos(radians);
+	const sin = Math.sin(radians);
+	const points = [
+		{ x: 9, y: 18 },
+		{ x: 15, y: 12 },
+		{ x: 9, y: 6 },
+	].map((point) => {
+		const dx = point.x - 12;
+		const dy = point.y - 12;
+		return `${(12 + dx * cos - dy * sin).toFixed(2)} ${(12 + dx * sin + dy * cos).toFixed(2)}`;
+	});
+	return `M${points.join("L")}`;
+}
+
 /**
  * Right when collapsed, rotated 90 degrees down when open. gpuix cannot rotate
- * an element, so the rotation is inside the SVG source and a short JS tween
- * rewrites it: whole degrees, so GPUI's SVG cache sees at most 91 strings.
+ * an element, so a short JS tween turns the path's own points, which lets
+ * `Icon easeStroke` ease the stroke width on the group that draws them.
  */
 function Chevron(props: { open: boolean; stroke: number; color: string }) {
 	const [angle, setAngle] = createSignal(props.open ? 90 : 0);
@@ -76,11 +93,11 @@ function Chevron(props: { open: boolean; stroke: number; color: string }) {
 	});
 	return (
 		<Icon
-			name={defineIcon(
-				`<g transform="rotate(${angle()} 12 12)"><path d="m9 18 6-6-6-6"/></g>`,
-			)}
+			name={defineIcon(`<path d="${chevronPath(angle())}"/>`)}
 			size={16}
 			strokeWidth={props.stroke}
+			easeStroke
+			fade
 			color={props.color}
 		/>
 	);
@@ -138,6 +155,7 @@ function TriggerRow(props: {
 				aria-controls={props.open ? props.panelId : undefined}
 				style={{
 					position: "relative",
+					zIndex: 10,
 					display: "flex",
 					flexDirection: "row",
 					alignItems: "center",
@@ -157,6 +175,7 @@ function TriggerRow(props: {
 					text={props.children}
 					heavy={props.open}
 					color={highlighted() ? color.foreground : color.mutedForeground}
+					fade
 				/>
 				<Chevron
 					open={props.open}

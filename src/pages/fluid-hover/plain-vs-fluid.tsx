@@ -1,5 +1,5 @@
 import {
-	type EventPayload,
+	createReducedMotion,
 	type HostElement,
 	IntersectionObserver,
 } from "@gpuix/solid";
@@ -106,7 +106,8 @@ function Stage(props: { paused: () => boolean }) {
 	const [inView, setInView] = createSignal(false);
 	// A real pointer inside the demo owns both lists until it leaves.
 	const [userInside, setUserInside] = createSignal(false);
-	const scripted = () => inView() && !userInside();
+	const reduced = createReducedMotion();
+	const scripted = () => inView() && !reduced() && !userInside();
 	const running = () => scripted() && !props.paused();
 	const [cursorY, setCursorY] = createSignal(CURSOR_TOP);
 	const [fakeIndex, setFakeIndex] = createSignal<number | null>(null);
@@ -147,13 +148,7 @@ function Stage(props: { paused: () => boolean }) {
 			setFakeIndex(rowUnder(y));
 			if (fluid === undefined || !fluid.mounted) return;
 			const box = fluid.getBoundingClientRect();
-			const move: EventPayload = {
-				elementId: 0,
-				eventType: "mousemove",
-				x: box.x + CURSOR_X,
-				y: box.y + y,
-			};
-			hover.handlers.onMouseMove(move);
+			hover.handlers.onMouseMove({ x: box.x + CURSOR_X, y: box.y + y });
 		});
 	});
 

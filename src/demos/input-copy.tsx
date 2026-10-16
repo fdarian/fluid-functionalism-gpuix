@@ -7,17 +7,6 @@ import { color, type as scale } from "../lib/theme";
 const COMMAND =
 	"npx shadcn@latest add https://www.fluidfunctionalism.com/r/input-copy.json";
 
-/** The screenshot script presses these buttons: it must not overwrite the clipboard of whoever runs it. */
-let capturing = false;
-const copyUnlessCapturing = async (text: string) => {
-	if (capturing) return;
-	const { copyToClipboard } = await import("../components/input-copy");
-	await copyToClipboard(text);
-};
-const failToCopy = async () => {
-	throw new Error("Clipboard access denied");
-};
-
 export const title = "Input Copy";
 export const group = "Components";
 
@@ -38,7 +27,6 @@ export function Demo() {
 					<InputCopy
 						testId="basic"
 						value={COMMAND}
-						copy={copyUnlessCapturing}
 					/>
 				</Field>
 				<Field label="With label">
@@ -46,7 +34,6 @@ export function Demo() {
 						testId="label"
 						label="Install command"
 						value={COMMAND}
-						copy={copyUnlessCapturing}
 					/>
 				</Field>
 				<Field label="Button">
@@ -54,7 +41,6 @@ export function Demo() {
 						testId="button"
 						variant="button"
 						value={COMMAND}
-						copy={copyUnlessCapturing}
 					/>
 				</Field>
 				<Field label="Left, icon">
@@ -62,7 +48,6 @@ export function Demo() {
 						testId="left-icon"
 						align="left"
 						value={COMMAND}
-						copy={copyUnlessCapturing}
 					/>
 				</Field>
 				<Field label="Left, button">
@@ -71,7 +56,6 @@ export function Demo() {
 						variant="button"
 						align="left"
 						value={COMMAND}
-						copy={copyUnlessCapturing}
 					/>
 				</Field>
 				<Field label="Disabled">
@@ -80,7 +64,6 @@ export function Demo() {
 						label="Invite code"
 						value="ABCD-1234-EFGH"
 						disabled
-						copy={copyUnlessCapturing}
 					/>
 				</Field>
 				<Field label="Callback">
@@ -89,7 +72,6 @@ export function Demo() {
 							testId="callback"
 							label="Share link"
 							value="https://fluidfunctionalism.com/r/input-copy"
-							copy={copyUnlessCapturing}
 							onCopy={() => setCopyCount(copyCount() + 1)}
 						/>
 						<div style={{ paddingLeft: 4 }}>
@@ -99,21 +81,12 @@ export function Demo() {
 						</div>
 					</div>
 				</Field>
-				<Field label="Copy fails">
-					<InputCopy
-						testId="failing"
-						variant="button"
-						value="ABCD-1234-EFGH"
-						copy={failToCopy}
-					/>
-				</Field>
 				<Field label="Compact">
 					<InputCopy
 						testId="compact"
 						size="compact"
 						variant="button"
 						value="ABCD-1234-EFGH"
-						copy={copyUnlessCapturing}
 					/>
 				</Field>
 			</div>
@@ -122,8 +95,6 @@ export function Demo() {
 }
 
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
-	capturing = true;
-
 	await shot.hover("basic");
 	await shot.settle(700);
 	shot.capture("hover-tooltip");
@@ -153,7 +124,15 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("callback");
 	shot.expectText("Copied 1 time", true);
 
-	await shot.click("failing");
-	shot.expectText("Failed", true);
-	shot.capture("failed");
+	const writeText = navigator.clipboard.writeText;
+	navigator.clipboard.writeText = async () => {
+		throw new Error("Clipboard access denied");
+	};
+	try {
+		await shot.click("compact");
+		shot.expectText("Failed", true);
+		shot.capture("failed");
+	} finally {
+		navigator.clipboard.writeText = writeText;
+	}
 };

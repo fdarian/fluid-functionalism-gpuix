@@ -29,36 +29,36 @@ export async function scenarios(shot: ShotContext) {
 	shot.capture("top");
 	const plain = shot.centerOf("scrollbars-plain");
 	await shot.moveTo(plain.x, plain.y);
-	await shot.scroll(plain.x, plain.y, 0, -120);
+	await shot.scroll(plain.x, plain.y, 0, 120);
 	shot.capture("problem-plain-scrolled");
 	const area = shot.centerOf("scrollbars-area");
 	await shot.moveTo(area.x - 60, area.y);
 	shot.capture("problem-area-hover");
-	await shot.scroll(area.x, area.y, 0, -120);
+	await shot.scroll(area.x, area.y, 0, 120);
 	shot.capture("problem-area-scrolled");
 	await shot.click("scrollbars-problem-code-tab");
 	shot.capture("problem-code");
 	await shot.click("scrollbars-problem-preview-tab");
 
-	await shot.scroll(600, 400, 0, -700);
+	await shot.scroll(600, 400, 0, 700);
 	shot.capture("fade");
 	const fade = shot.centerOf("scrollbars-fade-area");
 	await shot.moveTo(fade.x, fade.y);
-	await shot.scroll(fade.x, fade.y, 0, -120);
+	await shot.scroll(fade.x, fade.y, 0, 120);
 	shot.capture("fade-scrolled");
 
-	await shot.scroll(600, 400, 0, -700);
+	await shot.scroll(600, 400, 0, 700);
 	shot.capture("horizontal");
 	const strip = shot.centerOf("scrollbars-horizontal-area");
 	await shot.moveTo(strip.x, strip.y);
-	await shot.scroll(strip.x, strip.y, -200, 0);
+	await shot.scroll(strip.x, strip.y, 200, 0);
 	shot.capture("horizontal-scrolled");
 
-	await shot.scroll(600, 400, 0, -900);
+	await shot.scroll(600, 400, 0, 900);
 	shot.capture("table");
 	const table = shot.centerOf("scrollbars-table-area");
 	await shot.moveTo(table.x, table.y);
-	await shot.scroll(table.x, table.y, -240, -90);
+	await shot.scroll(table.x, table.y, 240, 90);
 	shot.capture("table-scrolled");
 }
 

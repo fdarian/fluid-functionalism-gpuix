@@ -1,10 +1,11 @@
 import {
-	clipboard,
 	createAppearance,
 	type HostElement,
+	MotionConfig,
 	useGpuixRequired,
 } from "@gpuix/solid";
 import {
+	type Accessor,
 	createEffect,
 	createSignal,
 	For,
@@ -30,6 +31,7 @@ import { BentoGrid } from "./home/bento-grid";
 import { AppFrame, PANEL_INNER_RADIUS } from "./lib/app-frame";
 import { type Demo, type Page, SHOWCASE_SLUG } from "./lib/demo";
 import { PageScrollerContext } from "./lib/demo-kit";
+import { createMeasuredHeight } from "./lib/measured-height";
 import { MONO } from "./lib/doc-page";
 import { type PageNav, PageNavContext, usePageNav } from "./lib/page-nav";
 import {
@@ -165,7 +167,12 @@ function Hero() {
 	let resetTimer: ReturnType<typeof setTimeout> | undefined;
 	onCleanup(() => clearTimeout(resetTimer));
 	const copyPrompt = async () => {
-		await clipboard.writeText(buildStarterPrompt(themeChoice()));
+		try {
+			await navigator.clipboard.writeText(buildStarterPrompt(themeChoice()));
+		} catch (error) {
+			console.error("Copy install prompt failed", error);
+			return;
+		}
 		setCopied(true);
 		clearTimeout(resetTimer);
 		resetTimer = setTimeout(() => setCopied(false), COPIED_MS);
@@ -400,8 +407,7 @@ export function App(props: {
 	initialPage?: string;
 }) {
 	const [page, setPage] = createSignal(props.initialPage ?? SHOWCASE);
-	// A page mounts motion values, and gpuix rejects renderer creates inside the key or press handler that navigates; a microtask runs after it returns.
-	const navigate = (slug: string) => queueMicrotask(() => setPage(slug));
+	const navigate = (slug: string) => setPage(slug);
 	const nav: PageNav = { navigate, current: page };
 	const current = (): Demo | undefined =>
 		props.demos.find((demo) => demo.slug === page());
@@ -412,6 +418,7 @@ export function App(props: {
 	const siteMenu = createSiteMenu();
 	const rail = createRightRail();
 	const [pageScroller, setPageScroller] = createSignal<HostElement>();
+	const viewport = createMeasuredHeight();
 	const renderer = useGpuixRequired();
 	const setAppearance = renderer.setAppearance;
 	if (setAppearance === undefined) {
@@ -420,95 +427,119 @@ export function App(props: {
 	// Native chrome and traffic lights follow the override; "system" clears it.
 	createEffect(() => setAppearance.call(renderer, themeChoice()));
 	return (
-		<AppFrame title={WINDOW_TITLE}>
-			<RightRailContext.Provider value={rail}>
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "row",
-					width: "100%",
-					height: "100%",
-					backgroundColor: color.background,
-					borderRadius: PANEL_INNER_RADIUS,
-				}}
-			>
-				<Show when={!isFull()}>
-					<AppSidebar
-						demos={props.demos}
-						pages={props.pages}
-						page={page()}
-						onPage={navigate}
-						onSearch={() => siteMenu.setOpen(true)}
-					/>
-				</Show>
+		<MotionConfig reducedMotion="user">
+			<AppFrame title={WINDOW_TITLE}>
+				<RightRailContext.Provider value={rail}>
 				<div
-					ref={setPageScroller}
 					style={{
-						flexGrow: 1,
-						minWidth: 0,
 						display: "flex",
-						flexDirection: "column",
-						alignItems: "center",
-						overflowY: "scroll",
+						flexDirection: "row",
+						width: "100%",
+						height: "100%",
+						backgroundColor: color.background,
+						borderRadius: PANEL_INNER_RADIUS,
 					}}
 				>
+					<Show when={!isFull()}>
+						<AppSidebar
+							demos={props.demos}
+							pages={props.pages}
+							page={page()}
+							onPage={navigate}
+							onSearch={() => siteMenu.setOpen(true)}
+						/>
+					</Show>
 					<div
+						ref={setPageScroller}
+						onLayout={viewport.onLayout}
 						style={{
-							width: isFull() || page() === SHOWCASE ? "100%" : PAGE_WIDTH,
-							...(isFull() ? { height: "100%" } : {}),
-							flexShrink: 0,
+							flexGrow: 1,
+							minWidth: 0,
 							display: "flex",
-							flexDirection: "column",
-							gap: isFull() ? 0 : 24,
-							paddingTop: isFull() ? 0 : 40,
-							paddingBottom: isFull() ? 0 : 40,
+							flexDirection: "row",
+							overflowY: "scroll",
 						}}
 					>
-						<PageScrollerContext.Provider value={pageScroller}>
-							<PageNavContext.Provider value={nav}>
-								<Switch>
-									<Match when={page() === SHOWCASE}>
-										<Showcase />
-									</Match>
-									<Match when={current()} keyed>
-										{(demo: Demo) => <DemoPage demo={demo} />}
-									</Match>
-									<Match when={currentPage()} keyed>
-										{(entry: Page) => <PageBody page={entry} />}
-									</Match>
-								</Switch>
-							</PageNavContext.Provider>
-						</PageScrollerContext.Provider>
-					</div>
-				</div>
-				<Show when={!isFull()}>
-					<div style={{ width: 296, flexShrink: 0 }}>
-						<ScrollArea height="100%" fade>
+						<div
+							style={{
+								flexGrow: 1,
+								minWidth: 0,
+								display: "flex",
+								flexDirection: "column",
+								alignItems: "center",
+							}}
+						>
 							<div
 								style={{
+									width: isFull() || page() === SHOWCASE ? "100%" : PAGE_WIDTH,
+									...(isFull() ? { height: "100%" } : {}),
+									flexShrink: 0,
 									display: "flex",
 									flexDirection: "column",
-									gap: 12,
-									padding: 16,
+									gap: isFull() ? 0 : 24,
+									paddingTop: isFull() ? 0 : 40,
+									paddingBottom: isFull() ? 0 : 40,
 								}}
 							>
-								<CustomizeCard />
-								<RightRailTarget />
+								<PageScrollerContext.Provider value={pageScroller}>
+									<PageNavContext.Provider value={nav}>
+										<Switch>
+											<Match when={page() === SHOWCASE}>
+												<Showcase />
+											</Match>
+											<Match when={current()} keyed>
+												{(demo: Demo) => <DemoPage demo={demo} />}
+											</Match>
+											<Match when={currentPage()} keyed>
+												{(entry: Page) => <PageBody page={entry} />}
+											</Match>
+										</Switch>
+									</PageNavContext.Provider>
+								</PageScrollerContext.Provider>
 							</div>
-						</ScrollArea>
+						</div>
+						{/* Sticky needs a definite height to stick at, and gpuix has no `100svh`: it is the scroller's own, measured. */}
+						<Show when={!isFull() && viewport.height()}>
+							{(height: Accessor<number>) => (
+								<div
+									style={{
+										position: "sticky",
+										top: 0,
+										alignSelf: "flex-start",
+										width: 296,
+										height: height(),
+										flexShrink: 0,
+									}}
+								>
+									<ScrollArea height="100%" fade>
+										<div
+											style={{
+												display: "flex",
+												flexDirection: "column",
+												gap: 12,
+												padding: 16,
+											}}
+										>
+											<CustomizeCard />
+											<RightRailTarget />
+										</div>
+									</ScrollArea>
+								</div>
+							)}
+						</Show>
 					</div>
-				</Show>
-			</div>
-			</RightRailContext.Provider>
-			<SiteCommandMenu
-				menu={siteMenu}
-				demos={props.demos}
-				pages={props.pages}
-				showcase={SHOWCASE}
-				current={page()}
-				onPage={navigate}
-			/>
-		</AppFrame>
+				</div>
+				</RightRailContext.Provider>
+				<SiteCommandMenu
+					menu={siteMenu}
+					demos={props.demos}
+					pages={props.pages}
+					showcase={SHOWCASE}
+					current={page()}
+					onPage={navigate}
+				/>
+			</AppFrame>
+		</MotionConfig>
 	);
 }
 

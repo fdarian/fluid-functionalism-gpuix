@@ -2,10 +2,9 @@ import {
 	createMotionValue,
 	createMotionValueEvent,
 	createReducedMotion,
-	type EventPayload,
+	type DomEvent,
 	type HostElement,
 	type KeyEvent,
-	type MotionValue,
 	motion,
 	useGpuixRequired,
 } from "@gpuix/solid";
@@ -14,11 +13,9 @@ import {
 	createContext,
 	createEffect,
 	createMemo,
-	createRoot,
 	createSignal,
 	createUniqueId,
 	For,
-	getOwner,
 	type JSX,
 	on,
 	onCleanup,
@@ -38,11 +35,13 @@ import { IS_MAC } from "../lib/platform";
 import { createPresence } from "../lib/presence";
 import {
 	color,
+	colorFade,
 	radius,
 	shape,
 	sizeChoice,
 	type as scale,
-	shadow3,
+	shadow,
+	surface,
 	motion as tween,
 	weight,
 } from "../lib/theme";
@@ -310,8 +309,9 @@ function useCommandMenu() {
 
 // ─── Panel ───────────────────────────────────────────────────────────────────
 
-/** The surface-3 card an inline menu sits in. It caps the height; the list scrolls past it. */
+/** The card a menu sits in: surface 3 inline, surface 5 in a dialog. It caps the height; the list scrolls past it. */
 export function CommandMenuPanel(props: {
+	level?: number;
 	width?: number | string;
 	maxHeight?: number;
 	children: JSX.Element;
@@ -324,11 +324,9 @@ export function CommandMenuPanel(props: {
 				width: props.width ?? "100%",
 				maxWidth: 520,
 				maxHeight: props.maxHeight,
-				backgroundColor: color.card,
+				backgroundColor: surface(props.level ?? 3),
 				borderRadius: shape.container,
-				borderWidth: 1,
-				borderColor: color.popupBorder,
-				boxShadow: shadow3(),
+				boxShadow: shadow(props.level ?? 3),
 				overflow: "hidden",
 			}}
 		>
@@ -407,39 +405,16 @@ export function CommandMenu(props: {
 
 	// The list's scrollTop travels on the fill's spring so row and fill arrive together. The motion value only carries the animation: the scroller is the source of truth, so every run starts by jumping the value to where the wheel or the scrollbar left it.
 	const reduceMotion = createReducedMotion();
-	const owner = getOwner();
-	let scrollPosition: MotionValue<number> | undefined;
-	let disposeScrollMotion: (() => void) | undefined;
-	let disposed = false;
-	onCleanup(() => {
-		disposed = true;
-		queueMicrotask(() => disposeScrollMotion?.());
+	const scrollPosition = createMotionValue(0);
+	createMotionValueEvent(scrollPosition, "change", (top) => {
+		if (scroller !== undefined) scroller.scrollTop = top;
 	});
-	// A key or press handler is native-synchronous, and the renderer refuses to create, drive or release a motion value inside one (the menu mounts from ⌘K and unmounts on Esc): those calls wait for a microtask. The value is made at the first travel, in a root of its own that the menu's cleanup disposes after the handler returns.
-	const afterHandler = (write: () => void) => {
-		queueMicrotask(() => {
-			if (!disposed) write();
-		});
-	};
-	const scrollMotion = () => {
-		if (scrollPosition === undefined) {
-			scrollPosition = createRoot((dispose) => {
-				disposeScrollMotion = dispose;
-				const position = createMotionValue(0);
-				createMotionValueEvent(position, "change", (top) => {
-					if (scroller !== undefined) scroller.scrollTop = top;
-				});
-				return position;
-			}, owner);
-		}
-		return scrollPosition;
-	};
 
 	/** Puts the list at `top` now and ends any running scroll animation. */
 	const snapScroll = (top: number) => {
 		if (scroller === undefined) return;
 		scroller.scrollTo({ top, left: 0 });
-		afterHandler(() => scrollPosition?.jump(top));
+		scrollPosition.jump(top);
 	};
 
 	/** Keeps the keyboard row at the middle of the viewport, as far as the ends allow. */
@@ -463,13 +438,10 @@ export function CommandMenu(props: {
 			snapScroll(target);
 			return;
 		}
-		afterHandler(() => {
-			const position = scrollMotion();
-			// A running travel is taken over where it is (its own value is the live one; the scroller's read can trail a frame). Otherwise the wheel or the scrollbar may have moved the list since.
-			if (position.isAnimating()) position.stop();
-			else position.jump(list.scrollTop);
-			position.animate(target, tween.fast);
-		});
+		// A running travel is taken over where it is (its own value is the live one; the scroller's read can trail a frame). Otherwise the wheel or the scrollbar may have moved the list since.
+		if (scrollPosition.isAnimating()) scrollPosition.stop();
+		else scrollPosition.jump(list.scrollTop);
+		scrollPosition.animate(target, tween.fast);
 	};
 
 	// The first enabled row is highlighted whenever the row set changes, so Enter always has a target.
@@ -648,7 +620,7 @@ export function CommandMenuInput(props: {
 		const row = menu.rows()[index];
 		if (row !== undefined) menu.select(row);
 	};
-	const onChange = (event: EventPayload) => {
+	const onChange = (event: DomEvent) => {
 		if (event.value === undefined) {
 			throw new Error("Command menu input change without a value");
 		}
@@ -681,6 +653,8 @@ export function CommandMenuInput(props: {
 						name={ref()}
 						size={layout().icon}
 						strokeWidth={focused() ? 2 : 1.5}
+						fade
+						easeStroke
 						color={focused() ? color.foreground : color.mutedForeground}
 					/>
 				)}
@@ -745,6 +719,7 @@ function TabLabel(props: { text: string; selected: boolean; lit: boolean }) {
 					top: 0,
 					left: 0,
 					color: props.lit ? color.foreground : color.mutedForeground,
+					...colorFade,
 				}}
 			>
 				{props.text}
@@ -1160,6 +1135,8 @@ export function CommandMenuItem(props: {
 						name={ref()}
 						size={layout().icon}
 						strokeWidth={active() ? 2 : 1.5}
+						fade
+						easeStroke
 						color={active() ? color.foreground : color.mutedForeground}
 					/>
 				)}
@@ -1183,6 +1160,7 @@ export function CommandMenuItem(props: {
 								...layout().text,
 								flexShrink: 0,
 								color: active() ? color.foreground : color.mutedForeground,
+								...colorFade,
 								whiteSpace: "nowrap",
 							}}
 						>
@@ -1250,6 +1228,7 @@ export function CommandMenuItemText(props: {
 					active() && props.muted !== true
 						? color.foreground
 						: color.mutedForeground,
+				...colorFade,
 				whiteSpace: "nowrap",
 				textOverflow: "ellipsis",
 				overflow: "hidden",
@@ -1439,7 +1418,7 @@ export function CommandMenuDialog(props: {
 						style={{ display: "flex", flexDirection: "column" }}
 					>
 						<DialogContext.Provider value={handle}>
-							<CommandMenuPanel width="100%" maxHeight={maxHeight()}>
+							<CommandMenuPanel level={5} width="100%" maxHeight={maxHeight()}>
 								{props.children}
 							</CommandMenuPanel>
 						</DialogContext.Provider>

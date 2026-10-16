@@ -1,4 +1,4 @@
-import type { EventPayload, HostElement } from "@gpuix/solid";
+import type { DomEvent, HostElement } from "@gpuix/solid";
 import {
 	createContext,
 	createEffect,
@@ -7,7 +7,14 @@ import {
 	useContext,
 } from "solid-js";
 import { Icon } from "../lib/icon";
-import { color, height, type as scale, weight } from "../lib/theme";
+import { SurfaceContext } from "../lib/surface-context";
+import {
+	color,
+	height,
+	surface,
+	type as scale,
+	weight,
+} from "../lib/theme";
 import { separatorColor } from "./menu-item";
 
 export interface DropdownSearchProps {
@@ -22,9 +29,11 @@ export interface DropdownSearchProps {
 }
 
 /**
- * The field is part of the popup's chrome, above the scroller, and cannot sit
- * among the rows (gpuix has no `position: sticky`), so `DropdownSearch` hands
- * its props to the content and renders nothing itself.
+ * The field is the scroller's first child, ahead of the padded rows, so
+ * `DropdownSearch` hands its props to the list and renders nothing where it
+ * stands. In the rows' own box it could not bleed over their padding as the
+ * source's `-mx-1 -mt-1` does: gpuix keeps a sticky box inside its parent's
+ * content box.
  */
 export interface DropdownSearchHost {
 	register: (props: DropdownSearchProps) => () => void;
@@ -65,17 +74,31 @@ export function DropdownEmpty(props: { children: string }) {
 
 export const SEARCH_HEIGHT = height.control;
 
-/** The field row `DropdownContent` draws above its rows. */
+/**
+ * The field row the list draws ahead of its rows. `sticky` keeps it at the top
+ * of the scroller it is in, painted with the popup's surface so rows scroll
+ * under it.
+ */
 export function SearchField(props: {
 	search: DropdownSearchProps;
+	sticky: boolean;
 	/** The list moves focus here: back from past either end of the rows, or when a key typed on a row goes into the query. */
 	fieldRef: (element: HostElement) => void;
 	testId?: string;
 }) {
 	const [focused, setFocused] = createSignal(false);
+	const level = useContext(SurfaceContext);
 	return (
 		<div
 			style={{
+				...(props.sticky
+					? {
+							position: "sticky" as const,
+							top: 0,
+							zIndex: 20,
+							backgroundColor: surface(level),
+						}
+					: {}),
 				height: SEARCH_HEIGHT,
 				flexShrink: 0,
 				display: "flex",
@@ -114,7 +137,7 @@ export function SearchField(props: {
 				}}
 				onFocus={() => setFocused(true)}
 				onBlur={() => setFocused(false)}
-				onChange={(event: EventPayload) => {
+				onChange={(event: DomEvent) => {
 					if (event.value === undefined) {
 						throw new Error("Search change without a value");
 					}

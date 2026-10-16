@@ -1,8 +1,10 @@
 import {
-	type EventPayload,
+	document,
+	type DomEvent,
 	type HostElement,
+	type HostMouseEvent,
+	type HostMouseMoveEvent,
 	type KeyEvent,
-	useGpuixRequired,
 } from "@gpuix/solid";
 import {
 	type Accessor,
@@ -24,7 +26,7 @@ import { CheckMark, Icon, LIST_CHECK } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { edgeIndex, isChord, moveIndex, revealRow } from "../lib/list-nav";
 import { PopupSurface } from "../lib/popup";
-import { returnFocusTo } from "../lib/popup-trigger";
+import { refocusAfterPress } from "../lib/popup-trigger";
 import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import {
 	color,
@@ -160,7 +162,6 @@ export function Select<Value extends string>(props: {
 	/** The popup is as wide as the trigger, or this, whichever is larger. */
 	popupWidth?: number;
 }) {
-	const renderer = useGpuixRequired();
 	const variant = () => props.variant ?? "inline";
 	const inline = () => variant() === "inline";
 	const spec = () => specs[props.size ?? sizeChoice()];
@@ -270,36 +271,27 @@ export function Select<Value extends string>(props: {
 		typeahead.reset();
 		presence.show();
 		hover.setActiveIndex(openHighlight(from));
-		// The rows mount with the popup: focus goes in once they have. A pointer open with no value has no row to focus, so the panel takes it.
-		setTimeout(() => {
-			if (!presence.open()) return;
-			const index = hover.activeIndex();
-			if (index === null) focusPanel();
-			else rowElements.get(index)?.focus({ preventScroll: true });
-		}, 0);
+		// A pointer open with no value has no row to focus, so the panel takes it.
+		const index = hover.activeIndex();
+		if (index === null) focusPanel();
+		else rowElements.get(index)?.focus({ preventScroll: true });
 	};
 	/** Hands focus back to the trigger when it sat in the popup (which unmounts and drops it) or nowhere; a control that took it since keeps it (Base UI's `returnFocus`). */
-	const returnFocus = (tabbing: boolean) => {
-		// Deferred: reading focus inside a mouse handler throws `VIEW_BUSY`. The popup is still mounted, held by its exit.
-		setTimeout(() => {
-			if (triggerElement === undefined || !triggerElement.mounted) return;
-			const inPopup =
-				scroller !== undefined &&
-				scroller.mounted &&
-				scroller.matches(":focus-within");
-			returnFocusTo(renderer, triggerElement.id, inPopup);
-			// The default Tab would start from the popup row, whose floating layer wraps to the start of the page.
-			if (tabbing) renderer.focusNext?.();
-		}, 0);
+	const returnFocus = () => {
+		if (triggerElement === undefined || !triggerElement.mounted) return;
+		const inPopup =
+			scroller !== undefined &&
+			scroller.mounted &&
+			scroller.matches(":focus-within");
+		if (inPopup || document.activeElement === null) triggerElement.focus();
 	};
-	const closePopup = (tabbing: boolean) => {
+	const close = () => {
 		clearTimeout(ackTimer);
 		if (!presence.open()) return;
 		presence.hide();
 		typeahead.reset();
-		returnFocus(tabbing);
+		returnFocus();
 	};
-	const close = () => closePopup(false);
 	const pick = (row: SelectItem<Value>) => {
 		if (row.disabled === true) return;
 		commitValue(row);
@@ -390,14 +382,16 @@ export function Select<Value extends string>(props: {
 				close();
 				return;
 			case "Tab":
-				event.preventDefault();
-				// Forward moves focus on from the trigger; backward leaves it on the trigger.
-				closePopup(event.shiftKey !== true);
+				// Forward: the trigger takes focus first, so the default Tab moves on from it. Backward leaves it on the trigger.
+				if (event.shiftKey === true) event.preventDefault();
+				close();
 				return;
 		}
 	};
-	const onTriggerMouseDown = (event: EventPayload) => {
+	const onTriggerMouseDown = (event: HostMouseEvent) => {
 		if (event.button !== undefined && event.button !== 0) return;
+		// A press moves focus to the trigger after its handlers have run, which would pull it back from the popup `open` just focused. Windows and Linux run the handler after that move, where this changes nothing.
+		event.preventDefault();
 		if (presence.open()) close();
 		else open("pointer");
 	};
@@ -410,7 +404,7 @@ export function Select<Value extends string>(props: {
 		const allowed = value() === row.value ? settled : settled || dragCommits;
 		if (allowed) pick(row);
 	};
-	const onListMouseMove = (event: EventPayload) => {
+	const onListMouseMove = (event: HostMouseMoveEvent) => {
 		hover.handlers.onMouseMove(event);
 		if (event.pressedButton !== 0 || event.y === undefined) {
 			dragFromY = undefined;
@@ -558,7 +552,11 @@ export function Select<Value extends string>(props: {
 		>
 			<div
 				testId={props.testId}
-				onMouseDownOutside={close}
+				onMouseDownOutside={() => {
+					if (!presence.open()) return;
+					close();
+					refocusAfterPress(triggerElement);
+				}}
 				style={{ position: "relative" }}
 			>
 				<div
@@ -600,6 +598,7 @@ export function Select<Value extends string>(props: {
 						keyboardFocusDim: false,
 						opacity: props.disabled === true ? 0.5 : 1,
 						pointerEvents: props.disabled === true ? "none" : "auto",
+						...colorFade,
 						hover: { backgroundColor: color.hover },
 						active: { backgroundColor: color.active },
 						focusVisible: focusRing(0),
@@ -694,7 +693,7 @@ export function Select<Value extends string>(props: {
 								display: "flex",
 								flexDirection: "column",
 								overflowY: "scroll",
-								maxHeight: popupMaxHeight() - 2,
+								maxHeight: popupMaxHeight(),
 							}}
 						>
 							{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
@@ -766,7 +765,7 @@ function Row<Value extends string>(props: {
 	testId?: string;
 	tabIndex: number;
 	onElement: (element: HostElement) => void;
-	onFocus: (event: EventPayload) => void;
+	onFocus: (event: DomEvent) => void;
 	onBlur: () => void;
 	onPick: () => void;
 	onPress: () => void;

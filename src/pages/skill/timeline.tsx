@@ -113,7 +113,7 @@ export function Timeline(props: { steps: { title: string; body: string }[] }) {
 						pointerEvents: "none",
 					}}
 				/>
-				{/* The gliding highlight: lines above and below the dot, then the dot. Rows come after it, so document order paints them over. */}
+				{/* The gliding highlight: lines above and below the dot, then the dot. It is positioned, so it paints over the in-flow rows, as the source's `z-10` lines and dot do. */}
 				<motion.div
 					initial={false}
 					animate={{

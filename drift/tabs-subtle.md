@@ -46,11 +46,11 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 - **Fidelity:** approximated (the accessibility tree differs for unselected tabs).
 - **Components it hits:** just this one.
 
-## Colour and stroke width switch at once, semibold is 600, no `text-box-trim`
+## Semibold is 600, no `text-box-trim`
 
-- **Cause:** `not ported yet` for the 80 ms colour and stroke-width ease (`Icon` `fade`, `theme.ts:310-314`; `motion.path` `strokeWidth`, `host.ts:296-298`); `gpuix gap` for the variable weight and for `text-box-trim` (README "Missing features").
-- **Original:** `transition-[color,stroke-width] duration-80` on the icon, `transition-[color,font-variation-settings] duration-80` on the label with `wght 550 / opsz 18`, both spans trimmed (`tabs-subtle.tsx:327-335`, `:376-377`, `:320`).
-- **Port:** `Icon` has no `fade` and `StableLabel` no transition (`tabs-subtle.tsx:380-389`, `:324-331`); SemiBold 600 (`theme.ts:276-278`); line-box centring. Details in `drift/tabs.md`.
+- **Cause:** `gpuix gap` for the variable weight and for `text-box-trim` (README "Missing features").
+- **Original:** the label is `wght 550 / opsz 18` when selected and eases that weight with its colour over 80 ms, both spans trimmed (`tabs-subtle.tsx:327-335`, `:320`).
+- **Port:** SemiBold 600 switching at once (`theme.ts:276-278`), line-box centring. The colour and stroke-width eases are ported (`fade` on `StableLabel` and `Icon`, `easeStroke`). Details in `drift/tabs.md`.
 - **gpuix lacks:** variable-font axes and `text-box-trim` only.
 - **Workaround:** the hidden 600 copy reserves the width.
 - **Fidelity:** approximated.

@@ -31,18 +31,9 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 - **Original:** surface layer inset 1px (`:211`) with `bg-[var(--btn-bg)]` plus a same-colour `shadow-[0_0_0_1px_...]` that collapses on press (`:113-128`). Secondary's `--tint` and ghost's `--hover` are translucent; an outer CSS shadow paints only outside the box, so fill and ring never double up (comment `:105-112`).
 - **Port:** the element is the inset surface (`margin: 1`, height and padding give 1px back, `:137-142`, `:217-221`) and carries no `backgroundColor`; the fill is `boxShadow: fill(colour, 1)`, press sets spread 0 (`src/lib/press.ts:10-18`, `src/components/button.tsx:63-93`). Tertiary's ring is an outline, 0 offset at rest and -1 pressed (`:74-87`).
 - **gpuix lacks:** the knock-out of an outer `box-shadow` under its own box. `shadow_fragment` covers the whole rounded rect, so a background on top of a translucent shadow doubles up (`~/code/fdarian/gpuix/zed/crates/gpui_apple/src/shaders.metal:628`; inset shadows are clipped to the element, `:648-654`).
-- **Workaround:** the shadow is the fill; outline for the tertiary ring.
-- **Fidelity:** exact in colour and geometry; a different mechanism.
+- **Workaround:** the shadow is the fill; outline for the tertiary ring. Hover and press ease like the source (`boxShadow` 180ms on `cubic-bezier(0.23,1,0.32,1)`, `backgroundColor` 80ms, both 80ms while pressed; label colour and icons over 80ms), but the tertiary ring's 1px move inward on press (`outlineOffset` 0 to -1) switches at once: a transition on `outline-offset` would also ease the focus ring's offset when the button gains keyboard focus, which the source does not.
+- **Fidelity:** exact in colour and geometry; a different mechanism. The tertiary ring's press move is instant.
 - **Components it hits:** just this one (`CardButton` fills with plain `backgroundColor`, no ring).
-
-## No transitions on hover, press and label colour
-
-- **Cause:** `not ported yet`.
-- **Original:** `transition-colors duration-80` on the root (`:21`); the surface eases `box-shadow` over 180ms on `cubic-bezier(0.23,1,0.32,1)` and `background-color` over 80ms, both 80ms while pressed (`:212`).
-- **Port:** every state switches at once: `hover` / `active` style objects with no `transition*` (`src/components/button.tsx:210-233`); the ghost label colour follows the `hovered` signal (`:125-134`) and `<text>` carries no `colorFade` (`src/lib/theme.ts:451-455`, used only by `Icon fade`, which the button does not pass).
-- **Workaround:** none. README's "gpuix gaps" no longer lists colour transitions; gpuix animates `color`, `backgroundColor`, `outlineColor` and `boxShadow` on state-style changes (`FORK.md:815-818`). The README's "How the first three components translate" row ("none: state styles switch instantly") is stale.
-- **Fidelity:** dropped.
-- **Components it hits:** every component with a hover or press fill; `Icon` has `fade` for colour (the button's icons use only `easeStroke`, as the source eases only the stroke width).
 
 ## Loading spinner is a static glyph
 

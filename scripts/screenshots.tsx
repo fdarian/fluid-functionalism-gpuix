@@ -6,7 +6,9 @@
  * Writes `screenshots/<demo>/initial.png`, then whatever the demo's
  * `scenarios` capture, then `pill.png` with Radius set to Pill, then
  * `compact.png` with Size set to Compact, then `light.png`: the same page
- * after switching the theme with the "Make them yours" select.
+ * after switching the theme with the "Make them yours" select. The window is
+ * created Dark with the theme on System; `light.png` asserts the window really
+ * flipped to light.
  *
  * Real time, not the test clock: fluid hover measures on timers and motion
  * samples a wall clock, so each step runs frames until they settle.
@@ -50,7 +52,12 @@ mkdirSync(outDir, { recursive: true });
 
 const FRAME_MS = 16;
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-const test = createTestRoot({ width: 1240, height: 780, fonts });
+const test = createTestRoot({
+	width: 1240,
+	height: 780,
+	fonts,
+	appearance: "dark",
+});
 const renderer = test.renderer;
 
 /**
@@ -122,6 +129,13 @@ function ariaNode(target: string) {
 		return aria;
 	}
 	return undefined;
+}
+
+function expectAppearance(expected: "light" | "dark") {
+	const actual = renderer.getAppearance();
+	if (actual !== expected) {
+		throw new Error(`window appearance: expected ${expected}, got ${actual}`);
+	}
 }
 
 const shot: ShotContext = {
@@ -199,10 +213,6 @@ const shot: ShotContext = {
 		renderer.nativeSimulateScrollWheel(x, y, deltaX, deltaY);
 		await settle();
 	},
-	async moveHeld(x, y) {
-		renderer.nativeSimulateMouseMove(x, y, 0);
-		await settle();
-	},
 	settle,
 	expectText(text, present) {
 		const found = renderer.getAllText().some((line) => line.includes(text));
@@ -215,11 +225,12 @@ const shot: ShotContext = {
 	capture,
 };
 
-// The test renderer reports the machine's appearance; pin the scheme so captures are reproducible.
-setThemeChoice("dark");
+// The window starts Dark and the theme stays on "System", so the first captures also prove `createAppearance` feeds the scheme.
+expectAppearance("dark");
 test.render(() => <App demos={demos} pages={pages} initialPage={slug} />);
 // Fluid hover measures on timers after the first frame; 400 ms leaves the first highlight unpainted.
 await settle(800);
+expectAppearance("dark");
 capture("initial");
 
 await (slug === "showcase" ? showcaseScenarios : demo?.scenarios)?.(shot);
@@ -245,18 +256,15 @@ if (demo !== undefined && "layout" in demo && demo.layout === "full") {
 	setThemeChoice("light");
 	await settle(600);
 } else {
+	// A scenario may have scrolled the controls column; the theme select sits at its top.
+	await shot.scroll(1080, 300, 0, -100000);
 	await shot.click("theme");
-	const lightRow = renderer.findByText("Light");
-	if (lightRow === undefined)
-		throw new Error("the theme select has no Light row");
-	const lightBounds = renderer.getElementBounds(lightRow.id);
-	if (lightBounds === null)
-		throw new Error("no painted bounds for the Light row");
-	renderer.nativeSimulateClick(lightBounds.x + 4, lightBounds.y + 4);
-	await settle(600);
+	await shot.click("theme-option-light");
 }
 await shot.moveTo(1180, 700);
+expectAppearance("light");
 capture("light");
 
 console.log("screenshots written to", outDir);
+test.unmount();
 process.exit(0);

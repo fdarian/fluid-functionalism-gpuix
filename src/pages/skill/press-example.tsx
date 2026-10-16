@@ -1,6 +1,6 @@
 import {
 	buttonProps,
-	type EventPayload,
+	type DomEvent,
 	motion,
 	useGpuixRequired,
 } from "@gpuix/solid";
@@ -94,7 +94,7 @@ function GenericButton(props: { index: number; press: PressProps }) {
 			{...buttonProps({}, renderer)}
 			testId={`press-generic-${props.index}`}
 			{...pressHandlers(props.index, props.press, setHovered)}
-			onLayout={(event: EventPayload) => {
+			onLayout={(event: DomEvent) => {
 				if (event.width === undefined)
 					throw new Error("onLayout reported no width");
 				setMeasured(event.width);

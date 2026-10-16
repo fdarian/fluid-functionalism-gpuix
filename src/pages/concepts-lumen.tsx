@@ -19,9 +19,8 @@ import {
 	ThinkingStepsHeader,
 } from "../components/thinking-steps";
 import type { ShotContext } from "../lib/demo";
-import { color, shape, siteType, weight } from "../lib/theme";
+import { color, shadow, shape, siteType, weight } from "../lib/theme";
 import { ConceptFrame } from "./concepts/frame";
-import { shadowSurface } from "./surfaces/elevated";
 
 export const title = "Lumen";
 export const group = "Pages";
@@ -39,7 +38,7 @@ export async function scenarios(shot: ShotContext) {
 	shot.capture("nav-hover");
 	await shot.moveTo(600, 400);
 	await shot.focus("concept-nav-concepts-lumen");
-	await shot.press("down");
+	await shot.press("ArrowDown");
 	shot.capture("nav-keyboard");
 	await shot.moveTo(600, 400);
 	await shot.click("lumen-seed-tab-1");
@@ -49,13 +48,13 @@ export async function scenarios(shot: ShotContext) {
 	await shot.click("lumen-seed-tab-0");
 	await shot.click("input-message-textarea");
 	await shot.press("w h y");
-	await shot.press("enter");
+	await shot.press("Enter");
 	// The new turn lands below the fold; the page does not scroll to it.
-	await shot.scroll(580, 300, 0, -2000);
+	await shot.scroll(580, 300, 0, 2000);
 	shot.expectText("why", true);
 	shot.capture("thinking");
 	await shot.settle(THINKING_MS + 600);
-	await shot.scroll(580, 300, 0, -2000);
+	await shot.scroll(580, 300, 0, 2000);
 	shot.capture("followup");
 }
 
@@ -218,8 +217,8 @@ function SourcesPanel() {
 							paddingBottom: 12,
 							borderRadius: 12,
 							backgroundColor: color.surface2,
-							boxShadow: shadowSurface(2),
-							hover: { boxShadow: shadowSurface(4) },
+							boxShadow: shadow(2),
+							hover: { boxShadow: shadow(4) },
 						}}
 					>
 						<Badge color={source.color} size="compact">

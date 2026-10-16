@@ -14,24 +14,6 @@ Same in both (checked against the code): row height, gap and padding per size (3
 - **Fidelity:** approximated (growing, shrinking and moving runs match; merge and split lose the meeting-in-the-middle choreography).
 - **Components it hits:** just this one (radio-group has a single run). `BASE-UI-AUDIT.md` lists merge/split as out of scope only for combobox.
 
-## Indicator border changes colour at once
-
-- **Cause:** `not ported yet`. gpuix animates `borderColor` (`~/code/fdarian/gpuix/FORK.md:813-814`); `colorFade` in `theme.ts:310` only names `color`.
-- **Original:** the box border eases between `border`, neutral-400 (neutral-500 dark) and transparent with `transition-all duration-80` (`checkbox-group.tsx:312-322`).
-- **Port:** `indicatorBorder` (`choice-group.tsx:387-392`) sets the colour; the border div has no transition (`checkbox-group.tsx:55-66`).
-- **Workaround:** none.
-- **Fidelity:** approximated (right colours, no 80 ms ease).
-- **Components it hits:** radio-group.
-
-## Label colour changes at once
-
-- **Cause:** `not ported yet`. `select.tsx:723` and `combobox.tsx:648` already spread `colorFade` for the same row label.
-- **Original:** `transition-[color,font-variation-settings] duration-80` on the label (`checkbox-group.tsx:400-411`).
-- **Port:** `StableLabel` sets `color` with no transition (`stable-label.tsx:40-54`, used at `choice-group.tsx:375-382`).
-- **Workaround:** none.
-- **Fidelity:** approximated (no 80 ms ease).
-- **Components it hits:** radio-group, and the other `StableLabel` rows (tabs, tabs-subtle, sidebar, menu rows) unless they set a fade.
-
 ## Label weight (variable fonts)
 
 - **Cause:** `gpuix gap`. See the README "Missing features" row for variable-font axes (`README.md:171`).

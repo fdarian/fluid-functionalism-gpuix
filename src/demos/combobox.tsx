@@ -272,7 +272,7 @@ async function reveal(shot: ShotContext, testId: string) {
 		const y = shot.centerOf(testId).y;
 		if ((y > 120 && y < 320) || y === previous) return;
 		previous = y;
-		await shot.scroll(700, 400, 0, -(y - 200));
+		await shot.scroll(700, 400, 0, y - 200);
 	}
 	throw new Error(`could not scroll ${testId} into view`);
 }
@@ -283,11 +283,11 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("play-icon-track");
 	await shot.click("play-clearable-track");
 	await shot.focus("play-input");
-	await shot.press("down");
+	await shot.press("ArrowDown");
 	shot.expectText("RadioGroup", true);
 	await shot.press("b u");
 	shot.expectText("RadioGroup", false);
-	await shot.press("down enter");
+	await shot.press("ArrowDown Enter");
 	await shot.settle(400);
 	shot.expectText("RadioGroup", false);
 	shot.capture("playground-icon-clearable");
@@ -298,10 +298,10 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("playground-shuffled");
 
 	// 25 timezones: the list scrolls and the typed query narrows it.
-	await shot.scroll(700, 400, 0, -900);
+	await shot.scroll(700, 400, 0, 900);
 	await reveal(shot, "tz-input");
 	await shot.focus("tz-input");
-	await shot.press("down");
+	await shot.press("ArrowDown");
 	shot.expectText("(UTC−12) Baker Island", true);
 	shot.capture("long-list-open");
 	await shot.press("t o k");
@@ -309,7 +309,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectText("(UTC−12) Baker Island", false);
 	await shot.press("z z");
 	shot.expectText("No timezone matches.", true);
-	await shot.press("escape");
+	await shot.press("Escape");
 
 	// Form and ARIA, opened by key: an empty required combobox blocks the submit and takes the focus; the input names its list and the lit row.
 	await reveal(shot, "form-submit");
@@ -324,7 +324,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 		labelled_by: ["form-stack-label"],
 		controls: undefined,
 	});
-	await shot.press("down");
+	await shot.press("ArrowDown");
 	shot.expectAria("form-stack-input", { expanded: true });
 	const listbox = shot.aria("form-stack-input").controls;
 	if (!Array.isArray(listbox) || listbox.length !== 1)
@@ -333,11 +333,11 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectAria("form-stack-input", {
 		active_descendant: shot.idOf("form-stack-option-Astro"),
 	});
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.settle(300);
 	await shot.click("form-submit");
 	shot.expectText("submitted: stack=Astro", true);
-	await shot.scroll(700, 400, 0, 2000);
+	await shot.scroll(700, 400, 0, -2000);
 
 	// Opens on mouse-down; the release leaves it open.
 	await shot.down("framework-input");
@@ -346,7 +346,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectText("Angular", true);
 	shot.capture("open");
 
-	await shot.press("backspace backspace backspace backspace backspace");
+	await shot.press("Backspace Backspace Backspace Backspace Backspace");
 	await shot.press("s o l");
 	shot.expectText("Angular", false);
 	shot.capture("filtered");
@@ -360,46 +360,46 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 
 	// Focus alone does not open it; ArrowUp does.
 	await shot.click("framework-input");
-	await shot.press("escape");
+	await shot.press("Escape");
 	shot.expectText("Angular", false);
-	await shot.press("tab shift-tab");
+	await shot.press("Tab Shift+Tab");
 	shot.expectText("Angular", false);
-	await shot.press("up");
+	await shot.press("ArrowUp");
 	shot.expectText("Angular", true);
-	await shot.press("escape");
+	await shot.press("Escape");
 
 	// Arrows loop and reach the disabled row; Enter refuses it and the popup stays.
 	await shot.click("views-input");
 	shot.expectText("Inbox", true);
-	await shot.press("up");
-	await shot.press("enter");
+	await shot.press("ArrowUp");
+	await shot.press("Enter");
 	shot.expectText("Private", true);
 	shot.capture("views-disabled-highlight");
-	await shot.press("down enter");
+	await shot.press("ArrowDown Enter");
 	await shot.settle(400);
 	shot.expectText("Private", false);
 	shot.expectText("Value: inbox", true);
 
 	// Closed, Escape empties the field and the pick.
-	await shot.press("escape");
+	await shot.press("Escape");
 	shot.expectText("Value: none", true);
 
 	// Leaving the list puts the highlight back on the first row, so Enter picks it.
-	await shot.press("down");
+	await shot.press("ArrowDown");
 	await shot.hover("views-option-starred");
 	await shot.moveTo(1180, 700);
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.settle(400);
 	shot.expectText("Value: inbox", true);
 
 	// Emptying the text drops the pick; the match ignores accents.
-	await shot.press("backspace backspace backspace backspace backspace");
+	await shot.press("Backspace Backspace Backspace Backspace Backspace");
 	shot.expectText("Value: none", true);
 	await shot.press("c a f e");
 	shot.expectText("Café", true);
 	shot.expectText("Recent", false);
 	shot.capture("views-accent");
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.settle(400);
 	shot.expectText("Value: cafe", true);
 
@@ -412,13 +412,15 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("views-cleared");
 
 	// A custom `filter`, and the picked row scrolled into view on open.
+	await reveal(shot, "tall-input");
 	await shot.click("tall-input");
 	shot.capture("tall-open");
-	await shot.press("backspace backspace backspace s");
-	shot.expectText("Astro", false);
+	await shot.press("Backspace Backspace Backspace s");
+	// Not "Astro": the form's "submitted: stack=Astro" line holds it on the page.
+	shot.expectText("Qwik", false);
 	shot.expectText("Solid", true);
 	shot.capture("tall-prefix");
-	await shot.press("escape");
+	await shot.press("Escape");
 
 	await shot.click("off-input");
 	shot.expectText("Angular", false);

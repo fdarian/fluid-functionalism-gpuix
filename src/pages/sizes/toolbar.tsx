@@ -124,6 +124,7 @@ function HeightGuides(props: { height: number }) {
 						...siteType.caption,
 						fontWeight: weight.semibold,
 						color: color.foreground,
+						fontVariantNumeric: "tabular-nums",
 					}}
 				>
 					{`${props.height}px`}

@@ -1,18 +1,19 @@
 import type {
-	EventPayload,
+	DomEvent,
 	HostElement,
 	HostMouseEvent,
+	HostMouseMoveEvent,
 	KeyEvent,
 } from "@gpuix/solid";
 import { createSignal } from "solid-js";
 import { createPointerCapture } from "../../../lib/pointer-capture";
-import { withAlpha } from "../../../lib/theme";
-import { sc, scRing, scShadow } from "./theme";
+import { twShadow, withAlpha } from "../../../lib/theme";
+import { sc, scRing } from "./theme";
 
 const THUMB = 12;
 const TRACK_HEIGHT = 4;
 
-function pointerX(event: EventPayload) {
+function pointerX(event: Pick<HostMouseEvent, "x">) {
 	if (event.x === undefined) {
 		throw new Error("Pointer event without coordinates");
 	}
@@ -59,7 +60,7 @@ export function ScSlider(props: {
 		setDragging(true);
 		valueAt(pointerX(event));
 	};
-	const onMove = (event: EventPayload) => {
+	const onMove = (event: HostMouseMoveEvent) => {
 		if (dragging()) valueAt(pointerX(event));
 	};
 	const onRelease = () => setDragging(false);
@@ -93,7 +94,7 @@ export function ScSlider(props: {
 			onMouseMove={onMove}
 			onMouseUp={onRelease}
 			onLostPointerCapture={onRelease}
-			onLayout={(event: EventPayload) => {
+			onLayout={(event: DomEvent) => {
 				if (event.width === undefined) {
 					throw new Error("onLayout reported no width");
 				}
@@ -151,7 +152,7 @@ export function ScSlider(props: {
 					borderWidth: 1,
 					borderColor: withAlpha(sc.primary, 0.5),
 					backgroundColor: "#FFFFFF",
-					boxShadow: scShadow.base,
+					boxShadow: twShadow.sm,
 					keyboardFocusDim: false,
 					focusVisible: { ...scRing(), outlineWidth: 1, outlineOffset: 0 },
 				}}

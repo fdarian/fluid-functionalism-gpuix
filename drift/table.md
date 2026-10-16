@@ -26,16 +26,6 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 - **Fidelity:** approximated (600 for 550, no optical size).
 - **Components it hits:** every component using `font-variation-settings`.
 
-## The 80ms border and text-colour fade
-
-- **Cause:** `not ported yet`.
-- **Original:** the row border fades to transparent over 80ms (`transition-[border-color] duration-80`, `table.tsx:153-154`) and the cell text eases from muted to foreground over the same 80ms (`transition-colors duration-80 group-[.is-active]/row:text-foreground`, `table.tsx:210`).
-- **Port:** both switch at once: `borderColor` is set from `hideBorder()` (`table.tsx:146`) and the text `color` from `textColor()` (`:159-160`, `:177`), with no transition.
-- **gpuix lacks:** nothing. gpuix animates `color` and `borderColor` with CSS transitions (`FORK.md:816-818`); the port already does it for text in select and combobox with `colorFade` (`src/lib/theme.ts:451`, `src/components/select.tsx:728`, `src/components/combobox.tsx:651`). A border needs `transitionProperty: "border-color"` (kebab-case, `FORK.md:895`). `README.md:226` still says state styles switch instantly, which is stale.
-- **Workaround:** none.
-- **Fidelity:** dropped (the lit row's rules and text snap).
-- **Components it hits:** just this one.
-
 ## Highlight travel runs on `top` / `left`
 
 - **Cause:** `gpuix gap` (no transforms; `README.md:236`).
@@ -45,16 +35,6 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 - **Workaround:** the layout properties `motion` can animate.
 - **Fidelity:** approximated (same motion, but it re-lays out each frame).
 - **Components it hits:** every fluid-hover list.
-
-## Reduced motion is not honoured
-
-- **Cause:** `not ported yet`.
-- **Original:** the highlight keeps its 80ms opacity fade but snaps its position under `prefers-reduced-motion` (`fluid-hover-highlight.tsx:83-90`, `:114`, `:133`).
-- **Port:** always travels; nothing in `src` reads reduced motion (`src/lib/fluid-highlight.tsx:55-60`).
-- **gpuix lacks:** nothing: `matchMedia` with `prefers-reduced-motion` and `MotionConfig reducedMotion="user"` exist (`FORK.md:831-833`).
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every component that uses `FluidHighlight`.
 
 ## An explicit `size` does not scope the parts inside
 
@@ -69,7 +49,7 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 
 - **Cause:** `not ported yet`.
 - **Original:** real `<table>`, `<thead>`, `<tbody>`, `<tr>`, `<th>`, `<td>`; every part takes `className`, a `ref` and the element's HTML attributes (`table.tsx:39-47`, `:99-117`, `:125-170`, `:176-217`), which the site's pages use to align and size columns (`text-center`, `w-[180px]`, `whitespace-nowrap` in `app/table/page.tsx`).
-- **Port:** plain `<div>` rows and cells with no `role`, only `testId` and the `width` prop (`table.tsx:50-54`, `:107-111`, `:155`, `:187-199`). There is no cell alignment option and no `className` / `ref`.
+- **Port:** plain `<div>` rows and cells with no `role`, only `testId`, the `width` prop and two booleans, `alignRight` (`text-right`) and `tabularNums` (`tabular-nums`) (`table.tsx:50-54`, `:107-111`, `:155`, `:187-199`). There is no other cell styling, `className` or `ref`.
 - **gpuix lacks:** nothing: `role` and `aria-*` work on any element (`src/components/sidebar.tsx:312` sets `aria-current`; `src/components/tabs.tsx` sets `role`).
 - **Workaround:** none.
 - **Fidelity:** approximated (looks the same; the table is anonymous to assistive tech, columns cannot be centred or kept on one line).

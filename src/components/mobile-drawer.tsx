@@ -1,4 +1,5 @@
 import {
+	DialogBackdrop,
 	DialogPopup,
 	DialogPortal,
 	Dialog as GpuixDialog,
@@ -11,7 +12,7 @@ import { createPresence } from "../lib/presence";
 import { FocusFirst } from "./dialog";
 import {
 	color,
-	shadow3,
+	shadow,
 	motion as tween,
 } from "../lib/theme";
 
@@ -50,13 +51,7 @@ export function MobileDrawer(props: {
 			}}
 		>
 			<DialogPortal>
-				{/* gpuix's own DialogBackdrop closes on mousedown; the drawer closes on a click that presses and releases on the backdrop, as in a browser, and the exit leaves the layer up, so it ignores one that arrives then. */}
-				<div
-					onClick={() => {
-						if (props.open) props.onClose();
-					}}
-					style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
-				>
+				<DialogBackdrop>
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: props.open ? 1 : 0 }}
@@ -70,7 +65,7 @@ export function MobileDrawer(props: {
 							backgroundColor: color.scrim,
 						}}
 					/>
-				</div>
+				</DialogBackdrop>
 				{/* The popup is only the focus scope: the panel is what the pointer hits. */}
 				<DialogPopup
 					finalFocus={props.triggerRef}
@@ -105,9 +100,7 @@ export function MobileDrawer(props: {
 							flexDirection: "column",
 							overflowY: "scroll",
 							backgroundColor: color.card,
-							borderRightWidth: 1,
-							borderColor: color.popupBorder,
-							boxShadow: shadow3(),
+							boxShadow: shadow(3),
 							pointerEvents: "auto",
 						}}
 					>

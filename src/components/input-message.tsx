@@ -1,8 +1,8 @@
 import {
 	type BoxShadow,
 	buttonProps,
-	type EventPayload,
 	type HostElement,
+	type HostMouseMoveEvent,
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
@@ -25,7 +25,7 @@ import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { fill } from "../lib/press";
 import { createMeasuredHeight } from "../lib/measured-height";
-import { color, sizeChoice, height, nestedRadius, radius, shape, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
+import { color, colorFade, fade, pressFade, surfaceFade, sizeChoice, height, nestedRadius, radius, shape, type as scale, scheme, shadow, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 import { FileThumbnail } from "./file-thumbnail";
 import type { InputSize } from "./input-group";
 import { Tooltip } from "./tooltip";
@@ -118,6 +118,15 @@ const steps = {
 	},
 } as const;
 
+/** The drop under a recoloured edge: `--shadow-color`, which stays 6% black in dark too. */
+/** The source's `transition-opacity duration-80` on the remove badge, the queued close button and the suggestion's ↵. */
+const OPACITY_FADE = fade(["opacity"], 80);
+
+/** The composer's `transition-[box-shadow,color] duration-80` on the edge ring. */
+const COMPOSER_FADE = fade(["box-shadow", "color"], 80);
+
+const EDGE_DROP = "0 1px 1px -0.5px rgba(0,0,0,0.06)";
+
 /** The focused composer's ring: foreground at 20%. */
 const focusEdge = () => withAlpha(color.foreground, 0.2);
 
@@ -189,9 +198,10 @@ function SendButton(props: {
 				keyboardFocusDim: false,
 				opacity: props.disabled ? 0.5 : 1,
 				pointerEvents: props.disabled ? "none" : undefined,
+				...surfaceFade,
 				boxShadow: fill(color.foreground, 1),
 				hover: { boxShadow: fill(color.primaryHover, 1) },
-				active: { boxShadow: fill(color.primaryActive, 0) },
+				active: { boxShadow: fill(color.primaryActive, 0), ...pressFade },
 				focusVisible: focusRing(1),
 			}}
 		>
@@ -261,6 +271,7 @@ function RemoveBadge(props: {
 					justifyContent: "center",
 					cursor: "pointer",
 					opacity: props.visible || focusVisible() ? 1 : 0,
+					...OPACITY_FADE,
 					keyboardFocusDim: false,
 					focusVisible: focusRing(0),
 				}}
@@ -328,7 +339,7 @@ function QueuedRow(props: {
 	onEdit: (item: QueuedMessage) => void;
 	onRemove: (item: QueuedMessage) => void;
 	onMove: (item: QueuedMessage, direction: -1 | 1) => void;
-	onDragMove: (item: QueuedMessage, event: EventPayload) => void;
+	onDragMove: (item: QueuedMessage, event: HostMouseMoveEvent) => void;
 	testId?: string;
 }) {
 	const renderer = useGpuixRequired();
@@ -418,7 +429,13 @@ function QueuedRow(props: {
 						color={color.mutedForeground}
 					/>
 					<Show when={props.item.text !== ""}>
-						<text style={{ ...step().rowText, color: color.mutedForeground }}>
+						<text
+							style={{
+								...step().rowText,
+								color: color.mutedForeground,
+								fontVariantNumeric: "tabular-nums",
+							}}
+						>
 							{String(files())}
 						</text>
 					</Show>
@@ -488,6 +505,7 @@ function QueuedRow(props: {
 						justifyContent: "center",
 						cursor: "pointer",
 						opacity: hovered() || closeHovered() || closeFocusVisible() ? 1 : 0,
+						...OPACITY_FADE,
 						keyboardFocusDim: false,
 						hover: { backgroundColor: color.hover },
 						focusVisible: focusRing(0),
@@ -542,6 +560,8 @@ function SuggestionRow(props: {
 				paddingLeft: step().rowPadX,
 				paddingRight: step().rowPadX,
 				cursor: "pointer",
+				color: props.active ? color.foreground : color.mutedForeground,
+				...colorFade,
 			}}
 		>
 			<text
@@ -550,7 +570,7 @@ function SuggestionRow(props: {
 					flexGrow: 1,
 					minWidth: 0,
 					fontWeight: weight.normal,
-					color: props.active ? color.foreground : color.mutedForeground,
+					color: "currentColor",
 					whiteSpace: "nowrap",
 					textOverflow: "ellipsis",
 					overflow: "hidden",
@@ -562,14 +582,16 @@ function SuggestionRow(props: {
 				<Show
 					when={!props.active && props.keyHint}
 					fallback={
-						<Show when={props.active}>
+						<div
+							style={{ opacity: props.active ? 1 : 0, ...OPACITY_FADE }}
+						>
 							<Icon
 								name="corner-down-left"
 								size={13}
 								strokeWidth={1.5}
-								color={color.foreground}
+								color="currentColor"
 							/>
-						</Show>
+						</div>
 					}
 				>
 					<Icon
@@ -785,7 +807,7 @@ export function InputMessage(props: InputMessageProps) {
 		const from = queue().findIndex((queued) => queued.id === item.id);
 		moveQueuedTo(item, from + direction);
 	};
-	const dragQueued = (item: QueuedMessage, event: EventPayload) => {
+	const dragQueued = (item: QueuedMessage, event: HostMouseMoveEvent) => {
 		if (queueList === undefined || event.y === undefined) return;
 		const bounds = queueList.getBoundingClientRect();
 		const stride = step().row + 4;
@@ -922,12 +944,13 @@ export function InputMessage(props: InputMessageProps) {
 	const renderSlot = (slot: InputMessageSlot | undefined) =>
 		typeof slot === "function" ? slot(slotContext()) : slot;
 
-	const ring = () => {
-		if (focused()) return focusEdge();
-		if (hovered() && props.clickToFocus !== false && props.disabled !== true) {
-			return color.border;
-		}
-		return color.popupBorder;
+	const edgeShadow = () => {
+		let edge: string;
+		if (focused()) edge = focusEdge();
+		else if (hovered() && props.clickToFocus !== false && props.disabled !== true) {
+			edge = color.border;
+		} else return shadow(2);
+		return `0 0 0 1px ${edge}, ${EDGE_DROP}`;
 	};
 
 	const rectFor = (index: number | null) => {
@@ -957,22 +980,14 @@ export function InputMessage(props: InputMessageProps) {
 				width: "100%",
 				borderRadius: shape.container,
 				backgroundColor: color.surface2,
-				outlineWidth: 1,
-				outlineColor: ring(),
-				outlineOffset: 0,
 				cursor:
 					props.clickToFocus !== false && props.disabled !== true
 						? "text"
 						: undefined,
 				opacity: props.disabled === true ? 0.5 : 1,
 				pointerEvents: props.disabled === true ? "none" : undefined,
-				boxShadow: {
-					offsetX: 0,
-					offsetY: 1,
-					blurRadius: 1,
-					spreadRadius: -0.5,
-					color: color.shadowColor,
-				},
+				boxShadow: edgeShadow(),
+				...COMPOSER_FADE,
 			}}
 		>
 			<Collapse open={files().length > 0}>

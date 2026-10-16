@@ -1,14 +1,10 @@
-import {
-	buttonProps,
-	type MotionTransition,
-	motion,
-	useGpuixRequired,
-} from "@gpuix/solid";
+import { buttonProps, motion, useGpuixRequired } from "@gpuix/solid";
 import { createSignal, type JSX, Show } from "solid-js";
 import { Icon } from "../lib/icon";
 import type { IconName } from "../lib/icons";
 import {
 	color,
+	fade,
 	focusRing,
 	type as scale,
 	scheme,
@@ -19,8 +15,10 @@ import { type FileLike, FileThumbnail } from "./file-thumbnail";
 
 const subtitle = { fontSize: 14, lineHeight: 20 } as const;
 const ENTRANCE_RISE = 8;
-/** group-hover's `transition-opacity duration-150`, Tailwind's default curve. */
-const META_FADE: MotionTransition = { duration: 0.15, ease: [0.4, 0, 0.2, 1] };
+/** The meta row's `transition-opacity duration-150`. */
+const META_FADE = fade(["opacity"], 150);
+/** The action buttons' `transition-colors duration-100` without `outline-color`: the source's focus ring is a box-shadow ring, which does not ease. */
+const ACTION_FADE = fade(["color", "background-color"], 100);
 
 export type ChatAction = "copy" | "edit" | "regenerate";
 
@@ -32,7 +30,6 @@ export function ChatMessageAction(props: {
 	onClick?: () => void;
 }) {
 	const renderer = useGpuixRequired();
-	const [hovered, setHovered] = createSignal(false);
 	const glyph = (): IconName =>
 		props.action === "copy"
 			? "copy"
@@ -45,8 +42,6 @@ export function ChatMessageAction(props: {
 			aria-label={props.label}
 			testId={props.testId}
 			tabIndex={0}
-			onMouseEnter={() => setHovered(true)}
-			onMouseLeave={() => setHovered(false)}
 			style={{
 				width: 24,
 				height: 24,
@@ -56,16 +51,13 @@ export function ChatMessageAction(props: {
 				borderRadius: shape.button,
 				cursor: "pointer",
 				keyboardFocusDim: false,
-				hover: { backgroundColor: color.hover },
+				color: color.mutedForeground,
+				...ACTION_FADE,
+				hover: { backgroundColor: color.hover, color: color.foreground },
 				focusVisible: focusRing(0),
 			}}
 		>
-			<Icon
-				name={glyph()}
-				size={13}
-				strokeWidth={1.5}
-				color={hovered() ? color.foreground : color.mutedForeground}
-			/>
+			<Icon name={glyph()} size={13} strokeWidth={1.5} color="currentColor" />
 		</div>
 	);
 }
@@ -155,11 +147,10 @@ export function ChatMessage(props: {
 			</Show>
 			<Show when={hasMeta()}>
 				{/* Always laid out, so revealing it never shifts the gap between bubbles. */}
-				<motion.div
-					initial={false}
-					animate={{ opacity: revealed() ? 1 : 0 }}
-					transition={META_FADE}
+				<div
 					style={{
+						opacity: revealed() ? 1 : 0,
+						...META_FADE,
 						display: "flex",
 						flexDirection: "row",
 						alignItems: "center",
@@ -171,7 +162,13 @@ export function ChatMessage(props: {
 					}}
 				>
 					<Show when={showTime()}>
-						<text style={{ ...scale.caption, color: color.mutedForeground }}>
+						<text
+							style={{
+								...scale.caption,
+								color: color.mutedForeground,
+								fontVariantNumeric: "tabular-nums",
+							}}
+						>
 							{props.time}
 						</text>
 					</Show>
@@ -187,7 +184,7 @@ export function ChatMessage(props: {
 							{props.actions}
 						</div>
 					</Show>
-				</motion.div>
+				</div>
 			</Show>
 		</motion.div>
 	);

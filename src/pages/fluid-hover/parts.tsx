@@ -33,6 +33,7 @@ export const LIST_PADDING = 8;
 function rowStyle() {
 	return {
 		position: "relative",
+		zIndex: 10,
 		height: ROW_HEIGHT,
 		flexShrink: 0,
 		display: "flex",
@@ -63,7 +64,7 @@ function RowLabel(props: { children: string }) {
 	);
 }
 
-/** A bare row that joins a fluid hover list. The highlight sits under it by document order, so the row paints nothing itself. */
+/** A bare row that joins a fluid hover list. The highlight sits under it (the row is `z-10`, as in the source), so the row paints nothing itself. */
 export function FluidRow(props: {
 	hover: FluidHover;
 	index: number;

@@ -1,7 +1,8 @@
 import {
 	type BoxShadow,
 	buttonProps,
-	type EventPayload,
+	type HostMouseEvent,
+	type HostPointerEvent,
 	type StateStyleDesc,
 	useGpuixRequired,
 } from "@gpuix/solid";
@@ -9,7 +10,18 @@ import { type Accessor, createSignal, type JSX, Show } from "solid-js";
 import { Icon } from "../lib/icon";
 import { fill } from "../lib/press";
 import type { IconRef } from "../lib/icons";
-import { color, sizeChoice, height, shape, type as scale, weight, focusRing } from "../lib/theme";
+import {
+	color,
+	colorFade,
+	focusRing,
+	height,
+	pressFade,
+	shape,
+	sizeChoice,
+	surfaceFade,
+	type as scale,
+	weight,
+} from "../lib/theme";
 
 export type ButtonVariant = "primary" | "secondary" | "tertiary" | "ghost";
 export type ButtonSize = "default" | "compact" | "icon" | "icon-compact";
@@ -64,12 +76,12 @@ const surfaces = (): Record<ButtonVariant, Surface> => ({
 	primary: {
 		rest: { boxShadow: fill(color.foreground, 1) },
 		hover: { boxShadow: fill(color.primaryHover, 1) },
-		active: { boxShadow: fill(color.primaryActive, 0) },
+		active: { boxShadow: fill(color.primaryActive, 0), ...pressFade },
 	},
 	secondary: {
 		rest: { boxShadow: fill(color.tint, 1) },
 		hover: { boxShadow: fill(color.tintHover, 1) },
-		active: { boxShadow: fill(color.tint, 0) },
+		active: { boxShadow: fill(color.tint, 0), ...pressFade },
 	},
 	tertiary: {
 		rest: {
@@ -80,15 +92,16 @@ const surfaces = (): Record<ButtonVariant, Surface> => ({
 		hover: { backgroundColor: color.hover },
 		active: {
 			backgroundColor: color.active,
+			...pressFade,
 			outlineWidth: 1,
 			outlineColor: color.border,
 			outlineOffset: -1,
 		},
 	},
 	ghost: {
-		rest: {},
+		rest: { boxShadow: fill("transparent", 1) },
 		hover: { boxShadow: fill(color.hover, 1) },
-		active: { boxShadow: fill(color.active, 0) },
+		active: { boxShadow: fill(color.active, 0), ...pressFade },
 	},
 });
 
@@ -106,8 +119,8 @@ export function Button(props: {
 	"aria-expanded"?: boolean;
 	"aria-haspopup"?: "menu" | "listbox" | "dialog";
 	"aria-controls"?: string;
-	onClick?: (event: EventPayload) => void;
-	onMouseDown?: (event: EventPayload) => void;
+	onClick?: (event: HostPointerEvent) => void;
+	onMouseDown?: (event: HostMouseEvent) => void;
 	/** The label, or the icon for an icon-only size. */
 	children?: JSX.Element;
 	/** Anything after the label, e.g. a keycap. Takes the trailing icon's tighter padding. */
@@ -150,6 +163,7 @@ export function Button(props: {
 						size={size().icon}
 						strokeWidth={iconStroke()}
 						easeStroke
+						fade
 						color={labelColor()}
 					/>
 				)}
@@ -161,6 +175,7 @@ export function Button(props: {
 						style={{
 							...size().text,
 							color: labelColor(),
+							...colorFade,
 							fontWeight: weight.normal,
 							whiteSpace: "nowrap",
 						}}
@@ -174,6 +189,7 @@ export function Button(props: {
 					size={size().icon}
 					strokeWidth={iconStroke()}
 					easeStroke
+					fade
 					color={labelColor()}
 				/>
 			</Show>
@@ -185,6 +201,7 @@ export function Button(props: {
 						size={size().icon}
 						strokeWidth={iconStroke()}
 						easeStroke
+						fade
 						color={labelColor()}
 					/>
 				)}
@@ -230,6 +247,7 @@ export function Button(props: {
 				keyboardFocusDim: false,
 				opacity: inert() ? 0.5 : 1,
 				pointerEvents: inert() ? "none" : "auto",
+				...surfaceFade,
 				...surfaces()[variant()].rest,
 				hover: surfaces()[variant()].hover,
 				active: surfaces()[variant()].active,
@@ -264,6 +282,7 @@ export function Button(props: {
 						name="loader"
 						size={size().icon}
 						strokeWidth={1.5}
+						fade
 						color={labelColor()}
 					/>
 				</div>

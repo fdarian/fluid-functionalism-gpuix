@@ -35,13 +35,6 @@ repeating it.
 - **Fidelity:** approximated.
 - **Components it hits:** every glyph FF turns with a transform.
 
-## Each Tailwind shadow keeps one drop
-
-- **Cause:** `gpuix gap`: one outer shadow per element (`src/lib/theme.ts` `shadow3`).
-- **Original:** `shadow-sm` / `shadow` / `shadow-md` / `shadow-lg` are two stacked drops each; the switch thumb is `shadow-lg`, the menu `shadow-md`, the active tab `shadow-sm`, the slider thumb `shadow`.
-- **Port:** the first, largest drop of each (`scShadow` in `src/pages/compare/shadcn/theme.ts:78-107`).
-- **Fidelity:** approximated.
-
 ## The focus ring leaves its offset gap transparent
 
 - **Cause:** `gpuix gap`: one `outline` per element, no second ring.
@@ -74,16 +67,6 @@ repeating it.
 - **Workaround:** the wrapper regions.
 - **Fidelity:** approximated (same outcome for these ten slides; a widget added later needs wrapping by hand).
 
-## A slide change runs in a microtask
-
-- **Cause:** `gpuix gap`.
-- **Original:** `setCurrentIndex` and `router.replace` straight from the handler (`app/compare/page.tsx:82-90`).
-- **Port:** `goTo` queues `setIndex` with `queueMicrotask` (`src/pages/compare.tsx:237-243`): the Slider creates motion values as it mounts, and gpuix throws "This renderer call cannot run inside an event handler that native called synchronously" if a key or press handler mounts it. A `target` mirror keeps two arrows pressed in one tick counting from the slide they are heading to.
-- **gpuix lacks:** the test renderer refuses `createMotionValue` while a key or press handler is running (`packages/native/src/test_renderer.rs:106`); a component mounted from a handler has no way to know it is inside one, and the windowed renderer was not tried.
-- **Workaround:** the microtask.
-- **Fidelity:** exact for what is seen.
-- **Components it hits:** any page that swaps in a component that creates a motion value from a press or key.
-
 ## The slide is not in the URL
 
 - **Cause:** `port choice`: the port has page slugs, no query string or history.
@@ -112,12 +95,12 @@ repeating it.
 - **Port:** Inter Bold 700 without `opsz`, line height = font size, stepping down with the Size row (`siteType.display`); padding 48 and top 96, two columns always (the window is not made narrower than the md and sm breakpoints in practice).
 - **Fidelity:** approximated.
 
-## The card is opaque, and its shadow is one drop
+## The card is opaque
 
-- **Cause:** `gpuix gap`: a shadow paints under its element, not around it, and one per element.
+- **Cause:** `gpuix gap`: a shadow paints under its element, not around it.
 - **Original:** `BentoCard` has no background; `.bento-card-border` is a 1px border plus `0 1px 2px` shadow, changing on hover and on `:focus-within` (`app/components/bento-card.tsx:62-66`, `app/globals.css:1244-1269`).
 - **Port:** the card fills with the page colour so the shadow does not darken it through a transparent fill, then sets the rest, hover and focus-within border colours and shadows from the same values per scheme (`src/pages/compare/card.tsx:5-33, 56-72`). `min-h-[420px]`, `px-6 py-16` and the 44px footer match.
-- **gpuix lacks:** an outer-only shadow (`FORK.md`, box shadows).
+- **gpuix lacks:** an outer box shadow clipped out of the border box: `shadow_fragment` clips only `inset` shadows to the element (`~/code/fdarian/gpuix/zed/crates/gpui_apple/src/shaders.metal:600-654`).
 - **Fidelity:** exact for what is seen.
 
 ## The progress pills tween their width, no focus style of their own

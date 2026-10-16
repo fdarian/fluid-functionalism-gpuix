@@ -1,4 +1,4 @@
-import type { EventPayload } from "@gpuix/solid";
+import type { DomEvent } from "@gpuix/solid";
 import { createSignal, For, type JSX, useContext } from "solid-js";
 import {
 	AccordionContent,
@@ -162,7 +162,7 @@ function ComboboxPreview() {
 	return (
 		<div
 			style={{ width: "100%", maxWidth: COMBOBOX_WIDTH }}
-			onLayout={(event: EventPayload) => {
+			onLayout={(event: DomEvent) => {
 				if (event.width === undefined) {
 					throw new Error("onLayout reported no width");
 				}
@@ -590,7 +590,9 @@ function SliderPreview() {
 					}}
 				>
 					<text style={muted}>{SLIDER_OPACITY.label}</text>
-					<text style={muted}>{String(basic())}</text>
+					<text style={{ ...muted, fontVariantNumeric: "tabular-nums" }}>
+						{String(basic())}
+					</text>
 				</div>
 				<Slider value={basic()} onChange={setBasic} showValue={false} />
 			</div>

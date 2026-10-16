@@ -1,5 +1,5 @@
 import {
-	type EventPayload,
+	type DomEvent,
 	type HostElement,
 	type HostPointerEvent,
 	type KeyEvent,
@@ -27,6 +27,7 @@ import { IS_MAC } from "../lib/platform";
 import { StableLabel } from "../lib/stable-label";
 import {
 	color,
+	fade,
 	focusRing,
 	shape,
 	type as scale,
@@ -34,6 +35,7 @@ import {
 	motion as tween,
 	weight,
 	withAlpha,
+	colorFadeNoRing,
 } from "../lib/theme";
 import { Button } from "./button";
 
@@ -87,6 +89,12 @@ const questionKey = (question: AskUserQuestion, index: number) =>
 const optionKey = (option: AskUserOption, index: number) =>
 	option.id ?? `o-${index}`;
 
+/** The chip's `transition-[opacity,font-variation-settings] duration-80`; its colours switch at once in the source too. */
+const CHIP_FADE = fade(["opacity"], 80);
+
+/** The free-text box's `transition-colors`, without `outline-color`: the source's focus ring is a box-shadow ring, which does not ease. */
+const FREE_TEXT_FADE = colorFadeNoRing(150);
+
 const SHORTCUT_GLYPH = IS_MAC ? "⌘↵" : "⌃↵";
 
 /** Keycap for a shortcut, inside the primary button. */
@@ -125,7 +133,7 @@ interface RowProps {
 	tabIndex: number;
 	onClick: () => void;
 	onFocus: () => void;
-	onBlur: () => void;
+	onBlur: (event: DomEvent) => void;
 	chipContent: number;
 	chipFilled: boolean;
 	isMulti: boolean;
@@ -214,6 +222,7 @@ function Row(props: RowProps) {
 					justifyContent: "center",
 					borderRadius: shape.bg,
 					opacity: props.chipPosition === "right" && props.showArrow ? 0 : 1,
+					...CHIP_FADE,
 					...(props.isMulti
 						? props.chipFilled
 							? { backgroundColor: color.foreground }
@@ -271,6 +280,7 @@ function Row(props: RowProps) {
 			onBlur={props.onBlur}
 			style={{
 				position: "relative",
+				zIndex: 10,
 				display: "flex",
 				flexDirection: "row",
 				alignItems: props.topAlign ? "flex-start" : "center",
@@ -473,6 +483,7 @@ export function AskUserQuestions(props: {
 				setFocusedRow(null);
 				setFreeTextError(null);
 				if (!keyboardDriving) return;
+				// The source focuses the first row in the same commit. Here focusing it from this effect leaves focus on nothing (checked in the test renderer), so it waits a few frames.
 				const timer = setTimeout(() => focusRow(0), 48);
 				onCleanup(() => clearTimeout(timer));
 			},
@@ -490,21 +501,18 @@ export function AskUserQuestions(props: {
 		if (otherElement === undefined) return;
 		renderer.focusElement?.(otherElement.id);
 	};
-	const groupHasFocus = () => {
-		const focused = renderer.getFocusedElementId?.();
-		if (focused === undefined || focused === null) return false;
-		if (otherElement?.id === focused) return true;
-		for (const element of rowElements.values()) {
-			if (element.id === focused) return true;
+	const groupHolds = (element: object | null) => {
+		if (element === null) return false;
+		if (element === otherElement) return true;
+		for (const row of rowElements.values()) {
+			if (row === element) return true;
 		}
 		return false;
 	};
-	/** A blur is followed at once by the next row's focus, so the highlight is only dropped once focus is known to have left the group. */
-	const rowBlurred = (row: number) => {
+	/** The highlight is only dropped when focus leaves the group: the blur names where it went. */
+	const rowBlurred = (row: number, event: DomEvent) => {
 		setFocusedRow((current) => (current === row ? null : current));
-		queueMicrotask(() => {
-			if (!groupHasFocus()) hover.setActiveIndex(null);
-		});
+		if (!groupHolds(event.relatedTarget)) hover.setActiveIndex(null);
 	};
 	const moveActive = (next: number) => {
 		hover.setActiveIndex(next);
@@ -734,7 +742,7 @@ export function AskUserQuestions(props: {
 								hover.setActiveIndex(i());
 								setFocusedRow(i());
 							}}
-							onBlur={() => rowBlurred(i())}
+							onBlur={(event: DomEvent) => rowBlurred(i(), event)}
 							chipContent={i() + 1}
 							chipFilled={selected()}
 							isMulti={isMulti()}
@@ -776,7 +784,7 @@ export function AskUserQuestions(props: {
 						hover.setActiveIndex(otherIndex());
 						setFocusedRow(otherIndex());
 					}}
-					onBlur={() => rowBlurred(otherIndex())}
+					onBlur={(event: DomEvent) => rowBlurred(otherIndex(), event)}
 					chipContent={otherIndex() + 1}
 					chipFilled={otherText().length > 0}
 					isMulti={isMulti()}
@@ -809,15 +817,15 @@ export function AskUserQuestions(props: {
 							question()?.otherPlaceholder ?? "Describe in your own words"
 						}
 						theme={fieldTheme()}
-						onChange={(event: EventPayload) => setOther(event.value ?? "")}
+						onChange={(event: DomEvent) => setOther(event.value ?? "")}
 						onFocus={() => {
 							setTextFocused(true);
 							hover.setActiveIndex(otherIndex());
 							setFocusedRow(otherIndex());
 						}}
-						onBlur={() => {
+						onBlur={(event: DomEvent) => {
 							setTextFocused(false);
-							rowBlurred(otherIndex());
+							rowBlurred(otherIndex(), event);
 						}}
 						onKeyDown={(event: KeyEvent) => {
 							if (!isMulti()) submitOtherOnEnter(event);
@@ -865,6 +873,7 @@ export function AskUserQuestions(props: {
 								: hovered()
 									? color.hover
 									: color.transparent,
+					...FREE_TEXT_FADE,
 					...(textFocused() && otherText().length === 0
 						? {
 								outlineWidth: 1,
@@ -885,7 +894,7 @@ export function AskUserQuestions(props: {
 					placeholder={question()?.freeTextPlaceholder ?? "Type your answer…"}
 					aria-label={question()?.title}
 					theme={fieldTheme()}
-					onChange={(event: EventPayload) => setOther(event.value ?? "")}
+					onChange={(event: DomEvent) => setOther(event.value ?? "")}
 					onFocus={() => setTextFocused(true)}
 					onBlur={() => setTextFocused(false)}
 					onKeyDown={multiline ? undefined : submitOtherOnEnter}

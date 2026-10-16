@@ -1,6 +1,13 @@
 import { buttonProps, useGpuixRequired } from "@gpuix/solid";
 import { type JSX, Show } from "solid-js";
-import { color, scheme, siteType, weight, withAlpha } from "../../lib/theme";
+import {
+	color,
+	fade,
+	scheme,
+	siteType,
+	weight,
+	withAlpha,
+} from "../../lib/theme";
 
 /** `.bento-card-border`: the card's rule and drop shadow at rest, on hover and with focus inside. */
 function edge() {
@@ -59,8 +66,7 @@ export function CompareCard(props: {
 				// Transparent in the source; gpuix paints a shadow under its element, so a see-through card would show it as a darker fill.
 				backgroundColor: color.background,
 				...edge().rest,
-				transitionProperty: "border-color",
-				transitionDuration: "80ms",
+				...fade(["border-color"], 80),
 				hover: edge().hover,
 				focusWithin: edge().focus,
 			}}
@@ -140,8 +146,7 @@ function FooterLabel(props: { name: string; linked: boolean }) {
 					color: color.mutedForeground,
 					...(props.linked
 						? {
-								transitionProperty: "color",
-								transitionDuration: "80ms",
+								...fade(["color"], 80),
 								groupHover: { color: color.foreground },
 							}
 						: {}),

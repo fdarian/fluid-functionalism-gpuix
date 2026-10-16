@@ -5,6 +5,8 @@ Original: `registry/base/dialog.tsx` (Base UI Dialog + Motion), demo in `app/doc
 
 Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `showCloseButton`, scoped), Header, Footer, Title, Description and Close are ported, composed over gpuix's own headless `Dialog` (`packages/solid/src/components/dialog.ts`): a full-window layer, a backdrop, a popup, Escape handling and focus in / out. Sizes (400 / 540 / 880, 360 / 480 / 800 compact), padding 24, header gap 6 and margin 16, footer gap 8 and margin 24, the ghost icon close button at top 12 / right 12, the title and body type steps, the `slow` spring in and `slowExit` tween out, the scrim values and Escape-only-the-top-layer all match the source.
 
+`modal={false}` matches the source too. Base UI still renders the Backdrop (`fixed inset-0`, no `pointer-events: none`) and counts a press on it as outside, so the scrim takes the press, the page control under it is not pressed, and a press on the trigger lands on the scrim and closes the dialog. The port's `DialogBackdrop` sets `pointerEvents: "auto"` because gpuix's `DialogPortal` sets `"none"` on a non-modal layer; gpuix's own backdrop click then closes it. No drift.
+
 ## CSS transforms (scale 0.97 to 1, and the centring)
 
 - **Cause:** `gpuix gap`. [README "Missing features": CSS transforms](../README.md#missing-features).
@@ -25,32 +27,12 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 - **Fidelity:** exact while the root font size is 16px.
 - **Components it hits:** any component sized in `rem` or viewport units.
 
-## `DialogBackdrop` closes on mousedown
-
-- **Cause:** `gpuix gap`.
-- **Original:** a backdrop closes on a click that presses and releases on it (Base UI's outside press; not rechecked against Base UI, its source is not on this machine), so pressing on the backdrop and releasing on the panel does not close.
-- **Port:** its own backdrop `div` with `onClick`, modal only (`src/components/dialog.tsx:290-295`); the same in `src/components/mobile-drawer.tsx:54-59`.
-- **gpuix lacks:** that rule: `DialogBackdrop` closes from `onMouseDown` (`packages/solid/src/components/dialog.ts:145-157`).
-- **Workaround:** the own backdrop; it also ignores a request that arrives while the exit plays (`:123-128`), since gpuix keeps the layer up through it.
-- **Fidelity:** exact.
-- **Components it hits:** mobile-drawer.
-
-## A reactive prop change re-creates `DialogPopup`
-
-- **Cause:** `gpuix gap`.
-- **Original:** the popup's `aria-labelledby` / `aria-describedby` can change while it is open.
-- **Port:** static ids, always passed, even when no title or description is rendered (`src/components/dialog.tsx:317-320`; the ids at `:144-146`).
-- **gpuix lacks:** a stable popup under changing props: `DialogPopup` sits inside a keyed `Show` and builds its element from a spread of its props, so a prop that changes re-creates the element and drops focus (`packages/solid/src/components/dialog.ts:169-209`).
-- **Workaround:** the static ids; a reference to a missing id resolves to nothing.
-- **Fidelity:** exact.
-- **Components it hits:** mobile-drawer, and any gpuix popup given a reactive prop.
-
 ## Focus lands on the first tab stop one tick after open
 
 - **Cause:** `gpuix gap`.
 - **Original:** Base UI focuses the first tabbable inside the popup as it opens.
 - **Port:** `FocusFirst` calls `focusNextWithin(popup.id)` in a `setTimeout(0)` (`src/components/dialog.tsx:209-219`).
-- **gpuix lacks:** a first-tabbable initial focus: `DialogPopup` focuses the popup itself by default (`packages/solid/src/components/dialog.ts:162`), and the popup's children are only committed natively after the mount (port comment, `:204`).
+- **gpuix lacks:** a first-tabbable initial focus: `DialogPopup` focuses the popup itself by default (`packages/solid/src/components/dialog.ts:162`), and native's tab order exists only once the popup has painted (gpuix README, Dialog), so `focusNextWithin` from mount finds no stop and gpuix's own focus on the popup lands after that mount (checked: calling it synchronously left focus on the popup).
 - **Workaround:** the deferred `focusNextWithin`; for one tick the popup holds focus.
 - **Fidelity:** approximated (one tick late).
 - **Components it hits:** mobile-drawer (reuses `FocusFirst`).
@@ -62,15 +44,6 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 - **Port:** tabs (`+ 3`), the mobile drawer (`+ 2`), the color picker, the dropdown submenu and inline panel and the cards use fixed levels, so inside a dialog they sit lower than they do in the source (dark mode only; light mode is `#FFFFFF` at every level).
 - **Fidelity:** approximated in dark mode (light mode is `#FFFFFF` at every level; only the shadow weight differs).
 - **Components it hits:** tabs, mobile-drawer, color-picker, dropdown (submenu, inline panel), sidebar, card.
-
-## `shadow-surface-5` painted as a border and one drop
-
-- **Cause:** `not ported yet`. The comment at `src/lib/theme.ts:469-472` ("gpuix paints one outer shadow") is out of date: `boxShadow` takes `BoxShadow[]` or a CSS string with several layers and `inset` (`~/code/fdarian/gpuix/FORK.md:646-649`, `packages/native/js/host.ts:369-377`, `:558`).
-- **Original:** `--shadow-5`: light, a 1px ring plus four stacked drops (1, 3, 6, 12px); dark, an inset top highlight, an inset ring, a 1px black outer ring and the same drops (`app/globals.css:141`, `:164`). No border, so the box keeps its full content size.
-- **Port:** a 1px `popupBorder` border plus only the 12px drop, `shadow5()` (`src/components/dialog.tsx:229-237`, `:346-349`). The border takes 1px of layout on each side, so the content is 2px narrower than in the source at every size.
-- **Workaround:** none.
-- **Fidelity:** approximated (the small drops, the dark highlights and the outer ring are dropped).
-- **Components it hits:** every surface-3 to surface-8 shadow in the port (`shadow3()` in `src/lib/theme.ts:473-481` is the same).
 
 ## Scoped dialog: no portal target, and the top offset is 24px
 

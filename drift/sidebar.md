@@ -107,15 +107,6 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 - **Fidelity:** dropped.
 - **Components it hits:** every fluid-hover list (README lists `gapClick` as not ported).
 
-## 80 ms colour ease on label, icon and badge
-
-- **Cause:** `not ported yet`.
-- **Original:** label colour, icon colour, icon stroke width and badge colour / weight all run `transition-[...] duration-80` (`sidebar-menu.tsx:879,1015,1241`).
-- **Port:** the colours switch at once: `Icon` is called without `fade` (`src/components/sidebar.tsx:375-382`; the prop exists, `src/lib/icon.tsx:6-12`) and `StableLabel` has no colour transition (`src/lib/stable-label.tsx`). The stroke width switch is a separate known gap, `BASE-UI-AUDIT.md:529`.
-- **Workaround:** none.
-- **Fidelity:** dropped (instant).
-- **Components it hits:** `StableLabel` users (tabs, tabs-subtle, card).
-
 ## Label truncation
 
 - **Cause:** `not ported yet` (everywhere but the menu row).
@@ -125,11 +116,11 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 - **Fidelity:** exact for a plain or badged row; dropped for a dotted row and the other `StableLabel` users.
 - **Components it hits:** `StableLabel` users (tabs, tabs-subtle, card).
 
-## Badge: `tabular-nums`, `pointer-events-none`
+## Badge: `pointer-events-none`
 
-- **Cause:** `not ported yet`.
-- **Original:** `tabular-nums` on the digits; the badge is `pointer-events-none` (`sidebar-menu.tsx:1239`).
-- **Port:** no tabular figures (`src/components/sidebar.tsx:417-444`); the badge box is a normal hit target (the README says decorative `pointerEvents: none` was dropped on purpose).
+- **Cause:** `port choice` (decorative `pointerEvents: none` was dropped on purpose, see the README).
+- **Original:** the badge is `pointer-events-none`, its digits `tabular-nums` (`sidebar-menu.tsx:1239`).
+- **Port:** the digits are tabular too (`src/components/sidebar.tsx:417-444`); the badge box is a normal hit target (the README says decorative `pointerEvents: none` was dropped on purpose).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -142,15 +133,6 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 - **Workaround:** none.
 - **Fidelity:** approximated (the fade is about the same length for hover, twice as long for the active background).
 - **Components it hits:** every `FluidHighlight` user.
-
-## Reduced motion
-
-- **Cause:** `not ported yet`.
-- **Original:** the highlight and the sheet and shell springs honour `useReducedMotion` (travel snaps, opacity keeps fading) (`fluid-hover-highlight.tsx`, `sidebar-core.tsx:634`).
-- **Port:** no reduced-motion read anywhere in `src/`. gpuix exposes it (`FORK.md:906`, `packages/native/js/motion-config.ts`).
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every motion component in the port.
 
 ## One active background per level
 
@@ -174,8 +156,8 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 ## Group label: count column and spacing
 
 - **Cause:** `not ported yet` (the count spacing); the `SidebarGroup` wrapper is covered above.
-- **Original:** the site's count is a `h-5 min-w-5 px-1` centred box in the label row, `tabular-nums`, `text-site-caption` (12/16), so its digits share the badge column (centre 18px from the right edge) (`app/components/sidebar.tsx:62-64`). A label sits in a `SidebarGroup` (`p-2`), so groups are 16px apart (content `py-2` + group `p-2`).
-- **Port:** the count is a bare `caption` text right-aligned at 8px, so a two-digit count ends 4px right of the badge column and has no tabular figures; and groups touch (the label follows the last row, no 16px gap) (`src/components/sidebar.tsx:569-594`, `src/app.tsx:132-150`).
+- **Original:** the site's count is a `h-5 min-w-5 px-1` centred box in the label row, `tabular-nums` (the port has that too), `text-site-caption` (12/16), so its digits share the badge column (centre 18px from the right edge) (`app/components/sidebar.tsx:62-64`). A label sits in a `SidebarGroup` (`p-2`), so groups are 16px apart (content `py-2` + group `p-2`).
+- **Port:** the count is a bare `caption` text right-aligned at 8px, so a two-digit count ends 4px right of the badge column; and groups touch (the label follows the last row, no 16px gap) (`src/components/sidebar.tsx:569-594`, `src/app.tsx:132-150`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -184,7 +166,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `not ported yet`.
 - **Original:** `SidebarInput` is `h-8` (`h-7` compact), `px-3`, `bg-transparent` with `ring-1 ring-transparent`; hover `bg-muted/50` + `ring-border`; focus `bg-card` + `ring-border`; and `focus-visible:ring-[--focus-ring]` (a text input matches `:focus-visible` on any focus, so a focused field shows the blue ring). Fill and ring ease over 80 ms (`sidebar-core.tsx:1165-1195`). The block adds the icon at `left-2`, `pl-8 pr-12`, `aria-label="Search"`, default placeholder `Search…` and a chip `⌘K` that fades in on hover or focus over 80 ms, or `shortcut={null}` to drop it (`registry/blocks/sidebar-app/search-field.tsx`).
-- **Port:** hover fill `mutedHalf`, focus fill `card`, and the outline is `color.border` for both hover and focus, never the focus-ring colour (`src/components/sidebar.tsx:597-673`). Fill, ring and chip switch at once. No `aria-label`; the demo passes `placeholder="Search"` without the ellipsis (`src/demos/sidebar.tsx:72`); the chip cannot be dropped (`shortcut` is required). Size is fixed at 32 (`height.menuRow`).
+- **Port:** hover fill `mutedHalf`, focus fill `card`, and the outline is `color.border` for both hover and focus, never the focus-ring colour (`src/components/sidebar.tsx:597-673`). Fill, outline and chip ease over 80 ms (the outline stands in for the source's `ring-1` box shadow). No `aria-label`; the demo passes `placeholder="Search"` without the ellipsis (`src/demos/sidebar.tsx:72`); the chip cannot be dropped (`shortcut` is required). Size is fixed at 32 (`height.menuRow`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -277,7 +259,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `port choice` (the sidebar sits inside the app frame's rounded panel; reason for the fill not stated).
 - **Original:** `Sidebar className="ml-2"`, `rail={false}`, no fill of its own, sticky `h-svh`, content `py-2` (`app/components/sidebar.tsx:90-91`).
-- **Port:** no left margin; the column paints `color.background` and takes `leftCornerRadius={PANEL_INNER_RADIUS}` (9) so the fill follows the panel's corner (`src/app.tsx:110`, `src/components/sidebar.tsx:512-533`); content padding is `8 / 8 / 0` rather than `py-2`.
+- **Port:** no left margin; the column paints `color.background` and takes `leftCornerRadius={PANEL_INNER_RADIUS}` (9) so the fill follows the panel's corner (`src/app.tsx:110`, `src/components/sidebar.tsx:512-533`); content padding is `8 / 8 / 0` rather than `py-2`. The column is a sibling of the page scroller, not inside it, so it needs no `sticky h-svh` to stay put.
 - **Workaround:** n/a.
 - **Fidelity:** approximated.
 - **Components it hits:** app frame.

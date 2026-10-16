@@ -102,7 +102,7 @@ for (const row of rows) console.log(row, fmt(rowBounds(row)));
 if (process.env.TAB !== undefined) {
 	// Keyboard entry: Tab from the top of the page until the ring shows.
 	for (let presses = 1; presses <= 40 && ring() === undefined; presses++) {
-		renderer.simulateKeystrokes("tab");
+		renderer.simulateKeystrokes("Tab");
 		await settle(120);
 		if (ring() !== undefined)
 			console.log(`tab #${presses} shows the ring: ${fmt(ring())}`);
@@ -113,7 +113,7 @@ if (process.env.TAB !== undefined) {
 	if (element === undefined) throw new Error(`no element ${first}`);
 	for (let presses = 1; presses <= 60; presses++) {
 		if (renderer.getFocusedElementId() === element.id) break;
-		renderer.simulateKeystrokes("tab");
+		renderer.simulateKeystrokes("Tab");
 		await settle(60);
 	}
 	if (renderer.getFocusedElementId() !== element.id) {
@@ -137,4 +137,5 @@ if (process.env.POINT !== undefined) {
 	console.log(`after pointer click on ${last}: ring ${fmt(ring())}`);
 }
 renderer.captureScreenshot(`${outDir}focus-pointer.png`);
+test.unmount();
 process.exit(0);

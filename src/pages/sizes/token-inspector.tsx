@@ -1,4 +1,4 @@
-import type { EventPayload } from "@gpuix/solid";
+import type { DomEvent } from "@gpuix/solid";
 import { type Accessor, createSignal, For, type JSX, Show } from "solid-js";
 import { Button } from "../../components/button";
 import { CheckboxGroup, CheckboxItem } from "../../components/checkbox-group";
@@ -200,7 +200,7 @@ function InspectTarget(props: {
 					testId={props.testId}
 					onMouseEnter={() => setHovered(true)}
 					onMouseLeave={() => setHovered(false)}
-					onLayout={(event: EventPayload) => {
+					onLayout={(event: DomEvent) => {
 						if (event.width === undefined || event.height === undefined) {
 							throw new Error("onLayout reported no size");
 						}

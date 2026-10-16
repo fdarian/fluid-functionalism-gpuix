@@ -1,7 +1,8 @@
 import {
 	buttonProps,
-	type EventPayload,
+	document,
 	type HostElement,
+	type HostMouseEvent,
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
@@ -32,9 +33,9 @@ import {
 	POPUP_OFFSET,
 } from "../lib/popup";
 import { createPresence } from "../lib/presence";
-import { createPressToggle, returnFocusTo } from "../lib/popup-trigger";
+import { createPressToggle, refocusAfterPress } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
-import { color, height, nestedRadius, radius, shape, type as scale, scheme, shadow3, motion as tween, weight, surface, focusRing } from "../lib/theme";
+import { color, colorFade, colorFadeNoRing, fade, springFade, height, nestedRadius, radius, shape, type as scale, scheme, shadow, motion as tween, weight, surface, focusRing } from "../lib/theme";
 import {
 	buildParsed,
 	clamp01,
@@ -67,6 +68,8 @@ const RAIL_PAD = 8;
 const RAIL_KNOB = 16;
 const RAIL_TRACK = 18;
 const HAIRLINE = "rgba(127,127,127,0.25)";
+/** The source's `transition-colors duration-80` on its buttons and fields, whose focus ring is a box-shadow that stays out of that list: `colorFade` would also fade the port's outline ring in. */
+const BUTTON_FADE = colorFadeNoRing(80);
 const focusOutline = () => ({
 	outlineWidth: 1,
 	outlineColor: color.focusRing,
@@ -164,19 +167,14 @@ export function ColorTile(props: { color: string; size?: number }) {
 					width: size(),
 					height: size(),
 					borderRadius: shape.bg,
-					borderWidth: 1,
-					borderColor: HAIRLINE,
+					boxShadow: `inset 0 0 0 1px ${HAIRLINE}`,
 				}}
 			/>
 		</div>
 	);
 }
 
-/**
- * The accent ring sits outside a 2px gap: an outline offset by 2, over a
- * background-coloured spread. gpuix has one box shadow, so the original's
- * stack of three rings is this pair.
- */
+/** The accent ring sits outside a 2px gap in the page colour, as the source stacks them. */
 export function ColorSwatch(props: {
 	color: string;
 	size?: number;
@@ -187,10 +185,10 @@ export function ColorSwatch(props: {
 	const renderer = useGpuixRequired();
 	const size = () => props.size ?? 28;
 	const [hovered, setHovered] = createSignal(false);
-	const ring = () => {
-		if (props.selected === true) return color.focusRing;
-		if (hovered()) return "rgba(127,127,127,0.4)";
-		return undefined;
+	const ringShadow = () => {
+		if (props.selected !== true && !hovered()) return undefined;
+		const ring = props.selected === true ? color.focusRing : "rgba(127,127,127,0.4)";
+		return `0 0 0 2px ${color.background}, 0 0 0 4px ${ring}`;
 	};
 	return (
 		<div
@@ -206,19 +204,8 @@ export function ColorSwatch(props: {
 				flexShrink: 0,
 				borderRadius: shape.bg,
 				cursor: "pointer",
-				boxShadow:
-					ring() === undefined
-						? undefined
-						: {
-								offsetX: 0,
-								offsetY: 0,
-								blurRadius: 0,
-								spreadRadius: 2,
-								color: color.background,
-							},
-				outlineWidth: ring() === undefined ? 0 : 2,
-				outlineColor: ring(),
-				outlineOffset: 2,
+				boxShadow: ringShadow(),
+				...fade(["box-shadow"], 100),
 			}}
 		>
 			<div
@@ -252,8 +239,7 @@ export function ColorSwatch(props: {
 					width: size(),
 					height: size(),
 					borderRadius: shape.bg,
-					borderWidth: 1,
-					borderColor: HAIRLINE,
+					boxShadow: `inset 0 0 0 1px ${HAIRLINE}`,
 				}}
 			/>
 		</div>
@@ -263,7 +249,10 @@ export function ColorSwatch(props: {
 /** Window x/y to a 0..1 point inside an element's painted box. */
 function useFractionIn() {
 	const renderer = useGpuixRequired();
-	return (element: HostElement | undefined, event: EventPayload) => {
+	return (
+		element: HostElement | undefined,
+		event: Pick<HostMouseEvent, "x" | "y">,
+	) => {
 		if (element === undefined || !element.mounted) {
 			throw new Error("Pointer target is not mounted");
 		}
@@ -298,7 +287,7 @@ function SaturationSquare(props: {
 	const [hovered, setHovered] = createSignal(false);
 	const [cursor, setCursor] = createSignal<{ x: number; y: number }>();
 
-	const apply = (event: EventPayload) => {
+	const apply = (event: Pick<HostMouseEvent, "x" | "y">) => {
 		const point = fractionIn(element, event);
 		props.onChange(point.x, 1 - point.y);
 	};
@@ -368,11 +357,7 @@ function SaturationSquare(props: {
 				cursor: "crosshair",
 				userSelect: "none",
 				keyboardFocusDim: false,
-				focusVisible: {
-					outlineWidth: 2,
-					outlineColor: color.focusRing,
-					outlineOffset: 0,
-				},
+				focusVisible: { boxShadow: `0 0 0 2px ${color.focusRing}` },
 			}}
 		>
 			{/* Black rising from the bottom over white to the pure hue: the plane, as two stacked gradients. */}
@@ -414,6 +399,20 @@ function SaturationSquare(props: {
 					},
 				}}
 			/>
+			<div
+				style={{
+					position: "absolute",
+					left: props.s * INNER_WIDTH - THUMB / 2,
+					top: (1 - props.v) * SQUARE_HEIGHT - THUMB / 2,
+					width: THUMB,
+					height: THUMB,
+					borderRadius: THUMB / 2,
+					borderWidth: 1,
+					borderColor: "#ffffff",
+					backgroundColor: thumbColor(),
+					boxShadow: "0 0 0 1px rgba(0,0,0,1)",
+				}}
+			/>
 			<Show when={hovered() && !dragging() ? cursor() : undefined}>
 				{(ghost: Accessor<{ x: number; y: number }>) => (
 					<div
@@ -426,29 +425,12 @@ function SaturationSquare(props: {
 							borderRadius: THUMB / 2,
 							borderWidth: 2,
 							borderColor: "rgba(255,255,255,0.55)",
-							outlineWidth: 1,
-							outlineColor: "rgba(0,0,0,0.2)",
-							outlineOffset: 0,
+							boxShadow: "0 0 0 1px rgba(0,0,0,0.2)",
+							pointerEvents: "none",
 						}}
 					/>
 				)}
 			</Show>
-			<div
-				style={{
-					position: "absolute",
-					left: props.s * INNER_WIDTH - THUMB / 2,
-					top: (1 - props.v) * SQUARE_HEIGHT - THUMB / 2,
-					width: THUMB,
-					height: THUMB,
-					borderRadius: THUMB / 2,
-					borderWidth: 1,
-					borderColor: "#ffffff",
-					backgroundColor: thumbColor(),
-					outlineWidth: 1,
-					outlineColor: "#000000",
-					outlineOffset: 0,
-				}}
-			/>
 		</div>
 	);
 }
@@ -476,7 +458,7 @@ function Rail(props: {
 	const [dragging, setDragging] = createSignal(false);
 
 	const fraction = () => (props.value - props.min) / (props.max - props.min);
-	const apply = (event: EventPayload) => {
+	const apply = (event: Pick<HostMouseEvent, "x">) => {
 		if (root === undefined || !root.mounted) {
 			throw new Error("Rail is not mounted");
 		}
@@ -558,6 +540,7 @@ function Rail(props: {
 					alignItems: "center",
 					justifyContent: "center",
 					keyboardFocusDim: false,
+					...springFade(["outline-color"]),
 					focusVisible: focusRing(2),
 				}}
 			>
@@ -569,13 +552,7 @@ function Rail(props: {
 						borderWidth: 1,
 						borderColor: "rgba(255,255,255,0.9)",
 						backgroundColor: props.thumbColor,
-						boxShadow: {
-							offsetX: 0,
-							offsetY: 1,
-							blurRadius: 2,
-							spreadRadius: 0,
-							color: "rgba(0,0,0,0.1)",
-						},
+						boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
 					}}
 				/>
 			</div>
@@ -744,9 +721,7 @@ function Popup(props: {
 						flexDirection: "column",
 						backgroundColor: surface(props.level),
 						borderRadius: radius.container,
-						borderWidth: 1,
-						borderColor: color.popupBorder,
-						boxShadow: shadow3(),
+						boxShadow: shadow(3),
 					}}
 				>
 					{props.children}
@@ -766,7 +741,6 @@ function FormatDropdown(props: {
 	level: number;
 	testId: string;
 }) {
-	const renderer = useGpuixRequired();
 	const presence = createPresence(FORMAT_MENU_EXIT_FALLBACK_MS);
 	const hover = createFluidHover();
 	const [triggerHovered, setTriggerHovered] = createSignal(false);
@@ -780,8 +754,6 @@ function FormatDropdown(props: {
 	const rowElements = new Map<number, HostElement>();
 	let button: HostElement | undefined;
 	let panel: HostElement | undefined;
-	/** Tab closed the menu: once focus is back on the trigger it moves on to the next tab stop. */
-	let tabbingOn = false;
 	const checkedIndex = () => FORMATS.indexOf(props.value);
 	const width = (INNER_WIDTH - 8) / 2;
 
@@ -803,12 +775,8 @@ function FormatDropdown(props: {
 		setPointerLit(false);
 		const start = from === "pointer" ? null : edgeIndex(from, FORMATS.length);
 		hover.setActiveIndex(start);
-		// The rows mount with the popup: focus them once they have.
-		setTimeout(() => {
-			if (!presence.open()) return;
-			if (start === null) focusPanel();
-			else focusRow(start);
-		}, 0);
+		if (start === null) focusPanel();
+		else focusRow(start);
 	};
 	/** Closing hands focus back to the trigger when it sat in the popup, which is about to unmount and drop it, or nowhere; a control that took it since keeps it (Base UI's returnFocus). */
 	const close = () => {
@@ -817,15 +785,13 @@ function FormatDropdown(props: {
 			panel !== undefined && panel.mounted && panel.matches(":focus-within");
 		presence.hide();
 		setPageHoldsFocus(false);
-		if (button !== undefined) returnFocusTo(renderer, button.id, popupHasFocus);
-		// The default Tab would start from the popup row, whose floating layer wraps to the start of the page.
-		if (tabbingOn) renderer.focusNext?.();
-	};
-	/** Tab closes the menu: forward moves on from the trigger, backward leaves focus on it. */
-	const leave = (backwards: boolean) => {
-		tabbingOn = !backwards;
-		close();
-		tabbingOn = false;
+		if (
+			button !== undefined &&
+			button.mounted &&
+			(popupHasFocus || document.activeElement === null)
+		) {
+			button.focus();
+		}
 	};
 	const choose = (format: ColorFormat) => {
 		props.onChange(format);
@@ -919,8 +885,9 @@ function FormatDropdown(props: {
 			return;
 		}
 		if (event.key === "Tab") {
-			event.preventDefault();
-			leave(event.shiftKey === true);
+			// Forward: the trigger takes focus as the menu closes, so the default Tab moves on from it. Backward leaves it on the trigger.
+			if (event.shiftKey === true) event.preventDefault();
+			close();
 			return;
 		}
 		if (typeahead.handleKey(event)) {
@@ -960,7 +927,11 @@ function FormatDropdown(props: {
 
 	return (
 		<div
-			onMouseDownOutside={close}
+			onMouseDownOutside={() => {
+				if (!presence.open()) return;
+				close();
+				refocusAfterPress(button);
+			}}
 			style={{ position: "relative", width, height: height.control }}
 		>
 			<div
@@ -993,6 +964,7 @@ function FormatDropdown(props: {
 					cursor: "pointer",
 					keyboardFocusDim: false,
 					backgroundColor: presence.open() ? color.active : color.transparent,
+					...BUTTON_FADE,
 					hover: {
 						backgroundColor: presence.open() ? color.active : color.hover,
 					},
@@ -1008,6 +980,7 @@ function FormatDropdown(props: {
 							presence.open() || triggerHovered()
 								? color.foreground
 								: color.mutedForeground,
+						...colorFade,
 					}}
 				>
 					{FORMAT_LABELS[props.value]}
@@ -1112,6 +1085,7 @@ function FormatDropdown(props: {
 										text={FORMAT_LABELS[format]}
 										heavy={checked()}
 										color={lit() ? color.foreground : color.mutedForeground}
+										fade
 									/>
 								</div>
 							);
@@ -1296,11 +1270,14 @@ function ColorInput(props: {
 				paddingLeft: 8,
 				paddingRight: 8,
 				borderRadius: shape.input,
+				// On the wrapper: an `<input>` ignores the property in its own style but inherits it.
+				fontVariantNumeric: "tabular-nums",
 				cursor: scrub && !editing() ? "ew-resize" : "text",
 				userSelect: "none",
 				outlineWidth: focused() ? 1 : 0,
 				outlineColor: color.focusRing,
 				outlineOffset: 0,
+				...BUTTON_FADE,
 				hover: { backgroundColor: color.hover },
 				active: { backgroundColor: color.active },
 			}}
@@ -1781,7 +1758,7 @@ function ColorPickerPanel(props: ColorPickerProps) {
 	);
 }
 
-/** The panel on its own card: surface level 3, a hairline edge and no drop. */
+/** The panel on its own card: surface level 3 with `--shadow-1`, the hairline ring and no drop. */
 export function ColorPicker(props: ColorPickerProps) {
 	return (
 		<div
@@ -1789,8 +1766,7 @@ export function ColorPicker(props: ColorPickerProps) {
 				width: PANEL_WIDTH,
 				backgroundColor: surface(props.level ?? 3),
 				borderRadius: shape.container,
-				borderWidth: 1,
-				borderColor: color.popupBorder,
+				boxShadow: shadow(1),
 			}}
 		>
 			<ColorPickerPanel {...props} />
@@ -1909,6 +1885,7 @@ export function ColorPickerPopover(
 					borderColor: color.border,
 					cursor: "pointer",
 					keyboardFocusDim: false,
+					...BUTTON_FADE,
 					hover: { backgroundColor: color.hover },
 					focusVisible: focusOutline(),
 				}}
@@ -1928,6 +1905,7 @@ export function ColorPickerPopover(
 							...scale.body,
 							fontWeight: weight.normal,
 							color: color.foreground,
+							fontVariantNumeric: "tabular-nums",
 						}}
 					>
 						{valueLabel()}

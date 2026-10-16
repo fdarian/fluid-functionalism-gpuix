@@ -7,25 +7,6 @@ Ported: Card, CardGroup (stacked / inline, 1 or 2+ columns, borderless / outline
 
 Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardFooter and the inline-image column (16 / 12, 14 / 10, 12 / 10, gap 8), the 60px minimum height, the 32px media tile and its icon (18 / 16), the logo pair rule, the 160px inline image, the 1px inset image outline, dismiss chip size and position (28px at 8 / 8, icon 15 / 13), CardButton height, padding and glyphs (28, 10, 14 / 12, arrow 13), the four CardButton fills (`bg-foreground/90`, `bg-accent/80`, `bg-hover`, `bg-active` resolved as alphas), hairline colours (`border-border/60` is `borderFaint`), highlight and selected radii (12), type (subtitle 14/20, 13/18; caption 12/16, 11/14), dark tokens.
 
-## A nested `buttonProps` element is clicked twice by Enter
-
-- **Cause:** `gpuix gap`.
-- **Original:** Enter on a focused `<button>` inside a clickable card clicks that button once, and the click bubbles to the card.
-- **Port:** the clickable card root is a `buttonProps` element, and `CardButton` and the dismiss chip are nested `buttonProps` elements (`src/components/card.tsx`). Enter on a nested one would run its action twice.
-- **gpuix lacks:** a target check in `buttonProps`' key handling: its `onKeyDown` clicks `event.elementId`, the focused element, and the keydown bubbles, so every enclosing `buttonProps` element clicks the same target again (`packages/solid/src/components/button.ts:34`, `:48`). Probed on the test renderer with an outer and an inner `buttonProps` div and focus on the inner: one Enter produced `inner, outer, inner, outer`. Space (on key-up, `:52-57`) has the same shape.
-- **Workaround:** inside a card, `CardFooter`, `CardAction` and the dismiss chip stop Enter and Space from propagating (`stopActivationKey`), so the card root never re-clicks the focused control. `scripts/check-card.tsx` confirms one Enter on a `CardButton` in a clickable card runs its handler once and the card's not at all. Any other `buttonProps` element nested in another still doubles.
-- **Fidelity:** exact inside Card; approximated elsewhere (exact for the pointer, doubled for the keyboard).
-- **Components it hits:** any `buttonProps` element inside another (README "Bugs" table lists the others).
-
-## The clickable card is the root, not a stretched overlay
-
-- **Cause:** `port choice` (reason not stated; gpuix has `position: absolute` and `zIndex`, `FORK.md:560-561`, so an overlay would work).
-- **Original:** a stretched `<button>` (or `<a>`) at `z-20` sits behind the footer and actions (`z-30`), which are siblings, not descendants (`registry/default/card.tsx:345-369`, `:650`, `:698`). Clicking `CardButton`, or the empty part of the footer, runs only its own handler.
-- **Port:** the card root carries `buttonProps({ onClick })` (`src/components/card.tsx:337-339`), so the footer and `CardAction` are inside it. They stop the click and the Enter / Space keys from bubbling (`aboveCard`), which keeps their presses off the card, as in the source. The root's own focus ring and hover still cover the whole card, and the card's `onClick` is still reachable through a keydown that starts anywhere else in the card.
-- **Workaround:** n/a.
-- **Fidelity:** exact for clicks and keys on the footer and actions (`scripts/check-card.tsx`); the card is still one nested focus target, not a button with siblings.
-- **Components it hits:** just this one.
-
 ## Link cards: `href`, `external` and `CardButton` `href`
 
 - **Cause:** `not ported yet`.
@@ -39,7 +20,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `not ported yet`.
 - **Original:** the overlay button has `aria-label={label}` and `aria-pressed={selected || undefined}` (`:363-365`); a disabled card gets `aria-disabled` (`:413`) and drops the overlay; `CardMedia` and `CardImage` pass `alt` (`logoAlt`, `alt`, `:752-756`, `:804-806`).
-- **Port:** the root gets `aria-label` and `aria-pressed` (only while selected) when it is clickable and enabled, and `aria-disabled` when disabled (`src/components/card.tsx:340-345`); `scripts/check-card.tsx` reads role `Button`, the label and `toggled` off the accessibility tree. The test renderer shows no node at all for a disabled or informational card (a plain `div`), so `aria-disabled` on the disabled root is set but not observed. The `<img>` elements get no `alt` (`:755-766`, `:799-814`) although `ImgProps` has it (`packages/native/js/host.ts:1274`).
+- **Port:** the overlay gets `aria-label` and `aria-pressed` (only while selected) when the card is clickable and enabled, and the root `aria-disabled` when disabled (`src/components/card.tsx`, `Card`); `scripts/check-card.tsx` reads role `Button`, the label and `toggled` off the accessibility tree. The test renderer shows no node at all for a disabled or informational card (a plain `div`), so `aria-disabled` on the disabled root is set but not observed. The `<img>` elements get no `alt` (`:755-766`, `:799-814`) although `ImgProps` has it (`packages/native/js/host.ts:1274`).
 - **Workaround:** none.
 - **Fidelity:** exact on the root; `alt` dropped.
 - **Components it hits:** just this one.
@@ -48,7 +29,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** the overlay `<button>` has no `cursor-pointer` class (`:361-367`) and Tailwind v4's preflight resets buttons to `cursor: default`, so by the CSS a clickable card shows the arrow; a `href` card (an `<a>`) shows the hand. Not run in a browser.
-- **Port:** `cursor: "pointer"` for every clickable, enabled card (`src/components/card.tsx:397`).
+- **Port:** `cursor: "pointer"` on the overlay of every clickable, enabled card (`src/components/card.tsx`, the overlay in `Card`).
 - **Workaround:** n/a.
 - **Fidelity:** approximated (unverified).
 - **Components it hits:** just this one.
@@ -57,25 +38,16 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** the ring is `ring-1` on the overlay, inside a card that is `overflow-hidden` when it is a tile (standalone, or separated and outlined, `:339-343`), so by the CSS the 1px ring that falls outside the card is clipped away. A card in a plain group shows it. Not run in a browser.
-- **Port:** `focusVisible: focusRing(0)` on the root, an outline outside the box, which the card's own `overflow: "hidden"` does not clip (`src/components/card.tsx:399`, `:388`); inside an outlined, non-separated group the group's `overflow: "hidden"` clips it as in the source.
+- **Port:** the overlay's outline is offset -1 on a tile, so it falls inside the box and shows; offset 0 on any other card, as in the source, where inside an outlined, non-separated group the group's `overflow: "hidden"` clips it (`src/components/card.tsx`, the overlay in `Card`).
 - **Workaround:** n/a.
 - **Fidelity:** approximated (the port shows a ring the source probably does not).
 - **Components it hits:** just this one.
-
-## Standalone-hover, dismiss-chip and `CardButton` colours do not ease
-
-- **Cause:** `not ported yet`.
-- **Original:** `transition-colors duration-80` on a standalone clickable card (`:428`), the chip's colour and its opacity reveal (`transition-opacity duration-80`, `:487`, `:502`), `CardButton`'s colour (`:974`), and glyph `transition-[stroke-width]` (`:951`, `:958`).
-- **Port:** all switch at once (`src/components/card.tsx:394-396`, `:563-571`, `:973-974`, `:1019-1038`). gpuix animates colours and opacity on state-style and plain style changes (`FORK.md:815-818`); the stroke width needs `Icon` rebuilt from shape children (`BASE-UI-AUDIT.md:529`).
-- **Workaround:** none.
-- **Fidelity:** dropped (80ms fades).
-- **Components it hits:** every component with a hover fill (see `drift/button.md`).
 
 ## The dismiss chip does not appear when the card has focus
 
 - **Cause:** `not ported yet`.
 - **Original:** with `dismissOnHover` the chip shows on `group-hover/card` and `group-focus-within/card`, and on its own `focus-visible` (`:501-502`), so tabbing to the card or one of its buttons reveals it.
-- **Port:** `visible` is `hovered() || dismissFocused()`, the card's hover or the chip's own focus (`src/components/card.tsx:470-472`); focus on the card root or a `CardButton` does not reveal it. The chip is still a tab stop (`:519`) and appears when reached.
+- **Port:** `visible` is `hovered() || dismissFocused()`, the card's hover or the chip's own focus (`src/components/card.tsx:470-472`); focus on the overlay or a `CardButton` does not reveal it. The chip is still a tab stop (`:519`) and appears when reached.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -146,15 +118,6 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Fidelity:** approximated (same path and spring, more work per frame).
 - **Components it hits:** every fluid hover list.
 
-## No reduced-motion handling
-
-- **Cause:** `not ported yet`.
-- **Original:** the highlight snaps instead of travelling under `prefers-reduced-motion`, keeping the opacity fade (`registry/default/fluid-hover-highlight.tsx:79-90`, `:114`, `:133`).
-- **Port:** `FluidHighlight` always travels (`src/lib/fluid-highlight.tsx`); no `matchMedia` or `reducedMotion` anywhere in `src/`. gpuix reads it (`FORK.md:831-833`).
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every motion in the port.
-
 ## Label is not trimmed to cap height
 
 - **Cause:** `gpuix gap`.
@@ -210,15 +173,6 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Workaround:** n/a.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
-
-## Layering is document order, not `zIndex`
-
-- **Cause:** `not ported yet`.
-- **Original:** the fill and dividers at `-z-10`, the overlay at `z-20`, actions at `z-30`, the highlight at `z-0` under the cards at `z-10` (`:208-212`, `:415`, `:445-509`).
-- **Port:** the highlight is the group's first child and the decorative fill and hairlines share one absolute layer first in the card (`src/components/card.tsx:237-253`, `:403-452`); the comments say gpuix has no `zIndex` and that an empty text node eats a `gap`. gpuix has `zIndex` and gives an empty text node no box or `gap` slot (`FORK.md:561`, `:564-565`).
-- **Workaround:** the wrapper layers.
-- **Fidelity:** exact (no visible difference; the wrappers and comments are stale).
-- **Components it hits:** carousel-dots and tabs carry the same comment (`src/components/carousel-dots.tsx:134`, `src/components/tabs.tsx:222`).
 
 ## Playground: the Get code dialog and the preview frame
 

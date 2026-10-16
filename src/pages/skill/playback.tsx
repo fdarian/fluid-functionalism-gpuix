@@ -1,9 +1,9 @@
 import {
 	createReducedMotion,
-	type EventPayload,
+	document,
 	type HostElement,
+	type HostMouseEvent,
 	IntersectionObserver,
-	useGpuixRequired,
 } from "@gpuix/solid";
 import {
 	createEffect,
@@ -37,7 +37,6 @@ export type Side = "generic" | "skill";
  * its button after the pointer has gone.
  */
 export function createPlayback() {
-	const renderer = useGpuixRequired();
 	const [root, setRoot] = createSignal<HostElement>();
 	const [inView, setInView] = createSignal(false);
 	const [pointerInside, setPointerInside] = createSignal(false);
@@ -59,25 +58,20 @@ export function createPlayback() {
 		onCleanup(() => observer.disconnect());
 	});
 
-	const enterOrMove = (event: EventPayload) => {
+	const enterOrMove = (event: HostMouseEvent) => {
 		if (fromVisitor(event)) setPointerInside(true);
 	};
 	const bind = {
 		onMouseEnter: enterOrMove,
 		onMouseMove: enterOrMove,
 		onMouseDown: enterOrMove,
-		onMouseLeave(event: EventPayload) {
+		onMouseLeave(event: HostMouseEvent) {
 			if (fromVisitor(event)) setPointerInside(false);
 		},
 		onFocusIn() {
-			const focused = renderer.getFocusedElementId?.();
-			if (focused === undefined || focused === null) return;
-			if (renderer.matchesFocus === undefined) {
-				throw new Error(
-					"this renderer cannot tell keyboard focus (matchesFocus)",
-				);
-			}
-			setKeyboardInside(renderer.matchesFocus(focused, ":focus-visible"));
+			const focused = document.activeElement;
+			if (focused === null) return;
+			setKeyboardInside(focused.matches(":focus-visible"));
 		},
 		onFocusOut() {
 			setKeyboardInside(false);

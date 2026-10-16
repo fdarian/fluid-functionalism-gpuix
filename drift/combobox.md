@@ -76,24 +76,11 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Fidelity:** approximated.
 - **Components it hits:** badge, select, every trimmed label.
 
-## `shadow-surface-3` is one shadow, and the ring is a real border
-
-- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup shadow is one drop and a border"](dropdown.md#popup-shadow-is-one-drop-and-a-border), where the entry lives. Here: `src/lib/popup.tsx:107-111`; the border takes 2px of layout, so the list's `maxHeight` is the card's minus 2 (`src/components/combobox.tsx:568`); original `combobox.tsx:827`. API to use: multi-layer `boxShadow` with `inset` (`~/code/fdarian/gpuix/FORK.md:646-649`).
-
-## The field's fill and ring do not fade
-
-- **Cause:** `not ported yet`.
-- **Original:** the field has `transition-all duration-80`, so the hover fill (`muted/50`), the focus fill (`card`) and the icon colour ease over 80ms (`combobox.tsx:380-384`); the clear and chevron buttons ease their colour and clear's fill too (`:407-412`).
-- **Port:** `hover` / `focused()` swap `backgroundColor` at once (`src/components/combobox.tsx:408-411`); the clear fill is a state style (`:60-61`).
-- **Workaround:** none. gpuix can do it: it animates colours and state styles with `transition` (`~/code/fdarian/gpuix/FORK.md:814-818`), and the port already uses `colorFade` on row text.
-- **Fidelity:** approximated (the end states are right).
-- **Components it hits:** any field with a hover or focus fill (input-group, input-message).
-
 ## Hovering a focused field
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `hover:bg-muted/50 focus-within:bg-card` (`combobox.tsx:392`). Tailwind v4 emits `hover` after `focus-within`, so by cascade order a hovered, focused field should show `muted/50`, not `card` (read from the variant order, not seen in a browser).
-- **Port:** a hovered, focused field stays `card` (`src/components/combobox.tsx:409-411`).
+- **Port:** a hovered, focused field stays `card` (`src/components/combobox.tsx:419-422`).
 - **Workaround:** n/a.
 - **Fidelity:** approximated (unverified against the browser).
 - **Components it hits:** just this one.
@@ -123,15 +110,6 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Workaround:** none; a row-level leave would also need the fluid hover to ignore the padding.
 - **Fidelity:** approximated (a few pixels of padding).
 - **Components it hits:** just this one.
-
-## Reduced motion is not honoured
-
-- **Cause:** `not ported yet`.
-- **Original:** `FluidHoverHighlight` keeps the opacity fade and drops the travel under `prefers-reduced-motion` (`fluid-hover-highlight.tsx:82-96,114`).
-- **Port:** no reduced-motion check anywhere in `src/`.
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every fluid hover list.
 
 ## Disabled is `readOnly` plus `tabIndex` -1
 

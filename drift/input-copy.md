@@ -30,13 +30,15 @@ repeating it.
 - **Fidelity:** approximated (static, larger cross, thinner strokes).
 - **Components it hits:** just this one.
 
-## Hover colour changes are instant
+## The value tint switches on at once
 
-- **Cause:** `not ported yet`.
-- **Original:** `transition-colors duration-80` on the action cell (`input-copy.tsx:226,330`) and on the `<mark>` (`:351`), so the label, glyph and tint ease over 80 ms.
-- **Port:** `hovered()` switches `color` and `highlight` at once (`input-copy.tsx:147-179,248-258`). `Icon` has a `fade` prop (`lib/icon.tsx:11`) and `colorFade` (`lib/theme.ts:310`) is used by select and combobox; this component uses neither.
-- **Fidelity:** approximated (colour fade dropped).
-- **Components it hits:** input-group (icon colour, its own entry).
+- **Cause:** `gpuix gap`.
+- **Original:** the `<mark>` carries `transition-colors duration-80` (`input-copy.tsx:351`), so the `bg-[#6B97FF]/20` tint fades in and out over 80 ms on hover. The glyph and label colours ease the same way on the action cell (`:226,330`).
+- **Port:** the glyph and label colours do ease (`Icon fade`, `colorFade` on the label `<text>`, `src/components/input-copy.tsx:190-198,236`). The tint is a `highlight` wash on the value `<text>` (`:261-270`), set while hovered, and appears and disappears on the first frame.
+- **gpuix lacks:** a transition for the `highlight` wash. It is painted as its own quad from the `highlight` prop (`~/code/fdarian/gpuix/README.md:3993-4090`), not from the element's style, so `transition*` never sees it.
+- **Workaround:** none.
+- **Fidelity:** approximated (the tint switches instead of easing; the glyph and label fade).
+- **Components it hits:** just this one.
 
 ## Icon stroke 1.5 to 2 on hover applies to the wrong glyphs in the button variant
 
@@ -49,7 +51,7 @@ repeating it.
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `<mark>` with `bg-[#6B97FF]/20`, no radius (`input-copy.tsx:351`).
-- **Port:** `highlight` with `radius: 2` (`input-copy.tsx:248-258`). How tall the tinted box is next to an inline `<mark>` was not compared.
+- **Port:** `highlight` with `radius: 2` (`input-copy.tsx:261-270`). How tall the tinted box is next to an inline `<mark>` was not compared.
 - **Fidelity:** approximated.
 
 ## The monospace face is Menlo
@@ -73,18 +75,19 @@ repeating it.
 - **Port:** `aria-label` is "Copy to clipboard" whether or not a label is shown (`input-copy.tsx:280-286`); the label `<text>` is not referenced. gpuix accepts `aria-labelledby` (`FORK.md:455`).
 - **Fidelity:** approximated.
 
-## The copy goes through pbcopy / wl-copy
+## A refused write has no `execCommand` fallback
 
-- **Cause:** `not ported yet`.
-- **Original:** `navigator.clipboard.writeText`, then an off-screen textarea and `execCommand("copy")` as fallback (`input-copy.tsx:77-110`).
-- **Port:** `copyToClipboard` spawns `pbcopy` on macOS and `wl-copy` on everything else (`input-copy.tsx:32-42`). gpuix has `navigator.clipboard.writeText` (`FORK.md:458`) and exports `clipboard` from `@gpuix/solid`, which `src/app.tsx:168` already uses. On Windows and X11 without `wl-copy` every copy ends in the red cross.
-- **Fidelity:** approximated (works on macOS only).
+- **Cause:** `port choice` (a native window has no insecure context or permissions policy to fall back from, and gpuix has no `document.execCommand`).
+- **Original:** `navigator.clipboard.writeText`, then an off-screen textarea and `execCommand("copy")` when that throws; the error state shows only if both fail (`input-copy.tsx:77-110`).
+- **Port:** `navigator.clipboard.writeText(value)`; when it rejects the component shows the error state, as the source does when its fallback fails too (`input-copy.tsx:100-105`).
+- **Workaround:** none.
+- **Fidelity:** exact where the write succeeds; a refused write shows the error at once instead of trying a second way.
 
 ## Passthrough props
 
 - **Cause:** `not ported yet`.
 - **Original:** `...props`, `className` and `ref` go to the wrapper div (`input-copy.tsx:384`, `:396-401`).
-- **Port:** no `className`, `ref` or rest props. The port adds `copy` (injectable clipboard) and `testId`. An omitted `size` follows the Size row (`input-copy.tsx:89`).
+- **Port:** no `className`, `ref` or rest props. The port adds `testId`. An omitted `size` follows the Size row (`input-copy.tsx:89`).
 - **Fidelity:** dropped.
 - **Components it hits:** every component with `size` (input-group, input-message).
 
@@ -96,5 +99,5 @@ repeating it.
 
 - **Cause:** `port choice` (the demo is a showcase card, not a docs page; reason not stated beyond that).
 - **Original:** `app/docs/input-copy/page.tsx`: Basic, With Label, Button Variant, Left Aligned (icon and button, `gap-4`), Disabled, Copy Callback (`gap-2` to a caption with `px-1`), each in a `ComponentPreview` with its code, then a props table.
-- **Port:** all six variants exist (`src/demos/input-copy.tsx:37-101`), stacked in one card at `gap: 8` (`:36`), the callback caption at `gap: 4` (`:87`). Extras: "Copy fails" (`:102`) and "Compact" (`:110`). The code snippets and props table are not ported.
-- **Fidelity:** all source variants present; two extra.
+- **Port:** all six variants exist (`src/demos/input-copy.tsx:37-101`), stacked in one card at `gap: 8` (`:36`), the callback caption at `gap: 4` (`:87`). Extra: "Compact". The code snippets and props table are not ported.
+- **Fidelity:** all source variants present; one extra.

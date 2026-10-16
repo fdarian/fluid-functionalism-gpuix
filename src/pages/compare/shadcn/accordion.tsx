@@ -1,5 +1,5 @@
 import {
-	type EventPayload,
+	type DomEvent,
 	type HostElement,
 	type KeyEvent,
 	motion,
@@ -44,7 +44,7 @@ function Panel(props: { open: boolean; children: string }) {
 		>
 			<Show when={!retired()}>
 				<div
-					onLayout={(event: EventPayload) => {
+					onLayout={(event: DomEvent) => {
 						if (event.height === undefined) {
 							throw new Error("onLayout reported no height");
 						}

@@ -1,5 +1,6 @@
 import {
 	buttonProps,
+	createReducedMotion,
 	type HostElement,
 	motion,
 	useGpuixRequired,
@@ -20,6 +21,7 @@ import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import {
 	color,
+	fade,
 	focusRing,
 	shape,
 	sizeChoice,
@@ -144,6 +146,9 @@ export function Banner(props: {
 	const status = () => props.status ?? "default";
 	const contrast = () => props.contrast ?? "low";
 	const fixed = () => props.variant === "fixed";
+	const reduced = createReducedMotion();
+	// A fixed bar rides its row both ways; reduced, it fades in place like the inline one.
+	const slides = () => fixed() && !reduced();
 	const size = () => props.size ?? sizeChoice();
 	const metrics = () => sizes[size()];
 
@@ -315,12 +320,19 @@ export function Banner(props: {
 					rowElement = element;
 				}}
 				initial={inPlace ? false : { height: 0 }}
-				animate={{ height: open() ? "auto" : 0 }}
-				transition={open() ? appearRow : dismissRow}
+				// Reduced, the row snaps open and stays open while the bar fades; the bar's completion unmounts it.
+				animate={{ height: open() || reduced() ? "auto" : 0 }}
+				transition={reduced() ? tween.snap : open() ? appearRow : dismissRow}
 				onMotionComplete={() => {
-					if (!open()) setMounted(false);
+					if (!open() && !reduced()) setMounted(false);
 				}}
-				style={{ ...rowStyle, overflow: "hidden" }}
+				style={{
+					...rowStyle,
+					overflow: "hidden",
+					...(fixed()
+						? { position: "sticky" as const, top: 0, zIndex: 40 }
+						: {}),
+				}}
 			>
 				<motion.div
 					ref={(element: HostElement) => {
@@ -329,24 +341,31 @@ export function Banner(props: {
 					initial={
 						inPlace
 							? false
-							: fixed()
+							: slides()
 								? { opacity: 0, top: exitOffset() }
 								: { opacity: 0 }
 					}
 					animate={
-						fixed()
+						slides()
 							? { opacity: open() ? 1 : 0, top: open() ? 0 : exitOffset() }
 							: { opacity: open() ? 1 : 0 }
 					}
 					transition={
 						open()
-							? fixed()
+							? slides()
 								? appearRow
-								: appearBanner
-							: fixed()
+								: reduced()
+									? tween.fast
+									: appearBanner
+							: slides()
 								? dismissRow
-								: dismissFade
+								: reduced()
+									? tween.fastExit
+									: dismissFade
 					}
+					onMotionComplete={() => {
+						if (reduced() && !open()) setMounted(false);
+					}}
 					style={{ ...rowStyle, position: "relative", flexShrink: 0 }}
 				>
 					{body()}
@@ -358,21 +377,21 @@ export function Banner(props: {
 	return <Show when={mounted()}>{row()}</Show>;
 }
 
+/** `transition-colors duration-80` without `outline-color`: the source's focus ring is a box-shadow ring, which does not ease. */
+const DISMISS_FADE = fade(["color", "background-color"], 80);
+
 function DismissButton(props: {
 	compact: boolean;
 	testId?: string;
 	onClick: () => void;
 }) {
 	const renderer = useGpuixRequired();
-	const [hovered, setHovered] = createSignal(false);
 	return (
 		<div
 			{...buttonProps({ onClick: props.onClick }, renderer)}
 			tabIndex={0}
 			aria-label="Dismiss"
 			testId={props.testId}
-			onMouseEnter={() => setHovered(true)}
-			onMouseLeave={() => setHovered(false)}
 			style={{
 				// Above the fill layer, which paints over its in-flow siblings.
 				position: "relative",
@@ -390,7 +409,9 @@ function DismissButton(props: {
 				borderRadius: shape.button,
 				cursor: "pointer",
 				keyboardFocusDim: false,
-				hover: { backgroundColor: color.hover },
+				color: color.mutedForeground,
+				...DISMISS_FADE,
+				hover: { backgroundColor: color.hover, color: color.foreground },
 				focusVisible: focusRing(0),
 			}}
 		>
@@ -398,7 +419,7 @@ function DismissButton(props: {
 				name="x"
 				size={props.compact ? 13 : 15}
 				strokeWidth={1.5}
-				color={hovered() ? color.foreground : color.mutedForeground}
+				color="currentColor"
 			/>
 		</div>
 	);

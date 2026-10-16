@@ -193,7 +193,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.hover("basic");
 	await shot.settle(300);
 	shot.expectText("Save your changes", true);
-	await shot.press("escape");
+	await shot.press("Escape");
 	shot.expectText("Save your changes", false);
 	await shot.moveTo(900, 700);
 	await shot.hover("basic");
@@ -241,14 +241,14 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	// The Escape above left the last input a key, so script focus counts as keyboard focus.
 	await shot.focus("rich-trigger");
 	shot.expectText("Keyboard shortcut", true);
-	await shot.press("tab");
+	await shot.press("Tab");
 	shot.expectText("Instant", true);
 	shot.expectText("Keyboard shortcut", false);
-	await shot.press("tab");
+	await shot.press("Tab");
 	shot.expectText("Instant", false);
 	shot.expectText("Slow", true);
 	shot.capture("keyboard-focus");
-	await shot.press("escape");
+	await shot.press("Escape");
 	shot.expectText("Slow", false);
 
 	await shot.hover("follow-x");

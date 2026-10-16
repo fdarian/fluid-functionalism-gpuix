@@ -4,9 +4,9 @@ import {
 	useGpuixRequired,
 } from "@gpuix/solid";
 import { For } from "solid-js";
-import { weight } from "../../../lib/theme";
+import { twShadow, weight } from "../../../lib/theme";
 import { pressProps } from "./parts";
-import { sc, scRadius, scRing, scShadow } from "./theme";
+import { sc, scRadius, scRing } from "./theme";
 
 /**
  * `components/shadcn/tabs.tsx`: an `h-10` muted pill list holding triggers, the active one raised on the
@@ -99,7 +99,7 @@ export function ScTabs(props: {
 								paddingBottom: 6,
 								borderRadius: scRadius.sm,
 								backgroundColor: active() ? sc.background : "rgba(0,0,0,0)",
-								boxShadow: active() ? scShadow.sm : undefined,
+								boxShadow: active() ? twShadow.sm : undefined,
 								transitionProperty: "background-color",
 								transitionDuration: "150ms",
 								transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",

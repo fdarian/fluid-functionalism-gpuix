@@ -45,7 +45,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `gpuix gap` (shared; variable-font axes, see the "Variable-font axes" row in `README.md` "Missing features").
 - **Original:** the selected tab's label eases between weight 400 and 550 (`registry/base/tabs-subtle.tsx:326-337`).
-- **Port:** SemiBold 600 switches at once, with a hidden semibold copy reserving the width (`src/components/command-menu.tsx:655-677`).
+- **Port:** SemiBold 600 switches at once, with a hidden semibold copy reserving the width (`src/components/command-menu.tsx:706-727`).
 - **Workaround:** static cuts.
 - **Fidelity:** approximated.
 - **Components it hits:** tabs, tabs-subtle, sidebar.
@@ -91,15 +91,6 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 - **Fidelity:** approximated.
 - **Components it hits:** badge, select, every list row.
 
-## State changes do not fade over 80 ms
-
-- **Cause:** `not ported yet`.
-- **Original:** row text and icon colour and stroke width ease over `duration-80`; the field's search icon likewise on focus (`:849`, `:1306`, `:1317`).
-- **Port:** row text, row icon and the field icon switch at once (`src/components/command-menu.tsx:610-613`, `:1081-1084`, `:1102-1111`). `colorFade` and `Icon`'s `fade` exist (`src/lib/theme.ts:451-455`, `src/lib/icon.tsx:21`) and combobox and select use them; whether gpuix can tween `strokeWidth` is not checked.
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** just this one.
-
 ## A wheel scroll re-picks the row under a stationary pointer
 
 - **Cause:** `port choice` (stated in `src/lib/fluid-hover.ts:202-206`: a scroll event carries no pointer position, so the port re-picks at the last one seen).
@@ -118,35 +109,6 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 - **Fidelity:** approximated.
 - **Components it hits:** every fluid list.
 
-## Scroll travel starts a microtask after the key
-
-- **Cause:** `gpuix gap`.
-- **Original:** the key handler starts the scroll animation in the same call (`registry/default/command-menu.tsx:569-602`).
-- **Port:** the motion value that carries the travel is created at the first travel and its calls wait for a microtask (`src/components/command-menu.tsx:410-436`, `:465-470`); the menu's release of it waits too, so closing on Esc or leaving the page from a click does not throw.
-- **gpuix lacks:** a motion value cannot be created, driven or released inside a handler that native called synchronously (a key, a press): the renderer throws "This renderer call cannot run inside an event handler that native called synchronously". A menu mounts from ⌘K and unmounts on Esc, so a value made at mount would throw.
-- **Workaround:** `queueMicrotask`; one microtask is under a frame, so nothing shows. Each `scrollTop` write during the travel is a renderer call (about 7 ms apiece in the offscreen renderer); a live frame-rate check is open.
-- **Fidelity:** exact in effect.
-- **Components it hits:** slider (its `createAnimateQueue`), and any component that animates a motion value from a key or press.
-
-## Reduced motion reaches only the list scroll
-
-- **Cause:** `not ported yet`.
-- **Original:** the highlight travel, the list scroll and the height spring snap under the OS setting; the opacity fade stays (`registry/default/command-menu.tsx:567`, `:590`, `:723`; `registry/default/fluid-hover-highlight.tsx:83-91`).
-- **Port:** the arrow-key scroll reads `createReducedMotion()` and jumps (`src/components/command-menu.tsx:407`, `:460-463`). The fill's travel and the dialog's fades ignore it; nothing else in `src/` reads the setting.
-- **Workaround:** none.
-- **Fidelity:** approximated (the scroll snaps, the fill still glides).
-- **Components it hits:** every component with motion.
-- **Note:** gpuix's `MotionConfig reducedMotion="user"` makes `motion.*` position and size properties jump (`~/code/fdarian/gpuix/README.md:1953-1966`); the fill is a `motion.div`, so one wrapper at the app root would cover it.
-
-## Panel frame: a border and one shadow, and the dialog uses surface 3
-
-- **Cause:** `not ported yet` (the stated reason, "gpuix paints one outer shadow", no longer holds: `boxShadow` takes a list, `~/code/fdarian/gpuix/README.md:5192`).
-- **Original:** `Elevated offset=2 shadowLevel=3` for the inline panel (surface 3, `--shadow-3`: a 1 px ring plus two drops, with an inset highlight and ring in dark). The dialog panel is `surfaceClasses(substrate + 4)`, surface 5 with `--shadow-5` (`app/docs/command-menu/page.tsx:344-354`; `registry/base/dialog.tsx:30`, `:190`, `:274`).
-- **Port:** `CommandMenuPanel` is `color.card` (surface 3) with a real 1 px `popupBorder` (it takes layout, the ring does not) and `shadow3()` (the 3 px drop alone) for both the inline panel and the dialog (`src/components/command-menu.tsx:314-328`, `:1363`; `src/lib/theme.ts:469-481`). In dark mode the dialog is `#252525` where the source draws `#333333`.
-- **Workaround:** `popupBorder` stands in for the ring.
-- **Fidelity:** approximated.
-- **Components it hits:** every popup, dialog and mobile-drawer.
-
 ## Dialog enter and exit
 
 - **Cause:** `gpuix gap` (the scale).
@@ -161,7 +123,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `not ported yet`.
 - **Original:** Base UI Dialog: `role="dialog"` named by a screen-reader-only `title` and `description` props, focus trapped and returned to the trigger on close, page scroll locked and the page hidden from the accessibility tree, Escape closes from anywhere, an outside press closes (a click that presses and releases on the backdrop in `drift/dialog.md`), `defaultOpen` and an uncontrolled mode, `modal`, `container` and `className` props (`:1449-1568`).
-- **Port:** its own `<anchored fill="window">` layer, not the ported `Dialog` (`src/components/command-menu.tsx:1288-1372`): no role, title or description; `HideOutside` (`src/lib/modal.tsx`, used by `src/components/dialog.tsx:331`) is not used; no focus return; `open` and `onOpenChange` are required; the scrim closes on `mousedown` through `onMouseDownOutside` (`:1321`; the dialog port works around this with a click, `drift/dialog.md`); Escape works from the field only (`:530-534`).
+- **Port:** its own `<anchored fill="window">` layer, not the ported `Dialog` (`src/components/command-menu.tsx:1288-1372`): no role, title or description; `HideOutside` (`src/lib/modal.tsx`, used by `src/components/dialog.tsx:331`) is not used; no focus return; `open` and `onOpenChange` are required; the scrim closes on `mousedown` through `onMouseDownOutside` (`:1321`; the dialog port uses gpuix's `DialogBackdrop`, which closes on a click); Escape works from the field only (`:530-534`).
 - **Workaround:** none.
 - **Fidelity:** approximated (looks and closes the same with the pointer and the field focused).
 - **Components it hits:** just this one.

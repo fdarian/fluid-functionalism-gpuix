@@ -31,15 +31,6 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 - **Fidelity:** approximated (no easing, 600 for 550).
 - **Components it hits:** every `StableLabel` (tabs, tabs-subtle, sidebar, menu rows, card, table).
 
-## Label and chevron colour switch at once
-
-- **Cause:** `not ported yet`.
-- **Original:** label colour and the chevron's colour ease over 80 ms (`:754`, `:778`).
-- **Port:** the colour changes in one frame: the accordion passes neither `StableLabel` nor `Icon` a `fade` (`src/components/accordion.tsx:640-657`; both props exist, `src/lib/stable-label.tsx`, `src/lib/icon.tsx`). The chevron's stroke width does ease (`easeStroke`). gpuix animates `color` (`FORK.md:815-820`).
-- **Workaround:** none.
-- **Fidelity:** dropped (the ease), exact end colours.
-- **Components it hits:** any `StableLabel` row (tabs, sidebar, menus).
-
 ## Labels do not wrap
 
 - **Cause:** `port choice` (shared `StableLabel`; reason not stated).
@@ -69,9 +60,9 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 ## Blur keeps the hover while the pointer is inside
 
-- **Cause:** `port choice` (reason not stated; the microtask guards a sibling's focus arriving right after the blur, `src/components/accordion.tsx:276`).
+- **Cause:** `port choice` (reason not stated).
 - **Original:** focus leaving the group clears the hover and the ring even with the pointer inside (`registry/base/accordion.tsx:396-403`).
-- **Port:** the hover is cleared only if no trigger took focus and the pointer is outside (`src/components/accordion.tsx:274-284`), so Tab out with the pointer in the group leaves the last row lit until the pointer moves.
+- **Port:** the hover is cleared only if the blur's `relatedTarget` is not a trigger and the pointer is outside (`blurRow`, `src/components/accordion.tsx`), so Tab out with the pointer in the group leaves the last row lit until the pointer moves.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -121,15 +112,6 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 - **Workaround:** `height: "auto"` until the first measure (`:585-588`).
 - **Fidelity:** approximated.
 - **Components it hits:** any panel holding collapsibles (thinking-steps, sidebar).
-
-## Reduced motion
-
-- **Cause:** `not ported yet` (gpuix reads the OS setting on macOS and has `MotionConfig reducedMotion="user"`, `FORK.md:831`, `:906`).
-- **Original:** `MotionConfig reducedMotion="user"` at the root, and the panel height takes `duration: 0` under it (`registry/base/accordion.tsx:849`, `:953`).
-- **Port:** nothing in `src/` reads it, so the springs always play.
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every component.
 
 ## An explicit `size` does not scope the parts inside
 

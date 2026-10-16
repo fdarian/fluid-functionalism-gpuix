@@ -14,26 +14,6 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** approximated (dwell timer instead of a safe area).
 - **Components it hits:** any popup with a nested popup; tooltip has the same gap.
 
-## Reading focus state inside a mousedown handler throws `VIEW_BUSY`
-
-- **Cause:** `gpuix gap`.
-- **Original:** `document.activeElement` is readable anywhere, including in a pointer handler, so a popup can note which element had focus when it opened and hand focus back on close (Base UI `returnFocus`).
-- **Port:** the pressed trigger's element id is recorded from the press event (`noteTrigger(event.elementId)`, `src/components/dropdown.tsx:947`, `:1010`) and used when the menu opens, falling back to the focused element only for a keyboard open (`:901`). Closing calls `returnFocusTo` (`:895`; `src/lib/popup-trigger.ts:8`) with `popup.matches(":focus-within")` as `force`, so focus goes back to the trigger when it sat in the popup (gpuix drops it silently when the popup unmounts) or nowhere.
-- **gpuix lacks:** that read: `mousedown` and `pointerdown` (and, per `~/code/fdarian/gpuix/FORK.md:359-364`, `mouseup`, `click` and `wheel`) handlers run inside the synchronous input dispatch on macOS and in the test renderer, where `getFocusedElementId` throws "The root view is being updated by the input" (`packages/native/src/events/sync_dispatch.rs:154`). An earlier probe on the test renderer found it throws in `onMouseDown` and answers in `onClick` and `onKeyDown`; that was not re-run for this audit, and the README row says click throws too. gpuix's own `DismissableLayer` makes the same read while it mounts, so a pointer press that opens a popup throws (README Bugs row "every popup on gpuix's `DismissableLayer`").
-- **Workaround:** the recorded id above.
-- **Fidelity:** exact for the open; unverified for the close. A press closes the menu from a `mousedown` handler in two places: the trigger's second press (`createPressToggle` `onMouseDown`, `src/lib/popup-trigger.ts:43-47` into `scope.setOpen(false)`) and an outside press (`onMouseDownOutside`, `dropdown.tsx:985`). Both reach `returnFocusTo`, which reads focus first (`popup-trigger.ts:13`), and `popup.matches(":focus-within")` before that, which may throw the same way. No scenario in `src/demos/dropdown.tsx` closes the menu that way (row picks close from `click` and `mouseup`, which the scenarios do run), so whether those two closes throw is not known.
-- **Components it hits:** any popup opened or closed on press: select (`src/components/select.tsx:243`) and color-picker (`src/components/color-picker.tsx:820`) also call `returnFocusTo`.
-
-## Tab from a popup row does not continue after the trigger
-
-- **Cause:** `gpuix gap`.
-- **Original:** Tab in an open Base UI menu closes it and focus moves to the next tabbable after the trigger (`FloatingFocusManager`, BASE-UI-AUDIT.md "Menu"); Shift+Tab closes and focuses the trigger.
-- **Port:** the menu's Tab handler cancels the default, closes, hands focus to the trigger and calls `renderer.focusNext()` from there (`tabbingOn`, `src/components/dropdown.tsx:888`, `:909`, `:954`); Shift+Tab does the same without the `focusNext` (`:373-377`).
-- **gpuix lacks:** a tab order that puts a floating layer where its trigger is: Tab pressed on a row inside an `<anchored>` popup jumps to the first tab stop of the page (`nav-search` in the demo app) rather than the stop after the trigger, as the check scenario found (`scripts/check-dropdown.tsx`, "Tab focuses what follows the trigger").
-- **Workaround:** the explicit `focusNext()` from the trigger.
-- **Fidelity:** exact for the target, approximated for the mechanism.
-- **Components it hits:** select and color-picker's format menu close on Tab by other means (not re-checked here).
-
 ## No `width: max-content` / `fit-content`
 
 - **Cause:** `gpuix gap`. README "Missing features" row "Intrinsic width".
@@ -77,15 +57,6 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Port:** gpuix `<input>` (`src/components/dropdown-search.tsx:97-131`); no `composition*` events, so the field's Escape/Tab/arrow handling cannot tell a key an IME consumed. Untested.
 - **Fidelity:** exact for Latin input, unknown for IME.
 - **Components it hits:** combobox, command-menu, input-group, input-message.
-
-## Popup shadow is one drop and a border
-
-- **Cause:** `not ported yet`. gpuix paints multi-layer and inset `boxShadow` (`~/code/fdarian/gpuix/FORK.md:646-649`); the comment above `shadow3` in `src/lib/theme.ts:470` ("gpuix paints one outer shadow") is stale.
-- **Original:** `Elevated shadowLevel={3}` (`registry/base/dropdown.tsx:133-135`, `:641-645`): `--shadow-3` is a 1px ring, a `0 1px 1px -0.5px` drop and a `0 3px 3px -1.5px` drop in light (`app/globals.css:139`); in dark it adds an inset top highlight, an inset ring and a 1px outer ring (`:162`).
-- **Port:** a 1px `popupBorder` border plus one `0 3px 3px -1.5px` drop (`src/lib/popup.tsx:106-110`, `src/components/dropdown.tsx:778-784`, `:1327-1333`; `src/lib/theme.ts:470`). No `1px` drop and no dark-mode inset highlight, so the dark popup edge reads flatter.
-- **Workaround:** the border stands in for the ring.
-- **Fidelity:** approximated.
-- **Components it hits:** every popup and card (select, combobox, dialog, color-picker, tooltip).
 
 ## Submenu and inline panel colour is fixed at surface-3
 
@@ -142,12 +113,14 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** approximated for the fade and the clearing.
 - **Components it hits:** just this one (popup menus draw no ring in either build).
 
-## Search field is not sticky and cannot sit in an inline panel
+## Search field is a child of the scroller, not of the list
 
-- **Cause:** `not ported yet`. gpuix has `position: sticky` (`~/code/fdarian/gpuix/FORK.md:560`; README gpuix gaps intro); the comment at `src/components/dropdown-search.tsx:24-28` ("gpuix has no `position: sticky`") is stale. BASE-UI-AUDIT.md row 415 records it as not adopted.
-- **Original:** the field is `sticky top-0 z-20 -mx-1 -mt-1 mb-0.5` inside the scrolling list, `border-b border-border/60`, painted with the surface so rows scroll underneath; `DropdownSearch` in an inline `Dropdown` is simply open (`registry/default/dropdown-search.tsx:228-231`, `:317-331`).
-- **Port:** `DropdownSearch` renders nothing and hands its props to `DropdownContent`, which draws the field above the scroller (`src/components/dropdown-search.tsx:35-44`, `:69-134`; `src/components/dropdown.tsx:669-677`) with the rows' top padding cut to 2px (`:699`). Placed in an inline `Dropdown` it throws "DropdownSearch must be inside a DropdownContent" (`dropdown-search.tsx:36-39`). Visually the first frame matches; rows no longer slide under the field, and the thumb (if any) would start below it.
-- **Fidelity:** approximated.
+- **Cause:** `gpuix gap`.
+- **Original:** the field is `sticky top-0 z-20 -mx-1 -mt-1 mb-0.5` inside the padded `p-1` list, `border-b border-border/60`, painted with the surface so rows scroll underneath; `DropdownSearch` in an inline `Dropdown` is simply open (`registry/default/dropdown-search.tsx:228-231`, `:317-331`).
+- **Port:** `DropdownSearch` renders nothing and registers its props with the list around it, which draws the field as the first child of the scroller, ahead of the padded rows: `position: sticky`, `top: 0`, `zIndex: 20`, the popup's `surface(level)` fill, the rows' top padding cut to 2px (`src/components/dropdown-search.tsx:75-135`; `src/components/dropdown.tsx:692-701`). A row the keyboard reveals stops below the field (`revealRow`'s `topInset`, `src/lib/list-nav.ts`); the source's `scrollIntoView` lets it slide under. An inline `Dropdown` hosts `DropdownSearch` the same way and draws the field above the rows, not sticky (`dropdown.tsx:868-881`); ArrowDown and ArrowUp leave it for the first and last row.
+- **gpuix lacks:** a negative margin on a sticky box does not bleed over its parent's padding. A sticky `marginTop: -4` child of a `padding: 4` box is held at the parent's content box (y 54 where its layout slot is 50) until the scroller moves it, then pinned at 50; a CSS sticky box keeps its border box where the margin puts it. So the field cannot sit in the padded list as the source has it. Measured on the test renderer, not traced in gpuix's `sticky.rs`.
+- **Workaround:** the field is the scroller's child, where the parent has no padding.
+- **Fidelity:** exact visually; the DOM structure differs.
 - **Components it hits:** command-menu draws its own field.
 
 ## Compact size is not ported

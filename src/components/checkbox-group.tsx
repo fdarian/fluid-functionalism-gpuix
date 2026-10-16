@@ -7,6 +7,7 @@ import {
 	type ChoiceSize,
 	createSelectionRuns,
 	indicatorBorder,
+	indicatorFade,
 	ROW,
 } from "./choice-group";
 
@@ -62,6 +63,7 @@ function Checkbox(props: {
 					borderRadius: props.size === "compact" ? 4 : 5,
 					borderWidth: 1.5,
 					borderColor: indicatorBorder(props.checked, props.active),
+					...indicatorFade,
 				}}
 			/>
 			<div style={{ position: "absolute", top: inset(), left: inset() }}>

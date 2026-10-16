@@ -150,7 +150,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	// The format menu opened by key: the trigger names the menu, a radio row says whether it is checked.
 	await shot.focus("default-format");
 	shot.expectAria("default-format", { has_popup: "Menu", expanded: false });
-	await shot.press("down");
+	await shot.press("ArrowDown");
 	const menu = shot.aria("default-format").controls;
 	if (!Array.isArray(menu) || menu.length !== 1)
 		throw new Error("an open format trigger controls its menu");
@@ -165,7 +165,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 		toggled: "True",
 	});
 	shot.expectAria("default-format-rgb", { toggled: "False" });
-	await shot.press("escape");
+	await shot.press("Escape");
 
 	// The square: hover ghost, a press, a drag.
 	const square = shot.centerOf("default-square");
@@ -173,11 +173,11 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(square.x - 50, square.y - 15);
 	shot.capture("square-hover");
 	await shot.down("default-square");
-	await shot.moveHeld(square.x + 70, square.y + 40);
-	await shot.moveHeld(square.x + 80, square.y + 45);
+	await shot.moveTo(square.x + 70, square.y + 40);
+	await shot.moveTo(square.x + 80, square.y + 45);
 	shot.capture("square-drag");
 	// Past the edge the thumb pins to the border.
-	await shot.moveHeld(square.x + 400, square.y + 300);
+	await shot.moveTo(square.x + 400, square.y + 300);
 	shot.capture("square-drag-past-edge");
 	await shot.up("default-square");
 	shot.expectText("#", true);
@@ -189,31 +189,31 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.clickAt(alpha.x + 30, alpha.y);
 	shot.capture("hue-and-alpha");
 	await shot.down("default-hue");
-	await shot.moveHeld(hue.x + 60, hue.y);
-	await shot.moveHeld(hue.x + 90, hue.y + 30);
+	await shot.moveTo(hue.x + 60, hue.y);
+	await shot.moveTo(hue.x + 90, hue.y + 30);
 	shot.capture("hue-drag");
 	await shot.up("default-hue");
 	await shot.down("default-alpha");
-	await shot.moveHeld(alpha.x - 60, alpha.y);
-	await shot.moveHeld(alpha.x - 400, alpha.y);
+	await shot.moveTo(alpha.x - 60, alpha.y);
+	await shot.moveTo(alpha.x - 400, alpha.y);
 	shot.capture("alpha-drag-past-edge");
 	await shot.up("default-alpha");
 
 	// The hex field: replace its text.
 	await shot.click("default-hex-input");
 	await shot.press(
-		"end backspace backspace backspace backspace backspace backspace backspace backspace",
+		"End Backspace Backspace Backspace Backspace Backspace Backspace Backspace Backspace",
 	);
 	await shot.press("f f 3 b 3 0");
-	await shot.press("enter");
+	await shot.press("Enter");
 	shot.capture("hex-typed");
 
 	// Keyboard: the square takes focus, Tab reaches the hue thumb and arrows move it.
 	await shot.click("default-square");
-	await shot.press("left left left shift-down");
+	await shot.press("ArrowLeft ArrowLeft ArrowLeft Shift+ArrowDown");
 	shot.capture("keyboard-square");
-	await shot.press("tab");
-	await shot.press("right right right shift-right");
+	await shot.press("Tab");
+	await shot.press("ArrowRight ArrowRight ArrowRight Shift+ArrowRight");
 	shot.capture("keyboard-hue");
 
 	// The format menu, and each format's channels.
@@ -231,29 +231,29 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	// The format menu by keyboard: closing returned focus to the trigger, a
 	// keyboard open lights the first row (Up: the last), Down wraps, End /
 	// Home / typeahead move.
-	await shot.press("up");
+	await shot.press("ArrowUp");
 	shot.capture("format-up-opens-last");
-	await shot.press("enter");
+	await shot.press("Enter");
 	shot.expectText("OKLCH", true);
-	await shot.press("down h enter");
+	await shot.press("ArrowDown h Enter");
 	shot.expectText("OKLCH", false);
-	await shot.press("down up enter");
+	await shot.press("ArrowDown ArrowUp Enter");
 	shot.expectText("OKLCH", true);
-	await shot.press("down end up enter");
+	await shot.press("ArrowDown End ArrowUp Enter");
 	shot.expectText("OKLCH", false);
 	// A pointer open lights nothing until the pointer moves in.
 	await shot.moveTo(1180, 700);
 	await shot.click("default-format");
 	shot.capture("format-pointer-open");
-	await shot.press("escape");
+	await shot.press("Escape");
 	await pickFormat(shot, "default", "rgb");
 
 	// A channel scrubs by dragging sideways.
 	await shot.moveTo(1180, 700);
 	const red = shot.centerOf("default-r");
 	await shot.down("default-r");
-	await shot.moveHeld(red.x - 30, red.y);
-	await shot.moveHeld(red.x - 60, red.y);
+	await shot.moveTo(red.x - 30, red.y);
+	await shot.moveTo(red.x - 60, red.y);
 	shot.capture("scrub");
 	await shot.up("default-r");
 

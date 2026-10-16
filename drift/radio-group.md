@@ -15,14 +15,6 @@ Same in both (checked against the code): row height, gap and padding per size, c
 - **Fidelity:** approximated (same size and timing; the layout is recomputed per frame).
 - **Components it hits:** the README row's scale-in entrances: banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack.
 
-## Circle border changes colour at once
-
-- **Cause:** `not ported yet`. Same drift as [checkbox-group.md, "Indicator border changes colour at once"](checkbox-group.md#indicator-border-changes-colour-at-once), where the entry lives. Here: source `transition-all duration-80` (`radio-group.tsx:404-413`); port `indicatorBorder` with no transition (`radio-group.tsx:134-145`, `choice-group.tsx:338-343`).
-
-## Label colour changes at once
-
-- **Cause:** `not ported yet`. Same drift as [checkbox-group.md, "Label colour changes at once"](checkbox-group.md#label-colour-changes-at-once), where the entry lives. Here: source `radio-group.tsx:459-471`; the port's `StableLabel` is used at `choice-group.tsx:326-333`.
-
 ## Label weight (variable fonts)
 
 - **Cause:** `gpuix gap`. README "Missing features" row for variable-font axes (`README.md:171`).

@@ -14,7 +14,7 @@ interface Shape {
 	attrs: Record<string, string>;
 }
 
-/** The glyph's inner markup (lucide's `<path/>`, `<rect/>`, `<circle/>`, `<line/>` nodes) as shapes. */
+/** The glyph's inner markup (lucide's `<path/>`, `<rect/>`, `<circle/>`, `<line/>`, `<polyline/>`, `<polygon/>` nodes) as shapes. */
 function parseShapes(nodes: string): Shape[] {
 	return Array.from(nodes.matchAll(/<(\w+)\s+([^>]*?)\s*\/>/g)).map((match) => {
 		const attrs: Record<string, string> = {};
@@ -44,6 +44,10 @@ function ShapeNode(props: { shape: Shape }) {
 			);
 		case "line":
 			return <line x1={attrs.x1} y1={attrs.y1} x2={attrs.x2} y2={attrs.y2} />;
+		case "polyline":
+			return <polyline points={attrs.points} />;
+		case "polygon":
+			return <polygon points={attrs.points} />;
 		default:
 			throw new Error(
 				`Icon does not draw <${props.shape.tag}> with easeStroke`,

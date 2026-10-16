@@ -39,4 +39,5 @@ await click(`nav-${first}`);
 console.log(first, renderer.getAllText().filter((t) => t.length > 0 && !/^(Showcase|Accordion|Ask User Questions)$/.test(t)).slice(-25).join(" | "));
 await click(`nav-${second}`);
 console.log(second, renderer.getAllText().filter((t) => t.length > 0 && !/^(Showcase|Accordion|Ask User Questions)$/.test(t)).slice(-25).join(" | "));
+test.unmount();
 process.exit(0);

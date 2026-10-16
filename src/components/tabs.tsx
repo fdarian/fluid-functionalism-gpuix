@@ -1,6 +1,6 @@
 import {
 	buttonProps,
-	type EventPayload,
+	type DomEvent,
 	type HostElement,
 	type KeyEvent,
 	motion,
@@ -40,7 +40,7 @@ import {
 	sizeChoice,
 	type as scale,
 	scheme,
-	shadow3,
+	shadow,
 	motion as tween,
 	weight,
 } from "../lib/theme";
@@ -241,7 +241,6 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 					userSelect: "none",
 				}}
 			>
-				{/* Layers first: gpuix has no zIndex, so the transparent tabs paint over them by document order. */}
 				<Show when={selectedRect()}>
 					{(rect: () => ItemRect) => (
 						<motion.div
@@ -264,9 +263,7 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 									bottom: 0,
 									borderRadius: shape.bg,
 									backgroundColor: color.surface4,
-									borderWidth: 1,
-									borderColor: color.popupBorder,
-									boxShadow: shadow3(),
+									boxShadow: shadow(4),
 								}}
 							/>
 						</motion.div>
@@ -404,25 +401,23 @@ export function TabItem(props: {
 			}
 			aria-disabled={props.disabled === true}
 			testId={props.testId}
-			onFocus={(event: EventPayload) => {
+			onFocus={(event: DomEvent) => {
 				list.focusRing.focus(index, event);
 				list.focusTab(index);
 				list.hover.setActiveIndex(index);
 				if (props.disabled !== true) tabs.select(props.value);
 			}}
-			onBlur={() => {
+			onBlur={(event: DomEvent) => {
 				list.focusRing.blur(index);
 				// Focus moving to a sibling tab stays inside the list: only a real exit drops the highlight.
-				queueMicrotask(() => {
-					const focused = renderer.getFocusedElementId?.();
-					for (const tab of list.elements.values()) {
-						if (tab.id === focused) return;
-					}
-					if (!list.mouseInside()) list.hover.setActiveIndex(null);
-				});
+				for (const tab of list.elements.values()) {
+					if (tab === event.relatedTarget) return;
+				}
+				if (!list.mouseInside()) list.hover.setActiveIndex(null);
 			}}
 			style={{
 				position: "relative",
+				zIndex: 10,
 				display: "flex",
 				flexDirection: "row",
 				alignItems: "center",
@@ -441,6 +436,8 @@ export function TabItem(props: {
 						name={icon()}
 						size={metrics().icon}
 						strokeWidth={isActive() ? 2 : 1.5}
+						easeStroke
+						fade
 						color={isActive() ? color.foreground : color.mutedForeground}
 					/>
 				)}
@@ -450,6 +447,7 @@ export function TabItem(props: {
 				heavy={isSelected()}
 				color={isActive() ? color.foreground : color.mutedForeground}
 				textStyle={metrics().text}
+				fade
 			/>
 		</div>
 	);

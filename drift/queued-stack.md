@@ -33,15 +33,6 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 - **Fidelity:** dropped.
 - **Components it hits:** chat-message (meta row), ask-user-questions, any touch-aware component.
 
-## Card shadow ring is a border
-
-- **Cause:** `not ported yet`. gpuix paints multi-layer and `inset` `boxShadow` (`~/code/fdarian/gpuix/FORK.md:646-649`); `src/lib/theme.ts:469-481` still says it paints one outer shadow. To port: a `boxShadow` CSS string with the `0 0 0 1px` ring and both drops, and no `borderWidth`.
-- **Original:** `shadow-surface-3`, a 1px ring plus two drops, none of it in layout (`:342`).
-- **Port:** `shadow3()` plus `borderWidth: 1` in `popupBorder` (`queued-stack.tsx:489-491`).
-- **Workaround:** a real border inside the card's box, where the source's ring is outside it.
-- **Fidelity:** approximated (one drop, not two).
-- **Components it hits:** every popup and card that uses `shadow3`.
-
 ## No size ladder
 
 - **Cause:** `not ported yet` (README: "Not ported there: ... the Size ... rows").
@@ -69,22 +60,13 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 - **Fidelity:** approximated (the card edge is not part of the grip).
 - **Components it hits:** none other.
 
-## Card paint order
-
-- **Cause:** `not ported yet`. gpuix has `zIndex` on positioned siblings (`~/code/fdarian/gpuix/FORK.md:561`, `:603`), and every card is `position: absolute`; the comment at `queued-stack.tsx:245` is stale. To port: `zIndex: dragging ? 200 : 100 - i` on each card, as in the source.
-- **Original:** `zIndex: isDragging ? 200 : 100 - i` (`:326`).
-- **Port:** the cards render back to front with the dragged one last (`queued-stack.tsx:237-247`, `:377`).
-- **Workaround:** document order.
-- **Fidelity:** exact.
-- **Components it hits:** none other.
-
 ## Overflow chip, count and edit/remove details
 
 - **Cause:** `not ported yet`.
-- **Original:** the "+n" chip is `bg-background/40`, `tabular-nums`, radius `attachmentRadius` (`:355-360`); the count is `tabular-nums` (`:255`); Edit and Remove are focusable buttons with a `focus-visible:ring-1` ring and labels `Edit queued message: <text>` / `Remove queued message: <text>` (`:387-388`, `:401-402`).
-- **Port:** the chip is `color.hover` (a 4% black wash, not 40% of the background), proportional digits (`queued-stack.tsx:546`, `:549`, `:354-361`); Edit and Remove are `role="button"` divs with no `tabIndex`, no focus ring, and the labels `Edit` / `Remove` (`:90-92`, `:80-118`).
+- **Original:** the "+n" chip is `bg-background/40`, radius `attachmentRadius` (`:355-360`); Edit and Remove are focusable buttons with a `focus-visible:ring-1` ring and labels `Edit queued message: <text>` / `Remove queued message: <text>` (`:387-388`, `:401-402`).
+- **Port:** the chip is `color.hover` (a 4% black wash, not 40% of the background), tabular digits as in the source (`queued-stack.tsx:546`, `:549`, `:354-361`); Edit and Remove are `role="button"` divs with no `tabIndex`, no focus ring, and the labels `Edit` / `Remove` (`:90-92`, `:80-118`).
 - **Workaround:** none.
-- **Fidelity:** approximated (chip tint, digits); dropped (keyboard focus ring, longer labels).
+- **Fidelity:** approximated (chip tint); dropped (keyboard focus ring, longer labels).
 - **Components it hits:** none other.
 
 ## Static font weight for the count

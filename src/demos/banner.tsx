@@ -619,7 +619,7 @@ async function reveal(shot: ShotContext, testId: string) {
 		const y = shot.centerOf(testId).y;
 		if ((y > 120 && y < 320) || y === previous) return;
 		previous = y;
-		await shot.scroll(700, 400, 0, -(y - 200));
+		await shot.scroll(700, 400, 0, y - 200);
 	}
 	throw new Error(`could not scroll ${testId} into view`);
 }
@@ -637,12 +637,12 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("play-description-track");
 	shot.capture("playground-ghost-no-description");
 	await shot.focus("play-status-trigger");
-	await shot.press("down down enter");
+	await shot.press("ArrowDown ArrowDown Enter");
 	await shot.settle(300);
 	shot.expectText(COPY.warning.title, true);
 	shot.capture("playground-warning");
 	await shot.focus("play-variant-trigger");
-	await shot.press("down down enter");
+	await shot.press("ArrowDown ArrowDown Enter");
 	await shot.settle(300);
 	shot.capture("playground-fixed");
 	await shot.click("play-banner-dismiss");
@@ -668,8 +668,8 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectText("Registry maintenance tonight at 22:00 UTC", true);
 	shot.capture("fixed-replayed");
 	// The statuses and actions cards are below the fold.
-	await shot.scroll(600, 400, 0, -620);
+	await shot.scroll(600, 400, 0, 620);
 	shot.capture("scrolled-statuses");
-	await shot.scroll(600, 400, 0, -620);
+	await shot.scroll(600, 400, 0, 620);
 	shot.capture("scrolled-actions");
 };

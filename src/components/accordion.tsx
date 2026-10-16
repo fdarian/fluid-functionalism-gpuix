@@ -1,7 +1,9 @@
 import {
 	buttonProps,
-	type EventPayload,
+	createReducedMotion,
+	type DomEvent,
 	type HostElement,
+	type HostMouseMoveEvent,
 	type KeyEvent,
 	motion,
 	ResizeObserver,
@@ -88,8 +90,8 @@ interface GroupScope {
 	/** The pointer is on a row whose item is closed: open tints dim to let it read. */
 	hoveringClosedRow: () => boolean;
 	overContent: (index: number | null) => void;
-	focusRow: (index: number, event: EventPayload) => void;
-	blurRow: (index: number) => void;
+	focusRow: (index: number, event: DomEvent) => void;
+	blurRow: (index: number, event: DomEvent) => void;
 	focusSibling: (
 		index: number,
 		step: "next" | "previous" | "first" | "last",
@@ -191,7 +193,6 @@ type RootProps = ValueProps & {
 
 export function AccordionGroup(props: RootProps) {
 	const root = createRootState(props);
-	const renderer = useGpuixRequired();
 	const triggers = new Map<
 		number,
 		{
@@ -264,16 +265,12 @@ export function AccordionGroup(props: RootProps) {
 			hover.setActiveIndex(index);
 			focusRing.focus(index, event);
 		},
-		blurRow(index) {
+		blurRow(index, event) {
 			focusRing.blur(index);
-			// Focus moving to a sibling trigger arrives as its focus right after this blur.
-			queueMicrotask(() => {
-				const focused = renderer.getFocusedElementId?.();
-				for (const trigger of triggers.values()) {
-					if (trigger.element.id === focused) return;
-				}
-				if (!mouseInside) hover.setActiveIndex(null);
-			});
+			for (const trigger of triggers.values()) {
+				if (trigger.element === event.relatedTarget) return;
+			}
+			if (!mouseInside) hover.setActiveIndex(null);
 		},
 		overContent(index) {
 			contentOver = index;
@@ -314,7 +311,7 @@ export function AccordionGroup(props: RootProps) {
 						mouseInside = true;
 						hover.handlers.onMouseEnter();
 					}}
-					onMouseMove={(event: EventPayload) => {
+					onMouseMove={(event: HostMouseMoveEvent) => {
 						// The pointer over an open panel belongs to no row.
 						if (contentOver !== null) return;
 						hover.handlers.onMouseMove(event);
@@ -332,7 +329,6 @@ export function AccordionGroup(props: RootProps) {
 						maxWidth: "100%",
 					}}
 				>
-					{/* Layers first, in the source's order (open tints, hover fill, ring): the items paint after them by document order, so the ring is never under a tint. */}
 					<For each={tints()}>
 						{(entry) => (
 							<GroupTint
@@ -468,6 +464,7 @@ export function AccordionItem(props: {
 				}}
 				style={{
 					position: "relative",
+					zIndex: 10,
 					display: "flex",
 					flexDirection: "column",
 					flexShrink: 0,
@@ -615,13 +612,13 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 				aria-expanded={item.isOpen()}
 				aria-controls={item.isOpen() ? item.panelId : undefined}
 				aria-disabled={item.disabled()}
-				onFocus={(event: EventPayload) => {
+				onFocus={(event: DomEvent) => {
 					const own = item.index();
 					if (own !== undefined) group?.focusRow(own, event);
 				}}
-				onBlur={() => {
+				onBlur={(event: DomEvent) => {
 					const own = item.index();
-					if (own !== undefined) group?.blurRow(own);
+					if (own !== undefined) group?.blurRow(own, event);
 				}}
 				testId={props.testId}
 				style={{
@@ -649,12 +646,14 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					color={lit() ? color.foreground : color.mutedForeground}
 					textStyle={metrics().text}
 					grow
+					fade
 				/>
 				<Icon
 					name={item.isOpen() ? "chevron-down" : "chevron-right"}
 					size={metrics().icon}
 					strokeWidth={lit() ? 2 : 1.5}
 					easeStroke
+					fade
 					color={lit() ? color.foreground : color.mutedForeground}
 				/>
 			</div>
@@ -676,6 +675,7 @@ export function AccordionContent(props: { children: JSX.Element }) {
 	const metrics = () => sizes[root.size()];
 	const measured = createMeasuredHeight();
 	const contentHeight = measured.height;
+	const reduced = createReducedMotion();
 	// gpuix has no `display: none`, so a closed panel's text leaves the accessibility tree by unmounting once the exit is over (Base UI hides the panel). It paints once first, or it would never report its height.
 	const [retired, setRetired] = createSignal(false);
 	let toggled = false;
@@ -697,7 +697,13 @@ export function AccordionContent(props: { children: JSX.Element }) {
 			aria-labelledby={item.triggerId}
 			initial={false}
 			animate={{ height: item.isOpen() ? (contentHeight() ?? 0) : 0 }}
-			transition={item.isOpen() ? tween.fast : tween.fastExit}
+			transition={
+				reduced()
+					? tween.snap
+					: item.isOpen()
+						? tween.fast
+						: tween.fastExit
+			}
 			onMotionComplete={() => {
 				if (!item.isOpen()) setRetired(true);
 			}}
@@ -720,11 +726,17 @@ export function AccordionContent(props: { children: JSX.Element }) {
 			<motion.div
 				initial={false}
 				animate={{ opacity: item.isOpen() ? 1 : 0 }}
-				transition={item.isOpen() ? { duration: 0.06 } : { duration: 0.04 }}
+				transition={
+					reduced()
+						? tween.snap
+						: item.isOpen()
+							? { duration: 0.06 }
+							: { duration: 0.04 }
+				}
 			>
 				<Show when={!retired()}>
 					<div
-						onLayout={(event: EventPayload) => {
+						onLayout={(event: DomEvent) => {
 							measured.onLayout(event);
 							if (!toggled && !item.isOpen()) setRetired(true);
 						}}

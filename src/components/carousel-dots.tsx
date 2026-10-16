@@ -1,5 +1,6 @@
 import {
 	buttonProps,
+	createReducedMotion,
 	type HostElement,
 	motion,
 	useGpuixRequired,
@@ -90,8 +91,10 @@ export function CarouselDots(props: {
 		),
 	);
 
+	const reduced = createReducedMotion();
 	createEffect(() => {
-		if (!autoplaying()) return;
+		// Reduced motion: no timer moves the page on the reader's behalf.
+		if (!autoplaying() || reduced()) return;
 		onFrame((delta) => {
 			const live = untrack(options);
 			if (live === null || (live.paused ?? false) || waiting) return;
@@ -131,7 +134,6 @@ export function CarouselDots(props: {
 				alignItems: "center",
 			}}
 		>
-			{/* First child: gpuix has no zIndex, so the dots paint over the highlight by document order. */}
 			<FluidHighlight
 				rect={hoverRect}
 				session={hover.session}
@@ -179,6 +181,7 @@ function Dot(props: {
 			aria-current={props.current ? true : undefined}
 			style={{
 				position: "relative",
+				zIndex: 10,
 				display: "flex",
 				alignItems: "center",
 				padding: CLICK_PAD,

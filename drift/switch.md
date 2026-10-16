@@ -8,15 +8,6 @@ One entry per place the port looks or behaves differently from the source, whate
 (transforms, intrinsic width, variable fonts) get a one-line entry here that links to the README row instead of
 repeating it.
 
-## Track and label colours switch instead of crossfading
-
-- **Cause:** `not ported yet`.
-- **Original:** the track has `transition-colors duration-80` (`switch.tsx:288`) and the label `transition-[color] duration-80` (`:356`), so on/off and hover ease over 80 ms.
-- **Port:** `trackColor()` (`src/components/switch.tsx:163-166`, bound at `:188`) and the label colour (`:223`) change at once. gpuix transitions colours (FORK.md:816) and the port already has `colorFade` (`src/lib/theme.ts:451`, used by select and combobox), but the switch does not spread it.
-- **Workaround:** none.
-- **Fidelity:** dropped (the thumb still springs; only the colours snap).
-- **Components it hits:** just this one. The README translation row that lists `transition-colors` as "none" is out of date.
-
 ## The thumb moves on `left` / `top`, not a transform
 
 - **Cause:** `gpuix gap`. See the CSS transforms row in [`README.md`](../README.md#missing-features).
@@ -34,15 +25,6 @@ repeating it.
 - **Workaround:** none.
 - **Fidelity:** approximated (compact rows are 2px taller; the stack of compact switches grows by 2px each).
 - **Components it hits:** any component whose layout relies on a trimmed label.
-
-## Thumb shadow is one layer
-
-- **Cause:** `not ported yet`.
-- **Original:** `shadow-sm` on the thumb (`switch.tsx:330`), Tailwind 4's `0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1)`.
-- **Port:** the first layer only (`src/components/switch.tsx:236-242`). `boxShadow` takes a list (`packages/native/js/host.ts:558`), so the second layer can be added. The README rows that say gpuix paints a single shadow (and the comment at `src/lib/theme.ts:470`) are out of date.
-- **Workaround:** none.
-- **Fidelity:** approximated (the tighter second layer is missing).
-- **Components it hits:** any port that copied a multi-layer FF shadow down to one (`shadow3()` in `src/lib/theme.ts:473`).
 
 ## Focus ring gap is not filled with the background
 

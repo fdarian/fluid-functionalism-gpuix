@@ -63,7 +63,7 @@ repeating it.
 
 - **Cause:** `port choice`.
 - **Original:** `CopyPromptButton` crossfades the copy glyph into a check (opacity, 4px blur, scale 0.6, over `spring.fast`) for 2s, with a visually hidden "Copied" read out by `aria-live`, and the brief comes from `buildInstallPrompt` (`lib/docs/copy-prompt-button.tsx:30-141`, `lib/docs/install-prompt.ts:38-95`).
-- **Port:** the button's `leadingIcon` is `copy`, then `check` for 2s (`src/lib/doc-page.tsx:128-157`), with no crossfade, blur, scale or live region (the port's `Button` takes an icon name, not a component, and gpuix has no `filter` motion target). The brief is `buildInstallPrompt({ slug: "motion", installSlug: "springs", base: "radix" })` written out in `src/pages/motion/install-prompt.ts`, not built from the page registry. It copies through `pbcopy` like `InputCopy`; a failed copy logs and leaves the icon alone.
+- **Port:** the button's `leadingIcon` is `copy`, then `check` for 2s (`src/lib/doc-page.tsx:128-157`), with no crossfade, blur, scale or live region (the port's `Button` takes an icon name, not a component, and gpuix has no `filter` motion target). The brief is `buildInstallPrompt({ slug: "motion", installSlug: "springs", base: "radix" })` written out in `src/pages/motion/install-prompt.ts`, not built from the page registry. It copies through `navigator.clipboard.writeText`; a failed copy logs and leaves the icon alone, as the source's does when its `execCommand` fallback fails too (minus the log).
 - **Fidelity:** approximated.
 - **Components it hits:** the Installation block of every docs page.
 
@@ -81,13 +81,6 @@ repeating it.
 - **Port:** a `role="link"` div calling `usePageNav().navigate(slug)` (`src/pages/motion/spring-reference.tsx`); Space activates it too, which a link does not do in a browser (it comes from `buttonProps`). "Mobile drawer" is plain text as in the source, though the port has a `mobile-drawer` demo. The "Fluid hover" chip links to a `fluid-hover` page that lands in a parallel branch: until it merges, it navigates to an empty column. The hover color eases over 150ms like `transition-colors`.
 - **Fidelity:** exact for links to existing pages.
 
-## Reduced motion is described but not wired
-
-- **Cause:** `not ported yet`.
-- **Original:** "Wrap the app tree in `<MotionConfig reducedMotion="user">`" (`app/docs/motion/page.tsx:461-466`); the site does, so the demos' position moves drop out under the OS setting.
-- **Port:** the prose is verbatim. gpuix has `MotionConfig` with `reducedMotion="user"` (README "MotionConfig and reduced motion"; the OS setting is read on macOS only), but `App` does not wrap the tree in it, so these demos always animate.
-- **Fidelity:** exact text, describes more than the port does.
-
 ## Text baselines
 
 - **Cause:** `gpuix gap` (as observed; not traced in gpuix): `alignItems: "baseline"` puts a `<text>` box on its bottom edge in a flex row, where the DOM aligns the first baselines.
@@ -95,12 +88,12 @@ repeating it.
 - **Port:** `alignItems: "center"` (`src/pages/motion/spring-tokens.tsx`). With 20px, 14px and 16px line boxes the baselines land within a pixel of each other.
 - **Fidelity:** approximated.
 
-## Section spacing, heading weight and the box shadow
+## Section spacing and heading weight
 
-- **Cause:** `port choice` (spacing, shadow); `gpuix gap` (weight).
-- **Original:** `DocSection` is `gap-4 pt-6` with a `-mb-2` title; the `h3` is `mt-8`; the modal card is `shadow-xl` (two drops).
-- **Port:** the same numbers as margins and padding (`src/lib/doc-page.tsx:92-126`); the page's description is tucked under `App`'s heading with `marginTop: -16`, as in `drift/introduction.md`. Titles are SemiBold 600 where the source's variable font is 550 (README variable-font rows), the `h3` is `SubHeading` on `siteType.subtitle` (14/20), and the card's shadow is the larger drop alone (`boxShadow` takes one shadow).
-- **Fidelity:** exact spacing, approximated weight and shadow.
+- **Cause:** `port choice` (spacing); `gpuix gap` (weight).
+- **Original:** `DocSection` is `gap-4 pt-6` with a `-mb-2` title; the `h3` is `mt-8`.
+- **Port:** the same numbers as margins and padding (`src/lib/doc-page.tsx:92-126`); the page's description is tucked under `App`'s heading with `marginTop: -16`, as in `drift/introduction.md`. Titles are SemiBold 600 where the source's variable font is 550 (README variable-font rows), the `h3` is `SubHeading` on `siteType.subtitle` (14/20).
+- **Fidelity:** exact spacing, approximated weight.
 
 ## The ⌘K row
 

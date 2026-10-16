@@ -1,8 +1,9 @@
 import {
 	type DimensionValue,
-	type EventPayload,
+	type DomEvent,
 	type HostElement,
 	type HostMouseEvent,
+	type HostMouseMoveEvent,
 	type HostWheelEvent,
 	type KeyEvent,
 	motion,
@@ -11,7 +12,7 @@ import {
 } from "@gpuix/solid";
 import { createSignal, type JSX, onCleanup, Show } from "solid-js";
 import { isChord } from "../lib/list-nav";
-import { color, withAlpha } from "../lib/theme";
+import { color, fade, withAlpha } from "../lib/theme";
 
 export type ScrollOrientation = "vertical" | "horizontal" | "both";
 
@@ -42,7 +43,7 @@ type Axis = "x" | "y";
 /** `rgb(var(--overlay) / a)`: black on light surfaces, white on dark. */
 const overlay = (alpha: number) => withAlpha(color.overlay, alpha);
 
-function sizeOf(event: EventPayload): Size {
+function sizeOf(event: Pick<DomEvent, "width" | "height">): Size {
 	if (event.width === undefined || event.height === undefined) {
 		throw new Error("layout event without a size");
 	}
@@ -199,7 +200,10 @@ export function ScrollArea(props: {
 	// ── Dragging ────────────────────────────────────────────────────────────
 
 	let dragOrigin = { pointer: 0, scrolled: 0 };
-	const pointerAlong = (axis: Axis, event: EventPayload) => {
+	const pointerAlong = (
+		axis: Axis,
+		event: Pick<HostMouseEvent, "x" | "y">,
+	) => {
 		const value = axis === "y" ? event.y : event.x;
 		if (value === undefined) throw new Error("mouse event without coordinates");
 		return value;
@@ -221,7 +225,7 @@ export function ScrollArea(props: {
 		setDragging(undefined);
 		stopScrolling(axis);
 	};
-	const dragTo = (event: EventPayload) => {
+	const dragTo = (event: HostMouseMoveEvent) => {
 		// Capture ends the drag on release and on lost capture; this stays for a release the window never saw (outside it, or while it was inactive), which may not be delivered even to a capturing element.
 		if (event.pressedButton === undefined) {
 			stopDrag();
@@ -267,7 +271,7 @@ export function ScrollArea(props: {
 		startDrag(axis, track, event, target);
 	};
 
-	/** A wheel tick over the track scrolls the viewport, which is not under the pointer. Once the viewport is at its limit the tick is left to chain to the scroller around it. */
+	/** A wheel event over the track scrolls the viewport, which is not under the pointer, and is prevented so the scroller around the area does not take it too. A viewport already at its limit leaves the event alone: gpuix gives one event to the innermost scroller that can use it, which is then the scroller around the area. */
 	const wheelTrack = (axis: Axis, event: HostWheelEvent) => {
 		const delta = axis === "y" ? event.deltaY : event.deltaX;
 		if (delta === 0) return;
@@ -281,7 +285,7 @@ export function ScrollArea(props: {
 	const onKeyDown = (event: KeyEvent) => {
 		if (isChord(event)) return;
 		// Keys from a focused descendant (an input, a listbox) are that descendant's.
-		if (event.defaultPrevented || event.elementId !== mountedViewport().id) {
+		if (event.defaultPrevented || event.target !== mountedViewport()) {
 			return;
 		}
 		const size = view();
@@ -464,6 +468,8 @@ export function ScrollArea(props: {
 							position: "absolute",
 							borderRadius: 3,
 							backgroundColor: thumbColor(),
+							// Tailwind's `ease-in-out` is `fade`'s default curve.
+							...fade(["background-color"], 160),
 							...(bar.axis === "y"
 								? { top: span()?.start, height: span()?.length }
 								: { left: span()?.start, width: span()?.length }),
@@ -493,7 +499,7 @@ export function ScrollArea(props: {
 				}}
 				onScroll={onScroll}
 				onWheel={markUserScroll}
-				onLayout={(event: EventPayload) => setView(sizeOf(event))}
+				onLayout={(event: DomEvent) => setView(sizeOf(event))}
 				// A viewport that overflows is a tab stop and scrolls with the keys, like a focused scroller in a browser.
 				tabIndex={overflows("x") || overflows("y") ? 0 : -1}
 				onKeyDown={onKeyDown}
@@ -506,7 +512,7 @@ export function ScrollArea(props: {
 					overflowX: horizontal() ? "scroll" : "hidden",
 					// The thumbs are drawn by this component.
 					scrollbarWidth: "none",
-					// There is no `width: max-content`, and `overflowX: "scroll"` no longer makes the viewport a flex row: without one the content box is clamped to the viewport and nothing overflows.
+					// Base UI's Content has `min-width: fit-content`, which gpuix rejects. As a non-shrinking item of a flex row the wrapper takes its content's width instead, and its `onLayout` is where the content size comes from. As a block child it is clamped to the viewport width, `onLayout` reports that, and the area draws no horizontal thumb (the scroller itself still scrolls, since `scrollWidth` counts descendants).
 					...(horizontal()
 						? {
 								display: "flex",
@@ -517,7 +523,7 @@ export function ScrollArea(props: {
 				}}
 			>
 				<div
-					onLayout={(event: EventPayload) => setContent(sizeOf(event))}
+					onLayout={(event: DomEvent) => setContent(sizeOf(event))}
 					style={{
 						display: "flex",
 						flexDirection: "column",

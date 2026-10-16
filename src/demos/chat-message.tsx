@@ -167,7 +167,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(1180, 700);
 	await shot.click("add-message");
 	shot.capture("added");
-	await shot.scroll(600, 400, 0, -700);
+	await shot.scroll(600, 400, 0, 700);
 	await shot.settle();
 	shot.capture("attachments");
 };

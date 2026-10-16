@@ -17,7 +17,7 @@ import { setThemeChoice } from "../src/lib/theme";
 import { createCheck } from "./check-kit";
 import { readPng } from "./png-pixels";
 
-const outDir = "/tmp/check-accordion/";
+const outDir = `/tmp/check-accordion-${process.pid}/`;
 mkdirSync(outDir, { recursive: true });
 const kit = await createCheck("accordion");
 const renderer = kit.renderer;
@@ -60,7 +60,7 @@ const element = renderer.findByTestId("single-1");
 if (element === undefined) throw new Error("no single-1");
 for (let presses = 0; presses < 60; presses++) {
 	if (renderer.getFocusedElementId() === element.id) break;
-	renderer.simulateKeystrokes("tab");
+	renderer.simulateKeystrokes("Tab");
 	await settle(60);
 }
 if (renderer.getFocusedElementId() !== element.id)
@@ -98,13 +98,13 @@ kit.check(
 
 // A panel changing height moves the rows under the ring every frame; the source
 // keeps the ring's spring.fast glide instead of snapping, so it trails the row.
-await kit.press("down");
+await kit.press("ArrowDown");
 const rowStart = bounds("single-2").y;
 // The motion clock is stepped by hand: sampling against wall time lets a slow
 // frame carry both springs to rest before the first sample.
 const FRAME_MS = 16;
 renderer.clockPause();
-renderer.simulateKeystrokes("enter");
+renderer.simulateKeystrokes("Enter");
 let maxLag = 0;
 let rowTravel = 0;
 for (let frame = 0; frame < 40; frame++) {

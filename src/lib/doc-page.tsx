@@ -15,7 +15,6 @@ import {
 	useContext,
 } from "solid-js";
 import { Button } from "../components/button";
-import { copyToClipboard } from "../components/input-copy";
 import { TabsSubtle, TabsSubtleItem } from "../components/tabs-subtle";
 import { Tooltip } from "../components/tooltip";
 import { PageScrollerContext } from "./demo-kit";
@@ -134,7 +133,7 @@ function CopyPromptButton(props: { prompt: string }) {
 
 	const copy = async () => {
 		try {
-			await copyToClipboard(props.prompt);
+			await navigator.clipboard.writeText(props.prompt);
 		} catch (error) {
 			console.error("Copy prompt failed", error);
 			return;

@@ -1,7 +1,8 @@
 import {
 	buttonProps,
-	type EventPayload,
+	type DomEvent,
 	type HostElement,
+	type HostPointerEvent,
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
@@ -37,6 +38,8 @@ import { createMeasuredHeight } from "../lib/measured-height";
 import { StableLabel } from "../lib/stable-label";
 import {
 	color,
+	colorFade,
+	fade,
 	height,
 	shape,
 	type as scale,
@@ -67,8 +70,8 @@ interface MenuScope {
 	registerRow: (entry: RowEntry) => number;
 	/** Roving tabindex: the active rows are the tab stops, or the first row while none is active. */
 	isTabStop: (index: number | undefined) => boolean;
-	focusRow: (index: number, event: EventPayload) => void;
-	blurRow: (index: number) => void;
+	focusRow: (index: number, event: DomEvent) => void;
+	blurRow: (index: number, event: DomEvent) => void;
 	focusSibling: (index: number, step: KeyStep) => void;
 }
 
@@ -116,7 +119,6 @@ function sameRect(a: ItemRect | null, b: ItemRect | null) {
 }
 
 export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
-	const renderer = useGpuixRequired();
 	const rows = new Map<number, RowEntry>();
 	const [rowsVersion, setRowsVersion] = createSignal(0);
 	let nextIndex = 0;
@@ -170,16 +172,12 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 			hover.setActiveIndex(index);
 			focusRing.focus(index, event);
 		},
-		blurRow(index) {
+		blurRow(index, event) {
 			focusRing.blur(index);
-			// Focus moving to a sibling row arrives as its focus right after this blur.
-			queueMicrotask(() => {
-				const focused = renderer.getFocusedElementId?.();
-				for (const row of rows.values()) {
-					if (row.element.id === focused) return;
-				}
-				if (!mouseInside) hover.setActiveIndex(null);
-			});
+			for (const row of rows.values()) {
+				if (row.element === event.relatedTarget) return;
+			}
+			if (!mouseInside) hover.setActiveIndex(null);
 		},
 		focusSibling(index, step) {
 			const target =
@@ -251,7 +249,6 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 					minWidth: 0,
 				}}
 			>
-				{/* Overlays first: no zIndex in gpuix, so rows paint over them by document order. */}
 				<FluidHighlight
 					rect={activeRectRoot}
 					session={() => 0}
@@ -302,7 +299,7 @@ export function SidebarMenuButton(props: {
 	/** A row clipped away by a collapsed sub-menu: stays registered, never a hover target. */
 	disabled?: () => boolean;
 	trailingIcon?: () => IconRef;
-	onClick?: (event: EventPayload) => void;
+	onClick?: (event: HostPointerEvent) => void;
 	testId?: string;
 }) {
 	const scope = useMenuScope();
@@ -371,16 +368,17 @@ export function SidebarMenuButton(props: {
 			id={createUniqueId()}
 			testId={props.testId}
 			aria-current={props.active === true ? "page" : undefined}
-			onFocus={(event: EventPayload) => {
+			onFocus={(event: DomEvent) => {
 				const own = index();
 				if (own !== undefined) scope.focusRow(own, event);
 			}}
-			onBlur={() => {
+			onBlur={(event: DomEvent) => {
 				const own = index();
-				if (own !== undefined) scope.blurRow(own);
+				if (own !== undefined) scope.blurRow(own, event);
 			}}
 			style={{
 				position: "relative",
+				zIndex: 10,
 				height: rowHeight,
 				flexShrink: 0,
 				display: "flex",
@@ -402,6 +400,8 @@ export function SidebarMenuButton(props: {
 						name={name()}
 						size={16}
 						strokeWidth={lit() ? 2 : 1.5}
+						easeStroke
+						fade
 						color={lit() ? color.foreground : color.mutedForeground}
 					/>
 				)}
@@ -413,6 +413,7 @@ export function SidebarMenuButton(props: {
 				text={props.label}
 				heavy={props.active === true}
 				truncate
+				fade
 				color={lit() ? color.foreground : color.mutedForeground}
 				grow={props.dot === undefined}
 			/>
@@ -460,6 +461,8 @@ export function SidebarMenuButton(props: {
 								...scale.micro,
 								fontWeight: props.active ? weight.semibold : weight.normal,
 								color: props.active ? color.foreground : color.mutedForeground,
+								fontVariantNumeric: "tabular-nums",
+								...colorFade,
 							}}
 						>
 							{text()}
@@ -628,7 +631,13 @@ export function SidebarGroupLabel(props: { children: string; count?: number }) {
 				{props.children}
 			</text>
 			<Show when={props.count}>
-				<text style={{ ...scale.caption, color: color.mutedForeground }}>
+				<text
+					style={{
+						...scale.caption,
+						color: color.mutedForeground,
+						fontVariantNumeric: "tabular-nums",
+					}}
+				>
 					{props.count}
 				</text>
 			</Show>
@@ -658,6 +667,8 @@ export function SidebarSearchField(props: {
 				outlineWidth: 1,
 				outlineColor: hovered() || focused() ? color.border : color.transparent,
 				outlineOffset: 0,
+				// The outline stands in for the source's `ring-1` box shadow, which it transitions with the fill.
+				...fade(["background-color", "outline-color"], 80),
 			}}
 		>
 			<input
@@ -705,6 +716,7 @@ export function SidebarSearchField(props: {
 					top: 9,
 					pointerEvents: "none",
 					opacity: hovered() || focused() ? 1 : 0,
+					...fade(["opacity"], 80),
 				}}
 			>
 				<text style={{ ...scale.micro, color: color.mutedForeground }}>

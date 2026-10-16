@@ -43,13 +43,6 @@ repeating it.
 - **Port:** `Collapse` exits on the 120 ms tween (`tween.moderateExit`, `input-message.tsx:125,148`), fades opacity on exit for every region including suggestions (`:153-156`), and its `initial` is always `{ height: 0, opacity: 0 }` (`:152`), so a region open at mount (the Attachments demo's two files) animates in.
 - **Fidelity:** approximated (the divider vanishing mid-collapse is what the source comment avoids).
 
-## 80 ms fades are instant
-
-- **Cause:** `not ported yet`.
-- **Original:** `transition-opacity duration-80` on the badge and close button (`input-message.tsx:257,370`), `transition-colors duration-80` on a suggestion row's text and `transition-opacity` on its icon (`:429,445,451`), `transition-[box-shadow,color] duration-80` on the composer's ring (`:1060`).
-- **Port:** the badge, close button and suggestion icon are shown or hidden at once (`input-message.tsx:263,490,561-581`), the row colour switches (`:556`), and `ring()` switches the outline colour (`:928-934`). The fork animates colours, `outlineColor` and `boxShadow` (`FORK.md:814-815`).
-- **Fidelity:** approximated.
-
 ## Drag-over has no state
 
 - **Cause:** `not ported yet`.
@@ -99,13 +92,6 @@ repeating it.
 - **Port:** the same handler also accepts Ctrl-P / Ctrl-N (`input-message.tsx:812-836`), and the demo's scenarios use `ctrl-n` / `ctrl-p` (`src/demos/input-message.tsx:644,763`). If the arrows really are swallowed, the keyboard path in the real window is Ctrl-P / Ctrl-N only.
 - **Fidelity:** approximated.
 
-## The resting ring in dark mode
-
-- **Cause:** `port choice` (`popupBorder` "stands in for the shadow ring", `lib/theme.ts:35`).
-- **Original:** `surfaceClasses(2, 2)` (`input-message.tsx:1057`): `--shadow-light-2` in light (1px ring plus a drop) and `--shadow-dark-2` in dark, an inset 1px ring at 2% white and an inset top highlight at 1% (`app/globals.css:138,161`).
-- **Port:** an outline outside the box in `color.popupBorder` (6% black in light, 5% white in dark) plus the drop (`input-message.tsx:925-931,959-975`). Light is the same; dark has a stronger, outer ring and no top highlight.
-- **Fidelity:** approximated in dark.
-
 ## Slot buttons are not scaled down in compact
 
 - **Cause:** `not ported yet`.
@@ -116,8 +102,8 @@ repeating it.
 ## Queued row icon strokes
 
 - **Cause:** `not ported yet`.
-- **Original:** the image, enter and down-arrow icons pass no `strokeWidth`, so they draw at lucide's 2 (`input-message.tsx:344,443,448`). The file count is `tabular-nums` (`:345`).
-- **Port:** strokes of 1.5 (`input-message.tsx:417,569,578`); the file count lacks `tabular-nums` (`:431`).
+- **Original:** the image, enter and down-arrow icons pass no `strokeWidth`, so they draw at lucide's 2 (`input-message.tsx:344,443,448`).
+- **Port:** strokes of 1.5 (`input-message.tsx:417,569,578`).
 - **Fidelity:** approximated.
 
 ## The ghost placeholder

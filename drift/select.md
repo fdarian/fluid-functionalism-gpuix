@@ -64,20 +64,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Fidelity:** exact for `requestSubmit()`, dropped for implicit submission.
 - **Components it hits:** combobox.
 
-## Reading focus in a mouse handler throws `VIEW_BUSY`
-
-- **Cause:** `gpuix gap`.
-- **Original:** Base UI returns focus to the trigger on close, in the same tick (`SelectPopup.tsx:479-488`).
-- **Port:** `returnFocus` defers the focus read to a `setTimeout(..., 0)` (`select.tsx:266-277`; `popup-trigger.ts:11-18`). The popup is still mounted then (held by its exit), so `matches(":focus-within")` on the panel tells whether focus sat inside it.
-- **gpuix lacks:** a focus read inside mousedown / mouseup / click handlers (README Bugs, `VIEW_BUSY` row). `DismissableLayer` does the same read while it mounts (`popup.tsx:74`), so a pointer press that opens the select throws (reproduced: `bun scripts/screenshots.tsx button` fails in `onTriggerMouseDown`, `select.tsx:381`; README Bugs row "every popup on gpuix's `DismissableLayer`"). The pointer open path (panel or checked row takes focus) is therefore not covered by `scripts/check-select.tsx`.
-- **Workaround:** the deferred read; the rest is open.
-- **Fidelity:** exact for the focus return.
-- **Components it hits:** dropdown, color-picker, combobox, tooltip.
-
-## Tab from a popup row does not continue after the trigger
-
-- **Cause:** `gpuix gap`. Same drift as [dropdown.md, "Tab from a popup row does not continue after the trigger"](dropdown.md#tab-from-a-popup-row-does-not-continue-after-the-trigger), where the entry lives. Here: Tab on the panel cancels the default, closes, hands focus to the trigger and calls `renderer.focusNext()` (`select.tsx:266-277`, `:371-375`); Shift+Tab does the same without `focusNext()`. Checked in `scripts/check-select.tsx` ("Tab focuses what follows the trigger").
-
 ## Releasing the press outside the popup does not cancel
 
 - **Cause:** `gpuix gap`.
@@ -133,27 +119,14 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Fidelity:** exact for `bordered` and `borderless` (an `error` draws the destructive border on both, as the source does).
 - **Components it hits:** just this one.
 
-## Trigger background does not fade
-
-- **Cause:** `not ported yet`.
-- **Original:** `transition-all duration-80` on the trigger, so the hover fill eases over 80 ms (`select.tsx:235`).
-- **Port:** `hover` / `active` state styles switch the background at once (`select.tsx:518-519`). The leading icon and the rows do ease colour and stroke width (`<Icon fade easeStroke>`). gpuix has `transitionProperty` for state-style changes (`~/code/fdarian/gpuix/FORK.md:816`).
-- **Workaround:** none.
-- **Fidelity:** approximated (background switches; 80 ms).
-- **Components it hits:** any control using `transition-all duration-80` without a `colorFade`.
-
 ## The port adds a pressed background on the trigger
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** only `hover:bg-hover`; no pressed style (`select.tsx:243-246`).
-- **Port:** `active: { backgroundColor: color.active }` (`select.tsx:519`).
+- **Port:** `active: { backgroundColor: color.active }` (`src/components/select.tsx:603`).
 - **Workaround:** none.
 - **Fidelity:** approximated (extra state; the popup opens on mouse-down, so it shows briefly).
 - **Components it hits:** just this one.
-
-## Popup ring is a layout-taking border and the shadow is one drop
-
-- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup shadow is one drop and a border"](dropdown.md#popup-shadow-is-one-drop-and-a-border), where the entry lives. Here: `popup.tsx:99-101`, `theme.ts:332-340`; the border takes layout, so the card is 2px taller and `select.tsx:601` subtracts 2 from the rows. API to use: multi-layer `boxShadow` (`~/code/fdarian/gpuix/FORK.md:646-649`).
 
 ## The list scrolls in a bare scroller
 
@@ -166,15 +139,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 ## The selected background fades in on every open
 
 - **Cause:** `not ported yet`. Same drift as [dropdown.md, "Checked background appears with a fade instead of already being there"](dropdown.md#checked-background-appears-with-a-fade-instead-of-already-being-there), where the entry lives. Here: original `select.tsx:548-575`; port `select.tsx:615-622`. (Was recorded as `port choice`; the blocker is the shared `FluidHighlight`, which `motion`'s `initial={false}` could serve.)
-
-## No reduced-motion handling
-
-- **Cause:** `not ported yet` (gpuix has `matchMedia` for `prefers-reduced-motion` and `MotionConfig reducedMotion="user"`, `FORK.md:831`, `:906`).
-- **Original:** the hover highlight drops its travel to a snap when the user prefers reduced motion (`fluid-hover-highlight.tsx:83-90`, `:114`).
-- **Port:** no reduced-motion read anywhere in `src/`.
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every fluid hover list and popup.
 
 ## Demo: variants, copy and page shape
 

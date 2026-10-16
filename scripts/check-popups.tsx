@@ -20,8 +20,11 @@ function report(ok: boolean, label: string, detail: string) {
 	console.log(`${ok ? "PASS" : "FAIL"} ${label}: ${detail}`);
 }
 
+const sessions: ReturnType<typeof createTestRoot>[] = [];
+
 function session() {
 	const test = createTestRoot({ width: 1240, height: 780, fonts });
+	sessions.push(test);
 	const renderer = test.renderer;
 	const frame = () => {
 		renderer.flush();
@@ -47,7 +50,6 @@ function session() {
 		if (bounds === null) throw new Error(`no bounds for ${testId}`);
 		return { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 };
 	};
-	/** Keyboard stand-in for a click: a pointer press that mounts a dismiss layer throws in the test renderer (the root view is held during the press), though the live window opens it. */
 	const focus = async (testId: string) => {
 		renderer.focusElement(need(testId).id);
 		await settle(100);
@@ -61,16 +63,20 @@ function session() {
 		renderer.simulateKeystrokes(keys);
 		await settle(ms);
 	};
-	/** Milliseconds until `testId` leaves the tree after `action`, or null when it never does. */
-	const timeToUnmount = async (testId: string, action: () => void) => {
-		action();
-		const start = performance.now();
-		while (performance.now() - start < 600) {
-			frame();
-			if (find(testId) === undefined) return performance.now() - start;
-			await sleep(4);
+	/** Milliseconds of the motion clock, held and stepped 4 ms a frame, until `testId` leaves the tree after `action`; null when it never does. */
+	const timeToUnmount = (testId: string, action: () => void) => {
+		renderer.clockPause();
+		try {
+			action();
+			for (let elapsed = 0; elapsed <= 600; elapsed += 4) {
+				renderer.clockFastForward(elapsed === 0 ? 0 : 4);
+				frame();
+				if (find(testId) === undefined) return elapsed;
+			}
+			return null;
+		} finally {
+			renderer.clockResume();
 		}
-		return null;
 	};
 	/** Opacity of an element times that of every ancestor. */
 	const effectiveOpacity = (testId: string) => {
@@ -111,15 +117,14 @@ async function popupExit() {
 		await ui.settle(800);
 		const id = slug === "select" ? "basic" : "framework";
 		const trigger = slug === "select" ? `${id}-trigger` : `${id}-input`;
-		await ui.focus(trigger);
 		// The first open pays for cold rendering; the fastest of three is the exit itself.
 		const times: number[] = [];
 		for (let round = 0; round < 3; round++) {
-			await ui.press("down");
+			await ui.click(trigger);
 			if (ui.find(`${id}-popup`) === undefined)
 				throw new Error(`${slug} popup did not open`);
-			const took = await ui.timeToUnmount(`${id}-popup`, () =>
-				ui.renderer.simulateKeystrokes("escape"),
+			const took = ui.timeToUnmount(`${id}-popup`, () =>
+				ui.renderer.simulateKeystrokes("Escape"),
 			);
 			if (took !== null) times.push(took);
 			await ui.settle(300);
@@ -141,8 +146,7 @@ async function dialogSurface() {
 	ui.test.render(() => <App demos={demos} pages={pages} initialPage="dialog" />);
 	await ui.settle(800);
 	await ui.click("stack-open");
-	await ui.focus("stack-select-trigger");
-	await ui.press("down");
+	await ui.click("stack-select-trigger");
 	const popup = ui.need("stack-select-popup").style.backgroundColor;
 	report(
 		popup === color.surface7,
@@ -206,27 +210,27 @@ async function comboboxEnter() {
 	await ui.settle(500);
 	await ui.focus("c-input");
 	const before = submits;
-	await ui.press("enter");
+	await ui.press("Enter");
 	report(
 		submits === before + 1,
 		"Enter in a closed combobox reaches the form",
 		`submits ${submits - before}`,
 	);
 
-	await ui.press("down");
+	await ui.press("ArrowDown");
 	await ui.press("z");
 	const second = submits;
-	await ui.press("enter");
+	await ui.press("Enter");
 	report(
 		submits === second + 1,
 		"Enter with no row highlighted closes the list and reaches the form",
 		`submits ${submits - second}, popup ${ui.find("c-popup") === undefined ? "gone" : "still there"}`,
 	);
 
-	await ui.press("backspace");
-	if (ui.find("c-popup") === undefined) await ui.press("down");
+	await ui.press("Backspace");
+	if (ui.find("c-popup") === undefined) await ui.press("ArrowDown");
 	const third = submits;
-	await ui.press("enter");
+	await ui.press("Enter");
 	report(
 		submits === third && ui.find("c-popup") === undefined,
 		"Enter on a highlighted row picks it and does not submit",
@@ -239,4 +243,5 @@ await dialogSurface();
 await disabledError();
 await comboboxEnter();
 console.log(failures === 0 ? "ALL PASS" : `${failures} FAIL`);
+for (const test of sessions) test.unmount();
 process.exit(failures === 0 ? 0 : 1);

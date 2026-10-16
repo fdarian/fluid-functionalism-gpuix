@@ -1,5 +1,6 @@
 import {
 	AnimatePresence,
+	createReducedMotion,
 	type MotionTransition,
 	motion,
 	type StyleDesc,
@@ -164,6 +165,8 @@ function morphedPath(time: number) {
 	);
 }
 
+const staticGlyph = defineIcon(`<path d="${infinity}"/>`);
+
 function MorphingGlyph(props: { size: number }) {
 	const time = useClock();
 	// GPUI caches a rasterised SVG by the hash of its bytes, so a path that varies
@@ -220,9 +223,11 @@ export function ThinkingIndicator(props: {
 	showIcon?: boolean;
 	testId?: string;
 }) {
+	const reduced = createReducedMotion();
 	const [index, setIndex] = createSignal(0);
 	let sinceWord = 0;
 	onFrame((dt) => {
+		if (reduced()) return;
 		sinceWord += dt;
 		if (sinceWord < WORD_INTERVAL_MS) return;
 		sinceWord -= WORD_INTERVAL_MS;
@@ -245,7 +250,19 @@ export function ThinkingIndicator(props: {
 			}}
 		>
 			<Show when={props.showIcon !== false}>
-				<MorphingGlyph size={20} />
+				<Show
+					when={!reduced()}
+					fallback={
+						<Icon
+							name={staticGlyph}
+							size={20}
+							strokeWidth={1.5}
+							color={color.mutedForeground}
+						/>
+					}
+				>
+					<MorphingGlyph size={20} />
+				</Show>
 			</Show>
 			<div
 				style={{
@@ -258,11 +275,20 @@ export function ThinkingIndicator(props: {
 				<div style={{ opacity: 0 }}>
 					<Shimmer style={scale.body}>{longestWord}</Shimmer>
 				</div>
-				<AnimatePresence initial={false}>
-					<Show when={words[index()]} keyed>
-						{(word: string) => <RollingWord word={word} />}
-					</Show>
-				</AnimatePresence>
+				<Show
+					when={!reduced()}
+					fallback={
+						<div style={{ position: "absolute", left: 0 }}>
+							<Shimmer style={scale.body}>{words[0]}</Shimmer>
+						</div>
+					}
+				>
+					<AnimatePresence initial={false}>
+						<Show when={words[index()]} keyed>
+							{(word: string) => <RollingWord word={word} />}
+						</Show>
+					</AnimatePresence>
+				</Show>
 			</div>
 		</div>
 	);

@@ -10,7 +10,16 @@ import {
 import { createFluidHover, type FluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { color, sizeChoice, height, shape, type as scale, scheme, weight, withAlpha } from "../lib/theme";
+import {
+	color,
+	colorFade,
+	height,
+	shape,
+	sizeChoice,
+	type as scale,
+	weight,
+	withAlpha,
+} from "../lib/theme";
 
 export type InputSize = "default" | "compact";
 
@@ -197,6 +206,7 @@ export function InputField(props: {
 						outlineColor: fill().ring,
 						outlineOffset: 0,
 						backgroundColor: fill().bg,
+						...colorFade,
 						pointerEvents: "none",
 					}}
 				/>
@@ -207,6 +217,8 @@ export function InputField(props: {
 								name={name()}
 								size={step().icon}
 								strokeWidth={lit() ? 2 : 1.5}
+								easeStroke
+								fade
 								color={lit() ? color.foreground : color.mutedForeground}
 							/>
 						</div>

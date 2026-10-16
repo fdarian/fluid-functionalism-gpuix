@@ -3,12 +3,13 @@
  *
  *   bun scripts/check-input-copy.tsx
  *
- * The component is mounted on its own with a no-op copy, so the clipboard is never touched.
+ * The component is mounted on its own; the test renderer's in-memory clipboard takes the copies, so the system pasteboard is never touched.
  *
  * - A press on a resting pointer with the tooltip open says "Copied".
  * - A press while the pointer is still moving (the tooltip never opened) keeps the tooltip shut.
  * - Enter while the tooltip is open from keyboard focus closes it, as the source does.
  * - The compact row is 26px tall (4 + 18 + 4), the default row 36px.
+ * - A press writes the value to `navigator.clipboard`; a refused write shows "Failed".
  */
 import { createTestRoot } from "@gpuix/solid/testing";
 import { InputCopy } from "../src/components/input-copy";
@@ -59,6 +60,11 @@ function report(name: string, ok: boolean, detail: string) {
 	if (!ok) failed = true;
 	console.log(`${ok ? "PASS" : "FAIL"} ${name}: ${detail}`);
 }
+function step(ms: number) {
+	renderer.clockFastForward(ms);
+	renderer.flush();
+	renderer.dispatchNativeEvents();
+}
 async function reset() {
 	renderer.nativeSimulateMouseMove(580, 280);
 	await settle(2600);
@@ -80,14 +86,12 @@ test.render(() => (
 			<InputCopy
 				testId="subject"
 				value="npx shadcn@latest add input-copy"
-				copy={async () => {}}
 			/>
 			<InputCopy
 				testId="compact"
 				size="compact"
 				variant="button"
 				value="ABCD-1234"
-				copy={async () => {}}
 			/>
 		</div>
 	</TooltipProvider>
@@ -102,13 +106,20 @@ report("compact row is 26px", compact.height === 26, `${compact.height}`);
 // Keyboard focus opens the tooltip; Enter copies. The source's snapshot is taken on pointer press only, so this does not show "Copied".
 const row = renderer.findByTestId("subject");
 if (row === undefined) throw new Error("no subject");
-renderer.simulateKeystrokes("tab");
+renderer.simulateKeystrokes("Tab");
 await settle(500);
 if (renderer.getFocusedElementId() !== row.id)
 	throw new Error("Tab did not reach the row");
 const keyboardBefore = tooltipText();
-renderer.simulateKeystrokes("enter");
+await navigator.clipboard.writeText("untouched");
+renderer.simulateKeystrokes("Enter");
 await settle(400);
+const keyboardCopied = await navigator.clipboard.readText();
+report(
+	"Enter copies the value to navigator.clipboard",
+	keyboardCopied === "npx shadcn@latest add input-copy",
+	JSON.stringify(keyboardCopied),
+);
 report(
 	"keyboard press: the source snapshots pointer presses only, so the tooltip closes",
 	keyboardBefore === "Copy to clipboard" && tooltipText() === undefined,
@@ -132,10 +143,42 @@ report(
 );
 await reset();
 
+// A refused write: the button variant shows "Failed".
+const writeText = navigator.clipboard.writeText;
+navigator.clipboard.writeText = async () => {
+	throw new Error("Clipboard access denied");
+};
+try {
+	const compactBox = centerOf("compact");
+	renderer.nativeSimulateMouseDown(compactBox.x, compactBox.y);
+	renderer.nativeSimulateMouseUp(compactBox.x, compactBox.y);
+	await settle(400);
+	report(
+		"a refused write shows Failed",
+		renderer.getAllText().includes("Failed"),
+		JSON.stringify(renderer.getAllText()),
+	);
+} finally {
+	navigator.clipboard.writeText = writeText;
+}
+await reset();
+renderer.nativeSimulateMouseDown(compact.x, compact.y);
+renderer.nativeSimulateMouseUp(compact.x, compact.y);
+await settle(400);
+const compactCopied = await navigator.clipboard.readText();
+report(
+	"the compact button copies its value",
+	compactCopied === "ABCD-1234",
+	JSON.stringify(compactCopied),
+);
+await reset();
+
 // A moving pointer: the tooltip keeps restarting its rest timer and never opens.
-for (let step = 0; step < 14; step++) {
-	renderer.nativeSimulateMouseMove(subject.x - 60 + step * 4, subject.y);
-	await settle(60);
+// The moves come back to back: each restarts the rest timer, and none waits on a clock a loaded machine could stretch past the delay.
+for (let move = 0; move < 14; move++) {
+	renderer.nativeSimulateMouseMove(subject.x - 60 + move * 4, subject.y);
+	renderer.flush();
+	renderer.dispatchNativeEvents();
 }
 const movingBefore = tooltipText();
 renderer.nativeSimulateMouseMove(subject.x - 4, subject.y);
@@ -149,7 +192,7 @@ report(
 );
 await reset();
 
-// Hovering the row eases the glyph's stroke from 1.5 to 2 over 80 ms: the inked area grows frame by frame, not in one step.
+// Hovering the row eases the glyph's stroke from 1.5 to 2 and its colour to the foreground over 80 ms: the inked area grows frame by frame, not in one step.
 const rowBox = (() => {
 	const found = renderer.findByTestId("subject");
 	if (found === undefined) throw new Error("no subject");
@@ -159,8 +202,8 @@ const rowBox = (() => {
 })();
 /** The glyph is the last thing in the row: count the pixels that differ from the row's background there. */
 function glyphInk() {
-	renderer.captureScreenshot("/tmp/check-input-copy-ink.png");
-	const pixels = readPng("/tmp/check-input-copy-ink.png");
+	renderer.captureScreenshot(`/tmp/check-input-copy-ink-${process.pid}.png`);
+	const pixels = readPng(`/tmp/check-input-copy-ink-${process.pid}.png`);
 	const left = Math.round(rowBox.x + rowBox.width - 36);
 	const right = Math.round(rowBox.x + rowBox.width - 6);
 	const top = Math.round(rowBox.y + 4);
@@ -179,21 +222,54 @@ function glyphInk() {
 }
 await reset();
 const restInk = glyphInk();
+// The glyph's colour and stroke both ease, so a frame 16 ms in that is only partly inked is the fade. The motion clock is held and stepped by hand.
+renderer.clockPause();
 renderer.nativeSimulateMouseMove(subject.x - 40, subject.y);
 renderer.nativeSimulateMouseMove(subject.x - 41, subject.y);
-renderer.flush();
-renderer.dispatchNativeEvents();
-// The colour switches at once, so a first frame that is only partly thickened is the stroke easing.
-await sleep(10);
-renderer.flush();
-renderer.dispatchNativeEvents();
+step(0);
+step(16);
 const earlyInk = glyphInk();
-await settle(400);
+step(400);
 const hoverInk = glyphInk();
+renderer.clockResume();
 report(
 	"the glyph's stroke eases to 2 on hover",
 	earlyInk > restInk && earlyInk < hoverInk - 1000,
 	`rest ${restInk}, first frames ${earlyInk}, hovered ${hoverInk}`,
 );
 
+// The focus ring (an outline) fades in over 80 ms like the source's `transition-all` box-shadow ring. The motion clock
+// is held and stepped by hand so a slow frame cannot skip the middle.
+await reset();
+// An earlier check left the row focused: a click on the bare page takes the focus away.
+renderer.nativeSimulateClick(580, 280);
+await settle(300);
+function ringSum() {
+	renderer.captureScreenshot(`/tmp/check-input-copy-ring-${process.pid}.png`);
+	const pixel = readPng(`/tmp/check-input-copy-ring-${process.pid}.png`).at(
+		Math.round(rowBox.x) - 1,
+		Math.round(rowBox.y + rowBox.height / 2),
+	);
+	return pixel[0] + pixel[1] + pixel[2];
+}
+if (renderer.getFocusedElementId() === row.id)
+	throw new Error("the row already has focus");
+const ringRest = ringSum();
+renderer.clockPause();
+renderer.simulateKeystrokes("Tab");
+step(0);
+step(16);
+const ringMiddle = ringSum();
+step(300);
+const ringFocused = ringSum();
+renderer.clockResume();
+report(
+	"the focus ring fades in",
+	ringFocused > ringRest + 20 &&
+		ringMiddle > ringRest &&
+		ringMiddle < ringRest + 0.6 * (ringFocused - ringRest),
+	`rest ${ringRest}, 16 ms ${ringMiddle}, end ${ringFocused}`,
+);
+
+test.unmount();
 process.exit(failed ? 1 : 0);

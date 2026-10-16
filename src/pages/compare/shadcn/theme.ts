@@ -72,35 +72,3 @@ export const scRadius = { sm: 4, md: 6 } as const;
 export function scRing(): StateStyleDesc {
 	return { outlineWidth: 2, outlineColor: sc.ring, outlineOffset: 2 };
 }
-
-/** Tailwind's `shadow-sm`, `shadow`, `shadow-md` and `shadow-lg` keep only their first, largest drop: gpuix paints one outer shadow. */
-export const scShadow = {
-	sm: {
-		offsetX: 0,
-		offsetY: 1,
-		blurRadius: 2,
-		spreadRadius: 0,
-		color: "rgba(0,0,0,0.05)",
-	},
-	base: {
-		offsetX: 0,
-		offsetY: 1,
-		blurRadius: 3,
-		spreadRadius: 0,
-		color: "rgba(0,0,0,0.1)",
-	},
-	md: {
-		offsetX: 0,
-		offsetY: 4,
-		blurRadius: 6,
-		spreadRadius: -1,
-		color: "rgba(0,0,0,0.1)",
-	},
-	lg: {
-		offsetX: 0,
-		offsetY: 10,
-		blurRadius: 15,
-		spreadRadius: -3,
-		color: "rgba(0,0,0,0.1)",
-	},
-} as const;

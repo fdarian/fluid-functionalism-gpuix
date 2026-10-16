@@ -4,16 +4,6 @@ Original: `registry/base/mobile-drawer.tsx` (Base UI Dialog + Motion). The sourc
 
 Matches the source: 256px wide, top / left / bottom edges, `aria-label="Navigation"`, a 16px inset, the scrim values, the backdrop fade (`{ duration: 0.16 }` in, the 120ms `moderate` exit tween out), the critically damped `moderate` slide in and 120ms tween out, the 220ms unmount fallback, Escape and backdrop click closing, focus returning to `triggerRef`, and "the drawer only reports closes".
 
-## `DialogBackdrop` closes on mousedown, not click
-
-- **Cause:** `gpuix gap`. Same as [dialog](dialog.md).
-- **Original:** Base UI closes the drawer on a click that presses and releases on the backdrop; a press that starts elsewhere and releases there does not close it.
-- **Port:** its own full-window `div` with `onClick` closes the drawer, ignoring a click that arrives while the exit plays (`src/components/mobile-drawer.tsx:53-73`).
-- **gpuix lacks:** the DOM rule: `DialogBackdrop` closes in `onMouseDown` (`packages/solid/src/components/dialog.ts:145-157`).
-- **Workaround:** the own backdrop.
-- **Fidelity:** exact.
-- **Components it hits:** dialog, and anything built on `DialogBackdrop`.
-
 ## No `x: -100%`; the slide animates `left`
 
 - **Cause:** `gpuix gap`. [README "Missing features": CSS transforms](../README.md#missing-features).
@@ -33,15 +23,6 @@ Matches the source: 256px wide, top / left / bottom edges, `aria-label="Navigati
 - **Workaround:** the inner box.
 - **Fidelity:** exact.
 - **Components it hits:** any scroller with padding.
-
-## `shadow-surface-3` painted as a border
-
-- **Cause:** `not ported yet`. gpuix takes `BoxShadow[]` or a CSS string with several layers and `inset` (`~/code/fdarian/gpuix/FORK.md:646-649`, `packages/native/js/host.ts:558`); the comment at `src/lib/theme.ts:469-472` saying it paints one shadow is out of date.
-- **Original:** `surfaceClasses(level, 3)` (`registry/base/mobile-drawer.tsx:147`): the `--shadow-3` ring and drops; in dark mode also an inset top highlight, an inset ring and a 1px black outer ring (`app/globals.css:162`). No border.
-- **Port:** a `borderRightWidth: 1` in `popupBorder` and `shadow3()`, one drop (`src/components/mobile-drawer.tsx:107-110`; `src/lib/theme.ts:473-481`). The ring shows only on the right edge, so the dark highlights and outer ring are the visible loss.
-- **Workaround:** none.
-- **Fidelity:** approximated.
-- **Components it hits:** every surface-3 or higher shadow (dialog has the same entry).
 
 ## No surface context for the panel's contents
 

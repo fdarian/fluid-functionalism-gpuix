@@ -52,11 +52,11 @@ repeating it.
 - **Port:** Inter Bold for the generic side's selection; SemiBold 600 for the semibold role. The skill side's `StableLabel` and the generic side's plain text widen by the real difference between the two cuts.
 - **Fidelity:** approximated.
 
-## The copy example's skill side shows a tooltip and the script cannot write the clipboard
+## The copy example's skill side shows a tooltip
 
 - **Cause:** `port choice`.
 - **Original:** the skill side's `InputCopy` is the real component with its hover mirrored for `[data-script-hover]`, and `clickWithoutClipboard` swaps `navigator.clipboard.writeText` for one write (`examples.tsx:128-175`).
-- **Port:** the real `InputCopy` (`variant="icon"`, so its tooltip shows under the cursor and says "Copied" if it was open at the press, as for a mouse) with a `copy` prop that resolves without writing while the script plays; the visitor's own click always lands while the script is paused, so it copies through `copyToClipboard` (`pbcopy`).
+- **Port:** the real `InputCopy` (`variant="icon"`, so its tooltip shows under the cursor and says "Copied" if it was open at the press, as for a mouse). The scripted click goes through the same `clickWithoutClipboard` stand-in for `navigator.clipboard.writeText` (`src/pages/skill/copy-example.tsx`), and a visitor's own click writes the clipboard.
 - **Fidelity:** exact behavior; the system clipboard is never touched by the script.
 
 ## Playback gating reads the focus-visible match and the OS reduced-motion setting
@@ -84,5 +84,5 @@ repeating it.
 
 - **Cause:** `port choice`.
 - **Original:** the button calls `track("Skill install copied", { method: "prompt" })` (`app/docs/skill/page.tsx:30`).
-- **Port:** the shared `DocPage` button only copies (through `pbcopy`); there is no analytics.
+- **Port:** the shared `DocPage` button only copies (through `navigator.clipboard.writeText`); there is no analytics.
 - **Fidelity:** exact prompt text, dropped tracking.

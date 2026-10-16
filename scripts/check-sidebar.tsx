@@ -139,19 +139,19 @@ await click("sidebar-demo-Showcase");
 focus("sidebar-demo-Showcase");
 await settle();
 check("Showcase takes focus", focusedRow() === "sidebar-demo-Showcase");
-await press("tab");
+await press("Tab");
 check(
 	"Tab leaves the one-row menu for the next menu's tab stop",
 	focusedRow() === "sidebar-demo-Fluid Hover",
 	String(focusedRow()),
 );
-await press("tab");
+await press("Tab");
 check(
 	"Tab skips the System menu's other rows and the sub-menu's",
 	focusedRow() === "sidebar-demo-Accordion",
 	String(focusedRow()),
 );
-await press("shift-tab");
+await press("Shift+Tab");
 check(
 	"Shift+Tab goes back",
 	focusedRow() === "sidebar-demo-Fluid Hover",
@@ -161,39 +161,36 @@ check(
 // Arrows move within one menu (the System menu here) and wrap at its ends.
 focus("sidebar-demo-Fluid Hover");
 await settle();
-await press("down");
+await press("ArrowDown");
 check("ArrowDown moves to the next row", focusedRow() === "sidebar-demo-Motion", String(focusedRow()));
 check("ring shows after keyboard focus", ringBounds() !== undefined);
-await press("up");
+await press("ArrowUp");
 check("ArrowUp moves back", focusedRow() === "sidebar-demo-Fluid Hover", String(focusedRow()));
-await press("up");
+await press("ArrowUp");
 check("ArrowUp wraps to the menu's last row", focusedRow() === "sidebar-demo-Skill", String(focusedRow()));
-await press("home");
+await press("Home");
 check("Home goes to the first row", focusedRow() === "sidebar-demo-Fluid Hover", String(focusedRow()));
-await press("end");
+await press("End");
 check("End goes to the last row", focusedRow() === "sidebar-demo-Skill", String(focusedRow()));
-await press("home");
-await press("right");
+await press("Home");
+await press("ArrowRight");
 check("ArrowRight moves to the next row", focusedRow() === "sidebar-demo-Motion", String(focusedRow()));
-await press("left");
+await press("ArrowLeft");
 check("ArrowLeft moves to the previous row", focusedRow() === "sidebar-demo-Fluid Hover", String(focusedRow()));
 
 // Enter and Space activate.
-await press("down");
-await press("enter");
+await press("ArrowDown");
+await press("Enter");
 check("Enter activates the row", current("sidebar-demo-Motion") === "Page", String(current("sidebar-demo-Motion")));
-await press("down");
-// simulateKeystrokes sends the key down only; Space activates on release.
-const space = element("sidebar-demo-Scrollbars").id;
-renderer.nativeSimulateKeyDown(space, "space");
-renderer.nativeSimulateKeyUp(space, "space");
+await press("ArrowDown");
+renderer.nativeSimulateKeystrokes(element("sidebar-demo-Scrollbars").id, "Space");
 await settle(300);
 check("Space activates the row", current("sidebar-demo-Scrollbars") === "Page", String(current("sidebar-demo-Scrollbars")));
 
 // Sub-menu rows are in the order while open and skipped while collapsed.
 focus("sidebar-demo-Button");
 await settle();
-await press("down");
+await press("ArrowDown");
 check(
 	"ArrowDown from the open Button row enters the sub-menu",
 	focusedRow() === "sidebar-demo-Variants",
@@ -201,17 +198,17 @@ check(
 );
 focus("sidebar-demo-Button");
 await settle();
-await press("enter");
+await press("Enter");
 await settle(600);
 focus("sidebar-demo-Button");
 await settle();
-await press("down");
+await press("ArrowDown");
 check(
 	"ArrowDown skips collapsed sub-rows",
 	focusedRow() === "sidebar-demo-Badge",
 	String(focusedRow()),
 );
-await press("up");
+await press("ArrowUp");
 check(
 	"ArrowUp skips collapsed sub-rows",
 	focusedRow() === "sidebar-demo-Button",
@@ -228,7 +225,7 @@ const lastNav = demos[demos.length - 1];
 if (lastNav === undefined) throw new Error("no demos");
 focus("nav-accordion");
 await settle();
-await press("end");
+await press("End");
 await settle(400);
 const lastBox = bounds(`nav-${lastNav.slug}`);
 check(
@@ -238,4 +235,5 @@ check(
 	`y ${lastBox.y} h ${lastBox.height}`,
 );
 
+test.unmount();
 process.exit(failed ? 1 : 0);

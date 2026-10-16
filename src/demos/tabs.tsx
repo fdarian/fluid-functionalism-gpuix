@@ -103,14 +103,10 @@ export function Demo() {
 							<Content>Favorites content.</Content>
 						</TabPanel>
 					</Tabs>
-					<div style={{ flexDirection: "row", display: "flex", gap: 4 }}>
-						<text style={{ ...scale.caption, color: color.mutedForeground }}>
-							Active:
-						</text>
-						<text style={{ ...scale.caption, color: color.foreground }}>
-							{controlled()}
-						</text>
-					</div>
+					<text style={{ ...scale.caption, color: color.mutedForeground }}>
+						Active:{" "}
+						<span style={{ color: color.foreground }}>{controlled()}</span>
+					</text>
 				</Section>
 				<Section caption="Compact">
 					<Tabs defaultValue="library" size="compact">
@@ -154,28 +150,28 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(1180, 700);
 	shot.capture("pointer-left-list");
 	await shot.click("basic-library");
-	await shot.press("right");
+	await shot.press("ArrowRight");
 	shot.capture("keyboard-arrow");
 
 	await shot.click("kb-one");
 	shot.expectText("Panel one", true);
 	// The arrow lands on the disabled tab; the selection stays.
-	await shot.press("right");
+	await shot.press("ArrowRight");
 	shot.expectText("Panel one", true);
 	shot.expectText("Panel two", false);
-	await shot.press("enter");
+	await shot.press("Enter");
 	shot.expectText("Panel two", false);
 	// The next arrow selects Three; one more wraps round to One.
-	await shot.press("right");
+	await shot.press("ArrowRight");
 	shot.expectText("Panel three", true);
-	await shot.press("right");
+	await shot.press("ArrowRight");
 	shot.expectText("Panel one", true);
-	await shot.press("left");
+	await shot.press("ArrowLeft");
 	shot.expectText("Panel three", true);
-	await shot.press("home");
+	await shot.press("Home");
 	shot.expectText("Panel one", true);
 	// A modifier chord is not a navigation key.
-	await shot.press("cmd-right");
+	await shot.press("Meta+ArrowRight");
 	shot.expectText("Panel one", true);
 	shot.capture("keyboard-disabled");
 	// Only the selected tab has a mounted panel to control; the panel is named by its tab.

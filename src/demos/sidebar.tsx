@@ -132,31 +132,31 @@ async function reveal(shot: ShotContext, testId: string) {
 		const y = shot.centerOf(testId).y;
 		if ((y > 120 && y < 320) || y === previous) return;
 		previous = y;
-		await shot.scroll(700, 400, 0, -(y - 200));
+		await shot.scroll(700, 400, 0, y - 200);
 	}
 	throw new Error(`could not scroll ${testId} into view`);
 }
 
-/** Opens a playground select from the keyboard (a pointer press that opens a popup cannot run in the test renderer) and walks `steps` rows from the current one. */
+/** Opens a playground select from the keyboard and walks `steps` rows from the current one. */
 async function pickOption(shot: ShotContext, testId: string, steps: string) {
 	await shot.focus(`${testId}-trigger`);
-	await shot.press(`down ${steps} enter`);
+	await shot.press(`ArrowDown ${steps} Enter`);
 	await shot.settle(300);
 }
 
 /** The controls panel is taller than the window: scroll the right column. */
 async function scrollControls(shot: ShotContext) {
-	await shot.scroll(1080, 500, 0, -500);
+	await shot.scroll(1080, 500, 0, 500);
 }
 
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("playground");
-	await pickOption(shot, "play-header-stack", "up");
-	await pickOption(shot, "play-header-actions", "down");
+	await pickOption(shot, "play-header-stack", "ArrowUp");
+	await pickOption(shot, "play-header-actions", "ArrowDown");
 	shot.capture("playground-horizontal-header");
 	await shot.click("play-l1-badges-track");
 	shot.capture("playground-thread-badges");
-	await pickOption(shot, "play-l1-primary", "up");
+	await pickOption(shot, "play-l1-primary", "ArrowUp");
 	await shot.click("play-l1-children-track");
 	shot.capture("playground-menu-children-badges");
 	await shot.click("play-sub-Home-Marketing site");
@@ -169,8 +169,8 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("playground-sub-rows-without-icon");
 
 	await scrollControls(shot);
-	await pickOption(shot, "play-footer-stack", "down");
-	await pickOption(shot, "play-callout", "down");
+	await pickOption(shot, "play-footer-stack", "ArrowDown");
+	await pickOption(shot, "play-callout", "ArrowDown");
 	shot.capture("playground-inline-callout");
 	// The dismiss chip shows on hover, at the card's top-right corner.
 	await shot.hover("callout");
@@ -178,12 +178,12 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.clickAt(card.x + 98, card.y - 8);
 	await shot.settle(300);
 	shot.expectText("Sidebar is here", false);
-	await pickOption(shot, "play-callout", "down down");
+	await pickOption(shot, "play-callout", "ArrowDown ArrowDown");
 	shot.capture("playground-banner-callout");
 	await shot.click("play-callout-stacked-track");
 	await shot.settle(600);
 	shot.capture("playground-banner-stack");
-	await pickOption(shot, "play-callout", "up");
+	await pickOption(shot, "play-callout", "ArrowUp");
 	await shot.settle(600);
 	shot.capture("playground-inline-stack");
 	await shot.hover("callout-stack");
@@ -211,6 +211,6 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 
 	await shot.moveTo(1180, 700);
 	await shot.focus("sidebar-demo-Fluid Hover");
-	await shot.press("down");
+	await shot.press("ArrowDown");
 	shot.capture("keyboard-focus");
 };

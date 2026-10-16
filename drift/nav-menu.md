@@ -33,11 +33,11 @@ Checked and equal: row height 32 / 28 (compact), `px` 12, icon 16 / 14 with an 8
 - **Fidelity:** approximated (a 160 ms fade on mount only).
 - **Components it hits:** sidebar, dropdown (any `FluidHighlight` that is mounted already on).
 
-## Colour and stroke width switch at once, semibold is 600, no `text-box-trim`
+## Semibold is 600, no `text-box-trim`
 
-- **Cause:** `not ported yet` for the 80 ms colour and stroke-width ease; `gpuix gap` for variable weight and `text-box-trim`. Same entry as [tabs-subtle.md, "Colour and stroke width switch at once, semibold is 600, no `text-box-trim`"](tabs-subtle.md).
-- **Original:** `transition-[color,stroke-width] duration-80` on the icon and `transition-[color,font-variation-settings] duration-80` on the label, both labels trimmed (`nav-item.tsx:82`, `:99`).
-- **Port:** no fades, SemiBold 600, line-box centring in a fixed-height row (`nav-item.tsx:150-165`).
+- **Cause:** `gpuix gap` for variable weight and `text-box-trim`. Same entry as [tabs-subtle.md, "Semibold is 600, no `text-box-trim`"](tabs-subtle.md).
+- **Original:** the label eases its weight with its colour over 80 ms, both labels trimmed (`nav-item.tsx:99`).
+- **Port:** SemiBold 600 switching at once, line-box centring in a fixed-height row (`nav-item.tsx:155-162`). The colour and stroke-width eases are ported (`fade`, `easeStroke`).
 - **Workaround:** the hidden semibold copy (`StableLabel`) reserves the width.
 - **Fidelity:** approximated.
 - **Components it hits:** tabs, tabs-subtle, select, sidebar.
@@ -55,7 +55,7 @@ Checked and equal: row height 32 / 28 (compact), `px` 12, icon 16 / 14 with an 8
 
 - **Cause:** `port choice` (the pattern `tabs-subtle.tsx` uses).
 - **Original:** a blur to somewhere outside the `nav` clears the hover target and the ring (`nav-menu.tsx:121-126`), whatever the pointer does.
-- **Port:** a blur clears the ring at once; the hover target is cleared in a microtask, and only if focus left every item and the pointer is outside the menu (`nav-item.tsx:122-133`). gpuix dispatches a blur before the next row's focus, so the check cannot read the new focus synchronously.
+- **Port:** a blur clears the ring at once; the hover target is cleared only if the blur's `relatedTarget` is not an item and the pointer is outside the menu (`nav-item.tsx`).
 - **Workaround:** none.
 - **Fidelity:** approximated (a pointer resting on the menu keeps its hover fill after Tab leaves).
 - **Components it hits:** tabs-subtle.

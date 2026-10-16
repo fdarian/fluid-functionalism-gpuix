@@ -36,15 +36,6 @@ repeating it.
 - **Fidelity:** approximated. The glyph moves in 33ms steps, not per display frame. The loop phase comes from the app's clock, not from mount, so every shimmer and glyph is in lockstep and a freshly mounted one starts mid-loop. Each `useClock` caller subscribes separately and writes the one shared signal, so with several shimmers on screen it fires more often than every 33ms (by reading, not measured).
 - **Components it hits:** thinking-steps (shimmer); file-thumbnail and carousel-dots use the same clock.
 
-## Reduced motion is ignored
-
-- **Cause:** `not ported yet`. gpuix has `matchMedia("(prefers-reduced-motion)")` and `MotionConfig reducedMotion="user"` (`FORK.md:831`; the OS setting is read on macOS only, `FORK.md:906`).
-- **Original:** `useReducedMotion()` swaps the morphing glyph for a static infinity path, stops the word cycle, and shows the first word without the roll (`thinking-indicator.tsx:40`, `:43`, `:75-77`, `:115-118`).
-- **Port:** no check; the glyph, shimmer and word roll always run (`thinking-indicator.tsx:219-267`).
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** banner, and every component whose source reads `useReducedMotion`.
-
 ## No `size` prop, `className`, `ref` or HTML attributes
 
 - **Cause:** `not ported yet`. `banner.tsx:139` shows the port can take a `size` prop.

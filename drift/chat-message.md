@@ -22,15 +22,6 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 - **Fidelity:** dropped.
 - **Components it hits:** queued-stack, any touch-aware component.
 
-## Action buttons: hover is instant
-
-- **Cause:** `not ported yet`.
-- **Original:** the docs page's buttons use `transition-colors duration-100` for the hover background and the icon colour (`app/docs/chat-message/page.tsx:20`).
-- **Port:** the hover background is a state style and the icon colour follows a `hovered` signal, both with no transition (`chat-message.tsx:44`, `:54`, `:62`).
-- **Workaround:** none.
-- **Fidelity:** approximated (switches at once).
-- **Components it hits:** just this one.
-
 ## Action buttons are part of the component
 
 - **Cause:** `port choice` (the docs page's `MessageActions` is demo code in the source; the port needs a button built on `buttonProps`, so it exports one).
@@ -58,11 +49,11 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
-## Timestamp: tabular numerals and type
+## Timestamp is a string
 
-- **Cause:** `not ported yet` (gpuix has `fontVariantNumeric`, `FORK.md:657`).
-- **Original:** the time span is `tabular-nums`; `time` is a `ReactNode` (`chat-message.tsx:127`, `:24`).
-- **Port:** proportional digits, `time` is `string` (`chat-message.tsx:169`, `:78`).
+- **Cause:** `port choice` (the timestamp is one `<text>`, which takes a string; the caller pre-formats).
+- **Original:** `time` is a `ReactNode` in a `tabular-nums` span (`chat-message.tsx:127`, `:24`).
+- **Port:** `time` is `string`, set in tabular digits like the source (`chat-message.tsx:166-175`, `:78`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

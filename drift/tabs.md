@@ -9,15 +9,6 @@ exit and the slide back on `moderate`, the travelling focus ring (outset 2, radi
 Home / End with wrap, `activateOnFocus`, disabled tabs that take focus and never select, roving tab stop, ARIA ids,
 light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 
-## Selected pill: shadow recipe and edge
-
-- **Cause:** `not ported yet`. gpuix paints several `boxShadow` layers, `inset` and spread from a CSS string (`~/code/fdarian/gpuix/FORK.md:646-649`, `packages/native/js/host.ts:558`); the "one outer shadow" comment is stale.
-- **Original:** `surfaceClasses(indicatorLevel)` gives `bg-surface-4` + `shadow-surface-4` (`tabs.tsx:364`, `:198`): light is a 1px outer ring plus drops at 1, 3 and 6px (`app/globals.css:140`), dark adds an inset top highlight, an inset ring and a darker outer ring (`:163`).
-- **Port:** `surface4` fill, a 1px inside `borderWidth` in `popupBorder`, and `shadow3()`, one `0 3 3 -1.5` drop (`tabs.tsx:243-246`, `theme.ts:332-340`). That is the shadow-3 recipe cut to its biggest drop, not shadow-4, and the ring sits inside the pill instead of 1px outside it.
-- **Workaround:** none.
-- **Fidelity:** approximated (lighter drop, no 6px layer, no dark inset highlight, ring inside).
-- **Components it hits:** dropdown, mobile-drawer, queued-stack, command-menu (everything on `shadow3()`).
-
 ## Pill does not lift with the surrounding surface
 
 - **Cause:** `not ported yet`. The ladder exists (`src/lib/surface-context.ts`, read by dialog and popups); tabs does not read it.
@@ -35,15 +26,6 @@ light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 - **Workaround:** pass `size` to each nested component.
 - **Fidelity:** approximated.
 - **Components it hits:** every component with a `size` variant.
-
-## Colour and stroke width switch at once
-
-- **Cause:** `not ported yet`. gpuix eases colour (`colorFade`, `Icon`'s `fade`, `theme.ts:310-314`) and animates `strokeWidth` on `motion.path` (`host.ts:296-298`; BASE-UI-AUDIT row 529).
-- **Original:** label colour and font weight ease over 80 ms (`transition-[color,font-variation-settings] duration-80`, `tabs.tsx:565`); icon colour and stroke width 1.5 to 2 ease over 80 ms (`:546`).
-- **Port:** `Icon` is called without `fade` and bakes the stroke width into its SVG source (`tabs.tsx:409-414`, `src/lib/icon.tsx:9-23`); `StableLabel` has no transition (`stable-label.tsx:40-52`). Both change on the frame the hover or selection does.
-- **Workaround:** none.
-- **Fidelity:** approximated (the 80 ms ease is dropped).
-- **Components it hits:** tabs-subtle, select, sidebar, menu rows (anything with a `StableLabel` or the 1.5 to 2 stroke).
 
 ## Semibold is SemiBold 600, not variable 550
 

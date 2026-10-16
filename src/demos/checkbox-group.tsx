@@ -108,20 +108,20 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(1180, 700);
 	shot.capture("split");
 	await shot.click("box-0");
-	await shot.press("down");
+	await shot.press("ArrowDown");
 	shot.capture("keyboard-focus");
-	await shot.press("space");
+	await shot.press("Space");
 	shot.capture("keyboard-toggled");
 	// Enter and Space both toggle the focused row; End and Home jump to the last and first row without toggling.
 	shot.expectText("Checked: 1,2,3", true);
-	await shot.press("enter");
+	await shot.press("Enter");
 	shot.expectText("Checked: 2,3", true);
-	await shot.press("end");
+	await shot.press("End");
 	shot.expectText("Checked: 2,3", true);
-	await shot.press("space");
+	await shot.press("Space");
 	shot.expectText("Checked: 2", true);
-	await shot.press("home");
-	await shot.press("space");
+	await shot.press("Home");
+	await shot.press("Space");
 	shot.expectText("Checked: 0,2", true);
 	shot.expectAria("box-0", { role: "CheckBox", toggled: "True" });
 	shot.expectAria("box-1", { toggled: "False" });

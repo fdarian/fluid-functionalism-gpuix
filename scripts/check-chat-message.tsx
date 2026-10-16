@@ -4,12 +4,13 @@
  *   bun scripts/check-chat-message.tsx
  *
  * The meta row (timestamp and actions) is revealed by hover and by keyboard focus on an action.
- * The reveal is the opacity target of the row's `animate`; a screenshot with the focused action lands in /tmp/check-chat-message-focus.png.
+ * The reveal is the row's opacity, eased by a CSS transition; a screenshot with the focused action lands in /tmp/check-chat-message-focus-<pid>.png.
  */
 import { createTestRoot } from "@gpuix/solid/testing";
 import { ChatMessage, ChatMessageAction } from "../src/components/chat-message";
 import { fonts } from "../src/lib/fonts";
 import { color, setThemeChoice } from "../src/lib/theme";
+import { readPng } from "./png-pixels";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const test = createTestRoot({ width: 500, height: 200, fonts });
@@ -30,12 +31,8 @@ function element(testId: string) {
 	if (found === undefined) throw new Error(`no element ${testId}`);
 	return found;
 }
-type MetaMotion = {
-	animate?: { opacity?: number };
-	transition?: { duration?: number; ease?: unknown };
-};
-/** The motion props of the meta row: the grandparent of the time's text. */
-function metaMotion() {
+/** The meta row: the grandparent of the time's text. */
+function metaRow() {
 	const text = renderer.findByText("09:41");
 	if (text === undefined || text.parentId === null)
 		throw new Error("no timestamp");
@@ -44,15 +41,13 @@ function metaMotion() {
 		throw new Error("no timestamp label");
 	const row = renderer.getElement(label.parentId);
 	if (row === undefined) throw new Error("no meta row");
-	const motion = row.customProps?.motion as MetaMotion | undefined;
-	if (motion === undefined) throw new Error("the meta row has no motion");
-	return motion;
+	return row;
 }
 function metaOpacity() {
-	const opacity = metaMotion().animate?.opacity;
+	const opacity = metaRow().style.opacity;
 	if (opacity === undefined)
-		throw new Error("the meta row has no opacity target");
-	return opacity;
+		throw new Error("the meta row has no opacity");
+	return Number(opacity);
 }
 let failed = false;
 function report(name: string, ok: boolean, detail: string) {
@@ -92,15 +87,16 @@ await settle(800);
 const resting = metaOpacity();
 report("meta row is hidden at rest", resting === 0, `opacity ${resting}`);
 
-const fade = metaMotion().transition;
+const metaStyle = metaRow().style;
 report(
-	"meta row fades over 150 ms on Tailwind's default curve",
-	fade?.duration === 0.15 &&
-		JSON.stringify(fade.ease) === JSON.stringify([0.4, 0, 0.2, 1]),
-	JSON.stringify(fade),
+	"meta row fades opacity over 150 ms on Tailwind's default curve",
+	metaStyle.transitionProperty === "opacity" &&
+		metaStyle.transitionDuration === "150ms" &&
+		metaStyle.transitionTimingFunction === "cubic-bezier(0.4, 0, 0.2, 1)",
+	`${metaStyle.transitionProperty} ${metaStyle.transitionDuration} ${metaStyle.transitionTimingFunction}`,
 );
 
-renderer.simulateKeystrokes("tab");
+renderer.simulateKeystrokes("Tab");
 await settle(500);
 const focused = renderer.getFocusedElementId();
 report(
@@ -114,9 +110,9 @@ report(
 	focusOpacity === 1,
 	`opacity ${focusOpacity}`,
 );
-renderer.captureScreenshot("/tmp/check-chat-message-focus.png");
+renderer.captureScreenshot(`/tmp/check-chat-message-focus-${process.pid}.png`);
 
-renderer.simulateKeystrokes("tab");
+renderer.simulateKeystrokes("Tab");
 await settle(500);
 report(
 	"meta row stays shown moving between actions",
@@ -124,7 +120,7 @@ report(
 	`opacity ${metaOpacity()}`,
 );
 
-renderer.simulateKeystrokes("tab");
+renderer.simulateKeystrokes("Tab");
 await settle(500);
 const afterFocus = renderer.getFocusedElementId();
 report(
@@ -138,4 +134,68 @@ report(
 	`opacity ${metaOpacity()}`,
 );
 
+// Hover moves from the first action to the second: the first one's fill and glyph ease back over 100 ms.
+function bounds(testId: string) {
+	const box = renderer.getElementBounds(element(testId).id);
+	if (box === null) throw new Error(`no painted bounds for ${testId}`);
+	return box;
+}
+function actionPixels(testId: string) {
+	renderer.captureScreenshot(`/tmp/check-chat-message-fade-${process.pid}.png`);
+	const box = bounds(testId);
+	const pixels = readPng(`/tmp/check-chat-message-fade-${process.pid}.png`);
+	const left = Math.round(box.x);
+	const top = Math.round(box.y);
+	let glyph = 0;
+	for (let y = top + 5; y < top + 19; y++)
+		for (let x = left + 5; x < left + 19; x++)
+			glyph = Math.max(glyph, pixels.at(x, y)[0]);
+	return { fill: pixels.at(left + 2, top + 12)[0], glyph };
+}
+function step(ms: number) {
+	renderer.clockFastForward(ms);
+	renderer.flush();
+	renderer.dispatchNativeEvents();
+}
+const copyBox = bounds("copy");
+const editBox = bounds("edit");
+renderer.nativeSimulateMouseMove(copyBox.x + 12, copyBox.y + 12);
+await settle(500);
+renderer.clockPause();
+const hovered = actionPixels("copy");
+renderer.nativeSimulateMouseMove(editBox.x + 12, editBox.y + 12);
+step(0);
+step(40);
+const middle = actionPixels("copy");
+step(300);
+const rested = actionPixels("copy");
+renderer.clockResume();
+report(
+	"action fill eases back 40 ms after the pointer leaves",
+	middle.fill < hovered.fill - 2 && middle.fill > rested.fill + 2,
+	`hovered ${hovered.fill}, 40 ms ${middle.fill}, rest ${rested.fill}`,
+);
+report(
+	"action glyph colour eases back 40 ms after the pointer leaves",
+	middle.glyph < hovered.glyph - 2 && middle.glyph > rested.glyph + 2,
+	`hovered ${hovered.glyph}, 40 ms ${middle.glyph}, rest ${rested.glyph}`,
+);
+
+// Leaving the message hides the meta row over 150 ms; the second glyph is hovered nowhere, so only the row's opacity moves it.
+renderer.clockPause();
+const shown = actionPixels("copy").glyph;
+renderer.nativeSimulateMouseMove(400, 190);
+step(0);
+step(40);
+const fading = actionPixels("copy").glyph;
+step(400);
+const hidden = actionPixels("copy").glyph;
+renderer.clockResume();
+report(
+	"meta row eases its opacity out 40 ms after the pointer leaves",
+	fading < shown - 2 && fading > hidden + 2,
+	`shown ${shown}, 40 ms ${fading}, hidden ${hidden}`,
+);
+
+test.unmount();
 process.exit(failed ? 1 : 0);

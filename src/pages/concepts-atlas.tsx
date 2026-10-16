@@ -38,20 +38,20 @@ const INDICATOR_PAD = 12;
 export async function scenarios(shot: ShotContext) {
 	replyMs = CAPTURE_REPLY_MS;
 	await shot.click("input-message-textarea");
-	await shot.press("w r i t e space t h e space t i c k e t s");
-	await shot.press("enter");
+	await shot.press("w r i t e Space t h e Space t i c k e t s");
+	await shot.press("Enter");
 	// A second message while the first is still answering is queued under the composer.
-	await shot.press("a n d space s m a l l e r");
-	await shot.press("enter");
+	await shot.press("a n d Space s m a l l e r");
+	await shot.press("Enter");
 	// The page does not follow a new message (ScrollArea has no scroll-to-end), so scroll to it.
-	await shot.scroll(580, 300, 0, -3000);
+	await shot.scroll(580, 300, 0, 3000);
 	shot.expectText("write the tickets", true);
 	shot.expectText("Here's a first cut", false);
 	shot.expectText("and smaller", true);
 	shot.capture("streaming");
 	await shot.moveTo(600, 300);
 	await shot.settle(CAPTURE_REPLY_MS);
-	await shot.scroll(580, 300, 0, -3000);
+	await shot.scroll(580, 300, 0, 3000);
 	shot.expectText("Here's a first cut", true);
 	shot.capture("replied");
 }

@@ -7,6 +7,7 @@ import {
 	color,
 	siteType,
 	motion as tween,
+	twShadow,
 	withAlpha,
 } from "../../lib/theme";
 
@@ -128,14 +129,7 @@ function ModalFrame(props: {
 						borderWidth: 1,
 						borderColor: color.border,
 						backgroundColor: color.card,
-						// gpuix paints one outer shadow: shadow-xl's larger drop.
-						boxShadow: {
-							offsetX: 0,
-							offsetY: 20,
-							blurRadius: 25,
-							spreadRadius: -5,
-							color: color.shadowColor,
-						},
+						boxShadow: twShadow.xl,
 					}}
 				>
 					<Bar

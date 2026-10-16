@@ -1,5 +1,5 @@
 import {
-	type EventPayload,
+	type DomEvent,
 	type HostElement,
 	type KeyEvent,
 	useGpuixRequired,
@@ -29,6 +29,7 @@ import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import {
 	color,
 	colorFade,
+	fade,
 	radius,
 	shape,
 	shapeChoice,
@@ -62,6 +63,7 @@ function ClearButton(props: { onClick: () => void; testId?: string }) {
 				justifyContent: "center",
 				borderRadius: shapeChoice() === "pill" ? 12 : 6,
 				cursor: "pointer",
+				...fade(["color", "background-color"], 80),
 				hover: { backgroundColor: color.hover },
 				active: { backgroundColor: color.active },
 			}}
@@ -343,7 +345,7 @@ export function Combobox(props: {
 		const row = filtered()[index];
 		if (row !== undefined) select(row);
 	};
-	const onChange = (event: EventPayload) => {
+	const onChange = (event: DomEvent) => {
 		const text = event.value;
 		if (text === undefined) throw new Error("Combobox change without a value");
 		setInputText(text);
@@ -414,6 +416,7 @@ export function Combobox(props: {
 					outlineColor: color.border,
 					outlineOffset: 0,
 					backgroundColor: focused() ? color.card : color.transparent,
+					...colorFade,
 					hover: {
 						backgroundColor: focused() ? color.card : color.mutedHalf,
 					},
@@ -579,7 +582,7 @@ export function Combobox(props: {
 								display: "flex",
 								flexDirection: "column",
 								overflowY: "scroll",
-								maxHeight: popupMaxHeight() - 2,
+								maxHeight: popupMaxHeight(),
 							}}
 						>
 							{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
@@ -633,6 +636,8 @@ export function Combobox(props: {
 												onMouseDown={(event) => event.preventDefault()}
 												onClick={() => select(row)}
 												style={{
+													position: "relative",
+													zIndex: 10,
 													height: ROW_HEIGHT,
 													flexShrink: 0,
 													display: "flex",

@@ -11,7 +11,7 @@ import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
 import { readPng } from "./png-pixels";
 
-const INK_PATH = "/tmp/check-kit-ink.png";
+const INK_PATH = `/tmp/check-kit-ink-${process.pid}.png`;
 
 type CheckOptions = {
 	width?: number;
@@ -37,7 +37,7 @@ export async function scrollIntoView(renderer: Renderer, testId: string) {
 			700,
 			400,
 			0,
-			center === null ? -400 : -(center - 200),
+			center === null ? 400 : center - 200,
 		);
 		const until = performance.now() + 150;
 		do {
@@ -72,6 +72,24 @@ export async function createCheck(
 		} while (performance.now() < until);
 		renderer.flush();
 		renderer.dispatchNativeEvents();
+	}
+
+	/** Advances the held motion clock by `ms` (after `clockPause()`) and runs the frame, so an animation is sampled at an exact time instead of wherever the wall clock landed. */
+	function step(ms: number) {
+		renderer.clockFastForward(ms);
+		renderer.flush();
+		renderer.dispatchNativeEvents();
+	}
+
+	/** Runs frames in real time until `done()` holds, for what a JS timer decides (a hover delay, a grace period): the motion clock may be held meanwhile. */
+	async function until(done: () => boolean, what: string, timeoutMs = 5000) {
+		const limit = performance.now() + timeoutMs;
+		while (!done()) {
+			if (performance.now() > limit) throw new Error(`timed out waiting for ${what}`);
+			await sleep(8);
+			renderer.flush();
+			renderer.dispatchNativeEvents();
+		}
 	}
 
 	function element(testId: string) {
@@ -179,6 +197,8 @@ export async function createCheck(
 	return {
 		renderer,
 		settle,
+		step,
+		until,
 		element,
 		bounds,
 		center,
@@ -218,10 +238,14 @@ export async function createCheck(
 				`${ok ? "PASS" : "FAIL"} ${label}: ${JSON.stringify(actual)}${ok ? "" : ` (expected ${JSON.stringify(expected)})`}`,
 			);
 		},
+		/** Ends this check's tree and renderer without exiting, for a script that runs several; returns how many checks failed. */
+		unmount() {
+			test.unmount();
+			return failures;
+		},
 		async finish() {
-			// Unmount first: with the tree alive, Bun can abort at exit ("Thread Local Storage", exit 134) after every check passed.
-			test.root.unmount();
-			await settle(100);
+			// Unmount first: with the tree alive, Bun can abort at exit ("Thread Local Storage", exit 134) after every check passed. TestRoot.unmount also disposes the renderer.
+			test.unmount();
 			console.log(failures === 0 ? "all passed" : `${failures} failed`);
 			process.exit(failures === 0 ? 0 : 1);
 		},

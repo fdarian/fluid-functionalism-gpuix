@@ -23,15 +23,6 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 - **Fidelity:** dropped (exits, sibling slide); approximated (first-mount fade).
 - **Components it hits:** just this one.
 
-## Chip fade has no transition
-
-- **Cause:** `not ported yet`.
-- **Original:** the chip is `transition-[opacity,font-variation-settings] duration-80`, so it fades out as the arrow overlay fades in (`:1742`).
-- **Port:** `opacity` flips between 1 and 0 with no transition (`ask-user-questions.tsx:216`).
-- **Workaround:** none.
-- **Fidelity:** approximated (switches at once).
-- **Components it hits:** just this one.
-
 ## Static font weights
 
 - **Cause:** `gpuix gap`. Shared: variable-font axes ([README, Missing features, variable-font row](../README.md)).
@@ -71,7 +62,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** when a keyboard-driven step changes the question, the new first row is focused in the same commit; a mouse step does not restore (`:394-424`).
-- **Port:** the first row is focused 48 ms later, and `keyboardDriving` turns true on any keydown and false on mousedown (`ask-user-questions.tsx:468-481`, `:518`, `:922-924`).
+- **Port:** the first row is focused 48 ms later (a synchronous focus from the effect leaves focus on nothing, checked), and `keyboardDriving` turns true on any keydown and false on mousedown (`ask-user-questions.tsx:468-481`, `:518`, `:922-924`).
 - **Workaround:** a timer.
 - **Fidelity:** approximated (a 48 ms gap).
 - **Components it hits:** just this one.
@@ -146,15 +137,6 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 - **Port:** one string "⌘↵", no 2px gap, `lineHeight: 11` (`ask-user-questions.tsx:93-114`); `size="compact"`, which is the source's `sm` alias, with the Button's own icon padding (`:986-1048`; `src/components/button.tsx:26-31`).
 - **Workaround:** `marginLeft: 2` to stand in for the label gap.
 - **Fidelity:** approximated (about a pixel).
-- **Components it hits:** just this one.
-
-## freeText and Other field colour changes are instant
-
-- **Cause:** `not ported yet`.
-- **Original:** the freeText box is `transition-colors`, so its fill eases between rest, hover, focus and filled (`:1307`).
-- **Port:** the background switches at once (`ask-user-questions.tsx:860-874`).
-- **Workaround:** none.
-- **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
 ## freeText autofocus is optional

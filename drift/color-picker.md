@@ -51,15 +51,6 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Fidelity:** approximated (1px).
 - **Components it hits:** just this one.
 
-## Card edge and shadow
-
-- **Cause:** `not ported yet`.
-- **Original:** the panel carries `shadow-surface-1` (a 1px ring) and the popover and format menu `shadow-surface-3` (ring plus two stacked drops, inset hairline and highlight in dark) (`color-picker.tsx:1958`, `:2405`, `:1025-1027`; tokens in `app/globals.css:137-162`).
-- **Port:** a 1px `borderColor: popupBorder` plus one drop (`shadow3()`, `src/lib/theme.ts:470-478`; `src/components/color-picker.tsx:748-749`, `:1793`). The README row says gpuix paints a single non-inset shadow, but `boxShadow` takes a list and `inset` (`~/code/fdarian/gpuix/packages/native/js/host.ts:369-377`, `:558`; `FORK.md:646-649`).
-- **Workaround:** border plus one drop; README "shadow-surface-3" row.
-- **Fidelity:** approximated.
-- **Components it hits:** every popup and card.
-
 ## Popover surface level is 5, not substrate + 2
 
 - **Cause:** `port choice` (reason not stated; the ladder in `src/lib/surface-context.ts` is not read here).
@@ -82,7 +73,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** a press springs the thumb to the pressed spot on `spring.moderate`, a drag sets it directly, release and keyboard or programmatic changes spring again (`registry/radix/slider.tsx:721-723`, `:763-766`, `:799-815`, and the value-sync effect at `:611-625`).
-- **Port:** `left` is a plain style from the value, so every change jumps (`src/components/color-picker.tsx:553`). The slider port animates its thumb through `createAnimateQueue` (`src/components/slider.tsx:159`; README "Bugs", slider row), which the rails do not use.
+- **Port:** `left` is a plain style from the value, so every change jumps (`src/components/color-picker.tsx:553`). The slider port animates its thumb with `animate` on a motion value (`src/components/slider.tsx`), which the rails do not use.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -91,7 +82,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** Radix slider thumb: arrows, Shift+arrow and PageUp/PageDown move by 10, Home/End jump, and it exposes `aria-valuenow`, `-min`, `-max` (`registry/radix/slider.tsx`, primitive). The ring is a 24px circle whose opacity eases on `spring.fast` (`:940-952`), and the track has an `ew-resize` cursor only on the hit area (`:1087`).
-- **Port:** arrows, Shift (10), Home and End only; no PageUp/PageDown (`src/components/color-picker.tsx:489-512`). The thumb has `aria-valuetext` but no `aria-valuenow`/`-min`/`-max` (`:537-539`; `slider.tsx:851-853` has them). The ring is `focusVisible` with a 2px offset, switching at once and drawn about 2px wider (`:553`).
+- **Port:** arrows, Shift (10), Home and End only; no PageUp/PageDown (`src/components/color-picker.tsx:489-512`). The thumb has `aria-valuetext` but no `aria-valuenow`/`-min`/`-max` (`:535-538`; `slider.tsx:851-853` has them). The ring is `focusVisible` with a 2px offset, drawn about 2px wider, its colour easing over 80 ms on a spring-fitted curve (`:552-553`, `springFade`, `src/lib/theme.ts`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -118,36 +109,9 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `port choice` (follows the source comment's intent, not its rendering).
 - **Original:** the 25% grey hairline is an `inset` box-shadow on the tile and swatch button, and the colour is an `absolute inset-0` child above it (`color-picker.tsx:1665-1672`, `:1692`, `:1713-1716`). By CSS paint order the child covers an inset shadow, so on an opaque colour the hairline does not show; it shows only through translucent ones. This was reasoned from the stacking rules, not checked in a browser.
-- **Port:** a separate bordered overlay is painted after the colour, so the hairline is always visible (`src/components/color-picker.tsx:158-169`, `:246-257`).
+- **Port:** the same `inset 0 0 0 1px` shadow, but on a separate overlay painted after the colour, so the hairline is always visible (`src/components/color-picker.tsx:158-169`, `:229-241`). On the tile or button itself it would sit under the checker, which is a child box here, not the parent's background, and would never show.
 - **Workaround:** n/a.
 - **Fidelity:** approximated (a hairline the source may not draw on opaque colours).
-- **Components it hits:** just this one.
-
-## Swatch ring stack, and its fade
-
-- **Cause:** `not ported yet`.
-- **Original:** three stacked box-shadows (inset hairline, 2px background gap, 2px outer ring: `#6B97FF` selected, 40% grey hovered), fading over 100ms (`color-picker.tsx:1688-1699`).
-- **Port:** a 2px background-coloured spread shadow plus a 2px outline offset by 2, switching at once (`src/components/color-picker.tsx:175-220`), on the stated ground that gpuix has one box shadow. It takes a list (`host.ts:558`), and CSS transitions apply to state-style changes (`FORK.md:816-818`). README row "transition-colors duration-80, transition-[box-shadow]: Dropped" predates that.
-- **Workaround:** the pair.
-- **Fidelity:** approximated.
-- **Components it hits:** just this one.
-
-## Colour fades (`transition-colors duration-80`) are not ported
-
-- **Cause:** `not ported yet`.
-- **Original:** the format trigger, channel fields, hex field, eyedropper and popover trigger fade background and text over 80ms (`color-picker.tsx:978`, `:1267`, `:1466`, `:1631`, `:2315`), and a menu row's colour and weight over 80ms (`:870`). The remove X changes colour at once (`:2359`).
-- **Port:** state styles switch at once (`src/components/color-picker.tsx:988-998`, `:1163-1164`, `:1765`); the row label colour likewise (`:1110`). Other components use `colorFade` for text (`src/lib/theme.ts:451`).
-- **Workaround:** none. Per-property CSS transitions exist (`FORK.md:816-819`).
-- **Fidelity:** dropped.
-- **Components it hits:** every control with `transition-colors`.
-
-## Digits are not tabular
-
-- **Cause:** `not ported yet` (gpuix has `fontVariantNumeric`, `FORK.md:657`; unchecked on `<input>`).
-- **Original:** the fields and the trigger's hex are `tabular-nums` (`color-picker.tsx:1321`, `:1562`, `:2331`).
-- **Port:** none (`src/components/color-picker.tsx:1221-1232`, `:1800-1808`), so Inter's proportional digits shift as a value changes.
-- **Workaround:** none.
-- **Fidelity:** dropped.
 - **Components it hits:** just this one.
 
 ## Saturation square: the OS cursor stays
@@ -159,15 +123,6 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
-## Saturation square: ghost ring paints under the thumb
-
-- **Cause:** `not ported yet`.
-- **Original:** the thumb comes first and the ghost ring after it, so the ring is on top (`color-picker.tsx:636-669`).
-- **Port:** the ghost is rendered before the thumb (`src/components/color-picker.tsx:416-450`); paint order is document order, so the thumb is on top.
-- **Workaround:** none; swapping the two blocks fixes it.
-- **Fidelity:** approximated.
-- **Components it hits:** just this one.
-
 ## Format menu: no travelling focus ring
 
 - **Cause:** `not ported yet`.
@@ -176,16 +131,6 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
-
-## Tab from a popup row does not continue after the trigger
-
-- **Cause:** `gpuix gap`; same as `drift/dropdown.md` "Tab from a popup row does not continue after the trigger".
-- **Original:** Tab in the open format menu closes it and focus moves to the next tabbable after the trigger; Shift+Tab closes and focuses the trigger (Base UI `FloatingFocusManager`).
-- **Port:** the panel's Tab handler cancels the default, closes, hands focus to the trigger and calls `renderer.focusNext()` from there (`tabbingOn`, `onPanelKeyDown` and `close` in `src/components/color-picker.tsx:811-835`, `:910-952`); Shift+Tab stops on the trigger.
-- **gpuix lacks:** a tab order that puts a floating layer where its trigger is.
-- **Workaround:** the explicit `focusNext()`.
-- **Fidelity:** exact for the target, approximated for the mechanism.
-- **Components it hits:** dropdown (same workaround); select closes on Tab by other means.
 
 ## Popover: focus is not moved in, restored or lost
 

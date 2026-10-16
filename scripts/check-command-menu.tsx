@@ -10,15 +10,13 @@
  * home hero's buttons.
  */
 
-import { clipboard } from "@gpuix/solid";
 import { createHostElement } from "../node_modules/@gpuix/solid/dist/host.js";
 import { formatShortcut } from "../src/components/command-menu";
-import { IS_MAC } from "../src/lib/platform";
 import { createCheck } from "./check-kit";
 
 const kit = await createCheck("command-menu");
 const renderer = kit.renderer;
-const mod = IS_MAC ? "cmd" : "ctrl";
+const mod = "ControlOrMeta";
 
 // ─── formatShortcut ──────────────────────────────────────────────────────────
 
@@ -86,6 +84,7 @@ const sinceMark = (from: number) =>
 		.slice(from)
 		.map((w) => w.top);
 
+await kit.scrollIntoView(INPUT);
 await kit.focus(INPUT);
 // The motion clock is stepped by hand: against wall time a slow frame carries the whole travel in one step.
 const FRAME_MS = 16;
@@ -104,12 +103,12 @@ const steppedPress = async (keystrokes: string) => {
 	await stepFrames();
 };
 renderer.clockPause();
-for (let step = 0; step < 4; step++) await steppedPress("down");
+for (let step = 0; step < 4; step++) await steppedPress("ArrowDown");
 const before = offset();
 let mark = listWrites().length;
 // The travel lasts a handful of frames; stepping the motion clock by hand keeps the sampling independent of how long a real frame takes.
 renderer.clockPause();
-renderer.simulateKeystrokes("down");
+renderer.simulateKeystrokes("ArrowDown");
 // The menu starts the travel in a microtask after the key handler returns.
 await Promise.resolve();
 for (let frame = 0; frame < 40; frame++) {
@@ -136,10 +135,10 @@ kit.check(
 );
 
 // A second arrow while the first is travelling takes over from where it is.
-await steppedPress("down");
+await steppedPress("ArrowDown");
 mark = listWrites().length;
-renderer.simulateKeystrokes("down");
-renderer.simulateKeystrokes("down");
+renderer.simulateKeystrokes("ArrowDown");
+renderer.simulateKeystrokes("ArrowDown");
 await stepFrames();
 const chained = sinceMark(mark);
 kit.check(
@@ -156,10 +155,10 @@ kit.check(
 );
 
 // Home and a move to row 0 snap.
-await steppedPress("up");
+await steppedPress("ArrowUp");
 kit.check("still scrolled one arrow up", offset() > 0, `${offset()}`);
 mark = listWrites().length;
-renderer.simulateKeystrokes("home");
+renderer.simulateKeystrokes("Home");
 await stepFrames();
 const home = sinceMark(mark);
 kit.check(
@@ -170,7 +169,7 @@ kit.check(
 kit.expect("Home ends at the top", offset(), 0);
 
 // A re-filter snaps to the top too.
-await steppedPress("end");
+await steppedPress("End");
 kit.check("End scrolls the list down", offset() > 0, `${offset()}`);
 mark = listWrites().length;
 renderer.simulateKeystrokes("a");
@@ -214,7 +213,7 @@ const idOf = (testId: string) => {
 const inputAria = (testId: string) => ariaOf(idOf(testId));
 
 await kit.focus("details-input");
-await kit.press("home");
+await kit.press("Home");
 const combobox = inputAria("details-input");
 kit.expect("the input is a combobox", combobox.role, "ComboBox");
 kit.expect("the input reports expanded", combobox.expanded, true);
@@ -229,19 +228,19 @@ kit.expect(
 	inputAria("details-input").active,
 	idOf("details-row-new-file"),
 );
-await kit.press("down");
+await kit.press("ArrowDown");
 kit.expect(
 	"ArrowDown moves aria-activedescendant to the next row",
 	inputAria("details-input").active,
 	idOf("details-row-search"),
 );
-await kit.press("down");
+await kit.press("ArrowDown");
 kit.expect(
 	"ArrowDown again follows",
 	inputAria("details-input").active,
 	idOf("details-row-theme"),
 );
-await kit.press("up");
+await kit.press("ArrowUp");
 kit.expect(
 	"ArrowUp moves it back",
 	inputAria("details-input").active,
@@ -258,7 +257,7 @@ kit.expect(
 	inputAria("details-input").active,
 	undefined,
 );
-await kit.press("escape");
+await kit.press("Escape");
 
 // ─── The filter select ───────────────────────────────────────────────────────
 
@@ -279,28 +278,28 @@ const typeFocus = () => {
 };
 
 await kit.focus("filters-type-trigger");
-await kit.press("enter");
+await kit.press("Enter");
 kit.check("Enter opens the type filter", kit.exists("filters-type-list"));
 kit.expect(
 	"Enter focuses the checked row",
 	typeFocus(),
 	"filters-type-option-all",
 );
-await kit.press("down");
+await kit.press("ArrowDown");
 kit.expect(
 	"ArrowDown focuses the next row",
 	typeFocus(),
 	"filters-type-option-Actions",
 );
-await kit.press("escape");
+await kit.press("Escape");
 kit.check("Escape closes the type filter", !kit.exists("filters-type-list"));
 kit.expect(
 	"Escape returns focus to the trigger",
 	typeFocus(),
 	"filters-type-trigger",
 );
-await kit.press("enter");
-await kit.press("down enter");
+await kit.press("Enter");
+await kit.press("ArrowDown Enter");
 await kit.settle(500);
 kit.expect(
 	"a pick returns focus to the trigger",
@@ -334,36 +333,36 @@ const focusedTestId = () => {
 
 // The key a layout types is what counts: gpuix's `code` is derived from `key`, so
 // the key that types "t" (Dvorak's physical K) reports key "t", code "KeyT".
-await kit.press(`${mod}-t`);
-kit.check(`${mod}-t does not open the menu`, !isOpen());
-await kit.press(`${mod}-alt-k`);
-kit.check(`${mod}-alt-k does not open the menu`, !isOpen());
-await kit.press(`${mod}-k`);
-kit.check(`${mod}-k opens the menu`, isOpen());
+await kit.press(`${mod}+t`);
+kit.check(`${mod}+t does not open the menu`, !isOpen());
+await kit.press(`${mod}+Alt+k`);
+kit.check(`${mod}+Alt+k does not open the menu`, !isOpen());
+await kit.press(`${mod}+k`);
+kit.check(`${mod}+k opens the menu`, isOpen());
 await kit.settle(400);
-await kit.press(`${mod}-k`);
+await kit.press(`${mod}+k`);
 await kit.settle(400);
-kit.check(`${mod}-k closes it again`, !isOpen());
+kit.check(`${mod}+k closes it again`, !isOpen());
 
 // ─── Modified arrows ─────────────────────────────────────────────────────────
 
-await kit.press(`${mod}-k`);
+await kit.press(`${mod}+k`);
 await kit.settle(400);
 kit.check("menu open for the arrow checks", isOpen());
 kit.check("starts on All", tabState() === "all", tabState());
-for (const modifier of ["shift", "alt", "ctrl", "cmd"]) {
-	await kit.press(`${modifier}-right`);
+for (const modifier of ["Shift", "Alt", "Control", "Meta"]) {
+	await kit.press(`${modifier}+ArrowRight`);
 	kit.check(
-		`${modifier}-right keeps the tab`,
+		`${modifier}+ArrowRight keeps the tab`,
 		tabState() === "all",
 		tabState(),
 	);
-	await kit.press(`${modifier}-left`);
-	kit.check(`${modifier}-left keeps the tab`, tabState() === "all", tabState());
+	await kit.press(`${modifier}+ArrowLeft`);
+	kit.check(`${modifier}+ArrowLeft keeps the tab`, tabState() === "all", tabState());
 }
-await kit.press("right");
+await kit.press("ArrowRight");
 kit.check("bare right switches to Pages", tabState() === "page", tabState());
-await kit.press("left");
+await kit.press("ArrowLeft");
 kit.check("bare left switches back to All", tabState() === "all", tabState());
 
 // ─── A tab click keeps the keyboard in the field ─────────────────────────────
@@ -376,7 +375,7 @@ kit.check(
 	focused === "site-menu-input",
 	focused,
 );
-await kit.press("right");
+await kit.press("ArrowRight");
 kit.check(
 	"right after a tab click moves to Settings",
 	tabState() === "setting",
@@ -386,12 +385,12 @@ kit.check(
 // ─── The scrim finishes its fade ─────────────────────────────────────────────
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-await kit.press("escape");
+await kit.press("Escape");
 await kit.settle(400);
 kit.check("escape closes the menu", !isOpen());
-await kit.press(`${mod}-k`);
+await kit.press(`${mod}+k`);
 await kit.settle(500);
-renderer.simulateKeystrokes("escape");
+renderer.simulateKeystrokes("Escape");
 const closedAt = performance.now();
 while (isOpen() && performance.now() - closedAt < 1000) {
 	renderer.flush();
@@ -409,9 +408,12 @@ kit.check(
 // ─── The home hero ───────────────────────────────────────────────────────────
 
 await kit.click("nav-showcase");
-await clipboard.writeText("untouched");
+// The page keeps the scroll position the list checks left it at.
+renderer.nativeSimulateScrollWheel(700, 400, 0, -10000);
+await kit.settle(300);
+await navigator.clipboard.writeText("untouched");
 await kit.click("hero-copy");
-const copied = await clipboard.readText();
+const copied = await navigator.clipboard.readText();
 kit.check(
 	"Copy install prompt writes the starter prompt",
 	copied.startsWith("Start a new React app with Fluid Functionalism"),

@@ -30,7 +30,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 ## The frame fills the window and scrolls its centre column
 
-- **Cause:** `port choice` (the window is a fixed panel, not a scrolling document).
+- **Cause:** `port choice` (the window is a fixed panel, not a scrolling document; each screen scrolls itself in a `height: 100%` `ScrollArea`, so a sticky nav and card would only restate what the frame's height already does, and adopting the source means turning the four screens into page-scroll layouts).
 - **Original:** the nav is `sticky top-0 h-screen`, the right panel is its own component, and the page scrolls as a whole (`concept-frame.tsx:53`, `:41-46`). The nav is `hidden lg:flex`.
 - **Port:** the frame is the panel's height, so the nav and the card stay put and the screen scrolls inside the centre column (`src/pages/concepts/frame.tsx:30-62`). A full-layout page's wrapper now has the panel's height (`src/app.tsx`, the `App` page column). The nav is always shown, at 224px; there is no `lg` breakpoint.
 - **Workaround:** none.
@@ -87,7 +87,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `not ported yet` for the shadow transition; `port choice` for the link.
 - **Original:** each row is `<a href="#answer">` (jumps to the question heading) with `transition-shadow duration-100 hover:shadow-surface-4` (`lumen/page.tsx:114-140`).
-- **Port:** a `div` with the `surface-2` fill and `shadowSurface(2)`, and `hover: { boxShadow: shadowSurface(4) }`, which switches at once (`src/pages/concepts-lumen.tsx:204-262`; `shadowSurface` is the surfaces page's helper, `src/pages/surfaces/elevated.tsx`). A click does nothing.
+- **Port:** a `div` with the `surface-2` fill and `shadow(2)`, and `hover: { boxShadow: shadow(4) }`, which switches at once (`src/pages/concepts-lumen.tsx:204-262`; `shadow` is the `--shadow-N` helper in `src/lib/theme.ts`). A click does nothing.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -258,7 +258,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice`.
 - **Original:** `h-screen` column, `max-w-[960px]`, `flex-1 overflow-y-auto` content; the board is `grid-cols-1 md:grid-cols-3`; the triage panel is `rounded-2xl`; avatars and ID text are `bg-blue-500` ... `text-[10px]`, `font-mono`; surfaces are `surfaceClasses(2, 2)` (`beacon/page.tsx:107-118`, `:168`, `:184`, `:286`, `:382`).
-- **Port:** the column is the frame's height with the issue list in the port's `ScrollArea` (a drawn scrollbar); the board is always three columns (no breakpoint); the panel radius is `shape.container + 4` (16 rounded, 28 pill; the source's `rounded-2xl` is an unchecked guess at its shape-map value); avatar colours are the badge palette's blue, violet, emerald and rose, which are Tailwind's 500s; mono text is Menlo; surfaces are `surface2` with `shadowSurface(2)`, as in Lumen. The triage panel's "done" check is the palette's emerald.
+- **Port:** the column is the frame's height with the issue list in the port's `ScrollArea` (a drawn scrollbar); the board is always three columns (no breakpoint); the panel radius is `shape.container + 4` (16 rounded, 28 pill; the source's `rounded-2xl` is an unchecked guess at its shape-map value); avatar colours are the badge palette's blue, violet, emerald and rose, which are Tailwind's 500s; mono text is Menlo; surfaces are `surface2` with `shadow(2)`, as in Lumen. The triage panel's "done" check is the palette's emerald.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -274,10 +274,9 @@ Original: `app/concepts/quill/page.tsx`. Ported in `src/pages/concepts-quill.tsx
 
 ## Quill: Add block is a popup `DropdownMenu`, not an absolutely placed `Dropdown`
 
-- **Cause:** `gpuix gap` (paint order) and `port choice`.
+- **Cause:** `port choice` (the popup brings flipping, outside-press and Escape dismissal and focus return for free; the inline `Dropdown` in an absolute box would also work now, as the Beacon toolbar does: the box's wrapper takes a `zIndex` so it paints over the heading and table after it).
 - **Original:** the open menu is the inline `Dropdown` in an `absolute left-0 top-full z-50 mt-1.5` box under a `Button` with `active={open}`; a document `mousedown` closes it (`quill/page.tsx:73-113`).
 - **Port:** `DropdownMenu` + `DropdownTrigger` + `DropdownContent` with the same five `MenuItem` rows and the "Basic blocks" label (`src/pages/concepts-quill.tsx:149-181`). It opens on press or by Enter / Space / arrows, flips above the button when there is no room below, closes on outside press, Esc, and picking a row, and returns focus to the button. Picking a row does nothing else (the source's `onSelect` only closes). The trigger is the port's `compact` Button (no `sm`) and has no `active` prop, so it shows no pressed background while the menu is open.
-- **gpuix lacks:** a stacking order across parents: `zIndex` orders siblings only (`~/code/fdarian/gpuix/FORK.md:603`), so the inline `Dropdown` positioned absolute would paint under the heading and table that follow it.
 - **Workaround:** the popup's anchored surface.
 - **Fidelity:** approximated.
 - **Components it hits:** dropdown (`Dropdown` has no trigger, positioning or dismissal), button.
@@ -285,8 +284,8 @@ Original: `app/concepts/quill/page.tsx`. Ported in `src/pages/concepts-quill.tsx
 ## Quill: the Initiatives table cells take text only and the name is muted
 
 - **Cause:** `port choice` (the port's `TableCell` / `TableHead` wrap their children in one `<text>`; the cell colour is fixed: muted unless the row is lit, foreground in the header).
-- **Original:** the name cell is `text-foreground`, the owner and target `text-muted-foreground`, the target `tabular-nums`, status a `Badge variant="dot" size="sm"` (`quill/page.tsx:228-246`).
-- **Port:** the name cell is muted like the others (lit rows go foreground). The status Badge sits in a row `div` inside the cell so it hugs its width instead of stretching (`src/pages/concepts-quill.tsx:425-445`); `size="compact"` stands for `sm`. The target digits are not tabular.
+- **Original:** the name cell is `text-foreground`, the owner and target `text-muted-foreground`, status a `Badge variant="dot" size="sm"` (`quill/page.tsx:228-246`).
+- **Port:** the name cell is muted like the others (lit rows go foreground). The status Badge sits in a row `div` inside the cell so it hugs its width instead of stretching (`src/pages/concepts-quill.tsx:425-445`); `size="compact"` stands for `sm`.
 - **Components it hits:** table (a cell colour prop would close it).
 - **Fidelity:** approximated.
 

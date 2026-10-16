@@ -40,23 +40,22 @@ const kit = await createCheck(() => (
 	</div>
 ));
 const renderer = kit.renderer;
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
- * Samples a row and the ring frame by frame. A snapping ring is re-measured one
+ * Runs `trigger` with the motion clock held, then samples a row and the ring on each 8 ms frame. A snapping ring is re-measured one
  * frame after its row moves, so it sits on the row's previous position; `behind`
  * is how far the ring falls short of that, `lag` its distance from the row now.
  */
-async function sample(testId: string, frames: number) {
+function sample(testId: string, frames: number, trigger: () => void) {
 	let behind = 0;
 	let lag = 0;
 	let travel = 0;
 	const start = kit.bounds(testId).y;
 	let previous = start;
+	renderer.clockPause();
+	trigger();
 	for (let frame = 0; frame < frames; frame++) {
-		renderer.flush();
-		renderer.dispatchNativeEvents();
-		await sleep(8);
+		kit.step(frame === 0 ? 0 : 8);
 		const row = kit.bounds(testId).y;
 		const ring = kit.bounds("menu-focus-ring").y + 2;
 		travel = Math.max(travel, Math.abs(row - start));
@@ -66,12 +65,13 @@ async function sample(testId: string, frames: number) {
 		}
 		previous = row;
 	}
+	renderer.clockResume();
 	return { behind, lag, travel };
 }
 
-renderer.simulateKeystrokes("tab");
+renderer.simulateKeystrokes("Tab");
 await kit.settle(200);
-renderer.simulateKeystrokes("end");
+renderer.simulateKeystrokes("End");
 await kit.settle(300);
 kit.check(
 	"the last row has the focus",
@@ -79,8 +79,7 @@ kit.check(
 );
 
 const parentBottom = kit.bounds("parent").y + kit.bounds("parent").height;
-setOpen(true);
-const opening = await sample("last", 40);
+const opening = sample("last", 40, () => setOpen(true));
 kit.check(
 	"the row moved under the ring",
 	opening.travel > 20,
@@ -98,8 +97,7 @@ kit.expect(
 	56,
 );
 
-renderer.simulateKeystrokes("up");
-const moving = await sample("sub-2", 12);
+const moving = sample("sub-2", 12, () => renderer.simulateKeystrokes("ArrowUp"));
 kit.check(
 	"a ring that changes row glides to it",
 	moving.lag > 0.5,

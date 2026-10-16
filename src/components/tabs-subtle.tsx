@@ -1,6 +1,6 @@
 import {
 	buttonProps,
-	type EventPayload,
+	type DomEvent,
 	type HostElement,
 	type KeyEvent,
 	motion,
@@ -185,7 +185,6 @@ export function TabsSubtle(props: {
 					userSelect: "none",
 				}}
 			>
-				{/* Layers first: gpuix has no zIndex, so the transparent tabs paint over them by document order. */}
 				<Show when={selectedRect()}>
 					{(rect: () => ItemRect) => (
 						<motion.div
@@ -343,6 +342,7 @@ export function TabsSubtleItem(props: {
 			heavy={isSelected()}
 			color={isActive() ? color.foreground : color.mutedForeground}
 			textStyle={metrics().text}
+			fade
 		/>
 	);
 
@@ -365,24 +365,22 @@ export function TabsSubtleItem(props: {
 			id={tabId()}
 			aria-controls={isSelected() ? panelId() : undefined}
 			testId={props.testId}
-			onFocus={(event: EventPayload) => {
+			onFocus={(event: DomEvent) => {
 				scope.focusRing.focus(props.index, event);
 				scope.focusTab(props.index);
 				scope.hover.setActiveIndex(props.index);
 			}}
-			onBlur={() => {
+			onBlur={(event: DomEvent) => {
 				scope.focusRing.blur(props.index);
 				// Focus moving to a sibling tab stays inside the list: only a real exit drops the highlight.
-				queueMicrotask(() => {
-					const focused = renderer.getFocusedElementId?.();
-					for (const tab of scope.elements.values()) {
-						if (tab.id === focused) return;
-					}
-					if (!scope.mouseInside()) scope.hover.setActiveIndex(null);
-				});
+				for (const tab of scope.elements.values()) {
+					if (tab === event.relatedTarget) return;
+				}
+				if (!scope.mouseInside()) scope.hover.setActiveIndex(null);
 			}}
 			style={{
 				position: "relative",
+				zIndex: 10,
 				display: "flex",
 				flexDirection: "row",
 				alignItems: "center",
@@ -402,6 +400,8 @@ export function TabsSubtleItem(props: {
 						name={icon()}
 						size={metrics().icon}
 						strokeWidth={isActive() ? 2 : 1.5}
+						easeStroke
+						fade
 						color={isActive() ? color.foreground : color.mutedForeground}
 					/>
 				)}
@@ -423,7 +423,7 @@ export function TabsSubtleItem(props: {
 					}}
 				>
 					<div
-						onLayout={(event: EventPayload) => {
+						onLayout={(event: DomEvent) => {
 							if (event.width === undefined)
 								throw new Error("onLayout reported no width");
 							setUnfoldedWidth(event.width);

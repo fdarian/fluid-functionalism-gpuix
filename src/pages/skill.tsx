@@ -126,13 +126,13 @@ function Example(props: {
 }
 
 export async function scenarios(shot: ShotContext) {
-	// The wheel keeps GPUI's sign: negative scrolls down. It scrolls from the page column's left gutter so the pointer never rests inside an example, where it would stop the script.
+	// Scrolls from the page column's left gutter so the pointer never rests inside an example, where it would stop the script.
 	await shot.hover("skill-timeline");
 	shot.capture("timeline-hover");
 	await shot.moveTo(285, 400);
 
 	// Each example plays on its own once it is on screen: the script's cursor glides and clicks.
-	await shot.scroll(285, 400, 0, -700);
+	await shot.scroll(285, 400, 0, 700);
 	await shot.settle(900);
 	shot.capture("tabs-playing");
 	await shot.settle(1600);
@@ -145,7 +145,7 @@ export async function scenarios(shot: ShotContext) {
 	shot.capture("tabs-visitor-generic");
 	await shot.moveTo(285, 400);
 
-	await shot.scroll(285, 400, 0, -500);
+	await shot.scroll(285, 400, 0, 500);
 	await shot.settle(1200);
 	shot.capture("menu-playing");
 	await shot.settle(1200);
@@ -159,14 +159,14 @@ export async function scenarios(shot: ShotContext) {
 	shot.capture("menu-visitor-generic");
 	await shot.moveTo(285, 400);
 
-	await shot.scroll(285, 400, 0, -500);
+	await shot.scroll(285, 400, 0, 500);
 	await shot.settle(1500);
 	shot.capture("copy-playing");
 	await shot.hover("copy-skill");
 	shot.capture("copy-visitor-hover");
 	await shot.moveTo(285, 400);
 
-	await shot.scroll(285, 400, 0, -600);
+	await shot.scroll(285, 400, 0, 600);
 	await shot.settle(1500);
 	shot.capture("press-playing");
 	await shot.down("press-generic-1");
