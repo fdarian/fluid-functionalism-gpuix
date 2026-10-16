@@ -5,9 +5,9 @@ import type { IconName } from "../lib/icons";
 import {
 	color,
 	focusRing,
-	shape,
 	type as scale,
 	scheme,
+	shape,
 	motion as tween,
 } from "../lib/theme";
 import { type FileLike, FileThumbnail } from "./file-thumbnail";
@@ -78,7 +78,10 @@ export function ChatMessage(props: {
 	time?: string;
 	actions?: JSX.Element;
 	testId?: string;
-	children?: string;
+	/** Text, or your own blocks (rich text, several paragraphs); text is set in the message style. */
+	children?: JSX.Element;
+	/** Lets the message use the whole row instead of 80% of it. */
+	fullWidth?: boolean;
 }) {
 	const [hovered, setHovered] = createSignal(false);
 	const isUser = () => props.from === "user";
@@ -97,7 +100,7 @@ export function ChatMessage(props: {
 				display: "flex",
 				flexDirection: "column",
 				gap: 6,
-				maxWidth: "80%",
+				maxWidth: props.fullWidth === true ? "100%" : "80%",
 				alignItems: isUser() ? "flex-end" : "flex-start",
 				alignSelf: isUser() ? "flex-end" : "flex-start",
 			}}
@@ -132,9 +135,13 @@ export function ChatMessage(props: {
 							: {}),
 					}}
 				>
-					<text style={{ ...subtitle, color: color.foreground }}>
-						{props.children}
-					</text>
+					{typeof props.children === "string" ? (
+						<text style={{ ...subtitle, color: color.foreground }}>
+							{props.children}
+						</text>
+					) : (
+						props.children
+					)}
 				</div>
 			</Show>
 			<Show when={hasMeta()}>
