@@ -78,6 +78,9 @@ interface MenuScope {
 
 const MenuScopeContext = createContext<MenuScope>();
 
+/** The callbacks of the menus inside a `SidebarContent`, run on each scroll of it. */
+const ScrollListenersContext = createContext<Set<() => void>>();
+
 function useMenuScope() {
 	const scope = useContext(MenuScopeContext);
 	if (scope === undefined) throw new Error("Must be used inside SidebarMenu");
@@ -131,9 +134,14 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 			return row.disabled();
 		},
 	});
+	// The scroller is an ancestor, so its scroll events never reach this menu's own handlers.
+	const scrollListeners = useContext(ScrollListenersContext);
+	if (scrollListeners !== undefined) {
+		scrollListeners.add(hover.handlers.onScroll);
+		onCleanup(() => scrollListeners.delete(hover.handlers.onScroll));
+	}
 
 	const focusRing = createFocusRing(hover);
-	let mouseInside = false;
 	const isDisabled = (index: number) => {
 		const row = rows.get(index);
 		if (row === undefined) throw new Error(`No row registered at ${index}`);
@@ -178,7 +186,8 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 			for (const row of rows.values()) {
 				if (row.element === event.relatedTarget) return;
 			}
-			if (!mouseInside) hover.setActiveIndex(null);
+			// Focus leaving the menu takes the highlight with it, pointer inside or not (`onBlur`, `registry/default/sidebar-menu.tsx:402-409`): the next mouse move restores it. A highlight left under a stationary pointer would sit beside the active row once the page changes.
+			hover.setActiveIndex(null);
 		},
 		focusSibling(index, step) {
 			const target =
@@ -234,14 +243,6 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 			<div
 				testId={props.testId}
 				{...hover.containerProps}
-				onMouseEnter={() => {
-					mouseInside = true;
-					hover.handlers.onMouseEnter();
-				}}
-				onMouseLeave={() => {
-					mouseInside = false;
-					hover.handlers.onMouseLeave();
-				}}
 				style={{
 					position: "relative",
 					display: "flex",
@@ -599,9 +600,13 @@ export function SidebarFooter(props: { children: JSX.Element; flushBottom?: bool
 
 /** The source's `SidebarContent`: a `ScrollArea` with `scroll-fade` and a hairline on the end edge while there is more below (the start edge's is dropped, as the site nav draws none). */
 export function SidebarContent(props: { children: JSX.Element }) {
+	const scrollListeners = new Set<() => void>();
 	return (
 		<ScrollArea
 			fade
+			onScroll={() => {
+				for (const listener of scrollListeners) listener();
+			}}
 			divider={{ start: false }}
 			style={{ flexGrow: 1, minHeight: 0, width: "100%" }}
 		>
@@ -613,7 +618,9 @@ export function SidebarContent(props: { children: JSX.Element }) {
 					paddingTop: 0,
 				}}
 			>
-				{props.children}
+				<ScrollListenersContext.Provider value={scrollListeners}>
+					{props.children}
+				</ScrollListenersContext.Provider>
 			</div>
 		</ScrollArea>
 	);
