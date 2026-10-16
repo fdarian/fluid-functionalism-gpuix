@@ -69,7 +69,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Cause:** `gpuix gap`.
 - **Original:** Base UI returns focus to the trigger on close.
 - **Port:** `returnFocus` defers the focus read to a `setTimeout(..., 0)` (`select.tsx:240-245`, `popup-trigger.ts:11-18`).
-- **gpuix lacks:** a focus read inside mousedown / mouseup / click handlers (README Bugs, `VIEW_BUSY` row). That row also says a pointer-opened popup can fail to open because `DismissableLayer` does the same read (`popup.tsx:69`); not reproduced for select here.
+- **gpuix lacks:** a focus read inside mousedown / mouseup / click handlers (README Bugs, `VIEW_BUSY` row). `DismissableLayer` does the same read while it mounts (`popup.tsx:74`), so a pointer press that opens the select throws (reproduced: `bun scripts/screenshots.tsx button` fails in `onTriggerMouseDown`, `select.tsx:253`; README Bugs row "every popup on gpuix's `DismissableLayer`").
 - **Workaround:** the deferred read; the rest is open.
 - **Fidelity:** exact for the focus return.
 - **Components it hits:** dropdown, color-picker, combobox, tooltip.

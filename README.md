@@ -6,7 +6,7 @@ Can [gpuix](https://github.com/remorses/gpuix), a GPUI-backed renderer with no D
 Yes. 32 demo pages cover every component of the library (36 component files, counting shared parts such as
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Every place the port looks or behaves differently from the source is recorded in
-[Drift from the source](#drift-from-the-source): 576 entries, each tagged by cause (gpuix gap, port choice or not
+[Drift from the source](#drift-from-the-source): 543 entries, each tagged by cause (gpuix gap, port choice or not
 ported yet).
 
 | | |
@@ -40,7 +40,7 @@ bun scripts/live-check.tsx             # the same flow against the real window, 
 ```
 
 `screenshots.tsx` takes a file name from `src/demos/` (or `showcase`) and writes `initial.png`, whatever the demo's
-`scenarios` capture, and `light.png` (the page after flipping the theme through the real control). It runs on
+`scenarios` capture, and `light.png` (the page after flipping the theme through the real control; that step currently throws on every demo, see the `DismissableLayer` row under Bugs). It runs on
 gpuix's offscreen test renderer, so it needs the native addon but no window. `live-check.tsx` drives the real window
 through the automation client and writes to `screenshots/live/`.
 
@@ -77,7 +77,7 @@ settle / expectText / capture`; see `ShotContext` in `src/lib/demo.ts`. Give ele
 |---|---|
 | `theme.ts` | Both columns of every `light-dark()` in `app/globals.css` (`color-mix()` mixed offline), type scale, radii, springs. `color.x` reads a `scheme` signal, so a JSX prop that touches it re-colours on a theme change; read tokens inside JSX or a function, never at module scope. `withAlpha`, `surface(level)`, `focusRing(offset)`. |
 | `fluid-hover.ts`, `fluid-highlight.tsx` | The site's `use-fluid-hover`: rows register with a `ResizeObserver`, their boxes are read with `getBoundingClientRect` when one reports, `pickNearest` (ported verbatim) resolves the pointer to a row including gaps, and one highlight glides between rows. `hover.containerProps` and `useHoverItem` wire a list. |
-| `focus-ring.tsx` | The shared keyboard focus ring of accordion groups, tabs, tabs-subtle, checkbox, radio and select: one outline box 2px outside the focused row that springs between the rects fluid hover measures. `createFocusRing(hover)` collects `onFocus` / `onBlur` from the rows and counts only `event.focusVisible`, so a click draws none; the ring fades out 60 ms after the last blur and appears in place, not travelling from where it was. |
+| `focus-ring.tsx` | The shared keyboard focus ring of accordion groups, tabs, tabs-subtle, checkbox, radio, select and the sidebar menu: one outline box 2px outside the focused row that springs between the rects fluid hover measures. `createFocusRing(hover)` collects `onFocus` / `onBlur` from the rows and counts only `event.focusVisible`, so a click draws none; the ring fades out 60 ms after the last blur and appears in place, not travelling from where it was. |
 | `measured-height.ts` | A box whose height springs to its content's: the content box reports its size through `onLayout`, used by every collapse. |
 | `popup.tsx`, `presence.ts` | Popup chrome on `<anchored fit="flip">` (`PopupSurface`; `createPlacementState` keeps the reported side and available height), and `createPresence` (mounted outlives open so an exit can play). |
 | `list-nav.ts` | `moveIndex` (skip disabled, wrap or clamp) and `revealRow` (scroll a row into view by hand). |
@@ -99,40 +99,40 @@ names two causes counts as mixed. Base UI behaviour, row by row, is in [`BASE-UI
 
 | Component | gpuix gap | port choice | not ported yet | mixed | total |
 |---|---:|---:|---:|---:|---:|
-| [accordion](drift/accordion.md) | 2 | 9 | 13 | 0 | 24 |
-| [ask-user-questions](drift/ask-user-questions.md) | 2 | 5 | 11 | 3 | 21 |
+| [accordion](drift/accordion.md) | 2 | 9 | 12 | 0 | 23 |
+| [ask-user-questions](drift/ask-user-questions.md) | 2 | 5 | 9 | 3 | 19 |
 | [badge](drift/badge.md) | 1 | 2 | 2 | 0 | 5 |
-| [banner](drift/banner.md) | 3 | 3 | 11 | 1 | 18 |
+| [banner](drift/banner.md) | 3 | 3 | 11 | 0 | 17 |
 | [button](drift/button.md) | 4 | 3 | 5 | 0 | 12 |
-| [card](drift/card.md) | 6 | 8 | 12 | 1 | 27 |
-| [carousel-dots](drift/carousel-dots.md) | 2 | 4 | 3 | 1 | 10 |
-| [chat-message](drift/chat-message.md) | 2 | 4 | 5 | 2 | 13 |
-| [checkbox-group](drift/checkbox-group.md) | 3 | 0 | 10 | 0 | 13 |
-| [color-picker](drift/color-picker.md) | 3 | 9 | 24 | 1 | 37 |
-| [combobox](drift/combobox.md) | 7 | 12 | 13 | 1 | 33 |
-| [command-menu](drift/command-menu.md) | 5 | 3 | 20 | 2 | 30 |
+| [card](drift/card.md) | 6 | 7 | 12 | 1 | 26 |
+| [carousel-dots](drift/carousel-dots.md) | 2 | 3 | 3 | 1 | 9 |
+| [chat-message](drift/chat-message.md) | 2 | 4 | 4 | 2 | 12 |
+| [checkbox-group](drift/checkbox-group.md) | 3 | 0 | 8 | 0 | 11 |
+| [color-picker](drift/color-picker.md) | 3 | 8 | 21 | 1 | 33 |
+| [combobox](drift/combobox.md) | 7 | 12 | 10 | 1 | 30 |
+| [command-menu](drift/command-menu.md) | 6 | 3 | 17 | 2 | 28 |
 | [dialog](drift/dialog.md) | 8 | 2 | 4 | 1 | 15 |
 | [dropdown](drift/dropdown.md) | 7 | 5 | 12 | 2 | 26 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
-| [input-copy](drift/input-copy.md) | 2 | 4 | 7 | 1 | 14 |
-| [input-group](drift/input-group.md) | 1 | 1 | 6 | 1 | 9 |
-| [input-message](drift/input-message.md) | 4 | 1 | 17 | 2 | 24 |
+| [input-copy](drift/input-copy.md) | 2 | 3 | 7 | 1 | 13 |
+| [input-group](drift/input-group.md) | 1 | 1 | 4 | 1 | 7 |
+| [input-message](drift/input-message.md) | 4 | 1 | 16 | 1 | 22 |
 | [mobile-drawer](drift/mobile-drawer.md) | 4 | 2 | 2 | 0 | 8 |
 | [queued-stack](drift/queued-stack.md) | 4 | 4 | 5 | 0 | 13 |
-| [radio-group](drift/radio-group.md) | 4 | 1 | 8 | 0 | 13 |
+| [radio-group](drift/radio-group.md) | 4 | 1 | 7 | 0 | 12 |
 | [scroll-area](drift/scroll-area.md) | 3 | 6 | 3 | 1 | 13 |
-| [select](drift/select.md) | 8 | 7 | 11 | 2 | 28 |
-| [sidebar](drift/sidebar.md) | 1 | 6 | 29 | 0 | 36 |
-| [site](drift/site.md) | 3 | 4 | 24 | 3 | 34 |
-| [slider](drift/slider.md) | 5 | 5 | 4 | 3 | 17 |
-| [switch](drift/switch.md) | 2 | 2 | 4 | 2 | 10 |
+| [select](drift/select.md) | 8 | 7 | 8 | 2 | 25 |
+| [sidebar](drift/sidebar.md) | 1 | 6 | 27 | 0 | 34 |
+| [site](drift/site.md) | 4 | 4 | 24 | 3 | 35 |
+| [slider](drift/slider.md) | 4 | 5 | 4 | 3 | 16 |
+| [switch](drift/switch.md) | 2 | 2 | 3 | 2 | 9 |
 | [table](drift/table.md) | 3 | 1 | 5 | 0 | 9 |
-| [tabs-subtle](drift/tabs-subtle.md) | 1 | 5 | 4 | 1 | 11 |
-| [tabs](drift/tabs.md) | 2 | 3 | 5 | 0 | 10 |
+| [tabs-subtle](drift/tabs-subtle.md) | 1 | 5 | 2 | 1 | 9 |
+| [tabs](drift/tabs.md) | 2 | 3 | 4 | 0 | 9 |
 | [thinking-indicator](drift/thinking-indicator.md) | 1 | 2 | 4 | 0 | 7 |
-| [thinking-steps](drift/thinking-steps.md) | 3 | 3 | 8 | 1 | 15 |
+| [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 7 | 1 | 15 |
 | [tooltip](drift/tooltip.md) | 4 | 7 | 2 | 1 | 14 |
-| **Total** | **111** | **137** | **294** | **34** | **576** |
+| **Total** | **113** | **133** | **265** | **32** | **543** |
 
 ### gpuix gaps across components
 
@@ -145,7 +145,9 @@ offer it. A count is given only where the code shows it.
 
 | Used by | What | Workaround here |
 |---|---|---|
-| combobox, dropdown, select, tooltip (every popup on gpuix's `DismissableLayer`), and `returnFocusTo` in dropdown, select, color-picker | `VIEW_BUSY`: reading focus state (`getFocusedElementId`, `matches(":focus")`) inside a mousedown, mouseup, click or wheel handler throws on macOS, because those run in synchronous dispatch. gpuix's own `DismissableLayer` does it, so a pointer-opened popup fails to open (seen headless, likely live too). There is no `document.activeElement` | none yet |
+| combobox, dropdown, select, tooltip (every popup on gpuix's `DismissableLayer`), and `returnFocusTo` in dropdown, select, color-picker | `VIEW_BUSY`: reading focus state (`getFocusedElementId`, `matches(":focus")`) inside a mousedown, mouseup, click or wheel handler throws on macOS and in the test renderer, because those run in synchronous dispatch. gpuix's own `DismissableLayer` does it too, see the next row. There is no `document.activeElement` | none yet |
+| every popup on gpuix's `DismissableLayer` (select, combobox, dropdown, color-picker), when a pointer press opens it | Since gpuix `aae8c790` a press dispatches synchronously on macOS and in the test renderer. `DismissableLayer` reads `renderer.getFocusedElementId()` while it mounts (`packages/solid/src/components/floating.ts:80`), and a popup that a press handler opens mounts inside that dispatch, so the read throws `VIEW_BUSY` (`packages/native/src/events/sync_dispatch.rs:154`). Reproduced in the test renderer through `select.tsx`'s `onMouseDown` (`bun scripts/screenshots.tsx button`); not run in the live window. Windows and Linux queue the press, so the read is outside the dispatch there (not run) | none yet. `scripts/screenshots.tsx` fails at its final theme-switch step (a press on the theme select) for every demo, so the `light.png` files are stale; the scenario scripts open popups by keyboard (`scripts/check-popups.tsx`, `scripts/check-dropdown.tsx`) |
+| command-menu, and any list that keeps focus in a field while it is pressed | On Windows and Linux the press reaches JavaScript through a queue after native has already moved focus, so `preventDefault()` in `onMouseDown` or `onPointerDown` has no effect and a press on something not focusable still blurs the field (gpuix `README.md:3259-3266`). Seen in the command menu: clicking a tab blurs the field. macOS and the test renderer apply it | `preventDefault()` in `onMouseDown` on the list and the tab row (`drift/command-menu.md`); it works on macOS only. Not run on Windows or Linux |
 | slider | `MotionValue.animate` and `jump` used to throw inside a press, release or key handler ("This renderer call cannot run inside an event handler that native called synchronously"). The fork now defers a motion-value write made there until the input returns (`renderer.rs:1389-1412`, FORK.md:361-363). Values derived in JS (`createTransform` of several values) still trail their inputs by one frame (FORK.md:915-917) | `createMotionWrites` queues each write in a microtask (`drift/slider.md`); it predates the fork's deferral and is not re-tested against it |
 | accordion, banner, button, card, carousel-dots, chat-message, input-copy, input-message, tabs, tabs-subtle, thinking-steps (all use `buttonProps`) | `buttonProps` handles keydown on the way up, so a `buttonProps` element nested in another is clicked twice on Enter: the inner one clicks itself and the outer one clicks the same target. The fix is to act only when `target === currentTarget` | none; nested cases are not counted |
 | dialog, mobile-drawer | `DialogBackdrop` closes on mousedown; the DOM and Base UI close on click | The app's own backdrop div closes on a click that presses and releases on it |
@@ -190,6 +192,7 @@ offer it. A count is given only where the code shows it.
 | color-picker | A JS-visible CSS colour resolver: named colours and `color-mix()` resolve natively for styles only | `parseColor` reads hex, `rgb(a)`, `hsl(a)` and `oklch`; a name is rejected |
 | queued-stack | An input-device signal: `matchMedia` fixes `hover` to `hover` and `pointer` to `fine`, so `(hover: none)` never matches | none; desktop only |
 | combobox, select (any form) | A submit button: `SubmitEvent.submitter` is always `null` | The demos call `form.requestSubmit()` |
+| site menu (`isModK`) | A physical key: gpuix derives `code` from GPUI's layout-dependent `key`, so a non-Latin letter reports `code` `""` (`packages/native/src/events/key_names.rs:9-12`, `:138-160`). On Windows and Linux, Ctrl plus a Cyrillic or Greek letter cannot match a shortcut through `code`, as the source's `matchesShortcut` does. macOS reports the layout's Cmd letter, so ⌘K works there | none; the sidebar's Search row opens the menu (`drift/site.md`). Not run on Windows or Linux |
 
 ## Harness and shared-lib notes
 
@@ -262,6 +265,6 @@ now does that the port has not picked up.
 | `AnimatePresence` exit of the popup | the popup stays mounted for 60 ms while its opacity fades | Approximated |
 
 Not ported there: pill shape, the Radius / Size / Icons / Primitive rows of the customise card, multiple-select
-combobox and chips, rail resize, the traveling keyboard focus ring in the sidebar, row actions, and `gapClick` (a
+combobox and chips, rail resize, row actions, and `gapClick` (a
 click between rows is not routed to the highlighted row).
 </details>

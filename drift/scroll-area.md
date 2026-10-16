@@ -73,7 +73,7 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 - **Cause:** `not ported yet`.
 - **Original:** the sidebar content and the command-menu list are a `ScrollArea` with `scroll-divider` and `scroll-fade` (`registry/base/sidebar.tsx:297-301`, `registry/default/command-menu.tsx:1069-1138`).
-- **Port:** both use a bare `overflowY: "scroll"` scroller (`src/components/sidebar.tsx:381`, `src/components/command-menu.tsx:874`); the `divider` prop has no consumer.
+- **Port:** both use a bare `overflowY: "scroll"` scroller (`src/components/sidebar.tsx:512`, `src/components/command-menu.tsx:907`); the `divider` prop has no consumer.
 - **Workaround:** gpuix's own overlay bar; the sidebar draws fixed hairlines.
 - **Fidelity:** dropped for those two components.
 - **Components it hits:** sidebar, command-menu (see their drift files).

@@ -30,8 +30,9 @@ const steps = {
 } as const;
 
 /**
- * gpuix has no clipboard API, so the system command writes it. Rejects when
- * the command is missing or fails, which InputCopy shows as a red cross.
+ * Writes through the system command, not gpuix's `clipboard` (`@gpuix/solid`),
+ * which this component has not adopted yet. Rejects when the command is
+ * missing or fails, which InputCopy shows as a red cross.
  */
 export async function copyToClipboard(text: string) {
 	const command = process.platform === "darwin" ? "pbcopy" : "wl-copy";

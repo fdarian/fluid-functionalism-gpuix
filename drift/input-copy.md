@@ -77,7 +77,7 @@ repeating it.
 
 - **Cause:** `not ported yet`.
 - **Original:** `navigator.clipboard.writeText`, then an off-screen textarea and `execCommand("copy")` as fallback (`input-copy.tsx:77-110`).
-- **Port:** `copyToClipboard` spawns `pbcopy` on macOS and `wl-copy` on everything else (`input-copy.tsx:32-41`), and its comment says gpuix has no clipboard API. The fork has `navigator.clipboard.writeText` (`FORK.md:458`). On Windows and X11 without `wl-copy` every copy ends in the red cross.
+- **Port:** `copyToClipboard` spawns `pbcopy` on macOS and `wl-copy` on everything else (`input-copy.tsx:32-42`). gpuix has `navigator.clipboard.writeText` (`FORK.md:458`) and exports `clipboard` from `@gpuix/solid`, which `src/app.tsx:121` already uses. On Windows and X11 without `wl-copy` every copy ends in the red cross.
 - **Fidelity:** approximated (works on macOS only).
 
 ## Ambient size and shape, passthrough props
