@@ -9,7 +9,7 @@ import {
 	color,
 	colorFade,
 	radius,
-	type as scale,
+	siteType,
 	motion as tween,
 } from "../../lib/theme";
 import { Elevated } from "./elevated";
@@ -69,7 +69,7 @@ function RoleText(props: { role: RoleOption; checked: boolean; lit: boolean }) {
 				heavy={props.checked}
 				color={props.lit ? color.foreground : color.mutedForeground}
 			/>
-			<text style={{ ...scale.caption, color: color.mutedForeground }}>
+			<text style={{ ...siteType.caption, color: color.mutedForeground }}>
 				{props.role.description}
 			</text>
 		</div>

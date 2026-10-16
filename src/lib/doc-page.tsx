@@ -18,15 +18,13 @@ import {
 	focusRing,
 	type Scheme,
 	SchemeScope,
-	type as scale,
 	scheme,
+	siteType,
 	weight,
 	withAlpha,
 } from "./theme";
 
 export const MONO = "Menlo";
-/** `text-site-subtitle`, the role between `title` and `body`. */
-export const SUBTITLE = { fontSize: 14, lineHeight: 20 } as const;
 
 const NBSP = " ";
 
@@ -37,7 +35,7 @@ const rotateCcw = defineIcon(
 
 export function Prose(props: { children: JSX.Element }) {
 	return (
-		<text style={{ ...scale.body, color: color.mutedForeground }}>
+		<text style={{ ...siteType.body, color: color.mutedForeground }}>
 			{props.children}
 		</text>
 	);
@@ -72,7 +70,7 @@ function SectionTitle(props: { children: string }) {
 	return (
 		<text
 			style={{
-				...scale.title,
+				...siteType.title,
 				lineHeight: 16,
 				fontWeight: weight.semibold,
 				color: color.foreground,
@@ -108,7 +106,7 @@ export function SubHeading(props: { children: string; marginTop?: number }) {
 		<div style={{ marginTop: props.marginTop ?? 32 }}>
 			<text
 				style={{
-					...SUBTITLE,
+					...siteType.subtitle,
 					fontWeight: weight.semibold,
 					color: color.foreground,
 				}}
@@ -251,7 +249,7 @@ function CodeView(props: { code: string; minHeight: number }) {
 						<text
 							style={{
 								fontFamily: MONO,
-								...scale.body,
+								...siteType.body,
 								fontWeight: weight.normal,
 								color: color.foreground,
 								whiteSpace: "pre",

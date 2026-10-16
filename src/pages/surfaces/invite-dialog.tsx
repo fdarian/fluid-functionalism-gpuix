@@ -4,7 +4,7 @@ import { Icon } from "../../lib/icon";
 import {
 	color,
 	colorFade,
-	type as scale,
+	siteType,
 	surface,
 	weight,
 } from "../../lib/theme";
@@ -20,7 +20,7 @@ function FieldLabel(props: { children: string }) {
 	return (
 		<text
 			style={{
-				...scale.body,
+				...siteType.body,
 				fontWeight: weight.normal,
 				color: color.foreground,
 			}}
@@ -64,7 +64,7 @@ function Header() {
 				>
 					<text
 						style={{
-							...scale.caption,
+							...siteType.caption,
 							fontWeight: weight.semibold,
 							color: color.background,
 						}}
@@ -74,7 +74,7 @@ function Header() {
 				</div>
 				<text
 					style={{
-						...scale.title,
+						...siteType.title,
 						fontWeight: weight.semibold,
 						color: color.foreground,
 					}}
@@ -127,7 +127,7 @@ function EmailField() {
 					...colorFade,
 				}}
 			>
-				<text style={{ ...scale.body, color: color.mutedForeground }}>
+				<text style={{ ...siteType.body, color: color.mutedForeground }}>
 					email@gmail.com, email2@gmail.com...
 				</text>
 			</div>
@@ -156,7 +156,7 @@ function RoleTrigger() {
 				cursor: "pointer",
 			}}
 		>
-			<text style={{ ...scale.body, color: color.foreground }}>Member</text>
+			<text style={{ ...siteType.body, color: color.foreground }}>Member</text>
 			<Icon
 				name={CHEVRON_UP_ICON}
 				size={14}
@@ -195,7 +195,7 @@ function Footer() {
 			>
 				<text
 					style={{
-						...scale.body,
+						...siteType.body,
 						fontWeight: weight.normal,
 						color: color.foreground,
 					}}
@@ -219,7 +219,7 @@ function Footer() {
 			>
 				<text
 					style={{
-						...scale.body,
+						...siteType.body,
 						fontWeight: weight.semibold,
 						color: color.background,
 					}}

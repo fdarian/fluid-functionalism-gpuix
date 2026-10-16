@@ -4,8 +4,8 @@ import { DocSection, Prose, SubHeading } from "../lib/doc-page";
 import {
 	color,
 	type Scheme,
-	type as scale,
 	setThemeChoice,
+	siteType,
 } from "../lib/theme";
 import { ColorPickerDemo, InviteDialogDemo } from "./surfaces/examples";
 import { ProblemDemo } from "./surfaces/problem";
@@ -107,7 +107,7 @@ function ThemeLink(props: { theme: Scheme; children: string }) {
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			style={{
-				...scale.body,
+				...siteType.body,
 				color: hovered() ? color.foreground : color.mutedForeground,
 				textDecoration: "underline",
 				cursor: "pointer",

@@ -8,6 +8,7 @@ import {
 	radius,
 	SchemeScope,
 	type as scale,
+	siteType,
 	surface,
 	weight,
 } from "../../lib/theme";
@@ -249,7 +250,7 @@ export function SubstrateDemo() {
 							>
 								<text
 									style={{
-										...scale.caption,
+										...siteType.caption,
 										fontWeight: weight.semibold,
 										color: color.foreground,
 									}}
@@ -295,7 +296,7 @@ export function SubstrateDemo() {
 
 function PanelLabel(props: { children: string }) {
 	return (
-		<text style={{ ...scale.caption, color: color.mutedForeground }}>
+		<text style={{ ...siteType.caption, color: color.mutedForeground }}>
 			{props.children}
 		</text>
 	);
@@ -376,7 +377,7 @@ function LayerBox(props: {
 		<div style={{ position: "absolute", top: 8, left: 10 }}>
 			<text
 				style={{
-					...scale.caption,
+					...siteType.caption,
 					color: color.mutedForeground,
 					opacity: !props.ghost && hoveredLevel() === props.level ? 1 : 0,
 					transitionProperty: "opacity",

@@ -10,7 +10,7 @@ import { usePageNav } from "../../lib/page-nav";
 import {
 	color,
 	focusRing,
-	type as scale,
+	siteType,
 	motion as tween,
 	weight,
 } from "../../lib/theme";
@@ -121,7 +121,7 @@ function ComponentChip(props: Chip) {
 	const label = () => (
 		<text
 			style={{
-				...scale.body,
+				...siteType.body,
 				color: hovered() ? color.foreground : color.mutedForeground,
 				transitionProperty: "color",
 				transitionDuration: "150ms",
@@ -135,7 +135,7 @@ function ComponentChip(props: Chip) {
 		<Show
 			when={props.slug}
 			fallback={
-				<text style={{ ...scale.body, color: color.mutedForeground }}>
+				<text style={{ ...siteType.body, color: color.mutedForeground }}>
 					{props.label}
 				</text>
 			}
@@ -223,18 +223,18 @@ export function SpringReferenceSection() {
 						<div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
 							<text
 								style={{
-									...scale.body,
+									...siteType.body,
 									fontWeight: weight.semibold,
 									color: color.foreground,
 								}}
 							>
 								{tier.key}
 							</text>
-							<text style={{ ...scale.caption, color: color.mutedForeground }}>
+							<text style={{ ...siteType.caption, color: color.mutedForeground }}>
 								→ <span style={{ fontFamily: MONO }}>{tier.enterToken}</span>{" "}
 								{tier.enterMeta}
 							</text>
-							<text style={{ ...scale.caption, color: color.mutedForeground }}>
+							<text style={{ ...siteType.caption, color: color.mutedForeground }}>
 								← <span style={{ fontFamily: MONO }}>{tier.exitToken}</span>{" "}
 								{tier.exitMeta}
 							</text>

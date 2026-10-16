@@ -9,7 +9,7 @@ import {
 	TableRow,
 } from "../../components/table";
 import { ComponentPreview } from "../../lib/doc-page";
-import { color, type as scale, shape } from "../../lib/theme";
+import { color, shape, siteType } from "../../lib/theme";
 import { FADE_CODE, HORIZONTAL_CODE, PROBLEM_CODE, TABLE_CODE } from "./code";
 
 const RELEASES = Array.from(
@@ -79,7 +79,7 @@ function ReleaseRows() {
 					>
 						<text
 							style={{
-								...scale.body,
+								...siteType.body,
 								color: color.foreground,
 								whiteSpace: "nowrap",
 							}}
@@ -97,7 +97,7 @@ function PanelLabel(props: { children: JSX.Element }) {
 	return (
 		<text
 			style={{
-				...scale.caption,
+				...siteType.caption,
 				color: color.mutedForeground,
 				textAlign: "center",
 			}}
@@ -236,7 +236,7 @@ export function HorizontalDemo() {
 									justifyContent: "center",
 								}}
 							>
-								<text style={{ ...scale.body, color: color.foreground }}>
+								<text style={{ ...siteType.body, color: color.foreground }}>
 									{month}
 								</text>
 							</div>

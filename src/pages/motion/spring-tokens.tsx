@@ -5,6 +5,7 @@ import {
 	color,
 	focusRing,
 	type as scale,
+	siteType,
 	motion as tween,
 	weight,
 } from "../../lib/theme";
@@ -84,7 +85,7 @@ export function SpringTokensDemo() {
 							>
 								<text
 									style={{
-										...scale.body,
+										...siteType.body,
 										fontWeight: weight.semibold,
 										color: color.foreground,
 									}}
@@ -103,7 +104,7 @@ export function SpringTokensDemo() {
 								<div style={{ marginLeft: "auto" }}>
 									<text
 										style={{
-											...scale.caption,
+											...siteType.caption,
 											color: color.mutedForeground,
 										}}
 									>
@@ -147,7 +148,7 @@ export function SpringTokensDemo() {
 					)}
 				</For>
 				<div style={{ alignSelf: "center" }}>
-					<text style={{ ...scale.caption, color: color.mutedForeground }}>
+					<text style={{ ...siteType.caption, color: color.mutedForeground }}>
 						Click a track (or replay) to fire all three springs.
 					</text>
 				</div>

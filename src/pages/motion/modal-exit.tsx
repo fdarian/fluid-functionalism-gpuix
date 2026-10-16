@@ -5,7 +5,7 @@ import { ComponentPreview, MONO } from "../../lib/doc-page";
 import { createPresence } from "../../lib/presence";
 import {
 	color,
-	type as scale,
+	siteType,
 	motion as tween,
 	withAlpha,
 } from "../../lib/theme";
@@ -237,7 +237,7 @@ function Side(props: {
 			</Button>
 			<text
 				style={{
-					...scale.caption,
+					...siteType.caption,
 					color: color.mutedForeground,
 					textAlign: "center",
 				}}
@@ -289,7 +289,7 @@ export function ModalExitDemo() {
 				</div>
 				<text
 					style={{
-						...scale.caption,
+						...siteType.caption,
 						color: color.mutedForeground,
 						textAlign: "center",
 					}}
