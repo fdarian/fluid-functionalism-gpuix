@@ -31,7 +31,7 @@ const steps = {
 		icon: 14,
 		labelInset: 8,
 		text: scale.bodyCompact,
-		caption: scale.microCompact,
+		caption: scale.captionCompact,
 	},
 } as const;
 
@@ -184,7 +184,7 @@ export function InputField(props: {
 					paddingRight: step().padX,
 				}}
 			>
-				{/* The fill is its own layer, and pass-through: an absolute box paints above its in-flow siblings, as in a browser, and would take the press meant for the input. */}
+				{/* The fill is its own layer, and pass-through: an absolute box paints above its in-flow siblings, as in a browser, so the icon and input are `position: relative` to paint over it, and it must not take the press meant for the input. */}
 				<div
 					style={{
 						position: "absolute",
@@ -202,12 +202,14 @@ export function InputField(props: {
 				/>
 				<Show when={props.icon}>
 					{(name: Accessor<IconRef>) => (
-						<Icon
-							name={name()}
-							size={step().icon}
-							strokeWidth={lit() ? 2 : 1.5}
-							color={lit() ? color.foreground : color.mutedForeground}
-						/>
+						<div style={{ position: "relative", display: "flex", flexShrink: 0 }}>
+							<Icon
+								name={name()}
+								size={step().icon}
+								strokeWidth={lit() ? 2 : 1.5}
+								color={lit() ? color.foreground : color.mutedForeground}
+							/>
+						</div>
 					)}
 				</Show>
 				<input
@@ -220,7 +222,7 @@ export function InputField(props: {
 					aria-label={props.label}
 					value={props.value}
 					placeholder={props.placeholder}
-					readOnly={props.disabled}
+					disabled={props.disabled}
 					theme={{
 						text: color.foreground,
 						textMuted: color.mutedForeground,
@@ -237,6 +239,7 @@ export function InputField(props: {
 						props.onChange(event.value);
 					}}
 					style={{
+						position: "relative",
 						flexGrow: 1,
 						minWidth: 0,
 						height: 24,

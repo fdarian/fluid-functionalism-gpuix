@@ -72,7 +72,7 @@ export function Demo() {
 					</InputGroup>
 				</div>
 			</DemoCard>
-			<DemoCard title="Error state and disabled">
+			<DemoCard title="Error state, default and compact, and disabled">
 				<div style={{ display: "flex", flexDirection: "row", gap: 16 }}>
 					<InputGroup>
 						<InputField
@@ -84,6 +84,18 @@ export function Demo() {
 							value={errorEmail()}
 							onChange={setErrorEmail}
 							error="Please enter a valid email address."
+						/>
+					</InputGroup>
+					<InputGroup size="compact">
+						<InputField
+							testId="compact-error"
+							index={0}
+							label="Email"
+							placeholder="you@example.com"
+							icon="mail"
+							value={errorEmail()}
+							onChange={setErrorEmail}
+							error="Enter a valid email."
 						/>
 					</InputGroup>
 					<InputGroup>
