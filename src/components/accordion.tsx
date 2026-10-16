@@ -329,7 +329,6 @@ export function AccordionGroup(props: RootProps) {
 						maxWidth: "100%",
 					}}
 				>
-					{/* Layers first, in the source's order (open tints, hover fill, ring): the items paint after them by document order, so the ring is never under a tint. */}
 					<For each={tints()}>
 						{(entry) => (
 							<GroupTint
@@ -465,6 +464,7 @@ export function AccordionItem(props: {
 				}}
 				style={{
 					position: "relative",
+					zIndex: 10,
 					display: "flex",
 					flexDirection: "column",
 					flexShrink: 0,

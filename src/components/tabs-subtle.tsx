@@ -185,7 +185,6 @@ export function TabsSubtle(props: {
 					userSelect: "none",
 				}}
 			>
-				{/* Layers first: gpuix has no zIndex, so the transparent tabs paint over them by document order. */}
 				<Show when={selectedRect()}>
 					{(rect: () => ItemRect) => (
 						<motion.div
@@ -381,6 +380,7 @@ export function TabsSubtleItem(props: {
 			}}
 			style={{
 				position: "relative",
+				zIndex: 10,
 				display: "flex",
 				flexDirection: "row",
 				alignItems: "center",

@@ -280,6 +280,7 @@ function Row(props: RowProps) {
 			onBlur={props.onBlur}
 			style={{
 				position: "relative",
+				zIndex: 10,
 				display: "flex",
 				flexDirection: "row",
 				alignItems: props.topAlign ? "flex-start" : "center",

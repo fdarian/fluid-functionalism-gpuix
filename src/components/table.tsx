@@ -82,7 +82,6 @@ export function Table(props: {
 					width: "100%",
 				}}
 			>
-				{/* First child: no zIndex in gpuix, so the rows paint over it by document order. */}
 				<FluidHighlight
 					rect={hoverRect}
 					session={hover.session}
@@ -150,6 +149,8 @@ export function TableRow(props: {
 					rowElement = element;
 				}}
 				style={{
+					position: "relative",
+					zIndex: 10,
 					display: "flex",
 					flexDirection: "row",
 					borderBottomWidth: 1,

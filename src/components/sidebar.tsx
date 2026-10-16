@@ -249,7 +249,6 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 					minWidth: 0,
 				}}
 			>
-				{/* Overlays first: no zIndex in gpuix, so rows paint over them by document order. */}
 				<FluidHighlight
 					rect={activeRectRoot}
 					session={() => 0}
@@ -379,6 +378,7 @@ export function SidebarMenuButton(props: {
 			}}
 			style={{
 				position: "relative",
+				zIndex: 10,
 				height: rowHeight,
 				flexShrink: 0,
 				display: "flex",

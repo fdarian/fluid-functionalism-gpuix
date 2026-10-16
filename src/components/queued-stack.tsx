@@ -11,7 +11,6 @@ import {
 } from "@gpuix/solid";
 import {
 	createEffect,
-	createMemo,
 	createSignal,
 	For,
 	onCleanup,
@@ -215,18 +214,6 @@ export function QueuedStack(props: {
 		}
 	});
 
-	/** Cards painted back to front, the dragged one last: gpuix has no z-index, so paint order is document order. */
-	const paintOrder = createMemo(() => {
-		const dragged = draggingId();
-		const ordered = [...props.queue].reverse();
-		return dragged === null
-			? ordered
-			: [
-					...ordered.filter((item) => item.id !== dragged),
-					...ordered.filter((item) => item.id === dragged),
-				];
-	});
-
 	/** `y` and `scale` of the source, as a box: translating up is `bottom`, scaling about the bottom centre is insets and height. */
 	const box = (bottom: number, scaleBy: number) => {
 		const inset = GUTTER + ((1 - scaleBy) * cardWidth()) / 2;
@@ -356,10 +343,11 @@ export function QueuedStack(props: {
 							</Tooltip>
 						</div>
 						<AnimatePresence initial={false}>
-							<For each={paintOrder()}>
-								{(item) => (
+							<For each={props.queue}>
+								{(item, index) => (
 									<QueueCard
 										item={item}
+										index={index}
 										target={() => target(item)}
 										entering={() => ({
 											opacity: 0,
@@ -396,6 +384,7 @@ export function QueuedStack(props: {
 
 function QueueCard(props: {
 	item: QueuedMessage;
+	index: () => number;
 	target: () => {
 		opacity: number;
 		bottom: number;
@@ -454,6 +443,7 @@ function QueueCard(props: {
 			}}
 			style={{
 				position: "absolute",
+				zIndex: props.dragging() ? 200 : 100 - props.index(),
 				display: "flex",
 				flexDirection: "row",
 				alignItems: "center",

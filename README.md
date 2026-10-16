@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 607 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 602 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 | | |
@@ -122,15 +122,15 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [badge](drift/badge.md) | 1 | 3 | 0 | 0 | 4 |
 | [banner](drift/banner.md) | 3 | 4 | 7 | 0 | 14 |
 | [button](drift/button.md) | 4 | 4 | 2 | 1 | 11 |
-| [card](drift/card.md) | 6 | 8 | 8 | 0 | 22 |
+| [card](drift/card.md) | 5 | 7 | 7 | 0 | 19 |
 | [carousel-dots](drift/carousel-dots.md) | 2 | 3 | 2 | 1 | 8 |
 | [chat-message](drift/chat-message.md) | 2 | 3 | 2 | 3 | 10 |
 | [checkbox-group](drift/checkbox-group.md) | 3 | 0 | 4 | 1 | 8 |
-| [color-picker](drift/color-picker.md) | 3 | 6 | 16 | 1 | 26 |
+| [color-picker](drift/color-picker.md) | 3 | 6 | 15 | 1 | 25 |
 | [combobox](drift/combobox.md) | 7 | 13 | 5 | 1 | 26 |
 | [command-menu](drift/command-menu.md) | 7 | 2 | 12 | 1 | 22 |
 | [compare](drift/compare.md) | 4 | 9 | 0 | 2 | 15 |
-| [concepts](drift/concepts.md) | 4 | 26 | 2 | 2 | 34 |
+| [concepts](drift/concepts.md) | 4 | 27 | 2 | 1 | 34 |
 | [dialog](drift/dialog.md) | 6 | 2 | 2 | 1 | 11 |
 | [dropdown](drift/dropdown.md) | 7 | 4 | 10 | 2 | 23 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
@@ -143,7 +143,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [mobile-drawer](drift/mobile-drawer.md) | 3 | 2 | 1 | 0 | 6 |
 | [motion-page](drift/motion-page.md) | 4 | 3 | 1 | 3 | 11 |
 | [nav-menu](drift/nav-menu.md) | 1 | 5 | 1 | 0 | 7 |
-| [queued-stack](drift/queued-stack.md) | 4 | 2 | 4 | 1 | 11 |
+| [queued-stack](drift/queued-stack.md) | 4 | 2 | 3 | 1 | 10 |
 | [radio-group](drift/radio-group.md) | 4 | 2 | 3 | 0 | 9 |
 | [scroll-area](drift/scroll-area.md) | 3 | 6 | 1 | 1 | 11 |
 | [scrollbars-page](drift/scrollbars-page.md) | 1 | 4 | 2 | 1 | 8 |
@@ -162,7 +162,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
 | [tooltip](drift/tooltip.md) | 4 | 5 | 1 | 1 | 11 |
 | [typography](drift/typography.md) | 4 | 0 | 1 | 6 | 11 |
-| **Total** | **144** | **196** | **203** | **64** | **607** |
+| **Total** | **143** | **196** | **200** | **63** | **602** |
 
 ### gpuix gaps across components
 
@@ -177,7 +177,7 @@ offer it. A count is given only where the code shows it.
 |---|---|---|
 | command-menu, and any list that keeps focus in a field while it is pressed | On Windows and Linux the press reaches JavaScript through a queue after native has already moved focus, so `preventDefault()` in `onMouseDown` or `onPointerDown` has no effect and a press on something not focusable still blurs the field (gpuix `README.md:3259-3266`). Seen in the command menu: clicking a tab blurs the field. macOS and the test renderer apply it | `preventDefault()` in `onMouseDown` on the list and the tab row (`drift/command-menu.md`); it works on macOS only. Not run on Windows or Linux |
 | slider | Values derived in JS (`createTransform` of several values) still trail their inputs by one frame (FORK.md:915-917) | none (`drift/slider.md`) |
-| accordion, banner, button, card, carousel-dots, chat-message, input-copy, input-message, tabs, tabs-subtle, thinking-steps (all use `buttonProps`) | `buttonProps` handles keydown on the way up, so a `buttonProps` element nested in another is clicked twice on Enter: the inner one clicks itself and the outer one clicks the same target. The fix is to act only when `target === currentTarget` | none; nested cases are not counted |
+| accordion, banner, button, carousel-dots, chat-message, input-copy, input-message, tabs, tabs-subtle, thinking-steps (all use `buttonProps`) | `buttonProps` handles keydown on the way up, so a `buttonProps` element nested in another is clicked twice on Enter: the inner one clicks itself and the outer one clicks the same target. The fix is to act only when `target === currentTarget` | none; nested cases are not counted |
 | scroll-area | A horizontal or both-axis scroller has no `min-width: fit-content` content wrapper (gpuix rejects intrinsic width keywords). `scrollWidth` counts overflowing descendants now, but a block wrapper is clamped to the viewport width and its `onLayout` reports that, so the area has no content size to draw a horizontal thumb from | The viewport is a flex row with `alignItems: "flex-start"` and the content wrapper is `flexShrink: 0`, so the wrapper takes its content's width |
 | select, combobox | Enter in a form `<input>` with an empty `required` control does nothing; HTML implicit submission validates, sets `invalid` and moves focus. Only `requestSubmit()` validates | The demos submit through `requestSubmit()` |
 | dropdown submenus (audit rows 386, 721), tooltip | `window` and `document` mousemove listeners fire only when an element on the hit path has a mousemove listener, never over bare window background, so a safe polygon between trigger and popup cannot be tracked | A dwell timer for submenus (`SUBMENU_DWELL_MS`), a grace timer for the tooltip |
@@ -274,7 +274,7 @@ now does that the port has not picked up.
 | "snap, don't spring" on a reflow | a zero-length tween | Exact |
 | `translate` / `x`,`y` travel of the highlight | `motion` on `top` / `left` / `width` / `height` (the only layout props it animates) | Equivalent, but it re-lays out per frame |
 | `scaleY: 0.96` on popup enter | not possible, no transforms. Opacity plus the 4px slide stay (`top` −4 → 0) | Partly dropped |
-| `z-index` (overlays under rows) | document order: the highlights are the container's first children and rows keep transparent backgrounds | Equivalent |
+| `z-index` (`z-10` rows over the highlights, `z-20` rings, `z-30` card actions, `-z-10` fills) | `zIndex` on the positioned element, as in the source. It orders siblings only: where the source's z-indexed control sits in a plain wrapper, the wrapper takes the `zIndex` (and `pointerEvents: none` over an overlay, the control `auto`), and a popover in a positioned box over a later sibling needs its wrapper to take one too (`drift/concepts.md`, Beacon) | Exact within a parent; per-parent stacking is a gpuix gap |
 | press-shrink: inset-px layer plus same-colour `box-shadow` spread | the element carries `margin: 1` and a spread-1 shadow, and `active` sets spread 0 | Exact for flat fills |
 | translucent fill (`--tint`, `bg-hover`) over that shadow | gpuix paints a shadow under its element with no knock-out, so a background on top doubles up. Fills are the shadow alone, with no `backgroundColor` | Exact, but a different mechanism |
 | tertiary ring that moves inward on press (outer to inset shadow) | outline, offset 0 at rest and −1 pressed | Exact |

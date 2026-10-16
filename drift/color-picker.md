@@ -123,15 +123,6 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
-## Saturation square: ghost ring paints under the thumb
-
-- **Cause:** `not ported yet`.
-- **Original:** the thumb comes first and the ghost ring after it, so the ring is on top (`color-picker.tsx:636-669`).
-- **Port:** the ghost is rendered before the thumb (`src/components/color-picker.tsx:416-450`); paint order is document order, so the thumb is on top.
-- **Workaround:** none; swapping the two blocks fixes it.
-- **Fidelity:** approximated.
-- **Components it hits:** just this one.
-
 ## Format menu: no travelling focus ring
 
 - **Cause:** `not ported yet`.

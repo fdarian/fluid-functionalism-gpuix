@@ -213,6 +213,7 @@ export function MenuItem(props: {
 			}}
 			style={{
 				position: "relative",
+				zIndex: 10,
 				height: height.control,
 				flexShrink: 0,
 				display: "flex",

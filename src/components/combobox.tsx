@@ -636,6 +636,8 @@ export function Combobox(props: {
 												onMouseDown={(event) => event.preventDefault()}
 												onClick={() => select(row)}
 												style={{
+													position: "relative",
+													zIndex: 10,
 													height: ROW_HEIGHT,
 													flexShrink: 0,
 													display: "flex",

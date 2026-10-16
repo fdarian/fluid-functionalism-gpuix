@@ -8,7 +8,10 @@
 import { createSignal } from "solid-js";
 import {
 	Card,
+	CardAction,
 	CardButton,
+	CardGroup,
+	CardImage,
 	CardFeature,
 	CardFooter,
 	CardHeader,
@@ -17,8 +20,13 @@ import {
 import { createCheck } from "./check-kit";
 import { readPng } from "./png-pixels";
 
+const IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%236B97FF'/%3E%3C/svg%3E";
+
 const [cardClicks, setCardClicks] = createSignal(0);
 const [buttonClicks, setButtonClicks] = createSignal(0);
+const [actionClicks, setActionClicks] = createSignal(0);
+const [imageCardClicks, setImageCardClicks] = createSignal(0);
+const [imageButtonClicks, setImageButtonClicks] = createSignal(0);
 
 const check = await createCheck(() => (
 	<div
@@ -75,6 +83,39 @@ const check = await createCheck(() => (
 				<CardTitle>Dismissible</CardTitle>
 			</CardHeader>
 		</Card>
+		<Card testId="actioned" onClick={() => setCardClicks(cardClicks() + 1)}>
+			<CardHeader>
+				<CardTitle>With an action</CardTitle>
+				<CardAction>
+					<CardButton
+						testId="header-action"
+						onClick={() => setActionClicks(actionClicks() + 1)}
+					>
+						Edit
+					</CardButton>
+				</CardAction>
+			</CardHeader>
+		</Card>
+		<CardGroup orientation="inline" testId="inline-group">
+			<Card
+				testId="inline-image"
+				label="Open image card"
+				onClick={() => setImageCardClicks(imageCardClicks() + 1)}
+			>
+				<CardImage src={IMAGE} />
+				<CardHeader>
+					<CardTitle>Beside an image</CardTitle>
+				</CardHeader>
+				<CardFooter>
+					<CardButton
+						testId="inline-button"
+						onClick={() => setImageButtonClicks(imageButtonClicks() + 1)}
+					>
+						Open
+					</CardButton>
+				</CardFooter>
+			</Card>
+		</CardGroup>
 		<Card testId="compact" size="compact">
 			<CardFeature
 				testId="feature"
@@ -222,6 +263,25 @@ await park();
 		partway(rest, middle, end),
 		`rest ${rest}, 16 ms ${middle}, end ${end}`,
 	);
+}
+
+// The overlay stands over the content, and what rises over it (z-30) takes its own presses, also
+// where the plain wrapper of an inline image card holds the footer.
+await check.click("header-action");
+check.expect("CardAction: its handler runs", actionClicks(), 1);
+check.expect("CardAction: the card does not run", cardClicks(), 1);
+{
+	const box = check.bounds("actioned");
+	await check.clickAt(box.x + 30, box.y + box.height - 8);
+	check.expect("the header's own box: the card runs", cardClicks(), 2);
+}
+await check.click("inline-button");
+check.expect("inline image card: the footer button runs", imageButtonClicks(), 1);
+check.expect("inline image card: the card does not run", imageCardClicks(), 0);
+{
+	const box = check.bounds("inline-image");
+	await check.clickAt(box.x + box.width - 20, box.y + 14);
+	check.expect("inline image card: the card body runs the card", imageCardClicks(), 1);
 }
 
 check.finish();

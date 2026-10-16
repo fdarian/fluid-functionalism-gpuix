@@ -92,6 +92,8 @@ interface CardScope {
 	/** An inline card with a full CardImage centres its text in a column beside it. */
 	inlineImage: () => boolean;
 	setHasImage: (value: boolean) => void;
+	/** The stretched overlay is on: what sits above it must rise over it and take its own presses. */
+	overlaid: () => boolean;
 	/**
 	 * The radius a tile clips its media to, or 0 when the card is not a tile;
 	 * the image rounds its own outer corners to match.
@@ -106,28 +108,28 @@ const CardContext = createContext<CardScope>({
 	hasImage: () => false,
 	inlineImage: () => false,
 	setHasImage: () => {},
+	overlaid: () => false,
 	tileCorner: () => 0,
 });
 
 /** Lets a Card find its CardImage among its resolved children. */
 const imageNodes = new WeakSet<object>();
 
-function stopActivationKey(event: KeyEvent) {
-	if (event.key === "Enter" || event.key === " ") event.stopPropagation();
+/**
+ * A part that holds the footer or the actions has to stand over the overlay as
+ * a whole: gpuix orders `zIndex` among siblings only, so a z-30 control inside
+ * a plain wrapper would still sit under it. The wrapper lets presses fall
+ * through to the overlay, and the control takes its own with `takesPresses`.
+ */
+function aboveOverlay(scope: CardScope) {
+	return scope.overlaid()
+		? { position: "relative" as const, zIndex: 30, pointerEvents: "none" as const }
+		: {};
 }
 
-/**
- * The source stacks the footer and the actions above the card's stretched
- * overlay, so nothing in them reaches the card. Here the card root is the
- * button and they are its descendants: stopping the click keeps a footer
- * press off the card, and stopping Enter / Space keeps the card's own
- * `buttonProps` from clicking the focused control a second time.
- */
-const aboveCard = {
-	onClick: (event: HostPointerEvent) => event.stopPropagation(),
-	onKeyDown: stopActivationKey,
-	onKeyUp: stopActivationKey,
-};
+function takesPresses(scope: CardScope) {
+	return scope.overlaid() ? { pointerEvents: "auto" as const } : {};
+}
 
 /** Gap click: a press in the whitespace routes to the highlighted card when it lands this close. */
 const GAP_CLICK_DISTANCE = 16;
@@ -245,23 +247,12 @@ export function CardGroup(props: {
 						: {}),
 				}}
 			>
-				{/* First child: no zIndex in gpuix, so the cards paint over the highlight by document order. It sits in its own absolute layer because the empty text node its `For` leaves behind would otherwise take a grid cell. */}
-				<div
-					style={{
-						position: "absolute",
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-					}}
-				>
-					<FluidHighlight
-						rect={rectOfActive}
-						session={hover.session}
-						radius={shape.container}
-						background={color.hover}
-					/>
-				</div>
+				<FluidHighlight
+					rect={rectOfActive}
+					session={hover.session}
+					radius={shape.container}
+					background={color.hover}
+				/>
 				{props.children}
 			</div>
 		</GroupContext.Provider>
@@ -344,6 +335,7 @@ export function Card(props: {
 	const framed = () =>
 		group !== undefined && group.separated() && group.outlined();
 
+	const overlaid = () => clickable() && !props.disabled;
 	const scope: CardScope = {
 		emphasized: selected,
 		orientation,
@@ -351,6 +343,7 @@ export function Card(props: {
 		hasImage,
 		inlineImage,
 		setHasImage,
+		overlaid,
 		tileCorner: () =>
 			tile()
 				? shape.container -
@@ -363,18 +356,12 @@ export function Card(props: {
 			<div
 				testId={props.testId}
 				ref={setRootElement}
-				{...(clickable() && !props.disabled
-					? buttonProps({ onClick: props.onClick, tabIndex: 0 }, renderer)
-					: {})}
-				aria-label={clickable() && !props.disabled ? props.label : undefined}
-				aria-pressed={
-					clickable() && !props.disabled && selected() ? true : undefined
-				}
 				aria-disabled={props.disabled ? true : undefined}
 				onMouseEnter={() => setHovered(true)}
 				onMouseLeave={() => setHovered(false)}
 				style={{
 					position: "relative",
+					zIndex: 10,
 					display: "flex",
 					minWidth: 0,
 					minHeight: 60,
@@ -409,33 +396,22 @@ export function Card(props: {
 								hover: { backgroundColor: color.hover },
 							}
 						: {}),
-					...(clickable() && !props.disabled ? { cursor: "pointer" } : {}),
-					keyboardFocusDim: false,
-					focusVisible: focusRing(0),
 					...(props.disabled ? { opacity: 0.5, pointerEvents: "none" } : {}),
 				}}
 			>
-				{/* Everything decorative lives in one absolute layer: a Show that is not the last child leaves an empty text node behind, and gpuix lays it out as a flex item that eats one `gap`. */}
-				<div
-					style={{
-						position: "absolute",
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						pointerEvents: "none",
-					}}
-				>
+				{/* Behind the in-flow content, over the root's own fill. */}
 				<Show when={selected()}>
 					<div
 						style={{
 							position: "absolute",
+							zIndex: -10,
 							top: 0,
 							left: 0,
 							right: 0,
 							bottom: 0,
 							borderRadius: shape.container,
 							backgroundColor: color.active,
+							pointerEvents: "none",
 						}}
 					/>
 				</Show>
@@ -444,11 +420,13 @@ export function Card(props: {
 					<div
 						style={{
 							position: "absolute",
+							zIndex: -10,
 							left: 0,
 							right: 0,
 							bottom: 0,
 							height: 1,
 							backgroundColor: color.borderFaint,
+							pointerEvents: "none",
 						}}
 					/>
 				</Show>
@@ -456,27 +434,38 @@ export function Card(props: {
 					<div
 						style={{
 							position: "absolute",
+							zIndex: -10,
 							top: 0,
 							right: 0,
 							bottom: showBottom() ? 1 : 0,
 							width: 1,
 							backgroundColor: color.borderFaint,
+							pointerEvents: "none",
 						}}
 					/>
 				</Show>
-				</div>
+				{/* The whole card is the click target, above the content; the footer, the actions and the dismiss chip rise over it (z-30), siblings and not descendants, so a press on them never reaches the card. A disabled card drops it, so it cannot be tabbed to. */}
+				<Show when={overlaid()}>
+					<div
+						{...buttonProps({ onClick: props.onClick, tabIndex: 0 }, renderer)}
+						aria-label={props.label}
+						aria-pressed={selected() ? true : undefined}
+						style={{
+							position: "absolute",
+							zIndex: 20,
+							top: 0,
+							left: 0,
+							right: 0,
+							bottom: 0,
+							borderRadius: scope.tileCorner(),
+							cursor: "pointer",
+							keyboardFocusDim: false,
+							// The source's ring sits outside the overlay and a tile clips it away; inside, it shows.
+							focusVisible: focusRing(tile() ? -1 : 0),
+						}}
+					/>
+				</Show>
 				<CardFrame>{props.children}</CardFrame>
-				{/* After the content so the chip paints over media. */}
-				<div
-					style={{
-						position: "absolute",
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						pointerEvents: "none",
-					}}
-				>
 				<Show when={props.dismissible}>
 					<DismissChip
 						testId={props.testId === undefined ? undefined : `${props.testId}-dismiss`}
@@ -490,7 +479,6 @@ export function Card(props: {
 						onDismiss={props.onDismiss}
 					/>
 				</Show>
-				</div>
 			</div>
 		</CardContext.Provider>
 	);
@@ -513,6 +501,7 @@ function CardFrame(props: { children: JSX.Element }) {
 			{image()}
 			<div
 				style={{
+					...aboveOverlay(scope),
 					display: "flex",
 					flexDirection: "column",
 					justifyContent: "center",
@@ -548,13 +537,7 @@ function DismissChip(props: {
 		<div
 			{...buttonProps(
 				{
-					onClick: (event) => {
-						// The card behind the chip is clickable too.
-						event.stopPropagation();
-						props.onDismiss?.();
-					},
-					onKeyDown: stopActivationKey,
-					onKeyUp: stopActivationKey,
+					onClick: () => props.onDismiss?.(),
 				},
 				renderer,
 			)}
@@ -567,6 +550,7 @@ function DismissChip(props: {
 			onBlur={() => props.onFocusChange(false)}
 			style={{
 				position: "absolute",
+				zIndex: 30,
 				top: 8,
 				right: 8,
 				width: 28,
@@ -634,6 +618,7 @@ export function CardHeader(props: { children: JSX.Element }) {
 				gap: 4,
 				minWidth: 0,
 				...padding(),
+				...aboveOverlay(scope),
 			}}
 		>
 			{props.children}
@@ -688,8 +673,17 @@ export function CardDescription(props: { children: string }) {
 
 /** Pinned to the header's top-right corner. */
 export function CardAction(props: { children: JSX.Element }) {
+	const scope = useContext(CardContext);
 	return (
-		<div {...aboveCard} style={{ position: "absolute", top: 0, right: 0 }}>
+		<div
+			style={{
+				position: "absolute",
+				zIndex: 30,
+				top: 0,
+				right: 0,
+				...takesPresses(scope),
+			}}
+		>
 			{props.children}
 		</div>
 	);
@@ -719,8 +713,10 @@ export function CardFooter(props: { children: JSX.Element }) {
 	const scope = useContext(CardContext);
 	return (
 		<div
-			{...aboveCard}
 			style={{
+				position: "relative",
+				zIndex: 30,
+				...takesPresses(scope),
 				display: "flex",
 				flexDirection: "row",
 				flexWrap: "wrap",

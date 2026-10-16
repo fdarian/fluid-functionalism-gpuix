@@ -60,15 +60,6 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 - **Fidelity:** approximated (the card edge is not part of the grip).
 - **Components it hits:** none other.
 
-## Card paint order
-
-- **Cause:** `not ported yet`. gpuix has `zIndex` on positioned siblings (`~/code/fdarian/gpuix/FORK.md:561`, `:603`), and every card is `position: absolute`; the comment at `queued-stack.tsx:245` is stale. To port: `zIndex: dragging ? 200 : 100 - i` on each card, as in the source.
-- **Original:** `zIndex: isDragging ? 200 : 100 - i` (`:326`).
-- **Port:** the cards render back to front with the dragged one last (`queued-stack.tsx:237-247`, `:377`).
-- **Workaround:** document order.
-- **Fidelity:** exact.
-- **Components it hits:** none other.
-
 ## Overflow chip, count and edit/remove details
 
 - **Cause:** `not ported yet`.

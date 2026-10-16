@@ -129,6 +129,7 @@ export function NavItem(props: {
 			}}
 			style={{
 				position: "relative",
+				zIndex: 10,
 				display: "flex",
 				flexDirection: "row",
 				alignItems: "center",

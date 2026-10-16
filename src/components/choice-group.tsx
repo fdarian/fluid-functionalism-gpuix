@@ -359,6 +359,8 @@ export function ChoiceRow(props: {
 				}
 			}}
 			style={{
+				position: "relative",
+				zIndex: 10,
 				height: size().height,
 				flexShrink: 0,
 				display: "flex",

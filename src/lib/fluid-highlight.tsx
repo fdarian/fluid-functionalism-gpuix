@@ -23,8 +23,9 @@ const REDUCED: MotionTransition = { ...tween.snap, opacity: { duration: 0.08 } }
  * The one hover highlight every fluid list renders: an absolutely positioned
  * fill that glides between the rects `createFluidHover` measures.
  *
- * It must be the container's first child. gpuix has no zIndex, so paint order
- * is document order and the rows above it keep transparent backgrounds.
+ * Like the source's, it has no `z-index`: the rows over it are `relative z-10`
+ * there and `position: relative` with `zIndex: 10` here, and keep transparent
+ * backgrounds so it shows through.
  */
 export function FluidHighlight(props: {
 	/** `null` fades the highlight out in place. */

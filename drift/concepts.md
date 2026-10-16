@@ -274,10 +274,9 @@ Original: `app/concepts/quill/page.tsx`. Ported in `src/pages/concepts-quill.tsx
 
 ## Quill: Add block is a popup `DropdownMenu`, not an absolutely placed `Dropdown`
 
-- **Cause:** `gpuix gap` (paint order) and `port choice`.
+- **Cause:** `port choice` (the popup brings flipping, outside-press and Escape dismissal and focus return for free; the inline `Dropdown` in an absolute box would also work now, as the Beacon toolbar does: the box's wrapper takes a `zIndex` so it paints over the heading and table after it).
 - **Original:** the open menu is the inline `Dropdown` in an `absolute left-0 top-full z-50 mt-1.5` box under a `Button` with `active={open}`; a document `mousedown` closes it (`quill/page.tsx:73-113`).
 - **Port:** `DropdownMenu` + `DropdownTrigger` + `DropdownContent` with the same five `MenuItem` rows and the "Basic blocks" label (`src/pages/concepts-quill.tsx:149-181`). It opens on press or by Enter / Space / arrows, flips above the button when there is no room below, closes on outside press, Esc, and picking a row, and returns focus to the button. Picking a row does nothing else (the source's `onSelect` only closes). The trigger is the port's `compact` Button (no `sm`) and has no `active` prop, so it shows no pressed background while the menu is open.
-- **gpuix lacks:** a stacking order across parents: `zIndex` orders siblings only (`~/code/fdarian/gpuix/FORK.md:603`), so the inline `Dropdown` positioned absolute would paint under the heading and table that follow it.
 - **Workaround:** the popup's anchored surface.
 - **Fidelity:** approximated.
 - **Components it hits:** dropdown (`Dropdown` has no trigger, positioning or dismissal), button.

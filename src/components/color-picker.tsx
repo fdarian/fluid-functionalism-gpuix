@@ -403,25 +403,6 @@ function SaturationSquare(props: {
 					},
 				}}
 			/>
-			<Show when={hovered() && !dragging() ? cursor() : undefined}>
-				{(ghost: Accessor<{ x: number; y: number }>) => (
-					<div
-						style={{
-							position: "absolute",
-							left: ghost().x - THUMB / 2,
-							top: ghost().y - THUMB / 2,
-							width: THUMB,
-							height: THUMB,
-							borderRadius: THUMB / 2,
-							borderWidth: 2,
-							borderColor: "rgba(255,255,255,0.55)",
-							outlineWidth: 1,
-							outlineColor: "rgba(0,0,0,0.2)",
-							outlineOffset: 0,
-						}}
-					/>
-				)}
-			</Show>
 			<div
 				style={{
 					position: "absolute",
@@ -438,6 +419,26 @@ function SaturationSquare(props: {
 					outlineOffset: 0,
 				}}
 			/>
+			<Show when={hovered() && !dragging() ? cursor() : undefined}>
+				{(ghost: Accessor<{ x: number; y: number }>) => (
+					<div
+						style={{
+							position: "absolute",
+							left: ghost().x - THUMB / 2,
+							top: ghost().y - THUMB / 2,
+							width: THUMB,
+							height: THUMB,
+							borderRadius: THUMB / 2,
+							borderWidth: 2,
+							borderColor: "rgba(255,255,255,0.55)",
+							outlineWidth: 1,
+							outlineColor: "rgba(0,0,0,0.2)",
+							outlineOffset: 0,
+							pointerEvents: "none",
+						}}
+					/>
+				)}
+			</Show>
 		</div>
 	);
 }

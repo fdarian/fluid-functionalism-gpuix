@@ -155,6 +155,7 @@ function TriggerRow(props: {
 				aria-controls={props.open ? props.panelId : undefined}
 				style={{
 					position: "relative",
+					zIndex: 10,
 					display: "flex",
 					flexDirection: "row",
 					alignItems: "center",

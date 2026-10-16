@@ -151,6 +151,8 @@ export function FooterCallout(props: {
 
 function StackedCard(props: {
 	card: CalloutCard;
+	/** Its place in the pile, front first: the earlier, the higher it paints. */
+	index: () => number;
 	variant: CalloutVariant;
 	step: number;
 	target: () => { bottom: number; scale: number; opacity: number };
@@ -181,7 +183,11 @@ function StackedCard(props: {
 			exit={box(props.target().bottom, 0.9, 0)}
 			// The source's exit is a plain 0.12s tween.
 			transition={present() ? tween.moderate : tween.moderateExit}
-			style={{ position: "absolute", overflow: "hidden" }}
+			style={{
+				position: "absolute",
+				overflow: "hidden",
+				zIndex: 100 - props.index(),
+			}}
 		>
 			<div
 				onLayout={(event) => {
@@ -270,11 +276,11 @@ export function FooterCalloutStack(props: {
 			style={{ position: "relative" }}
 		>
 			<AnimatePresence initial={false}>
-				{/* Back to front: gpuix has no z-index, so paint order is document order. */}
-				<For each={[...cards()].reverse()}>
-					{(card) => (
+				<For each={cards()}>
+					{(card, index) => (
 						<StackedCard
 							card={card}
+							index={index}
 							variant={props.variant}
 							step={CARDS.findIndex((other) => other.id === card.id)}
 							target={targetOf(card.id)}

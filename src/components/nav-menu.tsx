@@ -108,7 +108,6 @@ export function NavMenu(props: {
 					userSelect: "none",
 				}}
 			>
-				{/* Layers first: gpuix has no zIndex, so the transparent items paint over them by document order. */}
 				<FluidHighlight
 					rect={activeRouteRect}
 					session={() => 0}
