@@ -3,21 +3,25 @@ import {
 	createTransform,
 	type DomEvent,
 	type HostElement,
-	type HostMouseEvent,
-	type HostMouseMoveEvent,
-	type HostPointerEvent,
 	type KeyEvent,
 	motion,
 } from '@gpuix/solid';
 import { createPresence } from 'base-ui-solid-gpuix/internals';
-import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
+import {
+	createControlBox,
+	createSliderControl,
+	createSliderRoot,
+	createSliderThumb,
+	createSliderValue,
+	pixelToValue,
+	valueToPixel,
+} from 'base-ui-solid-gpuix/slider';
 import {
 	type Accessor,
 	createEffect,
 	createMemo,
 	createRenderEffect,
 	createSignal,
-	createUniqueId,
 	For,
 	onCleanup,
 	Show,
@@ -60,114 +64,6 @@ const trackFill = () => color.selectedWash;
 const hoverPreviewFill = () => color.accentFaint;
 /** `color-mix(foreground N%, transparent)` for the handle line's rest and hover steps. */
 const foregroundAlpha = (alpha: number) => withAlpha(color.foreground, alpha);
-
-// ─── Value maths ─────────────────────────────────────────────────────────────
-
-function valueToPixel(v: number, min: number, max: number, trackWidth: number) {
-	if (max === min) return 0;
-	return ((v - min) / (max - min)) * (trackWidth - THUMB_SIZE);
-}
-
-/** Strict `<`: a value halfway between two entries snaps to the lower. */
-function nearestStepIndex(v: number, steps: readonly number[]) {
-	let index = 0;
-	for (let i = 1; i < steps.length; i++) {
-		if (Math.abs(steps[i] - v) < Math.abs(steps[index] - v)) index = i;
-	}
-	return index;
-}
-
-/** The nearest `steps` entry, or the step grid clamped to min / max. Press, drag and release all go pixel -> snapped value -> pixel through here. */
-function pixelToValue(
-	px: number,
-	min: number,
-	max: number,
-	step: number,
-	trackWidth: number,
-	stepValues: readonly number[] | null,
-) {
-	const usable = trackWidth - THUMB_SIZE;
-	if (usable <= 0) return min;
-	const raw = (px / usable) * (max - min) + min;
-	if (stepValues !== null) return stepValues[nearestStepIndex(raw, stepValues)];
-	const snapped = Math.round((raw - min) / step) * step + min;
-	return Math.max(min, Math.min(max, snapped));
-}
-
-function snapToStep(
-	v: number,
-	min: number,
-	max: number,
-	step: number,
-	stepValues: readonly number[] | null,
-) {
-	const clamped = Math.max(min, Math.min(max, v));
-	if (stepValues !== null)
-		return stepValues[nearestStepIndex(clamped, stepValues)];
-	return Math.round((clamped - min) / step) * step + min;
-}
-
-/** Base UI's `largeStep` default: Shift+arrow and Page Up / Down move this many value units (or list entries). It is independent of `step`, so FF's off-grid result for step 25 is kept. */
-const LARGE_STEP = 10;
-
-/** Decimal digits of a number, so a keyboard step can be rounded without float noise (Base UI's `getDecimalPrecision`). */
-function decimalPlaces(n: number) {
-	if (n === 0) return 0;
-	if (Math.abs(n) < 1) {
-		const [mantissa, exponent] = n.toExponential().split('e-');
-		const fraction = mantissa.split('.')[1];
-		return (
-			(fraction === undefined ? 0 : fraction.length) +
-			Number.parseInt(exponent, 10)
-		);
-	}
-	const fraction = n.toString().split('.')[1];
-	return fraction === undefined ? 0 : fraction.length;
-}
-
-/** One keyboard move from `current` by `increment`: the current value is first rounded onto the step grid, the result is rounded to the widest precision involved and clamped (Base UI's `roundValueToStep` + `getNewValue`). */
-function keyboardStep(
-	current: number,
-	increment: number,
-	direction: 1 | -1,
-	min: number,
-	max: number,
-	step: number,
-) {
-	const onGrid = Number(
-		(Math.round((current - min) / step) * step + min).toFixed(
-			Math.max(decimalPlaces(step), decimalPlaces(min)),
-		),
-	);
-	const moved = Number(
-		(onGrid + increment * direction).toFixed(
-			Math.max(
-				decimalPlaces(onGrid),
-				decimalPlaces(increment),
-				decimalPlaces(min),
-			),
-		),
-	);
-	return Math.max(min, Math.min(max, moved));
-}
-
-// ─── Element box ─────────────────────────────────────────────────────────────
-
-/** The element's box at the moment of a press. The width the render uses comes from the element's `onLayout`. */
-function createBoxRef() {
-	let element: HostElement | undefined;
-	return {
-		read() {
-			if (element === undefined || !element.mounted) {
-				throw new Error('Slider is not mounted');
-			}
-			return element.getBoundingClientRect();
-		},
-		ref(host: HostElement) {
-			element = host;
-		},
-	};
-}
 
 // ─── Bubbles ─────────────────────────────────────────────────────────────────
 
@@ -262,12 +158,6 @@ function layoutWidth(event: Pick<DomEvent, 'width'>) {
 	return event.width;
 }
 
-function pointerX(event: Pick<HostMouseEvent, 'x'>) {
-	if (event.x === undefined)
-		throw new Error('Pointer event without coordinates');
-	return event.x;
-}
-
 // ─── Value display (compact) ─────────────────────────────────────────────────
 
 /** The compact engine's value label. Clicking a number swaps in a field; Enter or blur commits, Escape cancels. */
@@ -277,10 +167,8 @@ function ValueDisplay(props: {
 	onStartEdit: (index: number) => void;
 	onCommit: (index: number, value: number) => void;
 	onCancel: () => void;
-	min: number;
 	max: number;
-	step: number;
-	stepValues: readonly number[] | null;
+	snap: (v: number) => number;
 	formatValue: (v: number) => string;
 	label: string | undefined;
 	isRange: boolean;
@@ -312,10 +200,7 @@ function ValueDisplay(props: {
 			props.onCancel();
 			return;
 		}
-		props.onCommit(
-			index,
-			snapToStep(parsed, props.min, props.max, props.step, props.stepValues),
-		);
+		props.onCommit(index, props.snap(parsed));
 	};
 	const cancel = () => {
 		settled = true;
@@ -492,91 +377,47 @@ interface CompactProps {
 
 /** Thumbs and a pill track with a fill, optional step dots, a value label or tooltips, and a click-to-edit value. Presses snap and spring, drags re-snap on every move. */
 function CompactSlider(props: CompactProps) {
-	const isRange = () => Array.isArray(props.value);
-	const values = createMemo(() =>
-		Array.isArray(props.value) ? props.value : [props.value],
-	);
-
-	// A single entry cannot span a track, so a list of one falls back to min / max / step.
-	const stepValues = createMemo(() => {
-		if (props.steps === undefined) return null;
-		const sorted = [...new Set(props.steps)].sort((a, b) => a - b);
-		return sorted.length > 1 ? sorted : null;
+	const root = createSliderRoot({
+		value: () => props.value,
+		onValueChange: (next) => props.onChange(next),
+		min: () => props.min,
+		max: () => props.max,
+		step: () => props.step,
+		steps: () => props.steps,
+		disabled: () => props.disabled,
 	});
-	const min = () => stepValues()?.[0] ?? props.min ?? 0;
-	const max = () => {
-		const list = stepValues();
-		return list === null ? (props.max ?? 100) : list[list.length - 1];
-	};
-	const step = () => props.step ?? 1;
+	const isRange = root.isRange;
+	const values = root.values;
+	const stepValues = root.stepValues;
+	const min = root.min;
+	const max = root.max;
+	const step = root.step;
+	const sliderValue = createSliderValue(root, {
+		format: () => props.formatValue,
+	});
+	const formatValue = sliderValue.formatValue;
 	const valuePosition = () => props.valuePosition ?? 'left';
-	const formatValue = (v: number) =>
-		props.formatValue === undefined ? String(v) : props.formatValue(v);
 	const inline = () =>
 		valuePosition() === 'left' || valuePosition() === 'right';
 
 	const [trackWidth, setTrackWidth] = createSignal<number>();
-	const box = createBoxRef();
+	const box = createControlBox({
+		onMeasure(painted) {
+			if (trackWidth() !== painted.width) setTrackWidth(painted.width);
+		},
+	});
 	/** The thumb's left offset for a value: the target the spring chases. */
 	const thumbLeft = (value: number, width: number) =>
-		valueToPixel(value, min(), max(), width);
+		valueToPixel(value, min(), max(), width, THUMB_SIZE);
 
 	const hover = createHover();
-	const pressTarget = createPointerCapture('Slider');
-	const [pressed, setPressed] = createSignal(false);
-	/** True once a press has moved: from then on the thumb is placed, not sprung. */
-	const [moving, setMoving] = createSignal(false);
 	const [editingIndex, setEditingIndex] = createSignal<number | null>(null);
 	const [preview, setPreview] = createSignal<HoverPreview | null>(null);
-	let dragging = false;
-	let activeThumb = 0;
-	let trackLeft = 0;
-	let liveWidth = 0;
-
-	const interacting = () => hover.hovered() || pressed();
-
-	const emitChange = (thumb: number, next: number) => {
-		if (next === values()[thumb]) return;
-		if (Array.isArray(props.value)) {
-			const updated: [number, number] = [props.value[0], props.value[1]];
-			updated[thumb] = next;
-			props.onChange(updated);
-		} else {
-			props.onChange(next);
-		}
-	};
-
-	/** Each thumb stops half a thumb short of the other, so the knobs may overlap a little but never swap sides. */
-	const clampForRange = (px: number, thumb: number) => {
-		if (!isRange()) return px;
-		const other = thumbLeft(values()[1 - thumb], liveWidth);
-		return thumb === 0
-			? Math.min(px, other - THUMB_SIZE * 0.5)
-			: Math.max(px, other + THUMB_SIZE * 0.5);
-	};
-
-	/** Window x -> the snapped, range-clamped value the thumb would take. */
-	const valueAt = (x: number, thumb: number) => {
-		const local = x - trackLeft - THUMB_SIZE / 2;
-		const clamped = Math.max(0, Math.min(liveWidth - THUMB_SIZE, local));
-		const snapped = pixelToValue(
-			clamped,
-			min(),
-			max(),
-			step(),
-			liveWidth,
-			stepValues(),
-		);
-		const px = clampForRange(
-			valueToPixel(snapped, min(), max(), liveWidth),
-			thumb,
-		);
-		return pixelToValue(px, min(), max(), step(), liveWidth, stepValues());
-	};
 
 	const computePreview = (x: number) => {
+		const liveWidth = box.width();
 		const usable = liveWidth - THUMB_SIZE;
-		const cursor = Math.max(0, Math.min(liveWidth, x - trackLeft));
+		const cursor = Math.max(0, Math.min(liveWidth, x - box.left()));
 		const raw = Math.max(0, Math.min(usable, cursor - THUMB_SIZE / 2));
 		const snappedValue = pixelToValue(
 			raw,
@@ -584,6 +425,7 @@ function CompactSlider(props: CompactProps) {
 			max(),
 			step(),
 			liveWidth,
+			THUMB_SIZE,
 			stepValues(),
 		);
 		const percent =
@@ -610,54 +452,25 @@ function CompactSlider(props: CompactProps) {
 		});
 	};
 
-	const syncBox = () => {
-		const painted = box.read();
-		trackLeft = painted.x;
-		liveWidth = painted.width;
-		if (trackWidth() !== painted.width) setTrackWidth(painted.width);
-	};
-
-	const onPress = (event: HostMouseEvent) => {
-		if (props.disabled || event.button !== 0) return;
-		pressTarget.capture(event);
-		syncBox();
-		const x = pointerX(event);
-		const local = Math.max(
-			0,
-			Math.min(liveWidth - THUMB_SIZE, x - trackLeft - THUMB_SIZE / 2),
-		);
-		// The nearer thumb takes the press; a tie (stacked thumbs) goes to the first.
-		activeThumb =
-			isRange() &&
-			Math.abs(local - thumbLeft(values()[0], liveWidth)) >
-				Math.abs(local - thumbLeft(values()[1], liveWidth))
-				? 1
-				: 0;
-		dragging = true;
-		setPressed(true);
-		setMoving(false);
-		emitChange(activeThumb, valueAt(x, activeThumb));
-	};
-	const onMove = (event: HostMouseMoveEvent) => {
-		const x = pointerX(event);
-		if (!dragging) {
-			if (props.disabled || liveWidth === 0) return;
+	const control = createSliderControl(root, {
+		owner: 'Slider',
+		box,
+		thumbSize: THUMB_SIZE,
+		onHover(x) {
+			if (box.width() === 0) return;
 			computePreview(x);
-			return;
-		}
-		setMoving(true);
-		emitChange(activeThumb, valueAt(x, activeThumb));
-	};
-	const onRelease = () => {
-		if (!dragging) return;
-		dragging = false;
-		setPressed(false);
-		setMoving(false);
-		setPreview(null);
-	};
+		},
+		onRelease: () => setPreview(null),
+	});
+	const pressed = control.pressed;
+	/** True once a press has moved: from then on the thumb is placed, not sprung. */
+	const moving = control.moving;
+
+	const interacting = () => hover.hovered() || pressed();
+
 	const onEnter = () => {
 		if (props.disabled) return;
-		syncBox();
+		box.sync();
 		hover.enter();
 	};
 	const onLeave = () => {
@@ -666,68 +479,9 @@ function CompactSlider(props: CompactProps) {
 		setPreview(null);
 	};
 	const pointer = {
-		onMouseDown: onPress,
-		onMouseMove: onMove,
-		onMouseUp: onRelease,
-		onLostPointerCapture: onRelease,
+		...control.pressProps,
 		onMouseEnter: onEnter,
 		onMouseLeave: onLeave,
-	};
-
-	/** Base UI's thumb keys: arrows by `step` (Shift: `largeStep`), Page Up / Down by `largeStep`, Home / End to the bound or the neighbouring thumb. A `steps` list runs on indices, like FF's primitive. */
-	const onThumbKey = (thumb: number) => (event: KeyEvent) => {
-		if (props.disabled || event.defaultPrevented) return;
-		const list = stepValues();
-		const current = values()[thumb];
-		const large = event.shiftKey === true;
-		const walk = (direction: 1 | -1, jump: boolean) => {
-			if (list === null) {
-				return keyboardStep(
-					current,
-					jump ? LARGE_STEP : step(),
-					direction,
-					min(),
-					max(),
-					step(),
-				);
-			}
-			const index =
-				nearestStepIndex(current, list) + direction * (jump ? LARGE_STEP : 1);
-			return list[Math.max(0, Math.min(list.length - 1, index))];
-		};
-		const lower = thumb === 1 ? values()[0] : min();
-		const upper = thumb === 0 && isRange() ? values()[1] : max();
-		let next: number;
-		switch (event.key) {
-			case 'ArrowRight':
-			case 'ArrowUp':
-				next = walk(1, large);
-				break;
-			case 'ArrowLeft':
-			case 'ArrowDown':
-				next = walk(-1, large);
-				break;
-			case 'PageUp':
-				next = walk(1, true);
-				break;
-			case 'PageDown':
-				next = walk(-1, true);
-				break;
-			case 'Home':
-				next = lower;
-				break;
-			case 'End':
-				next = upper;
-				break;
-			default:
-				return;
-		}
-		event.preventDefault();
-		// Base UI keeps its composite keys from reaching ancestors; Page Up / Down still bubble.
-		if (event.key !== 'PageUp' && event.key !== 'PageDown') {
-			event.stopPropagation();
-		}
-		emitChange(thumb, Math.max(lower, Math.min(upper, next)));
 	};
 
 	/** FF's per-thumb names: "<label> minimum" / "<label> maximum", or bare "Minimum" / "Maximum". */
@@ -738,27 +492,13 @@ function CompactSlider(props: CompactProps) {
 			? side
 			: `${props.label} ${side.toLowerCase()}`;
 	};
-	/** Base UI's thumb values: a `steps` list runs on indices, so FF announces the entry through `aria-valuetext`; a range says which end it is; a lone thumb is left to the number. */
-	const thumbAria = (index: number) => {
-		const value = values()[index];
-		const list = stepValues();
-		if (list !== null) {
-			return {
-				now: nearestStepIndex(value, list),
-				min: 0,
-				max: list.length - 1,
-				text: formatValue(value),
-			};
-		}
-		return {
-			now: value,
-			min: min(),
-			max: max(),
-			text: isRange()
-				? `${value.toLocaleString()} ${index === 0 ? 'start' : 'end'} range`
-				: undefined,
-		};
-	};
+	const thumbs = [0, 1].map((index) =>
+		createSliderThumb(root, {
+			index,
+			label: () => thumbLabel(index),
+			formatValue,
+		}),
+	);
 
 	const stepDots = createMemo(() => {
 		if (props.showSteps !== true) return [];
@@ -815,14 +555,12 @@ function CompactSlider(props: CompactProps) {
 				editingIndex={editingIndex}
 				onStartEdit={setEditingIndex}
 				onCommit={(index, next) => {
-					emitChange(index, next);
+					root.setThumbValue(index, next);
 					setEditingIndex(null);
 				}}
 				onCancel={() => setEditingIndex(null)}
-				min={min()}
 				max={max()}
-				step={step()}
-				stepValues={stepValues()}
+				snap={sliderValue.snapValue}
 				formatValue={formatValue}
 				label={props.label}
 				isRange={isRange()}
@@ -832,26 +570,15 @@ function CompactSlider(props: CompactProps) {
 		</Show>
 	);
 
-	const thumbIds = [createUniqueId(), createUniqueId()];
 	const thumb = (index: number) => (
 		<Show when={trackWidth() !== undefined}>
 			<div
-				tabIndex={props.disabled ? -1 : 0}
-				id={thumbIds[index]}
+				{...thumbs[index].thumbProps}
 				testId={
 					props.testId === undefined
 						? undefined
 						: `${props.testId}-thumb-${index}`
 				}
-				role="slider"
-				aria-label={thumbLabel(index)}
-				aria-orientation="horizontal"
-				aria-valuenow={thumbAria(index).now}
-				aria-valuemin={thumbAria(index).min}
-				aria-valuemax={thumbAria(index).max}
-				aria-valuetext={thumbAria(index).text}
-				aria-disabled={props.disabled === true}
-				onKeyDown={onThumbKey(index)}
 				style={{
 					position: 'absolute',
 					left: thumbX[index],
@@ -938,7 +665,7 @@ function CompactSlider(props: CompactProps) {
 						testId={
 							props.testId === undefined ? undefined : `${props.testId}-press`
 						}
-						ref={pressTarget.ref}
+						ref={control.ref}
 						{...pointer}
 						style={{
 							position: 'absolute',
@@ -1087,27 +814,37 @@ const ROW_BORDER = 1;
 /** A 32px bordered row with the label at the start and the value at the end. Pips draw a dot per step; the scrubber fills continuously, glued to the cursor. */
 function ComfortableSlider(props: ComfortableProps) {
 	const variant = () => props.variant ?? 'pips';
-	const min = () => props.min ?? 0;
-	const max = () => props.max ?? 100;
-	const step = () => props.step ?? 1;
-	const formatValue = (v: number) =>
-		props.formatValue === undefined ? String(v) : props.formatValue(v);
+	const root = createSliderRoot({
+		value: () => props.value,
+		onValueChange(next) {
+			if (typeof next !== 'number') {
+				throw new Error('The default slider takes a single value');
+			}
+			props.onChange(next);
+		},
+		min: () => props.min,
+		max: () => props.max,
+		step: () => props.step,
+		disabled: () => props.disabled,
+	});
+	const min = root.min;
+	const max = root.max;
+	const step = root.step;
+	const formatValue = createSliderValue(root, {
+		format: () => props.formatValue,
+	}).formatValue;
 
 	const [rowWidth, setRowWidth] = createSignal<number>();
-	const box = createBoxRef();
+	const box = createControlBox({
+		// A press maps over the border box, like the DOM version's getBoundingClientRect.
+		onMeasure(painted) {
+			const inside = painted.width - ROW_BORDER * 2;
+			if (rowWidth() !== inside) setRowWidth(inside);
+		},
+	});
 	const hover = createHover();
-	// The gutter spans the row and 8px past each end, so it takes the row's drags too.
-	const gutter = createPointerCapture('Slider');
-	const handle = createPointerCapture('Slider handle');
-	const [pressed, setPressed] = createSignal(false);
 	const [focused, setFocused] = createSignal(false);
 	const [preview, setPreview] = createSignal<HoverPreview | null>(null);
-	/** A press on the scrubber's handle or a drag of the scrubber places the fill; anything else springs it. */
-	const [placing, setPlacing] = createSignal(false);
-	let dragging = false;
-	let handleDragging = false;
-	let rowLeft = 0;
-	let liveWidth = 0;
 
 	const isActive = () => hover.hovered() || focused();
 	const pips = createMemo(() =>
@@ -1125,7 +862,8 @@ function ComfortableSlider(props: ComfortableProps) {
 	const atMin = () => props.value === min();
 
 	const valueAtX = (x: number) => {
-		const clamped = Math.max(0, Math.min(liveWidth, x - rowLeft));
+		const liveWidth = box.width();
+		const clamped = Math.max(0, Math.min(liveWidth, x - box.left()));
 		if (variant() === 'pips') {
 			const count = pips().length;
 			if (count <= 1) return min();
@@ -1153,6 +891,7 @@ function ComfortableSlider(props: ComfortableProps) {
 
 	const computePreview = (x: number) => {
 		const width = inner();
+		const liveWidth = box.width();
 		if (width === undefined || liveWidth === 0) return;
 		const snappedValue = valueAtX(x);
 		const snappedX = percentOf(snappedValue) * width;
@@ -1171,70 +910,34 @@ function ComfortableSlider(props: ComfortableProps) {
 		});
 	};
 
-	const syncBox = () => {
-		const painted = box.read();
-		// A press maps over the border box, like the DOM version's getBoundingClientRect.
-		rowLeft = painted.x;
-		liveWidth = painted.width;
-		const inside = painted.width - ROW_BORDER * 2;
-		if (rowWidth() !== inside) setRowWidth(inside);
-	};
-
-	const emit = (next: number) => {
-		if (next !== props.value) props.onChange(next);
-	};
-	const onPress = (event: HostMouseEvent) => {
-		if (props.disabled || event.button !== 0) return;
-		gutter.capture(event);
-		syncBox();
-		dragging = true;
-		setPressed(true);
-		setPlacing(false);
-		emit(valueAtX(pointerX(event)));
-	};
-	const onMove = (event: HostMouseMoveEvent) => {
-		const x = pointerX(event);
-		if (dragging) {
-			setPlacing(variant() === 'scrubber');
-			emit(valueAtX(x));
-			return;
-		}
-		if (props.disabled || handleDragging) return;
-		computePreview(x);
-	};
-	const onRelease = () => {
-		if (!dragging) return;
-		dragging = false;
-		setPressed(false);
-		setPlacing(false);
-		setPreview(null);
-	};
+	// The gutter spans the row and 8px past each end, so it takes the row's drags too.
+	const gutter = createSliderControl(root, {
+		owner: 'Slider',
+		box,
+		valueAt: valueAtX,
+		onHover(x) {
+			if (handle.pressed()) return;
+			computePreview(x);
+		},
+		onRelease: () => setPreview(null),
+	});
 	// Grabbing the scrubber's handle sets the fill from the first event, with no spring.
-	const onHandlePress = (event: HostPointerEvent) => {
-		if (props.disabled || event.button !== 0) return;
+	const handle = createSliderControl(root, {
+		owner: 'Slider handle',
+		box,
+		valueAt: valueAtX,
 		// The row's own press would end the placing this one starts.
-		event.stopPropagation();
-		handle.capture(event);
-		syncBox();
-		handleDragging = true;
-		setPressed(true);
-		setPlacing(true);
-		emit(valueAtX(pointerX(event)));
-	};
-	const onHandleMove = (event: HostMouseMoveEvent) => {
-		if (!handleDragging) return;
-		emit(valueAtX(pointerX(event)));
-	};
-	const onHandleRelease = () => {
-		if (!handleDragging) return;
-		handleDragging = false;
-		setPressed(false);
-		setPlacing(false);
-		setPreview(null);
-	};
+		stopPropagation: true,
+		onRelease: () => setPreview(null),
+	});
+	const pressed = () => gutter.pressed() || handle.pressed();
+	/** A press on the scrubber's handle or a drag of the scrubber places the fill; anything else springs it. */
+	const placing = () =>
+		handle.pressed() || (gutter.moving() && variant() === 'scrubber');
+
 	const onEnter = () => {
 		if (props.disabled) return;
-		syncBox();
+		box.sync();
 		hover.enter();
 	};
 	const onLeave = () => {
@@ -1243,58 +946,16 @@ function ComfortableSlider(props: ComfortableProps) {
 		setPreview(null);
 	};
 	const pointer = {
-		onMouseDown: onPress,
-		onMouseMove: onMove,
-		onMouseUp: onRelease,
-		onLostPointerCapture: onRelease,
+		...gutter.pressProps,
 		onMouseEnter: onEnter,
 		onMouseLeave: onLeave,
 	};
 
-	/** The compact thumb's keys (Base UI's, reached in FF through its invisible primitive). */
-	const onKey = (event: KeyEvent) => {
-		if (props.disabled || event.defaultPrevented) return;
-		const large = event.shiftKey === true;
-		const move = (direction: 1 | -1, jump: boolean) =>
-			keyboardStep(
-				props.value,
-				jump ? LARGE_STEP : step(),
-				direction,
-				min(),
-				max(),
-				step(),
-			);
-		let next: number;
-		switch (event.key) {
-			case 'ArrowRight':
-			case 'ArrowUp':
-				next = move(1, large);
-				break;
-			case 'ArrowLeft':
-			case 'ArrowDown':
-				next = move(-1, large);
-				break;
-			case 'PageUp':
-				next = move(1, true);
-				break;
-			case 'PageDown':
-				next = move(-1, true);
-				break;
-			case 'Home':
-				next = min();
-				break;
-			case 'End':
-				next = max();
-				break;
-			default:
-				return;
-		}
-		event.preventDefault();
-		if (event.key !== 'PageUp' && event.key !== 'PageDown') {
-			event.stopPropagation();
-		}
-		emit(next);
-	};
+	const thumb = createSliderThumb(root, {
+		index: 0,
+		label: () => props.label,
+		formatValue,
+	});
 
 	/**
 	 * The fill, the handle line and the scrubber's handle strip all read these three, so a press, a key or a drag moves them together. The fill and the line are `percent` (0..1) of the row's width plus offsets; `atMinValue` (0..1) is FF's `zeroOffset`, which keeps the line visible at min and empties the pips fill there.
@@ -1572,10 +1233,7 @@ function ComfortableSlider(props: ComfortableProps) {
 						testId={
 							props.testId === undefined ? undefined : `${props.testId}-handle`
 						}
-						onMouseDown={onHandlePress}
-						onMouseMove={onHandleMove}
-						onMouseUp={onHandleRelease}
-						onLostPointerCapture={onHandleRelease}
+						{...handle.pressProps}
 						ref={handle.ref}
 						onMouseEnter={onEnter}
 						onMouseLeave={onLeave}
@@ -1592,19 +1250,10 @@ function ComfortableSlider(props: ComfortableProps) {
 			</div>
 			{/* Hidden thumb: the only thing Tab reaches, so focus (and the ring) is keyboard-only like the primitive's thumb. */}
 			<div
-				id={createUniqueId()}
-				tabIndex={props.disabled ? -1 : 0}
-				role="slider"
+				{...thumb.thumbProps}
 				testId={
 					props.testId === undefined ? undefined : `${props.testId}-thumb`
 				}
-				aria-label={props.label}
-				aria-orientation="horizontal"
-				aria-valuenow={props.value}
-				aria-valuemin={min()}
-				aria-valuemax={max()}
-				aria-disabled={props.disabled === true}
-				onKeyDown={onKey}
 				onFocus={() => setFocused(true)}
 				onBlur={() => setFocused(false)}
 				style={{
