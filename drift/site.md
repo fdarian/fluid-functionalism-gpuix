@@ -35,12 +35,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 ## Sidebar collapse and reopen are not part of the layout
 
-- **Cause:** `not ported yet`. Sidebar rows and behaviour are in `drift/sidebar.md`; this is only the layout wrapper.
-- **Original:** `SidebarProvider` owns the desktop collapse (`[` key, ⌘B, rail click, `sidebar_state` cookie) and a fixed top-left reopen trigger fades in with a spring while the rail is collapsed; `[` toasts "Sidebar expanded / collapsed"; the mobile trigger is `xl:hidden` (`app/components/sidebar-layout.tsx:27-90, 184-195`, `app/layout.tsx:53-57`).
-- **Port:** the sidebar is always open inside the panel (`src/app.tsx:255-263`); no key, trigger, or persisted state.
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** just the shell.
+- **Cause:** `not ported yet`. Same drift as [sidebar.md, "Collapse, reopen trigger, `[` toast, persistence"](sidebar.md#collapse-reopen-trigger--toast-persistence), where the entry lives.
 
 ## Arrow keys do not step through the pages
 

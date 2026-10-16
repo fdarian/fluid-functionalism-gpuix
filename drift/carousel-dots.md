@@ -61,7 +61,6 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `relative flex w-fit items-center`, plus `className`, a `ref` and the `div`'s HTML attributes (`carousel-dots.tsx:59-60`, `:165-176`).
 - **Port:** `alignSelf: "flex-start"` for the shrink-to-fit width (`carousel-dots.tsx:117`); only `testId` is accepted besides the documented props (`:41-51`).
-- **gpuix lacks:** n/a.
 - **Workaround:** none.
 - **Fidelity:** approximated (same width in a column parent; in a row parent `flex-start` pins it to the top where `w-fit` would not).
 - **Components it hits:** any ported component without `className` passthrough.
@@ -101,7 +100,6 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 - **Cause:** `port choice` (reason not stated).
 - **Original:** two sections, "Static" and "Autoplay", one preview each, stacked, with prose ("Hover a dot to see its click area, then click it. The highlight glides from dot to dot." and "Add `autoplay` and the pill fills, then the next slide comes in. Hover the slide to pause. Reduced motion turns the timer off."), a code tab per preview and an API table (`app/docs/carousel-dots/page.tsx:125-147`). Both variants are present in the port.
 - **Port:** one "CarouselDots" card with the two variants side by side under short captions, "Static: hover a dot to see its click area" and "Autoplay: hover the slide to pause" (`src/demos/carousel-dots.tsx:114-160`). No code tab, API table or reduced-motion remark.
-- **gpuix lacks:** n/a.
 - **Workaround:** n/a.
 - **Fidelity:** exact for the variants; the prose is shortened.
 - **Components it hits:** every demo (docs chrome).

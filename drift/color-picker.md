@@ -47,7 +47,6 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Cause:** `port choice` (reason not stated; looks unintended, a bug).
 - **Original:** the panel is `w-[280px] p-3` with no border; the square, rails and fields are 256px wide with 12px either side (`color-picker.tsx:1956-1960`).
 - **Port:** the card is 280px with a 1px border, and the 280px panel sits inside it (`src/components/color-picker.tsx:1638-1651`, `:1561-1570`; the popover card is the same, `:691-731`, panel at `:1824`). The panel shrinks to 278px while its children stay 256px, so in `screenshots/color-picker/default.png` the left inset is 13px and the right one 11px.
-- **gpuix lacks:** n/a.
 - **Workaround:** none.
 - **Fidelity:** approximated (1px).
 - **Components it hits:** just this one.

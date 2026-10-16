@@ -328,9 +328,4 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 ## Left / Right arrows page through the docs
 
-- **Cause:** `not ported yet`.
-- **Original:** `SidebarLayout` binds Left and Right to the previous and next page in nav order (Showcase, Introduction, System, Components), skipping inputs, sliders, tablists, radiogroups, listboxes and menus, with a ref so held keys keep advancing (`app/components/sidebar-layout.tsx:20-26,106-165`).
-- **Port:** no arrow-key page navigation in `App` (`src/app.tsx:231-317`).
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** app frame.
+- **Cause:** `not ported yet`. Same drift as [site.md, "Arrow keys do not step through the pages"](site.md#arrow-keys-do-not-step-through-the-pages), where the entry lives (verified: the port's only key handler is ⌘K, `src/lib/site-command-menu.tsx:45-52`).

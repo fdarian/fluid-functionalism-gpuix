@@ -85,10 +85,9 @@ repeating it.
 
 ## Image box is sized outright
 
-- **Cause:** `gpuix gap`.
+- **Cause:** `not ported yet`. An `<img>` with a `%` width or `maxWidth` gets its height from its intrinsic ratio, and `onLoad` reports `naturalWidth` / `naturalHeight` (`~/code/fdarian/gpuix/FORK.md:592`, `:665`). To port: `width: "100%"` with `maxWidth: 200` and `objectFit: "cover"`. The height then comes from the file's ratio once decoded; before decode the box is empty (`~/code/fdarian/gpuix/README.md:4291-4296`), so the step's height jumps on load, which the `aspectRatio` prop avoids. Check that the jump is acceptable, or size from `onLoad`'s `naturalWidth` / `naturalHeight`.
 - **Original:** `<img class="w-full max-w-[200px] object-cover">` takes the file's aspect ratio and shrinks in a narrow column (`thinking-steps.tsx:586-593`).
 - **Port:** a fixed 200px-wide box, height `200 / aspectRatio` with `aspectRatio` an extra prop defaulting to 2 (`thinking-steps.tsx:555-581`). The demo image is 1200x600, so the demos match. A different ratio letterboxes (`objectFit` is the default `contain`, the source is `cover`), and the box does not shrink below 200.
-- **gpuix lacks:** an intrinsic size before decode: an `<img>` needs a definite width and height or its box is empty and then jumps to the bitmap size (`~/code/fdarian/gpuix/README.md:4291-4296`). `onLoad` reports `naturalWidth` and `naturalHeight`, which the port does not use.
 - **Workaround:** the `aspectRatio` prop, so the step's measured height is stable before the image decodes.
 - **Fidelity:** approximated.
 - **Components it hits:** card (image), file-thumbnail.

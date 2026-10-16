@@ -17,30 +17,15 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 ## The selected background fades in at mount
 
-- **Cause:** `not ported yet`. `FluidHighlight` always starts at `opacity: 0` and has no way to start in place; `motion` supports `initial={false}`.
-- **Original:** the fill mounts with `initial={false}` (`radio-group.tsx:199`), so a group with a default selection shows it at once; opacity uses its own `{ duration: 0.08 }` (`:208-211`).
-- **Port:** `FluidHighlight` mounts at `initial={{ opacity: 0, ...rect }}` (`fluid-highlight.tsx:74`), after the first measure, and one transition drives every property, so the opacity rides the 0.16 s `moderate` spring (`choice-group.tsx:212`). The default-selected row's fill fades in on load (code reading, not observed). Moving the selection is the same spring as FF.
-- **Workaround:** none.
-- **Fidelity:** approximated (late by a fade, only at mount).
-- **Components it hits:** checkbox-group (a newly checked row fades in too), and every `FluidHighlight` user for the 0.08 s opacity.
+- **Cause:** `not ported yet`. Same drift as [checkbox-group.md, "The selected background fades in; FF places it"](checkbox-group.md#the-selected-background-fades-in-ff-places-it), where the entry lives. Here: the fill mounts with `initial={false}` in the source (`radio-group.tsx:199`, opacity `{ duration: 0.08 }` at `:208-211`); the port's `FluidHighlight` starts at `opacity: 0` (`fluid-highlight.tsx:74`) and fades in on the 0.16 s `moderate` spring (`choice-group.tsx:212`), so the default-selected row fades in on load (code reading, not observed).
 
 ## Circle border changes colour at once
 
-- **Cause:** `not ported yet`. gpuix animates `borderColor` (`~/code/fdarian/gpuix/FORK.md:813-814`); `colorFade` in `theme.ts:310` only names `color`.
-- **Original:** `transition-all duration-80` between `border`, neutral-400 (neutral-500 dark) and transparent (`radio-group.tsx:404-413`).
-- **Port:** `indicatorBorder` (`choice-group.tsx:338-343`) sets the colour with no transition (`radio-group.tsx:134-145`).
-- **Workaround:** none.
-- **Fidelity:** approximated (right colours, no 80 ms ease).
-- **Components it hits:** checkbox-group.
+- **Cause:** `not ported yet`. Same drift as [checkbox-group.md, "Indicator border changes colour at once"](checkbox-group.md#indicator-border-changes-colour-at-once), where the entry lives. Here: source `transition-all duration-80` (`radio-group.tsx:404-413`); port `indicatorBorder` with no transition (`radio-group.tsx:134-145`, `choice-group.tsx:338-343`).
 
 ## Label colour changes at once
 
-- **Cause:** `not ported yet`. `select.tsx:723` and `combobox.tsx:648` already spread `colorFade` for the same kind of label.
-- **Original:** `transition-[color,font-variation-settings] duration-80` (`radio-group.tsx:459-471`).
-- **Port:** `StableLabel` sets `color` with no transition (`stable-label.tsx:37-48`, used at `choice-group.tsx:326-333`).
-- **Workaround:** none.
-- **Fidelity:** approximated.
-- **Components it hits:** checkbox-group and the other `StableLabel` rows unless they set a fade.
+- **Cause:** `not ported yet`. Same drift as [checkbox-group.md, "Label colour changes at once"](checkbox-group.md#label-colour-changes-at-once), where the entry lives. Here: source `radio-group.tsx:459-471`; the port's `StableLabel` is used at `choice-group.tsx:326-333`.
 
 ## Label weight (variable fonts)
 
@@ -91,21 +76,11 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 ## Props: `className`, `ref`, HTML attributes
 
-- **Cause:** `not ported yet`.
-- **Original:** both components forward `ref`, `className` and the rest of the `div` props (`radio-group.tsx:61-70,300-306`); the bento preview narrows the group to 220 px.
-- **Port:** a fixed `width: 288, maxWidth: "100%"` (`choice-group.tsx:200-201`); `testId` is the only pass-through.
-- **Workaround:** none.
-- **Fidelity:** dropped (cannot restyle).
-- **Components it hits:** checkbox-group.
+- **Cause:** `not ported yet`. Same drift as [checkbox-group.md, "Props: `className`, `ref`, HTML attributes"](checkbox-group.md#props-classname-ref-html-attributes), where the entry lives. Here: source `radio-group.tsx:61-70,300-306`; the port's fixed `width: 288` is `choice-group.tsx:200-201`.
 
 ## Long labels
 
-- **Cause:** `not ported yet`. Code reading, not observed.
-- **Original:** the label is an `inline-grid` flex item with no `nowrap`, so a long label wraps inside the row (`radio-group.tsx:446`).
-- **Port:** `whiteSpace: "nowrap"` and `flexShrink: 0` (`stable-label.tsx:24,32`): a label wider than the row runs past its right edge.
-- **Workaround:** none.
-- **Fidelity:** approximated (differs only for labels wider than about 240 px).
-- **Components it hits:** checkbox-group and every `StableLabel`.
+- **Cause:** `not ported yet`. Same drift as [checkbox-group.md, "Long labels"](checkbox-group.md#long-labels), where the entry lives. Here: source `radio-group.tsx:446`; port `stable-label.tsx:24,32`.
 
 ## A group with `value={undefined}` still reports changes
 

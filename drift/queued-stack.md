@@ -35,7 +35,7 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 
 ## Card shadow ring is a border
 
-- **Cause:** `gpuix gap` (one outer shadow per box; `src/lib/theme.ts:328-340` says `--shadow-3` becomes its largest drop plus a border).
+- **Cause:** `not ported yet`. gpuix paints multi-layer and `inset` `boxShadow` (`~/code/fdarian/gpuix/FORK.md:646-649`); `src/lib/theme.ts:328-340` still says it paints one outer shadow. To port: a `boxShadow` CSS string with the `0 0 0 1px` ring and both drops, and no `borderWidth`.
 - **Original:** `shadow-surface-3`, a 1px ring plus two drops, none of it in layout (`:342`).
 - **Port:** `shadow3()` plus `borderWidth: 1` in `popupBorder` (`queued-stack.tsx:496-498`).
 - **Workaround:** a real border inside the card's box, where the source's ring is outside it.
@@ -80,7 +80,7 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 
 ## Card paint order
 
-- **Cause:** `gpuix gap` (no `z-index`; the README lists document order as the replacement).
+- **Cause:** `not ported yet`. gpuix has `zIndex` on positioned siblings (`~/code/fdarian/gpuix/FORK.md:561`, `:603`), and every card is `position: absolute`; the comment at `queued-stack.tsx:245` is stale. To port: `zIndex: dragging ? 200 : 100 - i` on each card, as in the source.
 - **Original:** `zIndex: isDragging ? 200 : 100 - i` (`:326`).
 - **Port:** the cards render back to front with the dragged one last (`queued-stack.tsx:245-255`, `:384`).
 - **Workaround:** document order.

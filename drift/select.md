@@ -89,7 +89,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Cause:** `port choice` (reason not stated beyond the comment at `select.tsx:185`; `BASE-UI-AUDIT.md:536` calls it "virtual highlight").
 - **Original:** Base UI moves real focus into the popup and onto the lit row (`select.tsx:486-518`).
 - **Port:** the trigger keeps focus; `aria-activedescendant` names the lit row (`select.tsx:186-189`, `:493`) and the rows are not focusable.
-- **gpuix lacks:** n/a.
 - **Workaround:** `aria-activedescendant`, a `keyboardNav` flag for the ring (next entries).
 - **Fidelity:** approximated (the screen-reader model is `activedescendant`, not roving focus).
 - **Components it hits:** combobox shares the model by design.
@@ -99,7 +98,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Cause:** `port choice` (FF's trigger loses focus to the popup, so the ring is gone there too; the port keeps focus on the trigger and hides the ring to match).
 - **Original:** `focus-visible:ring-1` on the trigger (`select.tsx:237`); while open, focus is in the popup so only the row ring shows, and the trigger's ring returns when focus does.
 - **Port:** `focusVisible: focusRing(0)` is applied only when `!presence.open()` (`select.tsx:520-521`), so it returns the instant `open` goes false, at the start of the exit fade.
-- **gpuix lacks:** n/a.
 - **Workaround:** none needed.
 - **Fidelity:** approximated (the ring comes back at the start of the close, FF at focus return; not compared frame by frame).
 - **Components it hits:** just this one.
@@ -109,7 +107,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Cause:** `port choice` (reason not stated; follows from the virtual focus above).
 - **Original:** the ring is seeded at open from the trigger's `:focus-visible` and earned by Arrow, Home, End, PageUp, PageDown, Tab keys inside the popup; typeahead letters are not among them, and moving the pointer does not clear it (`use-keyboard-nav-gate.ts:19-37`, `popup.ts:40-50`, `select.tsx:372`, `:504-518`).
 - **Port:** `keyboardNav` is set on a keyboard open, arrows, Home/End and typeahead, and cleared on any pointer move over the list (`select.tsx:160-161`, `:208-217`, `:347-349`, `:630`). Typeahead after a pointer open draws the ring here and does not in FF. PageUp, PageDown, Left, Right and Tab do not set it.
-- **gpuix lacks:** n/a.
 - **Workaround:** none needed.
 - **Fidelity:** approximated.
 - **Components it hits:** combobox.
@@ -119,7 +116,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Cause:** `not ported yet`.
 - **Original:** `SelectGroup` renders `role="group"` around its label and rows (`select.tsx:768-778`).
 - **Port:** labels and separators are flat entries in the same list; no group element or role (`select.tsx:432-461`).
-- **gpuix lacks:** n/a.
 - **Workaround:** none.
 - **Fidelity:** approximated (looks the same; the a11y tree has no group).
 - **Components it hits:** just this one.
@@ -129,7 +125,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Cause:** `not ported yet`.
 - **Original:** `typeClass("caption", compact ? "compact" : "default")`, so 11/14 in compact with `py-1.5` (`select.tsx:785-792`, `type-scale.ts` caption).
 - **Port:** a fixed 28px row and `scale.caption` (12/16) at every size (`select.tsx:96`, `:434-446`).
-- **gpuix lacks:** n/a.
 - **Workaround:** none.
 - **Fidelity:** approximated (compact label is 2px taller and 1px larger text).
 - **Components it hits:** just this one.
@@ -139,7 +134,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Cause:** `not ported yet`.
 - **Original:** `useSize(size)` reads the surrounding `SizeProvider`, so trigger and popup follow a compact region; `SelectTrigger` also takes its own `size`. The trigger follows the global pill shape (`shape.input`), the popup stays rounded (`select.tsx:99-102`, `:278-281`, `:84-89`).
 - **Port:** `size?: "default" | "compact"` on `Select` only (`select.tsx:122`, `:140`); corners are always `radius.item` (8) and `radius.container` (12); no pill shape.
-- **gpuix lacks:** n/a.
 - **Workaround:** the demo passes `size="compact"` where needed.
 - **Fidelity:** dropped (context and pill shape).
 - **Components it hits:** every component that reads `useSize` / `useShape`.
@@ -149,7 +143,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Cause:** `port choice` (data-driven `items`, not compound, per `BASE-UI-AUDIT.md:493`; reason otherwise not stated).
 - **Original:** compound `Select` / `SelectTrigger` / `SelectContent` / `SelectItem index` / `SelectGroup` / `SelectLabel` / `SelectSeparator`; `variant`, `icon`, `placeholder`, `error`, `size` on the trigger; value is a string, `""` for none; `className` and `ref` forwarded (`select.tsx:91-103`, `:254-263`, `:625-630`).
 - **Port:** one `Select` taking `items` (items, `{ type: "label" }`, `{ type: "separator" }`), `variant`, `size`, `placeholder`, `icon`, `error`, `popupWidth`, `labelledBy`; value is `Value | null`; no `className` or `ref` (`select.tsx:114-136`).
-- **gpuix lacks:** n/a.
 - **Workaround:** none.
 - **Fidelity:** approximated (API shape; row `index` is computed, not passed).
 - **Components it hits:** combobox, dropdown.
@@ -159,7 +152,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Cause:** `port choice` (serves the app frame's theme picker, `app.tsx:220`, and the site's "Make them yours" card; docstring at `select.tsx:53-57`).
 - **Original:** `variant` is `"bordered"` (default) or `"borderless"` (`select.tsx:241-249`).
 - **Port:** `variant` defaults to `"inline"` (`select.tsx:138`): borderless, compact trigger, 13px text, shows the picked item's icon, popup right-aligned at 160 wide (`select.tsx:141-150`, `:584-585`). Every demo passes `bordered` explicitly.
-- **gpuix lacks:** n/a.
 - **Workaround:** none.
 - **Fidelity:** exact for `bordered` and `borderless`.
 - **Components it hits:** just this one.
@@ -169,7 +161,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Cause:** `not ported yet`.
 - **Original:** `transition-all duration-80` on the trigger; the leading icon eases colour and stroke width on `group-hover` over 80 ms (`select.tsx:235`, `:305`).
 - **Port:** `hover` / `active` state styles switch the background at once (`select.tsx:518-519`); the leading `Icon` has no `fade` (`select.tsx:534-547`) while the chevron does (`:569`). gpuix has `transitionProperty` for state-style changes (`~/code/fdarian/gpuix/FORK.md:816`).
-- **gpuix lacks:** n/a.
 - **Workaround:** none.
 - **Fidelity:** approximated (colour and background switch; 80 ms).
 - **Components it hits:** any control using `transition-all duration-80` without a `colorFade`.
@@ -179,7 +170,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Cause:** `port choice` (the stroke width is baked into the SVG source string, `icon.tsx:9`; whether gpuix could animate it was not checked).
 - **Original:** `transition-[color,stroke-width] duration-80` on the leading icon and each row icon (`select.tsx:305`, `:702`).
 - **Port:** colour fades on rows via `fade`, stroke 1.5 to 2 jumps (`select.tsx:539`, `:708`).
-- **gpuix lacks:** n/a.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** every icon whose stroke changes on hover.
@@ -189,7 +179,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Cause:** `port choice` (reason not stated).
 - **Original:** only `hover:bg-hover`; no pressed style (`select.tsx:243-246`).
 - **Port:** `active: { backgroundColor: color.active }` (`select.tsx:519`).
-- **gpuix lacks:** n/a.
 - **Workaround:** none.
 - **Fidelity:** approximated (extra state; the popup opens on mouse-down, so it shows briefly).
 - **Components it hits:** just this one.
@@ -199,67 +188,35 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Cause:** `not ported yet` (a bug: the port dims more than FF).
 - **Original:** `disabled:opacity-50 disabled:pointer-events-none` on the trigger only; the error text beneath is outside it (`select.tsx:236`, `:332-334`).
 - **Port:** the outer wrapper, which holds the trigger and the error text, takes `opacity: 0.5` and `pointerEvents: "none"` (`select.tsx:467-474`).
-- **gpuix lacks:** n/a.
 - **Workaround:** none.
 - **Fidelity:** approximated (a disabled select with an error shows the message at half opacity).
 - **Components it hits:** just this one.
 
 ## Popup surface does not follow the substrate
 
-- **Cause:** `not ported yet`.
-- **Original:** `Elevated offset={2} shadowLevel={3}`: the popup is `surface(substrate + 2)` with a fixed level-3 shadow, so inside a dialog (level 5) it is surface-7 (`select.tsx:486-493`, `elevated.tsx:37-52`, `dialog.tsx:189-190`).
-- **Port:** always `color.card` (surface-3) (`popup.tsx:97`); no surface context exists in the port. The select inside the dialog demo (`demos/dialog.tsx:84`) opens surface-3 on a surface-5 dialog.
-- **gpuix lacks:** n/a.
-- **Workaround:** none.
-- **Fidelity:** approximated (right on the page, wrong in a dialog or drawer; dark mode shows it most: `#252525` against `#414141`).
-- **Components it hits:** dropdown, combobox, color-picker: any popup opened over an elevated surface.
+- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup surface colour is fixed at surface-3"](dropdown.md#popup-surface-colour-is-fixed-at-surface-3), where the entry lives. Here: original `select.tsx:486-493`, `elevated.tsx:37-52`, `dialog.tsx:189-190`; port `popup.tsx:97`. The select inside the dialog demo (`demos/dialog.tsx:84`) opens surface-3 on a surface-5 dialog (dark: `#252525` against `#414141`).
 
 ## Popup ring is a layout-taking border and the shadow is one drop
 
-- **Cause:** `not ported yet` (`theme.ts:329-331` says gpuix paints one outer shadow, but `FORK.md:646-649` lists `boxShadow` with multiple layers and `inset`, and `outline` takes no layout).
-- **Original:** `--shadow-3`: a 1px ring plus two stacked drops in light; in dark also an inset top highlight, an inset ring and a 1px black outer ring (`globals.css:139`, `:162`); the ring sits outside the box.
-- **Port:** a 1px `popupBorder` border (white 5% in dark) plus one drop `0 3 3 -1.5` (`popup.tsx:99-101`, `theme.ts:332-340`). The border takes layout: the card is 2px taller and the rows 2px narrower in the same width (`select.tsx:601` subtracts 2).
-- **gpuix lacks:** n/a.
-- **Workaround:** none.
-- **Fidelity:** approximated (the `0 1 1 -0.5` drop, dark inset highlight and outer ring are dropped).
-- **Components it hits:** dropdown, combobox (`PopupSurface` users).
+- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup shadow is one drop and a border"](dropdown.md#popup-shadow-is-one-drop-and-a-border), where the entry lives. Here: `popup.tsx:99-101`, `theme.ts:332-340`; the border takes layout, so the card is 2px taller and `select.tsx:601` subtracts 2 from the rows. API to use: multi-layer `boxShadow` (`~/code/fdarian/gpuix/FORK.md:646-649`).
 
 ## The list scrolls in a bare scroller
 
-- **Cause:** `not ported yet` (`BASE-UI-AUDIT.md:530`: gpuix has `scrollbarWidth: "none"`, `onScroll` offsets and `maskImage`).
-- **Original:** the rows sit in `ScrollArea` with the hover-revealed thumb and a 32px `scroll-fade` mask (`select.tsx:536`, `popup.ts:35-37`).
-- **Port:** `overflowY: "scroll"` on a plain div, so the platform overlay scrollbar shows and no edge fade (`select.tsx:596-603`); the port's own `ScrollArea` (`src/components/scroll-area.tsx`) is not used.
-- **gpuix lacks:** n/a.
-- **Workaround:** none.
-- **Fidelity:** approximated.
-- **Components it hits:** combobox (same list).
+- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup list scrolls in plain `overflow`, not ScrollArea"](dropdown.md#popup-list-scrolls-in-plain-overflow-not-scrollarea), where the entry lives. Here: original `select.tsx:536`; port `select.tsx:596-603` (`BASE-UI-AUDIT.md:530`: gpuix has `scrollbarWidth: "none"`, `onScroll` offsets and `maskImage`).
 
 ## Clicks between rows are not routed to the lit row
 
-- **Cause:** `not ported yet`.
-- **Original:** `gapClick` defaults on: a click in the popup padding or past the last row activates the highlighted row (`use-fluid-hover.ts:46`, `:505-542`; wired at `select.tsx:503`).
-- **Port:** each `Row` handles its own click (`select.tsx:687`); the 4px padding is inert; `createFluidHover` has no click handler (`fluid-hover.ts:191-209`).
-- **gpuix lacks:** n/a.
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** any fluid hover list with padding or gaps (dropdown, combobox).
+- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Clicks in the padding and between rows are not routed to the lit row"](dropdown.md#clicks-in-the-padding-and-between-rows-are-not-routed-to-the-lit-row), where the entry lives. Here: original `select.tsx:503`; port `Row` handles its own click (`select.tsx:687`).
 
 ## The selected background fades in on every open
 
-- **Cause:** `port choice` (the shared `FluidHighlight` always starts at opacity 0; reason not stated).
-- **Original:** `initial={false}`: the marker mounts after the rects are measured at full opacity and in place; only a later value change springs it (`select.tsx:548-575`).
-- **Port:** `FluidHighlight` mounts with `opacity: 0` and fades in on the `moderate` spring, 160 ms, as the popup also fades in (`fluid-highlight.tsx:74-80`, `select.tsx:615-622`).
-- **gpuix lacks:** n/a.
-- **Workaround:** none.
-- **Fidelity:** approximated (the checked row's fill lags the popup).
-- **Components it hits:** combobox, dropdown.
+- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Checked background appears with a fade instead of already being there"](dropdown.md#checked-background-appears-with-a-fade-instead-of-already-being-there), where the entry lives. Here: original `select.tsx:548-575`; port `select.tsx:615-622`. (Was recorded as `port choice`; the blocker is the shared `FluidHighlight`, which `motion`'s `initial={false}` could serve.)
 
 ## Exit unmounts on a timer, not on completion
 
 - **Cause:** `not ported yet` (`BASE-UI-AUDIT.md:525` lists this as fixed; `popup.tsx` has no `onMotionComplete` and nothing in the popup path calls `presence.release()`, though `dialog.tsx:326` and `mobile-drawer.tsx:96` do).
 - **Original:** `onAnimationComplete` releases the unmount after the 60 ms exit; `exitFallbackMs` (160 ms) is the fallback only (`select.tsx:377-389`, `:481-483`).
 - **Port:** the card stays mounted 160 ms after `open` goes false (`presence.ts:10`, `select.tsx:152`); the exit fade is 60 ms, so it sits invisible for about 100 ms.
-- **gpuix lacks:** n/a.
 - **Workaround:** none.
 - **Fidelity:** approximated (invisible).
 - **Components it hits:** combobox, dropdown.
@@ -269,7 +226,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Cause:** `not ported yet` (gpuix has `matchMedia` for `prefers-reduced-motion` and `MotionConfig reducedMotion="user"`, `FORK.md:831`, `:906`).
 - **Original:** the hover highlight drops its travel to a snap when the user prefers reduced motion (`fluid-hover-highlight.tsx:83-90`, `:114`).
 - **Port:** no reduced-motion read anywhere in `src/`.
-- **gpuix lacks:** n/a.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** every fluid hover list and popup.
@@ -279,7 +235,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Cause:** `port choice` (reason not stated) for the copy and counts; `not ported yet` for the code snippets and API tables.
 - **Original:** sections Basic, Variants (bordered + borderless, 3 fruits), With Icons, Groups, Scrollable List, Error State, Disabled; each has a code snippet, and the page ends with four props tables (`page.tsx:278-428`).
 - **Port:** the same seven, as rows in cards (`demos/select.tsx:110-239`), plus three the source lacks: Compact, Uncontrolled (keyboard, typeahead and `defaultValue` selects), and a Form card with a required select. Differences: Variants and Basic use four fruits (Apple, Banana, Cherry, Mango) where the source's Variants has three (`:17-22`, `:122-137`); the disabled select holds Admin / Editor / Viewer, the source's one "Option A" (`:197-206`); "Some disabled" lists "Also available" where the source repeats "Available" (`:65-69`); Basic sets `variant="bordered"` explicitly. No code snippets, no props tables, no page description.
-- **gpuix lacks:** n/a.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** every demo page shares the card layout and lacks the snippets.

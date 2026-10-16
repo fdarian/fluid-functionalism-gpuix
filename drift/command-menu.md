@@ -89,12 +89,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 ## A click between rows is not routed to the highlighted row
 
-- **Cause:** `not ported yet`.
-- **Original:** `useFluidHover` `gapClick` (on by default): a click on a gap, the list padding or below the last row clicks the highlighted row (`registry/default/hooks/use-fluid-hover.ts:505-541`, passed through `onClick` at `command-menu.tsx:1087`).
-- **Port:** `createFluidHover` has no click handler and the list has no `onClick` (`src/lib/fluid-hover.ts:191-211`, `src/components/command-menu.tsx:880-891`); listed in README "Not ported there: ... `gapClick`".
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** combobox, dropdown, select (any fluid list).
+- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Clicks in the padding and between rows are not routed to the lit row"](dropdown.md#clicks-in-the-padding-and-between-rows-are-not-routed-to-the-lit-row), where the entry lives. Here: original `command-menu.tsx:1087`; port list `src/components/command-menu.tsx:880-891`.
 
 ## Row label never truncates, disabled rows keep the pointer cursor
 

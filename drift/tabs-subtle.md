@@ -66,12 +66,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 ## Preview pill after resting on the selected tab starts at the old rect
 
-- **Cause:** `not ported yet`. Same memo as tabs; see `drift/tabs.md`.
-- **Original:** the preview unmounts after fading in place over the selected tab, so the next hover mounts it at the selected pill (`tabs-subtle.tsx:197-234`).
-- **Port:** it keeps the rect it last had, invisible (`tabs-subtle.tsx:146-148`).
-- **Workaround:** none.
-- **Fidelity:** approximated.
-- **Components it hits:** tabs.
+- **Cause:** `not ported yet`. Same drift as [tabs.md, "Preview pill after resting on the selected tab starts at the old rect"](tabs.md#preview-pill-after-resting-on-the-selected-tab-starts-at-the-old-rect), where the entry lives. Here: original `tabs-subtle.tsx:197-234`; port `tabs-subtle.tsx:146-148`.
 
 ## Colour and stroke width switch at once, semibold is 600, no `text-box-trim`
 
@@ -85,12 +80,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 ## Size ladder and pill shape are local
 
-- **Cause:** `not ported yet` (README: "Not ported there: pill shape, the Radius / Size / Icons / Primitive rows").
-- **Original:** `size` falls back to the surrounding `SizeProvider`, `useShape()` switches the pill and ring radii (`tabs-subtle.tsx:47-50`, `:61`, `:264-265`, `registry/default/lib/shape-context.tsx:50-79`).
-- **Port:** `size` is the prop or `"default"` (`tabs-subtle.tsx:117`); radii fixed (`theme.ts:280-284`).
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every component with a `size` or shape variant.
+- **Cause:** `not ported yet`. Same drift as [tabs.md, "Size ladder and pill shape are local"](tabs.md#size-ladder-and-pill-shape-are-local), where the entry lives. Here: original `tabs-subtle.tsx:47-50`, `:61`, `:264-265`; port `tabs-subtle.tsx:117`.
 
 ## API surface: `className`, ref and HTML props
 

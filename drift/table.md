@@ -81,7 +81,6 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 - **Cause:** `port choice` (reason not stated).
 - **Original:** the docs page has one preview, "Basic" (Name / Role / Status, Alice, Bob, Carol), a description "Data table with row hover effects and semantic markup.", a code tab and API tables for `Table` and `TableRow` (`app/docs/table/page.tsx:56-103`).
 - **Port:** the same three rows in a "Basic" card, plus a "Compact" card the source page lacks (`src/demos/table.tsx:45-55`); no description, code or API tables.
-- **gpuix lacks:** n/a.
 - **Workaround:** n/a.
 - **Fidelity:** exact for Basic; Compact is an addition.
 - **Components it hits:** every demo (docs chrome).

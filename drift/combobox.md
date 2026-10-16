@@ -78,13 +78,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 ## `shadow-surface-3` is one shadow, and the ring is a real border
 
-- **Cause:** `gpuix gap`.
-- **Original:** `Elevated offset={2} shadowLevel={3}` paints a ring plus stacked drops (dark adds an inset hairline), taking no layout (`combobox.tsx:827`).
-- **Port:** one drop shadow plus a 1px `borderColor` (`src/lib/popup.tsx:98-102`, `shadow3()` in `src/lib/theme.ts`); the border takes 2px of layout, so the list's `maxHeight` is the card's minus 2 (`src/components/combobox.tsx:565`).
-- **gpuix lacks:** stacked and inset shadows; README translation table, `shadow-surface-3` rows.
-- **Workaround:** the border stands in for the ring.
-- **Fidelity:** approximated.
-- **Components it hits:** every popup.
+- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup shadow is one drop and a border"](dropdown.md#popup-shadow-is-one-drop-and-a-border), where the entry lives. Here: `src/lib/popup.tsx:98-102`; the border takes 2px of layout, so the list's `maxHeight` is the card's minus 2 (`src/components/combobox.tsx:565`); original `combobox.tsx:827`. API to use: multi-layer `boxShadow` with `inset` (`~/code/fdarian/gpuix/FORK.md:646-649`).
 
 ## Row icon stroke-width does not ease
 
@@ -115,21 +109,11 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 ## Scrolling list: no `ScrollArea` thumb or scroll fade
 
-- **Cause:** `not ported yet`.
-- **Original:** the list scrolls in `ScrollArea` with a hover-revealed thumb and a 32px scroll-aware fade (`combobox.tsx:989,1075`; `popup.ts:35-37`; `scroll-fade` in `app/globals.css:1087`).
-- **Port:** a plain `overflowY: "scroll"` div with gpuix's own scrollbar (`src/components/combobox.tsx:554-567`).
-- **Workaround:** none. gpuix has `maskImage` and `onScroll` offsets for it (`BASE-UI-AUDIT.md:26,530`).
-- **Fidelity:** dropped.
-- **Components it hits:** select (same list), dropdown.
+- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup list scrolls in plain `overflow`, not ScrollArea"](dropdown.md#popup-list-scrolls-in-plain-overflow-not-scrollarea), where the entry lives. Here: original `combobox.tsx:989,1075`; port `src/components/combobox.tsx:554-567`.
 
 ## A click between rows is not routed to the highlighted row
 
-- **Cause:** `not ported yet`.
-- **Original:** `onClick={handlers.onClick}` on the list: a click in the padding or past the last row picks the highlighted row (`combobox.tsx:1001`; `use-fluid-hover.ts` `gapClick`, on by default).
-- **Port:** `createFluidHover` has no click handler (`src/lib/fluid-hover.ts:191-211`); the list's 4px padding is inert (`src/components/combobox.tsx:569-578`).
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** select (also not ported), dropdown.
+- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Clicks in the padding and between rows are not routed to the lit row"](dropdown.md#clicks-in-the-padding-and-between-rows-are-not-routed-to-the-lit-row), where the entry lives. Here: original `combobox.tsx:1001`; port list padding `src/components/combobox.tsx:569-578`.
 
 ## Highlight opacity and lifecycle
 
@@ -142,21 +126,11 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 ## Popup exit is released by the timer only
 
-- **Cause:** `not ported yet` (regression: 65e350b added it, 7464e6c dropped it).
-- **Original:** `onAnimationComplete` unmounts the popup the moment the exit spring ends; a 160ms timer is only the fallback (`combobox.tsx:787-796,820-824`).
-- **Port:** `createPresence(POPUP_EXIT_FALLBACK_MS)` unmounts after 160ms (`src/components/combobox.tsx:137`); `PopupSurface` has no `onMotionComplete` and `presence.release()` has no caller (`src/lib/popup.tsx:83-90`, `src/lib/presence.ts:39`). The 60ms exit tween ends, then the invisible card stays mounted for about 100ms more. Whether it still takes pointer events in that window was not checked.
-- **Workaround:** the timer.
-- **Fidelity:** approximated.
-- **Components it hits:** select, dropdown, color-picker, any `PopupSurface` user.
+- **Cause:** `not ported yet`. Same drift as [select.md, "Exit unmounts on a timer, not on completion"](select.md#exit-unmounts-on-a-timer-not-on-completion), where the entry lives. Here: regression, 65e350b added `onMotionComplete` and `presence.release()` and 7464e6c dropped them; original `combobox.tsx:787-796,820-824`; port `createPresence(POPUP_EXIT_FALLBACK_MS)` at `src/components/combobox.tsx:137`, `src/lib/popup.tsx:83-90`, `src/lib/presence.ts:39`.
 
 ## The popup surface does not track its substrate
 
-- **Cause:** `not ported yet`.
-- **Original:** `Elevated offset={2}` puts the popup two surface steps above whatever it opens on (`min(substrate + 2, 8)`), so in a dialog or card it is lighter than on the page; the shadow stays level 3 (`combobox.tsx:827`, `elevated.tsx`).
-- **Port:** the card is always `color.card` (surface 3) (`src/lib/popup.tsx:97`). The port has no `SurfaceProvider`.
-- **Workaround:** none. Light mode is all white, so it shows in dark mode only, inside a dialog or a raised card.
-- **Fidelity:** approximated.
-- **Components it hits:** select, dropdown, color-picker, every popup.
+- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup surface colour is fixed at surface-3"](dropdown.md#popup-surface-colour-is-fixed-at-surface-3), where the entry lives. Here: original `combobox.tsx:827`; port `src/lib/popup.tsx:97`.
 
 ## Reduced motion is not honoured
 

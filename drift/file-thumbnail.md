@@ -72,7 +72,6 @@ Ported and matching: the square with `bg-accent`, `overflow-hidden` and `shrink-
 - **Cause:** `port choice` (reason not stated).
 - **Original:** no standalone demo. The component appears inside other pages: thumbnails at size 28 and radius 12 on the queued cards (`app/docs/input-message/page.tsx:446-450`).
 - **Port:** its own page: Image, No preview, Pending and Radius rows at 28, 48, 64 and 96px (`src/demos/file-thumbnail.tsx:17-43`). The source has no counterpart; the queued-stack port uses `radius={0}` for its 28px tiles (`src/components/queued-stack.tsx:543`) where the source passes 12; that belongs to the queued-stack file.
-- **gpuix lacks:** n/a.
 - **Workaround:** n/a.
 - **Fidelity:** n/a (an addition).
 - **Components it hits:** queued-stack, chat-message, input-message.
