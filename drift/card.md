@@ -62,15 +62,6 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Fidelity:** approximated (the port shows a ring the source probably does not).
 - **Components it hits:** just this one.
 
-## Standalone-hover, dismiss-chip and `CardButton` colours do not ease
-
-- **Cause:** `not ported yet`.
-- **Original:** `transition-colors duration-80` on a standalone clickable card (`:428`), the chip's colour and its opacity reveal (`transition-opacity duration-80`, `:487`, `:502`), `CardButton`'s colour (`:974`), and glyph `transition-[stroke-width]` (`:951`, `:958`).
-- **Port:** all switch at once (`src/components/card.tsx:394-396`, `:563-571`, `:973-974`, `:1019-1038`). gpuix animates colours and opacity on state-style and plain style changes (`FORK.md:815-818`); the stroke width needs `Icon` rebuilt from shape children (`BASE-UI-AUDIT.md:529`).
-- **Workaround:** none.
-- **Fidelity:** dropped (80ms fades).
-- **Components it hits:** every component with a hover fill (see `drift/button.md`).
-
 ## The dismiss chip does not appear when the card has focus
 
 - **Cause:** `not ported yet`.

@@ -8,15 +8,6 @@ One entry per place the port looks or behaves differently from the source, whate
 (transforms, intrinsic width, variable fonts) get a one-line entry here that links to the README row instead of
 repeating it.
 
-## Track and label colours switch instead of crossfading
-
-- **Cause:** `not ported yet`.
-- **Original:** the track has `transition-colors duration-80` (`switch.tsx:288`) and the label `transition-[color] duration-80` (`:356`), so on/off and hover ease over 80 ms.
-- **Port:** `trackColor()` (`src/components/switch.tsx:163-166`, bound at `:188`) and the label colour (`:223`) change at once. gpuix transitions colours (FORK.md:816) and the port already has `colorFade` (`src/lib/theme.ts:451`, used by select and combobox), but the switch does not spread it.
-- **Workaround:** none.
-- **Fidelity:** dropped (the thumb still springs; only the colours snap).
-- **Components it hits:** just this one. The README translation row that lists `transition-colors` as "none" is out of date.
-
 ## The thumb moves on `left` / `top`, not a transform
 
 - **Cause:** `gpuix gap`. See the CSS transforms row in [`README.md`](../README.md#missing-features).

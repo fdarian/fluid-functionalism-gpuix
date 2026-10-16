@@ -26,16 +26,6 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 - **Fidelity:** approximated (600 for 550, no optical size).
 - **Components it hits:** every component using `font-variation-settings`.
 
-## The 80ms border and text-colour fade
-
-- **Cause:** `not ported yet`.
-- **Original:** the row border fades to transparent over 80ms (`transition-[border-color] duration-80`, `table.tsx:153-154`) and the cell text eases from muted to foreground over the same 80ms (`transition-colors duration-80 group-[.is-active]/row:text-foreground`, `table.tsx:210`).
-- **Port:** both switch at once: `borderColor` is set from `hideBorder()` (`table.tsx:146`) and the text `color` from `textColor()` (`:159-160`, `:177`), with no transition.
-- **gpuix lacks:** nothing. gpuix animates `color` and `borderColor` with CSS transitions (`FORK.md:816-818`); the port already does it for text in select and combobox with `colorFade` (`src/lib/theme.ts:451`, `src/components/select.tsx:728`, `src/components/combobox.tsx:651`). A border needs `transitionProperty: "border-color"` (kebab-case, `FORK.md:895`). `README.md:226` still says state styles switch instantly, which is stale.
-- **Workaround:** none.
-- **Fidelity:** dropped (the lit row's rules and text snap).
-- **Components it hits:** just this one.
-
 ## Highlight travel runs on `top` / `left`
 
 - **Cause:** `gpuix gap` (no transforms; `README.md:236`).

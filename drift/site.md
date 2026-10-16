@@ -157,11 +157,12 @@ One entry per place the port looks or behaves differently from the source, whate
 
 ## Theme change is not cross-faded
 
-- **Cause:** `not ported yet`.
-- **Original:** `ThemeProvider` adds `.transitioning` around the class swap, so border-radius, background, colour, border, fill and stroke ease over 180ms; the first apply is skipped (`registry/default/lib/theme-context.tsx:40-67`, `app/globals.css:856-866`).
-- **Port:** `themeChoice` flips the palette signal and every `color.*` getter re-reads (`src/lib/theme.ts:199-253`); no colour transition is declared on the frame, panels or text (`src/app.tsx` and `src/lib/app-frame.tsx` declare none). Gpuix has colour transitions (`colorFade`, `src/lib/theme.ts:451-455`, README "gpuix gaps" preface), so nothing stops it. Not checked live.
+- **Cause:** `gpuix gap`. The source puts one rule on every element; gpuix has no stylesheet or universal selector to put it on, only a `transition` per element.
+- **Original:** `ThemeProvider` adds `.transitioning` around the class swap, and `html.transitioning *` eases border-radius, background, colour, border, fill and stroke over 180ms ease-in-out on every element; the first apply is skipped (`registry/default/lib/theme-context.tsx:40-67`, `app/globals.css:856-866`).
+- **Port:** `themeChoice` flips the palette signal and every `color.*` getter re-reads (`src/lib/theme.ts:199-253`). Components that declare a `transition` (mostly 80ms) ease the swap; the chrome, panel, headings, cards, sidebar and undeclared text cut at once. A 180ms fade on only the chrome and panel was tried and removed: with the text and cards still cutting, mid-swap shows new-theme text on a part-way background.
+- **gpuix lacks:** a global transition rule (an inherited or universal `transition`).
 - **Workaround:** none.
-- **Fidelity:** dropped (the swap is a hard cut).
+- **Fidelity:** approximated (declared component fades only, the rest cuts).
 - **Components it hits:** every page.
 
 ## Theme and settings are not persisted

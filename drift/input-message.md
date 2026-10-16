@@ -43,13 +43,6 @@ repeating it.
 - **Port:** `Collapse` exits on the 120 ms tween (`tween.moderateExit`, `input-message.tsx:125,148`), fades opacity on exit for every region including suggestions (`:153-156`), and its `initial` is always `{ height: 0, opacity: 0 }` (`:152`), so a region open at mount (the Attachments demo's two files) animates in.
 - **Fidelity:** approximated (the divider vanishing mid-collapse is what the source comment avoids).
 
-## 80 ms fades are instant
-
-- **Cause:** `not ported yet`.
-- **Original:** `transition-opacity duration-80` on the badge and close button (`input-message.tsx:257,370`), `transition-colors duration-80` on a suggestion row's text and `transition-opacity` on its icon (`:429,445,451`), `transition-[box-shadow,color] duration-80` on the composer's ring (`:1060`).
-- **Port:** the badge, close button and suggestion icon are shown or hidden at once (`input-message.tsx:263,490,561-581`), the row colour switches (`:556`), and `edgeShadow()` switches the ring's shadow (`:928-936`). The fork animates colours, `outlineColor` and `boxShadow` (`FORK.md:814-815`).
-- **Fidelity:** approximated.
-
 ## Drag-over has no state
 
 - **Cause:** `not ported yet`.

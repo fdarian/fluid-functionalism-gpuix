@@ -31,15 +31,6 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 - **Fidelity:** approximated (no easing, 600 for 550).
 - **Components it hits:** every `StableLabel` (tabs, tabs-subtle, sidebar, menu rows, card, table).
 
-## Label and chevron colour switch at once
-
-- **Cause:** `not ported yet`.
-- **Original:** label colour and the chevron's colour ease over 80 ms (`:754`, `:778`).
-- **Port:** the colour changes in one frame: the accordion passes neither `StableLabel` nor `Icon` a `fade` (`src/components/accordion.tsx:640-657`; both props exist, `src/lib/stable-label.tsx`, `src/lib/icon.tsx`). The chevron's stroke width does ease (`easeStroke`). gpuix animates `color` (`FORK.md:815-820`).
-- **Workaround:** none.
-- **Fidelity:** dropped (the ease), exact end colours.
-- **Components it hits:** any `StableLabel` row (tabs, sidebar, menus).
-
 ## Labels do not wrap
 
 - **Cause:** `port choice` (shared `StableLabel`; reason not stated).

@@ -41,27 +41,9 @@ repeating it.
 
 - **Cause:** `gpuix gap`. gpuix has `maskImage` (`packages/native/js/host.ts:571`), but a gradient string cannot be a motion value, so the mask cannot follow a spring.
 - **Original:** compact step dots and the pips layer sit under `mask-image: linear-gradient(...)` driven by the thumb's or fill's motion value, a 2px feather that hides each dot as the edge passes it (`slider.tsx:507-522`, `:1194`; `:1370-1376`, `:1683`).
-- **Port:** each dot is its own `motion.div` whose opacity goes to 0 when it is at or under the value (`dotHidden`, `src/components/slider.tsx:774-777`, `:1028`) and each pip's opacity drops when `pip <= value` (`:1409-1421`). At rest it looks the same. While a press springs the thumb, every passed dot fades together over the spring instead of one by one as the edge reaches it.
+- **Port:** each dot is its own `motion.div` whose opacity goes to 0 when it is at or under the value (`dotHidden`, `src/components/slider.tsx:758-761`, `:1006`) and each pip sits in a wrapper whose opacity drops, at once, when `pip <= value` (`:1401-1412`). At rest it looks the same. While a press springs the thumb, every passed dot fades together over the spring instead of one by one as the edge reaches it.
 - **Workaround:** per-item opacity.
 - **Fidelity:** approximated.
-- **Components it hits:** none other.
-
-## Pip colour and opacity do not ease
-
-- **Cause:** `not ported yet`.
-- **Original:** each pip is a `motion.div` animating `backgroundColor` (foreground active, muted otherwise) and `opacity` (1 / 0.3) on `spring.fast` (`slider.tsx:1695-1704`).
-- **Port:** plain `div` with the values set at once (`src/components/slider.tsx:1427-1437`).
-- **Workaround:** none.
-- **Fidelity:** dropped (the active pip changes immediately).
-- **Components it hits:** none other.
-
-## Label, value and handle-line colours do not ease; the focus rings do not fade
-
-- **Cause:** `not ported yet` (gpuix animates colours and `outlineColor`, FORK.md:815).
-- **Original:** label and value go muted -> foreground on `spring.fast` (`slider.tsx:1773`, `:1784`, `:1833`, `:1847`); the handle line's colour steps 25% -> 50% -> 100% foreground on `spring.fast` (`:1749-1758`, `:1811-1820`); the row's focus outline animates in (`:1623-1626`); the compact thumb's focus ring animates `opacity` on `spring.fast` (`:944-953`).
-- **Port:** plain `<text>` and `backgroundColor` bound to `isActive()` / `lineColor()` (`src/components/slider.tsx:1345-1350`, `:1523`, `:1542`, `:1558`); the row outline is `outlineWidth` 0 or 1 (`:1385-1387`) and the thumb's ring is `focusVisible: focusRing(1)` (`:855`). The thumb ring's geometry matches the source's 24px circle (outline 1px at offset 1 around the 20px box).
-- **Workaround:** none.
-- **Fidelity:** dropped (hover, focus and blur snap).
 - **Components it hits:** none other.
 
 ## Value label weight shifts at once, and digits are not tabular

@@ -119,20 +119,11 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Fidelity:** exact for `bordered` and `borderless` (an `error` draws the destructive border on both, as the source does).
 - **Components it hits:** just this one.
 
-## Trigger background does not fade
-
-- **Cause:** `not ported yet`.
-- **Original:** `transition-all duration-80` on the trigger, so the hover fill eases over 80 ms (`select.tsx:235`).
-- **Port:** `hover` / `active` state styles switch the background at once (`select.tsx:518-519`). The leading icon and the rows do ease colour and stroke width (`<Icon fade easeStroke>`). gpuix has `transitionProperty` for state-style changes (`~/code/fdarian/gpuix/FORK.md:816`).
-- **Workaround:** none.
-- **Fidelity:** approximated (background switches; 80 ms).
-- **Components it hits:** any control using `transition-all duration-80` without a `colorFade`.
-
 ## The port adds a pressed background on the trigger
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** only `hover:bg-hover`; no pressed style (`select.tsx:243-246`).
-- **Port:** `active: { backgroundColor: color.active }` (`select.tsx:519`).
+- **Port:** `active: { backgroundColor: color.active }` (`src/components/select.tsx:603`).
 - **Workaround:** none.
 - **Fidelity:** approximated (extra state; the popup opens on mouse-down, so it shows briefly).
 - **Components it hits:** just this one.

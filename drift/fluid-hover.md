@@ -57,12 +57,13 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 - **Port:** the pause button is the same 40px header button, through the shared `ComponentPreview`'s `playback` option (icon, tooltip and click; `src/lib/doc-page.tsx:204-249`, `src/pages/fluid-hover/plain-vs-fluid.tsx:247-265`). There is no `prefers-reduced-motion` check (`matchMedia` exists in the fork, nothing reads it); each caption is one centred `<text>` with inline runs, so the gaps around the chip are a normal space.
 - **Fidelity:** approximated.
 
-## "Show the math": dashed rules are a gradient, the dots do not fade
+## "Show the math": dashed rules are a gradient
 
-- **Cause:** `gpuix gap` (a dashed border on a one-sided, zero-height box paints nothing; `borderStyle` is per element, `FORK.md:755-757`) and `port choice` (the colour transition).
-- **Original:** `border-t border-dashed border-foreground/20` lines at the midpoints between row centres, and `transition-colors` on the dots (`demos.tsx:406-508`).
-- **Port:** each rule is a 1px box with a `repeating-linear-gradient` of 3px dashes and 3px gaps at 20% foreground (`src/pages/fluid-hover/show-the-math.tsx:108-119`); the active dot changes colour at once. The distance label is right-aligned by a `right` offset (the source translates it by `-100% - 8px`). Everything else (cursor line at 70%, rail at 20px, dots 8px, mono 11px label) is the source's geometry.
-- **Fidelity:** approximated (dash phase differs from Chrome's, no dot fade).
+- **Cause:** `gpuix gap` (a dashed border on a one-sided, zero-height box paints nothing; `borderStyle` is per element, `FORK.md:755-757`).
+- **Original:** `border-t border-dashed border-foreground/20` lines at the midpoints between row centres (`app/docs/fluid-hover/demos.tsx:459`).
+- **Port:** each rule is a 1px box with a `repeating-linear-gradient` of 3px dashes and 3px gaps at 20% foreground (`src/pages/fluid-hover/show-the-math.tsx:115-125`). The distance label is right-aligned by a `right` offset (the source translates it by `-100% - 8px`). Everything else (cursor line at 70%, rail at 20px, dots 8px with their 150 ms colour fade, mono 11px label) is the source's geometry.
+- **Workaround:** the gradient.
+- **Fidelity:** approximated (dash phase differs from Chrome's).
 - **Components it hits:** just this page.
 
 ## "3 axes": the strip, list and grid are the port's components

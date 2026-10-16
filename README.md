@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 646 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 620 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 | | |
@@ -116,53 +116,53 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 
 | Component or page | gpuix gap | port choice | not ported yet | mixed | total |
 |---|---:|---:|---:|---:|---:|
-| [accordion](drift/accordion.md) | 3 | 9 | 9 | 0 | 21 |
-| [ask-user-questions](drift/ask-user-questions.md) | 2 | 5 | 9 | 3 | 19 |
+| [accordion](drift/accordion.md) | 3 | 9 | 8 | 0 | 20 |
+| [ask-user-questions](drift/ask-user-questions.md) | 2 | 5 | 7 | 3 | 17 |
 | [audio-mixer](drift/audio-mixer.md) | 0 | 2 | 0 | 1 | 3 |
 | [badge](drift/badge.md) | 1 | 3 | 0 | 0 | 4 |
-| [banner](drift/banner.md) | 3 | 4 | 10 | 0 | 17 |
-| [button](drift/button.md) | 4 | 4 | 3 | 1 | 12 |
-| [card](drift/card.md) | 6 | 8 | 10 | 0 | 24 |
+| [banner](drift/banner.md) | 3 | 4 | 9 | 0 | 16 |
+| [button](drift/button.md) | 4 | 4 | 2 | 1 | 11 |
+| [card](drift/card.md) | 6 | 8 | 9 | 0 | 23 |
 | [carousel-dots](drift/carousel-dots.md) | 2 | 3 | 3 | 1 | 9 |
-| [chat-message](drift/chat-message.md) | 2 | 3 | 4 | 2 | 11 |
-| [checkbox-group](drift/checkbox-group.md) | 3 | 0 | 6 | 1 | 10 |
-| [color-picker](drift/color-picker.md) | 3 | 6 | 19 | 1 | 29 |
-| [combobox](drift/combobox.md) | 7 | 13 | 7 | 1 | 28 |
-| [command-menu](drift/command-menu.md) | 7 | 2 | 14 | 1 | 24 |
+| [chat-message](drift/chat-message.md) | 2 | 2 | 3 | 3 | 10 |
+| [checkbox-group](drift/checkbox-group.md) | 3 | 0 | 4 | 1 | 8 |
+| [color-picker](drift/color-picker.md) | 3 | 6 | 17 | 1 | 27 |
+| [combobox](drift/combobox.md) | 7 | 13 | 6 | 1 | 27 |
+| [command-menu](drift/command-menu.md) | 7 | 2 | 13 | 1 | 23 |
 | [compare](drift/compare.md) | 4 | 9 | 0 | 2 | 15 |
 | [concepts](drift/concepts.md) | 4 | 26 | 2 | 2 | 34 |
 | [dialog](drift/dialog.md) | 6 | 2 | 2 | 1 | 11 |
-| [dropdown](drift/dropdown.md) | 6 | 4 | 12 | 1 | 23 |
+| [dropdown](drift/dropdown.md) | 6 | 4 | 11 | 2 | 23 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
-| [fluid-hover](drift/fluid-hover.md) | 3 | 4 | 2 | 4 | 13 |
+| [fluid-hover](drift/fluid-hover.md) | 4 | 4 | 2 | 3 | 13 |
 | [home](drift/home.md) | 1 | 1 | 1 | 2 | 5 |
-| [input-copy](drift/input-copy.md) | 2 | 3 | 8 | 0 | 13 |
-| [input-group](drift/input-group.md) | 1 | 1 | 4 | 1 | 7 |
-| [input-message](drift/input-message.md) | 4 | 0 | 15 | 3 | 22 |
+| [input-copy](drift/input-copy.md) | 3 | 3 | 7 | 0 | 13 |
+| [input-group](drift/input-group.md) | 1 | 1 | 3 | 1 | 6 |
+| [input-message](drift/input-message.md) | 4 | 0 | 14 | 3 | 21 |
 | [introduction](drift/introduction.md) | 1 | 4 | 2 | 1 | 8 |
 | [mobile-drawer](drift/mobile-drawer.md) | 3 | 2 | 1 | 0 | 6 |
 | [motion-page](drift/motion-page.md) | 4 | 3 | 2 | 3 | 12 |
-| [nav-menu](drift/nav-menu.md) | 0 | 5 | 1 | 1 | 7 |
+| [nav-menu](drift/nav-menu.md) | 1 | 5 | 1 | 0 | 7 |
 | [queued-stack](drift/queued-stack.md) | 4 | 2 | 4 | 1 | 11 |
-| [radio-group](drift/radio-group.md) | 4 | 2 | 5 | 0 | 11 |
-| [scroll-area](drift/scroll-area.md) | 3 | 6 | 2 | 1 | 12 |
+| [radio-group](drift/radio-group.md) | 4 | 2 | 3 | 0 | 9 |
+| [scroll-area](drift/scroll-area.md) | 3 | 6 | 1 | 1 | 11 |
 | [scrollbars-page](drift/scrollbars-page.md) | 1 | 4 | 2 | 1 | 8 |
-| [select](drift/select.md) | 7 | 3 | 7 | 2 | 19 |
-| [sidebar](drift/sidebar.md) | 1 | 6 | 25 | 1 | 33 |
-| [site](drift/site.md) | 4 | 6 | 22 | 6 | 38 |
+| [select](drift/select.md) | 7 | 3 | 6 | 2 | 18 |
+| [sidebar](drift/sidebar.md) | 1 | 6 | 24 | 1 | 32 |
+| [site](drift/site.md) | 5 | 6 | 21 | 6 | 38 |
 | [sizes-page](drift/sizes-page.md) | 0 | 5 | 2 | 4 | 11 |
 | [skill-page](drift/skill-page.md) | 3 | 5 | 0 | 1 | 9 |
-| [slider](drift/slider.md) | 4 | 3 | 4 | 2 | 13 |
+| [slider](drift/slider.md) | 4 | 3 | 2 | 2 | 11 |
 | [surfaces](drift/surfaces.md) | 1 | 3 | 4 | 4 | 12 |
-| [switch](drift/switch.md) | 2 | 1 | 3 | 1 | 7 |
-| [table](drift/table.md) | 3 | 1 | 5 | 0 | 9 |
-| [tabs-subtle](drift/tabs-subtle.md) | 1 | 4 | 2 | 1 | 8 |
-| [tabs](drift/tabs.md) | 2 | 2 | 3 | 0 | 7 |
+| [switch](drift/switch.md) | 2 | 1 | 2 | 1 | 6 |
+| [table](drift/table.md) | 3 | 1 | 4 | 0 | 8 |
+| [tabs-subtle](drift/tabs-subtle.md) | 2 | 4 | 2 | 0 | 8 |
+| [tabs](drift/tabs.md) | 2 | 2 | 2 | 0 | 6 |
 | [thinking-indicator](drift/thinking-indicator.md) | 1 | 2 | 4 | 0 | 7 |
-| [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 7 | 1 | 15 |
+| [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
 | [tooltip](drift/tooltip.md) | 4 | 5 | 1 | 1 | 11 |
 | [typography](drift/typography.md) | 4 | 0 | 1 | 6 | 11 |
-| **Total** | **136** | **193** | **250** | **67** | **646** |
+| **Total** | **141** | **192** | **221** | **66** | **620** |
 
 ### gpuix gaps across components
 
@@ -265,7 +265,7 @@ now does that the port has not picked up.
 | `group-hover:` (icon stroke, label colour) | `onMouseEnter` / `onMouseLeave` plus a signal | Exact, one JS round trip |
 | `focus-visible:ring-1` | `style.focusVisible` outline, offset 1 | Exact |
 | `ring-1 ring-border` | `outlineWidth` / `outlineColor`: outside the box, takes no layout | Exact |
-| `transition-colors` (`duration-80`, or Tailwind's 150 ms), `transition-[box-shadow]` and the other lists | CSS `transition` on the element: `colorFade` (`src/lib/theme.ts`) is Tailwind's `transition-colors` list that gpuix animates (`color`, `background-color`, `border-color`, `outline-color`) over 80 ms on Tailwind's curve, `colorFadeDefault` the same over 150 ms, and `fade([...], ms, ease?)` any other list (`box-shadow`, one colour, the source's own curve). A signal-driven change and a `hover` / `active` / `focusVisible` change both ease (`scripts/check-color-fade.tsx`). `text-decoration-color`, `fill` and `stroke` are not CSS-transitionable here; an icon's strokes follow `color` through `currentColor` (`<Icon fade>`) | Exact |
+| `transition-colors` (`duration-80`, or Tailwind's 150 ms), `transition-[box-shadow]` and the other lists | CSS `transition` on the element: `colorFade` (`src/lib/theme.ts`) is Tailwind's `transition-colors` list that gpuix animates (`color`, `background-color`, `border-color`, `outline-color`) over 80 ms on Tailwind's curve, `colorFadeDefault` the same over 150 ms, `colorFadeNoRing(ms)` the list without `outline-color` for a box-shadow focus ring, `springFade([...])` an 80 ms colour or outline fade on a curve fitted to `spring.fast` where the source animates it with a spring, and `fade([...], ms, ease?)` any other list (`box-shadow`, one colour, the source's own curve). Button's two-speed surface layer is `surfaceFade` / `pressFade`. A signal-driven change and a `hover` / `active` / `focusVisible` change both ease (`scripts/check-color-fade.tsx`). `text-decoration-color`, `fill` and `stroke` are not CSS-transitionable here; an icon's strokes follow `color` through `currentColor` (`<Icon fade>`) | Exact |
 | spring `fast` / `moderate` (`motion/react`) | native `motion` spring, `{ type: "spring", duration: 0.08 / 0.16, bounce: 0 }`, velocity kept when the target changes mid-flight | Exact; `slow` (bounce 0.12, the exit 160 ms) drives the command menu's dialog and the banner |
 | exits (`spring.fast.exit` …) | plain tweens, 60 ms / 120 ms, like the source | Exact |
 | "snap, don't spring" on a reflow | a zero-length tween | Exact |
@@ -288,7 +288,7 @@ now does that the port has not picked up.
 | Inter variable (`wght 550`, `opsz`) | static Inter TTFs (400, 500, 600, 700) passed as `fonts` to `render()`; the family is `Inter` for every weight. the site's 550 is set as SemiBold 600, there is no `opsz` | Approximated, one weight step |
 | ghost-span that reserves the semibold width | the same trick: a hidden copy in flow, the visible label absolutely positioned over it | Exact |
 | `truncate` | `whiteSpace: "nowrap"` + `textOverflow: "ellipsis"` on the combobox rows | Exact; sidebar labels are not truncated |
-| icon stroke 1.5 → 2 on hover | `<Icon easeStroke>` (`src/lib/icon.tsx`) animates `strokeWidth` on a `motion.g` over 80 ms: input-copy, button, accordion, and the dropdown, select and combobox icons. Everywhere else the SVG string is swapped | Exact where `easeStroke` is set, except with the phosphor library (filled paths, the weight switches at once); instant elsewhere |
+| icon stroke 1.5 → 2 on hover | `<Icon easeStroke>` (`src/lib/icon.tsx`) animates `strokeWidth` on a `motion.g` over 80 ms: accordion, button, card, tabs, tabs-subtle, nav-item, sidebar, thinking-steps, input-copy, input-group, and the dropdown, dropdown-search, menu-item, select, combobox and command-menu icons. Everywhere else the SVG string is swapped | Exact where `easeStroke` is set, except with the phosphor library (filled paths, the weight switches at once); instant elsewhere |
 | `animation: spinner-move` | a static lucide `loader`: no rotation, no animation. gpuix now has keyframes and `strokeDasharray` / `strokeDashoffset` motion (FORK.md:822, :829); not adopted yet | Dropped, now possible |
 | `AnimatePresence` exit of the popup | the popup stays mounted for 60 ms while its opacity fades | Approximated |
 

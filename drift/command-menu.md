@@ -45,7 +45,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `gpuix gap` (shared; variable-font axes, see the "Variable-font axes" row in `README.md` "Missing features").
 - **Original:** the selected tab's label eases between weight 400 and 550 (`registry/base/tabs-subtle.tsx:326-337`).
-- **Port:** SemiBold 600 switches at once, with a hidden semibold copy reserving the width (`src/components/command-menu.tsx:655-677`).
+- **Port:** SemiBold 600 switches at once, with a hidden semibold copy reserving the width (`src/components/command-menu.tsx:706-727`).
 - **Workaround:** static cuts.
 - **Fidelity:** approximated.
 - **Components it hits:** tabs, tabs-subtle, sidebar.
@@ -90,15 +90,6 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 - **Workaround:** flex centring.
 - **Fidelity:** approximated.
 - **Components it hits:** badge, select, every list row.
-
-## State changes do not fade over 80 ms
-
-- **Cause:** `not ported yet`.
-- **Original:** row text and icon colour and stroke width ease over `duration-80`; the field's search icon likewise on focus (`:849`, `:1306`, `:1317`).
-- **Port:** row text, row icon and the field icon switch at once (`src/components/command-menu.tsx:610-613`, `:1081-1084`, `:1102-1111`). `colorFade` and `Icon`'s `fade` exist (`src/lib/theme.ts:451-455`, `src/lib/icon.tsx:21`) and combobox and select use them; whether gpuix can tween `strokeWidth` is not checked.
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** just this one.
 
 ## A wheel scroll re-picks the row under a stationary pointer
 

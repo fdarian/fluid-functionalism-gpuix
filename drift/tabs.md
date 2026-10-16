@@ -27,15 +27,6 @@ light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 - **Fidelity:** approximated.
 - **Components it hits:** every component with a `size` variant.
 
-## Colour and stroke width switch at once
-
-- **Cause:** `not ported yet`. gpuix eases colour (`colorFade`, `Icon`'s `fade`, `theme.ts:310-314`) and animates `strokeWidth` on `motion.path` (`host.ts:296-298`; BASE-UI-AUDIT row 529).
-- **Original:** label colour and font weight ease over 80 ms (`transition-[color,font-variation-settings] duration-80`, `tabs.tsx:565`); icon colour and stroke width 1.5 to 2 ease over 80 ms (`:546`).
-- **Port:** `Icon` is called without `fade` and bakes the stroke width into its SVG source (`tabs.tsx:409-414`, `src/lib/icon.tsx:9-23`); `StableLabel` has no transition (`stable-label.tsx:40-52`). Both change on the frame the hover or selection does.
-- **Workaround:** none.
-- **Fidelity:** approximated (the 80 ms ease is dropped).
-- **Components it hits:** tabs-subtle, select, sidebar, menu rows (anything with a `StableLabel` or the 1.5 to 2 stroke).
-
 ## Semibold is SemiBold 600, not variable 550
 
 - **Cause:** `gpuix gap` (README "Missing features": variable-font axes).

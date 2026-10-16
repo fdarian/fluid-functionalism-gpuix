@@ -30,13 +30,15 @@ repeating it.
 - **Fidelity:** approximated (static, larger cross, thinner strokes).
 - **Components it hits:** just this one.
 
-## Hover colour changes are instant
+## The value tint switches on at once
 
-- **Cause:** `not ported yet`.
-- **Original:** `transition-colors duration-80` on the action cell (`input-copy.tsx:226,330`) and on the `<mark>` (`:351`), so the label, glyph and tint ease over 80 ms.
-- **Port:** `hovered()` switches `color` and `highlight` at once (`input-copy.tsx:147-179,248-258`). `Icon` has a `fade` prop (`lib/icon.tsx:11`) and `colorFade` (`lib/theme.ts:310`) is used by select and combobox; this component uses neither.
-- **Fidelity:** approximated (colour fade dropped).
-- **Components it hits:** input-group (icon colour, its own entry).
+- **Cause:** `gpuix gap`.
+- **Original:** the `<mark>` carries `transition-colors duration-80` (`input-copy.tsx:351`), so the `bg-[#6B97FF]/20` tint fades in and out over 80 ms on hover. The glyph and label colours ease the same way on the action cell (`:226,330`).
+- **Port:** the glyph and label colours do ease (`Icon fade`, `colorFade` on the label `<text>`, `src/components/input-copy.tsx:190-198,236`). The tint is a `highlight` wash on the value `<text>` (`:261-270`), set while hovered, and appears and disappears on the first frame.
+- **gpuix lacks:** a transition for the `highlight` wash. It is painted as its own quad from the `highlight` prop (`~/code/fdarian/gpuix/README.md:3993-4090`), not from the element's style, so `transition*` never sees it.
+- **Workaround:** none.
+- **Fidelity:** approximated (the tint switches instead of easing; the glyph and label fade).
+- **Components it hits:** just this one.
 
 ## Icon stroke 1.5 to 2 on hover applies to the wrong glyphs in the button variant
 
@@ -49,7 +51,7 @@ repeating it.
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `<mark>` with `bg-[#6B97FF]/20`, no radius (`input-copy.tsx:351`).
-- **Port:** `highlight` with `radius: 2` (`input-copy.tsx:248-258`). How tall the tinted box is next to an inline `<mark>` was not compared.
+- **Port:** `highlight` with `radius: 2` (`input-copy.tsx:261-270`). How tall the tinted box is next to an inline `<mark>` was not compared.
 - **Fidelity:** approximated.
 
 ## The monospace face is Menlo

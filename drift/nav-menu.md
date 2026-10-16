@@ -33,11 +33,11 @@ Checked and equal: row height 32 / 28 (compact), `px` 12, icon 16 / 14 with an 8
 - **Fidelity:** approximated (a 160 ms fade on mount only).
 - **Components it hits:** sidebar, dropdown (any `FluidHighlight` that is mounted already on).
 
-## Colour and stroke width switch at once, semibold is 600, no `text-box-trim`
+## Semibold is 600, no `text-box-trim`
 
-- **Cause:** `not ported yet` for the 80 ms colour and stroke-width ease; `gpuix gap` for variable weight and `text-box-trim`. Same entry as [tabs-subtle.md, "Colour and stroke width switch at once, semibold is 600, no `text-box-trim`"](tabs-subtle.md).
-- **Original:** `transition-[color,stroke-width] duration-80` on the icon and `transition-[color,font-variation-settings] duration-80` on the label, both labels trimmed (`nav-item.tsx:82`, `:99`).
-- **Port:** no fades, SemiBold 600, line-box centring in a fixed-height row (`nav-item.tsx:150-165`).
+- **Cause:** `gpuix gap` for variable weight and `text-box-trim`. Same entry as [tabs-subtle.md, "Semibold is 600, no `text-box-trim`"](tabs-subtle.md).
+- **Original:** the label eases its weight with its colour over 80 ms, both labels trimmed (`nav-item.tsx:99`).
+- **Port:** SemiBold 600 switching at once, line-box centring in a fixed-height row (`nav-item.tsx:155-162`). The colour and stroke-width eases are ported (`fade`, `easeStroke`).
 - **Workaround:** the hidden semibold copy (`StableLabel`) reserves the width.
 - **Fidelity:** approximated.
 - **Components it hits:** tabs, tabs-subtle, select, sidebar.

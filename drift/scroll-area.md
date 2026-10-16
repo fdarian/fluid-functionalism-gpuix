@@ -24,15 +24,6 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 - **Fidelity:** exact on macOS (apart from `Math.min(fadeSize, length / 2)` at `:359`, which the CSS does not do for a viewport under 96px); no fade elsewhere. A new gradient string is built on every scroll event. A `both` area fades vertically only, as the single class does on the web.
 - **Components it hits:** any `ScrollArea` with `fade`.
 
-## The thumb colour switches instantly
-
-- **Cause:** `not ported yet` (gpuix transitions colours: `colorFade`, `src/lib/theme.ts:450`).
-- **Original:** `transition-[background-color,width,height] duration-160 ease-in-out` on the thumb, so the 8 / 12 / 16% tint eases (`registry/base/scroll-area.tsx:147-148`).
-- **Port:** `thumbColor()` is a plain style (`src/components/scroll-area.tsx:401-402`, `:466`); only the width / height and the nudge ease (`:449-454`).
-- **Workaround:** none.
-- **Fidelity:** approximated (tint steps, 160ms).
-- **Components it hits:** just this one.
-
 ## The thumb's 2px nudge is a `left` / `top`, not a translate
 
 - **Cause:** `gpuix gap` (no transforms: [README "Missing features", first row](../README.md#missing-features)).

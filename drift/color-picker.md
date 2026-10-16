@@ -82,7 +82,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** Radix slider thumb: arrows, Shift+arrow and PageUp/PageDown move by 10, Home/End jump, and it exposes `aria-valuenow`, `-min`, `-max` (`registry/radix/slider.tsx`, primitive). The ring is a 24px circle whose opacity eases on `spring.fast` (`:940-952`), and the track has an `ew-resize` cursor only on the hit area (`:1087`).
-- **Port:** arrows, Shift (10), Home and End only; no PageUp/PageDown (`src/components/color-picker.tsx:489-512`). The thumb has `aria-valuetext` but no `aria-valuenow`/`-min`/`-max` (`:537-539`; `slider.tsx:851-853` has them). The ring is `focusVisible` with a 2px offset, switching at once and drawn about 2px wider (`:553`).
+- **Port:** arrows, Shift (10), Home and End only; no PageUp/PageDown (`src/components/color-picker.tsx:489-512`). The thumb has `aria-valuetext` but no `aria-valuenow`/`-min`/`-max` (`:535-538`; `slider.tsx:851-853` has them). The ring is `focusVisible` with a 2px offset, drawn about 2px wider, its colour easing over 80 ms on a spring-fitted curve (`:552-553`, `springFade`, `src/lib/theme.ts`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -113,24 +113,6 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Workaround:** n/a.
 - **Fidelity:** approximated (a hairline the source may not draw on opaque colours).
 - **Components it hits:** just this one.
-
-## Swatch ring does not fade
-
-- **Cause:** `not ported yet`.
-- **Original:** three stacked box-shadows (inset hairline, 2px background gap, 2px outer ring: `#6B97FF` selected, 40% grey hovered), fading over 100ms (`color-picker.tsx:1688-1699`).
-- **Port:** the gap and the ring as one `0 0 0 2px background, 0 0 0 4px ring` shadow (the hairline is the overlay above), switching at once (`src/components/color-picker.tsx:176-206`). CSS transitions apply to state-style changes (`FORK.md:816-818`). README row "transition-colors duration-80, transition-[box-shadow]: Dropped" predates that.
-- **Workaround:** none.
-- **Fidelity:** approximated (the ring switches at once).
-- **Components it hits:** just this one.
-
-## Colour fades (`transition-colors duration-80`) are not ported
-
-- **Cause:** `not ported yet`.
-- **Original:** the format trigger, channel fields, hex field, eyedropper and popover trigger fade background and text over 80ms (`color-picker.tsx:978`, `:1267`, `:1466`, `:1631`, `:2315`), and a menu row's colour and weight over 80ms (`:870`). The remove X changes colour at once (`:2359`).
-- **Port:** state styles switch at once (`src/components/color-picker.tsx:988-998`, `:1163-1164`, `:1765`); the row label colour likewise (`:1110`). Other components use `colorFade` for text (`src/lib/theme.ts:451`).
-- **Workaround:** none. Per-property CSS transitions exist (`FORK.md:816-819`).
-- **Fidelity:** dropped.
-- **Components it hits:** every control with `transition-colors`.
 
 ## Digits are not tabular
 

@@ -101,15 +101,6 @@ repeating it.
 - **Fidelity:** approximated. The mark is pure page colour in the source and a tinted one in the port on a high-contrast banner, and on a surface that is not the page background.
 - **Components it hits:** just this one.
 
-## Dismiss button fades
-
-- **Cause:** `not ported yet`. `colorFade` exists (`src/lib/theme.ts:451`) and `Icon` takes `fade` (`src/lib/icon.tsx:6-12`).
-- **Original:** `transition-colors duration-80 hover:bg-hover hover:text-foreground` (`banner.tsx:497`).
-- **Port:** the hover background is a state style and the icon colour comes from a signal, so both switch at once (`banner.tsx:393`, `:401`).
-- **Workaround:** none.
-- **Fidelity:** approximated (80ms fades dropped).
-- **Components it hits:** any control with `transition-colors duration-80`.
-
 ## Action order is done by reversing the elements
 
 - **Cause:** `not ported yet`. gpuix has `order` and `flexDirection: "row-reverse"`, and `order` keeps focus order in document order, as the DOM does (`packages/native/js/host.ts:399`, `:413-415`). The port's comment that it has neither (`banner.tsx:474-478`) is out of date.
@@ -121,11 +112,11 @@ repeating it.
 
 ## Ghost action colour
 
-- **Cause:** `not ported yet`.
-- **Original:** a ghost `BannerAction` adds `text-foreground`, which overrides the ghost button's muted rest colour, so it reads foreground at rest and on hover (`banner.tsx:648-652`; its comment at `:618-619` describes "70% foreground", the code does not).
-- **Port:** the plain ghost `Button`: muted at rest, foreground on hover (`banner.tsx:490-506`; `src/components/button.tsx:129-130`).
+- **Cause:** `not ported yet`. The port's `Button` has no colour override (`labelColor` is internal, `src/components/button.tsx:149-158`); a `Button` prop for it would close this.
+- **Original:** a ghost `BannerAction` adds `text-foreground`, which overrides the ghost button's muted rest colour, so it reads foreground at rest and on hover, with no colour change to ease (`banner.tsx:648-652`; its comment at `:618-619` describes "70% foreground", the code does not).
+- **Port:** the plain ghost `Button`: muted at rest, foreground on hover, eased over 80 ms like the source's other ghost buttons (`banner.tsx:490-506`; `src/components/button.tsx:129-130`).
 - **Workaround:** none.
-- **Fidelity:** approximated.
+- **Fidelity:** approximated (the rest colour, and the hover fade the source does not have here).
 - **Components it hits:** just this one.
 
 ## Props and parts the port does not take
