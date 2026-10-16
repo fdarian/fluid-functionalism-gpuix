@@ -1,9 +1,11 @@
 import {
+	window as appWindow,
+	type DomEvent,
 	type HostElement,
 	type KeyEvent,
 	useGpuixRequired,
 } from "@gpuix/solid";
-import { createMemo, createSignal, For, type JSX, Show } from "solid-js";
+import { createMemo, createSignal, type JSX, onCleanup, Show } from "solid-js";
 import { Button } from "../components/button";
 import {
 	CommandMenu,
@@ -36,7 +38,6 @@ import {
 	pick,
 } from "../lib/playground";
 import { color, type as scale } from "../lib/theme";
-
 
 function items(options: {
 	descriptions: boolean;
@@ -231,6 +232,20 @@ function Section(props: { id: string; title: string; children: JSX.Element }) {
 	);
 }
 
+/** The rows once the tab, the type filter and the sort have had their say. */
+function scoped(
+	tab: string,
+	type: string,
+	sort: string,
+): CommandMenuItemData[] {
+	let rows = FULL;
+	if (tab !== "all") rows = rows.filter((item) => item.group === tab);
+	if (type !== "all") rows = rows.filter((item) => item.group === type);
+	return sort === "az"
+		? [...rows].sort((a, b) => a.label.localeCompare(b.label))
+		: [...rows];
+}
+
 /** The two borderless selects of the filter row, which the playground and the Filters sections share. */
 function FilterSelects(props: {
 	testId: string;
@@ -263,6 +278,9 @@ function FilterSelects(props: {
 
 // ─── Trigger combos ──────────────────────────────────────────────────────────
 
+/** The combo the Dialog section binds, as the source binds its own: the default ⌘K belongs to the site menu. */
+const DIALOG_COMBO = "mod+p";
+
 const TRIGGERS = ["mod+k", "mod+j", "mod+p", "mod+/"] as const;
 type Trigger = (typeof TRIGGERS)[number];
 
@@ -272,7 +290,7 @@ const TRIGGER_OPTIONS = TRIGGERS.map((value) => ({
 }));
 
 /** FF's `matchesShortcut` for a "mod+<key>" combo: the key, or its physical key when Alt or a non-Latin layout changes the character; Meta or Ctrl, no Alt, Shift free. */
-function matchesCombo(event: KeyEvent, combo: Trigger): boolean {
+function matchesCombo(event: KeyEvent | DomEvent, combo: string): boolean {
 	if (event.altKey === true) return false;
 	if (event.metaKey !== true && event.ctrlKey !== true) return false;
 	const key = combo.slice("mod+".length);
@@ -573,11 +591,93 @@ function Filters() {
 	);
 }
 
+function TabsAndFilters() {
+	const [tab, setTab] = createSignal("all");
+	const [type, setType] = createSignal("all");
+	const [sort, setSort] = createSignal("default");
+	const visible = createMemo(() => scoped(tab(), type(), sort()));
+	return (
+		<Section id="tabs-filters" title="Tabs and filters">
+			<CommandMenuPanel maxHeight={PANEL_HEIGHT}>
+				<CommandMenu testId="tabs-filters" items={visible()}>
+					<CommandMenuInput
+						testId="tabs-filters-input"
+						placeholder={PLACEHOLDER}
+					/>
+					<CommandMenuTabs tabs={TABS} value={tab()} onValueChange={setTab}>
+						<CommandMenuFilters>
+							<FilterSelects
+								testId="tabs-filters"
+								type={type()}
+								onType={setType}
+								sort={sort()}
+								onSort={setSort}
+							/>
+						</CommandMenuFilters>
+					</CommandMenuTabs>
+					<CommandMenuList>
+						<CommandMenuEmpty>{EMPTY}</CommandMenuEmpty>
+					</CommandMenuList>
+				</CommandMenu>
+			</CommandMenuPanel>
+		</Section>
+	);
+}
+
+function Compact() {
+	const [tab, setTab] = createSignal("all");
+	const [type, setType] = createSignal("all");
+	const [sort, setSort] = createSignal("default");
+	const visible = createMemo(() => scoped(tab(), type(), sort()));
+	return (
+		<Section id="compact" title="Compact">
+			<CommandMenuPanel maxHeight={PANEL_HEIGHT}>
+				<CommandMenu
+					testId="compact"
+					size="compact"
+					items={visible()}
+					suggestions={SUGGESTIONS}
+				>
+					<CommandMenuInput testId="compact-input" placeholder={PLACEHOLDER} />
+					<CommandMenuTabs tabs={TABS} value={tab()} onValueChange={setTab}>
+						<CommandMenuFilters>
+							<FilterSelects
+								testId="compact"
+								type={type()}
+								onType={setType}
+								sort={sort()}
+								onSort={setSort}
+							/>
+						</CommandMenuFilters>
+					</CommandMenuTabs>
+					<CommandMenuList>
+						<CommandMenuEmpty>{EMPTY}</CommandMenuEmpty>
+					</CommandMenuList>
+					<CommandMenuFooter />
+				</CommandMenu>
+			</CommandMenuPanel>
+		</Section>
+	);
+}
+
 function DialogSection() {
 	const [open, setOpen] = createSignal(false);
+	const [openWithoutKey, setOpenWithoutKey] = createSignal(false);
 	const [ran, setRan] = createSignal("Nothing yet");
+	const run = (item: CommandMenuItemData) => setRan(item.label);
+
+	// "Anywhere on this page": the window answers, and leaves with the page.
+	const onKeyDown = (event: DomEvent) => {
+		if (event.repeat === true || event.defaultPrevented) return;
+		if (!matchesCombo(event, DIALOG_COMBO)) return;
+		event.preventDefault();
+		setOpen(!open());
+	};
+	appWindow.addEventListener("keydown", onKeyDown);
+	onCleanup(() => appWindow.removeEventListener("keydown", onKeyDown));
+
 	return (
-		<Section id="dialog" title="Dialog">
+		<Section id="dialog" title="Dialog and trigger shortcut">
 			<div
 				style={{
 					display: "flex",
@@ -590,10 +690,17 @@ function DialogSection() {
 					testId="dialog-open"
 					variant="secondary"
 					onClick={() => setOpen(true)}
+					trailingContent={<CommandMenuShortcut keys={DIALOG_COMBO} />}
 				>
 					Open
 				</Button>
-				<CommandMenuShortcut keys="mod+k" />
+				<Button
+					testId="dialog-open-no-shortcut"
+					variant="ghost"
+					onClick={() => setOpenWithoutKey(true)}
+				>
+					Open, no shortcut
+				</Button>
 				<text style={{ ...scale.caption, color: color.mutedForeground }}>
 					{`Ran: ${ran()}`}
 				</text>
@@ -603,16 +710,26 @@ function DialogSection() {
 					testId="dialog"
 					items={FULL}
 					suggestions={SUGGESTIONS}
-					onSelect={(item: CommandMenuItemData) => {
-						setRan(item.label);
-						setOpen(false);
-					}}
+					onSelect={run}
 				>
 					<CommandMenuInput testId="dialog-input" placeholder={PLACEHOLDER} />
 					<CommandMenuList>
 						<CommandMenuEmpty>{EMPTY}</CommandMenuEmpty>
 					</CommandMenuList>
-					<CommandMenuFooter />
+				</CommandMenu>
+			</CommandMenuDialog>
+			<CommandMenuDialog
+				open={openWithoutKey()}
+				onOpenChange={setOpenWithoutKey}
+			>
+				<CommandMenu testId="dialog-no-shortcut" items={FULL} onSelect={run}>
+					<CommandMenuInput
+						testId="dialog-no-shortcut-input"
+						placeholder={PLACEHOLDER}
+					/>
+					<CommandMenuList>
+						<CommandMenuEmpty>{EMPTY}</CommandMenuEmpty>
+					</CommandMenuList>
 				</CommandMenu>
 			</CommandMenuDialog>
 		</Section>
@@ -698,6 +815,8 @@ export function Demo() {
 			<Suggestions />
 			<Tabs />
 			<Filters />
+			<TabsAndFilters />
+			<Compact />
 			<DialogSection />
 			<FooterSection />
 			<CustomRows />
@@ -774,9 +893,20 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("tabs-hover");
 
 	await reveal(shot, "filters");
-	await shot.click("filters-sort");
+	// A pointer press that opens a popup cannot run in the test renderer: drive the select by key.
+	await shot.focus("filters-sort-trigger");
+	await shot.press("down");
 	shot.capture("filters-open");
-	await shot.clickAt(1000, 700);
+	await shot.press("down enter");
+	await shot.settle(500);
+	shot.capture("filters-sorted");
+
+	await reveal(shot, "tabs-filters");
+	shot.capture("tabs-and-filters");
+
+	await reveal(shot, "compact");
+	await shot.click("compact-input");
+	shot.capture("compact");
 
 	await reveal(shot, "footer");
 	await shot.click("footer-input");
@@ -797,4 +927,12 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("dialog-open");
 	await shot.press("escape");
 	shot.capture("dialog-closed");
+	// The bound combo opens it from anywhere on the page, and again closes it.
+	await shot.press("cmd-p");
+	shot.capture("dialog-combo-open");
+	await shot.press("cmd-p");
+	shot.capture("dialog-combo-closed");
+	await shot.click("dialog-open-no-shortcut");
+	shot.capture("dialog-no-shortcut");
+	await shot.press("escape");
 };
