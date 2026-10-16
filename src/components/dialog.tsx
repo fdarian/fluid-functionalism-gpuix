@@ -213,27 +213,6 @@ export function DialogClose(props: { children: JSX.Element }) {
 }
 
 /**
- * Builds `make()` once per mount and hands the same value back until the
- * mounting scope is disposed. gpuix's `DialogPortal` evaluates its children
- * twice (`dialog.ts:117` spreads them, `dialog.ts:137` reads them again), so
- * the content would otherwise exist twice and the discarded copy keep its
- * timers and listeners alive.
- */
-export function once<Value>(make: () => Value): () => Value {
-	let made: { value: Value } | undefined;
-	return () => {
-		if (made === undefined) {
-			made = { value: make() };
-			// The portal remounts on every open: a copy from the last open is dead.
-			onCleanup(() => {
-				made = undefined;
-			});
-		}
-		return made.value;
-	};
-}
-
-/**
  * surface-5's shadow: a 1px ring plus drops up to 12px. gpuix paints one
  * outer shadow, so the ring is the border and the largest drop is kept.
  */
@@ -259,7 +238,6 @@ export function DialogContent(props: {
 	children: JSX.Element;
 }) {
 	const scope = useDialogScope();
-	const content = once(() => props.children);
 	const windowSize = createWindowSize();
 	const maxWidth = () =>
 		widths[props.size ?? "sm"][props.compact ? "compact" : "default"];
@@ -281,9 +259,6 @@ export function DialogContent(props: {
 	let popup: HostElement | undefined;
 	/** The scoped overlay's box: a trigger outside it is not under the backdrop. */
 	let region: HostElement | undefined;
-	// gpuix builds the popup's children twice (see `once`), and a second focus step would skip the first tab stop.
-	const focusFirst = once(() => <FocusFirst popup={() => popup} />);
-	const hideOutside = once(() => <HideOutside popup={() => popup} />);
 	/** A non-modal dialog closes on a press anywhere outside it, except, for a scoped dialog, on a trigger outside the overlay (it toggles the dialog itself) or inside a dialog opened from it. */
 	const closeOnOutsidePress = (event: EventPayload) => {
 		if (scope.modal() || !scope.shown() || scope.openChildren() > 0) return;
@@ -341,8 +316,8 @@ export function DialogContent(props: {
 					if (event.key === "Escape" && !scope.shown()) scope.finish();
 				}}
 			>
-				{focusFirst()}
-				<Show when={scope.modal()}>{hideOutside()}</Show>
+				<FocusFirst popup={() => popup} />
+				<Show when={scope.modal()}><HideOutside popup={() => popup} /></Show>
 				{/* The original also scales 0.97 to 1; gpuix has no transforms, so the panel only fades. */}
 				<motion.div
 					initial={{ opacity: 0 }}
@@ -363,7 +338,7 @@ export function DialogContent(props: {
 						boxShadow: shadow5(),
 					}}
 				>
-					{content()}
+					{props.children}
 					<Show when={props.showCloseButton ?? true}>
 						<div style={{ position: "absolute", top: 12, right: 12 }}>
 							<DialogClose>

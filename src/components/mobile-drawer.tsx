@@ -15,7 +15,7 @@ import {
 } from "solid-js";
 import { HideOutside } from "../lib/modal";
 import { createPresence } from "../lib/presence";
-import { FocusFirst, once } from "./dialog";
+import { FocusFirst } from "./dialog";
 import {
 	color,
 	scheme,
@@ -44,10 +44,7 @@ export function MobileDrawer(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
-	const content = once(() => props.children);
 	let popup: HostElement | undefined;
-	const focusFirst = once(() => <FocusFirst popup={() => popup} />);
-	const hideOutside = once(() => <HideOutside popup={() => popup} />);
 	// onMotionComplete is the primary release; the timer covers an exit that never animates.
 	const presence = createPresence(EXIT_FALLBACK_MS, props.open);
 	presence.follow(() => props.open);
@@ -112,7 +109,7 @@ export function MobileDrawer(props: {
 						pointerEvents: "none",
 					}}
 				>
-					{hideOutside()}
+					<HideOutside popup={() => popup} />
 					<motion.div
 						initial={{ left: -DRAWER_WIDTH }}
 						animate={{ left: props.open ? 0 : -DRAWER_WIDTH }}
@@ -140,14 +137,14 @@ export function MobileDrawer(props: {
 						<div style={{ display: "flex", flexDirection: "column", padding: 16 }}>
 							<Show when={settled()}>
 								{/* The content mounts only once the panel has stopped, so focus moves into it then. */}
-								{focusFirst()}
+								<FocusFirst popup={() => popup} />
 								<motion.div
 									initial={{ opacity: 0 }}
 									animate={{ opacity: 1 }}
 									transition={{ duration: 0.08 }}
 									style={{ display: "flex", flexDirection: "column" }}
 								>
-									{content()}
+									{props.children}
 								</motion.div>
 							</Show>
 						</div>
