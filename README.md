@@ -22,7 +22,7 @@ bun install
 bun --hot src/main.tsx
 ```
 
-The app is a sidebar (Showcase, Introduction, a System group, then one demo page per component) plus a "Make them
+The app is a sidebar (Showcase, Introduction, Changelog, a System group, then one demo page per component, with the New dots of the latest release) plus a "Make them
 yours" card with Theme (System follows the OS appearance), Radius, Size and Icons selects. The sidebar's Search row,
 or ⌘K / Ctrl+K anywhere, opens the site menu: every page, the theme, a Recent group and a few actions in one field;
 Compare, Concepts and Audio Mixer are reached from it. It sits in a browser-style frame: a transparent titlebar with
@@ -77,8 +77,8 @@ settle / expectText / capture`; see `ShotContext` in `src/lib/demo.ts`. Give ele
 
 A page (Introduction, a system page, a concept) is a file in `src/pages/` instead: it exports `title`, `group`
 (`"Pages"` or `"System"`), `order`, `layout` (`"docs"` keeps the sidebar and right column, `"full"` fills the
-window), `listed` (`"sidebar"`, `"menu"` for the site menu only, or `"none"`), `Page`, and optionally `scenarios`,
-`menuIcon` and `menuKeywords`. `PageModule` in `src/lib/demo.ts` is the contract, `usePageNav()` from
+window), `listed` (`"sidebar"`, `"menu"` for the site menu only, or `"none"`), `Page`, and optionally `Rail` (the right
+column's card in place of "Make them yours"), `scenarios`, `menuIcon` and `menuKeywords`. `PageModule` in `src/lib/demo.ts` is the contract, `usePageNav()` from
 `src/lib/page-nav.ts` navigates, and `src/lib/doc-page.tsx` holds the shared doc chrome.
 
 <details>
@@ -148,8 +148,8 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [scroll-area](drift/scroll-area.md) | 3 | 6 | 1 | 1 | 11 |
 | [scrollbars-page](drift/scrollbars-page.md) | 1 | 4 | 2 | 1 | 8 |
 | [select](drift/select.md) | 7 | 3 | 5 | 2 | 17 |
-| [sidebar](drift/sidebar.md) | 1 | 7 | 22 | 1 | 31 |
-| [site](drift/site.md) | 6 | 6 | 20 | 6 | 38 |
+| [sidebar](drift/sidebar.md) | 1 | 8 | 19 | 1 | 29 |
+| [site](drift/site.md) | 7 | 11 | 21 | 6 | 45 |
 | [sizes-page](drift/sizes-page.md) | 0 | 5 | 2 | 4 | 11 |
 | [skill-page](drift/skill-page.md) | 3 | 5 | 0 | 1 | 9 |
 | [slider](drift/slider.md) | 5 | 3 | 2 | 1 | 11 |
@@ -162,7 +162,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
 | [tooltip](drift/tooltip.md) | 4 | 5 | 1 | 1 | 11 |
 | [typography](drift/typography.md) | 4 | 0 | 1 | 6 | 11 |
-| **Total** | **143** | **196** | **200** | **63** | **602** |
+| **Total** | **144** | **202** | **198** | **63** | **607** |
 
 ### gpuix gaps across components
 
@@ -193,7 +193,7 @@ offer it. A count is given only where the code shows it.
 
 | Used by | What | Workaround here |
 |---|---|---|
-| popups (select, combobox, dropdown, color-picker, dialog), tooltip, chevrons (accordion, card, color-picker, thinking-steps), scale-in entrances (banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack, radio-group), spinners (file-thumbnail) | CSS transforms: no scale, rotate or translate, so the popups' `scaleY: 0.96` entrance and every turn and pop is impossible (audit rows 525, 606). The tooltip has no scale in the source (`tooltip.tsx:282-291`); it only slides on x / y, which is a transform too | Popups and the tooltip slide from the reported side and fade; glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom` |
+| popups (select, combobox, dropdown, color-picker, dialog), tooltip, chevrons (accordion, card, color-picker, thinking-steps), scale-in entrances (banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack, radio-group), spinners (file-thumbnail), the changelog's month dot (scale) and entry-name arrow (translate) | CSS transforms: no scale, rotate or translate, so the popups' `scaleY: 0.96` entrance and every turn and pop is impossible (audit rows 525, 606). The tooltip has no scale in the source (`tooltip.tsx:282-291`); it only slides on x / y, which is a transform too | Popups and the tooltip slide from the reported side and fade; glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom` |
 | input-copy, doc-page, site-command-menu, app, skill copy example (`navigator.clipboard`) | gpuix installs `navigator.clipboard` at runtime but ships no TypeScript declaration for it, and Bun's types have none | `src/navigator.d.ts` declares it as gpuix's `clipboard` |
 | slider | `<input type="range">` (audit row 310) | A pointer-handled track and thumbs |
 | select, combobox (`FormValue`) | `<input type="hidden">` | A real input that is invisible, unreachable and `aria-hidden` |
@@ -285,7 +285,7 @@ now does that the port has not picked up.
 | `prefers-color-scheme` ("System" theme) | `createAppearance()` reads the OS appearance and `bindSystemScheme` feeds it to the `scheme` token. System / Light / Dark are one `themeChoice` signal, and `renderer.setAppearance` mirrors Light / Dark so the native chrome follows | Exact in the window and on the test renderer, which honours `appearance` and `setAppearance` |
 | `prefers-reduced-motion`, `<MotionConfig reducedMotion="user">`, `useReducedMotion()` | `App` wraps the tree in gpuix's `<MotionConfig reducedMotion="user">`, which makes every `motion.*` position and size property jump (opacity and colour keep fading). Where the source reads `useReducedMotion()` itself, the port reads `createReducedMotion()` at the same site: the fluid highlight, the accordion panel, the banner, the carousel timer, the thinking indicator, the command-menu scroll and the scripted demos. Pinned by `scripts/check-reduced-motion.tsx` | Approximated: gpuix reduces layout properties the source animates (`drift/site.md`); the OS setting is read on macOS only |
 | Base UI `Positioner` (flip, `--anchor-width`, `--available-height`) | `<anchored fit="flip" deferred>`: gpuix picks the side and reports it with the room left (`onPlacement`), and `PopupSurface` caps the card to that room, slides from the reported side and is at least the trigger's width | Equivalent |
-| `ScrollArea` (hover thumb, scroll fade) | a plain `overflowY: "scroll"`, on the combobox list and the sidebar | Dropped |
+| `ScrollArea` (hover thumb, scroll fade) | a plain `overflowY: "scroll"` on the combobox list (Dropped); the sidebar's content is a ported `ScrollArea` with the fade and the end hairline | Dropped for the combobox; exact for the site nav |
 | `getBoundingClientRect` | `element.getBoundingClientRect()`, read when needed (layout is flushed first, so it is never stale) | Native |
 | `ResizeObserver` | gpuix's `ResizeObserver` (fluid hover, slider width, queued stack) and `onLayout` (size, after the first paint and on every change) | Exact |
 | `text-[length:…] leading-[…]` | `fontSize` + `lineHeight` | Exact |

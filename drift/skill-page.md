@@ -66,12 +66,12 @@ repeating it.
 - **Port:** an `IntersectionObserver` with a 0.35 ratio, `createReducedMotion()` (the OS setting, read on macOS only; README "MotionConfig and reduced motion"), `onFocusIn` asking the renderer whether the focused element matches `:focus-visible`, and mouse handlers that skip any event the scripted pointer made (`src/pages/skill/playback.tsx`, `scripted-pointer.ts`). While the OS asks for reduced motion no example plays.
 - **Fidelity:** exact.
 
-## The heading is a page export, and the sidebar row has no "New" tag
+## The heading is a page export, and the menu row has no "New" tag
 
-- **Cause:** `port choice` (heading); `not ported yet` (tag).
-- **Original:** the heading is `/fluid-functionalism skill`, the sidebar and menu say "Skill" with a "New" tag (`lib/docs/components.ts:62-71`).
-- **Port:** `heading` is a new optional page export read by `App`'s `PageBody` (`src/lib/demo.ts`, `src/app.tsx`); the sidebar row is "Skill" without the tag, as for every other page.
-- **Fidelity:** exact heading, dropped tag.
+- **Cause:** `port choice` (heading); `not ported yet` (the menu's tag).
+- **Original:** the heading is `/fluid-functionalism skill`, the sidebar and menu say "Skill" with a New dot and tag, which follow the latest release (`app/components/sidebar.tsx:82`, `app/components/site-command-menu.tsx:194-217`).
+- **Port:** `heading` is a new optional page export read by `App`'s `PageBody` (`src/lib/demo.ts`, `src/app.tsx`); the sidebar row is "Skill" with the release-driven dot (`src/app.tsx:225-243`), and the menu row has no tag, as for every other page.
+- **Fidelity:** exact heading and dot, dropped menu tag.
 
 ## The ⌘K row
 
