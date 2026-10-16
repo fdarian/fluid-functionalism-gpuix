@@ -363,19 +363,26 @@ const PREVIEW_PADDING = {
  */
 export function ComponentPreview(props: {
 	testId: string;
-	code: string;
+	/** Required unless `hideHeader`: the header holds the only way to reach the Code tab. */
+	code?: string;
 	onReplay?: () => void;
 	playback?: Playback;
 	cull?: boolean;
 	minHeight?: number;
 	scheme?: Scheme;
 	padding?: keyof typeof PREVIEW_PADDING;
+	/** The frame shows just the live demo, with no Preview / Code header. */
+	hideHeader?: boolean;
 	children: JSX.Element;
 }) {
 	const culling = props.cull === true ? createCulling() : undefined;
 	const [tab, setTab] = createSignal(0);
 	const minHeight = () => props.minHeight ?? 120;
 	const padding = () => PREVIEW_PADDING[props.padding ?? "default"];
+	const codeOf = () => {
+		if (props.code === undefined) throw new Error("ComponentPreview needs `code` for its Code tab");
+		return props.code;
+	};
 	return (
 		<ForcedScheme scheme={props.scheme}>
 			<div
@@ -392,65 +399,68 @@ export function ComponentPreview(props: {
 					focusWithin: { borderColor: withAlpha(color.foreground, 0.4) },
 				}}
 			>
-				<div
-					style={{
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
-						justifyContent: "space-between",
-						minHeight: 52,
-						padding: 12,
-						borderBottomWidth: 1,
-						borderColor: color.borderFaint,
-					}}
-				>
-					<TabsSubtle
-						testId={`${props.testId}-tabs`}
-						selectedIndex={tab()}
-						onSelect={setTab}
+				<Show when={props.hideHeader !== true}>
+					<div
+						style={{
+							display: "flex",
+							flexDirection: "row",
+							alignItems: "center",
+							justifyContent: "space-between",
+							minHeight: 52,
+							padding: 12,
+							borderBottomWidth: 1,
+							borderColor: color.borderFaint,
+						}}
 					>
-						<TabsSubtleItem
-							testId={`${props.testId}-preview-tab`}
-							index={0}
-							label="Preview"
-						/>
-						<TabsSubtleItem
-							testId={`${props.testId}-code-tab`}
-							index={1}
-							label="Code"
-						/>
-					</TabsSubtle>
-					<Show when={props.playback}>
-						{(playback: Accessor<NonNullable<typeof props.playback>>) => (
-							<PlaybackButton
-								icon={playback().icon}
-								tooltip={playback().tooltip}
-								testId={playback().testId ?? `${props.testId}-playback`}
-								onClick={playback().onClick}
+						<TabsSubtle
+							testId={`${props.testId}-tabs`}
+							selectedIndex={tab()}
+							onSelect={setTab}
+						>
+							<TabsSubtleItem
+								testId={`${props.testId}-preview-tab`}
+								index={0}
+								label="Preview"
 							/>
-						)}
-					</Show>
-					<Show when={props.playback === undefined ? props.onReplay : undefined}>
-						{(replay: Accessor<() => void>) => (
-							<PlaybackButton
-								icon={rotateCcw}
-								tooltip="Replay animation"
-								testId={`${props.testId}-replay`}
-								onClick={replay()}
+							<TabsSubtleItem
+								testId={`${props.testId}-code-tab`}
+								index={1}
+								label="Code"
 							/>
-						)}
-					</Show>
-				</div>
+						</TabsSubtle>
+						<Show when={props.playback}>
+							{(playback: Accessor<NonNullable<typeof props.playback>>) => (
+								<PlaybackButton
+									icon={playback().icon}
+									tooltip={playback().tooltip}
+									testId={playback().testId ?? `${props.testId}-playback`}
+									onClick={playback().onClick}
+								/>
+							)}
+						</Show>
+						<Show when={props.playback === undefined ? props.onReplay : undefined}>
+							{(replay: Accessor<() => void>) => (
+								<PlaybackButton
+									icon={rotateCcw}
+									tooltip="Replay animation"
+									testId={`${props.testId}-replay`}
+									onClick={replay()}
+								/>
+							)}
+						</Show>
+					</div>
+				</Show>
 				<div
 					style={{
 						overflow: "hidden",
-						borderBottomLeftRadius: 11,
-						borderBottomRightRadius: 11,
+						...(props.hideHeader === true
+							? { borderRadius: 11 }
+							: { borderBottomLeftRadius: 11, borderBottomRightRadius: 11 }),
 					}}
 				>
 					<Show
 						when={tab() === 0}
-						fallback={<CodeView code={props.code} minHeight={minHeight()} />}
+						fallback={<CodeView code={codeOf()} minHeight={minHeight()} />}
 					>
 						<div
 							ref={culling?.ref}
