@@ -228,6 +228,7 @@ export function Combobox(props: {
 					</Show>
 					<input
 						{...combobox.inputProps}
+						ref={combobox.inputRef}
 						testId={
 							props.testId === undefined ? undefined : `${props.testId}-input`
 						}
@@ -326,6 +327,7 @@ export function Combobox(props: {
 					>
 						<div
 							{...combobox.listProps}
+							ref={combobox.listRef}
 							onScroll={hover.handlers.onScroll}
 							style={{
 								display: 'flex',

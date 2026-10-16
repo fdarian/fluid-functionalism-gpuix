@@ -235,6 +235,7 @@ export function Select<Value extends string>(props: {
 						checked={value() === slot.row.value}
 						hover={hover}
 						itemProps={itemProps}
+						onElement={(element) => select.itemRef(slot.index, element)}
 						testId={
 							props.testId === undefined
 								? undefined
@@ -297,6 +298,7 @@ export function Select<Value extends string>(props: {
 			>
 				<div
 					{...select.triggerProps}
+					ref={select.triggerRef}
 					testId={
 						props.testId === undefined ? undefined : `${props.testId}-trigger`
 					}
@@ -398,6 +400,7 @@ export function Select<Value extends string>(props: {
 					{(popupMaxHeight) => (
 						<div
 							{...select.popupProps}
+							ref={select.popupRef}
 							testId={
 								props.testId === undefined ? undefined : `${props.testId}-list`
 							}
@@ -479,6 +482,7 @@ function Row<Value extends string>(props: {
 	checked: boolean;
 	hover: ReturnType<typeof createFluidHover>;
 	itemProps: ReturnType<ReturnType<typeof createSelectRoot>['itemProps']>;
+	onElement: (element: HostElement) => void;
 	testId?: string;
 	onFocus: (event: DomEvent) => void;
 	onBlur: () => void;
@@ -494,7 +498,7 @@ function Row<Value extends string>(props: {
 			{...props.itemProps}
 			ref={(element) => {
 				rowElement = element;
-				props.itemProps.ref(element);
+				props.onElement(element);
 			}}
 			onFocus={props.onFocus}
 			onBlur={props.onBlur}
