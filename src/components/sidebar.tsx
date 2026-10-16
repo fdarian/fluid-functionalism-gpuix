@@ -46,6 +46,7 @@ import {
 	motion as tween,
 	weight,
 } from "../lib/theme";
+import { ScrollArea } from "./scroll-area";
 
 export const SIDEBAR_WIDTH = 256;
 
@@ -596,21 +597,25 @@ export function SidebarFooter(props: { children: JSX.Element; flushBottom?: bool
 	);
 }
 
+/** The source's `SidebarContent`: a `ScrollArea` with `scroll-fade` and a hairline on the end edge while there is more below (the start edge's is dropped, as the site nav draws none). */
 export function SidebarContent(props: { children: JSX.Element }) {
 	return (
-		<div
-			style={{
-				flexGrow: 1,
-				minHeight: 0,
-				display: "flex",
-				flexDirection: "column",
-				padding: 8,
-				paddingTop: 0,
-				overflowY: "scroll",
-			}}
+		<ScrollArea
+			fade
+			divider={{ start: false }}
+			style={{ flexGrow: 1, minHeight: 0, width: "100%" }}
 		>
-			{props.children}
-		</div>
+			<div
+				style={{
+					display: "flex",
+					flexDirection: "column",
+					padding: 8,
+					paddingTop: 0,
+				}}
+			>
+				{props.children}
+			</div>
+		</ScrollArea>
 	);
 }
 
