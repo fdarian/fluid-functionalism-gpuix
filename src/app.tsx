@@ -23,8 +23,9 @@ import {
 	SidebarMenuButton,
 } from "./components/sidebar";
 import { AppFrame, PANEL_INNER_RADIUS } from "./lib/app-frame";
-import type { Demo } from "./lib/demo";
+import { type Demo, type Page, SHOWCASE_SLUG } from "./lib/demo";
 import { PageScrollerContext } from "./lib/demo-kit";
+import { type PageNav, PageNavContext, usePageNav } from "./lib/page-nav";
 import {
 	createSiteMenu,
 	SITE_MENU_SHORTCUT,
@@ -41,7 +42,7 @@ import {
 	weight,
 } from "./lib/theme";
 
-const SHOWCASE = "showcase";
+const SHOWCASE = SHOWCASE_SLUG;
 const PAGE_WIDTH = 600;
 export const WINDOW_TITLE = "Fluid Functionalism on gpuix";
 
@@ -61,10 +62,23 @@ function Heading(props: { children: string }) {
 
 function AppSidebar(props: {
 	demos: readonly Demo[];
+	pages: readonly Page[];
 	page: string;
 	onPage: (page: string) => void;
 	onSearch: () => void;
 }) {
+	const sidebarPages = (group: Page["group"]) =>
+		props.pages.filter(
+			(page) => page.group === group && page.listed === "sidebar",
+		);
+	const row = (page: Page) => (
+		<SidebarMenuButton
+			testId={`nav-${page.slug}`}
+			label={page.title}
+			active={props.page === page.slug}
+			onClick={() => props.onPage(page.slug)}
+		/>
+	);
 	return (
 		<Sidebar leftCornerRadius={PANEL_INNER_RADIUS}>
 			<SidebarHeader>
@@ -86,7 +100,16 @@ function AppSidebar(props: {
 						active={props.page === SHOWCASE}
 						onClick={() => props.onPage(SHOWCASE)}
 					/>
+					<For each={sidebarPages("Pages")}>{row}</For>
 				</SidebarMenu>
+				<Show when={sidebarPages("System").length > 0}>
+					<SidebarGroupLabel count={sidebarPages("System").length}>
+						System
+					</SidebarGroupLabel>
+					<SidebarMenu>
+						<For each={sidebarPages("System")}>{row}</For>
+					</SidebarMenu>
+				</Show>
 				<SidebarGroupLabel count={props.demos.length}>
 					Components
 				</SidebarGroupLabel>
@@ -138,10 +161,8 @@ function Hero() {
 }
 
 /** A card per discovered demo; the landing page is a table of contents. */
-function Showcase(props: {
-	demos: readonly Demo[];
-	onPage: (page: string) => void;
-}) {
+function Showcase(props: { demos: readonly Demo[] }) {
+	const nav = usePageNav();
 	return (
 		<div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
 			<Hero />
@@ -158,7 +179,7 @@ function Showcase(props: {
 						<div
 							testId={`card-${demo.slug}`}
 							role="button"
-							onClick={() => props.onPage(demo.slug)}
+							onClick={() => nav.navigate(demo.slug)}
 							style={{
 								width: 144,
 								height: 72,
@@ -228,10 +249,18 @@ function CustomizeCard() {
 	);
 }
 
-export function App(props: { demos: readonly Demo[]; initialPage?: string }) {
+export function App(props: {
+	demos: readonly Demo[];
+	pages: readonly Page[];
+	initialPage?: string;
+}) {
 	const [page, setPage] = createSignal(props.initialPage ?? SHOWCASE);
+	const nav: PageNav = { navigate: setPage, current: page };
 	const current = (): Demo | undefined =>
 		props.demos.find((demo) => demo.slug === page());
+	const currentPage = (): Page | undefined =>
+		props.pages.find((candidate) => candidate.slug === page());
+	const isFull = () => currentPage()?.layout === "full";
 	bindSystemScheme(createAppearance());
 	const siteMenu = createSiteMenu();
 	const [pageScroller, setPageScroller] = createSignal<HostElement>();
@@ -254,12 +283,15 @@ export function App(props: { demos: readonly Demo[]; initialPage?: string }) {
 					borderRadius: PANEL_INNER_RADIUS,
 				}}
 			>
-				<AppSidebar
-					demos={props.demos}
-					page={page()}
-					onPage={setPage}
-					onSearch={() => siteMenu.setOpen(true)}
-				/>
+				<Show when={!isFull()}>
+					<AppSidebar
+						demos={props.demos}
+						pages={props.pages}
+						page={page()}
+						onPage={setPage}
+						onSearch={() => siteMenu.setOpen(true)}
+					/>
+				</Show>
 				<div
 					ref={setPageScroller}
 					style={{
@@ -273,34 +305,42 @@ export function App(props: { demos: readonly Demo[]; initialPage?: string }) {
 				>
 					<div
 						style={{
-							width: PAGE_WIDTH,
+							width: isFull() ? "100%" : PAGE_WIDTH,
 							flexShrink: 0,
 							display: "flex",
 							flexDirection: "column",
-							gap: 24,
-							paddingTop: 40,
-							paddingBottom: 40,
+							gap: isFull() ? 0 : 24,
+							paddingTop: isFull() ? 0 : 40,
+							paddingBottom: isFull() ? 0 : 40,
 						}}
 					>
 						<PageScrollerContext.Provider value={pageScroller}>
-							<Switch>
-								<Match when={page() === SHOWCASE}>
-									<Showcase demos={props.demos} onPage={setPage} />
-								</Match>
-								<Match when={current()} keyed>
-									{(demo: Demo) => <DemoPage demo={demo} />}
-								</Match>
-							</Switch>
+							<PageNavContext.Provider value={nav}>
+								<Switch>
+									<Match when={page() === SHOWCASE}>
+										<Showcase demos={props.demos} />
+									</Match>
+									<Match when={current()} keyed>
+										{(demo: Demo) => <DemoPage demo={demo} />}
+									</Match>
+									<Match when={currentPage()} keyed>
+										{(entry: Page) => <PageBody page={entry} />}
+									</Match>
+								</Switch>
+							</PageNavContext.Provider>
 						</PageScrollerContext.Provider>
 					</div>
 				</div>
-				<div style={{ width: 296, flexShrink: 0, padding: 16 }}>
-					<CustomizeCard />
-				</div>
+				<Show when={!isFull()}>
+					<div style={{ width: 296, flexShrink: 0, padding: 16 }}>
+						<CustomizeCard />
+					</div>
+				</Show>
 			</div>
 			<SiteCommandMenu
 				menu={siteMenu}
 				demos={props.demos}
+				pages={props.pages}
 				showcase={SHOWCASE}
 				onPage={setPage}
 			/>
@@ -314,5 +354,18 @@ function DemoPage(props: { demo: Demo }): JSX.Element {
 			<Heading>{props.demo.title}</Heading>
 			<props.demo.Demo />
 		</>
+	);
+}
+
+/** A "docs" page sits under the heading in the page column; a "full" page is the whole panel. */
+function PageBody(props: { page: Page }): JSX.Element {
+	return (
+		<Show
+			when={props.page.layout === "docs"}
+			fallback={<props.page.Page />}
+		>
+			<Heading>{props.page.title}</Heading>
+			<props.page.Page />
+		</Show>
 	);
 }

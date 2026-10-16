@@ -10,7 +10,8 @@ import {
 	CommandMenuList,
 	CommandMenuTabs,
 } from "../components/command-menu";
-import type { Demo } from "./demo";
+import type { Demo, Page } from "./demo";
+import type { IconRef } from "./icons";
 import { IS_MAC } from "./platform";
 import { setThemeChoice, THEMES, themeChoice } from "./theme";
 
@@ -57,6 +58,7 @@ export function createSiteMenu(): SiteMenu {
 export function SiteCommandMenu(props: {
 	menu: SiteMenu;
 	demos: readonly Demo[];
+	pages: readonly Page[];
 	showcase: string;
 	onPage: (page: string) => void;
 }) {
@@ -66,19 +68,42 @@ export function SiteCommandMenu(props: {
 			value: string,
 			label: string,
 			group: string,
-			icon?: "home",
+			icon?: IconRef,
+			keywords?: readonly string[],
 		): SiteItem => ({
 			kind: "page",
 			value,
 			label,
 			action: `Open ${label}`,
 			icon,
+			keywords,
 			group,
 			onSelect: () => props.onPage(value),
 		});
+		const listedPages = (group: Page["group"]) =>
+			props.pages
+				.filter(
+					(candidate) =>
+						candidate.group === group && candidate.listed !== "none",
+				)
+				.map((entry) =>
+					page(
+						entry.slug,
+						entry.title,
+						group,
+						entry.menuIcon,
+						entry.menuKeywords,
+					),
+				);
 		const current = themeChoice();
 		return [
-			page(props.showcase, "Showcase", "Pages", "home"),
+			page(props.showcase, "Showcase", "Pages", "home", [
+				"home",
+				"bento",
+				"gallery",
+			]),
+			...listedPages("Pages"),
+			...listedPages("System"),
 			...props.demos.map((demo) => page(demo.slug, demo.title, "Components")),
 			...THEMES.map(
 				(theme): SiteItem => ({

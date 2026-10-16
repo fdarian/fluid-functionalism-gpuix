@@ -1,7 +1,7 @@
 /**
  * Headless captures of one demo page through gpuix's offscreen test renderer.
  *
- *   bun scripts/screenshots.tsx <demo>      # a file name in src/demos/, or "showcase"
+ *   bun scripts/screenshots.tsx <slug>      # a file name in src/demos/ or src/pages/, or "showcase"
  *
  * Writes `screenshots/<demo>/initial.png`, then whatever the demo's
  * `scenarios` capture, then `light.png`: the same page after switching the
@@ -13,18 +13,29 @@
 import { mkdirSync } from "node:fs";
 import { createTestRoot } from "@gpuix/solid/testing";
 import { App } from "../src/app";
-import { type Demo, loadDemos, type ShotContext } from "../src/lib/demo";
+import {
+	type Demo,
+	loadDemos,
+	loadPages,
+	type Page,
+	type ShotContext,
+} from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
 
 const slug = process.argv[2];
 const demos = await loadDemos();
-const names = ["showcase", ...demos.map((demo) => demo.slug)];
+const pages = await loadPages(demos);
+const names = [
+	"showcase",
+	...demos.map((demo) => demo.slug),
+	...pages.map((page) => page.slug),
+];
 if (slug === undefined || !names.includes(slug)) {
 	console.error(`usage: bun scripts/screenshots.tsx <${names.join("|")}>`);
 	process.exit(1);
 }
-const demo: Demo | undefined = demos.find(
+const demo: Demo | Page | undefined = [...demos, ...pages].find(
 	(candidate) => candidate.slug === slug,
 );
 
@@ -199,7 +210,7 @@ const shot: ShotContext = {
 
 // The test renderer reports the machine's appearance; pin the scheme so captures are reproducible.
 setThemeChoice("dark");
-test.render(() => <App demos={demos} initialPage={slug} />);
+test.render(() => <App demos={demos} pages={pages} initialPage={slug} />);
 // Fluid hover measures on timers after the first frame; 400 ms leaves the first highlight unpainted.
 await settle(800);
 capture("initial");
@@ -208,15 +219,21 @@ await demo?.scenarios?.(shot);
 
 // Back to a neutral pointer, then flip the theme through the real control.
 await shot.moveTo(1180, 700);
-await shot.click("theme");
-const lightRow = renderer.findByText("Light");
-if (lightRow === undefined)
-	throw new Error("the theme select has no Light row");
-const lightBounds = renderer.getElementBounds(lightRow.id);
-if (lightBounds === null)
-	throw new Error("no painted bounds for the Light row");
-renderer.nativeSimulateClick(lightBounds.x + 4, lightBounds.y + 4);
-await settle(600);
+if (demo !== undefined && "layout" in demo && demo.layout === "full") {
+	// A full-layout page has no right column, so no theme select to drive.
+	setThemeChoice("light");
+	await settle(600);
+} else {
+	await shot.click("theme");
+	const lightRow = renderer.findByText("Light");
+	if (lightRow === undefined)
+		throw new Error("the theme select has no Light row");
+	const lightBounds = renderer.getElementBounds(lightRow.id);
+	if (lightBounds === null)
+		throw new Error("no painted bounds for the Light row");
+	renderer.nativeSimulateClick(lightBounds.x + 4, lightBounds.y + 4);
+	await settle(600);
+}
 await shot.moveTo(1180, 700);
 capture("light");
 

@@ -1,4 +1,5 @@
 import type { JSX } from "solid-js";
+import type { IconRef } from "./icons";
 
 /**
  * Drives one demo page from scripts/screenshots.tsx. Each helper settles the
@@ -106,4 +107,122 @@ export async function loadDemos(): Promise<Demo[]> {
 		});
 	}
 	return demos.sort((a, b) => a.title.localeCompare(b.title));
+}
+
+/** The slug of the landing page, which `App` renders itself: no demo or page may take it. */
+export const SHOWCASE_SLUG = "showcase";
+
+/**
+ * What a file in `src/pages/` exports: a page of its own in the sidebar and
+ * the site menu, beside the component demos.
+ */
+export interface PageModule {
+	/** Sidebar label, menu row and (for "docs" pages) the heading's text. */
+	title: string;
+	/** The sidebar section the page sits under; its menu group too. */
+	group: "Pages" | "System";
+	/** Sorts within the group, ascending. */
+	order: number;
+	/** "docs": the sidebar, the page column with a heading, and the right column. "full": the page alone in the window frame. */
+	layout: "docs" | "full";
+	/** Where the page is linked: sidebar and site menu, the site menu only, or neither (reached by `navigate`). */
+	listed: "sidebar" | "menu" | "none";
+	Page: () => JSX.Element;
+	/** Optional states beyond the first paint for `scripts/screenshots.tsx <page>` to capture. */
+	scenarios?: (shot: ShotContext) => Promise<void>;
+	/** The site menu row's glyph. */
+	menuIcon?: IconRef;
+	/** Extra words the site menu matches. */
+	menuKeywords?: readonly string[];
+}
+
+export interface Page extends PageModule {
+	/** The file name without `.tsx`. Shares one namespace with demo slugs. */
+	slug: string;
+}
+
+const pagesDir = new URL("../pages/", import.meta.url).pathname;
+
+function assertPageModule(
+	slug: string,
+	module: unknown,
+): asserts module is PageModule {
+	const candidate = module as Partial<PageModule>;
+	const fail = (what: string): never => {
+		throw new Error(`src/pages/${slug}.tsx must export ${what}`);
+	};
+	if (typeof candidate.title !== "string") fail("a string `title`");
+	if (candidate.group !== "Pages" && candidate.group !== "System") {
+		fail('`group: "Pages" | "System"`');
+	}
+	if (typeof candidate.order !== "number") fail("a numeric `order`");
+	if (candidate.layout !== "docs" && candidate.layout !== "full") {
+		fail('`layout: "docs" | "full"`');
+	}
+	if (
+		candidate.listed !== "sidebar" &&
+		candidate.listed !== "menu" &&
+		candidate.listed !== "none"
+	) {
+		fail('`listed: "sidebar" | "menu" | "none"`');
+	}
+	if (typeof candidate.Page !== "function") fail("a `Page` component");
+	if (
+		candidate.scenarios !== undefined &&
+		typeof candidate.scenarios !== "function"
+	) {
+		fail("`scenarios` as a function, or not at all");
+	}
+	if (
+		candidate.menuIcon !== undefined &&
+		typeof candidate.menuIcon !== "string" &&
+		typeof candidate.menuIcon !== "object"
+	) {
+		fail("`menuIcon` as an icon name or `defineIcon(...)`, or not at all");
+	}
+	if (
+		candidate.menuKeywords !== undefined &&
+		!(
+			Array.isArray(candidate.menuKeywords) &&
+			candidate.menuKeywords.every((word) => typeof word === "string")
+		)
+	) {
+		fail("`menuKeywords` as an array of strings, or not at all");
+	}
+}
+
+/**
+ * Imports every `src/pages/*.tsx`, sorted by `order` then title. Demos and
+ * pages are routed by slug alone, so a page that shares a slug with a demo
+ * (or with the showcase) throws.
+ */
+export async function loadPages(demos: readonly Demo[]): Promise<Page[]> {
+	const taken = new Set([SHOWCASE_SLUG, ...demos.map((demo) => demo.slug)]);
+	const pages: Page[] = [];
+	for await (const file of new Bun.Glob("*.tsx").scan({
+		cwd: pagesDir,
+		absolute: true,
+	})) {
+		const slug = file.slice(file.lastIndexOf("/") + 1, -".tsx".length);
+		if (taken.has(slug)) {
+			throw new Error(
+				`src/pages/${slug}.tsx has the slug "${slug}", which a demo or the showcase already uses`,
+			);
+		}
+		const module: unknown = await import(file);
+		assertPageModule(slug, module);
+		pages.push({
+			slug,
+			title: module.title,
+			group: module.group,
+			order: module.order,
+			layout: module.layout,
+			listed: module.listed,
+			Page: module.Page,
+			scenarios: module.scenarios,
+			menuIcon: module.menuIcon,
+			menuKeywords: module.menuKeywords,
+		});
+	}
+	return pages.sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
 }

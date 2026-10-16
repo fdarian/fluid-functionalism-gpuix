@@ -1,6 +1,7 @@
 const nodes = {
 	search: '<path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>',
 	home: '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+	"square-library": '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7v10"/><path d="M11 7v10"/><path d="m15 7 2 10"/>',
 	plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
 	x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
 	check: '<path d="M20 6 9 17l-5-5"/>',

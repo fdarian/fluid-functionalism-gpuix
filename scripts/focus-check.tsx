@@ -11,7 +11,7 @@
 import { mkdirSync } from "node:fs";
 import { createTestRoot } from "@gpuix/solid/testing";
 import { App } from "../src/app";
-import { loadDemos } from "../src/lib/demo";
+import { loadDemos, loadPages } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
 
@@ -91,8 +91,9 @@ async function trace(label: string, keystrokes: string) {
 }
 
 const demos = await loadDemos();
+const pages = await loadPages(demos);
 setThemeChoice("dark");
-test.render(() => <App demos={demos} initialPage={slug} />);
+test.render(() => <App demos={demos} pages={pages} initialPage={slug} />);
 await settle(800);
 
 const first = rows[0] as string;
