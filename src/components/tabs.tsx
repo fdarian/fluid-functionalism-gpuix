@@ -1,5 +1,6 @@
 import {
 	buttonProps,
+	type EventPayload,
 	type HostElement,
 	type KeyEvent,
 	motion,
@@ -17,6 +18,7 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
+import { createFocusRing, FocusRing, type FocusRingState } from "../lib/focus-ring";
 import {
 	createFluidHover,
 	type FluidHover,
@@ -25,7 +27,7 @@ import {
 import { StableLabel } from "../lib/stable-label";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { color, radius, type as scale, scheme, shadow3, motion as tween, weight, focusRing } from "../lib/theme";
+import { color, radius, type as scale, scheme, shadow3, motion as tween, weight } from "../lib/theme";
 
 export type TabsSize = "default" | "compact";
 
@@ -53,6 +55,7 @@ interface TabsState {
 
 interface ListScope {
 	hover: FluidHover;
+	focusRing: FocusRingState;
 	/** Every tab element by index, for moving focus with the keyboard. */
 	elements: Map<number, HostElement>;
 	nextIndex: () => number;
@@ -144,6 +147,7 @@ const rectStyle = (rect: ItemRect) => ({
 export function TabsList(props: { children: JSX.Element; testId?: string }) {
 	const tabs = useTabs();
 	const hover = createFluidHover({ axis: "x" });
+	const focusRing = createFocusRing(hover);
 	const [mouseInside, setMouseInside] = createSignal(false);
 	let counter = 0;
 	const metrics = () => sizes[tabs.size()];
@@ -158,6 +162,7 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 	createEffect(on(selectedIndex, () => setFocusedTab(undefined), { defer: true }));
 	const scope: ListScope = {
 		hover,
+		focusRing,
 		elements: new Map(),
 		nextIndex: () => counter++,
 		mouseInside,
@@ -277,6 +282,10 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 						</motion.div>
 					)}
 				</Show>
+				<FocusRing
+					ring={focusRing}
+					testId={props.testId && `${props.testId}-focus-ring`}
+				/>
 				{props.children}
 			</div>
 		</ListContext.Provider>
@@ -359,12 +368,14 @@ export function TabItem(props: {
 			}
 			aria-disabled={props.disabled === true}
 			testId={props.testId}
-			onFocus={() => {
+			onFocus={(event: EventPayload) => {
+				list.focusRing.focus(index, event);
 				list.focusTab(index);
 				list.hover.setActiveIndex(index);
 				if (props.disabled !== true) tabs.select(props.value);
 			}}
-			onBlur={() =>
+			onBlur={() => {
+				list.focusRing.blur(index);
 				// Focus moving to a sibling tab stays inside the list: only a real exit drops the highlight.
 				queueMicrotask(() => {
 					const focused = renderer.getFocusedElementId?.();
@@ -372,8 +383,8 @@ export function TabItem(props: {
 						if (tab.id === focused) return;
 					}
 					if (!list.mouseInside()) list.hover.setActiveIndex(null);
-				})
-			}
+				});
+			}}
 			style={{
 				position: "relative",
 				display: "flex",
@@ -386,7 +397,6 @@ export function TabItem(props: {
 				borderRadius: radius.item,
 				cursor: "pointer",
 				keyboardFocusDim: false,
-				focusVisible: focusRing(1),
 			}}
 		>
 			<Show when={props.icon}>
