@@ -30,6 +30,8 @@ export interface MenuRow {
 	activate: () => void;
 	/** ArrowRight on a submenu trigger. */
 	openSubmenu?: () => void;
+	/** Moves real focus to the row without scrolling it into view. */
+	focus: () => void;
 }
 
 export interface DropdownContextValue {
@@ -38,8 +40,12 @@ export interface DropdownContextValue {
 	/** `checkedIndices` was given: rows are checkboxes and stay open on select. */
 	multiple: Accessor<boolean>;
 	rows: Map<number, MenuRow>;
-	/** The DOM `id` of a row: what `aria-activedescendant` names when the keyboard has lit it. */
+	/** The DOM `id` of a row: what a search field's `aria-activedescendant` names when the arrows have lit it. */
 	rowId: (index: number) => string;
+	/** Popup lists whose rows take real focus: roving `tabIndex`, 0 on the lit row. Undefined for the inline panel and for lists that keep focus in a search field. */
+	rowTabIndex?: (index: number) => number | undefined;
+	/** A row took focus (arrows, hover, Tab or a press): it becomes the lit one. */
+	rowFocused?: (index: number) => void;
 	/** The highlight is where the pointer put it, not the keyboard or the open itself. */
 	pointerLit: Accessor<boolean>;
 	/** A row mounted or went: the measured rects are stale. */
@@ -153,6 +159,7 @@ export function MenuItem(props: {
 			disabled: () => props.disabled === true,
 			activate: () => activate(true),
 			openSubmenu: props.onOpenSubmenu,
+			focus: () => rowElement?.focus({ preventScroll: true }),
 		};
 		context.rows.set(index, row);
 		context.rowsChanged?.();
@@ -176,6 +183,8 @@ export function MenuItem(props: {
 			}}
 			id={context.rowId(props.index)}
 			role={role()}
+			tabIndex={context.rowTabIndex?.(props.index)}
+			onFocus={() => context.rowFocused?.(props.index)}
 			testId={props.testId}
 			aria-checked={props.checked}
 			aria-disabled={props.disabled === true}
@@ -212,6 +221,7 @@ export function MenuItem(props: {
 				cursor: "pointer",
 				opacity: props.disabled === true ? 0.5 : 1,
 				pointerEvents: props.disabled === true ? "none" : undefined,
+				keyboardFocusDim: false,
 			}}
 		>
 			<Show when={props.icon}>

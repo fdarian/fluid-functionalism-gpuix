@@ -252,13 +252,6 @@ function MenuBody(props: {
 
 // ─── Keyboard and hover for one list of rows ─────────────────────────────────
 
-type KeyHandler = (event: KeyEvent) => void;
-
-interface KeyTarget {
-	onKey: KeyHandler;
-	activeRowId: Accessor<string | undefined>;
-}
-
 interface SubmenuHost {
 	openIndex: Accessor<number | null>;
 	setOpenIndex: (index: number | null) => void;
@@ -278,8 +271,8 @@ function createMenuList(options: {
 	multiple: Accessor<boolean>;
 	keyboardActive: Accessor<boolean>;
 	setKeyboardActive: (active: boolean) => void;
-	/** Tab: close the whole menu and let focus move on. */
-	leave: () => void;
+	/** Tab closes the whole menu: forward lets focus move on, backward hands it to the trigger. */
+	leave: (backwards: boolean) => void;
 	/** Which end an open lights: ArrowUp on the trigger opens on the last row. */
 	openFrom: Accessor<"first" | "last">;
 }) {
@@ -294,6 +287,7 @@ function createMenuList(options: {
 	const [search, setSearch] = createSignal<DropdownSearchProps>();
 	const [openSubIndex, setOpenSubIndex] = createSignal<number | null>(null);
 	let scroller: HostElement | undefined;
+	let panel: HostElement | undefined;
 	let dwellTimer: ReturnType<typeof setTimeout> | undefined;
 	let lastMove: EventPayload | undefined;
 	let lastSearch: DropdownSearchProps | undefined;
@@ -317,8 +311,12 @@ function createMenuList(options: {
 		revealRow(scroller, row, "nearest", PADDING);
 	};
 
+	/** With a search field the field keeps focus and the lit row is only named through `aria-activedescendant` (F2 moves that onto the rows). */
+	const rowsTakeFocus = () => search() === undefined;
+
 	const highlight = (index: number | null) => {
 		setLitBy("keyboard");
+		hover.releasePointer();
 		hover.setActiveIndex(index);
 		if (index !== null) revealIndex(index);
 	};
@@ -357,45 +355,44 @@ function createMenuList(options: {
 		onMatch: highlight,
 	});
 
-	const onKey: KeyHandler = (event) => {
+	const onKey = (event: KeyEvent) => {
+		if (isChord(event)) return;
+		options.setKeyboardActive(true);
+		// The panel is the menu's keyboard: nothing it hears reaches the trigger's
+		// wrapper (which would reopen a menu this key just closed) or, from a
+		// submenu, the parent menu around it.
+		event.stopPropagation();
 		const typing = search() !== undefined;
-		// In the source a lit row holds real focus, so Space, Home and End act on it;
-		// here the field keeps focus, so they only belong to the field while no row is lit.
+		// A row in the source holds real focus, so Space, Home and End act on it; with a
+		// search field the field keeps focus, so they belong to it while no row is lit.
 		const fieldOwnsKey = typing && hover.activeIndex() === null;
 		if (event.key === "Escape") {
-			// The window-level dismiss stack must not also close the whole menu.
 			event.preventDefault();
-			event.stopPropagation();
 			options.closeSelf();
 			return;
 		}
 		if (event.key === "Tab") {
-			options.leave();
+			event.preventDefault();
+			options.leave(event.shiftKey === true);
 			return;
 		}
-		if (isChord(event)) return;
-		if (!typing && typeahead.handleKey(event)) {
-			event.stopPropagation();
-			return;
-		}
+		if (!typing && typeahead.handleKey(event)) return;
 		switch (event.key) {
 			case "ArrowDown":
-				event.stopPropagation();
+				event.preventDefault();
 				move(1);
 				return;
 			case "ArrowUp":
-				event.stopPropagation();
+				event.preventDefault();
 				move(-1);
 				return;
 			case "Home":
 				if (fieldOwnsKey) return;
-				event.stopPropagation();
 				event.preventDefault();
 				highlight(allRows()[0] ?? null);
 				return;
 			case "End":
 				if (fieldOwnsKey) return;
-				event.stopPropagation();
 				event.preventDefault();
 				highlight(allRows().at(-1) ?? null);
 				return;
@@ -405,7 +402,7 @@ function createMenuList(options: {
 				return;
 			case " ":
 				if (fieldOwnsKey) return;
-				if (typing) event.preventDefault();
+				event.preventDefault();
 				activateActive();
 				return;
 			case "ArrowRight": {
@@ -414,10 +411,7 @@ function createMenuList(options: {
 				return;
 			}
 			case "ArrowLeft":
-				if (options.isSub) {
-					event.stopPropagation();
-					options.closeSelf();
-				}
+				if (options.isSub) options.closeSelf();
 				return;
 		}
 	};
@@ -460,6 +454,11 @@ function createMenuList(options: {
 		multiple: options.multiple,
 		rows,
 		rowId: (index) => `${listId}-row-${index}`,
+		rowTabIndex(index) {
+			if (!rowsTakeFocus()) return undefined;
+			return options.open() && hover.activeIndex() === index ? 0 : -1;
+		},
+		rowFocused: (index) => hover.setActiveIndex(index),
 		pointerLit: () => litBy() === "pointer",
 		rowsChanged() {
 			if (!options.mounted()) return;
@@ -470,15 +469,21 @@ function createMenuList(options: {
 		releasePress: menu.releasePress,
 	};
 
-	// Open ready to act: the first row is lit, unless a search field takes the keyboard.
+	// Open ready to act. A keyboard open focuses the first row (ArrowUp: the last), a
+	// pointer open focuses the panel with nothing lit, and a search field takes the
+	// keyboard instead. A submenu the pointer opened leaves focus on its parent row.
 	createEffect(
 		on(options.open, (isOpen) => {
 			if (!isOpen) return;
 			setLitBy("open");
 			setTimeout(() => {
-				if (options.isSub && !options.keyboardActive()) return;
+				if (!options.open()) return;
 				if (search() !== undefined) {
 					hover.setActiveIndex(null);
+					return;
+				}
+				if (!options.keyboardActive()) {
+					if (!options.isSub) panel?.focus({ preventScroll: true });
 					return;
 				}
 				const start =
@@ -486,7 +491,20 @@ function createMenuList(options: {
 						? enabledRows().at(-1)
 						: enabledRows()[0];
 				hover.setActiveIndex(start ?? null);
+				if (start !== undefined) revealIndex(start);
 			}, 0);
+		}),
+	);
+	// Highlight follows focus and focus follows the highlight: a hover or a key moves
+	// the lit row, and the row takes focus. Leaving every row hands focus to the panel.
+	createEffect(
+		on(hover.activeIndex, (index) => {
+			if (!options.open() || !rowsTakeFocus()) return;
+			if (index === null) {
+				if (litBy() === "pointer") panel?.focus({ preventScroll: true });
+				return;
+			}
+			rows.get(index)?.focus();
 		}),
 	);
 	createEffect(() => {
@@ -553,6 +571,11 @@ function createMenuList(options: {
 		setScroller(element: HostElement) {
 			scroller = element;
 		},
+		setPanel(element: HostElement) {
+			panel = element;
+		},
+		containsFocus: () =>
+			panel !== undefined && panel.mounted && panel.matches(":focus-within"),
 	};
 }
 
@@ -567,20 +590,31 @@ function MenuPanel(props: {
 	checkedIndex: Accessor<number | undefined>;
 	checkedIndices: Accessor<readonly number[] | undefined>;
 	maxHeight: Accessor<number>;
+	testId?: string;
 	children: JSX.Element;
 }) {
 	const list = props.list;
-	const menu = useMenuScope();
 	const field = () => list.search();
 	return (
 		<DropdownContext.Provider value={list.context}>
 			<DropdownSearchHostContext.Provider value={list.searchHost}>
 				<SubmenuHostContext.Provider value={list.submenuHost}>
 					<div
+						ref={(element) => {
+							list.setPanel(element);
+						}}
 						id={props.id}
+						testId={props.testId}
 						role="menu"
 						aria-labelledby={props.labelledBy}
-						style={{ display: "flex", flexDirection: "column" }}
+						// A press on the bare popup, or a pointer open, lands focus here so the keys still reach it.
+						tabIndex={-1}
+						onKeyDown={list.onKey}
+						style={{
+							display: "flex",
+							flexDirection: "column",
+							keyboardFocusDim: false,
+						}}
 					>
 						<Show when={field()}>
 							{(search: Accessor<DropdownSearchProps>) => (
@@ -590,7 +624,6 @@ function MenuPanel(props: {
 										event.stopPropagation();
 										list.onKey(event);
 									}}
-									onFocusChange={menu.setSearchFocused}
 									activeDescendant={list.activeRowId()}
 								/>
 							)}
@@ -787,11 +820,10 @@ interface MenuScope {
 	setOpen: (next: boolean) => void;
 	keyboardActive: Accessor<boolean>;
 	setKeyboardActive: (active: boolean) => void;
-	/** The deepest open list takes the keys, and its lit row is the one assistive technology hears. Returns the remover. */
-	pushKeys: (target: KeyTarget) => () => void;
-	activeRowId: Accessor<string | undefined>;
 	triggerId: string;
 	popupId: string;
+	/** `<testId>-popup`: the panel that holds focus while no row does. */
+	popupTestId: string | undefined;
 	openFrom: Accessor<"first" | "last">;
 	/** The trigger was pressed and the button is still down. */
 	startPress: () => void;
@@ -800,9 +832,10 @@ interface MenuScope {
 	releasePress: () => void;
 	/** Remember the trigger element the menu opened from, to hand focus back to it. */
 	noteTrigger: (elementId: number) => void;
-	setSearchFocused: (focused: boolean) => void;
-	/** Tab leaves for the next control: close without taking focus back. */
-	closeKeepingFocus: () => void;
+	/** The root popup says how to tell whether focus sits inside it, so a close knows whether the trigger should get focus back. */
+	watchPopupFocus: (containsFocus: () => boolean) => void;
+	/** Tab closes the menu: forward moves focus on from the trigger to the next control, backward leaves it on the trigger. */
+	leave: (backwards: boolean) => void;
 }
 
 /** Base UI keeps a press-drag-release from opening a menu from picking a row for this long. */
@@ -831,8 +864,6 @@ export interface DropdownTriggerState {
 		readonly "aria-haspopup": "menu";
 		/** Base UI names the popup only while it is open. */
 		readonly "aria-controls": string | undefined;
-		/** Focus stays on the trigger while the arrows walk the rows, so it names the lit one. */
-		readonly "aria-activedescendant": string | undefined;
 	};
 }
 
@@ -847,23 +878,21 @@ export function DropdownMenu(props: {
 	const renderer = useGpuixRequired();
 	const presence = createPresence();
 	const [keyboardActive, setKeyboardActive] = createSignal(false);
-	const [keyStack, setKeyStack] = createSignal<readonly KeyTarget[]>([]);
 
 	const [openFrom, setOpenFrom] = createSignal<"first" | "last">("first");
 	let pressedAt: number | null = null;
 	let pendingTrigger: number | null = null;
 	let triggerId: number | null = null;
-	let searchFocused = false;
-	let keepFocus = false;
+	let popupHasFocus: () => boolean = () => false;
+	/** Tab closed the menu: once focus is back on the trigger it moves on to the next tab stop. */
+	let tabbingOn = false;
 
-	/** Closing hands focus back to the trigger unless it already moved to another control (Base UI's returnFocus). */
+	/** Closing hands focus back to the trigger when it sat in the popup, which is about to unmount and drop it, or nowhere; a control that took it since keeps it (Base UI's returnFocus). */
 	const returnFocus = () => {
 		const target = triggerId;
 		triggerId = null;
-		const skip = keepFocus;
-		keepFocus = false;
-		if (skip || target === null) return;
-		returnFocusTo(renderer, target, searchFocused);
+		if (target === null) return;
+		returnFocusTo(renderer, target, popupHasFocus());
 	};
 
 	const apply = (next: boolean) => {
@@ -875,8 +904,9 @@ export function DropdownMenu(props: {
 		} else {
 			pressedAt = null;
 			presence.hide();
-			setKeyStack([]);
 			returnFocus();
+			// The default Tab would start from the popup row, whose floating layer wraps to the start of the page.
+			if (tabbingOn) renderer.focusNext?.();
 		}
 	};
 	const setOpen = (next: boolean) => {
@@ -898,14 +928,9 @@ export function DropdownMenu(props: {
 		setOpen,
 		keyboardActive,
 		setKeyboardActive,
-		pushKeys(target) {
-			setKeyStack((stack) => [...stack, target]);
-			return () =>
-				setKeyStack((stack) => stack.filter((entry) => entry !== target));
-		},
-		activeRowId: () => keyStack().at(-1)?.activeRowId(),
 		triggerId: createUniqueId(),
 		popupId: createUniqueId(),
+		popupTestId: props.testId === undefined ? undefined : `${props.testId}-popup`,
 		openFrom,
 		startPress() {
 			setOpenFrom("first");
@@ -922,45 +947,40 @@ export function DropdownMenu(props: {
 		noteTrigger(elementId) {
 			pendingTrigger = elementId;
 		},
-		setSearchFocused(focused) {
-			searchFocused = focused;
+		watchPopupFocus(containsFocus) {
+			popupHasFocus = containsFocus;
 		},
-		closeKeepingFocus() {
-			keepFocus = true;
+		leave(backwards) {
+			tabbingOn = !backwards;
 			setOpen(false);
+			tabbingOn = false;
 		},
 	};
 
+	/** Only the closed trigger's keys live here: once open, the popup's panel takes them. */
 	const onKeyDown = (event: KeyEvent) => {
 		if (props.disabled === true) return;
 		if (isChord(event)) return;
-		if (!presence.open()) {
-			if (
-				event.key === "ArrowDown" ||
-				event.key === "ArrowUp" ||
-				event.key === "Enter" ||
-				event.key === " "
-			) {
-				event.preventDefault();
-				if (event.key === "ArrowDown" || event.key === "ArrowUp")
-					event.stopPropagation();
-				setOpenFrom(event.key === "ArrowUp" ? "last" : "first");
-				setKeyboardActive(true);
-				setOpen(true);
-			}
-			return;
+		if (presence.open()) return;
+		if (
+			event.key === "ArrowDown" ||
+			event.key === "ArrowUp" ||
+			event.key === "Enter" ||
+			event.key === " "
+		) {
+			event.preventDefault();
+			if (event.key === "ArrowDown" || event.key === "ArrowUp")
+				event.stopPropagation();
+			setOpenFrom(event.key === "ArrowUp" ? "last" : "first");
+			setKeyboardActive(true);
+			setOpen(true);
 		}
-		setKeyboardActive(true);
-		keyStack().at(-1)?.onKey(event);
 	};
 
 	return (
 		<MenuScopeContext.Provider value={scope}>
 			<div
 				testId={props.testId}
-				// A press on the menu's bare content lands focus here, so the keys still reach onKeyDown.
-				tabIndex={-1}
-				aria-activedescendant={scope.activeRowId()}
 				onKeyDown={onKeyDown}
 				onMouseDownOutside={() => {
 					if (presence.open()) setOpen(false);
@@ -1011,9 +1031,6 @@ export function DropdownTrigger(props: {
 			get "aria-controls"() {
 				return scope.presence.open() ? scope.popupId : undefined;
 			},
-			get "aria-activedescendant"() {
-				return scope.presence.open() ? scope.activeRowId() : undefined;
-			},
 		},
 	};
 	return props.children(trigger);
@@ -1039,15 +1056,9 @@ export function DropdownContent(props: {
 		keyboardActive: scope.keyboardActive,
 		setKeyboardActive: scope.setKeyboardActive,
 		openFrom: scope.openFrom,
-		leave: scope.closeKeepingFocus,
+		leave: scope.leave,
 	});
-
-	createEffect(() => {
-		if (!scope.presence.open()) return;
-		onCleanup(
-			scope.pushKeys({ onKey: list.onKey, activeRowId: list.activeRowId }),
-		);
-	});
+	scope.watchPopupFocus(list.containsFocus);
 
 	return (
 		<PopupSurface
@@ -1062,6 +1073,7 @@ export function DropdownContent(props: {
 					id={scope.popupId}
 					labelledBy={scope.triggerId}
 					list={list}
+					testId={scope.popupTestId}
 					checkedIndex={() => props.checkedIndex}
 					checkedIndices={() => props.checkedIndices}
 					maxHeight={maxHeight}
@@ -1088,7 +1100,7 @@ interface SubScope {
 	popupId: string;
 	content: Accessor<SubContentProps | undefined>;
 	setContent: (props: SubContentProps | undefined) => void;
-	/** The keys are in the submenu: it opened from the keyboard, or Right / Enter went into it. A hover-opened submenu leaves them with its parent. */
+	/** Right / Enter went into the submenu, which may already be open from a hover: focus its first row. */
 	entered: Accessor<boolean>;
 	enter: () => void;
 }
@@ -1208,7 +1220,10 @@ export function DropdownSubTrigger(props: {
 			}}
 		>
 			<Show when={sub.presence.mounted()}>
-				<SubPopup triggerId={parent.rowId(props.index)} />
+				<SubPopup
+					triggerId={parent.rowId(props.index)}
+					focusTrigger={() => parent.rows.get(props.index)?.focus()}
+				/>
 			</Show>
 		</MenuItem>
 	);
@@ -1226,7 +1241,11 @@ export function DropdownSubContent(props: SubContentProps) {
 
 const stopPropagation = (event: HostDomEvent) => event.stopPropagation();
 
-function SubPopup(props: { triggerId: string }) {
+function SubPopup(props: {
+	triggerId: string;
+	/** Escape and Left hand focus back to the row that opened this submenu. */
+	focusTrigger: () => void;
+}) {
 	const sub = useSubScope();
 	const menu = useMenuScope();
 	const content = () => {
@@ -1239,14 +1258,17 @@ function SubPopup(props: { triggerId: string }) {
 		open: sub.open,
 		mounted: sub.presence.mounted,
 		closeAll: () => menu.setOpen(false),
-		closeSelf: () => sub.setOpen(false),
+		closeSelf() {
+			sub.setOpen(false);
+			props.focusTrigger();
+		},
 		isSub: true,
 		checkedIndex: () => content().checkedIndex,
 		multiple: () => content().checkedIndices !== undefined,
 		keyboardActive: menu.keyboardActive,
 		setKeyboardActive: menu.setKeyboardActive,
 		openFrom: () => "first",
-		leave: menu.closeKeepingFocus,
+		leave: menu.leave,
 	});
 
 	// Right / Enter on an already open (hover-opened) submenu goes in: light its first row.
@@ -1259,13 +1281,6 @@ function SubPopup(props: { triggerId: string }) {
 			{ defer: true },
 		),
 	);
-	createEffect(() => {
-		if (!sub.open() || !sub.entered()) return;
-		onCleanup(
-			menu.pushKeys({ onKey: list.onKey, activeRowId: list.activeRowId }),
-		);
-	});
-
 	const placement = createPlacementState("right");
 	const maxHeight = () => placement.maxHeight(POPUP_MAX_HEIGHT);
 
