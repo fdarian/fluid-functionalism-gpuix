@@ -97,6 +97,36 @@ export async function createCheck(
 		return total;
 	}
 
+	/**
+	 * How much area of `box` the glyph covers: each pixel counts by its difference from the corner pixel as a share
+	 * of the largest difference in the box. Unlike `ink` it does not move when only the colour or the background
+	 * changes, so it isolates a stroke width.
+	 */
+	function coverage(box: {
+		x: number;
+		y: number;
+		width: number;
+		height: number;
+	}) {
+		renderer.captureScreenshot(INK_PATH);
+		const pixels = readPng(INK_PATH);
+		const left = Math.round(box.x);
+		const top = Math.round(box.y);
+		const ground = pixels.at(left, top);
+		const diffs: number[] = [];
+		for (let y = top; y < Math.round(box.y + box.height); y++)
+			for (let x = left; x < Math.round(box.x + box.width); x++) {
+				const pixel = pixels.at(x, y);
+				diffs.push(
+					Math.abs(pixel[0] - ground[0]) +
+						Math.abs(pixel[1] - ground[1]) +
+						Math.abs(pixel[2] - ground[2]),
+				);
+			}
+		const strongest = Math.max(...diffs);
+		return diffs.reduce((sum, diff) => sum + diff / strongest, 0);
+	}
+
 	/** Moves the pointer onto `point` and returns once `afterMs` have passed, the frames flushed by hand. */
 	async function hoverFor(point: { x: number; y: number }, afterMs: number) {
 		renderer.nativeSimulateMouseMove(point.x - 1, point.y);
@@ -126,6 +156,7 @@ export async function createCheck(
 		center,
 		aria,
 		ink,
+		coverage,
 		hoverFor,
 		exists: (testId: string) => renderer.findByTestId(testId) !== undefined,
 		async click(testId: string) {

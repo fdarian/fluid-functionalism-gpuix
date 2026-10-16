@@ -35,19 +35,10 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `not ported yet`.
 - **Original:** label colour and the chevron's colour ease over 80 ms (`:754`, `:778`).
-- **Port:** the colour changes in one frame: `StableLabel` takes no `colorFade` and `Icon` is not given `fade` (`src/components/accordion.tsx:518-530`; `fade` exists at `src/lib/icon.tsx:11`, `colorFade` at `src/lib/theme.ts:310`). gpuix animates `color` (`FORK.md:815-820`).
+- **Port:** the colour changes in one frame: the accordion passes neither `StableLabel` nor `Icon` a `fade` (`src/components/accordion.tsx:640-657`; both props exist, `src/lib/stable-label.tsx`, `src/lib/icon.tsx`). The chevron's stroke width does ease (`easeStroke`). gpuix animates `color` (`FORK.md:815-820`).
 - **Workaround:** none.
 - **Fidelity:** dropped (the ease), exact end colours.
 - **Components it hits:** any `StableLabel` row (tabs, sidebar, menus).
-
-## Chevron stroke width switches at once
-
-- **Cause:** `not ported yet`.
-- **Original:** the chevron's stroke eases 1.5 to 2 with the colour (`:778`, `transition-[color,stroke-width]`).
-- **Port:** `strokeWidth={lit() ? 2 : 1.5}` swaps the SVG source (`src/components/accordion.tsx:528`). gpuix animates `strokeWidth` on `motion.path` (`BASE-UI-AUDIT.md:529`), but `Icon` bakes the width into a source string.
-- **Workaround:** none.
-- **Fidelity:** dropped (the ease).
-- **Components it hits:** every `<Icon>` that changes stroke on hover (select, combobox, menus, tabs, sidebar).
 
 ## Labels do not wrap
 
