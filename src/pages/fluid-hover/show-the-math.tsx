@@ -3,7 +3,13 @@ import { type Accessor, createSignal, For, Show } from "solid-js";
 import { Switch } from "../../components/switch";
 import { ComponentPreview, MONO } from "../../lib/doc-page";
 import { createFluidHover } from "../../lib/fluid-hover";
-import { color, type as scale, weight, withAlpha } from "../../lib/theme";
+import {
+	color,
+	colorFadeDefault,
+	type as scale,
+	weight,
+	withAlpha,
+} from "../../lib/theme";
 import {
 	FluidRow,
 	ListFrame,
@@ -105,7 +111,8 @@ function MathList(props: { showMath: () => boolean }) {
 				>
 					{/* Midpoints between centers: the highlight flips here. */}
 					<For each={boundaries()}>
-						{(y) => (							<div
+						{(y) => (
+							<div
 								style={{
 									position: "absolute",
 									left: 8,
@@ -148,6 +155,7 @@ function MathList(props: { showMath: () => boolean }) {
 												index() === hover.activeIndex()
 													? color.focusRing
 													: withAlpha(color.foreground, 0.25),
+											...colorFadeDefault,
 										}}
 									/>
 								)}

@@ -27,6 +27,7 @@ import { IS_MAC } from "../lib/platform";
 import { StableLabel } from "../lib/stable-label";
 import {
 	color,
+	fade,
 	focusRing,
 	shape,
 	type as scale,
@@ -34,6 +35,7 @@ import {
 	motion as tween,
 	weight,
 	withAlpha,
+	colorFadeNoRing,
 } from "../lib/theme";
 import { Button } from "./button";
 
@@ -86,6 +88,12 @@ const questionKey = (question: AskUserQuestion, index: number) =>
 	question.id ?? `q-${index}`;
 const optionKey = (option: AskUserOption, index: number) =>
 	option.id ?? `o-${index}`;
+
+/** The chip's `transition-[opacity,font-variation-settings] duration-80`; its colours switch at once in the source too. */
+const CHIP_FADE = fade(["opacity"], 80);
+
+/** The free-text box's `transition-colors`, without `outline-color`: the source's focus ring is a box-shadow ring, which does not ease. */
+const FREE_TEXT_FADE = colorFadeNoRing(150);
 
 const SHORTCUT_GLYPH = IS_MAC ? "⌘↵" : "⌃↵";
 
@@ -214,6 +222,7 @@ function Row(props: RowProps) {
 					justifyContent: "center",
 					borderRadius: shape.bg,
 					opacity: props.chipPosition === "right" && props.showArrow ? 0 : 1,
+					...CHIP_FADE,
 					...(props.isMulti
 						? props.chipFilled
 							? { backgroundColor: color.foreground }
@@ -863,6 +872,7 @@ export function AskUserQuestions(props: {
 								: hovered()
 									? color.hover
 									: color.transparent,
+					...FREE_TEXT_FADE,
 					...(textFocused() && otherText().length === 0
 						? {
 								outlineWidth: 1,

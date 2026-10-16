@@ -630,20 +630,29 @@ const ease = await createCheck(
 		height: row.height - 8,
 	};
 	const rest = { icon: ease.ink(iconBox), label: ease.ink(labelBox) };
-	await ease.hoverFor(ease.center("ease-0"), 10);
+	const point = ease.center("ease-0");
+	ease.renderer.clockPause();
+	ease.renderer.nativeSimulateMouseMove(point.x - 1, point.y);
+	ease.renderer.nativeSimulateMouseMove(point.x, point.y);
+	for (const ms of [0, 16, 16]) {
+		ease.renderer.clockFastForward(ms);
+		ease.renderer.flush();
+		ease.renderer.dispatchNativeEvents();
+	}
 	const early = { icon: ease.ink(iconBox), label: ease.ink(labelBox) };
+	ease.renderer.clockResume();
 	await ease.settle(400);
 	const lit = { icon: ease.ink(iconBox), label: ease.ink(labelBox) };
 	const partway = (name: "icon" | "label") =>
 		early[name] > rest[name] + 0.1 * (lit[name] - rest[name]) &&
 		early[name] < lit[name] - 0.1 * (lit[name] - rest[name]);
 	k.check(
-		"ease: the icon's stroke and colour are partway a frame or two after the row lights",
+		"ease: the icon's stroke and colour are partway 32 ms after the row lights",
 		partway("icon"),
 		`rest ${rest.icon}, early ${early.icon}, lit ${lit.icon}`,
 	);
 	k.check(
-		"ease: the label's colour is partway a frame or two after the row lights",
+		"ease: the label's colour is partway 32 ms after the row lights",
 		partway("label"),
 		`rest ${rest.label}, early ${early.label}, lit ${lit.label}`,
 	);

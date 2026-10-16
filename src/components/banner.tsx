@@ -20,6 +20,7 @@ import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import {
 	color,
+	fade,
 	focusRing,
 	shape,
 	sizeChoice,
@@ -358,21 +359,21 @@ export function Banner(props: {
 	return <Show when={mounted()}>{row()}</Show>;
 }
 
+/** `transition-colors duration-80` without `outline-color`: the source's focus ring is a box-shadow ring, which does not ease. */
+const DISMISS_FADE = fade(["color", "background-color"], 80);
+
 function DismissButton(props: {
 	compact: boolean;
 	testId?: string;
 	onClick: () => void;
 }) {
 	const renderer = useGpuixRequired();
-	const [hovered, setHovered] = createSignal(false);
 	return (
 		<div
 			{...buttonProps({ onClick: props.onClick }, renderer)}
 			tabIndex={0}
 			aria-label="Dismiss"
 			testId={props.testId}
-			onMouseEnter={() => setHovered(true)}
-			onMouseLeave={() => setHovered(false)}
 			style={{
 				// Above the fill layer, which paints over its in-flow siblings.
 				position: "relative",
@@ -390,7 +391,9 @@ function DismissButton(props: {
 				borderRadius: shape.button,
 				cursor: "pointer",
 				keyboardFocusDim: false,
-				hover: { backgroundColor: color.hover },
+				color: color.mutedForeground,
+				...DISMISS_FADE,
+				hover: { backgroundColor: color.hover, color: color.foreground },
 				focusVisible: focusRing(0),
 			}}
 		>
@@ -398,7 +401,7 @@ function DismissButton(props: {
 				name="x"
 				size={props.compact ? 13 : 15}
 				strokeWidth={1.5}
-				color={hovered() ? color.foreground : color.mutedForeground}
+				color="currentColor"
 			/>
 		</div>
 	);

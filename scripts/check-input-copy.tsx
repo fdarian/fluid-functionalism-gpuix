@@ -149,7 +149,7 @@ report(
 );
 await reset();
 
-// Hovering the row eases the glyph's stroke from 1.5 to 2 over 80 ms: the inked area grows frame by frame, not in one step.
+// Hovering the row eases the glyph's stroke from 1.5 to 2 and its colour to the foreground over 80 ms: the inked area grows frame by frame, not in one step.
 const rowBox = (() => {
 	const found = renderer.findByTestId("subject");
 	if (found === undefined) throw new Error("no subject");
@@ -183,7 +183,7 @@ renderer.nativeSimulateMouseMove(subject.x - 40, subject.y);
 renderer.nativeSimulateMouseMove(subject.x - 41, subject.y);
 renderer.flush();
 renderer.dispatchNativeEvents();
-// The colour switches at once, so a first frame that is only partly thickened is the stroke easing.
+// The glyph's colour and stroke both ease, so a first frame that is only partly inked is the fade.
 await sleep(10);
 renderer.flush();
 renderer.dispatchNativeEvents();
@@ -194,6 +194,44 @@ report(
 	"the glyph's stroke eases to 2 on hover",
 	earlyInk > restInk && earlyInk < hoverInk - 1000,
 	`rest ${restInk}, first frames ${earlyInk}, hovered ${hoverInk}`,
+);
+
+// The focus ring (an outline) fades in over 80 ms like the source's `transition-all` box-shadow ring. The motion clock
+// is held and stepped by hand so a slow frame cannot skip the middle.
+await reset();
+// An earlier check left the row focused: a click on the bare page takes the focus away.
+renderer.nativeSimulateClick(580, 280);
+await settle(300);
+function ringSum() {
+	renderer.captureScreenshot("/tmp/check-input-copy-ring.png");
+	const pixel = readPng("/tmp/check-input-copy-ring.png").at(
+		Math.round(rowBox.x) - 1,
+		Math.round(rowBox.y + rowBox.height / 2),
+	);
+	return pixel[0] + pixel[1] + pixel[2];
+}
+function step(ms: number) {
+	renderer.clockFastForward(ms);
+	renderer.flush();
+	renderer.dispatchNativeEvents();
+}
+if (renderer.getFocusedElementId() === row.id)
+	throw new Error("the row already has focus");
+const ringRest = ringSum();
+renderer.clockPause();
+renderer.simulateKeystrokes("Tab");
+step(0);
+step(16);
+const ringMiddle = ringSum();
+step(300);
+const ringFocused = ringSum();
+renderer.clockResume();
+report(
+	"the focus ring fades in",
+	ringFocused > ringRest + 20 &&
+		ringMiddle > ringRest &&
+		ringMiddle < ringRest + 0.6 * (ringFocused - ringRest),
+	`rest ${ringRest}, 16 ms ${ringMiddle}, end ${ringFocused}`,
 );
 
 test.unmount();

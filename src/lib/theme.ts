@@ -470,6 +470,35 @@ export const colorFade = fade(COLORS, 80);
 /** `transition-colors` with no duration class: Tailwind's default 150 ms. */
 export const colorFadeDefault = fade(COLORS, 150);
 
+/**
+ * `transition-colors` minus `outline-color`, for elements whose focus ring is not an outline (a box-shadow ring, or none)
+ * and so must not fade in with the colours. Default curve unless `ease` is given.
+ */
+export function colorFadeNoRing(ms: number, ease?: string) {
+	return fade(["color", "background-color", "border-color"], ms, ease);
+}
+
+/**
+ * A CSS stand-in for the source's `spring.fast` (80 ms, bounce 0) where it animates a colour or an outline: a
+ * critically damped spring has no bezier of its own, so this is the closest fit to its position curve (within
+ * 0.015 of it across the 80 ms).
+ */
+export function springFade(properties: readonly string[]) {
+	return fade(properties, 80, "cubic-bezier(0.2, 0.05, 0.2, 1)");
+}
+
+/**
+ * Button's surface layer: `box-shadow` eases over 180ms on a snappy curve and `background-color` over 80ms, both 80ms
+ * while pressed. The pressed list goes in the `active` style, which gpuix uses while entering it; the base one is used
+ * on the way out. The focus ring and the disabled dim stay out of the list: the source does not ease them either.
+ */
+export const surfaceFade = {
+	transitionProperty: "box-shadow,background-color",
+	transitionDuration: "180ms,80ms",
+	transitionTimingFunction: "cubic-bezier(0.23,1,0.32,1),ease",
+};
+export const pressFade = { ...surfaceFade, transitionDuration: "80ms,80ms" };
+
 /** The `focus-visible` ring: a 1px outline `offset` px from the box (negative draws inside). */
 export function focusRing(offset: number): StateStyleDesc {
 	return {

@@ -148,6 +148,8 @@ export function NavItem(props: {
 						name={icon()}
 						size={metrics().icon}
 						strokeWidth={lit() ? 2 : 1.5}
+						easeStroke
+						fade
 						color={lit() ? color.foreground : color.mutedForeground}
 					/>
 				)}
@@ -157,6 +159,7 @@ export function NavItem(props: {
 				heavy={isActiveRoute()}
 				color={lit() ? color.foreground : color.mutedForeground}
 				textStyle={metrics().text}
+				fade
 				grow={dot() === undefined}
 				truncate
 			/>

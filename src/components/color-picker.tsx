@@ -35,7 +35,7 @@ import {
 import { createPresence } from "../lib/presence";
 import { createPressToggle, refocusAfterPress } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
-import { color, height, nestedRadius, radius, shape, type as scale, scheme, shadow, motion as tween, weight, surface, focusRing } from "../lib/theme";
+import { color, colorFade, colorFadeNoRing, fade, springFade, height, nestedRadius, radius, shape, type as scale, scheme, shadow, motion as tween, weight, surface, focusRing } from "../lib/theme";
 import {
 	buildParsed,
 	clamp01,
@@ -68,6 +68,8 @@ const RAIL_PAD = 8;
 const RAIL_KNOB = 16;
 const RAIL_TRACK = 18;
 const HAIRLINE = "rgba(127,127,127,0.25)";
+/** The source's `transition-colors duration-80` on its buttons and fields, whose focus ring is a box-shadow that stays out of that list: `colorFade` would also fade the port's outline ring in. */
+const BUTTON_FADE = colorFadeNoRing(80);
 const focusOutline = () => ({
 	outlineWidth: 1,
 	outlineColor: color.focusRing,
@@ -203,6 +205,7 @@ export function ColorSwatch(props: {
 				borderRadius: shape.bg,
 				cursor: "pointer",
 				boxShadow: ringShadow(),
+				...fade(["box-shadow"], 100),
 			}}
 		>
 			<div
@@ -544,6 +547,7 @@ function Rail(props: {
 					alignItems: "center",
 					justifyContent: "center",
 					keyboardFocusDim: false,
+					...springFade(["outline-color"]),
 					focusVisible: focusRing(2),
 				}}
 			>
@@ -967,6 +971,7 @@ function FormatDropdown(props: {
 					cursor: "pointer",
 					keyboardFocusDim: false,
 					backgroundColor: presence.open() ? color.active : color.transparent,
+					...BUTTON_FADE,
 					hover: {
 						backgroundColor: presence.open() ? color.active : color.hover,
 					},
@@ -982,6 +987,7 @@ function FormatDropdown(props: {
 							presence.open() || triggerHovered()
 								? color.foreground
 								: color.mutedForeground,
+						...colorFade,
 					}}
 				>
 					{FORMAT_LABELS[props.value]}
@@ -1086,6 +1092,7 @@ function FormatDropdown(props: {
 										text={FORMAT_LABELS[format]}
 										heavy={checked()}
 										color={lit() ? color.foreground : color.mutedForeground}
+										fade
 									/>
 								</div>
 							);
@@ -1275,6 +1282,7 @@ function ColorInput(props: {
 				outlineWidth: focused() ? 1 : 0,
 				outlineColor: color.focusRing,
 				outlineOffset: 0,
+				...BUTTON_FADE,
 				hover: { backgroundColor: color.hover },
 				active: { backgroundColor: color.active },
 			}}
@@ -1882,6 +1890,7 @@ export function ColorPickerPopover(
 					borderColor: color.border,
 					cursor: "pointer",
 					keyboardFocusDim: false,
+					...BUTTON_FADE,
 					hover: { backgroundColor: color.hover },
 					focusVisible: focusOutline(),
 				}}

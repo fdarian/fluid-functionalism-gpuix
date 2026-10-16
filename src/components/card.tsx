@@ -22,7 +22,18 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
-import { color, sizeChoice, shape, type as scale, scheme, weight, withAlpha, focusRing } from "../lib/theme";
+import {
+	color,
+	colorFade,
+	fade,
+	focusRing,
+	scheme,
+	shape,
+	sizeChoice,
+	type as scale,
+	weight,
+	withAlpha,
+} from "../lib/theme";
 
 export type CardOrientation = "card" | "inline";
 export type CardBorder = "none" | "outlined";
@@ -392,7 +403,11 @@ export function Card(props: {
 						: {}),
 					// A card that is its own tile has no group highlight, so it lights itself.
 					...(group === undefined && clickable() && !props.disabled
-						? { hover: { backgroundColor: color.hover } }
+						? {
+								// Only the fill: the source's ring is a box shadow that `transition-colors` leaves out.
+								...fade(["background-color"], 80),
+								hover: { backgroundColor: color.hover },
+							}
 						: {}),
 					...(clickable() && !props.disabled ? { cursor: "pointer" } : {}),
 					keyboardFocusDim: false,
@@ -470,6 +485,7 @@ export function Card(props: {
 						visible={
 							!(props.dismissOnHover ?? true) || hovered() || dismissFocused()
 						}
+						revealOnHover={props.dismissOnHover ?? true}
 						onFocusChange={setDismissFocused}
 						onDismiss={props.onDismiss}
 					/>
@@ -521,6 +537,8 @@ function DismissChip(props: {
 	compact: boolean;
 	overMedia: boolean;
 	visible: boolean;
+	/** The chip is revealed by hover or focus, so it fades its opacity instead of its colours. */
+	revealOnHover: boolean;
 	onFocusChange: (focused: boolean) => void;
 	onDismiss?: () => void;
 }) {
@@ -560,6 +578,11 @@ function DismissChip(props: {
 				cursor: "pointer",
 				keyboardFocusDim: false,
 				// The chip stays shown while the pointer is on it, whatever the card's own hover says.
+				// The source sets `transition-colors` and, with `dismissOnHover`, `transition-opacity` after it: the later
+				// one replaces the property list, so a revealed chip fades its opacity only and its hover colours switch at once.
+				...(props.revealOnHover
+					? fade(["opacity"], 80)
+					: fade(["background-color"], 80)),
 				opacity: props.visible || hovered() ? 1 : 0,
 				pointerEvents: props.visible || hovered() ? "auto" : "none",
 				backgroundColor: props.overMedia
@@ -576,6 +599,7 @@ function DismissChip(props: {
 				name="x"
 				size={props.compact ? 13 : 15}
 				strokeWidth={1.5}
+				fade={!props.revealOnHover}
 				color={hovered() ? color.foreground : color.mutedForeground}
 			/>
 		</div>
@@ -978,6 +1002,8 @@ export function CardButton(props: {
 					name={icon()}
 					size={glyphSize()}
 					strokeWidth={stroke()}
+					easeStroke
+					fade
 					color={labelColor()}
 				/>
 			)}
@@ -991,6 +1017,7 @@ export function CardButton(props: {
 				style={{
 					...(scope.compact() ? scale.micro : scale.caption),
 					color: labelColor(),
+					...colorFade,
 					fontWeight: weight.normal,
 					whiteSpace: "nowrap",
 					...(variant() === "link" && hovered()
@@ -1007,6 +1034,8 @@ export function CardButton(props: {
 					name={arrowUpRight}
 					size={13}
 					strokeWidth={stroke()}
+					easeStroke
+					fade
 					color={labelColor()}
 				/>
 			</Show>
@@ -1032,6 +1061,8 @@ export function CardButton(props: {
 				...(variant() === "link"
 					? {}
 					: { height: 28, paddingLeft: 10, paddingRight: 10 }),
+				// Not the full colour list: the source's ring is a box shadow that `transition-colors` leaves out.
+				...fade(["background-color"], 80),
 				...surface(),
 				...(props.disabled ? { opacity: 0.5, pointerEvents: "none" } : {}),
 				focusVisible: focusRing(0),

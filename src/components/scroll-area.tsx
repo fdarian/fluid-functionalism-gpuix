@@ -12,7 +12,7 @@ import {
 } from "@gpuix/solid";
 import { createSignal, type JSX, onCleanup, Show } from "solid-js";
 import { isChord } from "../lib/list-nav";
-import { color, withAlpha } from "../lib/theme";
+import { color, fade, withAlpha } from "../lib/theme";
 
 export type ScrollOrientation = "vertical" | "horizontal" | "both";
 
@@ -468,6 +468,8 @@ export function ScrollArea(props: {
 							position: "absolute",
 							borderRadius: 3,
 							backgroundColor: thumbColor(),
+							// Tailwind's `ease-in-out` is `fade`'s default curve.
+							...fade(["background-color"], 160),
 							...(bar.axis === "y"
 								? { top: span()?.start, height: span()?.length }
 								: { left: span()?.start, width: span()?.length }),

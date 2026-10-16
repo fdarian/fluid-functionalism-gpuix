@@ -25,7 +25,7 @@ import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { fill } from "../lib/press";
 import { createMeasuredHeight } from "../lib/measured-height";
-import { color, sizeChoice, height, nestedRadius, radius, shape, type as scale, scheme, shadow, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
+import { color, colorFade, fade, pressFade, surfaceFade, sizeChoice, height, nestedRadius, radius, shape, type as scale, scheme, shadow, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 import { FileThumbnail } from "./file-thumbnail";
 import type { InputSize } from "./input-group";
 import { Tooltip } from "./tooltip";
@@ -119,6 +119,12 @@ const steps = {
 } as const;
 
 /** The drop under a recoloured edge: `--shadow-color`, which stays 6% black in dark too. */
+/** The source's `transition-opacity duration-80` on the remove badge, the queued close button and the suggestion's ↵. */
+const OPACITY_FADE = fade(["opacity"], 80);
+
+/** The composer's `transition-[box-shadow,color] duration-80` on the edge ring. */
+const COMPOSER_FADE = fade(["box-shadow", "color"], 80);
+
 const EDGE_DROP = "0 1px 1px -0.5px rgba(0,0,0,0.06)";
 
 /** The focused composer's ring: foreground at 20%. */
@@ -192,9 +198,10 @@ function SendButton(props: {
 				keyboardFocusDim: false,
 				opacity: props.disabled ? 0.5 : 1,
 				pointerEvents: props.disabled ? "none" : undefined,
+				...surfaceFade,
 				boxShadow: fill(color.foreground, 1),
 				hover: { boxShadow: fill(color.primaryHover, 1) },
-				active: { boxShadow: fill(color.primaryActive, 0) },
+				active: { boxShadow: fill(color.primaryActive, 0), ...pressFade },
 				focusVisible: focusRing(1),
 			}}
 		>
@@ -264,6 +271,7 @@ function RemoveBadge(props: {
 					justifyContent: "center",
 					cursor: "pointer",
 					opacity: props.visible || focusVisible() ? 1 : 0,
+					...OPACITY_FADE,
 					keyboardFocusDim: false,
 					focusVisible: focusRing(0),
 				}}
@@ -491,6 +499,7 @@ function QueuedRow(props: {
 						justifyContent: "center",
 						cursor: "pointer",
 						opacity: hovered() || closeHovered() || closeFocusVisible() ? 1 : 0,
+						...OPACITY_FADE,
 						keyboardFocusDim: false,
 						hover: { backgroundColor: color.hover },
 						focusVisible: focusRing(0),
@@ -545,6 +554,8 @@ function SuggestionRow(props: {
 				paddingLeft: step().rowPadX,
 				paddingRight: step().rowPadX,
 				cursor: "pointer",
+				color: props.active ? color.foreground : color.mutedForeground,
+				...colorFade,
 			}}
 		>
 			<text
@@ -553,7 +564,7 @@ function SuggestionRow(props: {
 					flexGrow: 1,
 					minWidth: 0,
 					fontWeight: weight.normal,
-					color: props.active ? color.foreground : color.mutedForeground,
+					color: "currentColor",
 					whiteSpace: "nowrap",
 					textOverflow: "ellipsis",
 					overflow: "hidden",
@@ -565,14 +576,16 @@ function SuggestionRow(props: {
 				<Show
 					when={!props.active && props.keyHint}
 					fallback={
-						<Show when={props.active}>
+						<div
+							style={{ opacity: props.active ? 1 : 0, ...OPACITY_FADE }}
+						>
 							<Icon
 								name="corner-down-left"
 								size={13}
 								strokeWidth={1.5}
-								color={color.foreground}
+								color="currentColor"
 							/>
-						</Show>
+						</div>
 					}
 				>
 					<Icon
@@ -968,6 +981,7 @@ export function InputMessage(props: InputMessageProps) {
 				opacity: props.disabled === true ? 0.5 : 1,
 				pointerEvents: props.disabled === true ? "none" : undefined,
 				boxShadow: edgeShadow(),
+				...COMPOSER_FADE,
 			}}
 		>
 			<Collapse open={files().length > 0}>

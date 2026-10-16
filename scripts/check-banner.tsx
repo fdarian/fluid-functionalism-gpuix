@@ -6,6 +6,7 @@
  * The demo's Replay button sits under the banner, so its y is the row's height.
  */
 import { createCheck } from "./check-kit";
+import { readPng } from "./png-pixels";
 
 const kit = await createCheck("banner");
 const renderer = kit.renderer;
@@ -104,5 +105,43 @@ kit.check(
 	"the dismiss button keeps focus through a reopen",
 	renderer.getFocusedElementId() === after.id,
 );
+
+// The dismiss button's hover fill and glyph colour ease over 80 ms (the clock is still held).
+function dismissPixels() {
+	renderer.captureScreenshot("/tmp/check-banner-fade.png");
+	const box = kit.bounds("inline-banner-dismiss");
+	const pixels = readPng("/tmp/check-banner-fade.png");
+	const sum = (x: number, y: number) =>
+		pixels
+			.at(Math.round(x), Math.round(y))
+			.slice(0, 3)
+			.reduce((a, b) => a + b, 0);
+	let glyph = 0;
+	for (let y = box.y + 6; y < box.y + box.height - 6; y++)
+		for (let x = box.x + 6; x < box.x + box.width - 6; x++)
+			glyph = Math.max(glyph, sum(x, y));
+	return { fill: sum(box.x + 3, box.y + box.height / 2), glyph };
+}
+renderer.nativeSimulateMouseMove(2, 2);
+await frames(300);
+const restFade = dismissPixels();
+const dismissBox = kit.bounds("inline-banner-dismiss");
+renderer.nativeSimulateMouseMove(
+	dismissBox.x + dismissBox.width / 2,
+	dismissBox.y + dismissBox.height / 2,
+);
+await frames(32);
+const midFade = dismissPixels();
+await frames(300);
+const hoverFade = dismissPixels();
+for (const part of ["fill", "glyph"] as const) {
+	const low = Math.min(restFade[part], hoverFade[part]);
+	const high = Math.max(restFade[part], hoverFade[part]);
+	kit.check(
+		`the dismiss button's ${part} eases 32 ms into the hover`,
+		high - low > 6 && midFade[part] > low + 1 && midFade[part] < high - 1,
+		`rest ${restFade[part]}, 32 ms ${midFade[part]}, hover ${hoverFade[part]}`,
+	);
+}
 
 kit.finish();

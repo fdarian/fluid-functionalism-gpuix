@@ -29,6 +29,7 @@ import {
 	focusRing,
 	shape,
 	sizeChoice,
+	springFade,
 	type as scale,
 	scheme,
 	motion as tween,
@@ -848,6 +849,7 @@ function CompactSlider(props: CompactProps) {
 					justifyContent: "center",
 					pointerEvents: "none",
 					keyboardFocusDim: false,
+					...springFade(["outline-color"]),
 					focusVisible: focusRing(1),
 				}}
 			>
@@ -1326,6 +1328,7 @@ function ComfortableSlider(props: ComfortableProps) {
 		...scale.body,
 		whiteSpace: "nowrap" as const,
 	};
+	const textFade = springFade(["color"]);
 
 	return (
 		<div
@@ -1370,9 +1373,10 @@ function ComfortableSlider(props: ComfortableProps) {
 					borderRadius: shape.bg,
 					overflow: "hidden",
 					cursor: "ew-resize",
-					outlineWidth: focused() ? 1 : 0,
-					outlineColor: color.focusRing,
+					outlineWidth: 1,
+					outlineColor: focused() ? color.focusRing : color.transparent,
 					outlineOffset: 2,
+					...springFade(["outline-color"]),
 				}}
 			>
 				<Show when={variant() === "pips"}>
@@ -1402,13 +1406,22 @@ function ComfortableSlider(props: ComfortableProps) {
 										style={{
 											width: PIP_SIZE,
 											height: PIP_SIZE,
-											borderRadius: PIP_SIZE / 2,
-											backgroundColor: active()
-												? color.foreground
-												: color.mutedForeground,
-											opacity: hidden() ? 0 : active() ? 1 : 0.3,
+											opacity: hidden() ? 0 : 1,
 										}}
-									/>
+									>
+										<div
+											style={{
+												width: PIP_SIZE,
+												height: PIP_SIZE,
+												borderRadius: PIP_SIZE / 2,
+												backgroundColor: active()
+													? color.foreground
+													: color.mutedForeground,
+												opacity: active() ? 1 : 0.3,
+												...springFade(["background-color", "opacity"]),
+											}}
+										/>
+									</div>
 								);
 							}}
 						</For>
@@ -1495,6 +1508,7 @@ function ComfortableSlider(props: ComfortableProps) {
 							width: 2,
 							borderRadius: 1,
 							backgroundColor: lineColor(),
+							...springFade(["background-color"]),
 						}}
 					/>
 				</Show>
@@ -1513,7 +1527,7 @@ function ComfortableSlider(props: ComfortableProps) {
 					}}
 				>
 					<Show when={props.label !== undefined}>
-						<text style={{ ...textStyle, color: textColor() }}>
+						<text style={{ ...textStyle, color: textColor(), ...textFade }}>
 							{props.label}
 						</text>
 					</Show>
@@ -1530,6 +1544,7 @@ function ComfortableSlider(props: ComfortableProps) {
 								top: 0,
 								right: 0,
 								color: textColor(),
+								...textFade,
 							}}
 						>
 							{formatValue(props.value)}

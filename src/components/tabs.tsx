@@ -436,6 +436,8 @@ export function TabItem(props: {
 						name={icon()}
 						size={metrics().icon}
 						strokeWidth={isActive() ? 2 : 1.5}
+						easeStroke
+						fade
 						color={isActive() ? color.foreground : color.mutedForeground}
 					/>
 				)}
@@ -445,6 +447,7 @@ export function TabItem(props: {
 				heavy={isSelected()}
 				color={isActive() ? color.foreground : color.mutedForeground}
 				textStyle={metrics().text}
+				fade
 			/>
 		</div>
 	);

@@ -35,6 +35,7 @@ import { IS_MAC } from "../lib/platform";
 import { createPresence } from "../lib/presence";
 import {
 	color,
+	colorFade,
 	radius,
 	shape,
 	sizeChoice,
@@ -652,6 +653,8 @@ export function CommandMenuInput(props: {
 						name={ref()}
 						size={layout().icon}
 						strokeWidth={focused() ? 2 : 1.5}
+						fade
+						easeStroke
 						color={focused() ? color.foreground : color.mutedForeground}
 					/>
 				)}
@@ -716,6 +719,7 @@ function TabLabel(props: { text: string; selected: boolean; lit: boolean }) {
 					top: 0,
 					left: 0,
 					color: props.lit ? color.foreground : color.mutedForeground,
+					...colorFade,
 				}}
 			>
 				{props.text}
@@ -1131,6 +1135,8 @@ export function CommandMenuItem(props: {
 						name={ref()}
 						size={layout().icon}
 						strokeWidth={active() ? 2 : 1.5}
+						fade
+						easeStroke
 						color={active() ? color.foreground : color.mutedForeground}
 					/>
 				)}
@@ -1154,6 +1160,7 @@ export function CommandMenuItem(props: {
 								...layout().text,
 								flexShrink: 0,
 								color: active() ? color.foreground : color.mutedForeground,
+								...colorFade,
 								whiteSpace: "nowrap",
 							}}
 						>
@@ -1221,6 +1228,7 @@ export function CommandMenuItemText(props: {
 					active() && props.muted !== true
 						? color.foreground
 						: color.mutedForeground,
+				...colorFade,
 				whiteSpace: "nowrap",
 				textOverflow: "ellipsis",
 				overflow: "hidden",

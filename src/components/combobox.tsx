@@ -29,6 +29,7 @@ import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import {
 	color,
 	colorFade,
+	fade,
 	radius,
 	shape,
 	shapeChoice,
@@ -62,6 +63,7 @@ function ClearButton(props: { onClick: () => void; testId?: string }) {
 				justifyContent: "center",
 				borderRadius: shapeChoice() === "pill" ? 12 : 6,
 				cursor: "pointer",
+				...fade(["color", "background-color"], 80),
 				hover: { backgroundColor: color.hover },
 				active: { backgroundColor: color.active },
 			}}
@@ -414,6 +416,7 @@ export function Combobox(props: {
 					outlineColor: color.border,
 					outlineOffset: 0,
 					backgroundColor: focused() ? color.card : color.transparent,
+					...colorFade,
 					hover: {
 						backgroundColor: focused() ? color.card : color.mutedHalf,
 					},

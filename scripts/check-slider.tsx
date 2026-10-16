@@ -5,6 +5,7 @@
  */
 import { showOnly } from "../src/demos/slider";
 import { createCheck } from "./check-kit";
+import { readPng } from "./png-pixels";
 
 const kit = await createCheck("slider");
 const renderer = kit.renderer;
@@ -89,5 +90,36 @@ kit.check(
 );
 renderer.nativeSimulateMouseUp(handle.x - 40, handle.y);
 await kit.settle(300);
+
+// The row's focus ring eases in over 80 ms, as the source's animated outline does.
+showOnly("default");
+await kit.settle(400);
+{
+	const row = kit.bounds("scrubber-row");
+	const ring = () => {
+		renderer.captureScreenshot("/tmp/check-slider-fade.png");
+		const pixel = readPng("/tmp/check-slider-fade.png").at(
+			Math.round(row.x + row.width / 2),
+			Math.round(row.y - 3),
+		);
+		return pixel[2];
+	};
+	renderer.clockPause();
+	const rest = ring();
+	renderer.focusElement(kit.element("scrubber-thumb").id);
+	step(0);
+	step(16);
+	const early = ring();
+	step(300);
+	const focused = ring();
+	renderer.clockResume();
+	kit.check(
+		"the row's focus ring is partway 16 ms after focus",
+		early > rest + 5 && early < focused - 5,
+		`rest ${rest}, 16 ms ${early}, focused ${focused}`,
+	);
+	renderer.focusElement(kit.element("scrubber-thumb").id);
+	await kit.settle(100);
+}
 
 kit.finish();

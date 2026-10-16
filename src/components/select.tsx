@@ -598,6 +598,7 @@ export function Select<Value extends string>(props: {
 						keyboardFocusDim: false,
 						opacity: props.disabled === true ? 0.5 : 1,
 						pointerEvents: props.disabled === true ? "none" : "auto",
+						...colorFade,
 						hover: { backgroundColor: color.hover },
 						active: { backgroundColor: color.active },
 						focusVisible: focusRing(0),

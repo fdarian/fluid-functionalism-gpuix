@@ -14,6 +14,7 @@ import {
 	ChoiceRow,
 	type ChoiceSize,
 	indicatorBorder,
+	indicatorFade,
 	ROW,
 } from "./choice-group";
 
@@ -142,6 +143,7 @@ function Radio(props: { selected: boolean; active: boolean; size: ChoiceSize }) 
 					borderRadius: box() / 2,
 					borderWidth: 1.5,
 					borderColor: indicatorBorder(props.selected, props.active),
+					...indicatorFade,
 				}}
 			/>
 			<AnimatePresence initial={false}>

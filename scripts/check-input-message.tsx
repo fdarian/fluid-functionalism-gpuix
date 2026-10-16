@@ -10,12 +10,15 @@
  * - A tab stop on the tile's remove badge and on the queued row's close button is painted
  *   (opacity 1 all the way up) while it has keyboard focus.
  * - The queued row's close button sits one row padding from the right edge: 10 default, 8 compact.
+ * - The 80 ms fades (composer ring, queued close button, suggestion text) are mid-way 40 ms in, with the motion
+ *   clock held; the send button's hover shadow eases over 180 ms.
  */
 import { createTestRoot } from "@gpuix/solid/testing";
 import { fileFromPath, InputMessage } from "../src/components/input-message";
 import { TooltipProvider } from "../src/components/tooltip";
 import { fonts } from "../src/lib/fonts";
 import { color, setThemeChoice } from "../src/lib/theme";
+import { readPng } from "./png-pixels";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const test = createTestRoot({ width: 700, height: 900, fonts });
@@ -109,6 +112,12 @@ test.render(() => (
 				onQueueChange={() => {}}
 			/>
 			<InputMessage testId="c" value="" onValueChange={() => {}} disabled />
+			<InputMessage
+				testId="d"
+				value=""
+				onValueChange={() => {}}
+				suggestions={["Draft a reply", "Summarise the thread"]}
+			/>
 		</div>
 	</TooltipProvider>
 ));
@@ -157,6 +166,159 @@ for (const [composer, expected] of [
 		`${composer} queued close button is ${expected}px from the row's right edge`,
 		gap === expected,
 		`${gap}`,
+	);
+}
+
+function step(ms: number) {
+	renderer.clockFastForward(ms);
+	renderer.flush();
+	renderer.dispatchNativeEvents();
+}
+/** The largest red channel inside `box`. */
+function brightest(box: {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+}) {
+	renderer.captureScreenshot("/tmp/check-input-message-fade.png");
+	const pixels = readPng("/tmp/check-input-message-fade.png");
+	let best = 0;
+	for (let y = Math.round(box.y); y < Math.round(box.y + box.height); y++)
+		for (let x = Math.round(box.x); x < Math.round(box.x + box.width); x++)
+			best = Math.max(best, pixels.at(x, y)[0]);
+	return best;
+}
+function betweenReport(
+	name: string,
+	before: number,
+	middle: number,
+	after: number,
+) {
+	const low = Math.min(before, after);
+	const high = Math.max(before, after);
+	report(
+		name,
+		high - low > 4 && middle > low + 1 && middle < high - 1,
+		`before ${before}, 40 ms ${middle}, after ${after}`,
+	);
+}
+/** Moves the pointer, steps the held clock 40 ms and samples `probe`, then lets the fade finish and samples again. */
+function fadeSamples(move: () => void, probe: () => number) {
+	renderer.clockPause();
+	const before = probe();
+	move();
+	step(0);
+	step(40);
+	const middle = probe();
+	step(400);
+	const after = probe();
+	renderer.clockResume();
+	return { before, middle, after };
+}
+
+renderer.nativeSimulateMouseMove(5, 5);
+await settle(400);
+{
+	const row = bounds("a-queued-0");
+	const closeBox = bounds("a-queued-0-remove");
+	const hidden = fadeSamples(
+		() => renderer.nativeSimulateMouseMove(row.x + 60, row.y + row.height / 2),
+		() => brightest(closeBox),
+	);
+	betweenReport(
+		"queued close button fades in over 80 ms",
+		hidden.before,
+		hidden.middle,
+		hidden.after,
+	);
+}
+renderer.nativeSimulateMouseMove(5, 5);
+await settle(400);
+// Light: in dark the rest shadow (`inset` layers) and the hover edge are not interpolable, in the browser as here, so that fade is a switch.
+setThemeChoice("light");
+await settle(400);
+{
+	const box = bounds("b");
+	const ring = () =>
+		brightest({
+			x: box.x - 1,
+			y: box.y + box.height / 2,
+			width: 1,
+			height: 1,
+		});
+	const samples = fadeSamples(
+		() => renderer.nativeSimulateMouseMove(box.x + 30, box.y + 10),
+		ring,
+	);
+	betweenReport(
+		"composer ring eases to the hover edge",
+		samples.before,
+		samples.middle,
+		samples.after,
+	);
+}
+setThemeChoice("dark");
+await settle(400);
+renderer.nativeSimulateMouseMove(5, 5);
+await settle(400);
+{
+	const send = bounds("a-send");
+	const glow = () =>
+		brightest({ x: send.x + 2, y: send.y + 2, width: 2, height: 2 });
+	const samples = fadeSamples(
+		() => renderer.nativeSimulateMouseMove(send.x + 14, send.y + 14),
+		glow,
+	);
+	betweenReport(
+		"send button shadow eases to the hover colour",
+		samples.before,
+		samples.middle,
+		samples.after,
+	);
+}
+renderer.nativeSimulateMouseMove(5, 5);
+await settle(400);
+{
+	const textarea = bounds("d-textarea");
+	renderer.nativeSimulateMouseMove(textarea.x + 20, textarea.y + 10);
+	renderer.nativeSimulateMouseDown(textarea.x + 20, textarea.y + 10);
+	renderer.nativeSimulateMouseUp(textarea.x + 20, textarea.y + 10);
+	await settle(400);
+	const row = bounds("d-suggestion-0");
+	const text = {
+		x: row.x,
+		y: row.y,
+		width: row.width * 0.6,
+		height: row.height,
+	};
+	const texts = fadeSamples(
+		() => renderer.simulateKeystrokes("ArrowDown"),
+		() => brightest(text),
+	);
+	betweenReport(
+		"suggestion text eases to the active colour",
+		texts.before,
+		texts.middle,
+		texts.after,
+	);
+	// Row 1 has no ↓ hint, so its ↵ stays mounted and its opacity eases.
+	const second = bounds("d-suggestion-1");
+	const enter = {
+		x: second.x + second.width - 30,
+		y: second.y,
+		width: 30,
+		height: second.height,
+	};
+	const icons = fadeSamples(
+		() => renderer.simulateKeystrokes("ArrowDown"),
+		() => brightest(enter),
+	);
+	betweenReport(
+		"suggestion enter glyph fades in",
+		icons.before,
+		icons.middle,
+		icons.after,
 	);
 }
 

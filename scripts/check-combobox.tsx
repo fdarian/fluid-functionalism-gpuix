@@ -17,6 +17,7 @@ import {
 	DialogTrigger,
 } from "../src/components/dialog";
 import { createCheck } from "./check-kit";
+import { readPng } from "./png-pixels";
 
 const FRUITS = ["Apple", "Banana", "Cherry", "Mango"];
 const SOME_DISABLED = [
@@ -286,6 +287,44 @@ k.expect(
 	"",
 );
 
+// ─── Hovering the field eases its fill over 80 ms ────────────────────────────
+
+{
+	const probe = () => {
+		const box = k.bounds("ease");
+		renderer.captureScreenshot("/tmp/check-combobox-fade.png");
+		return readPng("/tmp/check-combobox-fade.png").at(
+			Math.round(box.x + 5),
+			Math.round(box.y + 5),
+		)[0];
+	};
+	const hoverPoint = k.center("ease");
+	renderer.nativeSimulateMouseMove(1, 1);
+	await k.settle(300);
+	renderer.clockPause();
+	const rest = probe();
+	renderer.nativeSimulateMouseMove(hoverPoint.x - 1, hoverPoint.y);
+	renderer.nativeSimulateMouseMove(hoverPoint.x, hoverPoint.y);
+	for (const ms of [0, 16]) {
+		renderer.clockFastForward(ms);
+		renderer.flush();
+		renderer.dispatchNativeEvents();
+	}
+	const early = probe();
+	renderer.clockFastForward(300);
+	renderer.flush();
+	renderer.dispatchNativeEvents();
+	const hovered = probe();
+	renderer.clockResume();
+	k.check(
+		"fade: the field's hover fill is partway 16 ms in",
+		early > rest + 1 && early < hovered - 1,
+		`rest ${rest}, early ${early}, hovered ${hovered}`,
+	);
+	renderer.nativeSimulateMouseMove(1, 1);
+	await k.settle(300);
+}
+
 // ─── Lighting a row eases its icon stroke and colour over 80 ms ──────────────
 
 await k.focus("ease-input");
@@ -300,12 +339,21 @@ await k.settle(300);
 		height: row.height - 8,
 	};
 	const rest = k.ink(iconBox);
-	await k.hoverFor(k.center("ease-option-b"), 10);
+	const point = k.center("ease-option-b");
+	renderer.clockPause();
+	renderer.nativeSimulateMouseMove(point.x - 1, point.y);
+	renderer.nativeSimulateMouseMove(point.x, point.y);
+	for (const ms of [0, 16]) {
+		renderer.clockFastForward(ms);
+		renderer.flush();
+		renderer.dispatchNativeEvents();
+	}
 	const early = k.ink(iconBox);
+	renderer.clockResume();
 	await k.settle(400);
 	const litInk = k.ink(iconBox);
 	k.check(
-		"ease: the row icon's stroke and colour are partway a frame or two after the row lights",
+		"ease: the row icon's stroke and colour are partway 16 ms after the row lights",
 		early > rest + 0.1 * (litInk - rest) &&
 			early < litInk - 0.1 * (litInk - rest),
 		`rest ${rest}, early ${early}, lit ${litInk}`,

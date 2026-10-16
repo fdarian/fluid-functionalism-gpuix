@@ -10,6 +10,7 @@ import { App } from "../src/app";
 import { loadDemos, loadPages } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
+import { readPng } from "./png-pixels";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const test = createTestRoot({ width: 1240, height: 780, fonts });
@@ -49,8 +50,8 @@ function maybeBounds(testId: string) {
 	if (found === undefined) return undefined;
 	return renderer.getElementBounds(found.id) ?? undefined;
 }
-/** Scrolls the page until the element is mid-window, then focuses it. Elements far off-screen have no painted bounds, so it scrolls in steps. */
-async function focus(testId: string) {
+/** Scrolls the page until the element is mid-window. Elements far off-screen have no painted bounds, so it scrolls blind in `blindStep` pixels (negative: up) until they have. */
+async function scrollTo(testId: string, blindStep = 500) {
 	for (let attempt = 0; attempt < 40; attempt++) {
 		const box = maybeBounds(testId);
 		if (box !== undefined) {
@@ -58,10 +59,13 @@ async function focus(testId: string) {
 			if (Math.abs(offset) < 40) break;
 			renderer.nativeSimulateScrollWheel(600, 400, 0, offset);
 		} else {
-			renderer.nativeSimulateScrollWheel(600, 400, 0, 500);
+			renderer.nativeSimulateScrollWheel(600, 400, 0, blindStep);
 		}
 		await settle(200);
 	}
+}
+async function focus(testId: string) {
+	await scrollTo(testId);
 	renderer.focusElement(element(testId).id);
 	await settle(300);
 }
@@ -131,6 +135,77 @@ check("row 0 lit while focused", lit());
 renderer.simulateKeystrokes("Tab");
 await settle(400);
 check("row 0 not lit after Tab leaves the group", !lit());
+
+// The numbered chip fades its opacity over 80 ms as the arrow overlay takes its place; its colours do not ease.
+await focus("multiple-option-0");
+{
+	const row = element("multiple-option-0");
+	let chipStyle: Record<string, unknown> | undefined;
+	for (let id = row.id; id < row.id + 40; id++) {
+		const candidate = renderer.getElement(id);
+		if (
+			candidate !== undefined &&
+			candidate.style.width === 20 &&
+			candidate.style.height === 20
+		)
+			chipStyle = candidate.style;
+	}
+	if (chipStyle === undefined) throw new Error("no chip in the first row");
+	check(
+		"chip eases opacity over 80 ms and nothing else",
+		chipStyle.transitionProperty === "opacity" &&
+			chipStyle.transitionDuration === "80ms",
+		`${chipStyle.transitionProperty} ${chipStyle.transitionDuration}`,
+	);
+}
+
+// The free-text box eases its fill over 150 ms when the pointer enters it. The motion clock is held and stepped by hand.
+function step(ms: number) {
+	renderer.clockFastForward(ms);
+	renderer.flush();
+	renderer.dispatchNativeEvents();
+}
+function freeTextBox() {
+	const input = element("free-free-input");
+	if (input.parentId === null) throw new Error("free-text input has no box");
+	const box = renderer.getElementBounds(input.parentId);
+	if (box === null) throw new Error("free-text box has no bounds");
+	return box;
+}
+function freeTextFill() {
+	const box = freeTextBox();
+	renderer.captureScreenshot("/tmp/check-ask-user-questions-fade.png");
+	const pixel = readPng("/tmp/check-ask-user-questions-fade.png").at(
+		Math.round(box.x + 4),
+		Math.round(box.y + box.height / 2),
+	);
+	return pixel[0] + pixel[1] + pixel[2];
+}
+await scrollTo("free-free-input", -500);
+renderer.nativeSimulateMouseMove(2, 2);
+renderer.focusElement(element("free").id);
+await scrollTo("free-free-input", -500);
+await settle(500);
+renderer.clockPause();
+const unfocused = freeTextFill();
+const boxBounds = freeTextBox();
+renderer.nativeSimulateMouseMove(
+	boxBounds.x + boxBounds.width / 2,
+	boxBounds.y + boxBounds.height / 2,
+);
+step(0);
+step(60);
+const midFill = freeTextFill();
+step(400);
+const hoverFill = freeTextFill();
+renderer.clockResume();
+check(
+	"free-text box eases its fill into the hover",
+	Math.abs(hoverFill - unfocused) > 6 &&
+		Math.abs(midFill - unfocused) > 1 &&
+		Math.abs(midFill - hoverFill) > 1,
+	`rest ${unfocused}, 60 ms ${midFill}, hover ${hoverFill}`,
+);
 
 console.log(failed ? "FAILED" : "ALL PASSED");
 test.unmount();

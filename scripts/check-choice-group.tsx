@@ -5,7 +5,8 @@
  *
  *  - the group's `size` sizes the checkbox square (14 px compact, 16 px default),
  *  - a selected run is there at once when it mounts (no fade-in),
- *  - a run that vanishes fades out over its 0.12 s exit instead of cutting.
+ *  - a run that vanishes fades out over its 0.12 s exit instead of cutting,
+ *  - the indicator border and the label colour ease over 80 ms on hover.
  */
 import { mkdirSync } from "node:fs";
 import { createTestRoot } from "@gpuix/solid/testing";
@@ -135,23 +136,94 @@ for (const [id, expected] of [
 }
 
 // Vanish: uncheck the only checked row; the pointer leaves with the click, so its hover fill is gone within 60 ms.
+// The motion clock is held and stepped by hand: sampling in real time cannot land inside a 120 ms fade reliably.
 const row = pointIn("box-0");
 renderer.nativeSimulateMouseMove(990, 390);
 await settle(400);
-const clickedAt = performance.now();
+function step(ms: number) {
+	renderer.clockFastForward(ms);
+	frame();
+}
+function fillAt(point: { x: number; y: number }) {
+	renderer.captureScreenshot(`${outDir}frame.png`);
+	return readPng(`${outDir}frame.png`).at(point.x, point.y)[0];
+}
+renderer.clockPause();
 renderer.nativeSimulateClick(row.x, row.y);
 renderer.nativeSimulateMouseMove(990, 390);
-const vanish = await sampleFrames({ row: () => row }, 450, clickedAt);
-const fade = vanish.row as Sample[];
-console.log("vanish", show(fade));
-const lingering = fade.filter(
-	(sample) => sample.ms >= 75 && sample.ms <= 105 && sample.value > rest + 3,
-);
+step(0);
+const before = fillAt(row);
+step(60);
+const middle = fillAt(row);
+step(300);
+const after = fillAt(row);
+renderer.clockResume();
+console.log("vanish", before, middle, after);
 report(
 	"a vanishing run fades out",
-	lingering.length > 0,
-	`between 75 and 105 ms after the click ${lingering.length > 0 ? `still ${show(lingering)}` : "the fill is already gone"} (rest ${rest})`,
+	middle > rest + 3 && middle < before && after <= rest + 1,
+	`just after the click ${before}, 60 ms later ${middle}, 360 ms later ${after} (rest ${rest})`,
 );
+
+// Hover on an unchecked row: the indicator border and the label colour ease over 80 ms (the border is the left
+// edge of the box, the label the ink to its right).
+{
+	const box = bounds("box-3-box");
+	const edge = {
+		x: Math.round(box.x),
+		y: Math.round(box.y + box.height / 2),
+	};
+	const sum = (point: { x: number; y: number }) => {
+		renderer.captureScreenshot(`${outDir}frame.png`);
+		const pixel = readPng(`${outDir}frame.png`).at(point.x, point.y);
+		return pixel[0] + pixel[1] + pixel[2];
+	};
+	const label = {
+		x: Math.round(box.x + box.width + 12),
+		y: edge.y,
+	};
+	const inkAt = () => {
+		renderer.captureScreenshot(`${outDir}frame.png`);
+		const pixels = readPng(`${outDir}frame.png`);
+		let total = 0;
+		for (let dy = -6; dy <= 6; dy++)
+			for (let dx = 0; dx < 40; dx++) {
+				const pixel = pixels.at(label.x + dx, label.y + dy);
+				total += pixel[0] + pixel[1] + pixel[2];
+			}
+		return total;
+	};
+	renderer.nativeSimulateMouseMove(990, 390);
+	await settle(400);
+	const edgeRest = sum(edge);
+	const inkRest = inkAt();
+	renderer.clockPause();
+	const point = pointIn("box-3");
+	renderer.nativeSimulateMouseMove(point.x - 1, point.y);
+	renderer.nativeSimulateMouseMove(point.x, point.y);
+	step(0);
+	step(16);
+	const edgeMiddle = sum(edge);
+	const inkMiddle = inkAt();
+	step(300);
+	const edgeEnd = sum(edge);
+	const inkEnd = inkAt();
+	renderer.clockResume();
+	/** Past the start but under 60% of the way: an instant switch is already at the end by 16 ms. */
+	const between = (rest: number, middle: number, end: number) =>
+		(middle - rest) * (end - rest) > 0 &&
+		Math.abs(middle - rest) < 0.6 * Math.abs(end - rest);
+	report(
+		"indicator border eases on hover",
+		between(edgeRest, edgeMiddle, edgeEnd),
+		`rest ${edgeRest}, 16 ms ${edgeMiddle}, end ${edgeEnd}`,
+	);
+	report(
+		"label colour eases on hover",
+		between(inkRest, inkMiddle, inkEnd),
+		`rest ${inkRest}, 16 ms ${inkMiddle}, end ${inkEnd}`,
+	);
+}
 
 test.unmount();
 process.exit(failed ? 1 : 0);

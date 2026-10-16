@@ -38,6 +38,8 @@ import { createMeasuredHeight } from "../lib/measured-height";
 import { StableLabel } from "../lib/stable-label";
 import {
 	color,
+	colorFade,
+	fade,
 	height,
 	shape,
 	type as scale,
@@ -398,6 +400,8 @@ export function SidebarMenuButton(props: {
 						name={name()}
 						size={16}
 						strokeWidth={lit() ? 2 : 1.5}
+						easeStroke
+						fade
 						color={lit() ? color.foreground : color.mutedForeground}
 					/>
 				)}
@@ -409,6 +413,7 @@ export function SidebarMenuButton(props: {
 				text={props.label}
 				heavy={props.active === true}
 				truncate
+				fade
 				color={lit() ? color.foreground : color.mutedForeground}
 				grow={props.dot === undefined}
 			/>
@@ -456,6 +461,7 @@ export function SidebarMenuButton(props: {
 								...scale.micro,
 								fontWeight: props.active ? weight.semibold : weight.normal,
 								color: props.active ? color.foreground : color.mutedForeground,
+								...colorFade,
 							}}
 						>
 							{text()}
@@ -654,6 +660,8 @@ export function SidebarSearchField(props: {
 				outlineWidth: 1,
 				outlineColor: hovered() || focused() ? color.border : color.transparent,
 				outlineOffset: 0,
+				// The outline stands in for the source's `ring-1` box shadow, which it transitions with the fill.
+				...fade(["background-color", "outline-color"], 80),
 			}}
 		>
 			<input
@@ -701,6 +709,7 @@ export function SidebarSearchField(props: {
 					top: 9,
 					pointerEvents: "none",
 					opacity: hovered() || focused() ? 1 : 0,
+					...fade(["opacity"], 80),
 				}}
 			>
 				<text style={{ ...scale.micro, color: color.mutedForeground }}>

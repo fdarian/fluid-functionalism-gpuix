@@ -8,6 +8,7 @@ import { createSignal, createUniqueId } from "solid-js";
 import { createPointerCapture } from "../lib/pointer-capture";
 import {
 	color,
+	fade,
 	focusRing,
 	sizeChoice,
 	type as scale,
@@ -213,6 +214,9 @@ export function Switch(props: {
 					height: m().trackHeight,
 					borderRadius: m().trackHeight / 2,
 					backgroundColor: trackColor(),
+					// Not the full colour list: the source's ring is a box shadow that appears at once, and an outline-color
+					// fade would catch the port's outline ring.
+					...fade(["background-color"], 80),
 					cursor: "pointer",
 					keyboardFocusDim: false,
 					focusVisible: focusRing(2),
@@ -250,6 +254,7 @@ export function Switch(props: {
 					fontWeight: weight.normal,
 					whiteSpace: "nowrap",
 					color: props.checked ? color.foreground : color.mutedForeground,
+					...fade(["color"], 80),
 				}}
 			>
 				{props.label}

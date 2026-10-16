@@ -343,6 +343,7 @@ export function TabsSubtleItem(props: {
 			heavy={isSelected()}
 			color={isActive() ? color.foreground : color.mutedForeground}
 			textStyle={metrics().text}
+			fade
 		/>
 	);
 
@@ -399,6 +400,8 @@ export function TabsSubtleItem(props: {
 						name={icon()}
 						size={metrics().icon}
 						strokeWidth={isActive() ? 2 : 1.5}
+						easeStroke
+						fade
 						color={isActive() ? color.foreground : color.mutedForeground}
 					/>
 				)}

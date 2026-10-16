@@ -4,6 +4,7 @@
  *   bun scripts/check-switch.tsx
  */
 import { createCheck } from "./check-kit";
+import { readPng } from "./png-pixels";
 
 const kit = await createCheck("switch");
 const renderer = kit.renderer;
@@ -119,5 +120,42 @@ kit.check(
 );
 renderer.nativeSimulateMouseUp(dragPoint.x - 6, dragPoint.y);
 await kit.settle(500);
+
+// The track eases to its hover colour over 80 ms instead of switching. The motion clock is held and stepped by hand
+// so a slow frame cannot skip the middle. The switch is off here, so the track's right end is clear of the thumb.
+const FADE_PATH = `/tmp/check-switch-fade-${process.pid}.png`;
+function trackSum() {
+	renderer.captureScreenshot(FADE_PATH);
+	const box = kit.bounds("kb-track");
+	const pixel = readPng(FADE_PATH).at(
+		Math.round(box.x + box.width - 3),
+		Math.round(box.y + box.height / 2),
+	);
+	return pixel[0] + pixel[1] + pixel[2];
+}
+function step(ms: number) {
+	renderer.clockFastForward(ms);
+	renderer.flush();
+	renderer.dispatchNativeEvents();
+}
+renderer.nativeSimulateMouseMove(2, 2);
+await kit.settle(300);
+const trackRest = trackSum();
+renderer.clockPause();
+const trackPoint = kit.center("kb-track");
+renderer.nativeSimulateMouseMove(trackPoint.x - 1, trackPoint.y);
+renderer.nativeSimulateMouseMove(trackPoint.x, trackPoint.y);
+step(0);
+step(16);
+const trackMiddle = trackSum();
+step(300);
+const trackHovered = trackSum();
+renderer.clockResume();
+kit.check(
+	"track: 16 ms into the hover, between the resting and the hovered colour",
+	Math.min(trackRest, trackHovered) + 2 < trackMiddle &&
+		trackMiddle < Math.max(trackRest, trackHovered) - 2,
+	`rest ${trackRest}, 16 ms ${trackMiddle}, end ${trackHovered}`,
+);
 
 kit.finish();

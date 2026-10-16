@@ -645,12 +645,14 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					color={lit() ? color.foreground : color.mutedForeground}
 					textStyle={metrics().text}
 					grow
+					fade
 				/>
 				<Icon
 					name={item.isOpen() ? "chevron-down" : "chevron-right"}
 					size={metrics().icon}
 					strokeWidth={lit() ? 2 : 1.5}
 					easeStroke
+					fade
 					color={lit() ? color.foreground : color.mutedForeground}
 				/>
 			</div>

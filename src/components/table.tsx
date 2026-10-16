@@ -7,7 +7,14 @@ import {
 } from "solid-js";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type FluidHover, useHoverItem } from "../lib/fluid-hover";
-import { color, sizeChoice, type as scale, weight } from "../lib/theme";
+import {
+	color,
+	colorFade,
+	fade,
+	sizeChoice,
+	type as scale,
+	weight,
+} from "../lib/theme";
 
 export type TableSize = "default" | "compact";
 
@@ -144,6 +151,7 @@ export function TableRow(props: {
 					flexDirection: "row",
 					borderBottomWidth: 1,
 					borderColor: hideBorder() ? color.transparent : color.accentFaint,
+					...fade(["border-color"], 80),
 				}}
 			>
 				{props.children}
@@ -175,6 +183,7 @@ function Cell(props: { header: boolean; width?: number; children: JSX.Element })
 				style={{
 					...metrics().text,
 					color: textColor(),
+					...(props.header ? {} : colorFade),
 					fontWeight: props.header ? weight.semibold : weight.normal,
 				}}
 			>
