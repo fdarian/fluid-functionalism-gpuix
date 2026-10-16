@@ -13,6 +13,9 @@ import { color, type as scale } from "./theme";
 /** The scroller a page's cards live in: they measure their distance from it. */
 export const PageScrollerContext = createContext<Accessor<HostElement | undefined>>();
 
+/** Runs a listener on each scroll of the page scroller, until the returned function removes it. The scroller's own `onScroll` is the only way to hear it: scroll events do not bubble. */
+export const PageScrollContext = createContext<(listener: () => void) => () => void>();
+
 /**
  * gpuix lays out and paints every element, including those a scroller clips
  * away, so a page of many menus costs a frame several times a short page's.

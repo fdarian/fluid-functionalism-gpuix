@@ -28,7 +28,7 @@ import { Tooltip } from "./components/tooltip";
 import { BentoGrid } from "./home/bento-grid";
 import { AppFrame, PANEL_INNER_RADIUS } from "./lib/app-frame";
 import { type Demo, type Page, SHOWCASE_SLUG } from "./lib/demo";
-import { PageScrollerContext } from "./lib/demo-kit";
+import { PageScrollContext, PageScrollerContext } from "./lib/demo-kit";
 import { createMeasuredHeight } from "./lib/measured-height";
 import { MONO } from "./lib/doc-page";
 import { type PageNav, PageNavContext, usePageNav } from "./lib/page-nav";
@@ -500,6 +500,11 @@ export function App(props: {
 	const siteMenu = createSiteMenu();
 	const rail = createRightRail();
 	const [pageScroller, setPageScroller] = createSignal<HostElement>();
+	const scrollListeners = new Set<() => void>();
+	const onPageScroll = (listener: () => void) => {
+		scrollListeners.add(listener);
+		return () => scrollListeners.delete(listener);
+	};
 	const viewport = createMeasuredHeight();
 	const renderer = useGpuixRequired();
 	const setAppearance = renderer.setAppearance;
@@ -534,6 +539,9 @@ export function App(props: {
 					<div
 						ref={setPageScroller}
 						onLayout={viewport.onLayout}
+						onScroll={() => {
+							for (const listener of scrollListeners) listener();
+						}}
 						style={{
 							flexGrow: 1,
 							minWidth: 0,
@@ -564,19 +572,21 @@ export function App(props: {
 								}}
 							>
 								<PageScrollerContext.Provider value={pageScroller}>
-									<PageNavContext.Provider value={nav}>
-										<Switch>
-											<Match when={page() === SHOWCASE}>
-												<Showcase />
-											</Match>
-											<Match when={current()} keyed>
-												{(demo: Demo) => <DemoPage demo={demo} />}
-											</Match>
-											<Match when={currentPage()} keyed>
-												{(entry: Page) => <PageBody page={entry} />}
-											</Match>
-										</Switch>
-									</PageNavContext.Provider>
+									<PageScrollContext.Provider value={onPageScroll}>
+										<PageNavContext.Provider value={nav}>
+											<Switch>
+												<Match when={page() === SHOWCASE}>
+													<Showcase />
+												</Match>
+												<Match when={current()} keyed>
+													{(demo: Demo) => <DemoPage demo={demo} />}
+												</Match>
+												<Match when={currentPage()} keyed>
+													{(entry: Page) => <PageBody page={entry} />}
+												</Match>
+											</Switch>
+										</PageNavContext.Provider>
+									</PageScrollContext.Provider>
 								</PageScrollerContext.Provider>
 							</div>
 						</div>
@@ -602,7 +612,13 @@ export function App(props: {
 												padding: 16,
 											}}
 										>
-											<CustomizeCard />
+											<Show
+												when={currentPage()?.Rail}
+												fallback={<CustomizeCard />}
+												keyed
+											>
+												{(Rail: () => JSX.Element) => <Rail />}
+											</Show>
 											<RightRailTarget />
 										</div>
 									</ScrollArea>

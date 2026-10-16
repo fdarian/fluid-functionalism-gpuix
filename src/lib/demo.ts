@@ -140,6 +140,10 @@ export interface PageModule {
 	/** Where the page is linked: sidebar and site menu, the site menu only, or neither (reached by `navigate`). */
 	listed: "sidebar" | "menu" | "none";
 	Page: () => JSX.Element;
+	/**
+	 * What a "docs" page's right column shows in place of "Make them yours". The page and its rail are siblings in `App`, so they share state through the page's own module.
+	 */
+	Rail?: () => JSX.Element;
 	/** Optional states beyond the first paint for `scripts/screenshots.tsx <page>` to capture. */
 	scenarios?: (shot: ShotContext) => Promise<void>;
 	/** The site menu row's glyph. */
@@ -182,6 +186,12 @@ function assertPageModule(
 		fail('`listed: "sidebar" | "menu" | "none"`');
 	}
 	if (typeof candidate.Page !== "function") fail("a `Page` component");
+	if (candidate.Rail !== undefined && typeof candidate.Rail !== "function") {
+		fail("`Rail` as a component, or not at all");
+	}
+	if (candidate.Rail !== undefined && candidate.layout !== "docs") {
+		fail('`Rail` only with `layout: "docs"`: a "full" page has no right column');
+	}
 	if (
 		candidate.scenarios !== undefined &&
 		typeof candidate.scenarios !== "function"
@@ -235,6 +245,7 @@ export async function loadPages(demos: readonly Demo[]): Promise<Page[]> {
 			layout: module.layout,
 			listed: module.listed,
 			Page: module.Page,
+			Rail: module.Rail,
 			scenarios: module.scenarios,
 			menuIcon: module.menuIcon,
 			menuKeywords: module.menuKeywords,
