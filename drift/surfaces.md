@@ -1,0 +1,114 @@
+# surfaces
+
+Original: `app/docs/surfaces/page.tsx` of the source (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`), with `lib/docs/DocPage.tsx`, `lib/docs/ComponentPreview.tsx`, `registry/default/lib/elevated.tsx` and `surface-classes.ts`.
+Ported in `src/pages/surfaces.tsx` (the page) and `src/pages/surfaces/` (`problem`, `solution`, `examples`, `invite-dialog`, `role-menu`, `annotations`, `elevated`, `preview-frame`, `visibility`, `snippets`), routed by the page registry.
+
+One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
+(transforms, intrinsic width, variable fonts) get a one-line entry here that links to the README row instead of
+repeating it.
+
+## Page header and Installation block follow the port's doc page
+
+- **Cause:** `not ported yet` (arrows), `port choice` (Installation block, see site.md).
+- **Original:** `DocPage` draws the title with prev / next arrows, the description, and an "Installation" block with the note "Installs the Elevated primitive plus the surface-context and surface-classes libs — the elevation ladder as code." and a copy-prompt button (`app/docs/surfaces/page.tsx:1298-1311`, `lib/docs/DocPage.tsx:73-170`).
+- **Port:** `App`'s heading and the description under it (`src/pages/surfaces.tsx:Page`), a 32px gap above each section like the source's. No arrows, no Installation block, no note, no copy button. The same drift as [introduction.md](introduction.md#the-previous--next-arrows-are-missing) and [site.md](site.md#no-installation-block); the heading weight and 8px description gap are [introduction.md's](introduction.md#the-heading-is-bold-in-the-source-semibold-here-and-sits-8px-above-the-subtitle-only-by-a-negative-margin) too (`marginTop: -16`).
+- **Fidelity:** dropped.
+- **Components it hits:** every docs page.
+
+## The description's "light" and "dark" links are laid out word by word and underlined solid
+
+- **Cause:** `gpuix gap` (a clickable run cannot sit inside a paragraph; dotted underlines draw solid).
+- **Original:** `UseLightLink` / `UseDarkLink`: buttons inside the description's paragraph with `underline decoration-dotted underline-offset-2`, hover `text-foreground` (`app/docs/surfaces/page.tsx:1265-1309`).
+- **Port:** the sentence is a wrapping row of one `<text>` per word with a 3.6px column gap, and the two links are `<text onClick>` that call `setThemeChoice` with a solid underline (`src/pages/surfaces.tsx:Description`, `ThemeLink`). gpuix: "A nested `<text>` that needs to react is a block … a `<span>` has no events" (gpuix `README.md:2669-2683`), and `double`, `dotted` and `dashed` draw solid (`FORK.md:744-748`). The word gap is an Inter space at 13px, so line breaks can differ from the browser's by a word, and kerning across a space is lost.
+- **Workaround:** the word-by-word row.
+- **Fidelity:** approximated.
+- **Components it hits:** just this page.
+
+## The preview frame has no Inspect switch and an unhighlighted Code tab
+
+- **Cause:** `not ported yet`. Same drift as [site.md, "Preview frame"](site.md#preview-frame-no-preview--code-tabs-inspect-replay), narrowed to what this page ports.
+- **Original:** `ComponentPreview` (52px header, `TabsSubtle` Preview / Code, Inspect `Switch`, shiki-highlighted code, `foreground/40` border on `:focus-within`, keyboard routing into the demo on a press of empty space) (`lib/docs/ComponentPreview.tsx:85-250`).
+- **Port:** `PreviewFrame` keeps the border, the 52px header, the Preview / Code `TabsSubtle` and the Code tab, drawn in plain `foreground` Menlo 13/20 with a horizontal scroll (`src/pages/surfaces/preview-frame.tsx`). The Inspect switch, the highlighting, the focus border and the keyboard routing are not ported. The frame is `bg-background` with `px-4 py-4` (`compact`) or none, as the page uses; the source's other options are not needed here.
+- **Fidelity:** approximated (Code tab uncoloured); dropped (Inspect).
+- **Components it hits:** every docs page that gets a preview frame.
+
+## The dark previews are a token scope, not a CSS class
+
+- **Cause:** `port choice`.
+- **Original:** `DarkPreview` wraps each frame in `className="dark bg-background"`, so every CSS variable resolves dark whatever the page theme; the Tokens demo's two rows use `.dark` and `.light` the same way (`app/docs/surfaces/page.tsx:38-45,189,208`).
+- **Port:** `SchemeScope` in `src/lib/theme.ts` provides a scheme through Solid context, and `scheme()` (so every `color.x` and `surface(n)`) returns it while the read runs under a scope. The whole frame, the demos, the real `ColorPicker`, `Slider` and `ScrollArea` and a popup that the picker opens under it all draw dark in a light page (`screenshots/surfaces/problem-light.png`, `color-picker-light.png`). A token read outside a reactive owner (an event handler, a timer) sees the page's scheme instead. `scheme()` skips the lookup while no scope is mounted, so other pages pay nothing.
+- **Fidelity:** exact in the screenshots; untested for token reads made in handlers inside a scope.
+- **Components it hits:** just this page; the scope is available to any page that forces a scheme.
+
+## `Elevated`, the substrate context and the ladder's shadows are page-local; the components ignore them
+
+- **Cause:** `not ported yet` (surface context in the components, see [dropdown.md](dropdown.md#popup-surface-colour-is-fixed-at-surface-3) and [color-picker.md](color-picker.md#popover-surface-level-is-5-not-substrate--2)).
+- **Original:** `registry/default/lib/elevated.tsx`, `surface-context.tsx` and `surface-classes.ts`: every component reads `useSurface()` and sits at `min(substrate + offset, 8)`, with `shadow-surface-N` from `app/globals.css:137-162`.
+- **Port:** `SurfaceProvider`, `useSurface` (an accessor), `Elevated` (`offset`, `shadowLevel`) and `shadowSurface(level)` live in `src/pages/surfaces/elevated.tsx`. `shadowSurface` writes the whole `--shadow-N` recipe, light and dark (inset highlight and ring, hairline, stacked drops of 1 to 96px), as one multi-layer `boxShadow` string, which gpuix now accepts (`FORK.md:646-649`), so the ladder's shadows are exact here where the components still use `shadow3()` (README "shadow-surface-3" row). Nothing in `src/components/` reads the context, so only this page's own panels lift.
+- **Fidelity:** exact for the page's panels; the components do not lift.
+- **Components it hits:** dropdown, select, combobox, color-picker, dialog (as above).
+
+## The role menus are a page-local `SurfaceMenu`, not the port's `Dropdown`
+
+- **Cause:** `not ported yet` (the `Dropdown` is fixed at surface 3, 288px wide, with no description rows).
+- **Original:** the Substrate demo and the invite dialog render the real `Dropdown` (`className="w-full"` / `"!w-full"`) at the substrate's level, and the invite dialog's rows are a page-local `RoleItem` built on `useDropdown` with an 18px icon and a two-line label (`app/docs/surfaces/page.tsx:689-700,854-928,1205-1227`).
+- **Port:** `SurfaceMenu` (`src/pages/surfaces/role-menu.tsx`) is `Elevated offset={2} shadowLevel={3}` around rows on the lib's `createFluidHover` and `FluidHighlight`, so the selected background and the hover highlight glide as in the dropdown. It has no keyboard navigation, no focus ring, no tab stop and no ARIA roles, and the rows do nothing on click. The Substrate demo's "Favorites / Recents / Private" rows and the invite dialog's role rows are drawn by it; the problem demo's menu is the source's presentational `StaticRoleItem` as it is there.
+- **Workaround:** none; the real `Dropdown` cannot show a lifted background without a component change.
+- **Fidelity:** approximated (look and hover exact, behaviour dropped).
+- **Components it hits:** just this page.
+
+## The invite dialog is a plain panel, its email field a static box, its chevron a different glyph
+
+- **Cause:** `port choice` (a panel, as in the source), `gpuix gap` (transforms) for the chevron.
+- **Original:** both dialogs are `div`s at `surfaceClasses(5)`, not the `Dialog` component; the email field is a `readOnly` `<textarea rows={2}>`; the role trigger's chevron is `rotate-180` (`app/docs/surfaces/page.tsx:502-612,1139-1248`).
+- **Port:** the same panels in `src/pages/surfaces/invite-dialog.tsx`; the email field is a 58px bordered box with the placeholder text and a hover tint, no input; the chevron is a page-local `chevron-up` glyph because gpuix has no transforms (README "gpuix gaps across components", CSS transforms row). The "Send invites" button is `opacity: 0.5` as `disabled:opacity-50`; no element takes focus.
+- **Fidelity:** approximated.
+- **Components it hits:** just this page.
+
+## The annotation arrowheads are computed, and the canvas is 2px wider than the frame
+
+- **Cause:** `gpuix gap` (arrowheads), `port choice` (canvas).
+- **Original:** an SVG `<marker>` with an open chevron and `context-stroke` ends each path; the Problem canvas is a fixed 600 x 640 centred in the frame, which is 632px wide in the source's 680px column (`app/docs/surfaces/page.tsx:413-445`, `lib/docs/DocPage.tsx`, `app/docs/layout.tsx:3`).
+- **Port:** gpuix's `<svg>` does not serialise `marker` (`FORK.md:762`), so `buildArrow` (`src/pages/surfaces/annotations.tsx`) lays the same two strokes (5.5px back, 3.5px to each side of the tip) along the curve's end tangent as a second `<path>`. The page column is 600px, so the frame's inner width is 598 and the 600px canvas sits at `marginLeft: -1` under the frame's clip; the dialog is at an explicit `left: 140`, not `left-1/2 -translate-x-1/2` (no transforms). Callouts, dial values and anchors are the source's.
+- **Fidelity:** approximated (the head's join at the tip), exact otherwise.
+- **Components it hits:** just this page.
+
+## The solution callouts read tokens, not the painted colour
+
+- **Cause:** `port choice`.
+- **Original:** `SolutionAnnotations` reads each target's `getComputedStyle(el).backgroundColor` and converts it to hex (`app/docs/surfaces/page.tsx:930-1120`).
+- **Port:** the swatch and hex are `surface(5)` and `surface(7)`, the levels the page gave the dialog and the menu; positions are measured with `getBoundingClientRect` under a `ResizeObserver` as the source does (`src/pages/surfaces/examples.tsx`). If the menu's level were wrong the label would not show it.
+- **Fidelity:** approximated.
+- **Components it hits:** just this page.
+
+## The elevation stack tracks the pointer in a signal
+
+- **Cause:** `port choice`.
+- **Original:** a surface's name is shown by `[&:hover>span]:opacity-100 [&:has([data-surface]:hover)>span]:opacity-0`, `transition-opacity duration-150` (`app/docs/surfaces/page.tsx:767-770`).
+- **Port:** each box's `onMouseMove` stops propagation and sets the level under the pointer; the label of that level is opaque and the others transparent, with a 150ms `transitionProperty: "opacity"` on the label. The fade was not checked; the label appears (`screenshots/surfaces/stack.png`). Leaving the stage clears it. The slider is the real `Slider` (range, `showSteps`), whose value label sits to the left of the track as in the component.
+- **Fidelity:** approximated.
+- **Components it hits:** just this page.
+
+## The colour picker's format menu only exists while the demo is on screen
+
+- **Cause:** `gpuix gap` (an open popup whose anchor is off screen is clamped into the window; no portal container) and `port choice` (the gate).
+- **Original:** `ColorPicker formatOpen` inside `ColorPickerPortalContainer`, so the open format menu portals into the demo's own container and scrolls with it (`app/docs/surfaces/page.tsx:838-852`).
+- **Port:** `defaultFormatOpen`; the popup is gpuix's `anchored`, which keeps it in the window, so a picker mounted off screen showed its menu over unrelated content, and one mounted while hidden was dismissed by the first click anywhere. The picker is mounted only while at least half of its 520px stage is inside the page scroller (`src/pages/surfaces/visibility.ts`, an `IntersectionObserver` on the scroller as `DemoCard` uses), and unmounted when it scrolls away, so its value resets. A stage scrolled mostly out of view still draws the menu clamped to the window edge. The panel is at level 3 and the menu at 5 (`level` prop, `color-picker.tsx:1409`), as in the source.
+- **Workaround:** the visibility gate.
+- **Fidelity:** approximated.
+- **Components it hits:** any demo that opens a popup on mount.
+
+## Smaller differences
+
+- **Cause:** `port choice`, `not ported yet` where noted.
+- **Original and Port:**
+  - `text-site-subtitle` (14/20) is a local constant, the port's `type` has no such role (`src/pages/surfaces.tsx:43`; `app/globals.css:420`). Compact sizes follow the ambient size in the source; the port has the default step only ([site.md, "Customise rows not ported"](site.md#customise-rows-not-ported-radius-size-icons-primitive), `not ported yet`).
+  - Section titles use a 16px line, SemiBold 600 for the variable 550 / 600 (README variable-font row), as in [introduction.md](introduction.md#section-titles-use-a-16px-line).
+  - `font-mono` is Menlo (`ui-monospace` in the browser; same face in Chrome on macOS).
+  - Substrate demo: the three columns are 181px wide in the 566px content box (191px in the source's 598px), the `border-border/40` edge is the dark literal `rgba(245,245,245,0.048)` because `color.border` is not a hex `withAlpha` can mix (`src/pages/surfaces/solution.tsx`).
+  - Tokens demo: the chip row (564px) fits the 566px `ScrollArea` here as in the source, so neither scrolls and the fade never shows; the port's `ScrollArea` takes an explicit `height={110}`.
+  - The Elevated demo's outer panel is `maxWidth: 480` with `width: 100%` centred by the column, where the source uses `max-w-[480px] mx-auto`.
+  - The elevation stack's invisible ghost stack is `opacity: 0` with `pointerEvents: none` (`invisible` is not a gpuix style), so it takes layout but not events.
+  - ⌘K: the System row has no icon, and its keywords are the slug and the description's words as the source computes them (`s.slug, ...s.description.split(/\W+/)`, `app/components/site-command-menu.tsx:206-216`), written out in `menuKeywords` without the empty string the split's trailing full stop leaves; the "New" badge does not apply to this page. The sidebar order is alphabetical like the source's `systemNavList`, so `order = 6` (after Skill).
+  - The scenario captures `problem-light`, `tokens-light` and `color-picker-light` by setting the theme in code, then back to dark; the script's own final light step through the theme select still fails (known, README / lead notes).
+- **Fidelity:** approximated.
