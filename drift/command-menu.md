@@ -53,10 +53,10 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 ## Accessibility tree is thinner
 
 - **Cause:** `not ported yet`.
-- **Original:** the field is `role="combobox"` with `aria-expanded`, `aria-controls`, `aria-autocomplete="list"` and `aria-activedescendant` pointing at the highlighted row's id; rows have `id` and `aria-disabled`; sections are `role="group"` labelled by their heading; the empty state is `role="status" aria-live="polite"` (`:858-863`, `:1105-1110`, `:1286-1289`, `:1159-1160`).
-- **Port:** rows carry `role="option"` and `aria-selected`, the wrapper `role="listbox"` (`src/components/command-menu.tsx:880-883`, `:1027-1028`); the input, rows' ids, groups, `aria-disabled` and the empty status have none. gpuix does expose these (`~/code/fdarian/gpuix/README.md:2965-2985`); the combobox port uses them (`src/components/combobox.tsx:448-455`).
+- **Original:** rows have `id` and `aria-disabled`; sections are `role="group"` labelled by their heading; the empty state is `role="status" aria-live="polite"` (`:1105-1110`, `:1286-1289`, `:1159-1160`). The field's `role="combobox"`, `aria-expanded`, `aria-controls`, `aria-autocomplete` and `aria-activedescendant` are ported (`:858-863`).
+- **Port:** the field and the rows' `id` / `aria-selected` follow the source (`src/components/command-menu.tsx:695-700`, `:993-994`, `:1140-1142`); disabled rows carry no `aria-disabled`, sections no group role or label, and the empty state no status role. gpuix does expose these (`~/code/fdarian/gpuix/README.md:2965-2985`); the combobox port uses them (`src/components/combobox.tsx:448-455`).
 - **Workaround:** none.
-- **Fidelity:** dropped.
+- **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
 ## IME composition is invisible to JS
