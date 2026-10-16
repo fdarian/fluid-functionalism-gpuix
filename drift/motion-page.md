@@ -2,8 +2,8 @@
 
 Original: `app/docs/motion/page.tsx` of the source (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`), inside
 `DocPage` / `DocSection` (`lib/docs/DocPage.tsx`) and `ComponentPreview` (`lib/docs/ComponentPreview.tsx`).
-Ported in `src/pages/motion.tsx`, with the page chrome and the three demos in `src/pages/motion/` (`doc.tsx`, `spring-tokens.tsx`,
-`modal-exit.tsx`, `spring-reference.tsx`, `install-prompt.ts`), routed by the page registry (`src/lib/demo.ts` `loadPages`).
+Ported in `src/pages/motion.tsx`, with the three demos in `src/pages/motion/` (`spring-tokens.tsx`, `modal-exit.tsx`,
+`spring-reference.tsx`, `install-prompt.ts`) and the page chrome in the shared `src/lib/doc-page.tsx`, routed by the page registry (`src/lib/demo.ts` `loadPages`).
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
 (transforms, intrinsic width, variable fonts) get a one-line entry here that links to the README row instead of
@@ -39,7 +39,7 @@ repeating it.
 
 - **Cause:** `not ported yet` (the Inspect overlay: pixel rulers and box-model inspector); `port choice` for the Code tab (no highlighter).
 - **Original:** the frame's tab bar has a Preview / Code `TabsSubtle`, an Inspect `Switch` and the replay button, and the Code tab is Shiki HTML (`lib/docs/ComponentPreview.tsx:118-205`).
-- **Port:** `ComponentPreview` in `src/pages/motion/doc.tsx` has the Preview / Code tabs and the replay button with its tooltip. The Code tab is 13px Menlo in the foreground color, one `<text>` per line, scrolling sideways when a line is wider than the frame. The snippets are the source's, verbatim: they show `motion/react` and `spring.<tier>.exit`, where the port's tokens are `motion.<tier>` and `motion.<tier>Exit` (`src/lib/theme.ts`).
+- **Port:** `ComponentPreview` in `src/lib/doc-page.tsx` has the Preview / Code tabs and the replay button with its tooltip. The Code tab is 13px Menlo in the foreground color, one `<text>` per line, scrolling sideways when a line is wider than the frame. The snippets are the source's, verbatim: they show `motion/react` and `spring.<tier>.exit`, where the port's tokens are `motion.<tier>` and `motion.<tier>Exit` (`src/lib/theme.ts`).
 - **Fidelity:** dropped (Inspect), approximated (Code).
 - **Components it hits:** every docs page that uses `ComponentPreview`; each page agent re-creates or hoists this file.
 
@@ -54,7 +54,7 @@ repeating it.
 
 - **Cause:** `gpuix gap`: an inline box takes no padding, margin, border radius or `fontSize` (README "Inline text", "Not supported inside a paragraph").
 - **Original:** `<code class="mx-1 rounded bg-[light-dark(#EBEBED,#2C2C2C)] px-1 py-0.5 text-site-caption">` (`app/docs/motion/page.tsx:14-20`): 12px, 4px of margin and padding each side, a 4px radius.
-- **Port:** a nested `<span>` with the background and a Menlo run inside, a no-break space inside the wash for the padding and one outside for the margin (`src/pages/motion/doc.tsx:50-72`). A no-break space in Inter is about 3.6px, so the 4px is exact to within half a pixel. The run is 13px (the paragraph's size), the corners are square, and the wash is exactly the text's line box tall instead of `py-0.5` taller.
+- **Port:** a nested `<span>` with the background and a Menlo run inside, a no-break space inside the wash for the padding and one outside for the margin (`src/lib/doc-page.tsx:52-75`). A no-break space in Inter is about 3.6px, so the 4px is exact to within half a pixel. The run is 13px (the paragraph's size), the corners are square, and the wash is exactly the text's line box tall instead of `py-0.5` taller.
 - **gpuix lacks:** padding, margin, radius and `fontSize` on an inline box (README "Inline text").
 - **Fidelity:** approximated.
 - **Components it hits:** every prose line with `<code>`; the `font-mono` runs in the tier headers and the demo caption are Menlo too (the browser resolves `font-mono` to `ui-monospace`).
@@ -63,7 +63,7 @@ repeating it.
 
 - **Cause:** `port choice`.
 - **Original:** `CopyPromptButton` crossfades the copy glyph into a check (opacity, 4px blur, scale 0.6, over `spring.fast`) for 2s, with a visually hidden "Copied" read out by `aria-live`, and the brief comes from `buildInstallPrompt` (`lib/docs/copy-prompt-button.tsx:30-141`, `lib/docs/install-prompt.ts:38-95`).
-- **Port:** the button's `leadingIcon` is `copy`, then `check` for 2s (`src/pages/motion/doc.tsx:122-146`), with no crossfade, blur, scale or live region (the port's `Button` takes an icon name, not a component, and gpuix has no `filter` motion target). The brief is `buildInstallPrompt({ slug: "motion", installSlug: "springs", base: "radix" })` written out in `src/pages/motion/install-prompt.ts`, not built from the page registry. It copies through `pbcopy` like `InputCopy`; a failed copy logs and leaves the icon alone.
+- **Port:** the button's `leadingIcon` is `copy`, then `check` for 2s (`src/lib/doc-page.tsx:128-157`), with no crossfade, blur, scale or live region (the port's `Button` takes an icon name, not a component, and gpuix has no `filter` motion target). The brief is `buildInstallPrompt({ slug: "motion", installSlug: "springs", base: "radix" })` written out in `src/pages/motion/install-prompt.ts`, not built from the page registry. It copies through `pbcopy` like `InputCopy`; a failed copy logs and leaves the icon alone.
 - **Fidelity:** approximated.
 - **Components it hits:** the Installation block of every docs page.
 
@@ -99,7 +99,7 @@ repeating it.
 
 - **Cause:** `port choice` (spacing, shadow); `gpuix gap` (weight).
 - **Original:** `DocSection` is `gap-4 pt-6` with a `-mb-2` title; the `h3` is `mt-8`; the modal card is `shadow-xl` (two drops).
-- **Port:** the same numbers as margins and padding (`src/pages/motion/doc.tsx:85-106`); the page's description is tucked under `App`'s heading with `marginTop: -16`, as in `drift/introduction.md`. Titles are SemiBold 600 where the source's variable font is 550 (README variable-font rows), the `h3` and its 14px role are a local constant (`SUBTITLE`, not in `type` in `src/lib/theme.ts`), and the card's shadow is the larger drop alone (`boxShadow` takes one shadow).
+- **Port:** the same numbers as margins and padding (`src/lib/doc-page.tsx:92-126`); the page's description is tucked under `App`'s heading with `marginTop: -16`, as in `drift/introduction.md`. Titles are SemiBold 600 where the source's variable font is 550 (README variable-font rows), the `h3` is `SubHeading` on `siteType.subtitle` (14/20), and the card's shadow is the larger drop alone (`boxShadow` takes one shadow).
 - **Fidelity:** exact spacing, approximated weight and shadow.
 
 ## The ⌘K row
