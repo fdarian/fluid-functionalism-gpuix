@@ -72,7 +72,9 @@ export function Demo() {
 								content="Save your changes"
 								onOpenChange={(open) => open && setOpened(opened() + 1)}
 							>
-								<Button onClick={() => setSaves(saves() + 1)}>Hover me</Button>
+								<Button testId="basic-trigger" onClick={() => setSaves(saves() + 1)}>
+									Hover me
+								</Button>
 							</Tooltip>
 							<text style={{ ...scale.caption, color: color.mutedForeground }}>
 								{`Clicked ${saves()} times, opened ${opened()}`}
@@ -102,15 +104,19 @@ export function Demo() {
 									</div>
 								}
 							>
-								<Button>Save</Button>
+								<Button testId="rich-trigger">Save</Button>
 							</Tooltip>
 						</DemoRow>
 						<DemoRow label="Delay">
 							<Tooltip testId="delay-0" content="Instant" delayDuration={0}>
-								<Button variant="secondary">No delay</Button>
+								<Button testId="delay-0-trigger" variant="secondary">
+									No delay
+								</Button>
 							</Tooltip>
 							<Tooltip testId="delay-500" content="Slow" delayDuration={500}>
-								<Button variant="secondary">500ms delay</Button>
+								<Button testId="delay-500-trigger" variant="secondary">
+									500ms delay
+								</Button>
 							</Tooltip>
 						</DemoRow>
 						<DemoRow label="Placement">
@@ -228,6 +234,22 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectText("Slow", true);
 	await shot.settle(300);
 	shot.capture("delay-500");
+
+	// Keyboard focus opens at once, past the 500 ms delay too; blur closes it.
+	await shot.moveTo(900, 700);
+	await shot.settle(600);
+	// The Escape above left the last input a key, so script focus counts as keyboard focus.
+	await shot.focus("rich-trigger");
+	shot.expectText("Keyboard shortcut", true);
+	await shot.press("tab");
+	shot.expectText("Instant", true);
+	shot.expectText("Keyboard shortcut", false);
+	await shot.press("tab");
+	shot.expectText("Instant", false);
+	shot.expectText("Slow", true);
+	shot.capture("keyboard-focus");
+	await shot.press("escape");
+	shot.expectText("Slow", false);
 
 	await shot.hover("follow-x");
 	await shot.settle(300);
