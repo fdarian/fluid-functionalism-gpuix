@@ -9,11 +9,7 @@ import {
 	type KeyEvent,
 	motion,
 } from '@gpuix/solid';
-import {
-	createPressToggle,
-	createTypeahead,
-	refocusAfterPress,
-} from 'base-ui-solid-gpuix/floating-ui-solid/hooks';
+import { createTypeahead } from 'base-ui-solid-gpuix/floating-ui-solid/hooks';
 import {
 	createPlacementState,
 	createPresence,
@@ -24,6 +20,12 @@ import {
 	moveIndex,
 	revealRow,
 } from 'base-ui-solid-gpuix/internals/composite';
+import {
+	createMenuRoot,
+	createMenuTrigger,
+	type MenuRoot,
+	type MenuTriggerState,
+} from 'base-ui-solid-gpuix/menu';
 import {
 	type Accessor,
 	batch,
@@ -924,33 +926,12 @@ export function Dropdown(props: {
 
 // ─── DropdownMenu (popup root) ───────────────────────────────────────────────
 
-interface MenuScope {
-	presence: ReturnType<typeof createPresence>;
-	setOpen: (next: boolean) => void;
-	keyboardActive: Accessor<boolean>;
-	setKeyboardActive: (active: boolean) => void;
-	triggerId: string;
-	popupId: string;
+interface MenuScope extends MenuRoot {
 	/** `<testId>-popup`: the panel that holds focus while no row does. */
 	popupTestId: string | undefined;
 	/** `<testId>-field`: the search field, when the popup has one. */
 	searchTestId: string | undefined;
-	openFrom: Accessor<'first' | 'last'>;
-	/** The trigger was pressed and the button is still down. */
-	startPress: () => void;
-	/** A row released under a press that began on the trigger at least 200 ms ago picks (once). */
-	pressPick: () => boolean;
-	releasePress: () => void;
-	/** Remember the trigger element the menu opened from, to hand focus back to it. */
-	noteTrigger: (element: HostElement) => void;
-	/** The root popup says how to tell whether focus sits inside it, so a close knows whether the trigger should get focus back. */
-	watchPopupFocus: (containsFocus: () => boolean) => void;
-	/** Tab closes the menu. */
-	leave: () => void;
 }
-
-/** Base UI keeps a press-drag-release from opening a menu from picking a row for this long. */
-const PRESS_PICK_MS = 200;
 
 const MenuScopeContext = createContext<MenuScope>();
 
@@ -962,21 +943,7 @@ function useMenuScope() {
 	return scope;
 }
 
-export interface DropdownTriggerState {
-	/** Opens on press, like Base UI: put this on the element that opens the menu. */
-	onMouseDown: (event: HostMouseEvent) => void;
-	/** The release of that press, or a screen reader's press. Keyboard-originated clicks are ignored: the menu answers those itself. */
-	onClick: (event: HostPointerEvent) => void;
-	readonly expanded: boolean;
-	/** Put these on the element that opens the menu, with the handlers above. */
-	readonly attributes: {
-		readonly id: string;
-		readonly 'aria-expanded': boolean;
-		readonly 'aria-haspopup': 'menu';
-		/** Base UI names the popup only while it is open. */
-		readonly 'aria-controls': string | undefined;
-	};
-}
+export type DropdownTriggerState = MenuTriggerState;
 
 export function DropdownMenu(props: {
 	open?: boolean;
@@ -986,115 +953,21 @@ export function DropdownMenu(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
-	const presence = createPresence(POPUP_EXIT_MS);
-	const [keyboardActive, setKeyboardActive] = createSignal(false);
-
-	const [openFrom, setOpenFrom] = createSignal<'first' | 'last'>('first');
-	let pressedAt: number | null = null;
-	let pendingTrigger: HostElement | null = null;
-	let triggerElement: HostElement | null = null;
-	let popupHasFocus: () => boolean = () => false;
-
-	/** Closing hands focus back to the trigger when it sat in the popup, which is about to unmount and drop it, or nowhere; a control that took it since keeps it (Base UI's returnFocus). */
-	const returnFocus = () => {
-		const target = triggerElement;
-		triggerElement = null;
-		if (target === null || !target.mounted) return;
-		if (popupHasFocus() || document.activeElement === null) target.focus();
-	};
-
-	const apply = (next: boolean) => {
-		if (next === presence.open()) return;
-		if (next) {
-			triggerElement = pendingTrigger ?? document.activeElement;
-			pendingTrigger = null;
-			presence.show();
-		} else {
-			pressedAt = null;
-			presence.hide();
-			returnFocus();
-		}
-	};
-	const setOpen = (next: boolean) => {
-		if (props.disabled === true && next) return;
-		if (props.open === undefined) apply(next);
-		props.onOpenChange?.(next);
-	};
-	createEffect(() => {
-		const controlled = props.open;
-		if (controlled !== undefined) untrack(() => apply(controlled));
-	});
-	onMount(() => {
-		// Opens like the initial state would: no `onOpenChange`.
-		if (props.defaultOpen === true) setTimeout(() => apply(true), 64);
-	});
-
+	const root = createMenuRoot(props, { exitMs: POPUP_EXIT_MS });
 	const scope: MenuScope = {
-		presence,
-		setOpen,
-		keyboardActive,
-		setKeyboardActive,
-		triggerId: createUniqueId(),
-		popupId: createUniqueId(),
+		...root,
 		popupTestId:
 			props.testId === undefined ? undefined : `${props.testId}-popup`,
 		searchTestId:
 			props.testId === undefined ? undefined : `${props.testId}-field`,
-		openFrom,
-		startPress() {
-			setOpenFrom('first');
-			pressedAt = performance.now();
-		},
-		pressPick() {
-			const at = pressedAt;
-			pressedAt = null;
-			return at !== null && performance.now() - at >= PRESS_PICK_MS;
-		},
-		releasePress() {
-			pressedAt = null;
-		},
-		noteTrigger(element) {
-			pendingTrigger = element;
-		},
-		watchPopupFocus(containsFocus) {
-			popupHasFocus = containsFocus;
-		},
-		leave() {
-			setOpen(false);
-		},
-	};
-
-	/** Only the closed trigger's keys live here: once open, the popup's panel takes them. */
-	const onKeyDown = (event: KeyEvent) => {
-		if (props.disabled === true) return;
-		if (isChord(event)) return;
-		if (presence.open()) return;
-		if (
-			event.key === 'ArrowDown' ||
-			event.key === 'ArrowUp' ||
-			event.key === 'Enter' ||
-			event.key === ' '
-		) {
-			event.preventDefault();
-			if (event.key === 'ArrowDown' || event.key === 'ArrowUp')
-				event.stopPropagation();
-			setOpenFrom(event.key === 'ArrowUp' ? 'last' : 'first');
-			setKeyboardActive(true);
-			setOpen(true);
-		}
 	};
 
 	return (
 		<MenuScopeContext.Provider value={scope}>
 			<div
 				testId={props.testId}
-				onKeyDown={onKeyDown}
-				onMouseDownOutside={() => {
-					if (!presence.open()) return;
-					const trigger = triggerElement;
-					setOpen(false);
-					refocusAfterPress(trigger);
-				}}
+				onKeyDown={root.onKeyDown}
+				onMouseDownOutside={root.onMouseDownOutside}
 				style={{
 					position: 'relative',
 					display: 'flex',
@@ -1112,38 +985,7 @@ export function DropdownMenu(props: {
 export function DropdownTrigger(props: {
 	children: (trigger: DropdownTriggerState) => JSX.Element;
 }) {
-	const scope = useMenuScope();
-	const press = createPressToggle({
-		isOpen: scope.presence.open,
-		open(event, pressed) {
-			if (pressed) {
-				scope.noteTrigger(event.currentTarget as HostElement);
-				scope.startPress();
-			}
-			scope.setOpen(true);
-		},
-		close: () => scope.setOpen(false),
-		onPointer: () => scope.setKeyboardActive(false),
-		onClickEnd: scope.releasePress,
-	});
-	const trigger: DropdownTriggerState = {
-		onMouseDown: press.onMouseDown,
-		onClick: press.onClick,
-		get expanded() {
-			return scope.presence.open();
-		},
-		attributes: {
-			id: scope.triggerId,
-			get 'aria-expanded'() {
-				return scope.presence.open();
-			},
-			'aria-haspopup': 'menu',
-			get 'aria-controls'() {
-				return scope.presence.open() ? scope.popupId : undefined;
-			},
-		},
-	};
-	return props.children(trigger);
+	return props.children(createMenuTrigger(useMenuScope()));
 }
 
 export function DropdownContent(props: {
