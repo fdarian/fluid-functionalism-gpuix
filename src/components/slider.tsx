@@ -330,7 +330,9 @@ function ValueDisplay(props: {
 		fontVariantNumeric: "tabular-nums",
 		whiteSpace: "nowrap" as const,
 	});
-	const prefix = () => (props.label === undefined ? "" : `${props.label}: `);
+	// The prefix and the value are flex items, and a flex item drops a trailing collapsible space: the no-break space is content, so it stays. One `<text>` is not an option, because the value takes the click and an inline span takes no events.
+	const prefix = () =>
+		props.label === undefined ? "" : `${props.label}:\u00a0`;
 	const widest = () => {
 		const one = `${prefix()}${props.formatValue(props.max)}`;
 		return props.isRange ? `${one} — ${props.formatValue(props.max)}` : one;
@@ -366,7 +368,14 @@ function ValueDisplay(props: {
 				}}
 			>
 				<Show when={props.label !== undefined}>
-					<text style={{ ...textStyle(false), color: color.mutedForeground }}>
+					<text
+						testId={
+							props.testId === undefined
+								? undefined
+								: `${props.testId}-edit-label`
+						}
+						style={{ ...textStyle(false), color: color.mutedForeground }}
+					>
 						{`${props.label}:`}
 					</text>
 				</Show>
@@ -436,7 +445,12 @@ function ValueDisplay(props: {
 				}}
 			>
 				<Show when={props.label !== undefined && props.editingIndex() === null}>
-					<text style={{ ...textStyle(false), color: color.mutedForeground }}>
+					<text
+						testId={
+							props.testId === undefined ? undefined : `${props.testId}-label`
+						}
+						style={{ ...textStyle(false), color: color.mutedForeground }}
+					>
 						{prefix()}
 					</text>
 				</Show>

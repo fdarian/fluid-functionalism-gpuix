@@ -12,12 +12,26 @@ const renderer = kit.renderer;
 showOnly("display");
 await kit.settle(400);
 
-// Click-to-edit selects the number, so typing replaces it.
+// The label and the value are separate flex items, and the label keeps its trailing space: "Volume: 40", not "Volume:40".
 const valueId = "left-value-0";
+const labelBox = kit.bounds("left-label");
+const valueBox = kit.bounds(valueId);
+kit.check(
+	"the value starts where the label ends",
+	Math.abs(valueBox.x - (labelBox.x + labelBox.width)) < 0.5,
+	`label ${labelBox.x}+${labelBox.width}, value ${valueBox.x}`,
+);
+
+// Click-to-edit selects the number, so typing replaces it.
 const point = kit.center(valueId);
 renderer.nativeSimulateClick(point.x, point.y);
 await kit.settle(600);
 kit.check("clicking the value opens the field", kit.exists("left-edit-0"));
+kit.check(
+	"the label is wider than its colon alone by a space",
+	labelBox.width - kit.bounds("left-edit-label").width > 2,
+	`${labelBox.width} against ${kit.bounds("left-edit-label").width}`,
+);
 const field = kit.element("left-edit-0");
 const selection = renderer.getTextSelection(field.id);
 kit.check(

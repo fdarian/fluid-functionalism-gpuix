@@ -103,14 +103,10 @@ export function Demo() {
 							<Content>Favorites content.</Content>
 						</TabPanel>
 					</Tabs>
-					<div style={{ flexDirection: "row", display: "flex", gap: 4 }}>
-						<text style={{ ...scale.caption, color: color.mutedForeground }}>
-							Active:
-						</text>
-						<text style={{ ...scale.caption, color: color.foreground }}>
-							{controlled()}
-						</text>
-					</div>
+					<text style={{ ...scale.caption, color: color.mutedForeground }}>
+						Active:{" "}
+						<span style={{ color: color.foreground }}>{controlled()}</span>
+					</text>
 				</Section>
 				<Section caption="Compact">
 					<Tabs defaultValue="library" size="compact">
