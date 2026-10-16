@@ -21,7 +21,6 @@ import { Select } from "./components/select";
 import {
 	Sidebar,
 	SidebarContent,
-	SidebarGroupLabel,
 	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuButton,
@@ -55,7 +54,9 @@ import { buildStarterPrompt, SITE_URL } from "./lib/starter-prompt";
 import {
 	bindSystemScheme,
 	color,
+	height,
 	siteType,
+	type as scale,
 	setShapeChoice,
 	setSizeChoice,
 	setThemeChoice,
@@ -86,6 +87,91 @@ function Heading(props: { children: string }) {
 		>
 			{props.children}
 		</text>
+	);
+}
+
+/**
+ * One section of the site nav, as `NavGroup` in the source's `app/components/sidebar.tsx`: an
+ * 8px-padded group, 16px above a labelled one. The name is foreground, not the
+ * library label's muted, with the count muted beside it and a hairline under
+ * both. The hairline runs from the name's first letter to the count's last
+ * digit and leaves 4px before the first row, so its hover fill clears the line.
+ */
+function NavGroup(props: {
+	label?: string;
+	count?: number;
+	children: JSX.Element;
+}) {
+	return (
+		<div
+			style={{
+				display: "flex",
+				flexDirection: "column",
+				flexShrink: 0,
+				paddingTop: props.label === undefined ? 8 : 16,
+				paddingBottom: 8,
+			}}
+		>
+			<Show when={props.label}>
+				{(label: Accessor<string>) => (
+					<>
+						<div
+							style={{
+								height: height.groupLabel,
+								flexShrink: 0,
+								display: "flex",
+								flexDirection: "row",
+								alignItems: "center",
+								paddingLeft: 8,
+								paddingRight: 8,
+							}}
+						>
+							<text
+								style={{
+									...scale.caption,
+									color: color.foreground,
+									flexGrow: 1,
+								}}
+							>
+								{label()}
+							</text>
+							<div
+								style={{
+									height: 20,
+									minWidth: 20,
+									paddingLeft: 4,
+									paddingRight: 4,
+									display: "flex",
+									alignItems: "center",
+									justifyContent: "center",
+								}}
+							>
+								<text
+									style={{
+										...siteType.caption,
+										color: color.mutedForeground,
+										fontVariantNumeric: "tabular-nums",
+									}}
+								>
+									{props.count}
+								</text>
+							</div>
+						</div>
+						<div
+							style={{
+								height: 1,
+								flexShrink: 0,
+								marginLeft: 8,
+								marginRight: 12,
+								marginBottom: 4,
+								backgroundColor: color.border,
+							}}
+						/>
+					</>
+				)}
+			</Show>
+			<SidebarMenu>{props.children}</SidebarMenu>
+		</div>
 	);
 }
 
@@ -124,7 +210,7 @@ function AppSidebar(props: {
 				</SidebarMenu>
 			</SidebarHeader>
 			<SidebarContent>
-				<SidebarMenu>
+				<NavGroup>
 					<SidebarMenuButton
 						testId="nav-showcase"
 						label="Showcase"
@@ -132,19 +218,13 @@ function AppSidebar(props: {
 						onClick={() => props.onPage(SHOWCASE)}
 					/>
 					<For each={sidebarPages("Pages")}>{row}</For>
-				</SidebarMenu>
+				</NavGroup>
 				<Show when={sidebarPages("System").length > 0}>
-					<SidebarGroupLabel count={sidebarPages("System").length}>
-						System
-					</SidebarGroupLabel>
-					<SidebarMenu>
+					<NavGroup label="System" count={sidebarPages("System").length}>
 						<For each={sidebarPages("System")}>{row}</For>
-					</SidebarMenu>
+					</NavGroup>
 				</Show>
-				<SidebarGroupLabel count={sidebarDemos().length}>
-					Components
-				</SidebarGroupLabel>
-				<SidebarMenu>
+				<NavGroup label="Components" count={sidebarDemos().length}>
 					<For each={sidebarDemos()}>
 						{(demo) => (
 							<SidebarMenuButton
@@ -155,7 +235,7 @@ function AppSidebar(props: {
 							/>
 						)}
 					</For>
-				</SidebarMenu>
+				</NavGroup>
 			</SidebarContent>
 		</Sidebar>
 	);
