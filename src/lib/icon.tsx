@@ -1,6 +1,6 @@
 import { type MotionTransition, motion } from "@gpuix/solid";
 import { For } from "solid-js";
-import { type IconRef, iconNodes, iconSource } from "./icons";
+import { hasStrokeNodes, type IconRef, iconNodes, iconSource } from "./icons";
 import { colorFade } from "./theme";
 
 /** FF's `transition-[stroke-width] duration-80`: Tailwind's default curve. */
@@ -59,7 +59,7 @@ export function Icon(props: {
 	/** Ease a colour change over 80 ms. */
 	fade?: boolean;
 	/**
-	 * Ease a stroke-width change over 80 ms. `Icon` otherwise bakes the width into its SVG source and can only switch; this draws the glyph as shapes inside one animated group that they inherit the width from.
+	 * Ease a stroke-width change over 80 ms. `Icon` otherwise bakes the width into its SVG source and can only switch; this draws the glyph as shapes inside one animated group that they inherit the width from. Phosphor's glyphs are filled paths whose weight is picked by the width, so there the weight switches at once.
 	 */
 	easeStroke?: boolean;
 }) {
@@ -71,7 +71,7 @@ export function Icon(props: {
 		...(props.fade === true ? colorFade : {}),
 	});
 	const shapes = () => parseShapes(iconNodes(props.name));
-	return props.easeStroke === true ? (
+	return props.easeStroke === true && hasStrokeNodes(props.name) ? (
 		<svg viewBox="0 0 24 24" style={style()}>
 			<motion.g
 				fill="none"
