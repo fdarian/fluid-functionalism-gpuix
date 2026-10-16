@@ -147,7 +147,6 @@ export function Demo() {
 						<ScrollArea
 							testId="area"
 							fade
-							fadeColor={color.surface2}
 							width={256}
 							height={168}
 							style={box()}
@@ -160,7 +159,6 @@ export function Demo() {
 					testId="horizontal"
 					orientation="horizontal"
 					fade
-					fadeColor={color.surface2}
 					height={104}
 				>
 					<div
@@ -248,12 +246,43 @@ export function Demo() {
 				</ScrollArea>
 			</div>
 		</DemoCard>
+		<DemoCard title="Rounded clip">
+			<div style={{ display: "flex", flexDirection: "row", gap: 24 }}>
+				<For each={[false, true]}>
+					{(fade: boolean) => (
+						<ScrollArea
+							testId={fade ? "round-fade" : "round"}
+							fade={fade}
+							width={200}
+							height={120}
+							style={{ ...box(), borderRadius: 28 }}
+						>
+							<div style={{ height: 400, backgroundColor: "#c0392b" }} />
+						</ScrollArea>
+					)}
+				</For>
+			</div>
+		</DemoCard>
+		<DemoCard title="Scroll divider">
+			<Panel caption="Fade plus hairlines at the edges that have content past them">
+				<ScrollArea
+					testId="divider"
+					fade
+					divider={{}}
+					width={256}
+					height={168}
+					// No frame: the hairlines are the edges.
+					style={{ borderRadius: radius.container }}
+				>
+					<ReleaseRows />
+				</ScrollArea>
+			</Panel>
+		</DemoCard>
 		<DemoCard title="Nested scroll areas">
 			<ScrollArea
 				testId="outer"
 				width={280}
 				height={160}
-				fadeColor={color.surface2}
 				style={box()}
 			>
 				<div style={{ display: "flex", flexDirection: "column", padding: 12, gap: 8 }}>
@@ -282,7 +311,8 @@ const trackX = (areaCenterX: number) => areaCenterX + 128 - 5;
 
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	const area = shot.centerOf("area");
-	await shot.moveTo(area.x, area.y);
+	// The pointer is inside the area and well off the 10px track: the bar shows (`data-hovering` is the pointer anywhere in the root).
+	await shot.moveTo(area.x - 60, area.y);
 	shot.capture("hover-scrollbar");
 	await shot.hover("area-y-thumb");
 	shot.capture("hover-thumb");
@@ -360,6 +390,23 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("nested-inner-at-end-outer-stays");
 	await shot.scroll(inner.x, inner.y, 0, -150);
 	shot.capture("nested-inner-at-end-outer-follows");
+	await shot.scroll(930, 400, 0, 2000);
+
+	// Divider: bring the card into view, then wheel it to the middle and the end. The top hairline is absent at rest and the bottom one goes at the end.
+	await shot.scroll(930, 400, 0, -400);
+	// Full-bleed content under a 28px radius: the viewport's corners are cut, with and without the fade's mask.
+	const round = shot.centerOf("round");
+	await shot.moveTo(round.x, round.y);
+	await shot.scroll(round.x, round.y, 0, -60);
+	shot.capture("rounded-clip");
+	const divider = shot.centerOf("divider");
+	shot.capture("divider-top");
+	await shot.moveTo(divider.x, divider.y);
+	await shot.scroll(divider.x, divider.y, 0, -120);
+	shot.capture("divider-middle");
+	// The scroll range is 888 - 168 = 720px: this stops exactly at it, since a tick that overshoots hands its remainder to the page.
+	for (let tick = 0; tick < 4; tick++) await shot.scroll(divider.x, divider.y, 0, -150);
+	shot.capture("divider-end");
 	await shot.scroll(930, 400, 0, 2000);
 
 	const grid = shot.centerOf("both");
