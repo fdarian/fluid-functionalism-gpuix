@@ -18,8 +18,8 @@ by cause (gpuix gap, port choice or not ported yet).
 ## Run it
 
 ```bash
-bun install
-bun --hot src/main.tsx
+pnpm install
+pnpm start
 ```
 
 The app is a sidebar (Showcase, Introduction, Changelog, a System group, then one demo page per component, with the New dots of the latest release) plus a "Make them
@@ -29,20 +29,22 @@ Compare, Concepts and Audio Mixer are reached from it. It sits in a browser-styl
 the traffic lights, a title across the top bar, and the page in a rounded panel. Inter is loaded from
 `assets/fonts/`.
 
-`@gpuix/native` and `@gpuix/solid` are bun workspaces pointing at the fork at `~/code/fdarian/gpuix`, wired like
-[`../gpuix-pierre-diffs`](../gpuix-pierre-diffs) (see its README for building the native addon). The fork must be
-at `poc` a02ec23 or later: the highlights and popups use its native `motion` springs, so rebuild the addon and the
-`@gpuix/solid` dist after pulling it. The Solid JSX transform is a Bun preload (`bunfig.toml`), so there is no
-build step. `solid-js` is pinned to the version gpuix resolves: two copies of Solid give two reactive systems and
-nothing updates.
+`@gpuix/native` and `@gpuix/solid` come from the fork at `~/code/fdarian/gpuix`, a sibling checkout (`../gpuix`): native is
+a `link:`, solid is a `file:` copy. The fork must be at `poc` a02ec23 or later: the highlights and popups use its native
+`motion` springs, so rebuild the addon and the `@gpuix/solid` dist after pulling it (see the fork's `FORK.md`, "Building"),
+then run `pnpm install` here to refresh the copy. The Solid JSX transform is a Bun preload (`bunfig.toml`), so there is
+no build step. Two copies of Solid give two reactive systems and nothing updates, so `solid-js` is pinned to the version
+gpuix uses and `@gpuix/solid` is a `file:` copy rather than a `link:`: through a link it would resolve `solid-js` from the
+fork's own `node_modules`, a different file from this app's. The copy resolves its `solid-js` peer from this app, and
+`pnpm-workspace.yaml` points the copy's `@gpuix/native` dependency back at the fork.
 
 ```bash
-bun run typecheck                      # tsc
-bun scripts/screenshots.tsx <slug>     # headless captures of one demo or page, into screenshots/<slug>/
+pnpm check                             # check:type (tsc) then check:scenarios (every scripts/check-*)
+pnpm screenshots [slug]                # headless captures of every demo and page, or of one, into screenshots/<slug>/
 bun scripts/live-check.tsx             # the same flow against the real window, via gpuix's automation client
 ```
 
-`screenshots.tsx` takes a file name from `src/demos/` or `src/pages/` (or `showcase`) and writes `initial.png`,
+`scripts/screenshots.tsx <slug>` takes a file name from `src/demos/` or `src/pages/` (or `showcase`) and writes `initial.png`,
 whatever the page's `scenarios` capture, `pill.png` (Radius on Pill), `compact.png` (Size on Compact) and `light.png`
 (the page after flipping the theme through the real control). The light step currently fails on pages that have a
 right column (the click on the theme select throws, see the `DismissableLayer` row under Bugs); every capture before it is written. It runs on

@@ -1,16 +1,13 @@
 {
+	"extends": "@total-typescript/tsconfig/bundler/no-dom/app",
 	"compilerOptions": {
-		"target": "ES2022",
-		"lib": ["ES2022"],
-		"module": "ESNext",
-		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
+		"noErrorTruncation": true,
+		"noUncheckedIndexedAccess": false,
 		"jsx": "preserve",
 		"jsxImportSource": "@gpuix/solid",
-		"strict": true,
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"noEmit": true,
-		"types": ["bun"]
+		"types": ["bun"],
+		"paths": { "#/*": ["./src/*"] }
 	},
 	"include": ["src/**/*.ts", "src/**/*.tsx", "scripts/**/*.ts", "scripts/**/*.tsx"]
 }
