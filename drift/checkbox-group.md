@@ -117,9 +117,9 @@ Same in both (checked against the code): row height, gap and padding per size (3
 
 ## Demo variants
 
-- **Cause:** `not ported yet` for the missing ones; the extras are port additions.
+- **Cause:** `port choice` (extras are port additions); the sizes-page variant is `not ported yet`.
 - **Original:** the docs page has one example, Basic: Apples, Bananas, Cherries, Dates, Apples checked (`app/docs/checkbox-group/page.tsx:56-77`). Other pages use it with nothing checked at 220 px (`app/components/bento-previews.tsx:288-309`) and as a two-row group inside a compact `SizeProvider` at `w-44` (`app/docs/sizes/page.tsx:498-515`).
-- **Port:** Default (Apples checked, plus a "Checked: ..." readout) and Compact (Bananas and Cherries checked) (`src/demos/checkbox-group.tsx:56-67`). Missing: nothing checked at rest, narrow width.
+- **Port:** Default (Apples checked, plus a "Checked: ..." readout), Compact (Bananas and Cherries checked) and "Narrow, empty" (the bento preview's five rows, nothing checked, in a 220 px wrapper the group's `maxWidth: 100%` shrinks to) (`src/demos/checkbox-group.tsx`). Missing: the `w-44` two-row group of the sizes page (the port has no `SizeProvider`, see "`size` is read twice").
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

@@ -4,10 +4,20 @@ import type { DemoModule } from "../lib/demo";
 import { DemoCard, DemoRow } from "../lib/demo-kit";
 import { color, type as scale } from "../lib/theme";
 
-const ITEMS = ["Apples", "Bananas", "Cherries", "Dates"];
+const FRUITS = ["Apples", "Bananas", "Cherries", "Dates"];
+
+/** The bento preview's rows (`app/components/demo-data.ts:62-68`). */
+const FEATURES = [
+	"Spring physics",
+	"Fluid hover",
+	"Font weight transitions",
+	"Keyboard navigation",
+	"Dark mode support",
+];
 
 function Group(props: {
 	testId: string;
+	items: readonly string[];
 	initial: number[];
 	size?: "default" | "compact";
 	readout?: boolean;
@@ -28,7 +38,7 @@ function Group(props: {
 				checkedIndices={checked()}
 				size={props.size}
 			>
-				<For each={ITEMS}>
+				<For each={props.items}>
 					{(label: string, index) => (
 						<CheckboxItem
 							testId={`${props.testId}-${index()}`}
@@ -58,10 +68,20 @@ export function Demo() {
 		<DemoCard title="CheckboxGroup">
 			<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
 				<DemoRow label="Default">
-					<Group testId="box" initial={[0]} readout />
+					<Group testId="box" items={FRUITS} initial={[0]} readout />
 				</DemoRow>
 				<DemoRow label="Compact">
-					<Group testId="small" initial={[1, 2]} size="compact" />
+					<Group
+						testId="small"
+						items={FRUITS}
+						initial={[1, 2]}
+						size="compact"
+					/>
+				</DemoRow>
+				<DemoRow label="Narrow, empty">
+					<div style={{ display: "flex", flexDirection: "column", width: 220 }}>
+						<Group testId="narrow" items={FEATURES} initial={[]} />
+					</div>
 				</DemoRow>
 			</div>
 		</DemoCard>
@@ -73,7 +93,10 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	const row = shot.centerOf("box-2");
 	await shot.moveTo(row.x - 144 + 60, row.y);
 	shot.capture("hover");
-	await shot.clickAt(shot.centerOf("box-1").x - 144 + 60, shot.centerOf("box-1").y);
+	await shot.clickAt(
+		shot.centerOf("box-1").x - 144 + 60,
+		shot.centerOf("box-1").y,
+	);
 	shot.expectText("Bananas", true);
 	await shot.hover("box-2");
 	shot.capture("checked-pair");
@@ -103,4 +126,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectText("Checked: 0,2", true);
 	shot.expectAria("box-0", { role: "CheckBox", toggled: "True" });
 	shot.expectAria("box-1", { toggled: "False" });
+	// The hover fill shows the narrow group's width.
+	await shot.click("narrow-1");
+	shot.capture("narrow-checked");
 };
