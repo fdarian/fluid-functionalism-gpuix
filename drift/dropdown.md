@@ -217,13 +217,22 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
-## Demo page: no Playground, no section copy, extra and altered cards
+## Playground: no Get code dialog, preset URL or code snippet
 
-- **Cause:** `not ported yet` for the Playground and the copy; `port choice` (reason not stated; the added rows and cards feed the scenarios, `src/demos/dropdown.tsx:603`) for the additions.
-- **Original:** sections in order, each in a `ComponentPreview` with a Code tab (`app/docs/dropdown/page.tsx:509-810`): Playground, Basic, Groups, Triggered menu, Submenus, Multiple selection, Searchable menu, Searchable multiple selection, Create from the query, then 13 API Reference tables. The Playground (`lib/docs/playgrounds/dropdown.tsx`) drives a live dropdown: Mode (menu or inline), Selection (single, multiple, none), Search, Create from query, Icons, Groups, Disabled row, Submenu, a theme row set, a preset URL and a Get-code dialog. Sections open with a line of prose (for example "3 parts: `DropdownMenu`, `DropdownTrigger`, `DropdownContent`. Any element goes in `render`." and "Hover Move to, then cut across Share to its submenu: the highlight stays on Move to until you stop on another row."), and the page opens with "2 forms: an inline panel, or a popup on any trigger."
-- **Port:** nine `DemoCard`s titled "Dropdown, basic" and so on (`src/demos/dropdown.tsx:573-590`), with no prose, no Code tab, no API tables and no Playground. Previews are `minHeight: 56` where the source uses `min-h-[160px]` for the popup cases.
+- **Cause:** `not ported yet` (the site has no preset codec and no Code tab).
+- **Original:** the Playground (`lib/docs/playgrounds/dropdown.tsx`) has Mode, Selection, Search, Create from query, Icons, Groups, Disabled row and Submenu, a shuffle, a Get code dialog (`GetCodeDialog`, `:475`) and a preset URL kept in sync with the controls (`usePresetUrlSync`, `:237`). It rebuilds a Code tab snippet from the controls (`buildPlaygroundCode`, `:62-186`).
+- **Port:** all eight controls, their defaults, the derived constraints (Search and Submenu need the popup; Search turns Groups off; Create from query needs Search), the shuffle's odds and the preview are as the source, in `src/demos/dropdown.tsx` (`Playground`). No Get code dialog, no preset URL, no Code tab. The inline panel gets no `aria-label="Settings"`: `Dropdown` takes none (see "Props the port does not take").
+- **Workaround:** none.
+- **Fidelity:** dropped (Get code, preset URL, snippet); exact for the controls and the preview content.
+- **Components it hits:** every playground.
+
+## Demo page: no section copy, extra and altered cards
+
+- **Cause:** `not ported yet` for the copy; `port choice` (reason not stated; the added rows and cards feed the scenarios, `src/demos/dropdown.tsx`) for the additions.
+- **Original:** sections in order, each in a `ComponentPreview` with a Code tab (`app/docs/dropdown/page.tsx:509-810`): Playground, Basic, Groups, Triggered menu, Submenus, Multiple selection, Searchable menu, Searchable multiple selection, Create from the query, then 13 API Reference tables. Sections open with a line of prose (for example "3 parts: `DropdownMenu`, `DropdownTrigger`, `DropdownContent`. Any element goes in `render`." and "Hover Move to, then cut across Share to its submenu: the highlight stays on Move to until you stop on another row."), and the page opens with "2 forms: an inline panel, or a popup on any trigger."
+- **Port:** the Playground, then nine `DemoCard`s titled "Dropdown, basic" and so on, with no prose, no Code tab and no API tables. Previews are `minHeight: 56` where the source uses `min-h-[160px]` for the popup cases.
   - Basic, Groups, Triggered, Submenus, Multiple, Searchable, Searchable multiple and Creatable exist with the source's rows, icons, copy and initial state ("Create “…”", "No languages found", "Search languages", `Labels · 2`, statuses `[0, 1, 2]`, used `["Button", "Combobox"]`).
-  - Added: a "Dropdown, keyboard" card (Alpha to Charter with a disabled Beta and a picked/changes readout) and, in Submenus, a "Moved to ..." readout (`:233-307`, `:309-352`).
-  - Altered: the Groups card marks "Display" `disabled` (`src/demos/dropdown.tsx:185`); the source row is enabled (`app/docs/dropdown/page.tsx:547`).
-- **Fidelity:** all nine source variants present; the Playground and the prose dropped.
+  - Added: a "Dropdown, keyboard" card (Alpha to Charter with a disabled Beta and a picked/changes readout) and, in Submenus, a "Moved to ..." readout.
+  - Altered: the Groups card marks "Display" `disabled`; the source row is enabled (`app/docs/dropdown/page.tsx:547`). The scenario `inline-disabled-lit` walks onto it.
+- **Fidelity:** all nine source variants present; the prose dropped.
 - **Components it hits:** the section prose and Code tab are absent from every ported demo.
