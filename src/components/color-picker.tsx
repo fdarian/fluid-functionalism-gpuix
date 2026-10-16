@@ -692,9 +692,14 @@ function AlphaRail(props: {
 	);
 }
 
-/** An anchored card of a given surface level, with the same slide and fade as the shared popup. Opens below its trigger, or above when there is no room. */
+/** The source's own fallback for an exit that never reports completing: `spring.moderate.exit` is 120 ms, `spring.fast.exit` 60 ms. */
+const POPOVER_EXIT_FALLBACK_MS = 150;
+const FORMAT_MENU_EXIT_FALLBACK_MS = 120;
+
+/** An anchored card of a given surface level that slides and fades like the shared popup, at the speed the source gives it: the popover is `moderate`, the format menu `fast`. Opens below its trigger, or above when there is no room. */
 function Popup(props: {
 	presence: ReturnType<typeof createPresence>;
+	speed: "fast" | "moderate";
 	width: number;
 	level: number;
 	children: JSX.Element;
@@ -721,7 +726,14 @@ function Popup(props: {
 							? { opacity: 1, top: 0 }
 							: { opacity: 0, top: slide() }
 					}
-					transition={props.presence.open() ? tween.fast : tween.fastExit}
+					transition={
+						props.presence.open()
+							? tween[props.speed]
+							: tween[`${props.speed}Exit`]
+					}
+					onMotionComplete={() => {
+						if (!props.presence.open()) props.presence.release();
+					}}
 					style={{
 						position: "relative",
 						width: props.width,
@@ -752,7 +764,7 @@ function FormatDropdown(props: {
 	testId: string;
 }) {
 	const renderer = useGpuixRequired();
-	const presence = createPresence();
+	const presence = createPresence(FORMAT_MENU_EXIT_FALLBACK_MS);
 	const hover = createFluidHover();
 	const [triggerHovered, setTriggerHovered] = createSignal(false);
 	/** The pointer lit the row (or none), not a key: leaving the rows hands focus to the panel. */
@@ -1004,7 +1016,12 @@ function FormatDropdown(props: {
 					color={color.mutedForeground}
 				/>
 			</div>
-			<Popup presence={presence} width={width} level={props.level + 2}>
+			<Popup
+				presence={presence}
+				speed="fast"
+				width={width}
+				level={props.level + 2}
+			>
 				<div
 					ref={(element) => {
 						panel = element;
@@ -1791,7 +1808,7 @@ export function ColorPickerPopover(
 		defaultOpen?: boolean;
 	},
 ) {
-	const presence = createPresence();
+	const presence = createPresence(POPOVER_EXIT_FALLBACK_MS);
 	const [removeHovered, setRemoveHovered] = createSignal(false);
 
 	const isControlled = () => props.value !== undefined;
@@ -1947,7 +1964,12 @@ export function ColorPickerPopover(
 					</div>
 				</Show>
 			</div>
-			<Popup presence={presence} width={PANEL_WIDTH} level={5}>
+			<Popup
+				presence={presence}
+				speed="moderate"
+				width={PANEL_WIDTH}
+				level={5}
+			>
 				<ColorPickerPanel
 					{...props}
 					level={5}
