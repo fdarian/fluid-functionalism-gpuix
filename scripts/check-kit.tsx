@@ -9,6 +9,9 @@ import { App } from "../src/app";
 import { loadDemos } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
+import { readPng } from "./png-pixels";
+
+const INK_PATH = "/tmp/check-kit-ink.png";
 
 type CheckOptions = {
 	width?: number;
@@ -72,6 +75,39 @@ export async function createCheck(
 		return undefined;
 	}
 
+	/**
+	 * How much of `box` differs from the pixel at its top-left corner, summed over the channels: a measure of how
+	 * much ink a glyph or label leaves on its own background, so it grows with stroke width and with contrast.
+	 */
+	function ink(box: { x: number; y: number; width: number; height: number }) {
+		renderer.captureScreenshot(INK_PATH);
+		const pixels = readPng(INK_PATH);
+		const left = Math.round(box.x);
+		const top = Math.round(box.y);
+		const ground = pixels.at(left, top);
+		let total = 0;
+		for (let y = top; y < Math.round(box.y + box.height); y++)
+			for (let x = left; x < Math.round(box.x + box.width); x++) {
+				const pixel = pixels.at(x, y);
+				total +=
+					Math.abs(pixel[0] - ground[0]) +
+					Math.abs(pixel[1] - ground[1]) +
+					Math.abs(pixel[2] - ground[2]);
+			}
+		return total;
+	}
+
+	/** Moves the pointer onto `point` and returns once `afterMs` have passed, the frames flushed by hand. */
+	async function hoverFor(point: { x: number; y: number }, afterMs: number) {
+		renderer.nativeSimulateMouseMove(point.x - 1, point.y);
+		renderer.nativeSimulateMouseMove(point.x, point.y);
+		renderer.flush();
+		renderer.dispatchNativeEvents();
+		await sleep(afterMs);
+		renderer.flush();
+		renderer.dispatchNativeEvents();
+	}
+
 	setThemeChoice("dark");
 	if (isPage) {
 		const demos = await loadDemos();
@@ -89,6 +125,8 @@ export async function createCheck(
 		bounds,
 		center,
 		aria,
+		ink,
+		hoverFor,
 		exists: (testId: string) => renderer.findByTestId(testId) !== undefined,
 		async click(testId: string) {
 			const point = center(testId);

@@ -1,5 +1,5 @@
 import type { HostElement } from "@gpuix/solid";
-import { type as scale, weight } from "./theme";
+import { colorFade, type as scale, weight } from "./theme";
 
 /**
  * A label that gains weight in place. A hidden semibold copy sits in the flow
@@ -14,6 +14,8 @@ export function StableLabel(props: {
 	grow?: boolean;
 	/** Defaults to the body role. */
 	textStyle?: { fontSize: number; lineHeight: number };
+	/** Ease a colour change over 80 ms (the weight still switches at once). */
+	fade?: boolean;
 	/** The wrapper, for a caller that measures the label's width. */
 	labelRef?: (element: HostElement) => void;
 	testId?: string;
@@ -42,6 +44,7 @@ export function StableLabel(props: {
 					top: 0,
 					left: 0,
 					color: props.color,
+					...(props.fade === true ? colorFade : {}),
 				}}
 			>
 				{props.text}

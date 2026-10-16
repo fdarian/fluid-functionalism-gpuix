@@ -127,14 +127,6 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** approximated.
 - **Components it hits:** just this one (select and combobox already draw it).
 
-## Row colour and stroke do not ease
-
-- **Cause:** `not ported yet` for the colour; `port choice` for the stroke width (`src/lib/icon.tsx:9`: it is part of the SVG source, so it switches at once).
-- **Original:** the leading icon, the label and the submenu chevron ease `color` and `stroke-width` over 80 ms when the row lights (`transition-[color,stroke-width] duration-80`, `registry/default/menu-item.tsx:204`, `:224`; `registry/default/dropdown-sub.tsx:180-186`); the search icon does the same on focus (`registry/default/dropdown-search.tsx:335`).
-- **Port:** `Icon` takes a `fade` prop for the 80 ms colour ease (`src/lib/icon.tsx:9-23`) and select uses it (`src/components/select.tsx:569`), but `MenuItem` and the search icon do not pass it, and `StableLabel` has no fade (`src/components/menu-item.tsx:217-240`, `src/components/dropdown-search.tsx:94-99`). Colour and stroke both change on the same frame.
-- **Fidelity:** approximated.
-- **Components it hits:** just this one.
-
 ## Clicks in the padding and between rows are not routed to the lit row
 
 - **Cause:** `not ported yet`.

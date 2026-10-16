@@ -7,14 +7,15 @@
  * here starts from the keyboard; the pointer paths are for a live check.
  */
 import { mkdirSync } from "node:fs";
+import { createTestRoot } from "@gpuix/solid/testing";
+import { Button } from "../src/components/button";
 import {
+	Dropdown,
 	DropdownContent,
 	DropdownMenu,
 	DropdownTrigger,
 	MenuItem,
 } from "../src/components/dropdown";
-import { Button } from "../src/components/button";
-import { createTestRoot } from "@gpuix/solid/testing";
 import { fonts } from "../src/lib/fonts";
 import { createCheck } from "./check-kit";
 
@@ -90,12 +91,18 @@ const basicFocus = () => focusedAmong(BASIC_ROWS);
 // Shift+Tab from the first row, which is not the tab stop, leaves the panel.
 await k.focus("basic-0");
 await k.press("shift-tab");
-k.check("inline: Shift+Tab from the first row leaves the panel", basicFocus() === null);
+k.check(
+	"inline: Shift+Tab from the first row leaves the panel",
+	basicFocus() === null,
+);
 for (let presses = 0; presses < 60 && basicFocus() === null; presses++) {
 	await k.press("tab");
 }
 k.expect("inline: Tab lands on the checked row", basicFocus(), "basic-1");
-k.check("inline: the ring shows on a keyboard-visible focus", k.exists("basic-ring"));
+k.check(
+	"inline: the ring shows on a keyboard-visible focus",
+	k.exists("basic-ring"),
+);
 await k.press("up");
 k.expect("inline: ArrowUp focuses the previous row", basicFocus(), "basic-0");
 await k.press("up");
@@ -105,7 +112,11 @@ k.expect(
 	BASIC_ROWS.at(-1),
 );
 await k.press("down");
-k.expect("inline: ArrowDown from the last row wraps to the first", basicFocus(), "basic-0");
+k.expect(
+	"inline: ArrowDown from the last row wraps to the first",
+	basicFocus(),
+	"basic-0",
+);
 await k.press("right");
 k.expect("inline: ArrowRight is ArrowDown", basicFocus(), "basic-1");
 await k.press("left");
@@ -126,7 +137,8 @@ k.check("inline: ring after Tab entry", k.exists("groups-ring"));
 // ─── Popup menu: keyboard open, focus on the rows ────────────────────────────
 
 const MENU_ROWS = [0, 1, 2, 3, 4].map((index) => `menu-${index}`);
-const menuFocus = () => focusedAmong(["menu-trigger", ...MENU_ROWS, "menu-popup"]);
+const menuFocus = () =>
+	focusedAmong(["menu-trigger", ...MENU_ROWS, "menu-popup"]);
 const menuOpen = () => k.exists("menu-0");
 
 await scrollIntoView("menu-trigger");
@@ -140,31 +152,58 @@ k.check(
 await k.press("down");
 k.expect("menu: ArrowDown focuses the next row", menuFocus(), "menu-1");
 await k.press("up up");
-k.expect("menu: ArrowUp from the first row loops to the last", menuFocus(), "menu-4");
+k.expect(
+	"menu: ArrowUp from the first row loops to the last",
+	menuFocus(),
+	"menu-4",
+);
 await k.press("down");
-k.expect("menu: ArrowDown from the last row loops to the first", menuFocus(), "menu-0");
+k.expect(
+	"menu: ArrowDown from the last row loops to the first",
+	menuFocus(),
+	"menu-0",
+);
 await k.press("end");
 k.expect("menu: End focuses the last row", menuFocus(), "menu-4");
 await k.press("home");
 k.expect("menu: Home focuses the first row", menuFocus(), "menu-0");
 await k.press("escape");
 k.check("menu: Escape closes", !menuOpen());
-k.expect("menu: Escape returns focus to the trigger", menuFocus(), "menu-trigger");
+k.expect(
+	"menu: Escape returns focus to the trigger",
+	menuFocus(),
+	"menu-trigger",
+);
 
 await k.press("up");
-k.expect("menu: ArrowUp on the trigger opens on the last row", menuFocus(), "menu-4");
+k.expect(
+	"menu: ArrowUp on the trigger opens on the last row",
+	menuFocus(),
+	"menu-4",
+);
 await k.press("escape");
 
 await k.press("space");
 k.expect("menu: Space opens and focuses the first row", menuFocus(), "menu-0");
 await k.press("down down enter");
 k.check("menu: Enter on a row closes the menu", !menuOpen());
-k.expect("menu: a pick returns focus to the trigger", menuFocus(), "menu-trigger");
+k.expect(
+	"menu: a pick returns focus to the trigger",
+	menuFocus(),
+	"menu-trigger",
+);
 
 await k.press("space");
 await k.press("down space");
-k.check("menu: Space on a row closes and the key's release does not reopen", !menuOpen());
-k.expect("menu: Space on a row returns focus to the trigger", menuFocus(), "menu-trigger");
+k.check(
+	"menu: Space on a row closes and the key's release does not reopen",
+	!menuOpen(),
+);
+k.expect(
+	"menu: Space on a row returns focus to the trigger",
+	menuFocus(),
+	"menu-trigger",
+);
 
 await k.focus("menu-trigger");
 await k.press("tab");
@@ -194,9 +233,17 @@ await k.settle(300);
 k.expect("menu: hovering a row focuses it", menuFocus(), "menu-2");
 renderer.nativeSimulateMouseMove(1200, 40);
 await k.settle(300);
-k.expect("menu: leaving the rows focuses the popup panel", menuFocus(), "menu-popup");
+k.expect(
+	"menu: leaving the rows focuses the popup panel",
+	menuFocus(),
+	"menu-popup",
+);
 await k.press("down");
-k.expect("menu: ArrowDown on the panel focuses the first row", menuFocus(), "menu-0");
+k.expect(
+	"menu: ArrowDown on the panel focuses the first row",
+	menuFocus(),
+	"menu-0",
+);
 await k.press("escape");
 
 // ─── Typeahead and disabled rows ─────────────────────────────────────────────
@@ -227,7 +274,11 @@ k.expect(
 	pickedText(),
 	`picked: Alpha changes: ${changesBefore + 1}`,
 );
-k.expect("keys: a pick returns focus to the trigger", keysFocus(), "keys-trigger");
+k.expect(
+	"keys: a pick returns focus to the trigger",
+	keysFocus(),
+	"keys-trigger",
+);
 
 // ─── Submenus ────────────────────────────────────────────────────────────────
 
@@ -246,27 +297,57 @@ await k.focus("sub-trigger");
 await k.press("enter");
 k.expect("sub: opens on the first row", subFocus(), "sub-move");
 await k.press("right");
-k.expect("sub: ArrowRight on a sub-trigger focuses the submenu's first row", subFocus(), "sub-folder-Inbox");
+k.expect(
+	"sub: ArrowRight on a sub-trigger focuses the submenu's first row",
+	subFocus(),
+	"sub-folder-Inbox",
+);
 await k.press("down");
-k.expect("sub: arrows move inside the submenu", subFocus(), "sub-folder-Design");
+k.expect(
+	"sub: arrows move inside the submenu",
+	subFocus(),
+	"sub-folder-Design",
+);
 await k.press("left");
-k.expect("sub: ArrowLeft closes the submenu and focuses its trigger", subFocus(), "sub-move");
+k.expect(
+	"sub: ArrowLeft closes the submenu and focuses its trigger",
+	subFocus(),
+	"sub-move",
+);
 k.check("sub: the submenu is gone", !k.exists("sub-folder-Inbox"));
 k.check("sub: the parent menu stays open", k.exists("sub-rename"));
 await k.press("enter");
-k.expect("sub: Enter on a sub-trigger focuses the submenu's first row", subFocus(), "sub-folder-Inbox");
+k.expect(
+	"sub: Enter on a sub-trigger focuses the submenu's first row",
+	subFocus(),
+	"sub-folder-Inbox",
+);
 await k.press("escape");
 k.expect("sub: Escape closes only the submenu", subFocus(), "sub-move");
-k.check("sub: the parent menu is still open after Escape", k.exists("sub-rename"));
+k.check(
+	"sub: the parent menu is still open after Escape",
+	k.exists("sub-rename"),
+);
 await k.press("down down");
-k.expect("sub: the parent keeps arrowing after the submenu closes", subFocus(), "sub-rename");
+k.expect(
+	"sub: the parent keeps arrowing after the submenu closes",
+	subFocus(),
+	"sub-rename",
+);
 await k.press("up up enter");
 await k.press("tab");
-k.check("sub: Tab inside a submenu closes the whole menu", !k.exists("sub-move") && !k.exists("sub-folder-Inbox"));
+k.check(
+	"sub: Tab inside a submenu closes the whole menu",
+	!k.exists("sub-move") && !k.exists("sub-folder-Inbox"),
+);
 await k.focus("sub-trigger");
 await k.press("enter");
 await k.press("escape");
-k.expect("sub: Escape in the parent returns focus to the trigger", subFocus(), "sub-trigger");
+k.expect(
+	"sub: Escape in the parent returns focus to the trigger",
+	subFocus(),
+	"sub-trigger",
+);
 
 // A submenu the pointer opened leaves focus on its parent row.
 await k.press("enter");
@@ -274,9 +355,17 @@ const move = k.bounds("sub-move");
 renderer.nativeSimulateMouseMove(move.x + 40, move.y + move.height / 2);
 await k.settle(600);
 k.check("sub: hover opens the submenu", k.exists("sub-folder-Inbox"));
-k.expect("sub: a hover-opened submenu leaves focus on the parent row", subFocus(), "sub-move");
+k.expect(
+	"sub: a hover-opened submenu leaves focus on the parent row",
+	subFocus(),
+	"sub-move",
+);
 await k.press("right");
-k.expect("sub: ArrowRight then enters the hover-opened submenu", subFocus(), "sub-folder-Inbox");
+k.expect(
+	"sub: ArrowRight then enters the hover-opened submenu",
+	subFocus(),
+	"sub-folder-Inbox",
+);
 await k.press("escape");
 await k.press("escape");
 
@@ -327,10 +416,7 @@ k.expect(
 	"search-trigger",
 );
 
-const SEARCH_ROWS = Array.from(
-	{ length: 80 },
-	(_, index) => `search-${index}`,
-);
+const SEARCH_ROWS = Array.from({ length: 80 }, (_, index) => `search-${index}`);
 const searchFocus = () => focusedAmong(["search-field", ...SEARCH_ROWS]);
 const lastSearchRow = () => {
 	const rows = SEARCH_ROWS.filter((testId) => k.exists(testId));
@@ -338,7 +424,11 @@ const lastSearchRow = () => {
 };
 
 await openSearch();
-k.expect("search: the field takes focus on open", searchFocus(), "search-field");
+k.expect(
+	"search: the field takes focus on open",
+	searchFocus(),
+	"search-field",
+);
 const searchBoxes = Object.values(renderer.getA11yTree().nodes ?? {}).filter(
 	(node) => node.aria?.role === "SearchInput",
 );
@@ -348,17 +438,37 @@ k.check(
 	searchBoxes[0]?.aria?.active_descendant === undefined,
 );
 await k.press("down");
-k.expect("search: ArrowDown in the field focuses the first row", searchFocus(), "search-0");
+k.expect(
+	"search: ArrowDown in the field focuses the first row",
+	searchFocus(),
+	"search-0",
+);
 await k.press("up");
-k.expect("search: ArrowUp from the first row returns to the field", searchFocus(), "search-field");
+k.expect(
+	"search: ArrowUp from the first row returns to the field",
+	searchFocus(),
+	"search-field",
+);
 await k.press("up");
-k.expect("search: ArrowUp in the field focuses the last row", searchFocus(), lastSearchRow());
+k.expect(
+	"search: ArrowUp in the field focuses the last row",
+	searchFocus(),
+	lastSearchRow(),
+);
 await k.press("down");
-k.expect("search: ArrowDown past the last row returns to the field", searchFocus(), "search-field");
+k.expect(
+	"search: ArrowDown past the last row returns to the field",
+	searchFocus(),
+	"search-field",
+);
 await k.press("down down");
 k.expect("search: arrows walk the rows", searchFocus(), "search-1");
 await k.press("f");
-k.expect("search: a key typed on a row moves focus to the field", searchFocus(), "search-field");
+k.expect(
+	"search: a key typed on a row moves focus to the field",
+	searchFocus(),
+	"search-field",
+);
 await k.press("r");
 k.check(
 	"search: typing goes into the query in order",
@@ -370,7 +480,11 @@ k.check(
 	k.exists("search-0") && shown("French"),
 );
 await k.press("down backspace");
-k.expect("search: Backspace on a row goes to the field", searchFocus(), "search-field");
+k.expect(
+	"search: Backspace on a row goes to the field",
+	searchFocus(),
+	"search-field",
+);
 k.check("search: Backspace shortens the query", shown("Finnish"));
 await k.press("escape");
 k.expect(
@@ -383,7 +497,10 @@ k.expect(
 
 // A pointer press that opens a popup throws in the test renderer; `defaultOpen`
 // takes the same path through the menu: no keyboard, nothing focused before.
-async function openBare(testId: string, rows: readonly { label: string; disabled?: boolean }[]) {
+async function openBare(
+	testId: string,
+	rows: readonly { label: string; disabled?: boolean }[],
+) {
 	const root = createTestRoot({ width: 600, height: 400, fonts });
 	root.render(() => (
 		<DropdownMenu testId={testId} defaultOpen>
@@ -444,10 +561,18 @@ const bare = await openBare("bare", [
 	{ label: "Three" },
 ]);
 await bare.settle(600);
-k.expect("pointer open: the first enabled row is focused two frames later", bare.focus(), "bare-0");
+k.expect(
+	"pointer open: the first enabled row is focused two frames later",
+	bare.focus(),
+	"bare-0",
+);
 bare.keys("down");
 await bare.settle(300);
-k.expect("pointer open: ArrowDown moves on from the first row", bare.focus(), "bare-1");
+k.expect(
+	"pointer open: ArrowDown moves on from the first row",
+	bare.focus(),
+	"bare-1",
+);
 bare.unmount();
 
 const idle = await openBare("idle", [
@@ -455,10 +580,65 @@ const idle = await openBare("idle", [
 	{ label: "Two", disabled: true },
 ]);
 await idle.settle(600);
-k.expect("pointer open: with no enabled row the popup panel keeps focus", idle.focus(), "idle-popup");
+k.expect(
+	"pointer open: with no enabled row the popup panel keeps focus",
+	idle.focus(),
+	"idle-popup",
+);
 idle.keys("down");
 await idle.settle(300);
-k.expect("pointer open: ArrowDown on the panel reaches a disabled row", idle.focus(), "idle-0");
+k.expect(
+	"pointer open: ArrowDown on the panel reaches a disabled row",
+	idle.focus(),
+	"idle-0",
+);
 idle.unmount();
+
+// ─── Lighting a row eases its icon stroke and colour and its label colour over 80 ms ─
+
+const ease = await createCheck(
+	() => (
+		<div style={{ padding: 20, width: 260 }}>
+			<Dropdown>
+				<MenuItem testId="ease-0" index={0} label="Settings" icon="settings" />
+				<MenuItem testId="ease-1" index={1} label="Profile" icon="user" />
+			</Dropdown>
+		</div>
+	),
+	{ width: 400, height: 300, initialSettleMs: 600 },
+);
+{
+	const row = ease.bounds("ease-0");
+	const iconBox = {
+		x: row.x + 8,
+		y: row.y + 4,
+		width: 16,
+		height: row.height - 8,
+	};
+	const labelBox = {
+		x: row.x + 32,
+		y: row.y + 4,
+		width: 70,
+		height: row.height - 8,
+	};
+	const rest = { icon: ease.ink(iconBox), label: ease.ink(labelBox) };
+	await ease.hoverFor(ease.center("ease-0"), 10);
+	const early = { icon: ease.ink(iconBox), label: ease.ink(labelBox) };
+	await ease.settle(400);
+	const lit = { icon: ease.ink(iconBox), label: ease.ink(labelBox) };
+	const partway = (name: "icon" | "label") =>
+		early[name] > rest[name] + 0.1 * (lit[name] - rest[name]) &&
+		early[name] < lit[name] - 0.1 * (lit[name] - rest[name]);
+	k.check(
+		"ease: the icon's stroke and colour are partway a frame or two after the row lights",
+		partway("icon"),
+		`rest ${rest.icon}, early ${early.icon}, lit ${lit.icon}`,
+	);
+	k.check(
+		"ease: the label's colour is partway a frame or two after the row lights",
+		partway("label"),
+		`rest ${rest.label}, early ${early.label}, lit ${lit.label}`,
+	);
+}
 
 k.finish();
