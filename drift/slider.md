@@ -1,6 +1,6 @@
 # slider
 
-Original: `registry/base/slider.tsx` (the compact thumb-and-track engine: range, step lists, value display; and the default-step pips and scrubber rows), demos in `app/docs/slider/page.tsx` and `app/slider/page.tsx` of the source
+Original: `registry/base/slider.tsx` (the compact thumb-and-track engine: range, step lists, value display; and the default-step pips and scrubber rows), demos in `app/docs/slider/page.tsx` of the source (the Audio Mixer page, `app/slider/page.tsx`, is `src/pages/audio-mixer.tsx`, see [`audio-mixer.md`](audio-mixer.md))
 (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/slider.tsx`,
 demo in `src/demos/slider.tsx`.
 
@@ -153,12 +153,3 @@ repeating it.
 - **Workaround:** none.
 - **Fidelity:** all source variants present; extras and chrome as above.
 - **Components it hits:** every demo page.
-
-## `app/slider/page.tsx` (Audio Mixer) is not ported
-
-- **Cause:** `not ported yet`.
-- **Original:** a second page that demos the component (a music-production control surface, `app/slider/page.tsx:19-460`, "Audio Mixer"): Channel Strip (five compact sliders, `valuePosition="right"`, `%`), Parametric EQ (custom `min` / `max` / `step`, `formatValue` to dB, Hz and kHz), Range Selection (two range sliders, `step` 100 over 20-20000), Compressor (`showSteps` at step 5, 21 dots, dB / ms / ratio formats), Effects Sends (three `valuePosition="tooltip"` with labels), Settings (four default pips rows with string `formatValue`), Master Controls (six scrubbers, including `C` / `L` / `R` pan formatting).
-- **Port:** nothing; `src/demos/slider.tsx` is the docs-page demo only. Every prop the mixer uses is ported, so it could be built from the existing component.
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** none other. The page also has a 21-dot compressor row, which would test a many-element slider on gpuix.
