@@ -10,24 +10,33 @@ import {
 	createMemo,
 	createSignal,
 	createUniqueId,
-	on,
 	For,
 	type JSX,
+	on,
 	onCleanup,
 	Show,
 } from "solid-js";
-import { createFocusRing, FocusRing } from "../lib/focus-ring";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
+import { createFocusRing, FocusRing } from "../lib/focus-ring";
 import { FormValue } from "../lib/form-value";
 import { CheckMark, Icon, LIST_CHECK } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { edgeIndex, isChord, moveIndex, revealRow } from "../lib/list-nav";
 import { PopupSurface } from "../lib/popup";
-import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import { returnFocusTo } from "../lib/popup-trigger";
+import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
+import {
+	color,
+	colorFade,
+	focusRing,
+	radius,
+	type as scale,
+	scheme,
+	motion as tween,
+	withAlpha,
+} from "../lib/theme";
 import { createTypeahead } from "../lib/typeahead";
-import { color, colorFade, radius, type as scale, scheme, motion as tween, withAlpha, focusRing } from "../lib/theme";
 
 /** How long a pick holds the popup open so the check and the checked background are seen arriving. */
 const ACK_MS = 300;
@@ -216,7 +225,8 @@ export function Select<Value extends string>(props: {
 
 	const typeahead = createTypeahead({
 		labels: () => rows().map((row) => row.label),
-		current: () => (selectedIndex() === -1 ? hover.activeIndex() : selectedIndex()),
+		current: () =>
+			selectedIndex() === -1 ? hover.activeIndex() : selectedIndex(),
 		isDisabled: isRowDisabled,
 		onMatch: (index) => {
 			// Closed, Base UI commits the match as the value and does not open.
@@ -235,7 +245,11 @@ export function Select<Value extends string>(props: {
 	const openHighlight = (from: "pointer" | "down" | "up") => {
 		if (selectedIndex() !== -1) return selectedIndex();
 		if (from === "pointer") return null;
-		return edgeIndex(from === "down" ? "first" : "last", rows().length, isRowDisabled);
+		return edgeIndex(
+			from === "down" ? "first" : "last",
+			rows().length,
+			isRowDisabled,
+		);
 	};
 	const focusPanel = () => {
 		if (scroller !== undefined && scroller.mounted) {
@@ -340,7 +354,8 @@ export function Select<Value extends string>(props: {
 	const onPanelKeyDown = (event: KeyEvent) => {
 		if (isChord(event)) return;
 		event.stopPropagation();
-		if (event.key !== undefined && NAV_KEYS.includes(event.key)) keyboardNav = true;
+		if (event.key !== undefined && NAV_KEYS.includes(event.key))
+			keyboardNav = true;
 		if (typeahead.handleKey(event)) {
 			event.preventDefault();
 			return;
@@ -364,7 +379,8 @@ export function Select<Value extends string>(props: {
 			case "Home":
 			case "End":
 				event.preventDefault();
-				if (rows().length > 0) jump(event.key === "Home" ? 0 : rows().length - 1);
+				if (rows().length > 0)
+					jump(event.key === "Home" ? 0 : rows().length - 1);
 				return;
 			case "Escape":
 				// Closing pops the popup's dismiss layer before the window sees this Escape, which would then close the dialog behind.
@@ -449,7 +465,8 @@ export function Select<Value extends string>(props: {
 	const indexed = createMemo((): Slot<Value>[] => {
 		let itemIndex = 0;
 		return props.items.map((entry) => {
-			if (isItem(entry)) return { kind: "item", row: entry, index: itemIndex++ };
+			if (isItem(entry))
+				return { kind: "item", row: entry, index: itemIndex++ };
 			if ("label" in entry) return { kind: "label", label: entry.label };
 			return { kind: "separator" };
 		});
@@ -602,6 +619,8 @@ export function Select<Value extends string>(props: {
 									name={name()}
 									size={triggerSpec().icon}
 									strokeWidth={inline() || triggerHovered() ? 2 : 1.5}
+									fade
+									easeStroke
 									color={
 										inline() || triggerHovered()
 											? color.foreground
@@ -646,77 +665,81 @@ export function Select<Value extends string>(props: {
 				</Show>
 				<PopupSurface
 					presence={presence}
-					testId={props.testId === undefined ? undefined : `${props.testId}-popup`}
+					testId={
+						props.testId === undefined ? undefined : `${props.testId}-popup`
+					}
 					align={inline() ? "end" : "start"}
 					width={props.popupWidth ?? (inline() ? 160 : "anchor-size(width)")}
 					maxHeight={POPUP_MAX_HEIGHT}
 					onDismiss={close}
 				>
 					{(popupMaxHeight) => (
-					<div
-						ref={(element) => {
-							scroller = element;
-						}}
-						id={popupId}
-						testId={
-							props.testId === undefined ? undefined : `${props.testId}-list`
-						}
-						role="listbox"
-						// A pointer open, and a pointer leaving every row, land focus here so the keys still reach it.
-						tabIndex={-1}
-						onKeyDown={onPanelKeyDown}
-						onScroll={hover.handlers.onScroll}
-						style={{
-							keyboardFocusDim: false,
-							display: "flex",
-							flexDirection: "column",
-							overflowY: "scroll",
-							maxHeight: popupMaxHeight() - 2,
-						}}
-					>
-						{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
 						<div
-							{...hover.containerProps}
-							onMouseMove={onListMouseMove}
+							ref={(element) => {
+								scroller = element;
+							}}
+							id={popupId}
+							testId={
+								props.testId === undefined ? undefined : `${props.testId}-list`
+							}
+							role="listbox"
+							// A pointer open, and a pointer leaving every row, land focus here so the keys still reach it.
+							tabIndex={-1}
+							onKeyDown={onPanelKeyDown}
+							onScroll={hover.handlers.onScroll}
 							style={{
-								position: "relative",
+								keyboardFocusDim: false,
 								display: "flex",
 								flexDirection: "column",
-								padding: POPUP_PADDING,
+								overflowY: "scroll",
+								maxHeight: popupMaxHeight() - 2,
 							}}
 						>
-							<FluidHighlight
-								rect={rectOf(selectedIndex())}
-								session={() => 0}
-								radius={radius.item}
-								background={color.active}
-								glide={tween.moderate}
-								fade={tween.moderateExit}
-							/>
-							<FluidHighlight
-								rect={hoverRect}
-								session={hover.session}
-								radius={radius.item}
-								background={color.hover}
-							/>
-							<FocusRing
-								ring={rowRing}
-								testId={
-									props.testId === undefined
-										? undefined
-										: `${props.testId}-focus-ring`
-								}
-							/>
-							<For each={indexed()}>{(slot) => renderSlot(slot)}</For>
+							{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
+							<div
+								{...hover.containerProps}
+								onMouseMove={onListMouseMove}
+								style={{
+									position: "relative",
+									display: "flex",
+									flexDirection: "column",
+									padding: POPUP_PADDING,
+								}}
+							>
+								<FluidHighlight
+									rect={rectOf(selectedIndex())}
+									session={() => 0}
+									radius={radius.item}
+									background={color.active}
+									glide={tween.moderate}
+									fade={tween.moderateExit}
+								/>
+								<FluidHighlight
+									rect={hoverRect}
+									session={hover.session}
+									radius={radius.item}
+									background={color.hover}
+								/>
+								<FocusRing
+									ring={rowRing}
+									testId={
+										props.testId === undefined
+											? undefined
+											: `${props.testId}-focus-ring`
+									}
+								/>
+								<For each={indexed()}>{(slot) => renderSlot(slot)}</For>
+							</div>
 						</div>
-					</div>
 					)}
 				</PopupSurface>
 			</div>
 			<Show when={props.error}>
 				{(message: Accessor<string>) => (
 					<div
-						testId={props.testId === undefined ? undefined : `${props.testId}-error`}
+						testId={
+							props.testId === undefined ? undefined : `${props.testId}-error`
+						}
 						style={{ paddingLeft: 12, paddingTop: 4 }}
 					>
 						<text style={{ ...scale.caption, color: color.destructive }}>
@@ -792,6 +815,7 @@ function Row<Value extends string>(props: {
 						size={props.spec.icon}
 						strokeWidth={props.lit ? 2 : 1.5}
 						fade
+						easeStroke
 						color={props.lit ? color.foreground : color.mutedForeground}
 					/>
 				)}

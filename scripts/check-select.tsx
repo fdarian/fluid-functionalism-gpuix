@@ -76,16 +76,16 @@ const k = await createCheck(
 					placeholder="Gaps"
 				/>
 				<div style={{ display: "flex", flexDirection: "row" }}>
-				<Select
-					testId="filter"
-					variant="borderless"
-					size="compact"
-					hug
-					label="Type"
-					items={FRUITS}
-					defaultValue="banana"
-					popupWidth={150}
-				/>
+					<Select
+						testId="filter"
+						variant="borderless"
+						size="compact"
+						hug
+						label="Type"
+						items={FRUITS}
+						defaultValue="banana"
+						popupWidth={150}
+					/>
 				</div>
 				<Select
 					testId="invalid"
@@ -93,6 +93,15 @@ const k = await createCheck(
 					items={FRUITS}
 					placeholder="Invalid"
 					error="Pick one."
+				/>
+				<Select
+					testId="ease"
+					variant="bordered"
+					items={[
+						{ value: "a", label: "Settings", icon: "settings" },
+						{ value: "b", label: "Profile", icon: "user" },
+					]}
+					placeholder="Pick"
 				/>
 				<Button testId="after">After</Button>
 				<text>{`picked: ${picked()}`}</text>
@@ -445,4 +454,31 @@ await k.press("escape");
 await k.settle(400);
 k.check("dialog: the next Escape closes the dialog", !k.exists("dialog"));
 
+// ─── Lighting a row eases its icon stroke and colour over 80 ms ──────────────
+
+await k.focus("ease-trigger");
+await k.press("enter");
+await k.settle(300);
+{
+	const row = k.bounds("ease-option-b");
+	const iconBox = {
+		x: row.x + 8,
+		y: row.y + 4,
+		width: 16,
+		height: row.height - 8,
+	};
+	const rest = k.ink(iconBox);
+	await k.hoverFor(k.center("ease-option-b"), 10);
+	const early = k.ink(iconBox);
+	await k.settle(400);
+	const lit = k.ink(iconBox);
+	k.check(
+		"ease: the row icon's stroke and colour are partway a frame or two after the row lights",
+		early > rest + 0.1 * (lit - rest) && early < lit - 0.1 * (lit - rest),
+		`rest ${rest}, early ${early}, lit ${lit}`,
+	);
+}
+
+await k.press("escape");
+await k.settle(300);
 k.finish();

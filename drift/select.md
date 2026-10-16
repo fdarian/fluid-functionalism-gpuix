@@ -133,23 +133,14 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Fidelity:** exact for `bordered` and `borderless` (an `error` draws the destructive border on both, as the source does).
 - **Components it hits:** just this one.
 
-## Trigger background and leading icon do not fade
+## Trigger background does not fade
 
 - **Cause:** `not ported yet`.
-- **Original:** `transition-all duration-80` on the trigger; the leading icon eases colour and stroke width on `group-hover` over 80 ms (`select.tsx:235`, `:305`).
-- **Port:** `hover` / `active` state styles switch the background at once (`select.tsx:518-519`); the leading `Icon` has no `fade` (`select.tsx:534-547`) while the chevron does (`:569`). gpuix has `transitionProperty` for state-style changes (`~/code/fdarian/gpuix/FORK.md:816`).
+- **Original:** `transition-all duration-80` on the trigger, so the hover fill eases over 80 ms (`select.tsx:235`).
+- **Port:** `hover` / `active` state styles switch the background at once (`select.tsx:518-519`). The leading icon and the rows do ease colour and stroke width (`<Icon fade easeStroke>`). gpuix has `transitionProperty` for state-style changes (`~/code/fdarian/gpuix/FORK.md:816`).
 - **Workaround:** none.
-- **Fidelity:** approximated (colour and background switch; 80 ms).
+- **Fidelity:** approximated (background switches; 80 ms).
 - **Components it hits:** any control using `transition-all duration-80` without a `colorFade`.
-
-## Icon stroke width switches at once
-
-- **Cause:** `port choice` (the stroke width is baked into the SVG source string, `icon.tsx:9`; whether gpuix could animate it was not checked).
-- **Original:** `transition-[color,stroke-width] duration-80` on the leading icon and each row icon (`select.tsx:305`, `:702`).
-- **Port:** colour fades on rows via `fade`, stroke 1.5 to 2 jumps (`select.tsx:539`, `:708`).
-- **Workaround:** none.
-- **Fidelity:** approximated.
-- **Components it hits:** every icon whose stroke changes on hover.
 
 ## The port adds a pressed background on the trigger
 
