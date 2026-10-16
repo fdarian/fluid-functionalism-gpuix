@@ -26,7 +26,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `gpuix gap`.
 - **Original:** the popover and the format menu enter with `scaleY: 0.96` from the top corner and slide `y: -4` whichever side they open on (`color-picker.tsx:1005-1013`, `:2372-2382`), and the trigger's chevron rotates 180 degrees over 150ms (`:989-996`).
-- **Port:** the popup slides 4px from the side it opened on (down from above, up from below) and fades (`src/components/color-picker.tsx:698-719`, `src/lib/popup.tsx:83-107`); the chevron is swapped for a `chevron-up` icon while open, at once (`:79`, `:913`).
+- **Port:** the popup slides 4px from the side it opened on (down from above, up from below) and fades (`src/components/color-picker.tsx:700-756`, `src/lib/popup.tsx:83-107`); the chevron is swapped for a `chevron-up` icon while open, at once (`:84`, `:1013`).
 - **gpuix lacks:** `scale` and `rotate` (no `transform`; `~/code/fdarian/gpuix/FORK.md:876-887`).
 - **Workaround:** the slide and the icon swap above. README rows: "CSS transforms".
 - **Fidelity:** approximated.
@@ -36,7 +36,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `gpuix gap`.
 - **Original:** the checked format row eases between weight 400 and semibold 550 over 80ms (`color-picker.tsx:860-881`).
-- **Port:** `StableLabel` switches to SemiBold 600 at once (`src/components/color-picker.tsx:975-979`, `src/lib/stable-label.tsx`).
+- **Port:** `StableLabel` switches to SemiBold 600 at once (`src/components/color-picker.tsx:1108-1112`, `src/lib/stable-label.tsx`).
 - **gpuix lacks:** variable-font axes; see README "Missing features", variable-font row, and `drift/site.md` "Static font weights and no `opsz`".
 - **Workaround:** static cuts.
 - **Fidelity:** approximated.
@@ -55,7 +55,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** the panel carries `shadow-surface-1` (a 1px ring) and the popover and format menu `shadow-surface-3` (ring plus two stacked drops, inset hairline and highlight in dark) (`color-picker.tsx:1958`, `:2405`, `:1025-1027`; tokens in `app/globals.css:137-162`).
-- **Port:** a 1px `borderColor: popupBorder` plus one drop (`shadow3()`, `src/lib/theme.ts:332-341`; `src/components/color-picker.tsx:726-729`, `:1643-1647`). The README row says gpuix paints a single non-inset shadow, but `boxShadow` takes a list and `inset` (`~/code/fdarian/gpuix/packages/native/js/host.ts:369-377`, `:558`; `FORK.md:646-649`).
+- **Port:** a 1px `borderColor: popupBorder` plus one drop (`shadow3()`, `src/lib/theme.ts:332-341`; `src/components/color-picker.tsx:746`, `:1643-1647`). The README row says gpuix paints a single non-inset shadow, but `boxShadow` takes a list and `inset` (`~/code/fdarian/gpuix/packages/native/js/host.ts:369-377`, `:558`; `FORK.md:646-649`).
 - **Workaround:** border plus one drop; README "shadow-surface-3" row.
 - **Fidelity:** approximated.
 - **Components it hits:** every popup and card.
@@ -78,15 +78,6 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Fidelity:** approximated (two steps lighter in the popover).
 - **Components it hits:** just this one.
 
-## Popover and format menu speed
-
-- **Cause:** `port choice` (reason not stated; `Popup`'s doc says "the same slide and fade as the shared popup").
-- **Original:** the popover uses `spring.moderate` in and `spring.moderate.exit` out, 160ms and 120ms (`color-picker.tsx:2379`); the format menu uses `spring.fast` / `.exit`, 80ms and 60ms (`:1012`).
-- **Port:** both use `tween.fast` / `tween.fastExit` (`src/components/color-picker.tsx:719`), and the presence timer is the shared 60ms (`src/lib/presence.ts:4`). The popover is twice as quick in and out.
-- **Workaround:** none.
-- **Fidelity:** approximated.
-- **Components it hits:** just this one.
-
 ## Rails: hover preview and value bubble
 
 - **Cause:** `not ported yet`.
@@ -100,7 +91,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** a press springs the thumb to the pressed spot on `spring.moderate`, a drag sets it directly, release and keyboard or programmatic changes spring again (`registry/radix/slider.tsx:721-723`, `:763-766`, `:799-815`, and the value-sync effect at `:611-625`).
-- **Port:** `left` is a plain style from the value, so every change jumps (`src/components/color-picker.tsx:545`). The slider port animates its thumb through `createMotionWrites` (README "Bugs", slider row), which the rails do not use.
+- **Port:** `left` is a plain style from the value, so every change jumps (`src/components/color-picker.tsx:545`). The slider port animates its thumb through `createAnimateQueue` (`src/components/slider.tsx:158`; README "Bugs", slider row), which the rails do not use.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -154,7 +145,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** the format trigger, channel fields, hex field, eyedropper and popover trigger fade background and text over 80ms (`color-picker.tsx:978`, `:1267`, `:1466`, `:1631`, `:2315`), and a menu row's colour and weight over 80ms (`:870`). The remove X changes colour at once (`:2359`).
-- **Port:** state styles switch at once (`src/components/color-picker.tsx:892-897`, `:1163-1164`, `:1765`); the row label colour likewise (`:978`). Other components use `colorFade` for text (`src/lib/theme.ts:310`).
+- **Port:** state styles switch at once (`src/components/color-picker.tsx:988-998`, `:1163-1164`, `:1765`); the row label colour likewise (`:1110`). Other components use `colorFade` for text (`src/lib/theme.ts:310`).
 - **Workaround:** none. Per-property CSS transitions exist (`FORK.md:816-819`).
 - **Fidelity:** dropped.
 - **Components it hits:** every control with `transition-colors`.
@@ -190,19 +181,20 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** a keyboard-focused row gets a 1px ring 2px outside it that glides between rows on `spring.fast` and fades out on `spring.fast.exit` (`color-picker.tsx:1118-1138`); it shows for `:focus-visible` only (`:1069-1072`).
-- **Port:** the keyboard-lit row gets only the hover highlight; there is no ring (`src/components/color-picker.tsx:932-946`, `:947-983`). The select port has the ring (recent commit "Select: the keyboard-lit row gets a focus ring").
+- **Port:** the keyboard-lit row gets only the hover highlight; there is no ring (`src/components/color-picker.tsx:1055-1069`, `:1070-1117`); rows now take real focus, so a ring could follow `focusVisible` on the focused row. The select port has the ring (recent commit "Select: the keyboard-lit row gets a focus ring").
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
 
-## Format menu: focus stays on the trigger
+## Tab from a popup row does not continue after the trigger
 
-- **Cause:** `port choice` (`BASE-UI-AUDIT.md:441`: "the trigger keeps focus because the keys live on it").
-- **Original:** Base UI's Menu moves focus into the popup and onto a row, which is `:focus-visible` for keyboard use, and returns it to the trigger on close (`color-picker.tsx:961-971`, `:1047-1074`).
-- **Port:** the trigger keeps focus and names the lit row through `aria-activedescendant`; arrows, Home/End and typeahead are handled on the trigger (`src/components/color-picker.tsx:803-850`, `:872`). The audit rows for the format menu are otherwise `fixed` or `ported`.
-- **Workaround:** n/a.
-- **Fidelity:** approximated.
-- **Components it hits:** just this one.
+- **Cause:** `gpuix gap`; same as `drift/dropdown.md` "Tab from a popup row does not continue after the trigger".
+- **Original:** Tab in the open format menu closes it and focus moves to the next tabbable after the trigger; Shift+Tab closes and focuses the trigger (Base UI `FloatingFocusManager`).
+- **Port:** the panel's Tab handler cancels the default, closes, hands focus to the trigger and calls `renderer.focusNext()` from there (`tabbingOn`, `onPanelKeyDown` and `close` in `src/components/color-picker.tsx:811-835`, `:910-952`); Shift+Tab stops on the trigger.
+- **gpuix lacks:** a tab order that puts a floating layer where its trigger is.
+- **Workaround:** the explicit `focusNext()`.
+- **Fidelity:** exact for the target, approximated for the mechanism.
+- **Components it hits:** dropdown (same workaround); select closes on Tab by other means.
 
 ## Popover: focus is not moved in, restored or lost
 
@@ -290,7 +282,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** the format trigger has no label, so its name is "HEX" and so on (`color-picker.tsx:974-997`); the hex field is labelled "Hex value" (`:2116`).
-- **Port:** the format trigger is "Color format" (`src/components/color-picker.tsx:868`), the hex field "Hex" (`:1318`); the popover trigger name is covered above.
+- **Port:** the format trigger is "Color format" (`src/components/color-picker.tsx:969`), the hex field "Hex" (`:1318`); the popover trigger name is covered above.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
