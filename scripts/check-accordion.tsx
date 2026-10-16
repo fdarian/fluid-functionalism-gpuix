@@ -111,7 +111,11 @@ for (let frame = 0; frame < 40; frame++) {
 	if (frame > 0) maxLag = Math.max(maxLag, Math.abs(ringNow.y + 2 - rowNow.y));
 	rowTravel = Math.max(rowTravel, Math.abs(rowNow.y - rowStart));
 }
-renderer.clockResume();
+for (let step = 0; step < 4; step++) {
+	renderer.clockFastForward(100);
+	renderer.flush();
+	renderer.dispatchNativeEvents();
+}
 kit.check(
 	"row moved under the ring",
 	rowTravel > 20,
@@ -122,9 +126,9 @@ kit.check(
 	maxLag > 0.5,
 	`max lag ${maxLag.toFixed(2)}px`,
 );
-await settle(400);
 const settledRow = bounds("single-2");
 const settledRing = bounds("single-focus-ring");
+renderer.clockResume();
 kit.check(
 	"ring settles on the row",
 	Math.abs(settledRing.y + 2 - settledRow.y) < 0.5,
