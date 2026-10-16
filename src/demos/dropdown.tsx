@@ -601,13 +601,14 @@ async function reveal(shot: ShotContext, testId: string) {
 }
 
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
-	// The inline panel holds the focus itself and names the row its ring is on.
-	await shot.focus("groups");
-	shot.expectAria("groups", { active_descendant: shot.idOf("groups-0") });
+	// The inline panel is a plain group: its rows take the focus, so the group names no lit row.
+	await shot.focus("groups-0");
+	shot.expectAria("groups", { role: "Group", active_descendant: undefined });
 	await shot.press("down");
 	await shot.press("up");
-	shot.expectAria("groups", { active_descendant: shot.idOf("groups-0") });
-	// Opened by key, which the test renderer can run: the trigger names its popup and the row the keys lit.
+	shot.expectAria("groups", { active_descendant: undefined });
+	// Opened by key, which the test renderer can run: the trigger names its popup, and the focused row is not an activedescendant.
+	await reveal(shot, "menu-trigger");
 	await shot.focus("menu-trigger");
 	shot.expectAria("menu-trigger", {
 		role: "Button",
@@ -625,12 +626,14 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 		role: "Menu",
 		labelled_by: [shot.idOf("menu-trigger")],
 	});
-	shot.expectAria("menu-trigger", { active_descendant: shot.idOf("menu-0") });
+	shot.expectAria("menu-trigger", { active_descendant: undefined });
 	await shot.press("down");
-	shot.expectAria("menu-trigger", { active_descendant: shot.idOf("menu-1") });
+	shot.expectAria("menu-trigger", { active_descendant: undefined });
 	shot.expectAria("menu-1", { role: "MenuItemRadio", toggled: "False" });
 	await shot.press("escape");
-	// Submenu: the trigger row names its popup, and once the keys are inside the lit row is the submenu's.
+	await shot.settle(300);
+	// Submenu: the trigger row names its popup; the keys are inside it by real focus, so no row is an activedescendant.
+	await reveal(shot, "sub-trigger");
 	await shot.focus("sub-trigger");
 	await shot.press("enter");
 	shot.expectAria("sub-move", { has_popup: "Menu", expanded: false });
@@ -643,9 +646,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 		role: "Menu",
 		labelled_by: [shot.idOf("sub-move")],
 	});
-	shot.expectAria("sub-trigger", {
-		active_descendant: shot.idOf("sub-folder-Inbox"),
-	});
+	shot.expectAria("sub-trigger", { active_descendant: undefined });
 	await shot.press("escape escape");
 	// Arrows land on a disabled row; it says so.
 	await shot.focus("keys-trigger");
@@ -653,6 +654,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectAria("keys-1", { disabled: true });
 	await shot.press("escape");
 
+	await shot.scroll(700, 400, 0, 5000);
 	await reveal(shot, "basic-0");
 	await shot.hover("basic-2");
 	shot.capture("inline-hover");
