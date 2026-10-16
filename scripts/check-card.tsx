@@ -13,12 +13,12 @@ import {
 	CardHeader,
 	CardTitle,
 } from "../src/components/card";
-import { createCheck } from "./check-kit-card";
+import { createCheck } from "./check-kit";
 
 const [cardClicks, setCardClicks] = createSignal(0);
 const [buttonClicks, setButtonClicks] = createSignal(0);
 
-const check = createCheck(() => (
+const check = await createCheck(() => (
 	<div
 		style={{
 			display: "flex",

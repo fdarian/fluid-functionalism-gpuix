@@ -6,11 +6,11 @@
  */
 import { createSignal } from "solid-js";
 import { CarouselDots } from "../src/components/carousel-dots";
-import { createCheck } from "./check-kit-card";
+import { createCheck } from "./check-kit";
 
 const [value, setValue] = createSignal(1);
 
-const check = createCheck(() => (
+const check = await createCheck(() => (
 	<div style={{ padding: 40 }}>
 		<CarouselDots
 			testId="dots"

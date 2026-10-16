@@ -1,22 +1,44 @@
+/**
+ * Shared harness for the `scripts/check-<component>.tsx` scenarios: mounts either
+ * a demo page of the app or one component tree in the offscreen renderer and
+ * drives it in real time.
+ */
 import { createTestRoot } from "@gpuix/solid/testing";
+import type { JSX } from "solid-js";
 import { App } from "../src/app";
 import { loadDemos } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
 
-/** Shared harness for the `check-<component>.tsx` scenario scripts: real-time frames, testId lookups, PASS/FAIL lines. */
-export async function createCheck(slug: string, initialSettleMs = 800) {
-	const demos = await loadDemos();
-	const test = createTestRoot({ width: 1240, height: 780, fonts });
+type CheckOptions = {
+	width?: number;
+	height?: number;
+	/** Frames to run after mounting; a demo page needs time to load, a bare view does not. */
+	initialSettleMs?: number;
+};
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** `target` is a demo page slug, or a view to mount on its own. */
+export async function createCheck(
+	target: string | (() => JSX.Element),
+	options: CheckOptions = {},
+) {
+	const isPage = typeof target === "string";
+	const test = createTestRoot({
+		width: options.width ?? (isPage ? 1240 : 800),
+		height: options.height ?? (isPage ? 780 : 600),
+		fonts,
+	});
 	const renderer = test.renderer;
 	let failures = 0;
 
-	async function settle(ms = 400) {
+	async function settle(ms = 300) {
 		const until = performance.now() + ms;
 		do {
 			renderer.flush();
 			renderer.dispatchNativeEvents();
-			await new Promise((resolve) => setTimeout(resolve, 16));
+			await sleep(16);
 		} while (performance.now() < until);
 		renderer.flush();
 		renderer.dispatchNativeEvents();
@@ -40,8 +62,24 @@ export async function createCheck(slug: string, initialSettleMs = 800) {
 		return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
 	}
 
+	/** The accessibility node whose author id (or label, when the element has no id) matches. */
+	function aria(idOrLabel: string): Record<string, unknown> | undefined {
+		const nodes = renderer.getA11yTree().nodes ?? {};
+		for (const node of Object.values(nodes)) {
+			if (node.aria?.author_id === idOrLabel || node.aria?.label === idOrLabel)
+				return node.aria as Record<string, unknown>;
+		}
+		return undefined;
+	}
+
 	setThemeChoice("dark");
-	test.render(() => <App demos={demos} initialPage={slug} />);
+	if (isPage) {
+		const demos = await loadDemos();
+		test.render(() => <App demos={demos} initialPage={target} />);
+	} else {
+		test.render(target);
+	}
+	const initialSettleMs = options.initialSettleMs ?? (isPage ? 800 : 0);
 	if (initialSettleMs > 0) await settle(initialSettleMs);
 
 	return {
@@ -50,11 +88,36 @@ export async function createCheck(slug: string, initialSettleMs = 800) {
 		element,
 		bounds,
 		center,
+		aria,
 		exists: (testId: string) => renderer.findByTestId(testId) !== undefined,
+		async click(testId: string) {
+			const point = center(testId);
+			renderer.nativeSimulateClick(point.x, point.y);
+			await settle();
+		},
+		async clickAt(x: number, y: number) {
+			renderer.nativeSimulateClick(x, y);
+			await settle();
+		},
+		async focus(testId: string) {
+			renderer.focusElement(element(testId).id);
+			await settle();
+		},
+		async press(keystrokes: string) {
+			renderer.simulateKeystrokes(keystrokes);
+			await settle();
+		},
 		check(name: string, ok: boolean, detail = "") {
 			if (!ok) failures++;
 			console.log(
 				`${ok ? "PASS" : "FAIL"} ${name}${detail === "" ? "" : ` (${detail})`}`,
+			);
+		},
+		expect(label: string, actual: unknown, expected: unknown) {
+			const ok = JSON.stringify(actual) === JSON.stringify(expected);
+			if (!ok) failures++;
+			console.log(
+				`${ok ? "PASS" : "FAIL"} ${label}: ${JSON.stringify(actual)}${ok ? "" : ` (expected ${JSON.stringify(expected)})`}`,
 			);
 		},
 		finish() {

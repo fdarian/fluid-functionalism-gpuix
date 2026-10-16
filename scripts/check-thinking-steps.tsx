@@ -9,7 +9,7 @@
  */
 import { createCheck } from "./check-kit";
 
-const kit = await createCheck("thinking-steps", 0);
+const kit = await createCheck("thinking-steps", { initialSettleMs: 0 });
 const renderer = kit.renderer;
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 

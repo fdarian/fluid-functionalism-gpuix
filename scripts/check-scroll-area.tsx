@@ -7,12 +7,12 @@
  */
 import { createSignal, For } from "solid-js";
 import { ScrollArea } from "../src/components/scroll-area";
-import { createCheck } from "./check-kit-card";
+import { createCheck } from "./check-kit";
 
 const [text, setText] = createSignal("");
 const [listKeys, setListKeys] = createSignal(0);
 
-const check = createCheck(() => (
+const check = await createCheck(() => (
 	<div style={{ padding: 20 }}>
 		<ScrollArea testId="area" width={300} height={160}>
 			<div style={{ display: "flex", flexDirection: "column", padding: 8 }}>
