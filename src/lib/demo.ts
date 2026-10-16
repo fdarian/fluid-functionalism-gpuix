@@ -119,6 +119,8 @@ export const SHOWCASE_SLUG = "showcase";
 export interface PageModule {
 	/** Sidebar label, menu row and (for "docs" pages) the heading's text. */
 	title: string;
+	/** The "docs" heading when it differs from the sidebar label. */
+	heading?: string;
 	/** The sidebar section the page sits under; its menu group too. */
 	group: "Pages" | "System";
 	/** Sorts within the group, ascending. */
@@ -152,6 +154,9 @@ function assertPageModule(
 		throw new Error(`src/pages/${slug}.tsx must export ${what}`);
 	};
 	if (typeof candidate.title !== "string") fail("a string `title`");
+	if (candidate.heading !== undefined && typeof candidate.heading !== "string") {
+		fail("`heading` as a string, or not at all");
+	}
 	if (candidate.group !== "Pages" && candidate.group !== "System") {
 		fail('`group: "Pages" | "System"`');
 	}
@@ -214,6 +219,7 @@ export async function loadPages(demos: readonly Demo[]): Promise<Page[]> {
 		pages.push({
 			slug,
 			title: module.title,
+			heading: module.heading,
 			group: module.group,
 			order: module.order,
 			layout: module.layout,

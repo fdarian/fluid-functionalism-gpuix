@@ -114,8 +114,8 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 
 ## Demo page
 
-- **Cause:** `port choice` (reason not stated; the real composer is the input-message port).
+- **Cause:** `port choice` (reason not stated; the real composer is the input-message port); `not ported yet` for the morph.
 - **Original:** `queued-chat-demo.tsx`: a real `InputMessage` over a transcript with a paused, thinking reply (`ChatMessage`, `ThinkingIndicator`), a play and pause button that steps the stream word by word, a Reset, three seeded cards (two attachments, "Tighten the spacing", and a long text that truncates), queued messages that dispatch into the transcript with the layout morph, and a "rich" variant with an attach dropdown and a model picker (`:55-120`, `:243-300`). Edit pulls text and files back into the composer.
-- **Port:** one card: a "Queue message" / "Queue with attachment" / "Clear" row above a plain box that shows the composer text (`src/demos/queued-stack.tsx:39-135`). Four seeded cards, one with three files (two images and a PDF glyph), with other copy (`:24-50`); Edit puts the text only back (`:122-125`). Nothing is dispatched, and there is no transcript, streaming reply, play or pause, or rich variant.
-- **Fidelity:** approximated (the stack alone).
+- **Port:** two cards in `src/demos/queued-stack.tsx`. "Queued Stack": a "Queue message" / "Queue with attachment" / "Clear" row above a plain box that shows the composer text; four seeded cards, one with three files (`:24-50`). "Queued chat": `QueuedChat` from `src/lib/queued-chat.tsx`, the source's demo with a real `InputMessage`, a transcript, a Resume / Pause / Reset button, the same three seeded cards and dispatch into the transcript (the input-message page also shows its `rich` variant). Edit puts the text and files back but does not focus the composer (see `drift/input-message.md`, "Queued chat").
+- **Fidelity:** approximated (no morph).
 - **Components it hits:** input-message, chat-message, thinking-indicator.

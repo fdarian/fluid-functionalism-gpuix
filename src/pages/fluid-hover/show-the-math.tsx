@@ -1,17 +1,17 @@
 import type { EventPayload, HostElement } from "@gpuix/solid";
 import { type Accessor, createSignal, For, Show } from "solid-js";
 import { Switch } from "../../components/switch";
+import { ComponentPreview, MONO } from "../../lib/doc-page";
 import { createFluidHover } from "../../lib/fluid-hover";
 import { color, type as scale, weight, withAlpha } from "../../lib/theme";
 import {
 	FluidRow,
 	ListFrame,
 	ListHighlight,
-	MONO,
-	PreviewFrame,
 	ROW_GAP,
 } from "./parts";
 import { ROWS } from "./plain-vs-fluid";
+import { MATH_CODE } from "./snippets";
 
 function MathList(props: { showMath: () => boolean }) {
 	const hover = createFluidHover();
@@ -195,7 +195,7 @@ function MathList(props: { showMath: () => boolean }) {
 export function ShowTheMathDemo() {
 	const [showMath, setShowMath] = createSignal(true);
 	return (
-		<PreviewFrame>
+		<ComponentPreview testId="show-the-math-preview" code={MATH_CODE} cull>
 			<div
 				style={{
 					width: "100%",
@@ -216,6 +216,6 @@ export function ShowTheMathDemo() {
 					testId="math-switch"
 				/>
 			</div>
-		</PreviewFrame>
+		</ComponentPreview>
 	);
 }

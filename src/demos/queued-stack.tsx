@@ -4,6 +4,7 @@ import type { FileLike } from "../components/file-thumbnail";
 import { type QueuedMessage, QueuedStack } from "../components/queued-stack";
 import type { DemoModule } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
+import { QueuedChat } from "../lib/queued-chat";
 import { color, radius, type as scale, shadow3 } from "../lib/theme";
 
 const asset = (name: string) =>
@@ -37,6 +38,17 @@ export const title = "Queued Stack";
 export const group = "Components";
 
 export function Demo() {
+	return (
+		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+			<QueuedStackCard />
+			<DemoCard title="Queued chat">
+				<QueuedChat testId="chat" />
+			</DemoCard>
+		</div>
+	);
+}
+
+function QueuedStackCard() {
 	let nextId = 5;
 	const [queue, setQueue] = createSignal<QueuedMessage[]>([
 		{ id: "1", text: SAMPLE_TEXTS[0], files: [] },
@@ -169,4 +181,15 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(1180, 700);
 	await shot.click("clear");
 	shot.capture("cleared");
+
+	// The queued chat sits below the fold.
+	await shot.scroll(600, 400, 0, -700);
+	await shot.settle(300);
+	shot.capture("queued-chat");
+	await shot.hover("queued-chat-1");
+	shot.capture("queued-chat-expanded");
+	await shot.moveTo(1180, 700);
+	await shot.click("chat-playback");
+	await shot.settle(6000);
+	shot.capture("queued-chat-streaming");
 };

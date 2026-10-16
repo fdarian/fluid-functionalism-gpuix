@@ -1,10 +1,17 @@
 import { For, type JSX } from "solid-js";
 import type { ShotContext } from "../lib/demo";
+import {
+	Code,
+	DocPage,
+	DocSection,
+	Prose,
+	SectionTitle,
+} from "../lib/doc-page";
 import { color } from "../lib/theme";
 import { AxesDemo } from "./fluid-hover/axes";
 import { CostDemo } from "./fluid-hover/cost";
 import { ListsDemo } from "./fluid-hover/lists";
-import { Code, DocSection, Prose, SectionTitle } from "./fluid-hover/parts";
+import { FLUID_HOVER_INSTALL_PROMPT } from "./fluid-hover/install-prompt";
 import { PlainVsFluidDemo } from "./fluid-hover/plain-vs-fluid";
 import { ShowTheMathDemo } from "./fluid-hover/show-the-math";
 
@@ -25,6 +32,14 @@ export const menuKeywords = [
 
 export async function scenarios(shot: ShotContext) {
 	// The wheel keeps GPUI's sign: negative scrolls down.
+	const scrollTo = async (testId: string) => {
+		for (let tick = 0; tick < 40; tick++) {
+			const centre = shot.centerOf(testId);
+			if (centre.y < 460) return;
+			await shot.scroll(600, 400, 0, -300);
+		}
+		throw new Error(`${testId} never scrolled into view`);
+	};
 	// The scripted cursors ride both lists until a real pointer enters.
 	await shot.settle(1800);
 	shot.capture("blink-or-glide-scripted");
@@ -36,20 +51,25 @@ export async function scenarios(shot: ShotContext) {
 	await shot.click("plain-vs-fluid-playback");
 	await shot.moveTo(1100, 400);
 	shot.capture("blink-or-glide-paused");
-	await shot.scroll(600, 400, 0, -700);
+	await shot.click("plain-vs-fluid-preview-code-tab");
+	shot.capture("blink-or-glide-code");
+	await shot.click("plain-vs-fluid-preview-preview-tab");
+	await scrollTo("math-row-1");
 	await shot.hover("math-row-1");
 	shot.capture("show-the-math");
 	await shot.click("math-switch");
 	await shot.hover("math-row-3");
 	shot.capture("show-the-math-off");
-	await shot.scroll(600, 400, 0, -600);
+	await scrollTo("axes-tab-Settings");
 	await shot.hover("axes-tab-Settings");
 	shot.capture("axes-x");
+	await scrollTo("axes-list-3");
 	await shot.hover("axes-list-3");
 	shot.capture("axes-y");
+	await scrollTo("axes-grid-3");
 	await shot.hover("axes-grid-3");
 	shot.capture("axes-xy");
-	await shot.scroll(600, 400, 0, -700);
+	await scrollTo("lists-Yesterday");
 	await shot.hover("lists-Yesterday");
 	shot.capture("lists-children");
 	await shot.hover("lists-Knowledge");
@@ -59,7 +79,7 @@ export async function scenarios(shot: ShotContext) {
 	await shot.click("lists-Chat");
 	await shot.settle(800);
 	shot.capture("lists-collapsed");
-	await shot.scroll(600, 400, 0, -600);
+	await scrollTo("cost-row-first");
 	await shot.hover("cost-row-first");
 	await shot.hover("cost-row-first");
 	shot.capture("cost-first-row");
@@ -116,20 +136,11 @@ function UseList(props: { title: string; items: readonly string[] }) {
 
 export function Page(): JSX.Element {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-			{/* The page heading is `App`'s, a column gap above; the source sets it 8px above the description. */}
-			<div style={{ marginTop: -16 }}>
-				<Prose>{DESCRIPTION}</Prose>
-			</div>
-
-			<div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-				<SectionTitle>Installation</SectionTitle>
-				<Prose>
-					The useFluidHover hook and its highlight, already in every list and
-					menu.
-				</Prose>
-			</div>
-
+		<DocPage
+			description={<Prose>{DESCRIPTION}</Prose>}
+			installNote="The useFluidHover hook and its highlight, already in every list and menu."
+			installPrompt={FLUID_HOVER_INSTALL_PROMPT}
+		>
 			<DocSection title="Blink or glide">
 				<Prose>
 					Watch both cursors. The left blinks off and on 9 times per pass, and
@@ -210,6 +221,6 @@ export function Page(): JSX.Element {
 					the same in your app.
 				</Prose>
 			</DocSection>
-		</div>
+		</DocPage>
 	);
 }

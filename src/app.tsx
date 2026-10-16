@@ -471,6 +471,7 @@ export function App(props: {
 				demos={props.demos}
 				pages={props.pages}
 				showcase={SHOWCASE}
+				current={page()}
 				onPage={setPage}
 			/>
 		</AppFrame>
@@ -493,7 +494,7 @@ function PageBody(props: { page: Page }): JSX.Element {
 			when={props.page.layout === "docs"}
 			fallback={<props.page.Page />}
 		>
-			<Heading>{props.page.title}</Heading>
+			<Heading>{props.page.heading ?? props.page.title}</Heading>
 			<props.page.Page />
 		</Show>
 	);

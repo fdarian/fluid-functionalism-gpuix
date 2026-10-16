@@ -160,7 +160,21 @@ repeating it.
 
 ## Demo page
 
-- **Cause:** `port choice` for the shape (the demo is a showcase card, not a docs page; reason not stated beyond that); `not ported yet` for the missing variants.
+- **Cause:** `port choice` for the shape (the demo is a showcase card, not a docs page; reason not stated beyond that); `not ported yet` for what is missing.
 - **Original:** `app/docs/input-message/page.tsx`: Playground (toggles for placeholder suggestion, prompts, history, attachments, min rows, disabled, slots, queue status), Basic, Suggestions, Attachments (composer floating over a scrolling transcript, pre-filled, a Reset button), Queued messages (`queued-chat-demo.tsx`: a pausable streaming reply, `showQueue={false}` with the `QueuedStack` above the composer, the queued-to-sent morph, a `rich` variant with an attach dropdown and a model picker, Reset), Left Slot Only, Right Slot Only, Send Handler (no history), Disabled (text "This composer is disabled"), then a props table. Each has a `ComponentPreview` with code.
-- **Port:** Basic, Suggestions, Attachments (pre-filled, transcript above the composer, no scroll or Reset), Queued messages (the built-in rows, a plain stand-in reply), both slots in one card, Send handler (with `history` added), Disabled (empty value) with Compact (`src/demos/input-message.tsx:83-311`). Missing: Playground, the `QueuedStack` / morph / rich queued demo, Reset buttons, code snippets, props table. Extras: history, compact.
-- **Fidelity:** 8 of 9 source sections have a port counterpart; the queued one is simpler.
+- **Port:** Playground (every control and the shuffle; `src/demos/input-message.tsx`), Basic, Suggestions, Attachments (pre-filled, a transcript that scrolls under the composer and stays pinned to its end, Reset), Queued messages (`src/lib/queued-chat.tsx`: pausable stream, the stack over the composer with `showQueue={false}`, Reset), the same with the rich attach menu and model picker, a built-in-rows queue card, both slots in one card, Send handler (with `history` added), Disabled (empty value) with Compact. Missing: the queued-to-sent morph, code snippets, props table. Extras: history, compact, the built-in-rows card.
+- **Fidelity:** every source section has a port counterpart.
+
+## Playground: what differs
+
+- **Cause:** `not ported yet` (Get code); `port choice` (the preview frame is a `DemoCard`, as for every playground).
+- **Original:** the panel ends with a "Get code" dialog (preset codes, `usePresetUrlSync`) and the Code tab shows a snippet generated from the toggles; the left slot is `Tooltip` "Attach" with an `icon-sm` button; the preview is 560px with compact padding.
+- **Port:** no Get code, no snippet. The stage is 480px in the card's 20px padding. The left slot and the stack's tooltips are the same. Every control, default and the shuffle match.
+- **Fidelity:** approximated.
+
+## Queued chat: what differs
+
+- **Cause:** `not ported yet` (morph, menu placement, edit focus); `gpuix gap` (queue types).
+- **Original:** the front card morphs into its sent bubble (`morphLayoutId` on the stack and `layoutId` on `ChatMessage`); the attach and model menus open above their buttons (`bottom-full`); the buttons are lit while their menu is open (`active`) and wrapped in tooltips; editing a card puts the caret at the end of the composer.
+- **Port:** no morph: neither `QueuedStack` nor `ChatMessage` takes a layout id, so a dispatched card fades out and its bubble fades in. `DropdownContent` has no side prop, so the menus open below the composer's slot buttons. `Button` has no `active` prop. Edit refills the composer but does not focus it: `InputMessage` has no ref and gpuix has no way to find its textarea from outside. The composer's `QueuedMessage` carries `ComposerFile`s and the stack's carries `FileLike`s, so `ComposerQueueStack` (`src/lib/composer-stage.tsx`) maps between them, caching one mapped object per message because the stack keys its cards by identity.
+- **Fidelity:** approximated (morph dropped).
