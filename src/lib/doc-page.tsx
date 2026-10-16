@@ -162,6 +162,8 @@ function CopyPromptButton(props: { prompt: string }) {
  */
 export function DocPage(props: {
 	description: JSX.Element;
+	/** A paragraph under the description, 16px below it, read before the install. */
+	intro?: string;
 	installNote: string;
 	installPrompt: string;
 	children: JSX.Element;
@@ -169,8 +171,18 @@ export function DocPage(props: {
 	return (
 		<div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
 			{/* The heading is `App`'s, a column gap above; the source sets the description 8px under its title. */}
-			<div style={{ marginTop: -16 }}>
+			<div
+				style={{
+					marginTop: -16,
+					display: "flex",
+					flexDirection: "column",
+					gap: 16,
+				}}
+			>
 				{props.description}
+				<Show when={props.intro}>
+					{(intro: Accessor<string>) => <Prose>{intro()}</Prose>}
+				</Show>
 			</div>
 			<div
 				style={{

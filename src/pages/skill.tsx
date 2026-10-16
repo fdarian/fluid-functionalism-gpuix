@@ -182,7 +182,7 @@ export async function scenarios(shot: ShotContext) {
 export function Page(): JSX.Element {
 	return (
 		<DocPage
-			description={DESCRIPTION}
+			description={<Prose>{DESCRIPTION}</Prose>}
 			installNote="One prompt for your coding agent: it installs the skill, then audits your project with it."
 			installPrompt={INSTALL_PROMPT}
 		>
