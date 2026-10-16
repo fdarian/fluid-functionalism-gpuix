@@ -44,8 +44,12 @@ export function defineIcon(nodes: string): IconNodes {
 /** What `<Icon name>` and the components' icon props accept: a shared glyph by name, or one defined next to the component. */
 export type IconRef = IconName | IconNodes;
 
+/** The glyph's inner SVG markup. */
+export function iconNodes(icon: IconRef) {
+	return typeof icon === "string" ? nodes[icon] : icon.nodes;
+}
+
 /** lucide glyph as an SVG string. `currentColor` resolves to the element's `style.color`. */
 export function iconSource(icon: IconRef, strokeWidth: number) {
-	const nodesOf = typeof icon === "string" ? nodes[icon] : icon.nodes;
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">${nodesOf}</svg>`;
+	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">${iconNodes(icon)}</svg>`;
 }
