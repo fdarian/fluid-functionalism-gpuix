@@ -1,4 +1,9 @@
-import type { JSX } from 'solid-js';
+import { createCheckboxRoot } from 'base-ui-solid-gpuix/checkbox';
+import {
+	type CheckboxGroup as CheckboxGroupState,
+	createCheckboxGroup,
+} from 'base-ui-solid-gpuix/checkbox-group';
+import { createContext, type JSX, useContext } from 'solid-js';
 import { CheckMark } from '#/lib/icon';
 import { color } from '#/lib/theme';
 import {
@@ -13,6 +18,8 @@ import {
 
 const CHECK = 'M6 12L10 16L18 8';
 
+const CheckboxContext = createContext<CheckboxGroupState>();
+
 export function CheckboxGroup(props: {
 	/** The whole checked set: the group merges contiguous checked rows into one background. */
 	checkedIndices: ReadonlySet<number>;
@@ -21,15 +28,18 @@ export function CheckboxGroup(props: {
 	children: JSX.Element;
 }) {
 	const runs = createSelectionRuns(() => [...props.checkedIndices]);
+	const group = createCheckboxGroup();
 	return (
-		<ChoiceGroup
-			role="group"
-			size={props.size}
-			runs={runs}
-			testId={props.testId}
-		>
-			{props.children}
-		</ChoiceGroup>
+		<CheckboxContext.Provider value={group}>
+			<ChoiceGroup
+				groupProps={group.groupProps}
+				size={props.size}
+				runs={runs}
+				testId={props.testId}
+			>
+				{props.children}
+			</ChoiceGroup>
+		</CheckboxContext.Provider>
 	);
 }
 
@@ -86,14 +96,21 @@ export function CheckboxItem(props: {
 	onToggle: () => void;
 	testId?: string;
 }) {
+	const group = useContext(CheckboxContext);
+	if (group === undefined) {
+		throw new Error('A CheckboxItem must be inside a CheckboxGroup');
+	}
+	const item = createCheckboxRoot(group, {
+		index: props.index,
+		label: () => props.label,
+		checked: () => props.checked,
+		onCheckedChange: () => props.onToggle(),
+	});
 	return (
 		<ChoiceRow
 			index={props.index}
 			label={props.label}
-			role="checkbox"
-			checked={props.checked}
-			tabbable
-			onActivate={props.onToggle}
+			item={item}
 			testId={props.testId}
 			indicator={(active, size) => (
 				<Checkbox

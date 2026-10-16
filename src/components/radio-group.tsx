@@ -1,10 +1,13 @@
 import { AnimatePresence, motion } from '@gpuix/solid';
+import { createRadioRoot } from 'base-ui-solid-gpuix/radio';
+import {
+	createRadioGroup,
+	type RadioGroup as RadioGroupState,
+} from 'base-ui-solid-gpuix/radio-group';
 import {
 	createContext,
 	createMemo,
-	createSignal,
 	type JSX,
-	onCleanup,
 	Show,
 	useContext,
 } from 'solid-js';
@@ -22,18 +25,9 @@ import {
 const DOT_FROM = 0.3;
 const DOT_OUT = { duration: 0.04 } as const;
 
-interface ItemEntry {
-	value: string | undefined;
-	selected: () => boolean | undefined;
-}
-
 interface RadioContextValue {
-	/** Row index of the selected item, from whichever of the three selection APIs the group is using. */
-	selectedIndex: () => number | undefined;
-	value: () => string | undefined;
-	onValueChange: ((value: string) => void) | undefined;
+	group: RadioGroupState;
 	size: () => ChoiceSize;
-	register(index: number, entry: ItemEntry): void;
 }
 
 const RadioContext = createContext<RadioContextValue>();
@@ -55,54 +49,29 @@ export function RadioGroup(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
-	const [entries, setEntries] = createSignal<ReadonlyMap<number, ItemEntry>>(
-		new Map(),
-	);
-	const selectedIndex = createMemo(() => {
-		if (props.value !== undefined) {
-			for (const [index, entry] of entries()) {
-				if (entry.value === props.value) return index;
-			}
-			return undefined;
-		}
-		if (props.selectedIndex !== undefined) return props.selectedIndex;
-		for (const [index, entry] of entries()) {
-			if (entry.selected() === true) return index;
-		}
-		return undefined;
+	const group = createRadioGroup({
+		value: () => props.value,
+		selectedIndex: () => props.selectedIndex,
+		onValueChange: (value) => props.onValueChange?.(value),
 	});
 	// FF paints the selected background only for the `value` and `selectedIndex` APIs; a group driven by per-item `selected` has none.
 	const runs = createMemo(() => {
 		const index =
-			props.value !== undefined ? selectedIndex() : props.selectedIndex;
+			props.value !== undefined ? group.selectedIndex() : props.selectedIndex;
 		return index === undefined ? [] : [{ start: index, end: index, id: 0 }];
 	});
 
 	const context: RadioContextValue = {
-		selectedIndex,
-		value: () => props.value,
-		get onValueChange() {
-			return props.onValueChange;
-		},
+		group,
 		size: () => props.size ?? sizeChoice(),
-		register(index, entry) {
-			setEntries(new Map(entries()).set(index, entry));
-			onCleanup(() => {
-				if (entries().get(index) !== entry) return;
-				const next = new Map(entries());
-				next.delete(index);
-				setEntries(next);
-			});
-		},
 	};
 
 	return (
 		<RadioContext.Provider value={context}>
 			<ChoiceGroup
-				role="radiogroup"
+				groupProps={group.groupProps}
 				size={props.size}
 				runs={runs}
-				arrowsSelect
 				fadeOutRuns={false}
 				testId={props.testId}
 			>
@@ -176,40 +145,26 @@ export function RadioItem(props: {
 	testId?: string;
 }) {
 	const radio = useRadio();
-	radio.register(props.index, {
-		value: props.value,
+	const item = createRadioRoot(radio.group, {
+		index: props.index,
+		label: () => props.label,
+		value: () => props.value,
 		selected: () => props.selected,
+		onSelect: () => props.onSelect?.(),
 	});
-
-	// Value equality decides when both the item and the group have a value; otherwise the item's own `selected` wins over the group's index.
-	const isSelected = () => {
-		const groupValue = radio.value();
-		if (props.value !== undefined && groupValue !== undefined) {
-			return groupValue === props.value;
-		}
-		return props.selected ?? radio.selectedIndex() === props.index;
-	};
-	// Roving tabindex: the selected row is the tab stop; with no selection the first takes it so the group stays reachable by keyboard.
-	const tabbable = () => {
-		const selected = radio.selectedIndex();
-		return selected === undefined ? props.index === 0 : isSelected();
-	};
-	const select = () => {
-		if (props.value !== undefined) radio.onValueChange?.(props.value);
-		props.onSelect?.();
-	};
 
 	return (
 		<ChoiceRow
 			index={props.index}
 			label={props.label}
-			role="radio"
-			checked={isSelected()}
-			tabbable={tabbable()}
-			onActivate={select}
+			item={item}
 			testId={props.testId}
 			indicator={(active) => (
-				<Radio selected={isSelected()} active={active()} size={radio.size()} />
+				<Radio
+					selected={item.checked()}
+					active={active()}
+					size={radio.size()}
+				/>
 			)}
 		/>
 	);
