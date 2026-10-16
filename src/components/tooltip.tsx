@@ -15,7 +15,7 @@ import {
 	useContext,
 } from "solid-js";
 import { createPlacementState, POPUP_MARGIN } from "../lib/popup";
-import { createPresence } from "../lib/presence";
+import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import { color, radius, type as scale, motion as tween } from "../lib/theme";
 
 export type TooltipSide = "top" | "right" | "bottom" | "left";
@@ -99,8 +99,10 @@ export function Tooltip(props: {
 		closedAt: undefined,
 	};
 	const placement = createPlacementState(props.side ?? "top");
+	const side = () => props.side ?? "top";
 
-	const presence = createPresence();
+	// onMotionComplete is the primary release; the timer covers an exit that never animates.
+	const presence = createPresence(POPUP_EXIT_FALLBACK_MS);
 	const [opened, setHovered] = createSignal(false);
 	const open = () => props.forceOpen ?? opened();
 	const [followOffset, setFollowOffset] = createSignal({ x: 0, y: 0 });
@@ -250,7 +252,7 @@ export function Tooltip(props: {
 			</Show>
 			<Show when={presence.mounted()}>
 				<anchored
-					side={props.side ?? "top"}
+					side={side()}
 					align="center"
 					fit="flip"
 					gap={props.sideOffset ?? 8}
@@ -262,7 +264,9 @@ export function Tooltip(props: {
 					style={{ backgroundColor: color.transparent }}
 				>
 					<motion.div
-						testId={props.testId === undefined ? undefined : `${props.testId}-chip`}
+						testId={
+							props.testId === undefined ? undefined : `${props.testId}-chip`
+						}
 						// The chip is hoverable, like Base UI's popup: reaching it keeps the tooltip open.
 						onMouseEnter={() => {
 							overChip = true;
@@ -272,13 +276,16 @@ export function Tooltip(props: {
 							overChip = false;
 							scheduleClose();
 						}}
-						initial={{ opacity: 0, ...slideFrom(placement.side()) }}
+						initial={{ opacity: 0, ...slideFrom(side()) }}
 						animate={
 							presence.open()
 								? { opacity: 1, top: 0, left: 0 }
-								: { opacity: 0, ...slideFrom(placement.side()) }
+								: { opacity: 0, ...slideFrom(side()) }
 						}
 						transition={presence.open() ? tween.fast : tween.fastExit}
+						onMotionComplete={() => {
+							if (!presence.open()) presence.release();
+						}}
 						style={{
 							position: "relative",
 							backgroundColor: color.foreground,
