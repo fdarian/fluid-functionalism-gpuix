@@ -53,7 +53,7 @@ repeating it.
 
 - **Cause:** `gpuix gap` (as the description's links in [surfaces.md](surfaces.md#the-descriptions-light-and-dark-links-are-laid-out-word-by-word-and-underlined-solid)), `port choice` (opening).
 - **Original:** `<p>` with `<Code>` chips (`mx-1 px-1 py-0.5`, 12px) and `ExternalLink` anchors (`target="_blank"`, `underline-offset-4`).
-- **Port:** `Sentence` (`src/pages/typography/text.tsx`) lays each such sentence out as a row of one item per word with a 3.6px space after it, the chips as padded `<text>` blocks (so the 12px size and the 4px padding are exact) and the links as clickable `<text>` blocks that run `open` (`xdg-open` off macOS) on the URL. Line breaks can differ from the browser's by a word, and kerning across a space is lost. The underline is solid and not offset 4px (`FORK.md:744-748`). The "5 rules" and "5 no-gos" lists draw their discs themselves (`Rule`): `list-disc pl-5` with `pl-1` items puts the text 24px in; the disc's position is an estimate.
+- **Port:** `Sentence` (`src/pages/typography/text.tsx`) lays each such sentence out as a row of one item per word with a 3.6px space after it, the chips as padded `<text>` blocks (so the 12px size and the 4px padding are exact) and the links as clickable `<text>` blocks that run `open` (`xdg-open` off macOS) on the URL. Line breaks can differ from the browser's by a word, and kerning across a space is lost. The underline is solid and not offset 4px (`FORK.md:768-772`). The "5 rules" and "5 no-gos" lists draw their discs themselves (`Rule`): `list-disc pl-5` with `pl-1` items puts the text 24px in; the disc's position is an estimate.
 - **Fidelity:** approximated.
 - **Components it hits:** just this page.
 

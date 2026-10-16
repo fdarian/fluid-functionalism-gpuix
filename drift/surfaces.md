@@ -19,7 +19,7 @@ repeating it.
 
 - **Cause:** `gpuix gap` (a clickable run cannot sit inside a paragraph; dotted underlines draw solid).
 - **Original:** `UseLightLink` / `UseDarkLink`: buttons inside the description's paragraph with `underline decoration-dotted underline-offset-2`, hover `text-foreground` (`app/docs/surfaces/page.tsx:1265-1309`).
-- **Port:** the sentence is a wrapping row of one `<text>` per word with a 3.6px column gap, and the two links are `<text onClick>` that call `setThemeChoice` with a solid underline (`src/pages/surfaces.tsx:Description`, `ThemeLink`). gpuix: "A nested `<text>` that needs to react is a block … a `<span>` has no events" (gpuix `README.md:2669-2683`), and `double`, `dotted` and `dashed` draw solid (`FORK.md:744-748`). The word gap is an Inter space at 13px, so line breaks can differ from the browser's by a word, and kerning across a space is lost.
+- **Port:** the sentence is a wrapping row of one `<text>` per word with a 3.6px column gap, and the two links are `<text onClick>` that call `setThemeChoice` with a solid underline (`src/pages/surfaces.tsx:Description`, `ThemeLink`). gpuix: "A nested `<text>` that needs to react is a block … a `<span>` has no events" (gpuix `README.md:2669-2683`), and `double`, `dotted` and `dashed` draw solid (`FORK.md:768-772`). The word gap is an Inter space at 13px, so line breaks can differ from the browser's by a word, and kerning across a space is lost.
 - **Workaround:** the word-by-word row.
 - **Fidelity:** approximated.
 - **Components it hits:** just this page.
@@ -69,7 +69,7 @@ repeating it.
 
 - **Cause:** `gpuix gap` (arrowheads), `port choice` (canvas).
 - **Original:** an SVG `<marker>` with an open chevron and `context-stroke` ends each path; the Problem canvas is a fixed 600 x 640 centred in the frame, which is 632px wide in the source's 680px column (`app/docs/surfaces/page.tsx:413-445`, `lib/docs/DocPage.tsx`, `app/docs/layout.tsx:3`).
-- **Port:** gpuix's `<svg>` does not serialise `marker` (`FORK.md:762`), so `buildArrow` (`src/pages/surfaces/annotations.tsx`) lays the same two strokes (5.5px back, 3.5px to each side of the tip) along the curve's end tangent as a second `<path>`. The page column is 600px, so the frame's inner width is 598 and the 600px canvas sits at `marginLeft: -1` under the frame's clip; the dialog is at an explicit `left: 140`, not `left-1/2 -translate-x-1/2` (no transforms). Callouts, dial values and anchors are the source's.
+- **Port:** gpuix's `<svg>` does not serialise `marker` (`FORK.md:786`), so `buildArrow` (`src/pages/surfaces/annotations.tsx`) lays the same two strokes (5.5px back, 3.5px to each side of the tip) along the curve's end tangent as a second `<path>`. The page column is 600px, so the frame's inner width is 598 and the 600px canvas sits at `marginLeft: -1` under the frame's clip; the dialog is at an explicit `left: 140`, not `left-1/2 -translate-x-1/2` (no transforms). Callouts, dial values and anchors are the source's.
 - **Fidelity:** approximated (the head's join at the tip), exact otherwise.
 - **Components it hits:** just this page.
 

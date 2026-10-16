@@ -35,7 +35,7 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 
 ## Inline code chips have no radius or smaller type, and one can strand at a line end
 
-- **Cause:** `gpuix gap` (a `<span>` has no padding, margin, border or radius, and no per-run `fontSize`: `~/code/fdarian/gpuix/FORK.md:765-773`).
+- **Cause:** `gpuix gap` (a `<span>` has no padding, margin, border or radius, and no per-run `fontSize`: `~/code/fdarian/gpuix/FORK.md:789-800`).
 - **Original:** `<code className="mx-1 rounded bg-[light-dark(#EBEBED,#2C2C2C)] px-1 py-0.5 text-site-caption text-foreground">` (`page.tsx:15-21`), and the same chip on the `:hover` in the comparison's caption by the global `code:not(pre code)` rule (`app/globals.css:349-355`): 12px type, 4px radius, 4px side padding, 4px side margin.
 - **Port:** the shared `Code` (`src/lib/doc-page.tsx:52-74`): a no-break space outside the chip for the margin and one inside each end for the padding, around a Menlo run at the prose's 13px, square corners. gpuix's line wrapper treats a no-break space as a break opportunity (`zed/crates/gpui/src/text_system/line_wrapper.rs:450`), so a line can end between the padding and the text: the "Reduced motion" paragraph ends its first line with an empty chip before "`<MotionConfig>`" (`screenshots/fluid-hover/use-when.png`). The page used a bare span with no padding before moving to the shared chip, which never stranded but hugged its text.
 - **Workaround:** none; the stranding depends on where the line happens to break.
@@ -59,7 +59,7 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 
 ## "Show the math": dashed rules are a gradient
 
-- **Cause:** `gpuix gap` (a dashed border on a one-sided, zero-height box paints nothing; `borderStyle` is per element, `FORK.md:755-757`).
+- **Cause:** `gpuix gap` (a dashed border on a one-sided, zero-height box paints nothing; `borderStyle` is per element, `FORK.md:779-781`).
 - **Original:** `border-t border-dashed border-foreground/20` lines at the midpoints between row centres (`app/docs/fluid-hover/demos.tsx:459`).
 - **Port:** each rule is a 1px box with a `repeating-linear-gradient` of 3px dashes and 3px gaps at 20% foreground (`src/pages/fluid-hover/show-the-math.tsx:110-120`). The distance label is right-aligned by a `right` offset (the source translates it by `-100% - 8px`). Everything else (cursor line at 70%, rail at 20px, dots 8px with their 150 ms colour fade, mono 11px label) is the source's geometry.
 - **Workaround:** the gradient.

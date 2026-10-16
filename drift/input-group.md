@@ -19,7 +19,7 @@ repeating it.
 
 - **Cause:** `not ported yet`.
 - **Original:** `Field.Root` / `Label` / `Control` / `Error` give `htmlFor`, `aria-invalid`, and `aria-describedby` pointing at the error message (`input-group.tsx:173-190,258-288`).
-- **Port:** `aria-label={props.label}` only (`input-group.tsx:222`); no `aria-invalid`, no description link to the error. gpuix accepts `aria-*` and `<label htmlFor>` (`FORK.md:455`).
+- **Port:** `aria-label={props.label}` only (`input-group.tsx:222`); no `aria-invalid`, no description link to the error. gpuix accepts `aria-*` and `<label htmlFor>` (`FORK.md:465`).
 - **Fidelity:** approximated (the name is right, the error is not announced with the field).
 
 ## Props are fixed, not passed through

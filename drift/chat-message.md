@@ -7,7 +7,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 - **Cause:** `gpuix gap`. Shared: CSS transforms ([README, Missing features, first row](../README.md)).
 - **Original:** `initial {opacity 0, y 8, scale .96}` to `{1, 0, 1}` on `spring.moderate`, `transform-origin` bottom right for the user and bottom left for the assistant (`chat-message.tsx:57-60`).
 - **Port:** `initial {opacity 0, top 8}` to `{1, 0}` on `tween.moderate` (`chat-message.tsx:95-97`); `top` needs `position: relative` (`:100`).
-- **gpuix lacks:** `scale` and `transform-origin` (`~/code/fdarian/gpuix/FORK.md:876-887`).
+- **gpuix lacks:** `scale` and `transform-origin` (`~/code/fdarian/gpuix/FORK.md:900-911`).
 - **Workaround:** opacity and the 8px rise on `top`, no scale.
 - **Fidelity:** approximated.
 - **Components it hits:** banner, ask-user-questions, input-copy, input-message, queued-stack, radio-group.
@@ -42,7 +42,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 ## Message body: whitespace, wrapping, node children
 
-- **Cause:** `not ported yet` for `pre-wrap` and `break-words` (gpuix has `whiteSpace` `pre-wrap`, `FORK.md:658-659`); `gpuix gap` for `text-pretty` (no `text-wrap` in `FORK.md`).
+- **Cause:** `not ported yet` for `pre-wrap` and `break-words` (gpuix has `whiteSpace` `pre-wrap`, `FORK.md:682-683`); `gpuix gap` for `text-pretty` (no `text-wrap` in `FORK.md`).
 - **Original:** the body is `whitespace-pre-wrap break-words`, the user bubble adds `text-pretty`, and `children` is any `ReactNode` (`chat-message.tsx:87`, `:96-102`, `:28`).
 - **Port:** the body is one `<text>` with no `whiteSpace` or overflow-wrap, so newlines collapse and a long unbroken token is not broken; `children` is `string` only (`chat-message.tsx:82`, `:143`).
 - **Workaround:** none.
@@ -60,7 +60,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 ## Layout motion for sibling messages
 
-- **Cause:** `not ported yet` (gpuix has `layout`, `FORK.md:827`).
+- **Cause:** `not ported yet` (gpuix has `layout`, `FORK.md:851`).
 - **Original:** `layout="position"` so earlier messages slide when a message is added (`chat-message.tsx:56`).
 - **Port:** no `layout` on the message; siblings jump (`chat-message.tsx:93-99`). Invisible in the demo, where "Add message" appends at the bottom.
 - **Workaround:** none.
