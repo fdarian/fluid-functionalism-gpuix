@@ -87,8 +87,10 @@ export function ScrollArea(props: {
 	const both = () => orientation() === "both";
 
 	let viewport: HostElement | undefined;
-	const scrollingTimer: Record<Axis, ReturnType<typeof setTimeout> | undefined> =
-		{ x: undefined, y: undefined };
+	const scrollingTimer: Record<
+		Axis,
+		ReturnType<typeof setTimeout> | undefined
+	> = { x: undefined, y: undefined };
 	let userTimer: ReturnType<typeof setTimeout> | undefined;
 	let userScroll = false;
 	onCleanup(() => {
@@ -190,9 +192,7 @@ export function ScrollArea(props: {
 		if (span === null) return false;
 		const next = clamp(distance, 0, span.maxScroll);
 		if (next === positionOf(axis)) return false;
-		mountedViewport().scrollTo(
-			axis === "x" ? { left: next } : { top: next },
-		);
+		mountedViewport().scrollTo(axis === "x" ? { left: next } : { top: next });
 		return true;
 	};
 
@@ -280,6 +280,10 @@ export function ScrollArea(props: {
 	/** What a browser does for a focused scroller: arrows by 40px, pages by 87.5% of the view, Home and End to the ends. */
 	const onKeyDown = (event: KeyEvent) => {
 		if (isChord(event)) return;
+		// Keys from a focused descendant (an input, a listbox) are that descendant's.
+		if (event.defaultPrevented || event.elementId !== mountedViewport().id) {
+			return;
+		}
 		const size = view();
 		if (size === undefined) return;
 		let axis: Axis | undefined;
@@ -288,12 +292,14 @@ export function ScrollArea(props: {
 			case "ArrowDown":
 			case "ArrowUp":
 				axis = "y";
-				target = positionOf("y") + (event.key === "ArrowDown" ? ARROW_PX : -ARROW_PX);
+				target =
+					positionOf("y") + (event.key === "ArrowDown" ? ARROW_PX : -ARROW_PX);
 				break;
 			case "ArrowRight":
 			case "ArrowLeft":
 				axis = "x";
-				target = positionOf("x") + (event.key === "ArrowRight" ? ARROW_PX : -ARROW_PX);
+				target =
+					positionOf("x") + (event.key === "ArrowRight" ? ARROW_PX : -ARROW_PX);
 				break;
 			case "PageDown":
 			case "PageUp":
@@ -341,7 +347,9 @@ export function ScrollArea(props: {
 		const total = axis === "y" ? inner.h : inner.w;
 		const scrolled = axis === "y" ? offset().y : offset().x;
 		return clamp(
-			edge === "start" ? scrolled / size : (total - viewLength - scrolled) / size,
+			edge === "start"
+				? scrolled / size
+				: (total - viewLength - scrolled) / size,
 			0,
 			1,
 		);
@@ -485,9 +493,7 @@ export function ScrollArea(props: {
 				}}
 				onScroll={onScroll}
 				onWheel={markUserScroll}
-				onLayout={(event: EventPayload) =>
-					setView(sizeOf(event))
-				}
+				onLayout={(event: EventPayload) => setView(sizeOf(event))}
 				// A viewport that overflows is a tab stop and scrolls with the keys, like a focused scroller in a browser.
 				tabIndex={overflows("x") || overflows("y") ? 0 : -1}
 				onKeyDown={onKeyDown}

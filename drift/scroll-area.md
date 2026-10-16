@@ -51,13 +51,13 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 - **Fidelity:** dropped (no touch path).
 - **Components it hits:** just this one.
 
-## Keyboard scrolling is re-implemented, and also fires for keys from descendants
+## Keyboard scrolling is re-implemented
 
 - **Cause:** `port choice` (reason not stated). gpuix already scrolls the nearest scroller on arrows, Page, Home, End and Space unless `preventDefault`ed (`FORK.md:584-586`), so the handler duplicates a default.
 - **Original:** the viewport is a tab stop while it overflows and the browser scrolls it with the keys (Base UI `Viewport:367-369`; FF sets no `tabIndex` of its own on the Base UI path, `registry/base/scroll-area.tsx:83-92`); keys typed in a descendant input or listbox do not scroll it.
-- **Port:** `onKeyDown` on the viewport maps arrows (40px), Page keys and Space (87.5% of the view), Home and End to `scrollTo`, and calls `preventDefault` (`src/components/scroll-area.tsx:281-323`, `:492-493`). It runs for every bubbled keydown and does not check `event.target === event.currentTarget` or `event.defaultPrevented`.
-- **Workaround:** none.
-- **Fidelity:** approximated. Likely a bug (not run): a text input inside a `ScrollArea` loses Space, arrows and Home / End to the scroller, and a child that handles arrows itself (a listbox) also scrolls the area.
+- **Port:** `onKeyDown` on the viewport maps arrows (40px), Page keys and Space (87.5% of the view), Home and End to `scrollTo`, and calls `preventDefault` (`src/components/scroll-area.tsx`, `onKeyDown`). It acts only when the viewport itself is the focused element and the key is not already `defaultPrevented`, so an input inside keeps Space, arrows and Home / End, and a child that handles arrows itself does not also scroll the area (`scripts/check-scroll-area.tsx`).
+- **Workaround:** n/a.
+- **Fidelity:** exact for the keys it maps; the rest of gpuix's own defaults are unreachable because the handler `preventDefault`s the mapped keys.
 - **Components it hits:** just this one.
 
 ## Props: class names, `ref` and div props are gone
