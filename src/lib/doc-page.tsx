@@ -274,6 +274,8 @@ export function ComponentPreview(props: {
 	code: string;
 	onReplay?: () => void;
 	minHeight?: number;
+	/** `"none"` lets the demo bleed to the frame's edges, as the source's `padding="none"` does. */
+	padding?: "default" | "none";
 	children: JSX.Element;
 }) {
 	const [tab, setTab] = createSignal(0);
@@ -346,10 +348,14 @@ export function ComponentPreview(props: {
 							alignItems: "center",
 							justifyContent: "center",
 							minHeight: minHeight(),
-							paddingLeft: 32,
-							paddingRight: 32,
-							paddingTop: 48,
-							paddingBottom: 48,
+							...(props.padding === "none"
+								? {}
+								: {
+										paddingLeft: 32,
+										paddingRight: 32,
+										paddingTop: 48,
+										paddingBottom: 48,
+									}),
 							backgroundColor: color.background,
 						}}
 					>
