@@ -495,7 +495,15 @@ function Row<Value extends string>(props: {
 	);
 	return (
 		<div
-			{...props.itemProps}
+			// Explicit, not `{...props.itemProps}`: a spread applies its props in a later effect, so the row is focusable (tabIndex) only after the open's `focus()`. The visible effect is the scrollbar's fade timing (screenshots/select/timezone-reopened).
+			id={props.itemProps.id}
+			role={props.itemProps.role}
+			tabIndex={props.itemProps.tabIndex}
+			aria-selected={props.itemProps['aria-selected']}
+			aria-disabled={props.itemProps['aria-disabled']}
+			onMouseDown={props.itemProps.onMouseDown}
+			onMouseUp={props.itemProps.onMouseUp}
+			onClick={props.itemProps.onClick}
 			ref={(element) => {
 				rowElement = element;
 				props.onElement(element);
