@@ -52,9 +52,11 @@ export type AriaSnapshot = Record<string, unknown>;
  * new component adds a demo file and never edits a shared one.
  */
 export interface DemoModule {
-	/** Sidebar label and page heading. */
+	/** Sidebar label, menu row and page heading: the component's name, as written in code. */
 	title: string;
 	group: "Components";
+	/** Where the demo is linked: sidebar and site menu, the site menu only, or neither (reached by `navigate`). */
+	listed: "sidebar" | "menu" | "none";
 	/** The page body: one or more `DemoCard`s. */
 	Demo: () => JSX.Element;
 	/** Optional states beyond the first paint for `scripts/screenshots.tsx <demo>` to capture. */
@@ -81,6 +83,15 @@ function assertDemoModule(
 			`src/demos/${slug}.tsx must export \`group: "Components"\``,
 		);
 	}
+	if (
+		candidate.listed !== "sidebar" &&
+		candidate.listed !== "menu" &&
+		candidate.listed !== "none"
+	) {
+		throw new Error(
+			`src/demos/${slug}.tsx must export \`listed: "sidebar" | "menu" | "none"\``,
+		);
+	}
 	if (typeof candidate.Demo !== "function") {
 		throw new Error(`src/demos/${slug}.tsx must export a \`Demo\` component`);
 	}
@@ -100,6 +111,7 @@ export async function loadDemos(): Promise<Demo[]> {
 			slug,
 			title: module.title,
 			group: module.group,
+			listed: module.listed,
 			Demo: module.Demo,
 			scenarios: module.scenarios,
 		});

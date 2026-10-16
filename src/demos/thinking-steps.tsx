@@ -423,8 +423,9 @@ function FullDemo(props: { sequence: ReturnType<typeof createSequence> }) {
 	);
 }
 
-export const title = "Thinking Steps";
+export const title = "ThinkingSteps";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	return (

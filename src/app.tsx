@@ -100,6 +100,8 @@ function AppSidebar(props: {
 		props.pages.filter(
 			(page) => page.group === group && page.listed === "sidebar",
 		);
+	const sidebarDemos = () =>
+		props.demos.filter((demo) => demo.listed === "sidebar");
 	const row = (page: Page) => (
 		<SidebarMenuButton
 			testId={`nav-${page.slug}`}
@@ -139,11 +141,11 @@ function AppSidebar(props: {
 						<For each={sidebarPages("System")}>{row}</For>
 					</SidebarMenu>
 				</Show>
-				<SidebarGroupLabel count={props.demos.length}>
+				<SidebarGroupLabel count={sidebarDemos().length}>
 					Components
 				</SidebarGroupLabel>
 				<SidebarMenu>
-					<For each={props.demos}>
+					<For each={sidebarDemos()}>
 						{(demo) => (
 							<SidebarMenuButton
 								testId={`nav-${demo.slug}`}

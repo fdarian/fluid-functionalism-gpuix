@@ -11,8 +11,9 @@ const photo: FileLike = {
 const pdf: FileLike = { name: "design-notes.pdf", type: "application/pdf" };
 const SIZES = [28, 48, 64, 96];
 
-export const title = "File Thumbnail";
+export const title = "FileThumbnail";
 export const group = "Components";
+export const listed = "menu";
 
 export function Demo() {
 	return (

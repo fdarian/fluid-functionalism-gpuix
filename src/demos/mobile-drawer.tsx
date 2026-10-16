@@ -24,8 +24,9 @@ const ROWS: { label: string; icon: IconName }[] = [
 	{ label: "Settings", icon: "settings" },
 ];
 
-export const title = "Mobile Drawer";
+export const title = "MobileDrawer";
 export const group = "Components";
+export const listed = "menu";
 
 export function Demo() {
 	const [open, setOpen] = createSignal(false);

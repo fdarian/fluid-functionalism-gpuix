@@ -809,8 +809,9 @@ function CustomRows() {
 	);
 }
 
-export const title = "Command Menu";
+export const title = "CommandMenu";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	scrollRenderer = useGpuixRequired() as unknown as ScrollRenderer;

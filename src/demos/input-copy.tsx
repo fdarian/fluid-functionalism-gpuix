@@ -7,8 +7,9 @@ import { color, type as scale } from "../lib/theme";
 const COMMAND =
 	"npx shadcn@latest add https://www.fluidfunctionalism.com/r/input-copy.json";
 
-export const title = "Input Copy";
+export const title = "InputCopy";
 export const group = "Components";
+export const listed = "sidebar";
 
 function Field(props: { label: string; children: JSX.Element }) {
 	return (

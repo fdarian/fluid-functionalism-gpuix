@@ -93,8 +93,9 @@ function Transcript(props: { messages: Message[]; testPrefix: string }) {
 	);
 }
 
-export const title = "Chat Message";
+export const title = "ChatMessage";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	const [messages, setMessages] = createSignal(CONVERSATION);

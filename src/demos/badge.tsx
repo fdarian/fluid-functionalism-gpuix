@@ -53,6 +53,7 @@ function Palette(props: { variant: BadgeVariant }) {
 
 export const title = "Badge";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	return (

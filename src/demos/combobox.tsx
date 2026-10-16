@@ -85,6 +85,7 @@ const PLAY_COMPONENTS = [
 
 export const title = "Combobox";
 export const group = "Components";
+export const listed = "sidebar";
 
 function Playground() {
 	const [icon, setIcon] = createSignal(false);

@@ -3,8 +3,9 @@ import { InputField, InputGroup } from "../components/input-group";
 import type { DemoModule, ShotContext } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
 
-export const title = "Input Group";
+export const title = "InputGroup";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	const [search, setSearch] = createSignal("");

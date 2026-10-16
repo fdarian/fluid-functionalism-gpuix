@@ -190,6 +190,7 @@ function MockPage(props: { height: number; children: unknown }) {
 
 export const title = "Banner";
 export const group = "Components";
+export const listed = "sidebar";
 
 const COPY: Record<
 	BannerStatus,

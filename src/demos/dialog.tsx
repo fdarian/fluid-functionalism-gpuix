@@ -161,6 +161,7 @@ function Row(props: { children: JSX.Element }) {
 
 export const title = "Dialog";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	return (

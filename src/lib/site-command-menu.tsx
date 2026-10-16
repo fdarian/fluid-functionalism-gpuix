@@ -140,7 +140,9 @@ export function SiteCommandMenu(props: {
 			]),
 			...listedPages("Pages"),
 			...listedPages("System"),
-			...props.demos.map((demo) => page(demo.slug, demo.title, "Components")),
+			...props.demos
+				.filter((demo) => demo.listed !== "none")
+				.map((demo) => page(demo.slug, demo.title, "Components")),
 			...THEMES.map(
 				(theme): SiteItem => ({
 					kind: "setting",

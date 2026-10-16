@@ -77,6 +77,7 @@ const FIGS = [
 
 export const title = "Select";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	const [fruit, setFruit] = createSignal<string | null>(null);

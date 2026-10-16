@@ -2,8 +2,9 @@ import { ThinkingIndicator } from "../components/thinking-indicator";
 import type { DemoModule } from "../lib/demo";
 import { DemoCard, DemoRow } from "../lib/demo-kit";
 
-export const title = "Thinking Indicator";
+export const title = "ThinkingIndicator";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	return (

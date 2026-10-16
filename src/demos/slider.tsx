@@ -23,6 +23,7 @@ const [resizeWidth, setResizeWidth] = createSignal(288);
 
 export const title = "Slider";
 export const group = "Components";
+export const listed = "sidebar";
 
 export function Demo() {
 	const [basic, setBasic] = createSignal<SliderValue>(25);

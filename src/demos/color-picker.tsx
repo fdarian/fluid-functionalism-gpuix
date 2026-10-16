@@ -20,8 +20,9 @@ type Section = "default" | "swatches" | "oklch" | "controlled";
 const [only, setOnly] = createSignal<Section | null>(null);
 const shows = (section: Section) => only() === null || only() === section;
 
-export const title = "Color Picker";
+export const title = "ColorPicker";
 export const group = "Components";
+export const listed = "sidebar";
 
 function Caption(props: { children: string }) {
 	return (
