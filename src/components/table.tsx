@@ -7,7 +7,7 @@ import {
 } from "solid-js";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type FluidHover, useHoverItem } from "../lib/fluid-hover";
-import { color, type as scale, weight } from "../lib/theme";
+import { color, sizeChoice, type as scale, weight } from "../lib/theme";
 
 export type TableSize = "default" | "compact";
 
@@ -55,7 +55,7 @@ export function Table(props: {
 	const hover = createFluidHover();
 	const scope: TableScope = {
 		hover,
-		size: () => props.size ?? "default",
+		size: () => props.size ?? sizeChoice(),
 	};
 	const hoverRect = () => {
 		const index = hover.activeIndex();

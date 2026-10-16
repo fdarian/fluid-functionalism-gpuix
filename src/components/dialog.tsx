@@ -30,6 +30,7 @@ import { createPresence } from "../lib/presence";
 import {
 	color,
 	shape,
+	sizeChoice,
 	type as scale,
 	scheme,
 	motion as tween,
@@ -46,6 +47,10 @@ const widths = {
 	lg: { default: 540, compact: 480 },
 	xl: { default: 880, compact: 800 },
 } as const;
+
+function isCompact(compact: boolean | undefined) {
+	return compact ?? sizeChoice() === "compact";
+}
 
 /** Space the panel keeps from the window edge: `w-[calc(100%-2rem)]`. */
 const EDGE = 16;
@@ -240,7 +245,7 @@ export function DialogContent(props: {
 	const scope = useDialogScope();
 	const windowSize = createWindowSize();
 	const maxWidth = () =>
-		widths[props.size ?? "sm"][props.compact ? "compact" : "default"];
+		widths[props.size ?? "sm"][isCompact(props.compact) ? "compact" : "default"];
 	const top = () => (props.position ?? "center") === "top";
 	const topOffset = () =>
 		scope.scoped() ? 24 : Math.round(windowSize().height * TOP_OFFSET);
@@ -421,7 +426,7 @@ export function DialogTitle(props: { compact?: boolean; children: string }) {
 		<GpuixDialogTitle id={scope.titleId}>
 			<text
 				style={{
-					...(props.compact ? { fontSize: 15, lineHeight: 20 } : scale.title),
+					...(isCompact(props.compact) ? { fontSize: 15, lineHeight: 20 } : scale.title),
 					color: color.foreground,
 					fontWeight: weight.semibold,
 				}}
@@ -441,7 +446,7 @@ export function DialogDescription(props: {
 		<GpuixDialogDescription id={scope.descriptionId}>
 			<text
 				style={{
-					...(props.compact ? scale.bodyCompact : scale.body),
+					...(isCompact(props.compact) ? scale.bodyCompact : scale.body),
 					color: color.mutedForeground,
 				}}
 			>

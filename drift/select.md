@@ -129,13 +129,13 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Fidelity:** approximated (compact label is 2px taller and 1px larger text).
 - **Components it hits:** just this one.
 
-## Size is a prop only; there is no ambient size
+## An explicit `size` does not scope the parts inside
 
-- **Cause:** `not ported yet`.
-- **Original:** `useSize(size)` reads the surrounding `SizeProvider`, so trigger and popup follow a compact region; `SelectTrigger` also takes its own `size`. (`select.tsx:99-102`, `:278-281`).
-- **Port:** `size?: "default" | "compact"` on `Select` only (`select.tsx:122`, `:140`).
-- **Workaround:** the demo passes `size="compact"` where needed.
-- **Fidelity:** dropped (context).
+- **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
+- **Original:** `size` wraps the select in a `SizeProvider` and `SelectTrigger` takes its own `size`, so trigger and popup follow together (`registry/base/select.tsx:99-102`, `:223`, `:278-281`).
+- **Port:** `size?: "default" | "compact"` on `Select` only; omitted, it follows the Size row (`src/components/select.tsx:122`, `:140`).
+- **Workaround:** pass `size` to each nested component.
+- **Fidelity:** approximated.
 - **Components it hits:** every component that reads `useSize`.
 
 ## Data-driven API and `null` for no value

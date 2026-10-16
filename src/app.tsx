@@ -48,10 +48,14 @@ import {
 	color,
 	type as scale,
 	setShapeChoice,
+	setSizeChoice,
 	setThemeChoice,
 	SHAPES,
 	type ShapeChoice,
 	shapeChoice,
+	SIZES,
+	type SizeChoice,
+	sizeChoice,
 	THEMES,
 	type ThemeChoice,
 	themeChoice,
@@ -278,6 +282,25 @@ function CustomizeCard() {
 					items={SHAPES}
 					value={shapeChoice()}
 					onValueChange={(value: ShapeChoice) => setShapeChoice(value)}
+				/>
+			</div>
+			<div
+				style={{
+					display: "flex",
+					flexDirection: "row",
+					alignItems: "center",
+					justifyContent: "space-between",
+					height: 28,
+				}}
+			>
+				<text style={{ ...scale.body, color: color.mutedForeground }}>
+					Size
+				</text>
+				<Select
+					testId="size"
+					items={SIZES}
+					value={sizeChoice()}
+					onValueChange={(value: SizeChoice) => setSizeChoice(value)}
 				/>
 			</div>
 			<div

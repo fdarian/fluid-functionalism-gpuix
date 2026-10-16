@@ -80,14 +80,14 @@ repeating it.
 - **Fidelity:** approximated (the normal release path is exact).
 - **Components it hits:** any port that ends a drag on `onLostPointerCapture` (slider, scroll area).
 
-## Props not ported: `thumbTransition`, `className`, `ref`, HTML attributes, the size ladder
+## Props not ported: `thumbTransition`, `className`, `ref`, HTML attributes
 
-- **Cause:** `not ported yet` for `thumbTransition`, `className`, `ref` and rest props; `port choice` (reason not stated, the port has no `SizeProvider`) for the size ladder.
-- **Original:** `SwitchProps` (`switch.tsx:27-39`): `thumbTransition` overrides the spring, `size` falls back to the surrounding `SizeProvider` through `useSize` (`:76`), and `className`, `ref` and the rest spread on the row (`:273`).
-- **Port:** `label`, `checked`, `onToggle`, `disabled`, `size` (`"default" | "compact"`, default `"default"`) and a harness-only `testId` (`src/components/switch.tsx:41-48`). Row padding, gap and text come from `METRICS` (`:9-34`), which match `sizeMap` (px-3 / gap-2 / body 13/20 default; px-2.5 / gap-1 / 12/18 compact).
+- **Cause:** `not ported yet`.
+- **Original:** `SwitchProps` (`switch.tsx:27-39`): `thumbTransition` overrides the spring, `className`, `ref` and the rest spread on the row (`:273`).
+- **Port:** `label`, `checked`, `onToggle`, `disabled`, `size` (`"default" | "compact"`, default the Size row) and a harness-only `testId` (`src/components/switch.tsx:41-48`). Row padding, gap and text come from `METRICS` (`:9-34`), which match `sizeMap` (px-3 / gap-2 / body 13/20 default; px-2.5 / gap-1 / 12/18 compact).
 - **Workaround:** none.
 - **Fidelity:** dropped for the props; exact for the two built-in sizes.
-- **Components it hits:** every component with a `size` prop (nothing in the port reads a size context).
+- **Components it hits:** every ported component.
 
 ## Demo has more rows than the source page, and no code or props table
 

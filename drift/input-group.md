@@ -52,11 +52,12 @@ repeating it.
 - **Port:** a fixed prop list (`input-group.tsx:91-104`), `testId` added, `icon` an `IconRef`. The group is `width: 288, minWidth: 0, flexShrink: 1` (`:80-82`), which approximates `max-w-full`.
 - **Fidelity:** dropped.
 
-## Ambient size
+## An explicit `size` does not scope the parts inside
 
-- **Cause:** `not ported yet`. README lists the Size row as not ported.
-- **Original:** `useSize()` inside each field follows the `SizeProvider` the group sets from `size` or inherits (`input-group.tsx:130-132`).
-- **Port:** the group's `size` prop through `GroupContext` (`input-group.tsx:42-55,67-70`); no inheritance from an outer provider.
+- **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
+- **Original:** the group sets a `SizeProvider` from `size`, and `useSize()` inside each field follows it (`registry/default/input-group.tsx:87`, `:130-132`).
+- **Port:** An omitted `size` follows the Size row (`input-group.tsx:69`); a given one reaches the fields through `GroupContext` (`:42-55`), and nothing is provided to other components in the group.
+- **Workaround:** pass `size` to each nested component.
 - **Fidelity:** approximated.
 - **Components it hits:** every component with `size`.
 

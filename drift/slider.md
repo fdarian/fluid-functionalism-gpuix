@@ -93,12 +93,12 @@ repeating it.
 
 ## Public props not ported
 
-- **Cause:** `not ported yet` for the compact engine's styling props, `className`, `ref` and rest props; `port choice` (reason not stated, no `SizeProvider` in the port) for the size ladder.
-- **Original:** `hideFill`, `thumbColor`, `thumbBorderColor`, `trackClassName` / `trackStyle`, `fillClassName` / `fillStyle` (`slider.tsx:78-84`, applied at `:1134-1157`, `:935-937`), any of which forces the compact engine (`:1903-1915`); `size` falls back to the surrounding `SizeProvider` (`:1899`); `className`, `ref` and HTML props land on the root (`:959-970`) or the comfortable row (`:1631`).
+- **Cause:** `not ported yet`.
+- **Original:** `hideFill`, `thumbColor`, `thumbBorderColor`, `trackClassName` / `trackStyle`, `fillClassName` / `fillStyle` (`slider.tsx:78-84`, applied at `:1134-1157`, `:935-937`), any of which forces the compact engine (`:1903-1915`); `className`, `ref` and HTML props land on the root (`:959-970`) or the comfortable row (`:1631`).
 - **Port:** `CompactProps` and `variant` / `size` only, plus a harness `testId` (`src/components/slider.tsx:464-478`, `:1627-1632`); `needsCompact` checks `size`, an array value, `steps`, `showSteps`, `showValue`, `valuePosition` (`:1636-1642`). The knob is always `#FFFFFF` (`:863`), the fill `selectedWash`, with no way to override either.
 - **Workaround:** none. Also in `BASE-UI-AUDIT.md` (Slider, last bullet).
 - **Fidelity:** dropped.
-- **Components it hits:** every component with a `size` prop.
+- **Components it hits:** every ported component.
 
 ## Value bubbles are anchored overlays
 

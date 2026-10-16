@@ -90,14 +90,14 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 - **Fidelity:** dropped.
 - **Components it hits:** every popup trigger that is a `Button` (dropdown, select).
 
-## No ambient size, no `className`, `type` or `ref`
+## No `className`, `type` or `ref`
 
 - **Cause:** `not ported yet`.
-- **Original:** an omitted `size` follows the surrounding `SizeProvider` (`:187-194`); `className` / `style` (the demo's `w-full`) and every `<button>` attribute pass through, including `type="submit"` (`:143-160`, `:304-316`).
-- **Port:** `size` defaults to `default`, so compact must be passed to each button; the prop list is fixed (`:95-116`), so no full-width button and no form submit from a button (the demos call `form.requestSubmit()`, README "combobox, select (any form)" row).
+- **Original:** `className` / `style` (the demo's `w-full`) and every `<button>` attribute pass through, including `type="submit"` (`registry/base/button.tsx:143-160`, `:304-316`).
+- **Port:** the prop list is fixed (`:95-116`), so no full-width button and no form submit from a button (the demos call `form.requestSubmit()`, README "combobox, select (any form)" row). An omitted `size` follows the Size row (`:119`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
-- **Components it hits:** every component with a size ladder (the customise card has no Size row).
+- **Components it hits:** every ported component.
 
 ## Icon-only buttons take `icon`, not a child
 

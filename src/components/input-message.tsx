@@ -25,7 +25,7 @@ import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { fill } from "../lib/press";
 import { createMeasuredHeight } from "../lib/measured-height";
-import { color, height, nestedRadius, radius, shape, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
+import { color, sizeChoice, height, nestedRadius, radius, shape, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 import { FileThumbnail } from "./file-thumbnail";
 import type { InputSize } from "./input-group";
 import { Tooltip } from "./tooltip";
@@ -625,7 +625,7 @@ export type InputMessageProps = {
 
 export function InputMessage(props: InputMessageProps) {
 	const renderer = useGpuixRequired();
-	const size = () => props.size ?? "default";
+	const size = () => props.size ?? sizeChoice();
 	const step = () => steps[size()];
 	const files = () => props.files ?? [];
 	const queue = () => props.queue ?? [];

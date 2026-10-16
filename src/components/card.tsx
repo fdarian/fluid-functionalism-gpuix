@@ -21,7 +21,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
-import { color, shape, type as scale, scheme, weight, withAlpha, focusRing } from "../lib/theme";
+import { color, sizeChoice, shape, type as scale, scheme, weight, withAlpha, focusRing } from "../lib/theme";
 
 export type CardOrientation = "card" | "inline";
 export type CardBorder = "none" | "outlined";
@@ -263,7 +263,7 @@ export function Card(props: {
 	const [dismissFocused, setDismissFocused] = createSignal(false);
 	const [rootElement, setRootElement] = createSignal<HostElement>();
 
-	const compact = () => props.size === "compact";
+	const compact = () => (props.size ?? sizeChoice()) === "compact";
 	const orientation = () => group?.orientation() ?? "card";
 	const isInline = () => orientation() === "inline";
 	const clickable = () => props.onClick !== undefined;

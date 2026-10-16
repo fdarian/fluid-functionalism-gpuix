@@ -79,11 +79,11 @@ Same in both (checked against the code): row height, gap and padding per size (3
 - **Fidelity:** exact in look.
 - **Components it hits:** every `FluidHighlight` list.
 
-## `size` is read twice, and a surrounding size is ignored
+## `size` is read twice
 
 - **Cause:** `not ported yet`.
-- **Original:** `size` on the group pins every row through a `SizeProvider`; omitted, the group follows the surrounding provider (`checkbox-group.tsx:64-67,212-213`). Items take no `size`.
-- **Port:** the group's `size` sizes the rows (`choice-group.tsx:165,247`) but the square and glyph read the item's own `size` prop (`checkbox-group.tsx:83,99`). With `size="compact"` on the group alone the rows are 28 px with a 16 px box and an 18 px glyph. No surrounding size context exists.
+- **Original:** `size` on the group pins every row through a `SizeProvider`, and the items read it (`checkbox-group.tsx:64-67,212-213`). Items take no `size`.
+- **Port:** the group's `size` sizes the rows (`choice-group.tsx:165,247`) but the square and glyph read the item's own `size` prop (`checkbox-group.tsx:83,99`). With `size="compact"` on the group alone the rows are 28 px with a 16 px box and an 18 px glyph. Omitted on both, each follows the Size row (`choice-group.tsx:165`, `checkbox-group.tsx:99`).
 - **Workaround:** the demo passes `size` to both (`src/demos/checkbox-group.tsx:29,37`).
 - **Fidelity:** approximated (wrong when the item omits `size`).
 - **Components it hits:** just this one (radio-group's item reads the group's size, `radio-group.tsx:210`).
@@ -110,7 +110,7 @@ Same in both (checked against the code): row height, gap and padding per size (3
 
 - **Cause:** `port choice` (extras are port additions); the sizes-page variant is `not ported yet`.
 - **Original:** the docs page has one example, Basic: Apples, Bananas, Cherries, Dates, Apples checked (`app/docs/checkbox-group/page.tsx:56-77`). Other pages use it with nothing checked at 220 px (`app/components/bento-previews.tsx:288-309`) and as a two-row group inside a compact `SizeProvider` at `w-44` (`app/docs/sizes/page.tsx:498-515`).
-- **Port:** Default (Apples checked, plus a "Checked: ..." readout), Compact (Bananas and Cherries checked) and "Narrow, empty" (the bento preview's five rows, nothing checked, in a 220 px wrapper the group's `maxWidth: 100%` shrinks to) (`src/demos/checkbox-group.tsx`). Missing: the `w-44` two-row group of the sizes page (the port has no `SizeProvider`, see "`size` is read twice").
+- **Port:** Default (Apples checked, plus a "Checked: ..." readout), Compact (Bananas and Cherries checked) and "Narrow, empty" (the bento preview's five rows, nothing checked, in a 220 px wrapper the group's `maxWidth: 100%` shrinks to) (`src/demos/checkbox-group.tsx`). Missing: the `w-44` two-row group of the sizes page (an explicit `size` scopes no children, see "`size` is read twice").
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

@@ -273,6 +273,59 @@ export const type = {
 	microCompact: { fontSize: 10, lineHeight: 12 },
 } as const;
 
+export type SizeChoice = "default" | "compact";
+
+export const SIZES = [
+	{ value: "default", label: "Default" },
+	{ value: "compact", label: "Compact" },
+] as const satisfies readonly { value: SizeChoice; label: string }[];
+
+/** The Size row of the customise card, and the ambient size components start from when a use gives none (`props.size ?? sizeChoice()`). */
+export const [sizeChoice, setSizeChoice] = createSignal<SizeChoice>("default");
+
+const siteTypeSteps = {
+	display: {
+		default: { fontSize: 28, lineHeight: 34 },
+		compact: { fontSize: 24, lineHeight: 30 },
+	},
+	title: {
+		default: { fontSize: 16, lineHeight: 22 },
+		compact: { fontSize: 15, lineHeight: 20 },
+	},
+	subtitle: {
+		default: { fontSize: 14, lineHeight: 20 },
+		compact: { fontSize: 13, lineHeight: 18 },
+	},
+	body: {
+		default: { fontSize: 13, lineHeight: 20 },
+		compact: { fontSize: 12, lineHeight: 18 },
+	},
+	caption: {
+		default: { fontSize: 12, lineHeight: 16 },
+		compact: { fontSize: 11, lineHeight: 14 },
+	},
+	micro: {
+		default: { fontSize: 11, lineHeight: 14 },
+		compact: { fontSize: 10, lineHeight: 12 },
+	},
+} as const;
+
+type SiteTypeRole = keyof typeof siteTypeSteps;
+
+/**
+ * The shell and page text roles (`text-site-*`), at the window's wide (>=640px) values, stepping down in compact.
+ * Components keep `type`: they follow their own size prop. Read it inside JSX props or effects, like `color`.
+ */
+export const siteType = Object.defineProperties(
+	{} as { readonly [Role in SiteTypeRole]: { fontSize: number; lineHeight: number } },
+	Object.fromEntries(
+		(Object.keys(siteTypeSteps) as SiteTypeRole[]).map((role) => [
+			role,
+			{ enumerable: true, get: () => siteTypeSteps[role][sizeChoice()] },
+		]),
+	),
+);
+
 /** The static cuts are loaded in `lib/fonts.ts`. The site's semibold is variable `wght 550`; with static cuts only, SemiBold 600 is the nearest. */
 export const fontFamily = "Inter";
 export const weight = { normal: 400, medium: 500, semibold: 600 } as const;

@@ -19,7 +19,7 @@ import { StableLabel } from "../lib/stable-label";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFocusRing, FocusRing, type FocusRingState } from "../lib/focus-ring";
 import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
-import { color, shape, scheme, type as scale, motion as tween, weight } from "../lib/theme";
+import { color, sizeChoice, shape, scheme, type as scale, motion as tween, weight } from "../lib/theme";
 
 /**
  * What checkbox-group and radio-group share: a vertical list of focusable
@@ -162,7 +162,7 @@ export function ChoiceGroup(props: {
 	const context: ChoiceContextValue = {
 		hover,
 		focusRing,
-		size: () => props.size ?? "default",
+		size: () => props.size ?? sizeChoice(),
 		arrowsSelect: props.arrowsSelect ?? false,
 		registerRow(index, entry) {
 			rows.set(index, entry);

@@ -56,13 +56,13 @@ Same in both (checked against the code): row height, gap and padding per size, c
 - **Fidelity:** exact in look.
 - **Components it hits:** every `FluidHighlight` list.
 
-## A surrounding size is ignored
+## An explicit `size` does not scope the parts inside
 
-- **Cause:** `not ported yet`.
-- **Original:** omitted, `size` follows the surrounding `SizeProvider` (`radio-group.tsx:66-69,255-257`).
-- **Port:** `size` defaults to `"default"` (`radio-group.tsx:88`); no size context exists. The items read the group's size, so there is no checkbox-style double `size` here.
-- **Workaround:** pass `size` on the group.
-- **Fidelity:** dropped (inheritance).
+- **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
+- **Original:** `size` wraps the group in a `SizeProvider` (`registry/base/radio-group.tsx:255-257`).
+- **Port:** An omitted `size` follows the Size row (`src/components/radio-group.tsx:88`); the items read the group's size, so there is no checkbox-style double `size` here.
+- **Workaround:** pass `size` to each nested component.
+- **Fidelity:** approximated.
 - **Components it hits:** checkbox-group and the other sized components.
 
 ## Props: `className`, `ref`, HTML attributes

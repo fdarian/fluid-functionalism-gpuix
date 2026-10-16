@@ -29,6 +29,7 @@ import {
 	color,
 	radius,
 	shape,
+	sizeChoice,
 	type as scale,
 	scheme,
 	shadow3,
@@ -428,7 +429,7 @@ export function CommandMenu(props: {
 	};
 
 	const context: CommandMenuContextValue = {
-		compact: () => props.size === "compact",
+		compact: () => (props.size ?? sizeChoice()) === "compact",
 		query,
 		setQuery,
 		sections,

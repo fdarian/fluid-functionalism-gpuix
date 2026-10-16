@@ -1,6 +1,6 @@
 import type { JSX } from "solid-js";
 import { CheckMark } from "../lib/icon";
-import { color } from "../lib/theme";
+import { color, sizeChoice } from "../lib/theme";
 import {
 	ChoiceGroup,
 	ChoiceRow,
@@ -96,7 +96,7 @@ export function CheckboxItem(props: {
 				<Checkbox
 					checked={props.checked}
 					active={active()}
-					size={props.size ?? "default"}
+					size={props.size ?? sizeChoice()}
 				/>
 			)}
 		/>

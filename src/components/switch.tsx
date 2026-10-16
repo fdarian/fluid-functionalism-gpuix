@@ -2,7 +2,7 @@ import type { HostMouseEvent, HostMouseMoveEvent, KeyEvent } from "@gpuix/solid"
 import { motion } from "@gpuix/solid";
 import { createSignal, createUniqueId } from "solid-js";
 import { createPointerCapture } from "../lib/pointer-capture";
-import { color, type as scale, scheme, motion as tween, weight, focusRing } from "../lib/theme";
+import { color, sizeChoice, type as scale, scheme, motion as tween, weight, focusRing } from "../lib/theme";
 
 export type SwitchSize = "default" | "compact";
 
@@ -48,7 +48,7 @@ export function Switch(props: {
 	settingsRow?: boolean;
 	testId?: string;
 }) {
-	const m = () => METRICS[props.size ?? "default"];
+	const m = () => METRICS[props.size ?? sizeChoice()];
 	const trackId = createUniqueId();
 	const labelId = createUniqueId();
 	const thumbTravel = () => m().trackWidth - m().thumbSize - THUMB_OFFSET * 2;

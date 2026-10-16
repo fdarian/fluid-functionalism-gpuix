@@ -209,12 +209,12 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
-## Size follows only the `size` prop
+## `size` does not scope the filter controls, and the dialog width is fixed
 
 - **Cause:** `not ported yet`.
-- **Original:** omitted `size` follows the surrounding `SizeProvider` (so a compact region gives a compact menu, a 480 px dialog and compact filter controls); `CommandMenuFilters` sets its children to `compact` (`:458-460`, `:1016`).
-- **Port:** `compact` is only `props.size === "compact"` (`src/components/command-menu.tsx:434`); there is no size context in `src/`, the dialog width is always 540 (`:1249`), and filter controls are the caller's to make compact.
-- **Workaround:** n/a.
+- **Original:** an omitted `size` follows the surrounding `SizeProvider`, which also gives a 480 px dialog; `CommandMenuFilters` sets its children to `compact` (`registry/default/command-menu.tsx:458-460`, `:1016`).
+- **Port:** an omitted `size` follows the Size row (`src/components/command-menu.tsx:432`), but the dialog width is always 540 (`:1249`), and filter controls are the caller's to make compact.
+- **Workaround:** pass `size` to each filter control.
 - **Fidelity:** approximated.
 - **Components it hits:** every component with a `size` prop.
 

@@ -15,14 +15,14 @@ Checked with no drift: the 17 hexes, heights (24 / 20), paddings (10 / 8), gaps 
 - **Fidelity:** approximated.
 - **Components it hits:** any component that trims its label (button, inline card title, `CardButton`, `CardFeature`).
 
-## Size does not follow the surrounding `SizeProvider`
+## Size aliases `sm`, `md`, `lg`
 
-- **Cause:** `not ported yet`.
-- **Original:** an omitted `size` resolves from the `SizeProvider`; `sm` / `md` / `lg` are accepted as aliases (`:64-75`, `:102-109`).
-- **Port:** `size` defaults to `default` and takes only `default` | `compact` (`src/components/badge.tsx:26`, `:52`).
-- **Workaround:** pass `size` by hand.
-- **Fidelity:** dropped.
-- **Components it hits:** every component with a size ladder (the port has no `SizeProvider`).
+- **Cause:** `port choice` (reason not stated).
+- **Original:** `sm` / `md` / `lg` are accepted and mapped onto the two-step ladder (`registry/default/badge.tsx:64-75`, `:102-109`).
+- **Port:** `size` takes only `default` | `compact`; omitted, it follows the Size row (`src/components/badge.tsx:26`, `:52`).
+- **Workaround:** pass `default` or `compact`.
+- **Fidelity:** dropped (aliases).
+- **Components it hits:** just this one (button has the same aliases, see button.md).
 
 ## No `className`, `style`, `ref` or HTML attributes
 

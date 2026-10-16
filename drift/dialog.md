@@ -90,15 +90,6 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 - **Fidelity:** dropped (no zero-padding canvas, so the sidebar block cannot be built).
 - **Components it hits:** just this one.
 
-## `compact` is a prop, not the region's size
-
-- **Cause:** `not ported yet`. The port has no size context (`useSize` / `useSizeVariant`).
-- **Original:** `DialogContent`, `DialogTitle` and `DialogDescription` read the variant from the region, so a dialog opened in a compact region narrows and steps its type down by itself (`registry/base/dialog.tsx:193`, `:348-349`, `:368`).
-- **Port:** `compact` must be passed to `DialogContent`, `DialogTitle` and `DialogDescription` separately (`src/components/dialog.tsx:232`, `:418-451`); the footer buttons take their own `size`.
-- **Workaround:** none.
-- **Fidelity:** exact when every piece is passed `compact`.
-- **Components it hits:** every component with a compact step.
-
 ## `DialogTrigger` and `DialogClose` take one child only
 
 - **Cause:** `port choice` (the single child becomes the control through gpuix's `asChild`; the children-as-label form has no use there; reason not stated beyond the comment at `src/components/dialog.tsx:177`).

@@ -140,7 +140,7 @@ repeating it.
 ## Props and parts the port does not take
 
 - **Cause:** `not ported yet`.
-- **Original:** `Banner` takes `dismissLabel` (default "Dismiss"), `motion` (a `BannerMotionConfig` that overrides the appear and dismiss values) with the exported `bannerMotion`, `role`, `className`, `style`, `ref` and HTML attributes, and wraps its children in `SizeProvider` when `size` is set (`banner.tsx:154-195`, `:366-393`, `:407-413`, `:525`, `:694`). `BannerAction` takes any `Button` prop, `href` (renders a link) and `external` (`banner.tsx:636-690`). The parts take `className` and HTML attributes. `useShape()` sets the radii.
+- **Original:** `Banner` takes `dismissLabel` (default "Dismiss"), `motion` (a `BannerMotionConfig` that overrides the appear and dismiss values) with the exported `bannerMotion`, `role`, `className`, `style`, `ref` and HTML attributes, and wraps its children in `SizeProvider` when `size` is set (the port's omitted `size` follows the Size row, `banner.tsx:143`, but a given one scopes no children) (`banner.tsx:154-195`, `:366-393`, `:407-413`, `:525`, `:694`). `BannerAction` takes any `Button` prop, `href` (renders a link) and `external` (`banner.tsx:636-690`). The parts take `className` and HTML attributes. `useShape()` sets the radii.
 - **Port:** the ✕ label is the literal "Dismiss" (`banner.tsx:396`); the motion values are module constants (`:123-126`); the role is derived from `status` only (`:240-242`); `BannerAction` takes `variant`, `testId`, `onClick` and children (`:514-530`); the parts take children only. Radii are fixed (`radius.container` 12, `radius.item` 8, `:250`, `:414`).
 - **Workaround:** none.
 - **Fidelity:** dropped.

@@ -23,7 +23,7 @@ import { createFocusRing, FocusRing, type FocusRingState } from "../lib/focus-ri
 import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { createMeasuredHeight } from "../lib/measured-height";
-import { color, shape, type as scale, scheme, motion as tween, weight, focusRing, trackMs } from "../lib/theme";
+import { color, sizeChoice, shape, type as scale, scheme, motion as tween, weight, focusRing, trackMs } from "../lib/theme";
 
 export type AccordionSize = "default" | "compact";
 export type AccordionHighlight = "trigger" | "item";
@@ -137,7 +137,7 @@ function createRootState(
 		isOpen: (value) => open().includes(value),
 		anyOpen: () => open().length > 0,
 		highlight: () => props.highlight ?? "item",
-		size: () => props.size ?? "default",
+		size: () => props.size ?? sizeChoice(),
 		toggle(value) {
 			const current = open();
 			if (props.type === "multiple") {

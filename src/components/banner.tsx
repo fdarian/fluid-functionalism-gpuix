@@ -20,7 +20,7 @@ import {
 } from "solid-js";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { color, shape, type as scale, motion as tween, weight, focusRing } from "../lib/theme";
+import { color, sizeChoice, shape, type as scale, motion as tween, weight, focusRing } from "../lib/theme";
 import { Button } from "./button";
 
 export type BannerStatus = "default" | "info" | "success" | "warning" | "error";
@@ -140,7 +140,8 @@ export function Banner(props: {
 	const status = () => props.status ?? "default";
 	const contrast = () => props.contrast ?? "low";
 	const fixed = () => props.variant === "fixed";
-	const metrics = () => sizes[props.size ?? "default"];
+	const size = () => props.size ?? sizeChoice();
+	const metrics = () => sizes[size()];
 
 	const [openState, setOpenState] = createSignal(true);
 	const open = () => props.open ?? openState();
@@ -149,7 +150,7 @@ export function Banner(props: {
 	const [rowHeight, setRowHeight] = createSignal(0);
 
 	const scope: BannerScope = {
-		compact: () => props.size === "compact",
+		compact: () => size() === "compact",
 		hasDescription,
 		setHasDescription,
 	};
@@ -289,7 +290,7 @@ export function Banner(props: {
 				</div>
 				<Show when={props.dismissible}>
 					<DismissButton
-						compact={props.size === "compact"}
+						compact={size() === "compact"}
 						testId={props.testId === undefined ? undefined : `${props.testId}-dismiss`}
 						onClick={dismiss}
 					/>
