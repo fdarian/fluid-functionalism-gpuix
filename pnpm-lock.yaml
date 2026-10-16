@@ -175,6 +175,9 @@ importers:
       '@gpuix/solid':
         specifier: file:../gpuix/packages/solid
         version: file:../gpuix/packages/solid(solid-js@1.9.15)
+      base-ui-solid-gpuix:
+        specifier: link:../base-ui-solid-gpuix
+        version: link:../base-ui-solid-gpuix
       solid-js:
         specifier: 1.9.15
         version: 1.9.15
@@ -188,6 +191,30 @@ importers:
       '@types/bun':
         specifier: ^1.4.2
         version: 1.4.3
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
+  ../base-ui-solid-gpuix:
+    devDependencies:
+      '@biomejs/biome':
+        specifier: latest
+        version: 2.5.15
+      '@gpuix/native':
+        specifier: link:../gpuix/packages/native
+        version: link:../gpuix/packages/native
+      '@gpuix/solid':
+        specifier: file:../gpuix/packages/solid
+        version: file:../gpuix/packages/solid(solid-js@1.9.15)
+      '@total-typescript/tsconfig':
+        specifier: latest
+        version: 1.0.4
+      '@types/bun':
+        specifier: ^1.4.2
+        version: 1.4.3
+      solid-js:
+        specifier: 1.9.15
+        version: 1.9.15
       typescript:
         specifier: ^7.0.2
         version: 7.0.2

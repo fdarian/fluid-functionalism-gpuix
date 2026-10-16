@@ -1,3 +1,6 @@
+packages:
+  - .
+  - ../base-ui-solid-gpuix
 enableGlobalVirtualStore: true
 packageImportMethod: clone-or-copy
 overrides:

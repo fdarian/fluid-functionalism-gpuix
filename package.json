@@ -16,6 +16,7 @@
 	"dependencies": {
 		"@gpuix/native": "link:../gpuix/packages/native",
 		"@gpuix/solid": "file:../gpuix/packages/solid",
+		"base-ui-solid-gpuix": "link:../base-ui-solid-gpuix",
 		"solid-js": "1.9.15"
 	},
 	"devDependencies": {
