@@ -1,19 +1,351 @@
 # color-picker
 
-Original: `registry/default/color-picker.tsx`. Ported in `src/components/color-picker.tsx` (colour maths in `src/components/color-picker-math.ts`, copied from the original), demo in `src/demos/color-picker.tsx`. The panel, the format menu, the channel fields with scrubbing, swatches and the popover are ported; size pinning and the eyedropper are not (a port gap, not a gpuix one: see `BASE-UI-AUDIT.md`), and named colours are below.
+Original: `registry/default/color-picker.tsx` (rails come from `registry/radix/slider.tsx`'s compact engine), demo in `app/docs/color-picker/page.tsx` of the source
+(fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/color-picker.tsx` (colour maths in `src/components/color-picker-math.ts`),
+demo in `src/demos/color-picker.tsx`. Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`.
+
+One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
+(transforms, intrinsic width, variable fonts) get a one-line entry here that links to the README row instead of
+repeating it. In this file, source line numbers are `color-picker.tsx:N` and port ones `src/components/color-picker.tsx:N`.
+
+The colour maths is the same code: `color-picker-math.ts` matches `color-picker.tsx:153-474` function for function (formatting and `Math.pow` to `**` aside),
+except `resolveCssColor` and `useIsClient`, which are gone (first entry). HSV state, sticky OKLCH hue, controlled-value echo skip, format re-emit, 0..1 / 0..255 rounding and string formats behave alike.
+The square, hex and channel commit rules, and the alpha rail snap to whole percents also match.
 
 ## No JS-side CSS colour resolver (named colours)
 
-- **Original:** a typed or swatch colour such as `tomato` resolves through a canvas 2D context (`fillStyle`), which accepts every CSS colour syntax.
-- **gpuix lacks:** a canvas pixel path and any JS-visible colour resolver. Named colours, `color-mix()` and the rest resolve natively for style values only (`~/code/fdarian/gpuix/FORK.md:661-667`), and nothing hands the resolved colour back to JS.
-- **Workaround:** `parseColor` reads hex, `rgb(a)`, `hsl(a)` and `oklch` only (`src/components/color-picker-math.ts:303-306`); a typed name is rejected like any unreadable input, and a `swatches` entry it cannot read throws (`src/components/color-picker.tsx:1404`).
+- **Cause:** `gpuix gap`.
+- **Original:** a swatch such as `tomato` resolves through a canvas 2D context (`fillStyle`), which accepts every CSS colour syntax (`color-picker.tsx:420-440`); the strip marks the matching swatch and a click commits it (`:1748-1758`, `:1895-1902`). `swatches` is documented as "Any CSS color" (`:103`).
+- **Port:** `parseColor` reads hex, `rgb(a)`, `hsl(a)` and `oklch` only (`src/components/color-picker-math.ts:304-306`). A named entry in `swatches` throws while the panel renders (`normalizedHex`, `src/components/color-picker.tsx:1389-1393`, called at `:1626`), so it takes the whole panel with it; the prop is documented as "named colours are not parsed" (`:1404`). A typed name is rejected as before (the hex field prefixes `#`, `:1321`). A bare `ColorSwatch` or `ColorTile` still paints a name, because styles resolve it natively.
+- **gpuix lacks:** a JS-visible colour resolver. Named colours, `color-mix()` and the rest resolve natively for style values only (`~/code/fdarian/gpuix/FORK.md:661-662`), and nothing hands the resolved colour back to JS.
+- **Workaround:** none. A static table of the CSS colour names inside `parseColor` would close most of it without gpuix.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
 
 ## CSS transforms (popup scale, chevron turn)
 
-- **Original:** the popover and the format menu enter with `scaleY: 0.96`, and the trigger's chevron rotates 180 degrees.
+- **Cause:** `gpuix gap`.
+- **Original:** the popover and the format menu enter with `scaleY: 0.96` from the top corner and slide `y: -4` whichever side they open on (`color-picker.tsx:1005-1013`, `:2372-2382`), and the trigger's chevron rotates 180 degrees over 150ms (`:989-996`).
+- **Port:** the popup slides 4px from the side it opened on (down from above, up from below) and fades (`src/components/color-picker.tsx:698-719`, `src/lib/popup.tsx:83-107`); the chevron is swapped for a `chevron-up` icon while open, at once (`:79`, `:913`).
 - **gpuix lacks:** `scale` and `rotate` (no `transform`; `~/code/fdarian/gpuix/FORK.md:876-887`).
-- **Workaround:** the popup slides 4px from the side it opened on and fades (`src/components/color-picker.tsx:697-719`); the chevron is swapped for a `chevron-up` icon while open (`:79`, `:913`).
+- **Workaround:** the slide and the icon swap above. README rows: "CSS transforms".
 - **Fidelity:** approximated.
-- **Components it hits:** every popup (select, combobox, dropdown share the same slide in `src/lib/popup.tsx:64-84`) and every rotating chevron.
+- **Components it hits:** every popup (select, combobox, dropdown share the same slide in `src/lib/popup.tsx:83-107`) and every rotating chevron.
+
+## Static font weights in the format menu
+
+- **Cause:** `gpuix gap`.
+- **Original:** the checked format row eases between weight 400 and semibold 550 over 80ms (`color-picker.tsx:860-881`).
+- **Port:** `StableLabel` switches to SemiBold 600 at once (`src/components/color-picker.tsx:975-979`, `src/lib/stable-label.tsx`).
+- **gpuix lacks:** variable-font axes; see README "Missing features", variable-font row, and `drift/site.md` "Static font weights and no `opsz`".
+- **Workaround:** static cuts.
+- **Fidelity:** approximated.
+- **Components it hits:** every `StableLabel`.
+
+## Panel content sits 1px off centre
+
+- **Cause:** `port choice` (reason not stated; looks unintended, a bug).
+- **Original:** the panel is `w-[280px] p-3` with no border; the square, rails and fields are 256px wide with 12px either side (`color-picker.tsx:1956-1960`).
+- **Port:** the card is 280px with a 1px border, and the 280px panel sits inside it (`src/components/color-picker.tsx:1638-1651`, `:1561-1570`; the popover card is the same, `:691-731`, panel at `:1824`). The panel shrinks to 278px while its children stay 256px, so in `screenshots/color-picker/default.png` the left inset is 13px and the right one 11px.
+- **gpuix lacks:** n/a.
+- **Workaround:** none.
+- **Fidelity:** approximated (1px).
+- **Components it hits:** just this one.
+
+## Card edge and shadow
+
+- **Cause:** `not ported yet`.
+- **Original:** the panel carries `shadow-surface-1` (a 1px ring) and the popover and format menu `shadow-surface-3` (ring plus two stacked drops, inset hairline and highlight in dark) (`color-picker.tsx:1958`, `:2405`, `:1025-1027`; tokens in `app/globals.css:137-162`).
+- **Port:** a 1px `borderColor: popupBorder` plus one drop (`shadow3()`, `src/lib/theme.ts:332-341`; `src/components/color-picker.tsx:726-729`, `:1643-1647`). The README row says gpuix paints a single non-inset shadow, but `boxShadow` takes a list and `inset` (`~/code/fdarian/gpuix/packages/native/js/host.ts:369-377`, `:558`; `FORK.md:646-649`).
+- **Workaround:** border plus one drop; README "shadow-surface-3" row.
+- **Fidelity:** approximated.
+- **Components it hits:** every popup and card.
+
+## Pill shape is not ported
+
+- **Cause:** `not ported yet`.
+- **Original:** corners come from `useShape()`: the square's radius nests in the panel's, and tiles, swatches, fields and the trigger switch to 20px in pill mode (`color-picker.tsx:516-520`, `:1660`).
+- **Port:** one rounded set (`radius.item` 8, `radius.container` 12). README "Not ported there: pill shape" (`README.md:219`).
+- **Workaround:** none.
+- **Fidelity:** dropped.
+- **Components it hits:** every component.
+
+## Popover surface level is 5, not substrate + 2
+
+- **Cause:** `port choice` (reason not stated; the port has no surface context).
+- **Original:** the popover panel sits at `min(substrate + 2, 8)` and the format menu two above it (`color-picker.tsx:2247`, `:1025`); a standalone panel is `max(substrate, 3)` (`:1948`). On the docs page the substrate is 1, so the popover is surface 3 and its menu surface 5.
+- **Port:** the popover card and its panel are hard-coded to level 5 and the menu is 7 (`src/components/color-picker.tsx:1823-1827`); a standalone panel takes a port-only `level` prop (default 3, `:1409-1410`, `:1643`). In `screenshots/color-picker/popover-open.png` the popover is visibly lighter than the inline panel; select and combobox popups use surface 3 (`src/lib/popup.tsx:97`).
+- **Workaround:** none.
+- **Fidelity:** approximated (two steps lighter in the popover).
+- **Components it hits:** just this one.
+
+## Popover and format menu speed
+
+- **Cause:** `port choice` (reason not stated; `Popup`'s doc says "the same slide and fade as the shared popup").
+- **Original:** the popover uses `spring.moderate` in and `spring.moderate.exit` out, 160ms and 120ms (`color-picker.tsx:2379`); the format menu uses `spring.fast` / `.exit`, 80ms and 60ms (`:1012`).
+- **Port:** both use `tween.fast` / `tween.fastExit` (`src/components/color-picker.tsx:719`), and the presence timer is the shared 60ms (`src/lib/presence.ts:4`). The popover is twice as quick in and out.
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
+
+## Rails are 20px tall, the source's are 36px
+
+- **Cause:** `port choice` (reason not stated; looks unintended).
+- **Original:** each rail is the compact slider with the default `valuePosition="left"`, whose track area is `THUMB_SIZE + 16` = 36px high, the 18px pill centred in it (`registry/radix/slider.tsx:402`, `:981-983`, `:1121-1130`); the picker stacks two with a -1px overlap (`color-picker.tsx:1971`), so the block is 71px, and the press target is that full height (`slider.tsx:1086-1092`).
+- **Port:** a rail is `RAIL_THUMB` = 20px high, the pill 18px (`src/components/color-picker.tsx:61-63`, `:513-531`), the block 39px, and the press area 20px (`:574-596`). The pills sit 3px apart where the source's are 17px apart, and the panel is about 32px shorter.
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one (the slider port is separate).
+
+## Rails: hover preview and value bubble
+
+- **Cause:** `not ported yet`.
+- **Original:** hovering a rail fades in a 40% accent bar from the start to the snapped hover point (0.15s) and, after 100ms, a foreground-coloured bubble above it with the value (hue degrees or alpha percent), both hidden while pressed (`registry/radix/slider.tsx:1094-1120`, `:1152-1171`).
+- **Port:** neither (`src/components/color-picker.tsx:454-599`).
+- **Workaround:** none.
+- **Fidelity:** dropped.
+- **Components it hits:** just this one; `src/components/slider.tsx` has its own.
+
+## Rails: thumb does not spring
+
+- **Cause:** `not ported yet`.
+- **Original:** a press springs the thumb to the pressed spot on `spring.moderate`, a drag sets it directly, release and keyboard or programmatic changes spring again (`registry/radix/slider.tsx:721-723`, `:763-766`, `:799-815`, and the value-sync effect at `:611-625`).
+- **Port:** `left` is a plain style from the value, so every change jumps (`src/components/color-picker.tsx:545`). The slider port animates its thumb through `createMotionWrites` (README "Bugs", slider row), which the rails do not use.
+- **Workaround:** none.
+- **Fidelity:** dropped.
+- **Components it hits:** just this one.
+
+## Rails: keyboard, ARIA and focus ring
+
+- **Cause:** `not ported yet`.
+- **Original:** Radix slider thumb: arrows, Shift+arrow and PageUp/PageDown move by 10, Home/End jump, and it exposes `aria-valuenow`, `-min`, `-max` (`registry/radix/slider.tsx`, primitive). The ring is a 24px circle whose opacity eases on `spring.fast` (`:940-952`), and the track has an `ew-resize` cursor only on the hit area (`:1087`).
+- **Port:** arrows, Shift (10), Home and End only; no PageUp/PageDown (`src/components/color-picker.tsx:482-505`). The thumb has `aria-valuetext` but no `aria-valuenow`/`-min`/`-max` (`:537-539`; `slider.tsx:837-839` has them). The ring is `focusVisible` with a 2px offset, switching at once and drawn about 2px wider (`:553`).
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
+
+## Hue rail is six gradients side by side
+
+- **Cause:** `not ported yet`.
+- **Original:** one `linear-gradient` with seven stops as the track (`color-picker.tsx:695-699`).
+- **Port:** six flex children with two stops each (`src/components/color-picker.tsx:618-642`), on the stated ground that gpuix gradients take two stops. That holds only for the object form (`LinearGradientBackground.stops`, `host.ts:389`); the CSS-string `background` and `backgroundImage` take any number of stops (`host.ts:483-491`; `FORK.md:646-647`). Sub-pixel widths (254 / 6) can leave seams between the cells.
+- **Workaround:** the six cells.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
+
+## Checkerboard is an SVG of squares
+
+- **Cause:** `not ported yet`.
+- **Original:** one `conic-gradient` tiled at 8px (`CHECKER_BG`, `color-picker.tsx:485-489`) behind the tile, the swatch and the alpha rail (`:741`).
+- **Port:** a backing fill plus a monochrome SVG path of the other squares, rebuilt for each size (`src/components/color-picker.tsx:82-127`), on the stated ground that gpuix has no conic gradients or tiled backgrounds. It has: `backgroundImage` takes `conic-gradient()` and `backgroundSize` / `backgroundRepeat` exist (`host.ts:483-496`; `FORK.md:646-649`). The squares line up with the source's (4px, `checker-a` on the top right).
+- **Workaround:** the SVG.
+- **Fidelity:** exact in pixels.
+- **Components it hits:** just this one.
+
+## Hairline sits over the colour
+
+- **Cause:** `port choice` (follows the source comment's intent, not its rendering).
+- **Original:** the 25% grey hairline is an `inset` box-shadow on the tile and swatch button, and the colour is an `absolute inset-0` child above it (`color-picker.tsx:1665-1672`, `:1692`, `:1713-1716`). By CSS paint order the child covers an inset shadow, so on an opaque colour the hairline does not show; it shows only through translucent ones. This was reasoned from the stacking rules, not checked in a browser.
+- **Port:** a separate bordered overlay is painted after the colour, so the hairline is always visible (`src/components/color-picker.tsx:154-165`, `:242-253`).
+- **Workaround:** n/a.
+- **Fidelity:** approximated (a hairline the source may not draw on opaque colours).
+- **Components it hits:** just this one.
+
+## Swatch ring stack, and its fade
+
+- **Cause:** `not ported yet`.
+- **Original:** three stacked box-shadows (inset hairline, 2px background gap, 2px outer ring: `#6B97FF` selected, 40% grey hovered), fading over 100ms (`color-picker.tsx:1688-1699`).
+- **Port:** a 2px background-coloured spread shadow plus a 2px outline offset by 2, switching at once (`src/components/color-picker.tsx:171-216`), on the stated ground that gpuix has one box shadow. It takes a list (`host.ts:558`), and CSS transitions apply to state-style changes (`FORK.md:816-818`). README row "transition-colors duration-80, transition-[box-shadow]: Dropped" predates that.
+- **Workaround:** the pair.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
+
+## Colour fades (`transition-colors duration-80`) are not ported
+
+- **Cause:** `not ported yet`.
+- **Original:** the format trigger, channel fields, hex field, eyedropper and popover trigger fade background and text over 80ms (`color-picker.tsx:978`, `:1267`, `:1466`, `:1631`, `:2315`), and a menu row's colour and weight over 80ms (`:870`). The remove X changes colour at once (`:2359`).
+- **Port:** state styles switch at once (`src/components/color-picker.tsx:892-897`, `:1163-1164`, `:1765`); the row label colour likewise (`:978`). Other components use `colorFade` for text (`src/lib/theme.ts:310`).
+- **Workaround:** none. Per-property CSS transitions exist (`FORK.md:816-819`).
+- **Fidelity:** dropped.
+- **Components it hits:** every control with `transition-colors`.
+
+## Digits are not tabular
+
+- **Cause:** `not ported yet` (gpuix has `fontVariantNumeric`, `FORK.md:657`; unchecked on `<input>`).
+- **Original:** the fields and the trigger's hex are `tabular-nums` (`color-picker.tsx:1321`, `:1562`, `:2331`).
+- **Port:** none (`src/components/color-picker.tsx:1206-1217`, `:1779-1787`), so Inter's proportional digits shift as a value changes.
+- **Workaround:** none.
+- **Fidelity:** dropped.
+- **Components it hits:** just this one.
+
+## Saturation square: the OS cursor stays
+
+- **Cause:** `not ported yet`.
+- **Original:** `cursor-none`; the ghost ring stands in for the pointer (`color-picker.tsx:616`, `:653-669`).
+- **Port:** `cursor: "crosshair"`, so the crosshair and the ghost ring both show (`src/components/color-picker.tsx:361-362`), on the stated ground that gpuix has no `cursor: none`. It has (`host.ts:367`, `packages/native/src/style.rs:759`; `FORK.md:314`), on macOS only: Linux shows the default cursor, Windows is untested (`FORK.md:409-414`).
+- **Workaround:** the crosshair.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
+
+## Saturation square: ghost ring paints under the thumb
+
+- **Cause:** `not ported yet`.
+- **Original:** the thumb comes first and the ghost ring after it, so the ring is on top (`color-picker.tsx:636-669`).
+- **Port:** the ghost is rendered before the thumb (`src/components/color-picker.tsx:409-443`); paint order is document order, so the thumb is on top.
+- **Workaround:** none; swapping the two blocks fixes it.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
+
+## Format menu: no travelling focus ring
+
+- **Cause:** `not ported yet`.
+- **Original:** a keyboard-focused row gets a 1px ring 2px outside it that glides between rows on `spring.fast` and fades out on `spring.fast.exit` (`color-picker.tsx:1118-1138`); it shows for `:focus-visible` only (`:1069-1072`).
+- **Port:** the keyboard-lit row gets only the hover highlight; there is no ring (`src/components/color-picker.tsx:932-946`, `:947-983`). The select port has the ring (recent commit "Select: the keyboard-lit row gets a focus ring").
+- **Workaround:** none.
+- **Fidelity:** dropped.
+- **Components it hits:** just this one.
+
+## Format menu: focus stays on the trigger
+
+- **Cause:** `port choice` (`BASE-UI-AUDIT.md:441`: "the trigger keeps focus because the keys live on it").
+- **Original:** Base UI's Menu moves focus into the popup and onto a row, which is `:focus-visible` for keyboard use, and returns it to the trigger on close (`color-picker.tsx:961-971`, `:1047-1074`).
+- **Port:** the trigger keeps focus and names the lit row through `aria-activedescendant`; arrows, Home/End and typeahead are handled on the trigger (`src/components/color-picker.tsx:803-850`, `:872`). The audit rows for the format menu are otherwise `fixed` or `ported`.
+- **Workaround:** n/a.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
+
+## Escape in the open format menu also closes the popover (suspected bug)
+
+- **Cause:** `not ported yet` (`PopupSurface` joins gpuix's dismiss-layer stack, `src/lib/popup.tsx:68-73`; this file's `Popup` does not).
+- **Original:** Escape closes the innermost open layer, the menu, and a second Escape closes the popover (Base UI Menu inside Popover; `color-picker.tsx:961-971`, `:2304-2311`).
+- **Port:** the trigger's Escape handler closes the menu and does not stop the event (`src/components/color-picker.tsx:843-845`); events follow the logical tree, so the popover wrapper's own Escape handler (`:1728-1730`) sees it as well and closes the popover too. Read from the code, not run; no scenario covers Escape with the menu open.
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
+
+## Popover: focus is not moved in, restored or lost
+
+- **Cause:** `not ported yet`.
+- **Original:** Base UI Popover (`modal={false}`) moves focus into the panel on open, restores it to the trigger on close, and closes on focus-out and outside press (`color-picker.tsx:2204-2214`, `:2304-2311`). The trigger is a real button with no `aria-label`, so its name is the label and value text.
+- **Port:** open and close change nothing about focus; only an outside press and Escape (from the wrapper) close it, with no focus-out handler (`src/components/color-picker.tsx:1677-1685`, `:1719-1730`). The trigger is a `div role="button"` whose `aria-label` is `triggerLabel` or "Pick a color" (`:1734`), which hides the value from its name. Read from the code, not run.
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
+
+## Popover remove X is not keyboard reachable
+
+- **Cause:** `not ported yet`.
+- **Original:** a `span role="button" tabIndex={0}`; Enter and Space remove without toggling the popover (`color-picker.tsx:2343-2363`).
+- **Port:** a `div role="button"` with no `tabIndex` or key handler; a pointer click is kept off the trigger by a hover flag (`src/components/color-picker.tsx:1797-1821`, `:1741`).
+- **Workaround:** none.
+- **Fidelity:** approximated (pointer only).
+- **Components it hits:** just this one.
+
+## Swatches are not keyboard reachable
+
+- **Cause:** `not ported yet`.
+- **Original:** each swatch is a `<button>`, so Tab reaches it and Enter or Space picks it (`color-picker.tsx:1694-1717`).
+- **Port:** a `div role="button"` with `onClick` only, no `tabIndex` and no key handler (`src/components/color-picker.tsx:189-218`).
+- **Workaround:** none.
+- **Fidelity:** approximated (pointer only).
+- **Components it hits:** just this one.
+
+## Channel fields: scrubbing without pointer lock
+
+- **Cause:** `not ported yet` (pointer lock is macOS only, `FORK.md:314`, `:409-414`).
+- **Original:** Base UI's `NumberField.ScrubArea` locks the pointer, draws a black `<->` cursor in its place, and counts 1px of travel per step with no dead zone (`pixelSensitivity={1}`), so a drag can run past the screen edge (`color-picker.tsx:1473-1510`). A press without a drag dispatches a click that starts editing (`:1479-1487`).
+- **Port:** the pointer is captured, not locked, so the real cursor shows with an `ew-resize` shape and stops at the screen edge; a 3px dead zone separates a press from a scrub, and the first scrub step jumps by that travel (`src/components/color-picker.tsx:1104-1147`, `:1158`). No virtual cursor.
+- **gpuix lacks:** n/a on macOS (`requestPointerLock` exists, `packages/native/index.d.ts:313`; the port does not call it).
+- **Workaround:** capture plus the dead zone.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
+
+## Channel fields: select-all on focus
+
+- **Cause:** `not ported yet` (`select()` exists, `FORK.md:451`).
+- **Original:** focusing a field, or a no-drag press, selects all its text, so typing replaces the value (`color-picker.tsx:1289-1292`, `:1485-1486`, `:1530-1534`).
+- **Port:** focus places the caret and selects nothing (`src/components/color-picker.tsx:1069-1072`, `:1196-1199`); the demo clears the hex field with eight Backspaces (`src/demos/color-picker.tsx:204-208`).
+- **Workaround:** none.
+- **Fidelity:** dropped.
+- **Components it hits:** just this one.
+
+## Channel fields: NumberField keys and input filtering
+
+- **Cause:** `not ported yet`.
+- **Original:** `NumberField` also handles Home/End (to `min`/`max` where set), and its scrub and arrow steps read Shift for `largeStep` and Alt for `smallStep`; it blocks non-numeric characters as you type (Base UI master `NumberFieldInput.tsx:350-385`, `NumberFieldRoot.tsx:217-225`, `NumberFieldScrubArea.tsx:230`; checked against master, not FF's pinned version).
+- **Port:** ArrowUp/Down and Shift+arrow only; Home/End do nothing; no modifier during a scrub; any text can be typed (`src/components/color-picker.tsx:1082-1100`, `:1127-1129`).
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
+
+## Channel fields: unreadable or empty text commits NaN or 0 (bug)
+
+- **Cause:** `not ported yet` (the source ignores them).
+- **Original:** `NumberField` reports `null` for empty text and ignores it (`color-picker.tsx:1433-1435`), and an unparseable draft is dropped on blur, so the field reverts and the colour is untouched.
+- **Port:** on blur a bounded field whose draft does not parse hands the raw text to `onCommit` (`src/components/color-picker.tsx:1074-1080`), and `onChannelChange` turns it into `Number(value)` (`:1518-1520`, `:1530-1532`, `:1543-1545`). Text such as `abc` becomes NaN, which flows through `rgbToHsv` into the state and the emitted string; an empty draft becomes 0 (red, green or blue goes to 0). The alpha field is guarded (`:1266-1272`); red, green, blue, hue, saturation, lightness, L, C and H are not. Read from the code, not run.
+- **Workaround:** none.
+- **Fidelity:** dropped.
+- **Components it hits:** just this one.
+
+## Channel fields: hue wraps at its maximum
+
+- **Cause:** `port choice` (reason not stated; the port has one shared `bound` for both of the source's input kinds).
+- **Original:** the scrub field wraps only values outside the range, so 360 stays 360 (`color-picker.tsx:1412-1418`); the text field maps 360 to 0 (`:1236-1243`). Hue fields use the scrub path.
+- **Port:** `bound` always takes the modulo, so a typed 360 commits 0 (`src/components/color-picker.tsx:1040-1048`). The OKLCH H field then shows 0, where the source's sticky hue shows 360.
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
+
+## Size ladder is not ported
+
+- **Cause:** `not ported yet`.
+- **Original:** `size` pins the panel, the format menu and the popover trigger to the default (36px) or compact (28px) step: control height, padding, gap, 12px text, 16px tile and menu row padding (`color-picker.tsx:113-116`, `:830-831`, `:2075`, `:2242-2243`, `:2329`).
+- **Port:** fixed 36px controls (`height.control`, `src/components/color-picker.tsx:1757`), 13px text, 20px tile (`:1777`). No `size` prop and no size context.
+- **Workaround:** none.
+- **Fidelity:** dropped.
+- **Components it hits:** any component with a `size` prop; the port has no `SizeProvider`.
+
+## Eyedropper is not ported
+
+- **Cause:** `not ported yet` (an `EyeDropper` exists on macOS only: `FORK.md:514-517`).
+- **Original:** a pipette button beside the format menu where `window.EyeDropper` exists, hidden elsewhere or by `hideEyedropper`; a pick commits the colour like a swatch (`color-picker.tsx:1599-1640`, `:1983-1991`).
+- **Port:** the format menu is the only item in its row, in the same half-width column (`src/components/color-picker.tsx:1596-1604`). No `hideEyedropper` prop; no `pipette` icon (`src/lib/icons.ts`).
+- **Workaround:** none.
+- **Fidelity:** dropped.
+- **Components it hits:** just this one.
+
+## Props and exports the port lacks
+
+- **Cause:** `not ported yet` for the behaviour props; `port choice` (gpuix takes `style`, not classes) for the class and ref ones.
+- **Original:** `ColorPicker` takes `formatOpen`, `size`, `hideEyedropper`, `className`, a forwarded `ref` and div attributes (`color-picker.tsx:89-117`); `ColorPickerPopover` adds controlled `open`, `onOpenChange` and `triggerClassName` (`:119-137`); `ColorTile` takes `className` and `style` (`:1646-1651`); `ColorSwatch` takes every button attribute and `size` (`:139-147`); `ColorPickerPortalContainer` is exported (`:2431-2439`).
+- **Port:** none of those; `ColorPickerPopover` has `defaultOpen` only and is uncontrolled for open state (`src/components/color-picker.tsx:1655-1666`). `ColorSwatch` takes `onClick` and `testId`, `ColorTile` neither class nor style (`:130`, `:175-181`). Port-only: `level` and `testId` (`:1409-1410`, `:1408`). No portal container: the menu and popover are `<anchored>` layers.
+- **Workaround:** none.
+- **Fidelity:** dropped.
+- **Components it hits:** just this one.
+
+## Accessible names differ
+
+- **Cause:** `port choice` (reason not stated).
+- **Original:** the format trigger has no label, so its name is "HEX" and so on (`color-picker.tsx:974-997`); the hex field is labelled "Hex value" (`:2116`).
+- **Port:** the format trigger is "Color format" (`src/components/color-picker.tsx:868`), the hex field "Hex" (`:1318`); the popover trigger name is covered above.
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
+
+## Demo: sections are merged into cards
+
+- **Cause:** `port choice` (reason not stated; the file says only that the page is taller than the window, so scenarios show one card at a time).
+- **Original:** six sections: Default, Popover, With Swatches, OKLCH Format, Controlled, Removable Trigger, then an "Eyedropper Support" note and two props tables (`app/docs/color-picker/page.tsx:96-179`).
+- **Port:** four cards: "Default and popover" (the inline panel, the popover and the removable trigger side by side under captions), "With swatches", "OKLCH format", "Controlled" (`src/demos/color-picker.tsx:40-133`). Every variant the source demos exists; the Eyedropper section has no feature to describe. No Preview / Code tabs and no props tables: see `drift/site.md` ("Preview frame: no Preview / Code tabs", "API Reference props tables"). Section and card titles differ in case ("With Swatches" / "With swatches").
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
+
+## Demo: "+ Add fill" button and the "Current:" readout
+
+- **Cause:** `not ported yet` (`borderStyle: "dashed"` exists, `packages/native/src/style.rs:346`; the port loads Inter only, `src/lib/fonts.ts:4`).
+- **Original:** the add button has a dashed border, muted text that goes to foreground on hover (`app/docs/color-picker/page.tsx:153-160`); the controlled readout shows the value in a monospace span (`:135-137`).
+- **Port:** a solid border and fixed muted text (`src/demos/color-picker.tsx:63-84`); the readout is one body-text string (`:128-130`).
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.
