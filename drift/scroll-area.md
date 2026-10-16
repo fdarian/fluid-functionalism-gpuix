@@ -80,19 +80,11 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 ## Demo: "The problem" is static and smaller
 
-- **Cause:** the script is `not ported yet`; the size and copy are `port choice` (reason not stated).
+- **Cause:** the script is `not ported yet` (the component has no way to be driven, below); the size and copy are `port choice` (reason not stated).
 - **Original:** two 256 x 224 lists (`h-56 w-64`) with a scripted fake cursor that slides in, scrolls down and back and leaves, feeding pointer events to the `ScrollArea` (`app/docs/scrollbars/page.tsx:248-262`, `:262-370`). Captions: "The native scrollbar hides until you scroll, so the list looks cut off" and "ScrollArea shows its scrollbar on hover and fades the edges", each with a leading X / check mark (`:347-366`).
 - **Port:** 256 x 168, no cursor script; captions "Plain overflow: nothing says there is more below" and "ScrollArea: scrollbar on hover, faded edges" (`src/demos/scroll-area.tsx:132-156`). The plain panel is `overflowY: "scroll"`, so it shows gpuix's overlay bar, not a hidden macOS one.
-- **Workaround:** n/a.
-- **Fidelity:** approximated.
-- **Components it hits:** just this one.
-
-## Demo: the standalone fade list is missing
-
-- **Cause:** `not ported yet`.
-- **Original:** "The fade": one `ScrollArea` with `scroll-fade`, `h-64 w-72` = 256 x 288 (`app/docs/scrollbars/page.tsx:408-420`).
-- **Port:** none as such; the right panel of the first card is a faded list at 256 x 168 and the divider card repeats it with hairlines (`src/demos/scroll-area.tsx:146-156`, `:266-279`).
-- **Workaround:** n/a.
+- **Why not in the demo:** `ScrollArea` takes its hover and scroll offset only from real pointer and wheel events: no `ref`, no hover prop, no controlled offset (`src/components/scroll-area.tsx:62-83`). A demo cannot feed it a scripted cursor the way the source dispatches `pointermove` and sets `scrollTop` (`page.tsx:292-318`), and a cursor drawn over the lists with the thumb left unshown would be fake.
+- **Workaround:** none without a component change.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
@@ -120,5 +112,5 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 - **Original:** sections The problem, The scrollbar, The fade, Examples (Horizontal, Double overflow), API reference, with code snippets and a PropsTable; no divider, rounded-clip or nested examples (`app/docs/scrollbars/page.tsx:492-580`).
 - **Port:** the first, horizontal and both-axis cards, plus "Rounded clip" (28px radius, with and without the fade), "Scroll divider" and "Nested scroll areas" (`src/demos/scroll-area.tsx:249-304`). No prose, no snippets, no API table, no `R` shape toggle hint.
 - **Workaround:** n/a.
-- **Fidelity:** all source variants present except the standalone fade (above).
+- **Fidelity:** all source variants present (the standalone fade is the last card, 288 x 256 as `w-72 h-64`), except the cursor script (above).
 - **Components it hits:** every demo.
