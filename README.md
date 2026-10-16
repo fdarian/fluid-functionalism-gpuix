@@ -185,7 +185,7 @@ offer it. A count is given only where the code shows it.
 | color-picker's value fields | `fontVariantNumeric` set in an `<input>`'s own style does nothing (measured: ten "1"s are the same width with `normal` and `tabular-nums`); set on a parent, the input inherits it | the property on the field's wrapper div (`src/components/color-picker.tsx`, `ColorInput`) |
 | dropdown search field | A sticky box with a negative margin is held at its parent's content box, not at the border box the margin puts it (`drift/dropdown.md`, "Search field is a child of the scroller"): a `marginTop: -4` child of a `padding: 4` parent sits 4px low until the scroller moves it. Measured on the test renderer | The field is the scroller's first child, ahead of the padded list |
 | tooltip and dialog demos | After a failed script run Bun aborts with `thread local panicked on drop` | none; the harness only |
-| screenshots, app-frame | The test renderer ignores the window options (titlebar, traffic lights), `setAppearance` changes nothing and `onAppearanceChange` never fires; `createAppearance` is the machine's | Captures pin the scheme with `setThemeChoice` and show no traffic lights |
+| screenshots, app-frame | The test renderer ignores the window options (titlebar, traffic lights) | Captures show no traffic lights |
 | screenshots | Batched keystrokes deliver an input's `onChange` after the whole batch | none |
 | screenshots | The accessibility dump flags an `aria-hidden` node as hidden but not its descendants, and `A11yTreeDump` lacks `frame` | `scripts/screenshots.tsx` reads `frame.tab_stop_count` through a cast |
 
@@ -243,8 +243,10 @@ Quirks of this repo's own code, kept apart from the gpuix gaps above.
 - **Dialog.** gpuix's `Dialog` unmounts the instant `open` goes false, so a local `mounted` signal keeps the
   content through the fade; a trigger pressed during the fade is ignored.
 - **Screenshots run on the test renderer** (`scripts/screenshots.tsx`).
-  - Captures show no traffic lights or native titlebar, and pin the theme to Dark (`setThemeChoice`), because the
-    test renderer ignores the window options and its appearance is the machine's.
+  - Captures show no traffic lights or native titlebar, because the test renderer ignores the window options.
+  - The window is created with `appearance: "dark"` and the theme stays on System, so `initial.png` and every
+    scenario capture are dark through `createAppearance`; `light.png` switches the theme with the real select, which
+    calls `setAppearance("light")`. The script asserts `getAppearance()` for both and throws if the window disagrees.
   - `settle()` runs frames for real time, flushing the tree and draining native events each frame; a bare `flush()`
     never delivers `onMotionComplete`, so presence exits would never unmount. The first capture waits 800 ms.
   - Helpers read `getElementBounds` once per step to find an element's centre; nothing polls bounds. `shot.press`
@@ -280,7 +282,7 @@ now does that the port has not picked up.
 | `shadow-surface-N` (1px ring plus stacked drops; in dark an inset highlight and ring, and a 1px outer hairline) | `shadow(N)` (`src/lib/theme.ts`): the `--shadow-N` recipe as one multi-layer, scheme-aware `boxShadow` string, with no border. The popups, dialog, drawer, queued card, tab pill and composer use it at the source's levels | Exact |
 | Tailwind `shadow-sm` to `shadow-xl` | `twShadow` (`src/lib/theme.ts`): both drops of each, as the CSS strings | Exact |
 | `color-mix(in oklab, …)`, `light-dark()` | both columns kept as a token table; the scheme is a signal | Exact |
-| `prefers-color-scheme` ("System" theme) | `createAppearance()` reads the OS appearance and `bindSystemScheme` feeds it to the `scheme` token. System / Light / Dark are one `themeChoice` signal, and `renderer.setAppearance` mirrors Light / Dark so the native chrome follows | Exact in the window; captures run on the test renderer, whose appearance is fixed, so they pin Dark |
+| `prefers-color-scheme` ("System" theme) | `createAppearance()` reads the OS appearance and `bindSystemScheme` feeds it to the `scheme` token. System / Light / Dark are one `themeChoice` signal, and `renderer.setAppearance` mirrors Light / Dark so the native chrome follows | Exact in the window and on the test renderer, which honours `appearance` and `setAppearance` |
 | `prefers-reduced-motion`, `<MotionConfig reducedMotion="user">`, `useReducedMotion()` | `App` wraps the tree in gpuix's `<MotionConfig reducedMotion="user">`, which makes every `motion.*` position and size property jump (opacity and colour keep fading). Where the source reads `useReducedMotion()` itself, the port reads `createReducedMotion()` at the same site: the fluid highlight, the accordion panel, the banner, the carousel timer, the thinking indicator, the command-menu scroll and the scripted demos. Pinned by `scripts/check-reduced-motion.tsx` | Approximated: gpuix reduces layout properties the source animates (`drift/site.md`); the OS setting is read on macOS only |
 | Base UI `Positioner` (flip, `--anchor-width`, `--available-height`) | `<anchored fit="flip" deferred>`: gpuix picks the side and reports it with the room left (`onPlacement`), and `PopupSurface` caps the card to that room, slides from the reported side and is at least the trigger's width | Equivalent |
 | `ScrollArea` (hover thumb, scroll fade) | a plain `overflowY: "scroll"`, on the combobox list and the sidebar | Dropped |

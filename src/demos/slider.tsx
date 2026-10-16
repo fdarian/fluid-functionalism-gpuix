@@ -291,8 +291,10 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	setOnly("compact");
 	await shot.settle(300);
 	shot.capture("compact");
-	// Keys, reached by walking back through the tab order from cold: theme, rating, resize, decimal, steps10, steps25, range, basic.
-	await shot.press("Shift+Tab Shift+Tab Shift+Tab Shift+Tab");
+	// Keys, reached by walking back through the tab order from cold: icons, size, radius, theme, rating, resize, decimal, steps10, steps25, range, basic.
+	await shot.press(
+		"Shift+Tab Shift+Tab Shift+Tab Shift+Tab Shift+Tab Shift+Tab Shift+Tab",
+	);
 	await shot.press("ArrowRight");
 	shot.expectText("0.3", true);
 	shot.expectText("0.30000", false);
@@ -332,9 +334,9 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	});
 	shot.expectAria("range-thumb-0", {
 		label: "Minimum",
-		value: "4 start range",
+		value: "2 start range",
 	});
-	shot.expectAria("range-thumb-1", { label: "Maximum", value: "9 end range" });
+	shot.expectAria("range-thumb-1", { label: "Maximum", value: "7 end range" });
 	shot.expectAria("rating-thumb-0", {
 		label: "Rating",
 		min_numeric_value: 0,
@@ -373,8 +375,8 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await drag(shot, "scrubber-row", [-40, -90], "scrubber-drag");
 	await shot.moveTo(1180, 700);
 	shot.capture("scrubber-dragged");
-	// Pointer presses never focus a slider, so reach the last one by walking back through the tab order.
-	await shot.press("Shift+Tab Shift+Tab");
+	// Pointer presses never focus a slider, so reach the last one by walking back through the tab order, past the four selects in the right column.
+	await shot.press("Shift+Tab Shift+Tab Shift+Tab Shift+Tab Shift+Tab");
 	shot.capture("keyboard-focus");
 	await shot.press("ArrowRight");
 	shot.capture("keyboard-moved");

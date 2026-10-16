@@ -557,18 +557,18 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("playground-hover");
 
 	// Image forces Separated on; Inline forces one column.
-	await pickOption(shot, "play-media", "down down");
+	await pickOption(shot, "play-media", "ArrowDown ArrowDown");
 	shot.capture("playground-image");
 	await shot.click("play-primary-track");
 	await shot.click("play-secondary-track");
-	await pickOption(shot, "play-columns", "down");
+	await pickOption(shot, "play-columns", "ArrowDown");
 	await shot.click("play-selected-track");
 	await shot.click("play-2");
 	shot.capture("playground-image-three-columns-selected");
-	await pickOption(shot, "play-media", "up");
-	await pickOption(shot, "play-orientation", "down");
+	await pickOption(shot, "play-media", "ArrowUp");
+	await pickOption(shot, "play-orientation", "ArrowDown");
 	shot.capture("playground-inline-logo");
-	await pickOption(shot, "play-border", "down");
+	await pickOption(shot, "play-border", "ArrowDown");
 	await shot.click("play-ghost-track");
 	await shot.click("play-0");
 	shot.capture("playground-inline-outlined-selected");

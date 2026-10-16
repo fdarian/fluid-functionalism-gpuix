@@ -930,7 +930,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.settle(300);
 	shot.capture("playground-menu");
 	await shot.press("Escape Escape");
-	await pickOption(shot, "play-selection", "down down");
+	await pickOption(shot, "play-selection", "ArrowDown ArrowDown");
 	await shot.click("play-search-track");
 	await shot.click("play-creatable-track");
 	await shot.focus("play-trigger");
@@ -940,7 +940,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("playground-search-create");
 	await shot.press("Escape");
 	await shot.click("play-search-track");
-	await pickOption(shot, "play-mode", "down down");
+	await pickOption(shot, "play-mode", "ArrowDown ArrowDown");
 	await shot.click("play-groups-track");
 	await shot.click("play-disabled-track");
 	shot.capture("playground-inline-groups");
@@ -1067,7 +1067,8 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 
 	await reveal(shot, "keys-trigger");
 	await shot.click("keys-trigger");
-	shot.expectText("changes: 1", true);
+	// The keyboard scenario above opened and closed this menu: two changes before this click opens it.
+	shot.expectText("changes: 3", true);
 	// Arrows land on the disabled "Beta"; Enter on it picks nothing.
 	await shot.press("ArrowDown Enter");
 	shot.expectText("picked:  changes", true);

@@ -412,10 +412,12 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("views-cleared");
 
 	// A custom `filter`, and the picked row scrolled into view on open.
+	await reveal(shot, "tall-input");
 	await shot.click("tall-input");
 	shot.capture("tall-open");
 	await shot.press("Backspace Backspace Backspace s");
-	shot.expectText("Astro", false);
+	// Not "Astro": the form's "submitted: stack=Astro" line holds it on the page.
+	shot.expectText("Qwik", false);
 	shot.expectText("Solid", true);
 	shot.capture("tall-prefix");
 	await shot.press("Escape");

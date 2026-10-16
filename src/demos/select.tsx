@@ -331,6 +331,8 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("form-submit");
 	shot.expectText("submitted: name=Ada&plan=apple", true);
 
+	// The form sits far down the page: back to the top for the basic select.
+	await shot.scroll(700, 400, 0, -100000);
 	await shot.click("basic");
 	await shot.settle(300);
 	shot.expectText("Banana", true);

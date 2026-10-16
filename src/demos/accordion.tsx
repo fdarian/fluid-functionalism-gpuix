@@ -332,13 +332,13 @@ async function pickExpand(shot: ShotContext, steps: string) {
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	// The playground's controls sit in the right column.
 	shot.capture("playground");
-	await pickExpand(shot, "down");
+	await pickExpand(shot, "ArrowDown");
 	await shot.click("play-item-2");
 	shot.expectText(PLAY_ITEMS[1].content, true);
 	shot.expectText(PLAY_ITEMS[0].content, true);
 	await shot.click("play-highlight-track");
 	shot.capture("playground-any-trigger-highlight");
-	await pickExpand(shot, "up up");
+	await pickExpand(shot, "ArrowUp ArrowUp");
 	await shot.click("play-item-1");
 	shot.expectText(PLAY_ITEMS[0].content, true);
 	await shot.click("play-item-1");

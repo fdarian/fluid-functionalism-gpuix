@@ -1100,10 +1100,10 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectText("What drew you to Fluid Functionalism?", true);
 	await shot.click("play-multi-track");
 	shot.expectText("How do you plan to use Fluid Functionalism?", true);
-	await pickPlay(shot, "play-layout", "down");
+	await pickPlay(shot, "play-layout", "ArrowDown");
 	await shot.click("play-other-track");
 	shot.capture("playground-stacked-multi-other");
-	await pickPlay(shot, "play-type", "down");
+	await pickPlay(shot, "play-type", "ArrowDown");
 	shot.expectText("What should we call your workspace?", true);
 	shot.capture("playground-free-text");
 	await shot.click("playground-shuffle");
