@@ -8,6 +8,7 @@ import {
 } from "@gpuix/solid";
 import {
 	createContext,
+	createComputed,
 	createEffect,
 	createMemo,
 	createSignal,
@@ -236,6 +237,15 @@ export function TabsSubtleItem(props: {
 	const metrics = () => sizes[scope.size()];
 	let element: HostElement | undefined;
 	const [unfoldedWidth, setUnfoldedWidth] = createSignal<number>();
+	/** The tab selected at mount is born unfolded: its first measured width is placed, not tweened. */
+	const [selectionChanged, setSelectionChanged] = createSignal(false);
+	createComputed(
+		on(
+			() => scope.selectedIndex() === props.index,
+			() => setSelectionChanged(true),
+			{ defer: true },
+		),
+	);
 
 	createEffect(() => {
 		if (element === undefined) throw new Error("Tab is not mounted");
@@ -257,6 +267,15 @@ export function TabsSubtleItem(props: {
 			? undefined
 			: `${scope.idPrefix()}-panel-${props.index}`;
 	// The unfolding label's width is animated to a measured number (gpuix cannot animate `auto`): the box holding the label and its gap to the icon reports it.
+	const labelWidthTarget = () => {
+		if (!showLabel()) return { width: 0 };
+		const measured = unfoldedWidth();
+		return measured === undefined ? {} : { width: measured };
+	};
+	const labelWidthTransition = () => {
+		if (!selectionChanged()) return { duration: 0 };
+		return showLabel() ? tween.fast : tween.fastExit;
+	};
 
 	const onKeyDown = (event: KeyEvent) => {
 		if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) {
@@ -350,8 +369,9 @@ export function TabsSubtleItem(props: {
 			{collapsible() ? (
 				<motion.div
 					initial={false}
-					animate={{ width: showLabel() ? (unfoldedWidth() ?? 0) : 0 }}
-					transition={showLabel() ? tween.fast : tween.fastExit}
+					animate={labelWidthTarget()}
+					transition={labelWidthTransition()}
+					onMotionComplete={() => scope.hover.remeasure()}
 					style={{
 						display: "flex",
 						flexDirection: "row",

@@ -226,6 +226,10 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 			});
 		},
 		handlers,
+		/** Re-reads every row's box now: for a row that resized without the observer reporting it yet (an unfolding label whose tween just settled). */
+		remeasure() {
+			commit();
+		},
 		/** Spread onto the rows' container: registers it, measures once it reports, and wires the pointer. */
 		containerProps: {
 			ref: setContainer,
