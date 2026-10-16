@@ -50,7 +50,11 @@ export async function scenarios(shot: ShotContext) {
 export function Page(): JSX.Element {
 	return (
 		<DocPage
-			description="Three spring speeds, exits a little faster than entrances, and one fluid hover shared by every list. Pick a speed, wire it in — every component follows the same pattern."
+			description={
+				<Prose>
+					Three spring speeds, exits a little faster than entrances, and one fluid hover shared by every list. Pick a speed, wire it in — every component follows the same pattern.
+				</Prose>
+			}
 			installNote="Installs the springs lib — the fast / moderate / slow spring presets every component animates with."
 			installPrompt={MOTION_INSTALL_PROMPT}
 		>

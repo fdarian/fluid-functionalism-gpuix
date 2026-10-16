@@ -1,6 +1,6 @@
 import { createSignal, For, type JSX } from "solid-js";
 import type { ShotContext } from "../lib/demo";
-import { DocSection, Prose, SubHeading } from "../lib/doc-page";
+import { DocPage, DocSection, Prose, SubHeading } from "../lib/doc-page";
 import {
 	color,
 	type Scheme,
@@ -8,6 +8,7 @@ import {
 	siteType,
 } from "../lib/theme";
 import { ColorPickerDemo, InviteDialogDemo } from "./surfaces/examples";
+import { SURFACES_INSTALL_PROMPT } from "./surfaces/install-prompt";
 import { ProblemDemo } from "./surfaces/problem";
 import {
 	ElevatedDemo,
@@ -148,12 +149,11 @@ function Description() {
 
 export function Page(): JSX.Element {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-			{/* The page heading is `App`'s, a column gap above; the source sets it 8px above the description. */}
-			<div style={{ marginTop: -16 }}>
-				<Description />
-			</div>
-
+		<DocPage
+			description={<Description />}
+			installNote="Installs the Elevated primitive plus the surface-context and surface-classes libs — the elevation ladder as code."
+			installPrompt={SURFACES_INSTALL_PROMPT}
+		>
 			<DocSection title="The problem">
 				<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
 					<Prose>
@@ -224,6 +224,6 @@ export function Page(): JSX.Element {
 				</Prose>
 				<ColorPickerDemo />
 			</DocSection>
-		</div>
+		</DocPage>
 	);
 }

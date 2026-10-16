@@ -65,7 +65,11 @@ export async function scenarios(shot: ShotContext) {
 export function Page(): JSX.Element {
 	return (
 		<DocPage
-			description="A scrollbar that stays out of the way but never disappears."
+			description={
+				<Prose>
+					A scrollbar that stays out of the way but never disappears.
+				</Prose>
+			}
 			installNote="Installs the ScrollArea component with the shape-system scrollbar and the scroll-fade edge treatment."
 			installPrompt={SCROLLBARS_INSTALL_PROMPT}
 		>

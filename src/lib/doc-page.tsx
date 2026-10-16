@@ -153,7 +153,7 @@ function CopyPromptButton(props: { prompt: string }) {
  * block with its note and Copy prompt button, then the sections.
  */
 export function DocPage(props: {
-	description: string;
+	description: JSX.Element;
 	installNote: string;
 	installPrompt: string;
 	children: JSX.Element;
@@ -162,7 +162,7 @@ export function DocPage(props: {
 		<div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
 			{/* The heading is `App`'s, a column gap above; the source sets the description 8px under its title. */}
 			<div style={{ marginTop: -16 }}>
-				<Prose>{props.description}</Prose>
+				{props.description}
 			</div>
 			<div
 				style={{
