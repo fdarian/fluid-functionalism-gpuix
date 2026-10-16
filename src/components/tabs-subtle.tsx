@@ -1,6 +1,5 @@
 import {
 	buttonProps,
-	document,
 	type DomEvent,
 	type HostElement,
 	type KeyEvent,
@@ -371,15 +370,13 @@ export function TabsSubtleItem(props: {
 				scope.focusTab(props.index);
 				scope.hover.setActiveIndex(props.index);
 			}}
-			onBlur={() => {
+			onBlur={(event: DomEvent) => {
 				scope.focusRing.blur(props.index);
 				// Focus moving to a sibling tab stays inside the list: only a real exit drops the highlight.
-				queueMicrotask(() => {
-					for (const tab of scope.elements.values()) {
-						if (tab === document.activeElement) return;
-					}
-					if (!scope.mouseInside()) scope.hover.setActiveIndex(null);
-				});
+				for (const tab of scope.elements.values()) {
+					if (tab === event.relatedTarget) return;
+				}
+				if (!scope.mouseInside()) scope.hover.setActiveIndex(null);
 			}}
 			style={{
 				position: "relative",

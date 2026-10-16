@@ -1,6 +1,5 @@
 import {
 	buttonProps,
-	document,
 	type DomEvent,
 	type HostElement,
 	type KeyEvent,
@@ -120,15 +119,13 @@ export function NavItem(props: {
 				scope.focusRing.focus(props.index, event);
 				scope.hover.setActiveIndex(props.index);
 			}}
-			onBlur={() => {
+			onBlur={(event: DomEvent) => {
 				scope.focusRing.blur(props.index);
 				// Focus moving to a sibling item stays inside the menu: only a real exit drops the highlight.
-				queueMicrotask(() => {
-					for (const item of scope.elements.values()) {
-						if (item === document.activeElement) return;
-					}
-					if (!scope.mouseInside()) scope.hover.setActiveIndex(null);
-				});
+				for (const item of scope.elements.values()) {
+					if (item === event.relatedTarget) return;
+				}
+				if (!scope.mouseInside()) scope.hover.setActiveIndex(null);
 			}}
 			style={{
 				position: "relative",

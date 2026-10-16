@@ -1,6 +1,5 @@
 import {
 	buttonProps,
-	document,
 	type DomEvent,
 	type HostElement,
 	type HostPointerEvent,
@@ -70,7 +69,7 @@ interface MenuScope {
 	/** Roving tabindex: the active rows are the tab stops, or the first row while none is active. */
 	isTabStop: (index: number | undefined) => boolean;
 	focusRow: (index: number, event: DomEvent) => void;
-	blurRow: (index: number) => void;
+	blurRow: (index: number, event: DomEvent) => void;
 	focusSibling: (index: number, step: KeyStep) => void;
 }
 
@@ -171,15 +170,12 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 			hover.setActiveIndex(index);
 			focusRing.focus(index, event);
 		},
-		blurRow(index) {
+		blurRow(index, event) {
 			focusRing.blur(index);
-			// Focus moving to a sibling row arrives as its focus right after this blur.
-			queueMicrotask(() => {
-				for (const row of rows.values()) {
-					if (row.element === document.activeElement) return;
-				}
-				if (!mouseInside) hover.setActiveIndex(null);
-			});
+			for (const row of rows.values()) {
+				if (row.element === event.relatedTarget) return;
+			}
+			if (!mouseInside) hover.setActiveIndex(null);
 		},
 		focusSibling(index, step) {
 			const target =
@@ -375,9 +371,9 @@ export function SidebarMenuButton(props: {
 				const own = index();
 				if (own !== undefined) scope.focusRow(own, event);
 			}}
-			onBlur={() => {
+			onBlur={(event: DomEvent) => {
 				const own = index();
-				if (own !== undefined) scope.blurRow(own);
+				if (own !== undefined) scope.blurRow(own, event);
 			}}
 			style={{
 				position: "relative",

@@ -1,6 +1,5 @@
 import {
 	buttonProps,
-	document,
 	type DomEvent,
 	type HostElement,
 	type KeyEvent,
@@ -411,15 +410,13 @@ export function TabItem(props: {
 				list.hover.setActiveIndex(index);
 				if (props.disabled !== true) tabs.select(props.value);
 			}}
-			onBlur={() => {
+			onBlur={(event: DomEvent) => {
 				list.focusRing.blur(index);
 				// Focus moving to a sibling tab stays inside the list: only a real exit drops the highlight.
-				queueMicrotask(() => {
-					for (const tab of list.elements.values()) {
-						if (tab === document.activeElement) return;
-					}
-					if (!list.mouseInside()) list.hover.setActiveIndex(null);
-				});
+				for (const tab of list.elements.values()) {
+					if (tab === event.relatedTarget) return;
+				}
+				if (!list.mouseInside()) list.hover.setActiveIndex(null);
 			}}
 			style={{
 				position: "relative",

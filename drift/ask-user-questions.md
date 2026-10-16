@@ -71,7 +71,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** when a keyboard-driven step changes the question, the new first row is focused in the same commit; a mouse step does not restore (`:394-424`).
-- **Port:** the first row is focused 48 ms later, and `keyboardDriving` turns true on any keydown and false on mousedown (`ask-user-questions.tsx:468-481`, `:518`, `:922-924`).
+- **Port:** the first row is focused 48 ms later (a synchronous focus from the effect leaves focus on nothing, checked), and `keyboardDriving` turns true on any keydown and false on mousedown (`ask-user-questions.tsx:468-481`, `:518`, `:922-924`).
 - **Workaround:** a timer.
 - **Fidelity:** approximated (a 48 ms gap).
 - **Components it hits:** just this one.

@@ -1,6 +1,5 @@
 import {
 	buttonProps,
-	document,
 	type DomEvent,
 	type HostElement,
 	type HostMouseMoveEvent,
@@ -91,7 +90,7 @@ interface GroupScope {
 	hoveringClosedRow: () => boolean;
 	overContent: (index: number | null) => void;
 	focusRow: (index: number, event: DomEvent) => void;
-	blurRow: (index: number) => void;
+	blurRow: (index: number, event: DomEvent) => void;
 	focusSibling: (
 		index: number,
 		step: "next" | "previous" | "first" | "last",
@@ -265,15 +264,12 @@ export function AccordionGroup(props: RootProps) {
 			hover.setActiveIndex(index);
 			focusRing.focus(index, event);
 		},
-		blurRow(index) {
+		blurRow(index, event) {
 			focusRing.blur(index);
-			// Focus moving to a sibling trigger arrives as its focus right after this blur.
-			queueMicrotask(() => {
-				for (const trigger of triggers.values()) {
-					if (trigger.element === document.activeElement) return;
-				}
-				if (!mouseInside) hover.setActiveIndex(null);
-			});
+			for (const trigger of triggers.values()) {
+				if (trigger.element === event.relatedTarget) return;
+			}
+			if (!mouseInside) hover.setActiveIndex(null);
 		},
 		overContent(index) {
 			contentOver = index;
@@ -619,9 +615,9 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					const own = item.index();
 					if (own !== undefined) group?.focusRow(own, event);
 				}}
-				onBlur={() => {
+				onBlur={(event: DomEvent) => {
 					const own = item.index();
-					if (own !== undefined) group?.blurRow(own);
+					if (own !== undefined) group?.blurRow(own, event);
 				}}
 				testId={props.testId}
 				style={{
