@@ -121,3 +121,54 @@ Checked and equal: the index is four rows centred in the window at 224px (`w-56`
 - **Cause:** `port choice`. See [thinking-steps.md](thinking-steps.md) and [tabs-subtle.md](tabs-subtle.md): only the selected panel mounts (the source's panels mount hidden), the source entrances' blur and scale are opacity only, and `ThinkingSteps width="100%"` stands for `className="w-full max-w-full"`.
 - **Fidelity:** approximated.
 - **Components it hits:** those two.
+
+## Quill: page, copy and layout
+
+Original: `app/concepts/quill/page.tsx`. Ported in `src/pages/concepts-quill.tsx` (group "Pages", order 34, layout "full", listed "none"), inside `ConceptFrame`.
+
+- **Checked and equal:** the copy (title, byline, intro, callout, goals, the four initiatives and their owners, statuses and targets, the three comments and activity lines, the block names, the AI block's placeholder, steps and canned draft), the 760px column, the three tabs (Document / Comments / Activity) with their icons, the dot Badge colours per status, the 1700 ms draft beat, and the new block landing above the composer.
+- **Cause:** `port choice`. The page scrolls in the port's `ScrollArea` and the side padding is 32 / 48 as `px-8 py-12` (`src/pages/concepts-quill.tsx:458-469`).
+- **Fidelity:** approximated (scrollbar look); exact for the flow. The title is Inter Bold 700 at 34 / 42 and the section headings SemiBold 600 at 18 (the source's variable `wght`: `gpuix gap`, README "gpuix gaps"). The 💡 and 🗓️ are the system emoji font's glyphs.
+- **Components it hits:** just this one.
+
+## Quill: Add block is a popup `DropdownMenu`, not an absolutely placed `Dropdown`
+
+- **Cause:** `gpuix gap` (paint order) and `port choice`.
+- **Original:** the open menu is the inline `Dropdown` in an `absolute left-0 top-full z-50 mt-1.5` box under a `Button` with `active={open}`; a document `mousedown` closes it (`quill/page.tsx:73-113`).
+- **Port:** `DropdownMenu` + `DropdownTrigger` + `DropdownContent` with the same five `MenuItem` rows and the "Basic blocks" label (`src/pages/concepts-quill.tsx:149-181`). It opens on press or by Enter / Space / arrows, flips above the button when there is no room below, closes on outside press, Esc, and picking a row, and returns focus to the button. Picking a row does nothing else (the source's `onSelect` only closes). The trigger is the port's `compact` Button (no `sm`) and has no `active` prop, so it shows no pressed background while the menu is open.
+- **gpuix lacks:** a stacking order across parents: `zIndex` orders siblings only (`~/code/fdarian/gpuix/FORK.md:603`), so the inline `Dropdown` positioned absolute would paint under the heading and table that follow it.
+- **Workaround:** the popup's anchored surface.
+- **Fidelity:** approximated.
+- **Components it hits:** dropdown (`Dropdown` has no trigger, positioning or dismissal), button.
+
+## Quill: the Initiatives table cells take text only and the name is muted
+
+- **Cause:** `port choice` (the port's `TableCell` / `TableHead` wrap their children in one `<text>`; the cell colour is fixed: muted unless the row is lit, foreground in the header).
+- **Original:** the name cell is `text-foreground`, the owner and target `text-muted-foreground`, the target `tabular-nums`, status a `Badge variant="dot" size="sm"` (`quill/page.tsx:228-246`).
+- **Port:** the name cell is muted like the others (lit rows go foreground). The status Badge sits in a row `div` inside the cell so it hugs its width instead of stretching (`src/pages/concepts-quill.tsx:425-445`); `size="compact"` stands for `sm`. The target digits are not tabular.
+- **Components it hits:** table (a cell colour prop would close it).
+- **Fidelity:** approximated.
+
+## Quill: the AI block's step icons
+
+- **Cause:** `port choice` (the port's `ThinkingStep` icons are `dot`, `search`, `globe`, `brain`, `image`, `check`).
+- **Original:** `square-library`, `brain`, `pencil` for the three steps (`quill/page.tsx:150-152`).
+- **Port:** `search`, `brain`, `dot` (`src/pages/concepts-quill.tsx:283-293`). The steps are `ThinkingSteps` with `width="100%"`, as in the other concepts.
+- **Fidelity:** approximated.
+- **Components it hits:** thinking-steps (a wider icon set would close it).
+
+## Quill: the draft timer and the sparkle
+
+- **Cause:** `port choice`.
+- **Original:** `setTimeout` 1700 ms that appends the draft; the "Sparkle" is `useIcon("brain")` (`quill/page.tsx:117-148`).
+- **Port:** the same timer, cleared on unmount (`src/pages/concepts-quill.tsx:227-250`); the icon is the port's `brain` at 16px in the drafted block and 14px next to "Quill AI" in the composer's left slot. The page does not scroll to the new block, as in the source.
+- **Fidelity:** exact for the flow.
+- **Components it hits:** just this one.
+
+## Quill: comments render through `ChatMessage` with `fullWidth`
+
+- **Cause:** `port choice`.
+- **Original:** `className="max-w-full"` on each `ChatMessage` (`quill/page.tsx:296`).
+- **Port:** `fullWidth` (`src/components/chat-message.tsx`, added for Lumen). The assistant reply is plain text, left aligned, and the user bubble sits right, as in the source.
+- **Fidelity:** exact for the layout.
+- **Components it hits:** chat-message.
