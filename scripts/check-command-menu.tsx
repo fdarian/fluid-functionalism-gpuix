@@ -87,10 +87,37 @@ const sinceMark = (from: number) =>
 		.map((w) => w.top);
 
 await kit.focus(INPUT);
-for (let step = 0; step < 4; step++) await kit.press("down");
+// The motion clock is stepped by hand: against wall time a slow frame carries the whole travel in one step.
+const FRAME_MS = 16;
+const stepFrames = async () => {
+	// The travel starts in a microtask after the key handler, so let one run before the first step.
+	await Promise.resolve();
+	for (let frame = 0; frame < 40; frame++) {
+		renderer.clockFastForward(FRAME_MS);
+		renderer.flush();
+		renderer.dispatchNativeEvents();
+		await Promise.resolve();
+	}
+};
+const steppedPress = async (keystrokes: string) => {
+	renderer.simulateKeystrokes(keystrokes);
+	await stepFrames();
+};
+renderer.clockPause();
+for (let step = 0; step < 4; step++) await steppedPress("down");
 const before = offset();
 let mark = listWrites().length;
-await kit.press("down");
+// The travel lasts a handful of frames; stepping the motion clock by hand keeps the sampling independent of how long a real frame takes.
+renderer.clockPause();
+renderer.simulateKeystrokes("down");
+// The menu starts the travel in a microtask after the key handler returns.
+await Promise.resolve();
+for (let frame = 0; frame < 40; frame++) {
+	renderer.clockFastForward(8);
+	renderer.flush();
+	renderer.dispatchNativeEvents();
+}
+renderer.clockResume();
 const travel = sinceMark(mark);
 const after = offset();
 kit.check(
@@ -109,11 +136,11 @@ kit.check(
 );
 
 // A second arrow while the first is travelling takes over from where it is.
-await kit.press("down");
+await steppedPress("down");
 mark = listWrites().length;
 renderer.simulateKeystrokes("down");
 renderer.simulateKeystrokes("down");
-await kit.settle();
+await stepFrames();
 const chained = sinceMark(mark);
 kit.check(
 	"two quick arrows end at the later row",
@@ -129,11 +156,11 @@ kit.check(
 );
 
 // Home and a move to row 0 snap.
-await kit.press("up");
+await steppedPress("up");
 kit.check("still scrolled one arrow up", offset() > 0, `${offset()}`);
 mark = listWrites().length;
 renderer.simulateKeystrokes("home");
-await kit.settle();
+await stepFrames();
 const home = sinceMark(mark);
 kit.check(
 	"Home snaps to the top in one write",
@@ -143,16 +170,17 @@ kit.check(
 kit.expect("Home ends at the top", offset(), 0);
 
 // A re-filter snaps to the top too.
-await kit.press("end");
+await steppedPress("end");
 kit.check("End scrolls the list down", offset() > 0, `${offset()}`);
 mark = listWrites().length;
 renderer.simulateKeystrokes("a");
-await kit.settle();
+await stepFrames();
 kit.check(
 	"typing snaps the list to the top",
 	offset() === 0 && sinceMark(mark).every((top) => top === 0),
 	sinceMark(mark).join(" "),
 );
+renderer.clockResume();
 
 // ─── The site menu ───────────────────────────────────────────────────────────
 
