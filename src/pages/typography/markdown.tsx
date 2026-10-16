@@ -1,10 +1,9 @@
 import { type Accessor, createSignal, For, type JSX, Show } from "solid-js";
 import { MONO } from "../../lib/doc-page";
-import { color, shape, weight, withAlpha } from "../../lib/theme";
+import { color, shape, sizeChoice, weight, withAlpha } from "../../lib/theme";
 import {
 	roleStyle,
 	space,
-	step,
 	TYPESET_CHECK,
 	TYPESET_SUB_INDENT,
 	type TypeRole,
@@ -118,8 +117,8 @@ interface Node {
 
 /** A list item's text starts here, in the list's own box: `indent` for the first level, the sub-indent in a sub-list. */
 function textStart(depth: number) {
-	if (depth > 0) return TYPESET_SUB_INDENT[step()];
-	return TYPESET_CHECK.box[step()] + TYPESET_CHECK.gap[step()];
+	if (depth > 0) return TYPESET_SUB_INDENT[sizeChoice()];
+	return TYPESET_CHECK.box[sizeChoice()] + TYPESET_CHECK.gap[sizeChoice()];
 }
 
 function alpha(n: number) {
@@ -251,7 +250,7 @@ function Checkbox(props: {
 	onToggle: () => void;
 }) {
 	const [hovered, setHovered] = createSignal(false);
-	const box = () => TYPESET_CHECK.box[step()];
+	const box = () => TYPESET_CHECK.box[sizeChoice()];
 	const inner = () => box() - 3;
 	const tick = () => box() + 2;
 	return (
@@ -268,7 +267,7 @@ function Checkbox(props: {
 				width: box(),
 				height: box(),
 				borderWidth: 1.5,
-				borderRadius: TYPESET_CHECK.radius[step()],
+				borderRadius: TYPESET_CHECK.radius[sizeChoice()],
 				borderColor: hovered()
 					? withAlpha(color.foreground, 0.4)
 					: props.checked
@@ -314,7 +313,7 @@ function TaskItem(props: { task: Task; first: boolean }) {
 				display: "flex",
 				flexDirection: "row",
 				alignItems: "flex-start",
-				columnGap: TYPESET_CHECK.gap[step()],
+				columnGap: TYPESET_CHECK.gap[sizeChoice()],
 				marginTop: props.first ? 0 : space("item"),
 			}}
 		>
@@ -348,7 +347,7 @@ function TaskItem(props: { task: Task; first: boolean }) {
 						<div
 							style={{
 								marginTop: space("item"),
-								marginLeft: TYPESET_SUB_INDENT[step()] - textStart(0),
+								marginLeft: TYPESET_SUB_INDENT[sizeChoice()] - textStart(0),
 							}}
 						>
 							<TaskList tasks={children()} />

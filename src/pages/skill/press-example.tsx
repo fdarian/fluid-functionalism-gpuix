@@ -9,8 +9,8 @@ import { fill } from "../../lib/press";
 import {
 	color,
 	focusRing,
-	type as scale,
 	shape,
+	siteType,
 	weight,
 } from "../../lib/theme";
 import {
@@ -31,11 +31,11 @@ import {
  * difference between them is felt, not just seen.
  */
 const SIZES = [
-	{ height: 28, padX: 12, text: scale.caption, label: "Skip" },
+	{ height: 28, padX: 12, text: "caption", label: "Skip" },
 	{
 		height: 36,
 		padX: 0,
-		text: scale.body,
+		text: "body",
 		label: "Continue",
 		width: 256,
 	},
@@ -134,7 +134,7 @@ function GenericButton(props: { index: number; press: PressProps }) {
 			>
 				<text
 					style={{
-						...size.text,
+						...siteType[size.text],
 						fontWeight: weight.normal,
 						color: color.background,
 						whiteSpace: "nowrap",
@@ -197,7 +197,7 @@ function SkillButton(props: { index: number; press: PressProps }) {
 			>
 				<text
 					style={{
-						...size.text,
+						...siteType[size.text],
 						fontWeight: weight.normal,
 						color: color.background,
 						whiteSpace: "nowrap",

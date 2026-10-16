@@ -33,12 +33,12 @@ repeating it.
 - **Fidelity:** approximated.
 - **Components it hits:** just this page; the Spacing table below uses `3fr 1fr 1fr` the same way.
 
-## S switches the page's own step, and only the scale, the markdown and the Spacing table follow it
+## The page follows the Size row, and the source's S shortcut is missing
 
-- **Cause:** `not ported yet` (the Size row and an ambient size; [site.md](site.md#customise-rows-not-ported-radius-size-icons-primitive)).
-- **Original:** `SizeShortcut` toggles the site-wide size; every `text-site-*` role, the specimen's numbers, the markdown and the buttons step with it (`lib/docs/size-shortcut.tsx`).
-- **Port:** `src/pages/typography/step.ts` holds a page-local `step` signal and a window `keydown` for S (no modifier). The specimen's sizes, the markdown's roles, spacing and to-do box, and nothing else, follow it; the page's prose, the shell and the components stay at the default. The key is not skipped while a text field has focus (gpuix gives a keydown only an element id, not a tag): typing an "s" in the ⌘K field while this page is mounted would toggle it unless the field prevents the default. The page's `typeStyles`, `TYPESET_SPACE`, `TYPESET_CHECK` and `TYPESET_SUB_INDENT` are copies of the source's values (`lib/type-scale.ts`, `lib/typeset/generate.ts`); swap `step` for `sizeChoice` and the copies for `siteType` when the Size row lands.
-- **Fidelity:** approximated.
+- **Cause:** `not ported yet` (the global settings shortcuts, [site.md](site.md#theme-shortcut-tooltips-toasts)).
+- **Original:** `SizeShortcut` toggles the site-wide size on a bare S; every `text-site-*` role, the specimen's numbers, the markdown and the buttons step with it (`lib/docs/size-shortcut.tsx`). The page's sentence "Press S for compact." is kept verbatim.
+- **Port:** the page reads `sizeChoice()` from `src/lib/theme.ts`, the Size row's signal (`step.ts`: `roleStyle`, `space` and the `TYPESET_*` tables index by it). The port has no S shortcut (nor T, R or I): the settings shortcuts are not ported, so the sentence points at a key that does nothing here and compact is reached through the Size select. The specimen's sizes, the markdown's roles, spacing and to-do box, and the page's `siteType` text follow it. The page's `typeStyles`, `TYPESET_SPACE`, `TYPESET_CHECK` and `TYPESET_SUB_INDENT` are copies of the source's values (`lib/type-scale.ts`, `lib/typeset/generate.ts`); `typeStyles` could be `siteType` (it adds `micro`).
+- **Fidelity:** approximated (shortcut dropped).
 - **Components it hits:** just this page.
 
 ## The scale specimen has no scroll fade, and shows the variable-font numbers over static cuts
@@ -105,7 +105,7 @@ repeating it.
 - **Cause:** `port choice`, `not ported yet` where noted.
 - **Original and Port:**
   - Spec and gap tables: `border-border/40` is the dark literal `rgba(245,245,245,0.048)` (light `rgba(23,23,23,0.048)`) because `color.border` is an rgba `withAlpha` cannot mix (`borderFainter` in `step.ts`), as in [surfaces.md](surfaces.md#smaller-differences).
-  - `text-site-subtitle` (14/20) is `SUBTITLE` from `doc-page.tsx`; the page's prose is the port's `scale.body`.
+  - `text-site-subtitle`, `text-site-body` and `text-site-caption` are `siteType.subtitle`, `.body` and `.caption`; the demos' `typeClass` text (numbers, weight, trim, wrap) is `type.*`.
   - The tweak frames are a page-local `TweakFrame` (`ComponentPreview hideHeader`: `px-8 py-12`, `min-h-[120px]`, no header) and `Specimen`; the 560px column makes them 534px wide inside, so the two-column grid's `max-w-xl` is not reached.
   - The ✅ and ❌ are emoji glyphs, as in [motion-page.md](motion-page.md).
   - ⌘K: the System row has no icon, its keywords are the slug and the description's words (`app/components/site-command-menu.tsx:206-225`) written out in `menuKeywords`; the "New" badge and the warning dot of the sidebar row are not ported. The sidebar order is alphabetical like the source's `systemNavList`, so `order = 7` (after Surfaces).

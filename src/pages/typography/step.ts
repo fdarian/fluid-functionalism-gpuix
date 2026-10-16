@@ -1,15 +1,4 @@
-import { window as appWindow, type DomEvent } from "@gpuix/solid";
-import { createSignal, onCleanup } from "solid-js";
-import { scheme } from "../../lib/theme";
-
-export type Step = "default" | "compact";
-
-/**
- * The page's own size step: the port has no ambient size (README, "Customise
- * rows not ported"), so S toggles this one and the specimen, the markdown and
- * the gap table follow it. Swap it for the Size row's `sizeChoice` when that lands.
- */
-export const [step, setStep] = createSignal<Step>("default");
+import { scheme, sizeChoice } from "../../lib/theme";
 
 /** `typeStyles` of lib/type-scale.ts: every role at both steps, in px. */
 export const typeStyles = {
@@ -38,7 +27,7 @@ export const typeStyles = {
 export type TypeRole = keyof typeof typeStyles;
 
 export function roleStyle(role: TypeRole) {
-	return typeStyles[role][step()];
+	return typeStyles[role][sizeChoice()];
 }
 
 /** `TYPESET_SPACE` of lib/typeset/generate.ts: room between blocks in px, listed by what it sits around. */
@@ -52,7 +41,7 @@ export const TYPESET_SPACE = {
 } as const;
 
 export function space(name: keyof typeof TYPESET_SPACE) {
-	return TYPESET_SPACE[name][step()];
+	return TYPESET_SPACE[name][sizeChoice()];
 }
 
 /** `TYPESET_CHECK` and `TYPESET_SUB_INDENT`: the to-do box, its radius, its gap to the text, and a sub-list's step in. */
@@ -68,18 +57,4 @@ export function borderFainter() {
 	return scheme() === "light"
 		? "rgba(23,23,23,0.048)"
 		: "rgba(245,245,245,0.048)";
-}
-
-/** FF's `SizeShortcut`: S toggles the size, with no modifier held. Call once inside the page. */
-export function createSizeShortcut() {
-	const onKeyDown = (event: DomEvent) => {
-		if (event.repeat === true || event.defaultPrevented) return;
-		if (event.key !== "s" && event.key !== "S") return;
-		if (event.metaKey === true || event.ctrlKey === true) return;
-		if (event.altKey === true) return;
-		event.preventDefault();
-		setStep(step() === "default" ? "compact" : "default");
-	};
-	appWindow.addEventListener("keydown", onKeyDown);
-	onCleanup(() => appWindow.removeEventListener("keydown", onKeyDown));
 }

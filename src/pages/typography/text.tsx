@@ -1,6 +1,6 @@
 import { For, type JSX } from "solid-js";
 import { MONO, Prose } from "../../lib/doc-page";
-import { color, siteType, type as scale, scheme, weight } from "../../lib/theme";
+import { color, scheme, siteType, weight } from "../../lib/theme";
 
 /** An Inter space at 13px; `Prose` breaks lines on it. */
 const SPACE = 3.6;
@@ -24,7 +24,7 @@ function Chip(props: { children: string }) {
 	return (
 		<text
 			style={{
-				...scale.caption,
+				...siteType.caption,
 				fontFamily: MONO,
 				color: color.foreground,
 				marginLeft: 4,
@@ -55,7 +55,7 @@ function ExternalLink(props: {
 				role="link"
 				onClick={() => openUrl(props.href)}
 				style={{
-					...scale.body,
+					...siteType.body,
 					color: color.foreground,
 					textDecoration: "underline",
 					cursor: "pointer",
@@ -65,7 +65,7 @@ function ExternalLink(props: {
 				{props.children}
 			</text>
 			{props.after === undefined ? null : (
-				<text style={{ ...scale.body, color: color.mutedForeground }}>
+				<text style={{ ...siteType.body, color: color.mutedForeground }}>
 					{props.after}
 				</text>
 			)}
@@ -148,7 +148,7 @@ export function Rule(props: { children: JSX.Element }) {
 				style={{
 					position: "absolute",
 					left: -15,
-					top: (scale.body.lineHeight - 5) / 2,
+					top: (siteType.body.lineHeight - 5) / 2,
 					width: 5,
 					height: 5,
 					borderRadius: 2.5,

@@ -9,10 +9,10 @@ repeating it.
 
 ## Page header and Installation block follow the port's doc page
 
-- **Cause:** `not ported yet` (arrows), `port choice` (Installation block, see site.md).
+- **Cause:** `not ported yet` (arrows).
 - **Original:** `DocPage` draws the title with prev / next arrows, the description, and an "Installation" block with the note "Installs the Elevated primitive plus the surface-context and surface-classes libs — the elevation ladder as code." and a copy-prompt button (`app/docs/surfaces/page.tsx:1298-1311`, `lib/docs/DocPage.tsx:73-170`).
-- **Port:** `App`'s heading and the description under it (`src/pages/surfaces.tsx:Page`), a 32px gap above each section like the source's. The sections and sub-headings are `DocSection` and `SubHeading`, but the page does not use `DocPage`: no arrows, no Installation block, no note, no copy button (`DocPage`'s description is a plain string and the page needs its clickable words). The same drift as [introduction.md](introduction.md#the-previous--next-arrows-are-missing) and [site.md](site.md#no-installation-block); the heading weight and 8px description gap are [introduction.md's](introduction.md#the-heading-is-bold-in-the-source-semibold-here-and-sits-8px-above-the-subtitle-only-by-a-negative-margin) too (`marginTop: -16`).
-- **Fidelity:** dropped.
+- **Port:** `DocPage` from `src/lib/doc-page.tsx` (`src/pages/surfaces.tsx:Page`): `App`'s heading, the description under it (a node, so the clickable words survive), the Installation block with the source's note and a Copy prompt button that copies `SURFACES_INSTALL_PROMPT`, then a 32px gap above each section like the source's. No prev / next arrows, as on [introduction.md](introduction.md#the-previous--next-arrows-are-missing); the heading weight and 8px description gap are [introduction.md's](introduction.md#the-heading-is-bold-in-the-source-semibold-here-and-sits-8px-above-the-subtitle-only-by-a-negative-margin) too (`marginTop: -16`).
+- **Fidelity:** dropped (arrows).
 - **Components it hits:** every docs page.
 
 ## The description's "light" and "dark" links are laid out word by word and underlined solid

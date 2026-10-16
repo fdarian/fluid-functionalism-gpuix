@@ -1,6 +1,6 @@
 import { For } from "solid-js";
 import { MONO } from "../../lib/doc-page";
-import { color, type as scale, shape, weight } from "../../lib/theme";
+import { color, shape, siteType, weight } from "../../lib/theme";
 import { borderFainter, roleStyle, TYPESET_SPACE, type TypeRole } from "./step";
 
 /** The axes `fontWeights` sets (lib/font-weight.ts); the port renders the static cut nearest each wght. */
@@ -112,7 +112,7 @@ export function TypeScaleSpecimen() {
 				>
 					<For each={["Style", "Sample", "Font size", "Line height", "Weight"]}>
 						{(label) => (
-							<text style={{ ...scale.caption, color: color.mutedForeground }}>
+							<text style={{ ...siteType.caption, color: color.mutedForeground }}>
 								{label}
 							</text>
 						)}
@@ -133,7 +133,7 @@ export function TypeScaleSpecimen() {
 							>
 								<text
 									style={{
-										...scale.body,
+										...siteType.body,
 										fontWeight: weight.semibold,
 										color: color.foreground,
 									}}
@@ -211,7 +211,7 @@ export function GapTable() {
 							style={{
 								...cell,
 								...(index() === 0 ? lead : {}),
-								...scale.body,
+								...siteType.body,
 								fontWeight: weight.semibold,
 								color: color.foreground,
 								fontVariantNumeric: "tabular-nums",
@@ -236,7 +236,7 @@ export function GapTable() {
 							style={{
 								...cell,
 								...lead,
-								...scale.body,
+								...siteType.body,
 								color: color.mutedForeground,
 							}}
 						>
@@ -245,7 +245,7 @@ export function GapTable() {
 						<text
 							style={{
 								...cell,
-								...scale.body,
+								...siteType.body,
 								color: color.foreground,
 								fontVariantNumeric: "tabular-nums",
 							}}
@@ -255,7 +255,7 @@ export function GapTable() {
 						<text
 							style={{
 								...cell,
-								...scale.body,
+								...siteType.body,
 								color: color.foreground,
 								fontVariantNumeric: "tabular-nums",
 							}}

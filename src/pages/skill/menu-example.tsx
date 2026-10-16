@@ -12,9 +12,9 @@ import { StableLabel } from "../../lib/stable-label";
 import {
 	color,
 	focusRing,
-	type as scale,
-	shape,
 	motion as tween,
+	shape,
+	siteType,
 	weight,
 } from "../../lib/theme";
 import {
@@ -73,7 +73,7 @@ const rowStyle = {
 
 function Count(props: { n: number }) {
 	return (
-		<text style={{ ...scale.caption, color: color.mutedForeground }}>
+		<text style={{ ...siteType.caption, color: color.mutedForeground }}>
 			{props.n}
 		</text>
 	);
@@ -120,7 +120,7 @@ function GenericList(props: {
 					>
 						<text
 							style={{
-								...scale.body,
+								...siteType.body,
 								// The generic version, bold on purpose to show the reflow.
 								fontWeight: props.selected === index() ? 700 : weight.normal,
 								color: color.foreground,

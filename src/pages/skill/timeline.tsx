@@ -8,8 +8,8 @@ import {
 import {
 	color,
 	colorFade,
-	type as scale,
 	motion as tween,
+	siteType,
 	weight,
 	withAlpha,
 } from "../../lib/theme";
@@ -215,7 +215,7 @@ function Step(props: {
 			<div style={{ height: 24, paddingTop: 2 }}>
 				<text
 					style={{
-						...scale.body,
+						...siteType.body,
 						fontWeight: weight.semibold,
 						color: props.active ? color.foreground : color.mutedForeground,
 						...colorFade,
@@ -227,7 +227,7 @@ function Step(props: {
 			<div style={{ marginTop: 2 }}>
 				<text
 					style={{
-						...scale.body,
+						...siteType.body,
 						lineHeight: 18,
 						color: color.mutedForeground,
 					}}

@@ -1,7 +1,7 @@
 import type { HostElement, StyleDesc } from "@gpuix/solid";
 import type { JSX } from "solid-js";
 import { MONO } from "../../lib/doc-page";
-import { color, type as scale, shape } from "../../lib/theme";
+import { color, shape, siteType } from "../../lib/theme";
 
 /** The blue line the tweak demos draw at the measured edge, and the red wash over what runs past it. */
 export const MARK_BLUE = "#6B97FF";
@@ -111,12 +111,12 @@ export function Specimen(props: {
 					maxWidth: "100%",
 				}}
 			>
-				<text style={{ ...scale.caption, flexShrink: 0 }}>
+				<text style={{ ...siteType.caption, flexShrink: 0 }}>
 					{props.mark ?? (props.good ? "✅" : "❌")}
 				</text>
 				<text
 					style={{
-						...scale.caption,
+						...siteType.caption,
 						color: color.mutedForeground,
 						textAlign: "center",
 						minWidth: 0,

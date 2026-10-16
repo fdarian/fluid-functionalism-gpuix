@@ -14,7 +14,7 @@ import {
 	untrack,
 } from "solid-js";
 import { onFrame } from "../../lib/clock";
-import { color, type as scale, shape } from "../../lib/theme";
+import { color, shape, siteType } from "../../lib/theme";
 import {
 	createScriptedPointer,
 	findByTestId,
@@ -312,7 +312,7 @@ function Caption(props: { side: Side; active: boolean; children: string }) {
 		<text
 			testId={`caption-${props.side}`}
 			style={{
-				...scale.caption,
+				...siteType.caption,
 				color: props.active ? color.foreground : color.mutedForeground,
 				transitionProperty: "color",
 				transitionDuration: "150ms",

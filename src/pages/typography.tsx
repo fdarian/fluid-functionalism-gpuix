@@ -1,12 +1,11 @@
 import type { JSX } from "solid-js";
 import type { ShotContext } from "../lib/demo";
 import { DocPage, DocSection, Prose } from "../lib/doc-page";
-import { setThemeChoice } from "../lib/theme";
+import { setSizeChoice, setThemeChoice } from "../lib/theme";
 import { TYPOGRAPHY_INSTALL_PROMPT } from "./typography/install-prompt";
 import { TypesetSample } from "./typography/markdown";
 import { NumbersDemo } from "./typography/numbers";
 import { GapTable, TypeScaleSpecimen } from "./typography/scale";
-import { createSizeShortcut } from "./typography/step";
 import { BulletList, H3, Rule, Sentence } from "./typography/text";
 import { TrimDemo } from "./typography/trim";
 import { WeightOpszDemo } from "./typography/weight";
@@ -40,9 +39,11 @@ export async function scenarios(shot: ShotContext) {
 
 	await scrollTo("type-scale");
 	shot.capture("scale");
-	await shot.press("s");
+	setSizeChoice("compact");
+	await shot.settle(600);
 	shot.capture("scale-compact");
-	await shot.press("s");
+	setSizeChoice("default");
+	await shot.settle(600);
 	await scrollTo("markdown-sample");
 	await shot.scroll(600, 400, 0, 420);
 	shot.capture("markdown");
@@ -50,9 +51,11 @@ export async function scenarios(shot: ShotContext) {
 	await shot.click("task-move-every-list-to-fluid-hover");
 	await shot.hover("task-command-menu");
 	shot.capture("markdown-todo");
-	await shot.press("s");
+	setSizeChoice("compact");
+	await shot.settle(600);
 	shot.capture("markdown-compact");
-	await shot.press("s");
+	setSizeChoice("default");
+	await shot.settle(600);
 	setThemeChoice("light");
 	await shot.settle(600);
 	shot.capture("markdown-light");
@@ -78,7 +81,6 @@ export async function scenarios(shot: ShotContext) {
 }
 
 export function Page(): JSX.Element {
-	createSizeShortcut();
 	return (
 		<DocPage
 			description={<Prose>Bold rules that create consistency across the whole component library.</Prose>}

@@ -3,13 +3,7 @@ import { createSignal } from "solid-js";
 import { copyToClipboard, InputCopy } from "../../components/input-copy";
 import { MONO } from "../../lib/doc-page";
 import { Icon } from "../../lib/icon";
-import {
-	color,
-	focusRing,
-	type as scale,
-	shape,
-	weight,
-} from "../../lib/theme";
+import { color, focusRing, shape, siteType, weight } from "../../lib/theme";
 import {
 	Compare,
 	clickStep,
@@ -48,7 +42,7 @@ function GenericCopy(props: { copied: boolean; onCopy: () => void }) {
 			<div style={{ flexGrow: 1, flexShrink: 1, minWidth: 0 }}>
 				<text
 					style={{
-						...scale.caption,
+						...siteType.caption,
 						fontFamily: MONO,
 						color: color.mutedForeground,
 						whiteSpace: "nowrap",
@@ -87,7 +81,7 @@ function GenericCopy(props: { copied: boolean; onCopy: () => void }) {
 				/>
 				<text
 					style={{
-						...scale.caption,
+						...siteType.caption,
 						fontWeight: weight.normal,
 						color: hovered() ? color.foreground : color.mutedForeground,
 						whiteSpace: "nowrap",
