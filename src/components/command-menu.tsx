@@ -21,7 +21,7 @@ import {
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, createReflowGate, type FluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
-import { defineIcon, type IconRef } from "../lib/icons";
+import type { IconRef } from "../lib/icons";
 import { IS_MAC } from "../lib/platform";
 import { createPresence } from "../lib/presence";
 import { moveIndex, revealRow } from "../lib/list-nav";
@@ -34,10 +34,6 @@ import {
 	motion as tween,
 	weight,
 } from "../lib/theme";
-
-export const searchIcon = defineIcon(
-	'<path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>',
-);
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -490,7 +486,7 @@ export function CommandMenuInput(props: {
 	const [focused, setFocused] = createSignal(false);
 	const layout = () => metrics(menu.compact());
 	const icon = (): IconRef | null =>
-		props.icon === undefined ? searchIcon : props.icon;
+		props.icon === undefined ? "search" : props.icon;
 	let inputElement: HostElement | undefined;
 
 	const onKeyDown = (event: KeyEvent) => {

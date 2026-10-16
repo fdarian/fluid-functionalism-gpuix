@@ -1,25 +1,21 @@
 import { buttonProps, motion, useGpuixRequired } from "@gpuix/solid";
 import { createSignal, type JSX, Show } from "solid-js";
 import { Icon } from "../lib/icon";
-import { defineIcon } from "../lib/icons";
-import { color, radius, type as scale, scheme, motion as tween, focusRing } from "../lib/theme";
+import type { IconName } from "../lib/icons";
+import {
+	color,
+	focusRing,
+	radius,
+	type as scale,
+	scheme,
+	motion as tween,
+} from "../lib/theme";
 import { type FileLike, FileThumbnail } from "./file-thumbnail";
-
-const copyGlyph = defineIcon(
-	'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
-);
-const pencilGlyph = defineIcon(
-	'<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
-);
-const regenerateGlyph = defineIcon(
-	'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
-);
 
 const subtitle = { fontSize: 14, lineHeight: 20 } as const;
 const ENTRANCE_RISE = 8;
 /** group-hover's `transition-opacity duration-150`. */
 const META_FADE = { duration: 0.15, ease: "easeOut" } as const;
-
 
 export type ChatAction = "copy" | "edit" | "regenerate";
 
@@ -32,12 +28,12 @@ export function ChatMessageAction(props: {
 }) {
 	const renderer = useGpuixRequired();
 	const [hovered, setHovered] = createSignal(false);
-	const glyph = () =>
+	const glyph = (): IconName =>
 		props.action === "copy"
-			? copyGlyph
+			? "copy"
 			: props.action === "edit"
-				? pencilGlyph
-				: regenerateGlyph;
+				? "pencil"
+				: "rotate-ccw";
 	return (
 		<div
 			{...buttonProps({ onClick: props.onClick }, renderer)}

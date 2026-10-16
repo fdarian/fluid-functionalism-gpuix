@@ -19,33 +19,10 @@ import {
 import type { DemoModule } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
 import { Icon } from "../lib/icon";
-import { defineIcon } from "../lib/icons";
 import { PopupSurface } from "../lib/popup";
 import { createPresence } from "../lib/presence";
 import { color, radius, type as scale } from "../lib/theme";
 
-const link = defineIcon(
-	'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
-);
-const image = defineIcon(
-	'<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
-);
-const home = defineIcon(
-	'<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
-);
-const inbox = defineIcon(
-	'<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
-);
-const calendar = defineIcon(
-	'<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>',
-);
-const library = defineIcon(
-	'<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7v10"/><path d="M11 7v10"/><path d="m15 7 2 10"/>',
-);
-const rocket = defineIcon(
-	'<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>',
-);
-const message = defineIcon('<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>');
 
 function items(options: {
 	descriptions: boolean;
@@ -83,7 +60,7 @@ function items(options: {
 			value: "copy-link",
 			label: "Copy link",
 			description: "To this page",
-			icon: link,
+			icon: "link",
 			shortcut: "mod+shift+c",
 			keywords: ["share", "url"],
 			group: "Actions",
@@ -100,7 +77,7 @@ function items(options: {
 			value: "export",
 			label: "Export as PDF",
 			description: "Pro plan",
-			icon: image,
+			icon: "image",
 			keywords: ["download"],
 			group: "Actions",
 			disabled: true,
@@ -109,7 +86,7 @@ function items(options: {
 			value: "home",
 			label: "Home",
 			action: "Go to Home",
-			icon: home,
+			icon: "home",
 			group: "Go to",
 		},
 		{
@@ -117,7 +94,7 @@ function items(options: {
 			label: "Inbox",
 			action: "Go to Inbox",
 			description: "3 unread",
-			icon: inbox,
+			icon: "inbox",
 			keywords: ["mail", "notifications"],
 			group: "Go to",
 		},
@@ -126,7 +103,7 @@ function items(options: {
 			label: "Calendar",
 			action: "Go to Calendar",
 			description: "Today",
-			icon: calendar,
+			icon: "calendar",
 			keywords: ["events", "schedule"],
 			group: "Go to",
 		},
@@ -160,7 +137,7 @@ function items(options: {
 		{
 			value: "docs",
 			label: "Documentation",
-			icon: library,
+			icon: "square-library",
 			keywords: ["help", "guide"],
 			group: "Help",
 		},
@@ -168,7 +145,7 @@ function items(options: {
 			value: "whats-new",
 			label: "What's new",
 			description: "Release notes",
-			icon: rocket,
+			icon: "rocket",
 			keywords: ["changelog", "updates"],
 			group: "Help",
 		},
@@ -176,7 +153,7 @@ function items(options: {
 			value: "support",
 			label: "Contact support",
 			description: "Reply within a day",
-			icon: message,
+			icon: "message-circle",
 			keywords: ["help", "chat"],
 			group: "Help",
 		},
