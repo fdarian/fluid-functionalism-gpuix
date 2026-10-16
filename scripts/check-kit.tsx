@@ -5,7 +5,7 @@ import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
 
 /** Shared harness for the `check-<component>.tsx` scenario scripts: real-time frames, testId lookups, PASS/FAIL lines. */
-export async function createCheck(slug: string) {
+export async function createCheck(slug: string, initialSettleMs = 800) {
 	const demos = await loadDemos();
 	const test = createTestRoot({ width: 1240, height: 780, fonts });
 	const renderer = test.renderer;
@@ -42,7 +42,7 @@ export async function createCheck(slug: string) {
 
 	setThemeChoice("dark");
 	test.render(() => <App demos={demos} initialPage={slug} />);
-	await settle(800);
+	if (initialSettleMs > 0) await settle(initialSettleMs);
 
 	return {
 		renderer,

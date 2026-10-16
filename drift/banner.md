@@ -22,10 +22,10 @@ repeating it.
 
 - **Cause:** `gpuix gap`.
 - **Original:** a fixed bar slides with `y: (row - 1) * 100%` while the row opens or closes, opacity following the row (`banner.tsx:236-238`, `:257`, `:290-296`).
-- **Port:** `top` from `-rowHeight` to 0 and back, the same springs and curve (`banner.tsx:349-355`, `:369-378`).
+- **Port:** `top` from 0 to minus the bar's height and back, the same springs and curve (the bar's `motion.div` in `src/components/banner.tsx`). The row's height animates between 0 and `auto`; the bar is not bottom-aligned in the row, because with `justifyContent: "flex-end"` the row's `auto` target follows the bar's offset and the row overshoots (measured on the demo: about 15px).
 - **gpuix lacks:** translate (README CSS transforms row), and `%` for insets in `motion` (`FORK.md:901`).
-- **Workaround:** the measured row height in pixels stands in for `100%`.
-- **Fidelity:** exact for the visible result; `top` re-lays out each frame.
+- **Workaround:** the bar's measured height in pixels stands in for `100%`, read as the exit starts. A banner that is created closed has not been seen yet, so its first entrance fades in without sliding; later ones slide.
+- **Fidelity:** exact for the visible result except that first entrance; `top` re-lays out each frame.
 - **Components it hits:** thinking-indicator, queued-stack, mobile-drawer.
 
 ## Container queries and `:has()`
@@ -51,25 +51,16 @@ repeating it.
 
 - **Cause:** `not ported yet`. `marginBottom` is animatable in `motion` (`packages/native/js/host.ts:107`).
 - **Original:** in a flex column with a gap, the row also takes back one gap (`marginBottom: (row - 1) * gap`), measured at mount, so nothing jumps when the banner mounts or unmounts (`banner.tsx:148-152`, `:246-256`, `:270-279`, `:344`). The playground's inline page is a `gap-3` column (`lib/docs/playgrounds/banner.tsx:359-363`).
-- **Port:** no margin. The "gone" phase renders nothing and the "measuring" phase renders a zero-height row, so the parent's gap appears when an appear starts and disappears when a dismiss ends: content below jumps by one gap (by reading; the demo's dismissable banner sits in a column without a gap, `src/demos/banner.tsx:103`).
+- **Port:** no margin. A closed banner renders nothing and an open or closing one is a row that starts at height 0, so the parent's gap appears when an appear starts and disappears when a dismiss ends: content below jumps by one gap (by reading; the demo's dismissable banner sits in a column without a gap, `src/demos/banner.tsx:103`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
-## Interrupting an appear or dismiss
+## Focus after a dismiss
 
-- **Cause:** `not ported yet`.
-- **Original:** the effect re-runs on every `isPresent` change from wherever the values are: coming back mid-dismiss reverses, and dismissing mid-appear does not jump (`banner.tsx:281-339`).
-- **Port:** the phases are separate branches of a `<Switch>` (`banner.tsx:310-381`). Reopening during "closing" goes back to "measuring", which collapses the row to 0 and opens it again (a jump). Closing during "opening" (or "measuring") throws `Banner is not mounted` (`banner.tsx:172-175`): `restElement` was assigned in the "rest" branch, which is gone, and its `mounted` is false. The throw leaves the phase at "opening" while `open` is false, so the banner stays up. Reading, not run.
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** just this one.
-
-## Focus after a dismiss, and rebuilt subtree
-
-- **Cause:** handoff `not ported yet` (gpuix has `focus({ preventScroll })`, `FORK.md:444`); rebuilding `port choice` (reason not stated; each phase has its own wrapper).
+- **Cause:** `not ported yet` (gpuix has `focus({ preventScroll })`, `FORK.md:444`).
 - **Original:** if keyboard focus is inside the banner when it leaves, `focusNeighbour` moves it to the next focusable element after it, else the last one before it (`banner.tsx:200-213`, `:306-309`). The body is one element throughout.
-- **Port:** `body()` is called again in every phase branch, so the ✕ and the actions are new elements at the start of a dismiss and again when an appear ends (`banner.tsx:236-302`, `:310-381`). A focused ✕ loses focus at once, to nothing; hover and press state also reset.
+- **Port:** the body is one element throughout too (the row stays mounted from the appear to the end of the exit), so a reopen during a dismiss keeps the ✕ focused. No hand-off: a focused ✕ keeps focus while the banner fades and loses it to nothing when the exit ends and the row unmounts.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -78,7 +69,7 @@ repeating it.
 
 - **Cause:** `not ported yet`. `pointerEvents` is a style property (`~/code/fdarian/gpuix/README.md:4918`).
 - **Original:** `pointerEvents` is `none` while the banner's opacity is under 0.5, so an appearing banner cannot catch clicks meant for what is under it and a leaving one cannot be hit twice (`banner.tsx:258-260`).
-- **Port:** no gate. The banner is clickable at opacity 0 during an appear, and the ✕ of a closing banner calls `onDismiss` again (`banner.tsx:369-380`).
+- **Port:** no gate. The banner is clickable at opacity 0 during an appear, and the ✕ of a closing banner calls `onDismiss` again.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
