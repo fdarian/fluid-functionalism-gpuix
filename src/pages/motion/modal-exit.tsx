@@ -1,6 +1,7 @@
 import { type MotionTransition, motion, type StyleDesc } from "@gpuix/solid";
 import { createSignal, Show } from "solid-js";
 import { Button } from "../../components/button";
+import { ComponentPreview, MONO } from "../../lib/doc-page";
 import { createPresence } from "../../lib/presence";
 import {
 	color,
@@ -8,7 +9,6 @@ import {
 	motion as tween,
 	withAlpha,
 } from "../../lib/theme";
-import { ComponentPreview, MONO } from "./doc";
 
 const MODAL_CODE = `// Both modals open on spring.slow. Only the exit differs.
 

@@ -7,12 +7,12 @@ import {
 	onCleanup,
 	Show,
 } from "solid-js";
-import { Button } from "../../components/button";
-import { copyToClipboard } from "../../components/input-copy";
-import { TabsSubtle, TabsSubtleItem } from "../../components/tabs-subtle";
-import { Tooltip } from "../../components/tooltip";
-import { Icon } from "../../lib/icon";
-import { defineIcon } from "../../lib/icons";
+import { Button } from "../components/button";
+import { copyToClipboard } from "../components/input-copy";
+import { TabsSubtle, TabsSubtleItem } from "../components/tabs-subtle";
+import { Tooltip } from "../components/tooltip";
+import { Icon } from "./icon";
+import { defineIcon } from "./icons";
 import {
 	color,
 	focusRing,
@@ -20,7 +20,7 @@ import {
 	scheme,
 	weight,
 	withAlpha,
-} from "../../lib/theme";
+} from "./theme";
 
 export const MONO = "Menlo";
 /** `text-site-subtitle`, the role between `title` and `body`. */

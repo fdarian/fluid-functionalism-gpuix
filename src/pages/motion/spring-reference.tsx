@@ -5,6 +5,7 @@ import {
 	useGpuixRequired,
 } from "@gpuix/solid";
 import { type Accessor, createSignal, For, onCleanup, Show } from "solid-js";
+import { MONO } from "../../lib/doc-page";
 import { usePageNav } from "../../lib/page-nav";
 import {
 	color,
@@ -13,7 +14,6 @@ import {
 	motion as tween,
 	weight,
 } from "../../lib/theme";
-import { MONO } from "./doc";
 
 interface Chip {
 	label: string;

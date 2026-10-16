@@ -1,6 +1,6 @@
 import type { JSX } from "solid-js";
 import type { ShotContext } from "../lib/demo";
-import { Code, DocPage, DocSection, Prose, SubHeading } from "./motion/doc";
+import { Code, DocPage, DocSection, Prose, SubHeading } from "../lib/doc-page";
 import { MOTION_INSTALL_PROMPT } from "./motion/install-prompt";
 import { ModalExitDemo } from "./motion/modal-exit";
 import { SpringReferenceSection } from "./motion/spring-reference";
