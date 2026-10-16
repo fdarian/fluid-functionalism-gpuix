@@ -46,16 +46,6 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 - **Fidelity:** dropped.
 - **Components it hits:** every animated component.
 
-## Dots are `aria-selected`, not `aria-current`
-
-- **Cause:** `port choice` (reason not stated); the port is wrong here.
-- **Original:** a native `<button>` with `aria-current="true"` on the current dot only and nothing on the others (`carousel-dots.tsx:217-222`).
-- **Port:** a `div` made a button by `buttonProps` (`role="button"`, `packages/solid/src/components/button.ts:36`) carrying `aria-selected={props.current}` on every dot, so the others read `false` (`carousel-dots.tsx:166-168`). `aria-selected` is not valid on a button, and `aria-current` works on gpuix (`src/components/sidebar.tsx:187`).
-- **gpuix lacks:** nothing.
-- **Workaround:** none.
-- **Fidelity:** approximated (looks the same; assistive tech is told the wrong thing).
-- **Components it hits:** card (`card.tsx:341`), tabs, tabs-subtle and others use `aria-selected` on a `buttonProps` element too; not checked against their sources.
-
 ## Container and extra props
 
 - **Cause:** `port choice` (reason not stated).
