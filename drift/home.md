@@ -44,16 +44,14 @@ repeating it. The hero's three buttons are not wired here (their `onClick`s belo
   - **chat-message:** the source pins both bubbles to `size="compact"`; the port's `ChatMessage` has no size prop, so they use the default step.
   - **card:** the source squeezes the four inline rows to a 52px minimum with `py-1.5`; the port's compact card is 60px, so the stack is 240px in a stage that has 255px left after the footer and 20px padding.
   - **command-menu:** the source wraps the menu in `Elevated` (`offset=2`, `shadowLevel=3`); the port's `CommandMenuPanel` is the `surface-3` card with `--shadow-3`'s drop (`drift/command-menu.md`). The data is the same rows and suggestions.
+  - **dropdown:** the source's "Accessible by default" row carries a heart; the port's five icon tables have no heart glyph, so it takes the shield. The inline panel is a fixed 288px with `flexShrink: 0` (`drift/dropdown.md`), where the source's is `max-w-full` and shrinks to the 255px a two-column stage leaves; the tile's horizontal padding is 8px instead of 24 so the panel fits whole.
+  - **input-group:** a fixed 288px column that shrinks (`minWidth: 0`), inside the source's `max-w-[320px]`; at wide windows the group stays 288px where the source grows to 320 (`drift/input-group.md`).
+  - **carousel-dots:** the slide is the demo's `Slide` at 192 x 64 (`src/demos/carousel-dots.tsx`), which moves on `left` / `right`, not a transform; the label is at the port's body size, the border is `color.border` where the source uses `border-border/60`.
+  - **accordion:** the open first row plus four closed ones are about as tall as the stage, so the first row touches the card's top edge.
+  - **slider, tabs, input-copy, button, table, dialog, color-picker, tooltip, badge:** the same content and layout as the source. The buttons are pinned to `size="compact"` (the source's `sm`) and the table shows four rows inside a tile (`BentoTileContext`). The dialog is the full-window one, as in the source.
   - **select, switch, radio-group, checkbox-group, tabs-subtle, thinking-indicator, thinking-steps, input-message, ask-user-questions:** the same content and layout as the source. The checkbox, radio, switch and select carry the differences listed in their own drift files; `tabs-subtle` has no `aria-label` prop.
 - **Fidelity:** approximated.
 - **Components it hits:** the tiles named.
-
-## The remaining tiles are empty
-
-- **Cause:** `not ported yet`.
-- **Original:** previews for every slug in `displayOrder`.
-- **Port:** the first 14 slugs of `displayOrder` have previews; the other 13 (slider, dropdown, tabs, input-copy, accordion, input-group, carousel-dots, button, table, dialog, color-picker, tooltip, badge) render a card with an empty stage, in the right grid slot, until `previewMap` gets their entries.
-- **Fidelity:** dropped.
 
 ## The hero: arrows, spacing and the heading weight
 

@@ -620,23 +620,21 @@ const DROPDOWN_ITEMS: { icon: IconRef; label: string }[] = [
 function DropdownPreview() {
 	const [selected, setSelected] = createSignal<number | null>(0);
 	return (
-		<Capped maxWidth={280}>
-			<Dropdown checkedIndex={selected() ?? undefined}>
-				<For each={DROPDOWN_ITEMS}>
-					{(item, index) => (
-						<MenuItem
-							index={index()}
-							icon={item.icon}
-							label={item.label}
-							checked={selected() === index()}
-							onSelect={() =>
-								setSelected(selected() === index() ? null : index())
-							}
-						/>
-					)}
-				</For>
-			</Dropdown>
-		</Capped>
+		<Dropdown checkedIndex={selected() ?? undefined}>
+			<For each={DROPDOWN_ITEMS}>
+				{(item, index) => (
+					<MenuItem
+						index={index()}
+						icon={item.icon}
+						label={item.label}
+						checked={selected() === index()}
+						onSelect={() =>
+							setSelected(selected() === index() ? null : index())
+						}
+					/>
+				)}
+			</For>
+		</Dropdown>
 	);
 }
 
@@ -711,16 +709,7 @@ function AccordionPreview() {
 					{(item) => (
 						<AccordionItem value={item.value}>
 							<AccordionTrigger>{item.title}</AccordionTrigger>
-							<AccordionContent>
-								<text
-									style={{
-										...siteType.body,
-										color: color.mutedForeground,
-									}}
-								>
-									{item.content}
-								</text>
-							</AccordionContent>
+							<AccordionContent>{item.content}</AccordionContent>
 						</AccordionItem>
 					)}
 				</For>
@@ -824,7 +813,6 @@ function ButtonPreview() {
 				flexDirection: "row",
 				flexWrap: "wrap",
 				alignItems: "center",
-				justifyContent: "center",
 				gap: 8,
 			}}
 		>
@@ -882,7 +870,7 @@ function DialogPreview() {
 	return (
 		<Dialog>
 			<DialogTrigger>
-				<Button variant="secondary" size="compact">
+				<Button testId="bento-dialog-open" variant="secondary" size="compact">
 					Open Dialog
 				</Button>
 			</DialogTrigger>
@@ -911,7 +899,7 @@ function ColorPickerPreview() {
 function TooltipPreview() {
 	return (
 		<Tooltip content="Copy to clipboard">
-			<Button variant="secondary" size="compact">
+			<Button testId="bento-tooltip" variant="secondary" size="compact">
 				Hover me
 			</Button>
 		</Tooltip>
@@ -932,7 +920,6 @@ function BadgePreview() {
 				flexDirection: "row",
 				flexWrap: "wrap",
 				alignItems: "center",
-				justifyContent: "center",
 				gap: 6,
 			}}
 		>

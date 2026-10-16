@@ -61,7 +61,13 @@ const TILES: readonly Tile[] = [
 		side: "right",
 	},
 	{ slug: "slider", name: "Slider", size: "small" },
-	{ slug: "dropdown", name: "Dropdown", size: "small" },
+	{
+		slug: "dropdown",
+		name: "Dropdown",
+		size: "small",
+		// The inline panel is a fixed 288px and does not shrink; a two-column tile's stage is 303px.
+		padding: { x: 8, y: 12 },
+	},
 	{ slug: "tabs", name: "Tabs", size: "medium" },
 	{ slug: "input-copy", name: "InputCopy", size: "small" },
 	{ slug: "accordion", name: "Accordion", size: "medium", side: "right" },
