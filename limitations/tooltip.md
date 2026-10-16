@@ -2,56 +2,18 @@
 
 Original: `registry/base/tooltip.tsx`. Ported in `src/components/tooltip.tsx`, demo in `src/demos/tooltip.tsx`.
 
-All four sides, rich content, per-tooltip and provider delay with skip-delay grouping, `forceOpen` and `followCursor` are ported. Three gaps changed the API or the behaviour.
+## The safe polygon needs pointer positions over bare window background
 
-## A filled child hides the pointer from its ancestors
+- **Original:** the popup is hoverable and `safePolygon` keeps it open while the pointer crosses the gap between trigger and popup, whatever is under the pointer there.
+- **gpuix lacks:** pointer moves over empty space. `window` / `document` `mousemove` listeners fire only when some element on the hit path has a mousemove listener, never over the bare window background, so the polygon cannot be tracked.
+- **Workaround:** a grace timer. Leaving the trigger or the chip closes after `GRACE_MS` (80 ms) unless the pointer reaches the chip or comes back (`tooltip.tsx:28`, `:146-151`, chip enter / leave at `:207-214`).
+- **Fidelity:** approximated (a pointer that takes longer than the grace period to cross the gap loses the tooltip).
+- **Components it hits:** dropdown submenus (the same polygon).
 
-- **Original:** `Tooltip.Trigger render={children}` merges its hover and focus handlers onto whatever element the caller passes, so `<Tooltip><Button/></Tooltip>` just works. DOM `mouseenter` also fires on an ancestor while the pointer is over a descendant.
-- **gpuix lacks:** the same ancestry. An element with a non-transparent fill, `position: absolute`, or `pointerEvents: "auto"` inserts a blocking hitbox (`packages/native/src/style.rs:317` `should_occlude`, applied at `renderer.rs:5335`). GPUI's hover set stops at that hitbox, so a wrapper's `onMouseEnter` / `onMouseMove` never fire while the pointer is over such a child. `Button` sets `pointerEvents: "auto"` and paints a fill, so a wrapper around it never sees the hover. A bug in spirit (CSS `:hover` and `mouseenter` cascade up), a missing feature in the letter of GPUI's hit testing.
-- **Workaround:** `Tooltip` children may be a function, `(trigger) => <el {...trigger} />`, receiving `onMouseEnter` / `onMouseMove` / `onMouseLeave` / `onMouseDown` to spread on the trigger. A plain unfilled child still works through the wrapper. The demo therefore uses a local `TriggerButton` that looks like `Button`, because `Button` does not take those handlers.
-- **Fidelity:** approximated (different API, same behaviour).
-- **Components it hits:** any wrapper that needs hover on a filled or `auto` child: dropdown triggers, tabs with tooltips, sidebar rail handle.
+## `scaleY` on the popup enter
 
-## mouseDown plus mouseMove on one element captures the pointer
-
-- **Original:** the trigger's handlers are passive; the child's click always arrives.
-- **gpuix lacks:** the same. gpuix calls `capture_pointer()` on any element that has both `onMouseDown` and `onMouseMove` (`packages/native/src/renderer.rs:5663`), so mouseUp and click go to that element instead of the child under it. The first version of the wrapper listened to both on every tooltip and swallowed the clicks of buttons and rows inside it (reported by the input and chat groups). A surprise: nothing signals that listening to both changes where the release goes. Bug-shaped trap.
-- **Workaround:** `onMouseMove` is attached only when `followCursor` is set; `onMouseDown` (dismiss on press) stays.
-- **Fidelity:** exact, except that a follow-cursor tooltip still captures the press of its own trigger.
-- **Components it hits:** any wrapper that tracks the pointer and also listens for a press.
-
-## `<anchored align="center">` offsets the layer twice
-
-- **Original:** Base UI's `Positioner side="top"` centres the popup on the trigger.
-- **gpuix lacks:** a correct centre alignment. `wrap_at_trigger` (`packages/native/src/custom_elements/anchored.rs:193` top and bottom, `:217` left and right) centres the zero-sized wrapper with flex, so the layer's origin is already `centre − size/2`, and `resolved_anchor` (`:155`, `:158`) then anchors the layer's own `BottomCenter` / `LeftCenter` at that origin, shifting it by `size/2` again. The chip lands half its width off on top/bottom and half its height off on left/right. A bug.
-- **Workaround:** pass an explicit `anchor` (`bottomLeft` for top, `topLeft` for bottom and right, `topRight` for left) together with `align="center"`. The wrapper's centring then places the corner correctly and `gap` still offsets by side.
-- **Fidelity:** exact once worked around.
-- **Components it hits:** anything centred under or beside its trigger (dropdown, select, popover-like pieces).
-
-## No collision flip
-
-- **Original:** Base UI flips the tooltip to the opposite side when it would leave the viewport and shifts it along the edge.
-- **gpuix lacks:** a flip that keeps clear of the trigger. `fit="snap"` slides the layer back inside the window and so can cover the trigger; `fit="switch"` flips to the far edge of the trigger, which the README already notes covers it. Missing feature.
-- **Workaround:** the side is chosen when the tooltip opens, from the trigger's painted box, the window size and the chip's last painted size (`onLayout`; a string's width is estimated the first time): the preferred side if it has room for the chip plus the offset plus 5px, else the opposite side when that has more room. Snap (with `snapMargin` 5, Base UI's collision padding) still does the shifting along the edge. The first hover of a tooltip primes the bounds read, so a tooltip that opens at once on its very first hover keeps its preferred side.
-- **Fidelity:** approximated (no flip after the window resizes while it is open).
-- **Components it hits:** every anchored popup.
-
-## Focus opens the tooltip
-
-- **Original:** a keyboard-focused trigger (`:focus-visible`) opens the tooltip too.
-- **gpuix lacks:** an `onFocus` that says whether focus came from the keyboard (`style.focusVisible` exists only as a style state), so hover is the only trigger. Missing feature.
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** any component whose focus has a side effect (dropdown typeahead, combobox).
-
-## Escape and a hoverable chip
-
-- **Original:** `useDismiss` closes on Escape; the popup is hoverable (`safePolygon`) so the pointer can cross the gap to it.
-- **Port:** a hover-opened tooltip joins gpuix's dismiss-layer stack (`DismissableLayer`), so Escape closes the tooltip first and a dialog behind it on the next press. Base UI's dialog and tooltip listen separately, so one Escape there probably closes both; this is a deliberate deviation. A pinned (`forceOpen`) tooltip is not a layer. The pointer leaving the trigger or the chip closes after an 80 ms grace unless it reaches the chip or comes back; the exact safe polygon needs pointer positions outside every element, which gpuix does not report. The chip is a hit target now, so it blocks what it overlaps.
-- **Also:** a bare `Tooltip` has its own group with Base UI's 400 ms timeout, so coming back within it, or while the chip fades out, opens at once; `onOpenChange` reports hover opens and closes.
-
-## Smaller notes
-
-- `followCursor` is `offset` on the layer, set from `onMouseMove` against `getElementBounds` of the wrapper (null until the wrapper has painted, so a move before that is skipped). Exact, with a frame of lag.
-- The `scaleY` of the popup enter and the rotated "Move along me" label of the vertical follow area need transforms (already known); the label is stacked in three lines instead.
-- Headless screenshots only advance a `motion` spring when a frame is drawn, so scenarios settle twice after a hover to capture the finished state.
+- **Original:** the popup enters with a `scaleY` as well as the slide and fade.
+- **gpuix lacks:** scale. Transforms are the known gap.
+- **Workaround:** the 4px slide and the opacity fade stay (`slideFrom`, `tooltip.tsx:66-77`; chip `initial` / `animate`, `:215-221`). The demo's vertical follow-cursor label, rotated in the original, is stacked in three lines (`src/demos/tooltip.tsx:45`).
+- **Fidelity:** approximated (partly dropped).
+- **Components it hits:** every popup with a scale entrance (select, combobox, dropdown).
