@@ -434,6 +434,7 @@ export function App(props: {
 				demos={props.demos}
 				pages={props.pages}
 				showcase={SHOWCASE}
+				current={page()}
 				onPage={setPage}
 			/>
 		</AppFrame>
