@@ -226,6 +226,10 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 			});
 		},
 		handlers,
+		/** A keyboard move owns the highlight: forgets the pointer so the scroll it causes does not re-pick under it. The next mouse move restores it. */
+		releasePointer() {
+			pointer = undefined;
+		},
 		/** Re-reads every row's box now: for a row that resized without the observer reporting it yet (an unfolding label whose tween just settled). */
 		remeasure() {
 			commit();

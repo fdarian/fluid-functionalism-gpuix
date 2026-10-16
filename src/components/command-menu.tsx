@@ -417,6 +417,7 @@ export function CommandMenu(props: {
 					? enabled[enabled.length - 1]
 					: moveIndex(hover.activeIndex(), to, all.length, (index) => all[index].disabled);
 		if (next === null) return;
+		hover.releasePointer();
 		hover.setActiveIndex(next);
 		lastActive = next;
 		centerRow(next);
