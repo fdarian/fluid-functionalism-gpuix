@@ -1,11 +1,173 @@
 # input-message
 
-Original: `registry/default/input-message.tsx`. Ported in `src/components/input-message.tsx`, demo in `src/demos/input-message.tsx`.
+Original: `registry/default/input-message.tsx`, demo in `app/docs/input-message/` of the source
+(fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/input-message.tsx`,
+demo in `src/demos/input-message.tsx`.
 
-## Send-button morph, tile and row enter
+One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
+(transforms, intrinsic width, variable fonts) get a one-line entry here that links to the README row instead of
+repeating it.
 
-- **Original:** the arrow and the stop square swap in wait mode with `scale` 0.6 to 1; attachment tiles and queued rows enter with `scale` 0.9 / 0.97.
-- **gpuix lacks:** scale. Transforms are the known gap.
-- **Workaround:** opacity fades only, on `tween.fast`: the glyph swap in `SendButton` (`input-message.tsx:207-215`, remounted per glyph by `<For each>`), `FilePreviewTile` (`:290`) and `QueuedRow` (`:370`).
+## Scale on the send glyph, tiles, queued rows
+
+- **Cause:** `gpuix gap`. No transforms (README "Missing features", scale-in entrances row, which lists input-message): source `scale` 0.6 (`input-message.tsx:1292-1298`), 0.9 (`:236-238`) and 0.97 (`:306-311`), and the Tab keycap's `-translate-y-px` (`:1247`). Port fades only (`input-message.tsx:207-215,290,370`); the keycap sits 1px low.
+
+## The send button swap has no exit, and the first mount fades in
+
+- **Cause:** `not ported yet`.
+- **Original:** `AnimatePresence mode="wait" initial={false}` around the arrow / stop square: the old glyph exits (opacity 0, `spring.fast.exit`), then the new one enters (`input-message.tsx:1286-1320`). Nothing plays on mount.
+- **Port:** `<For each={[mode === "stop" ? "stop" : "arrow"]}>` remounts a `motion.div` that fades in on `tween.fast` (`input-message.tsx:207-237`); the old glyph is gone at once and the arrow also fades in when the composer first mounts. `mode="wait"` exists in the fork (`~/code/fdarian/gpuix/FORK.md:826-827`).
 - **Fidelity:** approximated.
-- **Components it hits:** queued-stack, chat-message, any scale-in.
+- **Components it hits:** input-copy (`Swap`).
+
+## Tiles and queued rows: no exit, no sibling slide
+
+- **Cause:** `not ported yet`.
+- **Original:** `FilePreviewTile` and `QueuedRow` carry `layout`, an `exit` (opacity 0, scale, `spring.fast.exit`), and sit in `AnimatePresence mode="popLayout"` (tiles), so a removed item animates out and its siblings slide into the gap (`input-message.tsx:230-239,301-313,1105,1143`).
+- **Port:** enter fade only; a removed tile or row vanishes at once and the rest jump (`input-message.tsx:289-293,369-373`, `<For>` at `:991,1017`). The fork has `layout` and `popLayout` (`FORK.md:826-827`).
+- **Fidelity:** approximated.
+- **Components it hits:** queued-stack.
+
+## Queue drag-reorder does not follow the pointer
+
+- **Cause:** `not ported yet`.
+- **Original:** `Reorder.Group` / `Reorder.Item` (axis y): the row follows the pointer while the others animate into place; the whole row is the handle (`cursor-grab`, `active:cursor-grabbing`), and a double click anywhere on it edits (`input-message.tsx:301-340,1135-1158`).
+- **Port:** pointer capture on the label region only; the row under the pointer swaps with the one it crosses by a fixed stride of `row + 4` (`dragQueued`, `input-message.tsx:791-797`), nothing follows the cursor, and the file-count icon and padding are not draggable. Double click is `clickCount === 2` on the same region (`:433-447`). The fork has a `Reorder` primitive (`FORK.md:827`).
+- **Fidelity:** approximated.
+- **Components it hits:** queued-stack.
+
+## The collapsing regions animate differently
+
+- **Cause:** `not ported yet`.
+- **Original:** the files, queue and suggestions regions open with `spring.moderate`; the exit has no override, so it uses the same spring (`input-message.tsx:1098-1101,1130-1132,1339-1345`). The suggestions region exits on height only, so its divider holds until the space closes (comment at `:1340-1343`). `AnimatePresence initial={false}`: a region already open at mount does not animate (`:1094,1125,1334`).
+- **Port:** `Collapse` exits on the 120 ms tween (`tween.moderateExit`, `input-message.tsx:134,157`), fades opacity on exit for every region including suggestions (`:153-156`), and its `initial` is always `{ height: 0, opacity: 0 }` (`:152`), so a region open at mount (the Attachments demo's two files) animates in.
+- **Fidelity:** approximated (the divider vanishing mid-collapse is what the source comment avoids).
+
+## Remove badges stay invisible under keyboard focus
+
+- **Cause:** `not ported yet`. A bug, listed in the report.
+- **Original:** the tile's badge and the queued row's close button reveal on `focus-visible:opacity-100` as well as hover (`input-message.tsx:257,369`).
+- **Port:** opacity follows hover only (`input-message.tsx:269,493`), but both are tab stops (`:257,480`), so Tab lands on an invisible button whose focus ring is invisible too.
+- **Fidelity:** approximated.
+
+## 80 ms fades are instant
+
+- **Cause:** `not ported yet`.
+- **Original:** `transition-opacity duration-80` on the badge and close button (`input-message.tsx:257,370`), `transition-colors duration-80` on a suggestion row's text and `transition-opacity` on its icon (`:429,445,451`), `transition-[box-shadow,color] duration-80` on the composer's ring (`:1060`).
+- **Port:** the badge, close button and suggestion icon are shown or hidden at once (`input-message.tsx:269,493,564-584`), the row colour switches (`:556`), and `ring()` switches the outline colour (`:928-934`). The fork animates colours, `outlineColor` and `boxShadow` (`FORK.md:814-815`).
+- **Fidelity:** approximated.
+
+## Drag-over has no state
+
+- **Cause:** `not ported yet`.
+- **Original:** a file drag over the composer turns the ring `#6B97FF`, changes the placeholder to "Drop files here to add to chat" and hides the ghost (`input-message.tsx:507,574,653-656,1007-1027,1189-1195`).
+- **Port:** `onDragOver` only calls `preventDefault` so the drop is delivered (`input-message.tsx:946-949`); the drop adds the files (`:950-955`).
+- **Fidelity:** dropped.
+
+## Files are paths, not `File`s
+
+- **Cause:** `gpuix gap`. gpuix hands over paths from a drop or the picker, never a `File` (`input-message.tsx:43`).
+- **Original:** `File[]`, identity `name-size-lastModified`, type from the browser (`input-message.tsx:946-967`).
+- **Workaround:** `ComposerFile { path, name, type }`, identity is the path, and the type comes from a ten-entry extension table; anything else is `application/octet-stream` and fails the default `accept` (`input-message.tsx:43-103`). `onSend`, `files` and `QueuedMessage.files` carry `ComposerFile`.
+- **Fidelity:** approximated.
+- **Components it hits:** any component taking a `File`; the demo maps `ComposerFile` to chat-message's `{ name, type, src }` by hand (`src/demos/input-message.tsx:68-72`).
+
+## The file picker is not filtered by `accept`
+
+- **Cause:** `not ported yet`.
+- **Original:** a hidden `<input type="file" accept multiple>`; `openFilePicker(acceptOverride)` narrows `accept` for one call, so the OS dialog only offers those types (`input-message.tsx:977-996,1074-1083`).
+- **Port:** `renderer.promptForPaths({ files, multiple })` shows every file; the result is filtered afterwards (`input-message.tsx:701-719`). The fork lists file-picker `accept` filters (`FORK.md:459`).
+- **Fidelity:** approximated.
+
+## Clicking the composer's padding does not focus the textarea
+
+- **Cause:** `not ported yet`. A bug, listed in the report.
+- **Original:** `onMouseDown` on the whole composer focuses the textarea and cancels the default unless the target is a button, link, input, textarea or the queue (`input-message.tsx:912-928,1051`), so the padding, the footer gaps, the file row and the suggestions' padding all focus.
+- **Port:** `onClick` on the inner wrapper around the textarea only (`input-message.tsx:1036-1045`). The cursor is `text` over the whole box (`:966-969`).
+- **Fidelity:** approximated (focus lands on release, and only over the textarea).
+
+## The caret is not moved after a programmatic value change
+
+- **Cause:** `not ported yet` (unverified: where gpuix puts the caret after a programmatic change).
+- **Original:** after accepting a suggestion, editing a queued message, or recalling history the caret is set to the end (`input-message.tsx:587-592,728-733,781-786`).
+- **Port:** `focusTextarea()` only (`input-message.tsx:670-680,761-773,888-909`).
+
+## History recalls only from a single-line draft
+
+- **Cause:** `not ported yet`. The port's comment blames gpuix (`input-message.tsx:881`: "gpuix does not report the caret"), but the fork lists `selectionStart` / `selectionEnd` (`FORK.md:451`). Not checked on a textarea.
+- **Original:** ArrowUp recalls when the caret is on the first line, ArrowDown when it is on the last, so a multi-line draft still navigates (`input-message.tsx:846-889`).
+- **Port:** recalls only when the draft has no `\n` (`input-message.tsx:882-887`).
+- **Fidelity:** approximated.
+
+## Arrow keys may not reach the textarea's `onKeyDown`
+
+- **Cause:** `gpuix gap`, as the port's comment states (`input-message.tsx:822-823`). Unverified here: `FORK.md:448-450` says a text editor's `keydown` runs before its built-in action. No README row covers it.
+- **Original:** plain ArrowUp / ArrowDown drive the suggestion list and history (`input-message.tsx:788-889`).
+- **Port:** the same handler also accepts Ctrl-P / Ctrl-N (`input-message.tsx:815-839`), and the demo's scenarios use `ctrl-n` / `ctrl-p` (`src/demos/input-message.tsx:363,424`). If the arrows really are swallowed, the keyboard path in the real window is Ctrl-P / Ctrl-N only.
+- **Fidelity:** approximated.
+
+## A disabled composer is read-only, not disabled
+
+- **Cause:** `not ported yet`. A bug, listed in the report. Same as `drift/input-group.md`.
+- **Original:** `disabled` on the textarea (`input-message.tsx:1196`) takes it out of the Tab order.
+- **Port:** `readOnly` (`input-message.tsx:1058`) with `pointerEvents: "none"` on the wrapper (`:971`): Tab still focuses the textarea. Unverified for a textarea; `FORK.md:451,481` says a disabled input is never focusable.
+
+## The resting ring in dark mode
+
+- **Cause:** `port choice` (`popupBorder` "stands in for the shadow ring", `lib/theme.ts:35`).
+- **Original:** `surfaceClasses(2, 2)` (`input-message.tsx:1057`): `--shadow-light-2` in light (1px ring plus a drop) and `--shadow-dark-2` in dark, an inset 1px ring at 2% white and an inset top highlight at 1% (`app/globals.css:138,161`).
+- **Port:** an outline outside the box in `color.popupBorder` (6% black in light, 5% white in dark) plus the drop (`input-message.tsx:928-934,962-978`). Light is the same; dark has a stronger, outer ring and no top highlight.
+- **Fidelity:** approximated in dark.
+
+## Slot buttons are not scaled down in compact
+
+- **Cause:** `not ported yet`.
+- **Original:** the footer sets `[&_button]:h-6 [&_button.w-7]:w-6` and the caption text size on every descendant button in compact, so the consumer's slot buttons and the send button are 24px (`input-message.tsx:1270-1272`).
+- **Port:** only the send button is 24 (`steps.compact.button`, `input-message.tsx:120`); slot content keeps its own size.
+- **Fidelity:** approximated.
+
+## Queued row padding and icon strokes
+
+- **Cause:** `port choice` (reason not stated) for the padding; `not ported yet` for the strokes.
+- **Original:** the row is `px-2.5` / `px-2` on both sides (`input-message.tsx:333-335`). The image, enter and down-arrow icons pass no `strokeWidth`, so they draw at lucide's 2 (`:344,443,448`).
+- **Port:** `paddingRight: 6` at both steps (`input-message.tsx:390`), and strokes of 1.5 (`:422,571,581`). The file count lacks `tabular-nums` (`:426`).
+- **Fidelity:** approximated.
+
+## The ghost placeholder
+
+- **Cause:** `not ported yet`.
+- **Original:** the overlay is `absolute inset-0 overflow-hidden` and is described to assistive tech by an `sr-only` hint wired through `aria-describedby` (`input-message.tsx:1225-1261`).
+- **Port:** `top / left / right` without `bottom` or clipping (`input-message.tsx:1094-1109`); no hint text.
+- **Fidelity:** approximated.
+
+## Accessibility wiring
+
+- **Cause:** `not ported yet`. gpuix accepts `aria-*` (`FORK.md:455`).
+- **Original:** `aria-activedescendant` on the textarea and an `id` on each option (`input-message.tsx:1204-1208,419`), a polite `role="status"` live region announcing "Message sent. N still queued." (`:708-710,1390-1392`), `aria-describedby` merging the ghost hint and `textareaProps` (`:1199-1203`).
+- **Port:** `role="listbox"` / `option` / `aria-selected` and `listitem` labels are there (`input-message.tsx:533-534,1197-1198,373-374`); none of the three above.
+- **Fidelity:** dropped.
+
+## Props: no passthrough
+
+- **Cause:** `not ported yet`.
+- **Original:** `className`, `style`, `ref` and the div's HTML attributes on the root; `textareaProps` (a custom `aria-label`, `className`, `onFocus` / `onBlur`, `maxLength`, …) on the textarea (`input-message.tsx:126-210,491-495,513-519,1070,1219`).
+- **Port:** `InputMessageProps` has neither (`input-message.tsx:590-633`); the textarea's `aria-label` is fixed "Message" (`:1051`). `testId` is added.
+- **Fidelity:** dropped.
+
+## Ambient size and shape
+
+- **Cause:** `not ported yet`. README lists the pill shape and the Size row as not ported.
+- **Original:** `useSize(size)` falls back to the surrounding provider, `shape.container` sets the composer radius, `nestedRadius(shape.containerRadius, 8)` the tile radius (`input-message.tsx:224-227,497-498,1062`).
+- **Port:** the `size` prop only; fixed 12 and 4 (`input-message.tsx:312,961`).
+- **Fidelity:** approximated.
+
+## IME composition, touch, static weights
+
+- **Cause:** `gpuix gap`. One line each: the `isComposing` early return (`input-message.tsx:790`; README "Missing features", IME row, which lists input-message); the touch-only always-visible × (`useIsTouch`, `:77-87,367-368`; README, the `matchMedia` input-device row); the variable-font weight (`:340,432,1218`; README variable-font row).
+
+## Demo page
+
+- **Cause:** `port choice` for the shape (the demo is a showcase card, not a docs page; reason not stated beyond that); `not ported yet` for the missing variants.
+- **Original:** `app/docs/input-message/page.tsx`: Playground (toggles for placeholder suggestion, prompts, history, attachments, min rows, disabled, slots, queue status), Basic, Suggestions, Attachments (composer floating over a scrolling transcript, pre-filled, a Reset button), Queued messages (`queued-chat-demo.tsx`: a pausable streaming reply, `showQueue={false}` with the `QueuedStack` above the composer, the queued-to-sent morph, a `rich` variant with an attach dropdown and a model picker, Reset), Left Slot Only, Right Slot Only, Send Handler (no history), Disabled (text "This composer is disabled"), then a props table. Each has a `ComponentPreview` with code.
+- **Port:** Basic, Suggestions, Attachments (pre-filled, transcript above the composer, no scroll or Reset), Queued messages (the built-in rows, a plain stand-in reply), both slots in one card, Send handler (with `history` added), Disabled (empty value) with Compact (`src/demos/input-message.tsx:83-311`). Missing: Playground, the `QueuedStack` / morph / rich queued demo, Reset buttons, code snippets, props table. Extras: history, compact.
+- **Fidelity:** 8 of 9 source sections have a port counterpart; the queued one is simpler.
