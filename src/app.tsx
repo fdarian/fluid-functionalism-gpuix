@@ -205,6 +205,7 @@ function AppSidebar(props: {
 						icon="search"
 						label="Search"
 						badge={SITE_MENU_SHORTCUT}
+						badgeType={siteType.caption}
 						onClick={props.onSearch}
 					/>
 				</SidebarMenu>
