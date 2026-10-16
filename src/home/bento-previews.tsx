@@ -79,6 +79,7 @@ import {
 import { Tooltip } from "../components/tooltip";
 import { createSlides, SLIDES, Slide } from "../demos/carousel-dots";
 import type { IconRef } from "../lib/icons";
+import { usePreviewPlayback } from "../lib/preview-playback";
 import { color, siteType, weight } from "../lib/theme";
 import { ASK_USER_EXAMPLE_QUESTIONS } from "./ask-user-example";
 import { BentoTileContext } from "./bento-card";
@@ -765,6 +766,7 @@ function InputGroupPreview() {
 /** A small carousel on the dots' autoplay; hovering the slide pauses it. */
 function CarouselDotsPreview() {
 	const slides = createSlides();
+	const playing = usePreviewPlayback();
 	const [hovering, setHovering] = createSignal(false);
 	return (
 		<div
@@ -791,7 +793,7 @@ function CarouselDotsPreview() {
 					count={SLIDES.length}
 					value={slides.state().slide}
 					onValueChange={slides.onValueChange}
-					autoplay={{ duration: 2400, paused: hovering() }}
+					autoplay={{ duration: 2400, paused: hovering() || !playing() }}
 					getLabel={(index: number) => `Show ${SLIDES[index]}`}
 				/>
 			</div>

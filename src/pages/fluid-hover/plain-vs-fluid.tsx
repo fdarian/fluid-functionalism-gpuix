@@ -15,7 +15,8 @@ import { onFrame } from "../../lib/clock";
 import { PageScrollerContext } from "../../lib/demo-kit";
 import { Code, ComponentPreview } from "../../lib/doc-page";
 import { createFluidHover } from "../../lib/fluid-hover";
-import { defineIcon } from "../../lib/icons";
+import { PAUSE_ICON, PLAY_ICON } from "../../lib/playback-icons";
+import { usePreviewPlayback } from "../../lib/preview-playback";
 import { color, siteType } from "../../lib/theme";
 import {
 	FakeCursor,
@@ -30,13 +31,6 @@ import {
 import { FLUID_HOVER_CODE } from "./snippets";
 
 export const ROWS = ["Inbox", "Drafts", "Sent", "Archive", "Trash"];
-
-const PAUSE = defineIcon(
-	'<rect x="14" y="3" width="5" height="18" rx="1"/><rect x="5" y="3" width="5" height="18" rx="1"/>',
-);
-const PLAY = defineIcon(
-	'<path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/>',
-);
 
 // The cursor turns around 2px inside the padding at both ends, so it spends a beat above the first row and below the last.
 const CURSOR_X = 120;
@@ -239,6 +233,12 @@ function Stage(props: { paused: () => boolean }) {
 	);
 }
 
+/** The comparison alone, for a host with its own frame; it plays while the host's `PreviewPlaybackContext` says so. */
+export function PlainVsFluidPreview() {
+	const playing = usePreviewPlayback();
+	return <Stage paused={() => !playing()} />;
+}
+
 /** The comparison's frame: the pause button in the preview header holds the cursors on any frame. */
 export function PlainVsFluidDemo() {
 	const [paused, setPaused] = createSignal(false);
@@ -248,7 +248,7 @@ export function PlainVsFluidDemo() {
 			code={FLUID_HOVER_CODE}
 			cull
 			playback={{
-				icon: paused() ? PLAY : PAUSE,
+				icon: paused() ? PLAY_ICON : PAUSE_ICON,
 				tooltip: paused() ? "Play" : "Pause",
 				testId: "plain-vs-fluid-playback",
 				onClick: () => setPaused(!paused()),
