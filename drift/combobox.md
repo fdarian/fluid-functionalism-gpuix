@@ -258,12 +258,13 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 ## Demo
 
-Source page `app/docs/combobox/page.tsx`: Playground, Basic, With icons, Multiple selection, Create from the query, Hide picked rows, Variants, Long list, Error & disabled, API tables. Port `src/demos/combobox.tsx`: three cards.
+Source page `app/docs/combobox/page.tsx`: Playground, Basic, With icons, Multiple selection, Create from the query, Hide picked rows, Variants, Long list, Error & disabled, API tables. Port `src/demos/combobox.tsx`: Playground and four cards.
 
 - **Cause:** `port choice` (reason not stated) for the data and copy; `not ported yet` for sections that need a feature the combobox has but the demo does not show.
-- **Present:** Basic (`:43-62`), With icons (`:65-85`, with `clearable`), Disabled (`:96-98`). Extras with no source counterpart: external set button and value caption, prefix `filter` (`:86-95`), a form with `name` / `required` (`:101-137`).
+- **Present:** Playground, Basic, With icons (with `clearable`), Long list (25 timezones, globe icon, 280px, "Search timezones…", "No timezone matches."), Disabled. Extras with no source counterpart: external set button and value caption, prefix `filter`, a form with `name` / `required`.
 - **Missing, port has no feature:** Multiple selection, Create from the query, Hide picked rows, Variants, Error (see the not-ported entries).
-- **Missing, port could show it:** Long list (25 timezones, globe icon, `w-[280px]`; the 12-row basic list already scrolls past 300px), Playground, the doc prose and API tables.
+- **Missing, port could show it:** the doc prose and API tables.
+- **Playground:** the single combobox over the 17 component names (280px, "Pick a component…", nothing picked), with Leading icon, Clear button and Disabled switches and a shuffle that also clears the pick. Left out, no API in the port: the Multiple, Create from query and Hide picked rows switches, the Variant select and the Error switch (and the multiple-only default of the source, which opens with two chips). No Code tab or "Get code" preset dialog. Hide picked rows is disabled unless Multiple is on in the source; here it is absent. The preview frame is the shared 420px `PlaygroundLayout` one, not the source's 360px with the field top-anchored in a 350px box.
 - **Differs:**
   - Basic uses 12 string frameworks with "Solid" preselected and a search icon; the source has 7 `{ value, label }` items, nothing preselected, no icon (`:9-22,36,57`).
   - Basic placeholder is "Select framework…", the source's is "Select a framework…" (`:58`).
