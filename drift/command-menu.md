@@ -123,7 +123,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `not ported yet`.
 - **Original:** Base UI Dialog: `role="dialog"` named by a screen-reader-only `title` and `description` props, focus trapped and returned to the trigger on close, page scroll locked and the page hidden from the accessibility tree, Escape closes from anywhere, an outside press closes (a click that presses and releases on the backdrop in `drift/dialog.md`), `defaultOpen` and an uncontrolled mode, `modal`, `container` and `className` props (`:1449-1568`).
-- **Port:** its own `<anchored fill="window">` layer, not the ported `Dialog` (`src/components/command-menu.tsx:1288-1372`): no role, title or description; `HideOutside` (`src/lib/modal.tsx`, used by `src/components/dialog.tsx:331`) is not used; no focus return; `open` and `onOpenChange` are required; the scrim closes on `mousedown` through `onMouseDownOutside` (`:1321`; the dialog port works around this with a click, `drift/dialog.md`); Escape works from the field only (`:530-534`).
+- **Port:** its own `<anchored fill="window">` layer, not the ported `Dialog` (`src/components/command-menu.tsx:1288-1372`): no role, title or description; `HideOutside` (`src/lib/modal.tsx`, used by `src/components/dialog.tsx:331`) is not used; no focus return; `open` and `onOpenChange` are required; the scrim closes on `mousedown` through `onMouseDownOutside` (`:1321`; the dialog port uses gpuix's `DialogBackdrop`, which closes on a click); Escape works from the field only (`:530-534`).
 - **Workaround:** none.
 - **Fidelity:** approximated (looks and closes the same with the pointer and the field focused).
 - **Components it hits:** just this one.

@@ -8,18 +8,15 @@ import {
 	DialogDescription as GpuixDialogDescription,
 	DialogTitle as GpuixDialogTitle,
 	DialogTrigger as GpuixDialogTrigger,
-	type DomEvent,
 	type HostElement,
 	motion,
 	useGpuixRequired,
 } from "@gpuix/solid";
 import {
 	createContext,
-	createEffect,
 	createSignal,
 	createUniqueId,
 	type JSX,
-	on,
 	onCleanup,
 	onMount,
 	Show,
@@ -77,13 +74,8 @@ interface DialogScope {
 	finish: () => void;
 	/** Inside another dialog: the parent's scrim already dims the page. */
 	nested: boolean;
-	/** Dialogs opened inside this one that are still mounted. */
-	openChildren: () => number;
-	trackChild: (by: 1 | -1) => void;
 	/** A trigger press: closes an open dialog, reopens one that is fading out. */
 	pressTrigger: () => void;
-	/** The trigger, which a press must not count as outside. */
-	trigger: { current: HostElement | undefined };
 	modal: () => boolean;
 	setOpen: (open: boolean) => void;
 	popupId: string;
@@ -143,18 +135,6 @@ export function Dialog(props: {
 		props.onOpenChange?.(next);
 	};
 
-	const [openChildren, setOpenChildren] = createSignal(0);
-	if (parent !== undefined) {
-		createEffect(
-			on(mounted, (isMounted) => parent.trackChild(isMounted ? 1 : -1), {
-				defer: true,
-			}),
-		);
-		onCleanup(() => {
-			if (mounted()) parent.trackChild(-1);
-		});
-	}
-	const trigger: { current: HostElement | undefined } = { current: undefined };
 	const [titles, setTitles] = createSignal(0);
 	const [descriptions, setDescriptions] = createSignal(0);
 	const hasTitle = () => titles() > 0;
@@ -179,9 +159,6 @@ export function Dialog(props: {
 		scoped: () => props.scoped ?? false,
 		finish: presence.release,
 		nested: parent !== undefined,
-		openChildren,
-		trackChild: (by) => setOpenChildren((count) => count + by),
-		trigger,
 		modal: () => props.modal ?? true,
 		setOpen,
 		pressTrigger() {
@@ -210,9 +187,6 @@ export function DialogTrigger(props: { children: JSX.Element }) {
 	return (
 		<GpuixDialogTrigger
 			asChild
-			ref={(element) => {
-				scope.trigger.current = element;
-			}}
 			aria-haspopup="dialog"
 			aria-controls={scope.mounted() ? scope.popupId : undefined}
 			onClick={scope.pressTrigger}
@@ -274,23 +248,11 @@ export function DialogContent(props: {
 		}) as const;
 
 	let popup: HostElement | undefined;
-	/** The scoped overlay's box: a trigger outside it is not under the backdrop. */
-	let region: HostElement | undefined;
-	/** A non-modal dialog closes on a press anywhere outside it, except, for a scoped dialog, on a trigger outside the overlay (it toggles the dialog itself) or inside a dialog opened from it. */
-	const closeOnOutsidePress = (event: DomEvent) => {
-		if (scope.modal() || !scope.shown() || scope.openChildren() > 0) return;
-		const path = event.composedPath();
-		const pressed = (element: HostElement | undefined) =>
-			element !== undefined && path.includes(element);
-		if (scope.scoped() && pressed(scope.trigger.current) && !pressed(region)) {
-			return;
-		}
-		scope.setOpen(false);
-	};
 
 	const body = () => (
 		<>
-			<DialogBackdrop>
+			{/* gpuix's portal sets `pointerEvents: "none"` on a non-modal layer, which would let an outside press reach the page; the scrim opts back in so it takes the press, as the source's backdrop does. */}
+			<DialogBackdrop style={{ pointerEvents: "auto" }}>
 				{/* Base UI renders no second backdrop for a nested dialog: the parent's already dims the page. */}
 				<Show when={!scope.nested}>
 					<motion.div
@@ -318,7 +280,6 @@ export function DialogContent(props: {
 				ref={(element) => {
 					popup = element;
 				}}
-				onMouseDownOutside={closeOnOutsidePress}
 				// Escape while this dialog fades out belongs to the dialog behind it. gpuix hands the key to the top layer once the element handlers have run, so taking this layer down here lets it through.
 				onKeyDown={(event) => {
 					if (event.key === "Escape" && !scope.shown()) scope.finish();
@@ -372,9 +333,6 @@ export function DialogContent(props: {
 		>
 			<Show when={scope.mounted()}>
 				<div
-					ref={(element) => {
-						region = element;
-					}}
 					style={{
 						position: "absolute",
 						top: 0,

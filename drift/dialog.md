@@ -5,6 +5,8 @@ Original: `registry/base/dialog.tsx` (Base UI Dialog + Motion), demo in `app/doc
 
 Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `showCloseButton`, scoped), Header, Footer, Title, Description and Close are ported, composed over gpuix's own headless `Dialog` (`packages/solid/src/components/dialog.ts`): a full-window layer, a backdrop, a popup, Escape handling and focus in / out. Sizes (400 / 540 / 880, 360 / 480 / 800 compact), padding 24, header gap 6 and margin 16, footer gap 8 and margin 24, the ghost icon close button at top 12 / right 12, the title and body type steps, the `slow` spring in and `slowExit` tween out, the scrim values and Escape-only-the-top-layer all match the source.
 
+`modal={false}` matches the source too. Base UI still renders the Backdrop (`fixed inset-0`, no `pointer-events: none`) and counts a press on it as outside, so the scrim takes the press, the page control under it is not pressed, and a press on the trigger lands on the scrim and closes the dialog. The port's `DialogBackdrop` sets `pointerEvents: "auto"` because gpuix's `DialogPortal` sets `"none"` on a non-modal layer; gpuix's own backdrop click then closes it. No drift.
+
 ## CSS transforms (scale 0.97 to 1, and the centring)
 
 - **Cause:** `gpuix gap`. [README "Missing features": CSS transforms](../README.md#missing-features).

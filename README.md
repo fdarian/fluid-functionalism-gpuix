@@ -241,7 +241,7 @@ Quirks of this repo's own code, kept apart from the gpuix gaps above.
 - **Escape.** `PopupSurface` joins gpuix's dismiss-layer stack while open, so Escape closes only the topmost popup,
   even inside a dialog.
 - **Dialog.** gpuix's `Dialog` unmounts the instant `open` goes false, so a local `mounted` signal keeps the
-  content through the fade; a trigger pressed during the fade is ignored.
+  content through the fade. A non-modal dialog keeps its scrim, as in the source: gpuix's portal sets `pointerEvents: "none"` on a non-modal layer, so the backdrop opts back in with `"auto"`, and an outside press, the trigger included, lands on it and closes the dialog without reaching the page.
 - **Screenshots run on the test renderer** (`scripts/screenshots.tsx`).
   - Captures show no traffic lights or native titlebar, because the test renderer ignores the window options.
   - The window is created with `appearance: "dark"` and the theme stays on System, so `initial.png` and every
