@@ -110,9 +110,19 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 ## Demo: variants that exist and are missing
 
-- **Cause:** `not ported yet`.
-- **Original:** `app/docs/button/page.tsx:95-148`: a Playground (variant, size, label, icon-only, leading, trailing, loading, active, disabled; `lib/docs/playgrounds/button.tsx`), Variants (four inline plus four `w-full`), With Icons (`Create` leading `plus`, secondary `Next` trailing `arrow-right`, tertiary `Search` leading `search` and trailing `arrow-right`), Loading & Disabled (a `Click me` button that loads for 2s, secondary `Saving` loading with a leading `loader`, `Disabled`).
-- **Port:** `src/demos/button.tsx:39-71`: Default and Compact rows of the four variants, a Leading icon row (`plus` on all four), Icon only (both sizes), Disabled and Loading rows of the four variants. Missing: the playground, full-width buttons, trailing and both-sided icons, the click-to-load button, `active`. Added: the Compact, Icon only and per-variant Disabled / Loading rows. The icon-only buttons have no `aria-label` (the source playground sets one, `playgrounds/button.tsx:55`, `:222`). Copy matches.
+- **Cause:** `port choice` (no prop to drive it) for full-width; `not ported yet` for the `Saving` button.
+- **Original:** `app/docs/button/page.tsx:95-148`: Variants (four inline plus four `w-full`), With Icons (`Create` leading `plus`, secondary `Next` trailing `arrow-right`, tertiary `Search` leading `search` and trailing `arrow-right`), Loading & Disabled (a `Click me` button that loads for 2s, secondary `Saving` loading with a leading `loader`, `Disabled`).
+- **Port:** `src/demos/button.tsx`: Default and Compact rows of the four variants, a Leading icon row (`plus` on all four), a Trailing icon row (secondary `Next`, tertiary `Search` on both sides), Icon only (both sizes), Disabled and Loading rows of the four variants, and a Click to load row (the 2s button). Missing: the four `w-full` buttons (`Button` has no width prop), the `Saving` button (a loading button with a leading `loader`). Added: the Compact, Icon only and per-variant Disabled / Loading rows. The icon-only buttons have no `aria-label` (the source playground sets one, `playgrounds/button.tsx:55`, `:222`). Copy matches.
 - **Workaround:** n/a.
 - **Fidelity:** n/a.
 - **Components it hits:** just this one.
+
+## Playground: no Active switch, Label field not right-aligned, Size does not follow the site size
+
+- **Cause:** `port choice` (no `active` prop) for Active; `gpuix gap` for the field alignment; `not ported yet` for Size.
+- **Original:** `lib/docs/playgrounds/button.tsx`: an `Active` switch forces the pressed look (`active` prop, `registry/base/button.tsx:115-127`); the Label input is `text-right` (`:75`); the Size select follows the site-wide size step until a value is picked (`useSizeVariant`, `:98-100`); the Code tab shows the matching snippet.
+- **Port:** `src/demos/button.tsx` `Playground`: every other control and the shuffle are ported with the source's defaults and odds. `Button` has no `active` prop, so the Active switch is left out (the shuffle drops its roll too). The Label field (`PlayText`) is left-aligned: the `<input>` takes `textAlign: "right"` without effect in the capture. Size starts at Default and is only set by its own select. No Code tab (see `site.md`).
+- **gpuix lacks:** right-aligned text in `<input>` (unverified at the source; the style is accepted and does nothing in the test renderer).
+- **Workaround:** none.
+- **Fidelity:** approximated (left-aligned label text), dropped (Active).
+- **Components it hits:** any playground with a text field.
