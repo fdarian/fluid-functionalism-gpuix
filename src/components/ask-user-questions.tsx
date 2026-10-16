@@ -21,19 +21,12 @@ import { StableLabel } from "../lib/stable-label";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type ItemRect } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
-import { defineIcon } from "../lib/icons";
 import { createMeasuredHeight } from "../lib/measured-height";
 import { isChord, moveIndex } from "../lib/list-nav";
 import { IS_MAC } from "../lib/platform";
 import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 import { Button } from "./button";
 
-const arrowLeftGlyph = defineIcon(
-	'<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
-);
-const arrowRightGlyph = defineIcon(
-	'<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
-);
 
 export interface AskUserOption {
 	id?: string;
@@ -177,7 +170,7 @@ function Row(props: RowProps) {
 				}}
 			>
 				<Icon
-					name={arrowRightGlyph}
+					name="arrow-right"
 					size={14}
 					strokeWidth={2}
 					color={color.background}
@@ -986,7 +979,7 @@ export function AskUserQuestions(props: {
 										<Button
 											size="compact"
 											variant="ghost"
-											leadingIcon={arrowLeftGlyph}
+											leadingIcon="arrow-left"
 											testId={`${props.testId ?? "ask"}-back`}
 											onClick={back}
 										>
@@ -1021,7 +1014,7 @@ export function AskUserQuestions(props: {
 										<Button
 											size="compact"
 											variant="ghost"
-											trailingIcon={arrowRightGlyph}
+											trailingIcon="arrow-right"
 											testId={`${props.testId ?? "ask"}-skip`}
 											onClick={skip}
 										>

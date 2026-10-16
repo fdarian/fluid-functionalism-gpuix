@@ -6,15 +6,12 @@ import {
 } from "../components/tabs-subtle";
 import type { DemoModule } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
-import { defineIcon, type IconRef } from "../lib/icons";
+import type { IconRef } from "../lib/icons";
 import { color, type as scale } from "../lib/theme";
 
-const squareLibrary = defineIcon(
-	'<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7v10"/><path d="M11 7v10"/><path d="m15 7 2 10"/>',
-);
 
 const TABS: { icon: IconRef; label: string }[] = [
-	{ icon: squareLibrary, label: "Teamspaces" },
+	{ icon: "square-library", label: "Teamspaces" },
 	{ icon: "clock", label: "Recents" },
 	{ icon: "star", label: "Favorites" },
 	{ icon: "users", label: "Shared" },

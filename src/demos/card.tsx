@@ -15,7 +15,6 @@ import {
 } from "../components/card";
 import type { DemoModule } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
-import { defineIcon } from "../lib/icons";
 
 /** The docs' inline data-URI art, so the demo needs no asset files. */
 const BANNER =
@@ -23,26 +22,12 @@ const BANNER =
 const THUMB =
 	"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cdefs%3E%3CradialGradient id='a' cx='20%25' cy='18%25' r='80%25'%3E%3Cstop offset='0%25' stop-color='%236B97FF' stop-opacity='0.95'/%3E%3Cstop offset='100%25' stop-color='%236B97FF' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='b' cx='86%25' cy='14%25' r='75%25'%3E%3Cstop offset='0%25' stop-color='%236B97FF' stop-opacity='0.5'/%3E%3Cstop offset='100%25' stop-color='%236B97FF' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='c' cx='72%25' cy='94%25' r='85%25'%3E%3Cstop offset='0%25' stop-color='%236B97FF' stop-opacity='0.85'/%3E%3Cstop offset='100%25' stop-color='%236B97FF' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='40' height='40' fill='%23ffffff'/%3E%3Crect width='40' height='40' fill='%236B97FF' fill-opacity='0.35'/%3E%3Crect width='40' height='40' fill='url(%23a)'/%3E%3Crect width='40' height='40' fill='url(%23b)'/%3E%3Crect width='40' height='40' fill='url(%23c)'/%3E%3C/svg%3E";
 
-const circle = defineIcon('<circle cx="12" cy="12" r="10"/>');
-const shield = defineIcon(
-	'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
-);
-const palette = defineIcon(
-	'<path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>',
-);
-const moon = "moon";
-const paintbrush = defineIcon(
-	'<path d="m14.622 17.897-10.68-2.913"/><path d="M18.376 2.622a1 1 0 1 1 3.002 3.002L17.36 9.643a.5.5 0 0 0 0 .707l.944.944a2.41 2.41 0 0 1 0 3.408l-.944.944a.5.5 0 0 1-.707 0L8.354 7.348a.5.5 0 0 1 0-.707l.944-.944a2.41 2.41 0 0 1 3.408 0l.944.944a.5.5 0 0 0 .707 0z"/><path d="M9 8c-1.804 2.71-3.97 3.46-6.583 3.948a.507.507 0 0 0-.302.819l7.32 8.883a1 1 0 0 0 1.185.204C12.735 20.405 16 16.792 16 15"/>',
-);
-const squareLibrary = defineIcon(
-	'<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7v10"/><path d="M11 7v10"/><path d="m15 7 2 10"/>',
-);
 
 const FEATURES = [
-	{ icon: circle, title: "Fluid motion", description: "Spring-tuned transitions calibrated across three tiers" },
-	{ icon: shield, title: "Accessible by default", description: "Focus-visible rings and ARIA roles in every part" },
-	{ icon: palette, title: "Yours to theme", description: "Swap radius, icons, and primitive at runtime" },
-	{ icon: moon, title: "Dark mode ready", description: "Tokens adapt to light and dark automatically" },
+	{ icon: "circle", title: "Fluid motion", description: "Spring-tuned transitions calibrated across three tiers" },
+	{ icon: "shield", title: "Accessible by default", description: "Focus-visible rings and ARIA roles in every part" },
+	{ icon: "palette", title: "Yours to theme", description: "Swap radius, icons, and primitive at runtime" },
+	{ icon: "moon", title: "Dark mode ready", description: "Tokens adapt to light and dark automatically" },
 ] as const;
 
 /** Every example composes these same four cards a different way. */
@@ -150,12 +135,12 @@ function Promo() {
 					<CardContent>
 						<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
 							<CardFeature
-								icon={paintbrush}
+								icon="paintbrush"
 								title="Always pixel-perfect"
 								description="Renders your design exactly: token-driven and crisp in light and dark, at any radius"
 							/>
 							<CardFeature
-								icon={squareLibrary}
+								icon="square-library"
 								title="Stacked, inline, or grid"
 								description="One compositional API: borderless by default, with separated tiles or a shared frame"
 							/>

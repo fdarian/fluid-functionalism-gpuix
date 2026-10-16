@@ -19,7 +19,7 @@ import {
 	useContext,
 } from "solid-js";
 import { Icon } from "../lib/icon";
-import { defineIcon, type IconRef } from "../lib/icons";
+import type { IconRef } from "../lib/icons";
 import { color, radius, type as scale, motion as tween, weight, focusRing } from "../lib/theme";
 import { Button } from "./button";
 
@@ -51,9 +51,6 @@ const sizes = {
 	},
 } as const;
 
-const infoIcon = defineIcon(
-	'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
-);
 
 const tone = (status: BannerStatus) => {
 	switch (status) {
@@ -213,7 +210,7 @@ export function Banner(props: {
 		if (current === "default") {
 			return (
 				<Icon
-					name={infoIcon}
+					name="info"
 					size={metrics().icon}
 					strokeWidth={1.5}
 					color={tone(current)}

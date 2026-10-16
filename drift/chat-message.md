@@ -53,7 +53,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 - **Cause:** `port choice` (the docs page's `MessageActions` is demo code in the source; the port needs a button built on `buttonProps`, so it exports one).
 - **Original:** `MessageActions` lives in the docs page, a `<button>` with `useIcon("copy" | "pencil" | "rotate-ccw")` at size 13, stroke 1.5, `shape.button` radius (`app/docs/chat-message/page.tsx:15-37`).
-- **Port:** `ChatMessageAction` with a fixed lucide glyph per `action`, `radius.item` (8, the rounded shape) (`chat-message.tsx:27-70`). The icon-set switch is not ported (README, "Not ported there").
+- **Port:** `ChatMessageAction` with a fixed named glyph per `action`, `radius.item` (8, the rounded shape) (`chat-message.tsx:27-70`). The glyphs are named icons (`copy`, `pencil`, `rotate-ccw`, `chat-message.tsx:31-36`), so they follow the Icons row.
 - **Workaround:** n/a.
 - **Fidelity:** exact for the default icon set and rounded shape.
 - **Components it hits:** just this one.

@@ -24,21 +24,12 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { fill } from "../lib/press";
-import { defineIcon } from "../lib/icons";
 import { createMeasuredHeight } from "../lib/measured-height";
 import { color, height, radius, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 import { FileThumbnail } from "./file-thumbnail";
 import type { InputSize } from "./input-group";
 import { Tooltip } from "./tooltip";
 
-const arrowUp = defineIcon('<path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>');
-const arrowDown = defineIcon('<path d="M12 5v14"/><path d="m19 12-7 7-7-7"/>');
-const cornerDownLeft = defineIcon(
-	'<polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/>',
-);
-const imageGlyph = defineIcon(
-	'<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
-);
 
 /** A file the composer holds. gpuix hands over paths from a drop or the picker, never a `File`. */
 export type ComposerFile = {
@@ -216,7 +207,7 @@ function SendButton(props: {
 							when={glyph === "stop"}
 							fallback={
 								<Icon
-									name={arrowUp}
+									name="arrow-up"
 									size={props.arrowSize}
 									strokeWidth={2}
 									color={color.background}
@@ -417,7 +408,7 @@ function QueuedRow(props: {
 					}}
 				>
 					<Icon
-						name={imageGlyph}
+						name="image"
 						size={13}
 						strokeWidth={1.5}
 						color={color.mutedForeground}
@@ -567,7 +558,7 @@ function SuggestionRow(props: {
 					fallback={
 						<Show when={props.active}>
 							<Icon
-								name={cornerDownLeft}
+								name="corner-down-left"
 								size={13}
 								strokeWidth={1.5}
 								color={color.foreground}
@@ -576,7 +567,7 @@ function SuggestionRow(props: {
 					}
 				>
 					<Icon
-						name={arrowDown}
+						name="arrow-down"
 						size={13}
 						strokeWidth={1.5}
 						color={color.mutedForeground}

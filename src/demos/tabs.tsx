@@ -2,12 +2,8 @@ import { createSignal, type JSX } from "solid-js";
 import { TabItem, TabPanel, Tabs, TabsList } from "../components/tabs";
 import type { DemoModule } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
-import { defineIcon } from "../lib/icons";
 import { color, type as scale } from "../lib/theme";
 
-const squareLibrary = defineIcon(
-	'<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7v10"/><path d="M11 7v10"/><path d="m15 7 2 10"/>',
-);
 
 function Section(props: { caption: string; children: JSX.Element }) {
 	return (
@@ -71,7 +67,7 @@ export function Demo() {
 				<Section caption="With icons">
 					<Tabs defaultValue="library">
 						<TabsList>
-							<TabItem value="library" icon={squareLibrary} label="Library" />
+							<TabItem value="library" icon="square-library" label="Library" />
 							<TabItem value="recents" icon="clock" label="Recents" />
 							<TabItem value="favorites" icon="star" label="Favorites" />
 							<TabItem value="settings" icon="settings" label="Settings" />
@@ -119,7 +115,7 @@ export function Demo() {
 				<Section caption="Compact">
 					<Tabs defaultValue="library" size="compact">
 						<TabsList>
-							<TabItem value="library" icon={squareLibrary} label="Library" />
+							<TabItem value="library" icon="square-library" label="Library" />
 							<TabItem value="recents" icon="clock" label="Recents" />
 							<TabItem value="favorites" icon="star" label="Favorites" />
 						</TabsList>

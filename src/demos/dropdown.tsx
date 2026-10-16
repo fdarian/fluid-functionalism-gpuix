@@ -16,37 +16,15 @@ import {
 } from "../components/dropdown";
 import type { DemoModule, ShotContext } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
-import { defineIcon } from "../lib/icons";
 import { color, setThemeChoice, type as scale } from "../lib/theme";
 
-const squareLibrary = defineIcon(
-	'<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7v10"/><path d="M11 7v10"/><path d="m15 7 2 10"/>',
-);
-const lock = defineIcon(
-	'<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
-);
-const shield = defineIcon(
-	'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
-);
-const palette = defineIcon(
-	'<path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>',
-);
-const monitor = defineIcon(
-	'<rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/>',
-);
-const link = defineIcon(
-	'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
-);
-const pencil = defineIcon(
-	'<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
-);
 
 const ITEMS = [
-	{ icon: squareLibrary, label: "Teamspaces" },
+	{ icon: "square-library", label: "Teamspaces" },
 	{ icon: "clock", label: "Recents" },
 	{ icon: "star", label: "Favorites" },
 	{ icon: "users", label: "Shared" },
-	{ icon: lock, label: "Private" },
+	{ icon: "lock", label: "Private" },
 ] as const;
 
 const KEY_ROWS = ["Alpha", "Beta", "Bravo", "Charlie", "Charter"];
@@ -177,12 +155,12 @@ function Groups() {
 				<DropdownLabel>Account</DropdownLabel>
 				<MenuItem testId="groups-0" index={0} icon="mail" label="Email" />
 				<MenuItem index={1} icon="bell" label="Notifications" />
-				<MenuItem index={2} icon={shield} label="Privacy" />
+				<MenuItem index={2} icon="shield" label="Privacy" />
 				<DropdownSeparator />
 				<DropdownLabel>Appearance</DropdownLabel>
 				<MenuItem index={3} icon="settings" label="General" />
-				<MenuItem index={4} icon={palette} label="Theme" />
-				<MenuItem index={5} icon={monitor} label="Display" disabled />
+				<MenuItem index={4} icon="palette" label="Theme" />
+				<MenuItem index={5} icon="monitor" label="Display" disabled />
 			</Dropdown>
 		</DemoCard>
 	);
@@ -271,13 +249,13 @@ function Submenus() {
 							<DropdownSubTrigger
 								testId="sub-share"
 								index={1}
-								icon={link}
+								icon="link"
 								label="Share"
 							/>
 							<DropdownSubContent>
 								<MenuItem
 									index={0}
-									icon={link}
+									icon="link"
 									label="Copy link"
 									onSelect={() => setPicked("Copied link")}
 								/>
@@ -292,7 +270,7 @@ function Submenus() {
 						<MenuItem
 							testId="sub-rename"
 							index={2}
-							icon={pencil}
+							icon="pencil"
 							label="Rename"
 							onSelect={() => setPicked("Renamed")}
 						/>
