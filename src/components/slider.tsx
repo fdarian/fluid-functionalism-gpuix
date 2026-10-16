@@ -1,7 +1,7 @@
 import {
 	createMotionValue,
 	createTransform,
-	type EventPayload,
+	type DomEvent,
 	type HostElement,
 	type HostMouseEvent,
 	type HostMouseMoveEvent,
@@ -272,13 +272,13 @@ function createHover() {
 	};
 }
 
-function layoutWidth(event: EventPayload) {
+function layoutWidth(event: Pick<DomEvent, "width">) {
 	if (event.width === undefined)
 		throw new Error("Layout event without a width");
 	return event.width;
 }
 
-function pointerX(event: EventPayload) {
+function pointerX(event: Pick<HostMouseEvent, "x">) {
 	if (event.x === undefined)
 		throw new Error("Pointer event without coordinates");
 	return event.x;
@@ -403,7 +403,7 @@ function ValueDisplay(props: {
 						textDim: color.mutedForeground,
 						caret: color.foreground,
 					}}
-					onChange={(event: EventPayload) => {
+					onChange={(event: DomEvent) => {
 						if (event.value === undefined) {
 							throw new Error("Slider edit change without a value");
 						}
@@ -639,7 +639,7 @@ function CompactSlider(props: CompactProps) {
 		setMoving(false);
 		emitChange(activeThumb, valueAt(x, activeThumb));
 	};
-	const onMove = (event: EventPayload) => {
+	const onMove = (event: HostMouseMoveEvent) => {
 		const x = pointerX(event);
 		if (!dragging) {
 			if (props.disabled || liveWidth === 0) return;
@@ -932,7 +932,7 @@ function CompactSlider(props: CompactProps) {
 					testId={
 						props.testId === undefined ? undefined : `${props.testId}-track`
 					}
-					onLayout={(event: EventPayload) => setTrackWidth(layoutWidth(event))}
+					onLayout={(event: DomEvent) => setTrackWidth(layoutWidth(event))}
 					style={{
 						position: "relative",
 						width: "100%",
@@ -1199,7 +1199,7 @@ function ComfortableSlider(props: ComfortableProps) {
 		setPlacing(false);
 		emit(valueAtX(pointerX(event)));
 	};
-	const onMove = (event: EventPayload) => {
+	const onMove = (event: HostMouseMoveEvent) => {
 		const x = pointerX(event);
 		if (dragging) {
 			setPlacing(variant() === "scrubber");
@@ -1382,7 +1382,7 @@ function ComfortableSlider(props: ComfortableProps) {
 			<div
 				ref={box.ref}
 				testId={props.testId === undefined ? undefined : `${props.testId}-row`}
-				onLayout={(event: EventPayload) =>
+				onLayout={(event: DomEvent) =>
 					setRowWidth(layoutWidth(event) - ROW_BORDER * 2)
 				}
 				{...pointer}

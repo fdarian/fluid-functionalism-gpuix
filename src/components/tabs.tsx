@@ -1,6 +1,7 @@
 import {
 	buttonProps,
-	type EventPayload,
+	document,
+	type DomEvent,
 	type HostElement,
 	type KeyEvent,
 	motion,
@@ -404,7 +405,7 @@ export function TabItem(props: {
 			}
 			aria-disabled={props.disabled === true}
 			testId={props.testId}
-			onFocus={(event: EventPayload) => {
+			onFocus={(event: DomEvent) => {
 				list.focusRing.focus(index, event);
 				list.focusTab(index);
 				list.hover.setActiveIndex(index);
@@ -414,9 +415,8 @@ export function TabItem(props: {
 				list.focusRing.blur(index);
 				// Focus moving to a sibling tab stays inside the list: only a real exit drops the highlight.
 				queueMicrotask(() => {
-					const focused = renderer.getFocusedElementId?.();
 					for (const tab of list.elements.values()) {
-						if (tab.id === focused) return;
+						if (tab === document.activeElement) return;
 					}
 					if (!list.mouseInside()) list.hover.setActiveIndex(null);
 				});

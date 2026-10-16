@@ -192,7 +192,7 @@ export function CardGroup(props: {
 
 	const onGapClick = (event: HostPointerEvent) => {
 		// A click on a card bubbles up to here; only one on the group's own box is a gap.
-		if (container === undefined || event.target !== container.id) return;
+		if (container === undefined || event.target !== container) return;
 		const index = hover.activeIndex();
 		const rect = index === null ? undefined : hover.rects()[index];
 		if (index === null || rect === undefined) return;

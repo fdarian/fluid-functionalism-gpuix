@@ -1,7 +1,10 @@
 import {
-	type EventPayload,
+	type DomEvent,
 	type HostDomEvent,
 	type HostElement,
+	type HostMouseEvent,
+	type HostMouseMoveEvent,
+	type HostPointerEvent,
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
@@ -137,7 +140,7 @@ function MenuBody(props: {
 	paddingTop?: number;
 	handlers: {
 		onMouseEnter: () => void;
-		onMouseMove: (event: EventPayload) => void;
+		onMouseMove: (event: HostMouseMoveEvent) => void;
 		onMouseLeave: () => void;
 	};
 	children: JSX.Element;
@@ -292,7 +295,7 @@ function createMenuList(options: {
 	let panel: HostElement | undefined;
 	let field: HostElement | undefined;
 	let dwellTimer: ReturnType<typeof setTimeout> | undefined;
-	let lastMove: EventPayload | undefined;
+	let lastMove: HostMouseMoveEvent | undefined;
 	let lastSearch: DropdownSearchProps | undefined;
 	onCleanup(() => {
 		clearTimeout(dwellTimer);
@@ -395,7 +398,7 @@ function createMenuList(options: {
 		const query = search();
 		// Space, Home, End and the sideways arrows are the field's own while it has focus.
 		const inField =
-			field !== undefined && (event.target ?? event.elementId) === field.id;
+			field !== undefined && event.target === field;
 		if (event.key === "Escape") {
 			event.preventDefault();
 			options.closeSelf();
@@ -459,7 +462,7 @@ function createMenuList(options: {
 			options.setKeyboardActive(false);
 			if (openSubIndex() === null) hover.handlers.onMouseEnter();
 		},
-		onMouseMove(event: EventPayload) {
+		onMouseMove(event: HostMouseMoveEvent) {
 			setLitBy("pointer");
 			options.setKeyboardActive(false);
 			if (openSubIndex() === null) {
@@ -814,11 +817,11 @@ export function Dropdown(props: {
 				id={listId}
 				role="group"
 				onKeyDown={onKeyDown}
-				onFocusOut={(event: EventPayload) => {
+				onFocusOut={(event: DomEvent) => {
 					const next = event.relatedTarget;
 					if (
-						next !== undefined &&
-						[...rows.values()].some((row) => row.elementId() === next)
+						next !== null &&
+						[...rows.values()].some((row) => row.element() === next)
 					) {
 						return;
 					}
@@ -911,9 +914,9 @@ function useMenuScope() {
 
 export interface DropdownTriggerState {
 	/** Opens on press, like Base UI: put this on the element that opens the menu. */
-	onMouseDown: (event: EventPayload) => void;
+	onMouseDown: (event: HostMouseEvent) => void;
 	/** The release of that press, or a screen reader's press. Keyboard-originated clicks are ignored: the menu answers those itself. */
-	onClick: (event: EventPayload) => void;
+	onClick: (event: HostPointerEvent) => void;
 	readonly expanded: boolean;
 	/** Put these on the element that opens the menu, with the handlers above. */
 	readonly attributes: {

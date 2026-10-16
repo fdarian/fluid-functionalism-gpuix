@@ -1,4 +1,4 @@
-import type { EventPayload } from "@gpuix/solid";
+import type { DomEvent } from "@gpuix/solid";
 import { createSignal } from "solid-js";
 
 /**
@@ -14,7 +14,7 @@ import { createSignal } from "solid-js";
 export function createMeasuredHeight() {
 	const [height, setHeight] = createSignal<number>();
 	return {
-		onLayout(event: EventPayload) {
+		onLayout(event: DomEvent) {
 			if (event.height === undefined) {
 				throw new Error("onLayout reported no height");
 			}

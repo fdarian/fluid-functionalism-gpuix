@@ -1,6 +1,7 @@
 import {
 	buttonProps,
-	type EventPayload,
+	document,
+	type DomEvent,
 	type HostElement,
 	type KeyEvent,
 	motion,
@@ -365,7 +366,7 @@ export function TabsSubtleItem(props: {
 			id={tabId()}
 			aria-controls={isSelected() ? panelId() : undefined}
 			testId={props.testId}
-			onFocus={(event: EventPayload) => {
+			onFocus={(event: DomEvent) => {
 				scope.focusRing.focus(props.index, event);
 				scope.focusTab(props.index);
 				scope.hover.setActiveIndex(props.index);
@@ -374,9 +375,8 @@ export function TabsSubtleItem(props: {
 				scope.focusRing.blur(props.index);
 				// Focus moving to a sibling tab stays inside the list: only a real exit drops the highlight.
 				queueMicrotask(() => {
-					const focused = renderer.getFocusedElementId?.();
 					for (const tab of scope.elements.values()) {
-						if (tab.id === focused) return;
+						if (tab === document.activeElement) return;
 					}
 					if (!scope.mouseInside()) scope.hover.setActiveIndex(null);
 				});
@@ -423,7 +423,7 @@ export function TabsSubtleItem(props: {
 					}}
 				>
 					<div
-						onLayout={(event: EventPayload) => {
+						onLayout={(event: DomEvent) => {
 							if (event.width === undefined)
 								throw new Error("onLayout reported no width");
 							setUnfoldedWidth(event.width);

@@ -1,7 +1,7 @@
 import {
 	buttonProps,
-	type EventPayload,
 	type HostElement,
+	type HostMouseEvent,
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
@@ -263,7 +263,10 @@ export function ColorSwatch(props: {
 /** Window x/y to a 0..1 point inside an element's painted box. */
 function useFractionIn() {
 	const renderer = useGpuixRequired();
-	return (element: HostElement | undefined, event: EventPayload) => {
+	return (
+		element: HostElement | undefined,
+		event: Pick<HostMouseEvent, "x" | "y">,
+	) => {
 		if (element === undefined || !element.mounted) {
 			throw new Error("Pointer target is not mounted");
 		}
@@ -298,7 +301,7 @@ function SaturationSquare(props: {
 	const [hovered, setHovered] = createSignal(false);
 	const [cursor, setCursor] = createSignal<{ x: number; y: number }>();
 
-	const apply = (event: EventPayload) => {
+	const apply = (event: Pick<HostMouseEvent, "x" | "y">) => {
 		const point = fractionIn(element, event);
 		props.onChange(point.x, 1 - point.y);
 	};
@@ -476,7 +479,7 @@ function Rail(props: {
 	const [dragging, setDragging] = createSignal(false);
 
 	const fraction = () => (props.value - props.min) / (props.max - props.min);
-	const apply = (event: EventPayload) => {
+	const apply = (event: Pick<HostMouseEvent, "x">) => {
 		if (root === undefined || !root.mounted) {
 			throw new Error("Rail is not mounted");
 		}

@@ -1,4 +1,4 @@
-import type { EventPayload } from "@gpuix/solid";
+import type { DomEvent } from "@gpuix/solid";
 import { createSignal, For, type JSX, useContext } from "solid-js";
 import {
 	AccordionContent,
@@ -162,7 +162,7 @@ function ComboboxPreview() {
 	return (
 		<div
 			style={{ width: "100%", maxWidth: COMBOBOX_WIDTH }}
-			onLayout={(event: EventPayload) => {
+			onLayout={(event: DomEvent) => {
 				if (event.width === undefined) {
 					throw new Error("onLayout reported no width");
 				}

@@ -1,5 +1,6 @@
 import {
-	type EventPayload,
+	document,
+	type DomEvent,
 	type HostElement,
 	type HostPointerEvent,
 	type KeyEvent,
@@ -491,11 +492,11 @@ export function AskUserQuestions(props: {
 		renderer.focusElement?.(otherElement.id);
 	};
 	const groupHasFocus = () => {
-		const focused = renderer.getFocusedElementId?.();
-		if (focused === undefined || focused === null) return false;
-		if (otherElement?.id === focused) return true;
+		const focused = document.activeElement;
+		if (focused === null) return false;
+		if (focused === otherElement) return true;
 		for (const element of rowElements.values()) {
-			if (element.id === focused) return true;
+			if (element === focused) return true;
 		}
 		return false;
 	};
@@ -809,7 +810,7 @@ export function AskUserQuestions(props: {
 							question()?.otherPlaceholder ?? "Describe in your own words"
 						}
 						theme={fieldTheme()}
-						onChange={(event: EventPayload) => setOther(event.value ?? "")}
+						onChange={(event: DomEvent) => setOther(event.value ?? "")}
 						onFocus={() => {
 							setTextFocused(true);
 							hover.setActiveIndex(otherIndex());
@@ -885,7 +886,7 @@ export function AskUserQuestions(props: {
 					placeholder={question()?.freeTextPlaceholder ?? "Type your answer…"}
 					aria-label={question()?.title}
 					theme={fieldTheme()}
-					onChange={(event: EventPayload) => setOther(event.value ?? "")}
+					onChange={(event: DomEvent) => setOther(event.value ?? "")}
 					onFocus={() => setTextFocused(true)}
 					onBlur={() => setTextFocused(false)}
 					onKeyDown={multiline ? undefined : submitOtherOnEnter}

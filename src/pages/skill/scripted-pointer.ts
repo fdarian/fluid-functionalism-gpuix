@@ -1,6 +1,6 @@
 import {
-	type EventPayload,
 	type HostElement,
+	type HostMouseMoveEvent,
 	useGpuixRequired,
 } from "@gpuix/solid";
 
@@ -29,8 +29,8 @@ export function findByTestId(root: HostElement, testId: string) {
 type HoverEvent = "onMouseEnter" | "onMouseLeave" | "onMouseMove";
 
 /** Handlers the scripted pointer called itself, so a listener can tell them from a visitor's pointer. */
-const scripted = new WeakSet<EventPayload>();
-export const fromVisitor = (event: EventPayload) => !scripted.has(event);
+const scripted = new WeakSet<object>();
+export const fromVisitor = (event: object) => !scripted.has(event);
 
 /**
  * A pointer that is not the visitor's. gpuix delivers hover from the one
@@ -52,11 +52,31 @@ export function createScriptedPointer(root: () => HostElement | undefined) {
 	) => {
 		const handler = element.props.get(type);
 		if (typeof handler !== "function") return;
-		const event: EventPayload = {
+		const eventType = type.slice("on".length).toLowerCase();
+		const event: HostMouseMoveEvent = {
 			elementId: element.id,
-			eventType: type.slice("on".length).toLowerCase(),
+			eventType,
+			type: eventType,
 			x: at.x,
 			y: at.y,
+			clientX: at.x,
+			clientY: at.y,
+			target: element,
+			currentTarget: element,
+			relatedTarget: null,
+			composedPath: () => [element],
+			eventPhase: 2,
+			bubbles: false,
+			cancelable: false,
+			timeStamp: performance.now(),
+			defaultPrevented: false,
+			stopPropagation() {},
+			stopImmediatePropagation() {},
+			preventDefault() {},
+			pointerId: 1,
+			pointerType: "mouse",
+			movementX: 0,
+			movementY: 0,
 		};
 		scripted.add(event);
 		handler(event);

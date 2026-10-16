@@ -1,7 +1,8 @@
 import {
 	type BoxShadow,
 	buttonProps,
-	type EventPayload,
+	type HostMouseEvent,
+	type HostPointerEvent,
 	type StateStyleDesc,
 	useGpuixRequired,
 } from "@gpuix/solid";
@@ -106,8 +107,8 @@ export function Button(props: {
 	"aria-expanded"?: boolean;
 	"aria-haspopup"?: "menu" | "listbox" | "dialog";
 	"aria-controls"?: string;
-	onClick?: (event: EventPayload) => void;
-	onMouseDown?: (event: EventPayload) => void;
+	onClick?: (event: HostPointerEvent) => void;
+	onMouseDown?: (event: HostMouseEvent) => void;
 	/** The label, or the icon for an icon-only size. */
 	children?: JSX.Element;
 	/** Anything after the label, e.g. a keycap. Takes the trailing icon's tighter padding. */

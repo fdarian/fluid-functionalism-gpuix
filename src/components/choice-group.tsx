@@ -1,5 +1,5 @@
 import {
-	type EventPayload,
+	type DomEvent,
 	type HostElement,
 	type KeyEvent,
 	useGpuixRequired,
@@ -347,7 +347,7 @@ export function ChoiceRow(props: {
 			tabIndex={props.tabbable ? 0 : -1}
 			onClick={props.onActivate}
 			onKeyDown={onKeyDown}
-			onFocus={(event: EventPayload) => {
+			onFocus={(event: DomEvent) => {
 				context.hover.setActiveIndex(props.index);
 				context.focusRing.focus(props.index, event);
 			}}

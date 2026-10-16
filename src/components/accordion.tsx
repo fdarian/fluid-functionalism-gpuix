@@ -1,7 +1,9 @@
 import {
 	buttonProps,
-	type EventPayload,
+	document,
+	type DomEvent,
 	type HostElement,
+	type HostMouseMoveEvent,
 	type KeyEvent,
 	motion,
 	ResizeObserver,
@@ -88,7 +90,7 @@ interface GroupScope {
 	/** The pointer is on a row whose item is closed: open tints dim to let it read. */
 	hoveringClosedRow: () => boolean;
 	overContent: (index: number | null) => void;
-	focusRow: (index: number, event: EventPayload) => void;
+	focusRow: (index: number, event: DomEvent) => void;
 	blurRow: (index: number) => void;
 	focusSibling: (
 		index: number,
@@ -191,7 +193,6 @@ type RootProps = ValueProps & {
 
 export function AccordionGroup(props: RootProps) {
 	const root = createRootState(props);
-	const renderer = useGpuixRequired();
 	const triggers = new Map<
 		number,
 		{
@@ -268,9 +269,8 @@ export function AccordionGroup(props: RootProps) {
 			focusRing.blur(index);
 			// Focus moving to a sibling trigger arrives as its focus right after this blur.
 			queueMicrotask(() => {
-				const focused = renderer.getFocusedElementId?.();
 				for (const trigger of triggers.values()) {
-					if (trigger.element.id === focused) return;
+					if (trigger.element === document.activeElement) return;
 				}
 				if (!mouseInside) hover.setActiveIndex(null);
 			});
@@ -314,7 +314,7 @@ export function AccordionGroup(props: RootProps) {
 						mouseInside = true;
 						hover.handlers.onMouseEnter();
 					}}
-					onMouseMove={(event: EventPayload) => {
+					onMouseMove={(event: HostMouseMoveEvent) => {
 						// The pointer over an open panel belongs to no row.
 						if (contentOver !== null) return;
 						hover.handlers.onMouseMove(event);
@@ -615,7 +615,7 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 				aria-expanded={item.isOpen()}
 				aria-controls={item.isOpen() ? item.panelId : undefined}
 				aria-disabled={item.disabled()}
-				onFocus={(event: EventPayload) => {
+				onFocus={(event: DomEvent) => {
 					const own = item.index();
 					if (own !== undefined) group?.focusRow(own, event);
 				}}
@@ -724,7 +724,7 @@ export function AccordionContent(props: { children: JSX.Element }) {
 			>
 				<Show when={!retired()}>
 					<div
-						onLayout={(event: EventPayload) => {
+						onLayout={(event: DomEvent) => {
 							measured.onLayout(event);
 							if (!toggled && !item.isOpen()) setRetired(true);
 						}}

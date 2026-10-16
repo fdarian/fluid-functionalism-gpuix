@@ -1,10 +1,11 @@
 import {
 	AnimatePresence,
-	type EventPayload,
 	type HostElement,
 	type HostMouseEvent,
-	type MotionTransition,
+	type HostMouseMoveEvent,
+	type HostPointerEvent,
 	motion,
+	type MotionTransition,
 	ResizeObserver,
 	useIsPresent,
 } from "@gpuix/solid";
@@ -158,7 +159,7 @@ export function QueuedStack(props: {
 	onCleanup(() => widthObserver.disconnect());
 	const cardWidth = () => Math.max(0, (stackWidth() ?? 0) - GUTTER * 2);
 
-	const onDragMove = (event: EventPayload) => {
+	const onDragMove = (event: HostMouseMoveEvent) => {
 		const downId = pointerDownId();
 		if (downId === null) return;
 		if (event.y === undefined) throw new Error("mouseMove without coordinates");
@@ -418,7 +419,7 @@ function QueueCard(props: {
 	dragging: () => boolean;
 	expanded: () => boolean;
 	onPress: (event: HostMouseEvent) => void;
-	onDragMove: (event: EventPayload) => void;
+	onDragMove: (event: HostMouseMoveEvent) => void;
 	onRelease: () => void;
 	onEdit: () => void;
 	onRemove: () => void;
@@ -483,7 +484,7 @@ function QueueCard(props: {
 				onMouseMove={props.onDragMove}
 				onMouseUp={props.onRelease}
 				onLostPointerCapture={props.onRelease}
-				onClick={(event: EventPayload) => {
+				onClick={(event: HostPointerEvent) => {
 					if (event.clickCount === 2) props.onEdit();
 				}}
 				style={{

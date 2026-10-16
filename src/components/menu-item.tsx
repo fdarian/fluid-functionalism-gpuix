@@ -32,8 +32,8 @@ export interface MenuRow {
 	openSubmenu?: () => void;
 	/** Moves real focus to the row without scrolling it into view. */
 	focus: () => void;
-	/** The row's element id, to tell whether a focus move stayed among the rows. */
-	elementId: () => number | undefined;
+	/** The row's element, to tell whether a focus move stayed among the rows. */
+	element: () => HostElement | undefined;
 }
 
 export interface DropdownContextValue {
@@ -161,7 +161,7 @@ export function MenuItem(props: {
 			activate: () => activate(true),
 			openSubmenu: props.onOpenSubmenu,
 			focus: () => rowElement?.focus({ preventScroll: true }),
-			elementId: () => rowElement?.id,
+			element: () => rowElement,
 		};
 		context.rows.set(index, row);
 		context.rowsChanged?.();

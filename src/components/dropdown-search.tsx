@@ -1,4 +1,4 @@
-import type { EventPayload, HostElement } from "@gpuix/solid";
+import type { DomEvent, HostElement } from "@gpuix/solid";
 import {
 	createContext,
 	createEffect,
@@ -114,7 +114,7 @@ export function SearchField(props: {
 				}}
 				onFocus={() => setFocused(true)}
 				onBlur={() => setFocused(false)}
-				onChange={(event: EventPayload) => {
+				onChange={(event: DomEvent) => {
 					if (event.value === undefined) {
 						throw new Error("Search change without a value");
 					}

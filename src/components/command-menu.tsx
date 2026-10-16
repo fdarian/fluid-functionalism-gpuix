@@ -2,11 +2,11 @@ import {
 	createMotionValue,
 	createMotionValueEvent,
 	createReducedMotion,
-	type EventPayload,
+	type DomEvent,
 	type HostElement,
 	type KeyEvent,
-	type MotionValue,
 	motion,
+	type MotionValue,
 	useGpuixRequired,
 } from "@gpuix/solid";
 import {
@@ -648,7 +648,7 @@ export function CommandMenuInput(props: {
 		const row = menu.rows()[index];
 		if (row !== undefined) menu.select(row);
 	};
-	const onChange = (event: EventPayload) => {
+	const onChange = (event: DomEvent) => {
 		if (event.value === undefined) {
 			throw new Error("Command menu input change without a value");
 		}

@@ -1,8 +1,8 @@
 import {
 	type BoxShadow,
 	buttonProps,
-	type EventPayload,
 	type HostElement,
+	type HostMouseMoveEvent,
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
@@ -328,7 +328,7 @@ function QueuedRow(props: {
 	onEdit: (item: QueuedMessage) => void;
 	onRemove: (item: QueuedMessage) => void;
 	onMove: (item: QueuedMessage, direction: -1 | 1) => void;
-	onDragMove: (item: QueuedMessage, event: EventPayload) => void;
+	onDragMove: (item: QueuedMessage, event: HostMouseMoveEvent) => void;
 	testId?: string;
 }) {
 	const renderer = useGpuixRequired();
@@ -785,7 +785,7 @@ export function InputMessage(props: InputMessageProps) {
 		const from = queue().findIndex((queued) => queued.id === item.id);
 		moveQueuedTo(item, from + direction);
 	};
-	const dragQueued = (item: QueuedMessage, event: EventPayload) => {
+	const dragQueued = (item: QueuedMessage, event: HostMouseMoveEvent) => {
 		if (queueList === undefined || event.y === undefined) return;
 		const bounds = queueList.getBoundingClientRect();
 		const stride = step().row + 4;

@@ -1,6 +1,8 @@
 import {
-	type EventPayload,
+	type DomEvent,
 	type HostElement,
+	type HostMouseEvent,
+	type HostMouseMoveEvent,
 	type KeyEvent,
 	useGpuixRequired,
 } from "@gpuix/solid";
@@ -396,7 +398,7 @@ export function Select<Value extends string>(props: {
 				return;
 		}
 	};
-	const onTriggerMouseDown = (event: EventPayload) => {
+	const onTriggerMouseDown = (event: HostMouseEvent) => {
 		if (event.button !== undefined && event.button !== 0) return;
 		if (presence.open()) close();
 		else open("pointer");
@@ -410,7 +412,7 @@ export function Select<Value extends string>(props: {
 		const allowed = value() === row.value ? settled : settled || dragCommits;
 		if (allowed) pick(row);
 	};
-	const onListMouseMove = (event: EventPayload) => {
+	const onListMouseMove = (event: HostMouseMoveEvent) => {
 		hover.handlers.onMouseMove(event);
 		if (event.pressedButton !== 0 || event.y === undefined) {
 			dragFromY = undefined;
@@ -766,7 +768,7 @@ function Row<Value extends string>(props: {
 	testId?: string;
 	tabIndex: number;
 	onElement: (element: HostElement) => void;
-	onFocus: (event: EventPayload) => void;
+	onFocus: (event: DomEvent) => void;
 	onBlur: () => void;
 	onPick: () => void;
 	onPress: () => void;

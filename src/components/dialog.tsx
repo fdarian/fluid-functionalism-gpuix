@@ -8,7 +8,7 @@ import {
 	DialogDescription as GpuixDialogDescription,
 	DialogTitle as GpuixDialogTitle,
 	DialogTrigger as GpuixDialogTrigger,
-	type EventPayload,
+	type DomEvent,
 	type HostElement,
 	motion,
 	useGpuixRequired,
@@ -271,13 +271,11 @@ export function DialogContent(props: {
 	/** The scoped overlay's box: a trigger outside it is not under the backdrop. */
 	let region: HostElement | undefined;
 	/** A non-modal dialog closes on a press anywhere outside it, except, for a scoped dialog, on a trigger outside the overlay (it toggles the dialog itself) or inside a dialog opened from it. */
-	const closeOnOutsidePress = (event: EventPayload) => {
+	const closeOnOutsidePress = (event: DomEvent) => {
 		if (scope.modal() || !scope.shown() || scope.openChildren() > 0) return;
-		if (event.path === undefined) {
-			throw new Error("Outside press without a propagation path");
-		}
+		const path = event.composedPath();
 		const pressed = (element: HostElement | undefined) =>
-			element !== undefined && event.path?.includes(element.id) === true;
+			element !== undefined && path.includes(element);
 		if (scope.scoped() && pressed(scope.trigger.current) && !pressed(region)) {
 			return;
 		}

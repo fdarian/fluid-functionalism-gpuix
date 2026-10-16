@@ -1,5 +1,5 @@
 import {
-	type EventPayload,
+	type DomEvent,
 	type HostElement,
 	type KeyEvent,
 	useGpuixRequired,
@@ -343,7 +343,7 @@ export function Combobox(props: {
 		const row = filtered()[index];
 		if (row !== undefined) select(row);
 	};
-	const onChange = (event: EventPayload) => {
+	const onChange = (event: DomEvent) => {
 		const text = event.value;
 		if (text === undefined) throw new Error("Combobox change without a value");
 		setInputText(text);

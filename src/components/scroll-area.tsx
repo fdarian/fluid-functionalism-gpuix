@@ -1,8 +1,9 @@
 import {
 	type DimensionValue,
-	type EventPayload,
+	type DomEvent,
 	type HostElement,
 	type HostMouseEvent,
+	type HostMouseMoveEvent,
 	type HostWheelEvent,
 	type KeyEvent,
 	motion,
@@ -42,7 +43,7 @@ type Axis = "x" | "y";
 /** `rgb(var(--overlay) / a)`: black on light surfaces, white on dark. */
 const overlay = (alpha: number) => withAlpha(color.overlay, alpha);
 
-function sizeOf(event: EventPayload): Size {
+function sizeOf(event: Pick<DomEvent, "width" | "height">): Size {
 	if (event.width === undefined || event.height === undefined) {
 		throw new Error("layout event without a size");
 	}
@@ -199,7 +200,10 @@ export function ScrollArea(props: {
 	// ── Dragging ────────────────────────────────────────────────────────────
 
 	let dragOrigin = { pointer: 0, scrolled: 0 };
-	const pointerAlong = (axis: Axis, event: EventPayload) => {
+	const pointerAlong = (
+		axis: Axis,
+		event: Pick<HostMouseEvent, "x" | "y">,
+	) => {
 		const value = axis === "y" ? event.y : event.x;
 		if (value === undefined) throw new Error("mouse event without coordinates");
 		return value;
@@ -221,7 +225,7 @@ export function ScrollArea(props: {
 		setDragging(undefined);
 		stopScrolling(axis);
 	};
-	const dragTo = (event: EventPayload) => {
+	const dragTo = (event: HostMouseMoveEvent) => {
 		// Capture ends the drag on release and on lost capture; this stays for a release the window never saw (outside it, or while it was inactive), which may not be delivered even to a capturing element.
 		if (event.pressedButton === undefined) {
 			stopDrag();
@@ -281,7 +285,7 @@ export function ScrollArea(props: {
 	const onKeyDown = (event: KeyEvent) => {
 		if (isChord(event)) return;
 		// Keys from a focused descendant (an input, a listbox) are that descendant's.
-		if (event.defaultPrevented || event.elementId !== mountedViewport().id) {
+		if (event.defaultPrevented || event.target !== mountedViewport()) {
 			return;
 		}
 		const size = view();
@@ -493,7 +497,7 @@ export function ScrollArea(props: {
 				}}
 				onScroll={onScroll}
 				onWheel={markUserScroll}
-				onLayout={(event: EventPayload) => setView(sizeOf(event))}
+				onLayout={(event: DomEvent) => setView(sizeOf(event))}
 				// A viewport that overflows is a tab stop and scrolls with the keys, like a focused scroller in a browser.
 				tabIndex={overflows("x") || overflows("y") ? 0 : -1}
 				onKeyDown={onKeyDown}
@@ -517,7 +521,7 @@ export function ScrollArea(props: {
 				}}
 			>
 				<div
-					onLayout={(event: EventPayload) => setContent(sizeOf(event))}
+					onLayout={(event: DomEvent) => setContent(sizeOf(event))}
 					style={{
 						display: "flex",
 						flexDirection: "column",

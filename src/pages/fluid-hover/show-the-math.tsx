@@ -1,4 +1,4 @@
-import type { EventPayload, HostElement } from "@gpuix/solid";
+import type { HostElement, HostMouseMoveEvent } from "@gpuix/solid";
 import { type Accessor, createSignal, For, Show } from "solid-js";
 import { Switch } from "../../components/switch";
 import { ComponentPreview, MONO } from "../../lib/doc-page";
@@ -64,7 +64,7 @@ function MathList(props: { showMath: () => boolean }) {
 				hover.handlers.onMouseLeave();
 				setCursorY(null);
 			}}
-			onMouseMove={(event: EventPayload) => {
+			onMouseMove={(event: HostMouseMoveEvent) => {
 				hover.handlers.onMouseMove(event);
 				if (container === undefined || event.y === undefined) return;
 				setCursorY(event.y - container.getBoundingClientRect().y);

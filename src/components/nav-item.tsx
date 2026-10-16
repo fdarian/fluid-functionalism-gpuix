@@ -1,6 +1,7 @@
 import {
 	buttonProps,
-	type EventPayload,
+	document,
+	type DomEvent,
 	type HostElement,
 	type KeyEvent,
 	useGpuixRequired,
@@ -115,7 +116,7 @@ export function NavItem(props: {
 			role="link"
 			aria-current={isActiveRoute() ? "page" : undefined}
 			testId={props.testId}
-			onFocus={(event: EventPayload) => {
+			onFocus={(event: DomEvent) => {
 				scope.focusRing.focus(props.index, event);
 				scope.hover.setActiveIndex(props.index);
 			}}
@@ -123,9 +124,8 @@ export function NavItem(props: {
 				scope.focusRing.blur(props.index);
 				// Focus moving to a sibling item stays inside the menu: only a real exit drops the highlight.
 				queueMicrotask(() => {
-					const focused = renderer.getFocusedElementId?.();
 					for (const item of scope.elements.values()) {
-						if (item.id === focused) return;
+						if (item === document.activeElement) return;
 					}
 					if (!scope.mouseInside()) scope.hover.setActiveIndex(null);
 				});

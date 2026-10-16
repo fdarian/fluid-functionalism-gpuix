@@ -1,7 +1,9 @@
 import {
 	buttonProps,
-	type EventPayload,
+	document,
+	type DomEvent,
 	type HostElement,
+	type HostPointerEvent,
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
@@ -67,7 +69,7 @@ interface MenuScope {
 	registerRow: (entry: RowEntry) => number;
 	/** Roving tabindex: the active rows are the tab stops, or the first row while none is active. */
 	isTabStop: (index: number | undefined) => boolean;
-	focusRow: (index: number, event: EventPayload) => void;
+	focusRow: (index: number, event: DomEvent) => void;
 	blurRow: (index: number) => void;
 	focusSibling: (index: number, step: KeyStep) => void;
 }
@@ -116,7 +118,6 @@ function sameRect(a: ItemRect | null, b: ItemRect | null) {
 }
 
 export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
-	const renderer = useGpuixRequired();
 	const rows = new Map<number, RowEntry>();
 	const [rowsVersion, setRowsVersion] = createSignal(0);
 	let nextIndex = 0;
@@ -174,9 +175,8 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 			focusRing.blur(index);
 			// Focus moving to a sibling row arrives as its focus right after this blur.
 			queueMicrotask(() => {
-				const focused = renderer.getFocusedElementId?.();
 				for (const row of rows.values()) {
-					if (row.element.id === focused) return;
+					if (row.element === document.activeElement) return;
 				}
 				if (!mouseInside) hover.setActiveIndex(null);
 			});
@@ -302,7 +302,7 @@ export function SidebarMenuButton(props: {
 	/** A row clipped away by a collapsed sub-menu: stays registered, never a hover target. */
 	disabled?: () => boolean;
 	trailingIcon?: () => IconRef;
-	onClick?: (event: EventPayload) => void;
+	onClick?: (event: HostPointerEvent) => void;
 	testId?: string;
 }) {
 	const scope = useMenuScope();
@@ -371,7 +371,7 @@ export function SidebarMenuButton(props: {
 			id={createUniqueId()}
 			testId={props.testId}
 			aria-current={props.active === true ? "page" : undefined}
-			onFocus={(event: EventPayload) => {
+			onFocus={(event: DomEvent) => {
 				const own = index();
 				if (own !== undefined) scope.focusRow(own, event);
 			}}

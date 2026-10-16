@@ -1,7 +1,8 @@
 import {
 	DismissableLayer,
-	type EventPayload,
+	type DomEvent,
 	type HostElement,
+	type HostMouseMoveEvent,
 	motion,
 } from "@gpuix/solid";
 import {
@@ -179,7 +180,7 @@ export function Tooltip(props: {
 		if (fadingOut || delay() === 0) setOpen(true);
 	};
 	/** Base UI's `restMs`: the tooltip opens once the pointer has rested on the trigger for the delay. */
-	const restIntent = (event: EventPayload) => {
+	const restIntent = (event: HostMouseMoveEvent) => {
 		if (event.x === undefined || event.y === undefined) return;
 		const last = lastPointer;
 		lastPointer = { x: event.x, y: event.y };
@@ -199,7 +200,7 @@ export function Tooltip(props: {
 			if (!blockMove) setOpen(true);
 		}, wait);
 	};
-	const followPointer = (event: EventPayload) => {
+	const followPointer = (event: HostMouseMoveEvent) => {
 		if (props.followCursor === undefined) return;
 		if (wrapper === undefined) throw new Error("Tooltip is not mounted");
 		const bounds = wrapper.getBoundingClientRect();
@@ -211,13 +212,13 @@ export function Tooltip(props: {
 		);
 	};
 
-	const onMouseMove = (event: EventPayload) => {
+	const onMouseMove = (event: HostMouseMoveEvent) => {
 		followPointer(event);
 		restIntent(event);
 	};
 
 	// The child takes focus, not the wrapper, and `focus` does not bubble: `focusin` does.
-	const onFocusIn = (event: EventPayload) => {
+	const onFocusIn = (event: DomEvent) => {
 		if (!event.focusVisible || blockFocus) return;
 		clearTimeout(delayTimer);
 		clearTimeout(closeTimer);

@@ -1,8 +1,4 @@
-import {
-	type EventPayload,
-	type HostElement,
-	IntersectionObserver,
-} from "@gpuix/solid";
+import { type HostElement, IntersectionObserver } from "@gpuix/solid";
 import {
 	createEffect,
 	createSignal,
@@ -147,13 +143,7 @@ function Stage(props: { paused: () => boolean }) {
 			setFakeIndex(rowUnder(y));
 			if (fluid === undefined || !fluid.mounted) return;
 			const box = fluid.getBoundingClientRect();
-			const move: EventPayload = {
-				elementId: 0,
-				eventType: "mousemove",
-				x: box.x + CURSOR_X,
-				y: box.y + y,
-			};
-			hover.handlers.onMouseMove(move);
+			hover.handlers.onMouseMove({ x: box.x + CURSOR_X, y: box.y + y });
 		});
 	});
 

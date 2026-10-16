@@ -1,4 +1,4 @@
-import { type EventPayload, motion } from "@gpuix/solid";
+import { type DomEvent, motion } from "@gpuix/solid";
 import { createComputed, createSignal, Show } from "solid-js";
 import type { FluidHover, ItemRect } from "./fluid-hover";
 import { createPresence } from "./presence";
@@ -26,7 +26,7 @@ export function createFocusRing(hover: FluidHover) {
 			if (current === null || !hover.isMeasured()) return null;
 			return hover.rects()[current] ?? null;
 		},
-		focus(row: number, event: EventPayload) {
+		focus(row: number, event: DomEvent) {
 			if (event.focusVisible === undefined) {
 				throw new Error("A focus event carries no focusVisible");
 			}
