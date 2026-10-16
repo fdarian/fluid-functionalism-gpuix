@@ -133,12 +133,12 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** dropped.
 - **Components it hits:** any list on `createFluidHover` (select, combobox, tabs, sidebar).
 
-## Inline panel focus ring: no fade, cleared by the pointer, drawn after a click
+## Inline panel focus ring: no fade, cleared by the pointer
 
-- **Cause:** `not ported yet`. gpuix reports `event.focusVisible`, which the panel does not read (audit row 423).
+- **Cause:** `not ported yet`. The ring has no `AnimatePresence`-style fade, and the panel clears it on any pointer move.
 - **Original:** the ring is a `motion.div` in `AnimatePresence` that springs `left/top/width/height` on `spring.fast`, fades 0.08 s and exits on `spring.fast.exit` (`registry/base/dropdown.tsx:224-243`). It is set from `onFocus` only when the target `:focus-visible` (`:145-156`) and stays until focus leaves the panel (`:157-161`); a mouse move changes the hover highlight, not the ring.
-- **Port:** `Show` mounts and unmounts the ring with no fade either way (`src/components/dropdown.tsx:229-249`), though it springs between rows. Any pointer move over the panel clears it (`:752`, `:756`). The group's `onFocus` lights `entryRow()` or the hovered row and draws the ring for any focus, including the mouse-down on a row that focuses the group (`:720-724`).
-- **Fidelity:** approximated for the fade and the clearing; the click case is a bug (see report): `screenshots/dropdown/inline-checked.png` shows the ring on "Favorites" after a click on "Shared", with the pointer off the panel.
+- **Port:** `Show` mounts and unmounts the ring with no fade either way (`src/components/dropdown.tsx:229-249`), though it springs between rows. Any pointer move over the panel clears it (`:764`, `:769`). The group's `onFocus` reads `event.focusVisible` and draws the ring only for keyboard focus, as the source does (`:729-735`); a press that focuses the group lights the hovered row and draws no ring.
+- **Fidelity:** approximated for the fade and the clearing.
 - **Components it hits:** just this one (popup menus draw no ring in either build).
 
 ## Focus model: virtual highlight, rows are not focus targets
@@ -146,11 +146,10 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Cause:** `port choice`. BASE-UI-AUDIT.md row 405: the trigger or the search field keeps real focus and the lit row is named through `aria-activedescendant`; gpuix rows could take focus, but the keyboard model is built on the virtual highlight.
 - **Original:** Base UI `Menu.Item` rows take real focus with roving `tabindex` (`registry/base/dropdown.tsx:554-587`); `onFocus` lights the row (`:672-693`), typing on a focused row is redirected into the field (`registry/default/dropdown-search.tsx:132-168`), and Space on a row activates it (`:127-131`).
 - **Port:** the field (or the trigger) keeps focus while arrows move `hover.activeIndex` (`src/components/dropdown.tsx:329-343`, `:362-418`; `src/components/dropdown-search.tsx:74-77`). Consequences, with a search field and a row lit by arrow:
-  - Space types a space into the query and unlights the row (`:403-405` does nothing while `typing`, `:513-519` clears the lit row), where the source activates the row.
-  - Home and End move the caret (`:389-398` return while `typing`), where on a focused row the source jumps to the first or last row.
+  - Space, Home and End act on the lit row, as they do on a focused row in the source: while a row is lit the handler activates it or jumps to the first or last row (`fieldOwnsKey`, `src/components/dropdown.tsx:364`, `:390-410`). With no row lit the field keeps them (a space types, Home and End move the caret), which is also what the source's field does.
   - Returning to the field from the bottom does not scroll the list to its top (source `scrollToTop`, `dropdown-search.tsx:86-100`, `:155`); the next arrow reveals the row.
   - The field has no `role="searchbox"`, `autoComplete="off"` or `spellCheck={false}` (source `registry/default/dropdown-search.tsx:343-347`); the port sets only `aria-activedescendant` (`src/components/dropdown-search.tsx:102`).
-- **Fidelity:** approximated; the Space case is a bug (see report).
+- **Fidelity:** approximated.
 - **Components it hits:** color-picker's format menu is hand-written on the same virtual-highlight idea (audit "Color picker format menu").
 
 ## Search field is not sticky and cannot sit in an inline panel

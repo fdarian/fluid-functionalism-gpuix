@@ -32,15 +32,11 @@ import {
 } from "../lib/fluid-hover";
 import type { IconRef } from "../lib/icons";
 import { isChord, moveIndex, revealRow } from "../lib/list-nav";
-import {
-	createPlacementState,
-	POPUP_MARGIN,
-	PopupSurface,
-} from "../lib/popup";
-import { createPresence } from "../lib/presence";
+import { createPlacementState, POPUP_MARGIN, PopupSurface } from "../lib/popup";
 import { createPressToggle, returnFocusTo } from "../lib/popup-trigger";
-import { createTypeahead } from "../lib/typeahead";
+import { createPresence } from "../lib/presence";
 import { color, radius, shadow3, motion as tween } from "../lib/theme";
+import { createTypeahead } from "../lib/typeahead";
 import {
 	DropdownSearchHostContext,
 	type DropdownSearchProps,
@@ -135,6 +131,7 @@ function MenuBody(props: {
 	travel: Accessor<boolean>;
 	/** The keyboard ring of the inline panel. */
 	focusIndex?: Accessor<number | null>;
+	focusRingTestId?: string;
 	paddingTop?: number;
 	handlers: {
 		onMouseEnter: () => void;
@@ -229,6 +226,7 @@ function MenuBody(props: {
 			<Show when={focusRect()}>
 				{(rect: Accessor<ItemRect>) => (
 					<motion.div
+						testId={props.focusRingTestId}
 						initial={false}
 						animate={{
 							left: rect().left - 2,
@@ -304,8 +302,7 @@ function createMenuList(options: {
 		typeahead.reset();
 	});
 
-	const sortedRows = () =>
-		[...rows.entries()].sort((a, b) => a[0] - b[0]);
+	const sortedRows = () => [...rows.entries()].sort((a, b) => a[0] - b[0]);
 	/** Base UI lets the keyboard land on a disabled row: only activation refuses it. */
 	const allRows = () => sortedRows().map((entry) => entry[0]);
 	/** Where a fresh open starts: the first row that can be picked. */
@@ -351,8 +348,9 @@ function createMenuList(options: {
 	const typeahead = createTypeahead({
 		labels: () => {
 			const last = allRows().at(-1);
-			return Array.from({ length: last === undefined ? 0 : last + 1 }, (_, index) =>
-				rows.get(index)?.label,
+			return Array.from(
+				{ length: last === undefined ? 0 : last + 1 },
+				(_, index) => rows.get(index)?.label,
 			);
 		},
 		current: () => hover.activeIndex(),
@@ -361,6 +359,10 @@ function createMenuList(options: {
 
 	const onKey: KeyHandler = (event) => {
 		const typing = search() !== undefined;
+		console.log("KEY", JSON.stringify(event.key), "typing", typing, "active", hover.activeIndex());
+		// In the source a lit row holds real focus, so Space, Home and End act on it;
+		// here the field keeps focus, so they only belong to the field while no row is lit.
+		const fieldOwnsKey = typing && hover.activeIndex() === null;
 		if (event.key === "Escape") {
 			// The window-level dismiss stack must not also close the whole menu.
 			event.preventDefault();
@@ -387,13 +389,15 @@ function createMenuList(options: {
 				move(-1);
 				return;
 			case "Home":
-				if (typing) return;
+				if (fieldOwnsKey) return;
 				event.stopPropagation();
+				event.preventDefault();
 				highlight(allRows()[0] ?? null);
 				return;
 			case "End":
-				if (typing) return;
+				if (fieldOwnsKey) return;
 				event.stopPropagation();
+				event.preventDefault();
 				highlight(allRows().at(-1) ?? null);
 				return;
 			case "Enter":
@@ -401,7 +405,9 @@ function createMenuList(options: {
 				activateActive();
 				return;
 			case " ":
-				if (!typing) activateActive();
+				if (fieldOwnsKey) return;
+				if (typing) event.preventDefault();
+				activateActive();
 				return;
 			case "ArrowRight": {
 				const index = hover.activeIndex();
@@ -477,7 +483,9 @@ function createMenuList(options: {
 					return;
 				}
 				const start =
-					options.openFrom() === "last" ? enabledRows().at(-1) : enabledRows()[0];
+					options.openFrom() === "last"
+						? enabledRows().at(-1)
+						: enabledRows()[0];
 				hover.setActiveIndex(start ?? null);
 			}, 0);
 		}),
@@ -575,44 +583,46 @@ function MenuPanel(props: {
 						aria-labelledby={props.labelledBy}
 						style={{ display: "flex", flexDirection: "column" }}
 					>
-					<Show when={field()}>
-						{(search: Accessor<DropdownSearchProps>) => (
-							<SearchField
-								search={search()}
-								onKeyDown={(event) => {
-									event.stopPropagation();
-									list.onKey(event);
-								}}
-								onFocusChange={menu.setSearchFocused}
-								activeDescendant={list.activeRowId()}
-							/>
-						)}
-					</Show>
-					<div
-						ref={(element) => {
-							list.setScroller(element);
-						}}
-						onScroll={list.hover.handlers.onScroll}
-						style={{
-							display: "flex",
-							flexDirection: "column",
-							overflowY: "scroll",
-							maxHeight:
-								props.maxHeight() - 2 - (field() === undefined ? 0 : SEARCH_HEIGHT),
-						}}
-					>
-						<MenuBody
-							hover={list.hover}
-							checkedIndex={props.checkedIndex}
-							checkedIndices={props.checkedIndices}
-							litBy={list.litBy}
-							travel={list.travel}
-							paddingTop={field() === undefined ? PADDING : 2}
-							handlers={list.handlers}
+						<Show when={field()}>
+							{(search: Accessor<DropdownSearchProps>) => (
+								<SearchField
+									search={search()}
+									onKeyDown={(event) => {
+										event.stopPropagation();
+										list.onKey(event);
+									}}
+									onFocusChange={menu.setSearchFocused}
+									activeDescendant={list.activeRowId()}
+								/>
+							)}
+						</Show>
+						<div
+							ref={(element) => {
+								list.setScroller(element);
+							}}
+							onScroll={list.hover.handlers.onScroll}
+							style={{
+								display: "flex",
+								flexDirection: "column",
+								overflowY: "scroll",
+								maxHeight:
+									props.maxHeight() -
+									2 -
+									(field() === undefined ? 0 : SEARCH_HEIGHT),
+							}}
 						>
-							{props.children}
-						</MenuBody>
-					</div>
+							<MenuBody
+								hover={list.hover}
+								checkedIndex={props.checkedIndex}
+								checkedIndices={props.checkedIndices}
+								litBy={list.litBy}
+								travel={list.travel}
+								paddingTop={field() === undefined ? PADDING : 2}
+								handlers={list.handlers}
+							>
+								{props.children}
+							</MenuBody>
+						</div>
 					</div>
 				</SubmenuHostContext.Provider>
 			</DropdownSearchHostContext.Provider>
@@ -717,7 +727,9 @@ export function Dropdown(props: {
 				aria-activedescendant={ringRowId()}
 				tabIndex={0}
 				onKeyDown={onKeyDown}
-				onFocus={() => {
+				onFocus={(event: EventPayload) => {
+					// A press focuses the group too; only keyboard focus draws the ring.
+					if (!event.focusVisible) return;
 					const active = hover.activeIndex();
 					if (active === null) go(entryRow());
 					else setFocusIndex(active);
@@ -746,6 +758,9 @@ export function Dropdown(props: {
 					litBy={litBy}
 					travel={() => true}
 					focusIndex={focusIndex}
+					focusRingTestId={
+						props.testId === undefined ? undefined : `${props.testId}-ring`
+					}
 					handlers={{
 						onMouseEnter() {
 							setLitBy("pointer");
@@ -886,7 +901,8 @@ export function DropdownMenu(props: {
 		setKeyboardActive,
 		pushKeys(target) {
 			setKeyStack((stack) => [...stack, target]);
-			return () => setKeyStack((stack) => stack.filter((entry) => entry !== target));
+			return () =>
+				setKeyStack((stack) => stack.filter((entry) => entry !== target));
 		},
 		activeRowId: () => keyStack().at(-1)?.activeRowId(),
 		triggerId: createUniqueId(),
@@ -927,7 +943,8 @@ export function DropdownMenu(props: {
 				event.key === " "
 			) {
 				event.preventDefault();
-				if (event.key === "ArrowDown" || event.key === "ArrowUp") event.stopPropagation();
+				if (event.key === "ArrowDown" || event.key === "ArrowUp")
+					event.stopPropagation();
 				setOpenFrom(event.key === "ArrowUp" ? "last" : "first");
 				setKeyboardActive(true);
 				setOpen(true);
