@@ -293,8 +293,10 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 export function SidebarMenuButton(props: {
 	label: string;
 	icon?: IconRef;
-	/** A status dot after the label. */
+	/** A status dot after the label, in this colour: the row's label hugs its text and the dot sits one gap after it. */
 	dot?: string;
+	/** What assistive technology reads for the dot, e.g. "New"; the source's `sr-only` span. */
+	dotLabel?: string;
 	level?: 0 | 1;
 	active?: boolean;
 	badge?: string;
@@ -424,6 +426,8 @@ export function SidebarMenuButton(props: {
 			<Show when={props.dot}>
 				{(dot: Accessor<string>) => (
 					<div
+						role={props.dotLabel === undefined ? undefined : "img"}
+						aria-label={props.dotLabel}
 						style={{
 							width: 6,
 							height: 6,

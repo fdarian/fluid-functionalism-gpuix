@@ -27,6 +27,8 @@ import {
 import { Tooltip } from "./components/tooltip";
 import { BentoGrid } from "./home/bento-grid";
 import { AppFrame, PANEL_INNER_RADIUS } from "./lib/app-frame";
+import { kindDotColor } from "./lib/changelog/kind-style";
+import { marks } from "./lib/changelog/releases";
 import { type Demo, type Page, SHOWCASE_SLUG } from "./lib/demo";
 import { PageScrollContext, PageScrollerContext } from "./lib/demo-kit";
 import { createMeasuredHeight } from "./lib/measured-height";
@@ -187,10 +189,13 @@ function AppSidebar(props: {
 		);
 	const sidebarDemos = () =>
 		props.demos.filter((demo) => demo.listed === "sidebar");
-	const row = (page: Page) => (
+	const newDot = (isNew: boolean) =>
+		isNew ? { dot: kindDotColor("new"), dotLabel: "New" } : {};
+	const row = (page: Page, isNew: boolean) => (
 		<SidebarMenuButton
 			testId={`nav-${page.slug}`}
 			label={page.title}
+			{...newDot(isNew)}
 			active={props.page === page.slug}
 			onClick={() => props.onPage(page.slug)}
 		/>
@@ -217,11 +222,16 @@ function AppSidebar(props: {
 						active={props.page === SHOWCASE}
 						onClick={() => props.onPage(SHOWCASE)}
 					/>
-					<For each={sidebarPages("Pages")}>{row}</For>
+					<For each={sidebarPages("Pages")}>
+						{/* The Changelog page itself is new: dotted by hand, unlike the docs rows, which follow the latest release. */}
+						{(page) => row(page, page.slug === "changelog")}
+					</For>
 				</NavGroup>
 				<Show when={sidebarPages("System").length > 0}>
 					<NavGroup label="System" count={sidebarPages("System").length}>
-						<For each={sidebarPages("System")}>{row}</For>
+						<For each={sidebarPages("System")}>
+							{(page) => row(page, marks.new.includes(page.slug))}
+						</For>
 					</NavGroup>
 				</Show>
 				<NavGroup label="Components" count={sidebarDemos().length}>
@@ -230,6 +240,7 @@ function AppSidebar(props: {
 							<SidebarMenuButton
 								testId={`nav-${demo.slug}`}
 								label={demo.title}
+								{...newDot(marks.new.includes(demo.slug))}
 								active={props.page === demo.slug}
 								onClick={() => props.onPage(demo.slug)}
 							/>

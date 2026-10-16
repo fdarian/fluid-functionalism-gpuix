@@ -1,5 +1,5 @@
 import type { JSX } from "solid-js";
-import { loadReleases } from "../lib/changelog/load";
+import { releases } from "../lib/changelog/releases";
 import type { ShotContext } from "../lib/demo";
 import { defineIcon } from "../lib/icons";
 import { ChangelogView } from "./changelog/changelog-view";
@@ -15,9 +15,6 @@ export const menuIcon = defineIcon(
 	'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
 );
 export const menuKeywords = ["releases", "what's new", "updates", "breaking"];
-
-/** Read when the page loads, so a malformed release fails at startup instead of rendering half a page. */
-const releases = loadReleases();
 
 export async function scenarios(shot: ShotContext) {
 	// A click on a Releases row scrolls its month to the top: from the first month, down past stages that mount on the way.
