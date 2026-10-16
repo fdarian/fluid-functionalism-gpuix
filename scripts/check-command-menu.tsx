@@ -3,181 +3,261 @@
  *
  *   bun scripts/check-command-menu.tsx
  *
- * Prints PASS / FAIL lines and exits 1 on any FAIL. Covers: modified arrows with
- * tabs mounted, the scrim finishing its fade, keyboard focus after a tab click,
- * the `mod++` cap, the site menu's ⌘K matching, and the home hero's buttons.
+ * Prints PASS / FAIL lines and exits 1 on any FAIL. Covers: the list's scroll
+ * travel (arrows animate, Home and a re-filter snap, a second arrow takes over),
+ * modified arrows with tabs mounted, the scrim finishing its fade, keyboard
+ * focus after a tab click, the `mod++` cap, the site menu's ⌘K matching, and the
+ * home hero's buttons.
  */
+
 import { clipboard } from "@gpuix/solid";
-import { createTestRoot } from "@gpuix/solid/testing";
-import { App } from "../src/app";
+import { createHostElement } from "../node_modules/@gpuix/solid/dist/host.js";
 import { formatShortcut } from "../src/components/command-menu";
-import { loadDemos } from "../src/lib/demo";
-import { fonts } from "../src/lib/fonts";
 import { IS_MAC } from "../src/lib/platform";
-import { setThemeChoice } from "../src/lib/theme";
+import { createCheck } from "./check-kit";
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-const test = createTestRoot({ width: 1240, height: 780, fonts });
-const renderer = test.renderer;
-
-let failures = 0;
-function check(name: string, pass: boolean, detail?: string) {
-	if (!pass) failures++;
-	console.log(
-		`${pass ? "PASS" : "FAIL"} ${name}${detail === undefined ? "" : ` (${detail})`}`,
-	);
-}
-
-function frame() {
-	renderer.flush();
-	renderer.dispatchNativeEvents();
-}
-async function settle(ms: number) {
-	const until = performance.now() + ms;
-	do {
-		frame();
-		await sleep(16);
-	} while (performance.now() < until);
-	frame();
-}
-function find(testId: string) {
-	return renderer.findByTestId(testId);
-}
-function present(testId: string) {
-	return find(testId) !== undefined;
-}
-function boundsOf(testId: string) {
-	const element = find(testId);
-	if (element === undefined) throw new Error(`no element ${testId}`);
-	const bounds = renderer.getElementBounds(element.id);
-	if (bounds === null) throw new Error(`no bounds for ${testId}`);
-	return bounds;
-}
-async function click(testId: string) {
-	const bounds = boundsOf(testId);
-	renderer.nativeSimulateClick(
-		bounds.x + bounds.width / 2,
-		bounds.y + bounds.height / 2,
-	);
-	await settle(300);
-}
-async function press(keystrokes: string, ms = 250) {
-	renderer.simulateKeystrokes(keystrokes);
-	await settle(ms);
-}
-function focusedTestId() {
-	const id = renderer.getFocusedElementId();
-	if (id === null || id === undefined) return undefined;
-	const input = find("site-menu-input");
-	return input !== undefined && input.id === id
-		? "site-menu-input"
-		: `element ${id}`;
-}
+const kit = await createCheck("command-menu");
+const renderer = kit.renderer;
+const mod = IS_MAC ? "cmd" : "ctrl";
 
 // ─── formatShortcut ──────────────────────────────────────────────────────────
 
 const plus = formatShortcut("mod++");
-check(
+kit.check(
 	"mod++ keeps the + key",
 	plus.length === 2 && plus[1] === "+",
 	JSON.stringify(plus),
 );
 const comma = formatShortcut("mod+,");
-check(
+kit.check(
 	"mod+, keeps the comma",
 	comma.length === 2 && comma[1] === ",",
 	JSON.stringify(comma),
 );
-check("a bare + is one cap", JSON.stringify(formatShortcut("+")) === '["+"]');
+kit.check(
+	"a bare + is one cap",
+	JSON.stringify(formatShortcut("+")) === '["+"]',
+);
 
-const demos = await loadDemos();
-setThemeChoice("dark");
-test.render(() => <App demos={demos} />);
-await settle(800);
+// ─── The list's scroll travel ────────────────────────────────────────────────
+
+interface ScrollWrite {
+	id: number;
+	top: number;
+}
+const writes: ScrollWrite[] = [];
+// The list is scrolled by code only: every write to a scroller's offset passes through here, so a scenario can tell a travel from a jump.
+const hostPrototype = Object.getPrototypeOf(createHostElement("div"));
+const scrollTopSetter = Object.getOwnPropertyDescriptor(
+	hostPrototype,
+	"scrollTop",
+);
+const scrollTo = Object.getOwnPropertyDescriptor(hostPrototype, "scrollTo");
+if (scrollTopSetter?.set === undefined || scrollTo?.value === undefined) {
+	throw new Error("The host element's scroll members moved");
+}
+Object.defineProperty(hostPrototype, "scrollTop", {
+	...scrollTopSetter,
+	set(top: number) {
+		writes.push({ id: this.id, top });
+		scrollTopSetter.set?.call(this, top);
+	},
+});
+Object.defineProperty(hostPrototype, "scrollTo", {
+	...scrollTo,
+	value(options: { top?: number }) {
+		if (options.top !== undefined)
+			writes.push({ id: this.id, top: options.top });
+		scrollTo.value.call(this, options);
+	},
+});
+
+const LIST = "details-list";
+const INPUT = "details-input";
+const offset = () => {
+	const metrics = renderer.getScrollMetrics(kit.element(LIST).id);
+	if (metrics === null) throw new Error("the list has no scroll metrics");
+	return metrics[1];
+};
+const listWrites = () =>
+	writes.filter((write) => write.id === kit.element(LIST).id);
+const sinceMark = (from: number) =>
+	listWrites()
+		.slice(from)
+		.map((w) => w.top);
+
+await kit.focus(INPUT);
+for (let step = 0; step < 4; step++) await kit.press("down");
+const before = offset();
+let mark = listWrites().length;
+await kit.press("down");
+const travel = sinceMark(mark);
+const after = offset();
+kit.check(
+	"an arrow past the middle scrolls the list",
+	after > before,
+	`${before} -> ${after}`,
+);
+kit.check(
+	"the scroll travels in steps, it does not jump",
+	travel.filter((top) => top > before + 0.5 && top < after - 0.5).length >= 2,
+	travel.map((top) => top.toFixed(1)).join(" "),
+);
+kit.check(
+	"the travel never reverses",
+	travel.every((top, index) => index === 0 || top >= travel[index - 1] - 0.01),
+);
+
+// A second arrow while the first is travelling takes over from where it is.
+await kit.press("down");
+mark = listWrites().length;
+renderer.simulateKeystrokes("down");
+renderer.simulateKeystrokes("down");
+await kit.settle();
+const chained = sinceMark(mark);
+kit.check(
+	"two quick arrows end at the later row",
+	offset() >= chained[0],
+	`${offset()}`,
+);
+kit.check(
+	"a quick second arrow does not send the scroll backwards",
+	chained.every(
+		(top, index) => index === 0 || top >= chained[index - 1] - 0.01,
+	),
+	chained.map((top) => top.toFixed(0)).join(" "),
+);
+
+// Home and a move to row 0 snap.
+await kit.press("up");
+kit.check("still scrolled one arrow up", offset() > 0, `${offset()}`);
+mark = listWrites().length;
+renderer.simulateKeystrokes("home");
+await kit.settle();
+const home = sinceMark(mark);
+kit.check(
+	"Home snaps to the top in one write",
+	home.length > 0 && home.every((top) => top === 0),
+	home.join(" "),
+);
+kit.expect("Home ends at the top", offset(), 0);
+
+// A re-filter snaps to the top too.
+await kit.press("end");
+kit.check("End scrolls the list down", offset() > 0, `${offset()}`);
+mark = listWrites().length;
+renderer.simulateKeystrokes("a");
+await kit.settle();
+kit.check(
+	"typing snaps the list to the top",
+	offset() === 0 && sinceMark(mark).every((top) => top === 0),
+	sinceMark(mark).join(" "),
+);
 
 // ─── The site menu ───────────────────────────────────────────────────────────
 
-const isOpen = () => present("site-menu-input");
+const isOpen = () => kit.exists("site-menu-input");
 const tabState = () => {
-	const pages = present("site-menu-row-showcase");
-	const settings = present("site-menu-row-theme:dark");
+	const pages = kit.exists("site-menu-row-showcase");
+	const settings = kit.exists("site-menu-row-theme:dark");
 	if (pages && settings) return "all";
 	if (pages) return "page";
 	if (settings) return "setting";
 	return "none";
 };
-const mod = IS_MAC ? "cmd" : "ctrl";
+const focusedTestId = () => {
+	const id = renderer.getFocusedElementId();
+	if (id === null || id === undefined) return undefined;
+	return kit.exists("site-menu-input") &&
+		kit.element("site-menu-input").id === id
+		? "site-menu-input"
+		: `element ${id}`;
+};
 
 // The key a layout types is what counts: gpuix's `code` is derived from `key`, so
 // the key that types "t" (Dvorak's physical K) reports key "t", code "KeyT".
-await press(`${mod}-t`);
-check(`${mod}-t does not open the menu`, !isOpen());
-await press(`${mod}-alt-k`);
-check(`${mod}-alt-k does not open the menu`, !isOpen());
-await press(`${mod}-k`);
-check(`${mod}-k opens the menu`, isOpen());
-await press(`${mod}-k`, 400);
-check(`${mod}-k closes it again`, !isOpen());
+await kit.press(`${mod}-t`);
+kit.check(`${mod}-t does not open the menu`, !isOpen());
+await kit.press(`${mod}-alt-k`);
+kit.check(`${mod}-alt-k does not open the menu`, !isOpen());
+await kit.press(`${mod}-k`);
+kit.check(`${mod}-k opens the menu`, isOpen());
+await kit.settle(400);
+await kit.press(`${mod}-k`);
+await kit.settle(400);
+kit.check(`${mod}-k closes it again`, !isOpen());
 
 // ─── Modified arrows ─────────────────────────────────────────────────────────
 
-await press(`${mod}-k`, 400);
-check("menu open for the arrow checks", isOpen());
-check("starts on All", tabState() === "all", tabState());
+await kit.press(`${mod}-k`);
+await kit.settle(400);
+kit.check("menu open for the arrow checks", isOpen());
+kit.check("starts on All", tabState() === "all", tabState());
 for (const modifier of ["shift", "alt", "ctrl", "cmd"]) {
-	await press(`${modifier}-right`);
-	check(`${modifier}-right keeps the tab`, tabState() === "all", tabState());
-	await press(`${modifier}-left`);
-	check(`${modifier}-left keeps the tab`, tabState() === "all", tabState());
+	await kit.press(`${modifier}-right`);
+	kit.check(
+		`${modifier}-right keeps the tab`,
+		tabState() === "all",
+		tabState(),
+	);
+	await kit.press(`${modifier}-left`);
+	kit.check(`${modifier}-left keeps the tab`, tabState() === "all", tabState());
 }
-await press("right");
-check("bare right switches to Pages", tabState() === "page", tabState());
-await press("left");
-check("bare left switches back to All", tabState() === "all", tabState());
+await kit.press("right");
+kit.check("bare right switches to Pages", tabState() === "page", tabState());
+await kit.press("left");
+kit.check("bare left switches back to All", tabState() === "all", tabState());
 
 // ─── A tab click keeps the keyboard in the field ─────────────────────────────
 
-await click("site-menu-tab-page");
-check("tab click switches to Pages", tabState() === "page", tabState());
+await kit.click("site-menu-tab-page");
+kit.check("tab click switches to Pages", tabState() === "page", tabState());
 const focused = focusedTestId();
-check(
+kit.check(
 	"the field keeps focus after a tab click",
 	focused === "site-menu-input",
 	focused,
 );
-await press("right");
-check("right after a tab click moves to Settings", tabState() === "setting", tabState());
+await kit.press("right");
+kit.check(
+	"right after a tab click moves to Settings",
+	tabState() === "setting",
+	tabState(),
+);
 
 // ─── The scrim finishes its fade ─────────────────────────────────────────────
 
-await press("escape", 400);
-check("escape closes the menu", !isOpen());
-await press(`${mod}-k`, 500);
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+await kit.press("escape");
+await kit.settle(400);
+kit.check("escape closes the menu", !isOpen());
+await kit.press(`${mod}-k`);
+await kit.settle(500);
 renderer.simulateKeystrokes("escape");
 const closedAt = performance.now();
 while (isOpen() && performance.now() - closedAt < 1000) {
-	frame();
+	renderer.flush();
+	renderer.dispatchNativeEvents();
 	await sleep(2);
 }
 const unmountMs = performance.now() - closedAt;
-// The scrim's exit tween (`moderateExit`) runs 120 ms.
-check(
-	"the layer outlives the scrim's 120 ms exit",
-	unmountMs >= 120,
+// The scrim's exit tween (`slowExit`) runs 160 ms.
+kit.check(
+	"the layer outlives the scrim's 160 ms exit",
+	unmountMs >= 160,
 	`${unmountMs.toFixed(0)} ms`,
 );
 
 // ─── The home hero ───────────────────────────────────────────────────────────
 
-await click("nav-showcase");
+await kit.click("nav-showcase");
 await clipboard.writeText("untouched");
-await click("hero-copy");
+await kit.click("hero-copy");
 const copied = await clipboard.readText();
-check(
+kit.check(
 	"Copy install prompt writes the starter prompt",
 	copied.startsWith("Start a new React app with Fluid Functionalism"),
 	JSON.stringify(copied.slice(0, 50)),
 );
 
-console.log(failures === 0 ? "all passed" : `${failures} failed`);
-process.exit(failures === 0 ? 0 : 1);
+kit.finish();
