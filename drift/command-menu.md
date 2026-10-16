@@ -195,8 +195,8 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `port choice` (reason not stated; the doc comment only says opening from a key is the caller's).
 - **Original:** `CommandMenuDialog` takes `shortcut` (default `"mod+k"`, `null` binds nothing) and `shortcutScope`, and listens on `window` itself; several dialogs on one combo are arbitrated: the open one answers first, then the most recent in scope (`:1430-1447`, `:1508-1540`).
-- **Port:** no `shortcut` or `shortcutScope`; `createSiteMenu` binds Mod+K by hand for the site menu (`src/components/command-menu.tsx:1252`; `src/lib/site-command-menu.tsx:44-57`). The demo's dialog is only opened by its button.
-- **Workaround:** n/a.
+- **Port:** no `shortcut` or `shortcutScope`; `createSiteMenu` binds Mod+K by hand for the site menu (`src/components/command-menu.tsx:1252`; `src/lib/site-command-menu.tsx:44-57`). The demo's dialogs bind their combos in demo code (`matchesCombo` in `src/demos/command-menu.tsx`; see "Demo: dialog and footer sections differ in small ways"), with no arbitration between dialogs on one combo.
+- **Workaround:** the demo's own `window` / `onKeyDown` listeners.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
 
@@ -249,26 +249,17 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 ## Demo: variants of the source page that are missing
 
 - **Cause:** `not ported yet`.
-- **Original:** the page has a Playground (rail: trigger shortcut, descriptions, shortcut caps, suggestions first, tabs, filters, footer hints; "Open as a dialog"; Get code presets), Basic, Descriptions / shortcuts / disabled rows, Suggestions, Tabs, Filters, "Dialog and trigger shortcut" with two dialogs (⌘P bound, and "Open, no shortcut"), Footer hints, Custom rows, and eight API reference tables; each section has a sentence of prose (`app/docs/command-menu/page.tsx:389-596`, `:598-634`; `lib/docs/playgrounds/command-menu.tsx`).
-- **Port:** Basic, Descriptions / shortcuts / disabled rows, Suggestions, Tabs, Filters, Dialog, Footer hints, Custom rows, in the same order and with the same 15 rows, groups, keywords, suggestions and copy ("Type a command or search…", "No results.", the "Recent" label) (`src/demos/command-menu.tsx:50-212`, `:569-583`). Missing: the Playground and presets, the second dialog (no shortcut), tabs and filters sharing one row (the playground's both-on state; `CommandMenuTabs` takes children, no demo uses it), a compact or pill state, the API tables, the prose, and the page title "CommandMenu" and description ("1 field over every action. Type, arrow, Enter."): the port's title is "Command Menu" with no description.
+- **Original:** the page has a Playground (rail: trigger shortcut, descriptions, shortcut caps, suggestions first, tabs, filters, footer hints; "Open as a dialog"; Get code presets), the sections Basic, Descriptions / shortcuts / disabled rows, Suggestions, Tabs, Filters, "Dialog and trigger shortcut", Footer hints, Custom rows, and eight API reference tables; each section has a sentence of prose (`app/docs/command-menu/page.tsx:389-596`, `:598-634`; `lib/docs/playgrounds/command-menu.tsx`).
+- **Port:** every section and every playground control, default and shuffle is there, with the same 15 rows, groups, keywords, suggestions and copy; plus two cards the source has no section for, "Tabs and filters" (the playground's both-on state) and "Compact" (`size="compact"`, which the source reaches only through the site's Size row) (`src/demos/command-menu.tsx`). Missing: the playground's Get code presets and Code tab, a pick's toast (the playground shows nothing on a pick), the API tables, the prose, a pill state (the Radius row covers the site's), and the page title "CommandMenu" and description ("1 field over every action. Type, arrow, Enter."): the port's title is "Command Menu" with no description.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
 
-## Demo: Filters use a hand-built select
-
-- **Cause:** `not ported yet`.
-- **Original:** two real `Select`s with `variant="borderless"`, the full fluid popup and keyboard (`app/docs/command-menu/page.tsx:469-505`).
-- **Port:** a local `FilterSelect`: a hover-tinted button and a popup of plain rows with hover colour, no fluid highlight, no selected mark, no keyboard (arrows, Escape, typeahead), no focus ring, a fixed 150 px / 200 px popup (`src/demos/command-menu.tsx:243-341`). The port's `Select` already has `variant="borderless"` (`src/components/select.tsx:58`).
-- **Workaround:** none.
-- **Fidelity:** approximated.
-- **Components it hits:** just this one.
-
 ## Demo: dialog and footer sections differ in small ways
 
-- **Cause:** `not ported yet` for the toast and the shortcut; `port choice` (reason not stated) for the extra footer panel and footer in the dialog.
-- **Original:** a pick shows a toast, `Ran “<label>”`; the Open button holds the `⌘P` cap and ⌘P really opens the dialog; the dialog has no footer; the footer section is one panel with tabs and suggestions (`page.tsx:364`, `:508-545`, `:547-566`).
-- **Port:** a pick sets a line of text, `Ran: <label>` (`src/demos/command-menu.tsx:476`, `:484-487`; the `setOpen(false)` there duplicates `closeOnSelect`); the `⌘K` cap sits beside the button, not in it, and ⌘K opens the site menu, not this dialog, so the cap is wrong (`:467-474`; `src/lib/site-command-menu.tsx:44-57`); the dialog carries a `CommandMenuFooter` (`:493`); the footer section adds a second panel with custom hints (`:522-534`); the section is titled "Dialog", not "Dialog and trigger shortcut" (`:458`).
+- **Cause:** `not ported yet` for the toast; `port choice` (reason not stated) for the extra footer panel.
+- **Original:** a pick shows a toast, `Ran “<label>”`; the dialog section's first dialog binds its own combo through `CommandMenuDialog`'s `shortcut="mod+p"`, the second passes `shortcut={null}`; the playground's dialog takes `shortcut` and `shortcutScope` (the preview, so the combo fires only while focus is inside it); the footer section is one panel with tabs and suggestions (`page.tsx:364`, `:508-545`, `:547-566`; `lib/docs/playgrounds/command-menu.tsx:325-342`).
+- **Port:** a pick sets a line of text, `Ran: <label>`. `CommandMenuDialog` has no `shortcut` prop, so the demo binds the combos itself: ⌘P through a `window` keydown listener for the page's lifetime in the dialog section (`DialogSection`), and the playground's combo through `onKeyDown` on the preview, which only sees keys while focus is inside it (`matchesCombo`, `Playground`). Both are demo code, so a second use of the component repeats them. The footer section adds a second panel with custom hints, which the source only mentions in prose (`FooterSection`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

@@ -1,5 +1,11 @@
-import { type HostElement, useGpuixRequired } from "@gpuix/solid";
-import { createMemo, createSignal, For, type JSX, Show } from "solid-js";
+import {
+	window as appWindow,
+	type DomEvent,
+	type HostElement,
+	type KeyEvent,
+	useGpuixRequired,
+} from "@gpuix/solid";
+import { createMemo, createSignal, type JSX, onCleanup, Show } from "solid-js";
 import { Button } from "../components/button";
 import {
 	CommandMenu,
@@ -15,14 +21,23 @@ import {
 	CommandMenuPanel,
 	CommandMenuShortcut,
 	CommandMenuTabs,
+	formatShortcut,
 } from "../components/command-menu";
+import { Select } from "../components/select";
 import type { DemoModule } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
-import { Icon } from "../lib/icon";
-import { PopupSurface } from "../lib/popup";
-import { createPresence } from "../lib/presence";
-import { color, radius, type as scale } from "../lib/theme";
-
+import { IS_MAC } from "../lib/platform";
+import {
+	PlayDivider,
+	PlayField,
+	PlaygroundLayout,
+	PlaygroundPanel,
+	PlaySection,
+	PlaySelect,
+	PlaySwitch,
+	pick,
+} from "../lib/playground";
+import { color, type as scale } from "../lib/theme";
 
 function items(options: {
 	descriptions: boolean;
@@ -217,103 +232,256 @@ function Section(props: { id: string; title: string; children: JSX.Element }) {
 	);
 }
 
-/** A borderless select for the filter row: label, chevron, and a small fluid-less popup. */
-function FilterSelect(props: {
+/** The rows once the tab, the type filter and the sort have had their say. */
+function scoped(
+	tab: string,
+	type: string,
+	sort: string,
+): CommandMenuItemData[] {
+	let rows = FULL;
+	if (tab !== "all") rows = rows.filter((item) => item.group === tab);
+	if (type !== "all") rows = rows.filter((item) => item.group === type);
+	return sort === "az"
+		? [...rows].sort((a, b) => a.label.localeCompare(b.label))
+		: [...rows];
+}
+
+/** The two borderless selects of the filter row, which the playground and the Filters sections share. */
+function FilterSelects(props: {
 	testId: string;
-	options: readonly { value: string; label: string }[];
-	value: string;
-	onValueChange: (value: string) => void;
+	type: string;
+	onType: (value: string) => void;
+	sort: string;
+	onSort: (value: string) => void;
 }) {
-	const presence = createPresence();
-	const [hovered, setHovered] = createSignal(false);
-	const label = () =>
-		props.options.find((option) => option.value === props.value)?.label;
 	return (
-		<div
-			onMouseDownOutside={presence.hide}
-			style={{ position: "relative" }}
+		<>
+			<Select
+				testId={`${props.testId}-type`}
+				variant="borderless"
+				size="compact"
+				items={TYPES}
+				value={props.type}
+				onValueChange={props.onType}
+			/>
+			<Select
+				testId={`${props.testId}-sort`}
+				variant="borderless"
+				size="compact"
+				items={SORTS}
+				value={props.sort}
+				onValueChange={props.onSort}
+			/>
+		</>
+	);
+}
+
+// ─── Trigger combos ──────────────────────────────────────────────────────────
+
+/** The combo the Dialog section binds, as the source binds its own: the default ⌘K belongs to the site menu. */
+const DIALOG_COMBO = "mod+p";
+
+const TRIGGERS = ["mod+k", "mod+j", "mod+p", "mod+/"] as const;
+type Trigger = (typeof TRIGGERS)[number];
+
+const TRIGGER_OPTIONS = TRIGGERS.map((value) => ({
+	value,
+	label: formatShortcut(value).join(IS_MAC ? "" : "+"),
+}));
+
+/** FF's `matchesShortcut` for a "mod+<key>" combo: the key, or its physical key when Alt or a non-Latin layout changes the character; Meta or Ctrl, no Alt, Shift free. */
+function matchesCombo(event: KeyEvent | DomEvent, combo: string): boolean {
+	if (event.altKey === true) return false;
+	if (event.metaKey !== true && event.ctrlKey !== true) return false;
+	const key = combo.slice("mod+".length);
+	const physical = key === "/" ? "Slash" : `Key${key.toUpperCase()}`;
+	return event.key?.toLowerCase() === key || event.code === physical;
+}
+
+// ─── Playground ──────────────────────────────────────────────────────────────
+
+const PLAYGROUND_PANEL_HEIGHT = 400;
+
+function Playground() {
+	const [shortcut, setShortcut] = createSignal<Trigger>("mod+k");
+	const [descriptions, setDescriptions] = createSignal(true);
+	const [shortcuts, setShortcuts] = createSignal(true);
+	const [suggestions, setSuggestions] = createSignal(true);
+	const [tabs, setTabs] = createSignal(true);
+	const [filters, setFilters] = createSignal(false);
+	const [footer, setFooter] = createSignal(true);
+	const [open, setOpen] = createSignal(false);
+	const [tab, setTab] = createSignal("all");
+	const [type, setType] = createSignal("all");
+	const [sort, setSort] = createSignal("default");
+
+	const all = createMemo(() =>
+		items({ descriptions: descriptions(), shortcuts: shortcuts() }),
+	);
+	// The header controls are state; the rows derive from them.
+	const visible = createMemo(() => {
+		let rows = all();
+		if (tabs() && tab() !== "all") {
+			rows = rows.filter((item) => item.group === tab());
+		}
+		if (filters() && type() !== "all") {
+			rows = rows.filter((item) => item.group === type());
+		}
+		if (filters() && sort() === "az") {
+			rows = [...rows].sort((a, b) => a.label.localeCompare(b.label));
+		}
+		return rows;
+	});
+
+	const shuffle = () => {
+		setShortcut(pick(TRIGGERS));
+		setDescriptions(Math.random() > 0.3);
+		setShortcuts(Math.random() > 0.3);
+		setSuggestions(Math.random() > 0.4);
+		setTabs(Math.random() > 0.6);
+		setFilters(Math.random() > 0.7);
+		setFooter(Math.random() > 0.3);
+	};
+
+	const filterSelects = () => (
+		<FilterSelects
+			testId="play-filters"
+			type={type()}
+			onType={setType}
+			sort={sort()}
+			onSort={setSort}
+		/>
+	);
+	// Both on: the filters ride the tab row's trailing edge, so the header stays one line.
+	const menu = (testId: string) => (
+		<CommandMenu
+			testId={testId}
+			items={visible()}
+			suggestions={suggestions() ? SUGGESTIONS : undefined}
 		>
-			<div
-				testId={props.testId}
-				role="button"
-				onClick={() => (presence.open() ? presence.hide() : presence.show())}
-				onMouseEnter={() => setHovered(true)}
-				onMouseLeave={() => setHovered(false)}
-				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					gap: 4,
-					height: 28,
-					paddingLeft: 10,
-					paddingRight: 8,
-					borderRadius: radius.item,
-					cursor: "pointer",
-					hover: { backgroundColor: color.hover },
-				}}
+			<CommandMenuInput testId={`${testId}-input`} placeholder={PLACEHOLDER} />
+			<Show
+				when={tabs()}
+				fallback={
+					<Show when={filters()}>
+						<CommandMenuFilters>{filterSelects()}</CommandMenuFilters>
+					</Show>
+				}
 			>
-				<text
+				<CommandMenuTabs tabs={TABS} value={tab()} onValueChange={setTab}>
+					<Show when={filters()}>
+						<CommandMenuFilters>{filterSelects()}</CommandMenuFilters>
+					</Show>
+				</CommandMenuTabs>
+			</Show>
+			<CommandMenuList>
+				<CommandMenuEmpty>{EMPTY}</CommandMenuEmpty>
+			</CommandMenuList>
+			<Show when={footer()}>
+				<CommandMenuFooter />
+			</Show>
+		</CommandMenu>
+	);
+
+	return (
+		<PlaygroundLayout
+			minHeight={PLAYGROUND_PANEL_HEIGHT + 100}
+			preview={
+				// The combo fires only while focus is inside the preview: the site's own menu keeps the key everywhere else.
+				<div
+					testId="play-preview"
+					onKeyDown={(event: KeyEvent) => {
+						if (event.repeat === true || !matchesCombo(event, shortcut())) {
+							return;
+						}
+						event.preventDefault();
+						setOpen(!open());
+					}}
 					style={{
-						...scale.bodyCompact,
-						color: hovered() ? color.foreground : color.mutedForeground,
-						whiteSpace: "nowrap",
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+						gap: 16,
+						width: "100%",
 					}}
 				>
-					{label()}
-				</text>
-				<Icon
-					name="chevron-down"
-					size={14}
-					strokeWidth={2}
-					color={hovered() ? color.foreground : color.mutedForeground}
-				/>
-			</div>
-			<PopupSurface
-				presence={presence}
-				align="start"
-				width={150}
-				maxHeight={200}
-				onDismiss={() => presence.hide()}
-			>
-				{() => (
-				<div style={{ display: "flex", flexDirection: "column", padding: 4 }}>
-					<For each={props.options}>
-						{(option) => (
-							<div
-								role="option"
-								onClick={() => {
-									props.onValueChange(option.value);
-									presence.hide();
-								}}
-								style={{
-									display: "flex",
-									alignItems: "center",
-									height: 28,
-									paddingLeft: 6,
-									paddingRight: 6,
-									borderRadius: radius.item,
-									cursor: "pointer",
-									hover: { backgroundColor: color.hover },
-								}}
-							>
-								<text
-									style={{
-										...scale.bodyCompact,
-										color:
-											option.value === props.value
-												? color.foreground
-												: color.mutedForeground,
-									}}
-								>
-									{option.label}
-								</text>
-							</div>
-						)}
-					</For>
+					<CommandMenuPanel maxHeight={PLAYGROUND_PANEL_HEIGHT}>
+						{menu("play")}
+					</CommandMenuPanel>
+					<Button
+						testId="play-open"
+						variant="secondary"
+						onClick={() => setOpen(true)}
+						trailingContent={<CommandMenuShortcut keys={shortcut()} />}
+					>
+						Open as a dialog
+					</Button>
+					<CommandMenuDialog open={open()} onOpenChange={setOpen}>
+						{menu("play-dialog")}
+					</CommandMenuDialog>
 				</div>
-				)}
-			</PopupSurface>
-		</div>
+			}
+			controls={
+				<PlaygroundPanel onShuffle={shuffle}>
+					<PlaySection label="Dialog" />
+					<PlayField label="Trigger shortcut">
+						<PlaySelect
+							testId="play-shortcut"
+							value={shortcut()}
+							onChange={setShortcut}
+							options={TRIGGER_OPTIONS}
+						/>
+					</PlayField>
+					<div style={{ paddingLeft: 4, paddingRight: 4 }}>
+						<text style={{ ...scale.caption, color: color.mutedForeground }}>
+							Fires while the preview has focus.
+						</text>
+					</div>
+					<PlayDivider />
+					<PlaySection label="Rows" />
+					<PlaySwitch
+						testId="play-descriptions"
+						label="Descriptions"
+						checked={descriptions()}
+						onToggle={() => setDescriptions(!descriptions())}
+					/>
+					<PlaySwitch
+						testId="play-shortcuts"
+						label="Shortcut caps"
+						checked={shortcuts()}
+						onToggle={() => setShortcuts(!shortcuts())}
+					/>
+					<PlaySwitch
+						testId="play-suggestions"
+						label="Suggestions first"
+						checked={suggestions()}
+						onToggle={() => setSuggestions(!suggestions())}
+					/>
+					<PlayDivider />
+					<PlaySection label="Under the field" />
+					<PlaySwitch
+						testId="play-tabs"
+						label="Tabs"
+						checked={tabs()}
+						onToggle={() => setTabs(!tabs())}
+					/>
+					<PlaySwitch
+						testId="play-filters-switch"
+						label="Filters"
+						checked={filters()}
+						onToggle={() => setFilters(!filters())}
+					/>
+					<PlayDivider />
+					<PlaySection label="Under the list" />
+					<PlaySwitch
+						testId="play-footer"
+						label="Footer hints"
+						checked={footer()}
+						onToggle={() => setFooter(!footer())}
+					/>
+				</PlaygroundPanel>
+			}
+		/>
 	);
 }
 
@@ -406,17 +574,12 @@ function Filters() {
 				<CommandMenu testId="filters" items={visible()}>
 					<CommandMenuInput testId="filters-input" placeholder={PLACEHOLDER} />
 					<CommandMenuFilters>
-						<FilterSelect
-							testId="filters-type"
-							options={TYPES}
-							value={type()}
-							onValueChange={setType}
-						/>
-						<FilterSelect
-							testId="filters-sort"
-							options={SORTS}
-							value={sort()}
-							onValueChange={setSort}
+						<FilterSelects
+							testId="filters"
+							type={type()}
+							onType={setType}
+							sort={sort()}
+							onSort={setSort}
 						/>
 					</CommandMenuFilters>
 					<CommandMenuList>
@@ -428,11 +591,93 @@ function Filters() {
 	);
 }
 
+function TabsAndFilters() {
+	const [tab, setTab] = createSignal("all");
+	const [type, setType] = createSignal("all");
+	const [sort, setSort] = createSignal("default");
+	const visible = createMemo(() => scoped(tab(), type(), sort()));
+	return (
+		<Section id="tabs-filters" title="Tabs and filters">
+			<CommandMenuPanel maxHeight={PANEL_HEIGHT}>
+				<CommandMenu testId="tabs-filters" items={visible()}>
+					<CommandMenuInput
+						testId="tabs-filters-input"
+						placeholder={PLACEHOLDER}
+					/>
+					<CommandMenuTabs tabs={TABS} value={tab()} onValueChange={setTab}>
+						<CommandMenuFilters>
+							<FilterSelects
+								testId="tabs-filters"
+								type={type()}
+								onType={setType}
+								sort={sort()}
+								onSort={setSort}
+							/>
+						</CommandMenuFilters>
+					</CommandMenuTabs>
+					<CommandMenuList>
+						<CommandMenuEmpty>{EMPTY}</CommandMenuEmpty>
+					</CommandMenuList>
+				</CommandMenu>
+			</CommandMenuPanel>
+		</Section>
+	);
+}
+
+function Compact() {
+	const [tab, setTab] = createSignal("all");
+	const [type, setType] = createSignal("all");
+	const [sort, setSort] = createSignal("default");
+	const visible = createMemo(() => scoped(tab(), type(), sort()));
+	return (
+		<Section id="compact" title="Compact">
+			<CommandMenuPanel maxHeight={PANEL_HEIGHT}>
+				<CommandMenu
+					testId="compact"
+					size="compact"
+					items={visible()}
+					suggestions={SUGGESTIONS}
+				>
+					<CommandMenuInput testId="compact-input" placeholder={PLACEHOLDER} />
+					<CommandMenuTabs tabs={TABS} value={tab()} onValueChange={setTab}>
+						<CommandMenuFilters>
+							<FilterSelects
+								testId="compact"
+								type={type()}
+								onType={setType}
+								sort={sort()}
+								onSort={setSort}
+							/>
+						</CommandMenuFilters>
+					</CommandMenuTabs>
+					<CommandMenuList>
+						<CommandMenuEmpty>{EMPTY}</CommandMenuEmpty>
+					</CommandMenuList>
+					<CommandMenuFooter />
+				</CommandMenu>
+			</CommandMenuPanel>
+		</Section>
+	);
+}
+
 function DialogSection() {
 	const [open, setOpen] = createSignal(false);
+	const [openWithoutKey, setOpenWithoutKey] = createSignal(false);
 	const [ran, setRan] = createSignal("Nothing yet");
+	const run = (item: CommandMenuItemData) => setRan(item.label);
+
+	// "Anywhere on this page": the window answers, and leaves with the page.
+	const onKeyDown = (event: DomEvent) => {
+		if (event.repeat === true || event.defaultPrevented) return;
+		if (!matchesCombo(event, DIALOG_COMBO)) return;
+		event.preventDefault();
+		setOpen(!open());
+	};
+	appWindow.addEventListener("keydown", onKeyDown);
+	onCleanup(() => appWindow.removeEventListener("keydown", onKeyDown));
+
 	return (
-		<Section id="dialog" title="Dialog">
+		<Section id="dialog" title="Dialog and trigger shortcut">
 			<div
 				style={{
 					display: "flex",
@@ -445,10 +690,17 @@ function DialogSection() {
 					testId="dialog-open"
 					variant="secondary"
 					onClick={() => setOpen(true)}
+					trailingContent={<CommandMenuShortcut keys={DIALOG_COMBO} />}
 				>
 					Open
 				</Button>
-				<CommandMenuShortcut keys="mod+k" />
+				<Button
+					testId="dialog-open-no-shortcut"
+					variant="ghost"
+					onClick={() => setOpenWithoutKey(true)}
+				>
+					Open, no shortcut
+				</Button>
 				<text style={{ ...scale.caption, color: color.mutedForeground }}>
 					{`Ran: ${ran()}`}
 				</text>
@@ -458,16 +710,26 @@ function DialogSection() {
 					testId="dialog"
 					items={FULL}
 					suggestions={SUGGESTIONS}
-					onSelect={(item: CommandMenuItemData) => {
-						setRan(item.label);
-						setOpen(false);
-					}}
+					onSelect={run}
 				>
 					<CommandMenuInput testId="dialog-input" placeholder={PLACEHOLDER} />
 					<CommandMenuList>
 						<CommandMenuEmpty>{EMPTY}</CommandMenuEmpty>
 					</CommandMenuList>
-					<CommandMenuFooter />
+				</CommandMenu>
+			</CommandMenuDialog>
+			<CommandMenuDialog
+				open={openWithoutKey()}
+				onOpenChange={setOpenWithoutKey}
+			>
+				<CommandMenu testId="dialog-no-shortcut" items={FULL} onSelect={run}>
+					<CommandMenuInput
+						testId="dialog-no-shortcut-input"
+						placeholder={PLACEHOLDER}
+					/>
+					<CommandMenuList>
+						<CommandMenuEmpty>{EMPTY}</CommandMenuEmpty>
+					</CommandMenuList>
 				</CommandMenu>
 			</CommandMenuDialog>
 		</Section>
@@ -547,11 +809,14 @@ export function Demo() {
 	scrollRenderer = useGpuixRequired() as unknown as ScrollRenderer;
 	return (
 		<div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+			<Playground />
 			<Basic />
 			<Details />
 			<Suggestions />
 			<Tabs />
 			<Filters />
+			<TabsAndFilters />
+			<Compact />
 			<DialogSection />
 			<FooterSection />
 			<CustomRows />
@@ -586,6 +851,19 @@ async function reveal(
 }
 
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
+	shot.capture("playground");
+	await shot.click("play-filters-switch-track");
+	shot.capture("playground-tabs-and-filters");
+	await shot.click("play-input");
+	await shot.press("cmd-k");
+	shot.capture("playground-dialog");
+	await shot.press("escape");
+	await shot.click("play-tabs-track");
+	shot.capture("playground-filters-only");
+	await shot.click("playground-shuffle");
+	shot.capture("playground-shuffled");
+
+	await reveal(shot, "basic");
 	await shot.click("basic-input");
 	shot.capture("basic-focused");
 	await shot.press("down down");
@@ -615,9 +893,20 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("tabs-hover");
 
 	await reveal(shot, "filters");
-	await shot.click("filters-sort");
+	// A pointer press that opens a popup cannot run in the test renderer: drive the select by key.
+	await shot.focus("filters-sort-trigger");
+	await shot.press("down");
 	shot.capture("filters-open");
-	await shot.clickAt(1000, 700);
+	await shot.press("down enter");
+	await shot.settle(500);
+	shot.capture("filters-sorted");
+
+	await reveal(shot, "tabs-filters");
+	shot.capture("tabs-and-filters");
+
+	await reveal(shot, "compact");
+	await shot.click("compact-input");
+	shot.capture("compact");
 
 	await reveal(shot, "footer");
 	await shot.click("footer-input");
@@ -638,4 +927,12 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("dialog-open");
 	await shot.press("escape");
 	shot.capture("dialog-closed");
+	// The bound combo opens it from anywhere on the page, and again closes it.
+	await shot.press("cmd-p");
+	shot.capture("dialog-combo-open");
+	await shot.press("cmd-p");
+	shot.capture("dialog-combo-closed");
+	await shot.click("dialog-open-no-shortcut");
+	shot.capture("dialog-no-shortcut");
+	await shot.press("escape");
 };
