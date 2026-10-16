@@ -21,7 +21,7 @@ repeating it.
 
 - **Cause:** `gpuix gap`. See the CSS transforms row in [`README.md`](../README.md#missing-features).
 - **Original:** x is a motion value on a transform, y is a transform (`switch.tsx:333-340`); only width and height are layout.
-- **Port:** `left`, `top`, `width` and `height` all animate (`src/components/switch.tsx:196-201`), so the track re-lays out each frame. The motion is the same.
+- **Port:** `left`, `top`, `width` and `height` all animate (`src/components/switch.tsx:219-224`), so the track re-lays out each frame. The motion is the same.
 - **Workaround:** `motion.div` on layout props.
 - **Fidelity:** exact for what is seen.
 - **Components it hits:** every spring that FF runs on `x` / `y`.
@@ -60,15 +60,6 @@ repeating it.
 - **Port:** `originX: restX()` (`src/components/switch.tsx:88`), the pressed-shape target. A press that starts dragging while the thumb is still springing makes it jump to that target on the first drag frame. Visible only when pressing during a spring.
 - **Workaround:** none. Listed in `BASE-UI-AUDIT.md` (Switch, "Drag starts from where the thumb is now").
 - **Fidelity:** approximated.
-- **Components it hits:** just this one.
-
-## Thumb size and height snap while dragging
-
-- **Cause:** `port choice` (reason not stated).
-- **Original:** only x is written by the pointer; width, height and y keep springing on `thumbTransition ?? spring.moderate` during the drag (`switch.tsx:341-343`).
-- **Port:** one `transition` for all four props, `tween.snap` while `dragX()` is set (`src/components/switch.tsx:202`). A drag that begins before the press squash (160 ms spring) has finished cuts that spring short.
-- **Workaround:** none.
-- **Fidelity:** approximated (a press-and-drag within about 160 ms shows the squash landing at once).
 - **Components it hits:** just this one.
 
 ## Props not ported: `thumbTransition`, `className`, `ref`, HTML attributes, the size ladder
