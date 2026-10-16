@@ -7,7 +7,7 @@ import {
 	onCleanup,
 	Show,
 } from "solid-js";
-import { Icon } from "../lib/icon";
+import { StrokeIcon } from "../lib/stroke-icon";
 import type { IconRef } from "../lib/icons";
 import { color, radius, motion as tween, weight, focusRing } from "../lib/theme";
 import type { InputSize } from "./input-group";
@@ -178,7 +178,7 @@ export function InputCopy(props: {
 				: color.mutedForeground;
 
 	const icon = () => (
-		<Icon
+		<StrokeIcon
 			name={glyph().name}
 			size={step().icon}
 			strokeWidth={hovered() ? 2 : 1.5}

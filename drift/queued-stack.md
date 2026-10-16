@@ -60,15 +60,6 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 - **Fidelity:** dropped.
 - **Components it hits:** input-message, chat-message.
 
-## Hover bridging
-
-- **Cause:** `port choice` (stated at `queued-stack.tsx:142-143`: a short hold bridges the gap between one element leaving and the next entering).
-- **Original:** `onMouseEnter` / `onMouseLeave` on the stack's wrapper alone (`:209-210`).
-- **Port:** the wrapper and every card report enter and leave to a counter, and the stack collapses 40 ms after the count reaches 0 (`queued-stack.tsx:142-162`, `:306-307`, `:478-485`).
-- **Workaround:** a 40 ms timer.
-- **Fidelity:** approximated (collapses 40 ms later).
-- **Components it hits:** just this one.
-
 ## Drag and double-click start from the text region only
 
 - **Cause:** `port choice` (stated at `queued-stack.tsx:505-508`: a press on the buttons must not start a drag, and gpuix captures the pointer only when asked, `src/lib/pointer-capture.ts:3-9`).

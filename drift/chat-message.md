@@ -22,15 +22,6 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 - **Fidelity:** dropped.
 - **Components it hits:** queued-stack, any touch-aware component.
 
-## Meta row fade easing
-
-- **Cause:** `port choice` (reason not stated).
-- **Original:** `transition-opacity duration-150`, Tailwind's default `cubic-bezier(0.4, 0, 0.2, 1)` (`chat-message.tsx:121`).
-- **Port:** `{ duration: 0.15, ease: "easeOut" }` (`chat-message.tsx:21`). `colorFade` in `src/lib/theme.ts:311-313` already carries the exact bezier.
-- **Workaround:** a 150 ms tween with a different curve.
-- **Fidelity:** approximated.
-- **Components it hits:** just this one.
-
 ## Action buttons: hover is instant
 
 - **Cause:** `not ported yet`.

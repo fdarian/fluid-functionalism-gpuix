@@ -15,6 +15,7 @@ import { InputCopy } from "../src/components/input-copy";
 import { TooltipProvider } from "../src/components/tooltip";
 import { fonts } from "../src/lib/fonts";
 import { color, setThemeChoice } from "../src/lib/theme";
+import { readPng } from "./png-pixels";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const test = createTestRoot({ width: 600, height: 300, fonts });
@@ -42,7 +43,8 @@ function centerOf(testId: string) {
 	};
 }
 function tooltipText() {
-	if (renderer.findByTestId("subject-tooltip-chip") === undefined) return undefined;
+	if (renderer.findByTestId("subject-tooltip-chip") === undefined)
+		return undefined;
 	return renderer
 		.getAllText()
 		.find(
@@ -102,7 +104,8 @@ const row = renderer.findByTestId("subject");
 if (row === undefined) throw new Error("no subject");
 renderer.simulateKeystrokes("tab");
 await settle(500);
-if (renderer.getFocusedElementId() !== row.id) throw new Error("Tab did not reach the row");
+if (renderer.getFocusedElementId() !== row.id)
+	throw new Error("Tab did not reach the row");
 const keyboardBefore = tooltipText();
 renderer.simulateKeystrokes("enter");
 await settle(400);
@@ -145,5 +148,52 @@ report(
 	`before ${movingBefore}, after ${tooltipText()}`,
 );
 await reset();
+
+// Hovering the row eases the glyph's stroke from 1.5 to 2 over 80 ms: the inked area grows frame by frame, not in one step.
+const rowBox = (() => {
+	const found = renderer.findByTestId("subject");
+	if (found === undefined) throw new Error("no subject");
+	const box = renderer.getElementBounds(found.id);
+	if (box === null) throw new Error("no bounds for subject");
+	return box;
+})();
+/** The glyph is the last thing in the row: count the pixels that differ from the row's background there. */
+function glyphInk() {
+	renderer.captureScreenshot("/tmp/check-input-copy-ink.png");
+	const pixels = readPng("/tmp/check-input-copy-ink.png");
+	const left = Math.round(rowBox.x + rowBox.width - 36);
+	const right = Math.round(rowBox.x + rowBox.width - 6);
+	const top = Math.round(rowBox.y + 4);
+	const bottom = Math.round(rowBox.y + rowBox.height - 4);
+	const ground = pixels.at(left, top);
+	let ink = 0;
+	for (let y = top; y < bottom; y++)
+		for (let x = left; x < right; x++) {
+			const pixel = pixels.at(x, y);
+			ink +=
+				Math.abs(pixel[0] - ground[0]) +
+				Math.abs(pixel[1] - ground[1]) +
+				Math.abs(pixel[2] - ground[2]);
+		}
+	return ink;
+}
+await reset();
+const restInk = glyphInk();
+renderer.nativeSimulateMouseMove(subject.x - 40, subject.y);
+renderer.nativeSimulateMouseMove(subject.x - 41, subject.y);
+renderer.flush();
+renderer.dispatchNativeEvents();
+// The colour switches at once, so a first frame that is only partly thickened is the stroke easing.
+await sleep(10);
+renderer.flush();
+renderer.dispatchNativeEvents();
+const earlyInk = glyphInk();
+await settle(400);
+const hoverInk = glyphInk();
+report(
+	"the glyph's stroke eases to 2 on hover",
+	earlyInk > restInk && earlyInk < hoverInk - 1000,
+	`rest ${restInk}, first frames ${earlyInk}, hovered ${hoverInk}`,
+);
 
 process.exit(failed ? 1 : 0);

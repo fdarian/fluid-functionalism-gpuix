@@ -84,4 +84,40 @@ renderer.nativeSimulateMouseUp(point.x + 20, point.y);
 await kit.settle(500);
 kit.check("a drag past the midpoint toggles on", isOn());
 
+// While dragging only the thumb's x follows the pointer: width, height and y keep their spring, so a drag that starts mid-squash does not cut it short.
+type ThumbTransition = {
+	type?: string;
+	duration?: number;
+	left?: { duration?: number };
+	width?: unknown;
+	height?: unknown;
+	top?: unknown;
+};
+function thumbTransition() {
+	const motion = kit.element("kb-thumb").customProps?.motion as
+		| { transition?: ThumbTransition }
+		| undefined;
+	if (motion?.transition === undefined)
+		throw new Error("the thumb has no transition");
+	return motion.transition;
+}
+const dragPoint = kit.center("kb-track");
+renderer.nativeSimulateMouseMove(dragPoint.x, dragPoint.y);
+renderer.nativeSimulateMouseDown(dragPoint.x, dragPoint.y);
+await kit.settle(100);
+renderer.nativeSimulateMouseMove(dragPoint.x - 6, dragPoint.y, 0);
+await kit.settle(100);
+const dragging = thumbTransition();
+kit.check(
+	"mid-drag, x snaps and width, height and y keep the spring",
+	dragging.type === "spring" &&
+		dragging.left?.duration === 0 &&
+		dragging.width === undefined &&
+		dragging.height === undefined &&
+		dragging.top === undefined,
+	JSON.stringify(dragging),
+);
+renderer.nativeSimulateMouseUp(dragPoint.x - 6, dragPoint.y);
+await kit.settle(500);
+
 kit.finish();

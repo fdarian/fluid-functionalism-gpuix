@@ -153,16 +153,16 @@ function keyboardStep(
 // ─── Motion ──────────────────────────────────────────────────────────────────
 
 /**
- * Runs motion value writes outside the event that caused them. gpuix refuses `animate` and `jump` inside a press, release or key handler (native calls those synchronously), and a slider's value change lands in exactly those. A write that outlives its owner is dropped.
+ * Starts motion value animations outside the event that caused them. `animate` reads the value's current state from the renderer, which gpuix refuses inside a press, release or key handler (native calls those synchronously), and a slider's value change lands in exactly those. `set` and `jump` are deferred by gpuix itself, so they are written directly. An animation that outlives its owner is dropped.
  */
-function createMotionWrites() {
+function createAnimateQueue() {
 	let disposed = false;
 	onCleanup(() => {
 		disposed = true;
 	});
-	return (write: () => void) => {
+	return (start: () => void) => {
 		queueMicrotask(() => {
-			if (!disposed) write();
+			if (!disposed) start();
 		});
 	};
 }
@@ -779,21 +779,21 @@ function CompactSlider(props: CompactProps) {
 	 * Each thumb's left offset, one motion value the thumb, the fill and a tooltip riding the thumb all read, so they move together mid-spring. A press or a key springs it to the new value (retargeting a spring in flight keeps its velocity); a drag places it.
 	 */
 	const thumbX = [createMotionValue(0), createMotionValue(0)];
-	const writeMotion = createMotionWrites();
+	const startAnimation = createAnimateQueue();
 	let placed = false;
 	createRenderEffect(() => {
 		const width = trackWidth();
 		if (width === undefined) return;
 		const dragged = moving();
-		const place = !placed || dragged;
+		const first = !placed;
 		placed = true;
 		const count = isRange() ? 2 : 1;
 		for (let index = 0; index < count; index++) {
 			const target = thumbLeft(values()[index], width);
-			writeMotion(() => {
-				if (place) thumbX[index].jump(target);
-				else thumbX[index].animate(target, tween.moderate);
-			});
+			if (first) thumbX[index].jump(target);
+			// `set` leaves the press spring running, which keeps overwriting it until it settles, as in the source.
+			else if (dragged) thumbX[index].set(target);
+			else startAnimation(() => thumbX[index].animate(target, tween.moderate));
 		}
 	});
 	/** The fill's pixels follow the thumbs natively: its right edge is the thumb centre, in the pill's own coordinates. */
@@ -1308,7 +1308,7 @@ function ComfortableSlider(props: ComfortableProps) {
 	const percent = createMotionValue(0);
 	const atMinValue = createMotionValue(0);
 	const widthValue = createMotionValue(0);
-	const writeMotion = createMotionWrites();
+	const startAnimation = createAnimateQueue();
 	let placed = false;
 	createRenderEffect(() => {
 		const width = inner();
@@ -1316,15 +1316,14 @@ function ComfortableSlider(props: ComfortableProps) {
 		const target = percentOf(props.value);
 		const zero = atMin() ? 1 : 0;
 		const first = !placed;
-		const place = first || placing();
 		placed = true;
-		writeMotion(() => {
-			widthValue.jump(width);
-			if (place) percent.jump(target);
-			else percent.animate(target, tween.fast);
-			if (first) atMinValue.jump(zero);
-			else atMinValue.animate(zero, tween.fast);
-		});
+		widthValue.jump(width);
+		if (first) percent.jump(target);
+		// `set` leaves a press spring running, which keeps overwriting it until it settles, as in the source.
+		else if (placing()) percent.set(target);
+		else startAnimation(() => percent.animate(target, tween.fast));
+		if (first) atMinValue.jump(zero);
+		else startAnimation(() => atMinValue.animate(zero, tween.fast));
 	});
 	const fillWidth = createTransform(
 		[percent, atMinValue, widthValue],

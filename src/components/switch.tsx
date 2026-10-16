@@ -222,7 +222,12 @@ export function Switch(props: {
 						width: thumbWidth(),
 						height: thumbHeight(),
 					}}
-					transition={dragX() === null ? tween.moderate : tween.snap}
+					// While dragging only x follows the pointer; width, height and y keep springing.
+					transition={
+						dragX() === null
+							? tween.moderate
+							: { ...tween.moderate, left: tween.snap }
+					}
 					style={{
 						position: "absolute",
 						backgroundColor: "#FFFFFF",

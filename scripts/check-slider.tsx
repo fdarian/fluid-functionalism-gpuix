@@ -33,4 +33,58 @@ kit.check(
 	renderer.getAllText().some((line) => line.includes("72")),
 );
 
+// A move right after a press does not cancel the press spring: the thumb eases to the press point first, as the source does (`slider.tsx:722`, `:778`).
+showOnly("compact");
+await kit.settle(400);
+async function frame() {
+	renderer.flush();
+	renderer.dispatchNativeEvents();
+	await new Promise((resolve) => setTimeout(resolve, 8));
+}
+const thumbCentre = () => {
+	const box = kit.bounds("basic-thumb-0");
+	return box.x + box.width / 2;
+};
+const track = kit.bounds("basic-track");
+const pressX = track.x + track.width * 0.8;
+const dragX = track.x + track.width * 0.2;
+renderer.nativeSimulateMouseMove(pressX, track.y + track.height / 2);
+renderer.nativeSimulateMouseDown(pressX, track.y + track.height / 2);
+await frame();
+renderer.nativeSimulateMouseMove(dragX, track.y + track.height / 2, 0);
+await frame();
+const eased = thumbCentre();
+kit.check(
+	"a move during the press spring leaves the thumb easing to the press point",
+	Math.abs(eased - dragX) > 10,
+	`thumb ${eased.toFixed(1)}, cursor ${dragX.toFixed(1)}, press ${pressX.toFixed(1)}`,
+);
+await kit.settle(500);
+renderer.nativeSimulateMouseMove(dragX + 1, track.y + track.height / 2, 0);
+await kit.settle(100);
+kit.check(
+	"once the spring has settled a drag move places the thumb on the cursor",
+	Math.abs(thumbCentre() - (dragX + 1)) < 6,
+	`thumb ${thumbCentre().toFixed(1)}, cursor ${(dragX + 1).toFixed(1)}`,
+);
+renderer.nativeSimulateMouseUp(dragX + 1, track.y + track.height / 2);
+await kit.settle(300);
+
+// Grabbing the scrubber's handle `set`s the comfortable fill inside a press handler: it must not throw.
+showOnly("default");
+await kit.settle(400);
+const handle = kit.center("scrubber-handle");
+renderer.nativeSimulateMouseMove(handle.x, handle.y);
+renderer.nativeSimulateMouseDown(handle.x, handle.y);
+await kit.settle(100);
+renderer.nativeSimulateMouseMove(handle.x - 40, handle.y, 0);
+await kit.settle(200);
+kit.check(
+	"dragging the scrubber handle moves the handle",
+	kit.center("scrubber-handle").x < handle.x - 30,
+	`${handle.x.toFixed(1)} to ${kit.center("scrubber-handle").x.toFixed(1)}`,
+);
+renderer.nativeSimulateMouseUp(handle.x - 40, handle.y);
+await kit.settle(300);
+
 kit.finish();
