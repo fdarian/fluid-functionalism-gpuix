@@ -1,9 +1,5 @@
-import {
-	type DomEvent,
-	type HostElement,
-	type KeyEvent,
-	useGpuixRequired,
-} from '@gpuix/solid';
+import type { DomEvent, HostElement } from '@gpuix/solid';
+import type { RowItem } from 'base-ui-solid-gpuix/radio-group';
 import {
 	type Accessor,
 	createComputed,
@@ -11,7 +7,6 @@ import {
 	createEffect,
 	createMemo,
 	createSignal,
-	createUniqueId,
 	For,
 	type JSX,
 	onCleanup,
@@ -38,7 +33,8 @@ import {
 /**
  * What checkbox-group and radio-group share: a vertical list of focusable
  * rows under one fluid hover scope, with the backgrounds that span rows (the
- * selected runs and the hover highlight) painted by the group.
+ * selected runs and the hover highlight) painted by the group. The keys,
+ * selection and ARIA come from the group's Base UI primitive.
  */
 
 export type ChoiceSize = 'default' | 'compact';
@@ -113,19 +109,10 @@ export function createSelectionRuns(
 	});
 }
 
-interface RowEntry {
-	element: HostElement;
-	activate: () => void;
-}
-
 interface ChoiceContextValue {
 	hover: FluidHover;
 	focusRing: FocusRingState;
 	size: Accessor<ChoiceSize>;
-	arrowsSelect: boolean;
-	registerRow(index: number, entry: RowEntry): void;
-	/** Moves focus `delta` rows on, wrapping; `"first"` / `"last"` jump. */
-	focusFrom(index: number, step: number | 'first' | 'last'): void;
 }
 
 const ChoiceContext = createContext<ChoiceContextValue>();
@@ -139,24 +126,17 @@ function useChoice() {
 }
 
 export function ChoiceGroup(props: {
-	role: 'group' | 'radiogroup';
+	/** The Base UI group primitive's props: the role. */
+	groupProps: { role: 'group' | 'radiogroup' };
 	size?: ChoiceSize;
 	runs: Accessor<readonly Run[]>;
-	/** Arrow keys select the row they land on, as native radios do. */
-	arrowsSelect?: boolean;
 	/** Whether a run that leaves `runs` fades out (checkbox) or is gone at once (radio, whose one fill is placed, not faded). Defaults to `true`. */
 	fadeOutRuns?: boolean;
 	testId?: string;
 	children: JSX.Element;
 }) {
-	const renderer = useGpuixRequired();
-	const focusElement = renderer.focusElement;
-	if (focusElement === undefined) {
-		throw new Error('This renderer does not expose focusElement');
-	}
 	const hover = createFluidHover();
 	const focusRing = createFocusRing(hover);
-	const rows = new Map<number, RowEntry>();
 
 	const rectOf = (index: number | null) => () => {
 		if (index === null || !hover.isMeasured()) return null;
@@ -206,35 +186,13 @@ export function ChoiceGroup(props: {
 		hover,
 		focusRing,
 		size: () => props.size ?? sizeChoice(),
-		arrowsSelect: props.arrowsSelect ?? false,
-		registerRow(index, entry) {
-			rows.set(index, entry);
-			onCleanup(() => {
-				if (rows.get(index) === entry) rows.delete(index);
-			});
-		},
-		focusFrom(index, step) {
-			const order = [...rows.keys()].sort((a, b) => a - b);
-			if (order.length === 0) return;
-			const position = order.indexOf(index);
-			const target =
-				step === 'first'
-					? 0
-					: step === 'last'
-						? order.length - 1
-						: (position + step + order.length) % order.length;
-			const entry = rows.get(order[target]);
-			if (entry === undefined) throw new Error(`No row at ${order[target]}`);
-			focusElement.call(renderer, entry.element.id);
-			if (context.arrowsSelect) entry.activate();
-		},
 	};
 
 	return (
 		<ChoiceContext.Provider value={context}>
 			<div
 				testId={props.testId}
-				role={props.role}
+				role={props.groupProps.role}
 				{...hover.containerProps}
 				style={{
 					position: 'relative',
@@ -251,7 +209,11 @@ export function ChoiceGroup(props: {
 							rect={runRect(id)}
 							session={() => 0}
 							fadeIn={false}
-							radius={props.role === 'radiogroup' ? shape.bg : shape.mergedBg}
+							radius={
+								props.groupProps.role === 'radiogroup'
+									? shape.bg
+									: shape.mergedBg
+							}
 							background={color.active}
 							glide={tween.moderate}
 							fade={tween.moderateExit}
@@ -278,11 +240,8 @@ export function ChoiceGroup(props: {
 export function ChoiceRow(props: {
 	index: number;
 	label: string;
-	role: 'checkbox' | 'radio';
-	checked: boolean;
-	/** Whether Tab stops here. Checkboxes always do; a radio group only on its selected row. */
-	tabbable: boolean;
-	onActivate: () => void;
+	/** The Base UI row primitive: role, ARIA, tab stop, click and keys. */
+	item: RowItem;
 	testId?: string;
 	/** The indicator beside the label; `active` is hover or focus, `size` the group's. */
 	indicator: (
@@ -298,54 +257,16 @@ export function ChoiceRow(props: {
 	createEffect(() => {
 		if (element === undefined) throw new Error('Row is not mounted');
 		context.hover.registerItem(props.index, element);
-		context.registerRow(props.index, {
-			element,
-			activate: props.onActivate,
-		});
+		props.item.register(element);
 	});
-
-	// No `isHeld` guard: as in FF, a held arrow keeps walking and a held Space or Enter repeats.
-	const onKeyDown = (event: KeyEvent) => {
-		switch (event.key) {
-			case ' ':
-			case 'Enter':
-				event.preventDefault();
-				props.onActivate();
-				return;
-			case 'ArrowDown':
-				context.focusFrom(props.index, 1);
-				return;
-			case 'ArrowUp':
-				context.focusFrom(props.index, -1);
-				return;
-			case 'ArrowRight':
-				if (context.arrowsSelect) context.focusFrom(props.index, 1);
-				return;
-			case 'ArrowLeft':
-				if (context.arrowsSelect) context.focusFrom(props.index, -1);
-				return;
-			case 'Home':
-				context.focusFrom(props.index, 'first');
-				return;
-			case 'End':
-				context.focusFrom(props.index, 'last');
-				return;
-		}
-	};
 
 	return (
 		<div
 			testId={props.testId}
-			id={createUniqueId()}
-			role={props.role}
-			aria-label={props.label}
-			aria-checked={props.checked}
+			{...props.item.rowProps}
 			ref={(row) => {
 				element = row;
 			}}
-			tabIndex={props.tabbable ? 0 : -1}
-			onClick={props.onActivate}
-			onKeyDown={onKeyDown}
 			onFocus={(event: DomEvent) => {
 				context.hover.setActiveIndex(props.index);
 				context.focusRing.focus(props.index, event);
@@ -375,10 +296,12 @@ export function ChoiceRow(props: {
 			{props.indicator(active, context.size)}
 			<StableLabel
 				text={props.label}
-				heavy={props.checked}
+				heavy={props.item.checked()}
 				fade
 				color={
-					props.checked || active() ? color.foreground : color.mutedForeground
+					props.item.checked() || active()
+						? color.foreground
+						: color.mutedForeground
 				}
 				textStyle={size().text}
 			/>
