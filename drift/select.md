@@ -212,15 +212,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 - **Cause:** `not ported yet`. Same drift as [dropdown.md, "Checked background appears with a fade instead of already being there"](dropdown.md#checked-background-appears-with-a-fade-instead-of-already-being-there), where the entry lives. Here: original `select.tsx:548-575`; port `select.tsx:615-622`. (Was recorded as `port choice`; the blocker is the shared `FluidHighlight`, which `motion`'s `initial={false}` could serve.)
 
-## Exit unmounts on a timer, not on completion
-
-- **Cause:** `not ported yet` (`BASE-UI-AUDIT.md:525` lists this as fixed; `popup.tsx` has no `onMotionComplete` and nothing in the popup path calls `presence.release()`, though `dialog.tsx:326` and `mobile-drawer.tsx:96` do).
-- **Original:** `onAnimationComplete` releases the unmount after the 60 ms exit; `exitFallbackMs` (160 ms) is the fallback only (`select.tsx:377-389`, `:481-483`).
-- **Port:** the card stays mounted 160 ms after `open` goes false (`presence.ts:10`, `select.tsx:152`); the exit fade is 60 ms, so it sits invisible for about 100 ms.
-- **Workaround:** none.
-- **Fidelity:** approximated (invisible).
-- **Components it hits:** combobox, dropdown.
-
 ## No reduced-motion handling
 
 - **Cause:** `not ported yet` (gpuix has `matchMedia` for `prefers-reduced-motion` and `MotionConfig reducedMotion="user"`, `FORK.md:831`, `:906`).

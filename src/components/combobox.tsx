@@ -525,6 +525,7 @@ export function Combobox(props: {
 
 			<PopupSurface
 				presence={presence}
+				testId={props.testId === undefined ? undefined : `${props.testId}-popup`}
 				align="start"
 				width={width()}
 				maxHeight={POPUP_MAX_HEIGHT}

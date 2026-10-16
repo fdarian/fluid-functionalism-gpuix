@@ -46,6 +46,7 @@ export function createPlacementState(preferred: Side) {
  */
 export function PopupSurface(props: {
 	presence: ReturnType<typeof createPresence>;
+	testId?: string;
 	/** The side to open on when it has room. */
 	side?: "top" | "bottom";
 	align: "start" | "end";
@@ -81,6 +82,7 @@ export function PopupSurface(props: {
 				style={{ backgroundColor: color.transparent }}
 			>
 				<motion.div
+					testId={props.testId}
 					initial={{ opacity: 0, top: slide() }}
 					animate={
 						props.presence.open()
@@ -88,6 +90,9 @@ export function PopupSurface(props: {
 							: { opacity: 0, top: slide() }
 					}
 					transition={props.presence.open() ? tween.fast : tween.fastExit}
+					onMotionComplete={() => {
+						if (!props.presence.open()) props.presence.release();
+					}}
 					style={{
 						position: "relative",
 						width: props.width,

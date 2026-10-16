@@ -124,10 +124,6 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Fidelity:** approximated.
 - **Components it hits:** select, dropdown (every `FluidHighlight` user).
 
-## Popup exit is released by the timer only
-
-- **Cause:** `not ported yet`. Same drift as [select.md, "Exit unmounts on a timer, not on completion"](select.md#exit-unmounts-on-a-timer-not-on-completion), where the entry lives. Here: regression, 65e350b added `onMotionComplete` and `presence.release()` and 7464e6c dropped them; original `combobox.tsx:787-796,820-824`; port `createPresence(POPUP_EXIT_FALLBACK_MS)` at `src/components/combobox.tsx:137`, `src/lib/popup.tsx:83-90`, `src/lib/presence.ts:39`.
-
 ## The popup surface does not track its substrate
 
 - **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup surface colour is fixed at surface-3"](dropdown.md#popup-surface-colour-is-fixed-at-surface-3), where the entry lives. Here: original `combobox.tsx:827`; port `src/lib/popup.tsx:97`.
