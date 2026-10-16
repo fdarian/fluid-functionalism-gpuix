@@ -14,6 +14,7 @@
 import { mkdirSync } from "node:fs";
 import { createTestRoot } from "@gpuix/solid/testing";
 import { App } from "../src/app";
+import { showcaseScenarios } from "../src/home/scenarios";
 import {
 	type Demo,
 	loadDemos,
@@ -116,7 +117,8 @@ function ariaNode(target: string) {
 			aria[relation] = targets.map((key) => keyToId.get(key) ?? key);
 		}
 		const active = node.aria.active_descendant;
-		if (active !== undefined) aria.active_descendant = keyToId.get(active) ?? active;
+		if (active !== undefined)
+			aria.active_descendant = keyToId.get(active) ?? active;
 		return aria;
 	}
 	return undefined;
@@ -220,7 +222,7 @@ test.render(() => <App demos={demos} pages={pages} initialPage={slug} />);
 await settle(800);
 capture("initial");
 
-await demo?.scenarios?.(shot);
+await (slug === "showcase" ? showcaseScenarios : demo?.scenarios)?.(shot);
 
 // The same page with Radius on Pill. Set directly: it must work on full pages, which have no Radius select.
 setShapeChoice("pill");
