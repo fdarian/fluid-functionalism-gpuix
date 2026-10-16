@@ -69,7 +69,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 - **Cause:** `gpuix gap`.
 - **Original:** `Cite` is a `Badge` (`size="sm"`, `px-1.5`, `mx-0.5`, `-translate-y-px`) set inline in the paragraph (`lumen/page.tsx:62-73`).
 - **Port:** a `<span>` with the accent fill around a no-break-spaced number, between two more no-break spaces (`src/pages/concepts-lumen.tsx:139-155`): the chip is square-cornered, takes the paragraph's 14px size and sits on the text line.
-- **gpuix lacks:** padding, margin, radius and `fontSize` on an inline `<span>`, and a block (the `Badge`) flowing inside a paragraph (`~/code/fdarian/gpuix/FORK.md:765`, `:772`).
+- **gpuix lacks:** padding, margin, radius and `fontSize` on an inline `<span>`, and a block (the `Badge`) flowing inside a paragraph (`~/code/fdarian/gpuix/FORK.md:790-818`, `:1081-1091`).
 - **Workaround:** the no-break spaces, as the doc pages' inline code does (`src/lib/doc-page.tsx`, `Code`).
 - **Fidelity:** approximated (no rounding, 14px not 11px digits).
 - **Components it hits:** any inline chip in running text (doc-page `Code`).
@@ -155,7 +155,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 ## Atlas: the transcript does not follow a new message
 
-- **Cause:** `gpuix gap` (the port's `ScrollArea` exposes no viewport ref or scroll-to-end; the viewport is internal, `src/components/scroll-area.tsx:490-494`).
+- **Cause:** `gpuix gap` (the port's `ScrollArea` exposes no viewport ref or scroll-to-end; the viewport is internal, `src/components/scroll-area.tsx:218-238`).
 - **Original:** a `requestAnimationFrame` smooth `scrollTo` the bottom when a message is sent and again when the reply lands (`atlas/page.tsx:78-83`, `:89`, `:103`).
 - **Port:** nothing; once the transcript is taller than the column, a new message and the thinking indicator land below the fold and the user scrolls. The screenshot script scrolls to them.
 - **Workaround:** none. Needs a `ScrollArea` prop (`stickToEnd`, or an `onViewport` ref) to scroll to the end after the content grows.
@@ -240,7 +240,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `ThinkingIndicator` takes no `className`).
 - **Original:** `<ThinkingIndicator className="!px-0" />` (`beacon/page.tsx:303`).
-- **Port:** `<ThinkingIndicator />` with its own horizontal padding, so the glyph sits about 16px right of the panel's title (`src/pages/concepts-beacon.tsx:651`).
+- **Port:** `<ThinkingIndicator />` with its own horizontal padding, so the glyph sits about 16px right of the panel's title (`src/pages/concepts-beacon.tsx:650`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** `ThinkingIndicator`.
@@ -249,7 +249,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the source has a latent bug).
 - **Original:** `startTriage` sets a 1500 ms `setTimeout` to "asking" that nothing clears, so a Dismiss during "analyzing" brings the panel back at the question (`beacon/page.tsx:375-378`).
-- **Port:** Dismiss and unmount clear the timer (`src/pages/concepts-beacon.tsx:713`, `:737-743`).
+- **Port:** Dismiss and unmount clear the timer (`src/pages/concepts-beacon.tsx:718-719`, `:740-743`).
 - **Workaround:** none needed.
 - **Fidelity:** differs on purpose.
 - **Components it hits:** just this one.

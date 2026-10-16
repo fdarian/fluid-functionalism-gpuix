@@ -9,7 +9,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `port choice` (a desktop window has no browser to supply the chrome; reason not stated in code).
 - **Original:** none; the browser draws the window. The page is the body on `--background` (`app/globals.css:331-338`).
-- **Port:** a chrome-coloured window, a 40px drag bar with the title "Fluid Functionalism on gpuix" centred, and the page in a 10px-radius bordered panel with an 8px margin (`src/lib/app-frame.tsx:4-10, 13-78`). Transparent titlebar and traffic lights at 14/13 (`src/main.tsx:16-18`). The `chrome` token (`#EFEFEF` / `#0E0E0E`) is the port's own (`src/lib/theme.ts:19, 90, 139`).
+- **Port:** a chrome-coloured window, a 40px drag bar with the title "Fluid Functionalism on gpuix" centred, and the page in a 10px-radius bordered panel with an 8px margin (`src/lib/app-frame.tsx:4-10, 13-78`). Transparent titlebar and traffic lights at 14/13 (`src/main.tsx:16-18`). The `chrome` token (`#EFEFEF` / `#0E0E0E`) is the port's own (`src/lib/theme.ts:18, 87, 135`).
 - **Workaround:** n/a.
 - **Fidelity:** dropped (extra chrome around every page).
 - **Components it hits:** every page.
@@ -20,13 +20,13 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Original:** n/a, this is about the harness.
 - **Port:** the real window sets `titlebarTransparent`, `trafficLightX/Y` (`src/main.tsx:16-18`) and mirrors Light / Dark to `setAppearance` (`src/app.tsx:520-526`).
 - **gpuix lacks:** the offscreen test window has no traffic lights, and `setAppearance` validates and does nothing, so `getAppearance()` stays the machine's and `appearanceChange` never fires (`packages/native/src/test_renderer.rs:834-840`, `packages/native/js/testing.ts:902-907`).
-- **Workaround:** the screenshots pin the theme with `setThemeChoice("dark")` before rendering (`scripts/screenshots.tsx:215`) and flip it through the real select for the light capture (`:237-255`); a full page has no select, so the script sets Light directly. The select click is the step that fails today: it throws `VIEW_BUSY` from gpuix's `DismissableLayer` (README "gpuix gaps", Bugs), so every capture before `light.png` is written and the run ends with "the theme select has no Light row" (seen on `badge`).
+- **Workaround:** the screenshots pin the theme with `setThemeChoice("dark")` before rendering (`scripts/screenshots.tsx:55`) and flip it through the real select for the light capture (`:249-263`); a full page has no select, so the script sets Light directly. The select click is the step that fails today: it throws `VIEW_BUSY` from gpuix's `DismissableLayer` (README "gpuix gaps", Bugs), so every capture before `light.png` is written and the run ends with "the theme select has no Light row" (seen on `badge`).
 - **Fidelity:** approximated (captures show the frame without the traffic lights; `light.png` is not written for pages with a right column).
 - **Components it hits:** every demo capture.
 
 ## No responsive layout
 
-- **Cause:** `not ported yet` (the fork now has `matchMedia` with size queries and change events, `~/code/fdarian/gpuix/FORK.md:831-832`; the port uses none).
+- **Cause:** `not ported yet` (the fork now has `matchMedia` with size queries and change events, `~/code/fdarian/gpuix/FORK.md:1149-1150`; the port uses none).
 - **Original:** the site switches at `xl` (1280px): below it the rail becomes a sheet behind a fixed top-left "Open navigation" trigger that closes on navigation, the right panel is hidden, and the settings move into the sheet's footer (`app/components/sidebar-layout.tsx:184-195`, `app/components/sidebar.tsx:130-141`, `app/globals.css:1020-1043`). Content is `max-w-[680px]` with `py-20 sm:py-28`, `mt-12` below `lg` (`app/docs/layout.tsx:1-7`). The title size follows the viewport: 22px below 640px, 28px above (`app/globals.css:416, 430-435`).
 - **Port:** one fixed three-column layout at any width: sidebar, a page column of `PAGE_WIDTH` 600, a 296px customise column (`src/app.tsx:77, 541, 575, 613`); a "full" page fills the window instead (`:575-577`). The window opens at 1240x780 (`src/main.tsx:19-20`), already under the source's `xl`.
 - **Workaround:** none.
@@ -50,7 +50,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (arrows; the description on component pages); title weight is the shared static-font gap, see `README.md` "Variable-font axes" row.
 - **Original:** `DocPage` renders the h1 in `text-site-display` bold (`wght 700, opsz 25`) with ghost icon-button prev / next arrows on the same row (tooltips "Name ←" / "Name →", disabled at either end), then the description 8px under the title and an optional intro paragraph; page gap 32 (`lib/docs/DocPage.tsx:73-128`, `registry/default/lib/font-weight.ts:25-29`).
-- **Port:** every docs page and demo page takes `Heading`, `siteType.display` at `weight.semibold` (`src/app.tsx:80-92, 656-673`; it steps down with the Size row). The system pages put their description and optional intro under it through `DocPage` (Introduction does the same by hand), tucked up 8px by a negative margin (`src/lib/doc-page.tsx:164-221`, `:176`). A component demo page has the heading and the cards only: no description, no arrows. No docs page has arrows; only the home hero does (`src/app.tsx:317-358`). Page gap 24, top padding 40 (`src/app.tsx:581-583`) against the source's 112.
+- **Port:** every docs page and demo page takes `Heading`, `siteType.display` at `weight.semibold` (`src/app.tsx:80-92, 656-673`; it steps down with the Size row). The system pages put their description and optional intro under it through `DocPage` (Introduction does the same by hand), tucked up 8px by a negative margin (`src/lib/doc-page.tsx:164-218`, `:181`). A component demo page has the heading and the cards only: no description, no arrows. No docs page has arrows; only the home hero does (`src/app.tsx:317-358`). Page gap 24, top padding 40 (`src/app.tsx:581-583`) against the source's 112.
 - **Workaround:** none.
 - **Fidelity:** approximated (title lighter than the source's bold; arrows dropped, and the description on component pages).
 - **Components it hits:** every demo page (description, arrows); every docs page, the Changelog page included (arrows, weight).
@@ -59,16 +59,16 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `port choice` (the port is not a registry; reason not stated).
 - **Original:** an "Installation" heading with a note ("Base UI flavor. Switch in the right panel.", "Same source under both flavors.", or "One prompt for your coding agent: install command, usage, props.") and a copy-prompt button that writes `buildInstallPrompt(...)` to the clipboard and crossfades its icon to a check (`lib/docs/DocPage.tsx:130-170`, `lib/docs/copy-prompt-button.tsx:1-60`).
-- **Port:** the seven system pages have the block through `DocPage`: the heading, a per-page note, and a primary "Copy prompt" button that writes the page's prompt string and shows a check for 2 s (`src/lib/doc-page.tsx:129-160, 164-221`); the prompts are written out per page (`src/pages/<page>/install-prompt.ts`, or in the page file). The component demo pages have none (`src/app.tsx:656-663`).
+- **Port:** the seven system pages have the block through `DocPage`: the heading, a per-page note, and a primary "Copy prompt" button that writes the page's prompt string and shows a check for 2 s (`src/lib/doc-page.tsx:129-162, 164-218`); the prompts are written out per page (`src/pages/<page>/install-prompt.ts`, or in the page file). The component demo pages have none (`src/app.tsx:656-663`).
 - **Workaround:** none.
 - **Fidelity:** dropped (component pages).
 - **Components it hits:** every component demo page.
 
 ## Preview frame: Inspect, highlighted code, and tabs on component pages
 
-- **Cause:** `not ported yet` (Inspect, syntax highlighting, and the tabs and replay on component pages); the card look is a `port choice` (comment: "like the site's showcase cards", `src/lib/demo-kit.tsx:28`).
+- **Cause:** `not ported yet` (Inspect, syntax highlighting, and the tabs and replay on component pages); the card look is a `port choice` (comment: "like the site's showcase cards", `src/lib/demo-kit.tsx:31`).
 - **Original:** `ComponentPreview` is a `border-border/60` frame with a 52px header: the title (semibold), a `TabsSubtle` Preview / Code, an Inspect `Switch` that overlays rulers and a box-model inspector, and an optional replay button; the body is `bg-background` with `px-8 py-12`, `min-h-[120px]`, and an `align` and `padding` option; the Code tab shows a shiki-highlighted snippet; the frame border goes `foreground/40` on `:focus-within`, and a press on empty preview space routes the keyboard into the demo (`lib/docs/ComponentPreview.tsx:85-250`). Each block sits under a `DocSection` h2 (`lib/docs/DocPage.tsx:174-190`).
-- **Port:** the system pages use `ComponentPreview` (`src/lib/doc-page.tsx:376-512`): a 12px-radius frame with a 52px header holding Preview / Code `TabsSubtle`, an optional replay or pause button, the border going 40% foreground on focus-within, `px-8 py-12` / `px-4 py-4` / none padding, a forced scheme for the source's `DarkPreview`, and optional culling. Its Code tab is plain monospace without highlighting; there is no Inspect switch or ruler overlay. The component demo pages still use `DemoCard`, a 12px-radius bordered box on `surface2` with 20px padding and a 44px footer carrying the title in muted body text, with no header, tabs, code, replay, focus border or section heading (`src/lib/demo-kit.tsx:29-96`); `DemoRow` is a 96px caption beside the controls, which the source does not have (`:98-125`).
+- **Port:** the system pages use `ComponentPreview` (`src/lib/doc-page.tsx:369-517`): a 12px-radius frame with a 52px header holding Preview / Code `TabsSubtle`, an optional replay or pause button, the border going 40% foreground on focus-within, `px-8 py-12` / `px-4 py-4` / none padding, a forced scheme for the source's `DarkPreview`, and optional culling. Its Code tab is plain monospace without highlighting; there is no Inspect switch or ruler overlay. The component demo pages still use `DemoCard`, a 12px-radius bordered box on `surface2` with 20px padding and a 44px footer carrying the title in muted body text, with no header, tabs, code, replay, focus border or section heading (`src/lib/demo-kit.tsx:31-98`); `DemoRow` is a 96px caption beside the controls, which the source does not have (`:100-129`).
 - **Workaround:** none.
 - **Fidelity:** dropped (Inspect; highlighting; tabs, code and replay on component pages); approximated (the frame).
 - **Components it hits:** every demo page (all of it); every system page (Inspect, highlighting).
@@ -77,7 +77,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `gpuix gap` (no culling; see `README.md` "Culling" row and `drift/command-menu.md`).
 - **Original:** the browser skips paint and layout for clipped content.
-- **Port:** `DemoCard` sets its content to `display: none` and pins its height once it is more than 25% of the scroller away (`src/lib/demo-kit.tsx:14-55, 75`); `ComponentPreview` does the same with `cull` (`src/lib/doc-page.tsx:310-356`).
+- **Port:** `DemoCard` sets its content to `display: none` and pins its height once it is more than 25% of the scroller away (`src/lib/demo-kit.tsx:21-59, 76-78`); `ComponentPreview` does the same with `cull` (`src/lib/doc-page.tsx:315-361`).
 - **gpuix lacks:** culling.
 - **Workaround:** that observer.
 - **Fidelity:** approximated (a hitch of a frame or two when a far card is jumped to).
@@ -96,7 +96,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (the Code tab and snippet, the inline fallback below `xl`); `port choice` (the frame, the shuffle glyph, the surface level).
 - **Original:** ten components park a controls panel below "Make them yours" through `PlaygroundLayout`: accordion, ask-user-questions, banner, button, card, combobox, command-menu, dropdown, input-message, sidebar (`lib/docs/playgrounds/index.ts:26-37`, `lib/docs/playground.tsx:139-200`). The preview sits in the doc page's `ComponentPreview` with a Preview / Code tab and a snippet kept in sync with the controls; below `xl` the rail is `display: none` and the controls render inline under the preview; the panel provides `SurfaceProvider value={2}`; the shuffle button is a 28px ghost with a 15px lucide `Shuffle` at stroke 1.5 (`lib/docs/playground.tsx:105-137`).
-- **Port:** all ten are ported, each as the first card of its demo page, plus the `queued-stack` "Queued chat" demo. `PlaygroundLayout` puts the preview in a `DemoCard` titled "Playground" (at least 420px tall) and mounts the controls in the right column's slot, fading them out when the preview leaves the page scroller's view (`src/lib/playground.tsx:242-320`). There is no Code tab or snippet, the rail is always present on a docs page (no narrow fallback: the layout has no breakpoint), the shuffle is a `Button` `icon-compact` whose glyph follows the button's size (14px) and goes to stroke 2 on hover (`:172-224`), and the panel sets its own `surface2` fill with no surface level for what it holds (`:190`).
+- **Port:** all ten are ported, each as the first card of its demo page, plus the `queued-stack` "Queued chat" demo. `PlaygroundLayout` puts the preview in a `DemoCard` titled "Playground" (at least 420px tall) and mounts the controls in the right column's slot, fading them out when the preview leaves the page scroller's view (`src/lib/playground.tsx:241-331`). There is no Code tab or snippet, the rail is always present on a docs page (no narrow fallback: the layout has no breakpoint), the shuffle is a `Button` `icon-compact` whose glyph follows the button's size (14px) and goes to stroke 2 on hover (`:177-234`), and the panel sets its own `surface2` fill with no surface level for what it holds (`:195`).
 - **Workaround:** none.
 - **Fidelity:** dropped (Code tab, inline fallback); approximated (frame, shuffle glyph).
 - **Components it hits:** the ten above; `drift/<component>.md` lists each playground's own differences.
@@ -132,7 +132,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `port choice` (the port is Base UI only, so a row that switched nothing would be fake; reason otherwise not stated).
 - **Original:** the panel lists five borderless selects: Theme, Radius (Rounded, Pill), Size (Default, Compact), Icons (Lucide, Tabler, Phosphor, Hugeicons, Untitled UI) and Primitive (Radix, Base UI; the site's default is Base UI), each trigger at `h-7`, rows `py-3` with `gap-1.5` (`app/components/right-panel.tsx:122-259`, `lib/docs/site-settings.ts:26-31`). Primitive switches every dual-flavour page between the Radix and Base UI registries.
-- **Port:** four rows, Theme, Radius, Size and Icons, each a 28px inline `Select` (`src/app.tsx:396-495`); Radius drives the reactive `shape` tokens (`src/lib/theme.ts:381-437`), Size the ambient `sizeChoice` and the `siteType` roles (`:320-370`), Icons the per-library glyph tables (`src/lib/icons.ts`). There is no Primitive row: every component is Base UI only and the Radix registry is not ported (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md`).
+- **Port:** four rows, Theme, Radius, Size and Icons, each a 28px inline `Select` (`src/app.tsx:396-495`); Radius drives the reactive `shape` tokens (`src/lib/theme.ts:379-432`), Size the ambient `sizeChoice` and the `siteType` roles (`:313-366`), Icons the per-library glyph tables (`src/lib/icons.ts`). There is no Primitive row: every component is Base UI only and the Radix registry is not ported (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md`).
 - **Workaround:** none.
 - **Fidelity:** dropped (one of five rows).
 - **Components it hits:** the 17 dual-flavour components, in that they have no Radix build.
@@ -150,7 +150,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (component-owned glyphs); `port choice` (the Select icon: the inline variant always shows the picked row's icon).
 - **Original:** `IconProvider` swaps every glyph a component asks for by name (`registry/default/lib/icon-context.tsx`); the Icons row's trigger and its rows carry no icon (`app/components/right-panel.tsx:226-241`).
-- **Port:** the five libraries' tables cover the shared glyph names (`src/lib/icons/*.ts`); a glyph a component defines itself with `defineIcon` stays lucide whichever library is picked (`src/lib/icons.ts:34-41`; 32 calls in 16 files). The inline `Select` shows the picked item's icon (`src/components/select.tsx:381-382`) and the Icons items carry a `palette` glyph (`src/lib/icons.ts:19-31`), so the row's trigger and its popup rows show a palette that the source's do not.
+- **Port:** the five libraries' tables cover the shared glyph names (`src/lib/icons/*.ts`); a glyph a component defines itself with `defineIcon` stays lucide whichever library is picked (`src/lib/icons.ts:34-41`; 32 calls in 16 files). The inline `Select` shows the picked item's icon (`src/components/select.tsx:204`) and the Icons items carry a `palette` glyph (`src/lib/icons.ts:19-29`), so the row's trigger and its popup rows show a palette that the source's do not.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** every component with a `defineIcon` glyph (chevrons, close marks, checks); just the shell for the Select.
@@ -168,7 +168,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `gpuix gap`. The source puts one rule on every element; gpuix has no stylesheet or universal selector to put it on, only a `transition` per element.
 - **Original:** `ThemeProvider` adds `.transitioning` around the class swap, and `html.transitioning *` eases border-radius, background, colour, border, fill and stroke over 180ms ease-in-out on every element; the first apply is skipped (`registry/default/lib/theme-context.tsx:40-67`, `app/globals.css:856-866`).
-- **Port:** `themeChoice` flips the palette signal and every `color.*` getter re-reads (`src/lib/theme.ts:200-254`). Components that declare a `transition` (mostly 80ms) ease the swap; the chrome, panel, headings, cards, sidebar and undeclared text cut at once. A 180ms fade on only the chrome and panel was tried and removed: with the text and cards still cutting, mid-swap shows new-theme text on a part-way background.
+- **Port:** `themeChoice` flips the palette signal and every `color.*` getter re-reads (`src/lib/theme.ts:195-264`). Components that declare a `transition` (mostly 80ms) ease the swap; the chrome, panel, headings, cards, sidebar and undeclared text cut at once. A 180ms fade on only the chrome and panel was tried and removed: with the text and cards still cutting, mid-swap shows new-theme text on a part-way background.
 - **gpuix lacks:** a global transition rule (an inherited or universal `transition`).
 - **Workaround:** none.
 - **Fidelity:** approximated (declared component fades only, the rest cuts).
@@ -178,7 +178,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`.
 - **Original:** each setting is written to its own year-long cookie (`ff_theme`, `ff_shape`, `ff_size`, `ff_icons`, `ff_base`) and the root layout reads them back, so a reload paints the saved choice from the first frame (`lib/docs/settings-persistence.tsx`, `lib/docs/site-settings.ts:30-62`, `app/layout.tsx:58-69`).
-- **Port:** every launch starts at System, Rounded, Default and Lucide (`src/lib/theme.ts:200-201, 325, 399`, `src/lib/icons.ts:29`).
+- **Port:** every launch starts at System, Rounded, Default and Lucide (`src/lib/theme.ts:195-196, 321, 390-391`, `src/lib/icons.ts:31-32`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just the shell.
@@ -187,7 +187,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `port choice` (the window has no `prefers-color-scheme`; the fork exposes `createAppearance`).
 - **Original:** `color-scheme: light dark` plus `light-dark()` tokens; a `.light` / `.dark` class on `<html>` pins one (`app/globals.css:46-50, 184-225`).
-- **Port:** both columns kept as a token table, resolved by the `scheme()` signal; `bindSystemScheme(createAppearance())` feeds "system", and `renderer.setAppearance(themeChoice())` makes the native chrome follow (`src/lib/theme.ts:87-187, 203-254`, `src/app.tsx:510-526`). Token values match the source in both columns (checked: surfaces 1 to 8, foreground, muted, accent, status, checker, hover, active, tint); `--ring` and `--input` have no port token.
+- **Port:** both columns kept as a token table, resolved by the `scheme()` signal; `bindSystemScheme(createAppearance())` feeds "system", and `renderer.setAppearance(themeChoice())` makes the native chrome follow (`src/lib/theme.ts:83-193, 200-249`, `src/app.tsx:510-526`). Token values match the source in both columns (checked: surfaces 1 to 8, foreground, muted, accent, status, checker, hover, active, tint); `--ring` and `--input` have no port token.
 - **Workaround:** n/a.
 - **Fidelity:** exact in the window; see "The test renderer ignores window options and appearance" for captures.
 - **Components it hits:** every component.
@@ -196,7 +196,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `gpuix gap`. See the README row "Variable-font axes (`fontVariationSettings`)" and the "Inter variable" row.
 - **Original:** Inter variable with semibold `wght 550 / opsz 18` and bold `wght 700 / opsz 25` (`registry/default/lib/font-weight.ts:25-29`, `app/globals.css:6-18`).
-- **Port:** static Inter cuts, semibold 600, no `opsz` (`src/lib/theme.ts:373-375`).
+- **Port:** static Inter cuts, semibold 600, no `opsz` (`src/lib/theme.ts:368-370`).
 - **gpuix lacks:** variable-font axes.
 - **Workaround:** nearest static weight.
 - **Fidelity:** approximated.
@@ -216,7 +216,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (unverified live; read from code only).
 - **Original:** `scrollbar-gutter: stable`, `overscroll-behavior-y: none`, a thin overlay scrollbar ramp tinted by `--overlay`, grayscale font smoothing, balanced headings, inline-code chips, and a focus-ring fallback for natively focusable elements (`app/globals.css:296-345, 326-332, 896-945, 868-891`).
-- **Port:** the page column is a plain `overflowY: "scroll"` div (`src/app.tsx:551-562`) without the scrollbar styling. The docs pages have the inline-code chip and prose through `Code` and `Prose` (`src/lib/doc-page.tsx:44-74`; the chip is 13px with no-break-space padding, `drift/motion-page.md`); the shell has no prose.
+- **Port:** the page column is a plain `overflowY: "scroll"` div (`src/app.tsx:551-562`) without the scrollbar styling. The docs pages have the inline-code chip and prose through `Code` and `Prose` (`src/lib/doc-page.tsx:43-74`; the chip is 13px with no-break-space padding, `drift/motion-page.md`); the shell has no prose.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** every page.
@@ -243,7 +243,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`.
 - **Original:** Settings holds 3 Theme, 2 Radius, 2 Size, 5 Icons and 2 Primitive rows (14); a theme row reads "Theme: Follow system / Light / Dark", the action "Set theme to ...", description "Current" on the active one, icons monitor / sun / moon, keywords theme / appearance / mode; a pick toasts "Theme set to Light" (`app/components/site-command-menu.tsx:104-120, 227-298`).
-- **Port:** only the three Theme rows, with the label "Theme: System" (the shared `THEMES` label, `src/lib/theme.ts:195`) instead of "Follow system", no toast (`src/lib/site-command-menu.tsx:145-157`). The Radius, Size and Icons rows exist in the customise card now but not in the menu, so 9 rows are missing (Primitive's 2 have no setting to change).
+- **Port:** only the three Theme rows, with the label "Theme: System" (the shared `THEMES` label, `src/lib/theme.ts:185-193`) instead of "Follow system", no toast (`src/lib/site-command-menu.tsx:145-157`). The Radius, Size and Icons rows exist in the customise card now but not in the menu, so 9 rows are missing (Primitive's 2 have no setting to change).
 - **Workaround:** none.
 - **Fidelity:** dropped (11 rows); approximated (label).
 - **Components it hits:** just the site menu.
@@ -252,7 +252,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`.
 - **Original:** `CommandMenuDialog` takes `title="Site menu"` and `description="Jump to a page or change a setting."` as the dialog's accessible name, and binds `shortcut="mod+k"` itself (`app/components/site-command-menu.tsx:385-390`, `registry/default/command-menu.tsx:1425-1540`).
-- **Port:** the dialog has no title or description props (`src/components/command-menu.tsx:1288-1292`). A separate window listener toggles the menu (`src/lib/site-command-menu.tsx:67-77`); `isModK` matches Meta or Ctrl, no Alt, on `event.key` alone (`:42-45`). On Dvorak the key that types "t" does not open it: gpuix derives `code` from `key`, so there is no physical K to match (`scripts/check-command-menu.tsx` checks ⌘T and ⌘⌥K stay closed and ⌘K toggles; the layout itself needs a live check).
+- **Port:** the dialog has no title or description props (`src/components/command-menu.tsx:1346-1350`). A separate window listener toggles the menu (`src/lib/site-command-menu.tsx:67-77`); `isModK` matches Meta or Ctrl, no Alt, on `event.key` alone (`:59-63`). On Dvorak the key that types "t" does not open it: gpuix derives `code` from `key`, so there is no physical K to match (`scripts/check-command-menu.tsx` checks ⌘T and ⌘⌥K stay closed and ⌘K toggles; the layout itself needs a live check).
 - **Workaround:** none.
 - **Fidelity:** exact on macOS.
 - **Components it hits:** just the site menu.
@@ -261,7 +261,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `gpuix gap`.
 - **Original:** `matchesShortcut` reads the physical key (`code`) when `key` is not a Latin letter or digit, so Ctrl+K opens the menu on a Cyrillic or Greek layout (`registry/default/command-menu.tsx:195-230`).
-- **Port:** `isModK` reads `key` only (`src/lib/site-command-menu.tsx:60-63`).
+- **Port:** `isModK` reads `key` only (`src/lib/site-command-menu.tsx:59-63`).
 - **gpuix lacks:** a physical key. `code` is "derived from GPUI's `key`, which is layout-dependent on every platform", so a Cyrillic key reports `code` `""` (`~/code/fdarian/gpuix/packages/native/src/events/key_names.rs:9-12`, `:138-160`). On macOS this does not bite: GPUI reports the layout's Cmd letter, so ⌘K works on Cyrillic, Armenian and Dvorak-QWERTY (`~/code/fdarian/gpuix/zed/crates/gpui_macos/src/events.rs:425-439`). On Windows and Linux, Ctrl plus a non-Latin letter does not match (README Missing features row "site menu (`isModK`)"). Not run there.
 - **Workaround:** none; the sidebar's Search row opens the menu.
 - **Fidelity:** exact on macOS; dropped for non-Latin layouts on Windows and Linux.
@@ -271,7 +271,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (persistence).
 - **Original:** the last three pages opened through the menu are kept in `localStorage["ff:command-menu-recent"]`, read on open, and listed first under "Recent" while the field is empty, then dropped from their own group (`app/components/site-command-menu.tsx:51-53, 122-138, 170-188, 391`).
-- **Port:** the same list through `CommandMenu`'s `suggestions` and `suggestionsLabel` (`src/lib/site-command-menu.tsx:221-222`), held in a module-level signal of at most three slugs (`:35-42`), so it starts empty on every launch.
+- **Port:** the same list through `CommandMenu`'s `suggestions` and `suggestionsLabel` (`src/lib/site-command-menu.tsx:224-225`), held in a module-level signal of at most three slugs (`:35-42`), so it starts empty on every launch.
 - **Workaround:** none.
 - **Fidelity:** approximated (the list does not survive a restart).
 - **Components it hits:** just the site menu.
@@ -407,7 +407,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` for each item below, unless stated.
 - **Original:** every component in `registry/base` and `registry/default` has a port except the blocks `sidebar-workspace-header`, `sidebar-user-footer`, `dialog-sidebar/settings-dialog`, and the `sidebar-app` composition (`app-sidebar`, `inset-topbar`, `nav-data`, `page`) (`registry/blocks/`). `nav-item` and `nav-menu` are ported (`src/components/nav-item.tsx`, `nav-menu.tsx`, `drift/nav-menu.md`). `search-field` is ported (`src/components/sidebar.tsx:542`); check `drift/sidebar.md` for the blocks. Ported as part of another file rather than on their own: `dropdown-sub` inside `src/components/dropdown.tsx` and `menu-item.tsx`; `fluid-hover-highlight` as `src/lib/fluid-highlight.tsx`; `sidebar-core` and `sidebar-menu` inside `src/components/sidebar.tsx`; `scroll-area` and `queued-stack` have their own files.
-- **Port:** none for the items above. The `registry/radix` flavour of all 17 dual-flavour components is not ported on purpose (`port choice`; the port is Base UI only, see `../base-ui-solid-gpuix/BASE-UI-AUDIT.md`), and the registry lib items `elevated`, `surface-classes`, `type-scale` and `typography` have no port beyond the tokens in `src/lib/theme.ts`. The context items have an app-wide stand-in rather than a provider: `shape-context` is `shapeChoice` (`src/lib/theme.ts:400`), `size-context` is `sizeChoice` (`:325`), `icon-context` and the four extra icon libraries are `iconLibrary` and the tables in `src/lib/icons/` (`src/lib/icons.ts`); an explicit `size` does not scope the parts inside a component (`drift/select.md`).
+- **Port:** none for the items above. The `registry/radix` flavour of all 17 dual-flavour components is not ported on purpose (`port choice`; the port is Base UI only, see `../base-ui-solid-gpuix/BASE-UI-AUDIT.md`), and the registry lib items `elevated`, `surface-classes`, `type-scale` and `typography` have no port beyond the tokens in `src/lib/theme.ts`. The context items have an app-wide stand-in rather than a provider: `shape-context` is `shapeChoice` (`src/lib/theme.ts:390-391`), `size-context` is `sizeChoice` (`:321`), `icon-context` and the four extra icon libraries are `iconLibrary` and the tables in `src/lib/icons/` (`src/lib/icons.ts`); an explicit `size` does not scope the parts inside a component (`drift/select.md`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** the sidebar demo (blocks), none for the rest.
