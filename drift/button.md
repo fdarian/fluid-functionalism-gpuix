@@ -57,7 +57,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `not ported yet`.
 - **Original:** an infinity-shaped path in a 24 viewBox drawn at 36px (28px compact), `strokeDasharray` 15 85, `spinner-move 2s linear infinite` (dash offset to -100) and `spinner-dash 4s ease-in-out infinite` (dash 15 to 40), stroke 1.125 (`:199-201`, `:228-246`, `app/globals.css:998-1005`).
-- **Port:** the lucide `loader` spokes at the icon size (16 / 14), stroke 1.5, no motion (`src/components/button.tsx:248-266`, `src/lib/icons.ts:20`).
+- **Port:** the `loader` glyph of the Icons row's library (lucide spokes by default) at the icon size (16 / 14), stroke 1.5, no motion (`src/components/button.tsx:248-266`, `src/lib/icons/lucide.ts:21`).
 - **Workaround:** none. README calls this "Dropped" but it needs no transform: gpuix animates SVG `strokeDasharray` / `strokeDashoffset` with repeating keyframes (`FORK.md:828-829`, `:822-823`), and `file-thumbnail.tsx` already draws a moving arc.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.

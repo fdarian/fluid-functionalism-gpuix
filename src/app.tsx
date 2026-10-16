@@ -26,6 +26,12 @@ import { AppFrame, PANEL_INNER_RADIUS } from "./lib/app-frame";
 import type { Demo } from "./lib/demo";
 import { PageScrollerContext } from "./lib/demo-kit";
 import {
+	ICON_LIBRARIES,
+	type IconLibrary,
+	iconLibrary,
+	setIconLibrary,
+} from "./lib/icons";
+import {
 	createSiteMenu,
 	SITE_MENU_SHORTCUT,
 	SiteCommandMenu,
@@ -33,11 +39,11 @@ import {
 import {
 	bindSystemScheme,
 	color,
-	setThemeChoice,
-	type ThemeChoice,
-	THEMES,
-	themeChoice,
 	type as scale,
+	setThemeChoice,
+	THEMES,
+	type ThemeChoice,
+	themeChoice,
 	weight,
 } from "./lib/theme";
 
@@ -222,6 +228,25 @@ function CustomizeCard() {
 					items={THEMES}
 					value={themeChoice()}
 					onValueChange={(value: ThemeChoice) => setThemeChoice(value)}
+				/>
+			</div>
+			<div
+				style={{
+					display: "flex",
+					flexDirection: "row",
+					alignItems: "center",
+					justifyContent: "space-between",
+					height: 28,
+				}}
+			>
+				<text style={{ ...scale.body, color: color.mutedForeground }}>
+					Icons
+				</text>
+				<Select
+					testId="icons"
+					items={ICON_LIBRARIES}
+					value={iconLibrary()}
+					onValueChange={(value: IconLibrary) => setIconLibrary(value)}
 				/>
 			</div>
 		</div>

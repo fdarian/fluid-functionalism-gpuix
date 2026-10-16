@@ -25,7 +25,7 @@ repeating it.
 
 - **Cause:** `not ported yet`.
 - **Original:** custom paths `M6 12L10 16L18 8` and `M9 9L15 15M15 9L9 15` in `viewBox="2 4 20 16"` at 14px, `pathLength` 0 to 1 in 0.08 s ease-out (`input-copy.tsx:164-208,250-262,288-300`). The scale is 0.7, so the check is about 8.4px wide, the cross 4.2px, and the idle stroke 1.5 is 1.05px (2 is 1.4px).
-- **Port:** the static lucide `check` and `x` (`icons.ts:5-6`) through `Icon` at 14px of a 24 box, scale 0.583 (`input-copy.tsx:153-193`): a 9.3px check, a 7px cross, 0.875px idle stroke.
+- **Port:** the static `check` and `x` glyphs of the Icons row's library (lucide by default, `icons/lucide.ts:6-7`) through `Icon` at 14px of a 24 box, scale 0.583 (`input-copy.tsx:153-193`): a 9.3px check, a 7px cross, 0.875px idle stroke.
 - **Workaround:** none here. `CheckMark` (`lib/icon.tsx:41`) already draws a path with `motion.path` for select and combobox, and the fork animates `pathLength` (`FORK.md:829`).
 - **Fidelity:** approximated (static, larger cross, thinner strokes).
 - **Components it hits:** just this one.
