@@ -1,9 +1,9 @@
 import type { HostElement, HostMouseMoveEvent } from "@gpuix/solid";
 import { createEffect, createSignal, For } from "solid-js";
-import { onFrame } from "../../lib/clock";
-import { createFluidHover, pickNearest } from "../../lib/fluid-hover";
-import { ComponentPreview, MONO } from "../../lib/doc-page";
-import { color, siteType, type as scale, weight } from "../../lib/theme";
+import { onFrame } from "#/lib/clock";
+import { createFluidHover, pickNearest } from "#/lib/fluid-hover";
+import { ComponentPreview, MONO } from "#/lib/doc-page";
+import { color, siteType, type as scale, weight } from "#/lib/theme";
 import {
 	FluidRow,
 	ListFrame,

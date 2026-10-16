@@ -22,8 +22,8 @@ import {
 	Show,
 	untrack,
 } from "solid-js";
-import { createPointerCapture } from "../lib/pointer-capture";
-import { createPresence } from "../lib/presence";
+import { createPointerCapture } from "#/lib/pointer-capture";
+import { createPresence } from "#/lib/presence";
 import {
 	color,
 	focusRing,
@@ -35,7 +35,7 @@ import {
 	motion as tween,
 	weight,
 	withAlpha,
-} from "../lib/theme";
+} from "#/lib/theme";
 
 export type SliderValue = number | [number, number];
 export type ValuePosition = "left" | "right" | "top" | "bottom" | "tooltip";

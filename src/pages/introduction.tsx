@@ -1,12 +1,12 @@
 import { For, type JSX } from "solid-js";
-import { InputCopy } from "../components/input-copy";
-import type { ShotContext } from "../lib/demo";
+import { InputCopy } from "#/components/input-copy";
+import type { ShotContext } from "#/lib/demo";
 import {
 	color,
 	siteType,
 	weight,
 	withAlpha,
-} from "../lib/theme";
+} from "#/lib/theme";
 
 export const title = "Introduction";
 export const group = "Pages";

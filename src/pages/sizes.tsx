@@ -1,11 +1,11 @@
 import type { JSX } from "solid-js";
-import type { ShotContext } from "../lib/demo";
-import { Code, DocPage, DocSection, Prose } from "../lib/doc-page";
-import { CompactRegionDemo } from "./sizes/compact-region";
-import { SIZES_INSTALL_PROMPT } from "./sizes/install-prompt";
-import { TokenInspectorDemo } from "./sizes/token-inspector";
-import { TokenTable } from "./sizes/token-table";
-import { ToolbarDemo } from "./sizes/toolbar";
+import type { ShotContext } from "#/lib/demo";
+import { Code, DocPage, DocSection, Prose } from "#/lib/doc-page";
+import { CompactRegionDemo } from "#/pages/sizes/compact-region";
+import { SIZES_INSTALL_PROMPT } from "#/pages/sizes/install-prompt";
+import { TokenInspectorDemo } from "#/pages/sizes/token-inspector";
+import { TokenTable } from "#/pages/sizes/token-table";
+import { ToolbarDemo } from "#/pages/sizes/toolbar";
 
 export const title = "Sizes";
 export const group = "System";

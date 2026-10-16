@@ -9,7 +9,7 @@
  * and once under `setMediaFeatures({ reducedMotion: true })`, where the same
  * frame must already have it at rest.
  */
-import { ThinkingIndicator } from "../src/components/thinking-indicator";
+import { ThinkingIndicator } from "#/components/thinking-indicator";
 import { createCheck } from "./check-kit";
 
 const FRAME_MS = 16;

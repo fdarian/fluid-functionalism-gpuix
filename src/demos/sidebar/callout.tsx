@@ -8,11 +8,11 @@ import {
 	CardImage,
 	CardMedia,
 	CardTitle,
-} from "../../components/card";
-import { SIDEBAR_WIDTH } from "../../components/sidebar";
-import { defineIcon, type IconRef } from "../../lib/icons";
-import { createMeasuredHeight } from "../../lib/measured-height";
-import { shape, surface, motion as tween } from "../../lib/theme";
+} from "#/components/card";
+import { SIDEBAR_WIDTH } from "#/components/sidebar";
+import { defineIcon, type IconRef } from "#/lib/icons";
+import { createMeasuredHeight } from "#/lib/measured-height";
+import { shape, surface, motion as tween } from "#/lib/theme";
 
 export type CalloutVariant = "inline" | "banner";
 

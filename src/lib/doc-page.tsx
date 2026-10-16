@@ -14,9 +14,9 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
-import { Button, type ButtonVariant } from "../components/button";
-import { TabsSubtle, TabsSubtleItem } from "../components/tabs-subtle";
-import { Tooltip } from "../components/tooltip";
+import { Button, type ButtonVariant } from "#/components/button";
+import { TabsSubtle, TabsSubtleItem } from "#/components/tabs-subtle";
+import { Tooltip } from "#/components/tooltip";
 import { PageScrollerContext } from "./demo-kit";
 import { Icon } from "./icon";
 import { defineIcon, type IconRef } from "./icons";

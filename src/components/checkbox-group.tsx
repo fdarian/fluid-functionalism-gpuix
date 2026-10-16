@@ -1,6 +1,6 @@
 import type { JSX } from "solid-js";
-import { CheckMark } from "../lib/icon";
-import { color } from "../lib/theme";
+import { CheckMark } from "#/lib/icon";
+import { color } from "#/lib/theme";
 import {
 	ChoiceGroup,
 	ChoiceRow,

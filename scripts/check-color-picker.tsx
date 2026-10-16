@@ -8,11 +8,11 @@
  */
 import { createTestRoot } from "@gpuix/solid/testing";
 import { createSignal, Show } from "solid-js";
-import { App } from "../src/app";
-import { ColorPicker } from "../src/components/color-picker";
-import { loadDemos, loadPages } from "../src/lib/demo";
-import { fonts } from "../src/lib/fonts";
-import { setThemeChoice } from "../src/lib/theme";
+import { App } from "#/app";
+import { ColorPicker } from "#/components/color-picker";
+import { loadDemos, loadPages } from "#/lib/demo";
+import { fonts } from "#/lib/fonts";
+import { setThemeChoice } from "#/lib/theme";
 import { createCheck } from "./check-kit";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

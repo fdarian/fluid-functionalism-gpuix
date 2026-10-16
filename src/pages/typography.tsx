@@ -1,15 +1,15 @@
 import type { JSX } from "solid-js";
-import type { ShotContext } from "../lib/demo";
-import { DocPage, DocSection, Prose } from "../lib/doc-page";
-import { setSizeChoice, setThemeChoice } from "../lib/theme";
-import { TYPOGRAPHY_INSTALL_PROMPT } from "./typography/install-prompt";
-import { TypesetSample } from "./typography/markdown";
-import { NumbersDemo } from "./typography/numbers";
-import { GapTable, TypeScaleSpecimen } from "./typography/scale";
-import { BulletList, H3, Rule, Sentence } from "./typography/text";
-import { TrimDemo } from "./typography/trim";
-import { WeightOpszDemo } from "./typography/weight";
-import { BalanceDemo, PrettyDemo } from "./typography/wrap";
+import type { ShotContext } from "#/lib/demo";
+import { DocPage, DocSection, Prose } from "#/lib/doc-page";
+import { setSizeChoice, setThemeChoice } from "#/lib/theme";
+import { TYPOGRAPHY_INSTALL_PROMPT } from "#/pages/typography/install-prompt";
+import { TypesetSample } from "#/pages/typography/markdown";
+import { NumbersDemo } from "#/pages/typography/numbers";
+import { GapTable, TypeScaleSpecimen } from "#/pages/typography/scale";
+import { BulletList, H3, Rule, Sentence } from "#/pages/typography/text";
+import { TrimDemo } from "#/pages/typography/trim";
+import { WeightOpszDemo } from "#/pages/typography/weight";
+import { BalanceDemo, PrettyDemo } from "#/pages/typography/wrap";
 
 export const title = "Typography";
 export const group = "System";

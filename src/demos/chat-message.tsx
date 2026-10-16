@@ -1,9 +1,9 @@
 import { createSignal, For } from "solid-js";
-import { Button } from "../components/button";
-import { ChatMessage, ChatMessageAction } from "../components/chat-message";
-import type { FileLike } from "../components/file-thumbnail";
-import type { DemoModule } from "../lib/demo";
-import { DemoCard } from "../lib/demo-kit";
+import { Button } from "#/components/button";
+import { ChatMessage, ChatMessageAction } from "#/components/chat-message";
+import type { FileLike } from "#/components/file-thumbnail";
+import type { DemoModule } from "#/lib/demo";
+import { DemoCard } from "#/lib/demo-kit";
 
 interface Message {
 	from: "user" | "assistant";

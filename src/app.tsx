@@ -15,43 +15,43 @@ import {
 	Show,
 	Switch,
 } from "solid-js";
-import { Button } from "./components/button";
-import { ScrollArea } from "./components/scroll-area";
-import { Select } from "./components/select";
+import { Button } from "#/components/button";
+import { ScrollArea } from "#/components/scroll-area";
+import { Select } from "#/components/select";
 import {
 	Sidebar,
 	SidebarContent,
 	SidebarMenu,
 	SidebarMenuButton,
-} from "./components/sidebar";
-import { Tooltip } from "./components/tooltip";
-import { BentoGrid } from "./home/bento-grid";
-import { AppFrame, PANEL_INNER_RADIUS } from "./lib/app-frame";
-import { kindDotColor } from "./lib/changelog/kind-style";
-import { marks } from "./lib/changelog/releases";
-import { type Demo, type Page, SHOWCASE_SLUG } from "./lib/demo";
-import { PageScrollContext, PageScrollerContext } from "./lib/demo-kit";
-import { createMeasuredHeight } from "./lib/measured-height";
-import { MONO } from "./lib/doc-page";
-import { type PageNav, PageNavContext, usePageNav } from "./lib/page-nav";
+} from "#/components/sidebar";
+import { Tooltip } from "#/components/tooltip";
+import { BentoGrid } from "#/home/bento-grid";
+import { AppFrame, PANEL_INNER_RADIUS } from "#/lib/app-frame";
+import { kindDotColor } from "#/lib/changelog/kind-style";
+import { marks } from "#/lib/changelog/releases";
+import { type Demo, type Page, SHOWCASE_SLUG } from "#/lib/demo";
+import { PageScrollContext, PageScrollerContext } from "#/lib/demo-kit";
+import { createMeasuredHeight } from "#/lib/measured-height";
+import { MONO } from "#/lib/doc-page";
+import { type PageNav, PageNavContext, usePageNav } from "#/lib/page-nav";
 import {
 	createRightRail,
 	RightRailContext,
 	RightRailTarget,
-} from "./lib/playground";
+} from "#/lib/playground";
 import {
 	ICON_LIBRARIES,
 	type IconLibrary,
 	iconLibrary,
 	setIconLibrary,
-} from "./lib/icons";
-import { openUrl } from "./lib/open-url";
+} from "#/lib/icons";
+import { openUrl } from "#/lib/open-url";
 import {
 	createSiteMenu,
 	SITE_MENU_SHORTCUT,
 	SiteCommandMenu,
-} from "./lib/site-command-menu";
-import { buildStarterPrompt, SITE_URL } from "./lib/starter-prompt";
+} from "#/lib/site-command-menu";
+import { buildStarterPrompt, SITE_URL } from "#/lib/starter-prompt";
 import {
 	bindSystemScheme,
 	color,
@@ -71,7 +71,7 @@ import {
 	type ThemeChoice,
 	themeChoice,
 	weight,
-} from "./lib/theme";
+} from "#/lib/theme";
 
 const SHOWCASE = SHOWCASE_SLUG;
 const PAGE_WIDTH = 600;

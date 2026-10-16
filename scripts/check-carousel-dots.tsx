@@ -5,7 +5,7 @@
  *   bun scripts/check-carousel-dots.tsx
  */
 import { createSignal } from "solid-js";
-import { CarouselDots } from "../src/components/carousel-dots";
+import { CarouselDots } from "#/components/carousel-dots";
 import { createCheck } from "./check-kit";
 
 const [value, setValue] = createSignal(1);

@@ -13,7 +13,7 @@
  * (no snap window) and settles on the row.
  */
 import { mkdirSync } from "node:fs";
-import { setThemeChoice } from "../src/lib/theme";
+import { setThemeChoice } from "#/lib/theme";
 import { createCheck } from "./check-kit";
 import { readPng } from "./png-pixels";
 

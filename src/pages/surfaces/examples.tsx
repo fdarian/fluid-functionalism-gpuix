@@ -6,9 +6,9 @@ import {
 	onMount,
 	Show,
 } from "solid-js";
-import { ColorPicker } from "../../components/color-picker";
-import { ComponentPreview } from "../../lib/doc-page";
-import { color, surface } from "../../lib/theme";
+import { ColorPicker } from "#/components/color-picker";
+import { ComponentPreview } from "#/lib/doc-page";
+import { color, surface } from "#/lib/theme";
 import {
 	ANNOTATION_BLUE,
 	type ArrowDial,

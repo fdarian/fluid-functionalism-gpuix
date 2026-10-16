@@ -1,16 +1,16 @@
 import { createSignal, For, type JSX, onCleanup, Show } from "solid-js";
-import { Badge, type BadgeColor, badgeColors } from "../components/badge";
-import { Button } from "../components/button";
-import { ChatMessage } from "../components/chat-message";
+import { Badge, type BadgeColor, badgeColors } from "#/components/badge";
+import { Button } from "#/components/button";
+import { ChatMessage } from "#/components/chat-message";
 import {
 	DropdownContent,
 	DropdownLabel,
 	DropdownMenu,
 	DropdownTrigger,
 	MenuItem,
-} from "../components/dropdown";
-import { InputMessage } from "../components/input-message";
-import { ScrollArea } from "../components/scroll-area";
+} from "#/components/dropdown";
+import { InputMessage } from "#/components/input-message";
+import { ScrollArea } from "#/components/scroll-area";
 import {
 	Table,
 	TableBody,
@@ -18,23 +18,23 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "../components/table";
+} from "#/components/table";
 import {
 	TabsSubtle,
 	TabsSubtleItem,
 	TabsSubtlePanel,
-} from "../components/tabs-subtle";
+} from "#/components/tabs-subtle";
 import {
 	ThinkingStep,
 	ThinkingSteps,
 	ThinkingStepsContent,
 	ThinkingStepsHeader,
-} from "../components/thinking-steps";
-import type { ShotContext } from "../lib/demo";
-import { Icon } from "../lib/icon";
-import type { IconName } from "../lib/icons";
-import { color, shadow, siteType, weight } from "../lib/theme";
-import { ConceptFrame } from "./concepts/frame";
+} from "#/components/thinking-steps";
+import type { ShotContext } from "#/lib/demo";
+import { Icon } from "#/lib/icon";
+import type { IconName } from "#/lib/icons";
+import { color, shadow, siteType, weight } from "#/lib/theme";
+import { ConceptFrame } from "#/pages/concepts/frame";
 
 export const title = "Quill";
 export const group = "Pages";

@@ -6,7 +6,7 @@
  *   bun scripts/check-scroll-area.tsx
  */
 import { createSignal, For } from "solid-js";
-import { ScrollArea } from "../src/components/scroll-area";
+import { ScrollArea } from "#/components/scroll-area";
 import { createCheck } from "./check-kit";
 
 const [text, setText] = createSignal("");

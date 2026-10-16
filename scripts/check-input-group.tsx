@@ -8,10 +8,10 @@
  * - Hovering a field eases its ring in over 80 ms instead of switching it.
  */
 import { createTestRoot } from "@gpuix/solid/testing";
-import { App } from "../src/app";
-import { loadDemos, loadPages } from "../src/lib/demo";
-import { fonts } from "../src/lib/fonts";
-import { setThemeChoice } from "../src/lib/theme";
+import { App } from "#/app";
+import { loadDemos, loadPages } from "#/lib/demo";
+import { fonts } from "#/lib/fonts";
+import { setThemeChoice } from "#/lib/theme";
 import { scrollIntoView } from "./check-kit";
 import { readPng } from "./png-pixels";
 

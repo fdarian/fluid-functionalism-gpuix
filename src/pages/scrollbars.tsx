@@ -1,13 +1,13 @@
 import type { JSX } from "solid-js";
-import type { ShotContext } from "../lib/demo";
-import { Code, DocPage, DocSection, Prose, SubHeading } from "../lib/doc-page";
+import type { ShotContext } from "#/lib/demo";
+import { Code, DocPage, DocSection, Prose, SubHeading } from "#/lib/doc-page";
 import {
 	FadeDemo,
 	HorizontalDemo,
 	ProblemDemo,
 	TableDemo,
-} from "./scrollbars/demos";
-import { SCROLLBARS_INSTALL_PROMPT } from "./scrollbars/install-prompt";
+} from "#/pages/scrollbars/demos";
+import { SCROLLBARS_INSTALL_PROMPT } from "#/pages/scrollbars/install-prompt";
 
 export const title = "Scrollbars";
 export const group = "System";

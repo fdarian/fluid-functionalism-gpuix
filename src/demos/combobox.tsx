@@ -1,16 +1,16 @@
 import type { HostElement } from "@gpuix/solid";
 import { createSignal } from "solid-js";
-import { Button } from "../components/button";
-import { Combobox, type ComboboxItem } from "../components/combobox";
-import type { DemoModule, ShotContext } from "../lib/demo";
-import { DemoCard, DemoRow } from "../lib/demo-kit";
+import { Button } from "#/components/button";
+import { Combobox, type ComboboxItem } from "#/components/combobox";
+import type { DemoModule, ShotContext } from "#/lib/demo";
+import { DemoCard, DemoRow } from "#/lib/demo-kit";
 import {
 	PlaygroundLayout,
 	PlaygroundPanel,
 	PlaySection,
 	PlaySwitch,
-} from "../lib/playground";
-import { color, type as scale } from "../lib/theme";
+} from "#/lib/playground";
+import { color, type as scale } from "#/lib/theme";
 
 const FRAMEWORKS = [
 	"Astro",

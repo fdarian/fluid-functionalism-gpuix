@@ -1,6 +1,6 @@
 import { buttonProps, motion, useGpuixRequired } from "@gpuix/solid";
 import { createSignal, For } from "solid-js";
-import { ComponentPreview, MONO } from "../../lib/doc-page";
+import { ComponentPreview, MONO } from "#/lib/doc-page";
 import {
 	color,
 	focusRing,
@@ -8,7 +8,7 @@ import {
 	siteType,
 	motion as tween,
 	weight,
-} from "../../lib/theme";
+} from "#/lib/theme";
 
 export const SPRING_TOKENS_CODE = `import { motion } from "motion/react";
 import { spring } from "@/lib/springs";

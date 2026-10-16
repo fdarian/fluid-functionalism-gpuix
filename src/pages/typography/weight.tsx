@@ -6,8 +6,8 @@ import {
 	on,
 	onCleanup,
 } from "solid-js";
-import { color, fade, type as scale, shape, weight } from "../../lib/theme";
-import { createVisibility } from "../surfaces/visibility";
+import { color, fade, type as scale, shape, weight } from "#/lib/theme";
+import { createVisibility } from "#/pages/surfaces/visibility";
 import { MARK_BLUE, MARK_RED, Specimen, TweakFrame } from "./specimen";
 
 const MENU_LABEL = "Open the settings dialog";

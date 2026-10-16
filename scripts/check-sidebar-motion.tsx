@@ -13,7 +13,7 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuSub,
-} from "../src/components/sidebar";
+} from "#/components/sidebar";
 import { createCheck } from "./check-kit";
 
 const [open, setOpen] = createSignal(false);

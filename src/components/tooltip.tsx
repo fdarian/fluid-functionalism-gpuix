@@ -15,9 +15,9 @@ import {
 	untrack,
 	useContext,
 } from "solid-js";
-import { createPlacementState, POPUP_MARGIN } from "../lib/popup";
-import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
-import { color, shape, type as scale, motion as tween } from "../lib/theme";
+import { createPlacementState, POPUP_MARGIN } from "#/lib/popup";
+import { createPresence, POPUP_EXIT_FALLBACK_MS } from "#/lib/presence";
+import { color, shape, type as scale, motion as tween } from "#/lib/theme";
 
 export type TooltipSide = "top" | "right" | "bottom" | "left";
 

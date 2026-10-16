@@ -1,8 +1,8 @@
 import { createSignal } from "solid-js";
-import { Switch } from "../components/switch";
-import type { DemoModule } from "../lib/demo";
-import { DemoCard, DemoRow } from "../lib/demo-kit";
-import { color, type as scale } from "../lib/theme";
+import { Switch } from "#/components/switch";
+import type { DemoModule } from "#/lib/demo";
+import { DemoCard, DemoRow } from "#/lib/demo-kit";
+import { color, type as scale } from "#/lib/theme";
 
 export const title = "Switch";
 export const group = "Components";

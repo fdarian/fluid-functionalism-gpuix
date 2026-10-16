@@ -6,8 +6,8 @@
  * The releases must load, run newest first, and have every Breaking entry carry
  * a diff; each malformed release must throw a `ChangelogFormatError`.
  */
-import { latestMarks, loadReleases } from "../src/lib/changelog/load";
-import { ChangelogFormatError, parseRelease } from "../src/lib/changelog/parse";
+import { latestMarks, loadReleases } from "#/lib/changelog/load";
+import { ChangelogFormatError, parseRelease } from "#/lib/changelog/parse";
 
 function assert(condition: boolean, message: string) {
 	if (!condition) throw new Error(`check-changelog: ${message}`);

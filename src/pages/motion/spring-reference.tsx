@@ -5,15 +5,15 @@ import {
 	useGpuixRequired,
 } from "@gpuix/solid";
 import { type Accessor, createSignal, For, onCleanup, Show } from "solid-js";
-import { MONO } from "../../lib/doc-page";
-import { usePageNav } from "../../lib/page-nav";
+import { MONO } from "#/lib/doc-page";
+import { usePageNav } from "#/lib/page-nav";
 import {
 	color,
 	focusRing,
 	siteType,
 	motion as tween,
 	weight,
-} from "../../lib/theme";
+} from "#/lib/theme";
 
 interface Chip {
 	label: string;

@@ -1,4 +1,4 @@
-import type { ShotContext } from "../lib/demo";
+import type { ShotContext } from "#/lib/demo";
 
 const PAGE_X = 560;
 const PAGE_Y = 400;

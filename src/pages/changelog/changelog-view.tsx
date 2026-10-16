@@ -1,7 +1,7 @@
 import { For } from "solid-js";
-import type { Release } from "../../lib/changelog/parse";
-import { buildUpgradePrompt } from "../../lib/changelog/upgrade-prompt";
-import { CopyPromptButton, Prose } from "../../lib/doc-page";
+import type { Release } from "#/lib/changelog/parse";
+import { buildUpgradePrompt } from "#/lib/changelog/upgrade-prompt";
+import { CopyPromptButton, Prose } from "#/lib/doc-page";
 import { PagePlaybackProvider } from "./preview-stage";
 import { ReleaseSection } from "./release-section";
 import { createReleaseSpy } from "./release-spy";

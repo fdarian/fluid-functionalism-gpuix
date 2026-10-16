@@ -14,9 +14,9 @@ import {
 	onCleanup,
 	useContext,
 } from "solid-js";
-import { Button } from "../components/button";
-import { Select } from "../components/select";
-import { Switch } from "../components/switch";
+import { Button } from "#/components/button";
+import { Select } from "#/components/select";
+import { Switch } from "#/components/switch";
 import { PageScrollerContext, DemoCard } from "./demo-kit";
 import { defineIcon } from "./icons";
 import {

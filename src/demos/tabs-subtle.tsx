@@ -3,11 +3,11 @@ import {
 	TabsSubtle,
 	TabsSubtleItem,
 	TabsSubtlePanel,
-} from "../components/tabs-subtle";
-import type { DemoModule } from "../lib/demo";
-import { DemoCard } from "../lib/demo-kit";
-import type { IconRef } from "../lib/icons";
-import { color, type as scale } from "../lib/theme";
+} from "#/components/tabs-subtle";
+import type { DemoModule } from "#/lib/demo";
+import { DemoCard } from "#/lib/demo-kit";
+import type { IconRef } from "#/lib/icons";
+import { color, type as scale } from "#/lib/theme";
 
 
 const TABS: { icon: IconRef; label: string }[] = [

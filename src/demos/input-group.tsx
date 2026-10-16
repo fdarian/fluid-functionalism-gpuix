@@ -1,7 +1,7 @@
 import { createSignal } from "solid-js";
-import { InputField, InputGroup } from "../components/input-group";
-import type { DemoModule, ShotContext } from "../lib/demo";
-import { DemoCard } from "../lib/demo-kit";
+import { InputField, InputGroup } from "#/components/input-group";
+import type { DemoModule, ShotContext } from "#/lib/demo";
+import { DemoCard } from "#/lib/demo-kit";
 
 export const title = "InputGroup";
 export const group = "Components";

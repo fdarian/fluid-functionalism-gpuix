@@ -1,12 +1,12 @@
 import { createSignal, For } from "solid-js";
-import { Button } from "../../components/button";
-import { InputField, InputGroup } from "../../components/input-group";
-import { Select } from "../../components/select";
-import { TabsSubtle, TabsSubtleItem } from "../../components/tabs-subtle";
-import { ComponentPreview } from "../../lib/doc-page";
-import { defineIcon } from "../../lib/icons";
-import { color, type SizeChoice, siteType, weight } from "../../lib/theme";
-import { ANNOTATION_BLUE } from "../surfaces/annotations";
+import { Button } from "#/components/button";
+import { InputField, InputGroup } from "#/components/input-group";
+import { Select } from "#/components/select";
+import { TabsSubtle, TabsSubtleItem } from "#/components/tabs-subtle";
+import { ComponentPreview } from "#/lib/doc-page";
+import { defineIcon } from "#/lib/icons";
+import { color, type SizeChoice, siteType, weight } from "#/lib/theme";
+import { ANNOTATION_BLUE } from "#/pages/surfaces/annotations";
 import { LADDER } from "./ladder";
 import { SORT_OPTIONS } from "./sort-options";
 

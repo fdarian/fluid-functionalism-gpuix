@@ -1,9 +1,9 @@
 import { AnimatePresence, motion } from "@gpuix/solid";
 import { createSignal, For, type JSX } from "solid-js";
-import { CarouselDots } from "../components/carousel-dots";
-import type { DemoModule } from "../lib/demo";
-import { DemoCard } from "../lib/demo-kit";
-import { color, shape, type as scale, motion as tween } from "../lib/theme";
+import { CarouselDots } from "#/components/carousel-dots";
+import type { DemoModule } from "#/lib/demo";
+import { DemoCard } from "#/lib/demo-kit";
+import { color, shape, type as scale, motion as tween } from "#/lib/theme";
 
 export const SLIDES = ["Inbox", "Drafts", "Sent", "Archive"];
 /** How far a slide's label travels sideways on a change, in px. */

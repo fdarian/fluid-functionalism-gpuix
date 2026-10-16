@@ -5,11 +5,11 @@ import {
 	CardGroup,
 	CardHeader,
 	CardTitle,
-} from "../../components/card";
-import { Dropdown, MenuItem } from "../../components/dropdown";
-import { TabItem, Tabs, TabsList } from "../../components/tabs";
-import { ComponentPreview, MONO } from "../../lib/doc-page";
-import { color, siteType, weight } from "../../lib/theme";
+} from "#/components/card";
+import { Dropdown, MenuItem } from "#/components/dropdown";
+import { TabItem, Tabs, TabsList } from "#/components/tabs";
+import { ComponentPreview, MONO } from "#/lib/doc-page";
+import { color, siteType, weight } from "#/lib/theme";
 import { AXES_CODE } from "./snippets";
 import { ROWS } from "./plain-vs-fluid";
 

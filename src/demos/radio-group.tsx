@@ -1,8 +1,8 @@
 import { createSignal, For } from "solid-js";
-import { RadioGroup, RadioItem } from "../components/radio-group";
-import type { DemoModule } from "../lib/demo";
-import { DemoCard, DemoRow } from "../lib/demo-kit";
-import { color, type as scale } from "../lib/theme";
+import { RadioGroup, RadioItem } from "#/components/radio-group";
+import type { DemoModule } from "#/lib/demo";
+import { DemoCard, DemoRow } from "#/lib/demo-kit";
+import { color, type as scale } from "#/lib/theme";
 
 const OPTIONS = ["Option A", "Option B", "Option C"];
 

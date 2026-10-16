@@ -5,8 +5,8 @@ import {
 	type JSX,
 	useContext,
 } from "solid-js";
-import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover, type FluidHover, useHoverItem } from "../lib/fluid-hover";
+import { FluidHighlight } from "#/lib/fluid-highlight";
+import { createFluidHover, type FluidHover, useHoverItem } from "#/lib/fluid-hover";
 import {
 	color,
 	colorFade,
@@ -14,7 +14,7 @@ import {
 	sizeChoice,
 	type as scale,
 	weight,
-} from "../lib/theme";
+} from "#/lib/theme";
 
 export type TableSize = "default" | "compact";
 

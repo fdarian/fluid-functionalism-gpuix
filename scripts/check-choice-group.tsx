@@ -10,10 +10,10 @@
  */
 import { mkdirSync } from "node:fs";
 import { createTestRoot } from "@gpuix/solid/testing";
-import { App } from "../src/app";
-import { loadDemos, loadPages } from "../src/lib/demo";
-import { fonts } from "../src/lib/fonts";
-import { setThemeChoice } from "../src/lib/theme";
+import { App } from "#/app";
+import { loadDemos, loadPages } from "#/lib/demo";
+import { fonts } from "#/lib/fonts";
+import { setThemeChoice } from "#/lib/theme";
 import { readPng } from "./png-pixels";
 
 const outDir = `/tmp/check-choice-group-${process.pid}/`;

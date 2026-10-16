@@ -7,7 +7,7 @@ import {
 	siteType,
 	weight,
 	withAlpha,
-} from "../../lib/theme";
+} from "#/lib/theme";
 
 /** `.bento-card-border`: the card's rule and drop shadow at rest, on hover and with focus inside. */
 function edge() {

@@ -8,7 +8,7 @@
  */
 import { mkdirSync } from "node:fs";
 import { createTestRoot } from "@gpuix/solid/testing";
-import { Button } from "../src/components/button";
+import { Button } from "#/components/button";
 import {
 	Dropdown,
 	DropdownContent,
@@ -16,8 +16,8 @@ import {
 	DropdownSearch,
 	DropdownTrigger,
 	MenuItem,
-} from "../src/components/dropdown";
-import { fonts } from "../src/lib/fonts";
+} from "#/components/dropdown";
+import { fonts } from "#/lib/fonts";
 import { createCheck } from "./check-kit";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

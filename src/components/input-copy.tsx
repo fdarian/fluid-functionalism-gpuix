@@ -7,8 +7,8 @@ import {
 	onCleanup,
 	Show,
 } from "solid-js";
-import { Icon } from "../lib/icon";
-import type { IconRef } from "../lib/icons";
+import { Icon } from "#/lib/icon";
+import type { IconRef } from "#/lib/icons";
 import {
 	color,
 	colorFade,
@@ -18,7 +18,7 @@ import {
 	sizeChoice,
 	motion as tween,
 	weight,
-} from "../lib/theme";
+} from "#/lib/theme";
 import type { InputSize } from "./input-group";
 import { Tooltip } from "./tooltip";
 

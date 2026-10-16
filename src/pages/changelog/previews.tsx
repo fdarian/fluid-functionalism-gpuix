@@ -1,8 +1,8 @@
 import type { JSX } from "solid-js";
-import { previewMap } from "../../home/bento-previews";
-import { PlainVsFluidPreview } from "../fluid-hover/plain-vs-fluid";
-import { ToolbarRows } from "../sizes/toolbar";
-import { TabsExample } from "../skill/tabs-example";
+import { previewMap } from "#/home/bento-previews";
+import { PlainVsFluidPreview } from "#/pages/fluid-hover/plain-vs-fluid";
+import { ToolbarRows } from "#/pages/sizes/toolbar";
+import { TabsExample } from "#/pages/skill/tabs-example";
 
 /**
  * What a New entry shows under its sentence: the live component, the same

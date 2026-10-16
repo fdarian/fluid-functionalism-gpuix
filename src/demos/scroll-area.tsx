@@ -1,8 +1,8 @@
 import { For, type JSX } from "solid-js";
-import { ScrollArea } from "../components/scroll-area";
-import type { DemoModule } from "../lib/demo";
-import { DemoCard } from "../lib/demo-kit";
-import { color, radius, type as scale } from "../lib/theme";
+import { ScrollArea } from "#/components/scroll-area";
+import type { DemoModule } from "#/lib/demo";
+import { DemoCard } from "#/lib/demo-kit";
+import { color, radius, type as scale } from "#/lib/theme";
 
 const RELEASES = Array.from(
 	{ length: 24 },

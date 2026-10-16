@@ -11,8 +11,8 @@ import {
 	type StyleDesc,
 } from "@gpuix/solid";
 import { createSignal, type JSX, onCleanup, Show } from "solid-js";
-import { isChord } from "../lib/list-nav";
-import { color, fade, withAlpha } from "../lib/theme";
+import { isChord } from "#/lib/list-nav";
+import { color, fade, withAlpha } from "#/lib/theme";
 
 export type ScrollOrientation = "vertical" | "horizontal" | "both";
 

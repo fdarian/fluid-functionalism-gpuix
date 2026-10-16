@@ -1,11 +1,11 @@
 import { createSignal, For } from "solid-js";
-import { Button } from "../components/button";
-import { MobileDrawer } from "../components/mobile-drawer";
-import { SidebarMenu, SidebarMenuButton } from "../components/sidebar";
-import type { DemoModule } from "../lib/demo";
-import { DemoCard } from "../lib/demo-kit";
-import type { IconName } from "../lib/icons";
-import { color, type as scale, setThemeChoice, weight } from "../lib/theme";
+import { Button } from "#/components/button";
+import { MobileDrawer } from "#/components/mobile-drawer";
+import { SidebarMenu, SidebarMenuButton } from "#/components/sidebar";
+import type { DemoModule } from "#/lib/demo";
+import { DemoCard } from "#/lib/demo-kit";
+import type { IconName } from "#/lib/icons";
+import { color, type as scale, setThemeChoice, weight } from "#/lib/theme";
 
 const ROWS: { label: string; icon: IconName }[] = [
 	{ label: "Overview", icon: "globe" },

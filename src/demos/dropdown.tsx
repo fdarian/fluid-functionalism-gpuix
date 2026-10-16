@@ -1,5 +1,5 @@
 import { createMemo, createSignal, For, type JSX, Show } from "solid-js";
-import { Button } from "../components/button";
+import { Button } from "#/components/button";
 import {
 	Dropdown,
 	DropdownContent,
@@ -13,10 +13,10 @@ import {
 	DropdownSubTrigger,
 	DropdownTrigger,
 	MenuItem,
-} from "../components/dropdown";
-import type { DemoModule, ShotContext } from "../lib/demo";
-import { DemoCard } from "../lib/demo-kit";
-import type { IconName } from "../lib/icons";
+} from "#/components/dropdown";
+import type { DemoModule, ShotContext } from "#/lib/demo";
+import { DemoCard } from "#/lib/demo-kit";
+import type { IconName } from "#/lib/icons";
 import {
 	PlayDivider,
 	PlayField,
@@ -26,8 +26,8 @@ import {
 	PlaySelect,
 	PlaySwitch,
 	pick,
-} from "../lib/playground";
-import { color, type as scale, setThemeChoice } from "../lib/theme";
+} from "#/lib/playground";
+import { color, type as scale, setThemeChoice } from "#/lib/theme";
 
 const ITEMS = [
 	{ icon: "square-library", label: "Teamspaces" },

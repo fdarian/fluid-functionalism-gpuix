@@ -1,8 +1,8 @@
 import { For } from "solid-js";
-import { SidebarMenu, SidebarMenuButton } from "../../components/sidebar";
-import { monthLabel } from "../../lib/changelog/migration-prompt";
-import type { Release } from "../../lib/changelog/parse";
-import { color, shape, siteType, weight } from "../../lib/theme";
+import { SidebarMenu, SidebarMenuButton } from "#/components/sidebar";
+import { monthLabel } from "#/lib/changelog/migration-prompt";
+import type { Release } from "#/lib/changelog/parse";
+import { color, shape, siteType, weight } from "#/lib/theme";
 import { activeMonth, scrollToMonth } from "./release-spy";
 
 /**

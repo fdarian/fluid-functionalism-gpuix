@@ -1,7 +1,7 @@
 import { createSignal, type JSX, Show } from "solid-js";
-import { Slider, type SliderValue } from "../components/slider";
-import type { DemoModule } from "../lib/demo";
-import { DemoCard, DemoRow } from "../lib/demo-kit";
+import { Slider, type SliderValue } from "#/components/slider";
+import type { DemoModule } from "#/lib/demo";
+import { DemoCard, DemoRow } from "#/lib/demo-kit";
 
 const AMPERE_RATINGS = [0.1, 0.5, 0.7, 1.1, 1.3];
 const QUALITY = ["Off", "Low", "Medium", "High", "Ultra"];

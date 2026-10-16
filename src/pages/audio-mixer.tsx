@@ -1,7 +1,7 @@
 import { createSignal, type JSX } from "solid-js";
-import { Slider, type SliderValue } from "../components/slider";
-import type { ShotContext } from "../lib/demo";
-import { color, siteType, weight } from "../lib/theme";
+import { Slider, type SliderValue } from "#/components/slider";
+import type { ShotContext } from "#/lib/demo";
+import { color, siteType, weight } from "#/lib/theme";
 
 export const title = "Audio Mixer";
 export const group = "Pages";

@@ -1,8 +1,8 @@
 import type { HostMouseMoveEvent } from "@gpuix/solid";
 import { createSignal, For, type JSX, Show } from "solid-js";
-import { ScrollArea } from "../../components/scroll-area";
-import { Slider, type SliderValue } from "../../components/slider";
-import { ComponentPreview, MONO } from "../../lib/doc-page";
+import { ScrollArea } from "#/components/scroll-area";
+import { Slider, type SliderValue } from "#/components/slider";
+import { ComponentPreview, MONO } from "#/lib/doc-page";
 import {
 	color,
 	fade,
@@ -13,7 +13,7 @@ import {
 	siteType,
 	surface,
 	weight,
-} from "../../lib/theme";
+} from "#/lib/theme";
 import { Elevated, SurfaceProvider } from "./elevated";
 import { LOCK_ICON, type MenuOption, SurfaceMenu } from "./role-menu";
 import {

@@ -16,7 +16,7 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "../src/components/card";
+} from "#/components/card";
 import { createCheck } from "./check-kit";
 import { readPng } from "./png-pixels";
 

@@ -3,9 +3,9 @@ import {
 	Button,
 	type ButtonSize,
 	type ButtonVariant,
-} from "../components/button";
-import type { DemoModule, ShotContext } from "../lib/demo";
-import { DemoCard, DemoRow } from "../lib/demo-kit";
+} from "#/components/button";
+import type { DemoModule, ShotContext } from "#/lib/demo";
+import { DemoCard, DemoRow } from "#/lib/demo-kit";
 import {
 	PlayDivider,
 	PlayField,
@@ -15,8 +15,8 @@ import {
 	PlaySelect,
 	PlaySwitch,
 	pick,
-} from "../lib/playground";
-import { color, type as scale, weight } from "../lib/theme";
+} from "#/lib/playground";
+import { color, type as scale, weight } from "#/lib/theme";
 
 const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost"];
 

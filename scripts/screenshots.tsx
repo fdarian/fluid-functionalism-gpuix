@@ -15,21 +15,21 @@
  */
 import { mkdirSync } from "node:fs";
 import { createTestRoot } from "@gpuix/solid/testing";
-import { App } from "../src/app";
-import { showcaseScenarios } from "../src/home/scenarios";
+import { App } from "#/app";
+import { showcaseScenarios } from "#/home/scenarios";
 import {
 	type Demo,
 	loadDemos,
 	loadPages,
 	type Page,
 	type ShotContext,
-} from "../src/lib/demo";
-import { fonts } from "../src/lib/fonts";
+} from "#/lib/demo";
+import { fonts } from "#/lib/fonts";
 import {
 	setShapeChoice,
 	setSizeChoice,
 	setThemeChoice,
-} from "../src/lib/theme";
+} from "#/lib/theme";
 
 const slug = process.argv[2];
 const demos = await loadDemos();

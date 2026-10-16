@@ -1,5 +1,5 @@
-import type { DemoModule } from "../lib/demo";
-import { DemoCard } from "../lib/demo-kit";
+import type { DemoModule } from "#/lib/demo";
+import { DemoCard } from "#/lib/demo-kit";
 import {
 	Table,
 	TableBody,
@@ -8,7 +8,7 @@ import {
 	TableHeader,
 	TableRow,
 	type TableSize,
-} from "../components/table";
+} from "#/components/table";
 
 const PEOPLE = [
 	{ name: "Alice", role: "Engineer", status: "Active" },

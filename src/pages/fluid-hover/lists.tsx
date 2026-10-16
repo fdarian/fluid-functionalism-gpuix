@@ -14,17 +14,17 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuSub,
-} from "../../components/sidebar";
-import { onFrame } from "../../lib/clock";
-import { defineIcon, type IconRef } from "../../lib/icons";
-import { ComponentPreview } from "../../lib/doc-page";
+} from "#/components/sidebar";
+import { onFrame } from "#/lib/clock";
+import { defineIcon, type IconRef } from "#/lib/icons";
+import { ComponentPreview } from "#/lib/doc-page";
 import {
 	color,
 	radius,
 	siteType,
 	type as scale,
 	weight,
-} from "../../lib/theme";
+} from "#/lib/theme";
 import { LISTS_CODE } from "./snippets";
 
 const MESSAGE_CIRCLE = defineIcon(

@@ -1,22 +1,22 @@
 import { createEffect, createSignal, on, onCleanup, Show } from "solid-js";
-import { Button } from "../components/button";
+import { Button } from "#/components/button";
 import {
 	type ComposerFile,
 	fileFromPath,
 	InputMessage,
 	type InputMessageSlotContext,
 	type QueuedMessage,
-} from "../components/input-message";
-import { collapsedStackHeight } from "../components/queued-stack";
-import { Tooltip } from "../components/tooltip";
+} from "#/components/input-message";
+import { collapsedStackHeight } from "#/components/queued-stack";
+import { Tooltip } from "#/components/tooltip";
 import {
 	ComposerQueueStack,
 	ComposerStage,
 	Transcript,
 	type Turn,
-} from "../lib/composer-stage";
-import type { DemoModule } from "../lib/demo";
-import { DemoCard } from "../lib/demo-kit";
+} from "#/lib/composer-stage";
+import type { DemoModule } from "#/lib/demo";
+import { DemoCard } from "#/lib/demo-kit";
 import {
 	PlayDivider,
 	PlayField,
@@ -26,8 +26,8 @@ import {
 	PlaySelect,
 	PlaySwitch,
 	pick,
-} from "../lib/playground";
-import { QueuedChat } from "../lib/queued-chat";
+} from "#/lib/playground";
+import { QueuedChat } from "#/lib/queued-chat";
 
 const SUGGESTIONS = [
 	"What is Fluid Functionalism about?",

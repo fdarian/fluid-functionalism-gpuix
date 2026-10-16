@@ -1,7 +1,7 @@
 import type { HostElement, StyleDesc } from "@gpuix/solid";
 import type { JSX } from "solid-js";
-import { MONO } from "../../lib/doc-page";
-import { color, shape, siteType } from "../../lib/theme";
+import { MONO } from "#/lib/doc-page";
+import { color, shape, siteType } from "#/lib/theme";
 
 /** The blue line the tweak demos draw at the measured edge, and the red wash over what runs past it. */
 export const MARK_BLUE = "#6B97FF";

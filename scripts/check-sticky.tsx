@@ -5,7 +5,7 @@
  *   bun scripts/check-sticky.tsx
  */
 import { For } from "solid-js";
-import { Banner, BannerTitle } from "../src/components/banner";
+import { Banner, BannerTitle } from "#/components/banner";
 import { createCheck } from "./check-kit";
 
 const ROWS = 20;

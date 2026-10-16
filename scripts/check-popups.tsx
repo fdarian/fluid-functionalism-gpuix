@@ -6,12 +6,12 @@
  */
 import { createTestRoot, type TestElement } from "@gpuix/solid/testing";
 import { createSignal } from "solid-js";
-import { App } from "../src/app";
-import { Combobox } from "../src/components/combobox";
-import { Select } from "../src/components/select";
-import { loadDemos, loadPages } from "../src/lib/demo";
-import { fonts } from "../src/lib/fonts";
-import { color, setThemeChoice } from "../src/lib/theme";
+import { App } from "#/app";
+import { Combobox } from "#/components/combobox";
+import { Select } from "#/components/select";
+import { loadDemos, loadPages } from "#/lib/demo";
+import { fonts } from "#/lib/fonts";
+import { color, setThemeChoice } from "#/lib/theme";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 let failures = 0;

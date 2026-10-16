@@ -5,10 +5,10 @@ import {
 	useGpuixRequired,
 } from "@gpuix/solid";
 import { createSignal, For } from "solid-js";
-import { FluidHighlight } from "../../lib/fluid-highlight";
-import { createFluidHover, useHoverItem } from "../../lib/fluid-hover";
-import { CheckMark, Icon, LIST_CHECK } from "../../lib/icon";
-import { StableLabel } from "../../lib/stable-label";
+import { FluidHighlight } from "#/lib/fluid-highlight";
+import { createFluidHover, useHoverItem } from "#/lib/fluid-hover";
+import { CheckMark, Icon, LIST_CHECK } from "#/lib/icon";
+import { StableLabel } from "#/lib/stable-label";
 import {
 	color,
 	focusRing,
@@ -16,7 +16,7 @@ import {
 	shape,
 	siteType,
 	weight,
-} from "../../lib/theme";
+} from "#/lib/theme";
 import {
 	Compare,
 	clickStep,

@@ -7,14 +7,14 @@ import {
 	motion,
 } from "@gpuix/solid";
 import type { JSX } from "solid-js";
-import { HideOutside } from "../lib/modal";
-import { createPresence } from "../lib/presence";
+import { HideOutside } from "#/lib/modal";
+import { createPresence } from "#/lib/presence";
 import { FocusFirst } from "./dialog";
 import {
 	color,
 	shadow,
 	motion as tween,
-} from "../lib/theme";
+} from "#/lib/theme";
 
 export const DRAWER_WIDTH = 256;
 

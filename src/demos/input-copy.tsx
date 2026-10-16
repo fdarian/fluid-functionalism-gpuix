@@ -1,8 +1,8 @@
 import { createSignal, type JSX } from "solid-js";
-import { InputCopy } from "../components/input-copy";
-import type { DemoModule } from "../lib/demo";
-import { DemoCard, DemoRow } from "../lib/demo-kit";
-import { color, type as scale } from "../lib/theme";
+import { InputCopy } from "#/components/input-copy";
+import type { DemoModule } from "#/lib/demo";
+import { DemoCard, DemoRow } from "#/lib/demo-kit";
+import { color, type as scale } from "#/lib/theme";
 
 const COMMAND =
 	"npx shadcn@latest add https://www.fluidfunctionalism.com/r/input-copy.json";

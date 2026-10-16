@@ -1,13 +1,13 @@
 import { createSignal, For } from "solid-js";
-import { Button } from "../../components/button";
-import { Dropdown } from "../../components/dropdown";
-import { MenuItem } from "../../components/menu-item";
-import { color, type SizeChoice, siteType, weight } from "../../lib/theme";
+import { Button } from "#/components/button";
+import { Dropdown } from "#/components/dropdown";
+import { MenuItem } from "#/components/menu-item";
+import { color, type SizeChoice, siteType, weight } from "#/lib/theme";
 import {
 	ANNOTATION_BLUE,
 	ArrowOverlay,
 	buildArrow,
-} from "../surfaces/annotations";
+} from "#/pages/surfaces/annotations";
 import { LADDER } from "./ladder";
 import { SORT_OPTIONS } from "./sort-options";
 import { StepFrame } from "./step-frame";

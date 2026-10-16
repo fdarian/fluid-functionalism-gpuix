@@ -1,9 +1,9 @@
 import { buttonProps, useGpuixRequired } from "@gpuix/solid";
 import { createSignal } from "solid-js";
-import { InputCopy } from "../../components/input-copy";
-import { MONO } from "../../lib/doc-page";
-import { Icon } from "../../lib/icon";
-import { color, focusRing, shape, siteType, weight } from "../../lib/theme";
+import { InputCopy } from "#/components/input-copy";
+import { MONO } from "#/lib/doc-page";
+import { Icon } from "#/lib/icon";
+import { color, focusRing, shape, siteType, weight } from "#/lib/theme";
 import {
 	Compare,
 	clickStep,

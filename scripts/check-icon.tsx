@@ -9,8 +9,8 @@
  * held and stepped by hand so a slow frame cannot skip the middle.
  */
 import { createSignal } from "solid-js";
-import { Icon } from "../src/lib/icon";
-import { color } from "../src/lib/theme";
+import { Icon } from "#/lib/icon";
+import { color } from "#/lib/theme";
 import { createCheck } from "./check-kit";
 
 const [stroke, setStroke] = createSignal(1.5);

@@ -6,7 +6,7 @@ import {
 	onCleanup,
 	useContext,
 } from "solid-js";
-import { PageScrollerContext } from "../../lib/demo-kit";
+import { PageScrollerContext } from "#/lib/demo-kit";
 
 /**
  * Whether at least `threshold` of the element is inside the page's scroller.

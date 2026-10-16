@@ -7,10 +7,10 @@ import {
 	useIsPresent,
 } from "@gpuix/solid";
 import { createSignal, For, onCleanup, onMount, Show } from "solid-js";
-import { onFrame } from "../lib/clock";
-import { Icon } from "../lib/icon";
-import { defineIcon } from "../lib/icons";
-import { color, type as scale, scheme } from "../lib/theme";
+import { onFrame } from "#/lib/clock";
+import { Icon } from "#/lib/icon";
+import { defineIcon } from "#/lib/icons";
+import { color, type as scale, scheme } from "#/lib/theme";
 
 const FRAME_MS = 33;
 

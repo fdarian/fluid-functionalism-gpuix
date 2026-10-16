@@ -9,10 +9,10 @@ import {
 	onCleanup,
 	Show,
 } from "solid-js";
-import { ChatMessage } from "../components/chat-message";
-import type { ComposerFile, QueuedMessage } from "../components/input-message";
-import { type QueuedMessage as StackMessage, QueuedStack } from "../components/queued-stack";
-import { ThinkingIndicator } from "../components/thinking-indicator";
+import { ChatMessage } from "#/components/chat-message";
+import type { ComposerFile, QueuedMessage } from "#/components/input-message";
+import { type QueuedMessage as StackMessage, QueuedStack } from "#/components/queued-stack";
+import { ThinkingIndicator } from "#/components/thinking-indicator";
 
 export type Turn = {
 	from: "user" | "assistant";

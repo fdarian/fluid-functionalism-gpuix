@@ -18,10 +18,10 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
-import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover } from "../lib/fluid-hover";
-import { Icon } from "../lib/icon";
-import { defineIcon, type IconRef } from "../lib/icons";
+import { FluidHighlight } from "#/lib/fluid-highlight";
+import { createFluidHover } from "#/lib/fluid-hover";
+import { Icon } from "#/lib/icon";
+import { defineIcon, type IconRef } from "#/lib/icons";
 import {
 	color,
 	colorFade,
@@ -33,7 +33,7 @@ import {
 	type as scale,
 	weight,
 	withAlpha,
-} from "../lib/theme";
+} from "#/lib/theme";
 
 export type CardOrientation = "card" | "inline";
 export type CardBorder = "none" | "outlined";

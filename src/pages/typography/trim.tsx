@@ -1,4 +1,4 @@
-import { color, type as scale, shape } from "../../lib/theme";
+import { color, type as scale, shape } from "#/lib/theme";
 import { MARK_BLUE, MARK_RED, Specimen, TweakFrame } from "./specimen";
 
 // Inter's metrics at the body role (13px on a 20px line), from the font's

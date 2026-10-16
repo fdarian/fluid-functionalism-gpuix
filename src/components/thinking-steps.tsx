@@ -16,11 +16,11 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
-import { onFrame } from "../lib/clock";
-import { Icon } from "../lib/icon";
-import { defineIcon, type IconName } from "../lib/icons";
-import { createMeasuredHeight } from "../lib/measured-height";
-import { StableLabel } from "../lib/stable-label";
+import { onFrame } from "#/lib/clock";
+import { Icon } from "#/lib/icon";
+import { defineIcon, type IconName } from "#/lib/icons";
+import { createMeasuredHeight } from "#/lib/measured-height";
+import { StableLabel } from "#/lib/stable-label";
 import {
 	color,
 	focusRing,
@@ -28,7 +28,7 @@ import {
 	type as scale,
 	motion as tween,
 	weight,
-} from "../lib/theme";
+} from "#/lib/theme";
 import { Badge, type BadgeColor } from "./badge";
 import { Shimmer } from "./thinking-indicator";
 

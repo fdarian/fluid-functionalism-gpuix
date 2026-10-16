@@ -1,20 +1,20 @@
 import { type Accessor, createSignal, For, onCleanup, Show } from "solid-js";
-import { Button } from "../components/button";
+import { Button } from "#/components/button";
 import {
 	DropdownContent,
 	DropdownMenu,
 	DropdownTrigger,
 	MenuItem,
-} from "../components/dropdown";
+} from "#/components/dropdown";
 import {
 	type ComposerFile,
 	fileFromPath,
 	InputMessage,
 	type InputMessageSlotContext,
 	type QueuedMessage,
-} from "../components/input-message";
-import { collapsedStackHeight } from "../components/queued-stack";
-import { Tooltip } from "../components/tooltip";
+} from "#/components/input-message";
+import { collapsedStackHeight } from "#/components/queued-stack";
+import { Tooltip } from "#/components/tooltip";
 import {
 	ComposerQueueStack,
 	ComposerStage,

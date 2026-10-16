@@ -6,14 +6,14 @@ import {
 	onCleanup,
 	useContext,
 } from "solid-js";
-import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
+import { FluidHighlight } from "#/lib/fluid-highlight";
+import { createFluidHover, type FluidHover } from "#/lib/fluid-hover";
 import {
 	createFocusRing,
 	FocusRing,
 	type FocusRingState,
-} from "../lib/focus-ring";
-import { color, shape, motion as tween } from "../lib/theme";
+} from "#/lib/focus-ring";
+import { color, shape, motion as tween } from "#/lib/theme";
 
 interface NavMenuScope {
 	hover: FluidHover;

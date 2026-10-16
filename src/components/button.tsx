@@ -7,9 +7,9 @@ import {
 	useGpuixRequired,
 } from "@gpuix/solid";
 import { type Accessor, createSignal, type JSX, Show } from "solid-js";
-import { Icon } from "../lib/icon";
-import { fill } from "../lib/press";
-import type { IconRef } from "../lib/icons";
+import { Icon } from "#/lib/icon";
+import { fill } from "#/lib/press";
+import type { IconRef } from "#/lib/icons";
 import {
 	color,
 	colorFade,
@@ -21,7 +21,7 @@ import {
 	surfaceFade,
 	type as scale,
 	weight,
-} from "../lib/theme";
+} from "#/lib/theme";
 
 export type ButtonVariant = "primary" | "secondary" | "tertiary" | "ghost";
 export type ButtonSize = "default" | "compact" | "icon" | "icon-compact";

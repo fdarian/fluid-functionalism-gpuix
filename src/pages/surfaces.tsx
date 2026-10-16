@@ -1,21 +1,21 @@
 import { createSignal, For, type JSX } from "solid-js";
-import type { ShotContext } from "../lib/demo";
-import { DocPage, DocSection, Prose, SubHeading } from "../lib/doc-page";
+import type { ShotContext } from "#/lib/demo";
+import { DocPage, DocSection, Prose, SubHeading } from "#/lib/doc-page";
 import {
 	color,
 	type Scheme,
 	setThemeChoice,
 	siteType,
-} from "../lib/theme";
-import { ColorPickerDemo, InviteDialogDemo } from "./surfaces/examples";
-import { SURFACES_INSTALL_PROMPT } from "./surfaces/install-prompt";
-import { ProblemDemo } from "./surfaces/problem";
+} from "#/lib/theme";
+import { ColorPickerDemo, InviteDialogDemo } from "#/pages/surfaces/examples";
+import { SURFACES_INSTALL_PROMPT } from "#/pages/surfaces/install-prompt";
+import { ProblemDemo } from "#/pages/surfaces/problem";
 import {
 	ElevatedDemo,
 	ElevationStackDemo,
 	SubstrateDemo,
 	TokensDemo,
-} from "./surfaces/solution";
+} from "#/pages/surfaces/solution";
 
 export const title = "Surfaces";
 export const group = "System";

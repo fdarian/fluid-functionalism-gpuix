@@ -16,10 +16,10 @@ import {
 	type BannerStatus,
 	BannerTitle,
 	type BannerVariant,
-} from "../components/banner";
-import { Button } from "../components/button";
-import type { DemoModule, ShotContext } from "../lib/demo";
-import { DemoCard } from "../lib/demo-kit";
+} from "#/components/banner";
+import { Button } from "#/components/button";
+import type { DemoModule, ShotContext } from "#/lib/demo";
+import { DemoCard } from "#/lib/demo-kit";
 import {
 	PlayDivider,
 	PlayField,
@@ -29,8 +29,8 @@ import {
 	PlaySelect,
 	PlaySwitch,
 	pick,
-} from "../lib/playground";
-import { color, type as scale } from "../lib/theme";
+} from "#/lib/playground";
+import { color, type as scale } from "#/lib/theme";
 
 const STATUSES: { status: BannerStatus; label: string }[] = [
 	{ status: "default", label: "Default" },

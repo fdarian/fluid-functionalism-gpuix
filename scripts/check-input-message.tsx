@@ -14,10 +14,10 @@
  *   clock held; the send button's hover shadow eases over 180 ms.
  */
 import { createTestRoot } from "@gpuix/solid/testing";
-import { fileFromPath, InputMessage } from "../src/components/input-message";
-import { TooltipProvider } from "../src/components/tooltip";
-import { fonts } from "../src/lib/fonts";
-import { color, setThemeChoice } from "../src/lib/theme";
+import { fileFromPath, InputMessage } from "#/components/input-message";
+import { TooltipProvider } from "#/components/tooltip";
+import { fonts } from "#/lib/fonts";
+import { color, setThemeChoice } from "#/lib/theme";
 import { readPng } from "./png-pixels";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

@@ -8,11 +8,11 @@ import {
 	SidebarMenuButton,
 	SidebarMenuSub,
 	SidebarSearchField,
-} from "../components/sidebar";
-import type { DemoModule, ShotContext } from "../lib/demo";
-import { DemoCard } from "../lib/demo-kit";
-import { color, shape } from "../lib/theme";
-import { SidebarPlayground } from "./sidebar/playground";
+} from "#/components/sidebar";
+import type { DemoModule, ShotContext } from "#/lib/demo";
+import { DemoCard } from "#/lib/demo-kit";
+import { color, shape } from "#/lib/theme";
+import { SidebarPlayground } from "#/demos/sidebar/playground";
 
 // The source's blue dot is a fixed Tailwind `bg-blue-500`; its second dot is `var(--warning)`, which follows the theme, so a dot colour is read when it paints.
 const blue = () => "#3B82F6";

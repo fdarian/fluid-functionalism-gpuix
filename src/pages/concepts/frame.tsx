@@ -1,11 +1,11 @@
 import { For, type JSX } from "solid-js";
-import { CustomizeCard } from "../../app";
-import { NavItem } from "../../components/nav-item";
-import { NavMenu } from "../../components/nav-menu";
-import { ScrollArea } from "../../components/scroll-area";
-import { SHOWCASE_SLUG } from "../../lib/demo";
-import { usePageNav } from "../../lib/page-nav";
-import { color } from "../../lib/theme";
+import { CustomizeCard } from "#/app";
+import { NavItem } from "#/components/nav-item";
+import { NavMenu } from "#/components/nav-menu";
+import { ScrollArea } from "#/components/scroll-area";
+import { SHOWCASE_SLUG } from "#/lib/demo";
+import { usePageNav } from "#/lib/page-nav";
+import { color } from "#/lib/theme";
 
 export const CONCEPTS = [
 	{ slug: "concepts-lumen", name: "Lumen" },

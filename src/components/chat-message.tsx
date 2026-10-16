@@ -1,7 +1,7 @@
 import { buttonProps, motion, useGpuixRequired } from "@gpuix/solid";
 import { createSignal, type JSX, Show } from "solid-js";
-import { Icon } from "../lib/icon";
-import type { IconName } from "../lib/icons";
+import { Icon } from "#/lib/icon";
+import type { IconName } from "#/lib/icons";
 import {
 	color,
 	fade,
@@ -10,7 +10,7 @@ import {
 	scheme,
 	shape,
 	motion as tween,
-} from "../lib/theme";
+} from "#/lib/theme";
 import { type FileLike, FileThumbnail } from "./file-thumbnail";
 
 const subtitle = { fontSize: 14, lineHeight: 20 } as const;

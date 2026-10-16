@@ -1,5 +1,5 @@
 import { createSignal, type JSX } from "solid-js";
-import { Button } from "../components/button";
+import { Button } from "#/components/button";
 import {
 	Dialog,
 	DialogClose,
@@ -10,11 +10,11 @@ import {
 	DialogTitle,
 	DialogTrigger,
 	type DialogSize,
-} from "../components/dialog";
-import { Select } from "../components/select";
-import type { DemoModule } from "../lib/demo";
-import { DemoCard, DemoRow } from "../lib/demo-kit";
-import { color, type as scale, setThemeChoice } from "../lib/theme";
+} from "#/components/dialog";
+import { Select } from "#/components/select";
+import type { DemoModule } from "#/lib/demo";
+import { DemoCard, DemoRow } from "#/lib/demo-kit";
+import { color, type as scale, setThemeChoice } from "#/lib/theme";
 
 const SIZE_COPY: Record<DialogSize, { label: string; text: string }> = {
 	sm: {

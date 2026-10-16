@@ -26,20 +26,20 @@ import {
 	untrack,
 	useContext,
 } from "solid-js";
-import { FluidHighlight } from "../lib/fluid-highlight";
+import { FluidHighlight } from "#/lib/fluid-highlight";
 import {
 	createFluidHover,
 	createReflowGate,
 	type FluidHover,
 	type ItemRect,
-} from "../lib/fluid-hover";
-import type { IconRef } from "../lib/icons";
-import { isChord, moveIndex, revealRow } from "../lib/list-nav";
-import { createPlacementState, POPUP_MARGIN, PopupSurface } from "../lib/popup";
-import { createPressToggle, refocusAfterPress } from "../lib/popup-trigger";
-import { createPresence } from "../lib/presence";
-import { color, radius, shadow, motion as tween } from "../lib/theme";
-import { createTypeahead } from "../lib/typeahead";
+} from "#/lib/fluid-hover";
+import type { IconRef } from "#/lib/icons";
+import { isChord, moveIndex, revealRow } from "#/lib/list-nav";
+import { createPlacementState, POPUP_MARGIN, PopupSurface } from "#/lib/popup";
+import { createPressToggle, refocusAfterPress } from "#/lib/popup-trigger";
+import { createPresence } from "#/lib/presence";
+import { color, radius, shadow, motion as tween } from "#/lib/theme";
+import { createTypeahead } from "#/lib/typeahead";
 import {
 	type DropdownSearchHost,
 	DropdownSearchHostContext,

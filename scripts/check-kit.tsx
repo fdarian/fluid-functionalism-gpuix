@@ -5,10 +5,10 @@
  */
 import { createTestRoot } from "@gpuix/solid/testing";
 import type { JSX } from "solid-js";
-import { App } from "../src/app";
-import { loadDemos, loadPages } from "../src/lib/demo";
-import { fonts } from "../src/lib/fonts";
-import { setThemeChoice } from "../src/lib/theme";
+import { App } from "#/app";
+import { loadDemos, loadPages } from "#/lib/demo";
+import { fonts } from "#/lib/fonts";
+import { setThemeChoice } from "#/lib/theme";
 import { readPng } from "./png-pixels";
 
 const INK_PATH = `/tmp/check-kit-ink-${process.pid}.png`;

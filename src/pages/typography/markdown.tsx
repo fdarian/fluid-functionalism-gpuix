@@ -1,6 +1,6 @@
 import { type Accessor, createSignal, For, type JSX, Show } from "solid-js";
-import { MONO } from "../../lib/doc-page";
-import { color, shape, sizeChoice, weight, withAlpha } from "../../lib/theme";
+import { MONO } from "#/lib/doc-page";
+import { color, shape, sizeChoice, weight, withAlpha } from "#/lib/theme";
 import {
 	roleStyle,
 	space,

@@ -22,17 +22,17 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
-import { FluidHighlight } from "../lib/fluid-highlight";
+import { FluidHighlight } from "#/lib/fluid-highlight";
 import {
 	createFluidHover,
 	type FluidHover,
 	useHoverItem,
-} from "../lib/fluid-hover";
-import { Icon } from "../lib/icon";
-import type { IconRef } from "../lib/icons";
-import { moveIndex } from "../lib/list-nav";
-import { IS_MAC } from "../lib/platform";
-import { createPresence } from "../lib/presence";
+} from "#/lib/fluid-hover";
+import { Icon } from "#/lib/icon";
+import type { IconRef } from "#/lib/icons";
+import { moveIndex } from "#/lib/list-nav";
+import { IS_MAC } from "#/lib/platform";
+import { createPresence } from "#/lib/presence";
 import {
 	color,
 	colorFade,
@@ -44,7 +44,7 @@ import {
 	surface,
 	motion as tween,
 	weight,
-} from "../lib/theme";
+} from "#/lib/theme";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 

@@ -1,4 +1,4 @@
-import { color, type as scale, weight } from "../../lib/theme";
+import { color, type as scale, weight } from "#/lib/theme";
 import { Mono, Specimen, TweakFrame } from "./specimen";
 
 // The source measured both at 214px. gpuix has no `text-wrap`, so the "good"

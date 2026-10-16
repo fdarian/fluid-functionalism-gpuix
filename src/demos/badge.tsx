@@ -4,8 +4,8 @@ import {
 	type BadgeColor,
 	badgeColors,
 	type BadgeVariant,
-} from "../components/badge";
-import { DemoCard, DemoRow } from "../lib/demo-kit";
+} from "#/components/badge";
+import { DemoCard, DemoRow } from "#/lib/demo-kit";
 
 const FEATURED: { color: BadgeColor; label: string }[] = [
 	{ color: "violet", label: "Fiction" },

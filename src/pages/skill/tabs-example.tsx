@@ -1,7 +1,7 @@
 import { buttonProps, useGpuixRequired } from "@gpuix/solid";
 import { createSignal, For } from "solid-js";
-import { TabsSubtle, TabsSubtleItem } from "../../components/tabs-subtle";
-import { color, focusRing, shape, siteType, weight } from "../../lib/theme";
+import { TabsSubtle, TabsSubtleItem } from "#/components/tabs-subtle";
+import { color, focusRing, shape, siteType, weight } from "#/lib/theme";
 import {
 	Compare,
 	clickStep,

@@ -3,10 +3,10 @@ import {
 	type AskUserAnswer,
 	type AskUserQuestion,
 	AskUserQuestions,
-} from "../components/ask-user-questions";
-import { Button } from "../components/button";
-import type { DemoModule, ShotContext } from "../lib/demo";
-import { DemoCard } from "../lib/demo-kit";
+} from "#/components/ask-user-questions";
+import { Button } from "#/components/button";
+import type { DemoModule, ShotContext } from "#/lib/demo";
+import { DemoCard } from "#/lib/demo-kit";
 import {
 	PlayDivider,
 	PlayField,
@@ -16,8 +16,8 @@ import {
 	PlaySelect,
 	PlaySwitch,
 	pick,
-} from "../lib/playground";
-import { color, type as scale } from "../lib/theme";
+} from "#/lib/playground";
+import { color, type as scale } from "#/lib/theme";
 
 const multipleQuestions: AskUserQuestion[] = [
 	{

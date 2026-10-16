@@ -12,10 +12,10 @@
  * - A press writes the value to `navigator.clipboard`; a refused write shows "Failed".
  */
 import { createTestRoot } from "@gpuix/solid/testing";
-import { InputCopy } from "../src/components/input-copy";
-import { TooltipProvider } from "../src/components/tooltip";
-import { fonts } from "../src/lib/fonts";
-import { color, setThemeChoice } from "../src/lib/theme";
+import { InputCopy } from "#/components/input-copy";
+import { TooltipProvider } from "#/components/tooltip";
+import { fonts } from "#/lib/fonts";
+import { color, setThemeChoice } from "#/lib/theme";
 import { readPng } from "./png-pixels";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

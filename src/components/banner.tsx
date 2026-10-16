@@ -17,8 +17,8 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
-import { Icon } from "../lib/icon";
-import type { IconRef } from "../lib/icons";
+import { Icon } from "#/lib/icon";
+import type { IconRef } from "#/lib/icons";
 import {
 	color,
 	fade,
@@ -28,7 +28,7 @@ import {
 	type as scale,
 	motion as tween,
 	weight,
-} from "../lib/theme";
+} from "#/lib/theme";
 import { Button } from "./button";
 
 export type BannerStatus = "default" | "info" | "success" | "warning" | "error";

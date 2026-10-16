@@ -1,6 +1,6 @@
 import { For, Show } from "solid-js";
-import type { IconName } from "../../../lib/icons";
-import { twShadow, weight } from "../../../lib/theme";
+import type { IconName } from "#/lib/icons";
+import { twShadow, weight } from "#/lib/theme";
 import { LUCIDE, LucideIcon, lucideGlyph, pressProps } from "./parts";
 import { sc, scRadius } from "./theme";
 

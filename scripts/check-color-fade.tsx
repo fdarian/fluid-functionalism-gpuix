@@ -7,7 +7,7 @@
  * The motion clock is held and stepped by hand, so a slow frame cannot skip the middle of the 80 ms.
  */
 import { createSignal } from "solid-js";
-import { colorFade, fade } from "../src/lib/theme";
+import { colorFade, fade } from "#/lib/theme";
 import { createCheck } from "./check-kit";
 import { readPng } from "./png-pixels";
 

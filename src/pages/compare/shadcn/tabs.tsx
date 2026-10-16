@@ -4,7 +4,7 @@ import {
 	useGpuixRequired,
 } from "@gpuix/solid";
 import { For } from "solid-js";
-import { twShadow, weight } from "../../../lib/theme";
+import { twShadow, weight } from "#/lib/theme";
 import { pressProps } from "./parts";
 import { sc, scRadius, scRing } from "./theme";
 

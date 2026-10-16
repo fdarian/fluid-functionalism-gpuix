@@ -1,12 +1,12 @@
 import { For, type JSX } from "solid-js";
-import { MONO } from "../../lib/doc-page";
+import { MONO } from "#/lib/doc-page";
 import {
 	color,
 	type SizeChoice,
 	scheme,
 	siteType,
 	weight,
-} from "../../lib/theme";
+} from "#/lib/theme";
 import { LADDER } from "./ladder";
 
 interface TokenRow {

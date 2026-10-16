@@ -1,6 +1,6 @@
 import { createSignal } from "solid-js";
-import { Button } from "../src/components/button";
-import { Select } from "../src/components/select";
+import { Button } from "#/components/button";
+import { Select } from "#/components/select";
 import { createCheck } from "./check-kit";
 const k = await createCheck(() => (
 	<div style={{ display: "flex", flexDirection: "column", gap: 12, padding: 20 }}>

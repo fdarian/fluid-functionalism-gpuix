@@ -1,4 +1,4 @@
-import { SITE_URL } from "../starter-prompt";
+import { SITE_URL } from "#/lib/starter-prompt";
 
 // The text behind /changelog's "Copy upgrade prompt": a brief any coding
 // agent can follow to bring a project's Fluid Functionalism items up to the

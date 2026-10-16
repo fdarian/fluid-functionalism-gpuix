@@ -1,8 +1,8 @@
 import { buttonProps, type KeyEvent, useGpuixRequired } from "@gpuix/solid";
-import { Icon } from "../../../lib/icon";
-import { defineIcon, type IconName } from "../../../lib/icons";
-import { lucide } from "../../../lib/icons/lucide";
-import { weight } from "../../../lib/theme";
+import { Icon } from "#/lib/icon";
+import { defineIcon, type IconName } from "#/lib/icons";
+import { lucide } from "#/lib/icons/lucide";
+import { weight } from "#/lib/theme";
 import { sc } from "./theme";
 
 /** shadcn imports `lucide-react` directly, so these stay Lucide whichever library the Icons row picks. */

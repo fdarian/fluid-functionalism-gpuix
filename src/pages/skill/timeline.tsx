@@ -4,7 +4,7 @@ import {
 	createFluidHover,
 	type ItemRect,
 	useHoverItem,
-} from "../../lib/fluid-hover";
+} from "#/lib/fluid-hover";
 import {
 	color,
 	colorFade,
@@ -12,7 +12,7 @@ import {
 	siteType,
 	weight,
 	withAlpha,
-} from "../../lib/theme";
+} from "#/lib/theme";
 
 // The "What it does" timeline: one continuous line from the top of the first
 // title to the end of the last description. ONE dot glides between steps with

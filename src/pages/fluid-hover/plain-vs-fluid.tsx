@@ -11,13 +11,13 @@ import {
 	onCleanup,
 	useContext,
 } from "solid-js";
-import { onFrame } from "../../lib/clock";
-import { PageScrollerContext } from "../../lib/demo-kit";
-import { Code, ComponentPreview } from "../../lib/doc-page";
-import { createFluidHover } from "../../lib/fluid-hover";
-import { PAUSE_ICON, PLAY_ICON } from "../../lib/playback-icons";
-import { usePreviewPlayback } from "../../lib/preview-playback";
-import { color, siteType } from "../../lib/theme";
+import { onFrame } from "#/lib/clock";
+import { PageScrollerContext } from "#/lib/demo-kit";
+import { Code, ComponentPreview } from "#/lib/doc-page";
+import { createFluidHover } from "#/lib/fluid-hover";
+import { PAUSE_ICON, PLAY_ICON } from "#/lib/playback-icons";
+import { usePreviewPlayback } from "#/lib/preview-playback";
+import { color, siteType } from "#/lib/theme";
 import {
 	FakeCursor,
 	FluidRow,

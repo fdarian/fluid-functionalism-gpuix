@@ -14,18 +14,18 @@ import {
 	on,
 	Show,
 } from "solid-js";
-import { FluidHighlight } from "../lib/fluid-highlight";
+import { FluidHighlight } from "#/lib/fluid-highlight";
 import {
 	createFluidHover,
 	createReflowGate,
 	useHoverItem,
-} from "../lib/fluid-hover";
-import { FormValue } from "../lib/form-value";
-import { CheckMark, Icon, LIST_CHECK } from "../lib/icon";
-import type { IconRef } from "../lib/icons";
-import { isChord, moveIndex, revealRow } from "../lib/list-nav";
-import { PopupSurface } from "../lib/popup";
-import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
+} from "#/lib/fluid-hover";
+import { FormValue } from "#/lib/form-value";
+import { CheckMark, Icon, LIST_CHECK } from "#/lib/icon";
+import type { IconRef } from "#/lib/icons";
+import { isChord, moveIndex, revealRow } from "#/lib/list-nav";
+import { PopupSurface } from "#/lib/popup";
+import { createPresence, POPUP_EXIT_FALLBACK_MS } from "#/lib/presence";
 import {
 	color,
 	colorFade,
@@ -36,7 +36,7 @@ import {
 	type as scale,
 	motion as tween,
 	weight,
-} from "../lib/theme";
+} from "#/lib/theme";
 
 const FIELD_HEIGHT = 36;
 const ROW_HEIGHT = 36;

@@ -20,22 +20,22 @@ import {
 	Show,
 	untrack,
 } from "solid-js";
-import { createPointerCapture } from "../lib/pointer-capture";
-import { StableLabel } from "../lib/stable-label";
-import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
-import { Icon } from "../lib/icon";
-import { defineIcon } from "../lib/icons";
-import { edgeIndex, isChord, moveIndex } from "../lib/list-nav";
+import { createPointerCapture } from "#/lib/pointer-capture";
+import { StableLabel } from "#/lib/stable-label";
+import { FluidHighlight } from "#/lib/fluid-highlight";
+import { createFluidHover, useHoverItem } from "#/lib/fluid-hover";
+import { Icon } from "#/lib/icon";
+import { defineIcon } from "#/lib/icons";
+import { edgeIndex, isChord, moveIndex } from "#/lib/list-nav";
 import {
 	createPlacementState,
 	POPUP_MARGIN,
 	POPUP_OFFSET,
-} from "../lib/popup";
-import { createPresence } from "../lib/presence";
-import { createPressToggle, refocusAfterPress } from "../lib/popup-trigger";
-import { createTypeahead } from "../lib/typeahead";
-import { color, colorFade, colorFadeNoRing, fade, springFade, height, nestedRadius, radius, shape, type as scale, scheme, shadow, motion as tween, weight, surface, focusRing } from "../lib/theme";
+} from "#/lib/popup";
+import { createPresence } from "#/lib/presence";
+import { createPressToggle, refocusAfterPress } from "#/lib/popup-trigger";
+import { createTypeahead } from "#/lib/typeahead";
+import { color, colorFade, colorFadeNoRing, fade, springFade, height, nestedRadius, radius, shape, type as scale, scheme, shadow, motion as tween, weight, surface, focusRing } from "#/lib/theme";
 import {
 	buildParsed,
 	clamp01,

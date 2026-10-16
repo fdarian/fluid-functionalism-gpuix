@@ -1,5 +1,5 @@
 import { type HostElement, useGpuixRequired } from "@gpuix/solid";
-import { weight } from "../../../lib/theme";
+import { weight } from "#/lib/theme";
 import { ScLabel } from "./parts";
 import { sc, scRadius, scRing } from "./theme";
 

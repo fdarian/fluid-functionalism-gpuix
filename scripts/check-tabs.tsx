@@ -9,7 +9,7 @@
  * vetoed click leaves it on the clicked tab.
  */
 import { createSignal } from "solid-js";
-import { TabItem, Tabs, TabsList } from "../src/components/tabs";
+import { TabItem, Tabs, TabsList } from "#/components/tabs";
 import { createCheck } from "./check-kit";
 
 const [lateValue, setLateValue] = createSignal("a");

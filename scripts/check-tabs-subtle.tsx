@@ -12,7 +12,7 @@
  * two ends in a few frames and never overshoot.
  */
 import { createSignal } from "solid-js";
-import { TabsSubtle, TabsSubtleItem } from "../src/components/tabs-subtle";
+import { TabsSubtle, TabsSubtleItem } from "#/components/tabs-subtle";
 import { createCheck } from "./check-kit";
 
 const [selected, setSelected] = createSignal(0);

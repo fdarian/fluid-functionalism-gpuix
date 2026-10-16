@@ -1,7 +1,7 @@
 import { motion } from "@gpuix/solid";
 import { createUniqueId } from "solid-js";
 import { pressProps, ScLabel } from "./parts";
-import { twShadow } from "../../../lib/theme";
+import { twShadow } from "#/lib/theme";
 import { sc, scRing } from "./theme";
 
 const TRACK_WIDTH = 36;

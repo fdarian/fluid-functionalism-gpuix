@@ -1,6 +1,6 @@
 import type { JSX } from "solid-js";
-import { TabsSubtle, TabsSubtleItem } from "../../components/tabs-subtle";
-import { color, type SizeChoice, shape } from "../../lib/theme";
+import { TabsSubtle, TabsSubtleItem } from "#/components/tabs-subtle";
+import { color, type SizeChoice, shape } from "#/lib/theme";
 
 /**
  * The stripped preview frame of the compact-region and token-inspector demos:

@@ -11,10 +11,10 @@
  * start left of tab 2's own edge is asserted.
  */
 import { createTestRoot } from "@gpuix/solid/testing";
-import { App } from "../src/app";
-import { loadDemos, loadPages } from "../src/lib/demo";
-import { fonts } from "../src/lib/fonts";
-import { setThemeChoice } from "../src/lib/theme";
+import { App } from "#/app";
+import { loadDemos, loadPages } from "#/lib/demo";
+import { fonts } from "#/lib/fonts";
+import { setThemeChoice } from "#/lib/theme";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const test = createTestRoot({ width: 1240, height: 780, fonts });

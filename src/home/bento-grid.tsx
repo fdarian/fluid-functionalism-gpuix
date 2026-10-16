@@ -1,6 +1,6 @@
 import { createMediaQuery } from "@gpuix/solid";
 import { type Accessor, For, type JSX, Show } from "solid-js";
-import { usePageNav } from "../lib/page-nav";
+import { usePageNav } from "#/lib/page-nav";
 import { BENTO_ROW, BentoCard, type BentoSize } from "./bento-card";
 import { previewMap } from "./bento-previews";
 

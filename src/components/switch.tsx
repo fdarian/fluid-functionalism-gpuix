@@ -5,7 +5,7 @@ import type {
 } from "@gpuix/solid";
 import { motion } from "@gpuix/solid";
 import { createSignal, createUniqueId } from "solid-js";
-import { createPointerCapture } from "../lib/pointer-capture";
+import { createPointerCapture } from "#/lib/pointer-capture";
 import {
 	color,
 	fade,
@@ -16,7 +16,7 @@ import {
 	motion as tween,
 	twShadow,
 	weight,
-} from "../lib/theme";
+} from "#/lib/theme";
 
 export type SwitchSize = "default" | "compact";
 

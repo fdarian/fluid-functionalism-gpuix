@@ -1,6 +1,6 @@
 import { For, type JSX } from "solid-js";
-import { MONO, Prose } from "../../lib/doc-page";
-import { color, scheme, siteType, weight } from "../../lib/theme";
+import { MONO, Prose } from "#/lib/doc-page";
+import { color, scheme, siteType, weight } from "#/lib/theme";
 
 /** An Inter space at 13px; `Prose` breaks lines on it. */
 const SPACE = 3.6;

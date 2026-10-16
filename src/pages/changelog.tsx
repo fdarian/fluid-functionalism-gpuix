@@ -1,9 +1,9 @@
 import type { JSX } from "solid-js";
-import { releases } from "../lib/changelog/releases";
-import type { ShotContext } from "../lib/demo";
-import { defineIcon } from "../lib/icons";
-import { ChangelogView } from "./changelog/changelog-view";
-import { ReleaseIndexCard } from "./changelog/release-index";
+import { releases } from "#/lib/changelog/releases";
+import type { ShotContext } from "#/lib/demo";
+import { defineIcon } from "#/lib/icons";
+import { ChangelogView } from "#/pages/changelog/changelog-view";
+import { ReleaseIndexCard } from "#/pages/changelog/release-index";
 
 export const title = "Changelog";
 export const group = "Pages";

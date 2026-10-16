@@ -22,17 +22,17 @@ import {
 	createFluidHover,
 	type FluidHover,
 	type ItemRect,
-} from "../lib/fluid-hover";
+} from "#/lib/fluid-hover";
 import {
 	createFocusRing,
 	FocusRing,
 	type FocusRingState,
-} from "../lib/focus-ring";
-import { Icon } from "../lib/icon";
-import type { IconRef } from "../lib/icons";
-import { moveIndex } from "../lib/list-nav";
-import { createPreviewPill } from "../lib/preview-pill";
-import { StableLabel } from "../lib/stable-label";
+} from "#/lib/focus-ring";
+import { Icon } from "#/lib/icon";
+import type { IconRef } from "#/lib/icons";
+import { moveIndex } from "#/lib/list-nav";
+import { createPreviewPill } from "#/lib/preview-pill";
+import { StableLabel } from "#/lib/stable-label";
 import {
 	color,
 	height,
@@ -41,7 +41,7 @@ import {
 	type as scale,
 	motion as tween,
 	weight,
-} from "../lib/theme";
+} from "#/lib/theme";
 
 export type TabsSubtleSize = "default" | "compact";
 

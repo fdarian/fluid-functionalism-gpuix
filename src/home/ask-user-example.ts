@@ -1,4 +1,4 @@
-import type { AskUserQuestion } from "../components/ask-user-questions";
+import type { AskUserQuestion } from "#/components/ask-user-questions";
 
 /** `askUserExampleQuestions` of `app/components/bento-previews.tsx:430-529`: the same eight questions as the docs page's first example. */
 export const ASK_USER_EXAMPLE_QUESTIONS: AskUserQuestion[] = [

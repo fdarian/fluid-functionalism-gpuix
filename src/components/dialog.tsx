@@ -22,9 +22,9 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
-import { HideOutside } from "../lib/modal";
-import { createPresence } from "../lib/presence";
-import { SurfaceContext, useElevatedSurface } from "../lib/surface-context";
+import { HideOutside } from "#/lib/modal";
+import { createPresence } from "#/lib/presence";
+import { SurfaceContext, useElevatedSurface } from "#/lib/surface-context";
 import {
 	color,
 	shape,
@@ -35,7 +35,7 @@ import {
 	surface,
 	motion as tween,
 	weight,
-} from "../lib/theme";
+} from "#/lib/theme";
 import { Button } from "./button";
 
 export type DialogSize = "sm" | "lg" | "xl";

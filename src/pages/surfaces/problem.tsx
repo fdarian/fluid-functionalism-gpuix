@@ -1,6 +1,6 @@
 import { For } from "solid-js";
-import { ComponentPreview } from "../../lib/doc-page";
-import { color } from "../../lib/theme";
+import { ComponentPreview } from "#/lib/doc-page";
+import { color } from "#/lib/theme";
 import {
 	ANNOTATION_BLUE,
 	ANNOTATION_RED,

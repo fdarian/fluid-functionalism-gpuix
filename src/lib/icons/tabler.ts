@@ -1,4 +1,4 @@
-import type { IconName } from "../icons";
+import type { IconName } from "#/lib/icons";
 
 /** @tabler/icons outline set, 24 x 24, stroke 2. */
 export const tabler = {

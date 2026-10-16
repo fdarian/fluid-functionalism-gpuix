@@ -5,9 +5,9 @@ import {
 	AccordionGroup,
 	AccordionItem,
 	AccordionTrigger,
-} from "../components/accordion";
-import type { DemoModule, ShotContext } from "../lib/demo";
-import { DemoCard } from "../lib/demo-kit";
+} from "#/components/accordion";
+import type { DemoModule, ShotContext } from "#/lib/demo";
+import { DemoCard } from "#/lib/demo-kit";
 import {
 	PlayField,
 	PlaygroundLayout,
@@ -15,8 +15,8 @@ import {
 	PlaySelect,
 	PlaySwitch,
 	pick,
-} from "../lib/playground";
-import { color, type as scale } from "../lib/theme";
+} from "#/lib/playground";
+import { color, type as scale } from "#/lib/theme";
 
 function Section(props: { caption: string; children: JSX.Element }) {
 	return (

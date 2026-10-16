@@ -1,5 +1,5 @@
 import { createSignal, For, type JSX } from "solid-js";
-import { weight } from "../../lib/theme";
+import { weight } from "#/lib/theme";
 import {
 	ACCORDION_ITEMS,
 	CHECKBOX_ITEMS,
@@ -16,16 +16,16 @@ import {
 	TABS_DEFAULT,
 	TABS_ITEMS,
 } from "./data";
-import { ScAccordion } from "./shadcn/accordion";
-import { ScCheckbox } from "./shadcn/checkbox";
-import { ScDropdownMenu } from "./shadcn/dropdown-menu";
-import { ScInputField } from "./shadcn/input";
-import { ScRadioGroup } from "./shadcn/radio-group";
-import { ScSlider } from "./shadcn/slider";
-import { ScSwitch } from "./shadcn/switch";
-import { ScTable } from "./shadcn/table";
-import { ScTabs } from "./shadcn/tabs";
-import { sc } from "./shadcn/theme";
+import { ScAccordion } from "#/pages/compare/shadcn/accordion";
+import { ScCheckbox } from "#/pages/compare/shadcn/checkbox";
+import { ScDropdownMenu } from "#/pages/compare/shadcn/dropdown-menu";
+import { ScInputField } from "#/pages/compare/shadcn/input";
+import { ScRadioGroup } from "#/pages/compare/shadcn/radio-group";
+import { ScSlider } from "#/pages/compare/shadcn/slider";
+import { ScSwitch } from "#/pages/compare/shadcn/switch";
+import { ScTable } from "#/pages/compare/shadcn/table";
+import { ScTabs } from "#/pages/compare/shadcn/tabs";
+import { sc } from "#/pages/compare/shadcn/theme";
 
 function toggled(set: ReadonlySet<string>, id: string, on: boolean) {
 	const next = new Set(set);

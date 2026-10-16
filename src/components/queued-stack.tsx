@@ -16,9 +16,9 @@ import {
 	onCleanup,
 	Show,
 } from "solid-js";
-import { Icon } from "../lib/icon";
-import type { IconRef } from "../lib/icons";
-import { createPointerCapture } from "../lib/pointer-capture";
+import { Icon } from "#/lib/icon";
+import type { IconRef } from "#/lib/icons";
+import { createPointerCapture } from "#/lib/pointer-capture";
 import {
 	color,
 	nestedRadius,
@@ -28,7 +28,7 @@ import {
 	shadow,
 	motion as tween,
 	weight,
-} from "../lib/theme";
+} from "#/lib/theme";
 import { type FileLike, FileThumbnail } from "./file-thumbnail";
 import { Tooltip } from "./tooltip";
 

@@ -1,6 +1,6 @@
 import type { HostElement, StyleDesc } from "@gpuix/solid";
 import { createSignal, type JSX, Show } from "solid-js";
-import { Icon } from "../../lib/icon";
+import { Icon } from "#/lib/icon";
 import {
 	color,
 	colorFade,
@@ -8,7 +8,7 @@ import {
 	siteType,
 	surface,
 	weight,
-} from "../../lib/theme";
+} from "#/lib/theme";
 import { SurfaceProvider } from "./elevated";
 import {
 	CHEVRON_UP_ICON,

@@ -4,13 +4,13 @@ import {
 	AccordionGroup,
 	AccordionItem,
 	AccordionTrigger,
-} from "../../components/accordion";
-import { CheckboxGroup, CheckboxItem } from "../../components/checkbox-group";
-import { Dropdown, MenuItem } from "../../components/dropdown";
-import { InputField, InputGroup } from "../../components/input-group";
-import { RadioGroup, RadioItem } from "../../components/radio-group";
-import { Slider } from "../../components/slider";
-import { Switch } from "../../components/switch";
+} from "#/components/accordion";
+import { CheckboxGroup, CheckboxItem } from "#/components/checkbox-group";
+import { Dropdown, MenuItem } from "#/components/dropdown";
+import { InputField, InputGroup } from "#/components/input-group";
+import { RadioGroup, RadioItem } from "#/components/radio-group";
+import { Slider } from "#/components/slider";
+import { Switch } from "#/components/switch";
 import {
 	Table,
 	TableBody,
@@ -18,10 +18,10 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "../../components/table";
-import { TabItem, Tabs, TabsList } from "../../components/tabs";
-import { TabsSubtle, TabsSubtleItem } from "../../components/tabs-subtle";
-import { color, siteType, weight } from "../../lib/theme";
+} from "#/components/table";
+import { TabItem, Tabs, TabsList } from "#/components/tabs";
+import { TabsSubtle, TabsSubtleItem } from "#/components/tabs-subtle";
+import { color, siteType, weight } from "#/lib/theme";
 import {
 	ACCORDION_ITEMS,
 	CHECKBOX_ITEMS,

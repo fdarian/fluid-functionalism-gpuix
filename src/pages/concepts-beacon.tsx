@@ -6,37 +6,37 @@ import {
 	onCleanup,
 	Show,
 } from "solid-js";
-import { AskUserQuestions } from "../components/ask-user-questions";
-import { Badge, type BadgeColor, badgeColors } from "../components/badge";
-import { Button } from "../components/button";
+import { AskUserQuestions } from "#/components/ask-user-questions";
+import { Badge, type BadgeColor, badgeColors } from "#/components/badge";
+import { Button } from "#/components/button";
 import {
 	Dropdown,
 	DropdownLabel,
 	DropdownSeparator,
 	MenuItem,
-} from "../components/dropdown";
-import { InputField, InputGroup } from "../components/input-group";
-import { ScrollArea } from "../components/scroll-area";
-import { Select, type SelectItem } from "../components/select";
-import { Switch } from "../components/switch";
+} from "#/components/dropdown";
+import { InputField, InputGroup } from "#/components/input-group";
+import { ScrollArea } from "#/components/scroll-area";
+import { Select, type SelectItem } from "#/components/select";
+import { Switch } from "#/components/switch";
 import {
 	Table,
 	TableBody,
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "../components/table";
+} from "#/components/table";
 import {
 	TabsSubtle,
 	TabsSubtleItem,
 	TabsSubtlePanel,
-} from "../components/tabs-subtle";
-import { ThinkingIndicator } from "../components/thinking-indicator";
-import type { ShotContext } from "../lib/demo";
-import { MONO } from "../lib/doc-page";
-import { Icon } from "../lib/icon";
-import { color, shadow, shape, siteType, sizeChoice, weight } from "../lib/theme";
-import { ConceptFrame } from "./concepts/frame";
+} from "#/components/tabs-subtle";
+import { ThinkingIndicator } from "#/components/thinking-indicator";
+import type { ShotContext } from "#/lib/demo";
+import { MONO } from "#/lib/doc-page";
+import { Icon } from "#/lib/icon";
+import { color, shadow, shape, siteType, sizeChoice, weight } from "#/lib/theme";
+import { ConceptFrame } from "#/pages/concepts/frame";
 
 export const title = "Beacon";
 export const group = "Pages";

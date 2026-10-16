@@ -1,6 +1,6 @@
 import { buttonProps, useGpuixRequired } from "@gpuix/solid";
 import { createContext, type JSX, Show } from "solid-js";
-import { Badge } from "../components/badge";
+import { Badge } from "#/components/badge";
 import {
 	color,
 	colorFade,
@@ -9,7 +9,7 @@ import {
 	scheme,
 	siteType,
 	weight,
-} from "../lib/theme";
+} from "#/lib/theme";
 
 export type BentoSize = "large" | "medium" | "small";
 

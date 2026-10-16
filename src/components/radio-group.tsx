@@ -8,7 +8,7 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
-import { color, sizeChoice, motion as tween } from "../lib/theme";
+import { color, sizeChoice, motion as tween } from "#/lib/theme";
 import {
 	ChoiceGroup,
 	ChoiceRow,

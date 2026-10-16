@@ -9,11 +9,11 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
-import type { FluidHover } from "../lib/fluid-hover";
-import { useHoverItem } from "../lib/fluid-hover";
-import { Icon } from "../lib/icon";
-import type { IconRef } from "../lib/icons";
-import { StableLabel } from "../lib/stable-label";
+import type { FluidHover } from "#/lib/fluid-hover";
+import { useHoverItem } from "#/lib/fluid-hover";
+import { Icon } from "#/lib/icon";
+import type { IconRef } from "#/lib/icons";
+import { StableLabel } from "#/lib/stable-label";
 import {
 	color,
 	height,
@@ -21,7 +21,7 @@ import {
 	type as scale,
 	scheme,
 	weight,
-} from "../lib/theme";
+} from "#/lib/theme";
 
 /** What the keyboard needs to know about a row the pointer would otherwise be the only one to reach. */
 export interface MenuRow {

@@ -1,19 +1,19 @@
 import { buttonProps, useGpuixRequired } from "@gpuix/solid";
 import { type Accessor, createSignal, For, type JSX, Show } from "solid-js";
-import { entryInstall } from "../../lib/changelog/install";
-import { kindDotColor } from "../../lib/changelog/kind-style";
-import { buildMigrationPrompt } from "../../lib/changelog/migration-prompt";
+import { entryInstall } from "#/lib/changelog/install";
+import { kindDotColor } from "#/lib/changelog/kind-style";
+import { buildMigrationPrompt } from "#/lib/changelog/migration-prompt";
 import type {
 	ChangeEntry,
 	ChangeKind,
 	ChangeRef,
 	Inline,
-} from "../../lib/changelog/parse";
-import { Code, CopyPromptButton, MONO, Prose } from "../../lib/doc-page";
-import { Icon } from "../../lib/icon";
-import { openUrl } from "../../lib/open-url";
-import { usePageNav } from "../../lib/page-nav";
-import { color, colorFade, focusRing, siteType, weight } from "../../lib/theme";
+} from "#/lib/changelog/parse";
+import { Code, CopyPromptButton, MONO, Prose } from "#/lib/doc-page";
+import { Icon } from "#/lib/icon";
+import { openUrl } from "#/lib/open-url";
+import { usePageNav } from "#/lib/page-nav";
+import { color, colorFade, focusRing, siteType, weight } from "#/lib/theme";
 import { DiffBlock } from "./diff-block";
 import { PreviewStage } from "./preview-stage";
 import { previewFor } from "./previews";

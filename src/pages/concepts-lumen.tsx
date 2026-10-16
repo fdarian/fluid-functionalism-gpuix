@@ -1,15 +1,15 @@
 import { createSignal, For, type JSX, onCleanup, Show } from "solid-js";
 import { createStore } from "solid-js/store";
-import { Badge, type BadgeColor } from "../components/badge";
-import { Button } from "../components/button";
-import { ChatMessage } from "../components/chat-message";
-import { InputMessage } from "../components/input-message";
-import { ScrollArea } from "../components/scroll-area";
+import { Badge, type BadgeColor } from "#/components/badge";
+import { Button } from "#/components/button";
+import { ChatMessage } from "#/components/chat-message";
+import { InputMessage } from "#/components/input-message";
+import { ScrollArea } from "#/components/scroll-area";
 import {
 	TabsSubtle,
 	TabsSubtleItem,
 	TabsSubtlePanel,
-} from "../components/tabs-subtle";
+} from "#/components/tabs-subtle";
 import {
 	ThinkingStep,
 	ThinkingStepSource,
@@ -17,10 +17,10 @@ import {
 	ThinkingSteps,
 	ThinkingStepsContent,
 	ThinkingStepsHeader,
-} from "../components/thinking-steps";
-import type { ShotContext } from "../lib/demo";
-import { color, shadow, shape, siteType, weight } from "../lib/theme";
-import { ConceptFrame } from "./concepts/frame";
+} from "#/components/thinking-steps";
+import type { ShotContext } from "#/lib/demo";
+import { color, shadow, shape, siteType, weight } from "#/lib/theme";
+import { ConceptFrame } from "#/pages/concepts/frame";
 
 export const title = "Lumen";
 export const group = "Pages";

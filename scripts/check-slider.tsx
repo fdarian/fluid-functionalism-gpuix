@@ -3,7 +3,7 @@
  *
  *   bun scripts/check-slider.tsx
  */
-import { showOnly } from "../src/demos/slider";
+import { showOnly } from "#/demos/slider";
 import { createCheck } from "./check-kit";
 import { readPng } from "./png-pixels";
 

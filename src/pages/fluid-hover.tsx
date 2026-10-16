@@ -1,19 +1,19 @@
 import { For, type JSX } from "solid-js";
-import type { ShotContext } from "../lib/demo";
+import type { ShotContext } from "#/lib/demo";
 import {
 	Code,
 	DocPage,
 	DocSection,
 	Prose,
 	SectionTitle,
-} from "../lib/doc-page";
-import { color } from "../lib/theme";
-import { AxesDemo } from "./fluid-hover/axes";
-import { CostDemo } from "./fluid-hover/cost";
-import { ListsDemo } from "./fluid-hover/lists";
-import { FLUID_HOVER_INSTALL_PROMPT } from "./fluid-hover/install-prompt";
-import { PlainVsFluidDemo } from "./fluid-hover/plain-vs-fluid";
-import { ShowTheMathDemo } from "./fluid-hover/show-the-math";
+} from "#/lib/doc-page";
+import { color } from "#/lib/theme";
+import { AxesDemo } from "#/pages/fluid-hover/axes";
+import { CostDemo } from "#/pages/fluid-hover/cost";
+import { ListsDemo } from "#/pages/fluid-hover/lists";
+import { FLUID_HOVER_INSTALL_PROMPT } from "#/pages/fluid-hover/install-prompt";
+import { PlainVsFluidDemo } from "#/pages/fluid-hover/plain-vs-fluid";
+import { ShowTheMathDemo } from "#/pages/fluid-hover/show-the-math";
 
 export const title = "Fluid Hover";
 export const group = "System";

@@ -1,4 +1,4 @@
-import { scheme, sizeChoice } from "../../lib/theme";
+import { scheme, sizeChoice } from "#/lib/theme";
 
 /** `typeStyles` of lib/type-scale.ts: every role at both steps, in px. */
 export const typeStyles = {

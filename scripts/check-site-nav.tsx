@@ -10,12 +10,12 @@
  * Prints PASS / FAIL lines; exits 1 on any FAIL.
  */
 import { createTestRoot } from "@gpuix/solid/testing";
-import { App } from "../src/app";
-import { marks } from "../src/lib/changelog/releases";
-import { loadDemos, loadPages } from "../src/lib/demo";
-import { fonts } from "../src/lib/fonts";
-import { pageOrder } from "../src/lib/page-nav";
-import { setThemeChoice } from "../src/lib/theme";
+import { App } from "#/app";
+import { marks } from "#/lib/changelog/releases";
+import { loadDemos, loadPages } from "#/lib/demo";
+import { fonts } from "#/lib/fonts";
+import { pageOrder } from "#/lib/page-nav";
+import { setThemeChoice } from "#/lib/theme";
 import { readPng } from "./png-pixels";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

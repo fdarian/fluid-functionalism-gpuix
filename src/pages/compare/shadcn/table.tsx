@@ -1,5 +1,5 @@
 import { For } from "solid-js";
-import { weight, withAlpha } from "../../../lib/theme";
+import { weight, withAlpha } from "#/lib/theme";
 import { sc } from "./theme";
 
 /** Inter at 14px averages about this per character; the cell padding is 12 each side. */

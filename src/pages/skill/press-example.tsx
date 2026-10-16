@@ -5,14 +5,14 @@ import {
 	useGpuixRequired,
 } from "@gpuix/solid";
 import { createSignal, For } from "solid-js";
-import { fill } from "../../lib/press";
+import { fill } from "#/lib/press";
 import {
 	color,
 	focusRing,
 	shape,
 	siteType,
 	weight,
-} from "../../lib/theme";
+} from "#/lib/theme";
 import {
 	Compare,
 	clickStep,

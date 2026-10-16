@@ -18,14 +18,14 @@ import {
 	untrack,
 	useContext,
 } from "solid-js";
-import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
+import { FluidHighlight } from "#/lib/fluid-highlight";
+import { createFluidHover, type FluidHover } from "#/lib/fluid-hover";
 import {
 	createFocusRing,
 	FocusRing,
 	type FocusRingState,
-} from "../lib/focus-ring";
-import { StableLabel } from "../lib/stable-label";
+} from "#/lib/focus-ring";
+import { StableLabel } from "#/lib/stable-label";
 import {
 	color,
 	fade,
@@ -35,7 +35,7 @@ import {
 	scheme,
 	motion as tween,
 	weight,
-} from "../lib/theme";
+} from "#/lib/theme";
 
 /**
  * What checkbox-group and radio-group share: a vertical list of focusable

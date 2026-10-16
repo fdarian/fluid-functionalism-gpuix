@@ -18,13 +18,13 @@ import {
 	Show,
 	untrack,
 } from "solid-js";
-import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover, type ItemRect } from "../lib/fluid-hover";
-import { Icon } from "../lib/icon";
-import { isChord, moveIndex } from "../lib/list-nav";
-import { createMeasuredHeight } from "../lib/measured-height";
-import { IS_MAC } from "../lib/platform";
-import { StableLabel } from "../lib/stable-label";
+import { FluidHighlight } from "#/lib/fluid-highlight";
+import { createFluidHover, type ItemRect } from "#/lib/fluid-hover";
+import { Icon } from "#/lib/icon";
+import { isChord, moveIndex } from "#/lib/list-nav";
+import { createMeasuredHeight } from "#/lib/measured-height";
+import { IS_MAC } from "#/lib/platform";
+import { StableLabel } from "#/lib/stable-label";
 import {
 	color,
 	fade,
@@ -36,7 +36,7 @@ import {
 	weight,
 	withAlpha,
 	colorFadeNoRing,
-} from "../lib/theme";
+} from "#/lib/theme";
 import { Button } from "./button";
 
 export interface AskUserOption {

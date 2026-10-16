@@ -6,11 +6,11 @@ import {
 	useGpuixRequired,
 } from "@gpuix/solid";
 import { createEffect, onCleanup, Show } from "solid-js";
-import { Icon } from "../lib/icon";
-import type { IconRef } from "../lib/icons";
-import { moveIndex } from "../lib/list-nav";
-import { StableLabel } from "../lib/stable-label";
-import { color, type as scale, shape, sizeChoice } from "../lib/theme";
+import { Icon } from "#/lib/icon";
+import type { IconRef } from "#/lib/icons";
+import { moveIndex } from "#/lib/list-nav";
+import { StableLabel } from "#/lib/stable-label";
+import { color, type as scale, shape, sizeChoice } from "#/lib/theme";
 import { useNavMenu } from "./nav-menu";
 
 const sizes = {

@@ -1,10 +1,10 @@
 import type { JSX } from "solid-js";
-import type { ShotContext } from "../lib/demo";
-import { Code, DocPage, DocSection, Prose, SubHeading } from "../lib/doc-page";
-import { MOTION_INSTALL_PROMPT } from "./motion/install-prompt";
-import { ModalExitDemo } from "./motion/modal-exit";
-import { SpringReferenceSection } from "./motion/spring-reference";
-import { SpringTokensDemo } from "./motion/spring-tokens";
+import type { ShotContext } from "#/lib/demo";
+import { Code, DocPage, DocSection, Prose, SubHeading } from "#/lib/doc-page";
+import { MOTION_INSTALL_PROMPT } from "#/pages/motion/install-prompt";
+import { ModalExitDemo } from "#/pages/motion/modal-exit";
+import { SpringReferenceSection } from "#/pages/motion/spring-reference";
+import { SpringTokensDemo } from "#/pages/motion/spring-tokens";
 
 export const title = "Motion";
 export const group = "System";

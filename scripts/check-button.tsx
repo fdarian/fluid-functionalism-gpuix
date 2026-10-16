@@ -6,7 +6,7 @@
  *
  * The motion clock is held and stepped by hand, so a slow frame cannot skip the middle of the 80 ms.
  */
-import { Button } from "../src/components/button";
+import { Button } from "#/components/button";
 import { createCheck } from "./check-kit";
 import { readPng } from "./png-pixels";
 

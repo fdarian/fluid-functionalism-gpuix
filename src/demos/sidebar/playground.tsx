@@ -1,6 +1,6 @@
 import { type Accessor, createSignal, For, type JSX, Show } from "solid-js";
 import { createStore } from "solid-js/store";
-import { Button } from "../../components/button";
+import { Button } from "#/components/button";
 import {
 	Sidebar,
 	SidebarContent,
@@ -11,9 +11,9 @@ import {
 	SidebarMenuButton,
 	SidebarMenuSub,
 	SidebarSearchField,
-} from "../../components/sidebar";
-import { Tooltip } from "../../components/tooltip";
-import type { IconName } from "../../lib/icons";
+} from "#/components/sidebar";
+import { Tooltip } from "#/components/tooltip";
+import type { IconName } from "#/lib/icons";
 import {
 	PlayDivider,
 	PlayField,
@@ -23,8 +23,8 @@ import {
 	PlaySelect,
 	PlaySwitch,
 	pick,
-} from "../../lib/playground";
-import { color, shape, surface } from "../../lib/theme";
+} from "#/lib/playground";
+import { color, shape, surface } from "#/lib/theme";
 import {
 	type CalloutVariant,
 	FooterCallout,

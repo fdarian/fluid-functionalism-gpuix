@@ -2,20 +2,20 @@ import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createSignal, For, onCleanup, Show } from "solid-js";
-import { Button } from "../components/button";
-import { ChatMessage } from "../components/chat-message";
-import type { FileLike } from "../components/file-thumbnail";
+import { Button } from "#/components/button";
+import { ChatMessage } from "#/components/chat-message";
+import type { FileLike } from "#/components/file-thumbnail";
 import {
 	type ComposerFile,
 	InputMessage,
 	type InputMessageSlotContext,
 	type QueuedMessage,
-} from "../components/input-message";
-import { ScrollArea } from "../components/scroll-area";
-import { ThinkingIndicator } from "../components/thinking-indicator";
-import type { ShotContext } from "../lib/demo";
-import { color } from "../lib/theme";
-import { ConceptFrame } from "./concepts/frame";
+} from "#/components/input-message";
+import { ScrollArea } from "#/components/scroll-area";
+import { ThinkingIndicator } from "#/components/thinking-indicator";
+import type { ShotContext } from "#/lib/demo";
+import { color } from "#/lib/theme";
+import { ConceptFrame } from "#/pages/concepts/frame";
 
 export const title = "Atlas";
 export const group = "Pages";

@@ -12,9 +12,9 @@ import {
 	CardImage,
 	CardMedia,
 	CardTitle,
-} from "../components/card";
-import type { DemoModule, ShotContext } from "../lib/demo";
-import { DemoCard } from "../lib/demo-kit";
+} from "#/components/card";
+import type { DemoModule, ShotContext } from "#/lib/demo";
+import { DemoCard } from "#/lib/demo-kit";
 import {
 	PlayDivider,
 	PlayField,
@@ -24,8 +24,8 @@ import {
 	PlaySelect,
 	PlaySwitch,
 	pick,
-} from "../lib/playground";
-import { color, type as scale } from "../lib/theme";
+} from "#/lib/playground";
+import { color, type as scale } from "#/lib/theme";
 
 /** The docs' inline data-URI art, so the demo needs no asset files. */
 const BANNER =

@@ -1,17 +1,17 @@
 import type { HostElement } from "@gpuix/solid";
 import { createSignal, For, Show } from "solid-js";
-import { FluidHighlight } from "../../lib/fluid-highlight";
-import { createFluidHover, useHoverItem } from "../../lib/fluid-hover";
-import { Icon } from "../../lib/icon";
-import { defineIcon, type IconRef } from "../../lib/icons";
-import { StableLabel } from "../../lib/stable-label";
+import { FluidHighlight } from "#/lib/fluid-highlight";
+import { createFluidHover, useHoverItem } from "#/lib/fluid-hover";
+import { Icon } from "#/lib/icon";
+import { defineIcon, type IconRef } from "#/lib/icons";
+import { StableLabel } from "#/lib/stable-label";
 import {
 	color,
 	colorFade,
 	radius,
 	siteType,
 	motion as tween,
-} from "../../lib/theme";
+} from "#/lib/theme";
 import { Elevated } from "./elevated";
 
 export const LOCK_ICON = defineIcon(

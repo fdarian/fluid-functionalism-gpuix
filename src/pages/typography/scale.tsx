@@ -1,6 +1,6 @@
 import { For } from "solid-js";
-import { MONO } from "../../lib/doc-page";
-import { color, shape, siteType, weight } from "../../lib/theme";
+import { MONO } from "#/lib/doc-page";
+import { color, shape, siteType, weight } from "#/lib/theme";
 import { borderFainter, roleStyle, TYPESET_SPACE, type TypeRole } from "./step";
 
 /** The axes `fontWeights` sets (lib/font-weight.ts); the port renders the static cut nearest each wght. */

@@ -21,20 +21,20 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
-import { FluidHighlight } from "../lib/fluid-highlight";
+import { FluidHighlight } from "#/lib/fluid-highlight";
 import {
 	createFluidHover,
 	type FluidHover,
 	type ItemRect,
-} from "../lib/fluid-hover";
+} from "#/lib/fluid-hover";
 import {
 	createFocusRing,
 	FocusRing,
 	type FocusRingState,
-} from "../lib/focus-ring";
-import { Icon } from "../lib/icon";
-import { createMeasuredHeight } from "../lib/measured-height";
-import { StableLabel } from "../lib/stable-label";
+} from "#/lib/focus-ring";
+import { Icon } from "#/lib/icon";
+import { createMeasuredHeight } from "#/lib/measured-height";
+import { StableLabel } from "#/lib/stable-label";
 import {
 	color,
 	focusRing,
@@ -44,7 +44,7 @@ import {
 	scheme,
 	motion as tween,
 	weight,
-} from "../lib/theme";
+} from "#/lib/theme";
 
 export type AccordionSize = "default" | "compact";
 export type AccordionHighlight = "trigger" | "item";

@@ -7,9 +7,9 @@
  * The reveal is the row's opacity, eased by a CSS transition; a screenshot with the focused action lands in /tmp/check-chat-message-focus-<pid>.png.
  */
 import { createTestRoot } from "@gpuix/solid/testing";
-import { ChatMessage, ChatMessageAction } from "../src/components/chat-message";
-import { fonts } from "../src/lib/fonts";
-import { color, setThemeChoice } from "../src/lib/theme";
+import { ChatMessage, ChatMessageAction } from "#/components/chat-message";
+import { fonts } from "#/lib/fonts";
+import { color, setThemeChoice } from "#/lib/theme";
 import { readPng } from "./png-pixels";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

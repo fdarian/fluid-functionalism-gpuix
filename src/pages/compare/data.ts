@@ -1,4 +1,4 @@
-import type { IconName } from "../../lib/icons";
+import type { IconName } from "#/lib/icons";
 
 /**
  * The copy both sides of a slide render (`app/components/demo-data.ts`), so the

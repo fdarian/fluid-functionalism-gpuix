@@ -7,8 +7,8 @@ import {
 	on,
 	onCleanup,
 } from "solid-js";
-import { color, type as scale } from "../../lib/theme";
-import { createVisibility } from "../surfaces/visibility";
+import { color, type as scale } from "#/lib/theme";
+import { createVisibility } from "#/pages/surfaces/visibility";
 import { MARK_BLUE, MARK_RED, Specimen, TweakFrame } from "./specimen";
 
 // Measured at 13px: Inter's default "1" is 5.3px wide and its "0" 8.2px, so the

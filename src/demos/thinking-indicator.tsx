@@ -1,6 +1,6 @@
-import { ThinkingIndicator } from "../components/thinking-indicator";
-import type { DemoModule } from "../lib/demo";
-import { DemoCard, DemoRow } from "../lib/demo-kit";
+import { ThinkingIndicator } from "#/components/thinking-indicator";
+import type { DemoModule } from "#/lib/demo";
+import { DemoCard, DemoRow } from "#/lib/demo-kit";
 
 export const title = "ThinkingIndicator";
 export const group = "Components";

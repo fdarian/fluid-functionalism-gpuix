@@ -1,4 +1,4 @@
-import type { CommandMenuItemData } from "../components/command-menu";
+import type { CommandMenuItemData } from "#/components/command-menu";
 
 /** `COMMAND_MENU_ITEMS` and `COMMAND_MENU_SUGGESTIONS` of `lib/preset/command-menu-options.ts:176-212`: a small app's palette, with every field a row can show. */
 export const COMMAND_MENU_ITEMS: readonly CommandMenuItemData[] = [

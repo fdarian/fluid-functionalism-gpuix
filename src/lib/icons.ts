@@ -1,10 +1,10 @@
 import { createSignal } from "solid-js";
-import { hugeicons } from "./icons/hugeicons";
-import { lucide } from "./icons/lucide";
-import { phosphorLight } from "./icons/phosphor-light";
-import { phosphorRegular } from "./icons/phosphor-regular";
-import { tabler } from "./icons/tabler";
-import { untitledui } from "./icons/untitledui";
+import { hugeicons } from "#/lib/icons/hugeicons";
+import { lucide } from "#/lib/icons/lucide";
+import { phosphorLight } from "#/lib/icons/phosphor-light";
+import { phosphorRegular } from "#/lib/icons/phosphor-regular";
+import { tabler } from "#/lib/icons/tabler";
+import { untitledui } from "#/lib/icons/untitledui";
 
 export type IconName = keyof typeof lucide;
 

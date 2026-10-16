@@ -9,7 +9,7 @@ import {
 	type CommandMenuItemData,
 	CommandMenuList,
 	CommandMenuTabs,
-} from "../components/command-menu";
+} from "#/components/command-menu";
 import type { Demo, Page } from "./demo";
 import type { IconRef } from "./icons";
 import { installUrl } from "./install-url";

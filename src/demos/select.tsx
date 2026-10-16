@@ -1,10 +1,10 @@
 import type { HostElement } from "@gpuix/solid";
 import { createSignal } from "solid-js";
-import { Button } from "../components/button";
-import { Select, type SelectEntry } from "../components/select";
-import type { DemoModule, ShotContext } from "../lib/demo";
-import { DemoCard, DemoRow } from "../lib/demo-kit";
-import { color, type as scale } from "../lib/theme";
+import { Button } from "#/components/button";
+import { Select, type SelectEntry } from "#/components/select";
+import type { DemoModule, ShotContext } from "#/lib/demo";
+import { DemoCard, DemoRow } from "#/lib/demo-kit";
+import { color, type as scale } from "#/lib/theme";
 
 
 const FRUITS = [

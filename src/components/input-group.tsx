@@ -7,9 +7,9 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
-import { createFluidHover, type FluidHover, useHoverItem } from "../lib/fluid-hover";
-import { Icon } from "../lib/icon";
-import type { IconRef } from "../lib/icons";
+import { createFluidHover, type FluidHover, useHoverItem } from "#/lib/fluid-hover";
+import { Icon } from "#/lib/icon";
+import type { IconRef } from "#/lib/icons";
 import {
 	color,
 	colorFade,
@@ -19,7 +19,7 @@ import {
 	type as scale,
 	weight,
 	withAlpha,
-} from "../lib/theme";
+} from "#/lib/theme";
 
 export type InputSize = "default" | "compact";
 

@@ -1,9 +1,9 @@
 import { For } from "solid-js";
-import { NavItem } from "../components/nav-item";
-import { NavMenu } from "../components/nav-menu";
-import type { ShotContext } from "../lib/demo";
-import { usePageNav } from "../lib/page-nav";
-import { CONCEPTS, ConceptFrame } from "./concepts/frame";
+import { NavItem } from "#/components/nav-item";
+import { NavMenu } from "#/components/nav-menu";
+import type { ShotContext } from "#/lib/demo";
+import { usePageNav } from "#/lib/page-nav";
+import { CONCEPTS, ConceptFrame } from "#/pages/concepts/frame";
 
 export const title = "Concepts";
 export const group = "Pages";

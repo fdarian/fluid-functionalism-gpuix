@@ -1,4 +1,4 @@
-import { color } from "../theme";
+import { color } from "#/lib/theme";
 import type { ChangeKind } from "./parse";
 
 /**

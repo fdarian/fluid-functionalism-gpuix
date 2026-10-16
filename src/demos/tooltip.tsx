@@ -1,13 +1,13 @@
 import { createSignal, For } from "solid-js";
-import { Button } from "../components/button";
+import { Button } from "#/components/button";
 import {
 	Tooltip,
 	TooltipProvider,
 	type TooltipSide,
-} from "../components/tooltip";
-import type { DemoModule } from "../lib/demo";
-import { DemoCard, DemoRow } from "../lib/demo-kit";
-import { color, type as scale, weight } from "../lib/theme";
+} from "#/components/tooltip";
+import type { DemoModule } from "#/lib/demo";
+import { DemoCard, DemoRow } from "#/lib/demo-kit";
+import { color, type as scale, weight } from "#/lib/theme";
 
 const SIDES: TooltipSide[] = ["top", "right", "bottom", "left"];
 

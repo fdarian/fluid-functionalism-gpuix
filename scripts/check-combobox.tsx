@@ -8,14 +8,14 @@
  * Most opens start from the keyboard; "Open with the pointer" presses for real.
  */
 import { createSignal } from "solid-js";
-import { Button } from "../src/components/button";
-import { Combobox } from "../src/components/combobox";
+import { Button } from "#/components/button";
+import { Combobox } from "#/components/combobox";
 import {
 	Dialog,
 	DialogContent,
 	DialogTitle,
 	DialogTrigger,
-} from "../src/components/dialog";
+} from "#/components/dialog";
 import { createCheck } from "./check-kit";
 import { readPng } from "./png-pixels";
 

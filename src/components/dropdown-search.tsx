@@ -6,15 +6,15 @@ import {
 	onCleanup,
 	useContext,
 } from "solid-js";
-import { Icon } from "../lib/icon";
-import { SurfaceContext } from "../lib/surface-context";
+import { Icon } from "#/lib/icon";
+import { SurfaceContext } from "#/lib/surface-context";
 import {
 	color,
 	height,
 	surface,
 	type as scale,
 	weight,
-} from "../lib/theme";
+} from "#/lib/theme";
 import { separatorColor } from "./menu-item";
 
 export interface DropdownSearchProps {

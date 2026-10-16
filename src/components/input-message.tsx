@@ -18,14 +18,14 @@ import {
 	Show,
 	untrack,
 } from "solid-js";
-import { createPointerCapture } from "../lib/pointer-capture";
-import { createPresence } from "../lib/presence";
-import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover } from "../lib/fluid-hover";
-import { Icon } from "../lib/icon";
-import { fill } from "../lib/press";
-import { createMeasuredHeight } from "../lib/measured-height";
-import { color, colorFade, fade, pressFade, surfaceFade, sizeChoice, height, nestedRadius, radius, shape, type as scale, scheme, shadow, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
+import { createPointerCapture } from "#/lib/pointer-capture";
+import { createPresence } from "#/lib/presence";
+import { FluidHighlight } from "#/lib/fluid-highlight";
+import { createFluidHover } from "#/lib/fluid-hover";
+import { Icon } from "#/lib/icon";
+import { fill } from "#/lib/press";
+import { createMeasuredHeight } from "#/lib/measured-height";
+import { color, colorFade, fade, pressFade, surfaceFade, sizeChoice, height, nestedRadius, radius, shape, type as scale, scheme, shadow, motion as tween, weight, withAlpha, focusRing } from "#/lib/theme";
 import { FileThumbnail } from "./file-thumbnail";
 import type { InputSize } from "./input-group";
 import { Tooltip } from "./tooltip";

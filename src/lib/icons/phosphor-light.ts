@@ -1,4 +1,4 @@
-import type { IconName } from "../icons";
+import type { IconName } from "#/lib/icons";
 
 /** @phosphor-icons/core light weight, filled paths in a 256 x 256 box. */
 export const phosphorLight = {

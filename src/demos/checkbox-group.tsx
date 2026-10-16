@@ -1,8 +1,8 @@
 import { createSignal, For, Show } from "solid-js";
-import { CheckboxGroup, CheckboxItem } from "../components/checkbox-group";
-import type { DemoModule } from "../lib/demo";
-import { DemoCard, DemoRow } from "../lib/demo-kit";
-import { color, type as scale } from "../lib/theme";
+import { CheckboxGroup, CheckboxItem } from "#/components/checkbox-group";
+import type { DemoModule } from "#/lib/demo";
+import { DemoCard, DemoRow } from "#/lib/demo-kit";
+import { color, type as scale } from "#/lib/theme";
 
 const FRUITS = ["Apples", "Bananas", "Cherries", "Dates"];
 

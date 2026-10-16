@@ -1,5 +1,5 @@
 import { createSignal, For, type JSX, onCleanup, Show } from "solid-js";
-import { Button } from "../components/button";
+import { Button } from "#/components/button";
 import {
 	type StepStatus,
 	ThinkingStep,
@@ -10,9 +10,9 @@ import {
 	ThinkingSteps,
 	ThinkingStepsContent,
 	ThinkingStepsHeader,
-} from "../components/thinking-steps";
-import type { DemoModule, ShotContext } from "../lib/demo";
-import { DemoCard } from "../lib/demo-kit";
+} from "#/components/thinking-steps";
+import type { DemoModule, ShotContext } from "#/lib/demo";
+import { DemoCard } from "#/lib/demo-kit";
 
 const ogImage = new URL("../../assets/chat-ai/og.png", import.meta.url)
 	.pathname;

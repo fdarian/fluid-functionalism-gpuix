@@ -1,4 +1,4 @@
-import type { IconName } from "../icons";
+import type { IconName } from "#/lib/icons";
 
 /** @hugeicons/core-free-icons stroke set, 24 x 24. */
 export const hugeicons = {

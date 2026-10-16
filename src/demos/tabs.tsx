@@ -1,8 +1,8 @@
 import { createSignal, type JSX } from "solid-js";
-import { TabItem, TabPanel, Tabs, TabsList } from "../components/tabs";
-import type { DemoModule } from "../lib/demo";
-import { DemoCard } from "../lib/demo-kit";
-import { color, type as scale } from "../lib/theme";
+import { TabItem, TabPanel, Tabs, TabsList } from "#/components/tabs";
+import type { DemoModule } from "#/lib/demo";
+import { DemoCard } from "#/lib/demo-kit";
+import { color, type as scale } from "#/lib/theme";
 
 
 function Section(props: { caption: string; children: JSX.Element }) {

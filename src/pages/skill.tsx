@@ -1,18 +1,18 @@
 import type { JSX } from "solid-js";
 import { For } from "solid-js";
-import type { ShotContext } from "../lib/demo";
+import type { ShotContext } from "#/lib/demo";
 import {
 	ComponentPreview,
 	DocPage,
 	DocSection,
 	Prose,
-} from "../lib/doc-page";
-import { color, siteType, weight } from "../lib/theme";
-import { CopyExample } from "./skill/copy-example";
-import { MenuExample } from "./skill/menu-example";
-import { PressExample } from "./skill/press-example";
-import { TabsExample } from "./skill/tabs-example";
-import { Timeline } from "./skill/timeline";
+} from "#/lib/doc-page";
+import { color, siteType, weight } from "#/lib/theme";
+import { CopyExample } from "#/pages/skill/copy-example";
+import { MenuExample } from "#/pages/skill/menu-example";
+import { PressExample } from "#/pages/skill/press-example";
+import { TabsExample } from "#/pages/skill/tabs-example";
+import { Timeline } from "#/pages/skill/timeline";
 
 export const title = "Skill";
 export const heading = "/fluid-functionalism skill";

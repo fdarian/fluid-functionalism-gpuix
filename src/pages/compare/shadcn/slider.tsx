@@ -6,8 +6,8 @@ import type {
 	KeyEvent,
 } from "@gpuix/solid";
 import { createSignal } from "solid-js";
-import { createPointerCapture } from "../../../lib/pointer-capture";
-import { twShadow, withAlpha } from "../../../lib/theme";
+import { createPointerCapture } from "#/lib/pointer-capture";
+import { twShadow, withAlpha } from "#/lib/theme";
 import { sc, scRing } from "./theme";
 
 const THUMB = 12;

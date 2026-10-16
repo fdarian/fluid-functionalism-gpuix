@@ -1,6 +1,6 @@
 import { For } from "solid-js";
-import { MONO } from "../../lib/doc-page";
-import { color, type as scale, siteType, weight } from "../../lib/theme";
+import { MONO } from "#/lib/doc-page";
+import { color, type as scale, siteType, weight } from "#/lib/theme";
 
 export const ANNOTATION_BLUE = "#6B97FF";
 /** Red marks the collapse: the dialog and the dropdown share one surface. The page background stays blue, as orienting context. */

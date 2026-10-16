@@ -1,13 +1,13 @@
 import { createReducedMotion, type HostElement, motion } from "@gpuix/solid";
 import { type Accessor, For, type JSX, Show } from "solid-js";
-import { monthLabel } from "../../lib/changelog/migration-prompt";
+import { monthLabel } from "#/lib/changelog/migration-prompt";
 import {
 	type ChangeGroup,
 	type Inline,
 	KIND_LABEL,
 	type Release,
-} from "../../lib/changelog/parse";
-import { color, siteType, motion as tween, weight } from "../../lib/theme";
+} from "#/lib/changelog/parse";
+import { color, siteType, motion as tween, weight } from "#/lib/theme";
 import { Entry, InlineProse } from "./entry";
 import { activeMonth } from "./release-spy";
 

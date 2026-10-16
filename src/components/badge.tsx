@@ -1,5 +1,5 @@
 import { type JSX, Show } from "solid-js";
-import { color, sizeChoice, shape, type as scale, weight } from "../lib/theme";
+import { color, sizeChoice, shape, type as scale, weight } from "#/lib/theme";
 
 export const badgeColors = {
 	gray: "#a3a3a3",

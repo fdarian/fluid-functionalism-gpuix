@@ -1,15 +1,15 @@
 import type { HostElement, HostMouseMoveEvent } from "@gpuix/solid";
 import { type Accessor, createSignal, For, Show } from "solid-js";
-import { Switch } from "../../components/switch";
-import { ComponentPreview, MONO } from "../../lib/doc-page";
-import { createFluidHover } from "../../lib/fluid-hover";
+import { Switch } from "#/components/switch";
+import { ComponentPreview, MONO } from "#/lib/doc-page";
+import { createFluidHover } from "#/lib/fluid-hover";
 import {
 	color,
 	colorFadeDefault,
 	type as scale,
 	weight,
 	withAlpha,
-} from "../../lib/theme";
+} from "#/lib/theme";
 import {
 	FluidRow,
 	ListFrame,

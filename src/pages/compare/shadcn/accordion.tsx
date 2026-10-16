@@ -6,7 +6,7 @@ import {
 	useGpuixRequired,
 } from "@gpuix/solid";
 import { createEffect, createSignal, For, on, Show } from "solid-js";
-import { weight } from "../../../lib/theme";
+import { weight } from "#/lib/theme";
 import { LUCIDE, LucideIcon, pressProps } from "./parts";
 import { sc, scRing } from "./theme";
 

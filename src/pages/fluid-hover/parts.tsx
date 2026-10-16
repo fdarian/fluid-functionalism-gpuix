@@ -1,14 +1,14 @@
 import { buttonProps, type HostElement, useGpuixRequired } from "@gpuix/solid";
 import type { JSX } from "solid-js";
-import { FluidHighlight } from "../../lib/fluid-highlight";
-import { type FluidHover, useHoverItem } from "../../lib/fluid-hover";
+import { FluidHighlight } from "#/lib/fluid-highlight";
+import { type FluidHover, useHoverItem } from "#/lib/fluid-hover";
 import {
 	color,
 	focusRing,
 	radius,
 	siteType,
 	weight,
-} from "../../lib/theme";
+} from "#/lib/theme";
 
 /** The demos' bordered list frame: `border-border/60` and the container radius. */
 export function ListFrame(props: { children: JSX.Element }) {

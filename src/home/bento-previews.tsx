@@ -5,29 +5,29 @@ import {
 	AccordionGroup,
 	AccordionItem,
 	AccordionTrigger,
-} from "../components/accordion";
-import { AskUserQuestions } from "../components/ask-user-questions";
-import { Badge, type BadgeColor } from "../components/badge";
-import { Button, type ButtonVariant } from "../components/button";
-import { CarouselDots } from "../components/carousel-dots";
+} from "#/components/accordion";
+import { AskUserQuestions } from "#/components/ask-user-questions";
+import { Badge, type BadgeColor } from "#/components/badge";
+import { Button, type ButtonVariant } from "#/components/button";
+import { CarouselDots } from "#/components/carousel-dots";
 import {
 	Card,
 	CardGroup,
 	CardHeader,
 	CardMedia,
 	CardTitle,
-} from "../components/card";
-import { ChatMessage } from "../components/chat-message";
-import { CheckboxGroup, CheckboxItem } from "../components/checkbox-group";
-import { ColorPicker } from "../components/color-picker";
-import { Combobox } from "../components/combobox";
+} from "#/components/card";
+import { ChatMessage } from "#/components/chat-message";
+import { CheckboxGroup, CheckboxItem } from "#/components/checkbox-group";
+import { ColorPicker } from "#/components/color-picker";
+import { Combobox } from "#/components/combobox";
 import {
 	CommandMenu,
 	CommandMenuEmpty,
 	CommandMenuInput,
 	CommandMenuList,
 	CommandMenuPanel,
-} from "../components/command-menu";
+} from "#/components/command-menu";
 import {
 	Dialog,
 	DialogClose,
@@ -37,13 +37,13 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "../components/dialog";
-import { Dropdown, MenuItem } from "../components/dropdown";
-import { InputCopy } from "../components/input-copy";
-import { InputField, InputGroup } from "../components/input-group";
-import { InputMessage } from "../components/input-message";
-import { RadioGroup, RadioItem } from "../components/radio-group";
-import { Select } from "../components/select";
+} from "#/components/dialog";
+import { Dropdown, MenuItem } from "#/components/dropdown";
+import { InputCopy } from "#/components/input-copy";
+import { InputField, InputGroup } from "#/components/input-group";
+import { InputMessage } from "#/components/input-message";
+import { RadioGroup, RadioItem } from "#/components/radio-group";
+import { Select } from "#/components/select";
 import {
 	Sidebar,
 	SidebarContent,
@@ -53,9 +53,9 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarSearchField,
-} from "../components/sidebar";
-import { Slider, type SliderValue } from "../components/slider";
-import { Switch } from "../components/switch";
+} from "#/components/sidebar";
+import { Slider, type SliderValue } from "#/components/slider";
+import { Switch } from "#/components/switch";
 import {
 	Table,
 	TableBody,
@@ -63,10 +63,10 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "../components/table";
-import { TabItem, Tabs, TabsList } from "../components/tabs";
-import { TabsSubtle, TabsSubtleItem } from "../components/tabs-subtle";
-import { ThinkingIndicator } from "../components/thinking-indicator";
+} from "#/components/table";
+import { TabItem, Tabs, TabsList } from "#/components/tabs";
+import { TabsSubtle, TabsSubtleItem } from "#/components/tabs-subtle";
+import { ThinkingIndicator } from "#/components/thinking-indicator";
 import {
 	ThinkingStep,
 	ThinkingStepDetails,
@@ -75,12 +75,12 @@ import {
 	ThinkingSteps,
 	ThinkingStepsContent,
 	ThinkingStepsHeader,
-} from "../components/thinking-steps";
-import { Tooltip } from "../components/tooltip";
-import { createSlides, SLIDES, Slide } from "../demos/carousel-dots";
-import type { IconRef } from "../lib/icons";
-import { usePreviewPlayback } from "../lib/preview-playback";
-import { color, siteType, weight } from "../lib/theme";
+} from "#/components/thinking-steps";
+import { Tooltip } from "#/components/tooltip";
+import { createSlides, SLIDES, Slide } from "#/demos/carousel-dots";
+import type { IconRef } from "#/lib/icons";
+import { usePreviewPlayback } from "#/lib/preview-playback";
+import { color, siteType, weight } from "#/lib/theme";
 import { ASK_USER_EXAMPLE_QUESTIONS } from "./ask-user-example";
 import { BentoTileContext } from "./bento-card";
 import {

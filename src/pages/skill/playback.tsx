@@ -13,9 +13,9 @@ import {
 	Show,
 	untrack,
 } from "solid-js";
-import { onFrame } from "../../lib/clock";
-import { usePreviewPlayback } from "../../lib/preview-playback";
-import { color, shape, siteType } from "../../lib/theme";
+import { onFrame } from "#/lib/clock";
+import { usePreviewPlayback } from "#/lib/preview-playback";
+import { color, shape, siteType } from "#/lib/theme";
 import {
 	createScriptedPointer,
 	findByTestId,

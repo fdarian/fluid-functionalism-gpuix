@@ -1,7 +1,7 @@
 import { For } from "solid-js";
-import { type FileLike, FileThumbnail } from "../components/file-thumbnail";
-import type { DemoModule } from "../lib/demo";
-import { DemoCard, DemoRow } from "../lib/demo-kit";
+import { type FileLike, FileThumbnail } from "#/components/file-thumbnail";
+import type { DemoModule } from "#/lib/demo";
+import { DemoCard, DemoRow } from "#/lib/demo-kit";
 
 const photo: FileLike = {
 	name: "micka.png",

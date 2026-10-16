@@ -13,13 +13,13 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
-import { Button } from "../../components/button";
-import { Tooltip } from "../../components/tooltip";
-import { BentoTileContext, bentoFrame } from "../../home/bento-card";
-import { PageScrollerContext } from "../../lib/demo-kit";
-import { PAUSE_ICON, PLAY_ICON } from "../../lib/playback-icons";
-import { PreviewPlaybackContext } from "../../lib/preview-playback";
-import { color, fade, shape, sizeChoice } from "../../lib/theme";
+import { Button } from "#/components/button";
+import { Tooltip } from "#/components/tooltip";
+import { BentoTileContext, bentoFrame } from "#/home/bento-card";
+import { PageScrollerContext } from "#/lib/demo-kit";
+import { PAUSE_ICON, PLAY_ICON } from "#/lib/playback-icons";
+import { PreviewPlaybackContext } from "#/lib/preview-playback";
+import { color, fade, shape, sizeChoice } from "#/lib/theme";
 import {
 	ANIMATED_PREVIEWS,
 	DEFAULT_STAGE_PADDING,

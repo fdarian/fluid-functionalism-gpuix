@@ -11,7 +11,7 @@
  */
 
 import { createHostElement } from "../node_modules/@gpuix/solid/dist/host.js";
-import { formatShortcut } from "../src/components/command-menu";
+import { formatShortcut } from "#/components/command-menu";
 import { createCheck } from "./check-kit";
 
 const kit = await createCheck("command-menu");

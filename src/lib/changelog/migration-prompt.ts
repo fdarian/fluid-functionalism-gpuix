@@ -1,5 +1,5 @@
-import { installUrl } from "../install-url";
-import { OVERWRITE_NOTE, SITE_URL } from "../starter-prompt";
+import { installUrl } from "#/lib/install-url";
+import { OVERWRITE_NOTE, SITE_URL } from "#/lib/starter-prompt";
 import type { EntryInstall } from "./install";
 import type { ChangeEntry, Inline } from "./parse";
 

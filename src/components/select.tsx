@@ -18,16 +18,16 @@ import {
 	onCleanup,
 	Show,
 } from "solid-js";
-import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
-import { createFocusRing, FocusRing } from "../lib/focus-ring";
-import { FormValue } from "../lib/form-value";
-import { CheckMark, Icon, LIST_CHECK } from "../lib/icon";
-import type { IconRef } from "../lib/icons";
-import { edgeIndex, isChord, moveIndex, revealRow } from "../lib/list-nav";
-import { PopupSurface } from "../lib/popup";
-import { refocusAfterPress } from "../lib/popup-trigger";
-import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
+import { FluidHighlight } from "#/lib/fluid-highlight";
+import { createFluidHover, useHoverItem } from "#/lib/fluid-hover";
+import { createFocusRing, FocusRing } from "#/lib/focus-ring";
+import { FormValue } from "#/lib/form-value";
+import { CheckMark, Icon, LIST_CHECK } from "#/lib/icon";
+import type { IconRef } from "#/lib/icons";
+import { edgeIndex, isChord, moveIndex, revealRow } from "#/lib/list-nav";
+import { PopupSurface } from "#/lib/popup";
+import { refocusAfterPress } from "#/lib/popup-trigger";
+import { createPresence, POPUP_EXIT_FALLBACK_MS } from "#/lib/presence";
 import {
 	color,
 	colorFade,
@@ -39,8 +39,8 @@ import {
 	scheme,
 	motion as tween,
 	withAlpha,
-} from "../lib/theme";
-import { createTypeahead } from "../lib/typeahead";
+} from "#/lib/theme";
+import { createTypeahead } from "#/lib/typeahead";
 
 /** How long a pick holds the popup open so the check and the checked background are seen arriving. */
 const ACK_MS = 300;

@@ -1,6 +1,6 @@
 import { For } from "solid-js";
-import { MONO } from "../../lib/doc-page";
-import { color, siteType, weight, withAlpha } from "../../lib/theme";
+import { MONO } from "#/lib/doc-page";
+import { color, siteType, weight, withAlpha } from "#/lib/theme";
 
 type Mark = "add" | "remove" | null;
 

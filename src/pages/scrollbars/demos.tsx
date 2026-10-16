@@ -1,5 +1,5 @@
 import { For, type JSX } from "solid-js";
-import { ScrollArea } from "../../components/scroll-area";
+import { ScrollArea } from "#/components/scroll-area";
 import {
 	Table,
 	TableBody,
@@ -7,9 +7,9 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "../../components/table";
-import { ComponentPreview } from "../../lib/doc-page";
-import { color, shape, siteType } from "../../lib/theme";
+} from "#/components/table";
+import { ComponentPreview } from "#/lib/doc-page";
+import { color, shape, siteType } from "#/lib/theme";
 import { FADE_CODE, HORIZONTAL_CODE, PROBLEM_CODE, TABLE_CODE } from "./code";
 
 const RELEASES = Array.from(

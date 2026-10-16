@@ -1,4 +1,4 @@
-import { loadDemos, loadPages } from "../src/lib/demo";
+import { loadDemos, loadPages } from "#/lib/demo";
 
 const demos = await loadDemos();
 const pages = await loadPages(demos);

@@ -1,8 +1,8 @@
 import { type Accessor, createSignal, Show } from "solid-js";
-import { ColorPicker, ColorPickerPopover } from "../components/color-picker";
-import type { DemoModule, ShotContext } from "../lib/demo";
-import { DemoCard } from "../lib/demo-kit";
-import { color, type as scale } from "../lib/theme";
+import { ColorPicker, ColorPickerPopover } from "#/components/color-picker";
+import type { DemoModule, ShotContext } from "#/lib/demo";
+import { DemoCard } from "#/lib/demo-kit";
+import { color, type as scale } from "#/lib/theme";
 
 const SWATCHES = [
 	"#000000",

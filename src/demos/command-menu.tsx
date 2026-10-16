@@ -6,7 +6,7 @@ import {
 	useGpuixRequired,
 } from "@gpuix/solid";
 import { createMemo, createSignal, type JSX, onCleanup, Show } from "solid-js";
-import { Button } from "../components/button";
+import { Button } from "#/components/button";
 import {
 	CommandMenu,
 	CommandMenuDialog,
@@ -22,11 +22,11 @@ import {
 	CommandMenuShortcut,
 	CommandMenuTabs,
 	formatShortcut,
-} from "../components/command-menu";
-import { Select } from "../components/select";
-import type { DemoModule } from "../lib/demo";
-import { DemoCard } from "../lib/demo-kit";
-import { IS_MAC } from "../lib/platform";
+} from "#/components/command-menu";
+import { Select } from "#/components/select";
+import type { DemoModule } from "#/lib/demo";
+import { DemoCard } from "#/lib/demo-kit";
+import { IS_MAC } from "#/lib/platform";
 import {
 	PlayDivider,
 	PlayField,
@@ -36,8 +36,8 @@ import {
 	PlaySelect,
 	PlaySwitch,
 	pick,
-} from "../lib/playground";
-import { color, type as scale } from "../lib/theme";
+} from "#/lib/playground";
+import { color, type as scale } from "#/lib/theme";
 
 function items(options: {
 	descriptions: boolean;
