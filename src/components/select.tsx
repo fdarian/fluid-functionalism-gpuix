@@ -7,6 +7,18 @@ import {
 	type KeyEvent,
 } from '@gpuix/solid';
 import {
+	createTypeahead,
+	refocusAfterPress,
+} from 'base-ui-solid-gpuix/floating-ui-solid/hooks';
+import { createPresence } from 'base-ui-solid-gpuix/internals';
+import {
+	edgeIndex,
+	isChord,
+	moveIndex,
+	revealRow,
+} from 'base-ui-solid-gpuix/internals/composite';
+import { FormValue } from 'base-ui-solid-gpuix/utils';
+import {
 	type Accessor,
 	createEffect,
 	createMemo,
@@ -21,13 +33,10 @@ import {
 import { FluidHighlight } from '#/lib/fluid-highlight';
 import { createFluidHover, useHoverItem } from '#/lib/fluid-hover';
 import { createFocusRing, FocusRing } from '#/lib/focus-ring';
-import { FormValue } from '#/lib/form-value';
 import { CheckMark, Icon, LIST_CHECK } from '#/lib/icon';
 import type { IconRef } from '#/lib/icons';
-import { edgeIndex, isChord, moveIndex, revealRow } from '#/lib/list-nav';
 import { PopupSurface } from '#/lib/popup';
-import { refocusAfterPress } from '#/lib/popup-trigger';
-import { createPresence, POPUP_EXIT_FALLBACK_MS } from '#/lib/presence';
+import { POPUP_EXIT_FALLBACK_MS } from '#/lib/popup-timing';
 import {
 	color,
 	colorFade,
@@ -39,7 +48,6 @@ import {
 	motion as tween,
 	withAlpha,
 } from '#/lib/theme';
-import { createTypeahead } from '#/lib/typeahead';
 
 /** How long a pick holds the popup open so the check and the checked background are seen arriving. */
 const ACK_MS = 300;

@@ -6,6 +6,7 @@ import {
 	motion,
 	useGpuixRequired,
 } from '@gpuix/solid';
+import { moveIndex } from 'base-ui-solid-gpuix/internals/composite';
 import {
 	createComputed,
 	createContext,
@@ -30,7 +31,6 @@ import {
 } from '#/lib/focus-ring';
 import { Icon } from '#/lib/icon';
 import type { IconRef } from '#/lib/icons';
-import { moveIndex } from '#/lib/list-nav';
 import { createPreviewPill } from '#/lib/preview-pill';
 import { StableLabel } from '#/lib/stable-label';
 import {

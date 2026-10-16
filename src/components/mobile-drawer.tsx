@@ -6,9 +6,9 @@ import {
 	type HostElement,
 	motion,
 } from '@gpuix/solid';
+import { HideOutside } from 'base-ui-solid-gpuix/floating-ui-solid/utils';
+import { createPresence } from 'base-ui-solid-gpuix/internals';
 import type { JSX } from 'solid-js';
-import { HideOutside } from '#/lib/modal';
-import { createPresence } from '#/lib/presence';
 import { color, shadow, motion as tween } from '#/lib/theme';
 import { FocusFirst } from './dialog';
 

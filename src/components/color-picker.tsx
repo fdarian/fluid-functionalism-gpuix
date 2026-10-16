@@ -8,6 +8,22 @@ import {
 	useGpuixRequired,
 } from '@gpuix/solid';
 import {
+	createPressToggle,
+	createTypeahead,
+	refocusAfterPress,
+} from 'base-ui-solid-gpuix/floating-ui-solid/hooks';
+import {
+	createPlacementState,
+	createPresence,
+	POPUP_MARGIN,
+} from 'base-ui-solid-gpuix/internals';
+import {
+	edgeIndex,
+	isChord,
+	moveIndex,
+} from 'base-ui-solid-gpuix/internals/composite';
+import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
+import {
 	type Accessor,
 	createEffect,
 	createMemo,
@@ -24,11 +40,7 @@ import { FluidHighlight } from '#/lib/fluid-highlight';
 import { createFluidHover, useHoverItem } from '#/lib/fluid-hover';
 import { Icon } from '#/lib/icon';
 import { defineIcon } from '#/lib/icons';
-import { edgeIndex, isChord, moveIndex } from '#/lib/list-nav';
-import { createPointerCapture } from '#/lib/pointer-capture';
-import { createPlacementState, POPUP_MARGIN, POPUP_OFFSET } from '#/lib/popup';
-import { createPressToggle, refocusAfterPress } from '#/lib/popup-trigger';
-import { createPresence } from '#/lib/presence';
+import { POPUP_OFFSET } from '#/lib/popup';
 import { StableLabel } from '#/lib/stable-label';
 import {
 	color,
@@ -47,7 +59,6 @@ import {
 	motion as tween,
 	weight,
 } from '#/lib/theme';
-import { createTypeahead } from '#/lib/typeahead';
 import {
 	buildParsed,
 	type ColorFormat,

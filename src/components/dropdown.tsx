@@ -10,6 +10,21 @@ import {
 	motion,
 } from '@gpuix/solid';
 import {
+	createPressToggle,
+	createTypeahead,
+	refocusAfterPress,
+} from 'base-ui-solid-gpuix/floating-ui-solid/hooks';
+import {
+	createPlacementState,
+	createPresence,
+	POPUP_MARGIN,
+} from 'base-ui-solid-gpuix/internals';
+import {
+	isChord,
+	moveIndex,
+	revealRow,
+} from 'base-ui-solid-gpuix/internals/composite';
+import {
 	type Accessor,
 	batch,
 	createContext,
@@ -34,12 +49,9 @@ import {
 	type ItemRect,
 } from '#/lib/fluid-hover';
 import type { IconRef } from '#/lib/icons';
-import { isChord, moveIndex, revealRow } from '#/lib/list-nav';
-import { createPlacementState, POPUP_MARGIN, PopupSurface } from '#/lib/popup';
-import { createPressToggle, refocusAfterPress } from '#/lib/popup-trigger';
-import { createPresence } from '#/lib/presence';
+import { PopupSurface } from '#/lib/popup';
+import { POPUP_EXIT_MS } from '#/lib/popup-timing';
 import { color, radius, shadow, motion as tween } from '#/lib/theme';
-import { createTypeahead } from '#/lib/typeahead';
 import {
 	type DropdownSearchHost,
 	DropdownSearchHostContext,
@@ -974,7 +986,7 @@ export function DropdownMenu(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
-	const presence = createPresence();
+	const presence = createPresence(POPUP_EXIT_MS);
 	const [keyboardActive, setKeyboardActive] = createSignal(false);
 
 	const [openFrom, setOpenFrom] = createSignal<'first' | 'last'>('first');
@@ -1221,7 +1233,7 @@ export function DropdownSub(props: {
 	onOpenChange?: (open: boolean) => void;
 	children: JSX.Element;
 }) {
-	const presence = createPresence();
+	const presence = createPresence(POPUP_EXIT_MS);
 	const [content, setContent] = createSignal<SubContentProps>();
 	const [entered, setEntered] = createSignal(false);
 	const apply = (next: boolean) => {

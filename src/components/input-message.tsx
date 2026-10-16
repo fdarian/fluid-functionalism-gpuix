@@ -6,6 +6,8 @@ import {
 	motion,
 	useGpuixRequired,
 } from '@gpuix/solid';
+import { createPresence } from 'base-ui-solid-gpuix/internals';
+import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
 import {
 	type Accessor,
 	createEffect,
@@ -20,8 +22,6 @@ import { FluidHighlight } from '#/lib/fluid-highlight';
 import { createFluidHover } from '#/lib/fluid-hover';
 import { Icon } from '#/lib/icon';
 import { createMeasuredHeight } from '#/lib/measured-height';
-import { createPointerCapture } from '#/lib/pointer-capture';
-import { createPresence } from '#/lib/presence';
 import { fill } from '#/lib/press';
 import {
 	color,

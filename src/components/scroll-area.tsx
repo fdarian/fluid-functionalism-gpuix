@@ -10,8 +10,8 @@ import {
 	type ScrollEvent,
 	type StyleDesc,
 } from '@gpuix/solid';
+import { isChord } from 'base-ui-solid-gpuix/internals/composite';
 import { createSignal, type JSX, onCleanup, Show } from 'solid-js';
-import { isChord } from '#/lib/list-nav';
 import { color, fade, withAlpha } from '#/lib/theme';
 
 export type ScrollOrientation = 'vertical' | 'horizontal' | 'both';

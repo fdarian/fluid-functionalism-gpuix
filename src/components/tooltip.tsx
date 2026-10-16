@@ -6,6 +6,11 @@ import {
 	motion,
 } from '@gpuix/solid';
 import {
+	createPlacementState,
+	createPresence,
+	POPUP_MARGIN,
+} from 'base-ui-solid-gpuix/internals';
+import {
 	createContext,
 	createEffect,
 	createSignal,
@@ -15,8 +20,7 @@ import {
 	untrack,
 	useContext,
 } from 'solid-js';
-import { createPlacementState, POPUP_MARGIN } from '#/lib/popup';
-import { createPresence, POPUP_EXIT_FALLBACK_MS } from '#/lib/presence';
+import { POPUP_EXIT_FALLBACK_MS } from '#/lib/popup-timing';
 import { color, type as scale, shape, motion as tween } from '#/lib/theme';
 
 export type TooltipSide = 'top' | 'right' | 'bottom' | 'left';

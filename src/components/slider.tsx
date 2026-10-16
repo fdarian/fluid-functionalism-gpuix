@@ -9,6 +9,8 @@ import {
 	type KeyEvent,
 	motion,
 } from '@gpuix/solid';
+import { createPresence } from 'base-ui-solid-gpuix/internals';
+import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
 import {
 	type Accessor,
 	createEffect,
@@ -21,8 +23,7 @@ import {
 	Show,
 	untrack,
 } from 'solid-js';
-import { createPointerCapture } from '#/lib/pointer-capture';
-import { createPresence } from '#/lib/presence';
+import { POPUP_EXIT_MS } from '#/lib/popup-timing';
 import {
 	color,
 	focusRing,
@@ -176,7 +177,7 @@ function ValueBubble(props: {
 	visible: Accessor<boolean>;
 	gap: number;
 }) {
-	const presence = createPresence();
+	const presence = createPresence(POPUP_EXIT_MS);
 	createEffect(() => {
 		if (props.visible()) presence.show();
 		else if (untrack(presence.mounted)) presence.hide();

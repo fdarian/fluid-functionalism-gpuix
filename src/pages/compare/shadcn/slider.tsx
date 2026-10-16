@@ -5,8 +5,8 @@ import type {
 	HostMouseMoveEvent,
 	KeyEvent,
 } from '@gpuix/solid';
+import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
 import { createSignal } from 'solid-js';
-import { createPointerCapture } from '#/lib/pointer-capture';
 import { twShadow, withAlpha } from '#/lib/theme';
 import { sc, scRing } from './theme';
 

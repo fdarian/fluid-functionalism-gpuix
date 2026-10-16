@@ -6,6 +6,7 @@ import {
 	motion,
 	useGpuixRequired,
 } from '@gpuix/solid';
+import { isChord, moveIndex } from 'base-ui-solid-gpuix/internals/composite';
 import {
 	createEffect,
 	createMemo,
@@ -21,7 +22,6 @@ import {
 import { FluidHighlight } from '#/lib/fluid-highlight';
 import { createFluidHover, type ItemRect } from '#/lib/fluid-hover';
 import { Icon } from '#/lib/icon';
-import { isChord, moveIndex } from '#/lib/list-nav';
 import { createMeasuredHeight } from '#/lib/measured-height';
 import { IS_MAC } from '#/lib/platform';
 import { StableLabel } from '#/lib/stable-label';

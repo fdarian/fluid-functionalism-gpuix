@@ -7,6 +7,7 @@ import {
 	motion,
 	useGpuixRequired,
 } from '@gpuix/solid';
+import { edgeIndex, moveIndex } from 'base-ui-solid-gpuix/internals/composite';
 import {
 	type Accessor,
 	createComputed,
@@ -33,7 +34,6 @@ import {
 } from '#/lib/focus-ring';
 import { Icon } from '#/lib/icon';
 import type { IconRef } from '#/lib/icons';
-import { edgeIndex, moveIndex } from '#/lib/list-nav';
 import { createMeasuredHeight } from '#/lib/measured-height';
 import { StableLabel } from '#/lib/stable-label';
 import {

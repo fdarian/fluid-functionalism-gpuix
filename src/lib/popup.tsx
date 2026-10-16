@@ -1,42 +1,16 @@
+import { type DimensionValue, DismissableLayer, motion } from '@gpuix/solid';
 import {
-	type AnchoredPlacementEvent,
-	type DimensionValue,
-	DismissableLayer,
-	motion,
-} from '@gpuix/solid';
-import { type Accessor, createSignal, type JSX, Show } from 'solid-js';
-import type { createPresence } from './presence';
+	createPlacementState,
+	type createPresence,
+	POPUP_MARGIN,
+} from 'base-ui-solid-gpuix/internals';
+import { type Accessor, type JSX, Show } from 'solid-js';
 import { SurfaceContext, useElevatedSurface } from './surface-context';
 import { color, radius, shadow, surface, motion as tween } from './theme';
 
 export const POPUP_OFFSET = 6;
 /** Steps above its substrate a popup sits: `Elevated offset={2}` in the source. */
 const POPUP_SURFACE_OFFSET = 2;
-/** The gap a popup keeps from the window edge: Base UI's default collision padding. */
-export const POPUP_MARGIN = 5;
-
-type Side = AnchoredPlacementEvent['side'];
-
-/**
- * What `<anchored fit="flip">` reports about where it ended up: the side it
- * opened on, which may differ from the preferred one, and the height left on
- * that side.
- */
-export function createPlacementState(preferred: Side) {
-	const [side, setSide] = createSignal<Side>(preferred);
-	const [availableHeight, setAvailableHeight] = createSignal(
-		Number.POSITIVE_INFINITY,
-	);
-	return {
-		side,
-		/** `cap`, or the room on the popup's side if that is smaller. */
-		maxHeight: (cap: number) => Math.min(cap, availableHeight()),
-		onPlacement(event: AnchoredPlacementEvent) {
-			setSide(event.side);
-			setAvailableHeight(event.availableHeight);
-		},
-	};
-}
 
 /**
  * The shared popup chrome of the combobox, select and dropdown: an `<anchored>`

@@ -12,6 +12,8 @@ import {
 	motion,
 	useGpuixRequired,
 } from '@gpuix/solid';
+import { HideOutside } from 'base-ui-solid-gpuix/floating-ui-solid/utils';
+import { createPresence } from 'base-ui-solid-gpuix/internals';
 import {
 	createContext,
 	createSignal,
@@ -22,8 +24,6 @@ import {
 	Show,
 	useContext,
 } from 'solid-js';
-import { HideOutside } from '#/lib/modal';
-import { createPresence } from '#/lib/presence';
 import { SurfaceContext, useElevatedSurface } from '#/lib/surface-context';
 import {
 	color,

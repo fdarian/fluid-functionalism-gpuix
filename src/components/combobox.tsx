@@ -4,6 +4,13 @@ import {
 	type KeyEvent,
 	useGpuixRequired,
 } from '@gpuix/solid';
+import { createPresence } from 'base-ui-solid-gpuix/internals';
+import {
+	isChord,
+	moveIndex,
+	revealRow,
+} from 'base-ui-solid-gpuix/internals/composite';
+import { FormValue } from 'base-ui-solid-gpuix/utils';
 import {
 	type Accessor,
 	createEffect,
@@ -20,12 +27,10 @@ import {
 	createReflowGate,
 	useHoverItem,
 } from '#/lib/fluid-hover';
-import { FormValue } from '#/lib/form-value';
 import { CheckMark, Icon, LIST_CHECK } from '#/lib/icon';
 import type { IconRef } from '#/lib/icons';
-import { isChord, moveIndex, revealRow } from '#/lib/list-nav';
 import { PopupSurface } from '#/lib/popup';
-import { createPresence, POPUP_EXIT_FALLBACK_MS } from '#/lib/presence';
+import { POPUP_EXIT_FALLBACK_MS } from '#/lib/popup-timing';
 import {
 	color,
 	colorFade,

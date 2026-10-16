@@ -8,6 +8,8 @@ import {
 	motion,
 	useGpuixRequired,
 } from '@gpuix/solid';
+import { createPresence } from 'base-ui-solid-gpuix/internals';
+import { moveIndex } from 'base-ui-solid-gpuix/internals/composite';
 import {
 	type Accessor,
 	createContext,
@@ -30,9 +32,7 @@ import {
 } from '#/lib/fluid-hover';
 import { Icon } from '#/lib/icon';
 import type { IconRef } from '#/lib/icons';
-import { moveIndex } from '#/lib/list-nav';
 import { IS_MAC } from '#/lib/platform';
-import { createPresence } from '#/lib/presence';
 import {
 	color,
 	colorFade,

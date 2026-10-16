@@ -9,10 +9,10 @@ import {
 	ResizeObserver,
 	useIsPresent,
 } from '@gpuix/solid';
+import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
 import { createEffect, createSignal, For, onCleanup, Show } from 'solid-js';
 import { Icon } from '#/lib/icon';
 import type { IconRef } from '#/lib/icons';
-import { createPointerCapture } from '#/lib/pointer-capture';
 import {
 	color,
 	nestedRadius,

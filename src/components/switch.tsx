@@ -4,8 +4,8 @@ import type {
 	KeyEvent,
 } from '@gpuix/solid';
 import { motion } from '@gpuix/solid';
+import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
 import { createSignal, createUniqueId } from 'solid-js';
-import { createPointerCapture } from '#/lib/pointer-capture';
 import {
 	color,
 	fade,

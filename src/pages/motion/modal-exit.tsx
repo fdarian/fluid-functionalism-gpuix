@@ -1,8 +1,8 @@
 import { type MotionTransition, motion, type StyleDesc } from '@gpuix/solid';
+import { createPresence } from 'base-ui-solid-gpuix/internals';
 import { createSignal, Show } from 'solid-js';
 import { Button } from '#/components/button';
 import { ComponentPreview, MONO } from '#/lib/doc-page';
-import { createPresence } from '#/lib/presence';
 import {
 	color,
 	siteType,

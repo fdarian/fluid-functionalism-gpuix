@@ -1,7 +1,8 @@
 import { type DomEvent, motion } from '@gpuix/solid';
+import { createPresence } from 'base-ui-solid-gpuix/internals';
 import { createComputed, createSignal, Show } from 'solid-js';
 import type { FluidHover, ItemRect } from './fluid-hover';
-import { createPresence } from './presence';
+import { POPUP_EXIT_MS } from './popup-timing';
 import { color, motion as tween } from './theme';
 
 /** The ring's box rides `spring.fast` but its opacity is a plain tween (`registry/base/accordion.tsx:465-468`). */
@@ -64,7 +65,7 @@ export function FocusRing(props: {
 	/** `false` snaps to the new rect: a reflow moved the row, not the focus. */
 	travel?: () => boolean;
 }) {
-	const presence = createPresence();
+	const presence = createPresence(POPUP_EXIT_MS);
 	presence.follow(() => props.ring.rect() !== null);
 
 	// The exit fades in place, so the last rect outlives the ring's own.
