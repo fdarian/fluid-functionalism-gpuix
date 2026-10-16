@@ -183,15 +183,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Fidelity:** approximated (extra state; the popup opens on mouse-down, so it shows briefly).
 - **Components it hits:** just this one.
 
-## Disabled dims and blocks the error message too
-
-- **Cause:** `not ported yet` (a bug: the port dims more than FF).
-- **Original:** `disabled:opacity-50 disabled:pointer-events-none` on the trigger only; the error text beneath is outside it (`select.tsx:236`, `:332-334`).
-- **Port:** the outer wrapper, which holds the trigger and the error text, takes `opacity: 0.5` and `pointerEvents: "none"` (`select.tsx:467-474`).
-- **Workaround:** none.
-- **Fidelity:** approximated (a disabled select with an error shows the message at half opacity).
-- **Components it hits:** just this one.
-
 ## Popup surface does not follow the substrate
 
 - **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup surface colour is fixed at surface-3"](dropdown.md#popup-surface-colour-is-fixed-at-surface-3), where the entry lives. Here: original `select.tsx:486-493`, `elevated.tsx:37-52`, `dialog.tsx:189-190`; port `popup.tsx:97`. The select inside the dialog demo (`demos/dialog.tsx:84`) opens surface-3 on a surface-5 dialog (dark: `#252525` against `#414141`).

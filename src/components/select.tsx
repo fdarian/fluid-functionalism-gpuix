@@ -469,8 +469,6 @@ export function Select<Value extends string>(props: {
 				display: "flex",
 				flexDirection: "column",
 				flexShrink: 0,
-				opacity: props.disabled === true ? 0.5 : 1,
-				pointerEvents: props.disabled === true ? "none" : "auto",
 			}}
 		>
 			<div
@@ -515,6 +513,8 @@ export function Select<Value extends string>(props: {
 						borderRadius: radius.item,
 						cursor: "pointer",
 						keyboardFocusDim: false,
+						opacity: props.disabled === true ? 0.5 : 1,
+						pointerEvents: props.disabled === true ? "none" : "auto",
 						hover: { backgroundColor: color.hover },
 						active: { backgroundColor: color.active },
 						// FF's focus moves into the popup while it is open, so the trigger's ring waits for the close; here the trigger keeps focus and the popup's own ring takes over.
