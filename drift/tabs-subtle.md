@@ -13,8 +13,8 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `gpuix gap`.
 - **Original:** `width` animates to `offsetWidth` read through a `ResizeObserver`, with a separate `marginLeft` (`tabs-subtle.tsx:286-296`, `:396-410`).
-- **Port:** the box holding the label reports its width through `onLayout` (`tabs-subtle.tsx:429-434`) and the outer box animates `width` to that number, with `marginLeft` 0 to 8 (6 compact) and `opacity` on the same box (`labelTarget`, `:302-307`, `:410`). The tab selected at mount is born unfolded: until the first report it keeps a plain `width: "auto"` style (`:417-421`), and the first measured width is placed with a snap (`labelTransition`, `:309-312`). `onMotionComplete` calls `hover.remeasure()` (`:412`) so the pill and neighbours refresh once the label settles. Width and margin ride `spring.fast` both ways with opacity on a 0.06 tween, as the source does (`:309-312`).
-- **gpuix lacks:** `width: "auto"` as a motion target (it throws; `~/code/fdarian/gpuix/FORK.md:867-871`: taffy reports a content size inside a width already decided, not a max-content width). `height: "auto"` works.
+- **Port:** the box holding the label reports its width through `onLayout` (`tabs-subtle.tsx:373-378`) and the outer box animates `width` to that number, with `marginLeft` 0 to 8 (6 compact) and `opacity` on the same box (`labelTarget`, `:288-293`, `:358-361`). The tab selected at mount is born unfolded: until the first report it keeps a plain `width: "auto"` style (`:367-370`), and the first measured width is placed with a snap (`labelTransition`, `:295-298`). `onMotionComplete` calls `hover.remeasure()` (`:362`) so the pill and neighbours refresh once the label settles. Width and margin ride `spring.fast` both ways with opacity on a 0.06 tween, as the source does (`:295-298`).
+- **gpuix lacks:** `width: "auto"` as a motion target (it throws; `~/code/fdarian/gpuix/FORK.md:891-899`: taffy reports a content size inside a width already decided, not a max-content width). `height: "auto"` works.
 - **Workaround:** as above.
 - **Fidelity:** exact for the label width.
 - **Components it hits:** accordion, sidebar sub-menu, any component that animates width to a content size.
@@ -23,7 +23,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** the list is a block `flex` with `-mx-1 px-1 -my-1 py-1` and `max-w-[calc(100%+8px)]`, so in a column parent it is as wide as the parent and 4px taller on each side (`tabs-subtle.tsx:166-175`). With `axis: "x"` the pointer anywhere along that row, including empty space to the right of the last tab or 4px above the tabs, lights the nearest tab.
-- **Port:** `alignSelf: "flex-start"` and no padding, so the list is only the tabs (`tabs-subtle.tsx:167-174`); the pointer outside the tabs lights nothing.
+- **Port:** `alignSelf: "flex-start"` and no padding, so the list is only the tabs (`tabs-subtle.tsx:171-178`); the pointer outside the tabs lights nothing.
 - **Workaround:** none.
 - **Fidelity:** approximated (looks the same at rest).
 - **Components it hits:** just this one (tabs hugs its content in the source too).
@@ -32,7 +32,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `not ported yet` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` row 144: no demo overflows; no gpuix cause).
 - **Original:** `overflow-x-auto scrollbar-hide`, with the `-mx-1 px-1` padding giving the focus ring room, and Base UI scrolls a focused tab into view (`tabs-subtle.tsx:166-175`).
-- **Port:** no scroller, no scroll-into-view; a list wider than its parent overflows (`tabs-subtle.tsx:167-174`).
+- **Port:** no scroller, no scroll-into-view; a list wider than its parent overflows (`tabs-subtle.tsx:171-178`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -41,7 +41,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `port choice` (c3ba037 follows Base UI, whose panels mount only while selected; the source's own panel is a plain `div` that does not).
 - **Original:** every panel exists, `hidden` unless selected, `tabIndex={-1}`, `outline-none`, and with an `idPrefix` every tab has `aria-controls` (`tabs-subtle.tsx:357`, `:435-453`).
-- **Port:** only the selected panel mounts, with no `tabIndex`; `aria-controls` is set on the selected tab only (`tabs-subtle.tsx:347`, `:431-448`).
+- **Port:** only the selected panel mounts, with no `tabIndex`; `aria-controls` is set on the selected tab only (`tabs-subtle.tsx:265`, `:395-412`, `base-ui:src/tabs/tab/use-tabs-tab.ts:94-96`).
 - **Workaround:** none.
 - **Fidelity:** approximated (the accessibility tree differs for unselected tabs).
 - **Components it hits:** just this one.
@@ -50,7 +50,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `gpuix gap` for the variable weight and for `text-box-trim` (README "Missing features").
 - **Original:** the label is `wght 550 / opsz 18` when selected and eases that weight with its colour over 80 ms, both spans trimmed (`tabs-subtle.tsx:327-335`, `:320`).
-- **Port:** SemiBold 600 switching at once (`theme.ts:276-278`), line-box centring. The colour and stroke-width eases are ported (`fade` on `StableLabel` and `Icon`, `easeStroke`). Details in `drift/tabs.md`.
+- **Port:** SemiBold 600 switching at once (`theme.ts:370`), line-box centring. The colour and stroke-width eases are ported (`fade` on `StableLabel` and `Icon`, `easeStroke`). Details in `drift/tabs.md`.
 - **gpuix lacks:** variable-font axes and `text-box-trim` only.
 - **Workaround:** the hidden 600 copy reserves the width.
 - **Fidelity:** approximated.
@@ -60,7 +60,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
 - **Original:** `size` wraps the tabs in a `SizeProvider` (`registry/base/tabs-subtle.tsx:47-50`, `:61`, `:264-265`).
-- **Port:** An omitted `size` follows the Size row (`src/components/tabs-subtle.tsx:122`).
+- **Port:** An omitted `size` follows the Size row (`src/components/tabs-subtle.tsx:129`).
 - **Workaround:** pass `size` to each nested component.
 - **Fidelity:** approximated.
 - **Components it hits:** every component with a `size` variant.
@@ -69,7 +69,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `TabsSubtle`, `TabsSubtleItem` and `TabsSubtlePanel` take `className`, forward refs and spread HTML attributes (`tabs-subtle.tsx:40`, `:271-278`, `:425-436`).
-- **Port:** props are only the ones in the source's table plus `testId`; no `className`, ref or passthrough (`tabs-subtle.tsx:91-101`, `:249-254`, `:431-436`).
+- **Port:** props are only the ones in the source's table plus `testId`; no `className`, ref or passthrough (`tabs-subtle.tsx:96-105`, `:254-259`, `:395-400`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** tabs, and most of the port.
@@ -78,7 +78,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `port choice` (README: a demo is a `DemoCard` of live variants) for the missing page furniture; `port choice` (reason not stated) for the spacing; the extra variants are port-only.
 - **Original:** three variants: Basic, With Icons, Active Label. Panels are `px-3` under a `gap-4` (16px) column. The page has a description ("Tab navigation with smooth pill animations."), code snippets and API tables for TabsSubtle, TabsSubtleItem, TabsSubtlePanel (`app/docs/tabs-subtle/page.tsx:147`, `:149-242`, `:244-254`, `:151`, `:168`).
-- **Port:** Basic, With icons and Active label match in copy (`TABS`, "{label} content goes here."). It adds Compact and a Keyboard section (`src/demos/tabs-subtle.tsx:141-187`). A panel is 8px (section gap) + 4px (`paddingTop`) under the list, 12px not 16, with `paddingLeft` 12 (`:25`, `:36`). The card title is `TabsSubtle`, the nav title `Tabs Subtle` (`:45`, `:54`). No description, snippets or props tables.
+- **Port:** Basic, With icons and Active label match in copy (`TABS`, "{label} content goes here."). It adds Compact and a Keyboard section (`src/demos/tabs-subtle.tsx:142-188`). A panel is 8px (section gap) + 4px (`paddingTop`) under the list, 12px not 16, with `paddingLeft` 12 (`:33`). The card title is `TabsSubtle`, the nav title `Tabs Subtle` (`:41`, `:52`). No description, snippets or props tables.
 - **Workaround:** none.
 - **Fidelity:** dropped (docs furniture), approximated (spacing).
 - **Components it hits:** every demo.
