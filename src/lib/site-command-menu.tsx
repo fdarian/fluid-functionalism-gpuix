@@ -1,4 +1,4 @@
-import { type DomEvent, window as appWindow } from "@gpuix/solid";
+import { window as appWindow, type DomEvent } from "@gpuix/solid";
 import { createMemo, createSignal, onCleanup } from "solid-js";
 import {
 	CommandMenu,
@@ -32,11 +32,17 @@ export type SiteMenu = {
 	setOpen: (open: boolean) => void;
 };
 
-/** FF's `matchesShortcut` for "mod+k": the key, or its physical key when Alt or a non-Latin layout changes the character; Meta or Ctrl, no Alt, Shift free. */
+/**
+ * FF's `matchesShortcut` for "mod+k": Meta or Ctrl, no Alt, Shift free. The web
+ * falls back to the physical key (`code`) when `key` is not a Latin letter or Alt
+ * is held. gpuix derives `code` from `key`, so it never names a different key and
+ * the fallback adds nothing: on Dvorak the key that types "t" reports "t", and on
+ * macOS a non-Latin layout reports its Cmd layout's letter.
+ */
 function isModK(event: DomEvent): boolean {
 	if (event.altKey === true) return false;
 	if (event.metaKey !== true && event.ctrlKey !== true) return false;
-	return event.key?.toLowerCase() === "k" || event.code === "KeyK";
+	return event.key?.toLowerCase() === "k";
 }
 
 /** The menu's open state plus the window-wide Mod+K that toggles it. Call it once, inside the app root: the listener leaves with that owner. */
