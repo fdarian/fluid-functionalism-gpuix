@@ -39,7 +39,6 @@ import {
 	radius,
 	type as scale,
 	scheme,
-	trackMs,
 	motion as tween,
 	weight,
 } from "../lib/theme";
@@ -85,9 +84,6 @@ interface GroupScope {
 	) => number;
 	/** The item's box, for the open tint the group paints under its hover fill. */
 	registerItem: (element: HostElement, entry: TintEntry) => void;
-	/** Panels are changing height: rows reflow every frame and the highlight must follow without gliding. */
-	trackReflow: () => void;
-	reflow: () => boolean;
 	/** The pointer is on a row whose item is closed: open tints dim to let it read. */
 	hoveringClosedRow: () => boolean;
 	overContent: (index: number | null) => void;
@@ -205,9 +201,7 @@ export function AccordionGroup(props: RootProps) {
 		}
 	>();
 	let nextIndex = 0;
-	let reflowTimer: ReturnType<typeof setTimeout> | undefined;
 	let contentOver: number | null = null;
-	const [reflow, setReflow] = createSignal(false);
 
 	const hover = createFluidHover();
 	const focusRing = createFocusRing(hover);
@@ -241,7 +235,6 @@ export function AccordionGroup(props: RootProps) {
 	const scope: GroupScope = {
 		hover,
 		focusRing,
-		reflow,
 		registerItem(element, entry) {
 			tintElements.set(entry.id, element);
 			setTints([...tints(), entry]);
@@ -280,11 +273,6 @@ export function AccordionGroup(props: RootProps) {
 				}
 				if (!mouseInside) hover.setActiveIndex(null);
 			});
-		},
-		trackReflow() {
-			clearTimeout(reflowTimer);
-			setReflow(true);
-			reflowTimer = setTimeout(() => setReflow(false), trackMs.spring + 48);
 		},
 		overContent(index) {
 			contentOver = index;
@@ -368,12 +356,10 @@ export function AccordionGroup(props: RootProps) {
 						session={hover.session}
 						radius={radius.item}
 						background={color.hover}
-						travel={() => !reflow()}
 					/>
 					<FocusRing
 						ring={focusRing}
 						testId={props.testId && `${props.testId}-focus-ring`}
-						travel={() => !reflow()}
 					/>
 					{props.children}
 				</div>
@@ -545,7 +531,6 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 	const toggle = () => {
 		if (item.disabled()) return;
 		root.toggle(item.value);
-		group?.trackReflow();
 	};
 	const onKeyDown = (event: KeyEvent) => {
 		const own = item.index();

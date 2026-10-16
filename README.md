@@ -99,7 +99,7 @@ names two causes counts as mixed. Base UI behaviour, row by row, is in [`BASE-UI
 
 | Component | gpuix gap | port choice | not ported yet | mixed | total |
 |---|---:|---:|---:|---:|---:|
-| [accordion](drift/accordion.md) | 2 | 9 | 12 | 0 | 23 |
+| [accordion](drift/accordion.md) | 3 | 7 | 12 | 0 | 22 |
 | [ask-user-questions](drift/ask-user-questions.md) | 2 | 5 | 9 | 3 | 19 |
 | [badge](drift/badge.md) | 1 | 2 | 2 | 0 | 5 |
 | [banner](drift/banner.md) | 3 | 3 | 11 | 0 | 17 |

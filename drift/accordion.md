@@ -58,20 +58,11 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 - **Fidelity:** dropped for long titles.
 - **Components it hits:** every `StableLabel`.
 
-## Highlight and ring snap for 448 ms after a toggle
-
-- **Cause:** `port choice` (the code comment: rows reflow every frame while a panel changes height and the highlight must follow without gliding, `src/components/accordion.tsx:67`).
-- **Original:** the hover fill and the ring keep their `spring.fast` glide while the panel height animates; the group re-measures every frame via `onUpdate` and the fill chases the moving row (`registry/base/accordion.tsx:959-966`, `FluidHoverHighlight` default transition).
-- **Port:** `travel={() => !reflow()}` makes both snap (`tween.snap`) for `trackMs.spring + 48` = 448 ms after any toggle (`src/components/accordion.tsx:220-224`, `:284`, `:289`). The panel's own spring is 80 ms, so a pointer that moves to another row within that window snaps there instead of gliding.
-- **Workaround:** the timer.
-- **Fidelity:** approximated.
-- **Components it hits:** any list whose rows resize under the highlight (thinking-steps, sidebar).
-
 ## Pill shape
 
 - **Cause:** `not ported yet` (README lists "pill shape" as not ported).
 - **Original:** highlight, tints and trigger radius follow `shape.bg` / `shape.item` (20 px pill, 8 px rounded), the ring `shape.focusRing` (22 px pill, 10 px rounded) (`registry/default/lib/shape-context.tsx:53-85`). The site default is rounded.
-- **Port:** fixed `radius.item` 8 and `radius.focusRing` 10 (`src/lib/theme.ts:280-284`, `src/components/accordion.tsx` (`GroupTint`), `src/lib/focus-ring.tsx:92`).
+- **Port:** fixed `radius.item` 8 and `radius.focusRing` 10 (`src/lib/theme.ts:280-284`, `src/components/accordion.tsx` (`GroupTint`), `src/lib/focus-ring.tsx:96`).
 - **Workaround:** none; the rounded default is exact.
 - **Fidelity:** exact for rounded, dropped for pill.
 - **Components it hits:** every component.
@@ -103,14 +94,15 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
-## Focus ring motion
+## Focus ring exit waits 60 ms
 
-- **Cause:** `port choice` (the shared ring; gpuix has no `AnimatePresence`, so a `createPresence` timer stands in for the exit).
-- **Original:** a 1 px `--focus-ring` box at left/top -2, size +4, travels on `spring.fast` with opacity on a 0.08 tween, appears in place (`initial={false}`) and exits on `spring.fast.exit` 0.06 (`registry/base/accordion.tsx:455-472`).
-- **Port:** the same box and offsets (`src/lib/focus-ring.tsx:8`, `:73-97`); opacity rides the same spring as the position (`tween.fast`, not a 0.08 tween), and the exit is `tween.fastExit` 0.06 started 60 ms after the last blur, so a blur followed by the next row's focus glides instead of fading (`:63-71`, `src/lib/presence.ts:6`).
+- **Cause:** `gpuix gap` (no `AnimatePresence`, so a `createPresence` timer stands in for the exit).
+- **Original:** a 1 px `--focus-ring` box at left/top -2, size +4, travels on `spring.fast` with opacity on a 0.08 tween, appears in place (`initial={false}`) and exits on `spring.fast.exit` 0.06 (`registry/base/accordion.tsx:455-472`). A blur followed by the next row's focus keeps the same element, so it glides.
+- **Port:** the same box, offsets and motion (`src/lib/focus-ring.tsx:8` `ENTER_FADE`, `:11`, `:84-92`). The one difference is that the exit fade starts 60 ms after the last blur, so a blur followed by the next row's focus glides instead of fading and reappearing (`:64-67`, `src/lib/presence.ts:6`).
+- **gpuix lacks:** an exit-presence primitive for a conditionally rendered `motion.div`; `onMotionComplete` plus a timer is the stand-in.
 - **Workaround:** the 60 ms presence delay.
-- **Fidelity:** approximated (opacity curve, 60 ms extra before a fade).
-- **Components it hits:** checkbox, radio, select, tabs, tabs-subtle.
+- **Fidelity:** approximated (60 ms extra before a fade).
+- **Components it hits:** checkbox, radio, select, tabs, tabs-subtle, sidebar.
 
 ## Up/Down/Home/End between triggers (group)
 
