@@ -127,7 +127,7 @@ names two causes counts as mixed. Base UI behaviour, row by row, is in [`BASE-UI
 | [slider](drift/slider.md) | 4 | 5 | 4 | 3 | 16 |
 | [switch](drift/switch.md) | 2 | 2 | 3 | 2 | 9 |
 | [table](drift/table.md) | 3 | 1 | 5 | 0 | 9 |
-| [tabs-subtle](drift/tabs-subtle.md) | 1 | 5 | 2 | 1 | 9 |
+| [tabs-subtle](drift/tabs-subtle.md) | 1 | 4 | 2 | 1 | 8 |
 | [tabs](drift/tabs.md) | 2 | 3 | 4 | 0 | 9 |
 | [thinking-indicator](drift/thinking-indicator.md) | 1 | 2 | 4 | 0 | 7 |
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 7 | 1 | 15 |
