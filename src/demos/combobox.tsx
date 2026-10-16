@@ -74,7 +74,6 @@ const PLAY_COMPONENTS = [
 	"Dialog",
 	"Dropdown",
 	"InputGroup",
-	"QueuedStack",
 	"RadioGroup",
 	"Select",
 	"Sidebar",
@@ -286,13 +285,12 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("play-clearable-track");
 	await shot.focus("play-input");
 	await shot.press("ArrowDown");
-	// QueuedStack is on no sidebar row, so the nav's own text cannot satisfy these.
-	shot.expectText("QueuedStack", true);
+	shot.expectText("RadioGroup", true);
 	await shot.press("b u");
-	shot.expectText("QueuedStack", false);
+	shot.expectText("RadioGroup", false);
 	await shot.press("ArrowDown Enter");
 	await shot.settle(400);
-	shot.expectText("QueuedStack", false);
+	shot.expectText("RadioGroup", false);
 	shot.capture("playground-icon-clearable");
 	await shot.click("play-disabled-track");
 	shot.capture("playground-disabled");
