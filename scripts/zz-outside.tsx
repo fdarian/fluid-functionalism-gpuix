@@ -1,4 +1,3 @@
-import { createSignal } from 'solid-js';
 import { Button } from '#/components/button';
 import { Select } from '#/components/select';
 import { createCheck } from './check-kit';

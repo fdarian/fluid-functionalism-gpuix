@@ -2,7 +2,6 @@ import {
 	buttonProps,
 	type HostElement,
 	type HostPointerEvent,
-	type KeyEvent,
 	useGpuixRequired,
 } from '@gpuix/solid';
 import {
@@ -28,7 +27,6 @@ import {
 	fade,
 	focusRing,
 	type as scale,
-	scheme,
 	shape,
 	sizeChoice,
 	weight,

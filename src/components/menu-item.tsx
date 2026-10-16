@@ -14,14 +14,7 @@ import { useHoverItem } from '#/lib/fluid-hover';
 import { Icon } from '#/lib/icon';
 import type { IconRef } from '#/lib/icons';
 import { StableLabel } from '#/lib/stable-label';
-import {
-	color,
-	height,
-	radius,
-	type as scale,
-	scheme,
-	weight,
-} from '#/lib/theme';
+import { color, height, radius, type as scale } from '#/lib/theme';
 
 /** What the keyboard needs to know about a row the pointer would otherwise be the only one to reach. */
 export interface MenuRow {

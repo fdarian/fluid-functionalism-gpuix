@@ -31,7 +31,6 @@ import {
 	fade,
 	focusRing,
 	type as scale,
-	scheme,
 	shape,
 	motion as tween,
 	weight,

@@ -40,7 +40,6 @@ import {
 	nestedRadius,
 	radius,
 	type as scale,
-	scheme,
 	shadow,
 	shape,
 	springFade,

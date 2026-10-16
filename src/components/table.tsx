@@ -1,5 +1,5 @@
 import type { HostElement } from '@gpuix/solid';
-import { createContext, createEffect, type JSX, useContext } from 'solid-js';
+import { createContext, type JSX, useContext } from 'solid-js';
 import { FluidHighlight } from '#/lib/fluid-highlight';
 import {
 	createFluidHover,

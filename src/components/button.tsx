@@ -1,5 +1,4 @@
 import {
-	type BoxShadow,
 	buttonProps,
 	type HostMouseEvent,
 	type HostPointerEvent,

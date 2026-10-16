@@ -5,24 +5,11 @@ import {
 	motion,
 	useGpuixRequired,
 } from '@gpuix/solid';
-import {
-	createEffect,
-	createSignal,
-	For,
-	on,
-	onCleanup,
-	untrack,
-} from 'solid-js';
+import { createEffect, createSignal, For, on, untrack } from 'solid-js';
 import { onFrame } from '#/lib/clock';
 import { FluidHighlight } from '#/lib/fluid-highlight';
 import { createFluidHover } from '#/lib/fluid-hover';
-import {
-	color,
-	focusRing,
-	scheme,
-	motion as tween,
-	withAlpha,
-} from '#/lib/theme';
+import { color, focusRing, motion as tween, withAlpha } from '#/lib/theme';
 
 /** Dot height, and the diameter of every resting dot. */
 const DOT_PX = 6;

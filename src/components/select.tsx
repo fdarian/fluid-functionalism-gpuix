@@ -34,7 +34,6 @@ import {
 	focusRing,
 	radius,
 	type as scale,
-	scheme,
 	shape,
 	sizeChoice,
 	motion as tween,

@@ -1,5 +1,4 @@
 import {
-	type BoxShadow,
 	buttonProps,
 	type HostElement,
 	type HostMouseMoveEvent,
@@ -14,7 +13,6 @@ import {
 	For,
 	type JSX,
 	on,
-	onCleanup,
 	Show,
 	untrack,
 } from 'solid-js';
@@ -35,7 +33,6 @@ import {
 	pressFade,
 	radius,
 	type as scale,
-	scheme,
 	shadow,
 	shape,
 	sizeChoice,

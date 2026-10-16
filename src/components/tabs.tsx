@@ -37,12 +37,10 @@ import { StableLabel } from '#/lib/stable-label';
 import {
 	color,
 	type as scale,
-	scheme,
 	shadow,
 	shape,
 	sizeChoice,
 	motion as tween,
-	weight,
 } from '#/lib/theme';
 
 export type TabsSize = 'default' | 'compact';

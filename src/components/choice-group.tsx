@@ -30,11 +30,9 @@ import {
 	color,
 	fade,
 	type as scale,
-	scheme,
 	shape,
 	sizeChoice,
 	motion as tween,
-	weight,
 } from '#/lib/theme';
 
 /**

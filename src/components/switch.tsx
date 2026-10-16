@@ -11,7 +11,6 @@ import {
 	fade,
 	focusRing,
 	type as scale,
-	scheme,
 	sizeChoice,
 	motion as tween,
 	twShadow,

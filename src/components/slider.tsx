@@ -8,7 +8,6 @@ import {
 	type HostPointerEvent,
 	type KeyEvent,
 	motion,
-	useGpuixRequired,
 } from '@gpuix/solid';
 import {
 	type Accessor,
@@ -28,7 +27,6 @@ import {
 	color,
 	focusRing,
 	type as scale,
-	scheme,
 	shape,
 	sizeChoice,
 	springFade,

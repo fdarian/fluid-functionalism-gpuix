@@ -40,7 +40,6 @@ import {
 	shape,
 	sizeChoice,
 	motion as tween,
-	weight,
 } from '#/lib/theme';
 
 export type TabsSubtleSize = 'default' | 'compact';

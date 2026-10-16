@@ -28,7 +28,6 @@ import { SurfaceContext, useElevatedSurface } from '#/lib/surface-context';
 import {
 	color,
 	type as scale,
-	scheme,
 	shadow,
 	shape,
 	sizeChoice,

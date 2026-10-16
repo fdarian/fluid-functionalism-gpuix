@@ -17,7 +17,6 @@ import {
 	color,
 	nestedRadius,
 	type as scale,
-	scheme,
 	shadow,
 	shape,
 	motion as tween,

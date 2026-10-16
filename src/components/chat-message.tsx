@@ -7,7 +7,6 @@ import {
 	fade,
 	focusRing,
 	type as scale,
-	scheme,
 	shape,
 	motion as tween,
 } from '#/lib/theme';
