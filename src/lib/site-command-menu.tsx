@@ -12,10 +12,13 @@ import {
 } from "../components/command-menu";
 import type { Demo, Page } from "./demo";
 import type { IconRef } from "./icons";
-import { IS_MAC } from "./platform";
+import { copyToClipboard } from "../components/input-copy";
+import { installUrl } from "./install-url";
+import { pageOrder } from "./page-nav";
+import { IS_MAC, openUrl } from "./platform";
 import { setThemeChoice, THEMES, themeChoice } from "./theme";
 
-type Kind = "page" | "setting";
+type Kind = "page" | "setting" | "action";
 
 type SiteItem = CommandMenuItemData & { kind: Kind };
 
@@ -23,7 +26,10 @@ const TABS = [
 	{ value: "all", label: "All" },
 	{ value: "page", label: "Pages" },
 	{ value: "setting", label: "Settings" },
+	{ value: "action", label: "Actions" },
 ];
+
+const GITHUB_REPOSITORY = "mickadesign/fluid-functionalism";
 
 const RECENT_MAX = 3;
 
@@ -71,9 +77,15 @@ export function SiteCommandMenu(props: {
 	demos: readonly Demo[];
 	pages: readonly Page[];
 	showcase: string;
+	/** The slug on screen: the Actions group acts on it. */
+	current: string;
 	onPage: (page: string) => void;
 }) {
 	const [tab, setTab] = createSignal("all");
+	const go = (slug: string) => {
+		remember(slug);
+		props.onPage(slug);
+	};
 	const items = createMemo<SiteItem[]>(() => {
 		const page = (
 			value: string,
@@ -89,10 +101,7 @@ export function SiteCommandMenu(props: {
 			icon,
 			keywords,
 			group,
-			onSelect: () => {
-				remember(value);
-				props.onPage(value);
-			},
+			onSelect: () => go(value),
 		});
 		const listedPages = (group: Page["group"]) =>
 			props.pages
@@ -110,6 +119,14 @@ export function SiteCommandMenu(props: {
 					),
 				);
 		const current = themeChoice();
+		const order = pageOrder(props.pages, props.demos);
+		const index = order.indexOf(props.current);
+		const component = props.demos.find((demo) => demo.slug === props.current);
+		const action = (item: Omit<SiteItem, "kind" | "group">): SiteItem => ({
+			...item,
+			kind: "action",
+			group: "Actions",
+		});
 		return [
 			page(props.showcase, "Showcase", "Pages", "home", [
 				"home",
@@ -132,6 +149,56 @@ export function SiteCommandMenu(props: {
 					onSelect: () => setThemeChoice(theme.value),
 				}),
 			),
+			...(component === undefined
+				? []
+				: [
+						action({
+							value: "action:copy-install",
+							label: "Copy install command",
+							description: component.title,
+							icon: "copy",
+							keywords: ["npx", "shadcn", "add", "registry"],
+							onSelect: () => {
+								copyToClipboard(
+									`npx shadcn@latest add ${installUrl(component.slug)}`,
+								).catch((error: unknown) =>
+									console.error("Copy install command failed", error),
+								);
+							},
+						}),
+					]),
+			...(index > 0
+				? [
+						action({
+							value: "action:previous",
+							label: "Previous page",
+							action: "Go to the previous page",
+							icon: "arrow-left",
+							shortcut: "left",
+							onSelect: () => go(order[index - 1]),
+						}),
+					]
+				: []),
+			...(index >= 0 && index < order.length - 1
+				? [
+						action({
+							value: "action:next",
+							label: "Next page",
+							action: "Go to the next page",
+							icon: "arrow-right",
+							shortcut: "right",
+							onSelect: () => go(order[index + 1]),
+						}),
+					]
+				: []),
+			action({
+				value: "action:github",
+				label: "Open on GitHub",
+				description: GITHUB_REPOSITORY,
+				icon: "link",
+				keywords: ["source", "star", "repository"],
+				onSelect: () => openUrl(`https://github.com/${GITHUB_REPOSITORY}`),
+			}),
 		];
 	});
 	const visible = createMemo(() =>
