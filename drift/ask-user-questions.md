@@ -186,10 +186,12 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 ## Demo page
 
-- **Cause:** `not ported yet` (Playground, API tables, code tabs) + `port choice` (Replay button, centred card, Controlled readout; reason not stated). Itemised under Port.
+- **Cause:** `not ported yet` (Playground Code tab and Get code, API tables, code tabs) + `port choice` (Replay button, centred card, Controlled readout; reason not stated). Itemised under Port.
 - **Original:** `page.tsx:1182-1309`: Playground, then Multiple questions, Multi-select, With other, Free text, Free text validation, Skippable, Chip on left, Stacked layout and Controlled, each in a `min-h-[560px]` preview aligned to the bottom with a corner Replay icon; the Controlled example has no readout; then four API Reference tables.
-- **Port:** the same nine examples in the same order (`src/demos/ask-user-questions.tsx:718-760`).
-  - `not ported yet`: the Playground (live controls with synced code) and the API tables and code tabs (docs chrome).
+- **Port:** the Playground and the same nine examples in the same order (`src/demos/ask-user-questions.tsx`, `Playground` and `Demo`).
+  - Playground ported with every control, default, the shuffle, the question data and the bottom-anchored 420px stage (min height 560); a control change or Replay remounts the flow from question 1.
+  - `not ported yet`: the Playground's synced Code tab, the `?preset=` URL sync and the "Get code" install dialog (preset codec, docs chrome), and the API tables and code tabs.
+  - `port choice` (reason not stated): the playground's Replay is the same ghost "Replay" button above the card, not a corner icon (see below).
   - `port choice` (reason not stated): Replay is a ghost "Replay" button above the card (`:605-650`), not a corner icon with a tooltip.
   - `port choice` (reason not stated): the card is centred with no `min-h-[560px]` bottom alignment, so the page height changes as a flow changes.
   - `port choice` (reason not stated): the Controlled example adds a `currentIndex` / `answers` readout (`:653-714`).
