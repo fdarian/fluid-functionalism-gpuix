@@ -1,4 +1,4 @@
-import { buttonProps, type HostElement, motion } from "@gpuix/solid";
+import { buttonProps, type HostElement, motion, useGpuixRequired } from "@gpuix/solid";
 import {
 	createEffect,
 	createSignal,
@@ -151,6 +151,7 @@ function Dot(props: {
 	register: (index: number, element: HostElement) => void;
 	onSelect: () => void;
 }) {
+	const renderer = useGpuixRequired();
 	let element: HostElement | undefined;
 	createEffect(() => {
 		if (element === undefined) throw new Error("Dot is not mounted");
@@ -162,7 +163,7 @@ function Dot(props: {
 			ref={(node) => {
 				element = node;
 			}}
-			{...buttonProps({ onClick: props.onSelect })}
+			{...buttonProps({ onClick: props.onSelect, tabIndex: 0 }, renderer)}
 			aria-label={props.label}
 			aria-selected={props.current}
 			style={{
@@ -186,12 +187,10 @@ function Dot(props: {
 					overflow: "hidden",
 					borderRadius: DOT_PX / 2,
 					backgroundColor: trackColor(),
-					// A filled box blocks hits behind it, which would leave only the dot's padding clickable.
-					pointerEvents: "none",
 				}}
 			>
 				{props.current && (
-					// The original slides a full-width pill in from the left behind the dot's rounded clip, so the fill always ends in a round cap. gpui clips to a rectangle, which would leave a square left edge, so the fill is a pill that grows from a dot (p = 0) to the whole pill (p = 1).
+					// The original slides a full-width pill in from the left behind the dot's rounded clip, so the fill always ends in a round cap. Here the fill is a pill that grows from a dot (p = 0) to the whole pill (p = 1).
 					<div
 						style={{
 							position: "absolute",
@@ -203,7 +202,6 @@ function Dot(props: {
 							height: DOT_PX,
 							borderRadius: DOT_PX / 2,
 							backgroundColor: fillColor(),
-							pointerEvents: "none",
 						}}
 					/>
 				)}

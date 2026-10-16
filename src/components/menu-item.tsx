@@ -38,10 +38,13 @@ export interface DropdownContextValue {
 	/** `checkedIndices` was given: rows are checkboxes and stay open on select. */
 	multiple: Accessor<boolean>;
 	rows: Map<number, MenuRow>;
+	/** The DOM `id` of a row: what `aria-activedescendant` names when the keyboard has lit it. */
+	rowId: (index: number) => string;
 	/** The highlight is where the pointer put it, not the keyboard or the open itself. */
 	pointerLit: Accessor<boolean>;
 	/** A row mounted or went: the measured rects are stale. */
-	rowsChanged: () => void;
+	/** Rows were added or removed: set by lists whose rows come and go under the highlight. */
+	rowsChanged?: () => void;
 	/** Closes the whole menu. A no-op for the inline panel. */
 	close: () => void;
 	/** A row released under a press that began on the menu's trigger picks, once. Always false for the inline panel. */
@@ -113,6 +116,8 @@ export function MenuItem(props: {
 	/** ArrowRight on a submenu trigger. */
 	onOpenSubmenu?: () => void;
 	testId?: string;
+	/** A submenu trigger: whether its popup is open and what it is called. */
+	submenu?: { open: boolean; popupId: string };
 	/** A submenu popup anchors to its trigger row, so it is the row's child. */
 	children?: JSX.Element;
 }) {
@@ -150,10 +155,10 @@ export function MenuItem(props: {
 			openSubmenu: props.onOpenSubmenu,
 		};
 		context.rows.set(index, row);
-		context.rowsChanged();
+		context.rowsChanged?.();
 		onCleanup(() => {
 			if (context.rows.get(index) === row) context.rows.delete(index);
-			context.rowsChanged();
+			context.rowsChanged?.();
 		});
 	});
 
@@ -169,9 +174,14 @@ export function MenuItem(props: {
 			ref={(element) => {
 				rowElement = element;
 			}}
+			id={context.rowId(props.index)}
 			role={role()}
 			testId={props.testId}
-			aria-selected={props.checked}
+			aria-checked={props.checked}
+			aria-disabled={props.disabled === true}
+			aria-haspopup={props.submenu === undefined ? undefined : "menu"}
+			aria-expanded={props.submenu?.open}
+			aria-controls={props.submenu?.open ? props.submenu.popupId : undefined}
 			onMouseDown={() => {
 				pickedOnRelease = false;
 				context.releasePress();
@@ -189,6 +199,7 @@ export function MenuItem(props: {
 				activate(false);
 			}}
 			style={{
+				position: "relative",
 				height: height.control,
 				flexShrink: 0,
 				display: "flex",

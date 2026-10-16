@@ -18,8 +18,8 @@ import {
 	Show,
 	untrack,
 } from "solid-js";
+import { createPointerCapture } from "../lib/pointer-capture";
 import { createPresence } from "../lib/presence";
-import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
@@ -29,7 +29,7 @@ import { createMeasuredHeight } from "../lib/measured-height";
 import { color, height, radius, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 import { FileThumbnail } from "./file-thumbnail";
 import type { InputSize } from "./input-group";
-import { Tooltip, type TooltipTrigger } from "./tooltip";
+import { Tooltip } from "./tooltip";
 
 const arrowUp = defineIcon('<path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>');
 const arrowDown = defineIcon('<path d="M12 5v14"/><path d="m19 12-7 7-7-7"/>');
@@ -177,9 +177,10 @@ function SendButton(props: {
 	size: number;
 	testId?: string;
 }) {
+	const renderer = useGpuixRequired();
 	return (
 		<div
-			{...buttonProps({ disabled: props.disabled, onClick: props.onClick })}
+			{...buttonProps({ disabled: props.disabled, onClick: props.onClick }, renderer)}
 			aria-label={props.label}
 			testId={props.testId}
 			tabIndex={props.disabled ? -1 : 0}
@@ -228,7 +229,6 @@ function SendButton(props: {
 									height: 12,
 									borderRadius: 3,
 									backgroundColor: color.background,
-									pointerEvents: "none",
 								}}
 							/>
 						</Show>
@@ -247,40 +247,32 @@ function RemoveBadge(props: {
 	onHoverChange: (hovered: boolean) => void;
 	testId?: string;
 }) {
+	const renderer = useGpuixRequired();
 	return (
 		<Tooltip content="Remove" side="top">
-			{(tooltip: TooltipTrigger) => (
-				<div
-					{...buttonProps({ onClick: props.onClick })}
-					aria-label={props.label}
-					testId={props.testId}
-					tabIndex={0}
-					onMouseEnter={() => {
-						props.onHoverChange(true);
-						tooltip.onMouseEnter();
-					}}
-					onMouseLeave={() => {
-						props.onHoverChange(false);
-						tooltip.onMouseLeave();
-					}}
-					onMouseDown={tooltip.onMouseDown}
-					style={{
-						width: 20,
-						height: 20,
-						borderRadius: 10,
-						backgroundColor: "#171717",
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						cursor: "pointer",
-						opacity: props.visible ? 1 : 0,
-						keyboardFocusDim: false,
-						focusVisible: focusRing(0),
-					}}
-				>
-					<Icon name="x" size={12} strokeWidth={2.5} color="#ffffff" />
-				</div>
-			)}
+			<div
+				{...buttonProps({ onClick: props.onClick }, renderer)}
+				aria-label={props.label}
+				testId={props.testId}
+				tabIndex={0}
+				onMouseEnter={() => props.onHoverChange(true)}
+				onMouseLeave={() => props.onHoverChange(false)}
+				style={{
+					width: 20,
+					height: 20,
+					borderRadius: 10,
+					backgroundColor: "#171717",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					cursor: "pointer",
+					opacity: props.visible ? 1 : 0,
+					keyboardFocusDim: false,
+					focusVisible: focusRing(0),
+				}}
+			>
+				<Icon name="x" size={12} strokeWidth={2.5} color="#ffffff" />
+			</div>
 		</Tooltip>
 	);
 }
@@ -345,10 +337,12 @@ function QueuedRow(props: {
 	onDragMove: (item: QueuedMessage, event: EventPayload) => void;
 	testId?: string;
 }) {
+	const renderer = useGpuixRequired();
 	const step = () => steps[props.size];
 	const [hovered, setHovered] = createSignal(false);
 	const [closeHovered, setCloseHovered] = createSignal(false);
 	const [grabbing, setGrabbing] = createSignal(false);
+	const grabRegion = createPointerCapture("QueuedRow");
 	const files = () => props.item.files.length;
 	const label = () =>
 		props.item.text !== ""
@@ -356,18 +350,18 @@ function QueuedRow(props: {
 			: `${files()} attachment${files() === 1 ? "" : "s"}`;
 
 	const onKeyDown = (event: KeyEvent) => {
-		if (event.key === "enter" || event.key === "f2") {
+		if (event.key === "Enter" || event.key === "F2") {
 			event.preventDefault();
 			props.onEdit(props.item);
-		} else if (event.key === "delete" || event.key === "backspace") {
+		} else if (event.key === "Delete" || event.key === "Backspace") {
 			event.preventDefault();
 			props.onRemove(props.item);
 		} else if (
-			event.modifiers?.alt === true &&
-			(event.key === "up" || event.key === "down")
+			event.altKey === true &&
+			(event.key === "ArrowUp" || event.key === "ArrowDown")
 		) {
 			event.preventDefault();
-			props.onMove(props.item, event.key === "up" ? -1 : 1);
+			props.onMove(props.item, event.key === "ArrowUp" ? -1 : 1);
 		}
 	};
 
@@ -399,7 +393,7 @@ function QueuedRow(props: {
 				focusVisible: focusRing(0),
 			}}
 		>
-			{/* The recessed fill is its own layer: a filled row would take the pointer from the composer around it. */}
+			{/* The recessed fill is its own layer; the siblings after it are `position: relative` so the fill paints under them. */}
 			<div
 				style={{
 					position: "absolute",
@@ -409,12 +403,12 @@ function QueuedRow(props: {
 					bottom: 0,
 					borderRadius: radius.item,
 					backgroundColor: color.muted,
-					pointerEvents: "none",
 				}}
 			/>
 			<Show when={files() > 0}>
 				<div
 					style={{
+						position: "relative",
 						display: "flex",
 						flexDirection: "row",
 						alignItems: "center",
@@ -435,21 +429,25 @@ function QueuedRow(props: {
 					</Show>
 				</div>
 			</Show>
-			{/* Drag and double-click live here, not on the row: a pointer-capturing ancestor would swallow the close button's click. */}
+			{/* Drag and double-click live here, not on the row, so a press on the close button does not start a drag. */}
 			<div
+				ref={grabRegion.ref}
 				onMouseDown={(event) => {
 					if (event.button !== 0) return;
 					if (event.clickCount === 2) {
 						props.onEdit(props.item);
 						return;
 					}
+					grabRegion.capture(event);
 					setGrabbing(true);
 				}}
 				onMouseMove={(event) => {
 					if (grabbing()) props.onDragMove(props.item, event);
 				}}
 				onMouseUp={() => setGrabbing(false)}
+				onLostPointerCapture={() => setGrabbing(false)}
 				style={{
+					position: "relative",
 					flexGrow: 1,
 					minWidth: 0,
 					height: step().row,
@@ -467,53 +465,44 @@ function QueuedRow(props: {
 						whiteSpace: "nowrap",
 						textOverflow: "ellipsis",
 						overflow: "hidden",
-						pointerEvents: "none",
 					}}
 				>
 					{label()}
 				</text>
 			</div>
 			<Tooltip content="Remove" side="top">
-				{(tooltip: TooltipTrigger) => (
-					<div
-						{...buttonProps({ onClick: () => props.onRemove(props.item) })}
-						aria-label={`Remove queued message: ${label()}`}
-						testId={
-							props.testId === undefined ? undefined : `${props.testId}-remove`
-						}
-						tabIndex={0}
-						onMouseEnter={() => {
-							setCloseHovered(true);
-							tooltip.onMouseEnter();
-						}}
-						onMouseLeave={() => {
-							setCloseHovered(false);
-							tooltip.onMouseLeave();
-						}}
-						onMouseDown={tooltip.onMouseDown}
-						style={{
-							width: 20,
-							height: 20,
-							flexShrink: 0,
-							borderRadius: 10,
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-							cursor: "pointer",
-							opacity: hovered() || closeHovered() ? 1 : 0,
-							keyboardFocusDim: false,
-							hover: { backgroundColor: color.hover },
-							focusVisible: focusRing(0),
-						}}
-					>
-						<Icon
-							name="x"
-							size={13}
-							strokeWidth={2.5}
-							color={closeHovered() ? color.foreground : color.mutedForeground}
-						/>
-					</div>
-				)}
+				<div
+					{...buttonProps({ onClick: () => props.onRemove(props.item) }, renderer)}
+					aria-label={`Remove queued message: ${label()}`}
+					testId={
+						props.testId === undefined ? undefined : `${props.testId}-remove`
+					}
+					tabIndex={0}
+					onMouseEnter={() => setCloseHovered(true)}
+					onMouseLeave={() => setCloseHovered(false)}
+					style={{
+						position: "relative",
+						width: 20,
+						height: 20,
+						flexShrink: 0,
+						borderRadius: 10,
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						cursor: "pointer",
+						opacity: hovered() || closeHovered() ? 1 : 0,
+						keyboardFocusDim: false,
+						hover: { backgroundColor: color.hover },
+						focusVisible: focusRing(0),
+					}}
+				>
+					<Icon
+						name="x"
+						size={13}
+						strokeWidth={2.5}
+						color={closeHovered() ? color.foreground : color.mutedForeground}
+					/>
+				</div>
 			</Tooltip>
 		</motion.div>
 	);
@@ -677,11 +666,6 @@ export function InputMessage(props: InputMessageProps) {
 	createEffect(() => {
 		if (!suggestionsOpen()) hover.setActiveIndex(null);
 	});
-	createEffect(
-		on(suggestionsOpen, (open) => {
-			if (open) hover.remeasure();
-		}),
-	);
 
 	const focusTextarea = () => {
 		if (textarea === undefined) throw new Error("InputMessage is not mounted");
@@ -806,8 +790,7 @@ export function InputMessage(props: InputMessageProps) {
 	};
 	const dragQueued = (item: QueuedMessage, event: EventPayload) => {
 		if (queueList === undefined || event.y === undefined) return;
-		const bounds = readBounds(queueList);
-		if (bounds == null) return;
+		const bounds = queueList.getBoundingClientRect();
 		const stride = step().row + 4;
 		const target = Math.floor((event.y - bounds.y) / stride);
 		moveQueuedTo(item, Math.max(0, Math.min(queue().length - 1, target)));
@@ -830,17 +813,23 @@ export function InputMessage(props: InputMessageProps) {
 	};
 
 	const onKeyDown = (event: KeyEvent) => {
+		// Enter sends, Shift+Enter is left to the textarea for a newline.
+		if (event.key === "Enter" && event.shiftKey !== true) {
+			event.preventDefault();
+			onSubmit();
+			return;
+		}
 		// gpuix's textarea binds the arrow keys as editor actions and never reports them
 		// here, so Ctrl-P / Ctrl-N walk the lists too (see limitations/input-message.md).
 		const plain =
-			event.modifiers?.shift !== true &&
-			event.modifiers?.alt !== true &&
-			event.modifiers?.cmd !== true;
-		const control = event.modifiers?.ctrl === true;
+			event.shiftKey !== true &&
+			event.altKey !== true &&
+			event.metaKey !== true;
+		const control = event.ctrlKey === true;
 		const direction =
-			plain && !control && event.key === "down"
+			plain && !control && event.key === "ArrowDown"
 				? 1
-				: plain && !control && event.key === "up"
+				: plain && !control && event.key === "ArrowUp"
 					? -1
 					: plain && control && event.key === "n"
 						? 1
@@ -869,7 +858,7 @@ export function InputMessage(props: InputMessageProps) {
 					);
 					return;
 				}
-				if (event.key === "escape") {
+				if (event.key === "Escape") {
 					hover.setActiveIndex(null);
 					return;
 				}
@@ -879,8 +868,8 @@ export function InputMessage(props: InputMessageProps) {
 		// Tab fills the suggested placeholder into an empty composer.
 		const suggested = props.placeholderSuggestion;
 		if (
-			event.key === "tab" &&
-			event.modifiers?.shift !== true &&
+			event.key === "Tab" &&
+			event.shiftKey !== true &&
 			suggested !== undefined &&
 			props.value === ""
 		) {
@@ -954,10 +943,14 @@ export function InputMessage(props: InputMessageProps) {
 			testId={testId()}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
-			onFileDrop={(event) => {
+			// A drop is delivered only to a target whose dragover was cancelled.
+			onDragOver={(event) => {
+				if (supportsFiles() && props.disabled !== true) event.preventDefault();
+			}}
+			onDrop={(event) => {
 				if (!supportsFiles() || props.disabled === true) return;
-				if (event.paths === undefined) throw new Error("Drop without paths");
-				addFiles(event.paths.map(fileFromPath));
+				if (event.dataTransfer === undefined) throw new Error("Drop without dataTransfer");
+				addFiles(event.dataTransfer.files.map((file) => fileFromPath(file.path)));
 			}}
 			style={{
 				position: "relative",
@@ -1079,7 +1072,6 @@ export function InputMessage(props: InputMessageProps) {
 						props.onValueChange(event.value);
 					}}
 					onKeyDown={onKeyDown}
-					onSubmit={onSubmit}
 					onFocus={() => setFocused(true)}
 					onBlur={() => {
 						setFocused(false);
@@ -1141,7 +1133,6 @@ export function InputMessage(props: InputMessageProps) {
 								borderWidth: 1,
 								borderColor: color.border,
 								backgroundColor: color.background,
-								pointerEvents: "none",
 							}}
 						>
 							<text

@@ -10,23 +10,23 @@ import {
 	createEffect,
 	createMemo,
 	createSignal,
+	createUniqueId,
 	For,
 	on,
 	Show,
 } from "solid-js";
-import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
+import { createFluidHover, createReflowGate, useHoverItem } from "../lib/fluid-hover";
+import { FormValue } from "../lib/form-value";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { isChord, moveIndex, revealRow } from "../lib/list-nav";
-import { createPlacement, isInside, PopupSurface } from "../lib/popup";
+import { PopupSurface } from "../lib/popup";
 import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import {
 	color,
 	radius,
 	type as scale,
-	shadow3,
 	motion as tween,
 	weight,
 } from "../lib/theme";
@@ -102,11 +102,6 @@ function contains(text: string, query: string) {
 	return false;
 }
 
-/** Rows a list of this many items needs: for choosing which side of the field has room. */
-function listHeight(count: number) {
-	return count === 0 ? 74 : count * ROW_HEIGHT + 2 * LIST_PADDING + 2;
-}
-
 /**
  * Single-select Combobox from base/combobox.tsx: a text field that filters a
  * list as you type, a popup of fluid-hover rows, and a checked row whose
@@ -124,6 +119,12 @@ export function Combobox(props: {
 	emptyText?: string;
 	testId?: string;
 	disabled?: boolean;
+	/** Makes an empty combobox block its form's submission. */
+	required?: boolean;
+	/** The key the picked value is submitted under in the enclosing `<form>`'s `FormData`. */
+	name?: string;
+	/** The `id` of the element that labels the field. */
+	labelledBy?: string;
 	/** A ✕ that clears the pick and the query. Its slot is only reserved when set. */
 	clearable?: boolean;
 	/** Whether a row matches the typed query. Default: Base UI's collator `contains` on the label. */
@@ -133,6 +134,8 @@ export function Combobox(props: {
 	const width = () => props.width ?? 280;
 
 	const presence = createPresence(POPUP_EXIT_FALLBACK_MS);
+	const listId = createUniqueId();
+	const rowId = (index: number) => `${listId}-row-${index}`;
 	const open = presence.open;
 	const mounted = presence.mounted;
 	const rows = createMemo(() => props.items.map(toRow));
@@ -153,11 +156,8 @@ export function Combobox(props: {
 	const [focused, setFocused] = createSignal(false);
 	const [chevronHovered, setChevronHovered] = createSignal(false);
 	/** Armed while typing re-filters the rows under the highlights: those frames snap, not glide. */
-	const [reflow, setReflow] = createSignal(false);
+	const reflow = createReflowGate();
 
-	const placement = createPlacement(POPUP_MAX_HEIGHT);
-	let rootElement: HostElement | undefined;
-	let popupElement: HostElement | undefined;
 	let inputElement: HostElement | undefined;
 	let scroller: HostElement | undefined;
 	/** Set on open: the highlighted row is scrolled into view once its rect has been measured. */
@@ -177,6 +177,12 @@ export function Combobox(props: {
 	const hover = createFluidHover({
 		isItemDisabled: (index) => filtered()[index]?.disabled === true,
 	});
+	/** Focus stays in the field while the arrows walk the rows, so it names the lit one. */
+	const litRowId = () => {
+		const index = hover.activeIndex();
+		return open() && index !== null ? rowId(index) : undefined;
+	};
+	const listShown = () => open() && filtered().length > 0;
 
 	const commitValue = (next: string | null) => {
 		if (props.value === undefined) setOwnValue(next);
@@ -188,14 +194,9 @@ export function Combobox(props: {
 		if (picked !== -1) return picked;
 		return rows().length === 0 ? null : 0;
 	};
-	const place = (count: number) => {
-		if (rootElement === undefined) throw new Error("Combobox is not mounted");
-		placement.place(rootElement, listHeight(count));
-	};
 	const openPopup = () => {
 		if (open() || props.disabled === true) return;
 		setQuery("");
-		place(rows().length);
 		revealOnMeasure = true;
 		presence.show();
 		hover.setActiveIndex(openHighlight());
@@ -243,19 +244,16 @@ export function Combobox(props: {
 			filtered,
 			() => {
 				if (!mounted()) return;
-				setReflow(true);
+				reflow.raise();
 				if (scroller !== undefined && scroller.mounted) {
-					renderer.scrollTo?.(scroller.id, 0, 0);
+					scroller.scrollTo({ top: 0, left: 0 });
 				}
-				if (open()) place(filtered().length);
 				if (filtered().length === 0) {
 					hover.setActiveIndex(null);
-					hover.cancelMeasure();
 					return;
 				}
 				const picked = query().trim() === "" ? checkedIndex() : null;
 				hover.setActiveIndex(picked ?? 0);
-				hover.remeasure();
 			},
 			{ defer: true },
 		),
@@ -264,7 +262,6 @@ export function Combobox(props: {
 		on(
 			hover.rects,
 			() => {
-				if (reflow()) setTimeout(() => setReflow(false), 48);
 				if (!revealOnMeasure) return;
 				revealOnMeasure = false;
 				const index = hover.activeIndex();
@@ -291,14 +288,14 @@ export function Combobox(props: {
 	const onKeyDown = (event: KeyEvent) => {
 		if (isChord(event)) return;
 		switch (event.key) {
-			case "down":
-			case "up":
+			case "ArrowDown":
+			case "ArrowUp":
 				event.preventDefault();
 				event.stopPropagation();
 				if (!open()) openPopup();
-				else move(event.key === "down" ? 1 : -1);
+				else move(event.key === "ArrowDown" ? 1 : -1);
 				return;
-			case "escape":
+			case "Escape":
 				if (open()) {
 					// Closing pops the popup's dismiss layer before the window sees this Escape, which would then close the dialog behind.
 					event.preventDefault();
@@ -315,12 +312,16 @@ export function Combobox(props: {
 					event.stopPropagation();
 				}
 				return;
-			case "tab":
+			case "Tab":
 				closePopup();
+				return;
+			case "Enter":
+				event.preventDefault();
+				submit();
 				return;
 		}
 	};
-	const onSubmit = () => {
+	const submit = () => {
 		if (!open()) return;
 		const index = hover.activeIndex();
 		// Nothing highlighted (no results): Enter closes, so a form can submit.
@@ -345,9 +346,6 @@ export function Combobox(props: {
 		openPopup();
 		setQuery(text);
 	};
-	const onMouseDownOutside = (event: EventPayload) => {
-		if (!isInside(event, [rootElement, popupElement])) closePopup();
-	};
 	const onListMouseLeave = () => {
 		hover.handlers.onMouseLeave();
 		// `autoHighlight="always"` refills a dropped highlight with the first row, so Enter always has a target.
@@ -369,11 +367,8 @@ export function Combobox(props: {
 
 	return (
 		<div
-			ref={(element) => {
-				rootElement = element;
-			}}
 			testId={props.testId}
-			onMouseDownOutside={onMouseDownOutside}
+			onMouseDownOutside={closePopup}
 			style={{
 				position: "relative",
 				width: width(),
@@ -383,6 +378,15 @@ export function Combobox(props: {
 				pointerEvents: props.disabled === true ? "none" : "auto",
 			}}
 		>
+			<Show when={props.name !== undefined || props.required === true}>
+				<FormValue
+					name={props.name}
+					value={value() ?? ""}
+					required={props.required === true}
+					disabled={props.disabled === true}
+					focusTarget={() => inputElement}
+				/>
+			</Show>
 			<div
 				style={{
 					width: "100%",
@@ -436,10 +440,18 @@ export function Combobox(props: {
 						testId={
 							props.testId === undefined ? undefined : `${props.testId}-input`
 						}
+						id={createUniqueId()}
 						value={inputText()}
 						placeholder={props.placeholder ?? "Search…"}
 						role="combobox"
+						aria-haspopup="listbox"
 						aria-expanded={open()}
+						aria-controls={listShown() ? listId : undefined}
+						aria-autocomplete="list"
+						aria-activedescendant={litRowId()}
+						aria-labelledby={props.labelledBy}
+						aria-required={props.required}
+						aria-disabled={props.disabled === true}
 						readOnly={props.disabled === true}
 						tabIndex={props.disabled === true ? -1 : undefined}
 						theme={{
@@ -454,7 +466,6 @@ export function Combobox(props: {
 						onBlur={() => setFocused(false)}
 						onChange={onChange}
 						onKeyDown={onKeyDown}
-						onSubmit={onSubmit}
 						style={{
 							flexGrow: 1,
 							minWidth: 0,
@@ -512,16 +523,12 @@ export function Combobox(props: {
 
 			<PopupSurface
 				presence={presence}
-				side={placement.side()}
 				align="start"
 				width={width()}
-				maxHeight={placement.maxHeight()}
+				maxHeight={POPUP_MAX_HEIGHT}
 				onDismiss={closePopup}
-				onMouseDownOutside={onMouseDownOutside}
-				popupRef={(element) => {
-					popupElement = element;
-				}}
 			>
+				{(popupMaxHeight) => (
 				<Show
 					when={filtered().length > 0}
 					fallback={
@@ -546,13 +553,14 @@ export function Combobox(props: {
 						ref={(element) => {
 							scroller = element;
 						}}
+						id={listId}
 						role="listbox"
 						onScroll={hover.handlers.onScroll}
 						style={{
 							display: "flex",
 							flexDirection: "column",
 							overflowY: "scroll",
-							maxHeight: placement.maxHeight() - 2,
+							maxHeight: popupMaxHeight() - 2,
 						}}
 					>
 						{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
@@ -573,14 +581,14 @@ export function Combobox(props: {
 								background={color.active}
 								glide={tween.moderate}
 								fade={tween.moderateExit}
-								travel={() => !reflow()}
+								travel={() => !reflow.reflowing()}
 							/>
 							<FluidHighlight
 								rect={hoverRect}
 								session={hover.session}
 								radius={radius.item}
 								background={color.hover}
-								travel={() => !reflow()}
+								travel={() => !reflow.reflowing()}
 							/>
 							<For each={filtered()}>
 								{(row, index) => {
@@ -593,6 +601,7 @@ export function Combobox(props: {
 											ref={(element) => {
 												rowElement = element;
 											}}
+											id={rowId(index())}
 											role="option"
 											testId={
 												props.testId === undefined
@@ -600,6 +609,7 @@ export function Combobox(props: {
 													: `${props.testId}-option-${row.value}`
 											}
 											aria-selected={value() === row.value}
+											aria-disabled={row.disabled === true}
 											onClick={() => select(row)}
 											style={{
 												height: ROW_HEIGHT,
@@ -656,6 +666,7 @@ export function Combobox(props: {
 						</div>
 					</div>
 				</Show>
+				)}
 			</PopupSurface>
 		</div>
 	);

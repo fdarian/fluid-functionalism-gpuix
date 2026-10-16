@@ -1,4 +1,4 @@
-import { buttonProps, motion } from "@gpuix/solid";
+import { buttonProps, motion, useGpuixRequired } from "@gpuix/solid";
 import {
 	type Accessor,
 	createSignal,
@@ -11,7 +11,7 @@ import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { color, height, radius, motion as tween, weight, focusRing } from "../lib/theme";
 import type { InputSize } from "./input-group";
-import { Tooltip, type TooltipTrigger } from "./tooltip";
+import { Tooltip } from "./tooltip";
 
 /** How long the copied / failed result stays in place. */
 const RESULT_MS = 2000;
@@ -82,6 +82,7 @@ export function InputCopy(props: {
 	copy?: (text: string) => Promise<void>;
 	testId?: string;
 }) {
+	const renderer = useGpuixRequired();
 	const variant = () => props.variant ?? "icon";
 	const align = () => props.align ?? "right";
 	const step = () => steps[props.size ?? "default"];
@@ -279,9 +280,9 @@ export function InputCopy(props: {
 		</div>
 	);
 
-	const row = (tooltip?: TooltipTrigger) => (
+	const row = () => (
 		<div
-			{...buttonProps({ disabled: props.disabled, onClick: handleCopy })}
+			{...buttonProps({ disabled: props.disabled, onClick: handleCopy, tabIndex: 0 }, renderer)}
 			aria-label={
 				status() === "copied"
 					? "Copied"
@@ -290,15 +291,8 @@ export function InputCopy(props: {
 						: "Copy to clipboard"
 			}
 			testId={props.testId}
-			onMouseEnter={() => {
-				onMouseEnter();
-				tooltip?.onMouseEnter();
-			}}
-			onMouseLeave={() => {
-				onMouseLeave();
-				tooltip?.onMouseLeave();
-			}}
-			onMouseDown={tooltip?.onMouseDown}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
 			style={{
 				display: "flex",
 				flexDirection: "row",
@@ -362,7 +356,7 @@ export function InputCopy(props: {
 					sideOffset={2}
 					forceOpen={forceOpen()}
 				>
-					{(tooltip: TooltipTrigger) => row(tooltip)}
+					{row()}
 				</Tooltip>
 			</Show>
 		</div>

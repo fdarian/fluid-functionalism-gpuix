@@ -3,7 +3,6 @@ import {
 	type EventPayload,
 	type HostElement,
 	motion,
-	useGpuixRequired,
 } from "@gpuix/solid";
 import {
 	createContext,
@@ -15,7 +14,7 @@ import {
 	untrack,
 	useContext,
 } from "solid-js";
-import { readBounds } from "../lib/bounds";
+import { createPlacementState, POPUP_MARGIN } from "../lib/popup";
 import { createPresence } from "../lib/presence";
 import { color, radius, type as scale, motion as tween } from "../lib/theme";
 
@@ -27,9 +26,6 @@ const SLIDE = 4;
 const BARE_SKIP_DELAY = 400;
 /** How long the tooltip stays after the pointer leaves, so it can cross the gap to the chip: Base UI's safe polygon, approximated with a timer. */
 const GRACE_MS = 80;
-/** Base UI's default collision padding. */
-const WINDOW_MARGIN = 5;
-const CHIP_HEIGHT = 24;
 
 /** What tooltips under one provider share: the hover delay, and when the last one closed so a neighbour can skip it. */
 interface TooltipGroup {
@@ -66,13 +62,6 @@ export function TooltipProvider(props: {
 	);
 }
 
-const OPPOSITE: Record<TooltipSide, TooltipSide> = {
-	top: "bottom",
-	bottom: "top",
-	left: "right",
-	right: "left",
-};
-
 /** Where the chip starts, relative to where it rests: it slides in from the trigger's side. */
 function slideFrom(side: TooltipSide) {
 	switch (side) {
@@ -87,36 +76,10 @@ function slideFrom(side: TooltipSide) {
 	}
 }
 
-/**
- * The hover handlers a trigger element takes. gpuix hit-tests a filled or
- * `pointerEvents: "auto"` element as the end of the line, so its ancestors
- * never see the pointer: such a trigger must carry these itself.
- */
-export interface TooltipTrigger {
-	onMouseEnter: () => void;
-	/** Only present with `followCursor`: gpuix captures the pointer on any element that listens to both mouseDown and mouseMove, and the child's click would never arrive. */
-	onMouseMove?: (event: EventPayload) => void;
-	onMouseLeave: () => void;
-	onMouseDown: () => void;
-}
-
-/** The anchor that centres the chip on its side. gpuix's `align="center"` offsets the layer by half its own size twice, so the corner anchor is picked by hand and the layer's centring does the rest. */
-function centredAnchor(side: TooltipSide) {
-	switch (side) {
-		case "top":
-			return "bottomLeft";
-		case "bottom":
-		case "right":
-			return "topLeft";
-		case "left":
-			return "topRight";
-	}
-}
-
 export function Tooltip(props: {
 	content: JSX.Element;
-	/** An unfilled element, or a function receiving the handlers for a trigger that paints a fill. */
-	children: JSX.Element | ((trigger: TooltipTrigger) => JSX.Element);
+	/** The trigger: the wrapper hears its hover and press through bubbling. */
+	children: JSX.Element;
 	side?: TooltipSide;
 	sideOffset?: number;
 	/** Hover delay in ms. Defaults to the provider's, or 200. */
@@ -129,16 +92,13 @@ export function Tooltip(props: {
 	onOpenChange?: (open: boolean) => void;
 	testId?: string;
 }) {
-	const renderer = useGpuixRequired();
 	const ambient = useContext(TooltipGroupContext);
 	const group: TooltipGroup = ambient ?? {
 		delay: DEFAULT_DELAY,
 		skipDelay: BARE_SKIP_DELAY,
 		closedAt: undefined,
 	};
-	/** The side that has room for the chip, chosen each time it opens. */
-	const [placed, setPlaced] = createSignal<TooltipSide>();
-	const side = () => placed() ?? props.side ?? "top";
+	const placement = createPlacementState(props.side ?? "top");
 
 	const presence = createPresence();
 	const [hovered, setHovered] = createSignal(false);
@@ -149,50 +109,14 @@ export function Tooltip(props: {
 	let closeTimer: ReturnType<typeof setTimeout> | undefined;
 	/** The pointer is on the chip. It enters the chip before the trigger reports it left, so the trigger's leave must not start the close. */
 	let overChip = false;
-	/** The chip's last painted size, for deciding which side it fits on. */
-	let chipSize: { width: number; height: number } | undefined;
 	onCleanup(() => {
 		clearTimeout(delayTimer);
 		clearTimeout(closeTimer);
 	});
 
-	/**
-	 * Base UI flips to the opposite side when the preferred one has no room.
-	 * gpuix's own flip anchors to the far edge of the trigger and covers it, so
-	 * the side is chosen here from the trigger's painted box and the window.
-	 */
-	const placeChip = (): TooltipSide => {
-		const preferred = props.side ?? "top";
-		const box = wrapper === undefined ? null : readBounds(wrapper);
-		const window = renderer.getWindowSize?.();
-		if (box == null || window == null) return preferred;
-		const chip =
-			chipSize ??
-			(typeof props.content === "string"
-				? { width: props.content.length * 6.5 + 16, height: CHIP_HEIGHT }
-				: { width: 160, height: 48 });
-		const room = {
-			top: box.y,
-			bottom: window.height - (box.y + box.height),
-			left: box.x,
-			right: window.width - (box.x + box.width),
-		};
-		const need =
-			(preferred === "top" || preferred === "bottom"
-				? chip.height
-				: chip.width) +
-			(props.sideOffset ?? 8) +
-			WINDOW_MARGIN;
-		if (room[preferred] >= need) return preferred;
-		const opposite = OPPOSITE[preferred];
-		return room[opposite] > room[preferred] ? opposite : preferred;
-	};
-
 	createEffect(() => {
-		if (open()) {
-			untrack(() => setPlaced(placeChip()));
-			presence.show();
-		} else if (untrack(presence.mounted)) presence.hide();
+		if (open()) presence.show();
+		else if (untrack(presence.mounted)) presence.hide();
 	});
 
 	const setOpen = (next: boolean) => {
@@ -238,9 +162,8 @@ export function Tooltip(props: {
 	const onMouseMove = (event: EventPayload) => {
 		if (props.followCursor === undefined) return;
 		if (wrapper === undefined) throw new Error("Tooltip is not mounted");
-		const bounds = readBounds(wrapper);
-		if (bounds == null || event.x === undefined || event.y === undefined)
-			return;
+		const bounds = wrapper.getBoundingClientRect();
+		if (event.x === undefined || event.y === undefined) return;
 		setFollowOffset(
 			props.followCursor === "x"
 				? { x: event.x - (bounds.x + bounds.width / 2), y: 0 }
@@ -248,41 +171,34 @@ export function Tooltip(props: {
 		);
 	};
 
-	const trigger: TooltipTrigger = {
-		onMouseEnter,
-		get onMouseMove() {
-			return props.followCursor === undefined ? undefined : onMouseMove;
-		},
-		onMouseLeave: scheduleClose,
-		onMouseDown: dismiss,
-	};
-	const render = props.children;
-
 	return (
 		<div
 			ref={(element) => {
 				wrapper = element;
 			}}
 			testId={props.testId}
-			{...(typeof render === "function" ? {} : trigger)}
+			onMouseEnter={onMouseEnter}
+			onMouseMove={onMouseMove}
+			onMouseLeave={scheduleClose}
+			onMouseDown={dismiss}
 			style={{ position: "relative", display: "flex", flexShrink: 0 }}
 		>
-			{typeof render === "function" ? render(trigger) : render}
+			{props.children}
 			{/* Escape closes a hover-opened tooltip before it reaches a dialog behind it; a pinned one is not a layer. */}
 			<Show when={hovered() && props.forceOpen === undefined}>
 				<DismissableLayer onEscapeKeyDown={dismiss} />
 			</Show>
 			<Show when={presence.mounted()}>
 				<anchored
-					side={side()}
+					side={props.side ?? "top"}
 					align="center"
-					anchor={centredAnchor(side())}
+					fit="flip"
 					gap={props.sideOffset ?? 8}
 					offset={props.forceOpen === true ? undefined : followOffset()}
-					snapMargin={WINDOW_MARGIN}
+					snapMargin={POPUP_MARGIN}
+					onPlacement={placement.onPlacement}
 					deferred
 					priority={2}
-					occlude={false}
 					style={{ backgroundColor: color.transparent }}
 				>
 					<motion.div
@@ -296,17 +212,11 @@ export function Tooltip(props: {
 							overChip = false;
 							scheduleClose();
 						}}
-						onLayout={(event: EventPayload) => {
-							if (event.width === undefined || event.height === undefined) {
-								throw new Error("layout event without a size");
-							}
-							chipSize = { width: event.width, height: event.height };
-						}}
-						initial={{ opacity: 0, ...slideFrom(side()) }}
+						initial={{ opacity: 0, ...slideFrom(placement.side()) }}
 						animate={
 							presence.open()
 								? { opacity: 1, top: 0, left: 0 }
-								: { opacity: 0, ...slideFrom(side()) }
+								: { opacity: 0, ...slideFrom(placement.side()) }
 						}
 						transition={presence.open() ? tween.fast : tween.fastExit}
 						style={{

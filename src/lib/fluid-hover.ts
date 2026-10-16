@@ -1,6 +1,9 @@
-import type { EventPayload, HostElement } from "@gpuix/solid";
+import {
+	type EventPayload,
+	type HostElement,
+	ResizeObserver,
+} from "@gpuix/solid";
 import { createEffect, createSignal, onCleanup } from "solid-js";
-import { readBounds } from "./bounds";
 
 /** A row's box relative to the container's own top-left corner. */
 export interface ItemRect {
@@ -103,46 +106,37 @@ export interface FluidHoverOptions {
 }
 
 /**
- * Attempts to wait for painted bounds. A box is recorded on every paint and
- * read a frame stale, so a frame or two of nulls before the first paint is
- * normal. A tree that stays null is a bug, not a state.
- */
-const MEASURE_ATTEMPTS = 12;
-const MEASURE_RETRY_MS = 16;
-
-/**
  * Port of use-fluid-hover.ts. The DOM version measures with
- * getBoundingClientRect; this one reads gpuix's painted bounds for each
- * registered row and for the container, and resolves the pointer with
- * `pickNearest`.
+ * getBoundingClientRect when a ResizeObserver reports; this one does the same
+ * for each registered row and for the container, and resolves the pointer
+ * with `pickNearest`.
+ *
+ * Only a box that changes size is reported, so rows must move because the
+ * container or a row resized (an accordion opening, a label unfolding, a
+ * filter swapping rows). Rows that shift while every observed box keeps its
+ * size are not seen.
  */
 export function createFluidHover(options: FluidHoverOptions = {}) {
 	const items = new Map<number, HostElement>();
 	let container: HostElement | undefined;
 	let pointer: { x: number; y: number } | undefined;
 	let sessionPending = false;
-	let measureTimer: ReturnType<typeof setTimeout> | undefined;
-	let trackTimer: ReturnType<typeof setInterval> | undefined;
+
+	const observer = new ResizeObserver(() => commit());
+	onCleanup(() => observer.disconnect());
 
 	const [activeIndex, setActiveIndex] = createSignal<number | null>(null);
 	const [rects, setRects] = createSignal<readonly (ItemRect | undefined)[]>([]);
 	const [session, setSession] = createSignal(0);
 	const [isMeasured, setIsMeasured] = createSignal(false);
 
-	let missing: number | undefined;
 	const measureNow = () => {
-		missing = undefined;
-		if (container === undefined) return false;
-		const box = readBounds(container);
-		if (box === null) return false;
+		if (container === undefined || !container.mounted) return false;
+		const box = container.getBoundingClientRect();
 		const next: (ItemRect | undefined)[] = [];
 		for (const [index, element] of items) {
-			const bounds = readBounds(element);
-			if (bounds === null) {
-				if (options.isItemDisabled?.(index)) continue;
-				missing = index;
-				return false;
-			}
+			if (!element.mounted) continue;
+			const bounds = element.getBoundingClientRect();
 			next[index] = {
 				top: bounds.y - box.y,
 				left: bounds.x - box.x,
@@ -156,9 +150,9 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 	};
 
 	const pick = () => {
-		if (container === undefined || pointer === undefined) return;
-		const box = readBounds(container);
-		if (box === null) return;
+		if (container === undefined || !container.mounted) return;
+		if (pointer === undefined) return;
+		const box = container.getBoundingClientRect();
 		const next = pickNearest({
 			axis: options.axis ?? "y",
 			point: pointer,
@@ -187,49 +181,16 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 		return true;
 	};
 
-	/**
-	 * Painted bounds lag the tree by a frame, so a measurement taken in the
-	 * same tick as a mutation would read the old layout. The first read waits
-	 * two frames, then retries until every row has a box. A list with no
-	 * container on screen (an empty state, a hidden question) has nothing to
-	 * measure, which is not an error.
-	 */
-	const remeasure = () => {
-		clearTimeout(measureTimer);
-		let attempts = 0;
-		const attempt = () => {
-			if (container === undefined || !container.mounted) return;
-			if (commit()) return;
-			attempts += 1;
-			if (attempts >= MEASURE_ATTEMPTS) {
-				throw new Error(
-					`Fluid hover: painted bounds still unavailable after ${MEASURE_ATTEMPTS} frames (${missing === undefined ? "container" : `row ${missing}`})`,
-				);
-			}
-			measureTimer = setTimeout(attempt, MEASURE_RETRY_MS);
-		};
-		measureTimer = setTimeout(attempt, MEASURE_RETRY_MS * 2);
+	const setContainer = (element: HostElement) => {
+		if (container === element) return;
+		if (container !== undefined) observer.unobserve(container);
+		container = element;
+		observer.observe(element, { box: "border-box" });
 	};
-
-	/** Re-reads every frame for `ms`: rows are moving under an animation, as the DOM version's ResizeObserver would follow. */
-	const remeasureFor = (ms: number) => {
-		clearInterval(trackTimer);
-		const until = performance.now() + ms;
-		trackTimer = setInterval(() => {
-			commit();
-			if (performance.now() >= until) clearInterval(trackTimer);
-		}, MEASURE_RETRY_MS);
-	};
-
-	onCleanup(() => {
-		clearTimeout(measureTimer);
-		clearInterval(trackTimer);
-	});
 
 	const handlers = {
 		onMouseEnter() {
 			sessionPending = true;
-			// Layout may have settled since the last measurement; what is painted now is current.
 			commit();
 		},
 		onMouseMove(event: EventPayload) {
@@ -239,7 +200,7 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 			pointer = { x: event.x, y: event.y };
 			pick();
 		},
-		/** Rows moved under a stationary pointer. */
+		/** Rows moved under a stationary pointer: a scroll event carries no pointer position, so this picks at the last one seen. */
 		onScroll() {
 			pick();
 		},
@@ -255,32 +216,45 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 		rects,
 		session,
 		isMeasured,
-		remeasure,
-		remeasureFor,
-		/** The container is going away (an empty state replaced the rows): drop pending reads of it. */
-		cancelMeasure() {
-			clearTimeout(measureTimer);
-			clearInterval(trackTimer);
-		},
-		containerRef(element: HostElement) {
-			container = element;
-		},
+		containerRef: setContainer,
 		registerItem(index: number, element: HostElement) {
 			items.set(index, element);
+			observer.observe(element, { box: "border-box" });
 			onCleanup(() => {
 				if (items.get(index) === element) items.delete(index);
+				observer.unobserve(element);
 			});
 		},
 		handlers,
-		/** Spread onto the rows' container: registers it, re-measures once it mounts, and wires the pointer. */
+		/** Spread onto the rows' container: registers it, measures once it reports, and wires the pointer. */
 		containerProps: {
-			ref(element: HostElement) {
-				container = element;
-				queueMicrotask(remeasure);
-			},
+			ref: setContainer,
 			onMouseEnter: handlers.onMouseEnter,
 			onMouseMove: handlers.onMouseMove,
 			onMouseLeave: handlers.onMouseLeave,
+		},
+	};
+}
+
+/**
+ * Raised while rows are rearranged under the highlight (a filter swapping
+ * them, a menu gaining items): the highlight snaps to its row's new box
+ * instead of gliding there, since the row moved, not the pointer. Lowered on a
+ * timer that outlasts the observer's report, because a rearrangement that
+ * changes no observed size would never report and a flag waiting on it would
+ * stay raised.
+ */
+const REFLOW_MS = 100;
+export function createReflowGate() {
+	const [reflowing, setReflowing] = createSignal(false);
+	let timer: ReturnType<typeof setTimeout> | undefined;
+	onCleanup(() => clearTimeout(timer));
+	return {
+		reflowing,
+		raise() {
+			clearTimeout(timer);
+			setReflowing(true);
+			timer = setTimeout(() => setReflowing(false), REFLOW_MS);
 		},
 	};
 }

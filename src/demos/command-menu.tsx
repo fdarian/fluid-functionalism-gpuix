@@ -20,7 +20,7 @@ import type { DemoModule } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
-import { isInside, PopupSurface } from "../lib/popup";
+import { PopupSurface } from "../lib/popup";
 import { createPresence } from "../lib/presence";
 import { color, radius, type as scale } from "../lib/theme";
 
@@ -249,18 +249,11 @@ function FilterSelect(props: {
 }) {
 	const presence = createPresence();
 	const [hovered, setHovered] = createSignal(false);
-	let root: HostElement | undefined;
-	let popup: HostElement | undefined;
 	const label = () =>
 		props.options.find((option) => option.value === props.value)?.label;
 	return (
 		<div
-			ref={(element) => {
-				root = element;
-			}}
-			onMouseDownOutside={(event) => {
-				if (!isInside(event, [root, popup])) presence.hide();
-			}}
+			onMouseDownOutside={presence.hide}
 			style={{ position: "relative" }}
 		>
 			<div
@@ -302,14 +295,10 @@ function FilterSelect(props: {
 				presence={presence}
 				align="start"
 				width={150}
+				maxHeight={200}
 				onDismiss={() => presence.hide()}
-				onMouseDownOutside={(event) => {
-					if (!isInside(event, [root, popup])) presence.hide();
-				}}
-				popupRef={(element) => {
-					popup = element;
-				}}
 			>
+				{() => (
 				<div style={{ display: "flex", flexDirection: "column", padding: 4 }}>
 					<For each={props.options}>
 						{(option) => (
@@ -345,6 +334,7 @@ function FilterSelect(props: {
 						)}
 					</For>
 				</div>
+				)}
 			</PopupSurface>
 		</div>
 	);
@@ -592,7 +582,7 @@ export function Demo() {
 	);
 }
 
-/** Wheels the page until the card's top edge sits under the heading. gpuix's scrollIntoView does not reach the page's scroller from here. */
+/** Wheels the page until the card's top edge sits under the heading (negative delta is down, as for `ShotContext.scroll`). gpuix's scrollIntoView does not reach the page's scroller from here. */
 async function reveal(
 	shot: Parameters<NonNullable<DemoModule["scenarios"]>>[0],
 	id: string,

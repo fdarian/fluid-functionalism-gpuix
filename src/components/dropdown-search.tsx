@@ -69,9 +69,10 @@ export const SEARCH_HEIGHT = height.control;
 export function SearchField(props: {
 	search: DropdownSearchProps;
 	onKeyDown: (event: KeyEvent) => void;
-	onSubmit: () => void;
 	/** The field gained or lost keyboard focus. */
 	onFocusChange?: (focused: boolean) => void;
+	/** The `id` of the lit row: focus stays in the field while the arrows walk the rows. */
+	activeDescendant: string | undefined;
 	testId?: string;
 }) {
 	const [focused, setFocused] = createSignal(false);
@@ -98,6 +99,7 @@ export function SearchField(props: {
 			/>
 			<input
 				testId={props.testId}
+				aria-activedescendant={props.activeDescendant}
 				autoFocus={props.search.autoFocus ?? true}
 				value={props.search.value}
 				placeholder={props.search.placeholder ?? "Search…"}
@@ -123,7 +125,6 @@ export function SearchField(props: {
 					props.search.onValueChange(event.value);
 				}}
 				onKeyDown={props.onKeyDown}
-				onSubmit={props.onSubmit}
 				style={{
 					flexGrow: 1,
 					minWidth: 0,

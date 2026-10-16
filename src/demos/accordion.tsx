@@ -210,6 +210,17 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.press("enter");
 	shot.expectText("Beta body", true);
 	shot.capture("keyboard-tab");
+	// Open: the trigger controls its region, which the trigger names. Closed: no controls.
+	const controls = shot.aria("kb-2").controls;
+	if (!Array.isArray(controls) || controls.length !== 1)
+		throw new Error("an open trigger controls its panel");
+	shot.expectAria(String(controls[0]), {
+		role: "Region",
+		labelled_by: [shot.idOf("kb-2")],
+	});
+	shot.expectAria("kb-2", { expanded: true });
+	shot.expectAria("kb-1", { expanded: false, controls: undefined });
+	shot.expectAria("kb-3", { disabled: true });
 	await shot.click("kb-3");
 	shot.expectText("Gamma body", false);
 	await shot.press("enter");

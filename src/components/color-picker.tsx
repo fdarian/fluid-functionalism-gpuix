@@ -10,20 +10,25 @@ import {
 	createEffect,
 	createMemo,
 	createSignal,
+	createUniqueId,
 	For,
 	type JSX,
 	on,
 	Show,
 	untrack,
 } from "solid-js";
+import { createPointerCapture } from "../lib/pointer-capture";
 import { StableLabel } from "../lib/stable-label";
-import { readBounds } from "../lib/bounds";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
 import { edgeIndex, isChord, moveIndex } from "../lib/list-nav";
-import { isInside, placePopup, POPUP_OFFSET } from "../lib/popup";
+import {
+	createPlacementState,
+	POPUP_MARGIN,
+	POPUP_OFFSET,
+} from "../lib/popup";
 import { createPresence } from "../lib/presence";
 import { createPressToggle, returnFocusTo } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
@@ -43,7 +48,7 @@ import {
 	rgbToHsv,
 	rgbToOklch,
 } from "./color-picker-math";
-import { Tooltip, type TooltipTrigger } from "./tooltip";
+import { Tooltip } from "./tooltip";
 
 export type { ColorFormat, ParsedColor } from "./color-picker-math";
 export { buildParsed, parseColor } from "./color-picker-math";
@@ -85,13 +90,13 @@ function checkerSource(width: number, size: number) {
 			}
 		}
 	}
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${size}"><path d="${path}" fill="#000"/></svg>`;
+	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${size}"><path d="${path}" fill="currentColor"/></svg>`;
 }
 
 /**
  * The alpha checkerboard. gpuix has no conic gradients or tiled backgrounds,
- * so it is a backing fill plus a monochrome SVG of the other squares, tinted
- * by `style.color`.
+ * so it is a backing fill plus a monochrome SVG of the other squares, filled
+ * with `style.color`.
  */
 function Checker(props: { width: number; height: number }) {
 	const source = createMemo(() => checkerSource(props.width, props.height));
@@ -104,7 +109,6 @@ function Checker(props: { width: number; height: number }) {
 				width: props.width,
 				height: props.height,
 				backgroundColor: color.checkerB,
-				pointerEvents: "none",
 			}}
 		>
 			<svg
@@ -116,7 +120,6 @@ function Checker(props: { width: number; height: number }) {
 					width: props.width,
 					height: props.height,
 					color: color.checkerA,
-					pointerEvents: "none",
 				}}
 			/>
 		</div>
@@ -146,7 +149,6 @@ export function ColorTile(props: { color: string; size?: number }) {
 					width: size(),
 					height: size(),
 					backgroundColor: props.color,
-					pointerEvents: "none",
 				}}
 			/>
 			<div
@@ -159,7 +161,6 @@ export function ColorTile(props: { color: string; size?: number }) {
 					borderRadius: radius.item,
 					borderWidth: 1,
 					borderColor: HAIRLINE,
-					pointerEvents: "none",
 				}}
 			/>
 		</div>
@@ -224,7 +225,6 @@ export function ColorSwatch(props: {
 					height: size(),
 					borderRadius: radius.item,
 					overflow: "hidden",
-					pointerEvents: "none",
 				}}
 			>
 				<Checker width={size()} height={size()} />
@@ -236,7 +236,6 @@ export function ColorSwatch(props: {
 						width: size(),
 						height: size(),
 						backgroundColor: props.color,
-						pointerEvents: "none",
 					}}
 				/>
 			</div>
@@ -250,7 +249,6 @@ export function ColorSwatch(props: {
 					borderRadius: radius.item,
 					borderWidth: 1,
 					borderColor: HAIRLINE,
-					pointerEvents: "none",
 				}}
 			/>
 		</div>
@@ -261,12 +259,13 @@ export function ColorSwatch(props: {
 function useFractionIn() {
 	const renderer = useGpuixRequired();
 	return (element: HostElement | undefined, event: EventPayload) => {
-		if (element === undefined) throw new Error("Pointer target is not mounted");
+		if (element === undefined || !element.mounted) {
+			throw new Error("Pointer target is not mounted");
+		}
 		if (event.x === undefined || event.y === undefined) {
 			throw new Error("Pointer event without coordinates");
 		}
-		const bounds = readBounds(element);
-		if (bounds == null) throw new Error("Pointer target has no painted bounds");
+		const bounds = element.getBoundingClientRect();
 		return {
 			x: clamp01((event.x - bounds.x) / bounds.width),
 			y: clamp01((event.y - bounds.y) / bounds.height),
@@ -300,18 +299,18 @@ function SaturationSquare(props: {
 	};
 
 	const onKeyDown = (event: KeyEvent) => {
-		const step = event.modifiers?.shift === true ? 0.1 : 0.01;
+		const step = event.shiftKey === true ? 0.1 : 0.01;
 		switch (event.key) {
-			case "left":
+			case "ArrowLeft":
 				props.onChange(clamp01(props.s - step), props.v);
 				break;
-			case "right":
+			case "ArrowRight":
 				props.onChange(clamp01(props.s + step), props.v);
 				break;
-			case "up":
+			case "ArrowUp":
 				props.onChange(props.s, clamp01(props.v + step));
 				break;
-			case "down":
+			case "ArrowDown":
 				props.onChange(props.s, clamp01(props.v - step));
 				break;
 			default:
@@ -342,6 +341,7 @@ function SaturationSquare(props: {
 			}}
 			onMouseDown={(event) => {
 				if (event.button !== 0) return;
+				element?.setPointerCapture(event.pointerId);
 				setDragging(true);
 				apply(event);
 			}}
@@ -351,6 +351,7 @@ function SaturationSquare(props: {
 				if (dragging()) props.onChange(point.x, 1 - point.y);
 			}}
 			onMouseUp={() => setDragging(false)}
+			onLostPointerCapture={() => setDragging(false)}
 			onKeyDown={onKeyDown}
 			style={{
 				position: "relative",
@@ -376,7 +377,6 @@ function SaturationSquare(props: {
 					left: 0,
 					width: INNER_WIDTH,
 					height: SQUARE_HEIGHT,
-					pointerEvents: "none",
 					background: {
 						type: "linear-gradient",
 						angle: 90,
@@ -395,7 +395,6 @@ function SaturationSquare(props: {
 					left: 0,
 					width: INNER_WIDTH,
 					height: SQUARE_HEIGHT,
-					pointerEvents: "none",
 					background: {
 						type: "linear-gradient",
 						angle: 0,
@@ -422,7 +421,6 @@ function SaturationSquare(props: {
 							outlineWidth: 1,
 							outlineColor: "rgba(0,0,0,0.2)",
 							outlineOffset: 0,
-							pointerEvents: "none",
 						}}
 					/>
 				)}
@@ -441,7 +439,6 @@ function SaturationSquare(props: {
 					outlineWidth: 1,
 					outlineColor: "#000000",
 					outlineOffset: 0,
-					pointerEvents: "none",
 				}}
 			/>
 		</div>
@@ -467,36 +464,38 @@ function Rail(props: {
 	const renderer = useGpuixRequired();
 	let root: HostElement | undefined;
 	let thumb: HostElement | undefined;
+	const press = createPointerCapture("Rail");
 	const [dragging, setDragging] = createSignal(false);
 
 	const fraction = () => (props.value - props.min) / (props.max - props.min);
 	const apply = (event: EventPayload) => {
-		if (root === undefined) throw new Error("Rail is not mounted");
+		if (root === undefined || !root.mounted) {
+			throw new Error("Rail is not mounted");
+		}
 		if (event.x === undefined) throw new Error("Pointer event without x");
-		const bounds = readBounds(root);
-		if (bounds == null) throw new Error("Rail has no painted bounds");
+		const bounds = root.getBoundingClientRect();
 		const usable = bounds.width - RAIL_THUMB;
 		const along = clamp01((event.x - bounds.x - RAIL_THUMB / 2) / usable);
 		props.onChange(Math.round(props.min + along * (props.max - props.min)));
 	};
 
 	const onKeyDown = (event: KeyEvent) => {
-		const step = event.modifiers?.shift === true ? 10 : 1;
+		const step = event.shiftKey === true ? 10 : 1;
 		const clamp = (value: number) =>
 			Math.max(props.min, Math.min(props.max, value));
 		switch (event.key) {
-			case "left":
-			case "down":
+			case "ArrowLeft":
+			case "ArrowDown":
 				props.onChange(clamp(props.value - step));
 				break;
-			case "right":
-			case "up":
+			case "ArrowRight":
+			case "ArrowUp":
 				props.onChange(clamp(props.value + step));
 				break;
-			case "home":
+			case "Home":
 				props.onChange(props.min);
 				break;
-			case "end":
+			case "End":
 				props.onChange(props.max);
 				break;
 			default:
@@ -527,7 +526,6 @@ function Rail(props: {
 					height: RAIL_TRACK,
 					borderRadius: RAIL_TRACK / 2,
 					overflow: "hidden",
-					pointerEvents: "none",
 				}}
 			>
 				{props.children}
@@ -551,7 +549,6 @@ function Rail(props: {
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
-					pointerEvents: "none",
 					keyboardFocusDim: false,
 					focusVisible: focusRing(2),
 				}}
@@ -575,8 +572,10 @@ function Rail(props: {
 				/>
 			</div>
 			<div
+				ref={press.ref}
 				onMouseDown={(event) => {
 					if (event.button !== 0) return;
+					press.capture(event);
 					setDragging(true);
 					apply(event);
 					if (thumb !== undefined) renderer.focusElement?.(thumb.id);
@@ -585,6 +584,7 @@ function Rail(props: {
 					if (dragging()) apply(event);
 				}}
 				onMouseUp={() => setDragging(false)}
+				onLostPointerCapture={() => setDragging(false)}
 				style={{
 					position: "absolute",
 					top: 0,
@@ -687,32 +687,29 @@ function AlphaRail(props: {
 	);
 }
 
-/** An anchored card of a given surface level, with the same slide and fade as the shared popup. */
+/** An anchored card of a given surface level, with the same slide and fade as the shared popup. Opens below its trigger, or above when there is no room. */
 function Popup(props: {
 	presence: ReturnType<typeof createPresence>;
-	side: "top" | "bottom";
 	width: number;
 	level: number;
-	onMouseDownOutside?: (event: EventPayload) => void;
-	/** The card, for callers that ask whether a press landed on it. */
-	cardRef?: (element: HostElement) => void;
 	children: JSX.Element;
 }) {
-	const slide = () => (props.side === "top" ? 4 : -4);
+	const placement = createPlacementState("bottom");
+	const slide = () => (placement.side() === "top" ? 4 : -4);
 	return (
 		<Show when={props.presence.mounted()}>
 			<anchored
-				side={props.side}
+				side="bottom"
 				align="start"
 				gap={POPUP_OFFSET}
+				fit="flip"
+				snapMargin={POPUP_MARGIN}
+				onPlacement={placement.onPlacement}
 				deferred
 				priority={2}
-				occlude
-				onMouseDownOutside={props.onMouseDownOutside}
 				style={{ backgroundColor: color.transparent }}
 			>
 				<motion.div
-					ref={props.cardRef}
 					initial={{ opacity: 0, top: slide() }}
 					animate={
 						props.presence.open()
@@ -747,42 +744,36 @@ function FormatDropdown(props: {
 	defaultOpen?: boolean;
 	/** The surface the menu rises above: it sits two levels higher. */
 	level: number;
-	onOpenChange?: (open: boolean) => void;
 	testId: string;
 }) {
 	const renderer = useGpuixRequired();
 	const presence = createPresence();
 	const hover = createFluidHover();
-	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
 	const [triggerHovered, setTriggerHovered] = createSignal(false);
-	let trigger: HostElement | undefined;
+	const triggerId = createUniqueId();
+	const menuId = createUniqueId();
+	const rowId = (index: number) => `${menuId}-row-${index}`;
+	/** Focus stays on the trigger while the arrows walk the rows. */
+	const litRowId = () => {
+		const index = hover.activeIndex();
+		return presence.open() && index !== null ? rowId(index) : undefined;
+	};
 	let button: HostElement | undefined;
-	let card: HostElement | undefined;
 	const checkedIndex = () => FORMATS.indexOf(props.value);
 	const width = (INNER_WIDTH - 8) / 2;
 
 	/** A pointer open lights nothing until the pointer moves in; a keyboard open lights the first row, or the last on ArrowUp. */
 	const open = (from: "pointer" | "first" | "last" = "pointer") => {
 		if (presence.open()) return;
-		if (trigger === undefined) throw new Error("Trigger is not mounted");
-		setSide(
-			placePopup(
-				trigger,
-				FORMATS.length * MENU_ROW + 8,
-				Number.POSITIVE_INFINITY,
-			).side,
-		);
 		presence.show();
 		hover.setActiveIndex(
 			from === "pointer" ? null : edgeIndex(from, FORMATS.length),
 		);
-		props.onOpenChange?.(true);
 	};
 	/** Closing hands focus back to the trigger unless it already moved to another control; Tab lets it move on. */
 	const close = (returnFocus = true) => {
 		if (!presence.open()) return;
 		presence.hide();
-		props.onOpenChange?.(false);
 		if (!returnFocus || button === undefined) return;
 		returnFocusTo(renderer, button.id);
 	};
@@ -817,8 +808,8 @@ function FormatDropdown(props: {
 			return;
 		}
 		switch (event.key) {
-			case "enter":
-			case "space": {
+			case "Enter":
+			case " ": {
 				if (!presence.open()) {
 					open("first");
 				} else {
@@ -828,31 +819,31 @@ function FormatDropdown(props: {
 				event.preventDefault();
 				return;
 			}
-			case "down":
+			case "ArrowDown":
 				if (presence.open()) move(1);
 				else open("first");
 				event.preventDefault();
 				event.stopPropagation();
 				return;
-			case "up":
+			case "ArrowUp":
 				if (presence.open()) move(-1);
 				else open("last");
 				event.preventDefault();
 				event.stopPropagation();
 				return;
-			case "home":
-			case "end":
+			case "Home":
+			case "End":
 				if (!presence.open()) return;
 				hover.setActiveIndex(
-					edgeIndex(event.key === "home" ? "first" : "last", FORMATS.length),
+					edgeIndex(event.key === "Home" ? "first" : "last", FORMATS.length),
 				);
 				event.preventDefault();
 				event.stopPropagation();
 				return;
-			case "escape":
+			case "Escape":
 				close();
 				return;
-			case "tab":
+			case "Tab":
 				close(false);
 				return;
 		}
@@ -865,18 +856,20 @@ function FormatDropdown(props: {
 
 	return (
 		<div
-			ref={(node) => {
-				trigger = node;
-			}}
+			onMouseDownOutside={() => close()}
 			style={{ position: "relative", width, height: height.control }}
 		>
 			<div
 				ref={(node) => {
 					button = node;
 				}}
+				id={triggerId}
 				role="button"
 				aria-label="Color format"
+				aria-haspopup="menu"
 				aria-expanded={presence.open()}
+				aria-controls={presence.open() ? menuId : undefined}
+				aria-activedescendant={litRowId()}
 				testId={props.testId}
 				tabIndex={0}
 				onMouseDown={press.onMouseDown}
@@ -923,21 +916,12 @@ function FormatDropdown(props: {
 					color={color.mutedForeground}
 				/>
 			</div>
-			<Popup
-				presence={presence}
-				side={side()}
-				width={width}
-				level={props.level + 2}
-				cardRef={(element) => {
-					card = element;
-				}}
-				onMouseDownOutside={(event) => {
-					if (!isInside(event, [trigger, card])) close();
-				}}
-			>
+			<Popup presence={presence} width={width} level={props.level + 2}>
 				<div
 					{...hover.containerProps}
+					id={menuId}
 					role="menu"
+					aria-labelledby={triggerId}
 					style={{
 						position: "relative",
 						display: "flex",
@@ -971,8 +955,9 @@ function FormatDropdown(props: {
 									ref={(element) => {
 										row = element;
 									}}
+									id={rowId(index())}
 									role="menuitemradio"
-									aria-selected={checked()}
+									aria-checked={checked()}
 									testId={`${props.testId}-${format}`}
 									onClick={() => choose(format)}
 									style={{
@@ -1028,7 +1013,6 @@ function ColorInput(props: {
 	max?: number;
 	/** Wraps (modulo) instead of clamping: hue is an angle. */
 	wrap?: boolean;
-	tooltip?: TooltipTrigger;
 }) {
 	const renderer = useGpuixRequired();
 	const [draft, setDraft] = createSignal(props.value);
@@ -1036,6 +1020,7 @@ function ColorInput(props: {
 	const [editing, setEditing] = createSignal(props.scrubbable !== true);
 	let input: HostElement | undefined;
 	let press: { x: number; value: number; scrubbed: boolean } | undefined;
+	const field = createPointerCapture("ColorInput");
 
 	// While the field has focus, outside changes leave the draft alone.
 	createEffect(
@@ -1095,31 +1080,37 @@ function ColorInput(props: {
 	};
 
 	const onKeyDown = (event: KeyEvent) => {
-		if (event.key === "escape") {
+		if (event.key === "Escape") {
 			setDraft(props.value);
 			renderer.blur?.();
 			return;
 		}
+		if (event.key === "Enter") {
+			event.preventDefault();
+			renderer.blur?.();
+			return;
+		}
 		if (
-			(event.key === "up" || event.key === "down") &&
+			(event.key === "ArrowUp" || event.key === "ArrowDown") &&
 			(props.nudgeStep !== undefined || props.nudgeShiftStep !== undefined)
 		) {
 			event.preventDefault();
-			nudge(event.key === "up" ? 1 : -1, event.modifiers?.shift === true);
+			nudge(event.key === "ArrowUp" ? 1 : -1, event.shiftKey === true);
 		}
 	};
 
 	const scrub = props.scrubbable === true;
 	return (
 		<div
+			ref={field.ref}
 			testId={props.testId}
-			onMouseEnter={() => props.tooltip?.onMouseEnter()}
-			onMouseLeave={() => props.tooltip?.onMouseLeave()}
 			onMouseDown={
 				scrub
 					? (event) => {
-							props.tooltip?.onMouseDown();
 							if (editing() || event.x === undefined) return;
+							// Pressing the field would focus its input; only a press that never scrubs does that, on release.
+							event.preventDefault();
+							field.capture(event);
 							press = {
 								x: event.x,
 								value: numberOf(props.value),
@@ -1139,7 +1130,8 @@ function ColorInput(props: {
 						}
 					: undefined
 			}
-			onMouseUp={
+			// pointerup, not mouseup: the capture ends between the two, and its lost-capture handler clears `press`.
+			onPointerUp={
 				scrub
 					? () => {
 							const pressed = press;
@@ -1150,6 +1142,9 @@ function ColorInput(props: {
 						}
 					: undefined
 			}
+			onLostPointerCapture={() => {
+				press = undefined;
+			}}
 			style={{
 				width: props.width,
 				height: height.control,
@@ -1208,7 +1203,6 @@ function ColorInput(props: {
 					commitDraft();
 				}}
 				onKeyDown={onKeyDown}
-				onSubmit={() => renderer.blur?.()}
 				style={{
 					flexGrow: 1,
 					minWidth: 0,
@@ -1226,17 +1220,15 @@ function ColorInput(props: {
 	);
 }
 
-/** A channel field with a 300ms name tooltip. The tooltip's handlers go on the field itself: see limitations/color-picker.md. */
+/** A channel field with a 300ms name tooltip. */
 function Channel(
-	props: Omit<Parameters<typeof ColorInput>[0], "tooltip" | "ariaLabel"> & {
+	props: Omit<Parameters<typeof ColorInput>[0], "ariaLabel"> & {
 		name: string;
 	},
 ) {
 	return (
 		<Tooltip content={props.name} delayDuration={300}>
-			{(tooltip: TooltipTrigger) => (
-				<ColorInput {...props} ariaLabel={props.name} tooltip={tooltip} />
-			)}
+			<ColorInput {...props} ariaLabel={props.name} />
 		</Tooltip>
 	);
 }
@@ -1291,7 +1283,7 @@ function ColorInputsRow(props: {
 	const whole = (
 		name: string,
 		key: ChannelKey,
-		value: number,
+		value: () => number,
 		min: number,
 		max: number,
 		wrap?: boolean,
@@ -1300,7 +1292,7 @@ function ColorInputsRow(props: {
 			name={name}
 			testId={id(key)}
 			width={four}
-			value={String(value)}
+			value={String(value())}
 			onCommit={(next) => props.onChannelChange(key, next)}
 			align="center"
 			nudgeStep={1}
@@ -1337,9 +1329,9 @@ function ColorInputsRow(props: {
 				{alpha(half)}
 			</Show>
 			<Show when={props.format === "rgb"}>
-				{whole("Red", "r", props.parsed.r, 0, 255)}
-				{whole("Green", "g", props.parsed.g, 0, 255)}
-				{whole("Blue", "b", props.parsed.b, 0, 255)}
+				{whole("Red", "r", () => props.parsed.r, 0, 255)}
+				{whole("Green", "g", () => props.parsed.g, 0, 255)}
+				{whole("Blue", "b", () => props.parsed.b, 0, 255)}
 				{alpha(four)}
 			</Show>
 			<Show when={props.format === "hsl"}>
@@ -1348,9 +1340,9 @@ function ColorInputsRow(props: {
 						rgbToHsl(props.parsed.r, props.parsed.g, props.parsed.b);
 					return (
 						<>
-							{whole("Hue", "hSL", Math.round(hsl().h), 0, 360, true)}
-							{whole("Saturation", "sSL", Math.round(hsl().s * 100), 0, 100)}
-							{whole("Lightness", "lSL", Math.round(hsl().l * 100), 0, 100)}
+							{whole("Hue", "hSL", () => Math.round(hsl().h), 0, 360, true)}
+							{whole("Saturation", "sSL", () => Math.round(hsl().s * 100), 0, 100)}
+							{whole("Lightness", "lSL", () => Math.round(hsl().l * 100), 0, 100)}
 							{alpha(four)}
 						</>
 					);
@@ -1362,7 +1354,7 @@ function ColorInputsRow(props: {
 						rgbToOklch(props.parsed.r, props.parsed.g, props.parsed.b);
 					return (
 						<>
-							{whole("Lightness", "L", Math.round(oklch().L * 100), 0, 100)}
+							{whole("Lightness", "L", () => Math.round(oklch().L * 100), 0, 100)}
 							<Channel
 								name="Chroma"
 								testId={id("C")}
@@ -1380,7 +1372,7 @@ function ColorInputsRow(props: {
 							{whole(
 								"Hue",
 								"H",
-								Math.round(props.oklchHue ?? oklch().H),
+								() => Math.round(props.oklchHue ?? oklch().H),
 								0,
 								360,
 								true,
@@ -1416,7 +1408,6 @@ export type ColorPickerProps = {
 	testId?: string;
 	/** Surface level the panel's own card sits on. Defaults to 3. */
 	level?: number;
-	onFormatMenuOpenChange?: (open: boolean) => void;
 };
 
 /** The panel itself: no card around it, so a popover can supply its own. */
@@ -1609,7 +1600,6 @@ function ColorPickerPanel(props: ColorPickerProps) {
 					onChange={handleFormatChange}
 					defaultOpen={props.defaultFormatOpen}
 					level={props.level ?? 3}
-					onOpenChange={props.onFormatMenuOpenChange}
 				/>
 			</div>
 			<ColorInputsRow
@@ -1675,11 +1665,7 @@ export function ColorPickerPopover(
 	},
 ) {
 	const presence = createPresence();
-	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
 	const [removeHovered, setRemoveHovered] = createSignal(false);
-	const [formatMenuOpen, setFormatMenuOpen] = createSignal(false);
-	let trigger: HostElement | undefined;
-	let card: HostElement | undefined;
 
 	const isControlled = () => props.value !== undefined;
 	const [internalValue, setInternalValue] = createSignal(
@@ -1690,8 +1676,6 @@ export function ColorPickerPopover(
 
 	const open = () => {
 		if (presence.open()) return;
-		if (trigger === undefined) throw new Error("Trigger is not mounted");
-		setSide(placePopup(trigger, 420, Number.POSITIVE_INFINITY).side);
 		presence.show();
 	};
 	const close = () => {
@@ -1732,18 +1716,17 @@ export function ColorPickerPopover(
 
 	return (
 		<div
-			ref={(node) => {
-				trigger = node;
-			}}
+			onMouseDownOutside={close}
 			style={{
 				position: "relative",
 				display: "flex",
 				alignSelf: "flex-start",
-				// A key listener makes this wrapper focusable, so it would dim with its descendants.
+				// A press on the popover's bare content lands focus here, so Escape still reaches the handler below; the wrapper dims with its descendants unless this is off.
 				keyboardFocusDim: false,
 			}}
+			tabIndex={-1}
 			onKeyDown={(event) => {
-				if (event.key === "escape" && presence.open()) close();
+				if (event.key === "Escape" && presence.open()) close();
 			}}
 		>
 			<div
@@ -1760,7 +1743,7 @@ export function ColorPickerPopover(
 					else open();
 				}}
 				onKeyDown={(event) => {
-					if (event.key === "enter" || event.key === "space") {
+					if (event.key === "Enter" || event.key === " ") {
 						event.preventDefault();
 						if (presence.open()) close();
 						else open();
@@ -1837,18 +1820,7 @@ export function ColorPickerPopover(
 					</div>
 				</Show>
 			</div>
-			<Popup
-				presence={presence}
-				side={side()}
-				width={PANEL_WIDTH}
-				level={5}
-				cardRef={(element) => {
-					card = element;
-				}}
-				onMouseDownOutside={(event) => {
-					if (!formatMenuOpen() && !isInside(event, [trigger, card])) close();
-				}}
-			>
+			<Popup presence={presence} width={PANEL_WIDTH} level={5}>
 				<ColorPickerPanel
 					{...props}
 					level={5}
@@ -1857,7 +1829,6 @@ export function ColorPickerPopover(
 						if (!isControlled()) setInternalValue(next);
 						props.onValueChange?.(next, result);
 					}}
-					onFormatMenuOpenChange={setFormatMenuOpen}
 				/>
 			</Popup>
 		</div>

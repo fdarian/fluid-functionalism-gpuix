@@ -2,10 +2,8 @@ import { type HostElement, useGpuixRequired } from "@gpuix/solid";
 import {
 	type Accessor,
 	createContext,
-	createEffect,
 	createSignal,
 	type JSX,
-	on,
 	Show,
 	useContext,
 } from "solid-js";
@@ -117,15 +115,6 @@ export function InputField(props: {
 		() => rootElement,
 	);
 
-	// The error row changes the field's height, so the group's rects are stale.
-	createEffect(
-		on(
-			() => [props.error, props.labelHidden],
-			() => group.hover.remeasure(),
-			{ defer: true },
-		),
-	);
-
 	const active = () => group.hover.activeIndex() === props.index;
 	const lit = () => active() || focused();
 
@@ -195,7 +184,7 @@ export function InputField(props: {
 					paddingRight: step().padX,
 				}}
 			>
-				{/* The fill is its own layer: a filled element would stop the group's hover from seeing the pointer over it, and the field would unlight itself. */}
+				{/* The fill is its own layer, and pass-through: an absolute box paints above its in-flow siblings, as in a browser, and would take the press meant for the input. */}
 				<div
 					style={{
 						position: "absolute",

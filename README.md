@@ -5,8 +5,7 @@ Can [gpuix](https://github.com/remorses/gpuix), a GPUI-backed renderer with no D
 
 Yes. 32 demo pages cover every component of the library (36 component files, counting shared parts such as
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
-behaviour. What does not carry over is catalogued below: [7 gpuix bugs and 57 missing features](#gpuix-limitations),
-ranked by how many components each one hurts.
+behaviour. What does not carry over is catalogued below: [15 gpuix bugs and 23 missing features](#gpuix-limitations).
 
 | | |
 |---|---|
@@ -74,10 +73,9 @@ settle / expectText / capture`; see `ShotContext` in `src/lib/demo.ts`. Give ele
 | File | What it holds |
 |---|---|
 | `theme.ts` | Both columns of every `light-dark()` in `app/globals.css` (`color-mix()` mixed offline), type scale, radii, springs. `color.x` reads a `scheme` signal, so a JSX prop that touches it re-colours on a theme change; read tokens inside JSX or a function, never at module scope. `withAlpha`, `surface(level)`, `focusRing(offset)`. |
-| `fluid-hover.ts`, `fluid-highlight.tsx` | The site's `use-fluid-hover`: rows register, their painted boxes are read, `pickNearest` (ported verbatim) resolves the pointer to a row including gaps, and one highlight glides between rows. `hover.containerProps` and `useHoverItem` wire a list. |
-| `bounds.ts` | `readBounds` (sync, null until the element has painted once) and `awaitBounds` (12 tries x 16 ms, then throws). Bounds are recorded on every paint, so a read is one frame stale. |
-| `measured-height.ts` | A box whose height springs to its content's: re-reads while "hot", used by every collapse. |
-| `popup.tsx`, `presence.ts` | Popup chrome on `<anchored>`, `placePopup` (side from bounds, capped height), `isInside` (outside presses by bounds), and `createPresence` (mounted outlives open so an exit can play). |
+| `fluid-hover.ts`, `fluid-highlight.tsx` | The site's `use-fluid-hover`: rows register with a `ResizeObserver`, their boxes are read with `getBoundingClientRect` when one reports, `pickNearest` (ported verbatim) resolves the pointer to a row including gaps, and one highlight glides between rows. `hover.containerProps` and `useHoverItem` wire a list. |
+| `measured-height.ts` | A box whose height springs to its content's: the content box reports its size through `onLayout`, used by every collapse. |
+| `popup.tsx`, `presence.ts` | Popup chrome on `<anchored fit="flip">` (`PopupSurface`; `createPlacementState` keeps the reported side and available height), and `createPresence` (mounted outlives open so an exit can play). |
 | `list-nav.ts` | `moveIndex` (skip disabled, wrap or clamp) and `revealRow` (scroll a row into view by hand). |
 | `stable-label.tsx` | A label that gains weight without moving its neighbours: a hidden semibold copy reserves the width. |
 | `clock.ts` | One shared, ref-counted frame clock for every JS-driven loop. |
@@ -88,129 +86,89 @@ settle / expectText / capture`; see `ShotContext` in `src/lib/demo.ts`. Give ele
 
 ## gpuix limitations
 
-What gpuix lacks or gets wrong, found by porting every component. Transforms (no rotate, scale or translate) are
-known and not repeated here. An entry counts the components that hit it; each component's own file
-in [`limitations/`](limitations) has the detail, the original behaviour and the fidelity of its workaround.
-"Bug" means gpuix does something wrong or inconsistent; "missing" means it simply does not offer it. When unsure I
-called it missing. A few entries were disputed between component files: the occlusion rule below is documented in
-`host.ts`, so it is listed as missing, not as a bug.
+What gpuix still lacks or gets wrong, as of the DOM-parity release of the fork (`~/code/fdarian/gpuix/FORK.md`).
+Everything the port used to work around and gpuix now does (bubbling hover and press, explicit pointer capture,
+focus modality, ARIA and `inert`, forms, `fit="flip"` placement, motion values, colour transitions, gradients,
+sticky, masks and the rest) is gone from this list. Where the port still does not use such a feature, that is a gap
+in the port, tracked row by row in [`BASE-UI-AUDIT.md`](BASE-UI-AUDIT.md), not a gpuix limitation. Each component's
+own file in [`limitations/`](limitations) has the detail. "Bug" means gpuix does something wrong or inconsistent;
+"missing" means it does not offer it. A count is given only where the code shows it.
 
 ### Bugs
 
-| Used by | What | gpuix source | Workaround here |
-|---|---|---|---|
-| **5**: mobile-drawer, scroll-area, sidebar, combobox, select | Scroller with padding scrolls by 2x padding even when content fits (padded overflowY:scroll box, 16px pad, 2x40px rows scrolled 32px) | not traced | No padding on the scroller; an inner box carries it |
-| **4**: ask-user-questions, radio-group, checkbox-group, tabs | Focus events arrive out of order: new row's onFocus fires before the old row's onBlur (renderer.focusElement), so blur handlers clear fresh state | not traced | Blur only clears the focused index if it is still this row's |
-| **3**: dialog, mobile-drawer, command-menu | DialogPortal builds its children twice: the anchored element reads the children getter, then declares get children() that builds it again; discarded copy keeps effects/timers alive | `packages/solid/src/components/dialog.ts:110, :117, :137` | once() builds content once per open and drops it on dispose |
-| **3**: tooltip, dropdown, select | <anchored align="center"> offsets the layer twice (wrapper centres origin, then resolved_anchor shifts by size/2 again) | `packages/native/src/custom_elements/anchored.rs:193, :217, :155, :158` | Pass an explicit anchor (bottomLeft/topLeft/topRight) together with align="center" |
-| **3**: mobile-drawer, accordion, scroll-area | getElementBounds is inconsistent within a tick under a moving ancestor: container and child read one frame of ancestor travel apart (16px), skewing fluid-hover rects | not traced | Slide the panel empty, measure at rest (onMotionComplete), then fade content in |
-| **2**: checkbox-group, radio-group | onClick is wired to mouse-up with no press-origin check: press on row A, release on row B fires click on B | `packages/native/src/renderer.rs:5460` | none |
-| **2**: scroll-area, table | A both-axis scroller stays display:block (only x-only scrollers get flex/min-width:0), so a wide child fills the parent instead of overflowing | `packages/native/src/renderer.rs:5371` | Viewport sets display:flex; flexDirection:row; alignItems:flex-start itself |
+| Used by | What | Workaround here |
+|---|---|---|
+| combobox, dropdown, select, tooltip (every popup on gpuix's `DismissableLayer`), and `returnFocusTo` in dropdown, select, color-picker | `VIEW_BUSY`: reading focus state (`getFocusedElementId`, `matches(":focus")`) inside a mousedown, mouseup, click or wheel handler throws on macOS, because those run in synchronous dispatch. gpuix's own `DismissableLayer` does it, so a pointer-opened popup fails to open (seen headless, likely live too). There is no `document.activeElement` | none yet |
+| accordion, banner, button, card, carousel-dots, chat-message, input-copy, input-message, tabs, tabs-subtle, thinking-steps (all use `buttonProps`) | `buttonProps` handles keydown on the way up, so a `buttonProps` element nested in another is clicked twice on Enter: the inner one clicks itself and the outer one clicks the same target. The fix is to act only when `target === currentTarget` | none; nested cases are not counted |
+| dialog, mobile-drawer | `DialogBackdrop` closes on mousedown; the DOM and Base UI close on click | The app's own backdrop div closes on a click that presses and releases on it |
+| dialog, mobile-drawer | A reactive prop change on `DialogPopup` re-creates the popup and loses focus | `aria-labelledby` and `-describedby` are static ids |
+| scroll-area | A horizontal or both-axis scroller does not extend its scroll width for content that overflows through descendants (a block wrapper clamps to the viewport width) | The viewport is a flex row with `alignItems: "flex-start"` |
+| any nested scrollers (scroll-area, combobox, select, sidebar) | One large wheel event chains its remainder to the outer scroller in the same event; a browser latches the whole event to the first scroller | none |
+| select, combobox | Enter in a form `<input>` with an empty `required` control does nothing; HTML implicit submission validates, sets `invalid` and moves focus. Only `requestSubmit()` validates | The demos submit through `requestSubmit()` |
+| dropdown submenus (audit rows 386, 721), tooltip | `window` and `document` mousemove listeners fire only when an element on the hit path has a mousemove listener, never over bare window background, so a safe polygon between trigger and popup cannot be tracked | A dwell timer for submenus (`SUBMENU_DWELL_MS`), a grace timer for the tooltip |
+| tooltip and dialog demos | After a failed script run Bun aborts with `thread local panicked on drop` | none; the harness only |
+| screenshots, app-frame | The test renderer ignores the window options (titlebar, traffic lights), `setAppearance` changes nothing and `onAppearanceChange` never fires; `createAppearance` is the machine's | Captures pin the scheme with `setThemeChoice` and show no traffic lights |
+| screenshots | `simulateKeystrokes` takes GPUI key names (`down`, `tab`, `enter`), not DOM ones, and delivers a keydown only: `space` never gets its key-up or click | `shot.press` passes the names through; scenarios press Enter, which activates on keydown |
+| screenshots | `nativeSimulateScrollWheel` keeps GPUI's sign: negative `deltaY` scrolls down, where `onWheel` sees positive-down | Scenarios pass negative deltas |
+| screenshots | A mouse move without a held button is not delivered to an element that holds pointer capture; batched keystrokes deliver an input's `onChange` after the whole batch | `shot.moveHeld` sends the move with a button held; none for the batch |
+| not counted | `relatedTarget` and `target` on focus events are element ids (numbers), not elements | none |
+| screenshots | The accessibility dump flags an `aria-hidden` node as hidden but not its descendants, and `A11yTreeDump` lacks `frame` | `scripts/screenshots.tsx` reads `frame.tab_stop_count` through a cast |
 
 ### Missing features
 
-The 33 that hit four or more components:
-
-| Used by | What | gpuix source | Workaround here |
-|---|---|---|---|
-| **23**: accordion, card, carousel-dots, chat-message, checkbox-group, color-picker, command-menu, dropdown, input-copy, input-group, input-message, queued-stack, radio-group, scroll-area, slider, switch, thinking-steps, tooltip, tabs, tabs-subtle, sidebar, button, file-thumbnail | Absolute/fixed boxes, non-transparent fills and pointerEvents:auto insert a hit-test blocker, so ancestors never get hover/enter/leave/down/click over them; no bubbling opt-in (by design per host.ts doc; many files call it bug-shaped) | `packages/native/src/style.rs:317 (also :318, :323)`<br>`packages/native/src/renderer.rs:5335 (also :5336-5352, :5347)`<br>`packages/native/js/host.ts:247` | pointerEvents:"none" on every decorative/filled/absolute child; own signals or counters where the child must stay interactive |
-| **14**: accordion, banner, command-menu, dropdown, input-message, queued-stack, scroll-area, select, slider, tabs-subtle, thinking-steps, tooltip, combobox, sidebar | getElementBounds reads are one frame stale: a read in the commit that mutates the tree sees the old layout | `packages/native/src/automation.rs:83`<br>`packages/native/src/renderer.rs:2333` | Retry per frame until the first paint (up to 12, then throw), re-read on enter/press, timers |
-| **11**: accordion, card, color-picker, input-copy, input-group, scroll-area, switch, table, tabs, tabs-subtle, sidebar | No colour transitions: colour/background/border/shadow are not in MotionStyle and hover/active/focusVisible state styles switch instantly (transition-colors dropped) | `packages/native/src/motion.rs:14`<br>`packages/native/js/host.ts:27` | Instant switch, or an always-mounted absolute layer whose opacity is animated |
-| **10**: ask-user-questions, tabs-subtle, thinking-steps, input-group, color-picker, combobox, input-copy, tabs, accordion, slider | No ARIA beyond role/aria-label/-description/-id/-expanded/-selected/-valuetext/-level: no aria-checked, -controls, -labelledby, -describedby, -invalid, -valuenow/min/max, no label-for | not traced | aria-selected / aria-id / aria-valuetext substitutes; label onClick focuses input |
-| **9**: card, carousel-dots, dialog, file-thumbnail, mobile-drawer, table, scroll-area, banner, app-frame | overflow:hidden clips to a rectangle, not the rounded box (ContentMask is bounds-only); flush children show square corners | `zed/crates/gpui/src/window.rs:1930` | Child rounds its own corners (img borderRadius, tileCorner, the app frame's row and sidebar); pill that grows instead of a clipped slide |
-| **8**: switch, slider, scroll-area, color-picker, input-copy, tooltip, queued-stack, input-message | Pointer capture is only implicit: an element with both onMouseDown and onMouseMove gets capture_pointer(); undocumented, no explicit API, and it swallows descendants' mouseUp/click | `packages/native/src/renderer.rs:5663`<br>`GPUI window.rs:2874, elements/div.rs:2724` | Put all three handlers on the dragged element only; drag region excludes child buttons; Tooltip function-children form |
-| **8**: checkbox-group, select, input-copy, thinking-indicator, dropdown, switch, command-menu, accordion | No SVG internals animation: no stroke-dash/pathLength draw, no path morph, svg is one tinted glyph | `packages/native/js/host.ts:22`<br>`packages/native/js/host.ts:27` | Fade in, left-to-right clip wipe, or JS timer rewriting the svg source string |
-| **7**: accordion, banner, command-menu, input-message, tabs-subtle, thinking-steps, sidebar | motion cannot target height:auto, fr tracks or layout size; only plain pixel numbers (apply_to writes DimensionValue::Pixels) | `packages/native/src/motion.rs:14`<br>`packages/native/src/motion.rs:740`<br>`packages/native/js/host.ts:27` | Measure content with getElementBounds and tween 0 to the pixel value |
-| **7**: accordion, checkbox-group, radio-group, tabs, tabs-subtle, tooltip, sidebar | No focus modality in JS: onFocus/onBlur carry no payload (no keyboard-vs-pointer, no relatedTarget); focusVisible exists only as a native style on the focused element, so no traveling ring and no focus-opens-tooltip | `packages/native/js/host.ts:262`<br>`packages/native/src/renderer.rs:4841`<br>`EventPayload in packages/native/index.d.ts` | Per-element native focusVisible outline; microtask + getFocusedElementId; renderer.focusElement |
-| **7**: command-menu, scroll-area, slider, select, dropdown, carousel-dots, sidebar | No mask-image / clip-path / scroll-linked styles, so scroll-fade, scroll-divider and step-dot sweeps are impossible | not traced | Flat-colour gradient overlays with opacity from scroll offset; fixed hairlines; per-dot opacity |
-| **6**: accordion, combobox, sidebar, slider, tabs-subtle, thinking-steps | No signal for a box that moves: `onLayout` reports a border box after the first paint and on every size change, but a move without a resize reports nothing, so rows travelling under an animation, a slider's position and a popup's anchor are read again by hand | `packages/native/js/host.ts:494-500`<br>`packages/native/src/renderer.rs:6795-6845` | `onLayout` for every size (measured-height, scroll-area, slider width, tooltip chip); `remeasureFor` frame re-reads while rows move; position read on enter, press and open |
-| **6**: dropdown, select, tabs, accordion, combobox, command-menu | Rows are not focusable roving-tabindex items: highlight is a virtual index, arrow keys move focus by renderer.focusElement or, for popups, the trigger or field keeps focus and drives the index | not traced | Virtual highlight + wrapper key handlers; focusElement; typeahead buffer; popups hand focus back to the trigger on close (`returnFocusTo`) |
-| **6**: scroll-area, dropdown, select, mobile-drawer, combobox, sidebar | No painted scrollbar and no overflow:auto (scroll only); `onScroll` is the wheel tick (deltaX/Y, no offset), while `onScrollChange` reports every offset change (wheel, drag, key, `scrollTo`) but not the offset at the first paint | `packages/native/src/renderer.rs:5605`<br>`packages/native/js/host.ts:492` | Draw the thumb in-component from `onLayout` and `onScrollChange` (scroll-area); a bare scroller elsewhere |
-| **6**: color-picker, input-message, slider, ask-user-questions, input-copy, input-group | No caret/selection access or select-on-focus on input/textarea (no select(), setSelectionRange, selectionStart); no type/step/min/max | `packages/native/src/custom_elements/input.rs:518`<br>`packages/native/src/custom_elements/input.rs:959` | autoFocus + manual delete; single-line-only history; none |
-| **6**: accordion, tabs, tabs-subtle, slider, checkbox-group, thinking-indicator | motion has one MotionTransition per node, so no per-property transitions (spring + tween on one element) | `packages/native/src/motion.rs:155`<br>`packages/native/js/host.ts:98 (also :98-103)` | Two nested motion.divs, one transition each |
-| **6**: slider, switch, banner, checkbox-group, radio-group, accordion | No motion values: no shared/derived (useTransform) or readable/imperative value, so linked layers are separate springs that can drift; mid-flight grab restarts from target | `packages/native/js/host.ts:98`<br>`packages/native/src/motion.rs:14` | Same spring and target maths on each layer; zero-length tween while dragging |
-| **5**: color-picker, banner, thinking-indicator, slider, card | Gradients: only two stops and one background layer (no stacked backgrounds) | `packages/native/js/host.ts:159` | Several two-stop segments side by side; stacked absolute layers (document order) |
-| **5**: banner, dropdown, command-menu, table, scroll-area | No position:sticky | `packages/native/src/style.rs:323` | Render the sticky piece above the scroller as sibling/chrome |
-| **5**: banner, carousel-dots, thinking-indicator, thinking-steps, queued-stack | No reduced-motion preference or media queries (prefers-reduced-motion, hover:none) | not traced | none; always animate, desktop-only |
-| **4**: scroll-area, combobox, select, sidebar | Nested scrollers all scroll at once: every scroll container under the pointer applies the wheel tick (listener never stops propagation), no overscrollBehavior | `zed/crates/gpui/src/elements/div.rs:3266` | containWheel restores the ancestor's offset after a tick that moved the area |
-| **4**: select, command-menu, dropdown, combobox | element.scrollIntoView scrolls to the scroller's direct child containing the element, so rows inside the required wrapper scroll nowhere | `packages/native/src/renderer.rs:3860-3890 (scroll_target at :3874)` | revealRow: measured rect + getScrollOffset + scrollTo (instant jump) |
-| **4**: slider, queued-stack, carousel-dots, scroll-area | Pointer events carry window x/y only: no element-local coordinates, so pointer-to-value needs the element's bounds | `packages/native/src/automation.rs:83`<br>`EventPayload in packages/native/index.d.ts` | Read bounds on enter/press/move and subtract |
-| **4**: dropdown, select, tooltip, combobox | Popup placement: no flip that clears the trigger (switch covers it, snap slides over it), no available-height measure | `packages/native/src/custom_elements/anchored.rs:351-352` | Choose side on open from trigger bounds + window height; max-height = room; no flip at right edge for submenus |
-| **4**: dropdown, color-picker, combobox, select | No group-aware outside press or tree-bubbling for popups: onMouseDownOutside fires per element, a deferred anchored layer is hit-tested alone so the parent gets mouseLeave entering a submenu | `packages/native/src/renderer.rs:5586`<br>`DismissableLayer in packages/solid/src/components/floating.ts` | Compare event.x/y with painted bounds of trigger and popups; dwell timer for submenus |
-| **4**: ask-user-questions, command-menu, sidebar, dialog | No window-level key subscription for components (window key events go only to render() options) | `packages/solid/src/root.ts:85 (also :85-104)` | Focusable container with onKeyDown; open from a button, shortcut cap is display-only |
-| **4**: command-menu, input-message, dropdown, combobox | Text editor binds Left/Right/Home/End (input) and Up/Down/Enter/Backspace (textarea) as actions that consume the key; JS onKeyDown never fires and cannot cancel | `packages/native/src/custom_elements/input.rs:200-209 (handlers :1669-1690)`<br>`input.rs:182`<br>`packages/native/src/renderer.rs:3615` | Ctrl-P/Ctrl-N, onSubmit for Enter; none for Left/Right/Home/End |
-| **4**: thinking-indicator, file-thumbnail, carousel-dots, thinking-steps | No keyframes or repeat, so loops (spinner, glyph morph, shimmer, autoplay clock) cannot be native motions; clock must be pausable/readable | `README.md:1101`<br>`packages/native/js/host.ts:27` | Shared JS setInterval clock (16-33 ms) rewriting style/svg each frame |
-| **4**: chat-message, input-message, queued-stack, carousel-dots | No layout/shared-layout (FLIP) animation, layoutId morph or drag-reorder primitive: siblings jump | `README.md:1101` | Instant reorder; entrance kept on top/opacity |
-| **4**: card, thinking-steps, file-thumbnail, chat-message | No aspectRatio in StyleDesc; <img> height from ratio is unreliable when parent width is not definite (observed 600px box, not traced) | `packages/native/js/host.ts:163-249 (absent)` | Pixel height / caller-stated ratio |
-| **4**: banner, table, card, dialog | Grid/layout: gridTemplateColumns is a track count only (no auto/fr), no order, no row-reverse, no container queries, no :has(), no table layout | `packages/native/js/host.ts:178`<br>`packages/native/src/renderer.rs:5799` | Nested flex rows; equal-width columns; context-driven layout flip |
-| **4**: color-picker, dialog, input-message, tabs | Box shadows: one layer, no inset | not traced | Border/outline for the ring + single largest drop shadow |
-| **4**: chat-message, color-picker, queued-stack, table | OpenType feature control absent (tabular-nums / font-variant-numeric); not a font-loading gap | not traced | none; proportional digits |
-| **4**: dialog, banner, card, sidebar | position:absolute resolves against the parent element, not the nearest positioned ancestor | not traced | Render the overlay as a direct child of the region (scoped prop) |
-
-<details>
-<summary>The 24 that hit three or fewer</summary>
-
-| Used by | What | gpuix source | Workaround here |
-|---|---|---|---|
-| **3**: input-message, chat-message, queued-stack | File drop yields paths only: no File/Blob, size/mtime, picker type filter, or drag-enter/over/leave (only on_drop) | `packages/native/src/renderer.rs:5599` | {path,name,type} guessed from extension; filter after picker; no drag-over state |
-| **3**: table, chat-message, card | No state-style group selectors: group-hover, group-focus-within, descendant selectors; hover/active/focusVisible apply to the element itself | `packages/native/js/host.ts (StyleDesc)` | Solid context/signals from the row; none for focus-within |
-| **3**: input-group, combobox, input-message | <input> has no disabled prop (readOnly still focuses and shows caret) | `packages/native/src/custom_elements/input.rs:522`<br>`InputProps in packages/native/js/host.ts` | readOnly + pointerEvents:none + opacity 0.5; still tab-focusable |
-| **3**: card, thinking-steps, dialog | No filter / backdrop-filter blur | not traced | Opacity only / flat 70% colour |
-| **3**: checkbox-group, ask-user-questions, dropdown | motion animates one borderRadius, not per-corner radii; no corner straightening in merge/split | `packages/native/src/motion.rs:14 (also :22)`<br>`packages/native/js/host.ts:22 (static corners :220)` | One FluidHighlight per run; surviving block springs over the union |
-| **3**: tabs-subtle, banner, accordion | motion cannot animate margin or padding | `packages/native/src/motion.rs:14`<br>`packages/native/src/motion.rs:740` | Gap carried as padding on an inner element; pixel height only |
-| **3**: badge, banner, select | Colour functions absent: colours are literals, no color-mix() against a theme colour | `packages/native/js/host.ts:209`<br>`oklab gradient only interpolates two stops (host.ts:160)` | Own sRGB mix() at render time / rgba literals per scheme |
-| **2**: thinking-indicator, thinking-steps | No text-fill other than flat colour (no background-clip:text gradient, shimmer) | `packages/native/js/host.ts:159` | One <text> per letter recoloured each frame from the JS clock |
-| **2**: ask-user-questions, input-copy | No rich inline runs (colour/weight/background) inside one text block; nested <text> is a div; no inline backgrounds (<mark>) | `README.md:3095` | Wrapping flex row of separate <text> boxes; highlight prop for the wash |
-| **2**: thinking-indicator, ask-user-questions | AnimatePresence has no popLayout mode: an exiting node stays in flow | not traced | Fade-in only / absolute-positioned words with top tween |
-| **2**: color-picker, slider | No cursor:none and no pointer lock (scrub fields keep the OS cursor, travel ends at screen edge) | `CursorValue in packages/native/js/host.ts` | cursor crosshair/ew-resize; 3px-threshold scrub |
-| **2**: input-copy, chat-message | No clipboard write from JS | `packages/native/index.d.ts` | Spawns pbcopy / wl-copy via Bun.spawn |
-| **2**: carousel-dots, input-message | No capture-phase handlers or event target/closest(): a handler cannot tell which descendant took the press | `packages/native/js/host.ts (HostProps)` | Bubbling handlers on wrapper; handler on the textarea wrapper only |
-| **2**: color-picker, table | No conic gradient, background-size/repeat or tiling (alpha checkerboard) | not traced | Backing div + generated monochrome SVG path of squares |
-| **1**: app-frame | No window drag region: `Window::start_window_move` and `WindowControlArea` are not plumbed to JS, so the top bar cannot drag the window or zoom it on double-click (the native titlebar strip may still drag; unverified) | `zed/crates/gpui/src/window.rs:2607`<br>`zed/crates/gpui/src/window.rs:744` | none |
-| **1**: app-frame | The test renderer ignores window options (titlebar, traffic lights) and `setAppearance`, and `createAppearance` there is the machine's appearance and never changes | `packages/native/js/testing.ts:120` | Captures pin the scheme with `setThemeChoice` and show no traffic lights |
-| **1**: file-thumbnail | <img> has no onLoad/onError, no File/blob URL, no canvas pixel path (PDF preview) | `ImgProps in packages/native/js/host.ts` | Caller passes {name,type,src} and a pending flag; PDF shows glyph |
-| **1**: file-thumbnail | No per-side border colour (borderColor is one value) | not traced | Stacked static ring + rotating SVG arc |
-| **1**: slider | opacity is applied per primitive, not as an offscreen group, so overlapping children of a translucent parent show through each other | not traced | none |
-| **1**: banner | svg is a monochrome tinted mask: no per-path colour | `SvgProps in packages/native/js/host.ts` | SVG <mask> cuts the mark out of the shape |
-| **1**: card | No margin:auto (margin is number only) | `packages/native/js/host.ts:196` | flexGrow:1; flexBasis:0 spacer |
-| **1**: thinking-steps | No IntersectionObserver / visibility observer | not traced | Start on mount with manual pause/play |
-| **1**: select | No form integration (name, required, hidden input) | not traced | not ported |
-| **1**: color-picker | No OS eyedropper / screen sampler and no CSS colour-name resolver | not traced | Eyedropper button not rendered; parseColor hex/rgb/hsl/oklch only |
-</details>
+| Used by | What | Workaround here |
+|---|---|---|
+| popups (select, combobox, dropdown, color-picker, tooltip, dialog), chevrons (accordion, card, color-picker, thinking-steps), scale-in entrances (banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack, radio-group), spinners (file-thumbnail) | CSS transforms: no scale, rotate or translate, so the popup's `scaleY: 0.96` entrance and every turn and pop is impossible (audit rows 525, 606) | Popups slide from the reported side and fade; glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom` |
+| slider | `<input type="range">` (audit row 310) | A pointer-handled track and thumbs |
+| select, combobox (`FormValue`) | `<input type="hidden">` | A real input that is invisible, unreachable and `aria-hidden` |
+| accordion, ask-user-questions, input-message, sidebar, thinking-steps (`createMeasuredHeight`) | Motion on `width: auto`, and layout size morphs | The content box reports its size through `onLayout` and the outer box tweens to that number |
+| not counted | Container queries | none |
+| not counted | `:has()` | none |
+| table | `display: table`, `border-collapse` and `inline-*`: columns cannot size to their widest cell | Flex rows with equal-width cells and an optional fixed `width` |
+| not counted | `em`, `rem`, `vw` and `vh` units | Pixel numbers |
+| not counted | `disabled` on anything but an input: other elements get `aria-disabled` only, so they stay focusable and clickable | `aria-disabled` plus the component's own guard |
+| not counted | `url()` backgrounds and masks | `<img>` elements and SVG `<mask>` |
+| file-thumbnail | A canvas pixel path (a PDF page preview) | The caller passes a type and the thumbnail shows a glyph |
+| not counted | Effect groups (`filter`, `backdrop-filter`, `mask`, `clip`, group opacity) off macOS | none |
+| carousel-dots, file-thumbnail, thinking-indicator, thinking-steps | `requestAnimationFrame` | `lib/clock.ts`: one shared, ref-counted `setInterval` frame clock |
+| dropdown, select, combobox, scroll-area | Intrinsic `width`: `max-content`, `min-content` and `fit-content` are rejected outside grid tracks, so a popup cannot grow to its widest row | A fixed panel width (288px, 224px for submenus), `popupWidth`, `minWidth: "anchor-size(width)"` |
+| badge | `text-box-trim` / `text-box-edge`: a label is centred by its full line box | Flex centring in a fixed-height pill (about a pixel of drift) |
+| card, table (every `StableLabel`: tabs, tabs-subtle, sidebar, menu rows) | Variable-font axes (`fontVariationSettings`): only a font's default instance renders, so the weight cannot ease between 400 and 550 | Static cuts; the weight switches at once, SemiBold 600 for 550 |
+| combobox (command-menu, dropdown-search, input-group, input-message) | IME composition: no `composition*` events, `isComposing` is always `false`, and `keydown` cannot cancel a key an IME consumed | none; IME input is untested |
+| button (every `buttonProps` button) | A keyboard `:active` state: a held Space does not play the pressed look | none; Space still activates on key-up |
+| thinking-steps | `filter` in `motion` targets: `blur()` paints as a static style but cannot be tweened | Opacity only |
+| thinking-indicator | Percentage insets in `motion` (`top: "80%"`) | Pixel offsets from the line height |
+| color-picker | A JS-visible CSS colour resolver: named colours and `color-mix()` resolve natively for styles only | `parseColor` reads hex, `rgb(a)`, `hsl(a)` and `oklch`; a name is rejected |
+| queued-stack | An input-device signal: `matchMedia` fixes `hover` to `hover` and `pointer` to `fine`, so `(hover: none)` never matches | none; desktop only |
+| combobox, select (any form) | A submit button: `SubmitEvent.submitter` is always `null` | The demos call `form.requestSubmit()` |
 
 ## Harness and shared-lib notes
 
 Quirks of this repo's own code, kept apart from the gpuix list above.
 
-- **`Show` / `For` leave gap slots.** A conditional among siblings leaves an empty Solid text node that gpuix lays
-  out as a flex or grid item, so each hole adds one `gap` (`packages/native/src/renderer.rs:5677`,
-  `packages/solid/src/host.ts:137`). Component files disagree on whether this is a gpuix bug. Containers with
-  conditional children use margin or padding, one fragment, or absolute layers, never `gap` (11 components).
-- **Absolute and filled boxes block the mouse, so ours opt out.** Every decorative absolute or filled child inside a
-  hover target sets `pointerEvents: "none"`; `StableLabel` and the fluid highlights do it for you. Forgetting it
-  makes fluid hover go dead while the pointer is over that child.
-- **Overlays live inside the scrolled content.** gpuix paints an absolute child of a scroller where it was placed,
-  not where the content has scrolled to, so highlights and rows share a relative wrapper *inside* the scroller.
-  Rows are measured relative to that wrapper, so rects do not change as the list scrolls.
-- **Focus dimming.** gpuix dims every other focusable control while one has keyboard focus, so buttons and inputs
-  set `keyboardFocusDim: false`. A key listener on a container makes it focusable, which triggers the dimming too.
+- **Focus dimming.** gpuix dims every other focusable control while one has keyboard focus, so buttons, inputs and
+  the tab and card wrappers set `keyboardFocusDim: false`.
+- **Pointer events.** Filled and positioned boxes no longer block an ancestor's hover and press, so
+  `pointerEvents: "none"` is left only where a browser needs it too: overlays above interactive siblings, the
+  fluid highlights, a disabled cascade, the slider's press target, the hidden form input. The dropdown's submenu
+  panel and the dialog and drawer popups opt back in with `"auto"`.
+- **Overlays live inside the scrolled content.** Highlights and rows share a relative wrapper inside the scroller
+  (combobox list), as in the DOM, where an absolute child of a scroller that is not its containing block does not
+  scroll with the content. Rows are measured relative to that wrapper, so rects do not change as the list scrolls.
 - **Escape.** `PopupSurface` joins gpuix's dismiss-layer stack while open, so Escape closes only the topmost popup,
   even inside a dialog.
-- **Shared Tooltip.** The wrapper form listens for `mouseDown` and `mouseMove`, which makes gpuix capture the pointer
-  and swallow the child's click; `Button` cannot take its handlers either. The function-children form avoids both.
-- **Dialog.** gpuix's `Dialog` unmounts the instant `open` goes false, so a local `mounted` signal and `once()`
-  keep the content through the fade; a trigger pressed during the fade is ignored.
-- **Hover-reveal groups** (chat-message actions) use `pointerEvents: "none"` until hovered, so a keyboard user can
-  tab to an invisible, unclickable action: there is no focus-within.
-- **Screenshots run on the test renderer.**
-  - Captures show no traffic lights or native titlebar: the test renderer ignores the window options, so the top bar
-    is empty apart from the title. They pin the theme to Dark (`setThemeChoice`) because its appearance is the
-    machine's.
-  - `settle()` sleeps real time and drains native events each frame; a bare `flush()` never delivers
-    `onMotionComplete`, so presence exits would never unmount.
-  - `TestRenderer.getElementBounds` triggers a full draw (about 28 ms), so timer-polled bounds can starve a run.
-  - The first simulated move produces only `mouseEnter`, springs advance only on drawn frames, and there is no
-    double-click or file-drop helper.
+- **Dialog.** gpuix's `Dialog` unmounts the instant `open` goes false, so a local `mounted` signal keeps the
+  content through the fade; a trigger pressed during the fade is ignored. The backdrop is the app's own,
+  because gpuix's closes on mousedown.
+- **Screenshots run on the test renderer** (`scripts/screenshots.tsx`).
+  - Captures show no traffic lights or native titlebar, and pin the theme to Dark (`setThemeChoice`), because the
+    test renderer ignores the window options and its appearance is the machine's.
+  - `settle()` runs frames for real time, flushing the tree and draining native events each frame; a bare `flush()`
+    never delivers `onMotionComplete`, so presence exits would never unmount. The first capture waits 800 ms.
+  - Helpers read `getElementBounds` once per step to find an element's centre; nothing polls bounds. `shot.press`
+    takes GPUI key names and `shot.scroll` GPUI's sign (negative scrolls down). There is no double-click or
+    file-drop helper.
+  - `shot.aria`, `expectAria`, `idOf`, `hasAriaNode` and `tabStopCount` assert on the accessibility tree.
   - Captures are not byte-stable: the text caret, timing-driven demos (thinking steps, shimmer, spinner) and
     queue text vary run to run. Compare the content area with a pixel diff, not file hashes.
 
@@ -218,7 +176,7 @@ Quirks of this repo's own code, kept apart from the gpuix list above.
 <summary>How the first three components translate (Tailwind to gpuix)</summary>
 
 The Button, Combobox and Sidebar were ported first, with this table kept as they went. Most rows have since
-generalised into the limitations above.
+were later fixed in gpuix or generalised into the limitations above.
 
 | Tailwind / CSS | gpuix | Fidelity |
 |---|---|---|
@@ -240,11 +198,10 @@ generalised into the limitations above.
 | `color-mix(in oklab, …)`, `light-dark()` | both columns kept as a token table; the scheme is a signal | Exact |
 | dark `--shadow-3` (inset hairline + ring + drops) | popup `borderColor` of white at 5% plus the one drop shadow | Approximated |
 | `prefers-color-scheme` ("System" theme) | `createAppearance()` reads the OS appearance and `bindSystemScheme` feeds it to the `scheme` token. System / Light / Dark are one `themeChoice` signal, and `renderer.setAppearance` mirrors Light / Dark so the native chrome follows | Exact in the window; captures run on the test renderer, whose appearance is fixed, so they pin Dark |
-| Base UI `Positioner` (flip, `--anchor-width`) | `<anchored gap={6} deferred>`; the popup width is a constant. gpuix snaps an overflowing popup into the window, and its `switch` flip anchors to the far edge of the field and covers it, so the combobox picks `top` or `bottom` itself from the painted bounds and the window height | Approximated |
+| Base UI `Positioner` (flip, `--anchor-width`, `--available-height`) | `<anchored fit="flip" deferred>`: gpuix picks the side and reports it with the room left (`onPlacement`), and `PopupSurface` caps the card to that room, slides from the reported side and is at least the trigger's width | Equivalent |
 | `ScrollArea` (hover thumb, scroll fade) | a plain `overflowY: "scroll"`, on the combobox list and the sidebar | Dropped |
-| absolute child of a scroll container | gpuix paints it where it was placed, not where the content has scrolled to, so rows and overlays share a relative wrapper *inside* the scroller | Needed workaround |
-| `getBoundingClientRect` | `getElementBounds` (last painted frame) read on timers | Approximated, up to a frame stale |
-| `ResizeObserver` | `onLayout` (size, after the first paint and on every change); a box that only moves is re-read with `getElementBounds` | Exact for size, approximated for moves |
+| `getBoundingClientRect` | `element.getBoundingClientRect()`, read when needed (layout is flushed first, so it is never stale) | Native |
+| `ResizeObserver` | gpuix's `ResizeObserver` (fluid hover, slider width, queued stack) and `onLayout` (size, after the first paint and on every change) | Exact |
 | `text-[length:…] leading-[…]` | `fontSize` + `lineHeight` | Exact |
 | `[text-box:trim-both_cap_alphabetic]` | none: labels are centred by their line box | Dropped, a pixel of optical drift |
 | Inter variable (`wght 550`, `opsz`) | static Inter TTFs (400, 500, 600, 700) passed as `fonts` to `render()`; the family is `Inter` for every weight. the site's 550 is set as SemiBold 600, there is no `opsz` | Approximated, one weight step |

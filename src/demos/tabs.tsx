@@ -182,6 +182,15 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.press("cmd-right");
 	shot.expectText("Panel one", true);
 	shot.capture("keyboard-disabled");
+	// Only the selected tab has a mounted panel to control; the panel is named by its tab.
+	const controls = shot.aria("kb-one").controls;
+	if (!Array.isArray(controls) || controls.length !== 1)
+		throw new Error("the selected tab controls its panel");
+	shot.expectAria(String(controls[0]), {
+		role: "TabPanel",
+		labelled_by: [shot.idOf("kb-one")],
+	});
+	shot.expectAria("kb-two", { disabled: true, controls: undefined });
 	await shot.click("kb-two");
 	shot.expectText("Panel two", false);
 };

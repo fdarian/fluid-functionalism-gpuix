@@ -29,7 +29,7 @@ const shield = defineIcon(
 	'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
 );
 const palette = defineIcon(
-	'<path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/><circle cx="13.5" cy="6.5" r=".5" fill="#000"/><circle cx="17.5" cy="10.5" r=".5" fill="#000"/><circle cx="6.5" cy="12.5" r=".5" fill="#000"/><circle cx="8.5" cy="7.5" r=".5" fill="#000"/>',
+	'<path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>',
 );
 const monitor = defineIcon(
 	'<rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/>',
@@ -199,7 +199,7 @@ function Triggered() {
 							<Button
 								testId="menu-trigger"
 								variant="ghost"
-								aria-expanded={trigger.expanded}
+								{...trigger.attributes}
 								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
@@ -238,7 +238,7 @@ function Submenus() {
 							<Button
 								testId="sub-trigger"
 								variant="ghost"
-								aria-expanded={trigger.expanded}
+								{...trigger.attributes}
 								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
@@ -321,7 +321,7 @@ function Keyboard() {
 							<Button
 								testId="keys-trigger"
 								variant="ghost"
-								aria-expanded={trigger.expanded}
+								{...trigger.attributes}
 								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
@@ -362,7 +362,7 @@ function Multiple() {
 							<Button
 								testId="multi-trigger"
 								variant="ghost"
-								aria-expanded={trigger.expanded}
+								{...trigger.attributes}
 								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
@@ -405,7 +405,7 @@ function Searchable() {
 								testId="search-trigger"
 								variant="ghost"
 								trailingIcon="chevron-down"
-								aria-expanded={trigger.expanded}
+								{...trigger.attributes}
 								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
@@ -455,7 +455,7 @@ function SearchableMultiple() {
 							<Button
 								testId="labels-trigger"
 								variant="ghost"
-								aria-expanded={trigger.expanded}
+								{...trigger.attributes}
 								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
@@ -516,7 +516,7 @@ function Creatable() {
 							<Button
 								testId="create-trigger"
 								variant="ghost"
-								aria-expanded={trigger.expanded}
+								{...trigger.attributes}
 								onMouseDown={trigger.onMouseDown}
 								onClick={trigger.onClick}
 							>
@@ -601,6 +601,58 @@ async function reveal(shot: ShotContext, testId: string) {
 }
 
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
+	// The inline panel holds the focus itself and names the row its ring is on.
+	await shot.focus("groups");
+	shot.expectAria("groups", { active_descendant: shot.idOf("groups-0") });
+	await shot.press("down");
+	await shot.press("up");
+	shot.expectAria("groups", { active_descendant: shot.idOf("groups-0") });
+	// Opened by key, which the test renderer can run: the trigger names its popup and the row the keys lit.
+	await shot.focus("menu-trigger");
+	shot.expectAria("menu-trigger", {
+		role: "Button",
+		expanded: false,
+		has_popup: "Menu",
+		controls: undefined,
+		active_descendant: undefined,
+	});
+	await shot.press("enter");
+	shot.expectAria("menu-trigger", { expanded: true });
+	const popup = shot.aria("menu-trigger").controls;
+	if (!Array.isArray(popup) || popup.length !== 1)
+		throw new Error("an open trigger controls its popup");
+	shot.expectAria(String(popup[0]), {
+		role: "Menu",
+		labelled_by: [shot.idOf("menu-trigger")],
+	});
+	shot.expectAria("menu-trigger", { active_descendant: shot.idOf("menu-0") });
+	await shot.press("down");
+	shot.expectAria("menu-trigger", { active_descendant: shot.idOf("menu-1") });
+	shot.expectAria("menu-1", { role: "MenuItemRadio", toggled: "False" });
+	await shot.press("escape");
+	// Submenu: the trigger row names its popup, and once the keys are inside the lit row is the submenu's.
+	await shot.focus("sub-trigger");
+	await shot.press("enter");
+	shot.expectAria("sub-move", { has_popup: "Menu", expanded: false });
+	await shot.press("right");
+	await shot.settle(300);
+	const subPopup = shot.aria("sub-move").controls;
+	if (!Array.isArray(subPopup) || subPopup.length !== 1)
+		throw new Error("an open submenu trigger controls its popup");
+	shot.expectAria(String(subPopup[0]), {
+		role: "Menu",
+		labelled_by: [shot.idOf("sub-move")],
+	});
+	shot.expectAria("sub-trigger", {
+		active_descendant: shot.idOf("sub-folder-Inbox"),
+	});
+	await shot.press("escape escape");
+	// Arrows land on a disabled row; it says so.
+	await shot.focus("keys-trigger");
+	await shot.press("enter");
+	shot.expectAria("keys-1", { disabled: true });
+	await shot.press("escape");
+
 	await reveal(shot, "basic-0");
 	await shot.hover("basic-2");
 	shot.capture("inline-hover");

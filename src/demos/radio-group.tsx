@@ -122,4 +122,6 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.press("left");
 	shot.expectText("Plan: team", true);
 	shot.capture("by-value-keys");
+	shot.expectAria("plan-0", { role: "RadioButton", toggled: "False" });
+	shot.expectAria("plan-2", { toggled: "True" });
 };

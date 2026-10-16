@@ -1,7 +1,6 @@
 import {
 	type BoxShadow,
 	createWindowSize,
-	DialogBackdrop,
 	DialogPopup,
 	DialogPortal,
 	Dialog as GpuixDialog,
@@ -18,6 +17,7 @@ import {
 	createContext,
 	createEffect,
 	createSignal,
+	createUniqueId,
 	type JSX,
 	on,
 	onCleanup,
@@ -25,7 +25,7 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
-import { isInside } from "../lib/popup";
+import { HideOutside } from "../lib/modal";
 import { createPresence } from "../lib/presence";
 import {
 	color,
@@ -71,10 +71,13 @@ interface DialogScope {
 	trackChild: (by: 1 | -1) => void;
 	/** A trigger press: closes an open dialog, reopens one that is fading out. */
 	pressTrigger: () => void;
-	/** The trigger's box, which an outside press must not count as outside. */
+	/** The trigger, which a press must not count as outside. */
 	trigger: { current: HostElement | undefined };
 	modal: () => boolean;
 	setOpen: (open: boolean) => void;
+	popupId: string;
+	titleId: string;
+	descriptionId: string;
 }
 
 const DialogScopeContext = createContext<DialogScope>();
@@ -99,10 +102,9 @@ export function Dialog(props: {
 	/** Block the page behind and keep Tab inside. */
 	modal?: boolean;
 	/**
-	 * Draw the overlay inside the parent element instead of over the whole window
-	 * (the original's `container`). gpuix places an absolute child against its
-	 * parent, not the nearest positioned ancestor, so `DialogContent` must be a
-	 * direct child of the region: Dialog renders no element of its own.
+	 * Draw the overlay inside the nearest positioned ancestor instead of over the
+	 * whole window (the original's `container`). The region must be
+	 * `position: relative`; Dialog renders no element of its own.
 	 */
 	scoped?: boolean;
 	children: JSX.Element;
@@ -139,6 +141,9 @@ export function Dialog(props: {
 	const trigger: { current: HostElement | undefined } = { current: undefined };
 
 	const scope: DialogScope = {
+		popupId: createUniqueId(),
+		titleId: createUniqueId(),
+		descriptionId: createUniqueId(),
 		shown,
 		mounted,
 		scoped: () => props.scoped ?? false,
@@ -161,8 +166,6 @@ export function Dialog(props: {
 			<GpuixDialog
 				open={mounted()}
 				modal={props.modal}
-				// A non-modal dialog closes on a press anywhere outside it, so `DialogContent` takes that over from the backdrop.
-				disablePointerDismissal={!scope.modal()}
 				onOpenChange={setOpen}
 			>
 				{props.children}
@@ -180,6 +183,8 @@ export function DialogTrigger(props: { children: JSX.Element }) {
 			ref={(element) => {
 				scope.trigger.current = element;
 			}}
+			aria-haspopup="dialog"
+			aria-controls={scope.mounted() ? scope.popupId : undefined}
 			onClick={scope.pressTrigger}
 		>
 			{props.children}
@@ -208,27 +213,6 @@ export function DialogClose(props: { children: JSX.Element }) {
 }
 
 /**
- * Builds `make()` once per mount and hands the same value back until the
- * mounting scope is disposed. gpuix's `DialogPortal` evaluates its children
- * twice (`dialog.ts:117` spreads them, `dialog.ts:137` reads them again), so
- * the content would otherwise exist twice and the discarded copy keep its
- * timers and listeners alive.
- */
-export function once<Value>(make: () => Value): () => Value {
-	let made: { value: Value } | undefined;
-	return () => {
-		if (made === undefined) {
-			made = { value: make() };
-			// The portal remounts on every open: a copy from the last open is dead.
-			onCleanup(() => {
-				made = undefined;
-			});
-		}
-		return made.value;
-	};
-}
-
-/**
  * surface-5's shadow: a 1px ring plus drops up to 12px. gpuix paints one
  * outer shadow, so the ring is the border and the largest drop is kept.
  */
@@ -254,7 +238,6 @@ export function DialogContent(props: {
 	children: JSX.Element;
 }) {
 	const scope = useDialogScope();
-	const content = once(() => props.children);
 	const windowSize = createWindowSize();
 	const maxWidth = () =>
 		widths[props.size ?? "sm"][props.compact ? "compact" : "default"];
@@ -276,16 +259,15 @@ export function DialogContent(props: {
 	let popup: HostElement | undefined;
 	/** The scoped overlay's box: a trigger outside it is not under the backdrop. */
 	let region: HostElement | undefined;
-	// gpuix builds the popup's children twice (see `once`), and a second focus step would skip the first tab stop.
-	const focusFirst = once(() => <FocusFirst popup={() => popup} />);
 	/** A non-modal dialog closes on a press anywhere outside it, except, for a scoped dialog, on a trigger outside the overlay (it toggles the dialog itself) or inside a dialog opened from it. */
 	const closeOnOutsidePress = (event: EventPayload) => {
 		if (scope.modal() || !scope.shown() || scope.openChildren() > 0) return;
-		if (
-			scope.scoped() &&
-			isInside(event, [scope.trigger.current]) &&
-			!isInside(event, [region])
-		) {
+		if (event.path === undefined) {
+			throw new Error("Outside press without a propagation path");
+		}
+		const pressed = (element: HostElement | undefined) =>
+			element !== undefined && event.path?.includes(element.id) === true;
+		if (scope.scoped() && pressed(scope.trigger.current) && !pressed(region)) {
 			return;
 		}
 		scope.setOpen(false);
@@ -293,7 +275,13 @@ export function DialogContent(props: {
 
 	const body = () => (
 		<>
-			<DialogBackdrop>
+			{/* gpuix's own DialogBackdrop closes on mousedown; a backdrop closes on a click that presses and releases on it, as in a browser. */}
+			<div
+				onClick={() => {
+					if (scope.modal()) scope.setOpen(false);
+				}}
+				style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
+			>
 				{/* Base UI renders no second backdrop for a nested dialog: the parent's already dims the page. */}
 				<Show when={!scope.nested}>
 					<motion.div
@@ -307,25 +295,29 @@ export function DialogContent(props: {
 							right: 0,
 							bottom: 0,
 							backgroundColor: color.scrim,
-							// A filled child would swallow the press meant for the backdrop behind it.
-							pointerEvents: "none",
 						}}
 					/>
 				</Show>
-			</DialogBackdrop>
+			</div>
 			<DialogPopup
-				style={{ width: "100%", maxWidth: maxWidth() }}
+				// Positioned so it paints and hit-tests above the absolute backdrop, which would otherwise take a press inside the dialog and close it.
+				style={{ position: "relative", width: "100%", maxWidth: maxWidth() }}
 				testId={props.testId}
+				id={scope.popupId}
+				// Static: gpuix's popup re-creates itself when a prop it spreads changes. A reference to a title or description that is not rendered resolves to nothing.
+				aria-labelledby={scope.titleId}
+				aria-describedby={scope.descriptionId}
 				ref={(element) => {
 					popup = element;
 				}}
 				onMouseDownOutside={closeOnOutsidePress}
 				// Escape while this dialog fades out belongs to the dialog behind it. gpuix hands the key to the top layer once the element handlers have run, so taking this layer down here lets it through.
 				onKeyDown={(event) => {
-					if (event.key === "escape" && !scope.shown()) scope.finish();
+					if (event.key === "Escape" && !scope.shown()) scope.finish();
 				}}
 			>
-				{focusFirst()}
+				<FocusFirst popup={() => popup} />
+				<Show when={scope.modal()}><HideOutside popup={() => popup} /></Show>
 				{/* The original also scales 0.97 to 1; gpuix has no transforms, so the panel only fades. */}
 				<motion.div
 					initial={{ opacity: 0 }}
@@ -346,7 +338,7 @@ export function DialogContent(props: {
 						boxShadow: shadow5(),
 					}}
 				>
-					{content()}
+					{props.children}
 					<Show when={props.showCloseButton ?? true}>
 						<div style={{ position: "absolute", top: 12, right: 12 }}>
 							<DialogClose>
@@ -424,8 +416,9 @@ export function DialogFooter(props: { children: JSX.Element }) {
 }
 
 export function DialogTitle(props: { compact?: boolean; children: string }) {
+	const scope = useDialogScope();
 	return (
-		<GpuixDialogTitle>
+		<GpuixDialogTitle id={scope.titleId}>
 			<text
 				style={{
 					...(props.compact ? { fontSize: 15, lineHeight: 20 } : scale.title),
@@ -443,8 +436,9 @@ export function DialogDescription(props: {
 	compact?: boolean;
 	children: string;
 }) {
+	const scope = useDialogScope();
 	return (
-		<GpuixDialogDescription>
+		<GpuixDialogDescription id={scope.descriptionId}>
 			<text
 				style={{
 					...(props.compact ? scale.bodyCompact : scale.body),

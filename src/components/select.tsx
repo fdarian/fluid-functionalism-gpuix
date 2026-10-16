@@ -10,6 +10,7 @@ import {
 	createEffect,
 	createMemo,
 	createSignal,
+	createUniqueId,
 	on,
 	For,
 	type JSX,
@@ -18,10 +19,11 @@ import {
 } from "solid-js";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, useHoverItem } from "../lib/fluid-hover";
+import { FormValue } from "../lib/form-value";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { edgeIndex, isChord, moveIndex, revealRow } from "../lib/list-nav";
-import { createPlacement, isInside, PopupSurface } from "../lib/popup";
+import { PopupSurface } from "../lib/popup";
 import { createPresence, POPUP_EXIT_FALLBACK_MS } from "../lib/presence";
 import { returnFocusTo } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
@@ -92,7 +94,6 @@ const specs: Record<SelectSize, Spec> = {
 };
 
 const LABEL_HEIGHT = 28;
-const SEPARATOR_HEIGHT = 9;
 
 /** `border-destructive/50`. */
 const destructiveHalf = () => withAlpha(color.destructive, 0.5);
@@ -110,14 +111,6 @@ type Slot<Value extends string> =
 	| { kind: "label"; label: string }
 	| { kind: "separator" };
 
-function entryHeight<Value extends string>(
-	entry: SelectEntry<Value>,
-	spec: Spec,
-) {
-	if (isItem(entry)) return spec.height;
-	return "label" in entry ? LABEL_HEIGHT : SEPARATOR_HEIGHT;
-}
-
 export function Select<Value extends string>(props: {
 	items: readonly SelectEntry<Value>[];
 	/** Controlled value. Omitted, the select keeps its own, starting at `defaultValue`. */
@@ -132,6 +125,12 @@ export function Select<Value extends string>(props: {
 	icon?: IconRef;
 	error?: string;
 	disabled?: boolean;
+	/** Makes an empty select block its form's submission. */
+	required?: boolean;
+	/** The key the value is submitted under in the enclosing `<form>`'s `FormData`. */
+	name?: string;
+	/** The `id` of the element that labels the trigger. */
+	labelledBy?: string;
 	/** The popup is as wide as the trigger, or this, whichever is larger. */
 	popupWidth?: number;
 }) {
@@ -151,21 +150,20 @@ export function Select<Value extends string>(props: {
 			: spec();
 
 	const presence = createPresence(POPUP_EXIT_FALLBACK_MS);
+	const triggerId = createUniqueId();
+	const popupId = createUniqueId();
+	const rowId = (index: number) => `${popupId}-row-${index}`;
 	const hover = createFluidHover({
 		isItemDisabled: (index) => rows()[index]?.disabled === true,
 	});
 	const [triggerHovered, setTriggerHovered] = createSignal(false);
-	const placement = createPlacement(POPUP_MAX_HEIGHT);
-	const [popupWidth, setPopupWidth] = createSignal(0);
 	/** Set by a pick, so only a check that arrives after the open fades in. */
 	const [picked, setPicked] = createSignal(false);
 	const [ownValue, setOwnValue] = createSignal<Value | null>(
 		props.defaultValue ?? null,
 	);
 	const value = () => (props.value === undefined ? ownValue() : props.value);
-	let triggerWrapper: HostElement | undefined;
 	let triggerElement: HostElement | undefined;
-	let popupElement: HostElement | undefined;
 	let scroller: HostElement | undefined;
 	/** Set on open: the highlighted row is scrolled into view once its rect has been measured. */
 	let revealOnMeasure = false;
@@ -184,6 +182,11 @@ export function Select<Value extends string>(props: {
 		if (current === null) return -1;
 		return rows().findIndex((row) => row.value === current);
 	};
+	/** Focus stays on the trigger while the arrows walk the rows, so it names the lit one. */
+	const litRowId = () => {
+		const index = hover.activeIndex();
+		return presence.open() && index !== null ? rowId(index) : undefined;
+	};
 	const selected = () => {
 		const current = value();
 		if (current === null) return undefined;
@@ -191,11 +194,6 @@ export function Select<Value extends string>(props: {
 		if (row === undefined) throw new Error(`No item for ${current}`);
 		return row;
 	};
-	const listHeight = () =>
-		props.items.reduce(
-			(sum, entry) => sum + entryHeight(entry, spec()),
-			2 * POPUP_PADDING + 2,
-		);
 
 	const commitValue = (row: SelectItem<Value>) => {
 		if (props.value === undefined) setOwnValue(() => row.value);
@@ -227,9 +225,6 @@ export function Select<Value extends string>(props: {
 	};
 	const open = (from: "pointer" | "down" | "up" = "pointer") => {
 		if (props.disabled === true || presence.open()) return;
-		if (triggerWrapper === undefined) throw new Error("Select is not mounted");
-		const placed = placement.place(triggerWrapper, listHeight());
-		setPopupWidth(Math.max(placed.triggerWidth, props.popupWidth ?? 0));
 		setPicked(false);
 		revealOnMeasure = true;
 		openedAt = performance.now();
@@ -294,8 +289,8 @@ export function Select<Value extends string>(props: {
 			return;
 		}
 		switch (event.key) {
-			case "enter":
-			case "space": {
+			case "Enter":
+			case " ": {
 				if (!presence.open()) {
 					open("down");
 					return;
@@ -304,31 +299,31 @@ export function Select<Value extends string>(props: {
 				if (index !== null) pick(rows()[index]);
 				return;
 			}
-			case "down":
+			case "ArrowDown":
 				event.preventDefault();
 				event.stopPropagation();
 				if (presence.open()) move(1);
 				else open("down");
 				return;
-			case "up":
+			case "ArrowUp":
 				event.preventDefault();
 				event.stopPropagation();
 				if (presence.open()) move(-1);
 				else open("up");
 				return;
-			case "home":
-			case "end":
+			case "Home":
+			case "End":
 				if (!presence.open() || rows().length === 0) return;
 				event.preventDefault();
 				event.stopPropagation();
-				jump(event.key === "home" ? 0 : rows().length - 1);
+				jump(event.key === "Home" ? 0 : rows().length - 1);
 				return;
-			case "escape":
+			case "Escape":
 				// Closing pops the popup's dismiss layer before the window sees this Escape, which would then close the dialog behind.
 				if (presence.open()) event.preventDefault();
 				close();
 				return;
-			case "tab":
+			case "Tab":
 				close();
 				return;
 		}
@@ -376,9 +371,6 @@ export function Select<Value extends string>(props: {
 		return hover.rects()[index] ?? null;
 	};
 	const hoverRect = () => rectOf(hover.activeIndex())();
-	const onOutside = (event: EventPayload) => {
-		if (!isInside(event, [triggerWrapper, popupElement])) close();
-	};
 
 	const triggerIcon = (): IconRef | undefined => {
 		if (inline()) return selected()?.icon;
@@ -415,6 +407,7 @@ export function Select<Value extends string>(props: {
 						checked={value() === slot.row.value}
 						fadeCheck={picked()}
 						hover={hover}
+						id={rowId(slot.index)}
 						testId={
 							props.testId === undefined
 								? undefined
@@ -477,19 +470,27 @@ export function Select<Value extends string>(props: {
 			}}
 		>
 			<div
-				ref={(element) => {
-					triggerWrapper = element;
-				}}
 				testId={props.testId}
-				onMouseDownOutside={onOutside}
+				onMouseDownOutside={close}
 				style={{ position: "relative" }}
 			>
 				<div
 					ref={(element) => {
 						triggerElement = element;
 					}}
+					id={triggerId}
+					testId={
+						props.testId === undefined ? undefined : `${props.testId}-trigger`
+					}
 					role="combobox"
+					aria-haspopup="listbox"
 					aria-expanded={presence.open()}
+					aria-controls={presence.open() ? popupId : undefined}
+					aria-activedescendant={litRowId()}
+					aria-labelledby={props.labelledBy}
+					aria-required={props.required}
+					aria-invalid={props.error !== undefined}
+					aria-disabled={props.disabled === true}
 					tabIndex={props.disabled === true ? -1 : 0}
 					onMouseDown={onTriggerMouseDown}
 					onKeyDown={onKeyDown}
@@ -563,29 +564,35 @@ export function Select<Value extends string>(props: {
 						color={triggerHovered() ? color.foreground : color.mutedForeground}
 					/>
 				</div>
+				<Show when={props.name !== undefined || props.required === true}>
+					<FormValue
+						name={props.name}
+						value={value() ?? ""}
+						required={props.required === true}
+						disabled={props.disabled === true}
+						focusTarget={() => triggerElement}
+					/>
+				</Show>
 				<PopupSurface
 					presence={presence}
-					side={placement.side()}
 					align={inline() ? "end" : "start"}
-					width={inline() ? (props.popupWidth ?? 160) : popupWidth()}
-					maxHeight={placement.maxHeight()}
+					width={props.popupWidth ?? (inline() ? 160 : "anchor-size(width)")}
+					maxHeight={POPUP_MAX_HEIGHT}
 					onDismiss={close}
-					onMouseDownOutside={onOutside}
-					popupRef={(element) => {
-						popupElement = element;
-					}}
 				>
+					{(popupMaxHeight) => (
 					<div
 						ref={(element) => {
 							scroller = element;
 						}}
+						id={popupId}
 						role="listbox"
 						onScroll={hover.handlers.onScroll}
 						style={{
 							display: "flex",
 							flexDirection: "column",
 							overflowY: "scroll",
-							maxHeight: placement.maxHeight() - 2,
+							maxHeight: popupMaxHeight() - 2,
 						}}
 					>
 						{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
@@ -616,6 +623,7 @@ export function Select<Value extends string>(props: {
 							<For each={indexed()}>{(slot) => renderSlot(slot)}</For>
 						</div>
 					</div>
+					)}
 				</PopupSurface>
 			</div>
 			<Show when={props.error}>
@@ -639,6 +647,7 @@ function Row<Value extends string>(props: {
 	checked: boolean;
 	fadeCheck: boolean;
 	hover: ReturnType<typeof createFluidHover>;
+	id: string;
 	testId?: string;
 	onPick: () => void;
 	onPress: () => void;
@@ -655,9 +664,11 @@ function Row<Value extends string>(props: {
 			ref={(element) => {
 				rowElement = element;
 			}}
+			id={props.id}
 			role="option"
 			testId={props.testId}
 			aria-selected={props.checked}
+			aria-disabled={props.row.disabled === true}
 			onMouseDown={props.onPress}
 			onMouseUp={props.onRelease}
 			onClick={props.onPick}

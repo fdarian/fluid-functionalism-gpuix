@@ -1,11 +1,10 @@
 import {
+	type AnchoredPlacementEvent,
 	DismissableLayer,
-	type EventPayload,
-	type HostElement,
+	type DimensionValue,
 	motion,
 } from "@gpuix/solid";
-import { createSignal, type JSX, onCleanup, Show } from "solid-js";
-import { readBounds } from "./bounds";
+import { type Accessor, createSignal, type JSX, Show } from "solid-js";
 import type { createPresence } from "./presence";
 import { color, radius, shadow3, motion as tween } from "./theme";
 
@@ -13,112 +12,56 @@ export const POPUP_OFFSET = 6;
 /** The gap a popup keeps from the window edge: Base UI's default collision padding. */
 export const POPUP_MARGIN = 5;
 
-/** Whether a press landed inside any of the elements' painted boxes. An unmounted or unpainted element cannot have been pressed. */
-export function isInside(
-	event: EventPayload,
-	elements: readonly (HostElement | undefined)[],
-) {
-	if (event.x === undefined || event.y === undefined) {
-		throw new Error("Outside press without coordinates");
-	}
-	const x = event.x;
-	const y = event.y;
-	return elements.some((element) => {
-		if (element === undefined) return false;
-		const box = readBounds(element);
-		if (box === null) return false;
-		return (
-			x >= box.x && x <= box.x + box.width && y >= box.y && y <= box.y + box.height
-		);
-	});
-}
-
-export interface PopupPlacement {
-	side: "top" | "bottom";
-	/** The popup's height cap: the room on its side, up to `maxHeight`. */
-	maxHeight: number;
-	/** The trigger's width, for popups at least as wide as it. */
-	triggerWidth: number;
-}
+type Side = AnchoredPlacementEvent["side"];
 
 /**
- * Chooses the side of `trigger` with room for `contentHeight` px: below when
- * it fits or has more room than above, else above. gpuix flips an
- * overflowing `<anchored>` from the far edge of the trigger, which would
- * cover it, so the side is picked here and passed to `PopupSurface`.
+ * What `<anchored fit="flip">` reports about where it ended up: the side it
+ * opened on, which may differ from the preferred one, and the height left on
+ * that side.
  */
-export function placePopup(
-	trigger: HostElement,
-	contentHeight: number,
-	maxHeight: number,
-): PopupPlacement {
-	const box = readBounds(trigger);
-	const window = trigger.root?.nativeRenderer.getWindowSize?.();
-	if (box === null || window === undefined) {
-		throw new Error("Cannot place the popup without painted bounds");
-	}
-	const below = window.height - (box.y + box.height);
-	const above = box.y;
-	const need = contentHeight + POPUP_OFFSET + POPUP_MARGIN;
-	const side = below >= need || below >= above ? "bottom" : "top";
+export function createPlacementState(preferred: Side) {
+	const [side, setSide] = createSignal<Side>(preferred);
+	const [availableHeight, setAvailableHeight] = createSignal(
+		Number.POSITIVE_INFINITY,
+	);
 	return {
 		side,
-		maxHeight: Math.min(
-			maxHeight,
-			(side === "bottom" ? below : above) - POPUP_OFFSET - POPUP_MARGIN,
-		),
-		triggerWidth: box.width,
-	};
-}
-
-/**
- * The side and height cap a popup anchored to a trigger gets, kept as signals
- * for `PopupSurface`. `place` measures against the trigger and returns the
- * placement for callers that also want the trigger's width.
- */
-export function createPlacement(maxHeight: number) {
-	const [side, setSide] = createSignal<"top" | "bottom">("bottom");
-	const [height, setHeight] = createSignal(maxHeight);
-	return {
-		side,
-		maxHeight: height,
-		place(trigger: HostElement, contentHeight: number) {
-			const placement = placePopup(
-				trigger,
-				Math.min(maxHeight, contentHeight),
-				maxHeight,
-			);
-			setSide(placement.side);
-			setHeight(placement.maxHeight);
-			return placement;
+		/** `cap`, or the room on the popup's side if that is smaller. */
+		maxHeight: (cap: number) => Math.min(cap, availableHeight()),
+		onPlacement(event: AnchoredPlacementEvent) {
+			setSide(event.side);
+			setAvailableHeight(event.availableHeight);
 		},
 	};
 }
 
 /**
- * The shared popup chrome of the combobox and select: an `<anchored>` layer
- * under its parent, with the surface-3 card, the 4px slide and the fade.
+ * The shared popup chrome of the combobox, select and dropdown: an `<anchored>`
+ * layer under its parent, with the surface-3 card, the 4px slide and the fade.
+ * The layer flips to the far side of the trigger when `side` has no room, and
+ * the card is at least as wide as the trigger.
  *
- * Closing on an outside press needs both the field and the popup: gpuix
- * reports "outside" per element, so callers also pass `onMouseDownOutside` to
- * their field and ask `isInside` whether the press landed in either.
+ * It sits in the logical subtree of its trigger, so an outside press is
+ * judged on the element that holds both.
  */
 export function PopupSurface(props: {
 	presence: ReturnType<typeof createPresence>;
-	/** The side with room for the popup: gpuix anchors the flip to the far edge of the field, so it would cover the field. */
+	/** The side to open on when it has room. */
 	side?: "top" | "bottom";
 	align: "start" | "end";
-	width: number;
-	maxHeight?: number;
-	onMouseDownOutside: (event: EventPayload) => void;
+	/** The card's width; it is never narrower than the trigger. */
+	width: DimensionValue;
+	/** The tallest the card gets; the room on its side caps it further. */
+	maxHeight: number;
 	/** Escape while this popup is the top layer. The popup joins gpuix's dismiss-layer stack, so a dialog around it stays open. */
 	onDismiss: () => void;
-	/** The popup's box, for `isInside`. */
-	popupRef?: (element: HostElement) => void;
-	children: JSX.Element;
+	/** Called with the height the card may use, for a scroller inside it. */
+	children: (maxHeight: Accessor<number>) => JSX.Element;
 }) {
-	/** The popup slides in from the field: down from above, up from below. */
-	const slide = () => (props.side === "top" ? 4 : -4);
+	const placement = createPlacementState(props.side ?? "bottom");
+	const maxHeight = () => placement.maxHeight(props.maxHeight);
+	/** The popup slides in from the trigger: down from above, up from below. */
+	const slide = () => (placement.side() === "top" ? 4 : -4);
 	return (
 		<>
 		{/* A layer only while open, not while the exit fade plays: a second Escape in that window belongs to the dialog behind. It is a sibling because the layer needs no children, only its place in the stack. */}
@@ -130,10 +73,11 @@ export function PopupSurface(props: {
 				side={props.side ?? "bottom"}
 				align={props.align}
 				gap={POPUP_OFFSET}
+				fit="flip"
+				snapMargin={POPUP_MARGIN}
+				onPlacement={placement.onPlacement}
 				deferred
 				priority={1}
-				occlude
-				onMouseDownOutside={props.onMouseDownOutside}
 				style={{ backgroundColor: color.transparent }}
 			>
 				<motion.div
@@ -144,10 +88,10 @@ export function PopupSurface(props: {
 							: { opacity: 0, top: slide() }
 					}
 					transition={props.presence.open() ? tween.fast : tween.fastExit}
-					ref={props.popupRef}
 					style={{
 						position: "relative",
 						width: props.width,
+						minWidth: "anchor-size(width)",
 						display: "flex",
 						flexDirection: "column",
 						backgroundColor: color.card,
@@ -156,10 +100,10 @@ export function PopupSurface(props: {
 						borderColor: color.popupBorder,
 						boxShadow: shadow3(),
 						overflow: "hidden",
-						maxHeight: props.maxHeight,
+						maxHeight: maxHeight(),
 					}}
 				>
-					{props.children}
+					{props.children(maxHeight)}
 				</motion.div>
 			</anchored>
 		</Show>

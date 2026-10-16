@@ -1,7 +1,7 @@
 import {
 	buttonProps,
-	type EventPayload,
 	type HostElement,
+	type HostPointerEvent,
 	useGpuixRequired,
 } from "@gpuix/solid";
 import {
@@ -19,7 +19,6 @@ import {
 } from "solid-js";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
-import { readBounds } from "../lib/bounds";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
 import { color, radius, type as scale, scheme, weight, withAlpha, focusRing } from "../lib/theme";
@@ -82,9 +81,8 @@ interface CardScope {
 	inlineImage: () => boolean;
 	setHasImage: (value: boolean) => void;
 	/**
-	 * The radius a tile clips its media to, or 0 when the card is not a tile.
-	 * gpuix's `overflow: hidden` clips to the rectangle, not the rounded
-	 * corners, so the image rounds its own outer corners instead.
+	 * The radius a tile clips its media to, or 0 when the card is not a tile;
+	 * the image rounds its own outer corners to match.
 	 */
 	tileCorner: () => number;
 }
@@ -146,7 +144,6 @@ export function CardGroup(props: {
 				const target = element();
 				if (target === undefined || entry.onClick === undefined) return;
 				hover.registerItem(index, target);
-				hover.remeasure();
 			});
 			onCleanup(() => {
 				entries.delete(index);
@@ -169,22 +166,19 @@ export function CardGroup(props: {
 		},
 	};
 
-	const boxOf = () => {
-		if (container === undefined) return null;
-		return readBounds(container);
-	};
-
 	const rectOfActive = () => {
 		const index = hover.activeIndex();
 		if (index === null || !hover.isMeasured() || !fluid()) return null;
 		return hover.rects()[index] ?? null;
 	};
 
-	const onGapClick = (event: EventPayload) => {
+	const onGapClick = (event: HostPointerEvent) => {
+		// A click on a card bubbles up to here; only one on the group's own box is a gap.
+		if (container === undefined || event.target !== container.id) return;
 		const index = hover.activeIndex();
-		const box = boxOf();
 		const rect = index === null ? undefined : hover.rects()[index];
-		if (index === null || box === null || rect === undefined) return;
+		if (index === null || rect === undefined) return;
+		const box = container.getBoundingClientRect();
 		if (event.x === undefined || event.y === undefined) {
 			throw new Error("click without coordinates");
 		}
@@ -230,7 +224,6 @@ export function CardGroup(props: {
 						left: 0,
 						right: 0,
 						bottom: 0,
-						pointerEvents: "none",
 					}}
 				>
 					<FluidHighlight
@@ -263,6 +256,7 @@ export function Card(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
+	const renderer = useGpuixRequired();
 	const group = useContext(GroupContext);
 	const [hasImage, setHasImage] = createSignal(false);
 	const [hovered, setHovered] = createSignal(false);
@@ -341,7 +335,7 @@ export function Card(props: {
 				testId={props.testId}
 				ref={setRootElement}
 				{...(clickable() && !props.disabled
-					? buttonProps({ onClick: props.onClick })
+					? buttonProps({ onClick: props.onClick, tabIndex: 0 }, renderer)
 					: {})}
 				aria-label={props.label}
 				aria-selected={selected()}
@@ -406,7 +400,6 @@ export function Card(props: {
 							bottom: 0,
 							borderRadius: radius.container,
 							backgroundColor: color.active,
-							pointerEvents: "none",
 						}}
 					/>
 				</Show>
@@ -420,7 +413,6 @@ export function Card(props: {
 							bottom: 0,
 							height: 1,
 							backgroundColor: color.borderFaint,
-							pointerEvents: "none",
 						}}
 					/>
 				</Show>
@@ -433,7 +425,6 @@ export function Card(props: {
 							bottom: showBottom() ? 1 : 0,
 							width: 1,
 							backgroundColor: color.borderFaint,
-							pointerEvents: "none",
 						}}
 					/>
 				</Show>
@@ -510,10 +501,20 @@ function DismissChip(props: {
 	onFocusChange: (focused: boolean) => void;
 	onDismiss?: () => void;
 }) {
+	const renderer = useGpuixRequired();
 	const [hovered, setHovered] = createSignal(false);
 	return (
 		<div
-			{...buttonProps({ onClick: () => props.onDismiss?.() })}
+			{...buttonProps(
+				{
+					onClick: (event) => {
+						// The card behind the chip is clickable too.
+						event.stopPropagation();
+						props.onDismiss?.();
+					},
+				},
+				renderer,
+			)}
 			aria-label="Dismiss"
 			tabIndex={0}
 			onMouseEnter={() => setHovered(true)}
@@ -532,7 +533,7 @@ function DismissChip(props: {
 				borderRadius: radius.item,
 				cursor: "pointer",
 				keyboardFocusDim: false,
-				// Over the chip the card itself is no longer hovered (the chip's hitbox takes the pointer), so the chip keeps itself shown.
+				// The chip stays shown while the pointer is on it, whatever the card's own hover says.
 				opacity: props.visible || hovered() ? 1 : 0,
 				pointerEvents: props.visible || hovered() ? "auto" : "none",
 				backgroundColor: props.overMedia
@@ -718,7 +719,6 @@ export function CardMedia(props: {
 								height: 32,
 								borderRadius: radius.item,
 								backgroundColor: color.hover,
-								pointerEvents: "none",
 								...(scope.orientation() === "inline"
 									? {}
 									: { marginBottom: 8 }),
@@ -742,7 +742,6 @@ export function CardMedia(props: {
 					alignItems: "center",
 					flexShrink: 0,
 					gap: 6,
-					pointerEvents: "none",
 					...(scope.orientation() === "inline" ? {} : { marginBottom: 8 }),
 				}}
 			>
@@ -808,7 +807,6 @@ export function CardImage(props: { src: string; height?: number }) {
 				outlineWidth: 1,
 				outlineOffset: -1,
 				outlineColor: imageOutline(),
-				pointerEvents: "none",
 				...(inline()
 					? { width: 160, height: 160, flexShrink: 0 }
 					: { width: "100%", height: props.height ?? 160, flexShrink: 0 }),
@@ -898,6 +896,7 @@ export function CardButton(props: {
 	testId?: string;
 	children: string;
 }) {
+	const renderer = useGpuixRequired();
 	const scope = useContext(CardContext);
 	const [hovered, setHovered] = createSignal(false);
 	const variant = () => props.variant ?? "ghost";
@@ -983,7 +982,7 @@ export function CardButton(props: {
 
 	return (
 		<div
-			{...buttonProps({ disabled: props.disabled, onClick: props.onClick })}
+			{...buttonProps({ disabled: props.disabled, onClick: props.onClick, tabIndex: 0 }, renderer)}
 			testId={props.testId}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}

@@ -25,7 +25,7 @@ import { StableLabel } from "../lib/stable-label";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { moveIndex } from "../lib/list-nav";
-import { color, height, radius, type as scale, motion as tween, weight, focusRing, trackMs } from "../lib/theme";
+import { color, height, radius, type as scale, motion as tween, weight, focusRing } from "../lib/theme";
 
 export type TabsSubtleSize = "default" | "compact";
 
@@ -175,7 +175,7 @@ export function TabsSubtle(props: {
 							initial={false}
 							animate={rectStyle(rect())}
 							transition={tween.moderate}
-							style={{ position: "absolute", pointerEvents: "none" }}
+							style={{ position: "absolute" }}
 						>
 							<motion.div
 								initial={false}
@@ -187,7 +187,6 @@ export function TabsSubtle(props: {
 									left: 0,
 									right: 0,
 									bottom: 0,
-									pointerEvents: "none",
 									borderRadius: radius.item,
 									backgroundColor: color.active,
 								}}
@@ -201,7 +200,7 @@ export function TabsSubtle(props: {
 							initial={false}
 							animate={rectStyle(shown().rect)}
 							transition={hoveringOther() ? tween.fast : tween.moderate}
-							style={{ position: "absolute", pointerEvents: "none" }}
+							style={{ position: "absolute" }}
 						>
 							<motion.div
 								initial={false}
@@ -213,7 +212,6 @@ export function TabsSubtle(props: {
 									left: 0,
 									right: 0,
 									bottom: 0,
-									pointerEvents: "none",
 									borderRadius: radius.item,
 									backgroundColor: color.active,
 								}}
@@ -250,35 +248,30 @@ export function TabsSubtleItem(props: {
 		scope.hover.activeIndex() === props.index || isSelected();
 	const collapsible = () => scope.activeLabel() && props.icon !== undefined;
 	const showLabel = () => !collapsible() || isSelected();
+	const tabId = () =>
+		scope.idPrefix() === undefined
+			? undefined
+			: `${scope.idPrefix()}-tab-${props.index}`;
+	const panelId = () =>
+		scope.idPrefix() === undefined
+			? undefined
+			: `${scope.idPrefix()}-panel-${props.index}`;
 	// The unfolding label's width is animated to a measured number (gpuix cannot animate `auto`): the box holding the label and its gap to the icon reports it.
 
-	// The tab's own width changes as its label unfolds, so every row after it moves: re-read the rects for the length of the spring.
-	let previousSelected = isSelected();
-	createEffect(() => {
-		const selected = isSelected();
-		if (selected === previousSelected) return;
-		previousSelected = selected;
-		if (collapsible()) scope.hover.remeasureFor(trackMs.reflow);
-	});
-
 	const onKeyDown = (event: KeyEvent) => {
-		const modifiers = event.modifiers;
-		if (
-			modifiers !== undefined &&
-			(modifiers.shift || modifiers.ctrl || modifiers.alt || modifiers.cmd)
-		) {
+		if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) {
 			return;
 		}
 		const count = scope.elements.size;
-		const move = ({ right: 1, left: -1 } as Record<string, 1 | -1 | undefined>)[
+		const move = ({ ArrowRight: 1, ArrowLeft: -1 } as Record<string, 1 | -1 | undefined>)[
 			event.key ?? ""
 		];
 		const target =
 			move !== undefined
 				? (moveIndex(props.index, move, count) ?? undefined)
-				: event.key === "home"
+				: event.key === "Home"
 					? 0
-					: event.key === "end"
+					: event.key === "End"
 						? count - 1
 						: undefined;
 		if (target === undefined || target === props.index) return;
@@ -307,15 +300,12 @@ export function TabsSubtleItem(props: {
 				onClick: () => scope.onSelect(props.index),
 				onKeyDown,
 				tabIndex: scope.tabStop() === props.index ? 0 : -1,
-			})}
+			}, renderer)}
 			role="tab"
 			aria-selected={isSelected()}
 			aria-label={collapsible() && !showLabel() ? props.label : undefined}
-			aria-id={
-				scope.idPrefix() === undefined
-					? undefined
-					: `${scope.idPrefix()}-tab-${props.index}`
-			}
+			id={tabId()}
+			aria-controls={isSelected() ? panelId() : undefined}
 			testId={props.testId}
 			onFocus={() => {
 				scope.focusTab(props.index);
@@ -405,7 +395,11 @@ export function TabsSubtlePanel(props: {
 }) {
 	return (
 		<Show when={props.selectedIndex === props.index}>
-			<div role="tabpanel" aria-id={`${props.idPrefix}-panel-${props.index}`}>
+			<div
+				role="tabpanel"
+				id={`${props.idPrefix}-panel-${props.index}`}
+				aria-labelledby={`${props.idPrefix}-tab-${props.index}`}
+			>
 				{props.children}
 			</div>
 		</Show>

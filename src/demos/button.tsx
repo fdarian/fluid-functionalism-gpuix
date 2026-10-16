@@ -20,6 +20,7 @@ function VariantRow(props: {
 				{(variant: ButtonVariant) => (
 					<Button
 						testId={`${props.label}-${variant}`}
+						id={`${props.label}-${variant}`}
 						variant={variant}
 						size={props.size}
 						{...props.extra}
@@ -78,4 +79,8 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	// A loading button is disabled: dimmed, and the pointer does nothing to it.
 	await shot.hover("Loading-secondary");
 	shot.capture("loading-hover");
+	// A loading button is disabled for assistive technology too.
+	shot.expectAria("Disabled-primary", { role: "Button", disabled: true });
+	shot.expectAria("Loading-secondary", { disabled: true });
+	shot.expectAria("Default-primary", { disabled: undefined });
 };

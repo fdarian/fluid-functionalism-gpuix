@@ -2,70 +2,36 @@
 
 Original: `registry/base/dropdown.tsx`, with `registry/default/menu-item.tsx`, `dropdown-search.tsx` and `dropdown-sub.tsx`. Ported in `src/components/dropdown.tsx`, `menu-item.tsx` and `dropdown-search.tsx`, demo in `src/demos/dropdown.tsx`.
 
-Everything the docs page shows is ported and renders in both themes: the inline panel (with a keyboard focus ring), groups and separators, a triggered popup, submenus (hover to open, ←/→, Escape one level at a time), multiple selection with contiguous checked rows sharing one background, a searchable menu, searchable multiple selection and the creatable row. The parts are the originals' (`Dropdown`, `DropdownMenu`, `DropdownTrigger`, `DropdownContent`, `DropdownSub*`, `DropdownSearch`, `DropdownEmpty`, `DropdownLabel`, `DropdownSeparator`, `MenuItem`), except that the trigger takes a function child (see below).
+Everything the docs page shows is ported and renders in both themes: the inline panel (with a keyboard focus ring), groups and separators, a triggered popup, submenus (hover to open, left and right arrows, Escape one level at a time), multiple selection with contiguous checked rows sharing one background, a searchable menu, searchable multiple selection and the creatable row. The trigger takes a function child (`DropdownTrigger`).
 
-## A positioned element eats the mouse for its ancestors
+## No safe area toward a submenu: window mousemove only fires over listeners
 
-- **Original:** a `position: relative` or absolutely placed child is paint-only; hover still reaches the list around it.
-- **gpuix lacks:** the same, as already seen in the command menu and tooltip: any element with `position` set, or a fill, ends the hit test (`packages/native/src/renderer.rs:5336-5352`, `style::should_occlude` at `style.rs:317`). Here it bit three times: a `position: relative` row stopped the container's fluid hover; the ghost-span label (relative wrapper plus an absolute copy) needed `pointerEvents: "none"` on both layers; and a `Button` trigger, being filled, hides the pointer from the wrapper around it.
-- **Workaround:** rows carry no `position`; both label layers set `pointerEvents: "none"`; the trigger is a function child (`<DropdownTrigger>{(trigger) => <Button onMouseDown={trigger.onMouseDown} onClick={trigger.onClick} aria-expanded={trigger.expanded} />}`) rather than a wrapper that listens, and the menu decides "inside the trigger" from its painted bounds.
-- **Fidelity:** exact once worked around. The `render` prop of Base UI's trigger has no equivalent, so the trigger needs the one extra function.
-- **Components it hits:** tooltip, command-menu, every semibold ghost-span label.
-
-## Hover and "outside" are bounds-based, not tree-based
-
-- **Original:** a submenu is a DOM child of the menu's tree, so pointer events inside it bubble to the parent; the safe-area logic of Base UI keeps the submenu open while the pointer crosses other rows toward it, and an outside press is "anywhere that is not the menu, its submenus or the trigger".
-- **gpuix lacks:** tree-bubbling for mouse events and a way to group elements for `onMouseDownOutside`. A deferred `<anchored>` layer is hit-tested on its own bounds, so the moment the pointer enters the submenu the parent popup gets `mouseLeave`, and `onMouseDownOutside` fires on every element the press is not inside, including the trigger (for the popup) and the popup (for the wrapper). A hovered flag is not a safe substitute: a press without a preceding move never sets it. Missing feature.
-- **Workaround:** the parent holds its highlight on the open trigger through `mouseLeave`; while a submenu is open a pointer that settles on another row for 120 ms takes the highlight (and the submenu closes), where Base UI uses a safe triangle, so a slow diagonal across another row changes the highlight where the original would not. An outside press is classified by comparing `event.x/y` with the painted bounds of the trigger and of every open popup (a press before a popup has painted finds no bounds and counts as outside).
+- **Original:** Base UI keeps a submenu open with a safe triangle while the pointer crosses other rows, or the empty gap, on its way to the submenu.
+- **gpuix lacks:** a `window` / `document` `mousemove` that fires over bare background: those listeners run only when some element on the pointer's hit path has a `mousemove` listener of its own, so the pointer between the trigger row and the popup (the 6px gap) is invisible to a polygon test.
+- **Workaround:** while a submenu is open, a pointer that settles on another row for 120 ms takes the highlight and closes the submenu (`SUBMENU_DWELL_MS`, `src/components/dropdown.tsx:70`, `:429-442`), so a slow diagonal across another row changes the highlight where Base UI would not.
 - **Fidelity:** approximated (dwell timer instead of a safe area).
-- **Components it hits:** select, combobox, any popup with a nested popup.
+- **Components it hits:** any popup with a nested popup.
 
-## Popup placement: no flip, no available height
+## Reading focus state inside a mousedown handler throws `VIEW_BUSY`
 
-- **Original:** Base UI's Positioner flips the popup to the side with room and the popup's `max-height` follows `--available-height`.
-- **gpuix lacks:** a flip that clears the trigger (`fit="switch"` flips to the far edge and covers it; `fit="snap"` slides the popup over the trigger, `packages/native/src/custom_elements/anchored.rs:351-352`) and any measure of the room around an anchor. Missing feature, already known from the combobox and select.
-- **Workaround:** the side is chosen on open from the trigger's painted bounds and the window height, with the previous open's height as the guess (240 px the first time). Once the rows are measured the menu flips once if the real height does not fit, and its `max-height` is the room on the chosen side up to 480 px, so a long list scrolls instead of covering the trigger. That second step can land a frame or two into the popup's fade-in.
-- **Fidelity:** approximated.
-- **Components it hits:** select, combobox, tooltip, every anchored popup.
-
-## Submenus anchor to a row, and cannot flip
-
-- **Original:** `Menu.SubmenuRoot` positions beside its trigger row (`side="right"`, 6 px offset, -4 px along the row so the first row lines up) and flips to the left when there is no room.
-- **gpuix lacks:** the flip (above). `<anchored side="right" align="start" gap={6} offset={{ y: -4 }}>` places it exactly like the original, and the popup is the trigger row's child, but nothing moves it to the left at a window edge; `snap` slides it over its parent instead.
-- **Workaround:** none. The anchored layer sits inside an absolutely placed, mouse-transparent box that fills the row, because a bare `<anchored>` child of a flex row takes a `gap` slot and would shove the chevron left by 8 px when the submenu opens.
-- **Fidelity:** exact on the right side, not handled at the right window edge.
-- **Components it hits:** any nested popup.
-
-## Rows are not focusable: no roving focus, no typeahead from focus
-
-- **Original:** Base UI's `Menu.Item` owns focus: arrows move real focus between rows, typeahead matches on the focused row, Enter and Space activate it, and focus returns to the trigger on close.
-- **gpuix lacks:** focusable rows with their own key handling in this layout (`tabIndex` is per element and Tab order is native), so the highlight is a virtual index. The trigger (or the search field) keeps real focus; the menu's wrapper handles `down`, `up`, `home`, `end`, `enter`, `space`, `left`, `right`, `escape` and `tab` as keys bubble to it from either, and a stack of handlers makes the deepest *entered* submenu the one that answers (a hover-opened submenu leaves the keys with its parent until Right or Enter goes in, as in Base UI). Space and Enter from a `Button` trigger also reach the button's own click, which is told apart from a mouse click by `event.key`. No `aria-checked`, `aria-disabled`, `aria-haspopup` or `aria-labelledby` can be set (gpuix wires only `aria-expanded` / `aria-selected`), so a checked row carries `aria-selected`.
-- **Workaround:** the virtual highlight, and `createTypeahead` (`src/lib/typeahead.ts`, Base UI's `useTypeahead` rules). Like Base UI, arrows, Home and End land on disabled rows (only activation refuses them) and ignore Ctrl/Cmd/Alt chords. The trigger opens on mouse-down; a press held on it for 200 ms and released on a row picks that row. Focus goes back to the trigger when the menu closes (the element id is taken at open, from the pressed trigger or the focused element), unless it already moved to another control or the menu closed with Tab.
-- **Fidelity:** approximated (no real focus on rows, no screen-reader focus semantics).
-- **Components it hits:** select, combobox, command-menu.
-
-## Checked-run backgrounds merge, but the merge cannot straighten corners
-
-- **Original:** contiguous checked rows share one background; toggling a bridge row plays a merge/split where the facing corners straighten from rounded to square while the halves converge.
-- **gpuix lacks:** per-corner radius in `motion` (`MotionStyle.borderRadius` is one number, `packages/native/js/host.ts:22`, `motion.rs:22`), so the inner corners of two converging blocks cannot go square.
-- **Workaround:** one `FluidHighlight` per run, ids kept stable across selections (a run reuses the id of the earlier run it overlaps), spanning the first to the last row of the run on the `moderate` spring. A run that appears fades in, one that goes fades out in place; a bridge that merges two runs grows one block and fades the other.
-- **Fidelity:** approximated.
-- **Components it hits:** checkbox-group (merged selection), any merge/split choreography.
-
-## The search field cannot be sticky
-
-- **Original:** `DropdownSearch` is `position: sticky; top: 0` inside the scrolling list, painted on the surface colour so rows scroll underneath it.
-- **gpuix lacks:** `position: sticky`.
-- **Workaround:** the field is drawn by `DropdownContent` above the scroller (it is part of the popup's chrome), and `DropdownSearch` only hands its props up. Visually identical, since the rows never need to show through it; the scroller's `max-height` subtracts the field's 36 px.
+- **Original:** `document.activeElement` is readable anywhere, including in a pointer handler, so a popup can note which element had focus when it opened.
+- **gpuix lacks:** that read: `mousedown` and `pointerdown` (and, per `~/code/fdarian/gpuix/FORK.md:359-364`, `mouseup`, `click` and `wheel`) handlers run inside the synchronous input dispatch on macOS and in the test renderer, where `getFocusedElementId` throws "The root view is being updated by the input" (`packages/native/src/events/sync_dispatch.rs:154`). Probed on the test renderer: it throws in `onMouseDown` and answers in `onClick` and `onKeyDown`.
+- **Workaround:** the pressed trigger's element id is recorded from the press event (`noteTrigger(event.elementId)`, `src/components/dropdown.tsx:907`, `:974`) and used when the menu opens, falling back to the focused element only for a keyboard open (`:858`).
 - **Fidelity:** exact.
-- **Components it hits:** command-menu (its list is the same shape).
+- **Components it hits:** any popup opened on press. `returnFocusTo` (`src/lib/popup-trigger.ts:13`, called from `src/components/select.tsx:242` and `src/components/color-picker.tsx:778`) reads the same state; no scenario closes those popups from a press, so that path was not exercised.
 
-## Smaller notes
+## No `width: max-content` / `fit-content`
 
-- **Check mark:** fades in (`motion` opacity) instead of drawing its path; see `limitations/select.md`. A row checked at mount shows the finished check, like `initial={false}`.
-- **Popup enter:** opacity and the 4 px slide on `top`; no `scaleY` (transforms are a known gap). Submenus fade only, like the original's `--popup-enter-y: 0` for side popups.
-- **`scrollIntoView`:** replaced by `getScrollOffset` plus `scrollTo` against the measured rect, as in select and the command menu (`packages/native/src/renderer.rs:3860-3890`).
-- **Scroll fade and ScrollArea:** a bare `overflowY: "scroll"` list; no thumb, no edge mask (see the README's ScrollArea row).
-- **Left, right, home and end in the search field** belong to the text editor and never reach `onKeyDown` (`custom_elements/input.rs:200-209`); here that only means ArrowLeft/Right edit the query rather than reach the menu, which is also what the original's field does.
-- **`size="compact"`** is not ported; every row is the default 36 px.
-- **Popup width:** 288 px (`w-72`), or the trigger's width if larger; the original grows to fit its widest row up to `max-w-full`.
+- **Original:** the popup grows to fit its widest row, up to `max-w-full`.
+- **gpuix lacks:** intrinsic sizing keywords for `width`: `max-content`, `min-content` and `fit-content` are rejected as "invalid dimension" (they exist in grid tracks only, `packages/native/js/host.ts:420-425`).
+- **Workaround:** a fixed 288px panel (`PANEL_WIDTH`, `src/components/dropdown.tsx:60`, `:730`, `:1040`) and 224px submenus, never narrower than the trigger (`minWidth: "anchor-size(width)"`, `src/lib/popup.tsx:94`).
+- **Fidelity:** approximated (a row wider than the panel does not widen it).
+- **Components it hits:** select, combobox, any popup that sizes to content.
+
+## CSS transforms (popup scaleY entrance)
+
+- **Original:** the popup enters with `scaleY: 0.96`; side popups (submenus) do not.
+- **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:876-887`).
+- **Workaround:** the popup slides 4px from the reported side and fades; submenus fade only (`src/lib/popup.tsx:64`, `:84-90`).
+- **Fidelity:** approximated.
+- **Components it hits:** select, combobox, color-picker.

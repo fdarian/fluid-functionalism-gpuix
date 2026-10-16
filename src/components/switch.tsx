@@ -1,6 +1,7 @@
-import type { EventPayload, KeyEvent } from "@gpuix/solid";
+import type { HostMouseEvent, HostMouseMoveEvent, KeyEvent } from "@gpuix/solid";
 import { motion } from "@gpuix/solid";
-import { createSignal } from "solid-js";
+import { createSignal, createUniqueId } from "solid-js";
+import { createPointerCapture } from "../lib/pointer-capture";
 import { color, type as scale, scheme, motion as tween, weight, focusRing } from "../lib/theme";
 
 export type SwitchSize = "default" | "compact";
@@ -46,19 +47,21 @@ export function Switch(props: {
 	testId?: string;
 }) {
 	const m = () => METRICS[props.size ?? "default"];
+	const trackId = createUniqueId();
+	const labelId = createUniqueId();
 	const thumbTravel = () => m().trackWidth - m().thumbSize - THUMB_OFFSET * 2;
 	const pressedThumbWidth = () => m().thumbSize + m().pressExtend;
 	const dragMin = THUMB_OFFSET;
 	const dragMax = () => m().trackWidth - THUMB_OFFSET - pressedThumbWidth();
 
-	// The row and the track both take presses, and the track blocks the row
-	// behind it, so hover is a count of the elements the pointer is over.
+	// The row and the track each report their own enter and leave, so hover is a count of the elements the pointer is over.
 	const [overCount, setOverCount] = createSignal(0);
 	const hovered = () => overCount() > 0;
 	const [pressed, setPressed] = createSignal(false);
 	const [dragX, setDragX] = createSignal<number | null>(null);
 	let press: { startX: number; originX: number } | undefined;
 	let dragging = false;
+	const row = createPointerCapture("Switch");
 
 	const thumbWidth = () =>
 		pressed()
@@ -76,15 +79,16 @@ export function Switch(props: {
 			? THUMB_OFFSET + thumbTravel() - (thumbWidth() - m().thumbSize)
 			: THUMB_OFFSET;
 
-	const onPressStart = (event: EventPayload) => {
+	const onPressStart = (event: HostMouseEvent) => {
 		if (props.disabled || event.button !== 0) return;
 		if (event.x === undefined) throw new Error("mouseDown without coordinates");
+		row.capture(event);
 		setPressed(true);
 		dragging = false;
 		press = { startX: event.x, originX: restX() };
 	};
 
-	const onPressMove = (event: EventPayload) => {
+	const onPressMove = (event: HostMouseMoveEvent) => {
 		if (press === undefined) return;
 		if (event.x === undefined) throw new Error("mouseMove without coordinates");
 		const delta = event.x - press.startX;
@@ -116,24 +120,21 @@ export function Switch(props: {
 	// Base UI's switch root owns the keys: Enter clicks on keydown, Space on keyup (a keydown only keeps the page from scrolling).
 	const onKeyDown = (event: KeyEvent) => {
 		if (props.disabled) return;
-		if (event.key === "enter") {
+		if (event.key === "Enter") {
 			event.preventDefault();
 			props.onToggle();
-		} else if (event.key === "space") {
+		} else if (event.key === " ") {
 			event.preventDefault();
 		}
 	};
 	const onKeyUp = (event: KeyEvent) => {
-		if (props.disabled || event.key !== "space" || event.defaultPrevented) return;
+		if (props.disabled || event.key !== " " || event.defaultPrevented) return;
 		props.onToggle();
 	};
 
 	const hoverHandlers = {
 		onMouseEnter: () => setOverCount(overCount() + 1),
 		onMouseLeave: () => setOverCount(overCount() - 1),
-		onMouseDown: onPressStart,
-		onMouseMove: onPressMove,
-		onMouseUp: onPressEnd,
 	};
 
 	const trackColor = () => {
@@ -143,8 +144,13 @@ export function Switch(props: {
 
 	return (
 		<div
+			ref={row.ref}
 			testId={props.testId}
 			{...hoverHandlers}
+			onMouseDown={onPressStart}
+			onMouseMove={onPressMove}
+			onMouseUp={onPressEnd}
+			onLostPointerCapture={onPressEnd}
 			style={{
 				display: "flex",
 				flexDirection: "row",
@@ -161,8 +167,11 @@ export function Switch(props: {
 			}}
 		>
 			<div
+				id={trackId}
 				role="switch"
-				aria-label={props.label}
+				aria-checked={props.checked}
+				aria-labelledby={labelId}
+				aria-disabled={props.disabled === true}
 				tabIndex={props.disabled ? -1 : 0}
 				testId={
 					props.testId === undefined ? undefined : `${props.testId}-track`
@@ -195,7 +204,6 @@ export function Switch(props: {
 						position: "absolute",
 						backgroundColor: "#FFFFFF",
 						borderRadius: 9999,
-						pointerEvents: "none",
 						boxShadow: {
 							offsetX: 0,
 							offsetY: 1,
@@ -207,6 +215,7 @@ export function Switch(props: {
 				/>
 			</div>
 			<text
+				id={labelId}
 				style={{
 					...m().text,
 					fontWeight: weight.normal,

@@ -19,7 +19,7 @@ import {
 	useContext,
 } from "solid-js";
 import { FluidHighlight } from "../lib/fluid-highlight";
-import { createFluidHover, type FluidHover, useHoverItem } from "../lib/fluid-hover";
+import { createFluidHover, createReflowGate, type FluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
 import { createPresence } from "../lib/presence";
@@ -336,7 +336,6 @@ export function CommandMenu(props: {
 	testId: string;
 	children: JSX.Element;
 }) {
-	const renderer = useGpuixRequired();
 	const dialog = useContext(DialogContext);
 	const [internalQuery, setInternalQuery] = createSignal(
 		props.defaultQuery ?? "",
@@ -374,7 +373,7 @@ export function CommandMenu(props: {
 	const hover = createFluidHover({
 		isItemDisabled: (index) => rows()[index]?.disabled === true,
 	});
-	const [reflow, setReflow] = createSignal(false);
+	const reflow = createReflowGate();
 	const [tabs, setTabs] = createSignal<TabsHandle>();
 	const rowElements = new Map<number, HostElement>();
 	let scroller: HostElement | undefined;
@@ -400,19 +399,9 @@ export function CommandMenu(props: {
 			const first = firstEnabled();
 			hover.setActiveIndex(first === -1 ? null : first);
 			lastActive = first === -1 ? null : first;
-			setReflow(true);
-			if (scroller !== undefined) renderer.scrollTo?.(scroller.id, 0, 0);
-			hover.remeasure();
+			reflow.raise();
+			if (scroller !== undefined) scroller.scrollTo({ top: 0, left: 0 });
 		}),
-	);
-	createEffect(
-		on(
-			hover.rects,
-			() => {
-				if (reflow()) setTimeout(() => setReflow(false), 48);
-			},
-			{ defer: true },
-		),
 	);
 
 	const move = (to: 1 | -1 | "first" | "last") => {
@@ -449,7 +438,7 @@ export function CommandMenu(props: {
 		rows,
 		itemsByValue,
 		hover,
-		reflow,
+		reflow: reflow.reflowing,
 		select,
 		move,
 		tabs,
@@ -506,8 +495,8 @@ export function CommandMenuInput(props: {
 
 	const onKeyDown = (event: KeyEvent) => {
 		switch (event.key) {
-			case "left":
-			case "right": {
+			case "ArrowLeft":
+			case "ArrowRight": {
 				const handle = menu.tabs();
 				if (handle === undefined || handle.tabs.length === 0) return;
 				event.preventDefault();
@@ -515,30 +504,30 @@ export function CommandMenuInput(props: {
 				const current = handle.tabs.findIndex(
 					(tab) => tab.value === handle.value,
 				);
-				const step = event.key === "right" ? 1 : -1;
+				const step = event.key === "ArrowRight" ? 1 : -1;
 				const next = ((current === -1 ? 0 : current) + step + count) % count;
 				handle.onValueChange(handle.tabs[next].value);
 				return;
 			}
-			case "down":
+			case "ArrowDown":
 				event.preventDefault();
 				menu.move(1);
 				return;
-			case "up":
+			case "ArrowUp":
 				event.preventDefault();
 				menu.move(-1);
 				return;
-			case "home":
+			case "Home":
 				if (menu.query() !== "") return;
 				event.preventDefault();
 				menu.move("first");
 				return;
-			case "end":
+			case "End":
 				if (menu.query() !== "") return;
 				event.preventDefault();
 				menu.move("last");
 				return;
-			case "escape":
+			case "Escape":
 				if (menu.dialog !== undefined) {
 					menu.dialog.close();
 					return;
@@ -547,9 +536,13 @@ export function CommandMenuInput(props: {
 				event.preventDefault();
 				menu.setQuery("");
 				return;
+			case "Enter":
+				event.preventDefault();
+				submit();
+				return;
 		}
 	};
-	const onSubmit = () => {
+	const submit = () => {
 		const index = menu.hover.activeIndex();
 		if (index === null) return;
 		const row = menu.rows()[index];
@@ -611,7 +604,6 @@ export function CommandMenuInput(props: {
 				onBlur={() => setFocused(false)}
 				onChange={onChange}
 				onKeyDown={onKeyDown}
-				onSubmit={onSubmit}
 				style={{
 					flexGrow: 1,
 					minWidth: 0,
@@ -636,12 +628,9 @@ function TabLabel(props: { text: string; selected: boolean; lit: boolean }) {
 		...scale.bodyCompact,
 		fontWeight: heavy ? weight.semibold : weight.normal,
 		whiteSpace: "nowrap" as const,
-		pointerEvents: "none" as const,
 	});
 	return (
-		<div
-			style={{ position: "relative", flexShrink: 0, pointerEvents: "none" }}
-		>
+		<div style={{ position: "relative", flexShrink: 0 }}>
 			<text style={{ ...textStyle(true), opacity: 0 }}>{props.text}</text>
 			<text
 				style={{
@@ -1296,7 +1285,6 @@ export function CommandMenuDialog(props: {
 				fill="window"
 				deferred
 				priority={2}
-				occlude
 				style={{
 					backgroundColor: color.transparent,
 					display: "flex",

@@ -1,7 +1,9 @@
 import {
-	type ElementBounds,
 	type EventPayload,
 	type HostElement,
+	type HostMouseEvent,
+	type HostMouseMoveEvent,
+	type HostPointerEvent,
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
@@ -11,12 +13,13 @@ import {
 	createEffect,
 	createMemo,
 	createSignal,
+	createUniqueId,
 	For,
 	onCleanup,
 	Show,
 	untrack,
 } from "solid-js";
-import { awaitBounds, readBounds } from "../lib/bounds";
+import { createPointerCapture } from "../lib/pointer-capture";
 import { createPresence } from "../lib/presence";
 import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 
@@ -128,24 +131,20 @@ function keyboardStep(
 	return Math.max(min, Math.min(max, moved));
 }
 
-// ─── Painted bounds ──────────────────────────────────────────────────────────
+// ─── Element box ─────────────────────────────────────────────────────────────
 
-/**
- * Reads an element's painted box. Nothing is recorded before the first paint,
- * so `onReady` waits for it; later `read()` calls are synchronous.
- */
-function createPaintedBox(onReady: (box: ElementBounds) => void) {
+/** The element's box at the moment of a press. The width the render uses comes from the element's `onLayout`. */
+function createBoxRef() {
 	let element: HostElement | undefined;
 	return {
 		read() {
-			if (element === undefined) throw new Error("Slider is not mounted");
-			const box = readBounds(element);
-			if (box === null) throw new Error("Slider has no painted bounds yet");
-			return box;
+			if (element === undefined || !element.mounted) {
+				throw new Error("Slider is not mounted");
+			}
+			return element.getBoundingClientRect();
 		},
 		ref(host: HostElement) {
 			element = host;
-			void awaitBounds(host).then(onReady);
 		},
 	};
 }
@@ -168,12 +167,10 @@ function ValueBubble(props: {
 			<anchored
 				side="top"
 				align="center"
-				// gpuix's align="center" offsets the layer by half its size twice, so the corner anchor is picked by hand.
-				anchor="bottomLeft"
+				fit="snap"
 				gap={props.gap}
 				deferred
 				priority={2}
-				occlude={false}
 				style={{ backgroundColor: color.transparent, pointerEvents: "none" }}
 			>
 				<motion.div
@@ -214,7 +211,7 @@ interface HoverPreview {
 	cursorX: number;
 }
 
-/** Hover over a slider: a count of the pressable elements the pointer is over (one of them blocks the other behind it), and the tooltip's 100 ms delay. */
+/** Hover over a slider: a count of the elements the pointer is over (the row, the track and the handle each report their own enter and leave), and the tooltip's 100 ms delay. */
 function createHover() {
 	const [overCount, setOverCount] = createSignal(0);
 	const [delayDone, setDelayDone] = createSignal(false);
@@ -321,7 +318,6 @@ function ValueDisplay(props: {
 						...textStyle(props.interacting()),
 						color: color.mutedForeground,
 						cursor: "text",
-						pointerEvents: "auto",
 					}}
 				>
 					{props.formatValue(props.values[index])}
@@ -362,10 +358,13 @@ function ValueDisplay(props: {
 						}
 						setDraft(event.value);
 					}}
-					onSubmit={() => commit(index)}
 					onBlur={() => commit(index)}
 					onKeyDown={(event: KeyEvent) => {
-						if (event.key === "escape") cancel();
+						if (event.key === "Escape") cancel();
+						else if (event.key === "Enter") {
+							event.preventDefault();
+							commit(index);
+						}
 					}}
 					style={{
 						width: 40,
@@ -397,7 +396,6 @@ function ValueDisplay(props: {
 					display: "flex",
 					flexDirection: "row",
 					alignItems: "center",
-					pointerEvents: "none",
 				}}
 			>
 				<Show when={props.label !== undefined && props.editingIndex() === null}>
@@ -468,12 +466,13 @@ function CompactSlider(props: CompactProps) {
 		valuePosition() === "left" || valuePosition() === "right";
 
 	const [trackWidth, setTrackWidth] = createSignal<number>();
-	const box = createPaintedBox((measured) => setTrackWidth(measured.width));
+	const box = createBoxRef();
 	/** The thumb's left offset for a value: the target the spring chases. */
 	const thumbLeft = (value: number, width: number) =>
 		valueToPixel(value, min(), max(), width);
 
 	const hover = createHover();
+	const pressTarget = createPointerCapture("Slider");
 	const [pressed, setPressed] = createSignal(false);
 	/** True once a press has moved: from then on the thumb is placed, not sprung. */
 	const [moving, setMoving] = createSignal(false);
@@ -568,8 +567,9 @@ function CompactSlider(props: CompactProps) {
 		if (trackWidth() !== painted.width) setTrackWidth(painted.width);
 	};
 
-	const onPress = (event: EventPayload) => {
+	const onPress = (event: HostMouseEvent) => {
 		if (props.disabled || event.button !== 0) return;
+		pressTarget.capture(event);
 		syncBox();
 		const x = pointerX(event);
 		const local = Math.max(
@@ -619,6 +619,7 @@ function CompactSlider(props: CompactProps) {
 		onMouseDown: onPress,
 		onMouseMove: onMove,
 		onMouseUp: onRelease,
+		onLostPointerCapture: onRelease,
 		onMouseEnter: onEnter,
 		onMouseLeave: onLeave,
 	};
@@ -628,7 +629,7 @@ function CompactSlider(props: CompactProps) {
 		if (props.disabled || event.defaultPrevented) return;
 		const list = stepValues();
 		const current = values()[thumb];
-		const large = event.modifiers?.shift === true;
+		const large = event.shiftKey === true;
 		const walk = (direction: 1 | -1, jump: boolean) => {
 			if (list === null) {
 				return keyboardStep(
@@ -648,24 +649,24 @@ function CompactSlider(props: CompactProps) {
 		const upper = thumb === 0 && isRange() ? values()[1] : max();
 		let next: number;
 		switch (event.key) {
-			case "right":
-			case "up":
+			case "ArrowRight":
+			case "ArrowUp":
 				next = walk(1, large);
 				break;
-			case "left":
-			case "down":
+			case "ArrowLeft":
+			case "ArrowDown":
 				next = walk(-1, large);
 				break;
-			case "pageup":
+			case "PageUp":
 				next = walk(1, true);
 				break;
-			case "pagedown":
+			case "PageDown":
 				next = walk(-1, true);
 				break;
-			case "home":
+			case "Home":
 				next = lower;
 				break;
-			case "end":
+			case "End":
 				next = upper;
 				break;
 			default:
@@ -673,7 +674,7 @@ function CompactSlider(props: CompactProps) {
 		}
 		event.preventDefault();
 		// Base UI keeps its composite keys from reaching ancestors; Page Up / Down still bubble.
-		if (event.key !== "pageup" && event.key !== "pagedown") {
+		if (event.key !== "PageUp" && event.key !== "PageDown") {
 			event.stopPropagation();
 		}
 		emitChange(thumb, Math.max(lower, Math.min(upper, next)));
@@ -687,11 +688,26 @@ function CompactSlider(props: CompactProps) {
 			? side
 			: `${props.label} ${side.toLowerCase()}`;
 	};
-	/** Base UI + FF: a list announces `formatValue`, a range its default "N start range" / "N end range". gpuix has no `aria-valuenow`, so a single thumb announces `formatValue` where Base UI would leave it to the number. */
-	const thumbValueText = (index: number) => {
+	/** Base UI's thumb values: a `steps` list runs on indices, so FF announces the entry through `aria-valuetext`; a range says which end it is; a lone thumb is left to the number. */
+	const thumbAria = (index: number) => {
 		const value = values()[index];
-		if (stepValues() !== null || !isRange()) return formatValue(value);
-		return `${value.toLocaleString()} ${index === 0 ? "start" : "end"} range`;
+		const list = stepValues();
+		if (list !== null) {
+			return {
+				now: nearestStepIndex(value, list),
+				min: 0,
+				max: list.length - 1,
+				text: formatValue(value),
+			};
+		}
+		return {
+			now: value,
+			min: min(),
+			max: max(),
+			text: isRange()
+				? `${value.toLocaleString()} ${index === 0 ? "start" : "end"} range`
+				: undefined,
+		};
 	};
 
 	const stepDots = createMemo(() => {
@@ -735,6 +751,7 @@ function CompactSlider(props: CompactProps) {
 		</Show>
 	);
 
+	const thumbIds = [createUniqueId(), createUniqueId()];
 	const thumb = (index: number) => (
 		<Show when={trackWidth()}>
 			{(width: Accessor<number>) => (
@@ -743,9 +760,20 @@ function CompactSlider(props: CompactProps) {
 					animate={{ left: thumbLeft(values()[index], width()) }}
 					transition={springOrPlace()}
 					tabIndex={props.disabled ? -1 : 0}
+					id={thumbIds[index]}
+					testId={
+						props.testId === undefined
+							? undefined
+							: `${props.testId}-thumb-${index}`
+					}
 					role="slider"
-					aria-label={props.label}
-					aria-valuetext={formatValue(values()[index])}
+					aria-label={thumbLabel(index)}
+					aria-orientation="horizontal"
+					aria-valuenow={thumbAria(index).now}
+					aria-valuemin={thumbAria(index).min}
+					aria-valuemax={thumbAria(index).max}
+					aria-valuetext={thumbAria(index).text}
+					aria-disabled={props.disabled === true}
 					onKeyDown={onThumbKey(index)}
 					style={{
 						position: "absolute",
@@ -767,7 +795,6 @@ function CompactSlider(props: CompactProps) {
 							height: THUMB_SIZE_REST,
 							borderRadius: THUMB_SIZE_REST / 2,
 							backgroundColor: "#FFFFFF",
-							pointerEvents: "none",
 							boxShadow: {
 								offsetX: 0,
 								offsetY: 1,
@@ -852,6 +879,7 @@ function CompactSlider(props: CompactProps) {
 						testId={
 							props.testId === undefined ? undefined : `${props.testId}-press`
 						}
+						ref={pressTarget.ref}
 						{...pointer}
 						style={{
 							position: "absolute",
@@ -888,7 +916,6 @@ function CompactSlider(props: CompactProps) {
 										top: 0,
 										bottom: 0,
 										backgroundColor: trackFill(),
-										pointerEvents: "none",
 									}}
 								/>
 							)}
@@ -913,7 +940,6 @@ function CompactSlider(props: CompactProps) {
 											borderBottomLeftRadius: 9999,
 										}),
 								backgroundColor: hoverPreviewFill(),
-								pointerEvents: "none",
 							}}
 						/>
 					</div>
@@ -962,7 +988,6 @@ function CompactSlider(props: CompactProps) {
 										top: 4,
 										width: 0,
 										height: 0,
-										pointerEvents: "none",
 									}}
 								>
 									<ValueBubble
@@ -1012,10 +1037,11 @@ function ComfortableSlider(props: ComfortableProps) {
 		props.formatValue === undefined ? String(v) : props.formatValue(v);
 
 	const [rowWidth, setRowWidth] = createSignal<number>();
-	const box = createPaintedBox((measured) =>
-		setRowWidth(measured.width - ROW_BORDER * 2),
-	);
+	const box = createBoxRef();
 	const hover = createHover();
+	// The gutter spans the row and 8px past each end, so it takes the row's drags too.
+	const gutter = createPointerCapture("Slider");
+	const handle = createPointerCapture("Slider handle");
 	const [pressed, setPressed] = createSignal(false);
 	const [focused, setFocused] = createSignal(false);
 	const [preview, setPreview] = createSignal<HoverPreview | null>(null);
@@ -1100,8 +1126,9 @@ function ComfortableSlider(props: ComfortableProps) {
 	const emit = (next: number) => {
 		if (next !== props.value) props.onChange(next);
 	};
-	const onPress = (event: EventPayload) => {
+	const onPress = (event: HostMouseEvent) => {
 		if (props.disabled || event.button !== 0) return;
+		gutter.capture(event);
 		syncBox();
 		dragging = true;
 		setPressed(true);
@@ -1126,15 +1153,18 @@ function ComfortableSlider(props: ComfortableProps) {
 		setPreview(null);
 	};
 	// Grabbing the scrubber's handle sets the fill from the first event, with no spring.
-	const onHandlePress = (event: EventPayload) => {
+	const onHandlePress = (event: HostPointerEvent) => {
 		if (props.disabled || event.button !== 0) return;
+		// The row's own press would end the placing this one starts.
+		event.stopPropagation();
+		handle.capture(event);
 		syncBox();
 		handleDragging = true;
 		setPressed(true);
 		setPlacing(true);
 		emit(valueAtX(pointerX(event)));
 	};
-	const onHandleMove = (event: EventPayload) => {
+	const onHandleMove = (event: HostMouseMoveEvent) => {
 		if (!handleDragging) return;
 		emit(valueAtX(pointerX(event)));
 	};
@@ -1159,6 +1189,7 @@ function ComfortableSlider(props: ComfortableProps) {
 		onMouseDown: onPress,
 		onMouseMove: onMove,
 		onMouseUp: onRelease,
+		onLostPointerCapture: onRelease,
 		onMouseEnter: onEnter,
 		onMouseLeave: onLeave,
 	};
@@ -1166,7 +1197,7 @@ function ComfortableSlider(props: ComfortableProps) {
 	/** The compact thumb's keys (Base UI's, reached in FF through its invisible primitive). */
 	const onKey = (event: KeyEvent) => {
 		if (props.disabled || event.defaultPrevented) return;
-		const large = event.modifiers?.shift === true;
+		const large = event.shiftKey === true;
 		const move = (direction: 1 | -1, jump: boolean) =>
 			keyboardStep(
 				props.value,
@@ -1178,31 +1209,31 @@ function ComfortableSlider(props: ComfortableProps) {
 			);
 		let next: number;
 		switch (event.key) {
-			case "right":
-			case "up":
+			case "ArrowRight":
+			case "ArrowUp":
 				next = move(1, large);
 				break;
-			case "left":
-			case "down":
+			case "ArrowLeft":
+			case "ArrowDown":
 				next = move(-1, large);
 				break;
-			case "pageup":
+			case "PageUp":
 				next = move(1, true);
 				break;
-			case "pagedown":
+			case "PageDown":
 				next = move(-1, true);
 				break;
-			case "home":
+			case "Home":
 				next = min();
 				break;
-			case "end":
+			case "End":
 				next = max();
 				break;
 			default:
 				return;
 		}
 		event.preventDefault();
-		if (event.key !== "pageup" && event.key !== "pagedown") {
+		if (event.key !== "PageUp" && event.key !== "PageDown") {
 			event.stopPropagation();
 		}
 		emit(next);
@@ -1252,6 +1283,7 @@ function ComfortableSlider(props: ComfortableProps) {
 				testId={
 					props.testId === undefined ? undefined : `${props.testId}-gutter`
 				}
+				ref={gutter.ref}
 				{...pointer}
 				style={{
 					position: "absolute",
@@ -1297,7 +1329,6 @@ function ComfortableSlider(props: ComfortableProps) {
 							alignItems: "center",
 							paddingLeft: 12,
 							paddingRight: 12,
-							pointerEvents: "none",
 						}}
 					>
 						<For each={pips()}>
@@ -1311,7 +1342,6 @@ function ComfortableSlider(props: ComfortableProps) {
 										style={{
 											width: PIP_SIZE,
 											height: PIP_SIZE,
-											pointerEvents: "none",
 											borderRadius: PIP_SIZE / 2,
 											backgroundColor: active()
 												? color.foreground
@@ -1338,7 +1368,6 @@ function ComfortableSlider(props: ComfortableProps) {
 							alignItems: "center",
 							paddingLeft: 8,
 							paddingRight: 8,
-							pointerEvents: "none",
 						}}
 					>
 						<Show when={props.label !== undefined}>
@@ -1347,7 +1376,6 @@ function ComfortableSlider(props: ComfortableProps) {
 									paddingLeft: 8,
 									paddingRight: 8,
 									backgroundColor: color.surface2,
-									pointerEvents: "none",
 								}}
 							>
 								<text style={{ ...textStyle, opacity: 0 }}>{props.label}</text>
@@ -1359,7 +1387,6 @@ function ComfortableSlider(props: ComfortableProps) {
 								paddingLeft: 8,
 								paddingRight: 8,
 								backgroundColor: color.surface2,
-								pointerEvents: "none",
 							}}
 						>
 							<text style={{ ...textStyle, opacity: 0 }}>
@@ -1379,7 +1406,6 @@ function ComfortableSlider(props: ComfortableProps) {
 						left: preview()?.left ?? 0,
 						width: preview()?.width ?? 0,
 						backgroundColor: hoverPreviewFill(),
-						pointerEvents: "none",
 					}}
 				/>
 				<Show when={fillTarget()}>
@@ -1394,7 +1420,6 @@ function ComfortableSlider(props: ComfortableProps) {
 								bottom: 0,
 								left: 0,
 								backgroundColor: color.active,
-								pointerEvents: "none",
 							}}
 						/>
 					)}
@@ -1414,7 +1439,6 @@ function ComfortableSlider(props: ComfortableProps) {
 								width: 2,
 								borderRadius: 1,
 								backgroundColor: lineColor(),
-								pointerEvents: "none",
 							}}
 						/>
 					)}
@@ -1431,7 +1455,6 @@ function ComfortableSlider(props: ComfortableProps) {
 						alignItems: "center",
 						paddingLeft: 16,
 						paddingRight: 16,
-						pointerEvents: "none",
 					}}
 				>
 					<Show when={props.label !== undefined}>
@@ -1470,6 +1493,8 @@ function ComfortableSlider(props: ComfortableProps) {
 							onMouseDown={onHandlePress}
 							onMouseMove={onHandleMove}
 							onMouseUp={onHandleRelease}
+							onLostPointerCapture={onHandleRelease}
+							ref={handle.ref}
 							onMouseEnter={onEnter}
 							onMouseLeave={onLeave}
 							style={{
@@ -1485,11 +1510,16 @@ function ComfortableSlider(props: ComfortableProps) {
 			</div>
 			{/* Hidden thumb: the only thing Tab reaches, so focus (and the ring) is keyboard-only like the primitive's thumb. */}
 			<div
+				id={createUniqueId()}
 				tabIndex={props.disabled ? -1 : 0}
 				role="slider"
 				testId={props.testId === undefined ? undefined : `${props.testId}-thumb`}
 				aria-label={props.label}
-				aria-valuetext={formatValue(props.value)}
+				aria-orientation="horizontal"
+				aria-valuenow={props.value}
+				aria-valuemin={min()}
+				aria-valuemax={max()}
+				aria-disabled={props.disabled === true}
 				onKeyDown={onKey}
 				onFocus={() => setFocused(true)}
 				onBlur={() => setFocused(false)}
@@ -1513,7 +1543,6 @@ function ComfortableSlider(props: ComfortableProps) {
 							top: -6,
 							width: 0,
 							height: 0,
-							pointerEvents: "none",
 						}}
 					>
 						<ValueBubble

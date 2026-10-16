@@ -1,58 +1,18 @@
 import { createSignal, For } from "solid-js";
+import { Button } from "../components/button";
 import {
 	Tooltip,
 	TooltipProvider,
 	type TooltipSide,
-	type TooltipTrigger,
 } from "../components/tooltip";
 import type { DemoModule } from "../lib/demo";
 import { DemoCard, DemoRow } from "../lib/demo-kit";
-import { color, height, radius, type as scale, weight } from "../lib/theme";
+import { color, type as scale, weight } from "../lib/theme";
 
 const SIDES: TooltipSide[] = ["top", "right", "bottom", "left"];
 
 function sideLabel(side: TooltipSide) {
 	return side[0].toUpperCase() + side.slice(1);
-}
-
-/** Button's look, but with the tooltip's handlers on the filled element itself. */
-function TriggerButton(props: {
-	trigger: TooltipTrigger;
-	primary?: boolean;
-	compact?: boolean;
-	onClick?: () => void;
-	children: string;
-}) {
-	return (
-		<div
-			{...props.trigger}
-			onClick={props.onClick}
-			style={{
-				height: props.compact ? height.controlCompact : height.control,
-				paddingLeft: props.compact ? 12 : 16,
-				paddingRight: props.compact ? 12 : 16,
-				display: "flex",
-				alignItems: "center",
-				borderRadius: radius.item,
-				cursor: "pointer",
-				userSelect: "none",
-				backgroundColor: props.primary ? color.foreground : color.tint,
-				hover: {
-					backgroundColor: props.primary ? color.primaryHover : color.tintHover,
-				},
-			}}
-		>
-			<text
-				style={{
-					...(props.compact ? scale.bodyCompact : scale.body),
-					color: props.primary ? color.background : color.foreground,
-					whiteSpace: "nowrap",
-				}}
-			>
-				{props.children}
-			</text>
-		</div>
-	);
 }
 
 function FollowArea(props: {
@@ -112,15 +72,7 @@ export function Demo() {
 								content="Save your changes"
 								onOpenChange={(open) => open && setOpened(opened() + 1)}
 							>
-								{(trigger: TooltipTrigger) => (
-									<TriggerButton
-										trigger={trigger}
-										primary
-										onClick={() => setSaves(saves() + 1)}
-									>
-										Hover me
-									</TriggerButton>
-								)}
+								<Button onClick={() => setSaves(saves() + 1)}>Hover me</Button>
 							</Tooltip>
 							<text style={{ ...scale.caption, color: color.mutedForeground }}>
 								{`Clicked ${saves()} times, opened ${opened()}`}
@@ -150,27 +102,21 @@ export function Demo() {
 									</div>
 								}
 							>
-								{(trigger: TooltipTrigger) => (
-									<TriggerButton trigger={trigger} primary>
-										Save
-									</TriggerButton>
-								)}
+								<Button>Save</Button>
 							</Tooltip>
 						</DemoRow>
 						<DemoRow label="Delay">
 							<Tooltip testId="delay-0" content="Instant" delayDuration={0}>
-								{(trigger: TooltipTrigger) => <TriggerButton trigger={trigger}>No delay</TriggerButton>}
+								<Button variant="secondary">No delay</Button>
 							</Tooltip>
 							<Tooltip testId="delay-500" content="Slow" delayDuration={500}>
-								{(trigger: TooltipTrigger) => <TriggerButton trigger={trigger}>500ms delay</TriggerButton>}
+								<Button variant="secondary">500ms delay</Button>
 							</Tooltip>
 						</DemoRow>
 						<DemoRow label="Placement">
 							{SIDES.map((side) => (
 								<Tooltip testId={`side-${side}`} content={sideLabel(side)} side={side}>
-									{(trigger: TooltipTrigger) => (
-										<TriggerButton trigger={trigger}>{sideLabel(side)}</TriggerButton>
-									)}
+									<Button variant="secondary">{sideLabel(side)}</Button>
 								</Tooltip>
 							))}
 						</DemoRow>
@@ -185,9 +131,7 @@ export function Demo() {
 						content="This label is far too wide to fit between the trigger and the right edge of the window"
 						side="right"
 					>
-						{(trigger: TooltipTrigger) => (
-							<TriggerButton trigger={trigger}>Right edge</TriggerButton>
-						)}
+						<Button variant="secondary">Right edge</Button>
 					</Tooltip>
 				</div>
 			</DemoCard>
@@ -218,11 +162,9 @@ export function Demo() {
 				>
 					{SIDES.map((side) => (
 						<Tooltip content={sideLabel(side)} side={side} forceOpen>
-							{(trigger: TooltipTrigger) => (
-								<TriggerButton trigger={trigger} compact>
-									{sideLabel(side)}
-								</TriggerButton>
-							)}
+							<Button variant="secondary" size="compact">
+								{sideLabel(side)}
+							</Button>
 						</Tooltip>
 					))}
 				</div>

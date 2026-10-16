@@ -75,7 +75,6 @@ function Slide(props: { index: number; direction: number }) {
 								display: "flex",
 								alignItems: "center",
 								justifyContent: "center",
-								pointerEvents: "none",
 							}}
 						>
 							<text style={{ ...scale.body, color: color.foreground }}>

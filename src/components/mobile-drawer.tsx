@@ -1,5 +1,4 @@
 import {
-	DialogBackdrop,
 	DialogPopup,
 	DialogPortal,
 	Dialog as GpuixDialog,
@@ -14,8 +13,9 @@ import {
 	onCleanup,
 	Show,
 } from "solid-js";
+import { HideOutside } from "../lib/modal";
 import { createPresence } from "../lib/presence";
-import { FocusFirst, once } from "./dialog";
+import { FocusFirst } from "./dialog";
 import {
 	color,
 	scheme,
@@ -44,9 +44,7 @@ export function MobileDrawer(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
-	const content = once(() => props.children);
 	let popup: HostElement | undefined;
-	const focusFirst = once(() => <FocusFirst popup={() => popup} />);
 	// onMotionComplete is the primary release; the timer covers an exit that never animates.
 	const presence = createPresence(EXIT_FALLBACK_MS, props.open);
 	presence.follow(() => props.open);
@@ -68,12 +66,18 @@ export function MobileDrawer(props: {
 		<GpuixDialog
 			open={mounted()}
 			onOpenChange={(next) => {
-				// gpuix keeps the layer up through the exit, so Escape and backdrop presses still arrive then; the drawer has already been told.
+				// gpuix keeps the layer up through the exit, so Escape still arrives then; the drawer has already been told.
 				if (!next && props.open) props.onClose();
 			}}
 		>
 			<DialogPortal>
-				<DialogBackdrop>
+				{/* gpuix's own DialogBackdrop closes on mousedown; the drawer closes on a click that presses and releases on the backdrop, as in a browser, and the exit leaves the layer up, so it ignores one that arrives then. */}
+				<div
+					onClick={() => {
+						if (props.open) props.onClose();
+					}}
+					style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
+				>
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: props.open ? 1 : 0 }}
@@ -85,11 +89,9 @@ export function MobileDrawer(props: {
 							right: 0,
 							bottom: 0,
 							backgroundColor: color.scrim,
-							// A filled child would swallow the press meant for the backdrop behind it.
-							pointerEvents: "none",
 						}}
 					/>
-				</DialogBackdrop>
+				</div>
 				{/* The popup is only the focus scope: the panel is what the pointer hits. */}
 				<DialogPopup
 					finalFocus={props.triggerRef}
@@ -107,6 +109,7 @@ export function MobileDrawer(props: {
 						pointerEvents: "none",
 					}}
 				>
+					<HideOutside popup={() => popup} />
 					<motion.div
 						initial={{ left: -DRAWER_WIDTH }}
 						animate={{ left: props.open ? 0 : -DRAWER_WIDTH }}
@@ -134,14 +137,14 @@ export function MobileDrawer(props: {
 						<div style={{ display: "flex", flexDirection: "column", padding: 16 }}>
 							<Show when={settled()}>
 								{/* The content mounts only once the panel has stopped, so focus moves into it then. */}
-								{focusFirst()}
+								<FocusFirst popup={() => popup} />
 								<motion.div
 									initial={{ opacity: 0 }}
 									animate={{ opacity: 1 }}
 									transition={{ duration: 0.08 }}
 									style={{ display: "flex", flexDirection: "column" }}
 								>
-									{content()}
+									{props.children}
 								</motion.div>
 							</Show>
 						</div>

@@ -1,6 +1,7 @@
 import {
 	type EventPayload,
 	type HostElement,
+	type HostPointerEvent,
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
@@ -22,7 +23,7 @@ import { createFluidHover, type ItemRect } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
 import { createMeasuredHeight } from "../lib/measured-height";
-import { moveIndex } from "../lib/list-nav";
+import { isChord, moveIndex } from "../lib/list-nav";
 import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 import { Button } from "./button";
 
@@ -102,7 +103,6 @@ function ShortcutChip(props: { children: string }) {
 				borderRadius: radius.item,
 				// bg-background/15 over the primary button.
 				backgroundColor: withAlpha(color.background, 0.15),
-				pointerEvents: "none",
 			}}
 		>
 			<text style={{ ...scale.micro, lineHeight: 11, color: color.background }}>
@@ -153,7 +153,14 @@ function Row(props: RowProps) {
 				animate={{ opacity: 1 }}
 				transition={{ duration: 0.08 }}
 				{...(props.onArrowClick
-					? { role: "button", onClick: props.onArrowClick }
+					? {
+							role: "button",
+							onClick: (event: HostPointerEvent) => {
+								// The row behind the arrow handles clicks too.
+								event.stopPropagation();
+								props.onArrowClick?.();
+							},
+						}
 					: {})}
 				style={{
 					position: "absolute",
@@ -166,8 +173,6 @@ function Row(props: RowProps) {
 					justifyContent: "center",
 					borderRadius: radius.item,
 					backgroundColor: color.foreground,
-					// Decorative unless it carries its own click: a filled absolute child takes hits from the row.
-					pointerEvents: props.onArrowClick ? "auto" : "none",
 					cursor: props.onArrowClick ? "pointer" : "default",
 				}}
 			>
@@ -203,7 +208,6 @@ function Row(props: RowProps) {
 					alignItems: "center",
 					justifyContent: "center",
 					borderRadius: radius.item,
-					pointerEvents: "none",
 					opacity: props.chipPosition === "right" && props.showArrow ? 0 : 1,
 					...(props.isMulti
 						? props.chipFilled
@@ -255,7 +259,7 @@ function Row(props: RowProps) {
 			}}
 			testId={props.testId}
 			role={props.role ?? undefined}
-			aria-selected={props.isSelected}
+			aria-checked={props.role === null ? undefined : props.isSelected}
 			tabIndex={props.tabIndex}
 			onClick={props.onClick}
 			onFocus={props.onFocus}
@@ -426,6 +430,12 @@ export function AskUserQuestions(props: {
 		setFreeTextError(null);
 		goNext(patch(() => ({ otherText: text })));
 	};
+	/** Enter on a one-line answer field; Shift+Enter and the chords stay with the editor and the card. */
+	const submitOtherOnEnter = (event: KeyEvent) => {
+		if (event.key !== "Enter" || event.shiftKey === true || isChord(event)) return;
+		event.preventDefault();
+		submitOther();
+	};
 	const skip = () => {
 		const current = question();
 		if (current === undefined) return;
@@ -482,9 +492,9 @@ export function AskUserQuestions(props: {
 
 	// ── Keyboard. One handler on the card: the focused row or field bubbles here.
 	const onKeyDown = (event: KeyEvent) => {
-		const mod = IS_MAC ? event.modifiers?.cmd : event.modifiers?.ctrl;
+		const mod = IS_MAC ? event.metaKey : event.ctrlKey;
 		keyboardDriving = true;
-		if (event.key === "enter" && mod) {
+		if (event.key === "Enter" && mod) {
 			if (!(isMulti() || isFreeText())) return;
 			event.preventDefault();
 			if (isFreeText()) {
@@ -492,14 +502,14 @@ export function AskUserQuestions(props: {
 			} else if (hasAnswer()) commitMulti();
 			return;
 		}
-		if (event.modifiers?.cmd || event.modifiers?.ctrl || event.modifiers?.alt) {
+		if (event.metaKey || event.ctrlKey || event.altKey) {
 			return;
 		}
 		const inText = textFocused();
 		const key = event.key;
 		if (inText) {
 			// Caret movement is the editor's, except up and down off a one-line draft.
-			if (isFreeText() || (key !== "up" && key !== "down")) return;
+			if (isFreeText() || (key !== "ArrowUp" && key !== "ArrowDown")) return;
 			if (otherText().includes("\n")) return;
 		}
 		if (!inText && key !== undefined && key >= "1" && key <= "9") {
@@ -520,7 +530,7 @@ export function AskUserQuestions(props: {
 			!inText &&
 			focused !== null &&
 			focused < options().length &&
-			(key === "space" || key === "enter")
+			(key === " " || key === "Enter")
 		) {
 			event.preventDefault();
 			const id = optionKey(options()[focused], focused);
@@ -528,22 +538,22 @@ export function AskUserQuestions(props: {
 			else selectSingle(id);
 			return;
 		}
-		if (key === "left" || key === "right") {
+		if (key === "ArrowLeft" || key === "ArrowRight") {
 			event.preventDefault();
-			if (key === "left") back();
+			if (key === "ArrowLeft") back();
 			else if (isSkippable() && total() > 1) skip();
 			return;
 		}
 		if (rowCount() === 0) return;
-		if (key === "down" || key === "up" || key === "home" || key === "end") {
+		if (key === "ArrowDown" || key === "ArrowUp" || key === "Home" || key === "End") {
 			event.preventDefault();
 			let next: number;
-			if (key === "home") next = 0;
-			else if (key === "end") next = rowCount() - 1;
+			if (key === "Home") next = 0;
+			else if (key === "End") next = rowCount() - 1;
 			else {
 				const stepped = moveIndex(
 					inText ? otherIndex() : hover.activeIndex(),
-					key === "down" ? 1 : -1,
+					key === "ArrowDown" ? 1 : -1,
 					rowCount(),
 				);
 				if (stepped === null) return;
@@ -600,17 +610,6 @@ export function AskUserQuestions(props: {
 
 	// ── Content height: the Q/A region animates to its content's measured height.
 	const content = createMeasuredHeight();
-	createEffect(() => {
-		void [
-			qId(),
-			selectedIds().length,
-			otherText(),
-			freeTextError(),
-			focusedRow(),
-		];
-		hover.remeasure();
-	});
-
 	const showBack = () => total() > 1 && safeIndex() > 0;
 	const showSkip = () => total() > 1 && isSkippable();
 	const showSubmit = () => isMulti() || isFreeText();
@@ -792,7 +791,9 @@ export function AskUserQuestions(props: {
 								current === otherIndex() ? null : current,
 							);
 						}}
-						{...(isMulti() ? {} : { onSubmit: submitOther })}
+						onKeyDown={(event: KeyEvent) => {
+							if (!isMulti()) submitOtherOnEnter(event);
+						}}
 						style={{
 							...scale.body,
 							flexGrow: 1,
@@ -859,7 +860,7 @@ export function AskUserQuestions(props: {
 					onChange={(event: EventPayload) => setOther(event.value ?? "")}
 					onFocus={() => setTextFocused(true)}
 					onBlur={() => setTextFocused(false)}
-					{...(multiline ? {} : { onSubmit: submitOther })}
+					onKeyDown={multiline ? undefined : submitOtherOnEnter}
 					style={{
 						...scale.body,
 						width: "100%",

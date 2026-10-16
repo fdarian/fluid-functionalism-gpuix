@@ -7,6 +7,8 @@ import type { JSX } from "solid-js";
 export interface ShotContext {
 	/** Window-space centre of the element with this `testId`. */
 	centerOf(testId: string): { x: number; y: number };
+	/** Focus the element, as a script would: a pointer press that opens a popup cannot run in the test renderer. */
+	focus(testId: string): Promise<void>;
 	hover(testId: string): Promise<void>;
 	click(testId: string): Promise<void>;
 	/** Mouse button down / up on an element (hold a press while capturing). */
@@ -17,7 +19,7 @@ export interface ShotContext {
 	/** Pointer to a window position, e.g. to leave a popup. */
 	moveTo(x: number, y: number): Promise<void>;
 	clickAt(x: number, y: number): Promise<void>;
-	/** A wheel tick at a window position. Negative `deltaY` scrolls down, like a real wheel. */
+	/** A wheel tick at a window position. The test harness keeps GPUI's sign, so negative `deltaY` scrolls down and negative `deltaX` scrolls right: the reverse of the positive-down deltas `onWheel` handlers see. */
 	scroll(x: number, y: number, deltaX: number, deltaY: number): Promise<void>;
 	/** Pointer to a window position with the left button held, e.g. mid-drag. */
 	moveHeld(x: number, y: number): Promise<void>;
@@ -27,7 +29,24 @@ export interface ShotContext {
 	expectText(text: string, present: boolean): void;
 	/** Writes `screenshots/<demo>/<name>.png`. */
 	capture(name: string): void;
+	/** The DOM `id` of the element with this `testId`; throws when it has none. */
+	idOf(testId: string): string;
+	/**
+	 * What assistive technology gets for an element, from the last painted
+	 * frame: given as a `testId`, or as a DOM `id` (e.g. a panel a trigger
+	 * `controls`). Relations (`controls`, `labelled_by`, ...) are lists of DOM
+	 * `id`s. Throws when the element has no node.
+	 */
+	aria(target: string): AriaSnapshot;
+	/** Whether the element is in the accessibility tree. */
+	hasAriaNode(target: string): boolean;
+	/** How many elements Tab reaches in the last painted frame. */
+	tabStopCount(): number;
+	/** Throws unless every given key of `aria(target)` equals the expected value. */
+	expectAria(target: string, expected: AriaSnapshot): void;
 }
+
+export type AriaSnapshot = Record<string, unknown>;
 
 /**
  * What a file in `src/demos/` exports. The app finds these at startup, so a

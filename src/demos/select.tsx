@@ -1,8 +1,11 @@
+import type { HostElement } from "@gpuix/solid";
 import { createSignal } from "solid-js";
+import { Button } from "../components/button";
 import { Select, type SelectEntry } from "../components/select";
-import type { DemoModule } from "../lib/demo";
+import type { DemoModule, ShotContext } from "../lib/demo";
 import { DemoCard, DemoRow } from "../lib/demo-kit";
 import { defineIcon } from "../lib/icons";
+import { color, type as scale } from "../lib/theme";
 
 const monitor = defineIcon(
 	'<rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/>',
@@ -92,6 +95,9 @@ export function Demo() {
 	const [timezone, setTimezone] = createSignal<string | null>(null);
 	const [role, setRole] = createSignal<string | null>(null);
 	const [some, setSome] = createSignal<string | null>(null);
+	const [plan, setPlan] = createSignal<string | null>(null);
+	const [submitted, setSubmitted] = createSignal("");
+	let form: HostElement | undefined;
 
 	const themeIcon = () => {
 		const picked = THEMES.find((entry) => entry.value === theme());
@@ -232,11 +238,108 @@ export function Demo() {
 					</DemoRow>
 				</div>
 			</DemoCard>
+			<DemoCard title="Select, in a form">
+				<form
+					ref={form}
+					testId="form"
+					onSubmit={(event) =>
+						setSubmitted(
+							Array.from(event.formData.entries(), (entry) => `${entry[0]}=${entry[1]}`).join(
+								"&",
+							),
+						)
+					}
+					style={{ display: "flex", flexDirection: "column", gap: 8 }}
+				>
+					<DemoRow label="Form">
+						<input
+							testId="form-name"
+							name="name"
+							value="Ada"
+							placeholder="Name"
+							style={{ width: 120, height: 28 }}
+						/>
+						<text
+							id="form-plan-label"
+							style={{ ...scale.caption, color: color.mutedForeground }}
+						>
+							Plan
+						</text>
+						<Select
+							testId="form-plan"
+							variant="bordered"
+							size="compact"
+							name="plan"
+							required
+							labelledBy="form-plan-label"
+							items={FRUITS}
+							value={plan()}
+							onValueChange={setPlan}
+							placeholder="Choose…"
+						/>
+					</DemoRow>
+					<DemoRow label="">
+						<Button
+							testId="form-submit"
+							variant="secondary"
+							size="compact"
+							onClick={() => form?.requestSubmit()}
+						>
+							Submit
+						</Button>
+						<text style={{ ...scale.caption, color: color.mutedForeground }}>
+							{`submitted: ${submitted()}`}
+						</text>
+					</DemoRow>
+				</form>
+			</DemoCard>
 		</>
 	);
 }
 
+/** The page is taller than the window: scroll an element to the upper part of it. */
+async function reveal(shot: ShotContext, testId: string) {
+	let previous = Number.NaN;
+	for (let attempt = 0; attempt < 8; attempt++) {
+		const y = shot.centerOf(testId).y;
+		if ((y > 120 && y < 320) || y === previous) return;
+		previous = y;
+		await shot.scroll(700, 400, 0, -(y - 200));
+	}
+	throw new Error(`could not scroll ${testId} into view`);
+}
+
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
+	await reveal(shot, "form-submit");
+	// Form: an empty required select blocks the submit and hands focus to its trigger; once picked its value is submitted under its name.
+	await shot.click("form-submit");
+	shot.expectText("submitted: name=Ada", false);
+	shot.expectAria("form-plan-trigger", {
+		role: "ComboBox",
+		has_popup: "Listbox",
+		required: true,
+		expanded: false,
+		labelled_by: ["form-plan-label"],
+		controls: undefined,
+	});
+	await shot.press("down");
+	shot.expectAria("form-plan-trigger", { expanded: true });
+	const listbox = shot.aria("form-plan-trigger").controls;
+	if (!Array.isArray(listbox) || listbox.length !== 1)
+		throw new Error("an open select controls its list");
+	shot.expectAria(String(listbox[0]), { role: "ListBox" });
+	shot.expectAria("form-plan-option-apple", {
+		role: "ListBoxOption",
+		selected: false,
+	});
+	shot.expectAria("form-plan-trigger", {
+		active_descendant: shot.idOf("form-plan-option-apple"),
+	});
+	await shot.press("enter");
+	await shot.settle(600);
+	await shot.click("form-submit");
+	shot.expectText("submitted: name=Ada&plan=apple", true);
+
 	await shot.click("basic");
 	await shot.settle(300);
 	shot.expectText("Banana", true);

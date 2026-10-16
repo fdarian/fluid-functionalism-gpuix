@@ -76,7 +76,6 @@ export function SidebarMenu(props: { children: JSX.Element }) {
 		trackReflow(ms) {
 			clearTimeout(reflowTimer);
 			setReflow(true);
-			hover.remeasureFor(ms);
 			reflowTimer = setTimeout(() => setReflow(false), ms + 48);
 		},
 	};
@@ -232,7 +231,6 @@ export function SidebarMenuButton(props: {
 							flexShrink: 0,
 							borderRadius: 3,
 							backgroundColor: dot(),
-							pointerEvents: "none",
 						}}
 					/>
 				)}
@@ -261,7 +259,6 @@ export function SidebarMenuButton(props: {
 							display: "flex",
 							alignItems: "center",
 							justifyContent: "center",
-							pointerEvents: "none",
 						}}
 					>
 						<text

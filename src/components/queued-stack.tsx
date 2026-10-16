@@ -2,8 +2,10 @@ import {
 	AnimatePresence,
 	type EventPayload,
 	type HostElement,
+	type HostMouseEvent,
 	type MotionTransition,
 	motion,
+	ResizeObserver,
 	useIsPresent,
 } from "@gpuix/solid";
 import {
@@ -14,9 +16,9 @@ import {
 	onCleanup,
 	Show,
 } from "solid-js";
-import { awaitBounds, readBounds } from "../lib/bounds";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
+import { createPointerCapture } from "../lib/pointer-capture";
 import {
 	color,
 	radius,
@@ -27,7 +29,7 @@ import {
 	weight,
 } from "../lib/theme";
 import { type FileLike, FileThumbnail } from "./file-thumbnail";
-import { Tooltip, type TooltipTrigger } from "./tooltip";
+import { Tooltip } from "./tooltip";
 
 const pencilGlyph = defineIcon(
 	'<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
@@ -85,41 +87,32 @@ function CardAction(props: {
 	const [hovered, setHovered] = createSignal(false);
 	return (
 		<Tooltip content={props.label} side="top">
-			{(trigger: TooltipTrigger) => (
-				// The tooltip's wrapper arms pointer capture (it listens for press and move), which takes the release from this button and loses its click, so the button takes only the enter and leave handlers. See limitations/queued-stack.md.
-				<div
-					role="button"
-					aria-label={props.label}
-					testId={props.testId}
-					onClick={props.onClick}
-					onMouseEnter={() => {
-						setHovered(true);
-						trigger.onMouseEnter();
-					}}
-					onMouseLeave={() => {
-						setHovered(false);
-						trigger.onMouseLeave();
-					}}
-					style={{
-						width: 32,
-						height: 32,
-						flexShrink: 0,
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						borderRadius: radius.item,
-						cursor: "pointer",
-						hover: { backgroundColor: color.hover },
-					}}
-				>
-					<Icon
-						name={props.glyph}
-						size={14}
-						strokeWidth={props.stroke}
-						color={hovered() ? color.foreground : color.mutedForeground}
-					/>
-				</div>
-			)}
+			<div
+				role="button"
+				aria-label={props.label}
+				testId={props.testId}
+				onClick={props.onClick}
+				onMouseEnter={() => setHovered(true)}
+				onMouseLeave={() => setHovered(false)}
+				style={{
+					width: 32,
+					height: 32,
+					flexShrink: 0,
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					borderRadius: radius.item,
+					cursor: "pointer",
+					hover: { backgroundColor: color.hover },
+				}}
+			>
+				<Icon
+					name={props.glyph}
+					size={14}
+					strokeWidth={props.stroke}
+					color={hovered() ? color.foreground : color.mutedForeground}
+				/>
+			</div>
 		</Tooltip>
 	);
 }
@@ -146,9 +139,8 @@ export function QueuedStack(props: {
 	const count = () => props.queue.length;
 	const hiddenCount = () => Math.max(0, count() - (STACK_MAX_PEEK + 1));
 
-	// ── Hover. A filled card takes the pointer from the stack under it, so the
-	// stack and each card report enter / leave and a short hold bridges the gap
-	// between one leaving and the next entering.
+	// ── Hover. The stack and each card report enter / leave, and a short hold
+	// bridges the gap between one leaving and the next entering.
 	const [overStack, setOverStack] = createSignal(false);
 	let overCount = 0;
 	let leaveTimer: ReturnType<typeof setTimeout> | undefined;
@@ -181,21 +173,17 @@ export function QueuedStack(props: {
 	const slotBottom = (index: number) => index * (QUEUE_CARD_H + STACK_GAP);
 
 	const stackBox = () => {
-		if (stackElement === undefined) throw new Error("Stack is not mounted");
-		const box = readBounds(stackElement);
-		if (box === null) throw new Error("Stack has no painted bounds");
-		return box;
+		if (stackElement === undefined || !stackElement.mounted) {
+			throw new Error("Stack is not mounted");
+		}
+		return stackElement.getBoundingClientRect();
 	};
 
 	const [stackWidth, setStackWidth] = createSignal<number>();
-	createEffect(() => {
-		void [count() > 0, expanded()];
-		const timer = setTimeout(() => {
-			if (stackElement === undefined) return;
-			void awaitBounds(stackElement).then((box) => setStackWidth(box.width));
-		}, 32);
-		onCleanup(() => clearTimeout(timer));
+	const widthObserver = new ResizeObserver((entries) => {
+		setStackWidth(entries[entries.length - 1].borderBoxSize[0].inlineSize);
 	});
+	onCleanup(() => widthObserver.disconnect());
 	const cardWidth = () => Math.max(0, (stackWidth() ?? 0) - GUTTER * 2);
 
 	const onDragMove = (event: EventPayload) => {
@@ -302,7 +290,9 @@ export function QueuedStack(props: {
 				<motion.div
 					testId={props.testId}
 					ref={(element: HostElement) => {
+						if (stackElement !== undefined) widthObserver.unobserve(stackElement);
 						stackElement = element;
+						widthObserver.observe(element, { box: "border-box" });
 					}}
 					initial={{ opacity: 0 }}
 					animate={{
@@ -367,7 +357,6 @@ export function QueuedStack(props: {
 												animate={{ opacity: 1 }}
 												exit={{ opacity: 0 }}
 												transition={tween.fast}
-												style={{ pointerEvents: "none" }}
 											>
 												<text
 													style={{
@@ -410,7 +399,6 @@ export function QueuedStack(props: {
 										onHoverEnter={hover.enter}
 										onHoverLeave={hover.leave}
 										onPress={(event) => {
-											if (!expanded() || event.button !== 0) return;
 											if (event.y === undefined) {
 												throw new Error("mouseDown without coordinates");
 											}
@@ -460,13 +448,14 @@ function QueueCard(props: {
 	expanded: () => boolean;
 	onHoverEnter: () => void;
 	onHoverLeave: () => void;
-	onPress: (event: EventPayload) => void;
+	onPress: (event: HostMouseEvent) => void;
 	onDragMove: (event: EventPayload) => void;
 	onRelease: () => void;
 	onEdit: () => void;
 	onRemove: () => void;
 }) {
 	const [hovered, setHovered] = createSignal(false);
+	const region = createPointerCapture("QueueCard");
 	const present = useIsPresent();
 	const files = () => props.item.files;
 	const label = () =>
@@ -514,14 +503,19 @@ function QueueCard(props: {
 			}}
 		>
 			{/*
-				The press, drag and double click live on this region, not on the card:
-				a card that listens for press, move and release captures the release,
-				and the buttons beside it would never get their click.
+				The press, drag and double click live on this region, not on the card,
+				so a press on the buttons beside it does not start a drag.
 			*/}
 			<div
-				onMouseDown={props.onPress}
+				ref={region.ref}
+				onMouseDown={(event) => {
+					if (!props.expanded() || event.button !== 0) return;
+					region.capture(event);
+					props.onPress(event);
+				}}
 				onMouseMove={props.onDragMove}
 				onMouseUp={props.onRelease}
+				onLostPointerCapture={props.onRelease}
 				onClick={(event: EventPayload) => {
 					if (event.clickCount === 2) props.onEdit();
 				}}
@@ -543,7 +537,6 @@ function QueueCard(props: {
 							flexShrink: 0,
 							gap: 4,
 							marginRight: 8,
-							pointerEvents: "none",
 						}}
 					>
 						<For each={files().slice(0, 3)}>
@@ -558,7 +551,6 @@ function QueueCard(props: {
 									alignItems: "center",
 									justifyContent: "center",
 									backgroundColor: color.hover,
-									pointerEvents: "none",
 								}}
 							>
 								<text style={{ ...scale.micro, color: color.foreground }}>
@@ -568,7 +560,7 @@ function QueueCard(props: {
 						</Show>
 					</div>
 				</Show>
-				<div style={{ flexGrow: 1, minWidth: 0, pointerEvents: "none" }}>
+				<div style={{ flexGrow: 1, minWidth: 0 }}>
 					<text
 						style={{
 							fontSize: 14,

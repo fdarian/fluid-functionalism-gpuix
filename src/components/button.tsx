@@ -3,6 +3,7 @@ import {
 	buttonProps,
 	type EventPayload,
 	type StateStyleDesc,
+	useGpuixRequired,
 } from "@gpuix/solid";
 import { type Accessor, createSignal, type JSX, Show } from "solid-js";
 import { Icon } from "../lib/icon";
@@ -99,10 +100,13 @@ export function Button(props: {
 	loading?: boolean;
 	disabled?: boolean;
 	testId?: string;
+	id?: string;
 	"aria-label"?: string;
+	"aria-activedescendant"?: string;
 	"aria-expanded"?: boolean;
+	"aria-haspopup"?: "menu" | "listbox" | "dialog";
+	"aria-controls"?: string;
 	onClick?: (event: EventPayload) => void;
-	/** Never pair with onMouseMove: down plus move on one element makes gpuix capture the pointer. */
 	onMouseDown?: (event: EventPayload) => void;
 	/** The label, or the icon for an icon-only size. */
 	children?: JSX.Element;
@@ -110,6 +114,7 @@ export function Button(props: {
 	trailingContent?: JSX.Element;
 	icon?: IconRef;
 }) {
+	const renderer = useGpuixRequired();
 	const variant = () => props.variant ?? "primary";
 	const size = () => sizes[props.size ?? "default"];
 	/** Base UI disables the button while it loads: FF passes `disabled || loading`, and its `disabled:` classes dim it and drop pointer events. */
@@ -189,11 +194,16 @@ export function Button(props: {
 			{...buttonProps({
 				disabled: inert(),
 				onClick: props.onClick,
-			})}
+			}, renderer)}
 			tabIndex={inert() ? -1 : 0}
 			testId={props.testId}
+			id={props.id}
 			aria-label={props["aria-label"]}
+			aria-activedescendant={props["aria-activedescendant"]}
 			aria-expanded={props["aria-expanded"]}
+			aria-haspopup={props["aria-haspopup"]}
+			aria-controls={props["aria-controls"]}
+			aria-disabled={inert()}
 			onMouseDown={props.onMouseDown}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
@@ -245,7 +255,6 @@ export function Button(props: {
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
-						pointerEvents: "none",
 					}}
 				>
 					<Icon

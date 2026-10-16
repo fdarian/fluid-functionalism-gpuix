@@ -8,6 +8,7 @@ import {
 	createContext,
 	createEffect,
 	createMemo,
+	createUniqueId,
 	For,
 	type JSX,
 	onCleanup,
@@ -249,27 +250,27 @@ export function ChoiceRow(props: {
 	// No `isHeld` guard: as in FF, a held arrow keeps walking and a held Space or Enter repeats.
 	const onKeyDown = (event: KeyEvent) => {
 		switch (event.key) {
-			case "space":
-			case "enter":
+			case " ":
+			case "Enter":
 				event.preventDefault();
 				props.onActivate();
 				return;
-			case "down":
+			case "ArrowDown":
 				context.focusFrom(props.index, 1);
 				return;
-			case "up":
+			case "ArrowUp":
 				context.focusFrom(props.index, -1);
 				return;
-			case "right":
+			case "ArrowRight":
 				if (context.arrowsSelect) context.focusFrom(props.index, 1);
 				return;
-			case "left":
+			case "ArrowLeft":
 				if (context.arrowsSelect) context.focusFrom(props.index, -1);
 				return;
-			case "home":
+			case "Home":
 				context.focusFrom(props.index, "first");
 				return;
-			case "end":
+			case "End":
 				context.focusFrom(props.index, "last");
 				return;
 		}
@@ -278,8 +279,10 @@ export function ChoiceRow(props: {
 	return (
 		<div
 			testId={props.testId}
+			id={createUniqueId()}
 			role={props.role}
 			aria-label={props.label}
+			aria-checked={props.checked}
 			ref={(row) => {
 				element = row;
 			}}

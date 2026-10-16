@@ -6,10 +6,7 @@ const MARGIN = 8;
 const PANEL_RADIUS = 10;
 const PANEL_BORDER = 1;
 
-/**
- * gpuix clips overflow to a rectangle, not the rounded box, so a child whose
- * fill touches a panel corner must round that corner itself.
- */
+/** The page panel's corner radius inside its border. */
 export const PANEL_INNER_RADIUS = PANEL_RADIUS - PANEL_BORDER;
 
 /**
@@ -46,7 +43,6 @@ export function AppFrame(props: { title: string; children: JSX.Element }) {
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
-						pointerEvents: "none",
 					}}
 				>
 					<text
