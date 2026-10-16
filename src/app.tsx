@@ -225,7 +225,7 @@ function Showcase(props: { demos: readonly Demo[] }) {
 	);
 }
 
-function CustomizeCard() {
+export function CustomizeCard() {
 	return (
 		<div
 			style={{
@@ -385,6 +385,7 @@ export function App(props: {
 					<div
 						style={{
 							width: isFull() ? "100%" : PAGE_WIDTH,
+							...(isFull() ? { height: "100%" } : {}),
 							flexShrink: 0,
 							display: "flex",
 							flexDirection: "column",
