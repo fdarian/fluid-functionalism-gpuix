@@ -62,7 +62,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `not ported yet` (README lists "pill shape" as not ported).
 - **Original:** highlight, tints and trigger radius follow `shape.bg` / `shape.item` (20 px pill, 8 px rounded), the ring `shape.focusRing` (22 px pill, 10 px rounded) (`registry/default/lib/shape-context.tsx:53-85`). The site default is rounded.
-- **Port:** fixed `radius.item` 8 and `radius.focusRing` 10 (`src/lib/theme.ts:280-284`, `src/components/accordion.tsx` (`GroupTint`), `src/lib/focus-ring.tsx:96`).
+- **Port:** fixed `radius.item` 8 and `radius.focusRing` 10 (`src/lib/theme.ts:280-284`, `src/components/accordion.tsx` (`GroupTint`), `src/lib/focus-ring.tsx:98`).
 - **Workaround:** none; the rounded default is exact.
 - **Fidelity:** exact for rounded, dropped for pill.
 - **Components it hits:** every component.
@@ -98,7 +98,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `gpuix gap` (no `AnimatePresence`, so a `createPresence` timer stands in for the exit).
 - **Original:** a 1 px `--focus-ring` box at left/top -2, size +4, travels on `spring.fast` with opacity on a 0.08 tween, appears in place (`initial={false}`) and exits on `spring.fast.exit` 0.06 (`registry/base/accordion.tsx:455-472`). A blur followed by the next row's focus keeps the same element, so it glides.
-- **Port:** the same box, offsets and motion (`src/lib/focus-ring.tsx:8` `ENTER_FADE`, `:11`, `:84-92`). The one difference is that the exit fade starts 60 ms after the last blur, so a blur followed by the next row's focus glides instead of fading and reappearing (`:64-67`, `src/lib/presence.ts:6`).
+- **Port:** the same box, offsets and motion (`src/lib/focus-ring.tsx:8` `ENTER_FADE`, `:11`, `:86-94`). The one difference is that the exit fade starts 60 ms after the last blur, so a blur followed by the next row's focus glides instead of fading and reappearing (`:66-69`, `src/lib/presence.ts:6`).
 - **gpuix lacks:** an exit-presence primitive for a conditionally rendered `motion.div`; `onMotionComplete` plus a timer is the stand-in.
 - **Workaround:** the 60 ms presence delay.
 - **Fidelity:** approximated (60 ms extra before a fade).

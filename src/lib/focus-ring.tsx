@@ -18,6 +18,8 @@ const OUTSET = 2;
 export function createFocusRing(hover: FluidHover) {
 	const [index, setIndex] = createSignal<number | null>(null);
 	return {
+		/** The ringed row, or `null` while no row shows the ring. */
+		index,
 		/** The measured box of the ringed row, or `null` while no row shows the ring. */
 		rect(): ItemRect | null {
 			const current = index();

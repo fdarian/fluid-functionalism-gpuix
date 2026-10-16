@@ -122,7 +122,7 @@ names two causes counts as mixed. Base UI behaviour, row by row, is in [`BASE-UI
 | [radio-group](drift/radio-group.md) | 4 | 1 | 7 | 0 | 12 |
 | [scroll-area](drift/scroll-area.md) | 3 | 6 | 3 | 1 | 13 |
 | [select](drift/select.md) | 8 | 7 | 8 | 2 | 25 |
-| [sidebar](drift/sidebar.md) | 1 | 6 | 27 | 0 | 34 |
+| [sidebar](drift/sidebar.md) | 1 | 5 | 26 | 0 | 32 |
 | [site](drift/site.md) | 4 | 4 | 24 | 3 | 35 |
 | [slider](drift/slider.md) | 4 | 5 | 4 | 3 | 16 |
 | [switch](drift/switch.md) | 2 | 2 | 3 | 2 | 9 |
