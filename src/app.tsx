@@ -23,9 +23,12 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 } from "./components/sidebar";
+import { Tooltip } from "./components/tooltip";
+import { BentoGrid } from "./home/bento-grid";
 import { AppFrame, PANEL_INNER_RADIUS } from "./lib/app-frame";
 import { type Demo, type Page, SHOWCASE_SLUG } from "./lib/demo";
 import { PageScrollerContext } from "./lib/demo-kit";
+import { MONO } from "./lib/doc-page";
 import { type PageNav, PageNavContext, usePageNav } from "./lib/page-nav";
 import {
 	createRightRail,
@@ -180,46 +183,80 @@ function Hero() {
 	);
 }
 
-/** A card per discovered demo; the landing page is a table of contents. */
-function Showcase(props: { demos: readonly Demo[] }) {
+function HeroArrows() {
 	const nav = usePageNav();
+	// Square icon buttons follow the site-wide size step.
+	const iconSize = () => (sizeChoice() === "compact" ? "icon-compact" : "icon");
+	return (
+		<div
+			style={{
+				display: "flex",
+				flexDirection: "row",
+				alignItems: "center",
+				gap: 4,
+				flexShrink: 0,
+			}}
+		>
+			<Button
+				testId="hero-prev"
+				variant="ghost"
+				size={iconSize()}
+				icon="arrow-left"
+				disabled
+				aria-label="No previous page"
+			/>
+			<Tooltip
+				content={
+					<text style={{ ...siteType.caption, color: color.background }}>
+						{"Introduction  "}
+						<span style={{ fontFamily: MONO, opacity: 0.5 }}>{"\u2192"}</span>
+					</text>
+				}
+			>
+				<Button
+					testId="hero-next"
+					variant="ghost"
+					size={iconSize()}
+					icon="arrow-right"
+					aria-label="Next: Introduction"
+					onClick={() => nav.navigate("introduction")}
+				/>
+			</Tooltip>
+		</div>
+	);
+}
+
+/** The hero over the bento grid of live component previews. */
+function Showcase() {
 	return (
 		<div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-			<Hero />
 			<div
 				style={{
+					width: "100%",
+					maxWidth: 680,
+					alignSelf: "center",
 					display: "flex",
 					flexDirection: "row",
-					flexWrap: "wrap",
-					gap: 12,
+					alignItems: "flex-start",
+					justifyContent: "space-between",
+					gap: 16,
+					paddingLeft: 24,
+					paddingRight: 24,
 				}}
 			>
-				<For each={props.demos}>
-					{(demo) => (
-						<div
-							testId={`card-${demo.slug}`}
-							role="button"
-							onClick={() => nav.navigate(demo.slug)}
-							style={{
-								width: 144,
-								height: 72,
-								display: "flex",
-								alignItems: "flex-end",
-								padding: 12,
-								borderRadius: 12,
-								borderWidth: 1,
-								borderColor: color.border,
-								backgroundColor: color.surface2,
-								cursor: "pointer",
-								hover: { backgroundColor: color.hover },
-							}}
-						>
-							<text style={{ ...siteType.body, color: color.foreground }}>
-								{demo.title}
-							</text>
-						</div>
-					)}
-				</For>
+				<Hero />
+				<HeroArrows />
+			</div>
+			<div
+				style={{
+					width: "100%",
+					maxWidth: 1200,
+					alignSelf: "center",
+					paddingLeft: 24,
+					paddingRight: 24,
+				}}
+			>
+				<BentoGrid />
 			</div>
 		</div>
 	);
@@ -386,7 +423,7 @@ export function App(props: {
 				>
 					<div
 						style={{
-							width: isFull() ? "100%" : PAGE_WIDTH,
+							width: isFull() || page() === SHOWCASE ? "100%" : PAGE_WIDTH,
 							flexShrink: 0,
 							display: "flex",
 							flexDirection: "column",
@@ -399,7 +436,7 @@ export function App(props: {
 							<PageNavContext.Provider value={nav}>
 								<Switch>
 									<Match when={page() === SHOWCASE}>
-										<Showcase demos={props.demos} />
+										<Showcase />
 									</Match>
 									<Match when={current()} keyed>
 										{(demo: Demo) => <DemoPage demo={demo} />}
