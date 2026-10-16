@@ -1,7 +1,7 @@
 import { createSignal, type JSX } from "solid-js";
 import { Slider, type SliderValue } from "../components/slider";
 import type { ShotContext } from "../lib/demo";
-import { color, type as scale, weight } from "../lib/theme";
+import { color, siteType, weight } from "../lib/theme";
 
 export const title = "Audio Mixer";
 export const group = "Pages";
@@ -144,7 +144,7 @@ export function Page(): JSX.Element {
 		<div style={{ display: "flex", flexDirection: "column", gap: 48 }}>
 			{/* The page heading is `App`'s, a column gap above; the source sets it 4px above the subtitle. */}
 			<div style={{ marginTop: -20 }}>
-				<text style={{ ...scale.body, color: color.mutedForeground }}>
+				<text style={{ ...siteType.body, color: color.mutedForeground }}>
 					Slider variants styled as a music production control surface.
 				</text>
 			</div>

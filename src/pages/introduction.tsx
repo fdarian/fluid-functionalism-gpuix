@@ -3,7 +3,7 @@ import { InputCopy } from "../components/input-copy";
 import type { ShotContext } from "../lib/demo";
 import {
 	color,
-	type as scale,
+	siteType,
 	weight,
 	withAlpha,
 } from "../lib/theme";
@@ -62,7 +62,7 @@ function SectionTitle(props: { children: string }) {
 	return (
 		<text
 			style={{
-				...scale.title,
+				...siteType.title,
 				lineHeight: 16,
 				fontWeight: weight.semibold,
 				color: color.foreground,
@@ -75,7 +75,7 @@ function SectionTitle(props: { children: string }) {
 
 function Prose(props: { children: string }) {
 	return (
-		<text style={{ ...scale.body, color: color.mutedForeground }}>
+		<text style={{ ...siteType.body, color: color.mutedForeground }}>
 			{props.children}
 		</text>
 	);
@@ -186,8 +186,8 @@ function CodeBlock(props: { lines: readonly string[] }) {
 						<text
 							style={{
 								fontFamily: MONO,
-								fontSize: scale.caption.fontSize,
-								lineHeight: scale.caption.lineHeight,
+								fontSize: siteType.caption.fontSize,
+								lineHeight: siteType.caption.lineHeight,
 								fontWeight: weight.normal,
 								color: color.mutedForeground,
 								whiteSpace: "pre",
