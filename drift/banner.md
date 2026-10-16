@@ -51,7 +51,7 @@ repeating it.
 
 - **Cause:** `not ported yet`. `marginBottom` is animatable in `motion` (`packages/native/js/host.ts:107`).
 - **Original:** in a flex column with a gap, the row also takes back one gap (`marginBottom: (row - 1) * gap`), measured at mount, so nothing jumps when the banner mounts or unmounts (`banner.tsx:148-152`, `:246-256`, `:270-279`, `:344`). The playground's inline page is a `gap-3` column (`lib/docs/playgrounds/banner.tsx:359-363`).
-- **Port:** no margin. The "gone" phase renders nothing and the "measuring" phase renders a zero-height row, so the parent's gap appears when an appear starts and disappears when a dismiss ends: content below jumps by one gap (by reading; the demo's dismissable banner sits in a column without a gap, `src/demos/banner.tsx:103`).
+- **Port:** no margin. The "gone" phase renders nothing and the "measuring" phase renders a zero-height row, so the parent's gap appears when an appear starts and disappears when a dismiss ends: content below jumps by one gap: the playground's inline page is the same `gap: 12` column, so its lower skeleton lines step up 12px as a dismiss ends (visible between `screenshots/banner/playground-warning.png` and `playground-dismissed.png`). The "Dismissible" card's banner sits in a column without a gap.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -146,20 +146,20 @@ repeating it.
 - **Fidelity:** dropped.
 - **Components it hits:** every component without `className` and `ref` passthrough.
 
-## Demo: no playground
+## Demo: playground
 
-- **Cause:** `not ported yet`.
-- **Original:** the page opens with a playground: variant (inline, fixed), status, contrast, switches for description, primary, secondary and ghost actions and dismissible, a shuffle, a code tab, and a "Show banner" ghost button after a dismiss. The inline page is a column with skeleton lines above and below the banner so the appear and dismiss move real content; the held page height keeps it from re-centring (`app/docs/banner/page.tsx:110-126`, `lib/docs/playgrounds/banner.tsx:32-375`). Per-status copy is in `BANNER_COPY` (`:32-71`).
-- **Port:** none of it. The demo is five fixed cards (`src/demos/banner.tsx:96-203`).
+- **Cause:** `port choice`.
+- **Original:** the playground has a code tab with the matching JSX and sits in `ComponentPreview` with a "Replay" in its toolbar (`app/docs/banner/page.tsx:110-126`, `lib/docs/playgrounds/banner.tsx:32-375`).
+- **Port:** every control, default, the shuffle, the per-status copy, the "Show banner" button, the held page height (a `ResizeObserver`, as in the source) and the inline page and fixed `MockPage` previews are ported; no control is left out (`src/demos/banner.tsx`, `Playground`). No code tab (the site has no code snippets). The preview is a `DemoCard`, with no Replay (the "Show banner" button is the way back). The preview is the page column's width up to 560px (the source's 420px variant is for its `/demo` card). The skeleton lines are `color.hover` instead of `muted`, which equals the card's `surface2` in dark and would vanish. The hold re-measures on the first resize after a control changes, where the source re-measures in an effect after the commit.
 - **Workaround:** none.
-- **Fidelity:** dropped.
+- **Fidelity:** approximated.
 - **Components it hits:** every component whose source page has a playground.
 
-## Demo: cards, mock page and widths
+## Demo: cards, lead sentences and widths
 
 - **Cause:** `port choice` (reason not stated; the cards are tuned for the harness).
-- **Original:** sections "Statuses", "Actions", "Fixed", "Custom icon", each with a lead sentence (`app/docs/banner/page.tsx:220-256`). Statuses is a 2-column grid, `max-w-[560px]`, `gap-x-3 gap-y-5`; Actions and Custom icon are `max-w-[520px]`; Fixed is `max-w-[560px]` in a 300px `MockPage` with a header skeleton (44px, a bottom rule, a logo square, three nav pills, an avatar) and muted pill-shaped skeleton lines (`:136-205`, `lib/docs/playgrounds/banner.tsx:112-159`). The Fixed demo's Replay remounts it, so the banner arrives in place.
-- **Port:** "Dismissible", "Fixed", "Statuses", "Actions", "Custom icon and compact". Cards fill the card width (no `max-w`). Statuses is two columns with `gap: 12` (`src/demos/banner.tsx:157-160`). The `MockPage` is 260px, has no header skeleton, and has eight 14px bars at `radius 4` in `color.hover` (`:51-91`). A "Replay" `Button` sets `open` back to true, so the banner plays its appear animation again (`:97-155`). Lead sentences and the code and API tables are dropped.
+- **Original:** sections "Statuses", "Actions", "Fixed", "Custom icon", each with a lead sentence, then the code tab and API tables (`app/docs/banner/page.tsx:220-256`, `:90-110`). Statuses is a 2-column grid with `gap-x-3 gap-y-5`. The Fixed demo's Replay remounts it, so the banner arrives in place.
+- **Port:** "Dismissible", "Fixed", "Statuses", "Actions", "Custom icon and compact" in that order. The widths, the `MockPage` (header skeleton, pill lines, 300px) and the 560/520 maxima follow the source. Statuses is two flex columns with `gap: 12`, rows `gap: 8`. A "Replay" `Button` sets `open` back to true, so the banner plays its appear animation again. Lead sentences, the code tab and the API tables are dropped.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** every demo (lead sentences, code tab, API tables).
