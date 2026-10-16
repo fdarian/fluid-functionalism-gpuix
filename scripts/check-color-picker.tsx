@@ -102,7 +102,7 @@ setThemeChoice("dark");
 	check("rgb channels shown", page.find("default-r-input") !== undefined);
 	for (const [label, typed] of [
 		["letters", "a b c"],
-		["nothing", "backspace backspace backspace backspace"],
+		["nothing", "Backspace Backspace Backspace Backspace"],
 	] as const) {
 		await page.click("default-r-input");
 		await page.press(`Meta+a ${typed}`);

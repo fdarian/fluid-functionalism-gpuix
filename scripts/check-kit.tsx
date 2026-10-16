@@ -221,7 +221,6 @@ export async function createCheck(
 		async finish() {
 			// Unmount first: with the tree alive, Bun can abort at exit ("Thread Local Storage", exit 134) after every check passed. TestRoot.unmount also disposes the renderer.
 			test.unmount();
-			await settle(100);
 			console.log(failures === 0 ? "all passed" : `${failures} failed`);
 			process.exit(failures === 0 ? 0 : 1);
 		},

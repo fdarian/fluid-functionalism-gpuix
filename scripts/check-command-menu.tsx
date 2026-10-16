@@ -85,6 +85,7 @@ const sinceMark = (from: number) =>
 		.slice(from)
 		.map((w) => w.top);
 
+await kit.scrollIntoView(INPUT);
 await kit.focus(INPUT);
 // The motion clock is stepped by hand: against wall time a slow frame carries the whole travel in one step.
 const FRAME_MS = 16;
@@ -408,6 +409,9 @@ kit.check(
 // ─── The home hero ───────────────────────────────────────────────────────────
 
 await kit.click("nav-showcase");
+// The page keeps the scroll position the list checks left it at.
+renderer.nativeSimulateScrollWheel(700, 400, 0, -10000);
+await kit.settle(300);
 await clipboard.writeText("untouched");
 await kit.click("hero-copy");
 const copied = await clipboard.readText();
