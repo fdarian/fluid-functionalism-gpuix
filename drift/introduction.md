@@ -19,14 +19,14 @@ repeating it.
 
 - **Cause:** `not ported yet` (Radius, Size and Icons rows); the Primitive row is not ported at all (Base UI only), so the Radix / Base UI sentence stays wrong.
 - **Original:** "Customize using the right panel" lists light and dark, the corner radius, icon libraries, the Radix / Base UI install flavor, and "Press T, R, or I to flip the first three from the keyboard" (`app/docs/page.tsx:125-135`).
-- **Port:** the text is verbatim (`src/pages/introduction.tsx:50`). The right column has only the Theme select, and no T / R / I shortcuts exist.
+- **Port:** the text is verbatim (`src/pages/introduction.tsx:42`). The right column has only the Theme select, and no T / R / I shortcuts exist.
 - **Fidelity:** exact text, describes more than the port offers.
 
 ## The heading is bold in the source, semibold here, and sits 8px above the subtitle only by a negative margin
 
 - **Cause:** `gpuix gap` for the weight (variable font: README "Drift from the source", variable-font rows) and `port choice` for the rest.
 - **Original:** `h1` `text-site-display leading-none mb-2` at `fontWeights.bold` (`app/docs/page.tsx:23-30`): a 28px line, 8px above the subtitle.
-- **Port:** `App`'s shared `Heading` (`src/app.tsx:53-66`) is semibold 600 with a 34px line and sits a 24px column gap above the page, which the subtitle cancels with `marginTop: -16` (`src/pages/introduction.tsx:204`), so the gap reads 8px past the taller line box.
+- **Port:** `App`'s shared `Heading` (`src/app.tsx:80-92`) is semibold 600 with a 34px line and sits a 24px column gap above the page, which the subtitle cancels with `marginTop: -16` (`src/pages/introduction.tsx:204`), so the gap reads 8px past the taller line box.
 - **Workaround:** the negative margin.
 - **Fidelity:** approximated.
 - **Components it hits:** every page and demo heading (semibold, 34px line).
@@ -48,7 +48,7 @@ repeating it.
 
 ## The code block overflows the 600px column and scrolls
 
-- **Cause:** `port choice` (the page column width, `src/app.tsx:42`).
+- **Cause:** `port choice` (the page column width, `src/app.tsx:77`).
 - **Original:** `<pre class="text-site-caption bg-muted/60 rounded-lg px-4 py-3 overflow-x-auto w-fit max-w-full">` (`app/docs/page.tsx:186`), in the source's own column. Its width was not measured.
 - **Port:** the same box with `overflowX: "scroll"` (`src/pages/introduction.tsx:157-197`). The longest line is 80 characters of 12px Menlo, about 578px, plus 32px of padding, so it overflows the 600px column by about 10px: the last characters of the `IconProvider` line need a scroll, and gpuix draws the scrollbar. No syntax highlighting, as in the source.
 - **Fidelity:** approximated.
@@ -57,7 +57,7 @@ repeating it.
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `hr` `border-border/60` (`app/docs/page.tsx:138,160,171`), the numbered badges `bg-muted` (`:148,155`), `font-mono` for the code (`:187`).
-- **Port:** the rules use `color.borderFaint` (`rgba(…,0.072)`, exactly 60% of `border`, `src/lib/theme.ts:103,152`) and the code block `withAlpha(muted, 0.6)`. The code face is Menlo like `InputCopy`'s (`src/pages/introduction.tsx:14`), where the browser resolves `font-mono` to `ui-monospace`.
+- **Port:** the rules use `color.borderFaint` (`rgba(…,0.072)`, exactly 60% of `border`, `src/lib/theme.ts:107,155`) and the code block `withAlpha(muted, 0.6)`. The code face is Menlo like `InputCopy`'s (`src/pages/introduction.tsx:14`), where the browser resolves `font-mono` to `ui-monospace`.
 - **Fidelity:** exact except the monospace face (same in Chrome on macOS, not in Safari).
 
 ## The page-level `px-6`
