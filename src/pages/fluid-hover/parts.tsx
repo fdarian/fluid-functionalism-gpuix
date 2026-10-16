@@ -6,7 +6,7 @@ import {
 	color,
 	focusRing,
 	radius,
-	type as scale,
+	siteType,
 	weight,
 } from "../../lib/theme";
 
@@ -52,7 +52,7 @@ function RowLabel(props: { children: string }) {
 	return (
 		<text
 			style={{
-				...scale.body,
+				...siteType.body,
 				fontWeight: weight.normal,
 				color: color.foreground,
 				whiteSpace: "nowrap",

@@ -16,7 +16,7 @@ import { PageScrollerContext } from "../../lib/demo-kit";
 import { Code, ComponentPreview } from "../../lib/doc-page";
 import { createFluidHover } from "../../lib/fluid-hover";
 import { defineIcon } from "../../lib/icons";
-import { color, type as scale } from "../../lib/theme";
+import { color, siteType } from "../../lib/theme";
 import {
 	FakeCursor,
 	FluidRow,
@@ -90,7 +90,7 @@ function Caption(props: { mark: string; children: JSX.Element }) {
 	return (
 		<text
 			style={{
-				...scale.caption,
+				...siteType.caption,
 				color: color.mutedForeground,
 				textAlign: "center",
 			}}

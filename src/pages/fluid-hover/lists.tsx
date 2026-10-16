@@ -21,6 +21,7 @@ import { ComponentPreview } from "../../lib/doc-page";
 import {
 	color,
 	radius,
+	siteType,
 	type as scale,
 	weight,
 } from "../../lib/theme";
@@ -440,7 +441,7 @@ export function ListsDemo() {
 							<text
 								ref={(element) => register(callout.key, element)}
 								style={{
-									...scale.caption,
+									...siteType.caption,
 									fontWeight: weight.semibold,
 									color: color.foreground,
 									whiteSpace: "nowrap",

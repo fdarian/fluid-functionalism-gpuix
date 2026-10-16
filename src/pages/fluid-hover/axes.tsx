@@ -9,7 +9,7 @@ import {
 import { Dropdown, MenuItem } from "../../components/dropdown";
 import { TabItem, Tabs, TabsList } from "../../components/tabs";
 import { ComponentPreview, MONO } from "../../lib/doc-page";
-import { color, type as scale, weight } from "../../lib/theme";
+import { color, siteType, weight } from "../../lib/theme";
 import { AXES_CODE } from "./snippets";
 import { ROWS } from "./plain-vs-fluid";
 
@@ -40,15 +40,15 @@ function AxisBlock(props: {
 				<text
 					style={{
 						fontFamily: MONO,
-						fontSize: scale.caption.fontSize,
-						lineHeight: scale.caption.lineHeight,
+						fontSize: siteType.caption.fontSize,
+						lineHeight: siteType.caption.lineHeight,
 						fontWeight: weight.semibold,
 						color: color.foreground,
 					}}
 				>
 					{`axis="${props.axis}"`}
 				</text>
-				<text style={{ ...scale.caption, color: color.mutedForeground }}>
+				<text style={{ ...siteType.caption, color: color.mutedForeground }}>
 					{props.hint}
 				</text>
 			</div>
