@@ -168,9 +168,9 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 			layoutSize: { width: box.width, height: box.height },
 			isDisabled: options.isItemDisabled,
 		});
-		if (sessionPending && next !== activeIndex()) {
+		if (sessionPending) {
 			sessionPending = false;
-			setSession(session() + 1);
+			if (next !== activeIndex()) setSession(session() + 1);
 		}
 		setActiveIndex(next);
 	};
