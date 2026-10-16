@@ -19,15 +19,6 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 - **Fidelity:** exact for the label width.
 - **Components it hits:** accordion, sidebar sub-menu, any component that animates width to a content size.
 
-## Gap before the unfolded label is 4px in compact, not 6
-
-- **Cause:** `not ported yet` (a bug: the port reuses the icon-to-label `gap`).
-- **Original:** the label's `marginLeft` animates to 8 in the default step and 6 in compact, "its own value, 2px wider than gap-1" (`tabs-subtle.tsx:401-404`).
-- **Port:** the label box is padded by `metrics().gap`, which is 8 default and 4 compact (`tabs-subtle.tsx:406`, `:34-49`). A compact `activeLabel` tab is 2px narrower than the source's.
-- **Workaround:** none.
-- **Fidelity:** approximated (2px in compact only).
-- **Components it hits:** just this one.
-
 ## Collapsing a label is a 60 ms tween, not the `fast` spring
 
 - **Cause:** `port choice` (reason not stated).
@@ -63,10 +54,6 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 - **Workaround:** none.
 - **Fidelity:** approximated (the accessibility tree differs for unselected tabs).
 - **Components it hits:** just this one.
-
-## Preview pill after resting on the selected tab starts at the old rect
-
-- **Cause:** `not ported yet`. Same drift as [tabs.md, "Preview pill after resting on the selected tab starts at the old rect"](tabs.md#preview-pill-after-resting-on-the-selected-tab-starts-at-the-old-rect), where the entry lives. Here: original `tabs-subtle.tsx:197-234`; port `tabs-subtle.tsx:146-148`.
 
 ## Colour and stroke width switch at once, semibold is 600, no `text-box-trim`
 
