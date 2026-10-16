@@ -16,6 +16,8 @@ import { defineIcon } from "./icons";
 import {
 	color,
 	focusRing,
+	type Scheme,
+	SchemeScope,
 	type as scale,
 	scheme,
 	weight,
@@ -100,10 +102,10 @@ export function DocSection(props: { title: string; children: JSX.Element }) {
 	);
 }
 
-/** An `h3` (`text-site-subtitle`) at the foot of a section, 32px below what precedes it. */
-export function SubHeading(props: { children: string }) {
+/** An `h3` (`text-site-subtitle`) at the foot of a section, `marginTop` (32px by default) below what precedes it. */
+export function SubHeading(props: { children: string; marginTop?: number }) {
 	return (
-		<div style={{ marginTop: 32 }}>
+		<div style={{ marginTop: props.marginTop ?? 32 }}>
 			<text
 				style={{
 					...SUBTITLE,
@@ -264,99 +266,130 @@ function CodeView(props: { code: string; minHeight: number }) {
 	);
 }
 
+/** The source's `DarkPreview` (`dark bg-background`): the frame, header included, resolves its tokens in `scheme` whatever the page's. */
+function ForcedScheme(props: { scheme?: Scheme; children: JSX.Element }) {
+	return (
+		<Show when={props.scheme} fallback={props.children}>
+			{(forced: Accessor<Scheme>) => (
+				<SchemeScope scheme={forced()}>
+					<div style={{ backgroundColor: color.background, borderRadius: 12 }}>
+						{props.children}
+					</div>
+				</SchemeScope>
+			)}
+		</Show>
+	);
+}
+
+const PREVIEW_PADDING = {
+	default: { x: 32, y: 48 },
+	compact: { x: 16, y: 16 },
+	none: { x: 0, y: 0 },
+} as const;
+
 /**
  * The docs' preview frame: a Preview / Code tab bar over the live demo, with
  * an optional replay button. The Inspect switch and ruler overlay are not
  * ported, and the Code tab is plain monospace without highlighting.
+ *
+ * `scheme` draws the whole frame in that scheme (the source's `DarkPreview`);
+ * `padding` is the demo's inset: `default` is `px-8 py-12`, `compact` the
+ * source's `px-4 py-4`, `none` lets the demo bleed to the frame.
  */
 export function ComponentPreview(props: {
 	testId: string;
 	code: string;
 	onReplay?: () => void;
 	minHeight?: number;
+	scheme?: Scheme;
+	padding?: keyof typeof PREVIEW_PADDING;
 	children: JSX.Element;
 }) {
 	const [tab, setTab] = createSignal(0);
 	const minHeight = () => props.minHeight ?? 120;
+	const padding = () => PREVIEW_PADDING[props.padding ?? "default"];
 	return (
-		<div
-			style={{
-				display: "flex",
-				flexDirection: "column",
-				borderRadius: 12,
-				borderWidth: 1,
-				borderColor: color.borderFaint,
-				transitionProperty: "border-color",
-				transitionDuration: "150ms",
-				transitionTimingFunction: "ease-out",
-				focusWithin: { borderColor: withAlpha(color.foreground, 0.4) },
-			}}
-		>
+		<ForcedScheme scheme={props.scheme}>
 			<div
+				testId={props.testId}
 				style={{
 					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
-					minHeight: 52,
-					padding: 12,
-					borderBottomWidth: 1,
+					flexDirection: "column",
+					borderRadius: 12,
+					borderWidth: 1,
 					borderColor: color.borderFaint,
+					transitionProperty: "border-color",
+					transitionDuration: "150ms",
+					transitionTimingFunction: "ease-out",
+					focusWithin: { borderColor: withAlpha(color.foreground, 0.4) },
 				}}
 			>
-				<TabsSubtle
-					testId={`${props.testId}-tabs`}
-					selectedIndex={tab()}
-					onSelect={setTab}
+				<div
+					style={{
+						display: "flex",
+						flexDirection: "row",
+						alignItems: "center",
+						justifyContent: "space-between",
+						minHeight: 52,
+						padding: 12,
+						borderBottomWidth: 1,
+						borderColor: color.borderFaint,
+					}}
 				>
-					<TabsSubtleItem
-						testId={`${props.testId}-preview-tab`}
-						index={0}
-						label="Preview"
-					/>
-					<TabsSubtleItem
-						testId={`${props.testId}-code-tab`}
-						index={1}
-						label="Code"
-					/>
-				</TabsSubtle>
-				<Show when={props.onReplay}>
-					{(replay: Accessor<() => void>) => (
-						<ReplayButton
-							testId={`${props.testId}-replay`}
-							onClick={replay()}
-						/>
-					)}
-				</Show>
-			</div>
-			<div
-				style={{
-					overflow: "hidden",
-					borderBottomLeftRadius: 11,
-					borderBottomRightRadius: 11,
-				}}
-			>
-				<Show
-					when={tab() === 0}
-					fallback={<CodeView code={props.code} minHeight={minHeight()} />}
-				>
-					<div
-						style={{
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-							minHeight: minHeight(),
-							paddingLeft: 32,
-							paddingRight: 32,
-							paddingTop: 48,
-							paddingBottom: 48,
-							backgroundColor: color.background,
-						}}
+					<TabsSubtle
+						testId={`${props.testId}-tabs`}
+						selectedIndex={tab()}
+						onSelect={setTab}
 					>
-						{props.children}
-					</div>
-				</Show>
+						<TabsSubtleItem
+							testId={`${props.testId}-preview-tab`}
+							index={0}
+							label="Preview"
+						/>
+						<TabsSubtleItem
+							testId={`${props.testId}-code-tab`}
+							index={1}
+							label="Code"
+						/>
+					</TabsSubtle>
+					<Show when={props.onReplay}>
+						{(replay: Accessor<() => void>) => (
+							<ReplayButton
+								testId={`${props.testId}-replay`}
+								onClick={replay()}
+							/>
+						)}
+					</Show>
+				</div>
+				<div
+					style={{
+						overflow: "hidden",
+						borderBottomLeftRadius: 11,
+						borderBottomRightRadius: 11,
+					}}
+				>
+					<Show
+						when={tab() === 0}
+						fallback={<CodeView code={props.code} minHeight={minHeight()} />}
+					>
+						<div
+							style={{
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center",
+								minHeight: minHeight(),
+								paddingLeft: padding().x,
+								paddingRight: padding().x,
+								paddingTop: padding().y,
+								paddingBottom: padding().y,
+								backgroundColor: color.background,
+							}}
+						>
+							{props.children}
+						</div>
+					</Show>
+				</div>
 			</div>
-		</div>
+		</ForcedScheme>
 	);
 }

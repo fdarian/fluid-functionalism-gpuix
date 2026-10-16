@@ -2,6 +2,7 @@ import type { HostMouseMoveEvent } from "@gpuix/solid";
 import { createSignal, For, type JSX, Show } from "solid-js";
 import { ScrollArea } from "../../components/scroll-area";
 import { Slider, type SliderValue } from "../../components/slider";
+import { ComponentPreview, MONO } from "../../lib/doc-page";
 import {
 	color,
 	radius,
@@ -11,7 +12,6 @@ import {
 	weight,
 } from "../../lib/theme";
 import { Elevated, SurfaceProvider, shadowSurface } from "./elevated";
-import { MONO, PreviewFrame } from "./preview-frame";
 import { LOCK_ICON, type MenuOption, SurfaceMenu } from "./role-menu";
 import {
 	ELEVATED_SOURCE,
@@ -116,7 +116,12 @@ function LadderRow(props: { scheme: "dark" | "light" }) {
 
 export function TokensDemo() {
 	return (
-		<PreviewFrame testId="tokens" code={TOKENS_CSS} padding="compact">
+		<ComponentPreview
+			scheme="dark"
+			testId="tokens"
+			code={TOKENS_CSS}
+			padding="compact"
+		>
 			<div
 				style={{
 					width: "100%",
@@ -128,7 +133,7 @@ export function TokensDemo() {
 				<LadderRow scheme="dark" />
 				<LadderRow scheme="light" />
 			</div>
-		</PreviewFrame>
+		</ComponentPreview>
 	);
 }
 
@@ -204,7 +209,12 @@ function ValueRow(props: {
 
 export function SubstrateDemo() {
 	return (
-		<PreviewFrame testId="substrate" code={SUBSTRATE_CODE} padding="compact">
+		<ComponentPreview
+			scheme="dark"
+			testId="substrate"
+			code={SUBSTRATE_CODE}
+			padding="compact"
+		>
 			<div
 				style={{
 					width: "100%",
@@ -279,7 +289,7 @@ export function SubstrateDemo() {
 					)}
 				</For>
 			</div>
-		</PreviewFrame>
+		</ComponentPreview>
 	);
 }
 
@@ -300,7 +310,12 @@ export function ElevatedDemo() {
 		borderRadius: 16,
 	} as const;
 	return (
-		<PreviewFrame testId="elevated" code={ELEVATED_SOURCE} padding="compact">
+		<ComponentPreview
+			scheme="dark"
+			testId="elevated"
+			code={ELEVATED_SOURCE}
+			padding="compact"
+		>
 			<div
 				style={{
 					width: "100%",
@@ -321,7 +336,7 @@ export function ElevatedDemo() {
 					</Elevated>
 				</Elevated>
 			</div>
-		</PreviewFrame>
+		</ComponentPreview>
 	);
 }
 
@@ -435,7 +450,12 @@ export function ElevationStackDemo() {
 		return value;
 	};
 	return (
-		<PreviewFrame testId="stack" code={ELEVATION_STACK_CODE} padding="compact">
+		<ComponentPreview
+			scheme="dark"
+			testId="stack"
+			code={ELEVATION_STACK_CODE}
+			padding="compact"
+		>
 			<div
 				style={{
 					width: "100%",
@@ -494,6 +514,6 @@ export function ElevationStackDemo() {
 					/>
 				</div>
 			</div>
-		</PreviewFrame>
+		</ComponentPreview>
 	);
 }

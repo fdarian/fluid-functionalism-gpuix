@@ -1,4 +1,5 @@
 import { For } from "solid-js";
+import { ComponentPreview } from "../../lib/doc-page";
 import { color } from "../../lib/theme";
 import {
 	ANNOTATION_BLUE,
@@ -11,7 +12,6 @@ import {
 	type Point,
 } from "./annotations";
 import { InviteDialog } from "./invite-dialog";
-import { PreviewFrame } from "./preview-frame";
 import { PROBLEM_CODE } from "./snippets";
 
 const CANVAS_WIDTH = 600;
@@ -80,7 +80,12 @@ const ARROWS: readonly Arrow[] = ANNOTATIONS.map((annotation) => ({
 
 export function ProblemDemo() {
 	return (
-		<PreviewFrame testId="problem" code={PROBLEM_CODE} padding="none">
+		<ComponentPreview
+			scheme="dark"
+			testId="problem"
+			code={PROBLEM_CODE}
+			padding="none"
+		>
 			<div
 				style={{
 					width: "100%",
@@ -129,6 +134,6 @@ export function ProblemDemo() {
 					</For>
 				</div>
 			</div>
-		</PreviewFrame>
+		</ComponentPreview>
 	);
 }

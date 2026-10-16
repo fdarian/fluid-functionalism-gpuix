@@ -1,7 +1,7 @@
 # surfaces
 
 Original: `app/docs/surfaces/page.tsx` of the source (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`), with `lib/docs/DocPage.tsx`, `lib/docs/ComponentPreview.tsx`, `registry/default/lib/elevated.tsx` and `surface-classes.ts`.
-Ported in `src/pages/surfaces.tsx` (the page) and `src/pages/surfaces/` (`problem`, `solution`, `examples`, `invite-dialog`, `role-menu`, `annotations`, `elevated`, `preview-frame`, `visibility`, `snippets`), routed by the page registry.
+Ported in `src/pages/surfaces.tsx` (the page) and `src/pages/surfaces/` (`problem`, `solution`, `examples`, `invite-dialog`, `role-menu`, `annotations`, `elevated`, `visibility`, `snippets`), routed by the page registry. The doc chrome (`DocSection`, `SubHeading`, `Prose`, `ComponentPreview`, `MONO`, `SUBTITLE`) is the shared `src/lib/doc-page.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
 (transforms, intrinsic width, variable fonts) get a one-line entry here that links to the README row instead of
@@ -11,7 +11,7 @@ repeating it.
 
 - **Cause:** `not ported yet` (arrows), `port choice` (Installation block, see site.md).
 - **Original:** `DocPage` draws the title with prev / next arrows, the description, and an "Installation" block with the note "Installs the Elevated primitive plus the surface-context and surface-classes libs — the elevation ladder as code." and a copy-prompt button (`app/docs/surfaces/page.tsx:1298-1311`, `lib/docs/DocPage.tsx:73-170`).
-- **Port:** `App`'s heading and the description under it (`src/pages/surfaces.tsx:Page`), a 32px gap above each section like the source's. No arrows, no Installation block, no note, no copy button. The same drift as [introduction.md](introduction.md#the-previous--next-arrows-are-missing) and [site.md](site.md#no-installation-block); the heading weight and 8px description gap are [introduction.md's](introduction.md#the-heading-is-bold-in-the-source-semibold-here-and-sits-8px-above-the-subtitle-only-by-a-negative-margin) too (`marginTop: -16`).
+- **Port:** `App`'s heading and the description under it (`src/pages/surfaces.tsx:Page`), a 32px gap above each section like the source's. The sections and sub-headings are `DocSection` and `SubHeading`, but the page does not use `DocPage`: no arrows, no Installation block, no note, no copy button (`DocPage`'s description is a plain string and the page needs its clickable words). The same drift as [introduction.md](introduction.md#the-previous--next-arrows-are-missing) and [site.md](site.md#no-installation-block); the heading weight and 8px description gap are [introduction.md's](introduction.md#the-heading-is-bold-in-the-source-semibold-here-and-sits-8px-above-the-subtitle-only-by-a-negative-margin) too (`marginTop: -16`).
 - **Fidelity:** dropped.
 - **Components it hits:** every docs page.
 
@@ -28,7 +28,7 @@ repeating it.
 
 - **Cause:** `not ported yet`. Same drift as [site.md, "Preview frame"](site.md#preview-frame-no-preview--code-tabs-inspect-replay), narrowed to what this page ports.
 - **Original:** `ComponentPreview` (52px header, `TabsSubtle` Preview / Code, Inspect `Switch`, shiki-highlighted code, `foreground/40` border on `:focus-within`, keyboard routing into the demo on a press of empty space) (`lib/docs/ComponentPreview.tsx:85-250`).
-- **Port:** `PreviewFrame` keeps the border, the 52px header, the Preview / Code `TabsSubtle` and the Code tab, drawn in plain `foreground` Menlo 13/20 with a horizontal scroll (`src/pages/surfaces/preview-frame.tsx`). The Inspect switch, the highlighting, the focus border and the keyboard routing are not ported. The frame is `bg-background` with `px-4 py-4` (`compact`) or none, as the page uses; the source's other options are not needed here.
+- **Port:** the shared `ComponentPreview` (`src/lib/doc-page.tsx`) keeps the border, the `foreground/40` focus-within border, the 52px header, the Preview / Code `TabsSubtle` and the Code tab, drawn in plain `foreground` Menlo 13/20 with a horizontal scroll. The Inspect switch, the highlighting and the keyboard routing are not ported. The page passes `padding="compact"` (`px-4 py-4`) or `"none"`, and `scheme="dark"` (next entry).
 - **Fidelity:** approximated (Code tab uncoloured); dropped (Inspect).
 - **Components it hits:** every docs page that gets a preview frame.
 
@@ -36,7 +36,7 @@ repeating it.
 
 - **Cause:** `port choice`.
 - **Original:** `DarkPreview` wraps each frame in `className="dark bg-background"`, so every CSS variable resolves dark whatever the page theme; the Tokens demo's two rows use `.dark` and `.light` the same way (`app/docs/surfaces/page.tsx:38-45,189,208`).
-- **Port:** `SchemeScope` in `src/lib/theme.ts` provides a scheme through Solid context, and `scheme()` (so every `color.x` and `surface(n)`) returns it while the read runs under a scope. The whole frame, the demos, the real `ColorPicker`, `Slider` and `ScrollArea` and a popup that the picker opens under it all draw dark in a light page (`screenshots/surfaces/problem-light.png`, `color-picker-light.png`). A token read outside a reactive owner (an event handler, a timer) sees the page's scheme instead. `scheme()` skips the lookup while no scope is mounted, so other pages pay nothing.
+- **Port:** `SchemeScope` in `src/lib/theme.ts` provides a scheme through Solid context, and `scheme()` (so every `color.x` and `surface(n)`) returns it while the read runs under a scope. `ComponentPreview`'s `scheme` prop wraps the frame in it with a `bg-background` backdrop. The whole frame, the demos, the real `ColorPicker`, `Slider` and `ScrollArea` and a popup that the picker opens under it all draw dark in a light page (`screenshots/surfaces/problem-light.png`, `color-picker-light.png`). A token read outside a reactive owner (an event handler, a timer) sees the page's scheme instead. `scheme()` skips the lookup while no scope is mounted, so other pages pay nothing.
 - **Fidelity:** exact in the screenshots; untested for token reads made in handlers inside a scope.
 - **Components it hits:** just this page; the scope is available to any page that forces a scheme.
 
@@ -102,7 +102,7 @@ repeating it.
 
 - **Cause:** `port choice`, `not ported yet` where noted.
 - **Original and Port:**
-  - `text-site-subtitle` (14/20) is a local constant, the port's `type` has no such role (`src/pages/surfaces.tsx:43`; `app/globals.css:420`). Compact sizes follow the ambient size in the source; the port has the default step only ([site.md, "Customise rows not ported"](site.md#customise-rows-not-ported-radius-size-icons-primitive), `not ported yet`).
+  - `text-site-subtitle` (14/20) is the shared `SUBTITLE` constant in `src/lib/doc-page.tsx`, the port's `type` has no such role (`app/globals.css:420`). Compact sizes follow the ambient size in the source; the port has the default step only ([site.md, "Customise rows not ported"](site.md#customise-rows-not-ported-radius-size-icons-primitive), `not ported yet`).
   - Section titles use a 16px line, SemiBold 600 for the variable 550 / 600 (README variable-font row), as in [introduction.md](introduction.md#section-titles-use-a-16px-line).
   - `font-mono` is Menlo (`ui-monospace` in the browser; same face in Chrome on macOS).
   - Substrate demo: the three columns are 181px wide in the 566px content box (191px in the source's 598px), the `border-border/40` edge is the dark literal `rgba(245,245,245,0.048)` because `color.border` is not a hex `withAlpha` can mix (`src/pages/surfaces/solution.tsx`).

@@ -7,6 +7,7 @@ import {
 	Show,
 } from "solid-js";
 import { ColorPicker } from "../../components/color-picker";
+import { ComponentPreview } from "../../lib/doc-page";
 import { color, surface } from "../../lib/theme";
 import {
 	ANNOTATION_BLUE,
@@ -16,7 +17,6 @@ import {
 	Callout,
 } from "./annotations";
 import { InviteDialog } from "./invite-dialog";
-import { PreviewFrame } from "./preview-frame";
 import { COLOR_PICKER_CODE, INVITE_DIALOG_CODE } from "./snippets";
 import { createVisibility } from "./visibility";
 
@@ -161,7 +161,12 @@ export function InviteDialogDemo() {
 	const [dialog, setDialog] = createSignal<HostElement>();
 	const [dropdown, setDropdown] = createSignal<HostElement>();
 	return (
-		<PreviewFrame testId="invite" code={INVITE_DIALOG_CODE} padding="compact">
+		<ComponentPreview
+			scheme="dark"
+			testId="invite"
+			code={INVITE_DIALOG_CODE}
+			padding="compact"
+		>
 			<div
 				ref={setContainer}
 				style={{
@@ -190,14 +195,15 @@ export function InviteDialogDemo() {
 					dropdown={dropdown}
 				/>
 			</div>
-		</PreviewFrame>
+		</ComponentPreview>
 	);
 }
 
 export function ColorPickerDemo() {
 	const visibility = createVisibility(0.5);
 	return (
-		<PreviewFrame
+		<ComponentPreview
+			scheme="dark"
 			testId="color-picker"
 			code={COLOR_PICKER_CODE}
 			padding="compact"
@@ -224,6 +230,6 @@ export function ColorPickerDemo() {
 					<ColorPicker defaultValue="#6B97FF" defaultFormatOpen />
 				</Show>
 			</div>
-		</PreviewFrame>
+		</ComponentPreview>
 	);
 }

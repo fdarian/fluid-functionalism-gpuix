@@ -1,11 +1,11 @@
 import { createSignal, For, type JSX } from "solid-js";
 import type { ShotContext } from "../lib/demo";
+import { DocSection, Prose, SubHeading } from "../lib/doc-page";
 import {
 	color,
 	type Scheme,
 	type as scale,
 	setThemeChoice,
-	weight,
 } from "../lib/theme";
 import { ColorPickerDemo, InviteDialogDemo } from "./surfaces/examples";
 import { ProblemDemo } from "./surfaces/problem";
@@ -39,9 +39,6 @@ export const menuKeywords = [
 	"mode",
 ];
 
-/** `text-site-subtitle`: the type scale has no such role yet. */
-const SUBTITLE = { fontSize: 14, lineHeight: 20 } as const;
-
 export async function scenarios(shot: ShotContext) {
 	// The wheel keeps GPUI's sign: negative scrolls down.
 	const scrollTo = async (testId: string) => {
@@ -63,9 +60,9 @@ export async function scenarios(shot: ShotContext) {
 
 	await scrollTo("problem");
 	shot.capture("problem");
-	await shot.click("problem-code");
+	await shot.click("problem-code-tab");
 	shot.capture("problem-code");
-	await shot.click("problem-preview");
+	await shot.click("problem-preview-tab");
 	await inLight("problem-light");
 	await scrollTo("tokens");
 	shot.capture("tokens");
@@ -86,59 +83,6 @@ export async function scenarios(shot: ShotContext) {
 	await scrollTo("color-picker");
 	shot.capture("color-picker");
 	await inLight("color-picker-light");
-}
-
-function Prose(props: { children: string }) {
-	return (
-		<text style={{ ...scale.body, color: color.mutedForeground }}>
-			{props.children}
-		</text>
-	);
-}
-
-/** `text-site-subtitle text-foreground`, with the `mt-*` the source gives it. */
-function Subtitle(props: { children: string; marginTop?: number }) {
-	return (
-		<div style={{ marginTop: props.marginTop }}>
-			<text
-				style={{
-					...SUBTITLE,
-					fontWeight: weight.semibold,
-					color: color.foreground,
-				}}
-			>
-				{props.children}
-			</text>
-		</div>
-	);
-}
-
-/** `DocSection`: 24px of air above, a 16px title tucked 8px against what follows. */
-function Section(props: { title: string; children: JSX.Element }) {
-	return (
-		<div
-			style={{
-				display: "flex",
-				flexDirection: "column",
-				gap: 16,
-				paddingTop: 24,
-			}}
-		>
-			<div style={{ marginBottom: -8 }}>
-				<text
-					style={{
-						...scale.title,
-						lineHeight: 16,
-						fontWeight: weight.semibold,
-						color: color.foreground,
-					}}
-				>
-					{props.title}
-				</text>
-			</div>
-			{props.children}
-		</div>
-	);
 }
 
 type Word = { text: string; theme?: Scheme };
@@ -210,7 +154,7 @@ export function Page(): JSX.Element {
 				<Description />
 			</div>
 
-			<Section title="The problem">
+			<DocSection title="The problem">
 				<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
 					<Prose>
 						In light mode, we use shadow behind white surfaces to signify
@@ -224,16 +168,16 @@ export function Page(): JSX.Element {
 					</Prose>
 				</div>
 				<ProblemDemo />
-			</Section>
+			</DocSection>
 
-			<Section title="The solution">
+			<DocSection title="The solution">
 				<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
 					<Prose>
 						Three pieces: tokens, substrate context, and the primitive.
 					</Prose>
 				</div>
 
-				<Subtitle marginTop={8}>Tokens</Subtitle>
+				<SubHeading marginTop={8}>Tokens</SubHeading>
 				<Prose>
 					Eight bg/shadow pairs. Light mode flattens to white after step 2
 					(shadow alone carries elevation). Dark mode keeps adding white-opacity
@@ -241,7 +185,7 @@ export function Page(): JSX.Element {
 				</Prose>
 				<TokensDemo />
 
-				<Subtitle marginTop={24}>Substrate</Subtitle>
+				<SubHeading marginTop={24}>Substrate</SubHeading>
 				<Prose>
 					Each container knows its own level and tells whatever opens inside. A
 					popover on the page and the same popover inside a dialog both end up
@@ -249,7 +193,7 @@ export function Page(): JSX.Element {
 				</Prose>
 				<SubstrateDemo />
 
-				<Subtitle marginTop={24}>Elevated</Subtitle>
+				<SubHeading marginTop={24}>Elevated</SubHeading>
 				<Prose>
 					Wrap a panel and the background settles at the level it belongs to.
 					The shadow doesn't change, so a popover still reads as a popover three
@@ -257,29 +201,29 @@ export function Page(): JSX.Element {
 				</Prose>
 				<ElevatedDemo />
 
-				<Subtitle marginTop={24}>Move through levels</Subtitle>
+				<SubHeading marginTop={24}>Move through levels</SubHeading>
 				<Prose>
 					Drag both knobs to choose which slice of the ladder to nest. Each
 					layer lifts a single step off the one it sits in — whether you span
 					two levels or all eight.
 				</Prose>
 				<ElevationStackDemo />
-			</Section>
+			</DocSection>
 
-			<Section title="Examples">
-				<Subtitle>Invite dialog</Subtitle>
+			<DocSection title="Examples">
+				<SubHeading marginTop={0}>Invite dialog</SubHeading>
 				<Prose>
 					Dialog at surface 5, role picker at surface 7 — no props passed
 					between them.
 				</Prose>
 				<InviteDialogDemo />
 
-				<Subtitle marginTop={24}>Color picker</Subtitle>
+				<SubHeading marginTop={24}>Color picker</SubHeading>
 				<Prose>
 					The format dropdown sits one level above the picker panel.
 				</Prose>
 				<ColorPickerDemo />
-			</Section>
+			</DocSection>
 		</div>
 	);
 }
