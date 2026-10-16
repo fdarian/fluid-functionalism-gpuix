@@ -267,7 +267,9 @@ export function TableDemo() {
 							<TableHead width={CITY_COLUMN}>City</TableHead>
 							<For each={MONTHS}>
 								{(month: string) => (
-									<TableHead width={columnWidth(month)}>{month}</TableHead>
+									<TableHead width={columnWidth(month)} alignRight>
+										{month}
+									</TableHead>
 								)}
 							</For>
 						</TableRow>
@@ -281,7 +283,11 @@ export function TableDemo() {
 									</TableCell>
 									<For each={MONTHS}>
 										{(month: string, col: () => number) => (
-											<TableCell width={columnWidth(month)}>
+											<TableCell
+												width={columnWidth(month)}
+												alignRight
+												tabularNums
+											>
 												{String(metric(row(), col()))}
 											</TableCell>
 										)}

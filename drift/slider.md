@@ -46,14 +46,14 @@ repeating it.
 - **Fidelity:** approximated.
 - **Components it hits:** none other.
 
-## Value label weight shifts at once, and digits are not tabular
+## Value label weight shifts at once
 
-- **Cause:** `gpuix gap` for the weight (see the variable-font row in [`README.md`](../README.md#missing-features)); `not ported yet` for `tabular-nums`.
-- **Original:** the compact value label goes normal -> semibold (`wght` 550) over 100 ms on hover or press (`slider.tsx:302-316`), and `tabular-nums` is on the label (`:309`), both bubbles (`:373`, `:1120`, `:1600`) and the default row's values (`:1722`, `:1782`, `:1845`).
-- **Port:** the weight switches at once, SemiBold 600 for 550 (`src/components/slider.tsx:341-346`). No `fontVariantNumeric` is set anywhere in `src/`, although gpuix has it (`packages/native/js/host.ts:640`), so digits take their proportional widths and a changing number can shift by a pixel inside its reserved box.
-- **Workaround:** a hidden copy at the heaviest weight reserves the width (`:426`).
-- **Fidelity:** approximated (weight), dropped (tabular digits).
-- **Components it hits:** the weight: every `StableLabel`. Tabular digits: any FF number readout (the port has no `fontVariantNumeric` anywhere).
+- **Cause:** `gpuix gap` (see the variable-font row in [`README.md`](../README.md#missing-features)).
+- **Original:** the compact value label goes normal -> semibold (`wght` 550) over 100 ms on hover or press (`slider.tsx:302-316`).
+- **Port:** the weight switches at once, SemiBold 600 for 550 (`src/components/slider.tsx:329`). The digits are `tabular-nums`, as in the source, so only the weight can change the label's width.
+- **Workaround:** a hidden copy at the heaviest weight reserves the width (`:425`), like the source's ghost span.
+- **Fidelity:** approximated (weight).
+- **Components it hits:** every `StableLabel`.
 
 ## Click-to-edit differs: no number field, no accessible name
 

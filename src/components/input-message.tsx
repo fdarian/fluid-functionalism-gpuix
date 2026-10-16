@@ -429,7 +429,13 @@ function QueuedRow(props: {
 						color={color.mutedForeground}
 					/>
 					<Show when={props.item.text !== ""}>
-						<text style={{ ...step().rowText, color: color.mutedForeground }}>
+						<text
+							style={{
+								...step().rowText,
+								color: color.mutedForeground,
+								fontVariantNumeric: "tabular-nums",
+							}}
+						>
 							{String(files())}
 						</text>
 					</Show>

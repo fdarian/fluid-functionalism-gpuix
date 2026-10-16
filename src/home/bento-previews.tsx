@@ -590,7 +590,9 @@ function SliderPreview() {
 					}}
 				>
 					<text style={muted}>{SLIDER_OPACITY.label}</text>
-					<text style={muted}>{String(basic())}</text>
+					<text style={{ ...muted, fontVariantNumeric: "tabular-nums" }}>
+						{String(basic())}
+					</text>
 				</div>
 				<Slider value={basic()} onChange={setBasic} showValue={false} />
 			</div>

@@ -114,15 +114,6 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Fidelity:** approximated (a hairline the source may not draw on opaque colours).
 - **Components it hits:** just this one.
 
-## Digits are not tabular
-
-- **Cause:** `not ported yet` (gpuix has `fontVariantNumeric`, `FORK.md:657`; unchecked on `<input>`).
-- **Original:** the fields and the trigger's hex are `tabular-nums` (`color-picker.tsx:1321`, `:1562`, `:2331`).
-- **Port:** none (`src/components/color-picker.tsx:1221-1232`, `:1800-1808`), so Inter's proportional digits shift as a value changes.
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** just this one.
-
 ## Saturation square: the OS cursor stays
 
 - **Cause:** `not ported yet`.

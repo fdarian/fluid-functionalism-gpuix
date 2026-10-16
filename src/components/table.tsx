@@ -163,7 +163,16 @@ export function TableRow(props: {
 	);
 }
 
-function Cell(props: { header: boolean; width?: number; children: JSX.Element }) {
+interface CellOptions {
+	width?: number;
+	/** The source's `text-right`. */
+	alignRight?: boolean;
+	/** The source's `tabular-nums`. */
+	tabularNums?: boolean;
+	children: JSX.Element;
+}
+
+function Cell(props: CellOptions & { header: boolean }) {
 	const scope = useTableScope();
 	const row = useRowState();
 	const metrics = () => cellMetrics[scope.size()];
@@ -188,6 +197,8 @@ function Cell(props: { header: boolean; width?: number; children: JSX.Element })
 					color: textColor(),
 					...(props.header ? {} : colorFade),
 					fontWeight: props.header ? weight.semibold : weight.normal,
+					textAlign: props.alignRight ? "right" : "left",
+					fontVariantNumeric: props.tabularNums ? "tabular-nums" : "normal",
 				}}
 			>
 				{props.children}
@@ -196,17 +207,27 @@ function Cell(props: { header: boolean; width?: number; children: JSX.Element })
 	);
 }
 
-export function TableHead(props: { width?: number; children: JSX.Element }) {
+export function TableHead(props: CellOptions) {
 	return (
-		<Cell header width={props.width}>
+		<Cell
+			header
+			width={props.width}
+			alignRight={props.alignRight}
+			tabularNums={props.tabularNums}
+		>
 			{props.children}
 		</Cell>
 	);
 }
 
-export function TableCell(props: { width?: number; children: JSX.Element }) {
+export function TableCell(props: CellOptions) {
 	return (
-		<Cell header={false} width={props.width}>
+		<Cell
+			header={false}
+			width={props.width}
+			alignRight={props.alignRight}
+			tabularNums={props.tabularNums}
+		>
 			{props.children}
 		</Cell>
 	);

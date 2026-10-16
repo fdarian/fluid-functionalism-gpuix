@@ -214,6 +214,7 @@ function ValueBubble(props: {
 						style={{
 							...scale.caption,
 							color: color.background,
+							fontVariantNumeric: "tabular-nums",
 							whiteSpace: "nowrap",
 						}}
 					>
@@ -326,6 +327,7 @@ function ValueDisplay(props: {
 		...scale.body,
 		lineHeight: scale.body.fontSize,
 		fontWeight: heavy ? weight.semibold : weight.normal,
+		fontVariantNumeric: "tabular-nums",
 		whiteSpace: "nowrap" as const,
 	});
 	const prefix = () => (props.label === undefined ? "" : `${props.label}: `);
@@ -420,7 +422,7 @@ function ValueDisplay(props: {
 
 	return (
 		<div style={{ position: "relative", flexShrink: 0 }}>
-			{/* Reserves the width of the widest value at the heaviest weight, so the track beside it never shifts. */}
+			{/* Tabular digits keep the number from changing width, but the weight shift normal -> semibold still does, so this reserves the widest value at semibold. */}
 			<text style={{ ...textStyle(true), opacity: 0 }}>{widest()}</text>
 			<div
 				style={{
@@ -1328,6 +1330,7 @@ function ComfortableSlider(props: ComfortableProps) {
 		...scale.body,
 		whiteSpace: "nowrap" as const,
 	};
+	const valueStyle = { ...textStyle, fontVariantNumeric: "tabular-nums" };
 	const textFade = springFade(["color"]);
 
 	return (
@@ -1462,7 +1465,7 @@ function ComfortableSlider(props: ComfortableProps) {
 								backgroundColor: color.surface2,
 							}}
 						>
-							<text style={{ ...textStyle, opacity: 0 }}>
+							<text style={{ ...valueStyle, opacity: 0 }}>
 								{formatValue(max())}
 							</text>
 						</div>
@@ -1532,14 +1535,14 @@ function ComfortableSlider(props: ComfortableProps) {
 						</text>
 					</Show>
 					<div style={{ flexGrow: 1 }} />
-					{/* Reserves the widest value, so the label never moves as the number changes. */}
+					{/* Stands in for the source's `minWidth: <max length>ch` on the value: the widest value, set in tabular digits, so the label never moves as the number changes. */}
 					<div style={{ position: "relative", flexShrink: 0 }}>
-						<text style={{ ...textStyle, opacity: 0 }}>
+						<text style={{ ...valueStyle, opacity: 0 }}>
 							{formatValue(max())}
 						</text>
 						<text
 							style={{
-								...textStyle,
+								...valueStyle,
 								position: "absolute",
 								top: 0,
 								right: 0,

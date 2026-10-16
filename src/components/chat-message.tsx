@@ -162,7 +162,13 @@ export function ChatMessage(props: {
 					}}
 				>
 					<Show when={showTime()}>
-						<text style={{ ...scale.caption, color: color.mutedForeground }}>
+						<text
+							style={{
+								...scale.caption,
+								color: color.mutedForeground,
+								fontVariantNumeric: "tabular-nums",
+							}}
+						>
 							{props.time}
 						</text>
 					</Show>

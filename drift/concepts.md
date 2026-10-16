@@ -285,8 +285,8 @@ Original: `app/concepts/quill/page.tsx`. Ported in `src/pages/concepts-quill.tsx
 ## Quill: the Initiatives table cells take text only and the name is muted
 
 - **Cause:** `port choice` (the port's `TableCell` / `TableHead` wrap their children in one `<text>`; the cell colour is fixed: muted unless the row is lit, foreground in the header).
-- **Original:** the name cell is `text-foreground`, the owner and target `text-muted-foreground`, the target `tabular-nums`, status a `Badge variant="dot" size="sm"` (`quill/page.tsx:228-246`).
-- **Port:** the name cell is muted like the others (lit rows go foreground). The status Badge sits in a row `div` inside the cell so it hugs its width instead of stretching (`src/pages/concepts-quill.tsx:425-445`); `size="compact"` stands for `sm`. The target digits are not tabular.
+- **Original:** the name cell is `text-foreground`, the owner and target `text-muted-foreground`, status a `Badge variant="dot" size="sm"` (`quill/page.tsx:228-246`).
+- **Port:** the name cell is muted like the others (lit rows go foreground). The status Badge sits in a row `div` inside the cell so it hugs its width instead of stretching (`src/pages/concepts-quill.tsx:425-445`); `size="compact"` stands for `sm`.
 - **Components it hits:** table (a cell colour prop would close it).
 - **Fidelity:** approximated.
 

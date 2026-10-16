@@ -49,11 +49,11 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
-## Timestamp: tabular numerals and type
+## Timestamp is a string
 
-- **Cause:** `not ported yet` (gpuix has `fontVariantNumeric`, `FORK.md:657`).
-- **Original:** the time span is `tabular-nums`; `time` is a `ReactNode` (`chat-message.tsx:127`, `:24`).
-- **Port:** proportional digits, `time` is `string` (`chat-message.tsx:169`, `:78`).
+- **Cause:** `port choice` (the timestamp is one `<text>`, which takes a string; the caller pre-formats).
+- **Original:** `time` is a `ReactNode` in a `tabular-nums` span (`chat-message.tsx:127`, `:24`).
+- **Port:** `time` is `string`, set in tabular digits like the source (`chat-message.tsx:166-175`, `:78`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

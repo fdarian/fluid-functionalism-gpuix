@@ -91,8 +91,8 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 ## Demo: the both-axis table is hand-built, shorter, and framed
 
 - **Cause:** `port choice` (reason not stated; the port's `Table` can overflow the viewport when its cells carry widths, as the Scrollbars page's "Double overflow" does, `src/pages/scrollbars/demos.tsx:251-292`, so the hand-built rows are not needed).
-- **Original:** the real `Table` / `TableRow index` / `TableCell` inside `ScrollArea orientation="both"`, `h-80 w-full` = 320px tall, no frame, full month names, `text-right tabular-nums` cells, row hover from the table (`app/docs/scrollbars/page.tsx:422-462`, snippet `:149-180`).
-- **Port:** flex rows of local `Cell`s (36px rows, 104 / 80px columns), 132px tall, inside a bordered 12px-radius frame, month names cut to three letters, no `tabular-nums`, no row hover (`src/demos/scroll-area.tsx:99-128`, `:201-261`).
+- **Original:** the real `Table` / `TableRow index` / `TableCell` inside `ScrollArea orientation="both"`, `h-80 w-full` = 320px tall, no frame, full month names, `text-right tabular-nums` cells (the port has both on the numbers), row hover from the table (`app/docs/scrollbars/page.tsx:422-462`, snippet `:149-180`).
+- **Port:** flex rows of local `Cell`s (36px rows, 104 / 80px columns), 132px tall, inside a bordered 12px-radius frame, month names cut to three letters, no row hover (`src/demos/scroll-area.tsx:99-128`, `:201-261`).
 - **Workaround:** fixed column widths, `flexShrink: 0` rows.
 - **Fidelity:** approximated.
 - **Components it hits:** table (README "Missing features": `display: table`).

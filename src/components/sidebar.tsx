@@ -461,6 +461,7 @@ export function SidebarMenuButton(props: {
 								...scale.micro,
 								fontWeight: props.active ? weight.semibold : weight.normal,
 								color: props.active ? color.foreground : color.mutedForeground,
+								fontVariantNumeric: "tabular-nums",
 								...colorFade,
 							}}
 						>
@@ -630,7 +631,13 @@ export function SidebarGroupLabel(props: { children: string; count?: number }) {
 				{props.children}
 			</text>
 			<Show when={props.count}>
-				<text style={{ ...scale.caption, color: color.mutedForeground }}>
+				<text
+					style={{
+						...scale.caption,
+						color: color.mutedForeground,
+						fontVariantNumeric: "tabular-nums",
+					}}
+				>
 					{props.count}
 				</text>
 			</Show>

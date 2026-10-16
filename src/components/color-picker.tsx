@@ -1277,6 +1277,8 @@ function ColorInput(props: {
 				paddingLeft: 8,
 				paddingRight: 8,
 				borderRadius: shape.input,
+				// On the wrapper: an `<input>` ignores the property in its own style but inherits it.
+				fontVariantNumeric: "tabular-nums",
 				cursor: scrub && !editing() ? "ew-resize" : "text",
 				userSelect: "none",
 				outlineWidth: focused() ? 1 : 0,
@@ -1910,6 +1912,7 @@ export function ColorPickerPopover(
 							...scale.body,
 							fontWeight: weight.normal,
 							color: color.foreground,
+							fontVariantNumeric: "tabular-nums",
 						}}
 					>
 						{valueLabel()}

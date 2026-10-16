@@ -338,6 +338,7 @@ export function QueuedStack(props: {
 														lineHeight: 10,
 														fontWeight: weight.semibold,
 														color: color.mutedForeground,
+														fontVariantNumeric: "tabular-nums",
 													}}
 												>
 													{String(count())}
@@ -519,7 +520,13 @@ function QueueCard(props: {
 									backgroundColor: color.hover,
 								}}
 							>
-								<text style={{ ...scale.micro, color: color.foreground }}>
+								<text
+									style={{
+										...scale.micro,
+										color: color.foreground,
+										fontVariantNumeric: "tabular-nums",
+									}}
+								>
 									{`+${files().length - 3}`}
 								</text>
 							</div>

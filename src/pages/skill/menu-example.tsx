@@ -73,7 +73,13 @@ const rowStyle = {
 
 function Count(props: { n: number }) {
 	return (
-		<text style={{ ...siteType.caption, color: color.mutedForeground }}>
+		<text
+			style={{
+				...siteType.caption,
+				color: color.mutedForeground,
+				fontVariantNumeric: "tabular-nums",
+			}}
+		>
 			{props.n}
 		</text>
 	);

@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 609 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 608 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 | | |
@@ -124,9 +124,9 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [button](drift/button.md) | 4 | 4 | 2 | 1 | 11 |
 | [card](drift/card.md) | 6 | 8 | 8 | 0 | 22 |
 | [carousel-dots](drift/carousel-dots.md) | 2 | 3 | 2 | 1 | 8 |
-| [chat-message](drift/chat-message.md) | 2 | 2 | 3 | 3 | 10 |
+| [chat-message](drift/chat-message.md) | 2 | 3 | 2 | 3 | 10 |
 | [checkbox-group](drift/checkbox-group.md) | 3 | 0 | 4 | 1 | 8 |
-| [color-picker](drift/color-picker.md) | 3 | 6 | 17 | 1 | 27 |
+| [color-picker](drift/color-picker.md) | 3 | 6 | 16 | 1 | 26 |
 | [combobox](drift/combobox.md) | 7 | 13 | 5 | 1 | 26 |
 | [command-menu](drift/command-menu.md) | 7 | 2 | 12 | 1 | 22 |
 | [compare](drift/compare.md) | 4 | 9 | 0 | 2 | 15 |
@@ -148,11 +148,11 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [scroll-area](drift/scroll-area.md) | 3 | 6 | 1 | 1 | 11 |
 | [scrollbars-page](drift/scrollbars-page.md) | 1 | 4 | 2 | 1 | 8 |
 | [select](drift/select.md) | 7 | 3 | 5 | 2 | 17 |
-| [sidebar](drift/sidebar.md) | 1 | 6 | 23 | 1 | 31 |
+| [sidebar](drift/sidebar.md) | 1 | 7 | 22 | 1 | 31 |
 | [site](drift/site.md) | 6 | 6 | 20 | 6 | 38 |
 | [sizes-page](drift/sizes-page.md) | 0 | 5 | 2 | 4 | 11 |
 | [skill-page](drift/skill-page.md) | 3 | 5 | 0 | 1 | 9 |
-| [slider](drift/slider.md) | 4 | 3 | 2 | 2 | 11 |
+| [slider](drift/slider.md) | 5 | 3 | 2 | 1 | 11 |
 | [surfaces](drift/surfaces.md) | 1 | 3 | 4 | 4 | 12 |
 | [switch](drift/switch.md) | 2 | 1 | 2 | 1 | 6 |
 | [table](drift/table.md) | 3 | 1 | 3 | 0 | 7 |
@@ -162,7 +162,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
 | [tooltip](drift/tooltip.md) | 4 | 5 | 1 | 1 | 11 |
 | [typography](drift/typography.md) | 4 | 0 | 1 | 6 | 11 |
-| **Total** | **142** | **193** | **209** | **65** | **609** |
+| **Total** | **143** | **195** | **206** | **64** | **608** |
 
 ### gpuix gaps across components
 
@@ -183,6 +183,7 @@ offer it. A count is given only where the code shows it.
 | dropdown submenus (audit rows 386, 721), tooltip | `window` and `document` mousemove listeners fire only when an element on the hit path has a mousemove listener, never over bare window background, so a safe polygon between trigger and popup cannot be tracked | A dwell timer for submenus (`SUBMENU_DWELL_MS`), a grace timer for the tooltip |
 | slider (Audio Mixer's `Volume: 78%` labels) | A trailing space at the end of a text run is not drawn: the label text `"Volume: "` renders as `Volume:` and the value touches it (`src/components/slider.tsx:346`, `:453-455`, visible in `screenshots/audio-mixer/initial.png`). Observed; not traced to gpuix's source | none |
 | any `<input>` with `textAlign: "right"` (the Button playground's Label field) | The style is accepted and does nothing in the test renderer (`drift/button.md`, "Playground: no Active switch, Label field not right-aligned"); unverified in a live window | none: left-aligned |
+| color-picker's value fields | `fontVariantNumeric` set in an `<input>`'s own style does nothing (measured: ten "1"s are the same width with `normal` and `tabular-nums`); set on a parent, the input inherits it | the property on the field's wrapper div (`src/components/color-picker.tsx`, `ColorInput`) |
 | tooltip and dialog demos | After a failed script run Bun aborts with `thread local panicked on drop` | none; the harness only |
 | screenshots, app-frame | The test renderer ignores the window options (titlebar, traffic lights), `setAppearance` changes nothing and `onAppearanceChange` never fires; `createAppearance` is the machine's | Captures pin the scheme with `setThemeChoice` and show no traffic lights |
 | screenshots | Batched keystrokes deliver an input's `onChange` after the whole batch | none |

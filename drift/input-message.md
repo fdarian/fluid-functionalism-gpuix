@@ -102,8 +102,8 @@ repeating it.
 ## Queued row icon strokes
 
 - **Cause:** `not ported yet`.
-- **Original:** the image, enter and down-arrow icons pass no `strokeWidth`, so they draw at lucide's 2 (`input-message.tsx:344,443,448`). The file count is `tabular-nums` (`:345`).
-- **Port:** strokes of 1.5 (`input-message.tsx:417,569,578`); the file count lacks `tabular-nums` (`:431`).
+- **Original:** the image, enter and down-arrow icons pass no `strokeWidth`, so they draw at lucide's 2 (`input-message.tsx:344,443,448`).
+- **Port:** strokes of 1.5 (`input-message.tsx:417,569,578`).
 - **Fidelity:** approximated.
 
 ## The ghost placeholder

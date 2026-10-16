@@ -116,11 +116,11 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 - **Fidelity:** exact for a plain or badged row; dropped for a dotted row and the other `StableLabel` users.
 - **Components it hits:** `StableLabel` users (tabs, tabs-subtle, card).
 
-## Badge: `tabular-nums`, `pointer-events-none`
+## Badge: `pointer-events-none`
 
-- **Cause:** `not ported yet`.
-- **Original:** `tabular-nums` on the digits; the badge is `pointer-events-none` (`sidebar-menu.tsx:1239`).
-- **Port:** no tabular figures (`src/components/sidebar.tsx:417-444`); the badge box is a normal hit target (the README says decorative `pointerEvents: none` was dropped on purpose).
+- **Cause:** `port choice` (decorative `pointerEvents: none` was dropped on purpose, see the README).
+- **Original:** the badge is `pointer-events-none`, its digits `tabular-nums` (`sidebar-menu.tsx:1239`).
+- **Port:** the digits are tabular too (`src/components/sidebar.tsx:417-444`); the badge box is a normal hit target (the README says decorative `pointerEvents: none` was dropped on purpose).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -156,8 +156,8 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 ## Group label: count column and spacing
 
 - **Cause:** `not ported yet` (the count spacing); the `SidebarGroup` wrapper is covered above.
-- **Original:** the site's count is a `h-5 min-w-5 px-1` centred box in the label row, `tabular-nums`, `text-site-caption` (12/16), so its digits share the badge column (centre 18px from the right edge) (`app/components/sidebar.tsx:62-64`). A label sits in a `SidebarGroup` (`p-2`), so groups are 16px apart (content `py-2` + group `p-2`).
-- **Port:** the count is a bare `caption` text right-aligned at 8px, so a two-digit count ends 4px right of the badge column and has no tabular figures; and groups touch (the label follows the last row, no 16px gap) (`src/components/sidebar.tsx:569-594`, `src/app.tsx:132-150`).
+- **Original:** the site's count is a `h-5 min-w-5 px-1` centred box in the label row, `tabular-nums` (the port has that too), `text-site-caption` (12/16), so its digits share the badge column (centre 18px from the right edge) (`app/components/sidebar.tsx:62-64`). A label sits in a `SidebarGroup` (`p-2`), so groups are 16px apart (content `py-2` + group `p-2`).
+- **Port:** the count is a bare `caption` text right-aligned at 8px, so a two-digit count ends 4px right of the badge column; and groups touch (the label follows the last row, no 16px gap) (`src/components/sidebar.tsx:569-594`, `src/app.tsx:132-150`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

@@ -72,10 +72,10 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 ## Overflow chip, count and edit/remove details
 
 - **Cause:** `not ported yet`.
-- **Original:** the "+n" chip is `bg-background/40`, `tabular-nums`, radius `attachmentRadius` (`:355-360`); the count is `tabular-nums` (`:255`); Edit and Remove are focusable buttons with a `focus-visible:ring-1` ring and labels `Edit queued message: <text>` / `Remove queued message: <text>` (`:387-388`, `:401-402`).
-- **Port:** the chip is `color.hover` (a 4% black wash, not 40% of the background), proportional digits (`queued-stack.tsx:546`, `:549`, `:354-361`); Edit and Remove are `role="button"` divs with no `tabIndex`, no focus ring, and the labels `Edit` / `Remove` (`:90-92`, `:80-118`).
+- **Original:** the "+n" chip is `bg-background/40`, radius `attachmentRadius` (`:355-360`); Edit and Remove are focusable buttons with a `focus-visible:ring-1` ring and labels `Edit queued message: <text>` / `Remove queued message: <text>` (`:387-388`, `:401-402`).
+- **Port:** the chip is `color.hover` (a 4% black wash, not 40% of the background), tabular digits as in the source (`queued-stack.tsx:546`, `:549`, `:354-361`); Edit and Remove are `role="button"` divs with no `tabIndex`, no focus ring, and the labels `Edit` / `Remove` (`:90-92`, `:80-118`).
 - **Workaround:** none.
-- **Fidelity:** approximated (chip tint, digits); dropped (keyboard focus ring, longer labels).
+- **Fidelity:** approximated (chip tint); dropped (keyboard focus ring, longer labels).
 - **Components it hits:** none other.
 
 ## Static font weight for the count

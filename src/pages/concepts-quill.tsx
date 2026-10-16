@@ -434,7 +434,9 @@ function DocumentBody() {
 										</Badge>
 									</div>
 								</TableCell>
-								<TableCell width={110}>{initiative.target}</TableCell>
+								<TableCell width={110} tabularNums>
+									{initiative.target}
+								</TableCell>
 							</TableRow>
 						)}
 					</For>

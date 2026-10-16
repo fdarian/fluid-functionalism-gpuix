@@ -99,6 +99,7 @@ function Panel(props: { caption: string; children: JSX.Element }) {
 function Cell(props: {
 	width: number;
 	right?: boolean;
+	tabular?: boolean;
 	strong?: boolean;
 	children: string;
 }) {
@@ -118,6 +119,7 @@ function Cell(props: {
 				style={{
 					...scale.body,
 					whiteSpace: "nowrap",
+					fontVariantNumeric: props.tabular ? "tabular-nums" : "normal",
 					color: props.strong ? color.foreground : color.mutedForeground,
 				}}
 			>
@@ -249,7 +251,7 @@ export function Demo() {
 										</Cell>
 										<For each={MONTHS}>
 											{(_month: string, col: () => number) => (
-												<Cell width={CELL_W} right>
+												<Cell width={CELL_W} right tabular>
 													{String(metric(row(), col()))}
 												</Cell>
 											)}
