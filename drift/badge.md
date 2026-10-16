@@ -10,7 +10,7 @@ Checked with no drift: the 17 hexes, heights (24 / 20), paddings (10 / 8), gaps 
 - **Cause:** `gpuix gap`.
 - **Original:** `[text-box:trim-both_cap_alphabetic]` on the label span so the letterforms centre in the fixed-height pill (`registry/default/badge.tsx:148-151`).
 - **Port:** the label keeps the type scale's line height (16 for `caption`, 14 for `micro`, `src/lib/theme.ts:265-266`) inside a 24px or 20px pill, flex-centred (`src/components/badge.tsx:28-31`, `:79-90`, `:98-100`).
-- **gpuix lacks:** `text-box-trim` / `text-box-edge`: `StyleDesc` has neither (searched `packages/native/js/host.ts`, `packages/native/src`), so a label is centred by its full line box. README "gpuix limitations", badge row.
+- **gpuix lacks:** `text-box-trim` / `text-box-edge`: `StyleDesc` has neither (searched `packages/native/js/host.ts`, `packages/native/src`), so a label is centred by its full line box. README "gpuix gaps", badge row.
 - **Workaround:** none. Visible only as roughly a pixel of optical drift.
 - **Fidelity:** approximated.
 - **Components it hits:** any component that trims its label (button, inline card title, `CardButton`, `CardFeature`).

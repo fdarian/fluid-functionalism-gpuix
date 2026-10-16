@@ -20,7 +20,7 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Original:** n/a, this is about the harness.
 - **Port:** the real window sets `titlebarTransparent`, `trafficLightX/Y` (`src/main.tsx:15-17`) and mirrors Light / Dark to `setAppearance` (`src/app.tsx:239-244`).
 - **gpuix lacks:** the offscreen test window has no traffic lights, and `setAppearance` validates and does nothing, so `getAppearance()` stays the machine's and `appearanceChange` never fires (`packages/native/src/test_renderer.rs:834-840`, `packages/native/js/testing.ts:902-907`).
-- **Workaround:** the screenshots pin the theme with `setThemeChoice("dark")` before rendering and flip it through the real control for the light capture (`scripts/screenshots.tsx:201`, `:211-221`). README "gpuix limitations" lists the bug.
+- **Workaround:** the screenshots pin the theme with `setThemeChoice("dark")` before rendering and flip it through the real control for the light capture (`scripts/screenshots.tsx:201`, `:211-221`). README "gpuix gaps" lists the bug.
 - **Fidelity:** approximated (captures show the frame without the traffic lights).
 - **Components it hits:** every demo capture.
 
@@ -141,7 +141,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`.
 - **Original:** `ThemeProvider` adds `.transitioning` around the class swap, so border-radius, background, colour, border, fill and stroke ease over 180ms; the first apply is skipped (`registry/default/lib/theme-context.tsx:40-67`, `app/globals.css:856-866`).
-- **Port:** `themeChoice` flips the palette signal and every `color.*` getter re-reads (`src/lib/theme.ts:191-228`); no colour transition is declared on the frame, panels or text. Gpuix has colour transitions (`colorFade`, `src/lib/theme.ts:309-314`, README "gpuix limitations" preface), so nothing stops it. Not checked live.
+- **Port:** `themeChoice` flips the palette signal and every `color.*` getter re-reads (`src/lib/theme.ts:191-228`); no colour transition is declared on the frame, panels or text. Gpuix has colour transitions (`colorFade`, `src/lib/theme.ts:309-314`, README "gpuix gaps" preface), so nothing stops it. Not checked live.
 - **Workaround:** none.
 - **Fidelity:** dropped (the swap is a hard cut).
 - **Components it hits:** every page.

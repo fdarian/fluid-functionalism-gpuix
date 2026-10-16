@@ -13,7 +13,7 @@ repeating it.
 - **Cause:** `gpuix gap`.
 - **Original:** `motion.span animate={{ rotate: open ? 90 : 0 }}` with `spring.fast` (0.08s, no bounce) (`thinking-steps.tsx:112-125`).
 - **Port:** `Chevron` rewrites an SVG `<g transform="rotate(a 12 12)">` from a 100ms ease-out on the shared frame clock (`thinking-steps.tsx:56-88`).
-- **gpuix lacks:** rotation (README "gpuix limitations", CSS transforms row; no `transform`, `~/code/fdarian/gpuix/FORK.md:876`). `motion.path` animates `d`, `strokeWidth` and the other shape attributes but not a `transform` (`packages/native/js/host.ts:292-322`).
+- **gpuix lacks:** rotation (README "gpuix gaps", CSS transforms row; no `transform`, `~/code/fdarian/gpuix/FORK.md:876`). `motion.path` animates `d`, `strokeWidth` and the other shape attributes but not a `transform` (`packages/native/js/host.ts:292-322`).
 - **Workaround:** whole degrees, so GPUI's SVG cache (keyed by the bytes) holds at most 91 entries. The effect reads `angle()` inside `createEffect` (`:69`), so by reading it re-subscribes after every step and restarts the tween from the current angle; the move is then closer to an exponential ease-out than to a 100ms cubic, with a final snap when the original 100ms elapses.
 - **Fidelity:** approximated. A tween rather than the critically damped spring, driven from JS.
 - **Components it hits:** any disclosure chevron (accordion, card, color-picker); file-thumbnail's spinner uses the same SVG-rewrite technique.
@@ -33,7 +33,7 @@ repeating it.
 - **Cause:** `gpuix gap`.
 - **Original:** the trigger label eases between weight 400 and 550 over 80ms, and step labels are 550 (`thinking-steps.tsx:98-105`, `:444`).
 - **Port:** the weight switches at once, SemiBold 600 for 550 (`StableLabel`, `src/lib/stable-label.tsx`; `thinking-steps.tsx:157-161`, `:327`).
-- **gpuix lacks:** variable-font axes. See the README "gpuix limitations" row "Variable-font axes".
+- **gpuix lacks:** variable-font axes. See the README "gpuix gaps" row "Variable-font axes".
 - **Workaround:** static cuts; a hidden semibold copy reserves the width.
 - **Fidelity:** approximated.
 - **Components it hits:** every `StableLabel` (tabs, tabs-subtle, sidebar, menu rows), card, table, banner.

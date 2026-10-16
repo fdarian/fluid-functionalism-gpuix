@@ -13,7 +13,7 @@ repeating it.
 - **Cause:** `gpuix gap`.
 - **Original:** inline, the banner inside its row scales from 0.4 to 1 on appear (slow spring, a fast tier after the row) and shrinks from 1 to 0.6 from its top edge on dismiss, `transformOrigin: "top"` (`banner.tsx:177-189`, `:245`, `:298`, `:323-332`, `:356`).
 - **Port:** the banner only fades (`banner.tsx:341-380`).
-- **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:876-887`; README "gpuix limitations", CSS transforms row).
+- **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:876-887`; README "gpuix gaps", CSS transforms row).
 - **Workaround:** none; the row's height tween and the fade carry the motion.
 - **Fidelity:** approximated (height and fade, no scale).
 - **Components it hits:** any enter or exit that scales.

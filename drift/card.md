@@ -121,7 +121,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Cause:** `gpuix gap`.
 - **Original:** `transition-[font-variation-settings]` eases the title between regular and semibold when the card is selected (`:596-605`); the site's semibold is the variable `wght 550`.
 - **Port:** the weight switches at once between 400 and the nearest static cut, SemiBold 600 (`src/components/card.tsx:598-627`); the invisible semibold copy in flow keeps the row from reflowing.
-- **gpuix lacks:** variable-font axes: fonts render only their default instance, so there is one static file per weight and nothing to interpolate (`~/code/fdarian/gpuix/README.md:756`, `:5302`; `src/lib/fonts.ts`). README "gpuix limitations", card and table row.
+- **gpuix lacks:** variable-font axes: fonts render only their default instance, so there is one static file per weight and nothing to interpolate (`~/code/fdarian/gpuix/README.md:756`, `:5302`; `src/lib/fonts.ts`). README "gpuix gaps", card and table row.
 - **Workaround:** static cuts.
 - **Fidelity:** approximated (no easing, 600 for 550).
 - **Components it hits:** every `StableLabel` (`src/lib/stable-label.tsx`): tabs, tabs-subtle, sidebar, menu rows; also `CardFeature`'s title (semibold 550 in the source, `:886`).
@@ -131,7 +131,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Cause:** `gpuix gap`.
 - **Original:** the link button's arrow is an arrow-right with `-rotate-45` (`:958`).
 - **Port:** the arrow-up-right glyph is drawn instead (`src/components/card.tsx:30`, `:971-979`).
-- **gpuix lacks:** `rotate` (no `transform`; `~/code/fdarian/gpuix/FORK.md:876-887`). README "gpuix limitations", CSS transforms row.
+- **gpuix lacks:** `rotate` (no `transform`; `~/code/fdarian/gpuix/FORK.md:876-887`). README "gpuix gaps", CSS transforms row.
 - **Workaround:** the glyph swap.
 - **Fidelity:** exact for the resting pose, no rotation tween.
 - **Components it hits:** any rotated glyph.
@@ -160,7 +160,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Cause:** `gpuix gap`.
 - **Original:** `[text-box:trim-both_cap_alphabetic]` on the inline-card title, `CardFeature`'s title and `CardButton`'s label (`:564-565`, `:883`, `:965`).
 - **Port:** no trim (`src/components/card.tsx:598-627`, `:859-865`, `:957-969`).
-- **gpuix lacks:** `text-box-trim`; README "gpuix limitations", badge row.
+- **gpuix lacks:** `text-box-trim`; README "gpuix gaps", badge row.
 - **Workaround:** none.
 - **Fidelity:** approximated (about a pixel).
 - **Components it hits:** see `drift/badge.md`.

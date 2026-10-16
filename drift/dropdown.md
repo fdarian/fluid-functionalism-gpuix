@@ -155,7 +155,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 ## Search field is not sticky and cannot sit in an inline panel
 
-- **Cause:** `not ported yet`. gpuix has `position: sticky` (`~/code/fdarian/gpuix/FORK.md:560`; README gpuix limitations intro); the comment at `src/components/dropdown-search.tsx:24-28` ("gpuix has no `position: sticky`") is stale. BASE-UI-AUDIT.md row 415 records it as not adopted.
+- **Cause:** `not ported yet`. gpuix has `position: sticky` (`~/code/fdarian/gpuix/FORK.md:560`; README gpuix gaps intro); the comment at `src/components/dropdown-search.tsx:24-28` ("gpuix has no `position: sticky`") is stale. BASE-UI-AUDIT.md row 415 records it as not adopted.
 - **Original:** the field is `sticky top-0 z-20 -mx-1 -mt-1 mb-0.5` inside the scrolling list, `border-b border-border/60`, painted with the surface so rows scroll underneath; `DropdownSearch` in an inline `Dropdown` is simply open (`registry/default/dropdown-search.tsx:228-231`, `:317-331`).
 - **Port:** `DropdownSearch` renders nothing and hands its props to `DropdownContent`, which draws the field above the scroller (`src/components/dropdown-search.tsx:35-44`, `:69-141`; `src/components/dropdown.tsx:578-603`) with the rows' top padding cut to 2px (`:610`). Placed in an inline `Dropdown` it throws "DropdownSearch must be inside a DropdownContent" (`dropdown-search.tsx:36-39`). Visually the first frame matches; rows no longer slide under the field, and the thumb (if any) would start below it.
 - **Fidelity:** approximated.

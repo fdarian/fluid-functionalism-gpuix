@@ -40,7 +40,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 - **Cause:** `not ported yet`.
 - **Original:** `transition-colors duration-80` on the root (`:21`); the surface eases `box-shadow` over 180ms on `cubic-bezier(0.23,1,0.32,1)` and `background-color` over 80ms, both 80ms while pressed (`:212`).
 - **Port:** every state switches at once: `hover` / `active` style objects with no `transition*` (`src/components/button.tsx:210-233`); the ghost label colour follows the `hovered` signal (`:125-134`) and `<text>` carries no `colorFade` (`src/lib/theme.ts:310-314`, used only by `Icon fade`, which the button does not pass).
-- **Workaround:** none. README's "gpuix limitations" no longer lists colour transitions; gpuix animates `color`, `backgroundColor`, `outlineColor` and `boxShadow` on state-style changes (`FORK.md:815-818`). The README's "How the first three components translate" row ("none: state styles switch instantly") is stale.
+- **Workaround:** none. README's "gpuix gaps" no longer lists colour transitions; gpuix animates `color`, `backgroundColor`, `outlineColor` and `boxShadow` on state-style changes (`FORK.md:815-818`). The README's "How the first three components translate" row ("none: state styles switch instantly") is stale.
 - **Fidelity:** dropped.
 - **Components it hits:** every component with a hover or press fill; `Icon` has `fade` for colour only.
 
@@ -67,7 +67,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 - **Cause:** `gpuix gap`.
 - **Original:** `[text-box:trim-both_cap_alphabetic]` on the label span (`:265`).
 - **Port:** the label keeps its 20px (18 compact) line box inside the flex-centred button (`src/components/button.tsx:159-168`).
-- **gpuix lacks:** `text-box-trim`; see the badge row in README "gpuix limitations" and `drift/badge.md`.
+- **gpuix lacks:** `text-box-trim`; see the badge row in README "gpuix gaps" and `drift/badge.md`.
 - **Workaround:** none.
 - **Fidelity:** approximated (about a pixel of optical drift).
 - **Components it hits:** every trimmed label (badge, card title in inline cards, `CardButton`).
