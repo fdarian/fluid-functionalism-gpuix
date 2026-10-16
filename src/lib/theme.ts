@@ -306,6 +306,13 @@ export const motion = {
 	snap: { duration: 0 },
 } satisfies Record<string, MotionTransition>;
 
+/** FF's `transition-colors duration-80`: the colour eases to its new value instead of switching. */
+export const colorFade = {
+	transitionProperty: "color",
+	transitionDuration: "80ms",
+	transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+} as const;
+
 /** The `focus-visible` ring: a 1px outline `offset` px from the box (negative draws inside). */
 export function focusRing(offset: number): StateStyleDesc {
 	return {
