@@ -5,7 +5,7 @@ Can [gpuix](https://github.com/remorses/gpuix), a GPUI-backed renderer with no D
 
 Yes. 32 demo pages cover every component of the library (36 component files, counting shared parts such as
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
-behaviour. What does not carry over is catalogued below: [16 gpuix bugs and 15 missing features](#gpuix-limitations).
+behaviour. What does not carry over is catalogued below: [15 gpuix bugs and 23 missing features](#gpuix-limitations).
 
 | | |
 |---|---|
@@ -102,13 +102,13 @@ own file in [`limitations/`](limitations) has the detail. "Bug" means gpuix does
 | accordion, banner, button, card, carousel-dots, chat-message, input-copy, input-message, tabs, tabs-subtle, thinking-steps (all use `buttonProps`) | `buttonProps` handles keydown on the way up, so a `buttonProps` element nested in another is clicked twice on Enter: the inner one clicks itself and the outer one clicks the same target. The fix is to act only when `target === currentTarget` | none; nested cases are not counted |
 | dialog, mobile-drawer | `DialogBackdrop` closes on mousedown; the DOM and Base UI close on click | The app's own backdrop div closes on a click that presses and releases on it |
 | dialog, mobile-drawer | A reactive prop change on `DialogPopup` re-creates the popup and loses focus | `aria-labelledby` and `-describedby` are static ids |
-| scroll-area | A horizontal or both-axis scroller does not extend its scroll width for content that overflows through descendants (a block wrapper clamps to the viewport width), and `width: "max-content"` is rejected | The viewport is a flex row with `alignItems: "flex-start"` |
+| scroll-area | A horizontal or both-axis scroller does not extend its scroll width for content that overflows through descendants (a block wrapper clamps to the viewport width) | The viewport is a flex row with `alignItems: "flex-start"` |
 | any nested scrollers (scroll-area, combobox, select, sidebar) | One large wheel event chains its remainder to the outer scroller in the same event; a browser latches the whole event to the first scroller | none |
 | select, combobox | Enter in a form `<input>` with an empty `required` control does nothing; HTML implicit submission validates, sets `invalid` and moves focus. Only `requestSubmit()` validates | The demos submit through `requestSubmit()` |
-| dropdown submenus (audit rows 386, 721) | `window` and `document` mousemove listeners fire only when an element on the hit path has a mousemove listener, never over bare window background, so a safe polygon between trigger and popup cannot be tracked | A dwell timer for submenus (`SUBMENU_DWELL_MS`) |
+| dropdown submenus (audit rows 386, 721), tooltip | `window` and `document` mousemove listeners fire only when an element on the hit path has a mousemove listener, never over bare window background, so a safe polygon between trigger and popup cannot be tracked | A dwell timer for submenus (`SUBMENU_DWELL_MS`), a grace timer for the tooltip |
 | tooltip and dialog demos | After a failed script run Bun aborts with `thread local panicked on drop` | none; the harness only |
 | screenshots, app-frame | The test renderer ignores the window options (titlebar, traffic lights), `setAppearance` changes nothing and `onAppearanceChange` never fires; `createAppearance` is the machine's | Captures pin the scheme with `setThemeChoice` and show no traffic lights |
-| screenshots | `simulateKeystrokes` takes GPUI key names (`down`, `tab`, `enter`), not DOM ones | `shot.press` passes them through |
+| screenshots | `simulateKeystrokes` takes GPUI key names (`down`, `tab`, `enter`), not DOM ones, and delivers a keydown only: `space` never gets its key-up or click | `shot.press` passes the names through; scenarios press Enter, which activates on keydown |
 | screenshots | `nativeSimulateScrollWheel` keeps GPUI's sign: negative `deltaY` scrolls down, where `onWheel` sees positive-down | Scenarios pass negative deltas |
 | screenshots | A mouse move without a held button is not delivered to an element that holds pointer capture; batched keystrokes deliver an input's `onChange` after the whole batch | `shot.moveHeld` sends the move with a button held; none for the batch |
 | not counted | `relatedTarget` and `target` on focus events are element ids (numbers), not elements | none |
@@ -118,21 +118,29 @@ own file in [`limitations/`](limitations) has the detail. "Bug" means gpuix does
 
 | Used by | What | Workaround here |
 |---|---|---|
-| select, combobox, dropdown (`PopupSurface`) | CSS transforms: no scale or rotate, so the popup's `scaleY: 0.96` entrance is impossible (audit rows 525, 606) | The popup slides from the reported side and fades |
+| popups (select, combobox, dropdown, color-picker, tooltip, dialog), chevrons (accordion, card, color-picker, thinking-steps), scale-in entrances (banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack, radio-group), spinners (file-thumbnail) | CSS transforms: no scale, rotate or translate, so the popup's `scaleY: 0.96` entrance and every turn and pop is impossible (audit rows 525, 606) | Popups slide from the reported side and fade; glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom` |
 | slider | `<input type="range">` (audit row 310) | A pointer-handled track and thumbs |
 | select, combobox (`FormValue`) | `<input type="hidden">` | A real input that is invisible, unreachable and `aria-hidden` |
-| app-frame | `appRegion`, a window drag region: the top bar cannot drag the window or zoom it on double-click | none |
 | accordion, ask-user-questions, input-message, sidebar, thinking-steps (`createMeasuredHeight`) | Motion on `width: auto`, and layout size morphs | The content box reports its size through `onLayout` and the outer box tweens to that number |
 | not counted | Container queries | none |
 | not counted | `:has()` | none |
-| not counted | `display: table` and `inline-*` | Flex rows and columns |
+| table | `display: table`, `border-collapse` and `inline-*`: columns cannot size to their widest cell | Flex rows with equal-width cells and an optional fixed `width` |
 | not counted | `em`, `rem`, `vw` and `vh` units | Pixel numbers |
 | not counted | `disabled` on anything but an input: other elements get `aria-disabled` only, so they stay focusable and clickable | `aria-disabled` plus the component's own guard |
-| not counted | A per-input caret colour | The default caret |
 | not counted | `url()` backgrounds and masks | `<img>` elements and SVG `<mask>` |
 | file-thumbnail | A canvas pixel path (a PDF page preview) | The caller passes a type and the thumbnail shows a glyph |
 | not counted | Effect groups (`filter`, `backdrop-filter`, `mask`, `clip`, group opacity) off macOS | none |
 | carousel-dots, file-thumbnail, thinking-indicator, thinking-steps | `requestAnimationFrame` | `lib/clock.ts`: one shared, ref-counted `setInterval` frame clock |
+| dropdown, select, combobox, scroll-area | Intrinsic `width`: `max-content`, `min-content` and `fit-content` are rejected outside grid tracks, so a popup cannot grow to its widest row | A fixed panel width (288px, 224px for submenus), `popupWidth`, `minWidth: "anchor-size(width)"` |
+| badge | `text-box-trim` / `text-box-edge`: a label is centred by its full line box | Flex centring in a fixed-height pill (about a pixel of drift) |
+| card, table (every `StableLabel`: tabs, tabs-subtle, sidebar, menu rows) | Variable-font axes (`fontVariationSettings`): only a font's default instance renders, so the weight cannot ease between 400 and 550 | Static cuts; the weight switches at once, SemiBold 600 for 550 |
+| combobox (command-menu, dropdown-search, input-group, input-message) | IME composition: no `composition*` events, `isComposing` is always `false`, and `keydown` cannot cancel a key an IME consumed | none; IME input is untested |
+| button (every `buttonProps` button) | A keyboard `:active` state: a held Space does not play the pressed look | none; Space still activates on key-up |
+| thinking-steps | `filter` in `motion` targets: `blur()` paints as a static style but cannot be tweened | Opacity only |
+| thinking-indicator | Percentage insets in `motion` (`top: "80%"`) | Pixel offsets from the line height |
+| color-picker | A JS-visible CSS colour resolver: named colours and `color-mix()` resolve natively for styles only | `parseColor` reads hex, `rgb(a)`, `hsl(a)` and `oklch`; a name is rejected |
+| queued-stack | An input-device signal: `matchMedia` fixes `hover` to `hover` and `pointer` to `fine`, so `(hover: none)` never matches | none; desktop only |
+| combobox, select (any form) | A submit button: `SubmitEvent.submitter` is always `null` | The demos call `form.requestSubmit()` |
 
 ## Harness and shared-lib notes
 
@@ -149,8 +157,8 @@ Quirks of this repo's own code, kept apart from the gpuix list above.
   scroll with the content. Rows are measured relative to that wrapper, so rects do not change as the list scrolls.
 - **Escape.** `PopupSurface` joins gpuix's dismiss-layer stack while open, so Escape closes only the topmost popup,
   even inside a dialog.
-- **Dialog.** gpuix's `Dialog` unmounts the instant `open` goes false, so a local `mounted` signal and `once()`
-  keep the content through the fade; a trigger pressed during the fade is ignored. The backdrop is the app's own,
+- **Dialog.** gpuix's `Dialog` unmounts the instant `open` goes false, so a local `mounted` signal keeps the
+  content through the fade; a trigger pressed during the fade is ignored. The backdrop is the app's own,
   because gpuix's closes on mousedown.
 - **Screenshots run on the test renderer** (`scripts/screenshots.tsx`).
   - Captures show no traffic lights or native titlebar, and pin the theme to Dark (`setThemeChoice`), because the
