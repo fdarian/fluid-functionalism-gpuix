@@ -5,6 +5,7 @@ import {
 	createEffect,
 	createSignal,
 	type JSX,
+	onCleanup,
 	onMount,
 	Show,
 	useContext,
@@ -71,6 +72,11 @@ export function SidebarMenu(props: { children: JSX.Element }) {
 			rows.set(index, entry);
 			hover.registerItem(index, element);
 			setRowsVersion(rowsVersion() + 1);
+			// A removed row must leave the map: the active overlay returns at the first entry that claims to be active.
+			onCleanup(() => {
+				rows.delete(index);
+				setRowsVersion(rowsVersion() + 1);
+			});
 			return index;
 		},
 		trackReflow(ms) {
@@ -177,7 +183,7 @@ export function SidebarMenuButton(props: {
 	const lit = () => props.active === true || isHovered();
 	const rowHeight = level === 0 ? height.menuRow : height.menuSubRow;
 	// Trailing reservation: the badge's 24px slot, its 8px inset and a 4px gap.
-	const paddingRight = props.badge === undefined ? 8 : 36;
+	const paddingRight = () => (props.badge === undefined ? 8 : 36);
 
 	return (
 		<div
@@ -197,7 +203,7 @@ export function SidebarMenuButton(props: {
 				alignItems: "center",
 				gap: 8,
 				paddingLeft: 8,
-				paddingRight,
+				paddingRight: paddingRight(),
 				borderRadius: shape.item,
 				cursor: "pointer",
 				userSelect: "none",
@@ -219,6 +225,7 @@ export function SidebarMenuButton(props: {
 				}
 				text={props.label}
 				heavy={props.active === true}
+				truncate
 				color={lit() ? color.foreground : color.mutedForeground}
 				grow={props.dot === undefined}
 			/>
@@ -361,6 +368,24 @@ export function SidebarHeader(props: { children: JSX.Element }) {
 				flexDirection: "column",
 				gap: 8,
 				padding: 8,
+			}}
+		>
+			{props.children}
+		</div>
+	);
+}
+
+export function SidebarFooter(props: { children: JSX.Element; flushBottom?: boolean }) {
+	return (
+		<div
+			style={{
+				flexShrink: 0,
+				display: "flex",
+				flexDirection: "column",
+				gap: 8,
+				padding: 8,
+				// A callout alone in the footer sits on the rail's bottom edge.
+				paddingBottom: props.flushBottom === true ? 0 : 8,
 			}}
 		>
 			{props.children}
