@@ -5,7 +5,7 @@ Can [gpuix](https://github.com/remorses/gpuix), a GPUI-backed renderer with no D
 
 Yes. 32 demo pages cover every component of the library (36 component files, counting shared parts such as
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
-behaviour. What does not carry over is catalogued below: [15 gpuix bugs and 23 missing features](#gpuix-limitations).
+behaviour. What does not carry over is catalogued below: [15 gpuix bugs and 24 missing features](#gpuix-limitations).
 
 | | |
 |---|---|
@@ -131,6 +131,7 @@ own file in [`limitations/`](limitations) has the detail. "Bug" means gpuix does
 | not counted | `em`, `rem`, `vw` and `vh` units | Pixel numbers |
 | not counted | `disabled` on anything but an input: other elements get `aria-disabled` only, so they stay focusable and clickable | `aria-disabled` plus the component's own guard |
 | not counted | `url()` backgrounds and masks | `<img>` elements and SVG `<mask>` |
+| command-menu (and every long demo page) | Culling: elements a scroller clips away are still built, laid out and painted each frame, so a page of many menus costs several times a short one (`<virtual-list>` is the only exception) | `DemoCard` hides its content with `display: none` while it is far from the page scroller (`limitations/command-menu.md`) |
 | file-thumbnail | A canvas pixel path (a PDF page preview) | The caller passes a type and the thumbnail shows a glyph |
 | not counted | Effect groups (`filter`, `backdrop-filter`, `mask`, `clip`, group opacity) off macOS | none |
 | carousel-dots, file-thumbnail, thinking-indicator, thinking-steps | `requestAnimationFrame` | `lib/clock.ts`: one shared, ref-counted `setInterval` frame clock |

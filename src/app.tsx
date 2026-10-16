@@ -1,4 +1,8 @@
-import { createAppearance, useGpuixRequired } from "@gpuix/solid";
+import {
+	createAppearance,
+	type HostElement,
+	useGpuixRequired,
+} from "@gpuix/solid";
 import {
 	createEffect,
 	createSignal,
@@ -20,6 +24,7 @@ import {
 } from "./components/sidebar";
 import { AppFrame, PANEL_INNER_RADIUS } from "./lib/app-frame";
 import type { Demo } from "./lib/demo";
+import { PageScrollerContext } from "./lib/demo-kit";
 import {
 	createSiteMenu,
 	SITE_MENU_SHORTCUT,
@@ -229,6 +234,7 @@ export function App(props: { demos: readonly Demo[]; initialPage?: string }) {
 		props.demos.find((demo) => demo.slug === page());
 	bindSystemScheme(createAppearance());
 	const siteMenu = createSiteMenu();
+	const [pageScroller, setPageScroller] = createSignal<HostElement>();
 	const renderer = useGpuixRequired();
 	const setAppearance = renderer.setAppearance;
 	if (setAppearance === undefined) {
@@ -255,6 +261,7 @@ export function App(props: { demos: readonly Demo[]; initialPage?: string }) {
 					onSearch={() => siteMenu.setOpen(true)}
 				/>
 				<div
+					ref={setPageScroller}
 					style={{
 						flexGrow: 1,
 						minWidth: 0,
@@ -275,14 +282,16 @@ export function App(props: { demos: readonly Demo[]; initialPage?: string }) {
 							paddingBottom: 40,
 						}}
 					>
-						<Switch>
-							<Match when={page() === SHOWCASE}>
-								<Showcase demos={props.demos} onPage={setPage} />
-							</Match>
-							<Match when={current()} keyed>
-								{(demo: Demo) => <DemoPage demo={demo} />}
-							</Match>
-						</Switch>
+						<PageScrollerContext.Provider value={pageScroller}>
+							<Switch>
+								<Match when={page() === SHOWCASE}>
+									<Showcase demos={props.demos} onPage={setPage} />
+								</Match>
+								<Match when={current()} keyed>
+									{(demo: Demo) => <DemoPage demo={demo} />}
+								</Match>
+							</Switch>
+						</PageScrollerContext.Provider>
 					</div>
 				</div>
 				<div style={{ width: 296, flexShrink: 0, padding: 16 }}>
