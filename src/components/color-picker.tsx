@@ -1,5 +1,6 @@
 import {
 	buttonProps,
+	document,
 	type HostElement,
 	type HostMouseEvent,
 	type KeyEvent,
@@ -32,7 +33,7 @@ import {
 	POPUP_OFFSET,
 } from "../lib/popup";
 import { createPresence } from "../lib/presence";
-import { createPressToggle, returnFocusTo } from "../lib/popup-trigger";
+import { createPressToggle } from "../lib/popup-trigger";
 import { createTypeahead } from "../lib/typeahead";
 import { color, height, nestedRadius, radius, shape, type as scale, scheme, shadow3, motion as tween, weight, surface, focusRing } from "../lib/theme";
 import {
@@ -769,7 +770,6 @@ function FormatDropdown(props: {
 	level: number;
 	testId: string;
 }) {
-	const renderer = useGpuixRequired();
 	const presence = createPresence(FORMAT_MENU_EXIT_FALLBACK_MS);
 	const hover = createFluidHover();
 	const [triggerHovered, setTriggerHovered] = createSignal(false);
@@ -783,8 +783,6 @@ function FormatDropdown(props: {
 	const rowElements = new Map<number, HostElement>();
 	let button: HostElement | undefined;
 	let panel: HostElement | undefined;
-	/** Tab closed the menu: once focus is back on the trigger it moves on to the next tab stop. */
-	let tabbingOn = false;
 	const checkedIndex = () => FORMATS.indexOf(props.value);
 	const width = (INNER_WIDTH - 8) / 2;
 
@@ -806,12 +804,8 @@ function FormatDropdown(props: {
 		setPointerLit(false);
 		const start = from === "pointer" ? null : edgeIndex(from, FORMATS.length);
 		hover.setActiveIndex(start);
-		// The rows mount with the popup: focus them once they have.
-		setTimeout(() => {
-			if (!presence.open()) return;
-			if (start === null) focusPanel();
-			else focusRow(start);
-		}, 0);
+		if (start === null) focusPanel();
+		else focusRow(start);
 	};
 	/** Closing hands focus back to the trigger when it sat in the popup, which is about to unmount and drop it, or nowhere; a control that took it since keeps it (Base UI's returnFocus). */
 	const close = () => {
@@ -820,15 +814,13 @@ function FormatDropdown(props: {
 			panel !== undefined && panel.mounted && panel.matches(":focus-within");
 		presence.hide();
 		setPageHoldsFocus(false);
-		if (button !== undefined) returnFocusTo(renderer, button.id, popupHasFocus);
-		// The default Tab would start from the popup row, whose floating layer wraps to the start of the page.
-		if (tabbingOn) renderer.focusNext?.();
-	};
-	/** Tab closes the menu: forward moves on from the trigger, backward leaves focus on it. */
-	const leave = (backwards: boolean) => {
-		tabbingOn = !backwards;
-		close();
-		tabbingOn = false;
+		if (
+			button !== undefined &&
+			button.mounted &&
+			(popupHasFocus || document.activeElement === null)
+		) {
+			button.focus();
+		}
 	};
 	const choose = (format: ColorFormat) => {
 		props.onChange(format);
@@ -922,8 +914,9 @@ function FormatDropdown(props: {
 			return;
 		}
 		if (event.key === "Tab") {
-			event.preventDefault();
-			leave(event.shiftKey === true);
+			// Forward: the trigger takes focus as the menu closes, so the default Tab moves on from it. Backward leaves it on the trigger.
+			if (event.shiftKey === true) event.preventDefault();
+			close();
 			return;
 		}
 		if (typeahead.handleKey(event)) {

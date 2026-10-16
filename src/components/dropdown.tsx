@@ -1,4 +1,5 @@
 import {
+	document,
 	type DomEvent,
 	type HostDomEvent,
 	type HostElement,
@@ -7,7 +8,6 @@ import {
 	type HostPointerEvent,
 	type KeyEvent,
 	motion,
-	useGpuixRequired,
 } from "@gpuix/solid";
 import {
 	type Accessor,
@@ -36,7 +36,7 @@ import {
 import type { IconRef } from "../lib/icons";
 import { isChord, moveIndex, revealRow } from "../lib/list-nav";
 import { createPlacementState, POPUP_MARGIN, PopupSurface } from "../lib/popup";
-import { createPressToggle, returnFocusTo } from "../lib/popup-trigger";
+import { createPressToggle } from "../lib/popup-trigger";
 import { createPresence } from "../lib/presence";
 import { color, radius, shadow3, motion as tween } from "../lib/theme";
 import { createTypeahead } from "../lib/typeahead";
@@ -276,8 +276,8 @@ function createMenuList(options: {
 	multiple: Accessor<boolean>;
 	keyboardActive: Accessor<boolean>;
 	setKeyboardActive: (active: boolean) => void;
-	/** Tab closes the whole menu: forward lets focus move on, backward hands it to the trigger. */
-	leave: (backwards: boolean) => void;
+	/** Tab closes the whole menu; the key handler decides whether focus moves on from the trigger. */
+	leave: () => void;
 	/** Which end an open lights: ArrowUp on the trigger opens on the last row. */
 	openFrom: Accessor<"first" | "last">;
 }) {
@@ -405,8 +405,9 @@ function createMenuList(options: {
 			return;
 		}
 		if (event.key === "Tab") {
-			event.preventDefault();
-			options.leave(event.shiftKey === true);
+			// Forward: the trigger takes focus as the menu closes, so the default Tab moves on from it. Backward leaves it on the trigger.
+			if (event.shiftKey === true) event.preventDefault();
+			options.leave();
 			return;
 		}
 		if (query === undefined) {
@@ -892,11 +893,11 @@ interface MenuScope {
 	pressPick: () => boolean;
 	releasePress: () => void;
 	/** Remember the trigger element the menu opened from, to hand focus back to it. */
-	noteTrigger: (elementId: number) => void;
+	noteTrigger: (element: HostElement) => void;
 	/** The root popup says how to tell whether focus sits inside it, so a close knows whether the trigger should get focus back. */
 	watchPopupFocus: (containsFocus: () => boolean) => void;
-	/** Tab closes the menu: forward moves focus on from the trigger to the next control, backward leaves it on the trigger. */
-	leave: (backwards: boolean) => void;
+	/** Tab closes the menu. */
+	leave: () => void;
 }
 
 /** Base UI keeps a press-drag-release from opening a menu from picking a row for this long. */
@@ -936,38 +937,33 @@ export function DropdownMenu(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
-	const renderer = useGpuixRequired();
 	const presence = createPresence();
 	const [keyboardActive, setKeyboardActive] = createSignal(false);
 
 	const [openFrom, setOpenFrom] = createSignal<"first" | "last">("first");
 	let pressedAt: number | null = null;
-	let pendingTrigger: number | null = null;
-	let triggerId: number | null = null;
+	let pendingTrigger: HostElement | null = null;
+	let triggerElement: HostElement | null = null;
 	let popupHasFocus: () => boolean = () => false;
-	/** Tab closed the menu: once focus is back on the trigger it moves on to the next tab stop. */
-	let tabbingOn = false;
 
 	/** Closing hands focus back to the trigger when it sat in the popup, which is about to unmount and drop it, or nowhere; a control that took it since keeps it (Base UI's returnFocus). */
 	const returnFocus = () => {
-		const target = triggerId;
-		triggerId = null;
-		if (target === null) return;
-		returnFocusTo(renderer, target, popupHasFocus());
+		const target = triggerElement;
+		triggerElement = null;
+		if (target === null || !target.mounted) return;
+		if (popupHasFocus() || document.activeElement === null) target.focus();
 	};
 
 	const apply = (next: boolean) => {
 		if (next === presence.open()) return;
 		if (next) {
-			triggerId = pendingTrigger ?? renderer.getFocusedElementId?.() ?? null;
+			triggerElement = pendingTrigger ?? document.activeElement;
 			pendingTrigger = null;
 			presence.show();
 		} else {
 			pressedAt = null;
 			presence.hide();
 			returnFocus();
-			// The default Tab would start from the popup row, whose floating layer wraps to the start of the page.
-			if (tabbingOn) renderer.focusNext?.();
 		}
 	};
 	const setOpen = (next: boolean) => {
@@ -1006,16 +1002,14 @@ export function DropdownMenu(props: {
 		releasePress() {
 			pressedAt = null;
 		},
-		noteTrigger(elementId) {
-			pendingTrigger = elementId;
+		noteTrigger(element) {
+			pendingTrigger = element;
 		},
 		watchPopupFocus(containsFocus) {
 			popupHasFocus = containsFocus;
 		},
-		leave(backwards) {
-			tabbingOn = !backwards;
+		leave() {
 			setOpen(false);
-			tabbingOn = false;
 		},
 	};
 
@@ -1069,7 +1063,7 @@ export function DropdownTrigger(props: {
 		isOpen: scope.presence.open,
 		open(event, pressed) {
 			if (pressed) {
-				scope.noteTrigger(event.elementId);
+				scope.noteTrigger(event.currentTarget as HostElement);
 				scope.startPress();
 			}
 			scope.setOpen(true);

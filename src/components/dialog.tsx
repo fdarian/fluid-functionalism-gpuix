@@ -1,6 +1,7 @@
 import {
 	type BoxShadow,
 	createWindowSize,
+	DialogBackdrop,
 	DialogPopup,
 	DialogPortal,
 	Dialog as GpuixDialog,
@@ -88,6 +89,11 @@ interface DialogScope {
 	popupId: string;
 	titleId: string;
 	descriptionId: string;
+	/** The popup names itself by these only while they are rendered, as Base UI does. */
+	hasTitle: () => boolean;
+	hasDescription: () => boolean;
+	registerTitle: () => void;
+	registerDescription: () => void;
 }
 
 const DialogScopeContext = createContext<DialogScope>();
@@ -149,11 +155,25 @@ export function Dialog(props: {
 		});
 	}
 	const trigger: { current: HostElement | undefined } = { current: undefined };
+	const [titles, setTitles] = createSignal(0);
+	const [descriptions, setDescriptions] = createSignal(0);
+	const hasTitle = () => titles() > 0;
+	const hasDescription = () => descriptions() > 0;
 
 	const scope: DialogScope = {
 		popupId: createUniqueId(),
 		titleId: createUniqueId(),
 		descriptionId: createUniqueId(),
+		hasTitle,
+		hasDescription,
+		registerTitle: () => {
+			setTitles((count) => count + 1);
+			onCleanup(() => setTitles((count) => count - 1));
+		},
+		registerDescription: () => {
+			setDescriptions((count) => count + 1);
+			onCleanup(() => setDescriptions((count) => count - 1));
+		},
 		shown,
 		mounted,
 		scoped: () => props.scoped ?? false,
@@ -211,7 +231,7 @@ export function FocusFirst(props: { popup: () => HostElement | undefined }) {
 	onMount(() => {
 		const popup = props.popup();
 		if (popup === undefined) throw new Error("FocusFirst: the popup is not mounted");
-		// A tick later: the tree the popup holds is only committed natively after this mount.
+		// Not synchronous: native's tab order exists only once the popup has painted (gpuix README, "Dialog"), so `focusNextWithin` from mount finds no stop, and gpuix's own focus on the popup lands after this mount. A synchronous call was tried and left focus on the popup.
 		const timer = setTimeout(() => renderer.focusNextWithin?.(popup.id), 0);
 		onCleanup(() => clearTimeout(timer));
 	});
@@ -284,13 +304,7 @@ export function DialogContent(props: {
 
 	const body = () => (
 		<>
-			{/* gpuix's own DialogBackdrop closes on mousedown; a backdrop closes on a click that presses and releases on it, as in a browser. */}
-			<div
-				onClick={() => {
-					if (scope.modal()) scope.setOpen(false);
-				}}
-				style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
-			>
+			<DialogBackdrop>
 				{/* Base UI renders no second backdrop for a nested dialog: the parent's already dims the page. */}
 				<Show when={!scope.nested}>
 					<motion.div
@@ -307,15 +321,14 @@ export function DialogContent(props: {
 						}}
 					/>
 				</Show>
-			</div>
+			</DialogBackdrop>
 			<DialogPopup
 				// Positioned so it paints and hit-tests above the absolute backdrop, which would otherwise take a press inside the dialog and close it.
 				style={{ position: "relative", width: "100%", maxWidth: maxWidth() }}
 				testId={props.testId}
 				id={scope.popupId}
-				// Static: gpuix's popup re-creates itself when a prop it spreads changes. A reference to a title or description that is not rendered resolves to nothing.
-				aria-labelledby={scope.titleId}
-				aria-describedby={scope.descriptionId}
+				aria-labelledby={scope.hasTitle() ? scope.titleId : undefined}
+				aria-describedby={scope.hasDescription() ? scope.descriptionId : undefined}
 				ref={(element) => {
 					popup = element;
 				}}
@@ -428,6 +441,7 @@ export function DialogFooter(props: { children: JSX.Element }) {
 
 export function DialogTitle(props: { compact?: boolean; children: string }) {
 	const scope = useDialogScope();
+	scope.registerTitle();
 	return (
 		<GpuixDialogTitle id={scope.titleId}>
 			<text
@@ -448,6 +462,7 @@ export function DialogDescription(props: {
 	children: string;
 }) {
 	const scope = useDialogScope();
+	scope.registerDescription();
 	return (
 		<GpuixDialogDescription id={scope.descriptionId}>
 			<text
