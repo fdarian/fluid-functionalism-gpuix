@@ -63,16 +63,20 @@ function session() {
 		renderer.simulateKeystrokes(keys);
 		await settle(ms);
 	};
-	/** Milliseconds until `testId` leaves the tree after `action`, or null when it never does. */
-	const timeToUnmount = async (testId: string, action: () => void) => {
-		action();
-		const start = performance.now();
-		while (performance.now() - start < 600) {
-			frame();
-			if (find(testId) === undefined) return performance.now() - start;
-			await sleep(4);
+	/** Milliseconds of the motion clock, held and stepped 4 ms a frame, until `testId` leaves the tree after `action`; null when it never does. */
+	const timeToUnmount = (testId: string, action: () => void) => {
+		renderer.clockPause();
+		try {
+			action();
+			for (let elapsed = 0; elapsed <= 600; elapsed += 4) {
+				renderer.clockFastForward(elapsed === 0 ? 0 : 4);
+				frame();
+				if (find(testId) === undefined) return elapsed;
+			}
+			return null;
+		} finally {
+			renderer.clockResume();
 		}
-		return null;
 	};
 	/** Opacity of an element times that of every ancestor. */
 	const effectiveOpacity = (testId: string) => {
@@ -119,7 +123,7 @@ async function popupExit() {
 			await ui.click(trigger);
 			if (ui.find(`${id}-popup`) === undefined)
 				throw new Error(`${slug} popup did not open`);
-			const took = await ui.timeToUnmount(`${id}-popup`, () =>
+			const took = ui.timeToUnmount(`${id}-popup`, () =>
 				ui.renderer.simulateKeystrokes("Escape"),
 			);
 			if (took !== null) times.push(took);

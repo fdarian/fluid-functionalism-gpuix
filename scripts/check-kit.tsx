@@ -74,6 +74,24 @@ export async function createCheck(
 		renderer.dispatchNativeEvents();
 	}
 
+	/** Advances the held motion clock by `ms` (after `clockPause()`) and runs the frame, so an animation is sampled at an exact time instead of wherever the wall clock landed. */
+	function step(ms: number) {
+		renderer.clockFastForward(ms);
+		renderer.flush();
+		renderer.dispatchNativeEvents();
+	}
+
+	/** Runs frames in real time until `done()` holds, for what a JS timer decides (a hover delay, a grace period): the motion clock may be held meanwhile. */
+	async function until(done: () => boolean, what: string, timeoutMs = 5000) {
+		const limit = performance.now() + timeoutMs;
+		while (!done()) {
+			if (performance.now() > limit) throw new Error(`timed out waiting for ${what}`);
+			await sleep(8);
+			renderer.flush();
+			renderer.dispatchNativeEvents();
+		}
+	}
+
 	function element(testId: string) {
 		const found = renderer.findByTestId(testId);
 		if (found === undefined)
@@ -179,6 +197,8 @@ export async function createCheck(
 	return {
 		renderer,
 		settle,
+		step,
+		until,
 		element,
 		bounds,
 		center,

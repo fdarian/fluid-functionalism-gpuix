@@ -60,6 +60,11 @@ function report(name: string, ok: boolean, detail: string) {
 	if (!ok) failed = true;
 	console.log(`${ok ? "PASS" : "FAIL"} ${name}: ${detail}`);
 }
+function step(ms: number) {
+	renderer.clockFastForward(ms);
+	renderer.flush();
+	renderer.dispatchNativeEvents();
+}
 async function reset() {
 	renderer.nativeSimulateMouseMove(580, 280);
 	await settle(2600);
@@ -169,9 +174,11 @@ report(
 await reset();
 
 // A moving pointer: the tooltip keeps restarting its rest timer and never opens.
-for (let step = 0; step < 14; step++) {
-	renderer.nativeSimulateMouseMove(subject.x - 60 + step * 4, subject.y);
-	await settle(60);
+// The moves come back to back: each restarts the rest timer, and none waits on a clock a loaded machine could stretch past the delay.
+for (let move = 0; move < 14; move++) {
+	renderer.nativeSimulateMouseMove(subject.x - 60 + move * 4, subject.y);
+	renderer.flush();
+	renderer.dispatchNativeEvents();
 }
 const movingBefore = tooltipText();
 renderer.nativeSimulateMouseMove(subject.x - 4, subject.y);
@@ -195,8 +202,8 @@ const rowBox = (() => {
 })();
 /** The glyph is the last thing in the row: count the pixels that differ from the row's background there. */
 function glyphInk() {
-	renderer.captureScreenshot("/tmp/check-input-copy-ink.png");
-	const pixels = readPng("/tmp/check-input-copy-ink.png");
+	renderer.captureScreenshot(`/tmp/check-input-copy-ink-${process.pid}.png`);
+	const pixels = readPng(`/tmp/check-input-copy-ink-${process.pid}.png`);
 	const left = Math.round(rowBox.x + rowBox.width - 36);
 	const right = Math.round(rowBox.x + rowBox.width - 6);
 	const top = Math.round(rowBox.y + 4);
@@ -215,17 +222,16 @@ function glyphInk() {
 }
 await reset();
 const restInk = glyphInk();
+// The glyph's colour and stroke both ease, so a frame 16 ms in that is only partly inked is the fade. The motion clock is held and stepped by hand.
+renderer.clockPause();
 renderer.nativeSimulateMouseMove(subject.x - 40, subject.y);
 renderer.nativeSimulateMouseMove(subject.x - 41, subject.y);
-renderer.flush();
-renderer.dispatchNativeEvents();
-// The glyph's colour and stroke both ease, so a first frame that is only partly inked is the fade.
-await sleep(10);
-renderer.flush();
-renderer.dispatchNativeEvents();
+step(0);
+step(16);
 const earlyInk = glyphInk();
-await settle(400);
+step(400);
 const hoverInk = glyphInk();
+renderer.clockResume();
 report(
 	"the glyph's stroke eases to 2 on hover",
 	earlyInk > restInk && earlyInk < hoverInk - 1000,
@@ -239,17 +245,12 @@ await reset();
 renderer.nativeSimulateClick(580, 280);
 await settle(300);
 function ringSum() {
-	renderer.captureScreenshot("/tmp/check-input-copy-ring.png");
-	const pixel = readPng("/tmp/check-input-copy-ring.png").at(
+	renderer.captureScreenshot(`/tmp/check-input-copy-ring-${process.pid}.png`);
+	const pixel = readPng(`/tmp/check-input-copy-ring-${process.pid}.png`).at(
 		Math.round(rowBox.x) - 1,
 		Math.round(rowBox.y + rowBox.height / 2),
 	);
 	return pixel[0] + pixel[1] + pixel[2];
-}
-function step(ms: number) {
-	renderer.clockFastForward(ms);
-	renderer.flush();
-	renderer.dispatchNativeEvents();
 }
 if (renderer.getFocusedElementId() === row.id)
 	throw new Error("the row already has focus");

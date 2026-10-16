@@ -130,7 +130,7 @@ report(
 	badge === 1,
 	`opacity ${badge}`,
 );
-renderer.captureScreenshot("/tmp/check-input-message-badge.png");
+renderer.captureScreenshot(`/tmp/check-input-message-badge-${process.pid}.png`);
 
 await tabTo("a-queued-0-remove");
 const close = paintedOpacity("a-queued-0-remove");
@@ -139,7 +139,7 @@ report(
 	close === 1,
 	`opacity ${close}`,
 );
-renderer.captureScreenshot("/tmp/check-input-message-close.png");
+renderer.captureScreenshot(`/tmp/check-input-message-close-${process.pid}.png`);
 
 const disabledTextarea = element("c-textarea").id;
 const reached = new Set<number>();
@@ -181,8 +181,8 @@ function brightest(box: {
 	width: number;
 	height: number;
 }) {
-	renderer.captureScreenshot("/tmp/check-input-message-fade.png");
-	const pixels = readPng("/tmp/check-input-message-fade.png");
+	renderer.captureScreenshot(`/tmp/check-input-message-fade-${process.pid}.png`);
+	const pixels = readPng(`/tmp/check-input-message-fade-${process.pid}.png`);
 	let best = 0;
 	for (let y = Math.round(box.y); y < Math.round(box.y + box.height); y++)
 		for (let x = Math.round(box.x); x < Math.round(box.x + box.width); x++)

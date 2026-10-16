@@ -57,7 +57,6 @@ const kit = await createCheck(() => (
 	</div>
 ));
 const renderer = kit.renderer;
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const width = (testId: string) => kit.bounds(testId).width;
 await kit.settle(800);
 
@@ -75,16 +74,18 @@ for (const size of ["default", "compact"] as const) {
 
 const unfolded = width("first");
 const folded = width("second");
+// The motion clock is held and stepped by hand, so the frames sampled do not depend on how fast the machine runs them.
+renderer.clockPause();
 setSelected(1);
+kit.step(0);
 const firstWidths: number[] = [];
 const secondWidths: number[] = [];
 for (let frame = 0; frame < 40; frame++) {
-	renderer.flush();
-	renderer.dispatchNativeEvents();
-	await sleep(8);
+	kit.step(8);
 	firstWidths.push(width("first"));
 	secondWidths.push(width("second"));
 }
+renderer.clockResume();
 const first = (index: number) => firstWidths[index] as number;
 const second = (index: number) => secondWidths[index] as number;
 const last = firstWidths.length - 1;

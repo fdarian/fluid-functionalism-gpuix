@@ -495,8 +495,8 @@ k.expect(
 {
 	const probe = (testId: string) => {
 		const box = k.bounds(testId);
-		renderer.captureScreenshot("/tmp/check-select-fade.png");
-		return readPng("/tmp/check-select-fade.png").at(
+		renderer.captureScreenshot(`/tmp/check-select-fade-${process.pid}.png`);
+		return readPng(`/tmp/check-select-fade-${process.pid}.png`).at(
 			Math.round(box.x + 5),
 			Math.round(box.y + 5),
 		)[0];

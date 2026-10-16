@@ -80,9 +80,9 @@ function step(ms: number) {
 
 /** The red channel at `dx`, `dy` from the element's top-left. */
 function red(testId: string, dx: number, dy: number) {
-	renderer.captureScreenshot("/tmp/check-color-fade.png");
+	renderer.captureScreenshot(`/tmp/check-color-fade-${process.pid}.png`);
 	const box = k.bounds(testId);
-	return readPng("/tmp/check-color-fade.png").at(
+	return readPng(`/tmp/check-color-fade-${process.pid}.png`).at(
 		Math.round(box.x + dx),
 		Math.round(box.y + dy),
 	)[0];

@@ -111,8 +111,8 @@ await kit.settle(400);
 {
 	const row = kit.bounds("scrubber-row");
 	const ring = () => {
-		renderer.captureScreenshot("/tmp/check-slider-fade.png");
-		const pixel = readPng("/tmp/check-slider-fade.png").at(
+		renderer.captureScreenshot(`/tmp/check-slider-fade-${process.pid}.png`);
+		const pixel = readPng(`/tmp/check-slider-fade-${process.pid}.png`).at(
 			Math.round(row.x + row.width / 2),
 			Math.round(row.y - 3),
 		);

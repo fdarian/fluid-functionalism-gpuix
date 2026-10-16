@@ -14,8 +14,10 @@ const renderer = kit.renderer;
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const heights: number[] = [];
-const start = performance.now();
-while (performance.now() - start < 1500) {
+// The motion clock is held and stepped 4 ms a frame: the heights sampled are the same whatever the machine's speed.
+renderer.clockPause();
+for (let frame = 0; frame < 375; frame++) {
+	renderer.clockFastForward(frame === 0 ? 0 : 4);
 	renderer.flush();
 	// Sampled between the frame and the events it queued: a layout report arrives after the frame it measured.
 	if (kit.exists("basic-panel")) {
@@ -23,8 +25,10 @@ while (performance.now() - start < 1500) {
 		heights.push(bounds === null ? 0 : bounds.height);
 	}
 	renderer.dispatchNativeEvents();
-	await sleep(4);
+	// The page's real-time work (a mount timer) still needs wall time between frames.
+	await sleep(2);
 }
+renderer.clockResume();
 const settled = heights[heights.length - 1];
 console.log(
 	`panel height by frame: ${heights

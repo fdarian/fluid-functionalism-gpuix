@@ -108,9 +108,9 @@ kit.check(
 
 // The dismiss button's hover fill and glyph colour ease over 80 ms (the clock is still held).
 function dismissPixels() {
-	renderer.captureScreenshot("/tmp/check-banner-fade.png");
+	renderer.captureScreenshot(`/tmp/check-banner-fade-${process.pid}.png`);
 	const box = kit.bounds("inline-banner-dismiss");
-	const pixels = readPng("/tmp/check-banner-fade.png");
+	const pixels = readPng(`/tmp/check-banner-fade-${process.pid}.png`);
 	const sum = (x: number, y: number) =>
 		pixels
 			.at(Math.round(x), Math.round(y))
@@ -130,6 +130,8 @@ renderer.nativeSimulateMouseMove(
 	dismissBox.x + dismissBox.width / 2,
 	dismissBox.y + dismissBox.height / 2,
 );
+// The hover reaches the style on this frame; the fade is timed from it, so the 32 ms step below is 32 ms into the fade.
+kit.step(0);
 await frames(32);
 const midFade = dismissPixels();
 await frames(300);

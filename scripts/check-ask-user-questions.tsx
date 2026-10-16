@@ -174,8 +174,8 @@ function freeTextBox() {
 }
 function freeTextFill() {
 	const box = freeTextBox();
-	renderer.captureScreenshot("/tmp/check-ask-user-questions-fade.png");
-	const pixel = readPng("/tmp/check-ask-user-questions-fade.png").at(
+	renderer.captureScreenshot(`/tmp/check-ask-user-questions-fade-${process.pid}.png`);
+	const pixel = readPng(`/tmp/check-ask-user-questions-fade-${process.pid}.png`).at(
 		Math.round(box.x + 4),
 		Math.round(box.y + box.height / 2),
 	);

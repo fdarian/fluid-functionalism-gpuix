@@ -10,20 +10,10 @@ import { createCheck } from "./check-kit";
 
 const kit = await createCheck("queued-stack");
 const renderer = kit.renderer;
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /** Fanned out when the back card sits far above the front one; folded, a peek apart. */
 const isExpanded = () =>
 	kit.bounds("queued-1").y - kit.bounds("queued-4").y > 80;
-
-async function frames(ms: number) {
-	const until = performance.now() + ms;
-	while (performance.now() < until) {
-		renderer.flush();
-		renderer.dispatchNativeEvents();
-		await sleep(8);
-	}
-}
 
 await kit.settle(600);
 kit.check("starts folded", !isExpanded());
@@ -33,26 +23,24 @@ renderer.nativeSimulateMouseMove(front.x, front.y);
 await kit.settle(700);
 kit.check("hovering the front card fans the stack out", isExpanded());
 
-// Walk straight up through every card and the gaps between them, a step a frame.
+// Walk straight up through every card and the gaps between them, a step a frame. The motion clock is held and stepped 16 ms a frame, so a slow machine cannot give the spring longer between moves.
 const top = kit.bounds("queued-4");
 let folded = false;
+renderer.clockPause();
 for (let y = front.y; y > top.y + 4; y -= 3) {
 	renderer.nativeSimulateMouseMove(front.x, y);
-	await frames(16);
+	kit.step(16);
 	if (!isExpanded()) folded = true;
 }
 kit.check("walking up the cards never folds the stack", !folded);
 
 // And off the stack: folds at once.
 renderer.nativeSimulateMouseMove(2, 2);
-await frames(60);
-const offTime = performance.now();
-let foldedAt: number | undefined;
-while (performance.now() - offTime < 800 && foldedAt === undefined) {
-	renderer.flush();
-	renderer.dispatchNativeEvents();
-	if (!isExpanded()) foldedAt = performance.now() - offTime;
-	await sleep(8);
+let foldedAfter: number | undefined;
+for (let elapsed = 0; elapsed <= 800 && foldedAfter === undefined; elapsed += 8) {
+	kit.step(8);
+	if (!isExpanded()) foldedAfter = elapsed;
 }
-kit.check("leaving the stack folds it", foldedAt !== undefined, `${foldedAt}`);
+renderer.clockResume();
+kit.check("leaving the stack folds it", foldedAfter !== undefined, `${foldedAfter} ms`);
 kit.finish();

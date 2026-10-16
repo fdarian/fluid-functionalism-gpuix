@@ -17,7 +17,7 @@ import { setThemeChoice } from "../src/lib/theme";
 import { createCheck } from "./check-kit";
 import { readPng } from "./png-pixels";
 
-const outDir = "/tmp/check-accordion/";
+const outDir = `/tmp/check-accordion-${process.pid}/`;
 mkdirSync(outDir, { recursive: true });
 const kit = await createCheck("accordion");
 const renderer = kit.renderer;

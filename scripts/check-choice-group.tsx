@@ -16,7 +16,7 @@ import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
 import { readPng } from "./png-pixels";
 
-const outDir = "/tmp/check-choice-group/";
+const outDir = `/tmp/check-choice-group-${process.pid}/`;
 mkdirSync(outDir, { recursive: true });
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const test = createTestRoot({ width: 1000, height: 400, fonts });
@@ -61,18 +61,19 @@ interface Sample {
 	value: number;
 }
 
-/** The red channel at each point on every frame for `ms`, stamped from `start`. */
+const SAMPLE_STEP_MS = 8;
+
+/** The red channel at each point on every frame for `ms` of the held motion clock, stamped in that clock's time: a slow frame cannot land a sample elsewhere in an animation. */
 async function sampleFrames(
 	points: Record<string, () => { x: number; y: number } | undefined>,
 	ms: number,
-	start = performance.now(),
 ) {
 	const series: Record<string, Sample[]> = {};
 	for (const name of Object.keys(points)) series[name] = [];
-	do {
+	for (let stamp = 0; stamp <= ms; stamp += SAMPLE_STEP_MS) {
+		renderer.clockFastForward(stamp === 0 ? 0 : SAMPLE_STEP_MS);
 		frame();
 		renderer.captureScreenshot(`${outDir}frame.png`);
-		const stamp = performance.now() - start;
 		const pixels = readPng(`${outDir}frame.png`);
 		for (const [name, point] of Object.entries(points)) {
 			const at = point();
@@ -83,8 +84,9 @@ async function sampleFrames(
 				});
 			}
 		}
-		await sleep(4);
-	} while (performance.now() - start < ms);
+		// The page's own real-time work (lazy loading, JS timers) still needs wall time between frames.
+		await sleep(2);
+	}
 	return series;
 }
 const show = (samples: Sample[]) =>
@@ -95,7 +97,7 @@ const pages = await loadPages(demos);
 setThemeChoice("dark");
 
 // Mount: checked row 0 against unchecked row 3, from the first frame.
-const mountStart = performance.now();
+renderer.clockPause();
 test.render(() => <App demos={demos} pages={pages} initialPage="checkbox-group" />);
 const optional = (testId: string) => () => {
 	const element = renderer.findByTestId(testId);
@@ -107,8 +109,8 @@ const optional = (testId: string) => () => {
 const mount = await sampleFrames(
 	{ checked: optional("box-0"), plain: optional("box-3") },
 	1200,
-	mountStart,
 );
+renderer.clockResume();
 const checked = mount.checked as Sample[];
 const plain = mount.plain as Sample[];
 const settled = (checked[checked.length - 1] as Sample).value;

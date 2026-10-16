@@ -292,8 +292,8 @@ k.expect(
 {
 	const probe = () => {
 		const box = k.bounds("ease");
-		renderer.captureScreenshot("/tmp/check-combobox-fade.png");
-		return readPng("/tmp/check-combobox-fade.png").at(
+		renderer.captureScreenshot(`/tmp/check-combobox-fade-${process.pid}.png`);
+		return readPng(`/tmp/check-combobox-fade-${process.pid}.png`).at(
 			Math.round(box.x + 5),
 			Math.round(box.y + 5),
 		)[0];

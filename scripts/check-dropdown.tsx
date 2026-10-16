@@ -52,8 +52,8 @@ await k.settle(300);
 await k.click("basic-3");
 renderer.nativeSimulateMouseMove(700, 80);
 await k.settle(300);
-mkdirSync("/tmp/check-dropdown", { recursive: true });
-renderer.captureScreenshot("/tmp/check-dropdown/inline-checked.png");
+mkdirSync(`/tmp/check-dropdown-${process.pid}`, { recursive: true });
+renderer.captureScreenshot(`/tmp/check-dropdown-${process.pid}/inline-checked.png`);
 k.check("inline: no ring after clicking a row", !k.exists("basic-ring"));
 await k.click("basic-1");
 k.check("inline: no ring after a mouse click", !k.exists("basic-ring"));
@@ -241,10 +241,18 @@ await k.press("ArrowDown");
 k.expect("keys: arrows land on a disabled row", keysFocus(), "keys-1");
 await k.press("Enter");
 k.check("keys: Enter on a disabled row does nothing", k.exists("keys-0"));
-await k.press("c");
-k.expect("keys: typeahead focuses the next match", keysFocus(), "keys-3");
-await k.press("c");
-k.expect("keys: the same letter again cycles", keysFocus(), "keys-4");
+// Typeahead forgets the query after 750 ms of real time: the two presses go back to back, not a settle apart, which a loaded machine can stretch past it.
+function tap(keystrokes: string) {
+	renderer.simulateKeystrokes(keystrokes);
+	renderer.flush();
+	renderer.dispatchNativeEvents();
+}
+tap("c");
+const afterFirst = keysFocus();
+tap("c");
+const afterSecond = keysFocus();
+k.expect("keys: typeahead focuses the next match", afterFirst, "keys-3");
+k.expect("keys: the same letter again cycles", afterSecond, "keys-4");
 await k.settle(800);
 await k.press("c h a r t");
 k.expect("keys: a longer query narrows the match", keysFocus(), "keys-4");

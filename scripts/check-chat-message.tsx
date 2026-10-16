@@ -4,7 +4,7 @@
  *   bun scripts/check-chat-message.tsx
  *
  * The meta row (timestamp and actions) is revealed by hover and by keyboard focus on an action.
- * The reveal is the row's opacity, eased by a CSS transition; a screenshot with the focused action lands in /tmp/check-chat-message-focus.png.
+ * The reveal is the row's opacity, eased by a CSS transition; a screenshot with the focused action lands in /tmp/check-chat-message-focus-<pid>.png.
  */
 import { createTestRoot } from "@gpuix/solid/testing";
 import { ChatMessage, ChatMessageAction } from "../src/components/chat-message";
@@ -110,7 +110,7 @@ report(
 	focusOpacity === 1,
 	`opacity ${focusOpacity}`,
 );
-renderer.captureScreenshot("/tmp/check-chat-message-focus.png");
+renderer.captureScreenshot(`/tmp/check-chat-message-focus-${process.pid}.png`);
 
 renderer.simulateKeystrokes("Tab");
 await settle(500);
@@ -141,9 +141,9 @@ function bounds(testId: string) {
 	return box;
 }
 function actionPixels(testId: string) {
-	renderer.captureScreenshot("/tmp/check-chat-message-fade.png");
+	renderer.captureScreenshot(`/tmp/check-chat-message-fade-${process.pid}.png`);
 	const box = bounds(testId);
-	const pixels = readPng("/tmp/check-chat-message-fade.png");
+	const pixels = readPng(`/tmp/check-chat-message-fade-${process.pid}.png`);
 	const left = Math.round(box.x);
 	const top = Math.round(box.y);
 	let glyph = 0;
