@@ -1,5 +1,5 @@
 import type { DomEvent, HostElement } from '@gpuix/solid';
-import type { RowItem } from 'base-ui-solid-gpuix/radio-group';
+import type { RowItem } from 'base-ui-solid-gpuix/internals/composite';
 import {
 	type Accessor,
 	createComputed,

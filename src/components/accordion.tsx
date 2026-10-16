@@ -15,7 +15,7 @@ import {
 	createAccordionRoot,
 	createAccordionTrigger,
 } from 'base-ui-solid-gpuix/accordion';
-import { createCompositeRoot } from 'base-ui-solid-gpuix/tabs';
+import { createCompositeRoot } from 'base-ui-solid-gpuix/internals/composite';
 import {
 	createContext,
 	createEffect,
