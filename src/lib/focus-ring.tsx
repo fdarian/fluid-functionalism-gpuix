@@ -46,7 +46,12 @@ export type FocusRingState = ReturnType<typeof createFocusRing>;
  * Place it after the list's fills: gpuix has no zIndex, so it paints over
  * whatever comes before it and under whatever follows.
  */
-export function FocusRing(props: { ring: FocusRingState; testId?: string }) {
+export function FocusRing(props: {
+	ring: FocusRingState;
+	testId?: string;
+	/** `false` snaps to the new rect: a reflow moved the row, not the focus. */
+	travel?: () => boolean;
+}) {
 	const presence = createPresence();
 	presence.follow(() => props.ring.rect() !== null);
 
@@ -70,7 +75,13 @@ export function FocusRing(props: { ring: FocusRingState; testId?: string }) {
 						width: rect().width + OUTSET * 2,
 						height: rect().height + OUTSET * 2,
 					}}
-					transition={presence.open() ? tween.fast : tween.fastExit}
+					transition={
+						presence.open()
+							? props.travel?.() === false
+								? tween.snap
+								: tween.fast
+							: tween.fastExit
+					}
 					style={{
 						position: "absolute",
 						borderRadius: radius.focusRing,

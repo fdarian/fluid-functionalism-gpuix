@@ -92,7 +92,7 @@ export function Demo() {
 				</Row>
 				<Row>
 					<Section caption="Single expand">
-						<AccordionGroup type="single" defaultValue="item-1">
+						<AccordionGroup type="single" defaultValue="item-1" testId="single">
 							<AccordionItem value="item-1">
 								<AccordionTrigger testId="single-1">
 									Getting Started
@@ -160,7 +160,7 @@ export function Demo() {
 				</Row>
 				<Row>
 					<Section caption="Keyboard: Tab reaches each trigger, a disabled item stays shut">
-						<AccordionGroup type="multiple">
+						<AccordionGroup type="multiple" testId="kb">
 							<AccordionItem value="alpha">
 								<AccordionTrigger testId="kb-1">Alpha</AccordionTrigger>
 								<AccordionContent>Alpha body</AccordionContent>
