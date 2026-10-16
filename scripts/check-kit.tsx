@@ -189,7 +189,10 @@ export async function createCheck(
 				`${ok ? "PASS" : "FAIL"} ${label}: ${JSON.stringify(actual)}${ok ? "" : ` (expected ${JSON.stringify(expected)})`}`,
 			);
 		},
-		finish() {
+		async finish() {
+			// Unmount first: with the tree alive, Bun can abort at exit ("Thread Local Storage", exit 134) after every check passed.
+			test.root.unmount();
+			await settle(100);
 			console.log(failures === 0 ? "all passed" : `${failures} failed`);
 			process.exit(failures === 0 ? 0 : 1);
 		},
