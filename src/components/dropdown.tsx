@@ -338,7 +338,7 @@ function createDropdownList(options: {
 		searchHost: list.searchHost,
 		submenuHost: list.submenuHost,
 		handlers: list.handlers,
-		onKey: list.onKey,
+		popupProps: list.popupProps,
 		lightFirst: list.lightFirst,
 		setScroller: list.setScroller,
 		setPanel: list.setPanel,
@@ -372,13 +372,8 @@ function MenuPanel(props: {
 						ref={(element) => {
 							list.setPanel(element);
 						}}
-						id={props.id}
+						{...list.popupProps({ id: props.id, labelledBy: props.labelledBy })}
 						testId={props.testId}
-						role="menu"
-						aria-labelledby={props.labelledBy}
-						// A press on the bare popup, or a pointer open, lands focus here so the keys still reach it.
-						tabIndex={-1}
-						onKeyDown={list.onKey}
 						style={{
 							display: 'flex',
 							flexDirection: 'column',
