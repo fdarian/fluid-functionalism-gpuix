@@ -24,6 +24,7 @@ import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
 import { createMeasuredHeight } from "../lib/measured-height";
 import { isChord, moveIndex } from "../lib/list-nav";
+import { IS_MAC } from "../lib/platform";
 import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 import { Button } from "./button";
 
@@ -84,7 +85,6 @@ const questionKey = (question: AskUserQuestion, index: number) =>
 const optionKey = (option: AskUserOption, index: number) =>
 	option.id ?? `o-${index}`;
 
-const IS_MAC = process.platform === "darwin";
 const SHORTCUT_GLYPH = IS_MAC ? "⌘↵" : "⌃↵";
 
 /** Keycap for a shortcut, inside the primary button. */

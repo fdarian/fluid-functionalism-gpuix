@@ -182,6 +182,12 @@ const palettes: Record<Scheme, Palette> = {
 
 export type ThemeChoice = "system" | "light" | "dark";
 
+export const THEMES = [
+	{ value: "system", label: "System", icon: "monitor" },
+	{ value: "light", label: "Light", icon: "sun" },
+	{ value: "dark", label: "Dark", icon: "moon" },
+] as const satisfies readonly { value: ThemeChoice; label: string; icon: string }[];
+
 export const [themeChoice, setThemeChoice] =
 	createSignal<ThemeChoice>("system");
 

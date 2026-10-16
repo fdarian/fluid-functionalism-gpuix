@@ -20,7 +20,8 @@ bun --hot src/main.tsx
 ```
 
 The app is a sidebar of demo pages (one per component) plus a "Make them yours" card with a System / Light / Dark
-switch (System follows the OS appearance). It sits in a browser-style frame: a transparent titlebar with the
+switch (System follows the OS appearance). The sidebar's Search row, or ⌘K / Ctrl+K anywhere, opens the site menu:
+every page and the theme in one field. It sits in a browser-style frame: a transparent titlebar with the
 traffic lights, a title across the top bar, and the page in a rounded panel. Inter is loaded from `assets/fonts/`.
 
 `@gpuix/native` and `@gpuix/solid` are bun workspaces pointing at the fork at `~/code/fdarian/gpuix`, wired like
@@ -81,6 +82,7 @@ settle / expectText / capture`; see `ShotContext` in `src/lib/demo.ts`. Give ele
 | `clock.ts` | One shared, ref-counted frame clock for every JS-driven loop. |
 | `fonts.ts`, `app-frame.tsx` | The static Inter files passed to `render()` and the test renderer; the window frame (chrome-coloured bar, rounded page panel). |
 | `press.ts`, `icons.ts`, `icon.tsx` | The press-shrink shadow; lucide glyphs as SVG strings (`defineIcon` for a component's own). |
+| `site-command-menu.tsx`, `platform.ts` | The site menu (a `CommandMenuDialog` of pages and theme) and the window-wide Mod+K that toggles it, through gpuix's `window` event target; `IS_MAC`. |
 | `demo.ts`, `demo-kit.tsx` | The demo contract and the card every page is made of. |
 </details>
 
