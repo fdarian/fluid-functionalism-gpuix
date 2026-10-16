@@ -9,13 +9,12 @@ import {
 } from "solid-js";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { color, height, radius, motion as tween, weight, focusRing } from "../lib/theme";
+import { color, radius, motion as tween, weight, focusRing } from "../lib/theme";
 import type { InputSize } from "./input-group";
 import { Tooltip } from "./tooltip";
 
 /** How long the copied / failed result stays in place. */
 const RESULT_MS = 2000;
-/** The tooltip's own hover delay: a press before it is a press on a closed tooltip. */
 const TOOLTIP_DELAY_MS = 500;
 /** `[#6B97FF]/20` behind the value while the row is hovered. */
 const MARK = "rgba(107,151,255,0.2)";
@@ -24,9 +23,10 @@ const MONO = "Menlo";
 type Status = "idle" | "copied" | "error";
 type TooltipMode = "idle" | "copied" | "suppressed";
 
+/** The row is its padded line: `py-2` around 20 (36), `py-1` around 18 (26, not the 28 the source's comment claims). */
 const steps = {
-	default: { height: height.control, text: 13, line: 20, icon: 14 },
-	compact: { height: height.controlCompact, text: 12, line: 18, icon: 14 },
+	default: { height: 8 + 20 + 8, text: 13, line: 20, icon: 14 },
+	compact: { height: 4 + 18 + 4, text: 12, line: 18, icon: 14 },
 } as const;
 
 /**
@@ -91,18 +91,15 @@ export function InputCopy(props: {
 	const [copyCount, setCopyCount] = createSignal(0);
 	const [tooltipMode, setTooltipMode] = createSignal<TooltipMode>("idle");
 	const [hovered, setHovered] = createSignal(false);
-	/** Whether the tooltip has had time to show under the pointer. */
-	const [tooltipShown, setTooltipShown] = createSignal(false);
+	/** Whether the tooltip is open by hover or focus, as it last reported. */
+	let tooltipOpen = false;
+	/** Whether it was open when the last pointer press began: the tooltip closes on press, before the click lands. */
+	let tooltipOpenAtPress = false;
 	let resultTimer: ReturnType<typeof setTimeout> | undefined;
-	let tooltipTimer: ReturnType<typeof setTimeout> | undefined;
-	onCleanup(() => {
-		clearTimeout(resultTimer);
-		clearTimeout(tooltipTimer);
-	});
+	onCleanup(() => clearTimeout(resultTimer));
 
 	const handleCopy = async () => {
 		if (props.disabled) return;
-		const tooltipWasShown = tooltipShown();
 		const copy = props.copy ?? copyToClipboard;
 		let ok = true;
 		try {
@@ -113,7 +110,7 @@ export function InputCopy(props: {
 		setStatus(ok ? "copied" : "error");
 		setCopyCount(copyCount() + 1);
 		// The tooltip says "Copied" only if it was already showing at the press.
-		setTooltipMode(tooltipWasShown ? "copied" : "suppressed");
+		setTooltipMode(tooltipOpenAtPress ? "copied" : "suppressed");
 		if (ok) props.onCopy?.();
 		clearTimeout(resultTimer);
 		resultTimer = setTimeout(() => {
@@ -125,13 +122,9 @@ export function InputCopy(props: {
 	const onMouseEnter = () => {
 		setHovered(true);
 		setTooltipMode((mode) => (mode === "suppressed" ? "idle" : mode));
-		clearTimeout(tooltipTimer);
-		tooltipTimer = setTimeout(() => setTooltipShown(true), TOOLTIP_DELAY_MS);
 	};
 	const onMouseLeave = () => {
 		setHovered(false);
-		setTooltipShown(false);
-		clearTimeout(tooltipTimer);
 		setTooltipMode((mode) => (mode === "copied" ? "suppressed" : mode));
 	};
 
@@ -291,6 +284,9 @@ export function InputCopy(props: {
 						: "Copy to clipboard"
 			}
 			testId={props.testId}
+			onMouseDown={() => {
+				tooltipOpenAtPress = tooltipOpen;
+			}}
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
 			style={{
@@ -355,6 +351,10 @@ export function InputCopy(props: {
 					delayDuration={TOOLTIP_DELAY_MS}
 					sideOffset={2}
 					forceOpen={forceOpen()}
+					onOpenChange={(open) => {
+						tooltipOpen = open;
+					}}
+					testId={props.testId === undefined ? undefined : `${props.testId}-tooltip`}
 				>
 					{row()}
 				</Tooltip>
