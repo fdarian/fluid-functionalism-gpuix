@@ -40,8 +40,8 @@ kit.check(
 	thumbLeft() > restLeft + 1,
 	`${thumbLeft().toFixed(1)} vs rest ${restLeft.toFixed(1)}`,
 );
-renderer.releasePointerCapture(kit.element("kb").id, 1);
-// A JS-side capture change applies at the next native pointer input.
+// The release never arrives; the next move carries no button.
+renderer.simulateLostMouseUp();
 renderer.nativeSimulateMouseMove(point.x + 6, point.y);
 await kit.settle(600);
 kit.check("a lost capture mid-drag does not toggle", !isOn());
@@ -63,8 +63,8 @@ kit.check(
 	"a press squashes the thumb",
 	kit.bounds("kb-thumb").width > restWidth + 1,
 );
-renderer.releasePointerCapture(kit.element("kb").id, 1);
-// A JS-side capture change applies at the next native pointer input.
+// The release never arrives; the next move carries no button.
+renderer.simulateLostMouseUp();
 renderer.nativeSimulateMouseMove(point.x + 6, point.y);
 await kit.settle(600);
 kit.check("a lost capture after a plain press does not toggle", !isOn());

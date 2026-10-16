@@ -94,10 +94,11 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("drag-outside");
 	await shot.up("basic-track");
 
-	// A press focuses the track; a key then makes the focus ring visible.
+	// A press focuses the track; tabbing away and back makes the focus ring visible without toggling it.
 	await shot.click("basic-track");
 	await shot.moveTo(1180, 700);
-	await shot.press("Space");
+	await shot.press("Shift+Tab");
+	await shot.press("Tab");
 	shot.capture("focus");
 	await shot.press("Enter");
 	shot.capture("focus-off");
