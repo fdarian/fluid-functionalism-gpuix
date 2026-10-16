@@ -5,20 +5,12 @@ import {
 	type HostElement,
 	motion,
 } from "@gpuix/solid";
-import {
-	createEffect,
-	createSignal,
-	type JSX,
-	on,
-	onCleanup,
-	Show,
-} from "solid-js";
+import type { JSX } from "solid-js";
 import { HideOutside } from "../lib/modal";
 import { createPresence } from "../lib/presence";
 import { FocusFirst } from "./dialog";
 import {
 	color,
-	scheme,
 	shadow3,
 	motion as tween,
 } from "../lib/theme";
@@ -49,19 +41,6 @@ export function MobileDrawer(props: {
 	const presence = createPresence(EXIT_FALLBACK_MS, props.open);
 	presence.follow(() => props.open);
 	const mounted = presence.mounted;
-	/**
-	 * The panel slides empty and its content arrives once it has stopped. gpuix
-	 * reports a nested element's painted bounds up to a frame apart from its
-	 * ancestor's while the ancestor moves, so fluid hover would measure its rows
-	 * skewed (the active highlight sat 14px off) and keep that until the next
-	 * pointer enter.
-	 */
-	const [settled, setSettled] = createSignal(false);
-	const finish = () => {
-		presence.release();
-		setSettled(false);
-	};
-
 	return (
 		<GpuixDialog
 			open={mounted()}
@@ -115,8 +94,7 @@ export function MobileDrawer(props: {
 						animate={{ left: props.open ? 0 : -DRAWER_WIDTH }}
 						transition={props.open ? tween.moderate : tween.moderateExit}
 						onMotionComplete={() => {
-							if (props.open) setSettled(true);
-							else finish();
+							if (!props.open) presence.release();
 						}}
 						style={{
 							position: "absolute",
@@ -135,18 +113,8 @@ export function MobileDrawer(props: {
 					>
 						{/* The padding lives on an inner box: a scroller's own padding is counted twice in its scroll extent, so a short panel would still scroll by 2 x 16. */}
 						<div style={{ display: "flex", flexDirection: "column", padding: 16 }}>
-							<Show when={settled()}>
-								{/* The content mounts only once the panel has stopped, so focus moves into it then. */}
-								<FocusFirst popup={() => popup} />
-								<motion.div
-									initial={{ opacity: 0 }}
-									animate={{ opacity: 1 }}
-									transition={{ duration: 0.08 }}
-									style={{ display: "flex", flexDirection: "column" }}
-								>
-									{props.children}
-								</motion.div>
-							</Show>
+							<FocusFirst popup={() => popup} />
+							{props.children}
 						</div>
 					</motion.div>
 				</DialogPopup>

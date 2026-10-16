@@ -24,7 +24,7 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 
 - **Original:** a backdrop closes on a click that presses and releases on it (Base UI's outside press), so pressing on the backdrop and releasing on the panel does not close.
 - **gpuix lacks:** that rule: `DialogBackdrop` closes from `onMouseDown` (`packages/solid/src/components/dialog.ts:151-154`).
-- **Workaround:** the port renders its own backdrop `div` with `onClick` instead of `DialogBackdrop` (`src/components/dialog.tsx:303-310`; the same in `src/components/mobile-drawer.tsx:77`).
+- **Workaround:** the port renders its own backdrop `div` with `onClick` instead of `DialogBackdrop` (`src/components/dialog.tsx:303-310`; the same in `src/components/mobile-drawer.tsx:54`).
 - **Fidelity:** exact.
 - **Components it hits:** mobile-drawer.
 
