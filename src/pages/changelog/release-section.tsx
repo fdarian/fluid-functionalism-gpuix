@@ -1,15 +1,15 @@
-import { createReducedMotion, type HostElement, motion } from "@gpuix/solid";
-import { type Accessor, For, type JSX, Show } from "solid-js";
-import { monthLabel } from "#/lib/changelog/migration-prompt";
+import { createReducedMotion, type HostElement, motion } from '@gpuix/solid';
+import { type Accessor, For, type JSX, Show } from 'solid-js';
+import { monthLabel } from '#/lib/changelog/migration-prompt';
 import {
 	type ChangeGroup,
 	type Inline,
 	KIND_LABEL,
 	type Release,
-} from "#/lib/changelog/parse";
-import { color, siteType, motion as tween, weight } from "#/lib/theme";
-import { Entry, InlineProse } from "./entry";
-import { activeMonth } from "./release-spy";
+} from '#/lib/changelog/parse';
+import { color, siteType, motion as tween, weight } from '#/lib/theme';
+import { Entry, InlineProse } from './entry';
+import { activeMonth } from './release-spy';
 
 /** Where a month's dot sits from the top of its block: the middle of the title line. */
 const DOT_Y = () => siteType.title.lineHeight / 2;
@@ -50,10 +50,10 @@ function releasedLabel(day: string): string {
 			Number(day.slice(5, 7)) - 1,
 			Number(day.slice(8)),
 		),
-	).toLocaleDateString("en-US", {
-		month: "short",
-		day: "numeric",
-		timeZone: "UTC",
+	).toLocaleDateString('en-US', {
+		month: 'short',
+		day: 'numeric',
+		timeZone: 'UTC',
 	});
 }
 
@@ -69,7 +69,7 @@ function TimelineMark(props: { first: boolean; active: boolean }) {
 		<>
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					left: 2,
 					top: props.first ? dotY() : 0,
 					bottom: 0,
@@ -78,7 +78,7 @@ function TimelineMark(props: { first: boolean; active: boolean }) {
 				}}
 			/>
 			<motion.div
-				style={{ position: "absolute", backgroundColor: color.foreground }}
+				style={{ position: 'absolute', backgroundColor: color.foreground }}
 				initial={false}
 				animate={dot(props.active ? ACTIVE_DOT_SCALE : 1, dotY())}
 				transition={reduced() ? tween.snap : tween.moderate}
@@ -92,10 +92,10 @@ function MonthHeading(props: { release: Release }) {
 		<div
 			testId={`changelog-heading-${props.release.month}`}
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
-				justifyContent: "space-between",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
+				justifyContent: 'space-between',
 			}}
 		>
 			<text
@@ -112,7 +112,7 @@ function MonthHeading(props: { release: Release }) {
 					<text
 						style={{
 							...siteType.caption,
-							fontVariantNumeric: "tabular-nums",
+							fontVariantNumeric: 'tabular-nums',
 							color: color.mutedForeground,
 						}}
 					>
@@ -127,15 +127,15 @@ function MonthHeading(props: { release: Release }) {
 /** A hairline above every group, the first included, so it also closes the month's header: 40px on each side. */
 function KindGroup(props: { group: ChangeGroup; month: string }): JSX.Element {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", paddingTop: 40 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', paddingTop: 40 }}>
 			<div
 				style={{ height: 1, flexShrink: 0, backgroundColor: color.border }}
 			/>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "baseline",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'baseline',
 					gap: 8,
 					paddingTop: 40,
 				}}
@@ -153,14 +153,14 @@ function KindGroup(props: { group: ChangeGroup; month: string }): JSX.Element {
 					style={{
 						...siteType.caption,
 						fontWeight: weight.normal,
-						fontVariantNumeric: "tabular-nums",
+						fontVariantNumeric: 'tabular-nums',
 						color: color.mutedForeground,
 					}}
 				>
 					{String(props.group.entries.length)}
 				</text>
 			</div>
-			<div style={{ display: "flex", flexDirection: "column", marginTop: 8 }}>
+			<div style={{ display: 'flex', flexDirection: 'column', marginTop: 8 }}>
 				<For each={props.group.entries}>
 					{(entry, index) => (
 						<Entry
@@ -186,9 +186,9 @@ export function ReleaseSection(props: {
 	return (
 		<div
 			style={{
-				position: "relative",
-				display: "flex",
-				flexDirection: "column",
+				position: 'relative',
+				display: 'flex',
+				flexDirection: 'column',
 				paddingLeft: 24,
 			}}
 		>
@@ -212,8 +212,8 @@ export function ReleaseSection(props: {
 				ref={props.sectionRef}
 				testId={`changelog-${props.release.month}`}
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					paddingTop: props.first ? 0 : 64,
 				}}
 			>

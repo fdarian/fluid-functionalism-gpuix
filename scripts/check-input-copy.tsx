@@ -11,12 +11,12 @@
  * - The compact row is 26px tall (4 + 18 + 4), the default row 36px.
  * - A press writes the value to `navigator.clipboard`; a refused write shows "Failed".
  */
-import { createTestRoot } from "@gpuix/solid/testing";
-import { InputCopy } from "#/components/input-copy";
-import { TooltipProvider } from "#/components/tooltip";
-import { fonts } from "#/lib/fonts";
-import { color, setThemeChoice } from "#/lib/theme";
-import { readPng } from "./png-pixels";
+import { createTestRoot } from '@gpuix/solid/testing';
+import { InputCopy } from '#/components/input-copy';
+import { TooltipProvider } from '#/components/tooltip';
+import { fonts } from '#/lib/fonts';
+import { color, setThemeChoice } from '#/lib/theme';
+import { readPng } from './png-pixels';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const test = createTestRoot({ width: 600, height: 300, fonts });
@@ -44,21 +44,21 @@ function centerOf(testId: string) {
 	};
 }
 function tooltipText() {
-	if (renderer.findByTestId("subject-tooltip-chip") === undefined)
+	if (renderer.findByTestId('subject-tooltip-chip') === undefined)
 		return undefined;
 	return renderer
 		.getAllText()
 		.find(
 			(line) =>
-				line === "Copied" ||
-				line === "Copy to clipboard" ||
-				line === "Copy failed",
+				line === 'Copied' ||
+				line === 'Copy to clipboard' ||
+				line === 'Copy failed',
 		);
 }
 let failed = false;
 function report(name: string, ok: boolean, detail: string) {
 	if (!ok) failed = true;
-	console.log(`${ok ? "PASS" : "FAIL"} ${name}: ${detail}`);
+	console.log(`${ok ? 'PASS' : 'FAIL'} ${name}: ${detail}`);
 }
 function step(ms: number) {
 	renderer.clockFastForward(ms);
@@ -70,23 +70,20 @@ async function reset() {
 	await settle(2600);
 }
 
-setThemeChoice("dark");
+setThemeChoice('dark');
 test.render(() => (
 	<TooltipProvider>
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 20,
 				padding: 20,
 				width: 400,
 				backgroundColor: color.background,
 			}}
 		>
-			<InputCopy
-				testId="subject"
-				value="npx shadcn@latest add input-copy"
-			/>
+			<InputCopy testId="subject" value="npx shadcn@latest add input-copy" />
 			<InputCopy
 				testId="compact"
 				size="compact"
@@ -98,31 +95,31 @@ test.render(() => (
 ));
 await settle(600);
 
-const subject = centerOf("subject");
-report("default row is 36px", subject.height === 36, `${subject.height}`);
-const compact = centerOf("compact");
-report("compact row is 26px", compact.height === 26, `${compact.height}`);
+const subject = centerOf('subject');
+report('default row is 36px', subject.height === 36, `${subject.height}`);
+const compact = centerOf('compact');
+report('compact row is 26px', compact.height === 26, `${compact.height}`);
 
 // Keyboard focus opens the tooltip; Enter copies. The source's snapshot is taken on pointer press only, so this does not show "Copied".
-const row = renderer.findByTestId("subject");
-if (row === undefined) throw new Error("no subject");
-renderer.simulateKeystrokes("Tab");
+const row = renderer.findByTestId('subject');
+if (row === undefined) throw new Error('no subject');
+renderer.simulateKeystrokes('Tab');
 await settle(500);
 if (renderer.getFocusedElementId() !== row.id)
-	throw new Error("Tab did not reach the row");
+	throw new Error('Tab did not reach the row');
 const keyboardBefore = tooltipText();
-await navigator.clipboard.writeText("untouched");
-renderer.simulateKeystrokes("Enter");
+await navigator.clipboard.writeText('untouched');
+renderer.simulateKeystrokes('Enter');
 await settle(400);
 const keyboardCopied = await navigator.clipboard.readText();
 report(
-	"Enter copies the value to navigator.clipboard",
-	keyboardCopied === "npx shadcn@latest add input-copy",
+	'Enter copies the value to navigator.clipboard',
+	keyboardCopied === 'npx shadcn@latest add input-copy',
 	JSON.stringify(keyboardCopied),
 );
 report(
-	"keyboard press: the source snapshots pointer presses only, so the tooltip closes",
-	keyboardBefore === "Copy to clipboard" && tooltipText() === undefined,
+	'keyboard press: the source snapshots pointer presses only, so the tooltip closes',
+	keyboardBefore === 'Copy to clipboard' && tooltipText() === undefined,
 	`before ${keyboardBefore}, after ${tooltipText()}`,
 );
 
@@ -137,8 +134,8 @@ renderer.nativeSimulateMouseDown(subject.x - 41, subject.y);
 renderer.nativeSimulateMouseUp(subject.x - 41, subject.y);
 await settle(400);
 report(
-	"resting press: tooltip shows Copied",
-	idleTooltip === "Copy to clipboard" && tooltipText() === "Copied",
+	'resting press: tooltip shows Copied',
+	idleTooltip === 'Copy to clipboard' && tooltipText() === 'Copied',
 	`before ${idleTooltip}, after ${tooltipText()}`,
 );
 await reset();
@@ -146,16 +143,16 @@ await reset();
 // A refused write: the button variant shows "Failed".
 const writeText = navigator.clipboard.writeText;
 navigator.clipboard.writeText = async () => {
-	throw new Error("Clipboard access denied");
+	throw new Error('Clipboard access denied');
 };
 try {
-	const compactBox = centerOf("compact");
+	const compactBox = centerOf('compact');
 	renderer.nativeSimulateMouseDown(compactBox.x, compactBox.y);
 	renderer.nativeSimulateMouseUp(compactBox.x, compactBox.y);
 	await settle(400);
 	report(
-		"a refused write shows Failed",
-		renderer.getAllText().includes("Failed"),
+		'a refused write shows Failed',
+		renderer.getAllText().includes('Failed'),
 		JSON.stringify(renderer.getAllText()),
 	);
 } finally {
@@ -167,8 +164,8 @@ renderer.nativeSimulateMouseUp(compact.x, compact.y);
 await settle(400);
 const compactCopied = await navigator.clipboard.readText();
 report(
-	"the compact button copies its value",
-	compactCopied === "ABCD-1234",
+	'the compact button copies its value',
+	compactCopied === 'ABCD-1234',
 	JSON.stringify(compactCopied),
 );
 await reset();
@@ -186,7 +183,7 @@ renderer.nativeSimulateMouseDown(subject.x - 4, subject.y);
 renderer.nativeSimulateMouseUp(subject.x - 4, subject.y);
 await settle(400);
 report(
-	"moving press: tooltip stays shut",
+	'moving press: tooltip stays shut',
 	movingBefore === undefined && tooltipText() === undefined,
 	`before ${movingBefore}, after ${tooltipText()}`,
 );
@@ -194,10 +191,10 @@ await reset();
 
 // Hovering the row eases the glyph's stroke from 1.5 to 2 and its colour to the foreground over 80 ms: the inked area grows frame by frame, not in one step.
 const rowBox = (() => {
-	const found = renderer.findByTestId("subject");
-	if (found === undefined) throw new Error("no subject");
+	const found = renderer.findByTestId('subject');
+	if (found === undefined) throw new Error('no subject');
 	const box = renderer.getElementBounds(found.id);
-	if (box === null) throw new Error("no bounds for subject");
+	if (box === null) throw new Error('no bounds for subject');
 	return box;
 })();
 /** The glyph is the last thing in the row: count the pixels that differ from the row's background there. */
@@ -253,10 +250,10 @@ function ringSum() {
 	return pixel[0] + pixel[1] + pixel[2];
 }
 if (renderer.getFocusedElementId() === row.id)
-	throw new Error("the row already has focus");
+	throw new Error('the row already has focus');
 const ringRest = ringSum();
 renderer.clockPause();
-renderer.simulateKeystrokes("Tab");
+renderer.simulateKeystrokes('Tab');
 step(0);
 step(16);
 const ringMiddle = ringSum();
@@ -264,7 +261,7 @@ step(300);
 const ringFocused = ringSum();
 renderer.clockResume();
 report(
-	"the focus ring fades in",
+	'the focus ring fades in',
 	ringFocused > ringRest + 20 &&
 		ringMiddle > ringRest &&
 		ringMiddle < ringRest + 0.6 * (ringFocused - ringRest),

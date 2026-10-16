@@ -1,8 +1,8 @@
-import { createTestRoot } from "@gpuix/solid/testing";
-import { App } from "#/app";
-import { loadDemos, loadPages } from "#/lib/demo";
-import { fonts } from "#/lib/fonts";
-import { setThemeChoice } from "#/lib/theme";
+import { createTestRoot } from '@gpuix/solid/testing';
+import { App } from '#/app';
+import { loadDemos, loadPages } from '#/lib/demo';
+import { fonts } from '#/lib/fonts';
+import { setThemeChoice } from '#/lib/theme';
 
 const demos = await loadDemos();
 const pages = await loadPages(demos);
@@ -24,20 +24,41 @@ async function click(testId: string) {
 	if (element === undefined) throw new Error(`no ${testId}`);
 	const bounds = renderer.getElementBounds(element.id);
 	if (bounds === null) throw new Error(`no bounds ${testId}`);
-	renderer.nativeSimulateClick(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+	renderer.nativeSimulateClick(
+		bounds.x + bounds.width / 2,
+		bounds.y + bounds.height / 2,
+	);
 	await settle();
 }
 
 // The test renderer reports the machine's appearance; pin the scheme so captures are reproducible.
-setThemeChoice("dark");
+setThemeChoice('dark');
 test.render(() => <App demos={demos} pages={pages} />);
 await settle();
 
 const first = process.argv[2];
 const second = process.argv[3];
 await click(`nav-${first}`);
-console.log(first, renderer.getAllText().filter((t) => t.length > 0 && !/^(Showcase|Accordion|AskUserQuestions)$/.test(t)).slice(-25).join(" | "));
+console.log(
+	first,
+	renderer
+		.getAllText()
+		.filter(
+			(t) => t.length > 0 && !/^(Showcase|Accordion|AskUserQuestions)$/.test(t),
+		)
+		.slice(-25)
+		.join(' | '),
+);
 await click(`nav-${second}`);
-console.log(second, renderer.getAllText().filter((t) => t.length > 0 && !/^(Showcase|Accordion|AskUserQuestions)$/.test(t)).slice(-25).join(" | "));
+console.log(
+	second,
+	renderer
+		.getAllText()
+		.filter(
+			(t) => t.length > 0 && !/^(Showcase|Accordion|AskUserQuestions)$/.test(t),
+		)
+		.slice(-25)
+		.join(' | '),
+);
 test.unmount();
 process.exit(0);

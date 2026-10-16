@@ -1,16 +1,16 @@
-import { createSignal, For, type JSX } from "solid-js";
+import { createSignal, For, type JSX } from 'solid-js';
 import {
 	AccordionContent,
 	AccordionGroup,
 	AccordionItem,
 	AccordionTrigger,
-} from "#/components/accordion";
-import { CheckboxGroup, CheckboxItem } from "#/components/checkbox-group";
-import { Dropdown, MenuItem } from "#/components/dropdown";
-import { InputField, InputGroup } from "#/components/input-group";
-import { RadioGroup, RadioItem } from "#/components/radio-group";
-import { Slider } from "#/components/slider";
-import { Switch } from "#/components/switch";
+} from '#/components/accordion';
+import { CheckboxGroup, CheckboxItem } from '#/components/checkbox-group';
+import { Dropdown, MenuItem } from '#/components/dropdown';
+import { InputField, InputGroup } from '#/components/input-group';
+import { RadioGroup, RadioItem } from '#/components/radio-group';
+import { Slider } from '#/components/slider';
+import { Switch } from '#/components/switch';
 import {
 	Table,
 	TableBody,
@@ -18,10 +18,10 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "#/components/table";
-import { TabItem, Tabs, TabsList } from "#/components/tabs";
-import { TabsSubtle, TabsSubtleItem } from "#/components/tabs-subtle";
-import { color, siteType, weight } from "#/lib/theme";
+} from '#/components/table';
+import { TabItem, Tabs, TabsList } from '#/components/tabs';
+import { TabsSubtle, TabsSubtleItem } from '#/components/tabs-subtle';
+import { color, siteType, weight } from '#/lib/theme';
 import {
 	ACCORDION_ITEMS,
 	CHECKBOX_ITEMS,
@@ -36,22 +36,22 @@ import {
 	TABLE_ROWS,
 	TABS_DEFAULT,
 	TABS_ITEMS,
-} from "./data";
+} from './data';
 
 /** `w-full max-w-[N]`, a column. */
 function Column(props: {
 	maxWidth: number;
 	gap?: number;
-	alignItems?: "center";
+	alignItems?: 'center';
 	children: JSX.Element;
 }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				alignItems: props.alignItems,
-				width: "100%",
+				width: '100%',
 				maxWidth: props.maxWidth,
 				gap: props.gap,
 			}}
@@ -143,7 +143,7 @@ function InputGroupPreview() {
 							index={index()}
 							label={field.label}
 							placeholder={field.placeholder}
-							value={values()[field.key] ?? ""}
+							value={values()[field.key] ?? ''}
 							onChange={(next) => setValues({ ...values(), [field.key]: next })}
 						/>
 					)}
@@ -185,22 +185,22 @@ function SliderPreview() {
 		<Column maxWidth={280} gap={32}>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					gap: 6,
-					width: "100%",
+					width: '100%',
 				}}
 			>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
-						justifyContent: "space-between",
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
+						justifyContent: 'space-between',
 					}}
 				>
 					<text style={readout()}>{SLIDER_OPACITY.label}</text>
-					<text style={{ ...readout(), fontVariantNumeric: "tabular-nums" }}>
+					<text style={{ ...readout(), fontVariantNumeric: 'tabular-nums' }}>
 						{String(basic())}
 					</text>
 				</div>
@@ -208,8 +208,8 @@ function SliderPreview() {
 					testId="fl-slider-opacity"
 					value={basic()}
 					onChange={(next) => {
-						if (typeof next !== "number") {
-							throw new Error("A single-thumb slider reported a range");
+						if (typeof next !== 'number') {
+							throw new Error('A single-thumb slider reported a range');
 						}
 						setBasic(next);
 					}}
@@ -222,8 +222,8 @@ function SliderPreview() {
 				label={SLIDER_VOLUME.label}
 				value={volume()}
 				onChange={(next) => {
-					if (typeof next !== "number") {
-						throw new Error("A single-thumb slider reported a range");
+					if (typeof next !== 'number') {
+						throw new Error('A single-thumb slider reported a range');
 					}
 					setVolume(next);
 				}}
@@ -246,7 +246,7 @@ function SwitchPreview() {
 		setOn(next);
 	};
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 			<For each={SWITCH_ITEMS}>
 				{(item) => (
 					<Switch
@@ -308,16 +308,16 @@ function TabsPreview() {
 }
 
 const SUBTLE_TABS = [
-	{ icon: "home", label: "Home" },
-	{ icon: "message-circle", label: "Chat" },
-	{ icon: "inbox", label: "Inbox" },
+	{ icon: 'home', label: 'Home' },
+	{ icon: 'message-circle', label: 'Chat' },
+	{ icon: 'inbox', label: 'Inbox' },
 ] as const;
 
 function TabsSubtlePreview() {
 	const [tab, setTab] = createSignal(0);
 	// `w-fit mx-auto`: the tab list pins itself to the start of its parent.
 	return (
-		<div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+		<div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
 			<TabsSubtle
 				testId="fl-tabs-subtle"
 				idPrefix="compare-tabs"
@@ -343,13 +343,13 @@ function TabsSubtlePreview() {
 /** The Fluid side of each slide: `bento-previews.tsx`' entry, or `compare-fluid-previews.tsx`' override. */
 export const fluidPreviews: Record<string, () => JSX.Element> = {
 	dropdown: DropdownPreview,
-	"checkbox-group": CheckboxPreview,
+	'checkbox-group': CheckboxPreview,
 	accordion: AccordionPreview,
 	tabs: TabsPreview,
-	"radio-group": RadioGroupPreview,
+	'radio-group': RadioGroupPreview,
 	slider: SliderPreview,
-	"input-group": InputGroupPreview,
+	'input-group': InputGroupPreview,
 	switch: SwitchPreview,
 	table: TablePreview,
-	"tabs-subtle": TabsSubtlePreview,
+	'tabs-subtle': TabsSubtlePreview,
 };

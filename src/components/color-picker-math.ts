@@ -1,4 +1,4 @@
-export type ColorFormat = "hex" | "rgb" | "hsl" | "oklch";
+export type ColorFormat = 'hex' | 'rgb' | 'hsl' | 'oklch';
 
 export type ParsedColor = {
 	/** HSV, canonical: 0..360 / 0..1 / 0..1. */
@@ -242,7 +242,7 @@ export function oklchToRgb(
 }
 
 function to2hex(n: number): string {
-	return Math.round(clamp255(n)).toString(16).padStart(2, "0");
+	return Math.round(clamp255(n)).toString(16).padStart(2, '0');
 }
 
 // Alpha is appended only below 1, so opaque colors stay 6-digit. This is
@@ -260,14 +260,14 @@ export function rgbToHexStr(
 function expandShortHex(h: string): string {
 	if (h.length === 3)
 		return h
-			.split("")
+			.split('')
 			.map((c) => c + c)
-			.join("");
+			.join('');
 	if (h.length === 4)
 		return h
-			.split("")
+			.split('')
 			.map((c) => c + c)
-			.join("");
+			.join('');
 	return h;
 }
 
@@ -308,7 +308,7 @@ export function parseColor(
 ): { r: number; g: number; b: number; a: number } | null {
 	const s = input.trim();
 	if (!s) return null;
-	if (s.startsWith("#") || /^[0-9a-fA-F]{3,8}$/.test(s)) {
+	if (s.startsWith('#') || /^[0-9a-fA-F]{3,8}$/.test(s)) {
 		return parseHex(s);
 	}
 	const rgbM = s.match(/^rgba?\(\s*([^)]+)\)$/i);
@@ -320,7 +320,7 @@ export function parseColor(
 		const b = parseFloat(parts[2]);
 		let a = 1;
 		if (parts[3] !== undefined) {
-			a = parts[3].endsWith("%")
+			a = parts[3].endsWith('%')
 				? parseFloat(parts[3]) / 100
 				: parseFloat(parts[3]);
 		}
@@ -332,15 +332,15 @@ export function parseColor(
 		const parts = hslM[1].split(/[\s,/]+/).filter(Boolean);
 		if (parts.length < 3) return null;
 		const h = parseFloat(parts[0]);
-		const sat = parts[1].endsWith("%")
+		const sat = parts[1].endsWith('%')
 			? parseFloat(parts[1]) / 100
 			: parseFloat(parts[1]);
-		const l = parts[2].endsWith("%")
+		const l = parts[2].endsWith('%')
 			? parseFloat(parts[2]) / 100
 			: parseFloat(parts[2]);
 		let a = 1;
 		if (parts[3] !== undefined) {
-			a = parts[3].endsWith("%")
+			a = parts[3].endsWith('%')
 				? parseFloat(parts[3]) / 100
 				: parseFloat(parts[3]);
 		}
@@ -357,14 +357,14 @@ export function parseColor(
 	if (oklchM) {
 		const parts = oklchM[1].split(/[\s,/]+/).filter(Boolean);
 		if (parts.length < 3) return null;
-		const L = parts[0].endsWith("%")
+		const L = parts[0].endsWith('%')
 			? parseFloat(parts[0]) / 100
 			: parseFloat(parts[0]);
 		const C = parseFloat(parts[1]);
 		const H = parseFloat(parts[2]);
 		let a = 1;
 		if (parts[3] !== undefined) {
-			a = parts[3].endsWith("%")
+			a = parts[3].endsWith('%')
 				? parseFloat(parts[3]) / 100
 				: parseFloat(parts[3]);
 		}
@@ -426,13 +426,13 @@ export function formatValueByFormat(
 	fmt: ColorFormat,
 ): string {
 	switch (fmt) {
-		case "hex":
+		case 'hex':
 			return parsed.hex;
-		case "rgb":
+		case 'rgb':
 			return parsed.rgb;
-		case "hsl":
+		case 'hsl':
 			return parsed.hsl;
-		case "oklch":
+		case 'oklch':
 			return parsed.oklch;
 	}
 }

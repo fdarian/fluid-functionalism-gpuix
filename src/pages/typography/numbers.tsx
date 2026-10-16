@@ -1,4 +1,4 @@
-import { createReducedMotion } from "@gpuix/solid";
+import { createReducedMotion } from '@gpuix/solid';
 import {
 	createEffect,
 	createMemo,
@@ -6,10 +6,10 @@ import {
 	For,
 	on,
 	onCleanup,
-} from "solid-js";
-import { color, type as scale } from "#/lib/theme";
-import { createVisibility } from "#/pages/surfaces/visibility";
-import { MARK_BLUE, MARK_RED, Specimen, TweakFrame } from "./specimen";
+} from 'solid-js';
+import { color, type as scale } from '#/lib/theme';
+import { createVisibility } from '#/pages/surfaces/visibility';
+import { MARK_BLUE, MARK_RED, Specimen, TweakFrame } from './specimen';
 
 // Measured at 13px: Inter's default "1" is 5.3px wide and its "0" 8.2px, so the
 // line drifts as the count climbs from 10 to 48. Tabular digits are all 8.4px,
@@ -31,7 +31,7 @@ const ROW_PAD = 8;
 const ROW_HEIGHT = 36;
 const LABEL_LEFT = FRAME_PAD + ROW_PAD;
 
-type Numeric = "normal" | "tabular-nums";
+type Numeric = 'normal' | 'tabular-nums';
 
 /** A row whose count climbs. The blue line marks the narrowest count's width; whatever runs past it is tinted red. */
 function CountRow(props: {
@@ -66,42 +66,42 @@ function CountRow(props: {
 	const textStyle = () => ({
 		...scale.body,
 		fontVariantNumeric: props.numeric,
-		whiteSpace: "nowrap" as const,
+		whiteSpace: 'nowrap' as const,
 	});
 
 	return (
-		<div style={{ position: "relative", padding: FRAME_PAD }}>
+		<div style={{ position: 'relative', padding: FRAME_PAD }}>
 			{rest() === undefined ? null : (
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 8,
 						bottom: 8,
 						left: LABEL_LEFT + (rest() ?? 0),
 						width: 1,
 						backgroundColor: MARK_BLUE,
-						pointerEvents: "none",
+						pointerEvents: 'none',
 					}}
 				/>
 			)}
 			{over() >= 0.5 ? (
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						left: LABEL_LEFT + (rest() ?? 0),
 						width: over(),
 						top: FRAME_PAD + (ROW_HEIGHT - scale.body.lineHeight) / 2 - 3,
 						height: scale.body.lineHeight + 6,
 						backgroundColor: MARK_RED,
-						pointerEvents: "none",
+						pointerEvents: 'none',
 					}}
 				/>
 			) : null}
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					height: ROW_HEIGHT,
 					paddingLeft: ROW_PAD,
 					paddingRight: ROW_PAD,
@@ -122,11 +122,11 @@ function CountRow(props: {
 						}
 						style={{
 							...textStyle(),
-							position: "absolute",
+							position: 'absolute',
 							left: LABEL_LEFT,
 							top: 0,
 							opacity: 0,
-							pointerEvents: "none",
+							pointerEvents: 'none',
 						}}
 					>
 						{countLabel(n)}
@@ -139,9 +139,9 @@ function CountRow(props: {
 
 const drift = (px: number | undefined) =>
 	px === undefined
-		? ""
+		? ''
 		: px < 0.25
-			? ": holds still"
+			? ': holds still'
 			: `: drifts ${px.toFixed(1)}px`;
 
 export function NumbersDemo() {

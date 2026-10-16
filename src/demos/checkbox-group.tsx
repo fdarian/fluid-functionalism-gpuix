@@ -1,25 +1,25 @@
-import { createSignal, For, Show } from "solid-js";
-import { CheckboxGroup, CheckboxItem } from "#/components/checkbox-group";
-import type { DemoModule } from "#/lib/demo";
-import { DemoCard, DemoRow } from "#/lib/demo-kit";
-import { color, type as scale } from "#/lib/theme";
+import { createSignal, For, Show } from 'solid-js';
+import { CheckboxGroup, CheckboxItem } from '#/components/checkbox-group';
+import type { DemoModule } from '#/lib/demo';
+import { DemoCard, DemoRow } from '#/lib/demo-kit';
+import { color, type as scale } from '#/lib/theme';
 
-const FRUITS = ["Apples", "Bananas", "Cherries", "Dates"];
+const FRUITS = ['Apples', 'Bananas', 'Cherries', 'Dates'];
 
 /** The bento preview's rows (`app/components/demo-data.ts:62-68`). */
 const FEATURES = [
-	"Spring physics",
-	"Fluid hover",
-	"Font weight transitions",
-	"Keyboard navigation",
-	"Dark mode support",
+	'Spring physics',
+	'Fluid hover',
+	'Font weight transitions',
+	'Keyboard navigation',
+	'Dark mode support',
 ];
 
 function Group(props: {
 	testId: string;
 	items: readonly string[];
 	initial: number[];
-	size?: "default" | "compact";
+	size?: 'default' | 'compact';
 	readout?: boolean;
 }) {
 	const [checked, setChecked] = createSignal<ReadonlySet<number>>(
@@ -52,21 +52,21 @@ function Group(props: {
 			</CheckboxGroup>
 			<Show when={props.readout === true}>
 				<text style={{ ...scale.caption, color: color.mutedForeground }}>
-					{`Checked: ${[...checked()].sort().join(",")}`}
+					{`Checked: ${[...checked()].sort().join(',')}`}
 				</text>
 			</Show>
 		</>
 	);
 }
 
-export const title = "CheckboxGroup";
-export const group = "Components";
-export const listed = "sidebar";
+export const title = 'CheckboxGroup';
+export const group = 'Components';
+export const listed = 'sidebar';
 
 export function Demo() {
 	return (
 		<DemoCard title="CheckboxGroup">
-			<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+			<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 				<DemoRow label="Default">
 					<Group testId="box" items={FRUITS} initial={[0]} readout />
 				</DemoRow>
@@ -79,7 +79,7 @@ export function Demo() {
 					/>
 				</DemoRow>
 				<DemoRow label="Narrow, empty">
-					<div style={{ display: "flex", flexDirection: "column", width: 220 }}>
+					<div style={{ display: 'flex', flexDirection: 'column', width: 220 }}>
 						<Group testId="narrow" items={FEATURES} initial={[]} />
 					</div>
 				</DemoRow>
@@ -88,45 +88,45 @@ export function Demo() {
 	);
 }
 
-export const scenarios: DemoModule["scenarios"] = async (shot) => {
+export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	// The label is the likeliest thing under the pointer: hover and click must work over it.
-	const row = shot.centerOf("box-2");
+	const row = shot.centerOf('box-2');
 	await shot.moveTo(row.x - 144 + 60, row.y);
-	shot.capture("hover");
+	shot.capture('hover');
 	await shot.clickAt(
-		shot.centerOf("box-1").x - 144 + 60,
-		shot.centerOf("box-1").y,
+		shot.centerOf('box-1').x - 144 + 60,
+		shot.centerOf('box-1').y,
 	);
-	shot.expectText("Bananas", true);
-	await shot.hover("box-2");
-	shot.capture("checked-pair");
+	shot.expectText('Bananas', true);
+	await shot.hover('box-2');
+	shot.capture('checked-pair');
 	// Checking the row between two checked runs merges them.
-	await shot.click("box-3");
-	await shot.click("box-2");
+	await shot.click('box-3');
+	await shot.click('box-2');
 	await shot.moveTo(1180, 700);
-	shot.capture("merged");
-	await shot.click("box-1");
+	shot.capture('merged');
+	await shot.click('box-1');
 	await shot.moveTo(1180, 700);
-	shot.capture("split");
-	await shot.click("box-0");
-	await shot.press("ArrowDown");
-	shot.capture("keyboard-focus");
-	await shot.press("Space");
-	shot.capture("keyboard-toggled");
+	shot.capture('split');
+	await shot.click('box-0');
+	await shot.press('ArrowDown');
+	shot.capture('keyboard-focus');
+	await shot.press('Space');
+	shot.capture('keyboard-toggled');
 	// Enter and Space both toggle the focused row; End and Home jump to the last and first row without toggling.
-	shot.expectText("Checked: 1,2,3", true);
-	await shot.press("Enter");
-	shot.expectText("Checked: 2,3", true);
-	await shot.press("End");
-	shot.expectText("Checked: 2,3", true);
-	await shot.press("Space");
-	shot.expectText("Checked: 2", true);
-	await shot.press("Home");
-	await shot.press("Space");
-	shot.expectText("Checked: 0,2", true);
-	shot.expectAria("box-0", { role: "CheckBox", toggled: "True" });
-	shot.expectAria("box-1", { toggled: "False" });
+	shot.expectText('Checked: 1,2,3', true);
+	await shot.press('Enter');
+	shot.expectText('Checked: 2,3', true);
+	await shot.press('End');
+	shot.expectText('Checked: 2,3', true);
+	await shot.press('Space');
+	shot.expectText('Checked: 2', true);
+	await shot.press('Home');
+	await shot.press('Space');
+	shot.expectText('Checked: 0,2', true);
+	shot.expectAria('box-0', { role: 'CheckBox', toggled: 'True' });
+	shot.expectAria('box-1', { toggled: 'False' });
 	// The hover fill shows the narrow group's width.
-	await shot.click("narrow-1");
-	shot.capture("narrow-checked");
+	await shot.click('narrow-1');
+	shot.capture('narrow-checked');
 };

@@ -1,43 +1,38 @@
-import { createSignal, For, type JSX } from "solid-js";
-import type { ShotContext } from "#/lib/demo";
-import { DocPage, DocSection, Prose, SubHeading } from "#/lib/doc-page";
-import {
-	color,
-	type Scheme,
-	setThemeChoice,
-	siteType,
-} from "#/lib/theme";
-import { ColorPickerDemo, InviteDialogDemo } from "#/pages/surfaces/examples";
-import { SURFACES_INSTALL_PROMPT } from "#/pages/surfaces/install-prompt";
-import { ProblemDemo } from "#/pages/surfaces/problem";
+import { createSignal, For, type JSX } from 'solid-js';
+import type { ShotContext } from '#/lib/demo';
+import { DocPage, DocSection, Prose, SubHeading } from '#/lib/doc-page';
+import { color, type Scheme, setThemeChoice, siteType } from '#/lib/theme';
+import { ColorPickerDemo, InviteDialogDemo } from '#/pages/surfaces/examples';
+import { SURFACES_INSTALL_PROMPT } from '#/pages/surfaces/install-prompt';
+import { ProblemDemo } from '#/pages/surfaces/problem';
 import {
 	ElevatedDemo,
 	ElevationStackDemo,
 	SubstrateDemo,
 	TokensDemo,
-} from "#/pages/surfaces/solution";
+} from '#/pages/surfaces/solution';
 
-export const title = "Surfaces";
-export const group = "System";
+export const title = 'Surfaces';
+export const group = 'System';
 /** The sidebar's System group is alphabetical: Fluid Hover, Motion, Scrollbars, Sizes, Skill, Surfaces, Typography. */
 export const order = 6;
-export const layout = "docs";
-export const listed = "sidebar";
+export const layout = 'docs';
+export const listed = 'sidebar';
 export const menuKeywords = [
-	"surfaces",
-	"Eight",
-	"level",
-	"surface",
-	"and",
-	"shadow",
-	"ladder",
-	"for",
-	"elevation",
-	"in",
-	"light",
-	"and",
-	"dark",
-	"mode",
+	'surfaces',
+	'Eight',
+	'level',
+	'surface',
+	'and',
+	'shadow',
+	'ladder',
+	'for',
+	'elevation',
+	'in',
+	'light',
+	'and',
+	'dark',
+	'mode',
 ];
 
 export async function scenarios(shot: ShotContext) {
@@ -51,50 +46,50 @@ export async function scenarios(shot: ShotContext) {
 	};
 	/** The dark previews must stay dark when the page is light. */
 	const inLight = async (name: string) => {
-		setThemeChoice("light");
+		setThemeChoice('light');
 		await shot.settle(600);
 		shot.capture(name);
-		setThemeChoice("dark");
+		setThemeChoice('dark');
 		await shot.settle(600);
 	};
 
-	await scrollTo("problem");
-	shot.capture("problem");
-	await shot.click("problem-code-tab");
-	shot.capture("problem-code");
-	await shot.click("problem-preview-tab");
-	await inLight("problem-light");
-	await scrollTo("tokens");
-	shot.capture("tokens");
-	await inLight("tokens-light");
-	await scrollTo("substrate");
-	shot.capture("substrate");
-	await scrollTo("elevated");
-	shot.capture("elevated");
-	await scrollTo("stack");
-	await shot.hover("stack");
-	shot.capture("stack");
+	await scrollTo('problem');
+	shot.capture('problem');
+	await shot.click('problem-code-tab');
+	shot.capture('problem-code');
+	await shot.click('problem-preview-tab');
+	await inLight('problem-light');
+	await scrollTo('tokens');
+	shot.capture('tokens');
+	await inLight('tokens-light');
+	await scrollTo('substrate');
+	shot.capture('substrate');
+	await scrollTo('elevated');
+	shot.capture('elevated');
+	await scrollTo('stack');
+	await shot.hover('stack');
+	shot.capture('stack');
 	// A press on the track's far end moves the nearer knob there: surface-1 to surface-4 becomes 1 to 8.
-	const slider = shot.centerOf("stack-slider");
+	const slider = shot.centerOf('stack-slider');
 	await shot.clickAt(slider.x + 245, slider.y);
-	shot.capture("stack-all-levels");
-	await scrollTo("invite");
-	shot.capture("invite-dialog");
-	await scrollTo("color-picker");
-	shot.capture("color-picker");
-	await inLight("color-picker-light");
+	shot.capture('stack-all-levels');
+	await scrollTo('invite');
+	shot.capture('invite-dialog');
+	await scrollTo('color-picker');
+	shot.capture('color-picker');
+	await inLight('color-picker-light');
 }
 
 type Word = { text: string; theme?: Scheme };
 
 const DESCRIPTION: readonly Word[] = [
-	..."Eight surface levels that nest. Components read their substrate from context and lift relative to it, so popovers, dropdowns, and dialogs stay visible at any depth — in both"
-		.split(" ")
+	...'Eight surface levels that nest. Components read their substrate from context and lift relative to it, so popovers, dropdowns, and dialogs stay visible at any depth — in both'
+		.split(' ')
 		.map((text) => ({ text })),
-	{ text: "light", theme: "light" },
-	{ text: "and" },
-	{ text: "dark", theme: "dark" },
-	{ text: "mode." },
+	{ text: 'light', theme: 'light' },
+	{ text: 'and' },
+	{ text: 'dark', theme: 'dark' },
+	{ text: 'mode.' },
 ];
 
 function ThemeLink(props: { theme: Scheme; children: string }) {
@@ -109,8 +104,8 @@ function ThemeLink(props: { theme: Scheme; children: string }) {
 			style={{
 				...siteType.body,
 				color: hovered() ? color.foreground : color.mutedForeground,
-				textDecoration: "underline",
-				cursor: "pointer",
+				textDecoration: 'underline',
+				cursor: 'pointer',
 			}}
 		>
 			{props.children}
@@ -127,9 +122,9 @@ function Description() {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				flexWrap: "wrap",
+				display: 'flex',
+				flexDirection: 'row',
+				flexWrap: 'wrap',
 				columnGap: 3.6,
 			}}
 		>
@@ -154,7 +149,7 @@ export function Page(): JSX.Element {
 			installPrompt={SURFACES_INSTALL_PROMPT}
 		>
 			<DocSection title="The problem">
-				<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+				<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 					<Prose>
 						In light mode, we use shadow behind white surfaces to signify
 						elevation. In dark mode, we use progressively lighter backgrounds
@@ -170,7 +165,7 @@ export function Page(): JSX.Element {
 			</DocSection>
 
 			<DocSection title="The solution">
-				<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+				<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 					<Prose>
 						Three pieces: tokens, substrate context, and the primitive.
 					</Prose>

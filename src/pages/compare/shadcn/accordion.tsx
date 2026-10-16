@@ -4,14 +4,14 @@ import {
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
-} from "@gpuix/solid";
-import { createEffect, createSignal, For, on, Show } from "solid-js";
-import { weight } from "#/lib/theme";
-import { LUCIDE, LucideIcon, pressProps } from "./parts";
-import { sc, scRing } from "./theme";
+} from '@gpuix/solid';
+import { createEffect, createSignal, For, on, Show } from 'solid-js';
+import { weight } from '#/lib/theme';
+import { LUCIDE, LucideIcon, pressProps } from './parts';
+import { sc, scRing } from './theme';
 
 /** `accordion-down` / `accordion-up`: 0.2s ease-out. */
-const SLIDE = { duration: 0.2, ease: "easeOut" } as const;
+const SLIDE = { duration: 0.2, ease: 'easeOut' } as const;
 
 function Panel(props: { open: boolean; children: string }) {
 	const [height, setHeight] = createSignal<number>();
@@ -36,23 +36,23 @@ function Panel(props: { open: boolean; children: string }) {
 				if (!props.open) setRetired(true);
 			}}
 			style={{
-				display: "flex",
-				flexDirection: "column",
-				overflow: "hidden",
-				...(height() === undefined && props.open ? { height: "auto" } : {}),
+				display: 'flex',
+				flexDirection: 'column',
+				overflow: 'hidden',
+				...(height() === undefined && props.open ? { height: 'auto' } : {}),
 			}}
 		>
 			<Show when={!retired()}>
 				<div
 					onLayout={(event: DomEvent) => {
 						if (event.height === undefined) {
-							throw new Error("onLayout reported no height");
+							throw new Error('onLayout reported no height');
 						}
 						setHeight(event.height);
 					}}
 					style={{
-						display: "flex",
-						flexDirection: "column",
+						display: 'flex',
+						flexDirection: 'column',
 						flexShrink: 0,
 						paddingTop: 4,
 						paddingBottom: 12,
@@ -92,24 +92,24 @@ export function ScAccordion(props: {
 		const target = triggers[index];
 		if (target === undefined) throw new Error(`There is no trigger ${index}`);
 		if (renderer.focusElement === undefined) {
-			throw new Error("This renderer cannot move focus");
+			throw new Error('This renderer cannot move focus');
 		}
 		renderer.focusElement(target.id);
 	};
 	const onKeyDown = (index: number) => (event: KeyEvent) => {
 		const last = props.items.length - 1;
 		const target =
-			event.key === "ArrowDown"
+			event.key === 'ArrowDown'
 				? index === last
 					? 0
 					: index + 1
-				: event.key === "ArrowUp"
+				: event.key === 'ArrowUp'
 					? index === 0
 						? last
 						: index - 1
-					: event.key === "Home"
+					: event.key === 'Home'
 						? 0
-						: event.key === "End"
+						: event.key === 'End'
 							? last
 							: undefined;
 		if (target === undefined) return;
@@ -120,7 +120,7 @@ export function ScAccordion(props: {
 	return (
 		<div
 			testId={props.testId}
-			style={{ display: "flex", flexDirection: "column", width: "100%" }}
+			style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
 		>
 			<For each={props.items}>
 				{(item, index) => {
@@ -128,8 +128,8 @@ export function ScAccordion(props: {
 					return (
 						<div
 							style={{
-								display: "flex",
-								flexDirection: "column",
+								display: 'flex',
+								flexDirection: 'column',
 								borderBottomWidth: 1,
 								borderColor: sc.border,
 							}}
@@ -150,10 +150,10 @@ export function ScAccordion(props: {
 								}
 								style={{
 									group: true,
-									display: "flex",
-									flexDirection: "row",
-									alignItems: "center",
-									justifyContent: "space-between",
+									display: 'flex',
+									flexDirection: 'row',
+									alignItems: 'center',
+									justifyContent: 'space-between',
 									paddingTop: 8,
 									paddingBottom: 8,
 									keyboardFocusDim: false,
@@ -166,7 +166,7 @@ export function ScAccordion(props: {
 										lineHeight: 19.5,
 										fontWeight: weight.medium,
 										color: sc.foreground,
-										groupHover: { textDecoration: "underline" },
+										groupHover: { textDecoration: 'underline' },
 									}}
 								>
 									{item.title}

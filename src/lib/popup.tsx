@@ -1,13 +1,13 @@
 import {
 	type AnchoredPlacementEvent,
-	DismissableLayer,
 	type DimensionValue,
+	DismissableLayer,
 	motion,
-} from "@gpuix/solid";
-import { type Accessor, createSignal, type JSX, Show } from "solid-js";
-import type { createPresence } from "./presence";
-import { SurfaceContext, useElevatedSurface } from "./surface-context";
-import { color, radius, shadow, surface, motion as tween } from "./theme";
+} from '@gpuix/solid';
+import { type Accessor, createSignal, type JSX, Show } from 'solid-js';
+import type { createPresence } from './presence';
+import { SurfaceContext, useElevatedSurface } from './surface-context';
+import { color, radius, shadow, surface, motion as tween } from './theme';
 
 export const POPUP_OFFSET = 6;
 /** Steps above its substrate a popup sits: `Elevated offset={2}` in the source. */
@@ -15,7 +15,7 @@ const POPUP_SURFACE_OFFSET = 2;
 /** The gap a popup keeps from the window edge: Base UI's default collision padding. */
 export const POPUP_MARGIN = 5;
 
-type Side = AnchoredPlacementEvent["side"];
+type Side = AnchoredPlacementEvent['side'];
 
 /**
  * What `<anchored fit="flip">` reports about where it ended up: the side it
@@ -51,8 +51,8 @@ export function PopupSurface(props: {
 	presence: ReturnType<typeof createPresence>;
 	testId?: string;
 	/** The side to open on when it has room. */
-	side?: "top" | "bottom";
-	align: "start" | "end";
+	side?: 'top' | 'bottom';
+	align: 'start' | 'end';
 	/** The card's width; it is never narrower than the trigger. */
 	width: DimensionValue;
 	/** The tallest the card gets; the room on its side caps it further. */
@@ -63,59 +63,59 @@ export function PopupSurface(props: {
 	children: (maxHeight: Accessor<number>) => JSX.Element;
 }) {
 	const level = useElevatedSurface(POPUP_SURFACE_OFFSET);
-	const placement = createPlacementState(props.side ?? "bottom");
+	const placement = createPlacementState(props.side ?? 'bottom');
 	const maxHeight = () => placement.maxHeight(props.maxHeight);
 	/** The popup slides in from the trigger: down from above, up from below. */
-	const slide = () => (placement.side() === "top" ? 4 : -4);
+	const slide = () => (placement.side() === 'top' ? 4 : -4);
 	return (
 		<>
-		{/* A layer only while open, not while the exit fade plays: a second Escape in that window belongs to the dialog behind. It is a sibling because the layer needs no children, only its place in the stack. */}
-		<Show when={props.presence.open()}>
-			<DismissableLayer onEscapeKeyDown={props.onDismiss} />
-		</Show>
-		<Show when={props.presence.mounted()}>
-			<anchored
-				side={props.side ?? "bottom"}
-				align={props.align}
-				gap={POPUP_OFFSET}
-				fit="flip"
-				snapMargin={POPUP_MARGIN}
-				onPlacement={placement.onPlacement}
-				deferred
-				priority={1}
-				style={{ backgroundColor: color.transparent }}
-			>
-				<motion.div
-					testId={props.testId}
-					initial={{ opacity: 0, top: slide() }}
-					animate={
-						props.presence.open()
-							? { opacity: 1, top: 0 }
-							: { opacity: 0, top: slide() }
-					}
-					transition={props.presence.open() ? tween.fast : tween.fastExit}
-					onMotionComplete={() => {
-						if (!props.presence.open()) props.presence.release();
-					}}
-					style={{
-						position: "relative",
-						width: props.width,
-						minWidth: "anchor-size(width)",
-						display: "flex",
-						flexDirection: "column",
-						backgroundColor: surface(level),
-						borderRadius: radius.container,
-						boxShadow: shadow(3),
-						overflow: "hidden",
-						maxHeight: maxHeight(),
-					}}
+			{/* A layer only while open, not while the exit fade plays: a second Escape in that window belongs to the dialog behind. It is a sibling because the layer needs no children, only its place in the stack. */}
+			<Show when={props.presence.open()}>
+				<DismissableLayer onEscapeKeyDown={props.onDismiss} />
+			</Show>
+			<Show when={props.presence.mounted()}>
+				<anchored
+					side={props.side ?? 'bottom'}
+					align={props.align}
+					gap={POPUP_OFFSET}
+					fit="flip"
+					snapMargin={POPUP_MARGIN}
+					onPlacement={placement.onPlacement}
+					deferred
+					priority={1}
+					style={{ backgroundColor: color.transparent }}
 				>
-					<SurfaceContext.Provider value={level}>
-						{props.children(maxHeight)}
-					</SurfaceContext.Provider>
-				</motion.div>
-			</anchored>
-		</Show>
+					<motion.div
+						testId={props.testId}
+						initial={{ opacity: 0, top: slide() }}
+						animate={
+							props.presence.open()
+								? { opacity: 1, top: 0 }
+								: { opacity: 0, top: slide() }
+						}
+						transition={props.presence.open() ? tween.fast : tween.fastExit}
+						onMotionComplete={() => {
+							if (!props.presence.open()) props.presence.release();
+						}}
+						style={{
+							position: 'relative',
+							width: props.width,
+							minWidth: 'anchor-size(width)',
+							display: 'flex',
+							flexDirection: 'column',
+							backgroundColor: surface(level),
+							borderRadius: radius.container,
+							boxShadow: shadow(3),
+							overflow: 'hidden',
+							maxHeight: maxHeight(),
+						}}
+					>
+						<SurfaceContext.Provider value={level}>
+							{props.children(maxHeight)}
+						</SurfaceContext.Provider>
+					</motion.div>
+				</anchored>
+			</Show>
 		</>
 	);
 }

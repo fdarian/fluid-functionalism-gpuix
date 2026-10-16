@@ -5,26 +5,26 @@
 // mdast; the shape is small enough that a line scanner covers it without a
 // Markdown dependency, and it rejects every construct the shape leaves out.
 
-export const CHANGE_KINDS = ["new", "breaking", "updated"] as const;
+export const CHANGE_KINDS = ['new', 'breaking', 'updated'] as const;
 export type ChangeKind = (typeof CHANGE_KINDS)[number];
 
 export const KIND_LABEL: Record<ChangeKind, string> = {
-	breaking: "Breaking",
-	new: "New",
-	updated: "Updated",
+	breaking: 'Breaking',
+	new: 'New',
+	updated: 'Updated',
 };
 
 /** Sentence text: plain runs and inline code, nothing else. */
 export type Inline =
-	| { type: "text"; value: string }
-	| { type: "code"; value: string };
+	| { type: 'text'; value: string }
+	| { type: 'code'; value: string };
 
 export type ChangeRef =
-	| { type: "pr"; number: number }
-	| { type: "commit"; sha: string };
+	| { type: 'pr'; number: number }
+	| { type: 'commit'; sha: string };
 
 /** The languages a Breaking diff can be written in, TSX first. */
-export const DIFF_LANGS = ["tsx", "ts", "css", "json", "bash"] as const;
+export const DIFF_LANGS = ['tsx', 'ts', 'css', 'json', 'bash'] as const;
 export type DiffLang = (typeof DIFF_LANGS)[number];
 
 export interface ChangeEntry {
@@ -57,8 +57,8 @@ export interface Release {
 
 export class ChangelogFormatError extends Error {
 	constructor(file: string, line: number | undefined, message: string) {
-		super(`${file}${line ? `:${line}` : ""}: ${message}`);
-		this.name = "ChangelogFormatError";
+		super(`${file}${line ? `:${line}` : ''}: ${message}`);
+		this.name = 'ChangelogFormatError';
 	}
 }
 
@@ -73,9 +73,9 @@ const HEADING = /^(#{1,6})(?:\s+(.*?))?\s*#*\s*$/;
 const BULLET = /^- /;
 const ORDERED = /^\d+[.)]\s/;
 const HEADINGS: Record<string, ChangeKind> = {
-	Breaking: "breaking",
-	New: "new",
-	Updated: "updated",
+	Breaking: 'breaking',
+	New: 'new',
+	Updated: 'updated',
 };
 
 /** The month after `YYYY-MM`, as `YYYY-MM`. */
@@ -84,21 +84,21 @@ export function nextMonth(month: string): string {
 	const number = Number(month.slice(5));
 	return number === 12
 		? `${year + 1}-01`
-		: `${year}-${String(number + 1).padStart(2, "0")}`;
+		: `${year}-${String(number + 1).padStart(2, '0')}`;
 }
 
-export function parseRelease(source: string, file = "release.md"): Release {
+export function parseRelease(source: string, file = 'release.md'): Release {
 	const fail: Fail = (line, message) => {
 		throw new ChangelogFormatError(file, line, message);
 	};
 
 	// Em dashes are out everywhere (tone-of-voice.md), fences included.
-	const dash = source.split("\n").findIndex((line) => line.includes("—"));
+	const dash = source.split('\n').findIndex((line) => line.includes('—'));
 	if (dash !== -1)
-		fail(dash + 1, "em dash; use a comma, a colon, or a full stop");
+		fail(dash + 1, 'em dash; use a comma, a colon, or a full stop');
 
 	const front = FRONTMATTER.exec(source);
-	if (front === null) return fail(1, "missing the --- frontmatter block");
+	if (front === null) return fail(1, 'missing the --- frontmatter block');
 	const meta: Record<string, string> = {};
 	const frontLines = front[1].split(/\r?\n/);
 	for (let index = 0; index < frontLines.length; index += 1) {
@@ -109,7 +109,7 @@ export function parseRelease(source: string, file = "release.md"): Release {
 			fail(index + 2, `frontmatter line is not \`key: value\`: ${line}`);
 		}
 		const key = match[1];
-		if (!["month", "released", "title"].includes(key)) {
+		if (!['month', 'released', 'title'].includes(key)) {
 			fail(index + 2, `unknown frontmatter key \`${key}\``);
 		}
 		meta[key] = match[2].trim();
@@ -118,12 +118,12 @@ export function parseRelease(source: string, file = "release.md"): Release {
 	const month = meta.month;
 	const released = meta.released;
 	const title = meta.title;
-	if (!month || !MONTH.test(month)) return fail(2, "`month` must be YYYY-MM");
-	if (!title) return fail(2, "`title` is required");
-	if (title.length > 90) fail(2, "`title` runs past 90 characters");
-	if (/\.$/.test(title)) fail(2, "`title` ends with a period");
+	if (!month || !MONTH.test(month)) return fail(2, '`month` must be YYYY-MM');
+	if (!title) return fail(2, '`title` is required');
+	if (title.length > 90) fail(2, '`title` runs past 90 characters');
+	if (/\.$/.test(title)) fail(2, '`title` ends with a period');
 	if (released !== undefined) {
-		if (!DAY.test(released)) fail(2, "`released` must be YYYY-MM-DD");
+		if (!DAY.test(released)) fail(2, '`released` must be YYYY-MM-DD');
 		// The pattern lets 2026-02-31 through; Date would roll it into March.
 		if (
 			new Date(`${released}T00:00:00Z`).toISOString().slice(0, 10) !== released
@@ -131,12 +131,12 @@ export function parseRelease(source: string, file = "release.md"): Release {
 			fail(2, `\`released\` is not a real day: ${released}`);
 		}
 		if (released < `${nextMonth(month)}-01`) {
-			fail(2, "`released` falls before the month ended");
+			fail(2, '`released` falls before the month ended');
 		}
 	}
 
 	// Line numbers in the body are offset by the frontmatter block.
-	const offset = front[0].split("\n").length - 1;
+	const offset = front[0].split('\n').length - 1;
 	const lines = source.slice(front[0].length).split(/\r?\n/);
 	const lineNumber = (index: number) => index + 1 + offset;
 
@@ -148,7 +148,7 @@ export function parseRelease(source: string, file = "release.md"): Release {
 
 	while (index < lines.length) {
 		const line = lines[index];
-		if (line.trim() === "") {
+		if (line.trim() === '') {
 			index += 1;
 			continue;
 		}
@@ -156,9 +156,9 @@ export function parseRelease(source: string, file = "release.md"): Release {
 		const heading = HEADING.exec(line);
 		if (heading !== null) {
 			if (heading[1].length !== 2) {
-				fail(lineNumber(index), "only `##` headings are allowed");
+				fail(lineNumber(index), 'only `##` headings are allowed');
 			}
-			const label = heading[2] ?? "";
+			const label = heading[2] ?? '';
 			const kind = HEADINGS[label];
 			if (kind === undefined) {
 				fail(
@@ -173,11 +173,11 @@ export function parseRelease(source: string, file = "release.md"): Release {
 			) {
 				fail(
 					lineNumber(index),
-					"sections run New, Breaking, Updated, each once",
+					'sections run New, Breaking, Updated, each once',
 				);
 			}
 			if (current !== null && !listSeen) {
-				fail(lineNumber(index), "the previous section has no entries");
+				fail(lineNumber(index), 'the previous section has no entries');
 			}
 			current = { kind, entries: [] };
 			groups.push(current);
@@ -190,30 +190,30 @@ export function parseRelease(source: string, file = "release.md"): Release {
 			if (intro !== null || BULLET.test(line) || ORDERED.test(line)) {
 				fail(
 					lineNumber(index),
-					"only one intro paragraph may sit above the first section",
+					'only one intro paragraph may sit above the first section',
 				);
 			}
 			const start = index;
 			const paragraph: string[] = [];
 			while (
 				index < lines.length &&
-				lines[index].trim() !== "" &&
+				lines[index].trim() !== '' &&
 				!HEADING.test(lines[index])
 			) {
 				paragraph.push(lines[index]);
 				index += 1;
 			}
-			intro = parseInline(paragraph.join(" "), fail, lineNumber(start));
+			intro = parseInline(paragraph.join(' '), fail, lineNumber(start));
 			continue;
 		}
 
 		if (ORDERED.test(line)) {
-			fail(lineNumber(index), "use `-` bullets, not a numbered list");
+			fail(lineNumber(index), 'use `-` bullets, not a numbered list');
 		}
 		if (!BULLET.test(line) || listSeen) {
 			fail(
 				lineNumber(index),
-				"a section holds exactly one bullet list and nothing else",
+				'a section holds exactly one bullet list and nothing else',
 			);
 		}
 		listSeen = true;
@@ -224,7 +224,7 @@ export function parseRelease(source: string, file = "release.md"): Release {
 			// paragraph continuation; trailing blanks belong to the gap after it.
 			while (index < lines.length && itemContinues(lines, index)) index += 1;
 			let end = index;
-			while (end > start + 1 && lines[end - 1].trim() === "") end -= 1;
+			while (end > start + 1 && lines[end - 1].trim() === '') end -= 1;
 			current.entries.push(
 				parseEntry(
 					lines.slice(start, end),
@@ -234,14 +234,14 @@ export function parseRelease(source: string, file = "release.md"): Release {
 				),
 			);
 			// Blank lines between items keep the list going.
-			while (index < lines.length && lines[index].trim() === "") index += 1;
+			while (index < lines.length && lines[index].trim() === '') index += 1;
 		}
 	}
 
 	if (current !== null && !listSeen)
-		fail(undefined, "the last section has no entries");
+		fail(undefined, 'the last section has no entries');
 	if (groups.length === 0)
-		fail(undefined, "a release needs at least one section");
+		fail(undefined, 'a release needs at least one section');
 
 	return { month, released: released ?? null, title, intro, groups };
 }
@@ -249,15 +249,15 @@ export function parseRelease(source: string, file = "release.md"): Release {
 /** Whether `lines[index]` belongs to the bullet item above it. */
 function itemContinues(lines: string[], index: number): boolean {
 	const line = lines[index];
-	if (line.trim() === "") {
+	if (line.trim() === '') {
 		// A blank line holds the item only when an indented line follows it.
 		let next = index + 1;
-		while (next < lines.length && lines[next].trim() === "") next += 1;
-		return next < lines.length && lines[next].startsWith("  ");
+		while (next < lines.length && lines[next].trim() === '') next += 1;
+		return next < lines.length && lines[next].startsWith('  ');
 	}
-	if (line.startsWith("  ")) return true;
+	if (line.startsWith('  ')) return true;
 	return (
-		!BULLET.test(line) && !HEADING.test(line) && lines[index - 1].trim() !== ""
+		!BULLET.test(line) && !HEADING.test(line) && lines[index - 1].trim() !== ''
 	);
 }
 
@@ -269,27 +269,27 @@ function parseEntry(
 ): ChangeEntry {
 	// Dedent the item's content by the bullet's 2 columns.
 	const content = itemLines.map((raw, index) =>
-		index === 0 ? raw.slice(2) : raw.replace(/^ {1,2}/, ""),
+		index === 0 ? raw.slice(2) : raw.replace(/^ {1,2}/, ''),
 	);
 
 	let cursor = 0;
 	const paragraph: string[] = [];
 	while (
 		cursor < content.length &&
-		content[cursor].trim() !== "" &&
-		!content[cursor].startsWith("```")
+		content[cursor].trim() !== '' &&
+		!content[cursor].startsWith('```')
 	) {
 		paragraph.push(content[cursor]);
 		cursor += 1;
 	}
 	if (paragraph.length === 0) {
-		fail(line, "an entry starts with its label and sentence");
+		fail(line, 'an entry starts with its label and sentence');
 	}
 
 	let diff: string | null = null;
 	let diffLang: DiffLang | null = null;
 	while (cursor < content.length) {
-		if (content[cursor].trim() === "") {
+		if (content[cursor].trim() === '') {
 			cursor += 1;
 			continue;
 		}
@@ -298,43 +298,43 @@ function parseEntry(
 		if (fence === null) {
 			fail(
 				fenceLine,
-				"an entry holds one line, plus a diff block when Breaking",
+				'an entry holds one line, plus a diff block when Breaking',
 			);
 		}
-		if (kind !== "breaking") {
-			fail(fenceLine, "only Breaking entries carry a code block");
+		if (kind !== 'breaking') {
+			fail(fenceLine, 'only Breaking entries carry a code block');
 		}
-		if (fence?.[1] !== "diff") {
-			fail(fenceLine, "the migration block must be fenced as ```diff");
+		if (fence?.[1] !== 'diff') {
+			fail(fenceLine, 'the migration block must be fenced as ```diff');
 		}
 		if (diff !== null) {
-			fail(fenceLine, "a Breaking entry carries exactly one diff block");
+			fail(fenceLine, 'a Breaking entry carries exactly one diff block');
 		}
-		const language = fence?.[2] || "tsx";
+		const language = fence?.[2] || 'tsx';
 		if (!(DIFF_LANGS as readonly string[]).includes(language)) {
 			fail(
 				fenceLine,
-				`\`\`\`diff ${language}\` is not a diff language; use ${DIFF_LANGS.join(", ")}`,
+				`\`\`\`diff ${language}\` is not a diff language; use ${DIFF_LANGS.join(', ')}`,
 			);
 		}
 		const body: string[] = [];
 		cursor += 1;
-		while (cursor < content.length && !content[cursor].startsWith("```")) {
+		while (cursor < content.length && !content[cursor].startsWith('```')) {
 			body.push(content[cursor]);
 			cursor += 1;
 		}
 		if (cursor === content.length)
-			fail(fenceLine, "the diff block is never closed");
+			fail(fenceLine, 'the diff block is never closed');
 		cursor += 1;
-		diff = body.join("\n");
+		diff = body.join('\n');
 		diffLang = language as DiffLang;
 	}
-	if (kind === "breaking" && diff === null) {
-		fail(line, "a Breaking entry needs a ```diff block");
+	if (kind === 'breaking' && diff === null) {
+		fail(line, 'a Breaking entry needs a ```diff block');
 	}
 
 	// The label: [Name](/route) or **Name**.
-	const text = paragraph.join(" ");
+	const text = paragraph.join(' ');
 	let name: string;
 	let href: string | null;
 	let rest: string;
@@ -355,52 +355,52 @@ function parseEntry(
 	} else {
 		return fail(
 			line,
-			"an entry starts with `[Name](/docs/slug)` or `**Name**`",
+			'an entry starts with `[Name](/docs/slug)` or `**Name**`',
 		);
 	}
-	if (!name) fail(line, "the label is empty");
+	if (!name) fail(line, 'the label is empty');
 
 	const sentence = parseInline(rest, fail, line);
 	const head = sentence[0];
-	if (!head || head.type !== "text" || !head.value.startsWith(": ")) {
-		return fail(line, "a colon and a space follow the label");
+	if (!head || head.type !== 'text' || !head.value.startsWith(': ')) {
+		return fail(line, 'a colon and a space follow the label');
 	}
 	head.value = head.value.slice(2);
 	if (!head.value) sentence.shift();
 
 	const tail = sentence[sentence.length - 1];
-	const refsMatch = tail?.type === "text" ? REFS_TAIL.exec(tail.value) : null;
+	const refsMatch = tail?.type === 'text' ? REFS_TAIL.exec(tail.value) : null;
 	if (tail === undefined || refsMatch === null) {
 		return fail(
 			line,
-			"an entry ends with its refs: `(#52)` or `(#52, a28dd34)`",
+			'an entry ends with its refs: `(#52)` or `(#52, a28dd34)`',
 		);
 	}
-	const refs = refsMatch[1].split(",").map((raw): ChangeRef => {
+	const refs = refsMatch[1].split(',').map((raw): ChangeRef => {
 		const ref = raw.trim();
 		if (!REF.test(ref)) {
 			fail(line, `\`${ref}\` is not a PR (#52) or a 7-character SHA`);
 		}
-		return ref.startsWith("#")
-			? { type: "pr", number: Number(ref.slice(1)) }
-			: { type: "commit", sha: ref };
+		return ref.startsWith('#')
+			? { type: 'pr', number: Number(ref.slice(1)) }
+			: { type: 'commit', sha: ref };
 	});
 	if (refs.length > 3) {
 		fail(
 			line,
-			"3 refs at most; keep the PR, or the commits that carry the change",
+			'3 refs at most; keep the PR, or the commits that carry the change',
 		);
 	}
 	tail.value = tail.value.slice(0, refsMatch.index);
 	if (!tail.value) sentence.pop();
 
 	const last = sentence[sentence.length - 1];
-	if (!last || last.type !== "text" || !/[.!?]$/.test(last.value)) {
-		fail(line, "the sentence ends with a period before the refs");
+	if (!last || last.type !== 'text' || !/[.!?]$/.test(last.value)) {
+		fail(line, 'the sentence ends with a period before the refs');
 	}
 	const lead = sentence[0];
-	if (lead.type === "text" && !/^[A-Z0-9]/.test(lead.value)) {
-		fail(line, "the sentence starts with a capital");
+	if (lead.type === 'text' && !/^[A-Z0-9]/.test(lead.value)) {
+		fail(line, 'the sentence starts with a capital');
 	}
 
 	return { kind, name, href, text: sentence, refs, diff, diffLang };
@@ -410,7 +410,7 @@ function parseEntry(
 function parseInline(text: string, fail: Fail, line: number): Inline[] {
 	const out: Inline[] = [];
 	const pushText = (raw: string) => {
-		if (raw === "") return;
+		if (raw === '') return;
 		const forbidden = /[*[<\\]|!\[/.exec(raw);
 		if (forbidden !== null) {
 			fail(
@@ -418,36 +418,36 @@ function parseInline(text: string, fail: Fail, line: number): Inline[] {
 				`only plain text and inline code go in a sentence, found \`${forbidden[0]}\``,
 			);
 		}
-		const value = raw.replace(/\s+/g, " ");
+		const value = raw.replace(/\s+/g, ' ');
 		const previous = out[out.length - 1];
-		if (previous?.type === "text") previous.value += value;
-		else out.push({ type: "text", value });
+		if (previous?.type === 'text') previous.value += value;
+		else out.push({ type: 'text', value });
 	};
 
 	let cursor = 0;
 	while (cursor < text.length) {
-		const open = text.indexOf("`", cursor);
+		const open = text.indexOf('`', cursor);
 		if (open === -1) {
 			pushText(text.slice(cursor));
 			break;
 		}
 		pushText(text.slice(cursor, open));
 		let ticks = 1;
-		while (text[open + ticks] === "`") ticks += 1;
-		const delimiter = "`".repeat(ticks);
+		while (text[open + ticks] === '`') ticks += 1;
+		const delimiter = '`'.repeat(ticks);
 		let close = open + ticks;
 		for (;;) {
 			close = text.indexOf(delimiter, close);
-			if (close === -1) fail(line, "an inline code span is never closed");
-			if (text[close + ticks] !== "`") break;
+			if (close === -1) fail(line, 'an inline code span is never closed');
+			if (text[close + ticks] !== '`') break;
 			close += ticks;
-			while (text[close] === "`") close += 1;
+			while (text[close] === '`') close += 1;
 		}
-		let value = text.slice(open + ticks, close).replace(/\s+/g, " ");
-		if (value.length > 2 && value.startsWith(" ") && value.endsWith(" ")) {
+		let value = text.slice(open + ticks, close).replace(/\s+/g, ' ');
+		if (value.length > 2 && value.startsWith(' ') && value.endsWith(' ')) {
 			value = value.slice(1, -1);
 		}
-		out.push({ type: "code", value });
+		out.push({ type: 'code', value });
 		cursor = close + ticks;
 	}
 	return out;

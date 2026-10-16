@@ -1,6 +1,6 @@
-import { type Accessor, createSignal, For, type JSX, Show } from "solid-js";
-import { createStore } from "solid-js/store";
-import { Button } from "#/components/button";
+import { type Accessor, createSignal, For, type JSX, Show } from 'solid-js';
+import { createStore } from 'solid-js/store';
+import { Button } from '#/components/button';
 import {
 	Sidebar,
 	SidebarContent,
@@ -11,9 +11,9 @@ import {
 	SidebarMenuButton,
 	SidebarMenuSub,
 	SidebarSearchField,
-} from "#/components/sidebar";
-import { Tooltip } from "#/components/tooltip";
-import type { IconName } from "#/lib/icons";
+} from '#/components/sidebar';
+import { Tooltip } from '#/components/tooltip';
+import type { IconName } from '#/lib/icons';
 import {
 	PlayDivider,
 	PlayField,
@@ -23,42 +23,42 @@ import {
 	PlaySelect,
 	PlaySwitch,
 	pick,
-} from "#/lib/playground";
-import { color, shape, surface } from "#/lib/theme";
+} from '#/lib/playground';
+import { color, shape, surface } from '#/lib/theme';
 import {
 	type CalloutVariant,
 	FooterCallout,
 	FooterCalloutStack,
-} from "./callout";
+} from './callout';
 
-type Stack = "horizontal" | "vertical";
+type Stack = 'horizontal' | 'vertical';
 type Count2 = 0 | 1 | 2;
 
 interface PlayState {
 	headerStack: Stack;
 	headerActions: Count2;
-	l1Primary: "threads" | "menu";
+	l1Primary: 'threads' | 'menu';
 	l1Children: boolean;
 	l1Badges: boolean;
 	l2Icon: boolean;
 	l2Badges: boolean;
 	footerStack: Stack;
 	footerActions: Count2;
-	footerCallout: "none" | CalloutVariant;
+	footerCallout: 'none' | CalloutVariant;
 	footerCalloutStacked: boolean;
 }
 
 const DEFAULT_STATE: PlayState = {
-	headerStack: "vertical",
+	headerStack: 'vertical',
 	headerActions: 1,
-	l1Primary: "threads",
+	l1Primary: 'threads',
 	l1Children: false,
 	l1Badges: false,
 	l2Icon: true,
 	l2Badges: true,
-	footerStack: "horizontal",
+	footerStack: 'horizontal',
 	footerActions: 2,
-	footerCallout: "none",
+	footerCallout: 'none',
 	footerCalloutStacked: false,
 };
 
@@ -70,58 +70,58 @@ interface PlayRow {
 }
 
 const THREADS: readonly PlayRow[] = [
-	{ label: "Sidebar component height in demo", badge: "2", active: true },
-	{ label: "Sidebar component creation", badge: "5" },
-	{ label: "Dark mode token audit", badge: "3" },
-	{ label: "Scrollbar fade regression", badge: "1" },
-	{ label: "Registry deploy pipeline", badge: "7" },
+	{ label: 'Sidebar component height in demo', badge: '2', active: true },
+	{ label: 'Sidebar component creation', badge: '5' },
+	{ label: 'Dark mode token audit', badge: '3' },
+	{ label: 'Scrollbar fade regression', badge: '1' },
+	{ label: 'Registry deploy pipeline', badge: '7' },
 ];
 
 const MENU: readonly PlayRow[] = [
-	{ icon: "home", label: "Home", badge: "3", active: true },
-	{ icon: "inbox", label: "Inbox", badge: "12" },
-	{ icon: "calendar", label: "Calendar", badge: "5" },
-	{ icon: "bell", label: "Notifications", badge: "8" },
-	{ icon: "star", label: "Favorites", badge: "2" },
+	{ icon: 'home', label: 'Home', badge: '3', active: true },
+	{ icon: 'inbox', label: 'Inbox', badge: '12' },
+	{ icon: 'calendar', label: 'Calendar', badge: '5' },
+	{ icon: 'bell', label: 'Notifications', badge: '8' },
+	{ icon: 'star', label: 'Favorites', badge: '2' },
 ];
 
 const LEVEL_2 = [
-	{ icon: "folder", label: "Design system", badge: "4" },
-	{ icon: "folder", label: "Marketing site", badge: "2" },
-	{ icon: "folder", label: "Travel app" },
+	{ icon: 'folder', label: 'Design system', badge: '4' },
+	{ icon: 'folder', label: 'Marketing site', badge: '2' },
+	{ icon: 'folder', label: 'Travel app' },
 ] as const;
 
 const SECTION_LABELS = {
-	threads: ["fluid-functionalism", "portfolio-site"],
-	menu: ["Platform", "Workspace"],
+	threads: ['fluid-functionalism', 'portfolio-site'],
+	menu: ['Platform', 'Workspace'],
 } as const;
 
-const SEARCH_SHORTCUT = "⌘K";
+const SEARCH_SHORTCUT = '⌘K';
 
 const HEADER_ACTIONS = [
-	{ icon: "plus", label: "New" },
-	{ icon: "users", label: "Invite" },
+	{ icon: 'plus', label: 'New' },
+	{ icon: 'users', label: 'Invite' },
 ] as const;
 
 const FOOTER_ACTIONS = [
-	{ icon: "settings", label: "Settings" },
-	{ icon: "moon", label: "Theme" },
+	{ icon: 'settings', label: 'Settings' },
+	{ icon: 'moon', label: 'Theme' },
 ] as const;
 
 const SHELL_HEIGHT = 520;
 
 const COUNT_OPTIONS = [
-	{ value: "0", label: "None" },
-	{ value: "1", label: "One" },
-	{ value: "2", label: "Two" },
+	{ value: '0', label: 'None' },
+	{ value: '1', label: 'One' },
+	{ value: '2', label: 'Two' },
 ] as const;
 
 const STACK_OPTIONS = [
-	{ value: "horizontal", label: "Horizontal" },
-	{ value: "vertical", label: "Vertical" },
+	{ value: 'horizontal', label: 'Horizontal' },
+	{ value: 'vertical', label: 'Vertical' },
 ] as const;
 
-function countOf(value: "0" | "1" | "2"): Count2 {
+function countOf(value: '0' | '1' | '2'): Count2 {
 	return Number(value) as Count2;
 }
 
@@ -129,7 +129,7 @@ function countOf(value: "0" | "1" | "2"): Count2 {
 function IconAction(props: {
 	icon: IconName;
 	label: string;
-	side: "top" | "bottom";
+	side: 'top' | 'bottom';
 	testId: string;
 }) {
 	return (
@@ -149,9 +149,9 @@ function HorizontalRow(props: { children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: 4,
 				paddingRight: 6,
 			}}
@@ -175,16 +175,16 @@ export function SidebarPlayground() {
 		// Selection keys are row labels, which differ between the two primary elements.
 		setSelected(undefined);
 		setState({
-			headerStack: pick(["horizontal", "vertical"] as const),
+			headerStack: pick(['horizontal', 'vertical'] as const),
 			headerActions: pick([0, 1, 2, 2] as const),
-			l1Primary: pick(["threads", "menu"] as const),
+			l1Primary: pick(['threads', 'menu'] as const),
 			l1Children: Math.random() > 0.5,
 			l1Badges: Math.random() > 0.5,
 			l2Icon: Math.random() > 0.4,
 			l2Badges: Math.random() > 0.5,
-			footerStack: pick(["horizontal", "horizontal", "vertical"] as const),
+			footerStack: pick(['horizontal', 'horizontal', 'vertical'] as const),
 			footerActions: pick([0, 1, 2, 2] as const),
-			footerCallout: pick(["none", "inline", "banner", "banner"] as const),
+			footerCallout: pick(['none', 'inline', 'banner', 'banner'] as const),
 			footerCalloutStacked: Math.random() > 0.65,
 		});
 	};
@@ -192,16 +192,16 @@ export function SidebarPlayground() {
 	const headerActions = () => HEADER_ACTIONS.slice(0, state.headerActions);
 	const footerActions = () => FOOTER_ACTIONS.slice(0, state.footerActions);
 	// Only icon menus nest; a thread row is a leaf.
-	const canNest = () => state.l1Primary === "menu";
+	const canNest = () => state.l1Primary === 'menu';
 	const nests = () => canNest() && state.l1Children;
-	const rows = () => (state.l1Primary === "threads" ? THREADS : MENU);
+	const rows = () => (state.l1Primary === 'threads' ? THREADS : MENU);
 	const showFooter = () =>
-		footerActions().length > 0 || state.footerCallout !== "none";
+		footerActions().length > 0 || state.footerCallout !== 'none';
 	// A callout with nothing under it sits on the rail's bottom edge.
 	const calloutOnly = () =>
-		state.footerCallout !== "none" && footerActions().length === 0;
+		state.footerCallout !== 'none' && footerActions().length === 0;
 	const calloutVariant = () =>
-		state.footerCallout === "none" ? undefined : state.footerCallout;
+		state.footerCallout === 'none' ? undefined : state.footerCallout;
 
 	const section = (index: 0 | 1) => (
 		<>
@@ -227,7 +227,7 @@ export function SidebarPlayground() {
 									trailingIcon={
 										nests()
 											? () =>
-													isRowOpen(key) ? "chevron-down" : "chevron-right"
+													isRowOpen(key) ? 'chevron-down' : 'chevron-right'
 											: undefined
 									}
 									onClick={() => (nests() ? toggleRow(key) : setSelected(key))}
@@ -242,7 +242,7 @@ export function SidebarPlayground() {
 													icon={state.l2Icon ? child.icon : undefined}
 													label={child.label}
 													badge={
-														state.l2Badges && "badge" in child
+														state.l2Badges && 'badge' in child
 															? child.badge
 															: undefined
 													}
@@ -265,11 +265,11 @@ export function SidebarPlayground() {
 	const shell = (
 		<div
 			style={{
-				width: "100%",
+				width: '100%',
 				height: SHELL_HEIGHT,
-				display: "flex",
-				flexDirection: "row",
-				overflow: "hidden",
+				display: 'flex',
+				flexDirection: 'row',
+				overflow: 'hidden',
 				borderRadius: shape.container,
 				backgroundColor: color.background,
 			}}
@@ -277,8 +277,8 @@ export function SidebarPlayground() {
 			{/* The inset layout, which has no control here: the rail with a vertical gutter beside a rounded card. */}
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					flexShrink: 0,
 					paddingTop: 8,
 					paddingBottom: 8,
@@ -287,9 +287,9 @@ export function SidebarPlayground() {
 				<Sidebar>
 					<SidebarHeader>
 						<Show
-							when={state.headerStack === "horizontal"}
+							when={state.headerStack === 'horizontal'}
 							fallback={
-								<div style={{ display: "flex", flexDirection: "column" }}>
+								<div style={{ display: 'flex', flexDirection: 'column' }}>
 									<SidebarSearchField
 										placeholder="Search"
 										shortcut={SEARCH_SHORTCUT}
@@ -344,20 +344,20 @@ export function SidebarPlayground() {
 										fallback={
 											<FooterCallout
 												variant={variant()}
-												onDismiss={() => setState("footerCallout", "none")}
+												onDismiss={() => setState('footerCallout', 'none')}
 											/>
 										}
 									>
 										<FooterCalloutStack
 											variant={variant()}
-											onEmpty={() => setState("footerCallout", "none")}
+											onEmpty={() => setState('footerCallout', 'none')}
 										/>
 									</Show>
 								)}
 							</Show>
 							<Show
 								when={
-									state.footerStack === "vertical" && footerActions().length > 0
+									state.footerStack === 'vertical' && footerActions().length > 0
 								}
 							>
 								<SidebarMenu>
@@ -374,7 +374,7 @@ export function SidebarPlayground() {
 							</Show>
 							<Show
 								when={
-									state.footerStack === "horizontal" &&
+									state.footerStack === 'horizontal' &&
 									footerActions().length > 0
 								}
 							>
@@ -419,15 +419,15 @@ export function SidebarPlayground() {
 						<PlaySelect
 							testId="play-header-stack"
 							value={state.headerStack}
-							onChange={(value) => setState("headerStack", value)}
+							onChange={(value) => setState('headerStack', value)}
 							options={STACK_OPTIONS}
 						/>
 					</PlayField>
 					<PlayField label="Header actions">
 						<PlaySelect
 							testId="play-header-actions"
-							value={String(state.headerActions) as "0" | "1" | "2"}
-							onChange={(value) => setState("headerActions", countOf(value))}
+							value={String(state.headerActions) as '0' | '1' | '2'}
+							onChange={(value) => setState('headerActions', countOf(value))}
 							options={COUNT_OPTIONS}
 						/>
 					</PlayField>
@@ -439,12 +439,12 @@ export function SidebarPlayground() {
 							testId="play-l1-primary"
 							value={state.l1Primary}
 							onChange={(value) => {
-								setState("l1Primary", value);
+								setState('l1Primary', value);
 								setSelected(undefined);
 							}}
 							options={[
-								{ value: "menu", label: "Menu" },
-								{ value: "threads", label: "Thread" },
+								{ value: 'menu', label: 'Menu' },
+								{ value: 'threads', label: 'Thread' },
 							]}
 						/>
 					</PlayField>
@@ -453,14 +453,14 @@ export function SidebarPlayground() {
 						testId="play-l1-children"
 						label="Has children"
 						checked={nests()}
-						onToggle={() => setState("l1Children", !state.l1Children)}
+						onToggle={() => setState('l1Children', !state.l1Children)}
 						disabled={!canNest()}
 					/>
 					<PlaySwitch
 						testId="play-l1-badges"
 						label="Badges"
 						checked={state.l1Badges}
-						onToggle={() => setState("l1Badges", !state.l1Badges)}
+						onToggle={() => setState('l1Badges', !state.l1Badges)}
 					/>
 
 					<PlayDivider />
@@ -469,14 +469,14 @@ export function SidebarPlayground() {
 						testId="play-l2-icon"
 						label="Leading icon"
 						checked={nests() && state.l2Icon}
-						onToggle={() => setState("l2Icon", !state.l2Icon)}
+						onToggle={() => setState('l2Icon', !state.l2Icon)}
 						disabled={!nests()}
 					/>
 					<PlaySwitch
 						testId="play-l2-badges"
 						label="Badges"
 						checked={nests() && state.l2Badges}
-						onToggle={() => setState("l2Badges", !state.l2Badges)}
+						onToggle={() => setState('l2Badges', !state.l2Badges)}
 						disabled={!nests()}
 					/>
 
@@ -486,15 +486,15 @@ export function SidebarPlayground() {
 						<PlaySelect
 							testId="play-footer-stack"
 							value={state.footerStack}
-							onChange={(value) => setState("footerStack", value)}
+							onChange={(value) => setState('footerStack', value)}
 							options={STACK_OPTIONS}
 						/>
 					</PlayField>
 					<PlayField label="Footer actions">
 						<PlaySelect
 							testId="play-footer-actions"
-							value={String(state.footerActions) as "0" | "1" | "2"}
-							onChange={(value) => setState("footerActions", countOf(value))}
+							value={String(state.footerActions) as '0' | '1' | '2'}
+							onChange={(value) => setState('footerActions', countOf(value))}
 							options={COUNT_OPTIONS}
 						/>
 					</PlayField>
@@ -502,11 +502,11 @@ export function SidebarPlayground() {
 						<PlaySelect
 							testId="play-callout"
 							value={state.footerCallout}
-							onChange={(value) => setState("footerCallout", value)}
+							onChange={(value) => setState('footerCallout', value)}
 							options={[
-								{ value: "none", label: "None" },
-								{ value: "inline", label: "Inline" },
-								{ value: "banner", label: "Banner" },
+								{ value: 'none', label: 'None' },
+								{ value: 'inline', label: 'Inline' },
+								{ value: 'banner', label: 'Banner' },
 							]}
 						/>
 					</PlayField>
@@ -515,12 +515,12 @@ export function SidebarPlayground() {
 						testId="play-callout-stacked"
 						label="Stacked"
 						checked={
-							state.footerCallout !== "none" && state.footerCalloutStacked
+							state.footerCallout !== 'none' && state.footerCalloutStacked
 						}
 						onToggle={() =>
-							setState("footerCalloutStacked", !state.footerCalloutStacked)
+							setState('footerCalloutStacked', !state.footerCalloutStacked)
 						}
-						disabled={state.footerCallout === "none"}
+						disabled={state.footerCallout === 'none'}
 					/>
 				</PlaygroundPanel>
 			}

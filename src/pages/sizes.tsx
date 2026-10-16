@@ -1,58 +1,58 @@
-import type { JSX } from "solid-js";
-import type { ShotContext } from "#/lib/demo";
-import { Code, DocPage, DocSection, Prose } from "#/lib/doc-page";
-import { CompactRegionDemo } from "#/pages/sizes/compact-region";
-import { SIZES_INSTALL_PROMPT } from "#/pages/sizes/install-prompt";
-import { TokenInspectorDemo } from "#/pages/sizes/token-inspector";
-import { TokenTable } from "#/pages/sizes/token-table";
-import { ToolbarDemo } from "#/pages/sizes/toolbar";
+import type { JSX } from 'solid-js';
+import type { ShotContext } from '#/lib/demo';
+import { Code, DocPage, DocSection, Prose } from '#/lib/doc-page';
+import { CompactRegionDemo } from '#/pages/sizes/compact-region';
+import { SIZES_INSTALL_PROMPT } from '#/pages/sizes/install-prompt';
+import { TokenInspectorDemo } from '#/pages/sizes/token-inspector';
+import { TokenTable } from '#/pages/sizes/token-table';
+import { ToolbarDemo } from '#/pages/sizes/toolbar';
 
-export const title = "Sizes";
-export const group = "System";
+export const title = 'Sizes';
+export const group = 'System';
 /** The sidebar's System group is alphabetical: Fluid Hover, Motion, Scrollbars, Sizes, Skill, Surfaces, Typography. */
 export const order = 4;
-export const layout = "docs";
-export const listed = "sidebar";
+export const layout = 'docs';
+export const listed = 'sidebar';
 
 /** `systemList`'s description of the page, which the source's site menu splits into keywords. */
 const LIST_DESCRIPTION =
-	"A two-step size ladder — a 36px default and a 28px compact — shared by buttons, inputs, selects, tabs, and rows.";
-export const menuKeywords = ["sizes", ...LIST_DESCRIPTION.split(/\W+/)];
+	'A two-step size ladder — a 36px default and a 28px compact — shared by buttons, inputs, selects, tabs, and rows.';
+export const menuKeywords = ['sizes', ...LIST_DESCRIPTION.split(/\W+/)];
 
 /** An `<a>` in the source. An inline box takes no click in gpuix, so the link is underlined text that goes nowhere. */
 function Link(props: { children: string }) {
-	return <span style={{ textDecoration: "underline" }}>{props.children}</span>;
+	return <span style={{ textDecoration: 'underline' }}>{props.children}</span>;
 }
 
 export async function scenarios(shot: ShotContext) {
-	shot.capture("top");
-	await shot.click("toolbar-code-tab");
-	shot.capture("toolbar-code");
-	await shot.click("toolbar-preview-tab");
+	shot.capture('top');
+	await shot.click('toolbar-code-tab');
+	shot.capture('toolbar-code');
+	await shot.click('toolbar-preview-tab');
 
 	await shot.scroll(600, 400, 0, 700);
-	shot.capture("compact-region");
-	await shot.click("compact-region-default");
-	shot.capture("compact-region-default");
-	await shot.click("compact-region-compact");
+	shot.capture('compact-region');
+	await shot.click('compact-region-default');
+	shot.capture('compact-region-default');
+	await shot.click('compact-region-compact');
 
 	await shot.scroll(600, 400, 0, 500);
-	shot.capture("token-inspector");
-	await shot.hover("inspect-button");
-	shot.capture("inspect-button");
-	await shot.hover("inspect-select");
-	shot.capture("inspect-select");
-	await shot.hover("inspect-row-1");
-	shot.capture("inspect-row");
-	await shot.click("token-inspector-compact");
-	await shot.hover("inspect-button");
-	shot.capture("inspect-button-compact");
-	await shot.hover("inspect-row-0");
-	shot.capture("inspect-row-compact");
-	await shot.click("token-inspector-default");
+	shot.capture('token-inspector');
+	await shot.hover('inspect-button');
+	shot.capture('inspect-button');
+	await shot.hover('inspect-select');
+	shot.capture('inspect-select');
+	await shot.hover('inspect-row-1');
+	shot.capture('inspect-row');
+	await shot.click('token-inspector-compact');
+	await shot.hover('inspect-button');
+	shot.capture('inspect-button-compact');
+	await shot.hover('inspect-row-0');
+	shot.capture('inspect-row-compact');
+	await shot.click('token-inspector-default');
 
 	await shot.scroll(600, 400, 0, 500);
-	shot.capture("token-table");
+	shot.capture('token-table');
 }
 
 export function Page(): JSX.Element {
@@ -60,7 +60,7 @@ export function Page(): JSX.Element {
 		<DocPage
 			description={
 				<Prose>
-					Two component sizes: a 36px default and a 28px compact. Press{" "}
+					Two component sizes: a 36px default and a 28px compact. Press{' '}
 					<Code>S</Code> to toggle on the website.
 				</Prose>
 			}
@@ -85,7 +85,7 @@ export function Page(): JSX.Element {
 				<Prose>
 					Type follows the ladder. Compact drops each of the six roles one
 					notch, size and leading together, so a dense screen keeps the same
-					hierarchy at a smaller size. The full scale lives on{" "}
+					hierarchy at a smaller size. The full scale lives on{' '}
 					<Link>Typography</Link>.
 				</Prose>
 			</DocSection>

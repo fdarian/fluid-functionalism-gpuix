@@ -6,7 +6,7 @@ import {
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	type Accessor,
 	createEffect,
@@ -17,19 +17,36 @@ import {
 	onCleanup,
 	Show,
 	untrack,
-} from "solid-js";
-import { createPointerCapture } from "#/lib/pointer-capture";
-import { createPresence } from "#/lib/presence";
-import { FluidHighlight } from "#/lib/fluid-highlight";
-import { createFluidHover } from "#/lib/fluid-hover";
-import { Icon } from "#/lib/icon";
-import { fill } from "#/lib/press";
-import { createMeasuredHeight } from "#/lib/measured-height";
-import { color, colorFade, fade, pressFade, surfaceFade, sizeChoice, height, nestedRadius, radius, shape, type as scale, scheme, shadow, motion as tween, weight, withAlpha, focusRing } from "#/lib/theme";
-import { FileThumbnail } from "./file-thumbnail";
-import type { InputSize } from "./input-group";
-import { Tooltip } from "./tooltip";
-
+} from 'solid-js';
+import { FluidHighlight } from '#/lib/fluid-highlight';
+import { createFluidHover } from '#/lib/fluid-hover';
+import { Icon } from '#/lib/icon';
+import { createMeasuredHeight } from '#/lib/measured-height';
+import { createPointerCapture } from '#/lib/pointer-capture';
+import { createPresence } from '#/lib/presence';
+import { fill } from '#/lib/press';
+import {
+	color,
+	colorFade,
+	fade,
+	focusRing,
+	height,
+	nestedRadius,
+	pressFade,
+	radius,
+	type as scale,
+	scheme,
+	shadow,
+	shape,
+	sizeChoice,
+	surfaceFade,
+	motion as tween,
+	weight,
+	withAlpha,
+} from '#/lib/theme';
+import { FileThumbnail } from './file-thumbnail';
+import type { InputSize } from './input-group';
+import { Tooltip } from './tooltip';
 
 /** A file the composer holds. gpuix hands over paths from a drop or the picker, never a `File`. */
 export type ComposerFile = {
@@ -56,39 +73,39 @@ export type InputMessageSlot =
 	| JSX.Element
 	| ((context: InputMessageSlotContext) => JSX.Element);
 
-const DEFAULT_ACCEPT = "image/png,image/jpeg,application/pdf";
+const DEFAULT_ACCEPT = 'image/png,image/jpeg,application/pdf';
 const MIME_BY_EXTENSION: Record<string, string> = {
-	png: "image/png",
-	jpg: "image/jpeg",
-	jpeg: "image/jpeg",
-	gif: "image/gif",
-	webp: "image/webp",
-	svg: "image/svg+xml",
-	pdf: "application/pdf",
-	txt: "text/plain",
-	md: "text/markdown",
-	json: "application/json",
+	png: 'image/png',
+	jpg: 'image/jpeg',
+	jpeg: 'image/jpeg',
+	gif: 'image/gif',
+	webp: 'image/webp',
+	svg: 'image/svg+xml',
+	pdf: 'application/pdf',
+	txt: 'text/plain',
+	md: 'text/markdown',
+	json: 'application/json',
 };
 
 /** The file a path names. An extension gpuix cannot map is `application/octet-stream`. */
 export function fileFromPath(path: string): ComposerFile {
-	const name = path.slice(path.lastIndexOf("/") + 1);
-	const extension = name.slice(name.lastIndexOf(".") + 1).toLowerCase();
+	const name = path.slice(path.lastIndexOf('/') + 1);
+	const extension = name.slice(name.lastIndexOf('.') + 1).toLowerCase();
 	return {
 		path,
 		name,
-		type: MIME_BY_EXTENSION[extension] ?? "application/octet-stream",
+		type: MIME_BY_EXTENSION[extension] ?? 'application/octet-stream',
 	};
 }
 
 const matchesAccept = (file: ComposerFile, accept: string) =>
 	accept
-		.split(",")
+		.split(',')
 		.map((token) => token.trim())
-		.filter((token) => token !== "")
+		.filter((token) => token !== '')
 		.some((token) => {
-			if (token.endsWith("/*")) return file.type.startsWith(token.slice(0, -1));
-			if (token.startsWith("."))
+			if (token.endsWith('/*')) return file.type.startsWith(token.slice(0, -1));
+			if (token.startsWith('.'))
 				return file.name.toLowerCase().endsWith(token.toLowerCase());
 			return file.type === token;
 		});
@@ -120,12 +137,12 @@ const steps = {
 
 /** The drop under a recoloured edge: `--shadow-color`, which stays 6% black in dark too. */
 /** The source's `transition-opacity duration-80` on the remove badge, the queued close button and the suggestion's ↵. */
-const OPACITY_FADE = fade(["opacity"], 80);
+const OPACITY_FADE = fade(['opacity'], 80);
 
 /** The composer's `transition-[box-shadow,color] duration-80` on the edge ring. */
-const COMPOSER_FADE = fade(["box-shadow", "color"], 80);
+const COMPOSER_FADE = fade(['box-shadow', 'color'], 80);
 
-const EDGE_DROP = "0 1px 1px -0.5px rgba(0,0,0,0.06)";
+const EDGE_DROP = '0 1px 1px -0.5px rgba(0,0,0,0.06)';
 
 /** The focused composer's ring: foreground at 20%. */
 const focusEdge = () => withAlpha(color.foreground, 0.2);
@@ -137,10 +154,7 @@ const COLLAPSE_EXIT_MS = 130;
  * A region that opens and closes by height. gpuix animates `height` to a
  * number only, so the content reports its own height and the region tweens to it.
  */
-function Collapse(props: {
-	open: boolean;
-	children: JSX.Element;
-}) {
+function Collapse(props: { open: boolean; children: JSX.Element }) {
 	const presence = createPresence(COLLAPSE_EXIT_MS, props.open);
 	presence.follow(() => props.open);
 	const mounted = presence.mounted;
@@ -155,11 +169,11 @@ function Collapse(props: {
 					opacity: props.open ? 1 : 0,
 				}}
 				transition={props.open ? tween.moderate : tween.moderateExit}
-				style={{ overflow: "hidden", flexShrink: 0 }}
+				style={{ overflow: 'hidden', flexShrink: 0 }}
 			>
 				<div
 					onLayout={measured.onLayout}
-					style={{ display: "flex", flexDirection: "column", flexShrink: 0 }}
+					style={{ display: 'flex', flexDirection: 'column', flexShrink: 0 }}
 				>
 					{props.children}
 				</div>
@@ -169,7 +183,7 @@ function Collapse(props: {
 }
 
 function SendButton(props: {
-	mode: "send" | "queue" | "stop";
+	mode: 'send' | 'queue' | 'stop';
 	label: string;
 	disabled: boolean;
 	onClick: () => void;
@@ -180,24 +194,27 @@ function SendButton(props: {
 	const renderer = useGpuixRequired();
 	return (
 		<div
-			{...buttonProps({ disabled: props.disabled, onClick: props.onClick }, renderer)}
+			{...buttonProps(
+				{ disabled: props.disabled, onClick: props.onClick },
+				renderer,
+			)}
 			aria-label={props.label}
 			testId={props.testId}
 			tabIndex={props.disabled ? -1 : 0}
 			style={{
-				position: "relative",
+				position: 'relative',
 				margin: 1,
 				width: props.size - 2,
 				height: props.size - 2,
 				flexShrink: 0,
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
 				borderRadius: shape.button,
-				cursor: "pointer",
+				cursor: 'pointer',
 				keyboardFocusDim: false,
 				opacity: props.disabled ? 0.5 : 1,
-				pointerEvents: props.disabled ? "none" : undefined,
+				pointerEvents: props.disabled ? 'none' : undefined,
 				...surfaceFade,
 				boxShadow: fill(color.foreground, 1),
 				hover: { boxShadow: fill(color.primaryHover, 1) },
@@ -205,16 +222,16 @@ function SendButton(props: {
 				focusVisible: focusRing(1),
 			}}
 		>
-			<For each={[props.mode === "stop" ? "stop" : "arrow"]}>
+			<For each={[props.mode === 'stop' ? 'stop' : 'arrow']}>
 				{(glyph: string) => (
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						transition={tween.fast}
-						style={{ display: "flex", alignItems: "center" }}
+						style={{ display: 'flex', alignItems: 'center' }}
 					>
 						<Show
-							when={glyph === "stop"}
+							when={glyph === 'stop'}
 							fallback={
 								<Icon
 									name="arrow-up"
@@ -265,11 +282,11 @@ function RemoveBadge(props: {
 					width: 20,
 					height: 20,
 					borderRadius: 10,
-					backgroundColor: "#171717",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-					cursor: "pointer",
+					backgroundColor: '#171717',
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+					cursor: 'pointer',
 					opacity: props.visible || focusVisible() ? 1 : 0,
 					...OPACITY_FADE,
 					keyboardFocusDim: false,
@@ -299,11 +316,11 @@ function FilePreviewTile(props: {
 			onMouseEnter={() => setTileHovered(true)}
 			onMouseLeave={() => setTileHovered(false)}
 			style={{
-				position: "relative",
+				position: 'relative',
 				flexShrink: 0,
 				width: props.size,
 				height: props.size,
-				cursor: "default",
+				cursor: 'default',
 			}}
 		>
 			<FileThumbnail
@@ -316,7 +333,7 @@ function FilePreviewTile(props: {
 				// The tile sits 8px inside the composer's edge.
 				radius={nestedRadius(shape.container, 8)}
 			/>
-			<div style={{ position: "absolute", top: 4, right: 4 }}>
+			<div style={{ position: 'absolute', top: 4, right: 4 }}>
 				<RemoveBadge
 					label={`Remove ${props.file.name}`}
 					visible={tileHovered() || badgeHovered()}
@@ -348,26 +365,26 @@ function QueuedRow(props: {
 	const [closeHovered, setCloseHovered] = createSignal(false);
 	const [closeFocusVisible, setCloseFocusVisible] = createSignal(false);
 	const [grabbing, setGrabbing] = createSignal(false);
-	const grabRegion = createPointerCapture("QueuedRow");
+	const grabRegion = createPointerCapture('QueuedRow');
 	const files = () => props.item.files.length;
 	const label = () =>
-		props.item.text !== ""
+		props.item.text !== ''
 			? props.item.text
-			: `${files()} attachment${files() === 1 ? "" : "s"}`;
+			: `${files()} attachment${files() === 1 ? '' : 's'}`;
 
 	const onKeyDown = (event: KeyEvent) => {
-		if (event.key === "Enter" || event.key === "F2") {
+		if (event.key === 'Enter' || event.key === 'F2') {
 			event.preventDefault();
 			props.onEdit(props.item);
-		} else if (event.key === "Delete" || event.key === "Backspace") {
+		} else if (event.key === 'Delete' || event.key === 'Backspace') {
 			event.preventDefault();
 			props.onRemove(props.item);
 		} else if (
 			event.altKey === true &&
-			(event.key === "ArrowUp" || event.key === "ArrowDown")
+			(event.key === 'ArrowUp' || event.key === 'ArrowDown')
 		) {
 			event.preventDefault();
-			props.onMove(props.item, event.key === "ArrowUp" ? -1 : 1);
+			props.onMove(props.item, event.key === 'ArrowUp' ? -1 : 1);
 		}
 	};
 
@@ -384,13 +401,13 @@ function QueuedRow(props: {
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			style={{
-				position: "relative",
+				position: 'relative',
 				height: step().row,
 				flexShrink: 0,
 				marginTop: props.index > 0 ? 4 : 0,
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: 8,
 				paddingLeft: step().rowPadX,
 				paddingRight: step().rowPadX,
@@ -402,7 +419,7 @@ function QueuedRow(props: {
 			{/* The recessed fill is its own layer; the siblings after it are `position: relative` so the fill paints under them. */}
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					right: 0,
@@ -414,10 +431,10 @@ function QueuedRow(props: {
 			<Show when={files() > 0}>
 				<div
 					style={{
-						position: "relative",
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
+						position: 'relative',
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
 						gap: 2,
 						flexShrink: 0,
 					}}
@@ -428,12 +445,12 @@ function QueuedRow(props: {
 						strokeWidth={1.5}
 						color={color.mutedForeground}
 					/>
-					<Show when={props.item.text !== ""}>
+					<Show when={props.item.text !== ''}>
 						<text
 							style={{
 								...step().rowText,
 								color: color.mutedForeground,
-								fontVariantNumeric: "tabular-nums",
+								fontVariantNumeric: 'tabular-nums',
 							}}
 						>
 							{String(files())}
@@ -459,14 +476,14 @@ function QueuedRow(props: {
 				onMouseUp={() => setGrabbing(false)}
 				onLostPointerCapture={() => setGrabbing(false)}
 				style={{
-					position: "relative",
+					position: 'relative',
 					flexGrow: 1,
 					minWidth: 0,
 					height: step().row,
-					display: "flex",
-					alignItems: "center",
-					cursor: grabbing() ? "grabbing" : "grab",
-					userSelect: "none",
+					display: 'flex',
+					alignItems: 'center',
+					cursor: grabbing() ? 'grabbing' : 'grab',
+					userSelect: 'none',
 				}}
 			>
 				<text
@@ -474,9 +491,9 @@ function QueuedRow(props: {
 						...step().rowText,
 						fontWeight: weight.normal,
 						color: color.foreground,
-						whiteSpace: "nowrap",
-						textOverflow: "ellipsis",
-						overflow: "hidden",
+						whiteSpace: 'nowrap',
+						textOverflow: 'ellipsis',
+						overflow: 'hidden',
 					}}
 				>
 					{label()}
@@ -484,7 +501,10 @@ function QueuedRow(props: {
 			</div>
 			<Tooltip content="Remove" side="top">
 				<div
-					{...buttonProps({ onClick: () => props.onRemove(props.item) }, renderer)}
+					{...buttonProps(
+						{ onClick: () => props.onRemove(props.item) },
+						renderer,
+					)}
 					aria-label={`Remove queued message: ${label()}`}
 					testId={
 						props.testId === undefined ? undefined : `${props.testId}-remove`
@@ -495,15 +515,15 @@ function QueuedRow(props: {
 					onFocus={(event) => setCloseFocusVisible(event.focusVisible === true)}
 					onBlur={() => setCloseFocusVisible(false)}
 					style={{
-						position: "relative",
+						position: 'relative',
 						width: 20,
 						height: 20,
 						flexShrink: 0,
 						borderRadius: 10,
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						cursor: "pointer",
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						cursor: 'pointer',
 						opacity: hovered() || closeHovered() || closeFocusVisible() ? 1 : 0,
 						...OPACITY_FADE,
 						keyboardFocusDim: false,
@@ -537,7 +557,7 @@ function SuggestionRow(props: {
 	const step = () => steps[props.size];
 	let row: HostElement | undefined;
 	createEffect(() => {
-		if (row === undefined) throw new Error("Suggestion row is not mounted");
+		if (row === undefined) throw new Error('Suggestion row is not mounted');
 		props.onRegister(props.index, row);
 	});
 	return (
@@ -550,16 +570,16 @@ function SuggestionRow(props: {
 			testId={props.testId}
 			onClick={props.onSelect}
 			style={{
-				position: "relative",
+				position: 'relative',
 				height: step().row,
 				flexShrink: 0,
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: 8,
 				paddingLeft: step().rowPadX,
 				paddingRight: step().rowPadX,
-				cursor: "pointer",
+				cursor: 'pointer',
 				color: props.active ? color.foreground : color.mutedForeground,
 				...colorFade,
 			}}
@@ -570,10 +590,10 @@ function SuggestionRow(props: {
 					flexGrow: 1,
 					minWidth: 0,
 					fontWeight: weight.normal,
-					color: "currentColor",
-					whiteSpace: "nowrap",
-					textOverflow: "ellipsis",
-					overflow: "hidden",
+					color: 'currentColor',
+					whiteSpace: 'nowrap',
+					textOverflow: 'ellipsis',
+					overflow: 'hidden',
 				}}
 			>
 				{props.text}
@@ -582,9 +602,7 @@ function SuggestionRow(props: {
 				<Show
 					when={!props.active && props.keyHint}
 					fallback={
-						<div
-							style={{ opacity: props.active ? 1 : 0, ...OPACITY_FADE }}
-						>
+						<div style={{ opacity: props.active ? 1 : 0, ...OPACITY_FADE }}>
 							<Icon
 								name="corner-down-left"
 								size={13}
@@ -636,7 +654,7 @@ export type InputMessageProps = {
 	maxFiles?: number;
 	filePreviewSize?: number;
 	/** `"streaming"` turns the send button into Stop (empty draft) or Queue (a draft). */
-	status?: "idle" | "streaming";
+	status?: 'idle' | 'streaming';
 	onStop?: () => void;
 	queue?: QueuedMessage[];
 	onQueueChange?: (queue: QueuedMessage[]) => void;
@@ -663,22 +681,22 @@ export function InputMessage(props: InputMessageProps) {
 	const supportsFiles = () => props.onFilesChange !== undefined;
 	const supportsQueue = () =>
 		props.status !== undefined && props.onQueueChange !== undefined;
-	const streaming = () => props.status === "streaming";
-	const testId = () => props.testId ?? "input-message";
+	const streaming = () => props.status === 'streaming';
+	const testId = () => props.testId ?? 'input-message';
 
 	let textarea: HostElement | undefined;
 	let queueList: HostElement | undefined;
 	const [focused, setFocused] = createSignal(false);
 	const [hovered, setHovered] = createSignal(false);
 	const [historyIndex, setHistoryIndex] = createSignal<number | null>(null);
-	let draftBeforeHistory = "";
+	let draftBeforeHistory = '';
 
 	const trimmed = () => props.value.trim();
 	const canSend = () =>
 		props.disabled !== true && (trimmed().length > 0 || files().length > 0);
-	const suggestionsOpen = () => suggestions().length > 0 && props.value === "";
+	const suggestionsOpen = () => suggestions().length > 0 && props.value === '';
 	const showGhost = () =>
-		props.placeholderSuggestion !== undefined && props.value === "";
+		props.placeholderSuggestion !== undefined && props.value === '';
 
 	const hover = createFluidHover();
 	const activeSuggestion = hover.activeIndex;
@@ -687,7 +705,7 @@ export function InputMessage(props: InputMessageProps) {
 	});
 
 	const focusTextarea = () => {
-		if (textarea === undefined) throw new Error("InputMessage is not mounted");
+		if (textarea === undefined) throw new Error('InputMessage is not mounted');
 		renderer.focusElement?.(textarea.id);
 	};
 
@@ -720,7 +738,7 @@ export function InputMessage(props: InputMessageProps) {
 	const openFilePicker = (narrow?: string) => {
 		const picker = renderer.promptForPaths;
 		if (picker === undefined)
-			throw new Error("No file picker on this renderer");
+			throw new Error('No file picker on this renderer');
 		void picker
 			.call(renderer, {
 				files: true,
@@ -745,7 +763,7 @@ export function InputMessage(props: InputMessageProps) {
 				...queue(),
 				{ id: crypto.randomUUID(), text: trimmed(), files: files() },
 			]);
-			props.onValueChange("");
+			props.onValueChange('');
 			if (supportsFiles()) props.onFilesChange?.([]);
 			focusTextarea();
 			return;
@@ -764,8 +782,8 @@ export function InputMessage(props: InputMessageProps) {
 				if (!supportsQueue()) return;
 				const pending = untrack(queue);
 				if (
-					previous === "streaming" &&
-					status === "idle" &&
+					previous === 'streaming' &&
+					status === 'idle' &&
 					pending.length > 0
 				) {
 					const next = pending[0];
@@ -815,25 +833,25 @@ export function InputMessage(props: InputMessageProps) {
 		moveQueuedTo(item, Math.max(0, Math.min(queue().length - 1, target)));
 	};
 
-	const mode = (): "send" | "queue" | "stop" => {
-		if (!streaming()) return "send";
-		if (canSend() && supportsQueue()) return "queue";
-		return props.onStop === undefined ? "send" : "stop";
+	const mode = (): 'send' | 'queue' | 'stop' => {
+		if (!streaming()) return 'send';
+		if (canSend() && supportsQueue()) return 'queue';
+		return props.onStop === undefined ? 'send' : 'stop';
 	};
 	const buttonLabel = () => {
 		switch (mode()) {
-			case "stop":
-				return "Stop";
-			case "queue":
-				return "Queue message";
-			case "send":
-				return props.sendLabel ?? "Send";
+			case 'stop':
+				return 'Stop';
+			case 'queue':
+				return 'Queue message';
+			case 'send':
+				return props.sendLabel ?? 'Send';
 		}
 	};
 
 	const onKeyDown = (event: KeyEvent) => {
 		// Enter sends, Shift+Enter is left to the textarea for a newline.
-		if (event.key === "Enter" && event.shiftKey !== true) {
+		if (event.key === 'Enter' && event.shiftKey !== true) {
 			event.preventDefault();
 			onSubmit();
 			return;
@@ -846,13 +864,13 @@ export function InputMessage(props: InputMessageProps) {
 			event.metaKey !== true;
 		const control = event.ctrlKey === true;
 		const direction =
-			plain && !control && event.key === "ArrowDown"
+			plain && !control && event.key === 'ArrowDown'
 				? 1
-				: plain && !control && event.key === "ArrowUp"
+				: plain && !control && event.key === 'ArrowUp'
 					? -1
-					: plain && control && event.key === "n"
+					: plain && control && event.key === 'n'
 						? 1
-						: plain && control && event.key === "p"
+						: plain && control && event.key === 'p'
 							? -1
 							: 0;
 		const modified = !(plain && (!control || direction !== 0));
@@ -877,7 +895,7 @@ export function InputMessage(props: InputMessageProps) {
 					);
 					return;
 				}
-				if (event.key === "Escape") {
+				if (event.key === 'Escape') {
 					hover.setActiveIndex(null);
 					return;
 				}
@@ -887,10 +905,10 @@ export function InputMessage(props: InputMessageProps) {
 		// Tab fills the suggested placeholder into an empty composer.
 		const suggested = props.placeholderSuggestion;
 		if (
-			event.key === "Tab" &&
+			event.key === 'Tab' &&
 			event.shiftKey !== true &&
 			suggested !== undefined &&
-			props.value === ""
+			props.value === ''
 		) {
 			event.preventDefault();
 			acceptSuggestion(suggested);
@@ -902,7 +920,7 @@ export function InputMessage(props: InputMessageProps) {
 			history().length > 0 &&
 			direction !== 0 &&
 			!modified &&
-			!props.value.includes("\n")
+			!props.value.includes('\n')
 		) {
 			if (direction === -1) {
 				const start = historyIndex() ?? history().length;
@@ -942,12 +960,16 @@ export function InputMessage(props: InputMessageProps) {
 		files: files(),
 	});
 	const renderSlot = (slot: InputMessageSlot | undefined) =>
-		typeof slot === "function" ? slot(slotContext()) : slot;
+		typeof slot === 'function' ? slot(slotContext()) : slot;
 
 	const edgeShadow = () => {
 		let edge: string;
 		if (focused()) edge = focusEdge();
-		else if (hovered() && props.clickToFocus !== false && props.disabled !== true) {
+		else if (
+			hovered() &&
+			props.clickToFocus !== false &&
+			props.disabled !== true
+		) {
 			edge = color.border;
 		} else return shadow(2);
 		return `0 0 0 1px ${edge}, ${EDGE_DROP}`;
@@ -969,23 +991,26 @@ export function InputMessage(props: InputMessageProps) {
 			}}
 			onDrop={(event) => {
 				if (!supportsFiles() || props.disabled === true) return;
-				if (event.dataTransfer === undefined) throw new Error("Drop without dataTransfer");
-				addFiles(event.dataTransfer.files.map((file) => fileFromPath(file.path)));
+				if (event.dataTransfer === undefined)
+					throw new Error('Drop without dataTransfer');
+				addFiles(
+					event.dataTransfer.files.map((file) => fileFromPath(file.path)),
+				);
 			}}
 			style={{
-				position: "relative",
-				display: "flex",
-				flexDirection: "column",
+				position: 'relative',
+				display: 'flex',
+				flexDirection: 'column',
 				padding: 8,
-				width: "100%",
+				width: '100%',
 				borderRadius: shape.container,
 				backgroundColor: color.surface2,
 				cursor:
 					props.clickToFocus !== false && props.disabled !== true
-						? "text"
+						? 'text'
 						: undefined,
 				opacity: props.disabled === true ? 0.5 : 1,
-				pointerEvents: props.disabled === true ? "none" : undefined,
+				pointerEvents: props.disabled === true ? 'none' : undefined,
 				boxShadow: edgeShadow(),
 				...COMPOSER_FADE,
 			}}
@@ -993,9 +1018,9 @@ export function InputMessage(props: InputMessageProps) {
 			<Collapse open={files().length > 0}>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						flexWrap: "wrap",
+						display: 'flex',
+						flexDirection: 'row',
+						flexWrap: 'wrap',
 						gap: 8,
 						paddingBottom: 8,
 					}}
@@ -1021,8 +1046,8 @@ export function InputMessage(props: InputMessageProps) {
 						}}
 						role="list"
 						style={{
-							display: "flex",
-							flexDirection: "column",
+							display: 'flex',
+							flexDirection: 'column',
 							paddingBottom: 8,
 						}}
 					>
@@ -1050,9 +1075,9 @@ export function InputMessage(props: InputMessageProps) {
 					if (props.clickToFocus !== false) focusTextarea();
 				}}
 				style={{
-					position: "relative",
-					display: "flex",
-					flexDirection: "column",
+					position: 'relative',
+					display: 'flex',
+					flexDirection: 'column',
 				}}
 			>
 				<textarea
@@ -1063,7 +1088,7 @@ export function InputMessage(props: InputMessageProps) {
 					aria-label="Message"
 					value={props.value}
 					placeholder={
-						showGhost() ? undefined : (props.placeholder ?? "Ask me anything…")
+						showGhost() ? undefined : (props.placeholder ?? 'Ask me anything…')
 					}
 					minRows={props.minRows ?? 1}
 					maxRows={props.maxRows ?? 8}
@@ -1077,7 +1102,7 @@ export function InputMessage(props: InputMessageProps) {
 					}}
 					onChange={(event) => {
 						if (event.value === undefined) {
-							throw new Error("InputMessage change without a value");
+							throw new Error('InputMessage change without a value');
 						}
 						setHistoryIndex(null);
 						hover.setActiveIndex(null);
@@ -1091,7 +1116,7 @@ export function InputMessage(props: InputMessageProps) {
 					}}
 					style={{
 						...step().field,
-						width: "100%",
+						width: '100%',
 						paddingTop: step().fieldPad,
 						paddingBottom: step().fieldPad,
 						paddingLeft: step().fieldPadX,
@@ -1105,7 +1130,7 @@ export function InputMessage(props: InputMessageProps) {
 				<Show when={showGhost()}>
 					<div
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							top: 0,
 							left: 0,
 							right: 0,
@@ -1113,11 +1138,11 @@ export function InputMessage(props: InputMessageProps) {
 							paddingBottom: step().fieldPad,
 							paddingLeft: step().fieldPadX,
 							paddingRight: step().fieldPadX,
-							display: "flex",
-							flexDirection: "row",
-							alignItems: "center",
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'center',
 							gap: 6,
-							pointerEvents: "none",
+							pointerEvents: 'none',
 						}}
 					>
 						<text
@@ -1126,9 +1151,9 @@ export function InputMessage(props: InputMessageProps) {
 								minWidth: 0,
 								fontWeight: weight.normal,
 								color: color.mutedForeground,
-								whiteSpace: "nowrap",
-								textOverflow: "ellipsis",
-								overflow: "hidden",
+								whiteSpace: 'nowrap',
+								textOverflow: 'ellipsis',
+								overflow: 'hidden',
 							}}
 						>
 							{props.placeholderSuggestion}
@@ -1139,8 +1164,8 @@ export function InputMessage(props: InputMessageProps) {
 								flexShrink: 0,
 								paddingLeft: 4,
 								paddingRight: 4,
-								display: "flex",
-								alignItems: "center",
+								display: 'flex',
+								alignItems: 'center',
 								borderRadius: 5,
 								borderWidth: 1,
 								borderColor: color.border,
@@ -1162,19 +1187,19 @@ export function InputMessage(props: InputMessageProps) {
 
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
-					gap: size() === "compact" ? 6 : 8,
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					justifyContent: 'space-between',
+					gap: size() === 'compact' ? 6 : 8,
 					marginTop: 4,
 				}}
 			>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
 						gap: 6,
 						minWidth: 0,
 					}}
@@ -1183,9 +1208,9 @@ export function InputMessage(props: InputMessageProps) {
 				</div>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
 						gap: 6,
 						flexShrink: 0,
 					}}
@@ -1195,8 +1220,8 @@ export function InputMessage(props: InputMessageProps) {
 						testId={`${testId()}-send`}
 						mode={mode()}
 						label={buttonLabel()}
-						disabled={mode() === "stop" ? props.disabled === true : !canSend()}
-						onClick={mode() === "stop" ? () => props.onStop?.() : handleSend}
+						disabled={mode() === 'stop' ? props.disabled === true : !canSend()}
+						onClick={mode() === 'stop' ? () => props.onStop?.() : handleSend}
 						size={step().button}
 						arrowSize={step().arrow}
 					/>
@@ -1218,9 +1243,9 @@ export function InputMessage(props: InputMessageProps) {
 						<div
 							{...hover.containerProps}
 							style={{
-								position: "relative",
-								display: "flex",
-								flexDirection: "column",
+								position: 'relative',
+								display: 'flex',
+								flexDirection: 'column',
 								borderTopWidth: 1,
 								borderColor: color.borderFaint,
 								paddingLeft: 6,

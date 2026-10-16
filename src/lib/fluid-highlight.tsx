@@ -2,10 +2,10 @@ import {
 	createReducedMotion,
 	type MotionTransition,
 	motion,
-} from "@gpuix/solid";
-import { createComputed, createSignal, For, untrack } from "solid-js";
-import type { ItemRect } from "./fluid-hover";
-import { motion as tween } from "./theme";
+} from '@gpuix/solid';
+import { createComputed, createSignal, For, untrack } from 'solid-js';
+import type { ItemRect } from './fluid-hover';
+import { motion as tween } from './theme';
 
 function target(rect: ItemRect) {
 	return {
@@ -17,7 +17,10 @@ function target(rect: ItemRect) {
 }
 
 /** Reduced motion keeps the opacity fade and drops the travel: fewer and gentler, not none. */
-const REDUCED: MotionTransition = { ...tween.snap, opacity: { duration: 0.08 } };
+const REDUCED: MotionTransition = {
+	...tween.snap,
+	opacity: { duration: 0.08 },
+};
 
 /**
  * The one hover highlight every fluid list renders: an absolutely positioned
@@ -61,7 +64,7 @@ export function FluidHighlight(props: {
 			{() => {
 				const initial = untrack(() => props.from?.() ?? lastRect());
 				if (initial == null) {
-					throw new Error("FluidHighlight session started without a rect");
+					throw new Error('FluidHighlight session started without a rect');
 				}
 				const transition = (): MotionTransition => {
 					if (props.rect() === null) return props.fade ?? tween.fastExit;
@@ -73,7 +76,7 @@ export function FluidHighlight(props: {
 				const sitsOn = () => {
 					const rect = lastRect();
 					if (rect === undefined) {
-						throw new Error("FluidHighlight has no rect to sit on");
+						throw new Error('FluidHighlight has no rect to sit on');
 					}
 					return rect;
 				};
@@ -81,10 +84,10 @@ export function FluidHighlight(props: {
 					<motion.div
 						testId={props.testId}
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							backgroundColor: props.background,
 							borderRadius: props.radius,
-							pointerEvents: "none",
+							pointerEvents: 'none',
 						}}
 						initial={{
 							opacity: props.fadeIn === false ? 1 : 0,

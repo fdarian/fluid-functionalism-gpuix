@@ -7,23 +7,23 @@
  * `aria-activedescendant` (Base UI with `autoHighlight="always"`, `modal={false}`).
  * Most opens start from the keyboard; "Open with the pointer" presses for real.
  */
-import { createSignal } from "solid-js";
-import { Button } from "#/components/button";
-import { Combobox } from "#/components/combobox";
+import { createSignal } from 'solid-js';
+import { Button } from '#/components/button';
+import { Combobox } from '#/components/combobox';
 import {
 	Dialog,
 	DialogContent,
 	DialogTitle,
 	DialogTrigger,
-} from "#/components/dialog";
-import { createCheck } from "./check-kit";
-import { readPng } from "./png-pixels";
+} from '#/components/dialog';
+import { createCheck } from './check-kit';
+import { readPng } from './png-pixels';
 
-const FRUITS = ["Apple", "Banana", "Cherry", "Mango"];
+const FRUITS = ['Apple', 'Banana', 'Cherry', 'Mango'];
 const SOME_DISABLED = [
-	{ value: "a", label: "Available" },
-	{ value: "b", label: "Unavailable", disabled: true },
-	{ value: "c", label: "Also available" },
+	{ value: 'a', label: 'Available' },
+	{ value: 'b', label: 'Unavailable', disabled: true },
+	{ value: 'c', label: 'Also available' },
 ];
 
 const k = await createCheck(
@@ -32,8 +32,8 @@ const k = await createCheck(
 		return (
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					gap: 12,
 					padding: 20,
 					width: 360,
@@ -55,13 +55,13 @@ const k = await createCheck(
 				<Combobox
 					testId="ease"
 					items={[
-						{ value: "a", label: "Settings", icon: "settings" },
-						{ value: "b", label: "Profile", icon: "user" },
+						{ value: 'a', label: 'Settings', icon: 'settings' },
+						{ value: 'b', label: 'Profile', icon: 'user' },
 					]}
 					placeholder="Ease"
 				/>
 				<Button testId="after">After</Button>
-				<text>{`picked: ${picked() ?? "none"}`}</text>
+				<text>{`picked: ${picked() ?? 'none'}`}</text>
 				<Dialog>
 					<DialogTrigger>
 						<Button testId="dialog-open">Open dialog</Button>
@@ -95,18 +95,18 @@ function focusAt(id: string, values: readonly string[]) {
 	);
 }
 const PLACEHOLDER: Record<string, string> = {
-	empty: "Fruit",
-	valued: "Valued",
-	gaps: "Gaps",
-	ease: "Ease",
-	inside: "Inside",
+	empty: 'Fruit',
+	valued: 'Valued',
+	gaps: 'Gaps',
+	ease: 'Ease',
+	inside: 'Inside',
 };
 /** The input's accessibility node, found by placeholder. */
 function inputNode(id: string) {
 	const nodes = renderer.getA11yTree().nodes ?? {};
 	const found = Object.values(nodes).find(
 		(node) =>
-			node.aria?.role === "ComboBox" &&
+			node.aria?.role === 'ComboBox' &&
 			node.aria.placeholder === PLACEHOLDER[id],
 	);
 	if (found === undefined) throw new Error(`no input for ${id}`);
@@ -117,188 +117,188 @@ function lit(id: string, values: readonly string[]) {
 	const target = inputNode(id).active_descendant;
 	if (target === undefined) return null;
 	const row = renderer.getA11yTree().nodes?.[String(target)]?.aria?.author_id;
-	if (typeof row !== "string")
+	if (typeof row !== 'string')
 		throw new Error(`no row named ${String(target)}`);
-	return values[Number(row.split("-row-")[1])];
+	return values[Number(row.split('-row-')[1])];
 }
 const shown = (text: string) =>
 	renderer.getAllText().some((line) => line === text);
-const inputValue = (id: string) => String(inputNode(id).value ?? "");
+const inputValue = (id: string) => String(inputNode(id).value ?? '');
 
 // ─── Closed: arrows open ─────────────────────────────────────────────────────
 
-await k.focus("empty-input");
-k.check("empty: focusing does not open", !isOpen("empty"));
-await k.press("ArrowDown");
-k.check("empty: ArrowDown on the closed field opens", isOpen("empty"));
+await k.focus('empty-input');
+k.check('empty: focusing does not open', !isOpen('empty'));
+await k.press('ArrowDown');
+k.check('empty: ArrowDown on the closed field opens', isOpen('empty'));
 k.expect(
-	"empty: opening lights the first row (autoHighlight always)",
-	lit("empty", FRUITS),
-	"Apple",
+	'empty: opening lights the first row (autoHighlight always)',
+	lit('empty', FRUITS),
+	'Apple',
 );
 k.expect(
-	"empty: focus stays in the input",
-	focusAt("empty", FRUITS),
-	"empty-input",
+	'empty: focus stays in the input',
+	focusAt('empty', FRUITS),
+	'empty-input',
 );
-await k.press("Escape");
-k.check("empty: Escape closes", !isOpen("empty"));
+await k.press('Escape');
+k.check('empty: Escape closes', !isOpen('empty'));
 k.expect(
-	"empty: Escape keeps focus in the input",
-	focusAt("empty", FRUITS),
-	"empty-input",
+	'empty: Escape keeps focus in the input',
+	focusAt('empty', FRUITS),
+	'empty-input',
 );
-await k.press("ArrowUp");
-k.check("empty: ArrowUp on the closed field opens", isOpen("empty"));
+await k.press('ArrowUp');
+k.check('empty: ArrowUp on the closed field opens', isOpen('empty'));
 k.expect(
-	"empty: ArrowUp opens on the first row too, not the last",
-	lit("empty", FRUITS),
-	"Apple",
+	'empty: ArrowUp opens on the first row too, not the last',
+	lit('empty', FRUITS),
+	'Apple',
 );
 
 // ─── Open: arrows loop and never leave the input ─────────────────────────────
 
-await k.press("ArrowDown ArrowDown");
-k.expect("empty: ArrowDown walks the rows", lit("empty", FRUITS), "Cherry");
+await k.press('ArrowDown ArrowDown');
+k.expect('empty: ArrowDown walks the rows', lit('empty', FRUITS), 'Cherry');
 k.expect(
-	"empty: focus is still in the input while arrowing",
-	focusAt("empty", FRUITS),
-	"empty-input",
+	'empty: focus is still in the input while arrowing',
+	focusAt('empty', FRUITS),
+	'empty-input',
 );
-await k.press("ArrowDown ArrowDown");
+await k.press('ArrowDown ArrowDown');
 k.expect(
-	"empty: ArrowDown on the last row loops to the first",
-	lit("empty", FRUITS),
-	"Apple",
+	'empty: ArrowDown on the last row loops to the first',
+	lit('empty', FRUITS),
+	'Apple',
 );
-await k.press("ArrowUp");
+await k.press('ArrowUp');
 k.expect(
-	"empty: ArrowUp on the first row loops to the last",
-	lit("empty", FRUITS),
-	"Mango",
+	'empty: ArrowUp on the first row loops to the last',
+	lit('empty', FRUITS),
+	'Mango',
 );
 let escaped = false;
 for (let step = 0; step < 6; step++) {
-	await k.press("ArrowDown");
-	if (lit("empty", FRUITS) === null) escaped = true;
+	await k.press('ArrowDown');
+	if (lit('empty', FRUITS) === null) escaped = true;
 }
-k.check("empty: a full lap never drops the highlight into the input", !escaped);
+k.check('empty: a full lap never drops the highlight into the input', !escaped);
 
 // ─── Home and End move the caret only ────────────────────────────────────────
 
-await k.press("Escape");
-await k.press("a n");
-k.check("empty: typing opens and filters", isOpen("empty"));
-k.expect("empty: typed text", inputValue("empty"), "an");
-const before = lit("empty", FRUITS);
-await k.press("Home");
-k.expect("empty: Home keeps the lit row", lit("empty", FRUITS), before);
-k.check("empty: Home leaves the popup open", isOpen("empty"));
-await k.press("b");
-k.expect("empty: Home put the caret at the start", inputValue("empty"), "ban");
-await k.press("End");
-k.expect("empty: End keeps the lit row", lit("empty", FRUITS), before);
-await k.press("a");
-k.expect("empty: End put the caret at the end", inputValue("empty"), "bana");
-await k.press("Backspace Backspace Backspace Backspace");
+await k.press('Escape');
+await k.press('a n');
+k.check('empty: typing opens and filters', isOpen('empty'));
+k.expect('empty: typed text', inputValue('empty'), 'an');
+const before = lit('empty', FRUITS);
+await k.press('Home');
+k.expect('empty: Home keeps the lit row', lit('empty', FRUITS), before);
+k.check('empty: Home leaves the popup open', isOpen('empty'));
+await k.press('b');
+k.expect('empty: Home put the caret at the start', inputValue('empty'), 'ban');
+await k.press('End');
+k.expect('empty: End keeps the lit row', lit('empty', FRUITS), before);
+await k.press('a');
+k.expect('empty: End put the caret at the end', inputValue('empty'), 'bana');
+await k.press('Backspace Backspace Backspace Backspace');
 
 // ─── Enter picks, focus stays ────────────────────────────────────────────────
 
-await k.press("Escape");
-if (!isOpen("empty")) await k.press("ArrowDown");
-await k.press("ArrowDown ArrowDown Enter");
+await k.press('Escape');
+if (!isOpen('empty')) await k.press('ArrowDown');
+await k.press('ArrowDown ArrowDown Enter');
 await k.settle(500);
-k.check("empty: Enter closes", !isOpen("empty"));
-k.check("empty: Enter picks the lit row", shown("picked: Cherry"));
-k.expect("empty: the input shows the pick", inputValue("empty"), "Cherry");
+k.check('empty: Enter closes', !isOpen('empty'));
+k.check('empty: Enter picks the lit row', shown('picked: Cherry'));
+k.expect('empty: the input shows the pick', inputValue('empty'), 'Cherry');
 k.expect(
-	"empty: a pick keeps focus in the input",
-	focusAt("empty", FRUITS),
-	"empty-input",
+	'empty: a pick keeps focus in the input',
+	focusAt('empty', FRUITS),
+	'empty-input',
 );
 
 // ─── Pointer: hover lights without focus, leaving refills the first row ──────
 
-await k.press("ArrowDown");
-k.check("pointer: reopened by the keyboard", isOpen("empty"));
-const mango = k.center("empty-option-Mango");
+await k.press('ArrowDown');
+k.check('pointer: reopened by the keyboard', isOpen('empty'));
+const mango = k.center('empty-option-Mango');
 renderer.nativeSimulateMouseMove(mango.x, mango.y);
 await k.settle(100);
-k.expect("pointer: hover lights the row", lit("empty", FRUITS), "Mango");
+k.expect('pointer: hover lights the row', lit('empty', FRUITS), 'Mango');
 k.expect(
-	"pointer: hover leaves focus in the input",
-	focusAt("empty", FRUITS),
-	"empty-input",
+	'pointer: hover leaves focus in the input',
+	focusAt('empty', FRUITS),
+	'empty-input',
 );
 renderer.nativeSimulateMouseMove(700, 800);
 await k.settle(100);
 k.expect(
-	"pointer: leaving the list refills the first row",
-	lit("empty", FRUITS),
-	"Apple",
+	'pointer: leaving the list refills the first row',
+	lit('empty', FRUITS),
+	'Apple',
 );
-const banana = k.center("empty-option-Banana");
+const banana = k.center('empty-option-Banana');
 await k.clickAt(banana.x, banana.y);
 await k.settle(400);
-k.check("pointer: a click picks the row", shown("picked: Banana"));
+k.check('pointer: a click picks the row', shown('picked: Banana'));
 k.expect(
-	"pointer: a row click keeps focus in the input",
-	focusAt("empty", FRUITS),
-	"empty-input",
+	'pointer: a row click keeps focus in the input',
+	focusAt('empty', FRUITS),
+	'empty-input',
 );
 
 // ─── A selected value lights its row on open ─────────────────────────────────
 
-await k.focus("valued-input");
-await k.press("ArrowDown");
+await k.focus('valued-input');
+await k.press('ArrowDown');
 k.expect(
-	"valued: ArrowDown opens on the picked row",
-	lit("valued", FRUITS),
-	"Cherry",
+	'valued: ArrowDown opens on the picked row',
+	lit('valued', FRUITS),
+	'Cherry',
 );
-await k.press("Escape");
-await k.press("ArrowUp");
+await k.press('Escape');
+await k.press('ArrowUp');
 k.expect(
-	"valued: ArrowUp opens on the picked row too",
-	lit("valued", FRUITS),
-	"Cherry",
+	'valued: ArrowUp opens on the picked row too',
+	lit('valued', FRUITS),
+	'Cherry',
 );
-await k.press("Escape");
+await k.press('Escape');
 
 // ─── Disabled rows are reachable by arrows ───────────────────────────────────
 
-await k.focus("gaps-input");
-await k.press("ArrowDown");
-await k.press("ArrowDown");
+await k.focus('gaps-input');
+await k.press('ArrowDown');
+await k.press('ArrowDown');
 k.expect(
-	"gaps: arrows visit the disabled row (disabledIndices is empty)",
-	lit("gaps", ["a", "b", "c"]),
-	"b",
+	'gaps: arrows visit the disabled row (disabledIndices is empty)',
+	lit('gaps', ['a', 'b', 'c']),
+	'b',
 );
-await k.press("Escape");
+await k.press('Escape');
 
 // ─── Escape: open closes only the popup; closed clears the field ─────────────
 
-await k.focus("valued-input");
-await k.press("Escape");
+await k.focus('valued-input');
+await k.press('Escape');
 k.expect(
-	"valued: Escape on the closed field clears it",
-	inputValue("valued"),
-	"",
+	'valued: Escape on the closed field clears it',
+	inputValue('valued'),
+	'',
 );
 
 // ─── Hovering the field eases its fill over 80 ms ────────────────────────────
 
 {
 	const probe = () => {
-		const box = k.bounds("ease");
+		const box = k.bounds('ease');
 		renderer.captureScreenshot(`/tmp/check-combobox-fade-${process.pid}.png`);
 		return readPng(`/tmp/check-combobox-fade-${process.pid}.png`).at(
 			Math.round(box.x + 5),
 			Math.round(box.y + 5),
 		)[0];
 	};
-	const hoverPoint = k.center("ease");
+	const hoverPoint = k.center('ease');
 	renderer.nativeSimulateMouseMove(1, 1);
 	await k.settle(300);
 	renderer.clockPause();
@@ -327,11 +327,11 @@ k.expect(
 
 // ─── Lighting a row eases its icon stroke and colour over 80 ms ──────────────
 
-await k.focus("ease-input");
-await k.press("ArrowDown");
+await k.focus('ease-input');
+await k.press('ArrowDown');
 await k.settle(300);
 {
-	const row = k.bounds("ease-option-b");
+	const row = k.bounds('ease-option-b');
 	const iconBox = {
 		x: row.x + 8,
 		y: row.y + 4,
@@ -339,7 +339,7 @@ await k.settle(300);
 		height: row.height - 8,
 	};
 	const rest = k.ink(iconBox);
-	const point = k.center("ease-option-b");
+	const point = k.center('ease-option-b');
 	renderer.clockPause();
 	renderer.nativeSimulateMouseMove(point.x - 1, point.y);
 	renderer.nativeSimulateMouseMove(point.x, point.y);
@@ -358,36 +358,36 @@ await k.settle(300);
 			early < litInk - 0.1 * (litInk - rest),
 		`rest ${rest}, early ${early}, lit ${litInk}`,
 	);
-	await k.press("Escape");
+	await k.press('Escape');
 	await k.settle(300);
 }
 
 // ─── Open with the pointer ───────────────────────────────────────────────────
 
-await k.press("Escape");
-await k.clickAt(k.center("gaps-input").x, k.center("gaps-input").y);
-k.check("press: pressing the field opens the popup", isOpen("gaps"));
+await k.press('Escape');
+await k.clickAt(k.center('gaps-input').x, k.center('gaps-input').y);
+k.check('press: pressing the field opens the popup', isOpen('gaps'));
 k.expect(
-	"press: focus is in the input",
-	focusAt("gaps", ["a", "b", "c"]),
-	"gaps-input",
+	'press: focus is in the input',
+	focusAt('gaps', ['a', 'b', 'c']),
+	'gaps-input',
 );
 await k.clickAt(790, 890);
 await k.settle(300);
-k.check("press: a press outside closes it", !isOpen("gaps"));
+k.check('press: a press outside closes it', !isOpen('gaps'));
 
 // ─── Escape inside a dialog stops at the combobox ────────────────────────────
 
-await k.click("dialog-open");
+await k.click('dialog-open');
 await k.settle(400);
-await k.focus("inside-input");
-await k.press("ArrowDown");
-k.check("inside: opens in the dialog", isOpen("inside"));
-await k.press("Escape");
-k.check("inside: Escape closes the popup", !isOpen("inside"));
-k.check("inside: the dialog behind stays open", k.exists("dialog"));
-await k.press("Escape");
+await k.focus('inside-input');
+await k.press('ArrowDown');
+k.check('inside: opens in the dialog', isOpen('inside'));
+await k.press('Escape');
+k.check('inside: Escape closes the popup', !isOpen('inside'));
+k.check('inside: the dialog behind stays open', k.exists('dialog'));
+await k.press('Escape');
 await k.settle(500);
-k.check("inside: a second Escape closes the dialog", !k.exists("dialog"));
+k.check('inside: a second Escape closes the dialog', !k.exists('dialog'));
 
 k.finish();

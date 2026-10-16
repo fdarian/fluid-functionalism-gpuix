@@ -1,23 +1,18 @@
-import type { HostElement, HostMouseMoveEvent } from "@gpuix/solid";
-import { type Accessor, createSignal, For, Show } from "solid-js";
-import { Switch } from "#/components/switch";
-import { ComponentPreview, MONO } from "#/lib/doc-page";
-import { createFluidHover } from "#/lib/fluid-hover";
+import type { HostElement, HostMouseMoveEvent } from '@gpuix/solid';
+import { type Accessor, createSignal, For, Show } from 'solid-js';
+import { Switch } from '#/components/switch';
+import { ComponentPreview, MONO } from '#/lib/doc-page';
+import { createFluidHover } from '#/lib/fluid-hover';
 import {
 	color,
 	colorFadeDefault,
 	type as scale,
 	weight,
 	withAlpha,
-} from "#/lib/theme";
-import {
-	FluidRow,
-	ListFrame,
-	ListHighlight,
-	ROW_GAP,
-} from "./parts";
-import { ROWS } from "./plain-vs-fluid";
-import { MATH_CODE } from "./snippets";
+} from '#/lib/theme';
+import { FluidRow, ListFrame, ListHighlight, ROW_GAP } from './parts';
+import { ROWS } from './plain-vs-fluid';
+import { MATH_CODE } from './snippets';
 
 function MathList(props: { showMath: () => boolean }) {
 	const hover = createFluidHover();
@@ -50,12 +45,12 @@ function MathList(props: { showMath: () => boolean }) {
 	/** Read inside a `Show` on the same signal, where it cannot be null. */
 	const cursorNow = () => {
 		const y = cursorY();
-		if (y === null) throw new Error("The cursor line has no pointer");
+		if (y === null) throw new Error('The cursor line has no pointer');
 		return y;
 	};
 	const winnerNow = () => {
 		const y = winner();
-		if (y === null) throw new Error("The distance has no winning row");
+		if (y === null) throw new Error('The distance has no winning row');
 		return y;
 	};
 
@@ -76,9 +71,9 @@ function MathList(props: { showMath: () => boolean }) {
 				setCursorY(event.y - container.getBoundingClientRect().y);
 			}}
 			style={{
-				position: "relative",
-				display: "flex",
-				flexDirection: "column",
+				position: 'relative',
+				display: 'flex',
+				flexDirection: 'column',
 				gap: ROW_GAP,
 				paddingLeft: 8,
 				paddingRight: 8,
@@ -101,12 +96,12 @@ function MathList(props: { showMath: () => boolean }) {
 			<Show when={props.showMath()}>
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 0,
 						left: 0,
 						right: 0,
 						bottom: 0,
-						pointerEvents: "none",
+						pointerEvents: 'none',
 					}}
 				>
 					{/* Midpoints between centers: the highlight flips here. */}
@@ -114,7 +109,7 @@ function MathList(props: { showMath: () => boolean }) {
 						{(y) => (
 							<div
 								style={{
-									position: "absolute",
+									position: 'absolute',
 									left: 8,
 									right: 8,
 									top: y,
@@ -128,7 +123,7 @@ function MathList(props: { showMath: () => boolean }) {
 					<Show when={cursorY() !== null}>
 						<div
 							style={{
-								position: "absolute",
+								position: 'absolute',
 								left: 8,
 								right: 8,
 								top: cursorNow(),
@@ -145,7 +140,7 @@ function MathList(props: { showMath: () => boolean }) {
 								{(y: Accessor<number>) => (
 									<div
 										style={{
-											position: "absolute",
+											position: 'absolute',
 											right: 16,
 											top: y() - 4,
 											width: 8,
@@ -165,7 +160,7 @@ function MathList(props: { showMath: () => boolean }) {
 					<Show when={cursorY() !== null && winner() !== null}>
 						<div
 							style={{
-								position: "absolute",
+								position: 'absolute',
 								right: 20,
 								top: Math.min(cursorNow(), winnerNow()),
 								width: 1,
@@ -175,7 +170,7 @@ function MathList(props: { showMath: () => boolean }) {
 						/>
 						<div
 							style={{
-								position: "absolute",
+								position: 'absolute',
 								right: 28,
 								top: (cursorNow() + winnerNow()) / 2 - 7,
 							}}
@@ -187,7 +182,7 @@ function MathList(props: { showMath: () => boolean }) {
 									lineHeight: scale.micro.lineHeight,
 									fontWeight: weight.normal,
 									color: color.foreground,
-									whiteSpace: "nowrap",
+									whiteSpace: 'nowrap',
 								}}
 							>
 								{`${Math.round(Math.abs(cursorNow() - winnerNow()))}px`}
@@ -206,11 +201,11 @@ export function ShowTheMathDemo() {
 		<ComponentPreview testId="show-the-math-preview" code={MATH_CODE} cull>
 			<div
 				style={{
-					width: "100%",
+					width: '100%',
 					maxWidth: 384,
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
 					gap: 16,
 				}}
 			>

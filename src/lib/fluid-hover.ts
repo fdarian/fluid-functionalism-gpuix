@@ -2,8 +2,8 @@ import {
 	type HostElement,
 	type HostMouseMoveEvent,
 	ResizeObserver,
-} from "@gpuix/solid";
-import { createEffect, createSignal, onCleanup } from "solid-js";
+} from '@gpuix/solid';
+import { createEffect, createSignal, onCleanup } from 'solid-js';
 
 /** A row's box relative to the container's own top-left corner. */
 export interface ItemRect {
@@ -14,7 +14,7 @@ export interface ItemRect {
 }
 
 export interface PickNearestInput {
-	axis: "x" | "y" | "xy";
+	axis: 'x' | 'y' | 'xy';
 	point: { x: number; y: number };
 	rects: readonly (ItemRect | undefined)[];
 	containerRect: { left: number; top: number; width: number; height: number };
@@ -47,7 +47,7 @@ export function pickNearest(input: PickNearestInput): number | null {
 		if (!r) continue;
 		if (input.isDisabled?.(index)) continue;
 
-		if (input.axis === "xy") {
+		if (input.axis === 'xy') {
 			const left =
 				input.containerRect.left +
 				(input.border.x + r.left - input.scroll.x) * scaleX;
@@ -75,7 +75,7 @@ export function pickNearest(input: PickNearestInput): number | null {
 			continue;
 		}
 
-		const horizontal = input.axis === "x";
+		const horizontal = input.axis === 'x';
 		const mousePos = horizontal ? input.point.x : input.point.y;
 		const scale = horizontal ? scaleX : scaleY;
 		const itemStart =
@@ -102,7 +102,7 @@ export interface FluidHoverOptions {
 	/** Rows that stay mounted but are clipped away (a collapsed sub-menu). */
 	isItemDisabled?: (index: number) => boolean;
 	/** The direction rows run in: the pointer resolves to the row nearest along it. Default "y". */
-	axis?: "x" | "y" | "xy";
+	axis?: 'x' | 'y' | 'xy';
 }
 
 /**
@@ -154,7 +154,7 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 		if (pointer === undefined) return;
 		const box = container.getBoundingClientRect();
 		const next = pickNearest({
-			axis: options.axis ?? "y",
+			axis: options.axis ?? 'y',
 			point: pointer,
 			rects: rects(),
 			containerRect: {
@@ -185,7 +185,7 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 		if (container === element) return;
 		if (container !== undefined) observer.unobserve(container);
 		container = element;
-		observer.observe(element, { box: "border-box" });
+		observer.observe(element, { box: 'border-box' });
 	};
 
 	const handlers = {
@@ -193,9 +193,9 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 			sessionPending = true;
 			commit();
 		},
-		onMouseMove(event: Pick<HostMouseMoveEvent, "x" | "y">) {
+		onMouseMove(event: Pick<HostMouseMoveEvent, 'x' | 'y'>) {
 			if (event.x === undefined || event.y === undefined) {
-				throw new Error("mouseMove without coordinates");
+				throw new Error('mouseMove without coordinates');
 			}
 			pointer = { x: event.x, y: event.y };
 			pick();
@@ -219,7 +219,7 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 		containerRef: setContainer,
 		registerItem(index: number, element: HostElement) {
 			items.set(index, element);
-			observer.observe(element, { box: "border-box" });
+			observer.observe(element, { box: 'border-box' });
 			onCleanup(() => {
 				if (items.get(index) === element) items.delete(index);
 				observer.unobserve(element);
@@ -283,7 +283,7 @@ export function useHoverItem(
 		const own = index();
 		if (own === undefined) return;
 		const row = element();
-		if (row === undefined) throw new Error("Row is not mounted");
+		if (row === undefined) throw new Error('Row is not mounted');
 		hover.registerItem(own, row);
 	});
 }

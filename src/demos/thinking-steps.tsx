@@ -1,5 +1,5 @@
-import { createSignal, For, type JSX, onCleanup, Show } from "solid-js";
-import { Button } from "#/components/button";
+import { createSignal, For, type JSX, onCleanup, Show } from 'solid-js';
+import { Button } from '#/components/button';
 import {
 	type StepStatus,
 	ThinkingStep,
@@ -10,14 +10,14 @@ import {
 	ThinkingSteps,
 	ThinkingStepsContent,
 	ThinkingStepsHeader,
-} from "#/components/thinking-steps";
-import type { DemoModule, ShotContext } from "#/lib/demo";
-import { DemoCard } from "#/lib/demo-kit";
+} from '#/components/thinking-steps';
+import type { DemoModule, ShotContext } from '#/lib/demo';
+import { DemoCard } from '#/lib/demo-kit';
 
-const ogImage = new URL("../../assets/chat-ai/og.png", import.meta.url)
+const ogImage = new URL('../../assets/chat-ai/og.png', import.meta.url)
 	.pathname;
 
-type Playback = "playing" | "paused" | "finished";
+type Playback = 'playing' | 'paused' | 'finished';
 
 /**
  * The docs page's `useSequencedSteps`: fires `delays` (absolute ms from the
@@ -27,7 +27,7 @@ type Playback = "playing" | "paused" | "finished";
  */
 function createSequence(delays: number[]) {
 	const [fired, setFired] = createSignal(0);
-	const [playback, setPlayback] = createSignal<Playback>("playing");
+	const [playback, setPlayback] = createSignal<Playback>('playing');
 	let elapsed = 0;
 	let startedAt = performance.now();
 	let timer: ReturnType<typeof setTimeout> | undefined;
@@ -43,7 +43,7 @@ function createSequence(delays: number[]) {
 				elapsed = target;
 				const next = fired() + 1;
 				setFired(next);
-				if (next >= delays.length) setPlayback("finished");
+				if (next >= delays.length) setPlayback('finished');
 				else schedule();
 			},
 			Math.max(0, target - elapsed),
@@ -56,24 +56,24 @@ function createSequence(delays: number[]) {
 		playback,
 		/** Play / pause, or start over once finished. */
 		toggle() {
-			if (playback() === "playing") {
+			if (playback() === 'playing') {
 				clearTimeout(timer);
 				elapsed += performance.now() - startedAt;
-				setPlayback("paused");
-			} else if (playback() === "paused") {
-				setPlayback("playing");
+				setPlayback('paused');
+			} else if (playback() === 'paused') {
+				setPlayback('playing');
 				schedule();
 			} else {
 				elapsed = 0;
 				setFired(0);
-				setPlayback("playing");
+				setPlayback('playing');
 				schedule();
 			}
 		},
 		status(index: number, total: number): StepStatus {
-			if (fired() >= total) return "complete";
-			if (index < fired() - 1) return "complete";
-			return index === fired() - 1 ? "active" : "pending";
+			if (fired() >= total) return 'complete';
+			if (index < fired() - 1) return 'complete';
+			return index === fired() - 1 ? 'active' : 'pending';
 		},
 	};
 }
@@ -88,19 +88,19 @@ function PlaybackCard(props: {
 	const sequence = createSequence(props.delays);
 	const [run, setRun] = createSignal(0);
 	const label = () =>
-		sequence.playback() === "playing"
-			? "Pause"
-			: sequence.playback() === "paused"
-				? "Play"
-				: "Replay";
+		sequence.playback() === 'playing'
+			? 'Pause'
+			: sequence.playback() === 'paused'
+				? 'Play'
+				: 'Replay';
 	return (
 		<DemoCard title={props.title}>
-			<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+			<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						justifyContent: "flex-end",
+						display: 'flex',
+						flexDirection: 'row',
+						justifyContent: 'flex-end',
 					}}
 				>
 					<Button
@@ -108,7 +108,7 @@ function PlaybackCard(props: {
 						variant="ghost"
 						size="compact"
 						onClick={() => {
-							if (sequence.playback() === "finished") setRun(run() + 1);
+							if (sequence.playback() === 'finished') setRun(run() + 1);
 							sequence.toggle();
 						}}
 					>
@@ -132,12 +132,12 @@ function BasicDemo() {
 						testId="basic-details"
 						summary="Explored 6 files"
 						details={[
-							"Read accordion.tsx",
-							"Read icon-context.tsx",
-							"Read badge.tsx",
-							"Read use-fluid-hover.ts",
-							"Read components.ts",
-							"Read postbuild-registry.mjs",
+							'Read accordion.tsx',
+							'Read icon-context.tsx',
+							'Read badge.tsx',
+							'Read use-fluid-hover.ts',
+							'Read components.ts',
+							'Read postbuild-registry.mjs',
 						]}
 					/>
 				</ThinkingStep>
@@ -201,18 +201,18 @@ function StreamingDemo(props: { sequence: ReturnType<typeof createSequence> }) {
 }
 
 const STREAMING_TEXT = [
-	"Establishing a connection to the data warehouse and streaming 2.4 million rows across 47 columns into a memory-mapped buffer. The source table spans three partitions dated from January through March, each containing roughly 800K records with nested JSON fields that need to be flattened before downstream processing can begin.",
-	"Running a full schema validation pass against the canonical type definitions. Checking that all 47 columns match their expected types, verifying nullability constraints on the 12 required fields, confirming foreign key references resolve correctly against the dimension tables, and flagging any new columns that appeared since the last successful run on March 15th.",
-	"Applying the full normalization pipeline: flattening nested address objects into discrete columns, deduplicating records that share the same composite key across partitions, converting all timestamps from mixed UTC and local offsets into a canonical ISO 8601 format, and running the currency conversion step for the 14 non-USD transaction currencies using the daily exchange rate snapshot.",
+	'Establishing a connection to the data warehouse and streaming 2.4 million rows across 47 columns into a memory-mapped buffer. The source table spans three partitions dated from January through March, each containing roughly 800K records with nested JSON fields that need to be flattened before downstream processing can begin.',
+	'Running a full schema validation pass against the canonical type definitions. Checking that all 47 columns match their expected types, verifying nullability constraints on the 12 required fields, confirming foreign key references resolve correctly against the dimension tables, and flagging any new columns that appeared since the last successful run on March 15th.',
+	'Applying the full normalization pipeline: flattening nested address objects into discrete columns, deduplicating records that share the same composite key across partitions, converting all timestamps from mixed UTC and local offsets into a canonical ISO 8601 format, and running the currency conversion step for the 14 non-USD transaction currencies using the daily exchange rate snapshot.',
 	"Executing 23 data quality assertions: verifying that output row counts fall within the expected 2% tolerance of the source, checking that the revenue distribution skew hasn't shifted beyond 1.5 standard deviations from the trailing 30-day average, confirming referential integrity against all five dimension tables, and ensuring that no single partition exceeds 40% of total volume which would indicate an upstream ingestion anomaly.",
-	"Compressing the validated dataset into 847 Snappy-encoded Parquet files partitioned by region and date, uploading each file to the staging bucket with server-side encryption enabled, registering the new partition metadata in the Hive metastore, and triggering the downstream Airflow DAG that handles incremental merges into the production fact table.",
+	'Compressing the validated dataset into 847 Snappy-encoded Parquet files partitioned by region and date, uploading each file to the staging bucket with server-side encryption enabled, registering the new partition metadata in the Hive metastore, and triggering the downstream Airflow DAG that handles incremental merges into the production fact table.',
 ];
 const STREAMING_LABELS = [
-	"Loading dataset",
-	"Validating schema",
-	"Transforming records",
-	"Running quality checks",
-	"Writing output",
+	'Loading dataset',
+	'Validating schema',
+	'Transforming records',
+	'Running quality checks',
+	'Writing output',
 ];
 
 /** Types `text` in three characters at a time while `active`, like the docs' `useStreamingText`. */
@@ -229,7 +229,7 @@ function createStreamingText(
 	onCleanup(() => clearInterval(timer));
 	return () => {
 		const shown = done() ? text : text.slice(0, count());
-		return shown === "" ? undefined : shown;
+		return shown === '' ? undefined : shown;
 	};
 }
 
@@ -242,8 +242,8 @@ function StreamingTextStep(props: {
 }) {
 	const description = createStreamingText(
 		props.text,
-		() => props.status === "active",
-		() => props.status === "complete",
+		() => props.status === 'active',
+		() => props.status === 'complete',
 	);
 	return (
 		<ThinkingStep
@@ -383,10 +383,10 @@ function FullDemo(props: { sequence: ReturnType<typeof createSequence> }) {
 							testId="full-details"
 							summary="Explored 4 pages"
 							details={[
-								"Read about.html",
-								"Read projects.html",
-								"Read resume.pdf",
-								"Read contact.html",
+								'Read about.html',
+								'Read projects.html',
+								'Read resume.pdf',
+								'Read contact.html',
 							]}
 						/>
 					</Show>
@@ -423,13 +423,13 @@ function FullDemo(props: { sequence: ReturnType<typeof createSequence> }) {
 	);
 }
 
-export const title = "ThinkingSteps";
-export const group = "Components";
-export const listed = "sidebar";
+export const title = 'ThinkingSteps';
+export const group = 'Components';
+export const listed = 'sidebar';
 
 export function Demo() {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 			<DemoCard title="Basic">
 				<BasicDemo />
 			</DemoCard>
@@ -476,46 +476,46 @@ async function scrollTo(shot: ShotContext, testId: string) {
 	}
 }
 
-export const scenarios: DemoModule["scenarios"] = async (shot) => {
-	await shot.hover("basic-header");
-	shot.capture("header-hover");
+export const scenarios: DemoModule['scenarios'] = async (shot) => {
+	await shot.hover('basic-header');
+	shot.capture('header-hover');
 	const openTabStops = shot.tabStopCount();
-	const panel = shot.aria("basic-header").controls;
+	const panel = shot.aria('basic-header').controls;
 	if (!Array.isArray(panel) || panel.length !== 1)
-		throw new Error("an open trigger controls its panel");
+		throw new Error('an open trigger controls its panel');
 	if (!shot.hasAriaNode(String(panel[0])))
-		throw new Error("the controlled panel is not in the accessibility tree");
-	await shot.click("basic-header");
-	shot.capture("basic-collapsed");
-	shot.expectAria("basic-header", { expanded: false, controls: undefined });
+		throw new Error('the controlled panel is not in the accessibility tree');
+	await shot.click('basic-header');
+	shot.capture('basic-collapsed');
+	shot.expectAria('basic-header', { expanded: false, controls: undefined });
 	// The closed panel's own trigger leaves the tab order with it.
 	if (shot.tabStopCount() !== openTabStops - 1)
 		throw new Error("a closed panel's trigger is still a tab stop");
-	await shot.click("basic-header");
-	await shot.click("basic-details");
-	shot.capture("basic-details-open");
+	await shot.click('basic-header');
+	await shot.click('basic-details');
+	shot.capture('basic-details-open');
 
 	// Streaming restarts from zero, so each step is caught while it is active.
-	await scrollTo(shot, "streaming-playback");
+	await scrollTo(shot, 'streaming-playback');
 	await shot.settle(3000);
-	shot.expectText("Replay", true);
-	await shot.click("streaming-playback");
+	shot.expectText('Replay', true);
+	await shot.click('streaming-playback');
 	await shot.settle(900);
-	shot.capture("streaming-step-1");
+	shot.capture('streaming-step-1');
 	await shot.settle(1300);
-	shot.capture("streaming-step-2");
+	shot.capture('streaming-step-2');
 	await shot.settle(1700);
-	shot.capture("streaming-step-3");
+	shot.capture('streaming-step-3');
 	await shot.settle(2000);
-	shot.capture("streaming-done");
+	shot.capture('streaming-done');
 
 	// These cards have been playing since the page opened and are further down.
-	await scrollTo(shot, "text-playback");
-	shot.capture("streaming-text");
-	await scrollTo(shot, "images-playback");
-	shot.capture("with-images");
-	await scrollTo(shot, "full-playback");
-	shot.capture("full");
-	await shot.click("full-details");
-	shot.capture("full-details-open");
+	await scrollTo(shot, 'text-playback');
+	shot.capture('streaming-text');
+	await scrollTo(shot, 'images-playback');
+	shot.capture('with-images');
+	await scrollTo(shot, 'full-playback');
+	shot.capture('full');
+	await shot.click('full-details');
+	shot.capture('full-details-open');
 };

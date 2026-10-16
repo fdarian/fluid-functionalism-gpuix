@@ -1,11 +1,11 @@
-import { AnimatePresence, motion } from "@gpuix/solid";
-import { createSignal, For, type JSX } from "solid-js";
-import { CarouselDots } from "#/components/carousel-dots";
-import type { DemoModule } from "#/lib/demo";
-import { DemoCard } from "#/lib/demo-kit";
-import { color, shape, type as scale, motion as tween } from "#/lib/theme";
+import { AnimatePresence, motion } from '@gpuix/solid';
+import { createSignal, For, type JSX } from 'solid-js';
+import { CarouselDots } from '#/components/carousel-dots';
+import type { DemoModule } from '#/lib/demo';
+import { DemoCard } from '#/lib/demo-kit';
+import { color, type as scale, shape, motion as tween } from '#/lib/theme';
 
-export const SLIDES = ["Inbox", "Drafts", "Sent", "Archive"];
+export const SLIDES = ['Inbox', 'Drafts', 'Sent', 'Archive'];
 /** How far a slide's label travels sideways on a change, in px. */
 const SLIDE_SHIFT = 24;
 const SLIDE_SIZE = 160;
@@ -47,10 +47,10 @@ export function Slide(props: {
 	return (
 		<div
 			style={{
-				position: "relative",
+				position: 'relative',
 				width: props.width ?? SLIDE_SIZE,
 				height: props.height ?? SLIDE_SIZE,
-				overflow: "hidden",
+				overflow: 'hidden',
 				borderRadius: shape.container,
 				borderWidth: 1,
 				borderColor: color.border,
@@ -74,12 +74,12 @@ export function Slide(props: {
 							}}
 							transition={tween.moderate}
 							style={{
-								position: "absolute",
+								position: 'absolute',
 								top: 0,
 								bottom: 0,
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
 							}}
 						>
 							<text style={{ ...scale.body, color: color.foreground }}>
@@ -97,9 +97,9 @@ function Section(props: { caption: string; children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
 				flexBasis: 0,
 				flexGrow: 1,
 				gap: 12,
@@ -113,9 +113,9 @@ function Section(props: { caption: string; children: JSX.Element }) {
 	);
 }
 
-export const title = "CarouselDots";
-export const group = "Components";
-export const listed = "sidebar";
+export const title = 'CarouselDots';
+export const group = 'Components';
+export const listed = 'sidebar';
 
 export function Demo() {
 	const staticSlides = createSlides();
@@ -123,7 +123,7 @@ export function Demo() {
 	const [hovering, setHovering] = createSignal(false);
 	return (
 		<DemoCard title="CarouselDots">
-			<div style={{ display: "flex", flexDirection: "row", gap: 24 }}>
+			<div style={{ display: 'flex', flexDirection: 'row', gap: 24 }}>
 				<Section caption="Static: hover a dot to see its click area">
 					<Slide
 						index={staticSlides.state().slide}
@@ -166,20 +166,20 @@ export function Demo() {
 	);
 }
 
-export const scenarios: DemoModule["scenarios"] = async (shot) => {
-	const dots = shot.centerOf("static");
+export const scenarios: DemoModule['scenarios'] = async (shot) => {
+	const dots = shot.centerOf('static');
 	await shot.moveTo(dots.x - 36, dots.y);
-	shot.capture("hover-dot");
+	shot.capture('hover-dot');
 	await shot.moveTo(dots.x + 18, dots.y);
-	shot.capture("hover-next-dot");
+	shot.capture('hover-next-dot');
 	await shot.clickAt(dots.x + 18, dots.y);
-	shot.capture("picked-third");
+	shot.capture('picked-third');
 	await shot.moveTo(1180, 700);
-	shot.capture("pointer-left");
-	await shot.hover("autoplay-slide");
+	shot.capture('pointer-left');
+	await shot.hover('autoplay-slide');
 	await shot.settle(900);
-	shot.capture("autoplay-paused-mid-fill");
+	shot.capture('autoplay-paused-mid-fill');
 	await shot.moveTo(1180, 700);
 	await shot.settle(3400);
-	shot.capture("autoplay-advanced");
+	shot.capture('autoplay-advanced');
 };

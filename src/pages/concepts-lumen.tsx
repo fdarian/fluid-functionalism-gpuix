@@ -1,15 +1,15 @@
-import { createSignal, For, type JSX, onCleanup, Show } from "solid-js";
-import { createStore } from "solid-js/store";
-import { Badge, type BadgeColor } from "#/components/badge";
-import { Button } from "#/components/button";
-import { ChatMessage } from "#/components/chat-message";
-import { InputMessage } from "#/components/input-message";
-import { ScrollArea } from "#/components/scroll-area";
+import { createSignal, For, type JSX, onCleanup, Show } from 'solid-js';
+import { createStore } from 'solid-js/store';
+import { Badge, type BadgeColor } from '#/components/badge';
+import { Button } from '#/components/button';
+import { ChatMessage } from '#/components/chat-message';
+import { InputMessage } from '#/components/input-message';
+import { ScrollArea } from '#/components/scroll-area';
 import {
 	TabsSubtle,
 	TabsSubtleItem,
 	TabsSubtlePanel,
-} from "#/components/tabs-subtle";
+} from '#/components/tabs-subtle';
 import {
 	ThinkingStep,
 	ThinkingStepSource,
@@ -17,45 +17,45 @@ import {
 	ThinkingSteps,
 	ThinkingStepsContent,
 	ThinkingStepsHeader,
-} from "#/components/thinking-steps";
-import type { ShotContext } from "#/lib/demo";
-import { color, shadow, shape, siteType, weight } from "#/lib/theme";
-import { ConceptFrame } from "#/pages/concepts/frame";
+} from '#/components/thinking-steps';
+import type { ShotContext } from '#/lib/demo';
+import { color, shadow, shape, siteType, weight } from '#/lib/theme';
+import { ConceptFrame } from '#/pages/concepts/frame';
 
-export const title = "Lumen";
-export const group = "Pages";
+export const title = 'Lumen';
+export const group = 'Pages';
 export const order = 31;
-export const layout = "full";
-export const listed = "none";
+export const layout = 'full';
+export const listed = 'none';
 
 /** How long a new question stays in "Writing the answer" before the canned answer lands. */
 const THINKING_MS = 1600;
 const BOLD = 700;
-const NBSP = " ";
+const NBSP = ' ';
 
 export async function scenarios(shot: ShotContext) {
-	await shot.hover("concept-nav-concepts-beacon");
-	shot.capture("nav-hover");
+	await shot.hover('concept-nav-concepts-beacon');
+	shot.capture('nav-hover');
 	await shot.moveTo(600, 400);
-	await shot.focus("concept-nav-concepts-lumen");
-	await shot.press("ArrowDown");
-	shot.capture("nav-keyboard");
+	await shot.focus('concept-nav-concepts-lumen');
+	await shot.press('ArrowDown');
+	shot.capture('nav-keyboard');
 	await shot.moveTo(600, 400);
-	await shot.click("lumen-seed-tab-1");
-	shot.capture("sources");
-	await shot.click("lumen-seed-tab-2");
-	shot.capture("images");
-	await shot.click("lumen-seed-tab-0");
-	await shot.click("input-message-textarea");
-	await shot.press("w h y");
-	await shot.press("Enter");
+	await shot.click('lumen-seed-tab-1');
+	shot.capture('sources');
+	await shot.click('lumen-seed-tab-2');
+	shot.capture('images');
+	await shot.click('lumen-seed-tab-0');
+	await shot.click('input-message-textarea');
+	await shot.press('w h y');
+	await shot.press('Enter');
 	// The new turn lands below the fold; the page does not scroll to it.
 	await shot.scroll(580, 300, 0, 2000);
-	shot.expectText("why", true);
-	shot.capture("thinking");
+	shot.expectText('why', true);
+	shot.capture('thinking');
 	await shot.settle(THINKING_MS + 600);
 	await shot.scroll(580, 300, 0, 2000);
-	shot.capture("followup");
+	shot.capture('followup');
 }
 
 // ── Fixtures ────────────────────────────────────────────────────────────
@@ -70,35 +70,35 @@ interface Source {
 const SOURCES: Source[] = [
 	{
 		n: 1,
-		title: "Epictetus — The Enchiridion",
-		site: "classics.mit.edu",
-		color: "amber",
+		title: 'Epictetus — The Enchiridion',
+		site: 'classics.mit.edu',
+		color: 'amber',
 	},
 	{
 		n: 2,
-		title: "Marcus Aurelius and the dichotomy of control",
-		site: "dailystoic.com",
-		color: "blue",
+		title: 'Marcus Aurelius and the dichotomy of control',
+		site: 'dailystoic.com',
+		color: 'blue',
 	},
 	{
 		n: 3,
-		title: "Stoicism: internal vs external goods",
-		site: "plato.stanford.edu",
-		color: "violet",
+		title: 'Stoicism: internal vs external goods',
+		site: 'plato.stanford.edu',
+		color: 'violet',
 	},
 	{
 		n: 4,
 		title: "What is 'up to us'? A reading of Stoic agency",
-		site: "aeon.co",
-		color: "teal",
+		site: 'aeon.co',
+		color: 'teal',
 	},
 ];
 
 const IMAGES = [
-	{ from: "#fbbf24", to: "#b45309", caption: "Bust of Marcus Aurelius" },
-	{ from: "#60a5fa", to: "#1e3a8a", caption: "The Painted Porch, Athens" },
-	{ from: "#a78bfa", to: "#5b21b6", caption: "Epictetus, engraving" },
-	{ from: "#2dd4bf", to: "#0f766e", caption: "Seneca's letters, folio" },
+	{ from: '#fbbf24', to: '#b45309', caption: 'Bust of Marcus Aurelius' },
+	{ from: '#60a5fa', to: '#1e3a8a', caption: 'The Painted Porch, Athens' },
+	{ from: '#a78bfa', to: '#5b21b6', caption: 'Epictetus, engraving' },
+	{ from: '#2dd4bf', to: '#0f766e', caption: "Seneca's letters, folio" },
 ];
 
 type Swatch = (typeof IMAGES)[number];
@@ -110,8 +110,8 @@ function SwatchImage(props: { swatch: Swatch; width?: number }) {
 	return (
 		<div
 			style={{
-				position: "relative",
-				width: props.width ?? "100%",
+				position: 'relative',
+				width: props.width ?? '100%',
 				aspectRatio: 240 / 150,
 				flexShrink: 0,
 				borderRadius: shape.container,
@@ -143,7 +143,7 @@ function Cite(props: { n: number }) {
 				style={{
 					backgroundColor: color.accent,
 					color: color.foreground,
-					fontVariantNumeric: "tabular-nums",
+					fontVariantNumeric: 'tabular-nums',
 				}}
 			>
 				{NBSP}
@@ -167,9 +167,9 @@ function Paragraph(props: { children: JSX.Element }) {
 function Answer() {
 	return (
 		<ChatMessage from="assistant" fullWidth>
-			<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+			<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 				<Paragraph>
-					The Stoics drew a sharp line between what is{" "}
+					The Stoics drew a sharp line between what is{' '}
 					<span style={{ fontWeight: weight.semibold }}>“up to us”</span> and
 					what is not. Our judgments, desires, and chosen actions are within our
 					power; everything else — health, reputation, wealth, the behaviour of
@@ -178,8 +178,8 @@ function Answer() {
 					<Cite n={3} />.
 				</Paragraph>
 				<Paragraph>
-					Epictetus opens the{" "}
-					<span style={{ fontStyle: "italic" }}>Enchiridion</span> with exactly
+					Epictetus opens the{' '}
+					<span style={{ fontStyle: 'italic' }}>Enchiridion</span> with exactly
 					this “dichotomy of control.” Tranquility, he argues, comes from
 					investing effort only in the former and meeting the latter with
 					equanimity
@@ -202,14 +202,14 @@ function Answer() {
 
 function SourcesPanel() {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
 			<For each={SOURCES}>
 				{(source) => (
 					<div
 						style={{
-							display: "flex",
-							flexDirection: "row",
-							alignItems: "center",
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'center',
 							gap: 12,
 							paddingLeft: 14,
 							paddingRight: 14,
@@ -226,8 +226,8 @@ function SourcesPanel() {
 						</Badge>
 						<div
 							style={{
-								display: "flex",
-								flexDirection: "column",
+								display: 'flex',
+								flexDirection: 'column',
 								minWidth: 0,
 							}}
 						>
@@ -236,9 +236,9 @@ function SourcesPanel() {
 									...siteType.body,
 									fontWeight: weight.normal,
 									color: color.foreground,
-									whiteSpace: "nowrap",
-									overflow: "hidden",
-									textOverflow: "ellipsis",
+									whiteSpace: 'nowrap',
+									overflow: 'hidden',
+									textOverflow: 'ellipsis',
 								}}
 							>
 								{source.title}
@@ -247,9 +247,9 @@ function SourcesPanel() {
 								style={{
 									...siteType.caption,
 									color: color.mutedForeground,
-									whiteSpace: "nowrap",
-									overflow: "hidden",
-									textOverflow: "ellipsis",
+									whiteSpace: 'nowrap',
+									overflow: 'hidden',
+									textOverflow: 'ellipsis',
 								}}
 							>
 								{source.site}
@@ -264,7 +264,7 @@ function SourcesPanel() {
 
 function ImagesPanel() {
 	return (
-		<div style={{ display: "flex", flexDirection: "row", gap: 12 }}>
+		<div style={{ display: 'flex', flexDirection: 'row', gap: 12 }}>
 			<For each={IMAGES}>
 				{(image) => (
 					<div
@@ -272,8 +272,8 @@ function ImagesPanel() {
 							flexGrow: 1,
 							flexBasis: 0,
 							minWidth: 0,
-							display: "flex",
-							flexDirection: "column",
+							display: 'flex',
+							flexDirection: 'column',
 							gap: 4,
 						}}
 					>
@@ -298,7 +298,7 @@ function TurnView(props: { turn: Turn }) {
 	const [tab, setTab] = createSignal(0);
 	const idPrefix = () => `lumen-${props.turn.id}`;
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 			<text
 				style={{
 					fontSize: 24,
@@ -312,7 +312,7 @@ function TurnView(props: { turn: Turn }) {
 
 			<ThinkingSteps defaultOpen={props.turn.thinking} width="100%">
 				<ThinkingStepsHeader>
-					{props.turn.thinking ? "Searching the web" : "Searched 4 sources"}
+					{props.turn.thinking ? 'Searching the web' : 'Searched 4 sources'}
 				</ThinkingStepsHeader>
 				<ThinkingStepsContent>
 					<ThinkingStep
@@ -338,17 +338,17 @@ function TurnView(props: { turn: Turn }) {
 					<ThinkingStep
 						icon="brain"
 						label={
-							props.turn.thinking ? "Writing the answer" : "Composed the answer"
+							props.turn.thinking ? 'Writing the answer' : 'Composed the answer'
 						}
-						status={props.turn.thinking ? "active" : "complete"}
+						status={props.turn.thinking ? 'active' : 'complete'}
 						isLast
 					>
 						<Show when={!props.turn.thinking}>
 							<div
 								style={{
 									marginTop: 6,
-									display: "flex",
-									flexDirection: "column",
+									display: 'flex',
+									flexDirection: 'column',
 									gap: 4,
 								}}
 							>
@@ -403,10 +403,10 @@ function TurnView(props: { turn: Turn }) {
 // ── Page ────────────────────────────────────────────────────────────────
 
 export function Page() {
-	const [draft, setDraft] = createSignal("");
+	const [draft, setDraft] = createSignal('');
 	const [turns, setTurns] = createStore<Turn[]>([
 		{
-			id: "seed",
+			id: 'seed',
 			question: "What did the Stoics believe we can and can't control?",
 			thinking: false,
 		},
@@ -418,14 +418,14 @@ export function Page() {
 
 	const send = (value: string) => {
 		const question = value.trim();
-		if (question === "") return;
+		if (question === '') return;
 		const id = `t${Date.now()}`;
 		setTurns(turns.length, { id, question, thinking: true });
-		setDraft("");
+		setDraft('');
 		// The turn becomes a full answer after a beat.
 		const timer = setTimeout(() => {
 			timers.delete(timer);
-			setTurns((turn) => turn.id === id, "thinking", false);
+			setTurns((turn) => turn.id === id, 'thinking', false);
 		}, THINKING_MS);
 		timers.add(timer);
 	};
@@ -434,21 +434,21 @@ export function Page() {
 		<ConceptFrame>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "column",
-					width: "100%",
-					height: "100%",
+					display: 'flex',
+					flexDirection: 'column',
+					width: '100%',
+					height: '100%',
 				}}
 			>
 				<div style={{ flexGrow: 1, minHeight: 0 }}>
 					<ScrollArea height="100%">
 						<div
 							style={{
-								width: "100%",
+								width: '100%',
 								maxWidth: 760,
-								alignSelf: "center",
-								display: "flex",
-								flexDirection: "column",
+								alignSelf: 'center',
+								display: 'flex',
+								flexDirection: 'column',
 								gap: 40,
 								paddingLeft: 24,
 								paddingRight: 24,
@@ -463,16 +463,16 @@ export function Page() {
 
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "center",
+						display: 'flex',
+						flexDirection: 'column',
+						alignItems: 'center',
 						paddingLeft: 24,
 						paddingRight: 24,
 						paddingTop: 8,
 						paddingBottom: 24,
 					}}
 				>
-					<div style={{ width: "100%", maxWidth: 760 }}>
+					<div style={{ width: '100%', maxWidth: 760 }}>
 						<InputMessage
 							value={draft()}
 							onValueChange={setDraft}

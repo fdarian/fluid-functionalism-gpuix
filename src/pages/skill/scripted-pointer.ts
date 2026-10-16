@@ -2,15 +2,15 @@ import {
 	type HostElement,
 	type HostMouseMoveEvent,
 	useGpuixRequired,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 
-type HostNode = HostElement["children"][number];
+type HostNode = HostElement['children'][number];
 
 /** Every element under `root`, by id. */
 function descendantsOf(root: HostElement) {
 	const found = new Map<number, HostElement>();
 	const visit = (node: HostNode) => {
-		if (node.kind !== "element") return;
+		if (node.kind !== 'element') return;
 		found.set(node.id, node);
 		for (const child of node.children) visit(child);
 	};
@@ -21,12 +21,12 @@ function descendantsOf(root: HostElement) {
 /** The element under `root` whose `testId` prop is `testId`. */
 export function findByTestId(root: HostElement, testId: string) {
 	for (const element of descendantsOf(root).values()) {
-		if (element.props.get("testId") === testId) return element;
+		if (element.props.get('testId') === testId) return element;
 	}
 	throw new Error(`no element with testId ${testId} under the example`);
 }
 
-type HoverEvent = "onMouseEnter" | "onMouseLeave" | "onMouseMove";
+type HoverEvent = 'onMouseEnter' | 'onMouseLeave' | 'onMouseMove';
 
 /** Handlers the scripted pointer called itself, so a listener can tell them from a visitor's pointer. */
 const scripted = new WeakSet<object>();
@@ -51,8 +51,8 @@ export function createScriptedPointer(root: () => HostElement | undefined) {
 		at: { x: number; y: number },
 	) => {
 		const handler = element.props.get(type);
-		if (typeof handler !== "function") return;
-		const eventType = type.slice("on".length).toLowerCase();
+		if (typeof handler !== 'function') return;
+		const eventType = type.slice('on'.length).toLowerCase();
 		const event: HostMouseMoveEvent = {
 			elementId: element.id,
 			eventType,
@@ -74,7 +74,7 @@ export function createScriptedPointer(root: () => HostElement | undefined) {
 			stopImmediatePropagation() {},
 			preventDefault() {},
 			pointerId: 1,
-			pointerType: "mouse",
+			pointerType: 'mouse',
 			movementX: 0,
 			movementY: 0,
 		};
@@ -84,9 +84,9 @@ export function createScriptedPointer(root: () => HostElement | undefined) {
 
 	const under = (at: { x: number; y: number }) => {
 		const container = root();
-		if (container === undefined) throw new Error("the example has no root");
+		if (container === undefined) throw new Error('the example has no root');
 		if (renderer.getElementsAt === undefined) {
-			throw new Error("this renderer has no hit test (getElementsAt)");
+			throw new Error('this renderer has no hit test (getElementsAt)');
 		}
 		const own = descendantsOf(container);
 		const hit: HostElement[] = [];
@@ -102,23 +102,23 @@ export function createScriptedPointer(root: () => HostElement | undefined) {
 		moveTo(at: { x: number; y: number }) {
 			const next = under(at);
 			for (const element of chain) {
-				if (!next.includes(element)) fire(element, "onMouseLeave", at);
+				if (!next.includes(element)) fire(element, 'onMouseLeave', at);
 			}
 			for (const element of [...next].reverse()) {
-				if (!chain.includes(element)) fire(element, "onMouseEnter", at);
+				if (!chain.includes(element)) fire(element, 'onMouseEnter', at);
 			}
 			chain = next;
-			for (const element of chain) fire(element, "onMouseMove", at);
+			for (const element of chain) fire(element, 'onMouseMove', at);
 		},
 		click() {
 			const target = chain[0];
 			if (target === undefined)
-				throw new Error("the scripted pointer clicked nothing");
+				throw new Error('the scripted pointer clicked nothing');
 			target.click();
 		},
 		/** Leaves everything it was over. */
 		release(at: { x: number; y: number }) {
-			for (const element of chain) fire(element, "onMouseLeave", at);
+			for (const element of chain) fire(element, 'onMouseLeave', at);
 			chain = [];
 		},
 	};

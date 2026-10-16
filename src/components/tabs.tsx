@@ -5,7 +5,7 @@ import {
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	createComputed,
 	createContext,
@@ -19,33 +19,33 @@ import {
 	Show,
 	untrack,
 	useContext,
-} from "solid-js";
+} from 'solid-js';
 import {
 	createFluidHover,
 	type FluidHover,
 	type ItemRect,
-} from "#/lib/fluid-hover";
+} from '#/lib/fluid-hover';
 import {
 	createFocusRing,
 	FocusRing,
 	type FocusRingState,
-} from "#/lib/focus-ring";
-import { Icon } from "#/lib/icon";
-import type { IconRef } from "#/lib/icons";
-import { createPreviewPill } from "#/lib/preview-pill";
-import { StableLabel } from "#/lib/stable-label";
+} from '#/lib/focus-ring';
+import { Icon } from '#/lib/icon';
+import type { IconRef } from '#/lib/icons';
+import { createPreviewPill } from '#/lib/preview-pill';
+import { StableLabel } from '#/lib/stable-label';
 import {
 	color,
-	shape,
-	sizeChoice,
 	type as scale,
 	scheme,
 	shadow,
+	shape,
+	sizeChoice,
 	motion as tween,
 	weight,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
-export type TabsSize = "default" | "compact";
+export type TabsSize = 'default' | 'compact';
 
 const sizes = {
 	default: { pad: 4, item: 28, gap: 8, text: scale.body, icon: 16 },
@@ -88,13 +88,13 @@ const ListContext = createContext<ListScope>();
 
 function useTabs() {
 	const tabs = useContext(TabsContext);
-	if (tabs === undefined) throw new Error("Must be used inside Tabs");
+	if (tabs === undefined) throw new Error('Must be used inside Tabs');
 	return tabs;
 }
 function useList() {
 	const list = useContext(ListContext);
 	if (list === undefined)
-		throw new Error("TabItem must be used inside TabsList");
+		throw new Error('TabItem must be used inside TabsList');
 	return list;
 }
 
@@ -138,7 +138,7 @@ export function Tabs(props: {
 	};
 	return (
 		<TabsContext.Provider value={state}>
-			<div style={{ display: "flex", flexDirection: "column" }}>
+			<div style={{ display: 'flex', flexDirection: 'column' }}>
 				{props.children}
 			</div>
 		</TabsContext.Provider>
@@ -164,7 +164,7 @@ const rectStyle = (rect: ItemRect) => ({
  */
 export function TabsList(props: { children: JSX.Element; testId?: string }) {
 	const tabs = useTabs();
-	const hover = createFluidHover({ axis: "x" });
+	const hover = createFluidHover({ axis: 'x' });
 	const focusRing = createFocusRing(hover);
 	const [mouseInside, setMouseInside] = createSignal(false);
 	let counter = 0;
@@ -230,15 +230,15 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 					hover.handlers.onMouseLeave();
 				}}
 				style={{
-					position: "relative",
-					alignSelf: "flex-start",
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					position: 'relative',
+					alignSelf: 'flex-start',
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					padding: metrics().pad,
 					borderRadius: shape.container,
 					backgroundColor: color.muted,
-					userSelect: "none",
+					userSelect: 'none',
 				}}
 			>
 				<Show when={selectedRect()}>
@@ -248,7 +248,7 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 							initial={false}
 							animate={rectStyle(rect())}
 							transition={tween.moderate}
-							style={{ position: "absolute" }}
+							style={{ position: 'absolute' }}
 						>
 							<motion.div
 								initial={false}
@@ -256,7 +256,7 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 								animate={{ opacity: hoveringOther() ? 0.85 : 1 }}
 								transition={{ duration: 0.08 }}
 								style={{
-									position: "absolute",
+									position: 'absolute',
 									top: 0,
 									left: 0,
 									right: 0,
@@ -274,11 +274,11 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 						// Born at the selected pill, as the source mounts it, then slides out to the hovered tab.
 						const born = untrack(selectedRect);
 						if (born === undefined)
-							throw new Error("Preview pill mounted without a selected pill");
+							throw new Error('Preview pill mounted without a selected pill');
 						const shown = () => {
 							const pill = preview();
 							if (pill === undefined)
-								throw new Error("Preview pill has no state");
+								throw new Error('Preview pill has no state');
 							return pill;
 						};
 						return (
@@ -288,14 +288,14 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 								animate={rectStyle(shown().rect)}
 								// The preview keeps up with the pointer on fast; its way home takes the moderate spring.
 								transition={hoveringOther() ? tween.fast : tween.moderate}
-								style={{ position: "absolute" }}
+								style={{ position: 'absolute' }}
 							>
 								<motion.div
 									initial={{ opacity: 0 }}
 									animate={{ opacity: shown().visible ? 0.4 : 0 }}
 									transition={{ duration: shown().visible ? 0.08 : 0.06 }}
 									style={{
-										position: "absolute",
+										position: 'absolute',
 										top: 0,
 										left: 0,
 										right: 0,
@@ -337,7 +337,7 @@ export function TabItem(props: {
 	const metrics = () => sizes[tabs.size()];
 
 	createEffect(() => {
-		if (element === undefined) throw new Error("Tab is not mounted");
+		if (element === undefined) throw new Error('Tab is not mounted');
 		list.hover.registerItem(index, element);
 		list.elements.set(index, element);
 	});
@@ -348,13 +348,13 @@ export function TabItem(props: {
 	const keyTarget = (key: string): number | undefined => {
 		const last = tabs.order().length - 1;
 		switch (key) {
-			case "ArrowRight":
+			case 'ArrowRight':
 				return index === last ? 0 : index + 1;
-			case "ArrowLeft":
+			case 'ArrowLeft':
 				return index === 0 ? last : index - 1;
-			case "Home":
+			case 'Home':
 				return 0;
-			case "End":
+			case 'End':
 				return last;
 			default:
 				return undefined;
@@ -364,7 +364,7 @@ export function TabItem(props: {
 		if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) {
 			return;
 		}
-		const target = keyTarget(event.key ?? "");
+		const target = keyTarget(event.key ?? '');
 		if (target === undefined || target === index) return;
 		event.preventDefault();
 		event.stopPropagation();
@@ -416,17 +416,17 @@ export function TabItem(props: {
 				if (!list.mouseInside()) list.hover.setActiveIndex(null);
 			}}
 			style={{
-				position: "relative",
+				position: 'relative',
 				zIndex: 10,
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				height: metrics().item,
 				paddingLeft: 12,
 				paddingRight: 12,
 				gap: props.icon === undefined ? 0 : metrics().gap,
 				borderRadius: shape.bg,
-				cursor: "pointer",
+				cursor: 'pointer',
 				keyboardFocusDim: false,
 			}}
 		>

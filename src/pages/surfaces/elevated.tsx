@@ -1,6 +1,6 @@
-import type { HostElement, HostMouseMoveEvent, StyleDesc } from "@gpuix/solid";
-import { type Accessor, createContext, type JSX, useContext } from "solid-js";
-import { shadow, surface } from "#/lib/theme";
+import type { HostElement, HostMouseMoveEvent, StyleDesc } from '@gpuix/solid';
+import { type Accessor, createContext, type JSX, useContext } from 'solid-js';
+import { shadow, surface } from '#/lib/theme';
 
 /** `lib/surface-context`: the level of the surface a component opens inside. The page is 1. */
 const SurfaceContext = createContext<Accessor<number>>(() => 1);

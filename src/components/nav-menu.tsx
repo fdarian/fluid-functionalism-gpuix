@@ -1,19 +1,19 @@
-import type { HostElement } from "@gpuix/solid";
+import type { HostElement } from '@gpuix/solid';
 import {
 	createContext,
 	createSignal,
 	type JSX,
 	onCleanup,
 	useContext,
-} from "solid-js";
-import { FluidHighlight } from "#/lib/fluid-highlight";
-import { createFluidHover, type FluidHover } from "#/lib/fluid-hover";
+} from 'solid-js';
+import { FluidHighlight } from '#/lib/fluid-highlight';
+import { createFluidHover, type FluidHover } from '#/lib/fluid-hover';
 import {
 	createFocusRing,
 	FocusRing,
 	type FocusRingState,
-} from "#/lib/focus-ring";
-import { color, shape, motion as tween } from "#/lib/theme";
+} from '#/lib/focus-ring';
+import { color, shape, motion as tween } from '#/lib/theme';
 
 interface NavMenuScope {
 	hover: FluidHover;
@@ -31,7 +31,7 @@ const NavMenuContext = createContext<NavMenuScope>();
 
 export function useNavMenu() {
 	const scope = useContext(NavMenuContext);
-	if (scope === undefined) throw new Error("Must be used inside NavMenu");
+	if (scope === undefined) throw new Error('Must be used inside NavMenu');
 	return scope;
 }
 
@@ -43,7 +43,7 @@ export function useNavMenu() {
 export function NavMenu(props: {
 	/** The slug of the route on screen; the item with this `slug` is the active one. */
 	activeSlug: string | null;
-	"aria-label"?: string;
+	'aria-label'?: string;
 	testId?: string;
 	children: JSX.Element;
 }) {
@@ -90,7 +90,7 @@ export function NavMenu(props: {
 			<div
 				testId={props.testId}
 				role="navigation"
-				aria-label={props["aria-label"]}
+				aria-label={props['aria-label']}
 				{...hover.containerProps}
 				onMouseEnter={() => {
 					setMouseInside(true);
@@ -101,11 +101,11 @@ export function NavMenu(props: {
 					hover.handlers.onMouseLeave();
 				}}
 				style={{
-					position: "relative",
-					display: "flex",
-					flexDirection: "column",
-					width: "100%",
-					userSelect: "none",
+					position: 'relative',
+					display: 'flex',
+					flexDirection: 'column',
+					width: '100%',
+					userSelect: 'none',
 				}}
 			>
 				<FluidHighlight

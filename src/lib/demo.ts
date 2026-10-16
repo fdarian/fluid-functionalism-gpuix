@@ -1,5 +1,5 @@
-import type { JSX } from "solid-js";
-import type { IconRef } from "./icons";
+import type { JSX } from 'solid-js';
+import type { IconRef } from './icons';
 
 /**
  * Drives one demo page from scripts/screenshots.tsx. Each helper settles the
@@ -54,9 +54,9 @@ export type AriaSnapshot = Record<string, unknown>;
 export interface DemoModule {
 	/** Sidebar label, menu row and page heading: the component's name, as written in code. */
 	title: string;
-	group: "Components";
+	group: 'Components';
 	/** Where the demo is linked: sidebar and site menu, the site menu only, or neither (reached by `navigate`). */
-	listed: "sidebar" | "menu" | "none";
+	listed: 'sidebar' | 'menu' | 'none';
 	/** The page body: one or more `DemoCard`s. */
 	Demo: () => JSX.Element;
 	/** Optional states beyond the first paint for `scripts/screenshots.tsx <demo>` to capture. */
@@ -68,31 +68,31 @@ export interface Demo extends DemoModule {
 	slug: string;
 }
 
-const demosDir = new URL("../demos/", import.meta.url).pathname;
+const demosDir = new URL('../demos/', import.meta.url).pathname;
 
 function assertDemoModule(
 	slug: string,
 	module: unknown,
 ): asserts module is DemoModule {
 	const candidate = module as Partial<DemoModule>;
-	if (typeof candidate.title !== "string") {
+	if (typeof candidate.title !== 'string') {
 		throw new Error(`src/demos/${slug}.tsx must export a string \`title\``);
 	}
-	if (candidate.group !== "Components") {
+	if (candidate.group !== 'Components') {
 		throw new Error(
 			`src/demos/${slug}.tsx must export \`group: "Components"\``,
 		);
 	}
 	if (
-		candidate.listed !== "sidebar" &&
-		candidate.listed !== "menu" &&
-		candidate.listed !== "none"
+		candidate.listed !== 'sidebar' &&
+		candidate.listed !== 'menu' &&
+		candidate.listed !== 'none'
 	) {
 		throw new Error(
 			`src/demos/${slug}.tsx must export \`listed: "sidebar" | "menu" | "none"\``,
 		);
 	}
-	if (typeof candidate.Demo !== "function") {
+	if (typeof candidate.Demo !== 'function') {
 		throw new Error(`src/demos/${slug}.tsx must export a \`Demo\` component`);
 	}
 }
@@ -100,11 +100,11 @@ function assertDemoModule(
 /** Imports every `src/demos/*.tsx`, sorted by title. A demo that does not match the contract throws. */
 export async function loadDemos(): Promise<Demo[]> {
 	const demos: Demo[] = [];
-	for await (const file of new Bun.Glob("*.tsx").scan({
+	for await (const file of new Bun.Glob('*.tsx').scan({
 		cwd: demosDir,
 		absolute: true,
 	})) {
-		const slug = file.slice(file.lastIndexOf("/") + 1, -".tsx".length);
+		const slug = file.slice(file.lastIndexOf('/') + 1, -'.tsx'.length);
 		const module: unknown = await import(file);
 		assertDemoModule(slug, module);
 		demos.push({
@@ -120,7 +120,7 @@ export async function loadDemos(): Promise<Demo[]> {
 }
 
 /** The slug of the landing page, which `App` renders itself: no demo or page may take it. */
-export const SHOWCASE_SLUG = "showcase";
+export const SHOWCASE_SLUG = 'showcase';
 
 /**
  * What a file in `src/pages/` exports: a page of its own in the sidebar and
@@ -132,13 +132,13 @@ export interface PageModule {
 	/** The "docs" heading when it differs from the sidebar label. */
 	heading?: string;
 	/** The sidebar section the page sits under; its menu group too. */
-	group: "Pages" | "System";
+	group: 'Pages' | 'System';
 	/** Sorts within the group, ascending. */
 	order: number;
 	/** "docs": the sidebar, the page column with a heading, and the right column. "full": the page alone in the window frame. */
-	layout: "docs" | "full";
+	layout: 'docs' | 'full';
 	/** Where the page is linked: sidebar and site menu, the site menu only, or neither (reached by `navigate`). */
-	listed: "sidebar" | "menu" | "none";
+	listed: 'sidebar' | 'menu' | 'none';
 	Page: () => JSX.Element;
 	/**
 	 * What a "docs" page's right column shows in place of "Make them yours". The page and its rail are siblings in `App`, so they share state through the page's own module.
@@ -157,7 +157,7 @@ export interface Page extends PageModule {
 	slug: string;
 }
 
-const pagesDir = new URL("../pages/", import.meta.url).pathname;
+const pagesDir = new URL('../pages/', import.meta.url).pathname;
 
 function assertPageModule(
 	slug: string,
@@ -167,52 +167,57 @@ function assertPageModule(
 	const fail = (what: string): never => {
 		throw new Error(`src/pages/${slug}.tsx must export ${what}`);
 	};
-	if (typeof candidate.title !== "string") fail("a string `title`");
-	if (candidate.heading !== undefined && typeof candidate.heading !== "string") {
-		fail("`heading` as a string, or not at all");
+	if (typeof candidate.title !== 'string') fail('a string `title`');
+	if (
+		candidate.heading !== undefined &&
+		typeof candidate.heading !== 'string'
+	) {
+		fail('`heading` as a string, or not at all');
 	}
-	if (candidate.group !== "Pages" && candidate.group !== "System") {
+	if (candidate.group !== 'Pages' && candidate.group !== 'System') {
 		fail('`group: "Pages" | "System"`');
 	}
-	if (typeof candidate.order !== "number") fail("a numeric `order`");
-	if (candidate.layout !== "docs" && candidate.layout !== "full") {
+	if (typeof candidate.order !== 'number') fail('a numeric `order`');
+	if (candidate.layout !== 'docs' && candidate.layout !== 'full') {
 		fail('`layout: "docs" | "full"`');
 	}
 	if (
-		candidate.listed !== "sidebar" &&
-		candidate.listed !== "menu" &&
-		candidate.listed !== "none"
+		candidate.listed !== 'sidebar' &&
+		candidate.listed !== 'menu' &&
+		candidate.listed !== 'none'
 	) {
 		fail('`listed: "sidebar" | "menu" | "none"`');
 	}
-	if (typeof candidate.Page !== "function") fail("a `Page` component");
-	if (candidate.Rail !== undefined && typeof candidate.Rail !== "function") {
-		fail("`Rail` as a component, or not at all");
+	if (typeof candidate.Page !== 'function') fail('a `Page` component');
+	if (candidate.Rail !== undefined && typeof candidate.Rail !== 'function') {
+		fail('`Rail` as a component, or not at all');
 	}
-	if (candidate.Rail !== undefined && candidate.layout !== "docs") {
-		fail('`Rail` only with `layout: "docs"`: a "full" page has no right column');
+	if (candidate.Rail !== undefined && candidate.layout !== 'docs') {
+		fail(
+			'`Rail` only with `layout: "docs"`: a "full" page has no right column',
+		);
 	}
 	if (
 		candidate.scenarios !== undefined &&
-		typeof candidate.scenarios !== "function"
+		typeof candidate.scenarios !== 'function'
 	) {
-		fail("`scenarios` as a function, or not at all");
+		fail('`scenarios` as a function, or not at all');
 	}
 	if (
 		candidate.menuIcon !== undefined &&
-		typeof candidate.menuIcon !== "string" &&
-		typeof candidate.menuIcon !== "object"
+		typeof candidate.menuIcon !== 'string' &&
+		typeof candidate.menuIcon !== 'object'
 	) {
-		fail("`menuIcon` as an icon name or `defineIcon(...)`, or not at all");
+		fail('`menuIcon` as an icon name or `defineIcon(...)`, or not at all');
 	}
 	if (
 		candidate.menuKeywords !== undefined &&
 		!(
 			Array.isArray(candidate.menuKeywords) &&
-			candidate.menuKeywords.every((word) => typeof word === "string")
+			candidate.menuKeywords.every((word) => typeof word === 'string')
 		)
 	) {
-		fail("`menuKeywords` as an array of strings, or not at all");
+		fail('`menuKeywords` as an array of strings, or not at all');
 	}
 }
 
@@ -224,11 +229,11 @@ function assertPageModule(
 export async function loadPages(demos: readonly Demo[]): Promise<Page[]> {
 	const taken = new Set([SHOWCASE_SLUG, ...demos.map((demo) => demo.slug)]);
 	const pages: Page[] = [];
-	for await (const file of new Bun.Glob("*.tsx").scan({
+	for await (const file of new Bun.Glob('*.tsx').scan({
 		cwd: pagesDir,
 		absolute: true,
 	})) {
-		const slug = file.slice(file.lastIndexOf("/") + 1, -".tsx".length);
+		const slug = file.slice(file.lastIndexOf('/') + 1, -'.tsx'.length);
 		if (taken.has(slug)) {
 			throw new Error(
 				`src/pages/${slug}.tsx has the slug "${slug}", which a demo or the showcase already uses`,
@@ -251,5 +256,7 @@ export async function loadPages(demos: readonly Demo[]): Promise<Page[]> {
 			menuKeywords: module.menuKeywords,
 		});
 	}
-	return pages.sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
+	return pages.sort(
+		(a, b) => a.order - b.order || a.title.localeCompare(b.title),
+	);
 }

@@ -1,6 +1,6 @@
-import { createUniqueId, Show } from "solid-js";
-import { LUCIDE, LucideIcon, pressProps, ScLabel } from "./parts";
-import { sc, scRadius, scRing } from "./theme";
+import { createUniqueId, Show } from 'solid-js';
+import { LUCIDE, LucideIcon, pressProps, ScLabel } from './parts';
+import { sc, scRadius, scRing } from './theme';
 
 /** `components/shadcn/checkbox.tsx` and a `Label` beside it, as the preview lays them out. */
 export function ScCheckbox(props: {
@@ -14,9 +14,9 @@ export function ScCheckbox(props: {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: 8,
 			}}
 		>
@@ -27,16 +27,16 @@ export function ScCheckbox(props: {
 				aria-labelledby={labelId}
 				testId={props.testId}
 				style={{
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
 					flexShrink: 0,
 					width: 16,
 					height: 16,
 					borderRadius: scRadius.sm,
 					borderWidth: 1,
 					borderColor: sc.primary,
-					backgroundColor: props.checked ? sc.primary : "rgba(0,0,0,0)",
+					backgroundColor: props.checked ? sc.primary : 'rgba(0,0,0,0)',
 					keyboardFocusDim: false,
 					focusVisible: scRing(),
 				}}

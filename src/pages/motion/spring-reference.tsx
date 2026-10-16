@@ -3,17 +3,17 @@ import {
 	type MotionTransition,
 	motion,
 	useGpuixRequired,
-} from "@gpuix/solid";
-import { type Accessor, createSignal, For, onCleanup, Show } from "solid-js";
-import { MONO } from "#/lib/doc-page";
-import { usePageNav } from "#/lib/page-nav";
+} from '@gpuix/solid';
+import { type Accessor, createSignal, For, onCleanup, Show } from 'solid-js';
+import { MONO } from '#/lib/doc-page';
+import { usePageNav } from '#/lib/page-nav';
 import {
 	color,
 	focusRing,
 	siteType,
 	motion as tween,
 	weight,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
 interface Chip {
 	label: string;
@@ -23,65 +23,65 @@ interface Chip {
 
 const REFERENCE_TIERS = [
 	{
-		key: "fast",
-		trackWidth: "33.3333%",
-		enterToken: "spring.fast",
-		exitToken: "spring.fast.exit",
-		enterMeta: "0.08s",
-		exitMeta: "0.06s",
+		key: 'fast',
+		trackWidth: '33.3333%',
+		enterToken: 'spring.fast',
+		exitToken: 'spring.fast.exit',
+		enterMeta: '0.08s',
+		exitMeta: '0.06s',
 		enterTransition: tween.fast,
 		exitTransition: tween.fastExit,
 		components: [
-			{ label: "Fluid hover", slug: "fluid-hover" },
-			{ label: "Focus rings", slug: null },
-			{ label: "Checkbox", slug: "checkbox-group" },
-			{ label: "Radio", slug: "radio-group" },
-			{ label: "Tooltip", slug: "tooltip" },
-			{ label: "Table rows", slug: "table" },
-			{ label: "Card grid", slug: "card" },
-			{ label: "Input copy", slug: "input-copy" },
-			{ label: "Slider", slug: "slider" },
-			{ label: "Select", slug: "select" },
-			{ label: "Combobox", slug: "combobox" },
-			{ label: "Command menu", slug: "command-menu" },
-			{ label: "Color picker", slug: "color-picker" },
-			{ label: "Accordion", slug: "accordion" },
+			{ label: 'Fluid hover', slug: 'fluid-hover' },
+			{ label: 'Focus rings', slug: null },
+			{ label: 'Checkbox', slug: 'checkbox-group' },
+			{ label: 'Radio', slug: 'radio-group' },
+			{ label: 'Tooltip', slug: 'tooltip' },
+			{ label: 'Table rows', slug: 'table' },
+			{ label: 'Card grid', slug: 'card' },
+			{ label: 'Input copy', slug: 'input-copy' },
+			{ label: 'Slider', slug: 'slider' },
+			{ label: 'Select', slug: 'select' },
+			{ label: 'Combobox', slug: 'combobox' },
+			{ label: 'Command menu', slug: 'command-menu' },
+			{ label: 'Color picker', slug: 'color-picker' },
+			{ label: 'Accordion', slug: 'accordion' },
 		],
 	},
 	{
-		key: "moderate",
-		trackWidth: "66.6667%",
-		enterToken: "spring.moderate",
-		exitToken: "spring.moderate.exit",
-		enterMeta: "0.16s bounce 0",
-		exitMeta: "0.12s",
+		key: 'moderate',
+		trackWidth: '66.6667%',
+		enterToken: 'spring.moderate',
+		exitToken: 'spring.moderate.exit',
+		enterMeta: '0.16s bounce 0',
+		exitMeta: '0.12s',
 		enterTransition: tween.moderate,
 		exitTransition: tween.moderateExit,
 		components: [
-			{ label: "Dropdown", slug: "dropdown" },
-			{ label: "Tabs indicator", slug: "tabs" },
-			{ label: "Carousel dots", slug: "carousel-dots" },
-			{ label: "Banner dismiss", slug: "banner" },
-			{ label: "Switch thumb", slug: "switch" },
-			{ label: "Chat bubbles", slug: "chat-message" },
-			{ label: "Mobile drawer", slug: null },
-			{ label: "Sidebar", slug: "sidebar" },
-			{ label: "Selection merge / split", slug: "checkbox-group" },
+			{ label: 'Dropdown', slug: 'dropdown' },
+			{ label: 'Tabs indicator', slug: 'tabs' },
+			{ label: 'Carousel dots', slug: 'carousel-dots' },
+			{ label: 'Banner dismiss', slug: 'banner' },
+			{ label: 'Switch thumb', slug: 'switch' },
+			{ label: 'Chat bubbles', slug: 'chat-message' },
+			{ label: 'Mobile drawer', slug: null },
+			{ label: 'Sidebar', slug: 'sidebar' },
+			{ label: 'Selection merge / split', slug: 'checkbox-group' },
 		],
 	},
 	{
-		key: "slow",
-		trackWidth: "100%",
-		enterToken: "spring.slow",
-		exitToken: "spring.slow.exit",
-		enterMeta: "0.24s bounce 0.12",
-		exitMeta: "0.16s",
+		key: 'slow',
+		trackWidth: '100%',
+		enterToken: 'spring.slow',
+		exitToken: 'spring.slow.exit',
+		enterMeta: '0.24s bounce 0.12',
+		exitMeta: '0.16s',
 		enterTransition: tween.slow,
 		exitTransition: tween.slowExit,
 		components: [
-			{ label: "Dialog", slug: "dialog" },
-			{ label: "Ask-user questions", slug: "ask-user-questions" },
-			{ label: "Thinking steps", slug: "thinking-steps" },
+			{ label: 'Dialog', slug: 'dialog' },
+			{ label: 'Ask-user questions', slug: 'ask-user-questions' },
+			{ label: 'Thinking steps', slug: 'thinking-steps' },
 		],
 	},
 ] as const satisfies readonly {
@@ -96,7 +96,7 @@ const REFERENCE_TIERS = [
 	components: readonly Chip[];
 }[];
 
-type TierKey = (typeof REFERENCE_TIERS)[number]["key"];
+type TierKey = (typeof REFERENCE_TIERS)[number]['key'];
 
 /** ms to wait before reversing (covers spring settle + tiny pause). */
 const ENTER_SETTLE: Record<TierKey, number> = {
@@ -123,9 +123,9 @@ function ComponentChip(props: Chip) {
 			style={{
 				...siteType.body,
 				color: hovered() ? color.foreground : color.mutedForeground,
-				transitionProperty: "color",
-				transitionDuration: "150ms",
-				transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+				transitionProperty: 'color',
+				transitionDuration: '150ms',
+				transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 			}}
 		>
 			{props.label}
@@ -148,7 +148,7 @@ function ComponentChip(props: Chip) {
 					onMouseEnter={() => setHovered(true)}
 					onMouseLeave={() => setHovered(false)}
 					style={{
-						cursor: "pointer",
+						cursor: 'pointer',
 						keyboardFocusDim: false,
 						focusVisible: focusRing(0),
 					}}
@@ -206,13 +206,13 @@ export function SpringReferenceSection() {
 	};
 
 	return (
-		<div style={{ display: "flex", flexDirection: "column" }}>
+		<div style={{ display: 'flex', flexDirection: 'column' }}>
 			<For each={REFERENCE_TIERS}>
 				{(tier, index) => (
 					<div
 						style={{
-							display: "flex",
-							flexDirection: "column",
+							display: 'flex',
+							flexDirection: 'column',
 							gap: 16,
 							paddingTop: 24,
 							paddingBottom: 24,
@@ -220,7 +220,7 @@ export function SpringReferenceSection() {
 							borderColor: color.border,
 						}}
 					>
-						<div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+						<div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
 							<text
 								style={{
 									...siteType.body,
@@ -230,12 +230,16 @@ export function SpringReferenceSection() {
 							>
 								{tier.key}
 							</text>
-							<text style={{ ...siteType.caption, color: color.mutedForeground }}>
-								→ <span style={{ fontFamily: MONO }}>{tier.enterToken}</span>{" "}
+							<text
+								style={{ ...siteType.caption, color: color.mutedForeground }}
+							>
+								→ <span style={{ fontFamily: MONO }}>{tier.enterToken}</span>{' '}
 								{tier.enterMeta}
 							</text>
-							<text style={{ ...siteType.caption, color: color.mutedForeground }}>
-								← <span style={{ fontFamily: MONO }}>{tier.exitToken}</span>{" "}
+							<text
+								style={{ ...siteType.caption, color: color.mutedForeground }}
+							>
+								← <span style={{ fontFamily: MONO }}>{tier.exitToken}</span>{' '}
 								{tier.exitMeta}
 							</text>
 						</div>
@@ -246,17 +250,17 @@ export function SpringReferenceSection() {
 							testId={`reference-${tier.key}`}
 							aria-label={`Play ${tier.key} enter then exit`}
 							style={{
-								display: "flex",
-								flexDirection: "row",
-								alignItems: "center",
-								justifyContent: atEnds()[index()] ? "flex-end" : "flex-start",
+								display: 'flex',
+								flexDirection: 'row',
+								alignItems: 'center',
+								justifyContent: atEnds()[index()] ? 'flex-end' : 'flex-start',
 								width: tier.trackWidth,
 								height: TRACK,
 								paddingLeft: 2,
 								paddingRight: 2,
 								borderRadius: TRACK / 2,
 								backgroundColor: color.muted,
-								cursor: "pointer",
+								cursor: 'pointer',
 								keyboardFocusDim: false,
 								focusVisible: focusRing(0),
 							}}
@@ -277,9 +281,9 @@ export function SpringReferenceSection() {
 						{/* Component chips — links where a page exists */}
 						<div
 							style={{
-								display: "flex",
-								flexDirection: "row",
-								flexWrap: "wrap",
+								display: 'flex',
+								flexDirection: 'row',
+								flexWrap: 'wrap',
 								columnGap: 12,
 								rowGap: 4,
 							}}

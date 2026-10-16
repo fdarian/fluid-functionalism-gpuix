@@ -1,12 +1,12 @@
-import { type HostElement, IntersectionObserver } from "@gpuix/solid";
+import { type HostElement, IntersectionObserver } from '@gpuix/solid';
 import {
 	type Accessor,
 	createEffect,
 	createSignal,
 	onCleanup,
 	useContext,
-} from "solid-js";
-import { PageScrollerContext } from "#/lib/demo-kit";
+} from 'solid-js';
+import { PageScrollerContext } from '#/lib/demo-kit';
 
 /**
  * Whether at least `threshold` of the element is inside the page's scroller.

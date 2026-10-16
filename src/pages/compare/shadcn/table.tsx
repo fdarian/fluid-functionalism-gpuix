@@ -1,6 +1,6 @@
-import { For } from "solid-js";
-import { weight, withAlpha } from "#/lib/theme";
-import { sc } from "./theme";
+import { For } from 'solid-js';
+import { weight, withAlpha } from '#/lib/theme';
+import { sc } from './theme';
 
 /** Inter at 14px averages about this per character; the cell padding is 12 each side. */
 const CHAR_WIDTH = 7.4;
@@ -45,7 +45,7 @@ export function ScTable(props: {
 					lineHeight: 20,
 					fontWeight: header ? weight.medium : weight.normal,
 					color: header ? sc.mutedForeground : sc.foreground,
-					whiteSpace: "nowrap",
+					whiteSpace: 'nowrap',
 				}}
 			>
 				{text}
@@ -57,13 +57,13 @@ export function ScTable(props: {
 		<div
 			role="table"
 			testId={props.testId}
-			style={{ display: "flex", flexDirection: "column", width: "100%" }}
+			style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
 		>
 			<div
 				role="row"
 				style={{
-					display: "flex",
-					flexDirection: "row",
+					display: 'flex',
+					flexDirection: 'row',
 					borderBottomWidth: 1,
 					borderColor: sc.border,
 				}}
@@ -82,13 +82,13 @@ export function ScTable(props: {
 								: `${props.testId}-row-${rowIndex()}`
 						}
 						style={{
-							display: "flex",
-							flexDirection: "row",
+							display: 'flex',
+							flexDirection: 'row',
 							borderBottomWidth: rowIndex() === props.rows.length - 1 ? 0 : 1,
 							borderColor: sc.border,
-							transitionProperty: "background-color",
-							transitionDuration: "150ms",
-							transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+							transitionProperty: 'background-color',
+							transitionDuration: '150ms',
+							transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 							hover: { backgroundColor: withAlpha(sc.muted, 0.5) },
 						}}
 					>

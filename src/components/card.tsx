@@ -4,7 +4,7 @@ import {
 	type HostPointerEvent,
 	type KeyEvent,
 	useGpuixRequired,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	type Accessor,
 	createContext,
@@ -17,27 +17,27 @@ import {
 	children as resolveChildren,
 	Show,
 	useContext,
-} from "solid-js";
-import { FluidHighlight } from "#/lib/fluid-highlight";
-import { createFluidHover } from "#/lib/fluid-hover";
-import { Icon } from "#/lib/icon";
-import { defineIcon, type IconRef } from "#/lib/icons";
+} from 'solid-js';
+import { FluidHighlight } from '#/lib/fluid-highlight';
+import { createFluidHover } from '#/lib/fluid-hover';
+import { Icon } from '#/lib/icon';
+import { defineIcon, type IconRef } from '#/lib/icons';
 import {
 	color,
 	colorFade,
 	fade,
 	focusRing,
+	type as scale,
 	scheme,
 	shape,
 	sizeChoice,
-	type as scale,
 	weight,
 	withAlpha,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
-export type CardOrientation = "card" | "inline";
-export type CardBorder = "none" | "outlined";
-export type CardSize = "default" | "compact";
+export type CardOrientation = 'card' | 'inline';
+export type CardBorder = 'none' | 'outlined';
+export type CardSize = 'default' | 'compact';
 
 const arrowUpRight = defineIcon('<path d="M7 7h10v10"/><path d="M7 17 17 7"/>');
 
@@ -103,7 +103,7 @@ interface CardScope {
 
 const CardContext = createContext<CardScope>({
 	emphasized: () => false,
-	orientation: (): CardOrientation => "card",
+	orientation: (): CardOrientation => 'card',
 	compact: () => false,
 	hasImage: () => false,
 	inlineImage: () => false,
@@ -123,12 +123,16 @@ const imageNodes = new WeakSet<object>();
  */
 function aboveOverlay(scope: CardScope) {
 	return scope.overlaid()
-		? { position: "relative" as const, zIndex: 30, pointerEvents: "none" as const }
+		? {
+				position: 'relative' as const,
+				zIndex: 30,
+				pointerEvents: 'none' as const,
+			}
 		: {};
 }
 
 function takesPresses(scope: CardScope) {
-	return scope.overlaid() ? { pointerEvents: "auto" as const } : {};
+	return scope.overlaid() ? { pointerEvents: 'auto' as const } : {};
 }
 
 /** Gap click: a press in the whitespace routes to the highlighted card when it lands this close. */
@@ -152,7 +156,7 @@ export function CardGroup(props: {
 	const hover = createFluidHover({
 		// A grid resolves the pointer in two dimensions; one column is a plain list.
 		get axis() {
-			return columns() > 1 ? "xy" : "y";
+			return columns() > 1 ? 'xy' : 'y';
 		},
 	});
 	const entries = new Map<number, CardEntry>();
@@ -162,7 +166,7 @@ export function CardGroup(props: {
 
 	const fluid = () => props.fluidHover ?? true;
 	const separated = () => props.separated ?? false;
-	const outlined = () => (props.border ?? "none") === "outlined";
+	const outlined = () => (props.border ?? 'none') === 'outlined';
 
 	const scope: GroupScope = {
 		registerCard(entry, element) {
@@ -182,7 +186,7 @@ export function CardGroup(props: {
 			});
 			return index;
 		},
-		orientation: () => props.orientation ?? "card",
+		orientation: () => props.orientation ?? 'card',
 		columns,
 		count,
 		separated,
@@ -211,7 +215,7 @@ export function CardGroup(props: {
 		if (index === null || rect === undefined) return;
 		const box = container.getBoundingClientRect();
 		if (event.x === undefined || event.y === undefined) {
-			throw new Error("click without coordinates");
+			throw new Error('click without coordinates');
 		}
 		const left = box.x + rect.left;
 		const top = box.y + rect.top;
@@ -232,8 +236,8 @@ export function CardGroup(props: {
 				}}
 				onClick={fluid() ? onGapClick : undefined}
 				style={{
-					position: "relative",
-					display: "grid",
+					position: 'relative',
+					display: 'grid',
 					gridTemplateColumns: columns(),
 					gap: separated() ? 8 : 0,
 					// A shared frame clips the highlight and dividers to its rounded corners.
@@ -241,7 +245,7 @@ export function CardGroup(props: {
 						? {
 								borderWidth: 1,
 								borderColor: color.borderFaint,
-								overflow: "hidden",
+								overflow: 'hidden',
 								borderRadius: shape.container,
 							}
 						: {}),
@@ -283,9 +287,9 @@ export function Card(props: {
 	const [dismissFocused, setDismissFocused] = createSignal(false);
 	const [rootElement, setRootElement] = createSignal<HostElement>();
 
-	const compact = () => (props.size ?? sizeChoice()) === "compact";
-	const orientation = () => group?.orientation() ?? "card";
-	const isInline = () => orientation() === "inline";
+	const compact = () => (props.size ?? sizeChoice()) === 'compact';
+	const orientation = () => group?.orientation() ?? 'card';
+	const isInline = () => orientation() === 'inline';
 	const clickable = () => props.onClick !== undefined;
 	const selected = () => props.selected ?? false;
 	const inlineImage = () => isInline() && hasImage();
@@ -360,30 +364,30 @@ export function Card(props: {
 				onMouseEnter={() => setHovered(true)}
 				onMouseLeave={() => setHovered(false)}
 				style={{
-					position: "relative",
+					position: 'relative',
 					zIndex: 10,
-					display: "flex",
+					display: 'flex',
 					minWidth: 0,
 					minHeight: 60,
 					...(inlineImage()
 						? {
-								flexDirection: "row",
-								alignItems: "center",
+								flexDirection: 'row',
+								alignItems: 'center',
 								gap: compact() ? 10 : 12,
 							}
 						: isInline()
 							? {
-									flexDirection: "row",
-									alignItems: "center",
+									flexDirection: 'row',
+									alignItems: 'center',
 									gap: compact() ? 10 : 12,
 									paddingLeft: compact() ? 12 : 16,
 								}
 							: {
-									flexDirection: "column",
+									flexDirection: 'column',
 									paddingBottom: compact() ? 12 : 16,
 								}),
 					...(tile()
-						? { borderRadius: shape.container, overflow: "hidden" }
+						? { borderRadius: shape.container, overflow: 'hidden' }
 						: {}),
 					...(framed() || (group === undefined && props.outlined)
 						? { borderWidth: 1, borderColor: color.borderFaint }
@@ -392,18 +396,18 @@ export function Card(props: {
 					...(group === undefined && clickable() && !props.disabled
 						? {
 								// Only the fill: the source's ring is a box shadow that `transition-colors` leaves out.
-								...fade(["background-color"], 80),
+								...fade(['background-color'], 80),
 								hover: { backgroundColor: color.hover },
 							}
 						: {}),
-					...(props.disabled ? { opacity: 0.5, pointerEvents: "none" } : {}),
+					...(props.disabled ? { opacity: 0.5, pointerEvents: 'none' } : {}),
 				}}
 			>
 				{/* Behind the in-flow content, over the root's own fill. */}
 				<Show when={selected()}>
 					<div
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							zIndex: -10,
 							top: 0,
 							left: 0,
@@ -411,7 +415,7 @@ export function Card(props: {
 							bottom: 0,
 							borderRadius: shape.container,
 							backgroundColor: color.active,
-							pointerEvents: "none",
+							pointerEvents: 'none',
 						}}
 					/>
 				</Show>
@@ -419,28 +423,28 @@ export function Card(props: {
 				<Show when={showBottom()}>
 					<div
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							zIndex: -10,
 							left: 0,
 							right: 0,
 							bottom: 0,
 							height: 1,
 							backgroundColor: color.borderFaint,
-							pointerEvents: "none",
+							pointerEvents: 'none',
 						}}
 					/>
 				</Show>
 				<Show when={showRight()}>
 					<div
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							zIndex: -10,
 							top: 0,
 							right: 0,
 							bottom: showBottom() ? 1 : 0,
 							width: 1,
 							backgroundColor: color.borderFaint,
-							pointerEvents: "none",
+							pointerEvents: 'none',
 						}}
 					/>
 				</Show>
@@ -451,14 +455,14 @@ export function Card(props: {
 						aria-label={props.label}
 						aria-pressed={selected() ? true : undefined}
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							zIndex: 20,
 							top: 0,
 							left: 0,
 							right: 0,
 							bottom: 0,
 							borderRadius: scope.tileCorner(),
-							cursor: "pointer",
+							cursor: 'pointer',
 							keyboardFocusDim: false,
 							// The source's ring sits outside the overlay and a tile clips it away; inside, it shows.
 							focusVisible: focusRing(tile() ? -1 : 0),
@@ -468,7 +472,9 @@ export function Card(props: {
 				<CardFrame>{props.children}</CardFrame>
 				<Show when={props.dismissible}>
 					<DismissChip
-						testId={props.testId === undefined ? undefined : `${props.testId}-dismiss`}
+						testId={
+							props.testId === undefined ? undefined : `${props.testId}-dismiss`
+						}
 						compact={compact()}
 						overMedia={hasImage()}
 						visible={
@@ -502,9 +508,9 @@ function CardFrame(props: { children: JSX.Element }) {
 			<div
 				style={{
 					...aboveOverlay(scope),
-					display: "flex",
-					flexDirection: "column",
-					justifyContent: "center",
+					display: 'flex',
+					flexDirection: 'column',
+					justifyContent: 'center',
 					gap: 8,
 					flexGrow: 1,
 					flexShrink: 1,
@@ -549,26 +555,26 @@ function DismissChip(props: {
 			onFocus={() => props.onFocusChange(true)}
 			onBlur={() => props.onFocusChange(false)}
 			style={{
-				position: "absolute",
+				position: 'absolute',
 				zIndex: 30,
 				top: 8,
 				right: 8,
 				width: 28,
 				height: 28,
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
 				borderRadius: shape.button,
-				cursor: "pointer",
+				cursor: 'pointer',
 				keyboardFocusDim: false,
 				// The chip stays shown while the pointer is on it, whatever the card's own hover says.
 				// The source sets `transition-colors` and, with `dismissOnHover`, `transition-opacity` after it: the later
 				// one replaces the property list, so a revealed chip fades its opacity only and its hover colours switch at once.
 				...(props.revealOnHover
-					? fade(["opacity"], 80)
-					: fade(["background-color"], 80)),
+					? fade(['opacity'], 80)
+					: fade(['background-color'], 80)),
 				opacity: props.visible || hovered() ? 1 : 0,
-				pointerEvents: props.visible || hovered() ? "auto" : "none",
+				pointerEvents: props.visible || hovered() ? 'auto' : 'none',
 				backgroundColor: props.overMedia
 					? hovered()
 						? color.card
@@ -596,7 +602,7 @@ export function CardHeader(props: { children: JSX.Element }) {
 	const scope = useContext(CardContext);
 	const padding = () => {
 		if (scope.inlineImage()) return {};
-		if (scope.orientation() === "inline") {
+		if (scope.orientation() === 'inline') {
 			return {
 				flexGrow: 1,
 				flexShrink: 1,
@@ -612,9 +618,9 @@ export function CardHeader(props: { children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				position: "relative",
-				display: "flex",
-				flexDirection: "column",
+				position: 'relative',
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 4,
 				minWidth: 0,
 				...padding(),
@@ -632,26 +638,26 @@ export function CardHeader(props: { children: JSX.Element }) {
  */
 export function CardTitle(props: { children: string }) {
 	const scope = useContext(CardContext);
-	const text = () => subtitle[scope.compact() ? "compact" : "default"];
+	const text = () => subtitle[scope.compact() ? 'compact' : 'default'];
 	return (
-		<div style={{ position: "relative", minWidth: 0 }}>
+		<div style={{ position: 'relative', minWidth: 0 }}>
 			<text
 				style={{
 					...text(),
 					fontWeight: weight.semibold,
 					opacity: 0,
-					whiteSpace: "nowrap",
+					whiteSpace: 'nowrap',
 				}}
 			>
 				{props.children}
 			</text>
-			<div style={{ position: "absolute", top: 0, left: 0 }}>
+			<div style={{ position: 'absolute', top: 0, left: 0 }}>
 				<text
 					style={{
 						...text(),
 						color: color.foreground,
 						fontWeight: scope.emphasized() ? weight.semibold : weight.normal,
-						whiteSpace: "nowrap",
+						whiteSpace: 'nowrap',
 					}}
 				>
 					{props.children}
@@ -663,7 +669,7 @@ export function CardTitle(props: { children: string }) {
 
 export function CardDescription(props: { children: string }) {
 	const scope = useContext(CardContext);
-	const text = () => subtitle[scope.compact() ? "compact" : "default"];
+	const text = () => subtitle[scope.compact() ? 'compact' : 'default'];
 	return (
 		<text style={{ ...text(), color: color.mutedForeground }}>
 			{props.children}
@@ -677,7 +683,7 @@ export function CardAction(props: { children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				position: "absolute",
+				position: 'absolute',
 				zIndex: 30,
 				top: 0,
 				right: 0,
@@ -694,10 +700,10 @@ export function CardContent(props: { children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				minWidth: 0,
-				...(scope.orientation() === "inline"
+				...(scope.orientation() === 'inline'
 					? {}
 					: scope.compact()
 						? { paddingLeft: 12, paddingRight: 12, paddingTop: 10 }
@@ -714,17 +720,17 @@ export function CardFooter(props: { children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				position: "relative",
+				position: 'relative',
 				zIndex: 30,
 				...takesPresses(scope),
-				display: "flex",
-				flexDirection: "row",
-				flexWrap: "wrap",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				flexWrap: 'wrap',
+				alignItems: 'center',
 				gap: 4,
 				...(scope.inlineImage()
 					? {}
-					: scope.orientation() === "inline"
+					: scope.orientation() === 'inline'
 						? { flexShrink: 0, paddingRight: scope.compact() ? 12 : 16 }
 						: scope.compact()
 							? { paddingLeft: 12, paddingRight: 12, paddingTop: 10 }
@@ -758,15 +764,15 @@ export function CardMedia(props: {
 					{(icon: Accessor<IconRef>) => (
 						<div
 							style={{
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
 								flexShrink: 0,
 								width: 32,
 								height: 32,
 								borderRadius: shape.bg,
 								backgroundColor: color.hover,
-								...(scope.orientation() === "inline"
+								...(scope.orientation() === 'inline'
 									? {}
 									: { marginBottom: 8 }),
 							}}
@@ -784,12 +790,12 @@ export function CardMedia(props: {
 		>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					flexShrink: 0,
 					gap: 6,
-					...(scope.orientation() === "inline" ? {} : { marginBottom: 8 }),
+					...(scope.orientation() === 'inline' ? {} : { marginBottom: 8 }),
 				}}
 			>
 				{logos().map((src, position) => (
@@ -824,7 +830,7 @@ export function CardMedia(props: {
  */
 export function CardImage(props: { src: string; height?: number }) {
 	const scope = useContext(CardContext);
-	const inline = () => scope.orientation() === "inline";
+	const inline = () => scope.orientation() === 'inline';
 	/** The outer corners a tile would have clipped; the rest keep the original's 2px. */
 	const corners = () => {
 		const outer = scope.tileCorner() || 2;
@@ -857,8 +863,8 @@ export function CardImage(props: { src: string; height?: number }) {
 				...(inline()
 					? { width: 160, height: 160, flexShrink: 0 }
 					: props.height === undefined
-						? { width: "100%", aspectRatio: 16 / 9, flexShrink: 0 }
-						: { width: "100%", height: props.height, flexShrink: 0 }),
+						? { width: '100%', aspectRatio: 16 / 9, flexShrink: 0 }
+						: { width: '100%', height: props.height, flexShrink: 0 }),
 			}}
 		/>
 	);
@@ -876,9 +882,9 @@ export function CardFeature(props: {
 		<div
 			testId={props.testId}
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "flex-start",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'flex-start',
 			}}
 		>
 			<Show when={props.icon}>
@@ -903,8 +909,8 @@ export function CardFeature(props: {
 			<div
 				testId={props.testId && `${props.testId}-text`}
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					gap: 2,
 					minWidth: 0,
 				}}
@@ -935,13 +941,13 @@ export function CardFeature(props: {
 
 // ─── CardButton ──────────────────────────────────────────────────────────────
 
-export type CardButtonVariant = "primary" | "secondary" | "ghost" | "link";
+export type CardButtonVariant = 'primary' | 'secondary' | 'ghost' | 'link';
 
 /** The footer action. Self-contained, like the original, so Card needs no Button. */
 export function CardButton(props: {
 	variant?: CardButtonVariant;
 	icon?: IconRef;
-	iconPosition?: "start" | "end";
+	iconPosition?: 'start' | 'end';
 	/** Appends an outward arrow, as the original does for a link that leaves the app. */
 	external?: boolean;
 	disabled?: boolean;
@@ -952,15 +958,15 @@ export function CardButton(props: {
 	const renderer = useGpuixRequired();
 	const scope = useContext(CardContext);
 	const [hovered, setHovered] = createSignal(false);
-	const variant = () => props.variant ?? "ghost";
+	const variant = () => props.variant ?? 'ghost';
 	const position = () =>
-		props.iconPosition ?? (props.external ? "end" : "start");
+		props.iconPosition ?? (props.external ? 'end' : 'start');
 
 	const labelColor = () => {
 		switch (variant()) {
-			case "primary":
+			case 'primary':
 				return color.background;
-			case "ghost":
+			case 'ghost':
 				return hovered() ? color.foreground : color.mutedForeground;
 			default:
 				return color.foreground;
@@ -968,24 +974,24 @@ export function CardButton(props: {
 	};
 	const surface = () => {
 		switch (variant()) {
-			case "primary":
+			case 'primary':
 				return {
 					backgroundColor: color.foreground,
 					hover: { backgroundColor: inkHover() },
 					active: { backgroundColor: inkActive() },
 				};
-			case "secondary":
+			case 'secondary':
 				return {
 					backgroundColor: color.accent,
 					hover: { backgroundColor: accentHover() },
 					active: { backgroundColor: color.accent },
 				};
-			case "ghost":
+			case 'ghost':
 				return {
 					hover: { backgroundColor: color.hover },
 					active: { backgroundColor: color.active },
 				};
-			case "link":
+			case 'link':
 				return {};
 		}
 	};
@@ -1008,22 +1014,22 @@ export function CardButton(props: {
 
 	const content = () => (
 		<>
-			<Show when={position() === "start"}>{glyph()}</Show>
+			<Show when={position() === 'start'}>{glyph()}</Show>
 			<text
 				style={{
 					...(scope.compact() ? scale.micro : scale.caption),
 					color: labelColor(),
 					...colorFade,
 					fontWeight: weight.normal,
-					whiteSpace: "nowrap",
-					...(variant() === "link" && hovered()
-						? { textDecoration: "underline" }
+					whiteSpace: 'nowrap',
+					...(variant() === 'link' && hovered()
+						? { textDecoration: 'underline' }
 						: {}),
 				}}
 			>
 				{props.children}
 			</text>
-			<Show when={position() === "end"}>{glyph()}</Show>
+			<Show when={position() === 'end'}>{glyph()}</Show>
 			{/* The original rotates an arrow-right -45deg; there are no transforms, so the glyph is arrow-up-right. */}
 			<Show when={props.external}>
 				<Icon
@@ -1040,27 +1046,30 @@ export function CardButton(props: {
 
 	return (
 		<div
-			{...buttonProps({ disabled: props.disabled, onClick: props.onClick, tabIndex: 0 }, renderer)}
+			{...buttonProps(
+				{ disabled: props.disabled, onClick: props.onClick, tabIndex: 0 },
+				renderer,
+			)}
 			testId={props.testId}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
-				justifyContent: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
+				justifyContent: 'center',
 				flexShrink: 0,
 				gap: 6,
-				cursor: "pointer",
+				cursor: 'pointer',
 				keyboardFocusDim: false,
 				borderRadius: shape.button,
-				...(variant() === "link"
+				...(variant() === 'link'
 					? {}
 					: { height: 28, paddingLeft: 10, paddingRight: 10 }),
 				// Not the full colour list: the source's ring is a box shadow that `transition-colors` leaves out.
-				...fade(["background-color"], 80),
+				...fade(['background-color'], 80),
 				...surface(),
-				...(props.disabled ? { opacity: 0.5, pointerEvents: "none" } : {}),
+				...(props.disabled ? { opacity: 0.5, pointerEvents: 'none' } : {}),
 				focusVisible: focusRing(0),
 			}}
 		>

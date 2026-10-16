@@ -5,16 +5,12 @@ import {
 	Dialog as GpuixDialog,
 	type HostElement,
 	motion,
-} from "@gpuix/solid";
-import type { JSX } from "solid-js";
-import { HideOutside } from "#/lib/modal";
-import { createPresence } from "#/lib/presence";
-import { FocusFirst } from "./dialog";
-import {
-	color,
-	shadow,
-	motion as tween,
-} from "#/lib/theme";
+} from '@gpuix/solid';
+import type { JSX } from 'solid-js';
+import { HideOutside } from '#/lib/modal';
+import { createPresence } from '#/lib/presence';
+import { color, shadow, motion as tween } from '#/lib/theme';
+import { FocusFirst } from './dialog';
 
 export const DRAWER_WIDTH = 256;
 
@@ -57,7 +53,7 @@ export function MobileDrawer(props: {
 						animate={{ opacity: props.open ? 1 : 0 }}
 						transition={props.open ? { duration: 0.16 } : tween.moderateExit}
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							top: 0,
 							left: 0,
 							right: 0,
@@ -75,12 +71,12 @@ export function MobileDrawer(props: {
 					testId={props.testId}
 					aria-label="Navigation"
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 0,
 						left: 0,
 						right: 0,
 						bottom: 0,
-						pointerEvents: "none",
+						pointerEvents: 'none',
 					}}
 				>
 					<HideOutside popup={() => popup} />
@@ -92,20 +88,22 @@ export function MobileDrawer(props: {
 							if (!props.open) presence.release();
 						}}
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							top: 0,
 							bottom: 0,
 							width: DRAWER_WIDTH,
-							display: "flex",
-							flexDirection: "column",
-							overflowY: "scroll",
+							display: 'flex',
+							flexDirection: 'column',
+							overflowY: 'scroll',
 							backgroundColor: color.card,
 							boxShadow: shadow(3),
-							pointerEvents: "auto",
+							pointerEvents: 'auto',
 						}}
 					>
 						{/* The padding lives on an inner box: a scroller's own padding is counted twice in its scroll extent, so a short panel would still scroll by 2 x 16. */}
-						<div style={{ display: "flex", flexDirection: "column", padding: 16 }}>
+						<div
+							style={{ display: 'flex', flexDirection: 'column', padding: 16 }}
+						>
 							<FocusFirst popup={() => popup} />
 							{props.children}
 						</div>

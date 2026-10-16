@@ -1,15 +1,15 @@
-import { readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import {
 	type ChangeKind,
 	ChangelogFormatError,
 	parseRelease,
 	type Release,
 	releaseEntries,
-} from "./parse";
+} from './parse';
 
 export const CHANGELOG_DIR = new URL(
-	"../../../content/changelog/",
+	'../../../content/changelog/',
 	import.meta.url,
 ).pathname;
 const FILE = /^(\d{4}-\d{2})\.md$/;
@@ -22,14 +22,14 @@ export function loadReleases(dir = CHANGELOG_DIR): Release[] {
 		.reverse()
 		.map((name) => {
 			const release = parseRelease(
-				readFileSync(join(dir, name), "utf8"),
+				readFileSync(join(dir, name), 'utf8'),
 				`content/changelog/${name}`,
 			);
 			if (release.month !== FILE.exec(name)?.[1]) {
 				throw new ChangelogFormatError(
 					`content/changelog/${name}`,
 					2,
-					"`month` does not match the file name",
+					'`month` does not match the file name',
 				);
 			}
 			return release;
@@ -50,7 +50,7 @@ export interface AheadOfRelease {
  */
 export const AHEAD_OF_RELEASE: AheadOfRelease[] = [
 	// Merged in October 2026; the October release ships Friday 2026-11-06.
-	{ month: "2026-10", slugs: ["banner", "typography"] },
+	{ month: '2026-10', slugs: ['banner', 'typography'] },
 ];
 
 /** The doc slugs the latest release marks, and the pages listed ahead of the next one. */
@@ -87,10 +87,10 @@ export function latestMarks(
 						: /^\/docs\/([^/#?]+)/.exec(entry.href)?.[1];
 				return slug === undefined ? [] : [slug];
 			});
-	const added = slugs(["new"]);
+	const added = slugs(['new']);
 	return {
 		new: added,
-		updated: slugs(["updated", "breaking"]).filter(
+		updated: slugs(['updated', 'breaking']).filter(
 			(slug) => !added.includes(slug) && !pending.includes(slug),
 		),
 		ahead: pending,

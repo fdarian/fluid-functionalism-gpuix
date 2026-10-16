@@ -1,52 +1,52 @@
-import { createSignal, For } from "solid-js";
-import { Button } from "#/components/button";
-import { ChatMessage, ChatMessageAction } from "#/components/chat-message";
-import type { FileLike } from "#/components/file-thumbnail";
-import type { DemoModule } from "#/lib/demo";
-import { DemoCard } from "#/lib/demo-kit";
+import { createSignal, For } from 'solid-js';
+import { Button } from '#/components/button';
+import { ChatMessage, ChatMessageAction } from '#/components/chat-message';
+import type { FileLike } from '#/components/file-thumbnail';
+import type { DemoModule } from '#/lib/demo';
+import { DemoCard } from '#/lib/demo-kit';
 
 interface Message {
-	from: "user" | "assistant";
+	from: 'user' | 'assistant';
 	time?: string;
 	text: string;
 }
 
 const CONVERSATION: Message[] = [
 	{
-		from: "user",
-		time: "Wednesday 6:06 PM",
+		from: 'user',
+		time: 'Wednesday 6:06 PM',
 		text: 'What does "good design" actually mean? Everyone says it, no one defines it.',
 	},
 	{
-		from: "assistant",
+		from: 'assistant',
 		text: "Good design is mostly invisible — you only notice it when it's missing. It's less about how something looks and more about how effortlessly it lets you do what you came to do.",
 	},
-	{ from: "user", time: "Wednesday 6:07 PM", text: "So function over form?" },
+	{ from: 'user', time: 'Wednesday 6:07 PM', text: 'So function over form?' },
 	{
-		from: "assistant",
-		text: "Not quite. Form is part of function — something that feels good to use is, in a real sense, working better. The split between the two is mostly a myth.",
+		from: 'assistant',
+		text: 'Not quite. Form is part of function — something that feels good to use is, in a real sense, working better. The split between the two is mostly a myth.',
 	},
 	{
-		from: "user",
-		time: "Wednesday 6:08 PM",
-		text: "That reframes it completely.",
+		from: 'user',
+		time: 'Wednesday 6:08 PM',
+		text: 'That reframes it completely.',
 	},
 ];
 
 const FOLLOW_UP: Message = {
-	from: "user",
-	time: "Wednesday 6:09 PM",
-	text: "Say more about that.",
+	from: 'user',
+	time: 'Wednesday 6:09 PM',
+	text: 'Say more about that.',
 };
 
 const avatar: FileLike = {
-	name: "micka.png",
-	type: "image/png",
-	src: new URL("../../assets/chat-ai/micka.png", import.meta.url).pathname,
+	name: 'micka.png',
+	type: 'image/png',
+	src: new URL('../../assets/chat-ai/micka.png', import.meta.url).pathname,
 };
 
 /** Illustrative only, like the docs page: the buttons carry no behaviour. */
-function Actions(props: { from: "user" | "assistant"; testId?: string }) {
+function Actions(props: { from: 'user' | 'assistant'; testId?: string }) {
 	return (
 		<>
 			<ChatMessageAction
@@ -55,8 +55,8 @@ function Actions(props: { from: "user" | "assistant"; testId?: string }) {
 				testId={props.testId}
 			/>
 			<ChatMessageAction
-				action={props.from === "user" ? "edit" : "regenerate"}
-				label={props.from === "user" ? "Edit message" : "Regenerate response"}
+				action={props.from === 'user' ? 'edit' : 'regenerate'}
+				label={props.from === 'user' ? 'Edit message' : 'Regenerate response'}
 			/>
 		</>
 	);
@@ -66,10 +66,10 @@ function Transcript(props: { messages: Message[]; testPrefix: string }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 8,
-				width: "100%",
+				width: '100%',
 			}}
 		>
 			<For each={props.messages}>
@@ -93,18 +93,18 @@ function Transcript(props: { messages: Message[]; testPrefix: string }) {
 	);
 }
 
-export const title = "ChatMessage";
-export const group = "Components";
-export const listed = "sidebar";
+export const title = 'ChatMessage';
+export const group = 'Components';
+export const listed = 'sidebar';
 
 export function Demo() {
 	const [messages, setMessages] = createSignal(CONVERSATION);
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 			<DemoCard title="Conversation">
-				<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+				<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 					<Transcript messages={messages()} testPrefix="chat" />
-					<div style={{ display: "flex", flexDirection: "row" }}>
+					<div style={{ display: 'flex', flexDirection: 'row' }}>
 						<Button
 							testId="add-message"
 							variant="secondary"
@@ -120,10 +120,10 @@ export function Demo() {
 				<DemoCard title="Roles">
 					<div
 						style={{
-							display: "flex",
-							flexDirection: "column",
+							display: 'flex',
+							flexDirection: 'column',
 							gap: 8,
-							width: "100%",
+							width: '100%',
 						}}
 					>
 						<ChatMessage from="user">Right-aligned accent bubble.</ChatMessage>
@@ -137,10 +137,10 @@ export function Demo() {
 				<DemoCard title="Attachments">
 					<div
 						style={{
-							display: "flex",
-							flexDirection: "column",
+							display: 'flex',
+							flexDirection: 'column',
 							gap: 8,
-							width: "100%",
+							width: '100%',
 						}}
 					>
 						<ChatMessage from="user" files={[avatar]}>
@@ -156,19 +156,19 @@ export function Demo() {
 	);
 }
 
-export const scenarios: DemoModule["scenarios"] = async (shot) => {
+export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	await shot.moveTo(650, 60);
 	await shot.moveTo(650, 60);
-	await shot.hover("chat-0");
-	shot.capture("hover-user");
-	await shot.hover("chat-0-copy");
-	shot.capture("hover-action");
-	await shot.hover("chat-1");
-	shot.capture("hover-assistant");
+	await shot.hover('chat-0');
+	shot.capture('hover-user');
+	await shot.hover('chat-0-copy');
+	shot.capture('hover-action');
+	await shot.hover('chat-1');
+	shot.capture('hover-assistant');
 	await shot.moveTo(1180, 700);
-	await shot.click("add-message");
-	shot.capture("added");
+	await shot.click('add-message');
+	shot.capture('added');
 	await shot.scroll(600, 400, 0, 700);
 	await shot.settle();
-	shot.capture("attachments");
+	shot.capture('attachments');
 };

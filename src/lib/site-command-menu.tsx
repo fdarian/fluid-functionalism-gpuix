@@ -1,5 +1,5 @@
-import { window as appWindow, type DomEvent } from "@gpuix/solid";
-import { createMemo, createSignal, onCleanup } from "solid-js";
+import { window as appWindow, type DomEvent } from '@gpuix/solid';
+import { createMemo, createSignal, onCleanup } from 'solid-js';
 import {
 	CommandMenu,
 	CommandMenuDialog,
@@ -9,26 +9,26 @@ import {
 	type CommandMenuItemData,
 	CommandMenuList,
 	CommandMenuTabs,
-} from "#/components/command-menu";
-import type { Demo, Page } from "./demo";
-import type { IconRef } from "./icons";
-import { installUrl } from "./install-url";
-import { pageOrder } from "./page-nav";
-import { IS_MAC, openUrl } from "./platform";
-import { setThemeChoice, THEMES, themeChoice } from "./theme";
+} from '#/components/command-menu';
+import type { Demo, Page } from './demo';
+import type { IconRef } from './icons';
+import { installUrl } from './install-url';
+import { pageOrder } from './page-nav';
+import { IS_MAC, openUrl } from './platform';
+import { setThemeChoice, THEMES, themeChoice } from './theme';
 
-type Kind = "page" | "setting" | "action";
+type Kind = 'page' | 'setting' | 'action';
 
 type SiteItem = CommandMenuItemData & { kind: Kind };
 
 const TABS = [
-	{ value: "all", label: "All" },
-	{ value: "page", label: "Pages" },
-	{ value: "setting", label: "Settings" },
-	{ value: "action", label: "Actions" },
+	{ value: 'all', label: 'All' },
+	{ value: 'page', label: 'Pages' },
+	{ value: 'setting', label: 'Settings' },
+	{ value: 'action', label: 'Actions' },
 ];
 
-const GITHUB_REPOSITORY = "mickadesign/fluid-functionalism";
+const GITHUB_REPOSITORY = 'mickadesign/fluid-functionalism';
 
 const RECENT_MAX = 3;
 
@@ -42,7 +42,7 @@ function remember(slug: string) {
 }
 
 /** What the sidebar's Search row shows next to the label. */
-export const SITE_MENU_SHORTCUT = IS_MAC ? "⌘K" : "Ctrl K";
+export const SITE_MENU_SHORTCUT = IS_MAC ? '⌘K' : 'Ctrl K';
 
 export type SiteMenu = {
 	open: () => boolean;
@@ -59,7 +59,7 @@ export type SiteMenu = {
 function isModK(event: DomEvent): boolean {
 	if (event.altKey === true) return false;
 	if (event.metaKey !== true && event.ctrlKey !== true) return false;
-	return event.key?.toLowerCase() === "k";
+	return event.key?.toLowerCase() === 'k';
 }
 
 /** The menu's open state plus the window-wide Mod+K that toggles it. Call it once, inside the app root: the listener leaves with that owner. */
@@ -71,8 +71,8 @@ export function createSiteMenu(): SiteMenu {
 		event.preventDefault();
 		setOpen(!open());
 	};
-	appWindow.addEventListener("keydown", onKeyDown);
-	onCleanup(() => appWindow.removeEventListener("keydown", onKeyDown));
+	appWindow.addEventListener('keydown', onKeyDown);
+	onCleanup(() => appWindow.removeEventListener('keydown', onKeyDown));
 	return { open, setOpen };
 }
 
@@ -86,7 +86,7 @@ export function SiteCommandMenu(props: {
 	current: string;
 	onPage: (page: string) => void;
 }) {
-	const [tab, setTab] = createSignal("all");
+	const [tab, setTab] = createSignal('all');
 	const go = (slug: string) => {
 		remember(slug);
 		props.onPage(slug);
@@ -99,7 +99,7 @@ export function SiteCommandMenu(props: {
 			icon?: IconRef,
 			keywords?: readonly string[],
 		): SiteItem => ({
-			kind: "page",
+			kind: 'page',
 			value,
 			label,
 			action: `Open ${label}`,
@@ -108,11 +108,11 @@ export function SiteCommandMenu(props: {
 			group,
 			onSelect: () => go(value),
 		});
-		const listedPages = (group: Page["group"]) =>
+		const listedPages = (group: Page['group']) =>
 			props.pages
 				.filter(
 					(candidate) =>
-						candidate.group === group && candidate.listed !== "none",
+						candidate.group === group && candidate.listed !== 'none',
 				)
 				.map((entry) =>
 					page(
@@ -127,32 +127,32 @@ export function SiteCommandMenu(props: {
 		const order = pageOrder(props.pages, props.demos);
 		const index = order.indexOf(props.current);
 		const component = props.demos.find((demo) => demo.slug === props.current);
-		const action = (item: Omit<SiteItem, "kind" | "group">): SiteItem => ({
+		const action = (item: Omit<SiteItem, 'kind' | 'group'>): SiteItem => ({
 			...item,
-			kind: "action",
-			group: "Actions",
+			kind: 'action',
+			group: 'Actions',
 		});
 		return [
-			page(props.showcase, "Showcase", "Pages", "home", [
-				"home",
-				"bento",
-				"gallery",
+			page(props.showcase, 'Showcase', 'Pages', 'home', [
+				'home',
+				'bento',
+				'gallery',
 			]),
-			...listedPages("Pages"),
-			...listedPages("System"),
+			...listedPages('Pages'),
+			...listedPages('System'),
 			...props.demos
-				.filter((demo) => demo.listed !== "none")
-				.map((demo) => page(demo.slug, demo.title, "Components")),
+				.filter((demo) => demo.listed !== 'none')
+				.map((demo) => page(demo.slug, demo.title, 'Components')),
 			...THEMES.map(
 				(theme): SiteItem => ({
-					kind: "setting",
+					kind: 'setting',
 					value: `theme:${theme.value}`,
 					label: `Theme: ${theme.label}`,
 					action: `Set theme to ${theme.label}`,
-					description: current === theme.value ? "Current" : undefined,
+					description: current === theme.value ? 'Current' : undefined,
 					icon: theme.icon,
-					keywords: ["theme", "appearance", "mode", theme.value],
-					group: "Settings",
+					keywords: ['theme', 'appearance', 'mode', theme.value],
+					group: 'Settings',
 					onSelect: () => setThemeChoice(theme.value),
 				}),
 			),
@@ -160,18 +160,18 @@ export function SiteCommandMenu(props: {
 				? []
 				: [
 						action({
-							value: "action:copy-install",
-							label: "Copy install command",
+							value: 'action:copy-install',
+							label: 'Copy install command',
 							description: component.title,
-							icon: "copy",
-							keywords: ["npx", "shadcn", "add", "registry"],
+							icon: 'copy',
+							keywords: ['npx', 'shadcn', 'add', 'registry'],
 							onSelect: () => {
 								navigator.clipboard
 									.writeText(
 										`npx shadcn@latest add ${installUrl(component.slug)}`,
 									)
 									.catch((error: unknown) =>
-										console.error("Copy install command failed", error),
+										console.error('Copy install command failed', error),
 									);
 							},
 						}),
@@ -179,11 +179,11 @@ export function SiteCommandMenu(props: {
 			...(index > 0
 				? [
 						action({
-							value: "action:previous",
-							label: "Previous page",
-							action: "Go to the previous page",
-							icon: "arrow-left",
-							shortcut: "left",
+							value: 'action:previous',
+							label: 'Previous page',
+							action: 'Go to the previous page',
+							icon: 'arrow-left',
+							shortcut: 'left',
 							onSelect: () => go(order[index - 1]),
 						}),
 					]
@@ -191,27 +191,27 @@ export function SiteCommandMenu(props: {
 			...(index >= 0 && index < order.length - 1
 				? [
 						action({
-							value: "action:next",
-							label: "Next page",
-							action: "Go to the next page",
-							icon: "arrow-right",
-							shortcut: "right",
+							value: 'action:next',
+							label: 'Next page',
+							action: 'Go to the next page',
+							icon: 'arrow-right',
+							shortcut: 'right',
 							onSelect: () => go(order[index + 1]),
 						}),
 					]
 				: []),
 			action({
-				value: "action:github",
-				label: "Open on GitHub",
+				value: 'action:github',
+				label: 'Open on GitHub',
 				description: GITHUB_REPOSITORY,
-				icon: "link",
-				keywords: ["source", "star", "repository"],
+				icon: 'link',
+				keywords: ['source', 'star', 'repository'],
 				onSelect: () => openUrl(`https://github.com/${GITHUB_REPOSITORY}`),
 			}),
 		];
 	});
 	const visible = createMemo(() =>
-		tab() === "all" ? items() : items().filter((item) => item.kind === tab()),
+		tab() === 'all' ? items() : items().filter((item) => item.kind === tab()),
 	);
 	return (
 		<CommandMenuDialog

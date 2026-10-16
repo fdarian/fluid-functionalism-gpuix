@@ -1,5 +1,5 @@
-import { AnimatePresence, motion, useIsPresent } from "@gpuix/solid";
-import { createSignal, For, type JSX, onCleanup } from "solid-js";
+import { AnimatePresence, motion, useIsPresent } from '@gpuix/solid';
+import { createSignal, For, type JSX, onCleanup } from 'solid-js';
 import {
 	Card,
 	CardDescription,
@@ -8,13 +8,13 @@ import {
 	CardImage,
 	CardMedia,
 	CardTitle,
-} from "#/components/card";
-import { SIDEBAR_WIDTH } from "#/components/sidebar";
-import { defineIcon, type IconRef } from "#/lib/icons";
-import { createMeasuredHeight } from "#/lib/measured-height";
-import { shape, surface, motion as tween } from "#/lib/theme";
+} from '#/components/card';
+import { SIDEBAR_WIDTH } from '#/components/sidebar';
+import { defineIcon, type IconRef } from '#/lib/icons';
+import { createMeasuredHeight } from '#/lib/measured-height';
+import { shape, surface, motion as tween } from '#/lib/theme';
 
-export type CalloutVariant = "inline" | "banner";
+export type CalloutVariant = 'inline' | 'banner';
 
 const PANEL_ICON = defineIcon(
 	'<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/>',
@@ -32,22 +32,22 @@ interface CalloutCard {
 
 const CARDS: readonly CalloutCard[] = [
 	{
-		id: "sidebar",
+		id: 'sidebar',
 		icon: PANEL_ICON,
-		title: "Sidebar is here",
-		description: "New in Fluid Functionalism",
+		title: 'Sidebar is here',
+		description: 'New in Fluid Functionalism',
 	},
 	{
-		id: "stars",
-		icon: "star",
-		title: "500 stars",
-		description: "Find the hidden mosaic",
+		id: 'stars',
+		icon: 'star',
+		title: '500 stars',
+		description: 'Find the hidden mosaic',
 	},
 	{
-		id: "motion",
+		id: 'motion',
 		icon: PLAY_ICON,
-		title: "Motion guidelines",
-		description: "Three spring tiers, one page",
+		title: 'Motion guidelines',
+		description: 'Three spring tiers, one page',
 	},
 ];
 
@@ -74,7 +74,7 @@ function mesh(intensity: number) {
 		opacity: number,
 	) =>
 		`<radialGradient id='${id}' cx='${cx}%' cy='${cy}%' r='${r}%'><stop offset='0%' stop-color='#6B97FF' stop-opacity='${opacity * intensity}'/><stop offset='100%' stop-color='#6B97FF' stop-opacity='0'/></radialGradient>`;
-	const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='320' height='180'><defs>${stop("a", 12, 16, 70, 0.9)}${stop("b", 90, 12, 65, 0.45)}${stop("c", 82, 94, 75, 0.8)}${stop("d", 24, 90, 68, 0.55)}</defs><rect width='320' height='180' fill='#ffffff'/><rect width='320' height='180' fill='#6B97FF' fill-opacity='${0.2 * intensity}'/><rect width='320' height='180' fill='url(#a)'/><rect width='320' height='180' fill='url(#b)'/><rect width='320' height='180' fill='url(#c)'/><rect width='320' height='180' fill='url(#d)'/></svg>`;
+	const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='320' height='180'><defs>${stop('a', 12, 16, 70, 0.9)}${stop('b', 90, 12, 65, 0.45)}${stop('c', 82, 94, 75, 0.8)}${stop('d', 24, 90, 68, 0.55)}</defs><rect width='320' height='180' fill='#ffffff'/><rect width='320' height='180' fill='#6B97FF' fill-opacity='${0.2 * intensity}'/><rect width='320' height='180' fill='url(#a)'/><rect width='320' height='180' fill='url(#b)'/><rect width='320' height='180' fill='url(#c)'/><rect width='320' height='180' fill='url(#d)'/></svg>`;
 	return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }
 
@@ -84,7 +84,7 @@ function Resting(props: { children: JSX.Element }) {
 		<div
 			style={{
 				borderRadius: shape.container,
-				overflow: "hidden",
+				overflow: 'hidden',
 				backgroundColor: surface(2),
 			}}
 		>
@@ -109,7 +109,7 @@ function CalloutCardBody(props: {
 			label={`${props.card.title} — ${props.card.description}`}
 			testId={props.testId}
 		>
-			{props.variant === "banner" ? (
+			{props.variant === 'banner' ? (
 				<CardImage src={mesh(MESH_STEPS[props.step])} height={BANNER_HEIGHT} />
 			) : (
 				<CardMedia icon={props.card.icon} size={18} />
@@ -122,7 +122,7 @@ function CalloutCardBody(props: {
 	);
 	return (
 		<Resting>
-			{props.variant === "inline" ? (
+			{props.variant === 'inline' ? (
 				<CardGroup orientation="inline" fluidHover={false}>
 					{body()}
 				</CardGroup>
@@ -184,8 +184,8 @@ function StackedCard(props: {
 			// The source's exit is a plain 0.12s tween.
 			transition={present() ? tween.moderate : tween.moderateExit}
 			style={{
-				position: "absolute",
-				overflow: "hidden",
+				position: 'absolute',
+				overflow: 'hidden',
 				zIndex: 100 - props.index(),
 			}}
 		>
@@ -225,11 +225,11 @@ export function FooterCalloutStack(props: {
 	let leaveTimer: ReturnType<typeof setTimeout> | undefined;
 	onCleanup(() => clearTimeout(leaveTimer));
 
-	const expanded = () => props.variant === "inline" && hovered();
+	const expanded = () => props.variant === 'inline' && hovered();
 	const front = () => cards()[0];
 	const frontHeight = () =>
 		heights()[`${props.variant}:${front().id}`] ??
-		(props.variant === "banner" ? BANNER_FALLBACK_HEIGHT : INLINE_HEIGHT);
+		(props.variant === 'banner' ? BANNER_FALLBACK_HEIGHT : INLINE_HEIGHT);
 	const count = () => cards().length;
 	const collapsedHeight = () =>
 		frontHeight() + Math.min(Math.max(count() - 1, 0), MAX_PEEK) * PEEK;
@@ -273,7 +273,7 @@ export function FooterCalloutStack(props: {
 				clearTimeout(leaveTimer);
 				leaveTimer = setTimeout(() => setHovered(false), 40);
 			}}
-			style={{ position: "relative" }}
+			style={{ position: 'relative' }}
 		>
 			<AnimatePresence initial={false}>
 				<For each={cards()}>

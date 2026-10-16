@@ -1,29 +1,24 @@
-import type { JSX } from "solid-js";
-import { For } from "solid-js";
-import type { ShotContext } from "#/lib/demo";
-import {
-	ComponentPreview,
-	DocPage,
-	DocSection,
-	Prose,
-} from "#/lib/doc-page";
-import { color, siteType, weight } from "#/lib/theme";
-import { CopyExample } from "#/pages/skill/copy-example";
-import { MenuExample } from "#/pages/skill/menu-example";
-import { PressExample } from "#/pages/skill/press-example";
-import { TabsExample } from "#/pages/skill/tabs-example";
-import { Timeline } from "#/pages/skill/timeline";
+import type { JSX } from 'solid-js';
+import { For } from 'solid-js';
+import type { ShotContext } from '#/lib/demo';
+import { ComponentPreview, DocPage, DocSection, Prose } from '#/lib/doc-page';
+import { color, siteType, weight } from '#/lib/theme';
+import { CopyExample } from '#/pages/skill/copy-example';
+import { MenuExample } from '#/pages/skill/menu-example';
+import { PressExample } from '#/pages/skill/press-example';
+import { TabsExample } from '#/pages/skill/tabs-example';
+import { Timeline } from '#/pages/skill/timeline';
 
-export const title = "Skill";
-export const heading = "/fluid-functionalism skill";
-export const group = "System";
+export const title = 'Skill';
+export const heading = '/fluid-functionalism skill';
+export const group = 'System';
 export const order = 5;
-export const layout = "docs";
-export const listed = "sidebar";
+export const layout = 'docs';
+export const listed = 'sidebar';
 
 const DESCRIPTION =
-	"Gives your coding agent the components and the craft behind them, then puts both to work on your project.";
-export const menuKeywords = ["skill", ...DESCRIPTION.split(/\W+/)];
+	'Gives your coding agent the components and the craft behind them, then puts both to work on your project.';
+export const menuKeywords = ['skill', ...DESCRIPTION.split(/\W+/)];
 
 /**
  * Installation: a prompt rather than the bare command, so the agent goes on to
@@ -32,18 +27,18 @@ export const menuKeywords = ["skill", ...DESCRIPTION.split(/\W+/)];
  * user's repo; -y skips the CLI's prompts, which an agent shell can't answer.
  */
 const INSTALL_PROMPT =
-	"Install the fluid-functionalism skill with `npx skills add mickadesign/fluid-functionalism -g -y` (skip this if you already have it). Then read its SKILL.md and use it to audit this project.";
+	'Install the fluid-functionalism skill with `npx skills add mickadesign/fluid-functionalism -g -y` (skip this if you already have it). Then read its SKILL.md and use it to audit this project.';
 
 /** What it does: 1 line per job. The detail lives in SKILL.md. */
 const JOBS = [
-	{ title: "Read your stack", body: "To understand your project." },
+	{ title: 'Read your stack', body: 'To understand your project.' },
 	{
-		title: "Suggests 2 to 5 upgrades",
-		body: "Ranked by what your users will notice.",
+		title: 'Suggests 2 to 5 upgrades',
+		body: 'Ranked by what your users will notice.',
 	},
 	{
-		title: "Aligns your UI",
-		body: "Installs what fits, matches the rest.",
+		title: 'Aligns your UI',
+		body: 'Installs what fits, matches the rest.',
 	},
 ];
 
@@ -55,27 +50,27 @@ const EXAMPLES: {
 	Example: () => JSX.Element;
 }[] = [
 	{
-		slug: "tabs",
-		label: "Tabs",
-		caption: "Active labels get heavier without shifting neighboring tabs.",
+		slug: 'tabs',
+		label: 'Tabs',
+		caption: 'Active labels get heavier without shifting neighboring tabs.',
 		Example: TabsExample,
 	},
 	{
-		slug: "menu",
-		label: "Menu",
-		caption: "One highlight follows your pointer smoothly between menu items.",
+		slug: 'menu',
+		label: 'Menu',
+		caption: 'One highlight follows your pointer smoothly between menu items.',
 		Example: MenuExample,
 	},
 	{
-		slug: "copy",
-		label: "Copy field",
-		caption: "Hover and click anywhere on the text to copy.",
+		slug: 'copy',
+		label: 'Copy field',
+		caption: 'Hover and click anywhere on the text to copy.',
 		Example: CopyExample,
 	},
 	{
-		slug: "press",
-		label: "Button press",
-		caption: "Buttons scale down the same size no matter the width.",
+		slug: 'press',
+		label: 'Button press',
+		caption: 'Buttons scale down the same size no matter the width.',
 		Example: PressExample,
 	},
 ];
@@ -91,8 +86,8 @@ function Example(props: {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 16,
 				marginTop: props.index === 0 ? 8 : 24,
 			}}
@@ -113,9 +108,9 @@ function Example(props: {
 			<ComponentPreview testId={`skill-${props.slug}`} hideHeader>
 				<div
 					style={{
-						display: "flex",
-						width: "100%",
-						justifyContent: "center",
+						display: 'flex',
+						width: '100%',
+						justifyContent: 'center',
 					}}
 				>
 					{props.children}
@@ -127,55 +122,55 @@ function Example(props: {
 
 export async function scenarios(shot: ShotContext) {
 	// Scrolls from the page column's left gutter so the pointer never rests inside an example, where it would stop the script.
-	await shot.hover("skill-timeline");
-	shot.capture("timeline-hover");
+	await shot.hover('skill-timeline');
+	shot.capture('timeline-hover');
 	await shot.moveTo(285, 400);
 
 	// Each example plays on its own once it is on screen: the script's cursor glides and clicks.
 	await shot.scroll(285, 400, 0, 700);
 	await shot.settle(900);
-	shot.capture("tabs-playing");
+	shot.capture('tabs-playing');
 	await shot.settle(1600);
-	shot.capture("tabs-playing-2");
+	shot.capture('tabs-playing-2');
 	// A visitor's pointer inside an example takes over from its script.
-	await shot.click("tabs-skill-tab-2");
-	await shot.hover("tabs-skill-tab-1");
-	shot.capture("tabs-visitor");
-	await shot.click("tabs-generic-tab-1");
-	shot.capture("tabs-visitor-generic");
+	await shot.click('tabs-skill-tab-2');
+	await shot.hover('tabs-skill-tab-1');
+	shot.capture('tabs-visitor');
+	await shot.click('tabs-generic-tab-1');
+	shot.capture('tabs-visitor-generic');
 	await shot.moveTo(285, 400);
 
 	await shot.scroll(285, 400, 0, 500);
 	await shot.settle(1200);
-	shot.capture("menu-playing");
+	shot.capture('menu-playing');
 	await shot.settle(1200);
-	shot.capture("menu-playing-2");
-	await shot.hover("menu-skill-row-2");
-	shot.capture("menu-visitor-hover");
-	await shot.click("menu-skill-row-3");
-	await shot.hover("menu-skill-row-4");
-	shot.capture("menu-visitor-selected");
-	await shot.hover("menu-generic-row-1");
-	shot.capture("menu-visitor-generic");
+	shot.capture('menu-playing-2');
+	await shot.hover('menu-skill-row-2');
+	shot.capture('menu-visitor-hover');
+	await shot.click('menu-skill-row-3');
+	await shot.hover('menu-skill-row-4');
+	shot.capture('menu-visitor-selected');
+	await shot.hover('menu-generic-row-1');
+	shot.capture('menu-visitor-generic');
 	await shot.moveTo(285, 400);
 
 	await shot.scroll(285, 400, 0, 500);
 	await shot.settle(1500);
-	shot.capture("copy-playing");
-	await shot.hover("copy-skill");
-	shot.capture("copy-visitor-hover");
+	shot.capture('copy-playing');
+	await shot.hover('copy-skill');
+	shot.capture('copy-visitor-hover');
 	await shot.moveTo(285, 400);
 
 	await shot.scroll(285, 400, 0, 600);
 	await shot.settle(1500);
-	shot.capture("press-playing");
-	await shot.down("press-generic-1");
-	shot.capture("press-generic-pressed");
-	await shot.up("press-generic-1");
-	await shot.down("press-skill-1");
-	shot.capture("press-skill-pressed");
-	await shot.up("press-skill-1");
-	await shot.down("press-generic-0");
+	shot.capture('press-playing');
+	await shot.down('press-generic-1');
+	shot.capture('press-generic-pressed');
+	await shot.up('press-generic-1');
+	await shot.down('press-skill-1');
+	shot.capture('press-skill-pressed');
+	await shot.up('press-skill-1');
+	await shot.down('press-generic-0');
 	await shot.moveTo(285, 400);
 }
 

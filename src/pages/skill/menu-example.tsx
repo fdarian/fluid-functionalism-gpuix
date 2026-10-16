@@ -3,20 +3,20 @@ import {
 	type HostElement,
 	motion,
 	useGpuixRequired,
-} from "@gpuix/solid";
-import { createSignal, For } from "solid-js";
-import { FluidHighlight } from "#/lib/fluid-highlight";
-import { createFluidHover, useHoverItem } from "#/lib/fluid-hover";
-import { CheckMark, Icon, LIST_CHECK } from "#/lib/icon";
-import { StableLabel } from "#/lib/stable-label";
+} from '@gpuix/solid';
+import { createSignal, For } from 'solid-js';
+import { FluidHighlight } from '#/lib/fluid-highlight';
+import { createFluidHover, useHoverItem } from '#/lib/fluid-hover';
+import { CheckMark, Icon, LIST_CHECK } from '#/lib/icon';
+import { StableLabel } from '#/lib/stable-label';
 import {
 	color,
 	focusRing,
-	motion as tween,
 	shape,
 	siteType,
+	motion as tween,
 	weight,
-} from "#/lib/theme";
+} from '#/lib/theme';
 import {
 	Compare,
 	clickStep,
@@ -27,7 +27,7 @@ import {
 	type LoopStep,
 	type Side,
 	turns,
-} from "./playback";
+} from './playback';
 
 // The same menu twice. Left is what an agent writes on its own: a per-row
 // hover that snaps on and off, a selected background that jumps, and a bold
@@ -36,11 +36,11 @@ import {
 // moves nothing.
 
 const ROWS = [
-	{ label: "Inbox", count: 12 },
-	{ label: "Drafts", count: 3 },
-	{ label: "Sent", count: 48 },
-	{ label: "Archive", count: 210 },
-	{ label: "Trash", count: 7 },
+	{ label: 'Inbox', count: 12 },
+	{ label: 'Drafts', count: 3 },
+	{ label: 'Sent', count: 48 },
+	{ label: 'Archive', count: 210 },
+	{ label: 'Trash', count: 7 },
 ];
 
 /** Rows are 36px stacked with no gap inside 8px of padding, the same on both sides so the only difference is behavior. */
@@ -58,16 +58,16 @@ const TURN: { row: number; click?: boolean }[] = [
 const HOLD_MS = 600;
 
 const rowStyle = {
-	display: "flex",
-	flexDirection: "row",
-	alignItems: "center",
+	display: 'flex',
+	flexDirection: 'row',
+	alignItems: 'center',
 	flexShrink: 0,
 	gap: 8,
-	width: "100%",
+	width: '100%',
 	height: ROW_H,
 	paddingLeft: 12,
 	paddingRight: 12,
-	cursor: "pointer",
+	cursor: 'pointer',
 	keyboardFocusDim: false,
 } as const;
 
@@ -77,7 +77,7 @@ function Count(props: { n: number }) {
 			style={{
 				...siteType.caption,
 				color: color.mutedForeground,
-				fontVariantNumeric: "tabular-nums",
+				fontVariantNumeric: 'tabular-nums',
 			}}
 		>
 			{props.n}
@@ -95,9 +95,9 @@ function GenericList(props: {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
-				width: "100%",
+				display: 'flex',
+				flexDirection: 'column',
+				width: '100%',
 				padding: LIST_PAD,
 			}}
 		>
@@ -130,14 +130,14 @@ function GenericList(props: {
 								// The generic version, bold on purpose to show the reflow.
 								fontWeight: props.selected === index() ? 700 : weight.normal,
 								color: color.foreground,
-								whiteSpace: "nowrap",
+								whiteSpace: 'nowrap',
 							}}
 						>
 							{row.label}
 						</text>
 						<Count n={row.count} />
 						{/* Static check: pops in and out with the selection. */}
-						<div style={{ marginLeft: "auto", width: 16, height: 16 }}>
+						<div style={{ marginLeft: 'auto', width: 16, height: 16 }}>
 							{props.selected === index() && (
 								<Icon
 									name="check"
@@ -183,7 +183,7 @@ function FluidRow(props: {
 				color={color.foreground}
 			/>
 			<Count n={props.count} />
-			<div style={{ marginLeft: "auto" }}>
+			<div style={{ marginLeft: 'auto' }}>
 				<CheckMark
 					checked={props.selected}
 					size={16}
@@ -215,10 +215,10 @@ function SkillList(props: {
 			onMouseMove={hover.handlers.onMouseMove}
 			onMouseLeave={hover.handlers.onMouseLeave}
 			style={{
-				position: "relative",
-				display: "flex",
-				flexDirection: "column",
-				width: "100%",
+				position: 'relative',
+				display: 'flex',
+				flexDirection: 'column',
+				width: '100%',
 				padding: LIST_PAD,
 			}}
 		>
@@ -227,13 +227,13 @@ function SkillList(props: {
 				animate={{ top: rowTop(props.selected) }}
 				transition={tween.moderate}
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					left: LIST_PAD,
 					right: LIST_PAD,
 					height: ROW_H,
 					borderRadius: shape.bg,
 					backgroundColor: color.selectedWash,
-					pointerEvents: "none",
+					pointerEvents: 'none',
 				}}
 			/>
 			<FluidHighlight
@@ -264,7 +264,7 @@ export function MenuExample() {
 	const [generic, setGeneric] = createSignal(0);
 	const [skill, setSkill] = createSignal(0);
 	const [active, setActive] = createSignal<Side | null>(null);
-	const select = (side: Side) => (side === "generic" ? setGeneric : setSkill);
+	const select = (side: Side) => (side === 'generic' ? setGeneric : setSkill);
 	const row = (side: Side, index: number) => `menu-${side}-row-${index}`;
 	createLoop(
 		playback.playing,

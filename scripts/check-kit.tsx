@@ -3,13 +3,13 @@
  * a demo page of the app or one component tree in the offscreen renderer and
  * drives it in real time.
  */
-import { createTestRoot } from "@gpuix/solid/testing";
-import type { JSX } from "solid-js";
-import { App } from "#/app";
-import { loadDemos, loadPages } from "#/lib/demo";
-import { fonts } from "#/lib/fonts";
-import { setThemeChoice } from "#/lib/theme";
-import { readPng } from "./png-pixels";
+import { createTestRoot } from '@gpuix/solid/testing';
+import type { JSX } from 'solid-js';
+import { App } from '#/app';
+import { loadDemos, loadPages } from '#/lib/demo';
+import { fonts } from '#/lib/fonts';
+import { setThemeChoice } from '#/lib/theme';
+import { readPng } from './png-pixels';
 
 const INK_PATH = `/tmp/check-kit-ink-${process.pid}.png`;
 
@@ -22,7 +22,7 @@ type CheckOptions = {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-type Renderer = ReturnType<typeof createTestRoot>["renderer"];
+type Renderer = ReturnType<typeof createTestRoot>['renderer'];
 
 /** The ported pages put a playground above the demos: scroll the page until the element is on screen. */
 export async function scrollIntoView(renderer: Renderer, testId: string) {
@@ -54,7 +54,7 @@ export async function createCheck(
 	target: string | (() => JSX.Element),
 	options: CheckOptions = {},
 ) {
-	const isPage = typeof target === "string";
+	const isPage = typeof target === 'string';
 	const test = createTestRoot({
 		width: options.width ?? (isPage ? 1240 : 800),
 		height: options.height ?? (isPage ? 780 : 600),
@@ -85,7 +85,8 @@ export async function createCheck(
 	async function until(done: () => boolean, what: string, timeoutMs = 5000) {
 		const limit = performance.now() + timeoutMs;
 		while (!done()) {
-			if (performance.now() > limit) throw new Error(`timed out waiting for ${what}`);
+			if (performance.now() > limit)
+				throw new Error(`timed out waiting for ${what}`);
 			await sleep(8);
 			renderer.flush();
 			renderer.dispatchNativeEvents();
@@ -183,7 +184,7 @@ export async function createCheck(
 		renderer.dispatchNativeEvents();
 	}
 
-	setThemeChoice("dark");
+	setThemeChoice('dark');
 	if (isPage) {
 		const demos = await loadDemos();
 		const pages = await loadPages(demos);
@@ -225,17 +226,17 @@ export async function createCheck(
 			renderer.simulateKeystrokes(keystrokes);
 			await settle();
 		},
-		check(name: string, ok: boolean, detail = "") {
+		check(name: string, ok: boolean, detail = '') {
 			if (!ok) failures++;
 			console.log(
-				`${ok ? "PASS" : "FAIL"} ${name}${detail === "" ? "" : ` (${detail})`}`,
+				`${ok ? 'PASS' : 'FAIL'} ${name}${detail === '' ? '' : ` (${detail})`}`,
 			);
 		},
 		expect(label: string, actual: unknown, expected: unknown) {
 			const ok = JSON.stringify(actual) === JSON.stringify(expected);
 			if (!ok) failures++;
 			console.log(
-				`${ok ? "PASS" : "FAIL"} ${label}: ${JSON.stringify(actual)}${ok ? "" : ` (expected ${JSON.stringify(expected)})`}`,
+				`${ok ? 'PASS' : 'FAIL'} ${label}: ${JSON.stringify(actual)}${ok ? '' : ` (expected ${JSON.stringify(expected)})`}`,
 			);
 		},
 		/** Ends this check's tree and renderer without exiting, for a script that runs several; returns how many checks failed. */
@@ -246,7 +247,7 @@ export async function createCheck(
 		async finish() {
 			// Unmount first: with the tree alive, Bun can abort at exit ("Thread Local Storage", exit 134) after every check passed. TestRoot.unmount also disposes the renderer.
 			test.unmount();
-			console.log(failures === 0 ? "all passed" : `${failures} failed`);
+			console.log(failures === 0 ? 'all passed' : `${failures} failed`);
 			process.exit(failures === 0 ? 0 : 1);
 		},
 	};

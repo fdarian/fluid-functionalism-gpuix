@@ -1,4 +1,4 @@
-import { scheme, sizeChoice } from "#/lib/theme";
+import { scheme, sizeChoice } from '#/lib/theme';
 
 /** `typeStyles` of lib/type-scale.ts: every role at both steps, in px. */
 export const typeStyles = {
@@ -54,7 +54,7 @@ export const TYPESET_SUB_INDENT = { default: 20, compact: 16 } as const;
 
 /** `border-border/40`: `color.border` is an rgba, which `withAlpha` cannot mix, so it is the 12% colour's 40% written out. */
 export function borderFainter() {
-	return scheme() === "light"
-		? "rgba(23,23,23,0.048)"
-		: "rgba(245,245,245,0.048)";
+	return scheme() === 'light'
+		? 'rgba(23,23,23,0.048)'
+		: 'rgba(245,245,245,0.048)';
 }

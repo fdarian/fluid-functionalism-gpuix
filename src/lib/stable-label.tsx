@@ -1,5 +1,5 @@
-import type { HostElement } from "@gpuix/solid";
-import { colorFade, type as scale, weight } from "./theme";
+import type { HostElement } from '@gpuix/solid';
+import { colorFade, type as scale, weight } from './theme';
 
 /**
  * A label that gains weight in place. A hidden semibold copy sits in the flow
@@ -25,17 +25,17 @@ export function StableLabel(props: {
 	const textStyle = (heavy: boolean) => ({
 		...(props.textStyle ?? scale.body),
 		fontWeight: heavy ? weight.semibold : weight.normal,
-		whiteSpace: "nowrap" as const,
+		whiteSpace: 'nowrap' as const,
 	});
 	return (
 		<div
 			ref={props.labelRef}
 			style={{
-				position: "relative",
+				position: 'relative',
 				...(props.grow === true
 					? { flexGrow: 1, minWidth: 0 }
 					: { flexShrink: 0 }),
-				...(props.truncate === true ? { overflow: "hidden" } : {}),
+				...(props.truncate === true ? { overflow: 'hidden' } : {}),
 			}}
 		>
 			<text style={{ ...textStyle(true), opacity: 0 }}>{props.text}</text>
@@ -43,11 +43,11 @@ export function StableLabel(props: {
 				testId={props.testId}
 				style={{
 					...textStyle(props.heavy),
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					...(props.truncate === true
-						? { right: 0, overflow: "hidden", textOverflow: "ellipsis" }
+						? { right: 0, overflow: 'hidden', textOverflow: 'ellipsis' }
 						: {}),
 					color: props.color,
 					...(props.fade === true ? colorFade : {}),

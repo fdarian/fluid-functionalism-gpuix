@@ -5,12 +5,12 @@ import {
 	motion,
 	type StyleDesc,
 	useIsPresent,
-} from "@gpuix/solid";
-import { createSignal, For, onCleanup, onMount, Show } from "solid-js";
-import { onFrame } from "#/lib/clock";
-import { Icon } from "#/lib/icon";
-import { defineIcon } from "#/lib/icons";
-import { color, type as scale, scheme } from "#/lib/theme";
+} from '@gpuix/solid';
+import { createSignal, For, onCleanup, onMount, Show } from 'solid-js';
+import { onFrame } from '#/lib/clock';
+import { Icon } from '#/lib/icon';
+import { defineIcon } from '#/lib/icons';
+import { color, type as scale, scheme } from '#/lib/theme';
 
 const FRAME_MS = 33;
 
@@ -71,7 +71,7 @@ export function Shimmer(props: { children: string; style?: StyleDesc }) {
 	const time = useClock();
 	// A flex item holding only a collapsible space draws nothing, so a space becomes a no-break space to keep the gap between words.
 	const letters = () =>
-		[...props.children].map((letter) => (letter === " " ? "\u00a0" : letter));
+		[...props.children].map((letter) => (letter === ' ' ? '\u00a0' : letter));
 	const stops = () => ({
 		base: hexToRgb(color.shimmerBase),
 		bright: hexToRgb(color.shimmerBright),
@@ -93,13 +93,13 @@ export function Shimmer(props: { children: string; style?: StyleDesc }) {
 	};
 
 	return (
-		<div style={{ display: "flex", flexDirection: "row" }}>
+		<div style={{ display: 'flex', flexDirection: 'row' }}>
 			<For each={letters()}>
 				{(letter, index) => (
 					<text
 						style={{
 							...props.style,
-							whiteSpace: "nowrap",
+							whiteSpace: 'nowrap',
 							color: colorAt(index()),
 						}}
 					>
@@ -119,11 +119,11 @@ export function Shimmer(props: { children: string; style?: StyleDesc }) {
  * point. circleA and circleB trace the same circle in opposite directions.
  */
 const circleA =
-	"M 12 8 C 14.21 8 16 9.79 16 12 C 16 14.21 14.21 16 12 16 C 9.79 16 8 14.21 8 12 C 8 9.79 9.79 8 12 8 Z";
+	'M 12 8 C 14.21 8 16 9.79 16 12 C 16 14.21 14.21 16 12 16 C 9.79 16 8 14.21 8 12 C 8 9.79 9.79 8 12 8 Z';
 const infinity =
-	"M 12 12 C 14 8.5 19 8.5 19 12 C 19 15.5 14 15.5 12 12 C 10 8.5 5 8.5 5 12 C 5 15.5 10 15.5 12 12 Z";
+	'M 12 12 C 14 8.5 19 8.5 19 12 C 19 15.5 14 15.5 12 12 C 10 8.5 5 8.5 5 12 C 5 15.5 10 15.5 12 12 Z';
 const circleB =
-	"M 12 16 C 14.21 16 16 14.21 16 12 C 16 9.79 14.21 8 12 8 C 9.79 8 8 9.79 8 12 C 8 14.21 9.79 16 12 16 Z";
+	'M 12 16 C 14.21 16 16 14.21 16 12 C 16 9.79 14.21 8 12 8 C 9.79 8 8 9.79 8 12 C 8 14.21 9.79 16 12 16 Z';
 
 const numbersOf = (path: string) => path.match(/-?\d+(\.\d+)?/g)?.map(Number);
 
@@ -160,8 +160,8 @@ function morphedPath(time: number) {
 				const base = 2 + curve * 6;
 				return `C ${n(base)} ${n(base + 1)} ${n(base + 2)} ${n(base + 3)} ${n(base + 4)} ${n(base + 5)}`;
 			})
-			.join(" ") +
-		" Z"
+			.join(' ') +
+		' Z'
 	);
 }
 
@@ -184,7 +184,7 @@ function MorphingGlyph(props: { size: number }) {
 
 // ─── Word slot ────────────────────────────────────────────────────────────
 
-const words = ["Thinking", "Moonwalking", "Planning", "Refining"];
+const words = ['Thinking', 'Moonwalking', 'Planning', 'Refining'];
 const WORD_INTERVAL_MS = 4000;
 const longestWord = words.reduce((a, b) => (a.length >= b.length ? a : b));
 const ROLL = scale.body.lineHeight * 0.8;
@@ -207,7 +207,7 @@ function RollingWord(props: { word: string }) {
 			animate={{ top: 0, opacity: 1 }}
 			exit={{ top: -ROLL, opacity: 0 }}
 			transition={present() ? enterTransition : exitTransition}
-			style={{ position: "absolute", left: 0 }}
+			style={{ position: 'absolute', left: 0 }}
 		>
 			<Shimmer style={scale.body}>{props.word}</Shimmer>
 		</motion.div>
@@ -239,9 +239,9 @@ export function ThinkingIndicator(props: {
 			aria-label="Thinking…"
 			testId={props.testId}
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: 8,
 				paddingLeft: 12,
 				paddingRight: 12,
@@ -266,8 +266,8 @@ export function ThinkingIndicator(props: {
 			</Show>
 			<div
 				style={{
-					position: "relative",
-					overflow: "hidden",
+					position: 'relative',
+					overflow: 'hidden',
 					height: scale.body.lineHeight,
 				}}
 			>
@@ -278,7 +278,7 @@ export function ThinkingIndicator(props: {
 				<Show
 					when={!reduced()}
 					fallback={
-						<div style={{ position: "absolute", left: 0 }}>
+						<div style={{ position: 'absolute', left: 0 }}>
 							<Shimmer style={scale.body}>{words[0]}</Shimmer>
 						</div>
 					}

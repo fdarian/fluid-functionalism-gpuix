@@ -1,7 +1,7 @@
-import { buttonProps, motion, useGpuixRequired } from "@gpuix/solid";
-import { createSignal, type JSX, Show } from "solid-js";
-import { Icon } from "#/lib/icon";
-import type { IconName } from "#/lib/icons";
+import { buttonProps, motion, useGpuixRequired } from '@gpuix/solid';
+import { createSignal, type JSX, Show } from 'solid-js';
+import { Icon } from '#/lib/icon';
+import type { IconName } from '#/lib/icons';
 import {
 	color,
 	fade,
@@ -10,17 +10,17 @@ import {
 	scheme,
 	shape,
 	motion as tween,
-} from "#/lib/theme";
-import { type FileLike, FileThumbnail } from "./file-thumbnail";
+} from '#/lib/theme';
+import { type FileLike, FileThumbnail } from './file-thumbnail';
 
 const subtitle = { fontSize: 14, lineHeight: 20 } as const;
 const ENTRANCE_RISE = 8;
 /** The meta row's `transition-opacity duration-150`. */
-const META_FADE = fade(["opacity"], 150);
+const META_FADE = fade(['opacity'], 150);
 /** The action buttons' `transition-colors duration-100` without `outline-color`: the source's focus ring is a box-shadow ring, which does not ease. */
-const ACTION_FADE = fade(["color", "background-color"], 100);
+const ACTION_FADE = fade(['color', 'background-color'], 100);
 
-export type ChatAction = "copy" | "edit" | "regenerate";
+export type ChatAction = 'copy' | 'edit' | 'regenerate';
 
 /** The 24px icon-only button the docs page puts in the meta row. */
 export function ChatMessageAction(props: {
@@ -31,11 +31,11 @@ export function ChatMessageAction(props: {
 }) {
 	const renderer = useGpuixRequired();
 	const glyph = (): IconName =>
-		props.action === "copy"
-			? "copy"
-			: props.action === "edit"
-				? "pencil"
-				: "rotate-ccw";
+		props.action === 'copy'
+			? 'copy'
+			: props.action === 'edit'
+				? 'pencil'
+				: 'rotate-ccw';
 	return (
 		<div
 			{...buttonProps({ onClick: props.onClick }, renderer)}
@@ -45,11 +45,11 @@ export function ChatMessageAction(props: {
 			style={{
 				width: 24,
 				height: 24,
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
 				borderRadius: shape.button,
-				cursor: "pointer",
+				cursor: 'pointer',
 				keyboardFocusDim: false,
 				color: color.mutedForeground,
 				...ACTION_FADE,
@@ -68,7 +68,7 @@ export function ChatMessageAction(props: {
  * the bubble and a meta row (timestamp, then actions) fades in on hover.
  */
 export function ChatMessage(props: {
-	from: "user" | "assistant";
+	from: 'user' | 'assistant';
 	files?: FileLike[];
 	thumbnailSize?: number;
 	/** User messages only; pre-formatted by the caller. */
@@ -83,7 +83,7 @@ export function ChatMessage(props: {
 	const [hovered, setHovered] = createSignal(false);
 	const [focusWithin, setFocusWithin] = createSignal(false);
 	const revealed = () => hovered() || focusWithin();
-	const isUser = () => props.from === "user";
+	const isUser = () => props.from === 'user';
 	const showTime = () => isUser() && props.time !== undefined;
 	const hasMeta = () => showTime() || props.actions !== undefined;
 	return (
@@ -97,23 +97,23 @@ export function ChatMessage(props: {
 			onFocusIn={() => setFocusWithin(true)}
 			onFocusOut={() => setFocusWithin(false)}
 			style={{
-				position: "relative",
-				display: "flex",
-				flexDirection: "column",
+				position: 'relative',
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 6,
-				maxWidth: props.fullWidth === true ? "100%" : "80%",
-				alignItems: isUser() ? "flex-end" : "flex-start",
-				alignSelf: isUser() ? "flex-end" : "flex-start",
+				maxWidth: props.fullWidth === true ? '100%' : '80%',
+				alignItems: isUser() ? 'flex-end' : 'flex-start',
+				alignSelf: isUser() ? 'flex-end' : 'flex-start',
 			}}
 		>
 			<Show when={props.files !== undefined && props.files.length > 0}>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						flexWrap: "wrap",
+						display: 'flex',
+						flexDirection: 'row',
+						flexWrap: 'wrap',
 						gap: 6,
-						justifyContent: isUser() ? "flex-end" : "flex-start",
+						justifyContent: isUser() ? 'flex-end' : 'flex-start',
 					}}
 				>
 					{props.files?.map((file) => (
@@ -121,7 +121,7 @@ export function ChatMessage(props: {
 					))}
 				</div>
 			</Show>
-			<Show when={props.children !== undefined && props.children !== ""}>
+			<Show when={props.children !== undefined && props.children !== ''}>
 				<div
 					style={{
 						paddingTop: 8,
@@ -136,7 +136,7 @@ export function ChatMessage(props: {
 							: {}),
 					}}
 				>
-					{typeof props.children === "string" ? (
+					{typeof props.children === 'string' ? (
 						<text style={{ ...subtitle, color: color.foreground }}>
 							{props.children}
 						</text>
@@ -151,14 +151,14 @@ export function ChatMessage(props: {
 					style={{
 						opacity: revealed() ? 1 : 0,
 						...META_FADE,
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
 						gap: 8,
 						paddingLeft: 4,
 						paddingRight: 4,
-						userSelect: "none",
-						pointerEvents: revealed() ? "auto" : "none",
+						userSelect: 'none',
+						pointerEvents: revealed() ? 'auto' : 'none',
 					}}
 				>
 					<Show when={showTime()}>
@@ -166,7 +166,7 @@ export function ChatMessage(props: {
 							style={{
 								...scale.caption,
 								color: color.mutedForeground,
-								fontVariantNumeric: "tabular-nums",
+								fontVariantNumeric: 'tabular-nums',
 							}}
 						>
 							{props.time}
@@ -175,9 +175,9 @@ export function ChatMessage(props: {
 					<Show when={props.actions !== undefined}>
 						<div
 							style={{
-								display: "flex",
-								flexDirection: "row",
-								alignItems: "center",
+								display: 'flex',
+								flexDirection: 'row',
+								alignItems: 'center',
 								gap: 2,
 							}}
 						>

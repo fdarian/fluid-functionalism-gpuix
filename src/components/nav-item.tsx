@@ -4,14 +4,14 @@ import {
 	type HostElement,
 	type KeyEvent,
 	useGpuixRequired,
-} from "@gpuix/solid";
-import { createEffect, onCleanup, Show } from "solid-js";
-import { Icon } from "#/lib/icon";
-import type { IconRef } from "#/lib/icons";
-import { moveIndex } from "#/lib/list-nav";
-import { StableLabel } from "#/lib/stable-label";
-import { color, type as scale, shape, sizeChoice } from "#/lib/theme";
-import { useNavMenu } from "./nav-menu";
+} from '@gpuix/solid';
+import { createEffect, onCleanup, Show } from 'solid-js';
+import { Icon } from '#/lib/icon';
+import type { IconRef } from '#/lib/icons';
+import { moveIndex } from '#/lib/list-nav';
+import { StableLabel } from '#/lib/stable-label';
+import { color, type as scale, shape, sizeChoice } from '#/lib/theme';
+import { useNavMenu } from './nav-menu';
 
 const sizes = {
 	default: { height: 32, text: scale.body, icon: 16 },
@@ -19,7 +19,7 @@ const sizes = {
 } as const;
 
 /** Tailwind blue-500, the source's default status dot. */
-const BLUE_DOT = "#3b82f6";
+const BLUE_DOT = '#3b82f6';
 
 /**
  * One link of a NavMenu. `slug` stands in for the source's `href`: the menu
@@ -44,7 +44,7 @@ export function NavItem(props: {
 	let element: HostElement | undefined;
 
 	createEffect(() => {
-		if (element === undefined) throw new Error("Nav item is not mounted");
+		if (element === undefined) throw new Error('Nav item is not mounted');
 		scope.hover.registerItem(props.index, element);
 		scope.elements.set(props.index, element);
 		onCleanup(() => {
@@ -82,13 +82,13 @@ export function NavItem(props: {
 				string,
 				1 | -1 | undefined
 			>
-		)[event.key ?? ""];
+		)[event.key ?? ''];
 		const target =
 			step !== undefined
 				? (moveIndex(props.index, step, count) ?? undefined)
-				: event.key === "Home"
+				: event.key === 'Home'
 					? 0
-					: event.key === "End"
+					: event.key === 'End'
 						? count - 1
 						: undefined;
 		if (target === undefined) return;
@@ -113,7 +113,7 @@ export function NavItem(props: {
 				renderer,
 			)}
 			role="link"
-			aria-current={isActiveRoute() ? "page" : undefined}
+			aria-current={isActiveRoute() ? 'page' : undefined}
 			testId={props.testId}
 			onFocus={(event: DomEvent) => {
 				scope.focusRing.focus(props.index, event);
@@ -128,18 +128,18 @@ export function NavItem(props: {
 				if (!scope.mouseInside()) scope.hover.setActiveIndex(null);
 			}}
 			style={{
-				position: "relative",
+				position: 'relative',
 				zIndex: 10,
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: 8,
 				flexShrink: 0,
 				height: metrics().height,
 				paddingLeft: 12,
 				paddingRight: 12,
 				borderRadius: shape.item,
-				cursor: "pointer",
+				cursor: 'pointer',
 				keyboardFocusDim: false,
 			}}
 		>

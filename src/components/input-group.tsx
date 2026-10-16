@@ -1,4 +1,4 @@
-import { type HostElement, useGpuixRequired } from "@gpuix/solid";
+import { type HostElement, useGpuixRequired } from '@gpuix/solid';
 import {
 	type Accessor,
 	createContext,
@@ -6,22 +6,26 @@ import {
 	type JSX,
 	Show,
 	useContext,
-} from "solid-js";
-import { createFluidHover, type FluidHover, useHoverItem } from "#/lib/fluid-hover";
-import { Icon } from "#/lib/icon";
-import type { IconRef } from "#/lib/icons";
+} from 'solid-js';
+import {
+	createFluidHover,
+	type FluidHover,
+	useHoverItem,
+} from '#/lib/fluid-hover';
+import { Icon } from '#/lib/icon';
+import type { IconRef } from '#/lib/icons';
 import {
 	color,
 	colorFade,
 	height,
+	type as scale,
 	shape,
 	sizeChoice,
-	type as scale,
 	weight,
 	withAlpha,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
-export type InputSize = "default" | "compact";
+export type InputSize = 'default' | 'compact';
 
 const steps = {
 	default: {
@@ -58,7 +62,7 @@ const GroupContext = createContext<GroupScope>();
 function useGroup(): GroupScope {
 	const scope = useContext(GroupContext);
 	if (scope === undefined) {
-		throw new Error("InputField must be used within an InputGroup");
+		throw new Error('InputField must be used within an InputGroup');
 	}
 	return scope;
 }
@@ -82,9 +86,9 @@ export function InputGroup(props: {
 			<div
 				{...hover.containerProps}
 				style={{
-					position: "relative",
-					display: "flex",
-					flexDirection: "column",
+					position: 'relative',
+					display: 'flex',
+					flexDirection: 'column',
 					gap: 12,
 					width: 288,
 					minWidth: 0,
@@ -142,7 +146,7 @@ export function InputField(props: {
 
 	const focusInput = () => {
 		if (inputElement === undefined) {
-			throw new Error("InputField input is not mounted");
+			throw new Error('InputField input is not mounted');
 		}
 		renderer.focusElement?.(inputElement.id);
 	};
@@ -154,11 +158,11 @@ export function InputField(props: {
 			}}
 			testId={props.testId}
 			style={{
-				display: "flex",
-				flexDirection: "column",
-				cursor: "text",
+				display: 'flex',
+				flexDirection: 'column',
+				cursor: 'text',
 				opacity: props.disabled ? 0.5 : 1,
-				pointerEvents: props.disabled ? "none" : undefined,
+				pointerEvents: props.disabled ? 'none' : undefined,
 			}}
 		>
 			<Show when={!props.labelHidden}>
@@ -183,10 +187,10 @@ export function InputField(props: {
 			<div
 				onClick={focusInput}
 				style={{
-					position: "relative",
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					position: 'relative',
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					gap: step().gap,
 					height: step().height,
 					paddingLeft: step().padX,
@@ -196,7 +200,7 @@ export function InputField(props: {
 				{/* The fill is its own layer, and pass-through: an absolute box paints above its in-flow siblings, as in a browser, so the icon and input are `position: relative` to paint over it, and it must not take the press meant for the input. */}
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 0,
 						left: 0,
 						right: 0,
@@ -207,12 +211,14 @@ export function InputField(props: {
 						outlineOffset: 0,
 						backgroundColor: fill().bg,
 						...colorFade,
-						pointerEvents: "none",
+						pointerEvents: 'none',
 					}}
 				/>
 				<Show when={props.icon}>
 					{(name: Accessor<IconRef>) => (
-						<div style={{ position: "relative", display: "flex", flexShrink: 0 }}>
+						<div
+							style={{ position: 'relative', display: 'flex', flexShrink: 0 }}
+						>
 							<Icon
 								name={name()}
 								size={step().icon}
@@ -246,12 +252,12 @@ export function InputField(props: {
 					onBlur={() => setFocused(false)}
 					onChange={(event) => {
 						if (event.value === undefined) {
-							throw new Error("InputField change without a value");
+							throw new Error('InputField change without a value');
 						}
 						props.onChange(event.value);
 					}}
 					style={{
-						position: "relative",
+						position: 'relative',
 						flexGrow: 1,
 						minWidth: 0,
 						height: 24,

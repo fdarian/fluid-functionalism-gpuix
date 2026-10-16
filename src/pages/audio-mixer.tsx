@@ -1,25 +1,25 @@
-import { createSignal, type JSX } from "solid-js";
-import { Slider, type SliderValue } from "#/components/slider";
-import type { ShotContext } from "#/lib/demo";
-import { color, siteType, weight } from "#/lib/theme";
+import { createSignal, type JSX } from 'solid-js';
+import { Slider, type SliderValue } from '#/components/slider';
+import type { ShotContext } from '#/lib/demo';
+import { color, siteType, weight } from '#/lib/theme';
 
-export const title = "Audio Mixer";
-export const group = "Pages";
+export const title = 'Audio Mixer';
+export const group = 'Pages';
 export const order = 20;
-export const layout = "docs";
-export const listed = "menu";
-export const menuIcon = "sliders-horizontal";
-export const menuKeywords = ["mixer", "eq", "audio", "slider"];
+export const layout = 'docs';
+export const listed = 'menu';
+export const menuIcon = 'sliders-horizontal';
+export const menuKeywords = ['mixer', 'eq', 'audio', 'slider'];
 
 /** One screenshot per scroll: the last stops at the page end, so it shows Settings and Master Controls together. */
 const SCROLL_STEP = 560;
 
 export async function scenarios(shot: ShotContext) {
 	for (const name of [
-		"parametric-eq",
-		"compressor",
-		"effects-sends",
-		"settings",
+		'parametric-eq',
+		'compressor',
+		'effects-sends',
+		'settings',
 	]) {
 		await shot.scroll(400, 400, 0, SCROLL_STEP);
 		await shot.settle(200);
@@ -27,17 +27,17 @@ export async function scenarios(shot: ShotContext) {
 	}
 }
 
-const QUALITY_LABELS = ["Off", "Low", "Medium", "High", "Ultra"];
-const REVERB_TYPES = ["Room", "Hall", "Plate", "Spring", "Chamber"];
-const FILTER_MODES = ["LP", "BP", "HP", "Notch"];
+const QUALITY_LABELS = ['Off', 'Low', 'Medium', 'High', 'Ultra'];
+const REVERB_TYPES = ['Room', 'Hall', 'Plate', 'Spring', 'Chamber'];
+const FILTER_MODES = ['LP', 'BP', 'HP', 'Notch'];
 
 function numberState(initial: number) {
 	const [value, setValue] = createSignal(initial);
 	return {
 		value,
 		set(next: SliderValue) {
-			if (typeof next !== "number") {
-				throw new Error("A single-thumb slider reported a range");
+			if (typeof next !== 'number') {
+				throw new Error('A single-thumb slider reported a range');
 			}
 			setValue(next);
 		},
@@ -49,8 +49,8 @@ function rangeState(initial: [number, number]) {
 	return {
 		value,
 		set(next: SliderValue) {
-			if (typeof next === "number") {
-				throw new Error("A range slider reported a single value");
+			if (typeof next === 'number') {
+				throw new Error('A range slider reported a single value');
 			}
 			setValue(next);
 		},
@@ -67,7 +67,7 @@ const percent = (v: number) => `${v}%`;
 
 function decibels(v: number) {
 	const db = ((v - 50) / 50) * 12;
-	return `${db >= 0 ? "+" : ""}${db.toFixed(1)} dB`;
+	return `${db >= 0 ? '+' : ''}${db.toFixed(1)} dB`;
 }
 
 function hertz(v: number) {
@@ -76,7 +76,7 @@ function hertz(v: number) {
 
 function Section(props: { title: string; gap: number; children: JSX.Element }) {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 			<text
 				style={{
 					fontSize: 15,
@@ -89,8 +89,8 @@ function Section(props: { title: string; gap: number; children: JSX.Element }) {
 			</text>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					gap: props.gap,
 				}}
 			>
@@ -140,7 +140,7 @@ export function Page(): JSX.Element {
 	const dynamicRange = rangeState([20, 80]);
 
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 48 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
 			{/* The page heading is `App`'s, a column gap above; the source sets it 4px above the subtitle. */}
 			<div style={{ marginTop: -20 }}>
 				<text style={{ ...siteType.body, color: color.mutedForeground }}>
@@ -383,7 +383,7 @@ export function Page(): JSX.Element {
 					min={0}
 					max={100}
 					formatValue={(v) => {
-						if (v === 50) return "C";
+						if (v === 50) return 'C';
 						return v < 50 ? `L${50 - v}` : `R${v - 50}`;
 					}}
 				/>

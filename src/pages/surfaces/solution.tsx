@@ -1,44 +1,44 @@
-import type { HostMouseMoveEvent } from "@gpuix/solid";
-import { createSignal, For, type JSX, Show } from "solid-js";
-import { ScrollArea } from "#/components/scroll-area";
-import { Slider, type SliderValue } from "#/components/slider";
-import { ComponentPreview, MONO } from "#/lib/doc-page";
+import type { HostMouseMoveEvent } from '@gpuix/solid';
+import { createSignal, For, type JSX, Show } from 'solid-js';
+import { ScrollArea } from '#/components/scroll-area';
+import { Slider, type SliderValue } from '#/components/slider';
+import { ComponentPreview, MONO } from '#/lib/doc-page';
 import {
 	color,
 	fade,
 	radius,
 	SchemeScope,
-	shadow,
 	type as scale,
+	shadow,
 	siteType,
 	surface,
 	weight,
-} from "#/lib/theme";
-import { Elevated, SurfaceProvider } from "./elevated";
-import { LOCK_ICON, type MenuOption, SurfaceMenu } from "./role-menu";
+} from '#/lib/theme';
+import { Elevated, SurfaceProvider } from './elevated';
+import { LOCK_ICON, type MenuOption, SurfaceMenu } from './role-menu';
 import {
 	ELEVATED_SOURCE,
 	ELEVATION_STACK_CODE,
 	SUBSTRATE_CODE,
 	TOKENS_CSS,
-} from "./snippets";
+} from './snippets';
 
 const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8] as const;
 
 /** The dark ladder, for the labels of the demos that name raw colours. */
 const SURFACE_HEX_DARK: Record<number, string> = {
-	1: "#171717",
-	2: "#1E1E1E",
-	3: "#252525",
-	4: "#2C2C2C",
-	5: "#333333",
-	6: "#3A3A3A",
-	7: "#414141",
-	8: "#484848",
+	1: '#171717',
+	2: '#1E1E1E',
+	3: '#252525',
+	4: '#2C2C2C',
+	5: '#333333',
+	6: '#3A3A3A',
+	7: '#414141',
+	8: '#484848',
 };
 
 /** `border-border/40` in dark: `border` is the foreground at 12%. */
-const BORDER_40_DARK = "rgba(245,245,245,0.048)";
+const BORDER_40_DARK = 'rgba(245,245,245,0.048)';
 
 function MicroText(props: {
 	children: string;
@@ -65,9 +65,9 @@ function SurfaceChip(props: { level: number }) {
 		<div
 			style={{
 				flexShrink: 0,
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
 				gap: 8,
 			}}
 		>
@@ -87,12 +87,12 @@ function SurfaceChip(props: { level: number }) {
 	);
 }
 
-function LadderRow(props: { scheme: "dark" | "light" }) {
+function LadderRow(props: { scheme: 'dark' | 'light' }) {
 	return (
 		<SchemeScope scheme={props.scheme}>
-			<div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+			<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
 				<MicroText semibold color={color.mutedForeground}>
-					{props.scheme === "dark" ? "Dark" : "Light"}
+					{props.scheme === 'dark' ? 'Dark' : 'Light'}
 				</MicroText>
 				<ScrollArea
 					orientation="horizontal"
@@ -103,8 +103,8 @@ function LadderRow(props: { scheme: "dark" | "light" }) {
 					<div
 						style={{
 							flexShrink: 0,
-							display: "flex",
-							flexDirection: "row",
+							display: 'flex',
+							flexDirection: 'row',
 							gap: 12,
 							padding: 16,
 						}}
@@ -127,9 +127,9 @@ export function TokensDemo() {
 		>
 			<div
 				style={{
-					width: "100%",
-					display: "flex",
-					flexDirection: "column",
+					width: '100%',
+					display: 'flex',
+					flexDirection: 'column',
 					gap: 16,
 				}}
 			>
@@ -141,24 +141,24 @@ export function TokensDemo() {
 }
 
 const SUBSTRATE_ITEMS: readonly MenuOption[] = [
-	{ icon: "star", label: "Favorites" },
-	{ icon: "clock", label: "Recents" },
-	{ icon: LOCK_ICON, label: "Private" },
+	{ icon: 'star', label: 'Favorites' },
+	{ icon: 'clock', label: 'Recents' },
+	{ icon: LOCK_ICON, label: 'Private' },
 ];
 
 const SUBSTRATE_SCENARIOS = [
-	{ substrate: 1, label: "On the page" },
-	{ substrate: 3, label: "Inside a popover" },
-	{ substrate: 5, label: "Inside a dialog" },
+	{ substrate: 1, label: 'On the page' },
+	{ substrate: 3, label: 'Inside a popover' },
+	{ substrate: 5, label: 'Inside a dialog' },
 ] as const;
 
 function SwatchRow(props: { label: string; hex: string }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: 8,
 			}}
 		>
@@ -192,9 +192,9 @@ function ValueRow(props: {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: 8,
 				paddingTop: props.paddingTop,
 			}}
@@ -220,9 +220,9 @@ export function SubstrateDemo() {
 		>
 			<div
 				style={{
-					width: "100%",
-					display: "flex",
-					flexDirection: "row",
+					width: '100%',
+					display: 'flex',
+					flexDirection: 'row',
 					gap: 12,
 				}}
 			>
@@ -233,15 +233,15 @@ export function SubstrateDemo() {
 								flexGrow: 1,
 								flexBasis: 0,
 								minWidth: 0,
-								display: "flex",
-								flexDirection: "column",
+								display: 'flex',
+								flexDirection: 'column',
 								gap: 12,
 							}}
 						>
 							<div
 								style={{
-									display: "flex",
-									flexDirection: "column",
+									display: 'flex',
+									flexDirection: 'column',
 									gap: 12,
 									padding: 16,
 									borderRadius: 16,
@@ -269,8 +269,8 @@ export function SubstrateDemo() {
 							</div>
 							<div
 								style={{
-									display: "flex",
-									flexDirection: "column",
+									display: 'flex',
+									flexDirection: 'column',
 									gap: 4,
 									paddingLeft: 4,
 									paddingRight: 4,
@@ -306,8 +306,8 @@ function PanelLabel(props: { children: string }) {
 
 export function ElevatedDemo() {
 	const panel = {
-		display: "flex",
-		flexDirection: "column",
+		display: 'flex',
+		flexDirection: 'column',
 		gap: 12,
 		padding: 20,
 		borderRadius: 16,
@@ -321,7 +321,7 @@ export function ElevatedDemo() {
 		>
 			<div
 				style={{
-					width: "100%",
+					width: '100%',
 					maxWidth: 480,
 					...panel,
 					backgroundColor: surface(1),
@@ -356,11 +356,11 @@ function LayerBox(props: {
 	const innermost = () => props.level === props.high;
 	const style = () =>
 		({
-			position: "relative",
-			display: "flex",
-			flexDirection: "row",
-			alignItems: "center",
-			justifyContent: "center",
+			position: 'relative',
+			display: 'flex',
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'center',
 			padding: 24,
 			borderRadius: 16,
 			width: innermost() ? 96 : undefined,
@@ -376,13 +376,13 @@ function LayerBox(props: {
 					},
 				};
 	const label = (
-		<div style={{ position: "absolute", top: 8, left: 10 }}>
+		<div style={{ position: 'absolute', top: 8, left: 10 }}>
 			<text
 				style={{
 					...siteType.caption,
 					color: color.mutedForeground,
 					opacity: !props.ghost && hoveredLevel() === props.level ? 1 : 0,
-					...fade(["opacity"], 150),
+					...fade(['opacity'], 150),
 				}}
 			>
 				{`surface-${props.level}`}
@@ -447,7 +447,7 @@ export function ElevationStackDemo() {
 	const bounds = () => {
 		const value = range();
 		if (!Array.isArray(value)) {
-			throw new Error("The elevation slider holds a range");
+			throw new Error('The elevation slider holds a range');
 		}
 		return value;
 	};
@@ -460,9 +460,9 @@ export function ElevationStackDemo() {
 		>
 			<div
 				style={{
-					width: "100%",
-					display: "flex",
-					flexDirection: "column",
+					width: '100%',
+					display: 'flex',
+					flexDirection: 'column',
 					gap: 24,
 				}}
 			>
@@ -470,26 +470,26 @@ export function ElevationStackDemo() {
 				<div
 					onMouseLeave={() => setHoveredLevel(null)}
 					style={{
-						position: "relative",
-						width: "100%",
+						position: 'relative',
+						width: '100%',
 						maxWidth: 520,
-						alignSelf: "center",
+						alignSelf: 'center',
 					}}
 				>
-					<div style={{ opacity: 0, pointerEvents: "none" }}>
+					<div style={{ opacity: 0, pointerEvents: 'none' }}>
 						<Layers level={1} high={8} base ghost />
 					</div>
 					<div
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							top: 0,
 							left: 0,
 							right: 0,
 							bottom: 0,
-							display: "flex",
-							flexDirection: "column",
-							alignItems: "center",
-							justifyContent: "center",
+							display: 'flex',
+							flexDirection: 'column',
+							alignItems: 'center',
+							justifyContent: 'center',
 						}}
 					>
 						<Layers level={bounds()[0]} high={bounds()[1]} base ghost={false} />
@@ -497,9 +497,9 @@ export function ElevationStackDemo() {
 				</div>
 				<div
 					style={{
-						width: "100%",
+						width: '100%',
 						maxWidth: 520,
-						alignSelf: "center",
+						alignSelf: 'center',
 						paddingLeft: 4,
 						paddingRight: 4,
 						paddingBottom: 8,

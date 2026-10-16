@@ -1,22 +1,21 @@
-import type { HostElement } from "@gpuix/solid";
+import type { HostElement } from '@gpuix/solid';
+import { createContext, createEffect, type JSX, useContext } from 'solid-js';
+import { FluidHighlight } from '#/lib/fluid-highlight';
 import {
-	createContext,
-	createEffect,
-	type JSX,
-	useContext,
-} from "solid-js";
-import { FluidHighlight } from "#/lib/fluid-highlight";
-import { createFluidHover, type FluidHover, useHoverItem } from "#/lib/fluid-hover";
+	createFluidHover,
+	type FluidHover,
+	useHoverItem,
+} from '#/lib/fluid-hover';
 import {
 	color,
 	colorFade,
 	fade,
-	sizeChoice,
 	type as scale,
+	sizeChoice,
 	weight,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
-export type TableSize = "default" | "compact";
+export type TableSize = 'default' | 'compact';
 
 const cellMetrics = {
 	default: { padX: 12, padY: 8, text: scale.body },
@@ -32,7 +31,7 @@ const TableScopeContext = createContext<TableScope>();
 
 function useTableScope() {
 	const scope = useContext(TableScopeContext);
-	if (scope === undefined) throw new Error("Must be used inside Table");
+	if (scope === undefined) throw new Error('Must be used inside Table');
 	return scope;
 }
 
@@ -46,7 +45,7 @@ const RowContext = createContext<RowState>();
 
 function useRowState() {
 	const row = useContext(RowContext);
-	if (row === undefined) throw new Error("Must be used inside TableRow");
+	if (row === undefined) throw new Error('Must be used inside TableRow');
 	return row;
 }
 
@@ -76,10 +75,10 @@ export function Table(props: {
 				testId={props.testId}
 				{...hover.containerProps}
 				style={{
-					position: "relative",
-					display: "flex",
-					flexDirection: "column",
-					width: "100%",
+					position: 'relative',
+					display: 'flex',
+					flexDirection: 'column',
+					width: '100%',
 				}}
 			>
 				<FluidHighlight
@@ -99,7 +98,7 @@ export function Table(props: {
 
 export function TableHeader(props: { children: JSX.Element }) {
 	return (
-		<div style={{ display: "flex", flexDirection: "column" }}>
+		<div style={{ display: 'flex', flexDirection: 'column' }}>
 			{props.children}
 		</div>
 	);
@@ -107,7 +106,7 @@ export function TableHeader(props: { children: JSX.Element }) {
 
 export function TableBody(props: { children: JSX.Element }) {
 	return (
-		<div style={{ display: "flex", flexDirection: "column" }}>
+		<div style={{ display: 'flex', flexDirection: 'column' }}>
 			{props.children}
 		</div>
 	);
@@ -149,13 +148,13 @@ export function TableRow(props: {
 					rowElement = element;
 				}}
 				style={{
-					position: "relative",
+					position: 'relative',
 					zIndex: 10,
-					display: "flex",
-					flexDirection: "row",
+					display: 'flex',
+					flexDirection: 'row',
 					borderBottomWidth: 1,
 					borderColor: hideBorder() ? color.transparent : color.accentFaint,
-					...fade(["border-color"], 80),
+					...fade(['border-color'], 80),
 				}}
 			>
 				{props.children}
@@ -198,8 +197,8 @@ function Cell(props: CellOptions & { header: boolean }) {
 					color: textColor(),
 					...(props.header ? {} : colorFade),
 					fontWeight: props.header ? weight.semibold : weight.normal,
-					textAlign: props.alignRight ? "right" : "left",
-					fontVariantNumeric: props.tabularNums ? "tabular-nums" : "normal",
+					textAlign: props.alignRight ? 'right' : 'left',
+					fontVariantNumeric: props.tabularNums ? 'tabular-nums' : 'normal',
 				}}
 			>
 				{props.children}

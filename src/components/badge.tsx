@@ -1,29 +1,29 @@
-import { type JSX, Show } from "solid-js";
-import { color, sizeChoice, shape, type as scale, weight } from "#/lib/theme";
+import { type JSX, Show } from 'solid-js';
+import { color, type as scale, shape, sizeChoice, weight } from '#/lib/theme';
 
 export const badgeColors = {
-	gray: "#a3a3a3",
-	red: "#ef4444",
-	orange: "#f97316",
-	amber: "#f59e0b",
-	yellow: "#eab308",
-	lime: "#84cc16",
-	green: "#22c55e",
-	emerald: "#10b981",
-	teal: "#14b8a6",
-	cyan: "#06b6d4",
-	blue: "#3b82f6",
-	indigo: "#6366f1",
-	violet: "#8b5cf6",
-	purple: "#a855f7",
-	fuchsia: "#d946ef",
-	pink: "#ec4899",
-	rose: "#f43f5e",
+	gray: '#a3a3a3',
+	red: '#ef4444',
+	orange: '#f97316',
+	amber: '#f59e0b',
+	yellow: '#eab308',
+	lime: '#84cc16',
+	green: '#22c55e',
+	emerald: '#10b981',
+	teal: '#14b8a6',
+	cyan: '#06b6d4',
+	blue: '#3b82f6',
+	indigo: '#6366f1',
+	violet: '#8b5cf6',
+	purple: '#a855f7',
+	fuchsia: '#d946ef',
+	pink: '#ec4899',
+	rose: '#f43f5e',
 } as const;
 
 export type BadgeColor = keyof typeof badgeColors;
-export type BadgeVariant = "solid" | "dot";
-export type BadgeSize = "default" | "compact";
+export type BadgeVariant = 'solid' | 'dot';
+export type BadgeSize = 'default' | 'compact';
 
 const sizes = {
 	default: { height: 24, padX: 10, gap: 6, text: scale.caption, dot: 7 },
@@ -50,16 +50,17 @@ export function Badge(props: {
 	children: JSX.Element;
 }) {
 	const size = () => sizes[props.size ?? sizeChoice()];
-	const hue = () => badgeColors[props.color ?? "gray"];
-	const solid = () => (props.variant ?? "solid") === "solid";
+	const hue = () => badgeColors[props.color ?? 'gray'];
+	const solid = () => (props.variant ?? 'solid') === 'solid';
 
 	const fill = () => {
 		if (!solid()) return color.transparent;
-		if (props.color === undefined || props.color === "gray") return color.accent;
+		if (props.color === undefined || props.color === 'gray')
+			return color.accent;
 		return mix(hue(), color.background, 0.15);
 	};
 	const dotColor = () =>
-		props.color === undefined || props.color === "gray"
+		props.color === undefined || props.color === 'gray'
 			? color.mutedForeground
 			: hue();
 
@@ -81,7 +82,7 @@ export function Badge(props: {
 					...size().text,
 					color: color.foreground,
 					fontWeight: weight.normal,
-					whiteSpace: "nowrap",
+					whiteSpace: 'nowrap',
 				}}
 			>
 				{props.children}
@@ -93,9 +94,9 @@ export function Badge(props: {
 		<div
 			testId={props.testId}
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				flexShrink: 0,
 				height: size().height,
 				paddingLeft: size().padX,

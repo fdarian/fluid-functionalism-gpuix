@@ -13,34 +13,30 @@
  * Real time, not the test clock: fluid hover measures on timers and motion
  * samples a wall clock, so each step runs frames until they settle.
  */
-import { mkdirSync } from "node:fs";
-import { createTestRoot } from "@gpuix/solid/testing";
-import { App } from "#/app";
-import { showcaseScenarios } from "#/home/scenarios";
+import { mkdirSync } from 'node:fs';
+import { createTestRoot } from '@gpuix/solid/testing';
+import { App } from '#/app';
+import { showcaseScenarios } from '#/home/scenarios';
 import {
 	type Demo,
 	loadDemos,
 	loadPages,
 	type Page,
 	type ShotContext,
-} from "#/lib/demo";
-import { fonts } from "#/lib/fonts";
-import {
-	setShapeChoice,
-	setSizeChoice,
-	setThemeChoice,
-} from "#/lib/theme";
+} from '#/lib/demo';
+import { fonts } from '#/lib/fonts';
+import { setShapeChoice, setSizeChoice, setThemeChoice } from '#/lib/theme';
 
 const slug = process.argv[2];
 const demos = await loadDemos();
 const pages = await loadPages(demos);
 const names = [
-	"showcase",
+	'showcase',
 	...demos.map((demo) => demo.slug),
 	...pages.map((page) => page.slug),
 ];
 if (slug === undefined || !names.includes(slug)) {
-	console.error(`usage: bun scripts/screenshots.tsx <${names.join("|")}>`);
+	console.error(`usage: bun scripts/screenshots.tsx <${names.join('|')}>`);
 	process.exit(1);
 }
 const demo: Demo | Page | undefined = [...demos, ...pages].find(
@@ -56,7 +52,7 @@ const test = createTestRoot({
 	width: 1240,
 	height: 780,
 	fonts,
-	appearance: "dark",
+	appearance: 'dark',
 });
 const renderer = test.renderer;
 
@@ -91,17 +87,17 @@ function capture(name: string) {
 }
 
 const relationKeys = [
-	"labelled_by",
-	"described_by",
-	"controls",
-	"owns",
-	"details",
-	"flow_to",
+	'labelled_by',
+	'described_by',
+	'controls',
+	'owns',
+	'details',
+	'flow_to',
 ] as const;
 
 function idOf(testId: string) {
 	const id = renderer.findByTestId(testId)?.customProps?.id;
-	if (typeof id !== "string") throw new Error(`${testId} has no id`);
+	if (typeof id !== 'string') throw new Error(`${testId} has no id`);
 	return id;
 }
 
@@ -131,7 +127,7 @@ function ariaNode(target: string) {
 	return undefined;
 }
 
-function expectAppearance(expected: "light" | "dark") {
+function expectAppearance(expected: 'light' | 'dark') {
 	const actual = renderer.getAppearance();
 	if (actual !== expected) {
 		throw new Error(`window appearance: expected ${expected}, got ${actual}`);
@@ -162,7 +158,7 @@ const shot: ShotContext = {
 			frame?: { tab_stop_count?: number };
 		};
 		const count = tree.frame?.tab_stop_count;
-		if (count === undefined) throw new Error("the frame reports no tab stops");
+		if (count === undefined) throw new Error('the frame reports no tab stops');
 		return count;
 	},
 	hasAriaNode(target) {
@@ -218,7 +214,7 @@ const shot: ShotContext = {
 		const found = renderer.getAllText().some((line) => line.includes(text));
 		if (found !== present) {
 			throw new Error(
-				`expected "${text}" to be ${present ? "present" : "absent"}`,
+				`expected "${text}" to be ${present ? 'present' : 'absent'}`,
 			);
 		}
 	},
@@ -226,49 +222,49 @@ const shot: ShotContext = {
 };
 
 // The window starts Dark and the theme stays on "System", so the first captures also prove `createAppearance` feeds the scheme.
-expectAppearance("dark");
+expectAppearance('dark');
 test.render(() => <App demos={demos} pages={pages} initialPage={slug} />);
 // Fluid hover measures on timers after the first frame; 400 ms leaves the first highlight unpainted.
 await settle(800);
-expectAppearance("dark");
-capture("initial");
+expectAppearance('dark');
+capture('initial');
 
-await (slug === "showcase" ? showcaseScenarios : demo?.scenarios)?.(shot);
+await (slug === 'showcase' ? showcaseScenarios : demo?.scenarios)?.(shot);
 
 // The same page with Radius on Pill. Set directly: it must work on full pages, which have no Radius select.
-setShapeChoice("pill");
+setShapeChoice('pill');
 await settle(600);
-capture("pill");
-setShapeChoice("rounded");
+capture('pill');
+setShapeChoice('rounded');
 await settle(600);
 
 // And with Size on Compact, set directly for the same reason.
-setSizeChoice("compact");
+setSizeChoice('compact');
 await settle(600);
-capture("compact");
-setSizeChoice("default");
+capture('compact');
+setSizeChoice('default');
 await settle(600);
 
 // Back to a neutral pointer, then flip the theme through the real control.
 await shot.moveTo(1180, 700);
 if (
 	demo !== undefined &&
-	"layout" in demo &&
-	(demo.layout === "full" || demo.Rail !== undefined)
+	'layout' in demo &&
+	(demo.layout === 'full' || demo.Rail !== undefined)
 ) {
 	// A full-layout page has no right column, and a page with its own rail has no theme select: neither has a control to drive.
-	setThemeChoice("light");
+	setThemeChoice('light');
 	await settle(600);
 } else {
 	// A scenario may have scrolled the controls column; the theme select sits at its top.
 	await shot.scroll(1080, 300, 0, -100000);
-	await shot.click("theme");
-	await shot.click("theme-option-light");
+	await shot.click('theme');
+	await shot.click('theme-option-light');
 }
 await shot.moveTo(1180, 700);
-expectAppearance("light");
-capture("light");
+expectAppearance('light');
+capture('light');
 
-console.log("screenshots written to", outDir);
+console.log('screenshots written to', outDir);
 test.unmount();
 process.exit(0);

@@ -2,7 +2,7 @@ import {
 	createReducedMotion,
 	type HostElement,
 	IntersectionObserver,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	type Accessor,
 	createContext,
@@ -12,23 +12,23 @@ import {
 	onCleanup,
 	Show,
 	useContext,
-} from "solid-js";
-import { Button } from "#/components/button";
-import { Tooltip } from "#/components/tooltip";
-import { BentoTileContext, bentoFrame } from "#/home/bento-card";
-import { PageScrollerContext } from "#/lib/demo-kit";
-import { PAUSE_ICON, PLAY_ICON } from "#/lib/playback-icons";
-import { PreviewPlaybackContext } from "#/lib/preview-playback";
-import { color, fade, shape, sizeChoice } from "#/lib/theme";
+} from 'solid-js';
+import { Button } from '#/components/button';
+import { Tooltip } from '#/components/tooltip';
+import { BentoTileContext, bentoFrame } from '#/home/bento-card';
+import { PageScrollerContext } from '#/lib/demo-kit';
+import { PAUSE_ICON, PLAY_ICON } from '#/lib/playback-icons';
+import { PreviewPlaybackContext } from '#/lib/preview-playback';
+import { color, fade, shape, sizeChoice } from '#/lib/theme';
 import {
 	ANIMATED_PREVIEWS,
 	DEFAULT_STAGE_PADDING,
 	previewFor,
 	STAGE_PADDING,
-} from "./previews";
+} from './previews';
 
 /** A stage mounts its preview once it is this close to the viewport, so the preview is ready by the time it scrolls in. */
-const MOUNT_MARGIN = "600px 0px";
+const MOUNT_MARGIN = '600px 0px';
 /** How much of a stage must be on screen for its animation to play. */
 const IN_VIEW_RATIO = 0.35;
 const STAGE_MIN_HEIGHT = 260;
@@ -63,7 +63,7 @@ export function PagePlaybackProvider(props: { children: JSX.Element }) {
 function usePagePlayback(): PagePlayback {
 	const playback = useContext(PagePlaybackContext);
 	if (playback === undefined) {
-		throw new Error("A preview stage must be inside a PagePlaybackProvider");
+		throw new Error('A preview stage must be inside a PagePlaybackProvider');
 	}
 	return playback;
 }
@@ -103,11 +103,11 @@ function observe(
 function PlayPauseButton(props: { slug: string }) {
 	const playback = usePagePlayback();
 	const label = () =>
-		playback.paused() ? "Play all previews" : "Pause all previews";
+		playback.paused() ? 'Play all previews' : 'Pause all previews';
 	return (
 		<div
 			style={{
-				position: "absolute",
+				position: 'absolute',
 				top: BUTTON_INSET,
 				right: BUTTON_INSET,
 				zIndex: 10,
@@ -117,7 +117,7 @@ function PlayPauseButton(props: { slug: string }) {
 				<Button
 					testId={`changelog-playback-${props.slug}`}
 					variant="ghost"
-					size={sizeChoice() === "compact" ? "icon-compact" : "icon"}
+					size={sizeChoice() === 'compact' ? 'icon-compact' : 'icon'}
 					icon={playback.paused() ? PLAY_ICON : PAUSE_ICON}
 					aria-label={label()}
 					onClick={() => playback.setPaused(!playback.paused())}
@@ -135,19 +135,26 @@ function PlayPauseButton(props: { slug: string }) {
 export function PreviewStage(props: { slug: string }): JSX.Element {
 	const scroller = useContext(PageScrollerContext);
 	if (scroller === undefined) {
-		throw new Error("A preview stage must be inside the page's PageScrollerContext");
+		throw new Error(
+			"A preview stage must be inside the page's PageScrollerContext",
+		);
 	}
 	const playback = usePagePlayback();
 	const [stage, setStage] = createSignal<HostElement>();
 	const [near, setNear] = createSignal(false);
 	const [inView, setInView] = createSignal(false);
-	observe(scroller, stage, { margin: MOUNT_MARGIN, thresholds: [0] }, (crossing) => {
-		if (crossing.isIntersecting) setNear(true);
-	});
 	observe(
 		scroller,
 		stage,
-		{ margin: "0px", thresholds: [0, IN_VIEW_RATIO] },
+		{ margin: MOUNT_MARGIN, thresholds: [0] },
+		(crossing) => {
+			if (crossing.isIntersecting) setNear(true);
+		},
+	);
+	observe(
+		scroller,
+		stage,
+		{ margin: '0px', thresholds: [0, IN_VIEW_RATIO] },
 		(crossing) => setInView(crossing.intersectionRatio >= IN_VIEW_RATIO),
 	);
 
@@ -159,17 +166,17 @@ export function PreviewStage(props: { slug: string }): JSX.Element {
 			ref={setStage}
 			testId={`changelog-stage-${props.slug}`}
 			style={{
-				position: "relative",
+				position: 'relative',
 				marginTop: 12,
-				overflow: "hidden",
+				overflow: 'hidden',
 				borderWidth: 1,
 				borderRadius: shape.container,
 				// A box shadow is not clipped out of the border box here, so over a transparent fill it darkens the whole stage.
 				backgroundColor: color.background,
-				...bentoFrame("rest"),
-				...fade(["border-color"], 80),
-				hover: bentoFrame("hover"),
-				focusWithin: bentoFrame("focus"),
+				...bentoFrame('rest'),
+				...fade(['border-color'], 80),
+				hover: bentoFrame('hover'),
+				focusWithin: bentoFrame('focus'),
 			}}
 		>
 			<Show when={ANIMATED_PREVIEWS.has(props.slug)}>
@@ -181,10 +188,10 @@ export function PreviewStage(props: { slug: string }): JSX.Element {
 					<div
 						style={{
 							minHeight: STAGE_MIN_HEIGHT,
-							display: "flex",
-							flexDirection: "column",
-							alignItems: "center",
-							justifyContent: "center",
+							display: 'flex',
+							flexDirection: 'column',
+							alignItems: 'center',
+							justifyContent: 'center',
 							paddingLeft: padding().x,
 							paddingRight: padding().x,
 							paddingTop: padding().y,

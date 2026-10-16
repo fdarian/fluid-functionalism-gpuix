@@ -1,7 +1,7 @@
-import { type HostElement, useGpuixRequired } from "@gpuix/solid";
-import { weight } from "#/lib/theme";
-import { ScLabel } from "./parts";
-import { sc, scRadius, scRing } from "./theme";
+import { type HostElement, useGpuixRequired } from '@gpuix/solid';
+import { weight } from '#/lib/theme';
+import { ScLabel } from './parts';
+import { sc, scRadius, scRing } from './theme';
 
 /** A shadcn `Label` over an `Input`: `space-y-1.5`, an `h-10` bordered field with `px-3`. */
 export function ScInputField(props: {
@@ -14,20 +14,20 @@ export function ScInputField(props: {
 	const renderer = useGpuixRequired();
 	let input: HostElement | undefined;
 	const focusInput = () => {
-		if (input === undefined) throw new Error("ScInputField is not mounted");
+		if (input === undefined) throw new Error('ScInputField is not mounted');
 		renderer.focusElement?.(input.id);
 	};
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
 			<ScLabel size={12} onClick={focusInput}>
 				{props.label}
 			</ScLabel>
 			<div
 				onClick={focusInput}
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					height: 40,
 					paddingLeft: 12,
 					paddingRight: 12,
@@ -35,7 +35,7 @@ export function ScInputField(props: {
 					borderWidth: 1,
 					borderColor: sc.input,
 					backgroundColor: sc.background,
-					cursor: "text",
+					cursor: 'text',
 					focusWithin: scRing(),
 				}}
 			>
@@ -56,7 +56,7 @@ export function ScInputField(props: {
 					}}
 					onChange={(event) => {
 						if (event.value === undefined) {
-							throw new Error("Input change without a value");
+							throw new Error('Input change without a value');
 						}
 						props.onChange(event.value);
 					}}
@@ -67,7 +67,7 @@ export function ScInputField(props: {
 						fontSize: 14,
 						fontWeight: weight.normal,
 						color: sc.foreground,
-						backgroundColor: "rgba(0,0,0,0)",
+						backgroundColor: 'rgba(0,0,0,0)',
 						keyboardFocusDim: false,
 					}}
 				/>

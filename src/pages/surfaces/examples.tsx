@@ -1,27 +1,27 @@
-import { type HostElement, ResizeObserver } from "@gpuix/solid";
+import { type HostElement, ResizeObserver } from '@gpuix/solid';
 import {
 	type Accessor,
 	createSignal,
 	onCleanup,
 	onMount,
 	Show,
-} from "solid-js";
-import { ColorPicker } from "#/components/color-picker";
-import { ComponentPreview } from "#/lib/doc-page";
-import { color, surface } from "#/lib/theme";
+} from 'solid-js';
+import { ColorPicker } from '#/components/color-picker';
+import { ComponentPreview } from '#/lib/doc-page';
+import { color, surface } from '#/lib/theme';
 import {
 	ANNOTATION_BLUE,
 	type ArrowDial,
 	ArrowOverlay,
 	buildArrow,
 	Callout,
-} from "./annotations";
-import { InviteDialog } from "./invite-dialog";
-import { COLOR_PICKER_CODE, INVITE_DIALOG_CODE } from "./snippets";
-import { createVisibility } from "./visibility";
+} from './annotations';
+import { InviteDialog } from './invite-dialog';
+import { COLOR_PICKER_CODE, INVITE_DIALOG_CODE } from './snippets';
+import { createVisibility } from './visibility';
 
 /** Hand-tuned transforms for the two solution callouts. */
-const SOLUTION_VALUES: Record<"dialog" | "dropdown", ArrowDial> = {
+const SOLUTION_VALUES: Record<'dialog' | 'dropdown', ArrowDial> = {
 	dialog: { x: 0, y: -60, rotation: 20, curve: -10, labelX: 0, labelY: -30 },
 	dropdown: { x: 0, y: 0, rotation: 0, curve: 10, labelX: 10, labelY: 10 },
 };
@@ -64,7 +64,7 @@ function SolutionAnnotations(props: {
 			dialog === undefined ||
 			dropdown === undefined
 		) {
-			throw new Error("The annotated surfaces are not mounted");
+			throw new Error('The annotated surfaces are not mounted');
 		}
 		const measure = () => {
 			const frame = container.getBoundingClientRect();
@@ -170,16 +170,16 @@ export function InviteDialogDemo() {
 			<div
 				ref={setContainer}
 				style={{
-					position: "relative",
-					width: "100%",
+					position: 'relative',
+					width: '100%',
 					minHeight: 640,
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					justifyContent: 'center',
 					padding: 24,
 					borderRadius: 16,
-					overflow: "hidden",
+					overflow: 'hidden',
 					backgroundColor: color.background,
 				}}
 			>
@@ -187,7 +187,7 @@ export function InviteDialogDemo() {
 					variant="solution"
 					ref={setDialog}
 					menuRef={setDropdown}
-					style={{ position: "relative", width: "100%", maxWidth: 320 }}
+					style={{ position: 'relative', width: '100%', maxWidth: 320 }}
 				/>
 				<SolutionAnnotations
 					container={container}
@@ -211,17 +211,17 @@ export function ColorPickerDemo() {
 			<div
 				ref={visibility.ref}
 				style={{
-					position: "relative",
-					width: "100%",
+					position: 'relative',
+					width: '100%',
 					minHeight: 520,
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "flex-start",
-					justifyContent: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'flex-start',
+					justifyContent: 'center',
 					paddingTop: 48,
 					paddingBottom: 48,
 					borderRadius: 16,
-					overflow: "hidden",
+					overflow: 'hidden',
 					backgroundColor: color.background,
 				}}
 			>

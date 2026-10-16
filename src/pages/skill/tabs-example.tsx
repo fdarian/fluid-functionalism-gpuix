@@ -1,7 +1,7 @@
-import { buttonProps, useGpuixRequired } from "@gpuix/solid";
-import { createSignal, For } from "solid-js";
-import { TabsSubtle, TabsSubtleItem } from "#/components/tabs-subtle";
-import { color, focusRing, shape, siteType, weight } from "#/lib/theme";
+import { buttonProps, useGpuixRequired } from '@gpuix/solid';
+import { createSignal, For } from 'solid-js';
+import { TabsSubtle, TabsSubtleItem } from '#/components/tabs-subtle';
+import { color, focusRing, shape, siteType, weight } from '#/lib/theme';
 import {
 	Compare,
 	clickStep,
@@ -10,9 +10,9 @@ import {
 	createScriptCursor,
 	type Side,
 	turns,
-} from "./playback";
+} from './playback';
 
-const TABS = ["Overview", "Activity", "Settings"];
+const TABS = ['Overview', 'Activity', 'Settings'];
 
 /**
  * Generic subtle tabs: bold on the active tab widens it and shoves its
@@ -26,7 +26,7 @@ function GenericTabs(props: {
 	const renderer = useGpuixRequired();
 	const [hovered, setHovered] = createSignal<number>();
 	return (
-		<div role="tablist" style={{ display: "flex", flexDirection: "row" }}>
+		<div role="tablist" style={{ display: 'flex', flexDirection: 'row' }}>
 			<For each={TABS}>
 				{(label, index) => (
 					<div
@@ -43,11 +43,11 @@ function GenericTabs(props: {
 							height: 36,
 							paddingLeft: 12,
 							paddingRight: 12,
-							display: "flex",
-							alignItems: "center",
+							display: 'flex',
+							alignItems: 'center',
 							flexShrink: 0,
 							borderRadius: shape.bg,
-							cursor: "pointer",
+							cursor: 'pointer',
 							keyboardFocusDim: false,
 							backgroundColor:
 								props.selected === index()
@@ -67,7 +67,7 @@ function GenericTabs(props: {
 									props.selected === index()
 										? color.foreground
 										: color.mutedForeground,
-								whiteSpace: "nowrap",
+								whiteSpace: 'nowrap',
 							}}
 						>
 							{label}
@@ -85,7 +85,7 @@ export function TabsExample() {
 	const [generic, setGeneric] = createSignal(0);
 	const [skill, setSkill] = createSignal(0);
 	const [active, setActive] = createSignal<Side | null>(null);
-	const select = (side: Side) => (side === "generic" ? setGeneric : setSkill);
+	const select = (side: Side) => (side === 'generic' ? setGeneric : setSkill);
 	const tab = (side: Side, index: number) => `tabs-${side}-tab-${index}`;
 	createLoop(
 		playback.playing,
@@ -104,14 +104,14 @@ export function TabsExample() {
 			generic={<GenericTabs selected={generic()} onSelect={setGeneric} />}
 			skill={
 				// TabsSubtle aligns itself to the start of its parent's cross axis, so the frame's centering needs a box of its own.
-				<div style={{ display: "flex" }}>
+				<div style={{ display: 'flex' }}>
 					<TabsSubtle selectedIndex={skill()} onSelect={setSkill}>
 						<For each={TABS}>
 							{(label, index) => (
 								<TabsSubtleItem
 									index={index()}
 									label={label}
-									testId={tab("skill", index())}
+									testId={tab('skill', index())}
 								/>
 							)}
 						</For>

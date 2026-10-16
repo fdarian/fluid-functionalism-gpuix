@@ -6,7 +6,7 @@ import {
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	type Accessor,
 	createComputed,
@@ -19,34 +19,34 @@ import {
 	onMount,
 	Show,
 	useContext,
-} from "solid-js";
-import { FluidHighlight } from "#/lib/fluid-highlight";
+} from 'solid-js';
+import { FluidHighlight } from '#/lib/fluid-highlight';
 import {
 	createFluidHover,
 	type FluidHover,
 	type ItemRect,
-} from "#/lib/fluid-hover";
+} from '#/lib/fluid-hover';
 import {
 	createFocusRing,
 	FocusRing,
 	type FocusRingState,
-} from "#/lib/focus-ring";
-import { Icon } from "#/lib/icon";
-import type { IconRef } from "#/lib/icons";
-import { edgeIndex, moveIndex } from "#/lib/list-nav";
-import { createMeasuredHeight } from "#/lib/measured-height";
-import { StableLabel } from "#/lib/stable-label";
+} from '#/lib/focus-ring';
+import { Icon } from '#/lib/icon';
+import type { IconRef } from '#/lib/icons';
+import { edgeIndex, moveIndex } from '#/lib/list-nav';
+import { createMeasuredHeight } from '#/lib/measured-height';
+import { StableLabel } from '#/lib/stable-label';
 import {
 	color,
 	colorFade,
 	fade,
 	height,
-	shape,
 	type as scale,
+	shape,
 	motion as tween,
 	weight,
-} from "#/lib/theme";
-import { ScrollArea } from "./scroll-area";
+} from '#/lib/theme';
+import { ScrollArea } from './scroll-area';
 
 export const SIDEBAR_WIDTH = 256;
 
@@ -63,7 +63,7 @@ interface RowEntry {
 	element: HostElement;
 }
 
-type KeyStep = "next" | "previous" | "first" | "last";
+type KeyStep = 'next' | 'previous' | 'first' | 'last';
 
 interface MenuScope {
 	hover: FluidHover;
@@ -83,7 +83,7 @@ const ScrollListenersContext = createContext<Set<() => void>>();
 
 function useMenuScope() {
 	const scope = useContext(MenuScopeContext);
-	if (scope === undefined) throw new Error("Must be used inside SidebarMenu");
+	if (scope === undefined) throw new Error('Must be used inside SidebarMenu');
 	return scope;
 }
 
@@ -148,7 +148,7 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 		return row.disabled();
 	};
 	const registeredIndices = () => [...rows.keys()].sort((a, b) => a - b);
-	const edgeRegistered = (edge: "first" | "last") => {
+	const edgeRegistered = (edge: 'first' | 'last') => {
 		const indices = registeredIndices();
 		const position = edgeIndex(edge, indices.length, (at) =>
 			isDisabled(indices[at]),
@@ -175,7 +175,7 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 			for (const entry of rows.values()) {
 				if (entry.active() && !entry.disabled()) return false;
 			}
-			return edgeRegistered("first") === index;
+			return edgeRegistered('first') === index;
 		},
 		focusRow(index, event) {
 			hover.setActiveIndex(index);
@@ -191,9 +191,9 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 		},
 		focusSibling(index, step) {
 			const target =
-				step === "first" || step === "last"
+				step === 'first' || step === 'last'
 					? edgeRegistered(step)
-					: moveRegistered(index, step === "next" ? 1 : -1);
+					: moveRegistered(index, step === 'next' ? 1 : -1);
 			if (target === null) return;
 			const row = rows.get(target);
 			if (row === undefined) throw new Error(`No row registered at ${target}`);
@@ -244,10 +244,10 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 				testId={props.testId}
 				{...hover.containerProps}
 				style={{
-					position: "relative",
-					display: "flex",
-					flexDirection: "column",
-					width: "100%",
+					position: 'relative',
+					display: 'flex',
+					flexDirection: 'column',
+					width: '100%',
 					minWidth: 0,
 				}}
 			>
@@ -314,7 +314,7 @@ export function SidebarMenuButton(props: {
 	let rowElement: HostElement | undefined;
 	const [index, setIndex] = createSignal<number>();
 	onMount(() => {
-		if (rowElement === undefined) throw new Error("Row is not mounted");
+		if (rowElement === undefined) throw new Error('Row is not mounted');
 		setIndex(
 			scope.registerRow({
 				level,
@@ -331,14 +331,14 @@ export function SidebarMenuButton(props: {
 		if (own === undefined) return;
 		const step = (
 			{
-				ArrowDown: "next",
-				ArrowRight: "next",
-				ArrowUp: "previous",
-				ArrowLeft: "previous",
-				Home: "first",
-				End: "last",
+				ArrowDown: 'next',
+				ArrowRight: 'next',
+				ArrowUp: 'previous',
+				ArrowLeft: 'previous',
+				Home: 'first',
+				End: 'last',
 			} as const
-		)[event.key as "ArrowDown"];
+		)[event.key as 'ArrowDown'];
 		if (step === undefined) return;
 		event.preventDefault();
 		event.stopPropagation();
@@ -373,7 +373,7 @@ export function SidebarMenuButton(props: {
 			)}
 			id={createUniqueId()}
 			testId={props.testId}
-			aria-current={props.active === true ? "page" : undefined}
+			aria-current={props.active === true ? 'page' : undefined}
 			onFocus={(event: DomEvent) => {
 				const own = index();
 				if (own !== undefined) scope.focusRow(own, event);
@@ -383,19 +383,19 @@ export function SidebarMenuButton(props: {
 				if (own !== undefined) scope.blurRow(own, event);
 			}}
 			style={{
-				position: "relative",
+				position: 'relative',
 				zIndex: 10,
 				height: rowHeight,
 				flexShrink: 0,
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: 8,
 				paddingLeft: 8,
 				paddingRight: paddingRight(),
 				borderRadius: shape.item,
-				cursor: "pointer",
-				userSelect: "none",
+				cursor: 'pointer',
+				userSelect: 'none',
 				// The menu's one shared ring is drawn by SidebarMenu.
 				keyboardFocusDim: false,
 			}}
@@ -426,7 +426,7 @@ export function SidebarMenuButton(props: {
 			<Show when={props.dot}>
 				{(dot: Accessor<string>) => (
 					<div
-						role={props.dotLabel === undefined ? undefined : "img"}
+						role={props.dotLabel === undefined ? undefined : 'img'}
 						aria-label={props.dotLabel}
 						style={{
 							width: 6,
@@ -452,16 +452,16 @@ export function SidebarMenuButton(props: {
 				{(text: Accessor<string>) => (
 					<div
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							right: 8,
 							top: 6,
 							height: 20,
 							minWidth: 20,
 							paddingLeft: 4,
 							paddingRight: 4,
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
 						}}
 					>
 						<text
@@ -469,7 +469,7 @@ export function SidebarMenuButton(props: {
 								...(props.badgeType ?? scale.micro),
 								fontWeight: props.active ? weight.semibold : weight.normal,
 								color: props.active ? color.foreground : color.mutedForeground,
-								fontVariantNumeric: "tabular-nums",
+								fontVariantNumeric: 'tabular-nums',
 								...colorFade,
 							}}
 						>
@@ -520,16 +520,16 @@ export function SidebarMenuSub(props: {
 			}
 			onMotionComplete={() => setToggling(false)}
 			style={{
-				overflow: "hidden",
+				overflow: 'hidden',
 				// Until the content is measured an open sub-menu keeps its natural height.
-				...(contentHeight() === undefined ? { height: "auto" } : {}),
+				...(contentHeight() === undefined ? { height: 'auto' } : {}),
 			}}
 		>
 			<div
 				onLayout={measured.onLayout}
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					// A margin, not a translate, so the rows' measured rects include it. 15 + 1px border + 8 + the row's own 8 puts a sub-row label on the parent label's x (32).
 					marginLeft: 15,
 					paddingLeft: 8,
@@ -554,10 +554,10 @@ export function Sidebar(props: {
 		<div
 			style={{
 				width: SIDEBAR_WIDTH,
-				height: "100%",
+				height: '100%',
 				flexShrink: 0,
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				backgroundColor: color.background,
 				borderTopLeftRadius: props.leftCornerRadius,
 				borderBottomLeftRadius: props.leftCornerRadius,
@@ -573,8 +573,8 @@ export function SidebarHeader(props: { children: JSX.Element }) {
 		<div
 			style={{
 				flexShrink: 0,
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 8,
 				padding: 8,
 			}}
@@ -584,13 +584,16 @@ export function SidebarHeader(props: { children: JSX.Element }) {
 	);
 }
 
-export function SidebarFooter(props: { children: JSX.Element; flushBottom?: boolean }) {
+export function SidebarFooter(props: {
+	children: JSX.Element;
+	flushBottom?: boolean;
+}) {
 	return (
 		<div
 			style={{
 				flexShrink: 0,
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 8,
 				padding: 8,
 				// A callout alone in the footer sits on the rail's bottom edge.
@@ -612,12 +615,12 @@ export function SidebarContent(props: { children: JSX.Element }) {
 				for (const listener of scrollListeners) listener();
 			}}
 			divider={{ start: false }}
-			style={{ flexGrow: 1, minHeight: 0, width: "100%" }}
+			style={{ flexGrow: 1, minHeight: 0, width: '100%' }}
 		>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					padding: 8,
 					paddingTop: 0,
 				}}
@@ -636,9 +639,9 @@ export function SidebarGroupLabel(props: { children: string; count?: number }) {
 			style={{
 				height: height.groupLabel,
 				flexShrink: 0,
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				paddingLeft: 8,
 				paddingRight: 8,
 			}}
@@ -653,7 +656,7 @@ export function SidebarGroupLabel(props: { children: string; count?: number }) {
 					style={{
 						...scale.caption,
 						color: color.mutedForeground,
-						fontVariantNumeric: "tabular-nums",
+						fontVariantNumeric: 'tabular-nums',
 					}}
 				>
 					{props.count}
@@ -677,7 +680,7 @@ export function SidebarSearchField(props: {
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			style={{
-				position: "relative",
+				position: 'relative',
 				height: height.menuRow,
 				flexShrink: 0,
 				borderRadius: shape.input,
@@ -686,7 +689,7 @@ export function SidebarSearchField(props: {
 				outlineColor: hovered() || focused() ? color.border : color.transparent,
 				outlineOffset: 0,
 				// The outline stands in for the source's `ring-1` box shadow, which it transitions with the fill.
-				...fade(["background-color", "outline-color"], 80),
+				...fade(['background-color', 'outline-color'], 80),
 			}}
 		>
 			<input
@@ -701,7 +704,7 @@ export function SidebarSearchField(props: {
 				onFocus={() => setFocused(true)}
 				onBlur={() => setFocused(false)}
 				style={{
-					width: "100%",
+					width: '100%',
 					height: height.menuRow,
 					paddingLeft: 32,
 					paddingRight: 48,
@@ -714,10 +717,10 @@ export function SidebarSearchField(props: {
 			/>
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					left: 8,
 					top: 8,
-					pointerEvents: "none",
+					pointerEvents: 'none',
 				}}
 			>
 				<Icon
@@ -729,12 +732,12 @@ export function SidebarSearchField(props: {
 			</div>
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					right: 8,
 					top: 9,
-					pointerEvents: "none",
+					pointerEvents: 'none',
 					opacity: hovered() || focused() ? 1 : 0,
-					...fade(["opacity"], 80),
+					...fade(['opacity'], 80),
 				}}
 			>
 				<text style={{ ...scale.micro, color: color.mutedForeground }}>

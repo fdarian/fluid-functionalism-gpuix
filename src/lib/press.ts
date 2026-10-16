@@ -1,4 +1,4 @@
-import type { BoxShadow } from "@gpuix/solid";
+import type { BoxShadow } from '@gpuix/solid';
 
 /**
  * The press effect of button.tsx: the surface sits 1px inside the button's

@@ -1,5 +1,15 @@
-import { createSignal, For, type JSX } from "solid-js";
-import { weight } from "#/lib/theme";
+import { createSignal, For, type JSX } from 'solid-js';
+import { weight } from '#/lib/theme';
+import { ScAccordion } from '#/pages/compare/shadcn/accordion';
+import { ScCheckbox } from '#/pages/compare/shadcn/checkbox';
+import { ScDropdownMenu } from '#/pages/compare/shadcn/dropdown-menu';
+import { ScInputField } from '#/pages/compare/shadcn/input';
+import { ScRadioGroup } from '#/pages/compare/shadcn/radio-group';
+import { ScSlider } from '#/pages/compare/shadcn/slider';
+import { ScSwitch } from '#/pages/compare/shadcn/switch';
+import { ScTable } from '#/pages/compare/shadcn/table';
+import { ScTabs } from '#/pages/compare/shadcn/tabs';
+import { sc } from '#/pages/compare/shadcn/theme';
 import {
 	ACCORDION_ITEMS,
 	CHECKBOX_ITEMS,
@@ -15,17 +25,7 @@ import {
 	TABLE_ROWS,
 	TABS_DEFAULT,
 	TABS_ITEMS,
-} from "./data";
-import { ScAccordion } from "#/pages/compare/shadcn/accordion";
-import { ScCheckbox } from "#/pages/compare/shadcn/checkbox";
-import { ScDropdownMenu } from "#/pages/compare/shadcn/dropdown-menu";
-import { ScInputField } from "#/pages/compare/shadcn/input";
-import { ScRadioGroup } from "#/pages/compare/shadcn/radio-group";
-import { ScSlider } from "#/pages/compare/shadcn/slider";
-import { ScSwitch } from "#/pages/compare/shadcn/switch";
-import { ScTable } from "#/pages/compare/shadcn/table";
-import { ScTabs } from "#/pages/compare/shadcn/tabs";
-import { sc } from "#/pages/compare/shadcn/theme";
+} from './data';
 
 function toggled(set: ReadonlySet<string>, id: string, on: boolean) {
 	const next = new Set(set);
@@ -38,16 +38,16 @@ function toggled(set: ReadonlySet<string>, id: string, on: boolean) {
 function Column(props: {
 	maxWidth: number;
 	gap?: number;
-	alignItems?: "center";
+	alignItems?: 'center';
 	children: JSX.Element;
 }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				alignItems: props.alignItems,
-				width: "100%",
+				width: '100%',
 				maxWidth: props.maxWidth,
 				gap: props.gap,
 			}}
@@ -113,7 +113,7 @@ function InputGroupPreview() {
 						testId={`sc-${field.key}`}
 						label={field.label}
 						placeholder={field.placeholder}
-						value={values()[field.key] ?? ""}
+						value={values()[field.key] ?? ''}
 						onChange={(next) => setValues({ ...values(), [field.key]: next })}
 					/>
 				)}
@@ -152,22 +152,22 @@ function SliderRow(props: {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 6,
-				width: "100%",
+				width: '100%',
 			}}
 		>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					justifyContent: 'space-between',
 				}}
 			>
 				<text style={text()}>{props.label}</text>
-				<text style={{ ...text(), fontVariantNumeric: "tabular-nums" }}>
+				<text style={{ ...text(), fontVariantNumeric: 'tabular-nums' }}>
 					{props.readout}
 				</text>
 			</div>
@@ -208,7 +208,7 @@ function SwitchPreview() {
 		new Set(SWITCH_ITEMS.filter((item) => item.initial).map((item) => item.id)),
 	);
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 			<For each={SWITCH_ITEMS}>
 				{(item) => (
 					<ScSwitch
@@ -246,13 +246,13 @@ function TabsPreview() {
 }
 
 const SUBTLE_TABS = [
-	{ value: "library", label: "Library" },
-	{ value: "recents", label: "Recents" },
-	{ value: "favorites", label: "Favorites" },
+	{ value: 'library', label: 'Library' },
+	{ value: 'recents', label: 'Recents' },
+	{ value: 'favorites', label: 'Favorites' },
 ];
 
 function TabsSubtlePreview() {
-	const [tab, setTab] = createSignal("library");
+	const [tab, setTab] = createSignal('library');
 	return (
 		<Column maxWidth={360} alignItems="center">
 			<ScTabs
@@ -268,13 +268,13 @@ function TabsSubtlePreview() {
 /** `shadcnPreviewMap`, for the slides the page shows. */
 export const shadcnPreviews: Record<string, () => JSX.Element> = {
 	dropdown: DropdownPreview,
-	"checkbox-group": CheckboxPreview,
+	'checkbox-group': CheckboxPreview,
 	accordion: AccordionPreview,
 	tabs: TabsPreview,
-	"radio-group": RadioGroupPreview,
+	'radio-group': RadioGroupPreview,
 	slider: SliderPreview,
-	"input-group": InputGroupPreview,
+	'input-group': InputGroupPreview,
 	switch: SwitchPreview,
 	table: TablePreview,
-	"tabs-subtle": TabsSubtlePreview,
+	'tabs-subtle': TabsSubtlePreview,
 };

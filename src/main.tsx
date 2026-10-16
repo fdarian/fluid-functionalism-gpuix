@@ -3,10 +3,10 @@
  * is a Bun preload (see bunfig.toml). Demos in `src/demos/` are discovered at
  * startup, so a new one shows up after a restart.
  */
-import { render } from "@gpuix/solid";
-import { App, WINDOW_TITLE } from "./app";
-import { loadDemos, loadPages } from "#/lib/demo";
-import { fonts } from "#/lib/fonts";
+import { render } from '@gpuix/solid';
+import { loadDemos, loadPages } from '#/lib/demo';
+import { fonts } from '#/lib/fonts';
+import { App, WINDOW_TITLE } from './app';
 
 const demos = await loadDemos();
 const pages = await loadPages(demos);

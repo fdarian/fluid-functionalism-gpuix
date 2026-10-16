@@ -12,23 +12,23 @@
  * Then a toggle moves the focused row: the ring keeps its spring.fast glide
  * (no snap window) and settles on the row.
  */
-import { mkdirSync } from "node:fs";
-import { setThemeChoice } from "#/lib/theme";
-import { createCheck } from "./check-kit";
-import { readPng } from "./png-pixels";
+import { mkdirSync } from 'node:fs';
+import { setThemeChoice } from '#/lib/theme';
+import { createCheck } from './check-kit';
+import { readPng } from './png-pixels';
 
 const outDir = `/tmp/check-accordion-${process.pid}/`;
 mkdirSync(outDir, { recursive: true });
-const kit = await createCheck("accordion");
+const kit = await createCheck('accordion');
 const renderer = kit.renderer;
 const settle = kit.settle;
 const bounds = kit.bounds;
-setThemeChoice("light");
+setThemeChoice('light');
 await settle(300);
 
-await kit.scrollIntoView("single-1");
+await kit.scrollIntoView('single-1');
 await settle(300);
-const row = bounds("single-1");
+const row = bounds('single-1');
 // Right of the label, left of the chevron: bare row surface.
 const sample = {
 	x: Math.round(row.x + row.width - 60),
@@ -56,20 +56,20 @@ for (let channel = 0; channel < 3; channel++) {
 
 renderer.nativeSimulateMouseMove(1180, 700);
 await settle(500);
-const element = renderer.findByTestId("single-1");
-if (element === undefined) throw new Error("no single-1");
+const element = renderer.findByTestId('single-1');
+if (element === undefined) throw new Error('no single-1');
 for (let presses = 0; presses < 60; presses++) {
 	if (renderer.getFocusedElementId() === element.id) break;
-	renderer.simulateKeystrokes("Tab");
+	renderer.simulateKeystrokes('Tab');
 	await settle(60);
 }
 if (renderer.getFocusedElementId() !== element.id)
-	throw new Error("Tab never reached single-1");
+	throw new Error('Tab never reached single-1');
 await settle(500);
 // Tabbing scrolled the page to the focused row: measure it where it is now.
-await kit.scrollIntoView("single-1");
+await kit.scrollIntoView('single-1');
 await settle(300);
-const focusedRow = bounds("single-1");
+const focusedRow = bounds('single-1');
 renderer.captureScreenshot(`${outDir}ring.png`);
 const ring = readPng(`${outDir}ring.png`);
 const column = Math.round(focusedRow.x + focusedRow.width / 2);
@@ -91,28 +91,28 @@ for (
 	}
 }
 kit.check(
-	"ring bottom edge over the open tint",
+	'ring bottom edge over the open tint',
 	best <= 6,
 	`closest to #6B97FF is ${best} off at y=${bestAt}: ${ring.at(column, bestAt)}`,
 );
 
 // A panel changing height moves the rows under the ring every frame; the source
 // keeps the ring's spring.fast glide instead of snapping, so it trails the row.
-await kit.press("ArrowDown");
-const rowStart = bounds("single-2").y;
+await kit.press('ArrowDown');
+const rowStart = bounds('single-2').y;
 // The motion clock is stepped by hand: sampling against wall time lets a slow
 // frame carry both springs to rest before the first sample.
 const FRAME_MS = 16;
 renderer.clockPause();
-renderer.simulateKeystrokes("Enter");
+renderer.simulateKeystrokes('Enter');
 let maxLag = 0;
 let rowTravel = 0;
 for (let frame = 0; frame < 40; frame++) {
 	renderer.clockFastForward(FRAME_MS);
 	renderer.flush();
 	renderer.dispatchNativeEvents();
-	const rowNow = bounds("single-2");
-	const ringNow = bounds("single-focus-ring");
+	const rowNow = bounds('single-2');
+	const ringNow = bounds('single-focus-ring');
 	// Frame 0 only shows how late the first re-measure lands; a snapping ring is on the row from frame 1.
 	if (frame > 0) maxLag = Math.max(maxLag, Math.abs(ringNow.y + 2 - rowNow.y));
 	rowTravel = Math.max(rowTravel, Math.abs(rowNow.y - rowStart));
@@ -123,20 +123,20 @@ for (let step = 0; step < 4; step++) {
 	renderer.dispatchNativeEvents();
 }
 kit.check(
-	"row moved under the ring",
+	'row moved under the ring',
 	rowTravel > 20,
 	`row travelled ${rowTravel.toFixed(1)}px`,
 );
 kit.check(
-	"ring trails the moving row instead of snapping",
+	'ring trails the moving row instead of snapping',
 	maxLag > 0.5,
 	`max lag ${maxLag.toFixed(2)}px`,
 );
-const settledRow = bounds("single-2");
-const settledRing = bounds("single-focus-ring");
+const settledRow = bounds('single-2');
+const settledRing = bounds('single-focus-ring');
 renderer.clockResume();
 kit.check(
-	"ring settles on the row",
+	'ring settles on the row',
 	Math.abs(settledRing.y + 2 - settledRow.y) < 0.5,
 	`off by ${(settledRing.y + 2 - settledRow.y).toFixed(2)}px`,
 );

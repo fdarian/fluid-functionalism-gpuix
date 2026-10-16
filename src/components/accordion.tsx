@@ -8,7 +8,7 @@ import {
 	motion,
 	ResizeObserver,
 	useGpuixRequired,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	createContext,
 	createEffect,
@@ -20,34 +20,34 @@ import {
 	onCleanup,
 	Show,
 	useContext,
-} from "solid-js";
-import { FluidHighlight } from "#/lib/fluid-highlight";
+} from 'solid-js';
+import { FluidHighlight } from '#/lib/fluid-highlight';
 import {
 	createFluidHover,
 	type FluidHover,
 	type ItemRect,
-} from "#/lib/fluid-hover";
+} from '#/lib/fluid-hover';
 import {
 	createFocusRing,
 	FocusRing,
 	type FocusRingState,
-} from "#/lib/focus-ring";
-import { Icon } from "#/lib/icon";
-import { createMeasuredHeight } from "#/lib/measured-height";
-import { StableLabel } from "#/lib/stable-label";
+} from '#/lib/focus-ring';
+import { Icon } from '#/lib/icon';
+import { createMeasuredHeight } from '#/lib/measured-height';
+import { StableLabel } from '#/lib/stable-label';
 import {
 	color,
 	focusRing,
-	shape,
-	sizeChoice,
 	type as scale,
 	scheme,
+	shape,
+	sizeChoice,
 	motion as tween,
 	weight,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
-export type AccordionSize = "default" | "compact";
-export type AccordionHighlight = "trigger" | "item";
+export type AccordionSize = 'default' | 'compact';
+export type AccordionHighlight = 'trigger' | 'item';
 
 const sizes = {
 	default: {
@@ -94,7 +94,7 @@ interface GroupScope {
 	blurRow: (index: number, event: DomEvent) => void;
 	focusSibling: (
 		index: number,
-		step: "next" | "previous" | "first" | "last",
+		step: 'next' | 'previous' | 'first' | 'last',
 	) => void;
 }
 
@@ -123,25 +123,25 @@ const ItemContext = createContext<ItemState>();
 
 function useRoot() {
 	const root = useContext(RootContext);
-	if (root === undefined) throw new Error("Must be used inside an Accordion");
+	if (root === undefined) throw new Error('Must be used inside an Accordion');
 	return root;
 }
 function useItem() {
 	const item = useContext(ItemContext);
 	if (item === undefined)
-		throw new Error("Must be used inside an AccordionItem");
+		throw new Error('Must be used inside an AccordionItem');
 	return item;
 }
 
 type ValueProps =
 	| {
-			type?: "single";
+			type?: 'single';
 			value?: string;
 			defaultValue?: string;
 			onValueChange?: (value: string) => void;
 	  }
 	| {
-			type: "multiple";
+			type: 'multiple';
 			value?: string[];
 			defaultValue?: string[];
 			onValueChange?: (value: string[]) => void;
@@ -151,8 +151,8 @@ function createRootState(
 	props: ValueProps & { size?: AccordionSize; highlight?: AccordionHighlight },
 ): RootState {
 	const toList = (value: string | string[] | undefined): string[] => {
-		if (value === undefined || value === "") return [];
-		return typeof value === "string" ? [value] : value;
+		if (value === undefined || value === '') return [];
+		return typeof value === 'string' ? [value] : value;
 	};
 	const [internal, setInternal] = createSignal<string[]>(
 		toList(props.defaultValue),
@@ -163,11 +163,11 @@ function createRootState(
 	return {
 		isOpen: (value) => open().includes(value),
 		anyOpen: () => open().length > 0,
-		highlight: () => props.highlight ?? "item",
+		highlight: () => props.highlight ?? 'item',
 		size: () => props.size ?? sizeChoice(),
 		toggle(value) {
 			const current = open();
-			if (props.type === "multiple") {
+			if (props.type === 'multiple') {
 				const next = current.includes(value)
 					? current.filter((entry) => entry !== value)
 					: [...current, value];
@@ -175,7 +175,7 @@ function createRootState(
 				else props.onValueChange(next);
 				return;
 			}
-			const next = current.includes(value) ? "" : value;
+			const next = current.includes(value) ? '' : value;
 			if (props.onValueChange === undefined) setInternal(toList(next));
 			else props.onValueChange(next);
 		},
@@ -240,7 +240,7 @@ export function AccordionGroup(props: RootProps) {
 		registerItem(element, entry) {
 			tintElements.set(entry.id, element);
 			setTints([...tints(), entry]);
-			itemObserver.observe(element, { box: "border-box" });
+			itemObserver.observe(element, { box: 'border-box' });
 			measureItems();
 			onCleanup(() => {
 				tintElements.delete(entry.id);
@@ -322,25 +322,25 @@ export function AccordionGroup(props: RootProps) {
 						hover.handlers.onMouseLeave();
 					}}
 					style={{
-						position: "relative",
-						display: "flex",
-						flexDirection: "column",
+						position: 'relative',
+						display: 'flex',
+						flexDirection: 'column',
 						width: 288,
-						maxWidth: "100%",
+						maxWidth: '100%',
 					}}
 				>
 					<For each={tints()}>
 						{(entry) => (
 							<GroupTint
 								rect={() => {
-									if (root.highlight() === "item")
+									if (root.highlight() === 'item')
 										return itemRects().get(entry.id);
 									const own = entry.index();
 									return own === undefined ? undefined : hover.rects()[own];
 								}}
 								opacity={() => {
 									if (!entry.isOpen()) return 0;
-									if (root.highlight() === "item") {
+									if (root.highlight() === 'item') {
 										return scope.hoveringClosedRow() ? 0.7 : 1;
 									}
 									return hover.activeIndex() === entry.index() ? 1 : 0;
@@ -372,10 +372,10 @@ export function Accordion(props: RootProps) {
 		<RootContext.Provider value={root}>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					width: 288,
-					maxWidth: "100%",
+					maxWidth: '100%',
 				}}
 			>
 				{props.children}
@@ -413,11 +413,11 @@ function GroupTint(props: {
 						opacity: tween.moderateExit,
 					}}
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						borderRadius: shape.bg,
 						backgroundColor: color.accentWash,
 						// Removing this lights the row under the pointer after a single-expand click moves the rows, though the pointer is over the open panel, which belongs to no row.
-						pointerEvents: "none",
+						pointerEvents: 'none',
 					}}
 				/>
 			)}
@@ -463,10 +463,10 @@ export function AccordionItem(props: {
 					group?.registerItem(element, tint);
 				}}
 				style={{
-					position: "relative",
+					position: 'relative',
 					zIndex: 10,
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					flexShrink: 0,
 				}}
 			>
@@ -475,18 +475,18 @@ export function AccordionItem(props: {
 					<motion.div
 						initial={false}
 						animate={{
-							opacity: item.highlight() === "item" && item.isOpen() ? 1 : 0,
+							opacity: item.highlight() === 'item' && item.isOpen() ? 1 : 0,
 						}}
 						transition={tween.moderateExit}
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							top: 0,
 							left: 0,
 							right: 0,
 							bottom: 0,
 							borderRadius: shape.bg,
 							backgroundColor: color.accentWash,
-							pointerEvents: "none",
+							pointerEvents: 'none',
 						}}
 					/>
 				</Show>
@@ -509,7 +509,7 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 
 	createEffect(() => {
 		if (group === undefined) return;
-		if (triggerElement === undefined) throw new Error("Trigger is not mounted");
+		if (triggerElement === undefined) throw new Error('Trigger is not mounted');
 		const element = triggerElement;
 		item.setIndex(
 			group.registerTrigger(element, {
@@ -539,12 +539,12 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 		}
 		const step = (
 			{
-				ArrowDown: "next",
-				ArrowUp: "previous",
-				Home: "first",
-				End: "last",
+				ArrowDown: 'next',
+				ArrowUp: 'previous',
+				Home: 'first',
+				End: 'last',
 			} as const
-		)[event.key as "ArrowDown" | "ArrowUp" | "Home" | "End"];
+		)[event.key as 'ArrowDown' | 'ArrowUp' | 'Home' | 'End'];
 		if (step === undefined) return;
 		event.preventDefault();
 		event.stopPropagation();
@@ -555,7 +555,7 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 		<div
 			onMouseEnter={() => setStandaloneHovered(true)}
 			onMouseLeave={() => setStandaloneHovered(false)}
-			style={{ position: "relative", flexShrink: 0 }}
+			style={{ position: 'relative', flexShrink: 0 }}
 		>
 			{/* Standalone rows carry their own highlights; a group's tints and shared highlight are drawn by AccordionGroup. */}
 			<Show when={group === undefined}>
@@ -563,13 +563,13 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					initial={false}
 					animate={{
 						opacity:
-							item.highlight() === "trigger" && item.isOpen() && hovered()
+							item.highlight() === 'trigger' && item.isOpen() && hovered()
 								? 1
 								: 0,
 					}}
 					transition={tween.moderateExit}
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 0,
 						left: 0,
 						right: 0,
@@ -586,7 +586,7 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 				}}
 				transition={tween.fastExit}
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					right: 0,
@@ -622,19 +622,19 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 				}}
 				testId={props.testId}
 				style={{
-					position: "relative",
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					position: 'relative',
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					gap: metrics().gap,
 					paddingLeft: metrics().padX,
 					paddingRight: metrics().padX,
 					paddingTop: metrics().padY,
 					paddingBottom: metrics().padY,
-					width: "100%",
+					width: '100%',
 					borderRadius: shape.item,
-					cursor: "pointer",
-					userSelect: "none",
+					cursor: 'pointer',
+					userSelect: 'none',
 					keyboardFocusDim: false,
 					// A group's one shared ring is drawn by AccordionGroup.
 					...(group === undefined ? { focusVisible: focusRing(0) } : {}),
@@ -649,7 +649,7 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					fade
 				/>
 				<Icon
-					name={item.isOpen() ? "chevron-down" : "chevron-right"}
+					name={item.isOpen() ? 'chevron-down' : 'chevron-right'}
 					size={metrics().icon}
 					strokeWidth={lit() ? 2 : 1.5}
 					easeStroke
@@ -698,11 +698,7 @@ export function AccordionContent(props: { children: JSX.Element }) {
 			initial={false}
 			animate={{ height: item.isOpen() ? (contentHeight() ?? 0) : 0 }}
 			transition={
-				reduced()
-					? tween.snap
-					: item.isOpen()
-						? tween.fast
-						: tween.fastExit
+				reduced() ? tween.snap : item.isOpen() ? tween.fast : tween.fastExit
 			}
 			onMotionComplete={() => {
 				if (!item.isOpen()) setRetired(true);
@@ -714,12 +710,12 @@ export function AccordionContent(props: { children: JSX.Element }) {
 			}}
 			onMouseLeave={() => group?.overContent(null)}
 			style={{
-				display: "flex",
-				flexDirection: "column",
-				overflow: "hidden",
+				display: 'flex',
+				flexDirection: 'column',
+				overflow: 'hidden',
 				// Until the content is measured an open panel keeps its natural height.
 				...(contentHeight() === undefined && item.isOpen()
-					? { height: "auto" }
+					? { height: 'auto' }
 					: {}),
 			}}
 		>
@@ -741,8 +737,8 @@ export function AccordionContent(props: { children: JSX.Element }) {
 							if (!toggled && !item.isOpen()) setRetired(true);
 						}}
 						style={{
-							display: "flex",
-							flexDirection: "column",
+							display: 'flex',
+							flexDirection: 'column',
 							flexShrink: 0,
 							paddingTop: 4,
 							paddingLeft: metrics().padX,

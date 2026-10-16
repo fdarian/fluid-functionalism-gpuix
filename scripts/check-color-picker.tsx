@@ -6,21 +6,21 @@
  * Prints PASS / FAIL lines and exits non-zero on any FAIL. The format menu's
  * scenarios open it from the keyboard, then "pressing the trigger" presses it.
  */
-import { createTestRoot } from "@gpuix/solid/testing";
-import { createSignal, Show } from "solid-js";
-import { App } from "#/app";
-import { ColorPicker } from "#/components/color-picker";
-import { loadDemos, loadPages } from "#/lib/demo";
-import { fonts } from "#/lib/fonts";
-import { setThemeChoice } from "#/lib/theme";
-import { createCheck } from "./check-kit";
+import { createTestRoot } from '@gpuix/solid/testing';
+import { createSignal, Show } from 'solid-js';
+import { App } from '#/app';
+import { ColorPicker } from '#/components/color-picker';
+import { loadDemos, loadPages } from '#/lib/demo';
+import { fonts } from '#/lib/fonts';
+import { setThemeChoice } from '#/lib/theme';
+import { createCheck } from './check-kit';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 let failed = false;
 
-function check(name: string, ok: boolean, detail = "") {
+function check(name: string, ok: boolean, detail = '') {
 	console.log(
-		`${ok ? "PASS" : "FAIL"} ${name}${detail === "" ? "" : ` (${detail})`}`,
+		`${ok ? 'PASS' : 'FAIL'} ${name}${detail === '' ? '' : ` (${detail})`}`,
 	);
 	if (!ok) failed = true;
 }
@@ -71,96 +71,98 @@ function harness() {
 		const found = find(testId);
 		if (found === undefined) throw new Error(`no element ${testId}`);
 		const current = found.customProps?.value;
-		if (typeof current !== "string") throw new Error(`${testId} has no value`);
+		if (typeof current !== 'string') throw new Error(`${testId} has no value`);
 		return current;
 	};
 	return { test, renderer, settle, find, bounds, click, focus, press, value };
 }
 
-setThemeChoice("dark");
+setThemeChoice('dark');
 
 // The demo page.
 {
 	const page = harness();
 	const demos = await loadDemos();
 	const pages = await loadPages(demos);
-	page.test.render(() => <App demos={demos} pages={pages} initialPage="color-picker" />);
+	page.test.render(() => (
+		<App demos={demos} pages={pages} initialPage="color-picker" />
+	));
 	await page.settle(800);
 
 	// The rails are the source's 36px tall compact sliders, overlapping by 1px.
-	const hue = page.bounds("default-hue");
-	const alpha = page.bounds("default-alpha");
-	check("hue rail is 36px tall", hue.height === 36, `${hue.height}`);
-	check("alpha rail is 36px tall", alpha.height === 36, `${alpha.height}`);
-	check("rails overlap by 1px", alpha.y - hue.y === 35, `${alpha.y - hue.y}`);
+	const hue = page.bounds('default-hue');
+	const alpha = page.bounds('default-alpha');
+	check('hue rail is 36px tall', hue.height === 36, `${hue.height}`);
+	check('alpha rail is 36px tall', alpha.height === 36, `${alpha.height}`);
+	check('rails overlap by 1px', alpha.y - hue.y === 35, `${alpha.y - hue.y}`);
 
 	// Channel fields drop text that is not a number.
-	await page.focus("default-format");
-	await page.press("ArrowDown");
-	await page.press("ArrowDown Enter");
-	check("rgb channels shown", page.find("default-r-input") !== undefined);
+	await page.focus('default-format');
+	await page.press('ArrowDown');
+	await page.press('ArrowDown Enter');
+	check('rgb channels shown', page.find('default-r-input') !== undefined);
 	for (const [label, typed] of [
-		["letters", "a b c"],
-		["nothing", "Backspace Backspace Backspace Backspace"],
+		['letters', 'a b c'],
+		['nothing', 'Backspace Backspace Backspace Backspace'],
 	] as const) {
-		await page.click("default-r-input");
+		await page.click('default-r-input');
 		await page.press(`Meta+a ${typed}`);
-		await page.press("Tab");
+		await page.press('Tab');
 		check(
 			`red field shows its value again after ${label}`,
-			page.value("default-r-input") === "107",
-			page.value("default-r-input"),
+			page.value('default-r-input') === '107',
+			page.value('default-r-input'),
 		);
 		check(
 			`green field is untouched after ${label}`,
-			page.value("default-g-input") === "151",
-			page.value("default-g-input"),
+			page.value('default-g-input') === '151',
+			page.value('default-g-input'),
 		);
 	}
 
 	// Swatches take focus and Enter / Space picks them.
-	const reached = await page.focus("swatches-swatch-3");
-	check("swatch takes keyboard focus", reached);
-	await page.press("Enter");
+	const reached = await page.focus('swatches-swatch-3');
+	check('swatch takes keyboard focus', reached);
+	await page.press('Enter');
 	check(
-		"Enter on a focused swatch picks it",
-		page.value("swatches-hex-input") === "F0F0F0",
-		page.value("swatches-hex-input"),
+		'Enter on a focused swatch picks it',
+		page.value('swatches-hex-input') === 'F0F0F0',
+		page.value('swatches-hex-input'),
 	);
 	check(
-		"second swatch takes keyboard focus",
-		await page.focus("swatches-swatch-4"),
+		'second swatch takes keyboard focus',
+		await page.focus('swatches-swatch-4'),
 	);
 	// Space picks on key release, which the test renderer's keystrokes do not send; buttonProps handles it for every Button alike.
-	await page.press("Enter");
+	await page.press('Enter');
 	check(
-		"Enter on the second swatch picks it",
-		page.value("swatches-hex-input") === "E5E5E5",
-		page.value("swatches-hex-input"),
+		'Enter on the second swatch picks it',
+		page.value('swatches-hex-input') === 'E5E5E5',
+		page.value('swatches-hex-input'),
 	);
 
 	// Escape in the format menu closes the menu and leaves the popover open.
-	await page.click("popover-trigger");
-	check("popover opens", page.find("popover-square") !== undefined);
-	await page.focus("popover-format");
-	await page.press("ArrowDown");
-	check("format menu opens", page.find("popover-format-rgb") !== undefined);
-	await page.press("Escape");
+	await page.click('popover-trigger');
+	check('popover opens', page.find('popover-square') !== undefined);
+	await page.focus('popover-format');
+	await page.press('ArrowDown');
+	check('format menu opens', page.find('popover-format-rgb') !== undefined);
+	await page.press('Escape');
 	await page.settle(400);
 	check(
-		"Escape closes the format menu",
-		page.find("popover-format-rgb") === undefined,
+		'Escape closes the format menu',
+		page.find('popover-format-rgb') === undefined,
 	);
 	check(
-		"Escape in the format menu leaves the popover open",
-		page.find("popover-square") !== undefined,
+		'Escape in the format menu leaves the popover open',
+		page.find('popover-square') !== undefined,
 	);
-	await page.focus("popover-format");
-	await page.press("Escape");
+	await page.focus('popover-format');
+	await page.press('Escape');
 	await page.settle(400);
 	check(
-		"a second Escape closes the popover",
-		page.find("popover-square") === undefined,
+		'a second Escape closes the popover',
+		page.find('popover-square') === undefined,
 	);
 }
 
@@ -171,18 +173,18 @@ setThemeChoice("dark");
 		<ColorPicker
 			testId="named"
 			defaultValue="#6B97FF"
-			swatches={["#FF0000", "tomato"]}
+			swatches={['#FF0000', 'tomato']}
 		/>
 	));
 	await page.settle(600);
 	check(
-		"panel with a named swatch renders",
-		page.find("named-swatch-1") !== undefined,
+		'panel with a named swatch renders',
+		page.find('named-swatch-1') !== undefined,
 	);
-	await page.click("named-swatch-1");
+	await page.click('named-swatch-1');
 	check(
-		"clicking a named swatch leaves the colour alone",
-		page.find("named-square") !== undefined,
+		'clicking a named swatch leaves the colour alone',
+		page.find('named-square') !== undefined,
 	);
 }
 
@@ -191,8 +193,8 @@ setThemeChoice("dark");
 	const [second, setSecond] = createSignal(false);
 	const k = await createCheck(
 		() => (
-			<div style={{ display: "flex", flexDirection: "row", gap: 12 }}>
-				<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+			<div style={{ display: 'flex', flexDirection: 'row', gap: 12 }}>
+				<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 					<div testId="before" tabIndex={0} style={{ width: 40, height: 20 }} />
 					<ColorPicker testId="cp" defaultValue="#6B97FF" />
 				</div>
@@ -214,172 +216,172 @@ setThemeChoice("dark");
 			}) ?? null
 		);
 	};
-	const ROWS = ["hex", "rgb", "hsl", "oklch"].map(
+	const ROWS = ['hex', 'rgb', 'hsl', 'oklch'].map(
 		(format) => `cp-format-${format}`,
 	);
 	const focused = () =>
-		focusedAmong(["cp-format", ...ROWS, "cp-format-popup", "before"]);
-	const menuOpen = () => k.exists("cp-format-hex");
+		focusedAmong(['cp-format', ...ROWS, 'cp-format-popup', 'before']);
+	const menuOpen = () => k.exists('cp-format-hex');
 
-	await k.focus("cp-format");
-	await k.press("Enter");
+	await k.focus('cp-format');
+	await k.press('Enter');
 	k.expect(
-		"Enter on the trigger opens on the first row",
+		'Enter on the trigger opens on the first row',
 		focused(),
-		"cp-format-hex",
+		'cp-format-hex',
 	);
 	k.check(
-		"the focused row is the only tab stop",
-		renderer.matchesFocus(k.element("cp-format-hex").id, ":focus"),
+		'the focused row is the only tab stop',
+		renderer.matchesFocus(k.element('cp-format-hex').id, ':focus'),
 	);
 	k.check(
-		"the trigger no longer names the lit row",
-		k.aria("cp-format")?.active_descendant === undefined,
+		'the trigger no longer names the lit row',
+		k.aria('cp-format')?.active_descendant === undefined,
 	);
-	await k.press("ArrowDown");
-	k.expect("ArrowDown focuses the next row", focused(), "cp-format-rgb");
-	await k.press("ArrowUp ArrowUp");
+	await k.press('ArrowDown');
+	k.expect('ArrowDown focuses the next row', focused(), 'cp-format-rgb');
+	await k.press('ArrowUp ArrowUp');
 	k.expect(
-		"ArrowUp from the first row loops to the last",
+		'ArrowUp from the first row loops to the last',
 		focused(),
-		"cp-format-oklch",
+		'cp-format-oklch',
 	);
-	await k.press("ArrowDown");
+	await k.press('ArrowDown');
 	k.expect(
-		"ArrowDown from the last row loops to the first",
+		'ArrowDown from the last row loops to the first',
 		focused(),
-		"cp-format-hex",
+		'cp-format-hex',
 	);
-	await k.press("End");
-	k.expect("End focuses the last row", focused(), "cp-format-oklch");
-	await k.press("Home");
-	k.expect("Home focuses the first row", focused(), "cp-format-hex");
-	await k.press("o");
-	k.expect("typeahead focuses the matching row", focused(), "cp-format-oklch");
+	await k.press('End');
+	k.expect('End focuses the last row', focused(), 'cp-format-oklch');
+	await k.press('Home');
+	k.expect('Home focuses the first row', focused(), 'cp-format-hex');
+	await k.press('o');
+	k.expect('typeahead focuses the matching row', focused(), 'cp-format-oklch');
 	await k.settle(900);
-	await k.press("h");
+	await k.press('h');
 	k.expect(
-		"typeahead starts after the focused row and wraps",
+		'typeahead starts after the focused row and wraps',
 		focused(),
-		"cp-format-hex",
+		'cp-format-hex',
 	);
-	await k.press("Escape");
-	k.check("Escape closes the menu", !menuOpen());
-	k.expect("Escape returns focus to the trigger", focused(), "cp-format");
+	await k.press('Escape');
+	k.check('Escape closes the menu', !menuOpen());
+	k.expect('Escape returns focus to the trigger', focused(), 'cp-format');
 
-	await k.press("ArrowUp");
+	await k.press('ArrowUp');
 	k.expect(
-		"ArrowUp on the trigger opens on the last row",
+		'ArrowUp on the trigger opens on the last row',
 		focused(),
-		"cp-format-oklch",
+		'cp-format-oklch',
 	);
-	await k.press("Escape");
+	await k.press('Escape');
 
-	await k.press("Space");
+	await k.press('Space');
 	k.expect(
-		"Space on the trigger opens on the first row",
+		'Space on the trigger opens on the first row',
 		focused(),
-		"cp-format-hex",
+		'cp-format-hex',
 	);
-	await k.press("ArrowDown Enter");
-	k.check("Enter on a row closes the menu", !menuOpen());
-	k.expect("a pick returns focus to the trigger", focused(), "cp-format");
-	k.check("the pick switched the format", k.exists("cp-r-input"));
+	await k.press('ArrowDown Enter');
+	k.check('Enter on a row closes the menu', !menuOpen());
+	k.expect('a pick returns focus to the trigger', focused(), 'cp-format');
+	k.check('the pick switched the format', k.exists('cp-r-input'));
 
-	await k.press("Enter");
-	await k.press("ArrowDown Space");
-	k.check("Space on a row closes and its release does not reopen", !menuOpen());
+	await k.press('Enter');
+	await k.press('ArrowDown Space');
+	k.check('Space on a row closes and its release does not reopen', !menuOpen());
 	k.expect(
-		"Space on a row returns focus to the trigger",
+		'Space on a row returns focus to the trigger',
 		focused(),
-		"cp-format",
+		'cp-format',
 	);
 
 	// Tab closes and focus moves to the control after the trigger.
-	await k.focus("cp-format");
-	await k.press("Tab");
+	await k.focus('cp-format');
+	await k.press('Tab');
 	const afterTrigger = renderer.getFocusedElementId();
-	await k.focus("cp-format");
-	await k.press("Enter");
-	await k.press("ArrowDown");
-	await k.press("Tab");
-	k.check("Tab closes the menu", !menuOpen());
+	await k.focus('cp-format');
+	await k.press('Enter');
+	await k.press('ArrowDown');
+	await k.press('Tab');
+	k.check('Tab closes the menu', !menuOpen());
 	k.check(
-		"Tab focuses what follows the trigger",
+		'Tab focuses what follows the trigger',
 		afterTrigger !== null && renderer.getFocusedElementId() === afterTrigger,
 		`${renderer.getFocusedElementId()} vs ${afterTrigger}`,
 	);
 
-	await k.focus("cp-format");
-	await k.press("ArrowDown");
-	await k.press("Shift+Tab");
-	k.check("Shift+Tab closes the menu", !menuOpen());
-	k.expect("Shift+Tab focuses the trigger", focused(), "cp-format");
+	await k.focus('cp-format');
+	await k.press('ArrowDown');
+	await k.press('Shift+Tab');
+	k.check('Shift+Tab closes the menu', !menuOpen());
+	k.expect('Shift+Tab focuses the trigger', focused(), 'cp-format');
 
 	// Pointer movement over the rows (no press, so it runs in the test renderer).
-	await k.press("ArrowDown");
-	const third = k.bounds("cp-format-hsl");
+	await k.press('ArrowDown');
+	const third = k.bounds('cp-format-hsl');
 	renderer.nativeSimulateMouseMove(third.x + 40, third.y + third.height / 2);
 	await k.settle(300);
-	k.expect("hovering a row focuses it", focused(), "cp-format-hsl");
+	k.expect('hovering a row focuses it', focused(), 'cp-format-hsl');
 	renderer.nativeSimulateMouseMove(780, 20);
 	await k.settle(300);
 	k.expect(
-		"leaving the rows focuses the popup panel",
+		'leaving the rows focuses the popup panel',
 		focused(),
-		"cp-format-popup",
+		'cp-format-popup',
 	);
-	await k.press("ArrowDown");
+	await k.press('ArrowDown');
 	k.expect(
-		"ArrowDown on the panel focuses the first row",
+		'ArrowDown on the panel focuses the first row',
 		focused(),
-		"cp-format-hex",
+		'cp-format-hex',
 	);
-	await k.press("Escape");
+	await k.press('Escape');
 
 	// Pressing the trigger for real.
 	const press = (testId: string) =>
 		k.clickAt(k.center(testId).x, k.center(testId).y);
-	await press("cp-format");
-	k.check("pressing the trigger opens the menu", menuOpen());
-	k.expect("a pointer open focuses the panel", focused(), "cp-format-popup");
+	await press('cp-format');
+	k.check('pressing the trigger opens the menu', menuOpen());
+	k.expect('a pointer open focuses the panel', focused(), 'cp-format-popup');
 	await k.clickAt(790, 690);
 	await k.settle(300);
-	k.check("a press on bare background closes it", !menuOpen());
-	k.expect("the trigger takes focus back", focused(), "cp-format");
-	k.check("the format is not OKLCH yet", !k.exists("cp-C"));
-	await press("cp-format");
-	await press("cp-format-oklch");
+	k.check('a press on bare background closes it', !menuOpen());
+	k.expect('the trigger takes focus back', focused(), 'cp-format');
+	k.check('the format is not OKLCH yet', !k.exists('cp-C'));
+	await press('cp-format');
+	await press('cp-format-oklch');
 	await k.settle(300);
-	k.check("pressing a row closes the menu", !menuOpen());
-	k.check("the press picked the format", k.exists("cp-C"));
-	k.expect("a press pick returns focus to the trigger", focused(), "cp-format");
+	k.check('pressing a row closes the menu', !menuOpen());
+	k.check('the press picked the format', k.exists('cp-C'));
+	k.expect('a press pick returns focus to the trigger', focused(), 'cp-format');
 
 	// A menu that opened with the page keeps the page's focus until the reader reaches in.
 	setSecond(true);
 	await k.settle(600);
 	const focusedIs = (testId: string) =>
 		renderer.getFocusedElementId() === k.element(testId).id;
-	await k.focus("before");
-	k.check("the menu opened with the page is open", k.exists("op-format-hex"));
-	k.check("an open menu leaves focus on the page", focusedIs("before"));
-	const rgb = k.bounds("op-format-rgb");
+	await k.focus('before');
+	k.check('the menu opened with the page is open', k.exists('op-format-hex'));
+	k.check('an open menu leaves focus on the page', focusedIs('before'));
+	const rgb = k.bounds('op-format-rgb');
 	renderer.nativeSimulateMouseMove(rgb.x + 40, rgb.y + rgb.height / 2);
 	await k.settle(300);
-	k.check("hovering a row of it does not take focus", focusedIs("before"));
-	await k.focus("op-format");
-	await k.press("ArrowDown");
+	k.check('hovering a row of it does not take focus', focusedIs('before'));
+	await k.focus('op-format');
+	await k.press('ArrowDown');
 	k.check(
-		"ArrowDown on the trigger reaches into the menu",
-		focusedIs("op-format-hex"),
+		'ArrowDown on the trigger reaches into the menu',
+		focusedIs('op-format-hex'),
 	);
-	await k.press("ArrowDown");
-	k.check("the arrows then walk the rows", focusedIs("op-format-rgb"));
-	await k.press("Escape");
-	k.check("Escape closes it", !k.exists("op-format-hex"));
-	k.check("Escape returns focus to the trigger", focusedIs("op-format"));
+	await k.press('ArrowDown');
+	k.check('the arrows then walk the rows', focusedIs('op-format-rgb'));
+	await k.press('Escape');
+	k.check('Escape closes it', !k.exists('op-format-hex'));
+	k.check('Escape returns focus to the trigger', focusedIs('op-format'));
 
-	if (failed) console.log("FAILED");
+	if (failed) console.log('FAILED');
 	for (const test of harnesses) test.unmount();
 	k.finish();
 }

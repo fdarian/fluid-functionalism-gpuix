@@ -1,18 +1,18 @@
-import { For } from "solid-js";
+import { For } from 'solid-js';
 import {
 	Badge,
 	type BadgeColor,
-	badgeColors,
 	type BadgeVariant,
-} from "#/components/badge";
-import { DemoCard, DemoRow } from "#/lib/demo-kit";
+	badgeColors,
+} from '#/components/badge';
+import { DemoCard, DemoRow } from '#/lib/demo-kit';
 
 const FEATURED: { color: BadgeColor; label: string }[] = [
-	{ color: "violet", label: "Fiction" },
-	{ color: "amber", label: "Science" },
-	{ color: "green", label: "Philosophy" },
-	{ color: "blue", label: "History" },
-	{ color: "rose", label: "Poetry" },
+	{ color: 'violet', label: 'Fiction' },
+	{ color: 'amber', label: 'Science' },
+	{ color: 'green', label: 'Philosophy' },
+	{ color: 'blue', label: 'History' },
+	{ color: 'rose', label: 'Poetry' },
 ];
 
 const ALL_COLORS = Object.keys(badgeColors) as BadgeColor[];
@@ -22,7 +22,12 @@ const capitalize = (word: string) => word[0].toUpperCase() + word.slice(1);
 function Row(props: { variant: BadgeVariant }) {
 	return (
 		<div
-			style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", gap: 8 }}
+			style={{
+				display: 'flex',
+				flexDirection: 'row',
+				flexWrap: 'wrap',
+				gap: 8,
+			}}
 		>
 			<For each={FEATURED}>
 				{(item) => (
@@ -38,7 +43,12 @@ function Row(props: { variant: BadgeVariant }) {
 function Palette(props: { variant: BadgeVariant }) {
 	return (
 		<div
-			style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", gap: 8 }}
+			style={{
+				display: 'flex',
+				flexDirection: 'row',
+				flexWrap: 'wrap',
+				gap: 8,
+			}}
 		>
 			<For each={ALL_COLORS}>
 				{(name) => (
@@ -51,13 +61,13 @@ function Palette(props: { variant: BadgeVariant }) {
 	);
 }
 
-export const title = "Badge";
-export const group = "Components";
-export const listed = "sidebar";
+export const title = 'Badge';
+export const group = 'Components';
+export const listed = 'sidebar';
 
 export function Demo() {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 			<DemoCard title="Solid">
 				<Row variant="solid" />
 			</DemoCard>
@@ -65,13 +75,13 @@ export function Demo() {
 				<Row variant="dot" />
 			</DemoCard>
 			<DemoCard title="Colors">
-				<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+				<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 					<Palette variant="solid" />
 					<Palette variant="dot" />
 				</div>
 			</DemoCard>
 			<DemoCard title="Sizes">
-				<div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+				<div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
 					<DemoRow label="Default">
 						<Badge color="blue">Default</Badge>
 						<Badge variant="dot" color="blue">

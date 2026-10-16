@@ -4,9 +4,9 @@
  *
  *   bun scripts/check-carousel-dots.tsx
  */
-import { createSignal } from "solid-js";
-import { CarouselDots } from "#/components/carousel-dots";
-import { createCheck } from "./check-kit";
+import { createSignal } from 'solid-js';
+import { CarouselDots } from '#/components/carousel-dots';
+import { createCheck } from './check-kit';
 
 const [value, setValue] = createSignal(1);
 
@@ -37,7 +37,7 @@ function expectCurrent(label: string, current: number) {
 		check.expect(
 			`${label}: dot ${index} aria_current`,
 			node?.aria_current,
-			index === current ? "True" : undefined,
+			index === current ? 'True' : undefined,
 		);
 		check.expect(
 			`${label}: dot ${index} has no selected state`,
@@ -47,11 +47,11 @@ function expectCurrent(label: string, current: number) {
 	}
 }
 
-report("initial");
-expectCurrent("value 1", 1);
+report('initial');
+expectCurrent('value 1', 1);
 
 setValue(2);
 await check.settle();
-expectCurrent("value 2", 2);
+expectCurrent('value 2', 2);
 
 check.finish();

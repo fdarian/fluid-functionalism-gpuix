@@ -1,5 +1,5 @@
-import { createMemo, createSignal, For, type JSX, Show } from "solid-js";
-import { Button } from "#/components/button";
+import { createMemo, createSignal, For, type JSX, Show } from 'solid-js';
+import { Button } from '#/components/button';
 import {
 	Dropdown,
 	DropdownContent,
@@ -13,10 +13,10 @@ import {
 	DropdownSubTrigger,
 	DropdownTrigger,
 	MenuItem,
-} from "#/components/dropdown";
-import type { DemoModule, ShotContext } from "#/lib/demo";
-import { DemoCard } from "#/lib/demo-kit";
-import type { IconName } from "#/lib/icons";
+} from '#/components/dropdown';
+import type { DemoModule, ShotContext } from '#/lib/demo';
+import { DemoCard } from '#/lib/demo-kit';
+import type { IconName } from '#/lib/icons';
 import {
 	PlayDivider,
 	PlayField,
@@ -26,95 +26,95 @@ import {
 	PlaySelect,
 	PlaySwitch,
 	pick,
-} from "#/lib/playground";
-import { color, type as scale, setThemeChoice } from "#/lib/theme";
+} from '#/lib/playground';
+import { color, type as scale, setThemeChoice } from '#/lib/theme';
 
 const ITEMS = [
-	{ icon: "square-library", label: "Teamspaces" },
-	{ icon: "clock", label: "Recents" },
-	{ icon: "star", label: "Favorites" },
-	{ icon: "users", label: "Shared" },
-	{ icon: "lock", label: "Private" },
+	{ icon: 'square-library', label: 'Teamspaces' },
+	{ icon: 'clock', label: 'Recents' },
+	{ icon: 'star', label: 'Favorites' },
+	{ icon: 'users', label: 'Shared' },
+	{ icon: 'lock', label: 'Private' },
 ] as const;
 
-const KEY_ROWS = ["Alpha", "Beta", "Bravo", "Charlie", "Charter"];
-const FOLDERS = ["Inbox", "Design", "Engineering", "Marketing", "Archive"];
+const KEY_ROWS = ['Alpha', 'Beta', 'Bravo', 'Charlie', 'Charter'];
+const FOLDERS = ['Inbox', 'Design', 'Engineering', 'Marketing', 'Archive'];
 const STATUSES = [
-	"Open",
-	"In progress",
-	"In review",
-	"Blocked",
-	"Done",
-	"Archived",
+	'Open',
+	'In progress',
+	'In review',
+	'Blocked',
+	'Done',
+	'Archived',
 ];
 const LABELS = [
-	"Bug",
-	"Feature",
-	"Docs",
-	"Design",
-	"Performance",
-	"Accessibility",
-	"Refactor",
-	"Testing",
-	"Infrastructure",
-	"Security",
-	"Good first issue",
-	"Help wanted",
+	'Bug',
+	'Feature',
+	'Docs',
+	'Design',
+	'Performance',
+	'Accessibility',
+	'Refactor',
+	'Testing',
+	'Infrastructure',
+	'Security',
+	'Good first issue',
+	'Help wanted',
 ];
 const COMPONENTS = [
-	"Accordion",
-	"Badge",
-	"Button",
-	"Card",
-	"CheckboxGroup",
-	"ColorPicker",
-	"Combobox",
-	"Dialog",
-	"Dropdown",
-	"InputGroup",
-	"RadioGroup",
-	"Select",
-	"Sidebar",
-	"Slider",
-	"Switch",
-	"Table",
-	"Tabs",
+	'Accordion',
+	'Badge',
+	'Button',
+	'Card',
+	'CheckboxGroup',
+	'ColorPicker',
+	'Combobox',
+	'Dialog',
+	'Dropdown',
+	'InputGroup',
+	'RadioGroup',
+	'Select',
+	'Sidebar',
+	'Slider',
+	'Switch',
+	'Table',
+	'Tabs',
 ];
 const LANGUAGES = [
-	"Auto detect",
-	"Albanian (Albania)",
-	"Arabic",
-	"Bengali",
-	"Chinese (Simplified)",
-	"Chinese (Traditional)",
-	"Czech",
-	"Danish",
-	"Dutch",
-	"English (UK)",
-	"English (US)",
-	"Finnish",
-	"French",
-	"German",
-	"Greek",
-	"Hebrew",
-	"Hindi",
-	"Hungarian",
-	"Indonesian",
-	"Italian",
-	"Japanese",
-	"Korean",
-	"Norwegian",
-	"Polish",
-	"Portuguese (Brazil)",
-	"Portuguese (Portugal)",
-	"Romanian",
-	"Russian",
-	"Spanish",
-	"Swedish",
-	"Thai",
-	"Turkish",
-	"Ukrainian",
-	"Vietnamese",
+	'Auto detect',
+	'Albanian (Albania)',
+	'Arabic',
+	'Bengali',
+	'Chinese (Simplified)',
+	'Chinese (Traditional)',
+	'Czech',
+	'Danish',
+	'Dutch',
+	'English (UK)',
+	'English (US)',
+	'Finnish',
+	'French',
+	'German',
+	'Greek',
+	'Hebrew',
+	'Hindi',
+	'Hungarian',
+	'Indonesian',
+	'Italian',
+	'Japanese',
+	'Korean',
+	'Norwegian',
+	'Polish',
+	'Portuguese (Brazil)',
+	'Portuguese (Portugal)',
+	'Romanian',
+	'Russian',
+	'Spanish',
+	'Swedish',
+	'Thai',
+	'Turkish',
+	'Ukrainian',
+	'Vietnamese',
 ];
 
 function toggled<Item>(list: readonly Item[], item: Item) {
@@ -128,46 +128,46 @@ function includesQuery(item: string, query: string) {
 }
 
 const row = {
-	display: "flex",
-	flexDirection: "row",
-	alignItems: "flex-start",
+	display: 'flex',
+	flexDirection: 'row',
+	alignItems: 'flex-start',
 	gap: 24,
 } as const;
 
 type PlayRow = { icon: IconName; label: string; group: string };
-type PlayMode = "menu" | "inline";
-type PlaySelection = "single" | "multiple" | "none";
+type PlayMode = 'menu' | 'inline';
+type PlaySelection = 'single' | 'multiple' | 'none';
 
 const PLAY_ROWS: readonly PlayRow[] = [
-	{ icon: "mail", label: "Email", group: "Account" },
-	{ icon: "bell", label: "Notifications", group: "Account" },
-	{ icon: "shield", label: "Privacy", group: "Account" },
-	{ icon: "settings", label: "General", group: "Appearance" },
-	{ icon: "palette", label: "Theme", group: "Appearance" },
-	{ icon: "monitor", label: "Display", group: "Appearance" },
+	{ icon: 'mail', label: 'Email', group: 'Account' },
+	{ icon: 'bell', label: 'Notifications', group: 'Account' },
+	{ icon: 'shield', label: 'Privacy', group: 'Account' },
+	{ icon: 'settings', label: 'General', group: 'Appearance' },
+	{ icon: 'palette', label: 'Theme', group: 'Appearance' },
+	{ icon: 'monitor', label: 'Display', group: 'Appearance' },
 ];
-const PLAY_GROUPS = ["Account", "Appearance"] as const;
-const PLAY_DISABLED_LABEL = "Privacy";
-const PLAY_SUBMENU_LABEL = "Theme";
+const PLAY_GROUPS = ['Account', 'Appearance'] as const;
+const PLAY_DISABLED_LABEL = 'Privacy';
+const PLAY_SUBMENU_LABEL = 'Theme';
 const PLAY_THEMES = [
-	{ icon: "sun", label: "Light" },
-	{ icon: "moon", label: "Dark" },
-	{ icon: "monitor", label: "System" },
+	{ icon: 'sun', label: 'Light' },
+	{ icon: 'moon', label: 'Dark' },
+	{ icon: 'monitor', label: 'System' },
 ] as const;
 
 const MODE_OPTIONS = [
-	{ value: "menu", label: "Menu" },
-	{ value: "inline", label: "Inline panel" },
+	{ value: 'menu', label: 'Menu' },
+	{ value: 'inline', label: 'Inline panel' },
 ] as const;
 const SELECTION_OPTIONS = [
-	{ value: "single", label: "Single" },
-	{ value: "multiple", label: "Multiple" },
-	{ value: "none", label: "Actions" },
+	{ value: 'single', label: 'Single' },
+	{ value: 'multiple', label: 'Multiple' },
+	{ value: 'none', label: 'Actions' },
 ] as const;
 
 function Playground() {
-	const [mode, setMode] = createSignal<PlayMode>("menu");
-	const [selection, setSelection] = createSignal<PlaySelection>("single");
+	const [mode, setMode] = createSignal<PlayMode>('menu');
+	const [selection, setSelection] = createSignal<PlaySelection>('single');
 	const [search, setSearch] = createSignal(false);
 	const [showIcons, setShowIcons] = createSignal(true);
 	const [groups, setGroups] = createSignal(false);
@@ -176,31 +176,31 @@ function Playground() {
 	const [submenu, setSubmenu] = createSignal(true);
 
 	// Selections are kept by label so they survive filtering.
-	const [selected, setSelected] = createSignal<string | null>("Email");
+	const [selected, setSelected] = createSignal<string | null>('Email');
 	const [picked, setPicked] = createSignal<readonly string[]>([
-		"Email",
-		"Notifications",
+		'Email',
+		'Notifications',
 	]);
-	const [query, setQuery] = createSignal("");
-	const [theme, setTheme] = createSignal("System");
+	const [query, setQuery] = createSignal('');
+	const [theme, setTheme] = createSignal('System');
 	const [items, setItems] = createSignal<readonly PlayRow[]>(PLAY_ROWS);
 
 	// A search field lives in the popup only and replaces the groups; the create row reads the query; the inline panel has no submenu.
-	const hasSearch = () => mode() === "menu" && search();
+	const hasSearch = () => mode() === 'menu' && search();
 	const hasGroups = () => !hasSearch() && groups();
 	const hasCreate = () => hasSearch() && creatable();
-	const hasSubmenu = () => mode() === "menu" && submenu();
+	const hasSubmenu = () => mode() === 'menu' && submenu();
 
 	const shuffle = () => {
-		setMode(pick(["menu", "inline"] as const));
-		setSelection(pick(["single", "multiple", "none"] as const));
+		setMode(pick(['menu', 'inline'] as const));
+		setSelection(pick(['single', 'multiple', 'none'] as const));
 		setSearch(Math.random() > 0.6);
 		setShowIcons(Math.random() > 0.3);
 		setGroups(Math.random() > 0.6);
 		setDisabledRow(Math.random() > 0.7);
 		setCreatable(Math.random() > 0.6);
 		setSubmenu(Math.random() > 0.4);
-		setQuery("");
+		setQuery('');
 		setItems(PLAY_ROWS);
 	};
 
@@ -210,10 +210,10 @@ function Playground() {
 			: items();
 	const checkedIndex = () => {
 		const index = rows().findIndex((item) => item.label === selected());
-		return selection() === "single" && index !== -1 ? index : undefined;
+		return selection() === 'single' && index !== -1 ? index : undefined;
 	};
 	const checkedIndices = () =>
-		selection() === "multiple"
+		selection() === 'multiple'
 			? rows().flatMap((item, index) =>
 					picked().includes(item.label) ? [index] : [],
 				)
@@ -221,7 +221,7 @@ function Playground() {
 	const trimmed = () => query().trim();
 	const canCreate = () =>
 		hasCreate() &&
-		trimmed() !== "" &&
+		trimmed() !== '' &&
 		!items().some(
 			(item) => item.label.toLowerCase() === trimmed().toLowerCase(),
 		);
@@ -261,15 +261,15 @@ function Playground() {
 				label={item.label}
 				disabled={disabledRow() && item.label === PLAY_DISABLED_LABEL}
 				checked={
-					selection() === "single"
+					selection() === 'single'
 						? selected() === item.label
-						: selection() === "multiple"
+						: selection() === 'multiple'
 							? picked().includes(item.label)
 							: undefined
 				}
 				onSelect={() => {
-					if (selection() === "single") setSelected(item.label);
-					else if (selection() === "multiple")
+					if (selection() === 'single') setSelected(item.label);
+					else if (selection() === 'multiple')
 						setPicked(toggled(picked(), item.label));
 				}}
 			/>
@@ -305,19 +305,19 @@ function Playground() {
 				<MenuItem
 					testId="play-create"
 					index={rows().length}
-					icon={icon("plus")}
+					icon={icon('plus')}
 					label={`Create “${trimmed()}”`}
-					closeOnClick={selection() === "multiple" ? false : undefined}
+					closeOnClick={selection() === 'multiple' ? false : undefined}
 					onSelect={() => {
 						const created = trimmed();
 						setItems([
 							...items(),
-							{ icon: "plus", label: created, group: PLAY_GROUPS[1] },
+							{ icon: 'plus', label: created, group: PLAY_GROUPS[1] },
 						]);
-						if (selection() === "single") setSelected(created);
-						else if (selection() === "multiple")
+						if (selection() === 'single') setSelected(created);
+						else if (selection() === 'multiple')
 							setPicked(toggled(picked(), created));
-						setQuery("");
+						setQuery('');
 					}}
 				/>
 			</Show>
@@ -328,11 +328,11 @@ function Playground() {
 	);
 
 	const triggerLabel = () =>
-		selection() === "single"
-			? (selected() ?? "Choose")
-			: selection() === "multiple"
+		selection() === 'single'
+			? (selected() ?? 'Choose')
+			: selection() === 'multiple'
 				? `Filters · ${picked().length}`
-				: "Open menu";
+				: 'Open menu';
 
 	return (
 		<PlaygroundLayout
@@ -340,7 +340,7 @@ function Playground() {
 			preview={
 				<div style={{ paddingTop: 24 }}>
 					<Show
-						when={mode() === "menu"}
+						when={mode() === 'menu'}
 						fallback={
 							<Dropdown
 								testId="play-inline"
@@ -407,7 +407,7 @@ function Playground() {
 						label="Search"
 						checked={hasSearch()}
 						onToggle={() => setSearch(!search())}
-						disabled={mode() !== "menu"}
+						disabled={mode() !== 'menu'}
 					/>
 					<PlaySwitch
 						testId="play-creatable"
@@ -442,7 +442,7 @@ function Playground() {
 						label="Submenu"
 						checked={hasSubmenu()}
 						onToggle={() => setSubmenu(!submenu())}
-						disabled={mode() !== "menu"}
+						disabled={mode() !== 'menu'}
 					/>
 				</PlaygroundPanel>
 			}
@@ -532,10 +532,10 @@ function Triggered() {
 }
 
 function Submenus() {
-	const [picked, setPicked] = createSignal("");
+	const [picked, setPicked] = createSignal('');
 	return (
 		<DemoCard title="Dropdown, submenus">
-			<div style={{ ...row, alignItems: "center", minHeight: 56 }}>
+			<div style={{ ...row, alignItems: 'center', minHeight: 56 }}>
 				<DropdownMenu testId="sub">
 					<DropdownTrigger>
 						{(trigger) => (
@@ -583,13 +583,13 @@ function Submenus() {
 									index={0}
 									icon="link"
 									label="Copy link"
-									onSelect={() => setPicked("Copied link")}
+									onSelect={() => setPicked('Copied link')}
 								/>
 								<MenuItem
 									index={1}
 									icon="mail"
 									label="Email"
-									onSelect={() => setPicked("Emailed")}
+									onSelect={() => setPicked('Emailed')}
 								/>
 							</DropdownSubContent>
 						</DropdownSub>
@@ -598,11 +598,11 @@ function Submenus() {
 							index={2}
 							icon="pencil"
 							label="Rename"
-							onSelect={() => setPicked("Renamed")}
+							onSelect={() => setPicked('Renamed')}
 						/>
 					</DropdownContent>
 				</DropdownMenu>
-				<Show when={picked() !== ""}>
+				<Show when={picked() !== ''}>
 					<text style={{ ...scale.caption, color: color.mutedForeground }}>
 						{picked()}
 					</text>
@@ -613,11 +613,11 @@ function Submenus() {
 }
 
 function Keyboard() {
-	const [picked, setPicked] = createSignal("");
+	const [picked, setPicked] = createSignal('');
 	const [changes, setChanges] = createSignal(0);
 	return (
 		<DemoCard title="Dropdown, keyboard">
-			<div style={{ ...row, alignItems: "center", minHeight: 56 }}>
+			<div style={{ ...row, alignItems: 'center', minHeight: 56 }}>
 				<DropdownMenu
 					testId="keys"
 					onOpenChange={() => setChanges(changes() + 1)}
@@ -642,7 +642,7 @@ function Keyboard() {
 									testId={`keys-${index()}`}
 									index={index()}
 									label={label}
-									disabled={label === "Beta"}
+									disabled={label === 'Beta'}
 									onSelect={() => setPicked(label)}
 								/>
 							)}
@@ -696,8 +696,8 @@ function Multiple() {
 }
 
 function Searchable() {
-	const [language, setLanguage] = createSignal("Auto detect");
-	const [query, setQuery] = createSignal("");
+	const [language, setLanguage] = createSignal('Auto detect');
+	const [query, setQuery] = createSignal('');
 	const matches = createMemo(() =>
 		LANGUAGES.filter((item) => includesQuery(item, query())),
 	);
@@ -747,8 +747,8 @@ function Searchable() {
 }
 
 function SearchableMultiple() {
-	const [labels, setLabels] = createSignal(["Bug", "Design"]);
-	const [query, setQuery] = createSignal("");
+	const [labels, setLabels] = createSignal(['Bug', 'Design']);
+	const [query, setQuery] = createSignal('');
 	const matches = createMemo(() =>
 		LABELS.filter((item) => includesQuery(item, query())),
 	);
@@ -802,14 +802,14 @@ function SearchableMultiple() {
 
 function Creatable() {
 	const [components, setComponents] = createSignal(COMPONENTS);
-	const [used, setUsed] = createSignal(["Button", "Combobox"]);
-	const [query, setQuery] = createSignal("");
+	const [used, setUsed] = createSignal(['Button', 'Combobox']);
+	const [query, setQuery] = createSignal('');
 	const matches = createMemo(() =>
 		components().filter((item) => includesQuery(item, query())),
 	);
 	const trimmed = () => query().trim();
 	const canCreate = () =>
-		trimmed() !== "" &&
+		trimmed() !== '' &&
 		!components().some(
 			(item) => item.toLowerCase() === trimmed().toLowerCase(),
 		);
@@ -861,7 +861,7 @@ function Creatable() {
 									const created = trimmed();
 									setComponents([...components(), created]);
 									setUsed(toggled(used(), created));
-									setQuery("");
+									setQuery('');
 								}}
 							/>
 						</Show>
@@ -875,9 +875,9 @@ function Creatable() {
 	);
 }
 
-export const title = "Dropdown";
-export const group = "Components";
-export const listed = "sidebar";
+export const title = 'Dropdown';
+export const group = 'Components';
+export const listed = 'sidebar';
 
 export function Demo() {
 	return (
@@ -922,228 +922,228 @@ async function pickOption(shot: ShotContext, testId: string, steps: string) {
 	await shot.settle(300);
 }
 
-export const scenarios: DemoModule["scenarios"] = async (shot) => {
+export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	// The playground's controls sit in the right column.
-	shot.capture("playground");
-	await shot.focus("play-trigger");
-	await shot.press("Enter");
-	await shot.hover("play-row-Theme");
+	shot.capture('playground');
+	await shot.focus('play-trigger');
+	await shot.press('Enter');
+	await shot.hover('play-row-Theme');
 	await shot.settle(300);
-	shot.capture("playground-menu");
-	await shot.press("Escape Escape");
-	await pickOption(shot, "play-selection", "ArrowDown ArrowDown");
-	await shot.click("play-search-track");
-	await shot.click("play-creatable-track");
-	await shot.focus("play-trigger");
-	await shot.press("Enter");
-	await shot.press("x y z");
-	shot.expectText("Create “xyz”", true);
-	shot.capture("playground-search-create");
-	await shot.press("Escape");
-	await shot.click("play-search-track");
-	await pickOption(shot, "play-mode", "ArrowDown ArrowDown");
-	await shot.click("play-groups-track");
-	await shot.click("play-disabled-track");
-	shot.capture("playground-inline-groups");
-	await shot.click("playground-shuffle");
-	shot.capture("playground-shuffled");
+	shot.capture('playground-menu');
+	await shot.press('Escape Escape');
+	await pickOption(shot, 'play-selection', 'ArrowDown ArrowDown');
+	await shot.click('play-search-track');
+	await shot.click('play-creatable-track');
+	await shot.focus('play-trigger');
+	await shot.press('Enter');
+	await shot.press('x y z');
+	shot.expectText('Create “xyz”', true);
+	shot.capture('playground-search-create');
+	await shot.press('Escape');
+	await shot.click('play-search-track');
+	await pickOption(shot, 'play-mode', 'ArrowDown ArrowDown');
+	await shot.click('play-groups-track');
+	await shot.click('play-disabled-track');
+	shot.capture('playground-inline-groups');
+	await shot.click('playground-shuffle');
+	shot.capture('playground-shuffled');
 
 	// The inline panel is a plain group: its rows take the focus, so the group names no lit row.
-	await reveal(shot, "groups-0");
-	await shot.focus("groups-0");
-	shot.expectAria("groups", { role: "Group", active_descendant: undefined });
-	await shot.press("ArrowDown");
-	await shot.press("ArrowUp");
-	shot.expectAria("groups", { active_descendant: undefined });
+	await reveal(shot, 'groups-0');
+	await shot.focus('groups-0');
+	shot.expectAria('groups', { role: 'Group', active_descendant: undefined });
+	await shot.press('ArrowDown');
+	await shot.press('ArrowUp');
+	shot.expectAria('groups', { active_descendant: undefined });
 	// Opened by key, which the test renderer can run: the trigger names its popup, and the focused row is not an activedescendant.
-	await reveal(shot, "menu-trigger");
-	await shot.focus("menu-trigger");
-	shot.expectAria("menu-trigger", {
-		role: "Button",
+	await reveal(shot, 'menu-trigger');
+	await shot.focus('menu-trigger');
+	shot.expectAria('menu-trigger', {
+		role: 'Button',
 		expanded: false,
-		has_popup: "Menu",
+		has_popup: 'Menu',
 		controls: undefined,
 		active_descendant: undefined,
 	});
-	await shot.press("Enter");
-	shot.expectAria("menu-trigger", { expanded: true });
-	const popup = shot.aria("menu-trigger").controls;
+	await shot.press('Enter');
+	shot.expectAria('menu-trigger', { expanded: true });
+	const popup = shot.aria('menu-trigger').controls;
 	if (!Array.isArray(popup) || popup.length !== 1)
-		throw new Error("an open trigger controls its popup");
+		throw new Error('an open trigger controls its popup');
 	shot.expectAria(String(popup[0]), {
-		role: "Menu",
-		labelled_by: [shot.idOf("menu-trigger")],
+		role: 'Menu',
+		labelled_by: [shot.idOf('menu-trigger')],
 	});
-	shot.expectAria("menu-trigger", { active_descendant: undefined });
-	await shot.press("ArrowDown");
-	shot.expectAria("menu-trigger", { active_descendant: undefined });
-	shot.expectAria("menu-1", { role: "MenuItemRadio", toggled: "False" });
-	await shot.press("Escape");
+	shot.expectAria('menu-trigger', { active_descendant: undefined });
+	await shot.press('ArrowDown');
+	shot.expectAria('menu-trigger', { active_descendant: undefined });
+	shot.expectAria('menu-1', { role: 'MenuItemRadio', toggled: 'False' });
+	await shot.press('Escape');
 	await shot.settle(300);
 	// Submenu: the trigger row names its popup; the keys are inside it by real focus, so no row is an activedescendant.
-	await reveal(shot, "sub-trigger");
-	await shot.focus("sub-trigger");
-	await shot.press("Enter");
-	shot.expectAria("sub-move", { has_popup: "Menu", expanded: false });
-	await shot.press("ArrowRight");
+	await reveal(shot, 'sub-trigger');
+	await shot.focus('sub-trigger');
+	await shot.press('Enter');
+	shot.expectAria('sub-move', { has_popup: 'Menu', expanded: false });
+	await shot.press('ArrowRight');
 	await shot.settle(300);
-	const subPopup = shot.aria("sub-move").controls;
+	const subPopup = shot.aria('sub-move').controls;
 	if (!Array.isArray(subPopup) || subPopup.length !== 1)
-		throw new Error("an open submenu trigger controls its popup");
+		throw new Error('an open submenu trigger controls its popup');
 	shot.expectAria(String(subPopup[0]), {
-		role: "Menu",
-		labelled_by: [shot.idOf("sub-move")],
+		role: 'Menu',
+		labelled_by: [shot.idOf('sub-move')],
 	});
-	shot.expectAria("sub-trigger", { active_descendant: undefined });
-	await shot.press("Escape Escape");
+	shot.expectAria('sub-trigger', { active_descendant: undefined });
+	await shot.press('Escape Escape');
 	// Arrows land on a disabled row; it says so.
-	await reveal(shot, "keys-trigger");
-	await shot.focus("keys-trigger");
-	await shot.press("Enter");
-	shot.expectAria("keys-1", { disabled: true });
-	await shot.press("Escape");
+	await reveal(shot, 'keys-trigger');
+	await shot.focus('keys-trigger');
+	await shot.press('Enter');
+	shot.expectAria('keys-1', { disabled: true });
+	await shot.press('Escape');
 
 	await shot.scroll(700, 400, 0, -5000);
-	await reveal(shot, "basic-0");
-	await shot.hover("basic-2");
-	shot.capture("inline-hover");
-	await shot.click("basic-3");
+	await reveal(shot, 'basic-0');
+	await shot.hover('basic-2');
+	shot.capture('inline-hover');
+	await shot.click('basic-3');
 	await shot.moveTo(700, 80);
-	shot.capture("inline-checked");
-	await reveal(shot, "groups-0");
-	await shot.click("groups-0");
-	await shot.press("ArrowDown ArrowDown");
-	shot.capture("inline-keyboard");
-	await shot.press("ArrowDown ArrowDown ArrowDown ArrowDown ArrowDown");
-	shot.capture("inline-disabled-lit");
+	shot.capture('inline-checked');
+	await reveal(shot, 'groups-0');
+	await shot.click('groups-0');
+	await shot.press('ArrowDown ArrowDown');
+	shot.capture('inline-keyboard');
+	await shot.press('ArrowDown ArrowDown ArrowDown ArrowDown ArrowDown');
+	shot.capture('inline-disabled-lit');
 
-	await reveal(shot, "menu-trigger");
-	await shot.click("menu-trigger");
-	shot.capture("menu-open");
-	await shot.hover("menu-3");
-	shot.capture("menu-hover");
-	const label = shot.centerOf("menu-1");
+	await reveal(shot, 'menu-trigger');
+	await shot.click('menu-trigger');
+	shot.capture('menu-open');
+	await shot.hover('menu-3');
+	shot.capture('menu-hover');
+	const label = shot.centerOf('menu-1');
 	await shot.moveTo(label.x - 85, label.y);
-	shot.capture("menu-hover-label");
-	await shot.click("menu-3");
-	await shot.click("menu-trigger");
-	shot.capture("menu-picked");
-	await shot.press("Escape");
+	shot.capture('menu-hover-label');
+	await shot.click('menu-3');
+	await shot.click('menu-trigger');
+	shot.capture('menu-picked');
+	await shot.press('Escape');
 
-	await reveal(shot, "sub-trigger");
-	await shot.click("sub-trigger");
-	await shot.hover("sub-move");
+	await reveal(shot, 'sub-trigger');
+	await shot.click('sub-trigger');
+	await shot.hover('sub-move');
 	await shot.settle(300);
-	shot.capture("sub-open");
-	await shot.hover("sub-folder-Design");
-	shot.capture("sub-hover");
-	await shot.hover("sub-rename");
+	shot.capture('sub-open');
+	await shot.hover('sub-folder-Design');
+	shot.capture('sub-hover');
+	await shot.hover('sub-rename');
 	await shot.settle(400);
-	shot.capture("sub-left-for-rename");
-	await shot.hover("sub-move");
+	shot.capture('sub-left-for-rename');
+	await shot.hover('sub-move');
 	await shot.settle(300);
-	await shot.hover("sub-folder-Design");
-	await shot.click("sub-folder-Design");
-	shot.expectText("Moved to Design", true);
-	await shot.click("sub-trigger");
-	await shot.press("ArrowRight");
-	shot.capture("sub-keyboard");
-	await shot.press("ArrowDown ArrowDown ArrowLeft");
-	shot.capture("sub-keyboard-left");
-	await shot.press("Escape");
+	await shot.hover('sub-folder-Design');
+	await shot.click('sub-folder-Design');
+	shot.expectText('Moved to Design', true);
+	await shot.click('sub-trigger');
+	await shot.press('ArrowRight');
+	shot.capture('sub-keyboard');
+	await shot.press('ArrowDown ArrowDown ArrowLeft');
+	shot.capture('sub-keyboard-left');
+	await shot.press('Escape');
 
 	// A hover-opened submenu leaves the keys with its parent until Right goes in.
-	await shot.click("sub-trigger");
-	await shot.hover("sub-move");
+	await shot.click('sub-trigger');
+	await shot.hover('sub-move');
 	await shot.settle(300);
-	shot.expectText("Inbox", true);
-	await shot.press("ArrowDown");
+	shot.expectText('Inbox', true);
+	await shot.press('ArrowDown');
 	await shot.settle(300);
-	shot.expectText("Inbox", false);
-	await shot.press("ArrowRight");
+	shot.expectText('Inbox', false);
+	await shot.press('ArrowRight');
 	await shot.settle(300);
-	shot.capture("sub-hover-then-right");
-	shot.expectText("Copy link", true);
-	await shot.press("Escape Escape");
+	shot.capture('sub-hover-then-right');
+	shot.expectText('Copy link', true);
+	await shot.press('Escape Escape');
 
-	await reveal(shot, "keys-trigger");
-	await shot.click("keys-trigger");
+	await reveal(shot, 'keys-trigger');
+	await shot.click('keys-trigger');
 	// The keyboard scenario above opened and closed this menu: two changes before this click opens it.
-	shot.expectText("changes: 3", true);
+	shot.expectText('changes: 3', true);
 	// Arrows land on the disabled "Beta"; Enter on it picks nothing.
-	await shot.press("ArrowDown Enter");
-	shot.expectText("picked:  changes", true);
-	shot.capture("keys-disabled-lit");
-	await shot.press("ArrowDown Enter");
-	shot.expectText("picked: Bravo", true);
+	await shot.press('ArrowDown Enter');
+	shot.expectText('picked:  changes', true);
+	shot.capture('keys-disabled-lit');
+	await shot.press('ArrowDown Enter');
+	shot.expectText('picked: Bravo', true);
 	// Closing hands focus back to the trigger, so Up opens on the last row.
-	await shot.press("ArrowUp");
-	shot.capture("keys-up-opens-last");
-	await shot.press("Enter");
-	shot.expectText("picked: Charter", true);
-	await shot.click("keys-trigger");
-	await shot.press("c Enter");
-	shot.expectText("picked: Charlie", true);
-	await shot.click("keys-trigger");
-	await shot.press("c c Enter");
-	shot.expectText("picked: Charter", true);
+	await shot.press('ArrowUp');
+	shot.capture('keys-up-opens-last');
+	await shot.press('Enter');
+	shot.expectText('picked: Charter', true);
+	await shot.click('keys-trigger');
+	await shot.press('c Enter');
+	shot.expectText('picked: Charlie', true);
+	await shot.click('keys-trigger');
+	await shot.press('c c Enter');
+	shot.expectText('picked: Charter', true);
 	// Press on the trigger, hold, release on a row: it picks.
-	await shot.down("keys-trigger");
+	await shot.down('keys-trigger');
 	await shot.settle(300);
-	shot.capture("keys-press-held");
-	await shot.up("keys-2");
-	shot.expectText("picked: Bravo", true);
+	shot.capture('keys-press-held');
+	await shot.up('keys-2');
+	shot.expectText('picked: Bravo', true);
 
-	await reveal(shot, "multi-trigger");
-	await shot.click("multi-trigger");
-	shot.capture("multi-open");
-	await shot.click("multi-3");
-	shot.capture("multi-merged");
-	await shot.click("multi-1");
-	shot.capture("multi-split");
-	await shot.press("Escape");
+	await reveal(shot, 'multi-trigger');
+	await shot.click('multi-trigger');
+	shot.capture('multi-open');
+	await shot.click('multi-3');
+	shot.capture('multi-merged');
+	await shot.click('multi-1');
+	shot.capture('multi-split');
+	await shot.press('Escape');
 
-	await reveal(shot, "search-trigger");
-	await shot.click("search-trigger");
-	shot.capture("search-open");
-	await shot.press("ArrowDown");
-	shot.capture("search-row-lit");
-	await shot.press("f r");
-	shot.capture("search-filtered");
-	await shot.press("z z z");
-	shot.expectText("No languages found", true);
-	shot.capture("search-empty");
-	await shot.press("Escape");
+	await reveal(shot, 'search-trigger');
+	await shot.click('search-trigger');
+	shot.capture('search-open');
+	await shot.press('ArrowDown');
+	shot.capture('search-row-lit');
+	await shot.press('f r');
+	shot.capture('search-filtered');
+	await shot.press('z z z');
+	shot.expectText('No languages found', true);
+	shot.capture('search-empty');
+	await shot.press('Escape');
 
-	await reveal(shot, "labels-trigger");
-	await shot.click("labels-trigger");
-	await shot.press("ArrowDown ArrowDown");
-	shot.capture("labels-keyboard");
-	await shot.press("Enter");
-	shot.capture("labels-toggled");
-	await shot.press("Escape");
+	await reveal(shot, 'labels-trigger');
+	await shot.click('labels-trigger');
+	await shot.press('ArrowDown ArrowDown');
+	shot.capture('labels-keyboard');
+	await shot.press('Enter');
+	shot.capture('labels-toggled');
+	await shot.press('Escape');
 
-	await reveal(shot, "create-trigger");
-	await shot.click("create-trigger");
-	await shot.press("x y z");
-	shot.expectText("Create “xyz”", true);
-	shot.capture("create-row");
-	await shot.press("Escape");
+	await reveal(shot, 'create-trigger');
+	await shot.click('create-trigger');
+	await shot.press('x y z');
+	shot.expectText('Create “xyz”', true);
+	shot.capture('create-row');
+	await shot.press('Escape');
 
-	setThemeChoice("light");
-	await reveal(shot, "menu-trigger");
-	await shot.click("menu-trigger");
-	await shot.hover("menu-2");
-	shot.capture("light-menu");
-	await shot.press("Escape");
-	await reveal(shot, "sub-trigger");
-	await shot.click("sub-trigger");
-	await shot.press("ArrowRight");
-	shot.capture("light-sub");
-	await shot.press("Escape Escape");
-	await reveal(shot, "multi-trigger");
-	await shot.click("multi-trigger");
-	shot.capture("light-multi");
-	await shot.press("Escape");
-	setThemeChoice("dark");
+	setThemeChoice('light');
+	await reveal(shot, 'menu-trigger');
+	await shot.click('menu-trigger');
+	await shot.hover('menu-2');
+	shot.capture('light-menu');
+	await shot.press('Escape');
+	await reveal(shot, 'sub-trigger');
+	await shot.click('sub-trigger');
+	await shot.press('ArrowRight');
+	shot.capture('light-sub');
+	await shot.press('Escape Escape');
+	await reveal(shot, 'multi-trigger');
+	await shot.click('multi-trigger');
+	shot.capture('light-multi');
+	await shot.press('Escape');
+	setThemeChoice('dark');
 };

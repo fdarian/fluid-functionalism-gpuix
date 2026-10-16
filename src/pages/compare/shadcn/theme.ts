@@ -1,5 +1,5 @@
-import type { StateStyleDesc } from "@gpuix/solid";
-import { type Scheme, scheme } from "#/lib/theme";
+import type { StateStyleDesc } from '@gpuix/solid';
+import { type Scheme, scheme } from '#/lib/theme';
 
 /** `app/compare/shadcn-theme.css`: the canonical shadcn "default" style, "neutral" base colour, in both schemes. */
 interface Tokens {
@@ -21,36 +21,36 @@ interface Tokens {
 
 const tokens: Record<Scheme, Tokens> = {
 	light: {
-		background: "#FFFFFF",
-		foreground: "#0A0A0A",
-		popover: "#FFFFFF",
-		popoverForeground: "#0A0A0A",
-		primary: "#171717",
-		primaryForeground: "#FAFAFA",
-		muted: "#F5F5F5",
-		mutedForeground: "#737373",
-		accent: "#F5F5F5",
-		accentForeground: "#171717",
-		border: "#E5E5E5",
-		input: "#E5E5E5",
-		ring: "#0A0A0A",
-		destructive: "#EF4444",
+		background: '#FFFFFF',
+		foreground: '#0A0A0A',
+		popover: '#FFFFFF',
+		popoverForeground: '#0A0A0A',
+		primary: '#171717',
+		primaryForeground: '#FAFAFA',
+		muted: '#F5F5F5',
+		mutedForeground: '#737373',
+		accent: '#F5F5F5',
+		accentForeground: '#171717',
+		border: '#E5E5E5',
+		input: '#E5E5E5',
+		ring: '#0A0A0A',
+		destructive: '#EF4444',
 	},
 	dark: {
-		background: "#0A0A0A",
-		foreground: "#FAFAFA",
-		popover: "#0A0A0A",
-		popoverForeground: "#FAFAFA",
-		primary: "#FAFAFA",
-		primaryForeground: "#171717",
-		muted: "#262626",
-		mutedForeground: "#A3A3A3",
-		accent: "#262626",
-		accentForeground: "#FAFAFA",
-		border: "#262626",
-		input: "#262626",
-		ring: "#D4D4D4",
-		destructive: "#7F1D1D",
+		background: '#0A0A0A',
+		foreground: '#FAFAFA',
+		popover: '#0A0A0A',
+		popoverForeground: '#FAFAFA',
+		primary: '#FAFAFA',
+		primaryForeground: '#171717',
+		muted: '#262626',
+		mutedForeground: '#A3A3A3',
+		accent: '#262626',
+		accentForeground: '#FAFAFA',
+		border: '#262626',
+		input: '#262626',
+		ring: '#D4D4D4',
+		destructive: '#7F1D1D',
 	},
 };
 

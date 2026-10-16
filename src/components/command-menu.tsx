@@ -7,7 +7,7 @@ import {
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	type Accessor,
 	createContext,
@@ -21,30 +21,30 @@ import {
 	onCleanup,
 	Show,
 	useContext,
-} from "solid-js";
-import { FluidHighlight } from "#/lib/fluid-highlight";
+} from 'solid-js';
+import { FluidHighlight } from '#/lib/fluid-highlight';
 import {
 	createFluidHover,
 	type FluidHover,
 	useHoverItem,
-} from "#/lib/fluid-hover";
-import { Icon } from "#/lib/icon";
-import type { IconRef } from "#/lib/icons";
-import { moveIndex } from "#/lib/list-nav";
-import { IS_MAC } from "#/lib/platform";
-import { createPresence } from "#/lib/presence";
+} from '#/lib/fluid-hover';
+import { Icon } from '#/lib/icon';
+import type { IconRef } from '#/lib/icons';
+import { moveIndex } from '#/lib/list-nav';
+import { IS_MAC } from '#/lib/platform';
+import { createPresence } from '#/lib/presence';
 import {
 	color,
 	colorFade,
 	radius,
-	shape,
-	sizeChoice,
 	type as scale,
 	shadow,
+	shape,
+	sizeChoice,
 	surface,
 	motion as tween,
 	weight,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -88,25 +88,25 @@ interface CommandMenuSection {
 // ─── Shortcut caps ───────────────────────────────────────────────────────────
 
 const CAP_LABELS: Record<string, { mac: string; other: string }> = {
-	mod: { mac: "⌘", other: "Ctrl" },
-	meta: { mac: "⌘", other: "Win" },
-	cmd: { mac: "⌘", other: "Win" },
-	ctrl: { mac: "⌃", other: "Ctrl" },
-	alt: { mac: "⌥", other: "Alt" },
-	option: { mac: "⌥", other: "Alt" },
-	shift: { mac: "⇧", other: "Shift" },
-	enter: { mac: "↵", other: "Enter" },
-	return: { mac: "↵", other: "Enter" },
-	esc: { mac: "Esc", other: "Esc" },
-	escape: { mac: "Esc", other: "Esc" },
-	backspace: { mac: "⌫", other: "Backspace" },
-	delete: { mac: "⌦", other: "Del" },
-	tab: { mac: "⇥", other: "Tab" },
-	space: { mac: "Space", other: "Space" },
-	up: { mac: "↑", other: "↑" },
-	down: { mac: "↓", other: "↓" },
-	left: { mac: "←", other: "←" },
-	right: { mac: "→", other: "→" },
+	mod: { mac: '⌘', other: 'Ctrl' },
+	meta: { mac: '⌘', other: 'Win' },
+	cmd: { mac: '⌘', other: 'Win' },
+	ctrl: { mac: '⌃', other: 'Ctrl' },
+	alt: { mac: '⌥', other: 'Alt' },
+	option: { mac: '⌥', other: 'Alt' },
+	shift: { mac: '⇧', other: 'Shift' },
+	enter: { mac: '↵', other: 'Enter' },
+	return: { mac: '↵', other: 'Enter' },
+	esc: { mac: 'Esc', other: 'Esc' },
+	escape: { mac: 'Esc', other: 'Esc' },
+	backspace: { mac: '⌫', other: 'Backspace' },
+	delete: { mac: '⌦', other: 'Del' },
+	tab: { mac: '⇥', other: 'Tab' },
+	space: { mac: 'Space', other: 'Space' },
+	up: { mac: '↑', other: '↑' },
+	down: { mac: '↓', other: '↓' },
+	left: { mac: '←', other: '←' },
+	right: { mac: '→', other: '→' },
 };
 
 const PREFORMATTED = /^[⌘⌃⌥⇧↵⌫⌦⇥↑↓←→]+[A-Za-z0-9]?$/;
@@ -114,13 +114,13 @@ const PREFORMATTED = /^[⌘⌃⌥⇧↵⌫⌦⇥↑↓←→]+[A-Za-z0-9]?$/;
 /** Splits a combo on "+", keeping a trailing "+" as the key itself. */
 function shortcutTokens(shortcut: string): string[] {
 	const trimmed = shortcut.trim();
-	if (trimmed === "") return [];
-	const parts = trimmed.split("+").map((part) => part.trim());
+	if (trimmed === '') return [];
+	const parts = trimmed.split('+').map((part) => part.trim());
 	// "mod++" splits into ["mod", "", ""]: the empties are a literal "+".
 	const tokens: string[] = [];
 	parts.forEach((part, index) => {
-		if (part !== "") tokens.push(part);
-		else if (index > 0 && tokens[tokens.length - 1] !== "+") tokens.push("+");
+		if (part !== '') tokens.push(part);
+		else if (index > 0 && tokens[tokens.length - 1] !== '+') tokens.push('+');
 	});
 	return tokens;
 }
@@ -152,10 +152,10 @@ export function defaultCommandMenuFilter(
 	if (words.length === 0) return true;
 	const haystack = [
 		item.label,
-		item.description ?? "",
+		item.description ?? '',
 		...(item.keywords ?? []),
 	]
-		.join(" ")
+		.join(' ')
 		.toLowerCase();
 	return words.every((word) => haystack.includes(word));
 }
@@ -168,7 +168,7 @@ function sectionRows(
 ): CommandMenuSection[] {
 	const sections: CommandMenuSection[] = [];
 	const byHeading = new Map<string | null, CommandMenuSection>();
-	const suggested = new Set(query === "" ? (suggestions ?? []) : []);
+	const suggested = new Set(query === '' ? (suggestions ?? []) : []);
 	const push = (
 		heading: string | null,
 		id: string,
@@ -186,14 +186,14 @@ function sectionRows(
 		const pool = new Map(visible.map((item) => [item.value, item]));
 		for (const value of suggestions ?? []) {
 			const item = pool.get(value);
-			if (item !== undefined) push(suggestionsLabel, "suggestions", item);
+			if (item !== undefined) push(suggestionsLabel, 'suggestions', item);
 		}
 	}
 	for (const item of visible) {
 		if (suggested.has(item.value)) continue;
 		push(
 			item.group ?? null,
-			item.group === undefined ? "ungrouped" : `group:${item.group}`,
+			item.group === undefined ? 'ungrouped' : `group:${item.group}`,
 			item,
 		);
 	}
@@ -281,7 +281,7 @@ interface CommandMenuContextValue {
 	itemsByValue: Accessor<ReadonlyMap<string, CommandMenuItemData>>;
 	hover: FluidHover;
 	select: (item: CommandMenuItemData) => void;
-	move: (to: 1 | -1 | "first" | "last") => void;
+	move: (to: 1 | -1 | 'first' | 'last') => void;
 	tabs: Accessor<TabsHandle | undefined>;
 	setTabs: (handle: TabsHandle | undefined) => void;
 	registerRow: (index: number, element: HostElement) => void;
@@ -302,7 +302,7 @@ const RowIndexContext = createContext<number>();
 function useCommandMenu() {
 	const context = useContext(CommandMenuContext);
 	if (context === undefined) {
-		throw new Error("Command menu parts must be inside <CommandMenu>");
+		throw new Error('Command menu parts must be inside <CommandMenu>');
 	}
 	return context;
 }
@@ -319,15 +319,15 @@ export function CommandMenuPanel(props: {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
-				width: props.width ?? "100%",
+				display: 'flex',
+				flexDirection: 'column',
+				width: props.width ?? '100%',
 				maxWidth: 520,
 				maxHeight: props.maxHeight,
 				backgroundColor: surface(props.level ?? 3),
 				borderRadius: shape.container,
 				boxShadow: shadow(props.level ?? 3),
-				overflow: "hidden",
+				overflow: 'hidden',
 			}}
 		>
 			{props.children}
@@ -349,14 +349,14 @@ export function CommandMenu(props: {
 	suggestionsLabel?: string;
 	/** Inside a `CommandMenuDialog`, a pick closes the dialog. Defaults to true. */
 	closeOnSelect?: boolean;
-	size?: "default" | "compact";
+	size?: 'default' | 'compact';
 	/** Prefix of the rows' and tabs' test ids: `<testId>-row-<value>`. */
 	testId: string;
 	children: JSX.Element;
 }) {
 	const dialog = useContext(DialogContext);
 	const [internalQuery, setInternalQuery] = createSignal(
-		props.defaultQuery ?? "",
+		props.defaultQuery ?? '',
 	);
 	const query = () => props.query ?? internalQuery();
 	const setQuery = (next: string) => {
@@ -371,13 +371,13 @@ export function CommandMenu(props: {
 		const filter = props.filter ?? defaultCommandMenuFilter;
 		const needle = query();
 		const visible =
-			needle === ""
+			needle === ''
 				? props.items
 				: props.items.filter((item) => filter(item, needle));
 		return sectionRows(
 			visible,
 			props.suggestions,
-			props.suggestionsLabel ?? "Suggestions",
+			props.suggestionsLabel ?? 'Suggestions',
 			needle,
 		);
 	});
@@ -385,7 +385,7 @@ export function CommandMenu(props: {
 	const rowsKey = createMemo(() =>
 		rows()
 			.map((row) => row.value)
-			.join("\u0000"),
+			.join('\u0000'),
 	);
 
 	const hover = createFluidHover({
@@ -406,7 +406,7 @@ export function CommandMenu(props: {
 	// The list's scrollTop travels on the fill's spring so row and fill arrive together. The motion value only carries the animation: the scroller is the source of truth, so every run starts by jumping the value to where the wheel or the scrollbar left it.
 	const reduceMotion = createReducedMotion();
 	const scrollPosition = createMotionValue(0);
-	createMotionValueEvent(scrollPosition, "change", (top) => {
+	createMotionValueEvent(scrollPosition, 'change', (top) => {
 		if (scroller !== undefined) scroller.scrollTop = top;
 	});
 
@@ -454,7 +454,7 @@ export function CommandMenu(props: {
 		}),
 	);
 
-	const move = (to: 1 | -1 | "first" | "last") => {
+	const move = (to: 1 | -1 | 'first' | 'last') => {
 		const all = rows();
 		const enabled: number[] = [];
 		all.forEach((row, index) => {
@@ -462,9 +462,9 @@ export function CommandMenu(props: {
 		});
 		if (enabled.length === 0) return;
 		const next =
-			to === "first"
+			to === 'first'
 				? enabled[0]
-				: to === "last"
+				: to === 'last'
 					? enabled[enabled.length - 1]
 					: moveIndex(
 							hover.activeIndex(),
@@ -489,7 +489,7 @@ export function CommandMenu(props: {
 	const listId = createUniqueId();
 	const rowId = (index: number) => `${listId}-${index}`;
 	const context: CommandMenuContextValue = {
-		compact: () => (props.size ?? sizeChoice()) === "compact",
+		compact: () => (props.size ?? sizeChoice()) === 'compact',
 		query,
 		setQuery,
 		sections,
@@ -523,11 +523,11 @@ export function CommandMenu(props: {
 		<CommandMenuContext.Provider value={context}>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					flexShrink: 1,
 					minHeight: 0,
-					width: "100%",
+					width: '100%',
 				}}
 			>
 				{props.children}
@@ -549,7 +549,7 @@ export function CommandMenuInput(props: {
 	const [focused, setFocused] = createSignal(false);
 	const layout = () => metrics(menu.compact());
 	const icon = (): IconRef | null =>
-		props.icon === undefined ? "search" : props.icon;
+		props.icon === undefined ? 'search' : props.icon;
 	let inputElement: HostElement | undefined;
 	const litRowId = () => {
 		const index = menu.hover.activeIndex();
@@ -558,8 +558,8 @@ export function CommandMenuInput(props: {
 
 	const onKeyDown = (event: KeyEvent) => {
 		switch (event.key) {
-			case "ArrowLeft":
-			case "ArrowRight": {
+			case 'ArrowLeft':
+			case 'ArrowRight': {
 				// A modified arrow keeps its editing meaning: Shift extends the selection.
 				if (
 					event.shiftKey === true ||
@@ -576,39 +576,39 @@ export function CommandMenuInput(props: {
 				const current = handle.tabs.findIndex(
 					(tab) => tab.value === handle.value,
 				);
-				const step = event.key === "ArrowRight" ? 1 : -1;
+				const step = event.key === 'ArrowRight' ? 1 : -1;
 				const next = ((current === -1 ? 0 : current) + step + count) % count;
 				handle.onValueChange(handle.tabs[next].value);
 				return;
 			}
-			case "ArrowDown":
+			case 'ArrowDown':
 				event.preventDefault();
 				menu.move(1);
 				return;
-			case "ArrowUp":
+			case 'ArrowUp':
 				event.preventDefault();
 				menu.move(-1);
 				return;
-			case "Home":
-				if (menu.query() !== "") return;
+			case 'Home':
+				if (menu.query() !== '') return;
 				event.preventDefault();
-				menu.move("first");
+				menu.move('first');
 				return;
-			case "End":
-				if (menu.query() !== "") return;
+			case 'End':
+				if (menu.query() !== '') return;
 				event.preventDefault();
-				menu.move("last");
+				menu.move('last');
 				return;
-			case "Escape":
+			case 'Escape':
 				if (menu.dialog !== undefined) {
 					menu.dialog.close();
 					return;
 				}
-				if (menu.query() === "") return;
+				if (menu.query() === '') return;
 				event.preventDefault();
-				menu.setQuery("");
+				menu.setQuery('');
 				return;
-			case "Enter":
+			case 'Enter':
 				event.preventDefault();
 				submit();
 				return;
@@ -622,7 +622,7 @@ export function CommandMenuInput(props: {
 	};
 	const onChange = (event: DomEvent) => {
 		if (event.value === undefined) {
-			throw new Error("Command menu input change without a value");
+			throw new Error('Command menu input change without a value');
 		}
 		menu.setQuery(event.value);
 	};
@@ -631,20 +631,20 @@ export function CommandMenuInput(props: {
 		<div
 			onClick={() => {
 				if (inputElement === undefined) {
-					throw new Error("Command menu input is not mounted");
+					throw new Error('Command menu input is not mounted');
 				}
 				renderer.focusElement?.(inputElement.id);
 			}}
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				flexShrink: 0,
 				height: layout().input,
 				gap: layout().inputGap,
 				paddingLeft: layout().inputPadX,
 				paddingRight: layout().inputPadX,
-				cursor: "text",
+				cursor: 'text',
 			}}
 		>
 			<Show when={icon()}>
@@ -672,7 +672,7 @@ export function CommandMenuInput(props: {
 				aria-activedescendant={litRowId()}
 				autoFocus={menu.dialog !== undefined}
 				value={menu.query()}
-				placeholder={props.placeholder ?? "Type a command or search…"}
+				placeholder={props.placeholder ?? 'Type a command or search…'}
 				theme={{
 					text: color.foreground,
 					textMuted: color.mutedForeground,
@@ -707,15 +707,15 @@ function TabLabel(props: { text: string; selected: boolean; lit: boolean }) {
 	const textStyle = (heavy: boolean) => ({
 		...scale.bodyCompact,
 		fontWeight: heavy ? weight.semibold : weight.normal,
-		whiteSpace: "nowrap" as const,
+		whiteSpace: 'nowrap' as const,
 	});
 	return (
-		<div style={{ position: "relative", flexShrink: 0 }}>
+		<div style={{ position: 'relative', flexShrink: 0 }}>
 			<text style={{ ...textStyle(true), opacity: 0 }}>{props.text}</text>
 			<text
 				style={{
 					...textStyle(props.selected),
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					color: props.lit ? color.foreground : color.mutedForeground,
@@ -767,9 +767,9 @@ export function CommandMenuTabs(props: {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				flexShrink: 0,
 				gap: layout().tabsGap,
 				paddingLeft: layout().tabsPadX,
@@ -784,10 +784,10 @@ export function CommandMenuTabs(props: {
 				// A tab press leaves focus in the field, so the keyboard keeps working.
 				onMouseDown={(event) => event.preventDefault()}
 				style={{
-					position: "relative",
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					position: 'relative',
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					flexGrow: 1,
 					minWidth: 0,
 				}}
@@ -821,14 +821,14 @@ export function CommandMenuTabs(props: {
 								onClick={() => props.onValueChange(tab.value)}
 								onMouseEnter={() => setHovered(index())}
 								style={{
-									display: "flex",
-									alignItems: "center",
+									display: 'flex',
+									alignItems: 'center',
 									flexShrink: 0,
 									height: 28,
 									paddingLeft: 10,
 									paddingRight: 10,
 									borderRadius: shape.bg,
-									cursor: "pointer",
+									cursor: 'pointer',
 								}}
 							>
 								<TabLabel
@@ -843,7 +843,7 @@ export function CommandMenuTabs(props: {
 			</div>
 			<Show when={props.children}>
 				<TabsRowContext.Provider value={true}>
-					<div style={{ display: "flex", flexShrink: 0, alignItems: "center" }}>
+					<div style={{ display: 'flex', flexShrink: 0, alignItems: 'center' }}>
 						{props.children}
 					</div>
 				</TabsRowContext.Provider>
@@ -860,9 +860,9 @@ export function CommandMenuFilters(props: { children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				flexShrink: 0,
 				gap: 4,
 				paddingLeft: inTabsRow ? 0 : layout().tabsPadX,
@@ -883,15 +883,15 @@ export function CommandMenuShortcut(props: {
 	const menu = useContext(CommandMenuContext);
 	const layout = () => metrics(menu?.compact() ?? false);
 	const caps = () =>
-		(typeof props.keys === "string" ? [props.keys] : props.keys).flatMap(
+		(typeof props.keys === 'string' ? [props.keys] : props.keys).flatMap(
 			(key) => formatShortcut(key),
 		);
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				flexShrink: 0,
 				gap: 2,
 			}}
@@ -900,9 +900,9 @@ export function CommandMenuShortcut(props: {
 				{(cap) => (
 					<div
 						style={{
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
 							height: layout().cap,
 							minWidth: layout().cap,
 							paddingLeft: 4,
@@ -915,7 +915,7 @@ export function CommandMenuShortcut(props: {
 							style={{
 								...layout().capText,
 								color: color.mutedForeground,
-								whiteSpace: "nowrap",
+								whiteSpace: 'nowrap',
 							}}
 						>
 							{cap}
@@ -951,11 +951,11 @@ export function CommandMenuList(props: {
 			testId={`${menu.testId}-list`}
 			onScroll={hover.handlers.onScroll}
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				flexShrink: 1,
 				minHeight: 0,
-				overflowY: "scroll",
+				overflowY: 'scroll',
 				borderTopWidth: 1,
 				borderColor: color.border,
 			}}
@@ -969,9 +969,9 @@ export function CommandMenuList(props: {
 				// A row press leaves focus in the field, so the keyboard keeps working.
 				onMouseDown={(event) => event.preventDefault()}
 				style={{
-					position: "relative",
-					display: "flex",
-					flexDirection: "column",
+					position: 'relative',
+					display: 'flex',
+					flexDirection: 'column',
 					flexShrink: 0,
 					gap: 4,
 					padding: empty() ? 0 : 4,
@@ -986,13 +986,13 @@ export function CommandMenuList(props: {
 				{props.children}
 				<For each={menu.sections()}>
 					{(section) => (
-						<div style={{ display: "flex", flexDirection: "column" }}>
+						<div style={{ display: 'flex', flexDirection: 'column' }}>
 							<Show when={section.heading}>
 								{(heading: Accessor<string>) => (
 									<div
 										style={{
-											display: "flex",
-											alignItems: "center",
+											display: 'flex',
+											alignItems: 'center',
 											flexShrink: 0,
 											height: layout().heading,
 											paddingLeft: layout().headingPadX,
@@ -1045,9 +1045,9 @@ export function CommandMenuEmpty(props: { children: string }) {
 		<Show when={menu.rows().length === 0}>
 			<div
 				style={{
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
 					paddingTop: 24,
 					paddingBottom: 24,
 					paddingLeft: 12,
@@ -1081,7 +1081,7 @@ export function CommandMenuItem(props: {
 	const menu = useCommandMenu();
 	const index = useContext(RowIndexContext);
 	if (index === undefined) {
-		throw new Error("CommandMenuItem must be rendered by CommandMenuList");
+		throw new Error('CommandMenuItem must be rendered by CommandMenuList');
 	}
 	const layout = () => metrics(menu.compact());
 	const item = (): CommandMenuItemData => {
@@ -1101,7 +1101,7 @@ export function CommandMenuItem(props: {
 	const active = () => menu.hover.activeIndex() === index;
 	let rowElement: HostElement | undefined;
 	createEffect(() => {
-		if (rowElement === undefined) throw new Error("Row is not mounted");
+		if (rowElement === undefined) throw new Error('Row is not mounted');
 		menu.registerRow(index, rowElement);
 	});
 
@@ -1116,16 +1116,16 @@ export function CommandMenuItem(props: {
 			testId={`${menu.testId}-row-${props.value}`}
 			onClick={() => menu.select(item())}
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				flexShrink: 0,
 				height: layout().row,
 				gap: layout().gap,
 				paddingLeft: layout().rowPadX,
 				paddingRight: layout().rowPadX,
 				borderRadius: radius.item,
-				cursor: "pointer",
+				cursor: 'pointer',
 				opacity: item().disabled ? 0.5 : 1,
 			}}
 		>
@@ -1146,13 +1146,13 @@ export function CommandMenuItem(props: {
 				fallback={
 					<div
 						style={{
-							display: "flex",
-							flexDirection: "row",
-							alignItems: "center",
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'center',
 							flexGrow: 1,
 							minWidth: 0,
 							gap: 8,
-							overflow: "hidden",
+							overflow: 'hidden',
 						}}
 					>
 						<text
@@ -1161,7 +1161,7 @@ export function CommandMenuItem(props: {
 								flexShrink: 0,
 								color: active() ? color.foreground : color.mutedForeground,
 								...colorFade,
-								whiteSpace: "nowrap",
+								whiteSpace: 'nowrap',
 							}}
 						>
 							{item().label}
@@ -1173,9 +1173,9 @@ export function CommandMenuItem(props: {
 										...layout().text,
 										minWidth: 0,
 										color: color.mutedForeground,
-										whiteSpace: "nowrap",
-										textOverflow: "ellipsis",
-										overflow: "hidden",
+										whiteSpace: 'nowrap',
+										textOverflow: 'ellipsis',
+										overflow: 'hidden',
 									}}
 								>
 									{description()}
@@ -1187,13 +1187,13 @@ export function CommandMenuItem(props: {
 			>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
 						flexGrow: 1,
 						minWidth: 0,
 						gap: 8,
-						overflow: "hidden",
+						overflow: 'hidden',
 					}}
 				>
 					{props.children}
@@ -1229,9 +1229,9 @@ export function CommandMenuItemText(props: {
 						? color.foreground
 						: color.mutedForeground,
 				...colorFade,
-				whiteSpace: "nowrap",
-				textOverflow: "ellipsis",
-				overflow: "hidden",
+				whiteSpace: 'nowrap',
+				textOverflow: 'ellipsis',
+				overflow: 'hidden',
 			}}
 		>
 			{props.children}
@@ -1256,19 +1256,19 @@ export function CommandMenuFooter(props: {
 	};
 	const hints = (): readonly CommandMenuHint[] =>
 		props.hints ?? [
-			{ label: "Select", keys: ["up", "down"] },
+			{ label: 'Select', keys: ['up', 'down'] },
 			...(menu.tabs() === undefined
 				? []
-				: [{ label: "Tabs", keys: ["left", "right"] }]),
-			...(menu.dialog === undefined ? [] : [{ label: "Close", keys: "esc" }]),
+				: [{ label: 'Tabs', keys: ['left', 'right'] }]),
+			...(menu.dialog === undefined ? [] : [{ label: 'Close', keys: 'esc' }]),
 		];
 
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				flexShrink: 0,
 				height: layout().footer,
 				gap: layout().footerGap,
@@ -1276,16 +1276,16 @@ export function CommandMenuFooter(props: {
 				paddingRight: layout().footerPadX,
 				borderTopWidth: 1,
 				borderColor: color.border,
-				overflow: "hidden",
+				overflow: 'hidden',
 			}}
 		>
 			<For each={hints()}>
 				{(hint) => (
 					<div
 						style={{
-							display: "flex",
-							flexDirection: "row",
-							alignItems: "center",
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'center',
 							flexShrink: 0,
 							gap: 6,
 						}}
@@ -1294,7 +1294,7 @@ export function CommandMenuFooter(props: {
 							style={{
 								...layout().caption,
 								color: color.mutedForeground,
-								whiteSpace: "nowrap",
+								whiteSpace: 'nowrap',
 							}}
 						>
 							{hint.label}
@@ -1308,9 +1308,9 @@ export function CommandMenuFooter(props: {
 				{(label: Accessor<string>) => (
 					<div
 						style={{
-							display: "flex",
-							flexDirection: "row",
-							alignItems: "center",
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'center',
 							minWidth: 0,
 							gap: 6,
 						}}
@@ -1320,9 +1320,9 @@ export function CommandMenuFooter(props: {
 								...layout().caption,
 								minWidth: 0,
 								color: color.foreground,
-								whiteSpace: "nowrap",
-								textOverflow: "ellipsis",
-								overflow: "hidden",
+								whiteSpace: 'nowrap',
+								textOverflow: 'ellipsis',
+								overflow: 'hidden',
 							}}
 						>
 							{label()}
@@ -1356,7 +1356,7 @@ export function CommandMenuDialog(props: {
 	});
 	const window = () => {
 		const size = renderer.getWindowSize?.();
-		if (size === undefined) throw new Error("Cannot size the dialog");
+		if (size === undefined) throw new Error('Cannot size the dialog');
 		return size;
 	};
 	// Opens centred at its cap and keeps that top edge as the rows filter down.
@@ -1376,9 +1376,9 @@ export function CommandMenuDialog(props: {
 				priority={2}
 				style={{
 					backgroundColor: color.transparent,
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
 				}}
 			>
 				<motion.div
@@ -1391,7 +1391,7 @@ export function CommandMenuDialog(props: {
 						if (!presence.open()) presence.release();
 					}}
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 0,
 						left: 0,
 						right: 0,
@@ -1406,16 +1406,16 @@ export function CommandMenuDialog(props: {
 					}
 					transition={presence.open() ? tween.slow : tween.slowExit}
 					style={{
-						position: "relative",
+						position: 'relative',
 						marginTop: top(),
 						width: Math.min(DIALOG_WIDTH, window().width - 32),
-						display: "flex",
-						flexDirection: "column",
+						display: 'flex',
+						flexDirection: 'column',
 					}}
 				>
 					<div
 						onMouseDownOutside={handle.close}
-						style={{ display: "flex", flexDirection: "column" }}
+						style={{ display: 'flex', flexDirection: 'column' }}
 					>
 						<DialogContext.Provider value={handle}>
 							<CommandMenuPanel level={5} width="100%" maxHeight={maxHeight()}>

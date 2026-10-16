@@ -1,18 +1,18 @@
-import type { HostElement } from "@gpuix/solid";
-import { createSignal, For, Show } from "solid-js";
-import { FluidHighlight } from "#/lib/fluid-highlight";
-import { createFluidHover, useHoverItem } from "#/lib/fluid-hover";
-import { Icon } from "#/lib/icon";
-import { defineIcon, type IconRef } from "#/lib/icons";
-import { StableLabel } from "#/lib/stable-label";
+import type { HostElement } from '@gpuix/solid';
+import { createSignal, For, Show } from 'solid-js';
+import { FluidHighlight } from '#/lib/fluid-highlight';
+import { createFluidHover, useHoverItem } from '#/lib/fluid-hover';
+import { Icon } from '#/lib/icon';
+import { defineIcon, type IconRef } from '#/lib/icons';
+import { StableLabel } from '#/lib/stable-label';
 import {
 	color,
 	colorFade,
 	radius,
 	siteType,
 	motion as tween,
-} from "#/lib/theme";
-import { Elevated } from "./elevated";
+} from '#/lib/theme';
+import { Elevated } from './elevated';
 
 export const LOCK_ICON = defineIcon(
 	'<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
@@ -27,19 +27,19 @@ export interface RoleOption {
 
 export const ROLES: readonly RoleOption[] = [
 	{
-		icon: "users",
-		label: "Workspace owner",
-		description: "Can change workspace settings and invite new members",
+		icon: 'users',
+		label: 'Workspace owner',
+		description: 'Can change workspace settings and invite new members',
 	},
 	{
-		icon: "user",
-		label: "Member",
+		icon: 'user',
+		label: 'Member',
 		description: "Can't change workspace settings or invite new members",
 	},
 	{
 		icon: LOCK_ICON,
-		label: "Restricted member",
-		description: "Can only see and edit content they created",
+		label: 'Restricted member',
+		description: 'Can only see and edit content they created',
 	},
 ];
 
@@ -59,8 +59,8 @@ function RoleText(props: { role: RoleOption; checked: boolean; lit: boolean }) {
 				flexGrow: 1,
 				flexShrink: 1,
 				minWidth: 0,
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 2,
 			}}
 		>
@@ -88,16 +88,16 @@ export function StaticRoleItem(props: { role: RoleOption; checked: boolean }) {
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "flex-start",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'flex-start',
 				gap: 12,
 				paddingLeft: 12,
 				paddingRight: 12,
 				paddingTop: 10,
 				paddingBottom: 10,
 				borderRadius: radius.item,
-				cursor: "pointer",
+				cursor: 'pointer',
 				backgroundColor: props.checked
 					? color.active
 					: hovered()
@@ -130,7 +130,7 @@ export interface MenuOption {
 }
 
 /** "menu" is the stock row (36px, icon 16); "role" the invite dialog's two-line row. */
-type MenuVariant = "menu" | "role";
+type MenuVariant = 'menu' | 'role';
 
 function MenuRow(props: {
 	hover: ReturnType<typeof createFluidHover>;
@@ -146,17 +146,17 @@ function MenuRow(props: {
 		() => element,
 	);
 	const lit = () => props.hover.activeIndex() === props.index || props.checked;
-	const role = () => props.variant === "role";
+	const role = () => props.variant === 'role';
 	return (
 		<div
 			ref={(row) => {
 				element = row;
 			}}
 			style={{
-				position: "relative",
-				display: "flex",
-				flexDirection: "row",
-				alignItems: role() ? "flex-start" : "center",
+				position: 'relative',
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: role() ? 'flex-start' : 'center',
 				gap: role() ? 12 : 8,
 				height: role() ? undefined : 36,
 				flexShrink: 0,
@@ -165,7 +165,7 @@ function MenuRow(props: {
 				paddingTop: role() ? 10 : 0,
 				paddingBottom: role() ? 10 : 0,
 				borderRadius: radius.item,
-				cursor: "pointer",
+				cursor: 'pointer',
 			}}
 		>
 			<div style={{ marginTop: role() ? 2 : 0, flexShrink: 0 }}>
@@ -240,9 +240,9 @@ export function SurfaceMenu(props: {
 				onMouseMove={hover.containerProps.onMouseMove}
 				onMouseLeave={hover.containerProps.onMouseLeave}
 				style={{
-					position: "relative",
-					display: "flex",
-					flexDirection: "column",
+					position: 'relative',
+					display: 'flex',
+					flexDirection: 'column',
 					padding: 4,
 				}}
 			>

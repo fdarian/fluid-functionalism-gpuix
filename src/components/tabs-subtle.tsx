@@ -5,7 +5,7 @@ import {
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	createComputed,
 	createContext,
@@ -17,33 +17,33 @@ import {
 	Show,
 	untrack,
 	useContext,
-} from "solid-js";
+} from 'solid-js';
 import {
 	createFluidHover,
 	type FluidHover,
 	type ItemRect,
-} from "#/lib/fluid-hover";
+} from '#/lib/fluid-hover';
 import {
 	createFocusRing,
 	FocusRing,
 	type FocusRingState,
-} from "#/lib/focus-ring";
-import { Icon } from "#/lib/icon";
-import type { IconRef } from "#/lib/icons";
-import { moveIndex } from "#/lib/list-nav";
-import { createPreviewPill } from "#/lib/preview-pill";
-import { StableLabel } from "#/lib/stable-label";
+} from '#/lib/focus-ring';
+import { Icon } from '#/lib/icon';
+import type { IconRef } from '#/lib/icons';
+import { moveIndex } from '#/lib/list-nav';
+import { createPreviewPill } from '#/lib/preview-pill';
+import { StableLabel } from '#/lib/stable-label';
 import {
 	color,
 	height,
+	type as scale,
 	shape,
 	sizeChoice,
-	type as scale,
 	motion as tween,
 	weight,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
-export type TabsSubtleSize = "default" | "compact";
+export type TabsSubtleSize = 'default' | 'compact';
 
 const sizes = {
 	default: {
@@ -84,7 +84,7 @@ const SubtleContext = createContext<SubtleScope>();
 
 function useSubtle() {
 	const scope = useContext(SubtleContext);
-	if (scope === undefined) throw new Error("Must be used inside TabsSubtle");
+	if (scope === undefined) throw new Error('Must be used inside TabsSubtle');
 	return scope;
 }
 
@@ -111,7 +111,7 @@ export function TabsSubtle(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
-	const hover = createFluidHover({ axis: "x" });
+	const hover = createFluidHover({ axis: 'x' });
 	const focusRing = createFocusRing(hover);
 	const [mouseInside, setMouseInside] = createSignal(false);
 	/** Manual activation: arrows move focus, and the focused tab keeps the tab stop until the selection changes. */
@@ -177,12 +177,12 @@ export function TabsSubtle(props: {
 					hover.handlers.onMouseLeave();
 				}}
 				style={{
-					position: "relative",
-					alignSelf: "flex-start",
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					userSelect: "none",
+					position: 'relative',
+					alignSelf: 'flex-start',
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					userSelect: 'none',
 				}}
 			>
 				<Show when={selectedRect()}>
@@ -191,14 +191,14 @@ export function TabsSubtle(props: {
 							initial={false}
 							animate={rectStyle(rect())}
 							transition={tween.moderate}
-							style={{ position: "absolute" }}
+							style={{ position: 'absolute' }}
 						>
 							<motion.div
 								initial={false}
 								animate={{ opacity: hoveringOther() ? 0.8 : 1 }}
 								transition={{ duration: 0.08 }}
 								style={{
-									position: "absolute",
+									position: 'absolute',
 									top: 0,
 									left: 0,
 									right: 0,
@@ -215,11 +215,11 @@ export function TabsSubtle(props: {
 						// Born at the selected pill, as the source mounts it, then slides out to the hovered tab.
 						const born = untrack(selectedRect);
 						if (born === undefined)
-							throw new Error("Preview pill mounted without a selected pill");
+							throw new Error('Preview pill mounted without a selected pill');
 						const shown = () => {
 							const pill = preview();
 							if (pill === undefined)
-								throw new Error("Preview pill has no state");
+								throw new Error('Preview pill has no state');
 							return pill;
 						};
 						return (
@@ -228,14 +228,14 @@ export function TabsSubtle(props: {
 								initial={rectStyle(born)}
 								animate={rectStyle(shown().rect)}
 								transition={hoveringOther() ? tween.fast : tween.moderate}
-								style={{ position: "absolute" }}
+								style={{ position: 'absolute' }}
 							>
 								<motion.div
 									initial={{ opacity: 0 }}
 									animate={{ opacity: shown().visible ? 0.4 : 0 }}
 									transition={{ duration: shown().visible ? 0.08 : 0.06 }}
 									style={{
-										position: "absolute",
+										position: 'absolute',
 										top: 0,
 										left: 0,
 										right: 0,
@@ -281,7 +281,7 @@ export function TabsSubtleItem(props: {
 	);
 
 	createEffect(() => {
-		if (element === undefined) throw new Error("Tab is not mounted");
+		if (element === undefined) throw new Error('Tab is not mounted');
 		scope.hover.registerItem(props.index, element);
 		scope.elements.set(props.index, element);
 	});
@@ -319,13 +319,13 @@ export function TabsSubtleItem(props: {
 		const count = scope.elements.size;
 		const move = (
 			{ ArrowRight: 1, ArrowLeft: -1 } as Record<string, 1 | -1 | undefined>
-		)[event.key ?? ""];
+		)[event.key ?? ''];
 		const target =
 			move !== undefined
 				? (moveIndex(props.index, move, count) ?? undefined)
-				: event.key === "Home"
+				: event.key === 'Home'
 					? 0
-					: event.key === "End"
+					: event.key === 'End'
 						? count - 1
 						: undefined;
 		if (target === undefined || target === props.index) return;
@@ -379,18 +379,18 @@ export function TabsSubtleItem(props: {
 				if (!scope.mouseInside()) scope.hover.setActiveIndex(null);
 			}}
 			style={{
-				position: "relative",
+				position: 'relative',
 				zIndex: 10,
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				flexShrink: 0,
 				height: metrics().height,
 				paddingLeft: metrics().padX,
 				paddingRight: metrics().padX,
 				gap: collapsible() || props.icon === undefined ? 0 : metrics().gap,
 				borderRadius: shape.bg,
-				cursor: "pointer",
+				cursor: 'pointer',
 				keyboardFocusDim: false,
 			}}
 		>
@@ -413,24 +413,24 @@ export function TabsSubtleItem(props: {
 					transition={labelTransition()}
 					onMotionComplete={() => scope.hover.remeasure()}
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						overflow: "hidden",
+						display: 'flex',
+						flexDirection: 'row',
+						overflow: 'hidden',
 						// Until the label is measured an unfolded label keeps its natural width.
 						...(unfoldedWidth() === undefined && showLabel()
-							? { width: "auto" }
+							? { width: 'auto' }
 							: {}),
 					}}
 				>
 					<div
 						onLayout={(event: DomEvent) => {
 							if (event.width === undefined)
-								throw new Error("onLayout reported no width");
+								throw new Error('onLayout reported no width');
 							setUnfoldedWidth(event.width);
 						}}
 						style={{
-							display: "flex",
-							flexDirection: "row",
+							display: 'flex',
+							flexDirection: 'row',
 							flexShrink: 0,
 						}}
 					>

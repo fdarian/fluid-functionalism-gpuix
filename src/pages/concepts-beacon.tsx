@@ -5,83 +5,90 @@ import {
 	type JSX,
 	onCleanup,
 	Show,
-} from "solid-js";
-import { AskUserQuestions } from "#/components/ask-user-questions";
-import { Badge, type BadgeColor, badgeColors } from "#/components/badge";
-import { Button } from "#/components/button";
+} from 'solid-js';
+import { AskUserQuestions } from '#/components/ask-user-questions';
+import { Badge, type BadgeColor, badgeColors } from '#/components/badge';
+import { Button } from '#/components/button';
 import {
 	Dropdown,
 	DropdownLabel,
 	DropdownSeparator,
 	MenuItem,
-} from "#/components/dropdown";
-import { InputField, InputGroup } from "#/components/input-group";
-import { ScrollArea } from "#/components/scroll-area";
-import { Select, type SelectItem } from "#/components/select";
-import { Switch } from "#/components/switch";
+} from '#/components/dropdown';
+import { InputField, InputGroup } from '#/components/input-group';
+import { ScrollArea } from '#/components/scroll-area';
+import { Select, type SelectItem } from '#/components/select';
+import { Switch } from '#/components/switch';
 import {
 	Table,
 	TableBody,
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "#/components/table";
+} from '#/components/table';
 import {
 	TabsSubtle,
 	TabsSubtleItem,
 	TabsSubtlePanel,
-} from "#/components/tabs-subtle";
-import { ThinkingIndicator } from "#/components/thinking-indicator";
-import type { ShotContext } from "#/lib/demo";
-import { MONO } from "#/lib/doc-page";
-import { Icon } from "#/lib/icon";
-import { color, shadow, shape, siteType, sizeChoice, weight } from "#/lib/theme";
-import { ConceptFrame } from "#/pages/concepts/frame";
+} from '#/components/tabs-subtle';
+import { ThinkingIndicator } from '#/components/thinking-indicator';
+import type { ShotContext } from '#/lib/demo';
+import { MONO } from '#/lib/doc-page';
+import { Icon } from '#/lib/icon';
+import {
+	color,
+	shadow,
+	shape,
+	siteType,
+	sizeChoice,
+	weight,
+} from '#/lib/theme';
+import { ConceptFrame } from '#/pages/concepts/frame';
 
-export const title = "Beacon";
-export const group = "Pages";
+export const title = 'Beacon';
+export const group = 'Pages';
 export const order = 33;
-export const layout = "full";
-export const listed = "none";
+export const layout = 'full';
+export const listed = 'none';
 
 /** How long the triage panel shows "analyzing" before it asks. */
 const ANALYZING_MS = 1500;
 
 export async function scenarios(shot: ShotContext) {
-	await shot.click("beacon-view-tab-1");
-	shot.capture("backlog");
-	await shot.click("beacon-view-tab-2");
-	shot.capture("board");
-	await shot.click("beacon-view-tab-0");
-	await shot.click("beacon-display");
-	shot.capture("display-menu");
-	await shot.click("beacon-display");
-	await shot.click("beacon-search-input");
-	await shot.press("c i");
-	shot.expectText("ENG-131", true);
-	shot.expectText("ENG-128", false);
-	shot.capture("search");
-	await shot.press("Backspace Backspace");
-	await shot.focus("beacon-priority-trigger");
-	await shot.press("Enter ArrowDown ArrowDown Enter");
-	shot.expectText("ENG-131", true);
-	shot.expectText("ENG-124", false);
-	shot.capture("priority");
-	await shot.click("beacon-triage");
-	shot.capture("triage-analyzing");
+	await shot.click('beacon-view-tab-1');
+	shot.capture('backlog');
+	await shot.click('beacon-view-tab-2');
+	shot.capture('board');
+	await shot.click('beacon-view-tab-0');
+	await shot.click('beacon-display');
+	shot.capture('display-menu');
+	await shot.click('beacon-display');
+	await shot.click('beacon-search-input');
+	await shot.press('c i');
+	shot.expectText('ENG-131', true);
+	shot.expectText('ENG-128', false);
+	shot.capture('search');
+	await shot.press('Backspace Backspace');
+	await shot.focus('beacon-priority-trigger');
+	await shot.press('Enter ArrowDown ArrowDown Enter');
+	shot.expectText('ENG-131', true);
+	shot.expectText('ENG-124', false);
+	shot.capture('priority');
+	await shot.click('beacon-triage');
+	shot.capture('triage-analyzing');
 	await shot.settle(ANALYZING_MS + 400);
-	shot.capture("triage-asking");
-	await shot.click("beacon-triage-ask-option-0");
-	await shot.click("beacon-triage-ask-continue");
+	shot.capture('triage-asking');
+	await shot.click('beacon-triage-ask-option-0');
+	await shot.click('beacon-triage-ask-continue');
 	await shot.settle(600);
-	shot.expectText("Applied 3 changes", true);
-	shot.capture("triage-done");
+	shot.expectText('Applied 3 changes', true);
+	shot.capture('triage-done');
 }
 
 // ── Fixtures ────────────────────────────────────────────────────────────
 
-type StatusKey = "todo" | "progress" | "review" | "done";
-type PriorityKey = "urgent" | "high" | "medium" | "low" | "none";
+type StatusKey = 'todo' | 'progress' | 'review' | 'done';
+type PriorityKey = 'urgent' | 'high' | 'medium' | 'low' | 'none';
 
 interface Issue {
 	key: string;
@@ -92,156 +99,156 @@ interface Issue {
 }
 
 const STATUS: Record<StatusKey, { label: string; color: BadgeColor }> = {
-	todo: { label: "Todo", color: "gray" },
-	progress: { label: "In Progress", color: "amber" },
-	review: { label: "In Review", color: "violet" },
-	done: { label: "Done", color: "green" },
+	todo: { label: 'Todo', color: 'gray' },
+	progress: { label: 'In Progress', color: 'amber' },
+	review: { label: 'In Review', color: 'violet' },
+	done: { label: 'Done', color: 'green' },
 };
 
 const PRIORITY: Record<PriorityKey, { label: string; color: BadgeColor }> = {
-	urgent: { label: "Urgent", color: "red" },
-	high: { label: "High", color: "orange" },
-	medium: { label: "Medium", color: "yellow" },
-	low: { label: "Low", color: "blue" },
-	none: { label: "None", color: "gray" },
+	urgent: { label: 'Urgent', color: 'red' },
+	high: { label: 'High', color: 'orange' },
+	medium: { label: 'Medium', color: 'yellow' },
+	low: { label: 'Low', color: 'blue' },
+	none: { label: 'None', color: 'gray' },
 };
 
 const ACTIVE: Issue[] = [
 	{
-		key: "ENG-128",
-		title: "Auth token refresh fails for ~4% of sessions",
-		status: "progress",
-		priority: "urgent",
-		assignee: "DK",
+		key: 'ENG-128',
+		title: 'Auth token refresh fails for ~4% of sessions',
+		status: 'progress',
+		priority: 'urgent',
+		assignee: 'DK',
 	},
 	{
-		key: "ENG-131",
-		title: "Flaky CI on the e2e shard",
-		status: "todo",
-		priority: "high",
-		assignee: "MR",
+		key: 'ENG-131',
+		title: 'Flaky CI on the e2e shard',
+		status: 'todo',
+		priority: 'high',
+		assignee: 'MR',
 	},
 	{
-		key: "ENG-124",
-		title: "Virtualize the issues table for >1k rows",
-		status: "review",
-		priority: "medium",
-		assignee: "AJ",
+		key: 'ENG-124',
+		title: 'Virtualize the issues table for >1k rows',
+		status: 'review',
+		priority: 'medium',
+		assignee: 'AJ',
 	},
 	{
-		key: "ENG-140",
-		title: "Dark-mode contrast on status pills",
-		status: "todo",
-		priority: "low",
-		assignee: "SL",
+		key: 'ENG-140',
+		title: 'Dark-mode contrast on status pills',
+		status: 'todo',
+		priority: 'low',
+		assignee: 'SL',
 	},
 	{
-		key: "ENG-118",
-		title: "Command palette: fuzzy match on labels",
-		status: "progress",
-		priority: "medium",
-		assignee: "DK",
+		key: 'ENG-118',
+		title: 'Command palette: fuzzy match on labels',
+		status: 'progress',
+		priority: 'medium',
+		assignee: 'DK',
 	},
 	{
-		key: "ENG-142",
-		title: "Webhook retries should be idempotent",
-		status: "todo",
-		priority: "high",
-		assignee: "MR",
+		key: 'ENG-142',
+		title: 'Webhook retries should be idempotent',
+		status: 'todo',
+		priority: 'high',
+		assignee: 'MR',
 	},
 	{
-		key: "ENG-109",
-		title: "Migrate avatars to signed URLs",
-		status: "review",
-		priority: "low",
-		assignee: "AJ",
+		key: 'ENG-109',
+		title: 'Migrate avatars to signed URLs',
+		status: 'review',
+		priority: 'low',
+		assignee: 'AJ',
 	},
 	{
-		key: "ENG-145",
-		title: "Rate-limit the public search endpoint",
-		status: "progress",
-		priority: "high",
-		assignee: "DK",
+		key: 'ENG-145',
+		title: 'Rate-limit the public search endpoint',
+		status: 'progress',
+		priority: 'high',
+		assignee: 'DK',
 	},
 	{
-		key: "ENG-133",
-		title: "Empty states for the board columns",
-		status: "todo",
-		priority: "low",
-		assignee: "SL",
+		key: 'ENG-133',
+		title: 'Empty states for the board columns',
+		status: 'todo',
+		priority: 'low',
+		assignee: 'SL',
 	},
 	{
-		key: "ENG-126",
-		title: "Persist column widths across sessions",
-		status: "review",
-		priority: "medium",
-		assignee: "AJ",
+		key: 'ENG-126',
+		title: 'Persist column widths across sessions',
+		status: 'review',
+		priority: 'medium',
+		assignee: 'AJ',
 	},
 	{
-		key: "ENG-147",
-		title: "Audit log for permission changes",
-		status: "todo",
-		priority: "urgent",
-		assignee: "MR",
+		key: 'ENG-147',
+		title: 'Audit log for permission changes',
+		status: 'todo',
+		priority: 'urgent',
+		assignee: 'MR',
 	},
 	{
-		key: "ENG-121",
-		title: "Debounce the live filter input",
-		status: "progress",
-		priority: "low",
-		assignee: "SL",
+		key: 'ENG-121',
+		title: 'Debounce the live filter input',
+		status: 'progress',
+		priority: 'low',
+		assignee: 'SL',
 	},
 	{
-		key: "ENG-138",
-		title: "Keyboard shortcut to assign issues",
-		status: "todo",
-		priority: "medium",
-		assignee: "DK",
+		key: 'ENG-138',
+		title: 'Keyboard shortcut to assign issues',
+		status: 'todo',
+		priority: 'medium',
+		assignee: 'DK',
 	},
 	{
-		key: "ENG-156",
-		title: "Surface SLA breaches in the inbox",
-		status: "review",
-		priority: "high",
-		assignee: "AJ",
+		key: 'ENG-156',
+		title: 'Surface SLA breaches in the inbox',
+		status: 'review',
+		priority: 'high',
+		assignee: 'AJ',
 	},
 ];
 
 const BACKLOG: Issue[] = [
 	{
-		key: "ENG-150",
-		title: "Offline draft sync for the composer",
-		status: "todo",
-		priority: "medium",
-		assignee: "SL",
+		key: 'ENG-150',
+		title: 'Offline draft sync for the composer',
+		status: 'todo',
+		priority: 'medium',
+		assignee: 'SL',
 	},
 	{
-		key: "ENG-151",
-		title: "Per-team notification digests",
-		status: "todo",
-		priority: "low",
-		assignee: "MR",
+		key: 'ENG-151',
+		title: 'Per-team notification digests',
+		status: 'todo',
+		priority: 'low',
+		assignee: 'MR',
 	},
 	{
-		key: "ENG-152",
-		title: "Docs polish for the public API",
-		status: "todo",
-		priority: "none",
-		assignee: "AJ",
+		key: 'ENG-152',
+		title: 'Docs polish for the public API',
+		status: 'todo',
+		priority: 'none',
+		assignee: 'AJ',
 	},
 	{
-		key: "ENG-153",
-		title: "Investigate p99 latency on search",
-		status: "todo",
-		priority: "high",
-		assignee: "DK",
+		key: 'ENG-153',
+		title: 'Investigate p99 latency on search',
+		status: 'todo',
+		priority: 'high',
+		assignee: 'DK',
 	},
 	{
-		key: "ENG-154",
-		title: "Keyboard-only triage flow",
-		status: "todo",
-		priority: "medium",
-		assignee: "SL",
+		key: 'ENG-154',
+		title: 'Keyboard-only triage flow',
+		status: 'todo',
+		priority: 'medium',
+		assignee: 'SL',
 	},
 ];
 
@@ -252,19 +259,19 @@ const ASSIGNEE_COLOR: Record<string, string> = {
 	AJ: badgeColors.emerald,
 	SL: badgeColors.rose,
 };
-const FALLBACK_ASSIGNEE_COLOR = "#737373";
+const FALLBACK_ASSIGNEE_COLOR = '#737373';
 
-type PriorityFilter = "all" | Exclude<PriorityKey, "none">;
+type PriorityFilter = 'all' | Exclude<PriorityKey, 'none'>;
 
 const PRIORITY_FILTER: SelectItem<PriorityFilter>[] = [
-	{ value: "all", label: "All priorities" },
-	{ value: "urgent", label: "Urgent" },
-	{ value: "high", label: "High" },
-	{ value: "medium", label: "Medium" },
-	{ value: "low", label: "Low" },
+	{ value: 'all', label: 'All priorities' },
+	{ value: 'urgent', label: 'Urgent' },
+	{ value: 'high', label: 'High' },
+	{ value: 'medium', label: 'Medium' },
+	{ value: 'low', label: 'Low' },
 ];
 
-const ORDERINGS = ["Status", "Priority", "Created"];
+const ORDERINGS = ['Status', 'Priority', 'Created'];
 
 // ── Small pieces ────────────────────────────────────────────────────────
 
@@ -272,9 +279,9 @@ function Avatar(props: { initials: string }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
 				flexShrink: 0,
 				width: 24,
 				height: 24,
@@ -306,13 +313,13 @@ function BodyCell(props: { width?: number; children: JSX.Element }) {
 				flexShrink: props.width === undefined ? 1 : 0,
 				flexBasis: props.width === undefined ? 0 : props.width,
 				minWidth: 0,
-				display: "flex",
-				flexDirection: "column",
-				justifyContent: "center",
-				paddingLeft: sizeChoice() === "compact" ? 10 : 12,
-				paddingRight: sizeChoice() === "compact" ? 10 : 12,
-				paddingTop: sizeChoice() === "compact" ? 5 : 8,
-				paddingBottom: sizeChoice() === "compact" ? 5 : 8,
+				display: 'flex',
+				flexDirection: 'column',
+				justifyContent: 'center',
+				paddingLeft: sizeChoice() === 'compact' ? 10 : 12,
+				paddingRight: sizeChoice() === 'compact' ? 10 : 12,
+				paddingTop: sizeChoice() === 'compact' ? 5 : 8,
+				paddingBottom: sizeChoice() === 'compact' ? 5 : 8,
 			}}
 		>
 			{props.children}
@@ -325,9 +332,9 @@ function Inline(props: { center?: boolean; children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				justifyContent: props.center === true ? "center" : "flex-start",
+				display: 'flex',
+				flexDirection: 'row',
+				justifyContent: props.center === true ? 'center' : 'flex-start',
 			}}
 		>
 			{props.children}
@@ -399,14 +406,14 @@ function IssueTable(props: { rows: Issue[]; testId: string }) {
 }
 
 const BOARD_COLUMNS: { key: StatusKey; label: string }[] = [
-	{ key: "todo", label: "Todo" },
-	{ key: "progress", label: "In Progress" },
-	{ key: "review", label: "In Review" },
+	{ key: 'todo', label: 'Todo' },
+	{ key: 'progress', label: 'In Progress' },
+	{ key: 'review', label: 'In Review' },
 ];
 
 function Board(props: { rows: Issue[] }) {
 	return (
-		<div style={{ display: "flex", flexDirection: "row", gap: 16 }}>
+		<div style={{ display: 'flex', flexDirection: 'row', gap: 16 }}>
 			<For each={BOARD_COLUMNS}>
 				{(column) => {
 					const items = () =>
@@ -417,16 +424,16 @@ function Board(props: { rows: Issue[] }) {
 								flexGrow: 1,
 								flexBasis: 0,
 								minWidth: 0,
-								display: "flex",
-								flexDirection: "column",
+								display: 'flex',
+								flexDirection: 'column',
 								gap: 10,
 							}}
 						>
 							<div
 								style={{
-									display: "flex",
-									flexDirection: "row",
-									alignItems: "center",
+									display: 'flex',
+									flexDirection: 'row',
+									alignItems: 'center',
 									gap: 8,
 									paddingLeft: 4,
 									paddingRight: 4,
@@ -443,7 +450,7 @@ function Board(props: { rows: Issue[] }) {
 									style={{
 										...siteType.caption,
 										color: color.mutedForeground,
-										fontVariantNumeric: "tabular-nums",
+										fontVariantNumeric: 'tabular-nums',
 									}}
 								>
 									{String(items().length)}
@@ -462,8 +469,8 @@ function BoardCard(props: { issue: Issue }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 8,
 				padding: 12,
 				borderRadius: shape.container,
@@ -476,10 +483,10 @@ function BoardCard(props: { issue: Issue }) {
 			</text>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					justifyContent: 'space-between',
 				}}
 			>
 				<text
@@ -494,9 +501,9 @@ function BoardCard(props: { issue: Issue }) {
 				</text>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
 						gap: 8,
 					}}
 				>
@@ -521,7 +528,7 @@ function DisplayMenu() {
 			onMouseDownOutside={() => {
 				if (open()) setOpen(false);
 			}}
-			style={{ position: "relative" }}
+			style={{ position: 'relative' }}
 		>
 			<Button
 				testId="beacon-display"
@@ -536,9 +543,9 @@ function DisplayMenu() {
 			<Show when={open()}>
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						right: 0,
-						top: "100%",
+						top: '100%',
 						marginTop: 6,
 					}}
 				>
@@ -578,7 +585,7 @@ function DisplayMenu() {
 
 // ── AI triage panel ─────────────────────────────────────────────────────
 
-type TriageState = "idle" | "analyzing" | "asking" | "done";
+type TriageState = 'idle' | 'analyzing' | 'asking' | 'done';
 
 function TriagePanel(props: {
 	state: TriageState;
@@ -588,8 +595,8 @@ function TriagePanel(props: {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 12,
 				padding: 16,
 				borderRadius: shape.container + 4,
@@ -599,17 +606,17 @@ function TriagePanel(props: {
 		>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					justifyContent: 'space-between',
 				}}
 			>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
 						gap: 8,
 					}}
 				>
@@ -639,50 +646,50 @@ function TriagePanel(props: {
 				</Button>
 			</div>
 
-			<Show when={props.state === "analyzing"}>
+			<Show when={props.state === 'analyzing'}>
 				<ThinkingIndicator />
 			</Show>
 
-			<Show when={props.state === "asking"}>
+			<Show when={props.state === 'asking'}>
 				<AskUserQuestions
 					testId="beacon-triage-ask"
 					questions={[
 						{
-							id: "triage",
-							title: "3 active issues look mis-prioritized. Apply these?",
+							id: 'triage',
+							title: '3 active issues look mis-prioritized. Apply these?',
 							multiSelect: true,
 							allowOther: true,
-							nextLabel: "Apply changes",
-							layout: "stacked",
+							nextLabel: 'Apply changes',
+							layout: 'stacked',
 							options: [
 								{
-									id: "bump",
-									title: "Bump ENG-128 to Urgent",
-									description: "Auth refresh is failing for ~4% of sessions",
+									id: 'bump',
+									title: 'Bump ENG-128 to Urgent',
+									description: 'Auth refresh is failing for ~4% of sessions',
 								},
 								{
-									id: "assign",
-									title: "Assign ENG-131 to @dane",
-									description: "He owns the CI pipeline",
+									id: 'assign',
+									title: 'Assign ENG-131 to @dane',
+									description: 'He owns the CI pipeline',
 								},
 								{
-									id: "defer",
-									title: "Move ENG-152 to Backlog",
-									description: "Docs polish has no deadline",
+									id: 'defer',
+									title: 'Move ENG-152 to Backlog',
+									description: 'Docs polish has no deadline',
 								},
 							],
 						},
 					]}
-					onComplete={() => props.onAdvance("done")}
+					onComplete={() => props.onAdvance('done')}
 				/>
 			</Show>
 
-			<Show when={props.state === "done"}>
+			<Show when={props.state === 'done'}>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
 						gap: 8,
 					}}
 				>
@@ -706,8 +713,8 @@ function TriagePanel(props: {
 export function Page() {
 	const [view, setView] = createSignal(0);
 	const [priority, setPriority] = createSignal<PriorityFilter | null>(null);
-	const [query, setQuery] = createSignal("");
-	const [triage, setTriage] = createSignal<TriageState>("idle");
+	const [query, setQuery] = createSignal('');
+	const [triage, setTriage] = createSignal<TriageState>('idle');
 	let triageTimer: ReturnType<typeof setTimeout> | undefined;
 	onCleanup(() => clearTimeout(triageTimer));
 
@@ -716,9 +723,9 @@ export function Page() {
 		return rows.filter(
 			(row) =>
 				(priority() === null ||
-					priority() === "all" ||
+					priority() === 'all' ||
 					row.priority === priority()) &&
-				(needle === "" ||
+				(needle === '' ||
 					row.title.toLowerCase().includes(needle) ||
 					row.key.toLowerCase().includes(needle)),
 		);
@@ -727,24 +734,24 @@ export function Page() {
 	const backlogRows = createMemo(() => filterRows(BACKLOG));
 
 	const startTriage = () => {
-		setTriage("analyzing");
-		triageTimer = setTimeout(() => setTriage("asking"), ANALYZING_MS);
+		setTriage('analyzing');
+		triageTimer = setTimeout(() => setTriage('asking'), ANALYZING_MS);
 	};
 	const closeTriage = () => {
 		clearTimeout(triageTimer);
-		setTriage("idle");
+		setTriage('idle');
 	};
 
 	return (
 		<ConceptFrame>
 			<div
 				style={{
-					width: "100%",
-					height: "100%",
+					width: '100%',
+					height: '100%',
 					maxWidth: 960,
-					alignSelf: "center",
-					display: "flex",
-					flexDirection: "column",
+					alignSelf: 'center',
+					display: 'flex',
+					flexDirection: 'column',
 					gap: 16,
 					paddingLeft: 24,
 					paddingRight: 24,
@@ -754,14 +761,14 @@ export function Page() {
 			>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						flexWrap: "wrap",
-						alignItems: "center",
-						justifyContent: "space-between",
+						display: 'flex',
+						flexDirection: 'row',
+						flexWrap: 'wrap',
+						alignItems: 'center',
+						justifyContent: 'space-between',
 						gap: 12,
 						// Lifts the Display popover over the table, whose own positioned root would paint above a static toolbar.
-						position: "relative",
+						position: 'relative',
 						zIndex: 1,
 					}}
 				>
@@ -790,9 +797,9 @@ export function Page() {
 
 					<div
 						style={{
-							display: "flex",
-							flexDirection: "row",
-							alignItems: "center",
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'center',
 							gap: 8,
 						}}
 					>
@@ -802,7 +809,7 @@ export function Page() {
 							size="compact"
 							leadingIcon="brain"
 							onClick={startTriage}
-							disabled={triage() !== "idle"}
+							disabled={triage() !== 'idle'}
 						>
 							Triage with AI
 						</Button>
@@ -812,14 +819,14 @@ export function Page() {
 
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						flexWrap: "wrap",
-						alignItems: "flex-end",
+						display: 'flex',
+						flexDirection: 'row',
+						flexWrap: 'wrap',
+						alignItems: 'flex-end',
 						gap: 12,
 					}}
 				>
-					<div style={{ display: "flex", width: 224 }}>
+					<div style={{ display: 'flex', width: 224 }}>
 						<InputGroup>
 							<InputField
 								testId="beacon-search"
@@ -832,7 +839,7 @@ export function Page() {
 							/>
 						</InputGroup>
 					</div>
-					<div style={{ display: "flex", minWidth: 150 }}>
+					<div style={{ display: 'flex', minWidth: 150 }}>
 						<Select
 							testId="beacon-priority"
 							variant="bordered"
@@ -846,8 +853,8 @@ export function Page() {
 
 				<div style={{ flexGrow: 1, minHeight: 0 }}>
 					<ScrollArea height="100%">
-						<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-							<Show when={triage() !== "idle"}>
+						<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+							<Show when={triage() !== 'idle'}>
 								<TriagePanel
 									state={triage()}
 									onAdvance={setTriage}

@@ -1,4 +1,4 @@
-import { type HostElement, motion } from "@gpuix/solid";
+import { type HostElement, motion } from '@gpuix/solid';
 import {
 	type Accessor,
 	createContext,
@@ -8,12 +8,12 @@ import {
 	onMount,
 	Show,
 	useContext,
-} from "solid-js";
-import type { FluidHover } from "#/lib/fluid-hover";
-import { useHoverItem } from "#/lib/fluid-hover";
-import { Icon } from "#/lib/icon";
-import type { IconRef } from "#/lib/icons";
-import { StableLabel } from "#/lib/stable-label";
+} from 'solid-js';
+import type { FluidHover } from '#/lib/fluid-hover';
+import { useHoverItem } from '#/lib/fluid-hover';
+import { Icon } from '#/lib/icon';
+import type { IconRef } from '#/lib/icons';
+import { StableLabel } from '#/lib/stable-label';
 import {
 	color,
 	height,
@@ -21,7 +21,7 @@ import {
 	type as scale,
 	scheme,
 	weight,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
 /** What the keyboard needs to know about a row the pointer would otherwise be the only one to reach. */
 export interface MenuRow {
@@ -65,7 +65,7 @@ export const DropdownContext = createContext<DropdownContextValue>();
 export function useDropdown() {
 	const context = useContext(DropdownContext);
 	if (context === undefined) {
-		throw new Error("useDropdown must be used within a Dropdown");
+		throw new Error('useDropdown must be used within a Dropdown');
 	}
 	return context;
 }
@@ -79,8 +79,8 @@ export function DropdownLabel(props: { children: string }) {
 			style={{
 				height: 28,
 				flexShrink: 0,
-				display: "flex",
-				alignItems: "center",
+				display: 'flex',
+				alignItems: 'center',
 				paddingLeft: 8,
 				paddingRight: 8,
 			}}
@@ -174,8 +174,8 @@ export function MenuItem(props: {
 	const checked = () => props.checked === true;
 	const lit = () => context.hover.activeIndex() === props.index || checked();
 	const role = () => {
-		if (props.checked === undefined) return "menuitem";
-		return context.multiple() ? "menuitemcheckbox" : "menuitemradio";
+		if (props.checked === undefined) return 'menuitem';
+		return context.multiple() ? 'menuitemcheckbox' : 'menuitemradio';
 	};
 
 	return (
@@ -192,7 +192,7 @@ export function MenuItem(props: {
 			testId={props.testId}
 			aria-checked={props.checked}
 			aria-disabled={props.disabled === true}
-			aria-haspopup={props.submenu === undefined ? undefined : "menu"}
+			aria-haspopup={props.submenu === undefined ? undefined : 'menu'}
 			aria-expanded={props.submenu?.open}
 			aria-controls={props.submenu?.open ? props.submenu.popupId : undefined}
 			onMouseDown={() => {
@@ -212,20 +212,20 @@ export function MenuItem(props: {
 				activate(false);
 			}}
 			style={{
-				position: "relative",
+				position: 'relative',
 				zIndex: 10,
 				height: height.control,
 				flexShrink: 0,
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: 8,
 				paddingLeft: 8,
 				paddingRight: 8,
 				borderRadius: radius.item,
-				cursor: "pointer",
+				cursor: 'pointer',
 				opacity: props.disabled === true ? 0.5 : 1,
-				pointerEvents: props.disabled === true ? "none" : undefined,
+				pointerEvents: props.disabled === true ? 'none' : undefined,
 				keyboardFocusDim: false,
 			}}
 		>
@@ -267,7 +267,7 @@ export function MenuItem(props: {
 								<motion.div
 									initial={initial}
 									animate={{ opacity: 1 }}
-									transition={{ duration: 0.08, ease: "easeOut" }}
+									transition={{ duration: 0.08, ease: 'easeOut' }}
 								>
 									<Icon
 										name="check"

@@ -1,6 +1,6 @@
-import { buttonProps, useGpuixRequired } from "@gpuix/solid";
-import { createContext, type JSX, Show } from "solid-js";
-import { Badge } from "#/components/badge";
+import { buttonProps, useGpuixRequired } from '@gpuix/solid';
+import { createContext, type JSX, Show } from 'solid-js';
+import { Badge } from '#/components/badge';
 import {
 	color,
 	colorFade,
@@ -9,9 +9,9 @@ import {
 	scheme,
 	siteType,
 	weight,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
-export type BentoSize = "large" | "medium" | "small";
+export type BentoSize = 'large' | 'medium' | 'small';
 
 /** True inside a home tile. Previews that also serve a full demo stage read it to trim themselves for the tile alone. */
 export const BentoTileContext = createContext(false);
@@ -23,12 +23,12 @@ export const BENTO_ROW = 300;
  * `.bento-card-border` in `app/globals.css:1244-1269`: three states of the border and the 1px drop under it.
  * `light-dark()` becomes the scheme read here, so call it inside a style.
  */
-export function bentoFrame(state: "rest" | "hover" | "focus") {
-	const light = scheme() === "light";
+export function bentoFrame(state: 'rest' | 'hover' | 'focus') {
+	const light = scheme() === 'light';
 	const border = {
-		rest: light ? "rgba(23,23,23,0.12)" : "rgba(245,245,245,0.072)",
-		hover: light ? "rgba(23,23,23,0.2)" : "rgba(245,245,245,0.12)",
-		focus: light ? "rgba(23,23,23,0.65)" : "rgba(245,245,245,0.7)",
+		rest: light ? 'rgba(23,23,23,0.12)' : 'rgba(245,245,245,0.072)',
+		hover: light ? 'rgba(23,23,23,0.2)' : 'rgba(245,245,245,0.12)',
+		focus: light ? 'rgba(23,23,23,0.65)' : 'rgba(245,245,245,0.7)',
 	}[state];
 	const shadow = {
 		rest: { blur: 2, alpha: light ? 0.04 : 0.4 },
@@ -65,19 +65,19 @@ export function BentoCard(props: {
 			testId={`card-${props.slug}`}
 			style={{
 				...props.placement,
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				minHeight: 0,
 				borderRadius: 12,
 				borderWidth: 1,
-				overflow: "hidden",
+				overflow: 'hidden',
 				// A box shadow is not clipped out of the border box here, so over a transparent fill it darkens the whole card.
 				backgroundColor: color.background,
-				...bentoFrame("rest"),
+				...bentoFrame('rest'),
 				// `transition-[shadow,border-color]`: `shadow` is not a CSS property, so only the border eases.
-				...fade(["border-color"], 80),
-				hover: bentoFrame("hover"),
-				focusWithin: bentoFrame("focus"),
+				...fade(['border-color'], 80),
+				hover: bentoFrame('hover'),
+				focusWithin: bentoFrame('focus'),
 			}}
 		>
 			<div
@@ -85,10 +85,10 @@ export function BentoCard(props: {
 					flexGrow: 1,
 					flexBasis: 0,
 					minHeight: 0,
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
-					justifyContent: "center",
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
+					justifyContent: 'center',
 					paddingLeft: props.previewPadding.x,
 					paddingRight: props.previewPadding.x,
 					paddingTop: props.previewPadding.y,
@@ -107,9 +107,9 @@ export function BentoCard(props: {
 				style={{
 					group: true,
 					flexShrink: 0,
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					gap: 8,
 					paddingLeft: 16,
 					paddingRight: 16,
@@ -117,12 +117,12 @@ export function BentoCard(props: {
 					paddingBottom: 12,
 					borderTopWidth: 1,
 					borderTopColor:
-						scheme() === "light"
-							? "rgba(23,23,23,0.048)"
-							: "rgba(245,245,245,0.048)",
+						scheme() === 'light'
+							? 'rgba(23,23,23,0.048)'
+							: 'rgba(245,245,245,0.048)',
 					borderBottomLeftRadius: 11,
 					borderBottomRightRadius: 11,
-					cursor: "pointer",
+					cursor: 'pointer',
 					keyboardFocusDim: false,
 					...colorFade,
 					hover: { backgroundColor: color.hover },

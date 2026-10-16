@@ -1,4 +1,4 @@
-import { height, type SizeChoice, type as scale } from "#/lib/theme";
+import { height, type SizeChoice, type as scale } from '#/lib/theme';
 
 /**
  * The size ladder as the port's components spell it. The port has no

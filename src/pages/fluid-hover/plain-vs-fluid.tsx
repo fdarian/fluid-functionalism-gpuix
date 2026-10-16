@@ -2,7 +2,7 @@ import {
 	createReducedMotion,
 	type HostElement,
 	IntersectionObserver,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	createEffect,
 	createSignal,
@@ -10,14 +10,14 @@ import {
 	type JSX,
 	onCleanup,
 	useContext,
-} from "solid-js";
-import { onFrame } from "#/lib/clock";
-import { PageScrollerContext } from "#/lib/demo-kit";
-import { Code, ComponentPreview } from "#/lib/doc-page";
-import { createFluidHover } from "#/lib/fluid-hover";
-import { PAUSE_ICON, PLAY_ICON } from "#/lib/playback-icons";
-import { usePreviewPlayback } from "#/lib/preview-playback";
-import { color, siteType } from "#/lib/theme";
+} from 'solid-js';
+import { onFrame } from '#/lib/clock';
+import { PageScrollerContext } from '#/lib/demo-kit';
+import { Code, ComponentPreview } from '#/lib/doc-page';
+import { createFluidHover } from '#/lib/fluid-hover';
+import { PAUSE_ICON, PLAY_ICON } from '#/lib/playback-icons';
+import { usePreviewPlayback } from '#/lib/preview-playback';
+import { color, siteType } from '#/lib/theme';
 import {
 	FakeCursor,
 	FluidRow,
@@ -27,10 +27,10 @@ import {
 	PlainRow,
 	ROW_GAP,
 	ROW_HEIGHT,
-} from "./parts";
-import { FLUID_HOVER_CODE } from "./snippets";
+} from './parts';
+import { FLUID_HOVER_CODE } from './snippets';
 
-export const ROWS = ["Inbox", "Drafts", "Sent", "Archive", "Trash"];
+export const ROWS = ['Inbox', 'Drafts', 'Sent', 'Archive', 'Trash'];
 
 // The cursor turns around 2px inside the padding at both ends, so it spends a beat above the first row and below the last.
 const CURSOR_X = 120;
@@ -86,7 +86,7 @@ function Caption(props: { mark: string; children: JSX.Element }) {
 			style={{
 				...siteType.caption,
 				color: color.mutedForeground,
-				textAlign: "center",
+				textAlign: 'center',
 			}}
 		>
 			{props.mark} {props.children}
@@ -147,9 +147,9 @@ function Stage(props: { paused: () => boolean }) {
 	});
 
 	const listStyle = {
-		position: "relative",
-		display: "flex",
-		flexDirection: "column",
+		position: 'relative',
+		display: 'flex',
+		flexDirection: 'column',
 		gap: ROW_GAP,
 		padding: LIST_PADDING,
 	} as const;
@@ -157,9 +157,9 @@ function Stage(props: { paused: () => boolean }) {
 		flexGrow: 1,
 		flexBasis: 0,
 		minWidth: 0,
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
 		gap: 12,
 	} as const;
 
@@ -173,10 +173,10 @@ function Stage(props: { paused: () => boolean }) {
 			onMouseDown={() => setUserInside(true)}
 			onMouseLeave={() => setUserInside(false)}
 			style={{
-				width: "100%",
+				width: '100%',
 				maxWidth: 576,
-				display: "flex",
-				flexDirection: "row",
+				display: 'flex',
+				flexDirection: 'row',
 				gap: 20,
 			}}
 		>
@@ -225,9 +225,7 @@ function Stage(props: { paused: () => boolean }) {
 						{scripted() ? <FakeCursor x={CURSOR_X} y={cursorY} /> : null}
 					</div>
 				</ListFrame>
-				<Caption mark="✅">
-					Fluid hover glides, one pass, one target
-				</Caption>
+				<Caption mark="✅">Fluid hover glides, one pass, one target</Caption>
 			</div>
 		</div>
 	);
@@ -249,8 +247,8 @@ export function PlainVsFluidDemo() {
 			cull
 			playback={{
 				icon: paused() ? PLAY_ICON : PAUSE_ICON,
-				tooltip: paused() ? "Play" : "Pause",
-				testId: "plain-vs-fluid-playback",
+				tooltip: paused() ? 'Play' : 'Pause',
+				testId: 'plain-vs-fluid-playback',
 				onClick: () => setPaused(!paused()),
 			}}
 		>

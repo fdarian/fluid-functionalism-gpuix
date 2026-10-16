@@ -1,6 +1,6 @@
-import { buttonProps, motion, useGpuixRequired } from "@gpuix/solid";
-import { createSignal, For } from "solid-js";
-import { ComponentPreview, MONO } from "#/lib/doc-page";
+import { buttonProps, motion, useGpuixRequired } from '@gpuix/solid';
+import { createSignal, For } from 'solid-js';
+import { ComponentPreview, MONO } from '#/lib/doc-page';
 import {
 	color,
 	focusRing,
@@ -8,7 +8,7 @@ import {
 	siteType,
 	motion as tween,
 	weight,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
 export const SPRING_TOKENS_CODE = `import { motion } from "motion/react";
 import { spring } from "@/lib/springs";
@@ -27,22 +27,22 @@ import { spring } from "@/lib/springs";
 
 const SPRING_TIERS = [
 	{
-		key: "fast",
+		key: 'fast',
 		token: tween.fast,
-		meta: "0.08s · bounce 0",
-		usage: "hover, fades",
+		meta: '0.08s · bounce 0',
+		usage: 'hover, fades',
 	},
 	{
-		key: "moderate",
+		key: 'moderate',
 		token: tween.moderate,
-		meta: "0.16s · bounce 0",
-		usage: "dropdowns, tabs",
+		meta: '0.16s · bounce 0',
+		usage: 'dropdowns, tabs',
 	},
 	{
-		key: "slow",
+		key: 'slow',
 		token: tween.slow,
-		meta: "0.24s · bounce 0.12",
-		usage: "dialogs, drawers",
+		meta: '0.24s · bounce 0.12',
+		usage: 'dialogs, drawers',
 	},
 ] as const;
 
@@ -63,23 +63,23 @@ export function SpringTokensDemo() {
 		>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					gap: 20,
-					width: "100%",
+					width: '100%',
 					maxWidth: 448,
 				}}
 			>
 				<For each={SPRING_TIERS}>
 					{(tier) => (
-						<div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+						<div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
 							<div
 								style={{
-									display: "flex",
-									flexDirection: "row",
+									display: 'flex',
+									flexDirection: 'row',
 									// gpuix's baseline alignment sits a <text> box on its bottom edge, so
 									// the three runs are centered instead: within a pixel of a shared baseline.
-									alignItems: "center",
+									alignItems: 'center',
 									gap: 8,
 								}}
 							>
@@ -101,7 +101,7 @@ export function SpringTokensDemo() {
 								>
 									{tier.meta}
 								</text>
-								<div style={{ marginLeft: "auto" }}>
+								<div style={{ marginLeft: 'auto' }}>
 									<text
 										style={{
 											...siteType.caption,
@@ -117,17 +117,17 @@ export function SpringTokensDemo() {
 								testId={`spring-token-${tier.key}`}
 								aria-label={`Run the ${tier.key} spring`}
 								style={{
-									display: "flex",
-									flexDirection: "row",
-									alignItems: "center",
-									justifyContent: atEnd() ? "flex-end" : "flex-start",
-									width: "100%",
+									display: 'flex',
+									flexDirection: 'row',
+									alignItems: 'center',
+									justifyContent: atEnd() ? 'flex-end' : 'flex-start',
+									width: '100%',
 									height: TRACK,
 									paddingLeft: 4,
 									paddingRight: 4,
 									borderRadius: TRACK / 2,
 									backgroundColor: color.muted,
-									cursor: "pointer",
+									cursor: 'pointer',
 									keyboardFocusDim: false,
 									focusVisible: focusRing(0),
 								}}
@@ -147,7 +147,7 @@ export function SpringTokensDemo() {
 						</div>
 					)}
 				</For>
-				<div style={{ alignSelf: "center" }}>
+				<div style={{ alignSelf: 'center' }}>
 					<text style={{ ...siteType.caption, color: color.mutedForeground }}>
 						Click a track (or replay) to fire all three springs.
 					</text>

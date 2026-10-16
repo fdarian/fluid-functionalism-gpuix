@@ -1,7 +1,7 @@
-import { For } from "solid-js";
-import { MONO } from "#/lib/doc-page";
-import { color, shape, siteType, weight } from "#/lib/theme";
-import { borderFainter, roleStyle, TYPESET_SPACE, type TypeRole } from "./step";
+import { For } from 'solid-js';
+import { MONO } from '#/lib/doc-page';
+import { color, shape, siteType, weight } from '#/lib/theme';
+import { borderFainter, roleStyle, TYPESET_SPACE, type TypeRole } from './step';
 
 /** The axes `fontWeights` sets (lib/font-weight.ts); the port renders the static cut nearest each wght. */
 const AXES = {
@@ -19,49 +19,49 @@ const SPEC: readonly {
 	muted: boolean;
 }[] = [
 	{
-		role: "display",
-		name: "Display",
-		sample: "Page titles",
-		weight: "bold",
+		role: 'display',
+		name: 'Display',
+		sample: 'Page titles',
+		weight: 'bold',
 		muted: false,
 	},
 	{
-		role: "title",
-		name: "Title",
-		sample: "Section titles",
-		weight: "semibold",
+		role: 'title',
+		name: 'Title',
+		sample: 'Section titles',
+		weight: 'semibold',
 		muted: false,
 	},
 	{
-		role: "subtitle",
-		name: "Subtitle",
-		sample: "Sub-headings and card titles",
-		weight: "semibold",
+		role: 'subtitle',
+		name: 'Subtitle',
+		sample: 'Sub-headings and card titles',
+		weight: 'semibold',
 		muted: false,
 	},
 	{
-		role: "body",
-		name: "Body",
-		sample: "Labels, menu items, and paragraphs",
-		weight: "normal",
+		role: 'body',
+		name: 'Body',
+		sample: 'Labels, menu items, and paragraphs',
+		weight: 'normal',
 		muted: true,
 	},
 	{
-		role: "caption",
-		name: "Caption",
-		sample: "Descriptions and meta rows",
-		weight: "normal",
+		role: 'caption',
+		name: 'Caption',
+		sample: 'Descriptions and meta rows',
+		weight: 'normal',
 		muted: true,
 	},
 ];
 
-const COLUMNS = "80px minmax(0, 1fr) 64px 72px 56px";
+const COLUMNS = '80px minmax(0, 1fr) 64px 72px 56px';
 
 const row = {
-	display: "grid",
+	display: 'grid',
 	gridTemplateColumns: COLUMNS,
 	columnGap: 16,
-	alignItems: "center",
+	alignItems: 'center',
 	paddingLeft: 20,
 	paddingRight: 20,
 } as const;
@@ -70,9 +70,9 @@ function Mono(props: { children: string; muted?: boolean }) {
 	return (
 		<text
 			style={{
-				...roleStyle("caption"),
+				...roleStyle('caption'),
 				fontFamily: MONO,
-				fontVariantNumeric: "tabular-nums",
+				fontVariantNumeric: 'tabular-nums',
 				color: props.muted === true ? color.mutedForeground : color.foreground,
 			}}
 		>
@@ -87,7 +87,7 @@ export function TypeScaleSpecimen() {
 		<div
 			testId="type-scale"
 			style={{
-				overflowX: "auto",
+				overflowX: 'auto',
 				borderWidth: 1,
 				borderColor: color.borderFaint,
 				borderRadius: shape.container,
@@ -95,8 +95,8 @@ export function TypeScaleSpecimen() {
 		>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					flexShrink: 0,
 					minWidth: 560,
 				}}
@@ -110,9 +110,11 @@ export function TypeScaleSpecimen() {
 						borderColor: color.borderFaint,
 					}}
 				>
-					<For each={["Style", "Sample", "Font size", "Line height", "Weight"]}>
+					<For each={['Style', 'Sample', 'Font size', 'Line height', 'Weight']}>
 						{(label) => (
-							<text style={{ ...siteType.caption, color: color.mutedForeground }}>
+							<text
+								style={{ ...siteType.caption, color: color.mutedForeground }}
+							>
 								{label}
 							</text>
 						)}
@@ -147,9 +149,9 @@ export function TypeScaleSpecimen() {
 										color: spec.muted
 											? color.mutedForeground
 											: color.foreground,
-										whiteSpace: "nowrap",
-										textOverflow: "ellipsis",
-										overflow: "hidden",
+										whiteSpace: 'nowrap',
+										textOverflow: 'ellipsis',
+										overflow: 'hidden',
 										minWidth: 0,
 									}}
 								>
@@ -157,7 +159,7 @@ export function TypeScaleSpecimen() {
 								</text>
 								<Mono>{`${roleStyle(spec.role).fontSize}px`}</Mono>
 								<Mono>{`${roleStyle(spec.role).lineHeight}px`}</Mono>
-								<div style={{ display: "flex", flexDirection: "column" }}>
+								<div style={{ display: 'flex', flexDirection: 'column' }}>
 									<Mono>{String(axes.wght)}</Mono>
 									<Mono muted>{`opsz ${axes.opsz}`}</Mono>
 								</div>
@@ -172,13 +174,13 @@ export function TypeScaleSpecimen() {
 
 /** The sheet's gaps, named by the styles they sit around. A caption takes the same room as the space under a heading. */
 const GAPS: readonly (readonly [keyof typeof TYPESET_SPACE, string])[] = [
-	["section", "Above display and title"],
-	["subsection", "Above subtitle"],
-	["heading", "Below display, title, and subtitle"],
-	["block", "Between body blocks"],
-	["heading", "Above caption"],
-	["item", "Between list items"],
-	["rule", "Around a divider"],
+	['section', 'Above display and title'],
+	['subsection', 'Above subtitle'],
+	['heading', 'Below display, title, and subtitle'],
+	['block', 'Between body blocks'],
+	['heading', 'Above caption'],
+	['item', 'Between list items'],
+	['rule', 'Around a divider'],
 ];
 
 const cell = {
@@ -190,22 +192,22 @@ const cell = {
 
 /** Read from the sheet's own values, styled like the PropsTable: three columns, the first flush left. */
 export function GapTable() {
-	const columns = "minmax(0, 3fr) minmax(0, 1fr) minmax(0, 1fr)";
+	const columns = 'minmax(0, 3fr) minmax(0, 1fr) minmax(0, 1fr)';
 	const lead = { paddingLeft: 0 } as const;
 	return (
 		<div
 			testId="gap-table"
-			style={{ display: "flex", flexDirection: "column" }}
+			style={{ display: 'flex', flexDirection: 'column' }}
 		>
 			<div
 				style={{
-					display: "grid",
+					display: 'grid',
 					gridTemplateColumns: columns,
 					borderBottomWidth: 1,
 					borderColor: color.border,
 				}}
 			>
-				<For each={["Gap", "Default", "Compact"]}>
+				<For each={['Gap', 'Default', 'Compact']}>
 					{(label, index) => (
 						<text
 							style={{
@@ -214,7 +216,7 @@ export function GapTable() {
 								...siteType.body,
 								fontWeight: weight.semibold,
 								color: color.foreground,
-								fontVariantNumeric: "tabular-nums",
+								fontVariantNumeric: 'tabular-nums',
 							}}
 						>
 							{label}
@@ -226,7 +228,7 @@ export function GapTable() {
 				{(entry) => (
 					<div
 						style={{
-							display: "grid",
+							display: 'grid',
 							gridTemplateColumns: columns,
 							borderBottomWidth: 1,
 							borderColor: borderFainter(),
@@ -247,7 +249,7 @@ export function GapTable() {
 								...cell,
 								...siteType.body,
 								color: color.foreground,
-								fontVariantNumeric: "tabular-nums",
+								fontVariantNumeric: 'tabular-nums',
 							}}
 						>
 							{`${TYPESET_SPACE[entry[0]].default}px`}
@@ -257,7 +259,7 @@ export function GapTable() {
 								...cell,
 								...siteType.body,
 								color: color.foreground,
-								fontVariantNumeric: "tabular-nums",
+								fontVariantNumeric: 'tabular-nums',
 							}}
 						>
 							{`${TYPESET_SPACE[entry[0]].compact}px`}

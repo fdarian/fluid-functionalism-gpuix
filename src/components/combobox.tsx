@@ -3,7 +3,7 @@ import {
 	type HostElement,
 	type KeyEvent,
 	useGpuixRequired,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	type Accessor,
 	createEffect,
@@ -13,30 +13,30 @@ import {
 	For,
 	on,
 	Show,
-} from "solid-js";
-import { FluidHighlight } from "#/lib/fluid-highlight";
+} from 'solid-js';
+import { FluidHighlight } from '#/lib/fluid-highlight';
 import {
 	createFluidHover,
 	createReflowGate,
 	useHoverItem,
-} from "#/lib/fluid-hover";
-import { FormValue } from "#/lib/form-value";
-import { CheckMark, Icon, LIST_CHECK } from "#/lib/icon";
-import type { IconRef } from "#/lib/icons";
-import { isChord, moveIndex, revealRow } from "#/lib/list-nav";
-import { PopupSurface } from "#/lib/popup";
-import { createPresence, POPUP_EXIT_FALLBACK_MS } from "#/lib/presence";
+} from '#/lib/fluid-hover';
+import { FormValue } from '#/lib/form-value';
+import { CheckMark, Icon, LIST_CHECK } from '#/lib/icon';
+import type { IconRef } from '#/lib/icons';
+import { isChord, moveIndex, revealRow } from '#/lib/list-nav';
+import { PopupSurface } from '#/lib/popup';
+import { createPresence, POPUP_EXIT_FALLBACK_MS } from '#/lib/presence';
 import {
 	color,
 	colorFade,
 	fade,
 	radius,
+	type as scale,
 	shape,
 	shapeChoice,
-	type as scale,
 	motion as tween,
 	weight,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
 const FIELD_HEIGHT = 36;
 const ROW_HEIGHT = 36;
@@ -58,12 +58,12 @@ function ClearButton(props: { onClick: () => void; testId?: string }) {
 				width: 24,
 				height: 24,
 				flexShrink: 0,
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
-				borderRadius: shapeChoice() === "pill" ? 12 : 6,
-				cursor: "pointer",
-				...fade(["color", "background-color"], 80),
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				borderRadius: shapeChoice() === 'pill' ? 12 : 6,
+				cursor: 'pointer',
+				...fade(['color', 'background-color'], 80),
 				hover: { backgroundColor: color.hover },
 				active: { backgroundColor: color.active },
 			}}
@@ -92,17 +92,17 @@ export interface ComboboxRow {
 }
 
 function toRow(item: ComboboxItem): ComboboxRow {
-	return typeof item === "string" ? { value: item, label: item } : item;
+	return typeof item === 'string' ? { value: item, label: item } : item;
 }
 
 /** Base UI's default match: `Intl.Collator`, ignoring case, accents and punctuation. */
 const collator = new Intl.Collator(undefined, {
-	usage: "search",
-	sensitivity: "base",
+	usage: 'search',
+	sensitivity: 'base',
 	ignorePunctuation: true,
 });
 function contains(text: string, query: string) {
-	if (query === "") return true;
+	if (query === '') return true;
 	for (let start = 0; start <= text.length - query.length; start++) {
 		if (
 			collator.compare(text.slice(start, start + query.length), query) === 0
@@ -157,7 +157,7 @@ export function Combobox(props: {
 	);
 	const value = () => (props.value === undefined ? ownValue() : props.value);
 	const labelOf = (current: string | null) => {
-		if (current === null) return "";
+		if (current === null) return '';
 		const row = rows().find((candidate) => candidate.value === current);
 		if (row === undefined) throw new Error(`No item for ${current}`);
 		return row.label;
@@ -165,7 +165,7 @@ export function Combobox(props: {
 	const [inputText, setInputText] = createSignal(labelOf(value()));
 	// What the list filters by. The text field shows the selected label while
 	// closed, but opening it must still list every item.
-	const [query, setQuery] = createSignal("");
+	const [query, setQuery] = createSignal('');
 	const [focused, setFocused] = createSignal(false);
 	const [chevronHovered, setChevronHovered] = createSignal(false);
 	/** Armed while typing re-filters the rows under the highlights: those frames snap, not glide. */
@@ -178,7 +178,7 @@ export function Combobox(props: {
 
 	const filtered = createMemo(() => {
 		const needle = query().trim();
-		if (needle === "") return rows();
+		if (needle === '') return rows();
 		const matches = props.filter ?? ((row, text) => contains(row.label, text));
 		return rows().filter((row) => matches(row, needle));
 	});
@@ -209,7 +209,7 @@ export function Combobox(props: {
 	};
 	const openPopup = () => {
 		if (open() || props.disabled === true) return;
-		setQuery("");
+		setQuery('');
 		revealOnMeasure = true;
 		presence.show();
 		hover.setActiveIndex(openHighlight());
@@ -221,7 +221,7 @@ export function Combobox(props: {
 	};
 	const focusInput = () => {
 		if (inputElement === undefined)
-			throw new Error("Combobox input is not mounted");
+			throw new Error('Combobox input is not mounted');
 		renderer.focusElement?.(inputElement.id);
 	};
 	const select = (row: ComboboxRow) => {
@@ -232,8 +232,8 @@ export function Combobox(props: {
 	};
 	const clear = () => {
 		commitValue(null);
-		setInputText("");
-		setQuery("");
+		setInputText('');
+		setQuery('');
 		focusInput();
 	};
 
@@ -265,7 +265,7 @@ export function Combobox(props: {
 					hover.setActiveIndex(null);
 					return;
 				}
-				const picked = query().trim() === "" ? checkedIndex() : null;
+				const picked = query().trim() === '' ? checkedIndex() : null;
 				hover.setActiveIndex(picked ?? 0);
 			},
 			{ defer: true },
@@ -287,7 +287,7 @@ export function Combobox(props: {
 	const revealIndex = (index: number) => {
 		const row = hover.rects()[index];
 		if (scroller !== undefined && row !== undefined) {
-			revealRow(scroller, row, "nearest", LIST_PADDING);
+			revealRow(scroller, row, 'nearest', LIST_PADDING);
 		}
 	};
 	/** Arrows loop (`loopFocus` is on) and visit disabled rows (`disabledIndices: []`). */
@@ -301,14 +301,14 @@ export function Combobox(props: {
 	const onKeyDown = (event: KeyEvent) => {
 		if (isChord(event)) return;
 		switch (event.key) {
-			case "ArrowDown":
-			case "ArrowUp":
+			case 'ArrowDown':
+			case 'ArrowUp':
 				event.preventDefault();
 				event.stopPropagation();
 				if (!open()) openPopup();
-				else move(event.key === "ArrowDown" ? 1 : -1);
+				else move(event.key === 'ArrowDown' ? 1 : -1);
 				return;
-			case "Escape":
+			case 'Escape':
 				if (open()) {
 					// Closing pops the popup's dismiss layer before the window sees this Escape, which would then close the dialog behind.
 					event.preventDefault();
@@ -317,18 +317,18 @@ export function Combobox(props: {
 				}
 				if (mounted()) return;
 				// Closed: Escape empties the field and the pick. With a pick to clear it is consumed, so a dialog behind stays open.
-				setInputText("");
-				setQuery("");
+				setInputText('');
+				setQuery('');
 				if (value() !== null) {
 					commitValue(null);
 					event.preventDefault();
 					event.stopPropagation();
 				}
 				return;
-			case "Tab":
+			case 'Tab':
 				closePopup();
 				return;
-			case "Enter":
+			case 'Enter':
 				submit(event);
 				return;
 		}
@@ -347,15 +347,15 @@ export function Combobox(props: {
 	};
 	const onChange = (event: DomEvent) => {
 		const text = event.value;
-		if (text === undefined) throw new Error("Combobox change without a value");
+		if (text === undefined) throw new Error('Combobox change without a value');
 		setInputText(text);
 		// Emptying the field drops the pick.
-		if (text === "" && value() !== null) commitValue(null);
+		if (text === '' && value() !== null) commitValue(null);
 		if (open()) {
 			setQuery(text);
 			return;
 		}
-		if (text.trim() === "") return;
+		if (text.trim() === '') return;
 		openPopup();
 		setQuery(text);
 	};
@@ -383,18 +383,18 @@ export function Combobox(props: {
 			testId={props.testId}
 			onMouseDownOutside={closePopup}
 			style={{
-				position: "relative",
+				position: 'relative',
 				width: width(),
 				height: FIELD_HEIGHT,
 				flexShrink: 0,
 				opacity: props.disabled === true ? 0.5 : 1,
-				pointerEvents: props.disabled === true ? "none" : "auto",
+				pointerEvents: props.disabled === true ? 'none' : 'auto',
 			}}
 		>
 			<Show when={props.name !== undefined || props.required === true}>
 				<FormValue
 					name={props.name}
-					value={value() ?? ""}
+					value={value() ?? ''}
 					required={props.required === true}
 					disabled={props.disabled === true}
 					focusTarget={() => inputElement}
@@ -402,16 +402,16 @@ export function Combobox(props: {
 			</Show>
 			<div
 				style={{
-					width: "100%",
+					width: '100%',
 					height: FIELD_HEIGHT,
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					gap: 8,
 					paddingLeft: 10,
 					paddingRight: 10,
 					borderRadius: shape.input,
-					cursor: "text",
+					cursor: 'text',
 					outlineWidth: 1,
 					outlineColor: color.border,
 					outlineOffset: 0,
@@ -430,10 +430,10 @@ export function Combobox(props: {
 					style={{
 						flexGrow: 1,
 						minWidth: 0,
-						height: "100%",
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
+						height: '100%',
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
 						gap: 8,
 					}}
 				>
@@ -458,7 +458,7 @@ export function Combobox(props: {
 						}
 						id={inputId}
 						value={inputText()}
-						placeholder={props.placeholder ?? "Search…"}
+						placeholder={props.placeholder ?? 'Search…'}
 						role="combobox"
 						aria-haspopup="listbox"
 						aria-expanded={open()}
@@ -523,11 +523,11 @@ export function Combobox(props: {
 						width: 24,
 						height: 24,
 						flexShrink: 0,
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
 						borderRadius: 6,
-						cursor: "pointer",
+						cursor: 'pointer',
 					}}
 				>
 					<Icon
@@ -560,13 +560,13 @@ export function Combobox(props: {
 									paddingBottom: 24,
 									paddingLeft: 12,
 									paddingRight: 12,
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "center",
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
 								}}
 							>
 								<text style={{ ...scale.body, color: color.mutedForeground }}>
-									{props.emptyText ?? "No results found."}
+									{props.emptyText ?? 'No results found.'}
 								</text>
 							</div>
 						}
@@ -579,9 +579,9 @@ export function Combobox(props: {
 							role="listbox"
 							onScroll={hover.handlers.onScroll}
 							style={{
-								display: "flex",
-								flexDirection: "column",
-								overflowY: "scroll",
+								display: 'flex',
+								flexDirection: 'column',
+								overflowY: 'scroll',
 								maxHeight: popupMaxHeight(),
 							}}
 						>
@@ -590,9 +590,9 @@ export function Combobox(props: {
 								{...hover.containerProps}
 								onMouseLeave={onListMouseLeave}
 								style={{
-									position: "relative",
-									display: "flex",
-									flexDirection: "column",
+									position: 'relative',
+									display: 'flex',
+									flexDirection: 'column',
 									padding: 4,
 								}}
 							>
@@ -636,21 +636,21 @@ export function Combobox(props: {
 												onMouseDown={(event) => event.preventDefault()}
 												onClick={() => select(row)}
 												style={{
-													position: "relative",
+													position: 'relative',
 													zIndex: 10,
 													height: ROW_HEIGHT,
 													flexShrink: 0,
-													display: "flex",
-													flexDirection: "row",
-													alignItems: "center",
+													display: 'flex',
+													flexDirection: 'row',
+													alignItems: 'center',
 													gap: 8,
 													paddingLeft: 8,
 													paddingRight: 8,
 													borderRadius: radius.item,
-													cursor: "pointer",
+													cursor: 'pointer',
 													opacity: row.disabled === true ? 0.5 : 1,
 													pointerEvents:
-														row.disabled === true ? "none" : undefined,
+														row.disabled === true ? 'none' : undefined,
 												}}
 											>
 												<Show when={row.icon}>
@@ -676,9 +676,9 @@ export function Combobox(props: {
 															? color.foreground
 															: color.mutedForeground,
 														...colorFade,
-														whiteSpace: "nowrap",
-														textOverflow: "ellipsis",
-														overflow: "hidden",
+														whiteSpace: 'nowrap',
+														textOverflow: 'ellipsis',
+														overflow: 'hidden',
 													}}
 												>
 													{row.label}

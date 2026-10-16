@@ -1,11 +1,11 @@
 import {
-	document,
 	type DomEvent,
+	document,
 	type HostElement,
 	type HostMouseEvent,
 	type HostMouseMoveEvent,
 	type KeyEvent,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	type Accessor,
 	createEffect,
@@ -17,30 +17,30 @@ import {
 	on,
 	onCleanup,
 	Show,
-} from "solid-js";
-import { FluidHighlight } from "#/lib/fluid-highlight";
-import { createFluidHover, useHoverItem } from "#/lib/fluid-hover";
-import { createFocusRing, FocusRing } from "#/lib/focus-ring";
-import { FormValue } from "#/lib/form-value";
-import { CheckMark, Icon, LIST_CHECK } from "#/lib/icon";
-import type { IconRef } from "#/lib/icons";
-import { edgeIndex, isChord, moveIndex, revealRow } from "#/lib/list-nav";
-import { PopupSurface } from "#/lib/popup";
-import { refocusAfterPress } from "#/lib/popup-trigger";
-import { createPresence, POPUP_EXIT_FALLBACK_MS } from "#/lib/presence";
+} from 'solid-js';
+import { FluidHighlight } from '#/lib/fluid-highlight';
+import { createFluidHover, useHoverItem } from '#/lib/fluid-hover';
+import { createFocusRing, FocusRing } from '#/lib/focus-ring';
+import { FormValue } from '#/lib/form-value';
+import { CheckMark, Icon, LIST_CHECK } from '#/lib/icon';
+import type { IconRef } from '#/lib/icons';
+import { edgeIndex, isChord, moveIndex, revealRow } from '#/lib/list-nav';
+import { PopupSurface } from '#/lib/popup';
+import { refocusAfterPress } from '#/lib/popup-trigger';
+import { createPresence, POPUP_EXIT_FALLBACK_MS } from '#/lib/presence';
 import {
 	color,
 	colorFade,
 	focusRing,
 	radius,
-	shape,
-	sizeChoice,
 	type as scale,
 	scheme,
+	shape,
+	sizeChoice,
 	motion as tween,
 	withAlpha,
-} from "#/lib/theme";
-import { createTypeahead } from "#/lib/typeahead";
+} from '#/lib/theme';
+import { createTypeahead } from '#/lib/typeahead';
 
 /** How long a pick holds the popup open so the check and the checked background are seen arriving. */
 const ACK_MS = 300;
@@ -50,14 +50,14 @@ const PRESS_DRAG_MS = 400;
 const PRESS_DRAG_PX = 8;
 /** Base UI's gate for the row focus ring (`POPUP_NAV_KEYS`): these keys inside the popup earn it, typeahead letters do not. */
 const NAV_KEYS = [
-	"ArrowDown",
-	"ArrowUp",
-	"ArrowLeft",
-	"ArrowRight",
-	"Home",
-	"End",
-	"PageUp",
-	"PageDown",
+	'ArrowDown',
+	'ArrowUp',
+	'ArrowLeft',
+	'ArrowRight',
+	'Home',
+	'End',
+	'PageUp',
+	'PageDown',
 ];
 const POPUP_MAX_HEIGHT = 300;
 const POPUP_PADDING = 4;
@@ -71,16 +71,16 @@ export interface SelectItem<Value extends string> {
 
 export type SelectEntry<Value extends string> =
 	| SelectItem<Value>
-	| { type: "label"; label: string }
-	| { type: "separator" };
+	| { type: 'label'; label: string }
+	| { type: 'separator' };
 
 /**
  * `inline` is the borderless, always-compact select of the "Make them yours"
  * card: it shows the picked item's icon and its popup opens against the
  * trigger's right edge. `bordered` and `borderless` are the docs' variants.
  */
-export type SelectVariant = "bordered" | "borderless" | "inline";
-export type SelectSize = "default" | "compact";
+export type SelectVariant = 'bordered' | 'borderless' | 'inline';
+export type SelectSize = 'default' | 'compact';
 
 interface Spec {
 	/** Trigger and popup rows share this height. */
@@ -127,13 +127,13 @@ const separatorColor = () => color.borderFaint;
 function isItem<Value extends string>(
 	entry: SelectEntry<Value>,
 ): entry is SelectItem<Value> {
-	return "value" in entry;
+	return 'value' in entry;
 }
 
 type Slot<Value extends string> =
-	| { kind: "item"; row: SelectItem<Value>; index: number }
-	| { kind: "label"; label: string }
-	| { kind: "separator" };
+	| { kind: 'item'; row: SelectItem<Value>; index: number }
+	| { kind: 'label'; label: string }
+	| { kind: 'separator' };
 
 export function Select<Value extends string>(props: {
 	items: readonly SelectEntry<Value>[];
@@ -162,8 +162,8 @@ export function Select<Value extends string>(props: {
 	/** The popup is as wide as the trigger, or this, whichever is larger. */
 	popupWidth?: number;
 }) {
-	const variant = () => props.variant ?? "inline";
-	const inline = () => variant() === "inline";
+	const variant = () => props.variant ?? 'inline';
+	const inline = () => variant() === 'inline';
 	const spec = () => specs[props.size ?? sizeChoice()];
 	const triggerSpec = (): Spec =>
 		inline()
@@ -245,11 +245,11 @@ export function Select<Value extends string>(props: {
 	onCleanup(typeahead.reset);
 
 	/** Where the highlight starts: the picked row; else, for a keyboard open, the first (or last) enabled one. */
-	const openHighlight = (from: "pointer" | "down" | "up") => {
+	const openHighlight = (from: 'pointer' | 'down' | 'up') => {
 		if (selectedIndex() !== -1) return selectedIndex();
-		if (from === "pointer") return null;
+		if (from === 'pointer') return null;
 		return edgeIndex(
-			from === "down" ? "first" : "last",
+			from === 'down' ? 'first' : 'last',
 			rows().length,
 			isRowDisabled,
 		);
@@ -259,7 +259,7 @@ export function Select<Value extends string>(props: {
 			scroller.focus({ preventScroll: true });
 		}
 	};
-	const open = (from: "pointer" | "down" | "up" = "pointer") => {
+	const open = (from: 'pointer' | 'down' | 'up' = 'pointer') => {
 		if (props.disabled === true || presence.open()) return;
 		revealOnMeasure = true;
 		openedAt = performance.now();
@@ -267,7 +267,7 @@ export function Select<Value extends string>(props: {
 		dragY = 0;
 		dragFromY = undefined;
 		dragCommits = false;
-		keyboardNav = from !== "pointer";
+		keyboardNav = from !== 'pointer';
 		typeahead.reset();
 		presence.show();
 		hover.setActiveIndex(openHighlight(from));
@@ -282,7 +282,7 @@ export function Select<Value extends string>(props: {
 		const inPopup =
 			scroller !== undefined &&
 			scroller.mounted &&
-			scroller.matches(":focus-within");
+			scroller.matches(':focus-within');
 		if (inPopup || document.activeElement === null) triggerElement.focus();
 	};
 	const close = () => {
@@ -301,8 +301,8 @@ export function Select<Value extends string>(props: {
 
 	const revealIndex = (index: number) => {
 		const row = hover.rects()[index];
-		if (scroller === undefined) throw new Error("Select list is not mounted");
-		if (row !== undefined) revealRow(scroller, row, "nearest", POPUP_PADDING);
+		if (scroller === undefined) throw new Error('Select list is not mounted');
+		if (row !== undefined) revealRow(scroller, row, 'nearest', POPUP_PADDING);
 	};
 
 	/** Arrow keys stop at the ends and visit disabled rows, like Base UI's `loopFocus: false` with `disabledIndices: []`. */
@@ -332,15 +332,15 @@ export function Select<Value extends string>(props: {
 			return;
 		}
 		switch (event.key) {
-			case "Enter":
-			case " ":
-				open("down");
+			case 'Enter':
+			case ' ':
+				open('down');
 				return;
-			case "ArrowDown":
-			case "ArrowUp":
+			case 'ArrowDown':
+			case 'ArrowUp':
 				event.preventDefault();
 				event.stopPropagation();
-				open(event.key === "ArrowDown" ? "down" : "up");
+				open(event.key === 'ArrowDown' ? 'down' : 'up');
 				return;
 		}
 	};
@@ -355,33 +355,33 @@ export function Select<Value extends string>(props: {
 			return;
 		}
 		switch (event.key) {
-			case "Enter":
-			case " ": {
+			case 'Enter':
+			case ' ': {
 				event.preventDefault();
 				const index = hover.activeIndex();
 				if (index !== null) pick(rows()[index]);
 				return;
 			}
-			case "ArrowDown":
+			case 'ArrowDown':
 				event.preventDefault();
 				move(1);
 				return;
-			case "ArrowUp":
+			case 'ArrowUp':
 				event.preventDefault();
 				move(-1);
 				return;
-			case "Home":
-			case "End":
+			case 'Home':
+			case 'End':
 				event.preventDefault();
 				if (rows().length > 0)
-					jump(event.key === "Home" ? 0 : rows().length - 1);
+					jump(event.key === 'Home' ? 0 : rows().length - 1);
 				return;
-			case "Escape":
+			case 'Escape':
 				// Closing pops the popup's dismiss layer before the window sees this Escape, which would then close the dialog behind.
 				event.preventDefault();
 				close();
 				return;
-			case "Tab":
+			case 'Tab':
 				// Forward: the trigger takes focus first, so the default Tab moves on from it. Backward leaves it on the trigger.
 				if (event.shiftKey === true) event.preventDefault();
 				close();
@@ -393,7 +393,7 @@ export function Select<Value extends string>(props: {
 		// A press moves focus to the trigger after its handlers have run, which would pull it back from the popup `open` just focused. Windows and Linux run the handler after that move, where this changes nothing.
 		event.preventDefault();
 		if (presence.open()) close();
-		else open("pointer");
+		else open('pointer');
 	};
 	/** Press on the trigger, drag onto a row and release picks it: at once after a drag of 8px, else after 400 ms. */
 	const onRowMouseUp = (row: SelectItem<Value>, index: number) => {
@@ -454,7 +454,7 @@ export function Select<Value extends string>(props: {
 	};
 	const borderColor = () => {
 		if (props.error !== undefined) return destructiveHalf();
-		return variant() === "bordered" ? color.border : color.transparent;
+		return variant() === 'bordered' ? color.border : color.transparent;
 	};
 
 	/** Index of each item among the items only, which is what the highlight and the keyboard use. */
@@ -462,15 +462,15 @@ export function Select<Value extends string>(props: {
 		let itemIndex = 0;
 		return props.items.map((entry) => {
 			if (isItem(entry))
-				return { kind: "item", row: entry, index: itemIndex++ };
-			if ("label" in entry) return { kind: "label", label: entry.label };
-			return { kind: "separator" };
+				return { kind: 'item', row: entry, index: itemIndex++ };
+			if ('label' in entry) return { kind: 'label', label: entry.label };
+			return { kind: 'separator' };
 		});
 	});
 
 	const renderSlot = (slot: Slot<Value>): JSX.Element => {
 		switch (slot.kind) {
-			case "item":
+			case 'item':
 				return (
 					<Row
 						row={slot.row}
@@ -508,14 +508,14 @@ export function Select<Value extends string>(props: {
 						onRelease={() => onRowMouseUp(slot.row, slot.index)}
 					/>
 				);
-			case "label":
+			case 'label':
 				return (
 					<div
 						style={{
 							height: LABEL_HEIGHT,
 							flexShrink: 0,
-							display: "flex",
-							alignItems: "center",
+							display: 'flex',
+							alignItems: 'center',
 							paddingLeft: 8,
 							paddingRight: 8,
 						}}
@@ -525,7 +525,7 @@ export function Select<Value extends string>(props: {
 						</text>
 					</div>
 				);
-			case "separator":
+			case 'separator':
 				return (
 					<div
 						style={{
@@ -545,8 +545,8 @@ export function Select<Value extends string>(props: {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				flexShrink: 0,
 			}}
 		>
@@ -557,7 +557,7 @@ export function Select<Value extends string>(props: {
 					close();
 					refocusAfterPress(triggerElement);
 				}}
-				style={{ position: "relative" }}
+				style={{ position: 'relative' }}
 			>
 				<div
 					ref={(element) => {
@@ -584,20 +584,20 @@ export function Select<Value extends string>(props: {
 					style={{
 						height: triggerSpec().height,
 						minWidth: triggerSpec().minWidth,
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
-						justifyContent: "space-between",
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
+						justifyContent: 'space-between',
 						gap: triggerSpec().gap,
 						paddingLeft: triggerSpec().padX,
 						paddingRight: inline() ? 6 : triggerSpec().padX,
 						borderWidth: inline() ? 0 : 1,
 						borderColor: borderColor(),
 						borderRadius: shape.input,
-						cursor: "pointer",
+						cursor: 'pointer',
 						keyboardFocusDim: false,
 						opacity: props.disabled === true ? 0.5 : 1,
-						pointerEvents: props.disabled === true ? "none" : "auto",
+						pointerEvents: props.disabled === true ? 'none' : 'auto',
 						...colorFade,
 						hover: { backgroundColor: color.hover },
 						active: { backgroundColor: color.active },
@@ -606,9 +606,9 @@ export function Select<Value extends string>(props: {
 				>
 					<div
 						style={{
-							display: "flex",
-							flexDirection: "row",
-							alignItems: "center",
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'center',
 							gap: triggerSpec().gap,
 							minWidth: 0,
 							flexGrow: inline() || props.hug === true ? 0 : 1,
@@ -635,16 +635,16 @@ export function Select<Value extends string>(props: {
 								...triggerSpec().text,
 								minWidth: 0,
 								flexGrow: 1,
-								whiteSpace: "nowrap",
-								textOverflow: "ellipsis",
-								overflow: "hidden",
+								whiteSpace: 'nowrap',
+								textOverflow: 'ellipsis',
+								overflow: 'hidden',
 								color:
 									selected() === undefined
 										? color.mutedForeground
 										: color.foreground,
 							}}
 						>
-							{selected()?.label ?? props.placeholder ?? "Select…"}
+							{selected()?.label ?? props.placeholder ?? 'Select…'}
 						</text>
 					</div>
 					<Icon
@@ -658,7 +658,7 @@ export function Select<Value extends string>(props: {
 				<Show when={props.name !== undefined || props.required === true}>
 					<FormValue
 						name={props.name}
-						value={value() ?? ""}
+						value={value() ?? ''}
 						required={props.required === true}
 						disabled={props.disabled === true}
 						focusTarget={() => triggerElement}
@@ -669,8 +669,8 @@ export function Select<Value extends string>(props: {
 					testId={
 						props.testId === undefined ? undefined : `${props.testId}-popup`
 					}
-					align={inline() ? "end" : "start"}
-					width={props.popupWidth ?? (inline() ? 160 : "anchor-size(width)")}
+					align={inline() ? 'end' : 'start'}
+					width={props.popupWidth ?? (inline() ? 160 : 'anchor-size(width)')}
 					maxHeight={POPUP_MAX_HEIGHT}
 					onDismiss={close}
 				>
@@ -690,9 +690,9 @@ export function Select<Value extends string>(props: {
 							onScroll={hover.handlers.onScroll}
 							style={{
 								keyboardFocusDim: false,
-								display: "flex",
-								flexDirection: "column",
-								overflowY: "scroll",
+								display: 'flex',
+								flexDirection: 'column',
+								overflowY: 'scroll',
 								maxHeight: popupMaxHeight(),
 							}}
 						>
@@ -701,9 +701,9 @@ export function Select<Value extends string>(props: {
 								{...hover.containerProps}
 								onMouseMove={onListMouseMove}
 								style={{
-									position: "relative",
-									display: "flex",
-									flexDirection: "column",
+									position: 'relative',
+									display: 'flex',
+									flexDirection: 'column',
 									padding: POPUP_PADDING,
 								}}
 							>
@@ -797,16 +797,16 @@ function Row<Value extends string>(props: {
 			style={{
 				height: props.spec.height,
 				flexShrink: 0,
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: props.spec.itemGap,
 				paddingLeft: props.spec.itemPadX,
 				paddingRight: props.spec.itemPadX,
 				borderRadius: radius.item,
-				cursor: "pointer",
+				cursor: 'pointer',
 				opacity: props.row.disabled === true ? 0.5 : 1,
-				pointerEvents: props.row.disabled === true ? "none" : undefined,
+				pointerEvents: props.row.disabled === true ? 'none' : undefined,
 				keyboardFocusDim: false,
 			}}
 		>
@@ -827,9 +827,9 @@ function Row<Value extends string>(props: {
 					...props.spec.text,
 					flexGrow: 1,
 					minWidth: 0,
-					whiteSpace: "nowrap",
-					textOverflow: "ellipsis",
-					overflow: "hidden",
+					whiteSpace: 'nowrap',
+					textOverflow: 'ellipsis',
+					overflow: 'hidden',
 					color: props.lit ? color.foreground : color.mutedForeground,
 					...colorFade,
 				}}

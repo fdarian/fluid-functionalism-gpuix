@@ -4,20 +4,20 @@
  *
  *   bun scripts/check-popups.tsx
  */
-import { createTestRoot, type TestElement } from "@gpuix/solid/testing";
-import { createSignal } from "solid-js";
-import { App } from "#/app";
-import { Combobox } from "#/components/combobox";
-import { Select } from "#/components/select";
-import { loadDemos, loadPages } from "#/lib/demo";
-import { fonts } from "#/lib/fonts";
-import { color, setThemeChoice } from "#/lib/theme";
+import { createTestRoot, type TestElement } from '@gpuix/solid/testing';
+import { createSignal } from 'solid-js';
+import { App } from '#/app';
+import { Combobox } from '#/components/combobox';
+import { Select } from '#/components/select';
+import { loadDemos, loadPages } from '#/lib/demo';
+import { fonts } from '#/lib/fonts';
+import { color, setThemeChoice } from '#/lib/theme';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 let failures = 0;
 function report(ok: boolean, label: string, detail: string) {
 	if (!ok) failures++;
-	console.log(`${ok ? "PASS" : "FAIL"} ${label}: ${detail}`);
+	console.log(`${ok ? 'PASS' : 'FAIL'} ${label}: ${detail}`);
 }
 
 const sessions: ReturnType<typeof createTestRoot>[] = [];
@@ -84,7 +84,7 @@ function session() {
 		let element: TestElement | undefined = need(testId);
 		while (element !== undefined) {
 			const own = element.style.opacity;
-			if (typeof own === "number") opacity *= own;
+			if (typeof own === 'number') opacity *= own;
 			element =
 				element.parentId === null
 					? undefined
@@ -108,15 +108,17 @@ function session() {
 }
 
 async function popupExit() {
-	setThemeChoice("light");
+	setThemeChoice('light');
 	const ui = session();
 	const demos = await loadDemos();
 	const pages = await loadPages(demos);
-	for (const slug of ["select", "combobox"]) {
-		ui.test.render(() => <App demos={demos} pages={pages} initialPage={slug} />);
+	for (const slug of ['select', 'combobox']) {
+		ui.test.render(() => (
+			<App demos={demos} pages={pages} initialPage={slug} />
+		));
 		await ui.settle(800);
-		const id = slug === "select" ? "basic" : "framework";
-		const trigger = slug === "select" ? `${id}-trigger` : `${id}-input`;
+		const id = slug === 'select' ? 'basic' : 'framework';
+		const trigger = slug === 'select' ? `${id}-trigger` : `${id}-input`;
 		// The first open pays for cold rendering; the fastest of three is the exit itself.
 		const times: number[] = [];
 		for (let round = 0; round < 3; round++) {
@@ -124,7 +126,7 @@ async function popupExit() {
 			if (ui.find(`${id}-popup`) === undefined)
 				throw new Error(`${slug} popup did not open`);
 			const took = ui.timeToUnmount(`${id}-popup`, () =>
-				ui.renderer.simulateKeystrokes("Escape"),
+				ui.renderer.simulateKeystrokes('Escape'),
 			);
 			if (took !== null) times.push(took);
 			await ui.settle(300);
@@ -133,37 +135,39 @@ async function popupExit() {
 		report(
 			ms !== null && ms < 110,
 			`${slug} popup unmounts with its 60 ms exit`,
-			ms === null ? "never unmounted" : `${ms.toFixed(0)} ms`,
+			ms === null ? 'never unmounted' : `${ms.toFixed(0)} ms`,
 		);
 	}
 }
 
 async function dialogSurface() {
-	setThemeChoice("dark");
+	setThemeChoice('dark');
 	const ui = session();
 	const demos = await loadDemos();
 	const pages = await loadPages(demos);
-	ui.test.render(() => <App demos={demos} pages={pages} initialPage="dialog" />);
+	ui.test.render(() => (
+		<App demos={demos} pages={pages} initialPage="dialog" />
+	));
 	await ui.settle(800);
-	await ui.click("stack-open");
-	await ui.click("stack-select-trigger");
-	const popup = ui.need("stack-select-popup").style.backgroundColor;
+	await ui.click('stack-open');
+	await ui.click('stack-select-trigger');
+	const popup = ui.need('stack-select-popup').style.backgroundColor;
 	report(
 		popup === color.surface7,
-		"select popup in a dialog (surface-5) sits on surface-7",
+		'select popup in a dialog (surface-5) sits on surface-7',
 		`popup ${String(popup)}, surface-7 ${color.surface7}, the dialog is ${color.surface5}`,
 	);
 }
 
 async function disabledError() {
-	setThemeChoice("light");
+	setThemeChoice('light');
 	const ui = session();
 	ui.test.render(() => (
 		<div style={{ padding: 40, width: 400 }}>
 			<Select
 				testId="s"
 				variant="bordered"
-				items={[{ value: "a", label: "A" }]}
+				items={[{ value: 'a', label: 'A' }]}
 				value={null}
 				disabled
 				placeholder="Disabled"
@@ -172,27 +176,27 @@ async function disabledError() {
 		</div>
 	));
 	await ui.settle(500);
-	const error = ui.effectiveOpacity("s-error");
-	const trigger = ui.effectiveOpacity("s-trigger");
+	const error = ui.effectiveOpacity('s-error');
+	const trigger = ui.effectiveOpacity('s-trigger');
 	report(
 		error === 1,
-		"disabled select leaves its error text undimmed",
+		'disabled select leaves its error text undimmed',
 		`error ${error}`,
 	);
 	report(
 		trigger === 0.5,
-		"disabled select dims its trigger",
+		'disabled select dims its trigger',
 		`trigger ${trigger}`,
 	);
 }
 
 async function comboboxEnter() {
-	setThemeChoice("light");
+	setThemeChoice('light');
 	const ui = session();
 	let submits = 0;
 	const items = [
-		{ value: "a", label: "Alpha" },
-		{ value: "b", label: "Beta" },
+		{ value: 'a', label: 'Alpha' },
+		{ value: 'b', label: 'Beta' },
 	];
 	ui.test.render(() => {
 		const [value, setValue] = createSignal<string | null>(null);
@@ -208,33 +212,33 @@ async function comboboxEnter() {
 		);
 	});
 	await ui.settle(500);
-	await ui.focus("c-input");
+	await ui.focus('c-input');
 	const before = submits;
-	await ui.press("Enter");
+	await ui.press('Enter');
 	report(
 		submits === before + 1,
-		"Enter in a closed combobox reaches the form",
+		'Enter in a closed combobox reaches the form',
 		`submits ${submits - before}`,
 	);
 
-	await ui.press("ArrowDown");
-	await ui.press("z");
+	await ui.press('ArrowDown');
+	await ui.press('z');
 	const second = submits;
-	await ui.press("Enter");
+	await ui.press('Enter');
 	report(
 		submits === second + 1,
-		"Enter with no row highlighted closes the list and reaches the form",
-		`submits ${submits - second}, popup ${ui.find("c-popup") === undefined ? "gone" : "still there"}`,
+		'Enter with no row highlighted closes the list and reaches the form',
+		`submits ${submits - second}, popup ${ui.find('c-popup') === undefined ? 'gone' : 'still there'}`,
 	);
 
-	await ui.press("Backspace");
-	if (ui.find("c-popup") === undefined) await ui.press("ArrowDown");
+	await ui.press('Backspace');
+	if (ui.find('c-popup') === undefined) await ui.press('ArrowDown');
 	const third = submits;
-	await ui.press("Enter");
+	await ui.press('Enter');
 	report(
-		submits === third && ui.find("c-popup") === undefined,
-		"Enter on a highlighted row picks it and does not submit",
-		`submits ${submits - third}, popup ${ui.find("c-popup") === undefined ? "gone" : "still there"}`,
+		submits === third && ui.find('c-popup') === undefined,
+		'Enter on a highlighted row picks it and does not submit',
+		`submits ${submits - third}, popup ${ui.find('c-popup') === undefined ? 'gone' : 'still there'}`,
 	);
 }
 
@@ -242,6 +246,6 @@ await popupExit();
 await dialogSurface();
 await disabledError();
 await comboboxEnter();
-console.log(failures === 0 ? "ALL PASS" : `${failures} FAIL`);
+console.log(failures === 0 ? 'ALL PASS' : `${failures} FAIL`);
 for (const test of sessions) test.unmount();
 process.exit(failures === 0 ? 0 : 1);

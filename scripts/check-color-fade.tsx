@@ -6,24 +6,24 @@
  *
  * The motion clock is held and stepped by hand, so a slow frame cannot skip the middle of the 80 ms.
  */
-import { createSignal } from "solid-js";
-import { colorFade, fade } from "#/lib/theme";
-import { createCheck } from "./check-kit";
-import { readPng } from "./png-pixels";
+import { createSignal } from 'solid-js';
+import { colorFade, fade } from '#/lib/theme';
+import { createCheck } from './check-kit';
+import { readPng } from './png-pixels';
 
 const [on, setOn] = createSignal(false);
 
 const k = await createCheck(
 	() => (
 		<div
-			style={{ display: "flex", flexDirection: "row", gap: 20, padding: 20 }}
+			style={{ display: 'flex', flexDirection: 'row', gap: 20, padding: 20 }}
 		>
 			<div
 				testId="signal"
 				style={{
 					width: 40,
 					height: 40,
-					backgroundColor: on() ? "#ffffff" : "#000000",
+					backgroundColor: on() ? '#ffffff' : '#000000',
 					...colorFade,
 				}}
 			/>
@@ -32,9 +32,9 @@ const k = await createCheck(
 				style={{
 					width: 40,
 					height: 40,
-					backgroundColor: "#000000",
+					backgroundColor: '#000000',
 					...colorFade,
-					hover: { backgroundColor: "#ffffff" },
+					hover: { backgroundColor: '#ffffff' },
 				}}
 			/>
 			<div
@@ -43,8 +43,8 @@ const k = await createCheck(
 					width: 40,
 					height: 40,
 					borderWidth: 10,
-					borderStyle: "solid",
-					borderColor: on() ? "#ffffff" : "#000000",
+					borderStyle: 'solid',
+					borderColor: on() ? '#ffffff' : '#000000',
 					...colorFade,
 				}}
 			/>
@@ -54,8 +54,8 @@ const k = await createCheck(
 					width: 40,
 					height: 40,
 					margin: 20,
-					boxShadow: on() ? "0 0 0 20px #ffffff" : "0 0 0 20px #000000",
-					...fade(["color", "box-shadow"], 80),
+					boxShadow: on() ? '0 0 0 20px #ffffff' : '0 0 0 20px #000000',
+					...fade(['color', 'box-shadow'], 80),
 				}}
 			/>
 			<div
@@ -63,7 +63,7 @@ const k = await createCheck(
 				style={{
 					width: 40,
 					height: 40,
-					backgroundColor: on() ? "#ffffff" : "#000000",
+					backgroundColor: on() ? '#ffffff' : '#000000',
 				}}
 			/>
 		</div>
@@ -89,22 +89,22 @@ function red(testId: string, dx: number, dy: number) {
 }
 
 const probes = [
-	{ id: "signal", dx: 20, dy: 20 },
-	{ id: "hover", dx: 20, dy: 20 },
-	{ id: "border", dx: 5, dy: 20 },
-	{ id: "shadow", dx: -10, dy: 20 },
+	{ id: 'signal', dx: 20, dy: 20 },
+	{ id: 'hover', dx: 20, dy: 20 },
+	{ id: 'border', dx: 5, dy: 20 },
+	{ id: 'shadow', dx: -10, dy: 20 },
 ];
 
 renderer.clockPause();
 const before = probes.map((probe) => red(probe.id, probe.dx, probe.dy));
 setOn(true);
-const hoverPoint = k.center("hover");
+const hoverPoint = k.center('hover');
 renderer.nativeSimulateMouseMove(hoverPoint.x - 1, hoverPoint.y);
 renderer.nativeSimulateMouseMove(hoverPoint.x, hoverPoint.y);
 step(0);
 step(16);
 const middle = probes.map((probe) => red(probe.id, probe.dx, probe.dy));
-const plainMiddle = red("plain", 20, 20);
+const plainMiddle = red('plain', 20, 20);
 step(300);
 const after = probes.map((probe) => red(probe.id, probe.dx, probe.dy));
 renderer.clockResume();
@@ -116,6 +116,10 @@ for (const [index, probe] of probes.entries()) {
 		`before ${before[index]}, 16 ms ${middle[index]}, end ${after[index]}`,
 	);
 }
-k.check("unfaded element: switches on the first frame", plainMiddle > 240, `${plainMiddle}`);
+k.check(
+	'unfaded element: switches on the first frame',
+	plainMiddle > 240,
+	`${plainMiddle}`,
+);
 
 await k.finish();

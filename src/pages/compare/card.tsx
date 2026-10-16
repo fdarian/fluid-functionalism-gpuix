@@ -1,17 +1,10 @@
-import { buttonProps, useGpuixRequired } from "@gpuix/solid";
-import { type JSX, Show } from "solid-js";
-import {
-	color,
-	fade,
-	scheme,
-	siteType,
-	weight,
-	withAlpha,
-} from "#/lib/theme";
+import { buttonProps, useGpuixRequired } from '@gpuix/solid';
+import { type JSX, Show } from 'solid-js';
+import { color, fade, scheme, siteType, weight, withAlpha } from '#/lib/theme';
 
 /** `.bento-card-border`: the card's rule and drop shadow at rest, on hover and with focus inside. */
 function edge() {
-	const dark = scheme() === "dark";
+	const dark = scheme() === 'dark';
 	return {
 		rest: {
 			borderColor: dark ? color.borderFaint : color.border,
@@ -58,15 +51,15 @@ export function CompareCard(props: {
 				flexGrow: 1,
 				minWidth: 0,
 				minHeight: 420,
-				display: "flex",
-				flexDirection: "column",
-				overflow: "hidden",
+				display: 'flex',
+				flexDirection: 'column',
+				overflow: 'hidden',
 				borderRadius: 12,
 				borderWidth: 1,
 				// Transparent in the source; gpuix paints a shadow under its element, so a see-through card would show it as a darker fill.
 				backgroundColor: color.background,
 				...edge().rest,
-				...fade(["border-color"], 80),
+				...fade(['border-color'], 80),
 				hover: edge().hover,
 				focusWithin: edge().focus,
 			}}
@@ -75,9 +68,9 @@ export function CompareCard(props: {
 				style={{
 					flexGrow: 1,
 					minHeight: 0,
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
 					paddingLeft: 24,
 					paddingRight: 24,
 					paddingTop: 64,
@@ -130,9 +123,9 @@ function FooterLabel(props: { name: string; linked: boolean }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				paddingLeft: 16,
 				paddingRight: 16,
 				paddingTop: 12,
@@ -146,7 +139,7 @@ function FooterLabel(props: { name: string; linked: boolean }) {
 					color: color.mutedForeground,
 					...(props.linked
 						? {
-								...fade(["color"], 80),
+								...fade(['color'], 80),
 								groupHover: { color: color.foreground },
 							}
 						: {}),

@@ -1,4 +1,4 @@
-import type { HostElement } from "@gpuix/solid";
+import type { HostElement } from '@gpuix/solid';
 import {
 	type Accessor,
 	createEffect,
@@ -7,25 +7,19 @@ import {
 	type JSX,
 	on,
 	Show,
-} from "solid-js";
+} from 'solid-js';
 import {
 	SidebarContent,
 	SidebarGroupLabel,
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuSub,
-} from "#/components/sidebar";
-import { onFrame } from "#/lib/clock";
-import { defineIcon, type IconRef } from "#/lib/icons";
-import { ComponentPreview } from "#/lib/doc-page";
-import {
-	color,
-	radius,
-	siteType,
-	type as scale,
-	weight,
-} from "#/lib/theme";
-import { LISTS_CODE } from "./snippets";
+} from '#/components/sidebar';
+import { onFrame } from '#/lib/clock';
+import { ComponentPreview } from '#/lib/doc-page';
+import { defineIcon, type IconRef } from '#/lib/icons';
+import { color, radius, type as scale, siteType, weight } from '#/lib/theme';
+import { LISTS_CODE } from './snippets';
 
 const MESSAGE_CIRCLE = defineIcon(
 	'<path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/>',
@@ -59,32 +53,32 @@ interface Callout {
 	/** Broken by hand where `text-balance` breaks the source's copy: gpuix has no balanced wrap, and a wrapped text box is as wide as its container, so the arrow could not find the glyphs' edge. */
 	lines: readonly string[];
 	/** Which side of the sidebar the label sits on. Its vertical position follows the target, so the arrow is short and level. */
-	side: "left" | "right";
+	side: 'left' | 'right';
 	/** Rows the arrow points at: it ends level with the mean of their centers. */
 	targets: string[];
 }
 
 const CALLOUTS: Callout[] = [
 	{
-		key: "one",
-		title: "1 list",
-		lines: ["Children ride with", "their parent."],
-		side: "left",
-		targets: ["Today", "Yesterday"],
+		key: 'one',
+		title: '1 list',
+		lines: ['Children ride with', 'their parent.'],
+		side: 'left',
+		targets: ['Today', 'Yesterday'],
 	},
 	{
-		key: "skip",
-		title: "Skipped",
-		lines: ["Disabled rows", "are passed over."],
-		side: "right",
-		targets: ["Knowledge"],
+		key: 'skip',
+		title: 'Skipped',
+		lines: ['Disabled rows', 'are passed over.'],
+		side: 'right',
+		targets: ['Knowledge'],
 	},
 	{
-		key: "two",
-		title: "New list",
-		lines: ["A divider means a", "different kind."],
-		side: "left",
-		targets: ["Profile", "Log out"],
+		key: 'two',
+		title: 'New list',
+		lines: ['A divider means a', 'different kind.'],
+		side: 'left',
+		targets: ['Profile', 'Log out'],
 	},
 ];
 
@@ -137,8 +131,8 @@ function Measured(props: {
 			ref={(element) => props.register(props.label, element)}
 			onLayout={props.onLayout}
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				flexShrink: 0,
 				opacity: props.dimmed === true ? 0.5 : 1,
 			}}
@@ -154,7 +148,7 @@ function ListsSidebar(props: {
 	open: () => boolean;
 	setOpen: (open: boolean) => void;
 }) {
-	const [current, setCurrent] = createSignal("Today");
+	const [current, setCurrent] = createSignal('Today');
 	const measured = (label: string, dimmed: boolean, children: JSX.Element) => (
 		<Measured
 			label={label}
@@ -165,10 +159,7 @@ function ListsSidebar(props: {
 			{children}
 		</Measured>
 	);
-	const row = (
-		label: string,
-		icon: IconRef,
-	) => (
+	const row = (label: string, icon: IconRef) => (
 		<SidebarMenuButton
 			testId={`lists-${label}`}
 			icon={icon}
@@ -180,10 +171,10 @@ function ListsSidebar(props: {
 	return (
 		<div
 			style={{
-				width: "100%",
-				height: "100%",
-				display: "flex",
-				flexDirection: "column",
+				width: '100%',
+				height: '100%',
+				display: 'flex',
+				flexDirection: 'column',
 			}}
 		>
 			<div style={{ height: 4, flexShrink: 0 }} />
@@ -196,12 +187,12 @@ function ListsSidebar(props: {
 						icon={MESSAGE_CIRCLE}
 						label="Chat"
 						trailingIcon={() =>
-							props.open() ? "chevron-down" : "chevron-right"
+							props.open() ? 'chevron-down' : 'chevron-right'
 						}
 						onClick={() => props.setOpen(!props.open())}
 					/>
 					<SidebarMenuSub open={props.open()}>
-						<For each={["Today", "Yesterday"]}>
+						<For each={['Today', 'Yesterday']}>
 							{(label) =>
 								measured(
 									label,
@@ -218,9 +209,9 @@ function ListsSidebar(props: {
 							}
 						</For>
 					</SidebarMenuSub>
-					{row("Agents", BRAIN)}
+					{row('Agents', BRAIN)}
 					{measured(
-						"Knowledge",
+						'Knowledge',
 						true,
 						<SidebarMenuButton
 							testId="lists-Knowledge"
@@ -229,7 +220,7 @@ function ListsSidebar(props: {
 							disabled={() => true}
 						/>,
 					)}
-					{row("Runs", PLAY)}
+					{row('Runs', PLAY)}
 				</SidebarMenu>
 				{/* A different kind of thing follows. */}
 				<div
@@ -244,25 +235,25 @@ function ListsSidebar(props: {
 				<SidebarGroupLabel>Account</SidebarGroupLabel>
 				<SidebarMenu>
 					{measured(
-						"Profile",
+						'Profile',
 						false,
 						<SidebarMenuButton
 							testId="lists-Profile"
 							icon="user"
 							label="Profile"
-							active={current() === "Profile"}
-							onClick={() => setCurrent("Profile")}
+							active={current() === 'Profile'}
+							onClick={() => setCurrent('Profile')}
 						/>,
 					)}
 					{measured(
-						"Log out",
+						'Log out',
 						false,
 						<SidebarMenuButton
 							testId="lists-Log out"
 							icon={ARROW_LEFT}
 							label="Log out"
-							active={current() === "Log out"}
-							onClick={() => setCurrent("Log out")}
+							active={current() === 'Log out'}
+							onClick={() => setCurrent('Log out')}
 						/>,
 					)}
 				</SidebarMenu>
@@ -306,7 +297,7 @@ export function ListsDemo() {
 			if (label === undefined || label.some((line) => !line.mounted)) continue;
 			const rects = label.map((line) => line.getBoundingClientRect());
 			const edge =
-				callout.side === "left"
+				callout.side === 'left'
 					? Math.max(...rects.map((rect) => rect.x + rect.width)) - box.x
 					: Math.min(...rects.map((rect) => rect.x)) - box.x;
 			next[callout.key] = { y, edge };
@@ -338,7 +329,7 @@ export function ListsDemo() {
 				}}
 				onLayout={measure}
 				style={{
-					position: "relative",
+					position: 'relative',
 					flexShrink: 0,
 					width: CANVAS_WIDTH,
 					height: CANVAS_HEIGHT,
@@ -346,12 +337,12 @@ export function ListsDemo() {
 			>
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						left: SIDEBAR_LEFT,
 						top: SIDEBAR_TOP,
 						width: SIDEBAR_WIDTH,
 						height: SIDEBAR_HEIGHT,
-						overflow: "hidden",
+						overflow: 'hidden',
 						borderRadius: radius.container,
 						borderWidth: 1,
 						borderColor: color.borderFaint,
@@ -368,12 +359,12 @@ export function ListsDemo() {
 				<svg
 					viewBox={`0 0 ${CANVAS_WIDTH} ${CANVAS_HEIGHT}`}
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						left: 0,
 						top: 0,
 						width: CANVAS_WIDTH,
 						height: CANVAS_HEIGHT,
-						pointerEvents: "none",
+						pointerEvents: 'none',
 					}}
 				>
 					<For each={CALLOUTS}>
@@ -382,7 +373,7 @@ export function ListsDemo() {
 								const end = ends()[callout.key];
 								if (end === undefined) return undefined;
 								// Level with the target: from just past the label's text to just outside the frame, with a small bow so it reads as drawn.
-								return callout.side === "left"
+								return callout.side === 'left'
 									? arrow(
 											{ x: end.edge + 6, y: end.y },
 											{ x: SIDEBAR_LEFT - ARROW_GAP, y: end.y },
@@ -427,14 +418,14 @@ export function ListsDemo() {
 					{(callout) => (
 						<div
 							style={{
-								position: "absolute",
+								position: 'absolute',
 								left: LABEL_LEFT[callout.side],
 								top: labelTop(callout.key),
-								display: "flex",
-								flexDirection: "column",
-								alignItems: "flex-start",
+								display: 'flex',
+								flexDirection: 'column',
+								alignItems: 'flex-start',
 								gap: 2,
-								pointerEvents: "none",
+								pointerEvents: 'none',
 								opacity: ends()[callout.key] === undefined ? 0 : 1,
 							}}
 						>
@@ -444,7 +435,7 @@ export function ListsDemo() {
 									...siteType.caption,
 									fontWeight: weight.semibold,
 									color: color.foreground,
-									whiteSpace: "nowrap",
+									whiteSpace: 'nowrap',
 								}}
 							>
 								{callout.title}
@@ -456,7 +447,7 @@ export function ListsDemo() {
 										style={{
 											...scale.micro,
 											color: color.mutedForeground,
-											whiteSpace: "nowrap",
+											whiteSpace: 'nowrap',
 										}}
 									>
 										{line}

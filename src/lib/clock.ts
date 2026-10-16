@@ -1,4 +1,4 @@
-import { onCleanup } from "solid-js";
+import { onCleanup } from 'solid-js';
 
 const FRAME_MS = 16;
 /** A frame longer than this is a stall (a hidden window, a long task), not playback. */

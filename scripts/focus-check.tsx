@@ -8,12 +8,12 @@
  * the spring between rows is visible, and a final click back on the first row must
  * clear the ring. Captures land in `/tmp/focus-check/<demo>/`; set TAB=1 to enter the group with Tab instead of a click, FOCUS=1 to Tab until the first id has focus, POINT=<id> to end with a pointer move there.
  */
-import { mkdirSync } from "node:fs";
-import { createTestRoot } from "@gpuix/solid/testing";
-import { App } from "#/app";
-import { loadDemos, loadPages } from "#/lib/demo";
-import { fonts } from "#/lib/fonts";
-import { setThemeChoice } from "#/lib/theme";
+import { mkdirSync } from 'node:fs';
+import { createTestRoot } from '@gpuix/solid/testing';
+import { App } from '#/app';
+import { loadDemos, loadPages } from '#/lib/demo';
+import { fonts } from '#/lib/fonts';
+import { setThemeChoice } from '#/lib/theme';
 
 const [slug, ringId, rowList, key, stepsArg] = process.argv.slice(2);
 if (
@@ -23,11 +23,11 @@ if (
 	key === undefined
 ) {
 	console.error(
-		"usage: bun scripts/focus-check.tsx <demo> <ringTestId> <rows> <key> [steps]",
+		'usage: bun scripts/focus-check.tsx <demo> <ringTestId> <rows> <key> [steps]',
 	);
 	process.exit(1);
 }
-const rows = rowList.split(",");
+const rows = rowList.split(',');
 const steps = Number(stepsArg ?? 2);
 const outDir = `/tmp/focus-check/${slug}/`;
 mkdirSync(outDir, { recursive: true });
@@ -54,7 +54,7 @@ function ring() {
 	return renderer.getElementBounds(element.id) ?? undefined;
 }
 function fmt(bounds: ReturnType<typeof ring>) {
-	if (bounds === undefined) return "none";
+	if (bounds === undefined) return 'none';
 	return `x${bounds.x.toFixed(1)} y${bounds.y.toFixed(1)} w${bounds.width.toFixed(1)} h${bounds.height.toFixed(1)}`;
 }
 function rowBounds(testId: string) {
@@ -76,7 +76,7 @@ async function trace(label: string, keystrokes: string) {
 	renderer.simulateKeystrokes(keystrokes);
 	console.log(`-- ${label}`);
 	const start = performance.now();
-	let previous = "";
+	let previous = '';
 	do {
 		frame();
 		const now = fmt(ring());
@@ -92,7 +92,7 @@ async function trace(label: string, keystrokes: string) {
 
 const demos = await loadDemos();
 const pages = await loadPages(demos);
-setThemeChoice("dark");
+setThemeChoice('dark');
 test.render(() => <App demos={demos} pages={pages} initialPage={slug} />);
 await settle(800);
 
@@ -102,7 +102,7 @@ for (const row of rows) console.log(row, fmt(rowBounds(row)));
 if (process.env.TAB !== undefined) {
 	// Keyboard entry: Tab from the top of the page until the ring shows.
 	for (let presses = 1; presses <= 40 && ring() === undefined; presses++) {
-		renderer.simulateKeystrokes("Tab");
+		renderer.simulateKeystrokes('Tab');
 		await settle(120);
 		if (ring() !== undefined)
 			console.log(`tab #${presses} shows the ring: ${fmt(ring())}`);
@@ -113,7 +113,7 @@ if (process.env.TAB !== undefined) {
 	if (element === undefined) throw new Error(`no element ${first}`);
 	for (let presses = 1; presses <= 60; presses++) {
 		if (renderer.getFocusedElementId() === element.id) break;
-		renderer.simulateKeystrokes("Tab");
+		renderer.simulateKeystrokes('Tab');
 		await settle(60);
 	}
 	if (renderer.getFocusedElementId() !== element.id) {
@@ -131,7 +131,9 @@ if (process.env.POINT !== undefined) {
 	const bounds = rowBounds(process.env.POINT);
 	renderer.nativeSimulateMouseMove(bounds.x + 20, bounds.y + bounds.height / 2);
 	await settle(300);
-	console.log(`after pointer move over ${process.env.POINT}: ring ${fmt(ring())}`);
+	console.log(
+		`after pointer move over ${process.env.POINT}: ring ${fmt(ring())}`,
+	);
 } else {
 	await click(last);
 	console.log(`after pointer click on ${last}: ring ${fmt(ring())}`);

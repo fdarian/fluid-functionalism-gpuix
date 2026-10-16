@@ -1,33 +1,33 @@
-import type { DomEvent } from "@gpuix/solid";
-import { createSignal, For, type JSX, useContext } from "solid-js";
+import type { DomEvent } from '@gpuix/solid';
+import { createSignal, For, type JSX, useContext } from 'solid-js';
 import {
 	AccordionContent,
 	AccordionGroup,
 	AccordionItem,
 	AccordionTrigger,
-} from "#/components/accordion";
-import { AskUserQuestions } from "#/components/ask-user-questions";
-import { Badge, type BadgeColor } from "#/components/badge";
-import { Button, type ButtonVariant } from "#/components/button";
-import { CarouselDots } from "#/components/carousel-dots";
+} from '#/components/accordion';
+import { AskUserQuestions } from '#/components/ask-user-questions';
+import { Badge, type BadgeColor } from '#/components/badge';
+import { Button, type ButtonVariant } from '#/components/button';
 import {
 	Card,
 	CardGroup,
 	CardHeader,
 	CardMedia,
 	CardTitle,
-} from "#/components/card";
-import { ChatMessage } from "#/components/chat-message";
-import { CheckboxGroup, CheckboxItem } from "#/components/checkbox-group";
-import { ColorPicker } from "#/components/color-picker";
-import { Combobox } from "#/components/combobox";
+} from '#/components/card';
+import { CarouselDots } from '#/components/carousel-dots';
+import { ChatMessage } from '#/components/chat-message';
+import { CheckboxGroup, CheckboxItem } from '#/components/checkbox-group';
+import { ColorPicker } from '#/components/color-picker';
+import { Combobox } from '#/components/combobox';
 import {
 	CommandMenu,
 	CommandMenuEmpty,
 	CommandMenuInput,
 	CommandMenuList,
 	CommandMenuPanel,
-} from "#/components/command-menu";
+} from '#/components/command-menu';
 import {
 	Dialog,
 	DialogClose,
@@ -37,13 +37,13 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "#/components/dialog";
-import { Dropdown, MenuItem } from "#/components/dropdown";
-import { InputCopy } from "#/components/input-copy";
-import { InputField, InputGroup } from "#/components/input-group";
-import { InputMessage } from "#/components/input-message";
-import { RadioGroup, RadioItem } from "#/components/radio-group";
-import { Select } from "#/components/select";
+} from '#/components/dialog';
+import { Dropdown, MenuItem } from '#/components/dropdown';
+import { InputCopy } from '#/components/input-copy';
+import { InputField, InputGroup } from '#/components/input-group';
+import { InputMessage } from '#/components/input-message';
+import { RadioGroup, RadioItem } from '#/components/radio-group';
+import { Select } from '#/components/select';
 import {
 	Sidebar,
 	SidebarContent,
@@ -53,9 +53,9 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarSearchField,
-} from "#/components/sidebar";
-import { Slider, type SliderValue } from "#/components/slider";
-import { Switch } from "#/components/switch";
+} from '#/components/sidebar';
+import { Slider, type SliderValue } from '#/components/slider';
+import { Switch } from '#/components/switch';
 import {
 	Table,
 	TableBody,
@@ -63,10 +63,10 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "#/components/table";
-import { TabItem, Tabs, TabsList } from "#/components/tabs";
-import { TabsSubtle, TabsSubtleItem } from "#/components/tabs-subtle";
-import { ThinkingIndicator } from "#/components/thinking-indicator";
+} from '#/components/table';
+import { TabItem, Tabs, TabsList } from '#/components/tabs';
+import { TabsSubtle, TabsSubtleItem } from '#/components/tabs-subtle';
+import { ThinkingIndicator } from '#/components/thinking-indicator';
 import {
 	ThinkingStep,
 	ThinkingStepDetails,
@@ -75,37 +75,37 @@ import {
 	ThinkingSteps,
 	ThinkingStepsContent,
 	ThinkingStepsHeader,
-} from "#/components/thinking-steps";
-import { Tooltip } from "#/components/tooltip";
-import { createSlides, SLIDES, Slide } from "#/demos/carousel-dots";
-import type { IconRef } from "#/lib/icons";
-import { usePreviewPlayback } from "#/lib/preview-playback";
-import { color, siteType, weight } from "#/lib/theme";
-import { ASK_USER_EXAMPLE_QUESTIONS } from "./ask-user-example";
-import { BentoTileContext } from "./bento-card";
+} from '#/components/thinking-steps';
+import { Tooltip } from '#/components/tooltip';
+import { createSlides, SLIDES, Slide } from '#/demos/carousel-dots';
+import type { IconRef } from '#/lib/icons';
+import { usePreviewPlayback } from '#/lib/preview-playback';
+import { color, siteType, weight } from '#/lib/theme';
+import { ASK_USER_EXAMPLE_QUESTIONS } from './ask-user-example';
+import { BentoTileContext } from './bento-card';
 import {
 	COMMAND_MENU_ITEMS,
 	COMMAND_MENU_SUGGESTIONS,
-} from "./command-menu-items";
+} from './command-menu-items';
 
 /** The docs' `w-full max-w-[N]` column around a preview, centred in the stage. */
 function Capped(props: { maxWidth: number; children: JSX.Element }) {
 	return (
-		<div style={{ width: "100%", maxWidth: props.maxWidth }}>
+		<div style={{ width: '100%', maxWidth: props.maxWidth }}>
 			{props.children}
 		</div>
 	);
 }
 
 function InputMessagePreview() {
-	const [value, setValue] = createSignal("");
+	const [value, setValue] = createSignal('');
 	return (
 		<Capped maxWidth={440}>
 			<InputMessage
 				testId="bento-input-message"
 				value={value()}
 				onValueChange={setValue}
-				onSend={() => setValue("")}
+				onSend={() => setValue('')}
 				placeholderSuggestion="Why is every other input box so stiff?"
 			/>
 		</Capped>
@@ -134,38 +134,38 @@ function CommandMenuPreview() {
 }
 
 const COMBOBOX_COMPONENTS = [
-	"Accordion",
-	"Badge",
-	"Button",
-	"Card",
-	"CheckboxGroup",
-	"ColorPicker",
-	"Combobox",
-	"Dialog",
-	"Dropdown",
-	"InputGroup",
-	"RadioGroup",
-	"Select",
-	"Sidebar",
-	"Slider",
-	"Switch",
-	"Table",
-	"Tabs",
+	'Accordion',
+	'Badge',
+	'Button',
+	'Card',
+	'CheckboxGroup',
+	'ColorPicker',
+	'Combobox',
+	'Dialog',
+	'Dropdown',
+	'InputGroup',
+	'RadioGroup',
+	'Select',
+	'Sidebar',
+	'Slider',
+	'Switch',
+	'Table',
+	'Tabs',
 ];
 
 const COMBOBOX_WIDTH = 280;
 
 /** Single-select, where the source's tile is a multiple combobox with two chips: the port has no chips. */
 function ComboboxPreview() {
-	const [value, setValue] = createSignal<string | null>("Button");
+	const [value, setValue] = createSignal<string | null>('Button');
 	// The combobox takes a pixel width, so the `w-full max-w-[280px]` column reports the width it got.
 	const [width, setWidth] = createSignal(COMBOBOX_WIDTH);
 	return (
 		<div
-			style={{ width: "100%", maxWidth: COMBOBOX_WIDTH }}
+			style={{ width: '100%', maxWidth: COMBOBOX_WIDTH }}
 			onLayout={(event: DomEvent) => {
 				if (event.width === undefined) {
-					throw new Error("onLayout reported no width");
+					throw new Error('onLayout reported no width');
 				}
 				setWidth(event.width);
 			}}
@@ -184,8 +184,8 @@ function ComboboxPreview() {
 }
 
 const SWITCH_ITEMS = [
-	{ id: "notifications", label: "Notifications", initial: true },
-	{ id: "sound", label: "Sound effects", initial: false },
+	{ id: 'notifications', label: 'Notifications', initial: true },
+	{ id: 'sound', label: 'Sound effects', initial: false },
 ];
 
 function SwitchPreview() {
@@ -199,7 +199,7 @@ function SwitchPreview() {
 		setOn(next);
 	};
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 			<For each={SWITCH_ITEMS}>
 				{(item) => (
 					<Switch
@@ -214,10 +214,10 @@ function SwitchPreview() {
 }
 
 const SIDEBAR_THREADS = [
-	{ label: "Sidebar component height in demo", badge: "2" },
-	{ label: "Dark mode token audit", badge: "3" },
-	{ label: "Scrollbar fade regression", badge: "1" },
-	{ label: "Registry deploy pipeline", badge: "7" },
+	{ label: 'Sidebar component height in demo', badge: '2' },
+	{ label: 'Dark mode token audit', badge: '3' },
+	{ label: 'Scrollbar fade regression', badge: '1' },
+	{ label: 'Registry deploy pipeline', badge: '7' },
 ];
 
 /** A row the menu's fluid hover does not own: the workspace and the user, which carry an avatar the port's menu button cannot. */
@@ -226,9 +226,9 @@ function IdentityRow(props: { avatar: JSX.Element; label: string }) {
 		<div
 			style={{
 				height: 32,
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: 8,
 				paddingLeft: 8,
 				paddingRight: 8,
@@ -240,7 +240,7 @@ function IdentityRow(props: { avatar: JSX.Element; label: string }) {
 					...siteType.body,
 					fontWeight: weight.semibold,
 					color: color.foreground,
-					whiteSpace: "nowrap",
+					whiteSpace: 'nowrap',
 				}}
 			>
 				{props.label}
@@ -249,7 +249,7 @@ function IdentityRow(props: { avatar: JSX.Element; label: string }) {
 	);
 }
 
-const MICKA = new URL("../../assets/chat-ai/micka.png", import.meta.url)
+const MICKA = new URL('../../assets/chat-ai/micka.png', import.meta.url)
 	.pathname;
 
 /** A whole app shell in miniature: workspace row, search, a thread list and a user row beside a blank main region. */
@@ -258,12 +258,12 @@ function SidebarPreview() {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
+				display: 'flex',
+				flexDirection: 'row',
 				height: 380,
-				width: "100%",
+				width: '100%',
 				maxWidth: 620,
-				overflow: "hidden",
+				overflow: 'hidden',
 				borderRadius: 12,
 				borderWidth: 1,
 				borderColor: color.border,
@@ -280,9 +280,9 @@ function SidebarPreview() {
 									width: 20,
 									height: 20,
 									flexShrink: 0,
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "center",
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
 									borderRadius: 6,
 									backgroundColor: color.foreground,
 								}}
@@ -300,7 +300,7 @@ function SidebarPreview() {
 							</div>
 						}
 					/>
-					<div style={{ display: "flex", flexDirection: "column" }}>
+					<div style={{ display: 'flex', flexDirection: 'column' }}>
 						<SidebarSearchField placeholder="Search" shortcut="⌘K" />
 						<SidebarMenu>
 							<SidebarMenuButton icon="plus" label="New thread" />
@@ -344,15 +344,15 @@ function SidebarPreview() {
 }
 
 const RADIO_ITEMS = [
-	{ value: "fast", label: "Fast spring" },
-	{ value: "moderate", label: "Moderate spring" },
-	{ value: "slow", label: "Slow spring" },
-	{ value: "comfortable", label: "Comfortable" },
-	{ value: "none", label: "No animation" },
+	{ value: 'fast', label: 'Fast spring' },
+	{ value: 'moderate', label: 'Moderate spring' },
+	{ value: 'slow', label: 'Slow spring' },
+	{ value: 'comfortable', label: 'Comfortable' },
+	{ value: 'none', label: 'No animation' },
 ];
 
 function RadioGroupPreview() {
-	const [value, setValue] = createSignal<string | undefined>("moderate");
+	const [value, setValue] = createSignal<string | undefined>('moderate');
 	return (
 		<Capped maxWidth={220}>
 			<RadioGroup value={value()} onValueChange={setValue}>
@@ -371,10 +371,10 @@ function ChatMessagePreview() {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 4,
-				width: "100%",
+				width: '100%',
 				maxWidth: 300,
 			}}
 		>
@@ -389,10 +389,10 @@ function ChatMessagePreview() {
 }
 
 const CARD_ROWS: { icon: IconRef; title: string }[] = [
-	{ icon: "circle", title: "Fluid motion" },
-	{ icon: "shield", title: "Accessible" },
-	{ icon: "palette", title: "Yours to theme" },
-	{ icon: "search", title: "Fluid hover" },
+	{ icon: 'circle', title: 'Fluid motion' },
+	{ icon: 'shield', title: 'Accessible' },
+	{ icon: 'palette', title: 'Yours to theme' },
+	{ icon: 'search', title: 'Fluid hover' },
 ];
 
 /** A medium tile: four compact inline rows (icon and title) under one fluid hover. The descriptions stay on the docs page. */
@@ -415,13 +415,13 @@ function CardPreview() {
 	);
 }
 
-const SELECT_ROLES = ["Owner", "Editor", "Viewer", "Guest"].map((role) => ({
+const SELECT_ROLES = ['Owner', 'Editor', 'Viewer', 'Guest'].map((role) => ({
 	value: role,
 	label: role,
 }));
 
 function SelectPreview() {
-	const [value, setValue] = createSignal<string | null>("Viewer");
+	const [value, setValue] = createSignal<string | null>('Viewer');
 	return (
 		<Capped maxWidth={280}>
 			<Select
@@ -459,10 +459,10 @@ function ThinkingStepsPreview() {
 						<ThinkingStepDetails
 							summary="Explored 4 pages"
 							details={[
-								"Read about.html",
-								"Read projects.html",
-								"Read resume.pdf",
-								"Read contact.html",
+								'Read about.html',
+								'Read projects.html',
+								'Read resume.pdf',
+								'Read contact.html',
 							]}
 						/>
 					</ThinkingStep>
@@ -490,9 +490,9 @@ function ThinkingStepsPreview() {
 }
 
 const TABS_SUBTLE_ITEMS: { icon: IconRef; label: string }[] = [
-	{ icon: "home", label: "Home" },
-	{ icon: "message-circle", label: "Chat" },
-	{ icon: "inbox", label: "Inbox" },
+	{ icon: 'home', label: 'Home' },
+	{ icon: 'message-circle', label: 'Chat' },
+	{ icon: 'inbox', label: 'Inbox' },
 ];
 
 function TabsSubtlePreview() {
@@ -514,11 +514,11 @@ function TabsSubtlePreview() {
 }
 
 const CHECKBOX_ITEMS = [
-	"Spring physics",
-	"Fluid hover",
-	"Font weight transitions",
-	"Keyboard navigation",
-	"Dark mode support",
+	'Spring physics',
+	'Fluid hover',
+	'Font weight transitions',
+	'Keyboard navigation',
+	'Dark mode support',
 ];
 
 function CheckboxGroupPreview() {
@@ -553,11 +553,11 @@ function AskUserQuestionsPreview() {
 		<div
 			style={{
 				flexGrow: 1,
-				width: "100%",
+				width: '100%',
 				maxWidth: 420,
-				display: "flex",
-				flexDirection: "column",
-				justifyContent: "flex-end",
+				display: 'flex',
+				flexDirection: 'column',
+				justifyContent: 'flex-end',
 			}}
 		>
 			<AskUserQuestions questions={ASK_USER_EXAMPLE_QUESTIONS} />
@@ -565,8 +565,8 @@ function AskUserQuestionsPreview() {
 	);
 }
 
-const SLIDER_OPACITY = { label: "Opacity", initial: 35 };
-const SLIDER_VOLUME = { label: "Volume", initial: 60 };
+const SLIDER_OPACITY = { label: 'Opacity', initial: 35 };
+const SLIDER_VOLUME = { label: 'Volume', initial: 60 };
 
 function SliderPreview() {
 	const [basic, setBasic] = createSignal<SliderValue>(SLIDER_OPACITY.initial);
@@ -575,23 +575,23 @@ function SliderPreview() {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 32,
-				width: "100%",
+				width: '100%',
 				maxWidth: 280,
 			}}
 		>
-			<div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+			<div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						justifyContent: "space-between",
+						display: 'flex',
+						flexDirection: 'row',
+						justifyContent: 'space-between',
 					}}
 				>
 					<text style={muted}>{SLIDER_OPACITY.label}</text>
-					<text style={{ ...muted, fontVariantNumeric: "tabular-nums" }}>
+					<text style={{ ...muted, fontVariantNumeric: 'tabular-nums' }}>
 						{String(basic())}
 					</text>
 				</div>
@@ -611,12 +611,12 @@ function SliderPreview() {
 }
 
 const DROPDOWN_ITEMS: { icon: IconRef; label: string }[] = [
-	{ icon: "circle", label: "Spring animations" },
-	{ icon: "star", label: "Fluid hover" },
-	{ icon: "plus", label: "Font weight shifts" },
-	{ icon: "heart", label: "Accessible by default" },
-	{ icon: "check", label: "Radix or Base UI" },
-	{ icon: "brain", label: "Functional clarity" },
+	{ icon: 'circle', label: 'Spring animations' },
+	{ icon: 'star', label: 'Fluid hover' },
+	{ icon: 'plus', label: 'Font weight shifts' },
+	{ icon: 'heart', label: 'Accessible by default' },
+	{ icon: 'check', label: 'Radix or Base UI' },
+	{ icon: 'brain', label: 'Functional clarity' },
 ];
 
 function DropdownPreview() {
@@ -641,14 +641,14 @@ function DropdownPreview() {
 }
 
 const TABS_ITEMS = [
-	{ value: "overview", label: "Overview" },
-	{ value: "analytics", label: "Analytics" },
-	{ value: "settings", label: "Settings" },
-	{ value: "logs", label: "Logs" },
+	{ value: 'overview', label: 'Overview' },
+	{ value: 'analytics', label: 'Analytics' },
+	{ value: 'settings', label: 'Settings' },
+	{ value: 'logs', label: 'Logs' },
 ];
 
 function TabsPreview() {
-	const [tab, setTab] = createSignal("overview");
+	const [tab, setTab] = createSignal('overview');
 	return (
 		<Capped maxWidth={360}>
 			<Tabs value={tab()} onValueChange={setTab}>
@@ -672,34 +672,34 @@ function InputCopyPreview() {
 
 const ACCORDION_ITEMS = [
 	{
-		value: "item-1",
-		title: "What is Fluid Functionalism?",
+		value: 'item-1',
+		title: 'What is Fluid Functionalism?',
 		content:
-			"A design philosophy where every animation serves a functional purpose — motion is information, not decoration.",
+			'A design philosophy where every animation serves a functional purpose — motion is information, not decoration.',
 	},
 	{
-		value: "item-2",
-		title: "How does fluid hover work?",
+		value: 'item-2',
+		title: 'How does fluid hover work?',
 		content:
-			"The closest item to your cursor is highlighted before you click, reducing targeting errors.",
+			'The closest item to your cursor is highlighted before you click, reducing targeting errors.',
 	},
 	{
-		value: "item-3",
-		title: "Why spring physics?",
+		value: 'item-3',
+		title: 'Why spring physics?',
 		content:
-			"Springs respond naturally to interruption — if a user reverses mid-transition, the animation adapts.",
+			'Springs respond naturally to interruption — if a user reverses mid-transition, the animation adapts.',
 	},
 	{
-		value: "item-4",
-		title: "Is it compatible with shadcn/ui?",
+		value: 'item-4',
+		title: 'Is it compatible with shadcn/ui?',
 		content:
-			"Yes. Your existing theme, radius tokens, and setup apply automatically.",
+			'Yes. Your existing theme, radius tokens, and setup apply automatically.',
 	},
 	{
-		value: "item-5",
-		title: "How do I install a component?",
+		value: 'item-5',
+		title: 'How do I install a component?',
 		content:
-			"One CLI command — dependencies and shared utilities resolve themselves.",
+			'One CLI command — dependencies and shared utilities resolve themselves.',
 	},
 ];
 
@@ -726,18 +726,18 @@ const INPUT_FIELDS: {
 	placeholder: string;
 	icon: IconRef;
 }[] = [
-	{ key: "name", label: "Name", placeholder: "Your name", icon: "user" },
+	{ key: 'name', label: 'Name', placeholder: 'Your name', icon: 'user' },
 	{
-		key: "email",
-		label: "Email",
-		placeholder: "you@example.com",
-		icon: "mail",
+		key: 'email',
+		label: 'Email',
+		placeholder: 'you@example.com',
+		icon: 'mail',
 	},
 	{
-		key: "website",
-		label: "Website",
-		placeholder: "fluidfunctionalism.com",
-		icon: "globe",
+		key: 'website',
+		label: 'Website',
+		placeholder: 'fluidfunctionalism.com',
+		icon: 'globe',
 	},
 ];
 
@@ -753,7 +753,7 @@ function InputGroupPreview() {
 							label={field.label}
 							placeholder={field.placeholder}
 							icon={field.icon}
-							value={values()[field.key] ?? ""}
+							value={values()[field.key] ?? ''}
 							onChange={(next) => setValues({ ...values(), [field.key]: next })}
 						/>
 					)}
@@ -771,9 +771,9 @@ function CarouselDotsPreview() {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
 				gap: 12,
 			}}
 		>
@@ -802,20 +802,20 @@ function CarouselDotsPreview() {
 }
 
 const BUTTON_ITEMS: { label: string; variant: ButtonVariant }[] = [
-	{ label: "Primary", variant: "primary" },
-	{ label: "Secondary", variant: "secondary" },
-	{ label: "Tertiary", variant: "tertiary" },
-	{ label: "Ghost", variant: "ghost" },
+	{ label: 'Primary', variant: 'primary' },
+	{ label: 'Secondary', variant: 'secondary' },
+	{ label: 'Tertiary', variant: 'tertiary' },
+	{ label: 'Ghost', variant: 'ghost' },
 ];
 
 function ButtonPreview() {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				flexWrap: "wrap",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				flexWrap: 'wrap',
+				alignItems: 'center',
 				gap: 8,
 			}}
 		>
@@ -830,15 +830,15 @@ function ButtonPreview() {
 	);
 }
 
-const TABLE_COLUMNS = ["Name", "Role", "Status"];
+const TABLE_COLUMNS = ['Name', 'Role', 'Status'];
 const TABLE_ROWS = [
-	["Alice", "Engineer", "Active"],
-	["Bob", "Designer", "Away"],
-	["Carol", "PM", "Active"],
-	["Dan", "Engineer", "Offline"],
-	["Erin", "Researcher", "Active"],
-	["Farid", "Support", "Away"],
-	["Gwen", "Designer", "Active"],
+	['Alice', 'Engineer', 'Active'],
+	['Bob', 'Designer', 'Away'],
+	['Carol', 'PM', 'Active'],
+	['Dan', 'Engineer', 'Offline'],
+	['Erin', 'Researcher', 'Active'],
+	['Farid', 'Support', 'Away'],
+	['Gwen', 'Designer', 'Active'],
 ];
 
 function TablePreview() {
@@ -910,19 +910,19 @@ function TooltipPreview() {
 }
 
 const BADGE_ITEMS: { label: string; color: BadgeColor }[] = [
-	{ label: "Published", color: "blue" },
-	{ label: "Active", color: "green" },
-	{ label: "Declined", color: "red" },
+	{ label: 'Published', color: 'blue' },
+	{ label: 'Active', color: 'green' },
+	{ label: 'Declined', color: 'red' },
 ];
 
 function BadgePreview() {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				flexWrap: "wrap",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				flexWrap: 'wrap',
+				alignItems: 'center',
 				gap: 6,
 			}}
 		>
@@ -939,31 +939,31 @@ function BadgePreview() {
 
 /** Slug -> the live preview a home tile shows; a slug with no entry renders an empty stage. */
 export const previewMap: Record<string, () => JSX.Element> = {
-	"input-message": InputMessagePreview,
-	"thinking-indicator": ThinkingIndicatorPreview,
-	"command-menu": CommandMenuPreview,
+	'input-message': InputMessagePreview,
+	'thinking-indicator': ThinkingIndicatorPreview,
+	'command-menu': CommandMenuPreview,
 	combobox: ComboboxPreview,
 	switch: SwitchPreview,
 	sidebar: SidebarPreview,
-	"radio-group": RadioGroupPreview,
-	"chat-message": ChatMessagePreview,
+	'radio-group': RadioGroupPreview,
+	'chat-message': ChatMessagePreview,
 	card: CardPreview,
 	select: SelectPreview,
-	"thinking-steps": ThinkingStepsPreview,
-	"tabs-subtle": TabsSubtlePreview,
-	"checkbox-group": CheckboxGroupPreview,
-	"ask-user-questions": AskUserQuestionsPreview,
+	'thinking-steps': ThinkingStepsPreview,
+	'tabs-subtle': TabsSubtlePreview,
+	'checkbox-group': CheckboxGroupPreview,
+	'ask-user-questions': AskUserQuestionsPreview,
 	slider: SliderPreview,
 	dropdown: DropdownPreview,
 	tabs: TabsPreview,
-	"input-copy": InputCopyPreview,
+	'input-copy': InputCopyPreview,
 	accordion: AccordionPreview,
-	"input-group": InputGroupPreview,
-	"carousel-dots": CarouselDotsPreview,
+	'input-group': InputGroupPreview,
+	'carousel-dots': CarouselDotsPreview,
 	button: ButtonPreview,
 	table: TablePreview,
 	dialog: DialogPreview,
-	"color-picker": ColorPickerPreview,
+	'color-picker': ColorPickerPreview,
 	tooltip: TooltipPreview,
 	badge: BadgePreview,
 };

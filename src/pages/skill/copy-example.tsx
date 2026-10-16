@@ -1,9 +1,9 @@
-import { buttonProps, useGpuixRequired } from "@gpuix/solid";
-import { createSignal } from "solid-js";
-import { InputCopy } from "#/components/input-copy";
-import { MONO } from "#/lib/doc-page";
-import { Icon } from "#/lib/icon";
-import { color, focusRing, shape, siteType, weight } from "#/lib/theme";
+import { buttonProps, useGpuixRequired } from '@gpuix/solid';
+import { createSignal } from 'solid-js';
+import { InputCopy } from '#/components/input-copy';
+import { MONO } from '#/lib/doc-page';
+import { Icon } from '#/lib/icon';
+import { color, focusRing, shape, siteType, weight } from '#/lib/theme';
 import {
 	Compare,
 	clickStep,
@@ -13,9 +13,9 @@ import {
 	glideStep,
 	type Side,
 	turns,
-} from "./playback";
+} from './playback';
 
-const COMMAND = "npx skills add mickadesign/fluid-functionalism";
+const COMMAND = 'npx skills add mickadesign/fluid-functionalism';
 const FIELD_WIDTH = 240;
 
 /**
@@ -48,11 +48,11 @@ function GenericCopy(props: { copied: boolean; onCopy: () => void }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: 4,
-				width: "100%",
+				width: '100%',
 				maxWidth: FIELD_WIDTH,
 				height: 36,
 				paddingLeft: 12,
@@ -69,9 +69,9 @@ function GenericCopy(props: { copied: boolean; onCopy: () => void }) {
 						...siteType.caption,
 						fontFamily: MONO,
 						color: color.mutedForeground,
-						whiteSpace: "nowrap",
-						textOverflow: "ellipsis",
-						overflow: "hidden",
+						whiteSpace: 'nowrap',
+						textOverflow: 'ellipsis',
+						overflow: 'hidden',
 					}}
 				>
 					{COMMAND}
@@ -85,20 +85,20 @@ function GenericCopy(props: { copied: boolean; onCopy: () => void }) {
 				style={{
 					height: 28,
 					flexShrink: 0,
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					gap: 6,
 					paddingLeft: 6,
 					paddingRight: 6,
 					borderRadius: shape.bg,
-					cursor: "pointer",
+					cursor: 'pointer',
 					keyboardFocusDim: false,
 					focusVisible: focusRing(0),
 				}}
 			>
 				<Icon
-					name={props.copied ? "check" : "copy"}
+					name={props.copied ? 'check' : 'copy'}
 					size={14}
 					strokeWidth={1.5}
 					color={hovered() ? color.foreground : color.mutedForeground}
@@ -108,10 +108,10 @@ function GenericCopy(props: { copied: boolean; onCopy: () => void }) {
 						...siteType.caption,
 						fontWeight: weight.normal,
 						color: hovered() ? color.foreground : color.mutedForeground,
-						whiteSpace: "nowrap",
+						whiteSpace: 'nowrap',
 					}}
 				>
-					{props.copied ? "Copied!" : "Copy"}
+					{props.copied ? 'Copied!' : 'Copy'}
 				</text>
 			</div>
 		</div>
@@ -126,12 +126,12 @@ export function CopyExample() {
 	createLoop(
 		playback.playing,
 		turns(setActive, (side) =>
-			side === "generic"
+			side === 'generic'
 				? [
 						// Aim for the small action button, the only part that copies.
 						...clickStep(
 							cursor,
-							"copy-generic-action",
+							'copy-generic-action',
 							() => setGeneric(true),
 							1400,
 						),
@@ -139,7 +139,7 @@ export function CopyExample() {
 					]
 				: // Click the command itself: the whole field copies.
 					[
-						glideStep(cursor, "copy-skill"),
+						glideStep(cursor, 'copy-skill'),
 						{
 							ms: 2300,
 							run: () => clickWithoutClipboard(() => cursor.click(), COMMAND),
@@ -159,12 +159,8 @@ export function CopyExample() {
 				<GenericCopy copied={generic()} onCopy={() => setGeneric(!generic())} />
 			}
 			skill={
-				<div style={{ width: "100%", maxWidth: FIELD_WIDTH }}>
-					<InputCopy
-						value={COMMAND}
-						align="left"
-						testId="copy-skill"
-					/>
+				<div style={{ width: '100%', maxWidth: FIELD_WIDTH }}>
+					<InputCopy value={COMMAND} align="left" testId="copy-skill" />
 				</div>
 			}
 		/>

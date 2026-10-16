@@ -1,25 +1,25 @@
-import { For, type JSX } from "solid-js";
+import { For, type JSX } from 'solid-js';
 import {
 	Card,
 	CardDescription,
 	CardGroup,
 	CardHeader,
 	CardTitle,
-} from "#/components/card";
-import { Dropdown, MenuItem } from "#/components/dropdown";
-import { TabItem, Tabs, TabsList } from "#/components/tabs";
-import { ComponentPreview, MONO } from "#/lib/doc-page";
-import { color, siteType, weight } from "#/lib/theme";
-import { AXES_CODE } from "./snippets";
-import { ROWS } from "./plain-vs-fluid";
+} from '#/components/card';
+import { Dropdown, MenuItem } from '#/components/dropdown';
+import { TabItem, Tabs, TabsList } from '#/components/tabs';
+import { ComponentPreview, MONO } from '#/lib/doc-page';
+import { color, siteType, weight } from '#/lib/theme';
+import { ROWS } from './plain-vs-fluid';
+import { AXES_CODE } from './snippets';
 
-const TAB_ITEMS = ["Library", "Recents", "Favorites", "Settings"];
+const TAB_ITEMS = ['Library', 'Recents', 'Favorites', 'Settings'];
 
 const CARD_ITEMS = [
-	{ title: "Inbox", description: "Everything new lands here." },
-	{ title: "Drafts", description: "Unsent, saved as you type." },
-	{ title: "Sent", description: "Delivered and archived." },
-	{ title: "Trash", description: "Emptied after 30 days." },
+	{ title: 'Inbox', description: 'Everything new lands here.' },
+	{ title: 'Drafts', description: 'Unsent, saved as you type.' },
+	{ title: 'Sent', description: 'Delivered and archived.' },
+	{ title: 'Trash', description: 'Emptied after 30 days.' },
 ];
 
 function AxisBlock(props: {
@@ -28,12 +28,12 @@ function AxisBlock(props: {
 	children: JSX.Element;
 }) {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "baseline",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'baseline',
 					gap: 8,
 				}}
 			>
@@ -62,10 +62,10 @@ export function AxesDemo() {
 		<ComponentPreview testId="axes-preview" code={AXES_CODE} cull>
 			<div
 				style={{
-					width: "100%",
+					width: '100%',
 					maxWidth: 448,
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					gap: 32,
 				}}
 			>

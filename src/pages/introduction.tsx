@@ -1,60 +1,55 @@
-import { For, type JSX } from "solid-js";
-import { InputCopy } from "#/components/input-copy";
-import type { ShotContext } from "#/lib/demo";
-import {
-	color,
-	siteType,
-	weight,
-	withAlpha,
-} from "#/lib/theme";
+import { For, type JSX } from 'solid-js';
+import { InputCopy } from '#/components/input-copy';
+import type { ShotContext } from '#/lib/demo';
+import { color, siteType, weight, withAlpha } from '#/lib/theme';
 
-export const title = "Introduction";
-export const group = "Pages";
+export const title = 'Introduction';
+export const group = 'Pages';
 export const order = 1;
-export const layout = "docs";
-export const listed = "sidebar";
-export const menuIcon = "square-library";
-export const menuKeywords = ["docs", "getting started", "install"];
+export const layout = 'docs';
+export const listed = 'sidebar';
+export const menuIcon = 'square-library';
+export const menuKeywords = ['docs', 'getting started', 'install'];
 
-const MONO = "Menlo";
+const MONO = 'Menlo';
 
 export async function scenarios(shot: ShotContext) {
 	await shot.scroll(600, 400, 0, 2000);
-	shot.capture("installation");
-	await shot.hover("install-registry");
-	shot.capture("installation-hover");
+	shot.capture('installation');
+	await shot.hover('install-registry');
+	shot.capture('installation-hover');
 }
 
 const PRINCIPLES = [
 	{
-		title: "Motion that communicates",
+		title: 'Motion that communicates',
 		body: "Every animation here points at something. When two list items merge their backgrounds, the component tells you they belong together. The hover highlight follows your cursor before you click, so the row you're about to land on confirms itself first. Motion has a job to create meaning.",
 	},
 	{
-		title: "Hover as preview",
+		title: 'Hover as preview',
 		body: "The interaction starts before you click. The closest interactive thing to your cursor gets a faint highlight; buttons gain a little weight as you approach. By the time your finger lands, you've had a moment to reconsider, which is mostly the point.",
 	},
 	{
-		title: "Spring physics, not durations",
-		body: "Animations use springs, not fixed-duration eases. Toggle a switch and immediately toggle it back: the spring picks up wherever it was and reverses, instead of finishing the first animation before starting the second. Three presets, named fast, moderate, and slow, cover most of the library.",
+		title: 'Spring physics, not durations',
+		body: 'Animations use springs, not fixed-duration eases. Toggle a switch and immediately toggle it back: the spring picks up wherever it was and reverses, instead of finishing the first animation before starting the second. Three presets, named fast, moderate, and slow, cover most of the library.',
 	},
 	{
-		title: "Drop-in compatible",
+		title: 'Drop-in compatible',
 		body: "Built on shadcn/ui. Each component comes in two flavors, Radix or Base UI, so you can match whichever primitive library you've already chosen. Your theme tokens (colors, radii, fonts) work as-is. One CLI command installs a component along with whatever it needs.",
 	},
 	{
-		title: "Customize using the right panel",
-		body: "The panel on the right lets you change things on the fly. Switch between light and dark mode, toggle the corner radius from rounded to pill, cycle through different icon libraries, or pick whether the install command grabs the Radix flavor or the Base UI one. Press T, R, or I to flip the first three from the keyboard. The icon switcher is a preview tool that lives on this site — installed components ship with Lucide only, and you can swap in your own icons (see Icons below).",
+		title: 'Customize using the right panel',
+		body: 'The panel on the right lets you change things on the fly. Switch between light and dark mode, toggle the corner radius from rounded to pill, cycle through different icon libraries, or pick whether the install command grabs the Radix flavor or the Base UI one. Press T, R, or I to flip the first three from the keyboard. The icon switcher is a preview tool that lives on this site — installed components ship with Lucide only, and you can swap in your own icons (see Icons below).',
 	},
 ];
 
 const ICON_PROVIDER_EXAMPLE = [
 	'import { IconProvider } from "@/lib/icon-context";',
 	'import { CaretRight, MagnifyingGlass } from "@phosphor-icons/react";',
-	"",
+	'',
 	'<IconProvider icons={{ "chevron-right": CaretRight, "search": MagnifyingGlass }}>',
-	"  <App />",
-	"</IconProvider>",
+	'  <App />',
+	'</IconProvider>',
 ];
 
 function SectionTitle(props: { children: string }) {
@@ -98,7 +93,7 @@ function Rule(props: { marginTop: number; marginBottom?: number }) {
 /** A command that fits its text, not the column. */
 function Command(props: { value: string; testId?: string }) {
 	return (
-		<div style={{ alignSelf: "flex-start", maxWidth: "100%" }}>
+		<div style={{ alignSelf: 'flex-start', maxWidth: '100%' }}>
 			<InputCopy value={props.value} align="left" testId={props.testId} />
 		</div>
 	);
@@ -113,17 +108,17 @@ function Step(props: {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 8,
 				marginTop: 8,
 			}}
 		>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					gap: 8,
 					marginLeft: 4,
 				}}
@@ -133,9 +128,9 @@ function Step(props: {
 						width: 18,
 						height: 18,
 						flexShrink: 0,
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
 						borderRadius: 9,
 						backgroundColor: color.muted,
 					}}
@@ -162,9 +157,9 @@ function CodeBlock(props: { lines: readonly string[] }) {
 	return (
 		<div
 			style={{
-				alignSelf: "flex-start",
-				maxWidth: "100%",
-				overflowX: "scroll",
+				alignSelf: 'flex-start',
+				maxWidth: '100%',
+				overflowX: 'scroll',
 				borderRadius: 8,
 				backgroundColor: withAlpha(color.muted, 0.6),
 			}}
@@ -172,8 +167,8 @@ function CodeBlock(props: { lines: readonly string[] }) {
 			<div
 				style={{
 					flexShrink: 0,
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					paddingLeft: 16,
 					paddingRight: 16,
 					paddingTop: 12,
@@ -189,10 +184,10 @@ function CodeBlock(props: { lines: readonly string[] }) {
 								lineHeight: siteType.caption.lineHeight,
 								fontWeight: weight.normal,
 								color: color.mutedForeground,
-								whiteSpace: "pre",
+								whiteSpace: 'pre',
 							}}
 						>
-							{line === "" ? " " : line}
+							{line === '' ? ' ' : line}
 						</text>
 					)}
 				</For>
@@ -203,16 +198,16 @@ function CodeBlock(props: { lines: readonly string[] }) {
 
 export function Page(): JSX.Element {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
 			{/* The page heading is `App`'s, a column gap above; the source sets it 8px above the subtitle. */}
 			<div style={{ marginTop: -16 }}>
 				<Prose>Why these components feel different.</Prose>
 			</div>
 
-			<div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+			<div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 				<For each={PRINCIPLES}>
 					{(principle) => (
-						<div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+						<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
 							<SectionTitle>{principle.title}</SectionTitle>
 							<Prose>{principle.body}</Prose>
 						</div>
@@ -223,8 +218,8 @@ export function Page(): JSX.Element {
 			<Rule marginTop={32} marginBottom={32} />
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					gap: 12,
 					marginBottom: 16,
 				}}
@@ -256,8 +251,8 @@ export function Page(): JSX.Element {
 			<Rule marginTop={32} marginBottom={32} />
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					gap: 12,
 					marginBottom: 16,
 				}}
@@ -265,8 +260,8 @@ export function Page(): JSX.Element {
 				<SectionTitle>Icons</SectionTitle>
 				<Prose>
 					Components render their icons through named slots with Lucide
-					defaults, so lucide-react is the only icon dependency an install
-					adds. To use another icon library, wrap your app in the installed
+					defaults, so lucide-react is the only icon dependency an install adds.
+					To use another icon library, wrap your app in the installed
 					IconProvider and override any slot — names you leave out keep their
 					Lucide default:
 				</Prose>

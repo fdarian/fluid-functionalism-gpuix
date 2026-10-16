@@ -1,5 +1,5 @@
-import { type Accessor, createMemo } from "solid-js";
-import type { ItemRect } from "./fluid-hover";
+import { type Accessor, createMemo } from 'solid-js';
+import type { ItemRect } from './fluid-hover';
 
 export interface PreviewPill {
 	rect: ItemRect;

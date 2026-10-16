@@ -1,21 +1,15 @@
-import { buttonProps, type HostElement, useGpuixRequired } from "@gpuix/solid";
-import type { JSX } from "solid-js";
-import { FluidHighlight } from "#/lib/fluid-highlight";
-import { type FluidHover, useHoverItem } from "#/lib/fluid-hover";
-import {
-	color,
-	focusRing,
-	radius,
-	siteType,
-	weight,
-} from "#/lib/theme";
+import { buttonProps, type HostElement, useGpuixRequired } from '@gpuix/solid';
+import type { JSX } from 'solid-js';
+import { FluidHighlight } from '#/lib/fluid-highlight';
+import { type FluidHover, useHoverItem } from '#/lib/fluid-hover';
+import { color, focusRing, radius, siteType, weight } from '#/lib/theme';
 
 /** The demos' bordered list frame: `border-border/60` and the container radius. */
 export function ListFrame(props: { children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				width: "100%",
+				width: '100%',
 				borderRadius: radius.container,
 				borderWidth: 1,
 				borderColor: color.borderFaint,
@@ -32,18 +26,18 @@ export const LIST_PADDING = 8;
 
 function rowStyle() {
 	return {
-		position: "relative",
+		position: 'relative',
 		zIndex: 10,
 		height: ROW_HEIGHT,
 		flexShrink: 0,
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center",
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'center',
 		paddingLeft: 12,
 		paddingRight: 12,
 		borderRadius: radius.item,
-		cursor: "pointer",
-		userSelect: "none",
+		cursor: 'pointer',
+		userSelect: 'none',
 		keyboardFocusDim: false,
 		focusVisible: focusRing(0),
 	} as const;
@@ -56,7 +50,7 @@ function RowLabel(props: { children: string }) {
 				...siteType.body,
 				fontWeight: weight.normal,
 				color: color.foreground,
-				whiteSpace: "nowrap",
+				whiteSpace: 'nowrap',
 			}}
 		>
 			{props.children}
@@ -143,10 +137,10 @@ export function FakeCursor(props: { x: number; y: () => number }) {
 	return (
 		<div
 			style={{
-				position: "absolute",
+				position: 'absolute',
 				left: props.x - 3,
 				top: props.y() - 3,
-				pointerEvents: "none",
+				pointerEvents: 'none',
 			}}
 		>
 			<svg viewBox="0 0 24 24" style={{ width: 18, height: 18 }}>

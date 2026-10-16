@@ -5,14 +5,14 @@
  *
  * The demo's Replay button sits under the banner, so its y is the row's height.
  */
-import { createCheck } from "./check-kit";
-import { readPng } from "./png-pixels";
+import { createCheck } from './check-kit';
+import { readPng } from './png-pixels';
 
-const kit = await createCheck("banner");
+const kit = await createCheck('banner');
 const renderer = kit.renderer;
-const replayY = () => kit.bounds("inline-replay").y;
+const replayY = () => kit.bounds('inline-replay').y;
 const bannerShown = () =>
-	renderer.getAllText().some((line) => line.includes("Changes saved"));
+	renderer.getAllText().some((line) => line.includes('Changes saved'));
 
 const FRAME_MS = 16;
 // The motion clock is stepped by hand: against wall time a slow frame lands the
@@ -34,82 +34,82 @@ async function press(testId: string) {
 }
 
 const openY = replayY();
-kit.check("starts open", bannerShown());
+kit.check('starts open', bannerShown());
 
 // Closing while it is still opening must end closed, not throw and leave the banner up.
-await press("inline-banner-dismiss");
+await press('inline-banner-dismiss');
 await frames(600);
-kit.check("dismissing removes the banner", !bannerShown());
+kit.check('dismissing removes the banner', !bannerShown());
 const closedY = replayY();
-await press("inline-replay");
+await press('inline-replay');
 await frames(80);
-await press("inline-banner-dismiss");
+await press('inline-banner-dismiss');
 await frames(900);
-kit.check("closing mid-open removes the banner", !bannerShown());
+kit.check('closing mid-open removes the banner', !bannerShown());
 kit.check(
-	"closing mid-open ends collapsed",
+	'closing mid-open ends collapsed',
 	Math.abs(replayY() - closedY) < 0.5,
 	`${replayY().toFixed(1)} vs ${closedY.toFixed(1)}`,
 );
 
 // Reopen while it closes: the row continues from where it is.
-await press("inline-replay");
+await press('inline-replay');
 await frames(900);
 kit.check(
-	"reopens fully",
+	'reopens fully',
 	Math.abs(replayY() - openY) < 0.5,
 	`${replayY().toFixed(1)} vs ${openY.toFixed(1)}`,
 );
-await press("inline-banner-dismiss");
+await press('inline-banner-dismiss');
 await frames(110);
 const atReopen = replayY();
 kit.check(
-	"mid-close the row is partly collapsed",
+	'mid-close the row is partly collapsed',
 	atReopen < openY - 1 && atReopen > closedY + 1,
 	`${atReopen.toFixed(1)}`,
 );
-await press("inline-replay");
+await press('inline-replay');
 let lowest = atReopen;
 await frames(900, () => {
 	lowest = Math.min(lowest, replayY());
 });
 kit.check(
-	"reopening mid-close does not jump down",
+	'reopening mid-close does not jump down',
 	// A reversal carries some momentum on (7 px of a 52 px row).
 	lowest >= atReopen - 10,
 	`lowest ${lowest.toFixed(1)}, reopened at ${atReopen.toFixed(1)}`,
 );
 kit.check(
-	"reopening mid-close ends open",
+	'reopening mid-close ends open',
 	Math.abs(replayY() - openY) < 0.5 && bannerShown(),
 );
 
 // A focused dismiss button keeps focus through a reopen.
-const dismiss = kit.element("inline-banner-dismiss");
+const dismiss = kit.element('inline-banner-dismiss');
 renderer.focusElement(dismiss.id);
 await frames(100);
 kit.check(
-	"the dismiss button takes focus",
+	'the dismiss button takes focus',
 	renderer.getFocusedElementId() === dismiss.id,
 );
-await press("inline-banner-dismiss");
+await press('inline-banner-dismiss');
 await frames(110);
-await press("inline-replay");
+await press('inline-replay');
 await frames(900);
-const after = kit.element("inline-banner-dismiss");
+const after = kit.element('inline-banner-dismiss');
 kit.check(
-	"the dismiss button is the same element after a reopen",
+	'the dismiss button is the same element after a reopen',
 	after.id === dismiss.id,
 );
 kit.check(
-	"the dismiss button keeps focus through a reopen",
+	'the dismiss button keeps focus through a reopen',
 	renderer.getFocusedElementId() === after.id,
 );
 
 // The dismiss button's hover fill and glyph colour ease over 80 ms (the clock is still held).
 function dismissPixels() {
 	renderer.captureScreenshot(`/tmp/check-banner-fade-${process.pid}.png`);
-	const box = kit.bounds("inline-banner-dismiss");
+	const box = kit.bounds('inline-banner-dismiss');
 	const pixels = readPng(`/tmp/check-banner-fade-${process.pid}.png`);
 	const sum = (x: number, y: number) =>
 		pixels
@@ -125,7 +125,7 @@ function dismissPixels() {
 renderer.nativeSimulateMouseMove(2, 2);
 await frames(300);
 const restFade = dismissPixels();
-const dismissBox = kit.bounds("inline-banner-dismiss");
+const dismissBox = kit.bounds('inline-banner-dismiss');
 renderer.nativeSimulateMouseMove(
 	dismissBox.x + dismissBox.width / 2,
 	dismissBox.y + dismissBox.height / 2,
@@ -136,7 +136,7 @@ await frames(32);
 const midFade = dismissPixels();
 await frames(300);
 const hoverFade = dismissPixels();
-for (const part of ["fill", "glyph"] as const) {
+for (const part of ['fill', 'glyph'] as const) {
 	const low = Math.min(restFade[part], hoverFade[part]);
 	const high = Math.max(restFade[part], hoverFade[part]);
 	kit.check(

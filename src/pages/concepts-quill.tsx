@@ -1,16 +1,16 @@
-import { createSignal, For, type JSX, onCleanup, Show } from "solid-js";
-import { Badge, type BadgeColor, badgeColors } from "#/components/badge";
-import { Button } from "#/components/button";
-import { ChatMessage } from "#/components/chat-message";
+import { createSignal, For, type JSX, onCleanup, Show } from 'solid-js';
+import { Badge, type BadgeColor, badgeColors } from '#/components/badge';
+import { Button } from '#/components/button';
+import { ChatMessage } from '#/components/chat-message';
 import {
 	DropdownContent,
 	DropdownLabel,
 	DropdownMenu,
 	DropdownTrigger,
 	MenuItem,
-} from "#/components/dropdown";
-import { InputMessage } from "#/components/input-message";
-import { ScrollArea } from "#/components/scroll-area";
+} from '#/components/dropdown';
+import { InputMessage } from '#/components/input-message';
+import { ScrollArea } from '#/components/scroll-area';
 import {
 	Table,
 	TableBody,
@@ -18,60 +18,60 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "#/components/table";
+} from '#/components/table';
 import {
 	TabsSubtle,
 	TabsSubtleItem,
 	TabsSubtlePanel,
-} from "#/components/tabs-subtle";
+} from '#/components/tabs-subtle';
 import {
 	ThinkingStep,
 	ThinkingSteps,
 	ThinkingStepsContent,
 	ThinkingStepsHeader,
-} from "#/components/thinking-steps";
-import type { ShotContext } from "#/lib/demo";
-import { Icon } from "#/lib/icon";
-import type { IconName } from "#/lib/icons";
-import { color, shadow, siteType, weight } from "#/lib/theme";
-import { ConceptFrame } from "#/pages/concepts/frame";
+} from '#/components/thinking-steps';
+import type { ShotContext } from '#/lib/demo';
+import { Icon } from '#/lib/icon';
+import type { IconName } from '#/lib/icons';
+import { color, shadow, siteType, weight } from '#/lib/theme';
+import { ConceptFrame } from '#/pages/concepts/frame';
 
-export const title = "Quill";
-export const group = "Pages";
+export const title = 'Quill';
+export const group = 'Pages';
 export const order = 34;
-export const layout = "full";
-export const listed = "none";
+export const layout = 'full';
+export const listed = 'none';
 
 /** How long the AI block shows "Drafting with Quill AI" before the draft lands. */
 const DRAFTING_MS = 1700;
 const BOLD = 700;
 
 export async function scenarios(shot: ShotContext) {
-	shot.capture("document");
-	await shot.focus("quill-add-block");
-	await shot.press("Enter");
+	shot.capture('document');
+	await shot.focus('quill-add-block');
+	await shot.press('Enter');
 	await shot.settle(300);
-	shot.capture("add-block-menu");
-	await shot.press("ArrowDown ArrowDown");
-	shot.capture("add-block-menu-keyboard");
-	await shot.press("Escape");
-	await shot.click("quill-tab-1");
-	shot.capture("comments");
-	await shot.click("quill-tab-2");
-	shot.capture("activity");
-	await shot.click("quill-tab-0");
+	shot.capture('add-block-menu');
+	await shot.press('ArrowDown ArrowDown');
+	shot.capture('add-block-menu-keyboard');
+	await shot.press('Escape');
+	await shot.click('quill-tab-1');
+	shot.capture('comments');
+	await shot.click('quill-tab-2');
+	shot.capture('activity');
+	await shot.click('quill-tab-0');
 	await shot.scroll(580, 400, 0, 2000);
-	await shot.click("input-message-textarea");
-	await shot.press("p l a n");
-	await shot.press("Enter");
+	await shot.click('input-message-textarea');
+	await shot.press('p l a n');
+	await shot.press('Enter');
 	await shot.settle(300);
 	await shot.scroll(580, 400, 0, 2000);
-	shot.expectText("Drafting with Quill AI", true);
-	shot.capture("drafting");
+	shot.expectText('Drafting with Quill AI', true);
+	shot.capture('drafting');
 	await shot.settle(DRAFTING_MS + 600);
 	await shot.scroll(580, 400, 0, 2000);
-	shot.expectText("Draft — plan", true);
-	shot.capture("drafted");
+	shot.expectText('Draft — plan', true);
+	shot.capture('drafted');
 }
 
 // ── Fixtures ────────────────────────────────────────────────────────────
@@ -85,62 +85,62 @@ interface Initiative {
 
 const INITIATIVES: Initiative[] = [
 	{
-		name: "Self-serve onboarding",
-		owner: "Dana",
-		status: { label: "On track", color: "green" },
-		target: "Aug 15",
+		name: 'Self-serve onboarding',
+		owner: 'Dana',
+		status: { label: 'On track', color: 'green' },
+		target: 'Aug 15',
 	},
 	{
-		name: "Billing v2 migration",
-		owner: "Mara",
-		status: { label: "At risk", color: "amber" },
-		target: "Sep 1",
+		name: 'Billing v2 migration',
+		owner: 'Mara',
+		status: { label: 'At risk', color: 'amber' },
+		target: 'Sep 1',
 	},
 	{
-		name: "Mobile offline mode",
-		owner: "Alex",
-		status: { label: "Planned", color: "gray" },
-		target: "Sep 20",
+		name: 'Mobile offline mode',
+		owner: 'Alex',
+		status: { label: 'Planned', color: 'gray' },
+		target: 'Sep 20',
 	},
 	{
-		name: "SOC 2 Type II",
-		owner: "Sam",
-		status: { label: "On track", color: "green" },
-		target: "Oct 30",
+		name: 'SOC 2 Type II',
+		owner: 'Sam',
+		status: { label: 'On track', color: 'green' },
+		target: 'Oct 30',
 	},
 ];
 
 const COMMENTS = [
 	{
-		id: "c1",
-		from: "user" as const,
-		text: "Should Billing v2 block the mobile work, or can they run in parallel?",
+		id: 'c1',
+		from: 'user' as const,
+		text: 'Should Billing v2 block the mobile work, or can they run in parallel?',
 	},
 	{
-		id: "c2",
-		from: "assistant" as const,
+		id: 'c2',
+		from: 'assistant' as const,
 		text: "They can run in parallel — the only shared surface is the pricing API, and that's already versioned. I'd only serialize them if Mara's team gets pulled into the SOC 2 evidence collection.",
 	},
 ];
 
 const BLOCK_TYPES: { label: string; icon: IconName }[] = [
-	{ label: "Text", icon: "pencil" },
-	{ label: "Heading", icon: "square-library" },
-	{ label: "To-do list", icon: "check" },
-	{ label: "Table", icon: "rectangle-horizontal" },
-	{ label: "AI block", icon: "brain" },
+	{ label: 'Text', icon: 'pencil' },
+	{ label: 'Heading', icon: 'square-library' },
+	{ label: 'To-do list', icon: 'check' },
+	{ label: 'Table', icon: 'rectangle-horizontal' },
+	{ label: 'AI block', icon: 'brain' },
 ];
 
 const GOALS = [
-	"Cut time-to-first-value to under 5 minutes",
-	"Move 60% of new accounts onto self-serve billing",
-	"Close SOC 2 Type II without slipping the roadmap",
+	'Cut time-to-first-value to under 5 minutes',
+	'Move 60% of new accounts onto self-serve billing',
+	'Close SOC 2 Type II without slipping the roadmap',
 ];
 
 const ACTIVITY = [
-	"Dana added the Initiatives table · 2h ago",
-	"Mara changed Billing v2 to “At risk” · 5h ago",
-	"Sam created this page · yesterday",
+	'Dana added the Initiatives table · 2h ago',
+	'Mara changed Billing v2 to “At risk” · 5h ago',
+	'Sam created this page · yesterday',
 ];
 
 // ── Add-block menu ──────────────────────────────────────────────────────
@@ -207,8 +207,8 @@ function SurfaceCard(props: {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
+				display: 'flex',
+				flexDirection: 'row',
 				gap: props.gap,
 				padding: props.padding,
 				borderRadius: 12,
@@ -224,7 +224,7 @@ function SurfaceCard(props: {
 // ── AI composer block ───────────────────────────────────────────────────
 
 function AIBlock() {
-	const [draft, setDraft] = createSignal("");
+	const [draft, setDraft] = createSignal('');
 	const [drafting, setDrafting] = createSignal(false);
 	const [blocks, setBlocks] = createSignal<string[]>([]);
 	const timers = new Set<ReturnType<typeof setTimeout>>();
@@ -234,8 +234,8 @@ function AIBlock() {
 
 	const send = (value: string) => {
 		const trimmed = value.trim();
-		if (trimmed === "") return;
-		setDraft("");
+		if (trimmed === '') return;
+		setDraft('');
 		setDrafting(true);
 		const timer = setTimeout(() => {
 			timers.delete(timer);
@@ -249,7 +249,7 @@ function AIBlock() {
 	};
 
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 			<For each={blocks()}>
 				{(block) => (
 					<SurfaceCard padding={14} gap={10}>
@@ -304,9 +304,9 @@ function AIBlock() {
 				leftSlot={
 					<div
 						style={{
-							display: "flex",
-							flexDirection: "row",
-							alignItems: "center",
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'center',
 							gap: 6,
 							paddingLeft: 4,
 						}}
@@ -331,7 +331,7 @@ function AIBlock() {
 
 function DocumentBody() {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 			<text
 				style={{
 					fontSize: 15,
@@ -362,8 +362,8 @@ function DocumentBody() {
 			<Heading>Goals</Heading>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					gap: 8,
 					paddingLeft: 4,
 				}}
@@ -372,9 +372,9 @@ function DocumentBody() {
 					{(goal) => (
 						<div
 							style={{
-								display: "flex",
-								flexDirection: "row",
-								alignItems: "flex-start",
+								display: 'flex',
+								flexDirection: 'row',
+								alignItems: 'flex-start',
 								gap: 8,
 							}}
 						>
@@ -403,7 +403,7 @@ function DocumentBody() {
 				</For>
 			</div>
 
-			<div style={{ alignSelf: "flex-start" }}>
+			<div style={{ alignSelf: 'flex-start' }}>
 				<AddBlockMenu />
 			</div>
 
@@ -424,7 +424,7 @@ function DocumentBody() {
 								<TableCell>{initiative.name}</TableCell>
 								<TableCell width={110}>{initiative.owner}</TableCell>
 								<TableCell width={130}>
-									<div style={{ display: "flex", flexDirection: "row" }}>
+									<div style={{ display: 'flex', flexDirection: 'row' }}>
 										<Badge
 											variant="dot"
 											size="compact"
@@ -458,11 +458,11 @@ export function Page() {
 			<ScrollArea height="100%">
 				<div
 					style={{
-						width: "100%",
+						width: '100%',
 						maxWidth: 760,
-						alignSelf: "center",
-						display: "flex",
-						flexDirection: "column",
+						alignSelf: 'center',
+						display: 'flex',
+						flexDirection: 'column',
 						paddingLeft: 32,
 						paddingRight: 32,
 						paddingTop: 48,
@@ -486,9 +486,9 @@ export function Page() {
 						style={{
 							marginTop: 8,
 							marginBottom: 24,
-							display: "flex",
-							flexDirection: "row",
-							alignItems: "center",
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'center',
 							gap: 8,
 						}}
 					>
@@ -499,9 +499,9 @@ export function Page() {
 								flexShrink: 0,
 								borderRadius: 10,
 								backgroundColor: badgeColors.blue,
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
 							}}
 						>
 							<text
@@ -547,7 +547,7 @@ export function Page() {
 						</TabsSubtlePanel>
 						<TabsSubtlePanel index={1} selectedIndex={tab()} idPrefix="quill">
 							<div
-								style={{ display: "flex", flexDirection: "column", gap: 16 }}
+								style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
 							>
 								<For each={COMMENTS}>
 									{(comment) => (
@@ -560,7 +560,7 @@ export function Page() {
 						</TabsSubtlePanel>
 						<TabsSubtlePanel index={2} selectedIndex={tab()} idPrefix="quill">
 							<div
-								style={{ display: "flex", flexDirection: "column", gap: 12 }}
+								style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
 							>
 								<For each={ACTIVITY}>
 									{(entry) => (

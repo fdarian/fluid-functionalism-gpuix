@@ -1,21 +1,15 @@
-import type { DomEvent, HostElement } from "@gpuix/solid";
+import type { DomEvent, HostElement } from '@gpuix/solid';
 import {
 	createContext,
 	createEffect,
 	createSignal,
 	onCleanup,
 	useContext,
-} from "solid-js";
-import { Icon } from "#/lib/icon";
-import { SurfaceContext } from "#/lib/surface-context";
-import {
-	color,
-	height,
-	surface,
-	type as scale,
-	weight,
-} from "#/lib/theme";
-import { separatorColor } from "./menu-item";
+} from 'solid-js';
+import { Icon } from '#/lib/icon';
+import { SurfaceContext } from '#/lib/surface-context';
+import { color, height, type as scale, surface, weight } from '#/lib/theme';
+import { separatorColor } from './menu-item';
 
 export interface DropdownSearchProps {
 	/** The query. Filter the rows you render against it. */
@@ -44,7 +38,7 @@ export const DropdownSearchHostContext = createContext<DropdownSearchHost>();
 export function DropdownSearch(props: DropdownSearchProps) {
 	const host = useContext(DropdownSearchHostContext);
 	if (host === undefined) {
-		throw new Error("DropdownSearch must be inside a DropdownContent");
+		throw new Error('DropdownSearch must be inside a DropdownContent');
 	}
 	createEffect(() => {
 		onCleanup(host.register(props));
@@ -61,8 +55,8 @@ export function DropdownEmpty(props: { children: string }) {
 				paddingRight: 8,
 				paddingTop: 24,
 				paddingBottom: 24,
-				display: "flex",
-				justifyContent: "center",
+				display: 'flex',
+				justifyContent: 'center',
 			}}
 		>
 			<text style={{ ...scale.body, color: color.mutedForeground }}>
@@ -93,7 +87,7 @@ export function SearchField(props: {
 			style={{
 				...(props.sticky
 					? {
-							position: "sticky" as const,
+							position: 'sticky' as const,
 							top: 0,
 							zIndex: 20,
 							backgroundColor: surface(level),
@@ -101,9 +95,9 @@ export function SearchField(props: {
 					: {}),
 				height: SEARCH_HEIGHT,
 				flexShrink: 0,
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: 8,
 				paddingLeft: 12,
 				paddingRight: 12,
@@ -127,7 +121,7 @@ export function SearchField(props: {
 				role="searchbox"
 				autoFocus={props.search.autoFocus ?? true}
 				value={props.search.value}
-				placeholder={props.search.placeholder ?? "Search…"}
+				placeholder={props.search.placeholder ?? 'Search…'}
 				theme={{
 					text: color.foreground,
 					textMuted: color.mutedForeground,
@@ -139,7 +133,7 @@ export function SearchField(props: {
 				onBlur={() => setFocused(false)}
 				onChange={(event: DomEvent) => {
 					if (event.value === undefined) {
-						throw new Error("Search change without a value");
+						throw new Error('Search change without a value');
 					}
 					props.search.onValueChange(event.value);
 				}}

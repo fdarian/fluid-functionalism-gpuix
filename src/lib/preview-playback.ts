@@ -1,4 +1,4 @@
-import { type Accessor, createContext, useContext } from "solid-js";
+import { type Accessor, createContext, useContext } from 'solid-js';
 
 /**
  * Whether a live preview may run its own animation (an autoplay, a scripted

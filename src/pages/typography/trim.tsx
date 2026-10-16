@@ -1,5 +1,5 @@
-import { color, type as scale, shape } from "#/lib/theme";
-import { MARK_BLUE, MARK_RED, Specimen, TweakFrame } from "./specimen";
+import { color, type as scale, shape } from '#/lib/theme';
+import { MARK_BLUE, MARK_RED, Specimen, TweakFrame } from './specimen';
 
 // Inter's metrics at the body role (13px on a 20px line), from the font's
 // hhea and OS/2 tables (2048 units per em): ascender 1984, descender 494,
@@ -18,7 +18,7 @@ const BASELINE = HALF_LEADING + ASCENDER * FONT_SIZE;
 const BELOW_BASELINE = LINE - BASELINE;
 
 const PADDING = 8;
-const CHIP_LABEL = "Draft saved";
+const CHIP_LABEL = 'Draft saved';
 
 /**
  * A chip with 8px of padding on every side. Blue lines mark its label's
@@ -36,9 +36,9 @@ function TrimChip(props: { trimmed: boolean }) {
 	return (
 		<div
 			style={{
-				position: "relative",
-				display: "flex",
-				flexDirection: "row",
+				position: 'relative',
+				display: 'flex',
+				flexDirection: 'row',
 				padding: PADDING,
 				borderRadius: shape.bg,
 				backgroundColor: color.tint,
@@ -48,7 +48,7 @@ function TrimChip(props: { trimmed: boolean }) {
 				<>
 					<div
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							left: PADDING,
 							right: PADDING,
 							top: labelTop,
@@ -58,7 +58,7 @@ function TrimChip(props: { trimmed: boolean }) {
 					/>
 					<div
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							left: PADDING,
 							right: PADDING,
 							top: base,
@@ -78,7 +78,7 @@ function TrimChip(props: { trimmed: boolean }) {
 					style={{
 						...scale.body,
 						color: color.foreground,
-						whiteSpace: "nowrap",
+						whiteSpace: 'nowrap',
 					}}
 				>
 					{CHIP_LABEL}
@@ -87,7 +87,7 @@ function TrimChip(props: { trimmed: boolean }) {
 			{[cap, base].map((y) => (
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						left: 0,
 						right: 0,
 						top: y - 0.5,
@@ -112,9 +112,9 @@ export function TrimDemo() {
 				caption={`Untrimmed: ${above(false)}`}
 				frame={{
 					height: 64,
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
 				}}
 			>
 				<TrimChip trimmed={false} />
@@ -125,9 +125,9 @@ export function TrimDemo() {
 				caption={`Trimmed: ${above(true)}`}
 				frame={{
 					height: 64,
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
 				}}
 			>
 				<TrimChip trimmed />

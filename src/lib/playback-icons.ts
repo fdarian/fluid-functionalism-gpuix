@@ -1,4 +1,4 @@
-import { defineIcon } from "./icons";
+import { defineIcon } from './icons';
 
 /** lucide `play` and `pause`, which the icon set here does not carry by name. */
 export const PLAY_ICON = defineIcon(

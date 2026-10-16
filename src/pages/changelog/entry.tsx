@@ -1,24 +1,24 @@
-import { buttonProps, useGpuixRequired } from "@gpuix/solid";
-import { type Accessor, createSignal, For, type JSX, Show } from "solid-js";
-import { entryInstall } from "#/lib/changelog/install";
-import { kindDotColor } from "#/lib/changelog/kind-style";
-import { buildMigrationPrompt } from "#/lib/changelog/migration-prompt";
+import { buttonProps, useGpuixRequired } from '@gpuix/solid';
+import { type Accessor, createSignal, For, type JSX, Show } from 'solid-js';
+import { entryInstall } from '#/lib/changelog/install';
+import { kindDotColor } from '#/lib/changelog/kind-style';
+import { buildMigrationPrompt } from '#/lib/changelog/migration-prompt';
 import type {
 	ChangeEntry,
 	ChangeKind,
 	ChangeRef,
 	Inline,
-} from "#/lib/changelog/parse";
-import { Code, CopyPromptButton, MONO, Prose } from "#/lib/doc-page";
-import { Icon } from "#/lib/icon";
-import { openUrl } from "#/lib/open-url";
-import { usePageNav } from "#/lib/page-nav";
-import { color, colorFade, focusRing, siteType, weight } from "#/lib/theme";
-import { DiffBlock } from "./diff-block";
-import { PreviewStage } from "./preview-stage";
-import { previewFor } from "./previews";
+} from '#/lib/changelog/parse';
+import { Code, CopyPromptButton, MONO, Prose } from '#/lib/doc-page';
+import { Icon } from '#/lib/icon';
+import { openUrl } from '#/lib/open-url';
+import { usePageNav } from '#/lib/page-nav';
+import { color, colorFade, focusRing, siteType, weight } from '#/lib/theme';
+import { DiffBlock } from './diff-block';
+import { PreviewStage } from './preview-stage';
+import { previewFor } from './previews';
 
-const REPO = "https://github.com/mickadesign/fluid-functionalism";
+const REPO = 'https://github.com/mickadesign/fluid-functionalism';
 
 /** The port routes by slug alone: `/docs/banner` is the page `banner`. */
 function pageSlug(href: string): string {
@@ -35,7 +35,7 @@ function InlineText(props: { inline: Inline[] }): JSX.Element {
 	return (
 		<For each={props.inline}>
 			{(part) =>
-				part.type === "code" ? <Code>{part.value}</Code> : part.value
+				part.type === 'code' ? <Code>{part.value}</Code> : part.value
 			}
 		</For>
 	);
@@ -60,7 +60,7 @@ function KindDot(props: { kind: ChangeKind }) {
 	return (
 		<div
 			style={{
-				position: "absolute",
+				position: 'absolute',
 				left: -24,
 				top: (siteType.body.lineHeight - 5) / 2,
 				width: 5,
@@ -94,12 +94,12 @@ function NameLink(props: { name: string; slug: string }) {
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: 6,
 				borderRadius: 6,
-				cursor: "pointer",
+				cursor: 'pointer',
 				focusVisible: focusRing(0),
 			}}
 		>
@@ -115,8 +115,8 @@ function NameLink(props: { name: string; slug: string }) {
 			<div
 				style={{
 					marginLeft: hovered() ? 2 : 0,
-					transitionProperty: "margin-left",
-					transitionDuration: "80ms",
+					transitionProperty: 'margin-left',
+					transitionDuration: '80ms',
 				}}
 			>
 				<Icon
@@ -135,11 +135,11 @@ function RefChip(props: { gitRef: ChangeRef }) {
 	const renderer = useGpuixRequired();
 	const [hovered, setHovered] = createSignal(false);
 	const label = () =>
-		props.gitRef.type === "pr"
+		props.gitRef.type === 'pr'
 			? `#${props.gitRef.number}`
 			: props.gitRef.sha.slice(0, 7);
 	const url = () =>
-		props.gitRef.type === "pr"
+		props.gitRef.type === 'pr'
 			? `${REPO}/pull/${props.gitRef.number}`
 			: `${REPO}/commit/${props.gitRef.sha}`;
 	return (
@@ -148,14 +148,14 @@ function RefChip(props: { gitRef: ChangeRef }) {
 				{
 					onClick: () => {
 						openUrl(url()).catch((error: unknown) => {
-							console.error("Opening the changelog ref failed", error);
+							console.error('Opening the changelog ref failed', error);
 						});
 					},
 				},
 				renderer,
 			)}
 			aria-label={
-				props.gitRef.type === "pr"
+				props.gitRef.type === 'pr'
 					? `Pull request ${props.gitRef.number} on GitHub`
 					: `Commit ${props.gitRef.sha} on GitHub`
 			}
@@ -163,12 +163,12 @@ function RefChip(props: { gitRef: ChangeRef }) {
 			onMouseLeave={() => setHovered(false)}
 			style={{
 				height: 20,
-				display: "flex",
-				alignItems: "center",
+				display: 'flex',
+				alignItems: 'center',
 				paddingLeft: 6,
 				paddingRight: 6,
 				borderRadius: 6,
-				cursor: "pointer",
+				cursor: 'pointer',
 				backgroundColor: hovered() ? color.active : color.transparent,
 				...colorFade,
 				focusVisible: focusRing(0),
@@ -180,7 +180,7 @@ function RefChip(props: { gitRef: ChangeRef }) {
 					fontSize: siteType.caption.fontSize,
 					lineHeight: siteType.caption.lineHeight,
 					fontWeight: weight.normal,
-					fontVariantNumeric: "tabular-nums",
+					fontVariantNumeric: 'tabular-nums',
 					color: hovered() ? color.foreground : color.mutedForeground,
 				}}
 			>
@@ -206,29 +206,29 @@ export function Entry(props: {
 	const entry = () => props.entry;
 	const stagedSlug = () => {
 		const href = entry().href;
-		if (entry().kind !== "new" || href === null) return undefined;
+		if (entry().kind !== 'new' || href === null) return undefined;
 		const slug = pageSlug(href);
 		return previewFor(slug) === undefined ? undefined : slug;
 	};
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				paddingTop: props.first ? 0 : 24,
 			}}
 		>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					justifyContent: 'space-between',
 					gap: 16,
 					paddingTop: 8,
 				}}
 			>
-				<div style={{ position: "relative", display: "flex" }}>
+				<div style={{ position: 'relative', display: 'flex' }}>
 					<KindDot kind={entry().kind} />
 					<Show
 						when={entry().href}
@@ -244,14 +244,16 @@ export function Entry(props: {
 							</text>
 						}
 					>
-						{(href: Accessor<string>) => <NameLink name={entry().name} slug={pageSlug(href())} />}
+						{(href: Accessor<string>) => (
+							<NameLink name={entry().name} slug={pageSlug(href())} />
+						)}
 					</Show>
 				</div>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
 						marginRight: -6,
 					}}
 				>
@@ -268,9 +270,9 @@ export function Entry(props: {
 					<div
 						style={{
 							marginTop: 12,
-							display: "flex",
-							flexDirection: "column",
-							alignItems: "flex-start",
+							display: 'flex',
+							flexDirection: 'column',
+							alignItems: 'flex-start',
 							gap: 12,
 						}}
 					>

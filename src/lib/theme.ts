@@ -1,7 +1,4 @@
-import type {
-	MotionTransition,
-	StateStyleDesc,
-} from "@gpuix/solid";
+import type { MotionTransition, StateStyleDesc } from '@gpuix/solid';
 import {
 	type Accessor,
 	createComponent,
@@ -10,9 +7,9 @@ import {
 	type JSX,
 	onCleanup,
 	useContext,
-} from "solid-js";
+} from 'solid-js';
 
-export type Scheme = "light" | "dark";
+export type Scheme = 'light' | 'dark';
 
 interface Palette {
 	/** surface-1: the page. */
@@ -86,113 +83,117 @@ interface Palette {
 /** Both columns of `light-dark()` in app/globals.css, resolved. `color-mix()` is mixed offline. */
 const palettes: Record<Scheme, Palette> = {
 	light: {
-		background: "#FAFAFA",
-		chrome: "#EFEFEF",
-		surface2: "#FCFCFC",
-		card: "#FFFFFF",
-		surface5: "#FFFFFF",
-		foreground: "#171717",
-		mutedForeground: "#737373",
-		muted: "#F4F4F5",
-		border: "rgba(23,23,23,0.12)",
-		hover: "rgba(0,0,0,0.04)",
-		active: "rgba(0,0,0,0.07)",
-		tint: "rgba(0,0,0,0.08)",
-		tintHover: "rgba(0,0,0,0.065)",
-		focusRing: "#6B97FF",
-		primaryHover: "#292929",
-		primaryActive: "#3d3d3d",
-		mutedHalf: "rgba(244,244,245,0.5)",
-		shadowColor: "rgba(0,0,0,0.06)",
-		transparent: "rgba(0,0,0,0)",
-		accent: "#E5E5E5",
-		accentFaint: "rgba(229,229,229,0.4)",
-		borderFaint: "rgba(23,23,23,0.072)",
-		destructive: "#EF4444",
-		info: "#3B82F6",
-		success: "#22C55E",
-		warning: "#F59E0B",
-		selected: "#D4D4D4",
-		destructiveLight: "#FEF2F2",
-		overlay: "#000000",
-		borderStrong: "#A3A3A3",
-		surface4: "#FFFFFF",
-		surface6: "#FFFFFF",
-		surface7: "#FFFFFF",
-		surface8: "#FFFFFF",
-		checkerA: "#bbbbbb",
-		checkerB: "#ffffff",
-		scrim: "rgba(0,0,0,0.4)",
-		chatBubble: "#eeeeee",
-		queuedCard: "#f3f3f3",
-		accentWash: "rgba(229,229,229,0.2)",
-		selectedWash: "rgba(212,212,212,0.5)",
-		switchOn: "#6B97FF",
-		switchOnHover: "#5C89F2",
-		switchOffHover: "#CECECE",
-		shimmerBase: "#a3a3a3",
-		shimmerBright: "#525252",
+		background: '#FAFAFA',
+		chrome: '#EFEFEF',
+		surface2: '#FCFCFC',
+		card: '#FFFFFF',
+		surface5: '#FFFFFF',
+		foreground: '#171717',
+		mutedForeground: '#737373',
+		muted: '#F4F4F5',
+		border: 'rgba(23,23,23,0.12)',
+		hover: 'rgba(0,0,0,0.04)',
+		active: 'rgba(0,0,0,0.07)',
+		tint: 'rgba(0,0,0,0.08)',
+		tintHover: 'rgba(0,0,0,0.065)',
+		focusRing: '#6B97FF',
+		primaryHover: '#292929',
+		primaryActive: '#3d3d3d',
+		mutedHalf: 'rgba(244,244,245,0.5)',
+		shadowColor: 'rgba(0,0,0,0.06)',
+		transparent: 'rgba(0,0,0,0)',
+		accent: '#E5E5E5',
+		accentFaint: 'rgba(229,229,229,0.4)',
+		borderFaint: 'rgba(23,23,23,0.072)',
+		destructive: '#EF4444',
+		info: '#3B82F6',
+		success: '#22C55E',
+		warning: '#F59E0B',
+		selected: '#D4D4D4',
+		destructiveLight: '#FEF2F2',
+		overlay: '#000000',
+		borderStrong: '#A3A3A3',
+		surface4: '#FFFFFF',
+		surface6: '#FFFFFF',
+		surface7: '#FFFFFF',
+		surface8: '#FFFFFF',
+		checkerA: '#bbbbbb',
+		checkerB: '#ffffff',
+		scrim: 'rgba(0,0,0,0.4)',
+		chatBubble: '#eeeeee',
+		queuedCard: '#f3f3f3',
+		accentWash: 'rgba(229,229,229,0.2)',
+		selectedWash: 'rgba(212,212,212,0.5)',
+		switchOn: '#6B97FF',
+		switchOnHover: '#5C89F2',
+		switchOffHover: '#CECECE',
+		shimmerBase: '#a3a3a3',
+		shimmerBright: '#525252',
 	},
 	dark: {
-		background: "#171717",
-		chrome: "#0E0E0E",
-		surface2: "#1E1E1E",
-		card: "#252525",
-		surface5: "#333333",
-		foreground: "#F5F5F5",
-		mutedForeground: "#A3A3A3",
-		muted: "#1E1E1E",
-		border: "rgba(245,245,245,0.12)",
-		hover: "rgba(255,255,255,0.06)",
-		active: "rgba(255,255,255,0.1)",
-		tint: "rgba(255,255,255,0.25)",
-		tintHover: "rgba(255,255,255,0.2)",
-		focusRing: "#6B97FF",
-		primaryHover: "#dcdcdc",
-		primaryActive: "#c3c3c3",
-		mutedHalf: "rgba(30,30,30,0.5)",
-		shadowColor: "rgba(0,0,0,0.18)",
-		transparent: "rgba(0,0,0,0)",
-		accent: "#525252",
-		accentFaint: "rgba(82,82,82,0.4)",
-		borderFaint: "rgba(245,245,245,0.072)",
-		destructive: "#FCA5A5",
-		info: "#93C5FD",
-		success: "#86EFAC",
-		warning: "#FCD34D",
-		selected: "#525252",
-		destructiveLight: "#450A0A",
-		overlay: "#FFFFFF",
-		borderStrong: "#737373",
-		surface4: "#2C2C2C",
-		surface6: "#3A3A3A",
-		surface7: "#414141",
-		surface8: "#484848",
-		checkerA: "#1f1f1f",
-		checkerB: "#2a2a2a",
-		scrim: "rgba(0,0,0,0.8)",
-		chatBubble: "#363636",
-		queuedCard: "#292929",
-		accentWash: "rgba(82,82,82,0.12)",
-		selectedWash: "rgba(82,82,82,0.4)",
-		switchOn: "#6B97FF",
-		switchOnHover: "#5C89F2",
-		switchOffHover: "#636363",
-		shimmerBase: "#525252",
-		shimmerBright: "#a3a3a3",
+		background: '#171717',
+		chrome: '#0E0E0E',
+		surface2: '#1E1E1E',
+		card: '#252525',
+		surface5: '#333333',
+		foreground: '#F5F5F5',
+		mutedForeground: '#A3A3A3',
+		muted: '#1E1E1E',
+		border: 'rgba(245,245,245,0.12)',
+		hover: 'rgba(255,255,255,0.06)',
+		active: 'rgba(255,255,255,0.1)',
+		tint: 'rgba(255,255,255,0.25)',
+		tintHover: 'rgba(255,255,255,0.2)',
+		focusRing: '#6B97FF',
+		primaryHover: '#dcdcdc',
+		primaryActive: '#c3c3c3',
+		mutedHalf: 'rgba(30,30,30,0.5)',
+		shadowColor: 'rgba(0,0,0,0.18)',
+		transparent: 'rgba(0,0,0,0)',
+		accent: '#525252',
+		accentFaint: 'rgba(82,82,82,0.4)',
+		borderFaint: 'rgba(245,245,245,0.072)',
+		destructive: '#FCA5A5',
+		info: '#93C5FD',
+		success: '#86EFAC',
+		warning: '#FCD34D',
+		selected: '#525252',
+		destructiveLight: '#450A0A',
+		overlay: '#FFFFFF',
+		borderStrong: '#737373',
+		surface4: '#2C2C2C',
+		surface6: '#3A3A3A',
+		surface7: '#414141',
+		surface8: '#484848',
+		checkerA: '#1f1f1f',
+		checkerB: '#2a2a2a',
+		scrim: 'rgba(0,0,0,0.8)',
+		chatBubble: '#363636',
+		queuedCard: '#292929',
+		accentWash: 'rgba(82,82,82,0.12)',
+		selectedWash: 'rgba(82,82,82,0.4)',
+		switchOn: '#6B97FF',
+		switchOnHover: '#5C89F2',
+		switchOffHover: '#636363',
+		shimmerBase: '#525252',
+		shimmerBright: '#a3a3a3',
 	},
 };
 
-export type ThemeChoice = "system" | "light" | "dark";
+export type ThemeChoice = 'system' | 'light' | 'dark';
 
 export const THEMES = [
-	{ value: "system", label: "System", icon: "monitor" },
-	{ value: "light", label: "Light", icon: "sun" },
-	{ value: "dark", label: "Dark", icon: "moon" },
-] as const satisfies readonly { value: ThemeChoice; label: string; icon: string }[];
+	{ value: 'system', label: 'System', icon: 'monitor' },
+	{ value: 'light', label: 'Light', icon: 'sun' },
+	{ value: 'dark', label: 'Dark', icon: 'moon' },
+] as const satisfies readonly {
+	value: ThemeChoice;
+	label: string;
+	icon: string;
+}[];
 
 export const [themeChoice, setThemeChoice] =
-	createSignal<ThemeChoice>("system");
+	createSignal<ThemeChoice>('system');
 
 let systemScheme: Accessor<Scheme> | undefined;
 
@@ -238,10 +239,10 @@ export function scheme(): Scheme {
 		if (forced !== undefined) return forced;
 	}
 	const choice = themeChoice();
-	if (choice !== "system") return choice;
+	if (choice !== 'system') return choice;
 	if (systemScheme === undefined) {
 		throw new Error(
-			"The system scheme is unbound: call bindSystemScheme first",
+			'The system scheme is unbound: call bindSystemScheme first',
 		);
 	}
 	return systemScheme();
@@ -309,15 +310,15 @@ export const type = {
 	microCompact: { fontSize: 10, lineHeight: 12 },
 } as const;
 
-export type SizeChoice = "default" | "compact";
+export type SizeChoice = 'default' | 'compact';
 
 export const SIZES = [
-	{ value: "default", label: "Default" },
-	{ value: "compact", label: "Compact" },
+	{ value: 'default', label: 'Default' },
+	{ value: 'compact', label: 'Compact' },
 ] as const satisfies readonly { value: SizeChoice; label: string }[];
 
 /** The Size row of the customise card, and the ambient size components start from when a use gives none (`props.size ?? sizeChoice()`). */
-export const [sizeChoice, setSizeChoice] = createSignal<SizeChoice>("default");
+export const [sizeChoice, setSizeChoice] = createSignal<SizeChoice>('default');
 
 const siteTypeSteps = {
 	display: {
@@ -353,7 +354,9 @@ type SiteTypeRole = keyof typeof siteTypeSteps;
  * Components keep `type`: they follow their own size prop. Read it inside JSX props or effects, like `color`.
  */
 export const siteType = Object.defineProperties(
-	{} as { readonly [Role in SiteTypeRole]: { fontSize: number; lineHeight: number } },
+	{} as {
+		readonly [Role in SiteTypeRole]: { fontSize: number; lineHeight: number };
+	},
 	Object.fromEntries(
 		(Object.keys(siteTypeSteps) as SiteTypeRole[]).map((role) => [
 			role,
@@ -363,7 +366,7 @@ export const siteType = Object.defineProperties(
 );
 
 /** The static cuts are loaded in `lib/fonts.ts`. The site's semibold is variable `wght 550`; with static cuts only, SemiBold 600 is the nearest. */
-export const fontFamily = "Inter";
+export const fontFamily = 'Inter';
 export const weight = { normal: 400, medium: 500, semibold: 600 } as const;
 
 /** The rounded values, for surfaces the source pins to rounded (popups, menu rows). Everything else reads `shape`. */
@@ -373,22 +376,31 @@ export const radius = {
 	container: 12,
 } as const;
 
-export type ShapeChoice = "rounded" | "pill";
+export type ShapeChoice = 'rounded' | 'pill';
 
 export const SHAPES = [
-	{ value: "rounded", label: "Rounded", icon: "rectangle-horizontal" },
-	{ value: "pill", label: "Pill", icon: "circle" },
-] as const satisfies readonly { value: ShapeChoice; label: string; icon: string }[];
+	{ value: 'rounded', label: 'Rounded', icon: 'rectangle-horizontal' },
+	{ value: 'pill', label: 'Pill', icon: 'circle' },
+] as const satisfies readonly {
+	value: ShapeChoice;
+	label: string;
+	icon: string;
+}[];
 
-export const [shapeChoice, setShapeChoice] = createSignal<ShapeChoice>("rounded");
+export const [shapeChoice, setShapeChoice] =
+	createSignal<ShapeChoice>('rounded');
 
 /** Radius for a surface inset inside another rounded one, clamped at 0. */
-export function nestedRadius(outerRadius: number, inset: number, borderWidth = 0) {
+export function nestedRadius(
+	outerRadius: number,
+	inset: number,
+	borderWidth = 0,
+) {
 	return Math.max(0, outerRadius - inset - borderWidth);
 }
 
 function byShape(rounded: number, pill: number) {
-	return shapeChoice() === "pill" ? pill : rounded;
+	return shapeChoice() === 'pill' ? pill : rounded;
 }
 
 /**
@@ -433,11 +445,11 @@ export const height = {
  * the row, not the pointer.
  */
 export const motion = {
-	fast: { type: "spring", duration: 0.08, bounce: 0 },
-	moderate: { type: "spring", duration: 0.16, bounce: 0 },
+	fast: { type: 'spring', duration: 0.08, bounce: 0 },
+	moderate: { type: 'spring', duration: 0.16, bounce: 0 },
 	fastExit: { duration: 0.06 },
 	moderateExit: { duration: 0.12 },
-	slow: { type: "spring", duration: 0.24, bounce: 0.12 },
+	slow: { type: 'spring', duration: 0.24, bounce: 0.12 },
 	slowExit: { duration: 0.16 },
 	snap: { duration: 0 },
 } satisfies Record<string, MotionTransition>;
@@ -449,10 +461,10 @@ export const motion = {
 export function fade(
 	properties: readonly string[],
 	ms: number,
-	ease = "cubic-bezier(0.4, 0, 0.2, 1)",
+	ease = 'cubic-bezier(0.4, 0, 0.2, 1)',
 ) {
 	return {
-		transitionProperty: properties.join(","),
+		transitionProperty: properties.join(','),
 		transitionDuration: `${ms}ms`,
 		transitionTimingFunction: ease,
 	};
@@ -462,7 +474,7 @@ export function fade(
  * Tailwind v4's `transition-colors` list. `text-decoration-color`, `fill` and `stroke` are left out: gpuix's CSS
  * transitions do not animate them, and an icon's strokes follow `color` through `currentColor`.
  */
-const COLORS = ["color", "background-color", "border-color", "outline-color"];
+const COLORS = ['color', 'background-color', 'border-color', 'outline-color'];
 
 /** `transition-colors duration-80`, the source's usual: Tailwind's default curve over 80 ms. */
 export const colorFade = fade(COLORS, 80);
@@ -475,7 +487,7 @@ export const colorFadeDefault = fade(COLORS, 150);
  * and so must not fade in with the colours. Default curve unless `ease` is given.
  */
 export function colorFadeNoRing(ms: number, ease?: string) {
-	return fade(["color", "background-color", "border-color"], ms, ease);
+	return fade(['color', 'background-color', 'border-color'], ms, ease);
 }
 
 /**
@@ -484,7 +496,7 @@ export function colorFadeNoRing(ms: number, ease?: string) {
  * 0.015 of it across the 80 ms).
  */
 export function springFade(properties: readonly string[]) {
-	return fade(properties, 80, "cubic-bezier(0.2, 0.05, 0.2, 1)");
+	return fade(properties, 80, 'cubic-bezier(0.2, 0.05, 0.2, 1)');
 }
 
 /**
@@ -493,11 +505,11 @@ export function springFade(properties: readonly string[]) {
  * on the way out. The focus ring and the disabled dim stay out of the list: the source does not ease them either.
  */
 export const surfaceFade = {
-	transitionProperty: "box-shadow,background-color",
-	transitionDuration: "180ms,80ms",
-	transitionTimingFunction: "cubic-bezier(0.23,1,0.32,1),ease",
+	transitionProperty: 'box-shadow,background-color',
+	transitionDuration: '180ms,80ms',
+	transitionTimingFunction: 'cubic-bezier(0.23,1,0.32,1),ease',
 };
-export const pressFade = { ...surfaceFade, transitionDuration: "80ms,80ms" };
+export const pressFade = { ...surfaceFade, transitionDuration: '80ms,80ms' };
 
 /** The `focus-visible` ring: a 1px outline `offset` px from the box (negative draws inside). */
 export function focusRing(offset: number): StateStyleDesc {
@@ -510,13 +522,13 @@ export function focusRing(offset: number): StateStyleDesc {
 
 /** The drops of the ladder, level 2 up: offset, blur and spread each double from 1px. */
 const DROPS = [
-	"0 1px 1px -0.5px",
-	"0 3px 3px -1.5px",
-	"0 6px 6px -3px",
-	"0 12px 12px -6px",
-	"0 24px 24px -12px",
-	"0 48px 48px -24px",
-	"0 96px 96px -48px",
+	'0 1px 1px -0.5px',
+	'0 3px 3px -1.5px',
+	'0 6px 6px -3px',
+	'0 12px 12px -6px',
+	'0 24px 24px -12px',
+	'0 48px 48px -24px',
+	'0 96px 96px -48px',
 ] as const;
 
 /** The dark ladder per level: the inset highlight and ring alphas, and the outer hairline's. */
@@ -537,11 +549,11 @@ export function shadow(level: number): string {
 		throw new Error(`There is no shadow level ${level}`);
 	}
 	const drops = DROPS.slice(0, level - 1);
-	if (scheme() === "light") {
+	if (scheme() === 'light') {
 		return [
 			`0 0 0 1px ${color.shadowColor}`,
 			...drops.map((drop) => `${drop} ${color.shadowColor}`),
-		].join(", ");
+		].join(', ');
 	}
 	const step = DARK_STEPS[level - 1];
 	const layers: string[] = [];
@@ -553,13 +565,13 @@ export function shadow(level: number): string {
 		layers.push(`0 0 0 1px rgba(0,0,0,${step.hairline})`);
 	}
 	for (const drop of drops) layers.push(`${drop} ${color.shadowColor}`);
-	return layers.join(", ");
+	return layers.join(', ');
 }
 
 /** Tailwind v4's `shadow-sm`, `shadow-md`, `shadow-lg` and `shadow-xl`, both drops of each (`shadow-sm` is also the bare `shadow`). */
 export const twShadow = {
-	sm: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
-	md: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
-	lg: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
-	xl: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
+	sm: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+	md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+	lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+	xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
 } as const;

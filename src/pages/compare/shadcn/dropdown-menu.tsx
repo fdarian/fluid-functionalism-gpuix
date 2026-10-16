@@ -1,8 +1,8 @@
-import { For, Show } from "solid-js";
-import type { IconName } from "#/lib/icons";
-import { twShadow, weight } from "#/lib/theme";
-import { LUCIDE, LucideIcon, lucideGlyph, pressProps } from "./parts";
-import { sc, scRadius } from "./theme";
+import { For, Show } from 'solid-js';
+import type { IconName } from '#/lib/icons';
+import { twShadow, weight } from '#/lib/theme';
+import { LUCIDE, LucideIcon, lucideGlyph, pressProps } from './parts';
+import { sc, scRadius } from './theme';
 
 /**
  * The preview's static-open `DropdownMenu`: the content markup with no portal, so it sits inside the shadcn scope.
@@ -19,9 +19,9 @@ export function ScDropdownMenu(props: {
 			role="menu"
 			testId={props.testId}
 			style={{
-				alignSelf: "center",
-				display: "flex",
-				flexDirection: "column",
+				alignSelf: 'center',
+				display: 'flex',
+				flexDirection: 'column',
 				minWidth: 224,
 				padding: 4,
 				borderRadius: scRadius.md,
@@ -47,10 +47,10 @@ export function ScDropdownMenu(props: {
 									: `${props.testId}-${item.value}`
 							}
 							style={{
-								position: "relative",
-								display: "flex",
-								flexDirection: "row",
-								alignItems: "center",
+								position: 'relative',
+								display: 'flex',
+								flexDirection: 'row',
+								alignItems: 'center',
 								gap: 8,
 								paddingTop: 8,
 								paddingBottom: 8,
@@ -63,14 +63,14 @@ export function ScDropdownMenu(props: {
 						>
 							<div
 								style={{
-									position: "absolute",
+									position: 'absolute',
 									left: 8,
 									top: 0,
 									bottom: 0,
 									width: 14,
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "center",
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
 								}}
 							>
 								<Show when={selected()}>
@@ -93,7 +93,7 @@ export function ScDropdownMenu(props: {
 									fontSize: 13,
 									lineHeight: 19.5,
 									fontWeight: weight.normal,
-									whiteSpace: "nowrap",
+									whiteSpace: 'nowrap',
 									color: sc.popoverForeground,
 								}}
 							>

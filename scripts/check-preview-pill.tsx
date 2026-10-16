@@ -10,11 +10,11 @@
  * and stepped 16 ms a frame, so the samples are the same on every run: only a
  * start left of tab 2's own edge is asserted.
  */
-import { createTestRoot } from "@gpuix/solid/testing";
-import { App } from "#/app";
-import { loadDemos, loadPages } from "#/lib/demo";
-import { fonts } from "#/lib/fonts";
-import { setThemeChoice } from "#/lib/theme";
+import { createTestRoot } from '@gpuix/solid/testing';
+import { App } from '#/app';
+import { loadDemos, loadPages } from '#/lib/demo';
+import { fonts } from '#/lib/fonts';
+import { setThemeChoice } from '#/lib/theme';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const test = createTestRoot({ width: 1240, height: 780, fonts });
@@ -53,22 +53,22 @@ async function moveTo(testId: string, ms: number) {
 
 const demos = await loadDemos();
 const pages = await loadPages(demos);
-setThemeChoice("dark");
+setThemeChoice('dark');
 test.render(() => (
-	<App demos={demos} pages={pages} initialPage={process.argv[2] ?? "tabs"} />
+	<App demos={demos} pages={pages} initialPage={process.argv[2] ?? 'tabs'} />
 ));
 await settle(800);
 
-const list = process.argv[3] ?? "basic-list";
+const list = process.argv[3] ?? 'basic-list';
 const tabs = (
 	process.argv[4] ??
-	"basic-library,basic-recents,basic-favorites,basic-settings"
-).split(",");
+	'basic-library,basic-recents,basic-favorites,basic-settings'
+).split(',');
 const [selected, , far, last] = tabs as [string, string, string, string];
 
 /** The x of the pill on each 16 ms frame after the last move, the motion clock held from the move on. */
 async function run() {
-	await moveTo("theme", 300);
+	await moveTo('theme', 300);
 	await moveTo(far, 400);
 	await moveTo(selected, 400);
 	const lastBox = need(last);
@@ -85,7 +85,7 @@ async function run() {
 		if (pill !== undefined) xs.push(pill.x);
 	}
 	renderer.clockResume();
-	if (xs.length === 0) throw new Error("no preview pill");
+	if (xs.length === 0) throw new Error('no preview pill');
 	return xs;
 }
 
@@ -94,7 +94,7 @@ const farBox = need(far);
 const xs = await run();
 const ok = Math.min(...xs) < farBox.x;
 console.log(
-	`${ok ? "PASS" : "FAIL"} preview pill leaves the selected tab: x per frame ${xs.map((x) => x.toFixed(0)).join(" ")}; selected tab x ${box.x.toFixed(1)}, previously hovered tab x ${farBox.x.toFixed(1)}`,
+	`${ok ? 'PASS' : 'FAIL'} preview pill leaves the selected tab: x per frame ${xs.map((x) => x.toFixed(0)).join(' ')}; selected tab x ${box.x.toFixed(1)}, previously hovered tab x ${farBox.x.toFixed(1)}`,
 );
 test.unmount();
 process.exit(ok ? 0 : 1);

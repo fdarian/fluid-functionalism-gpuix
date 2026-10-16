@@ -1,20 +1,20 @@
-import { For } from "solid-js";
-import { NavItem } from "#/components/nav-item";
-import { NavMenu } from "#/components/nav-menu";
-import type { ShotContext } from "#/lib/demo";
-import { usePageNav } from "#/lib/page-nav";
-import { CONCEPTS, ConceptFrame } from "#/pages/concepts/frame";
+import { For } from 'solid-js';
+import { NavItem } from '#/components/nav-item';
+import { NavMenu } from '#/components/nav-menu';
+import type { ShotContext } from '#/lib/demo';
+import { usePageNav } from '#/lib/page-nav';
+import { CONCEPTS, ConceptFrame } from '#/pages/concepts/frame';
 
-export const title = "Concepts";
-export const group = "Pages";
+export const title = 'Concepts';
+export const group = 'Pages';
 export const order = 30;
-export const layout = "full";
-export const listed = "menu";
-export const menuKeywords = ["concepts", "mockups"];
+export const layout = 'full';
+export const listed = 'menu';
+export const menuKeywords = ['concepts', 'mockups'];
 
 export async function scenarios(shot: ShotContext) {
-	await shot.hover("concepts-index-concepts-beacon");
-	shot.capture("hover");
+	await shot.hover('concepts-index-concepts-beacon');
+	shot.capture('hover');
 }
 
 export function Page() {
@@ -24,9 +24,9 @@ export function Page() {
 			<div
 				style={{
 					flexGrow: 1,
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
 					paddingLeft: 24,
 					paddingRight: 24,
 				}}

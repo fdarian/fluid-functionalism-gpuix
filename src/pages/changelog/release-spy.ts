@@ -1,6 +1,6 @@
-import { createReducedMotion, type HostElement } from "@gpuix/solid";
-import { createEffect, createSignal, onCleanup, useContext } from "solid-js";
-import { PageScrollContext, PageScrollerContext } from "#/lib/demo-kit";
+import { createReducedMotion, type HostElement } from '@gpuix/solid';
+import { createEffect, createSignal, onCleanup, useContext } from 'solid-js';
+import { PageScrollContext, PageScrollerContext } from '#/lib/demo-kit';
 
 /** The line a month must cross to count as the one being read: a quarter of the way down the scroller. */
 const SPY_LINE = 0.25;
@@ -14,13 +14,14 @@ const BOTTOM_SLACK = 2;
  * `createReleaseSpy` writes them.
  */
 const [activeMonth, setActiveMonth] = createSignal<string>();
+
 export { activeMonth };
 
 let jump: ((month: string) => void) | undefined;
 
 export function scrollToMonth(month: string) {
 	if (jump === undefined) {
-		throw new Error("No changelog page is mounted to scroll");
+		throw new Error('No changelog page is mounted to scroll');
 	}
 	jump(month);
 }
@@ -41,7 +42,10 @@ export function createReleaseSpy(months: readonly string[]) {
 	const sections = new Map<string, HostElement>();
 
 	const update = (root: HostElement) => {
-		if (root.scrollTop + root.clientHeight >= root.scrollHeight - BOTTOM_SLACK) {
+		if (
+			root.scrollTop + root.clientHeight >=
+			root.scrollHeight - BOTTOM_SLACK
+		) {
 			setActiveMonth(months[months.length - 1]);
 			return;
 		}
@@ -74,7 +78,7 @@ export function createReleaseSpy(months: readonly string[]) {
 					section.getBoundingClientRect().top -
 					root.getBoundingClientRect().top -
 					SCROLL_MARGIN,
-				behavior: reduced() ? "instant" : "smooth",
+				behavior: reduced() ? 'instant' : 'smooth',
 			});
 		};
 		onCleanup(() => {

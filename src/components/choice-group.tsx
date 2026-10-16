@@ -3,7 +3,7 @@ import {
 	type HostElement,
 	type KeyEvent,
 	useGpuixRequired,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	type Accessor,
 	createComputed,
@@ -17,25 +17,25 @@ import {
 	onCleanup,
 	untrack,
 	useContext,
-} from "solid-js";
-import { FluidHighlight } from "#/lib/fluid-highlight";
-import { createFluidHover, type FluidHover } from "#/lib/fluid-hover";
+} from 'solid-js';
+import { FluidHighlight } from '#/lib/fluid-highlight';
+import { createFluidHover, type FluidHover } from '#/lib/fluid-hover';
 import {
 	createFocusRing,
 	FocusRing,
 	type FocusRingState,
-} from "#/lib/focus-ring";
-import { StableLabel } from "#/lib/stable-label";
+} from '#/lib/focus-ring';
+import { StableLabel } from '#/lib/stable-label';
 import {
 	color,
 	fade,
-	shape,
-	sizeChoice,
 	type as scale,
 	scheme,
+	shape,
+	sizeChoice,
 	motion as tween,
 	weight,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
 /**
  * What checkbox-group and radio-group share: a vertical list of focusable
@@ -43,7 +43,7 @@ import {
  * selected runs and the hover highlight) painted by the group.
  */
 
-export type ChoiceSize = "default" | "compact";
+export type ChoiceSize = 'default' | 'compact';
 
 export const ROW = {
 	default: { height: 36, gap: 8, padX: 12, box: 16, text: scale.body },
@@ -127,7 +127,7 @@ interface ChoiceContextValue {
 	arrowsSelect: boolean;
 	registerRow(index: number, entry: RowEntry): void;
 	/** Moves focus `delta` rows on, wrapping; `"first"` / `"last"` jump. */
-	focusFrom(index: number, step: number | "first" | "last"): void;
+	focusFrom(index: number, step: number | 'first' | 'last'): void;
 }
 
 const ChoiceContext = createContext<ChoiceContextValue>();
@@ -135,13 +135,13 @@ const ChoiceContext = createContext<ChoiceContextValue>();
 function useChoice() {
 	const context = useContext(ChoiceContext);
 	if (context === undefined) {
-		throw new Error("A choice row must be inside a choice group");
+		throw new Error('A choice row must be inside a choice group');
 	}
 	return context;
 }
 
 export function ChoiceGroup(props: {
-	role: "group" | "radiogroup";
+	role: 'group' | 'radiogroup';
 	size?: ChoiceSize;
 	runs: Accessor<readonly Run[]>;
 	/** Arrow keys select the row they land on, as native radios do. */
@@ -154,7 +154,7 @@ export function ChoiceGroup(props: {
 	const renderer = useGpuixRequired();
 	const focusElement = renderer.focusElement;
 	if (focusElement === undefined) {
-		throw new Error("This renderer does not expose focusElement");
+		throw new Error('This renderer does not expose focusElement');
 	}
 	const hover = createFluidHover();
 	const focusRing = createFocusRing(hover);
@@ -220,9 +220,9 @@ export function ChoiceGroup(props: {
 			if (order.length === 0) return;
 			const position = order.indexOf(index);
 			const target =
-				step === "first"
+				step === 'first'
 					? 0
-					: step === "last"
+					: step === 'last'
 						? order.length - 1
 						: (position + step + order.length) % order.length;
 			const entry = rows.get(order[target]);
@@ -239,12 +239,12 @@ export function ChoiceGroup(props: {
 				role={props.role}
 				{...hover.containerProps}
 				style={{
-					position: "relative",
-					display: "flex",
-					flexDirection: "column",
+					position: 'relative',
+					display: 'flex',
+					flexDirection: 'column',
 					width: 288,
-					maxWidth: "100%",
-					userSelect: "none",
+					maxWidth: '100%',
+					userSelect: 'none',
 				}}
 			>
 				<For each={shownRunIds()}>
@@ -253,7 +253,7 @@ export function ChoiceGroup(props: {
 							rect={runRect(id)}
 							session={() => 0}
 							fadeIn={false}
-							radius={props.role === "radiogroup" ? shape.bg : shape.mergedBg}
+							radius={props.role === 'radiogroup' ? shape.bg : shape.mergedBg}
 							background={color.active}
 							glide={tween.moderate}
 							fade={tween.moderateExit}
@@ -280,7 +280,7 @@ export function ChoiceGroup(props: {
 export function ChoiceRow(props: {
 	index: number;
 	label: string;
-	role: "checkbox" | "radio";
+	role: 'checkbox' | 'radio';
 	checked: boolean;
 	/** Whether Tab stops here. Checkboxes always do; a radio group only on its selected row. */
 	tabbable: boolean;
@@ -298,7 +298,7 @@ export function ChoiceRow(props: {
 	let element: HostElement | undefined;
 
 	createEffect(() => {
-		if (element === undefined) throw new Error("Row is not mounted");
+		if (element === undefined) throw new Error('Row is not mounted');
 		context.hover.registerItem(props.index, element);
 		context.registerRow(props.index, {
 			element,
@@ -309,28 +309,28 @@ export function ChoiceRow(props: {
 	// No `isHeld` guard: as in FF, a held arrow keeps walking and a held Space or Enter repeats.
 	const onKeyDown = (event: KeyEvent) => {
 		switch (event.key) {
-			case " ":
-			case "Enter":
+			case ' ':
+			case 'Enter':
 				event.preventDefault();
 				props.onActivate();
 				return;
-			case "ArrowDown":
+			case 'ArrowDown':
 				context.focusFrom(props.index, 1);
 				return;
-			case "ArrowUp":
+			case 'ArrowUp':
 				context.focusFrom(props.index, -1);
 				return;
-			case "ArrowRight":
+			case 'ArrowRight':
 				if (context.arrowsSelect) context.focusFrom(props.index, 1);
 				return;
-			case "ArrowLeft":
+			case 'ArrowLeft':
 				if (context.arrowsSelect) context.focusFrom(props.index, -1);
 				return;
-			case "Home":
-				context.focusFrom(props.index, "first");
+			case 'Home':
+				context.focusFrom(props.index, 'first');
 				return;
-			case "End":
-				context.focusFrom(props.index, "last");
+			case 'End':
+				context.focusFrom(props.index, 'last');
 				return;
 		}
 	};
@@ -359,18 +359,18 @@ export function ChoiceRow(props: {
 				}
 			}}
 			style={{
-				position: "relative",
+				position: 'relative',
 				zIndex: 10,
 				height: size().height,
 				flexShrink: 0,
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: size().gap,
 				paddingLeft: size().padX,
 				paddingRight: size().padX,
 				borderRadius: shape.item,
-				cursor: "pointer",
+				cursor: 'pointer',
 				keyboardFocusDim: false,
 			}}
 		>
@@ -396,4 +396,4 @@ export function indicatorBorder(selected: boolean, active: boolean) {
 }
 
 /** The source's `transition-all duration-80` on the indicator: the border colour is the one property that changes. */
-export const indicatorFade = fade(["border-color"], 80);
+export const indicatorFade = fade(['border-color'], 80);

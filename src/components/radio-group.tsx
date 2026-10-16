@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "@gpuix/solid";
+import { AnimatePresence, motion } from '@gpuix/solid';
 import {
 	createContext,
 	createMemo,
@@ -7,8 +7,8 @@ import {
 	onCleanup,
 	Show,
 	useContext,
-} from "solid-js";
-import { color, sizeChoice, motion as tween } from "#/lib/theme";
+} from 'solid-js';
+import { color, sizeChoice, motion as tween } from '#/lib/theme';
 import {
 	ChoiceGroup,
 	ChoiceRow,
@@ -16,7 +16,7 @@ import {
 	indicatorBorder,
 	indicatorFade,
 	ROW,
-} from "./choice-group";
+} from './choice-group';
 
 /** The dot pops in from 30% of its size and shrinks back out over 40 ms. */
 const DOT_FROM = 0.3;
@@ -41,7 +41,7 @@ const RadioContext = createContext<RadioContextValue>();
 function useRadio() {
 	const context = useContext(RadioContext);
 	if (context === undefined) {
-		throw new Error("A RadioItem must be inside a RadioGroup");
+		throw new Error('A RadioItem must be inside a RadioGroup');
 	}
 	return context;
 }
@@ -74,9 +74,7 @@ export function RadioGroup(props: {
 	// FF paints the selected background only for the `value` and `selectedIndex` APIs; a group driven by per-item `selected` has none.
 	const runs = createMemo(() => {
 		const index =
-			props.value !== undefined
-				? selectedIndex()
-				: props.selectedIndex;
+			props.value !== undefined ? selectedIndex() : props.selectedIndex;
 		return index === undefined ? [] : [{ start: index, end: index, id: 0 }];
 	});
 
@@ -115,9 +113,13 @@ export function RadioGroup(props: {
 }
 
 /** The circle and its dot. */
-function Radio(props: { selected: boolean; active: boolean; size: ChoiceSize }) {
+function Radio(props: {
+	selected: boolean;
+	active: boolean;
+	size: ChoiceSize;
+}) {
 	const box = () => ROW[props.size].box;
-	const dot = () => (props.size === "compact" ? 7 : 8);
+	const dot = () => (props.size === 'compact' ? 7 : 8);
 	const dotAt = (size: number) => ({
 		left: (box() - size) / 2,
 		top: (box() - size) / 2,
@@ -127,7 +129,7 @@ function Radio(props: { selected: boolean; active: boolean; size: ChoiceSize }) 
 	return (
 		<div
 			style={{
-				position: "relative",
+				position: 'relative',
 				flexShrink: 0,
 				width: box(),
 				height: box(),
@@ -135,7 +137,7 @@ function Radio(props: { selected: boolean; active: boolean; size: ChoiceSize }) 
 		>
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					right: 0,
@@ -154,7 +156,7 @@ function Radio(props: { selected: boolean; active: boolean; size: ChoiceSize }) 
 						exit={{ opacity: 0, ...dotAt(dot() * DOT_FROM) }}
 						transition={props.selected ? tween.fast : DOT_OUT}
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							borderRadius: 9999,
 							backgroundColor: color.foreground,
 						}}
@@ -207,11 +209,7 @@ export function RadioItem(props: {
 			onActivate={select}
 			testId={props.testId}
 			indicator={(active) => (
-				<Radio
-					selected={isSelected()}
-					active={active()}
-					size={radio.size()}
-				/>
+				<Radio selected={isSelected()} active={active()} size={radio.size()} />
 			)}
 		/>
 	);

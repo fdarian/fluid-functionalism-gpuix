@@ -1,18 +1,18 @@
-import { type HostElement, motion } from "@gpuix/solid";
-import { createMemo, createSignal, For } from "solid-js";
+import { type HostElement, motion } from '@gpuix/solid';
+import { createMemo, createSignal, For } from 'solid-js';
 import {
 	createFluidHover,
 	type ItemRect,
 	useHoverItem,
-} from "#/lib/fluid-hover";
+} from '#/lib/fluid-hover';
 import {
 	color,
 	colorFade,
-	motion as tween,
 	siteType,
+	motion as tween,
 	weight,
 	withAlpha,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
 // The "What it does" timeline: one continuous line from the top of the first
 // title to the end of the last description. ONE dot glides between steps with
@@ -85,7 +85,7 @@ export function Timeline(props: { steps: { title: string; body: string }[] }) {
 		return gliding ? tween.fast : tween.snap;
 	});
 
-	const gradient = (direction: "to top" | "to bottom") =>
+	const gradient = (direction: 'to top' | 'to bottom') =>
 		`linear-gradient(${direction}, ${withAlpha(color.mutedForeground, 0.7)}, ${withAlpha(color.mutedForeground, 0)})`;
 
 	return (
@@ -97,20 +97,20 @@ export function Timeline(props: { steps: { title: string; body: string }[] }) {
 				onMouseMove={hover.handlers.onMouseMove}
 				onMouseLeave={hover.handlers.onMouseLeave}
 				style={{
-					position: "relative",
-					display: "flex",
-					flexDirection: "column",
+					position: 'relative',
+					display: 'flex',
+					flexDirection: 'column',
 				}}
 			>
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						left: LINE_LEFT,
 						top: lineStart(),
 						width: 1,
 						height: lineEnd() - lineStart(),
 						backgroundColor: color.border,
-						pointerEvents: "none",
+						pointerEvents: 'none',
 					}}
 				/>
 				{/* The gliding highlight: lines above and below the dot, then the dot. It is positioned, so it paints over the in-flow rows, as the source's `z-10` lines and dot do. */}
@@ -122,11 +122,11 @@ export function Timeline(props: { steps: { title: string; body: string }[] }) {
 					}}
 					transition={move()}
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						left: LINE_LEFT,
 						width: 1,
-						backgroundImage: gradient("to top"),
-						pointerEvents: "none",
+						backgroundImage: gradient('to top'),
+						pointerEvents: 'none',
 					}}
 				/>
 				<motion.div
@@ -137,11 +137,11 @@ export function Timeline(props: { steps: { title: string; body: string }[] }) {
 					}}
 					transition={move()}
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						left: LINE_LEFT,
 						width: 1,
-						backgroundImage: gradient("to bottom"),
-						pointerEvents: "none",
+						backgroundImage: gradient('to bottom'),
+						pointerEvents: 'none',
 					}}
 				/>
 				<motion.div
@@ -149,14 +149,14 @@ export function Timeline(props: { steps: { title: string; body: string }[] }) {
 					animate={{ top: (center() ?? 0) - DOT / 2 }}
 					transition={move()}
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						left: DOT_LEFT,
 						width: DOT,
 						height: DOT,
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						pointerEvents: "none",
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						pointerEvents: 'none',
 					}}
 				>
 					{/* Grows from nothing as it fades in and shrinks back to nothing as it fades out; leaving, the fade waits half the spring so the shrink reads first. */}
@@ -206,8 +206,8 @@ function Step(props: {
 		<div
 			ref={setElement}
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				paddingLeft: 24,
 				paddingBottom: props.last ? 0 : 16,
 			}}

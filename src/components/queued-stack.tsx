@@ -4,33 +4,27 @@ import {
 	type HostMouseEvent,
 	type HostMouseMoveEvent,
 	type HostPointerEvent,
-	motion,
 	type MotionTransition,
+	motion,
 	ResizeObserver,
 	useIsPresent,
-} from "@gpuix/solid";
-import {
-	createEffect,
-	createSignal,
-	For,
-	onCleanup,
-	Show,
-} from "solid-js";
-import { Icon } from "#/lib/icon";
-import type { IconRef } from "#/lib/icons";
-import { createPointerCapture } from "#/lib/pointer-capture";
+} from '@gpuix/solid';
+import { createEffect, createSignal, For, onCleanup, Show } from 'solid-js';
+import { Icon } from '#/lib/icon';
+import type { IconRef } from '#/lib/icons';
+import { createPointerCapture } from '#/lib/pointer-capture';
 import {
 	color,
 	nestedRadius,
-	shape,
 	type as scale,
 	scheme,
 	shadow,
+	shape,
 	motion as tween,
 	weight,
-} from "#/lib/theme";
-import { type FileLike, FileThumbnail } from "./file-thumbnail";
-import { Tooltip } from "./tooltip";
+} from '#/lib/theme';
+import { type FileLike, FileThumbnail } from './file-thumbnail';
+import { Tooltip } from './tooltip';
 
 /** A message held back while the assistant is replying: its text and a snapshot of what was attached. */
 export interface QueuedMessage {
@@ -52,7 +46,7 @@ const DRAG_SCALE = 1.03;
 const settle = tween.moderate;
 /** The recoil on enqueue: `{ type: "spring", duration: 0.42, bounce: 0.5 }`. */
 const recoil = {
-	type: "spring",
+	type: 'spring',
 	duration: 0.42,
 	bounce: 0.5,
 } satisfies MotionTransition;
@@ -90,11 +84,11 @@ function CardAction(props: {
 					width: 32,
 					height: 32,
 					flexShrink: 0,
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
 					borderRadius: shape.button,
-					cursor: "pointer",
+					cursor: 'pointer',
 					hover: { backgroundColor: color.hover },
 				}}
 			>
@@ -146,7 +140,7 @@ export function QueuedStack(props: {
 
 	const stackBox = () => {
 		if (stackElement === undefined || !stackElement.mounted) {
-			throw new Error("Stack is not mounted");
+			throw new Error('Stack is not mounted');
 		}
 		return stackElement.getBoundingClientRect();
 	};
@@ -161,7 +155,7 @@ export function QueuedStack(props: {
 	const onDragMove = (event: HostMouseMoveEvent) => {
 		const downId = pointerDownId();
 		if (downId === null) return;
-		if (event.y === undefined) throw new Error("mouseMove without coordinates");
+		if (event.y === undefined) throw new Error('mouseMove without coordinates');
 		if (draggingId() === null) {
 			if (Math.abs(event.y - dragStartY) < DRAG_THRESHOLD) return;
 			setDraggingId(downId);
@@ -253,7 +247,7 @@ export function QueuedStack(props: {
 						if (stackElement !== undefined)
 							widthObserver.unobserve(stackElement);
 						stackElement = element;
-						widthObserver.observe(element, { box: "border-box" });
+						widthObserver.observe(element, { box: 'border-box' });
 					}}
 					initial={{ opacity: 0 }}
 					animate={{
@@ -267,7 +261,7 @@ export function QueuedStack(props: {
 					onMouseEnter={() => setOverStack(true)}
 					onMouseLeave={() => setOverStack(false)}
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						left: 0,
 						right: 0,
 						bottom: props.bottom,
@@ -279,7 +273,7 @@ export function QueuedStack(props: {
 						animate={{ top: -bump(), bottom: bump() }}
 						transition={bumpTransition()}
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							left: 0,
 							right: 0,
 							top: 0,
@@ -288,7 +282,7 @@ export function QueuedStack(props: {
 					>
 						<div
 							style={{
-								position: "absolute",
+								position: 'absolute',
 								left: 0,
 								bottom: 0,
 								width: GUTTER,
@@ -296,15 +290,15 @@ export function QueuedStack(props: {
 							}}
 						>
 							<Tooltip
-								content={`${count()} queued message${count() === 1 ? "" : "s"}`}
+								content={`${count()} queued message${count() === 1 ? '' : 's'}`}
 								side="left"
 							>
 								<div
 									style={{
-										display: "flex",
-										flexDirection: "row",
-										alignItems: "center",
-										justifyContent: "flex-end",
+										display: 'flex',
+										flexDirection: 'row',
+										alignItems: 'center',
+										justifyContent: 'flex-end',
 										gap: 4,
 										paddingRight: 4,
 										width: GUTTER,
@@ -325,7 +319,7 @@ export function QueuedStack(props: {
 														lineHeight: 10,
 														fontWeight: weight.semibold,
 														color: color.mutedForeground,
-														fontVariantNumeric: "tabular-nums",
+														fontVariantNumeric: 'tabular-nums',
 													}}
 												>
 													{String(count())}
@@ -361,7 +355,7 @@ export function QueuedStack(props: {
 										expanded={expanded}
 										onPress={(event) => {
 											if (event.y === undefined) {
-												throw new Error("mouseDown without coordinates");
+												throw new Error('mouseDown without coordinates');
 											}
 											dragStartY = event.y;
 											setDragBottom(slotBottom(props.queue.indexOf(item)));
@@ -415,12 +409,12 @@ function QueueCard(props: {
 	onRemove: () => void;
 }) {
 	const [hovered, setHovered] = createSignal(false);
-	const region = createPointerCapture("QueueCard");
+	const region = createPointerCapture('QueueCard');
 	const present = useIsPresent();
 	const files = () => props.item.files;
 	const label = () =>
 		props.item.text ||
-		`${files().length} attachment${files().length === 1 ? "" : "s"}`;
+		`${files().length} attachment${files().length === 1 ? '' : 's'}`;
 	return (
 		<motion.div
 			testId={`queued-${props.item.id}`}
@@ -442,21 +436,21 @@ function QueueCard(props: {
 				setHovered(false);
 			}}
 			style={{
-				position: "absolute",
+				position: 'absolute',
 				zIndex: props.dragging() ? 200 : 100 - props.index(),
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: 8,
 				paddingLeft: files().length > 0 ? 8 : 14,
 				paddingRight: 6,
-				overflow: "hidden",
+				overflow: 'hidden',
 				borderRadius: shape.bg,
 				boxShadow: shadow(3),
 				backgroundColor: color.queuedCard,
-				userSelect: "none",
-				cursor: props.expanded() ? "grab" : "default",
-				active: { cursor: "grabbing" },
+				userSelect: 'none',
+				cursor: props.expanded() ? 'grab' : 'default',
+				active: { cursor: 'grabbing' },
 			}}
 		>
 			{/*
@@ -477,10 +471,10 @@ function QueueCard(props: {
 					if (event.clickCount === 2) props.onEdit();
 				}}
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					alignSelf: "stretch",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					alignSelf: 'stretch',
 					flexGrow: 1,
 					minWidth: 0,
 				}}
@@ -488,25 +482,31 @@ function QueueCard(props: {
 				<Show when={files().length > 0}>
 					<div
 						style={{
-							display: "flex",
-							flexDirection: "row",
-							alignItems: "center",
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'center',
 							flexShrink: 0,
 							gap: 4,
 							marginRight: 8,
 						}}
 					>
 						<For each={files().slice(0, 3)}>
-							{(file) => <FileThumbnail file={file} size={28} radius={nestedRadius(shape.bg, 8)} />}
+							{(file) => (
+								<FileThumbnail
+									file={file}
+									size={28}
+									radius={nestedRadius(shape.bg, 8)}
+								/>
+							)}
 						</For>
 						<Show when={files().length > 3}>
 							<div
 								style={{
 									width: 28,
 									height: 28,
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "center",
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
 									backgroundColor: color.hover,
 								}}
 							>
@@ -514,7 +514,7 @@ function QueueCard(props: {
 									style={{
 										...scale.micro,
 										color: color.foreground,
-										fontVariantNumeric: "tabular-nums",
+										fontVariantNumeric: 'tabular-nums',
 									}}
 								>
 									{`+${files().length - 3}`}
@@ -529,8 +529,8 @@ function QueueCard(props: {
 							fontSize: 14,
 							lineHeight: 20,
 							color: color.mutedForeground,
-							whiteSpace: "nowrap",
-							textOverflow: "ellipsis",
+							whiteSpace: 'nowrap',
+							textOverflow: 'ellipsis',
 						}}
 					>
 						{label()}
@@ -541,9 +541,9 @@ function QueueCard(props: {
 			<Show when={hovered()}>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
 						flexShrink: 0,
 						gap: 4,
 					}}

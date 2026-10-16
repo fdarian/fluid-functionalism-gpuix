@@ -9,12 +9,12 @@ import {
 	motion,
 	type ScrollEvent,
 	type StyleDesc,
-} from "@gpuix/solid";
-import { createSignal, type JSX, onCleanup, Show } from "solid-js";
-import { isChord } from "#/lib/list-nav";
-import { color, fade, withAlpha } from "#/lib/theme";
+} from '@gpuix/solid';
+import { createSignal, type JSX, onCleanup, Show } from 'solid-js';
+import { isChord } from '#/lib/list-nav';
+import { color, fade, withAlpha } from '#/lib/theme';
 
-export type ScrollOrientation = "vertical" | "horizontal" | "both";
+export type ScrollOrientation = 'vertical' | 'horizontal' | 'both';
 
 /** `--scroll-fade-size` and `--scroll-divider-size`. */
 const FADE_PX = 48;
@@ -38,14 +38,14 @@ interface Size {
 	h: number;
 }
 
-type Axis = "x" | "y";
+type Axis = 'x' | 'y';
 
 /** `rgb(var(--overlay) / a)`: black on light surfaces, white on dark. */
 const overlay = (alpha: number) => withAlpha(color.overlay, alpha);
 
-function sizeOf(event: Pick<DomEvent, "width" | "height">): Size {
+function sizeOf(event: Pick<DomEvent, 'width' | 'height'>): Size {
 	if (event.width === undefined || event.height === undefined) {
-		throw new Error("layout event without a size");
+		throw new Error('layout event without a size');
 	}
 	return { w: event.width, h: event.height };
 }
@@ -84,10 +84,10 @@ export function ScrollArea(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
-	const orientation = () => props.orientation ?? "vertical";
-	const vertical = () => orientation() !== "horizontal";
-	const horizontal = () => orientation() !== "vertical";
-	const both = () => orientation() === "both";
+	const orientation = () => props.orientation ?? 'vertical';
+	const vertical = () => orientation() !== 'horizontal';
+	const horizontal = () => orientation() !== 'vertical';
+	const both = () => orientation() === 'both';
 
 	let viewport: HostElement | undefined;
 	const scrollingTimer: Record<
@@ -137,20 +137,20 @@ export function ScrollArea(props: {
 		const next = { x: event.scrollLeft, y: event.scrollTop };
 		const before = offset();
 		if (userScroll || dragging() !== undefined) {
-			if (next.y !== before.y) startScrolling("y");
-			if (next.x !== before.x) startScrolling("x");
+			if (next.y !== before.y) startScrolling('y');
+			if (next.x !== before.x) startScrolling('x');
 		}
 		setOffset(next);
 		props.onScroll?.();
 	};
 
 	const mountedViewport = () => {
-		if (viewport === undefined) throw new Error("ScrollArea is not mounted");
+		if (viewport === undefined) throw new Error('ScrollArea is not mounted');
 		return viewport;
 	};
 	/** Read from the element, so it is current inside an input handler before `onScroll` has reported. */
 	const positionOf = (axis: Axis) =>
-		axis === "x" ? mountedViewport().scrollLeft : mountedViewport().scrollTop;
+		axis === 'x' ? mountedViewport().scrollLeft : mountedViewport().scrollTop;
 
 	// ── Thumb geometry ──────────────────────────────────────────────────────
 
@@ -158,11 +158,11 @@ export function ScrollArea(props: {
 		const size = view();
 		const inner = content();
 		if (size === undefined || inner === undefined) return false;
-		return axis === "y" ? inner.h > size.h + 0.5 : inner.w > size.w + 0.5;
+		return axis === 'y' ? inner.h > size.h + 0.5 : inner.w > size.w + 0.5;
 	};
 	/** The corner square exists only while both scrollbars do, and takes the end of both tracks. */
 	const corner = () =>
-		both() && overflows("x") && overflows("y") ? TRACK_PX : 0;
+		both() && overflows('x') && overflows('y') ? TRACK_PX : 0;
 
 	/** The thumb's span along its track, or `null` when there is nothing to scroll. */
 	const thumb = (axis: Axis) => {
@@ -171,9 +171,9 @@ export function ScrollArea(props: {
 		if (size === undefined || inner === undefined || !overflows(axis)) {
 			return null;
 		}
-		const viewLength = axis === "y" ? size.h : size.w;
-		const total = axis === "y" ? inner.h : inner.w;
-		const scrolled = axis === "y" ? offset().y : offset().x;
+		const viewLength = axis === 'y' ? size.h : size.w;
+		const total = axis === 'y' ? inner.h : inner.w;
+		const scrolled = axis === 'y' ? offset().y : offset().x;
 		const track = viewLength - corner();
 		const length = Math.max(
 			THUMB_MIN_PX,
@@ -196,19 +196,16 @@ export function ScrollArea(props: {
 		if (span === null) return false;
 		const next = clamp(distance, 0, span.maxScroll);
 		if (next === positionOf(axis)) return false;
-		mountedViewport().scrollTo(axis === "x" ? { left: next } : { top: next });
+		mountedViewport().scrollTo(axis === 'x' ? { left: next } : { top: next });
 		return true;
 	};
 
 	// ── Dragging ────────────────────────────────────────────────────────────
 
 	let dragOrigin = { pointer: 0, scrolled: 0 };
-	const pointerAlong = (
-		axis: Axis,
-		event: Pick<HostMouseEvent, "x" | "y">,
-	) => {
-		const value = axis === "y" ? event.y : event.x;
-		if (value === undefined) throw new Error("mouse event without coordinates");
+	const pointerAlong = (axis: Axis, event: Pick<HostMouseEvent, 'x' | 'y'>) => {
+		const value = axis === 'y' ? event.y : event.x;
+		if (value === undefined) throw new Error('mouse event without coordinates');
 		return value;
 	};
 	const startDrag = (
@@ -257,7 +254,7 @@ export function ScrollArea(props: {
 		if (span === null || track === undefined) return;
 		const box = track.getBoundingClientRect();
 		markUserScroll();
-		const along = pointerAlong(axis, event) - (axis === "y" ? box.y : box.x);
+		const along = pointerAlong(axis, event) - (axis === 'y' ? box.y : box.x);
 		if (along >= span.start && along <= span.start + span.length) {
 			startDrag(axis, track, event, positionOf(axis));
 			return;
@@ -276,7 +273,7 @@ export function ScrollArea(props: {
 
 	/** A wheel event over the track scrolls the viewport, which is not under the pointer, and is prevented so the scroller around the area does not take it too. A viewport already at its limit leaves the event alone: gpuix gives one event to the innermost scroller that can use it, which is then the scroller around the area. */
 	const wheelTrack = (axis: Axis, event: HostWheelEvent) => {
-		const delta = axis === "y" ? event.deltaY : event.deltaX;
+		const delta = axis === 'y' ? event.deltaY : event.deltaX;
 		if (delta === 0) return;
 		markUserScroll();
 		if (scrollAlong(axis, positionOf(axis) + delta)) event.preventDefault();
@@ -296,34 +293,34 @@ export function ScrollArea(props: {
 		let axis: Axis | undefined;
 		let target: number | undefined;
 		switch (event.key) {
-			case "ArrowDown":
-			case "ArrowUp":
-				axis = "y";
+			case 'ArrowDown':
+			case 'ArrowUp':
+				axis = 'y';
 				target =
-					positionOf("y") + (event.key === "ArrowDown" ? ARROW_PX : -ARROW_PX);
+					positionOf('y') + (event.key === 'ArrowDown' ? ARROW_PX : -ARROW_PX);
 				break;
-			case "ArrowRight":
-			case "ArrowLeft":
-				axis = "x";
+			case 'ArrowRight':
+			case 'ArrowLeft':
+				axis = 'x';
 				target =
-					positionOf("x") + (event.key === "ArrowRight" ? ARROW_PX : -ARROW_PX);
+					positionOf('x') + (event.key === 'ArrowRight' ? ARROW_PX : -ARROW_PX);
 				break;
-			case "PageDown":
-			case "PageUp":
-			case " ": {
-				axis = "y";
+			case 'PageDown':
+			case 'PageUp':
+			case ' ': {
+				axis = 'y';
 				const back =
-					event.key === "PageUp" ||
-					(event.key === " " && event.shiftKey === true);
-				target = positionOf("y") + (back ? -1 : 1) * size.h * PAGE_SHARE;
+					event.key === 'PageUp' ||
+					(event.key === ' ' && event.shiftKey === true);
+				target = positionOf('y') + (back ? -1 : 1) * size.h * PAGE_SHARE;
 				break;
 			}
-			case "Home":
-				axis = "y";
+			case 'Home':
+				axis = 'y';
 				target = 0;
 				break;
-			case "End":
-				axis = "y";
+			case 'End':
+				axis = 'y';
 				target = Number.POSITIVE_INFINITY;
 				break;
 		}
@@ -340,21 +337,21 @@ export function ScrollArea(props: {
 
 	// ── Fade and divider ────────────────────────────────────────────────────
 
-	const fadeAxis = (): Axis => (orientation() === "horizontal" ? "x" : "y");
+	const fadeAxis = (): Axis => (orientation() === 'horizontal' ? 'x' : 'y');
 	const fadeSize = () => props.fadeSize ?? FADE_PX;
 
 	/** How far past an edge the scroll is, as 0 to 1 over `size`: 0 at the true start / end, 1 once `size` px of content lie beyond it. */
-	const pastEdge = (axis: Axis, edge: "start" | "end", size: number) => {
+	const pastEdge = (axis: Axis, edge: 'start' | 'end', size: number) => {
 		const extent = view();
 		const inner = content();
 		if (extent === undefined || inner === undefined || !overflows(axis)) {
 			return 0;
 		}
-		const viewLength = axis === "y" ? extent.h : extent.w;
-		const total = axis === "y" ? inner.h : inner.w;
-		const scrolled = axis === "y" ? offset().y : offset().x;
+		const viewLength = axis === 'y' ? extent.h : extent.w;
+		const total = axis === 'y' ? inner.h : inner.w;
+		const scrolled = axis === 'y' ? offset().y : offset().x;
 		return clamp(
-			edge === "start"
+			edge === 'start'
 				? scrolled / size
 				: (total - viewLength - scrolled) / size,
 			0,
@@ -367,15 +364,15 @@ export function ScrollArea(props: {
 		const size = view();
 		if (props.fade !== true || size === undefined) return undefined;
 		const axis = fadeAxis();
-		const start = pastEdge(axis, "start", fadeSize());
-		const end = pastEdge(axis, "end", fadeSize());
+		const start = pastEdge(axis, 'start', fadeSize());
+		const end = pastEdge(axis, 'end', fadeSize());
 		if (start === 0 && end === 0) return undefined;
-		const length = axis === "y" ? size.h : size.w;
+		const length = axis === 'y' ? size.h : size.w;
 		const edge = Math.min(fadeSize(), length / 2);
-		return `linear-gradient(${axis === "y" ? "to bottom" : "to right"}, rgba(0,0,0,${1 - start}) 0px, #000 ${edge}px, #000 ${length - edge}px, rgba(0,0,0,${1 - end}) ${length}px)`;
+		return `linear-gradient(${axis === 'y' ? 'to bottom' : 'to right'}, rgba(0,0,0,${1 - start}) 0px, #000 ${edge}px, #000 ${length - edge}px, rgba(0,0,0,${1 - end}) ${length}px)`;
 	};
 
-	const Divider = (line: { edge: "start" | "end" }) => (
+	const Divider = (line: { edge: 'start' | 'end' }) => (
 		<Show
 			when={
 				props.divider !== undefined &&
@@ -385,14 +382,14 @@ export function ScrollArea(props: {
 		>
 			<div
 				style={{
-					position: "absolute",
-					pointerEvents: "none",
+					position: 'absolute',
+					pointerEvents: 'none',
 					height: 1,
 					left: props.divider?.inset ?? 0,
 					right: props.divider?.inset ?? 0,
-					[line.edge === "start" ? "top" : "bottom"]: 0,
+					[line.edge === 'start' ? 'top' : 'bottom']: 0,
 					backgroundColor: color.border,
-					opacity: pastEdge("y", line.edge, FADE_PX),
+					opacity: pastEdge('y', line.edge, FADE_PX),
 				}}
 			/>
 		</Show>
@@ -423,8 +420,8 @@ export function ScrollArea(props: {
 					// Shows at once; on hide waits out the thumb's shrink before fading.
 					transition={
 						visible(bar.axis)
-							? { duration: 0.16, ease: "easeOut" }
-							: { duration: 0.12, delay: 0.16, ease: "easeOut" }
+							? { duration: 0.16, ease: 'easeOut' }
+							: { duration: 0.12, delay: 0.16, ease: 'easeOut' }
 					}
 					onMouseEnter={() => setTrackHovered(bar.axis)}
 					onMouseLeave={() => setTrackHovered(undefined)}
@@ -436,9 +433,9 @@ export function ScrollArea(props: {
 					onLostPointerCapture={stopDrag}
 					onWheel={(event: HostWheelEvent) => wheelTrack(bar.axis, event)}
 					style={{
-						position: "absolute",
-						userSelect: "none",
-						...(bar.axis === "y"
+						position: 'absolute',
+						userSelect: 'none',
+						...(bar.axis === 'y'
 							? {
 									top: 0,
 									right: 0,
@@ -462,18 +459,18 @@ export function ScrollArea(props: {
 						initial={false}
 						// Off the container edge by 2px (`-translate-x-0.5`) and widening from 4px to 6px on hover.
 						animate={
-							bar.axis === "y"
+							bar.axis === 'y'
 								? { left: hovered() ? 0 : 1, width: hovered() ? 6 : 4 }
 								: { top: hovered() ? 0 : 1, height: hovered() ? 6 : 4 }
 						}
-						transition={{ duration: 0.16, ease: "easeInOut" }}
+						transition={{ duration: 0.16, ease: 'easeInOut' }}
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							borderRadius: 3,
 							backgroundColor: thumbColor(),
 							// Tailwind's `ease-in-out` is `fade`'s default curve.
-							...fade(["background-color"], 160),
-							...(bar.axis === "y"
+							...fade(['background-color'], 160),
+							...(bar.axis === 'y'
 								? { top: span()?.start, height: span()?.length }
 								: { left: span()?.start, width: span()?.length }),
 						}}
@@ -489,8 +486,8 @@ export function ScrollArea(props: {
 			onMouseEnter={() => setRootHovered(true)}
 			onMouseLeave={() => setRootHovered(false)}
 			style={{
-				position: "relative",
-				overflow: "hidden",
+				position: 'relative',
+				overflow: 'hidden',
 				width: props.width,
 				height: props.height,
 				...props.style,
@@ -504,23 +501,23 @@ export function ScrollArea(props: {
 				onWheel={markUserScroll}
 				onLayout={(event: DomEvent) => setView(sizeOf(event))}
 				// A viewport that overflows is a tab stop and scrolls with the keys, like a focused scroller in a browser.
-				tabIndex={overflows("x") || overflows("y") ? 0 : -1}
+				tabIndex={overflows('x') || overflows('y') ? 0 : -1}
 				onKeyDown={onKeyDown}
 				style={{
 					keyboardFocusDim: false,
 					maskImage: fadeMask(),
-					width: "100%",
-					height: "100%",
-					overflowY: vertical() ? "scroll" : "hidden",
-					overflowX: horizontal() ? "scroll" : "hidden",
+					width: '100%',
+					height: '100%',
+					overflowY: vertical() ? 'scroll' : 'hidden',
+					overflowX: horizontal() ? 'scroll' : 'hidden',
 					// The thumbs are drawn by this component.
-					scrollbarWidth: "none",
+					scrollbarWidth: 'none',
 					// Base UI's Content has `min-width: fit-content`, which gpuix rejects. As a non-shrinking item of a flex row the wrapper takes its content's width instead, and its `onLayout` is where the content size comes from. As a block child it is clamped to the viewport width, `onLayout` reports that, and the area draws no horizontal thumb (the scroller itself still scrolls, since `scrollWidth` counts descendants).
 					...(horizontal()
 						? {
-								display: "flex",
-								flexDirection: "row",
-								alignItems: "flex-start",
+								display: 'flex',
+								flexDirection: 'row',
+								alignItems: 'flex-start',
 							}
 						: {}),
 				}}
@@ -528,11 +525,11 @@ export function ScrollArea(props: {
 				<div
 					onLayout={(event: DomEvent) => setContent(sizeOf(event))}
 					style={{
-						display: "flex",
-						flexDirection: "column",
+						display: 'flex',
+						flexDirection: 'column',
 						flexShrink: 0,
 						// A vertical area wraps to its own width; the others grow with their content.
-						...(horizontal() ? {} : { width: "100%" }),
+						...(horizontal() ? {} : { width: '100%' }),
 					}}
 				>
 					{props.children}

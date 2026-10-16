@@ -1,20 +1,16 @@
-import type { HostElement, HostMouseMoveEvent } from "@gpuix/solid";
-import { createEffect, createSignal, For } from "solid-js";
-import { onFrame } from "#/lib/clock";
-import { createFluidHover, pickNearest } from "#/lib/fluid-hover";
-import { ComponentPreview, MONO } from "#/lib/doc-page";
-import { color, siteType, type as scale, weight } from "#/lib/theme";
-import {
-	FluidRow,
-	ListFrame,
-	ListHighlight,
-} from "./parts";
-import { COST_CODE } from "./snippets";
+import type { HostElement, HostMouseMoveEvent } from '@gpuix/solid';
+import { createEffect, createSignal, For } from 'solid-js';
+import { onFrame } from '#/lib/clock';
+import { ComponentPreview, MONO } from '#/lib/doc-page';
+import { createFluidHover, pickNearest } from '#/lib/fluid-hover';
+import { color, type as scale, siteType, weight } from '#/lib/theme';
+import { FluidRow, ListFrame, ListHighlight } from './parts';
+import { COST_CODE } from './snippets';
 
 const COST_ROW_COUNT = 200;
 const COST_ROWS = Array.from(
 	{ length: COST_ROW_COUNT },
-	(_, index) => `Message ${String(index + 1).padStart(3, "0")}`,
+	(_, index) => `Message ${String(index + 1).padStart(3, '0')}`,
 );
 
 /** The mean over this many picks is the number shown: one reading is below the clock's resolution. */
@@ -46,7 +42,7 @@ function CostList(props: {
 		const box = container.getBoundingClientRect();
 		const started = performance.now();
 		pickNearest({
-			axis: "y",
+			axis: 'y',
 			point: { x: event.x, y: event.y },
 			rects: hover.rects(),
 			containerRect: {
@@ -67,9 +63,9 @@ function CostList(props: {
 			onScroll={hover.handlers.onScroll}
 			style={{
 				maxHeight: 256,
-				display: "flex",
-				flexDirection: "column",
-				overflowY: "scroll",
+				display: 'flex',
+				flexDirection: 'column',
+				overflowY: 'scroll',
 			}}
 		>
 			{/* The highlight lives inside the scrolled content: gpuix paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
@@ -92,9 +88,9 @@ function CostList(props: {
 					hover.handlers.onMouseMove(event);
 				}}
 				style={{
-					position: "relative",
-					display: "flex",
-					flexDirection: "column",
+					position: 'relative',
+					display: 'flex',
+					flexDirection: 'column',
 					padding: 8,
 				}}
 			>
@@ -105,7 +101,7 @@ function CostList(props: {
 							hover={hover}
 							index={index()}
 							label={label}
-							testId={index() === 0 ? "cost-row-first" : undefined}
+							testId={index() === 0 ? 'cost-row-first' : undefined}
 						/>
 					)}
 				</For>
@@ -121,9 +117,9 @@ function Stat(props: { value: string; label: string; hint: string }) {
 				flexGrow: 1,
 				flexBasis: 0,
 				minWidth: 0,
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
 				gap: 2,
 			}}
 		>
@@ -133,7 +129,7 @@ function Stat(props: { value: string; label: string; hint: string }) {
 					...siteType.body,
 					fontWeight: weight.normal,
 					color: color.foreground,
-					fontVariantNumeric: "tabular-nums",
+					fontVariantNumeric: 'tabular-nums',
 				}}
 			>
 				{props.value}
@@ -142,7 +138,7 @@ function Stat(props: { value: string; label: string; hint: string }) {
 				style={{
 					...siteType.caption,
 					color: color.mutedForeground,
-					textAlign: "center",
+					textAlign: 'center',
 				}}
 			>
 				{props.label}
@@ -151,7 +147,7 @@ function Stat(props: { value: string; label: string; hint: string }) {
 				style={{
 					...scale.micro,
 					color: color.mutedForeground,
-					textAlign: "center",
+					textAlign: 'center',
 				}}
 			>
 				{props.hint}
@@ -186,11 +182,11 @@ export function CostDemo() {
 		<ComponentPreview testId="cost-preview" code={COST_CODE} cull>
 			<div
 				style={{
-					width: "100%",
+					width: '100%',
 					maxWidth: 448,
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
 					gap: 16,
 				}}
 			>
@@ -200,9 +196,9 @@ export function CostDemo() {
 				{/* One number per claim in the copy that the port can observe: the loop. `moves` counts up so the reader sees the meter is live. */}
 				<div
 					style={{
-						width: "100%",
-						display: "flex",
-						flexDirection: "row",
+						width: '100%',
+						display: 'flex',
+						flexDirection: 'row',
 						gap: 16,
 					}}
 				>

@@ -1,6 +1,6 @@
-import { For, type JSX } from "solid-js";
-import { MONO, Prose } from "#/lib/doc-page";
-import { color, scheme, siteType, weight } from "#/lib/theme";
+import { For, type JSX } from 'solid-js';
+import { MONO, Prose } from '#/lib/doc-page';
+import { color, scheme, siteType, weight } from '#/lib/theme';
 
 /** An Inter space at 13px; `Prose` breaks lines on it. */
 const SPACE = 3.6;
@@ -15,7 +15,7 @@ export type Parts = readonly Part[];
 
 /** `open <url>`, as a link's click does: gpuix has no `href` and no shell-open call. */
 function openUrl(url: string) {
-	const command = process.platform === "darwin" ? "open" : "xdg-open";
+	const command = process.platform === 'darwin' ? 'open' : 'xdg-open';
 	Bun.spawn([command, url]);
 }
 
@@ -34,8 +34,8 @@ function Chip(props: { children: string }) {
 				paddingTop: 2,
 				paddingBottom: 2,
 				borderRadius: 4,
-				backgroundColor: scheme() === "light" ? "#EBEBED" : "#2C2C2C",
-				whiteSpace: "nowrap",
+				backgroundColor: scheme() === 'light' ? '#EBEBED' : '#2C2C2C',
+				whiteSpace: 'nowrap',
 			}}
 		>
 			{props.children}
@@ -50,16 +50,16 @@ function ExternalLink(props: {
 	after?: string;
 }) {
 	return (
-		<div style={{ display: "flex", flexDirection: "row" }}>
+		<div style={{ display: 'flex', flexDirection: 'row' }}>
 			<text
 				role="link"
 				onClick={() => openUrl(props.href)}
 				style={{
 					...siteType.body,
 					color: color.foreground,
-					textDecoration: "underline",
-					cursor: "pointer",
-					whiteSpace: "nowrap",
+					textDecoration: 'underline',
+					cursor: 'pointer',
+					whiteSpace: 'nowrap',
 				}}
 			>
 				{props.children}
@@ -82,10 +82,10 @@ interface Item {
 function items(parts: Parts): Item[] {
 	const out: Item[] = [];
 	for (const part of parts) {
-		if (typeof part !== "string") {
+		if (typeof part !== 'string') {
 			out.push({
 				node:
-					"code" in part ? (
+					'code' in part ? (
 						<Chip>{part.code}</Chip>
 					) : (
 						<ExternalLink href={part.href} after={part.after}>
@@ -117,10 +117,10 @@ export function Sentence(props: { parts: Parts }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				flexWrap: "wrap",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				flexWrap: 'wrap',
+				alignItems: 'center',
 			}}
 		>
 			<For each={items(props.parts)}>
@@ -135,7 +135,7 @@ export function Sentence(props: { parts: Parts }) {
 /** A `list-disc pl-5 marker:text-muted-foreground` list with `gap-1.5`; the text sits 24px in, `pl-1` past the 20px indent. */
 export function BulletList(props: { children: JSX.Element }) {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
 			{props.children}
 		</div>
 	);
@@ -143,10 +143,10 @@ export function BulletList(props: { children: JSX.Element }) {
 
 export function Rule(props: { children: JSX.Element }) {
 	return (
-		<div style={{ position: "relative", marginLeft: 24 }}>
+		<div style={{ position: 'relative', marginLeft: 24 }}>
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					left: -15,
 					top: (siteType.body.lineHeight - 5) / 2,
 					width: 5,

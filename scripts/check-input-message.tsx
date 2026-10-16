@@ -13,12 +13,12 @@
  * - The 80 ms fades (composer ring, queued close button, suggestion text) are mid-way 40 ms in, with the motion
  *   clock held; the send button's hover shadow eases over 180 ms.
  */
-import { createTestRoot } from "@gpuix/solid/testing";
-import { fileFromPath, InputMessage } from "#/components/input-message";
-import { TooltipProvider } from "#/components/tooltip";
-import { fonts } from "#/lib/fonts";
-import { color, setThemeChoice } from "#/lib/theme";
-import { readPng } from "./png-pixels";
+import { createTestRoot } from '@gpuix/solid/testing';
+import { fileFromPath, InputMessage } from '#/components/input-message';
+import { TooltipProvider } from '#/components/tooltip';
+import { fonts } from '#/lib/fonts';
+import { color, setThemeChoice } from '#/lib/theme';
+import { readPng } from './png-pixels';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const test = createTestRoot({ width: 700, height: 900, fonts });
@@ -50,7 +50,7 @@ function paintedOpacity(testId: string) {
 	let current: ReturnType<typeof renderer.getElement> = element(testId);
 	while (current !== undefined) {
 		const own = current.style.opacity;
-		if (typeof own === "number") opacity *= own;
+		if (typeof own === 'number') opacity *= own;
 		current =
 			current.parentId === null
 				? undefined
@@ -61,7 +61,7 @@ function paintedOpacity(testId: string) {
 async function tabTo(testId: string) {
 	const target = element(testId).id;
 	for (let presses = 0; presses < 40; presses++) {
-		renderer.simulateKeystrokes("Tab");
+		renderer.simulateKeystrokes('Tab');
 		await settle(60);
 		if (renderer.getFocusedElementId() === target) {
 			await settle(200);
@@ -73,19 +73,19 @@ async function tabTo(testId: string) {
 let failed = false;
 function report(name: string, ok: boolean, detail: string) {
 	if (!ok) failed = true;
-	console.log(`${ok ? "PASS" : "FAIL"} ${name}: ${detail}`);
+	console.log(`${ok ? 'PASS' : 'FAIL'} ${name}: ${detail}`);
 }
 
-const assets = new URL("../assets/chat-ai/", import.meta.url).pathname;
+const assets = new URL('../assets/chat-ai/', import.meta.url).pathname;
 const queued = (id: string) => ({ id, text: `Queued ${id}`, files: [] });
 
-setThemeChoice("dark");
+setThemeChoice('dark');
 test.render(() => (
 	<TooltipProvider>
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 20,
 				padding: 20,
 				width: 560,
@@ -99,7 +99,7 @@ test.render(() => (
 				files={[fileFromPath(`${assets}micka.png`)]}
 				onFilesChange={() => {}}
 				status="idle"
-				queue={[queued("one")]}
+				queue={[queued('one')]}
 				onQueueChange={() => {}}
 			/>
 			<InputMessage
@@ -108,7 +108,7 @@ test.render(() => (
 				value=""
 				onValueChange={() => {}}
 				status="idle"
-				queue={[queued("two")]}
+				queue={[queued('two')]}
 				onQueueChange={() => {}}
 			/>
 			<InputMessage testId="c" value="" onValueChange={() => {}} disabled />
@@ -116,48 +116,48 @@ test.render(() => (
 				testId="d"
 				value=""
 				onValueChange={() => {}}
-				suggestions={["Draft a reply", "Summarise the thread"]}
+				suggestions={['Draft a reply', 'Summarise the thread']}
 			/>
 		</div>
 	</TooltipProvider>
 ));
 await settle(1200);
 
-await tabTo("a-file-0-remove");
-const badge = paintedOpacity("a-file-0-remove");
+await tabTo('a-file-0-remove');
+const badge = paintedOpacity('a-file-0-remove');
 report(
-	"tile remove badge is painted under keyboard focus",
+	'tile remove badge is painted under keyboard focus',
 	badge === 1,
 	`opacity ${badge}`,
 );
 renderer.captureScreenshot(`/tmp/check-input-message-badge-${process.pid}.png`);
 
-await tabTo("a-queued-0-remove");
-const close = paintedOpacity("a-queued-0-remove");
+await tabTo('a-queued-0-remove');
+const close = paintedOpacity('a-queued-0-remove');
 report(
-	"queued close button is painted under keyboard focus",
+	'queued close button is painted under keyboard focus',
 	close === 1,
 	`opacity ${close}`,
 );
 renderer.captureScreenshot(`/tmp/check-input-message-close-${process.pid}.png`);
 
-const disabledTextarea = element("c-textarea").id;
+const disabledTextarea = element('c-textarea').id;
 const reached = new Set<number>();
 for (let presses = 0; presses < 40; presses++) {
-	renderer.simulateKeystrokes("Tab");
+	renderer.simulateKeystrokes('Tab');
 	await settle(40);
 	const focused = renderer.getFocusedElementId();
 	if (focused !== null) reached.add(focused);
 }
 report(
-	"disabled composer is out of the Tab order",
+	'disabled composer is out of the Tab order',
 	!reached.has(disabledTextarea),
-	`Tab reached ${reached.size} elements, the textarea ${reached.has(disabledTextarea) ? "among them" : "not among them"}`,
+	`Tab reached ${reached.size} elements, the textarea ${reached.has(disabledTextarea) ? 'among them' : 'not among them'}`,
 );
 
 for (const [composer, expected] of [
-	["a", 10],
-	["b", 8],
+	['a', 10],
+	['b', 8],
 ] as const) {
 	const row = bounds(`${composer}-queued-0`);
 	const button = bounds(`${composer}-queued-0-remove`);
@@ -181,7 +181,9 @@ function brightest(box: {
 	width: number;
 	height: number;
 }) {
-	renderer.captureScreenshot(`/tmp/check-input-message-fade-${process.pid}.png`);
+	renderer.captureScreenshot(
+		`/tmp/check-input-message-fade-${process.pid}.png`,
+	);
 	const pixels = readPng(`/tmp/check-input-message-fade-${process.pid}.png`);
 	let best = 0;
 	for (let y = Math.round(box.y); y < Math.round(box.y + box.height); y++)
@@ -220,14 +222,14 @@ function fadeSamples(move: () => void, probe: () => number) {
 renderer.nativeSimulateMouseMove(5, 5);
 await settle(400);
 {
-	const row = bounds("a-queued-0");
-	const closeBox = bounds("a-queued-0-remove");
+	const row = bounds('a-queued-0');
+	const closeBox = bounds('a-queued-0-remove');
 	const hidden = fadeSamples(
 		() => renderer.nativeSimulateMouseMove(row.x + 60, row.y + row.height / 2),
 		() => brightest(closeBox),
 	);
 	betweenReport(
-		"queued close button fades in over 80 ms",
+		'queued close button fades in over 80 ms',
 		hidden.before,
 		hidden.middle,
 		hidden.after,
@@ -236,10 +238,10 @@ await settle(400);
 renderer.nativeSimulateMouseMove(5, 5);
 await settle(400);
 // Light: in dark the rest shadow (`inset` layers) and the hover edge are not interpolable, in the browser as here, so that fade is a switch.
-setThemeChoice("light");
+setThemeChoice('light');
 await settle(400);
 {
-	const box = bounds("b");
+	const box = bounds('b');
 	const ring = () =>
 		brightest({
 			x: box.x - 1,
@@ -252,18 +254,18 @@ await settle(400);
 		ring,
 	);
 	betweenReport(
-		"composer ring eases to the hover edge",
+		'composer ring eases to the hover edge',
 		samples.before,
 		samples.middle,
 		samples.after,
 	);
 }
-setThemeChoice("dark");
+setThemeChoice('dark');
 await settle(400);
 renderer.nativeSimulateMouseMove(5, 5);
 await settle(400);
 {
-	const send = bounds("a-send");
+	const send = bounds('a-send');
 	const glow = () =>
 		brightest({ x: send.x + 2, y: send.y + 2, width: 2, height: 2 });
 	const samples = fadeSamples(
@@ -271,7 +273,7 @@ await settle(400);
 		glow,
 	);
 	betweenReport(
-		"send button shadow eases to the hover colour",
+		'send button shadow eases to the hover colour',
 		samples.before,
 		samples.middle,
 		samples.after,
@@ -280,12 +282,12 @@ await settle(400);
 renderer.nativeSimulateMouseMove(5, 5);
 await settle(400);
 {
-	const textarea = bounds("d-textarea");
+	const textarea = bounds('d-textarea');
 	renderer.nativeSimulateMouseMove(textarea.x + 20, textarea.y + 10);
 	renderer.nativeSimulateMouseDown(textarea.x + 20, textarea.y + 10);
 	renderer.nativeSimulateMouseUp(textarea.x + 20, textarea.y + 10);
 	await settle(400);
-	const row = bounds("d-suggestion-0");
+	const row = bounds('d-suggestion-0');
 	const text = {
 		x: row.x,
 		y: row.y,
@@ -293,17 +295,17 @@ await settle(400);
 		height: row.height,
 	};
 	const texts = fadeSamples(
-		() => renderer.simulateKeystrokes("ArrowDown"),
+		() => renderer.simulateKeystrokes('ArrowDown'),
 		() => brightest(text),
 	);
 	betweenReport(
-		"suggestion text eases to the active colour",
+		'suggestion text eases to the active colour',
 		texts.before,
 		texts.middle,
 		texts.after,
 	);
 	// Row 1 has no ↓ hint, so its ↵ stays mounted and its opacity eases.
-	const second = bounds("d-suggestion-1");
+	const second = bounds('d-suggestion-1');
 	const enter = {
 		x: second.x + second.width - 30,
 		y: second.y,
@@ -311,11 +313,11 @@ await settle(400);
 		height: second.height,
 	};
 	const icons = fadeSamples(
-		() => renderer.simulateKeystrokes("ArrowDown"),
+		() => renderer.simulateKeystrokes('ArrowDown'),
 		() => brightest(enter),
 	);
 	betweenReport(
-		"suggestion enter glyph fades in",
+		'suggestion enter glyph fades in',
 		icons.before,
 		icons.middle,
 		icons.after,

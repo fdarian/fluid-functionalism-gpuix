@@ -1,33 +1,27 @@
-import { For, type JSX } from "solid-js";
-import type { ShotContext } from "#/lib/demo";
-import {
-	Code,
-	DocPage,
-	DocSection,
-	Prose,
-	SectionTitle,
-} from "#/lib/doc-page";
-import { color } from "#/lib/theme";
-import { AxesDemo } from "#/pages/fluid-hover/axes";
-import { CostDemo } from "#/pages/fluid-hover/cost";
-import { ListsDemo } from "#/pages/fluid-hover/lists";
-import { FLUID_HOVER_INSTALL_PROMPT } from "#/pages/fluid-hover/install-prompt";
-import { PlainVsFluidDemo } from "#/pages/fluid-hover/plain-vs-fluid";
-import { ShowTheMathDemo } from "#/pages/fluid-hover/show-the-math";
+import { For, type JSX } from 'solid-js';
+import type { ShotContext } from '#/lib/demo';
+import { Code, DocPage, DocSection, Prose, SectionTitle } from '#/lib/doc-page';
+import { color } from '#/lib/theme';
+import { AxesDemo } from '#/pages/fluid-hover/axes';
+import { CostDemo } from '#/pages/fluid-hover/cost';
+import { FLUID_HOVER_INSTALL_PROMPT } from '#/pages/fluid-hover/install-prompt';
+import { ListsDemo } from '#/pages/fluid-hover/lists';
+import { PlainVsFluidDemo } from '#/pages/fluid-hover/plain-vs-fluid';
+import { ShowTheMathDemo } from '#/pages/fluid-hover/show-the-math';
 
-export const title = "Fluid Hover";
-export const group = "System";
+export const title = 'Fluid Hover';
+export const group = 'System';
 export const order = 1;
-export const layout = "docs";
-export const listed = "sidebar";
+export const layout = 'docs';
+export const listed = 'sidebar';
 
 const DESCRIPTION =
-	"Hover that never blinks and always follows your cursor to the nearest item.";
+	'Hover that never blinks and always follows your cursor to the nearest item.';
 
 // The source builds these from the slug and the description's words.
 export const menuKeywords = [
-	"fluid-hover",
-	...DESCRIPTION.split(/\W+/).filter((word) => word !== ""),
+	'fluid-hover',
+	...DESCRIPTION.split(/\W+/).filter((word) => word !== ''),
 ];
 
 export async function scenarios(shot: ShotContext) {
@@ -41,51 +35,51 @@ export async function scenarios(shot: ShotContext) {
 	};
 	// The scripted cursors ride both lists until a real pointer enters.
 	await shot.settle(1800);
-	shot.capture("blink-or-glide-scripted");
+	shot.capture('blink-or-glide-scripted');
 	// A real pointer over the demo takes both lists off the script.
-	await shot.hover("pvf-fluid-2");
-	shot.capture("blink-or-glide-fluid");
-	await shot.hover("pvf-plain-2");
-	shot.capture("blink-or-glide-plain");
-	await shot.click("plain-vs-fluid-playback");
+	await shot.hover('pvf-fluid-2');
+	shot.capture('blink-or-glide-fluid');
+	await shot.hover('pvf-plain-2');
+	shot.capture('blink-or-glide-plain');
+	await shot.click('plain-vs-fluid-playback');
 	await shot.moveTo(1100, 400);
-	shot.capture("blink-or-glide-paused");
-	await shot.click("plain-vs-fluid-preview-code-tab");
-	shot.capture("blink-or-glide-code");
-	await shot.click("plain-vs-fluid-preview-preview-tab");
-	await scrollTo("math-row-1");
-	await shot.hover("math-row-1");
-	shot.capture("show-the-math");
-	await shot.click("math-switch");
-	await shot.hover("math-row-3");
-	shot.capture("show-the-math-off");
-	await scrollTo("axes-tab-Settings");
-	await shot.hover("axes-tab-Settings");
-	shot.capture("axes-x");
-	await scrollTo("axes-list-3");
-	await shot.hover("axes-list-3");
-	shot.capture("axes-y");
-	await scrollTo("axes-grid-3");
-	await shot.hover("axes-grid-3");
-	shot.capture("axes-xy");
-	await scrollTo("lists-Yesterday");
-	await shot.hover("lists-Yesterday");
-	shot.capture("lists-children");
-	await shot.hover("lists-Knowledge");
-	shot.capture("lists-disabled");
-	await shot.hover("lists-Log out");
-	shot.capture("lists-second");
-	await shot.click("lists-Chat");
+	shot.capture('blink-or-glide-paused');
+	await shot.click('plain-vs-fluid-preview-code-tab');
+	shot.capture('blink-or-glide-code');
+	await shot.click('plain-vs-fluid-preview-preview-tab');
+	await scrollTo('math-row-1');
+	await shot.hover('math-row-1');
+	shot.capture('show-the-math');
+	await shot.click('math-switch');
+	await shot.hover('math-row-3');
+	shot.capture('show-the-math-off');
+	await scrollTo('axes-tab-Settings');
+	await shot.hover('axes-tab-Settings');
+	shot.capture('axes-x');
+	await scrollTo('axes-list-3');
+	await shot.hover('axes-list-3');
+	shot.capture('axes-y');
+	await scrollTo('axes-grid-3');
+	await shot.hover('axes-grid-3');
+	shot.capture('axes-xy');
+	await scrollTo('lists-Yesterday');
+	await shot.hover('lists-Yesterday');
+	shot.capture('lists-children');
+	await shot.hover('lists-Knowledge');
+	shot.capture('lists-disabled');
+	await shot.hover('lists-Log out');
+	shot.capture('lists-second');
+	await shot.click('lists-Chat');
 	await shot.settle(800);
-	shot.capture("lists-collapsed");
-	await scrollTo("cost-row-first");
-	await shot.hover("cost-row-first");
-	await shot.hover("cost-row-first");
-	shot.capture("cost-first-row");
+	shot.capture('lists-collapsed');
+	await scrollTo('cost-row-first');
+	await shot.hover('cost-row-first');
+	await shot.hover('cost-row-first');
+	shot.capture('cost-first-row');
 	await shot.scroll(600, 200, 0, 200);
-	shot.capture("cost-scrolled");
+	shot.capture('cost-scrolled');
 	await shot.scroll(600, 600, 0, 2000);
-	shot.capture("use-when");
+	shot.capture('use-when');
 }
 
 function UseList(props: { title: string; items: readonly string[] }) {
@@ -95,16 +89,16 @@ function UseList(props: { title: string; items: readonly string[] }) {
 				flexGrow: 1,
 				flexBasis: 0,
 				minWidth: 0,
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 8,
 			}}
 		>
 			<SectionTitle>{props.title}</SectionTitle>
-			<div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+			<div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
 				<For each={props.items}>
 					{(item) => (
-						<div style={{ display: "flex", flexDirection: "row" }}>
+						<div style={{ display: 'flex', flexDirection: 'row' }}>
 							<div
 								style={{
 									width: 24,
@@ -159,7 +153,7 @@ export function Page(): JSX.Element {
 
 			<DocSection title="3 axes">
 				<Prose>
-					Menus, tabs, and card grids all feel the same under the cursor. Pass{" "}
+					Menus, tabs, and card grids all feel the same under the cursor. Pass{' '}
 					<Code>y</Code>, <Code>x</Code>, or <Code>xy</Code> and the highlight
 					follows you down the list, across the strip, or to the closest card.
 				</Prose>
@@ -186,8 +180,8 @@ export function Page(): JSX.Element {
 			{/* Two columns, no section title: the column headings carry it. Same rhythm as a DocSection. */}
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
+					display: 'flex',
+					flexDirection: 'row',
 					gap: 24,
 					paddingTop: 24,
 				}}
@@ -195,18 +189,18 @@ export function Page(): JSX.Element {
 				<UseList
 					title="Use when"
 					items={[
-						"Everything in the list can be clicked: a menu, a list, tabs, a grid of links.",
-						"The items sit close together.",
-						"The items stay where they are while you look at them.",
+						'Everything in the list can be clicked: a menu, a list, tabs, a grid of links.',
+						'The items sit close together.',
+						'The items stay where they are while you look at them.',
 					]}
 				/>
 				<UseList
 					title="Skip when"
 					items={[
-						"A wrong click would hurt.",
-						"Only some of the cards can be clicked.",
-						"There is a lot of empty space around the items.",
-						"Rows change place as you scroll.",
+						'A wrong click would hurt.',
+						'Only some of the cards can be clicked.',
+						'There is a lot of empty space around the items.',
+						'Rows change place as you scroll.',
 					]}
 				/>
 			</div>
@@ -215,8 +209,8 @@ export function Page(): JSX.Element {
 				<Prose>
 					The highlight respects the OS setting on its own. Turn on reduced
 					motion and the travel drops out: the highlight still fades in on the
-					nearest row, it just stops sliding between rows. No{" "}
-					<Code>{"<MotionConfig>"}</Code> needed, so a copied component behaves
+					nearest row, it just stops sliding between rows. No{' '}
+					<Code>{'<MotionConfig>'}</Code> needed, so a copied component behaves
 					the same in your app.
 				</Prose>
 			</DocSection>

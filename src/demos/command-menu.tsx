@@ -4,9 +4,9 @@ import {
 	type HostElement,
 	type KeyEvent,
 	useGpuixRequired,
-} from "@gpuix/solid";
-import { createMemo, createSignal, type JSX, onCleanup, Show } from "solid-js";
-import { Button } from "#/components/button";
+} from '@gpuix/solid';
+import { createMemo, createSignal, type JSX, onCleanup, Show } from 'solid-js';
+import { Button } from '#/components/button';
 import {
 	CommandMenu,
 	CommandMenuDialog,
@@ -22,11 +22,11 @@ import {
 	CommandMenuShortcut,
 	CommandMenuTabs,
 	formatShortcut,
-} from "#/components/command-menu";
-import { Select } from "#/components/select";
-import type { DemoModule } from "#/lib/demo";
-import { DemoCard } from "#/lib/demo-kit";
-import { IS_MAC } from "#/lib/platform";
+} from '#/components/command-menu';
+import { Select } from '#/components/select';
+import type { DemoModule } from '#/lib/demo';
+import { DemoCard } from '#/lib/demo-kit';
+import { IS_MAC } from '#/lib/platform';
 import {
 	PlayDivider,
 	PlayField,
@@ -36,8 +36,8 @@ import {
 	PlaySelect,
 	PlaySwitch,
 	pick,
-} from "#/lib/playground";
-import { color, type as scale } from "#/lib/theme";
+} from '#/lib/playground';
+import { color, type as scale } from '#/lib/theme';
 
 function items(options: {
 	descriptions: boolean;
@@ -45,132 +45,132 @@ function items(options: {
 }): CommandMenuItemData[] {
 	const all: CommandMenuItemData[] = [
 		{
-			value: "new-file",
-			label: "New file",
-			description: "Blank document",
-			icon: "plus",
-			shortcut: "mod+n",
-			keywords: ["create", "document"],
-			group: "Actions",
+			value: 'new-file',
+			label: 'New file',
+			description: 'Blank document',
+			icon: 'plus',
+			shortcut: 'mod+n',
+			keywords: ['create', 'document'],
+			group: 'Actions',
 		},
 		{
-			value: "search",
-			label: "Search everywhere",
-			description: "Files, people, messages",
-			icon: "search",
-			shortcut: "mod+shift+f",
-			keywords: ["find"],
-			group: "Actions",
+			value: 'search',
+			label: 'Search everywhere',
+			description: 'Files, people, messages',
+			icon: 'search',
+			shortcut: 'mod+shift+f',
+			keywords: ['find'],
+			group: 'Actions',
 		},
 		{
-			value: "theme",
-			label: "Toggle dark mode",
-			description: "System, light, or dark",
-			icon: "moon",
-			shortcut: "mod+shift+l",
-			keywords: ["appearance", "theme"],
-			group: "Actions",
+			value: 'theme',
+			label: 'Toggle dark mode',
+			description: 'System, light, or dark',
+			icon: 'moon',
+			shortcut: 'mod+shift+l',
+			keywords: ['appearance', 'theme'],
+			group: 'Actions',
 		},
 		{
-			value: "copy-link",
-			label: "Copy link",
-			description: "To this page",
-			icon: "link",
-			shortcut: "mod+shift+c",
-			keywords: ["share", "url"],
-			group: "Actions",
+			value: 'copy-link',
+			label: 'Copy link',
+			description: 'To this page',
+			icon: 'link',
+			shortcut: 'mod+shift+c',
+			keywords: ['share', 'url'],
+			group: 'Actions',
 		},
 		{
-			value: "invite",
-			label: "Invite people",
-			description: "Send an email invite",
-			icon: "users",
-			keywords: ["team", "member"],
-			group: "Actions",
+			value: 'invite',
+			label: 'Invite people',
+			description: 'Send an email invite',
+			icon: 'users',
+			keywords: ['team', 'member'],
+			group: 'Actions',
 		},
 		{
-			value: "export",
-			label: "Export as PDF",
-			description: "Pro plan",
-			icon: "image",
-			keywords: ["download"],
-			group: "Actions",
+			value: 'export',
+			label: 'Export as PDF',
+			description: 'Pro plan',
+			icon: 'image',
+			keywords: ['download'],
+			group: 'Actions',
 			disabled: true,
 		},
 		{
-			value: "home",
-			label: "Home",
-			action: "Go to Home",
-			icon: "home",
-			group: "Go to",
+			value: 'home',
+			label: 'Home',
+			action: 'Go to Home',
+			icon: 'home',
+			group: 'Go to',
 		},
 		{
-			value: "inbox",
-			label: "Inbox",
-			action: "Go to Inbox",
-			description: "3 unread",
-			icon: "inbox",
-			keywords: ["mail", "notifications"],
-			group: "Go to",
+			value: 'inbox',
+			label: 'Inbox',
+			action: 'Go to Inbox',
+			description: '3 unread',
+			icon: 'inbox',
+			keywords: ['mail', 'notifications'],
+			group: 'Go to',
 		},
 		{
-			value: "calendar",
-			label: "Calendar",
-			action: "Go to Calendar",
-			description: "Today",
-			icon: "calendar",
-			keywords: ["events", "schedule"],
-			group: "Go to",
+			value: 'calendar',
+			label: 'Calendar',
+			action: 'Go to Calendar',
+			description: 'Today',
+			icon: 'calendar',
+			keywords: ['events', 'schedule'],
+			group: 'Go to',
 		},
 		{
-			value: "starred",
-			label: "Starred",
-			action: "Go to Starred",
-			icon: "star",
-			keywords: ["favorites"],
-			group: "Go to",
+			value: 'starred',
+			label: 'Starred',
+			action: 'Go to Starred',
+			icon: 'star',
+			keywords: ['favorites'],
+			group: 'Go to',
 		},
 		{
-			value: "recent",
-			label: "Recent",
-			action: "Go to Recent",
-			description: "Last 7 days",
-			icon: "clock",
-			keywords: ["history"],
-			group: "Go to",
+			value: 'recent',
+			label: 'Recent',
+			action: 'Go to Recent',
+			description: 'Last 7 days',
+			icon: 'clock',
+			keywords: ['history'],
+			group: 'Go to',
 		},
 		{
-			value: "settings",
-			label: "Settings",
-			action: "Go to Settings",
-			description: "Account and workspace",
-			icon: "settings",
-			shortcut: "mod+,",
-			keywords: ["preferences"],
-			group: "Go to",
+			value: 'settings',
+			label: 'Settings',
+			action: 'Go to Settings',
+			description: 'Account and workspace',
+			icon: 'settings',
+			shortcut: 'mod+,',
+			keywords: ['preferences'],
+			group: 'Go to',
 		},
 		{
-			value: "docs",
-			label: "Documentation",
-			icon: "square-library",
-			keywords: ["help", "guide"],
-			group: "Help",
+			value: 'docs',
+			label: 'Documentation',
+			icon: 'square-library',
+			keywords: ['help', 'guide'],
+			group: 'Help',
 		},
 		{
-			value: "whats-new",
+			value: 'whats-new',
 			label: "What's new",
-			description: "Release notes",
-			icon: "rocket",
-			keywords: ["changelog", "updates"],
-			group: "Help",
+			description: 'Release notes',
+			icon: 'rocket',
+			keywords: ['changelog', 'updates'],
+			group: 'Help',
 		},
 		{
-			value: "support",
-			label: "Contact support",
-			description: "Reply within a day",
-			icon: "message-circle",
-			keywords: ["help", "chat"],
-			group: "Help",
+			value: 'support',
+			label: 'Contact support',
+			description: 'Reply within a day',
+			icon: 'message-circle',
+			keywords: ['help', 'chat'],
+			group: 'Help',
 		},
 	];
 	return all.map((item) => ({
@@ -182,27 +182,27 @@ function items(options: {
 
 const PLAIN = items({ descriptions: false, shortcuts: false });
 const FULL = items({ descriptions: true, shortcuts: true });
-const SUGGESTIONS = ["calendar", "new-file", "settings"];
-const PLACEHOLDER = "Type a command or search…";
-const EMPTY = "No results.";
+const SUGGESTIONS = ['calendar', 'new-file', 'settings'];
+const PLACEHOLDER = 'Type a command or search…';
+const EMPTY = 'No results.';
 const PANEL_HEIGHT = 360;
 const FILTER_POPUP_WIDTH = 150;
 
 const TABS = [
-	{ value: "all", label: "All" },
-	{ value: "Actions", label: "Actions" },
-	{ value: "Go to", label: "Go to" },
-	{ value: "Help", label: "Help" },
+	{ value: 'all', label: 'All' },
+	{ value: 'Actions', label: 'Actions' },
+	{ value: 'Go to', label: 'Go to' },
+	{ value: 'Help', label: 'Help' },
 ];
 const TYPES = [
-	{ value: "all", label: "All types" },
-	{ value: "Actions", label: "Actions" },
-	{ value: "Go to", label: "Go to" },
-	{ value: "Help", label: "Help" },
+	{ value: 'all', label: 'All types' },
+	{ value: 'Actions', label: 'Actions' },
+	{ value: 'Go to', label: 'Go to' },
+	{ value: 'Help', label: 'Help' },
 ];
 const SORTS = [
-	{ value: "default", label: "Default order" },
-	{ value: "az", label: "A to Z" },
+	{ value: 'default', label: 'Default order' },
+	{ value: 'az', label: 'A to Z' },
 ];
 
 interface ScrollRenderer {
@@ -240,9 +240,9 @@ function scoped(
 	sort: string,
 ): CommandMenuItemData[] {
 	let rows = FULL;
-	if (tab !== "all") rows = rows.filter((item) => item.group === tab);
-	if (type !== "all") rows = rows.filter((item) => item.group === type);
-	return sort === "az"
+	if (tab !== 'all') rows = rows.filter((item) => item.group === tab);
+	if (type !== 'all') rows = rows.filter((item) => item.group === type);
+	return sort === 'az'
 		? [...rows].sort((a, b) => a.label.localeCompare(b.label))
 		: [...rows];
 }
@@ -286,22 +286,22 @@ function FilterSelects(props: {
 // ─── Trigger combos ──────────────────────────────────────────────────────────
 
 /** The combo the Dialog section binds, as the source binds its own: the default ⌘K belongs to the site menu. */
-const DIALOG_COMBO = "mod+p";
+const DIALOG_COMBO = 'mod+p';
 
-const TRIGGERS = ["mod+k", "mod+j", "mod+p", "mod+/"] as const;
+const TRIGGERS = ['mod+k', 'mod+j', 'mod+p', 'mod+/'] as const;
 type Trigger = (typeof TRIGGERS)[number];
 
 const TRIGGER_OPTIONS = TRIGGERS.map((value) => ({
 	value,
-	label: formatShortcut(value).join(IS_MAC ? "" : "+"),
+	label: formatShortcut(value).join(IS_MAC ? '' : '+'),
 }));
 
 /** FF's `matchesShortcut` for a "mod+<key>" combo: the key, or its physical key when Alt or a non-Latin layout changes the character; Meta or Ctrl, no Alt, Shift free. */
 function matchesCombo(event: KeyEvent | DomEvent, combo: string): boolean {
 	if (event.altKey === true) return false;
 	if (event.metaKey !== true && event.ctrlKey !== true) return false;
-	const key = combo.slice("mod+".length);
-	const physical = key === "/" ? "Slash" : `Key${key.toUpperCase()}`;
+	const key = combo.slice('mod+'.length);
+	const physical = key === '/' ? 'Slash' : `Key${key.toUpperCase()}`;
 	return event.key?.toLowerCase() === key || event.code === physical;
 }
 
@@ -310,7 +310,7 @@ function matchesCombo(event: KeyEvent | DomEvent, combo: string): boolean {
 const PLAYGROUND_PANEL_HEIGHT = 400;
 
 function Playground() {
-	const [shortcut, setShortcut] = createSignal<Trigger>("mod+k");
+	const [shortcut, setShortcut] = createSignal<Trigger>('mod+k');
 	const [descriptions, setDescriptions] = createSignal(true);
 	const [shortcuts, setShortcuts] = createSignal(true);
 	const [suggestions, setSuggestions] = createSignal(true);
@@ -318,9 +318,9 @@ function Playground() {
 	const [filters, setFilters] = createSignal(false);
 	const [footer, setFooter] = createSignal(true);
 	const [open, setOpen] = createSignal(false);
-	const [tab, setTab] = createSignal("all");
-	const [type, setType] = createSignal("all");
-	const [sort, setSort] = createSignal("default");
+	const [tab, setTab] = createSignal('all');
+	const [type, setType] = createSignal('all');
+	const [sort, setSort] = createSignal('default');
 
 	const all = createMemo(() =>
 		items({ descriptions: descriptions(), shortcuts: shortcuts() }),
@@ -328,13 +328,13 @@ function Playground() {
 	// The header controls are state; the rows derive from them.
 	const visible = createMemo(() => {
 		let rows = all();
-		if (tabs() && tab() !== "all") {
+		if (tabs() && tab() !== 'all') {
 			rows = rows.filter((item) => item.group === tab());
 		}
-		if (filters() && type() !== "all") {
+		if (filters() && type() !== 'all') {
 			rows = rows.filter((item) => item.group === type());
 		}
-		if (filters() && sort() === "az") {
+		if (filters() && sort() === 'az') {
 			rows = [...rows].sort((a, b) => a.label.localeCompare(b.label));
 		}
 		return rows;
@@ -405,15 +405,15 @@ function Playground() {
 						setOpen(!open());
 					}}
 					style={{
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "center",
+						display: 'flex',
+						flexDirection: 'column',
+						alignItems: 'center',
 						gap: 16,
-						width: "100%",
+						width: '100%',
 					}}
 				>
 					<CommandMenuPanel maxHeight={PLAYGROUND_PANEL_HEIGHT}>
-						{menu("play")}
+						{menu('play')}
 					</CommandMenuPanel>
 					<Button
 						testId="play-open"
@@ -424,7 +424,7 @@ function Playground() {
 						Open as a dialog
 					</Button>
 					<CommandMenuDialog open={open()} onOpenChange={setOpen}>
-						{menu("play-dialog")}
+						{menu('play-dialog')}
 					</CommandMenuDialog>
 				</div>
 			}
@@ -546,9 +546,9 @@ function Suggestions() {
 }
 
 function Tabs() {
-	const [tab, setTab] = createSignal("all");
+	const [tab, setTab] = createSignal('all');
 	const visible = createMemo(() =>
-		tab() === "all" ? FULL : FULL.filter((item) => item.group === tab()),
+		tab() === 'all' ? FULL : FULL.filter((item) => item.group === tab()),
 	);
 	return (
 		<Section id="tabs" title="Tabs">
@@ -566,12 +566,12 @@ function Tabs() {
 }
 
 function Filters() {
-	const [type, setType] = createSignal("all");
-	const [sort, setSort] = createSignal("default");
+	const [type, setType] = createSignal('all');
+	const [sort, setSort] = createSignal('default');
 	const visible = createMemo(() => {
 		const rows =
-			type() === "all" ? FULL : FULL.filter((item) => item.group === type());
-		return sort() === "az"
+			type() === 'all' ? FULL : FULL.filter((item) => item.group === type());
+		return sort() === 'az'
 			? [...rows].sort((a, b) => a.label.localeCompare(b.label))
 			: rows;
 	});
@@ -599,9 +599,9 @@ function Filters() {
 }
 
 function TabsAndFilters() {
-	const [tab, setTab] = createSignal("all");
-	const [type, setType] = createSignal("all");
-	const [sort, setSort] = createSignal("default");
+	const [tab, setTab] = createSignal('all');
+	const [type, setType] = createSignal('all');
+	const [sort, setSort] = createSignal('default');
 	const visible = createMemo(() => scoped(tab(), type(), sort()));
 	return (
 		<Section id="tabs-filters" title="Tabs and filters">
@@ -632,9 +632,9 @@ function TabsAndFilters() {
 }
 
 function Compact() {
-	const [tab, setTab] = createSignal("all");
-	const [type, setType] = createSignal("all");
-	const [sort, setSort] = createSignal("default");
+	const [tab, setTab] = createSignal('all');
+	const [type, setType] = createSignal('all');
+	const [sort, setSort] = createSignal('default');
 	const visible = createMemo(() => scoped(tab(), type(), sort()));
 	return (
 		<Section id="compact" title="Compact">
@@ -670,7 +670,7 @@ function Compact() {
 function DialogSection() {
 	const [open, setOpen] = createSignal(false);
 	const [openWithoutKey, setOpenWithoutKey] = createSignal(false);
-	const [ran, setRan] = createSignal("Nothing yet");
+	const [ran, setRan] = createSignal('Nothing yet');
 	const run = (item: CommandMenuItemData) => setRan(item.label);
 
 	// "Anywhere on this page": the window answers, and leaves with the page.
@@ -680,16 +680,16 @@ function DialogSection() {
 		event.preventDefault();
 		setOpen(!open());
 	};
-	appWindow.addEventListener("keydown", onKeyDown);
-	onCleanup(() => appWindow.removeEventListener("keydown", onKeyDown));
+	appWindow.addEventListener('keydown', onKeyDown);
+	onCleanup(() => appWindow.removeEventListener('keydown', onKeyDown));
 
 	return (
 		<Section id="dialog" title="Dialog and trigger shortcut">
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					gap: 12,
 				}}
 			>
@@ -744,13 +744,13 @@ function DialogSection() {
 }
 
 function FooterSection() {
-	const [tab, setTab] = createSignal("all");
+	const [tab, setTab] = createSignal('all');
 	const visible = createMemo(() =>
-		tab() === "all" ? FULL : FULL.filter((item) => item.group === tab()),
+		tab() === 'all' ? FULL : FULL.filter((item) => item.group === tab()),
 	);
 	return (
 		<Section id="footer" title="Footer hints">
-			<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+			<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 				<CommandMenuPanel maxHeight={PANEL_HEIGHT}>
 					<CommandMenu
 						testId="footer"
@@ -771,9 +771,9 @@ function FooterSection() {
 						<CommandMenuList />
 						<CommandMenuFooter
 							hints={[
-								{ label: "Select", keys: ["up", "down"] },
-								{ label: "Open", keys: "enter" },
-								{ label: "Open menu", keys: "mod+k" },
+								{ label: 'Select', keys: ['up', 'down'] },
+								{ label: 'Open', keys: 'enter' },
+								{ label: 'Open menu', keys: 'mod+k' },
 							]}
 						/>
 					</CommandMenu>
@@ -791,7 +791,7 @@ function CustomRows() {
 					<CommandMenuInput testId="custom-input" placeholder={PLACEHOLDER} />
 					<CommandMenuList
 						renderItem={(item: CommandMenuItemData) => (
-							<CommandMenuItem value={item.value} icon={item.icon ?? "plus"}>
+							<CommandMenuItem value={item.value} icon={item.icon ?? 'plus'}>
 								<CommandMenuItemText>{item.label}</CommandMenuItemText>
 								<Show when={item.group}>
 									{(group: () => string) => (
@@ -809,14 +809,14 @@ function CustomRows() {
 	);
 }
 
-export const title = "CommandMenu";
-export const group = "Components";
-export const listed = "sidebar";
+export const title = 'CommandMenu';
+export const group = 'Components';
+export const listed = 'sidebar';
 
 export function Demo() {
 	scrollRenderer = useGpuixRequired() as unknown as ScrollRenderer;
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 			<Playground />
 			<Basic />
 			<Details />
@@ -834,7 +834,7 @@ export function Demo() {
 
 /** Wheels the page until the card's top edge sits under the heading (positive delta is down, as for `ShotContext.scroll`). gpuix's scrollIntoView does not reach the page's scroller from here. */
 async function reveal(
-	shot: Parameters<NonNullable<DemoModule["scenarios"]>>[0],
+	shot: Parameters<NonNullable<DemoModule['scenarios']>>[0],
 	id: string,
 ) {
 	const section = sections.get(id);
@@ -858,87 +858,87 @@ async function reveal(
 	await shot.settle();
 }
 
-export const scenarios: DemoModule["scenarios"] = async (shot) => {
-	shot.capture("playground");
-	await shot.click("play-filters-switch-track");
-	shot.capture("playground-tabs-and-filters");
-	await shot.click("play-input");
-	await shot.press("Meta+k");
-	shot.capture("playground-dialog");
-	await shot.press("Escape");
-	await shot.click("play-tabs-track");
-	shot.capture("playground-filters-only");
-	await shot.click("playground-shuffle");
-	shot.capture("playground-shuffled");
+export const scenarios: DemoModule['scenarios'] = async (shot) => {
+	shot.capture('playground');
+	await shot.click('play-filters-switch-track');
+	shot.capture('playground-tabs-and-filters');
+	await shot.click('play-input');
+	await shot.press('Meta+k');
+	shot.capture('playground-dialog');
+	await shot.press('Escape');
+	await shot.click('play-tabs-track');
+	shot.capture('playground-filters-only');
+	await shot.click('playground-shuffle');
+	shot.capture('playground-shuffled');
 
-	await reveal(shot, "basic");
-	await shot.click("basic-input");
-	shot.capture("basic-focused");
-	await shot.press("ArrowDown ArrowDown");
-	shot.capture("basic-arrowed");
-	await shot.press("ArrowUp ArrowUp ArrowUp");
-	shot.capture("basic-wrapped");
-	await shot.press("s e a");
-	shot.capture("basic-filtered");
-	await shot.press("z z z");
+	await reveal(shot, 'basic');
+	await shot.click('basic-input');
+	shot.capture('basic-focused');
+	await shot.press('ArrowDown ArrowDown');
+	shot.capture('basic-arrowed');
+	await shot.press('ArrowUp ArrowUp ArrowUp');
+	shot.capture('basic-wrapped');
+	await shot.press('s e a');
+	shot.capture('basic-filtered');
+	await shot.press('z z z');
 	shot.expectText(EMPTY, true);
-	shot.capture("basic-empty");
-	await shot.press("Escape");
+	shot.capture('basic-empty');
+	await shot.press('Escape');
 	shot.expectText(EMPTY, false);
 
-	await reveal(shot, "details");
-	await shot.click("details-input");
-	await shot.press("m a i l");
-	shot.capture("details-keyword");
+	await reveal(shot, 'details');
+	await shot.click('details-input');
+	await shot.press('m a i l');
+	shot.capture('details-keyword');
 
-	await reveal(shot, "suggestions");
-	shot.capture("suggestions");
+	await reveal(shot, 'suggestions');
+	shot.capture('suggestions');
 
-	await reveal(shot, "tabs");
-	await shot.click("tabs-tab-Go to");
-	shot.capture("tabs-go-to");
-	await shot.hover("tabs-tab-Help");
-	shot.capture("tabs-hover");
+	await reveal(shot, 'tabs');
+	await shot.click('tabs-tab-Go to');
+	shot.capture('tabs-go-to');
+	await shot.hover('tabs-tab-Help');
+	shot.capture('tabs-hover');
 
-	await reveal(shot, "filters");
-	await shot.click("filters-sort-trigger");
-	shot.capture("filters-open");
-	await shot.press("ArrowDown Enter");
+	await reveal(shot, 'filters');
+	await shot.click('filters-sort-trigger');
+	shot.capture('filters-open');
+	await shot.press('ArrowDown Enter');
 	await shot.settle(500);
-	shot.capture("filters-sorted");
+	shot.capture('filters-sorted');
 
-	await reveal(shot, "tabs-filters");
-	shot.capture("tabs-and-filters");
+	await reveal(shot, 'tabs-filters');
+	shot.capture('tabs-and-filters');
 
-	await reveal(shot, "compact");
-	await shot.click("compact-input");
-	shot.capture("compact");
+	await reveal(shot, 'compact');
+	await shot.click('compact-input');
+	shot.capture('compact');
 
-	await reveal(shot, "footer");
-	await shot.click("footer-input");
-	await shot.press("ArrowRight");
-	shot.capture("footer-tabs");
+	await reveal(shot, 'footer');
+	await shot.click('footer-input');
+	await shot.press('ArrowRight');
+	shot.capture('footer-tabs');
 
-	await reveal(shot, "custom");
-	shot.capture("custom");
+	await reveal(shot, 'custom');
+	shot.capture('custom');
 
-	await reveal(shot, "dialog");
-	await shot.click("dialog-open");
-	shot.capture("dialog-open");
-	await shot.press("i n b");
-	shot.capture("dialog-filtered");
-	await shot.press("Enter");
-	shot.expectText("Ran: Inbox", true);
-	shot.capture("dialog-picked");
-	await shot.click("dialog-open");
-	await shot.press("Escape");
-	shot.capture("dialog-closed");
+	await reveal(shot, 'dialog');
+	await shot.click('dialog-open');
+	shot.capture('dialog-open');
+	await shot.press('i n b');
+	shot.capture('dialog-filtered');
+	await shot.press('Enter');
+	shot.expectText('Ran: Inbox', true);
+	shot.capture('dialog-picked');
+	await shot.click('dialog-open');
+	await shot.press('Escape');
+	shot.capture('dialog-closed');
 	// The bound combo opens it from anywhere on the page, and again closes it.
-	await shot.press("Meta+p");
-	shot.capture("dialog-combo-open");
-	await shot.press("Meta+p");
-	shot.capture("dialog-combo-closed");
-	await shot.click("dialog-open-no-shortcut");
-	shot.capture("dialog-no-shortcut");
-	await shot.press("Escape");
+	await shot.press('Meta+p');
+	shot.capture('dialog-combo-open');
+	await shot.press('Meta+p');
+	shot.capture('dialog-combo-closed');
+	await shot.click('dialog-open-no-shortcut');
+	shot.capture('dialog-no-shortcut');
+	await shot.press('Escape');
 };

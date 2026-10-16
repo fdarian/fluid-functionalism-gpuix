@@ -1,10 +1,10 @@
-import { For } from "solid-js";
-import { MONO } from "#/lib/doc-page";
-import { color, type as scale, siteType, weight } from "#/lib/theme";
+import { For } from 'solid-js';
+import { MONO } from '#/lib/doc-page';
+import { color, type as scale, siteType, weight } from '#/lib/theme';
 
-export const ANNOTATION_BLUE = "#6B97FF";
+export const ANNOTATION_BLUE = '#6B97FF';
 /** Red marks the collapse: the dialog and the dropdown share one surface. The page background stays blue, as orienting context. */
-export const ANNOTATION_RED = "#FF6B6B";
+export const ANNOTATION_RED = '#FF6B6B';
 
 export interface Point {
 	x: number;
@@ -81,12 +81,12 @@ export function ArrowOverlay(props: {
 		<svg
 			viewBox={`0 0 ${props.width} ${props.height}`}
 			style={{
-				position: "absolute",
+				position: 'absolute',
 				top: 0,
 				left: 0,
 				width: props.width,
 				height: props.height,
-				pointerEvents: "none",
+				pointerEvents: 'none',
 			}}
 		>
 			<For each={props.arrows}>
@@ -124,7 +124,7 @@ export function Swatch(props: { hex: string }) {
 				flexShrink: 0,
 				borderRadius: 3,
 				borderWidth: 1,
-				borderColor: "rgba(255,255,255,0.15)",
+				borderColor: 'rgba(255,255,255,0.15)',
 				backgroundColor: props.hex,
 			}}
 		/>
@@ -142,13 +142,13 @@ export function Callout(props: {
 	return (
 		<div
 			style={{
-				position: "absolute",
+				position: 'absolute',
 				left: props.left,
 				top: props.top,
 				width: props.width,
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "flex-start",
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'flex-start',
 				gap: 2,
 			}}
 		>
@@ -163,9 +163,9 @@ export function Callout(props: {
 			</text>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					gap: 6,
 				}}
 			>

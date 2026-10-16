@@ -1,8 +1,8 @@
-import { type DomEvent, motion } from "@gpuix/solid";
-import { createComputed, createSignal, Show } from "solid-js";
-import type { FluidHover, ItemRect } from "./fluid-hover";
-import { createPresence } from "./presence";
-import { color, motion as tween } from "./theme";
+import { type DomEvent, motion } from '@gpuix/solid';
+import { createComputed, createSignal, Show } from 'solid-js';
+import type { FluidHover, ItemRect } from './fluid-hover';
+import { createPresence } from './presence';
+import { color, motion as tween } from './theme';
 
 /** The ring's box rides `spring.fast` but its opacity is a plain tween (`registry/base/accordion.tsx:465-468`). */
 const ENTER_FADE = { duration: 0.08 } as const;
@@ -28,7 +28,7 @@ export function createFocusRing(hover: FluidHover) {
 		},
 		focus(row: number, event: DomEvent) {
 			if (event.focusVisible === undefined) {
-				throw new Error("A focus event carries no focusVisible");
+				throw new Error('A focus event carries no focusVisible');
 			}
 			setIndex(event.focusVisible ? row : null);
 		},
@@ -96,12 +96,12 @@ export function FocusRing(props: {
 							: tween.fastExit
 					}
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						zIndex: 20,
 						borderRadius: props.radius,
 						borderWidth: 1,
 						borderColor: color.focusRing,
-						pointerEvents: "none",
+						pointerEvents: 'none',
 					}}
 				/>
 			)}

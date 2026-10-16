@@ -1,4 +1,4 @@
-import { createContext, type JSX, useContext } from "solid-js";
+import { createContext, type JSX, useContext } from 'solid-js';
 
 /** How many `ArrowKeys` regions hold focus; the page's key handler reads it. */
 export const ArrowCaptureContext = createContext<{
@@ -13,13 +13,13 @@ export const ArrowCaptureContext = createContext<{
 export function ArrowKeys(props: { children: JSX.Element }) {
 	const capture = useContext(ArrowCaptureContext);
 	if (capture === undefined) {
-		throw new Error("ArrowKeys must be inside the compare page");
+		throw new Error('ArrowKeys must be inside the compare page');
 	}
 	return (
 		<div
 			onFocusIn={capture.enter}
 			onFocusOut={capture.leave}
-			style={{ display: "contents" }}
+			style={{ display: 'contents' }}
 		>
 			{props.children}
 		</div>

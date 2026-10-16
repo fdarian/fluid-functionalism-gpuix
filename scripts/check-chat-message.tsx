@@ -6,11 +6,11 @@
  * The meta row (timestamp and actions) is revealed by hover and by keyboard focus on an action.
  * The reveal is the row's opacity, eased by a CSS transition; a screenshot with the focused action lands in /tmp/check-chat-message-focus-<pid>.png.
  */
-import { createTestRoot } from "@gpuix/solid/testing";
-import { ChatMessage, ChatMessageAction } from "#/components/chat-message";
-import { fonts } from "#/lib/fonts";
-import { color, setThemeChoice } from "#/lib/theme";
-import { readPng } from "./png-pixels";
+import { createTestRoot } from '@gpuix/solid/testing';
+import { ChatMessage, ChatMessageAction } from '#/components/chat-message';
+import { fonts } from '#/lib/fonts';
+import { color, setThemeChoice } from '#/lib/theme';
+import { readPng } from './png-pixels';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const test = createTestRoot({ width: 500, height: 200, fonts });
@@ -33,34 +33,33 @@ function element(testId: string) {
 }
 /** The meta row: the grandparent of the time's text. */
 function metaRow() {
-	const text = renderer.findByText("09:41");
+	const text = renderer.findByText('09:41');
 	if (text === undefined || text.parentId === null)
-		throw new Error("no timestamp");
+		throw new Error('no timestamp');
 	const label = renderer.getElement(text.parentId);
 	if (label === undefined || label.parentId === null)
-		throw new Error("no timestamp label");
+		throw new Error('no timestamp label');
 	const row = renderer.getElement(label.parentId);
-	if (row === undefined) throw new Error("no meta row");
+	if (row === undefined) throw new Error('no meta row');
 	return row;
 }
 function metaOpacity() {
 	const opacity = metaRow().style.opacity;
-	if (opacity === undefined)
-		throw new Error("the meta row has no opacity");
+	if (opacity === undefined) throw new Error('the meta row has no opacity');
 	return Number(opacity);
 }
 let failed = false;
 function report(name: string, ok: boolean, detail: string) {
 	if (!ok) failed = true;
-	console.log(`${ok ? "PASS" : "FAIL"} ${name}: ${detail}`);
+	console.log(`${ok ? 'PASS' : 'FAIL'} ${name}: ${detail}`);
 }
 
-setThemeChoice("dark");
+setThemeChoice('dark');
 test.render(() => (
 	<div
 		style={{
-			display: "flex",
-			flexDirection: "column",
+			display: 'flex',
+			flexDirection: 'column',
 			padding: 20,
 			width: 460,
 			backgroundColor: color.background,
@@ -85,51 +84,51 @@ test.render(() => (
 await settle(800);
 
 const resting = metaOpacity();
-report("meta row is hidden at rest", resting === 0, `opacity ${resting}`);
+report('meta row is hidden at rest', resting === 0, `opacity ${resting}`);
 
 const metaStyle = metaRow().style;
 report(
 	"meta row fades opacity over 150 ms on Tailwind's default curve",
-	metaStyle.transitionProperty === "opacity" &&
-		metaStyle.transitionDuration === "150ms" &&
-		metaStyle.transitionTimingFunction === "cubic-bezier(0.4, 0, 0.2, 1)",
+	metaStyle.transitionProperty === 'opacity' &&
+		metaStyle.transitionDuration === '150ms' &&
+		metaStyle.transitionTimingFunction === 'cubic-bezier(0.4, 0, 0.2, 1)',
 	`${metaStyle.transitionProperty} ${metaStyle.transitionDuration} ${metaStyle.transitionTimingFunction}`,
 );
 
-renderer.simulateKeystrokes("Tab");
+renderer.simulateKeystrokes('Tab');
 await settle(500);
 const focused = renderer.getFocusedElementId();
 report(
-	"Tab reaches the first action",
-	focused === element("copy").id,
-	`focused ${focused}, copy ${element("copy").id}`,
+	'Tab reaches the first action',
+	focused === element('copy').id,
+	`focused ${focused}, copy ${element('copy').id}`,
 );
 const focusOpacity = metaOpacity();
 report(
-	"meta row is shown while an action has keyboard focus",
+	'meta row is shown while an action has keyboard focus',
 	focusOpacity === 1,
 	`opacity ${focusOpacity}`,
 );
 renderer.captureScreenshot(`/tmp/check-chat-message-focus-${process.pid}.png`);
 
-renderer.simulateKeystrokes("Tab");
+renderer.simulateKeystrokes('Tab');
 await settle(500);
 report(
-	"meta row stays shown moving between actions",
+	'meta row stays shown moving between actions',
 	metaOpacity() === 1,
 	`opacity ${metaOpacity()}`,
 );
 
-renderer.simulateKeystrokes("Tab");
+renderer.simulateKeystrokes('Tab');
 await settle(500);
 const afterFocus = renderer.getFocusedElementId();
 report(
-	"Tab leaves the message",
-	afterFocus === element("after").id,
+	'Tab leaves the message',
+	afterFocus === element('after').id,
 	`focused ${afterFocus}`,
 );
 report(
-	"meta row hides again when focus leaves",
+	'meta row hides again when focus leaves',
 	metaOpacity() === 0,
 	`opacity ${metaOpacity()}`,
 );
@@ -157,42 +156,42 @@ function step(ms: number) {
 	renderer.flush();
 	renderer.dispatchNativeEvents();
 }
-const copyBox = bounds("copy");
-const editBox = bounds("edit");
+const copyBox = bounds('copy');
+const editBox = bounds('edit');
 renderer.nativeSimulateMouseMove(copyBox.x + 12, copyBox.y + 12);
 await settle(500);
 renderer.clockPause();
-const hovered = actionPixels("copy");
+const hovered = actionPixels('copy');
 renderer.nativeSimulateMouseMove(editBox.x + 12, editBox.y + 12);
 step(0);
 step(40);
-const middle = actionPixels("copy");
+const middle = actionPixels('copy');
 step(300);
-const rested = actionPixels("copy");
+const rested = actionPixels('copy');
 renderer.clockResume();
 report(
-	"action fill eases back 40 ms after the pointer leaves",
+	'action fill eases back 40 ms after the pointer leaves',
 	middle.fill < hovered.fill - 2 && middle.fill > rested.fill + 2,
 	`hovered ${hovered.fill}, 40 ms ${middle.fill}, rest ${rested.fill}`,
 );
 report(
-	"action glyph colour eases back 40 ms after the pointer leaves",
+	'action glyph colour eases back 40 ms after the pointer leaves',
 	middle.glyph < hovered.glyph - 2 && middle.glyph > rested.glyph + 2,
 	`hovered ${hovered.glyph}, 40 ms ${middle.glyph}, rest ${rested.glyph}`,
 );
 
 // Leaving the message hides the meta row over 150 ms; the second glyph is hovered nowhere, so only the row's opacity moves it.
 renderer.clockPause();
-const shown = actionPixels("copy").glyph;
+const shown = actionPixels('copy').glyph;
 renderer.nativeSimulateMouseMove(400, 190);
 step(0);
 step(40);
-const fading = actionPixels("copy").glyph;
+const fading = actionPixels('copy').glyph;
 step(400);
-const hidden = actionPixels("copy").glyph;
+const hidden = actionPixels('copy').glyph;
 renderer.clockResume();
 report(
-	"meta row eases its opacity out 40 ms after the pointer leaves",
+	'meta row eases its opacity out 40 ms after the pointer leaves',
 	fading < shown - 2 && fading > hidden + 2,
 	`shown ${shown}, 40 ms ${fading}, hidden ${hidden}`,
 );

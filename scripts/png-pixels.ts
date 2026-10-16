@@ -1,5 +1,5 @@
-import { readFileSync } from "node:fs";
-import { inflateSync } from "node:zlib";
+import { readFileSync } from 'node:fs';
+import { inflateSync } from 'node:zlib';
 
 export interface Pixels {
 	width: number;
@@ -17,19 +17,19 @@ export function readPng(path: string): Pixels {
 	const parts: Buffer[] = [];
 	while (offset < file.length) {
 		const length = file.readUInt32BE(offset);
-		const kind = file.toString("ascii", offset + 4, offset + 8);
+		const kind = file.toString('ascii', offset + 4, offset + 8);
 		const body = file.subarray(offset + 8, offset + 8 + length);
-		if (kind === "IHDR") {
+		if (kind === 'IHDR') {
 			width = body.readUInt32BE(0);
 			height = body.readUInt32BE(4);
 			if (body[8] !== 8 || body[12] !== 0) {
-				throw new Error("only 8-bit non-interlaced PNGs are supported");
+				throw new Error('only 8-bit non-interlaced PNGs are supported');
 			}
 			if (body[9] === 6) channels = 4;
 			else if (body[9] === 2) channels = 3;
 			else throw new Error(`unsupported PNG colour type ${body[9]}`);
 		}
-		if (kind === "IDAT") parts.push(body);
+		if (kind === 'IDAT') parts.push(body);
 		offset += 12 + length;
 	}
 	const raw = inflateSync(Buffer.concat(parts));

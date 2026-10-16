@@ -3,7 +3,7 @@ import {
 	type HostElement,
 	MotionConfig,
 	useGpuixRequired,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	type Accessor,
 	createEffect,
@@ -14,68 +14,68 @@ import {
 	onCleanup,
 	Show,
 	Switch,
-} from "solid-js";
-import { Button } from "#/components/button";
-import { ScrollArea } from "#/components/scroll-area";
-import { Select } from "#/components/select";
+} from 'solid-js';
+import { Button } from '#/components/button';
+import { ScrollArea } from '#/components/scroll-area';
+import { Select } from '#/components/select';
 import {
 	Sidebar,
 	SidebarContent,
 	SidebarMenu,
 	SidebarMenuButton,
-} from "#/components/sidebar";
-import { Tooltip } from "#/components/tooltip";
-import { BentoGrid } from "#/home/bento-grid";
-import { AppFrame, PANEL_INNER_RADIUS } from "#/lib/app-frame";
-import { kindDotColor } from "#/lib/changelog/kind-style";
-import { marks } from "#/lib/changelog/releases";
-import { type Demo, type Page, SHOWCASE_SLUG } from "#/lib/demo";
-import { PageScrollContext, PageScrollerContext } from "#/lib/demo-kit";
-import { createMeasuredHeight } from "#/lib/measured-height";
-import { MONO } from "#/lib/doc-page";
-import { type PageNav, PageNavContext, usePageNav } from "#/lib/page-nav";
-import {
-	createRightRail,
-	RightRailContext,
-	RightRailTarget,
-} from "#/lib/playground";
+} from '#/components/sidebar';
+import { Tooltip } from '#/components/tooltip';
+import { BentoGrid } from '#/home/bento-grid';
+import { AppFrame, PANEL_INNER_RADIUS } from '#/lib/app-frame';
+import { kindDotColor } from '#/lib/changelog/kind-style';
+import { marks } from '#/lib/changelog/releases';
+import { type Demo, type Page, SHOWCASE_SLUG } from '#/lib/demo';
+import { PageScrollContext, PageScrollerContext } from '#/lib/demo-kit';
+import { MONO } from '#/lib/doc-page';
 import {
 	ICON_LIBRARIES,
 	type IconLibrary,
 	iconLibrary,
 	setIconLibrary,
-} from "#/lib/icons";
-import { openUrl } from "#/lib/open-url";
+} from '#/lib/icons';
+import { createMeasuredHeight } from '#/lib/measured-height';
+import { openUrl } from '#/lib/open-url';
+import { type PageNav, PageNavContext, usePageNav } from '#/lib/page-nav';
+import {
+	createRightRail,
+	RightRailContext,
+	RightRailTarget,
+} from '#/lib/playground';
 import {
 	createSiteMenu,
 	SITE_MENU_SHORTCUT,
 	SiteCommandMenu,
-} from "#/lib/site-command-menu";
-import { buildStarterPrompt, SITE_URL } from "#/lib/starter-prompt";
+} from '#/lib/site-command-menu';
+import { buildStarterPrompt, SITE_URL } from '#/lib/starter-prompt';
 import {
 	bindSystemScheme,
 	color,
 	height,
-	siteType,
+	SHAPES,
+	type ShapeChoice,
+	SIZES,
+	type SizeChoice,
 	type as scale,
 	setShapeChoice,
 	setSizeChoice,
 	setThemeChoice,
-	SHAPES,
-	type ShapeChoice,
 	shapeChoice,
-	SIZES,
-	type SizeChoice,
+	siteType,
 	sizeChoice,
 	THEMES,
 	type ThemeChoice,
 	themeChoice,
 	weight,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
 const SHOWCASE = SHOWCASE_SLUG;
 const PAGE_WIDTH = 600;
-export const WINDOW_TITLE = "Fluid Functionalism on gpuix";
+export const WINDOW_TITLE = 'Fluid Functionalism on gpuix';
 
 function Heading(props: { children: string }) {
 	return (
@@ -106,8 +106,8 @@ function NavGroup(props: {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				flexShrink: 0,
 				paddingTop: props.label === undefined ? 8 : 16,
 				paddingBottom: 8,
@@ -120,9 +120,9 @@ function NavGroup(props: {
 							style={{
 								height: height.groupLabel,
 								flexShrink: 0,
-								display: "flex",
-								flexDirection: "row",
-								alignItems: "center",
+								display: 'flex',
+								flexDirection: 'row',
+								alignItems: 'center',
 								paddingLeft: 8,
 								paddingRight: 8,
 							}}
@@ -142,16 +142,16 @@ function NavGroup(props: {
 									minWidth: 20,
 									paddingLeft: 4,
 									paddingRight: 4,
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "center",
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
 								}}
 							>
 								<text
 									style={{
 										...siteType.caption,
 										color: color.mutedForeground,
-										fontVariantNumeric: "tabular-nums",
+										fontVariantNumeric: 'tabular-nums',
 									}}
 								>
 									{props.count}
@@ -183,14 +183,14 @@ function AppSidebar(props: {
 	onPage: (page: string) => void;
 	onSearch: () => void;
 }) {
-	const sidebarPages = (group: Page["group"]) =>
+	const sidebarPages = (group: Page['group']) =>
 		props.pages.filter(
-			(page) => page.group === group && page.listed === "sidebar",
+			(page) => page.group === group && page.listed === 'sidebar',
 		);
 	const sidebarDemos = () =>
-		props.demos.filter((demo) => demo.listed === "sidebar");
+		props.demos.filter((demo) => demo.listed === 'sidebar');
 	const newDot = (isNew: boolean) =>
-		isNew ? { dot: kindDotColor("new"), dotLabel: "New" } : {};
+		isNew ? { dot: kindDotColor('new'), dotLabel: 'New' } : {};
 	const row = (page: Page, isNew: boolean) => (
 		<SidebarMenuButton
 			testId={`nav-${page.slug}`}
@@ -222,14 +222,14 @@ function AppSidebar(props: {
 						active={props.page === SHOWCASE}
 						onClick={() => props.onPage(SHOWCASE)}
 					/>
-					<For each={sidebarPages("Pages")}>
+					<For each={sidebarPages('Pages')}>
 						{/* The Changelog page itself is new: dotted by hand, unlike the docs rows, which follow the latest release. */}
-						{(page) => row(page, page.slug === "changelog")}
+						{(page) => row(page, page.slug === 'changelog')}
 					</For>
 				</NavGroup>
-				<Show when={sidebarPages("System").length > 0}>
-					<NavGroup label="System" count={sidebarPages("System").length}>
-						<For each={sidebarPages("System")}>
+				<Show when={sidebarPages('System').length > 0}>
+					<NavGroup label="System" count={sidebarPages('System').length}>
+						<For each={sidebarPages('System')}>
 							{(page) => row(page, marks.new.includes(page.slug))}
 						</For>
 					</NavGroup>
@@ -263,7 +263,7 @@ function Hero() {
 		try {
 			await navigator.clipboard.writeText(buildStarterPrompt(themeChoice()));
 		} catch (error) {
-			console.error("Copy install prompt failed", error);
+			console.error('Copy install prompt failed', error);
 			return;
 		}
 		setCopied(true);
@@ -271,16 +271,16 @@ function Hero() {
 		resetTimer = setTimeout(() => setCopied(false), COPIED_MS);
 	};
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
 			<Heading>Fluid Functionalism</Heading>
 			<text style={{ ...siteType.body, color: color.mutedForeground }}>
 				Refined UI components with satisfying hover.
 			</text>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					gap: 8,
 					paddingTop: 12,
 				}}
@@ -288,7 +288,7 @@ function Hero() {
 				<Button
 					testId="hero-copy"
 					size="compact"
-					leadingIcon={copied() ? "check" : "copy"}
+					leadingIcon={copied() ? 'check' : 'copy'}
 					onClick={copyPrompt}
 				>
 					Copy install prompt
@@ -297,7 +297,7 @@ function Hero() {
 					testId="hero-learn-more"
 					size="compact"
 					variant="secondary"
-					onClick={() => nav.navigate("introduction")}
+					onClick={() => nav.navigate('introduction')}
 				>
 					Learn more
 				</Button>
@@ -317,13 +317,13 @@ function Hero() {
 function HeroArrows() {
 	const nav = usePageNav();
 	// Square icon buttons follow the site-wide size step.
-	const iconSize = () => (sizeChoice() === "compact" ? "icon-compact" : "icon");
+	const iconSize = () => (sizeChoice() === 'compact' ? 'icon-compact' : 'icon');
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: 4,
 				flexShrink: 0,
 			}}
@@ -339,8 +339,8 @@ function HeroArrows() {
 			<Tooltip
 				content={
 					<text style={{ ...siteType.caption, color: color.background }}>
-						{"Introduction  "}
-						<span style={{ fontFamily: MONO, opacity: 0.5 }}>{"\u2192"}</span>
+						{'Introduction  '}
+						<span style={{ fontFamily: MONO, opacity: 0.5 }}>{'\u2192'}</span>
 					</text>
 				}
 			>
@@ -350,7 +350,7 @@ function HeroArrows() {
 					size={iconSize()}
 					icon="arrow-right"
 					aria-label="Next: Introduction"
-					onClick={() => nav.navigate("introduction")}
+					onClick={() => nav.navigate('introduction')}
 				/>
 			</Tooltip>
 		</div>
@@ -360,16 +360,16 @@ function HeroArrows() {
 /** The hero over the bento grid of live component previews. */
 function Showcase() {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
 			<div
 				style={{
-					width: "100%",
+					width: '100%',
 					maxWidth: 680,
-					alignSelf: "center",
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "flex-start",
-					justifyContent: "space-between",
+					alignSelf: 'center',
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'flex-start',
+					justifyContent: 'space-between',
 					gap: 16,
 					paddingLeft: 24,
 					paddingRight: 24,
@@ -380,9 +380,9 @@ function Showcase() {
 			</div>
 			<div
 				style={{
-					width: "100%",
+					width: '100%',
 					maxWidth: 1200,
-					alignSelf: "center",
+					alignSelf: 'center',
 					paddingLeft: 24,
 					paddingRight: 24,
 				}}
@@ -397,8 +397,8 @@ export function CustomizeCard() {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 12,
 				padding: 16,
 				borderRadius: 12,
@@ -416,10 +416,10 @@ export function CustomizeCard() {
 			</text>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					justifyContent: 'space-between',
 					height: 28,
 				}}
 			>
@@ -435,10 +435,10 @@ export function CustomizeCard() {
 			</div>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					justifyContent: 'space-between',
 					height: 28,
 				}}
 			>
@@ -454,10 +454,10 @@ export function CustomizeCard() {
 			</div>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					justifyContent: 'space-between',
 					height: 28,
 				}}
 			>
@@ -473,10 +473,10 @@ export function CustomizeCard() {
 			</div>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					justifyContent: 'space-between',
 					height: 28,
 				}}
 			>
@@ -506,7 +506,7 @@ export function App(props: {
 		props.demos.find((demo) => demo.slug === page());
 	const currentPage = (): Page | undefined =>
 		props.pages.find((candidate) => candidate.slug === page());
-	const isFull = () => currentPage()?.layout === "full";
+	const isFull = () => currentPage()?.layout === 'full';
 	bindSystemScheme(createAppearance());
 	const siteMenu = createSiteMenu();
 	const rail = createRightRail();
@@ -520,7 +520,7 @@ export function App(props: {
 	const renderer = useGpuixRequired();
 	const setAppearance = renderer.setAppearance;
 	if (setAppearance === undefined) {
-		throw new Error("This renderer does not expose setAppearance");
+		throw new Error('This renderer does not expose setAppearance');
 	}
 	// Native chrome and traffic lights follow the override; "system" clears it.
 	createEffect(() => setAppearance.call(renderer, themeChoice()));
@@ -528,116 +528,117 @@ export function App(props: {
 		<MotionConfig reducedMotion="user">
 			<AppFrame title={WINDOW_TITLE}>
 				<RightRailContext.Provider value={rail}>
-				<div
-					style={{
-						display: "flex",
-						flexDirection: "row",
-						width: "100%",
-						height: "100%",
-						backgroundColor: color.background,
-						borderRadius: PANEL_INNER_RADIUS,
-					}}
-				>
-					<Show when={!isFull()}>
-						<AppSidebar
-							demos={props.demos}
-							pages={props.pages}
-							page={page()}
-							onPage={navigate}
-							onSearch={() => siteMenu.setOpen(true)}
-						/>
-					</Show>
 					<div
-						ref={setPageScroller}
-						onLayout={viewport.onLayout}
-						onScroll={() => {
-							for (const listener of scrollListeners) listener();
-						}}
 						style={{
-							flexGrow: 1,
-							minWidth: 0,
-							display: "flex",
-							flexDirection: "row",
-							overflowY: "scroll",
+							display: 'flex',
+							flexDirection: 'row',
+							width: '100%',
+							height: '100%',
+							backgroundColor: color.background,
+							borderRadius: PANEL_INNER_RADIUS,
 						}}
 					>
+						<Show when={!isFull()}>
+							<AppSidebar
+								demos={props.demos}
+								pages={props.pages}
+								page={page()}
+								onPage={navigate}
+								onSearch={() => siteMenu.setOpen(true)}
+							/>
+						</Show>
 						<div
+							ref={setPageScroller}
+							onLayout={viewport.onLayout}
+							onScroll={() => {
+								for (const listener of scrollListeners) listener();
+							}}
 							style={{
 								flexGrow: 1,
 								minWidth: 0,
-								display: "flex",
-								flexDirection: "column",
-								alignItems: "center",
+								display: 'flex',
+								flexDirection: 'row',
+								overflowY: 'scroll',
 							}}
 						>
 							<div
 								style={{
-									width: isFull() || page() === SHOWCASE ? "100%" : PAGE_WIDTH,
-									...(isFull() ? { height: "100%" } : {}),
-									flexShrink: 0,
-									display: "flex",
-									flexDirection: "column",
-									gap: isFull() ? 0 : 24,
-									paddingTop: isFull() ? 0 : 40,
-									paddingBottom: isFull() ? 0 : 40,
+									flexGrow: 1,
+									minWidth: 0,
+									display: 'flex',
+									flexDirection: 'column',
+									alignItems: 'center',
 								}}
 							>
-								<PageScrollerContext.Provider value={pageScroller}>
-									<PageScrollContext.Provider value={onPageScroll}>
-										<PageNavContext.Provider value={nav}>
-											<Switch>
-												<Match when={page() === SHOWCASE}>
-													<Showcase />
-												</Match>
-												<Match when={current()} keyed>
-													{(demo: Demo) => <DemoPage demo={demo} />}
-												</Match>
-												<Match when={currentPage()} keyed>
-													{(entry: Page) => <PageBody page={entry} />}
-												</Match>
-											</Switch>
-										</PageNavContext.Provider>
-									</PageScrollContext.Provider>
-								</PageScrollerContext.Provider>
-							</div>
-						</div>
-						{/* Sticky needs a definite height to stick at, and gpuix has no `100svh`: it is the scroller's own, measured. */}
-						<Show when={!isFull() && viewport.height()}>
-							{(height: Accessor<number>) => (
 								<div
 									style={{
-										position: "sticky",
-										top: 0,
-										alignSelf: "flex-start",
-										width: 296,
-										height: height(),
+										width:
+											isFull() || page() === SHOWCASE ? '100%' : PAGE_WIDTH,
+										...(isFull() ? { height: '100%' } : {}),
 										flexShrink: 0,
+										display: 'flex',
+										flexDirection: 'column',
+										gap: isFull() ? 0 : 24,
+										paddingTop: isFull() ? 0 : 40,
+										paddingBottom: isFull() ? 0 : 40,
 									}}
 								>
-									<ScrollArea height="100%" fade>
-										<div
-											style={{
-												display: "flex",
-												flexDirection: "column",
-												gap: 12,
-												padding: 16,
-											}}
-										>
-											<Show
-												when={currentPage()?.Rail}
-												fallback={<CustomizeCard />}
-												keyed
-											>
-												{(Rail: () => JSX.Element) => <Rail />}
-											</Show>
-											<RightRailTarget />
-										</div>
-									</ScrollArea>
+									<PageScrollerContext.Provider value={pageScroller}>
+										<PageScrollContext.Provider value={onPageScroll}>
+											<PageNavContext.Provider value={nav}>
+												<Switch>
+													<Match when={page() === SHOWCASE}>
+														<Showcase />
+													</Match>
+													<Match when={current()} keyed>
+														{(demo: Demo) => <DemoPage demo={demo} />}
+													</Match>
+													<Match when={currentPage()} keyed>
+														{(entry: Page) => <PageBody page={entry} />}
+													</Match>
+												</Switch>
+											</PageNavContext.Provider>
+										</PageScrollContext.Provider>
+									</PageScrollerContext.Provider>
 								</div>
-							)}
-						</Show>
+							</div>
+							{/* Sticky needs a definite height to stick at, and gpuix has no `100svh`: it is the scroller's own, measured. */}
+							<Show when={!isFull() && viewport.height()}>
+								{(height: Accessor<number>) => (
+									<div
+										style={{
+											position: 'sticky',
+											top: 0,
+											alignSelf: 'flex-start',
+											width: 296,
+											height: height(),
+											flexShrink: 0,
+										}}
+									>
+										<ScrollArea height="100%" fade>
+											<div
+												style={{
+													display: 'flex',
+													flexDirection: 'column',
+													gap: 12,
+													padding: 16,
+												}}
+											>
+												<Show
+													when={currentPage()?.Rail}
+													fallback={<CustomizeCard />}
+													keyed
+												>
+													{(Rail: () => JSX.Element) => <Rail />}
+												</Show>
+												<RightRailTarget />
+											</div>
+										</ScrollArea>
+									</div>
+								)}
+							</Show>
+						</div>
 					</div>
-				</div>
 				</RightRailContext.Provider>
 				<SiteCommandMenu
 					menu={siteMenu}
@@ -664,10 +665,7 @@ function DemoPage(props: { demo: Demo }): JSX.Element {
 /** A "docs" page sits under the heading in the page column; a "full" page is the whole panel. */
 function PageBody(props: { page: Page }): JSX.Element {
 	return (
-		<Show
-			when={props.page.layout === "docs"}
-			fallback={<props.page.Page />}
-		>
+		<Show when={props.page.layout === 'docs'} fallback={<props.page.Page />}>
 			<Heading>{props.page.heading ?? props.page.title}</Heading>
 			<props.page.Page />
 		</Show>

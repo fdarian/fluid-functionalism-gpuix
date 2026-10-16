@@ -1,15 +1,15 @@
-import { type MotionTransition, motion, type StyleDesc } from "@gpuix/solid";
-import { createSignal, Show } from "solid-js";
-import { Button } from "#/components/button";
-import { ComponentPreview, MONO } from "#/lib/doc-page";
-import { createPresence } from "#/lib/presence";
+import { type MotionTransition, motion, type StyleDesc } from '@gpuix/solid';
+import { createSignal, Show } from 'solid-js';
+import { Button } from '#/components/button';
+import { ComponentPreview, MONO } from '#/lib/doc-page';
+import { createPresence } from '#/lib/presence';
 import {
 	color,
 	siteType,
 	motion as tween,
 	twShadow,
 	withAlpha,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
 const MODAL_CODE = `// Both modals open on spring.slow. Only the exit differs.
 
@@ -86,13 +86,13 @@ function ModalFrame(props: {
 		<div
 			testId={props.testId}
 			style={{
-				position: "relative",
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
+				position: 'relative',
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
 				height: 200,
-				width: "100%",
-				overflow: "hidden",
+				width: '100%',
+				overflow: 'hidden',
 				borderRadius: 12,
 				borderWidth: 1,
 				borderColor: color.border,
@@ -105,7 +105,7 @@ function ModalFrame(props: {
 					animate={{ opacity: presence.open() ? 1 : 0 }}
 					transition={transition()}
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 0,
 						left: 0,
 						right: 0,
@@ -119,12 +119,12 @@ function ModalFrame(props: {
 					animate={presence.open() ? CARD_AT : CARD_AWAY}
 					transition={transition()}
 					style={{
-						position: "relative",
-						display: "flex",
-						flexDirection: "column",
+						position: 'relative',
+						display: 'flex',
+						flexDirection: 'column',
 						gap: 10,
 						padding: 16,
-						overflow: "hidden",
+						overflow: 'hidden',
 						borderRadius: 12,
 						borderWidth: 1,
 						borderColor: color.border,
@@ -134,7 +134,7 @@ function ModalFrame(props: {
 				>
 					<Bar
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							top: 12,
 							right: 12,
 							width: 16,
@@ -143,27 +143,27 @@ function ModalFrame(props: {
 						}}
 					/>
 					<Bar
-						style={{ width: "50%", height: 12, backgroundColor: faint(0.1) }}
+						style={{ width: '50%', height: 12, backgroundColor: faint(0.1) }}
 					/>
 					<Bar
 						style={{
 							marginTop: 4,
-							width: "100%",
+							width: '100%',
 							height: 8,
 							backgroundColor: faint(0.06),
 						}}
 					/>
 					<Bar
-						style={{ width: "100%", height: 8, backgroundColor: faint(0.06) }}
+						style={{ width: '100%', height: 8, backgroundColor: faint(0.06) }}
 					/>
 					<Bar
-						style={{ width: "40%", height: 8, backgroundColor: faint(0.06) }}
+						style={{ width: '40%', height: 8, backgroundColor: faint(0.06) }}
 					/>
 					<div
 						style={{
-							display: "flex",
-							flexDirection: "row",
-							justifyContent: "flex-end",
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'flex-end',
 							gap: 8,
 							marginTop: 12,
 						}}
@@ -194,7 +194,7 @@ function ModalFrame(props: {
 }
 
 function Side(props: {
-	slug: "same" | "faster";
+	slug: 'same' | 'faster';
 	exitTransition: MotionTransition;
 	exitMs: number;
 	mark: string;
@@ -208,9 +208,9 @@ function Side(props: {
 				flexGrow: 1,
 				flexBasis: 0,
 				minWidth: 0,
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
 				gap: 12,
 			}}
 		>
@@ -233,7 +233,7 @@ function Side(props: {
 				style={{
 					...siteType.caption,
 					color: color.mutedForeground,
-					textAlign: "center",
+					textAlign: 'center',
 				}}
 			>
 				{props.mark} {props.caption}
@@ -247,21 +247,21 @@ export function ModalExitDemo() {
 		<ComponentPreview testId="modal-exit" code={MODAL_CODE} minHeight={320}>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
 					gap: 16,
-					width: "100%",
+					width: '100%',
 					maxWidth: 672,
 				}}
 			>
 				{/* Independent state per side, so one can be toggled and then the other, back to back. */}
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
+						display: 'flex',
+						flexDirection: 'row',
 						gap: 20,
-						width: "100%",
+						width: '100%',
 					}}
 				>
 					<Side
@@ -285,10 +285,10 @@ export function ModalExitDemo() {
 					style={{
 						...siteType.caption,
 						color: color.mutedForeground,
-						textAlign: "center",
+						textAlign: 'center',
 					}}
 				>
-					Toggle one, then the other — both open on{" "}
+					Toggle one, then the other — both open on{' '}
 					<span style={{ fontFamily: MONO }}>spring.slow</span>; only the close
 					differs.
 				</text>

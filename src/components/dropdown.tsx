@@ -1,6 +1,6 @@
 import {
-	document,
 	type DomEvent,
+	document,
 	type HostDomEvent,
 	type HostElement,
 	type HostMouseEvent,
@@ -8,7 +8,7 @@ import {
 	type HostPointerEvent,
 	type KeyEvent,
 	motion,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	type Accessor,
 	batch,
@@ -25,37 +25,37 @@ import {
 	Show,
 	untrack,
 	useContext,
-} from "solid-js";
-import { FluidHighlight } from "#/lib/fluid-highlight";
+} from 'solid-js';
+import { FluidHighlight } from '#/lib/fluid-highlight';
 import {
 	createFluidHover,
 	createReflowGate,
 	type FluidHover,
 	type ItemRect,
-} from "#/lib/fluid-hover";
-import type { IconRef } from "#/lib/icons";
-import { isChord, moveIndex, revealRow } from "#/lib/list-nav";
-import { createPlacementState, POPUP_MARGIN, PopupSurface } from "#/lib/popup";
-import { createPressToggle, refocusAfterPress } from "#/lib/popup-trigger";
-import { createPresence } from "#/lib/presence";
-import { color, radius, shadow, motion as tween } from "#/lib/theme";
-import { createTypeahead } from "#/lib/typeahead";
+} from '#/lib/fluid-hover';
+import type { IconRef } from '#/lib/icons';
+import { isChord, moveIndex, revealRow } from '#/lib/list-nav';
+import { createPlacementState, POPUP_MARGIN, PopupSurface } from '#/lib/popup';
+import { createPressToggle, refocusAfterPress } from '#/lib/popup-trigger';
+import { createPresence } from '#/lib/presence';
+import { color, radius, shadow, motion as tween } from '#/lib/theme';
+import { createTypeahead } from '#/lib/typeahead';
 import {
 	type DropdownSearchHost,
 	DropdownSearchHostContext,
 	type DropdownSearchProps,
 	SEARCH_HEIGHT,
 	SearchField,
-} from "./dropdown-search";
+} from './dropdown-search';
 import {
 	DropdownContext,
 	type DropdownContextValue,
 	MenuItem,
 	type MenuRow,
-} from "./menu-item";
+} from './menu-item';
 
-export { DropdownEmpty, DropdownSearch } from "./dropdown-search";
-export { DropdownLabel, DropdownSeparator, MenuItem } from "./menu-item";
+export { DropdownEmpty, DropdownSearch } from './dropdown-search';
+export { DropdownLabel, DropdownSeparator, MenuItem } from './menu-item';
 
 const PANEL_WIDTH = 288;
 const SUB_WIDTH = 224;
@@ -71,7 +71,7 @@ const SUBMENU_DWELL_MS = 120;
 /** FF focuses the first row two frames after a pointer open, once Base UI's own open focus has landed on the popup. */
 const OPEN_FOCUS_MS = 32;
 
-type LitBy = "open" | "pointer" | "keyboard";
+type LitBy = 'open' | 'pointer' | 'keyboard';
 
 /** Rows that are one contiguous run of checked indices share one background. */
 interface Run {
@@ -192,9 +192,9 @@ function MenuBody(props: {
 			onMouseMove={props.handlers.onMouseMove}
 			onMouseLeave={props.handlers.onMouseLeave}
 			style={{
-				position: "relative",
-				display: "flex",
-				flexDirection: "column",
+				position: 'relative',
+				display: 'flex',
+				flexDirection: 'column',
 				padding: PADDING,
 				paddingTop: props.paddingTop ?? PADDING,
 			}}
@@ -224,7 +224,7 @@ function MenuBody(props: {
 			<FluidHighlight
 				rect={hoverRect}
 				session={props.hover.session}
-				from={() => (props.litBy() === "pointer" ? checkedRect() : null)}
+				from={() => (props.litBy() === 'pointer' ? checkedRect() : null)}
 				radius={radius.item}
 				background={color.hover}
 				travel={props.travel}
@@ -242,11 +242,11 @@ function MenuBody(props: {
 						}}
 						transition={tween.fast}
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							borderRadius: radius.focusRing,
 							borderWidth: 1,
 							borderColor: color.focusRing,
-							pointerEvents: "none",
+							pointerEvents: 'none',
 						}}
 					/>
 				)}
@@ -280,7 +280,7 @@ function createMenuList(options: {
 	/** Tab closes the whole menu; the key handler decides whether focus moves on from the trigger. */
 	leave: () => void;
 	/** Which end an open lights: ArrowUp on the trigger opens on the last row. */
-	openFrom: Accessor<"first" | "last">;
+	openFrom: Accessor<'first' | 'last'>;
 }) {
 	const menu = useMenuScope();
 	const rows = new Map<number, MenuRow>();
@@ -288,7 +288,7 @@ function createMenuList(options: {
 	const hover = createFluidHover({
 		isItemDisabled: (index) => rows.get(index)?.disabled() === true,
 	});
-	const [litBy, setLitBy] = createSignal<LitBy>("open");
+	const [litBy, setLitBy] = createSignal<LitBy>('open');
 	const reflow = createReflowGate();
 	const [search, setSearch] = createSignal<DropdownSearchProps>();
 	const [openSubIndex, setOpenSubIndex] = createSignal<number | null>(null);
@@ -318,7 +318,7 @@ function createMenuList(options: {
 		revealRow(
 			scroller,
 			row,
-			"nearest",
+			'nearest',
 			PADDING,
 			search() === undefined ? 0 : SEARCH_HEIGHT,
 		);
@@ -331,7 +331,7 @@ function createMenuList(options: {
 	};
 
 	const highlight = (index: number | null) => {
-		setLitBy("keyboard");
+		setLitBy('keyboard');
 		hover.releasePointer();
 		hover.setActiveIndex(index);
 		if (index !== null) revealIndex(index);
@@ -367,10 +367,10 @@ function createMenuList(options: {
 	const redirectToField = (event: KeyEvent, query: DropdownSearchProps) => {
 		const key = event.key;
 		if (key === undefined) return false;
-		const typed = key.length === 1 && key !== " ";
-		if (!typed && key !== "Backspace") return false;
+		const typed = key.length === 1 && key !== ' ';
+		if (!typed && key !== 'Backspace') return false;
 		event.preventDefault();
-		setLitBy("keyboard");
+		setLitBy('keyboard');
 		hover.setActiveIndex(null);
 		field?.focus({ preventScroll: true });
 		query.onValueChange(typed ? query.value + key : query.value.slice(0, -1));
@@ -404,14 +404,13 @@ function createMenuList(options: {
 		event.stopPropagation();
 		const query = search();
 		// Space, Home, End and the sideways arrows are the field's own while it has focus.
-		const inField =
-			field !== undefined && event.target === field;
-		if (event.key === "Escape") {
+		const inField = field !== undefined && event.target === field;
+		if (event.key === 'Escape') {
 			event.preventDefault();
 			options.closeSelf();
 			return;
 		}
-		if (event.key === "Tab") {
+		if (event.key === 'Tab') {
 			// Forward: the trigger takes focus as the menu closes, so the default Tab moves on from it. Backward leaves it on the trigger.
 			if (event.shiftKey === true) event.preventDefault();
 			options.leave();
@@ -421,41 +420,41 @@ function createMenuList(options: {
 			if (typeahead.handleKey(event)) return;
 		} else if (!inField && redirectToField(event, query)) return;
 		switch (event.key) {
-			case "ArrowDown":
+			case 'ArrowDown':
 				event.preventDefault();
 				move(1);
 				return;
-			case "ArrowUp":
+			case 'ArrowUp':
 				event.preventDefault();
 				move(-1);
 				return;
-			case "Home":
+			case 'Home':
 				if (inField) return;
 				event.preventDefault();
 				highlight(allRows()[0] ?? null);
 				return;
-			case "End":
+			case 'End':
 				if (inField) return;
 				event.preventDefault();
 				highlight(allRows().at(-1) ?? null);
 				return;
-			case "Enter":
+			case 'Enter':
 				// Nothing is focused to pick in the field; the default would submit a form around it.
 				event.preventDefault();
 				if (!inField) activateActive();
 				return;
-			case " ":
+			case ' ':
 				if (inField) return;
 				event.preventDefault();
 				activateActive();
 				return;
-			case "ArrowRight": {
+			case 'ArrowRight': {
 				if (inField) return;
 				const index = hover.activeIndex();
 				if (index !== null) rows.get(index)?.openSubmenu?.();
 				return;
 			}
-			case "ArrowLeft":
+			case 'ArrowLeft':
 				if (options.isSub && !inField) options.closeSelf();
 				return;
 		}
@@ -466,12 +465,12 @@ function createMenuList(options: {
 	// takes the highlight, and the submenu goes with it.
 	const handlers = {
 		onMouseEnter() {
-			setLitBy("pointer");
+			setLitBy('pointer');
 			options.setKeyboardActive(false);
 			if (openSubIndex() === null) hover.handlers.onMouseEnter();
 		},
 		onMouseMove(event: HostMouseMoveEvent) {
-			setLitBy("pointer");
+			setLitBy('pointer');
 			options.setKeyboardActive(false);
 			if (openSubIndex() === null) {
 				hover.handlers.onMouseMove(event);
@@ -488,7 +487,7 @@ function createMenuList(options: {
 			clearTimeout(dwellTimer);
 			// Base UI resets the highlight on pointer leave only while the pointer was the last
 			// thing used: closing a submenu under a resting pointer reports a leave too.
-			if (litBy() === "keyboard") return;
+			if (litBy() === 'keyboard') return;
 			if (openSubIndex() === null) hover.handlers.onMouseLeave();
 		},
 	};
@@ -502,7 +501,7 @@ function createMenuList(options: {
 		rowTabIndex: (index) =>
 			options.open() && hover.activeIndex() === index ? 0 : -1,
 		rowFocused: (index) => hover.setActiveIndex(index),
-		pointerLit: () => litBy() === "pointer",
+		pointerLit: () => litBy() === 'pointer',
 		rowsChanged() {
 			if (!options.mounted()) return;
 			reflow.raise();
@@ -514,9 +513,7 @@ function createMenuList(options: {
 
 	const lightStart = () => {
 		const start =
-			options.openFrom() === "last"
-				? enabledRows().at(-1)
-				: enabledRows()[0];
+			options.openFrom() === 'last' ? enabledRows().at(-1) : enabledRows()[0];
 		hover.setActiveIndex(start ?? null);
 		if (start !== undefined) revealIndex(start);
 	};
@@ -528,7 +525,7 @@ function createMenuList(options: {
 	createEffect(
 		on(options.open, (isOpen) => {
 			if (!isOpen) return;
-			setLitBy("open");
+			setLitBy('open');
 			const landing = setTimeout(() => {
 				if (!options.open()) return;
 				if (fieldTakesFocus()) {
@@ -559,7 +556,7 @@ function createMenuList(options: {
 		on(hover.activeIndex, (index) => {
 			if (!options.open()) return;
 			if (index === null) {
-				if (litBy() === "pointer") panel?.focus({ preventScroll: true });
+				if (litBy() === 'pointer') panel?.focus({ preventScroll: true });
 				return;
 			}
 			rows.get(index)?.focus();
@@ -587,8 +584,8 @@ function createMenuList(options: {
 			if (isMounted || lastSearch === undefined) return;
 			const current = lastSearch;
 			lastSearch = undefined;
-			if ((current.clearOnClose ?? true) && current.value !== "") {
-				current.onValueChange("");
+			if ((current.clearOnClose ?? true) && current.value !== '') {
+				current.onValueChange('');
 			}
 		}),
 	);
@@ -597,7 +594,7 @@ function createMenuList(options: {
 		on(
 			() => search()?.value,
 			() => {
-				setLitBy("keyboard");
+				setLitBy('keyboard');
 				hover.setActiveIndex(null);
 			},
 			{ defer: true },
@@ -635,7 +632,7 @@ function createMenuList(options: {
 			field = element;
 		},
 		containsFocus: () =>
-			panel !== undefined && panel.mounted && panel.matches(":focus-within"),
+			panel !== undefined && panel.mounted && panel.matches(':focus-within'),
 	};
 }
 
@@ -672,8 +669,8 @@ function MenuPanel(props: {
 						tabIndex={-1}
 						onKeyDown={list.onKey}
 						style={{
-							display: "flex",
-							flexDirection: "column",
+							display: 'flex',
+							flexDirection: 'column',
 							keyboardFocusDim: false,
 						}}
 					>
@@ -683,9 +680,9 @@ function MenuPanel(props: {
 							}}
 							onScroll={list.hover.handlers.onScroll}
 							style={{
-								display: "flex",
-								flexDirection: "column",
-								overflowY: "scroll",
+								display: 'flex',
+								flexDirection: 'column',
+								overflowY: 'scroll',
 								maxHeight: props.maxHeight(),
 							}}
 						>
@@ -741,7 +738,7 @@ export function Dropdown(props: {
 	});
 	const [focused, setFocused] = createSignal<number | null>(null);
 	const [ringShown, setRingShown] = createSignal(false);
-	const [litBy, setLitBy] = createSignal<LitBy>("pointer");
+	const [litBy, setLitBy] = createSignal<LitBy>('pointer');
 
 	/** Arrows land on disabled rows too, as FF's panel focuses every row; only activation refuses them. */
 	const all = () => [...rows.keys()].sort((a, b) => a - b);
@@ -763,7 +760,7 @@ export function Dropdown(props: {
 		rowId: (index) => `${listId}-row-${index}`,
 		rowTabIndex: (index) => (entryRow() === index ? 0 : -1),
 		rowFocused(index, focusVisible) {
-			setLitBy(focusVisible ? "keyboard" : "pointer");
+			setLitBy(focusVisible ? 'keyboard' : 'pointer');
 			hover.setActiveIndex(index);
 			setFocused(index);
 			setRingShown(focusVisible);
@@ -799,33 +796,33 @@ export function Dropdown(props: {
 	const onKeyDown = (event: KeyEvent) => {
 		// The field's keys are its own, apart from the arrows, which leave it for the rows.
 		if (field !== undefined && event.target === field) {
-			if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+			if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
 				event.preventDefault();
-				focusRow(event.key === "ArrowDown" ? all()[0] : all().at(-1));
+				focusRow(event.key === 'ArrowDown' ? all()[0] : all().at(-1));
 			}
 			return;
 		}
 		switch (event.key) {
-			case "ArrowDown":
-			case "ArrowRight":
+			case 'ArrowDown':
+			case 'ArrowRight':
 				event.preventDefault();
 				step(1);
 				return;
-			case "ArrowUp":
-			case "ArrowLeft":
+			case 'ArrowUp':
+			case 'ArrowLeft':
 				event.preventDefault();
 				step(-1);
 				return;
-			case "Home":
+			case 'Home':
 				event.preventDefault();
 				focusRow(all()[0]);
 				return;
-			case "End":
+			case 'End':
 				event.preventDefault();
 				focusRow(all().at(-1));
 				return;
-			case "Enter":
-			case " ": {
+			case 'Enter':
+			case ' ': {
 				event.preventDefault();
 				const index = focused();
 				if (index !== null) rows.get(index)?.activate();
@@ -837,75 +834,77 @@ export function Dropdown(props: {
 	return (
 		<DropdownContext.Provider value={context}>
 			<DropdownSearchHostContext.Provider value={searchHost}>
-			<div
-				testId={props.testId}
-				id={listId}
-				role="group"
-				onKeyDown={onKeyDown}
-				onFocusOut={(event: DomEvent) => {
-					const next = event.relatedTarget;
-					if (
-						next !== null &&
-						[...rows.values()].some((row) => row.element() === next)
-					) {
-						return;
-					}
-					setFocused(null);
-					setRingShown(false);
-					hover.setActiveIndex(null);
-				}}
-				style={{
-					width: PANEL_WIDTH,
-					flexShrink: 0,
-					display: "flex",
-					flexDirection: "column",
-					backgroundColor: color.card,
-					borderRadius: radius.container,
-					boxShadow: shadow(3),
-					keyboardFocusDim: false,
-				}}
-			>
-				<Show when={search()}>
-					{(query: Accessor<DropdownSearchProps>) => (
-						<SearchField
-							sticky={false}
-							search={query()}
-							testId={
-								props.testId === undefined ? undefined : `${props.testId}-field`
-							}
-							fieldRef={(element) => {
-								field = element;
-							}}
-						/>
-					)}
-				</Show>
-				<MenuBody
-					hover={hover}
-					checkedIndex={() => props.checkedIndex}
-					checkedIndices={() => props.checkedIndices}
-					litBy={litBy}
-					travel={() => true}
-					paddingTop={search() === undefined ? undefined : 2}
-					focusIndex={() => (ringShown() ? focused() : null)}
-					focusRingTestId={
-						props.testId === undefined ? undefined : `${props.testId}-ring`
-					}
-					handlers={{
-						onMouseEnter() {
-							setLitBy("pointer");
-							setRingShown(false);
-							hover.handlers.onMouseEnter();
-						},
-						onMouseMove(event) {
-							setRingShown(false);
-							hover.handlers.onMouseMove(event);
-						},
-						onMouseLeave: hover.handlers.onMouseLeave,
+				<div
+					testId={props.testId}
+					id={listId}
+					role="group"
+					onKeyDown={onKeyDown}
+					onFocusOut={(event: DomEvent) => {
+						const next = event.relatedTarget;
+						if (
+							next !== null &&
+							[...rows.values()].some((row) => row.element() === next)
+						) {
+							return;
+						}
+						setFocused(null);
+						setRingShown(false);
+						hover.setActiveIndex(null);
+					}}
+					style={{
+						width: PANEL_WIDTH,
+						flexShrink: 0,
+						display: 'flex',
+						flexDirection: 'column',
+						backgroundColor: color.card,
+						borderRadius: radius.container,
+						boxShadow: shadow(3),
+						keyboardFocusDim: false,
 					}}
 				>
-					{props.children}
-				</MenuBody>
-			</div>
+					<Show when={search()}>
+						{(query: Accessor<DropdownSearchProps>) => (
+							<SearchField
+								sticky={false}
+								search={query()}
+								testId={
+									props.testId === undefined
+										? undefined
+										: `${props.testId}-field`
+								}
+								fieldRef={(element) => {
+									field = element;
+								}}
+							/>
+						)}
+					</Show>
+					<MenuBody
+						hover={hover}
+						checkedIndex={() => props.checkedIndex}
+						checkedIndices={() => props.checkedIndices}
+						litBy={litBy}
+						travel={() => true}
+						paddingTop={search() === undefined ? undefined : 2}
+						focusIndex={() => (ringShown() ? focused() : null)}
+						focusRingTestId={
+							props.testId === undefined ? undefined : `${props.testId}-ring`
+						}
+						handlers={{
+							onMouseEnter() {
+								setLitBy('pointer');
+								setRingShown(false);
+								hover.handlers.onMouseEnter();
+							},
+							onMouseMove(event) {
+								setRingShown(false);
+								hover.handlers.onMouseMove(event);
+							},
+							onMouseLeave: hover.handlers.onMouseLeave,
+						}}
+					>
+						{props.children}
+					</MenuBody>
+				</div>
 			</DropdownSearchHostContext.Provider>
 		</DropdownContext.Provider>
 	);
@@ -924,7 +923,7 @@ interface MenuScope {
 	popupTestId: string | undefined;
 	/** `<testId>-field`: the search field, when the popup has one. */
 	searchTestId: string | undefined;
-	openFrom: Accessor<"first" | "last">;
+	openFrom: Accessor<'first' | 'last'>;
 	/** The trigger was pressed and the button is still down. */
 	startPress: () => void;
 	/** A row released under a press that began on the trigger at least 200 ms ago picks (once). */
@@ -946,7 +945,7 @@ const MenuScopeContext = createContext<MenuScope>();
 function useMenuScope() {
 	const scope = useContext(MenuScopeContext);
 	if (scope === undefined) {
-		throw new Error("Dropdown parts must be inside a DropdownMenu");
+		throw new Error('Dropdown parts must be inside a DropdownMenu');
 	}
 	return scope;
 }
@@ -960,10 +959,10 @@ export interface DropdownTriggerState {
 	/** Put these on the element that opens the menu, with the handlers above. */
 	readonly attributes: {
 		readonly id: string;
-		readonly "aria-expanded": boolean;
-		readonly "aria-haspopup": "menu";
+		readonly 'aria-expanded': boolean;
+		readonly 'aria-haspopup': 'menu';
 		/** Base UI names the popup only while it is open. */
-		readonly "aria-controls": string | undefined;
+		readonly 'aria-controls': string | undefined;
 	};
 }
 
@@ -978,7 +977,7 @@ export function DropdownMenu(props: {
 	const presence = createPresence();
 	const [keyboardActive, setKeyboardActive] = createSignal(false);
 
-	const [openFrom, setOpenFrom] = createSignal<"first" | "last">("first");
+	const [openFrom, setOpenFrom] = createSignal<'first' | 'last'>('first');
 	let pressedAt: number | null = null;
 	let pendingTrigger: HostElement | null = null;
 	let triggerElement: HostElement | null = null;
@@ -1025,11 +1024,13 @@ export function DropdownMenu(props: {
 		setKeyboardActive,
 		triggerId: createUniqueId(),
 		popupId: createUniqueId(),
-		popupTestId: props.testId === undefined ? undefined : `${props.testId}-popup`,
-		searchTestId: props.testId === undefined ? undefined : `${props.testId}-field`,
+		popupTestId:
+			props.testId === undefined ? undefined : `${props.testId}-popup`,
+		searchTestId:
+			props.testId === undefined ? undefined : `${props.testId}-field`,
 		openFrom,
 		startPress() {
-			setOpenFrom("first");
+			setOpenFrom('first');
 			pressedAt = performance.now();
 		},
 		pressPick() {
@@ -1057,15 +1058,15 @@ export function DropdownMenu(props: {
 		if (isChord(event)) return;
 		if (presence.open()) return;
 		if (
-			event.key === "ArrowDown" ||
-			event.key === "ArrowUp" ||
-			event.key === "Enter" ||
-			event.key === " "
+			event.key === 'ArrowDown' ||
+			event.key === 'ArrowUp' ||
+			event.key === 'Enter' ||
+			event.key === ' '
 		) {
 			event.preventDefault();
-			if (event.key === "ArrowDown" || event.key === "ArrowUp")
+			if (event.key === 'ArrowDown' || event.key === 'ArrowUp')
 				event.stopPropagation();
-			setOpenFrom(event.key === "ArrowUp" ? "last" : "first");
+			setOpenFrom(event.key === 'ArrowUp' ? 'last' : 'first');
 			setKeyboardActive(true);
 			setOpen(true);
 		}
@@ -1083,8 +1084,8 @@ export function DropdownMenu(props: {
 					refocusAfterPress(trigger);
 				}}
 				style={{
-					position: "relative",
-					display: "flex",
+					position: 'relative',
+					display: 'flex',
 					flexShrink: 0,
 					opacity: props.disabled === true ? 0.5 : 1,
 				}}
@@ -1121,11 +1122,11 @@ export function DropdownTrigger(props: {
 		},
 		attributes: {
 			id: scope.triggerId,
-			get "aria-expanded"() {
+			get 'aria-expanded'() {
 				return scope.presence.open();
 			},
-			"aria-haspopup": "menu",
-			get "aria-controls"() {
+			'aria-haspopup': 'menu',
+			get 'aria-controls'() {
 				return scope.presence.open() ? scope.popupId : undefined;
 			},
 		},
@@ -1138,7 +1139,7 @@ export function DropdownContent(props: {
 	/** Rows become checkboxes that keep the menu open, and touching picks share one background. */
 	checkedIndices?: readonly number[];
 	/** Which edge of the trigger the popup lines up with. */
-	align?: "start" | "end";
+	align?: 'start' | 'end';
 	children: JSX.Element;
 }) {
 	const scope = useMenuScope();
@@ -1160,7 +1161,7 @@ export function DropdownContent(props: {
 	return (
 		<PopupSurface
 			presence={scope.presence}
-			align={props.align ?? "start"}
+			align={props.align ?? 'start'}
 			width={PANEL_WIDTH}
 			maxHeight={POPUP_MAX_HEIGHT}
 			onDismiss={() => scope.setOpen(false)}
@@ -1208,7 +1209,7 @@ const SubScopeContext = createContext<SubScope>();
 function useSubScope() {
 	const scope = useContext(SubScopeContext);
 	if (scope === undefined) {
-		throw new Error("Submenu parts must be inside a DropdownSub");
+		throw new Error('Submenu parts must be inside a DropdownSub');
 	}
 	return scope;
 }
@@ -1270,7 +1271,7 @@ export function DropdownSubTrigger(props: {
 	const host = useContext(SubmenuHostContext);
 	const menu = useMenuScope();
 	if (parent === undefined || host === undefined) {
-		throw new Error("DropdownSubTrigger must be inside a DropdownContent");
+		throw new Error('DropdownSubTrigger must be inside a DropdownContent');
 	}
 	let hoverTimer: ReturnType<typeof setTimeout> | undefined;
 	onCleanup(() => clearTimeout(hoverTimer));
@@ -1349,7 +1350,7 @@ function SubPopup(props: {
 	const content = () => {
 		const props = sub.content();
 		if (props === undefined)
-			throw new Error("DropdownSub has no DropdownSubContent");
+			throw new Error('DropdownSub has no DropdownSubContent');
 		return props;
 	};
 	const list = createMenuList({
@@ -1365,7 +1366,7 @@ function SubPopup(props: {
 		multiple: () => content().checkedIndices !== undefined,
 		keyboardActive: menu.keyboardActive,
 		setKeyboardActive: menu.setKeyboardActive,
-		openFrom: () => "first",
+		openFrom: () => 'first',
 		leave: menu.leave,
 	});
 
@@ -1379,19 +1380,19 @@ function SubPopup(props: {
 			{ defer: true },
 		),
 	);
-	const placement = createPlacementState("right");
+	const placement = createPlacementState('right');
 	const maxHeight = () => placement.maxHeight(POPUP_MAX_HEIGHT);
 
 	return (
 		// The layer fills the trigger row so the popup anchors to it, and takes no flex slot or mouse of its own.
 		<div
 			style={{
-				position: "absolute",
+				position: 'absolute',
 				top: 0,
 				left: 0,
 				right: 0,
 				bottom: 0,
-				pointerEvents: "none",
+				pointerEvents: 'none',
 			}}
 		>
 			<anchored
@@ -1417,15 +1418,15 @@ function SubPopup(props: {
 					onMouseMove={stopPropagation}
 					style={{
 						// The layer around the anchored popup is `none`, which inherits.
-						pointerEvents: "auto",
-						position: "relative",
+						pointerEvents: 'auto',
+						position: 'relative',
 						width: SUB_WIDTH,
-						display: "flex",
-						flexDirection: "column",
+						display: 'flex',
+						flexDirection: 'column',
 						backgroundColor: color.card,
 						borderRadius: radius.container,
 						boxShadow: shadow(3),
-						overflow: "hidden",
+						overflow: 'hidden',
 						maxHeight: maxHeight(),
 					}}
 				>

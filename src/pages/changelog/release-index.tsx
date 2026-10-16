@@ -1,9 +1,9 @@
-import { For } from "solid-js";
-import { SidebarMenu, SidebarMenuButton } from "#/components/sidebar";
-import { monthLabel } from "#/lib/changelog/migration-prompt";
-import type { Release } from "#/lib/changelog/parse";
-import { color, shape, siteType, weight } from "#/lib/theme";
-import { activeMonth, scrollToMonth } from "./release-spy";
+import { For } from 'solid-js';
+import { SidebarMenu, SidebarMenuButton } from '#/components/sidebar';
+import { monthLabel } from '#/lib/changelog/migration-prompt';
+import type { Release } from '#/lib/changelog/parse';
+import { color, shape, siteType, weight } from '#/lib/theme';
+import { activeMonth, scrollToMonth } from './release-spy';
 
 /**
  * The right rail's only card on the changelog: one row per month, the one in
@@ -16,8 +16,8 @@ export function ReleaseIndexCard(props: { releases: readonly Release[] }) {
 			role="complementary"
 			aria-label="Releases"
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				padding: 16,
 				borderRadius: shape.container,
 				backgroundColor: color.muted,
@@ -25,7 +25,7 @@ export function ReleaseIndexCard(props: { releases: readonly Release[] }) {
 		>
 			{/* The same header as "Make them yours": 8px above and below a 28px row, the title centred in it. */}
 			<div style={{ paddingTop: 8, paddingBottom: 8 }}>
-				<div style={{ height: 28, display: "flex", alignItems: "center" }}>
+				<div style={{ height: 28, display: 'flex', alignItems: 'center' }}>
 					<text
 						style={{
 							...siteType.title,

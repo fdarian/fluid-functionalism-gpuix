@@ -1,11 +1,11 @@
-import type { HostElement, StyleDesc } from "@gpuix/solid";
-import type { JSX } from "solid-js";
-import { MONO } from "#/lib/doc-page";
-import { color, shape, siteType } from "#/lib/theme";
+import type { HostElement, StyleDesc } from '@gpuix/solid';
+import type { JSX } from 'solid-js';
+import { MONO } from '#/lib/doc-page';
+import { color, shape, siteType } from '#/lib/theme';
 
 /** The blue line the tweak demos draw at the measured edge, and the red wash over what runs past it. */
-export const MARK_BLUE = "#6B97FF";
-export const MARK_RED = "rgba(242,85,90,0.45)";
+export const MARK_BLUE = '#6B97FF';
+export const MARK_RED = 'rgba(242,85,90,0.45)';
 
 /** A `ComponentPreview hideHeader` frame: the live demo alone, centred in `px-8 py-12`, 120px tall at least. */
 export function TweakFrame(props: {
@@ -20,11 +20,11 @@ export function TweakFrame(props: {
 			testId={props.testId}
 			ref={props.ref}
 			style={{
-				display: "flex",
+				display: 'flex',
 				borderWidth: 1,
 				borderColor: color.borderFaint,
 				borderRadius: shape.container,
-				overflow: "hidden",
+				overflow: 'hidden',
 			}}
 		>
 			<div
@@ -33,9 +33,9 @@ export function TweakFrame(props: {
 				style={{
 					flexGrow: 1,
 					minWidth: 0,
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
 					minHeight: 120,
 					paddingLeft: 32,
 					paddingRight: 32,
@@ -46,10 +46,10 @@ export function TweakFrame(props: {
 			>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
+						display: 'flex',
+						flexDirection: 'row',
 						columnGap: 20,
-						width: "100%",
+						width: '100%',
 						minWidth: 0,
 						maxWidth: 576,
 					}}
@@ -83,16 +83,16 @@ export function Specimen(props: {
 				flexGrow: 1,
 				flexBasis: 0,
 				minWidth: 0,
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
 				rowGap: 12,
 			}}
 		>
 			<div
 				testId={props.testId}
 				style={{
-					width: "100%",
+					width: '100%',
 					borderWidth: 1,
 					borderColor: color.borderFaint,
 					borderRadius: shape.container,
@@ -103,22 +103,22 @@ export function Specimen(props: {
 			</div>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					justifyContent: 'center',
 					columnGap: 8,
-					maxWidth: "100%",
+					maxWidth: '100%',
 				}}
 			>
 				<text style={{ ...siteType.caption, flexShrink: 0 }}>
-					{props.mark ?? (props.good ? "✅" : "❌")}
+					{props.mark ?? (props.good ? '✅' : '❌')}
 				</text>
 				<text
 					style={{
 						...siteType.caption,
 						color: color.mutedForeground,
-						textAlign: "center",
+						textAlign: 'center',
 						minWidth: 0,
 					}}
 				>

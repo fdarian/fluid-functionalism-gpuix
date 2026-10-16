@@ -1,5 +1,5 @@
-import type { DomEvent } from "@gpuix/solid";
-import { createSignal } from "solid-js";
+import type { DomEvent } from '@gpuix/solid';
+import { createSignal } from 'solid-js';
 
 /**
  * A box whose height springs to its content's: gpuix cannot animate
@@ -16,7 +16,7 @@ export function createMeasuredHeight() {
 	return {
 		onLayout(event: DomEvent) {
 			if (event.height === undefined) {
-				throw new Error("onLayout reported no height");
+				throw new Error('onLayout reported no height');
 			}
 			setHeight(event.height);
 		},

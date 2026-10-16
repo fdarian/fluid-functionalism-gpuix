@@ -1,5 +1,3 @@
-import type { DemoModule } from "#/lib/demo";
-import { DemoCard } from "#/lib/demo-kit";
 import {
 	Table,
 	TableBody,
@@ -8,12 +6,14 @@ import {
 	TableHeader,
 	TableRow,
 	type TableSize,
-} from "#/components/table";
+} from '#/components/table';
+import type { DemoModule } from '#/lib/demo';
+import { DemoCard } from '#/lib/demo-kit';
 
 const PEOPLE = [
-	{ name: "Alice", role: "Engineer", status: "Active" },
-	{ name: "Bob", role: "Designer", status: "Away" },
-	{ name: "Carol", role: "Manager", status: "Active" },
+	{ name: 'Alice', role: 'Engineer', status: 'Active' },
+	{ name: 'Bob', role: 'Designer', status: 'Away' },
+	{ name: 'Carol', role: 'Manager', status: 'Active' },
 ];
 
 function PeopleTable(props: { size?: TableSize; testId: string }) {
@@ -39,13 +39,13 @@ function PeopleTable(props: { size?: TableSize; testId: string }) {
 	);
 }
 
-export const title = "Table";
-export const group = "Components";
-export const listed = "sidebar";
+export const title = 'Table';
+export const group = 'Components';
+export const listed = 'sidebar';
 
 export function Demo() {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 			<DemoCard title="Basic">
 				<PeopleTable testId="basic" />
 			</DemoCard>
@@ -56,11 +56,11 @@ export function Demo() {
 	);
 }
 
-export const scenarios: DemoModule["scenarios"] = async (shot) => {
-	await shot.hover("basic-row-0");
-	shot.capture("hover-first-row");
-	await shot.hover("basic-row-2");
-	shot.capture("hover-last-row");
-	await shot.hover("compact-row-1");
-	shot.capture("hover-compact");
+export const scenarios: DemoModule['scenarios'] = async (shot) => {
+	await shot.hover('basic-row-0');
+	shot.capture('hover-first-row');
+	await shot.hover('basic-row-2');
+	shot.capture('hover-last-row');
+	await shot.hover('compact-row-1');
+	shot.capture('hover-compact');
 };

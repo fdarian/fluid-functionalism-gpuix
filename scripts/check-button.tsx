@@ -6,14 +6,14 @@
  *
  * The motion clock is held and stepped by hand, so a slow frame cannot skip the middle of the 80 ms.
  */
-import { Button } from "#/components/button";
-import { createCheck } from "./check-kit";
-import { readPng } from "./png-pixels";
+import { Button } from '#/components/button';
+import { createCheck } from './check-kit';
+import { readPng } from './png-pixels';
 
 const k = await createCheck(
 	() => (
 		<div
-			style={{ display: "flex", flexDirection: "row", gap: 24, padding: 24 }}
+			style={{ display: 'flex', flexDirection: 'row', gap: 24, padding: 24 }}
 		>
 			<Button testId="ghost" variant="ghost">
 				Ghost
@@ -41,7 +41,10 @@ function step(ms: number) {
 function sum(testId: string, dx: number, dy: number) {
 	renderer.captureScreenshot(PATH);
 	const box = k.bounds(testId);
-	const pixel = readPng(PATH).at(Math.round(box.x + dx), Math.round(box.y + dy));
+	const pixel = readPng(PATH).at(
+		Math.round(box.x + dx),
+		Math.round(box.y + dy),
+	);
 	return pixel[0] + pixel[1] + pixel[2];
 }
 
@@ -64,7 +67,7 @@ function between(before: number, middle: number, after: number) {
 
 renderer.clockPause();
 
-for (const id of ["ghost", "tertiary"]) {
+for (const id of ['ghost', 'tertiary']) {
 	const before = sum(id, 6, 6);
 	const point = k.center(id);
 	renderer.nativeSimulateMouseMove(point.x - 1, point.y);
@@ -79,7 +82,7 @@ for (const id of ["ghost", "tertiary"]) {
 		between(before, middle, after),
 		`rest ${before}, 16 ms ${middle}, end ${after}`,
 	);
-	if (id === "ghost") {
+	if (id === 'ghost') {
 		renderer.nativeSimulateMouseMove(0, 0);
 		step(300);
 		const inkRest = labelInk(id);
@@ -91,7 +94,7 @@ for (const id of ["ghost", "tertiary"]) {
 		step(300);
 		const inkEnd = labelInk(id);
 		k.check(
-			"ghost hover: the label colour is part-way at 16 ms",
+			'ghost hover: the label colour is part-way at 16 ms',
 			between(inkRest, inkMiddle, inkEnd),
 			`rest ${inkRest}, 16 ms ${inkMiddle}, end ${inkEnd}`,
 		);
@@ -103,20 +106,20 @@ for (const id of ["ghost", "tertiary"]) {
 {
 	// Primary's fill is a 1px spread outside the element that the press collapses: the pixel just outside
 	// the left edge goes from the fill to the page behind it.
-	const point = k.center("primary");
+	const point = k.center('primary');
 	renderer.nativeSimulateMouseMove(point.x - 1, point.y);
 	renderer.nativeSimulateMouseMove(point.x, point.y);
 	step(300);
-	const before = sum("primary", -1, 18);
+	const before = sum('primary', -1, 18);
 	renderer.nativeSimulateMouseDown(point.x, point.y);
 	step(0);
 	step(16);
-	const middle = sum("primary", -1, 18);
+	const middle = sum('primary', -1, 18);
 	step(300);
-	const after = sum("primary", -1, 18);
+	const after = sum('primary', -1, 18);
 	renderer.nativeSimulateMouseUp(point.x, point.y);
 	k.check(
-		"primary press: the spread collapses over 80 ms, not at once",
+		'primary press: the spread collapses over 80 ms, not at once',
 		between(before, middle, after),
 		`rest ${before}, 16 ms ${middle}, end ${after}`,
 	);

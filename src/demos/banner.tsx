@@ -1,12 +1,5 @@
-import { type HostElement, ResizeObserver } from "@gpuix/solid";
-import {
-	createEffect,
-	createSignal,
-	For,
-	on,
-	onCleanup,
-	Show,
-} from "solid-js";
+import { type HostElement, ResizeObserver } from '@gpuix/solid';
+import { createEffect, createSignal, For, on, onCleanup, Show } from 'solid-js';
 import {
 	Banner,
 	BannerAction,
@@ -16,10 +9,10 @@ import {
 	type BannerStatus,
 	BannerTitle,
 	type BannerVariant,
-} from "#/components/banner";
-import { Button } from "#/components/button";
-import type { DemoModule, ShotContext } from "#/lib/demo";
-import { DemoCard } from "#/lib/demo-kit";
+} from '#/components/banner';
+import { Button } from '#/components/button';
+import type { DemoModule, ShotContext } from '#/lib/demo';
+import { DemoCard } from '#/lib/demo-kit';
 import {
 	PlayDivider,
 	PlayField,
@@ -29,15 +22,15 @@ import {
 	PlaySelect,
 	PlaySwitch,
 	pick,
-} from "#/lib/playground";
-import { color, type as scale } from "#/lib/theme";
+} from '#/lib/playground';
+import { color, type as scale } from '#/lib/theme';
 
 const STATUSES: { status: BannerStatus; label: string }[] = [
-	{ status: "default", label: "Default" },
-	{ status: "info", label: "Info" },
-	{ status: "success", label: "Success" },
-	{ status: "warning", label: "Warning" },
-	{ status: "error", label: "Error" },
+	{ status: 'default', label: 'Default' },
+	{ status: 'info', label: 'Info' },
+	{ status: 'success', label: 'Success' },
+	{ status: 'warning', label: 'Warning' },
+	{ status: 'error', label: 'Error' },
 ];
 
 function Caption(props: { children: string }) {
@@ -50,19 +43,19 @@ function Caption(props: { children: string }) {
 	);
 }
 
-function Statuses(props: { contrast: "low" | "high" }) {
+function Statuses(props: { contrast: 'low' | 'high' }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 8,
 				flexGrow: 1,
 				flexBasis: 0,
 			}}
 		>
 			<Caption>
-				{props.contrast === "low" ? "Low contrast" : "High contrast"}
+				{props.contrast === 'low' ? 'Low contrast' : 'High contrast'}
 			</Caption>
 			<For each={STATUSES}>
 				{(item) => (
@@ -96,7 +89,7 @@ function Pill(props: { width: number | string; height: number; fill: string }) {
 /** Skeleton bars standing in for the page around a banner; `hover`, not `muted`, because the playground card is `surface2`, which `muted` equals in dark. */
 function SkeletonLines(props: { widths: number[] }) {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 			<For each={props.widths}>
 				{(width) => <Pill width={`${width}%`} height={16} fill={color.hover} />}
 			</For>
@@ -109,11 +102,11 @@ function MockPage(props: { height: number; children: unknown }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
-				width: "100%",
+				display: 'flex',
+				flexDirection: 'column',
+				width: '100%',
 				height: props.height,
-				overflow: "hidden",
+				overflow: 'hidden',
 				borderRadius: 12,
 				borderWidth: 1,
 				borderColor: color.borderFaint,
@@ -122,9 +115,9 @@ function MockPage(props: { height: number; children: unknown }) {
 		>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					gap: 16,
 					height: 44,
 					flexShrink: 0,
@@ -144,9 +137,9 @@ function MockPage(props: { height: number; children: unknown }) {
 				/>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
 						gap: 12,
 					}}
 				>
@@ -167,14 +160,14 @@ function MockPage(props: { height: number; children: unknown }) {
 			{props.children as never}
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					gap: 12,
 					padding: 20,
 					flexGrow: 1,
 					flexBasis: 0,
 					minHeight: 0,
-					overflowY: "scroll",
+					overflowY: 'scroll',
 				}}
 			>
 				<Pill width="33%" height={12} fill={color.muted} />
@@ -188,9 +181,9 @@ function MockPage(props: { height: number; children: unknown }) {
 	);
 }
 
-export const title = "Banner";
-export const group = "Components";
-export const listed = "sidebar";
+export const title = 'Banner';
+export const group = 'Components';
+export const listed = 'sidebar';
 
 const COPY: Record<
 	BannerStatus,
@@ -203,67 +196,67 @@ const COPY: Record<
 	}
 > = {
 	default: {
-		title: "Banner is new in Fluid Functionalism",
+		title: 'Banner is new in Fluid Functionalism',
 		description:
-			"5 statuses, 2 contrasts and a dismiss that collapses its height.",
-		primary: "Read the docs",
-		secondary: "Changelog",
-		ghost: "Not now",
+			'5 statuses, 2 contrasts and a dismiss that collapses its height.',
+		primary: 'Read the docs',
+		secondary: 'Changelog',
+		ghost: 'Not now',
 	},
 	info: {
-		title: "The registry has new components",
-		description: "Run the install command again to pull the latest versions.",
-		primary: "Copy command",
+		title: 'The registry has new components',
+		description: 'Run the install command again to pull the latest versions.',
+		primary: 'Copy command',
 		secondary: "What's new",
-		ghost: "Later",
+		ghost: 'Later',
 	},
 	success: {
-		title: "Fluid Functionalism is installed",
-		description: "Button, Card and Dialog were added to components/ui.",
-		primary: "Open the docs",
-		secondary: "Add more",
-		ghost: "Share",
+		title: 'Fluid Functionalism is installed',
+		description: 'Button, Card and Dialog were added to components/ui.',
+		primary: 'Open the docs',
+		secondary: 'Add more',
+		ghost: 'Share',
 	},
 	warning: {
-		title: "Inter is missing its opsz axis",
+		title: 'Inter is missing its opsz axis',
 		description:
 			'Labels shift when their weight changes. Add axes: ["opsz"] to your next/font call.',
-		primary: "Show the fix",
-		secondary: "Read the guide",
-		ghost: "Ignore",
+		primary: 'Show the fix',
+		secondary: 'Read the guide',
+		ghost: 'Ignore',
 	},
 	error: {
 		title: "Couldn't reach the registry",
 		description:
 			"shadcn couldn't fetch button.json from fluidfunctionalism.com.",
-		primary: "Retry",
-		secondary: "Status page",
-		ghost: "Report issue",
+		primary: 'Retry',
+		secondary: 'Status page',
+		ghost: 'Report issue',
 	},
 };
 
 const VARIANT_OPTIONS = [
-	{ value: "inline", label: "Inline" },
-	{ value: "fixed", label: "Fixed" },
+	{ value: 'inline', label: 'Inline' },
+	{ value: 'fixed', label: 'Fixed' },
 ] as const;
 
 const STATUS_OPTIONS = [
-	{ value: "default", label: "Default" },
-	{ value: "info", label: "Info" },
-	{ value: "success", label: "Success" },
-	{ value: "warning", label: "Warning" },
-	{ value: "error", label: "Error" },
+	{ value: 'default', label: 'Default' },
+	{ value: 'info', label: 'Info' },
+	{ value: 'success', label: 'Success' },
+	{ value: 'warning', label: 'Warning' },
+	{ value: 'error', label: 'Error' },
 ] as const;
 
 const CONTRAST_OPTIONS = [
-	{ value: "low", label: "Low" },
-	{ value: "high", label: "High" },
+	{ value: 'low', label: 'Low' },
+	{ value: 'high', label: 'High' },
 ] as const;
 
 function Playground() {
-	const [variant, setVariant] = createSignal<BannerVariant>("inline");
-	const [status, setStatus] = createSignal<BannerStatus>("success");
-	const [contrast, setContrast] = createSignal<BannerContrast>("low");
+	const [variant, setVariant] = createSignal<BannerVariant>('inline');
+	const [status, setStatus] = createSignal<BannerStatus>('success');
+	const [contrast, setContrast] = createSignal<BannerContrast>('low');
 	const [description, setDescription] = createSignal(true);
 	const [primary, setPrimary] = createSignal(true);
 	const [secondary, setSecondary] = createSignal(true);
@@ -294,7 +287,7 @@ function Playground() {
 				setHeldHeight(Math.max(heldHeight(), size.blockSize));
 			}
 		});
-		observer.observe(element, { box: "border-box" });
+		observer.observe(element, { box: 'border-box' });
 		onCleanup(() => observer.disconnect());
 	});
 	createEffect(
@@ -318,11 +311,11 @@ function Playground() {
 	);
 
 	const shuffle = () => {
-		setVariant(Math.random() > 0.75 ? "fixed" : "inline");
+		setVariant(Math.random() > 0.75 ? 'fixed' : 'inline');
 		setStatus(
-			pick(["default", "info", "success", "warning", "error"] as const),
+			pick(['default', 'info', 'success', 'warning', 'error'] as const),
 		);
-		setContrast(pick(["low", "high"] as const));
+		setContrast(pick(['low', 'high'] as const));
 		setDescription(Math.random() > 0.4);
 		setPrimary(Math.random() > 0.3);
 		setSecondary(Math.random() > 0.5);
@@ -378,21 +371,21 @@ function Playground() {
 			preview={
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "column",
-						justifyContent: "center",
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
 						flexGrow: 1,
-						width: "100%",
+						width: '100%',
 						maxWidth: 560,
 					}}
 				>
 					<Show
-						when={variant() === "fixed"}
+						when={variant() === 'fixed'}
 						fallback={
 							<div style={{ minHeight: heldHeight() }}>
 								<div
 									ref={setPage}
-									style={{ display: "flex", flexDirection: "column", gap: 12 }}
+									style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
 								>
 									<SkeletonLines widths={[45]} />
 									{banner()}
@@ -481,11 +474,11 @@ export function Demo() {
 	const [fixedOpen, setFixedOpen] = createSignal(true);
 	const [inlineOpen, setInlineOpen] = createSignal(true);
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 			<Playground />
 			<DemoCard title="Dismissible">
-				<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-					<div style={{ display: "flex", flexDirection: "column" }}>
+				<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+					<div style={{ display: 'flex', flexDirection: 'column' }}>
 						<Banner
 							testId="inline-banner"
 							status="success"
@@ -497,7 +490,7 @@ export function Demo() {
 							<BannerTitle>Changes saved</BannerTitle>
 						</Banner>
 					</div>
-					<div style={{ display: "flex", flexDirection: "row" }}>
+					<div style={{ display: 'flex', flexDirection: 'row' }}>
 						<Button
 							testId="inline-replay"
 							variant="secondary"
@@ -510,7 +503,7 @@ export function Demo() {
 				</div>
 			</DemoCard>
 			<DemoCard title="Fixed">
-				<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+				<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 					<div style={{ maxWidth: 560 }}>
 						<MockPage height={300}>
 							<Banner
@@ -530,7 +523,7 @@ export function Demo() {
 							</Banner>
 						</MockPage>
 					</div>
-					<div style={{ display: "flex", flexDirection: "row" }}>
+					<div style={{ display: 'flex', flexDirection: 'row' }}>
 						<Button
 							testId="fixed-replay"
 							variant="secondary"
@@ -545,8 +538,8 @@ export function Demo() {
 			<DemoCard title="Statuses">
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
+						display: 'flex',
+						flexDirection: 'row',
 						gap: 12,
 						maxWidth: 560,
 					}}
@@ -558,8 +551,8 @@ export function Demo() {
 			<DemoCard title="Actions">
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "column",
+						display: 'flex',
+						flexDirection: 'column',
 						gap: 12,
 						maxWidth: 520,
 					}}
@@ -588,8 +581,8 @@ export function Demo() {
 			<DemoCard title="Custom icon and compact">
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "column",
+						display: 'flex',
+						flexDirection: 'column',
 						gap: 12,
 						maxWidth: 520,
 					}}
@@ -625,52 +618,52 @@ async function reveal(shot: ShotContext, testId: string) {
 	throw new Error(`could not scroll ${testId} into view`);
 }
 
-export const scenarios: DemoModule["scenarios"] = async (shot) => {
+export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	// The playground's controls sit in the right column.
-	shot.capture("playground");
-	await shot.click("play-banner-dismiss");
+	shot.capture('playground');
+	await shot.click('play-banner-dismiss');
 	await shot.settle(500);
 	shot.expectText(COPY.success.title, false);
-	shot.capture("playground-dismissed");
-	await shot.click("play-show");
+	shot.capture('playground-dismissed');
+	await shot.click('play-show');
 	shot.expectText(COPY.success.title, true);
-	await shot.click("play-ghost-track");
-	await shot.click("play-description-track");
-	shot.capture("playground-ghost-no-description");
-	await shot.focus("play-status-trigger");
-	await shot.press("ArrowDown ArrowDown Enter");
+	await shot.click('play-ghost-track');
+	await shot.click('play-description-track');
+	shot.capture('playground-ghost-no-description');
+	await shot.focus('play-status-trigger');
+	await shot.press('ArrowDown ArrowDown Enter');
 	await shot.settle(300);
 	shot.expectText(COPY.warning.title, true);
-	shot.capture("playground-warning");
-	await shot.focus("play-variant-trigger");
-	await shot.press("ArrowDown ArrowDown Enter");
+	shot.capture('playground-warning');
+	await shot.focus('play-variant-trigger');
+	await shot.press('ArrowDown ArrowDown Enter');
 	await shot.settle(300);
-	shot.capture("playground-fixed");
-	await shot.click("play-banner-dismiss");
+	shot.capture('playground-fixed');
+	await shot.click('play-banner-dismiss');
 	await shot.settle(500);
 	shot.expectText(COPY.warning.title, false);
-	shot.capture("playground-fixed-dismissed");
-	await shot.click("playground-shuffle");
-	shot.capture("playground-shuffled");
+	shot.capture('playground-fixed-dismissed');
+	await shot.click('playground-shuffle');
+	shot.capture('playground-shuffled');
 
-	await reveal(shot, "inline-banner-dismiss");
-	await shot.hover("inline-banner-dismiss");
-	shot.capture("dismiss-hover");
-	await shot.click("inline-banner-dismiss");
-	shot.expectText("Changes saved", false);
-	shot.capture("dismissed");
-	await shot.click("inline-replay");
-	shot.expectText("Changes saved", true);
-	shot.capture("replayed");
-	await shot.click("fixed-banner-dismiss");
-	shot.expectText("Registry maintenance tonight at 22:00 UTC", false);
-	shot.capture("fixed-dismissed");
-	await shot.click("fixed-replay");
-	shot.expectText("Registry maintenance tonight at 22:00 UTC", true);
-	shot.capture("fixed-replayed");
+	await reveal(shot, 'inline-banner-dismiss');
+	await shot.hover('inline-banner-dismiss');
+	shot.capture('dismiss-hover');
+	await shot.click('inline-banner-dismiss');
+	shot.expectText('Changes saved', false);
+	shot.capture('dismissed');
+	await shot.click('inline-replay');
+	shot.expectText('Changes saved', true);
+	shot.capture('replayed');
+	await shot.click('fixed-banner-dismiss');
+	shot.expectText('Registry maintenance tonight at 22:00 UTC', false);
+	shot.capture('fixed-dismissed');
+	await shot.click('fixed-replay');
+	shot.expectText('Registry maintenance tonight at 22:00 UTC', true);
+	shot.capture('fixed-replayed');
 	// The statuses and actions cards are below the fold.
 	await shot.scroll(600, 400, 0, 620);
-	shot.capture("scrolled-statuses");
+	shot.capture('scrolled-statuses');
 	await shot.scroll(600, 400, 0, 620);
-	shot.capture("scrolled-actions");
+	shot.capture('scrolled-actions');
 };

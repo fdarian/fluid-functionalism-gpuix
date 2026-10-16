@@ -1,5 +1,5 @@
-import type { JSX } from "solid-js";
-import { color, fontFamily, type as scale, weight } from "./theme";
+import type { JSX } from 'solid-js';
+import { color, fontFamily, type as scale, weight } from './theme';
 
 const BAR_HEIGHT = 40;
 const MARGIN = 8;
@@ -17,33 +17,33 @@ export function AppFrame(props: { title: string; children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
-				width: "100%",
-				height: "100%",
+				display: 'flex',
+				flexDirection: 'column',
+				width: '100%',
+				height: '100%',
 				backgroundColor: color.chrome,
 				fontFamily,
 			}}
 		>
 			<div
 				style={{
-					position: "relative",
+					position: 'relative',
 					height: BAR_HEIGHT,
 					flexShrink: 0,
-					appRegion: "drag",
+					appRegion: 'drag',
 				}}
 			>
 				{/* Full width, so the traffic-light inset does not shift the title. */}
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 0,
 						left: 0,
 						right: 0,
 						bottom: 0,
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
 					}}
 				>
 					<text
@@ -67,7 +67,7 @@ export function AppFrame(props: { title: string; children: JSX.Element }) {
 					borderRadius: PANEL_RADIUS,
 					borderWidth: PANEL_BORDER,
 					borderColor: color.border,
-					overflow: "hidden",
+					overflow: 'hidden',
 					backgroundColor: color.background,
 				}}
 			>

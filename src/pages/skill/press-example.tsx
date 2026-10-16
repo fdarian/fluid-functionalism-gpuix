@@ -3,16 +3,10 @@ import {
 	type DomEvent,
 	motion,
 	useGpuixRequired,
-} from "@gpuix/solid";
-import { createSignal, For } from "solid-js";
-import { fill } from "#/lib/press";
-import {
-	color,
-	focusRing,
-	shape,
-	siteType,
-	weight,
-} from "#/lib/theme";
+} from '@gpuix/solid';
+import { createSignal, For } from 'solid-js';
+import { fill } from '#/lib/press';
+import { color, focusRing, shape, siteType, weight } from '#/lib/theme';
 import {
 	Compare,
 	clickStep,
@@ -21,7 +15,7 @@ import {
 	createScriptCursor,
 	type Side,
 	turns,
-} from "./playback";
+} from './playback';
 
 // Button press: 1px per side, not a scale.
 
@@ -31,12 +25,12 @@ import {
  * difference between them is felt, not just seen.
  */
 const SIZES = [
-	{ height: 28, padX: 12, text: "caption", label: "Skip" },
+	{ height: 28, padX: 12, text: 'caption', label: 'Skip' },
 	{
 		height: 36,
 		padX: 0,
-		text: "body",
-		label: "Continue",
+		text: 'body',
+		label: 'Continue',
 		width: 256,
 	},
 ] as const;
@@ -96,15 +90,15 @@ function GenericButton(props: { index: number; press: PressProps }) {
 			{...pressHandlers(props.index, props.press, setHovered)}
 			onLayout={(event: DomEvent) => {
 				if (event.width === undefined)
-					throw new Error("onLayout reported no width");
+					throw new Error('onLayout reported no width');
 				setMeasured(event.width);
 			}}
 			style={{
 				height: size.height,
-				...("width" in size ? { width: size.width, maxWidth: "100%" } : {}),
-				display: "flex",
-				flexDirection: "row",
-				cursor: "pointer",
+				...('width' in size ? { width: size.width, maxWidth: '100%' } : {}),
+				display: 'flex',
+				flexDirection: 'row',
+				cursor: 'pointer',
 				keyboardFocusDim: false,
 			}}
 		>
@@ -124,9 +118,9 @@ function GenericButton(props: { index: number; press: PressProps }) {
 				transition={{ duration: PRESS_IN_S }}
 				style={{
 					flexGrow: 1,
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
 					paddingLeft: size.padX,
 					paddingRight: size.padX,
 					borderRadius: shape.button,
@@ -137,7 +131,7 @@ function GenericButton(props: { index: number; press: PressProps }) {
 						...siteType[size.text],
 						fontWeight: weight.normal,
 						color: color.background,
-						whiteSpace: "nowrap",
+						whiteSpace: 'nowrap',
 					}}
 				>
 					{size.label}
@@ -170,9 +164,9 @@ function SkillButton(props: { index: number; press: PressProps }) {
 			testId={`press-skill-${props.index}`}
 			style={{
 				height: size.height,
-				...("width" in size ? { width: size.width, maxWidth: "100%" } : {}),
-				display: "flex",
-				flexDirection: "row",
+				...('width' in size ? { width: size.width, maxWidth: '100%' } : {}),
+				display: 'flex',
+				flexDirection: 'row',
 			}}
 		>
 			<motion.div
@@ -184,13 +178,13 @@ function SkillButton(props: { index: number; press: PressProps }) {
 				style={{
 					flexGrow: 1,
 					margin: 1,
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
 					paddingLeft: size.padX - 1,
 					paddingRight: size.padX - 1,
 					borderRadius: shape.button,
-					cursor: "pointer",
+					cursor: 'pointer',
 					keyboardFocusDim: false,
 					focusVisible: focusRing(1),
 				}}
@@ -200,7 +194,7 @@ function SkillButton(props: { index: number; press: PressProps }) {
 						...siteType[size.text],
 						fontWeight: weight.normal,
 						color: color.background,
-						whiteSpace: "nowrap",
+						whiteSpace: 'nowrap',
 					}}
 				>
 					{size.label}
@@ -214,16 +208,16 @@ function Buttons(props: { side: Side; press: PressProps }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
 				gap: 16,
-				width: "100%",
+				width: '100%',
 			}}
 		>
 			<For each={SIZES}>
 				{(_size, index) =>
-					props.side === "generic" ? (
+					props.side === 'generic' ? (
 						<GenericButton index={index()} press={props.press} />
 					) : (
 						<SkillButton index={index()} press={props.press} />
@@ -240,7 +234,7 @@ export function PressExample() {
 	const [generic, setGeneric] = createSignal<number | null>(null);
 	const [skill, setSkill] = createSignal<number | null>(null);
 	const [active, setActive] = createSignal<Side | null>(null);
-	const set = (side: Side) => (side === "generic" ? setGeneric : setSkill);
+	const set = (side: Side) => (side === 'generic' ? setGeneric : setSkill);
 	// Each turn clicks the small button, then the wide one.
 	const target = (side: Side, index: number) => `press-${side}-${index}`;
 	createLoop(

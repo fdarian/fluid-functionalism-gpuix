@@ -2,10 +2,10 @@ import {
 	type HostElement,
 	type KeyEvent,
 	useGpuixRequired,
-} from "@gpuix/solid";
-import { For, Show } from "solid-js";
-import { LUCIDE, LucideIcon, pressProps, ScLabel } from "./parts";
-import { sc, scRing } from "./theme";
+} from '@gpuix/solid';
+import { For, Show } from 'solid-js';
+import { LUCIDE, LucideIcon, pressProps, ScLabel } from './parts';
+import { sc, scRing } from './theme';
 
 /** `components/shadcn/radio-group.tsx`: a `grid gap-2` of round items, each with its `Label`. */
 export function ScRadioGroup(props: {
@@ -28,16 +28,16 @@ export function ScRadioGroup(props: {
 			throw new Error(`There is no radio item ${index}`);
 		}
 		if (renderer.focusElement === undefined) {
-			throw new Error("This renderer cannot move focus");
+			throw new Error('This renderer cannot move focus');
 		}
 		renderer.focusElement(target.id);
 		props.onValueChange(item.value);
 	};
 	const onKeyDown = (index: number) => (event: KeyEvent) => {
 		const by =
-			event.key === "ArrowDown" || event.key === "ArrowRight"
+			event.key === 'ArrowDown' || event.key === 'ArrowRight'
 				? 1
-				: event.key === "ArrowUp" || event.key === "ArrowLeft"
+				: event.key === 'ArrowUp' || event.key === 'ArrowLeft'
 					? -1
 					: 0;
 		if (by === 0) return;
@@ -49,15 +49,15 @@ export function ScRadioGroup(props: {
 		<div
 			role="radiogroup"
 			testId={props.testId}
-			style={{ display: "flex", flexDirection: "column", gap: 8 }}
+			style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
 		>
 			<For each={props.items}>
 				{(item, index) => (
 					<div
 						style={{
-							display: "flex",
-							flexDirection: "row",
-							alignItems: "center",
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'center',
 							gap: 8,
 						}}
 					>
@@ -84,9 +84,9 @@ export function ScRadioGroup(props: {
 									: `${props.testId}-${item.value}`
 							}
 							style={{
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
 								flexShrink: 0,
 								width: 16,
 								height: 16,

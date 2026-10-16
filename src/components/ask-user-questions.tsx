@@ -5,7 +5,7 @@ import {
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	createEffect,
 	createMemo,
@@ -17,27 +17,27 @@ import {
 	onCleanup,
 	Show,
 	untrack,
-} from "solid-js";
-import { FluidHighlight } from "#/lib/fluid-highlight";
-import { createFluidHover, type ItemRect } from "#/lib/fluid-hover";
-import { Icon } from "#/lib/icon";
-import { isChord, moveIndex } from "#/lib/list-nav";
-import { createMeasuredHeight } from "#/lib/measured-height";
-import { IS_MAC } from "#/lib/platform";
-import { StableLabel } from "#/lib/stable-label";
+} from 'solid-js';
+import { FluidHighlight } from '#/lib/fluid-highlight';
+import { createFluidHover, type ItemRect } from '#/lib/fluid-hover';
+import { Icon } from '#/lib/icon';
+import { isChord, moveIndex } from '#/lib/list-nav';
+import { createMeasuredHeight } from '#/lib/measured-height';
+import { IS_MAC } from '#/lib/platform';
+import { StableLabel } from '#/lib/stable-label';
 import {
 	color,
+	colorFadeNoRing,
 	fade,
 	focusRing,
-	shape,
 	type as scale,
 	scheme,
+	shape,
 	motion as tween,
 	weight,
 	withAlpha,
-	colorFadeNoRing,
-} from "#/lib/theme";
-import { Button } from "./button";
+} from '#/lib/theme';
+import { Button } from './button';
 
 export interface AskUserOption {
 	id?: string;
@@ -56,9 +56,9 @@ export interface AskUserQuestion {
 	skippable?: boolean;
 	nextLabel?: string;
 	/** "inline" keeps title and description together; "stacked" puts the description under the title. */
-	layout?: "inline" | "stacked";
+	layout?: 'inline' | 'stacked';
 	/** Which side of the row the numbered chip sits on. */
-	chipPosition?: "left" | "right";
+	chipPosition?: 'left' | 'right';
 	/** One multi-line textarea as the whole answer, no option rows. The text is returned in `otherText`. */
 	freeText?: boolean;
 	freeTextPlaceholder?: string;
@@ -79,7 +79,7 @@ type Answers = Record<string, AskUserAnswer>;
 
 const NO_OPTIONS: AskUserOption[] = [];
 const slowSpring = {
-	type: "spring",
+	type: 'spring',
 	duration: 0.24,
 	bounce: 0.12,
 } as const;
@@ -90,12 +90,12 @@ const optionKey = (option: AskUserOption, index: number) =>
 	option.id ?? `o-${index}`;
 
 /** The chip's `transition-[opacity,font-variation-settings] duration-80`; its colours switch at once in the source too. */
-const CHIP_FADE = fade(["opacity"], 80);
+const CHIP_FADE = fade(['opacity'], 80);
 
 /** The free-text box's `transition-colors`, without `outline-color`: the source's focus ring is a box-shadow ring, which does not ease. */
 const FREE_TEXT_FADE = colorFadeNoRing(150);
 
-const SHORTCUT_GLYPH = IS_MAC ? "⌘↵" : "⌃↵";
+const SHORTCUT_GLYPH = IS_MAC ? '⌘↵' : '⌃↵';
 
 /** Keycap for a shortcut, inside the primary button. */
 function ShortcutChip(props: { children: string }) {
@@ -107,9 +107,9 @@ function ShortcutChip(props: { children: string }) {
 				paddingLeft: 4,
 				paddingRight: 4,
 				marginLeft: 2,
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
 				borderRadius: shape.bg,
 				// bg-background/15 over the primary button.
 				backgroundColor: withAlpha(color.background, 0.15),
@@ -128,7 +128,7 @@ interface RowProps {
 	index: number;
 	registerItem: (index: number, element: HostElement) => void;
 	rowRef: (index: number, element: HostElement) => void;
-	role: "radio" | "checkbox" | null;
+	role: 'radio' | 'checkbox' | null;
 	isSelected: boolean;
 	tabIndex: number;
 	onClick: () => void;
@@ -139,9 +139,9 @@ interface RowProps {
 	isMulti: boolean;
 	showArrow: boolean;
 	onArrowClick?: () => void;
-	bodyLayout: "inline" | "stacked";
+	bodyLayout: 'inline' | 'stacked';
 	topAlign: boolean;
-	chipPosition: "left" | "right";
+	chipPosition: 'left' | 'right';
 	testId?: string;
 	children: JSX.Element;
 }
@@ -149,11 +149,11 @@ interface RowProps {
 function Row(props: RowProps) {
 	let rowElement: HostElement | undefined;
 	createEffect(() => {
-		if (rowElement === undefined) throw new Error("Row is not mounted");
+		if (rowElement === undefined) throw new Error('Row is not mounted');
 		props.registerItem(props.index, rowElement);
 		props.rowRef(props.index, rowElement);
 	});
-	const stacked = () => props.bodyLayout === "stacked";
+	const stacked = () => props.bodyLayout === 'stacked';
 	const chipNudge = () => (props.topAlign ? (stacked() ? -1 : -5) : 0);
 
 	const arrowOverlay = () => (
@@ -167,7 +167,7 @@ function Row(props: RowProps) {
 				transition={{ duration: 0.08 }}
 				{...(props.onArrowClick
 					? {
-							role: "button",
+							role: 'button',
 							onClick: (event: HostPointerEvent) => {
 								// The row behind the arrow handles clicks too.
 								event.stopPropagation();
@@ -176,17 +176,17 @@ function Row(props: RowProps) {
 						}
 					: {})}
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					right: 0,
 					bottom: 0,
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
 					borderRadius: shape.bg,
 					backgroundColor: color.foreground,
-					cursor: props.onArrowClick ? "pointer" : "default",
+					cursor: props.onArrowClick ? 'pointer' : 'default',
 				}}
 			>
 				<Icon
@@ -202,11 +202,11 @@ function Row(props: RowProps) {
 	const chipSlot = () => (
 		<div
 			style={{
-				position: "relative",
+				position: 'relative',
 				flexShrink: 0,
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
 				width: 28,
 				height: 28,
 				marginTop: chipNudge(),
@@ -214,14 +214,14 @@ function Row(props: RowProps) {
 		>
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					width: 20,
 					height: 20,
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
 					borderRadius: shape.bg,
-					opacity: props.chipPosition === "right" && props.showArrow ? 0 : 1,
+					opacity: props.chipPosition === 'right' && props.showArrow ? 0 : 1,
 					...CHIP_FADE,
 					...(props.isMulti
 						? props.chipFilled
@@ -246,15 +246,15 @@ function Row(props: RowProps) {
 					{String(props.chipContent)}
 				</text>
 			</div>
-			<Show when={props.chipPosition === "right"}>{arrowOverlay()}</Show>
+			<Show when={props.chipPosition === 'right'}>{arrowOverlay()}</Show>
 		</div>
 	);
 
 	const rightArrowSlot = () => (
-		<Show when={props.chipPosition === "left" && !props.isMulti}>
+		<Show when={props.chipPosition === 'left' && !props.isMulti}>
 			<div
 				style={{
-					position: "relative",
+					position: 'relative',
 					flexShrink: 0,
 					width: 28,
 					height: 28,
@@ -279,31 +279,31 @@ function Row(props: RowProps) {
 			onFocus={props.onFocus}
 			onBlur={props.onBlur}
 			style={{
-				position: "relative",
+				position: 'relative',
 				zIndex: 10,
-				display: "flex",
-				flexDirection: "row",
-				alignItems: props.topAlign ? "flex-start" : "center",
-				gap: props.chipPosition === "left" ? 8 : 12,
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: props.topAlign ? 'flex-start' : 'center',
+				gap: props.chipPosition === 'left' ? 8 : 12,
 				minHeight: stacked() ? 56 : 40,
 				paddingTop: stacked() ? 8 : 6,
 				paddingBottom: stacked() ? 8 : 6,
-				paddingLeft: props.chipPosition === "left" ? 6 : 12,
-				paddingRight: props.chipPosition === "left" && props.isMulti ? 12 : 6,
+				paddingLeft: props.chipPosition === 'left' ? 6 : 12,
+				paddingRight: props.chipPosition === 'left' && props.isMulti ? 12 : 6,
 				borderRadius: shape.item,
-				cursor: "pointer",
-				userSelect: "none",
+				cursor: 'pointer',
+				userSelect: 'none',
 				keyboardFocusDim: false,
 				focusVisible: focusRing(2),
 			}}
 		>
-			<Show when={props.chipPosition === "left"}>{chipSlot()}</Show>
+			<Show when={props.chipPosition === 'left'}>{chipSlot()}</Show>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: stacked() ? "column" : "row",
-					flexWrap: stacked() ? "nowrap" : "wrap",
-					alignItems: stacked() ? "flex-start" : "center",
+					display: 'flex',
+					flexDirection: stacked() ? 'column' : 'row',
+					flexWrap: stacked() ? 'nowrap' : 'wrap',
+					alignItems: stacked() ? 'flex-start' : 'center',
 					columnGap: 4,
 					rowGap: 0,
 					gap: stacked() ? 2 : undefined,
@@ -313,7 +313,7 @@ function Row(props: RowProps) {
 			>
 				{props.children}
 			</div>
-			<Show when={props.chipPosition === "right"}>{chipSlot()}</Show>
+			<Show when={props.chipPosition === 'right'}>{chipSlot()}</Show>
 			{rightArrowSlot()}
 		</div>
 	);
@@ -371,7 +371,7 @@ export function AskUserQuestions(props: {
 		props.questions[safeIndex()];
 	const qId = () => {
 		const current = question();
-		return current === undefined ? "" : questionKey(current, safeIndex());
+		return current === undefined ? '' : questionKey(current, safeIndex());
 	};
 	const currentAnswer = () => answers()[qId()];
 	const isMulti = () => question()?.multiSelect === true;
@@ -380,7 +380,7 @@ export function AskUserQuestions(props: {
 	const isFreeTextMultiline = () => question()?.freeTextMultiline !== false;
 	const allowOther = () => !isFreeText() && question()?.allowOther === true;
 	const selectedIds = () => currentAnswer()?.selectedIds ?? [];
-	const otherText = () => currentAnswer()?.otherText ?? "";
+	const otherText = () => currentAnswer()?.otherText ?? '';
 	const options = () => question()?.options ?? NO_OPTIONS;
 	const otherIndex = () => (allowOther() ? options().length : -1);
 	const rowCount = () => options().length + (allowOther() ? 1 : 0);
@@ -433,8 +433,8 @@ export function AskUserQuestions(props: {
 	const submitOther = () => {
 		const current = question();
 		if (current === undefined) return;
-		const text = (latestAnswers[qId()]?.otherText ?? "").trim();
-		if (text === "") return;
+		const text = (latestAnswers[qId()]?.otherText ?? '').trim();
+		if (text === '') return;
 		if (current.freeText && current.freeTextValidate) {
 			const message = current.freeTextValidate(text);
 			if (message) {
@@ -447,7 +447,7 @@ export function AskUserQuestions(props: {
 	};
 	/** Enter on a one-line answer field; Shift+Enter and the chords stay with the editor and the card. */
 	const submitOtherOnEnter = (event: KeyEvent) => {
-		if (event.key !== "Enter" || event.shiftKey === true || isChord(event))
+		if (event.key !== 'Enter' || event.shiftKey === true || isChord(event))
 			return;
 		event.preventDefault();
 		submitOther();
@@ -524,7 +524,7 @@ export function AskUserQuestions(props: {
 	const onKeyDown = (event: KeyEvent) => {
 		const mod = IS_MAC ? event.metaKey : event.ctrlKey;
 		keyboardDriving = true;
-		if (event.key === "Enter" && mod) {
+		if (event.key === 'Enter' && mod) {
 			if (!(isMulti() || isFreeText())) return;
 			event.preventDefault();
 			if (isFreeText()) {
@@ -539,10 +539,10 @@ export function AskUserQuestions(props: {
 		const key = event.key;
 		if (inText) {
 			// Caret movement is the editor's, except up and down off a one-line draft.
-			if (isFreeText() || (key !== "ArrowUp" && key !== "ArrowDown")) return;
-			if (otherText().includes("\n")) return;
+			if (isFreeText() || (key !== 'ArrowUp' && key !== 'ArrowDown')) return;
+			if (otherText().includes('\n')) return;
 		}
-		if (!inText && key !== undefined && key >= "1" && key <= "9") {
+		if (!inText && key !== undefined && key >= '1' && key <= '9') {
 			const slot = Number.parseInt(key, 10) - 1;
 			if (slot < options().length) {
 				event.preventDefault();
@@ -560,7 +560,7 @@ export function AskUserQuestions(props: {
 			!inText &&
 			focused !== null &&
 			focused < options().length &&
-			(key === " " || key === "Enter")
+			(key === ' ' || key === 'Enter')
 		) {
 			event.preventDefault();
 			const id = optionKey(options()[focused], focused);
@@ -568,27 +568,27 @@ export function AskUserQuestions(props: {
 			else selectSingle(id);
 			return;
 		}
-		if (key === "ArrowLeft" || key === "ArrowRight") {
+		if (key === 'ArrowLeft' || key === 'ArrowRight') {
 			event.preventDefault();
-			if (key === "ArrowLeft") back();
+			if (key === 'ArrowLeft') back();
 			else if (isSkippable() && total() > 1) skip();
 			return;
 		}
 		if (rowCount() === 0) return;
 		if (
-			key === "ArrowDown" ||
-			key === "ArrowUp" ||
-			key === "Home" ||
-			key === "End"
+			key === 'ArrowDown' ||
+			key === 'ArrowUp' ||
+			key === 'Home' ||
+			key === 'End'
 		) {
 			event.preventDefault();
 			let next: number;
-			if (key === "Home") next = 0;
-			else if (key === "End") next = rowCount() - 1;
+			if (key === 'Home') next = 0;
+			else if (key === 'End') next = rowCount() - 1;
 			else {
 				const stepped = moveIndex(
 					inText ? otherIndex() : hover.activeIndex(),
-					key === "ArrowDown" ? 1 : -1,
+					key === 'ArrowDown' ? 1 : -1,
 					rowCount(),
 				);
 				if (stepped === null) return;
@@ -656,16 +656,16 @@ export function AskUserQuestions(props: {
 
 	const continueLabel = () =>
 		question()?.nextLabel ??
-		(safeIndex() >= total() - 1 ? "Finish" : "Continue");
+		(safeIndex() >= total() - 1 ? 'Finish' : 'Continue');
 
 	const rows = () => (
 		<div
-			role={isMulti() ? "group" : "radiogroup"}
+			role={isMulti() ? 'group' : 'radiogroup'}
 			{...hover.containerProps}
 			style={{
-				position: "relative",
-				display: "flex",
-				flexDirection: "column",
+				position: 'relative',
+				display: 'flex',
+				flexDirection: 'column',
 				marginLeft: -12,
 				marginRight: -12,
 			}}
@@ -674,7 +674,7 @@ export function AskUserQuestions(props: {
 			<Show when={otherRect()}>
 				{(rect: () => ItemRect) => (
 					<motion.div
-						testId={`${props.testId ?? "ask"}-other-hint`}
+						testId={`${props.testId ?? 'ask'}-other-hint`}
 						initial={{
 							opacity: 0,
 							top: untrack(rect).top,
@@ -691,13 +691,13 @@ export function AskUserQuestions(props: {
 						}}
 						transition={{ ...tween.fast, duration: 0.08 }}
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							borderRadius: shape.bg,
 							backgroundColor: color.card,
 							outlineWidth: 1,
 							outlineOffset: -1,
 							outlineColor: color.border,
-							pointerEvents: "none",
+							pointerEvents: 'none',
 						}}
 					/>
 				)}
@@ -725,14 +725,14 @@ export function AskUserQuestions(props: {
 				{(option, i) => {
 					const id = () => optionKey(option, i());
 					const selected = () => selectedIds().includes(id());
-					const stacked = () => question()?.layout === "stacked";
+					const stacked = () => question()?.layout === 'stacked';
 					return (
 						<Row
 							index={i()}
-							testId={`${props.testId ?? "ask"}-option-${i()}`}
+							testId={`${props.testId ?? 'ask'}-option-${i()}`}
 							registerItem={hover.registerItem}
 							rowRef={(rowIndex, element) => rowElements.set(rowIndex, element)}
-							role={isMulti() ? "checkbox" : "radio"}
+							role={isMulti() ? 'checkbox' : 'radio'}
 							isSelected={selected()}
 							tabIndex={i() === rovingRow() ? 0 : -1}
 							onClick={() =>
@@ -747,9 +747,9 @@ export function AskUserQuestions(props: {
 							chipFilled={selected()}
 							isMulti={isMulti()}
 							showArrow={!isMulti() && hover.activeIndex() === i()}
-							bodyLayout={stacked() ? "stacked" : "inline"}
+							bodyLayout={stacked() ? 'stacked' : 'inline'}
 							topAlign={stacked()}
-							chipPosition={question()?.chipPosition ?? "right"}
+							chipPosition={question()?.chipPosition ?? 'right'}
 						>
 							<StableLabel
 								text={option.title}
@@ -773,7 +773,7 @@ export function AskUserQuestions(props: {
 			<Show when={allowOther()}>
 				<Row
 					index={otherIndex()}
-					testId={`${props.testId ?? "ask"}-other`}
+					testId={`${props.testId ?? 'ask'}-other`}
 					registerItem={hover.registerItem}
 					rowRef={(rowIndex, element) => rowElements.set(rowIndex, element)}
 					role={null}
@@ -800,24 +800,24 @@ export function AskUserQuestions(props: {
 							: undefined
 					}
 					bodyLayout="inline"
-					topAlign={otherText().includes("\n")}
-					chipPosition={question()?.chipPosition ?? "right"}
+					topAlign={otherText().includes('\n')}
+					chipPosition={question()?.chipPosition ?? 'right'}
 				>
 					<textarea
 						ref={(element) => {
 							otherElement = element;
 						}}
-						testId={`${props.testId ?? "ask"}-other-input`}
+						testId={`${props.testId ?? 'ask'}-other-input`}
 						minRows={1}
 						value={otherText()}
 						placeholder={
-							question()?.otherPlaceholder ?? "Describe in your own words…"
+							question()?.otherPlaceholder ?? 'Describe in your own words…'
 						}
 						aria-label={
-							question()?.otherPlaceholder ?? "Describe in your own words"
+							question()?.otherPlaceholder ?? 'Describe in your own words'
 						}
 						theme={fieldTheme()}
-						onChange={(event: DomEvent) => setOther(event.value ?? "")}
+						onChange={(event: DomEvent) => setOther(event.value ?? '')}
 						onFocus={() => {
 							setTextFocused(true);
 							hover.setActiveIndex(otherIndex());
@@ -833,7 +833,7 @@ export function AskUserQuestions(props: {
 						style={{
 							...scale.body,
 							flexGrow: 1,
-							width: "100%",
+							width: '100%',
 							minWidth: 0,
 							color: color.foreground,
 							backgroundColor: color.transparent,
@@ -854,7 +854,7 @@ export function AskUserQuestions(props: {
 				onMouseLeave={() => setHovered(false)}
 				onClick={focusFreeText}
 				style={{
-					position: "relative",
+					position: 'relative',
 					marginTop: 4,
 					marginLeft: -12,
 					marginRight: -12,
@@ -864,7 +864,7 @@ export function AskUserQuestions(props: {
 					paddingRight: 12,
 					minHeight: multiline ? 76 : 40,
 					borderRadius: shape.bg,
-					cursor: "text",
+					cursor: 'text',
 					backgroundColor:
 						otherText().length > 0
 							? color.active
@@ -887,20 +887,20 @@ export function AskUserQuestions(props: {
 					ref={(element) => {
 						otherElement = element;
 					}}
-					testId={`${props.testId ?? "ask"}-free-input`}
+					testId={`${props.testId ?? 'ask'}-free-input`}
 					autoFocus={safeIndex() > 0 || props.autoFocus !== false}
 					minRows={1}
 					value={otherText()}
-					placeholder={question()?.freeTextPlaceholder ?? "Type your answer…"}
+					placeholder={question()?.freeTextPlaceholder ?? 'Type your answer…'}
 					aria-label={question()?.title}
 					theme={fieldTheme()}
-					onChange={(event: DomEvent) => setOther(event.value ?? "")}
+					onChange={(event: DomEvent) => setOther(event.value ?? '')}
 					onFocus={() => setTextFocused(true)}
 					onBlur={() => setTextFocused(false)}
 					onKeyDown={multiline ? undefined : submitOtherOnEnter}
 					style={{
 						...scale.body,
-						width: "100%",
+						width: '100%',
 						color: color.foreground,
 						backgroundColor: color.transparent,
 						keyboardFocusDim: false,
@@ -952,11 +952,11 @@ export function AskUserQuestions(props: {
 					animate={{ height: content.height() ?? 0 }}
 					transition={content.height() === undefined ? tween.snap : slowSpring}
 					style={{
-						display: "flex",
-						flexDirection: "column",
-						overflow: "hidden",
+						display: 'flex',
+						flexDirection: 'column',
+						overflow: 'hidden',
 						// Until the content is measured the region keeps its natural height.
-						...(content.height() === undefined ? { height: "auto" } : {}),
+						...(content.height() === undefined ? { height: 'auto' } : {}),
 					}}
 				>
 					<div onLayout={content.onLayout} style={{ flexShrink: 0 }}>
@@ -969,7 +969,7 @@ export function AskUserQuestions(props: {
 						>
 							<Show when={qId()} keyed>
 								<div
-									style={{ display: "flex", flexDirection: "column", gap: 8 }}
+									style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
 								>
 									<text
 										style={{
@@ -999,10 +999,10 @@ export function AskUserQuestions(props: {
 					>
 						<div
 							style={{
-								display: "flex",
-								flexDirection: "row",
-								alignItems: "center",
-								justifyContent: "space-between",
+								display: 'flex',
+								flexDirection: 'row',
+								alignItems: 'center',
+								justifyContent: 'space-between',
 								gap: 8,
 								marginLeft: -12,
 								marginRight: -12,
@@ -1010,9 +1010,9 @@ export function AskUserQuestions(props: {
 						>
 							<div
 								style={{
-									display: "flex",
-									flexDirection: "row",
-									alignItems: "center",
+									display: 'flex',
+									flexDirection: 'row',
+									alignItems: 'center',
 									flexGrow: 1,
 									minWidth: 0,
 									gap: 8,
@@ -1024,7 +1024,7 @@ export function AskUserQuestions(props: {
 											size="compact"
 											variant="ghost"
 											leadingIcon="arrow-left"
-											testId={`${props.testId ?? "ask"}-back`}
+											testId={`${props.testId ?? 'ask'}-back`}
 											onClick={back}
 										>
 											Back
@@ -1047,9 +1047,9 @@ export function AskUserQuestions(props: {
 							</div>
 							<div
 								style={{
-									display: "flex",
-									flexDirection: "row",
-									alignItems: "center",
+									display: 'flex',
+									flexDirection: 'row',
+									alignItems: 'center',
 									gap: 8,
 								}}
 							>
@@ -1059,10 +1059,10 @@ export function AskUserQuestions(props: {
 											size="compact"
 											variant="ghost"
 											trailingIcon="arrow-right"
-											testId={`${props.testId ?? "ask"}-skip`}
+											testId={`${props.testId ?? 'ask'}-skip`}
 											onClick={skip}
 										>
-											{props.skipLabel ?? "Skip"}
+											{props.skipLabel ?? 'Skip'}
 										</Button>
 									</FadeIn>
 								</Show>
@@ -1070,7 +1070,7 @@ export function AskUserQuestions(props: {
 									<FadeIn>
 										<Button
 											size="compact"
-											testId={`${props.testId ?? "ask"}-continue`}
+											testId={`${props.testId ?? 'ask'}-continue`}
 											disabled={
 												isFreeText()
 													? otherText().trim().length === 0
@@ -1119,12 +1119,12 @@ function fieldTheme() {
 
 function cardStyle() {
 	return {
-		position: "relative",
-		display: "flex",
-		flexDirection: "column",
-		width: "100%",
+		position: 'relative',
+		display: 'flex',
+		flexDirection: 'column',
+		width: '100%',
 		maxWidth: 520,
-		overflow: "hidden",
+		overflow: 'hidden',
 		backgroundColor: color.card,
 		borderRadius: shape.container,
 		borderWidth: 1,

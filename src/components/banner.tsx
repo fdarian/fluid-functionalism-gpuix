@@ -4,7 +4,7 @@ import {
 	type HostElement,
 	motion,
 	useGpuixRequired,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	createContext,
 	createEffect,
@@ -16,25 +16,25 @@ import {
 	children as resolveChildren,
 	Show,
 	useContext,
-} from "solid-js";
-import { Icon } from "#/lib/icon";
-import type { IconRef } from "#/lib/icons";
+} from 'solid-js';
+import { Icon } from '#/lib/icon';
+import type { IconRef } from '#/lib/icons';
 import {
 	color,
 	fade,
 	focusRing,
+	type as scale,
 	shape,
 	sizeChoice,
-	type as scale,
 	motion as tween,
 	weight,
-} from "#/lib/theme";
-import { Button } from "./button";
+} from '#/lib/theme';
+import { Button } from './button';
 
-export type BannerStatus = "default" | "info" | "success" | "warning" | "error";
-export type BannerContrast = "low" | "high";
-export type BannerVariant = "inline" | "fixed";
-export type BannerSize = "default" | "compact";
+export type BannerStatus = 'default' | 'info' | 'success' | 'warning' | 'error';
+export type BannerContrast = 'low' | 'high';
+export type BannerVariant = 'inline' | 'fixed';
+export type BannerSize = 'default' | 'compact';
 
 const sizes = {
 	default: {
@@ -59,12 +59,11 @@ const sizes = {
 	},
 } as const;
 
-
 const tone = (status: BannerStatus) => {
 	switch (status) {
-		case "default":
+		case 'default':
 			return color.foreground;
-		case "error":
+		case 'error':
 			return color.destructive;
 		default:
 			return color[status];
@@ -79,8 +78,8 @@ function withAlpha(hex: string, alpha: number): string {
 }
 
 const fill = (status: BannerStatus, contrast: BannerContrast) => {
-	if (contrast === "low") return color.hover;
-	return withAlpha(tone(status), status === "default" ? 0.08 : 0.12);
+	if (contrast === 'low') return color.hover;
+	return withAlpha(tone(status), status === 'default' ? 0.08 : 0.12);
 };
 
 /**
@@ -95,10 +94,10 @@ const glyphMarks = {
 	info: '<path d="M12 16.5v-5M12 7.5h.01"/>',
 } as const;
 
-function glyphSource(status: Exclude<BannerStatus, "default">) {
+function glyphSource(status: Exclude<BannerStatus, 'default'>) {
 	const mark = `<g stroke="#000" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" fill="none">${glyphMarks[status]}</g>`;
 	const shape =
-		status === "warning"
+		status === 'warning'
 			? '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" mask="url(#cut)"/>'
 			: '<circle cx="12" cy="12" r="10.5" fill="currentColor" mask="url(#cut)"/>';
 	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><defs><mask id="cut" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="#fff"/>${mark}</mask></defs>${shape}</svg>`;
@@ -115,7 +114,7 @@ const BannerScopeContext = createContext<BannerScope>();
 
 function useBannerScope() {
 	const scope = useContext(BannerScopeContext);
-	if (scope === undefined) throw new Error("Must be used inside Banner");
+	if (scope === undefined) throw new Error('Must be used inside Banner');
 	return scope;
 }
 
@@ -125,10 +124,10 @@ function useBannerScope() {
  * fixed bar rides its row by sitting at the row's bottom edge while the row
  * clips it, standing in for the translate the DOM version uses.
  */
-const appearRow = { type: "spring", duration: 0.32, bounce: 0 } as const;
+const appearRow = { type: 'spring', duration: 0.32, bounce: 0 } as const;
 const appearBanner = { ...tween.slow, delay: 0.08 } as const;
-const dismissRow = { duration: 0.24, ease: "easeInOut" } as const;
-const dismissFade = { duration: 0.16, ease: "easeOut" } as const;
+const dismissRow = { duration: 0.24, ease: 'easeInOut' } as const;
+const dismissFade = { duration: 0.16, ease: 'easeOut' } as const;
 
 export function Banner(props: {
 	status?: BannerStatus;
@@ -143,9 +142,9 @@ export function Banner(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
-	const status = () => props.status ?? "default";
-	const contrast = () => props.contrast ?? "low";
-	const fixed = () => props.variant === "fixed";
+	const status = () => props.status ?? 'default';
+	const contrast = () => props.contrast ?? 'low';
+	const fixed = () => props.variant === 'fixed';
 	const reduced = createReducedMotion();
 	// A fixed bar rides its row both ways; reduced, it fades in place like the inline one.
 	const slides = () => fixed() && !reduced();
@@ -190,7 +189,7 @@ export function Banner(props: {
 	);
 
 	const scope: BannerScope = {
-		compact: () => size() === "compact",
+		compact: () => size() === 'compact',
 		hasDescription,
 		setHasDescription,
 	};
@@ -212,7 +211,7 @@ export function Banner(props: {
 			);
 		}
 		const current = status();
-		if (current === "default") {
+		if (current === 'default') {
 			return (
 				<Icon
 					name="info"
@@ -240,14 +239,14 @@ export function Banner(props: {
 			<div
 				testId={props.testId}
 				role={
-					status() === "error" || status() === "warning" ? "alert" : "status"
+					status() === 'error' || status() === 'warning' ? 'alert' : 'status'
 				}
 				style={{
-					position: "relative",
-					display: "flex",
-					flexDirection: "row",
+					position: 'relative',
+					display: 'flex',
+					flexDirection: 'row',
 					flexShrink: 0,
-					alignItems: hasDescription() ? "flex-start" : "center",
+					alignItems: hasDescription() ? 'flex-start' : 'center',
 					padding: metrics().pad,
 					borderRadius: fixed() ? 0 : shape.container,
 					// A fixed bar stays opaque over the page scrolling under it.
@@ -257,7 +256,7 @@ export function Banner(props: {
 				{/* The fill is its own first child: gpuix has no background-image layering, and the radius clips only what is painted. */}
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 0,
 						left: 0,
 						right: 0,
@@ -268,9 +267,9 @@ export function Banner(props: {
 				/>
 				<div
 					style={{
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
 						flexShrink: 0,
 						height: metrics().iconBox,
 						width: metrics().icon,
@@ -281,9 +280,9 @@ export function Banner(props: {
 				</div>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: hasDescription() ? "column" : "row",
-						alignItems: hasDescription() ? "stretch" : "center",
+						display: 'flex',
+						flexDirection: hasDescription() ? 'column' : 'row',
+						alignItems: hasDescription() ? 'stretch' : 'center',
 						flexGrow: 1,
 						flexShrink: 1,
 						flexBasis: 0,
@@ -294,7 +293,7 @@ export function Banner(props: {
 				</div>
 				<Show when={props.dismissible}>
 					<DismissButton
-						compact={size() === "compact"}
+						compact={size() === 'compact'}
 						testId={
 							props.testId === undefined ? undefined : `${props.testId}-dismiss`
 						}
@@ -306,9 +305,9 @@ export function Banner(props: {
 	);
 
 	const rowStyle = {
-		display: "flex",
-		flexDirection: "column",
-		width: "100%",
+		display: 'flex',
+		flexDirection: 'column',
+		width: '100%',
 	} as const;
 
 	const row = () => {
@@ -321,16 +320,16 @@ export function Banner(props: {
 				}}
 				initial={inPlace ? false : { height: 0 }}
 				// Reduced, the row snaps open and stays open while the bar fades; the bar's completion unmounts it.
-				animate={{ height: open() || reduced() ? "auto" : 0 }}
+				animate={{ height: open() || reduced() ? 'auto' : 0 }}
 				transition={reduced() ? tween.snap : open() ? appearRow : dismissRow}
 				onMotionComplete={() => {
 					if (!open() && !reduced()) setMounted(false);
 				}}
 				style={{
 					...rowStyle,
-					overflow: "hidden",
+					overflow: 'hidden',
 					...(fixed()
-						? { position: "sticky" as const, top: 0, zIndex: 40 }
+						? { position: 'sticky' as const, top: 0, zIndex: 40 }
 						: {}),
 				}}
 			>
@@ -366,7 +365,7 @@ export function Banner(props: {
 					onMotionComplete={() => {
 						if (reduced() && !open()) setMounted(false);
 					}}
-					style={{ ...rowStyle, position: "relative", flexShrink: 0 }}
+					style={{ ...rowStyle, position: 'relative', flexShrink: 0 }}
 				>
 					{body()}
 				</motion.div>
@@ -378,7 +377,7 @@ export function Banner(props: {
 }
 
 /** `transition-colors duration-80` without `outline-color`: the source's focus ring is a box-shadow ring, which does not ease. */
-const DISMISS_FADE = fade(["color", "background-color"], 80);
+const DISMISS_FADE = fade(['color', 'background-color'], 80);
 
 function DismissButton(props: {
 	compact: boolean;
@@ -394,10 +393,10 @@ function DismissButton(props: {
 			testId={props.testId}
 			style={{
 				// Above the fill layer, which paints over its in-flow siblings.
-				position: "relative",
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
+				position: 'relative',
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
 				flexShrink: 0,
 				width: 28,
 				height: 28,
@@ -407,7 +406,7 @@ function DismissButton(props: {
 				marginRight: -6,
 				marginLeft: props.compact ? 6 : 8,
 				borderRadius: shape.button,
-				cursor: "pointer",
+				cursor: 'pointer',
 				keyboardFocusDim: false,
 				color: color.mutedForeground,
 				...DISMISS_FADE,
@@ -485,14 +484,14 @@ export function BannerActions(props: { children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				flexWrap: "wrap",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				flexWrap: 'wrap',
+				alignItems: 'center',
 				flexShrink: 0,
 				gap: 8,
 				...(scope.hasDescription()
-					? { marginTop: sizes[compact() ? "compact" : "default"].actionsTop }
+					? { marginTop: sizes[compact() ? 'compact' : 'default'].actionsTop }
 					: {
 							marginTop: compact() ? -5 : -4,
 							marginBottom: compact() ? -5 : -4,
@@ -505,7 +504,7 @@ export function BannerActions(props: { children: JSX.Element }) {
 	);
 }
 
-export type BannerActionVariant = "primary" | "secondary" | "ghost";
+export type BannerActionVariant = 'primary' | 'secondary' | 'ghost';
 
 /** The library Button at its compact 28px size, so it presses like every other button. */
 export function BannerAction(props: {
@@ -517,7 +516,7 @@ export function BannerAction(props: {
 	return (
 		<Button
 			size="compact"
-			variant={props.variant ?? "secondary"}
+			variant={props.variant ?? 'secondary'}
 			testId={props.testId}
 			onClick={props.onClick}
 		>

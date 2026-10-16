@@ -1,13 +1,7 @@
-import { For, type JSX } from "solid-js";
-import { MONO } from "#/lib/doc-page";
-import {
-	color,
-	type SizeChoice,
-	scheme,
-	siteType,
-	weight,
-} from "#/lib/theme";
-import { LADDER } from "./ladder";
+import { For, type JSX } from 'solid-js';
+import { MONO } from '#/lib/doc-page';
+import { color, type SizeChoice, scheme, siteType, weight } from '#/lib/theme';
+import { LADDER } from './ladder';
 
 interface TokenRow {
 	token: string;
@@ -19,43 +13,43 @@ const px = (value: number) => `${value}px`;
 
 const TOKEN_ROWS: readonly TokenRow[] = [
 	{
-		token: "control",
+		token: 'control',
 		applies:
-			"Controls and rows — shared so menu rows line up with their trigger",
+			'Controls and rows — shared so menu rows line up with their trigger',
 		value: (step) => px(LADDER[step].control),
 	},
 	{
-		token: "segmentItem + segmentPad",
-		applies: "Segmented tabs inside their padded list",
+		token: 'segmentItem + segmentPad',
+		applies: 'Segmented tabs inside their padded list',
 		value: (step) =>
 			`${px(LADDER[step].segmentItem)} + ${px(LADDER[step].segmentPad)} = ${px(LADDER[step].control)}`,
 	},
 	{
-		token: "text",
-		applies: "Labels inside controls (the body role)",
+		token: 'text',
+		applies: 'Labels inside controls (the body role)',
 		value: (step) =>
 			`${LADDER[step].text.fontSize}px / ${LADDER[step].text.lineHeight}px`,
 	},
 	{
-		token: "field",
+		token: 'field',
 		applies:
-			"Text in editable fields: the body role. A desktop window has no touch step to 16px",
+			'Text in editable fields: the body role. A desktop window has no touch step to 16px',
 		value: (step) =>
 			`${LADDER[step].text.fontSize}px / ${LADDER[step].text.lineHeight}px`,
 	},
 	{
-		token: "icon",
-		applies: "Leading/trailing icons, checkbox square, radio circle",
+		token: 'icon',
+		applies: 'Leading/trailing icons, checkbox square, radio circle',
 		value: (step) => px(LADDER[step].icon),
 	},
 	{
-		token: "px / itemPx",
-		applies: "Control / row horizontal padding",
+		token: 'px / itemPx',
+		applies: 'Control / row horizontal padding',
 		value: (step) => `${px(LADDER[step].px)} / ${px(LADDER[step].itemPx)}`,
 	},
 	{
-		token: "gap",
-		applies: "Icon-to-label and control-to-control gap",
+		token: 'gap',
+		applies: 'Icon-to-label and control-to-control gap',
 		value: (step) => px(LADDER[step].gap),
 	},
 ];
@@ -83,9 +77,9 @@ function Cell(props: {
 				...(props.width === undefined
 					? { flexGrow: 1, flexBasis: 0, minWidth: 0 }
 					: { width: props.width, flexShrink: 0 }),
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "stretch",
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'stretch',
 			}}
 		>
 			{props.children}
@@ -112,13 +106,13 @@ function TokenChip(props: { children: string }) {
 	return (
 		<div
 			style={{
-				alignSelf: "flex-start",
+				alignSelf: 'flex-start',
 				paddingLeft: 4,
 				paddingRight: 4,
 				paddingTop: 2,
 				paddingBottom: 2,
 				borderRadius: 4,
-				backgroundColor: scheme() === "light" ? "#EBEBED" : "#2C2C2C",
+				backgroundColor: scheme() === 'light' ? '#EBEBED' : '#2C2C2C',
 			}}
 		>
 			<text
@@ -126,7 +120,7 @@ function TokenChip(props: { children: string }) {
 					fontFamily: MONO,
 					...siteType.caption,
 					color: color.foreground,
-					whiteSpace: "nowrap",
+					whiteSpace: 'nowrap',
 				}}
 			>
 				{props.children}
@@ -139,12 +133,12 @@ export function TokenTable() {
 	return (
 		<div
 			testId="token-table"
-			style={{ display: "flex", flexDirection: "column", width: "100%" }}
+			style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
 		>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
+					display: 'flex',
+					flexDirection: 'row',
 					borderBottomWidth: 1,
 					borderColor: color.border,
 				}}
@@ -166,8 +160,8 @@ export function TokenTable() {
 				{(row) => (
 					<div
 						style={{
-							display: "flex",
-							flexDirection: "row",
+							display: 'flex',
+							flexDirection: 'row',
 							borderBottomWidth: 1,
 							borderColor: color.borderFaint,
 						}}
@@ -185,10 +179,10 @@ export function TokenTable() {
 								style={{
 									...siteType.body,
 									color: color.foreground,
-									whiteSpace: "nowrap",
+									whiteSpace: 'nowrap',
 								}}
 							>
-								{row.value("default")}
+								{row.value('default')}
 							</text>
 						</Cell>
 						<Cell width={WIDTHS.compact}>
@@ -196,10 +190,10 @@ export function TokenTable() {
 								style={{
 									...siteType.body,
 									color: color.foreground,
-									whiteSpace: "nowrap",
+									whiteSpace: 'nowrap',
 								}}
 							>
-								{row.value("compact")}
+								{row.value('compact')}
 							</text>
 						</Cell>
 					</div>

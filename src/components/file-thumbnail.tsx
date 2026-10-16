@@ -1,8 +1,8 @@
-import { createSignal, type JSX, onCleanup, Show } from "solid-js";
-import { onFrame } from "#/lib/clock";
-import { Icon } from "#/lib/icon";
-import { defineIcon } from "#/lib/icons";
-import { color, shape, scheme, withAlpha } from "#/lib/theme";
+import { createSignal, type JSX, onCleanup, Show } from 'solid-js';
+import { onFrame } from '#/lib/clock';
+import { Icon } from '#/lib/icon';
+import { defineIcon } from '#/lib/icons';
+import { color, scheme, shape, withAlpha } from '#/lib/theme';
 
 const fileGlyph = defineIcon(
 	'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
@@ -49,7 +49,7 @@ export function Spinner() {
 			style={{
 				width: SPINNER_SIZE,
 				height: SPINNER_SIZE,
-				position: "relative",
+				position: 'relative',
 				flexShrink: 0,
 			}}
 		>
@@ -61,7 +61,7 @@ export function Spinner() {
 			/>
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 				}}
@@ -81,14 +81,14 @@ function centered(children: JSX.Element) {
 	return (
 		<div
 			style={{
-				position: "absolute",
+				position: 'absolute',
 				top: 0,
 				left: 0,
 				right: 0,
 				bottom: 0,
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
 			}}
 		>
 			{children}
@@ -108,16 +108,16 @@ export function FileThumbnail(props: {
 	pending?: boolean;
 }) {
 	const isImage = () =>
-		props.file.type.startsWith("image/") && props.file.src !== undefined;
+		props.file.type.startsWith('image/') && props.file.src !== undefined;
 	const glyphSize = () => Math.max(16, props.size * 0.35);
 	return (
 		<div
 			role="img"
 			aria-label={props.file.name}
 			style={{
-				position: "relative",
+				position: 'relative',
 				flexShrink: 0,
-				overflow: "hidden",
+				overflow: 'hidden',
 				width: props.size,
 				height: props.size,
 				backgroundColor: color.accent,
@@ -140,7 +140,7 @@ export function FileThumbnail(props: {
 						src={props.file.src}
 						alt={props.file.name}
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							top: 0,
 							left: 0,
 							width: props.size,
@@ -154,7 +154,7 @@ export function FileThumbnail(props: {
 			{/* Painted over the preview: a pale image still needs a visible edge. */}
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					width: props.size,

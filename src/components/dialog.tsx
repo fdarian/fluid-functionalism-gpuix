@@ -11,7 +11,7 @@ import {
 	type HostElement,
 	motion,
 	useGpuixRequired,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	createContext,
 	createSignal,
@@ -21,25 +21,25 @@ import {
 	onMount,
 	Show,
 	useContext,
-} from "solid-js";
-import { HideOutside } from "#/lib/modal";
-import { createPresence } from "#/lib/presence";
-import { SurfaceContext, useElevatedSurface } from "#/lib/surface-context";
+} from 'solid-js';
+import { HideOutside } from '#/lib/modal';
+import { createPresence } from '#/lib/presence';
+import { SurfaceContext, useElevatedSurface } from '#/lib/surface-context';
 import {
 	color,
-	shape,
-	sizeChoice,
 	type as scale,
 	scheme,
 	shadow,
+	shape,
+	sizeChoice,
 	surface,
 	motion as tween,
 	weight,
-} from "#/lib/theme";
-import { Button } from "./button";
+} from '#/lib/theme';
+import { Button } from './button';
 
-export type DialogSize = "sm" | "lg" | "xl";
-export type DialogPosition = "center" | "top";
+export type DialogSize = 'sm' | 'lg' | 'xl';
+export type DialogPosition = 'center' | 'top';
 
 /** Width per size, one notch narrower in compact regions (the size ladder). */
 const widths = {
@@ -49,7 +49,7 @@ const widths = {
 } as const;
 
 function isCompact(compact: boolean | undefined) {
-	return compact ?? sizeChoice() === "compact";
+	return compact ?? sizeChoice() === 'compact';
 }
 
 /** Steps above its substrate the panel sits: `DIALOG_OFFSET` in the source. */
@@ -92,7 +92,7 @@ const DialogScopeContext = createContext<DialogScope>();
 
 function useDialogScope() {
 	const scope = useContext(DialogScopeContext);
-	if (scope === undefined) throw new Error("Must be used inside Dialog");
+	if (scope === undefined) throw new Error('Must be used inside Dialog');
 	return scope;
 }
 
@@ -170,11 +170,7 @@ export function Dialog(props: {
 
 	return (
 		<DialogScopeContext.Provider value={scope}>
-			<GpuixDialog
-				open={mounted()}
-				modal={props.modal}
-				onOpenChange={setOpen}
-			>
+			<GpuixDialog open={mounted()} modal={props.modal} onOpenChange={setOpen}>
 				{props.children}
 			</GpuixDialog>
 		</DialogScopeContext.Provider>
@@ -204,7 +200,8 @@ export function FocusFirst(props: { popup: () => HostElement | undefined }) {
 	const renderer = useGpuixRequired();
 	onMount(() => {
 		const popup = props.popup();
-		if (popup === undefined) throw new Error("FocusFirst: the popup is not mounted");
+		if (popup === undefined)
+			throw new Error('FocusFirst: the popup is not mounted');
 		// Not synchronous: native's tab order exists only once the popup has painted (gpuix README, "Dialog"), so `focusNextWithin` from mount finds no stop, and gpuix's own focus on the popup lands after this mount. A synchronous call was tried and left focus on the popup.
 		const timer = setTimeout(() => renderer.focusNextWithin?.(popup.id), 0);
 		onCleanup(() => clearTimeout(timer));
@@ -231,20 +228,22 @@ export function DialogContent(props: {
 	const level = useElevatedSurface(DIALOG_SURFACE_OFFSET);
 	const windowSize = createWindowSize();
 	const maxWidth = () =>
-		widths[props.size ?? "sm"][isCompact(props.compact) ? "compact" : "default"];
-	const top = () => (props.position ?? "center") === "top";
+		widths[props.size ?? 'sm'][
+			isCompact(props.compact) ? 'compact' : 'default'
+		];
+	const top = () => (props.position ?? 'center') === 'top';
 	const topOffset = () =>
 		scope.scoped() ? 24 : Math.round(windowSize().height * TOP_OFFSET);
 
 	const layerStyle = () =>
 		({
-			display: "flex",
-			alignItems: top() ? "flex-start" : "center",
-			justifyContent: "center",
+			display: 'flex',
+			alignItems: top() ? 'flex-start' : 'center',
+			justifyContent: 'center',
 			paddingLeft: EDGE,
 			paddingRight: EDGE,
 			paddingTop: top() ? topOffset() : 0,
-			overflow: "hidden",
+			overflow: 'hidden',
 		}) as const;
 
 	let popup: HostElement | undefined;
@@ -252,7 +251,7 @@ export function DialogContent(props: {
 	const body = () => (
 		<>
 			{/* gpuix's portal sets `pointerEvents: "none"` on a non-modal layer, which would let an outside press reach the page; the scrim opts back in so it takes the press, as the source's backdrop does. */}
-			<DialogBackdrop style={{ pointerEvents: "auto" }}>
+			<DialogBackdrop style={{ pointerEvents: 'auto' }}>
 				{/* Base UI renders no second backdrop for a nested dialog: the parent's already dims the page. */}
 				<Show when={!scope.nested}>
 					<motion.div
@@ -260,7 +259,7 @@ export function DialogContent(props: {
 						animate={{ opacity: scope.shown() ? 1 : 0 }}
 						transition={scope.shown() ? tween.slow : tween.slowExit}
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							top: 0,
 							left: 0,
 							right: 0,
@@ -272,21 +271,25 @@ export function DialogContent(props: {
 			</DialogBackdrop>
 			<DialogPopup
 				// Positioned so it paints and hit-tests above the absolute backdrop, which would otherwise take a press inside the dialog and close it.
-				style={{ position: "relative", width: "100%", maxWidth: maxWidth() }}
+				style={{ position: 'relative', width: '100%', maxWidth: maxWidth() }}
 				testId={props.testId}
 				id={scope.popupId}
 				aria-labelledby={scope.hasTitle() ? scope.titleId : undefined}
-				aria-describedby={scope.hasDescription() ? scope.descriptionId : undefined}
+				aria-describedby={
+					scope.hasDescription() ? scope.descriptionId : undefined
+				}
 				ref={(element) => {
 					popup = element;
 				}}
 				// Escape while this dialog fades out belongs to the dialog behind it. gpuix hands the key to the top layer once the element handlers have run, so taking this layer down here lets it through.
 				onKeyDown={(event) => {
-					if (event.key === "Escape" && !scope.shown()) scope.finish();
+					if (event.key === 'Escape' && !scope.shown()) scope.finish();
 				}}
 			>
 				<FocusFirst popup={() => popup} />
-				<Show when={scope.modal()}><HideOutside popup={() => popup} /></Show>
+				<Show when={scope.modal()}>
+					<HideOutside popup={() => popup} />
+				</Show>
 				{/* The original also scales 0.97 to 1; gpuix has no transforms, so the panel only fades. */}
 				<motion.div
 					initial={{ opacity: 0 }}
@@ -296,9 +299,9 @@ export function DialogContent(props: {
 						if (!scope.shown()) scope.finish();
 					}}
 					style={{
-						position: "relative",
-						display: "flex",
-						flexDirection: "column",
+						position: 'relative',
+						display: 'flex',
+						flexDirection: 'column',
 						padding: 24,
 						borderRadius: shape.container,
 						backgroundColor: surface(level),
@@ -309,7 +312,7 @@ export function DialogContent(props: {
 						{props.children}
 					</SurfaceContext.Provider>
 					<Show when={props.showCloseButton ?? true}>
-						<div style={{ position: "absolute", top: 12, right: 12 }}>
+						<div style={{ position: 'absolute', top: 12, right: 12 }}>
 							<DialogClose>
 								<Button
 									variant="ghost"
@@ -334,12 +337,12 @@ export function DialogContent(props: {
 			<Show when={scope.mounted()}>
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 0,
 						left: 0,
 						right: 0,
 						bottom: 0,
-						pointerEvents: "auto",
+						pointerEvents: 'auto',
 						...layerStyle(),
 					}}
 				>
@@ -354,8 +357,8 @@ export function DialogHeader(props: { children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 6,
 				marginBottom: 16,
 			}}
@@ -369,9 +372,9 @@ export function DialogFooter(props: { children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				justifyContent: "flex-end",
+				display: 'flex',
+				flexDirection: 'row',
+				justifyContent: 'flex-end',
 				gap: 8,
 				marginTop: 24,
 			}}
@@ -388,7 +391,9 @@ export function DialogTitle(props: { compact?: boolean; children: string }) {
 		<GpuixDialogTitle id={scope.titleId}>
 			<text
 				style={{
-					...(isCompact(props.compact) ? { fontSize: 15, lineHeight: 20 } : scale.title),
+					...(isCompact(props.compact)
+						? { fontSize: 15, lineHeight: 20 }
+						: scale.title),
 					color: color.foreground,
 					fontWeight: weight.semibold,
 				}}

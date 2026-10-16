@@ -4,7 +4,7 @@ import {
 	type HostElement,
 	type HostMouseMoveEvent,
 	motion,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	createContext,
 	createEffect,
@@ -14,12 +14,12 @@ import {
 	Show,
 	untrack,
 	useContext,
-} from "solid-js";
-import { createPlacementState, POPUP_MARGIN } from "#/lib/popup";
-import { createPresence, POPUP_EXIT_FALLBACK_MS } from "#/lib/presence";
-import { color, shape, type as scale, motion as tween } from "#/lib/theme";
+} from 'solid-js';
+import { createPlacementState, POPUP_MARGIN } from '#/lib/popup';
+import { createPresence, POPUP_EXIT_FALLBACK_MS } from '#/lib/presence';
+import { color, type as scale, shape, motion as tween } from '#/lib/theme';
 
-export type TooltipSide = "top" | "right" | "bottom" | "left";
+export type TooltipSide = 'top' | 'right' | 'bottom' | 'left';
 
 const DEFAULT_DELAY = 200;
 const SLIDE = 4;
@@ -66,13 +66,13 @@ export function TooltipProvider(props: {
 /** Where the chip starts, relative to where it rests: it slides in from the trigger's side. */
 function slideFrom(side: TooltipSide) {
 	switch (side) {
-		case "top":
+		case 'top':
 			return { top: SLIDE, left: 0 };
-		case "bottom":
+		case 'bottom':
 			return { top: -SLIDE, left: 0 };
-		case "left":
+		case 'left':
 			return { top: 0, left: SLIDE };
-		case "right":
+		case 'right':
 			return { top: 0, left: -SLIDE };
 	}
 }
@@ -88,7 +88,7 @@ export function Tooltip(props: {
 	/** `true` / `false` pin the tooltip open / closed; leave it out for hover and keyboard focus. */
 	forceOpen?: boolean;
 	/** Track the pointer along one axis; the other stays anchored by `side`. */
-	followCursor?: "x" | "y";
+	followCursor?: 'x' | 'y';
 	/** The tooltip opened or closed by hover or focus (not by `forceOpen`). */
 	onOpenChange?: (open: boolean) => void;
 	testId?: string;
@@ -99,8 +99,8 @@ export function Tooltip(props: {
 		skipDelay: BARE_SKIP_DELAY,
 		closedAt: undefined,
 	};
-	const placement = createPlacementState(props.side ?? "top");
-	const side = () => props.side ?? "top";
+	const placement = createPlacementState(props.side ?? 'top');
+	const side = () => props.side ?? 'top';
 
 	// onMotionComplete is the primary release; the timer covers an exit that never animates.
 	const presence = createPresence(POPUP_EXIT_FALLBACK_MS);
@@ -202,11 +202,11 @@ export function Tooltip(props: {
 	};
 	const followPointer = (event: HostMouseMoveEvent) => {
 		if (props.followCursor === undefined) return;
-		if (wrapper === undefined) throw new Error("Tooltip is not mounted");
+		if (wrapper === undefined) throw new Error('Tooltip is not mounted');
 		const bounds = wrapper.getBoundingClientRect();
 		if (event.x === undefined || event.y === undefined) return;
 		setFollowOffset(
-			props.followCursor === "x"
+			props.followCursor === 'x'
 				? { x: event.x - (bounds.x + bounds.width / 2), y: 0 }
 				: { x: 0, y: event.y - (bounds.y + bounds.height / 2) },
 		);
@@ -244,7 +244,7 @@ export function Tooltip(props: {
 			onMouseDown={dismiss}
 			onFocusIn={onFocusIn}
 			onFocusOut={onFocusOut}
-			style={{ position: "relative", display: "flex", flexShrink: 0 }}
+			style={{ position: 'relative', display: 'flex', flexShrink: 0 }}
 		>
 			{props.children}
 			{/* Escape closes a hover-opened tooltip before it reaches a dialog behind it; a pinned one is not a layer. */}
@@ -288,7 +288,7 @@ export function Tooltip(props: {
 							if (!presence.open()) presence.release();
 						}}
 						style={{
-							position: "relative",
+							position: 'relative',
 							backgroundColor: color.foreground,
 							borderRadius: shape.bg,
 							paddingLeft: 8,
@@ -298,14 +298,14 @@ export function Tooltip(props: {
 						}}
 					>
 						<Show
-							when={typeof props.content === "string"}
+							when={typeof props.content === 'string'}
 							fallback={props.content}
 						>
 							<text
 								style={{
 									...scale.caption,
 									color: color.background,
-									whiteSpace: "nowrap",
+									whiteSpace: 'nowrap',
 								}}
 							>
 								{props.content as string}

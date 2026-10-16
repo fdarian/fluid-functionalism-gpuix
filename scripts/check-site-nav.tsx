@@ -9,14 +9,14 @@
  *
  * Prints PASS / FAIL lines; exits 1 on any FAIL.
  */
-import { createTestRoot } from "@gpuix/solid/testing";
-import { App } from "#/app";
-import { marks } from "#/lib/changelog/releases";
-import { loadDemos, loadPages } from "#/lib/demo";
-import { fonts } from "#/lib/fonts";
-import { pageOrder } from "#/lib/page-nav";
-import { setThemeChoice } from "#/lib/theme";
-import { readPng } from "./png-pixels";
+import { createTestRoot } from '@gpuix/solid/testing';
+import { App } from '#/app';
+import { marks } from '#/lib/changelog/releases';
+import { loadDemos, loadPages } from '#/lib/demo';
+import { fonts } from '#/lib/fonts';
+import { pageOrder } from '#/lib/page-nav';
+import { setThemeChoice } from '#/lib/theme';
+import { readPng } from './png-pixels';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const test = createTestRoot({ width: 1240, height: 780, fonts });
@@ -33,9 +33,9 @@ async function settle(ms = 400) {
 	renderer.flush();
 	renderer.dispatchNativeEvents();
 }
-function check(name: string, ok: boolean, detail = "") {
+function check(name: string, ok: boolean, detail = '') {
 	console.log(
-		`${ok ? "PASS" : "FAIL"} ${name}${detail === "" ? "" : ` (${detail})`}`,
+		`${ok ? 'PASS' : 'FAIL'} ${name}${detail === '' ? '' : ` (${detail})`}`,
 	);
 	if (!ok) failed = true;
 }
@@ -75,7 +75,7 @@ function fillOf(testId: string) {
 
 const demos = await loadDemos();
 const pages = await loadPages(demos);
-setThemeChoice("dark");
+setThemeChoice('dark');
 test.render(() => <App demos={demos} pages={pages} initialPage="showcase" />);
 await settle(800);
 
@@ -83,79 +83,104 @@ await settle(800);
 const dotOf = (testId: string) =>
 	element(testId)
 		.children.map((child) => renderer.getElement(child))
-		.find((child) => child?.customProps?.["aria-label"] === "New");
-const listed = [...pages, ...demos].filter((entry) => entry.listed === "sidebar");
+		.find((child) => child?.customProps?.['aria-label'] === 'New');
+const listed = [...pages, ...demos].filter(
+	(entry) => entry.listed === 'sidebar',
+);
 const dotted = listed
 	.filter((entry) => dotOf(`nav-${entry.slug}`) !== undefined)
 	.map((entry) => entry.slug)
 	.sort();
 const expectedDots = [
-	"changelog",
+	'changelog',
 	...marks.new.filter((slug) => listed.some((entry) => entry.slug === slug)),
 ].sort();
-check("the New dots are the latest release's New entries and Changelog", dotted.join() === expectedDots.join(), dotted.join());
-check("pages listed ahead of the release have no dot", marks.ahead.length > 0 && marks.ahead.every((slug) => !dotted.includes(slug)));
-const dot = dotOf("nav-changelog");
-check("a dot is 6px, in the info colour, after the label at the row's 8px gap", dot !== undefined && dot.style.width === 6 && dot.style.height === 6 && dot.style.backgroundColor === "#93C5FD");
+check(
+	"the New dots are the latest release's New entries and Changelog",
+	dotted.join() === expectedDots.join(),
+	dotted.join(),
+);
+check(
+	'pages listed ahead of the release have no dot',
+	marks.ahead.length > 0 && marks.ahead.every((slug) => !dotted.includes(slug)),
+);
+const dot = dotOf('nav-changelog');
+check(
+	"a dot is 6px, in the info colour, after the label at the row's 8px gap",
+	dot !== undefined &&
+		dot.style.width === 6 &&
+		dot.style.height === 6 &&
+		dot.style.backgroundColor === '#93C5FD',
+);
 if (dot !== undefined) {
-	const label = bounds("nav-changelog-label");
+	const label = bounds('nav-changelog-label');
 	const box = renderer.getElementBounds(dot.id);
-	check("the dot sits one 8px gap after the label", box !== null && Math.abs(box.x - (label.x + label.width + 8)) < 1, `${box?.x} vs ${label.x + label.width}`);
+	check(
+		'the dot sits one 8px gap after the label',
+		box !== null && Math.abs(box.x - (label.x + label.width + 8)) < 1,
+		`${box?.x} vs ${label.x + label.width}`,
+	);
 }
 
 // Changelog sits under Introduction, in the nav and in the page order.
 check(
-	"the page order runs Showcase, Introduction, Changelog, then System",
-	pageOrder(pages, demos).slice(0, 3).join() === "showcase,introduction,changelog",
+	'the page order runs Showcase, Introduction, Changelog, then System',
+	pageOrder(pages, demos).slice(0, 3).join() ===
+		'showcase,introduction,changelog',
 	pageOrder(pages, demos).slice(0, 4).join(),
 );
 check(
-	"the Changelog row is the third row, under Introduction",
-	bounds("nav-showcase").y < bounds("nav-introduction").y && bounds("nav-introduction").y < bounds("nav-changelog").y && bounds("nav-changelog").y < bounds("nav-fluid-hover").y,
+	'the Changelog row is the third row, under Introduction',
+	bounds('nav-showcase').y < bounds('nav-introduction').y &&
+		bounds('nav-introduction').y < bounds('nav-changelog').y &&
+		bounds('nav-changelog').y < bounds('nav-fluid-hover').y,
 );
 
 // Focus leaving the menu takes the highlight with it, as the source's onBlur does.
-await click("nav-sizes");
-const lit = fillOf("nav-sizes");
-check("the clicked row is lit", lit > UNLIT, String(lit));
-renderer.focusElement(element("nav-search").id);
+await click('nav-sizes');
+const lit = fillOf('nav-sizes');
+check('the clicked row is lit', lit > UNLIT, String(lit));
+renderer.focusElement(element('nav-search').id);
 await settle(400);
-const active = fillOf("nav-sizes");
+const active = fillOf('nav-sizes');
 check(
-	"the row keeps only the active fill once focus has left the menu",
+	'the row keeps only the active fill once focus has left the menu',
 	active > UNLIT && active < lit,
 	`${lit} -> ${active}`,
 );
 
 // A scroll moves rows under a stationary pointer: the highlight follows.
-const probe = center("nav-skill");
+const probe = center('nav-skill');
 renderer.nativeSimulateMouseMove(probe.x, probe.y);
 await settle(300);
-check("the pointer's row is lit", fillOf("nav-skill") > UNLIT);
+check("the pointer's row is lit", fillOf('nav-skill') > UNLIT);
 renderer.nativeSimulateScrollWheel(probe.x, probe.y, 0, 64);
 await settle(600);
 const navRows = [...pages, ...demos]
-	.filter((entry) => entry.listed === "sidebar")
+	.filter((entry) => entry.listed === 'sidebar')
 	.map((entry) => `nav-${entry.slug}`);
 const rowsUnderPointer = navRows.filter((id) => {
 	const box = bounds(id);
 	return box.y <= probe.y && probe.y < box.y + box.height;
 });
 const under = rowsUnderPointer[0];
-if (under === undefined) throw new Error("no row under the pointer");
+if (under === undefined) throw new Error('no row under the pointer');
 check(
-	"after a wheel scroll the row now under the pointer is lit",
-	fillOf(under) > UNLIT && under !== "nav-skill",
+	'after a wheel scroll the row now under the pointer is lit',
+	fillOf(under) > UNLIT && under !== 'nav-skill',
 	under,
 );
-check("the row that left the pointer is not", fillOf("nav-skill") === UNLIT);
+check('the row that left the pointer is not', fillOf('nav-skill') === UNLIT);
 
 // The site menu finds Changelog by its keywords.
-renderer.simulateKeystrokes("ControlOrMeta+k");
+renderer.simulateKeystrokes('ControlOrMeta+k');
 await settle(600);
 renderer.simulateKeystrokes("w h a t ' s");
 await settle(600);
-check("the site menu lists Changelog for \"what's\"", renderer.getAllText().includes("Open Changelog"));
+check(
+	'the site menu lists Changelog for "what\'s"',
+	renderer.getAllText().includes('Open Changelog'),
+);
 
 test.unmount();
 process.exit(failed ? 1 : 0);

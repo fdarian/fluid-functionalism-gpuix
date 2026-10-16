@@ -4,18 +4,18 @@ import type {
 	HostMouseEvent,
 	HostMouseMoveEvent,
 	KeyEvent,
-} from "@gpuix/solid";
-import { createSignal } from "solid-js";
-import { createPointerCapture } from "#/lib/pointer-capture";
-import { twShadow, withAlpha } from "#/lib/theme";
-import { sc, scRing } from "./theme";
+} from '@gpuix/solid';
+import { createSignal } from 'solid-js';
+import { createPointerCapture } from '#/lib/pointer-capture';
+import { twShadow, withAlpha } from '#/lib/theme';
+import { sc, scRing } from './theme';
 
 const THUMB = 12;
 const TRACK_HEIGHT = 4;
 
-function pointerX(event: Pick<HostMouseEvent, "x">) {
+function pointerX(event: Pick<HostMouseEvent, 'x'>) {
 	if (event.x === undefined) {
-		throw new Error("Pointer event without coordinates");
+		throw new Error('Pointer event without coordinates');
 	}
 	return event.x;
 }
@@ -37,7 +37,7 @@ export function ScSlider(props: {
 	const step = () => props.step ?? 1;
 	const [width, setWidth] = createSignal(0);
 	const [dragging, setDragging] = createSignal(false);
-	const capture = createPointerCapture("ScSlider");
+	const capture = createPointerCapture('ScSlider');
 	let root: HostElement | undefined;
 
 	const percent = () => ((props.value - min()) / (max() - min())) * 100;
@@ -47,7 +47,7 @@ export function ScSlider(props: {
 	};
 	const valueAt = (x: number) => {
 		if (root === undefined || !root.mounted) {
-			throw new Error("ScSlider is not mounted");
+			throw new Error('ScSlider is not mounted');
 		}
 		const box = root.getBoundingClientRect();
 		const ratio = Math.min(1, Math.max(0, (x - box.x) / box.width));
@@ -96,33 +96,33 @@ export function ScSlider(props: {
 			onLostPointerCapture={onRelease}
 			onLayout={(event: DomEvent) => {
 				if (event.width === undefined) {
-					throw new Error("onLayout reported no width");
+					throw new Error('onLayout reported no width');
 				}
 				setWidth(event.width);
 			}}
 			style={{
-				position: "relative",
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
-				width: "100%",
+				position: 'relative',
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
+				width: '100%',
 				height: TRACK_HEIGHT,
-				userSelect: "none",
+				userSelect: 'none',
 			}}
 		>
 			<div
 				style={{
-					position: "relative",
+					position: 'relative',
 					flexGrow: 1,
 					height: TRACK_HEIGHT,
 					borderRadius: TRACK_HEIGHT / 2,
-					overflow: "hidden",
+					overflow: 'hidden',
 					backgroundColor: withAlpha(sc.primary, 0.2),
 				}}
 			>
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 0,
 						bottom: 0,
 						left: 0,
@@ -143,7 +143,7 @@ export function ScSlider(props: {
 					props.testId === undefined ? undefined : `${props.testId}-thumb`
 				}
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: (TRACK_HEIGHT - THUMB) / 2,
 					left: ((width() - THUMB) * percent()) / 100,
 					width: THUMB,
@@ -151,7 +151,7 @@ export function ScSlider(props: {
 					borderRadius: THUMB / 2,
 					borderWidth: 1,
 					borderColor: withAlpha(sc.primary, 0.5),
-					backgroundColor: "#FFFFFF",
+					backgroundColor: '#FFFFFF',
 					boxShadow: twShadow.sm,
 					keyboardFocusDim: false,
 					focusVisible: { ...scRing(), outlineWidth: 1, outlineOffset: 0 },

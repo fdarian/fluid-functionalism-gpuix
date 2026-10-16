@@ -3,6 +3,9 @@
 	"vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
 	"formatter": { "indentStyle": "tab" },
 	"javascript": { "formatter": { "quoteStyle": "single" } },
-	"linter": { "enabled": true, "rules": { "recommended": true, "a11y": "off" } },
+	"linter": {
+		"enabled": true,
+		"rules": { "recommended": true, "a11y": "off" }
+	},
 	"assist": { "actions": { "source": { "organizeImports": "on" } } }
 }

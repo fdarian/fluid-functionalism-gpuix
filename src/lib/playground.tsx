@@ -3,7 +3,7 @@ import {
 	type HostElement,
 	IntersectionObserver,
 	motion,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	type Accessor,
 	children,
@@ -13,18 +13,13 @@ import {
 	type JSX,
 	onCleanup,
 	useContext,
-} from "solid-js";
-import { Button } from "#/components/button";
-import { Select } from "#/components/select";
-import { Switch } from "#/components/switch";
-import { PageScrollerContext, DemoCard } from "./demo-kit";
-import { defineIcon } from "./icons";
-import {
-	color,
-	type as scale,
-	motion as tween,
-	weight,
-} from "./theme";
+} from 'solid-js';
+import { Button } from '#/components/button';
+import { Select } from '#/components/select';
+import { Switch } from '#/components/switch';
+import { DemoCard, PageScrollerContext } from './demo-kit';
+import { defineIcon } from './icons';
+import { color, type as scale, motion as tween, weight } from './theme';
 
 // Shared scaffolding for page playgrounds: the control rows, the muted panel
 // with its shuffle header, and the layout that keeps the preview in the page
@@ -83,15 +78,15 @@ export function PlayField(props: {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
-				justifyContent: "space-between",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
+				justifyContent: 'space-between',
 				height: 36,
 				paddingLeft: 4,
 				paddingRight: 4,
 				opacity: props.disabled === true ? 0.4 : 1,
-				pointerEvents: props.disabled === true ? "none" : "auto",
+				pointerEvents: props.disabled === true ? 'none' : 'auto',
 			}}
 		>
 			<text style={{ ...scale.body, color: color.mutedForeground }}>
@@ -142,7 +137,14 @@ export function PlaySwitch(props: {
 /** A heading inside a panel: full contrast at the rows' size, so it reads as a title of the list. */
 export function PlaySection(props: { label: string }) {
 	return (
-		<div style={{ paddingLeft: 4, paddingRight: 4, paddingTop: 8, paddingBottom: 4 }}>
+		<div
+			style={{
+				paddingLeft: 4,
+				paddingRight: 4,
+				paddingTop: 8,
+				paddingBottom: 4,
+			}}
+		>
 			<text
 				style={{
 					...scale.body,
@@ -185,9 +187,9 @@ export function PlaygroundPanel(props: {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
-				width: "100%",
+				display: 'flex',
+				flexDirection: 'column',
+				width: '100%',
 				padding: 12,
 				borderRadius: 12,
 				backgroundColor: color.surface2,
@@ -195,10 +197,10 @@ export function PlaygroundPanel(props: {
 		>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					justifyContent: 'space-between',
 					paddingLeft: 4,
 					paddingRight: 4,
 					paddingTop: 4,
@@ -213,7 +215,7 @@ export function PlaygroundPanel(props: {
 						color: color.foreground,
 					}}
 				>
-					{props.title ?? "Playground variant"}
+					{props.title ?? 'Playground variant'}
 				</text>
 				<Button
 					testId="playground-shuffle"
@@ -234,7 +236,7 @@ export function PlaygroundPanel(props: {
 /** The preview's frame is at least this tall, as the doc page's `ComponentPreview` is. */
 const PREVIEW_MIN_HEIGHT = 420;
 /** `rootMargin: "0px 0px -20% 0px"`: the controls fade once the preview's top is in the scroller's last fifth. */
-const VISIBLE_MARGIN = "0px 0px -20% 0px";
+const VISIBLE_MARGIN = '0px 0px -20% 0px';
 
 /**
  * The preview in the page column, in the same frame as a demo card, and its
@@ -252,7 +254,9 @@ export function PlaygroundLayout(props: {
 	const rail = useRightRail();
 	const scroller = useContext(PageScrollerContext);
 	if (scroller === undefined) {
-		throw new Error("PlaygroundLayout must be inside the page's PageScrollerContext");
+		throw new Error(
+			"PlaygroundLayout must be inside the page's PageScrollerContext",
+		);
 	}
 	const [inView, setInView] = createSignal(true);
 	const reduced = createReducedMotion();
@@ -278,7 +282,7 @@ export function PlaygroundLayout(props: {
 			initial={false}
 			animate={{ opacity: inView() ? 1 : 0 }}
 			transition={reduced() ? tween.snap : tween.moderate}
-			style={{ pointerEvents: inView() ? "auto" : "none" }}
+			style={{ pointerEvents: inView() ? 'auto' : 'none' }}
 		>
 			{controls()}
 		</motion.div>
@@ -297,10 +301,10 @@ export function PlaygroundLayout(props: {
 			<DemoCard title="Playground">
 				<div
 					style={{
-						position: "relative",
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "center",
+						position: 'relative',
+						display: 'flex',
+						flexDirection: 'column',
+						alignItems: 'center',
 						minHeight: props.minHeight ?? PREVIEW_MIN_HEIGHT,
 					}}
 				>
@@ -308,13 +312,13 @@ export function PlaygroundLayout(props: {
 					{props.overlay === undefined ? null : (
 						<div
 							style={{
-								position: "absolute",
+								position: 'absolute',
 								left: 0,
 								right: 0,
 								bottom: 0,
-								display: "flex",
-								flexDirection: "row",
-								justifyContent: "center",
+								display: 'flex',
+								flexDirection: 'row',
+								justifyContent: 'center',
 							}}
 						>
 							{props.overlay}

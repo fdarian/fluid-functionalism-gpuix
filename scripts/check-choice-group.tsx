@@ -8,13 +8,13 @@
  *  - a run that vanishes fades out over its 0.12 s exit instead of cutting,
  *  - the indicator border and the label colour ease over 80 ms on hover.
  */
-import { mkdirSync } from "node:fs";
-import { createTestRoot } from "@gpuix/solid/testing";
-import { App } from "#/app";
-import { loadDemos, loadPages } from "#/lib/demo";
-import { fonts } from "#/lib/fonts";
-import { setThemeChoice } from "#/lib/theme";
-import { readPng } from "./png-pixels";
+import { mkdirSync } from 'node:fs';
+import { createTestRoot } from '@gpuix/solid/testing';
+import { App } from '#/app';
+import { loadDemos, loadPages } from '#/lib/demo';
+import { fonts } from '#/lib/fonts';
+import { setThemeChoice } from '#/lib/theme';
+import { readPng } from './png-pixels';
 
 const outDir = `/tmp/check-choice-group-${process.pid}/`;
 mkdirSync(outDir, { recursive: true });
@@ -44,7 +44,7 @@ function bounds(testId: string) {
 let failed = false;
 function report(name: string, ok: boolean, detail: string) {
 	if (!ok) failed = true;
-	console.log(`${ok ? "PASS" : "FAIL"} ${name}: ${detail}`);
+	console.log(`${ok ? 'PASS' : 'FAIL'} ${name}: ${detail}`);
 }
 
 /** Right of the label, so nothing but the row's fills shows there. */
@@ -90,15 +90,17 @@ async function sampleFrames(
 	return series;
 }
 const show = (samples: Sample[]) =>
-	samples.map((sample) => `${sample.ms}:${sample.value}`).join(" ");
+	samples.map((sample) => `${sample.ms}:${sample.value}`).join(' ');
 
 const demos = await loadDemos();
 const pages = await loadPages(demos);
-setThemeChoice("dark");
+setThemeChoice('dark');
 
 // Mount: checked row 0 against unchecked row 3, from the first frame.
 renderer.clockPause();
-test.render(() => <App demos={demos} pages={pages} initialPage="checkbox-group" />);
+test.render(() => (
+	<App demos={demos} pages={pages} initialPage="checkbox-group" />
+));
 const optional = (testId: string) => () => {
 	const element = renderer.findByTestId(testId);
 	if (element === undefined || renderer.getElementBounds(element.id) === null) {
@@ -107,7 +109,7 @@ const optional = (testId: string) => () => {
 	return pointIn(testId);
 };
 const mount = await sampleFrames(
-	{ checked: optional("box-0"), plain: optional("box-3") },
+	{ checked: optional('box-0'), plain: optional('box-3') },
 	1200,
 );
 renderer.clockResume();
@@ -115,19 +117,19 @@ const checked = mount.checked as Sample[];
 const plain = mount.plain as Sample[];
 const settled = (checked[checked.length - 1] as Sample).value;
 const rest = (plain[plain.length - 1] as Sample).value;
-console.log("mount", show(checked));
+console.log('mount', show(checked));
 const firstLit = checked.find((sample) => sample.value > rest + 1);
-if (firstLit === undefined) throw new Error("the checked row never lit");
+if (firstLit === undefined) throw new Error('the checked row never lit');
 report(
-	"a checked run appears without a fade-in",
+	'a checked run appears without a fade-in',
 	firstLit.value >= settled - 1,
 	`row at rest ${rest}, checked ${settled}, first lit frame ${firstLit.ms} ms: ${firstLit.value}`,
 );
 
 // Size: the group pins the square.
 for (const [id, expected] of [
-	["box-0-box", 16],
-	["small-0-box", 14],
+	['box-0-box', 16],
+	['small-0-box', 14],
 ] as const) {
 	const box = bounds(id);
 	report(
@@ -139,7 +141,7 @@ for (const [id, expected] of [
 
 // Vanish: uncheck the only checked row; the pointer leaves with the click, so its hover fill is gone within 60 ms.
 // The motion clock is held and stepped by hand: sampling in real time cannot land inside a 120 ms fade reliably.
-const row = pointIn("box-0");
+const row = pointIn('box-0');
 renderer.nativeSimulateMouseMove(990, 390);
 await settle(400);
 function step(ms: number) {
@@ -160,9 +162,9 @@ const middle = fillAt(row);
 step(300);
 const after = fillAt(row);
 renderer.clockResume();
-console.log("vanish", before, middle, after);
+console.log('vanish', before, middle, after);
 report(
-	"a vanishing run fades out",
+	'a vanishing run fades out',
 	middle > rest + 3 && middle < before && after <= rest + 1,
 	`just after the click ${before}, 60 ms later ${middle}, 360 ms later ${after} (rest ${rest})`,
 );
@@ -170,7 +172,7 @@ report(
 // Hover on an unchecked row: the indicator border and the label colour ease over 80 ms (the border is the left
 // edge of the box, the label the ink to its right).
 {
-	const box = bounds("box-3-box");
+	const box = bounds('box-3-box');
 	const edge = {
 		x: Math.round(box.x),
 		y: Math.round(box.y + box.height / 2),
@@ -200,7 +202,7 @@ report(
 	const edgeRest = sum(edge);
 	const inkRest = inkAt();
 	renderer.clockPause();
-	const point = pointIn("box-3");
+	const point = pointIn('box-3');
 	renderer.nativeSimulateMouseMove(point.x - 1, point.y);
 	renderer.nativeSimulateMouseMove(point.x, point.y);
 	step(0);
@@ -216,12 +218,12 @@ report(
 		(middle - rest) * (end - rest) > 0 &&
 		Math.abs(middle - rest) < 0.6 * Math.abs(end - rest);
 	report(
-		"indicator border eases on hover",
+		'indicator border eases on hover',
 		between(edgeRest, edgeMiddle, edgeEnd),
 		`rest ${edgeRest}, 16 ms ${edgeMiddle}, end ${edgeEnd}`,
 	);
 	report(
-		"label colour eases on hover",
+		'label colour eases on hover',
 		between(inkRest, inkMiddle, inkEnd),
 		`rest ${inkRest}, 16 ms ${inkMiddle}, end ${inkEnd}`,
 	);

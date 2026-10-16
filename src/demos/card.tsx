@@ -1,5 +1,5 @@
-import { buttonProps, useGpuixRequired } from "@gpuix/solid";
-import { createSignal, For, type JSX, Show } from "solid-js";
+import { buttonProps, useGpuixRequired } from '@gpuix/solid';
+import { createSignal, For, type JSX, Show } from 'solid-js';
 import {
 	Card,
 	CardButton,
@@ -12,9 +12,9 @@ import {
 	CardImage,
 	CardMedia,
 	CardTitle,
-} from "#/components/card";
-import type { DemoModule, ShotContext } from "#/lib/demo";
-import { DemoCard } from "#/lib/demo-kit";
+} from '#/components/card';
+import type { DemoModule, ShotContext } from '#/lib/demo';
+import { DemoCard } from '#/lib/demo-kit';
 import {
 	PlayDivider,
 	PlayField,
@@ -24,8 +24,8 @@ import {
 	PlaySelect,
 	PlaySwitch,
 	pick,
-} from "#/lib/playground";
-import { color, type as scale } from "#/lib/theme";
+} from '#/lib/playground';
+import { color, type as scale } from '#/lib/theme';
 
 /** The docs' inline data-URI art, so the demo needs no asset files. */
 const BANNER =
@@ -35,24 +35,24 @@ const THUMB =
 
 const FEATURES = [
 	{
-		icon: "circle",
-		title: "Fluid motion",
-		description: "Spring-tuned transitions calibrated across three tiers",
+		icon: 'circle',
+		title: 'Fluid motion',
+		description: 'Spring-tuned transitions calibrated across three tiers',
 	},
 	{
-		icon: "shield",
-		title: "Accessible by default",
-		description: "Focus-visible rings and ARIA roles in every part",
+		icon: 'shield',
+		title: 'Accessible by default',
+		description: 'Focus-visible rings and ARIA roles in every part',
 	},
 	{
-		icon: "palette",
-		title: "Yours to theme",
-		description: "Swap radius, icons, and primitive at runtime",
+		icon: 'palette',
+		title: 'Yours to theme',
+		description: 'Swap radius, icons, and primitive at runtime',
 	},
 	{
-		icon: "moon",
-		title: "Dark mode ready",
-		description: "Tokens adapt to light and dark automatically",
+		icon: 'moon',
+		title: 'Dark mode ready',
+		description: 'Tokens adapt to light and dark automatically',
 	},
 ] as const;
 
@@ -158,7 +158,7 @@ function Separated() {
 function Capped(props: { width: number; children: JSX.Element }) {
 	return (
 		<Centered>
-			<div style={{ width: "100%", maxWidth: props.width }}>
+			<div style={{ width: '100%', maxWidth: props.width }}>
 				{props.children}
 			</div>
 		</Centered>
@@ -169,9 +169,9 @@ function Centered(props: { children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				justifyContent: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				justifyContent: 'center',
 			}}
 		>
 			{props.children}
@@ -188,13 +188,13 @@ function RestoreLink(props: { onClick: () => void }) {
 			testId="promo-restore"
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
-			style={{ cursor: "pointer", keyboardFocusDim: false }}
+			style={{ cursor: 'pointer', keyboardFocusDim: false }}
 		>
 			<text
 				style={{
 					...scale.body,
 					color: hovered() ? color.foreground : color.mutedForeground,
-					textDecoration: "underline",
+					textDecoration: 'underline',
 				}}
 			>
 				Restore card
@@ -226,7 +226,7 @@ function Promo() {
 						<CardTitle>Meet the new Card component</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+						<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 							<CardFeature
 								icon="paintbrush"
 								title="Always pixel-perfect"
@@ -278,50 +278,50 @@ function Selected() {
 const PLAY_ITEMS = [
 	...FEATURES,
 	{
-		icon: "search",
-		title: "Fluid hover",
-		description: "A magnetic highlight previews where a click lands",
+		icon: 'search',
+		title: 'Fluid hover',
+		description: 'A magnetic highlight previews where a click lands',
 	},
 	{
-		icon: "lightbulb",
-		title: "Drop-in registry",
-		description: "Install any component with one shadcn command",
+		icon: 'lightbulb',
+		title: 'Drop-in registry',
+		description: 'Install any component with one shadcn command',
 	},
 ] as const;
 
 const PLAYGROUND_HEIGHT = 600;
 
-type Orientation = "card" | "inline";
-type Border = "none" | "outlined";
-type Media = "icon" | "logo" | "image" | "none";
+type Orientation = 'card' | 'inline';
+type Border = 'none' | 'outlined';
+type Media = 'icon' | 'logo' | 'image' | 'none';
 
 const MEDIA_OPTIONS = [
-	{ value: "icon", label: "Icon" },
-	{ value: "logo", label: "Logo" },
-	{ value: "image", label: "Image" },
-	{ value: "none", label: "None" },
+	{ value: 'icon', label: 'Icon' },
+	{ value: 'logo', label: 'Logo' },
+	{ value: 'image', label: 'Image' },
+	{ value: 'none', label: 'None' },
 ] as const;
 const ORIENTATION_OPTIONS = [
-	{ value: "card", label: "Card" },
-	{ value: "inline", label: "Inline" },
+	{ value: 'card', label: 'Card' },
+	{ value: 'inline', label: 'Inline' },
 ] as const;
 const COLUMN_OPTIONS = [
-	{ value: "1", label: "1" },
-	{ value: "2", label: "2" },
-	{ value: "3", label: "3" },
+	{ value: '1', label: '1' },
+	{ value: '2', label: '2' },
+	{ value: '3', label: '3' },
 ] as const;
 const BORDER_OPTIONS = [
-	{ value: "none", label: "None" },
-	{ value: "outlined", label: "Outlined" },
+	{ value: 'none', label: 'None' },
+	{ value: 'outlined', label: 'Outlined' },
 ] as const;
 
 function Playground() {
-	const [orientation, setOrientation] = createSignal<Orientation>("card");
-	const [columns, setColumns] = createSignal<"1" | "2" | "3">("2");
-	const [border, setBorder] = createSignal<Border>("none");
+	const [orientation, setOrientation] = createSignal<Orientation>('card');
+	const [columns, setColumns] = createSignal<'1' | '2' | '3'>('2');
+	const [border, setBorder] = createSignal<Border>('none');
 	const [separatedOn, setSeparatedOn] = createSignal(false);
 	const [fluidHover, setFluidHover] = createSignal(true);
-	const [media, setMedia] = createSignal<Media>("icon");
+	const [media, setMedia] = createSignal<Media>('icon');
 	const [primary, setPrimary] = createSignal(false);
 	const [secondary, setSecondary] = createSignal(false);
 	const [ghost, setGhost] = createSignal(false);
@@ -329,15 +329,15 @@ function Playground() {
 	const [selectedOn, setSelectedOn] = createSignal(false);
 	const [selectedIndex, setSelectedIndex] = createSignal(0);
 
-	const inline = () => orientation() === "inline";
+	const inline = () => orientation() === 'inline';
 	// An inline card is a full-width list: more columns would cram the media, title and footer together.
 	const cols = () => (inline() ? 1 : Number(columns()));
 	// Three columns fill two even rows; every other layout stays at four.
 	const items = () => PLAY_ITEMS.slice(0, cols() === 3 ? 6 : 4);
 	// A selection made while more items were shown would otherwise point past a shorter list.
 	const activeSelected = () => Math.min(selectedIndex(), items().length - 1);
-	const image = () => media() === "image";
-	const small = () => media() === "icon" || media() === "logo";
+	const image = () => media() === 'image';
+	const small = () => media() === 'icon' || media() === 'logo';
 	// The prominent image reads right only on tiles that clip it, so it forces Separated on.
 	const separated = () => image() || separatedOn();
 
@@ -354,24 +354,24 @@ function Playground() {
 		return inline() && !image() ? list.reverse() : list;
 	};
 
-	const smallMedia = (icon: (typeof PLAY_ITEMS)[number]["icon"]) =>
-		media() === "logo" ? (
+	const smallMedia = (icon: (typeof PLAY_ITEMS)[number]['icon']) =>
+		media() === 'logo' ? (
 			<CardMedia logo={THUMB} size={32} />
 		) : (
 			<CardMedia icon={icon} />
 		);
 
 	const shuffle = () => {
-		setMedia(pick(["icon", "logo", "image", "none"] as const));
+		setMedia(pick(['icon', 'logo', 'image', 'none'] as const));
 		setDescription(Math.random() > 0.25);
 		setPrimary(Math.random() > 0.4);
 		setSecondary(Math.random() > 0.6);
 		setGhost(Math.random() > 0.6);
 		setSelectedOn(Math.random() > 0.6);
 		setSelectedIndex(Math.floor(Math.random() * 4));
-		setOrientation(pick(["card", "inline"] as const));
-		setColumns(pick(["1", "2", "3"] as const));
-		setBorder(pick(["none", "outlined"] as const));
+		setOrientation(pick(['card', 'inline'] as const));
+		setColumns(pick(['1', '2', '3'] as const));
+		setBorder(pick(['none', 'outlined'] as const));
 		setSeparatedOn(Math.random() > 0.5);
 		setFluidHover(Math.random() > 0.2);
 	};
@@ -383,10 +383,10 @@ function Playground() {
 				// Vertically centred in the frame, as the docs' preview is.
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "column",
-						justifyContent: "center",
-						width: "100%",
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
+						width: '100%',
 						minHeight: PLAYGROUND_HEIGHT,
 					}}
 				>
@@ -483,7 +483,7 @@ function Playground() {
 					<PlayField label="Columns" disabled={inline()}>
 						<PlaySelect
 							testId="play-columns"
-							value={inline() ? "1" : columns()}
+							value={inline() ? '1' : columns()}
 							onChange={setColumns}
 							options={COLUMN_OPTIONS}
 						/>
@@ -521,13 +521,13 @@ function Playground() {
 	);
 }
 
-export const title = "Card";
-export const group = "Components";
-export const listed = "sidebar";
+export const title = 'Card';
+export const group = 'Components';
+export const listed = 'sidebar';
 
 export function Demo() {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 			<Playground />
 			<DemoCard title="Basic">
 				<Basic />
@@ -551,68 +551,68 @@ export function Demo() {
 	);
 }
 
-export const scenarios: DemoModule["scenarios"] = async (shot) => {
+export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	// The playground's controls sit in the right column.
-	shot.capture("playground");
-	await shot.hover("play-1");
-	shot.capture("playground-hover");
+	shot.capture('playground');
+	await shot.hover('play-1');
+	shot.capture('playground-hover');
 
 	// Image forces Separated on; Inline forces one column.
-	await pickOption(shot, "play-media", "ArrowDown ArrowDown");
-	shot.capture("playground-image");
-	await shot.click("play-primary-track");
-	await shot.click("play-secondary-track");
-	await pickOption(shot, "play-columns", "ArrowDown");
-	await shot.click("play-selected-track");
-	await shot.click("play-2");
-	shot.capture("playground-image-three-columns-selected");
-	await pickOption(shot, "play-media", "ArrowUp");
-	await pickOption(shot, "play-orientation", "ArrowDown");
-	shot.capture("playground-inline-logo");
-	await pickOption(shot, "play-border", "ArrowDown");
-	await shot.click("play-ghost-track");
-	await shot.click("play-0");
-	shot.capture("playground-inline-outlined-selected");
-	await shot.click("playground-shuffle");
-	shot.capture("playground-shuffled");
+	await pickOption(shot, 'play-media', 'ArrowDown ArrowDown');
+	shot.capture('playground-image');
+	await shot.click('play-primary-track');
+	await shot.click('play-secondary-track');
+	await pickOption(shot, 'play-columns', 'ArrowDown');
+	await shot.click('play-selected-track');
+	await shot.click('play-2');
+	shot.capture('playground-image-three-columns-selected');
+	await pickOption(shot, 'play-media', 'ArrowUp');
+	await pickOption(shot, 'play-orientation', 'ArrowDown');
+	shot.capture('playground-inline-logo');
+	await pickOption(shot, 'play-border', 'ArrowDown');
+	await shot.click('play-ghost-track');
+	await shot.click('play-0');
+	shot.capture('playground-inline-outlined-selected');
+	await shot.click('playground-shuffle');
+	shot.capture('playground-shuffled');
 
-	await reveal(shot, "basic-1");
-	await shot.hover("basic-1");
-	shot.capture("basic-hover");
-	await shot.hover("basic-3");
-	shot.capture("basic-hover-last");
-	await shot.hover("basic-2-connect");
-	shot.capture("basic-action-hover");
+	await reveal(shot, 'basic-1');
+	await shot.hover('basic-1');
+	shot.capture('basic-hover');
+	await shot.hover('basic-3');
+	shot.capture('basic-hover-last');
+	await shot.hover('basic-2-connect');
+	shot.capture('basic-action-hover');
 
-	await reveal(shot, "grid-3");
-	await shot.hover("grid-3");
-	shot.capture("grid-2d-hover");
+	await reveal(shot, 'grid-3');
+	await shot.hover('grid-3');
+	shot.capture('grid-2d-hover');
 	// The gap between two tiles still resolves to the nearest one.
-	const top = shot.centerOf("grid-0");
-	const bottom = shot.centerOf("grid-2");
+	const top = shot.centerOf('grid-0');
+	const bottom = shot.centerOf('grid-2');
 	await shot.moveTo(top.x, (top.y + bottom.y) / 2);
-	shot.capture("grid-gap-hover");
+	shot.capture('grid-gap-hover');
 
-	await reveal(shot, "separated-0");
-	shot.capture("separated-and-outlined");
+	await reveal(shot, 'separated-0');
+	shot.capture('separated-and-outlined');
 
-	await reveal(shot, "promo");
+	await reveal(shot, 'promo');
 	// The promo is taller than the window's upper band: bring its top (and the chip) into view.
 	await shot.scroll(700, 400, 0, -160);
-	await shot.hover("promo");
-	shot.capture("promo-hover");
-	await shot.hover("promo-dismiss");
-	shot.capture("promo-chip-hover");
-	await shot.click("promo-dismiss");
+	await shot.hover('promo');
+	shot.capture('promo-hover');
+	await shot.hover('promo-dismiss');
+	shot.capture('promo-chip-hover');
+	await shot.click('promo-dismiss');
 	await shot.settle(300);
-	await shot.hover("promo-restore");
-	shot.capture("promo-restore-hover");
-	await shot.click("promo-restore");
+	await shot.hover('promo-restore');
+	shot.capture('promo-restore-hover');
+	await shot.click('promo-restore');
 
-	await reveal(shot, "selected-3");
-	await shot.click("selected-3");
-	await shot.hover("selected-0");
-	shot.capture("selected-3-hover-0");
+	await reveal(shot, 'selected-3');
+	await shot.click('selected-3');
+	await shot.hover('selected-0');
+	shot.capture('selected-3-hover-0');
 };
 
 /** The page is taller than the window: scroll an element to the upper part of it. */

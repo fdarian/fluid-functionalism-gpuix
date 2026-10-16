@@ -1,8 +1,8 @@
-import { motion } from "@gpuix/solid";
-import { createUniqueId } from "solid-js";
-import { pressProps, ScLabel } from "./parts";
-import { twShadow } from "#/lib/theme";
-import { sc, scRing } from "./theme";
+import { motion } from '@gpuix/solid';
+import { createUniqueId } from 'solid-js';
+import { twShadow } from '#/lib/theme';
+import { pressProps, ScLabel } from './parts';
+import { sc, scRing } from './theme';
 
 const TRACK_WIDTH = 36;
 const TRACK_HEIGHT = 20;
@@ -23,9 +23,9 @@ export function ScSwitch(props: {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: 8,
 			}}
 		>
@@ -36,7 +36,7 @@ export function ScSwitch(props: {
 				aria-labelledby={labelId}
 				testId={props.testId}
 				style={{
-					position: "relative",
+					position: 'relative',
 					flexShrink: 0,
 					width: TRACK_WIDTH,
 					height: TRACK_HEIGHT,
@@ -45,7 +45,7 @@ export function ScSwitch(props: {
 					borderColor: sc.input,
 					backgroundColor: props.checked ? sc.primary : sc.input,
 					boxShadow: twShadow.sm,
-					cursor: "pointer",
+					cursor: 'pointer',
 					keyboardFocusDim: false,
 					focusVisible: scRing(),
 				}}
@@ -55,14 +55,14 @@ export function ScSwitch(props: {
 					animate={{ left: props.checked ? ON_X : OFF_X }}
 					transition={{ duration: 0.15 }}
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 1,
 						width: THUMB,
 						height: THUMB,
 						borderRadius: THUMB / 2,
-						backgroundColor: props.checked ? sc.primaryForeground : "#FFFFFF",
+						backgroundColor: props.checked ? sc.primaryForeground : '#FFFFFF',
 						boxShadow: twShadow.lg,
-						pointerEvents: "none",
+						pointerEvents: 'none',
 					}}
 				/>
 			</div>

@@ -1,4 +1,4 @@
-import { type HostElement, IntersectionObserver } from "@gpuix/solid";
+import { type HostElement, IntersectionObserver } from '@gpuix/solid';
 import {
 	type Accessor,
 	createContext,
@@ -7,14 +7,16 @@ import {
 	type JSX,
 	onCleanup,
 	useContext,
-} from "solid-js";
-import { color, type as scale } from "./theme";
+} from 'solid-js';
+import { color, type as scale } from './theme';
 
 /** The scroller a page's cards live in: they measure their distance from it. */
-export const PageScrollerContext = createContext<Accessor<HostElement | undefined>>();
+export const PageScrollerContext =
+	createContext<Accessor<HostElement | undefined>>();
 
 /** Runs a listener on each scroll of the page scroller, until the returned function removes it. The scroller's own `onScroll` is the only way to hear it: scroll events do not bubble. */
-export const PageScrollContext = createContext<(listener: () => void) => () => void>();
+export const PageScrollContext =
+	createContext<(listener: () => void) => () => void>();
 
 /**
  * gpuix lays out and paints every element, including those a scroller clips
@@ -24,7 +26,7 @@ export const PageScrollContext = createContext<(listener: () => void) => () => v
  * it had, so nothing shifts. It stays mounted, so typed text and selections
  * survive a scroll away and back.
  */
-const OVERSCAN = "25% 0px";
+const OVERSCAN = '25% 0px';
 
 /** The bordered surface a demo page is made of: content on top, the component's name in a footer, like the site's showcase cards. */
 export function DemoCard(props: { title: string; children: JSX.Element }) {
@@ -59,8 +61,8 @@ export function DemoCard(props: { title: string; children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				borderRadius: 12,
 				borderWidth: 1,
 				borderColor: color.border,
@@ -68,18 +70,20 @@ export function DemoCard(props: { title: string; children: JSX.Element }) {
 			}}
 		>
 			<div
-			ref={(element) => {
-				content = element;
-			}}
-			style={{ padding: 20, height: far() ? farHeight() : undefined }}
-		>
-			<div style={{ display: far() ? "none" : "contents" }}>{props.children}</div>
-		</div>
+				ref={(element) => {
+					content = element;
+				}}
+				style={{ padding: 20, height: far() ? farHeight() : undefined }}
+			>
+				<div style={{ display: far() ? 'none' : 'contents' }}>
+					{props.children}
+				</div>
+			</div>
 			<div
 				style={{
 					height: 44,
-					display: "flex",
-					alignItems: "center",
+					display: 'flex',
+					alignItems: 'center',
 					paddingLeft: 16,
 					borderTopWidth: 1,
 					borderColor: color.border,
@@ -98,9 +102,9 @@ export function DemoRow(props: { label: string; children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				gap: 16,
 				minHeight: 36,
 			}}
@@ -112,9 +116,9 @@ export function DemoRow(props: { label: string; children: JSX.Element }) {
 			</div>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					gap: 10,
 				}}
 			>

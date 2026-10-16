@@ -1,6 +1,6 @@
-import type { JSX } from "solid-js";
-import { TabsSubtle, TabsSubtleItem } from "#/components/tabs-subtle";
-import { color, type SizeChoice, shape } from "#/lib/theme";
+import type { JSX } from 'solid-js';
+import { TabsSubtle, TabsSubtleItem } from '#/components/tabs-subtle';
+import { color, type SizeChoice, shape } from '#/lib/theme';
 
 /**
  * The stripped preview frame of the compact-region and token-inspector demos:
@@ -18,10 +18,10 @@ export function StepFrame(props: {
 		<div
 			testId={props.testId}
 			style={{
-				position: "relative",
-				display: "flex",
-				flexDirection: "column",
-				width: "100%",
+				position: 'relative',
+				display: 'flex',
+				flexDirection: 'column',
+				width: '100%',
 				borderWidth: 1,
 				borderColor: color.borderFaint,
 				borderRadius: shape.container,
@@ -29,9 +29,9 @@ export function StepFrame(props: {
 		>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					minHeight: 52,
 					padding: 12,
 					borderBottomWidth: 1,
@@ -40,9 +40,9 @@ export function StepFrame(props: {
 			>
 				<TabsSubtle
 					testId={`${props.testId}-step`}
-					selectedIndex={props.step === "default" ? 0 : 1}
+					selectedIndex={props.step === 'default' ? 0 : 1}
 					onSelect={(index) =>
-						props.onStep(index === 0 ? "default" : "compact")
+						props.onStep(index === 0 ? 'default' : 'compact')
 					}
 				>
 					<TabsSubtleItem
@@ -59,18 +59,18 @@ export function StepFrame(props: {
 			</div>
 			<div
 				style={{
-					overflow: "hidden",
+					overflow: 'hidden',
 					borderBottomLeftRadius: shape.container - 1,
 					borderBottomRightRadius: shape.container - 1,
 				}}
 			>
 				<div
 					style={{
-						position: "relative",
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
-						justifyContent: "center",
+						position: 'relative',
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
+						justifyContent: 'center',
 						minHeight: props.minHeight,
 						paddingLeft: 32,
 						paddingRight: 32,

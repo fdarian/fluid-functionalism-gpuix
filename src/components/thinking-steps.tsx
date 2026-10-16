@@ -4,7 +4,7 @@ import {
 	type MotionTransition,
 	motion,
 	useGpuixRequired,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	createContext,
 	createEffect,
@@ -15,25 +15,25 @@ import {
 	onCleanup,
 	Show,
 	useContext,
-} from "solid-js";
-import { onFrame } from "#/lib/clock";
-import { Icon } from "#/lib/icon";
-import { defineIcon, type IconName } from "#/lib/icons";
-import { createMeasuredHeight } from "#/lib/measured-height";
-import { StableLabel } from "#/lib/stable-label";
+} from 'solid-js';
+import { onFrame } from '#/lib/clock';
+import { Icon } from '#/lib/icon';
+import { defineIcon, type IconName } from '#/lib/icons';
+import { createMeasuredHeight } from '#/lib/measured-height';
+import { StableLabel } from '#/lib/stable-label';
 import {
 	color,
 	focusRing,
-	shape,
 	type as scale,
+	shape,
 	motion as tween,
 	weight,
-} from "#/lib/theme";
-import { Badge, type BadgeColor } from "./badge";
-import { Shimmer } from "./thinking-indicator";
+} from '#/lib/theme';
+import { Badge, type BadgeColor } from './badge';
+import { Shimmer } from './thinking-indicator';
 
 const slowSpring = {
-	type: "spring",
+	type: 'spring',
 	duration: 0.24,
 	bounce: 0.12,
 } satisfies MotionTransition;
@@ -41,16 +41,16 @@ const slowSpring = {
 const panelSpring = tween.moderate;
 
 const glyphs = {
-	dot: "dot",
-	search: "search",
-	globe: "globe",
-	brain: "brain",
-	image: "image",
-	check: "check",
+	dot: 'dot',
+	search: 'search',
+	globe: 'globe',
+	brain: 'brain',
+	image: 'image',
+	check: 'check',
 } as const satisfies Record<string, IconName>;
 
 export type StepIcon = keyof typeof glyphs;
-export type StepStatus = "complete" | "active" | "pending";
+export type StepStatus = 'complete' | 'active' | 'pending';
 
 // ─── Chevron ──────────────────────────────────────────────────────────────
 
@@ -70,7 +70,7 @@ function chevronPath(degrees: number) {
 		const dy = point.y - 12;
 		return `${(12 + dx * cos - dy * sin).toFixed(2)} ${(12 + dx * sin + dy * cos).toFixed(2)}`;
 	});
-	return `M${points.join("L")}`;
+	return `M${points.join('L')}`;
 }
 
 /**
@@ -124,7 +124,7 @@ function TriggerRow(props: {
 	const highlighted = () => props.open || hovered();
 	return (
 		<div
-			style={{ position: "relative", alignSelf: "flex-start" }}
+			style={{ position: 'relative', alignSelf: 'flex-start' }}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 		>
@@ -136,7 +136,7 @@ function TriggerRow(props: {
 						exit={{ opacity: 0 }}
 						transition={{ duration: 0.08 }}
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							top: 0,
 							left: 0,
 							right: 0,
@@ -154,19 +154,19 @@ function TriggerRow(props: {
 				aria-expanded={props.open}
 				aria-controls={props.open ? props.panelId : undefined}
 				style={{
-					position: "relative",
+					position: 'relative',
 					zIndex: 10,
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					gap: props.gap,
 					paddingLeft: props.paddingX,
 					paddingRight: props.paddingX,
 					paddingTop: props.paddingY,
 					paddingBottom: props.paddingY,
 					borderRadius: shape.item,
-					cursor: "pointer",
-					userSelect: "none",
+					cursor: 'pointer',
+					userSelect: 'none',
 					keyboardFocusDim: false,
 					focusVisible: focusRing(0),
 				}}
@@ -212,7 +212,7 @@ function Collapse(props: {
 	});
 	const target = () => {
 		if (!props.open) return 0;
-		return measured.height() ?? "auto";
+		return measured.height() ?? 'auto';
 	};
 	return (
 		<motion.div
@@ -222,9 +222,9 @@ function Collapse(props: {
 			animate={{ height: target() }}
 			transition={needsSnap() ? tween.snap : panelSpring}
 			style={{
-				display: "flex",
-				flexDirection: "column",
-				overflow: "hidden",
+				display: 'flex',
+				flexDirection: 'column',
+				overflow: 'hidden',
 			}}
 		>
 			{/* Base UI hides a closed panel, and gpuix has no `display: none`: inert takes its triggers out of the tab order and the text out of the accessibility tree. */}
@@ -253,7 +253,7 @@ function useOpen(): OpenState {
 	const state = useContext(OpenContext);
 	if (state === undefined) {
 		throw new Error(
-			"ThinkingStepsHeader and ThinkingStepsContent need a ThinkingSteps",
+			'ThinkingStepsHeader and ThinkingStepsContent need a ThinkingSteps',
 		);
 	}
 	return state;
@@ -281,10 +281,10 @@ export function ThinkingSteps(props: {
 			<div
 				testId={props.testId}
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					width: props.width ?? 320,
-					maxWidth: "100%",
+					maxWidth: '100%',
 				}}
 			>
 				{props.children}
@@ -308,7 +308,7 @@ export function ThinkingStepsHeader(props: {
 			paddingY={8}
 			gap={10}
 		>
-			{props.children ?? "Thinking"}
+			{props.children ?? 'Thinking'}
 		</TriggerRow>
 	);
 }
@@ -322,8 +322,8 @@ export function ThinkingStepsContent(props: {
 		<Collapse id={state.panelId} testId={props.testId} open={state.open()}>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					paddingLeft: 12,
 					paddingRight: 12,
 					paddingTop: 4,
@@ -351,17 +351,17 @@ export function ThinkingStep(props: {
 	children?: JSX.Element;
 }) {
 	const measured = createMeasuredHeight();
-	const status = () => props.status ?? "complete";
+	const status = () => props.status ?? 'complete';
 	const labelStyle = { ...scale.body, fontWeight: weight.semibold };
 	return (
-		<Show when={status() !== "pending"}>
+		<Show when={status() !== 'pending'}>
 			{/* Outer: animates height so the space opens smoothly. */}
 			<motion.div
 				testId={props.testId}
 				initial={{ height: 0 }}
 				animate={{ height: measured.height() ?? 0 }}
 				transition={slowSpring}
-				style={{ position: "relative", overflow: "hidden" }}
+				style={{ position: 'relative', overflow: 'hidden' }}
 			>
 				{/* Inner: fades the content in after the space starts opening. */}
 				<motion.div
@@ -370,14 +370,14 @@ export function ThinkingStep(props: {
 					transition={{
 						duration: 0.24,
 						delay: props.delay ?? 0.08,
-						ease: "easeOut",
+						ease: 'easeOut',
 					}}
 				>
 					<div onLayout={measured.onLayout}>
 						<div
 							style={{
-								display: "flex",
-								flexDirection: "row",
+								display: 'flex',
+								flexDirection: 'row',
 								gap: 10,
 								paddingLeft: 8,
 								paddingRight: 8,
@@ -389,9 +389,9 @@ export function ThinkingStep(props: {
 							{/* Icon column with a connector that runs to the bottom of the step. */}
 							<div
 								style={{
-									display: "flex",
-									flexDirection: "column",
-									alignItems: "center",
+									display: 'flex',
+									flexDirection: 'column',
+									alignItems: 'center',
 									flexShrink: 0,
 									width: 14,
 								}}
@@ -404,9 +404,9 @@ export function ThinkingStep(props: {
 												style={{
 													width: 14,
 													height: 14,
-													display: "flex",
-													alignItems: "center",
-													justifyContent: "center",
+													display: 'flex',
+													alignItems: 'center',
+													justifyContent: 'center',
 												}}
 											>
 												<div
@@ -422,7 +422,7 @@ export function ThinkingStep(props: {
 										}
 									>
 										<Icon
-											name={glyphs[props.icon ?? "dot"]}
+											name={glyphs[props.icon ?? 'dot']}
 											size={14}
 											strokeWidth={1.5}
 											color={color.mutedForeground}
@@ -443,15 +443,15 @@ export function ThinkingStep(props: {
 							</div>
 							<div
 								style={{
-									display: "flex",
-									flexDirection: "column",
+									display: 'flex',
+									flexDirection: 'column',
 									flexGrow: 1,
 									gap: 4,
 									minWidth: 0,
 								}}
 							>
 								<Show
-									when={status() === "active"}
+									when={status() === 'active'}
 									fallback={
 										<text style={{ ...labelStyle, color: color.foreground }}>
 											{props.label}
@@ -489,8 +489,8 @@ export function ThinkingStepDetails(props: {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				marginTop: 4,
 				marginLeft: -12,
 			}}
@@ -517,8 +517,8 @@ export function ThinkingStepDetails(props: {
 				>
 					<div
 						style={{
-							display: "flex",
-							flexDirection: "column",
+							display: 'flex',
+							flexDirection: 'column',
 							gap: 2,
 							paddingTop: 2,
 						}}
@@ -546,9 +546,9 @@ export function ThinkingStepSources(props: { children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				flexWrap: "wrap",
+				display: 'flex',
+				flexDirection: 'row',
+				flexWrap: 'wrap',
 				gap: 6,
 				marginTop: 4,
 			}}
@@ -569,7 +569,7 @@ export function ThinkingStepSource(props: {
 			animate={{ opacity: 1 }}
 			transition={{ ...tween.moderate, delay: props.delay ?? 0 }}
 		>
-			<Badge variant="solid" size="compact" color={props.color ?? "gray"}>
+			<Badge variant="solid" size="compact" color={props.color ?? 'gray'}>
 				{props.children}
 			</Badge>
 		</motion.div>
@@ -593,15 +593,15 @@ export function ThinkingStepImage(props: {
 		<motion.div
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
-			transition={{ duration: 0.2, delay: props.delay ?? 0, ease: "easeOut" }}
+			transition={{ duration: 0.2, delay: props.delay ?? 0, ease: 'easeOut' }}
 			style={{ marginTop: 6 }}
 		>
 			<div
-				style={{ position: "relative", width: IMAGE_WIDTH, height: height() }}
+				style={{ position: 'relative', width: IMAGE_WIDTH, height: height() }}
 			>
 				<img
 					src={props.src}
-					alt={props.alt ?? ""}
+					alt={props.alt ?? ''}
 					style={{
 						width: IMAGE_WIDTH,
 						height: height(),
@@ -611,7 +611,7 @@ export function ThinkingStepImage(props: {
 				{/* An inset hairline keeps the edge of a pale screenshot visible. */}
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 0,
 						left: 0,
 						width: IMAGE_WIDTH,

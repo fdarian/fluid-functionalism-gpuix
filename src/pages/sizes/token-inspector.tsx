@@ -1,15 +1,15 @@
-import type { DomEvent } from "@gpuix/solid";
-import { type Accessor, createSignal, For, type JSX, Show } from "solid-js";
-import { Button } from "#/components/button";
-import { CheckboxGroup, CheckboxItem } from "#/components/checkbox-group";
-import { Select } from "#/components/select";
-import { Tooltip } from "#/components/tooltip";
-import { MONO } from "#/lib/doc-page";
-import { color, type SizeChoice, weight } from "#/lib/theme";
-import { ANNOTATION_BLUE } from "#/pages/surfaces/annotations";
-import { LADDER } from "./ladder";
-import { SORT_OPTIONS } from "./sort-options";
-import { StepFrame } from "./step-frame";
+import type { DomEvent } from '@gpuix/solid';
+import { type Accessor, createSignal, For, type JSX, Show } from 'solid-js';
+import { Button } from '#/components/button';
+import { CheckboxGroup, CheckboxItem } from '#/components/checkbox-group';
+import { Select } from '#/components/select';
+import { Tooltip } from '#/components/tooltip';
+import { MONO } from '#/lib/doc-page';
+import { color, type SizeChoice, weight } from '#/lib/theme';
+import { ANNOTATION_BLUE } from '#/pages/surfaces/annotations';
+import { LADDER } from './ladder';
+import { SORT_OPTIONS } from './sort-options';
+import { StepFrame } from './step-frame';
 
 /** What a control paints, in the units the ladder is measured in. The port's components keep these in their own step tables, so each target restates its own. */
 interface Metrics {
@@ -33,16 +33,16 @@ function tokenReadout(raw: Measured, step: SizeChoice) {
 	const eq = (a: number, b: number) => Math.abs(a - b) < 1;
 	const rows: Array<[string, string]> = [];
 	if (eq(raw.height, ladder.control))
-		rows.push(["control", `${ladder.control}px`]);
+		rows.push(['control', `${ladder.control}px`]);
 	if (eq(raw.width, ladder.icon) && eq(raw.height, ladder.icon))
-		rows.push(["icon", `${ladder.icon}px`]);
+		rows.push(['icon', `${ladder.icon}px`]);
 	if (eq(raw.fontSize, ladder.text.fontSize))
-		rows.push(["text", `${ladder.text.fontSize}px`]);
+		rows.push(['text', `${ladder.text.fontSize}px`]);
 	if (eq(raw.padLeft, ladder.px) || eq(raw.padRight, ladder.px))
-		rows.push(["px", `${ladder.px}px`]);
+		rows.push(['px', `${ladder.px}px`]);
 	else if (eq(raw.padLeft, ladder.itemPx) || eq(raw.padRight, ladder.itemPx))
-		rows.push(["itemPx", `${ladder.itemPx}px`]);
-	if (eq(raw.gap, ladder.gap)) rows.push(["gap", `${ladder.gap}px`]);
+		rows.push(['itemPx', `${ladder.itemPx}px`]);
+	if (eq(raw.gap, ladder.gap)) rows.push(['gap', `${ladder.gap}px`]);
 	return rows;
 }
 
@@ -55,8 +55,8 @@ interface GuideBox {
 	height?: number;
 }
 
-const CONTENT_FILL = "rgba(120, 132, 232, 0.20)";
-const PADDING_FILL = "rgba(153, 255, 201, 0.35)";
+const CONTENT_FILL = 'rgba(120, 132, 232, 0.20)';
+const PADDING_FILL = 'rgba(153, 255, 201, 0.35)';
 /** The source's guides run the whole frame; clipped by the body's overflow, 2000px is the frame. */
 const GUIDE_REACH = 2000;
 
@@ -69,7 +69,7 @@ function ReadoutText(props: { children: JSX.Element; heavy?: boolean }) {
 				lineHeight: 16,
 				fontWeight: props.heavy === true ? weight.semibold : weight.normal,
 				color: color.background,
-				whiteSpace: "nowrap",
+				whiteSpace: 'nowrap',
 			}}
 		>
 			{props.children}
@@ -77,18 +77,18 @@ function ReadoutText(props: { children: JSX.Element; heavy?: boolean }) {
 	);
 }
 
-function PaddingStrip(props: { width: number; side: "left" | "right" }) {
+function PaddingStrip(props: { width: number; side: 'left' | 'right' }) {
 	return (
 		<div
 			style={{
-				position: "absolute",
+				position: 'absolute',
 				top: 0,
 				bottom: 0,
 				[props.side]: 0,
 				width: props.width,
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
 				backgroundColor: PADDING_FILL,
 			}}
 		>
@@ -129,7 +129,7 @@ function InspectTarget(props: {
 	const guide = (style: GuideBox) => (
 		<div
 			style={{
-				position: "absolute",
+				position: 'absolute',
 				backgroundColor: ANNOTATION_BLUE,
 				opacity: 0.55,
 				...style,
@@ -145,8 +145,8 @@ function InspectTarget(props: {
 			content={
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "column",
+						display: 'flex',
+						flexDirection: 'column',
 						paddingLeft: 6,
 						paddingRight: 6,
 						paddingTop: 8,
@@ -170,8 +170,8 @@ function InspectTarget(props: {
 										{(row) => (
 											<div
 												style={{
-													display: "flex",
-													flexDirection: "row",
+													display: 'flex',
+													flexDirection: 'row',
 													gap: 6,
 												}}
 											>
@@ -189,9 +189,9 @@ function InspectTarget(props: {
 		>
 			<div
 				style={{
-					position: "relative",
-					display: "flex",
-					flexDirection: props.fill === true ? "column" : "row",
+					position: 'relative',
+					display: 'flex',
+					flexDirection: props.fill === true ? 'column' : 'row',
 					flexGrow: props.fill === true ? 1 : 0,
 				}}
 			>
@@ -202,23 +202,23 @@ function InspectTarget(props: {
 					onMouseLeave={() => setHovered(false)}
 					onLayout={(event: DomEvent) => {
 						if (event.width === undefined || event.height === undefined) {
-							throw new Error("onLayout reported no size");
+							throw new Error('onLayout reported no size');
 						}
 						setSize({ width: event.width, height: event.height });
 					}}
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 0,
 						left: 0,
 						right: 0,
 						bottom: 0,
-						cursor: "crosshair",
+						cursor: 'crosshair',
 					}}
 				>
 					<Show when={hovered()}>
 						<div
 							style={{
-								position: "absolute",
+								position: 'absolute',
 								top: 0,
 								bottom: 0,
 								left: props.metrics.padLeft,
@@ -259,7 +259,7 @@ function InspectTarget(props: {
 	);
 }
 
-const CHECKBOX_LABELS = ["Design", "Engineering"] as const;
+const CHECKBOX_LABELS = ['Design', 'Engineering'] as const;
 
 /** Each target restates what its component paints: `Button` `sizes` (leading-icon padding on the left, plain on the right), `Select` `specs`, `ROW` of the choice groups. */
 const BUTTON_METRICS = {
@@ -276,8 +276,8 @@ const ROW_METRICS = {
 } as const satisfies Record<SizeChoice, Metrics>;
 
 export function TokenInspectorDemo() {
-	const [step, setStep] = createSignal<SizeChoice>("default");
-	const [sort, setSort] = createSignal("updated");
+	const [step, setStep] = createSignal<SizeChoice>('default');
+	const [sort, setSort] = createSignal('updated');
 	const [checked, setChecked] = createSignal<ReadonlySet<number>>(new Set([0]));
 	const toggle = (index: number) => {
 		const next = new Set(checked());
@@ -295,18 +295,18 @@ export function TokenInspectorDemo() {
 		>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "flex-start",
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'flex-start',
 					gap: 16,
 				}}
 			>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						flexWrap: "wrap",
-						alignItems: "center",
+						display: 'flex',
+						flexDirection: 'row',
+						flexWrap: 'wrap',
+						alignItems: 'center',
 						gap: LADDER[step()].gap,
 					}}
 				>
@@ -334,7 +334,7 @@ export function TokenInspectorDemo() {
 						/>
 					</InspectTarget>
 				</div>
-				<div style={{ display: "flex", width: 176 }}>
+				<div style={{ display: 'flex', width: 176 }}>
 					<CheckboxGroup size={step()} checkedIndices={checked()}>
 						<For each={CHECKBOX_LABELS}>
 							{(label, index) => (

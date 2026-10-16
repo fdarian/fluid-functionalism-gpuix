@@ -1,4 +1,4 @@
-import { createEffect, createSignal, on, onCleanup } from "solid-js";
+import { createEffect, createSignal, on, onCleanup } from 'solid-js';
 
 /** How long a popup keeps painting its exit fade before unmounting. */
 const POPUP_EXIT_MS = 60;

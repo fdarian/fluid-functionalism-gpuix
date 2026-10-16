@@ -4,7 +4,7 @@ import {
 	type HostElement,
 	motion,
 	useGpuixRequired,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	createEffect,
 	createSignal,
@@ -12,17 +12,17 @@ import {
 	on,
 	onCleanup,
 	untrack,
-} from "solid-js";
-import { onFrame } from "#/lib/clock";
-import { FluidHighlight } from "#/lib/fluid-highlight";
-import { createFluidHover } from "#/lib/fluid-hover";
+} from 'solid-js';
+import { onFrame } from '#/lib/clock';
+import { FluidHighlight } from '#/lib/fluid-highlight';
+import { createFluidHover } from '#/lib/fluid-hover';
 import {
 	color,
 	focusRing,
 	scheme,
 	motion as tween,
 	withAlpha,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
 /** Dot height, and the diameter of every resting dot. */
 const DOT_PX = 6;
@@ -61,7 +61,7 @@ export function CarouselDots(props: {
 	getLabel?: (index: number) => string;
 	testId?: string;
 }) {
-	const hover = createFluidHover({ axis: "x" });
+	const hover = createFluidHover({ axis: 'x' });
 	const [clock, setClock] = createSignal(0);
 
 	const options = (): CarouselDotsAutoplay | null => {
@@ -72,7 +72,7 @@ export function CarouselDots(props: {
 	const autoplaying = () => options() !== null && props.progress === undefined;
 	const fill = () => {
 		const driven = props.progress;
-		if (typeof driven === "function") return driven();
+		if (typeof driven === 'function') return driven();
 		if (driven !== undefined) return driven;
 		return autoplaying() ? clock() : 1;
 	};
@@ -127,11 +127,11 @@ export function CarouselDots(props: {
 			aria-label="Slides"
 			{...hover.containerProps}
 			style={{
-				position: "relative",
-				alignSelf: "flex-start",
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				position: 'relative',
+				alignSelf: 'flex-start',
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 			}}
 		>
 			<FluidHighlight
@@ -167,7 +167,7 @@ function Dot(props: {
 	const renderer = useGpuixRequired();
 	let element: HostElement | undefined;
 	createEffect(() => {
-		if (element === undefined) throw new Error("Dot is not mounted");
+		if (element === undefined) throw new Error('Dot is not mounted');
 		props.register(props.index, element);
 	});
 
@@ -180,13 +180,13 @@ function Dot(props: {
 			aria-label={props.label}
 			aria-current={props.current ? true : undefined}
 			style={{
-				position: "relative",
+				position: 'relative',
 				zIndex: 10,
-				display: "flex",
-				alignItems: "center",
+				display: 'flex',
+				alignItems: 'center',
 				padding: CLICK_PAD,
 				borderRadius: DOT_PX / 2 + CLICK_PAD,
-				cursor: "pointer",
+				cursor: 'pointer',
 				keyboardFocusDim: false,
 				focusVisible: focusRing(0),
 			}}
@@ -196,9 +196,9 @@ function Dot(props: {
 				animate={{ width: props.current ? PILL_PX : DOT_PX }}
 				transition={tween.moderate}
 				style={{
-					position: "relative",
+					position: 'relative',
 					height: DOT_PX,
-					overflow: "hidden",
+					overflow: 'hidden',
 					borderRadius: DOT_PX / 2,
 					backgroundColor: trackColor(),
 				}}
@@ -207,7 +207,7 @@ function Dot(props: {
 					// The original slides a full-width pill in from the left behind the dot's rounded clip, so the fill always ends in a round cap. Here the fill is a pill that grows from a dot (p = 0) to the whole pill (p = 1).
 					<div
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							top: 0,
 							left: 0,
 							width:

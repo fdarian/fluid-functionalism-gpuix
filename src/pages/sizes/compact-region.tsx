@@ -1,17 +1,17 @@
-import { createSignal, For } from "solid-js";
-import { Button } from "#/components/button";
-import { Dropdown } from "#/components/dropdown";
-import { MenuItem } from "#/components/menu-item";
-import { color, type SizeChoice, siteType, weight } from "#/lib/theme";
+import { createSignal, For } from 'solid-js';
+import { Button } from '#/components/button';
+import { Dropdown } from '#/components/dropdown';
+import { MenuItem } from '#/components/menu-item';
+import { color, type SizeChoice, siteType, weight } from '#/lib/theme';
 import {
 	ANNOTATION_BLUE,
 	ArrowOverlay,
 	buildArrow,
-} from "#/pages/surfaces/annotations";
-import { LADDER } from "./ladder";
-import { SORT_OPTIONS } from "./sort-options";
-import { StepFrame } from "./step-frame";
-import { FILTER_ICON } from "./toolbar";
+} from '#/pages/surfaces/annotations';
+import { LADDER } from './ladder';
+import { SORT_OPTIONS } from './sort-options';
+import { StepFrame } from './step-frame';
+import { FILTER_ICON } from './toolbar';
 
 /** The inline `Dropdown` panel is a fixed 288px (`PANEL_WIDTH`); the source's frozen menu is `!w-48`. */
 const MENU_WIDTH = 288;
@@ -29,7 +29,7 @@ const CALLOUT_ARROW = buildArrow(CALLOUT_TAIL, CALLOUT_TIP, {
 });
 
 export function CompactRegionDemo() {
-	const [step, setStep] = createSignal<SizeChoice>("compact");
+	const [step, setStep] = createSignal<SizeChoice>('compact');
 	const [sort, setSort] = createSignal(0);
 
 	return (
@@ -41,26 +41,26 @@ export function CompactRegionDemo() {
 		>
 			<div
 				style={{
-					position: "relative",
-					alignSelf: "flex-start",
+					position: 'relative',
+					alignSelf: 'flex-start',
 					paddingRight: 230,
 				}}
 			>
 				{/* A fixed-width column and top alignment keep the origin stable across steps, so the callout does not move when the region re-renders at the other size. */}
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "flex-start",
+						display: 'flex',
+						flexDirection: 'column',
+						alignItems: 'flex-start',
 						gap: 8,
 						width: MENU_WIDTH,
 					}}
 				>
 					<div
 						style={{
-							display: "flex",
-							flexDirection: "row",
-							alignItems: "center",
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'center',
 							gap: LADDER[step()].gap,
 						}}
 					>
@@ -73,7 +73,7 @@ export function CompactRegionDemo() {
 						</Button>
 						<Button
 							variant="tertiary"
-							size={step() === "compact" ? "icon-compact" : "icon"}
+							size={step() === 'compact' ? 'icon-compact' : 'icon'}
 							icon={FILTER_ICON}
 							aria-label="Filter"
 						/>
@@ -82,7 +82,7 @@ export function CompactRegionDemo() {
 						</Button>
 					</div>
 					{/* The trigger's menu, frozen open (the inline Dropdown panel, as on the surfaces page) so the step shows without a real popup. Pointer-inert: it is an illustration. */}
-					<div style={{ pointerEvents: "none", userSelect: "none" }}>
+					<div style={{ pointerEvents: 'none', userSelect: 'none' }}>
 						<Dropdown checkedIndex={sort()}>
 							<For each={SORT_OPTIONS}>
 								{(option, index) => (
@@ -105,19 +105,19 @@ export function CompactRegionDemo() {
 				/>
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						left: 318 + CALLOUT_SHIFT,
 						top: 18,
 					}}
 				>
-					<For each={["The menu inherits", "the region's step"]}>
+					<For each={['The menu inherits', "the region's step"]}>
 						{(line) => (
 							<text
 								style={{
 									...siteType.caption,
 									fontWeight: weight.semibold,
 									color: color.foreground,
-									whiteSpace: "nowrap",
+									whiteSpace: 'nowrap',
 								}}
 							>
 								{line}

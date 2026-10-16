@@ -5,26 +5,26 @@ import {
 	type HostPointerEvent,
 	type StateStyleDesc,
 	useGpuixRequired,
-} from "@gpuix/solid";
-import { type Accessor, createSignal, type JSX, Show } from "solid-js";
-import { Icon } from "#/lib/icon";
-import { fill } from "#/lib/press";
-import type { IconRef } from "#/lib/icons";
+} from '@gpuix/solid';
+import { type Accessor, createSignal, type JSX, Show } from 'solid-js';
+import { Icon } from '#/lib/icon';
+import type { IconRef } from '#/lib/icons';
+import { fill } from '#/lib/press';
 import {
 	color,
 	colorFade,
 	focusRing,
 	height,
 	pressFade,
+	type as scale,
 	shape,
 	sizeChoice,
 	surfaceFade,
-	type as scale,
 	weight,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
-export type ButtonVariant = "primary" | "secondary" | "tertiary" | "ghost";
-export type ButtonSize = "default" | "compact" | "icon" | "icon-compact";
+export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'ghost';
+export type ButtonSize = 'default' | 'compact' | 'icon' | 'icon-compact';
 
 const sizes = {
 	default: {
@@ -51,7 +51,7 @@ const sizes = {
 		text: scale.body,
 		icon: 16,
 	},
-	"icon-compact": {
+	'icon-compact': {
 		height: height.controlCompact,
 		padX: 0,
 		padXIcon: 0,
@@ -99,7 +99,7 @@ const surfaces = (): Record<ButtonVariant, Surface> => ({
 		},
 	},
 	ghost: {
-		rest: { boxShadow: fill("transparent", 1) },
+		rest: { boxShadow: fill('transparent', 1) },
 		hover: { boxShadow: fill(color.hover, 1) },
 		active: { boxShadow: fill(color.active, 0), ...pressFade },
 	},
@@ -114,11 +114,11 @@ export function Button(props: {
 	disabled?: boolean;
 	testId?: string;
 	id?: string;
-	"aria-label"?: string;
-	"aria-activedescendant"?: string;
-	"aria-expanded"?: boolean;
-	"aria-haspopup"?: "menu" | "listbox" | "dialog";
-	"aria-controls"?: string;
+	'aria-label'?: string;
+	'aria-activedescendant'?: string;
+	'aria-expanded'?: boolean;
+	'aria-haspopup'?: 'menu' | 'listbox' | 'dialog';
+	'aria-controls'?: string;
 	onClick?: (event: HostPointerEvent) => void;
 	onMouseDown?: (event: HostMouseEvent) => void;
 	/** The label, or the icon for an icon-only size. */
@@ -128,18 +128,18 @@ export function Button(props: {
 	icon?: IconRef;
 }) {
 	const renderer = useGpuixRequired();
-	const variant = () => props.variant ?? "primary";
+	const variant = () => props.variant ?? 'primary';
 	const size = () => sizes[props.size ?? sizeChoice()];
 	/** Base UI disables the button while it loads: FF passes `disabled || loading`, and its `disabled:` classes dim it and drop pointer events. */
 	const inert = () => props.disabled === true || props.loading === true;
-	const iconOnly = () => props.size === "icon" || props.size === "icon-compact";
+	const iconOnly = () => props.size === 'icon' || props.size === 'icon-compact';
 	const [hovered, setHovered] = createSignal(false);
 
 	const labelColor = () => {
 		switch (variant()) {
-			case "primary":
+			case 'primary':
 				return color.background;
-			case "ghost":
+			case 'ghost':
 				return hovered() ? color.foreground : color.mutedForeground;
 			default:
 				return color.foreground;
@@ -177,7 +177,7 @@ export function Button(props: {
 							color: labelColor(),
 							...colorFade,
 							fontWeight: weight.normal,
-							whiteSpace: "nowrap",
+							whiteSpace: 'nowrap',
 						}}
 					>
 						{props.children}
@@ -211,29 +211,32 @@ export function Button(props: {
 
 	return (
 		<div
-			{...buttonProps({
-				disabled: inert(),
-				onClick: props.onClick,
-			}, renderer)}
+			{...buttonProps(
+				{
+					disabled: inert(),
+					onClick: props.onClick,
+				},
+				renderer,
+			)}
 			tabIndex={inert() ? -1 : 0}
 			testId={props.testId}
 			id={props.id}
-			aria-label={props["aria-label"]}
-			aria-activedescendant={props["aria-activedescendant"]}
-			aria-expanded={props["aria-expanded"]}
-			aria-haspopup={props["aria-haspopup"]}
-			aria-controls={props["aria-controls"]}
+			aria-label={props['aria-label']}
+			aria-activedescendant={props['aria-activedescendant']}
+			aria-expanded={props['aria-expanded']}
+			aria-haspopup={props['aria-haspopup']}
+			aria-controls={props['aria-controls']}
 			aria-disabled={inert()}
 			onMouseDown={props.onMouseDown}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
-				justifyContent: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
+				justifyContent: 'center',
 				flexShrink: 0,
-				position: "relative",
+				position: 'relative',
 				margin: 1,
 				height: size().height - 2,
 				...(iconOnly()
@@ -241,12 +244,12 @@ export function Button(props: {
 					: { paddingLeft: padLeft(), paddingRight: padRight() }),
 				gap: size().gap,
 				borderRadius: shape.button,
-				cursor: "pointer",
-				userSelect: "none",
+				cursor: 'pointer',
+				userSelect: 'none',
 				// gpuix dims every other focusable while one has keyboard focus; this design does not.
 				keyboardFocusDim: false,
 				opacity: inert() ? 0.5 : 1,
-				pointerEvents: inert() ? "none" : "auto",
+				pointerEvents: inert() ? 'none' : 'auto',
 				...surfaceFade,
 				...surfaces()[variant()].rest,
 				hover: surfaces()[variant()].hover,
@@ -257,9 +260,9 @@ export function Button(props: {
 			<Show when={props.loading} fallback={content()}>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
 						gap: size().gap,
 						opacity: 0,
 					}}
@@ -268,14 +271,14 @@ export function Button(props: {
 				</div>
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 0,
 						left: 0,
 						right: 0,
 						bottom: 0,
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
 					}}
 				>
 					<Icon

@@ -1,4 +1,4 @@
-import { type HostElement, ResizeObserver } from "@gpuix/solid";
+import { type HostElement, ResizeObserver } from '@gpuix/solid';
 import {
 	type Accessor,
 	createEffect,
@@ -8,14 +8,17 @@ import {
 	type JSX,
 	onCleanup,
 	Show,
-} from "solid-js";
-import { ChatMessage } from "#/components/chat-message";
-import type { ComposerFile, QueuedMessage } from "#/components/input-message";
-import { type QueuedMessage as StackMessage, QueuedStack } from "#/components/queued-stack";
-import { ThinkingIndicator } from "#/components/thinking-indicator";
+} from 'solid-js';
+import { ChatMessage } from '#/components/chat-message';
+import type { ComposerFile, QueuedMessage } from '#/components/input-message';
+import {
+	QueuedStack,
+	type QueuedMessage as StackMessage,
+} from '#/components/queued-stack';
+import { ThinkingIndicator } from '#/components/thinking-indicator';
 
 export type Turn = {
-	from: "user" | "assistant";
+	from: 'user' | 'assistant';
 	text: string;
 	files?: ComposerFile[];
 	thinking?: boolean;
@@ -24,7 +27,7 @@ export type Turn = {
 /** The docs' transcript: user bubbles, assistant text, a thinking indicator for a reply not yet started. Items update in place, so a streaming reply does not replay the entrance per word. */
 export function Transcript(props: { turns: Turn[] }) {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
 			<Index each={props.turns}>
 				{(turn) => (
 					<Show
@@ -81,8 +84,8 @@ export function ComposerStage(props: {
 	return (
 		<div
 			style={{
-				position: "relative",
-				width: "100%",
+				position: 'relative',
+				width: '100%',
 				height: props.height,
 			}}
 		>
@@ -91,19 +94,19 @@ export function ComposerStage(props: {
 					scroller = element;
 				}}
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					right: 0,
 					bottom: 0,
-					overflowY: "scroll",
-					scrollbarWidth: "none",
+					overflowY: 'scroll',
+					scrollbarWidth: 'none',
 				}}
 			>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "column",
+						display: 'flex',
+						flexDirection: 'column',
 						paddingBottom: props.reserve(composerHeight()),
 					}}
 				>
@@ -113,7 +116,7 @@ export function ComposerStage(props: {
 			{props.overlay?.(composerHeight)}
 			<div
 				ref={(element) => observer.observe(element)}
-				style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}
+				style={{ position: 'absolute', left: 0, right: 0, bottom: 0 }}
 			>
 				{props.children}
 			</div>

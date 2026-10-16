@@ -1,16 +1,16 @@
-import { createReducedMotion, motion } from "@gpuix/solid";
+import { createReducedMotion, motion } from '@gpuix/solid';
 import {
 	type Accessor,
 	createEffect,
 	createSignal,
 	on,
 	onCleanup,
-} from "solid-js";
-import { color, fade, type as scale, shape, weight } from "#/lib/theme";
-import { createVisibility } from "#/pages/surfaces/visibility";
-import { MARK_BLUE, MARK_RED, Specimen, TweakFrame } from "./specimen";
+} from 'solid-js';
+import { color, fade, type as scale, shape, weight } from '#/lib/theme';
+import { createVisibility } from '#/pages/surfaces/visibility';
+import { MARK_BLUE, MARK_RED, Specimen, TweakFrame } from './specimen';
 
-const MENU_LABEL = "Open the settings dialog";
+const MENU_LABEL = 'Open the settings dialog';
 
 /** The row's inset in its frame (`p-1`) and its own padding (`px-2`): where the label starts. */
 const FRAME_PAD = 4;
@@ -19,10 +19,10 @@ const ROW_HEIGHT = 36;
 const LABEL_LEFT = FRAME_PAD + ROW_PAD;
 
 const width = (px: number) =>
-	Math.abs(px) < 0.25 ? "same width" : `${Math.abs(px).toFixed(1)}px wider`;
+	Math.abs(px) < 0.25 ? 'same width' : `${Math.abs(px).toFixed(1)}px wider`;
 
 const wider = (px: number | undefined) =>
-	px === undefined ? "" : `: ${width(px)}`;
+	px === undefined ? '' : `: ${width(px)}`;
 
 interface Cursor {
 	y: Accessor<number>;
@@ -34,12 +34,12 @@ function FakeCursor(props: { x: number; y: Accessor<number> }) {
 	return (
 		<motion.div
 			animate={{ top: props.y() - 3 }}
-			transition={{ duration: 0.6, ease: "easeInOut" }}
+			transition={{ duration: 0.6, ease: 'easeInOut' }}
 			style={{
-				position: "absolute",
+				position: 'absolute',
 				left: props.x - 3,
 				top: props.y() - 3,
-				pointerEvents: "none",
+				pointerEvents: 'none',
 			}}
 		>
 			<svg viewBox="0 0 24 24" style={{ width: 18, height: 18 }}>
@@ -86,14 +86,14 @@ function WeightItem(props: {
 	const labelStyle = (heavy: boolean) => ({
 		...scale.body,
 		fontWeight: heavy ? weight.semibold : weight.normal,
-		whiteSpace: "nowrap" as const,
+		whiteSpace: 'nowrap' as const,
 	});
 
 	return (
-		<div style={{ position: "relative", padding: FRAME_PAD }}>
+		<div style={{ position: 'relative', padding: FRAME_PAD }}>
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					left: FRAME_PAD,
 					right: FRAME_PAD,
 					top: FRAME_PAD,
@@ -101,12 +101,12 @@ function WeightItem(props: {
 					borderRadius: shape.bg,
 					backgroundColor: color.active,
 					opacity: props.selected ? 1 : 0,
-					...fade(["opacity"], 80),
+					...fade(['opacity'], 80),
 				}}
 			/>
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					left: FRAME_PAD,
 					right: FRAME_PAD,
 					top: FRAME_PAD,
@@ -114,7 +114,7 @@ function WeightItem(props: {
 					borderRadius: shape.bg,
 					backgroundColor: color.hover,
 					opacity: hovered() ? 1 : 0,
-					...fade(["opacity"], 80),
+					...fade(['opacity'], 80),
 				}}
 			/>
 			<div
@@ -122,14 +122,14 @@ function WeightItem(props: {
 				onMouseLeave={() => setPointerOver(false)}
 				onClick={props.onToggle}
 				style={{
-					position: "relative",
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					position: 'relative',
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					height: ROW_HEIGHT,
 					paddingLeft: ROW_PAD,
 					paddingRight: ROW_PAD,
-					cursor: "pointer",
+					cursor: 'pointer',
 				}}
 			>
 				<text
@@ -139,7 +139,7 @@ function WeightItem(props: {
 							props.selected || hovered()
 								? color.foreground
 								: color.mutedForeground,
-						...fade(["color"], 80),
+						...fade(['color'], 80),
 					}}
 				>
 					{MENU_LABEL}
@@ -153,11 +153,11 @@ function WeightItem(props: {
 					}
 					style={{
 						...labelStyle(heavy),
-						position: "absolute",
+						position: 'absolute',
 						left: LABEL_LEFT,
 						top: 0,
 						opacity: 0,
-						pointerEvents: "none",
+						pointerEvents: 'none',
 					}}
 				>
 					{MENU_LABEL}
@@ -166,26 +166,26 @@ function WeightItem(props: {
 			{regularWidth() === undefined ? null : (
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 8,
 						bottom: 8,
 						left: LABEL_LEFT + (regularWidth() ?? 0),
 						width: 1,
 						backgroundColor: MARK_BLUE,
-						pointerEvents: "none",
+						pointerEvents: 'none',
 					}}
 				/>
 			)}
 			{props.selected && over() >= 0.5 ? (
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						left: LABEL_LEFT + (regularWidth() ?? 0),
 						width: over(),
 						top: FRAME_PAD + (ROW_HEIGHT - scale.body.lineHeight) / 2 - 3,
 						height: scale.body.lineHeight + 6,
 						backgroundColor: MARK_RED,
-						pointerEvents: "none",
+						pointerEvents: 'none',
 					}}
 				/>
 			) : null}
@@ -261,7 +261,7 @@ export function WeightOpszDemo() {
 	const cursor = createScript(scripted, setSelected);
 	const pairedCaption = () => {
 		const px = paired();
-		const note = px === undefined ? "" : ` (${width(px)} here)`;
+		const note = px === undefined ? '' : ` (${width(px)} here)`;
 		return `Weight + optical size needs variable axes${note}`;
 	};
 

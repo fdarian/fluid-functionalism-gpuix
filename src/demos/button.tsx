@@ -1,11 +1,11 @@
-import { createSignal, For, onCleanup } from "solid-js";
+import { createSignal, For, onCleanup } from 'solid-js';
 import {
 	Button,
 	type ButtonSize,
 	type ButtonVariant,
-} from "#/components/button";
-import type { DemoModule, ShotContext } from "#/lib/demo";
-import { DemoCard, DemoRow } from "#/lib/demo-kit";
+} from '#/components/button';
+import type { DemoModule, ShotContext } from '#/lib/demo';
+import { DemoCard, DemoRow } from '#/lib/demo-kit';
 import {
 	PlayDivider,
 	PlayField,
@@ -15,10 +15,10 @@ import {
 	PlaySelect,
 	PlaySwitch,
 	pick,
-} from "#/lib/playground";
-import { color, type as scale, weight } from "#/lib/theme";
+} from '#/lib/playground';
+import { color, type as scale, weight } from '#/lib/theme';
 
-const VARIANTS: ButtonVariant[] = ["primary", "secondary", "tertiary", "ghost"];
+const VARIANTS: ButtonVariant[] = ['primary', 'secondary', 'tertiary', 'ghost'];
 
 function VariantRow(props: {
 	label: string;
@@ -44,36 +44,36 @@ function VariantRow(props: {
 	);
 }
 
-export const title = "Button";
-export const group = "Components";
-export const listed = "sidebar";
+export const title = 'Button';
+export const group = 'Components';
+export const listed = 'sidebar';
 
 const PLAY_VARIANTS = [
-	{ value: "primary", label: "Primary" },
-	{ value: "secondary", label: "Secondary" },
-	{ value: "tertiary", label: "Tertiary" },
-	{ value: "ghost", label: "Ghost" },
+	{ value: 'primary', label: 'Primary' },
+	{ value: 'secondary', label: 'Secondary' },
+	{ value: 'tertiary', label: 'Tertiary' },
+	{ value: 'ghost', label: 'Ghost' },
 ] as const;
 
-type PlaySize = "compact" | "default";
+type PlaySize = 'compact' | 'default';
 
 const PLAY_SIZES = [
-	{ value: "compact", label: "Compact" },
-	{ value: "default", label: "Default" },
+	{ value: 'compact', label: 'Compact' },
+	{ value: 'default', label: 'Default' },
 ] as const;
 
 /** "Icon only" swaps the text sizes for their square counterparts. */
 const ICON_ONLY_SIZE = {
-	compact: "icon-compact",
-	default: "icon",
+	compact: 'icon-compact',
+	default: 'icon',
 } as const;
 
 const LABELS = [
-	"Get started",
-	"Learn more",
-	"Deploy",
-	"Continue",
-	"Ship it",
+	'Get started',
+	'Learn more',
+	'Deploy',
+	'Continue',
+	'Ship it',
 ] as const;
 
 /** A borderless text field in the select rows' style: 28 tall, 124 wide, right-aligned, tinted on hover and focus. */
@@ -86,9 +86,9 @@ function PlayText(props: {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				width: 124,
 				height: 28,
 				paddingLeft: 8,
@@ -96,7 +96,7 @@ function PlayText(props: {
 				borderRadius: 6,
 				backgroundColor: focused() ? color.hover : color.transparent,
 				hover: { backgroundColor: color.hover },
-				cursor: "text",
+				cursor: 'text',
 			}}
 		>
 			<input
@@ -114,7 +114,7 @@ function PlayText(props: {
 				onBlur={() => setFocused(false)}
 				onChange={(event) => {
 					if (event.value === undefined) {
-						throw new Error("PlayText change without a value");
+						throw new Error('PlayText change without a value');
 					}
 					props.onChange(event.value);
 				}}
@@ -124,7 +124,7 @@ function PlayText(props: {
 					height: 24,
 					fontSize: scale.body.fontSize,
 					fontWeight: weight.normal,
-					textAlign: "right",
+					textAlign: 'right',
 					color: color.foreground,
 					backgroundColor: color.transparent,
 					keyboardFocusDim: false,
@@ -135,8 +135,8 @@ function PlayText(props: {
 }
 
 function Playground() {
-	const [variant, setVariant] = createSignal<ButtonVariant>("primary");
-	const [size, setSize] = createSignal<PlaySize>("default");
+	const [variant, setVariant] = createSignal<ButtonVariant>('primary');
+	const [size, setSize] = createSignal<PlaySize>('default');
 	const [iconOnly, setIconOnly] = createSignal(false);
 	const [leading, setLeading] = createSignal(false);
 	const [trailing, setTrailing] = createSignal(false);
@@ -145,11 +145,11 @@ function Playground() {
 	const [disabled, setDisabled] = createSignal(false);
 
 	// An emptied field would collapse the button, and the icon-only one has no other accessible name.
-	const labelText = () => (label().trim() === "" ? LABELS[0] : label());
+	const labelText = () => (label().trim() === '' ? LABELS[0] : label());
 
 	const shuffle = () => {
-		setVariant(pick(["primary", "secondary", "tertiary", "ghost"] as const));
-		setSize(pick(["compact", "default"] as const));
+		setVariant(pick(['primary', 'secondary', 'tertiary', 'ghost'] as const));
+		setSize(pick(['compact', 'default'] as const));
 		setIconOnly(Math.random() > 0.85);
 		setLeading(Math.random() > 0.5);
 		setTrailing(Math.random() > 0.75);
@@ -164,19 +164,19 @@ function Playground() {
 			preview={
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
+						display: 'flex',
+						flexDirection: 'row',
 						flexGrow: 1,
-						alignItems: "center",
+						alignItems: 'center',
 					}}
 				>
 					<Button
 						testId="play-button"
 						variant={variant()}
 						size={iconOnly() ? ICON_ONLY_SIZE[size()] : size()}
-						icon={iconOnly() ? "plus" : undefined}
-						leadingIcon={!iconOnly() && leading() ? "plus" : undefined}
-						trailingIcon={!iconOnly() && trailing() ? "arrow-right" : undefined}
+						icon={iconOnly() ? 'plus' : undefined}
+						leadingIcon={!iconOnly() && leading() ? 'plus' : undefined}
+						trailingIcon={!iconOnly() && trailing() ? 'arrow-right' : undefined}
 						loading={loading()}
 						disabled={disabled()}
 						aria-label={iconOnly() ? labelText() : undefined}
@@ -262,7 +262,7 @@ function ClickToLoad() {
 				timer = setTimeout(() => setLoading(false), 2000);
 			}}
 		>
-			{loading() ? "Loading" : "Click me"}
+			{loading() ? 'Loading' : 'Click me'}
 		</Button>
 	);
 }
@@ -272,13 +272,13 @@ export function Demo() {
 		<>
 			<Playground />
 			<DemoCard title="Button">
-				<div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+				<div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
 					<VariantRow label="Default" size="default" />
 					<VariantRow label="Compact" size="compact" />
 					<VariantRow
 						label="Leading icon"
 						size="default"
-						extra={{ leadingIcon: "plus" }}
+						extra={{ leadingIcon: 'plus' }}
 					/>
 					<DemoRow label="Trailing icon">
 						<Button
@@ -348,37 +348,37 @@ async function reveal(shot: ShotContext, testId: string) {
 	throw new Error(`could not scroll ${testId} into view`);
 }
 
-export const scenarios: DemoModule["scenarios"] = async (shot) => {
-	shot.capture("playground");
-	await shot.click("play-leading-track");
-	await shot.click("play-trailing-track");
-	shot.capture("playground-both-icons");
-	await shot.click("play-icon-only-track");
-	shot.capture("playground-icon-only");
-	await shot.click("play-icon-only-track");
-	await shot.click("play-loading-track");
-	shot.capture("playground-loading");
-	await shot.click("playground-shuffle");
-	shot.capture("playground-shuffled");
+export const scenarios: DemoModule['scenarios'] = async (shot) => {
+	shot.capture('playground');
+	await shot.click('play-leading-track');
+	await shot.click('play-trailing-track');
+	shot.capture('playground-both-icons');
+	await shot.click('play-icon-only-track');
+	shot.capture('playground-icon-only');
+	await shot.click('play-icon-only-track');
+	await shot.click('play-loading-track');
+	shot.capture('playground-loading');
+	await shot.click('playground-shuffle');
+	shot.capture('playground-shuffled');
 
-	await shot.hover("Default-primary");
-	shot.capture("hover");
-	await shot.down("Default-primary");
-	shot.capture("pressed");
-	await shot.up("Default-primary");
+	await shot.hover('Default-primary');
+	shot.capture('hover');
+	await shot.down('Default-primary');
+	shot.capture('pressed');
+	await shot.up('Default-primary');
 	// A loading button is disabled: dimmed, and the pointer does nothing to it.
-	await shot.hover("Loading-secondary");
-	shot.capture("loading-hover");
+	await shot.hover('Loading-secondary');
+	shot.capture('loading-hover');
 	// A loading button is disabled for assistive technology too.
-	shot.expectAria("Disabled-primary", { role: "Button", disabled: true });
-	shot.expectAria("Loading-secondary", { disabled: true });
-	shot.expectAria("Default-primary", { disabled: undefined });
+	shot.expectAria('Disabled-primary', { role: 'Button', disabled: true });
+	shot.expectAria('Loading-secondary', { disabled: true });
+	shot.expectAria('Default-primary', { disabled: undefined });
 
-	await reveal(shot, "click-to-load");
-	shot.expectAria("click-to-load", { disabled: undefined });
-	await shot.click("click-to-load");
-	shot.expectAria("click-to-load", { disabled: true });
-	shot.capture("click-to-load-loading");
+	await reveal(shot, 'click-to-load');
+	shot.expectAria('click-to-load', { disabled: undefined });
+	await shot.click('click-to-load');
+	shot.expectAria('click-to-load', { disabled: true });
+	shot.capture('click-to-load-loading');
 	await shot.settle(2200);
-	shot.expectAria("click-to-load", { disabled: undefined });
+	shot.expectAria('click-to-load', { disabled: undefined });
 };

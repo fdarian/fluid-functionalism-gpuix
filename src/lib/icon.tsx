@@ -1,7 +1,7 @@
-import { type MotionTransition, motion } from "@gpuix/solid";
-import { For } from "solid-js";
-import { hasStrokeNodes, type IconRef, iconNodes, iconSource } from "./icons";
-import { colorFade } from "./theme";
+import { type MotionTransition, motion } from '@gpuix/solid';
+import { For } from 'solid-js';
+import { hasStrokeNodes, type IconRef, iconNodes, iconSource } from './icons';
+import { colorFade } from './theme';
 
 /** FF's `transition-[stroke-width] duration-80`: Tailwind's default curve. */
 const STROKE_EASE: MotionTransition = {
@@ -27,11 +27,11 @@ function parseShapes(nodes: string): Shape[] {
 function ShapeNode(props: { shape: Shape }) {
 	const attrs = props.shape.attrs;
 	switch (props.shape.tag) {
-		case "path":
+		case 'path':
 			return <path d={attrs.d} />;
-		case "circle":
+		case 'circle':
 			return <circle cx={attrs.cx} cy={attrs.cy} r={attrs.r} />;
-		case "rect":
+		case 'rect':
 			return (
 				<rect
 					x={attrs.x}
@@ -42,11 +42,11 @@ function ShapeNode(props: { shape: Shape }) {
 					ry={attrs.ry}
 				/>
 			);
-		case "line":
+		case 'line':
 			return <line x1={attrs.x1} y1={attrs.y1} x2={attrs.x2} y2={attrs.y2} />;
-		case "polyline":
+		case 'polyline':
 			return <polyline points={attrs.points} />;
-		case "polygon":
+		case 'polygon':
 			return <polygon points={attrs.points} />;
 		default:
 			throw new Error(
@@ -95,11 +95,11 @@ export function Icon(props: {
 }
 
 /** The check of FF's select and combobox, running left to right. */
-export const LIST_CHECK = "M4 12L9 17L20 6";
+export const LIST_CHECK = 'M4 12L9 17L20 6';
 
 /** The check draws in 80 ms ease-out and retracts in 40 ms ease-in. */
-const DRAW_IN = { duration: 0.08, ease: "easeOut" } as const;
-const DRAW_OUT = { duration: 0.04, ease: "easeIn" } as const;
+const DRAW_IN = { duration: 0.08, ease: 'easeOut' } as const;
+const DRAW_OUT = { duration: 0.04, ease: 'easeIn' } as const;
 
 /**
  * A check whose stroke draws in and retracts as `checked` flips. The path is

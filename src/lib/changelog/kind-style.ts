@@ -1,5 +1,5 @@
-import { color } from "#/lib/theme";
-import type { ChangeKind } from "./parse";
+import { color } from '#/lib/theme';
+import type { ChangeKind } from './parse';
 
 /**
  * One colour per kind, shared by the changelog's entry dots and the sidebar's:
@@ -9,11 +9,11 @@ import type { ChangeKind } from "./parse";
  */
 export function kindDotColor(kind: ChangeKind): string {
 	switch (kind) {
-		case "new":
+		case 'new':
 			return color.info;
-		case "breaking":
+		case 'breaking':
 			return color.destructive;
-		case "updated":
+		case 'updated':
 			return color.border;
 	}
 }

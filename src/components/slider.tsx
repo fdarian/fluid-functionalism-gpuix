@@ -9,7 +9,7 @@ import {
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	type Accessor,
 	createEffect,
@@ -21,25 +21,25 @@ import {
 	onCleanup,
 	Show,
 	untrack,
-} from "solid-js";
-import { createPointerCapture } from "#/lib/pointer-capture";
-import { createPresence } from "#/lib/presence";
+} from 'solid-js';
+import { createPointerCapture } from '#/lib/pointer-capture';
+import { createPresence } from '#/lib/presence';
 import {
 	color,
 	focusRing,
+	type as scale,
+	scheme,
 	shape,
 	sizeChoice,
 	springFade,
-	type as scale,
-	scheme,
 	motion as tween,
 	weight,
 	withAlpha,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
 export type SliderValue = number | [number, number];
-export type ValuePosition = "left" | "right" | "top" | "bottom" | "tooltip";
-export type SliderSize = "default" | "compact";
+export type ValuePosition = 'left' | 'right' | 'top' | 'bottom' | 'tooltip';
+export type SliderSize = 'default' | 'compact';
 
 // ─── Geometry ────────────────────────────────────────────────────────────────
 
@@ -115,14 +115,14 @@ const LARGE_STEP = 10;
 function decimalPlaces(n: number) {
 	if (n === 0) return 0;
 	if (Math.abs(n) < 1) {
-		const [mantissa, exponent] = n.toExponential().split("e-");
-		const fraction = mantissa.split(".")[1];
+		const [mantissa, exponent] = n.toExponential().split('e-');
+		const fraction = mantissa.split('.')[1];
 		return (
 			(fraction === undefined ? 0 : fraction.length) +
 			Number.parseInt(exponent, 10)
 		);
 	}
-	const fraction = n.toString().split(".")[1];
+	const fraction = n.toString().split('.')[1];
 	return fraction === undefined ? 0 : fraction.length;
 }
 
@@ -160,7 +160,7 @@ function createBoxRef() {
 	return {
 		read() {
 			if (element === undefined || !element.mounted) {
-				throw new Error("Slider is not mounted");
+				throw new Error('Slider is not mounted');
 			}
 			return element.getBoundingClientRect();
 		},
@@ -192,7 +192,7 @@ function ValueBubble(props: {
 				gap={props.gap}
 				deferred
 				priority={2}
-				style={{ backgroundColor: color.transparent, pointerEvents: "none" }}
+				style={{ backgroundColor: color.transparent, pointerEvents: 'none' }}
 			>
 				<motion.div
 					initial={{ opacity: 0, top: 4 }}
@@ -201,7 +201,7 @@ function ValueBubble(props: {
 					}
 					transition={presence.open() ? tween.fast : tween.fastExit}
 					style={{
-						position: "relative",
+						position: 'relative',
 						backgroundColor: color.foreground,
 						borderRadius: shape.bg,
 						paddingLeft: 8,
@@ -214,8 +214,8 @@ function ValueBubble(props: {
 						style={{
 							...scale.caption,
 							color: color.background,
-							fontVariantNumeric: "tabular-nums",
-							whiteSpace: "nowrap",
+							fontVariantNumeric: 'tabular-nums',
+							whiteSpace: 'nowrap',
 						}}
 					>
 						{props.text()}
@@ -257,15 +257,15 @@ function createHover() {
 	};
 }
 
-function layoutWidth(event: Pick<DomEvent, "width">) {
+function layoutWidth(event: Pick<DomEvent, 'width'>) {
 	if (event.width === undefined)
-		throw new Error("Layout event without a width");
+		throw new Error('Layout event without a width');
 	return event.width;
 }
 
-function pointerX(event: Pick<HostMouseEvent, "x">) {
+function pointerX(event: Pick<HostMouseEvent, 'x'>) {
 	if (event.x === undefined)
-		throw new Error("Pointer event without coordinates");
+		throw new Error('Pointer event without coordinates');
 	return event.x;
 }
 
@@ -288,7 +288,7 @@ function ValueDisplay(props: {
 	interacting: Accessor<boolean>;
 	testId: string | undefined;
 }) {
-	const [draft, setDraft] = createSignal("");
+	const [draft, setDraft] = createSignal('');
 	let settled = false;
 	const fields: HostElement[] = [];
 
@@ -296,7 +296,7 @@ function ValueDisplay(props: {
 	const selectField = (index: number) => {
 		const field = fields[index];
 		if (field === undefined)
-			throw new Error("Slider edit focused before it mounted");
+			throw new Error('Slider edit focused before it mounted');
 		field.select();
 	};
 
@@ -327,12 +327,12 @@ function ValueDisplay(props: {
 		...scale.body,
 		lineHeight: scale.body.fontSize,
 		fontWeight: heavy ? weight.semibold : weight.normal,
-		fontVariantNumeric: "tabular-nums",
-		whiteSpace: "nowrap" as const,
+		fontVariantNumeric: 'tabular-nums',
+		whiteSpace: 'nowrap' as const,
 	});
 	// The prefix and the value are flex items, and a flex item drops a trailing collapsible space: the no-break space is content, so it stays. One `<text>` is not an option, because the value takes the click and an inline span takes no events.
 	const prefix = () =>
-		props.label === undefined ? "" : `${props.label}:\u00a0`;
+		props.label === undefined ? '' : `${props.label}:\u00a0`;
 	const widest = () => {
 		const one = `${prefix()}${props.formatValue(props.max)}`;
 		return props.isRange ? `${one} — ${props.formatValue(props.max)}` : one;
@@ -352,7 +352,7 @@ function ValueDisplay(props: {
 					style={{
 						...textStyle(props.interacting()),
 						color: color.mutedForeground,
-						cursor: "text",
+						cursor: 'text',
 					}}
 				>
 					{props.formatValue(props.values[index])}
@@ -361,9 +361,9 @@ function ValueDisplay(props: {
 		>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					gap: 4,
 				}}
 			>
@@ -400,14 +400,14 @@ function ValueDisplay(props: {
 					}}
 					onChange={(event: DomEvent) => {
 						if (event.value === undefined) {
-							throw new Error("Slider edit change without a value");
+							throw new Error('Slider edit change without a value');
 						}
 						setDraft(event.value);
 					}}
 					onBlur={() => commit(index)}
 					onKeyDown={(event: KeyEvent) => {
-						if (event.key === "Escape") cancel();
-						else if (event.key === "Enter") {
+						if (event.key === 'Escape') cancel();
+						else if (event.key === 'Enter') {
 							event.preventDefault();
 							commit(index);
 						}
@@ -417,7 +417,7 @@ function ValueDisplay(props: {
 						height: 18,
 						fontSize: scale.body.fontSize,
 						fontWeight: weight.normal,
-						textAlign: "center",
+						textAlign: 'center',
 						color: color.foreground,
 						backgroundColor: color.transparent,
 						borderBottomWidth: 1,
@@ -430,18 +430,18 @@ function ValueDisplay(props: {
 	);
 
 	return (
-		<div style={{ position: "relative", flexShrink: 0 }}>
+		<div style={{ position: 'relative', flexShrink: 0 }}>
 			{/* Tabular digits keep the number from changing width, but the weight shift normal -> semibold still does, so this reserves the widest value at semibold. */}
 			<text style={{ ...textStyle(true), opacity: 0 }}>{widest()}</text>
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					bottom: 0,
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 				}}
 			>
 				<Show when={props.label !== undefined && props.editingIndex() === null}>
@@ -510,11 +510,11 @@ function CompactSlider(props: CompactProps) {
 		return list === null ? (props.max ?? 100) : list[list.length - 1];
 	};
 	const step = () => props.step ?? 1;
-	const valuePosition = () => props.valuePosition ?? "left";
+	const valuePosition = () => props.valuePosition ?? 'left';
 	const formatValue = (v: number) =>
 		props.formatValue === undefined ? String(v) : props.formatValue(v);
 	const inline = () =>
-		valuePosition() === "left" || valuePosition() === "right";
+		valuePosition() === 'left' || valuePosition() === 'right';
 
 	const [trackWidth, setTrackWidth] = createSignal<number>();
 	const box = createBoxRef();
@@ -523,7 +523,7 @@ function CompactSlider(props: CompactProps) {
 		valueToPixel(value, min(), max(), width);
 
 	const hover = createHover();
-	const pressTarget = createPointerCapture("Slider");
+	const pressTarget = createPointerCapture('Slider');
 	const [pressed, setPressed] = createSignal(false);
 	/** True once a press has moved: from then on the thumb is placed, not sprung. */
 	const [moving, setMoving] = createSignal(false);
@@ -700,24 +700,24 @@ function CompactSlider(props: CompactProps) {
 		const upper = thumb === 0 && isRange() ? values()[1] : max();
 		let next: number;
 		switch (event.key) {
-			case "ArrowRight":
-			case "ArrowUp":
+			case 'ArrowRight':
+			case 'ArrowUp':
 				next = walk(1, large);
 				break;
-			case "ArrowLeft":
-			case "ArrowDown":
+			case 'ArrowLeft':
+			case 'ArrowDown':
 				next = walk(-1, large);
 				break;
-			case "PageUp":
+			case 'PageUp':
 				next = walk(1, true);
 				break;
-			case "PageDown":
+			case 'PageDown':
 				next = walk(-1, true);
 				break;
-			case "Home":
+			case 'Home':
 				next = lower;
 				break;
-			case "End":
+			case 'End':
 				next = upper;
 				break;
 			default:
@@ -725,7 +725,7 @@ function CompactSlider(props: CompactProps) {
 		}
 		event.preventDefault();
 		// Base UI keeps its composite keys from reaching ancestors; Page Up / Down still bubble.
-		if (event.key !== "PageUp" && event.key !== "PageDown") {
+		if (event.key !== 'PageUp' && event.key !== 'PageDown') {
 			event.stopPropagation();
 		}
 		emitChange(thumb, Math.max(lower, Math.min(upper, next)));
@@ -734,7 +734,7 @@ function CompactSlider(props: CompactProps) {
 	/** FF's per-thumb names: "<label> minimum" / "<label> maximum", or bare "Minimum" / "Maximum". */
 	const thumbLabel = (index: number) => {
 		if (!isRange()) return props.label;
-		const side = index === 0 ? "Minimum" : "Maximum";
+		const side = index === 0 ? 'Minimum' : 'Maximum';
 		return props.label === undefined
 			? side
 			: `${props.label} ${side.toLowerCase()}`;
@@ -756,7 +756,7 @@ function CompactSlider(props: CompactProps) {
 			min: min(),
 			max: max(),
 			text: isRange()
-				? `${value.toLocaleString()} ${index === 0 ? "start" : "end"} range`
+				? `${value.toLocaleString()} ${index === 0 ? 'start' : 'end'} range`
 				: undefined,
 		};
 	};
@@ -810,7 +810,7 @@ function CompactSlider(props: CompactProps) {
 	);
 
 	const display = () => (
-		<Show when={props.showValue !== false && valuePosition() !== "tooltip"}>
+		<Show when={props.showValue !== false && valuePosition() !== 'tooltip'}>
 			<ValueDisplay
 				values={values()}
 				editingIndex={editingIndex}
@@ -854,18 +854,18 @@ function CompactSlider(props: CompactProps) {
 				aria-disabled={props.disabled === true}
 				onKeyDown={onThumbKey(index)}
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					left: thumbX[index],
 					top: PRESS_PAD,
 					width: THUMB_SIZE,
 					height: THUMB_SIZE,
 					borderRadius: THUMB_SIZE / 2,
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-					pointerEvents: "none",
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+					pointerEvents: 'none',
 					keyboardFocusDim: false,
-					...springFade(["outline-color"]),
+					...springFade(['outline-color']),
 					focusVisible: focusRing(1),
 				}}
 			>
@@ -874,11 +874,11 @@ function CompactSlider(props: CompactProps) {
 						width: THUMB_SIZE_REST,
 						height: THUMB_SIZE_REST,
 						borderRadius: THUMB_SIZE_REST / 2,
-						backgroundColor: "#FFFFFF",
-						boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
+						backgroundColor: '#FFFFFF',
+						boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
 					}}
 				/>
-				<Show when={valuePosition() === "tooltip"}>
+				<Show when={valuePosition() === 'tooltip'}>
 					<ValueBubble
 						text={() => formatValue(values()[index])}
 						visible={interacting}
@@ -892,33 +892,33 @@ function CompactSlider(props: CompactProps) {
 	const areaHeight = () =>
 		inline()
 			? THUMB_SIZE + 16
-			: THUMB_SIZE + (valuePosition() === "tooltip" ? 16 : 0);
+			: THUMB_SIZE + (valuePosition() === 'tooltip' ? 16 : 0);
 
 	return (
 		<div
 			testId={props.testId}
 			style={{
-				display: "flex",
-				flexDirection: inline() ? "row" : "column",
-				alignItems: inline() ? "center" : "stretch",
+				display: 'flex',
+				flexDirection: inline() ? 'row' : 'column',
+				alignItems: inline() ? 'center' : 'stretch',
 				gap: inline() ? 8 : 0,
 				marginBottom: inline() ? 8 : 0,
-				width: "100%",
+				width: '100%',
 				opacity: props.disabled ? 0.5 : 1,
-				pointerEvents: props.disabled ? "none" : "auto",
-				userSelect: "none",
+				pointerEvents: props.disabled ? 'none' : 'auto',
+				userSelect: 'none',
 			}}
 		>
-			<Show when={valuePosition() === "top" || valuePosition() === "left"}>
+			<Show when={valuePosition() === 'top' || valuePosition() === 'left'}>
 				{display()}
 			</Show>
 			<div
 				style={{
-					position: "relative",
+					position: 'relative',
 					flexGrow: 1,
 					minWidth: 0,
 					height: areaHeight(),
-					paddingTop: valuePosition() === "tooltip" ? 16 : 0,
+					paddingTop: valuePosition() === 'tooltip' ? 16 : 0,
 				}}
 			>
 				<div
@@ -928,8 +928,8 @@ function CompactSlider(props: CompactProps) {
 					}
 					onLayout={(event: DomEvent) => setTrackWidth(layoutWidth(event))}
 					style={{
-						position: "relative",
-						width: "100%",
+						position: 'relative',
+						width: '100%',
 						height: THUMB_SIZE + PRESS_PAD * 2,
 						opacity: trackWidth() === undefined ? 0 : 1,
 					}}
@@ -942,18 +942,18 @@ function CompactSlider(props: CompactProps) {
 						ref={pressTarget.ref}
 						{...pointer}
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							top: 0,
 							bottom: 0,
 							left: -PRESS_PAD,
 							right: -PRESS_PAD,
-							cursor: "ew-resize",
+							cursor: 'ew-resize',
 						}}
 					/>
 					{/* The pill clips the fill and the hover bar to its rounded ends. */}
 					<div
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							left: TRACK_INSET,
 							right: TRACK_INSET,
 							top: PRESS_PAD + TRACK_INSET,
@@ -961,8 +961,8 @@ function CompactSlider(props: CompactProps) {
 							borderRadius: TRACK_BG_HEIGHT / 2,
 							borderWidth: 1,
 							borderColor: color.border,
-							overflow: "hidden",
-							pointerEvents: "none",
+							overflow: 'hidden',
+							pointerEvents: 'none',
 						}}
 					>
 						<div
@@ -970,7 +970,7 @@ function CompactSlider(props: CompactProps) {
 								props.testId === undefined ? undefined : `${props.testId}-fill`
 							}
 							style={{
-								position: "absolute",
+								position: 'absolute',
 								top: 0,
 								bottom: 0,
 								left: isRange() ? fillEdge0 : 0,
@@ -983,7 +983,7 @@ function CompactSlider(props: CompactProps) {
 							animate={{ opacity: preview() !== null && !pressed() ? 1 : 0 }}
 							transition={{ duration: 0.15 }}
 							style={{
-								position: "absolute",
+								position: 'absolute',
 								top: 0,
 								bottom: 0,
 								left: (preview()?.left ?? 0) - TRACK_INSET,
@@ -1023,10 +1023,10 @@ function CompactSlider(props: CompactProps) {
 											}}
 											transition={tween.moderate}
 											style={{
-												position: "absolute",
+												position: 'absolute',
 												borderRadius: 9999,
 												backgroundColor: color.mutedForeground,
-												pointerEvents: "none",
+												pointerEvents: 'none',
 											}}
 										/>
 									);
@@ -1038,10 +1038,10 @@ function CompactSlider(props: CompactProps) {
 					<Show when={isRange()}>{thumb(1)}</Show>
 					<Show when={preview()}>
 						{(shown: Accessor<HoverPreview>) => (
-							<Show when={valuePosition() !== "tooltip"}>
+							<Show when={valuePosition() !== 'tooltip'}>
 								<div
 									style={{
-										position: "absolute",
+										position: 'absolute',
 										left: shown().cursorX,
 										top: 4,
 										width: 0,
@@ -1059,7 +1059,7 @@ function CompactSlider(props: CompactProps) {
 					</Show>
 				</div>
 			</div>
-			<Show when={valuePosition() === "bottom" || valuePosition() === "right"}>
+			<Show when={valuePosition() === 'bottom' || valuePosition() === 'right'}>
 				{display()}
 			</Show>
 		</div>
@@ -1074,7 +1074,7 @@ interface ComfortableProps {
 	min?: number;
 	max?: number;
 	step?: number;
-	variant?: "pips" | "scrubber";
+	variant?: 'pips' | 'scrubber';
 	label?: string;
 	formatValue?: (v: number) => string;
 	disabled?: boolean;
@@ -1087,7 +1087,7 @@ const ROW_BORDER = 1;
 
 /** A 32px bordered row with the label at the start and the value at the end. Pips draw a dot per step; the scrubber fills continuously, glued to the cursor. */
 function ComfortableSlider(props: ComfortableProps) {
-	const variant = () => props.variant ?? "pips";
+	const variant = () => props.variant ?? 'pips';
 	const min = () => props.min ?? 0;
 	const max = () => props.max ?? 100;
 	const step = () => props.step ?? 1;
@@ -1098,8 +1098,8 @@ function ComfortableSlider(props: ComfortableProps) {
 	const box = createBoxRef();
 	const hover = createHover();
 	// The gutter spans the row and 8px past each end, so it takes the row's drags too.
-	const gutter = createPointerCapture("Slider");
-	const handle = createPointerCapture("Slider handle");
+	const gutter = createPointerCapture('Slider');
+	const handle = createPointerCapture('Slider handle');
 	const [pressed, setPressed] = createSignal(false);
 	const [focused, setFocused] = createSignal(false);
 	const [preview, setPreview] = createSignal<HoverPreview | null>(null);
@@ -1127,7 +1127,7 @@ function ComfortableSlider(props: ComfortableProps) {
 
 	const valueAtX = (x: number) => {
 		const clamped = Math.max(0, Math.min(liveWidth, x - rowLeft));
-		if (variant() === "pips") {
+		if (variant() === 'pips') {
 			const count = pips().length;
 			if (count <= 1) return min();
 			const index = Math.max(
@@ -1146,7 +1146,7 @@ function ComfortableSlider(props: ComfortableProps) {
 	/** Where the fill's leading edge sits for a value, as the handle line sees it. */
 	const edgeOf = (v: number, width: number) => {
 		const p = percentOf(v);
-		if (variant() === "pips") {
+		if (variant() === 'pips') {
 			return v === min() ? 0 : p * width + (20 - 20 * p);
 		}
 		return p * width;
@@ -1196,7 +1196,7 @@ function ComfortableSlider(props: ComfortableProps) {
 	const onMove = (event: HostMouseMoveEvent) => {
 		const x = pointerX(event);
 		if (dragging) {
-			setPlacing(variant() === "scrubber");
+			setPlacing(variant() === 'scrubber');
 			emit(valueAtX(x));
 			return;
 		}
@@ -1267,31 +1267,31 @@ function ComfortableSlider(props: ComfortableProps) {
 			);
 		let next: number;
 		switch (event.key) {
-			case "ArrowRight":
-			case "ArrowUp":
+			case 'ArrowRight':
+			case 'ArrowUp':
 				next = move(1, large);
 				break;
-			case "ArrowLeft":
-			case "ArrowDown":
+			case 'ArrowLeft':
+			case 'ArrowDown':
 				next = move(-1, large);
 				break;
-			case "PageUp":
+			case 'PageUp':
 				next = move(1, true);
 				break;
-			case "PageDown":
+			case 'PageDown':
 				next = move(-1, true);
 				break;
-			case "Home":
+			case 'Home':
 				next = min();
 				break;
-			case "End":
+			case 'End':
 				next = max();
 				break;
 			default:
 				return;
 		}
 		event.preventDefault();
-		if (event.key !== "PageUp" && event.key !== "PageDown") {
+		if (event.key !== 'PageUp' && event.key !== 'PageDown') {
 			event.stopPropagation();
 		}
 		emit(next);
@@ -1322,14 +1322,14 @@ function ComfortableSlider(props: ComfortableProps) {
 	const fillWidth = createTransform(
 		[percent, atMinValue, widthValue],
 		([p, zero, width]) =>
-			variant() === "scrubber"
+			variant() === 'scrubber'
 				? p * width
 				: p * width + 20 - 20 * p - 20 * zero,
 	);
 	const lineLeft = createTransform(
 		[percent, atMinValue, widthValue],
 		([p, zero, width]) =>
-			variant() === "pips"
+			variant() === 'pips'
 				? p * width + 11 - 24 * p
 				: p * width - 9 + 17 * zero,
 	);
@@ -1342,20 +1342,20 @@ function ComfortableSlider(props: ComfortableProps) {
 		isActive() ? color.foreground : color.mutedForeground;
 	const textStyle = {
 		...scale.body,
-		whiteSpace: "nowrap" as const,
+		whiteSpace: 'nowrap' as const,
 	};
-	const valueStyle = { ...textStyle, fontVariantNumeric: "tabular-nums" };
-	const textFade = springFade(["color"]);
+	const valueStyle = { ...textStyle, fontVariantNumeric: 'tabular-nums' };
+	const textFade = springFade(['color']);
 
 	return (
 		<div
 			testId={props.testId}
 			style={{
-				position: "relative",
-				width: "100%",
+				position: 'relative',
+				width: '100%',
 				opacity: props.disabled ? 0.5 : 1,
-				pointerEvents: props.disabled ? "none" : "auto",
-				userSelect: "none",
+				pointerEvents: props.disabled ? 'none' : 'auto',
+				userSelect: 'none',
 			}}
 		>
 			{/* 8px gutters either side count as the row: presses there clamp to min or max. */}
@@ -1366,12 +1366,12 @@ function ComfortableSlider(props: ComfortableProps) {
 				ref={gutter.ref}
 				{...pointer}
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					bottom: 0,
 					left: -PRESS_PAD,
 					right: -PRESS_PAD,
-					cursor: "ew-resize",
+					cursor: 'ew-resize',
 				}}
 			/>
 			<div
@@ -1382,32 +1382,32 @@ function ComfortableSlider(props: ComfortableProps) {
 				}
 				{...pointer}
 				style={{
-					position: "relative",
+					position: 'relative',
 					height: ROW_HEIGHT,
-					width: "100%",
+					width: '100%',
 					borderWidth: ROW_BORDER,
 					borderColor: color.border,
 					borderRadius: shape.bg,
-					overflow: "hidden",
-					cursor: "ew-resize",
+					overflow: 'hidden',
+					cursor: 'ew-resize',
 					outlineWidth: 1,
 					outlineColor: focused() ? color.focusRing : color.transparent,
 					outlineOffset: 2,
-					...springFade(["outline-color"]),
+					...springFade(['outline-color']),
 				}}
 			>
-				<Show when={variant() === "pips"}>
+				<Show when={variant() === 'pips'}>
 					<div
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							top: 0,
 							bottom: 0,
 							left: 0,
 							right: 0,
-							display: "flex",
-							flexDirection: "row",
-							justifyContent: "space-between",
-							alignItems: "center",
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'space-between',
+							alignItems: 'center',
 							paddingLeft: 12,
 							paddingRight: 12,
 						}}
@@ -1435,7 +1435,7 @@ function ComfortableSlider(props: ComfortableProps) {
 													? color.foreground
 													: color.mutedForeground,
 												opacity: active() ? 1 : 0.3,
-												...springFade(["background-color", "opacity"]),
+												...springFade(['background-color', 'opacity']),
 											}}
 										/>
 									</div>
@@ -1445,17 +1445,17 @@ function ComfortableSlider(props: ComfortableProps) {
 					</div>
 				</Show>
 				{/* Blank boxes the size of the label and the value, in the surface colour, so no pip is drawn through the words. */}
-				<Show when={variant() === "pips"}>
+				<Show when={variant() === 'pips'}>
 					<div
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							top: 0,
 							bottom: 0,
 							left: 0,
 							right: 0,
-							display: "flex",
-							flexDirection: "row",
-							alignItems: "center",
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'center',
 							paddingLeft: 8,
 							paddingRight: 8,
 						}}
@@ -1490,7 +1490,7 @@ function ComfortableSlider(props: ComfortableProps) {
 					animate={{ opacity: preview() !== null && !pressed() ? 1 : 0 }}
 					transition={{ duration: 0.15 }}
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 0,
 						bottom: 0,
 						left: preview()?.left ?? 0,
@@ -1504,7 +1504,7 @@ function ComfortableSlider(props: ComfortableProps) {
 							props.testId === undefined ? undefined : `${props.testId}-fill`
 						}
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							top: 0,
 							bottom: 0,
 							left: 0,
@@ -1520,25 +1520,25 @@ function ComfortableSlider(props: ComfortableProps) {
 						}}
 						transition={tween.fast}
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							left: lineLeft,
 							width: 2,
 							borderRadius: 1,
 							backgroundColor: lineColor(),
-							...springFade(["background-color"]),
+							...springFade(['background-color']),
 						}}
 					/>
 				</Show>
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 0,
 						bottom: 0,
 						left: 0,
 						right: 0,
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
 						paddingLeft: 16,
 						paddingRight: 16,
 					}}
@@ -1550,14 +1550,14 @@ function ComfortableSlider(props: ComfortableProps) {
 					</Show>
 					<div style={{ flexGrow: 1 }} />
 					{/* Stands in for the source's `minWidth: <max length>ch` on the value: the widest value, set in tabular digits, so the label never moves as the number changes. */}
-					<div style={{ position: "relative", flexShrink: 0 }}>
+					<div style={{ position: 'relative', flexShrink: 0 }}>
 						<text style={{ ...valueStyle, opacity: 0 }}>
 							{formatValue(max())}
 						</text>
 						<text
 							style={{
 								...valueStyle,
-								position: "absolute",
+								position: 'absolute',
 								top: 0,
 								right: 0,
 								color: textColor(),
@@ -1568,7 +1568,7 @@ function ComfortableSlider(props: ComfortableProps) {
 						</text>
 					</div>
 				</div>
-				<Show when={variant() === "scrubber" && inner() !== undefined}>
+				<Show when={variant() === 'scrubber' && inner() !== undefined}>
 					<div
 						testId={
 							props.testId === undefined ? undefined : `${props.testId}-handle`
@@ -1581,12 +1581,12 @@ function ComfortableSlider(props: ComfortableProps) {
 						onMouseEnter={onEnter}
 						onMouseLeave={onLeave}
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							top: 0,
 							bottom: 0,
 							left: handleLeft,
 							width: 8,
-							cursor: "ew-resize",
+							cursor: 'ew-resize',
 						}}
 					/>
 				</Show>
@@ -1609,13 +1609,13 @@ function ComfortableSlider(props: ComfortableProps) {
 				onFocus={() => setFocused(true)}
 				onBlur={() => setFocused(false)}
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					width: 1,
 					height: 1,
 					opacity: 0,
-					pointerEvents: "none",
+					pointerEvents: 'none',
 					keyboardFocusDim: false,
 				}}
 			/>
@@ -1623,7 +1623,7 @@ function ComfortableSlider(props: ComfortableProps) {
 				{(shown: Accessor<HoverPreview>) => (
 					<div
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							left: shown().cursorX,
 							top: -6,
 							width: 0,
@@ -1646,7 +1646,7 @@ function ComfortableSlider(props: ComfortableProps) {
 
 export interface SliderProps extends CompactProps {
 	/** Default-step layout: value pips along the track, or an edge-to-edge scrubber. Ignored when the compact design renders. */
-	variant?: "pips" | "scrubber";
+	variant?: 'pips' | 'scrubber';
 	/** `"default"` renders the pip / scrubber row, `"compact"` the dense thumb-and-track design. */
 	size?: SliderSize;
 }
@@ -1654,7 +1654,7 @@ export interface SliderProps extends CompactProps {
 /** One slider, two engines. Features only the compact engine implements (a range, a step list, value display) force it whatever the size, so no capability is lost. */
 export function Slider(props: SliderProps) {
 	const needsCompact = () =>
-		(props.size ?? sizeChoice()) === "compact" ||
+		(props.size ?? sizeChoice()) === 'compact' ||
 		Array.isArray(props.value) ||
 		props.steps !== undefined ||
 		props.showSteps !== undefined ||
@@ -1700,7 +1700,7 @@ export function Slider(props: SliderProps) {
 
 function scalar(value: SliderValue): number {
 	if (Array.isArray(value)) {
-		throw new Error("The default slider takes a single value");
+		throw new Error('The default slider takes a single value');
 	}
 	return value;
 }

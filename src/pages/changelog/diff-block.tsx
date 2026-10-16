@@ -1,8 +1,8 @@
-import { For } from "solid-js";
-import { MONO } from "#/lib/doc-page";
-import { color, siteType, weight, withAlpha } from "#/lib/theme";
+import { For } from 'solid-js';
+import { MONO } from '#/lib/doc-page';
+import { color, siteType, weight, withAlpha } from '#/lib/theme';
 
-type Mark = "add" | "remove" | null;
+type Mark = 'add' | 'remove' | null;
 
 /**
  * Splits a release's diff into marked lines, as the source's `highlightDiff`
@@ -10,10 +10,10 @@ type Mark = "add" | "remove" | null;
  * diffs write `-code`, and the space goes too when every line has one.
  */
 function diffLines(diff: string): { mark: Mark; text: string }[] {
-	const lines = diff.replace(/\n+$/, "").split("\n");
+	const lines = diff.replace(/\n+$/, '').split('\n');
 	const spaced = lines.every((line) => !line || /^[+\- ]( |$)/.test(line));
 	return lines.map((line) => ({
-		mark: line.startsWith("+") ? "add" : line.startsWith("-") ? "remove" : null,
+		mark: line.startsWith('+') ? 'add' : line.startsWith('-') ? 'remove' : null,
 		text: /^[+\- ]/.test(line) ? line.slice(spaced ? 2 : 1) : line,
 	}));
 }
@@ -27,8 +27,8 @@ export function DiffBlock(props: { diff: string }) {
 	return (
 		<div
 			style={{
-				width: "100%",
-				overflowX: "auto",
+				width: '100%',
+				overflowX: 'auto',
 				borderRadius: 8,
 				borderWidth: 1,
 				borderColor: color.border,
@@ -36,10 +36,10 @@ export function DiffBlock(props: { diff: string }) {
 		>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					flexShrink: 0,
-					minWidth: "100%",
+					minWidth: '100%',
 					paddingTop: 8,
 					paddingBottom: 8,
 				}}
@@ -48,14 +48,14 @@ export function DiffBlock(props: { diff: string }) {
 					{(line) => (
 						<div
 							style={{
-								display: "flex",
-								flexDirection: "row",
+								display: 'flex',
+								flexDirection: 'row',
 								paddingLeft: 12,
 								paddingRight: 12,
 								backgroundColor:
-									line.mark === "add"
+									line.mark === 'add'
 										? withAlpha(color.success, 0.14)
-										: line.mark === "remove"
+										: line.mark === 'remove'
 											? withAlpha(color.destructive, 0.14)
 											: color.transparent,
 							}}
@@ -68,19 +68,19 @@ export function DiffBlock(props: { diff: string }) {
 										lineHeight: siteType.caption.lineHeight,
 										fontWeight: weight.normal,
 										color:
-											line.mark === "add"
+											line.mark === 'add'
 												? color.success
-												: line.mark === "remove"
+												: line.mark === 'remove'
 													? color.destructive
 													: color.transparent,
-										whiteSpace: "pre",
+										whiteSpace: 'pre',
 									}}
 								>
-									{line.mark === "add"
-										? "+"
-										: line.mark === "remove"
-											? "-"
-											: " "}
+									{line.mark === 'add'
+										? '+'
+										: line.mark === 'remove'
+											? '-'
+											: ' '}
 								</text>
 							</div>
 							<text
@@ -90,10 +90,10 @@ export function DiffBlock(props: { diff: string }) {
 									lineHeight: siteType.caption.lineHeight,
 									fontWeight: weight.normal,
 									color: color.foreground,
-									whiteSpace: "pre",
+									whiteSpace: 'pre',
 								}}
 							>
-								{line.text === "" ? " " : line.text}
+								{line.text === '' ? ' ' : line.text}
 							</text>
 						</div>
 					)}

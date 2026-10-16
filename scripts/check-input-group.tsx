@@ -7,13 +7,13 @@
  * - The error caption is 12/16 at the default step and 11/14 at the compact one.
  * - Hovering a field eases its ring in over 80 ms instead of switching it.
  */
-import { createTestRoot } from "@gpuix/solid/testing";
-import { App } from "#/app";
-import { loadDemos, loadPages } from "#/lib/demo";
-import { fonts } from "#/lib/fonts";
-import { setThemeChoice } from "#/lib/theme";
-import { scrollIntoView } from "./check-kit";
-import { readPng } from "./png-pixels";
+import { createTestRoot } from '@gpuix/solid/testing';
+import { App } from '#/app';
+import { loadDemos, loadPages } from '#/lib/demo';
+import { fonts } from '#/lib/fonts';
+import { setThemeChoice } from '#/lib/theme';
+import { scrollIntoView } from './check-kit';
+import { readPng } from './png-pixels';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const test = createTestRoot({ width: 1240, height: 780, fonts });
@@ -45,47 +45,49 @@ function caption(text: string) {
 let failed = false;
 function report(name: string, ok: boolean, detail: string) {
 	if (!ok) failed = true;
-	console.log(`${ok ? "PASS" : "FAIL"} ${name}: ${detail}`);
+	console.log(`${ok ? 'PASS' : 'FAIL'} ${name}: ${detail}`);
 }
 
 const demos = await loadDemos();
 const pages = await loadPages(demos);
-setThemeChoice("dark");
-test.render(() => <App demos={demos} pages={pages} initialPage="input-group" />);
+setThemeChoice('dark');
+test.render(() => (
+	<App demos={demos} pages={pages} initialPage="input-group" />
+));
 await settle(800);
 
-const disabledInput = element("disabled-input").id;
+const disabledInput = element('disabled-input').id;
 const reached = new Set<number>();
 for (let presses = 0; presses < 40; presses++) {
-	renderer.simulateKeystrokes("Tab");
+	renderer.simulateKeystrokes('Tab');
 	await settle(60);
 	const focused = renderer.getFocusedElementId();
 	if (focused !== null) reached.add(focused);
 }
 report(
-	"disabled field is out of the Tab order",
+	'disabled field is out of the Tab order',
 	!reached.has(disabledInput),
-	`Tab reached ${reached.size} elements, the disabled input ${reached.has(disabledInput) ? "among them" : "not among them"}`,
+	`Tab reached ${reached.size} elements, the disabled input ${reached.has(disabledInput) ? 'among them' : 'not among them'}`,
 );
 
-const defaultCaption = caption("Please enter a valid email address.");
+const defaultCaption = caption('Please enter a valid email address.');
 report(
-	"default error caption is 12/16",
-	defaultCaption === "12/16",
+	'default error caption is 12/16',
+	defaultCaption === '12/16',
 	defaultCaption,
 );
-const compactCaption = caption("Enter a valid email.");
+const compactCaption = caption('Enter a valid email.');
 report(
-	"compact error caption is 11/14",
-	compactCaption === "11/14",
+	'compact error caption is 11/14',
+	compactCaption === '11/14',
 	compactCaption,
 );
 
 // Hover fade, on a held motion clock so a slow frame cannot skip the middle of the 80 ms.
 const FADE_PATH = `/tmp/check-input-group-${process.pid}.png`;
-await scrollIntoView(renderer, "name");
-const field = renderer.getElementBounds(element("name").id);
-if (field === null) throw new Error("no bounds for the name field");
+await scrollIntoView(renderer, 'name');
+const field = renderer.getElementBounds(element('name').id);
+if (field === null) throw new Error('no bounds for the name field');
 // The ring is a 1px outline just outside the field box's left edge, and shows up only on hover.
 const probe = {
 	x: Math.round(field.x) - 1,
@@ -114,7 +116,7 @@ step(300);
 const ringHovered = ringSum();
 renderer.clockResume();
 report(
-	"hover ring is part-way at 16 ms",
+	'hover ring is part-way at 16 ms',
 	ringHovered > ringRest + 4 &&
 		ringMiddle > ringRest &&
 		ringMiddle < ringRest + 0.6 * (ringHovered - ringRest),

@@ -11,16 +11,16 @@
  * `spring.fast` (a bounce-free 80 ms spring): the widths travel between their
  * two ends in a few frames and never overshoot.
  */
-import { createSignal } from "solid-js";
-import { TabsSubtle, TabsSubtleItem } from "#/components/tabs-subtle";
-import { createCheck } from "./check-kit";
+import { createSignal } from 'solid-js';
+import { TabsSubtle, TabsSubtleItem } from '#/components/tabs-subtle';
+import { createCheck } from './check-kit';
 
 const [selected, setSelected] = createSignal(0);
 const kit = await createCheck(() => (
 	<div
-		style={{ display: "flex", flexDirection: "column", gap: 12, padding: 20 }}
+		style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 20 }}
 	>
-		{(["default", "compact"] as const).map((size) => (
+		{(['default', 'compact'] as const).map((size) => (
 			<>
 				<TabsSubtle selectedIndex={0} onSelect={() => {}} size={size}>
 					<TabsSubtleItem
@@ -62,7 +62,7 @@ await kit.settle(800);
 
 const expected = { default: 8, compact: 6 } as const;
 const iconGap = { default: 8, compact: 4 } as const;
-for (const size of ["default", "compact"] as const) {
+for (const size of ['default', 'compact'] as const) {
 	const margin =
 		width(`${size}-active`) - width(`${size}-plain`) + iconGap[size];
 	kit.check(
@@ -72,8 +72,8 @@ for (const size of ["default", "compact"] as const) {
 	);
 }
 
-const unfolded = width("first");
-const folded = width("second");
+const unfolded = width('first');
+const folded = width('second');
 // The motion clock is held and stepped by hand, so the frames sampled do not depend on how fast the machine runs them.
 renderer.clockPause();
 setSelected(1);
@@ -82,43 +82,43 @@ const firstWidths: number[] = [];
 const secondWidths: number[] = [];
 for (let frame = 0; frame < 40; frame++) {
 	kit.step(8);
-	firstWidths.push(width("first"));
-	secondWidths.push(width("second"));
+	firstWidths.push(width('first'));
+	secondWidths.push(width('second'));
 }
 renderer.clockResume();
 const first = (index: number) => firstWidths[index] as number;
 const second = (index: number) => secondWidths[index] as number;
 const last = firstWidths.length - 1;
 kit.check(
-	"the old label folds to the icon-only width",
+	'the old label folds to the icon-only width',
 	Math.abs(first(last) - folded) < 0.5,
 	`${first(last).toFixed(2)} (want ${folded.toFixed(2)})`,
 );
 kit.check(
-	"the selected tab unfolds to the label width",
+	'the selected tab unfolds to the label width',
 	second(last) > folded + 20,
 	`${second(last).toFixed(2)} against ${folded.toFixed(2)} folded`,
 );
 kit.check(
-	"folding passes through widths between its ends",
+	'folding passes through widths between its ends',
 	firstWidths.some((value) => value < unfolded - 0.5 && value > folded + 0.5),
 	firstWidths
 		.slice(0, 8)
 		.map((value) => value.toFixed(1))
-		.join(" "),
+		.join(' '),
 );
 kit.check(
-	"unfolding passes through widths between its ends",
+	'unfolding passes through widths between its ends',
 	secondWidths.some(
 		(value) => value > folded + 0.5 && value < second(last) - 0.5,
 	),
 	secondWidths
 		.slice(0, 8)
 		.map((value) => value.toFixed(1))
-		.join(" "),
+		.join(' '),
 );
 kit.check(
-	"neither width overshoots its end",
+	'neither width overshoots its end',
 	firstWidths.every(
 		(value) => value <= unfolded + 0.5 && value >= folded - 0.5,
 	) &&

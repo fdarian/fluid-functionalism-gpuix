@@ -2,23 +2,23 @@ import type {
 	HostMouseEvent,
 	HostMouseMoveEvent,
 	KeyEvent,
-} from "@gpuix/solid";
-import { motion } from "@gpuix/solid";
-import { createSignal, createUniqueId } from "solid-js";
-import { createPointerCapture } from "#/lib/pointer-capture";
+} from '@gpuix/solid';
+import { motion } from '@gpuix/solid';
+import { createSignal, createUniqueId } from 'solid-js';
+import { createPointerCapture } from '#/lib/pointer-capture';
 import {
 	color,
 	fade,
 	focusRing,
-	sizeChoice,
 	type as scale,
 	scheme,
+	sizeChoice,
 	motion as tween,
 	twShadow,
 	weight,
-} from "#/lib/theme";
+} from '#/lib/theme';
 
-export type SwitchSize = "default" | "compact";
+export type SwitchSize = 'default' | 'compact';
 
 const METRICS = {
 	default: {
@@ -77,7 +77,7 @@ export function Switch(props: {
 	const [dragX, setDragX] = createSignal<number | null>(null);
 	let press: { startX: number; originX: number } | undefined;
 	let dragging = false;
-	const row = createPointerCapture("Switch");
+	const row = createPointerCapture('Switch');
 
 	const thumbWidth = () =>
 		pressed()
@@ -97,7 +97,7 @@ export function Switch(props: {
 
 	const onPressStart = (event: HostMouseEvent) => {
 		if (props.disabled || event.button !== 0) return;
-		if (event.x === undefined) throw new Error("mouseDown without coordinates");
+		if (event.x === undefined) throw new Error('mouseDown without coordinates');
 		row.capture(event);
 		setPressed(true);
 		dragging = false;
@@ -106,7 +106,7 @@ export function Switch(props: {
 
 	const onPressMove = (event: HostMouseMoveEvent) => {
 		if (press === undefined) return;
-		if (event.x === undefined) throw new Error("mouseMove without coordinates");
+		if (event.x === undefined) throw new Error('mouseMove without coordinates');
 		const delta = event.x - press.startX;
 		if (!dragging) {
 			if (Math.abs(delta) < DRAG_DEAD_ZONE) return;
@@ -127,7 +127,7 @@ export function Switch(props: {
 			props.onToggle();
 			return;
 		}
-		if (releasedAt === null) throw new Error("drag ended without a position");
+		if (releasedAt === null) throw new Error('drag ended without a position');
 		// Past the midpoint of the drag range is on, short of it off, whichever side it started from.
 		const shouldBeOn = releasedAt > (dragMin + dragMax()) / 2;
 		if (shouldBeOn !== props.checked) props.onToggle();
@@ -145,15 +145,15 @@ export function Switch(props: {
 	// Base UI's switch root owns the keys: Enter clicks on keydown, Space on keyup (a keydown only keeps the page from scrolling).
 	const onKeyDown = (event: KeyEvent) => {
 		if (props.disabled) return;
-		if (event.key === "Enter") {
+		if (event.key === 'Enter') {
 			event.preventDefault();
 			props.onToggle();
-		} else if (event.key === " ") {
+		} else if (event.key === ' ') {
 			event.preventDefault();
 		}
 	};
 	const onKeyUp = (event: KeyEvent) => {
-		if (props.disabled || event.key !== " " || event.defaultPrevented) return;
+		if (props.disabled || event.key !== ' ' || event.defaultPrevented) return;
 		props.onToggle();
 	};
 
@@ -177,21 +177,21 @@ export function Switch(props: {
 			onPointerUp={onRelease}
 			onLostPointerCapture={onPressCancel}
 			style={{
-				display: "flex",
-				flexDirection: props.settingsRow === true ? "row-reverse" : "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: props.settingsRow === true ? 'row-reverse' : 'row',
+				alignItems: 'center',
 				gap: m().gap,
 				paddingLeft: props.settingsRow === true ? 4 : m().padX,
 				paddingRight: props.settingsRow === true ? 4 : m().padX,
 				paddingTop: props.settingsRow === true ? 0 : m().padY,
 				paddingBottom: props.settingsRow === true ? 0 : m().padY,
 				...(props.settingsRow === true
-					? { justifyContent: "space-between", width: "100%", height: 36 }
+					? { justifyContent: 'space-between', width: '100%', height: 36 }
 					: {}),
-				cursor: "pointer",
-				userSelect: "none",
+				cursor: 'pointer',
+				userSelect: 'none',
 				opacity: props.disabled ? 0.5 : 1,
-				pointerEvents: props.disabled ? "none" : "auto",
+				pointerEvents: props.disabled ? 'none' : 'auto',
 			}}
 		>
 			<div
@@ -208,7 +208,7 @@ export function Switch(props: {
 				onKeyDown={onKeyDown}
 				onKeyUp={onKeyUp}
 				style={{
-					position: "relative",
+					position: 'relative',
 					flexShrink: 0,
 					width: m().trackWidth,
 					height: m().trackHeight,
@@ -216,8 +216,8 @@ export function Switch(props: {
 					backgroundColor: trackColor(),
 					// Not the full colour list: the source's ring is a box shadow that appears at once, and an outline-color
 					// fade would catch the port's outline ring.
-					...fade(["background-color"], 80),
-					cursor: "pointer",
+					...fade(['background-color'], 80),
+					cursor: 'pointer',
 					keyboardFocusDim: false,
 					focusVisible: focusRing(2),
 				}}
@@ -240,8 +240,8 @@ export function Switch(props: {
 							: { ...tween.moderate, left: tween.snap }
 					}
 					style={{
-						position: "absolute",
-						backgroundColor: "#FFFFFF",
+						position: 'absolute',
+						backgroundColor: '#FFFFFF',
 						borderRadius: 9999,
 						boxShadow: twShadow.sm,
 					}}
@@ -252,9 +252,9 @@ export function Switch(props: {
 				style={{
 					...m().text,
 					fontWeight: weight.normal,
-					whiteSpace: "nowrap",
+					whiteSpace: 'nowrap',
 					color: props.checked ? color.foreground : color.mutedForeground,
-					...fade(["color"], 80),
+					...fade(['color'], 80),
 				}}
 			>
 				{props.label}

@@ -6,7 +6,7 @@ import {
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	type Accessor,
 	createEffect,
@@ -19,27 +19,40 @@ import {
 	onCleanup,
 	Show,
 	untrack,
-} from "solid-js";
-import { createPointerCapture } from "#/lib/pointer-capture";
-import { StableLabel } from "#/lib/stable-label";
-import { FluidHighlight } from "#/lib/fluid-highlight";
-import { createFluidHover, useHoverItem } from "#/lib/fluid-hover";
-import { Icon } from "#/lib/icon";
-import { defineIcon } from "#/lib/icons";
-import { edgeIndex, isChord, moveIndex } from "#/lib/list-nav";
+} from 'solid-js';
+import { FluidHighlight } from '#/lib/fluid-highlight';
+import { createFluidHover, useHoverItem } from '#/lib/fluid-hover';
+import { Icon } from '#/lib/icon';
+import { defineIcon } from '#/lib/icons';
+import { edgeIndex, isChord, moveIndex } from '#/lib/list-nav';
+import { createPointerCapture } from '#/lib/pointer-capture';
+import { createPlacementState, POPUP_MARGIN, POPUP_OFFSET } from '#/lib/popup';
+import { createPressToggle, refocusAfterPress } from '#/lib/popup-trigger';
+import { createPresence } from '#/lib/presence';
+import { StableLabel } from '#/lib/stable-label';
 import {
-	createPlacementState,
-	POPUP_MARGIN,
-	POPUP_OFFSET,
-} from "#/lib/popup";
-import { createPresence } from "#/lib/presence";
-import { createPressToggle, refocusAfterPress } from "#/lib/popup-trigger";
-import { createTypeahead } from "#/lib/typeahead";
-import { color, colorFade, colorFadeNoRing, fade, springFade, height, nestedRadius, radius, shape, type as scale, scheme, shadow, motion as tween, weight, surface, focusRing } from "#/lib/theme";
+	color,
+	colorFade,
+	colorFadeNoRing,
+	fade,
+	focusRing,
+	height,
+	nestedRadius,
+	radius,
+	type as scale,
+	scheme,
+	shadow,
+	shape,
+	springFade,
+	surface,
+	motion as tween,
+	weight,
+} from '#/lib/theme';
+import { createTypeahead } from '#/lib/typeahead';
 import {
 	buildParsed,
-	clamp01,
 	type ColorFormat,
+	clamp01,
 	formatValueByFormat,
 	hslToRgb,
 	hsvToRgb,
@@ -50,11 +63,11 @@ import {
 	rgbToHsl,
 	rgbToHsv,
 	rgbToOklch,
-} from "./color-picker-math";
-import { Tooltip } from "./tooltip";
+} from './color-picker-math';
+import { Tooltip } from './tooltip';
 
-export type { ColorFormat, ParsedColor } from "./color-picker-math";
-export { buildParsed, parseColor } from "./color-picker-math";
+export type { ColorFormat, ParsedColor } from './color-picker-math';
+export { buildParsed, parseColor } from './color-picker-math';
 
 const PANEL_WIDTH = 280;
 const PANEL_PADDING = 12;
@@ -67,7 +80,7 @@ const RAIL_HEIGHT = RAIL_THUMB + 16;
 const RAIL_PAD = 8;
 const RAIL_KNOB = 16;
 const RAIL_TRACK = 18;
-const HAIRLINE = "rgba(127,127,127,0.25)";
+const HAIRLINE = 'rgba(127,127,127,0.25)';
 /** The source's `transition-colors duration-80` on its buttons and fields, whose focus ring is a box-shadow that stays out of that list: `colorFade` would also fade the port's outline ring in. */
 const BUTTON_FADE = colorFadeNoRing(80);
 const focusOutline = () => ({
@@ -76,21 +89,20 @@ const focusOutline = () => ({
 	outlineOffset: 0,
 });
 
-const FORMATS = ["hex", "rgb", "hsl", "oklch"] as const;
+const FORMATS = ['hex', 'rgb', 'hsl', 'oklch'] as const;
 const FORMAT_LABELS: Record<ColorFormat, string> = {
-	hex: "HEX",
-	rgb: "RGB",
-	hsl: "HSL",
-	oklch: "OKLCH",
+	hex: 'HEX',
+	rgb: 'RGB',
+	hsl: 'HSL',
+	oklch: 'OKLCH',
 };
 
 const chevronUp = defineIcon('<path d="m18 15-6-6-6 6"/>');
 
-
 /** The squares of a 4px checkerboard that take `--checker-a`, as one path. */
 function checkerSource(width: number, size: number) {
 	const cell = 4;
-	let path = "";
+	let path = '';
 	for (let row = 0; row * cell < size; row++) {
 		for (let col = 0; col * cell < width; col++) {
 			if ((row + col) % 2 === 1) {
@@ -111,7 +123,7 @@ function Checker(props: { width: number; height: number }) {
 	return (
 		<div
 			style={{
-				position: "absolute",
+				position: 'absolute',
 				top: 0,
 				left: 0,
 				width: props.width,
@@ -122,7 +134,7 @@ function Checker(props: { width: number; height: number }) {
 			<svg
 				source={source()}
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					width: props.width,
@@ -140,18 +152,18 @@ export function ColorTile(props: { color: string; size?: number }) {
 	return (
 		<div
 			style={{
-				position: "relative",
+				position: 'relative',
 				width: size(),
 				height: size(),
 				flexShrink: 0,
 				borderRadius: shape.bg,
-				overflow: "hidden",
+				overflow: 'hidden',
 			}}
 		>
 			<Checker width={size()} height={size()} />
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					width: size(),
@@ -161,7 +173,7 @@ export function ColorTile(props: { color: string; size?: number }) {
 			/>
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					width: size(),
@@ -187,7 +199,8 @@ export function ColorSwatch(props: {
 	const [hovered, setHovered] = createSignal(false);
 	const ringShadow = () => {
 		if (props.selected !== true && !hovered()) return undefined;
-		const ring = props.selected === true ? color.focusRing : "rgba(127,127,127,0.4)";
+		const ring =
+			props.selected === true ? color.focusRing : 'rgba(127,127,127,0.4)';
 		return `0 0 0 2px ${color.background}, 0 0 0 4px ${ring}`;
 	};
 	return (
@@ -198,31 +211,31 @@ export function ColorSwatch(props: {
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			style={{
-				position: "relative",
+				position: 'relative',
 				width: size(),
 				height: size(),
 				flexShrink: 0,
 				borderRadius: shape.bg,
-				cursor: "pointer",
+				cursor: 'pointer',
 				boxShadow: ringShadow(),
-				...fade(["box-shadow"], 100),
+				...fade(['box-shadow'], 100),
 			}}
 		>
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					width: size(),
 					height: size(),
 					borderRadius: shape.bg,
-					overflow: "hidden",
+					overflow: 'hidden',
 				}}
 			>
 				<Checker width={size()} height={size()} />
 				<div
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						top: 0,
 						left: 0,
 						width: size(),
@@ -233,7 +246,7 @@ export function ColorSwatch(props: {
 			</div>
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					width: size(),
@@ -251,13 +264,13 @@ function useFractionIn() {
 	const renderer = useGpuixRequired();
 	return (
 		element: HostElement | undefined,
-		event: Pick<HostMouseEvent, "x" | "y">,
+		event: Pick<HostMouseEvent, 'x' | 'y'>,
 	) => {
 		if (element === undefined || !element.mounted) {
-			throw new Error("Pointer target is not mounted");
+			throw new Error('Pointer target is not mounted');
 		}
 		if (event.x === undefined || event.y === undefined) {
-			throw new Error("Pointer event without coordinates");
+			throw new Error('Pointer event without coordinates');
 		}
 		const bounds = element.getBoundingClientRect();
 		return {
@@ -287,7 +300,7 @@ function SaturationSquare(props: {
 	const [hovered, setHovered] = createSignal(false);
 	const [cursor, setCursor] = createSignal<{ x: number; y: number }>();
 
-	const apply = (event: Pick<HostMouseEvent, "x" | "y">) => {
+	const apply = (event: Pick<HostMouseEvent, 'x' | 'y'>) => {
 		const point = fractionIn(element, event);
 		props.onChange(point.x, 1 - point.y);
 	};
@@ -295,16 +308,16 @@ function SaturationSquare(props: {
 	const onKeyDown = (event: KeyEvent) => {
 		const step = event.shiftKey === true ? 0.1 : 0.01;
 		switch (event.key) {
-			case "ArrowLeft":
+			case 'ArrowLeft':
 				props.onChange(clamp01(props.s - step), props.v);
 				break;
-			case "ArrowRight":
+			case 'ArrowRight':
 				props.onChange(clamp01(props.s + step), props.v);
 				break;
-			case "ArrowUp":
+			case 'ArrowUp':
 				props.onChange(props.s, clamp01(props.v + step));
 				break;
-			case "ArrowDown":
+			case 'ArrowDown':
 				props.onChange(props.s, clamp01(props.v - step));
 				break;
 			default:
@@ -348,14 +361,14 @@ function SaturationSquare(props: {
 			onLostPointerCapture={() => setDragging(false)}
 			onKeyDown={onKeyDown}
 			style={{
-				position: "relative",
+				position: 'relative',
 				width: INNER_WIDTH,
 				height: SQUARE_HEIGHT,
 				borderRadius: nestedRadius(shape.container, 12),
 				flexShrink: 0,
 				// gpuix has no `cursor: none`, so the ghost ring and the pointer both show.
-				cursor: "crosshair",
-				userSelect: "none",
+				cursor: 'crosshair',
+				userSelect: 'none',
 				keyboardFocusDim: false,
 				focusVisible: { boxShadow: `0 0 0 2px ${color.focusRing}` },
 			}}
@@ -363,70 +376,70 @@ function SaturationSquare(props: {
 			{/* Black rising from the bottom over white to the pure hue: the plane, as two stacked gradients. */}
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					width: INNER_WIDTH,
 					height: SQUARE_HEIGHT,
 					borderRadius: nestedRadius(shape.container, 12),
 					background: {
-						type: "linear-gradient",
+						type: 'linear-gradient',
 						angle: 90,
 						stops: [
-							{ color: "#ffffff", position: 0 },
+							{ color: '#ffffff', position: 0 },
 							{ color: hueColor(), position: 1 },
 						],
-						colorSpace: "srgb",
+						colorSpace: 'srgb',
 					},
 				}}
 			/>
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					width: INNER_WIDTH,
 					height: SQUARE_HEIGHT,
 					borderRadius: nestedRadius(shape.container, 12),
 					background: {
-						type: "linear-gradient",
+						type: 'linear-gradient',
 						angle: 0,
 						stops: [
-							{ color: "#000000", position: 0 },
-							{ color: "rgba(0,0,0,0)", position: 1 },
+							{ color: '#000000', position: 0 },
+							{ color: 'rgba(0,0,0,0)', position: 1 },
 						],
-						colorSpace: "srgb",
+						colorSpace: 'srgb',
 					},
 				}}
 			/>
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					left: props.s * INNER_WIDTH - THUMB / 2,
 					top: (1 - props.v) * SQUARE_HEIGHT - THUMB / 2,
 					width: THUMB,
 					height: THUMB,
 					borderRadius: THUMB / 2,
 					borderWidth: 1,
-					borderColor: "#ffffff",
+					borderColor: '#ffffff',
 					backgroundColor: thumbColor(),
-					boxShadow: "0 0 0 1px rgba(0,0,0,1)",
+					boxShadow: '0 0 0 1px rgba(0,0,0,1)',
 				}}
 			/>
 			<Show when={hovered() && !dragging() ? cursor() : undefined}>
 				{(ghost: Accessor<{ x: number; y: number }>) => (
 					<div
 						style={{
-							position: "absolute",
+							position: 'absolute',
 							left: ghost().x - THUMB / 2,
 							top: ghost().y - THUMB / 2,
 							width: THUMB,
 							height: THUMB,
 							borderRadius: THUMB / 2,
 							borderWidth: 2,
-							borderColor: "rgba(255,255,255,0.55)",
-							boxShadow: "0 0 0 1px rgba(0,0,0,0.2)",
-							pointerEvents: "none",
+							borderColor: 'rgba(255,255,255,0.55)',
+							boxShadow: '0 0 0 1px rgba(0,0,0,0.2)',
+							pointerEvents: 'none',
 						}}
 					/>
 				)}
@@ -454,15 +467,15 @@ function Rail(props: {
 	const renderer = useGpuixRequired();
 	let root: HostElement | undefined;
 	let thumb: HostElement | undefined;
-	const press = createPointerCapture("Rail");
+	const press = createPointerCapture('Rail');
 	const [dragging, setDragging] = createSignal(false);
 
 	const fraction = () => (props.value - props.min) / (props.max - props.min);
-	const apply = (event: Pick<HostMouseEvent, "x">) => {
+	const apply = (event: Pick<HostMouseEvent, 'x'>) => {
 		if (root === undefined || !root.mounted) {
-			throw new Error("Rail is not mounted");
+			throw new Error('Rail is not mounted');
 		}
-		if (event.x === undefined) throw new Error("Pointer event without x");
+		if (event.x === undefined) throw new Error('Pointer event without x');
 		const bounds = root.getBoundingClientRect();
 		const usable = bounds.width - RAIL_THUMB;
 		const along = clamp01((event.x - bounds.x - RAIL_THUMB / 2) / usable);
@@ -474,18 +487,18 @@ function Rail(props: {
 		const clamp = (value: number) =>
 			Math.max(props.min, Math.min(props.max, value));
 		switch (event.key) {
-			case "ArrowLeft":
-			case "ArrowDown":
+			case 'ArrowLeft':
+			case 'ArrowDown':
 				props.onChange(clamp(props.value - step));
 				break;
-			case "ArrowRight":
-			case "ArrowUp":
+			case 'ArrowRight':
+			case 'ArrowUp':
 				props.onChange(clamp(props.value + step));
 				break;
-			case "Home":
+			case 'Home':
 				props.onChange(props.min);
 				break;
-			case "End":
+			case 'End':
 				props.onChange(props.max);
 				break;
 			default:
@@ -501,7 +514,7 @@ function Rail(props: {
 			}}
 			testId={props.testId}
 			style={{
-				position: "relative",
+				position: 'relative',
 				width: INNER_WIDTH,
 				height: RAIL_HEIGHT,
 				flexShrink: 0,
@@ -509,13 +522,13 @@ function Rail(props: {
 		>
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: RAIL_PAD + (RAIL_THUMB - RAIL_TRACK) / 2,
 					left: (RAIL_THUMB - RAIL_TRACK) / 2,
 					width: INNER_WIDTH - (RAIL_THUMB - RAIL_TRACK),
 					height: RAIL_TRACK,
 					borderRadius: RAIL_TRACK / 2,
-					overflow: "hidden",
+					overflow: 'hidden',
 				}}
 			>
 				{props.children}
@@ -530,17 +543,17 @@ function Rail(props: {
 				tabIndex={0}
 				onKeyDown={onKeyDown}
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: RAIL_PAD,
 					left: fraction() * (INNER_WIDTH - RAIL_THUMB),
 					width: RAIL_THUMB,
 					height: RAIL_THUMB,
 					borderRadius: RAIL_THUMB / 2,
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
 					keyboardFocusDim: false,
-					...springFade(["outline-color"]),
+					...springFade(['outline-color']),
 					focusVisible: focusRing(2),
 				}}
 			>
@@ -550,9 +563,9 @@ function Rail(props: {
 						height: RAIL_KNOB,
 						borderRadius: RAIL_KNOB / 2,
 						borderWidth: 1,
-						borderColor: "rgba(255,255,255,0.9)",
+						borderColor: 'rgba(255,255,255,0.9)',
 						backgroundColor: props.thumbColor,
-						boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
+						boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
 					}}
 				/>
 			</div>
@@ -571,12 +584,12 @@ function Rail(props: {
 				onMouseUp={() => setDragging(false)}
 				onLostPointerCapture={() => setDragging(false)}
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					bottom: 0,
 					left: -8,
 					right: -8,
-					cursor: "ew-resize",
+					cursor: 'ew-resize',
 				}}
 			/>
 		</div>
@@ -601,15 +614,15 @@ function HueRail(props: {
 			onChange={props.onChange}
 		>
 			{/* gpuix gradients take two stops, so the rainbow is six of them side by side. */}
-			<div style={{ display: "flex", flexDirection: "row", height: "100%" }}>
+			<div style={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
 				<For each={HUE_STOPS.slice(0, -1)}>
 					{(stop: number, index: Accessor<number>) => (
 						<div
 							style={{
 								flexGrow: 1,
-								height: "100%",
+								height: '100%',
 								background: {
-									type: "linear-gradient",
+									type: 'linear-gradient',
 									angle: 90,
 									stops: [
 										{ color: `hsl(${stop}, 100%, 50%)`, position: 0 },
@@ -618,7 +631,7 @@ function HueRail(props: {
 											position: 1,
 										},
 									],
-									colorSpace: "srgb",
+									colorSpace: 'srgb',
 								},
 							}}
 						/>
@@ -652,19 +665,19 @@ function AlphaRail(props: {
 			<Checker width={INNER_WIDTH - 2} height={RAIL_TRACK} />
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					width: INNER_WIDTH - 2,
 					height: RAIL_TRACK,
 					background: {
-						type: "linear-gradient",
+						type: 'linear-gradient',
 						angle: 90,
 						stops: [
 							{ color: clear(), position: 0 },
 							{ color: solid(), position: 0.98 },
 						],
-						colorSpace: "srgb",
+						colorSpace: 'srgb',
 					},
 				}}
 			/>
@@ -679,13 +692,13 @@ const FORMAT_MENU_EXIT_FALLBACK_MS = 120;
 /** An anchored card of a given surface level that slides and fades like the shared popup, at the speed the source gives it: the popover is `moderate`, the format menu `fast`. Opens below its trigger, or above when there is no room. */
 function Popup(props: {
 	presence: ReturnType<typeof createPresence>;
-	speed: "fast" | "moderate";
+	speed: 'fast' | 'moderate';
 	width: number;
 	level: number;
 	children: JSX.Element;
 }) {
-	const placement = createPlacementState("bottom");
-	const slide = () => (placement.side() === "top" ? 4 : -4);
+	const placement = createPlacementState('bottom');
+	const slide = () => (placement.side() === 'top' ? 4 : -4);
 	return (
 		<Show when={props.presence.mounted()}>
 			<anchored
@@ -715,10 +728,10 @@ function Popup(props: {
 						if (!props.presence.open()) props.presence.release();
 					}}
 					style={{
-						position: "relative",
+						position: 'relative',
 						width: props.width,
-						display: "flex",
-						flexDirection: "column",
+						display: 'flex',
+						flexDirection: 'column',
 						backgroundColor: surface(props.level),
 						borderRadius: radius.container,
 						boxShadow: shadow(3),
@@ -768,12 +781,12 @@ function FormatDropdown(props: {
 	};
 
 	/** A keyboard open focuses the first row (ArrowUp: the last); a pointer open focuses the panel and lights nothing. */
-	const open = (from: "pointer" | "first" | "last" = "pointer") => {
+	const open = (from: 'pointer' | 'first' | 'last' = 'pointer') => {
 		if (presence.open()) return;
 		presence.show();
 		setPageHoldsFocus(false);
 		setPointerLit(false);
-		const start = from === "pointer" ? null : edgeIndex(from, FORMATS.length);
+		const start = from === 'pointer' ? null : edgeIndex(from, FORMATS.length);
 		hover.setActiveIndex(start);
 		if (start === null) focusPanel();
 		else focusRow(start);
@@ -782,7 +795,7 @@ function FormatDropdown(props: {
 	const close = () => {
 		if (!presence.open()) return;
 		const popupHasFocus =
-			panel !== undefined && panel.mounted && panel.matches(":focus-within");
+			panel !== undefined && panel.mounted && panel.matches(':focus-within');
 		presence.hide();
 		setPageHoldsFocus(false);
 		if (
@@ -837,39 +850,39 @@ function FormatDropdown(props: {
 		if (isChord(event)) return;
 		if (!presence.open()) {
 			if (
-				event.key === "ArrowDown" ||
-				event.key === "ArrowUp" ||
-				event.key === "Enter" ||
-				event.key === " "
+				event.key === 'ArrowDown' ||
+				event.key === 'ArrowUp' ||
+				event.key === 'Enter' ||
+				event.key === ' '
 			) {
 				event.preventDefault();
-				if (event.key === "ArrowDown" || event.key === "ArrowUp")
+				if (event.key === 'ArrowDown' || event.key === 'ArrowUp')
 					event.stopPropagation();
-				open(event.key === "ArrowUp" ? "last" : "first");
+				open(event.key === 'ArrowUp' ? 'last' : 'first');
 			}
 			return;
 		}
 		switch (event.key) {
-			case "ArrowDown":
-			case "ArrowUp":
+			case 'ArrowDown':
+			case 'ArrowUp':
 				event.preventDefault();
 				event.stopPropagation();
 				setPageHoldsFocus(false);
 				highlight(
-					edgeIndex(event.key === "ArrowUp" ? "last" : "first", FORMATS.length),
+					edgeIndex(event.key === 'ArrowUp' ? 'last' : 'first', FORMATS.length),
 				);
 				return;
-			case "Enter":
-			case " ":
+			case 'Enter':
+			case ' ':
 				event.preventDefault();
 				close();
 				return;
-			case "Escape":
+			case 'Escape':
 				event.preventDefault();
 				event.stopPropagation();
 				close();
 				return;
-			case "Tab":
+			case 'Tab':
 				close();
 				return;
 		}
@@ -879,12 +892,12 @@ function FormatDropdown(props: {
 	const onPanelKeyDown = (event: KeyEvent) => {
 		if (isChord(event)) return;
 		event.stopPropagation();
-		if (event.key === "Escape") {
+		if (event.key === 'Escape') {
 			event.preventDefault();
 			close();
 			return;
 		}
-		if (event.key === "Tab") {
+		if (event.key === 'Tab') {
 			// Forward: the trigger takes focus as the menu closes, so the default Tab moves on from it. Backward leaves it on the trigger.
 			if (event.shiftKey === true) event.preventDefault();
 			close();
@@ -895,23 +908,23 @@ function FormatDropdown(props: {
 			return;
 		}
 		switch (event.key) {
-			case "ArrowDown":
+			case 'ArrowDown':
 				event.preventDefault();
 				move(1);
 				return;
-			case "ArrowUp":
+			case 'ArrowUp':
 				event.preventDefault();
 				move(-1);
 				return;
-			case "Home":
-			case "End":
+			case 'Home':
+			case 'End':
 				event.preventDefault();
 				highlight(
-					edgeIndex(event.key === "Home" ? "first" : "last", FORMATS.length),
+					edgeIndex(event.key === 'Home' ? 'first' : 'last', FORMATS.length),
 				);
 				return;
-			case "Enter":
-			case " ": {
+			case 'Enter':
+			case ' ': {
 				event.preventDefault();
 				const index = hover.activeIndex();
 				if (index !== null) choose(FORMATS[index]);
@@ -932,7 +945,7 @@ function FormatDropdown(props: {
 				close();
 				refocusAfterPress(button);
 			}}
-			style={{ position: "relative", width, height: height.control }}
+			style={{ position: 'relative', width, height: height.control }}
 		>
 			<div
 				ref={(node) => {
@@ -954,14 +967,14 @@ function FormatDropdown(props: {
 				style={{
 					width,
 					height: height.control,
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					justifyContent: 'space-between',
 					paddingLeft: 12,
 					paddingRight: 12,
 					borderRadius: shape.input,
-					cursor: "pointer",
+					cursor: 'pointer',
 					keyboardFocusDim: false,
 					backgroundColor: presence.open() ? color.active : color.transparent,
 					...BUTTON_FADE,
@@ -986,7 +999,7 @@ function FormatDropdown(props: {
 					{FORMAT_LABELS[props.value]}
 				</text>
 				<Icon
-					name={presence.open() ? chevronUp : "chevron-down"}
+					name={presence.open() ? chevronUp : 'chevron-down'}
 					size={14}
 					strokeWidth={1.5}
 					color={color.mutedForeground}
@@ -1021,9 +1034,9 @@ function FormatDropdown(props: {
 					}}
 					onMouseLeave={hover.handlers.onMouseLeave}
 					style={{
-						position: "relative",
-						display: "flex",
-						flexDirection: "column",
+						position: 'relative',
+						display: 'flex',
+						flexDirection: 'column',
 						padding: 4,
 						keyboardFocusDim: false,
 					}}
@@ -1071,13 +1084,13 @@ function FormatDropdown(props: {
 									style={{
 										height: MENU_ROW,
 										flexShrink: 0,
-										display: "flex",
-										flexDirection: "row",
-										alignItems: "center",
+										display: 'flex',
+										flexDirection: 'row',
+										alignItems: 'center',
 										paddingLeft: 12,
 										paddingRight: 12,
 										borderRadius: shape.item,
-										cursor: "pointer",
+										cursor: 'pointer',
 										keyboardFocusDim: false,
 									}}
 								>
@@ -1098,7 +1111,7 @@ function FormatDropdown(props: {
 }
 
 function numberOf(display: string) {
-	return Number.parseFloat(display.replace("%", ""));
+	return Number.parseFloat(display.replace('%', ''));
 }
 
 /**
@@ -1112,7 +1125,7 @@ function ColorInput(props: {
 	ariaLabel: string;
 	testId: string;
 	width: number;
-	align?: "left" | "center";
+	align?: 'left' | 'center';
 	prefix?: string;
 	nudgeStep?: number;
 	nudgeShiftStep?: number;
@@ -1130,7 +1143,7 @@ function ColorInput(props: {
 	const [editing, setEditing] = createSignal(props.scrubbable !== true);
 	let input: HostElement | undefined;
 	let press: { x: number; value: number; scrubbed: boolean } | undefined;
-	const field = createPointerCapture("ColorInput");
+	const field = createPointerCapture('ColorInput');
 
 	// While the field has focus, outside changes leave the draft alone.
 	createEffect(
@@ -1177,7 +1190,7 @@ function ColorInput(props: {
 	};
 
 	const focusInput = () => {
-		if (input === undefined) throw new Error("ColorInput is not mounted");
+		if (input === undefined) throw new Error('ColorInput is not mounted');
 		renderer.focusElement?.(input.id);
 	};
 
@@ -1195,22 +1208,22 @@ function ColorInput(props: {
 	};
 
 	const onKeyDown = (event: KeyEvent) => {
-		if (event.key === "Escape") {
+		if (event.key === 'Escape') {
 			setDraft(props.value);
 			renderer.blur?.();
 			return;
 		}
-		if (event.key === "Enter") {
+		if (event.key === 'Enter') {
 			event.preventDefault();
 			renderer.blur?.();
 			return;
 		}
 		if (
-			(event.key === "ArrowUp" || event.key === "ArrowDown") &&
+			(event.key === 'ArrowUp' || event.key === 'ArrowDown') &&
 			(props.nudgeStep !== undefined || props.nudgeShiftStep !== undefined)
 		) {
 			event.preventDefault();
-			nudge(event.key === "ArrowUp" ? 1 : -1, event.shiftKey === true);
+			nudge(event.key === 'ArrowUp' ? 1 : -1, event.shiftKey === true);
 		}
 	};
 
@@ -1264,16 +1277,16 @@ function ColorInput(props: {
 				width: props.width,
 				height: height.control,
 				flexShrink: 0,
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
 				paddingLeft: 8,
 				paddingRight: 8,
 				borderRadius: shape.input,
 				// On the wrapper: an `<input>` ignores the property in its own style but inherits it.
-				fontVariantNumeric: "tabular-nums",
-				cursor: scrub && !editing() ? "ew-resize" : "text",
-				userSelect: "none",
+				fontVariantNumeric: 'tabular-nums',
+				cursor: scrub && !editing() ? 'ew-resize' : 'text',
+				userSelect: 'none',
 				outlineWidth: focused() ? 1 : 0,
 				outlineColor: color.focusRing,
 				outlineOffset: 0,
@@ -1307,7 +1320,7 @@ function ColorInput(props: {
 				}}
 				onChange={(event) => {
 					if (event.value === undefined) {
-						throw new Error("ColorInput change without a value");
+						throw new Error('ColorInput change without a value');
 					}
 					setDraft(event.value);
 				}}
@@ -1327,11 +1340,11 @@ function ColorInput(props: {
 					height: 24,
 					fontSize: scale.body.fontSize,
 					fontWeight: weight.normal,
-					textAlign: props.align === "center" ? "center" : "left",
+					textAlign: props.align === 'center' ? 'center' : 'left',
 					color: color.foreground,
 					backgroundColor: color.transparent,
 					keyboardFocusDim: false,
-					pointerEvents: scrub && !editing() ? "none" : undefined,
+					pointerEvents: scrub && !editing() ? 'none' : undefined,
 				}}
 			/>
 		</div>
@@ -1340,7 +1353,7 @@ function ColorInput(props: {
 
 /** A channel field with a 300ms name tooltip. */
 function Channel(
-	props: Omit<Parameters<typeof ColorInput>[0], "ariaLabel"> & {
+	props: Omit<Parameters<typeof ColorInput>[0], 'ariaLabel'> & {
 		name: string;
 	},
 ) {
@@ -1352,17 +1365,17 @@ function Channel(
 }
 
 type ChannelKey =
-	| "hex"
-	| "r"
-	| "g"
-	| "b"
-	| "hSL"
-	| "sSL"
-	| "lSL"
-	| "L"
-	| "C"
-	| "H"
-	| "alphaPercent";
+	| 'hex'
+	| 'r'
+	| 'g'
+	| 'b'
+	| 'hSL'
+	| 'sSL'
+	| 'lSL'
+	| 'L'
+	| 'C'
+	| 'H'
+	| 'alphaPercent';
 
 function ColorInputsRow(props: {
 	parsed: ParsedColor;
@@ -1378,14 +1391,14 @@ function ColorInputsRow(props: {
 	const alpha = (width: number) => (
 		<Channel
 			name="Alpha"
-			testId={id("alpha-input")}
+			testId={id('alpha-input')}
 			width={width}
 			value={`${alphaPct()}%`}
 			onCommit={(input) => {
-				const n = Number.parseFloat(input.replace("%", ""));
+				const n = Number.parseFloat(input.replace('%', ''));
 				if (Number.isNaN(n)) return;
 				props.onChannelChange(
-					"alphaPercent",
+					'alphaPercent',
 					String(Math.max(0, Math.min(100, Math.round(n)))),
 				);
 			}}
@@ -1425,60 +1438,78 @@ function ColorInputsRow(props: {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				gap: props.format === "hex" ? 8 : 4,
+				display: 'flex',
+				flexDirection: 'row',
+				gap: props.format === 'hex' ? 8 : 4,
 			}}
 		>
-			<Show when={props.format === "hex"}>
+			<Show when={props.format === 'hex'}>
 				<Channel
 					name="Hex"
-					testId={id("hex")}
+					testId={id('hex')}
 					width={half}
-					value={props.parsed.hex.replace(/^#/, "").toUpperCase()}
+					value={props.parsed.hex.replace(/^#/, '').toUpperCase()}
 					onCommit={(next) =>
 						props.onChannelChange(
-							"hex",
-							next.startsWith("#") ? next : `#${next}`,
+							'hex',
+							next.startsWith('#') ? next : `#${next}`,
 						)
 					}
 					prefix="#"
 				/>
 				{alpha(half)}
 			</Show>
-			<Show when={props.format === "rgb"}>
-				{whole("Red", "r", () => props.parsed.r, 0, 255)}
-				{whole("Green", "g", () => props.parsed.g, 0, 255)}
-				{whole("Blue", "b", () => props.parsed.b, 0, 255)}
+			<Show when={props.format === 'rgb'}>
+				{whole('Red', 'r', () => props.parsed.r, 0, 255)}
+				{whole('Green', 'g', () => props.parsed.g, 0, 255)}
+				{whole('Blue', 'b', () => props.parsed.b, 0, 255)}
 				{alpha(four)}
 			</Show>
-			<Show when={props.format === "hsl"}>
+			<Show when={props.format === 'hsl'}>
 				{(() => {
 					const hsl = () =>
 						rgbToHsl(props.parsed.r, props.parsed.g, props.parsed.b);
 					return (
 						<>
-							{whole("Hue", "hSL", () => Math.round(hsl().h), 0, 360, true)}
-							{whole("Saturation", "sSL", () => Math.round(hsl().s * 100), 0, 100)}
-							{whole("Lightness", "lSL", () => Math.round(hsl().l * 100), 0, 100)}
+							{whole('Hue', 'hSL', () => Math.round(hsl().h), 0, 360, true)}
+							{whole(
+								'Saturation',
+								'sSL',
+								() => Math.round(hsl().s * 100),
+								0,
+								100,
+							)}
+							{whole(
+								'Lightness',
+								'lSL',
+								() => Math.round(hsl().l * 100),
+								0,
+								100,
+							)}
 							{alpha(four)}
 						</>
 					);
 				})()}
 			</Show>
-			<Show when={props.format === "oklch"}>
+			<Show when={props.format === 'oklch'}>
 				{(() => {
 					const oklch = () =>
 						rgbToOklch(props.parsed.r, props.parsed.g, props.parsed.b);
 					return (
 						<>
-							{whole("Lightness", "L", () => Math.round(oklch().L * 100), 0, 100)}
+							{whole(
+								'Lightness',
+								'L',
+								() => Math.round(oklch().L * 100),
+								0,
+								100,
+							)}
 							<Channel
 								name="Chroma"
-								testId={id("C")}
+								testId={id('C')}
 								width={four}
 								value={oklch().C.toFixed(2)}
-								onCommit={(next) => props.onChannelChange("C", next)}
+								onCommit={(next) => props.onChannelChange('C', next)}
 								align="center"
 								nudgeStep={0.01}
 								nudgeShiftStep={0.1}
@@ -1488,8 +1519,8 @@ function ColorInputsRow(props: {
 								max={0.4}
 							/>
 							{whole(
-								"Hue",
-								"H",
+								'Hue',
+								'H',
 								() => Math.round(props.oklchHue ?? oklch().H),
 								0,
 								360,
@@ -1536,13 +1567,13 @@ export type ColorPickerProps = {
 
 /** The panel itself: no card around it, so a popover can supply its own. */
 function ColorPickerPanel(props: ColorPickerProps) {
-	const testId = () => props.testId ?? "color-picker";
+	const testId = () => props.testId ?? 'color-picker';
 	const isControlled = () => props.value !== undefined;
 	const [internalValue, setInternalValue] = createSignal(
-		props.value ?? props.defaultValue ?? "#6B97FF",
+		props.value ?? props.defaultValue ?? '#6B97FF',
 	);
 	const [internalFormat, setInternalFormat] = createSignal<ColorFormat>(
-		props.defaultFormat ?? "hex",
+		props.defaultFormat ?? 'hex',
 	);
 	const currentFormat = () => props.format ?? internalFormat();
 
@@ -1562,7 +1593,7 @@ function ColorPickerPanel(props: ColorPickerProps) {
 	// The OKLCH hue the user stated, kept across the lossy RGB round trip and through
 	// grays. Cleared when another channel moves the hue.
 	const [oklchHue, setOklchHue] = createSignal<number | null>(null);
-	let lastEmitted = "";
+	let lastEmitted = '';
 
 	createEffect(
 		on(
@@ -1632,48 +1663,48 @@ function ColorPickerPanel(props: ColorPickerProps) {
 	const onChannelChange = (channel: ChannelKey, value: string) => {
 		const p = parsed();
 		switch (channel) {
-			case "hex":
+			case 'hex':
 				commitColor(value);
 				return;
-			case "r":
-			case "g":
-			case "b": {
+			case 'r':
+			case 'g':
+			case 'b': {
 				setOklchHue(null);
-				const r = channel === "r" ? Number(value) : p.r;
-				const g = channel === "g" ? Number(value) : p.g;
-				const b = channel === "b" ? Number(value) : p.b;
+				const r = channel === 'r' ? Number(value) : p.r;
+				const g = channel === 'g' ? Number(value) : p.g;
+				const b = channel === 'b' ? Number(value) : p.b;
 				const next = rgbToHsv(r, g, b);
 				updateHsv({ h: next.s === 0 ? hsv().h : next.h, s: next.s, v: next.v });
 				return;
 			}
-			case "hSL":
-			case "sSL":
-			case "lSL": {
-				if (channel === "hSL") setOklchHue(null);
+			case 'hSL':
+			case 'sSL':
+			case 'lSL': {
+				if (channel === 'hSL') setOklchHue(null);
 				const hsl = rgbToHsl(p.r, p.g, p.b);
-				const h2 = channel === "hSL" ? Number(value) : hsl.h;
-				const s2 = channel === "sSL" ? Number(value) / 100 : hsl.s;
-				const l2 = channel === "lSL" ? Number(value) / 100 : hsl.l;
+				const h2 = channel === 'hSL' ? Number(value) : hsl.h;
+				const s2 = channel === 'sSL' ? Number(value) / 100 : hsl.s;
+				const l2 = channel === 'lSL' ? Number(value) / 100 : hsl.l;
 				const rgb = hslToRgb(h2, clamp01(s2), clamp01(l2));
 				const next = rgbToHsv(rgb.r, rgb.g, rgb.b);
 				updateHsv({ h: next.s === 0 ? h2 : next.h, s: next.s, v: next.v });
 				return;
 			}
-			case "L":
-			case "C":
-			case "H": {
+			case 'L':
+			case 'C':
+			case 'H': {
 				const current = rgbToOklch(p.r, p.g, p.b);
 				const baseHue = oklchHue() ?? current.H;
-				const L = channel === "L" ? Number(value) / 100 : current.L;
-				const C = channel === "C" ? Number(value) : current.C;
-				const H = channel === "H" ? Number(value) : baseHue;
+				const L = channel === 'L' ? Number(value) / 100 : current.L;
+				const C = channel === 'C' ? Number(value) : current.C;
+				const H = channel === 'H' ? Number(value) : baseHue;
 				setOklchHue(H);
 				const rgb = oklchToRgb(clamp01(L), Math.max(0, C), H);
 				const next = rgbToHsv(rgb.r, rgb.g, rgb.b);
 				updateHsv({ h: next.s === 0 ? hsv().h : next.h, s: next.s, v: next.v });
 				return;
 			}
-			case "alphaPercent":
+			case 'alphaPercent':
 				updateHsv({ a: clamp01(Number(value) / 100) });
 				return;
 		}
@@ -1685,8 +1716,8 @@ function ColorPickerPanel(props: ColorPickerProps) {
 		<div
 			testId={testId()}
 			style={{
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 8,
 				padding: PANEL_PADDING,
 				width: PANEL_WIDTH,
@@ -1699,7 +1730,7 @@ function ColorPickerPanel(props: ColorPickerProps) {
 				v={hsv().v}
 				onChange={(s, v) => updateHsv({ s, v })}
 			/>
-			<div style={{ display: "flex", flexDirection: "column" }}>
+			<div style={{ display: 'flex', flexDirection: 'column' }}>
 				<HueRail
 					testId={`${testId()}-hue`}
 					h={hsv().h}
@@ -1717,7 +1748,7 @@ function ColorPickerPanel(props: ColorPickerProps) {
 					/>
 				</div>
 			</div>
-			<div style={{ display: "flex", flexDirection: "row", gap: 8 }}>
+			<div style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
 				<FormatDropdown
 					testId={`${testId()}-format`}
 					value={currentFormat()}
@@ -1736,9 +1767,9 @@ function ColorPickerPanel(props: ColorPickerProps) {
 			<Show when={props.swatches !== undefined && props.swatches.length > 0}>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						flexWrap: "wrap",
+						display: 'flex',
+						flexDirection: 'row',
+						flexWrap: 'wrap',
 						gap: 8,
 					}}
 				>
@@ -1778,7 +1809,7 @@ export function ColorPicker(props: ColorPickerProps) {
 export function ColorPickerPopover(
 	props: ColorPickerProps & {
 		triggerLabel?: string;
-		triggerLabelPosition?: "left" | "right";
+		triggerLabelPosition?: 'left' | 'right';
 		/** The 6-digit hex next to the tile, alpha left out: the tile shows it. */
 		triggerShowValue?: boolean;
 		/** An X inside the trigger that calls `onTriggerRemove` without opening. */
@@ -1792,7 +1823,7 @@ export function ColorPickerPopover(
 
 	const isControlled = () => props.value !== undefined;
 	const [internalValue, setInternalValue] = createSignal(
-		props.value ?? props.defaultValue ?? "#6B97FF",
+		props.value ?? props.defaultValue ?? '#6B97FF',
 	);
 	const currentValue = () =>
 		isControlled() ? (props.value as string) : internalValue();
@@ -1819,7 +1850,7 @@ export function ColorPickerPopover(
 		return result === null
 			? currentValue()
 			: rgbToHexStr(result.r, result.g, result.b, 1)
-					.replace(/^#/, "")
+					.replace(/^#/, '')
 					.toUpperCase();
 	};
 
@@ -1841,20 +1872,20 @@ export function ColorPickerPopover(
 		<div
 			onMouseDownOutside={close}
 			style={{
-				position: "relative",
-				display: "flex",
-				alignSelf: "flex-start",
+				position: 'relative',
+				display: 'flex',
+				alignSelf: 'flex-start',
 				// A press on the popover's bare content lands focus here, so Escape still reaches the handler below; the wrapper dims with its descendants unless this is off.
 				keyboardFocusDim: false,
 			}}
 			tabIndex={-1}
 			onKeyDown={(event) => {
-				if (event.key === "Escape" && presence.open()) close();
+				if (event.key === 'Escape' && presence.open()) close();
 			}}
 		>
 			<div
 				role="button"
-				aria-label={props.triggerLabel ?? "Pick a color"}
+				aria-label={props.triggerLabel ?? 'Pick a color'}
 				aria-expanded={presence.open()}
 				testId={
 					props.testId === undefined ? undefined : `${props.testId}-trigger`
@@ -1866,16 +1897,16 @@ export function ColorPickerPopover(
 					else open();
 				}}
 				onKeyDown={(event) => {
-					if (event.key === "Enter" || event.key === " ") {
+					if (event.key === 'Enter' || event.key === ' ') {
 						event.preventDefault();
 						if (presence.open()) close();
 						else open();
 					}
 				}}
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					gap: 8,
 					height: height.control,
 					paddingLeft: 8,
@@ -1883,7 +1914,7 @@ export function ColorPickerPopover(
 					borderRadius: shape.input,
 					borderWidth: 1,
 					borderColor: color.border,
-					cursor: "pointer",
+					cursor: 'pointer',
 					keyboardFocusDim: false,
 					...BUTTON_FADE,
 					hover: { backgroundColor: color.hover },
@@ -1893,7 +1924,7 @@ export function ColorPickerPopover(
 				<Show
 					when={
 						props.triggerLabel !== undefined &&
-						props.triggerLabelPosition !== "right"
+						props.triggerLabelPosition !== 'right'
 					}
 				>
 					{label(props.triggerLabel as string)}
@@ -1905,7 +1936,7 @@ export function ColorPickerPopover(
 							...scale.body,
 							fontWeight: weight.normal,
 							color: color.foreground,
-							fontVariantNumeric: "tabular-nums",
+							fontVariantNumeric: 'tabular-nums',
 						}}
 					>
 						{valueLabel()}
@@ -1914,7 +1945,7 @@ export function ColorPickerPopover(
 				<Show
 					when={
 						props.triggerLabel !== undefined &&
-						props.triggerLabelPosition === "right"
+						props.triggerLabelPosition === 'right'
 					}
 				>
 					{label(props.triggerLabel as string)}
@@ -1931,9 +1962,9 @@ export function ColorPickerPopover(
 						onClick={() => props.onTriggerRemove?.()}
 						style={{
 							marginLeft: 4,
-							display: "flex",
-							alignItems: "center",
-							cursor: "pointer",
+							display: 'flex',
+							alignItems: 'center',
+							cursor: 'pointer',
 						}}
 					>
 						<Icon
@@ -1945,12 +1976,7 @@ export function ColorPickerPopover(
 					</div>
 				</Show>
 			</div>
-			<Popup
-				presence={presence}
-				speed="moderate"
-				width={PANEL_WIDTH}
-				level={5}
-			>
+			<Popup presence={presence} speed="moderate" width={PANEL_WIDTH} level={5}>
 				<ColorPickerPanel
 					{...props}
 					level={5}

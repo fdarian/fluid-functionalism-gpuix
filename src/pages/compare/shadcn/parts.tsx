@@ -1,14 +1,14 @@
-import { buttonProps, type KeyEvent, useGpuixRequired } from "@gpuix/solid";
-import { Icon } from "#/lib/icon";
-import { defineIcon, type IconName } from "#/lib/icons";
-import { lucide } from "#/lib/icons/lucide";
-import { weight } from "#/lib/theme";
-import { sc } from "./theme";
+import { buttonProps, type KeyEvent, useGpuixRequired } from '@gpuix/solid';
+import { Icon } from '#/lib/icon';
+import { defineIcon, type IconName } from '#/lib/icons';
+import { lucide } from '#/lib/icons/lucide';
+import { weight } from '#/lib/theme';
+import { sc } from './theme';
 
 /** shadcn imports `lucide-react` directly, so these stay Lucide whichever library the Icons row picks. */
 export const LUCIDE = {
 	check: defineIcon(lucide.check),
-	chevronDown: defineIcon(lucide["chevron-down"]),
+	chevronDown: defineIcon(lucide['chevron-down']),
 	chevronUp: defineIcon('<path d="m18 15-6-6-6 6"/>'),
 	circle: defineIcon('<circle cx="12" cy="12" r="10" fill="currentColor"/>'),
 };
@@ -33,7 +33,7 @@ export function ScLabel(props: {
 					lineHeight: props.size ?? 14,
 					fontWeight: weight.medium,
 					color: sc.foreground,
-					whiteSpace: "nowrap",
+					whiteSpace: 'nowrap',
 				}}
 			>
 				{props.children}
@@ -59,7 +59,7 @@ export function pressProps(options: {
 			tabIndex: options.tabIndex,
 			onKeyDown(event: KeyEvent) {
 				options.onKeyDown?.(event);
-				if (options.enter === false && event.key === "Enter") {
+				if (options.enter === false && event.key === 'Enter') {
 					event.preventDefault();
 				}
 			},

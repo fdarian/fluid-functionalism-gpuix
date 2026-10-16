@@ -4,7 +4,7 @@ import {
 	type HostElement,
 	type HostMouseEvent,
 	IntersectionObserver,
-} from "@gpuix/solid";
+} from '@gpuix/solid';
 import {
 	createEffect,
 	createSignal,
@@ -12,15 +12,15 @@ import {
 	onCleanup,
 	Show,
 	untrack,
-} from "solid-js";
-import { onFrame } from "#/lib/clock";
-import { usePreviewPlayback } from "#/lib/preview-playback";
-import { color, shape, siteType } from "#/lib/theme";
+} from 'solid-js';
+import { onFrame } from '#/lib/clock';
+import { usePreviewPlayback } from '#/lib/preview-playback';
+import { color, shape, siteType } from '#/lib/theme';
 import {
 	createScriptedPointer,
 	findByTestId,
 	fromVisitor,
-} from "./scripted-pointer";
+} from './scripted-pointer';
 
 /** Height of every example's frame, so switching tabs never moves the page. Matches the menu: 5 rows of 36px plus 8px padding top and bottom. */
 export const FRAME_H = 196;
@@ -28,7 +28,7 @@ export const FRAME_H = 196;
 /** How much of an example must be on screen for its script to play. */
 const IN_VIEW_RATIO = 0.35;
 
-export type Side = "generic" | "skill";
+export type Side = 'generic' | 'skill';
 
 /**
  * Whether an example should play its script: on screen, motion allowed (by
@@ -73,7 +73,7 @@ export function createPlayback() {
 		onFocusIn() {
 			const focused = document.activeElement;
 			if (focused === null) return;
-			setKeyboardInside(focused.matches(":focus-visible"));
+			setKeyboardInside(focused.matches(':focus-visible'));
 		},
 		onFocusOut() {
 			setKeyboardInside(false);
@@ -121,7 +121,7 @@ export function createLoop(
 		let timer: ReturnType<typeof setTimeout>;
 		const tick = () => {
 			const step = steps[index];
-			if (step === undefined) throw new Error("the script has no steps");
+			if (step === undefined) throw new Error('the script has no steps');
 			step.run();
 			index = (index + 1) % steps.length;
 			timer = setTimeout(tick, step.ms);
@@ -169,7 +169,7 @@ export function createScriptCursor(playback: Playback) {
 
 	const rootBox = () => {
 		const root = playback.root();
-		if (root === undefined) throw new Error("the example has no root");
+		if (root === undefined) throw new Error('the example has no root');
 		return root.getBoundingClientRect();
 	};
 	const windowPoint = (point: { x: number; y: number }) => {
@@ -209,7 +209,7 @@ export function createScriptCursor(playback: Playback) {
 		pressed,
 		goto(testId: string) {
 			const root = playback.root();
-			if (root === undefined) throw new Error("the example has no root");
+			if (root === undefined) throw new Error('the example has no root');
 			const box = root.getBoundingClientRect();
 			const to = findByTestId(root, testId).getBoundingClientRect();
 			const target = {
@@ -266,9 +266,9 @@ export function turns(
 	setActive: (side: Side) => void,
 	turn: (side: Side) => LoopStep[],
 ): LoopStep[] {
-	return (["generic", "skill"] as const).flatMap((side) => {
+	return (['generic', 'skill'] as const).flatMap((side) => {
 		const [first, ...rest] = turn(side);
-		if (first === undefined) throw new Error("a turn has no steps");
+		if (first === undefined) throw new Error('a turn has no steps');
 		return [
 			{
 				ms: first.ms,
@@ -293,13 +293,13 @@ function ScriptCursorArrow(props: { cursor: ScriptCursor }) {
 				<svg
 					source={arrow(props.cursor.pressed() ? CURSOR_PRESSED : CURSOR)}
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						// The arrow's tip sits 3px in from the SVG's corner.
 						left: position().x - 3,
 						top: position().y - 3,
 						width: props.cursor.pressed() ? CURSOR_PRESSED : CURSOR,
 						height: props.cursor.pressed() ? CURSOR_PRESSED : CURSOR,
-						pointerEvents: "none",
+						pointerEvents: 'none',
 					}}
 				/>
 			)}
@@ -314,9 +314,9 @@ function Caption(props: { side: Side; active: boolean; children: string }) {
 			style={{
 				...siteType.caption,
 				color: props.active ? color.foreground : color.mutedForeground,
-				transitionProperty: "color",
-				transitionDuration: "150ms",
-				transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+				transitionProperty: 'color',
+				transitionDuration: '150ms',
+				transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 			}}
 		>
 			{props.children}
@@ -342,25 +342,25 @@ export function Compare(props: {
 				flexGrow: 1,
 				flexBasis: 0,
 				minWidth: 0,
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
 				gap: 12,
 			}}
 		>
 			<div
 				style={{
-					position: "relative",
-					width: "100%",
-					overflow: "hidden",
+					position: 'relative',
+					width: '100%',
+					overflow: 'hidden',
 					borderRadius: shape.container,
 					...(props.bare === true
 						? {}
 						: {
 								height: FRAME_H,
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
 							}),
 				}}
 			>
@@ -376,16 +376,16 @@ export function Compare(props: {
 			ref={props.playback.setRoot}
 			{...props.playback.bind}
 			style={{
-				position: "relative",
-				display: "flex",
-				flexDirection: "row",
+				position: 'relative',
+				display: 'flex',
+				flexDirection: 'row',
 				gap: 20,
-				width: "100%",
+				width: '100%',
 				maxWidth: 576,
 			}}
 		>
-			{frame("generic", props.generic, "❌ Generic AI output")}
-			{frame("skill", props.skill, "✅ With the skill")}
+			{frame('generic', props.generic, '❌ Generic AI output')}
+			{frame('skill', props.skill, '✅ With the skill')}
 			<Show when={props.playback.playing()}>
 				<ScriptCursorArrow cursor={props.cursor} />
 			</Show>

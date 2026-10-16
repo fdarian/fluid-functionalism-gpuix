@@ -1,14 +1,14 @@
-import { createSignal, For } from "solid-js";
-import { Button } from "#/components/button";
-import { InputField, InputGroup } from "#/components/input-group";
-import { Select } from "#/components/select";
-import { TabsSubtle, TabsSubtleItem } from "#/components/tabs-subtle";
-import { ComponentPreview } from "#/lib/doc-page";
-import { defineIcon } from "#/lib/icons";
-import { color, type SizeChoice, siteType, weight } from "#/lib/theme";
-import { ANNOTATION_BLUE } from "#/pages/surfaces/annotations";
-import { LADDER } from "./ladder";
-import { SORT_OPTIONS } from "./sort-options";
+import { createSignal, For } from 'solid-js';
+import { Button } from '#/components/button';
+import { InputField, InputGroup } from '#/components/input-group';
+import { Select } from '#/components/select';
+import { TabsSubtle, TabsSubtleItem } from '#/components/tabs-subtle';
+import { ComponentPreview } from '#/lib/doc-page';
+import { defineIcon } from '#/lib/icons';
+import { color, type SizeChoice, siteType, weight } from '#/lib/theme';
+import { ANNOTATION_BLUE } from '#/pages/surfaces/annotations';
+import { LADDER } from './ladder';
+import { SORT_OPTIONS } from './sort-options';
 
 const TOOLBAR_CODE = `// The same toolbar line at each step. One SizeProvider pins the
 // row; every control inside follows. activeLabel collapses inactive
@@ -49,9 +49,9 @@ export const FILTER_ICON = defineIcon(
 
 /** `w-24` in the source; the port's `InputGroup` is a fixed 288px, so the wrapper sets the width and the group shrinks into it. */
 function SearchField(props: { step: SizeChoice }) {
-	const [query, setQuery] = createSignal("");
+	const [query, setQuery] = createSignal('');
 	return (
-		<div style={{ display: "flex", width: 96, flexShrink: 0 }}>
+		<div style={{ display: 'flex', width: 96, flexShrink: 0 }}>
 			<InputGroup size={props.step}>
 				<InputField
 					index={0}
@@ -71,11 +71,11 @@ function SearchField(props: { step: SizeChoice }) {
 /** The double-headed arrow of the spec sheet's height guide, as the source's three strokes. */
 function HeightArrow(props: { height: number }) {
 	const stroke = {
-		fill: "none",
+		fill: 'none',
 		stroke: ANNOTATION_BLUE,
 		strokeWidth: 1.25,
-		strokeLinecap: "round",
-		strokeLinejoin: "round",
+		strokeLinecap: 'round',
+		strokeLinejoin: 'round',
 	} as const;
 	return (
 		<svg
@@ -95,7 +95,7 @@ function HeightArrow(props: { height: number }) {
 /** Blue lines along the row's top and bottom edges, and the height beside a double arrow on the right. */
 function HeightGuides(props: { height: number }) {
 	const line = {
-		position: "absolute",
+		position: 'absolute',
 		left: 0,
 		right: 0,
 		height: 1,
@@ -108,13 +108,13 @@ function HeightGuides(props: { height: number }) {
 			<div style={{ ...line, bottom: 0 }} />
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					right: 0,
 					top: 0,
 					bottom: 0,
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					gap: 4,
 				}}
 			>
@@ -124,7 +124,7 @@ function HeightGuides(props: { height: number }) {
 						...siteType.caption,
 						fontWeight: weight.semibold,
 						color: color.foreground,
-						fontVariantNumeric: "tabular-nums",
+						fontVariantNumeric: 'tabular-nums',
 					}}
 				>
 					{`${props.height}px`}
@@ -136,29 +136,29 @@ function HeightGuides(props: { height: number }) {
 
 function ToolbarRow(props: { step: SizeChoice }) {
 	const [view, setView] = createSignal(0);
-	const [sort, setSort] = createSignal("updated");
+	const [sort, setSort] = createSignal('updated');
 	const gap = () => LADDER[props.step].gap;
 
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "flex-start",
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'flex-start',
 				gap: 12,
-				width: "100%",
+				width: '100%',
 			}}
 		>
 			<text style={{ ...siteType.caption, color: color.mutedForeground }}>
-				{props.step === "default" ? "Default · 36px" : "Compact · 28px"}
+				{props.step === 'default' ? 'Default · 36px' : 'Compact · 28px'}
 			</text>
-			<div style={{ position: "relative", width: "100%" }}>
+			<div style={{ position: 'relative', width: '100%' }}>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
-						flexWrap: "nowrap",
-						alignItems: "center",
+						display: 'flex',
+						flexDirection: 'row',
+						flexWrap: 'nowrap',
+						alignItems: 'center',
 						gap: gap(),
 						paddingRight: 44,
 					}}
@@ -174,10 +174,10 @@ function ToolbarRow(props: { step: SizeChoice }) {
 					</TabsSubtle>
 					<div
 						style={{
-							marginLeft: "auto",
-							display: "flex",
-							flexDirection: "row",
-							alignItems: "center",
+							marginLeft: 'auto',
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'center',
 							gap: gap(),
 						}}
 					>
@@ -192,7 +192,7 @@ function ToolbarRow(props: { step: SizeChoice }) {
 						/>
 						<Button
 							variant="tertiary"
-							size={props.step === "compact" ? "icon-compact" : "icon"}
+							size={props.step === 'compact' ? 'icon-compact' : 'icon'}
 							icon={FILTER_ICON}
 							aria-label="Filter"
 						/>
@@ -213,12 +213,12 @@ export function ToolbarRows() {
 		<div
 			style={{
 				minWidth: 0,
-				display: "flex",
-				flexDirection: "column",
+				display: 'flex',
+				flexDirection: 'column',
 				gap: 32,
 			}}
 		>
-			<For each={["default", "compact"] as const}>
+			<For each={['default', 'compact'] as const}>
 				{(step) => <ToolbarRow step={step} />}
 			</For>
 		</div>
@@ -238,8 +238,8 @@ export function ToolbarDemo() {
 				style={{
 					flexGrow: 1,
 					minWidth: 0,
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					paddingLeft: 16,
 					paddingRight: 16,
 					paddingTop: 48,

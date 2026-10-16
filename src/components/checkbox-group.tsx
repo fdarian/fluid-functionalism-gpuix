@@ -1,6 +1,6 @@
-import type { JSX } from "solid-js";
-import { CheckMark } from "#/lib/icon";
-import { color } from "#/lib/theme";
+import type { JSX } from 'solid-js';
+import { CheckMark } from '#/lib/icon';
+import { color } from '#/lib/theme';
 import {
 	ChoiceGroup,
 	ChoiceRow,
@@ -9,9 +9,9 @@ import {
 	indicatorBorder,
 	indicatorFade,
 	ROW,
-} from "./choice-group";
+} from './choice-group';
 
-const CHECK = "M6 12L10 16L18 8";
+const CHECK = 'M6 12L10 16L18 8';
 
 export function CheckboxGroup(props: {
 	/** The whole checked set: the group merges contiguous checked rows into one background. */
@@ -41,13 +41,13 @@ function Checkbox(props: {
 	testId?: string;
 }) {
 	const box = () => ROW[props.size].box;
-	const glyph = () => (props.size === "compact" ? 16 : 18);
+	const glyph = () => (props.size === 'compact' ? 16 : 18);
 	const inset = () => (box() - glyph()) / 2;
 	return (
 		<div
 			testId={props.testId}
 			style={{
-				position: "relative",
+				position: 'relative',
 				flexShrink: 0,
 				width: box(),
 				height: box(),
@@ -55,18 +55,18 @@ function Checkbox(props: {
 		>
 			<div
 				style={{
-					position: "absolute",
+					position: 'absolute',
 					top: 0,
 					left: 0,
 					right: 0,
 					bottom: 0,
-					borderRadius: props.size === "compact" ? 4 : 5,
+					borderRadius: props.size === 'compact' ? 4 : 5,
 					borderWidth: 1.5,
 					borderColor: indicatorBorder(props.checked, props.active),
 					...indicatorFade,
 				}}
 			/>
-			<div style={{ position: "absolute", top: inset(), left: inset() }}>
+			<div style={{ position: 'absolute', top: inset(), left: inset() }}>
 				<CheckMark
 					checked={props.checked}
 					path={CHECK}

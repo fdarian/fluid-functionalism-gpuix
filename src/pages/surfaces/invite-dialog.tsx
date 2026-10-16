@@ -1,6 +1,6 @@
-import type { HostElement, StyleDesc } from "@gpuix/solid";
-import { createSignal, type JSX, Show } from "solid-js";
-import { Icon } from "#/lib/icon";
+import type { HostElement, StyleDesc } from '@gpuix/solid';
+import { createSignal, type JSX, Show } from 'solid-js';
+import { Icon } from '#/lib/icon';
 import {
 	color,
 	colorFade,
@@ -8,14 +8,14 @@ import {
 	siteType,
 	surface,
 	weight,
-} from "#/lib/theme";
-import { SurfaceProvider } from "./elevated";
+} from '#/lib/theme';
+import { SurfaceProvider } from './elevated';
 import {
 	CHEVRON_UP_ICON,
 	ROLES,
 	StaticRoleItem,
 	SurfaceMenu,
-} from "./role-menu";
+} from './role-menu';
 
 function FieldLabel(props: { children: string }) {
 	return (
@@ -36,18 +36,18 @@ function Header() {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "flex-start",
-				justifyContent: "space-between",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'flex-start',
+				justifyContent: 'space-between',
 				gap: 12,
 			}}
 		>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					gap: 12,
 				}}
 			>
@@ -56,9 +56,9 @@ function Header() {
 						width: 28,
 						height: 28,
 						flexShrink: 0,
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
 						borderRadius: 14,
 						backgroundColor: color.foreground,
 					}}
@@ -92,7 +92,7 @@ function Header() {
 					padding: 4,
 					marginRight: -4,
 					marginTop: -4,
-					cursor: "pointer",
+					cursor: 'pointer',
 				}}
 			>
 				<Icon
@@ -109,7 +109,7 @@ function Header() {
 function EmailField() {
 	const [hovered, setHovered] = createSignal(false);
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
 			<FieldLabel>Email</FieldLabel>
 			<div
 				onMouseEnter={() => setHovered(true)}
@@ -124,7 +124,7 @@ function EmailField() {
 					borderColor: color.border,
 					borderRadius: 12,
 					backgroundColor: hovered() ? color.hover : color.transparent,
-					cursor: "pointer",
+					cursor: 'pointer',
 					...colorFade,
 				}}
 			>
@@ -143,10 +143,10 @@ function RoleTrigger() {
 			aria-expanded
 			style={{
 				height: 40,
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center",
-				justifyContent: "space-between",
+				display: 'flex',
+				flexDirection: 'row',
+				alignItems: 'center',
+				justifyContent: 'space-between',
 				gap: 8,
 				paddingLeft: 12,
 				paddingRight: 12,
@@ -154,7 +154,7 @@ function RoleTrigger() {
 				borderWidth: 1,
 				borderColor: color.border,
 				backgroundColor: color.active,
-				cursor: "pointer",
+				cursor: 'pointer',
 			}}
 		>
 			<text style={{ ...siteType.body, color: color.foreground }}>Member</text>
@@ -172,10 +172,10 @@ function Footer() {
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "row",
-				justifyContent: "flex-end",
-				alignItems: "center",
+				display: 'flex',
+				flexDirection: 'row',
+				justifyContent: 'flex-end',
+				alignItems: 'center',
 				gap: 8,
 				paddingTop: 8,
 			}}
@@ -184,12 +184,12 @@ function Footer() {
 				role="button"
 				style={{
 					height: 36,
-					display: "flex",
-					alignItems: "center",
+					display: 'flex',
+					alignItems: 'center',
 					paddingLeft: 16,
 					paddingRight: 16,
 					borderRadius: 18,
-					cursor: "pointer",
+					cursor: 'pointer',
 					hover: { backgroundColor: color.hover },
 					...colorFade,
 				}}
@@ -209,8 +209,8 @@ function Footer() {
 				aria-disabled
 				style={{
 					height: 36,
-					display: "flex",
-					alignItems: "center",
+					display: 'flex',
+					alignItems: 'center',
 					paddingLeft: 16,
 					paddingRight: 16,
 					borderRadius: 18,
@@ -238,7 +238,7 @@ function Footer() {
  * substrate (the solution).
  */
 export function InviteDialog(props: {
-	variant: "problem" | "solution";
+	variant: 'problem' | 'solution';
 	style: StyleDesc;
 	ref?: (element: HostElement) => void;
 	menuRef?: (element: HostElement) => void;
@@ -248,8 +248,8 @@ export function InviteDialog(props: {
 			<div
 				ref={props.ref}
 				style={{
-					display: "flex",
-					flexDirection: "column",
+					display: 'flex',
+					flexDirection: 'column',
 					gap: 20,
 					padding: 24,
 					borderRadius: 16,
@@ -260,20 +260,20 @@ export function InviteDialog(props: {
 			>
 				<Header />
 				<EmailField />
-				<div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+				<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
 					<FieldLabel>Select role</FieldLabel>
 					<RoleTrigger />
 					<div style={{ marginTop: -1 }}>
 						<Show
-							when={props.variant === "solution"}
+							when={props.variant === 'solution'}
 							fallback={
 								// Same elevation shadow as a real dropdown, but the background
 								// is hard-coded to the dialog's own level: surface-5 on
 								// surface-5 gives a faint edge, yet the body melts into it.
 								<div
 									style={{
-										display: "flex",
-										flexDirection: "column",
+										display: 'flex',
+										flexDirection: 'column',
 										padding: 4,
 										borderRadius: 16,
 										backgroundColor: surface(5),

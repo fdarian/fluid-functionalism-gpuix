@@ -1,5 +1,5 @@
-import { For, type JSX } from "solid-js";
-import { ScrollArea } from "#/components/scroll-area";
+import { For, type JSX } from 'solid-js';
+import { ScrollArea } from '#/components/scroll-area';
 import {
 	Table,
 	TableBody,
@@ -7,10 +7,10 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "#/components/table";
-import { ComponentPreview } from "#/lib/doc-page";
-import { color, shape, siteType } from "#/lib/theme";
-import { FADE_CODE, HORIZONTAL_CODE, PROBLEM_CODE, TABLE_CODE } from "./code";
+} from '#/components/table';
+import { ComponentPreview } from '#/lib/doc-page';
+import { color, shape, siteType } from '#/lib/theme';
+import { FADE_CODE, HORIZONTAL_CODE, PROBLEM_CODE, TABLE_CODE } from './code';
 
 const RELEASES = Array.from(
 	{ length: 24 },
@@ -18,36 +18,36 @@ const RELEASES = Array.from(
 );
 
 const MONTHS = [
-	"January",
-	"February",
-	"March",
-	"April",
-	"May",
-	"June",
-	"July",
-	"August",
-	"September",
-	"October",
-	"November",
-	"December",
+	'January',
+	'February',
+	'March',
+	'April',
+	'May',
+	'June',
+	'July',
+	'August',
+	'September',
+	'October',
+	'November',
+	'December',
 ];
 
 const CITIES = [
-	"Amsterdam",
-	"Berlin",
-	"Copenhagen",
-	"Dublin",
-	"Helsinki",
-	"Lisbon",
-	"London",
-	"Madrid",
-	"Oslo",
-	"Paris",
-	"Prague",
-	"Stockholm",
-	"Vienna",
-	"Warsaw",
-	"Zurich",
+	'Amsterdam',
+	'Berlin',
+	'Copenhagen',
+	'Dublin',
+	'Helsinki',
+	'Lisbon',
+	'London',
+	'Madrid',
+	'Oslo',
+	'Paris',
+	'Prague',
+	'Stockholm',
+	'Vienna',
+	'Warsaw',
+	'Zurich',
 ];
 
 /** Deterministic fake metric so the table renders identically on every pass. */
@@ -66,7 +66,7 @@ const LIST_H = 224;
 
 function ReleaseRows() {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", padding: 12 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', padding: 12 }}>
 			<For each={RELEASES}>
 				{(release: string) => (
 					<div
@@ -81,7 +81,7 @@ function ReleaseRows() {
 							style={{
 								...siteType.body,
 								color: color.foreground,
-								whiteSpace: "nowrap",
+								whiteSpace: 'nowrap',
 							}}
 						>
 							{release}
@@ -99,7 +99,7 @@ function PanelLabel(props: { children: JSX.Element }) {
 			style={{
 				...siteType.caption,
 				color: color.mutedForeground,
-				textAlign: "center",
+				textAlign: 'center',
 			}}
 		>
 			{props.children}
@@ -124,16 +124,16 @@ export function ProblemDemo() {
 		<ComponentPreview testId="scrollbars-problem" code={PROBLEM_CODE}>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "flex-start",
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'flex-start',
 					gap: 24,
 				}}
 			>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "column",
+						display: 'flex',
+						flexDirection: 'column',
 						gap: 8,
 						width: LIST_W,
 						flexShrink: 0,
@@ -145,7 +145,7 @@ export function ProblemDemo() {
 							...frame(),
 							width: LIST_W,
 							height: LIST_H,
-							overflowY: "scroll",
+							overflowY: 'scroll',
 						}}
 					>
 						<ReleaseRows />
@@ -157,8 +157,8 @@ export function ProblemDemo() {
 				</div>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "column",
+						display: 'flex',
+						flexDirection: 'column',
 						gap: 8,
 						width: LIST_W,
 						flexShrink: 0,
@@ -215,8 +215,8 @@ export function HorizontalDemo() {
 			>
 				<div
 					style={{
-						display: "flex",
-						flexDirection: "row",
+						display: 'flex',
+						flexDirection: 'row',
 						gap: 8,
 						padding: 12,
 						flexShrink: 0,
@@ -231,9 +231,9 @@ export function HorizontalDemo() {
 									width: 112,
 									height: 80,
 									flexShrink: 0,
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "center",
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
 								}}
 							>
 								<text style={{ ...siteType.body, color: color.foreground }}>
@@ -278,9 +278,7 @@ export function TableDemo() {
 						<For each={CITIES}>
 							{(city: string, row: () => number) => (
 								<TableRow index={row()}>
-									<TableCell width={CITY_COLUMN}>
-										{city}
-									</TableCell>
+									<TableCell width={CITY_COLUMN}>{city}</TableCell>
 									<For each={MONTHS}>
 										{(month: string, col: () => number) => (
 											<TableCell

@@ -1,26 +1,25 @@
-import { createSignal, For, type JSX } from "solid-js";
+import { createSignal, For, type JSX } from 'solid-js';
 import {
 	TabsSubtle,
 	TabsSubtleItem,
 	TabsSubtlePanel,
-} from "#/components/tabs-subtle";
-import type { DemoModule } from "#/lib/demo";
-import { DemoCard } from "#/lib/demo-kit";
-import type { IconRef } from "#/lib/icons";
-import { color, type as scale } from "#/lib/theme";
-
+} from '#/components/tabs-subtle';
+import type { DemoModule } from '#/lib/demo';
+import { DemoCard } from '#/lib/demo-kit';
+import type { IconRef } from '#/lib/icons';
+import { color, type as scale } from '#/lib/theme';
 
 const TABS: { icon: IconRef; label: string }[] = [
-	{ icon: "square-library", label: "Teamspaces" },
-	{ icon: "clock", label: "Recents" },
-	{ icon: "star", label: "Favorites" },
-	{ icon: "users", label: "Shared" },
+	{ icon: 'square-library', label: 'Teamspaces' },
+	{ icon: 'clock', label: 'Recents' },
+	{ icon: 'star', label: 'Favorites' },
+	{ icon: 'users', label: 'Shared' },
 ];
-const BASIC_TABS = ["Teamspaces", "Recents", "Favorites", "Shared"];
+const BASIC_TABS = ['Teamspaces', 'Recents', 'Favorites', 'Shared'];
 
 function Section(props: { caption: string; children: JSX.Element }) {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
 			<text style={{ ...scale.caption, color: color.mutedForeground }}>
 				{props.caption}
 			</text>
@@ -39,9 +38,9 @@ function Content(props: { children: string }) {
 	);
 }
 
-export const title = "TabsSubtle";
-export const group = "Components";
-export const listed = "sidebar";
+export const title = 'TabsSubtle';
+export const group = 'Components';
+export const listed = 'sidebar';
 
 export function Demo() {
 	const [basic, setBasic] = createSignal(0);
@@ -51,7 +50,7 @@ export function Demo() {
 	const [keyboard, setKeyboard] = createSignal(0);
 	return (
 		<DemoCard title="TabsSubtle">
-			<div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+			<div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 				<Section caption="Basic">
 					<TabsSubtle
 						testId="basic-list"
@@ -165,7 +164,7 @@ export function Demo() {
 						selectedIndex={keyboard()}
 						onSelect={setKeyboard}
 					>
-						<For each={["A", "B", "C"]}>
+						<For each={['A', 'B', 'C']}>
 							{(label: string, index: () => number) => (
 								<TabsSubtleItem
 									testId={`kb-${index()}`}
@@ -175,7 +174,7 @@ export function Demo() {
 							)}
 						</For>
 					</TabsSubtle>
-					<For each={["A", "B", "C"]}>
+					<For each={['A', 'B', 'C']}>
 						{(label: string, index: () => number) => (
 							<TabsSubtlePanel
 								index={index()}
@@ -192,46 +191,46 @@ export function Demo() {
 	);
 }
 
-export const scenarios: DemoModule["scenarios"] = async (shot) => {
-	await shot.hover("basic-2");
-	shot.capture("hover-other-tab");
-	await shot.click("basic-1");
-	shot.capture("selected-second");
-	shot.expectAria("basic-1", {
+export const scenarios: DemoModule['scenarios'] = async (shot) => {
+	await shot.hover('basic-2');
+	shot.capture('hover-other-tab');
+	await shot.click('basic-1');
+	shot.capture('selected-second');
+	shot.expectAria('basic-1', {
 		selected: true,
-		controls: ["basic-demo-panel-1"],
+		controls: ['basic-demo-panel-1'],
 	});
-	shot.expectAria("basic-demo-panel-1", {
-		role: "TabPanel",
-		labelled_by: ["basic-demo-tab-1"],
+	shot.expectAria('basic-demo-panel-1', {
+		role: 'TabPanel',
+		labelled_by: ['basic-demo-tab-1'],
 	});
-	shot.expectAria("basic-0", { selected: false, controls: undefined });
+	shot.expectAria('basic-0', { selected: false, controls: undefined });
 	await shot.moveTo(1180, 700);
-	shot.capture("pointer-left-list");
-	await shot.click("active-2");
-	shot.capture("active-label-unfolded");
+	shot.capture('pointer-left-list');
+	await shot.click('active-2');
+	shot.capture('active-label-unfolded');
 	await shot.moveTo(1180, 700);
-	await shot.click("icons-0");
-	await shot.press("ArrowRight");
-	shot.capture("keyboard-focus-moved");
-	await shot.press("Enter");
-	shot.capture("keyboard-selected");
+	await shot.click('icons-0');
+	await shot.press('ArrowRight');
+	shot.capture('keyboard-focus-moved');
+	await shot.press('Enter');
+	shot.capture('keyboard-selected');
 
-	await shot.click("kb-0");
-	shot.expectText("Kb panel A", true);
+	await shot.click('kb-0');
+	shot.expectText('Kb panel A', true);
 	// Manual activation: the arrow moves focus only.
-	await shot.press("ArrowRight");
-	shot.expectText("Kb panel A", true);
-	shot.expectText("Kb panel B", false);
-	await shot.press("End");
-	await shot.press("Enter");
-	shot.expectText("Kb panel C", true);
+	await shot.press('ArrowRight');
+	shot.expectText('Kb panel A', true);
+	shot.expectText('Kb panel B', false);
+	await shot.press('End');
+	await shot.press('Enter');
+	shot.expectText('Kb panel C', true);
 	// A modifier chord is not a navigation key.
-	await shot.press("Meta+ArrowLeft");
-	await shot.press("Enter");
-	shot.expectText("Kb panel C", true);
-	await shot.press("ArrowLeft");
-	await shot.press("Enter");
-	shot.expectText("Kb panel B", true);
-	shot.capture("keyboard-manual");
+	await shot.press('Meta+ArrowLeft');
+	await shot.press('Enter');
+	shot.expectText('Kb panel C', true);
+	await shot.press('ArrowLeft');
+	await shot.press('Enter');
+	shot.expectText('Kb panel B', true);
+	shot.capture('keyboard-manual');
 };
