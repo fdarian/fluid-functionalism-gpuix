@@ -186,7 +186,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 ## Demo page
 
-- **Cause:** mixed.
+- **Cause:** `not ported yet` (Playground, API tables, code tabs) + `port choice` (Replay button, centred card, Controlled readout; reason not stated). Itemised under Port.
 - **Original:** `page.tsx:1182-1309`: Playground, then Multiple questions, Multi-select, With other, Free text, Free text validation, Skippable, Chip on left, Stacked layout and Controlled, each in a `min-h-[560px]` preview aligned to the bottom with a corner Replay icon; the Controlled example has no readout; then four API Reference tables.
 - **Port:** the same nine examples in the same order (`src/demos/ask-user-questions.tsx:718-760`).
   - `not ported yet`: the Playground (live controls with synced code) and the API tables and code tabs (docs chrome).

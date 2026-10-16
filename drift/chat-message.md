@@ -114,7 +114,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 ## Demo page
 
-- **Cause:** mixed.
+- **Cause:** `not ported yet` (API table and code tabs, `max-w-xl`, curly quotes) + `port choice` (the "Add message" button, to exercise the entrance in a capture). Itemised under Port.
 - **Original:** `app/docs/chat-message/page.tsx`: Conversation (5 messages, `MessageActions` on each), Roles, Attachments (a `File` fetched from `/micka.png`), API Reference table; previews are `max-w-xl` with code tabs (`:120-189`).
 - **Port:** `src/demos/chat-message.tsx` has the same three sections with the same messages (`:14-34`, `:99-153`). Differences:
   - `not ported yet`: the API Reference table and code tabs (docs chrome).
