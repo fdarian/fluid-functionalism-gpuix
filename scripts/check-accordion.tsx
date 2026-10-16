@@ -94,19 +94,24 @@ kit.check(
 // keeps the ring's spring.fast glide instead of snapping, so it trails the row.
 await kit.press("down");
 const rowStart = bounds("single-2").y;
+// The motion clock is stepped by hand: sampling against wall time lets a slow
+// frame carry both springs to rest before the first sample.
+const FRAME_MS = 16;
+renderer.clockPause();
 renderer.simulateKeystrokes("enter");
 let maxLag = 0;
 let rowTravel = 0;
 for (let frame = 0; frame < 40; frame++) {
+	renderer.clockFastForward(FRAME_MS);
 	renderer.flush();
 	renderer.dispatchNativeEvents();
-	await new Promise((resolve) => setTimeout(resolve, 8));
 	const rowNow = bounds("single-2");
 	const ringNow = bounds("single-focus-ring");
 	// Frame 0 only shows how late the first re-measure lands; a snapping ring is on the row from frame 1.
 	if (frame > 0) maxLag = Math.max(maxLag, Math.abs(ringNow.y + 2 - rowNow.y));
 	rowTravel = Math.max(rowTravel, Math.abs(rowNow.y - rowStart));
 }
+renderer.clockResume();
 kit.check(
 	"row moved under the ring",
 	rowTravel > 20,
