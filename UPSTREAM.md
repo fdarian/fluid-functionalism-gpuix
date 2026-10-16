@@ -9,7 +9,7 @@ porting them by hand. [`drift/`](drift) records where the port still differs; th
 
 | Commit | Date | Covers |
 | --- | --- | --- |
-| `0a0377eaaf4ab248773642ea0f299acc3f7958d7` (Merge PR #69) | 2026-10-11 | Every component, demo and page not listed below, and the audit in [BASE-UI-AUDIT.md](BASE-UI-AUDIT.md) (`@base-ui/react` 1.9.0) |
+| `0a0377eaaf4ab248773642ea0f299acc3f7958d7` (Merge PR #69) | 2026-10-11 | Every component, demo and page not listed below, and the `@base-ui/react` 1.9.0 audit in [../base-ui-solid-gpuix/BASE-UI-AUDIT.md](../base-ui-solid-gpuix/BASE-UI-AUDIT.md) |
 | `d5c36065b8a351a3f248b496b03b2bdcef58d682` (feat(og): build the OG image in code at /og) | 2026-10-14 | The site nav and the Changelog page |
 
 These are at `d5c3606`, because the live site was the only place they existed (0a0377e predates the Changelog and
@@ -57,8 +57,9 @@ git clone https://github.com/mickadesign/fluid-functionalism ~/.claude/notes/ff-
 
    Run both ranges per file when a file is still at `0a0377e`; run the second alone for the ones in the table.
 3. **Port each change** to the file the [map](#file-map) names, and update the `file:line` refs in its drift file.
-   Re-audit the component's Base UI rows in [BASE-UI-AUDIT.md](BASE-UI-AUDIT.md) when the change touches a
-   `registry/base/*` file.
+   When the change touches a `registry/base/*` file, decide first where it lands: keys, selection, open state, focus
+   and ARIA belong to the primitive in `../base-ui-solid-gpuix` (port it there, with its own `UPSTREAM.md` procedure,
+   and re-audit its rows in [../base-ui-solid-gpuix/BASE-UI-AUDIT.md](../base-ui-solid-gpuix/BASE-UI-AUDIT.md)); styling, tokens, springs and fluid hover stay in `src/`.
 4. **Move the pin.** Change the commit in the drift file's header (and the table above when the whole group moves).
    When no `0a0377e` is left, collapse this file to one pin.
 5. **Changelog.** `content/changelog/*.md` is copied verbatim: copy new months in as they land. The parser is a line
@@ -87,7 +88,8 @@ lands in the matching file on the right"; the drift file's `Original:` header na
 | `app/layout.tsx`, `app/components/{sidebar-layout,right-panel,site-command-menu,playground-menu}.tsx`, `lib/docs/{DocPage,ComponentPreview,PropsTable,playground}.tsx` | `src/main.tsx`, `src/app.tsx`, `src/lib/{app-frame,doc-page,demo-kit,playground,site-command-menu,page-nav}.ts*` |
 | `app/globals.css`, `registry/default/lib/{springs,surface-classes,type-scale,font-weight}.ts`, `shape-context.tsx`, `size-context.tsx` | `src/lib/theme.ts` (tokens, springs, shadows) |
 | `registry/default/hooks/use-fluid-hover.ts`, `registry/default/fluid-hover-highlight.tsx` | `src/lib/fluid-hover.ts`, `src/lib/fluid-highlight.tsx` |
-| `registry/default/lib/{popup.ts,surface-context.tsx,elevated.tsx}`, `hooks/use-keyboard-nav-gate.ts` | `src/lib/{popup,surface-context}.ts*`; the nav gate is inline in `src/components/select.tsx` |
+| `registry/default/lib/{popup.ts,surface-context.tsx,elevated.tsx}` | `src/lib/{popup,surface-context}.ts*` (the chrome; placement is `base-ui:src/internals/use-anchor-positioning.ts`) |
+| `registry/default/hooks/use-keyboard-nav-gate.ts` | `base-ui:src/select/root/use-select-root.ts` (`keyboardNav`), read in `src/components/select.tsx` |
 | `registry/default/lib/icon-context.tsx`, `icons-*.tsx`, `lib/icons-*.ts` | `src/lib/icons.ts`, `src/lib/icon.tsx`, `src/lib/icons/` |
 | `public/fonts/InterVariable*.ttf` | `assets/fonts/Inter-*.ttf` (static cuts: gpuix loads no variable fonts) |
 | `public/{micka,og}.png` | `assets/chat-ai/` |
@@ -100,10 +102,28 @@ Install is a copy prompt (`src/lib/install-url.ts`, `src/lib/starter-prompt.ts`)
 
 ## Base UI primitives
 
-Upstream's `registry/base/*` builds on `@base-ui/react` 1.9.0. Here the same components consume
-`base-ui-solid-gpuix`, a sibling repository linked with `link:`, whose own `UPSTREAM.md` tracks Base UI. A behaviour
-change in Base UI is synced there, not here; what this repository tracks is how FF uses a primitive, which
-[BASE-UI-AUDIT.md](BASE-UI-AUDIT.md) records row by row.
+Upstream's `registry/base/*` builds on `@base-ui/react` 1.9.0. Here the same components consume `base-ui-solid-gpuix`,
+headless Solid primitives in the sibling repository `../base-ui-solid-gpuix`, a workspace member linked with `link:`
+whose own `UPSTREAM.md` pins and syncs Base UI. A Base UI behaviour change is ported there, not here; this repository
+tracks how FF uses a primitive and what it styles on top, which
+[../base-ui-solid-gpuix/BASE-UI-AUDIT.md](../base-ui-solid-gpuix/BASE-UI-AUDIT.md) records row by row. In the file map above, a `base-ui:src/...`
+path is in that repository.
+
+Which part of a `registry/base/*` file is a primitive in `base-ui:src/`:
+
+| FF component | Primitive folder in `base-ui:src/` |
+| --- | --- |
+| `accordion`; `thinking-steps` | `accordion`; `collapsible` |
+| `tabs`, `tabs-subtle` | `tabs` |
+| `checkbox-group`, `radio-group` (the choice-group engine) | `checkbox`, `checkbox-group`, `radio`, `radio-group` |
+| `switch`, `slider` | `switch`, `slider` |
+| `dropdown`, `menu-item`, `dropdown-search` | `menu` |
+| `select`, `combobox` | `select`, `combobox` (form value in `utils/`) |
+| `dialog`, `mobile-drawer`, `tooltip`, `scroll-area` | `dialog`, `drawer`, `tooltip`, `scroll-area` |
+
+Stays here because Base UI has no counterpart: `command-menu`, `sidebar`, `nav-item`, `nav-menu`, `input-message`,
+`color-picker` (its colour maths and fields), `carousel-dots`, `queued-stack`, `ask-user-questions`, the cards, fluid hover and the focus ring. Where
+they need list navigation, presence or pointer capture they import it from `base-ui-solid-gpuix`.
 
 ## Deviations
 
