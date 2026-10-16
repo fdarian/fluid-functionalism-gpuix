@@ -11,19 +11,19 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `gpuix gap`.
 - **Original:** Enter on a focused `<button>` inside a clickable card clicks that button once, and the click bubbles to the card.
-- **Port:** the clickable card root, `CardButton` and the dismiss chip are all `buttonProps` elements, nested (`src/components/card.tsx:337-339`, `:985`, `:508`). The chip's click handler calls `stopPropagation` (`:511`), which stops the bubbled click but not the second keydown, so Enter on a focused chip or button runs its action twice.
+- **Port:** the clickable card root is a `buttonProps` element, and `CardButton` and the dismiss chip are nested `buttonProps` elements (`src/components/card.tsx`). Enter on a nested one would run its action twice.
 - **gpuix lacks:** a target check in `buttonProps`' key handling: its `onKeyDown` clicks `event.elementId`, the focused element, and the keydown bubbles, so every enclosing `buttonProps` element clicks the same target again (`packages/solid/src/components/button.ts:34`, `:48`). Probed on the test renderer with an outer and an inner `buttonProps` div and focus on the inner: one Enter produced `inner, outer, inner, outer`. Space (on key-up, `:52-57`) has the same shape.
-- **Workaround:** none.
-- **Fidelity:** approximated (exact for the pointer, doubled for the keyboard).
+- **Workaround:** inside a card, `CardFooter`, `CardAction` and the dismiss chip stop Enter and Space from propagating (`stopActivationKey`), so the card root never re-clicks the focused control. `scripts/check-card.tsx` confirms one Enter on a `CardButton` in a clickable card runs its handler once and the card's not at all. Any other `buttonProps` element nested in another still doubles.
+- **Fidelity:** exact inside Card; approximated elsewhere (exact for the pointer, doubled for the keyboard).
 - **Components it hits:** any `buttonProps` element inside another (README "Bugs" table lists the others).
 
-## The clickable card is the root, not a stretched overlay (BUG: a `CardButton` click also clicks the card)
+## The clickable card is the root, not a stretched overlay
 
 - **Cause:** `port choice` (reason not stated; gpuix has `position: absolute` and `zIndex`, `FORK.md:560-561`, so an overlay would work).
-- **Original:** a stretched `<button>` (or `<a>`) at `z-20` sits behind the footer and actions (`z-30`), which are siblings, not descendants (`registry/default/card.tsx:345-369`, `:650`, `:698`). Clicking `CardButton` runs only its own handler.
-- **Port:** the card root carries `buttonProps({ onClick })` (`src/components/card.tsx:337-339`), so `CardButton` (`:985`) and `CardAction` are inside it. `CardButton` and `CardAction` do not stop propagation, and gpuix click bubbles, so a click on a footer button also runs the card's `onClick`, and the Enter doubling above adds a second round. Only the chip guards against it (`:510-513`, "The card behind the chip is clickable too"). Read from the code and from the nested-`buttonProps` probe above (the outer handler ran for the inner click); not run on a card with both handlers. The demos hide it: every demo card's `onClick` is empty or a selection that has no `CardButton`.
-- **Workaround:** none.
-- **Fidelity:** approximated (the look is the same; the behaviour of a card with actions is not).
+- **Original:** a stretched `<button>` (or `<a>`) at `z-20` sits behind the footer and actions (`z-30`), which are siblings, not descendants (`registry/default/card.tsx:345-369`, `:650`, `:698`). Clicking `CardButton`, or the empty part of the footer, runs only its own handler.
+- **Port:** the card root carries `buttonProps({ onClick })` (`src/components/card.tsx:337-339`), so the footer and `CardAction` are inside it. They stop the click and the Enter / Space keys from bubbling (`aboveCard`), which keeps their presses off the card, as in the source. The root's own focus ring and hover still cover the whole card, and the card's `onClick` is still reachable through a keydown that starts anywhere else in the card.
+- **Workaround:** n/a.
+- **Fidelity:** exact for clicks and keys on the footer and actions (`scripts/check-card.tsx`); the card is still one nested focus target, not a button with siblings.
 - **Components it hits:** just this one.
 
 ## Link cards: `href`, `external` and `CardButton` `href`
@@ -39,9 +39,9 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `not ported yet`.
 - **Original:** the overlay button has `aria-label={label}` and `aria-pressed={selected || undefined}` (`:363-365`); a disabled card gets `aria-disabled` (`:413`) and drops the overlay; `CardMedia` and `CardImage` pass `alt` (`logoAlt`, `alt`, `:752-756`, `:804-806`).
-- **Port:** the root gets `aria-label` and `aria-selected={selected()}` on every card, clickable or not, and `aria-selected` is not a valid attribute for `role="button"` (`src/components/card.tsx:340-341`); a disabled card has no `aria-disabled` (`:379`); the `<img>` elements get no `alt` (`:755-766`, `:799-814`) although `ImgProps` has it (`packages/native/js/host.ts:1274`).
+- **Port:** the root gets `aria-label` and `aria-pressed` (only while selected) when it is clickable and enabled, and `aria-disabled` when disabled (`src/components/card.tsx:340-345`); `scripts/check-card.tsx` reads role `Button`, the label and `toggled` off the accessibility tree. The test renderer shows no node at all for a disabled or informational card (a plain `div`), so `aria-disabled` on the disabled root is set but not observed. The `<img>` elements get no `alt` (`:755-766`, `:799-814`) although `ImgProps` has it (`packages/native/js/host.ts:1274`).
 - **Workaround:** none.
-- **Fidelity:** approximated.
+- **Fidelity:** exact on the root; `alt` dropped.
 - **Components it hits:** just this one.
 
 ## Cursor over a clickable card
@@ -201,15 +201,6 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Workaround:** pass `size` to each child.
 - **Fidelity:** dropped.
 - **Components it hits:** every component with a size ladder.
-
-## `CardFeature` compact icon gap is 6, not 4
-
-- **Cause:** `port choice` (reason not stated; looks like a slip).
-- **Original:** the gap is the size ladder's `gap`: `gap-2` (8) default, `gap-1` (4) compact (`:871`, `registry/default/lib/size-context.tsx` `sizeMap`).
-- **Port:** `marginRight: scope.compact() ? 6 : 8` (`src/components/card.tsx:838`).
-- **Workaround:** none.
-- **Fidelity:** approximated (2px).
-- **Components it hits:** just this one.
 
 ## Corner radii are fixed
 

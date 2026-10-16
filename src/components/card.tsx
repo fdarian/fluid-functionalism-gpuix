@@ -2,6 +2,7 @@ import {
 	buttonProps,
 	type HostElement,
 	type HostPointerEvent,
+	type KeyEvent,
 	useGpuixRequired,
 } from "@gpuix/solid";
 import {
@@ -99,6 +100,23 @@ const CardContext = createContext<CardScope>({
 
 /** Lets a Card find its CardImage among its resolved children. */
 const imageNodes = new WeakSet<object>();
+
+function stopActivationKey(event: KeyEvent) {
+	if (event.key === "Enter" || event.key === " ") event.stopPropagation();
+}
+
+/**
+ * The source stacks the footer and the actions above the card's stretched
+ * overlay, so nothing in them reaches the card. Here the card root is the
+ * button and they are its descendants: stopping the click keeps a footer
+ * press off the card, and stopping Enter / Space keeps the card's own
+ * `buttonProps` from clicking the focused control a second time.
+ */
+const aboveCard = {
+	onClick: (event: HostPointerEvent) => event.stopPropagation(),
+	onKeyDown: stopActivationKey,
+	onKeyUp: stopActivationKey,
+};
 
 /** Gap click: a press in the whitespace routes to the highlighted card when it lands this close. */
 const GAP_CLICK_DISTANCE = 16;
@@ -337,8 +355,11 @@ export function Card(props: {
 				{...(clickable() && !props.disabled
 					? buttonProps({ onClick: props.onClick, tabIndex: 0 }, renderer)
 					: {})}
-				aria-label={props.label}
-				aria-selected={selected()}
+				aria-label={clickable() && !props.disabled ? props.label : undefined}
+				aria-pressed={
+					clickable() && !props.disabled && selected() ? true : undefined
+				}
+				aria-disabled={props.disabled ? true : undefined}
 				onMouseEnter={() => setHovered(true)}
 				onMouseLeave={() => setHovered(false)}
 				style={{
@@ -512,6 +533,8 @@ function DismissChip(props: {
 						event.stopPropagation();
 						props.onDismiss?.();
 					},
+					onKeyDown: stopActivationKey,
+					onKeyUp: stopActivationKey,
 				},
 				renderer,
 			)}
@@ -639,7 +662,7 @@ export function CardDescription(props: { children: string }) {
 /** Pinned to the header's top-right corner. */
 export function CardAction(props: { children: JSX.Element }) {
 	return (
-		<div style={{ position: "absolute", top: 0, right: 0 }}>
+		<div {...aboveCard} style={{ position: "absolute", top: 0, right: 0 }}>
 			{props.children}
 		</div>
 	);
@@ -669,6 +692,7 @@ export function CardFooter(props: { children: JSX.Element }) {
 	const scope = useContext(CardContext);
 	return (
 		<div
+			{...aboveCard}
 			style={{
 				display: "flex",
 				flexDirection: "row",
@@ -820,10 +844,12 @@ export function CardFeature(props: {
 	icon?: IconRef;
 	title: string;
 	description?: string;
+	testId?: string;
 }) {
 	const scope = useContext(CardContext);
 	return (
 		<div
+			testId={props.testId}
 			style={{
 				display: "flex",
 				flexDirection: "row",
@@ -833,9 +859,10 @@ export function CardFeature(props: {
 			<Show when={props.icon}>
 				{(icon: Accessor<IconRef>) => (
 					<div
+						testId={props.testId && `${props.testId}-icon`}
 						style={{
 							marginTop: 2,
-							marginRight: scope.compact() ? 6 : 8,
+							marginRight: scope.compact() ? 4 : 8,
 							flexShrink: 0,
 						}}
 					>
@@ -849,6 +876,7 @@ export function CardFeature(props: {
 				)}
 			</Show>
 			<div
+				testId={props.testId && `${props.testId}-text`}
 				style={{
 					display: "flex",
 					flexDirection: "column",
