@@ -68,6 +68,7 @@ function ClearButton(props: { onClick: () => void; testId?: string }) {
 				name="x"
 				size={16}
 				strokeWidth={1.5}
+				fade
 				color={hovered() ? color.foreground : color.mutedForeground}
 			/>
 		</div>
@@ -437,6 +438,8 @@ export function Combobox(props: {
 								name={name()}
 								size={16}
 								strokeWidth={focused() ? 2 : 1.5}
+								fade
+								easeStroke
 								color={focused() ? color.foreground : color.mutedForeground}
 							/>
 						)}
@@ -650,6 +653,7 @@ export function Combobox(props: {
 															size={16}
 															strokeWidth={lit() ? 2 : 1.5}
 															fade
+															easeStroke
 															color={
 																lit() ? color.foreground : color.mutedForeground
 															}

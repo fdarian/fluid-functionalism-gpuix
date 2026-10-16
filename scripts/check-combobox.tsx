@@ -52,6 +52,14 @@ const k = await createCheck(
 					placeholder="Valued"
 				/>
 				<Combobox testId="gaps" items={SOME_DISABLED} placeholder="Gaps" />
+				<Combobox
+					testId="ease"
+					items={[
+						{ value: "a", label: "Settings", icon: "settings" },
+						{ value: "b", label: "Profile", icon: "user" },
+					]}
+					placeholder="Ease"
+				/>
 				<Button testId="after">After</Button>
 				<text>{`picked: ${picked() ?? "none"}`}</text>
 				<Dialog>
@@ -90,6 +98,7 @@ const PLACEHOLDER: Record<string, string> = {
 	empty: "Fruit",
 	valued: "Valued",
 	gaps: "Gaps",
+	ease: "Ease",
 	inside: "Inside",
 };
 /** The input's accessibility node, found by placeholder. */
@@ -277,6 +286,34 @@ k.expect(
 	inputValue("valued"),
 	"",
 );
+
+// ─── Lighting a row eases its icon stroke and colour over 80 ms ──────────────
+
+await k.focus("ease-input");
+await k.press("down");
+await k.settle(300);
+{
+	const row = k.bounds("ease-option-b");
+	const iconBox = {
+		x: row.x + 8,
+		y: row.y + 4,
+		width: 16,
+		height: row.height - 8,
+	};
+	const rest = k.ink(iconBox);
+	await k.hoverFor(k.center("ease-option-b"), 10);
+	const early = k.ink(iconBox);
+	await k.settle(400);
+	const litInk = k.ink(iconBox);
+	k.check(
+		"ease: the row icon's stroke and colour are partway a frame or two after the row lights",
+		early > rest + 0.1 * (litInk - rest) &&
+			early < litInk - 0.1 * (litInk - rest),
+		`rest ${rest}, early ${early}, lit ${litInk}`,
+	);
+	await k.press("escape");
+	await k.settle(300);
+}
 
 // ─── Escape inside a dialog stops at the combobox ────────────────────────────
 

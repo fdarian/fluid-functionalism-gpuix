@@ -80,15 +80,6 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup shadow is one drop and a border"](dropdown.md#popup-shadow-is-one-drop-and-a-border), where the entry lives. Here: `src/lib/popup.tsx:98-102`; the border takes 2px of layout, so the list's `maxHeight` is the card's minus 2 (`src/components/combobox.tsx:565`); original `combobox.tsx:827`. API to use: multi-layer `boxShadow` with `inset` (`~/code/fdarian/gpuix/FORK.md:646-649`).
 
-## Row icon stroke-width does not ease
-
-- **Cause:** `not ported yet`.
-- **Original:** row icons and the field icon use `transition-[color,stroke-width] duration-80`; the stroke goes 1.5 to 2 when lit or focused (`combobox.tsx:527-528,1146-1151`).
-- **Port:** the stroke width is part of the SVG `source`, so it switches at once; only colour eases, on row icons (`<Icon fade>`, `src/components/combobox.tsx:633-639`). The field icon (`:429-435`) and the clear icon (`:64-69`) have no `fade`, so their colour switches at once as well.
-- **Workaround:** none for the width; `fade` for colour on the row icons and the chevron (`:516-522`).
-- **Fidelity:** approximated.
-- **Components it hits:** select, dropdown (rows with an icon).
-
 ## The field's fill and ring do not fade
 
 - **Cause:** `not ported yet`.
