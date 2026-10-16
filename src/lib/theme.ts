@@ -3,7 +3,15 @@ import type {
 	MotionTransition,
 	StateStyleDesc,
 } from "@gpuix/solid";
-import { type Accessor, createSignal } from "solid-js";
+import {
+	type Accessor,
+	createComponent,
+	createContext,
+	createSignal,
+	type JSX,
+	onCleanup,
+	useContext,
+} from "solid-js";
 
 export type Scheme = "light" | "dark";
 
@@ -201,7 +209,39 @@ export function bindSystemScheme(accessor: Accessor<Scheme>) {
 	systemScheme = accessor;
 }
 
+const SchemeOverride = createContext<Scheme>();
+/** Scopes alive right now; while there are none, `scheme()` skips the owner-chain lookup. */
+let liveScopes = 0;
+
+/**
+ * FF's `.dark` / `.light` class on a subtree: every token read below it
+ * resolves in `forced`, whatever the page's theme. Tokens are read through the
+ * reactive owner, so a read in an event handler or a timer sees the page's
+ * scheme instead.
+ */
+export function SchemeScope(props: {
+	scheme: Scheme;
+	children: JSX.Element;
+}): JSX.Element {
+	liveScopes++;
+	onCleanup(() => {
+		liveScopes--;
+	});
+	return createComponent(SchemeOverride.Provider, {
+		get value() {
+			return props.scheme;
+		},
+		get children() {
+			return props.children;
+		},
+	});
+}
+
 export function scheme(): Scheme {
+	if (liveScopes > 0) {
+		const forced = useContext(SchemeOverride);
+		if (forced !== undefined) return forced;
+	}
 	const choice = themeChoice();
 	if (choice !== "system") return choice;
 	if (systemScheme === undefined) {
