@@ -1,26 +1,7 @@
-import {
-	type DomEvent,
-	type HostElement,
-	type KeyEvent,
-	useGpuixRequired,
-} from '@gpuix/solid';
-import { createPresence } from 'base-ui-solid-gpuix/internals';
-import {
-	isChord,
-	moveIndex,
-	revealRow,
-} from 'base-ui-solid-gpuix/internals/composite';
+import type { HostElement } from '@gpuix/solid';
+import { createComboboxRoot } from 'base-ui-solid-gpuix/combobox';
 import { FormValue } from 'base-ui-solid-gpuix/utils';
-import {
-	type Accessor,
-	createEffect,
-	createMemo,
-	createSignal,
-	createUniqueId,
-	For,
-	on,
-	Show,
-} from 'solid-js';
+import { type Accessor, createMemo, createSignal, For, Show } from 'solid-js';
 import { FluidHighlight } from '#/lib/fluid-highlight';
 import {
 	createFluidHover,
@@ -49,14 +30,15 @@ const POPUP_MAX_HEIGHT = 300;
 /** The list's padding inside its scroller. */
 const LIST_PADDING = 4;
 
-function ClearButton(props: { onClick: () => void; testId?: string }) {
+function ClearButton(props: {
+	clearProps: ReturnType<typeof createComboboxRoot>['clearProps'];
+	testId?: string;
+}) {
 	const [hovered, setHovered] = createSignal(false);
 	return (
 		<div
-			role="button"
-			aria-label="Clear"
+			{...props.clearProps}
 			testId={props.testId}
-			onClick={props.onClick}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			style={{
@@ -100,24 +82,6 @@ function toRow(item: ComboboxItem): ComboboxRow {
 	return typeof item === 'string' ? { value: item, label: item } : item;
 }
 
-/** Base UI's default match: `Intl.Collator`, ignoring case, accents and punctuation. */
-const collator = new Intl.Collator(undefined, {
-	usage: 'search',
-	sensitivity: 'base',
-	ignorePunctuation: true,
-});
-function contains(text: string, query: string) {
-	if (query === '') return true;
-	for (let start = 0; start <= text.length - query.length; start++) {
-		if (
-			collator.compare(text.slice(start, start + query.length), query) === 0
-		) {
-			return true;
-		}
-	}
-	return false;
-}
-
 /**
  * Single-select Combobox from base/combobox.tsx: a text field that filters a
  * list as you type, a popup of fluid-hover rows, and a checked row whose
@@ -146,232 +110,43 @@ export function Combobox(props: {
 	/** Whether a row matches the typed query. Default: Base UI's collator `contains` on the label. */
 	filter?: (item: ComboboxRow, query: string) => boolean;
 }) {
-	const renderer = useGpuixRequired();
 	const width = () => props.width ?? 280;
-
-	const presence = createPresence(POPUP_EXIT_FALLBACK_MS);
-	const listId = createUniqueId();
-	// Not inline in the JSX: that prop re-evaluates with the others, so the input would get a new id on every highlight change.
-	const inputId = createUniqueId();
-	const rowId = (index: number) => `${listId}-row-${index}`;
-	const open = presence.open;
-	const mounted = presence.mounted;
 	const rows = createMemo(() => props.items.map(toRow));
-	const [ownValue, setOwnValue] = createSignal<string | null>(
-		props.defaultValue ?? null,
-	);
-	const value = () => (props.value === undefined ? ownValue() : props.value);
-	const labelOf = (current: string | null) => {
-		if (current === null) return '';
-		const row = rows().find((candidate) => candidate.value === current);
-		if (row === undefined) throw new Error(`No item for ${current}`);
-		return row.label;
-	};
-	const [inputText, setInputText] = createSignal(labelOf(value()));
-	// What the list filters by. The text field shows the selected label while
-	// closed, but opening it must still list every item.
-	const [query, setQuery] = createSignal('');
+
 	const [focused, setFocused] = createSignal(false);
 	const [chevronHovered, setChevronHovered] = createSignal(false);
 	/** Armed while typing re-filters the rows under the highlights: those frames snap, not glide. */
 	const reflow = createReflowGate();
-
-	let inputElement: HostElement | undefined;
-	let scroller: HostElement | undefined;
-	/** Set on open: the highlighted row is scrolled into view once its rect has been measured. */
-	let revealOnMeasure = false;
-
-	const filtered = createMemo(() => {
-		const needle = query().trim();
-		if (needle === '') return rows();
-		const matches = props.filter ?? ((row, text) => contains(row.label, text));
-		return rows().filter((row) => matches(row, needle));
-	});
-	const checkedIndex = createMemo(() => {
-		const index = filtered().findIndex((row) => row.value === value());
-		return index === -1 ? null : index;
-	});
-
+	// `combobox` is declared below: the hover only asks it once a row exists.
 	const hover = createFluidHover({
-		isItemDisabled: (index) => filtered()[index]?.disabled === true,
+		isItemDisabled: (index) => combobox.filtered()[index]?.disabled === true,
 	});
-	/** Focus stays in the field while the arrows walk the rows, so it names the lit one. */
-	const litRowId = () => {
-		const index = hover.activeIndex();
-		return open() && index !== null ? rowId(index) : undefined;
-	};
-	const listShown = () => open() && filtered().length > 0;
+	const combobox = createComboboxRoot({
+		items: rows,
+		value: () => props.value,
+		defaultValue: props.defaultValue,
+		onValueChange: (next) => props.onValueChange?.(next),
+		disabled: () => props.disabled === true,
+		required: () => props.required,
+		labelledBy: () => props.labelledBy,
+		filter: () => props.filter,
+		exitMs: POPUP_EXIT_FALLBACK_MS,
+		highlightedIndex: hover.activeIndex,
+		onHighlightChange: (index) => hover.setActiveIndex(index),
+		itemRects: hover.rects,
+		scrollPadding: LIST_PADDING,
+		onFilterReflow: reflow.raise,
+	});
+	const filtered = combobox.filtered;
+	const value = combobox.value;
 
-	const commitValue = (next: string | null) => {
-		if (props.value === undefined) setOwnValue(next);
-		props.onValueChange?.(next);
-	};
-	/** Where the highlight starts on open: the picked row, else the first (`autoHighlight="always"`). */
-	const openHighlight = () => {
-		const picked = rows().findIndex((row) => row.value === value());
-		if (picked !== -1) return picked;
-		return rows().length === 0 ? null : 0;
-	};
-	const openPopup = () => {
-		if (open() || props.disabled === true) return;
-		setQuery('');
-		revealOnMeasure = true;
-		presence.show();
-		hover.setActiveIndex(openHighlight());
-	};
-	const closePopup = () => {
-		if (!open()) return;
-		presence.hide();
-		setInputText(labelOf(value()));
-	};
-	const focusInput = () => {
-		if (inputElement === undefined)
-			throw new Error('Combobox input is not mounted');
-		renderer.focusElement?.(inputElement.id);
-	};
-	const select = (row: ComboboxRow) => {
-		if (row.disabled === true) return;
-		commitValue(row.value);
-		setInputText(row.label);
-		closePopup();
-	};
-	const clear = () => {
-		commitValue(null);
-		setInputText('');
-		setQuery('');
-		focusInput();
-	};
-
-	// The field follows a value that changed from outside.
-	createEffect(
-		on(
-			value,
-			(next) => {
-				const label = labelOf(next);
-				if (inputText() !== label) setInputText(label);
-			},
-			{ defer: true },
-		),
-	);
-
-	// Typing re-filters rows underneath the overlays, so the first row is the
-	// target again (the picked row once the text is emptied) and the new rects
-	// replace the old ones without a glide.
-	createEffect(
-		on(
-			filtered,
-			() => {
-				if (!mounted()) return;
-				reflow.raise();
-				if (scroller !== undefined && scroller.mounted) {
-					scroller.scrollTo({ top: 0, left: 0 });
-				}
-				if (filtered().length === 0) {
-					hover.setActiveIndex(null);
-					return;
-				}
-				const picked = query().trim() === '' ? checkedIndex() : null;
-				hover.setActiveIndex(picked ?? 0);
-			},
-			{ defer: true },
-		),
-	);
-	createEffect(
-		on(
-			hover.rects,
-			() => {
-				if (!revealOnMeasure) return;
-				revealOnMeasure = false;
-				const index = hover.activeIndex();
-				if (index !== null) revealIndex(index);
-			},
-			{ defer: true },
-		),
-	);
-
-	const revealIndex = (index: number) => {
-		const row = hover.rects()[index];
-		if (scroller !== undefined && row !== undefined) {
-			revealRow(scroller, row, 'nearest', LIST_PADDING);
-		}
-	};
-	/** Arrows loop (`loopFocus` is on) and visit disabled rows (`disabledIndices: []`). */
-	const move = (delta: 1 | -1) => {
-		const next = moveIndex(hover.activeIndex(), delta, filtered().length);
-		if (next === null) return;
-		hover.setActiveIndex(next);
-		revealIndex(next);
-	};
-
-	const onKeyDown = (event: KeyEvent) => {
-		if (isChord(event)) return;
-		switch (event.key) {
-			case 'ArrowDown':
-			case 'ArrowUp':
-				event.preventDefault();
-				event.stopPropagation();
-				if (!open()) openPopup();
-				else move(event.key === 'ArrowDown' ? 1 : -1);
-				return;
-			case 'Escape':
-				if (open()) {
-					// Closing pops the popup's dismiss layer before the window sees this Escape, which would then close the dialog behind.
-					event.preventDefault();
-					closePopup();
-					return;
-				}
-				if (mounted()) return;
-				// Closed: Escape empties the field and the pick. With a pick to clear it is consumed, so a dialog behind stays open.
-				setInputText('');
-				setQuery('');
-				if (value() !== null) {
-					commitValue(null);
-					event.preventDefault();
-					event.stopPropagation();
-				}
-				return;
-			case 'Tab':
-				closePopup();
-				return;
-			case 'Enter':
-				submit(event);
-				return;
-		}
-	};
-	/** Enter only belongs to the combobox when it picks a row; closed, or with no row lit, it passes on so the form submits. */
-	const submit = (event: KeyEvent) => {
-		if (!open()) return;
-		const index = hover.activeIndex();
-		if (index === null) {
-			closePopup();
-			return;
-		}
-		event.preventDefault();
-		const row = filtered()[index];
-		if (row !== undefined) select(row);
-	};
-	const onChange = (event: DomEvent) => {
-		const text = event.value;
-		if (text === undefined) throw new Error('Combobox change without a value');
-		setInputText(text);
-		// Emptying the field drops the pick.
-		if (text === '' && value() !== null) commitValue(null);
-		if (open()) {
-			setQuery(text);
-			return;
-		}
-		if (text.trim() === '') return;
-		openPopup();
-		setQuery(text);
-	};
 	const onListMouseLeave = () => {
 		hover.handlers.onMouseLeave();
-		// `autoHighlight="always"` refills a dropped highlight with the first row, so Enter always has a target.
-		if (filtered().length > 0) hover.setActiveIndex(0);
+		combobox.onListMouseLeave();
 	};
 
 	const checkedRect = () => {
-		const index = checkedIndex();
+		const index = combobox.checkedIndex();
 		if (index === null || !hover.isMeasured()) return null;
 		return hover.rects()[index] ?? null;
 	};
@@ -386,7 +161,7 @@ export function Combobox(props: {
 	return (
 		<div
 			testId={props.testId}
-			onMouseDownOutside={closePopup}
+			{...combobox.dismissProps}
 			style={{
 				position: 'relative',
 				width: width(),
@@ -402,7 +177,7 @@ export function Combobox(props: {
 					value={value() ?? ''}
 					required={props.required === true}
 					disabled={props.disabled === true}
-					focusTarget={() => inputElement}
+					focusTarget={combobox.inputElement}
 				/>
 			</Show>
 			<div
@@ -428,10 +203,7 @@ export function Combobox(props: {
 				}}
 			>
 				<div
-					onMouseDown={() => {
-						focusInput();
-						openPopup();
-					}}
+					{...combobox.inputGroupProps}
 					style={{
 						flexGrow: 1,
 						minWidth: 0,
@@ -455,26 +227,12 @@ export function Combobox(props: {
 						)}
 					</Show>
 					<input
-						ref={(element) => {
-							inputElement = element;
-						}}
+						{...combobox.inputProps}
+						ref={combobox.inputRef}
 						testId={
 							props.testId === undefined ? undefined : `${props.testId}-input`
 						}
-						id={inputId}
-						value={inputText()}
 						placeholder={props.placeholder ?? 'Search…'}
-						role="combobox"
-						aria-haspopup="listbox"
-						aria-expanded={open()}
-						aria-controls={listShown() ? listId : undefined}
-						aria-autocomplete="list"
-						aria-activedescendant={litRowId()}
-						aria-labelledby={props.labelledBy}
-						aria-required={props.required}
-						aria-disabled={props.disabled === true}
-						readOnly={props.disabled === true}
-						tabIndex={props.disabled === true ? -1 : undefined}
 						theme={{
 							text: color.foreground,
 							textMuted: color.mutedForeground,
@@ -483,10 +241,7 @@ export function Combobox(props: {
 							caret: color.foreground,
 						}}
 						onFocus={() => setFocused(true)}
-						onMouseDown={openPopup}
 						onBlur={() => setFocused(false)}
-						onChange={onChange}
-						onKeyDown={onKeyDown}
 						style={{
 							flexGrow: 1,
 							minWidth: 0,
@@ -504,7 +259,7 @@ export function Combobox(props: {
 					<div style={{ width: 24, height: 24, flexShrink: 0 }}>
 						<Show when={clearVisible()}>
 							<ClearButton
-								onClick={clear}
+								clearProps={combobox.clearProps}
 								testId={
 									props.testId === undefined
 										? undefined
@@ -515,15 +270,9 @@ export function Combobox(props: {
 					</div>
 				</Show>
 				<div
-					role="button"
-					aria-label="Open"
+					{...combobox.triggerProps}
 					onMouseEnter={() => setChevronHovered(true)}
 					onMouseLeave={() => setChevronHovered(false)}
-					onMouseDown={() => {
-						focusInput();
-						if (open()) closePopup();
-						else openPopup();
-					}}
 					style={{
 						width: 24,
 						height: 24,
@@ -546,14 +295,14 @@ export function Combobox(props: {
 			</div>
 
 			<PopupSurface
-				presence={presence}
+				presence={combobox.presence}
 				testId={
 					props.testId === undefined ? undefined : `${props.testId}-popup`
 				}
 				align="start"
 				width={width()}
 				maxHeight={POPUP_MAX_HEIGHT}
-				onDismiss={closePopup}
+				onDismiss={combobox.closePopup}
 			>
 				{(popupMaxHeight) => (
 					<Show
@@ -577,11 +326,8 @@ export function Combobox(props: {
 						}
 					>
 						<div
-							ref={(element) => {
-								scroller = element;
-							}}
-							id={listId}
-							role="listbox"
+							{...combobox.listProps}
+							ref={combobox.listRef}
 							onScroll={hover.handlers.onScroll}
 							style={{
 								display: 'flex',
@@ -625,21 +371,15 @@ export function Combobox(props: {
 										useHoverItem(hover, index, () => rowElement);
 										return (
 											<div
+												{...combobox.itemProps(row, index)}
 												ref={(element) => {
 													rowElement = element;
 												}}
-												id={rowId(index())}
-												role="option"
 												testId={
 													props.testId === undefined
 														? undefined
 														: `${props.testId}-option-${row.value}`
 												}
-												aria-selected={value() === row.value}
-												aria-disabled={row.disabled === true}
-												// A press on a row must not take focus from the input (Base UI `ComboboxItem`).
-												onMouseDown={(event) => event.preventDefault()}
-												onClick={() => select(row)}
 												style={{
 													position: 'relative',
 													zIndex: 10,

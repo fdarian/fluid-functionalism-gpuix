@@ -1,33 +1,13 @@
-import {
-	type DomEvent,
-	document,
-	type HostElement,
-	type HostMouseEvent,
-	type HostMouseMoveEvent,
-	type KeyEvent,
-} from '@gpuix/solid';
-import {
-	createTypeahead,
-	refocusAfterPress,
-} from 'base-ui-solid-gpuix/floating-ui-solid/hooks';
-import { createPresence } from 'base-ui-solid-gpuix/internals';
-import {
-	edgeIndex,
-	isChord,
-	moveIndex,
-	revealRow,
-} from 'base-ui-solid-gpuix/internals/composite';
+import type { DomEvent, HostElement } from '@gpuix/solid';
+import { createSelectRoot } from 'base-ui-solid-gpuix/select';
 import { FormValue } from 'base-ui-solid-gpuix/utils';
 import {
 	type Accessor,
 	createEffect,
 	createMemo,
 	createSignal,
-	createUniqueId,
 	For,
 	type JSX,
-	on,
-	onCleanup,
 	Show,
 } from 'solid-js';
 import { FluidHighlight } from '#/lib/fluid-highlight';
@@ -51,21 +31,6 @@ import {
 
 /** How long a pick holds the popup open so the check and the checked background are seen arriving. */
 const ACK_MS = 300;
-/** Base UI `SELECTED_DELAY`: a release over a row commits only after the popup has been open this long, or after a drag. */
-const PRESS_DRAG_MS = 400;
-/** Base UI: a drag of 8px over the rows enables the release commit early. */
-const PRESS_DRAG_PX = 8;
-/** Base UI's gate for the row focus ring (`POPUP_NAV_KEYS`): these keys inside the popup earn it, typeahead letters do not. */
-const NAV_KEYS = [
-	'ArrowDown',
-	'ArrowUp',
-	'ArrowLeft',
-	'ArrowRight',
-	'Home',
-	'End',
-	'PageUp',
-	'PageDown',
-];
 const POPUP_MAX_HEIGHT = 300;
 const POPUP_PADDING = 4;
 
@@ -183,42 +148,38 @@ export function Select<Value extends string>(props: {
 				}
 			: { ...spec(), minWidth: props.hug === true ? 0 : spec().minWidth };
 
-	const presence = createPresence(POPUP_EXIT_FALLBACK_MS);
-	const triggerId = createUniqueId();
-	const popupId = createUniqueId();
-	const rowId = (index: number) => `${popupId}-row-${index}`;
+	const rows = createMemo(() => props.items.filter(isItem));
 	const hover = createFluidHover({
 		isItemDisabled: (index) => rows()[index]?.disabled === true,
 	});
 	const [triggerHovered, setTriggerHovered] = createSignal(false);
 	const rowRing = createFocusRing(hover);
-	/** The row focus ring is earned: by a keyboard open and by navigation keys inside the popup (Base UI's `useKeyboardNavGate`). A focus that is also `:focus-visible` then draws it. */
-	let keyboardNav = false;
-	const [ownValue, setOwnValue] = createSignal<Value | null>(
-		props.defaultValue ?? null,
-	);
-	const value = () => (props.value === undefined ? ownValue() : props.value);
-	let triggerElement: HostElement | undefined;
-	/** The popup panel: the scrolling listbox, which holds focus while no row does. */
-	let scroller: HostElement | undefined;
-	const rowElements = new Map<number, HostElement>();
-	/** Set on open: the highlighted row is scrolled into view once its rect has been measured. */
-	let revealOnMeasure = false;
-	let ackTimer: ReturnType<typeof setTimeout> | undefined;
-	let openedAt = 0;
-	/** The row a press began on, so its click commits but a release that began elsewhere is judged by the drag rules. */
-	let pressedIndex: number | null = null;
-	let dragY = 0;
-	let dragFromY: number | undefined;
-	let dragCommits = false;
-	onCleanup(() => clearTimeout(ackTimer));
-
-	const rows = createMemo(() => props.items.filter(isItem));
-	const selectedIndex = () => {
-		const current = value();
-		if (current === null) return -1;
-		return rows().findIndex((row) => row.value === current);
-	};
+	const select = createSelectRoot({
+		items: rows,
+		value: () => props.value,
+		defaultValue: props.defaultValue,
+		onValueChange: (next) => props.onValueChange?.(next),
+		disabled: () => props.disabled === true,
+		required: () => props.required,
+		invalid: () => props.error !== undefined,
+		labelledBy: () => props.labelledBy,
+		label: () => props.label,
+		exitMs: POPUP_EXIT_FALLBACK_MS,
+		pickHoldMs: ACK_MS,
+		highlightedIndex: hover.activeIndex,
+		onHighlightChange: (index, reason) => {
+			// A keyboard move owns the highlight: the pointer is forgotten so the scroll it causes does not re-pick under it.
+			if (reason === 'keyboard' || reason === 'typeahead') {
+				hover.releasePointer();
+			}
+			hover.setActiveIndex(index);
+		},
+		itemRects: hover.rects,
+		scrollPadding: POPUP_PADDING,
+	});
+	const presence = select.presence;
+	const value = select.value;
+	const selectedIndex = select.selectedIndex;
 	const selected = () => {
 		const current = value();
 		if (current === null) return undefined;
@@ -227,224 +188,8 @@ export function Select<Value extends string>(props: {
 		return row;
 	};
 
-	const commitValue = (row: SelectItem<Value>) => {
-		if (props.value === undefined) setOwnValue(() => row.value);
-		props.onValueChange?.(row.value);
-	};
-	const isRowDisabled = (index: number) => rows()[index].disabled === true;
-
-	const typeahead = createTypeahead({
-		labels: () => rows().map((row) => row.label),
-		current: () =>
-			selectedIndex() === -1 ? hover.activeIndex() : selectedIndex(),
-		isDisabled: isRowDisabled,
-		onMatch: (index) => {
-			// Closed, Base UI commits the match as the value and does not open.
-			if (!presence.open()) {
-				commitValue(rows()[index]);
-				return;
-			}
-			hover.releasePointer();
-			hover.setActiveIndex(index);
-			revealIndex(index);
-		},
-	});
-	onCleanup(typeahead.reset);
-
-	/** Where the highlight starts: the picked row; else, for a keyboard open, the first (or last) enabled one. */
-	const openHighlight = (from: 'pointer' | 'down' | 'up') => {
-		if (selectedIndex() !== -1) return selectedIndex();
-		if (from === 'pointer') return null;
-		return edgeIndex(
-			from === 'down' ? 'first' : 'last',
-			rows().length,
-			isRowDisabled,
-		);
-	};
-	const focusPanel = () => {
-		if (scroller !== undefined && scroller.mounted) {
-			scroller.focus({ preventScroll: true });
-		}
-	};
-	const open = (from: 'pointer' | 'down' | 'up' = 'pointer') => {
-		if (props.disabled === true || presence.open()) return;
-		revealOnMeasure = true;
-		openedAt = performance.now();
-		pressedIndex = null;
-		dragY = 0;
-		dragFromY = undefined;
-		dragCommits = false;
-		keyboardNav = from !== 'pointer';
-		typeahead.reset();
-		presence.show();
-		hover.setActiveIndex(openHighlight(from));
-		// A pointer open with no value has no row to focus, so the panel takes it.
-		const index = hover.activeIndex();
-		if (index === null) focusPanel();
-		else rowElements.get(index)?.focus({ preventScroll: true });
-	};
-	/** Hands focus back to the trigger when it sat in the popup (which unmounts and drops it) or nowhere; a control that took it since keeps it (Base UI's `returnFocus`). */
-	const returnFocus = () => {
-		if (triggerElement === undefined || !triggerElement.mounted) return;
-		const inPopup =
-			scroller !== undefined &&
-			scroller.mounted &&
-			scroller.matches(':focus-within');
-		if (inPopup || document.activeElement === null) triggerElement.focus();
-	};
-	const close = () => {
-		clearTimeout(ackTimer);
-		if (!presence.open()) return;
-		presence.hide();
-		typeahead.reset();
-		returnFocus();
-	};
-	const pick = (row: SelectItem<Value>) => {
-		if (row.disabled === true) return;
-		commitValue(row);
-		clearTimeout(ackTimer);
-		ackTimer = setTimeout(close, ACK_MS);
-	};
-
-	const revealIndex = (index: number) => {
-		const row = hover.rects()[index];
-		if (scroller === undefined) throw new Error('Select list is not mounted');
-		if (row !== undefined) revealRow(scroller, row, 'nearest', POPUP_PADDING);
-	};
-
-	/** Arrow keys stop at the ends and visit disabled rows, like Base UI's `loopFocus: false` with `disabledIndices: []`. */
-	const move = (delta: 1 | -1) => {
-		const next = moveIndex(
-			hover.activeIndex(),
-			delta,
-			rows().length,
-			undefined,
-			false,
-		);
-		if (next === null) return;
-		jump(next);
-	};
-	const jump = (index: number) => {
-		hover.releasePointer();
-		hover.setActiveIndex(index);
-		revealIndex(index);
-	};
-	/** The closed trigger's keys: open, or commit a typeahead match. */
-	const onTriggerKeyDown = (event: KeyEvent) => {
-		if (isChord(event) || presence.open()) return;
-		// Typeahead first: Space inside a session continues it instead of opening.
-		if (typeahead.handleKey(event)) {
-			event.preventDefault();
-			event.stopPropagation();
-			return;
-		}
-		switch (event.key) {
-			case 'Enter':
-			case ' ':
-				open('down');
-				return;
-			case 'ArrowDown':
-			case 'ArrowUp':
-				event.preventDefault();
-				event.stopPropagation();
-				open(event.key === 'ArrowDown' ? 'down' : 'up');
-				return;
-		}
-	};
-	/** The open popup's keys: a row holds focus, so its keys bubble here. */
-	const onPanelKeyDown = (event: KeyEvent) => {
-		if (isChord(event)) return;
-		event.stopPropagation();
-		if (event.key !== undefined && NAV_KEYS.includes(event.key))
-			keyboardNav = true;
-		if (typeahead.handleKey(event)) {
-			event.preventDefault();
-			return;
-		}
-		switch (event.key) {
-			case 'Enter':
-			case ' ': {
-				event.preventDefault();
-				const index = hover.activeIndex();
-				if (index !== null) pick(rows()[index]);
-				return;
-			}
-			case 'ArrowDown':
-				event.preventDefault();
-				move(1);
-				return;
-			case 'ArrowUp':
-				event.preventDefault();
-				move(-1);
-				return;
-			case 'Home':
-			case 'End':
-				event.preventDefault();
-				if (rows().length > 0)
-					jump(event.key === 'Home' ? 0 : rows().length - 1);
-				return;
-			case 'Escape':
-				// Closing pops the popup's dismiss layer before the window sees this Escape, which would then close the dialog behind.
-				event.preventDefault();
-				close();
-				return;
-			case 'Tab':
-				// Forward: the trigger takes focus first, so the default Tab moves on from it. Backward leaves it on the trigger.
-				if (event.shiftKey === true) event.preventDefault();
-				close();
-				return;
-		}
-	};
-	const onTriggerMouseDown = (event: HostMouseEvent) => {
-		if (event.button !== undefined && event.button !== 0) return;
-		// A press moves focus to the trigger after its handlers have run, which would pull it back from the popup `open` just focused. Windows and Linux run the handler after that move, where this changes nothing.
-		event.preventDefault();
-		if (presence.open()) close();
-		else open('pointer');
-	};
-	/** Press on the trigger, drag onto a row and release picks it: at once after a drag of 8px, else after 400 ms. */
-	const onRowMouseUp = (row: SelectItem<Value>, index: number) => {
-		dragY = 0;
-		dragFromY = undefined;
-		if (row.disabled === true || pressedIndex === index) return;
-		const settled = performance.now() - openedAt >= PRESS_DRAG_MS;
-		const allowed = value() === row.value ? settled : settled || dragCommits;
-		if (allowed) pick(row);
-	};
-	const onListMouseMove = (event: HostMouseMoveEvent) => {
-		hover.handlers.onMouseMove(event);
-		if (event.pressedButton !== 0 || event.y === undefined) {
-			dragFromY = undefined;
-			return;
-		}
-		if (dragFromY !== undefined) dragY += event.y - dragFromY;
-		dragFromY = event.y;
-		if (dragY ** 2 >= PRESS_DRAG_PX ** 2) dragCommits = true;
-	};
-
-	createEffect(
-		on(hover.rects, () => {
-			if (!revealOnMeasure) return;
-			revealOnMeasure = false;
-			const index = hover.activeIndex();
-			if (index !== null) revealIndex(index);
-		}),
-	);
-	// Highlight follows focus and focus follows the highlight: a hover or a key lights a row and the row takes focus. Leaving every row hands focus to the panel.
-	createEffect(
-		on(
-			hover.activeIndex,
-			(index) => {
-				if (!presence.open()) return;
-				if (index === null) focusPanel();
-				else rowElements.get(index)?.focus({ preventScroll: true });
-			},
-			{ defer: true },
-		),
-	);
 	createEffect(() => {
 		if (presence.mounted()) return;
-		hover.setActiveIndex(null);
 		const ringed = rowRing.index();
 		if (ringed !== null) rowRing.blur(ringed);
 	});
@@ -477,7 +222,8 @@ export function Select<Value extends string>(props: {
 
 	const renderSlot = (slot: Slot<Value>): JSX.Element => {
 		switch (slot.kind) {
-			case 'item':
+			case 'item': {
+				const itemProps = select.itemProps(slot.row, slot.index);
 				return (
 					<Row
 						row={slot.row}
@@ -488,33 +234,21 @@ export function Select<Value extends string>(props: {
 						}
 						checked={value() === slot.row.value}
 						hover={hover}
-						id={rowId(slot.index)}
+						itemProps={itemProps}
+						onElement={(element) => select.itemRef(slot.index, element)}
 						testId={
 							props.testId === undefined
 								? undefined
 								: `${props.testId}-option-${slot.row.value}`
 						}
-						onElement={(element) => rowElements.set(slot.index, element)}
 						onFocus={(event) => {
-							hover.setActiveIndex(slot.index);
-							if (keyboardNav) rowRing.focus(slot.index, event);
+							itemProps.onFocus();
+							if (select.keyboardNav()) rowRing.focus(slot.index, event);
 						}}
 						onBlur={() => rowRing.blur(slot.index)}
-						tabIndex={
-							presence.open() && hover.activeIndex() === slot.index ? 0 : -1
-						}
-						onPress={() => {
-							pressedIndex = slot.index;
-							dragY = 0;
-						}}
-						onPick={() => {
-							if (pressedIndex !== slot.index) return;
-							pressedIndex = null;
-							pick(slot.row);
-						}}
-						onRelease={() => onRowMouseUp(slot.row, slot.index)}
 					/>
 				);
+			}
 			case 'label':
 				return (
 					<div
@@ -559,33 +293,15 @@ export function Select<Value extends string>(props: {
 		>
 			<div
 				testId={props.testId}
-				onMouseDownOutside={() => {
-					if (!presence.open()) return;
-					close();
-					refocusAfterPress(triggerElement);
-				}}
+				{...select.dismissProps}
 				style={{ position: 'relative' }}
 			>
 				<div
-					ref={(element) => {
-						triggerElement = element;
-					}}
-					id={triggerId}
+					{...select.triggerProps}
+					ref={select.triggerRef}
 					testId={
 						props.testId === undefined ? undefined : `${props.testId}-trigger`
 					}
-					role="combobox"
-					aria-haspopup="listbox"
-					aria-expanded={presence.open()}
-					aria-controls={presence.open() ? popupId : undefined}
-					aria-labelledby={props.labelledBy}
-					aria-label={props.label}
-					aria-required={props.required}
-					aria-invalid={props.error !== undefined}
-					aria-disabled={props.disabled === true}
-					tabIndex={props.disabled === true ? -1 : 0}
-					onMouseDown={onTriggerMouseDown}
-					onKeyDown={onTriggerKeyDown}
 					onMouseEnter={() => setTriggerHovered(true)}
 					onMouseLeave={() => setTriggerHovered(false)}
 					style={{
@@ -668,7 +384,7 @@ export function Select<Value extends string>(props: {
 						value={value() ?? ''}
 						required={props.required === true}
 						disabled={props.disabled === true}
-						focusTarget={() => triggerElement}
+						focusTarget={select.triggerElement}
 					/>
 				</Show>
 				<PopupSurface
@@ -679,21 +395,15 @@ export function Select<Value extends string>(props: {
 					align={inline() ? 'end' : 'start'}
 					width={props.popupWidth ?? (inline() ? 160 : 'anchor-size(width)')}
 					maxHeight={POPUP_MAX_HEIGHT}
-					onDismiss={close}
+					onDismiss={select.close}
 				>
 					{(popupMaxHeight) => (
 						<div
-							ref={(element) => {
-								scroller = element;
-							}}
-							id={popupId}
+							{...select.popupProps}
+							ref={select.popupRef}
 							testId={
 								props.testId === undefined ? undefined : `${props.testId}-list`
 							}
-							role="listbox"
-							// A pointer open, and a pointer leaving every row, land focus here so the keys still reach it.
-							tabIndex={-1}
-							onKeyDown={onPanelKeyDown}
 							onScroll={hover.handlers.onScroll}
 							style={{
 								keyboardFocusDim: false,
@@ -706,7 +416,10 @@ export function Select<Value extends string>(props: {
 							{/* The overlays live inside the scrolled content: gpui paints an absolute child of a scroller where it was placed, not where the content has scrolled to. */}
 							<div
 								{...hover.containerProps}
-								onMouseMove={onListMouseMove}
+								onMouseMove={(event) => {
+									hover.handlers.onMouseMove(event);
+									select.onListMouseMove(event);
+								}}
 								style={{
 									position: 'relative',
 									display: 'flex',
@@ -768,15 +481,11 @@ function Row<Value extends string>(props: {
 	lit: boolean;
 	checked: boolean;
 	hover: ReturnType<typeof createFluidHover>;
-	id: string;
-	testId?: string;
-	tabIndex: number;
+	itemProps: ReturnType<ReturnType<typeof createSelectRoot>['itemProps']>;
 	onElement: (element: HostElement) => void;
+	testId?: string;
 	onFocus: (event: DomEvent) => void;
 	onBlur: () => void;
-	onPick: () => void;
-	onPress: () => void;
-	onRelease: () => void;
 }): JSX.Element {
 	let rowElement: HostElement | undefined;
 	useHoverItem(
@@ -786,21 +495,22 @@ function Row<Value extends string>(props: {
 	);
 	return (
 		<div
+			// Explicit, not `{...props.itemProps}`: a spread applies its props in a later effect, so the row is focusable (tabIndex) only after the open's `focus()`. The visible effect is the scrollbar's fade timing (screenshots/select/timezone-reopened).
+			id={props.itemProps.id}
+			role={props.itemProps.role}
+			tabIndex={props.itemProps.tabIndex}
+			aria-selected={props.itemProps['aria-selected']}
+			aria-disabled={props.itemProps['aria-disabled']}
+			onMouseDown={props.itemProps.onMouseDown}
+			onMouseUp={props.itemProps.onMouseUp}
+			onClick={props.itemProps.onClick}
 			ref={(element) => {
 				rowElement = element;
 				props.onElement(element);
 			}}
-			id={props.id}
-			role="option"
-			tabIndex={props.tabIndex}
 			onFocus={props.onFocus}
 			onBlur={props.onBlur}
 			testId={props.testId}
-			aria-selected={props.checked}
-			aria-disabled={props.row.disabled === true}
-			onMouseDown={props.onPress}
-			onMouseUp={props.onRelease}
-			onClick={props.onPick}
 			style={{
 				height: props.spec.height,
 				flexShrink: 0,
