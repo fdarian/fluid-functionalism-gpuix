@@ -82,13 +82,13 @@ repeating it.
 - **Fidelity:** approximated (weight), dropped (tabular digits).
 - **Components it hits:** the weight: every `StableLabel`. Tabular digits: any FF number readout (the port has no `fontVariantNumeric` anywhere).
 
-## Click-to-edit differs: no select-all, no number field, no accessible name
+## Click-to-edit differs: no number field, no accessible name
 
-- **Cause:** `not ported yet`. gpuix has `select()` on inputs, `type="number"` and number `min` / `max` / `step` (FORK.md:451, `packages/native/js/host.ts:1175`).
+- **Cause:** `not ported yet`. gpuix has `type="number"` and number `min` / `max` / `step` (FORK.md:451, `packages/native/js/host.ts:1175`).
 - **Original:** the field is `type="number"` with `min`, `max` and `step` (`step="any"` for a `steps` list), focused and selected on the next frame so typing replaces the number, `aria-label="Edit slider value (start)"` for a range (`slider.tsx:209-213`, `:258-271`), a `5ch` wide box with line height 20 and a 1px bottom border (`:255-279`).
-- **Port:** a text `<input autoFocus>` (`src/components/slider.tsx:377-418`) with the caret at the end and nothing selected, so typing appends (the scenario backspaces first, `src/demos/slider.tsx:357`); no min / max / step on the field, no `aria-label`; 40 x 18 with the same bottom border. The seed, Enter / blur commit, Escape cancel, clamp and snap match (`:313-325`).
+- **Port:** a text `<input autoFocus>` (`src/components/slider.tsx`, the edit field in `ValueDisplay`) that selects its text on focus (`onFocus` calling `select()`), so typing replaces the number; no min / max / step on the field, no `aria-label`; 40 x 18 with the same bottom border. The seed, Enter / blur commit, Escape cancel, clamp and snap match (`:322-334`).
 - **Workaround:** none.
-- **Fidelity:** approximated (behaviour differs on the first keystroke; the field is about 2px shorter).
+- **Fidelity:** approximated (a text field instead of a number field, so letters can be typed and the browser's spinner is absent; the field is about 2px shorter).
 - **Components it hits:** none other.
 
 ## Public props not ported
@@ -135,15 +135,6 @@ repeating it.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** none other.
-
-## Default row at `disabled`: the blocks go translucent and a pip shows through
-
-- **Cause:** `gpuix gap` (unconfirmed: this is from the test-renderer capture, `screenshots/slider/default.png`, Disabled row; check in the live window). The code applies `opacity: 0.5` to the wrapper (`src/components/slider.tsx:1348`), and the capture looks as if opacity is applied per layer instead of to the subtree, which README lists as "group opacity" in its effect-groups row.
-- **Original:** `opacity-50` on the row (`slider.tsx:1619`) dims the finished row as one image, so the opaque `bg-background` blocks still hide the pips.
-- **Port:** the surface blocks are dimmed too, so the last pip is visible next to the value (a dot beside the "2").
-- **Workaround:** none.
-- **Fidelity:** approximated (cosmetic; disabled rows only). A bug, not a deliberate difference.
-- **Components it hits:** any component that dims a subtree that relies on opaque blocks (none found).
 
 ## Demo: variants, extras and missing chrome
 

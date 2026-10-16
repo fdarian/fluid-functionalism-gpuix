@@ -13,6 +13,8 @@ function Well(props: { children: JSX.Element }) {
 
 /** A scenario shows one card at a time so its sliders are inside the capture window. */
 const [only, setOnly] = createSignal<"compact" | "display" | "default">();
+/** For `scripts/check-slider.tsx`, which drives one card at a time as the scenarios do. */
+export const showOnly = setOnly;
 const visible = (card: "compact" | "display" | "default") => () =>
 	only() === undefined || only() === card;
 
@@ -354,7 +356,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("left-value-0");
 	shot.capture("editing");
 	// onChange reaches JS after the whole press; Enter is a keydown now, so it needs its own press to see the typed draft.
-	await shot.press("backspace backspace backspace 7 2");
+	await shot.press("7 2");
 	await shot.press("enter");
 	await shot.settle(300);
 	shot.expectText("72", true);
