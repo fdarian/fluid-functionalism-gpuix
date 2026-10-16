@@ -46,12 +46,16 @@ import {
 import {
 	bindSystemScheme,
 	color,
-	type as scale,
+	siteType,
 	setShapeChoice,
+	setSizeChoice,
 	setThemeChoice,
 	SHAPES,
 	type ShapeChoice,
 	shapeChoice,
+	SIZES,
+	type SizeChoice,
+	sizeChoice,
 	THEMES,
 	type ThemeChoice,
 	themeChoice,
@@ -66,7 +70,7 @@ function Heading(props: { children: string }) {
 	return (
 		<text
 			style={{
-				...scale.display,
+				...siteType.display,
 				fontWeight: weight.semibold,
 				color: color.foreground,
 			}}
@@ -150,7 +154,7 @@ function Hero() {
 	return (
 		<div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
 			<Heading>Fluid Functionalism</Heading>
-			<text style={{ ...scale.body, color: color.mutedForeground }}>
+			<text style={{ ...siteType.body, color: color.mutedForeground }}>
 				Refined UI components with satisfying hover.
 			</text>
 			<div
@@ -210,7 +214,7 @@ function Showcase(props: { demos: readonly Demo[] }) {
 								hover: { backgroundColor: color.hover },
 							}}
 						>
-							<text style={{ ...scale.body, color: color.foreground }}>
+							<text style={{ ...siteType.body, color: color.foreground }}>
 								{demo.title}
 							</text>
 						</div>
@@ -235,7 +239,7 @@ function CustomizeCard() {
 		>
 			<text
 				style={{
-					...scale.title,
+					...siteType.title,
 					fontWeight: weight.semibold,
 					color: color.foreground,
 				}}
@@ -251,7 +255,7 @@ function CustomizeCard() {
 					height: 28,
 				}}
 			>
-				<text style={{ ...scale.body, color: color.mutedForeground }}>
+				<text style={{ ...siteType.body, color: color.mutedForeground }}>
 					Theme
 				</text>
 				<Select
@@ -270,7 +274,7 @@ function CustomizeCard() {
 					height: 28,
 				}}
 			>
-				<text style={{ ...scale.body, color: color.mutedForeground }}>
+				<text style={{ ...siteType.body, color: color.mutedForeground }}>
 					Radius
 				</text>
 				<Select
@@ -289,7 +293,26 @@ function CustomizeCard() {
 					height: 28,
 				}}
 			>
-				<text style={{ ...scale.body, color: color.mutedForeground }}>
+				<text style={{ ...siteType.body, color: color.mutedForeground }}>
+					Size
+				</text>
+				<Select
+					testId="size"
+					items={SIZES}
+					value={sizeChoice()}
+					onValueChange={(value: SizeChoice) => setSizeChoice(value)}
+				/>
+			</div>
+			<div
+				style={{
+					display: "flex",
+					flexDirection: "row",
+					alignItems: "center",
+					justifyContent: "space-between",
+					height: 28,
+				}}
+			>
+				<text style={{ ...siteType.body, color: color.mutedForeground }}>
 					Icons
 				</text>
 				<Select

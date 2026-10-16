@@ -28,6 +28,7 @@ import {
 	color,
 	focusRing,
 	shape,
+	sizeChoice,
 	type as scale,
 	scheme,
 	motion as tween,
@@ -1634,7 +1635,7 @@ export interface SliderProps extends CompactProps {
 /** One slider, two engines. Features only the compact engine implements (a range, a step list, value display) force it whatever the size, so no capability is lost. */
 export function Slider(props: SliderProps) {
 	const needsCompact = () =>
-		props.size === "compact" ||
+		(props.size ?? sizeChoice()) === "compact" ||
 		Array.isArray(props.value) ||
 		props.steps !== undefined ||
 		props.showSteps !== undefined ||

@@ -60,9 +60,9 @@ repeating it.
 - **Port:** the rules use `color.borderFaint` (`rgba(…,0.072)`, exactly 60% of `border`, `src/lib/theme.ts:106,155`) and the code block `withAlpha(muted, 0.6)`. The code face is Menlo like `InputCopy`'s (`src/pages/introduction.tsx:19`), where the browser resolves `font-mono` to `ui-monospace`.
 - **Fidelity:** exact except the monospace face (same in Chrome on macOS, not in Safari).
 
-## Compact size and the page-level `px-6`
+## The page-level `px-6`
 
-- **Cause:** `not ported yet` (ambient size, README Size row) for compact; `port choice` for the padding.
-- **Original:** `text-site-*` roles follow the site-wide size step, and the page content has `px-6` (`app/docs/page.tsx:20`).
-- **Port:** the default step only (`scale` in `src/lib/theme.ts`), and the 600px column replaces the padding.
+- **Cause:** `port choice`.
+- **Original:** the page content has `px-6` (`app/docs/page.tsx:20`).
+- **Port:** the 600px column replaces the padding.
 - **Fidelity:** approximated.

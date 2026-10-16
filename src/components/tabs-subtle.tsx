@@ -27,7 +27,7 @@ import { StableLabel } from "../lib/stable-label";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { moveIndex } from "../lib/list-nav";
-import { color, height, shape, type as scale, motion as tween, weight } from "../lib/theme";
+import { color, sizeChoice, height, shape, type as scale, motion as tween, weight } from "../lib/theme";
 
 export type TabsSubtleSize = "default" | "compact";
 
@@ -114,7 +114,7 @@ export function TabsSubtle(props: {
 		},
 		activeLabel: () => props.activeLabel === true,
 		idPrefix: () => props.idPrefix,
-		size: () => props.size ?? "default",
+		size: () => props.size ?? sizeChoice(),
 		hover,
 		focusRing,
 		elements: new Map(),

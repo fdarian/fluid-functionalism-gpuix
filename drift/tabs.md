@@ -27,13 +27,13 @@ light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 - **Fidelity:** dropped.
 - **Components it hits:** every component that reads `useSurface` in the source.
 
-## Size ladder is local
+## An explicit `size` does not scope the parts inside
 
-- **Cause:** `not ported yet` (README: "Not ported there: ... the Size / Icons / Primitive rows").
-- **Original:** `size` falls back to the surrounding `SizeProvider` (`tabs.tsx:80-83`, `:173-174`).
-- **Port:** `size` is the prop or `"default"` (`tabs.tsx:101`).
-- **Workaround:** none.
-- **Fidelity:** dropped (ambient size).
+- **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
+- **Original:** `size` wraps the tabs in a `SizeProvider` (`registry/base/tabs.tsx:80-83`, `:173-174`).
+- **Port:** An omitted `size` follows the Size row (`src/components/tabs.tsx:101`).
+- **Workaround:** pass `size` to each nested component.
+- **Fidelity:** approximated.
 - **Components it hits:** every component with a `size` variant.
 
 ## Colour and stroke width switch at once

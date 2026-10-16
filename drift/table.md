@@ -56,14 +56,13 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 - **Fidelity:** dropped.
 - **Components it hits:** every component that uses `FluidHighlight`.
 
-## Size follows the nearest `SizeProvider`
+## An explicit `size` does not scope the parts inside
 
-- **Cause:** `not ported yet`.
-- **Original:** `size` is optional; omitted, the table follows the surrounding `SizeProvider` (`table.tsx:41-44`, `:49`, `:90-91`), and cells read the context (`:180`, `:203`).
-- **Port:** `size` is `"default"` unless the prop says otherwise (`table.tsx:51`, `:58`); there is no size context in `src`, so a table inside a compact surface stays at 36px.
-- **gpuix lacks:** nothing (Solid contexts exist).
-- **Workaround:** pass `size="compact"` by hand.
-- **Fidelity:** approximated (same two steps, no inheritance).
+- **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
+- **Original:** `size` wraps the table in a `SizeProvider`, and its cells read the context (`registry/default/table.tsx:41-44`, `:49`, `:90-91`, `:180`, `:203`).
+- **Port:** An omitted `size` follows the Size row (`src/components/table.tsx:51`, `:58`); a table inside a compact surface stays at 36px unless `size` is passed.
+- **Workaround:** pass `size` to each nested component.
+- **Fidelity:** approximated.
 - **Components it hits:** every component that reads `useSize`.
 
 ## Semantic markup and prop passthrough

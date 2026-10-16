@@ -78,9 +78,14 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 - **Fidelity:** approximated.
 - **Components it hits:** tabs, select, sidebar, menu rows.
 
-## Size ladder is local
+## An explicit `size` does not scope the parts inside
 
-- **Cause:** `not ported yet`. Same drift as [tabs.md, "Size ladder is local"](tabs.md#size-ladder-is-local), where the entry lives. Here: original `tabs-subtle.tsx:47-50`, `:61`, `:264-265`; port `tabs-subtle.tsx:117`.
+- **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
+- **Original:** `size` wraps the tabs in a `SizeProvider` (`registry/base/tabs-subtle.tsx:47-50`, `:61`, `:264-265`).
+- **Port:** An omitted `size` follows the Size row (`src/components/tabs-subtle.tsx:117`).
+- **Workaround:** pass `size` to each nested component.
+- **Fidelity:** approximated.
+- **Components it hits:** every component with a `size` variant.
 
 ## API surface: `className`, ref and HTML props
 

@@ -1,5 +1,5 @@
 import { type JSX, Show } from "solid-js";
-import { color, shape, type as scale, weight } from "../lib/theme";
+import { color, sizeChoice, shape, type as scale, weight } from "../lib/theme";
 
 export const badgeColors = {
 	gray: "#a3a3a3",
@@ -49,7 +49,7 @@ export function Badge(props: {
 	testId?: string;
 	children: JSX.Element;
 }) {
-	const size = () => sizes[props.size ?? "default"];
+	const size = () => sizes[props.size ?? sizeChoice()];
 	const hue = () => badgeColors[props.color ?? "gray"];
 	const solid = () => (props.variant ?? "solid") === "solid";
 

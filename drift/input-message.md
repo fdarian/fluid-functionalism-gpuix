@@ -154,13 +154,6 @@ repeating it.
 - **Port:** `InputMessageProps` has neither (`input-message.tsx:590-633`); the textarea's `aria-label` is fixed "Message" (`:1051`). `testId` is added.
 - **Fidelity:** dropped.
 
-## Ambient size
-
-- **Cause:** `not ported yet`. README lists the Size row as not ported.
-- **Original:** `useSize(size)` falls back to the surrounding provider (`input-message.tsx:497-498`).
-- **Port:** the `size` prop only.
-- **Fidelity:** approximated.
-
 ## IME composition, touch, static weights
 
 - **Cause:** `gpuix gap`. One line each: the `isComposing` early return (`input-message.tsx:790`; README "Missing features", IME row, which lists input-message); the touch-only always-visible × (`useIsTouch`, `:77-87,367-368`; README, the `matchMedia` input-device row); the variable-font weight (`:340,432,1218`; README variable-font row).

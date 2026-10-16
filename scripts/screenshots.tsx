@@ -5,8 +5,8 @@
  *
  * Writes `screenshots/<demo>/initial.png`, then whatever the demo's
  * `scenarios` capture, then `pill.png` with Radius set to Pill, then
- * `light.png`: the same page after switching the theme with the "Make them
- * yours" select.
+ * `compact.png` with Size set to Compact, then `light.png`: the same page
+ * after switching the theme with the "Make them yours" select.
  *
  * Real time, not the test clock: fluid hover measures on timers and motion
  * samples a wall clock, so each step runs frames until they settle.
@@ -22,7 +22,11 @@ import {
 	type ShotContext,
 } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
-import { setShapeChoice, setThemeChoice } from "../src/lib/theme";
+import {
+	setShapeChoice,
+	setSizeChoice,
+	setThemeChoice,
+} from "../src/lib/theme";
 
 const slug = process.argv[2];
 const demos = await loadDemos();
@@ -223,6 +227,13 @@ setShapeChoice("pill");
 await settle(600);
 capture("pill");
 setShapeChoice("rounded");
+await settle(600);
+
+// And with Size on Compact, set directly for the same reason.
+setSizeChoice("compact");
+await settle(600);
+capture("compact");
+setSizeChoice("default");
 await settle(600);
 
 // Back to a neutral pointer, then flip the theme through the real control.

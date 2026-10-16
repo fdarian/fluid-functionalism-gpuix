@@ -10,7 +10,7 @@ import {
 import { createFluidHover, type FluidHover, useHoverItem } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { color, height, shape, type as scale, scheme, weight, withAlpha } from "../lib/theme";
+import { color, sizeChoice, height, shape, type as scale, scheme, weight, withAlpha } from "../lib/theme";
 
 export type InputSize = "default" | "compact";
 
@@ -66,7 +66,7 @@ export function InputGroup(props: {
 	const hover = createFluidHover();
 	const scope: GroupScope = {
 		hover,
-		size: () => props.size ?? "default",
+		size: () => props.size ?? sizeChoice(),
 	};
 	return (
 		<GroupContext.Provider value={scope}>

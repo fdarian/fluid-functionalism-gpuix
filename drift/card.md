@@ -193,14 +193,14 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Fidelity:** exact in the cases checked by reading (stacked, inline, framed, borderless); the screenshots were not diffed.
 - **Components it hits:** just this one.
 
-## `size` pins the card's parts only
+## An explicit `size` does not scope the parts inside
 
-- **Cause:** `not ported yet`.
-- **Original:** `size` wraps the card in a `SizeProvider`, so a nested `Button`, `Badge` and the rest follow; omitted, it follows the surrounding provider (`:244-247`, `:276`, `:515`).
-- **Port:** `compact` is `props.size === "compact"` for the card's own parts (`src/components/card.tsx:266`); nothing is provided to children, and an ambient size is not read.
-- **Workaround:** pass `size` to each child.
-- **Fidelity:** dropped.
-- **Components it hits:** every component with a size ladder.
+- **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
+- **Original:** `size` wraps the card in a `SizeProvider`, so a nested `Button`, `Badge` and the rest follow (`registry/default/card.tsx:244-247`, `:276`, `:515`).
+- **Port:** An omitted `size` follows the Size row (`src/components/card.tsx:266`); `compact` covers the card's own parts only, and nothing is provided to children.
+- **Workaround:** pass `size` to each nested component.
+- **Fidelity:** approximated.
+- **Components it hits:** every component with a `size` prop.
 
 ## `CardFeature` compact icon gap is 6, not 4
 

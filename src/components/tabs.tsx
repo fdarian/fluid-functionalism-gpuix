@@ -27,7 +27,7 @@ import {
 import { StableLabel } from "../lib/stable-label";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { color, shape, type as scale, scheme, shadow3, motion as tween, weight } from "../lib/theme";
+import { color, sizeChoice, shape, type as scale, scheme, shadow3, motion as tween, weight } from "../lib/theme";
 
 export type TabsSize = "default" | "compact";
 
@@ -98,7 +98,7 @@ export function Tabs(props: {
 	const selected = () => props.value ?? uncontrolled() ?? order()[0];
 	const state: TabsState = {
 		order,
-		size: () => props.size ?? "default",
+		size: () => props.size ?? sizeChoice(),
 		tabId: (value) => `${idPrefix}-tab-${encodeURIComponent(value)}`,
 		panelId: (value) => `${idPrefix}-panel-${encodeURIComponent(value)}`,
 		hasPanel: (value) => panels().includes(value),
