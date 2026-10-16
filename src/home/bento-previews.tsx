@@ -607,12 +607,11 @@ function SliderPreview() {
 	);
 }
 
-/** The source's "Accessible by default" row carries a heart; the port's icon tables have none, so it takes the shield. */
 const DROPDOWN_ITEMS: { icon: IconRef; label: string }[] = [
 	{ icon: "circle", label: "Spring animations" },
 	{ icon: "star", label: "Fluid hover" },
 	{ icon: "plus", label: "Font weight shifts" },
-	{ icon: "shield", label: "Accessible by default" },
+	{ icon: "heart", label: "Accessible by default" },
 	{ icon: "check", label: "Radix or Base UI" },
 	{ icon: "brain", label: "Functional clarity" },
 ];
