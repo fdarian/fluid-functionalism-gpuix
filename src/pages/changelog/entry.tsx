@@ -15,6 +15,8 @@ import { openUrl } from "../../lib/open-url";
 import { usePageNav } from "../../lib/page-nav";
 import { color, colorFade, focusRing, siteType, weight } from "../../lib/theme";
 import { DiffBlock } from "./diff-block";
+import { PreviewStage } from "./preview-stage";
+import { previewFor } from "./previews";
 
 const REPO = "https://github.com/mickadesign/fluid-functionalism";
 
@@ -192,7 +194,7 @@ function RefChip(props: { gitRef: ChangeRef }) {
  * An entry: the name (linked to its page when it has one) with the refs on
  * the right, the sentence under them, and for Breaking the diff and a
  * migration prompt. Space goes above a block: 24px between entries, 4px under
- * the name, 12px above a diff. New entries' preview stages are not ported yet.
+ * the name, 12px above a diff or a New entry's preview stage.
  */
 export function Entry(props: {
 	/** `month-kind-index`, which names the entry's test ids. */
@@ -202,6 +204,12 @@ export function Entry(props: {
 	first: boolean;
 }) {
 	const entry = () => props.entry;
+	const stagedSlug = () => {
+		const href = entry().href;
+		if (entry().kind !== "new" || href === null) return undefined;
+		const slug = pageSlug(href);
+		return previewFor(slug) === undefined ? undefined : slug;
+	};
 	return (
 		<div
 			style={{
@@ -279,6 +287,9 @@ export function Entry(props: {
 						/>
 					</div>
 				)}
+			</Show>
+			<Show when={stagedSlug()}>
+				{(slug: Accessor<string>) => <PreviewStage slug={slug()} />}
 			</Show>
 		</div>
 	);

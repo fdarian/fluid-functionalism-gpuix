@@ -1,3 +1,4 @@
+import { createReducedMotion, type HostElement, motion } from "@gpuix/solid";
 import { type Accessor, For, type JSX, Show } from "solid-js";
 import { monthLabel } from "../../lib/changelog/migration-prompt";
 import {
@@ -6,14 +7,41 @@ import {
 	KIND_LABEL,
 	type Release,
 } from "../../lib/changelog/parse";
-import { color, siteType, weight } from "../../lib/theme";
+import { color, siteType, motion as tween, weight } from "../../lib/theme";
 import { Entry, InlineProse } from "./entry";
+import { activeMonth } from "./release-spy";
 
 /** Where a month's dot sits from the top of its block: the middle of the title line. */
 const DOT_Y = () => siteType.title.lineHeight / 2;
 /** Below the divider: 64px + 1px + 64px, then the title line. */
 const DOT_Y_DIVIDED = () => 129 + siteType.title.lineHeight / 2;
 const DOT_SIZE = 5;
+/** The month in view grows a step, on the same spring as the Releases fill in the rail. */
+const ACTIVE_DOT_SCALE = 1.3;
+const DOT_RING = 3;
+
+/**
+ * The dot at `scale` about its centre. gpuix animates no transform, so the
+ * scale is the box's size, its offset to stay centred, its radius and the ring
+ * that cuts the timeline's line, each moved by the same factor.
+ */
+function dot(scale: number, centreY: number) {
+	const size = DOT_SIZE * scale;
+	return {
+		left: DOT_SIZE / 2 - size / 2,
+		top: centreY - size / 2,
+		width: size,
+		height: size,
+		borderRadius: size / 2,
+		boxShadow: {
+			offsetX: 0,
+			offsetY: 0,
+			blurRadius: 0,
+			spreadRadius: DOT_RING * scale,
+			color: color.background,
+		},
+	};
+}
 
 function releasedLabel(day: string): string {
 	return new Date(
@@ -34,7 +62,8 @@ function releasedLabel(day: string): string {
  * Each month draws its own stretch of the line: the first starts at its dot,
  * and the last runs on to the end of the page.
  */
-function TimelineMark(props: { first: boolean }) {
+function TimelineMark(props: { first: boolean; active: boolean }) {
+	const reduced = createReducedMotion();
 	const dotY = () => (props.first ? DOT_Y() : DOT_Y_DIVIDED());
 	return (
 		<>
@@ -48,17 +77,11 @@ function TimelineMark(props: { first: boolean }) {
 					backgroundColor: color.border,
 				}}
 			/>
-			<div
-				style={{
-					position: "absolute",
-					left: 0,
-					top: dotY() - DOT_SIZE / 2,
-					width: DOT_SIZE,
-					height: DOT_SIZE,
-					borderRadius: DOT_SIZE / 2,
-					backgroundColor: color.foreground,
-					boxShadow: `0 0 0 3px ${color.background}`,
-				}}
+			<motion.div
+				style={{ position: "absolute", backgroundColor: color.foreground }}
+				initial={false}
+				animate={dot(props.active ? ACTIVE_DOT_SCALE : 1, dotY())}
+				transition={reduced() ? tween.snap : tween.moderate}
 			/>
 		</>
 	);
@@ -154,7 +177,12 @@ function KindGroup(props: { group: ChangeGroup; month: string }): JSX.Element {
 }
 
 /** One month of the changelog, with its stretch of the timeline in the 24px gutter to its left. */
-export function ReleaseSection(props: { release: Release; first: boolean }) {
+export function ReleaseSection(props: {
+	release: Release;
+	first: boolean;
+	/** Hands the month's block to the scroll-spy. */
+	sectionRef: (element: HostElement) => void;
+}) {
 	return (
 		<div
 			style={{
@@ -164,7 +192,10 @@ export function ReleaseSection(props: { release: Release; first: boolean }) {
 				paddingLeft: 24,
 			}}
 		>
-			<TimelineMark first={props.first} />
+			<TimelineMark
+				first={props.first}
+				active={activeMonth() === props.release.month}
+			/>
 			{/* A hairline between months, 64px on each side. -22px reaches back across the gutter to the timeline's line at 2px, so it branches off it. */}
 			<Show when={!props.first}>
 				<div style={{ paddingTop: 64 }}>
@@ -178,6 +209,7 @@ export function ReleaseSection(props: { release: Release; first: boolean }) {
 				</div>
 			</Show>
 			<div
+				ref={props.sectionRef}
 				testId={`changelog-${props.release.month}`}
 				style={{
 					display: "flex",
