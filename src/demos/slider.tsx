@@ -292,20 +292,20 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.settle(300);
 	shot.capture("compact");
 	// Keys, reached by walking back through the tab order from cold: theme, rating, resize, decimal, steps10, steps25, range, basic.
-	await shot.press("shift-tab shift-tab shift-tab shift-tab");
-	await shot.press("right");
+	await shot.press("Shift+Tab Shift+Tab Shift+Tab Shift+Tab");
+	await shot.press("ArrowRight");
 	shot.expectText("0.3", true);
 	shot.expectText("0.30000", false);
-	await shot.press("shift-tab shift-tab");
+	await shot.press("Shift+Tab Shift+Tab");
 	// Page Up is 10 value units whatever the step, so step 25 lands off the grid, as in FF.
-	await shot.press("pageup");
+	await shot.press("PageUp");
 	shot.expectText("60", true);
-	await shot.press("pagedown pagedown");
+	await shot.press("PageDown PageDown");
 	shot.expectText("40", true);
-	await shot.press("shift-tab shift-tab shift-tab");
-	await shot.press("shift-right");
+	await shot.press("Shift+Tab Shift+Tab Shift+Tab");
+	await shot.press("Shift+ArrowRight");
 	shot.expectText("35", true);
-	await shot.press("pageup");
+	await shot.press("PageUp");
 	shot.expectText("45", true);
 	shot.capture("compact-keys");
 	await shot.clickAt(1180, 700);
@@ -357,7 +357,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("editing");
 	// onChange reaches JS after the whole press; Enter is a keydown now, so it needs its own press to see the typed draft.
 	await shot.press("7 2");
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.settle(300);
 	shot.expectText("72", true);
 	shot.capture("edited");
@@ -374,15 +374,15 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(1180, 700);
 	shot.capture("scrubber-dragged");
 	// Pointer presses never focus a slider, so reach the last one by walking back through the tab order.
-	await shot.press("shift-tab shift-tab");
+	await shot.press("Shift+Tab Shift+Tab");
 	shot.capture("keyboard-focus");
-	await shot.press("right");
+	await shot.press("ArrowRight");
 	shot.capture("keyboard-moved");
 	shot.expectText("High", true);
 	// Shift jumps 10 and clamps to the end; Page Down jumps back past the start.
-	await shot.press("shift-right");
+	await shot.press("Shift+ArrowRight");
 	shot.expectText("Ultra", true);
-	await shot.press("pagedown");
+	await shot.press("PageDown");
 	shot.expectText("Off", true);
 	shot.expectAria("quality-thumb", {
 		role: "Slider",

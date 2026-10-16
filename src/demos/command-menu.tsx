@@ -831,7 +831,7 @@ export function Demo() {
 	);
 }
 
-/** Wheels the page until the card's top edge sits under the heading (negative delta is down, as for `ShotContext.scroll`). gpuix's scrollIntoView does not reach the page's scroller from here. */
+/** Wheels the page until the card's top edge sits under the heading (positive delta is down, as for `ShotContext.scroll`). gpuix's scrollIntoView does not reach the page's scroller from here. */
 async function reveal(
 	shot: Parameters<NonNullable<DemoModule["scenarios"]>>[0],
 	id: string,
@@ -851,7 +851,7 @@ async function reveal(
 		// The page stops at its end: a card near the bottom never reaches the top.
 		if (Math.abs(offset) < 4 || previous === offset) break;
 		previous = offset;
-		scrollRenderer.nativeSimulateScrollWheel(925, 400, 0, -offset);
+		scrollRenderer.nativeSimulateScrollWheel(925, 400, 0, offset);
 		await shot.settle(200);
 	}
 	await shot.settle();
@@ -862,9 +862,9 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("play-filters-switch-track");
 	shot.capture("playground-tabs-and-filters");
 	await shot.click("play-input");
-	await shot.press("cmd-k");
+	await shot.press("Meta+k");
 	shot.capture("playground-dialog");
-	await shot.press("escape");
+	await shot.press("Escape");
 	await shot.click("play-tabs-track");
 	shot.capture("playground-filters-only");
 	await shot.click("playground-shuffle");
@@ -873,16 +873,16 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await reveal(shot, "basic");
 	await shot.click("basic-input");
 	shot.capture("basic-focused");
-	await shot.press("down down");
+	await shot.press("ArrowDown ArrowDown");
 	shot.capture("basic-arrowed");
-	await shot.press("up up up");
+	await shot.press("ArrowUp ArrowUp ArrowUp");
 	shot.capture("basic-wrapped");
 	await shot.press("s e a");
 	shot.capture("basic-filtered");
 	await shot.press("z z z");
 	shot.expectText(EMPTY, true);
 	shot.capture("basic-empty");
-	await shot.press("escape");
+	await shot.press("Escape");
 	shot.expectText(EMPTY, false);
 
 	await reveal(shot, "details");
@@ -902,9 +902,9 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await reveal(shot, "filters");
 	// A pointer press that opens a popup cannot run in the test renderer: drive the select by key.
 	await shot.focus("filters-sort-trigger");
-	await shot.press("down");
+	await shot.press("ArrowDown");
 	shot.capture("filters-open");
-	await shot.press("down enter");
+	await shot.press("ArrowDown Enter");
 	await shot.settle(500);
 	shot.capture("filters-sorted");
 
@@ -917,7 +917,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 
 	await reveal(shot, "footer");
 	await shot.click("footer-input");
-	await shot.press("right");
+	await shot.press("ArrowRight");
 	shot.capture("footer-tabs");
 
 	await reveal(shot, "custom");
@@ -928,18 +928,18 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("dialog-open");
 	await shot.press("i n b");
 	shot.capture("dialog-filtered");
-	await shot.press("enter");
+	await shot.press("Enter");
 	shot.expectText("Ran: Inbox", true);
 	shot.capture("dialog-picked");
 	await shot.click("dialog-open");
-	await shot.press("escape");
+	await shot.press("Escape");
 	shot.capture("dialog-closed");
 	// The bound combo opens it from anywhere on the page, and again closes it.
-	await shot.press("cmd-p");
+	await shot.press("Meta+p");
 	shot.capture("dialog-combo-open");
-	await shot.press("cmd-p");
+	await shot.press("Meta+p");
 	shot.capture("dialog-combo-closed");
 	await shot.click("dialog-open-no-shortcut");
 	shot.capture("dialog-no-shortcut");
-	await shot.press("escape");
+	await shot.press("Escape");
 };

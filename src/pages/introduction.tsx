@@ -19,8 +19,7 @@ export const menuKeywords = ["docs", "getting started", "install"];
 const MONO = "Menlo";
 
 export async function scenarios(shot: ShotContext) {
-	// The wheel keeps GPUI's sign: negative scrolls down.
-	await shot.scroll(600, 400, 0, -2000);
+	await shot.scroll(600, 400, 0, 2000);
 	shot.capture("installation");
 	await shot.hover("install-registry");
 	shot.capture("installation-hover");

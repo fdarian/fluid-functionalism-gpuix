@@ -153,4 +153,5 @@ report(
 	`between 75 and 105 ms after the click ${lingering.length > 0 ? `still ${show(lingering)}` : "the fill is already gone"} (rest ${rest})`,
 );
 
+test.unmount();
 process.exit(failed ? 1 : 0);

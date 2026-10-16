@@ -200,7 +200,7 @@ const shot: ShotContext = {
 		await settle();
 	},
 	async moveHeld(x, y) {
-		renderer.nativeSimulateMouseMove(x, y, 0);
+		renderer.nativeSimulateMouseMove(x, y);
 		await settle();
 	},
 	settle,
@@ -259,4 +259,5 @@ await shot.moveTo(1180, 700);
 capture("light");
 
 console.log("screenshots written to", outDir);
+test.unmount();
 process.exit(0);

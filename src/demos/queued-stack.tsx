@@ -183,7 +183,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("cleared");
 
 	// The queued chat sits below the fold.
-	await shot.scroll(600, 400, 0, -700);
+	await shot.scroll(600, 400, 0, 700);
 	await shot.settle(300);
 	shot.capture("queued-chat");
 	await shot.hover("queued-chat-1");

@@ -54,7 +54,7 @@ await settle(800);
 const disabledInput = element("disabled-input").id;
 const reached = new Set<number>();
 for (let presses = 0; presses < 40; presses++) {
-	renderer.simulateKeystrokes("tab");
+	renderer.simulateKeystrokes("Tab");
 	await settle(60);
 	const focused = renderer.getFocusedElementId();
 	if (focused !== null) reached.add(focused);
@@ -78,4 +78,5 @@ report(
 	compactCaption,
 );
 
+test.unmount();
 process.exit(failed ? 1 : 0);

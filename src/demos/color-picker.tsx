@@ -150,7 +150,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	// The format menu opened by key: the trigger names the menu, a radio row says whether it is checked.
 	await shot.focus("default-format");
 	shot.expectAria("default-format", { has_popup: "Menu", expanded: false });
-	await shot.press("down");
+	await shot.press("ArrowDown");
 	const menu = shot.aria("default-format").controls;
 	if (!Array.isArray(menu) || menu.length !== 1)
 		throw new Error("an open format trigger controls its menu");
@@ -165,7 +165,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 		toggled: "True",
 	});
 	shot.expectAria("default-format-rgb", { toggled: "False" });
-	await shot.press("escape");
+	await shot.press("Escape");
 
 	// The square: hover ghost, a press, a drag.
 	const square = shot.centerOf("default-square");
@@ -202,18 +202,18 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	// The hex field: replace its text.
 	await shot.click("default-hex-input");
 	await shot.press(
-		"end backspace backspace backspace backspace backspace backspace backspace backspace",
+		"End Backspace Backspace Backspace Backspace Backspace Backspace Backspace Backspace",
 	);
 	await shot.press("f f 3 b 3 0");
-	await shot.press("enter");
+	await shot.press("Enter");
 	shot.capture("hex-typed");
 
 	// Keyboard: the square takes focus, Tab reaches the hue thumb and arrows move it.
 	await shot.click("default-square");
-	await shot.press("left left left shift-down");
+	await shot.press("ArrowLeft ArrowLeft ArrowLeft Shift+ArrowDown");
 	shot.capture("keyboard-square");
-	await shot.press("tab");
-	await shot.press("right right right shift-right");
+	await shot.press("Tab");
+	await shot.press("ArrowRight ArrowRight ArrowRight Shift+ArrowRight");
 	shot.capture("keyboard-hue");
 
 	// The format menu, and each format's channels.
@@ -231,21 +231,21 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	// The format menu by keyboard: closing returned focus to the trigger, a
 	// keyboard open lights the first row (Up: the last), Down wraps, End /
 	// Home / typeahead move.
-	await shot.press("up");
+	await shot.press("ArrowUp");
 	shot.capture("format-up-opens-last");
-	await shot.press("enter");
+	await shot.press("Enter");
 	shot.expectText("OKLCH", true);
-	await shot.press("down h enter");
+	await shot.press("ArrowDown h Enter");
 	shot.expectText("OKLCH", false);
-	await shot.press("down up enter");
+	await shot.press("ArrowDown ArrowUp Enter");
 	shot.expectText("OKLCH", true);
-	await shot.press("down end up enter");
+	await shot.press("ArrowDown End ArrowUp Enter");
 	shot.expectText("OKLCH", false);
 	// A pointer open lights nothing until the pointer moves in.
 	await shot.moveTo(1180, 700);
 	await shot.click("default-format");
 	shot.capture("format-pointer-open");
-	await shot.press("escape");
+	await shot.press("Escape");
 	await pickFormat(shot, "default", "rgb");
 
 	// A channel scrubs by dragging sideways.

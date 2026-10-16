@@ -56,9 +56,9 @@ async function focus(testId: string) {
 		if (box !== undefined) {
 			const offset = box.y + box.height / 2 - 300;
 			if (Math.abs(offset) < 40) break;
-			renderer.nativeSimulateScrollWheel(600, 400, 0, -offset);
+			renderer.nativeSimulateScrollWheel(600, 400, 0, offset);
 		} else {
-			renderer.nativeSimulateScrollWheel(600, 400, 0, -500);
+			renderer.nativeSimulateScrollWheel(600, 400, 0, 500);
 		}
 		await settle(200);
 	}
@@ -100,7 +100,7 @@ await settle(800);
 // The "type here" hint must sit on the Other row from its first frame.
 await focus("other-option-2");
 const inputId = element("other-other-input").id;
-const firstShow = await hintOffsetAfter("tab");
+const firstShow = await hintOffsetAfter("Tab");
 check(
 	"tab reaches the Other field",
 	renderer.getFocusedElementId() === inputId,
@@ -110,9 +110,9 @@ check(
 	firstShow < 2,
 	`worst offset ${firstShow.toFixed(1)}px`,
 );
-renderer.simulateKeystrokes("tab");
+renderer.simulateKeystrokes("Tab");
 await settle(400);
-const secondShow = await hintOffsetAfter("shift-tab");
+const secondShow = await hintOffsetAfter("Shift+Tab");
 check(
 	"shift-tab returns to the Other field",
 	renderer.getFocusedElementId() === inputId,
@@ -128,9 +128,10 @@ await focus("multiple-option-0");
 const lit = () => renderer.findByTestId("multiple-option-0-arrow") !== undefined;
 await settle(300);
 check("row 0 lit while focused", lit());
-renderer.simulateKeystrokes("tab");
+renderer.simulateKeystrokes("Tab");
 await settle(400);
 check("row 0 not lit after Tab leaves the group", !lit());
 
 console.log(failed ? "FAILED" : "ALL PASSED");
+test.unmount();
 process.exit(failed ? 1 : 0);

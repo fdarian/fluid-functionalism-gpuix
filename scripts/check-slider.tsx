@@ -26,7 +26,7 @@ kit.check(
 );
 renderer.simulateKeystrokes("7 2");
 await kit.settle(300);
-renderer.simulateKeystrokes("enter");
+renderer.simulateKeystrokes("Enter");
 await kit.settle(500);
 kit.check(
 	"typing replaces the number",
@@ -51,7 +51,7 @@ const dragX = track.x + track.width * 0.2;
 renderer.nativeSimulateMouseMove(pressX, track.y + track.height / 2);
 renderer.nativeSimulateMouseDown(pressX, track.y + track.height / 2);
 await frame();
-renderer.nativeSimulateMouseMove(dragX, track.y + track.height / 2, 0);
+renderer.nativeSimulateMouseMove(dragX, track.y + track.height / 2);
 await frame();
 const eased = thumbCentre();
 kit.check(
@@ -60,7 +60,7 @@ kit.check(
 	`thumb ${eased.toFixed(1)}, cursor ${dragX.toFixed(1)}, press ${pressX.toFixed(1)}`,
 );
 await kit.settle(500);
-renderer.nativeSimulateMouseMove(dragX + 1, track.y + track.height / 2, 0);
+renderer.nativeSimulateMouseMove(dragX + 1, track.y + track.height / 2);
 await kit.settle(100);
 kit.check(
 	"once the spring has settled a drag move places the thumb on the cursor",
@@ -77,7 +77,7 @@ const handle = kit.center("scrubber-handle");
 renderer.nativeSimulateMouseMove(handle.x, handle.y);
 renderer.nativeSimulateMouseDown(handle.x, handle.y);
 await kit.settle(100);
-renderer.nativeSimulateMouseMove(handle.x - 40, handle.y, 0);
+renderer.nativeSimulateMouseMove(handle.x - 40, handle.y);
 await kit.settle(200);
 kit.check(
 	"dragging the scrubber handle moves the handle",

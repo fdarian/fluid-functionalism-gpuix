@@ -58,28 +58,28 @@ const start = top();
 
 // Positive control: the focused viewport itself still scrolls with the keys.
 await check.click("row-3");
-await check.press("down");
+await check.press("ArrowDown");
 check.expect("ArrowDown on the focused viewport scrolls 40px", top(), start - 40);
-await check.press("home");
+await check.press("Home");
 check.expect("Home on the focused viewport scrolls back", top(), start);
 
 await check.focus("field");
-await check.press("a space b");
+await check.press("a Space b");
 check.expect("Space and letters type into the input", text(), "a b");
 check.expect("Space in the input does not scroll the area", top(), start);
 
-await check.press("down down pagedown");
+await check.press("ArrowDown ArrowDown PageDown");
 check.expect(
 	"arrows and PageDown in the input do not scroll the area",
 	top(),
 	start,
 );
 
-await check.press("end");
+await check.press("End");
 check.expect("End in the input does not scroll the area", top(), start);
 
 await check.focus("own-handler");
-await check.press("down");
+await check.press("ArrowDown");
 check.expect("a child's own ArrowDown handler runs", listKeys(), 1);
 check.expect(
 	"a child that handles ArrowDown does not also scroll the area",

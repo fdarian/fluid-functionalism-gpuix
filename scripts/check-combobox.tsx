@@ -129,7 +129,7 @@ const inputValue = (id: string) => String(inputNode(id).value ?? "");
 
 await k.focus("empty-input");
 k.check("empty: focusing does not open", !isOpen("empty"));
-await k.press("down");
+await k.press("ArrowDown");
 k.check("empty: ArrowDown on the closed field opens", isOpen("empty"));
 k.expect(
 	"empty: opening lights the first row (autoHighlight always)",
@@ -141,14 +141,14 @@ k.expect(
 	focusAt("empty", FRUITS),
 	"empty-input",
 );
-await k.press("escape");
+await k.press("Escape");
 k.check("empty: Escape closes", !isOpen("empty"));
 k.expect(
 	"empty: Escape keeps focus in the input",
 	focusAt("empty", FRUITS),
 	"empty-input",
 );
-await k.press("up");
+await k.press("ArrowUp");
 k.check("empty: ArrowUp on the closed field opens", isOpen("empty"));
 k.expect(
 	"empty: ArrowUp opens on the first row too, not the last",
@@ -158,20 +158,20 @@ k.expect(
 
 // ─── Open: arrows loop and never leave the input ─────────────────────────────
 
-await k.press("down down");
+await k.press("ArrowDown ArrowDown");
 k.expect("empty: ArrowDown walks the rows", lit("empty", FRUITS), "Cherry");
 k.expect(
 	"empty: focus is still in the input while arrowing",
 	focusAt("empty", FRUITS),
 	"empty-input",
 );
-await k.press("down down");
+await k.press("ArrowDown ArrowDown");
 k.expect(
 	"empty: ArrowDown on the last row loops to the first",
 	lit("empty", FRUITS),
 	"Apple",
 );
-await k.press("up");
+await k.press("ArrowUp");
 k.expect(
 	"empty: ArrowUp on the first row loops to the last",
 	lit("empty", FRUITS),
@@ -179,34 +179,34 @@ k.expect(
 );
 let escaped = false;
 for (let step = 0; step < 6; step++) {
-	await k.press("down");
+	await k.press("ArrowDown");
 	if (lit("empty", FRUITS) === null) escaped = true;
 }
 k.check("empty: a full lap never drops the highlight into the input", !escaped);
 
 // ─── Home and End move the caret only ────────────────────────────────────────
 
-await k.press("escape");
+await k.press("Escape");
 await k.press("a n");
 k.check("empty: typing opens and filters", isOpen("empty"));
 k.expect("empty: typed text", inputValue("empty"), "an");
 const before = lit("empty", FRUITS);
-await k.press("home");
+await k.press("Home");
 k.expect("empty: Home keeps the lit row", lit("empty", FRUITS), before);
 k.check("empty: Home leaves the popup open", isOpen("empty"));
 await k.press("b");
 k.expect("empty: Home put the caret at the start", inputValue("empty"), "ban");
-await k.press("end");
+await k.press("End");
 k.expect("empty: End keeps the lit row", lit("empty", FRUITS), before);
 await k.press("a");
 k.expect("empty: End put the caret at the end", inputValue("empty"), "bana");
-await k.press("backspace backspace backspace backspace");
+await k.press("Backspace Backspace Backspace Backspace");
 
 // ─── Enter picks, focus stays ────────────────────────────────────────────────
 
-await k.press("escape");
-if (!isOpen("empty")) await k.press("down");
-await k.press("down down enter");
+await k.press("Escape");
+if (!isOpen("empty")) await k.press("ArrowDown");
+await k.press("ArrowDown ArrowDown Enter");
 await k.settle(500);
 k.check("empty: Enter closes", !isOpen("empty"));
 k.check("empty: Enter picks the lit row", shown("picked: Cherry"));
@@ -219,7 +219,7 @@ k.expect(
 
 // ─── Pointer: hover lights without focus, leaving refills the first row ──────
 
-await k.press("down");
+await k.press("ArrowDown");
 k.check("pointer: reopened by the keyboard", isOpen("empty"));
 const mango = k.center("empty-option-Mango");
 renderer.nativeSimulateMouseMove(mango.x, mango.y);
@@ -250,37 +250,37 @@ k.expect(
 // ─── A selected value lights its row on open ─────────────────────────────────
 
 await k.focus("valued-input");
-await k.press("down");
+await k.press("ArrowDown");
 k.expect(
 	"valued: ArrowDown opens on the picked row",
 	lit("valued", FRUITS),
 	"Cherry",
 );
-await k.press("escape");
-await k.press("up");
+await k.press("Escape");
+await k.press("ArrowUp");
 k.expect(
 	"valued: ArrowUp opens on the picked row too",
 	lit("valued", FRUITS),
 	"Cherry",
 );
-await k.press("escape");
+await k.press("Escape");
 
 // ─── Disabled rows are reachable by arrows ───────────────────────────────────
 
 await k.focus("gaps-input");
-await k.press("down");
-await k.press("down");
+await k.press("ArrowDown");
+await k.press("ArrowDown");
 k.expect(
 	"gaps: arrows visit the disabled row (disabledIndices is empty)",
 	lit("gaps", ["a", "b", "c"]),
 	"b",
 );
-await k.press("escape");
+await k.press("Escape");
 
 // ─── Escape: open closes only the popup; closed clears the field ─────────────
 
 await k.focus("valued-input");
-await k.press("escape");
+await k.press("Escape");
 k.expect(
 	"valued: Escape on the closed field clears it",
 	inputValue("valued"),
@@ -290,7 +290,7 @@ k.expect(
 // ─── Lighting a row eases its icon stroke and colour over 80 ms ──────────────
 
 await k.focus("ease-input");
-await k.press("down");
+await k.press("ArrowDown");
 await k.settle(300);
 {
 	const row = k.bounds("ease-option-b");
@@ -311,7 +311,7 @@ await k.settle(300);
 			early < litInk - 0.1 * (litInk - rest),
 		`rest ${rest}, early ${early}, lit ${litInk}`,
 	);
-	await k.press("escape");
+	await k.press("Escape");
 	await k.settle(300);
 }
 
@@ -320,12 +320,12 @@ await k.settle(300);
 await k.click("dialog-open");
 await k.settle(400);
 await k.focus("inside-input");
-await k.press("down");
+await k.press("ArrowDown");
 k.check("inside: opens in the dialog", isOpen("inside"));
-await k.press("escape");
+await k.press("Escape");
 k.check("inside: Escape closes the popup", !isOpen("inside"));
 k.check("inside: the dialog behind stays open", k.exists("dialog"));
-await k.press("escape");
+await k.press("Escape");
 await k.settle(500);
 k.check("inside: a second Escape closes the dialog", !k.exists("dialog"));
 

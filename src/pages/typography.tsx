@@ -24,7 +24,6 @@ const LIST_DESCRIPTION =
 export const menuKeywords = ["typography", ...LIST_DESCRIPTION.split(/\W+/)];
 
 export async function scenarios(shot: ShotContext) {
-	// The wheel keeps GPUI's sign: negative scrolls down.
 	const scrollTo = async (testId: string) => {
 		let last = Number.NaN;
 		for (let tick = 0; tick < 80; tick++) {
@@ -32,7 +31,7 @@ export async function scenarios(shot: ShotContext) {
 			// The page's end stops the scroll before the element reaches the top.
 			if (centre.y < 460 || centre.y === last) return;
 			last = centre.y;
-			await shot.scroll(600, 400, 0, -300);
+			await shot.scroll(600, 400, 0, 300);
 		}
 		throw new Error(`${testId} never scrolled into view`);
 	};
@@ -45,7 +44,7 @@ export async function scenarios(shot: ShotContext) {
 	setSizeChoice("default");
 	await shot.settle(600);
 	await scrollTo("markdown-sample");
-	await shot.scroll(600, 400, 0, 420);
+	await shot.scroll(600, 400, 0, -420);
 	shot.capture("markdown");
 	// The to-dos check and uncheck; a hovered box darkens its outline.
 	await shot.click("task-move-every-list-to-fluid-hover");

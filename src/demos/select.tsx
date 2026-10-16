@@ -298,7 +298,7 @@ async function reveal(shot: ShotContext, testId: string) {
 		const y = shot.centerOf(testId).y;
 		if ((y > 120 && y < 320) || y === previous) return;
 		previous = y;
-		await shot.scroll(700, 400, 0, -(y - 200));
+		await shot.scroll(700, 400, 0, y - 200);
 	}
 	throw new Error(`could not scroll ${testId} into view`);
 }
@@ -316,7 +316,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 		labelled_by: ["form-plan-label"],
 		controls: undefined,
 	});
-	await shot.press("down");
+	await shot.press("ArrowDown");
 	shot.expectAria("form-plan-trigger", { expanded: true });
 	const listbox = shot.aria("form-plan-trigger").controls;
 	if (!Array.isArray(listbox) || listbox.length !== 1)
@@ -326,7 +326,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 		role: "ListBoxOption",
 		selected: false,
 	});
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.settle(600);
 	await shot.click("form-submit");
 	shot.expectText("submitted: name=Ada&plan=apple", true);
@@ -351,43 +351,43 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.press("c");
 	await shot.settle(300);
 	shot.capture("basic-typeahead");
-	await shot.press("escape");
+	await shot.press("Escape");
 	shot.expectText("Cherry", false);
 
 	await shot.click("icons");
 	await shot.settle(300);
 	shot.capture("icons-open");
-	await shot.press("escape");
+	await shot.press("Escape");
 
 	await shot.click("groups");
 	await shot.settle(300);
 	shot.expectText("Preferences", true);
 	shot.capture("groups-open");
-	await shot.press("escape");
+	await shot.press("Escape");
 
 	await shot.click("timezone");
 	await shot.settle(300);
 	shot.capture("timezone-open");
-	for (let step = 0; step < 14; step++) await shot.press("down");
+	for (let step = 0; step < 14; step++) await shot.press("ArrowDown");
 	await shot.settle(400);
 	shot.capture("timezone-scrolled");
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.settle(300);
 	await shot.click("timezone");
 	await shot.settle(400);
 	shot.capture("timezone-reopened");
-	await shot.press("escape");
+	await shot.press("Escape");
 
 	// Arrows land on disabled rows, Enter refuses them, the popup stays open.
 	await shot.click("some-disabled");
-	await shot.press("escape");
-	await shot.press("down down");
+	await shot.press("Escape");
+	await shot.press("ArrowDown ArrowDown");
 	shot.expectText("Unavailable", true);
 	shot.capture("some-disabled-keyboard");
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.settle(500);
 	shot.expectText("Unavailable", true);
-	await shot.press("down enter");
+	await shot.press("ArrowDown Enter");
 	await shot.settle(600);
 	shot.expectText("Unavailable", false);
 	shot.expectText("Also available", true);
@@ -402,32 +402,32 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("keys-mouse-down");
 	await shot.up("keys");
 	shot.expectText("Kiwi", true);
-	await shot.press("escape");
+	await shot.press("Escape");
 	shot.expectText("Kiwi", false);
 
 	// A keyboard open highlights the first row, and the arrows stop at the ends.
-	await shot.press("down");
+	await shot.press("ArrowDown");
 	shot.expectText("Kiwi", true);
-	await shot.press("up");
-	await shot.press("enter");
+	await shot.press("ArrowUp");
+	await shot.press("Enter");
 	await shot.settle(500);
 	shot.expectText("Kiwi", true);
 	shot.expectText("Melon", false);
 
 	// Home and End jump to the ends.
-	await shot.press("down end");
+	await shot.press("ArrowDown End");
 	shot.capture("keys-end");
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.settle(500);
 	shot.expectText("Melon", true);
 	shot.expectText("Kiwi", false);
-	await shot.press("down home enter");
+	await shot.press("ArrowDown Home Enter");
 	await shot.settle(500);
 	shot.expectText("Kiwi", true);
 	shot.expectText("Melon", false);
 
 	// Typeahead on a closed trigger commits and does not open; Space continues the session.
-	await shot.press("l i m e space j");
+	await shot.press("l i m e Space j");
 	await shot.settle(300);
 	shot.expectText("Lime juice", true);
 	shot.expectText("Melon", false);
@@ -440,16 +440,16 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectText("Kiwi", false);
 	shot.expectText("Melon", true);
 	// Focus came back to the trigger, so a key opens it again.
-	await shot.press("down");
+	await shot.press("ArrowDown");
 	shot.expectText("Kiwi", true);
-	await shot.press("escape");
+	await shot.press("Escape");
 
 	// ArrowUp opens on the last row.
 	await shot.click("keys-up");
-	await shot.press("escape");
-	await shot.press("up");
+	await shot.press("Escape");
+	await shot.press("ArrowUp");
 	shot.expectText("Fig", true);
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.settle(500);
 	shot.expectText("Honey", true);
 	shot.expectText("Fig", false);
@@ -461,7 +461,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.press("g g");
 	shot.expectText("Guava", true);
 	shot.expectText("Grape", false);
-	await shot.press("cmd-h");
+	await shot.press("Meta+h");
 	shot.expectText("Honey", false);
 	await shot.moveTo(1180, 700);
 };

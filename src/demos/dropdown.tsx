@@ -897,19 +897,19 @@ export function Demo() {
 
 /** Wheels the page until the trigger sits near the top, where its popup has room below, or the page ends. It starts from the top and walks down: an element too far outside the window has no painted bounds to aim at. */
 async function reveal(shot: ShotContext, testId: string) {
-	await shot.scroll(700, 400, 0, 100000);
+	await shot.scroll(700, 400, 0, -100000);
 	let previous = Number.NaN;
 	for (let attempt = 0; attempt < 30; attempt++) {
 		let y: number;
 		try {
 			y = shot.centerOf(testId).y;
 		} catch {
-			await shot.scroll(700, 400, 0, -500);
+			await shot.scroll(700, 400, 0, 500);
 			continue;
 		}
 		if ((y > 120 && y < 320) || y === previous) return;
 		previous = y;
-		await shot.scroll(700, 400, 0, -(y - 200));
+		await shot.scroll(700, 400, 0, y - 200);
 	}
 	throw new Error(`could not scroll ${testId} into view`);
 }
@@ -917,7 +917,7 @@ async function reveal(shot: ShotContext, testId: string) {
 /** Opens a playground select from the keyboard (a pointer press that opens a popup cannot run in the test renderer) and walks `steps` rows. */
 async function pickOption(shot: ShotContext, testId: string, steps: string) {
 	await shot.focus(`${testId}-trigger`);
-	await shot.press(`${steps} enter`);
+	await shot.press(`${steps} Enter`);
 	await shot.settle(300);
 }
 
@@ -925,20 +925,20 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	// The playground's controls sit in the right column.
 	shot.capture("playground");
 	await shot.focus("play-trigger");
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.hover("play-row-Theme");
 	await shot.settle(300);
 	shot.capture("playground-menu");
-	await shot.press("escape escape");
+	await shot.press("Escape Escape");
 	await pickOption(shot, "play-selection", "down down");
 	await shot.click("play-search-track");
 	await shot.click("play-creatable-track");
 	await shot.focus("play-trigger");
-	await shot.press("enter");
+	await shot.press("Enter");
 	await shot.press("x y z");
 	shot.expectText("Create “xyz”", true);
 	shot.capture("playground-search-create");
-	await shot.press("escape");
+	await shot.press("Escape");
 	await shot.click("play-search-track");
 	await pickOption(shot, "play-mode", "down down");
 	await shot.click("play-groups-track");
@@ -951,8 +951,8 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await reveal(shot, "groups-0");
 	await shot.focus("groups-0");
 	shot.expectAria("groups", { role: "Group", active_descendant: undefined });
-	await shot.press("down");
-	await shot.press("up");
+	await shot.press("ArrowDown");
+	await shot.press("ArrowUp");
 	shot.expectAria("groups", { active_descendant: undefined });
 	// Opened by key, which the test renderer can run: the trigger names its popup, and the focused row is not an activedescendant.
 	await reveal(shot, "menu-trigger");
@@ -964,7 +964,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 		controls: undefined,
 		active_descendant: undefined,
 	});
-	await shot.press("enter");
+	await shot.press("Enter");
 	shot.expectAria("menu-trigger", { expanded: true });
 	const popup = shot.aria("menu-trigger").controls;
 	if (!Array.isArray(popup) || popup.length !== 1)
@@ -974,17 +974,17 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 		labelled_by: [shot.idOf("menu-trigger")],
 	});
 	shot.expectAria("menu-trigger", { active_descendant: undefined });
-	await shot.press("down");
+	await shot.press("ArrowDown");
 	shot.expectAria("menu-trigger", { active_descendant: undefined });
 	shot.expectAria("menu-1", { role: "MenuItemRadio", toggled: "False" });
-	await shot.press("escape");
+	await shot.press("Escape");
 	await shot.settle(300);
 	// Submenu: the trigger row names its popup; the keys are inside it by real focus, so no row is an activedescendant.
 	await reveal(shot, "sub-trigger");
 	await shot.focus("sub-trigger");
-	await shot.press("enter");
+	await shot.press("Enter");
 	shot.expectAria("sub-move", { has_popup: "Menu", expanded: false });
-	await shot.press("right");
+	await shot.press("ArrowRight");
 	await shot.settle(300);
 	const subPopup = shot.aria("sub-move").controls;
 	if (!Array.isArray(subPopup) || subPopup.length !== 1)
@@ -994,15 +994,15 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 		labelled_by: [shot.idOf("sub-move")],
 	});
 	shot.expectAria("sub-trigger", { active_descendant: undefined });
-	await shot.press("escape escape");
+	await shot.press("Escape Escape");
 	// Arrows land on a disabled row; it says so.
 	await reveal(shot, "keys-trigger");
 	await shot.focus("keys-trigger");
-	await shot.press("enter");
+	await shot.press("Enter");
 	shot.expectAria("keys-1", { disabled: true });
-	await shot.press("escape");
+	await shot.press("Escape");
 
-	await shot.scroll(700, 400, 0, 5000);
+	await shot.scroll(700, 400, 0, -5000);
 	await reveal(shot, "basic-0");
 	await shot.hover("basic-2");
 	shot.capture("inline-hover");
@@ -1011,9 +1011,9 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("inline-checked");
 	await reveal(shot, "groups-0");
 	await shot.click("groups-0");
-	await shot.press("down down");
+	await shot.press("ArrowDown ArrowDown");
 	shot.capture("inline-keyboard");
-	await shot.press("down down down down down");
+	await shot.press("ArrowDown ArrowDown ArrowDown ArrowDown ArrowDown");
 	shot.capture("inline-disabled-lit");
 
 	await reveal(shot, "menu-trigger");
@@ -1027,7 +1027,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("menu-3");
 	await shot.click("menu-trigger");
 	shot.capture("menu-picked");
-	await shot.press("escape");
+	await shot.press("Escape");
 
 	await reveal(shot, "sub-trigger");
 	await shot.click("sub-trigger");
@@ -1045,45 +1045,45 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("sub-folder-Design");
 	shot.expectText("Moved to Design", true);
 	await shot.click("sub-trigger");
-	await shot.press("right");
+	await shot.press("ArrowRight");
 	shot.capture("sub-keyboard");
-	await shot.press("down down left");
+	await shot.press("ArrowDown ArrowDown ArrowLeft");
 	shot.capture("sub-keyboard-left");
-	await shot.press("escape");
+	await shot.press("Escape");
 
 	// A hover-opened submenu leaves the keys with its parent until Right goes in.
 	await shot.click("sub-trigger");
 	await shot.hover("sub-move");
 	await shot.settle(300);
 	shot.expectText("Inbox", true);
-	await shot.press("down");
+	await shot.press("ArrowDown");
 	await shot.settle(300);
 	shot.expectText("Inbox", false);
-	await shot.press("right");
+	await shot.press("ArrowRight");
 	await shot.settle(300);
 	shot.capture("sub-hover-then-right");
 	shot.expectText("Copy link", true);
-	await shot.press("escape escape");
+	await shot.press("Escape Escape");
 
 	await reveal(shot, "keys-trigger");
 	await shot.click("keys-trigger");
 	shot.expectText("changes: 1", true);
 	// Arrows land on the disabled "Beta"; Enter on it picks nothing.
-	await shot.press("down enter");
+	await shot.press("ArrowDown Enter");
 	shot.expectText("picked:  changes", true);
 	shot.capture("keys-disabled-lit");
-	await shot.press("down enter");
+	await shot.press("ArrowDown Enter");
 	shot.expectText("picked: Bravo", true);
 	// Closing hands focus back to the trigger, so Up opens on the last row.
-	await shot.press("up");
+	await shot.press("ArrowUp");
 	shot.capture("keys-up-opens-last");
-	await shot.press("enter");
+	await shot.press("Enter");
 	shot.expectText("picked: Charter", true);
 	await shot.click("keys-trigger");
-	await shot.press("c enter");
+	await shot.press("c Enter");
 	shot.expectText("picked: Charlie", true);
 	await shot.click("keys-trigger");
-	await shot.press("c c enter");
+	await shot.press("c c Enter");
 	shot.expectText("picked: Charter", true);
 	// Press on the trigger, hold, release on a row: it picks.
 	await shot.down("keys-trigger");
@@ -1099,49 +1099,49 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("multi-merged");
 	await shot.click("multi-1");
 	shot.capture("multi-split");
-	await shot.press("escape");
+	await shot.press("Escape");
 
 	await reveal(shot, "search-trigger");
 	await shot.click("search-trigger");
 	shot.capture("search-open");
-	await shot.press("down");
+	await shot.press("ArrowDown");
 	shot.capture("search-row-lit");
 	await shot.press("f r");
 	shot.capture("search-filtered");
 	await shot.press("z z z");
 	shot.expectText("No languages found", true);
 	shot.capture("search-empty");
-	await shot.press("escape");
+	await shot.press("Escape");
 
 	await reveal(shot, "labels-trigger");
 	await shot.click("labels-trigger");
-	await shot.press("down down");
+	await shot.press("ArrowDown ArrowDown");
 	shot.capture("labels-keyboard");
-	await shot.press("enter");
+	await shot.press("Enter");
 	shot.capture("labels-toggled");
-	await shot.press("escape");
+	await shot.press("Escape");
 
 	await reveal(shot, "create-trigger");
 	await shot.click("create-trigger");
 	await shot.press("x y z");
 	shot.expectText("Create “xyz”", true);
 	shot.capture("create-row");
-	await shot.press("escape");
+	await shot.press("Escape");
 
 	setThemeChoice("light");
 	await reveal(shot, "menu-trigger");
 	await shot.click("menu-trigger");
 	await shot.hover("menu-2");
 	shot.capture("light-menu");
-	await shot.press("escape");
+	await shot.press("Escape");
 	await reveal(shot, "sub-trigger");
 	await shot.click("sub-trigger");
-	await shot.press("right");
+	await shot.press("ArrowRight");
 	shot.capture("light-sub");
-	await shot.press("escape escape");
+	await shot.press("Escape Escape");
 	await reveal(shot, "multi-trigger");
 	await shot.click("multi-trigger");
 	shot.capture("light-multi");
-	await shot.press("escape");
+	await shot.press("Escape");
 	setThemeChoice("dark");
 };

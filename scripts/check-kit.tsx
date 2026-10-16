@@ -37,7 +37,7 @@ export async function scrollIntoView(renderer: Renderer, testId: string) {
 			700,
 			400,
 			0,
-			center === null ? -400 : -(center - 200),
+			center === null ? 400 : center - 200,
 		);
 		const until = performance.now() + 150;
 		do {
@@ -219,8 +219,8 @@ export async function createCheck(
 			);
 		},
 		async finish() {
-			// Unmount first: with the tree alive, Bun can abort at exit ("Thread Local Storage", exit 134) after every check passed.
-			test.root.unmount();
+			// Unmount first: with the tree alive, Bun can abort at exit ("Thread Local Storage", exit 134) after every check passed. TestRoot.unmount also disposes the renderer.
+			test.unmount();
 			await settle(100);
 			console.log(failures === 0 ? "all passed" : `${failures} failed`);
 			process.exit(failures === 0 ? 0 : 1);

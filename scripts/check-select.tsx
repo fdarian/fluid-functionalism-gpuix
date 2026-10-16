@@ -154,7 +154,7 @@ const shown = (text: string) =>
 // ─── Open from the keyboard ──────────────────────────────────────────────────
 
 await k.focus("empty-trigger");
-await k.press("enter");
+await k.press("Enter");
 k.expect(
 	"empty: Enter opens and focuses the first row",
 	fruitFocus("empty"),
@@ -168,37 +168,37 @@ k.check(
 	"empty: the trigger names no active descendant",
 	k.aria("empty-trigger")?.active_descendant === undefined,
 );
-await k.press("down");
+await k.press("ArrowDown");
 k.expect(
 	"empty: ArrowDown focuses the next row",
 	fruitFocus("empty"),
 	"empty-option-banana",
 );
-await k.press("up up");
+await k.press("ArrowUp ArrowUp");
 k.expect(
 	"empty: ArrowUp at the first row stays (no wrap)",
 	fruitFocus("empty"),
 	"empty-option-apple",
 );
-await k.press("end");
+await k.press("End");
 k.expect(
 	"empty: End focuses the last row",
 	fruitFocus("empty"),
 	"empty-option-mango",
 );
-await k.press("down");
+await k.press("ArrowDown");
 k.expect(
 	"empty: ArrowDown at the last row stays (no wrap)",
 	fruitFocus("empty"),
 	"empty-option-mango",
 );
-await k.press("home");
+await k.press("Home");
 k.expect(
 	"empty: Home focuses the first row",
 	fruitFocus("empty"),
 	"empty-option-apple",
 );
-await k.press("escape");
+await k.press("Escape");
 k.check("empty: Escape closes", !isOpen("empty"));
 k.expect(
 	"empty: Escape returns focus to the trigger",
@@ -206,27 +206,27 @@ k.expect(
 	"empty-trigger",
 );
 
-await k.press("up");
+await k.press("ArrowUp");
 k.expect(
 	"empty: ArrowUp on the trigger opens on the last row",
 	fruitFocus("empty"),
 	"empty-option-mango",
 );
-await k.press("escape");
-await k.press("down");
+await k.press("Escape");
+await k.press("ArrowDown");
 k.expect(
 	"empty: ArrowDown on the trigger opens on the first row",
 	fruitFocus("empty"),
 	"empty-option-apple",
 );
-await k.press("escape");
-await k.press("space");
+await k.press("Escape");
+await k.press("Space");
 k.expect(
 	"empty: Space opens on the first row",
 	fruitFocus("empty"),
 	"empty-option-apple",
 );
-await k.press("down down enter");
+await k.press("ArrowDown ArrowDown Enter");
 await k.settle(500);
 k.check("empty: Enter on a row closes", !isOpen("empty"));
 k.expect(
@@ -241,29 +241,29 @@ k.check(
 
 // With a value the checked row takes focus, whichever key opens.
 await k.focus("valued-trigger");
-for (const key of ["enter", "down", "up", "space"]) {
+for (const key of ["Enter", "ArrowDown", "ArrowUp", "Space"]) {
 	await k.press(key);
 	k.expect(
 		`valued: ${key} opens on the checked row`,
 		fruitFocus("valued"),
 		"valued-option-cherry",
 	);
-	await k.press("escape");
+	await k.press("Escape");
 }
-await k.press("enter");
-await k.press("down down");
+await k.press("Enter");
+await k.press("ArrowDown ArrowDown");
 k.expect(
 	"valued: the last row stops the arrows",
 	fruitFocus("valued"),
 	"valued-option-mango",
 );
-await k.press("up up up up");
+await k.press("ArrowUp ArrowUp ArrowUp ArrowUp");
 k.expect(
 	"valued: the first row stops the arrows",
 	fruitFocus("valued"),
 	"valued-option-apple",
 );
-await k.press("enter");
+await k.press("Enter");
 await k.settle(500);
 k.expect(
 	"valued: Enter picks the focused row",
@@ -288,7 +288,7 @@ k.check(
 	shown("Melon"),
 );
 await k.settle(800);
-await k.press("enter");
+await k.press("Enter");
 k.expect(
 	"keys: the picked row has focus on open",
 	keysFocus(),
@@ -310,14 +310,14 @@ k.expect(
 	"keys-option-kiwi",
 );
 await k.settle(800);
-await k.press("l i m e space j");
+await k.press("l i m e Space j");
 k.expect(
 	"keys: Space continues a session instead of picking",
 	keysFocus(),
 	"keys-option-lime",
 );
 k.check("keys: the popup is still open", isOpen("keys"));
-await k.press("escape");
+await k.press("Escape");
 
 // ─── Disabled rows, Tab and Shift+Tab ────────────────────────────────────────
 
@@ -328,20 +328,20 @@ const gapsFocus = () =>
 		...GAP_IDS.map((value) => `gaps-option-${value}`),
 	]);
 await k.focus("gaps-trigger");
-await k.press("enter");
-await k.press("down");
+await k.press("Enter");
+await k.press("ArrowDown");
 k.expect("gaps: arrows land on a disabled row", gapsFocus(), "gaps-option-b");
-await k.press("enter");
+await k.press("Enter");
 k.check("gaps: Enter on a disabled row does nothing", isOpen("gaps"));
-await k.press("escape");
+await k.press("Escape");
 
 await k.focus("gaps-trigger");
-await k.press("tab");
+await k.press("Tab");
 const afterTrigger = renderer.getFocusedElementId();
 await k.focus("gaps-trigger");
-await k.press("enter");
-await k.press("down");
-await k.press("tab");
+await k.press("Enter");
+await k.press("ArrowDown");
+await k.press("Tab");
 k.check("tab: Tab closes", !isOpen("gaps"));
 k.check(
 	"tab: Tab focuses what follows the trigger",
@@ -349,15 +349,15 @@ k.check(
 	`${renderer.getFocusedElementId()} vs ${afterTrigger}`,
 );
 await k.focus("gaps-trigger");
-await k.press("enter");
-await k.press("shift-tab");
+await k.press("Enter");
+await k.press("Shift+Tab");
 k.check("tab: Shift+Tab closes", !isOpen("gaps"));
 k.expect("tab: Shift+Tab focuses the trigger", gapsFocus(), "gaps-trigger");
 
 // ─── Pointer movement (no press, so it runs in the test renderer) ────────────
 
 await k.focus("empty-trigger");
-await k.press("enter");
+await k.press("Enter");
 const third = k.bounds("empty-option-cherry");
 renderer.nativeSimulateMouseMove(third.x + 40, third.y + third.height / 2);
 await k.settle(300);
@@ -373,7 +373,7 @@ k.expect(
 	fruitFocus("empty"),
 	"empty-list",
 );
-await k.press("down");
+await k.press("ArrowDown");
 k.expect(
 	"pointer: ArrowDown on the panel focuses the first row",
 	fruitFocus("empty"),
@@ -384,20 +384,20 @@ renderer.nativeSimulateMouseMove(second.x + 40, second.y + second.height / 2);
 await k.settle(300);
 renderer.nativeSimulateMouseMove(700, 20);
 await k.settle(300);
-await k.press("up");
+await k.press("ArrowUp");
 k.expect(
 	"pointer: ArrowUp on the panel focuses the last row",
 	fruitFocus("empty"),
 	"empty-option-mango",
 );
-await k.press("escape");
+await k.press("Escape");
 
 // ─── Row ring: only a keyboard focus draws it ────────────────────────────────
 
 await k.focus("valued-trigger");
-await k.press("enter");
+await k.press("Enter");
 k.check("ring: a keyboard open draws it", k.exists("valued-focus-ring"));
-await k.press("escape");
+await k.press("Escape");
 await k.settle(300);
 k.check("ring: it is gone after the close", !k.exists("valued-focus-ring"));
 
@@ -416,9 +416,9 @@ k.check(
 	`${filterWidth} vs ${emptyWidth}`,
 );
 await k.focus("filter-trigger");
-await k.press("enter");
+await k.press("Enter");
 k.check("filter: opens", isOpen("filter"));
-await k.press("escape");
+await k.press("Escape");
 
 const invalid = renderer.findByTestId("invalid-trigger");
 k.check(
@@ -434,14 +434,14 @@ await k.click("dialog-open");
 await k.settle(400);
 k.check("dialog: opens", k.exists("dialog"));
 await k.focus("inside-trigger");
-await k.press("enter");
+await k.press("Enter");
 k.check("dialog: the select opens", isOpen("inside"));
 k.expect(
 	"dialog: its first row is focused",
 	fruitFocus("inside"),
 	"inside-option-apple",
 );
-await k.press("escape");
+await k.press("Escape");
 await k.settle(300);
 k.check("dialog: Escape closes the select", !isOpen("inside"));
 k.check("dialog: Escape leaves the dialog open", k.exists("dialog"));
@@ -450,14 +450,14 @@ k.expect(
 	fruitFocus("inside"),
 	"inside-trigger",
 );
-await k.press("escape");
+await k.press("Escape");
 await k.settle(400);
 k.check("dialog: the next Escape closes the dialog", !k.exists("dialog"));
 
 // ─── Lighting a row eases its icon stroke and colour over 80 ms ──────────────
 
 await k.focus("ease-trigger");
-await k.press("enter");
+await k.press("Enter");
 await k.settle(300);
 {
 	const row = k.bounds("ease-option-b");
@@ -479,6 +479,6 @@ await k.settle(300);
 	);
 }
 
-await k.press("escape");
+await k.press("Escape");
 await k.settle(300);
 k.finish();

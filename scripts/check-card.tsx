@@ -86,7 +86,7 @@ check.expect(
 );
 
 await check.focus("button");
-await check.press("enter");
+await check.press("Enter");
 check.expect(
 	"Enter on CardButton: button handler runs once more",
 	buttonClicks(),

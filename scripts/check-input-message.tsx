@@ -58,7 +58,7 @@ function paintedOpacity(testId: string) {
 async function tabTo(testId: string) {
 	const target = element(testId).id;
 	for (let presses = 0; presses < 40; presses++) {
-		renderer.simulateKeystrokes("tab");
+		renderer.simulateKeystrokes("Tab");
 		await settle(60);
 		if (renderer.getFocusedElementId() === target) {
 			await settle(200);
@@ -135,7 +135,7 @@ renderer.captureScreenshot("/tmp/check-input-message-close.png");
 const disabledTextarea = element("c-textarea").id;
 const reached = new Set<number>();
 for (let presses = 0; presses < 40; presses++) {
-	renderer.simulateKeystrokes("tab");
+	renderer.simulateKeystrokes("Tab");
 	await settle(40);
 	const focused = renderer.getFocusedElementId();
 	if (focused !== null) reached.add(focused);
@@ -161,6 +161,5 @@ for (const [composer, expected] of [
 }
 
 // Unmount before exiting: with the tree alive, Bun aborts at exit ("Thread Local Storage", exit 134) after every check passed.
-test.root.unmount();
-await settle(100);
+test.unmount();
 process.exit(failed ? 1 : 0);

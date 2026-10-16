@@ -190,10 +190,7 @@ offer it. A count is given only where the code shows it.
 | any `<input>` with `textAlign: "right"` (the Button playground's Label field) | The style is accepted and does nothing in the test renderer (`drift/button.md`, "Playground: no Active switch, Label field not right-aligned"); unverified in a live window | none: left-aligned |
 | tooltip and dialog demos | After a failed script run Bun aborts with `thread local panicked on drop` | none; the harness only |
 | screenshots, app-frame | The test renderer ignores the window options (titlebar, traffic lights), `setAppearance` changes nothing and `onAppearanceChange` never fires; `createAppearance` is the machine's | Captures pin the scheme with `setThemeChoice` and show no traffic lights |
-| screenshots | `simulateKeystrokes` takes GPUI key names (`down`, `tab`, `enter`), not DOM ones, and delivers a keydown only: `space` never gets its key-up or click | `shot.press` passes the names through; scenarios press Enter, which activates on keydown |
-| screenshots | `nativeSimulateScrollWheel` keeps GPUI's sign: negative `deltaY` scrolls down, where `onWheel` sees positive-down | Scenarios pass negative deltas |
 | screenshots | A mouse move without a held button is not delivered to an element that holds pointer capture; batched keystrokes deliver an input's `onChange` after the whole batch | `shot.moveHeld` sends the move with a button held; none for the batch |
-| not counted | `relatedTarget` and `target` on focus events are element ids (numbers), not elements | none |
 | screenshots | The accessibility dump flags an `aria-hidden` node as hidden but not its descendants, and `A11yTreeDump` lacks `frame` | `scripts/screenshots.tsx` reads `frame.tab_stop_count` through a cast |
 
 #### Missing features
@@ -255,8 +252,8 @@ Quirks of this repo's own code, kept apart from the gpuix gaps above.
   - `settle()` runs frames for real time, flushing the tree and draining native events each frame; a bare `flush()`
     never delivers `onMotionComplete`, so presence exits would never unmount. The first capture waits 800 ms.
   - Helpers read `getElementBounds` once per step to find an element's centre; nothing polls bounds. `shot.press`
-    takes GPUI key names and `shot.scroll` GPUI's sign (negative scrolls down). There is no double-click or
-    file-drop helper.
+    takes Playwright key names (`ArrowDown`, `Shift+Tab`) and `shot.scroll` the DOM's sign (positive scrolls down).
+    There is no double-click or file-drop helper.
   - `shot.aria`, `expectAria`, `idOf`, `hasAriaNode` and `tabStopCount` assert on the accessibility tree.
   - Captures are not byte-stable: the text caret, timing-driven demos (thinking steps, shimmer, spinner) and
     queue text vary run to run. Compare the content area with a pixel diff, not file hashes.

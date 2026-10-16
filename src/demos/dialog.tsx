@@ -286,7 +286,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectAria("basic-popup", { role: "Dialog" });
 	shot.expectAria("basic-cancel", { role: "Button", hidden: undefined });
 	// Focus opens on the first tab stop in the popup (Cancel), not on the popup: Enter presses it.
-	await shot.press("enter");
+	await shot.press("Enter");
 	shot.expectText("Create teamspace", false);
 	shot.expectAria("basic-open", {
 		has_popup: "Dialog",
@@ -296,9 +296,9 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("basic-open");
 	shot.expectText("Create teamspace", true);
 	shot.capture("basic-open");
-	await shot.press("tab");
+	await shot.press("Tab");
 	shot.capture("focus-first-tab");
-	await shot.press("escape");
+	await shot.press("Escape");
 	shot.expectText("Create teamspace", false);
 	shot.capture("basic-closed");
 
@@ -316,7 +316,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("select-over-dialog");
 	shot.expectText("Viewer", true);
 	// Escape closes only the popup: it is the top layer of the dismiss stack.
-	await shot.press("escape");
+	await shot.press("Escape");
 	shot.expectText("Viewer", false);
 	shot.expectText("Invite a teammate", true);
 	await shot.click("stack-select");
@@ -328,16 +328,16 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.click("stack-nested-open");
 	shot.expectText("Discard the invite?", true);
 	shot.capture("nested");
-	await shot.press("escape");
+	await shot.press("Escape");
 	shot.expectText("Discard the invite?", false);
 	shot.expectText("Invite a teammate", true);
-	await shot.press("escape");
+	await shot.press("Escape");
 	shot.expectText("Invite a teammate", false);
 
 	// Two Escapes in one go: the second arrives while the nested dialog still fades, and must reach the dialog behind it.
 	await shot.click("stack-open");
 	await shot.click("stack-nested-open");
-	await shot.press("escape escape");
+	await shot.press("Escape Escape");
 	shot.expectText("Discard the invite?", false);
 	shot.expectText("Invite a teammate", false);
 
@@ -355,27 +355,27 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.clickAt(1100, 600);
 	shot.expectText("Non-modal dialog", false);
 	await shot.click("nonmodal-open");
-	await shot.press("escape");
+	await shot.press("Escape");
 	shot.expectText("Non-modal dialog", false);
 
 	await shot.click("size-xl");
 	shot.capture("size-xl");
-	await shot.press("escape");
+	await shot.press("Escape");
 
 	await shot.click("scoped-open");
 	shot.capture("scoped");
-	await shot.press("escape");
+	await shot.press("Escape");
 
 	// Both schemes: the scrim, surface-5 and the popup over it.
 	setThemeChoice("light");
 	await shot.settle(300);
 	await shot.click("basic-open");
 	shot.capture("basic-open-light");
-	await shot.press("escape");
+	await shot.press("Escape");
 	await shot.click("stack-open");
 	await shot.click("stack-select");
 	shot.capture("select-over-dialog-light");
-	await shot.press("escape escape");
+	await shot.press("Escape Escape");
 	shot.expectText("Invite a teammate", false);
 	shot.expectText("Viewer", false);
 	setThemeChoice("dark");

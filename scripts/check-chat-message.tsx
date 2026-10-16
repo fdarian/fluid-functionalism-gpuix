@@ -100,7 +100,7 @@ report(
 	JSON.stringify(fade),
 );
 
-renderer.simulateKeystrokes("tab");
+renderer.simulateKeystrokes("Tab");
 await settle(500);
 const focused = renderer.getFocusedElementId();
 report(
@@ -116,7 +116,7 @@ report(
 );
 renderer.captureScreenshot("/tmp/check-chat-message-focus.png");
 
-renderer.simulateKeystrokes("tab");
+renderer.simulateKeystrokes("Tab");
 await settle(500);
 report(
 	"meta row stays shown moving between actions",
@@ -124,7 +124,7 @@ report(
 	`opacity ${metaOpacity()}`,
 );
 
-renderer.simulateKeystrokes("tab");
+renderer.simulateKeystrokes("Tab");
 await settle(500);
 const afterFocus = renderer.getFocusedElementId();
 report(
@@ -138,4 +138,5 @@ report(
 	`opacity ${metaOpacity()}`,
 );
 
+test.unmount();
 process.exit(failed ? 1 : 0);

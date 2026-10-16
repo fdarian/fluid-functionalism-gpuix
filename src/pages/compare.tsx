@@ -69,7 +69,7 @@ export async function scenarios(shot: ShotContext) {
 	shot.capture("checkbox-group");
 
 	// Arrows step the slides while no widget holds focus; the checkbox rows are not among them.
-	await shot.press("right");
+	await shot.press("ArrowRight");
 	await shot.click("sc-accordion-item-3");
 	await shot.click("fl-accordion-item-3");
 	await shot.settle(500);

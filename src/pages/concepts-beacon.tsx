@@ -62,9 +62,9 @@ export async function scenarios(shot: ShotContext) {
 	shot.expectText("ENG-131", true);
 	shot.expectText("ENG-128", false);
 	shot.capture("search");
-	await shot.press("backspace backspace");
+	await shot.press("Backspace Backspace");
 	await shot.focus("beacon-priority-trigger");
-	await shot.press("enter down down enter");
+	await shot.press("Enter ArrowDown ArrowDown Enter");
 	shot.expectText("ENG-131", true);
 	shot.expectText("ENG-124", false);
 	shot.capture("priority");

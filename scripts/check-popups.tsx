@@ -20,8 +20,11 @@ function report(ok: boolean, label: string, detail: string) {
 	console.log(`${ok ? "PASS" : "FAIL"} ${label}: ${detail}`);
 }
 
+const sessions: ReturnType<typeof createTestRoot>[] = [];
+
 function session() {
 	const test = createTestRoot({ width: 1240, height: 780, fonts });
+	sessions.push(test);
 	const renderer = test.renderer;
 	const frame = () => {
 		renderer.flush();
@@ -115,11 +118,11 @@ async function popupExit() {
 		// The first open pays for cold rendering; the fastest of three is the exit itself.
 		const times: number[] = [];
 		for (let round = 0; round < 3; round++) {
-			await ui.press("down");
+			await ui.press("ArrowDown");
 			if (ui.find(`${id}-popup`) === undefined)
 				throw new Error(`${slug} popup did not open`);
 			const took = await ui.timeToUnmount(`${id}-popup`, () =>
-				ui.renderer.simulateKeystrokes("escape"),
+				ui.renderer.simulateKeystrokes("Escape"),
 			);
 			if (took !== null) times.push(took);
 			await ui.settle(300);
@@ -142,7 +145,7 @@ async function dialogSurface() {
 	await ui.settle(800);
 	await ui.click("stack-open");
 	await ui.focus("stack-select-trigger");
-	await ui.press("down");
+	await ui.press("ArrowDown");
 	const popup = ui.need("stack-select-popup").style.backgroundColor;
 	report(
 		popup === color.surface7,
@@ -206,27 +209,27 @@ async function comboboxEnter() {
 	await ui.settle(500);
 	await ui.focus("c-input");
 	const before = submits;
-	await ui.press("enter");
+	await ui.press("Enter");
 	report(
 		submits === before + 1,
 		"Enter in a closed combobox reaches the form",
 		`submits ${submits - before}`,
 	);
 
-	await ui.press("down");
+	await ui.press("ArrowDown");
 	await ui.press("z");
 	const second = submits;
-	await ui.press("enter");
+	await ui.press("Enter");
 	report(
 		submits === second + 1,
 		"Enter with no row highlighted closes the list and reaches the form",
 		`submits ${submits - second}, popup ${ui.find("c-popup") === undefined ? "gone" : "still there"}`,
 	);
 
-	await ui.press("backspace");
-	if (ui.find("c-popup") === undefined) await ui.press("down");
+	await ui.press("Backspace");
+	if (ui.find("c-popup") === undefined) await ui.press("ArrowDown");
 	const third = submits;
-	await ui.press("enter");
+	await ui.press("Enter");
 	report(
 		submits === third && ui.find("c-popup") === undefined,
 		"Enter on a highlighted row picks it and does not submit",
@@ -239,4 +242,5 @@ await dialogSurface();
 await disabledError();
 await comboboxEnter();
 console.log(failures === 0 ? "ALL PASS" : `${failures} FAIL`);
+for (const test of sessions) test.unmount();
 process.exit(failures === 0 ? 0 : 1);

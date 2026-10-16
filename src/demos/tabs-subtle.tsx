@@ -211,26 +211,26 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("active-label-unfolded");
 	await shot.moveTo(1180, 700);
 	await shot.click("icons-0");
-	await shot.press("right");
+	await shot.press("ArrowRight");
 	shot.capture("keyboard-focus-moved");
-	await shot.press("enter");
+	await shot.press("Enter");
 	shot.capture("keyboard-selected");
 
 	await shot.click("kb-0");
 	shot.expectText("Kb panel A", true);
 	// Manual activation: the arrow moves focus only.
-	await shot.press("right");
+	await shot.press("ArrowRight");
 	shot.expectText("Kb panel A", true);
 	shot.expectText("Kb panel B", false);
-	await shot.press("end");
-	await shot.press("enter");
+	await shot.press("End");
+	await shot.press("Enter");
 	shot.expectText("Kb panel C", true);
 	// A modifier chord is not a navigation key.
-	await shot.press("cmd-left");
-	await shot.press("enter");
+	await shot.press("Meta+ArrowLeft");
+	await shot.press("Enter");
 	shot.expectText("Kb panel C", true);
-	await shot.press("left");
-	await shot.press("enter");
+	await shot.press("ArrowLeft");
+	await shot.press("Enter");
 	shot.expectText("Kb panel B", true);
 	shot.capture("keyboard-manual");
 };

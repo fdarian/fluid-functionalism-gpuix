@@ -340,7 +340,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("hover-thumb");
 
 	// Real wheel ticks over the area: both edges fade once it is mid-scroll.
-	await shot.scroll(area.x, area.y, 0, -120);
+	await shot.scroll(area.x, area.y, 0, 120);
 	shot.capture("wheel-scrolled-both-fades");
 
 	// Drag the thumb, with the pointer leaving the track mid-drag.
@@ -358,28 +358,28 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 		}
 	};
 	await shot.clickAt(area.x - 60, area.y);
-	await shot.press("home");
+	await shot.press("Home");
 	const atHome = thumbY();
 	shot.capture("key-home");
-	await shot.press("pagedown");
+	await shot.press("PageDown");
 	const afterPage = thumbY();
 	expectBelow("pagedown", atHome, afterPage);
-	await shot.press("down down down");
+	await shot.press("ArrowDown ArrowDown ArrowDown");
 	expectBelow("arrows", afterPage, thumbY());
-	await shot.press("end");
+	await shot.press("End");
 	const atEnd = thumbY();
 	expectBelow("end", afterPage, atEnd);
 	shot.capture("key-end");
 
 	// A wheel tick over the track itself scrolls the viewport.
-	await shot.press("home");
+	await shot.press("Home");
 	const homeAgain = thumbY();
-	await shot.scroll(trackX(area.x), area.y, 0, -60);
+	await shot.scroll(trackX(area.x), area.y, 0, 60);
 	expectBelow("wheel over the track", homeAgain, thumbY());
 	shot.capture("wheel-over-track");
 
 	// A press on the bare track jumps, and holding it carries on as a drag from there.
-	await shot.press("home");
+	await shot.press("Home");
 	await shot.down("area-y-track");
 	const jumped = thumbY();
 	expectBelow("track press", homeAgain, jumped);
@@ -391,57 +391,57 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 
 	await shot.clickAt(trackX(area.x), area.y + 78);
 	shot.capture("track-jump-to-end");
-	await shot.scroll(area.x, area.y, 0, -400);
+	await shot.scroll(area.x, area.y, 0, 400);
 	shot.capture("wheel-past-end");
 
 	const strip = shot.centerOf("horizontal");
 	await shot.moveTo(strip.x, strip.y);
-	await shot.scroll(strip.x, strip.y, -200, 0);
+	await shot.scroll(strip.x, strip.y, 200, 0);
 	shot.capture("horizontal-wheel");
 
 	// Nested, as in a browser: a wheel over the inner area scrolls the inner area first; once it is at its limit, a wheel in a new gesture chains to the area around it.
-	await shot.scroll(930, 400, 0, -400);
+	await shot.scroll(930, 400, 0, 400);
 	shot.capture("page-scrolled");
 	const inner = shot.centerOf("inner");
 	await shot.moveTo(inner.x, inner.y);
-	await shot.scroll(inner.x, inner.y, 0, -150);
+	await shot.scroll(inner.x, inner.y, 0, 150);
 	shot.capture("nested-inner-scrolled-outer-stays");
 	// 794px is the inner area's scroll range: ticks that stop at it, since a tick that overshoots passes its remainder on to the outer area within the same event.
 	for (let tick = 0; tick < 4; tick++)
-		await shot.scroll(inner.x, inner.y, 0, -150);
-	await shot.scroll(inner.x, inner.y, 0, -44);
+		await shot.scroll(inner.x, inner.y, 0, 150);
+	await shot.scroll(inner.x, inner.y, 0, 44);
 	shot.capture("nested-inner-at-end-outer-stays");
-	await shot.scroll(inner.x, inner.y, 0, -150);
+	await shot.scroll(inner.x, inner.y, 0, 150);
 	shot.capture("nested-inner-at-end-outer-follows");
-	await shot.scroll(930, 400, 0, 2000);
+	await shot.scroll(930, 400, 0, -2000);
 
 	// Divider: bring the card into view, then wheel it to the middle and the end. The top hairline is absent at rest and the bottom one goes at the end.
-	await shot.scroll(930, 400, 0, -400);
+	await shot.scroll(930, 400, 0, 400);
 	// Full-bleed content under a 28px radius: the viewport's corners are cut, with and without the fade's mask.
 	const round = shot.centerOf("round");
 	await shot.moveTo(round.x, round.y);
-	await shot.scroll(round.x, round.y, 0, -60);
+	await shot.scroll(round.x, round.y, 0, 60);
 	shot.capture("rounded-clip");
 	const divider = shot.centerOf("divider");
 	shot.capture("divider-top");
 	await shot.moveTo(divider.x, divider.y);
-	await shot.scroll(divider.x, divider.y, 0, -120);
+	await shot.scroll(divider.x, divider.y, 0, 120);
 	shot.capture("divider-middle");
 	// The scroll range is 888 - 168 = 720px: this stops exactly at it, since a tick that overshoots hands its remainder to the page.
 	for (let tick = 0; tick < 4; tick++)
-		await shot.scroll(divider.x, divider.y, 0, -150);
+		await shot.scroll(divider.x, divider.y, 0, 150);
 	shot.capture("divider-end");
-	await shot.scroll(930, 400, 0, 2000);
+	await shot.scroll(930, 400, 0, -2000);
 
 	const grid = shot.centerOf("both");
 	await shot.moveTo(grid.x, grid.y);
-	await shot.scroll(grid.x, grid.y, -240, -90);
+	await shot.scroll(grid.x, grid.y, 240, 90);
 	shot.capture("both-wheel");
 
 	// The standalone fade list, 288 x 256: both edges dissolve mid-scroll.
-	await shot.scroll(930, 400, 0, -2000);
+	await shot.scroll(930, 400, 0, 2000);
 	const fade = shot.centerOf("fade");
 	await shot.moveTo(fade.x, fade.y);
-	await shot.scroll(fade.x, fade.y, 0, -120);
+	await shot.scroll(fade.x, fade.y, 0, 120);
 	shot.capture("fade-list");
 };

@@ -15,12 +15,12 @@ export interface ShotContext {
 	/** Mouse button down / up on an element (hold a press while capturing). */
 	down(testId: string): Promise<void>;
 	up(testId: string): Promise<void>;
-	/** Space-separated keystrokes, e.g. `"s o l"` or `"down enter"`. */
+	/** Space-separated Playwright key names, e.g. `"s o l"` or `"ArrowDown Enter"`; `Shift+Tab` and `ControlOrMeta+k` press a chord. Each is a key-down then a key-up. Unknown names throw. */
 	press(keystrokes: string): Promise<void>;
 	/** Pointer to a window position, e.g. to leave a popup. */
 	moveTo(x: number, y: number): Promise<void>;
 	clickAt(x: number, y: number): Promise<void>;
-	/** A wheel tick at a window position. The test harness keeps GPUI's sign, so negative `deltaY` scrolls down and negative `deltaX` scrolls right: the reverse of the positive-down deltas `onWheel` handlers see. */
+	/** A wheel tick at a window position. Deltas have the DOM's sign, the same as `onWheel` sees: positive `deltaY` scrolls down, positive `deltaX` scrolls right. */
 	scroll(x: number, y: number, deltaX: number, deltaY: number): Promise<void>;
 	/** Pointer to a window position with the left button held, e.g. mid-drag. */
 	moveHeld(x: number, y: number): Promise<void>;

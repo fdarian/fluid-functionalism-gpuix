@@ -33,7 +33,7 @@ const point = kit.center("kb-track");
 renderer.nativeSimulateMouseMove(point.x, point.y);
 renderer.nativeSimulateMouseDown(point.x, point.y);
 await kit.settle(300);
-renderer.nativeSimulateMouseMove(point.x + 6, point.y, 0);
+renderer.nativeSimulateMouseMove(point.x + 6, point.y);
 await kit.settle(300);
 kit.check(
 	"dragging moves the thumb",
@@ -42,7 +42,7 @@ kit.check(
 );
 renderer.releasePointerCapture(kit.element("kb").id, 1);
 // A JS-side capture change applies at the next native pointer input.
-renderer.nativeSimulateMouseMove(point.x + 6, point.y, 0);
+renderer.nativeSimulateMouseMove(point.x + 6, point.y);
 await kit.settle(600);
 kit.check("a lost capture mid-drag does not toggle", !isOn());
 kit.check(
@@ -65,7 +65,7 @@ kit.check(
 );
 renderer.releasePointerCapture(kit.element("kb").id, 1);
 // A JS-side capture change applies at the next native pointer input.
-renderer.nativeSimulateMouseMove(point.x + 6, point.y, 0);
+renderer.nativeSimulateMouseMove(point.x + 6, point.y);
 await kit.settle(600);
 kit.check("a lost capture after a plain press does not toggle", !isOn());
 renderer.nativeSimulateMouseUp(point.x, point.y);
@@ -76,9 +76,9 @@ await kit.settle(300);
 renderer.nativeSimulateMouseMove(point.x, point.y);
 renderer.nativeSimulateMouseDown(point.x, point.y);
 await kit.settle(200);
-renderer.nativeSimulateMouseMove(point.x + 4, point.y, 0);
+renderer.nativeSimulateMouseMove(point.x + 4, point.y);
 await kit.settle(100);
-renderer.nativeSimulateMouseMove(point.x + 20, point.y, 0);
+renderer.nativeSimulateMouseMove(point.x + 20, point.y);
 await kit.settle(200);
 renderer.nativeSimulateMouseUp(point.x + 20, point.y);
 await kit.settle(500);
@@ -105,7 +105,7 @@ const dragPoint = kit.center("kb-track");
 renderer.nativeSimulateMouseMove(dragPoint.x, dragPoint.y);
 renderer.nativeSimulateMouseDown(dragPoint.x, dragPoint.y);
 await kit.settle(100);
-renderer.nativeSimulateMouseMove(dragPoint.x - 6, dragPoint.y, 0);
+renderer.nativeSimulateMouseMove(dragPoint.x - 6, dragPoint.y);
 await kit.settle(100);
 const dragging = thumbTransition();
 kit.check(

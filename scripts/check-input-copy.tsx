@@ -102,12 +102,12 @@ report("compact row is 26px", compact.height === 26, `${compact.height}`);
 // Keyboard focus opens the tooltip; Enter copies. The source's snapshot is taken on pointer press only, so this does not show "Copied".
 const row = renderer.findByTestId("subject");
 if (row === undefined) throw new Error("no subject");
-renderer.simulateKeystrokes("tab");
+renderer.simulateKeystrokes("Tab");
 await settle(500);
 if (renderer.getFocusedElementId() !== row.id)
 	throw new Error("Tab did not reach the row");
 const keyboardBefore = tooltipText();
-renderer.simulateKeystrokes("enter");
+renderer.simulateKeystrokes("Enter");
 await settle(400);
 report(
 	"keyboard press: the source snapshots pointer presses only, so the tooltip closes",
@@ -196,4 +196,5 @@ report(
 	`rest ${restInk}, first frames ${earlyInk}, hovered ${hoverInk}`,
 );
 
+test.unmount();
 process.exit(failed ? 1 : 0);

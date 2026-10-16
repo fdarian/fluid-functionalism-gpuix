@@ -317,7 +317,7 @@ async function reveal(shot: ShotContext, testId: string) {
 		const y = shot.centerOf(testId).y;
 		if ((y > 120 && y < 320) || y === previous) return;
 		previous = y;
-		await shot.scroll(700, 400, 0, -(y - 200));
+		await shot.scroll(700, 400, 0, y - 200);
 	}
 	throw new Error(`could not scroll ${testId} into view`);
 }
@@ -325,7 +325,7 @@ async function reveal(shot: ShotContext, testId: string) {
 /** Opens the Expand select from the keyboard (a pointer press that opens a popup cannot run in the test renderer) and walks `steps` rows. */
 async function pickExpand(shot: ShotContext, steps: string) {
 	await shot.focus("play-expand-trigger");
-	await shot.press(`down ${steps} enter`);
+	await shot.press(`ArrowDown ${steps} Enter`);
 	await shot.settle(300);
 }
 
@@ -365,7 +365,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("standalone-closed");
 	await shot.click("single-1");
 	await shot.moveTo(1180, 700);
-	await shot.press("down");
+	await shot.press("ArrowDown");
 	shot.capture("keyboard-focus");
 
 	// Closed panels leave the tree once their exit is over.
@@ -376,8 +376,8 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.settle(300);
 	shot.expectText("Alpha body", false);
 	// Focus is on kb-1: Tab walks to the next trigger and Enter opens it.
-	await shot.press("tab");
-	await shot.press("enter");
+	await shot.press("Tab");
+	await shot.press("Enter");
 	shot.expectText("Beta body", true);
 	shot.capture("keyboard-tab");
 	// Open: the trigger controls its region, which the trigger names. Closed: no controls.
@@ -393,6 +393,6 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.expectAria("kb-3", { disabled: true });
 	await shot.click("kb-3");
 	shot.expectText("Gamma body", false);
-	await shot.press("enter");
+	await shot.press("Enter");
 	shot.expectText("Gamma body", false);
 };

@@ -69,9 +69,9 @@ async function sample(testId: string, frames: number) {
 	return { behind, lag, travel };
 }
 
-renderer.simulateKeystrokes("tab");
+renderer.simulateKeystrokes("Tab");
 await kit.settle(200);
-renderer.simulateKeystrokes("end");
+renderer.simulateKeystrokes("End");
 await kit.settle(300);
 kit.check(
 	"the last row has the focus",
@@ -98,7 +98,7 @@ kit.expect(
 	56,
 );
 
-renderer.simulateKeystrokes("up");
+renderer.simulateKeystrokes("ArrowUp");
 const moving = await sample("sub-2", 12);
 kit.check(
 	"a ring that changes row glides to it",

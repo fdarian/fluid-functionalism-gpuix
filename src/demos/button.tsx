@@ -342,7 +342,7 @@ async function reveal(shot: ShotContext, testId: string) {
 		const y = shot.centerOf(testId).y;
 		if ((y > 120 && y < 320) || y === previous) return;
 		previous = y;
-		await shot.scroll(700, 400, 0, -(y - 200));
+		await shot.scroll(700, 400, 0, y - 200);
 	}
 	throw new Error(`could not scroll ${testId} into view`);
 }

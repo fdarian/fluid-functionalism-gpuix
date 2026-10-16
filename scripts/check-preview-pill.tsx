@@ -98,4 +98,5 @@ for (let tries = 0; tries < 4 && !ok; tries++) {
 console.log(
 	`${ok ? "PASS" : "FAIL"} preview pill leaves the selected tab: x per frame ${xs.map((x) => x.toFixed(0)).join(" ")}; selected tab x ${box.x.toFixed(1)}, previously hovered tab x ${farBox.x.toFixed(1)}`,
 );
+test.unmount();
 process.exit(ok ? 0 : 1);
