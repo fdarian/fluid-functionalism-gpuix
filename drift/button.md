@@ -90,14 +90,14 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 - **Fidelity:** dropped.
 - **Components it hits:** every popup trigger that is a `Button` (dropdown, select).
 
-## No ambient size or shape, no `className`, `type` or `ref`
+## No ambient size, no `className`, `type` or `ref`
 
 - **Cause:** `not ported yet`.
-- **Original:** an omitted `size` follows the surrounding `SizeProvider` (`:187-194`); the radius comes from the shape context, 20px for the pill (`:202`, `:286`); `className` / `style` (the demo's `w-full`) and every `<button>` attribute pass through, including `type="submit"` (`:143-160`, `:304-316`).
-- **Port:** `size` defaults to `default`, so compact must be passed to each button; the radius is `radius.item` (8, `src/components/button.tsx:223`); the prop list is fixed (`:95-116`), so no full-width button and no form submit from a button (the demos call `form.requestSubmit()`, README "combobox, select (any form)" row).
+- **Original:** an omitted `size` follows the surrounding `SizeProvider` (`:187-194`); `className` / `style` (the demo's `w-full`) and every `<button>` attribute pass through, including `type="submit"` (`:143-160`, `:304-316`).
+- **Port:** `size` defaults to `default`, so compact must be passed to each button; the prop list is fixed (`:95-116`), so no full-width button and no form submit from a button (the demos call `form.requestSubmit()`, README "combobox, select (any form)" row).
 - **Workaround:** none.
 - **Fidelity:** dropped.
-- **Components it hits:** every component with a size ladder or shape (README: "pill shape" and the customise card are not ported).
+- **Components it hits:** every component with a size ladder (the customise card has no Size row).
 
 ## Icon-only buttons take `icon`, not a child
 

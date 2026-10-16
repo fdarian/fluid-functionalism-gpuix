@@ -47,14 +47,14 @@ Ported and matching: the square with `bg-accent`, `overflow-hidden` and `shrink-
 - **Fidelity:** approximated.
 - **Components it hits:** input-message, chat-message, queued-stack.
 
-## Shape and `className`
+## No `className`
 
 - **Cause:** `not ported yet`.
-- **Original:** the default radius is `shape.bg` from `useShape()`, 8px in the rounded shape and 20px in the pill shape; `radius` overrides it, and `className` can override it too (`file-thumbnail.tsx:86-89`, `:93`, `:139-152`).
-- **Port:** `radius.item` (8px) unless `radius` is given; there is no shape context and no `className` (`file-thumbnail.tsx:104-109`, `:124`). `README.md:219` lists the pill shape as not ported.
+- **Original:** `radius` overrides the shape's radius, and `className` can override it too (`file-thumbnail.tsx:86-89`, `:93`, `:139-152`).
+- **Port:** `radius` unless it is omitted, then `shape.bg`; no `className` (`file-thumbnail.tsx:104-109`, `:124`).
 - **gpuix lacks:** nothing.
 - **Workaround:** pass `radius`.
-- **Fidelity:** exact in the rounded shape; no pill.
+- **Fidelity:** approximated.
 - **Components it hits:** every shape-aware component.
 
 ## Accessible names

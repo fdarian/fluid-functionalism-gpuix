@@ -21,7 +21,7 @@ import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
-import { color, radius, type as scale, scheme, weight, withAlpha, focusRing } from "../lib/theme";
+import { color, shape, type as scale, scheme, weight, withAlpha, focusRing } from "../lib/theme";
 
 export type CardOrientation = "card" | "inline";
 export type CardBorder = "none" | "outlined";
@@ -211,7 +211,7 @@ export function CardGroup(props: {
 								borderWidth: 1,
 								borderColor: color.borderFaint,
 								overflow: "hidden",
-								borderRadius: radius.container,
+								borderRadius: shape.container,
 							}
 						: {}),
 				}}
@@ -229,7 +229,7 @@ export function CardGroup(props: {
 					<FluidHighlight
 						rect={rectOfActive}
 						session={hover.session}
-						radius={radius.container}
+						radius={shape.container}
 						background={color.hover}
 					/>
 				</div>
@@ -324,7 +324,7 @@ export function Card(props: {
 		setHasImage,
 		tileCorner: () =>
 			tile()
-				? radius.container -
+				? shape.container -
 					(framed() || (group === undefined && props.outlined) ? 1 : 0)
 				: 0,
 	};
@@ -364,7 +364,7 @@ export function Card(props: {
 									paddingBottom: compact() ? 12 : 16,
 								}),
 					...(tile()
-						? { borderRadius: radius.container, overflow: "hidden" }
+						? { borderRadius: shape.container, overflow: "hidden" }
 						: {}),
 					...(framed() || (group === undefined && props.outlined)
 						? { borderWidth: 1, borderColor: color.borderFaint }
@@ -398,7 +398,7 @@ export function Card(props: {
 							left: 0,
 							right: 0,
 							bottom: 0,
-							borderRadius: radius.container,
+							borderRadius: shape.container,
 							backgroundColor: color.active,
 						}}
 					/>
@@ -530,7 +530,7 @@ function DismissChip(props: {
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",
-				borderRadius: radius.item,
+				borderRadius: shape.button,
 				cursor: "pointer",
 				keyboardFocusDim: false,
 				// The chip stays shown while the pointer is on it, whatever the card's own hover says.
@@ -717,7 +717,7 @@ export function CardMedia(props: {
 								flexShrink: 0,
 								width: 32,
 								height: 32,
-								borderRadius: radius.item,
+								borderRadius: shape.bg,
 								backgroundColor: color.hover,
 								...(scope.orientation() === "inline"
 									? {}
@@ -758,7 +758,7 @@ export function CardMedia(props: {
 							style={{
 								width: size(),
 								height: size(),
-								borderRadius: radius.item,
+								borderRadius: shape.bg,
 								outlineWidth: 1,
 								outlineOffset: -1,
 								outlineColor: imageOutline(),
@@ -995,7 +995,7 @@ export function CardButton(props: {
 				gap: 6,
 				cursor: "pointer",
 				keyboardFocusDim: false,
-				borderRadius: radius.item,
+				borderRadius: shape.button,
 				...(variant() === "link"
 					? {}
 					: { height: 28, paddingLeft: 10, paddingRight: 10 }),

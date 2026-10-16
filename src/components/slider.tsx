@@ -27,7 +27,7 @@ import { createPresence } from "../lib/presence";
 import {
 	color,
 	focusRing,
-	radius,
+	shape,
 	type as scale,
 	scheme,
 	motion as tween,
@@ -218,7 +218,7 @@ function ValueBubble(props: {
 					style={{
 						position: "relative",
 						backgroundColor: color.foreground,
-						borderRadius: radius.item,
+						borderRadius: shape.bg,
 						paddingLeft: 8,
 						paddingRight: 8,
 						paddingTop: 4,
@@ -1379,7 +1379,7 @@ function ComfortableSlider(props: ComfortableProps) {
 					width: "100%",
 					borderWidth: ROW_BORDER,
 					borderColor: color.border,
-					borderRadius: radius.item,
+					borderRadius: shape.bg,
 					overflow: "hidden",
 					cursor: "ew-resize",
 					outlineWidth: focused() ? 1 : 0,

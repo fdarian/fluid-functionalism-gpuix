@@ -56,15 +56,6 @@ Same in both (checked against the code): row height, gap and padding per size, c
 - **Fidelity:** exact in look.
 - **Components it hits:** every `FluidHighlight` list.
 
-## Pill shape
-
-- **Cause:** `not ported yet`. The port has one corner scheme (`radius.item` 8, ring 10, `theme.ts:radius`).
-- **Original:** `useShape()` picks rounded or pill: row and fill radius 20, ring 22 (`radio-group.tsx:105,199,228`; `shape-context.tsx:51-81`). Rounded, the default, matches the port.
-- **Port:** `choice-group.tsx:210,220,320` use `radius.item` only.
-- **Workaround:** none.
-- **Fidelity:** dropped (pill).
-- **Components it hits:** every component that reads `useShape`.
-
 ## A surrounding size is ignored
 
 - **Cause:** `not ported yet`.

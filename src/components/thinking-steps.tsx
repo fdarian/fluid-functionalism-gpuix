@@ -21,7 +21,7 @@ import { StableLabel } from "../lib/stable-label";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
 import { createMeasuredHeight } from "../lib/measured-height";
-import { color, radius, type as scale, motion as tween, weight, focusRing } from "../lib/theme";
+import { color, shape, type as scale, motion as tween, weight, focusRing } from "../lib/theme";
 import { Badge, type BadgeColor } from "./badge";
 import { Shimmer } from "./thinking-indicator";
 
@@ -125,7 +125,7 @@ function TriggerRow(props: {
 							left: 0,
 							right: 0,
 							bottom: 0,
-							borderRadius: radius.item,
+							borderRadius: shape.bg,
 							backgroundColor: color.hover,
 						}}
 					/>
@@ -147,7 +147,7 @@ function TriggerRow(props: {
 					paddingRight: props.paddingX,
 					paddingTop: props.paddingY,
 					paddingBottom: props.paddingY,
-					borderRadius: radius.item,
+					borderRadius: shape.item,
 					cursor: "pointer",
 					userSelect: "none",
 					keyboardFocusDim: false,
@@ -355,7 +355,7 @@ export function ThinkingStep(props: {
 								paddingRight: 8,
 								paddingTop: 6,
 								paddingBottom: 6,
-								borderRadius: radius.item,
+								borderRadius: shape.item,
 							}}
 						>
 							{/* Icon column with a connector that runs to the bottom of the step. */}
@@ -577,7 +577,7 @@ export function ThinkingStepImage(props: {
 					style={{
 						width: IMAGE_WIDTH,
 						height: height(),
-						borderRadius: radius.container,
+						borderRadius: shape.container,
 					}}
 				/>
 				{/* An inset hairline keeps the edge of a pale screenshot visible. */}
@@ -588,7 +588,7 @@ export function ThinkingStepImage(props: {
 						left: 0,
 						width: IMAGE_WIDTH,
 						height: height(),
-						borderRadius: radius.container,
+						borderRadius: shape.container,
 						outlineWidth: 1,
 						outlineOffset: -1,
 						outlineColor: color.border,

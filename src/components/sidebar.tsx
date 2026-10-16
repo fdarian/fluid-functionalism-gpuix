@@ -15,7 +15,7 @@ import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
 import { createMeasuredHeight } from "../lib/measured-height";
-import { color, height, radius, type as scale, motion as tween, weight, trackMs } from "../lib/theme";
+import { color, height, shape, type as scale, motion as tween, weight, trackMs } from "../lib/theme";
 
 export const SIDEBAR_WIDTH = 256;
 
@@ -112,7 +112,7 @@ export function SidebarMenu(props: { children: JSX.Element }) {
 				<FluidHighlight
 					rect={activeRect(0)}
 					session={() => 0}
-					radius={radius.item}
+					radius={shape.bg}
 					background={color.active}
 					glide={tween.moderate}
 					fade={tween.moderateExit}
@@ -121,7 +121,7 @@ export function SidebarMenu(props: { children: JSX.Element }) {
 				<FluidHighlight
 					rect={activeRect(1)}
 					session={() => 0}
-					radius={radius.item}
+					radius={shape.bg}
 					background={color.active}
 					glide={tween.moderate}
 					fade={tween.moderateExit}
@@ -130,7 +130,7 @@ export function SidebarMenu(props: { children: JSX.Element }) {
 				<FluidHighlight
 					rect={hoverRect}
 					session={hover.session}
-					radius={radius.item}
+					radius={shape.bg}
 					background={color.hover}
 					travel={() => !reflow()}
 				/>
@@ -198,7 +198,7 @@ export function SidebarMenuButton(props: {
 				gap: 8,
 				paddingLeft: 8,
 				paddingRight,
-				borderRadius: radius.item,
+				borderRadius: shape.item,
 				cursor: "pointer",
 				userSelect: "none",
 			}}
@@ -430,7 +430,7 @@ export function SidebarSearchField(props: {
 				position: "relative",
 				height: height.menuRow,
 				flexShrink: 0,
-				borderRadius: radius.item,
+				borderRadius: shape.input,
 				backgroundColor: filled(),
 				outlineWidth: 1,
 				outlineColor: hovered() || focused() ? color.border : color.transparent,
@@ -457,7 +457,7 @@ export function SidebarSearchField(props: {
 					color: color.foreground,
 					backgroundColor: color.transparent,
 					keyboardFocusDim: false,
-					borderRadius: radius.item,
+					borderRadius: shape.input,
 				}}
 			/>
 			<div

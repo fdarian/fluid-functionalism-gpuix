@@ -2,7 +2,7 @@ import { createSignal, type JSX, onCleanup, Show } from "solid-js";
 import { onFrame } from "../lib/clock";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
-import { color, radius, scheme, withAlpha } from "../lib/theme";
+import { color, shape, scheme, withAlpha } from "../lib/theme";
 
 const fileGlyph = defineIcon(
 	'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
@@ -121,7 +121,7 @@ export function FileThumbnail(props: {
 				width: props.size,
 				height: props.size,
 				backgroundColor: color.accent,
-				borderRadius: props.radius ?? radius.item,
+				borderRadius: props.radius ?? shape.bg,
 			}}
 		>
 			<Show when={!props.pending} fallback={centered(<Spinner />)}>
@@ -145,7 +145,7 @@ export function FileThumbnail(props: {
 							left: 0,
 							width: props.size,
 							height: props.size,
-							borderRadius: props.radius ?? radius.item,
+							borderRadius: props.radius ?? shape.bg,
 						}}
 						objectFit="cover"
 					/>
@@ -159,7 +159,7 @@ export function FileThumbnail(props: {
 					left: 0,
 					width: props.size,
 					height: props.size,
-					borderRadius: props.radius ?? radius.item,
+					borderRadius: props.radius ?? shape.bg,
 					outlineWidth: 1,
 					outlineOffset: -1,
 					outlineColor: withAlpha(color.overlay, 0.1),

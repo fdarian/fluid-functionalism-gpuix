@@ -2,7 +2,7 @@ import { buttonProps, motion, useGpuixRequired } from "@gpuix/solid";
 import { createSignal, type JSX, Show } from "solid-js";
 import { Icon } from "../lib/icon";
 import { defineIcon } from "../lib/icons";
-import { color, radius, type as scale, scheme, motion as tween, focusRing } from "../lib/theme";
+import { color, shape, type as scale, scheme, motion as tween, focusRing } from "../lib/theme";
 import { type FileLike, FileThumbnail } from "./file-thumbnail";
 
 const copyGlyph = defineIcon(
@@ -52,7 +52,7 @@ export function ChatMessageAction(props: {
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",
-				borderRadius: radius.item,
+				borderRadius: shape.button,
 				cursor: "pointer",
 				keyboardFocusDim: false,
 				hover: { backgroundColor: color.hover },
@@ -130,7 +130,7 @@ export function ChatMessage(props: {
 							? {
 									paddingLeft: 14,
 									paddingRight: 14,
-									borderRadius: radius.item,
+									borderRadius: shape.bg,
 									backgroundColor: color.chatBubble,
 								}
 							: {}),

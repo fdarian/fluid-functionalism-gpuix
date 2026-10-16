@@ -129,14 +129,14 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Fidelity:** approximated (compact label is 2px taller and 1px larger text).
 - **Components it hits:** just this one.
 
-## Size is a prop only; there is no ambient size or shape
+## Size is a prop only; there is no ambient size
 
 - **Cause:** `not ported yet`.
-- **Original:** `useSize(size)` reads the surrounding `SizeProvider`, so trigger and popup follow a compact region; `SelectTrigger` also takes its own `size`. The trigger follows the global pill shape (`shape.input`), the popup stays rounded (`select.tsx:99-102`, `:278-281`, `:84-89`).
-- **Port:** `size?: "default" | "compact"` on `Select` only (`select.tsx:122`, `:140`); corners are always `radius.item` (8) and `radius.container` (12); no pill shape.
+- **Original:** `useSize(size)` reads the surrounding `SizeProvider`, so trigger and popup follow a compact region; `SelectTrigger` also takes its own `size`. (`select.tsx:99-102`, `:278-281`).
+- **Port:** `size?: "default" | "compact"` on `Select` only (`select.tsx:122`, `:140`).
 - **Workaround:** the demo passes `size="compact"` where needed.
-- **Fidelity:** dropped (context and pill shape).
-- **Components it hits:** every component that reads `useSize` / `useShape`.
+- **Fidelity:** dropped (context).
+- **Components it hits:** every component that reads `useSize`.
 
 ## Data-driven API and `null` for no value
 

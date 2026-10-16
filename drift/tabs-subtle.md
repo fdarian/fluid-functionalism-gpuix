@@ -78,9 +78,9 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 - **Fidelity:** approximated.
 - **Components it hits:** tabs, select, sidebar, menu rows.
 
-## Size ladder and pill shape are local
+## Size ladder is local
 
-- **Cause:** `not ported yet`. Same drift as [tabs.md, "Size ladder and pill shape are local"](tabs.md#size-ladder-and-pill-shape-are-local), where the entry lives. Here: original `tabs-subtle.tsx:47-50`, `:61`, `:264-265`; port `tabs-subtle.tsx:117`.
+- **Cause:** `not ported yet`. Same drift as [tabs.md, "Size ladder is local"](tabs.md#size-ladder-is-local), where the entry lives. Here: original `tabs-subtle.tsx:47-50`, `:61`, `:264-265`; port `tabs-subtle.tsx:117`.
 
 ## API surface: `className`, ref and HTML props
 

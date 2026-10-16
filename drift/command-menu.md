@@ -209,11 +209,11 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
-## Size follows only the `size` prop; no pill shape
+## Size follows only the `size` prop
 
 - **Cause:** `not ported yet`.
-- **Original:** omitted `size` follows the surrounding `SizeProvider` (so a compact region gives a compact menu, a 480 px dialog and compact filter controls); `CommandMenuFilters` sets its children to `compact`; the dialog and panel radius follow the global shape (rounded 12 / pill 24) while the list keeps rounded (`:458-460`, `:1016`; `registry/base/dialog.tsx:277`).
-- **Port:** `compact` is only `props.size === "compact"` (`src/components/command-menu.tsx:434`); there is no size context in `src/`, the dialog width is always 540 (`:1249`), and filter controls are the caller's to make compact. Pill shape is listed as not ported in `README.md` (end of the translation table).
+- **Original:** omitted `size` follows the surrounding `SizeProvider` (so a compact region gives a compact menu, a 480 px dialog and compact filter controls); `CommandMenuFilters` sets its children to `compact` (`:458-460`, `:1016`).
+- **Port:** `compact` is only `props.size === "compact"` (`src/components/command-menu.tsx:434`); there is no size context in `src/`, the dialog width is always 540 (`:1249`), and filter controls are the caller's to make compact.
 - **Workaround:** n/a.
 - **Fidelity:** approximated.
 - **Components it hits:** every component with a `size` prop.

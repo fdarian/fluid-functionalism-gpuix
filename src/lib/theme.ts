@@ -277,11 +277,58 @@ export const type = {
 export const fontFamily = "Inter";
 export const weight = { normal: 400, medium: 500, semibold: 600 } as const;
 
+/** The rounded values, for surfaces the source pins to rounded (popups, menu rows). Everything else reads `shape`. */
 export const radius = {
 	item: 8,
 	focusRing: 10,
 	container: 12,
 } as const;
+
+export type ShapeChoice = "rounded" | "pill";
+
+export const SHAPES = [
+	{ value: "rounded", label: "Rounded", icon: "rectangle-horizontal" },
+	{ value: "pill", label: "Pill", icon: "circle" },
+] as const satisfies readonly { value: ShapeChoice; label: string; icon: string }[];
+
+export const [shapeChoice, setShapeChoice] = createSignal<ShapeChoice>("rounded");
+
+/** Radius for a surface inset inside another rounded one, clamped at 0. */
+export function nestedRadius(outerRadius: number, inset: number, borderWidth = 0) {
+	return Math.max(0, outerRadius - inset - borderWidth);
+}
+
+function byShape(rounded: number, pill: number) {
+	return shapeChoice() === "pill" ? pill : rounded;
+}
+
+/**
+ * shape-context.tsx's shapeMap as numbers. Like `color`, read it inside JSX
+ * props or effects, never at module scope, so a Radius change reaches it.
+ */
+export const shape = {
+	get item() {
+		return byShape(8, 20);
+	},
+	get bg() {
+		return byShape(8, 20);
+	},
+	get button() {
+		return byShape(8, 20);
+	},
+	get input() {
+		return byShape(8, 20);
+	},
+	get container() {
+		return byShape(12, 24);
+	},
+	get mergedBg() {
+		return byShape(8, 16);
+	},
+	get focusRing() {
+		return byShape(10, 22);
+	},
+};
 
 export const height = {
 	control: 36,

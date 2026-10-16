@@ -20,7 +20,7 @@ import {
 } from "solid-js";
 import { Icon } from "../lib/icon";
 import { defineIcon, type IconRef } from "../lib/icons";
-import { color, radius, type as scale, motion as tween, weight, focusRing } from "../lib/theme";
+import { color, shape, type as scale, motion as tween, weight, focusRing } from "../lib/theme";
 import { Button } from "./button";
 
 export type BannerStatus = "default" | "info" | "success" | "warning" | "error";
@@ -247,7 +247,7 @@ export function Banner(props: {
 					flexShrink: 0,
 					alignItems: hasDescription() ? "flex-start" : "center",
 					padding: metrics().pad,
-					borderRadius: fixed() ? 0 : radius.container,
+					borderRadius: fixed() ? 0 : shape.container,
 					// A fixed bar stays opaque over the page scrolling under it.
 					backgroundColor: fixed() ? color.background : color.transparent,
 				}}
@@ -260,7 +260,7 @@ export function Banner(props: {
 						left: 0,
 						right: 0,
 						bottom: 0,
-						borderRadius: fixed() ? 0 : radius.container,
+						borderRadius: fixed() ? 0 : shape.container,
 						backgroundColor: fill(status(), contrast()),
 					}}
 				/>
@@ -411,7 +411,7 @@ function DismissButton(props: {
 				marginBottom: props.compact ? -5 : -4,
 				marginRight: -6,
 				marginLeft: props.compact ? 6 : 8,
-				borderRadius: radius.item,
+				borderRadius: shape.button,
 				cursor: "pointer",
 				keyboardFocusDim: false,
 				hover: { backgroundColor: color.hover },

@@ -27,7 +27,7 @@ import {
 import { StableLabel } from "../lib/stable-label";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { color, radius, type as scale, scheme, shadow3, motion as tween, weight } from "../lib/theme";
+import { color, shape, type as scale, scheme, shadow3, motion as tween, weight } from "../lib/theme";
 
 export type TabsSize = "default" | "compact";
 
@@ -221,7 +221,7 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 					flexDirection: "row",
 					alignItems: "center",
 					padding: metrics().pad,
-					borderRadius: radius.container,
+					borderRadius: shape.container,
 					backgroundColor: color.muted,
 					userSelect: "none",
 				}}
@@ -246,7 +246,7 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 									left: 0,
 									right: 0,
 									bottom: 0,
-									borderRadius: radius.item,
+									borderRadius: shape.bg,
 									backgroundColor: color.surface4,
 									borderWidth: 1,
 									borderColor: color.popupBorder,
@@ -275,7 +275,7 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 									left: 0,
 									right: 0,
 									bottom: 0,
-									borderRadius: radius.item,
+									borderRadius: shape.bg,
 									backgroundColor: color.hover,
 								}}
 							/>
@@ -284,6 +284,7 @@ export function TabsList(props: { children: JSX.Element; testId?: string }) {
 				</Show>
 				<FocusRing
 					ring={focusRing}
+					radius={shape.focusRing}
 					testId={props.testId && `${props.testId}-focus-ring`}
 				/>
 				{props.children}
@@ -394,7 +395,7 @@ export function TabItem(props: {
 				paddingLeft: 12,
 				paddingRight: 12,
 				gap: props.icon === undefined ? 0 : metrics().gap,
-				borderRadius: radius.item,
+				borderRadius: shape.bg,
 				cursor: "pointer",
 				keyboardFocusDim: false,
 			}}

@@ -19,7 +19,7 @@ import { StableLabel } from "../lib/stable-label";
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFocusRing, FocusRing, type FocusRingState } from "../lib/focus-ring";
 import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
-import { color, radius, scheme, type as scale, motion as tween, weight } from "../lib/theme";
+import { color, shape, scheme, type as scale, motion as tween, weight } from "../lib/theme";
 
 /**
  * What checkbox-group and radio-group share: a vertical list of focusable
@@ -207,7 +207,7 @@ export function ChoiceGroup(props: {
 						<FluidHighlight
 							rect={runRect(id)}
 							session={() => 0}
-							radius={radius.item}
+							radius={props.role === "radiogroup" ? shape.bg : shape.mergedBg}
 							background={color.active}
 							glide={tween.moderate}
 							fade={tween.moderateExit}
@@ -217,11 +217,12 @@ export function ChoiceGroup(props: {
 				<FluidHighlight
 					rect={rectOf(hover.activeIndex())}
 					session={hover.session}
-					radius={radius.item}
+					radius={shape.bg}
 					background={color.hover}
 				/>
 				<FocusRing
 					ring={focusRing}
+					radius={shape.focusRing}
 					testId={props.testId && `${props.testId}-focus-ring`}
 				/>
 				{props.children}
@@ -317,7 +318,7 @@ export function ChoiceRow(props: {
 				gap: size().gap,
 				paddingLeft: size().padX,
 				paddingRight: size().padX,
-				borderRadius: radius.item,
+				borderRadius: shape.item,
 				cursor: "pointer",
 				keyboardFocusDim: false,
 			}}

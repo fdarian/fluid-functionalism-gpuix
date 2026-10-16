@@ -143,10 +143,10 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `not ported yet` (README: "Not ported there: ... the Radius / Size ... rows").
 - **Original:** `size` prop and `SizeProvider` give a compact step (rows `min-h-8`, chip 18/24, 11px header, `px-3.5`); `className` and the rest of the `div` props, and a `ref`, land on the card (`:107-110`, `:1229-1235`, `:1832-1838`).
-- **Port:** one step; props are `testId` and `autoFocus` beside the source's flow props (`ask-user-questions.tsx:309-323`). Pill shape (`shape.bg`, `shape.container`, `shape.focusRing`) is not ported either; the radii are fixed at 8 / 12.
+- **Port:** one step; props are `testId` and `autoFocus` beside the source's flow props (`ask-user-questions.tsx:309-323`).
 - **Workaround:** none.
-- **Fidelity:** dropped (compact, pill).
-- **Components it hits:** every component with a `size` or shape variant.
+- **Fidelity:** dropped (compact).
+- **Components it hits:** every component with a `size` variant.
 
 ## Responsive and touch styling
 
@@ -160,8 +160,8 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 ## Shortcut chip and footer buttons
 
 - **Cause:** `not ported yet` (small details).
-- **Original:** the chip is `shape.bg` radius, `font-sans`, `leading-none`, and "⌘" and "↵" are two children with `gap-0.5` (`:1593-1604`, `:1551-1552`). Back, Skip and Continue are `Button size="sm"` with trimmed icon-side padding via `className` (`:1440-1450`, `:1524-1541`).
-- **Port:** one string "⌘↵", no 2px gap, `lineHeight: 11`, radius `radius.item` (`ask-user-questions.tsx:91-112`); `size="compact"`, which is the source's `sm` alias, with the Button's own icon padding (`:986-1048`; `src/components/button.tsx:26-31`).
+- **Original:** the chip is `font-sans`, `leading-none`, and "⌘" and "↵" are two children with `gap-0.5` (`:1593-1604`, `:1551-1552`). Back, Skip and Continue are `Button size="sm"` with trimmed icon-side padding via `className` (`:1440-1450`, `:1524-1541`).
+- **Port:** one string "⌘↵", no 2px gap, `lineHeight: 11` (`ask-user-questions.tsx:91-112`); `size="compact"`, which is the source's `sm` alias, with the Button's own icon padding (`:986-1048`; `src/components/button.tsx:26-31`).
 - **Workaround:** `marginLeft: 2` to stand in for the label gap.
 - **Fidelity:** approximated (about a pixel).
 - **Components it hits:** just this one.

@@ -256,14 +256,6 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
 
-## Not ported: pill shape
-
-- **Cause:** `not ported yet`.
-- **Original:** the field follows the global shape (`rounded-[20px]` in pill mode, round clear button); the popup keeps the rounded radii (`combobox.tsx:373,508-520,455`).
-- **Port:** the field is always `radius.item` (8) (`src/components/combobox.tsx:401`); README lists pill shape as not ported.
-- **Fidelity:** dropped.
-- **Components it hits:** every component with a shape.
-
 ## Demo
 
 Source page `app/docs/combobox/page.tsx`: Playground, Basic, With icons, Multiple selection, Create from the query, Hide picked rows, Variants, Long list, Error & disabled, API tables. Port `src/demos/combobox.tsx`: three cards.

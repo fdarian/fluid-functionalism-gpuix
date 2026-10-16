@@ -53,19 +53,19 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 - **Cause:** `port choice` (the docs page's `MessageActions` is demo code in the source; the port needs a button built on `buttonProps`, so it exports one).
 - **Original:** `MessageActions` lives in the docs page, a `<button>` with `useIcon("copy" | "pencil" | "rotate-ccw")` at size 13, stroke 1.5, `shape.button` radius (`app/docs/chat-message/page.tsx:15-37`).
-- **Port:** `ChatMessageAction` with a fixed lucide glyph per `action`, `radius.item` (8, the rounded shape) (`chat-message.tsx:27-70`). The icon-set switch is not ported (README, "Not ported there").
+- **Port:** `ChatMessageAction` with a fixed lucide glyph per `action`, `shape.button` (`chat-message.tsx:27-70`). The icon-set switch is not ported (README, "Not ported there").
 - **Workaround:** n/a.
-- **Fidelity:** exact for the default icon set and rounded shape.
+- **Fidelity:** exact for the default icon set.
 - **Components it hits:** just this one.
 
-## Size ladder and pill shape
+## Size ladder
 
-- **Cause:** `not ported yet` (README: "Not ported there: pill shape, the Radius / Size / Icons / Primitive rows").
-- **Original:** `size` prop and `SizeProvider` pick compact type (13/18 bubble, 11/14 caption), `py-1.5`, `px-3`; `useShape().bg` gives `rounded-[20px]` in the pill shape (`chat-message.tsx:30-33`, `:46`, `:88-95`).
-- **Port:** one step only: 14/20 bubble, `py` 8, `px` 14, `radius.item` 8 (`chat-message.tsx:18`, `:127-134`); no `size` prop.
+- **Cause:** `not ported yet` (README: "Not ported there: ... the Size / Icons / Primitive rows").
+- **Original:** `size` prop and `SizeProvider` pick compact type (13/18 bubble, 11/14 caption), `py-1.5`, `px-3` (`chat-message.tsx:30-33`, `:46`, `:88-95`).
+- **Port:** one step only: 14/20 bubble, `py` 8, `px` 14 (`chat-message.tsx:18`, `:127-134`); no `size` prop.
 - **Workaround:** none.
-- **Fidelity:** dropped (compact and pill).
-- **Components it hits:** every component with a `size` or shape variant.
+- **Fidelity:** dropped (compact).
+- **Components it hits:** every component with a `size` variant.
 
 ## Message body: whitespace, wrapping, node children
 

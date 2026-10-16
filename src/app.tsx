@@ -34,7 +34,11 @@ import {
 import {
 	bindSystemScheme,
 	color,
+	setShapeChoice,
 	setThemeChoice,
+	SHAPES,
+	type ShapeChoice,
+	shapeChoice,
 	type ThemeChoice,
 	THEMES,
 	themeChoice,
@@ -243,6 +247,25 @@ function CustomizeCard() {
 					items={THEMES}
 					value={themeChoice()}
 					onValueChange={(value: ThemeChoice) => setThemeChoice(value)}
+				/>
+			</div>
+			<div
+				style={{
+					display: "flex",
+					flexDirection: "row",
+					alignItems: "center",
+					justifyContent: "space-between",
+					height: 28,
+				}}
+			>
+				<text style={{ ...scale.body, color: color.mutedForeground }}>
+					Radius
+				</text>
+				<Select
+					testId="radius"
+					items={SHAPES}
+					value={shapeChoice()}
+					onValueChange={(value: ShapeChoice) => setShapeChoice(value)}
 				/>
 			</div>
 		</div>

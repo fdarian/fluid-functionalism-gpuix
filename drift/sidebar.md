@@ -247,7 +247,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `port choice` (reason not stated; the data is the site's nav rather than the docs page's "Aurora AI" product).
 - **Original:** each preview is a full shell (sidebar and `SidebarInset` content) 640px tall (560 on a phone), `bg-background`, workspace header with a switcher, a user footer with a dropdown, rows with icons (`app/docs/sidebar/page.tsx:SHELL_HEIGHT`, `example-data.ts`: Chat, Agents, Knowledge, Runs, Evals, with sub-rows and badges).
-- **Port:** the sidebar alone in a 480px-tall, 12px-radius box inside a `DemoCard` (`src/demos/sidebar.tsx:50-59`), no inset content, no header brand row, no footer, icon-less rows, no badges (the `badge` prop is never demoed). The dot colours are fixed hex (`BLUE` `#3B82F6`, `YELLOW` `#FBBF24`, `:16-17`); the site's second dot is `var(--warning)` (`#F59E0B` light, `#FCD34D` dark, `app/globals.css:102`), so in light mode the yellow dot differs and does not follow the theme (`color.warning` exists in `src/lib/theme.ts`).
+- **Port:** the sidebar alone in a 480px-tall `shape.container`-radius box inside a `DemoCard` (`src/demos/sidebar.tsx:50-59`), no inset content, no header brand row, no footer, icon-less rows, no badges (the `badge` prop is never demoed). The dot colours are fixed hex (`BLUE` `#3B82F6`, `YELLOW` `#FBBF24`, `:16-17`); the site's second dot is `var(--warning)` (`#F59E0B` light, `#FCD34D` dark, `app/globals.css:102`), so in light mode the yellow dot differs and does not follow the theme (`color.warning` exists in `src/lib/theme.ts`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

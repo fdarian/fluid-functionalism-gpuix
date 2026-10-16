@@ -23,7 +23,7 @@ import { createFocusRing, FocusRing, type FocusRingState } from "../lib/focus-ri
 import { createFluidHover, type FluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { createMeasuredHeight } from "../lib/measured-height";
-import { color, radius, type as scale, scheme, motion as tween, weight, focusRing, trackMs } from "../lib/theme";
+import { color, shape, type as scale, scheme, motion as tween, weight, focusRing, trackMs } from "../lib/theme";
 
 export type AccordionSize = "default" | "compact";
 export type AccordionHighlight = "trigger" | "item";
@@ -279,12 +279,13 @@ export function AccordionGroup(props: RootProps) {
 					<FluidHighlight
 						rect={hoverRect}
 						session={hover.session}
-						radius={radius.item}
+						radius={shape.bg}
 						background={color.hover}
 						travel={() => !reflow()}
 					/>
 					<FocusRing
 						ring={focusRing}
+						radius={shape.focusRing}
 						testId={props.testId && `${props.testId}-focus-ring`}
 						travel={() => !reflow()}
 					/>
@@ -368,7 +369,7 @@ export function AccordionItem(props: {
 						left: 0,
 						right: 0,
 						bottom: 0,
-						borderRadius: radius.item,
+						borderRadius: shape.bg,
 						backgroundColor: color.accentWash,
 						// Removing this lights the row under the pointer after a single-expand click moves the rows, though the pointer is over the open panel, which belongs to no row.
 						pointerEvents: "none",
@@ -453,7 +454,7 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					left: 0,
 					right: 0,
 					bottom: 0,
-					borderRadius: radius.item,
+					borderRadius: shape.bg,
 					backgroundColor: color.accentWash,
 				}}
 			/>
@@ -469,7 +470,7 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					left: 0,
 					right: 0,
 					bottom: 0,
-					borderRadius: radius.item,
+					borderRadius: shape.bg,
 					backgroundColor: color.hover,
 				}}
 			/>
@@ -507,7 +508,7 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					paddingTop: metrics().padY,
 					paddingBottom: metrics().padY,
 					width: "100%",
-					borderRadius: radius.item,
+					borderRadius: shape.item,
 					cursor: "pointer",
 					userSelect: "none",
 					keyboardFocusDim: false,

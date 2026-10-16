@@ -25,7 +25,7 @@ import { defineIcon } from "../lib/icons";
 import { createMeasuredHeight } from "../lib/measured-height";
 import { isChord, moveIndex } from "../lib/list-nav";
 import { IS_MAC } from "../lib/platform";
-import { color, radius, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
+import { color, shape, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 import { Button } from "./button";
 
 const arrowLeftGlyph = defineIcon(
@@ -100,7 +100,7 @@ function ShortcutChip(props: { children: string }) {
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",
-				borderRadius: radius.item,
+				borderRadius: shape.bg,
 				// bg-background/15 over the primary button.
 				backgroundColor: withAlpha(color.background, 0.15),
 			}}
@@ -171,7 +171,7 @@ function Row(props: RowProps) {
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
-					borderRadius: radius.item,
+					borderRadius: shape.bg,
 					backgroundColor: color.foreground,
 					cursor: props.onArrowClick ? "pointer" : "default",
 				}}
@@ -207,7 +207,7 @@ function Row(props: RowProps) {
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
-					borderRadius: radius.item,
+					borderRadius: shape.bg,
 					opacity: props.chipPosition === "right" && props.showArrow ? 0 : 1,
 					...(props.isMulti
 						? props.chipFilled
@@ -275,7 +275,7 @@ function Row(props: RowProps) {
 				paddingBottom: stacked() ? 8 : 6,
 				paddingLeft: props.chipPosition === "left" ? 6 : 12,
 				paddingRight: props.chipPosition === "left" && props.isMulti ? 12 : 6,
-				borderRadius: radius.item,
+				borderRadius: shape.item,
 				cursor: "pointer",
 				userSelect: "none",
 				keyboardFocusDim: false,
@@ -649,7 +649,7 @@ export function AskUserQuestions(props: {
 				transition={{ ...tween.fast, duration: 0.08 }}
 				style={{
 					position: "absolute",
-					borderRadius: radius.item,
+					borderRadius: shape.bg,
 					backgroundColor: color.card,
 					outlineWidth: 1,
 					outlineOffset: -1,
@@ -661,7 +661,7 @@ export function AskUserQuestions(props: {
 			<FluidHighlight
 				rect={hoverRect}
 				session={hover.session}
-				radius={radius.item}
+				radius={shape.bg}
 				background={color.hover}
 			/>
 			<Index each={runs()}>
@@ -669,7 +669,7 @@ export function AskUserQuestions(props: {
 					<FluidHighlight
 						rect={() => runRect(run())}
 						session={() => 0}
-						radius={radius.item}
+						radius={shape.bg}
 						background={color.active}
 						glide={tween.moderate}
 						fade={tween.moderateExit}
@@ -827,7 +827,7 @@ export function AskUserQuestions(props: {
 					paddingLeft: 12,
 					paddingRight: 12,
 					minHeight: multiline ? 76 : 40,
-					borderRadius: radius.item,
+					borderRadius: shape.bg,
 					cursor: "text",
 					backgroundColor:
 						otherText().length > 0
@@ -1089,7 +1089,7 @@ function cardStyle() {
 		maxWidth: 520,
 		overflow: "hidden",
 		backgroundColor: color.card,
-		borderRadius: radius.container,
+		borderRadius: shape.container,
 		borderWidth: 1,
 		borderColor: color.border,
 	} as const;

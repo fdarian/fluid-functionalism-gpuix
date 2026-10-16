@@ -211,15 +211,6 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Fidelity:** approximated (2px).
 - **Components it hits:** just this one.
 
-## Corner radii are fixed
-
-- **Cause:** `not ported yet`.
-- **Original:** the tile, highlight and fill radii come from `shape.container` (12, 24 for the pill) and the media, chip and button radii from `shape.bg` / `shape.button` (8, 20) (`:211`, `:340`, `:503`, `:760`, `:777`, `:977`).
-- **Port:** `radius.container` and `radius.item` (`src/components/card.tsx:232`, `:401`, `:533`, `:720`, `:998`). README: "pill shape" is not ported.
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every component that reads `shape`.
-
 ## No `className`, `style`, `ref` or HTML attributes; `outlined` stands in for a border class
 
 - **Cause:** `port choice` (reason not stated; Solid components with fixed prop lists).

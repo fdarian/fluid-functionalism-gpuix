@@ -27,14 +27,14 @@ light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 - **Fidelity:** dropped.
 - **Components it hits:** every component that reads `useSurface` in the source.
 
-## Size ladder and pill shape are local
+## Size ladder is local
 
-- **Cause:** `not ported yet` (README: "Not ported there: pill shape, the Radius / Size / Icons / Primitive rows").
-- **Original:** `size` falls back to the surrounding `SizeProvider`, and `useShape()` switches the track, pill and ring to the pill radii (24 / 20 / 22) (`tabs.tsx:80-83`, `:173-174`, `:192-193`, `:350-352`, `registry/default/lib/shape-context.tsx:50-79`).
-- **Port:** `size` is the prop or `"default"` (`tabs.tsx:101`); radii are fixed at 12 / 8 / 10 (`theme.ts:280-284`).
+- **Cause:** `not ported yet` (README: "Not ported there: ... the Size / Icons / Primitive rows").
+- **Original:** `size` falls back to the surrounding `SizeProvider` (`tabs.tsx:80-83`, `:173-174`).
+- **Port:** `size` is the prop or `"default"` (`tabs.tsx:101`).
 - **Workaround:** none.
-- **Fidelity:** dropped (ambient size, pill shape).
-- **Components it hits:** every component with a `size` or shape variant.
+- **Fidelity:** dropped (ambient size).
+- **Components it hits:** every component with a `size` variant.
 
 ## Colour and stroke width switch at once
 

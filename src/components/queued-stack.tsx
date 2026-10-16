@@ -21,7 +21,8 @@ import { defineIcon } from "../lib/icons";
 import { createPointerCapture } from "../lib/pointer-capture";
 import {
 	color,
-	radius,
+	nestedRadius,
+	shape,
 	type as scale,
 	scheme,
 	shadow3,
@@ -101,7 +102,7 @@ function CardAction(props: {
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
-					borderRadius: radius.item,
+					borderRadius: shape.button,
 					cursor: "pointer",
 					hover: { backgroundColor: color.hover },
 				}}
@@ -492,7 +493,7 @@ function QueueCard(props: {
 				paddingLeft: files().length > 0 ? 8 : 14,
 				paddingRight: 6,
 				overflow: "hidden",
-				borderRadius: radius.item,
+				borderRadius: shape.bg,
 				borderWidth: 1,
 				borderColor: color.popupBorder,
 				boxShadow: shadow3(),
@@ -540,7 +541,7 @@ function QueueCard(props: {
 						}}
 					>
 						<For each={files().slice(0, 3)}>
-							{(file) => <FileThumbnail file={file} size={28} radius={0} />}
+							{(file) => <FileThumbnail file={file} size={28} radius={nestedRadius(shape.bg, 8)} />}
 						</For>
 						<Show when={files().length > 3}>
 							<div

@@ -24,15 +24,6 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 - **Fidelity:** approximated (same distance and timing; a layout change per frame instead of a compositor transform).
 - **Components it hits:** every popup that slides in (select, combobox, dropdown, color-picker, dialog).
 
-## Pill shape is not ported
-
-- **Cause:** `not ported yet` (README "Not ported there: pill shape").
-- **Original:** the chip uses `shape.bg`: `rounded-lg` (8px) or `rounded-[20px]` under a pill `ShapeProvider` (`registry/base/tooltip.tsx:278`, `registry/default/lib/shape-context.tsx:51-79`).
-- **Port:** a fixed `radius.item` = 8px (`src/components/tooltip.tsx:285`, `src/lib/theme.ts:281`).
-- **Workaround:** none.
-- **Fidelity:** exact in the default shape; dropped for pill.
-- **Components it hits:** every component that reads `useShape`.
-
 ## The label is centred by its full line box
 
 - **Cause:** `gpuix gap` ([README, badge row](../README.md#missing-features): `text-box-trim`).
