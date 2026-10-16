@@ -175,15 +175,6 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Fidelity:** approximated (the line sits closer to the text).
 - **Components it hits:** any `underline-offset-*`.
 
-## `CardImage` has a fixed height, not 16:9
-
-- **Cause:** `not ported yet`.
-- **Original:** stacked images are `w-full aspect-[16/9]` (`:817`).
-- **Port:** `height` prop, default 160 (`src/components/card.tsx:778`, `:812`); the demos compute it by hand: 155 in the grid, 168 in the promo (`src/demos/card.tsx:76`, `:146`), 160 for the unset one. The doc comment says gpuix has no `aspect-video`; it has `aspectRatio` and sizes `<img>` like a replaced element (`packages/native/js/host.ts:601`, `FORK.md:561-562`).
-- **Workaround:** the `height` prop.
-- **Fidelity:** approximated (right at the demo widths, wrong at any other width).
-- **Components it hits:** just this one.
-
 ## The image rounds its own corners to the tile
 
 - **Cause:** `port choice` (reason not stated; the tile also sets `overflow: "hidden"` and a radius at `:366-367`).
@@ -238,11 +229,11 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Fidelity:** exact (no visible difference; the wrappers and comments are stale).
 - **Components it hits:** carousel-dots and tabs carry the same comment (`src/components/carousel-dots.tsx:123`, `src/components/tabs.tsx:229`).
 
-## Demo: order, widths, copy and the missing playground
+## Playground: the Get code dialog and the preview frame
 
-- **Cause:** `not ported yet` (playground, widths); `port choice` (the rest, reason not stated).
-- **Original:** `app/docs/card/page.tsx:413-451`: Playground, Basic, Grid, Outlined, Separated, Fully yours, Selected, then four API tables. The examples sit in `max-w-[520px]` / `560px` / `300px` columns (`:217`, `:241`, `:265`, `:289`, `:326`, `:363`). The title is "Fully yours — compose anything" and the promo copy has em dashes ("Renders your design exactly — token-driven", "One compositional API — borderless", `:340`, `:345`). After dismissing, a text link "Restore card" appears (`:316-322`).
-- **Port:** `src/demos/card.tsx:201-224`: no playground, Basic, Selected, Grid, Outlined, Separated, Fully yours (Selected moved second). The groups fill the demo card's width; only the promo is capped (300, `:144`). The title and promo copy use colons ("Fully yours: compose anything", `:219`, `:155`, `:160`). "Restore card" is a ghost compact `Button` (`:139-143`). The four feature cards, icons, labels and descriptions, `BANNER` and `THUMB` match.
-- **Workaround:** n/a.
-- **Fidelity:** n/a.
-- **Components it hits:** just this one.
+- **Cause:** `port choice` (the preset install flow and the Code tab have no counterpart in the port).
+- **Original:** the rail ends with a "Get code" dialog that bit-packs the whole configuration into a preset code (`lib/docs/playgrounds/card.tsx:200-215`, `:316-320`) and the preview sits in `ComponentPreview` with a Preview / Code tabs pair and a snippet kept in sync (`app/docs/card/page.tsx:384-398`, `buildPlaygroundCode`).
+- **Port:** every other control, default and the shuffle are ported (Media, Description, the three buttons, Orientation, Columns, Border, Separated, Fluid hover, Selected; the forced-Separated for Image, the single column for Inline, the six items at three columns). No Get code, no URL-synced preset, no snippet. The preview is the shared `DemoCard` frame with a 600 px minimum, the group capped at 560 px and centred (`src/demos/card.tsx`, `Playground`).
+- **Workaround:** none.
+- **Fidelity:** dropped (Get code, snippet), approximated (frame).
+- **Components it hits:** every playground.

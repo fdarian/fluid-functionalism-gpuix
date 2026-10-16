@@ -443,6 +443,7 @@ export function Card(props: {
 				>
 				<Show when={props.dismissible}>
 					<DismissChip
+						testId={props.testId === undefined ? undefined : `${props.testId}-dismiss`}
 						compact={compact()}
 						overMedia={hasImage()}
 						visible={
@@ -495,6 +496,7 @@ function CardFrame(props: { children: JSX.Element }) {
 }
 
 function DismissChip(props: {
+	testId?: string;
 	compact: boolean;
 	overMedia: boolean;
 	visible: boolean;
@@ -515,6 +517,7 @@ function DismissChip(props: {
 				},
 				renderer,
 			)}
+			testId={props.testId}
 			aria-label="Dismiss"
 			tabIndex={0}
 			onMouseEnter={() => setHovered(true)}
@@ -771,11 +774,8 @@ export function CardMedia(props: {
 	);
 }
 
-/**
- * Full-bleed image: a banner when stacked, a square when inline. Stacked,
- * `height` stands in for `aspect-video`, which gpuix has no equivalent of.
- */
-export function CardImage(props: { src: string; height?: number }) {
+/** Full-bleed image: a 16:9 banner when stacked, a square when inline. */
+export function CardImage(props: { src: string }) {
 	const scope = useContext(CardContext);
 	const inline = () => scope.orientation() === "inline";
 	/** The outer corners a tile would have clipped; the rest keep the original's 2px. */
@@ -809,7 +809,7 @@ export function CardImage(props: { src: string; height?: number }) {
 				outlineColor: imageOutline(),
 				...(inline()
 					? { width: 160, height: 160, flexShrink: 0 }
-					: { width: "100%", height: props.height ?? 160, flexShrink: 0 }),
+					: { width: "100%", aspectRatio: 16 / 9, flexShrink: 0 }),
 			}}
 		/>
 	);
