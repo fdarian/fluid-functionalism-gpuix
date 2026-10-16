@@ -1,4 +1,5 @@
 import type { DomEvent, HostElement } from '@gpuix/solid';
+import type { MenuSearchHost, MenuSearchProps } from 'base-ui-solid-gpuix/menu';
 import {
 	createContext,
 	createEffect,
@@ -11,15 +12,8 @@ import { SurfaceContext } from '#/lib/surface-context';
 import { color, height, type as scale, surface, weight } from '#/lib/theme';
 import { separatorColor } from './menu-item';
 
-export interface DropdownSearchProps {
-	/** The query. Filter the rows you render against it. */
-	value: string;
-	onValueChange: (value: string) => void;
+export interface DropdownSearchProps extends MenuSearchProps {
 	placeholder?: string;
-	/** Reset the query when the popup closes, so the menu reopens unfiltered. Defaults to `true`. */
-	clearOnClose?: boolean;
-	/** Take focus when the popup opens. Defaults to `true`. */
-	autoFocus?: boolean;
 }
 
 /**
@@ -29,9 +23,7 @@ export interface DropdownSearchProps {
  * source's `-mx-1 -mt-1` does: gpuix keeps a sticky box inside its parent's
  * content box.
  */
-export interface DropdownSearchHost {
-	register: (props: DropdownSearchProps) => () => void;
-}
+export type DropdownSearchHost = MenuSearchHost<DropdownSearchProps>;
 
 export const DropdownSearchHostContext = createContext<DropdownSearchHost>();
 

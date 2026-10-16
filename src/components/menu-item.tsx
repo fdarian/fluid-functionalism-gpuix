@@ -1,10 +1,9 @@
-import { type HostElement, motion } from '@gpuix/solid';
+import { motion } from '@gpuix/solid';
+import { createMenuItem, type MenuItemHost } from 'base-ui-solid-gpuix/menu';
 import {
 	type Accessor,
 	createContext,
-	createEffect,
 	type JSX,
-	onCleanup,
 	onMount,
 	Show,
 	useContext,
@@ -16,41 +15,9 @@ import type { IconRef } from '#/lib/icons';
 import { StableLabel } from '#/lib/stable-label';
 import { color, height, radius, type as scale } from '#/lib/theme';
 
-/** What the keyboard needs to know about a row the pointer would otherwise be the only one to reach. */
-export interface MenuRow {
-	label: string;
-	disabled: () => boolean;
-	activate: () => void;
-	/** ArrowRight on a submenu trigger. */
-	openSubmenu?: () => void;
-	/** Moves real focus to the row without scrolling it into view. */
-	focus: () => void;
-	/** The row's element, to tell whether a focus move stayed among the rows. */
-	element: () => HostElement | undefined;
-}
-
-export interface DropdownContextValue {
+export interface DropdownContextValue extends MenuItemHost {
 	hover: FluidHover;
 	checkedIndex: Accessor<number | undefined>;
-	/** `checkedIndices` was given: rows are checkboxes and stay open on select. */
-	multiple: Accessor<boolean>;
-	rows: Map<number, MenuRow>;
-	/** The DOM `id` of a row. */
-	rowId: (index: number) => string;
-	/** The roving `tabIndex`: 0 on the one tab stop, -1 on every other row. */
-	rowTabIndex: (index: number) => 0 | -1;
-	/** A row took focus (arrows, hover, Tab or a press): it becomes the lit one. `focusVisible` is false for a press. */
-	rowFocused: (index: number, focusVisible: boolean) => void;
-	/** The highlight is where the pointer put it, not the keyboard or the open itself. */
-	pointerLit: Accessor<boolean>;
-	/** Rows were added or removed: the measured rects are stale, and the tab stop may have moved. */
-	rowsChanged?: () => void;
-	/** Closes the whole menu. A no-op for the inline panel. */
-	close: () => void;
-	/** A row released under a press that began on the menu's trigger picks, once. Always false for the inline panel. */
-	pressPick: () => boolean;
-	/** Any other press on a row ends that trigger press. */
-	releasePress: () => void;
 }
 
 export const DropdownContext = createContext<DropdownContextValue>();
@@ -122,88 +89,21 @@ export function MenuItem(props: {
 	children?: JSX.Element;
 }) {
 	const context = useDropdown();
-	let rowElement: HostElement | undefined;
+	const item = createMenuItem(context, props);
 	let settled = false;
 	onMount(() => {
 		settled = true;
 	});
 
-	/** A keyboard activation of a submenu trigger goes into the submenu; a click opens it through `onSelect`. */
-	const activate = (fromKeyboard: boolean) => {
-		if (props.disabled === true) return;
-		if (fromKeyboard && props.onOpenSubmenu !== undefined) {
-			props.onOpenSubmenu();
-			return;
-		}
-		props.onSelect?.();
-		if (props.closeOnClick ?? !context.multiple()) context.close();
-	};
-	/** The release already picked the row; the click that may follow it must not pick twice. */
-	let pickedOnRelease = false;
-
-	useHoverItem(
-		context.hover,
-		() => props.index,
-		() => rowElement,
-	);
-	createEffect(() => {
-		const index = props.index;
-		const row: MenuRow = {
-			label: props.label,
-			disabled: () => props.disabled === true,
-			activate: () => activate(true),
-			openSubmenu: props.onOpenSubmenu,
-			focus: () => rowElement?.focus({ preventScroll: true }),
-			element: () => rowElement,
-		};
-		context.rows.set(index, row);
-		context.rowsChanged?.();
-		onCleanup(() => {
-			if (context.rows.get(index) === row) context.rows.delete(index);
-			context.rowsChanged?.();
-		});
-	});
+	useHoverItem(context.hover, () => props.index, item.element);
 
 	const checked = () => props.checked === true;
 	const lit = () => context.hover.activeIndex() === props.index || checked();
-	const role = () => {
-		if (props.checked === undefined) return 'menuitem';
-		return context.multiple() ? 'menuitemcheckbox' : 'menuitemradio';
-	};
-
 	return (
 		<div
-			ref={(element) => {
-				rowElement = element;
-			}}
-			id={context.rowId(props.index)}
-			role={role()}
-			tabIndex={context.rowTabIndex(props.index)}
-			onFocus={(event) =>
-				context.rowFocused(props.index, event.focusVisible === true)
-			}
+			ref={item.setElement}
+			{...item.props}
 			testId={props.testId}
-			aria-checked={props.checked}
-			aria-disabled={props.disabled === true}
-			aria-haspopup={props.submenu === undefined ? undefined : 'menu'}
-			aria-expanded={props.submenu?.open}
-			aria-controls={props.submenu?.open ? props.submenu.popupId : undefined}
-			onMouseDown={() => {
-				pickedOnRelease = false;
-				context.releasePress();
-			}}
-			onMouseUp={() => {
-				if (!context.pressPick()) return;
-				pickedOnRelease = true;
-				activate(false);
-			}}
-			onClick={() => {
-				if (pickedOnRelease) {
-					pickedOnRelease = false;
-					return;
-				}
-				activate(false);
-			}}
 			style={{
 				position: 'relative',
 				zIndex: 10,
