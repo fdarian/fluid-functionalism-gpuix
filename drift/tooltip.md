@@ -2,7 +2,7 @@
 
 Original: `registry/base/tooltip.tsx` (the docs page `app/docs/tooltip/page.tsx` imports the radix one, same API), demo in `app/docs/tooltip/page.tsx` of the source (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/tooltip.tsx`, demo in `src/demos/tooltip.tsx`.
 
-The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are tracked in `BASE-UI-AUDIT.md` ("Tooltip"); this file lists only what still looks or behaves differently.
+The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are tracked in `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` ("Tooltip"); this file lists only what still looks or behaves differently.
 
 ## The safe polygon needs pointer positions over bare window background
 
@@ -63,8 +63,8 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 
 ## Escape closes the tooltip before a dialog behind it
 
-- **Cause:** `port choice` (settled in `BASE-UI-AUDIT.md` "Tooltip", the tooltip joins gpuix's dismiss-layer stack).
-- **Original:** Base UI's tooltip and dialog are separate document-level listeners, so one Escape most likely closes both (`BASE-UI-AUDIT.md` reading; not run).
+- **Cause:** `port choice` (settled in `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` "Tooltip", the tooltip joins gpuix's dismiss-layer stack).
+- **Original:** Base UI's tooltip and dialog are separate document-level listeners, so one Escape most likely closes both (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` reading; not run).
 - **Port:** `<DismissableLayer onEscapeKeyDown={dismiss}>` while a hover-opened tooltip is open; a `forceOpen` one is not a layer (`src/components/tooltip.tsx:144-147`).
 - **Workaround:** n/a.
 - **Fidelity:** approximated (two Escapes to close both).
@@ -73,7 +73,7 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 ## A trigger that is several focusable controls is not handled
 
 - **Cause:** `not ported yet`.
-- **Original:** Base UI keeps a focus-opened tooltip when focus moves between elements inside one trigger (`BASE-UI-AUDIT.md` "Tooltip", keyboard row).
+- **Original:** Base UI keeps a focus-opened tooltip when focus moves between elements inside one trigger (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` "Tooltip", keyboard row).
 - **Port:** `onFocusOut` closes on any focus-out (`src/components/tooltip.tsx:226-229`).
 - **Workaround:** none; every port trigger is one control.
 - **Fidelity:** approximated.

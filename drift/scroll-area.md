@@ -2,7 +2,7 @@
 
 Original: `registry/base/scroll-area.tsx` plus the `scroll-fade` / `scroll-divider` utilities in `app/globals.css:1087-1236`, demo in `app/docs/scrollbars/page.tsx` of the source (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/scroll-area.tsx`, demo in `src/demos/scroll-area.tsx`.
 
-The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track press, wheel) are tracked in `BASE-UI-AUDIT.md` ("ScrollArea"); this file lists only what still looks or behaves differently.
+The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track press, wheel) are tracked in `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` ("ScrollArea"); this file lists only what still looks or behaves differently.
 
 ## A horizontal or both-axis scroller does not extend its scroll width from its content
 

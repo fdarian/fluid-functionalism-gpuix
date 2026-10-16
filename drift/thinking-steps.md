@@ -58,12 +58,12 @@ repeating it.
 
 ## Closed panel is `inert`, not `hidden`
 
-- **Cause:** `not ported yet`. gpuix has `display: none` (`FORK.md:564`; `BASE-UI-AUDIT.md:104`). The port's comment that gpuix has no `display: none` (`thinking-steps.tsx:205`) is out of date.
+- **Cause:** `not ported yet`. gpuix has `display: none` (`FORK.md:564`; `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:107`). The port's comment that gpuix has no `display: none` (`thinking-steps.tsx:205`) is out of date.
 - **Original:** the panel gets `hidden` once the exit animation finishes (`thinking-steps.tsx:195-218`).
 - **Port:** height 0, `overflow: hidden`, and `inert` the moment `open` goes false (`thinking-steps.tsx:199-219`). A closed panel's content is still laid out each frame, and is out of the accessibility tree from the start of the exit rather than the end.
 - **Workaround:** `inert`.
 - **Fidelity:** exact visually; the accessibility tree changes sooner.
-- **Components it hits:** accordion (`BASE-UI-AUDIT.md:49`).
+- **Components it hits:** accordion (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md:52`).
 
 ## Shimmer on the active step label
 

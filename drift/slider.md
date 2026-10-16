@@ -69,7 +69,7 @@ repeating it.
 - **Cause:** `not ported yet`.
 - **Original:** `hideFill`, `thumbColor`, `thumbBorderColor`, `trackClassName` / `trackStyle`, `fillClassName` / `fillStyle` (`slider.tsx:78-84`, applied at `:1134-1157`, `:935-937`), any of which forces the compact engine (`:1903-1915`); `className`, `ref` and HTML props land on the root (`:959-970`) or the comfortable row (`:1631`).
 - **Port:** `CompactProps` and `variant` / `size` only, plus a harness `testId` (`src/components/slider.tsx:362-376`, `:1289-1293`); `needsCompact` checks `size`, an array value, `steps`, `showSteps`, `showValue`, `valuePosition` (`:1284-1289`). The knob is always `#FFFFFF` (`:589`), the fill `selectedWash`, with no way to override either.
-- **Workaround:** none. Also in `BASE-UI-AUDIT.md` (Slider, last bullet).
+- **Workaround:** none. Also in `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` (Slider, last bullet).
 - **Fidelity:** dropped.
 - **Components it hits:** every ported component.
 
@@ -84,7 +84,7 @@ repeating it.
 
 ## `onChange` fires only when the value changes
 
-- **Cause:** `port choice` (the audit row "Emits only on change", `BASE-UI-AUDIT.md`).
+- **Cause:** `port choice` (the audit row "Emits only on change", `../base-ui-solid-gpuix/BASE-UI-AUDIT.md`).
 - **Original:** every pointer move and press calls `onChange` with the snapped value, changed or not (`slider.tsx:735`, `:788`, `:1473`).
 - **Port:** `emitChange` returns when `next === values()[thumb]` (`src/components/slider.tsx:539-548`); the comfortable `emit` does the same (`:1176-1178`).
 - **Workaround:** none.

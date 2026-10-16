@@ -67,9 +67,9 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 ## Releasing the press outside the popup does not cancel
 
 - **Cause:** `gpuix gap`.
-- **Original:** press the trigger, drag, release outside both trigger and popup: Base UI cancels (`SelectItem.tsx:194-236`, `SelectTrigger.tsx:27-129`, per `BASE-UI-AUDIT.md:535`).
+- **Original:** press the trigger, drag, release outside both trigger and popup: Base UI cancels (`SelectItem.tsx:194-236`, `SelectTrigger.tsx:27-129`, per `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:538`).
 - **Port:** rows judge the release (`select.tsx:338-346`); a release elsewhere leaves the popup open.
-- **gpuix lacks:** a mouse-up-outside event (per `BASE-UI-AUDIT.md:535`; not re-checked in gpuix).
+- **gpuix lacks:** a mouse-up-outside event (per `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:538`; not re-checked in gpuix).
 - **Workaround:** none; the press-and-drag commit itself is ported (400 ms or 8px, `select.tsx:34-37`).
 - **Fidelity:** dropped (the cancel).
 - **Components it hits:** just this one.
@@ -103,7 +103,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 ## Data-driven API and `null` for no value
 
-- **Cause:** `port choice` (data-driven `items`, not compound, per `BASE-UI-AUDIT.md:493`; reason otherwise not stated).
+- **Cause:** `port choice` (data-driven `items`, not compound, per `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:496`; reason otherwise not stated).
 - **Original:** compound `Select` / `SelectTrigger` / `SelectContent` / `SelectItem index` / `SelectGroup` / `SelectLabel` / `SelectSeparator`; `variant`, `icon`, `placeholder`, `error`, `size` on the trigger; value is a string, `""` for none; `className` and `ref` forwarded (`select.tsx:91-103`, `:254-263`, `:625-630`).
 - **Port:** one `Select` taking `items` (items, `{ type: "label" }`, `{ type: "separator" }`), `variant`, `size`, `placeholder`, `icon`, `error`, `popupWidth`, `labelledBy`, `label` (the trigger's `aria-label`; the source passes it to `SelectTrigger` as a prop), `hug` (port-only: the trigger is as wide as its content); value is `Value | null`; no `className` or `ref` (`select.tsx:114-136`).
 - **Workaround:** none.
@@ -130,7 +130,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 ## The list scrolls in a bare scroller
 
-- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup list scrolls in plain `overflow`, not ScrollArea"](dropdown.md#popup-list-scrolls-in-plain-overflow-not-scrollarea), where the entry lives. Here: original `select.tsx:536`; port `select.tsx:596-603` (`BASE-UI-AUDIT.md:530`: gpuix has `scrollbarWidth: "none"`, `onScroll` offsets and `maskImage`).
+- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup list scrolls in plain `overflow`, not ScrollArea"](dropdown.md#popup-list-scrolls-in-plain-overflow-not-scrollarea), where the entry lives. Here: original `select.tsx:536`; port `select.tsx:596-603` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md:533`: gpuix has `scrollbarWidth: "none"`, `onScroll` offsets and `maskImage`).
 
 ## Clicks between rows are not routed to the lit row
 

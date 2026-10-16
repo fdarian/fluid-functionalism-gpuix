@@ -40,7 +40,7 @@ repeating it.
 - **Cause:** `not ported yet`. `MotionValue.get()` is available, but whether it may be read inside a press handler was not tried.
 - **Original:** `originX: motionX.get()` (`switch.tsx:143-148`), so a press during a spring picks the thumb up where it is.
 - **Port:** `originX: restX()` (`src/components/switch.tsx:102`), the pressed-shape target. A press that starts dragging while the thumb is still springing makes it jump to that target on the first drag frame. Visible only when pressing during a spring.
-- **Workaround:** none. Listed in `BASE-UI-AUDIT.md` (Switch, "Drag starts from where the thumb is now").
+- **Workaround:** none. Listed in `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` (Switch, "Drag starts from where the thumb is now").
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 

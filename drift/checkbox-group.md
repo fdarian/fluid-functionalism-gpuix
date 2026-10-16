@@ -12,7 +12,7 @@ Same in both (checked against the code): row height, gap and padding per size (3
 - **Port:** one `FluidHighlight` per run, keyed by a stable run id (`createSelectionRuns`, `choice-group.tsx:80-92`; render in `ChoiceGroup`). Checking a bridge row makes the upper run spring (`moderate`) over the whole union, while the lower run's highlight fades out in place. Unchecking a middle row springs the one block shorter and a new block for the lower run appears at once.
 - **Workaround:** run ids survive a change, so a block that grows or shrinks at one end moves in place, as in FF.
 - **Fidelity:** approximated (growing, shrinking and moving runs match; merge and split lose the meeting-in-the-middle choreography).
-- **Components it hits:** just this one (radio-group has a single run). `BASE-UI-AUDIT.md` lists merge/split as out of scope only for combobox.
+- **Components it hits:** just this one (radio-group has a single run). `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` lists merge/split as out of scope only for combobox.
 
 ## Label weight (variable fonts)
 

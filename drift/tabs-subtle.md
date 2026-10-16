@@ -30,7 +30,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 ## Horizontal overflow
 
-- **Cause:** `not ported yet` (BASE-UI-AUDIT row 141: no demo overflows; no gpuix cause).
+- **Cause:** `not ported yet` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` row 144: no demo overflows; no gpuix cause).
 - **Original:** `overflow-x-auto scrollbar-hide`, with the `-mx-1 px-1` padding giving the focus ring room, and Base UI scrolls a focused tab into view (`tabs-subtle.tsx:166-175`).
 - **Port:** no scroller, no scroll-into-view; a list wider than its parent overflows (`tabs-subtle.tsx:167-174`).
 - **Workaround:** none.
