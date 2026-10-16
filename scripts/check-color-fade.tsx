@@ -42,7 +42,6 @@ const k = await createCheck(
 				style={{
 					width: 40,
 					height: 40,
-					boxSizing: "border-box",
 					borderWidth: 10,
 					borderStyle: "solid",
 					borderColor: on() ? "#ffffff" : "#000000",
