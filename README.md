@@ -53,7 +53,7 @@ while the display sleeps, but that is unconfirmed. Run it with the screen awake.
 
 ## Adding a component
 
-A component adds `src/components/<name>.tsx`, `src/demos/<name>.tsx` and `limitations/<name>.md`, and edits no shared
+A component adds `src/components/<name>.tsx`, `src/demos/<name>.tsx` and `drift/<name>.md`, and edits no shared
 file. `src/lib/demo.ts` finds every `src/demos/*.tsx` with `Bun.Glob` and a dynamic `import` at startup (restart
 `--hot` to pick up a new file), and the sidebar lists the demos by title. A demo file exports:
 
@@ -66,7 +66,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {};  // option
 
 `scenarios` drives `screenshots.tsx` with `shot.hover / click / down / up / press / moveTo / clickAt / scroll /
 settle / expectText / capture`; see `ShotContext` in `src/lib/demo.ts`. Give elements a `testId` to target them.
-`limitations/_TEMPLATE.md` is the shape of a limitations file.
+`drift/_TEMPLATE.md` is the shape of a limitations file.
 
 <details>
 <summary>Shared code in <code>src/lib/</code></summary>
@@ -94,7 +94,7 @@ Everything the port used to work around and gpuix now does (bubbling hover and p
 focus modality, ARIA and `inert`, forms, `fit="flip"` placement, motion values, colour transitions, gradients,
 sticky, masks and the rest) is gone from this list. Where the port still does not use such a feature, that is a gap
 in the port, tracked row by row in [`BASE-UI-AUDIT.md`](BASE-UI-AUDIT.md), not a gpuix limitation. Each component's
-own file in [`limitations/`](limitations) has the detail. "Bug" means gpuix does something wrong or inconsistent;
+own file in [`drift/`](drift) has the detail. "Bug" means gpuix does something wrong or inconsistent;
 "missing" means it does not offer it. A count is given only where the code shows it.
 
 ### Bugs
@@ -102,7 +102,7 @@ own file in [`limitations/`](limitations) has the detail. "Bug" means gpuix does
 | Used by | What | Workaround here |
 |---|---|---|
 | combobox, dropdown, select, tooltip (every popup on gpuix's `DismissableLayer`), and `returnFocusTo` in dropdown, select, color-picker | `VIEW_BUSY`: reading focus state (`getFocusedElementId`, `matches(":focus")`) inside a mousedown, mouseup, click or wheel handler throws on macOS, because those run in synchronous dispatch. gpuix's own `DismissableLayer` does it, so a pointer-opened popup fails to open (seen headless, likely live too). There is no `document.activeElement` | none yet |
-| slider | `MotionValue.animate` and `jump` throw inside a press, release or key handler ("This renderer call cannot run inside an event handler that native called synchronously"), where Framer's `animate` and `set` run freely. Values derived in JS (`createTransform` of several values) trail their inputs by one frame (FORK.md:915-917) | `createMotionWrites` queues each write in a microtask (`limitations/slider.md`) |
+| slider | `MotionValue.animate` and `jump` throw inside a press, release or key handler ("This renderer call cannot run inside an event handler that native called synchronously"), where Framer's `animate` and `set` run freely. Values derived in JS (`createTransform` of several values) trail their inputs by one frame (FORK.md:915-917) | `createMotionWrites` queues each write in a microtask (`drift/slider.md`) |
 | accordion, banner, button, card, carousel-dots, chat-message, input-copy, input-message, tabs, tabs-subtle, thinking-steps (all use `buttonProps`) | `buttonProps` handles keydown on the way up, so a `buttonProps` element nested in another is clicked twice on Enter: the inner one clicks itself and the outer one clicks the same target. The fix is to act only when `target === currentTarget` | none; nested cases are not counted |
 | dialog, mobile-drawer | `DialogBackdrop` closes on mousedown; the DOM and Base UI close on click | The app's own backdrop div closes on a click that presses and releases on it |
 | dialog, mobile-drawer | A reactive prop change on `DialogPopup` re-creates the popup and loses focus | `aria-labelledby` and `-describedby` are static ids |
@@ -132,7 +132,7 @@ own file in [`limitations/`](limitations) has the detail. "Bug" means gpuix does
 | not counted | `em`, `rem`, `vw` and `vh` units | Pixel numbers |
 | not counted | `disabled` on anything but an input: other elements get `aria-disabled` only, so they stay focusable and clickable | `aria-disabled` plus the component's own guard |
 | not counted | `url()` backgrounds and masks | `<img>` elements and SVG `<mask>` |
-| command-menu (and every long demo page) | Culling: elements a scroller clips away are still built, laid out and painted each frame, so a page of many menus costs several times a short one (`<virtual-list>` is the only exception) | `DemoCard` hides its content with `display: none` while it is far from the page scroller (`limitations/command-menu.md`) |
+| command-menu (and every long demo page) | Culling: elements a scroller clips away are still built, laid out and painted each frame, so a page of many menus costs several times a short one (`<virtual-list>` is the only exception) | `DemoCard` hides its content with `display: none` while it is far from the page scroller (`drift/command-menu.md`) |
 | file-thumbnail | A canvas pixel path (a PDF page preview) | The caller passes a type and the thumbnail shows a glyph |
 | not counted | Effect groups (`filter`, `backdrop-filter`, `mask`, `clip`, group opacity) off macOS | none |
 | carousel-dots, file-thumbnail, thinking-indicator, thinking-steps | `requestAnimationFrame` | `lib/clock.ts`: one shared, ref-counted `setInterval` frame clock |

@@ -1,4 +1,4 @@
-# app-frame
+# site
 
 Original: none. fluidfunctionalism.com is a web page; the browser supplies the window chrome. This is the port's own browser-style frame, in `src/lib/app-frame.tsx` and the `render()` options in `src/main.tsx`.
 

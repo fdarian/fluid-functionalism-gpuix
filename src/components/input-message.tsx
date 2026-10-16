@@ -820,7 +820,7 @@ export function InputMessage(props: InputMessageProps) {
 			return;
 		}
 		// gpuix's textarea binds the arrow keys as editor actions and never reports them
-		// here, so Ctrl-P / Ctrl-N walk the lists too (see limitations/input-message.md).
+		// here, so Ctrl-P / Ctrl-N walk the lists too (see drift/input-message.md).
 		const plain =
 			event.shiftKey !== true &&
 			event.altKey !== true &&
