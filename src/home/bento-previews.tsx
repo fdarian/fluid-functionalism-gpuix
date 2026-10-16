@@ -1,6 +1,15 @@
 import type { EventPayload } from "@gpuix/solid";
-import { createSignal, For, type JSX } from "solid-js";
+import { createSignal, For, type JSX, useContext } from "solid-js";
+import {
+	AccordionContent,
+	AccordionGroup,
+	AccordionItem,
+	AccordionTrigger,
+} from "../components/accordion";
 import { AskUserQuestions } from "../components/ask-user-questions";
+import { Badge, type BadgeColor } from "../components/badge";
+import { Button, type ButtonVariant } from "../components/button";
+import { CarouselDots } from "../components/carousel-dots";
 import {
 	Card,
 	CardGroup,
@@ -10,6 +19,7 @@ import {
 } from "../components/card";
 import { ChatMessage } from "../components/chat-message";
 import { CheckboxGroup, CheckboxItem } from "../components/checkbox-group";
+import { ColorPicker } from "../components/color-picker";
 import { Combobox } from "../components/combobox";
 import {
 	CommandMenu,
@@ -18,6 +28,19 @@ import {
 	CommandMenuList,
 	CommandMenuPanel,
 } from "../components/command-menu";
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "../components/dialog";
+import { Dropdown, MenuItem } from "../components/dropdown";
+import { InputCopy } from "../components/input-copy";
+import { InputField, InputGroup } from "../components/input-group";
 import { InputMessage } from "../components/input-message";
 import { RadioGroup, RadioItem } from "../components/radio-group";
 import { Select } from "../components/select";
@@ -31,7 +54,17 @@ import {
 	SidebarMenuButton,
 	SidebarSearchField,
 } from "../components/sidebar";
+import { Slider, type SliderValue } from "../components/slider";
 import { Switch } from "../components/switch";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "../components/table";
+import { TabItem, Tabs, TabsList } from "../components/tabs";
 import { TabsSubtle, TabsSubtleItem } from "../components/tabs-subtle";
 import { ThinkingIndicator } from "../components/thinking-indicator";
 import {
@@ -43,9 +76,12 @@ import {
 	ThinkingStepsContent,
 	ThinkingStepsHeader,
 } from "../components/thinking-steps";
+import { Tooltip } from "../components/tooltip";
+import { createSlides, SLIDES, Slide } from "../demos/carousel-dots";
 import type { IconRef } from "../lib/icons";
 import { color, siteType, weight } from "../lib/theme";
 import { ASK_USER_EXAMPLE_QUESTIONS } from "./ask-user-example";
+import { BentoTileContext } from "./bento-card";
 import {
 	COMMAND_MENU_ITEMS,
 	COMMAND_MENU_SUGGESTIONS,
@@ -528,6 +564,389 @@ function AskUserQuestionsPreview() {
 	);
 }
 
+const SLIDER_OPACITY = { label: "Opacity", initial: 35 };
+const SLIDER_VOLUME = { label: "Volume", initial: 60 };
+
+function SliderPreview() {
+	const [basic, setBasic] = createSignal<SliderValue>(SLIDER_OPACITY.initial);
+	const [volume, setVolume] = createSignal<SliderValue>(SLIDER_VOLUME.initial);
+	const muted = { ...siteType.body, color: color.mutedForeground };
+	return (
+		<div
+			style={{
+				display: "flex",
+				flexDirection: "column",
+				gap: 32,
+				width: "100%",
+				maxWidth: 280,
+			}}
+		>
+			<div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+				<div
+					style={{
+						display: "flex",
+						flexDirection: "row",
+						justifyContent: "space-between",
+					}}
+				>
+					<text style={muted}>{SLIDER_OPACITY.label}</text>
+					<text style={muted}>{String(basic())}</text>
+				</div>
+				<Slider value={basic()} onChange={setBasic} showValue={false} />
+			</div>
+			<Slider
+				variant="scrubber"
+				label={SLIDER_VOLUME.label}
+				value={volume()}
+				onChange={setVolume}
+				min={0}
+				max={100}
+				formatValue={(value) => `${value}%`}
+			/>
+		</div>
+	);
+}
+
+/** The source's "Accessible by default" row carries a heart; the port's icon tables have none, so it takes the shield. */
+const DROPDOWN_ITEMS: { icon: IconRef; label: string }[] = [
+	{ icon: "circle", label: "Spring animations" },
+	{ icon: "star", label: "Fluid hover" },
+	{ icon: "plus", label: "Font weight shifts" },
+	{ icon: "shield", label: "Accessible by default" },
+	{ icon: "check", label: "Radix or Base UI" },
+	{ icon: "brain", label: "Functional clarity" },
+];
+
+function DropdownPreview() {
+	const [selected, setSelected] = createSignal<number | null>(0);
+	return (
+		<Capped maxWidth={280}>
+			<Dropdown checkedIndex={selected() ?? undefined}>
+				<For each={DROPDOWN_ITEMS}>
+					{(item, index) => (
+						<MenuItem
+							index={index()}
+							icon={item.icon}
+							label={item.label}
+							checked={selected() === index()}
+							onSelect={() =>
+								setSelected(selected() === index() ? null : index())
+							}
+						/>
+					)}
+				</For>
+			</Dropdown>
+		</Capped>
+	);
+}
+
+const TABS_ITEMS = [
+	{ value: "overview", label: "Overview" },
+	{ value: "analytics", label: "Analytics" },
+	{ value: "settings", label: "Settings" },
+	{ value: "logs", label: "Logs" },
+];
+
+function TabsPreview() {
+	const [tab, setTab] = createSignal("overview");
+	return (
+		<Capped maxWidth={360}>
+			<Tabs value={tab()} onValueChange={setTab}>
+				<TabsList>
+					<For each={TABS_ITEMS}>
+						{(item) => <TabItem value={item.value} label={item.label} />}
+					</For>
+				</TabsList>
+			</Tabs>
+		</Capped>
+	);
+}
+
+function InputCopyPreview() {
+	return (
+		<Capped maxWidth={420}>
+			<InputCopy value="npx shadcn@latest registry add @fluid" />
+		</Capped>
+	);
+}
+
+const ACCORDION_ITEMS = [
+	{
+		value: "item-1",
+		title: "What is Fluid Functionalism?",
+		content:
+			"A design philosophy where every animation serves a functional purpose — motion is information, not decoration.",
+	},
+	{
+		value: "item-2",
+		title: "How does fluid hover work?",
+		content:
+			"The closest item to your cursor is highlighted before you click, reducing targeting errors.",
+	},
+	{
+		value: "item-3",
+		title: "Why spring physics?",
+		content:
+			"Springs respond naturally to interruption — if a user reverses mid-transition, the animation adapts.",
+	},
+	{
+		value: "item-4",
+		title: "Is it compatible with shadcn/ui?",
+		content:
+			"Yes. Your existing theme, radius tokens, and setup apply automatically.",
+	},
+	{
+		value: "item-5",
+		title: "How do I install a component?",
+		content:
+			"One CLI command — dependencies and shared utilities resolve themselves.",
+	},
+];
+
+function AccordionPreview() {
+	return (
+		<Capped maxWidth={420}>
+			<AccordionGroup type="single" defaultValue="item-1">
+				<For each={ACCORDION_ITEMS}>
+					{(item) => (
+						<AccordionItem value={item.value}>
+							<AccordionTrigger>{item.title}</AccordionTrigger>
+							<AccordionContent>
+								<text
+									style={{
+										...siteType.body,
+										color: color.mutedForeground,
+									}}
+								>
+									{item.content}
+								</text>
+							</AccordionContent>
+						</AccordionItem>
+					)}
+				</For>
+			</AccordionGroup>
+		</Capped>
+	);
+}
+
+const INPUT_FIELDS: {
+	key: string;
+	label: string;
+	placeholder: string;
+	icon: IconRef;
+}[] = [
+	{ key: "name", label: "Name", placeholder: "Your name", icon: "user" },
+	{
+		key: "email",
+		label: "Email",
+		placeholder: "you@example.com",
+		icon: "mail",
+	},
+	{
+		key: "website",
+		label: "Website",
+		placeholder: "fluidfunctionalism.com",
+		icon: "globe",
+	},
+];
+
+function InputGroupPreview() {
+	const [values, setValues] = createSignal<Record<string, string>>({});
+	return (
+		<Capped maxWidth={320}>
+			<InputGroup>
+				<For each={INPUT_FIELDS}>
+					{(field, index) => (
+						<InputField
+							index={index()}
+							label={field.label}
+							placeholder={field.placeholder}
+							icon={field.icon}
+							value={values()[field.key] ?? ""}
+							onChange={(next) => setValues({ ...values(), [field.key]: next })}
+						/>
+					)}
+				</For>
+			</InputGroup>
+		</Capped>
+	);
+}
+
+/** A small carousel on the dots' autoplay; hovering the slide pauses it. */
+function CarouselDotsPreview() {
+	const slides = createSlides();
+	const [hovering, setHovering] = createSignal(false);
+	return (
+		<div
+			style={{
+				display: "flex",
+				flexDirection: "column",
+				alignItems: "center",
+				gap: 12,
+			}}
+		>
+			<div
+				onMouseEnter={() => setHovering(true)}
+				onMouseLeave={() => setHovering(false)}
+			>
+				<Slide
+					index={slides.state().slide}
+					direction={slides.state().direction}
+					width={192}
+					height={64}
+				/>
+			</div>
+			<div {...slides.markByHand}>
+				<CarouselDots
+					count={SLIDES.length}
+					value={slides.state().slide}
+					onValueChange={slides.onValueChange}
+					autoplay={{ duration: 2400, paused: hovering() }}
+					getLabel={(index: number) => `Show ${SLIDES[index]}`}
+				/>
+			</div>
+		</div>
+	);
+}
+
+const BUTTON_ITEMS: { label: string; variant: ButtonVariant }[] = [
+	{ label: "Primary", variant: "primary" },
+	{ label: "Secondary", variant: "secondary" },
+	{ label: "Tertiary", variant: "tertiary" },
+	{ label: "Ghost", variant: "ghost" },
+];
+
+function ButtonPreview() {
+	return (
+		<div
+			style={{
+				display: "flex",
+				flexDirection: "row",
+				flexWrap: "wrap",
+				alignItems: "center",
+				justifyContent: "center",
+				gap: 8,
+			}}
+		>
+			<For each={BUTTON_ITEMS}>
+				{(item) => (
+					<Button variant={item.variant} size="compact">
+						{item.label}
+					</Button>
+				)}
+			</For>
+		</div>
+	);
+}
+
+const TABLE_COLUMNS = ["Name", "Role", "Status"];
+const TABLE_ROWS = [
+	["Alice", "Engineer", "Active"],
+	["Bob", "Designer", "Away"],
+	["Carol", "PM", "Active"],
+	["Dan", "Engineer", "Offline"],
+	["Erin", "Researcher", "Active"],
+	["Farid", "Support", "Away"],
+	["Gwen", "Designer", "Active"],
+];
+
+function TablePreview() {
+	const inTile = useContext(BentoTileContext);
+	// Four rows fit a medium tile's stage; outside a tile all seven show.
+	const rows = () => (inTile ? TABLE_ROWS.slice(0, 4) : TABLE_ROWS);
+	return (
+		<Capped maxWidth={420}>
+			<Table>
+				<TableHeader>
+					<TableRow>
+						<For each={TABLE_COLUMNS}>
+							{(column) => <TableHead>{column}</TableHead>}
+						</For>
+					</TableRow>
+				</TableHeader>
+				<TableBody>
+					<For each={rows()}>
+						{(row, index) => (
+							<TableRow index={index()}>
+								<For each={row}>{(cell) => <TableCell>{cell}</TableCell>}</For>
+							</TableRow>
+						)}
+					</For>
+				</TableBody>
+			</Table>
+		</Capped>
+	);
+}
+
+function DialogPreview() {
+	return (
+		<Dialog>
+			<DialogTrigger>
+				<Button variant="secondary" size="compact">
+					Open Dialog
+				</Button>
+			</DialogTrigger>
+			<DialogContent size="sm">
+				<DialogHeader>
+					<DialogTitle>Create teamspace</DialogTitle>
+					<DialogDescription>
+						Add a new teamspace to organize your projects.
+					</DialogDescription>
+				</DialogHeader>
+				<DialogFooter>
+					<DialogClose>
+						<Button variant="ghost">Cancel</Button>
+					</DialogClose>
+					<Button>Create</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	);
+}
+
+function ColorPickerPreview() {
+	return <ColorPicker defaultValue="#6B97FF" />;
+}
+
+function TooltipPreview() {
+	return (
+		<Tooltip content="Copy to clipboard">
+			<Button variant="secondary" size="compact">
+				Hover me
+			</Button>
+		</Tooltip>
+	);
+}
+
+const BADGE_ITEMS: { label: string; color: BadgeColor }[] = [
+	{ label: "Published", color: "blue" },
+	{ label: "Active", color: "green" },
+	{ label: "Declined", color: "red" },
+];
+
+function BadgePreview() {
+	return (
+		<div
+			style={{
+				display: "flex",
+				flexDirection: "row",
+				flexWrap: "wrap",
+				alignItems: "center",
+				justifyContent: "center",
+				gap: 6,
+			}}
+		>
+			<For each={BADGE_ITEMS}>
+				{(item) => (
+					<Badge variant="dot" color={item.color}>
+						{item.label}
+					</Badge>
+				)}
+			</For>
+		</div>
+	);
+}
+
 /** Slug -> the live preview a home tile shows; a slug with no entry renders an empty stage. */
 export const previewMap: Record<string, () => JSX.Element> = {
 	"input-message": InputMessagePreview,
@@ -544,4 +963,17 @@ export const previewMap: Record<string, () => JSX.Element> = {
 	"tabs-subtle": TabsSubtlePreview,
 	"checkbox-group": CheckboxGroupPreview,
 	"ask-user-questions": AskUserQuestionsPreview,
+	slider: SliderPreview,
+	dropdown: DropdownPreview,
+	tabs: TabsPreview,
+	"input-copy": InputCopyPreview,
+	accordion: AccordionPreview,
+	"input-group": InputGroupPreview,
+	"carousel-dots": CarouselDotsPreview,
+	button: ButtonPreview,
+	table: TablePreview,
+	dialog: DialogPreview,
+	"color-picker": ColorPickerPreview,
+	tooltip: TooltipPreview,
+	badge: BadgePreview,
 };

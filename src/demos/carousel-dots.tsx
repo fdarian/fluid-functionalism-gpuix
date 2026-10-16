@@ -5,13 +5,13 @@ import type { DemoModule } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
 import { color, shape, type as scale, motion as tween } from "../lib/theme";
 
-const SLIDES = ["Inbox", "Drafts", "Sent", "Archive"];
+export const SLIDES = ["Inbox", "Drafts", "Sent", "Archive"];
 /** How far a slide's label travels sideways on a change, in px. */
 const SLIDE_SHIFT = 24;
 const SLIDE_SIZE = 160;
 
 /** Slide state plus the direction of the last change. A dot picked by hand goes the way the index goes; autoplay wrapping around keeps moving forward. */
-function createSlides() {
+export function createSlides() {
 	const [state, setState] = createSignal({ slide: 0, direction: 1 });
 	let byHand = false;
 	return {
@@ -38,13 +38,18 @@ function createSlides() {
 }
 
 /** The label slides sideways: the new one comes in from the direction of travel and the old one leaves the other way. */
-function Slide(props: { index: number; direction: number }) {
+export function Slide(props: {
+	index: number;
+	direction: number;
+	width?: number;
+	height?: number;
+}) {
 	return (
 		<div
 			style={{
 				position: "relative",
-				width: SLIDE_SIZE,
-				height: SLIDE_SIZE,
+				width: props.width ?? SLIDE_SIZE,
+				height: props.height ?? SLIDE_SIZE,
 				overflow: "hidden",
 				borderRadius: shape.container,
 				borderWidth: 1,
