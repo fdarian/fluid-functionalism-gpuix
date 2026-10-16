@@ -17,11 +17,12 @@ import {
 	Show,
 } from "solid-js";
 import { Icon } from "../lib/icon";
-import { defineIcon } from "../lib/icons";
+import type { IconRef } from "../lib/icons";
 import { createPointerCapture } from "../lib/pointer-capture";
 import {
 	color,
-	radius,
+	nestedRadius,
+	shape,
 	type as scale,
 	scheme,
 	shadow3,
@@ -30,14 +31,6 @@ import {
 } from "../lib/theme";
 import { type FileLike, FileThumbnail } from "./file-thumbnail";
 import { Tooltip } from "./tooltip";
-
-const pencilGlyph = defineIcon(
-	'<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
-);
-const xGlyph = defineIcon('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>');
-const cornerDownRightGlyph = defineIcon(
-	'<path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/>',
-);
 
 /** A message held back while the assistant is replying: its text and a snapshot of what was attached. */
 export interface QueuedMessage {
@@ -78,7 +71,7 @@ function expandedStackHeight(count: number) {
 
 function CardAction(props: {
 	label: string;
-	glyph: typeof xGlyph;
+	glyph: IconRef;
 	stroke: number;
 	testId?: string;
 	onClick: () => void;
@@ -100,7 +93,7 @@ function CardAction(props: {
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
-					borderRadius: radius.item,
+					borderRadius: shape.button,
 					cursor: "pointer",
 					hover: { backgroundColor: color.hover },
 				}}
@@ -352,7 +345,7 @@ export function QueuedStack(props: {
 										</Show>
 									</AnimatePresence>
 									<Icon
-										name={cornerDownRightGlyph}
+										name="corner-down-right"
 										size={16}
 										strokeWidth={2}
 										color={color.mutedForeground}
@@ -466,7 +459,7 @@ function QueueCard(props: {
 				paddingLeft: files().length > 0 ? 8 : 14,
 				paddingRight: 6,
 				overflow: "hidden",
-				borderRadius: radius.item,
+				borderRadius: shape.bg,
 				borderWidth: 1,
 				borderColor: color.popupBorder,
 				boxShadow: shadow3(),
@@ -514,7 +507,7 @@ function QueueCard(props: {
 						}}
 					>
 						<For each={files().slice(0, 3)}>
-							{(file) => <FileThumbnail file={file} size={28} radius={0} />}
+							{(file) => <FileThumbnail file={file} size={28} radius={nestedRadius(shape.bg, 8)} />}
 						</For>
 						<Show when={files().length > 3}>
 							<div
@@ -561,14 +554,14 @@ function QueueCard(props: {
 				>
 					<CardAction
 						label="Edit"
-						glyph={pencilGlyph}
+						glyph="pencil"
 						stroke={2}
 						testId={`edit-${props.item.id}`}
 						onClick={props.onEdit}
 					/>
 					<CardAction
 						label="Remove"
-						glyph={xGlyph}
+						glyph="x"
 						stroke={2.5}
 						testId={`remove-${props.item.id}`}
 						onClick={props.onRemove}

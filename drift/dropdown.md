@@ -22,7 +22,7 @@ One entry per place the port looks or behaves differently from the source, whate
 - **gpuix lacks:** that read: `mousedown` and `pointerdown` (and, per `~/code/fdarian/gpuix/FORK.md:359-364`, `mouseup`, `click` and `wheel`) handlers run inside the synchronous input dispatch on macOS and in the test renderer, where `getFocusedElementId` throws "The root view is being updated by the input" (`packages/native/src/events/sync_dispatch.rs:154`). An earlier probe on the test renderer found it throws in `onMouseDown` and answers in `onClick` and `onKeyDown`; that was not re-run for this audit, and the README row says click throws too. gpuix's own `DismissableLayer` makes the same read while it mounts, so a pointer press that opens a popup throws (README Bugs row "every popup on gpuix's `DismissableLayer`").
 - **Workaround:** the recorded id above.
 - **Fidelity:** exact for the open; unverified for the close. A press closes the menu from a `mousedown` handler in two places: the trigger's second press (`createPressToggle` `onMouseDown`, `src/lib/popup-trigger.ts:43-47` into `scope.setOpen(false)`) and an outside press (`onMouseDownOutside`, `dropdown.tsx:985`). Both reach `returnFocusTo`, which reads focus first (`popup-trigger.ts:13`), and `popup.matches(":focus-within")` before that, which may throw the same way. No scenario in `src/demos/dropdown.tsx` closes the menu that way (row picks close from `click` and `mouseup`, which the scenarios do run), so whether those two closes throw is not known.
-- **Components it hits:** any popup opened or closed on press: select (`src/components/select.tsx:243`) and color-picker (`src/components/color-picker.tsx:778`) also call `returnFocusTo`.
+- **Components it hits:** any popup opened or closed on press: select (`src/components/select.tsx:243`) and color-picker (`src/components/color-picker.tsx:820`) also call `returnFocusTo`.
 
 ## Tab from a popup row does not continue after the trigger
 
@@ -38,7 +38,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `gpuix gap`. README "Missing features" row "Intrinsic width".
 - **Original:** the popup is `w-72 min-w-[var(--anchor-width)] max-w-full` (`registry/base/dropdown.tsx:708`) and grows with the trigger; the inline panel is `w-72 max-w-full` (`:187`); submenus are `w-56`.
-- **Port:** a fixed 288px panel (`PANEL_WIDTH`, `src/components/dropdown.tsx:56`, `:774`, `:1067`) and 224px submenus (`SUB_WIDTH`, `:57`, `:1324`), never narrower than the trigger (`minWidth: "anchor-size(width)"`, `src/lib/popup.tsx:94`). The inline panel is `flexShrink: 0` (`:775`), so it does not shrink in a narrow container, where the source's `max-w-full` does.
+- **Port:** a fixed 288px panel (`PANEL_WIDTH`, `src/components/dropdown.tsx:56`, `:774`, `:1067`) and 224px submenus (`SUB_WIDTH`, `:57`, `:1324`), never narrower than the trigger (`minWidth: "anchor-size(width)"`, `src/lib/popup.tsx:103`). The inline panel is `flexShrink: 0` (`:775`), so it does not shrink in a narrow container, where the source's `max-w-full` does.
 - **gpuix lacks:** intrinsic sizing keywords for `width`: `max-content`, `min-content` and `fit-content` are rejected as "invalid dimension" (they exist in grid tracks only, `packages/native/js/host.ts:420-425`).
 - **Workaround:** the fixed widths above.
 - **Fidelity:** approximated. The source's popup never actually grows past `w-72` either (its width is fixed unless the trigger is wider), so the loss is the `max-w-full` clamp only.
@@ -48,7 +48,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `gpuix gap`. README "Missing features" row "CSS transforms".
 - **Original:** every popup, submenus included, enters and exits with `scaleY: 0.96` about its side's origin (`registry/base/dropdown.tsx:622-630`); the root popup also slides 4px from the resolved side (`--popup-enter-y`, `registry/default/lib/popup.ts:17-26`), side popups (submenus) slide 0px but still scale.
-- **Port:** the root popup slides 4px from the reported side and fades (`src/lib/popup.tsx:64`, `:84-90`); a submenu only fades (`src/components/dropdown.tsx:1311-1316`). Timings are the source's: enter `spring.fast` (80 ms), exit 60 ms tween.
+- **Port:** the root popup slides 4px from the reported side and fades (`src/lib/popup.tsx:69`, `:90-96`); a submenu only fades (`src/components/dropdown.tsx:1311-1316`). Timings are the source's: enter `spring.fast` (80 ms), exit 60 ms tween.
 - **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:876-887`).
 - **Workaround:** the slide and fade above.
 - **Fidelity:** approximated.
@@ -58,7 +58,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `gpuix gap`. README "Missing features" row "Variable-font axes".
 - **Original:** a lit or checked row's label eases from `wght 400` to `550` over 80 ms (`registry/default/menu-item.tsx:224-233`); 
-- **Port:** `StableLabel` switches at once to SemiBold 600 (`src/components/menu-item.tsx:227-232`, `src/lib/theme.ts:278`).
+- **Port:** `StableLabel` switches at once to SemiBold 600 (`src/components/menu-item.tsx:227-232`, `src/lib/theme.ts:372`).
 - **Fidelity:** approximated.
 - **Components it hits:** every `StableLabel` (tabs, tabs-subtle, sidebar, menu rows).
 
@@ -80,9 +80,9 @@ One entry per place the port looks or behaves differently from the source, whate
 
 ## Popup shadow is one drop and a border
 
-- **Cause:** `not ported yet`. gpuix paints multi-layer and inset `boxShadow` (`~/code/fdarian/gpuix/FORK.md:646-649`); the comment above `shadow3` in `src/lib/theme.ts:329` ("gpuix paints one outer shadow") is stale.
+- **Cause:** `not ported yet`. gpuix paints multi-layer and inset `boxShadow` (`~/code/fdarian/gpuix/FORK.md:646-649`); the comment above `shadow3` in `src/lib/theme.ts:470` ("gpuix paints one outer shadow") is stale.
 - **Original:** `Elevated shadowLevel={3}` (`registry/base/dropdown.tsx:133-135`, `:641-645`): `--shadow-3` is a 1px ring, a `0 1px 1px -0.5px` drop and a `0 3px 3px -1.5px` drop in light (`app/globals.css:139`); in dark it adds an inset top highlight, an inset ring and a 1px outer ring (`:162`).
-- **Port:** a 1px `popupBorder` border plus one `0 3px 3px -1.5px` drop (`src/lib/popup.tsx:97-101`, `src/components/dropdown.tsx:778-784`, `:1327-1333`; `src/lib/theme.ts:332`). No `1px` drop and no dark-mode inset highlight, so the dark popup edge reads flatter.
+- **Port:** a 1px `popupBorder` border plus one `0 3px 3px -1.5px` drop (`src/lib/popup.tsx:106-110`, `src/components/dropdown.tsx:778-784`, `:1327-1333`; `src/lib/theme.ts:470`). No `1px` drop and no dark-mode inset highlight, so the dark popup edge reads flatter.
 - **Workaround:** the border stands in for the ring.
 - **Fidelity:** approximated.
 - **Components it hits:** every popup and card (select, combobox, dialog, color-picker, tooltip).
@@ -101,13 +101,13 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Original:** rows scroll inside `ScrollArea` with the hover-revealed thumb and a 32px `scroll-fade` on the viewport, dropped while a search field is mounted (`registry/base/dropdown.tsx:714`; `registry/default/lib/popup.ts:35-37`).
 - **Port:** a `div` with `overflowY: "scroll"` (`src/components/dropdown.tsx:634-645`): no custom thumb, no edge fade.
 - **Fidelity:** approximated.
-- **Components it hits:** select (`src/components/select.tsx:600`), combobox (`:564`), command-menu (`:874`).
+- **Components it hits:** select (`src/components/select.tsx:601`), combobox (`:564`), command-menu (`:874`).
 
 ## Checked background appears with a fade instead of already being there
 
 - **Cause:** `not ported yet`. `FluidHighlight` has no `initial={false}` mode.
 - **Original:** the single-select background is `initial={false}`, so a row checked at mount, or at popup open (the rows stay registered between opens), shows the finished block (`registry/base/dropdown.tsx:195-215`, `:722-742`). It animates `top/left/width/height` on `spring.moderate`, opacity in 0.08 s, exit `spring.moderate.exit` (120 ms).
-- **Port:** `FluidHighlight` always starts at `opacity: 0` and fades in on the one `glide` transition, `moderate` (160 ms spring), for opacity too (`src/lib/fluid-highlight.tsx:74`; `src/components/dropdown.tsx:196-216`). On the inline demo and on every popup open the checked block fades in over about 160 ms rather than being present from frame one; exit is the same 120 ms tween.
+- **Port:** `FluidHighlight` always starts at `opacity: 0` and fades in on the one `glide` transition, `moderate` (160 ms spring), for opacity too (`src/lib/fluid-highlight.tsx:78`; `src/components/dropdown.tsx:196-216`). On the inline demo and on every popup open the checked block fades in over about 160 ms rather than being present from frame one; exit is the same 120 ms tween.
 - **Fidelity:** approximated.
 - **Components it hits:** any list that uses `FluidHighlight` for a selected background.
 
@@ -131,7 +131,6 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`.
 - **Original:** `useFluidHover` routes a click that lands between rows, in the 4px padding or past the last row, to the highlighted row, so what is lit is what a click hits; the popup and the inline panel both pass `handlers.onClick` (`registry/default/hooks/use-fluid-hover.ts:40-47`, `:583`; `registry/base/dropdown.tsx:144`, `:667`).
-- **Port:** no click handler on `MenuBody` (`src/components/dropdown.tsx:183-195`); the port's `createFluidHover` returns no `onClick` (`src/lib/fluid-hover.ts:191-209`). A click on the padding, a label or a separator does nothing.
 - **Fidelity:** dropped.
 - **Components it hits:** any list on `createFluidHover` (select, combobox, tabs, sidebar).
 
@@ -163,7 +162,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (nothing in gpuix prevents them) except where noted.
 - **Original:** `Dropdown` takes `size`, `aria-label`, `className` and `ref` (`registry/base/dropdown.tsx:94-107`); `DropdownMenu` takes `size` (`:328-332`); `DropdownContent` takes `className`, `ref`, `side`, `align` (`start | center | end`), `sideOffset`, `alignOffset` (`:400-415`); `DropdownSubContent` takes `sideOffset` and `alignOffset` (`:863-891`); `MenuItem` takes `className` and any `div` prop, `onClick` included (`registry/default/menu-item.tsx:121-136`); `DropdownSearch` takes any `input` prop (`dropdown-search.tsx:193-207`); `DropdownLabel`, `DropdownSeparator` and `DropdownEmpty` take `className`.
-- **Port:** `Dropdown` takes `checkedIndex`, `checkedIndices`, `testId` (`src/components/dropdown.tsx:671-677`); `DropdownContent` takes `align` (`start | end`) only (`:1039-1047`), with the side fixed at the bottom and a 6px gap (`src/lib/popup.tsx:11`); the submenu offsets are the constants `SUBMENU_SIDE_OFFSET` and `SUBMENU_ALIGN_OFFSET` (`:61-63`, `:1300-1303`); `MenuItem` has `chevron`, `submenu`, `onOpenSubmenu` and `testId` (`src/components/menu-item.tsx:104-123`). `DropdownLabel` and `DropdownEmpty` take a string child only (`:69`, `dropdown-search.tsx:46`). BASE-UI-AUDIT.md row 395 records `side`, `sideOffset` and `alignOffset` as a lead decision: no ported consumer.
+- **Port:** `Dropdown` takes `checkedIndex`, `checkedIndices`, `testId` (`src/components/dropdown.tsx:671-677`); `DropdownContent` takes `align` (`start | end`) only (`:1039-1047`), with the side fixed at the bottom and a 6px gap (`src/lib/popup.tsx:12`); the submenu offsets are the constants `SUBMENU_SIDE_OFFSET` and `SUBMENU_ALIGN_OFFSET` (`:61-63`, `:1300-1303`); `MenuItem` has `chevron`, `submenu`, `onOpenSubmenu` and `testId` (`src/components/menu-item.tsx:104-123`). `DropdownLabel` and `DropdownEmpty` take a string child only (`:69`, `dropdown-search.tsx:46`). BASE-UI-AUDIT.md row 395 records `side`, `sideOffset` and `alignOffset` as a lead decision: no ported consumer.
 - **Fidelity:** dropped for the missing props.
 - **Components it hits:** just this one.
 
@@ -171,7 +170,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `port choice` (reason not stated in the code; Solid has no `cloneElement`-style `render` merge, and the trigger's handlers must reach the element so the press, the id and `aria-*` are wired by hand).
 - **Original:** `Menu.Trigger` re-exported; `<DropdownTrigger render={<Button variant="ghost">Open menu</Button>} />` (`registry/base/dropdown.tsx:384`, docs `app/docs/dropdown/page.tsx:559-561`).
-- **Port:** `DropdownTrigger` calls its child with `{ attributes, onMouseDown, onClick, expanded }`, which every demo spreads onto the `Button` by hand (`src/components/dropdown.tsx:1002-1036`; `src/demos/dropdown.tsx:198-208`). The trigger has no `disabled` of its own; `DropdownMenu disabled` covers it.
+- **Port:** `DropdownTrigger` calls its child with `{ attributes, onMouseDown, onClick, expanded }`, which every demo spreads onto the `Button` by hand (`src/components/dropdown.tsx:1002-1036`; `src/demos/dropdown.tsx:502-512`). The trigger has no `disabled` of its own; `DropdownMenu disabled` covers it.
 - **Fidelity:** approximated (same behaviour, different call shape).
 - **Components it hits:** none other (select and combobox own their triggers).
 
@@ -207,13 +206,22 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
-## Demo page: no Playground, no section copy, extra and altered cards
+## Playground: no Get code dialog, preset URL or code snippet
 
-- **Cause:** `not ported yet` for the Playground and the copy; `port choice` (reason not stated; the added rows and cards feed the scenarios, `src/demos/dropdown.tsx:603`) for the additions.
-- **Original:** sections in order, each in a `ComponentPreview` with a Code tab (`app/docs/dropdown/page.tsx:509-810`): Playground, Basic, Groups, Triggered menu, Submenus, Multiple selection, Searchable menu, Searchable multiple selection, Create from the query, then 13 API Reference tables. The Playground (`lib/docs/playgrounds/dropdown.tsx`) drives a live dropdown: Mode (menu or inline), Selection (single, multiple, none), Search, Create from query, Icons, Groups, Disabled row, Submenu, a theme row set, a preset URL and a Get-code dialog. Sections open with a line of prose (for example "3 parts: `DropdownMenu`, `DropdownTrigger`, `DropdownContent`. Any element goes in `render`." and "Hover Move to, then cut across Share to its submenu: the highlight stays on Move to until you stop on another row."), and the page opens with "2 forms: an inline panel, or a popup on any trigger."
-- **Port:** nine `DemoCard`s titled "Dropdown, basic" and so on (`src/demos/dropdown.tsx:573-590`), with no prose, no Code tab, no API tables and no Playground. Previews are `minHeight: 56` where the source uses `min-h-[160px]` for the popup cases.
+- **Cause:** `not ported yet` (the site has no preset codec and no Code tab).
+- **Original:** the Playground (`lib/docs/playgrounds/dropdown.tsx`) has Mode, Selection, Search, Create from query, Icons, Groups, Disabled row and Submenu, a shuffle, a Get code dialog (`GetCodeDialog`, `:475`) and a preset URL kept in sync with the controls (`usePresetUrlSync`, `:237`). It rebuilds a Code tab snippet from the controls (`buildPlaygroundCode`, `:62-186`).
+- **Port:** all eight controls, their defaults, the derived constraints (Search and Submenu need the popup; Search turns Groups off; Create from query needs Search), the shuffle's odds and the preview are as the source, in `src/demos/dropdown.tsx` (`Playground`). No Get code dialog, no preset URL, no Code tab. The inline panel gets no `aria-label="Settings"`: `Dropdown` takes none (see "Props the port does not take").
+- **Workaround:** none.
+- **Fidelity:** dropped (Get code, preset URL, snippet); exact for the controls and the preview content.
+- **Components it hits:** every playground.
+
+## Demo page: no section copy, extra and altered cards
+
+- **Cause:** `not ported yet` for the copy; `port choice` (reason not stated; the added rows and cards feed the scenarios, `src/demos/dropdown.tsx`) for the additions.
+- **Original:** sections in order, each in a `ComponentPreview` with a Code tab (`app/docs/dropdown/page.tsx:509-810`): Playground, Basic, Groups, Triggered menu, Submenus, Multiple selection, Searchable menu, Searchable multiple selection, Create from the query, then 13 API Reference tables. Sections open with a line of prose (for example "3 parts: `DropdownMenu`, `DropdownTrigger`, `DropdownContent`. Any element goes in `render`." and "Hover Move to, then cut across Share to its submenu: the highlight stays on Move to until you stop on another row."), and the page opens with "2 forms: an inline panel, or a popup on any trigger."
+- **Port:** the Playground, then nine `DemoCard`s titled "Dropdown, basic" and so on, with no prose, no Code tab and no API tables. Previews are `minHeight: 56` where the source uses `min-h-[160px]` for the popup cases.
   - Basic, Groups, Triggered, Submenus, Multiple, Searchable, Searchable multiple and Creatable exist with the source's rows, icons, copy and initial state ("Create “…”", "No languages found", "Search languages", `Labels · 2`, statuses `[0, 1, 2]`, used `["Button", "Combobox"]`).
-  - Added: a "Dropdown, keyboard" card (Alpha to Charter with a disabled Beta and a picked/changes readout) and, in Submenus, a "Moved to ..." readout (`:233-307`, `:309-352`).
-  - Altered: the Groups card marks "Display" `disabled` (`src/demos/dropdown.tsx:185`); the source row is enabled (`app/docs/dropdown/page.tsx:547`).
-- **Fidelity:** all nine source variants present; the Playground and the prose dropped.
+  - Added: a "Dropdown, keyboard" card (Alpha to Charter with a disabled Beta and a picked/changes readout) and, in Submenus, a "Moved to ..." readout.
+  - Altered: the Groups card marks "Display" `disabled`; the source row is enabled (`app/docs/dropdown/page.tsx:547`). The scenario `inline-disabled-lit` walks onto it.
+- **Fidelity:** all nine source variants present; the prose dropped.
 - **Components it hits:** the section prose and Code tab are absent from every ported demo.

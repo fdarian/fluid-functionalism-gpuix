@@ -1,6 +1,5 @@
-import { type Accessor, createSignal, For, onCleanup, Show } from "solid-js";
+import { createEffect, createSignal, on, onCleanup, Show } from "solid-js";
 import { Button } from "../components/button";
-import { ChatMessage } from "../components/chat-message";
 import {
 	type ComposerFile,
 	fileFromPath,
@@ -8,9 +7,27 @@ import {
 	type InputMessageSlotContext,
 	type QueuedMessage,
 } from "../components/input-message";
-import { ThinkingIndicator } from "../components/thinking-indicator";
+import { collapsedStackHeight } from "../components/queued-stack";
+import { Tooltip } from "../components/tooltip";
+import {
+	ComposerQueueStack,
+	ComposerStage,
+	Transcript,
+	type Turn,
+} from "../lib/composer-stage";
 import type { DemoModule } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
+import {
+	PlayDivider,
+	PlayField,
+	PlaygroundLayout,
+	PlaygroundPanel,
+	PlaySection,
+	PlaySelect,
+	PlaySwitch,
+	pick,
+} from "../lib/playground";
+import { QueuedChat } from "../lib/queued-chat";
 
 const SUGGESTIONS = [
 	"What is Fluid Functionalism about?",
@@ -29,9 +46,12 @@ const RECEIPT: ComposerFile = {
 };
 
 type Section =
+	| "playground"
 	| "basic"
 	| "suggestions"
 	| "attachments"
+	| "queued-chat"
+	| "queued-rich"
 	| "queued"
 	| "slots"
 	| "send"
@@ -48,35 +68,226 @@ const STREAM_MS = 3000;
 export const title = "Input Message";
 export const group = "Components";
 
-type Turn = {
-	from: "user" | "assistant";
-	text: string;
-	files?: ComposerFile[];
-	thinking?: boolean;
-};
+type PlayStatus = "off" | "idle" | "streaming";
 
-function Transcript(props: { turns: Turn[] }) {
+const PLAY_STATUS_OPTIONS = [
+	{ value: "off", label: "Off" },
+	{ value: "idle", label: "Idle" },
+	{ value: "streaming", label: "Streaming" },
+] as const;
+
+const PLAY_ROWS_OPTIONS = [
+	{ value: "1", label: "1" },
+	{ value: "2", label: "2" },
+	{ value: "3", label: "3" },
+] as const;
+
+const PLAYGROUND_HEIGHT = 480;
+
+function Playground() {
+	const [suggestion, setSuggestion] = createSignal(true);
+	const [suggestionsOn, setSuggestionsOn] = createSignal(true);
+	const [historyOn, setHistoryOn] = createSignal(true);
+	const [minRows, setMinRows] = createSignal("1");
+	const [disabled, setDisabled] = createSignal(false);
+	const [leftSlotOn, setLeftSlotOn] = createSignal(true);
+	const [rightSlotOn, setRightSlotOn] = createSignal(false);
+	const [attachments, setAttachments] = createSignal(false);
+	const [status, setStatus] = createSignal<PlayStatus>("off");
+
+	const [value, setValue] = createSignal("");
+	const [files, setFiles] = createSignal<ComposerFile[]>([]);
+	const [queue, setQueue] = createSignal<QueuedMessage[]>([]);
+	// One sent message is seeded so the transcript, and ArrowUp's recall, read at a glance.
+	const [messages, setMessages] = createSignal<Turn[]>([
+		{ from: "user", text: "Make my input box feel less stiff", files: [] },
+	]);
+
+	const queueOn = () => status() !== "off";
+	const filesOn = () => leftSlotOn() || attachments();
+	createEffect(
+		on(attachments, (enabled) => setFiles(enabled ? [MICKA, RECEIPT] : [])),
+	);
+
+	const edit = (item: QueuedMessage) => {
+		setValue(item.text);
+		if (filesOn()) setFiles(item.files);
+		setQueue(queue().filter((queued) => queued.id !== item.id));
+	};
+
+	const shuffle = () => {
+		setSuggestion(Math.random() > 0.3);
+		setSuggestionsOn(Math.random() > 0.3);
+		setHistoryOn(Math.random() > 0.4);
+		setMinRows(pick(["1", "1", "2", "3"] as const));
+		setDisabled(false);
+		setLeftSlotOn(Math.random() > 0.4);
+		setRightSlotOn(Math.random() > 0.5);
+		setAttachments(Math.random() > 0.7);
+		setStatus(pick(["off", "off", "idle", "streaming"] as const));
+	};
+
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-			<For each={props.turns}>
-				{(turn: Turn) =>
-					turn.thinking === true ? (
-						<ThinkingIndicator />
-					) : (
-						<ChatMessage
-							from={turn.from}
-							files={turn.files?.map((file) => ({
-								name: file.name,
-								type: file.type,
-								src: file.path,
-							}))}
-						>
-							{turn.text}
-						</ChatMessage>
-					)
-				}
-			</For>
-		</div>
+		<PlaygroundLayout
+			minHeight={PLAYGROUND_HEIGHT}
+			preview={
+				<ComposerStage
+					height={PLAYGROUND_HEIGHT}
+					transcript={<Transcript turns={messages()} />}
+					pin={() => [messages(), queue()]}
+					reserve={(composerHeight) =>
+						composerHeight +
+						8 +
+						(queueOn() && queue().length > 0
+							? collapsedStackHeight(queue().length) + 8
+							: 0)
+					}
+					overlay={(composerHeight) => (
+						<Show when={queueOn()}>
+							<ComposerQueueStack
+								testId="play-stack"
+								queue={queue()}
+								onQueueChange={setQueue}
+								onEdit={edit}
+								bottom={composerHeight() + 8}
+							/>
+						</Show>
+					)}
+				>
+					<InputMessage
+						testId="play"
+						value={value()}
+						onValueChange={setValue}
+						onSend={(text, sent) => {
+							if (text !== "" || sent.length > 0) {
+								setMessages([
+									...messages(),
+									{ from: "user", text, files: sent },
+								]);
+							}
+							setValue("");
+							if (filesOn()) setFiles([]);
+						}}
+						placeholderSuggestion={
+							suggestion()
+								? "Why is every other input box so stiff?"
+								: undefined
+						}
+						suggestions={suggestionsOn() ? SUGGESTIONS : undefined}
+						history={
+							historyOn()
+								? messages()
+										.map((message) => message.text)
+										.filter((text) => text !== "")
+								: undefined
+						}
+						minRows={Number(minRows())}
+						disabled={disabled()}
+						files={filesOn() ? files() : undefined}
+						onFilesChange={filesOn() ? setFiles : undefined}
+						leftSlot={
+							leftSlotOn()
+								? (context: InputMessageSlotContext) => (
+										<Tooltip content="Attach" side="top">
+											<Button
+												testId="play-attach"
+												variant="ghost"
+												size="icon-compact"
+												icon="plus"
+												aria-label="Attach files"
+												onClick={() => context.openFilePicker()}
+											/>
+										</Tooltip>
+									)
+								: undefined
+						}
+						rightSlot={
+							rightSlotOn() ? (
+								<Button
+									variant="ghost"
+									size="compact"
+									trailingIcon="chevron-down"
+								>
+									Sonnet 5
+								</Button>
+							) : undefined
+						}
+						status={queueOn() ? (status() as "idle" | "streaming") : undefined}
+						queue={queueOn() ? queue() : undefined}
+						onQueueChange={queueOn() ? setQueue : undefined}
+						onStop={queueOn() ? () => setStatus("idle") : undefined}
+						showQueue={false}
+					/>
+				</ComposerStage>
+			}
+			controls={
+				<PlaygroundPanel onShuffle={shuffle}>
+					<PlaySection label="Composer" />
+					<PlaySwitch
+						testId="play-suggestion"
+						label="Placeholder suggestion"
+						checked={suggestion()}
+						onToggle={() => setSuggestion(!suggestion())}
+					/>
+					<PlaySwitch
+						testId="play-prompts"
+						label="Suggested prompts"
+						checked={suggestionsOn()}
+						onToggle={() => setSuggestionsOn(!suggestionsOn())}
+					/>
+					<PlaySwitch
+						testId="play-history"
+						label="History recall"
+						checked={historyOn()}
+						onToggle={() => setHistoryOn(!historyOn())}
+					/>
+					<PlaySwitch
+						testId="play-attachments"
+						label="Attachments"
+						checked={attachments()}
+						onToggle={() => setAttachments(!attachments())}
+					/>
+					<PlayField label="Min rows">
+						<PlaySelect
+							testId="play-rows"
+							value={minRows()}
+							onChange={setMinRows}
+							options={PLAY_ROWS_OPTIONS}
+						/>
+					</PlayField>
+					<PlaySwitch
+						testId="play-disabled"
+						label="Disabled"
+						checked={disabled()}
+						onToggle={() => setDisabled(!disabled())}
+					/>
+					<PlayDivider />
+					<PlaySection label="Slots" />
+					<PlaySwitch
+						testId="play-left"
+						label="Left slot"
+						checked={leftSlotOn()}
+						onToggle={() => setLeftSlotOn(!leftSlotOn())}
+					/>
+					<PlaySwitch
+						testId="play-right"
+						label="Right slot"
+						checked={rightSlotOn()}
+						onToggle={() => setRightSlotOn(!rightSlotOn())}
+					/>
+					<PlayDivider />
+					<PlaySection label="Queue" />
+					<PlayField label="Status">
+						<PlaySelect
+							testId="play-status"
+							value={status()}
+							onChange={setStatus}
+							options={PLAY_STATUS_OPTIONS}
+						/>
+					</PlayField>
+				</PlaygroundPanel>
+			}
+		/>
 	);
 }
 
@@ -110,40 +321,73 @@ function SuggestionsCard() {
 	);
 }
 
+const ATTACHMENTS_HEIGHT = 440;
+const ATTACHMENTS = [MICKA, RECEIPT];
+
 function AttachmentsCard() {
 	const [value, setValue] = createSignal("");
-	const [files, setFiles] = createSignal<ComposerFile[]>([MICKA, RECEIPT]);
+	const [files, setFiles] = createSignal<ComposerFile[]>(ATTACHMENTS);
 	const [turns, setTurns] = createSignal<Turn[]>([]);
+	const reset = () => {
+		setTurns([]);
+		setValue("");
+		setFiles(ATTACHMENTS);
+	};
 	return (
 		<DemoCard title="Attachments">
-			<div style={{ display: "flex", flexDirection: "column" }}>
-				<Show when={turns().length > 0}>
-					<div style={{ marginBottom: 12 }}>
-						<Transcript turns={turns()} />
-					</div>
-				</Show>
-				<InputMessage
-					testId="attachments"
-					value={value()}
-					onValueChange={setValue}
-					files={files()}
-					onFilesChange={setFiles}
-					onSend={(text, attachments) => {
-						if (text === "" && attachments.length === 0) return;
-						setTurns([...turns(), { from: "user", text, files: attachments }]);
-						setValue("");
-						setFiles([]);
+			<div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+				<div
+					style={{
+						display: "flex",
+						flexDirection: "row",
+						justifyContent: "flex-end",
+						height: 32,
 					}}
-					leftSlot={(context: InputMessageSlotContext) => (
+				>
+					<Show when={turns().length > 0}>
 						<Button
-							testId="attach"
+							testId="attachments-reset"
 							variant="ghost"
-							size="icon-compact"
-							icon="plus"
-							onClick={() => context.openFilePicker()}
-						/>
-					)}
-				/>
+							size="compact"
+							leadingIcon="rotate-ccw"
+							onClick={reset}
+						>
+							Reset
+						</Button>
+					</Show>
+				</div>
+				<ComposerStage
+					height={ATTACHMENTS_HEIGHT}
+					transcript={<Transcript turns={turns()} />}
+					pin={turns}
+					reserve={(composerHeight) => composerHeight + 12}
+				>
+					<InputMessage
+						testId="attachments"
+						value={value()}
+						onValueChange={setValue}
+						files={files()}
+						onFilesChange={setFiles}
+						onSend={(text, attachments) => {
+							if (text === "" && attachments.length === 0) return;
+							setTurns([
+								...turns(),
+								{ from: "user", text, files: attachments },
+							]);
+							setValue("");
+							setFiles([]);
+						}}
+						leftSlot={(context: InputMessageSlotContext) => (
+							<Button
+								testId="attach"
+								variant="ghost"
+								size="icon-compact"
+								icon="plus"
+								onClick={() => context.openFilePicker()}
+							/>
+						)}
+					/>
+				</ComposerStage>
 			</div>
 		</DemoCard>
 	);
@@ -205,7 +449,7 @@ function QueuedCard() {
 	};
 
 	return (
-		<DemoCard title="Queued messages">
+		<DemoCard title="Queued messages, built-in rows">
 			<div style={{ display: "flex", flexDirection: "column" }}>
 				<Show when={turns().length > 0}>
 					<div style={{ marginBottom: 12 }}>
@@ -313,6 +557,9 @@ function DisabledCard() {
 export function Demo() {
 	return (
 		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+			<Show when={shows("playground")}>
+				<Playground />
+			</Show>
 			<Show when={shows("basic")}>
 				<BasicCard />
 			</Show>
@@ -321,6 +568,16 @@ export function Demo() {
 			</Show>
 			<Show when={shows("attachments")}>
 				<AttachmentsCard />
+			</Show>
+			<Show when={shows("queued-chat")}>
+				<DemoCard title="Queued messages">
+					<QueuedChat testId="chat" />
+				</DemoCard>
+			</Show>
+			<Show when={shows("queued-rich")}>
+				<DemoCard title="Queued messages, rich">
+					<QueuedChat testId="rich" rich />
+				</DemoCard>
 			</Show>
 			<Show when={shows("queued")}>
 				<QueuedCard />
@@ -340,6 +597,30 @@ export function Demo() {
 
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	capturing = true;
+
+	// The playground's controls sit in the right column.
+	setOnly("playground");
+	await shot.settle(900);
+	shot.capture("playground");
+	await shot.click("play-attachments-track");
+	await shot.click("play-right-track");
+	shot.capture("playground-attachments-right");
+	await shot.focus("play-status-trigger");
+	await shot.press("down down down enter");
+	await shot.settle(300);
+	await shot.click("play-textarea");
+	await shot.press("f i r s t");
+	await shot.press("enter");
+	await shot.press("s e c o n d");
+	await shot.press("enter");
+	await shot.press("t h i r d");
+	await shot.press("enter");
+	await shot.settle(600);
+	shot.capture("playground-queued");
+	await shot.moveTo(1180, 700);
+	await shot.click("playground-shuffle");
+	await shot.settle(600);
+	shot.capture("playground-shuffled");
 
 	setOnly("basic");
 	await shot.settle(500);
@@ -376,6 +657,64 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(1180, 700);
 	await shot.click("attachments-file-1-remove");
 	shot.capture("file-removed");
+	// The transcript scrolls under the composer and stays pinned to its end.
+	await shot.click("attachments-textarea");
+	for (const word of ["one", "two", "three", "four", "five", "six", "seven"]) {
+		await shot.press(word.split("").join(" "));
+		await shot.press("enter");
+	}
+	await shot.settle(600);
+	shot.capture("attachments-scrolled");
+	await shot.moveTo(1180, 700);
+	await shot.click("attachments-reset");
+	await shot.settle(600);
+	shot.capture("attachments-reset");
+
+	setOnly("queued-chat");
+	await shot.settle(900);
+	shot.capture("queued-chat");
+	await shot.hover("queued-chat-1");
+	shot.capture("queued-chat-expanded");
+	await shot.moveTo(1180, 700);
+	// Resume: think, then the reply streams a word at a time.
+	await shot.click("chat-playback");
+	await shot.settle(5200);
+	shot.capture("queued-chat-streaming");
+	await shot.click("chat-playback");
+	shot.capture("queued-chat-paused");
+	await shot.click("chat-playback");
+	// The reply ends and the head of the queue is sent into the transcript.
+	await shot.settle(4000);
+	shot.capture("queued-chat-dispatched");
+	await shot.click("chat-send");
+	await shot.settle(600);
+	shot.capture("queued-chat-stopped");
+	// Each Stop releases the next queued message; once the queue and the reply are done the button becomes Reset.
+	await shot.click("chat-send");
+	await shot.click("chat-send");
+	await shot.click("chat-send");
+	await shot.settle(600);
+	shot.capture("queued-chat-idle");
+	await shot.click("chat-playback");
+	await shot.settle(600);
+	shot.capture("queued-chat-reset");
+
+	setOnly("queued-rich");
+	await shot.settle(900);
+	shot.capture("queued-rich");
+	// A pointer press that opens a popup cannot run in the test renderer: open the menus from the keyboard.
+	await shot.focus("rich-model-trigger");
+	await shot.press("enter");
+	await shot.settle(300);
+	shot.capture("queued-rich-model-menu");
+	await shot.press("down enter");
+	await shot.settle(300);
+	shot.expectText("Sonnet 4.6", true);
+	await shot.focus("rich-attach-trigger");
+	await shot.press("enter");
+	await shot.settle(300);
+	shot.capture("queued-rich-attach-menu");
+	await shot.press("escape");
 
 	setOnly("queued");
 	await shot.settle(500);

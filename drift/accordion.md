@@ -15,7 +15,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `gpuix gap`.
 - **Original:** the chevron turns 90 degrees on `spring.fast` as the item opens (`registry/base/accordion.tsx:769-772`).
-- **Port:** the icon swaps between `chevron-right` and `chevron-down` at once (`src/components/accordion.tsx:525-531`).
+- **Port:** the icon swaps between `chevron-right` and `chevron-down` at once (`src/components/accordion.tsx:668-674`).
 - **gpuix lacks:** `transform`. Only SVG and glyph sprites carry a `TransformationMatrix`; quads, images, masks and hitboxes do not (`~/code/fdarian/gpuix/FORK.md:876-887`). README row "CSS transforms".
 - **Workaround:** the glyph swap.
 - **Fidelity:** approximated (no turn, the glyph changes at once).
@@ -25,7 +25,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `gpuix gap`.
 - **Original:** the label eases between `wght 400` and `550, opsz 18` over 80 ms (`:744-766`, `transition-[color,font-variation-settings] duration-80`).
-- **Port:** `StableLabel` switches at once between static 400 and SemiBold 600 (`src/components/accordion.tsx:518-524`, `src/lib/stable-label.tsx:21-25`); the hidden copy reserves the 600 width.
+- **Port:** `StableLabel` switches at once between static 400 and SemiBold 600 (`src/components/accordion.tsx:661-667`, `src/lib/stable-label.tsx:23-27`); the hidden copy reserves the 600 width.
 - **gpuix lacks:** variable-font axes. README row "Variable-font axes".
 - **Workaround:** static cuts and the hidden semibold copy.
 - **Fidelity:** approximated (no easing, 600 for 550).
@@ -44,25 +44,16 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `port choice` (shared `StableLabel`; reason not stated).
 - **Original:** the label is an `inline-grid flex-1` span with no `nowrap`, so a long title wraps and the hidden copy reserves the wrapped box (`:744-751`).
-- **Port:** `whiteSpace: "nowrap"` (`src/lib/stable-label.tsx:24`), so a long title does not wrap. The demo titles are all short, so no capture shows it.
+- **Port:** `whiteSpace: "nowrap"` (`src/lib/stable-label.tsx:26`), so a long title does not wrap. The demo titles are all short, so no capture shows it.
 - **Workaround:** none.
 - **Fidelity:** dropped for long titles.
 - **Components it hits:** every `StableLabel`.
-
-## Pill shape
-
-- **Cause:** `not ported yet` (README lists "pill shape" as not ported).
-- **Original:** highlight, tints and trigger radius follow `shape.bg` / `shape.item` (20 px pill, 8 px rounded), the ring `shape.focusRing` (22 px pill, 10 px rounded) (`registry/default/lib/shape-context.tsx:53-85`). The site default is rounded.
-- **Port:** fixed `radius.item` 8 and `radius.focusRing` 10 (`src/lib/theme.ts:280-284`, `src/components/accordion.tsx` (`GroupTint`), `src/lib/focus-ring.tsx:98`).
-- **Workaround:** none; the rounded default is exact.
-- **Fidelity:** exact for rounded, dropped for pill.
-- **Components it hits:** every component.
 
 ## Standalone hover fill fades in 20 ms faster
 
 - **Cause:** `not ported yet` (a plain mismatch; nothing stops it).
 - **Original:** the hover fill enters over `duration: 0.08` and leaves on `spring.fast.exit` 0.06 (`registry/base/accordion.tsx:819-824`).
-- **Port:** one transition, `tween.fastExit` (0.06), for both directions (`src/components/accordion.tsx:460-475`).
+- **Port:** one transition, `tween.fastExit` (0.06), for both directions (`src/components/accordion.tsx:600-615`).
 - **Workaround:** none.
 - **Fidelity:** approximated (enter 60 ms for 80 ms).
 - **Components it hits:** just this one.
@@ -71,16 +62,16 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** every mouse move tests the pointer's y against each open item's panel band (trigger bottom to item bottom) and clears the hover when it is inside (`registry/base/accordion.tsx:358-378`).
-- **Port:** `onMouseEnter` / `onMouseLeave` on the panel call `overContent`, which clears the hover and mutes the group's mouse move until the panel is left (`src/components/accordion.tsx:225-228`, `:260-264`, `:575-580`). A panel that is closing counts as no panel at once (`item.isOpen()` guard).
+- **Port:** `onMouseEnter` / `onMouseLeave` on the panel call `overContent`, which clears the hover and mutes the group's mouse move until the panel is left (`src/components/accordion.tsx:290-293`, `:329-333`, `:718-723`). A panel that is closing counts as no panel at once (`item.isOpen()` guard).
 - **Workaround:** none.
 - **Fidelity:** approximated (the same result except while a panel animates under a still pointer).
 - **Components it hits:** just this one.
 
 ## Blur keeps the hover while the pointer is inside
 
-- **Cause:** `port choice` (reason not stated; the microtask guards a sibling's focus arriving right after the blur, `src/components/accordion.tsx:211`).
+- **Cause:** `port choice` (reason not stated; the microtask guards a sibling's focus arriving right after the blur, `src/components/accordion.tsx:276`).
 - **Original:** focus leaving the group clears the hover and the ring even with the pointer inside (`registry/base/accordion.tsx:396-403`).
-- **Port:** the hover is cleared only if no trigger took focus and the pointer is outside (`src/components/accordion.tsx:209-219`), so Tab out with the pointer in the group leaves the last row lit until the pointer moves.
+- **Port:** the hover is cleared only if no trigger took focus and the pointer is outside (`src/components/accordion.tsx:274-284`), so Tab out with the pointer in the group leaves the last row lit until the pointer moves.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -99,7 +90,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `port choice` (Base UI 1.9 has no arrow navigation; the Radix variant the docs page imports does; `BASE-UI-AUDIT.md:66`).
 - **Original:** `registry/base` has none; the docs page runs the Radix accordion, which moves focus with Up/Down/Home/End and wraps.
-- **Port:** Up/Down/Home/End focus the previous, next, first or last enabled trigger, wrapping; any modifier key opts out (`src/components/accordion.tsx:229-241`, `:419-432`).
+- **Port:** Up/Down/Home/End focus the previous, next, first or last enabled trigger, wrapping; any modifier key opts out (`src/components/accordion.tsx:294-306`, `:552-570`).
 - **Workaround:** none.
 - **Fidelity:** exact against the Radix site, an addition against `registry/base`.
 - **Components it hits:** just this one.
@@ -108,7 +99,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `not ported yet`.
 - **Original:** Radix handles the arrow keys on the root, standalone or grouped.
-- **Port:** `onKeyDown` returns when there is no group (`src/components/accordion.tsx:419-424`), so a standalone `Accordion` with several items has none.
+- **Port:** `onKeyDown` returns when there is no group (`src/components/accordion.tsx:552-557`), so a standalone `Accordion` with several items has none.
 - **Workaround:** none.
 - **Fidelity:** dropped for standalone.
 - **Components it hits:** just this one.
@@ -117,7 +108,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `not ported yet` (the comment says gpuix has no `display: none`; it has, `FORK.md:564`, and `BASE-UI-AUDIT.md:49` records it).
 - **Original:** the panel stays mounted and gets `hidden` once the exit finishes (`registry/base/accordion.tsx:939`).
-- **Port:** the text is removed from the tree after the exit (`retired`, `src/components/accordion.tsx:550-562`, `:572-574`, `:596`); the panel box stays as a zero-height `role="region"`. A reopen re-mounts and re-lays out the text; the last measured height is cached.
+- **Port:** the text is removed from the tree after the exit (`retired`, `src/components/accordion.tsx:693-705`, `:715-717`, `:739`); the panel box stays as a zero-height `role="region"`. A reopen re-mounts and re-lays out the text; the last measured height is cached.
 - **Workaround:** the unmount.
 - **Fidelity:** approximated (same tab order and accessibility tree).
 - **Components it hits:** none other (thinking-steps uses `inert`).
@@ -126,7 +117,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `not ported yet`.
 - **Original:** the height springs only while this panel toggles; a size change from nested content, and the hand-off from `height: auto` for an item open at mount, snap (`toggling`, `registry/base/accordion.tsx:872-876`, `:953-958`).
-- **Port:** the transition depends only on `item.isOpen()` (`src/components/accordion.tsx:570-571`). Content that changes height while open (a nested accordion, a re-wrap) springs and chases. Whether an item open at mount plays a grow on its first measure was not run.
+- **Port:** the transition depends only on `item.isOpen()` (`src/components/accordion.tsx:713-714`). Content that changes height while open (a nested accordion, a re-wrap) springs and chases. Whether an item open at mount plays a grow on its first measure was not run.
 - **Workaround:** `height: "auto"` until the first measure (`:585-588`).
 - **Fidelity:** approximated.
 - **Components it hits:** any panel holding collapsibles (thinking-steps, sidebar).
@@ -140,20 +131,20 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 - **Fidelity:** dropped.
 - **Components it hits:** every component.
 
-## A surrounding `SizeProvider` is not read
+## An explicit `size` does not scope the parts inside
 
-- **Cause:** `not ported yet`.
-- **Original:** `size` is optional and falls back to the surrounding `SizeProvider` (`registry/base/accordion.tsx:28`, `:99-100`, `:484`, `:604`).
-- **Port:** `size` is the only way to choose compact; there is no provider (`src/components/accordion.tsx:389`, `:547`, `:123-140`).
-- **Workaround:** pass `size`.
+- **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
+- **Original:** `size` wraps the group in a `SizeProvider`, so nested sized components follow it (`registry/base/accordion.tsx:484`, `:604`).
+- **Port:** An omitted `size` follows the Size row (`src/components/accordion.tsx:169`); a given one sizes the accordion only.
+- **Workaround:** pass `size` to each nested component.
 - **Fidelity:** approximated.
-- **Components it hits:** every component with a `size`.
+- **Components it hits:** every component with a `size` prop.
 
 ## Items index by mount order
 
 - **Cause:** `not ported yet` (`BASE-UI-AUDIT.md:77`).
 - **Original:** `AccordionItem` takes an explicit `index`, required in a group (`registry/base/accordion.tsx:58`, `:616`).
-- **Port:** the trigger registers with a counter (`nextIndex++`, `src/components/accordion.tsx:179`, `:198-204`) and never reuses an index, so an item inserted mid-list or re-added gets a new index and the order of the rects no longer matches the document. The demo lists are static.
+- **Port:** the trigger registers with a counter (`nextIndex++`, `src/components/accordion.tsx:208`, `:263-269`) and never reuses an index, so an item inserted mid-list or re-added gets a new index and the order of the rects no longer matches the document. The demo lists are static.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** tabs.
@@ -171,25 +162,34 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `port choice` (gpuix has no classes, refs or HTML attributes; reason for `collapsible` is the audit note that Base UI single mode is always collapsible, `BASE-UI-AUDIT.md:83`).
 - **Original:** `className`, a forwarded `ref`, every HTML attribute, and `collapsible` on the roots (`registry/base/accordion.tsx:73-100`, `:490-503`).
-- **Port:** `testId` and `children` only (`src/components/accordion.tsx:160-165`, `:385`).
+- **Port:** `testId` and `children` only (`src/components/accordion.tsx:189-194`, `:518`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** every component.
 
-## Demo: playground missing
+## Playground: "One at a time" is a controlled value
 
-- **Cause:** `not ported yet`.
-- **Original:** a playground with an Expand select (one at a time / one or none / any number) and a "Highlight expanded" switch over four items (`lib/docs/playgrounds/accordion.tsx:28-148`, `app/docs/accordion/page.tsx:129-150`).
-- **Port:** no playground; `highlight="trigger"` and the single and multiple modes are shown as fixed variants (`src/demos/accordion.tsx:51-178`).
-- **Workaround:** the fixed variants.
-- **Fidelity:** dropped.
-- **Components it hits:** every component with a playground (card, button, dropdown, and others).
+- **Cause:** `port choice` (the port's single mode is always collapsible, `BASE-UI-AUDIT.md:83`, so there is no `collapsible` prop to turn off).
+- **Original:** the Expand select maps to `type` and `collapsible`; "One at a time" is a non-collapsible single group (`lib/docs/playgrounds/accordion.tsx:28-34`, `:78-92`).
+- **Port:** the playground controls the group's value and drops the close of the open item while "One at a time" is chosen (`src/demos/accordion.tsx`, `Playground`). Switching Expand resets the open set to the first item, as the source's `key` remount does.
+- **Workaround:** the controlled value.
+- **Fidelity:** exact in what it does; the group itself still has no non-collapsible mode.
+- **Components it hits:** just this one.
+
+## Playground: frame and preview
+
+- **Cause:** `port choice` (the preview sits in the shared demo card, so it lines up with the page's other cards).
+- **Original:** `ComponentPreview` with no padding, `h-[420px]`, top-aligned, the group centred at the card's width with `px-6 py-10`, and Preview / Code tabs with the snippet kept in sync (`app/docs/accordion/page.tsx:129-150`, `lib/docs/playgrounds/accordion.tsx:36-65`, `:130-137`).
+- **Port:** the `DemoCard` frame titled "Playground" in its footer, a 420 px minimum, the group 288 px wide (its fixed width) centred with 20 px above it; no Code tab and no generated snippet (`src/lib/playground.tsx`, `src/demos/accordion.tsx`). The four items and their texts match the source.
+- **Workaround:** none.
+- **Fidelity:** approximated (frame chrome), dropped (the code snippet).
+- **Components it hits:** every playground.
 
 ## Demo: Row highlight has two items, not three
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** three items, the third "Compare with the sections above" / "Those hold a block across the row and its panel while open." (`app/docs/accordion/page.tsx:264-268`).
-- **Port:** two items (`src/demos/accordion.tsx:69-91`).
+- **Port:** two items (`src/demos/accordion.tsx:197-219`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -198,7 +198,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `port choice` (reason not stated; a four-block grid in one card, plus fixtures for the harness).
 - **Original:** separate doc sections, each with a heading, a paragraph (e.g. "A single collapsible item with its own hover state.", "Multiple items with fluid hover — only one can be expanded at a time."), a code snippet and the API tables (`app/docs/accordion/page.tsx:153-300`).
-- **Port:** one "Accordion" card in a two-column grid with short captions ("Standalone: its own hover state", `highlight="trigger": the tint waits for hover`, "Single expand", "Multi expand") and no snippets or API tables (`src/demos/accordion.tsx:53-180`). A port-only "Keyboard" section holds a disabled item and drives the scenarios' ARIA and Tab assertions (`:161-178`, `:184-227`). All titles and panel texts that exist in both match. Neither shows `size="compact"`.
+- **Port:** one "Accordion" card in a two-column grid with short captions ("Standalone: its own hover state", `highlight="trigger": the tint waits for hover`, "Single expand", "Multi expand") and no snippets or API tables (`src/demos/accordion.tsx:181-308`). A port-only "Keyboard" section holds a disabled item and drives the scenarios' ARIA and Tab assertions (`:289-306`, `:332-398`). All titles and panel texts that exist in both match. Neither shows `size="compact"`.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** every demo (the shared card layout).

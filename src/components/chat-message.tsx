@@ -6,26 +6,16 @@ import {
 } from "@gpuix/solid";
 import { createSignal, type JSX, Show } from "solid-js";
 import { Icon } from "../lib/icon";
-import { defineIcon } from "../lib/icons";
+import type { IconName } from "../lib/icons";
 import {
 	color,
 	focusRing,
-	radius,
 	type as scale,
 	scheme,
+	shape,
 	motion as tween,
 } from "../lib/theme";
 import { type FileLike, FileThumbnail } from "./file-thumbnail";
-
-const copyGlyph = defineIcon(
-	'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
-);
-const pencilGlyph = defineIcon(
-	'<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
-);
-const regenerateGlyph = defineIcon(
-	'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
-);
 
 const subtitle = { fontSize: 14, lineHeight: 20 } as const;
 const ENTRANCE_RISE = 8;
@@ -43,12 +33,12 @@ export function ChatMessageAction(props: {
 }) {
 	const renderer = useGpuixRequired();
 	const [hovered, setHovered] = createSignal(false);
-	const glyph = () =>
+	const glyph = (): IconName =>
 		props.action === "copy"
-			? copyGlyph
+			? "copy"
 			: props.action === "edit"
-				? pencilGlyph
-				: regenerateGlyph;
+				? "pencil"
+				: "rotate-ccw";
 	return (
 		<div
 			{...buttonProps({ onClick: props.onClick }, renderer)}
@@ -63,7 +53,7 @@ export function ChatMessageAction(props: {
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",
-				borderRadius: radius.item,
+				borderRadius: shape.button,
 				cursor: "pointer",
 				keyboardFocusDim: false,
 				hover: { backgroundColor: color.hover },
@@ -93,7 +83,10 @@ export function ChatMessage(props: {
 	time?: string;
 	actions?: JSX.Element;
 	testId?: string;
-	children?: string;
+	/** Text, or your own blocks (rich text, several paragraphs); text is set in the message style. */
+	children?: JSX.Element;
+	/** Lets the message use the whole row instead of 80% of it. */
+	fullWidth?: boolean;
 }) {
 	const [hovered, setHovered] = createSignal(false);
 	const [focusWithin, setFocusWithin] = createSignal(false);
@@ -116,7 +109,7 @@ export function ChatMessage(props: {
 				display: "flex",
 				flexDirection: "column",
 				gap: 6,
-				maxWidth: "80%",
+				maxWidth: props.fullWidth === true ? "100%" : "80%",
 				alignItems: isUser() ? "flex-end" : "flex-start",
 				alignSelf: isUser() ? "flex-end" : "flex-start",
 			}}
@@ -145,15 +138,19 @@ export function ChatMessage(props: {
 							? {
 									paddingLeft: 14,
 									paddingRight: 14,
-									borderRadius: radius.item,
+									borderRadius: shape.bg,
 									backgroundColor: color.chatBubble,
 								}
 							: {}),
 					}}
 				>
-					<text style={{ ...subtitle, color: color.foreground }}>
-						{props.children}
-					</text>
+					{typeof props.children === "string" ? (
+						<text style={{ ...subtitle, color: color.foreground }}>
+							{props.children}
+						</text>
+					) : (
+						props.children
+					)}
 				</div>
 			</Show>
 			<Show when={hasMeta()}>

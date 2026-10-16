@@ -8,7 +8,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 - **Cause:** `gpuix gap`.
 - **Original:** `min-w-[var(--anchor-width)]` on the popup, which then grows to its widest option (`select.tsx:530`).
-- **Port:** the card is `popupWidth` when given, else `"anchor-size(width)"` (`select.tsx:585`, prop at `:134-135`), and never narrower than the trigger (`minWidth: "anchor-size(width)"`, `popup.tsx:94`). The inline variant is 160 wide.
+- **Port:** the card is `popupWidth` when given, else `"anchor-size(width)"` (`select.tsx:586`, prop at `:134-135`), and never narrower than the trigger (`minWidth: "anchor-size(width)"`, `popup.tsx:103`). The inline variant is 160 wide.
 - **gpuix lacks:** an intrinsic (`max-content`) width; `width: "max-content"` is rejected (README "Missing features", intrinsic `width` row; see scroll-area.md).
 - **Workaround:** `popupWidth` is a manual width for long labels (the timezone demo passes 220, `demos/select.tsx:183`). Without it a label wider than the trigger ellipsizes. A `hug` trigger (the command menu's filters, where the source trigger is `w-auto`) is only as wide as its label, so it always needs `popupWidth`.
 - **Fidelity:** approximated.
@@ -18,7 +18,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 - **Cause:** `gpuix gap`.
 - **Original:** enters with `opacity 0, y -4, scaleY 0.96` to rest, `spring.fast`; exits on `spring.fast.exit` (`select.tsx:470-478`, `popup.ts:16-23`).
-- **Port:** opacity plus a 4px slide on `top`, no scale (`popup.tsx:83-90`).
+- **Port:** opacity plus a 4px slide on `top`, no scale (`popup.tsx:88-96`).
 - **gpuix lacks:** CSS transforms; see README "Missing features", CSS transforms row.
 - **Workaround:** the slide.
 - **Fidelity:** approximated.
@@ -28,7 +28,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 - **Cause:** `gpuix gap`.
 - **Original:** the hover pill is pinned at 0,0 and moved with `x` / `y` transforms, so travel stays on the compositor (`fluid-hover-highlight.tsx:121-131`).
-- **Port:** the pill animates `top` / `left` / `width` / `height`, which re-lays out per frame (`fluid-highlight.tsx:74-80`).
+- **Port:** the pill animates `top` / `left` / `width` / `height`, which re-lays out per frame (`fluid-highlight.tsx:78-85`).
 - **gpuix lacks:** transforms (README, CSS transforms row; translation table "translate / x,y travel").
 - **Workaround:** none needed visually.
 - **Fidelity:** approximated (same path, different cost).
@@ -38,7 +38,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 - **Cause:** `gpuix gap`.
 - **Original:** the trigger value and each row's text use `text-box:trim-both cap alphabetic` so the glyphs centre on the cap height (`select.tsx:314`, `:709`).
-- **Port:** the text is centred by its full line box (`select.tsx:548-563`, `:714-725`).
+- **Port:** the text is centred by its full line box (`select.tsx:548-563`, `:719-730`).
 - **gpuix lacks:** `text-box-trim` / `text-box-edge` (README, badge row).
 - **Workaround:** none; the label sits about a pixel off.
 - **Fidelity:** approximated.
@@ -106,14 +106,14 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Fidelity:** approximated (compact label is 2px taller and 1px larger text).
 - **Components it hits:** just this one.
 
-## Size is a prop only; there is no ambient size or shape
+## An explicit `size` does not scope the parts inside
 
-- **Cause:** `not ported yet`.
-- **Original:** `useSize(size)` reads the surrounding `SizeProvider`, so trigger and popup follow a compact region; `SelectTrigger` also takes its own `size`. The trigger follows the global pill shape (`shape.input`), the popup stays rounded (`select.tsx:99-102`, `:278-281`, `:84-89`).
-- **Port:** `size?: "default" | "compact"` on `Select` only (`select.tsx:122`, `:140`); corners are always `radius.item` (8) and `radius.container` (12); no pill shape.
-- **Workaround:** the demo passes `size="compact"` where needed. `CommandMenuFilters` in the source wraps its children in `SizeProvider size="compact"` and forces `w-auto min-w-0` on every `[role=combobox]` (`command-menu.tsx:994-1019`); the port has neither, so each filter select passes `size="compact"` and `hug` itself.
-- **Fidelity:** dropped (context and pill shape).
-- **Components it hits:** every component that reads `useSize` / `useShape`.
+- **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
+- **Original:** `size` wraps the select in a `SizeProvider` and `SelectTrigger` takes its own `size`, so trigger and popup follow together (`registry/base/select.tsx:99-102`, `:223`, `:278-281`).
+- **Port:** `size?: "default" | "compact"` on `Select` only; omitted, it follows the Size row (`src/components/select.tsx:122`, `:140`).
+- **Workaround:** pass `size` to each nested component. `CommandMenuFilters` in the source wraps its children in `SizeProvider size="compact"` and forces `w-auto min-w-0` on every `[role=combobox]` (`command-menu.tsx:994-1019`); the port has neither, so each filter select passes `size="compact"` and `hug` itself.
+- **Fidelity:** approximated.
+- **Components it hits:** every component that reads `useSize`.
 
 ## Data-driven API and `null` for no value
 
@@ -128,7 +128,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 - **Cause:** `port choice` (serves the app frame's theme picker, `app.tsx:220`, and the site's "Make them yours" card; docstring at `select.tsx:53-57`).
 - **Original:** `variant` is `"bordered"` (default) or `"borderless"` (`select.tsx:241-249`).
-- **Port:** `variant` defaults to `"inline"` (`select.tsx:138`): borderless, compact trigger, 13px text, shows the picked item's icon, popup right-aligned at 160 wide (`select.tsx:141-150`, `:584-585`). Every demo passes `bordered` explicitly.
+- **Port:** `variant` defaults to `"inline"` (`select.tsx:138`): borderless, compact trigger, 13px text, shows the picked item's icon, popup right-aligned at 160 wide (`select.tsx:141-150`, `:585-586`). Every demo passes `bordered` explicitly.
 - **Workaround:** none.
 - **Fidelity:** exact for `bordered` and `borderless` (an `error` draws the destructive border on both, as the source does).
 - **Components it hits:** just this one.

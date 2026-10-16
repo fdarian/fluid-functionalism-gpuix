@@ -3,7 +3,15 @@ import type {
 	MotionTransition,
 	StateStyleDesc,
 } from "@gpuix/solid";
-import { type Accessor, createSignal } from "solid-js";
+import {
+	type Accessor,
+	createComponent,
+	createContext,
+	createSignal,
+	type JSX,
+	onCleanup,
+	useContext,
+} from "solid-js";
 
 export type Scheme = "light" | "dark";
 
@@ -201,7 +209,39 @@ export function bindSystemScheme(accessor: Accessor<Scheme>) {
 	systemScheme = accessor;
 }
 
+const SchemeOverride = createContext<Scheme>();
+/** Scopes alive right now; while there are none, `scheme()` skips the owner-chain lookup. */
+let liveScopes = 0;
+
+/**
+ * FF's `.dark` / `.light` class on a subtree: every token read below it
+ * resolves in `forced`, whatever the page's theme. Tokens are read through the
+ * reactive owner, so a read in an event handler or a timer sees the page's
+ * scheme instead.
+ */
+export function SchemeScope(props: {
+	scheme: Scheme;
+	children: JSX.Element;
+}): JSX.Element {
+	liveScopes++;
+	onCleanup(() => {
+		liveScopes--;
+	});
+	return createComponent(SchemeOverride.Provider, {
+		get value() {
+			return props.scheme;
+		},
+		get children() {
+			return props.children;
+		},
+	});
+}
+
 export function scheme(): Scheme {
+	if (liveScopes > 0) {
+		const forced = useContext(SchemeOverride);
+		if (forced !== undefined) return forced;
+	}
 	const choice = themeChoice();
 	if (choice !== "system") return choice;
 	if (systemScheme === undefined) {
@@ -274,15 +314,115 @@ export const type = {
 	microCompact: { fontSize: 10, lineHeight: 12 },
 } as const;
 
+export type SizeChoice = "default" | "compact";
+
+export const SIZES = [
+	{ value: "default", label: "Default" },
+	{ value: "compact", label: "Compact" },
+] as const satisfies readonly { value: SizeChoice; label: string }[];
+
+/** The Size row of the customise card, and the ambient size components start from when a use gives none (`props.size ?? sizeChoice()`). */
+export const [sizeChoice, setSizeChoice] = createSignal<SizeChoice>("default");
+
+const siteTypeSteps = {
+	display: {
+		default: { fontSize: 28, lineHeight: 34 },
+		compact: { fontSize: 24, lineHeight: 30 },
+	},
+	title: {
+		default: { fontSize: 16, lineHeight: 22 },
+		compact: { fontSize: 15, lineHeight: 20 },
+	},
+	subtitle: {
+		default: { fontSize: 14, lineHeight: 20 },
+		compact: { fontSize: 13, lineHeight: 18 },
+	},
+	body: {
+		default: { fontSize: 13, lineHeight: 20 },
+		compact: { fontSize: 12, lineHeight: 18 },
+	},
+	caption: {
+		default: { fontSize: 12, lineHeight: 16 },
+		compact: { fontSize: 11, lineHeight: 14 },
+	},
+	micro: {
+		default: { fontSize: 11, lineHeight: 14 },
+		compact: { fontSize: 10, lineHeight: 12 },
+	},
+} as const;
+
+type SiteTypeRole = keyof typeof siteTypeSteps;
+
+/**
+ * The shell and page text roles (`text-site-*`), at the window's wide (>=640px) values, stepping down in compact.
+ * Components keep `type`: they follow their own size prop. Read it inside JSX props or effects, like `color`.
+ */
+export const siteType = Object.defineProperties(
+	{} as { readonly [Role in SiteTypeRole]: { fontSize: number; lineHeight: number } },
+	Object.fromEntries(
+		(Object.keys(siteTypeSteps) as SiteTypeRole[]).map((role) => [
+			role,
+			{ enumerable: true, get: () => siteTypeSteps[role][sizeChoice()] },
+		]),
+	),
+);
+
 /** The static cuts are loaded in `lib/fonts.ts`. The site's semibold is variable `wght 550`; with static cuts only, SemiBold 600 is the nearest. */
 export const fontFamily = "Inter";
 export const weight = { normal: 400, medium: 500, semibold: 600 } as const;
 
+/** The rounded values, for surfaces the source pins to rounded (popups, menu rows). Everything else reads `shape`. */
 export const radius = {
 	item: 8,
 	focusRing: 10,
 	container: 12,
 } as const;
+
+export type ShapeChoice = "rounded" | "pill";
+
+export const SHAPES = [
+	{ value: "rounded", label: "Rounded", icon: "rectangle-horizontal" },
+	{ value: "pill", label: "Pill", icon: "circle" },
+] as const satisfies readonly { value: ShapeChoice; label: string; icon: string }[];
+
+export const [shapeChoice, setShapeChoice] = createSignal<ShapeChoice>("rounded");
+
+/** Radius for a surface inset inside another rounded one, clamped at 0. */
+export function nestedRadius(outerRadius: number, inset: number, borderWidth = 0) {
+	return Math.max(0, outerRadius - inset - borderWidth);
+}
+
+function byShape(rounded: number, pill: number) {
+	return shapeChoice() === "pill" ? pill : rounded;
+}
+
+/**
+ * shape-context.tsx's shapeMap as numbers. Like `color`, read it inside JSX
+ * props or effects, never at module scope, so a Radius change reaches it.
+ */
+export const shape = {
+	get item() {
+		return byShape(8, 20);
+	},
+	get bg() {
+		return byShape(8, 20);
+	},
+	get button() {
+		return byShape(8, 20);
+	},
+	get input() {
+		return byShape(8, 20);
+	},
+	get container() {
+		return byShape(12, 24);
+	},
+	get mergedBg() {
+		return byShape(8, 16);
+	},
+	get focusRing() {
+		return byShape(10, 22);
+	},
+};
 
 export const height = {
 	control: 36,

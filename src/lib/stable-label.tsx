@@ -16,6 +16,8 @@ export function StableLabel(props: {
 	textStyle?: { fontSize: number; lineHeight: number };
 	/** Ease a colour change over 80 ms (the weight still switches at once). */
 	fade?: boolean;
+	/** A label wider than its row ends in an ellipsis instead of running under what follows it. */
+	truncate?: boolean;
 	/** The wrapper, for a caller that measures the label's width. */
 	labelRef?: (element: HostElement) => void;
 	testId?: string;
@@ -33,6 +35,7 @@ export function StableLabel(props: {
 				...(props.grow === true
 					? { flexGrow: 1, minWidth: 0 }
 					: { flexShrink: 0 }),
+				...(props.truncate === true ? { overflow: "hidden" } : {}),
 			}}
 		>
 			<text style={{ ...textStyle(true), opacity: 0 }}>{props.text}</text>
@@ -43,6 +46,9 @@ export function StableLabel(props: {
 					position: "absolute",
 					top: 0,
 					left: 0,
+					...(props.truncate === true
+						? { right: 0, overflow: "hidden", textOverflow: "ellipsis" }
+						: {}),
 					color: props.color,
 					...(props.fade === true ? colorFade : {}),
 				}}

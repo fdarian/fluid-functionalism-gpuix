@@ -7,6 +7,16 @@ import {
 import { Button } from "../components/button";
 import type { DemoModule, ShotContext } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
+import {
+	PlayDivider,
+	PlayField,
+	PlaygroundLayout,
+	PlaygroundPanel,
+	PlaySection,
+	PlaySelect,
+	PlaySwitch,
+	pick,
+} from "../lib/playground";
 import { color, type as scale } from "../lib/theme";
 
 const multipleQuestions: AskUserQuestion[] = [
@@ -601,6 +611,322 @@ const skipQuestions: AskUserQuestion[] = [
 export const title = "Ask User Questions";
 export const group = "Components";
 
+const PLAY_OPTION_QUESTIONS = [
+	{
+		id: "role",
+		title: "How do you plan to use Fluid Functionalism?",
+		options: [
+			{
+				id: "design",
+				title: "Designer",
+				short: "Prototyping flows and pages",
+				long: "Prototyping flows and pages fast, then handing the patterns to the team.",
+			},
+			{
+				id: "eng",
+				title: "Engineer",
+				short: "Shipping production UI",
+				long: "Shipping production UI with springs and tokens instead of hand-rolled CSS.",
+			},
+			{
+				id: "pm",
+				title: "PM",
+				short: "Aligning the team on patterns",
+				long: "Aligning the team on one set of interaction patterns everyone can point to.",
+			},
+			{
+				id: "founder",
+				title: "Founder",
+				short: "Bootstrapping a product",
+				long: "Bootstrapping a product that needs to look credible from day one.",
+			},
+		],
+	},
+	{
+		id: "drew",
+		title: "What drew you to Fluid Functionalism?",
+		options: [
+			{
+				id: "motion",
+				title: "Motion",
+				short: "Springs that feel alive",
+				long: "Spring-driven motion that feels alive instead of scripted.",
+			},
+			{
+				id: "craft",
+				title: "Craft",
+				short: "Pixel-level polish",
+				long: "Pixel-level polish across typography, spacing, and focus states.",
+			},
+			{
+				id: "tokens",
+				title: "Tokens",
+				short: "Shape and elevation systems",
+				long: "Shape and elevation systems that compose beyond single components.",
+			},
+		],
+	},
+	{
+		id: "recommend",
+		title: "Would you recommend Fluid Functionalism to a teammate?",
+		options: [
+			{
+				id: "yes",
+				title: "Yes",
+				short: "Already have",
+				long: "Already have — it sets the bar for polished React surfaces.",
+			},
+			{
+				id: "soon",
+				title: "Soon",
+				short: "Once it covers more ground",
+				long: "Once it covers more ground — a few primitives are still missing.",
+			},
+			{
+				id: "unsure",
+				title: "Not sure yet",
+				short: "Still evaluating",
+				long: "Still evaluating — one real flow will settle it.",
+			},
+		],
+	},
+];
+
+const PLAY_FREE_TEXT_QUESTIONS = [
+	{
+		id: "name",
+		title: "What should we call your workspace?",
+		placeholder: "e.g. Acme Design",
+	},
+	{
+		id: "goal",
+		title: "Describe what you're hoping to build.",
+		placeholder: "A sentence or two is plenty…",
+	},
+	{
+		id: "feedback",
+		title: "Anything else you'd like us to know?",
+		placeholder: "Type your answer…",
+	},
+];
+
+type PlayType = "options" | "freeText";
+type PlayLayout = "inline" | "stacked";
+type PlayChip = "right" | "left";
+type PlayCount = "1" | "2" | "3";
+
+interface PlayConfig {
+	type: PlayType;
+	layout: PlayLayout;
+	chip: PlayChip;
+	multiSelect: boolean;
+	allowOther: boolean;
+	multiline: boolean;
+	count: PlayCount;
+	skippable: boolean;
+}
+
+function buildPlayQuestions(config: PlayConfig): AskUserQuestion[] {
+	const count = Number(config.count);
+	if (config.type === "freeText") {
+		return PLAY_FREE_TEXT_QUESTIONS.slice(0, count).map((question) => ({
+			id: question.id,
+			title: question.title,
+			freeText: true,
+			freeTextMultiline: config.multiline ? undefined : false,
+			freeTextPlaceholder: question.placeholder,
+			skippable: config.skippable ? undefined : false,
+		}));
+	}
+	return PLAY_OPTION_QUESTIONS.slice(0, count).map((question) => ({
+		id: question.id,
+		title: question.title,
+		layout: config.layout === "stacked" ? "stacked" : undefined,
+		chipPosition: config.chip === "left" ? "left" : undefined,
+		multiSelect: config.multiSelect || undefined,
+		allowOther: config.allowOther || undefined,
+		otherPlaceholder: config.allowOther ? "Something else?" : undefined,
+		skippable: config.skippable ? undefined : false,
+		options: question.options.map((option) => ({
+			id: option.id,
+			title: option.title,
+			description: config.layout === "stacked" ? option.long : option.short,
+		})),
+	}));
+}
+
+/** The flow holds its own step and answers, so any control change remounts it from question 1. */
+function Playground() {
+	const [type, setType] = createSignal<PlayType>("options");
+	const [layout, setLayout] = createSignal<PlayLayout>("inline");
+	const [chip, setChip] = createSignal<PlayChip>("right");
+	const [multiSelect, setMultiSelect] = createSignal(false);
+	const [allowOther, setAllowOther] = createSignal(false);
+	const [multiline, setMultiline] = createSignal(true);
+	const [count, setCount] = createSignal<PlayCount>("3");
+	const [skippable, setSkippable] = createSignal(true);
+	const [replay, setReplay] = createSignal(0);
+
+	const freeText = () => type() === "freeText";
+	const config = (): PlayConfig => ({
+		type: type(),
+		layout: layout(),
+		chip: chip(),
+		multiSelect: multiSelect(),
+		allowOther: allowOther(),
+		multiline: multiline(),
+		count: count(),
+		skippable: skippable(),
+	});
+	const flowKey = () =>
+		[
+			type(),
+			layout(),
+			chip(),
+			multiSelect(),
+			allowOther(),
+			multiline(),
+			count(),
+			skippable(),
+			replay(),
+		].join("|");
+
+	const shuffle = () => {
+		setType(pick(["options", "options", "options", "freeText"] as const));
+		setLayout(pick(["inline", "inline", "stacked"] as const));
+		setChip(pick(["right", "right", "left"] as const));
+		setMultiSelect(Math.random() > 0.6);
+		setAllowOther(Math.random() > 0.7);
+		setMultiline(Math.random() > 0.3);
+		setCount(pick(["1", "2", "3"] as const));
+		setSkippable(Math.random() > 0.2);
+		setReplay(replay() + 1);
+	};
+
+	return (
+		<PlaygroundLayout
+			minHeight={560}
+			preview={
+				<div
+					style={{
+						display: "flex",
+						flexDirection: "column",
+						justifyContent: "flex-end",
+						flexGrow: 1,
+						width: "100%",
+						maxWidth: 420,
+						gap: 12,
+					}}
+				>
+					<div
+						style={{
+							display: "flex",
+							flexDirection: "row",
+							justifyContent: "flex-end",
+						}}
+					>
+						<Button
+							testId="play-replay"
+							variant="ghost"
+							size="compact"
+							onClick={() => setReplay(replay() + 1)}
+						>
+							Replay
+						</Button>
+					</div>
+					<For each={[flowKey()]}>
+						{() => (
+							<AskUserQuestions
+								testId="play"
+								questions={buildPlayQuestions(config())}
+							/>
+						)}
+					</For>
+				</div>
+			}
+			controls={
+				<PlaygroundPanel onShuffle={shuffle}>
+					<PlaySection label="Question" />
+					<PlayField label="Type">
+						<PlaySelect
+							testId="play-type"
+							value={type()}
+							onChange={setType}
+							options={[
+								{ value: "options", label: "Options" },
+								{ value: "freeText", label: "Free text" },
+							]}
+						/>
+					</PlayField>
+					<PlayField label="Layout" disabled={freeText()}>
+						<PlaySelect
+							testId="play-layout"
+							value={layout()}
+							onChange={setLayout}
+							options={[
+								{ value: "inline", label: "Inline" },
+								{ value: "stacked", label: "Stacked" },
+							]}
+						/>
+					</PlayField>
+					<PlayField label="Chip position" disabled={freeText()}>
+						<PlaySelect
+							testId="play-chip"
+							value={chip()}
+							onChange={setChip}
+							options={[
+								{ value: "right", label: "Right" },
+								{ value: "left", label: "Left" },
+							]}
+						/>
+					</PlayField>
+					<PlaySwitch
+						testId="play-multi"
+						label="Multi-select"
+						checked={multiSelect()}
+						onToggle={() => setMultiSelect(!multiSelect())}
+						disabled={freeText()}
+					/>
+					<PlaySwitch
+						testId="play-other"
+						label="Allow other"
+						checked={allowOther()}
+						onToggle={() => setAllowOther(!allowOther())}
+						disabled={freeText()}
+					/>
+					<PlaySwitch
+						testId="play-multiline"
+						label="Multiline"
+						checked={multiline()}
+						onToggle={() => setMultiline(!multiline())}
+						disabled={!freeText()}
+					/>
+					<PlayDivider />
+					<PlaySection label="Flow" />
+					<PlayField label="Questions">
+						<PlaySelect
+							testId="play-count"
+							value={count()}
+							onChange={setCount}
+							options={[
+								{ value: "1", label: "1" },
+								{ value: "2", label: "2" },
+								{ value: "3", label: "3" },
+							]}
+						/>
+					</PlayField>
+					<PlaySwitch
+						testId="play-skippable"
+						label="Skippable"
+						checked={skippable()}
+						onToggle={() => setSkippable(!skippable())}
+					/>
+				</PlaygroundPanel>
+			}
+		/>
+	);
+}
+
 /** One flow in its card, with the docs page's Replay button: a new run remounts it. */
 function Example(props: {
 	title: string;
@@ -718,6 +1044,7 @@ function ControlledExample() {
 export function Demo() {
 	return (
 		<div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+			<Playground />
 			<Example
 				title="Multiple questions"
 				id="multiple"
@@ -759,8 +1086,31 @@ async function scrollTo(shot: ShotContext, testId: string) {
 	}
 }
 
+/** Opens a playground select from the keyboard (a pointer press that opens a popup cannot run in the test renderer) and walks `steps` rows. */
+async function pickPlay(shot: ShotContext, testId: string, steps: string) {
+	await shot.focus(`${testId}-trigger`);
+	await shot.press(`down ${steps} enter`);
+	await shot.settle(300);
+}
+
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
+	// The playground: the default flow, an answer, then controls rebuild it from question 1.
+	shot.capture("playground");
+	await shot.click("play-option-1");
+	shot.expectText("What drew you to Fluid Functionalism?", true);
+	await shot.click("play-multi-track");
+	shot.expectText("How do you plan to use Fluid Functionalism?", true);
+	await pickPlay(shot, "play-layout", "down");
+	await shot.click("play-other-track");
+	shot.capture("playground-stacked-multi-other");
+	await pickPlay(shot, "play-type", "down");
+	shot.expectText("What should we call your workspace?", true);
+	shot.capture("playground-free-text");
+	await shot.click("playground-shuffle");
+	shot.capture("playground-shuffled");
+
 	// Hover, then a single-select answer advances to the next question.
+	await scrollTo(shot, "multiple-option-1");
 	await shot.hover("multiple-option-1");
 	shot.capture("hover");
 	await shot.click("multiple-option-1");

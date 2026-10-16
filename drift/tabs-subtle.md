@@ -41,7 +41,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `port choice` (c3ba037 follows Base UI, whose panels mount only while selected; the source's own panel is a plain `div` that does not).
 - **Original:** every panel exists, `hidden` unless selected, `tabIndex={-1}`, `outline-none`, and with an `idPrefix` every tab has `aria-controls` (`tabs-subtle.tsx:357`, `:435-453`).
-- **Port:** only the selected panel mounts, with no `tabIndex`; `aria-controls` is set on the selected tab only (`tabs-subtle.tsx:335`, `:419-436`).
+- **Port:** only the selected panel mounts, with no `tabIndex`; `aria-controls` is set on the selected tab only (`tabs-subtle.tsx:347`, `:431-448`).
 - **Workaround:** none.
 - **Fidelity:** approximated (the accessibility tree differs for unselected tabs).
 - **Components it hits:** just this one.
@@ -50,21 +50,26 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `not ported yet` for the 80 ms colour and stroke-width ease (`Icon` `fade`, `theme.ts:310-314`; `motion.path` `strokeWidth`, `host.ts:296-298`); `gpuix gap` for the variable weight and for `text-box-trim` (README "Missing features").
 - **Original:** `transition-[color,stroke-width] duration-80` on the icon, `transition-[color,font-variation-settings] duration-80` on the label with `wght 550 / opsz 18`, both spans trimmed (`tabs-subtle.tsx:327-335`, `:376-377`, `:320`).
-- **Port:** `Icon` has no `fade` and `StableLabel` no transition (`tabs-subtle.tsx:368-377`, `:312-319`); SemiBold 600 (`theme.ts:276-278`); line-box centring. Details in `drift/tabs.md`.
+- **Port:** `Icon` has no `fade` and `StableLabel` no transition (`tabs-subtle.tsx:380-389`, `:324-331`); SemiBold 600 (`theme.ts:276-278`); line-box centring. Details in `drift/tabs.md`.
 - **gpuix lacks:** variable-font axes and `text-box-trim` only.
 - **Workaround:** the hidden 600 copy reserves the width.
 - **Fidelity:** approximated.
 - **Components it hits:** tabs, select, sidebar, menu rows.
 
-## Size ladder and pill shape are local
+## An explicit `size` does not scope the parts inside
 
-- **Cause:** `not ported yet`. Same drift as [tabs.md, "Size ladder and pill shape are local"](tabs.md#size-ladder-and-pill-shape-are-local), where the entry lives. Here: original `tabs-subtle.tsx:47-50`, `:61`, `:264-265`; port `tabs-subtle.tsx:117`.
+- **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
+- **Original:** `size` wraps the tabs in a `SizeProvider` (`registry/base/tabs-subtle.tsx:47-50`, `:61`, `:264-265`).
+- **Port:** An omitted `size` follows the Size row (`src/components/tabs-subtle.tsx:122`).
+- **Workaround:** pass `size` to each nested component.
+- **Fidelity:** approximated.
+- **Components it hits:** every component with a `size` variant.
 
 ## API surface: `className`, ref and HTML props
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `TabsSubtle`, `TabsSubtleItem` and `TabsSubtlePanel` take `className`, forward refs and spread HTML attributes (`tabs-subtle.tsx:40`, `:271-278`, `:425-436`).
-- **Port:** props are only the ones in the source's table plus `testId`; no `className`, ref or passthrough (`tabs-subtle.tsx:86-96`, `:237-242`, `:419-424`).
+- **Port:** props are only the ones in the source's table plus `testId`; no `className`, ref or passthrough (`tabs-subtle.tsx:91-101`, `:249-254`, `:431-436`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** tabs, and most of the port.
@@ -73,7 +78,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `port choice` (README: a demo is a `DemoCard` of live variants) for the missing page furniture; `port choice` (reason not stated) for the spacing; the extra variants are port-only.
 - **Original:** three variants: Basic, With Icons, Active Label. Panels are `px-3` under a `gap-4` (16px) column. The page has a description ("Tab navigation with smooth pill animations."), code snippets and API tables for TabsSubtle, TabsSubtleItem, TabsSubtlePanel (`app/docs/tabs-subtle/page.tsx:147`, `:149-242`, `:244-254`, `:151`, `:168`).
-- **Port:** Basic, With icons and Active label match in copy (`TABS`, "{label} content goes here."). It adds Compact and a Keyboard section (`src/demos/tabs-subtle.tsx:145-191`). A panel is 8px (section gap) + 4px (`paddingTop`) under the list, 12px not 16, with `paddingLeft` 12 (`:26`, `:37`). The card title is `TabsSubtle`, the nav title `Tabs Subtle` (`:45`, `:55`). No description, snippets or props tables.
+- **Port:** Basic, With icons and Active label match in copy (`TABS`, "{label} content goes here."). It adds Compact and a Keyboard section (`src/demos/tabs-subtle.tsx:142-188`). A panel is 8px (section gap) + 4px (`paddingTop`) under the list, 12px not 16, with `paddingLeft` 12 (`:26`, `:37`). The card title is `TabsSubtle`, the nav title `Tabs Subtle` (`:45`, `:55`). No description, snippets or props tables.
 - **Workaround:** none.
 - **Fidelity:** dropped (docs furniture), approximated (spacing).
 - **Components it hits:** every demo.

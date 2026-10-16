@@ -4,6 +4,12 @@ import { Button } from "../components/button";
 import { Combobox, type ComboboxItem } from "../components/combobox";
 import type { DemoModule, ShotContext } from "../lib/demo";
 import { DemoCard, DemoRow } from "../lib/demo-kit";
+import {
+	PlaygroundLayout,
+	PlaygroundPanel,
+	PlaySection,
+	PlaySwitch,
+} from "../lib/playground";
 import { color, type as scale } from "../lib/theme";
 
 const FRAMEWORKS = [
@@ -29,17 +35,124 @@ const VIEWS: readonly ComboboxItem[] = [
 	{ value: "private", label: "Private", disabled: true },
 ];
 
+const TIMEZONES = [
+	"(UTC−12) Baker Island",
+	"(UTC−10) Honolulu",
+	"(UTC−9) Anchorage",
+	"(UTC−8) Los Angeles",
+	"(UTC−7) Denver",
+	"(UTC−6) Mexico City",
+	"(UTC−5) New York",
+	"(UTC−4) Santiago",
+	"(UTC−3) São Paulo",
+	"(UTC−2) South Georgia",
+	"(UTC−1) Azores",
+	"(UTC+0) London",
+	"(UTC+1) Paris",
+	"(UTC+2) Cairo",
+	"(UTC+3) Moscow",
+	"(UTC+4) Dubai",
+	"(UTC+5) Karachi",
+	"(UTC+5:30) Mumbai",
+	"(UTC+6) Dhaka",
+	"(UTC+7) Bangkok",
+	"(UTC+8) Singapore",
+	"(UTC+9) Tokyo",
+	"(UTC+10) Sydney",
+	"(UTC+11) Nouméa",
+	"(UTC+12) Auckland",
+];
+
+const PLAY_COMPONENTS = [
+	"Accordion",
+	"Badge",
+	"Button",
+	"Card",
+	"CheckboxGroup",
+	"ColorPicker",
+	"Combobox",
+	"Dialog",
+	"Dropdown",
+	"InputGroup",
+	"RadioGroup",
+	"Select",
+	"Sidebar",
+	"Slider",
+	"Switch",
+	"Table",
+	"Tabs",
+].map((label) => ({ value: label.toLowerCase(), label }));
+
 export const title = "Combobox";
 export const group = "Components";
+
+function Playground() {
+	const [icon, setIcon] = createSignal(false);
+	const [clearable, setClearable] = createSignal(false);
+	const [disabled, setDisabled] = createSignal(false);
+	const [value, setValue] = createSignal<string | null>(null);
+
+	const shuffle = () => {
+		setIcon(Math.random() > 0.5);
+		setClearable(Math.random() > 0.6);
+		setDisabled(Math.random() > 0.9);
+		setValue(null);
+	};
+
+	return (
+		<PlaygroundLayout
+			preview={
+				<div style={{ paddingTop: 24 }}>
+					<Combobox
+						testId="play"
+						items={PLAY_COMPONENTS}
+						value={value()}
+						onValueChange={setValue}
+						icon={icon() ? "search" : undefined}
+						clearable={clearable()}
+						disabled={disabled()}
+						placeholder="Pick a component…"
+						emptyText="No component found."
+					/>
+				</div>
+			}
+			controls={
+				<PlaygroundPanel onShuffle={shuffle}>
+					<PlaySection label="Field" />
+					<PlaySwitch
+						testId="play-icon"
+						label="Leading icon"
+						checked={icon()}
+						onToggle={() => setIcon(!icon())}
+					/>
+					<PlaySwitch
+						testId="play-clearable"
+						label="Clear button"
+						checked={clearable()}
+						onToggle={() => setClearable(!clearable())}
+					/>
+					<PlaySwitch
+						testId="play-disabled"
+						label="Disabled"
+						checked={disabled()}
+						onToggle={() => setDisabled(!disabled())}
+					/>
+				</PlaygroundPanel>
+			}
+		/>
+	);
+}
 
 export function Demo() {
 	const [framework, setFramework] = createSignal<string | null>("Solid");
 	const [view, setView] = createSignal<string | null>(null);
 	const [stack, setStack] = createSignal<string | null>(null);
 	const [submitted, setSubmitted] = createSignal("");
+	const [timezone, setTimezone] = createSignal<string | null>(null);
 	let form: HostElement | undefined;
 	return (
 		<>
+		<Playground />
 		<DemoCard title="Combobox">
 			<div
 				style={{
@@ -98,6 +211,19 @@ export function Demo() {
 				</DemoRow>
 			</div>
 		</DemoCard>
+		<DemoCard title="Combobox, long list">
+			<div style={{ display: "flex", justifyContent: "center", paddingTop: 12, paddingBottom: 12 }}>
+				<Combobox
+					testId="tz"
+					items={TIMEZONES}
+					value={timezone()}
+					onValueChange={setTimezone}
+					icon="globe"
+					placeholder="Search timezones…"
+					emptyText="No timezone matches."
+				/>
+			</div>
+		</DemoCard>
 		<DemoCard title="Combobox, in a form">
 			<form
 				ref={form}
@@ -152,6 +278,39 @@ async function reveal(shot: ShotContext, testId: string) {
 }
 
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
+	// The playground's switches drive the field above the demos.
+	shot.capture("playground");
+	await shot.click("play-icon-track");
+	await shot.click("play-clearable-track");
+	await shot.focus("play-input");
+	await shot.press("down");
+	shot.expectText("RadioGroup", true);
+	await shot.press("b u");
+	shot.expectText("RadioGroup", false);
+	await shot.press("down enter");
+	await shot.settle(400);
+	shot.expectText("RadioGroup", false);
+	shot.capture("playground-icon-clearable");
+	await shot.click("play-disabled-track");
+	shot.capture("playground-disabled");
+	await shot.click("play-disabled-track");
+	await shot.click("playground-shuffle");
+	shot.capture("playground-shuffled");
+
+	// 25 timezones: the list scrolls and the typed query narrows it.
+	await shot.scroll(700, 400, 0, -900);
+	await reveal(shot, "tz-input");
+	await shot.focus("tz-input");
+	await shot.press("down");
+	shot.expectText("(UTC−12) Baker Island", true);
+	shot.capture("long-list-open");
+	await shot.press("t o k");
+	shot.expectText("(UTC+9) Tokyo", true);
+	shot.expectText("(UTC−12) Baker Island", false);
+	await shot.press("z z");
+	shot.expectText("No timezone matches.", true);
+	await shot.press("escape");
+
 	// Form and ARIA, opened by key: an empty required combobox blocks the submit and takes the focus; the input names its list and the lit row.
 	await reveal(shot, "form-submit");
 	await shot.click("form-submit");

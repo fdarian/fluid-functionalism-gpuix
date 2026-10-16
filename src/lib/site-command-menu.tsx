@@ -10,11 +10,15 @@ import {
 	CommandMenuList,
 	CommandMenuTabs,
 } from "../components/command-menu";
-import type { Demo } from "./demo";
-import { IS_MAC } from "./platform";
+import type { Demo, Page } from "./demo";
+import type { IconRef } from "./icons";
+import { copyToClipboard } from "../components/input-copy";
+import { installUrl } from "./install-url";
+import { pageOrder } from "./page-nav";
+import { IS_MAC, openUrl } from "./platform";
 import { setThemeChoice, THEMES, themeChoice } from "./theme";
 
-type Kind = "page" | "setting";
+type Kind = "page" | "setting" | "action";
 
 type SiteItem = CommandMenuItemData & { kind: Kind };
 
@@ -22,7 +26,21 @@ const TABS = [
 	{ value: "all", label: "All" },
 	{ value: "page", label: "Pages" },
 	{ value: "setting", label: "Settings" },
+	{ value: "action", label: "Actions" },
 ];
+
+const GITHUB_REPOSITORY = "mickadesign/fluid-functionalism";
+
+const RECENT_MAX = 3;
+
+/** Pages opened through the menu, newest first. Lives for the session: the port persists no settings. */
+const [recent, setRecent] = createSignal<readonly string[]>([]);
+
+function remember(slug: string) {
+	setRecent(
+		[slug, ...recent().filter((value) => value !== slug)].slice(0, RECENT_MAX),
+	);
+}
 
 /** What the sidebar's Search row shows next to the label. */
 export const SITE_MENU_SHORTCUT = IS_MAC ? "⌘K" : "Ctrl K";
@@ -63,28 +81,66 @@ export function createSiteMenu(): SiteMenu {
 export function SiteCommandMenu(props: {
 	menu: SiteMenu;
 	demos: readonly Demo[];
+	pages: readonly Page[];
 	showcase: string;
+	/** The slug on screen: the Actions group acts on it. */
+	current: string;
 	onPage: (page: string) => void;
 }) {
 	const [tab, setTab] = createSignal("all");
+	const go = (slug: string) => {
+		remember(slug);
+		props.onPage(slug);
+	};
 	const items = createMemo<SiteItem[]>(() => {
 		const page = (
 			value: string,
 			label: string,
 			group: string,
-			icon?: "home",
+			icon?: IconRef,
+			keywords?: readonly string[],
 		): SiteItem => ({
 			kind: "page",
 			value,
 			label,
 			action: `Open ${label}`,
 			icon,
+			keywords,
 			group,
-			onSelect: () => props.onPage(value),
+			onSelect: () => go(value),
 		});
+		const listedPages = (group: Page["group"]) =>
+			props.pages
+				.filter(
+					(candidate) =>
+						candidate.group === group && candidate.listed !== "none",
+				)
+				.map((entry) =>
+					page(
+						entry.slug,
+						entry.title,
+						group,
+						entry.menuIcon,
+						entry.menuKeywords,
+					),
+				);
 		const current = themeChoice();
+		const order = pageOrder(props.pages, props.demos);
+		const index = order.indexOf(props.current);
+		const component = props.demos.find((demo) => demo.slug === props.current);
+		const action = (item: Omit<SiteItem, "kind" | "group">): SiteItem => ({
+			...item,
+			kind: "action",
+			group: "Actions",
+		});
 		return [
-			page(props.showcase, "Showcase", "Pages", "home"),
+			page(props.showcase, "Showcase", "Pages", "home", [
+				"home",
+				"bento",
+				"gallery",
+			]),
+			...listedPages("Pages"),
+			...listedPages("System"),
 			...props.demos.map((demo) => page(demo.slug, demo.title, "Components")),
 			...THEMES.map(
 				(theme): SiteItem => ({
@@ -99,6 +155,56 @@ export function SiteCommandMenu(props: {
 					onSelect: () => setThemeChoice(theme.value),
 				}),
 			),
+			...(component === undefined
+				? []
+				: [
+						action({
+							value: "action:copy-install",
+							label: "Copy install command",
+							description: component.title,
+							icon: "copy",
+							keywords: ["npx", "shadcn", "add", "registry"],
+							onSelect: () => {
+								copyToClipboard(
+									`npx shadcn@latest add ${installUrl(component.slug)}`,
+								).catch((error: unknown) =>
+									console.error("Copy install command failed", error),
+								);
+							},
+						}),
+					]),
+			...(index > 0
+				? [
+						action({
+							value: "action:previous",
+							label: "Previous page",
+							action: "Go to the previous page",
+							icon: "arrow-left",
+							shortcut: "left",
+							onSelect: () => go(order[index - 1]),
+						}),
+					]
+				: []),
+			...(index >= 0 && index < order.length - 1
+				? [
+						action({
+							value: "action:next",
+							label: "Next page",
+							action: "Go to the next page",
+							icon: "arrow-right",
+							shortcut: "right",
+							onSelect: () => go(order[index + 1]),
+						}),
+					]
+				: []),
+			action({
+				value: "action:github",
+				label: "Open on GitHub",
+				description: GITHUB_REPOSITORY,
+				icon: "link",
+				keywords: ["source", "star", "repository"],
+				onSelect: () => openUrl(`https://github.com/${GITHUB_REPOSITORY}`),
+			}),
 		];
 	});
 	const visible = createMemo(() =>
@@ -109,7 +215,12 @@ export function SiteCommandMenu(props: {
 			open={props.menu.open()}
 			onOpenChange={props.menu.setOpen}
 		>
-			<CommandMenu testId="site-menu" items={visible()}>
+			<CommandMenu
+				testId="site-menu"
+				items={visible()}
+				suggestions={recent()}
+				suggestionsLabel="Recent"
+			>
 				<CommandMenuInput
 					testId="site-menu-input"
 					placeholder="Go to a page, change a setting…"

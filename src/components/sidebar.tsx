@@ -14,6 +14,7 @@ import {
 	createUniqueId,
 	type JSX,
 	on,
+	onCleanup,
 	onMount,
 	Show,
 	useContext,
@@ -37,7 +38,7 @@ import { StableLabel } from "../lib/stable-label";
 import {
 	color,
 	height,
-	radius,
+	shape,
 	type as scale,
 	motion as tween,
 	weight,
@@ -135,6 +136,23 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 		if (row === undefined) throw new Error(`No row registered at ${index}`);
 		return row.disabled();
 	};
+	const registeredIndices = () => [...rows.keys()].sort((a, b) => a - b);
+	const edgeRegistered = (edge: "first" | "last") => {
+		const indices = registeredIndices();
+		const position = edgeIndex(edge, indices.length, (at) =>
+			isDisabled(indices[at]),
+		);
+		return position === null ? null : indices[position];
+	};
+	const moveRegistered = (index: number, delta: 1 | -1) => {
+		const indices = registeredIndices();
+		const from = indices.indexOf(index);
+		if (from === -1) throw new Error(`No row registered at ${index}`);
+		const position = moveIndex(from, delta, indices.length, (at) =>
+			isDisabled(indices[at]),
+		);
+		return position === null ? null : indices[position];
+	};
 
 	const scope: MenuScope = {
 		hover,
@@ -146,7 +164,7 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 			for (const entry of rows.values()) {
 				if (entry.active() && !entry.disabled()) return false;
 			}
-			return edgeIndex("first", nextIndex, isDisabled) === index;
+			return edgeRegistered("first") === index;
 		},
 		focusRow(index, event) {
 			hover.setActiveIndex(index);
@@ -166,8 +184,8 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 		focusSibling(index, step) {
 			const target =
 				step === "first" || step === "last"
-					? edgeIndex(step, nextIndex, isDisabled)
-					: moveIndex(index, step === "next" ? 1 : -1, nextIndex, isDisabled);
+					? edgeRegistered(step)
+					: moveRegistered(index, step === "next" ? 1 : -1);
 			if (target === null) return;
 			const row = rows.get(target);
 			if (row === undefined) throw new Error(`No row registered at ${target}`);
@@ -179,6 +197,11 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 			rows.set(index, entry);
 			hover.registerItem(index, entry.element);
 			setRowsVersion(rowsVersion() + 1);
+			// A removed row must leave the map: the active overlay returns at the first entry that claims to be active.
+			onCleanup(() => {
+				rows.delete(index);
+				setRowsVersion(rowsVersion() + 1);
+			});
 			return index;
 		},
 	};
@@ -232,7 +255,7 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 				<FluidHighlight
 					rect={activeRectRoot}
 					session={() => 0}
-					radius={radius.item}
+					radius={shape.bg}
 					background={color.active}
 					glide={tween.moderate}
 					fade={tween.moderateExit}
@@ -241,7 +264,7 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 				<FluidHighlight
 					rect={activeRectSub}
 					session={() => 0}
-					radius={radius.item}
+					radius={shape.bg}
 					background={color.active}
 					glide={tween.moderate}
 					fade={tween.moderateExit}
@@ -250,12 +273,13 @@ export function SidebarMenu(props: { children: JSX.Element; testId?: string }) {
 				<FluidHighlight
 					rect={hoverRect}
 					session={hover.session}
-					radius={radius.item}
+					radius={shape.bg}
 					background={color.hover}
 					travel={hoverTravel}
 				/>
 				<FocusRing
 					ring={focusRing}
+					radius={shape.focusRing}
 					testId={props.testId && `${props.testId}-focus-ring`}
 					travel={ringTravel}
 				/>
@@ -324,7 +348,7 @@ export function SidebarMenuButton(props: {
 	const lit = () => props.active === true || isHovered();
 	const rowHeight = level === 0 ? height.menuRow : height.menuSubRow;
 	// Trailing reservation: the badge's 24px slot, its 8px inset and a 4px gap.
-	const paddingRight = props.badge === undefined ? 8 : 36;
+	const paddingRight = () => (props.badge === undefined ? 8 : 36);
 
 	return (
 		<div
@@ -364,8 +388,8 @@ export function SidebarMenuButton(props: {
 				alignItems: "center",
 				gap: 8,
 				paddingLeft: 8,
-				paddingRight,
-				borderRadius: radius.item,
+				paddingRight: paddingRight(),
+				borderRadius: shape.item,
 				cursor: "pointer",
 				userSelect: "none",
 				// The menu's one shared ring is drawn by SidebarMenu.
@@ -388,6 +412,7 @@ export function SidebarMenuButton(props: {
 				}
 				text={props.label}
 				heavy={props.active === true}
+				truncate
 				color={lit() ? color.foreground : color.mutedForeground}
 				grow={props.dot === undefined}
 			/>
@@ -548,6 +573,24 @@ export function SidebarHeader(props: { children: JSX.Element }) {
 	);
 }
 
+export function SidebarFooter(props: { children: JSX.Element; flushBottom?: boolean }) {
+	return (
+		<div
+			style={{
+				flexShrink: 0,
+				display: "flex",
+				flexDirection: "column",
+				gap: 8,
+				padding: 8,
+				// A callout alone in the footer sits on the rail's bottom edge.
+				paddingBottom: props.flushBottom === true ? 0 : 8,
+			}}
+		>
+			{props.children}
+		</div>
+	);
+}
+
 export function SidebarContent(props: { children: JSX.Element }) {
 	return (
 		<div
@@ -610,7 +653,7 @@ export function SidebarSearchField(props: {
 				position: "relative",
 				height: height.menuRow,
 				flexShrink: 0,
-				borderRadius: radius.item,
+				borderRadius: shape.input,
 				backgroundColor: filled(),
 				outlineWidth: 1,
 				outlineColor: hovered() || focused() ? color.border : color.transparent,
@@ -637,7 +680,7 @@ export function SidebarSearchField(props: {
 					color: color.foreground,
 					backgroundColor: color.transparent,
 					keyboardFocusDim: false,
-					borderRadius: radius.item,
+					borderRadius: shape.input,
 				}}
 			/>
 			<div

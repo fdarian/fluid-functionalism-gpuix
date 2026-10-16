@@ -6,7 +6,7 @@
 import { createTestRoot } from "@gpuix/solid/testing";
 import type { JSX } from "solid-js";
 import { App } from "../src/app";
-import { loadDemos } from "../src/lib/demo";
+import { loadDemos, loadPages } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
 import { readPng } from "./png-pixels";
@@ -21,6 +21,33 @@ type CheckOptions = {
 };
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+type Renderer = ReturnType<typeof createTestRoot>["renderer"];
+
+/** The ported pages put a playground above the demos: scroll the page until the element is on screen. */
+export async function scrollIntoView(renderer: Renderer, testId: string) {
+	for (let attempts = 0; attempts < 30; attempts++) {
+		const element = renderer.findByTestId(testId);
+		if (element === undefined) throw new Error(`no element ${testId}`);
+		const box = renderer.getElementBounds(element.id);
+		// An element far below the fold is not painted yet: scroll blind until it is.
+		const center = box === null ? null : box.y + box.height / 2;
+		if (center !== null && center > 120 && center < 600) return;
+		renderer.nativeSimulateScrollWheel(
+			700,
+			400,
+			0,
+			center === null ? -400 : -(center - 200),
+		);
+		const until = performance.now() + 150;
+		do {
+			renderer.flush();
+			renderer.dispatchNativeEvents();
+			await sleep(16);
+		} while (performance.now() < until);
+	}
+	throw new Error(`could not scroll ${testId} into view`);
+}
 
 /** `target` is a demo page slug, or a view to mount on its own. */
 export async function createCheck(
@@ -141,7 +168,8 @@ export async function createCheck(
 	setThemeChoice("dark");
 	if (isPage) {
 		const demos = await loadDemos();
-		test.render(() => <App demos={demos} initialPage={target} />);
+		const pages = await loadPages(demos);
+		test.render(() => <App demos={demos} pages={pages} initialPage={target} />);
 	} else {
 		test.render(target);
 	}
@@ -158,6 +186,7 @@ export async function createCheck(
 		ink,
 		coverage,
 		hoverFor,
+		scrollIntoView: (testId: string) => scrollIntoView(renderer, testId),
 		exists: (testId: string) => renderer.findByTestId(testId) !== undefined,
 		async click(testId: string) {
 			const point = center(testId);

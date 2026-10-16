@@ -15,6 +15,7 @@ import {
 	Switch,
 } from "solid-js";
 import { Button } from "./components/button";
+import { ScrollArea } from "./components/scroll-area";
 import { Select } from "./components/select";
 import {
 	Sidebar,
@@ -24,9 +25,24 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 } from "./components/sidebar";
+import { Tooltip } from "./components/tooltip";
+import { BentoGrid } from "./home/bento-grid";
 import { AppFrame, PANEL_INNER_RADIUS } from "./lib/app-frame";
-import type { Demo } from "./lib/demo";
+import { type Demo, type Page, SHOWCASE_SLUG } from "./lib/demo";
 import { PageScrollerContext } from "./lib/demo-kit";
+import { MONO } from "./lib/doc-page";
+import { type PageNav, PageNavContext, usePageNav } from "./lib/page-nav";
+import {
+	createRightRail,
+	RightRailContext,
+	RightRailTarget,
+} from "./lib/playground";
+import {
+	ICON_LIBRARIES,
+	type IconLibrary,
+	iconLibrary,
+	setIconLibrary,
+} from "./lib/icons";
 import { openUrl } from "./lib/open-url";
 import {
 	createSiteMenu,
@@ -37,15 +53,23 @@ import { buildStarterPrompt, SITE_URL } from "./lib/starter-prompt";
 import {
 	bindSystemScheme,
 	color,
-	type as scale,
+	siteType,
+	setShapeChoice,
+	setSizeChoice,
 	setThemeChoice,
+	SHAPES,
+	type ShapeChoice,
+	shapeChoice,
+	SIZES,
+	type SizeChoice,
+	sizeChoice,
 	THEMES,
 	type ThemeChoice,
 	themeChoice,
 	weight,
 } from "./lib/theme";
 
-const SHOWCASE = "showcase";
+const SHOWCASE = SHOWCASE_SLUG;
 const PAGE_WIDTH = 600;
 export const WINDOW_TITLE = "Fluid Functionalism on gpuix";
 
@@ -53,7 +77,7 @@ function Heading(props: { children: string }) {
 	return (
 		<text
 			style={{
-				...scale.display,
+				...siteType.display,
 				fontWeight: weight.semibold,
 				color: color.foreground,
 			}}
@@ -65,10 +89,23 @@ function Heading(props: { children: string }) {
 
 function AppSidebar(props: {
 	demos: readonly Demo[];
+	pages: readonly Page[];
 	page: string;
 	onPage: (page: string) => void;
 	onSearch: () => void;
 }) {
+	const sidebarPages = (group: Page["group"]) =>
+		props.pages.filter(
+			(page) => page.group === group && page.listed === "sidebar",
+		);
+	const row = (page: Page) => (
+		<SidebarMenuButton
+			testId={`nav-${page.slug}`}
+			label={page.title}
+			active={props.page === page.slug}
+			onClick={() => props.onPage(page.slug)}
+		/>
+	);
 	return (
 		<Sidebar leftCornerRadius={PANEL_INNER_RADIUS}>
 			<SidebarHeader>
@@ -90,7 +127,16 @@ function AppSidebar(props: {
 						active={props.page === SHOWCASE}
 						onClick={() => props.onPage(SHOWCASE)}
 					/>
+					<For each={sidebarPages("Pages")}>{row}</For>
 				</SidebarMenu>
+				<Show when={sidebarPages("System").length > 0}>
+					<SidebarGroupLabel count={sidebarPages("System").length}>
+						System
+					</SidebarGroupLabel>
+					<SidebarMenu>
+						<For each={sidebarPages("System")}>{row}</For>
+					</SidebarMenu>
+				</Show>
 				<SidebarGroupLabel count={props.demos.length}>
 					Components
 				</SidebarGroupLabel>
@@ -114,6 +160,7 @@ function AppSidebar(props: {
 const COPIED_MS = 2000;
 
 function Hero() {
+	const nav = usePageNav();
 	const [copied, setCopied] = createSignal(false);
 	let resetTimer: ReturnType<typeof setTimeout> | undefined;
 	onCleanup(() => clearTimeout(resetTimer));
@@ -126,7 +173,7 @@ function Hero() {
 	return (
 		<div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
 			<Heading>Fluid Functionalism</Heading>
-			<text style={{ ...scale.body, color: color.mutedForeground }}>
+			<text style={{ ...siteType.body, color: color.mutedForeground }}>
 				Refined UI components with satisfying hover.
 			</text>
 			<div
@@ -150,7 +197,7 @@ function Hero() {
 					testId="hero-learn-more"
 					size="compact"
 					variant="secondary"
-					onClick={() => openUrl(`${SITE_URL}/docs`)}
+					onClick={() => nav.navigate("introduction")}
 				>
 					Learn more
 				</Button>
@@ -167,54 +214,86 @@ function Hero() {
 	);
 }
 
-/** A card per discovered demo; the landing page is a table of contents. */
-function Showcase(props: {
-	demos: readonly Demo[];
-	onPage: (page: string) => void;
-}) {
+function HeroArrows() {
+	const nav = usePageNav();
+	// Square icon buttons follow the site-wide size step.
+	const iconSize = () => (sizeChoice() === "compact" ? "icon-compact" : "icon");
+	return (
+		<div
+			style={{
+				display: "flex",
+				flexDirection: "row",
+				alignItems: "center",
+				gap: 4,
+				flexShrink: 0,
+			}}
+		>
+			<Button
+				testId="hero-prev"
+				variant="ghost"
+				size={iconSize()}
+				icon="arrow-left"
+				disabled
+				aria-label="No previous page"
+			/>
+			<Tooltip
+				content={
+					<text style={{ ...siteType.caption, color: color.background }}>
+						{"Introduction  "}
+						<span style={{ fontFamily: MONO, opacity: 0.5 }}>{"\u2192"}</span>
+					</text>
+				}
+			>
+				<Button
+					testId="hero-next"
+					variant="ghost"
+					size={iconSize()}
+					icon="arrow-right"
+					aria-label="Next: Introduction"
+					onClick={() => nav.navigate("introduction")}
+				/>
+			</Tooltip>
+		</div>
+	);
+}
+
+/** The hero over the bento grid of live component previews. */
+function Showcase() {
 	return (
 		<div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-			<Hero />
 			<div
 				style={{
+					width: "100%",
+					maxWidth: 680,
+					alignSelf: "center",
 					display: "flex",
 					flexDirection: "row",
-					flexWrap: "wrap",
-					gap: 12,
+					alignItems: "flex-start",
+					justifyContent: "space-between",
+					gap: 16,
+					paddingLeft: 24,
+					paddingRight: 24,
 				}}
 			>
-				<For each={props.demos}>
-					{(demo) => (
-						<div
-							testId={`card-${demo.slug}`}
-							role="button"
-							onClick={() => props.onPage(demo.slug)}
-							style={{
-								width: 144,
-								height: 72,
-								display: "flex",
-								alignItems: "flex-end",
-								padding: 12,
-								borderRadius: 12,
-								borderWidth: 1,
-								borderColor: color.border,
-								backgroundColor: color.surface2,
-								cursor: "pointer",
-								hover: { backgroundColor: color.hover },
-							}}
-						>
-							<text style={{ ...scale.body, color: color.foreground }}>
-								{demo.title}
-							</text>
-						</div>
-					)}
-				</For>
+				<Hero />
+				<HeroArrows />
+			</div>
+			<div
+				style={{
+					width: "100%",
+					maxWidth: 1200,
+					alignSelf: "center",
+					paddingLeft: 24,
+					paddingRight: 24,
+				}}
+			>
+				<BentoGrid />
 			</div>
 		</div>
 	);
 }
 
-function CustomizeCard() {
+export function CustomizeCard() {
 	return (
 		<div
 			style={{
@@ -228,7 +307,7 @@ function CustomizeCard() {
 		>
 			<text
 				style={{
-					...scale.title,
+					...siteType.title,
 					fontWeight: weight.semibold,
 					color: color.foreground,
 				}}
@@ -244,7 +323,7 @@ function CustomizeCard() {
 					height: 28,
 				}}
 			>
-				<text style={{ ...scale.body, color: color.mutedForeground }}>
+				<text style={{ ...siteType.body, color: color.mutedForeground }}>
 					Theme
 				</text>
 				<Select
@@ -254,16 +333,84 @@ function CustomizeCard() {
 					onValueChange={(value: ThemeChoice) => setThemeChoice(value)}
 				/>
 			</div>
+			<div
+				style={{
+					display: "flex",
+					flexDirection: "row",
+					alignItems: "center",
+					justifyContent: "space-between",
+					height: 28,
+				}}
+			>
+				<text style={{ ...siteType.body, color: color.mutedForeground }}>
+					Radius
+				</text>
+				<Select
+					testId="radius"
+					items={SHAPES}
+					value={shapeChoice()}
+					onValueChange={(value: ShapeChoice) => setShapeChoice(value)}
+				/>
+			</div>
+			<div
+				style={{
+					display: "flex",
+					flexDirection: "row",
+					alignItems: "center",
+					justifyContent: "space-between",
+					height: 28,
+				}}
+			>
+				<text style={{ ...siteType.body, color: color.mutedForeground }}>
+					Size
+				</text>
+				<Select
+					testId="size"
+					items={SIZES}
+					value={sizeChoice()}
+					onValueChange={(value: SizeChoice) => setSizeChoice(value)}
+				/>
+			</div>
+			<div
+				style={{
+					display: "flex",
+					flexDirection: "row",
+					alignItems: "center",
+					justifyContent: "space-between",
+					height: 28,
+				}}
+			>
+				<text style={{ ...siteType.body, color: color.mutedForeground }}>
+					Icons
+				</text>
+				<Select
+					testId="icons"
+					items={ICON_LIBRARIES}
+					value={iconLibrary()}
+					onValueChange={(value: IconLibrary) => setIconLibrary(value)}
+				/>
+			</div>
 		</div>
 	);
 }
 
-export function App(props: { demos: readonly Demo[]; initialPage?: string }) {
+export function App(props: {
+	demos: readonly Demo[];
+	pages: readonly Page[];
+	initialPage?: string;
+}) {
 	const [page, setPage] = createSignal(props.initialPage ?? SHOWCASE);
+	// A page mounts motion values, and gpuix rejects renderer creates inside the key or press handler that navigates; a microtask runs after it returns.
+	const navigate = (slug: string) => queueMicrotask(() => setPage(slug));
+	const nav: PageNav = { navigate, current: page };
 	const current = (): Demo | undefined =>
 		props.demos.find((demo) => demo.slug === page());
+	const currentPage = (): Page | undefined =>
+		props.pages.find((candidate) => candidate.slug === page());
+	const isFull = () => currentPage()?.layout === "full";
 	bindSystemScheme(createAppearance());
 	const siteMenu = createSiteMenu();
+	const rail = createRightRail();
 	const [pageScroller, setPageScroller] = createSignal<HostElement>();
 	const renderer = useGpuixRequired();
 	const setAppearance = renderer.setAppearance;
@@ -274,6 +421,7 @@ export function App(props: { demos: readonly Demo[]; initialPage?: string }) {
 	createEffect(() => setAppearance.call(renderer, themeChoice()));
 	return (
 		<AppFrame title={WINDOW_TITLE}>
+			<RightRailContext.Provider value={rail}>
 			<div
 				style={{
 					display: "flex",
@@ -284,12 +432,15 @@ export function App(props: { demos: readonly Demo[]; initialPage?: string }) {
 					borderRadius: PANEL_INNER_RADIUS,
 				}}
 			>
-				<AppSidebar
-					demos={props.demos}
-					page={page()}
-					onPage={setPage}
-					onSearch={() => siteMenu.setOpen(true)}
-				/>
+				<Show when={!isFull()}>
+					<AppSidebar
+						demos={props.demos}
+						pages={props.pages}
+						page={page()}
+						onPage={navigate}
+						onSearch={() => siteMenu.setOpen(true)}
+					/>
+				</Show>
 				<div
 					ref={setPageScroller}
 					style={{
@@ -303,36 +454,59 @@ export function App(props: { demos: readonly Demo[]; initialPage?: string }) {
 				>
 					<div
 						style={{
-							width: PAGE_WIDTH,
+							width: isFull() || page() === SHOWCASE ? "100%" : PAGE_WIDTH,
+							...(isFull() ? { height: "100%" } : {}),
 							flexShrink: 0,
 							display: "flex",
 							flexDirection: "column",
-							gap: 24,
-							paddingTop: 40,
-							paddingBottom: 40,
+							gap: isFull() ? 0 : 24,
+							paddingTop: isFull() ? 0 : 40,
+							paddingBottom: isFull() ? 0 : 40,
 						}}
 					>
 						<PageScrollerContext.Provider value={pageScroller}>
-							<Switch>
-								<Match when={page() === SHOWCASE}>
-									<Showcase demos={props.demos} onPage={setPage} />
-								</Match>
-								<Match when={current()} keyed>
-									{(demo: Demo) => <DemoPage demo={demo} />}
-								</Match>
-							</Switch>
+							<PageNavContext.Provider value={nav}>
+								<Switch>
+									<Match when={page() === SHOWCASE}>
+										<Showcase />
+									</Match>
+									<Match when={current()} keyed>
+										{(demo: Demo) => <DemoPage demo={demo} />}
+									</Match>
+									<Match when={currentPage()} keyed>
+										{(entry: Page) => <PageBody page={entry} />}
+									</Match>
+								</Switch>
+							</PageNavContext.Provider>
 						</PageScrollerContext.Provider>
 					</div>
 				</div>
-				<div style={{ width: 296, flexShrink: 0, padding: 16 }}>
-					<CustomizeCard />
-				</div>
+				<Show when={!isFull()}>
+					<div style={{ width: 296, flexShrink: 0 }}>
+						<ScrollArea height="100%" fade>
+							<div
+								style={{
+									display: "flex",
+									flexDirection: "column",
+									gap: 12,
+									padding: 16,
+								}}
+							>
+								<CustomizeCard />
+								<RightRailTarget />
+							</div>
+						</ScrollArea>
+					</div>
+				</Show>
 			</div>
+			</RightRailContext.Provider>
 			<SiteCommandMenu
 				menu={siteMenu}
 				demos={props.demos}
+				pages={props.pages}
 				showcase={SHOWCASE}
-				onPage={setPage}
+				current={page()}
+				onPage={navigate}
 			/>
 		</AppFrame>
 	);
@@ -344,5 +518,18 @@ function DemoPage(props: { demo: Demo }): JSX.Element {
 			<Heading>{props.demo.title}</Heading>
 			<props.demo.Demo />
 		</>
+	);
+}
+
+/** A "docs" page sits under the heading in the page column; a "full" page is the whole panel. */
+function PageBody(props: { page: Page }): JSX.Element {
+	return (
+		<Show
+			when={props.page.layout === "docs"}
+			fallback={<props.page.Page />}
+		>
+			<Heading>{props.page.heading ?? props.page.title}</Heading>
+			<props.page.Page />
+		</Show>
 	);
 }

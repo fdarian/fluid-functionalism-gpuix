@@ -9,29 +9,20 @@ Checked with no drift: the 17 hexes, heights (24 / 20), paddings (10 / 8), gaps 
 
 - **Cause:** `gpuix gap`.
 - **Original:** `[text-box:trim-both_cap_alphabetic]` on the label span so the letterforms centre in the fixed-height pill (`registry/default/badge.tsx:148-151`).
-- **Port:** the label keeps the type scale's line height (16 for `caption`, 14 for `micro`, `src/lib/theme.ts:265-266`) inside a 24px or 20px pill, flex-centred (`src/components/badge.tsx:28-31`, `:79-90`, `:98-100`).
+- **Port:** the label keeps the type scale's line height (16 for `caption`, 14 for `micro`, `src/lib/theme.ts:305-306`) inside a 24px or 20px pill, flex-centred (`src/components/badge.tsx:28-31`, `:79-90`, `:98-100`).
 - **gpuix lacks:** `text-box-trim` / `text-box-edge`: `StyleDesc` has neither (searched `packages/native/js/host.ts`, `packages/native/src`), so a label is centred by its full line box. README "gpuix gaps", badge row.
 - **Workaround:** none. Visible only as roughly a pixel of optical drift.
 - **Fidelity:** approximated.
 - **Components it hits:** any component that trims its label (button, inline card title, `CardButton`, `CardFeature`).
 
-## Size does not follow the surrounding `SizeProvider`
+## Size aliases `sm`, `md`, `lg`
 
-- **Cause:** `not ported yet`.
-- **Original:** an omitted `size` resolves from the `SizeProvider`; `sm` / `md` / `lg` are accepted as aliases (`:64-75`, `:102-109`).
-- **Port:** `size` defaults to `default` and takes only `default` | `compact` (`src/components/badge.tsx:26`, `:52`).
-- **Workaround:** pass `size` by hand.
-- **Fidelity:** dropped.
-- **Components it hits:** every component with a size ladder (the port has no `SizeProvider`).
-
-## Radius is fixed at 8
-
-- **Cause:** `not ported yet`.
-- **Original:** the corner comes from the shape context, `rounded-lg` or 20px in pill mode (`:99-101`, `:134`).
-- **Port:** `radius.item` (`src/components/badge.tsx:104`). README: "pill shape" is not ported.
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every component that reads `shape`.
+- **Cause:** `port choice` (reason not stated).
+- **Original:** `sm` / `md` / `lg` are accepted and mapped onto the two-step ladder (`registry/default/badge.tsx:64-75`, `:102-109`).
+- **Port:** `size` takes only `default` | `compact`; omitted, it follows the Size row (`src/components/badge.tsx:26`, `:52`).
+- **Workaround:** pass `default` or `compact`.
+- **Fidelity:** dropped (aliases).
+- **Components it hits:** just this one (button has the same aliases, see button.md).
 
 ## No `className`, `style`, `ref` or HTML attributes
 

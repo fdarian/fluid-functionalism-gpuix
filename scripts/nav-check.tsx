@@ -1,10 +1,11 @@
 import { createTestRoot } from "@gpuix/solid/testing";
 import { App } from "../src/app";
-import { loadDemos } from "../src/lib/demo";
+import { loadDemos, loadPages } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
 
 const demos = await loadDemos();
+const pages = await loadPages(demos);
 const test = createTestRoot({ width: 1240, height: 780, fonts });
 const renderer = test.renderer;
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -29,7 +30,7 @@ async function click(testId: string) {
 
 // The test renderer reports the machine's appearance; pin the scheme so captures are reproducible.
 setThemeChoice("dark");
-test.render(() => <App demos={demos} />);
+test.render(() => <App demos={demos} pages={pages} />);
 await settle();
 
 const first = process.argv[2];

@@ -31,6 +31,8 @@ import {
 	colorFade,
 	focusRing,
 	radius,
+	shape,
+	sizeChoice,
 	type as scale,
 	scheme,
 	motion as tween,
@@ -161,7 +163,7 @@ export function Select<Value extends string>(props: {
 	const renderer = useGpuixRequired();
 	const variant = () => props.variant ?? "inline";
 	const inline = () => variant() === "inline";
-	const spec = () => specs[props.size ?? "default"];
+	const spec = () => specs[props.size ?? sizeChoice()];
 	const triggerSpec = (): Spec =>
 		inline()
 			? {
@@ -593,7 +595,7 @@ export function Select<Value extends string>(props: {
 						paddingRight: inline() ? 6 : triggerSpec().padX,
 						borderWidth: inline() ? 0 : 1,
 						borderColor: borderColor(),
-						borderRadius: radius.item,
+						borderRadius: shape.input,
 						cursor: "pointer",
 						keyboardFocusDim: false,
 						opacity: props.disabled === true ? 0.5 : 1,
@@ -722,6 +724,7 @@ export function Select<Value extends string>(props: {
 								/>
 								<FocusRing
 									ring={rowRing}
+									radius={radius.focusRing}
 									testId={
 										props.testId === undefined
 											? undefined

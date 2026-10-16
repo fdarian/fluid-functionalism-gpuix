@@ -1,11 +1,12 @@
 /**
  * Headless captures of one demo page through gpuix's offscreen test renderer.
  *
- *   bun scripts/screenshots.tsx <demo>      # a file name in src/demos/, or "showcase"
+ *   bun scripts/screenshots.tsx <slug>      # a file name in src/demos/ or src/pages/, or "showcase"
  *
  * Writes `screenshots/<demo>/initial.png`, then whatever the demo's
- * `scenarios` capture, then `light.png`: the same page after switching the
- * theme with the "Make them yours" select.
+ * `scenarios` capture, then `pill.png` with Radius set to Pill, then
+ * `compact.png` with Size set to Compact, then `light.png`: the same page
+ * after switching the theme with the "Make them yours" select.
  *
  * Real time, not the test clock: fluid hover measures on timers and motion
  * samples a wall clock, so each step runs frames until they settle.
@@ -13,18 +14,34 @@
 import { mkdirSync } from "node:fs";
 import { createTestRoot } from "@gpuix/solid/testing";
 import { App } from "../src/app";
-import { type Demo, loadDemos, type ShotContext } from "../src/lib/demo";
+import { showcaseScenarios } from "../src/home/scenarios";
+import {
+	type Demo,
+	loadDemos,
+	loadPages,
+	type Page,
+	type ShotContext,
+} from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
-import { setThemeChoice } from "../src/lib/theme";
+import {
+	setShapeChoice,
+	setSizeChoice,
+	setThemeChoice,
+} from "../src/lib/theme";
 
 const slug = process.argv[2];
 const demos = await loadDemos();
-const names = ["showcase", ...demos.map((demo) => demo.slug)];
+const pages = await loadPages(demos);
+const names = [
+	"showcase",
+	...demos.map((demo) => demo.slug),
+	...pages.map((page) => page.slug),
+];
 if (slug === undefined || !names.includes(slug)) {
 	console.error(`usage: bun scripts/screenshots.tsx <${names.join("|")}>`);
 	process.exit(1);
 }
-const demo: Demo | undefined = demos.find(
+const demo: Demo | Page | undefined = [...demos, ...pages].find(
 	(candidate) => candidate.slug === slug,
 );
 
@@ -100,7 +117,8 @@ function ariaNode(target: string) {
 			aria[relation] = targets.map((key) => keyToId.get(key) ?? key);
 		}
 		const active = node.aria.active_descendant;
-		if (active !== undefined) aria.active_descendant = keyToId.get(active) ?? active;
+		if (active !== undefined)
+			aria.active_descendant = keyToId.get(active) ?? active;
 		return aria;
 	}
 	return undefined;
@@ -199,24 +217,44 @@ const shot: ShotContext = {
 
 // The test renderer reports the machine's appearance; pin the scheme so captures are reproducible.
 setThemeChoice("dark");
-test.render(() => <App demos={demos} initialPage={slug} />);
+test.render(() => <App demos={demos} pages={pages} initialPage={slug} />);
 // Fluid hover measures on timers after the first frame; 400 ms leaves the first highlight unpainted.
 await settle(800);
 capture("initial");
 
-await demo?.scenarios?.(shot);
+await (slug === "showcase" ? showcaseScenarios : demo?.scenarios)?.(shot);
+
+// The same page with Radius on Pill. Set directly: it must work on full pages, which have no Radius select.
+setShapeChoice("pill");
+await settle(600);
+capture("pill");
+setShapeChoice("rounded");
+await settle(600);
+
+// And with Size on Compact, set directly for the same reason.
+setSizeChoice("compact");
+await settle(600);
+capture("compact");
+setSizeChoice("default");
+await settle(600);
 
 // Back to a neutral pointer, then flip the theme through the real control.
 await shot.moveTo(1180, 700);
-await shot.click("theme");
-const lightRow = renderer.findByText("Light");
-if (lightRow === undefined)
-	throw new Error("the theme select has no Light row");
-const lightBounds = renderer.getElementBounds(lightRow.id);
-if (lightBounds === null)
-	throw new Error("no painted bounds for the Light row");
-renderer.nativeSimulateClick(lightBounds.x + 4, lightBounds.y + 4);
-await settle(600);
+if (demo !== undefined && "layout" in demo && demo.layout === "full") {
+	// A full-layout page has no right column, so no theme select to drive.
+	setThemeChoice("light");
+	await settle(600);
+} else {
+	await shot.click("theme");
+	const lightRow = renderer.findByText("Light");
+	if (lightRow === undefined)
+		throw new Error("the theme select has no Light row");
+	const lightBounds = renderer.getElementBounds(lightRow.id);
+	if (lightBounds === null)
+		throw new Error("no painted bounds for the Light row");
+	renderer.nativeSimulateClick(lightBounds.x + 4, lightBounds.y + 4);
+	await settle(600);
+}
 await shot.moveTo(1180, 700);
 capture("light");
 

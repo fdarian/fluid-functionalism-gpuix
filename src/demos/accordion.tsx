@@ -1,4 +1,4 @@
-import type { JSX } from "solid-js";
+import { createSignal, type JSX, Show } from "solid-js";
 import {
 	Accordion,
 	AccordionContent,
@@ -6,8 +6,16 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from "../components/accordion";
-import type { DemoModule } from "../lib/demo";
+import type { DemoModule, ShotContext } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
+import {
+	PlayField,
+	PlaygroundLayout,
+	PlaygroundPanel,
+	PlaySelect,
+	PlaySwitch,
+	pick,
+} from "../lib/playground";
 import { color, type as scale } from "../lib/theme";
 
 function Section(props: { caption: string; children: JSX.Element }) {
@@ -48,9 +56,129 @@ function Row(props: { children: JSX.Element }) {
 export const title = "Accordion";
 export const group = "Components";
 
+const PLAY_ITEMS = [
+	{
+		value: "item-1",
+		title: "What is Fluid Functionalism?",
+		content:
+			"A design philosophy where every animation serves a functional purpose — motion is information, not decoration.",
+	},
+	{
+		value: "item-2",
+		title: "How does fluid hover work?",
+		content:
+			"The closest item to your cursor is highlighted before you click, reducing targeting errors.",
+	},
+	{
+		value: "item-3",
+		title: "Why spring physics?",
+		content:
+			"Springs respond naturally to interruption — if a user reverses mid-transition, the animation adapts.",
+	},
+	{
+		value: "item-4",
+		title: "Is it compatible with shadcn/ui?",
+		content:
+			"Yes. Your existing theme, radius tokens, and setup apply automatically.",
+	},
+] as const;
+
+/** `one` keeps exactly one open, `oneOrNone` is single and collapsible, `any` is multiple. */
+type Expand = "one" | "oneOrNone" | "any";
+
+const EXPAND_OPTIONS = [
+	{ value: "one", label: "One at a time" },
+	{ value: "oneOrNone", label: "One or none" },
+	{ value: "any", label: "Any number" },
+] as const;
+
+function Playground() {
+	const [expand, setExpand] = createSignal<Expand>("oneOrNone");
+	const [highlightExpanded, setHighlightExpanded] = createSignal(true);
+	const first = PLAY_ITEMS[0].value;
+	// A group's value is controlled so "One at a time" can refuse the close of the open item, which Base UI's single mode always allows.
+	const [single, setSingle] = createSignal<string>(first);
+	const [multiple, setMultiple] = createSignal<string[]>([first]);
+
+	const changeExpand = (next: Expand) => {
+		setSingle(first);
+		setMultiple([first]);
+		setExpand(next);
+	};
+	const shuffle = () => {
+		changeExpand(pick(["one", "oneOrNone", "oneOrNone", "any"] as const));
+		setHighlightExpanded(Math.random() > 0.4);
+	};
+
+	const items = () =>
+		PLAY_ITEMS.map((item) => (
+			<AccordionItem value={item.value}>
+				<AccordionTrigger testId={`play-${item.value}`}>
+					{item.title}
+				</AccordionTrigger>
+				<AccordionContent>{item.content}</AccordionContent>
+			</AccordionItem>
+		));
+	const highlight = () => (highlightExpanded() ? "item" : "trigger");
+
+	return (
+		<PlaygroundLayout
+			preview={
+				<div style={{ width: 288, paddingTop: 20 }}>
+					<Show
+						when={expand() === "any"}
+						fallback={
+							<AccordionGroup
+								type="single"
+								highlight={highlight()}
+								value={single()}
+								onValueChange={(next) => {
+									if (next === "" && expand() === "one") return;
+									setSingle(next);
+								}}
+							>
+								{items()}
+							</AccordionGroup>
+						}
+					>
+						<AccordionGroup
+							type="multiple"
+							highlight={highlight()}
+							value={multiple()}
+							onValueChange={setMultiple}
+						>
+							{items()}
+						</AccordionGroup>
+					</Show>
+				</div>
+			}
+			controls={
+				<PlaygroundPanel onShuffle={shuffle}>
+					<PlayField label="Expand">
+						<PlaySelect
+							testId="play-expand"
+							value={expand()}
+							onChange={changeExpand}
+							options={EXPAND_OPTIONS}
+						/>
+					</PlayField>
+					<PlaySwitch
+						testId="play-highlight"
+						label="Highlight expanded"
+						checked={highlightExpanded()}
+						onToggle={() => setHighlightExpanded(!highlightExpanded())}
+					/>
+				</PlaygroundPanel>
+			}
+		/>
+	);
+}
+
 export function Demo() {
 	return (
-		<DemoCard title="Accordion">
+		<>
+			<Playground />
+			<DemoCard title="Accordion">
 			<div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 				<Row>
 					<Section caption="Standalone: its own hover state">
@@ -177,11 +305,52 @@ export function Demo() {
 					</Section>
 				</Row>
 			</div>
-		</DemoCard>
+			</DemoCard>
+		</>
 	);
 }
 
+/** The page is taller than the window: scroll an element to the upper part of it. */
+async function reveal(shot: ShotContext, testId: string) {
+	let previous = Number.NaN;
+	for (let attempt = 0; attempt < 8; attempt++) {
+		const y = shot.centerOf(testId).y;
+		if ((y > 120 && y < 320) || y === previous) return;
+		previous = y;
+		await shot.scroll(700, 400, 0, -(y - 200));
+	}
+	throw new Error(`could not scroll ${testId} into view`);
+}
+
+/** Opens the Expand select from the keyboard (a pointer press that opens a popup cannot run in the test renderer) and walks `steps` rows. */
+async function pickExpand(shot: ShotContext, steps: string) {
+	await shot.focus("play-expand-trigger");
+	await shot.press(`down ${steps} enter`);
+	await shot.settle(300);
+}
+
 export const scenarios: DemoModule["scenarios"] = async (shot) => {
+	// The playground's controls sit in the right column.
+	shot.capture("playground");
+	await pickExpand(shot, "down");
+	await shot.click("play-item-2");
+	shot.expectText(PLAY_ITEMS[1].content, true);
+	shot.expectText(PLAY_ITEMS[0].content, true);
+	await shot.click("play-highlight-track");
+	shot.capture("playground-any-trigger-highlight");
+	await pickExpand(shot, "up up");
+	await shot.click("play-item-1");
+	shot.expectText(PLAY_ITEMS[0].content, true);
+	await shot.click("play-item-1");
+	shot.expectText(PLAY_ITEMS[0].content, true);
+	await shot.click("play-item-3");
+	await shot.settle(300);
+	shot.expectText(PLAY_ITEMS[0].content, false);
+	shot.capture("playground-one-at-a-time");
+	await shot.click("playground-shuffle");
+	shot.capture("playground-shuffled");
+
+	await reveal(shot, "single-2");
 	await shot.hover("single-2");
 	shot.capture("hover-closed-row");
 	await shot.click("single-2");
@@ -200,6 +369,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	shot.capture("keyboard-focus");
 
 	// Closed panels leave the tree once their exit is over.
+	await reveal(shot, "kb-1");
 	await shot.click("kb-1");
 	shot.expectText("Alpha body", true);
 	await shot.click("kb-1");

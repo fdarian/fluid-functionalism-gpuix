@@ -6,11 +6,13 @@
  * Hover tab 2, then the selected tab 0 (the pill fades in place), then tab 3.
  * The source unmounts the pill after the fade and mounts a new one at the
  * selected pill, so the pill must be seen left of tab 2 on its way out; resuming
- * from tab 2 never goes left of it.
+ * from tab 2 never goes left of it. The first sample is taken a frame (about
+ * 15 ms of spring) after the move, so on the ported pages' slower frames the pill
+ * is already near tab 2: only a start left of tab 2's own edge is asserted.
  */
 import { createTestRoot } from "@gpuix/solid/testing";
 import { App } from "../src/app";
-import { loadDemos } from "../src/lib/demo";
+import { loadDemos, loadPages } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
 
@@ -50,9 +52,10 @@ async function moveTo(testId: string, ms: number) {
 }
 
 const demos = await loadDemos();
+const pages = await loadPages(demos);
 setThemeChoice("dark");
 test.render(() => (
-	<App demos={demos} initialPage={process.argv[2] ?? "tabs"} />
+	<App demos={demos} pages={pages} initialPage={process.argv[2] ?? "tabs"} />
 ));
 await settle(800);
 
@@ -90,7 +93,7 @@ let ok = false;
 let xs: number[] = [];
 for (let tries = 0; tries < 4 && !ok; tries++) {
 	xs = await attempt();
-	ok = Math.min(...xs) < farBox.x - 20;
+	ok = Math.min(...xs) < farBox.x;
 }
 console.log(
 	`${ok ? "PASS" : "FAIL"} preview pill leaves the selected tab: x per frame ${xs.map((x) => x.toFixed(0)).join(" ")}; selected tab x ${box.x.toFixed(1)}, previously hovered tab x ${farBox.x.toFixed(1)}`,

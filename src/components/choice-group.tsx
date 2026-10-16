@@ -28,7 +28,8 @@ import {
 import { StableLabel } from "../lib/stable-label";
 import {
 	color,
-	radius,
+	shape,
+	sizeChoice,
 	type as scale,
 	scheme,
 	motion as tween,
@@ -205,7 +206,7 @@ export function ChoiceGroup(props: {
 	const context: ChoiceContextValue = {
 		hover,
 		focusRing,
-		size: () => props.size ?? "default",
+		size: () => props.size ?? sizeChoice(),
 		arrowsSelect: props.arrowsSelect ?? false,
 		registerRow(index, entry) {
 			rows.set(index, entry);
@@ -251,7 +252,7 @@ export function ChoiceGroup(props: {
 							rect={runRect(id)}
 							session={() => 0}
 							fadeIn={false}
-							radius={radius.item}
+							radius={props.role === "radiogroup" ? shape.bg : shape.mergedBg}
 							background={color.active}
 							glide={tween.moderate}
 							fade={tween.moderateExit}
@@ -261,11 +262,12 @@ export function ChoiceGroup(props: {
 				<FluidHighlight
 					rect={rectOf(hover.activeIndex())}
 					session={hover.session}
-					radius={radius.item}
+					radius={shape.bg}
 					background={color.hover}
 				/>
 				<FocusRing
 					ring={focusRing}
+					radius={shape.focusRing}
 					testId={props.testId && `${props.testId}-focus-ring`}
 				/>
 				{props.children}
@@ -364,7 +366,7 @@ export function ChoiceRow(props: {
 				gap: size().gap,
 				paddingLeft: size().padX,
 				paddingRight: size().padX,
-				borderRadius: radius.item,
+				borderRadius: shape.item,
 				cursor: "pointer",
 				keyboardFocusDim: false,
 			}}

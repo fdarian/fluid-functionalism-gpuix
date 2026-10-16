@@ -24,24 +24,6 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const k = await createCheck("dropdown");
 const renderer = k.renderer;
 
-async function scrollIntoView(testId: string) {
-	for (let attempts = 0; attempts < 30; attempts++) {
-		const element = renderer.findByTestId(testId);
-		const bounds =
-			element === undefined ? null : renderer.getElementBounds(element.id);
-		const center = bounds === null ? null : bounds.y + bounds.height / 2;
-		if (center !== null && center > 120 && center < 600) return;
-		renderer.nativeSimulateScrollWheel(
-			700,
-			400,
-			0,
-			center === null ? -400 : -(center - 200),
-		);
-		await k.settle(150);
-	}
-	throw new Error(`could not scroll ${testId} into view`);
-}
-
 /** The test id of the focused element, among `candidates`; `null` when focus is elsewhere or nowhere. */
 function focusedAmong(candidates: readonly string[]) {
 	const focused = renderer.getFocusedElementId();
@@ -57,7 +39,7 @@ function focusedAmong(candidates: readonly string[]) {
 // ─── Inline panel ────────────────────────────────────────────────────────────
 
 // A pointer click must not draw the keyboard ring.
-await scrollIntoView("basic-0");
+await k.scrollIntoView("basic-0");
 // The same steps as the `inline-checked` capture of scripts/screenshots.tsx, which
 // cannot run past its submenu step in some environments.
 const hovered = k.bounds("basic-2");
@@ -128,7 +110,7 @@ k.expect("inline: Home focuses the first row", basicFocus(), "basic-0");
 k.check("inline: the ring follows the focus", k.exists("basic-ring"));
 
 // Keyboard entry: Tab into the group draws the ring.
-await scrollIntoView("groups-0");
+await k.scrollIntoView("groups-0");
 for (let presses = 0; presses < 40 && !k.exists("groups-ring"); presses++) {
 	await k.press("tab");
 }
@@ -141,7 +123,7 @@ const menuFocus = () =>
 	focusedAmong(["menu-trigger", ...MENU_ROWS, "menu-popup"]);
 const menuOpen = () => k.exists("menu-0");
 
-await scrollIntoView("menu-trigger");
+await k.scrollIntoView("menu-trigger");
 await k.focus("menu-trigger");
 await k.press("enter");
 k.expect("menu: Enter opens and focuses the first row", menuFocus(), "menu-0");
@@ -250,7 +232,7 @@ await k.press("escape");
 
 const KEY_ROW_IDS = [0, 1, 2, 3, 4].map((index) => `keys-${index}`);
 const keysFocus = () => focusedAmong(["keys-trigger", ...KEY_ROW_IDS]);
-await scrollIntoView("keys-trigger");
+await k.scrollIntoView("keys-trigger");
 await k.focus("keys-trigger");
 await k.press("enter");
 k.expect("keys: opens on the first row", keysFocus(), "keys-0");
@@ -292,7 +274,7 @@ const SUB_IDS = [
 	"sub-folder-Engineering",
 ];
 const subFocus = () => focusedAmong(SUB_IDS);
-await scrollIntoView("sub-trigger");
+await k.scrollIntoView("sub-trigger");
 await k.focus("sub-trigger");
 await k.press("enter");
 k.expect("sub: opens on the first row", subFocus(), "sub-move");
@@ -374,7 +356,7 @@ await k.press("escape");
 const shown = (text: string) =>
 	renderer.getAllText().some((line) => line === text);
 async function openSearch() {
-	await scrollIntoView("search-trigger");
+	await k.scrollIntoView("search-trigger");
 	await k.focus("search-trigger");
 	await k.press("enter");
 	await k.settle(300);

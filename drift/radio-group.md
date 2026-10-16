@@ -7,9 +7,9 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 ## The dot pops in from scale 0.3
 
-- **Cause:** `gpuix gap`. CSS transforms (README "Missing features" row, `README.md:125`, which lists radio-group).
+- **Cause:** `gpuix gap`. CSS transforms (README "Missing features" row, `README.md:151`, which lists radio-group).
 - **Original:** the dot springs from `scale: 0.3, opacity: 0` to full on `spring.fast`, and shrinks out over 0.04 s (`radio-group.tsx:424-430`).
-- **Port:** `motion` animates `left` / `top` / `width` / `height` together so the dot stays centred while it grows from 30% of its size (`dotAt`, `radio-group.tsx:119-124`; `DOT_FROM` `:21`; `exit` over `DOT_OUT` 40 ms `:151-152`). `AnimatePresence initial={false}` keeps a row selected at mount at full size, as FF (`:146`, source `:420`).
+- **Port:** `motion` animates `left` / `top` / `width` / `height` together so the dot stays centred while it grows from 30% of its size (`dotAt`, `radio-group.tsx:120-125`; `DOT_FROM` `:21`; `exit` over `DOT_OUT` 40 ms `:151-152`). `AnimatePresence initial={false}` keeps a row selected at mount at full size, as FF (`:146`, source `:420`).
 - **Gpuix lacks:** transforms (`~/code/fdarian/gpuix/FORK.md:876-887`).
 - **Workaround:** layout properties instead of a compositor scale.
 - **Fidelity:** approximated (same size and timing; the layout is recomputed per frame).
@@ -25,9 +25,9 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 ## Label weight (variable fonts)
 
-- **Cause:** `gpuix gap`. README "Missing features" row for variable-font axes (`README.md:141`).
+- **Cause:** `gpuix gap`. README "Missing features" row for variable-font axes (`README.md:171`).
 - **Original:** `'wght' 400` to `'wght' 550` with `opsz` compensation, eased over 80 ms (`radio-group.tsx:466-470`).
-- **Port:** static Inter, SemiBold 600 for 550, switches at once; the hidden semibold copy still reserves the width (`stable-label.tsx:36`).
+- **Port:** static Inter, SemiBold 600 for 550, switches at once; the hidden semibold copy still reserves the width (`stable-label.tsx:39`).
 - **Gpuix lacks:** `fontVariationSettings`.
 - **Workaround:** static cuts.
 - **Fidelity:** approximated.
@@ -35,9 +35,9 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 ## Label vertical centring (`text-box-trim`)
 
-- **Cause:** `gpuix gap`. README "Missing features" row for `text-box-trim` (`README.md:140`, filed under badge).
+- **Cause:** `gpuix gap`. README "Missing features" row for `text-box-trim` (`README.md:170`, filed under badge).
 - **Original:** `[text-box:trim-both_cap_alphabetic]` on both label spans (`radio-group.tsx:450,461`).
-- **Port:** the label is centred by its full 20 px line box (`stable-label.tsx:36-47`), about a pixel off (the README's figure; not measured here).
+- **Port:** the label is centred by its full 20 px line box (`stable-label.tsx:39-53`), about a pixel off (the README's figure; not measured here).
 - **Gpuix lacks:** `text-box-trim` / `text-box-edge`.
 - **Workaround:** none.
 - **Fidelity:** approximated.
@@ -45,29 +45,20 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 ## Hover highlight travels on `left` / `top`
 
-- **Cause:** `gpuix gap`. CSS transforms (README "Missing features" row, `README.md:125`; `FORK.md:876-887`).
+- **Cause:** `gpuix gap`. CSS transforms (README "Missing features" row, `README.md:151`; `FORK.md:876-887`).
 - **Original:** the highlight is moved with an `x` / `y` transform (`registry/default/fluid-hover-highlight.tsx:74-76,126-131`).
-- **Port:** `FluidHighlight` animates `top` / `left` / `width` / `height` (`fluid-highlight.tsx:74-80`). The look is the same.
+- **Port:** `FluidHighlight` animates `top` / `left` / `width` / `height` (`fluid-highlight.tsx:78-85`). The look is the same.
 - **Workaround:** layout properties.
 - **Fidelity:** exact in look.
 - **Components it hits:** every `FluidHighlight` list.
 
-## Pill shape
+## An explicit `size` does not scope the parts inside
 
-- **Cause:** `not ported yet`. The port has one corner scheme (`radius.item` 8, ring 10, `theme.ts:radius`).
-- **Original:** `useShape()` picks rounded or pill: row and fill radius 20, ring 22 (`radio-group.tsx:105,199,228`; `shape-context.tsx:51-81`). Rounded, the default, matches the port.
-- **Port:** `choice-group.tsx:210,220,320` use `radius.item` only.
-- **Workaround:** none.
-- **Fidelity:** dropped (pill).
-- **Components it hits:** every component that reads `useShape`.
-
-## A surrounding size is ignored
-
-- **Cause:** `not ported yet`.
-- **Original:** omitted, `size` follows the surrounding `SizeProvider` (`radio-group.tsx:66-69,255-257`).
-- **Port:** `size` defaults to `"default"` (`radio-group.tsx:88`); no size context exists. The items read the group's size, so there is no checkbox-style double `size` here.
-- **Workaround:** pass `size` on the group.
-- **Fidelity:** dropped (inheritance).
+- **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
+- **Original:** `size` wraps the group in a `SizeProvider` (`registry/base/radio-group.tsx:255-257`).
+- **Port:** An omitted `size` follows the Size row (`src/components/radio-group.tsx:88`); the items read the group's size, so there is no checkbox-style double `size` here.
+- **Workaround:** pass `size` to each nested component.
+- **Fidelity:** approximated.
 - **Components it hits:** checkbox-group and the other sized components.
 
 ## Props: `className`, `ref`, HTML attributes
@@ -89,9 +80,9 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 ## Demo variants
 
-- **Cause:** `not ported yet` for the missing one; the extras are port additions.
+- **Cause:** `port choice` (the extras are port additions).
 - **Original:** the docs page has one example, Basic: `selectedIndex` mode, Option A/B/C, A selected (`app/docs/radio-group/page.tsx:50-64`). The bento preview uses `value` mode with a default selected, at 220 px (`app/components/bento-previews.tsx:386-396`).
-- **Port:** Default (by index), Compact, Per item (Option B selected, no fill) and By value (nothing selected, "Plan: none" readout) (`src/demos/radio-group.tsx:78-97`). Missing: by value with a default selected, narrow width.
-- **Workaround:** none.
+- **Port:** Default (by index), Compact, Per item (Option B selected, no fill), By value (nothing selected, "Plan: none" readout) and "Narrow, default" (the bento preview's five rows in `value` mode, "Moderate spring" selected, in a 220 px wrapper the group's `maxWidth: 100%` shrinks to) (`src/demos/radio-group.tsx`).
+- **Workaround:** n/a.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

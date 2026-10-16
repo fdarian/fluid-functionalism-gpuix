@@ -21,7 +21,6 @@ import {
 import { FluidHighlight } from "../lib/fluid-highlight";
 import { createFluidHover, type ItemRect } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
-import { defineIcon } from "../lib/icons";
 import { isChord, moveIndex } from "../lib/list-nav";
 import { createMeasuredHeight } from "../lib/measured-height";
 import { IS_MAC } from "../lib/platform";
@@ -29,7 +28,7 @@ import { StableLabel } from "../lib/stable-label";
 import {
 	color,
 	focusRing,
-	radius,
+	shape,
 	type as scale,
 	scheme,
 	motion as tween,
@@ -37,13 +36,6 @@ import {
 	withAlpha,
 } from "../lib/theme";
 import { Button } from "./button";
-
-const arrowLeftGlyph = defineIcon(
-	'<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
-);
-const arrowRightGlyph = defineIcon(
-	'<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
-);
 
 export interface AskUserOption {
 	id?: string;
@@ -110,7 +102,7 @@ function ShortcutChip(props: { children: string }) {
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",
-				borderRadius: radius.item,
+				borderRadius: shape.bg,
 				// bg-background/15 over the primary button.
 				backgroundColor: withAlpha(color.background, 0.15),
 			}}
@@ -184,13 +176,13 @@ function Row(props: RowProps) {
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
-					borderRadius: radius.item,
+					borderRadius: shape.bg,
 					backgroundColor: color.foreground,
 					cursor: props.onArrowClick ? "pointer" : "default",
 				}}
 			>
 				<Icon
-					name={arrowRightGlyph}
+					name="arrow-right"
 					size={14}
 					strokeWidth={2}
 					color={color.background}
@@ -220,7 +212,7 @@ function Row(props: RowProps) {
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
-					borderRadius: radius.item,
+					borderRadius: shape.bg,
 					opacity: props.chipPosition === "right" && props.showArrow ? 0 : 1,
 					...(props.isMulti
 						? props.chipFilled
@@ -288,7 +280,7 @@ function Row(props: RowProps) {
 				paddingBottom: stacked() ? 8 : 6,
 				paddingLeft: props.chipPosition === "left" ? 6 : 12,
 				paddingRight: props.chipPosition === "left" && props.isMulti ? 12 : 6,
-				borderRadius: radius.item,
+				borderRadius: shape.item,
 				cursor: "pointer",
 				userSelect: "none",
 				keyboardFocusDim: false,
@@ -692,7 +684,7 @@ export function AskUserQuestions(props: {
 						transition={{ ...tween.fast, duration: 0.08 }}
 						style={{
 							position: "absolute",
-							borderRadius: radius.item,
+							borderRadius: shape.bg,
 							backgroundColor: color.card,
 							outlineWidth: 1,
 							outlineOffset: -1,
@@ -706,7 +698,7 @@ export function AskUserQuestions(props: {
 			<FluidHighlight
 				rect={hoverRect}
 				session={hover.session}
-				radius={radius.item}
+				radius={shape.bg}
 				background={color.hover}
 			/>
 			<Index each={runs()}>
@@ -714,7 +706,7 @@ export function AskUserQuestions(props: {
 					<FluidHighlight
 						rect={() => runRect(run())}
 						session={() => 0}
-						radius={radius.item}
+						radius={shape.bg}
 						background={color.active}
 						glide={tween.moderate}
 						fade={tween.moderateExit}
@@ -863,7 +855,7 @@ export function AskUserQuestions(props: {
 					paddingLeft: 12,
 					paddingRight: 12,
 					minHeight: multiline ? 76 : 40,
-					borderRadius: radius.item,
+					borderRadius: shape.bg,
 					cursor: "text",
 					backgroundColor:
 						otherText().length > 0
@@ -1022,7 +1014,7 @@ export function AskUserQuestions(props: {
 										<Button
 											size="compact"
 											variant="ghost"
-											leadingIcon={arrowLeftGlyph}
+											leadingIcon="arrow-left"
 											testId={`${props.testId ?? "ask"}-back`}
 											onClick={back}
 										>
@@ -1057,7 +1049,7 @@ export function AskUserQuestions(props: {
 										<Button
 											size="compact"
 											variant="ghost"
-											trailingIcon={arrowRightGlyph}
+											trailingIcon="arrow-right"
 											testId={`${props.testId ?? "ask"}-skip`}
 											onClick={skip}
 										>
@@ -1125,7 +1117,7 @@ function cardStyle() {
 		maxWidth: 520,
 		overflow: "hidden",
 		backgroundColor: color.card,
-		borderRadius: radius.container,
+		borderRadius: shape.container,
 		borderWidth: 1,
 		borderColor: color.border,
 	} as const;

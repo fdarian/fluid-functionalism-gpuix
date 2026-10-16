@@ -9,7 +9,7 @@ import { type Accessor, createSignal, type JSX, Show } from "solid-js";
 import { Icon } from "../lib/icon";
 import { fill } from "../lib/press";
 import type { IconRef } from "../lib/icons";
-import { color, height, radius, type as scale, weight, focusRing } from "../lib/theme";
+import { color, sizeChoice, height, shape, type as scale, weight, focusRing } from "../lib/theme";
 
 export type ButtonVariant = "primary" | "secondary" | "tertiary" | "ghost";
 export type ButtonSize = "default" | "compact" | "icon" | "icon-compact";
@@ -116,7 +116,7 @@ export function Button(props: {
 }) {
 	const renderer = useGpuixRequired();
 	const variant = () => props.variant ?? "primary";
-	const size = () => sizes[props.size ?? "default"];
+	const size = () => sizes[props.size ?? sizeChoice()];
 	/** Base UI disables the button while it loads: FF passes `disabled || loading`, and its `disabled:` classes dim it and drop pointer events. */
 	const inert = () => props.disabled === true || props.loading === true;
 	const iconOnly = () => props.size === "icon" || props.size === "icon-compact";
@@ -223,7 +223,7 @@ export function Button(props: {
 					? { width: size().height - 2 }
 					: { paddingLeft: padLeft(), paddingRight: padRight() }),
 				gap: size().gap,
-				borderRadius: radius.item,
+				borderRadius: shape.button,
 				cursor: "pointer",
 				userSelect: "none",
 				// gpuix dims every other focusable while one has keyboard focus; this design does not.

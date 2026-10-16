@@ -7,7 +7,7 @@
  */
 import { createTestRoot } from "@gpuix/solid/testing";
 import { App } from "../src/app";
-import { loadDemos } from "../src/lib/demo";
+import { loadDemos, loadPages } from "../src/lib/demo";
 import { fonts } from "../src/lib/fonts";
 import { setThemeChoice } from "../src/lib/theme";
 
@@ -92,8 +92,9 @@ async function hintOffsetAfter(keystrokes: string) {
 }
 
 const demos = await loadDemos();
+const pages = await loadPages(demos);
 setThemeChoice("dark");
-test.render(() => <App demos={demos} initialPage="ask-user-questions" />);
+test.render(() => <App demos={demos} pages={pages} initialPage="ask-user-questions" />);
 await settle(800);
 
 // The "type here" hint must sit on the Other row from its first frame.

@@ -43,7 +43,8 @@ const CITIES = [
 ];
 
 /** A fixed fake metric, so the table paints the same on every run. */
-const metric = (row: number, col: number) => ((row + 3) * (col + 7) * 37) % 900 + 100;
+const metric = (row: number, col: number) =>
+	(((row + 3) * (col + 7) * 37) % 900) + 100;
 
 const CITY_W = 104;
 const CELL_W = 80;
@@ -95,7 +96,12 @@ function Panel(props: { caption: string; children: JSX.Element }) {
 	);
 }
 
-function Cell(props: { width: number; right?: boolean; strong?: boolean; children: string }) {
+function Cell(props: {
+	width: number;
+	right?: boolean;
+	strong?: boolean;
+	children: string;
+}) {
 	return (
 		<div
 			style={{
@@ -127,181 +133,197 @@ export const group = "Components";
 export function Demo() {
 	return (
 		<>
-		<DemoCard title="Scroll Area">
-			<div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-				<div style={{ display: "flex", flexDirection: "row", gap: 24 }}>
-					<Panel caption="Plain overflow: nothing says there is more below">
-						<div
-							testId="plain"
-							style={{
-								...box(),
-								width: 256,
-								height: 168,
-								overflowY: "scroll",
-							}}
-						>
-							<ReleaseRows />
-						</div>
-					</Panel>
-					<Panel caption="ScrollArea: scrollbar on hover, faded edges">
-						<ScrollArea
-							testId="area"
-							fade
-							width={256}
-							height={168}
-							style={box()}
-						>
-							<ReleaseRows />
-						</ScrollArea>
-					</Panel>
-				</div>
-				<ScrollArea
-					testId="horizontal"
-					orientation="horizontal"
-					fade
-					height={104}
-				>
-					<div
-						style={{
-							display: "flex",
-							flexDirection: "row",
-							gap: 8,
-							padding: 12,
-							flexShrink: 0,
-						}}
-					>
-						<For each={MONTHS}>
-							{(month: string) => (
-								<div
-									style={{
-										...box(),
-										borderRadius: radius.item,
-										width: 112,
-										height: 80,
-										flexShrink: 0,
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-									}}
-								>
-									<text style={{ ...scale.body, color: color.foreground }}>
-										{month}
-									</text>
-								</div>
-							)}
-						</For>
+			<DemoCard title="Scroll Area">
+				<div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+					<div style={{ display: "flex", flexDirection: "row", gap: 24 }}>
+						<Panel caption="Plain overflow: nothing says there is more below">
+							<div
+								testId="plain"
+								style={{
+									...box(),
+									width: 256,
+									height: 168,
+									overflowY: "scroll",
+								}}
+							>
+								<ReleaseRows />
+							</div>
+						</Panel>
+						<Panel caption="ScrollArea: scrollbar on hover, faded edges">
+							<ScrollArea
+								testId="area"
+								fade
+								width={256}
+								height={168}
+								style={box()}
+							>
+								<ReleaseRows />
+							</ScrollArea>
+						</Panel>
 					</div>
-				</ScrollArea>
-				<ScrollArea testId="both" orientation="both" height={132} style={box()}>
-					<div
-						style={{ display: "flex", flexDirection: "column", flexShrink: 0 }}
+					<ScrollArea
+						testId="horizontal"
+						orientation="horizontal"
+						fade
+						height={104}
 					>
 						<div
 							style={{
 								display: "flex",
 								flexDirection: "row",
-								height: 36,
-								alignItems: "center",
+								gap: 8,
+								padding: 12,
 								flexShrink: 0,
-								borderBottomWidth: 1,
-								borderColor: color.border,
 							}}
 						>
-							<Cell width={CITY_W} strong>
-								City
-							</Cell>
 							<For each={MONTHS}>
 								{(month: string) => (
-									<Cell width={CELL_W} right strong>
-										{month.slice(0, 3)}
-									</Cell>
+									<div
+										style={{
+											...box(),
+											borderRadius: radius.item,
+											width: 112,
+											height: 80,
+											flexShrink: 0,
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "center",
+										}}
+									>
+										<text style={{ ...scale.body, color: color.foreground }}>
+											{month}
+										</text>
+									</div>
 								)}
 							</For>
 						</div>
-						<For each={CITIES}>
-							{(city: string, row: () => number) => (
-								<div
-									style={{
-										display: "flex",
-										flexDirection: "row",
-										height: 36,
-										alignItems: "center",
-										flexShrink: 0,
-									}}
-								>
-									<Cell width={CITY_W} strong>
-										{city}
-									</Cell>
-									<For each={MONTHS}>
-										{(_month: string, col: () => number) => (
-											<Cell width={CELL_W} right>
-												{String(metric(row(), col()))}
-											</Cell>
-										)}
-									</For>
-								</div>
+					</ScrollArea>
+					<ScrollArea
+						testId="both"
+						orientation="both"
+						height={132}
+						style={box()}
+					>
+						<div
+							style={{
+								display: "flex",
+								flexDirection: "column",
+								flexShrink: 0,
+							}}
+						>
+							<div
+								style={{
+									display: "flex",
+									flexDirection: "row",
+									height: 36,
+									alignItems: "center",
+									flexShrink: 0,
+									borderBottomWidth: 1,
+									borderColor: color.border,
+								}}
+							>
+								<Cell width={CITY_W} strong>
+									City
+								</Cell>
+								<For each={MONTHS}>
+									{(month: string) => (
+										<Cell width={CELL_W} right strong>
+											{month.slice(0, 3)}
+										</Cell>
+									)}
+								</For>
+							</div>
+							<For each={CITIES}>
+								{(city: string, row: () => number) => (
+									<div
+										style={{
+											display: "flex",
+											flexDirection: "row",
+											height: 36,
+											alignItems: "center",
+											flexShrink: 0,
+										}}
+									>
+										<Cell width={CITY_W} strong>
+											{city}
+										</Cell>
+										<For each={MONTHS}>
+											{(_month: string, col: () => number) => (
+												<Cell width={CELL_W} right>
+													{String(metric(row(), col()))}
+												</Cell>
+											)}
+										</For>
+									</div>
+								)}
+							</For>
+						</div>
+					</ScrollArea>
+				</div>
+			</DemoCard>
+			<DemoCard title="Rounded clip">
+				<div style={{ display: "flex", flexDirection: "row", gap: 24 }}>
+					<For each={[false, true]}>
+						{(fade: boolean) => (
+							<ScrollArea
+								testId={fade ? "round-fade" : "round"}
+								fade={fade}
+								width={200}
+								height={120}
+								style={{ ...box(), borderRadius: 28 }}
+							>
+								<div style={{ height: 400, backgroundColor: "#c0392b" }} />
+							</ScrollArea>
+						)}
+					</For>
+				</div>
+			</DemoCard>
+			<DemoCard title="Scroll divider">
+				<Panel caption="Fade plus hairlines at the edges that have content past them">
+					<ScrollArea
+						testId="divider"
+						fade
+						divider={{}}
+						width={256}
+						height={168}
+						// No frame: the hairlines are the edges.
+						style={{ borderRadius: radius.container }}
+					>
+						<ReleaseRows />
+					</ScrollArea>
+				</Panel>
+			</DemoCard>
+			<DemoCard title="Nested scroll areas">
+				<ScrollArea testId="outer" width={280} height={160} style={box()}>
+					<div
+						style={{
+							display: "flex",
+							flexDirection: "column",
+							padding: 12,
+							gap: 8,
+						}}
+					>
+						<text style={{ ...scale.body, color: color.mutedForeground }}>
+							Outer area. Scroll the inner one to its end: the outer follows.
+						</text>
+						<ScrollArea testId="inner" width={256} height={96} style={box()}>
+							<ReleaseRows />
+						</ScrollArea>
+						<For each={RELEASES.slice(0, 6)}>
+							{(release: string) => (
+								<text style={{ ...scale.body, color: color.foreground }}>
+									{release}
+								</text>
 							)}
 						</For>
 					</div>
 				</ScrollArea>
-			</div>
-		</DemoCard>
-		<DemoCard title="Rounded clip">
-			<div style={{ display: "flex", flexDirection: "row", gap: 24 }}>
-				<For each={[false, true]}>
-					{(fade: boolean) => (
-						<ScrollArea
-							testId={fade ? "round-fade" : "round"}
-							fade={fade}
-							width={200}
-							height={120}
-							style={{ ...box(), borderRadius: 28 }}
-						>
-							<div style={{ height: 400, backgroundColor: "#c0392b" }} />
-						</ScrollArea>
-					)}
-				</For>
-			</div>
-		</DemoCard>
-		<DemoCard title="Scroll divider">
-			<Panel caption="Fade plus hairlines at the edges that have content past them">
-				<ScrollArea
-					testId="divider"
-					fade
-					divider={{}}
-					width={256}
-					height={168}
-					// No frame: the hairlines are the edges.
-					style={{ borderRadius: radius.container }}
-				>
+			</DemoCard>
+			<DemoCard title="The fade">
+				<ScrollArea testId="fade" fade width={288} height={256} style={box()}>
 					<ReleaseRows />
 				</ScrollArea>
-			</Panel>
-		</DemoCard>
-		<DemoCard title="Nested scroll areas">
-			<ScrollArea
-				testId="outer"
-				width={280}
-				height={160}
-				style={box()}
-			>
-				<div style={{ display: "flex", flexDirection: "column", padding: 12, gap: 8 }}>
-					<text style={{ ...scale.body, color: color.mutedForeground }}>
-						Outer area. Scroll the inner one to its end: the outer follows.
-					</text>
-					<ScrollArea testId="inner" width={256} height={96} style={box()}>
-						<ReleaseRows />
-					</ScrollArea>
-					<For each={RELEASES.slice(0, 6)}>
-						{(release: string) => (
-							<text style={{ ...scale.body, color: color.foreground }}>
-								{release}
-							</text>
-						)}
-					</For>
-				</div>
-			</ScrollArea>
-		</DemoCard>
+			</DemoCard>
 		</>
 	);
 }
@@ -385,7 +407,8 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.scroll(inner.x, inner.y, 0, -150);
 	shot.capture("nested-inner-scrolled-outer-stays");
 	// 794px is the inner area's scroll range: ticks that stop at it, since a tick that overshoots passes its remainder on to the outer area within the same event.
-	for (let tick = 0; tick < 4; tick++) await shot.scroll(inner.x, inner.y, 0, -150);
+	for (let tick = 0; tick < 4; tick++)
+		await shot.scroll(inner.x, inner.y, 0, -150);
 	await shot.scroll(inner.x, inner.y, 0, -44);
 	shot.capture("nested-inner-at-end-outer-stays");
 	await shot.scroll(inner.x, inner.y, 0, -150);
@@ -405,7 +428,8 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.scroll(divider.x, divider.y, 0, -120);
 	shot.capture("divider-middle");
 	// The scroll range is 888 - 168 = 720px: this stops exactly at it, since a tick that overshoots hands its remainder to the page.
-	for (let tick = 0; tick < 4; tick++) await shot.scroll(divider.x, divider.y, 0, -150);
+	for (let tick = 0; tick < 4; tick++)
+		await shot.scroll(divider.x, divider.y, 0, -150);
 	shot.capture("divider-end");
 	await shot.scroll(930, 400, 0, 2000);
 
@@ -413,4 +437,11 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {
 	await shot.moveTo(grid.x, grid.y);
 	await shot.scroll(grid.x, grid.y, -240, -90);
 	shot.capture("both-wheel");
+
+	// The standalone fade list, 288 x 256: both edges dissolve mid-scroll.
+	await shot.scroll(930, 400, 0, -2000);
+	const fade = shot.centerOf("fade");
+	await shot.moveTo(fade.x, fade.y);
+	await shot.scroll(fade.x, fade.y, 0, -120);
+	shot.capture("fade-list");
 };

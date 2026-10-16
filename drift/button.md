@@ -19,7 +19,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `gpuix gap` (test harness only).
 - **Original:** n/a.
-- **Port:** `press` in `scripts/screenshots.tsx:168-171` calls `simulateKeystrokes`; `ShotContext` has no helper for `nativeSimulateKeyDown` / `nativeSimulateKeyUp`.
+- **Port:** `press` in `scripts/screenshots.tsx:186-189` calls `simulateKeystrokes`; `ShotContext` has no helper for `nativeSimulateKeyDown` / `nativeSimulateKeyUp`.
 - **gpuix lacks:** a key-up from `simulateKeystrokes`: it makes one native call (`packages/native/js/testing.ts:441-450`), so a focused `buttonProps` element sees a keydown for `" "` and neither `keyup` nor `click`, while `nativeSimulateKeyDown` then `nativeSimulateKeyUp` gives keydown, click, keyup. The helper also still takes GPUI key names (`space`, `cmd-shift-p`; `~/code/fdarian/gpuix/README.md:3186`).
 - **Workaround:** scenarios press Enter, which activates on key-down. `nativeSimulateKeyDown` / `nativeSimulateKeyUp` would do it.
 - **Fidelity:** exact in the real window; a harness gap only.
@@ -39,7 +39,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `not ported yet`.
 - **Original:** `transition-colors duration-80` on the root (`:21`); the surface eases `box-shadow` over 180ms on `cubic-bezier(0.23,1,0.32,1)` and `background-color` over 80ms, both 80ms while pressed (`:212`).
-- **Port:** every state switches at once: `hover` / `active` style objects with no `transition*` (`src/components/button.tsx:210-233`); the ghost label colour follows the `hovered` signal (`:125-134`) and `<text>` carries no `colorFade` (`src/lib/theme.ts:310-314`, used only by `Icon fade`, which the button does not pass).
+- **Port:** every state switches at once: `hover` / `active` style objects with no `transition*` (`src/components/button.tsx:210-233`); the ghost label colour follows the `hovered` signal (`:125-134`) and `<text>` carries no `colorFade` (`src/lib/theme.ts:451-455`, used only by `Icon fade`, which the button does not pass).
 - **Workaround:** none. README's "gpuix gaps" no longer lists colour transitions; gpuix animates `color`, `backgroundColor`, `outlineColor` and `boxShadow` on state-style changes (`FORK.md:815-818`). The README's "How the first three components translate" row ("none: state styles switch instantly") is stale.
 - **Fidelity:** dropped.
 - **Components it hits:** every component with a hover or press fill; `Icon` has `fade` for colour (the button's icons use only `easeStroke`, as the source eases only the stroke width).
@@ -48,7 +48,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `not ported yet`.
 - **Original:** an infinity-shaped path in a 24 viewBox drawn at 36px (28px compact), `strokeDasharray` 15 85, `spinner-move 2s linear infinite` (dash offset to -100) and `spinner-dash 4s ease-in-out infinite` (dash 15 to 40), stroke 1.125 (`:199-201`, `:228-246`, `app/globals.css:998-1005`).
-- **Port:** the lucide `loader` spokes at the icon size (16 / 14), stroke 1.5, no motion (`src/components/button.tsx:248-266`, `src/lib/icons.ts:20`).
+- **Port:** the `loader` glyph of the Icons row's library (lucide spokes by default) at the icon size (16 / 14), stroke 1.5, no motion (`src/components/button.tsx:248-266`, `src/lib/icons/lucide.ts:21`).
 - **Workaround:** none. README calls this "Dropped" but it needs no transform: gpuix animates SVG `strokeDasharray` / `strokeDashoffset` with repeating keyframes (`FORK.md:828-829`, `:822-823`), and `file-thumbnail.tsx` already draws a moving arc.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -81,14 +81,14 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 - **Fidelity:** dropped.
 - **Components it hits:** every popup trigger that is a `Button` (dropdown, select).
 
-## No ambient size or shape, no `className`, `type` or `ref`
+## No `className`, `type` or `ref`
 
 - **Cause:** `not ported yet`.
-- **Original:** an omitted `size` follows the surrounding `SizeProvider` (`:187-194`); the radius comes from the shape context, 20px for the pill (`:202`, `:286`); `className` / `style` (the demo's `w-full`) and every `<button>` attribute pass through, including `type="submit"` (`:143-160`, `:304-316`).
-- **Port:** `size` defaults to `default`, so compact must be passed to each button; the radius is `radius.item` (8, `src/components/button.tsx:223`); the prop list is fixed (`:95-116`), so no full-width button and no form submit from a button (the demos call `form.requestSubmit()`, README "combobox, select (any form)" row).
+- **Original:** `className` / `style` (the demo's `w-full`) and every `<button>` attribute pass through, including `type="submit"` (`registry/base/button.tsx:143-160`, `:304-316`).
+- **Port:** the prop list is fixed (`:95-116`), so no full-width button and no form submit from a button (the demos call `form.requestSubmit()`, README "combobox, select (any form)" row). An omitted `size` follows the Size row (`:119`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
-- **Components it hits:** every component with a size ladder or shape (README: "pill shape" and the customise card are not ported).
+- **Components it hits:** every ported component.
 
 ## Icon-only buttons take `icon`, not a child
 
@@ -101,9 +101,19 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 ## Demo: variants that exist and are missing
 
-- **Cause:** `not ported yet`.
-- **Original:** `app/docs/button/page.tsx:95-148`: a Playground (variant, size, label, icon-only, leading, trailing, loading, active, disabled; `lib/docs/playgrounds/button.tsx`), Variants (four inline plus four `w-full`), With Icons (`Create` leading `plus`, secondary `Next` trailing `arrow-right`, tertiary `Search` leading `search` and trailing `arrow-right`), Loading & Disabled (a `Click me` button that loads for 2s, secondary `Saving` loading with a leading `loader`, `Disabled`).
-- **Port:** `src/demos/button.tsx:39-71`: Default and Compact rows of the four variants, a Leading icon row (`plus` on all four), Icon only (both sizes), Disabled and Loading rows of the four variants. Missing: the playground, full-width buttons, trailing and both-sided icons, the click-to-load button, `active`. Added: the Compact, Icon only and per-variant Disabled / Loading rows. The icon-only buttons have no `aria-label` (the source playground sets one, `playgrounds/button.tsx:55`, `:222`). Copy matches.
+- **Cause:** `port choice` (no prop to drive it).
+- **Original:** `app/docs/button/page.tsx:95-148`: Variants (four inline plus four `w-full`), With Icons (`Create` leading `plus`, secondary `Next` trailing `arrow-right`, tertiary `Search` leading `search` and trailing `arrow-right`), Loading & Disabled (a `Click me` button that loads for 2s, secondary `Saving` loading with a leading `loader`, `Disabled`).
+- **Port:** `src/demos/button.tsx`: Default and Compact rows of the four variants, a Leading icon row (`plus` on all four), a Trailing icon row (secondary `Next`, tertiary `Search` on both sides), Icon only (both sizes), Disabled and Loading rows of the four variants, and a Click to load row (the 2s button and the loading secondary `Saving` with a leading `loader`). Missing: the four `w-full` buttons (`Button` has no width prop). Added: the Compact, Icon only and per-variant Disabled / Loading rows. The icon-only buttons have no `aria-label` (the source playground sets one, `playgrounds/button.tsx:55`, `:222`). Copy matches.
 - **Workaround:** n/a.
 - **Fidelity:** n/a.
 - **Components it hits:** just this one.
+
+## Playground: no Active switch, Label field not right-aligned, Size does not follow the site size
+
+- **Cause:** `port choice` (no `active` prop) for Active; `gpuix gap` for the field alignment; `not ported yet` for Size.
+- **Original:** `lib/docs/playgrounds/button.tsx`: an `Active` switch forces the pressed look (`active` prop, `registry/base/button.tsx:115-127`); the Label input is `text-right` (`:75`); the Size select follows the site-wide size step until a value is picked (`useSizeVariant`, `:98-100`); the Code tab shows the matching snippet.
+- **Port:** `src/demos/button.tsx` `Playground`: every other control and the shuffle are ported with the source's defaults and odds. `Button` has no `active` prop, so the Active switch is left out (the shuffle drops its roll too). The Label field (`PlayText`) is left-aligned: the `<input>` takes `textAlign: "right"` without effect in the capture. Size starts at Default and is only set by its own select. No Code tab (see `site.md`).
+- **gpuix lacks:** right-aligned text in `<input>` (unverified at the source; the style is accepted and does nothing in the test renderer).
+- **Workaround:** none.
+- **Fidelity:** approximated (left-aligned label text), dropped (Active).
+- **Components it hits:** any playground with a text field.
