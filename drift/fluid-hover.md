@@ -50,11 +50,11 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 - **Fidelity:** approximated (the timer's 16 ms cadence instead of the display's frames).
 - **Components it hits:** just this page; the other scripted loops (thinking-steps, carousel-dots) use the same clock.
 
-## "Blink or glide": reduced motion is ignored, captions differ slightly
+## "Blink or glide": captions differ slightly
 
-- **Cause:** `not ported yet` (reduced motion, README "Drift from the source" site rows) and `port choice` (captions).
+- **Cause:** `port choice` (captions).
 - **Original:** the play / pause icon button is the right end of the preview header, 40px square, through `ComponentPreview`'s `playbackButton`; `useReducedMotion()` stops the script (`demos.tsx:288-292`, `:380-400`, `lib/docs/ComponentPreview.tsx:140-170`); the two captions are flex rows whose text and `<code>` runs are separate flex items 8px apart (`demos.tsx:344-376`).
-- **Port:** the pause button is the same 40px header button, through the shared `ComponentPreview`'s `playback` option (icon, tooltip and click; `src/lib/doc-page.tsx:204-249`, `src/pages/fluid-hover/plain-vs-fluid.tsx:247-265`). There is no `prefers-reduced-motion` check (`matchMedia` exists in the fork, nothing reads it); each caption is one centred `<text>` with inline runs, so the gaps around the chip are a normal space.
+- **Port:** the pause button is the same 40px header button, through the shared `ComponentPreview`'s `playback` option (icon, tooltip and click; `src/lib/doc-page.tsx:204-249`, `src/pages/fluid-hover/plain-vs-fluid.tsx:247-265`). Reduced motion stops the script as in the source (`createReducedMotion()`, `src/pages/fluid-hover/plain-vs-fluid.tsx:109-110`); each caption is one centred `<text>` with inline runs, so the gaps around the chip are a normal space.
 - **Fidelity:** approximated.
 
 ## "Show the math": dashed rules are a gradient

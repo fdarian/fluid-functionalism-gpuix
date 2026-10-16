@@ -2,6 +2,7 @@ import {
 	clipboard,
 	createAppearance,
 	type HostElement,
+	MotionConfig,
 	useGpuixRequired,
 } from "@gpuix/solid";
 import {
@@ -419,95 +420,97 @@ export function App(props: {
 	// Native chrome and traffic lights follow the override; "system" clears it.
 	createEffect(() => setAppearance.call(renderer, themeChoice()));
 	return (
-		<AppFrame title={WINDOW_TITLE}>
-			<RightRailContext.Provider value={rail}>
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "row",
-					width: "100%",
-					height: "100%",
-					backgroundColor: color.background,
-					borderRadius: PANEL_INNER_RADIUS,
-				}}
-			>
-				<Show when={!isFull()}>
-					<AppSidebar
-						demos={props.demos}
-						pages={props.pages}
-						page={page()}
-						onPage={navigate}
-						onSearch={() => siteMenu.setOpen(true)}
-					/>
-				</Show>
+		<MotionConfig reducedMotion="user">
+			<AppFrame title={WINDOW_TITLE}>
+				<RightRailContext.Provider value={rail}>
 				<div
-					ref={setPageScroller}
 					style={{
-						flexGrow: 1,
-						minWidth: 0,
 						display: "flex",
-						flexDirection: "column",
-						alignItems: "center",
-						overflowY: "scroll",
+						flexDirection: "row",
+						width: "100%",
+						height: "100%",
+						backgroundColor: color.background,
+						borderRadius: PANEL_INNER_RADIUS,
 					}}
 				>
+					<Show when={!isFull()}>
+						<AppSidebar
+							demos={props.demos}
+							pages={props.pages}
+							page={page()}
+							onPage={navigate}
+							onSearch={() => siteMenu.setOpen(true)}
+						/>
+					</Show>
 					<div
+						ref={setPageScroller}
 						style={{
-							width: isFull() || page() === SHOWCASE ? "100%" : PAGE_WIDTH,
-							...(isFull() ? { height: "100%" } : {}),
-							flexShrink: 0,
+							flexGrow: 1,
+							minWidth: 0,
 							display: "flex",
 							flexDirection: "column",
-							gap: isFull() ? 0 : 24,
-							paddingTop: isFull() ? 0 : 40,
-							paddingBottom: isFull() ? 0 : 40,
+							alignItems: "center",
+							overflowY: "scroll",
 						}}
 					>
-						<PageScrollerContext.Provider value={pageScroller}>
-							<PageNavContext.Provider value={nav}>
-								<Switch>
-									<Match when={page() === SHOWCASE}>
-										<Showcase />
-									</Match>
-									<Match when={current()} keyed>
-										{(demo: Demo) => <DemoPage demo={demo} />}
-									</Match>
-									<Match when={currentPage()} keyed>
-										{(entry: Page) => <PageBody page={entry} />}
-									</Match>
-								</Switch>
-							</PageNavContext.Provider>
-						</PageScrollerContext.Provider>
+						<div
+							style={{
+								width: isFull() || page() === SHOWCASE ? "100%" : PAGE_WIDTH,
+								...(isFull() ? { height: "100%" } : {}),
+								flexShrink: 0,
+								display: "flex",
+								flexDirection: "column",
+								gap: isFull() ? 0 : 24,
+								paddingTop: isFull() ? 0 : 40,
+								paddingBottom: isFull() ? 0 : 40,
+							}}
+						>
+							<PageScrollerContext.Provider value={pageScroller}>
+								<PageNavContext.Provider value={nav}>
+									<Switch>
+										<Match when={page() === SHOWCASE}>
+											<Showcase />
+										</Match>
+										<Match when={current()} keyed>
+											{(demo: Demo) => <DemoPage demo={demo} />}
+										</Match>
+										<Match when={currentPage()} keyed>
+											{(entry: Page) => <PageBody page={entry} />}
+										</Match>
+									</Switch>
+								</PageNavContext.Provider>
+							</PageScrollerContext.Provider>
+						</div>
 					</div>
+					<Show when={!isFull()}>
+						<div style={{ width: 296, flexShrink: 0 }}>
+							<ScrollArea height="100%" fade>
+								<div
+									style={{
+										display: "flex",
+										flexDirection: "column",
+										gap: 12,
+										padding: 16,
+									}}
+								>
+									<CustomizeCard />
+									<RightRailTarget />
+								</div>
+							</ScrollArea>
+						</div>
+					</Show>
 				</div>
-				<Show when={!isFull()}>
-					<div style={{ width: 296, flexShrink: 0 }}>
-						<ScrollArea height="100%" fade>
-							<div
-								style={{
-									display: "flex",
-									flexDirection: "column",
-									gap: 12,
-									padding: 16,
-								}}
-							>
-								<CustomizeCard />
-								<RightRailTarget />
-							</div>
-						</ScrollArea>
-					</div>
-				</Show>
-			</div>
-			</RightRailContext.Provider>
-			<SiteCommandMenu
-				menu={siteMenu}
-				demos={props.demos}
-				pages={props.pages}
-				showcase={SHOWCASE}
-				current={page()}
-				onPage={navigate}
-			/>
-		</AppFrame>
+				</RightRailContext.Provider>
+				<SiteCommandMenu
+					menu={siteMenu}
+					demos={props.demos}
+					pages={props.pages}
+					showcase={SHOWCASE}
+					current={page()}
+					onPage={navigate}
+				/>
+			</AppFrame>
+		</MotionConfig>
 	);
 }
 

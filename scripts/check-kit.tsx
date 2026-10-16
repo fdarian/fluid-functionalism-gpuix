@@ -218,6 +218,11 @@ export async function createCheck(
 				`${ok ? "PASS" : "FAIL"} ${label}: ${JSON.stringify(actual)}${ok ? "" : ` (expected ${JSON.stringify(expected)})`}`,
 			);
 		},
+		/** Ends this check's tree and renderer without exiting, for a script that runs several; returns how many checks failed. */
+		unmount() {
+			test.unmount();
+			return failures;
+		},
 		async finish() {
 			// Unmount first: with the tree alive, Bun can abort at exit ("Thread Local Storage", exit 134) after every check passed. TestRoot.unmount also disposes the renderer.
 			test.unmount();

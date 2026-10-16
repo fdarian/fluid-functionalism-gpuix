@@ -193,14 +193,15 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** approximated.
 - **Components it hits:** every component and page heading.
 
-## Reduced motion is not honoured
+## Reduced motion reaches different properties than the source's
 
-- **Cause:** `not ported yet` (`MotionConfig reducedMotion="user"` exists in the fork, `~/code/fdarian/gpuix/FORK.md:831-832`; `grep MotionConfig src` finds only prose on the Motion and Fluid Hover pages).
-- **Original:** `<MotionConfig reducedMotion="user">` wraps the app, so transform, scale, position and layout animations drop while opacity and colour fades stay (`app/layout.tsx:73-77`).
-- **Port:** every spring plays regardless of the OS setting. The one exception is the Skill page's looping examples, which pause under `createReducedMotion()` (`src/pages/skill/playback.tsx:45, 92`).
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every animated component.
+- **Cause:** `gpuix gap`.
+- **Original:** `<MotionConfig reducedMotion="user">` wraps the app and drops transform and layout animations (`app/layout.tsx:73-77`). A `width` / `height` / `top` / `left` animation is not reduced unless the component reads `useReducedMotion()` itself (`motion-guidelines.md:270-286` lists the tabs hover pill, the selected backgrounds and the focus rings as stragglers), and `animate()` on a motion value ignores the config.
+- **Port:** `App` wraps the tree in `<MotionConfig reducedMotion="user">` (`src/app.tsx:423`). gpuix reduces every `motion.*` position and size property (`width`, `height`, min/max, insets, margins, paddings, `gap`, `flexBasis`), and nothing else: opacity, colours, shadows and SVG geometry (`CheckMark`'s `pathLength`, `Icon`'s `easeStroke`) keep animating. The port has no transforms, so the source's `x` / `y` / `scale` travel is already one of those properties; but a source `animate` on a layout property that is not gated (the tabs pill, the sidebar sub-menu and thinking-steps collapses, the input-message collapse) glides there and jumps here. A motion value bound to a plain `div` (the slider's thumb and fill) keeps springing, as in the source. The source's own gates in `right-panel`, `sidebar-layout`, `playground-menu` and `not-found` have no counterpart: those pieces are not ported.
+- **gpuix lacks:** a choice of which properties a config reduces, so a layout animation the source leaves moving cannot be left moving without a nested `<MotionConfig reducedMotion="never">` per site (`~/code/fdarian/gpuix/README.md:1953-1975`).
+- **Workaround:** none; the port reduces more than the source.
+- **Fidelity:** approximated (jumps where the source glides).
+- **Components it hits:** tabs, tabs-subtle, sidebar, thinking-steps, input-message, scroll-area.
 
 ## Page scroller and base styles
 

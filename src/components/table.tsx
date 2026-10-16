@@ -88,6 +88,9 @@ export function Table(props: {
 					session={hover.session}
 					radius={0}
 					background={color.hover}
+					testId={
+						props.testId === undefined ? undefined : `${props.testId}-highlight`
+					}
 				/>
 				{props.children}
 			</div>

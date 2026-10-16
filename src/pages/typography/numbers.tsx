@@ -1,3 +1,4 @@
+import { createReducedMotion } from "@gpuix/solid";
 import {
 	createEffect,
 	createMemo,
@@ -151,7 +152,8 @@ export function NumbersDemo() {
 	const [held, setHeld] = createSignal(false);
 	const [tick, setTick] = createSignal(0);
 	const visibility = createVisibility(0.5);
-	const playing = () => visibility.visible() && !held();
+	const reduced = createReducedMotion();
+	const playing = () => visibility.visible() && !reduced() && !held();
 	createEffect(
 		on(playing, (active) => {
 			if (!active) return;
@@ -162,7 +164,9 @@ export function NumbersDemo() {
 			onCleanup(() => clearInterval(id));
 		}),
 	);
-	const count = () => Math.min(COUNT_FROM + tick(), COUNT_TO);
+	// Reduced motion shows the last count.
+	const count = () =>
+		reduced() ? COUNT_TO : Math.min(COUNT_FROM + tick(), COUNT_TO);
 
 	return (
 		<TweakFrame

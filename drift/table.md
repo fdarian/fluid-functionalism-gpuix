@@ -36,16 +36,6 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 - **Fidelity:** approximated (same motion, but it re-lays out each frame).
 - **Components it hits:** every fluid-hover list.
 
-## Reduced motion is not honoured
-
-- **Cause:** `not ported yet`.
-- **Original:** the highlight keeps its 80ms opacity fade but snaps its position under `prefers-reduced-motion` (`fluid-hover-highlight.tsx:83-90`, `:114`, `:133`).
-- **Port:** always travels; nothing in `src` reads reduced motion (`src/lib/fluid-highlight.tsx:55-60`).
-- **gpuix lacks:** nothing: `matchMedia` with `prefers-reduced-motion` and `MotionConfig reducedMotion="user"` exist (`FORK.md:831-833`).
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every component that uses `FluidHighlight`.
-
 ## An explicit `size` does not scope the parts inside
 
 - **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).

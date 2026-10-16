@@ -111,15 +111,6 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Fidelity:** approximated (a few pixels of padding).
 - **Components it hits:** just this one.
 
-## Reduced motion is not honoured
-
-- **Cause:** `not ported yet`.
-- **Original:** `FluidHoverHighlight` keeps the opacity fade and drops the travel under `prefers-reduced-motion` (`fluid-hover-highlight.tsx:82-96,114`).
-- **Port:** no reduced-motion check anywhere in `src/`.
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every fluid hover list.
-
 ## Disabled is `readOnly` plus `tabIndex` -1
 
 - **Cause:** `not ported yet`.

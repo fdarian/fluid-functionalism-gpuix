@@ -1,5 +1,6 @@
 import {
 	buttonProps,
+	createReducedMotion,
 	type DomEvent,
 	type HostElement,
 	type HostMouseMoveEvent,
@@ -674,6 +675,7 @@ export function AccordionContent(props: { children: JSX.Element }) {
 	const metrics = () => sizes[root.size()];
 	const measured = createMeasuredHeight();
 	const contentHeight = measured.height;
+	const reduced = createReducedMotion();
 	// gpuix has no `display: none`, so a closed panel's text leaves the accessibility tree by unmounting once the exit is over (Base UI hides the panel). It paints once first, or it would never report its height.
 	const [retired, setRetired] = createSignal(false);
 	let toggled = false;
@@ -695,7 +697,13 @@ export function AccordionContent(props: { children: JSX.Element }) {
 			aria-labelledby={item.triggerId}
 			initial={false}
 			animate={{ height: item.isOpen() ? (contentHeight() ?? 0) : 0 }}
-			transition={item.isOpen() ? tween.fast : tween.fastExit}
+			transition={
+				reduced()
+					? tween.snap
+					: item.isOpen()
+						? tween.fast
+						: tween.fastExit
+			}
 			onMotionComplete={() => {
 				if (!item.isOpen()) setRetired(true);
 			}}
@@ -718,7 +726,13 @@ export function AccordionContent(props: { children: JSX.Element }) {
 			<motion.div
 				initial={false}
 				animate={{ opacity: item.isOpen() ? 1 : 0 }}
-				transition={item.isOpen() ? { duration: 0.06 } : { duration: 0.04 }}
+				transition={
+					reduced()
+						? tween.snap
+						: item.isOpen()
+							? { duration: 0.06 }
+							: { duration: 0.04 }
+				}
 			>
 				<Show when={!retired()}>
 					<div

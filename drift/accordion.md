@@ -113,15 +113,6 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 - **Fidelity:** approximated.
 - **Components it hits:** any panel holding collapsibles (thinking-steps, sidebar).
 
-## Reduced motion
-
-- **Cause:** `not ported yet` (gpuix reads the OS setting on macOS and has `MotionConfig reducedMotion="user"`, `FORK.md:831`, `:906`).
-- **Original:** `MotionConfig reducedMotion="user"` at the root, and the panel height takes `duration: 0` under it (`registry/base/accordion.tsx:849`, `:953`).
-- **Port:** nothing in `src/` reads it, so the springs always play.
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every component.
-
 ## An explicit `size` does not scope the parts inside
 
 - **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).

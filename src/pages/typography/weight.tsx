@@ -1,4 +1,4 @@
-import { motion } from "@gpuix/solid";
+import { createReducedMotion, motion } from "@gpuix/solid";
 import {
 	type Accessor,
 	createEffect,
@@ -255,7 +255,9 @@ export function WeightOpszDemo() {
 	const [selected, setSelected] = createSignal(true);
 	const [userInside, setUserInside] = createSignal(false);
 	const visibility = createVisibility(0.5);
-	const scripted = () => visibility.visible() && !userInside();
+	const reduced = createReducedMotion();
+	// Reduced motion leaves the item on, for the reader to toggle.
+	const scripted = () => visibility.visible() && !reduced() && !userInside();
 	const cursor = createScript(scripted, setSelected);
 	const pairedCaption = () => {
 		const px = paired();

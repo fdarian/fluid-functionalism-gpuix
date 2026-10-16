@@ -74,15 +74,6 @@ repeating it.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
 
-## Reduced motion is ignored
-
-- **Cause:** `not ported yet`. gpuix has `matchMedia("(prefers-reduced-motion)")` and `MotionConfig reducedMotion="user"` (`FORK.md:831`).
-- **Original:** `useReducedMotion()` drops the scale and the slide, keeps the fades, and snaps the row (`banner.tsx:235-238`, `:289`, `:297`, `:311-315`).
-- **Port:** no check (`banner.tsx:126-129`, `:312-358`).
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** thinking-indicator, and every component whose source reads `useReducedMotion`.
-
 ## The fixed bar does not stick
 
 - **Cause:** `not ported yet`. gpuix has `position: sticky` (`FORK.md:560`).

@@ -137,15 +137,6 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Fidelity:** approximated (same path and spring, more work per frame).
 - **Components it hits:** every fluid hover list.
 
-## No reduced-motion handling
-
-- **Cause:** `not ported yet`.
-- **Original:** the highlight snaps instead of travelling under `prefers-reduced-motion`, keeping the opacity fade (`registry/default/fluid-hover-highlight.tsx:79-90`, `:114`, `:133`).
-- **Port:** `FluidHighlight` always travels (`src/lib/fluid-highlight.tsx`); no `matchMedia` or `reducedMotion` anywhere in `src/`. gpuix reads it (`FORK.md:831-833`).
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every motion in the port.
-
 ## Label is not trimmed to cap height
 
 - **Cause:** `gpuix gap`.

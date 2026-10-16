@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 620 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 609 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 | | |
@@ -116,53 +116,53 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 
 | Component or page | gpuix gap | port choice | not ported yet | mixed | total |
 |---|---:|---:|---:|---:|---:|
-| [accordion](drift/accordion.md) | 3 | 9 | 8 | 0 | 20 |
+| [accordion](drift/accordion.md) | 3 | 9 | 7 | 0 | 19 |
 | [ask-user-questions](drift/ask-user-questions.md) | 2 | 5 | 7 | 3 | 17 |
 | [audio-mixer](drift/audio-mixer.md) | 0 | 2 | 0 | 1 | 3 |
 | [badge](drift/badge.md) | 1 | 3 | 0 | 0 | 4 |
-| [banner](drift/banner.md) | 3 | 4 | 9 | 0 | 16 |
+| [banner](drift/banner.md) | 3 | 4 | 8 | 0 | 15 |
 | [button](drift/button.md) | 4 | 4 | 2 | 1 | 11 |
-| [card](drift/card.md) | 6 | 8 | 9 | 0 | 23 |
-| [carousel-dots](drift/carousel-dots.md) | 2 | 3 | 3 | 1 | 9 |
+| [card](drift/card.md) | 6 | 8 | 8 | 0 | 22 |
+| [carousel-dots](drift/carousel-dots.md) | 2 | 3 | 2 | 1 | 8 |
 | [chat-message](drift/chat-message.md) | 2 | 2 | 3 | 3 | 10 |
 | [checkbox-group](drift/checkbox-group.md) | 3 | 0 | 4 | 1 | 8 |
 | [color-picker](drift/color-picker.md) | 3 | 6 | 17 | 1 | 27 |
-| [combobox](drift/combobox.md) | 7 | 13 | 6 | 1 | 27 |
-| [command-menu](drift/command-menu.md) | 7 | 2 | 13 | 1 | 23 |
+| [combobox](drift/combobox.md) | 7 | 13 | 5 | 1 | 26 |
+| [command-menu](drift/command-menu.md) | 7 | 2 | 12 | 1 | 22 |
 | [compare](drift/compare.md) | 4 | 9 | 0 | 2 | 15 |
 | [concepts](drift/concepts.md) | 4 | 26 | 2 | 2 | 34 |
 | [dialog](drift/dialog.md) | 6 | 2 | 2 | 1 | 11 |
 | [dropdown](drift/dropdown.md) | 6 | 4 | 11 | 2 | 23 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
-| [fluid-hover](drift/fluid-hover.md) | 4 | 4 | 2 | 3 | 13 |
+| [fluid-hover](drift/fluid-hover.md) | 4 | 5 | 2 | 2 | 13 |
 | [home](drift/home.md) | 1 | 1 | 1 | 2 | 5 |
 | [input-copy](drift/input-copy.md) | 3 | 3 | 7 | 0 | 13 |
 | [input-group](drift/input-group.md) | 1 | 1 | 3 | 1 | 6 |
 | [input-message](drift/input-message.md) | 4 | 0 | 14 | 3 | 21 |
 | [introduction](drift/introduction.md) | 1 | 4 | 2 | 1 | 8 |
 | [mobile-drawer](drift/mobile-drawer.md) | 3 | 2 | 1 | 0 | 6 |
-| [motion-page](drift/motion-page.md) | 4 | 3 | 2 | 3 | 12 |
+| [motion-page](drift/motion-page.md) | 4 | 3 | 1 | 3 | 11 |
 | [nav-menu](drift/nav-menu.md) | 1 | 5 | 1 | 0 | 7 |
 | [queued-stack](drift/queued-stack.md) | 4 | 2 | 4 | 1 | 11 |
 | [radio-group](drift/radio-group.md) | 4 | 2 | 3 | 0 | 9 |
 | [scroll-area](drift/scroll-area.md) | 3 | 6 | 1 | 1 | 11 |
 | [scrollbars-page](drift/scrollbars-page.md) | 1 | 4 | 2 | 1 | 8 |
-| [select](drift/select.md) | 7 | 3 | 6 | 2 | 18 |
-| [sidebar](drift/sidebar.md) | 1 | 6 | 24 | 1 | 32 |
-| [site](drift/site.md) | 5 | 6 | 21 | 6 | 38 |
+| [select](drift/select.md) | 7 | 3 | 5 | 2 | 17 |
+| [sidebar](drift/sidebar.md) | 1 | 6 | 23 | 1 | 31 |
+| [site](drift/site.md) | 6 | 6 | 20 | 6 | 38 |
 | [sizes-page](drift/sizes-page.md) | 0 | 5 | 2 | 4 | 11 |
 | [skill-page](drift/skill-page.md) | 3 | 5 | 0 | 1 | 9 |
 | [slider](drift/slider.md) | 4 | 3 | 2 | 2 | 11 |
 | [surfaces](drift/surfaces.md) | 1 | 3 | 4 | 4 | 12 |
 | [switch](drift/switch.md) | 2 | 1 | 2 | 1 | 6 |
-| [table](drift/table.md) | 3 | 1 | 4 | 0 | 8 |
+| [table](drift/table.md) | 3 | 1 | 3 | 0 | 7 |
 | [tabs-subtle](drift/tabs-subtle.md) | 2 | 4 | 2 | 0 | 8 |
 | [tabs](drift/tabs.md) | 2 | 2 | 2 | 0 | 6 |
-| [thinking-indicator](drift/thinking-indicator.md) | 1 | 2 | 4 | 0 | 7 |
+| [thinking-indicator](drift/thinking-indicator.md) | 1 | 2 | 3 | 0 | 6 |
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
 | [tooltip](drift/tooltip.md) | 4 | 5 | 1 | 1 | 11 |
 | [typography](drift/typography.md) | 4 | 0 | 1 | 6 | 11 |
-| **Total** | **141** | **192** | **221** | **66** | **620** |
+| **Total** | **142** | **193** | **209** | **65** | **609** |
 
 ### gpuix gaps across components
 
@@ -279,6 +279,7 @@ now does that the port has not picked up.
 | Tailwind `shadow-sm` to `shadow-xl` | `twShadow` (`src/lib/theme.ts`): both drops of each, as the CSS strings | Exact |
 | `color-mix(in oklab, …)`, `light-dark()` | both columns kept as a token table; the scheme is a signal | Exact |
 | `prefers-color-scheme` ("System" theme) | `createAppearance()` reads the OS appearance and `bindSystemScheme` feeds it to the `scheme` token. System / Light / Dark are one `themeChoice` signal, and `renderer.setAppearance` mirrors Light / Dark so the native chrome follows | Exact in the window; captures run on the test renderer, whose appearance is fixed, so they pin Dark |
+| `prefers-reduced-motion`, `<MotionConfig reducedMotion="user">`, `useReducedMotion()` | `App` wraps the tree in gpuix's `<MotionConfig reducedMotion="user">`, which makes every `motion.*` position and size property jump (opacity and colour keep fading). Where the source reads `useReducedMotion()` itself, the port reads `createReducedMotion()` at the same site: the fluid highlight, the accordion panel, the banner, the carousel timer, the thinking indicator, the command-menu scroll and the scripted demos. Pinned by `scripts/check-reduced-motion.tsx` | Approximated: gpuix reduces layout properties the source animates (`drift/site.md`); the OS setting is read on macOS only |
 | Base UI `Positioner` (flip, `--anchor-width`, `--available-height`) | `<anchored fit="flip" deferred>`: gpuix picks the side and reports it with the room left (`onPlacement`), and `PopupSurface` caps the card to that room, slides from the reported side and is at least the trigger's width | Equivalent |
 | `ScrollArea` (hover thumb, scroll fade) | a plain `overflowY: "scroll"`, on the combobox list and the sidebar | Dropped |
 | `getBoundingClientRect` | `element.getBoundingClientRect()`, read when needed (layout is flushed first, so it is never stale) | Native |

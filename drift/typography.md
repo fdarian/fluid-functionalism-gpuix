@@ -78,7 +78,7 @@ repeating it.
 
 - **Cause:** none that matters: gpuix has `fontVariantNumeric: "tabular-nums"` (`README.md:5300`) and Inter's static cuts carry `tnum`.
 - **Original:** two rows count 10 to 48 in `normal-nums` and `tabular-nums` while the demo is half on screen, hold while a pointer is inside, and show the last count under reduced motion (`demos.tsx:382-540`).
-- **Port:** the same, with the widths of all 39 labels per row measured through hidden copies and `onLayout` (78 invisible texts); the proportional row drifts 6.0px where the browser measured 6.2px. The count ticks every 120ms on a timer while at least half the frame is on screen; reduced motion is not read.
+- **Port:** the same, with the widths of all 39 labels per row measured through hidden copies and `onLayout` (78 invisible texts); the proportional row drifts 6.0px where the browser measured 6.2px. The count ticks every 120ms on a timer while at least half the frame is on screen, and reduced motion shows the last count (`src/pages/typography/numbers.tsx:155-168`).
 - **Fidelity:** exact in behaviour.
 - **Components it hits:** just this page.
 

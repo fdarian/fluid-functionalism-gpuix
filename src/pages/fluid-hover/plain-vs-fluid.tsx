@@ -1,4 +1,8 @@
-import { type HostElement, IntersectionObserver } from "@gpuix/solid";
+import {
+	createReducedMotion,
+	type HostElement,
+	IntersectionObserver,
+} from "@gpuix/solid";
 import {
 	createEffect,
 	createSignal,
@@ -102,7 +106,8 @@ function Stage(props: { paused: () => boolean }) {
 	const [inView, setInView] = createSignal(false);
 	// A real pointer inside the demo owns both lists until it leaves.
 	const [userInside, setUserInside] = createSignal(false);
-	const scripted = () => inView() && !userInside();
+	const reduced = createReducedMotion();
+	const scripted = () => inView() && !reduced() && !userInside();
 	const running = () => scripted() && !props.paused();
 	const [cursorY, setCursorY] = createSignal(CURSOR_TOP);
 	const [fakeIndex, setFakeIndex] = createSignal<number | null>(null);

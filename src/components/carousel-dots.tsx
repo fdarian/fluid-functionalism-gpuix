@@ -1,5 +1,6 @@
 import {
 	buttonProps,
+	createReducedMotion,
 	type HostElement,
 	motion,
 	useGpuixRequired,
@@ -90,8 +91,10 @@ export function CarouselDots(props: {
 		),
 	);
 
+	const reduced = createReducedMotion();
 	createEffect(() => {
-		if (!autoplaying()) return;
+		// Reduced motion: no timer moves the page on the reader's behalf.
+		if (!autoplaying() || reduced()) return;
 		onFrame((delta) => {
 			const live = untrack(options);
 			if (live === null || (live.paused ?? false) || waiting) return;

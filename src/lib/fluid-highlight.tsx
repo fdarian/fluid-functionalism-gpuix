@@ -1,4 +1,8 @@
-import { type MotionTransition, motion } from "@gpuix/solid";
+import {
+	createReducedMotion,
+	type MotionTransition,
+	motion,
+} from "@gpuix/solid";
 import { createComputed, createSignal, For, untrack } from "solid-js";
 import type { ItemRect } from "./fluid-hover";
 import { motion as tween } from "./theme";
@@ -11,6 +15,9 @@ function target(rect: ItemRect) {
 		height: rect.height,
 	};
 }
+
+/** Reduced motion keeps the opacity fade and drops the travel: fewer and gentler, not none. */
+const REDUCED: MotionTransition = { ...tween.snap, opacity: { duration: 0.08 } };
 
 /**
  * The one hover highlight every fluid list renders: an absolutely positioned
@@ -35,7 +42,10 @@ export function FluidHighlight(props: {
 	/** The glide between rects. Hover uses `fast`; a selection background uses `moderate`. */
 	glide?: MotionTransition;
 	fade?: MotionTransition;
+	testId?: string;
 }) {
+	// Read here, not left to the app's MotionConfig: the highlight honours the OS setting wherever it is mounted.
+	const reduced = createReducedMotion();
 	const [lastRect, setLastRect] = createSignal<ItemRect>();
 	const [liveSession, setLiveSession] = createSignal<number>();
 	createComputed(() => {
@@ -54,6 +64,7 @@ export function FluidHighlight(props: {
 				}
 				const transition = (): MotionTransition => {
 					if (props.rect() === null) return props.fade ?? tween.fastExit;
+					if (reduced()) return REDUCED;
 					return props.travel?.() === false
 						? tween.snap
 						: (props.glide ?? tween.fast);
@@ -67,6 +78,7 @@ export function FluidHighlight(props: {
 				};
 				return (
 					<motion.div
+						testId={props.testId}
 						style={{
 							position: "absolute",
 							backgroundColor: props.background,

@@ -36,16 +36,6 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 - **Fidelity:** approximated (a signal write per update, not a native motion value).
 - **Components it hits:** just this one.
 
-## Reduced motion is not honoured
-
-- **Cause:** `not ported yet`.
-- **Original:** under reduced motion the autoplay timer never starts and the width change is instant (`carousel-dots.tsx:100`, `:135-136`, `:185`, `:234`); the highlight snaps too (`registry/default/fluid-hover-highlight.tsx:83-90`).
-- **Port:** autoplay and the width spring always run (`carousel-dots.tsx:93-110`, `:191-194`); nothing in `src` reads reduced motion.
-- **gpuix lacks:** nothing: `matchMedia` with `prefers-reduced-motion` and `MotionConfig reducedMotion="user"` exist (`FORK.md:831-833`).
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every animated component.
-
 ## Container and extra props
 
 - **Cause:** `port choice` (reason not stated).

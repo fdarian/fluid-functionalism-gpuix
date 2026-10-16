@@ -140,15 +140,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 - **Cause:** `not ported yet`. Same drift as [dropdown.md, "Checked background appears with a fade instead of already being there"](dropdown.md#checked-background-appears-with-a-fade-instead-of-already-being-there), where the entry lives. Here: original `select.tsx:548-575`; port `select.tsx:615-622`. (Was recorded as `port choice`; the blocker is the shared `FluidHighlight`, which `motion`'s `initial={false}` could serve.)
 
-## No reduced-motion handling
-
-- **Cause:** `not ported yet` (gpuix has `matchMedia` for `prefers-reduced-motion` and `MotionConfig reducedMotion="user"`, `FORK.md:831`, `:906`).
-- **Original:** the hover highlight drops its travel to a snap when the user prefers reduced motion (`fluid-hover-highlight.tsx:83-90`, `:114`).
-- **Port:** no reduced-motion read anywhere in `src/`.
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every fluid hover list and popup.
-
 ## Demo: variants, copy and page shape
 
 - **Cause:** `port choice` (reason not stated) for the copy and counts; `not ported yet` for the code snippets and API tables.

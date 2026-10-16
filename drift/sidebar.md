@@ -134,15 +134,6 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 - **Fidelity:** approximated (the fade is about the same length for hover, twice as long for the active background).
 - **Components it hits:** every `FluidHighlight` user.
 
-## Reduced motion
-
-- **Cause:** `not ported yet`.
-- **Original:** the highlight and the sheet and shell springs honour `useReducedMotion` (travel snaps, opacity keeps fading) (`fluid-hover-highlight.tsx`, `sidebar-core.tsx:634`).
-- **Port:** no reduced-motion read anywhere in `src/`. gpuix exposes it (`FORK.md:906`, `packages/native/js/motion-config.ts`).
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every motion component in the port.
-
 ## One active background per level
 
 - **Cause:** `port choice` (reason not stated).

@@ -81,13 +81,6 @@ repeating it.
 - **Port:** a `role="link"` div calling `usePageNav().navigate(slug)` (`src/pages/motion/spring-reference.tsx`); Space activates it too, which a link does not do in a browser (it comes from `buttonProps`). "Mobile drawer" is plain text as in the source, though the port has a `mobile-drawer` demo. The "Fluid hover" chip links to a `fluid-hover` page that lands in a parallel branch: until it merges, it navigates to an empty column. The hover color eases over 150ms like `transition-colors`.
 - **Fidelity:** exact for links to existing pages.
 
-## Reduced motion is described but not wired
-
-- **Cause:** `not ported yet`.
-- **Original:** "Wrap the app tree in `<MotionConfig reducedMotion="user">`" (`app/docs/motion/page.tsx:461-466`); the site does, so the demos' position moves drop out under the OS setting.
-- **Port:** the prose is verbatim. gpuix has `MotionConfig` with `reducedMotion="user"` (README "MotionConfig and reduced motion"; the OS setting is read on macOS only), but `App` does not wrap the tree in it, so these demos always animate.
-- **Fidelity:** exact text, describes more than the port does.
-
 ## Text baselines
 
 - **Cause:** `gpuix gap` (as observed; not traced in gpuix): `alignItems: "baseline"` puts a `<text>` box on its bottom edge in a flex row, where the DOM aligns the first baselines.

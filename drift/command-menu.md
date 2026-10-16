@@ -109,16 +109,6 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 - **Fidelity:** approximated.
 - **Components it hits:** every fluid list.
 
-## Reduced motion reaches only the list scroll
-
-- **Cause:** `not ported yet`.
-- **Original:** the highlight travel, the list scroll and the height spring snap under the OS setting; the opacity fade stays (`registry/default/command-menu.tsx:567`, `:590`, `:723`; `registry/default/fluid-hover-highlight.tsx:83-91`).
-- **Port:** the arrow-key scroll reads `createReducedMotion()` and jumps (`src/components/command-menu.tsx:407`, `:460-463`). The fill's travel and the dialog's fades ignore it; nothing else in `src/` reads the setting.
-- **Workaround:** none.
-- **Fidelity:** approximated (the scroll snaps, the fill still glides).
-- **Components it hits:** every component with motion.
-- **Note:** gpuix's `MotionConfig reducedMotion="user"` makes `motion.*` position and size properties jump (`~/code/fdarian/gpuix/README.md:1953-1966`); the fill is a `motion.div`, so one wrapper at the app root would cover it.
-
 ## Dialog enter and exit
 
 - **Cause:** `gpuix gap` (the scale).
