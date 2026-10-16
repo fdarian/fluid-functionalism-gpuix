@@ -14,7 +14,7 @@ import {
 	Show,
 	useContext,
 } from "solid-js";
-import { Button } from "../components/button";
+import { Button, type ButtonVariant } from "../components/button";
 import { TabsSubtle, TabsSubtleItem } from "../components/tabs-subtle";
 import { Tooltip } from "../components/tooltip";
 import { PageScrollerContext } from "./demo-kit";
@@ -126,7 +126,13 @@ export function SubHeading(props: { children: string; marginTop?: number }) {
 
 const COPIED_MS = 2000;
 
-function CopyPromptButton(props: { prompt: string }) {
+/** The docs pages' Copy prompt button; `label` and `variant` serve the changelog's own prompts. */
+export function CopyPromptButton(props: {
+	prompt: string;
+	label?: string;
+	variant?: ButtonVariant;
+	testId?: string;
+}) {
 	const [copied, setCopied] = createSignal(false);
 	let timer: ReturnType<typeof setTimeout> | undefined;
 	onCleanup(() => clearTimeout(timer));
@@ -145,12 +151,12 @@ function CopyPromptButton(props: { prompt: string }) {
 
 	return (
 		<Button
-			testId="copy-prompt"
-			variant="primary"
+			testId={props.testId ?? "copy-prompt"}
+			variant={props.variant ?? "primary"}
 			leadingIcon={copied() ? "check" : "copy"}
 			onClick={copy}
 		>
-			Copy prompt
+			{props.label ?? "Copy prompt"}
 		</Button>
 	);
 }
