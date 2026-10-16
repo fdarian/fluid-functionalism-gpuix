@@ -11,7 +11,7 @@ import {
 } from "../components/sidebar";
 import type { DemoModule } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
-import { color } from "../lib/theme";
+import { color, shape } from "../lib/theme";
 
 const BLUE = "#3B82F6";
 const YELLOW = "#FBBF24";
@@ -54,7 +54,7 @@ export function Demo() {
 					display: "flex",
 					flexDirection: "row",
 					overflow: "hidden",
-					borderRadius: 12,
+					borderRadius: shape.container,
 					backgroundColor: color.background,
 				}}
 			>

@@ -52,11 +52,11 @@ repeating it.
 - **Port:** a fixed prop list (`input-group.tsx:91-104`), `testId` added, `icon` an `IconRef`. The group is `width: 288, minWidth: 0, flexShrink: 1` (`:80-82`), which approximates `max-w-full`.
 - **Fidelity:** dropped.
 
-## Ambient size and shape
+## Ambient size
 
-- **Cause:** `not ported yet`. README lists the pill shape and the Size row as not ported.
-- **Original:** `useSize()` inside each field follows the `SizeProvider` the group sets from `size` or inherits; `shape.input` follows `ShapeProvider` (`input-group.tsx:130-132,237`).
-- **Port:** the group's `size` prop through `GroupContext` (`input-group.tsx:42-55,67-70`); no inheritance from an outer provider; radius fixed at `radius.item` 8 (`:195`).
+- **Cause:** `not ported yet`. README lists the Size row as not ported.
+- **Original:** `useSize()` inside each field follows the `SizeProvider` the group sets from `size` or inherits (`input-group.tsx:130-132`).
+- **Port:** the group's `size` prop through `GroupContext` (`input-group.tsx:42-55,67-70`); no inheritance from an outer provider.
 - **Fidelity:** approximated.
 - **Components it hits:** every component with `size`.
 

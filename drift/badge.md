@@ -24,15 +24,6 @@ Checked with no drift: the 17 hexes, heights (24 / 20), paddings (10 / 8), gaps 
 - **Fidelity:** dropped.
 - **Components it hits:** every component with a size ladder (the port has no `SizeProvider`).
 
-## Radius is fixed at 8
-
-- **Cause:** `not ported yet`.
-- **Original:** the corner comes from the shape context, `rounded-lg` or 20px in pill mode (`:99-101`, `:134`).
-- **Port:** `radius.item` (`src/components/badge.tsx:104`). README: "pill shape" is not ported.
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every component that reads `shape`.
-
 ## No `className`, `style`, `ref` or HTML attributes
 
 - **Cause:** `port choice` (reason not stated; Solid components with a fixed prop list).

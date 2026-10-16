@@ -46,7 +46,7 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:4
 
 - **Cause:** `not ported yet` (README: "Not ported there: ... the Size ... rows").
 - **Original:** at the compact step the card is 38px, the text 13/18, the thumbnails 24px, padding `pl-1.5` / `pl-3` and `pr-1`; the hooks `useQueueCardHeight` and `QUEUE_CARD_H_COMPACT` are exported, and `collapsedStackHeight(count, cardH)` takes the height (`:25-41`, `:68-76`, `:338-342`, `:350`, `:356`).
-- **Port:** one step at 44px; `collapsedStackHeight(count)` has no height argument and the other two exports do not exist (`queued-stack.tsx:49`, `:69-74`). The attachment radius `nestedRadius(shape.bgRadius, 8)` is the constant `0` (`:543`).
+- **Port:** one step at 44px; `collapsedStackHeight(count)` has no height argument and the other two exports do not exist (`queued-stack.tsx:49`, `:69-74`). The attachment radius is `nestedRadius(shape.bg, 8)` at every step; the source nests 7 at the compact step (`:543`).
 - **Workaround:** none.
 - **Fidelity:** dropped (compact).
 - **Components it hits:** every component with a `size` prop.

@@ -79,15 +79,6 @@ Same in both (checked against the code): row height, gap and padding per size (3
 - **Fidelity:** exact in look.
 - **Components it hits:** every `FluidHighlight` list.
 
-## Pill shape
-
-- **Cause:** `not ported yet`. The port has one corner scheme (`radius.item` 8, ring 10 in `theme.ts:radius`).
-- **Original:** `useShape()` picks the rounded or the pill set: row and fill radius 20, ring 22, merged radius 16 (`checkbox-group.tsx:92,98,180,190`; `shape-context.tsx:51-81`). Rounded, the default, matches the port.
-- **Port:** `choice-group.tsx:210,220,320` use `radius.item` only.
-- **Workaround:** none.
-- **Fidelity:** dropped (pill).
-- **Components it hits:** every component that reads `useShape`.
-
 ## `size` is read twice, and a surrounding size is ignored
 
 - **Cause:** `not ported yet`.

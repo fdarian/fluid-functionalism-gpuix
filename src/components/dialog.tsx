@@ -29,7 +29,7 @@ import { HideOutside } from "../lib/modal";
 import { createPresence } from "../lib/presence";
 import {
 	color,
-	radius,
+	shape,
 	type as scale,
 	scheme,
 	motion as tween,
@@ -331,7 +331,7 @@ export function DialogContent(props: {
 						display: "flex",
 						flexDirection: "column",
 						padding: 24,
-						borderRadius: radius.container,
+						borderRadius: shape.container,
 						backgroundColor: color.surface5,
 						borderWidth: 1,
 						borderColor: color.popupBorder,

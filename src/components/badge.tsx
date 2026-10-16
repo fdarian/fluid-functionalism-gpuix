@@ -1,5 +1,5 @@
 import { type JSX, Show } from "solid-js";
-import { color, radius, type as scale, weight } from "../lib/theme";
+import { color, shape, type as scale, weight } from "../lib/theme";
 
 export const badgeColors = {
 	gray: "#a3a3a3",
@@ -101,7 +101,7 @@ export function Badge(props: {
 				paddingLeft: size().padX,
 				paddingRight: size().padX,
 				gap: size().gap,
-				borderRadius: radius.item,
+				borderRadius: shape.item,
 				backgroundColor: fill(),
 				...(solid() ? {} : { borderWidth: 1, borderColor: color.border }),
 			}}

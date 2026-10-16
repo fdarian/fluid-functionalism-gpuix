@@ -9,7 +9,7 @@ import {
 } from "solid-js";
 import { Icon } from "../lib/icon";
 import type { IconRef } from "../lib/icons";
-import { color, height, radius, motion as tween, weight, focusRing } from "../lib/theme";
+import { color, height, shape, motion as tween, weight, focusRing } from "../lib/theme";
 import type { InputSize } from "./input-group";
 import { Tooltip } from "./tooltip";
 
@@ -298,7 +298,7 @@ export function InputCopy(props: {
 				flexDirection: "row",
 				alignItems: "center",
 				width: "100%",
-				borderRadius: radius.item,
+				borderRadius: shape.input,
 				cursor: "pointer",
 				userSelect: "none",
 				keyboardFocusDim: false,

@@ -76,15 +76,6 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 - **Fidelity:** approximated (a few percent of tint over the fill and the ring edge).
 - **Components it hits:** none other; stale "no zIndex" comments are also at `src/lib/fluid-highlight.tsx:19` and `src/components/accordion.tsx:278`.
 
-## Pill shape
-
-- **Cause:** `not ported yet` (README lists "pill shape" as not ported).
-- **Original:** highlight, tints and trigger radius follow `shape.bg` / `shape.item` (20 px pill, 8 px rounded), the ring `shape.focusRing` (22 px pill, 10 px rounded) (`registry/default/lib/shape-context.tsx:53-85`). The site default is rounded.
-- **Port:** fixed `radius.item` 8 and `radius.focusRing` 10 (`src/lib/theme.ts:280-284`, `src/components/accordion.tsx:371`, `src/lib/focus-ring.tsx:92`).
-- **Workaround:** none; the rounded default is exact.
-- **Fidelity:** exact for rounded, dropped for pill.
-- **Components it hits:** every component.
-
 ## Standalone hover fill fades in 20 ms faster
 
 - **Cause:** `not ported yet` (a plain mismatch; nothing stops it).

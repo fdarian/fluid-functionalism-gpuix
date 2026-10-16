@@ -100,14 +100,14 @@ repeating it.
 - **Fidelity:** dropped.
 - **Components it hits:** every component with a `size` prop.
 
-## Value bubbles are anchored overlays with a fixed radius
+## Value bubbles are anchored overlays
 
 - **Cause:** `port choice` (reason not stated; the offsets were not measured against the DOM).
-- **Original:** an absolutely positioned `motion.div` at fixed `top` offsets (`-20` compact hover, `-16` thumb bubble, `-30` default row, `slider.tsx:1116`, `:365`, `:1596`), centred with `-translate-x-1/2`, radius from `useShape()` (`shape.bg`, 8px by default; `:373`).
-- **Port:** a `ValueBubble` (`src/components/slider.tsx:191-241`) in an `<anchored side="top" align="center" fit="snap" deferred>` with `gap` 8 above a thumb or 0 above a zero-size marker at 4px (compact, `:1034-1049`) or -6px (default, `:1604-1618`); radius `radius.item` (8, `src/lib/theme.ts:281`). The anchor keeps the bubble inside the window, which the DOM bubble does not. The marker offsets reproduce the DOM's bubble bottom if the bubble is 24px tall.
+- **Original:** an absolutely positioned `motion.div` at fixed `top` offsets (`-20` compact hover, `-16` thumb bubble, `-30` default row, `slider.tsx:1116`, `:365`, `:1596`), centred with `-translate-x-1/2`, radius `shape.bg` (`:373`).
+- **Port:** a `ValueBubble` (`src/components/slider.tsx:191-241`) in an `<anchored side="top" align="center" fit="snap" deferred>` with `gap` 8 above a thumb or 0 above a zero-size marker at 4px (compact, `:1034-1049`) or -6px (default, `:1604-1618`); radius `shape.bg`. The anchor keeps the bubble inside the window, which the DOM bubble does not. The marker offsets reproduce the DOM's bubble bottom if the bubble is 24px tall.
 - **Workaround:** none.
-- **Fidelity:** approximated (placement unverified to the pixel; a non-default `ShapeProvider` radius is not followed).
-- **Components it hits:** every port that has no `ShapeProvider`.
+- **Fidelity:** approximated (placement unverified to the pixel).
+- **Components it hits:** none other.
 
 ## `onChange` fires only when the value changes
 

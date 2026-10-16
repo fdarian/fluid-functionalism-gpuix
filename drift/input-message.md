@@ -154,11 +154,11 @@ repeating it.
 - **Port:** `InputMessageProps` has neither (`input-message.tsx:590-633`); the textarea's `aria-label` is fixed "Message" (`:1051`). `testId` is added.
 - **Fidelity:** dropped.
 
-## Ambient size and shape
+## Ambient size
 
-- **Cause:** `not ported yet`. README lists the pill shape and the Size row as not ported.
-- **Original:** `useSize(size)` falls back to the surrounding provider, `shape.container` sets the composer radius, `nestedRadius(shape.containerRadius, 8)` the tile radius (`input-message.tsx:224-227,497-498,1062`).
-- **Port:** the `size` prop only; fixed 12 and 4 (`input-message.tsx:312,961`).
+- **Cause:** `not ported yet`. README lists the Size row as not ported.
+- **Original:** `useSize(size)` falls back to the surrounding provider (`input-message.tsx:497-498`).
+- **Port:** the `size` prop only.
 - **Fidelity:** approximated.
 
 ## IME composition, touch, static weights

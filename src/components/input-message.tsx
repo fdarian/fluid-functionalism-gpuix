@@ -25,7 +25,7 @@ import { createFluidHover } from "../lib/fluid-hover";
 import { Icon } from "../lib/icon";
 import { fill } from "../lib/press";
 import { createMeasuredHeight } from "../lib/measured-height";
-import { color, height, radius, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
+import { color, height, nestedRadius, radius, shape, type as scale, scheme, motion as tween, weight, withAlpha, focusRing } from "../lib/theme";
 import { FileThumbnail } from "./file-thumbnail";
 import type { InputSize } from "./input-group";
 import { Tooltip } from "./tooltip";
@@ -184,7 +184,7 @@ function SendButton(props: {
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",
-				borderRadius: radius.item,
+				borderRadius: shape.button,
 				cursor: "pointer",
 				keyboardFocusDim: false,
 				opacity: props.disabled ? 0.5 : 1,
@@ -299,8 +299,8 @@ function FilePreviewTile(props: {
 					src: props.file.path,
 				}}
 				size={props.size}
-				// The tile sits 8px inside the container's 12px radius.
-				radius={4}
+				// The tile sits 8px inside the composer's edge.
+				radius={nestedRadius(shape.container, 8)}
 			/>
 			<div style={{ position: "absolute", top: 4, right: 4 }}>
 				<RemoveBadge
@@ -949,7 +949,7 @@ export function InputMessage(props: InputMessageProps) {
 				flexDirection: "column",
 				padding: 8,
 				width: "100%",
-				borderRadius: radius.container,
+				borderRadius: shape.container,
 				backgroundColor: color.surface2,
 				outlineWidth: 1,
 				outlineColor: ring(),
@@ -1210,7 +1210,7 @@ export function InputMessage(props: InputMessageProps) {
 							<FluidHighlight
 								rect={() => rectFor(hover.activeIndex())}
 								session={hover.session}
-								radius={radius.item}
+								radius={shape.bg}
 								background={color.hover}
 							/>
 							<For each={suggestions()}>

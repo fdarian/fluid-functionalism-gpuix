@@ -88,11 +88,11 @@ repeating it.
 - **Port:** `copyToClipboard` spawns `pbcopy` on macOS and `wl-copy` on everything else (`input-copy.tsx:32-41`), and its comment says gpuix has no clipboard API. The fork has `navigator.clipboard.writeText` (`FORK.md:458`). On Windows and X11 without `wl-copy` every copy ends in the red cross.
 - **Fidelity:** approximated (works on macOS only).
 
-## Ambient size and shape, passthrough props
+## Ambient size, passthrough props
 
 - **Cause:** `not ported yet`.
-- **Original:** `useSize(size)` falls back to the surrounding `SizeProvider`, `shape.input` follows `ShapeProvider` (8px or the pill's 20px), and `...props`, `className` and `ref` go to the wrapper div (`input-copy.tsx:58,384,396-401`).
-- **Port:** `size` prop only, fixed `radius.item` 8 (`input-copy.tsx:80,298`), no `className`, `ref` or rest props. README lists the pill shape and the Size row as not ported. The port adds `copy` (injectable clipboard) and `testId`.
+- **Original:** `useSize(size)` falls back to the surrounding `SizeProvider`, and `...props`, `className` and `ref` go to the wrapper div (`input-copy.tsx:58,384,396-401`).
+- **Port:** `size` prop only (`input-copy.tsx:80`), no `className`, `ref` or rest props. README lists the Size row as not ported. The port adds `copy` (injectable clipboard) and `testId`.
 - **Fidelity:** dropped.
 - **Components it hits:** every component with `size` (input-group, input-message).
 

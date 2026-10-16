@@ -104,11 +104,11 @@ repeating it.
 ## Props and parts the port does not take
 
 - **Cause:** `not ported yet`. `banner.tsx:139` shows the port can take a `size` prop.
-- **Original:** `ThinkingSteps` takes `size` (pins the compact step: trigger `py-1.5`, icon 12, `compact` type scale) and `className` / HTML attributes (`thinking-steps.tsx:252-289`). `icon` is any `IconName` of the app's icon library (`:341`, `:387`). Header children are `ReactNode` (`:294-308`). `ThinkingStep`, `ThinkingStepSource` and `ThinkingStepImage` take `className`. `useShape()` sets the item and container radii (`:54`, `:389`, `:571`).
-- **Port:** no `size`, `className` or `ref` anywhere (`thinking-steps.tsx:237-244`). `icon` is one of six glyphs (`:36-53`). Header children are a `string` (`:271-274`). Radii are fixed `radius.item` 8 and `radius.container` 12 (`:128`, `:358`, `:580`).
+- **Original:** `ThinkingSteps` takes `size` (pins the compact step: trigger `py-1.5`, icon 12, `compact` type scale) and `className` / HTML attributes (`thinking-steps.tsx:252-289`). `icon` is any `IconName` of the app's icon library (`:341`, `:387`). Header children are `ReactNode` (`:294-308`). `ThinkingStep`, `ThinkingStepSource` and `ThinkingStepImage` take `className`.
+- **Port:** no `size`, `className` or `ref` anywhere (`thinking-steps.tsx:237-244`). `icon` is one of six glyphs (`:36-53`). Header children are a `string` (`:271-274`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
-- **Components it hits:** thinking-indicator (no `size`), and every component that reads `useShape`.
+- **Components it hits:** thinking-indicator (no `size`).
 
 ## `width` prop
 

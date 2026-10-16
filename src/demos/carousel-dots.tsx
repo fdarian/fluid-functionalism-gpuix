@@ -3,7 +3,7 @@ import { createSignal, For, type JSX } from "solid-js";
 import { CarouselDots } from "../components/carousel-dots";
 import type { DemoModule } from "../lib/demo";
 import { DemoCard } from "../lib/demo-kit";
-import { color, radius, type as scale, motion as tween } from "../lib/theme";
+import { color, shape, type as scale, motion as tween } from "../lib/theme";
 
 const SLIDES = ["Inbox", "Drafts", "Sent", "Archive"];
 /** How far a slide's label travels sideways on a change, in px. */
@@ -46,7 +46,7 @@ function Slide(props: { index: number; direction: number }) {
 				width: SLIDE_SIZE,
 				height: SLIDE_SIZE,
 				overflow: "hidden",
-				borderRadius: radius.container,
+				borderRadius: shape.container,
 				borderWidth: 1,
 				borderColor: color.border,
 				backgroundColor: color.background,

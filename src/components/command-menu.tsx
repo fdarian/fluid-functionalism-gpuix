@@ -28,6 +28,7 @@ import { moveIndex, revealRow } from "../lib/list-nav";
 import {
 	color,
 	radius,
+	shape,
 	type as scale,
 	scheme,
 	shadow3,
@@ -300,7 +301,7 @@ export function CommandMenuPanel(props: {
 				maxWidth: 520,
 				maxHeight: props.maxHeight,
 				backgroundColor: color.card,
-				borderRadius: radius.container,
+				borderRadius: shape.container,
 				borderWidth: 1,
 				borderColor: color.popupBorder,
 				boxShadow: shadow3(),
@@ -708,7 +709,7 @@ export function CommandMenuTabs(props: {
 				<FluidHighlight
 					rect={rectOf(selectedIndex())}
 					session={() => 0}
-					radius={radius.item}
+					radius={shape.bg}
 					background={color.active}
 					glide={tween.moderate}
 					fade={tween.moderateExit}
@@ -717,7 +718,7 @@ export function CommandMenuTabs(props: {
 					rect={() => rectOf(hoverIndex())()}
 					from={rectOf(selectedIndex())}
 					session={entered}
-					radius={radius.item}
+					radius={shape.bg}
 					background={color.hover}
 				/>
 				<For each={props.tabs}>
@@ -740,7 +741,7 @@ export function CommandMenuTabs(props: {
 									height: 28,
 									paddingLeft: 10,
 									paddingRight: 10,
-									borderRadius: radius.item,
+									borderRadius: shape.bg,
 									cursor: "pointer",
 								}}
 							>

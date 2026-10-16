@@ -60,15 +60,6 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Fidelity:** approximated.
 - **Components it hits:** every popup and card.
 
-## Pill shape is not ported
-
-- **Cause:** `not ported yet`.
-- **Original:** corners come from `useShape()`: the square's radius nests in the panel's, and tiles, swatches, fields and the trigger switch to 20px in pill mode (`color-picker.tsx:516-520`, `:1660`).
-- **Port:** one rounded set (`radius.item` 8, `radius.container` 12). README "Not ported there: pill shape" (`README.md:219`).
-- **Workaround:** none.
-- **Fidelity:** dropped.
-- **Components it hits:** every component.
-
 ## Popover surface level is 5, not substrate + 2
 
 - **Cause:** `port choice` (reason not stated; the port has no surface context).

@@ -2,7 +2,7 @@ import { type EventPayload, motion } from "@gpuix/solid";
 import { createComputed, createSignal, Show } from "solid-js";
 import type { FluidHover, ItemRect } from "./fluid-hover";
 import { createPresence } from "./presence";
-import { color, radius, motion as tween } from "./theme";
+import { color, motion as tween } from "./theme";
 
 /** How far the ring stands off the row: its box is the row grown by this on every side. */
 const OUTSET = 2;
@@ -53,6 +53,8 @@ export interface FocusRingSource {
  */
 export function FocusRing(props: {
 	ring: FocusRingSource;
+	/** `shape.focusRing`, or `radius.focusRing` for a popup the source pins to rounded. */
+	radius: number;
 	testId?: string;
 	/** `false` snaps to the new rect: a reflow moved the row, not the focus. */
 	travel?: () => boolean;
@@ -89,7 +91,7 @@ export function FocusRing(props: {
 					}
 					style={{
 						position: "absolute",
-						borderRadius: radius.focusRing,
+						borderRadius: props.radius,
 						borderWidth: 1,
 						borderColor: color.focusRing,
 						pointerEvents: "none",

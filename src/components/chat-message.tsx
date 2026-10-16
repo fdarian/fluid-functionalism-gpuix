@@ -5,7 +5,7 @@ import type { IconName } from "../lib/icons";
 import {
 	color,
 	focusRing,
-	radius,
+	shape,
 	type as scale,
 	scheme,
 	motion as tween,
@@ -48,7 +48,7 @@ export function ChatMessageAction(props: {
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",
-				borderRadius: radius.item,
+				borderRadius: shape.button,
 				cursor: "pointer",
 				keyboardFocusDim: false,
 				hover: { backgroundColor: color.hover },
@@ -126,7 +126,7 @@ export function ChatMessage(props: {
 							? {
 									paddingLeft: 14,
 									paddingRight: 14,
-									borderRadius: radius.item,
+									borderRadius: shape.bg,
 									backgroundColor: color.chatBubble,
 								}
 							: {}),
