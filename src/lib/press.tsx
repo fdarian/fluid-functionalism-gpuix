@@ -4,13 +4,12 @@ const group = 'press';
 
 /**
  * The style of the element that holds a `PressFill`. It is its own group, so a
- * button inside another group keeps its own hover and press, and its own
- * stacking context, so the fill's `zIndex: -1` stays behind the label.
+ * button inside another group keeps its own hover and press, and positioned,
+ * so the fill is placed against it.
  */
 export const pressSurface = {
 	group,
 	position: 'relative',
-	zIndex: 0,
 } as const;
 
 const fillTransition = {
@@ -33,11 +32,12 @@ const inset = (px: number) => ({
 });
 
 /**
- * The press effect of button.tsx: the fill sits behind the label, 1px outside
- * the pressable (which is itself inset 1px from the button's bounds), and
- * pressing pulls its edges to the pressable's own. One quad paints the fill, so
- * a rounded edge has no seam and a translucent fill does not double up. The
- * pressable spreads `pressSurface` into its style.
+ * The press effect of button.tsx: the fill sits 1px outside the pressable
+ * (which is itself inset 1px from the button's bounds), and pressing pulls its
+ * edges to the pressable's own. One quad paints the fill, so a rounded edge has
+ * no seam and a translucent fill does not double up. The pressable spreads
+ * `pressSurface` into its style, and its label is `position: relative` and
+ * after the fill in the tree, as in the source, so it paints over the fill.
  */
 export function PressFill(props: {
 	rest: string;
@@ -48,7 +48,6 @@ export function PressFill(props: {
 		<div
 			style={{
 				position: 'absolute',
-				zIndex: -1,
 				...inset(-1),
 				borderRadius: shape.button + 1,
 				backgroundColor: props.rest,

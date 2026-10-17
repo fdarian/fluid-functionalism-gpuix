@@ -224,7 +224,11 @@ function SendButton(props: {
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						transition={tween.fast}
-						style={{ display: 'flex', alignItems: 'center' }}
+						style={{
+							position: 'relative',
+							display: 'flex',
+							alignItems: 'center',
+						}}
 					>
 						<Show
 							when={glyph === 'stop'}

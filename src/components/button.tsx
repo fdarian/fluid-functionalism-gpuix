@@ -269,39 +269,49 @@ export function Button(props: {
 					/>
 				)}
 			</Show>
-			<Show when={props.loading} fallback={content()}>
-				<div
-					style={{
-						display: 'flex',
-						flexDirection: 'row',
-						alignItems: 'center',
-						gap: size().gap,
-						opacity: 0,
-					}}
-				>
-					{content()}
-				</div>
-				<div
-					style={{
-						position: 'absolute',
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-					}}
-				>
-					<Icon
-						name="loader"
-						size={size().icon}
-						strokeWidth={1.5}
-						fade
-						color={labelColor()}
-					/>
-				</div>
-			</Show>
+			<div
+				style={{
+					position: 'relative',
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					gap: size().gap,
+				}}
+			>
+				<Show when={props.loading} fallback={content()}>
+					<div
+						style={{
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'center',
+							gap: size().gap,
+							opacity: 0,
+						}}
+					>
+						{content()}
+					</div>
+					<div
+						style={{
+							position: 'absolute',
+							top: 0,
+							left: 0,
+							right: 0,
+							bottom: 0,
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+						}}
+					>
+						<Icon
+							name="loader"
+							size={size().icon}
+							strokeWidth={1.5}
+							fade
+							color={labelColor()}
+						/>
+					</div>
+				</Show>
+			</div>
 		</div>
 	);
 }
