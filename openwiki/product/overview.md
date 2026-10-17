@@ -10,10 +10,10 @@ sources:
     resource: repo://README.md
   - id: openwiki-source-ff18555ad70362de0f452788
     resource: repo://UPSTREAM.md
-generated: { by: "claude-code", at: "2026-10-17T05:21:14.095Z" }
+generated: { by: "claude-code", at: "2026-10-17T07:13:17.848Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-17T05:21:14.095Z
+    at: 2026-10-17T07:13:17.848Z
 ---
 
 # Project overview
@@ -29,7 +29,7 @@ home bento grid, the docs and System pages, Compare, Concepts, Audio Mixer, Chan
 
 It started on 2026-10-12 as an experiment answering one question: **can gpuix draw this library faithfully?** The
 answer is yes, with recorded differences. Every difference from the source is an entry in `drift/`
-with a cause (588 at the 2026-10-17 recount, printed by `scripts/drift-counts.ts`), so the repository doubles as a catalogue of what gpuix can and cannot do against a real, demanding
+with a cause (577 at the latest 2026-10-17 recount, printed by `scripts/drift-counts.ts`), so the repository doubles as a catalogue of what gpuix can and cannot do against a real, demanding
 design system. That catalogue fed the gpuix fork's work directly
 (see [gpuix gaps and divergence rounds](../gpuix/gaps-and-divergence-rounds.md)).
 
@@ -77,4 +77,4 @@ All three must resolve to one `solid-js` and one `@gpuix/solid`; see
 | 2026-10-13 | Native springs in the fork; dark scheme and theme switcher; every component ported in a six-way fan-out; shared logic extracted into `src/lib/` |
 | 2026-10-14/15 | Static Inter, System theme, browser-style window frame, Base UI audit; migration to gpuix's DOM-parity release |
 | 2026-10-16 | Drift audit by cause; the owner's [four decisions](../decisions/user-decisions-2026-10-16.md); rest of the site ported; gpuix Round 4 adopted |
-| 2026-10-17 | History extracted into this repository; Base UI primitives moved to base-ui-solid-gpuix ([details](../history/base-ui-extraction.md)); gpuix Round 5 and the gap pass adopted at `poc` `dcfc7a0e` ([details](../gpuix/gaps-and-divergence-rounds.md#adoption-pass-2026-10-17)) |
+| 2026-10-17 | History extracted into this repository; Base UI primitives moved to base-ui-solid-gpuix ([details](../history/base-ui-extraction.md)); gpuix Round 5, the gap pass, then real tables, `inline-*` and container queries adopted, ending at `poc` `20a0c327` ([details](../gpuix/gaps-and-divergence-rounds.md#adoption-pass-2026-10-17)) |

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:649e1f5e67260de024ff24095021bb46a6f3ac9ac13458fa6c2cfaaaf3b92f50",
+  "pageVersion": "sha256:d9b11fbfcae623bf8bf228ab279108f59e8e9aab576598c08850a18e419c5c94",
   "claims": [
     {
       "id": "claim_b925fe22d5a74d5388447aa34ff4d2fd",
@@ -34,21 +34,17 @@
     },
     {
       "id": "claim_8614bcad26f8486aa463c334ea2c9505",
-      "statement": "Every place the port differs from the source is a drift entry tagged by cause, 588 entries at the last recount.",
+      "statement": "Every place the port differs from the source is a drift entry tagged by cause, 577 entries at the last recount.",
       "evidence": [
         {
-          "resource": "repo://README.md#L10-L10",
-          "version": "repo-lines-v1:sha256:f7331d0fc82829ebb6de8d59a66b9310830f22288a5910dbba79dba5960c9e8b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjczMzFkMGZjODI4MjllYmI2ZGU4ZDU5YTY2YjkzMTA4MzBmMjIyODhhNTkxMGRiYmE3OWRiYTU5NjBjOWU4YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjczMzFkMGZjODI4MjllYmI2ZGU4ZDU5YTY2YjkzMTA4MzBmMjIyODhhNTkxMGRiYmE3OWRiYTU5NjBjOWU4YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjc2YzJmMzYzYzI2ZjBjY2IxZjI1OTJkZDE2ZmYzNDY5ZTEwZTczZGM3MzI0YTdkZTYyMzM3ZWJlZTIyYjVhYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODNjOWIwMTNjNzkwYTBjM2M0OTIzZTc3MWI3MDZiZTczYTkzMjlhNzE5ZDAxM2EyNGU3NDYyMWMzMjU0Y2Y1OCJ9"
-        },
-        {
-          "resource": "repo://README.md#L208-L208",
-          "version": "repo-lines-v1:sha256:462be5046990e850016e8a99c07ed790d0808602de7adf91bd7ebdc1375daa77:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDYyYmU1MDQ2OTkwZTg1MDAxNmU4YTk5YzA3ZWQ3OTBkMDgwODYwMmRlN2FkZjkxYmQ3ZWJkYzEzNzVkYWE3NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDYyYmU1MDQ2OTkwZTg1MDAxNmU4YTk5YzA3ZWQ3OTBkMDgwODYwMmRlN2FkZjkxYmQ3ZWJkYzEzNzVkYWE3NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGMyMjAwMmVlMTZiNWYxZjMwZTk1ZTc5MmM1ZTEyYmE0ZTA0NTk4ZTIwZDhhZDBhNzc0OTI0Yzg4NjMwYzY2MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDgyZjg5MWE0M2ZjZDYwZDY3YTA4NDkzM2IxMmE0ZjlmOGM4ZDQ0NmZjY2FjZmNmZThiZDdiMWE4MTYxODUzMyJ9"
+          "resource": "repo://README.md#L9-L11",
+          "version": "repo-lines-v1:sha256:c15717101f9e4088e05b6e071b5e2672c629947c662909dc23a55f95e6ebca15:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I1MTk3Nzc1OTUyOTBjYmNjODI3YjE4NGQwNGQyOTEzYzc3NDdlMmZjNjNjYjI1MGM3ZGY4Y2FhZTAxZjU2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDZiMzRkZjA1ZDI2ZTZjZGRhM2E1YzUxNTFjNGE1NjQxYWEwYTZhZDA4MWExYzlhMmI2MTZjNjJmYzJmZThjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDVmMDhjNzUyMWQ1ZTcyZDI2MDM2M2E2ZGRlMmRmMjcyMzc1YzRlYWYzMzUxMjI5MjE3ODYyNzJhMDYwMDZlZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWI3YmJmNzg1NTI1MDcyMjUxNDRjZWY1MDMyOTM4MjZhZTdkYjk3ZDRjMThhMzAwODJhZDYwYjQzMzUwNWFiYiJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-17T05:21:14.095Z"
+    "at": "2026-10-17T07:13:17.848Z"
   }
 }

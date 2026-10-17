@@ -5,7 +5,7 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-17T05:21:14.095Z
+    at: 2026-10-17T07:13:17.848Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -21,6 +21,12 @@ sources:
     resource: repo://src/app.tsx
   - id: openwiki-source-456bdd1fc2b44eea01d30954
     resource: repo://src/components/button.tsx
+  - id: openwiki-source-d17fc045a3296520b28371ae
+    resource: repo://src/components/card.tsx
+  - id: openwiki-source-acfa9c6a13d1ded9117c4665
+    resource: repo://src/components/color-picker.tsx
+  - id: openwiki-source-94d7540365b6edfe6f6a0bbe
+    resource: repo://src/components/table.tsx
   - id: openwiki-source-d8bbfda4e9c9d1361b2fe340
     resource: repo://src/lib/demo.ts
   - id: openwiki-source-b4238869522a9de0f81c49d7
@@ -39,7 +45,7 @@ sources:
     resource: repo://src/lib/theme.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-17T05:21:14.095Z" }
+generated: { by: "claude-code", at: "2026-10-17T07:13:17.848Z" }
 ---
 
 # Port decisions and their reasons
@@ -68,8 +74,20 @@ Two rules from the source were kept deliberately and are easy to lose in a refac
 ## Hover and press: native state styles first
 
 `hover:` and `active:` on the same element map to gpuix's `style.hover` / `style.active`, which gpuix applies
-natively with no JS round trip. Signals (`onMouseEnter` / `onMouseLeave`) are used only where Tailwind's
-`group-hover` makes a *child* react to its parent, which gpuix state styles cannot express.
+natively with no JS round trip. Tailwind's `group-hover` and `group-focus-within` are `groupHover` /
+`groupFocusWithin` with a named group, which gpuix also resolves natively: the card's dismiss chip reveals on its
+card's group, and the colour picker's format label darkens on its trigger's group. Before the adoption pass of
+2026-10-17 these were hover signals; do not reintroduce a signal for a child that only restyles from its parent's
+hover or focus-within.
+
+A signal (`onMouseEnter` / `onMouseLeave`) is still right in three cases:
+
+- **The lit element is not the one under the pointer.** The table row highlights the fluid hover's pick, which
+  still lights a body row while the pointer is over the header or past the last row, so `groupHover` on the row
+  would not match the source's `is-active`.
+- **The value is read in JS**, for example to choose between colour branches (a card over media).
+- **A parent's `has*` state would have to style its children**, or a selector such as `:has(.x)` is needed: gpuix
+  has neither (the surfaces' elevation stack keeps a pointer signal).
 
 ## Fluid hover: one highlight, nearest row, sessions
 

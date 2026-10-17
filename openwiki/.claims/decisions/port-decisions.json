@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:9d91f977430171fd36e0a2d713bafebd42b6683f3a408dd3f4dbe56dd97fde90",
+  "pageVersion": "sha256:d5cc9321209bb3677f44e9d7d69a7c18fed6a8f68c17b355d00294e159cf57f6",
   "claims": [
     {
       "id": "claim_782844f1b7454bbd8c43501708e208b1",
@@ -165,10 +165,34 @@
           "version": "repo-lines-v1:sha256:1bd6ccc0ce9dc8104681f18df823cbc533b88a4a0ffc84f3fe931e92f925a651:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhZDM5YmJkMTM0NmI5MmQyZDU3N2Y2ZDIzMzhkMmI3ZmQwMWEwZjlhYzk4M2Q3NWMxNzI2MDg2NmY0ZjBhNGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwMzQ2NzMwYzBiY2M2ZTNmMWQxNjlmZmM2M2UyYTQxMjNjZmNmMTI4YmRjMTQ5NTBlOGQxODBiOWFlOGRhN2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
+    },
+    {
+      "id": "claim_711249ebdc6441f99cc0a08d156a6c52",
+      "statement": "The card's dismiss chip reveals through groupHover and groupFocusWithin of a named card group, and the colour picker's format label darkens through groupHover, instead of hover signals.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/card.tsx#L550-L558",
+          "version": "repo-lines-v1:sha256:09bd377f267aba4fed7264d182df473e0c13a4bdab5c020fd93a3ba9c74f39ce:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGY3MWM1ZDAwZTZlYjM1MjFlMGNlM2JiNTA0OGUxOGUyYzY4ZjMyZjQ1MDcyMDQyM2Y4Zjg0NDcyMThmMGNhMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGExNzgwMWE3N2FmNzRkMDAzYzlmZWM2ZDU4NTgyM2JhMTE3OGQzNDZkZjUxMzA1NzVkMWYxMWE1OWI4ZDU4YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmY2YTIzOWQzZmQzYzFhM2I3ZGI1N2QzNzQyNGQ5YmU3NDZlZWM5YWM4MjljNjdkMjkwYTIxNGQ1ZThhZmI1YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTZmZDI5NzJlMThhNGU4OWNmOTJlMWQzMDE0MjdkMGZiMGU5MGYxNmZhZGY1M2M4NjkwODZhMGI4NTlmZWQ3YyJ9"
+        },
+        {
+          "resource": "repo://src/components/color-picker.tsx#L911-L920",
+          "version": "repo-lines-v1:sha256:38da923b42e21888191c8083223e3c76da4846fb46aca41b244cd84e13eb6b27:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkOGQ3YTIxMDA3ZWY2ODFlN2FmYmM2NmJmN2Y4YjM1ZDk0NTUzNTU4OTM3NWQwOWMyZGZmODM4YzJmYzllMGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkMDYzMzU4YzU4NjYwNjIxNjkwZjQwNGNiMWVkMjE4NDI1NGIwZWVmOTNiY2RjYjc5ZmU3OTNhNzQ4MzZiY2YiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMyMDUxMTQ0ZmFkMGI1ZjZlNzA0ZTA5ZDVkZGVlNGI1N2RlNWJiOGY0Y2JkYTBlZTY4ZjRkNTBjY2VjODEzNTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdkYzkzMDk2YzY1NGQ5NmQ4MzY2YzAzNGJlMDg0N2VkYjE5Y2Q2YzQwNTM5OWI3NjA1MWVkZTM0Njk4ZmE3NjQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f65df3dae27d437fb79d0bce28a19129",
+      "statement": "The table row lights from the fluid hover's pick rather than the pointer, so it stays signal-driven and not a groupHover.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/table.tsx#L117-L125",
+          "version": "repo-lines-v1:sha256:8a910919db529c5ef12cc0b6c93f4a75b0b03c42fb70d60e7700df85856cac3e:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzE4YTczMjM0ZWEwODY4OTA2YWEwMjcwMmIyOGFkNTFmOTU1YTgxNDBkYzA4MjFjN2VjOWRkYWQ5ZjcxN2VlNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE4ZDc3M2EwZWEyOGRhYzZlOTdiYTZhZjY4MDZjMDQzNDJhZmFhZjkxNjkzODQ5MzNmNDcwODkwMDNjZDJhNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmVlM2YyYmVjNzE2MGQzZTgwNzdjNmI5YzBkN2E5OGEyNWNjYmViOWRjYjg1ZjVlNWNiMzY3NmQ0MTRjNTVkZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTIzYmJmZjFjMmY2NjhkY2FjYmQxNzc3YzQxOTFkNzFkZDIyM2Y1NWQ5ODg1ZWZmZDE1NGZkNzc0MzY1ZmMyZiJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-17T05:21:14.095Z"
+    "at": "2026-10-17T07:13:17.848Z"
   }
 }

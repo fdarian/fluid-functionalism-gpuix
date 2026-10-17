@@ -8,20 +8,28 @@ sources:
     resource: repo://README.md
   - id: openwiki-source-f870e66b983ce90f21118b51
     resource: repo://scripts/drift-counts.ts
+  - id: openwiki-source-5ebe82cc5f9e383e14411602
+    resource: repo://src/app.tsx
   - id: openwiki-source-1dd7881206b2ce896ff9b518
     resource: repo://src/components/scroll-area.tsx
   - id: openwiki-source-b9ce445bfbcee83ede413754
     resource: repo://src/components/sidebar.tsx
+  - id: openwiki-source-94d7540365b6edfe6f6a0bbe
+    resource: repo://src/components/table.tsx
+  - id: openwiki-source-a6e7d28cb827574c90025f7b
+    resource: repo://src/home/bento-grid.tsx
   - id: openwiki-source-2784d511d2f9a521edaf8bb9
     resource: repo://src/lib/app-frame.tsx
   - id: openwiki-source-ff84ac67d7a6ebc693884d4f
     resource: repo://src/lib/popup.tsx
+  - id: openwiki-source-88a6e1849924a665249303d0
+    resource: repo://src/lib/stable-label.tsx
   - id: openwiki-source-d5126066c122ba41a6591f24
     resource: repo://src/lib/theme-fade.tsx
-generated: { by: "claude-code", at: "2026-10-17T05:21:14.095Z" }
+generated: { by: "claude-code", at: "2026-10-17T07:13:17.848Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-17T05:21:14.095Z
+    at: 2026-10-17T07:13:17.848Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -50,17 +58,23 @@ link to those rows rather than repeating them. The ones that shape the most code
 - **Windows/Linux** dispatch is asynchronous, so `preventDefault()` on press arrives too late there. The fork
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
-The list was recounted and rewritten during the 2026-10-17 [adoption pass](#adoption-pass-2026-10-17), so it is current
-against gpuix `poc` `dcfc7a0e`. The bugs that survived adoption and were measured on the test renderer are worth
-knowing before touching layout code:
+The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17), so it is current
+against gpuix `poc` `20a0c327`. The bugs and gaps worth knowing before touching layout code:
 
-- A `width: 100%` child under a `fit-content` parent takes the parent's available width instead of resolving after
-  the hug, so a hugging box that contains a full-width child fills its column.
-- A percentage `maxWidth` does not clamp a `fit-content` box whose content cannot shrink (a one-line `<pre>`).
 - A one-sided border paints nothing on a box whose content height is 0.
 - A multi-value `padding` or `margin` string throws "invalid length"; use the longhands.
 - `calc()` inside a motion value throws (a motion value holds a colour or a percentage), so derived layers stay
   in JS and trail their inputs by a frame.
+- A `fit-content` box in a column flex container with a horizontal negative margin keeps the height of a wrapped
+  first pass; a block parent avoids it.
+- gpui measures text up to the next whole pixel, so a shrink-to-fit box is up to 1px wider than Chrome's.
+- Flex `order` is ignored inside an `@container` block, and Tab follows the painted order under `order`, not the
+  document order; the banner uses `row` / `row-reverse` instead.
+- Table parts are not animatable (a collapsed-border row rule snaps where the source eases it), and gpuix has the
+  `has*` states but neither a `:has(.x)` selector nor a parent state that styles its children.
+
+Two earlier entries here were closed by `20a0c327` and should not be re-reported: a `width: 100%` child under a
+`fit-content` parent filling the column, and a percentage `maxWidth` not clamping a `fit-content` box.
 
 ## How a round works
 
@@ -147,8 +161,10 @@ Items #20 to #28, sent to the fork's gap-closing pass:
 The fork worked through its whole gap inventory in lanes: gpuix `gaps` tip `62da6990` (zed `637cd3df6e`), landed on
 `poc` as `120dd049`. Beyond Round 5 it closed, among others: em/rem/vw/vh and `calc()`, `min-content`/`max-content`/
 `fit-content` widths, `width: auto` motion, `zIndex` across stacking contexts, `url()` backgrounds and masks, SVG
-`marker`/`pattern`/`filter`, the physical key code, and IME composition events. Still not built: container queries,
-`display: table`, `display: inline-*`, `:has()`, and culling of clipped subtrees.
+`marker`/`pattern`/`filter`, the physical key code, and IME composition events. At that point still not built:
+container queries, `display: table`, `display: inline-*`, `:has()`, and culling of clipped subtrees. The
+[table and container pass](#table-and-container-pass-2026-10-17) adopted the first three; `:has()` selectors and
+culling remain open.
 
 ## Adoption pass (2026-10-17)
 
@@ -171,7 +187,8 @@ What it changed, by Round 5 item:
 - **#26 inline spans.** Sentences with code chips and links are one `<text>` with real padding, margin and radius on
   spans, and the slider value is one run with a clickable span per number. Residual: underline offset and the
   Cite chip's vertical offset. The Ask-user inline option stays a block: `StableLabel`'s hidden semibold copy cannot
-  sit inside a text run (`display: inline-*` is not built).
+  sit inside a text run (`display: inline-*` was not built yet; the [next pass](#table-and-container-pass-2026-10-17)
+  changed this).
 - **#27 refocus after press: kept.** The mousedown refocus workaround was tried out of base-ui and put back,
   because on the web focus returns after the popup exits while in gpuix the blur lands after the synchronous
   handler returns.
@@ -195,7 +212,7 @@ Pitfalls the pass hit and a future one should expect:
   `FORK.md`, gpuix and base-ui line cites to `dcfc7a0e`. A drift entry whose gap closed should say what the port
   still does differently, not vanish silently.
 - **The README count table is generated.** `scripts/drift-counts.ts` prints it from `drift/*.md` (588 entries
-  after the pass); paste its output instead of editing numbers, because the hand-kept table and the intro total had
+  after the pass, 577 after the next one); paste its output instead of editing numbers, because the hand-kept table and the intro total had
   drifted apart.
 - **Two behaviour gaps in base-ui turned up while re-pointing its audit refs**: the menu typeahead forgot its query
   after 750 ms where Base UI uses 500 ms (fixed, with a check-dropdown assertion), and the scrollbar's
@@ -205,3 +222,38 @@ Pitfalls the pass hit and a future one should expect:
 Verification: all 38 scenarios and 79 tests pass, and 177 screenshots were regenerated. IME composition and the
 physical key code are closed in gpuix on macOS only, and the port reads neither (`isModK` reads `key`), so those
 README rows stay.
+
+## Table and container pass (2026-10-17)
+
+A second adoption pass the same day, against gpuix `poc` `20a0c327`, which added real `display: table` (with
+collapsed borders), `display: inline-*`, container queries, working `fit-content`, and named `groupHover` /
+`groupFocusWithin` states. The three features that were "not built" in the gap-closing pass are the ones adopted.
+What the port changed, so a later reader can tell a regression from intent:
+
+- **Table is a real table.** `Table` is `display: table` inside a block wrapper holding the fluid highlight;
+  `TableHeader`, `TableBody` and `TableRow` are the table-row-group and row display values, so columns size to
+  content as in the source. The estimated column widths are gone from the Compare page's shadcn table, the Scrollbars
+  page's double-overflow table, the Typography markdown and Spacing tables, the Sizes token reference (inside a
+  horizontal `ScrollArea` with `min-width: 560`, as the source) and the ScrollArea demo's both-axis card, which now
+  uses the real `Table`. The row highlight still follows the fluid hover's pick, not the pointer
+  ([why](../decisions/port-decisions.md#hover-and-press-native-state-styles-first)).
+- **`StableLabel` is a real `inline-grid`.** The hidden semibold copy and the visible copy share one grid cell, so it
+  wraps like the source, with `nowrap` and `truncate` opt-in. That lets the Ask-user inline title be an inline-grid
+  atom inside a text run. `Badge` is `inline-flex` with a `style` prop, and the Lumen citation chips use it. The
+  thinking-steps details wrapper is a block, as the source's, because a `fit-content` flex child with a negative
+  margin hit a layout bug.
+- **Container queries replace `createMediaQuery`.** `App` wraps the window in a full-size `viewport` container
+  (`containerType: inline-size`), so the home bento grid's 768px and 1280px breakpoints are `@container` blocks
+  that query it. gpuix has no media queries, so a source viewport breakpoint is a query on this container.
+  `check-home-grid` mounts one window per breakpoint. The banner's `@max-sm/banner` layout is a real container
+  query on a grid. `fit-content` is used for the Introduction's command rows and code block.
+- **Group states replace hover signals** in the card's dismiss chip and the colour picker, plus state styles for the
+  colour picker's swatch ring, format label and the invite dialog's email field.
+- **Residuals recorded rather than hidden**: banner Tab order and `order` inside a container block, the
+  `:has()` / group-has selector gap (banner description flag and the surfaces elevation stack stay as a context
+  flag and a pointer signal), the inert row-rule fade, and the text-measurement rounding of shrink-to-fit boxes.
+  README gap rows were rewritten and the drift entries the pass closed were deleted or recaused; the README count
+  table, printed by `scripts/drift-counts.ts`, now totals 577.
+- **Screenshots**: tables, banner, scroll-area, sizes, thinking-steps, ask-user-questions and the Lumen and Beacon
+  concepts were regenerated; `concepts-lumen/sources.png` was kept as the old capture because it differed only by
+  noise.

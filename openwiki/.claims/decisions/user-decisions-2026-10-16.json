@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:0c78e6d0b303d32b1939abde14dea5bb525f28d499fca4ff7d3df3afd60b1ae6",
+  "pageVersion": "sha256:b351a1144c87f18219fe8430122cc3e407709317889b2e81bbc54e1b5c20d254",
   "claims": [
     {
       "id": "claim_ff785f35b52647d9a814c38dfcc9f775",
@@ -64,7 +64,7 @@
       "evidence": [
         {
           "resource": "repo://src/home/bento-grid.tsx",
-          "version": "repo-file-v1:sha256:55eea0ce4bfff1ac36591f7a462f663eb470f79ae8d39d3d6b5e4fafe39ecb8f"
+          "version": "repo-file-v1:sha256:b3069506fb0ad8b16ad53171b12fbd68eb64ad66b85469ee57705645112236e6"
         },
         {
           "resource": "repo://src/pages/audio-mixer.tsx",
@@ -79,6 +79,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-17T05:21:14.095Z"
+    "at": "2026-10-17T07:13:17.848Z"
   }
 }
