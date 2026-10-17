@@ -55,6 +55,10 @@ const test = createTestRoot({
 	appearance: 'dark',
 });
 const renderer = test.renderer;
+// The App sets the theme choice "System" as `setAppearance('system')`, which hands the window back to the host's own light/dark setting. Captures are meant to be taken from a dark system, so stand in for one: a machine in light mode would otherwise render the "System" theme light.
+const setAppearance = renderer.setAppearance.bind(renderer);
+renderer.setAppearance = (appearance) =>
+	setAppearance(appearance === 'system' ? 'dark' : appearance);
 
 /**
  * Runs the UI for `ms`: each frame flushes the tree and drains native events,
