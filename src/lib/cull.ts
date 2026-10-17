@@ -4,9 +4,11 @@ import {
 	createContext,
 	createEffect,
 	createSignal,
+	on,
 	onCleanup,
 	useContext,
 } from 'solid-js';
+import { sizeChoice } from './theme';
 
 /** The scroller a page's content lives in: culled regions measure their distance from it. */
 export const PageScrollerContext =
@@ -40,6 +42,9 @@ const OVERSCAN = '25% 0px';
  * it had, so nothing shifts. The content stays mounted, so typed text and
  * selections survive a scroll away and back.
  *
+ * Regions nest: a region inside a far one stops observing until the outer
+ * one shows again, and keeps its own measured height meanwhile.
+ *
  * Call it once per region, attach `ref` to the element whose height must hold
  * (it measures itself before `far` turns true), give that element `farHeight()`
  * while `far()`, and wrap the content in `display: far() ? 'none' : 'contents'`
@@ -57,10 +62,17 @@ export function createCulling() {
 	const [farHeight, setFarHeight] = createSignal<number>();
 	const [observed, setObserved] = createSignal<HostElement>();
 
+	// A far region's pinned height belongs to its old element and its old Size. Showing it lets the new element lay out at its own, and the observer made below reports it again and re-pins the height.
+	createEffect(
+		on([observed, sizeChoice], () => setFar(false), { defer: true }),
+	);
+
 	createEffect(() => {
+		sizeChoice();
 		const root = scroller();
 		const target = observed();
-		if (root === undefined || target === undefined) return;
+		// Inside a culled ancestor the target has no box and reports "not intersecting", which would overwrite its measured height with 0. Observing again once the ancestor shows gives a fresh first report.
+		if (root === undefined || target === undefined || !parentOnScreen()) return;
 		const observer = new IntersectionObserver(
 			(entries) => {
 				const latest = entries[entries.length - 1];
@@ -68,7 +80,10 @@ export function createCulling() {
 					setFar(false);
 					return;
 				}
-				setFarHeight(target.getBoundingClientRect().height);
+				// A target that was removed (a preview's tab swapped away), or has no box yet, reports as not intersecting too: pinning its zero height would collapse the region.
+				const height = target.getBoundingClientRect().height;
+				if (!target.mounted || height === 0) return;
+				setFarHeight(height);
 				setFar(true);
 			},
 			{ root, rootMargin: OVERSCAN },

@@ -38,7 +38,7 @@ repeating it.
 
 - **Cause:** `gpuix gap` (an underline offset, see [`card.md`](card.md#the-link-variant-underlines-at-the-default-offset)).
 - **Original:** `<a href target="_blank" className="underline underline-offset-2">` for Lina and shadcn's scroll-fade (`app/docs/scrollbars/page.tsx:516-541`).
-- **Port:** the shared `Link` (`src/lib/doc-page.tsx:84-122`): an underlined `<span>` in the paragraph's colour with a pointer cursor, a Tab stop and a focus ring, that opens the URL in the system browser on a click or Enter (`openUrl`, as the changelog's refs do). The underline sits at the font's default offset, not 2px.
+- **Port:** the shared `Link` (`src/lib/doc-page.tsx:82-120`): an underlined `<span>` in the paragraph's colour with a pointer cursor, a Tab stop and a focus ring, that opens the URL in the system browser on a click or Enter (`openUrl`, as the changelog's refs do). The underline sits at the font's default offset, not 2px.
 - **Workaround:** none.
 - **Fidelity:** approximated (underline offset).
 

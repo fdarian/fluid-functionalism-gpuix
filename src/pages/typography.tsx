@@ -27,6 +27,7 @@ export async function scenarios(shot: ShotContext) {
 	const scrollTo = async (testId: string) => {
 		let last = Number.NaN;
 		for (let tick = 0; tick < 80; tick++) {
+			await shot.reveal(testId);
 			const centre = shot.centerOf(testId);
 			// The page's end stops the scroll before the element reaches the top.
 			if (centre.y < 460 || centre.y === last) return;

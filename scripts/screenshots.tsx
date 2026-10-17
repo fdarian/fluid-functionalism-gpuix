@@ -47,10 +47,11 @@ const outDir = new URL(`../screenshots/${slug}/`, import.meta.url).pathname;
 mkdirSync(outDir, { recursive: true });
 
 const FRAME_MS = 16;
+const WINDOW_HEIGHT = 780;
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const test = createTestRoot({
 	width: 1240,
-	height: 780,
+	height: WINDOW_HEIGHT,
 	fonts,
 	appearance: 'dark',
 });
@@ -83,6 +84,25 @@ function centerOf(testId: string) {
 	const bounds = renderer.getElementBounds(element.id);
 	if (bounds === null) throw new Error(`no painted bounds for ${testId}`);
 	return { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 };
+}
+
+const REVEAL_STEP = 300;
+
+/** The first painted box up the tree from the element: a culled region keeps its own box. */
+function paintedBoxAround(testId: string) {
+	let element = renderer.findByTestId(testId);
+	if (element === undefined)
+		throw new Error(`no element with testId ${testId}`);
+	for (;;) {
+		const bounds = renderer.getElementBounds(element.id);
+		if (bounds !== null) return { painted: element.testId === testId, bounds };
+		if (element.parentId === null)
+			throw new Error(`${testId} and its ancestors have no painted bounds`);
+		const parent = renderer.getElement(element.parentId);
+		if (parent === undefined)
+			throw new Error(`${testId} has no ancestor ${element.parentId}`);
+		element = parent;
+	}
 }
 
 function capture(name: string) {
@@ -165,6 +185,15 @@ const shot: ShotContext = {
 		return ariaNode(target) !== undefined;
 	},
 	centerOf,
+	async reveal(testId) {
+		for (let step = 0; step < 100; step++) {
+			const box = paintedBoxAround(testId);
+			if (box.painted) return;
+			const above = box.bounds.y + box.bounds.height / 2 < WINDOW_HEIGHT / 2;
+			await shot.scroll(600, 400, 0, above ? -REVEAL_STEP : REVEAL_STEP);
+		}
+		throw new Error(`${testId} stayed unpainted`);
+	},
 	async focus(testId) {
 		const element = renderer.findByTestId(testId);
 		if (element === undefined)

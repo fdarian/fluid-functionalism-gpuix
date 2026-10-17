@@ -19,7 +19,7 @@ repeating it.
 
 - **Cause:** `gpuix gap` for the weight (variable font: README "Drift from the source", variable-font rows) and `port choice` for the size.
 - **Original:** `h1` `text-[22px]` at `fontWeights.bold`, 4px above the subtitle (`app/slider/page.tsx:68-77`); section titles are `text-[15px] leading-5.5` at `fontWeights.semibold` (`:84-87`).
-- **Port:** `App`'s shared `Heading` (`src/app.tsx:53-66`), 28px with a 34px line, a 24px column gap above the page, cancelled to 4px by `marginTop: -20` on the subtitle (`src/pages/audio-mixer.tsx:146`). Section titles are 15 / 22 at SemiBold 600 (`:78-90`).
+- **Port:** `App`'s shared `Heading` (`src/app.tsx:53-66`), 28px with a 34px line, a 24px column gap above the page, cancelled to 4px by `marginTop: -20` on the subtitle (`src/pages/audio-mixer.tsx:161`). Section titles are 15 / 22 at SemiBold 600 (`:78-90`).
 - **Workaround:** the negative margin.
 - **Fidelity:** approximated.
 - **Components it hits:** every docs page.
@@ -28,7 +28,7 @@ repeating it.
 
 - **Cause:** `port choice` (kept as in the source).
 - **Original:** `midFreq` starts at 50 while the slider's `min` is 200 (`app/slider/page.tsx:31`, `:141-150`), so the thumb sits at the left end and the label reads "50 Hz".
-- **Port:** the same (`src/pages/audio-mixer.tsx:113`). The thumb sits at the left end and the label reads "Mid Freq: 50 Hz".
+- **Port:** the same (`src/pages/audio-mixer.tsx:128`). The thumb sits at the left end and the label reads "Mid Freq: 50 Hz".
 - **Fidelity:** exact.
 
 ## Everything else

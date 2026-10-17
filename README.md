@@ -96,6 +96,7 @@ export const scenarios: DemoModule["scenarios"] = async (shot) => {};  // option
 
 `scenarios` drives `screenshots.tsx` with `shot.hover / click / down / up / press / moveTo / clickAt / scroll /
 settle / expectText / capture`; see `ShotContext` in `src/lib/demo.ts`. Give elements a `testId` to target them.
+An element inside a culled region has no painted bounds (`centerOf` throws), so `shot.reveal(testId)` first when a scenario scrolls toward one.
 `drift/_TEMPLATE.md` is the shape of a drift file.
 
 **Behaviour comes from base-ui-solid-gpuix, looks from here.** A component's keys, selection, open state, focus and ARIA
@@ -138,7 +139,7 @@ column's card in place of "Make them yours"), `scenarios`, `menuIcon` and `menuK
 | `press.tsx`, `icons.ts`, `icon.tsx` | The press-shrink fill layer; lucide glyphs as SVG strings (`defineIcon` for a component's own). |
 | `site-command-menu.tsx`, `install-url.ts`, `platform.ts` | The site menu (a `CommandMenuDialog` of pages, theme, Recent and actions) and the window-wide Mod+K that toggles it, through gpuix's `window` event target; the registry URL the copy action writes; `IS_MAC` and `openUrl`. |
 | `demo.ts`, `demo-kit.tsx`, `page-nav.ts` | The demo and page contracts, the card every demo page is made of, and `navigate` / `current` for pages. |
-| `cull.ts` | The page scroller's contexts and `createCulling`, which hides a region's content while it is far from the scroller (`DemoCard`, `ComponentPreview`, home tiles), and `OnScreenContext`, which loops read to hold still while hidden. |
+| `cull.ts` | The page scroller's contexts and `createCulling`, which hides a region's content while it is far from the scroller (`DemoCard`, `ComponentPreview`, home tiles, every `DocSection`, changelog entries and groups, Audio Mixer cards; regions nest, and a Size change re-measures them), and `OnScreenContext`, which loops read to hold still while hidden. |
 | `doc-page.tsx`, `playground.tsx` | The docs chrome (`DocPage`, `DocSection`, `ComponentPreview`, `Code`) and the playground scaffolding (`PlaygroundLayout`, `PlaygroundPanel`, the control rows, the right-rail slot). |
 | `icons.ts`, `icons/` | The Icons row: one glyph table per library, `iconSource` reads the picked one. |
 
@@ -248,7 +249,7 @@ offer it. A count is given only where the code shows it.
 | any component whose source writes `flex-1`, `flex-auto` or `flex-none` | The `flex` shorthand: `StyleDesc` has `flexGrow`, `flexShrink` and `flexBasis` only, so a source `flex: 1 1 0%` is three properties | The longhands, spelled out where the source writes `flex-1` |
 | table | Collapsed-border transitions: a table part's styles are not animatable by `motion`, a keyframe or a CSS transition, so the row rule's 80ms fade is a snap where the source eases it | none: `fade(['border-color'], 80)` is declared and inert (`drift/table.md`) |
 | not counted | `disabled` on anything but an input: other elements get `aria-disabled` only, so they stay focusable and clickable | `aria-disabled` plus the component's own guard |
-| command-menu (and every long demo page) | Culling: elements a scroller clips away are still built, laid out and painted each frame, so a page of many menus costs several times a short one (`<virtual-list>` is the only exception) | `DemoCard`, every `ComponentPreview` and each home tile hide their content with `display: none` while far from the page scroller, through `createCulling` in `src/lib/cull.ts` (`drift/command-menu.md`) |
+| command-menu (and every long demo page) | Culling: elements a scroller clips away are still built, laid out and painted each frame, so a page of many menus costs several times a short one (`<virtual-list>` is the only exception) | `DemoCard`, every `ComponentPreview`, `DocSection`, changelog entry and group, Audio Mixer card and each home tile hide their content with `display: none` while far from the page scroller, through `createCulling` in `src/lib/cull.ts` (`drift/command-menu.md`) |
 | file-thumbnail | A canvas pixel path (a PDF page preview) | The caller passes a type and the thumbnail shows a glyph |
 | not counted | Effect groups (`filter`, `backdrop-filter`, `mask`, `clip`, group opacity) off macOS: the group draws flat. The Markdown sample's to-do tick is a `maskImage` of an SVG data URI on a foreground box, so off macOS it is a flat square | none |
 | carousel-dots, file-thumbnail, thinking-indicator, thinking-steps | `requestAnimationFrame` itself (only `setTimeout`, FORK.md:209-211). The animations are possible without it, through motion values and keyframes (FORK.md:1144-1148) | `lib/clock.ts`: one shared, ref-counted `setInterval` frame clock |

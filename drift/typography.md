@@ -45,7 +45,7 @@ repeating it.
 
 - **Cause:** `gpuix gap` (an underline offset, see [`card.md`](card.md#the-link-variant-underlines-at-the-default-offset)).
 - **Original:** `ExternalLink`: `<a target="_blank" className="text-foreground underline underline-offset-4">` (`app/docs/typography/page.tsx:48-60`), in the paragraphs with "Inter Variable 4.0", `@lochieaxon` and `@jakubkrehel`.
-- **Port:** the shared `Link` (`src/lib/doc-page.tsx:84-122`) with `foreground`, a run in the paragraph's one `<text>` (`src/pages/typography.tsx`); it opens the URL in the system browser on a click or Enter. The inline code chips are the shared `Code` with its default `mx-1`, so the paragraphs wrap as the browser's do. The underline sits at the font's default offset, not 4px.
+- **Port:** the shared `Link` (`src/lib/doc-page.tsx:82-120`) with `foreground`, a run in the paragraph's one `<text>` (`src/pages/typography.tsx`); it opens the URL in the system browser on a click or Enter. The inline code chips are the shared `Code` with its default `mx-1`, so the paragraphs wrap as the browser's do. The underline sits at the font's default offset, not 4px.
 - **Fidelity:** approximated (underline offset).
 - **Components it hits:** just this page.
 

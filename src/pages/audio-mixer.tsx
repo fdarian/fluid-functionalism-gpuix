@@ -1,5 +1,6 @@
 import { createSignal, type JSX } from 'solid-js';
 import { Slider, type SliderValue } from '#/components/slider';
+import { createCulling, OnScreenContext } from '#/lib/cull';
 import type { ShotContext } from '#/lib/demo';
 import { color, siteType, weight } from '#/lib/theme';
 
@@ -74,27 +75,41 @@ function hertz(v: number) {
 	return v >= 1000 ? `${(v / 1000).toFixed(1)} kHz` : `${v} Hz`;
 }
 
+/** Hidden, title included, while far from the page scroller (`createCulling`); it keeps its height. */
 function Section(props: { title: string; gap: number; children: JSX.Element }) {
+	const culling = createCulling();
 	return (
-		<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-			<text
-				style={{
-					fontSize: 15,
-					lineHeight: '22px',
-					fontWeight: weight.semibold,
-					color: color.foreground,
-				}}
-			>
-				{props.title}
-			</text>
-			<div
-				style={{
-					display: 'flex',
-					flexDirection: 'column',
-					gap: props.gap,
-				}}
-			>
-				{props.children}
+		<div
+			ref={culling.ref}
+			style={{
+				display: 'flex',
+				flexDirection: 'column',
+				gap: 16,
+				height: culling.far() ? culling.farHeight() : undefined,
+			}}
+		>
+			<div style={{ display: culling.far() ? 'none' : 'contents' }}>
+				<OnScreenContext.Provider value={culling.onScreen}>
+					<text
+						style={{
+							fontSize: 15,
+							lineHeight: '22px',
+							fontWeight: weight.semibold,
+							color: color.foreground,
+						}}
+					>
+						{props.title}
+					</text>
+					<div
+						style={{
+							display: 'flex',
+							flexDirection: 'column',
+							gap: props.gap,
+						}}
+					>
+						{props.children}
+					</div>
+				</OnScreenContext.Provider>
 			</div>
 		</div>
 	);

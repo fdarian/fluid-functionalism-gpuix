@@ -22,12 +22,14 @@ export async function scenarios(shot: ShotContext) {
 	await shot.settle(2500);
 	shot.capture('releases-click');
 	// A New entry's stage mounts its preview as it nears the viewport; the carousel's is animated, so it carries the page-wide Pause.
+	await shot.reveal('changelog-stage-carousel-dots');
 	const stage = shot.centerOf('changelog-stage-carousel-dots');
 	await shot.scroll(600, 400, 0, stage.y - 400);
 	await shot.settle(600);
 	shot.capture('preview-stage');
 	await shot.click('changelog-playback-carousel-dots');
 	shot.capture('preview-stage-paused');
+	await shot.reveal('copy-migration-2026-09-breaking-2');
 	const target = shot.centerOf('copy-migration-2026-09-breaking-2');
 	await shot.scroll(600, 400, 0, target.y - 300);
 	shot.capture('breaking');

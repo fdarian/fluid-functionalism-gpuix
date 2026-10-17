@@ -9,6 +9,7 @@ import type {
 	ChangeRef,
 	Inline,
 } from '#/lib/changelog/parse';
+import { createCulling, OnScreenContext } from '#/lib/cull';
 import { Code, CopyPromptButton, MONO, Prose } from '#/lib/doc-page';
 import { Icon } from '#/lib/icon';
 import { openUrl } from '#/lib/open-url';
@@ -221,90 +222,97 @@ export function Entry(props: {
 		const slug = pageSlug(href);
 		return previewFor(slug) === undefined ? undefined : slug;
 	};
+	const culling = createCulling();
 	return (
 		<div
+			ref={culling.ref}
 			style={{
 				display: 'flex',
 				flexDirection: 'column',
 				width: '100%',
 				paddingTop: props.first ? 0 : 24,
+				height: culling.far() ? culling.farHeight() : undefined,
 			}}
 		>
-			<div
-				style={{
-					display: 'flex',
-					flexDirection: 'row',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-					gap: 16,
-					paddingTop: 8,
-				}}
-			>
-				<div style={{ position: 'relative', display: 'flex' }}>
-					<KindDot kind={entry().kind} />
-					<Show
-						when={entry().href}
-						fallback={
-							<text
-								style={{
-									...siteType.body,
-									fontWeight: weight.normal,
-									color: color.foreground,
-								}}
-							>
-								{entry().name}
-							</text>
-						}
-					>
-						{(href: Accessor<string>) => (
-							<NameLink name={entry().name} slug={pageSlug(href())} />
-						)}
-					</Show>
-				</div>
-				<div
-					style={{
-						display: 'flex',
-						flexDirection: 'row',
-						alignItems: 'center',
-						marginRight: -6,
-					}}
-				>
-					<For each={entry().refs}>
-						{(gitRef) => <RefChip gitRef={gitRef} />}
-					</For>
-				</div>
-			</div>
-			<div style={{ marginTop: 4 }}>
-				<InlineProse inline={entry().text} />
-			</div>
-			<Show when={entry().diff}>
-				{(diff: Accessor<string>) => (
+			<div style={{ display: culling.far() ? 'none' : 'contents' }}>
+				<OnScreenContext.Provider value={culling.onScreen}>
 					<div
 						style={{
-							marginTop: 12,
 							display: 'flex',
-							flexDirection: 'column',
-							alignItems: 'flex-start',
-							gap: 12,
+							flexDirection: 'row',
+							alignItems: 'center',
+							justifyContent: 'space-between',
+							gap: 16,
+							paddingTop: 8,
 						}}
 					>
-						<DiffBlock diff={diff()} />
-						<CopyPromptButton
-							label="Copy migration prompt"
-							variant="ghost"
-							testId={`copy-migration-${props.id}`}
-							prompt={buildMigrationPrompt({
-								entry: entry(),
-								month: props.month,
-								install: entryInstall(entry()),
-							})}
-						/>
+						<div style={{ position: 'relative', display: 'flex' }}>
+							<KindDot kind={entry().kind} />
+							<Show
+								when={entry().href}
+								fallback={
+									<text
+										style={{
+											...siteType.body,
+											fontWeight: weight.normal,
+											color: color.foreground,
+										}}
+									>
+										{entry().name}
+									</text>
+								}
+							>
+								{(href: Accessor<string>) => (
+									<NameLink name={entry().name} slug={pageSlug(href())} />
+								)}
+							</Show>
+						</div>
+						<div
+							style={{
+								display: 'flex',
+								flexDirection: 'row',
+								alignItems: 'center',
+								marginRight: -6,
+							}}
+						>
+							<For each={entry().refs}>
+								{(gitRef) => <RefChip gitRef={gitRef} />}
+							</For>
+						</div>
 					</div>
-				)}
-			</Show>
-			<Show when={stagedSlug()}>
-				{(slug: Accessor<string>) => <PreviewStage slug={slug()} />}
-			</Show>
+					<div style={{ marginTop: 4 }}>
+						<InlineProse inline={entry().text} />
+					</div>
+					<Show when={entry().diff}>
+						{(diff: Accessor<string>) => (
+							<div
+								style={{
+									marginTop: 12,
+									display: 'flex',
+									flexDirection: 'column',
+									alignItems: 'flex-start',
+									gap: 12,
+								}}
+							>
+								<DiffBlock diff={diff()} />
+								<CopyPromptButton
+									label="Copy migration prompt"
+									variant="ghost"
+									testId={`copy-migration-${props.id}`}
+									prompt={buildMigrationPrompt({
+										entry: entry(),
+										month: props.month,
+										install: entryInstall(entry()),
+									})}
+								/>
+							</div>
+						)}
+					</Show>
+					<Show when={stagedSlug()}>
+						{(slug: Accessor<string>) => <PreviewStage slug={slug()} />}
+					</Show>
+				</OnScreenContext.Provider>
+			</div>
 		</div>
 	);
 }

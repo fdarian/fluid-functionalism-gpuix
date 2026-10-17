@@ -1,13 +1,11 @@
 import { buttonProps, type KeyEvent, useGpuixRequired } from '@gpuix/solid';
 import {
 	type Accessor,
-	createEffect,
 	createSignal,
 	For,
 	type JSX,
 	onCleanup,
 	Show,
-	useContext,
 } from 'solid-js';
 import { Button, type ButtonVariant } from '#/components/button';
 import { TabsSubtle, TabsSubtleItem } from '#/components/tabs-subtle';
@@ -136,21 +134,32 @@ export function SectionTitle(props: { children: string }) {
 	);
 }
 
-/** `DocSection`: 24px more air above than the page's gap, the title tucked 8px above its text, 16px below. */
+/**
+ * `DocSection`: 24px more air above than the page's gap, the title tucked 8px
+ * above its text, 16px below. Hidden, title included, while far from the page
+ * scroller (`createCulling`); the section keeps its height.
+ */
 export function DocSection(props: { title: string; children: JSX.Element }) {
+	const culling = createCulling();
 	return (
 		<div
+			ref={culling.ref}
 			style={{
 				display: 'flex',
 				flexDirection: 'column',
 				gap: 16,
 				paddingTop: 24,
+				height: culling.far() ? culling.farHeight() : undefined,
 			}}
 		>
-			<div style={{ marginBottom: -8 }}>
-				<SectionTitle>{props.title}</SectionTitle>
+			<div style={{ display: culling.far() ? 'none' : 'contents' }}>
+				<OnScreenContext.Provider value={culling.onScreen}>
+					<div style={{ marginBottom: -8 }}>
+						<SectionTitle>{props.title}</SectionTitle>
+					</div>
+					{props.children}
+				</OnScreenContext.Provider>
 			</div>
-			{props.children}
 		</div>
 	);
 }

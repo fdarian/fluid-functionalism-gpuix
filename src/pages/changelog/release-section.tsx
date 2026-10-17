@@ -7,6 +7,7 @@ import {
 	KIND_LABEL,
 	type Release,
 } from '#/lib/changelog/parse';
+import { createCulling, OnScreenContext } from '#/lib/cull';
 import { color, linePx, siteType, motion as tween, weight } from '#/lib/theme';
 import { Entry, InlineProse } from './entry';
 import { activeMonth } from './release-spy';
@@ -124,67 +125,80 @@ function MonthHeading(props: { release: Release }) {
 	);
 }
 
-/** A hairline above every group, the first included, so it also closes the month's header: 40px on each side. */
+/**
+ * A hairline above every group, the first included, so it also closes the
+ * month's header: 40px on each side. The group is the unit hidden while far
+ * from the page scroller (`createCulling`), so a month costs only the groups
+ * near the viewport. It keeps its height, and the month's block, which the
+ * spy reads, keeps its top.
+ */
 function KindGroup(props: { group: ChangeGroup; month: string }): JSX.Element {
+	const culling = createCulling();
 	return (
 		<div
+			ref={culling.ref}
 			style={{
 				display: 'flex',
 				flexDirection: 'column',
 				width: '100%',
 				paddingTop: 40,
+				height: culling.far() ? culling.farHeight() : undefined,
 			}}
 		>
-			<div
-				style={{ height: 1, flexShrink: 0, backgroundColor: color.border }}
-			/>
-			<div
-				style={{
-					display: 'flex',
-					flexDirection: 'row',
-					alignItems: 'baseline',
-					gap: 8,
-					paddingTop: 40,
-				}}
-			>
-				<text
-					style={{
-						...siteType.subtitle,
-						fontWeight: weight.semibold,
-						color: color.foreground,
-					}}
-				>
-					{KIND_LABEL[props.group.kind]}
-				</text>
-				<text
-					style={{
-						...siteType.caption,
-						fontWeight: weight.normal,
-						fontVariantNumeric: 'tabular-nums',
-						color: color.mutedForeground,
-					}}
-				>
-					{String(props.group.entries.length)}
-				</text>
-			</div>
-			<div
-				style={{
-					display: 'flex',
-					flexDirection: 'column',
-					width: '100%',
-					marginTop: 8,
-				}}
-			>
-				<For each={props.group.entries}>
-					{(entry, index) => (
-						<Entry
-							id={`${props.month}-${props.group.kind}-${index()}`}
-							entry={entry}
-							month={props.month}
-							first={index() === 0}
-						/>
-					)}
-				</For>
+			<div style={{ display: culling.far() ? 'none' : 'contents' }}>
+				<OnScreenContext.Provider value={culling.onScreen}>
+					<div
+						style={{ height: 1, flexShrink: 0, backgroundColor: color.border }}
+					/>
+					<div
+						style={{
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'baseline',
+							gap: 8,
+							paddingTop: 40,
+						}}
+					>
+						<text
+							style={{
+								...siteType.subtitle,
+								fontWeight: weight.semibold,
+								color: color.foreground,
+							}}
+						>
+							{KIND_LABEL[props.group.kind]}
+						</text>
+						<text
+							style={{
+								...siteType.caption,
+								fontWeight: weight.normal,
+								fontVariantNumeric: 'tabular-nums',
+								color: color.mutedForeground,
+							}}
+						>
+							{String(props.group.entries.length)}
+						</text>
+					</div>
+					<div
+						style={{
+							display: 'flex',
+							flexDirection: 'column',
+							width: '100%',
+							marginTop: 8,
+						}}
+					>
+						<For each={props.group.entries}>
+							{(entry, index) => (
+								<Entry
+									id={`${props.month}-${props.group.kind}-${index()}`}
+									entry={entry}
+									month={props.month}
+									first={index() === 0}
+								/>
+							)}
+						</For>
+					</div>
+				</OnScreenContext.Provider>
 			</div>
 		</div>
 	);

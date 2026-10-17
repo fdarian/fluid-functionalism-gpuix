@@ -19,7 +19,7 @@ repeating it.
 
 - **Cause:** `gpuix gap` (an underline offset, see [`card.md`](card.md#the-link-variant-underlines-at-the-default-offset)).
 - **Original:** `UseLightLink` / `UseDarkLink`: buttons inside the description's paragraph with `underline decoration-dotted underline-offset-2`, hover `text-foreground transition-colors` (`app/docs/surfaces/page.tsx:1265-1309`).
-- **Port:** `ThemeLink` (`src/pages/surfaces.tsx:92-114`): a dotted-underlined `<span>` inside the description's one `<Prose>`, a button and Tab stop (Enter or Space switches, with a focus ring the source's button leaves to the browser), that calls `changeTheme`; hover eases the colour to foreground over 150 ms. The dots sit at the font's default offset, not 2px, and the underline does not fade with the colour (`text-decoration-color` is not transitionable, README "colour fade" row).
+- **Port:** `ThemeLink` (`src/pages/surfaces.tsx:93-115`): a dotted-underlined `<span>` inside the description's one `<Prose>`, a button and Tab stop (Enter or Space switches, with a focus ring the source's button leaves to the browser), that calls `changeTheme`; hover eases the colour to foreground over 150 ms. The dots sit at the font's default offset, not 2px, and the underline does not fade with the colour (`text-decoration-color` is not transitionable, README "colour fade" row).
 - **Fidelity:** approximated (underline offset).
 - **Components it hits:** just this page.
 
