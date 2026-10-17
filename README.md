@@ -170,13 +170,13 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [color-picker](drift/color-picker.md) | 3 | 6 | 15 | 1 | 25 |
 | [combobox](drift/combobox.md) | 7 | 13 | 5 | 1 | 26 |
 | [command-menu](drift/command-menu.md) | 7 | 2 | 12 | 1 | 22 |
-| [compare](drift/compare.md) | 4 | 9 | 0 | 2 | 15 |
+| [compare](drift/compare.md) | 3 | 9 | 0 | 2 | 14 |
 | [concepts](drift/concepts.md) | 4 | 27 | 2 | 1 | 34 |
 | [dialog](drift/dialog.md) | 6 | 2 | 2 | 1 | 11 |
 | [dropdown](drift/dropdown.md) | 7 | 4 | 10 | 2 | 23 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
 | [fluid-hover](drift/fluid-hover.md) | 4 | 5 | 2 | 2 | 13 |
-| [home](drift/home.md) | 1 | 1 | 1 | 2 | 5 |
+| [home](drift/home.md) | 0 | 1 | 1 | 2 | 4 |
 | [input-copy](drift/input-copy.md) | 2 | 3 | 6 | 0 | 11 |
 | [input-group](drift/input-group.md) | 1 | 1 | 3 | 1 | 6 |
 | [input-message](drift/input-message.md) | 4 | 0 | 14 | 3 | 21 |
@@ -203,7 +203,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
 | [tooltip](drift/tooltip.md) | 4 | 5 | 1 | 1 | 11 |
 | [typography](drift/typography.md) | 4 | 0 | 1 | 6 | 11 |
-| **Total** | **143** | **201** | **198** | **63** | **605** |
+| **Total** | **141** | **201** | **198** | **63** | **603** |
 
 ### gpuix gaps across components
 
@@ -261,7 +261,6 @@ offer it. A count is given only where the code shows it.
 | fluid-hover, motion, scrollbars and sizes pages (every `Code` chip, the Scrollbars links) | Inline `<span>` boxes take no padding, margin, border radius, per-run `fontSize` or click events (`~/code/fdarian/gpuix/FORK.md:789-800`) | The chip's padding is no-break spaces around a Menlo run at the paragraph's size (`src/lib/doc-page.tsx:58-74`); links are underlined text that goes nowhere |
 | surfaces and fluid-hover pages (the annotation arrows) | `<svg>` has no `marker` (`FORK.md:786`) | The arrowhead is two extra strokes laid along the curve's end tangent |
 | concepts (Lumen's image swatches) | `<img>` takes `file://` and `blob:` URLs, not `data:` ones | A `linear-gradient` box instead of an SVG data URI |
-| home bento cards, compare | An outer `box-shadow` paints under the whole border box with no knock-out (only `inset` shadows are clipped to the element, `shaders.metal:600-654`): a translucent fill over it doubles up | An opaque fill over the shadow, or the shadow alone as the fill (`drift/home.md`, `drift/compare.md`) |
 | skill page (the scripted-cursor examples) | Dispatching a synthetic pointer event, or setting `:hover`, on one element: the native simulate calls move the window's one pointer | The page calls the elements' `onMouseEnter` / `onMouseLeave` / `onMouseMove` props and `click()` directly (`drift/skill-page.md`, `src/pages/skill/scripted-pointer.ts`) |
 | site menu (`isModK`) | A physical key: gpuix derives `code` from GPUI's layout-dependent `key`, so a non-Latin letter reports `code` `""` (`packages/native/src/events/key_names.rs:9-12`, `:138-160`). On Windows and Linux, Ctrl plus a Cyrillic or Greek letter cannot match a shortcut through `code`, as the source's `matchesShortcut` does. macOS reports the layout's Cmd letter, so ⌘K works there | none; the sidebar's Search row opens the menu (`drift/site.md`). Not run on Windows or Linux |
 

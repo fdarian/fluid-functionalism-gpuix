@@ -17,16 +17,6 @@ repeating it. The hero's three buttons are not wired here (their `onClick`s belo
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
 
-## The card's shadow needs an opaque fill
-
-- **Cause:** `gpuix gap`.
-- **Original:** `.bento-card-border` is a 1px border plus `0 1px 2px` drop shadow, hairline `light-dark` colours in three states: rest, hover, `:focus-within` (`app/globals.css:1244-1269`), on a transparent card.
-- **Port:** the same three states through `hover` and `focusWithin` styles (`src/home/bento-card.tsx` `frame`), with `backgroundColor: color.background`. gpuix draws a box shadow under the whole border box instead of clipping it out of the inside, so over a transparent card it darkened the whole tile.
-- **gpuix lacks:** an outer box shadow clipped out of the border box (CSS paints no shadow inside the box): `shadow_fragment` clips only `inset` shadows to the element (`~/code/fdarian/gpuix/zed/crates/gpui_apple/src/shaders.metal:600-654`).
-- **Workaround:** an opaque background in the page colour hides the shadow's interior.
-- **Fidelity:** exact.
-- **Components it hits:** any transparent box with an outer shadow.
-
 ## The tile name is a button, not a link
 
 - **Cause:** `port choice` (no routes; the page registry navigates by slug).

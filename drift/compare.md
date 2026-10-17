@@ -95,14 +95,6 @@ repeating it.
 - **Port:** Inter Bold 700 without `opsz`, line height = font size, stepping down with the Size row (`siteType.display`); padding 48 and top 96, two columns always (the window is not made narrower than the md and sm breakpoints in practice).
 - **Fidelity:** approximated.
 
-## The card is opaque
-
-- **Cause:** `gpuix gap`: a shadow paints under its element, not around it.
-- **Original:** `BentoCard` has no background; `.bento-card-border` is a 1px border plus `0 1px 2px` shadow, changing on hover and on `:focus-within` (`app/components/bento-card.tsx:62-66`, `app/globals.css:1244-1269`).
-- **Port:** the card fills with the page colour so the shadow does not darken it through a transparent fill, then sets the rest, hover and focus-within border colours and shadows from the same values per scheme (`src/pages/compare/card.tsx:3-26, 49-65`). `min-h-[420px]`, `px-6 py-16` and the 44px footer match.
-- **gpuix lacks:** an outer box shadow clipped out of the border box: `shadow_fragment` clips only `inset` shadows to the element (`~/code/fdarian/gpuix/zed/crates/gpui_apple/src/shaders.metal:600-654`).
-- **Fidelity:** exact for what is seen.
-
 ## The progress pills tween their width, no focus style of their own
 
 - **Cause:** `port choice`.

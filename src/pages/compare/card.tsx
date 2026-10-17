@@ -57,8 +57,6 @@ export function CompareCard(props: {
 				borderRadius: 12,
 				borderStyle: 'solid',
 				borderWidth: 1,
-				// Transparent in the source; gpuix paints a shadow under its element, so a see-through card would show it as a darker fill.
-				backgroundColor: color.background,
 				...edge().rest,
 				...fade(['border-color'], 80),
 				hover: edge().hover,

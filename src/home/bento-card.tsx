@@ -72,8 +72,6 @@ export function BentoCard(props: {
 				borderStyle: 'solid',
 				borderWidth: 1,
 				overflow: 'hidden',
-				// A box shadow is not clipped out of the border box here, so over a transparent fill it darkens the whole card.
-				backgroundColor: color.background,
 				...bentoFrame('rest'),
 				// `transition-[shadow,border-color]`: `shadow` is not a CSS property, so only the border eases.
 				...fade(['border-color'], 80),

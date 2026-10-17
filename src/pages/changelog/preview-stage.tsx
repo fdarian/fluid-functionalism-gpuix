@@ -19,7 +19,7 @@ import { BentoTileContext, bentoFrame } from '#/home/bento-card';
 import { PageScrollerContext } from '#/lib/demo-kit';
 import { PAUSE_ICON, PLAY_ICON } from '#/lib/playback-icons';
 import { PreviewPlaybackContext } from '#/lib/preview-playback';
-import { color, fade, shape, sizeChoice } from '#/lib/theme';
+import { fade, shape, sizeChoice } from '#/lib/theme';
 import {
 	ANIMATED_PREVIEWS,
 	DEFAULT_STAGE_PADDING,
@@ -172,8 +172,6 @@ export function PreviewStage(props: { slug: string }): JSX.Element {
 				borderStyle: 'solid',
 				borderWidth: 1,
 				borderRadius: shape.container,
-				// A box shadow is not clipped out of the border box here, so over a transparent fill it darkens the whole stage.
-				backgroundColor: color.background,
 				...bentoFrame('rest'),
 				...fade(['border-color'], 80),
 				hover: bentoFrame('hover'),
