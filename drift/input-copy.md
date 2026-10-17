@@ -30,16 +30,6 @@ repeating it.
 - **Fidelity:** approximated (static, larger cross, thinner strokes).
 - **Components it hits:** just this one.
 
-## The value tint switches on at once
-
-- **Cause:** `gpuix gap`.
-- **Original:** the `<mark>` carries `transition-colors duration-80` (`input-copy.tsx:351`), so the `bg-[#6B97FF]/20` tint fades in and out over 80 ms on hover. The glyph and label colours ease the same way on the action cell (`:226,330`).
-- **Port:** the glyph and label colours do ease (`Icon fade`, `colorFade` on the label `<text>`, `src/components/input-copy.tsx:190-198,236`). The tint is a `highlight` wash on the value `<text>` (`:261-270`), set while hovered, and appears and disappears on the first frame.
-- **gpuix lacks:** a transition for the `highlight` wash. It is painted as its own quad from the `highlight` prop (`~/code/fdarian/gpuix/README.md:3993-4090`), not from the element's style, so `transition*` never sees it.
-- **Workaround:** none.
-- **Fidelity:** approximated (the tint switches instead of easing; the glyph and label fade).
-- **Components it hits:** just this one.
-
 ## Icon stroke 1.5 to 2 on hover applies to the wrong glyphs in the button variant
 
 - **Cause:** `not ported yet`.
@@ -47,32 +37,25 @@ repeating it.
 - **Port:** one `strokeWidth={hovered() ? 2 : 1.5}` for every glyph in both variants (`input-copy.tsx:186-193`), so the button variant's check and cross draw at 1.5 at rest. The ease itself is ported: `<Icon easeStroke>` (`src/lib/icon.tsx`) draws the glyph's shapes in one `motion.g` and animates its `strokeWidth` over 80 ms on Tailwind's curve.
 - **Fidelity:** approximated.
 
-## The value tint has a corner radius
-
-- **Cause:** `port choice` (reason not stated).
-- **Original:** `<mark>` with `bg-[#6B97FF]/20`, no radius (`input-copy.tsx:351`).
-- **Port:** `highlight` with `radius: 2` (`input-copy.tsx:261-270`). How tall the tinted box is next to an inline `<mark>` was not compared.
-- **Fidelity:** approximated.
-
 ## The monospace face is Menlo
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** Tailwind `font-mono` (`input-copy.tsx:344`): `ui-monospace, SFMono-Regular, Menlo, …`, resolved by the browser. The site sets no `--font-mono` of its own.
-- **Port:** `MONO = "Menlo"` (`input-copy.tsx:21,261`).
+- **Port:** `MONO = "Menlo"` (`input-copy.tsx:31,249`).
 - **Fidelity:** approximated (same face in Chrome on macOS, not in Safari, where `ui-monospace` is SF Mono).
 
 ## The tooltip's "Copied" reset runs on the row, not the whole field
 
 - **Cause:** `not ported yet`.
 - **Original:** `onMouseEnter` / `onMouseLeave` sit on the wrapper, so entering the label re-arms the tooltip and leaving it closes a "Copied" one (`input-copy.tsx:138-140,399`).
-- **Port:** the handlers are on the row (`input-copy.tsx:290-291`), so the label does not count. The press snapshot (`tooltipOpenAtPress`) is read from the tooltip's `onOpenChange` like the source's ref, and a keyboard press reuses the last pointer snapshot as the source does.
+- **Port:** the handlers are on the row (`input-copy.tsx:289-290`), so the label does not count. The press snapshot (`tooltipOpenAtPress`) is read from the tooltip's `onOpenChange` like the source's ref, and a keyboard press reuses the last pointer snapshot as the source does.
 - **Fidelity:** approximated (label hover only).
 
 ## The label is not part of the accessible name
 
 - **Cause:** `not ported yet`.
 - **Original:** `aria-labelledby={`${buttonId} ${labelId}`}` with `aria-label` "Copy" when a label is set, so the name reads "Copy <label>" (`input-copy.tsx:371-380`).
-- **Port:** `aria-label` is "Copy to clipboard" whether or not a label is shown (`input-copy.tsx:280-286`); the label `<text>` is not referenced. gpuix accepts `aria-labelledby` (`FORK.md:504`).
+- **Port:** `aria-label` is "Copy to clipboard" whether or not a label is shown (`input-copy.tsx:278-284`); the label `<text>` is not referenced. gpuix accepts `aria-labelledby` (`FORK.md:504`).
 - **Fidelity:** approximated.
 
 ## A refused write has no `execCommand` fallback

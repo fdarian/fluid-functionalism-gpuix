@@ -9,6 +9,7 @@
  * - A press while the pointer is still moving (the tooltip never opened) keeps the tooltip shut.
  * - Enter while the tooltip is open from keyboard focus closes it, as the source does.
  * - The compact row is 26px tall (4 + 18 + 4), the default row 36px.
+ * - Hovering the row eases the value's tint in over 80 ms.
  * - A press writes the value to `navigator.clipboard`; a refused write shows "Failed".
  */
 import { createTestRoot } from '@gpuix/solid/testing';
@@ -233,6 +234,43 @@ report(
 	"the glyph's stroke eases to 2 on hover",
 	earlyInk > restInk && earlyInk < hoverInk - 1000,
 	`rest ${restInk}, first frames ${earlyInk}, hovered ${hoverInk}`,
+);
+
+// The value's tint is a span background that transitions over 80 ms like the source's `<mark>`: a frame 16 ms in is partly tinted.
+// The sum is taken over the value's text, which is the same ink in every state, so only the tint moves it.
+await reset();
+function valueTint() {
+	renderer.captureScreenshot(`/tmp/check-input-copy-tint-${process.pid}.png`);
+	const pixels = readPng(`/tmp/check-input-copy-tint-${process.pid}.png`);
+	const left = Math.round(rowBox.x + 8);
+	const right = Math.round(rowBox.x + 200);
+	const top = Math.round(rowBox.y + rowBox.height / 2 - 6);
+	const bottom = Math.round(rowBox.y + rowBox.height / 2 + 6);
+	const ground = pixels.at(Math.round(rowBox.x) + 2, Math.round(rowBox.y) + 2);
+	let blue = 0;
+	for (let y = top; y < bottom; y++)
+		for (let x = left; x < right; x++) {
+			const pixel = pixels.at(x, y);
+			blue += pixel[2] - pixel[0] - (ground[2] - ground[0]);
+		}
+	return blue;
+}
+const tintRest = valueTint();
+renderer.clockPause();
+renderer.nativeSimulateMouseMove(subject.x - 40, subject.y);
+renderer.nativeSimulateMouseMove(subject.x - 41, subject.y);
+step(0);
+step(16);
+const tintMiddle = valueTint();
+step(400);
+const tintHovered = valueTint();
+renderer.clockResume();
+report(
+	"the value's tint eases in on hover",
+	tintHovered > tintRest + 1000 &&
+		tintMiddle > tintRest &&
+		tintMiddle < tintRest + 0.8 * (tintHovered - tintRest),
+	`rest ${tintRest}, 16 ms ${tintMiddle}, hovered ${tintHovered}`,
 );
 
 // The focus ring (an outline) fades in over 80 ms like the source's `transition-all` box-shadow ring. The motion clock

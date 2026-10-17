@@ -27,6 +27,7 @@ const RESULT_MS = 2000;
 const TOOLTIP_DELAY_MS = 500;
 /** `[#6B97FF]/20` behind the value while the row is hovered. */
 const MARK = 'rgba(107,151,255,0.2)';
+const MARK_REST = 'rgba(107,151,255,0)';
 const MONO = 'Menlo';
 
 type Status = 'idle' | 'copied' | 'error';
@@ -243,16 +244,6 @@ export function InputCopy(props: {
 			}}
 		>
 			<text
-				highlight={
-					hovered()
-						? {
-								query: props.value,
-								caseSensitive: true,
-								color: MARK,
-								radius: 2,
-							}
-						: null
-				}
 				style={{
 					minWidth: 0,
 					fontFamily: MONO,
@@ -266,7 +257,14 @@ export function InputCopy(props: {
 					userSelect: 'none',
 				}}
 			>
-				{props.value}
+				<span
+					style={{
+						backgroundColor: hovered() ? MARK : MARK_REST,
+						...colorFade,
+					}}
+				>
+					{props.value}
+				</span>
 			</text>
 		</div>
 	);
