@@ -133,7 +133,7 @@ source and port `file:line` and a **Cause**. The per-file counts are the table i
 [Drift from the source](README.md#drift-from-the-source) (as of its last recount: 588 entries, 62 of them naming two
 causes; `bun scripts/drift-counts.ts` prints them).
 
-- **`gpuix gap`** (127 entries): gpuix lacks the capability or gets it wrong, so the port approximates or drops
+- **`gpuix gap`** (126 entries): gpuix lacks the capability or gets it wrong, so the port approximates or drops
   it. The recurring ones (CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, table and `inline-*` layout) are collected in
   README's [gpuix gaps across components](README.md#gpuix-gaps-across-components); the per-file entry is one line
   linking there. Most in [typography](drift/typography.md), [select](drift/select.md), [command-menu](drift/command-menu.md),
@@ -141,7 +141,7 @@ causes; `bun scripts/drift-counts.ts` prints them).
 - **`port choice`** (199): the port differs on purpose, for a desktop window or a simpler shape. The window frame,
   the single fixed layout and the Base-UI-only install live in [site](drift/site.md); the largest block is the
   Concepts screens, [concepts](drift/concepts.md).
-- **`not ported yet`** (200): nothing stops the port doing it and nobody has. The backlog: [site](drift/site.md)
+- **`not ported yet`** (201): nothing stops the port doing it and nobody has. The backlog: [site](drift/site.md)
   (responsive layout, settings persistence, the API Reference tables), [sidebar](drift/sidebar.md) (collapse, mobile
   sheet, blocks), [color-picker](drift/color-picker.md) and [input-message](drift/input-message.md).
 - **Mixed** (62): an entry that names two causes, counted separately; the cause line says which part is which.

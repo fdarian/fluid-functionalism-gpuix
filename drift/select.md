@@ -56,10 +56,10 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 ## Releasing the press outside the popup does not cancel
 
-- **Cause:** `gpuix gap`.
+- **Cause:** `not ported yet`.
 - **Original:** press the trigger, drag, release outside both trigger and popup: Base UI cancels (`SelectItem.tsx:194-236`, `SelectTrigger.tsx:27-129`, per `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:539`).
 - **Port:** rows judge the release (`select.tsx:338-346`); a release elsewhere leaves the popup open.
-- **gpuix lacks:** a mouse-up-outside event (per `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:539`; not re-checked in gpuix).
+- **gpuix lacks:** n/a: a `window` listener hears every `mouseup`, whatever it lands on (`FORK.md:397-398`), so the cancel can be built; the port has not adopted one (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md:539`).
 - **Workaround:** none; the press-and-drag commit itself is ported (400 ms or 8px, `select.tsx:34-37`).
 - **Fidelity:** dropped (the cancel).
 - **Components it hits:** just this one.

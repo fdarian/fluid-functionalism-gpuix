@@ -190,7 +190,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [radio-group](drift/radio-group.md) | 4 | 2 | 3 | 0 | 9 |
 | [scroll-area](drift/scroll-area.md) | 2 | 6 | 1 | 1 | 10 |
 | [scrollbars-page](drift/scrollbars-page.md) | 1 | 4 | 2 | 1 | 8 |
-| [select](drift/select.md) | 6 | 3 | 5 | 2 | 16 |
+| [select](drift/select.md) | 5 | 3 | 6 | 2 | 16 |
 | [sidebar](drift/sidebar.md) | 1 | 8 | 19 | 1 | 29 |
 | [site](drift/site.md) | 5 | 11 | 21 | 7 | 44 |
 | [sizes-page](drift/sizes-page.md) | 0 | 5 | 2 | 4 | 11 |
@@ -205,7 +205,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
 | [tooltip](drift/tooltip.md) | 3 | 5 | 1 | 1 | 10 |
 | [typography](drift/typography.md) | 6 | 0 | 1 | 5 | 12 |
-| **Total** | **127** | **199** | **200** | **62** | **588** |
+| **Total** | **126** | **199** | **201** | **62** | **588** |
 
 ### gpuix gaps across components
 
@@ -233,8 +233,8 @@ offer it. A count is given only where the code shows it.
 
 | Used by | What | Workaround here |
 |---|---|---|
-| popups (select, combobox, dropdown, color-picker, dialog), tooltip, chevrons (accordion, card, color-picker, thinking-steps), scale-in entrances (banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack, radio-group), spinners (file-thumbnail), the changelog's month dot (scale) and entry-name arrow (translate) | CSS transforms: no scale, rotate or translate, so the popups' `scaleY: 0.96` entrance and every turn and pop is impossible (Base UI audit rows 528, 609). The tooltip has no scale in the source (`tooltip.tsx:282-291`); it only slides on x / y, which is a transform too | Popups and the tooltip slide from the reported side and fade; glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom` |
-| slider | `<input type="range">` (Base UI audit row 313) | A pointer-handled track and thumbs |
+| popups (select, combobox, dropdown, color-picker, dialog), tooltip, chevrons (accordion, card, color-picker, thinking-steps), scale-in entrances (banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack, radio-group), spinners (file-thumbnail), the changelog's month dot (scale) and entry-name arrow (translate) | CSS transforms: no scale, rotate or translate, so the popups' `scaleY: 0.96` entrance and every turn and pop is impossible (Base UI audit rows 530, 617). The tooltip has no scale in the source (`tooltip.tsx:282-291`); it only slides on x / y, which is a transform too | Popups and the tooltip slide from the reported side and fade; glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom` |
+| slider | `<input type="range">` (Base UI audit row 312) | A pointer-handled track and thumbs |
 | slider | `calc()`, or a `%` mixed with px, in a motion value: a string a motion value holds must be a colour or a percentage, so a `createTransform` that returns `calc(25% + 20px)` throws (gpuix `README.md:1531-1534`; `drift/slider.md`, "Derived layers trail their inputs"). `calc()` works as a static style, which does not animate | Pixel maths from the measured row width, in JS-derived values (one frame late, see Bugs) |
 | select, combobox (`FormValue`) | `<input type="hidden">` | A real input that is invisible, unreachable and `aria-hidden` |
 | every component that pads with a CSS shorthand string | Multi-value `padding` (and `margin`): the shorthands take one length, and `padding: "4px 8px"` throws "invalid length" when the batch applies (gpuix `README.md:5671-5673`; measured on the test renderer) | Longhands (`paddingTop`, `paddingLeft`, ...) |
