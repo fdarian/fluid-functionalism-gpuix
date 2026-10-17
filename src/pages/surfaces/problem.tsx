@@ -74,7 +74,11 @@ const ARROW_VALUES: Record<ArrowKey, ArrowDial> = {
 };
 
 const ARROWS: readonly Arrow[] = ANNOTATIONS.map((annotation) => ({
-	...buildArrow(annotation.start, annotation.end, ARROW_VALUES[annotation.key]),
+	line: buildArrow(
+		annotation.start,
+		annotation.end,
+		ARROW_VALUES[annotation.key],
+	),
 	color: annotation.color,
 }));
 

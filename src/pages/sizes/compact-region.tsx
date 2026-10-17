@@ -101,7 +101,7 @@ export function CompactRegionDemo() {
 				<ArrowOverlay
 					width={MENU_WIDTH + 232}
 					height={110}
-					arrows={[{ ...CALLOUT_ARROW, color: ANNOTATION_BLUE }]}
+					arrows={[{ line: CALLOUT_ARROW, color: ANNOTATION_BLUE }]}
 				/>
 				<div
 					style={{

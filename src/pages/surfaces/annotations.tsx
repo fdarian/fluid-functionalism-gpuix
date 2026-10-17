@@ -20,18 +20,12 @@ export interface ArrowDial {
 	labelY: number;
 }
 
-/** The marker's open chevron, two strokes: its tip on the path's end, its arms 5.5px back and 3.5px to each side. */
-const CHEVRON_BACK = 5.5;
-const CHEVRON_SIDE = 3.5;
-
 const round = (n: number) => Math.round(n * 10) / 10;
 
 /**
  * A quadratic Bézier from base anchors and a dial: rotation pivots the chord
  * around its midpoint, x/y translate the whole arrow, curve sets the
- * perpendicular bow of the control point. `head` is the chevron that the
- * source draws with an SVG `marker`, which gpuix's `<svg>` does not support
- * (FORK.md:762), laid along the curve's end tangent.
+ * perpendicular bow of the control point. The path's end is the arrow's tip.
  */
 export function buildArrow(start: Point, end: Point, dial: ArrowDial) {
 	const mx = (start.x + end.x) / 2;
@@ -52,22 +46,37 @@ export function buildArrow(start: Point, end: Point, dial: ArrowDial) {
 		x: (s.x + e.x) / 2 + (-dy / len) * dial.curve,
 		y: (s.y + e.y) / 2 + (dx / len) * dial.curve,
 	};
-	const tangent = Math.atan2(e.y - control.y, e.x - control.x);
-	const arm = (side: number): Point => ({
-		x: e.x - Math.cos(tangent) * CHEVRON_BACK - Math.sin(tangent) * side,
-		y: e.y - Math.sin(tangent) * CHEVRON_BACK + Math.cos(tangent) * side,
-	});
-	const left = arm(-CHEVRON_SIDE);
-	const right = arm(CHEVRON_SIDE);
-	return {
-		line: `M${round(s.x)},${round(s.y)} Q${round(control.x)},${round(control.y)} ${round(e.x)},${round(e.y)}`,
-		head: `M${round(left.x)},${round(left.y)} L${round(e.x)},${round(e.y)} L${round(right.x)},${round(right.y)}`,
-	};
+	return `M${round(s.x)},${round(s.y)} Q${round(control.x)},${round(control.y)} ${round(e.x)},${round(e.y)}`;
+}
+
+/** The open chevron that ends every annotation arrow (two strokes, in the stroke colour of the path it ends), for a `<defs>`. */
+export function ArrowMarker(props: { id: string }) {
+	return (
+		<marker
+			id={props.id}
+			viewBox="0 0 12 12"
+			markerWidth="12"
+			markerHeight="12"
+			refX="8.5"
+			refY="6"
+			orient="auto"
+			markerUnits="userSpaceOnUse"
+		>
+			<path
+				d="M3,2.5 L8.5,6 L3,9.5"
+				fill="none"
+				stroke="context-stroke"
+				strokeWidth={1.5}
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+		</marker>
+	);
 }
 
 export interface Arrow {
+	/** The path's `d`, from `buildArrow`. */
 	line: string;
-	head: string;
 	color: string;
 }
 
@@ -89,25 +98,19 @@ export function ArrowOverlay(props: {
 				pointerEvents: 'none',
 			}}
 		>
+			<defs>
+				<ArrowMarker id="ff-annotation-arrow" />
+			</defs>
 			<For each={props.arrows}>
 				{(arrow) => (
-					<>
-						<path
-							d={arrow.line}
-							fill="none"
-							stroke={arrow.color}
-							strokeWidth={1.5}
-							strokeLinecap="round"
-						/>
-						<path
-							d={arrow.head}
-							fill="none"
-							stroke={arrow.color}
-							strokeWidth={1.5}
-							strokeLinecap="round"
-							strokeLinejoin="round"
-						/>
-					</>
+					<path
+						d={arrow.line}
+						fill="none"
+						stroke={arrow.color}
+						strokeWidth={1.5}
+						strokeLinecap="round"
+						markerEnd="url(#ff-annotation-arrow)"
+					/>
 				)}
 			</For>
 		</svg>

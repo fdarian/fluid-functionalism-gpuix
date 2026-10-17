@@ -64,12 +64,12 @@ repeating it.
 - **Fidelity:** approximated.
 - **Components it hits:** just this page.
 
-## The annotation arrowheads are computed, and the canvas is 2px wider than the frame
+## The Problem canvas is 2px wider than the frame
 
-- **Cause:** `gpuix gap` (arrowheads), `port choice` (canvas).
-- **Original:** an SVG `<marker>` with an open chevron and `context-stroke` ends each path; the Problem canvas is a fixed 600 x 640 centred in the frame, which is 632px wide in the source's 680px column (`app/docs/surfaces/page.tsx:413-445`, `lib/docs/DocPage.tsx`, `app/docs/layout.tsx:3`).
-- **Port:** gpuix's `<svg>` does not serialise `marker` (`FORK.md:786`), so `buildArrow` (`src/pages/surfaces/annotations.tsx`) lays the same two strokes (5.5px back, 3.5px to each side of the tip) along the curve's end tangent as a second `<path>`. The page column is 600px, so the frame's inner width is 598 and the 600px canvas sits at `marginLeft: -1` under the frame's clip; the dialog is at an explicit `left: 140`, not `left-1/2 -translate-x-1/2` (no transforms). Callouts, dial values and anchors are the source's.
-- **Fidelity:** approximated (the head's join at the tip), exact otherwise.
+- **Cause:** `port choice` (canvas).
+- **Original:** the Problem canvas is a fixed 600 x 640 centred in the frame, which is 632px wide in the source's 680px column (`app/docs/surfaces/page.tsx:413-445`, `lib/docs/DocPage.tsx`, `app/docs/layout.tsx:3`).
+- **Port:** the page column is 600px, so the frame's inner width is 598 and the 600px canvas sits at `marginLeft: -1` under the frame's clip; the dialog is at an explicit `left: 140`, not `left-1/2 -translate-x-1/2` (no transforms). The arrows end in the source's SVG `<marker>` chevron with `context-stroke` (`ArrowMarker`, `src/pages/surfaces/annotations.tsx`). Callouts, dial values and anchors are the source's.
+- **Fidelity:** exact but for the canvas width.
 - **Components it hits:** just this page.
 
 ## The solution callouts read tokens, not the painted colour

@@ -107,7 +107,7 @@ function SolutionAnnotations(props: {
 				const dropdownLabelLeft = () => geo().width - DROPDOWN_LABEL_WIDTH - 4;
 				const arrows = () => [
 					{
-						...buildArrow(
+						line: buildArrow(
 							{ x: geo().dialog.left - 16, y: dialogEnd().y + 26 },
 							dialogEnd(),
 							SOLUTION_VALUES.dialog,
@@ -115,7 +115,7 @@ function SolutionAnnotations(props: {
 						color: ANNOTATION_BLUE,
 					},
 					{
-						...buildArrow(
+						line: buildArrow(
 							{ x: dropdownLabelLeft(), y: dropdownEnd().y + 24 },
 							dropdownEnd(),
 							SOLUTION_VALUES.dropdown,

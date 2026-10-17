@@ -195,7 +195,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [sizes-page](drift/sizes-page.md) | 0 | 5 | 2 | 4 | 11 |
 | [skill-page](drift/skill-page.md) | 3 | 5 | 0 | 1 | 9 |
 | [slider](drift/slider.md) | 5 | 3 | 2 | 1 | 11 |
-| [surfaces](drift/surfaces.md) | 1 | 3 | 4 | 4 | 12 |
+| [surfaces](drift/surfaces.md) | 1 | 4 | 4 | 3 | 12 |
 | [switch](drift/switch.md) | 2 | 1 | 2 | 1 | 6 |
 | [table](drift/table.md) | 3 | 1 | 3 | 0 | 7 |
 | [tabs-subtle](drift/tabs-subtle.md) | 2 | 4 | 2 | 0 | 8 |
@@ -204,7 +204,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
 | [tooltip](drift/tooltip.md) | 4 | 5 | 1 | 1 | 11 |
 | [typography](drift/typography.md) | 6 | 0 | 1 | 5 | 12 |
-| **Total** | **142** | **201** | **197** | **60** | **600** |
+| **Total** | **142** | **202** | **197** | **59** | **600** |
 
 ### gpuix gaps across components
 
@@ -260,7 +260,6 @@ offer it. A count is given only where the code shows it.
 | color-picker | A JS-visible CSS colour resolver: named colours and `color-mix()` resolve natively for styles only | `parseColor` reads hex, `rgb(a)`, `hsl(a)` and `oklch`; a name is rejected |
 | queued-stack | An input-device signal: `matchMedia` fixes `hover` to `hover` and `pointer` to `fine`, so `(hover: none)` never matches | none; desktop only |
 | combobox, select (any form) | A submit button: `SubmitEvent.submitter` is always `null` | The demos call `form.requestSubmit()` |
-| surfaces and fluid-hover pages (the annotation arrows) | `<svg>` has no `marker` (`FORK.md:786`) | The arrowhead is two extra strokes laid along the curve's end tangent |
 | concepts (Lumen's image swatches) | `<img>` takes `file://` and `blob:` URLs, not `data:` ones | A `linear-gradient` box instead of an SVG data URI |
 | skill page (the scripted-cursor examples) | Dispatching a synthetic pointer event, or setting `:hover`, on one element: the native simulate calls move the window's one pointer | The page calls the elements' `onMouseEnter` / `onMouseLeave` / `onMouseMove` props and `click()` directly (`drift/skill-page.md`, `src/pages/skill/scripted-pointer.ts`) |
 | site menu (`isModK`) | A physical key: gpuix derives `code` from GPUI's layout-dependent `key`, so a non-Latin letter reports `code` `""` (`packages/native/src/events/key_names.rs:9-12`, `:138-160`). On Windows and Linux, Ctrl plus a Cyrillic or Greek letter cannot match a shortcut through `code`, as the source's `matchesShortcut` does. macOS reports the layout's Cmd letter, so ⌘K works there | none; the sidebar's Search row opens the menu (`drift/site.md`). Not run on Windows or Linux |

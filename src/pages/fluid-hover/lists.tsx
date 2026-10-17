@@ -19,6 +19,7 @@ import { onFrame } from '#/lib/clock';
 import { ComponentPreview } from '#/lib/doc-page';
 import { defineIcon, type IconRef } from '#/lib/icons';
 import { color, radius, type as scale, siteType, weight } from '#/lib/theme';
+import { ArrowMarker, buildArrow } from '#/pages/surfaces/annotations';
 import { LISTS_CODE } from './snippets';
 
 const MESSAGE_CIRCLE = defineIcon(
@@ -86,36 +87,15 @@ const LABEL_LEFT = {
 	right: SIDEBAR_LEFT + SIDEBAR_WIDTH + 40,
 } as const;
 
-interface Point {
-	x: number;
-	y: number;
-}
-
-/** A quadratic curve from `start` to `end`, bowed by `curve` px off the chord, and the chevron at its end (the source's marker: a 7px-tall open arrowhead whose tip is the path's end). */
-function arrow(start: Point, end: Point, curve: number) {
-	const dx = end.x - start.x;
-	const dy = end.y - start.y;
-	const length = Math.hypot(dx, dy) || 1;
-	const control = {
-		x: (start.x + end.x) / 2 + (-dy / length) * curve,
-		y: (start.y + end.y) / 2 + (dx / length) * curve,
-	};
-	const tangentX = end.x - control.x;
-	const tangentY = end.y - control.y;
-	const tangentLength = Math.hypot(tangentX, tangentY) || 1;
-	const along = { x: tangentX / tangentLength, y: tangentY / tangentLength };
-	const across = { x: -along.y, y: along.x };
-	const wing = (side: 1 | -1) => ({
-		x: end.x - along.x * 5.5 + across.x * 3.5 * side,
-		y: end.y - along.y * 5.5 + across.y * 3.5 * side,
-	});
-	const round = (n: number) => Math.round(n * 10) / 10;
-	const at = (p: Point) => `${round(p.x)},${round(p.y)}`;
-	return {
-		line: `M${at(start)} Q${at(control)} ${at(end)}`,
-		head: `M${at(wing(1))} L${at(end)} L${at(wing(-1))}`,
-	};
-}
+/** A flat dial for `buildArrow`: the curve's bow is all the callouts use. */
+const bow = (curve: number) => ({
+	x: 0,
+	y: 0,
+	rotation: 0,
+	curve,
+	labelX: 0,
+	labelY: 0,
+});
 
 /** A row the arrows measure: a wrapper with the row's own box. */
 function Measured(props: {
@@ -367,47 +347,41 @@ export function ListsDemo() {
 						pointerEvents: 'none',
 					}}
 				>
+					<defs>
+						<ArrowMarker id="ff-lists-arrow" />
+					</defs>
 					<For each={CALLOUTS}>
 						{(callout) => {
-							const geometry = () => {
+							const line = () => {
 								const end = ends()[callout.key];
 								if (end === undefined) return undefined;
 								// Level with the target: from just past the label's text to just outside the frame, with a small bow so it reads as drawn.
 								return callout.side === 'left'
-									? arrow(
+									? buildArrow(
 											{ x: end.edge + 6, y: end.y },
 											{ x: SIDEBAR_LEFT - ARROW_GAP, y: end.y },
-											-6,
+											bow(-6),
 										)
-									: arrow(
+									: buildArrow(
 											{ x: end.edge - 6, y: end.y },
 											{
 												x: SIDEBAR_LEFT + SIDEBAR_WIDTH + ARROW_GAP,
 												y: end.y,
 											},
-											6,
+											bow(6),
 										);
 							};
 							return (
-								<Show when={geometry()}>
-									{(path: Accessor<ReturnType<typeof arrow>>) => (
-										<>
-											<path
-												d={path().line}
-												stroke={color.focusRing}
-												strokeWidth={1.5}
-												strokeLinecap="round"
-												fill="none"
-											/>
-											<path
-												d={path().head}
-												stroke={color.focusRing}
-												strokeWidth={1.5}
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												fill="none"
-											/>
-										</>
+								<Show when={line()}>
+									{(d: Accessor<string>) => (
+										<path
+											d={d()}
+											stroke={color.focusRing}
+											strokeWidth={1.5}
+											strokeLinecap="round"
+											fill="none"
+											markerEnd="url(#ff-lists-arrow)"
+										/>
 									)}
 								</Show>
 							);
