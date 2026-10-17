@@ -182,8 +182,6 @@ function TriggerRow(props: {
 					heavy={open()}
 					color={highlighted() ? color.foreground : color.mutedForeground}
 					fade
-					// Shrinkable inside the `fit-content` wrapper above, the label wraps in one of gpuix's trial widths and the wrapper keeps that second line's height.
-					nowrap
 				/>
 				<Chevron
 					open={open()}
@@ -483,14 +481,8 @@ export function ThinkingStepDetails(props: {
 		defaultOpen: props.defaultOpen ?? false,
 	});
 	return (
-		<div
-			style={{
-				display: 'flex',
-				flexDirection: 'column',
-				marginTop: 4,
-				marginLeft: -12,
-			}}
-		>
+		// A block, as the source's `mt-1 -ml-3`. A column flex container with a negative horizontal margin makes gpuix keep a wrapped first pass's height for a `fit-content` child (the trigger wrapper), +20px.
+		<div style={{ marginTop: 4, marginLeft: -12 }}>
 			<TriggerRow
 				collapsible={collapsible}
 				testId={props.testId}
@@ -562,8 +554,6 @@ export function ThinkingStepSource(props: {
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			transition={{ ...tween.moderate, delay: props.delay ?? 0 }}
-			// A flex box, so the inline-flex Badge is a flex item and the wrapper is 20px high, with no line strut around it.
-			style={{ display: 'flex' }}
 		>
 			<Badge variant="solid" size="compact" color={props.color ?? 'gray'}>
 				{props.children}

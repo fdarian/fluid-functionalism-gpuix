@@ -22,7 +22,7 @@ repeating it.
 
 - **Cause:** `gpuix gap`.
 - **Original:** sources enter `opacity 0, scale .85, blur(4px)` on `spring.moderate` with the blur on its own 0.12s transition (`thinking-steps.tsx:541-557`); images enter `opacity 0, blur(4px)`, opacity 0.2s `easeOut`, blur 0.15s (`:570-583`).
-- **Port:** opacity only, with the same delays and the same opacity transitions (`ThinkingStepSource`, `thinking-steps.tsx:553-569`; `ThinkingStepImage`, `:575-627`, motion at `:585-589`).
+- **Port:** opacity only, with the same delays and the same opacity transitions (`ThinkingStepSource`, `thinking-steps.tsx:547-563`; `ThinkingStepImage`, `:567-621`, motion at `:579-583`).
 - **gpuix lacks:** scale (the known transform gap), and an animatable `filter`: `filter: "blur(4px)"` paints as a static style, but `filter` is not among `MotionStyleTargets` (`packages/native/js/host.ts:123`), so it cannot be tweened.
 - **Workaround:** none beyond opacity.
 - **Fidelity:** approximated (the blur-to-sharp reveal and the pop are dropped).
@@ -40,7 +40,7 @@ repeating it.
 
 ## Hover background exit
 
-- **Cause:** `not ported yet`. `motion.fastExit` (0.06s) exists (`src/lib/theme.ts:450`).
+- **Cause:** `not ported yet`. `motion.fastExit` (0.06s) exists (`src/lib/theme.ts:458`).
 - **Original:** the trigger's hover background fades in over 0.08s and out with `spring.fast.exit`, 0.06s (`thinking-steps.tsx:65-75`).
 - **Port:** one `transition={{ duration: 0.08 }}` serves both (`thinking-steps.tsx:140-158`, `:146`), so the exit is 20ms slower.
 - **Workaround:** none.
@@ -58,12 +58,12 @@ repeating it.
 
 ## Closed panel is `inert`, not `hidden`
 
-- **Cause:** `not ported yet`. gpuix has `display: none` (`FORK.md:628`; `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:105`). The port's comment that gpuix has no `display: none` (`thinking-steps.tsx:187-192`) is out of date.
+- **Cause:** `not ported yet`. gpuix has `display: none` (`FORK.md:629`; `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:104`).
 - **Original:** the panel gets `hidden` once the exit animation finishes (`thinking-steps.tsx:195-218`).
-- **Port:** height 0, `overflow: hidden`, and `inert` the moment `open` goes false (`thinking-steps.tsx:209-244`). A closed panel's content is still laid out each frame, and is out of the accessibility tree from the start of the exit rather than the end.
+- **Port:** height 0, `overflow: hidden`, and `inert` the moment `open` goes false (`thinking-steps.tsx:224-243`, `inert` at `:237`). A closed panel's content is still laid out each frame, and is out of the accessibility tree from the start of the exit rather than the end.
 - **Workaround:** `inert`.
 - **Fidelity:** exact visually; the accessibility tree changes sooner.
-- **Components it hits:** accordion (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md:50`).
+- **Components it hits:** accordion (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md:73`).
 
 ## Shimmer on the active step label
 
@@ -78,7 +78,7 @@ repeating it.
 
 - **Cause:** `not ported yet`. An `<img>` with a `%` width or `maxWidth` gets its height from its intrinsic ratio, and `onLoad` reports `naturalWidth` / `naturalHeight` (`~/code/fdarian/gpuix/FORK.md:668`, `:834-835`). To port: `width: "100%"` with `maxWidth: 200` and `objectFit: "cover"`. The height then comes from the file's ratio once decoded; before decode the box is empty (`~/code/fdarian/gpuix/README.md:5012-5014`), so the step's height jumps on load, which the `aspectRatio` prop avoids. Check that the jump is acceptable, or size from `onLoad`'s `naturalWidth` / `naturalHeight`.
 - **Original:** `<img class="w-full max-w-[200px] object-cover">` takes the file's aspect ratio and shrinks in a narrow column (`thinking-steps.tsx:586-593`).
-- **Port:** a fixed 200px-wide box, height `200 / aspectRatio` with `aspectRatio` an extra prop defaulting to 2 (`thinking-steps.tsx:583-602`). The demo image is 1200x600, so the demos match. A different ratio letterboxes (`objectFit` is the default `contain`, the source is `cover`), and the box does not shrink below 200.
+- **Port:** a fixed 200px-wide box, height `200 / aspectRatio` with `aspectRatio` an extra prop defaulting to 2 (`thinking-steps.tsx:567-596`). The demo image is 1200x600, so the demos match. A different ratio letterboxes (`objectFit` is the default `contain`, the source is `cover`), and the box does not shrink below 200.
 - **Workaround:** the `aspectRatio` prop, so the step's measured height is stable before the image decodes.
 - **Fidelity:** approximated.
 - **Components it hits:** card (image), file-thumbnail.
@@ -87,16 +87,16 @@ repeating it.
 
 - **Cause:** `port choice` (the comment says it keeps a pale screenshot's edge visible; why an overlay div and not the image's own outline is not stated).
 - **Original:** `outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10` on the `<img>` (`thinking-steps.tsx:590`).
-- **Port:** an absolutely positioned overlay div with a 1px inset outline in `color.border`, `rgba(23,23,23,.12)` light and `rgba(245,245,245,.12)` dark (`thinking-steps.tsx:603-616`; `src/lib/theme.ts:94`, `:142`).
+- **Port:** an absolutely positioned overlay div with a 1px inset outline in `color.border`, `rgba(23,23,23,.12)` light and `rgba(245,245,245,.12)` dark (`thinking-steps.tsx:597-610`; `src/lib/theme.ts:94`, `:142`).
 - **Workaround:** the overlay.
 - **Fidelity:** approximated (alpha .12 against .10, base colours slightly off black and white).
 - **Components it hits:** just this one.
 
 ## Props and parts the port does not take
 
-- **Cause:** `not ported yet`. `banner.tsx:141` shows the port can take a `size` prop.
+- **Cause:** `not ported yet`. `banner.tsx:140` shows the port can take a `size` prop.
 - **Original:** `ThinkingSteps` takes `size` (pins the compact step: trigger `py-1.5`, icon 12, `compact` type scale) and `className` / HTML attributes (`thinking-steps.tsx:252-289`). `icon` is any `IconName` of the app's icon library (`:341`, `:387`). Header children are `ReactNode` (`:294-308`). `ThinkingStep`, `ThinkingStepSource` and `ThinkingStepImage` take `className`.
-- **Port:** no `size`, `className` or `ref` anywhere (`thinking-steps.tsx:261-268`). `icon` is one of six glyphs (`:47-56`). Header children are a `string` (`:291-294`).
+- **Port:** no `size`, `className` or `ref` anywhere (`thinking-steps.tsx:261-268`). `icon` is one of six glyphs (`:47-54`). Header children are a `string` (`:291-294`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** thinking-indicator (no `size`).
@@ -108,15 +108,6 @@ repeating it.
 - **Port:** `width` (default 320) and `maxWidth: "100%"` (`thinking-steps.tsx:265`, `:281-282`).
 - **Workaround:** none.
 - **Fidelity:** exact for the default.
-- **Components it hits:** just this one.
-
-## The trigger label never wraps, and the source badge sits in a flex box
-
-- **Cause:** `gpuix gap`. Not reproduced in isolation: inside the `fit-content` trigger wrapper the shrinkable `StableLabel` wraps in one of gpuix's trial widths ("Explored 6 files" at "Explored") and the wrapper keeps the second line's 20px, so every nested step grew by a line.
-- **Original:** the trigger label is an `inline-grid` span that can shrink and wrap; `ThinkingStepSource` is a `motion.span` flex item holding an `inline-flex` `Badge` (`registry/base/thinking-steps.tsx:88`, `:544-554`).
-- **Port:** `TriggerRow` passes `nowrap` to `StableLabel`, and the source's `motion.div` is `display: "flex"` so the badge is a flex item with no line strut around it (`src/components/thinking-steps.tsx:180-187`, `:561-567`). The source's wrapper is a block holding an inline atom, which in a browser leaves a descender gap under the badge; that gap was not measured, so the sources row keeps the 20px it had.
-- **Workaround:** `nowrap`; a flex wrapper.
-- **Fidelity:** approximated (a trigger label never wraps; the sources row may be a few pixels shorter than the source's).
 - **Components it hits:** just this one.
 
 ## Demo: Streaming text sizing
