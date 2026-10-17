@@ -20,14 +20,7 @@ import {
 	ThinkingStepsHeader,
 } from '#/components/thinking-steps';
 import type { ShotContext } from '#/lib/demo';
-import {
-	color,
-	type as scale,
-	shadow,
-	shape,
-	siteType,
-	weight,
-} from '#/lib/theme';
+import { color, shadow, shape, siteType, weight } from '#/lib/theme';
 import { ConceptFrame } from '#/pages/concepts/frame';
 
 export const title = 'Lumen';
@@ -147,26 +140,24 @@ function Caption(props: { children: string }) {
 
 // ── Citation chip ───────────────────────────────────────────────────────
 
-/** `Badge size="sm"` (20px tall, 11px type) with `mx-0.5 px-1.5`, set inline. The span's box is the font's content area plus the 3.5px of padding that makes it 20px tall; the source's `-translate-y-px` and `align-middle` have no counterpart. */
+/** The source's `Badge size="sm"` with `mx-0.5 -translate-y-px px-1.5 align-middle tabular-nums`; `top: -1` is the translate. */
 function Cite(props: { n: number }) {
 	return (
-		<span
+		<Badge
+			size="compact"
 			style={{
-				...scale.micro,
-				backgroundColor: color.accent,
-				color: color.foreground,
-				fontVariantNumeric: 'tabular-nums',
-				borderRadius: shape.item,
+				position: 'relative',
+				top: -1,
+				verticalAlign: 'middle',
 				marginLeft: 2,
 				marginRight: 2,
 				paddingLeft: 6,
 				paddingRight: 6,
-				paddingTop: 3.5,
-				paddingBottom: 3.5,
+				fontVariantNumeric: 'tabular-nums',
 			}}
 		>
 			{props.n}
-		</span>
+		</Badge>
 	);
 }
 

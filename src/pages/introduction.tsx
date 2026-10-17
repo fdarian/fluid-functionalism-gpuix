@@ -90,10 +90,10 @@ function Rule(props: { marginTop: number; marginBottom?: number }) {
 	);
 }
 
-/** A command that fits its text, not the column. */
+/** The source's `w-fit` on `InputCopy`: a command that fits its text, not the column. */
 function Command(props: { value: string; testId?: string }) {
 	return (
-		<div style={{ alignSelf: 'flex-start', maxWidth: '100%' }}>
+		<div style={{ width: 'fit-content' }}>
 			<InputCopy value={props.value} align="left" testId={props.testId} />
 		</div>
 	);
@@ -128,7 +128,7 @@ function Step(props: {
 						width: 18,
 						height: 18,
 						flexShrink: 0,
-						display: 'flex',
+						display: 'inline-flex',
 						alignItems: 'center',
 						justifyContent: 'center',
 						borderRadius: 9,
@@ -157,7 +157,7 @@ function CodeBlock(props: { lines: readonly string[] }) {
 	return (
 		<div
 			style={{
-				alignSelf: 'flex-start',
+				width: 'fit-content',
 				maxWidth: '100%',
 				overflowX: 'scroll',
 				borderRadius: 8,

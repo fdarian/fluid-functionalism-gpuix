@@ -19,7 +19,7 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 - **Cause:** `gpuix gap`. README "Missing features" row for variable-font axes (`README.md:252`).
 - **Original:** `'wght' 400` to `'wght' 550` with `opsz` compensation, eased over 80 ms (`radio-group.tsx:466-470`).
-- **Port:** static Inter, SemiBold 600 for 550, switches at once; the hidden semibold copy still reserves the width (`stable-label.tsx:41`).
+- **Port:** static Inter, SemiBold 600 for 550, switches at once; the hidden semibold copy still reserves the width (`stable-label.tsx:52`).
 - **Gpuix lacks:** `fontVariationSettings`.
 - **Workaround:** static cuts.
 - **Fidelity:** approximated.
@@ -29,7 +29,7 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 - **Cause:** `gpuix gap`. README "Missing features" row for `text-box-trim` (`README.md:251`, filed under badge).
 - **Original:** `[text-box:trim-both_cap_alphabetic]` on both label spans (`radio-group.tsx:450,461`).
-- **Port:** the label is centred by its full 20 px line box (`stable-label.tsx:41-57`), about a pixel off (the README's figure; not measured here).
+- **Port:** the label is centred by its full 20 px line box (`stable-label.tsx:52-62`), about a pixel off (the README's figure; not measured here).
 - **Gpuix lacks:** `text-box-trim` / `text-box-edge`.
 - **Workaround:** none.
 - **Fidelity:** approximated.
@@ -56,10 +56,6 @@ Same in both (checked against the code): row height, gap and padding per size, c
 ## Props: `className`, `ref`, HTML attributes
 
 - **Cause:** `not ported yet`. Same drift as [checkbox-group.md, "Props: `className`, `ref`, HTML attributes"](checkbox-group.md#props-classname-ref-html-attributes), where the entry lives. Here: source `radio-group.tsx:61-70,300-306`; the port's fixed `width: 288` is `choice-group.tsx:201`.
-
-## Long labels
-
-- **Cause:** `not ported yet`. Same drift as [checkbox-group.md, "Long labels"](checkbox-group.md#long-labels), where the entry lives. Here: source `radio-group.tsx:446`; port `stable-label.tsx:28,37`.
 
 ## A group with `value={undefined}` still reports changes
 

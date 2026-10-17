@@ -4,7 +4,7 @@ Original: `registry/base/accordion.tsx` (the docs page imports the Radix variant
 (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/accordion.tsx`, demo in `src/demos/accordion.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, table and `inline-*` layout, container queries, `:has()`) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, table layout, container queries, `:has()`) get a one-line entry here that links to the README row instead of
 repeating it. Includes the shared keyboard focus ring (`src/lib/focus-ring.tsx`) as an accordion group uses it.
 
 No drift found in: sizes (trigger padding, gap, icon 16/14, content padding, 288px width), type scale, light and dark
@@ -25,20 +25,11 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `gpuix gap`.
 - **Original:** the label eases between `wght 400` and `550, opsz 18` over 80 ms (`:744-766`, `transition-[color,font-variation-settings] duration-80`).
-- **Port:** `StableLabel` switches at once between static 400 and SemiBold 600 (`src/components/accordion.tsx:596-603`, `src/lib/stable-label.tsx:25-29`); the hidden copy reserves the 600 width.
+- **Port:** `StableLabel` switches at once between static 400 and SemiBold 600 (`src/components/accordion.tsx:596-603`, `src/lib/stable-label.tsx:29-38`); the hidden copy reserves the 600 width.
 - **gpuix lacks:** variable-font axes. README row "Variable-font axes".
 - **Workaround:** static cuts and the hidden semibold copy.
 - **Fidelity:** approximated (no easing, 600 for 550).
 - **Components it hits:** every `StableLabel` (tabs, tabs-subtle, sidebar, menu rows, card, table).
-
-## Labels do not wrap
-
-- **Cause:** `port choice` (shared `StableLabel`; reason not stated).
-- **Original:** the label is an `inline-grid flex-1` span with no `nowrap`, so a long title wraps and the hidden copy reserves the wrapped box (`:744-751`).
-- **Port:** `whiteSpace: "nowrap"` (`src/lib/stable-label.tsx:28`), so a long title does not wrap. The demo titles are all short, so no capture shows it.
-- **Workaround:** none.
-- **Fidelity:** dropped for long titles.
-- **Components it hits:** every `StableLabel`.
 
 ## Standalone hover fill fades in 20 ms faster
 

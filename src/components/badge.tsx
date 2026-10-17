@@ -1,3 +1,4 @@
+import type { StyleDesc } from '@gpuix/solid';
 import { type JSX, Show } from 'solid-js';
 import { color, type as scale, shape, sizeChoice, weight } from '#/lib/theme';
 
@@ -47,6 +48,8 @@ export function Badge(props: {
 	size?: BadgeSize;
 	color?: BadgeColor;
 	testId?: string;
+	/** Laid over the badge's own style, as the source's `className` and `style`. */
+	style?: StyleDesc;
 	children: JSX.Element;
 }) {
 	const size = () => sizes[props.size ?? sizeChoice()];
@@ -94,7 +97,7 @@ export function Badge(props: {
 		<div
 			testId={props.testId}
 			style={{
-				display: 'flex',
+				display: 'inline-flex',
 				flexDirection: 'row',
 				alignItems: 'center',
 				flexShrink: 0,
@@ -111,6 +114,7 @@ export function Badge(props: {
 							borderWidth: 1,
 							borderColor: color.border,
 						}),
+				...props.style,
 			}}
 		>
 			{/* One fragment: a Show among siblings leaves an empty text node that eats a `gap`. */}

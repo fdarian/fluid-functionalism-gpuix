@@ -316,6 +316,7 @@ export function TabsSubtleItem(props: {
 			color={isActive() ? color.foreground : color.mutedForeground}
 			textStyle={metrics().text}
 			fade
+			nowrap
 		/>
 	);
 

@@ -211,6 +211,33 @@ check(
 	`rest ${unfocused}, 60 ms ${midFill}, hover ${hoverFill}`,
 );
 
+// Selecting an inline option's title does not move its description: the title is an inline-grid that reserves the semibold width.
+await scrollTo('multi-option-0', -500);
+renderer.focusElement(element('multi-option-0').id);
+await settle(300);
+{
+	const description = element('multi-option-0-description');
+	const before = bounds('multi-option-0-description');
+	renderer.simulateKeystrokes('Space');
+	let worst = 0;
+	let sampled = 0;
+	const start = performance.now();
+	while (performance.now() - start < 300) {
+		frame();
+		const now = renderer.getElementBounds(description.id);
+		if (now !== null) {
+			sampled++;
+			worst = Math.max(worst, Math.abs(now.x - before.x));
+		}
+		await sleep(16);
+	}
+	check(
+		'selecting an inline option leaves its description where it was',
+		sampled > 3 && worst < 0.5,
+		`${sampled} frames, worst shift ${worst.toFixed(1)}px`,
+	);
+}
+
 console.log(failed ? 'FAILED' : 'ALL PASSED');
 test.unmount();
 process.exit(failed ? 1 : 0);

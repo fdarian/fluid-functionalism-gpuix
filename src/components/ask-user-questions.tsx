@@ -782,6 +782,7 @@ export function AskUserQuestions(props: {
 							>
 								{(description: () => string) => (
 									<InlineOptionText
+										testId={`${props.testId ?? 'ask'}-option-${i()}-description`}
 										title={option.title}
 										description={description()}
 										heavy={selected()}
@@ -1118,27 +1119,27 @@ export function AskUserQuestions(props: {
 
 /**
  * The inline layout's title and description: one paragraph, so a long
- * description runs on from the title's line as in the source. A run cannot hold
- * `StableLabel`'s hidden semibold copy (the source's `inline-grid` is an atom
- * in the line), so a selected title's wider weight moves the description.
+ * description runs on from the title's line as in the source. The title is an
+ * inline-grid `StableLabel`, an atom in the run that reserves the semibold
+ * width, so selecting it never moves the description.
  */
 function InlineOptionText(props: {
+	testId: string;
 	title: string;
 	description: string;
 	heavy: boolean;
 }) {
 	return (
 		<text style={{ ...scale.body, minWidth: 0, flexShrink: 1 }}>
-			<span
-				style={{
-					color: color.foreground,
-					fontWeight: props.heavy ? weight.semibold : weight.normal,
-					...fade(['color'], 80),
-				}}
-			>
-				{props.title}
-			</span>{' '}
-			<span style={{ color: color.mutedForeground }}>{props.description}</span>
+			<StableLabel
+				text={props.title}
+				heavy={props.heavy}
+				color={color.foreground}
+				fade
+			/>{' '}
+			<span testId={props.testId} style={{ color: color.mutedForeground }}>
+				{props.description}
+			</span>
 		</text>
 	);
 }

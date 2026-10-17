@@ -31,7 +31,7 @@ light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 
 - **Cause:** `gpuix gap` (README "Missing features": variable-font axes).
 - **Original:** `fontVariationSettings` `wght 550, opsz 18` for the selected label, `wght 400, opsz 14` otherwise (`registry/default/lib/font-weight.ts:19-23`, `tabs.tsx:570-574`).
-- **Port:** static cuts, 600 selected and 400 otherwise, switching at once (`theme.ts:276-278`, `stable-label.tsx:23-27`).
+- **Port:** static cuts, 600 selected and 400 otherwise, switching at once (`theme.ts:276-278`, `stable-label.tsx:29-38`).
 - **gpuix lacks:** variable axes; only a font's default instance renders.
 - **Workaround:** the hidden 600 copy still reserves the width, so nothing shifts.
 - **Fidelity:** approximated (one weight step, no `opsz`).
@@ -41,7 +41,7 @@ light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 
 - **Cause:** `gpuix gap` (README "Missing features": `text-box-trim`).
 - **Original:** both label spans carry `[text-box:trim-both_cap_alphabetic]` (`tabs.tsx:557`, `:565`).
-- **Port:** the label is centred by its 20px line box (`stable-label.tsx:39-52`). For Inter that should land within a pixel of cap-centred; not measured.
+- **Port:** the label is centred by its 20px line box (`stable-label.tsx:52-62`). For Inter that should land within a pixel of cap-centred; not measured.
 - **gpuix lacks:** `text-box-trim` / `text-box-edge`.
 - **Workaround:** flex centring in the fixed-height tab.
 - **Fidelity:** approximated.
