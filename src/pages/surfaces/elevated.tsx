@@ -1,4 +1,4 @@
-import type { HostElement, HostMouseMoveEvent, StyleDesc } from '@gpuix/solid';
+import type { HostElement, HostMouseEvent, StyleDesc } from '@gpuix/solid';
 import { type Accessor, createContext, type JSX, useContext } from 'solid-js';
 import { shadow, surface } from '#/lib/theme';
 
@@ -28,7 +28,7 @@ export function Elevated(props: {
 	style?: StyleDesc;
 	testId?: string;
 	ref?: (element: HostElement) => void;
-	onMouseMove?: (event: HostMouseMoveEvent) => void;
+	onMouseMove?: (event: HostMouseEvent) => void;
 	children?: JSX.Element;
 }) {
 	const substrate = useSurface();

@@ -1,7 +1,7 @@
 import {
 	buttonProps,
 	type HostElement,
-	type HostMouseMoveEvent,
+	type HostMouseEvent,
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
@@ -353,7 +353,7 @@ function QueuedRow(props: {
 	onEdit: (item: QueuedMessage) => void;
 	onRemove: (item: QueuedMessage) => void;
 	onMove: (item: QueuedMessage, direction: -1 | 1) => void;
-	onDragMove: (item: QueuedMessage, event: HostMouseMoveEvent) => void;
+	onDragMove: (item: QueuedMessage, event: HostMouseEvent) => void;
 	testId?: string;
 }) {
 	const renderer = useGpuixRequired();
@@ -822,7 +822,7 @@ export function InputMessage(props: InputMessageProps) {
 		const from = queue().findIndex((queued) => queued.id === item.id);
 		moveQueuedTo(item, from + direction);
 	};
-	const dragQueued = (item: QueuedMessage, event: HostMouseMoveEvent) => {
+	const dragQueued = (item: QueuedMessage, event: HostMouseEvent) => {
 		if (queueList === undefined || event.y === undefined) return;
 		const bounds = queueList.getBoundingClientRect();
 		const stride = step().row + 4;

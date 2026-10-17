@@ -1,6 +1,6 @@
 import {
 	type HostElement,
-	type HostMouseMoveEvent,
+	type HostMouseEvent,
 	ResizeObserver,
 } from '@gpuix/solid';
 import { createEffect, createSignal, onCleanup } from 'solid-js';
@@ -193,7 +193,7 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 			sessionPending = true;
 			commit();
 		},
-		onMouseMove(event: Pick<HostMouseMoveEvent, 'x' | 'y'>) {
+		onMouseMove(event: Pick<HostMouseEvent, 'x' | 'y'>) {
 			if (event.x === undefined || event.y === undefined) {
 				throw new Error('mouseMove without coordinates');
 			}

@@ -1,4 +1,4 @@
-import type { HostElement, HostMouseMoveEvent } from '@gpuix/solid';
+import type { HostElement, HostMouseEvent } from '@gpuix/solid';
 import { createEffect, createSignal, For } from 'solid-js';
 import { onFrame } from '#/lib/clock';
 import { ComponentPreview, MONO } from '#/lib/doc-page';
@@ -31,7 +31,7 @@ function CostList(props: {
 	const hover = createFluidHover();
 	let container: HostElement | undefined;
 
-	const timePick = (event: HostMouseMoveEvent) => {
+	const timePick = (event: HostMouseEvent) => {
 		if (
 			container === undefined ||
 			event.x === undefined ||
@@ -82,7 +82,7 @@ function CostList(props: {
 					props.onInside(false);
 					hover.handlers.onMouseLeave();
 				}}
-				onMouseMove={(event: HostMouseMoveEvent) => {
+				onMouseMove={(event: HostMouseEvent) => {
 					props.onInside(true);
 					timePick(event);
 					hover.handlers.onMouseMove(event);

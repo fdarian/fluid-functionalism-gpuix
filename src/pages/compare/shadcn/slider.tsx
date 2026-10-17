@@ -2,7 +2,6 @@ import type {
 	DomEvent,
 	HostElement,
 	HostMouseEvent,
-	HostMouseMoveEvent,
 	KeyEvent,
 } from '@gpuix/solid';
 import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
@@ -60,7 +59,7 @@ export function ScSlider(props: {
 		setDragging(true);
 		valueAt(pointerX(event));
 	};
-	const onMove = (event: HostMouseMoveEvent) => {
+	const onMove = (event: HostMouseEvent) => {
 		if (dragging()) valueAt(pointerX(event));
 	};
 	const onRelease = () => setDragging(false);

@@ -1,4 +1,4 @@
-import type { HostMouseMoveEvent } from '@gpuix/solid';
+import type { HostMouseEvent } from '@gpuix/solid';
 import { createSignal, For, type JSX, Show } from 'solid-js';
 import { ScrollArea } from '#/components/scroll-area';
 import { Slider, type SliderValue } from '#/components/slider';
@@ -370,7 +370,7 @@ function LayerBox(props: {
 		props.ghost
 			? {}
 			: {
-					onMouseMove(event: HostMouseMoveEvent) {
+					onMouseMove(event: HostMouseEvent) {
 						event.stopPropagation();
 						setHoveredLevel(props.level);
 					},

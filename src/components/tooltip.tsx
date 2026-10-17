@@ -1,7 +1,7 @@
 import {
 	DismissableLayer,
 	type HostElement,
-	type HostMouseMoveEvent,
+	type HostMouseEvent,
 	motion,
 } from '@gpuix/solid';
 import {
@@ -110,7 +110,7 @@ export function Tooltip(props: {
 	const [followOffset, setFollowOffset] = createSignal({ x: 0, y: 0 });
 	let wrapper: HostElement | undefined;
 
-	const followPointer = (event: HostMouseMoveEvent) => {
+	const followPointer = (event: HostMouseEvent) => {
 		if (props.followCursor === undefined) return;
 		if (wrapper === undefined) throw new Error('Tooltip is not mounted');
 		const bounds = wrapper.getBoundingClientRect();
@@ -122,7 +122,7 @@ export function Tooltip(props: {
 		);
 	};
 
-	const onMouseMove = (event: HostMouseMoveEvent) => {
+	const onMouseMove = (event: HostMouseEvent) => {
 		followPointer(event);
 		trigger.onMouseMove(event);
 	};

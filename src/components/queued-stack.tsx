@@ -2,7 +2,6 @@ import {
 	AnimatePresence,
 	type HostElement,
 	type HostMouseEvent,
-	type HostMouseMoveEvent,
 	type HostPointerEvent,
 	type MotionTransition,
 	motion,
@@ -151,7 +150,7 @@ export function QueuedStack(props: {
 	onCleanup(() => widthObserver.disconnect());
 	const cardWidth = () => Math.max(0, (stackWidth() ?? 0) - GUTTER * 2);
 
-	const onDragMove = (event: HostMouseMoveEvent) => {
+	const onDragMove = (event: HostMouseEvent) => {
 		const downId = pointerDownId();
 		if (downId === null) return;
 		if (event.y === undefined) throw new Error('mouseMove without coordinates');
@@ -402,7 +401,7 @@ function QueueCard(props: {
 	dragging: () => boolean;
 	expanded: () => boolean;
 	onPress: (event: HostMouseEvent) => void;
-	onDragMove: (event: HostMouseMoveEvent) => void;
+	onDragMove: (event: HostMouseEvent) => void;
 	onRelease: () => void;
 	onEdit: () => void;
 	onRemove: () => void;

@@ -2,7 +2,7 @@ import {
 	createReducedMotion,
 	type DomEvent,
 	type HostElement,
-	type HostMouseMoveEvent,
+	type HostMouseEvent,
 	type KeyEvent,
 	motion,
 	ResizeObserver,
@@ -291,7 +291,7 @@ export function AccordionGroup(props: RootProps) {
 						mouseInside = true;
 						hover.handlers.onMouseEnter();
 					}}
-					onMouseMove={(event: HostMouseMoveEvent) => {
+					onMouseMove={(event: HostMouseEvent) => {
 						// The pointer over an open panel belongs to no row.
 						if (contentOver !== null) return;
 						hover.handlers.onMouseMove(event);

@@ -1,6 +1,6 @@
 import {
 	type HostElement,
-	type HostMouseMoveEvent,
+	type HostMouseEvent,
 	useGpuixRequired,
 } from '@gpuix/solid';
 
@@ -53,7 +53,7 @@ export function createScriptedPointer(root: () => HostElement | undefined) {
 		const handler = element.props.get(type);
 		if (typeof handler !== 'function') return;
 		const eventType = type.slice('on'.length).toLowerCase();
-		const event: HostMouseMoveEvent = {
+		const event: HostMouseEvent = {
 			elementId: element.id,
 			eventType,
 			type: eventType,

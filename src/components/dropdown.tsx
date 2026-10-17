@@ -2,7 +2,7 @@ import {
 	type DomEvent,
 	type HostDomEvent,
 	type HostElement,
-	type HostMouseMoveEvent,
+	type HostMouseEvent,
 	type KeyEvent,
 	motion,
 } from '@gpuix/solid';
@@ -146,7 +146,7 @@ function MenuBody(props: {
 	paddingTop?: number;
 	handlers: {
 		onMouseEnter: () => void;
-		onMouseMove: (event: HostMouseMoveEvent) => void;
+		onMouseMove: (event: HostMouseEvent) => void;
 		onMouseLeave: () => void;
 	};
 	children: JSX.Element;
