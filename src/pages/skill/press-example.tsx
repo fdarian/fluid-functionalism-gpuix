@@ -173,7 +173,7 @@ function SkillButton(props: { index: number; press: PressProps }) {
 				{...buttonProps({}, renderer)}
 				{...pressHandlers(props.index, props.press, setHovered)}
 				initial={false}
-				animate={{ boxShadow: fill(surface(), down() ? 0 : 1) }}
+				animate={fill(surface(), down() ? 0 : 1)}
 				transition={{ duration: down() ? 0.08 : 0.18 }}
 				style={{
 					flexGrow: 1,

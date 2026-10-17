@@ -73,14 +73,14 @@ interface Surface {
  */
 const surfaces = (): Record<ButtonVariant, Surface> => ({
 	primary: {
-		rest: { boxShadow: fill(color.foreground, 1) },
-		hover: { boxShadow: fill(color.primaryHover, 1) },
-		active: { boxShadow: fill(color.primaryActive, 0), ...pressFade },
+		rest: fill(color.foreground, 1),
+		hover: fill(color.primaryHover, 1),
+		active: { ...fill(color.primaryActive, 0), ...pressFade },
 	},
 	secondary: {
-		rest: { boxShadow: fill(color.tint, 1) },
-		hover: { boxShadow: fill(color.tintHover, 1) },
-		active: { boxShadow: fill(color.tint, 0), ...pressFade },
+		rest: fill(color.tint, 1),
+		hover: fill(color.tintHover, 1),
+		active: { ...fill(color.tint, 0), ...pressFade },
 	},
 	tertiary: {
 		rest: {
@@ -98,9 +98,9 @@ const surfaces = (): Record<ButtonVariant, Surface> => ({
 		},
 	},
 	ghost: {
-		rest: { boxShadow: fill('transparent', 1) },
-		hover: { boxShadow: fill(color.hover, 1) },
-		active: { boxShadow: fill(color.active, 0), ...pressFade },
+		rest: fill('transparent', 1),
+		hover: fill(color.hover, 1),
+		active: { ...fill(color.active, 0), ...pressFade },
 	},
 });
 

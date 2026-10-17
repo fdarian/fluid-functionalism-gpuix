@@ -213,9 +213,9 @@ function SendButton(props: {
 				opacity: props.disabled ? 0.5 : 1,
 				pointerEvents: props.disabled ? 'none' : undefined,
 				...surfaceFade,
-				boxShadow: fill(color.foreground, 1),
-				hover: { boxShadow: fill(color.primaryHover, 1) },
-				active: { boxShadow: fill(color.primaryActive, 0), ...pressFade },
+				...fill(color.foreground, 1),
+				hover: fill(color.primaryHover, 1),
+				active: { ...fill(color.primaryActive, 0), ...pressFade },
 				focusVisible: focusRing(1),
 			}}
 		>
