@@ -191,7 +191,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [scrollbars-page](drift/scrollbars-page.md) | 1 | 4 | 2 | 1 | 8 |
 | [select](drift/select.md) | 7 | 3 | 5 | 2 | 17 |
 | [sidebar](drift/sidebar.md) | 1 | 8 | 19 | 1 | 29 |
-| [site](drift/site.md) | 7 | 11 | 21 | 6 | 45 |
+| [site](drift/site.md) | 6 | 11 | 21 | 6 | 44 |
 | [sizes-page](drift/sizes-page.md) | 0 | 5 | 2 | 4 | 11 |
 | [skill-page](drift/skill-page.md) | 3 | 5 | 0 | 1 | 9 |
 | [slider](drift/slider.md) | 5 | 3 | 2 | 1 | 11 |
@@ -204,7 +204,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
 | [tooltip](drift/tooltip.md) | 4 | 5 | 1 | 1 | 11 |
 | [typography](drift/typography.md) | 4 | 0 | 1 | 6 | 11 |
-| **Total** | **141** | **201** | **198** | **63** | **603** |
+| **Total** | **140** | **201** | **198** | **63** | **602** |
 
 ### gpuix gaps across components
 
@@ -322,7 +322,7 @@ now does that the port has not picked up.
 | Tailwind `shadow-sm` to `shadow-xl` | `twShadow` (`src/lib/theme.ts`): both drops of each, as the CSS strings | Exact |
 | `color-mix(in oklab, …)`, `light-dark()` | both columns kept as a token table; the scheme is a signal | Exact |
 | `prefers-color-scheme` ("System" theme) | `createAppearance()` reads the OS appearance and `bindSystemScheme` feeds it to the `scheme` token. System / Light / Dark are one `themeChoice` signal, and `renderer.setAppearance` mirrors Light / Dark so the native chrome follows | Exact in the window and on the test renderer, which honours `appearance` and `setAppearance` |
-| `prefers-reduced-motion`, `<MotionConfig reducedMotion="user">`, `useReducedMotion()` | `App` wraps the tree in gpuix's `<MotionConfig reducedMotion="user">`, which makes every `motion.*` position and size property jump (opacity and colour keep fading). Where the source reads `useReducedMotion()` itself, the port reads `createReducedMotion()` at the same site: the fluid highlight, the accordion panel, the banner, the carousel timer, the thinking indicator, the command-menu scroll and the scripted demos. Pinned by `scripts/check-reduced-motion.tsx` | Approximated: gpuix reduces layout properties the source animates (`drift/site.md`); the OS setting is read on macOS only |
+| `prefers-reduced-motion`, `<MotionConfig reducedMotion="user">`, `useReducedMotion()` | `App` wraps the tree in gpuix's `<MotionConfig reducedMotion="user">`, which makes `width`, `height`, `top`, `right`, `bottom`, `left` and layout glides jump and leaves padding, margin, opacity, colours and radii animating: Motion's rule less the transforms the port does not have, so the tabs pills, the collapses and every other `motion.*` size and position animation land as the source's do. Where the source reads `useReducedMotion()` itself, the port reads `createReducedMotion()` at the same site: the fluid highlight, the accordion panel's fade, the banner, the carousel timer, the thinking indicator, the command-menu scroll and the scripted demos; the thinking-steps chevron too, a JS tween the config does not reach. What the source drives by CSS transition or by `animate()` on a motion value is not reduced there, so the scrollbar thumb and the switch thumb's slide sit in a nested `reducedMotion="never"` config. Pinned by `scripts/check-reduced-motion.tsx` | Exact for the properties; the OS setting is read on macOS only |
 | Base UI `Positioner` (flip, `--anchor-width`, `--available-height`) | `<anchored fit="flip" deferred>`: gpuix picks the side and reports it with the room left (`onPlacement`), and `PopupSurface` caps the card to that room, slides from the reported side and is at least the trigger's width | Equivalent |
 | `ScrollArea` (hover thumb, scroll fade) | a plain `overflowY: "scroll"` on the combobox list (Dropped); the sidebar's content is a ported `ScrollArea` with the fade and the end hairline | Dropped for the combobox; exact for the site nav |
 | `getBoundingClientRect` | `element.getBoundingClientRect()`, read when needed (layout is flushed first, so it is never stale) | Native |
