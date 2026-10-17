@@ -44,12 +44,12 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Fidelity:** exact.
 - **Components it hits:** combobox, color-picker.
 
-## Implicit submission does not validate
+## Implicit submission needs a lone input
 
 - **Cause:** `gpuix gap`.
 - **Original:** Enter in a form control submits and an empty `required` select blocks it and takes focus.
 - **Port:** only `form.requestSubmit()` validates; the demo calls it from the Submit button (`demos/select.tsx:285`).
-- **gpuix lacks:** implicit-submission validation and `SubmitEvent.submitter` (README Bugs row "select, combobox" and Missing features "combobox, select (any form)").
+- **gpuix lacks:** a submit button (`SubmitEvent.submitter` is always `null`), so a form with two or more `<input>`s does not submit on Enter (gpuix `README.md:3602-3609`): the demo's form holds the Name input and the Select's `FormValue` input. Enter in a lone empty `required` `<input>` does validate now (README Bugs row "select, combobox"; `drift/combobox.md`).
 - **Workaround:** `requestSubmit()`.
 - **Fidelity:** exact for `requestSubmit()`, dropped for implicit submission.
 - **Components it hits:** combobox.

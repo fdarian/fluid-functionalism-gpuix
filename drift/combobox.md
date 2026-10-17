@@ -26,12 +26,12 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Fidelity:** exact.
 - **Components it hits:** select, color-picker (any control that is not an input and submits a value).
 
-## Implicit submission does not validate, and there is no submit button
+## Implicit submission needs a lone input, and there is no submit button
 
 - **Cause:** `gpuix gap`.
 - **Original:** a `<button type="submit">`, or Enter in a form control, submits the form; an empty `required` control blocks it, fires `invalid` and takes focus.
 - **Port:** the demo's Submit button calls `form.requestSubmit()` (`src/demos/combobox.tsx:275-282`).
-- **gpuix lacks:** a submit button (`SubmitEvent.submitter` is always `null`, `packages/native/js/host.ts:1370`), and Enter in a form `<input>` with an empty `required` control does nothing instead of validating; only `requestSubmit()` validates. A form with two or more `<input>`s does not submit on Enter at all (gpuix `README.md:3602-3609`), and a combobox with `name` or `required` adds `FormValue` as a second input, so Enter in it never submits.
+- **gpuix lacks:** a submit button (`SubmitEvent.submitter` is always `null`, `packages/native/js/host.ts:1370`), so HTML's fallback applies: a form with two or more `<input>`s does not submit on Enter at all (gpuix `README.md:3602-3609`). Enter in a lone `<input>` does validate and submit now (measured on the test renderer: an empty `required` one fires `invalid`, a filled one submits). A combobox with `name` or `required` adds `FormValue` as a second input, so Enter in it never submits.
 - **Workaround:** `requestSubmit()` from a button.
 - **Fidelity:** exact for `requestSubmit()`, dropped for implicit submission.
 - **Components it hits:** select, any form in a demo.

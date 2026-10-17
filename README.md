@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 589 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 588 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -174,7 +174,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [command-menu](drift/command-menu.md) | 6 | 2 | 12 | 2 | 22 |
 | [compare](drift/compare.md) | 3 | 8 | 1 | 2 | 14 |
 | [concepts](drift/concepts.md) | 3 | 26 | 2 | 1 | 32 |
-| [dialog](drift/dialog.md) | 4 | 2 | 2 | 1 | 9 |
+| [dialog](drift/dialog.md) | 3 | 2 | 2 | 1 | 8 |
 | [dropdown](drift/dropdown.md) | 4 | 5 | 11 | 1 | 21 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
 | [fluid-hover](drift/fluid-hover.md) | 3 | 5 | 2 | 2 | 12 |
@@ -205,7 +205,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
 | [tooltip](drift/tooltip.md) | 3 | 5 | 1 | 1 | 10 |
 | [typography](drift/typography.md) | 6 | 0 | 1 | 5 | 12 |
-| **Total** | **128** | **199** | **200** | **62** | **589** |
+| **Total** | **127** | **199** | **200** | **62** | **588** |
 
 ### gpuix gaps across components
 
@@ -223,12 +223,10 @@ offer it. A count is given only where the code shows it.
 | introduction (the commands, `drift/introduction.md`) | `width: "fit-content"` on a box whose child is `width: 100%`: the child takes the parent's available width, so the box fills the column. CSS Sizing treats the percentage as cyclic: it contributes nothing to the hug, then resolves against the hugged width. A `fit-content` box with no percentage child hugs correctly (the carousel dots, the thinking steps, the changelog button). Measured on the test renderer: `InputCopy` in a 600px column came out 600px wide, not 304px | `alignSelf: "flex-start"` on a wrapper, which hugs in a column parent (`src/pages/introduction.tsx:94-99`) |
 | introduction (the code block, `drift/introduction.md`) | `maxWidth: "100%"` does not clamp a `width: "fit-content"` box whose content cannot shrink (a `<pre>` of one long line): the box grows past its parent and draws no scrollbar, where CSS `max-width` clamps it and `overflow-x: auto` scrolls. Measured: a block about 617px wide in a 600px column | `alignSelf: "flex-start"` with `maxWidth: "100%"` and `overflowX: "scroll"` (`src/pages/introduction.tsx:160-162`) |
 | slider | Values derived in JS (`createTransform` of several values) still trail their inputs by one frame (FORK.md:1262-1263) | none (`drift/slider.md`) |
-| accordion, banner, button, carousel-dots, chat-message, input-copy, input-message, tabs, tabs-subtle, thinking-steps (all use `buttonProps`) | `buttonProps` handles keydown on the way up, so a `buttonProps` element nested in another is clicked twice on Enter: the inner one clicks itself and the outer one clicks the same target. The fix is to act only when `target === currentTarget` | none; nested cases are not counted |
-| select, combobox | Enter in a form `<input>` with an empty `required` control does nothing; HTML implicit submission validates, sets `invalid` and moves focus. Only `requestSubmit()` validates | The demos submit through `requestSubmit()` |
+| select, combobox | Enter in a form with two or more `<input>`s submits nothing: gpuix has no submit button, so HTML's fallback applies (gpuix `README.md:3602-3609`), and `FormValue` is a second `<input>` in every form that names a Select or Combobox. Enter in a lone `<input>` does validate and submit (an empty `required` one fires `invalid`; measured on the test renderer) | The demos submit through `requestSubmit()` |
 | any `<input>` with `textAlign: "right"` (the Button playground's Label field) | The style is accepted and does nothing in the test renderer (`drift/button.md`, "Playground: no Active switch, Label field not right-aligned"); unverified in a live window | none: left-aligned |
 | dropdown search field | A sticky box with a negative margin is held at its parent's content box, not at the border box the margin puts it (`drift/dropdown.md`, "Search field is a child of the scroller"): a `marginTop: -4` child of a `padding: 4` parent sits 4px low until the scroller moves it. Measured on the test renderer | The field is the scroller's first child, ahead of the padded list |
-| tooltip and dialog demos | After a failed script run Bun aborts with `thread local panicked on drop` | none; the harness only |
-| screenshots, app-frame | The test renderer ignores the window options (titlebar, traffic lights) | Captures show no traffic lights |
+| screenshots, app-frame | The test renderer opens its window with the options, but a capture is the view alone: no titlebar or traffic lights (gpuix `README.md:7059-7061`) | Captures show no traffic lights |
 | screenshots | Batched keystrokes deliver an input's `onChange` after the whole batch | none |
 
 #### Missing features
@@ -279,7 +277,7 @@ Quirks of this repo's own code, kept apart from the gpuix gaps above.
 - **Dialog.** gpuix's `Dialog` unmounts the instant `open` goes false, so `createDialogRoot`'s `mounted`
   (base-ui-solid-gpuix) outlives `open` and keeps the content through the fade. A non-modal dialog keeps its scrim, as in the source: gpuix's portal sets `pointerEvents: "none"` on a non-modal layer, so the backdrop opts back in with `"auto"`, and an outside press, the trigger included, lands on it and closes the dialog without reaching the page.
 - **Screenshots run on the test renderer** (`scripts/screenshots.tsx`).
-  - Captures show no traffic lights or native titlebar, because the test renderer ignores the window options.
+  - Captures show no traffic lights or native titlebar, because a test-renderer capture is the view alone.
   - The window is created with `appearance: "dark"` and the theme stays on System, so `initial.png` and every
     scenario capture are dark through `createAppearance`; `light.png` switches the theme with the real select, which
     calls `setAppearance("light")`. The script asserts `getAppearance()` for both and throws if the window disagrees.

@@ -14,12 +14,12 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** dropped (extra chrome around every page).
 - **Components it hits:** every page.
 
-## The test renderer ignores the window options
+## The test renderer's captures show no window chrome
 
 - **Cause:** `gpuix gap`.
 - **Original:** n/a, this is about the harness.
 - **Port:** the real window sets `titlebarTransparent` and `trafficLightX/Y` (`src/main.tsx:16-18`).
-- **gpuix lacks:** the offscreen test window has no traffic lights or titlebar: it ignores those options. Its appearance does follow `appearance` and `setAppearance` now (`~/code/fdarian/gpuix/FORK.md:1277-1283`), so the theme is no longer a gap.
+- **gpuix lacks:** the offscreen test window is opened with those options (`titlebarTransparent` makes it frameless, the traffic-light position is set on the native window and cannot be read back: gpuix `README.md:7059-7061`), but a capture is the view alone, with no titlebar or traffic lights. Its appearance does follow `appearance` and `setAppearance` now (`~/code/fdarian/gpuix/FORK.md:1277-1283`), so the theme is no longer a gap.
 - **Workaround:** none for the chrome. The screenshots create the window Dark and map `setAppearance("system")` to dark, because `System` would hand it back to the host's own setting (`scripts/screenshots.tsx:51-61`); `light.png` flips the theme through the real select, or by code on a full-layout page or one with its own rail (`:246-266`), and asserts `getAppearance()` for both.
 - **Fidelity:** approximated (captures show the frame without the traffic lights).
 - **Components it hits:** every demo capture.
@@ -189,7 +189,7 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Original:** `color-scheme: light dark` plus `light-dark()` tokens; a `.light` / `.dark` class on `<html>` pins one (`app/globals.css:46-50, 184-225`).
 - **Port:** both columns kept as a token table, resolved by the `scheme()` signal; `bindSystemScheme(createAppearance())` feeds "system", and `renderer.setAppearance(themeChoice())` makes the native chrome follow (`src/lib/theme.ts:83-193, 200-249`, `src/app.tsx:510-526`). Token values match the source in both columns (checked: surfaces 1 to 8, foreground, muted, accent, status, checker, hover, active, tint); `--ring` and `--input` have no port token.
 - **Workaround:** n/a.
-- **Fidelity:** exact in the window; see "The test renderer ignores the window options" for captures.
+- **Fidelity:** exact in the window; see "The test renderer's captures show no window chrome" for captures.
 - **Components it hits:** every component.
 
 ## Static font weights and no `opsz`
