@@ -1,11 +1,11 @@
 ---
 type: decision record
 title: Port decisions and their reasons
-description: Why the Fluid Functionalism port to gpuix uses native springs, native hover states, a single fluid highlight, shadow-based press-shrink, static Inter, createAppearance theming, Bun.Glob demo discovery, the drift/ convention, the screenshot and check-* harness, and its pnpm, tsconfig and Biome settings.
+description: Why the Fluid Functionalism port to gpuix uses native springs, native hover states, a single fluid highlight, a single-quad press-shrink fill, static Inter, createAppearance theming with a transient cross-fade layer, Bun.Glob demo discovery, the drift/ convention, the screenshot and check-* harness, and its pnpm, tsconfig and Biome settings.
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-17T00:13:20.113Z
+    at: 2026-10-17T05:21:14.095Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -31,13 +31,15 @@ sources:
     resource: repo://src/lib/fonts.ts
   - id: openwiki-source-a69db96d312e49d2e9f03b5a
     resource: repo://src/lib/playground.tsx
-  - id: openwiki-source-3b294898e2170781e8b07475
-    resource: repo://src/lib/press.ts
+  - id: openwiki-source-0f590d21e6a23d6af00e8e17
+    resource: repo://src/lib/press.tsx
+  - id: openwiki-source-d5126066c122ba41a6591f24
+    resource: repo://src/lib/theme-fade.tsx
   - id: openwiki-source-1a25dd521e50a4d59274e1c2
     resource: repo://src/lib/theme.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-17T00:13:20.113Z" }
+generated: { by: "claude-code", at: "2026-10-17T05:21:14.095Z" }
 ---
 
 # Port decisions and their reasons
@@ -87,13 +89,26 @@ the primitive's highlight is controlled from `hover.activeIndex`, and a keyboard
 the scroll it causes does not re-pick a row under a stationary pointer. See
 [Base UI extraction](../history/base-ui-extraction.md).
 
-## Press-shrink through an inset box shadow
+## Press-shrink through one fill quad
 
-The source shrinks a button on press with a layer inset 1px plus a same-colour `box-shadow` spread. gpuix
-reproduces this: the surface carries a spread-1 shadow of its fill colour, and `active` sets spread 0. Because gpuix
-paints an outer shadow under the whole box with no knock-out, a translucent fill (`--tint`, `bg-hover`) placed over
-the shadow would double up, so translucent fills are drawn as the shadow alone, with no `backgroundColor`. The
-tertiary variant's inward-moving ring uses an outline offset (0 at rest, -1 pressed) instead.
+The source shrinks a button on press with a layer inset 1px plus a same-colour `box-shadow` spread. The port does
+not copy the shadow. A filled button holds a `PressFill`: one absolutely positioned box, 1px outside the pressable
+at rest, whose four edges the press pulls in to the pressable's own. The reasons, in the order they were found:
+
+- **The first port used a spread shadow, drawn as the shadow alone.** gpuix then painted an outer shadow under the
+  whole box with no knock-out, so a translucent fill (`--tint`, `bg-hover`) placed over it would have doubled up.
+  Drawing translucent fills as the shadow alone avoided the doubling.
+- **That left a seam.** Fill and ring were two primitives that antialias separately, so every rounded corner and pill
+  end showed a thin grey ring. One quad has no seam.
+- **gpuix now paints an outer shadow only outside the border box** (Round 5 item #20), which makes the original
+  background-plus-spread recipe legal again. The port kept the single quad anyway: it is seamless, and the cards
+  that had an opaque page-colour fill under their shadow to hide the doubling lost that fill instead.
+- **The label must paint over the fill without a `zIndex`.** A negative `zIndex` on the fill and a stacking context
+  on the button was the first arrangement; the port now follows the source: the label is a `position: relative` box
+  after the fill in the tree.
+
+Cost: a quad's edges land on whole device pixels, so the 1px pull-in is one step where the source's spread eases
+through partial coverage. The tertiary variant's inward-moving ring is an outline offset (0 at rest, -1 pressed).
 
 ## Fonts: static Inter cuts
 
@@ -110,6 +125,19 @@ and the scheme is a signal so JSX re-colours on change. "System" follows the OS 
 and `renderer.setAppearance` mirrors an explicit Light/Dark so the native window chrome follows. Default is System.
 A consequence: tokens must be read inside JSX or a function, never at module scope, or they freeze at one scheme.
 
+**The theme cross-fade is a transient universal layer.** The source fades every colour for 180 ms by adding a
+`.transitioning` class for 200 ms around the swap. The port mounts a `UniversalStyle` (a gpuix `* {}` layer) in
+`src/lib/theme-fade.tsx`, flips the palette 20 ms later, and removes the layer 200 ms after that. Three details are
+easy to break:
+
+- **The lead frame is required.** An element that first gains a `transition` in the same change as its colour jumps
+  instead of easing, so the layer has to be in before the palette moves (the source forces a reflow for the same
+  reason).
+- **Only user actions fade.** `changeTheme` is the user path; captures and tests call `setThemeChoice` directly and
+  cut at once. The layer exists only during a change, so first paint never fades.
+- **Only three properties ease** (`background-color`, `color`, `border-color`): gpuix does not animate `fill` or
+  `stroke`, which the source also lists.
+
 ## Demo discovery through Bun.Glob
 
 During the 2026-10-13 fan-out, six agents ported components in parallel in one tree. To keep them from colliding on
@@ -118,8 +146,7 @@ only its own three files (component, demo, drift entry). Adding a demo file need
 
 ## drift/ and its Cause values
 
-<!-- openwiki: broken internal link [../../drift] file "../../drift" does not exist. Fix the href or restore the target, then delete this comment. -->
-Each component or page has a file in [`drift/`](../../drift) listing every place the port looks or behaves
+Each component or page has a file in `drift/` listing every place the port looks or behaves
 differently from the source, with source and port `file:line`. It started as `limitations/` (gpuix gaps only) and
 was renamed on 2026-10-16 (`a2d666c`, merged in `037f742`) when the audit widened to every difference, whatever its
 cause. Every entry has a **Cause**: `gpuix gap` (gpuix lacks it or gets it wrong), `port choice` (different on

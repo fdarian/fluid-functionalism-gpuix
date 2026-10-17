@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:ac1110223ac6c31d9ec42b180a293a2a35fe5e2bd13f38be339f8a67cabedf65",
+  "pageVersion": "sha256:5b7595c34d24f92325b81b1934c84a3905a61fce58305df6358fd2989650e8db",
   "claims": [
     {
       "id": "claim_8f689a7df6cd43af9e228cffa0828120",
       "statement": "The README's gpuix gaps section is the authoritative list of gpuix bugs and missing features the port works around, each with the components it hits and the workaround.",
       "evidence": [
         {
-          "resource": "repo://README.md#L208-L267",
-          "version": "repo-lines-v1:sha256:1576d383783a7687f63e3ee5890d595020d33ada4b5b867c9c2094f9844e364b:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczYjM3NDBjZTRjM2RlYTIzYWUxOWQwYTY4YWU3YmYxNmY1OTkxMmZlN2U5ODMwY2EwOGJhOGFiNTdhOGM5NTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3NzUzMjllNGM4ZGZjZDZjM2RjNDhiOWYyNTViYTEyMTNlMTYxOTljMmRkN2VhMGQ0YzI3Nzk3OGI5NjE0YjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVlZDIwYmE0YmY1ZGFlOTUyZjIwNDkzODRmMDQ3MjY2YTY5ZDI3YzY0ZGM4NzQ4MzY5MWEyNzJiMGI3YjAyYjgifQ"
+          "resource": "repo://README.md#L210-L261",
+          "version": "repo-lines-v1:sha256:9d53bc510ca058053c93fbac4a4338a30dacc9c43aadf58ee63d85f787211d00:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc1MzI3MGI3MGRjNmQ5ZGVlYTdmMjRjOTFjNGVlNjk2ZDk3MmEwYzYyYTBjNmMxNjZmMWQ1ZDUyMmU5YTE0NjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5MGQyZTdlM2VlZjk3NTM0MjU5MzM1NGY1ODFiYTRlZGMxMWNjZmI5OGZmYTFhODEzYmUzZTAwMzFmNGMzNzUifQ"
         }
       ]
     },
@@ -17,8 +17,8 @@
       "statement": "Without CSS transforms, popups keep an opacity fade and slide but lose the scaleY entrance, and glyph turns are swapped or redrawn.",
       "evidence": [
         {
-          "resource": "repo://README.md#L237-L237",
-          "version": "repo-lines-v1:sha256:6a7ba0b322c62c85d39f077a60e7a69b54a43c58123a0825fa45017a59102e89:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmE3YmEwYjMyMmM2MmM4NWQzOWYwNzdhNjBlN2E2OWI1NGE0M2M1ODEyM2EwODI1ZmE0NTAxN2E1OTEwMmU4OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmE3YmEwYjMyMmM2MmM4NWQzOWYwNzdhNjBlN2E2OWI1NGE0M2M1ODEyM2EwODI1ZmE0NTAxN2E1OTEwMmU4OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDg1MWNhYzQ4ODYxY2Y1NTI4ZDEyM2EwZmNlYjY2Njg5YjY4ZDcwMWI5NzViNjU4MmY5YzU1NDZhNjIzYzNkYSJ9"
+          "resource": "repo://README.md#L236-L236",
+          "version": "repo-lines-v1:sha256:cbd246c5db600089aef42e4e4681e787a69b782f7f30575af57c2f7c1defffd9:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2JkMjQ2YzVkYjYwMDA4OWFlZjQyZTRlNDY4MWU3ODdhNjliNzgyZjdmMzA1NzVhZjU3YzJmN2MxZGVmZmZkOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2JkMjQ2YzVkYjYwMDA4OWFlZjQyZTRlNDY4MWU3ODdhNjliNzgyZjdmMzA1NzVhZjU3YzJmN2MxZGVmZmZkOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzNmMmU1MGMzZTRiMjE2ZmFhMzU5YjZkOWUxZmRjZGU1YWVlN2ZkNDNjMzIyNjdjODUzOTc5ZGUyYTFmOGIxOSJ9"
         }
       ]
     },
@@ -27,7 +27,7 @@
       "statement": "Because gpuix does not cull clipped content, long demo pages hide cards far from the scroller with display none.",
       "evidence": [
         {
-          "resource": "repo://README.md#L248-L248",
+          "resource": "repo://README.md#L245-L245",
           "version": "repo-lines-v1:sha256:38c45eea5cb0f0ac2eec4143e6e3899be6c9b0c62c8d5c68e158ab4c95ab8e94:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzhjNDVlZWE1Y2IwZjBhYzJlZWM0MTQzZTZlMzg5OWJlNmM5YjBjNjJjOGQ1YzY4ZTE1OGFiNGM5NWFiOGU5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzhjNDVlZWE1Y2IwZjBhYzJlZWM0MTQzZTZlMzg5OWJlNmM5YjBjNjJjOGQ1YzY4ZTE1OGFiNGM5NWFiOGU5NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjQzN2VmYThhNWRiNzllMTFkMzg3ZDE4OWYxN2YxZjM2NTI0ODE1N2RjNTI0MDAwMTEzY2IxNjNjM2ZhOTdlZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWY5MGI1MDEzMmMxMGNiYTczYWZlNTBmODhiZGIwOTUyNTEwODdiMDEwZmYxYTY0MjAwOWM4NDNmZWRmMzcwNCJ9"
         }
       ]
@@ -43,32 +43,56 @@
       ]
     },
     {
-      "id": "claim_978c36aed01b4f9a97936e8bf776c7fe",
-      "statement": "The port still ships its own navigator.clipboard declaration, so the Round 5 adoption (gpuix now declares it) has not happened yet.",
-      "evidence": [
-        {
-          "resource": "repo://README.md#L238-L238",
-          "version": "repo-lines-v1:sha256:a104b49eb9c6419b847b3e76c40a550b69dbc5d28d5eee9a8119c313d3e80cb0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTEwNGI0OWViOWM2NDE5Yjg0N2IzZTc2YzQwYTU1MGI2OWRiYzVkMjhkNWVlZTlhODExOWMzMTNkM2U4MGNiMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTEwNGI0OWViOWM2NDE5Yjg0N2IzZTc2YzQwYTU1MGI2OWRiYzVkMjhkNWVlZTlhODExOWMzMTNkM2U4MGNiMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjllMzFmZmZlYzFmZWY1ZmVkMWFjMWY4MGFkY2ZjMDBjYTViOTczMGU3MDNlNDk4NDhiZjM5OWZjNmMyNDU0YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTM3MzJhZmQ0OTkzNGQ3ZDBkMzdmNjc2ZWM5ZWE0OWVmNWNkZTlmMGZhYThiMDkyZWIyMjdkMmM0YTJmYmZkMiJ9"
-        },
-        {
-          "resource": "repo://src/navigator.d.ts",
-          "version": "repo-file-v1:sha256:07888533460b0157e48b42b87603d1f74dea4d6ba9a26699bb5644d6cd46ff5c"
-        }
-      ]
-    },
-    {
       "id": "claim_3b0b5b6c62d54e0f975b6102acc49606",
       "statement": "On Windows and Linux, preventDefault on mousedown arrives after native focus has moved, so a press on a command-menu tab still blurs the field; macOS applies it.",
       "evidence": [
         {
-          "resource": "repo://README.md#L219-L219",
-          "version": "repo-lines-v1:sha256:a487eb50fe5b1297c6fb5ae9f1bd27f057e6758d957d06cd2493c27c279c3d68:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTQ4N2ViNTBmZTViMTI5N2M2ZmI1YWU5ZjFiZDI3ZjA1N2U2NzU4ZDk1N2QwNmNkMjQ5M2MyN2MyNzljM2Q2OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTQ4N2ViNTBmZTViMTI5N2M2ZmI1YWU5ZjFiZDI3ZjA1N2U2NzU4ZDk1N2QwNmNkMjQ5M2MyN2MyNzljM2Q2OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjkyNDIxNGM1ZTY0NjNjYjhjNDNlNmQ0MzE0Mjg2YmE0NDZhNjMxYjE1N2Y0ZWE3ODg0NmRlMWQwNGEzZTMxNCJ9"
+          "resource": "repo://README.md#L221-L221",
+          "version": "repo-lines-v1:sha256:f40c8816a7a0442c499584f02cdc1425a87cc19d68d5b05772ace28782db842f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjQwYzg4MTZhN2EwNDQyYzQ5OTU4NGYwMmNkYzE0MjVhODdjYzE5ZDY4ZDViMDU3NzJhY2UyODc4MmRiODQyZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjQwYzg4MTZhN2EwNDQyYzQ5OTU4NGYwMmNkYzE0MjVhODdjYzE5ZDY4ZDViMDU3NzJhY2UyODc4MmRiODQyZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzA0MzY4ODU2MzliODdiNWI4NjFkZGUxMGVkNjdkM2UwMTMxN2IzMDZmYThiMmU2NWYxNDhhMjA4NTllMDE0NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_fe9e7f35d24f40c7b41eba25ff6c39b5",
+      "statement": "Popups are content-sized with the trigger's width as a minimum, and a vertical-only ScrollArea lets a consumer override its content box through contentStyle, which SidebarContent uses to keep labels truncating.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/scroll-area.tsx#L240-L250",
+          "version": "repo-lines-v1:sha256:7a8cd63fc222865b86703d43145312183b32c13b619b399e2405cc4e2c7dd13a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExYjU2MGJkOTliMTI3MmE4YTQ5MDBhZDcyOWI0YjliNDk3ZjJiMzExY2U0Yjg4Zjg2ZTFlZmE4NWI4ZWYwZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxZjA0ZDYzMDE2NDc2M2E2OTNhNGFkMTY1YmE5ODY0NjI2NjU2MGUxYTE1NjA3OTY0MTNkYmE5OTA1Y2IzMzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljYzc1ODhhNDYwYzUxZGJmN2QzNzYxYzJlOWE1YjUwNTU1YmUxZmQ3YTkyODA4ODFmMTE0OTQzZGVjNjk3ZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNlYWE1MGU5YmZmZjc2Mzg1MWY2ZWE5ZjkwZjhjZmVmMjU3ZWUyNmE5MDgzMGM2NGQ1NTEzNWFiN2IzYjM0MWQifQ"
+        },
+        {
+          "resource": "repo://src/components/sidebar.tsx#L610-L622",
+          "version": "repo-lines-v1:sha256:ccbb8fdce59db9fcaef6b89cae662b6ff574618d2bd51f2ebc6cf416316eebe9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyMTYwNTE4NDU2MTkxM2U4M2I3MjZiMTQ5MDYzMTA0N2NmM2E2NjM5MjFhZWY1ZWVhNWZjOWMzZGE4YWNkNmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhMWExMTg3YzRlNjcwNTgwZDYyYTg0ZjMzMWY3ODg1ZTMwNWZiZDQ5ODAwZDZlOTRmZTVlYzZmM2JkZjNmMzUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2NDQzYjY4MDUyMDM3MTljMGY2YjNkZDFhNTg4ZTljMWVmNzJjYWQyYWMxZjc0NjZlYzlmMmYwYTM3OGNmYTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdhMjJhM2YyOWI3MjgwYWEzNzdlMjRiNjY4NjczOThmZjE5ZjM5MWRkZDhkYzczY2M3ZTk4NWQxYTY2NjE4MzkifQ"
+        },
+        {
+          "resource": "repo://src/lib/popup.tsx#L70-L85",
+          "version": "repo-lines-v1:sha256:51ddb55fb47fa32be55001a33d8999847f28130486a87989f1b8b84f130bf141:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhMTc4MDFhNzdhZjc0ZDAwM2M5ZmVjNmQ1ODU4MjNiYTExNzhkMzQ2ZGY1MTMwNTc1ZDFmMTFhNTliOGQ1OGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU0ZDc1MTFiMGFkODBmZWVlYTdjMTdmZDkzNzQxOWIwN2IzYTM1NTBjMzUwYzY4YTA2NTUwZDVjNDg3ZDM0NTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY3MWNlNDVjOTNjNDkwNmI1ZmIwN2Y1NTUxNDM5ZDFkN2RmOWIxNDc1OGYxNjNmYmQ5ZWY1ZDhlMDIzN2QxY2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI1OTNjNzY0NmJjMzM5ZDM3NGU2ZTczYmVkNGM5MDEyZjk2ZDBlMTA0YTRiYzlhZGQyNTA3NGQ0MTgwODg4YzkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dd57bef4115943a5a97ac404e4071846",
+      "statement": "The theme cross-fade is a transient UniversalStyle layer in src/lib/theme-fade.tsx.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/theme-fade.tsx#L7-L44",
+          "version": "repo-lines-v1:sha256:1bd6ccc0ce9dc8104681f18df823cbc533b88a4a0ffc84f3fe931e92f925a651:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhZDM5YmJkMTM0NmI5MmQyZDU3N2Y2ZDIzMzhkMmI3ZmQwMWEwZjlhYzk4M2Q3NWMxNzI2MDg2NmY0ZjBhNGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwMzQ2NzMwYzBiY2M2ZTNmMWQxNjlmZmM2M2UyYTQxMjNjZmNmMTI4YmRjMTQ5NTBlOGQxODBiOWFlOGRhN2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_30cac46f323142d7b76d04736c7f3902",
+      "statement": "scripts/drift-counts.ts prints the README drift-count table from the drift files by counting sections that have a Cause line.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/drift-counts.ts#L1-L30",
+          "version": "repo-lines-v1:sha256:08eb6067ad88b117ff3080f9dd3342877ae5b3511fb003f2921e7d9b84d9a49d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmM2Y5YTA4OWFjNjhiN2EyM2Q3MDRkYThkOWY2OGE5NjAwMDliMDI5NWJjOTg2ZTNiMTBhMDZjOGIyMTBkMWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEzZTY0MGM0OGFmMmY1YjZkZTkzNDcxMTU1Mzc1ZmVjNGZhOWQwYmE2ZWZiZDNmMGY3MDlhNzEwMTYxODhjZjMifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-17T00:13:20.113Z"
+    "at": "2026-10-17T05:21:14.095Z"
   }
 }

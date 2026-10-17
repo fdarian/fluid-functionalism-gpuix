@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:f38791e873fc70b76773da20f49fd3d8b009969a105e05d8b04235eee0a5bf51",
+  "pageVersion": "sha256:9d91f977430171fd36e0a2d713bafebd42b6683f3a408dd3f4dbe56dd97fde90",
   "claims": [
     {
       "id": "claim_782844f1b7454bbd8c43501708e208b1",
       "statement": "The port's springs are native gpuix motion springs with the source's numbers: fast is 80 ms and moderate 160 ms with bounce 0, slow 240 ms with bounce 0.12.",
       "evidence": [
         {
-          "resource": "repo://src/lib/theme.ts#L448-L452",
+          "resource": "repo://src/lib/theme.ts#L456-L460",
           "version": "repo-lines-v1:sha256:631b2a833125837e8918c7e5112f37bfe022e7725b98b68c917ea1742854a8ad:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTBiMzYwNGM0ZWVhODIwMTQ1MmEyNGE2YWUzOTg5YWQ5MjE4ZWQyMzFhZWU5MzhiZTExNmRlMWQ2MDAyOTFhYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDBiNzU0ZTZlM2MzYWU4MjI4ZWM3OGE1MWIyMDU4NGFmZTAxZTMwZTA3ZjU0OTU3ZTBiMTdkZDYxZDQ0NDNkNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGE2YTdmM2NmYThiYjQzMzdkZTcxOTY0MzA1OTQ5OWE4MTJjOTc2MmNlMjEwNmU0MjlkOGJjNzMxZDk0MWM0MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTNmZDk0MTZlMGEwZjY1NGYwMmM1YmFmNTIyM2VkYTAwMTk2ZDYxYTM5YTFjMjdmMzliNzA5ZTYxMGM3ODNmOSJ9"
         }
       ]
@@ -48,15 +48,15 @@
     },
     {
       "id": "claim_b1515cade9c741d6a5d64f299dcd3cbd",
-      "statement": "Press-shrink is a same-colour spread shadow whose spread drops to 0 on press, and translucent fills are drawn as the shadow alone because gpuix paints a shadow under its element.",
+      "statement": "Press-shrink is one absolutely positioned PressFill quad 1px outside the pressable whose four edges and radius are pulled in on press, not a spread shadow; the label is a position: relative box after the fill, with no zIndex.",
       "evidence": [
         {
-          "resource": "repo://src/components/button.tsx#L77-L82",
-          "version": "repo-lines-v1:sha256:849932257b10dea89c960848e2a1c38c8cb186052b56db29d7bd89e7b4b3b8ca:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGRiYjg2ODZkMTAwNjE0NjQ5ZGY2Mzg2ODI4NWNlMjE5ZDY1NjI0MzNiZWFiYjhjOGRmMTIzNWM3MjdjNTM2YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzY5NDI3YzNlYTI1MTMwYzM5NTJmOGM2ZWI3MWU2MTRlMjFhYTFkM2Y5ZmIxNjM4MWEwMjA0ZDQ1YmQwNjZhNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGQ1ODVlY2MyNDQ1MDBkODRjZWI5MTUyNGM1ZWRiZDNmMjcxODE5Mjk1NTA1N2I3MmZjN2Q1NTg2ZjQ1NWU4YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGZlNTU3ZTc2YWMwNGRkYmQyN2Y3YzhjODllNmYxNTY0Y2U4OTEzNGZlZmZjYmJjZmY4ODQwYjNkNWUxMWNhYSJ9"
+          "resource": "repo://src/components/button.tsx#L77-L102",
+          "version": "repo-lines-v1:sha256:45e876b4adeb9971dab20d23029ea0455c62e0df1da1c849d8182dae94cf70db:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxZThiYTJhZmEwZDU4ZWI5Njg3MWI1OTI5ODliNzliYTM5ZTZlOWQzYjQ3YTJmNzZlNjBiMjUzNTM2YzJiMTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2ODk1NDdhOTBhYmNhNmVjYzA0NDM4ZTZiYWY1NmViODQxNmEwNTljOWRiNmJjMTViYzgzMDQyNDA4NzZiNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ0NTljYzJjMWJjZjUzMDM3YTNlZTZmM2I4MDBlOWNlZDZjN2UyNzZmNTU4Y2UxNWQxYmU4MjFkNjliZjUyZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM1ZDJlNWE4NDM0MjNmNzI5ZDc1MzQ1NGU0NzMxZDE5NGQxODkyODE1MDJmZDJmZWFmOWQyNGI3ZmQyN2I4YTAifQ"
         },
         {
-          "resource": "repo://src/lib/press.ts#L3-L18",
-          "version": "repo-lines-v1:sha256:3f0fa6c0fd9306b6c100b8289276f9cf627d2bf78ea3b5448fa2acb6ced996ef:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkNzRjODQ2ZDU3OWUxZDY1MzY1YTQ0OTVkYzY1MWMxODcyYzk0ODQyOWQ3MDkyYjczMjFlNDUxOGNhNjdmMzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://src/lib/press.tsx#L1-L70",
+          "version": "repo-lines-v1:sha256:d7e3fddf7bc7a64fea4279ef01c4ccb1427d56fe00de65620bd783083133e58b:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiYzY3ZmUzMGUwNDcyMWYzOTY2MzgzNTUyOWZlY2Q4MDQ3YzljYWFlODAyM2JmYTU0YzEzNmZiMzA0Y2M0M2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -99,8 +99,8 @@
       "statement": "Every drift entry carries a Cause of gpuix gap, port choice or not ported yet.",
       "evidence": [
         {
-          "resource": "repo://drift/_TEMPLATE.md#L11-L19",
-          "version": "repo-lines-v1:sha256:31b3f024a430e52eff13abd12abbce59080626f594ea39a75d0743542c704fa0:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTJiOWU2ZmE0MWEwMTU0MjVkYmFkMDI2MTlhNDRmNWNlY2VkOTUwMzk4MTc5ODNiN2JkZWYyNGEyYWQ3YjVhMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDE2OTFiZTk0ZDQzMDQ4Nzg2OTE2YjY4ZjgxNGNiY2U2M2NmMzJiMDljOWY3ZjM3NWI4ZTIwMWRkMWM4NTRhMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmZkY2MwMmQ2NmYxYjRmZmI3N2ZhMjBlMGQ4Y2RhMDI1Y2NjNDNjZTI0ZmVlZjdhMTVmZjFmODU0ZDNmMjU3MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+          "resource": "repo://drift/_TEMPLATE.md#L11-L18",
+          "version": "repo-lines-v1:sha256:56ede956ad04b64af9357e5b6e072c750e14d4379a9f583ba24344296735d1a1:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTJiOWU2ZmE0MWEwMTU0MjVkYmFkMDI2MTlhNDRmNWNlY2VkOTUwMzk4MTc5ODNiN2JkZWYyNGEyYWQ3YjVhMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmYyNWM4YWU4OTg2ZmQ3MGEyNGU4NzA3OGRhZDA5NjZlYjZkMTZjM2RhMTM2ZDI2NzFhMjRkNzQ4NGM2ZDQyNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzE3NTNkYTA3MmViYTBlNGZiYTk0MTBlZDgzY2FjYjUzOGM3YjhiOGIzYmUzYjA2OWE0ZDc5MjFjMThkZTI5ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDE2OTFiZTk0ZDQzMDQ4Nzg2OTE2YjY4ZjgxNGNiY2U2M2NmMzJiMDljOWY3ZjM3NWI4ZTIwMWRkMWM4NTRhMCJ9"
         }
       ]
     },
@@ -133,8 +133,8 @@
       "statement": "noUncheckedIndexedAccess is turned off in tsconfig and Biome's a11y rule group is off.",
       "evidence": [
         {
-          "resource": "repo://biome.jsonc#L6-L9",
-          "version": "repo-lines-v1:sha256:7a6413b6e9094bcd8a1ed409b9ae15dd34179482f3c4284138ec3872f2681ea4:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTQ2ODEwOWI4NWUzYTZhMmQ4MTU3MmUyMzgwZDMwYmYzNTQ3YzY3MzkzNzkyMmI0OTM1ZDU2OGNlMzRkNTA2ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmU1MDMyNDk2MjU2NTY4NWE1OWMzOTc1ZTFhNTQyNGE4MTc1YmE0MGY3ZGZhM2EwOTY1NzkxOWIyMWNkOTI2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDMwYTdhZDg5ZjYxYjYwZmY1YWMzN2I2NGExZGMzMzA0MTBmMzhiYmM4MTg5MzM0ZWRkYmQyZjVkZWEwYTk3ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGRjZGIxZGYxMDVmYTk4NGIyOWUzN2ExNGM0ZDVkNzJlZDFmNDIzYmZiZjYwNjk1YzMwYzE3MDQ2ZjI5MzUzNiJ9"
+          "resource": "repo://biome.jsonc#L7-L10",
+          "version": "repo-lines-v1:sha256:88bd1543caea03c3ce0c3531ef5753ac5c427bb68d78ce5ce73fc264384fc0a3:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTQ2ODEwOWI4NWUzYTZhMmQ4MTU3MmUyMzgwZDMwYmYzNTQ3YzY3MzkzNzkyMmI0OTM1ZDU2OGNlMzRkNTA2ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmU1MDMyNDk2MjU2NTY4NWE1OWMzOTc1ZTFhNTQyNGE4MTc1YmE0MGY3ZGZhM2EwOTY1NzkxOWIyMWNkOTI2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjZlNDBhNDgyODI3M2FjOWRkMmI2NDdkZjAxZDQ3OTZhOWJhMWE4YzM3OTVlZDc1MzYwNzU5NTVlZWNlMDhjNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGRjZGIxZGYxMDVmYTk4NGIyOWUzN2ExNGM0ZDVkNzJlZDFmNDIzYmZiZjYwNjk1YzMwYzE3MDQ2ZjI5MzUzNiJ9"
         },
         {
           "resource": "repo://tsconfig.json#L1-L10",
@@ -151,10 +151,24 @@
           "version": "repo-lines-v1:sha256:f1c61538e4b36faad239f8de8126c3d0b17b7dae7f0a62e4475423abeea2c5f5:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWEyNDIxNThjNmQ5MWUzNjM0Mzg3NDJhY2E3MzE2NDI2MmQ5MDUwZDhjMjEwZTAxNzQzZDlhMjkxMGQ1YmM2NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjdkNzI2YWQwODFhZmMwODNjMmI1YmJkNjhjNTlmMzIxMTQ3NzQyYTBkNzI0NTNiY2JjNjdmYzRjYTllYjRjNSJ9"
         }
       ]
+    },
+    {
+      "id": "claim_5420b3174f704a1fa2cfd48d72908c41",
+      "statement": "The theme cross-fade mounts a UniversalStyle layer, flips the palette 20 ms later and removes the layer 200 ms after the flip; captures and tests that call setThemeChoice directly skip it.",
+      "evidence": [
+        {
+          "resource": "repo://src/app.tsx#L433-L433",
+          "version": "repo-lines-v1:sha256:c4d5c0807122213dd58d33081297dfa01fff3a71c0df5b5a4c228912d562b3a0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzRkNWMwODA3MTIyMjEzZGQ1OGQzMzA4MTI5N2RmYTAxZmZmM2E3MWMwZGY1YjVhNGMyMjg5MTJkNTYyYjNhMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzRkNWMwODA3MTIyMjEzZGQ1OGQzMzA4MTI5N2RmYTAxZmZmM2E3MWMwZGY1YjVhNGMyMjg5MTJkNTYyYjNhMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmUxY2YzZjE5NGYwNDc3MWY4MGE3ZjhhZjVkMzIxMjM2M2E2ZDc5NzRkMGQwN2ZkZGJmY2NkNDAyZGI3NjI4YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWYxMTViZDEwNTFiMzdhM2VhZmY2ZTg3ZDAwOGU0ZjQwYmUxZjhhZjBkY2YyZWJlYWM0ODM0NmU4MTIxMmNlMCJ9"
+        },
+        {
+          "resource": "repo://src/lib/theme-fade.tsx#L7-L44",
+          "version": "repo-lines-v1:sha256:1bd6ccc0ce9dc8104681f18df823cbc533b88a4a0ffc84f3fe931e92f925a651:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhZDM5YmJkMTM0NmI5MmQyZDU3N2Y2ZDIzMzhkMmI3ZmQwMWEwZjlhYzk4M2Q3NWMxNzI2MDg2NmY0ZjBhNGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwMzQ2NzMwYzBiY2M2ZTNmMWQxNjlmZmM2M2UyYTQxMjNjZmNmMTI4YmRjMTQ5NTBlOGQxODBiOWFlOGRhN2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-17T00:13:20.113Z"
+    "at": "2026-10-17T05:21:14.095Z"
   }
 }

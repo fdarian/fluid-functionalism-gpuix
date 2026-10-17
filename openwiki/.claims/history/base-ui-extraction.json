@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:c90bf4721f3229d9beeb4892d44aad426ca083a510a3da9c22064f3b505c566a",
+  "pageVersion": "sha256:44d7af1806c0120e9baadaa8ea6b9f9c82d4808fa3e4a64f02477a752fc7723f",
   "claims": [
     {
       "id": "claim_fd643a2c3e614b00990f1b7fce1b8905",
@@ -11,7 +11,7 @@
           "version": "repo-lines-v1:sha256:a9270716c6c4bea8174afef539b04d484fcc2c65bd9cd4b012e54c516bf0ce8c:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyZDAyOTU3NDE1MmUxOWM5MTFlYmNiZmMzODI1MTcwODIzMGEyYTIxNmYzYzQyMTc3MmQ3NjNhM2IxZGYzOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjkzYjk0ZmMyZDAxYWE5NmIxZjc2ZjU0NzQ2MDFhNjI4OTE4Y2UyMTNkM2M1OTg4NjBkMmMzOGEzMzYzMzc4MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTc3NWY5NWJkNWU1YjMwNGFkZWE4NmM2YzI3Nzg3MjU5MDU1MDYxY2UxNmRlOWZkYmZiZTNmNmMwODZjYzUwYiJ9"
         },
         {
-          "resource": "repo://src/components/select.tsx#L157-L157",
+          "resource": "repo://src/components/select.tsx#L155-L155",
           "version": "repo-lines-v1:sha256:5e26af1f569c31efa6f4f291a4674399bca4ce78ab5874b5d4e1d52ca179990a:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWUyNmFmMWY1NjljMzFlZmE2ZjRmMjkxYTQ2NzQzOTliY2E0Y2U3OGFiNTg3NGI1ZDRlMWQ1MmNhMTc5OTkwYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWUyNmFmMWY1NjljMzFlZmE2ZjRmMjkxYTQ2NzQzOTliY2E0Y2U3OGFiNTg3NGI1ZDRlMWQ1MmNhMTc5OTkwYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDk2MzhmNWJmMTRjNWIyNGNiMDMyYThmMmUwMTc1MDQ4OTRhYTU1ZTFmM2EyNDQwZGQxMjMwMWQyNWViODc1YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDBjZDk4Y2JiYzVmMDY3Y2QwZmJhYWFlZDczY2YzODMzYTI2MDhjOTQwNDg0NDMxNzliMDI1ZTk5Y2VmNjZiOCJ9"
         }
       ]
@@ -21,7 +21,7 @@
       "statement": "The primitive's highlight is controlled by fluid hover: Select passes hover.activeIndex as highlightedIndex and releases the pointer on a keyboard highlight change.",
       "evidence": [
         {
-          "resource": "repo://src/components/select.tsx#L157-L175",
+          "resource": "repo://src/components/select.tsx#L155-L173",
           "version": "repo-lines-v1:sha256:68877927d7f6c7b584623a864794d60b4bc606d135378e0d580ec755b402f82b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlMjZhZjFmNTY5YzMxZWZhNmY0ZjI5MWE0Njc0Mzk5YmNhNGNlNzhhYjU4NzRiNWQ0ZTFkNTJjYTE3OTk5MGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4MGVhZmFjMjIxYThlODY0MzgxNDllOGI2NzRkYzRkMzk3NjcwNjlmYjU4YTY4YjFmYmNjMDY1NWZiZmFmMjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ5NjM4ZjViZjE0YzViMjRjYjAzMmE4ZjJlMDE3NTA0ODk0YWE1NWUxZjNhMjQ0MGRkMTIzMDFkMjVlYjg3NWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyOWQ3MzM1MjA2NTJhN2M4ODAxNmVkODFmODE1NDgxZGM2NGUwOWYyNGYzMWNhMDE3OTBkNDYwNGZkNDdlOGUifQ"
         }
       ]
@@ -31,7 +31,7 @@
       "statement": "Select rows assign tabIndex and other item props explicitly because a JSX spread applies its props in a later effect, after the open has focused the row.",
       "evidence": [
         {
-          "resource": "repo://src/components/select.tsx#L496-L502",
+          "resource": "repo://src/components/select.tsx#L494-L500",
           "version": "repo-lines-v1:sha256:395a8ed046848bdb514f8acac321a4bb5f63abee4753327c0f05aa6e2e7b0f02:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzA4MGFjM2NkNTA5ZjUxMDY3ZDBiMmYzOWExNjNiNzlkYWE3MDZjNTJkM2FiNjEzOTI4MzdhYzI4OWMyZjE0NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzMzODM2YzkzNzA5YmI4NmNhYWE5ZDNhYTc2OTdiYmU2NWZiYTc3NWQ1NjdkZDVjNmMyNTQ3MTU3MWZiZjYxNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGY5MDE0MjliMDhjMWY4MGFiZjkxNDRjOTAxNGIwNDI5MTY2NTE3M2YzYTMzYTljODJiNGM1MGM2OGZiMWZkYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2M3NjNjZGUwNDQ4NGQ1OWMwODZhYTczYWQzMjBhYTMyYTdhZDQ2N2JhNDRjOWQ3NjE1YWNmMjkwZjQxMzJlMCJ9"
         }
       ]
@@ -73,6 +73,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-17T00:13:20.113Z"
+    "at": "2026-10-17T05:25:32.423Z"
   }
 }

@@ -3,9 +3,6 @@ type: decision record
 title: User decisions of 2026-10-16
 description: The four product decisions the project owner made on 2026-10-16 after the first full drift audit (Base UI popup focus model, source-matching motion, adopting newly possible gpuix features, porting everything not ported) and the merges that carried them out.
 tags: [decisions, product, focus, motion, scope]
-verified:
-  - by: openwiki/0.7.2
-    at: 2026-10-17T00:13:20.113Z
 sources:
   - id: openwiki-source-5ebe82cc5f9e383e14411602
     resource: repo://src/app.tsx
@@ -27,7 +24,10 @@ sources:
     resource: repo://src/pages/audio-mixer.tsx
   - id: openwiki-source-f8fd84e93d4dd9789aeddba9
     resource: repo://src/pages/compare.tsx
-generated: { by: "claude-code", at: "2026-10-17T00:13:20.113Z" }
+generated: { by: "claude-code", at: "2026-10-17T05:21:14.095Z" }
+verified:
+  - by: openwiki/0.7.2
+    at: 2026-10-17T05:21:14.095Z
 ---
 
 # User decisions of 2026-10-16
@@ -70,7 +70,7 @@ source reads it), `tabular-nums`, `navigator.clipboard`, `position: sticky` and 
 
 Carried out together with the gpuix Round 4 migration, merged in `bcf7479`. The rounds themselves are on
 [gpuix gaps and divergence rounds](../gpuix/gaps-and-divergence-rounds.md). This decision is standing: each later
-gpuix round produces a new adoption pass.
+gpuix round produces a new adoption pass, and the Round 5 / gap-pass adoption on 2026-10-17 was the second one.
 
 ## 4. Port everything not ported
 

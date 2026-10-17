@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:9b6f303d40fb0a6c65fd92195e8327ba3d09164ce0c196320dcb1fe3b9e698aa",
+  "pageVersion": "sha256:649e1f5e67260de024ff24095021bb46a6f3ac9ac13458fa6c2cfaaaf3b92f50",
   "claims": [
     {
       "id": "claim_b925fe22d5a74d5388447aa34ff4d2fd",
@@ -34,21 +34,21 @@
     },
     {
       "id": "claim_8614bcad26f8486aa463c334ea2c9505",
-      "statement": "Every place the port differs from the source is a drift entry tagged by cause, 607 entries at the last recount.",
+      "statement": "Every place the port differs from the source is a drift entry tagged by cause, 588 entries at the last recount.",
       "evidence": [
         {
-          "resource": "repo://README.md#L206-L206",
-          "version": "repo-lines-v1:sha256:110e6d18bfc8956f024eff1e8545f3a1fbcbd5f0d4c39cd94b77451bda09bdb9:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTEwZTZkMThiZmM4OTU2ZjAyNGVmZjFlODU0NWYzYTFmYmNiZDVmMGQ0YzM5Y2Q5NGI3NzQ1MWJkYTA5YmRiOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTEwZTZkMThiZmM4OTU2ZjAyNGVmZjFlODU0NWYzYTFmYmNiZDVmMGQ0YzM5Y2Q5NGI3NzQ1MWJkYTA5YmRiOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWRjZjY4ODI0ZjcxZTQ1YTM2NmZmMWRmZTA5N2IwYzgxNTk1YTYxNGFmMTYxZWNkOWRkMjUzYzEzZDliMjM1ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDgyZjg5MWE0M2ZjZDYwZDY3YTA4NDkzM2IxMmE0ZjlmOGM4ZDQ0NmZjY2FjZmNmZThiZDdiMWE4MTYxODUzMyJ9"
+          "resource": "repo://README.md#L10-L10",
+          "version": "repo-lines-v1:sha256:f7331d0fc82829ebb6de8d59a66b9310830f22288a5910dbba79dba5960c9e8b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjczMzFkMGZjODI4MjllYmI2ZGU4ZDU5YTY2YjkzMTA4MzBmMjIyODhhNTkxMGRiYmE3OWRiYTU5NjBjOWU4YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjczMzFkMGZjODI4MjllYmI2ZGU4ZDU5YTY2YjkzMTA4MzBmMjIyODhhNTkxMGRiYmE3OWRiYTU5NjBjOWU4YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjc2YzJmMzYzYzI2ZjBjY2IxZjI1OTJkZDE2ZmYzNDY5ZTEwZTczZGM3MzI0YTdkZTYyMzM3ZWJlZTIyYjVhYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODNjOWIwMTNjNzkwYTBjM2M0OTIzZTc3MWI3MDZiZTczYTkzMjlhNzE5ZDAxM2EyNGU3NDYyMWMzMjU0Y2Y1OCJ9"
         },
         {
-          "resource": "repo://README.md#L6-L11",
-          "version": "repo-lines-v1:sha256:bbaf9e12156b5e915d98cda56148fd5b43aeedbbcfaea3fdd9780e6dda0e4219:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTk0MmQ2YmM4MzViMDVmODUwYWVlYzBhMjc3YzdlZGU2MTIxNmE2MWM4MDU4NjYwMWEwY2Y5YzA4ZTlkOTIxMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDZiMzRkZjA1ZDI2ZTZjZGRhM2E1YzUxNTFjNGE1NjQxYWEwYTZhZDA4MWExYzlhMmI2MTZjNjJmYzJmZThjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWExZjk5MzQ2Y2Q0Y2M1NjQ0MjMzNmJhODZhM2NiOGVkZDA0ZGY2YWE5ZTI0MDE3ZjY2Nzk5YmMyZGQ2YWM0MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWI3YmJmNzg1NTI1MDcyMjUxNDRjZWY1MDMyOTM4MjZhZTdkYjk3ZDRjMThhMzAwODJhZDYwYjQzMzUwNWFiYiJ9"
+          "resource": "repo://README.md#L208-L208",
+          "version": "repo-lines-v1:sha256:462be5046990e850016e8a99c07ed790d0808602de7adf91bd7ebdc1375daa77:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDYyYmU1MDQ2OTkwZTg1MDAxNmU4YTk5YzA3ZWQ3OTBkMDgwODYwMmRlN2FkZjkxYmQ3ZWJkYzEzNzVkYWE3NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDYyYmU1MDQ2OTkwZTg1MDAxNmU4YTk5YzA3ZWQ3OTBkMDgwODYwMmRlN2FkZjkxYmQ3ZWJkYzEzNzVkYWE3NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGMyMjAwMmVlMTZiNWYxZjMwZTk1ZTc5MmM1ZTEyYmE0ZTA0NTk4ZTIwZDhhZDBhNzc0OTI0Yzg4NjMwYzY2MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDgyZjg5MWE0M2ZjZDYwZDY3YTA4NDkzM2IxMmE0ZjlmOGM4ZDQ0NmZjY2FjZmNmZThiZDdiMWE4MTYxODUzMyJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-17T00:13:20.113Z"
+    "at": "2026-10-17T05:21:14.095Z"
   }
 }

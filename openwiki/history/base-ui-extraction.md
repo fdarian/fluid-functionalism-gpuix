@@ -5,7 +5,7 @@ description: Why the Base UI behaviour primitives moved out of this repository i
 tags: [base-ui, extraction, architecture, history, follow-ups]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-17T00:13:20.113Z
+    at: 2026-10-17T05:25:32.423Z
 sources:
   - id: openwiki-source-40275cb92c3610938f16ade3
     resource: repo://pnpm-workspace.yaml
@@ -17,7 +17,7 @@ sources:
     resource: repo://THIRD_PARTY_NOTICES.md
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-17T00:13:20.113Z" }
+generated: { by: "claude-code", at: "2026-10-17T05:25:32.423Z" }
 ---
 
 # Base UI extraction (2026-10-17) and open follow-ups
@@ -32,8 +32,7 @@ into two local repositories (never pushed, no remotes):
 - **this repository**, the Fluid Functionalism port: styling, tokens, springs, popup chrome, focus ring, fluid
   hover, the site's pages;
 - **`~/code/fdarian/base-ui-solid-gpuix`**, headless Solid ports of the Base UI primitives the port uses, plus the
-<!-- openwiki: broken internal link [../../../base-ui-solid-gpuix/BASE-UI-AUDIT.md] file "../../../base-ui-solid-gpuix/BASE-UI-AUDIT.md" does not exist. Fix the href or restore the target, then delete this comment. -->
-  Base UI audit ([BASE-UI-AUDIT.md](../../../base-ui-solid-gpuix/BASE-UI-AUDIT.md)), synced with Base UI through its own
+  Base UI audit (`BASE-UI-AUDIT.md` in that repository), synced with Base UI through its own
   `UPSTREAM.md`.
 
 The day-to-day rule that follows ("behaviour goes into the primitive, looks stay here") is in
@@ -91,13 +90,11 @@ scenario and the screenshots had to pass after each slice.
   author photo is MIT as a file, not as a likeness.)
 - **`noUncheckedIndexedAccess` is off** (244 errors when on, measured 2026-10-17). Turn it back on and fix the
   errors now that the extraction has settled the code.
-- **Stale FORK.md refs.** README and drift refs into the gpuix fork's `FORK.md` were remapped to its rebased
-  1649-line version, but about 15 point into passages the fork rewrote, where the gap may since be closed.
-- **Possibly stale gap rows.** Prose flagged during the docs pass as likely outdated by the gpuix gap pass: inline
-  span padding, per-run font size, container queries, `width: auto` motion, SVG marker; and entries at
-  `drift/dropdown.md:79`, `drift/accordion.md:47`, `drift/scroll-area.md:67`, `drift/site.md:23`,
-  `drift/tabs-subtle.md:81`. Resolve them with the pending gpuix adoption pass
-  ([gpuix gaps and divergence rounds](../gpuix/gaps-and-divergence-rounds.md#pending-the-round-5--gap-pass-adoption)).
+- **FORK.md and gap-row staleness: resolved** by the gpuix adoption pass later the same day. About 130 line cites
+  into the fork were re-pointed to `poc` `dcfc7a0e`, the closed gap rows and drift entries were rewritten or
+  deleted, and base-ui's audit refs followed. See [gpuix gaps and divergence
+  rounds](../gpuix/gaps-and-divergence-rounds.md#adoption-pass-2026-10-17). Line cites rot whenever the fork's
+  `FORK.md` reflows, so expect a re-point after each fork rebase.
 - Minor: twelve Biome warnings (such as `useOptionalChain`) left unfixed; `scripts/check-command-menu.tsx`
   deep-imports `@gpuix/solid/dist/host.js` because the package exports no path for it; `clamp` is duplicated between
   this repository's scroll area and base-ui's scroll maths.

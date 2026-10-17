@@ -3,17 +3,25 @@ type: history and status
 title: gpuix gaps and divergence rounds
 description: Which gpuix gaps the port works around (summary, with the README as the full list), and the history of DOM divergences this port reported to the gpuix fork, round by round, with the gpuix commits that landed and the migrations the port made in response.
 tags: [gpuix, gaps, upstream, history, migration]
-verified:
-  - by: openwiki/0.7.2
-    at: 2026-10-17T00:13:20.113Z
 sources:
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
+  - id: openwiki-source-f870e66b983ce90f21118b51
+    resource: repo://scripts/drift-counts.ts
+  - id: openwiki-source-1dd7881206b2ce896ff9b518
+    resource: repo://src/components/scroll-area.tsx
+  - id: openwiki-source-b9ce445bfbcee83ede413754
+    resource: repo://src/components/sidebar.tsx
   - id: openwiki-source-2784d511d2f9a521edaf8bb9
     resource: repo://src/lib/app-frame.tsx
-  - id: openwiki-source-4debc99e1bba986521a754c5
-    resource: repo://src/navigator.d.ts
-generated: { by: "claude-code", at: "2026-10-17T00:13:20.113Z" }
+  - id: openwiki-source-ff84ac67d7a6ebc693884d4f
+    resource: repo://src/lib/popup.tsx
+  - id: openwiki-source-d5126066c122ba41a6591f24
+    resource: repo://src/lib/theme-fade.tsx
+generated: { by: "claude-code", at: "2026-10-17T05:21:14.095Z" }
+verified:
+  - by: openwiki/0.7.2
+    at: 2026-10-17T05:21:14.095Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -37,12 +45,22 @@ link to those rows rather than repeating them. The ones that shape the most code
 - **Variable fonts.** Only a font's default instance renders, hence static Inter and SemiBold 600 for 550.
 - **No culling.** Clipped or scrolled-away content is still built, laid out and painted, so long demo pages hide far
   cards with `display: none`.
-- **Test-renderer quirks** (window options ignored, batched keystrokes) that constrain the screenshot harness.
+- **Test-renderer quirks** (a capture is the view alone, with no titlebar or traffic lights; batched keystrokes deliver
+  an input's `onChange` after the whole batch) that constrain the screenshot harness.
 - **Windows/Linux** dispatch is asynchronous, so `preventDefault()` on press arrives too late there. The fork
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
-Treat the README list as **possibly stale**: it was written against the DOM-parity release, and the 2026-10-17 gap
-pass (below) closed several rows the port has not yet adopted.
+The list was recounted and rewritten during the 2026-10-17 [adoption pass](#adoption-pass-2026-10-17), so it is current
+against gpuix `poc` `dcfc7a0e`. The bugs that survived adoption and were measured on the test renderer are worth
+knowing before touching layout code:
+
+- A `width: 100%` child under a `fit-content` parent takes the parent's available width instead of resolving after
+  the hug, so a hugging box that contains a full-width child fills its column.
+- A percentage `maxWidth` does not clamp a `fit-content` box whose content cannot shrink (a one-line `<pre>`).
+- A one-sided border paints nothing on a box whose content height is 0.
+- A multi-value `padding` or `margin` string throws "invalid length"; use the longhands.
+- `calc()` inside a motion value throws (a motion value holds a colour or a percentage), so derived layers stay
+  in JS and trail their inputs by a frame.
 
 ## How a round works
 
@@ -132,22 +150,58 @@ The fork worked through its whole gap inventory in lanes: gpuix `gaps` tip `62da
 `marker`/`pattern`/`filter`, the physical key code, and IME composition events. Still not built: container queries,
 `display: table`, `display: inline-*`, `:has()`, and culling of clipped subtrees.
 
-## Pending: the Round 5 / gap-pass adoption
+## Adoption pass (2026-10-17)
 
-As of 2026-10-17 the port has **not** migrated to `120dd049`; it was held until the
-[Base UI extraction](../history/base-ui-extraction.md) finished. The next adoption pass, across this repository and
-base-ui-solid-gpuix, has to:
+Done against gpuix `poc` `dcfc7a0e`, the fork after it rebased. **Every gpuix SHA in the Round 5 table and the
+gap-closing section above is pre-rebase**; they identify the fixes but no longer resolve on `poc`. The pass ran in
+slices, one checkout at a time, because the check-* scenarios load base-ui-solid-gpuix live. This repository's
+dist copy of `@gpuix/solid` was byte-identical to the fork's, so no rebuild was needed.
 
-- rebuild the gpuix dist and `pnpm install` from this repository's root;
-- handle two breaking changes: a numeric `lineHeight` is now a unitless multiplier (convert px values), and a border
-  without a style is `none` (add `borderStyle: "solid"`);
-- drop the workarounds now unnecessary: the mousedown refocus workaround (#27), `src/navigator.d.ts` (#25), the
-  opaque-fill-under-shadow arrangement (#20), the input wrapper carrying `fontVariantNumeric` (#24), the nbsp-padded
-  code chips and the slider's split value label (#26);
-- adopt: `UniversalStyle` for the theme cross-fade (#22), mark colour transitions (#23), the reduced-motion nuance
-  (#21), intrinsic widths for the scroll-area wrapper and select popup, `zIndex` across stacking contexts, `url()`
-  backgrounds, the physical key and IME;
-- then update `drift/` and the README gap rows, rerun `pnpm check` and the screenshots.
+What it changed, by Round 5 item:
 
-Several README gap rows and drift entries (inline span padding, per-run font size, SVG marker, `width: auto` motion,
-intrinsic width) describe gaps this pass already closed in gpuix; they stay until the adoption confirms each one.
+- **#20 outer shadow.** Cards lost the opaque page-colour fill that hid a doubled shadow; filled buttons already used
+  the single-quad press fill ([why](../decisions/port-decisions.md#press-shrink-through-one-fill-quad)).
+- **#21 reduced motion.** The port now matches framer-motion: only positional keys (width, height, insets, layout
+  glides) jump, other properties still animate. The accordion's own outer gate was removed; the chevron turn, the
+  scrollbar thumb and the switch thumb follow the web instead of the old blanket jump. The scrollbar thumb is
+  `MotionConfig` "never".
+- **#22 theme cross-fade** through `UniversalStyle` ([decision](../decisions/port-decisions.md#theme-system-light-and-dark-through-createappearance)).
+- **#23, #24, #25.** The input-copy value tint is a span background that eases over 80 ms; `fontVariantNumeric` sits on
+  the colour input's own style; `src/navigator.d.ts` is gone.
+- **#26 inline spans.** Sentences with code chips and links are one `<text>` with real padding, margin and radius on
+  spans, and the slider value is one run with a clickable span per number. Residual: underline offset and the
+  Cite chip's vertical offset. The Ask-user inline option stays a block: `StableLabel`'s hidden semibold copy cannot
+  sit inside a text run (`display: inline-*` is not built).
+- **#27 refocus after press: kept.** The mousedown refocus workaround was tried out of base-ui and put back,
+  because on the web focus returns after the popup exits while in gpuix the blur lands after the synchronous
+  handler returns.
+- **Intrinsic widths.** Popups are content-sized with the trigger's width as a minimum (the `popupWidth` option is
+  gone; dropdown panels clamp to their container and the window); the scroll area's content box has
+  `min-width: fit-content` as Base UI's does; `w-fit` hugs use `fit-content`; the Dialog panel is
+  `calc(100% - 2rem)` wide with `top` 12vh, so a resize needs no window-size signal.
+- **`zIndex`, `url()`, `em`/`rem`.** Card footers take z-30 and the Beacon popover z-50 as the source does; the
+  Markdown to-do tick and the Lumen swatches are the sheet's data-URI mask and images; markdown padding is `em`.
+- **Safe polygon.** Tooltip and dropdown submenus use base-ui's safe polygon, driven by a window `mousemove`. The
+  grace and dwell timers are gone. `blockPointerEvents` is approximated: clicks on siblings still land.
+
+Pitfalls the pass hit and a future one should expect:
+
+- **A moved layout rule can regress somewhere unrelated.** The scroll-area content change made sidebar labels stop
+  truncating (a vertical area's content box must be `width: 100%`); the fix is `ScrollArea`'s `contentStyle`, which
+  `SidebarContent` overrides as the source does. The cause was this port, not a gpuix bug. The full checks only
+  caught it through the regenerated screenshots, so look at them.
+- **Closed gaps hide in drift entries.** Dozens of README rows and drift entries described gaps gpuix had already
+  closed. The pass rewrote them to say what is left, deleted the ones nothing remained of, and re-pointed about 130
+  `FORK.md`, gpuix and base-ui line cites to `dcfc7a0e`. A drift entry whose gap closed should say what the port
+  still does differently, not vanish silently.
+- **The README count table is generated.** `scripts/drift-counts.ts` prints it from `drift/*.md` (588 entries
+  after the pass); paste its output instead of editing numbers, because the hand-kept table and the intro total had
+  drifted apart.
+- **Two behaviour gaps in base-ui turned up while re-pointing its audit refs**: the menu typeahead forgot its query
+  after 750 ms where Base UI uses 500 ms (fixed, with a check-dropdown assertion), and the scrollbar's
+  press-on-track handler lacks the mousedown `preventDefault`, so focus blurs (recorded in base-ui's audit; check
+  there for its status).
+
+Verification: all 38 scenarios and 79 tests pass, and 177 screenshots were regenerated. IME composition and the
+physical key code are closed in gpuix on macOS only, and the port reads neither (`isModK` reads `key`), so those
+README rows stay.
