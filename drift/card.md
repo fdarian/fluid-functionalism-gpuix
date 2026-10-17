@@ -43,20 +43,11 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Fidelity:** approximated (the port shows a ring the source probably does not).
 - **Components it hits:** just this one.
 
-## The dismiss chip does not appear when the card has focus
-
-- **Cause:** `not ported yet`.
-- **Original:** with `dismissOnHover` the chip shows on `group-hover/card` and `group-focus-within/card`, and on its own `focus-visible` (`:501-502`), so tabbing to the card or one of its buttons reveals it.
-- **Port:** `visible` is `hovered() || dismissFocused()`, the card's hover or the chip's own focus (`src/components/card.tsx:463-465`); focus on the overlay or a `CardButton` does not reveal it. The chip is still a tab stop (`:534`) and appears when reached.
-- **Workaround:** none.
-- **Fidelity:** approximated.
-- **Components it hits:** just this one.
-
 ## The chip over media has no backdrop blur
 
 - **Cause:** `not ported yet`.
 - **Original:** `bg-card/70 backdrop-blur-sm hover:bg-card` when the card has a `CardImage` (`:492-494`).
-- **Port:** the 70% alpha alone (`src/components/card.tsx:51-52`, `:559-565`). The comment says gpuix has no backdrop blur; it has `backdropFilter` (`packages/native/js/host.ts:662-665`, `FORK.md:788-789`, effect groups, macOS).
+- **Port:** the 70% alpha alone (`src/components/card.tsx:51-52`, `:560-565`). The comment says gpuix has no backdrop blur; it has `backdropFilter` (`packages/native/js/host.ts:662-665`, `FORK.md:788-789`, effect groups, macOS).
 - **Workaround:** the alpha.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -142,7 +133,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `port choice` (reason not stated; the tile also sets `overflow: "hidden"` and a radius at `:366-367`).
 - **Original:** the image is `rounded-[2px]` and the tile's `overflow-hidden` + radius clips its outer corners (`:339-343`, `:813-815`).
-- **Port:** `tileCorner()` hands the tile radius (minus 1 for a frame) to the image's outer corners and keeps 2px on the rest (`src/components/card.tsx:330-334`, `:814-829`).
+- **Port:** `tileCorner()` hands the tile radius (minus 1 for a frame) to the image's outer corners and keeps 2px on the rest (`src/components/card.tsx:328-332`, `:814-829`).
 - **Workaround:** n/a.
 - **Fidelity:** exact in the cases checked by reading (stacked, inline, framed, borderless); the screenshots were not diffed.
 - **Components it hits:** just this one.
@@ -151,7 +142,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
 - **Original:** `size` wraps the card in a `SizeProvider`, so a nested `Button`, `Badge` and the rest follow (`registry/default/card.tsx:244-247`, `:276`, `:515`).
-- **Port:** An omitted `size` follows the Size row (`src/components/card.tsx:269`); `compact` covers the card's own parts only, and nothing is provided to children.
+- **Port:** An omitted `size` follows the Size row (`src/components/card.tsx:267`); `compact` covers the card's own parts only, and nothing is provided to children.
 - **Workaround:** pass `size` to each nested component.
 - **Fidelity:** approximated.
 - **Components it hits:** every component with a `size` prop.
@@ -160,7 +151,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `port choice` (reason not stated; Solid components with fixed prop lists).
 - **Original:** every part forwards `className` and the HTML attributes; the promo demo gives `Card` `border border-border/60 overflow-hidden rounded-xl` and `CardContent` `flex flex-col gap-3` (`app/docs/card/page.tsx:330`, `:336`).
-- **Port:** a standalone `Card` takes `outlined` for the frame (`src/components/card.tsx:255-256`, `:371-373`) and the demo wraps `CardContent`'s children in a 12px-gap column (`src/demos/card.tsx:228-241`). Parts take `children` only; `CardMedia` has no `className`.
+- **Port:** a standalone `Card` takes `outlined` for the frame (`src/components/card.tsx:255-256`, `:368-370`) and the demo wraps `CardContent`'s children in a 12px-gap column (`src/demos/card.tsx:228-241`). Parts take `children` only; `CardMedia` has no `className`.
 - **Workaround:** `outlined`.
 - **Fidelity:** exact for the demos.
 - **Components it hits:** every ported component.

@@ -85,6 +85,14 @@ const check = await createCheck(
 					<CardTitle>Dismissible</CardTitle>
 				</CardHeader>
 			</Card>
+			<Card testId="dismiss-focus" dismissible onDismiss={() => {}}>
+				<CardHeader>
+					<CardTitle>Dismissible with a button</CardTitle>
+				</CardHeader>
+				<CardFooter>
+					<CardButton testId="dismiss-focus-button">Go</CardButton>
+				</CardFooter>
+			</Card>
 			<Card testId="actioned" onClick={() => setCardClicks(cardClicks() + 1)}>
 				<CardHeader>
 					<CardTitle>With an action</CardTitle>
@@ -266,6 +274,21 @@ await park();
 		'dismiss chip fades in on card hover',
 		partway(rest, middle, end),
 		`rest ${rest}, 16 ms ${middle}, end ${end}`,
+	);
+}
+
+await park();
+{
+	// Focus inside the card, not on the chip, shows the chip too: group-focus-within/card.
+	const chip = check.bounds('dismiss-focus-dismiss');
+	const rest = check.ink(chip);
+	await check.focus('dismiss-focus-button');
+	await new Promise((resolve) => setTimeout(resolve, 300));
+	const focused = check.ink(chip);
+	check.check(
+		'dismiss chip shows while a button inside the card has focus',
+		focused > rest,
+		`rest ${rest}, focused ${focused}`,
 	);
 }
 

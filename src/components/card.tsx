@@ -262,8 +262,6 @@ export function Card(props: {
 	const renderer = useGpuixRequired();
 	const group = useContext(GroupContext);
 	const [hasImage, setHasImage] = createSignal(false);
-	const [hovered, setHovered] = createSignal(false);
-	const [dismissFocused, setDismissFocused] = createSignal(false);
 	const [rootElement, setRootElement] = createSignal<HostElement>();
 
 	const compact = () => (props.size ?? sizeChoice()) === 'compact';
@@ -340,9 +338,8 @@ export function Card(props: {
 				testId={props.testId}
 				ref={setRootElement}
 				aria-disabled={props.disabled ? true : undefined}
-				onMouseEnter={() => setHovered(true)}
-				onMouseLeave={() => setHovered(false)}
 				style={{
+					group: cardGroup,
 					position: 'relative',
 					zIndex: 10,
 					display: 'flex',
@@ -460,11 +457,7 @@ export function Card(props: {
 						}
 						compact={compact()}
 						overMedia={hasImage()}
-						visible={
-							!(props.dismissOnHover ?? true) || hovered() || dismissFocused()
-						}
 						revealOnHover={props.dismissOnHover ?? true}
-						onFocusChange={setDismissFocused}
 						onDismiss={props.onDismiss}
 					/>
 				</Show>
@@ -509,14 +502,17 @@ function CardFrame(props: { children: JSX.Element }) {
 	);
 }
 
+/** A named group: a card inside another card's content would otherwise follow the wrong one. */
+const cardGroup = 'card';
+
+const revealed = { opacity: 1, pointerEvents: 'auto' } as const;
+
 function DismissChip(props: {
 	testId?: string;
 	compact: boolean;
 	overMedia: boolean;
-	visible: boolean;
-	/** The chip is revealed by hover or focus, so it fades its opacity instead of its colours. */
+	/** The chip is revealed by the card's hover or focus, so it fades its opacity instead of its colours. */
 	revealOnHover: boolean;
-	onFocusChange: (focused: boolean) => void;
 	onDismiss?: () => void;
 }) {
 	const renderer = useGpuixRequired();
@@ -534,8 +530,6 @@ function DismissChip(props: {
 			tabIndex={0}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
-			onFocus={() => props.onFocusChange(true)}
-			onBlur={() => props.onFocusChange(false)}
 			style={{
 				position: 'absolute',
 				zIndex: 30,
@@ -555,8 +549,14 @@ function DismissChip(props: {
 				...(props.revealOnHover
 					? fade(['opacity'], 80)
 					: fade(['background-color'], 80)),
-				opacity: props.visible || hovered() ? 1 : 0,
-				pointerEvents: props.visible || hovered() ? 'auto' : 'none',
+				...(props.revealOnHover
+					? {
+							opacity: 0,
+							pointerEvents: 'none',
+							groupHover: { group: cardGroup, ...revealed },
+							groupFocusWithin: { group: cardGroup, ...revealed },
+						}
+					: {}),
 				backgroundColor: props.overMedia
 					? hovered()
 						? color.card
@@ -564,7 +564,7 @@ function DismissChip(props: {
 					: hovered()
 						? color.hover
 						: color.transparent,
-				focusVisible: focusRing(0),
+				focusVisible: { ...revealed, ...focusRing(0) },
 			}}
 		>
 			<Icon
