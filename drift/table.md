@@ -6,21 +6,21 @@ demo in `src/demos/table.tsx`.
 
 The source's `app/table/page.tsx` is not the table demo: it is an unlisted stress page (excluded from the sitemap at `app/sitemap.ts:9`), see "Quotes page".
 
-## Table layout (`<table>`, `border-collapse`)
+## The row rule's 80ms fade does not run
 
 - **Cause:** `gpuix gap`.
-- **Original:** a real `<table>` with `w-full border-collapse` (`table.tsx:81`): columns auto-size to their widest cell and line up across rows; one rule is shared between adjacent rows.
-- **Port:** a column of flex rows, each cell `flexGrow: 1; flexBasis: 0` (`table.tsx:107-153`, `:162-173`), so columns are equal width. `TableHead` / `TableCell` take an optional fixed `width` (`:164-166`). Each row draws its own bottom border (`:145`); the port's rows are 36px + a 1px rule, the collapsed original's row height was not measured.
-- **gpuix lacks:** `display: table` and `border-collapse` (taffy has no table boxes, `~/code/fdarian/gpuix/FORK.md` area C; README row `README.md:243`). Grid tracks (`auto`, `max-content`, `fr`) exist and could size columns across rows if every cell sat in one grid; the port has not moved to that.
-- **Workaround:** equal columns plus the optional fixed `width`.
-- **Fidelity:** approximated (equal columns instead of content-sized ones).
+- **Original:** the row's `border-b` fades between `border-accent/40` and `border-transparent` with `transition-[border-color] duration-80`, so the rules around the lit row ease out as the highlight arrives (`registry/default/table.tsx:153`).
+- **Port:** the row is a `table-row` in a `borderCollapse: 'collapse'` table with the same `fade(['border-color'], 80)` declared (`src/components/table.tsx:150-157`); the rule goes at once, while the highlight and the cell text colour fade as in the source. Measured: the rule's pixel is gone on the first frame after the hover.
+- **gpuix lacks:** an animated collapsed border: the table resolves the edges from the style each part declares, and its styles are not animatable by `motion`, a keyframe or a CSS transition (gpuix `README.md` "Tables", "Differences from Chrome").
+- **Workaround:** none; the transition is still declared, so it starts working when gpuix animates collapsed borders.
+- **Fidelity:** approximated (the 80ms ease is a snap).
 - **Components it hits:** just this one.
 
 ## Header weight: `wght 550` / `opsz 18`
 
 - **Cause:** `gpuix gap`.
 - **Original:** header rows set `fontVariationSettings` to `fontWeights.semibold` (`wght 550, opsz 18`) and body rows to `fontWeights.normal` (`wght 400, opsz 14`) on the `<tr>` (`table.tsx:158-165`).
-- **Port:** `fontWeight: weight.semibold` (600) for header cells, 400 for body, on the cell `<text>` (`table.tsx:178`, `src/lib/theme.ts:375`).
+- **Port:** `fontWeight: weight.semibold` (600) for header cells, 400 for body, on the cell `<text>` (`table.tsx:202`, `src/lib/theme.ts:375`).
 - **gpuix lacks:** variable-font axes (`StyleDesc` has `fontWeight` and `fontFeatureSettings`, no `fontVariationSettings`); `README.md:252`, `:329`.
 - **Workaround:** Inter's static cuts only; no `opsz`.
 - **Fidelity:** approximated (600 for 550, no optical size).
@@ -40,7 +40,7 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 
 - **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
 - **Original:** `size` wraps the table in a `SizeProvider`, and its cells read the context (`registry/default/table.tsx:41-44`, `:49`, `:90-91`, `:180`, `:203`).
-- **Port:** An omitted `size` follows the Size row (`src/components/table.tsx:50`, `:57`); a table inside a compact surface stays at 36px unless `size` is passed.
+- **Port:** An omitted `size` follows the Size row (`src/components/table.tsx:64`); a table inside a compact surface stays at 36px unless `size` is passed.
 - **Workaround:** pass `size` to each nested component.
 - **Fidelity:** approximated.
 - **Components it hits:** every component that reads `useSize`.
@@ -49,10 +49,10 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 
 - **Cause:** `not ported yet`.
 - **Original:** real `<table>`, `<thead>`, `<tbody>`, `<tr>`, `<th>`, `<td>`; every part takes `className`, a `ref` and the element's HTML attributes (`table.tsx:39-47`, `:99-117`, `:125-170`, `:176-217`), which the site's pages use to align and size columns (`text-center`, `w-[180px]`, `whitespace-nowrap` in `app/table/page.tsx`).
-- **Port:** plain `<div>` rows and cells with no `role`, only `testId`, the `width` prop and two booleans, `alignRight` (`text-right`) and `tabularNums` (`tabular-nums`) (`table.tsx:50-54`, `:107-111`, `:155`, `:187-199`). There is no other cell styling, `className` or `ref`.
+- **Port:** plain `<div>`s with `display: table`, `table-header-group`, `table-row-group`, `table-row` and `table-cell` (`table.tsx:91`, `:104`, `:108`, `:150`, `:187`), no `role`, only `testId`, the `width` prop (the column's preferred width) and two booleans, `alignRight` (`text-right`) and `tabularNums` (`tabular-nums`) (`table.tsx:166-175`, `:190`, `:203`). There is no other cell styling, `className` or `ref`.
 - **gpuix lacks:** nothing: `role` and `aria-*` work on any element (`src/components/sidebar.tsx:312` sets `aria-current`; `src/components/tabs.tsx` sets `role`).
 - **Workaround:** none.
-- **Fidelity:** approximated (looks the same; the table is anonymous to assistive tech, columns cannot be centred or kept on one line).
+- **Fidelity:** approximated (looks the same; the table is anonymous to assistive tech, columns cannot be centred or kept on one line, and no cell takes `colSpan` although gpuix supports it).
 - **Components it hits:** any ported component that dropped `className` passthrough.
 
 ## Demo variants
@@ -69,7 +69,7 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 - **Cause:** `not ported yet`.
 - **Original:** an unlisted showcase, not the docs demo: a "Quotes" title (22px bold), `TabsSubtle` over five categories (Wisdom, Ambition, Love & Life, Creativity, Philosophy), and per tab a table of 50 rows with a centred 50px "Saved" column holding an animated checkbox, a 180px Author column on one line, and a wrapping Quote column (`app/table/page.tsx:285-447`).
 - **Port:** no counterpart.
-- **gpuix lacks:** nothing known. Wrapping long text in an equal-width flex cell and 50 hover-registered rows per tab are untested.
+- **gpuix lacks:** nothing known. The table now sizes columns to content, so the Author column on one line and the wrapping Quote column are expressible; 50 hover-registered rows per tab are untested.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** table, tabs-subtle, checkbox.

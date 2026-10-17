@@ -117,6 +117,7 @@ export function TableRow(props: {
 	const scope = useTableScope();
 	const header = props.index === undefined;
 	const active = () => scope.hover.activeIndex();
+	// The fluid hover's pick, not the pointer: the pointer over the header or past the last row still lights a body row, so `groupHover` on the row would not match the source's `is-active`.
 	const lit = () => !header && active() === props.index;
 
 	// Each row draws only its bottom border, so the lit row's top edge is the
@@ -152,6 +153,7 @@ export function TableRow(props: {
 					borderBottomColor: hideBorder()
 						? color.transparent
 						: color.accentFaint,
+					// Declared as the source does, but gpuix does not animate collapsed borders: the rule changes at once.
 					...fade(['border-color'], 80),
 				}}
 			>
