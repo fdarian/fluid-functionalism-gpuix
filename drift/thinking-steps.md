@@ -110,6 +110,15 @@ repeating it.
 - **Fidelity:** exact for the default.
 - **Components it hits:** just this one.
 
+## The trigger label never wraps, and the source badge sits in a flex box
+
+- **Cause:** `gpuix gap`. Not reproduced in isolation: inside the `fit-content` trigger wrapper the shrinkable `StableLabel` wraps in one of gpuix's trial widths ("Explored 6 files" at "Explored") and the wrapper keeps the second line's 20px, so every nested step grew by a line.
+- **Original:** the trigger label is an `inline-grid` span that can shrink and wrap; `ThinkingStepSource` is a `motion.span` flex item holding an `inline-flex` `Badge` (`registry/base/thinking-steps.tsx:88`, `:544-554`).
+- **Port:** `TriggerRow` passes `nowrap` to `StableLabel`, and the source's `motion.div` is `display: "flex"` so the badge is a flex item with no line strut around it (`src/components/thinking-steps.tsx:180-187`, `:561-567`). The source's wrapper is a block holding an inline atom, which in a browser leaves a descender gap under the badge; that gap was not measured, so the sources row keeps the 20px it had.
+- **Workaround:** `nowrap`; a flex wrapper.
+- **Fidelity:** approximated (a trigger label never wraps; the sources row may be a few pixels shorter than the source's).
+- **Components it hits:** just this one.
+
 ## Demo: Streaming text sizing
 
 - **Cause:** `not ported yet`.
