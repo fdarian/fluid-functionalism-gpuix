@@ -547,6 +547,7 @@ function DisplayMenu() {
 						right: 0,
 						top: '100%',
 						marginTop: 6,
+						zIndex: 50,
 					}}
 				>
 					<Dropdown checkedIndex={ordering()} testId="beacon-display-menu">
@@ -767,9 +768,6 @@ export function Page() {
 						alignItems: 'center',
 						justifyContent: 'space-between',
 						gap: 12,
-						// Lifts the Display popover over the table, whose own positioned root would paint above a static toolbar.
-						position: 'relative',
-						zIndex: 1,
 					}}
 				>
 					<TabsSubtle

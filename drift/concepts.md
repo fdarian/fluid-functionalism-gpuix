@@ -190,16 +190,6 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 - **Fidelity:** exact in the look; the padding duplicates `cellMetrics` in `src/components/table.tsx`.
 - **Components it hits:** `Table`.
 
-## Beacon: the Display popover sits above the table through a `zIndex` on the toolbar
-
-- **Cause:** `gpuix gap` (paint order is per parent: a positioned `Table` root in the content paints above a static toolbar's absolute popover).
-- **Original:** `absolute right-0 top-full z-50 mt-1.5` around `Dropdown` (`beacon/page.tsx:240`).
-- **Port:** the same absolute box (`right: 0`, `top: 100%`, `marginTop: 6`) with `Dropdown` as the panel; the toolbar row is `position: relative; zIndex: 1` so the box paints over the table (`src/pages/concepts-beacon.tsx:523-567`, `:767-775`). A press outside the button wrapper closes it (`onMouseDownOutside`, standing for the source's `document` `mousedown` listener). Escape does not close it, as in the source.
-- **gpuix lacks:** a global stacking order (FORK.md: `zIndex` orders siblings only).
-- **Workaround:** the toolbar's `zIndex`.
-- **Fidelity:** exact.
-- **Components it hits:** `Dropdown`.
-
 ## Beacon: the Display button does not stay lit while the menu is open
 
 - **Cause:** `port choice` (the port's `Button` has no `active` prop).
@@ -222,7 +212,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice`.
 - **Original:** `InputGroup className="w-56"` and `SelectTrigger className="min-w-[150px]"` (`beacon/page.tsx:407-418`); the Select starts empty (`value=""`) and shows "Priority".
-- **Port:** the `InputGroup` is a fixed 288px, so it sits in a 224px wrapper and shrinks to it; `Select` has no width prop, so a wrapper gives it `minWidth: 150`. `variant="bordered"` (the port's default is `inline`) and `value={null}` for the placeholder (`src/pages/concepts-beacon.tsx:829-852`). The search matches title or key, case-insensitively, as in the source. The screenshot scenario drives the select by keyboard (a pointer press on a select crashes the test renderer).
+- **Port:** the `InputGroup` is a fixed 288px, so it sits in a 224px wrapper and shrinks to it; `Select` has no width prop, so a wrapper gives it `minWidth: 150`. `variant="bordered"` (the port's default is `inline`) and `value={null}` for the placeholder (`src/pages/concepts-beacon.tsx:827-846`). The search matches title or key, case-insensitively, as in the source. The screenshot scenario drives the select by keyboard (a pointer press on a select crashes the test renderer).
 - **Workaround:** the wrappers.
 - **Fidelity:** exact in the layout.
 - **Components it hits:** `InputGroup`, `Select`.
