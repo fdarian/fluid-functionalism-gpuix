@@ -5,7 +5,7 @@ Original: `registry/base/thinking-steps.tsx` (Base UI `Collapsible`), demo in `a
 demo in `src/demos/thinking-steps.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, table and `inline-*` layout, container queries, `:has()`) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## Chevron rotation
@@ -36,7 +36,7 @@ repeating it.
 - **gpuix lacks:** variable-font axes. See the README "gpuix gaps" row "Variable-font axes".
 - **Workaround:** static cuts; a hidden semibold copy reserves the width.
 - **Fidelity:** approximated.
-- **Components it hits:** every `StableLabel` (tabs, tabs-subtle, sidebar, menu rows), card, table, banner.
+- **Components it hits:** every `StableLabel` (tabs, tabs-subtle, sidebar, menu rows); card's `CardTitle`, table and banner have the same gap without it.
 
 ## Hover background exit
 

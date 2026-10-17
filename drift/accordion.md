@@ -4,7 +4,7 @@ Original: `registry/base/accordion.tsx` (the docs page imports the Radix variant
 (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/accordion.tsx`, demo in `src/demos/accordion.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, table layout, container queries, `:has()`) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it. Includes the shared keyboard focus ring (`src/lib/focus-ring.tsx`) as an accordion group uses it.
 
 No drift found in: sizes (trigger padding, gap, icon 16/14, content padding, 288px width), type scale, light and dark
@@ -29,7 +29,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 - **gpuix lacks:** variable-font axes. README row "Variable-font axes".
 - **Workaround:** static cuts and the hidden semibold copy.
 - **Fidelity:** approximated (no easing, 600 for 550).
-- **Components it hits:** every `StableLabel` (tabs, tabs-subtle, sidebar, menu rows, card, table).
+- **Components it hits:** every `StableLabel` (tabs, tabs-subtle, sidebar, menu rows); card's `CardTitle` and table have the same gap without it.
 
 ## Standalone hover fill fades in 20 ms faster
 
