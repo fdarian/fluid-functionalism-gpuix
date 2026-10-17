@@ -41,7 +41,6 @@ const SIDEBAR_LEFT = 179;
 const SIDEBAR_TOP = 16;
 const SIDEBAR_WIDTH = 260;
 const SIDEBAR_HEIGHT = 368;
-const LABEL_WIDTH = 140;
 /** Arrows stop this far outside the sidebar frame, never inside it. */
 const ARROW_GAP = 6;
 /** How long the arrows keep re-measuring after a sub-menu toggles: its height spring and the rows below it settle by then. */
@@ -50,7 +49,7 @@ const TRACK_MS = 600;
 interface Callout {
 	key: string;
 	title: string;
-	/** Broken by hand where `text-balance` breaks the source's copy: gpuix has no balanced wrap, and a wrapped text box is as wide as its container, so the arrow could not find the glyphs' edge. */
+	/** Broken by hand where `text-balance` breaks the source's copy, since gpuix has no balanced wrap. One `<text>` per line, so the measured edge is the longest line's. */
 	lines: readonly string[];
 	/** Which side of the sidebar the label sits on. Its vertical position follows the target, so the arrow is short and level. */
 	side: 'left' | 'right';
