@@ -5,7 +5,7 @@ Original: `registry/default/input-copy.tsx`, demo in `app/docs/input-copy/page.t
 demo in `src/demos/input-copy.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(transforms, intrinsic width, variable fonts) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, table and `inline-*` layout, container queries, `:has()`) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The result glyph pops in with a scale

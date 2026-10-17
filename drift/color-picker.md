@@ -5,7 +5,7 @@ Original: `registry/default/color-picker.tsx` (rails come from `registry/radix/s
 demo in `src/demos/color-picker.tsx`. Popup chrome is shared: `src/lib/popup.tsx` (the select, combobox and dropdown card; the picker has its own `Popup` for the two cards below), presence is `base-ui:src/internals/use-transition-status.ts`. The format menu runs on the Menu primitives (`base-ui:src/menu/`) and the popover on the Popover ones (`base-ui:src/popover/`); `base-ui:` paths are in `../base-ui-solid-gpuix`, whose `BASE-UI-AUDIT.md` ("Color picker format menu", "Popover") compares them to Base UI.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(transforms, intrinsic width, variable fonts) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, table and `inline-*` layout, container queries, `:has()`) get a one-line entry here that links to the README row instead of
 repeating it. In this file, source line numbers are `color-picker.tsx:N` and port ones `src/components/color-picker.tsx:N`.
 
 The colour maths is the same code: `color-picker-math.ts` matches `color-picker.tsx:153-474` function for function (formatting and `Math.pow` to `**` aside),

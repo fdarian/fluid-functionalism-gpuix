@@ -5,7 +5,7 @@ Original: `registry/default/input-message.tsx`, demo in `app/docs/input-message/
 demo in `src/demos/input-message.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(transforms, intrinsic width, variable fonts) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, table and `inline-*` layout, container queries, `:has()`) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## Scale on the send glyph, tiles, queued rows

@@ -9,7 +9,7 @@ registry (`src/lib/demo.ts` `loadPages`). The page chrome (`DocPage`, `Component
 its drift, which this page shares (inline code chips, the Copy prompt icon swap, no Inspect switch, no prev / next arrows, section spacing).
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(transforms, intrinsic width, variable fonts) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, table and `inline-*` layout, container queries, `:has()`) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The scripted cursor calls handlers and `click()`, not DOM events

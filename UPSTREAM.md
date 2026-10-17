@@ -134,7 +134,7 @@ source and port `file:line` and a **Cause**. The per-file counts are the table i
 causes).
 
 - **`gpuix gap`** (144 entries): gpuix lacks the capability or gets it wrong, so the port approximates or drops
-  it. The recurring ones (transforms, intrinsic width, variable fonts, the test renderer) are collected in
+  it. The recurring ones (CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, table and `inline-*` layout) are collected in
   README's [gpuix gaps across components](README.md#gpuix-gaps-across-components); the per-file entry is one line
   linking there. Most in [combobox](drift/combobox.md), [command-menu](drift/command-menu.md),
   [dropdown](drift/dropdown.md), [select](drift/select.md) and [site](drift/site.md).

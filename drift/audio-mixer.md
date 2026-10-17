@@ -4,7 +4,7 @@ Original: `app/slider/page.tsx` of the source (fluidfunctionalism.com at 0a0377e
 Ported in `src/pages/audio-mixer.tsx`, routed by the page registry (`src/lib/demo.ts` `loadPages`, `src/app.tsx` `PageBody`), listed in the site menu only.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(transforms, intrinsic width, variable fonts) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, table and `inline-*` layout, container queries, `:has()`) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The column is 600 wide, the source's is 720
