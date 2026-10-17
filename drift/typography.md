@@ -17,13 +17,13 @@ repeating it.
 - **Fidelity:** approximated (look); dropped (editing, Inspect).
 - **Components it hits:** just this page.
 
-## Inline runs inside the markdown can't size, pad or navigate
+## Italic is upright, and list markers are placed by estimate
 
-- **Cause:** `gpuix gap` (a `<span>` takes no `fontSize`, padding, border, radius or events: gpuix `README.md:2670-2679`) and `gpuix gap` (italic).
-- **Original:** `` ` `` code is caption-sized with `padding: 0.1em 0.3em` and a 4px radius; `<a>` navigates to `/docs/motion`; `<em>` slants.
-- **Port:** inline code is a monospace run at the paragraph's 13px (12px in the source) with a no-break space each side as its padding, square-cornered; the link is underlined at 35% and does nothing; `fontStyle: "italic"` is set on "glides" but no italic cut is loaded (`src/lib/fonts.ts` has the four upright cuts), and the capture shows it upright. Bullets are 5px circles and numbers are `tabular-nums` text, both drawn absolutely 10px and 8px before the text: where Chrome puts a `::marker` is estimated, not measured.
+- **Cause:** `gpuix gap` (italic).
+- **Original:** `<em>` slants; bullets and numbers are `::marker`s.
+- **Port:** inline code is a span at the typeset caption size with `padding: 0.1em 0.3em`, a 4px radius and the 7% wash, and the link is underlined at 35% (`src/pages/typography/markdown.tsx:38-72`), as in the source. The link does not navigate, as in the source: its editor sets `openOnClick: false` and a link in a `contenteditable` does not follow a click. `fontStyle: "italic"` is set on "glides" but no italic cut is loaded (`src/lib/fonts.ts` has the four upright cuts), and the capture shows it upright. Bullets are 5px circles and numbers are `tabular-nums` text, both drawn absolutely 10px and 8px before the text: where Chrome puts a `::marker` is estimated, not measured.
 - **Fidelity:** approximated; italic dropped.
-- **Components it hits:** just this page; the same inline-run limits as [surfaces.md](surfaces.md).
+- **Components it hits:** just this page.
 
 ## The table is a grid, its column widths estimated
 

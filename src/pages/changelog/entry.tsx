@@ -42,7 +42,11 @@ function InlineText(props: { inline: Inline[] }): JSX.Element {
 	return (
 		<For each={props.inline}>
 			{(part) =>
-				part.type === 'code' ? <Code>{part.value}</Code> : part.value
+				part.type === 'code' ? (
+					<Code variant="prose">{part.value}</Code>
+				) : (
+					part.value
+				)
 			}
 		</For>
 	);

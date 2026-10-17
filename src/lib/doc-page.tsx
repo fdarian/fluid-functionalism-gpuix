@@ -2,6 +2,7 @@ import {
 	buttonProps,
 	type HostElement,
 	IntersectionObserver,
+	type KeyEvent,
 	useGpuixRequired,
 } from '@gpuix/solid';
 import {
@@ -20,6 +21,8 @@ import { Tooltip } from '#/components/tooltip';
 import { PageScrollerContext } from './demo-kit';
 import { Icon } from './icon';
 import { defineIcon, type IconRef } from './icons';
+import { openUrl } from './open-url';
+import { usePageNav } from './page-nav';
 import {
 	color,
 	focusRing,
@@ -32,8 +35,6 @@ import {
 } from './theme';
 
 export const MONO = 'Menlo';
-
-const NBSP = ' ';
 
 /** lucide `rotate-ccw`. */
 const rotateCcw = defineIcon(
@@ -49,27 +50,80 @@ export function Prose(props: { children: JSX.Element }) {
 }
 
 /**
- * Inline code chip: `mx-1 rounded bg-[light-dark(#EBEBED,#2C2C2C)] px-1 py-0.5
- * text-site-caption`. An inline box takes no padding, margin, radius or font
- * size, so the 4px of each is a no-break space (Inter's is about 3.6px) around
- * the monospace run, and the chip is 13px where the source's is 12px.
+ * Inline code chip. `page` is each docs page's own helper, `mx-1 rounded
+ * bg-[light-dark(#EBEBED,#2C2C2C)] px-1 py-0.5 text-site-caption text-foreground`;
+ * `flush` is the same without the margin (the Scrollbars page's hand-written
+ * chips); `prose` is the global `code:not(pre code)` rule (`padding: 1px 4px`,
+ * the caption size and the paragraph's line height, no margin), which a bare
+ * `<code>` gets, as the changelog's and a demo caption's do.
  */
-export function Code(props: { children: string }) {
+export function Code(props: {
+	children: string;
+	variant?: 'page' | 'flush' | 'prose';
+}) {
+	const variant = () => props.variant ?? 'page';
+	const padY = () => (variant() === 'prose' ? 1 : 2);
 	return (
-		<>
-			{NBSP}
-			<span
-				style={{
-					backgroundColor: scheme() === 'light' ? '#EBEBED' : '#2C2C2C',
-					color: color.foreground,
-				}}
-			>
-				{NBSP}
-				<span style={{ fontFamily: MONO }}>{props.children}</span>
-				{NBSP}
-			</span>
-			{NBSP}
-		</>
+		<span
+			style={{
+				fontFamily: MONO,
+				fontSize: siteType.caption.fontSize,
+				...(variant() === 'prose'
+					? {}
+					: { lineHeight: siteType.caption.lineHeight }),
+				backgroundColor: scheme() === 'light' ? '#EBEBED' : '#2C2C2C',
+				color: color.foreground,
+				borderRadius: 4,
+				paddingLeft: 4,
+				paddingRight: 4,
+				paddingTop: padY(),
+				paddingBottom: padY(),
+				...(variant() === 'page' ? { marginLeft: 4, marginRight: 4 } : {}),
+			}}
+		>
+			{props.children}
+		</span>
+	);
+}
+
+/** A prose `<a>`: underlined, a Tab stop, Enter or a click follows it. A `/docs/<slug>` href shows that page, any other opens the system browser. `foreground` is `text-foreground` and `spaced` is `mx-1`, where the source sets them; the colour is else the paragraph's. */
+export function Link(props: {
+	children: string;
+	href: string;
+	foreground?: boolean;
+	spaced?: boolean;
+	testId?: string;
+}) {
+	const nav = usePageNav();
+	const follow = () => {
+		const slug = /^\/docs\/([^/#]+)$/.exec(props.href)?.[1];
+		if (slug !== undefined) {
+			nav.navigate(slug);
+			return;
+		}
+		openUrl(props.href).catch((error: unknown) => {
+			console.error(`Opening ${props.href} failed`, error);
+		});
+	};
+	return (
+		<span
+			testId={props.testId}
+			role="link"
+			tabIndex={0}
+			onClick={follow}
+			onKeyDown={(event: KeyEvent) => {
+				if (event.key === 'Enter') follow();
+			}}
+			style={{
+				textDecoration: 'underline',
+				cursor: 'pointer',
+				...(props.foreground === true ? { color: color.foreground } : {}),
+				...(props.spaced === true ? { marginLeft: 4, marginRight: 4 } : {}),
+				focusVisible: focusRing(2),
+			}}
+		>
+			{props.children}
+		</span>
 	);
 }
 

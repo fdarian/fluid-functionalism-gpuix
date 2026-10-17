@@ -16,7 +16,6 @@ import {
 	type TypeRole,
 } from './step';
 
-const NBSP = '\u00a0';
 /** The tick of lib/typeset/generate.ts, in a 24px grid. */
 const TICK_PATH = 'M6 12L10 16L18 8';
 
@@ -36,24 +35,28 @@ function Strike(props: { children: JSX.Element }) {
 	);
 }
 
-/** `:not(pre) > code`: foreground, a 7% wash, `padding: 0.1em 0.3em`. An inline run takes no padding, so the 0.3em is a no-break space and the size stays the paragraph's. */
+/** `:not(pre) > code`: foreground, caption size, a 7% wash, `padding: 0.1em 0.3em`, a 4px radius. */
 function Code(props: { children: string }) {
 	return (
 		<span
 			style={{
 				fontFamily: MONO,
+				fontSize: roleStyle('caption').fontSize,
 				color: color.foreground,
 				backgroundColor: withAlpha(color.foreground, 0.07),
+				borderRadius: 4,
+				paddingTop: '0.1em',
+				paddingBottom: '0.1em',
+				paddingLeft: '0.3em',
+				paddingRight: '0.3em',
 			}}
 		>
-			{NBSP}
 			{props.children}
-			{NBSP}
 		</span>
 	);
 }
 
-/** `a`: foreground, underlined at 35%. A run takes no events, so it does not navigate. */
+/** `a`: foreground, underlined at 35%. It does not navigate: the source's editor sets `openOnClick: false`, and a link in a `contenteditable` does not follow a click. */
 function Link(props: { children: string }) {
 	return (
 		<span

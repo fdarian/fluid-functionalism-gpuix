@@ -50,7 +50,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (arrows; the description on component pages); title weight is the shared static-font gap, see `README.md` "Variable-font axes" row.
 - **Original:** `DocPage` renders the h1 in `text-site-display` bold (`wght 700, opsz 25`) with ghost icon-button prev / next arrows on the same row (tooltips "Name ←" / "Name →", disabled at either end), then the description 8px under the title and an optional intro paragraph; page gap 32 (`lib/docs/DocPage.tsx:73-128`, `registry/default/lib/font-weight.ts:25-29`).
-- **Port:** every docs page and demo page takes `Heading`, `siteType.display` at `weight.semibold` (`src/app.tsx:80-92, 657-674`; it steps down with the Size row). The system pages put their description and optional intro under it through `DocPage` (Introduction does the same by hand), tucked up 8px by a negative margin (`src/lib/doc-page.tsx:164-218`, `:181`). A component demo page has the heading and the cards only: no description, no arrows. No docs page has arrows; only the home hero does (`src/app.tsx:317-358`). Page gap 24, top padding 40 (`src/app.tsx:582-584`) against the source's 112.
+- **Port:** every docs page and demo page takes `Heading`, `siteType.display` at `weight.semibold` (`src/app.tsx:80-92, 657-674`; it steps down with the Size row). The system pages put their description and optional intro under it through `DocPage` (Introduction does the same by hand), tucked up 8px by a negative margin (`src/lib/doc-page.tsx:222-272`, `:235`). A component demo page has the heading and the cards only: no description, no arrows. No docs page has arrows; only the home hero does (`src/app.tsx:317-358`). Page gap 24, top padding 40 (`src/app.tsx:582-584`) against the source's 112.
 - **Workaround:** none.
 - **Fidelity:** approximated (title lighter than the source's bold; arrows dropped, and the description on component pages).
 - **Components it hits:** every demo page (description, arrows); every docs page, the Changelog page included (arrows, weight).
@@ -59,7 +59,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `port choice` (the port is not a registry; reason not stated).
 - **Original:** an "Installation" heading with a note ("Base UI flavor. Switch in the right panel.", "Same source under both flavors.", or "One prompt for your coding agent: install command, usage, props.") and a copy-prompt button that writes `buildInstallPrompt(...)` to the clipboard and crossfades its icon to a check (`lib/docs/DocPage.tsx:130-170`, `lib/docs/copy-prompt-button.tsx:1-60`).
-- **Port:** the seven system pages have the block through `DocPage`: the heading, a per-page note, and a primary "Copy prompt" button that writes the page's prompt string and shows a check for 2 s (`src/lib/doc-page.tsx:129-162, 164-218`); the prompts are written out per page (`src/pages/<page>/install-prompt.ts`, or in the page file). The component demo pages have none (`src/app.tsx:657-664`).
+- **Port:** the seven system pages have the block through `DocPage`: the heading, a per-page note, and a primary "Copy prompt" button that writes the page's prompt string and shows a check for 2 s (`src/lib/doc-page.tsx:184-216, 222-272`); the prompts are written out per page (`src/pages/<page>/install-prompt.ts`, or in the page file). The component demo pages have none (`src/app.tsx:657-664`).
 - **Workaround:** none.
 - **Fidelity:** dropped (component pages).
 - **Components it hits:** every component demo page.
@@ -68,7 +68,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (Inspect, syntax highlighting, and the tabs and replay on component pages); the card look is a `port choice` (comment: "like the site's showcase cards", `src/lib/demo-kit.tsx:31`).
 - **Original:** `ComponentPreview` is a `border-border/60` frame with a 52px header: the title (semibold), a `TabsSubtle` Preview / Code, an Inspect `Switch` that overlays rulers and a box-model inspector, and an optional replay button; the body is `bg-background` with `px-8 py-12`, `min-h-[120px]`, and an `align` and `padding` option; the Code tab shows a shiki-highlighted snippet; the frame border goes `foreground/40` on `:focus-within`, and a press on empty preview space routes the keyboard into the demo (`lib/docs/ComponentPreview.tsx:85-250`). Each block sits under a `DocSection` h2 (`lib/docs/DocPage.tsx:174-190`).
-- **Port:** the system pages use `ComponentPreview` (`src/lib/doc-page.tsx:369-517`): a 12px-radius frame with a 52px header holding Preview / Code `TabsSubtle`, an optional replay or pause button, the border going 40% foreground on focus-within, `px-8 py-12` / `px-4 py-4` / none padding, a forced scheme for the source's `DarkPreview`, and optional culling. Its Code tab is plain monospace without highlighting; there is no Inspect switch or ruler overlay. The component demo pages still use `DemoCard`, a 12px-radius bordered box on `surface2` with 20px padding and a 44px footer carrying the title in muted body text, with no header, tabs, code, replay, focus border or section heading (`src/lib/demo-kit.tsx:31-98`); `DemoRow` is a 96px caption beside the controls, which the source does not have (`:100-129`).
+- **Port:** the system pages use `ComponentPreview` (`src/lib/doc-page.tsx:435-573`): a 12px-radius frame with a 52px header holding Preview / Code `TabsSubtle`, an optional replay or pause button, the border going 40% foreground on focus-within, `px-8 py-12` / `px-4 py-4` / none padding, a forced scheme for the source's `DarkPreview`, and optional culling. Its Code tab is plain monospace without highlighting; there is no Inspect switch or ruler overlay. The component demo pages still use `DemoCard`, a 12px-radius bordered box on `surface2` with 20px padding and a 44px footer carrying the title in muted body text, with no header, tabs, code, replay, focus border or section heading (`src/lib/demo-kit.tsx:31-98`); `DemoRow` is a 96px caption beside the controls, which the source does not have (`:100-129`).
 - **Workaround:** none.
 - **Fidelity:** dropped (Inspect; highlighting; tabs, code and replay on component pages); approximated (the frame).
 - **Components it hits:** every demo page (all of it); every system page (Inspect, highlighting).
@@ -77,7 +77,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `gpuix gap` (no culling; see `README.md` "Culling" row and `drift/command-menu.md`).
 - **Original:** the browser skips paint and layout for clipped content.
-- **Port:** `DemoCard` sets its content to `display: none` and pins its height once it is more than 25% of the scroller away (`src/lib/demo-kit.tsx:21-59, 76-78`); `ComponentPreview` does the same with `cull` (`src/lib/doc-page.tsx:315-361`).
+- **Port:** `DemoCard` sets its content to `display: none` and pins its height once it is more than 25% of the scroller away (`src/lib/demo-kit.tsx:21-59, 76-78`); `ComponentPreview` does the same with `cull` (`src/lib/doc-page.tsx:369-415`).
 - **gpuix lacks:** culling.
 - **Workaround:** that observer.
 - **Fidelity:** approximated (a hitch of a frame or two when a far card is jumped to).
@@ -206,7 +206,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (unverified live; read from code only).
 - **Original:** `scrollbar-gutter: stable`, `overscroll-behavior-y: none`, a thin overlay scrollbar ramp tinted by `--overlay`, grayscale font smoothing, balanced headings, inline-code chips, and a focus-ring fallback for natively focusable elements (`app/globals.css:296-345, 326-332, 896-945, 868-891`).
-- **Port:** the page column is a plain `overflowY: "scroll"` div (`src/app.tsx:552-563`) without the scrollbar styling. The docs pages have the inline-code chip and prose through `Code` and `Prose` (`src/lib/doc-page.tsx:43-74`; the chip is 13px with no-break-space padding, `drift/motion-page.md`); the shell has no prose.
+- **Port:** the page column is a plain `overflowY: "scroll"` div (`src/app.tsx:552-563`) without the scrollbar styling. The docs pages have the inline-code chip and prose through `Code` and `Prose` (`src/lib/doc-page.tsx:44-87`); the shell has no prose.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** every page.

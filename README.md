@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 607 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 605 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -176,14 +176,14 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [dialog](drift/dialog.md) | 6 | 2 | 2 | 1 | 11 |
 | [dropdown](drift/dropdown.md) | 7 | 4 | 10 | 2 | 23 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
-| [fluid-hover](drift/fluid-hover.md) | 4 | 5 | 2 | 2 | 13 |
+| [fluid-hover](drift/fluid-hover.md) | 3 | 5 | 2 | 2 | 12 |
 | [home](drift/home.md) | 0 | 1 | 1 | 2 | 4 |
 | [input-copy](drift/input-copy.md) | 2 | 3 | 6 | 0 | 11 |
 | [input-group](drift/input-group.md) | 1 | 1 | 3 | 1 | 6 |
 | [input-message](drift/input-message.md) | 4 | 0 | 14 | 3 | 21 |
 | [introduction](drift/introduction.md) | 1 | 4 | 2 | 1 | 8 |
 | [mobile-drawer](drift/mobile-drawer.md) | 3 | 2 | 1 | 0 | 6 |
-| [motion-page](drift/motion-page.md) | 4 | 3 | 1 | 3 | 11 |
+| [motion-page](drift/motion-page.md) | 3 | 3 | 1 | 3 | 10 |
 | [nav-menu](drift/nav-menu.md) | 1 | 5 | 1 | 0 | 7 |
 | [queued-stack](drift/queued-stack.md) | 4 | 2 | 3 | 1 | 10 |
 | [radio-group](drift/radio-group.md) | 4 | 2 | 3 | 0 | 9 |
@@ -204,7 +204,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
 | [tooltip](drift/tooltip.md) | 4 | 5 | 1 | 1 | 11 |
 | [typography](drift/typography.md) | 4 | 0 | 1 | 6 | 11 |
-| **Total** | **140** | **201** | **198** | **63** | **602** |
+| **Total** | **138** | **201** | **198** | **63** | **600** |
 
 ### gpuix gaps across components
 
@@ -218,7 +218,7 @@ offer it. A count is given only where the code shows it.
 | Used by | What | Workaround here |
 |---|---|---|
 | command-menu, and any list that keeps focus in a field while it is pressed | On Windows and Linux the press reaches JavaScript through a queue after native has already moved focus, so `preventDefault()` in `onMouseDown` or `onPointerDown` has no effect and a press on something not focusable still blurs the field (gpuix `README.md:3259-3266`). Seen in the command menu: clicking a tab blurs the field. macOS and the test renderer apply it | `preventDefault()` in `onMouseDown` on the list and the tab row (`drift/command-menu.md`); it works on macOS only. Not run on Windows or Linux |
-| slider | Values derived in JS (`createTransform` of several values) still trail their inputs by one frame (FORK.md:1215-1217) | none (`drift/slider.md`) |
+| slider | Values derived in JS (`createTransform` of several values) still trail their inputs by one frame (FORK.md:1262-1263) | none (`drift/slider.md`) |
 | accordion, banner, button, carousel-dots, chat-message, input-copy, input-message, tabs, tabs-subtle, thinking-steps (all use `buttonProps`) | `buttonProps` handles keydown on the way up, so a `buttonProps` element nested in another is clicked twice on Enter: the inner one clicks itself and the outer one clicks the same target. The fix is to act only when `target === currentTarget` | none; nested cases are not counted |
 | scroll-area | A horizontal or both-axis scroller has no `min-width: fit-content` content wrapper (gpuix rejects intrinsic width keywords). `scrollWidth` counts overflowing descendants now, but a block wrapper is clamped to the viewport width and its `onLayout` reports that, so the area has no content size to draw a horizontal thumb from | The viewport is a flex row with `alignItems: "flex-start"` and the content wrapper is `flexShrink: 0`, so the wrapper takes its content's width |
 | select, combobox | Enter in a form `<input>` with an empty `required` control does nothing; HTML implicit submission validates, sets `invalid` and moves focus. Only `requestSubmit()` validates | The demos submit through `requestSubmit()` |
@@ -258,7 +258,6 @@ offer it. A count is given only where the code shows it.
 | color-picker | A JS-visible CSS colour resolver: named colours and `color-mix()` resolve natively for styles only | `parseColor` reads hex, `rgb(a)`, `hsl(a)` and `oklch`; a name is rejected |
 | queued-stack | An input-device signal: `matchMedia` fixes `hover` to `hover` and `pointer` to `fine`, so `(hover: none)` never matches | none; desktop only |
 | combobox, select (any form) | A submit button: `SubmitEvent.submitter` is always `null` | The demos call `form.requestSubmit()` |
-| fluid-hover, motion, scrollbars and sizes pages (every `Code` chip, the Scrollbars links) | Inline `<span>` boxes take no padding, margin, border radius, per-run `fontSize` or click events (`~/code/fdarian/gpuix/FORK.md:789-800`) | The chip's padding is no-break spaces around a Menlo run at the paragraph's size (`src/lib/doc-page.tsx:58-74`); links are underlined text that goes nowhere |
 | surfaces and fluid-hover pages (the annotation arrows) | `<svg>` has no `marker` (`FORK.md:786`) | The arrowhead is two extra strokes laid along the curve's end tangent |
 | concepts (Lumen's image swatches) | `<img>` takes `file://` and `blob:` URLs, not `data:` ones | A `linear-gradient` box instead of an SVG data URI |
 | skill page (the scripted-cursor examples) | Dispatching a synthetic pointer event, or setting `:hover`, on one element: the native simulate calls move the window's one pointer | The page calls the elements' `onMouseEnter` / `onMouseLeave` / `onMouseMove` props and `click()` directly (`drift/skill-page.md`, `src/pages/skill/scripted-pointer.ts`) |

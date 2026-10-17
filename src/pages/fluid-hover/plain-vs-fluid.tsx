@@ -196,7 +196,7 @@ function Stage(props: { paused: () => boolean }) {
 					</div>
 				</ListFrame>
 				<Caption mark="❌">
-					Plain <Code>:hover</Code> blinks at every gap
+					Plain <Code variant="prose">:hover</Code> blinks at every gap
 				</Caption>
 			</div>
 			<div style={columnStyle}>

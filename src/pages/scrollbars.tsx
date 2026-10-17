@@ -1,6 +1,13 @@
 import type { JSX } from 'solid-js';
 import type { ShotContext } from '#/lib/demo';
-import { Code, DocPage, DocSection, Prose, SubHeading } from '#/lib/doc-page';
+import {
+	Code,
+	DocPage,
+	DocSection,
+	Link,
+	Prose,
+	SubHeading,
+} from '#/lib/doc-page';
 import {
 	FadeDemo,
 	HorizontalDemo,
@@ -19,11 +26,6 @@ export const listed = 'sidebar';
 const LIST_DESCRIPTION =
 	"A scrollbar that stays out of the way but never disappears, over shadcn's scroll-fade baseline — restyled to the shape system, native scroll on touch.";
 export const menuKeywords = ['scrollbars', ...LIST_DESCRIPTION.split(/\W+/)];
-
-/** An `<a>` in the source. An inline box takes no click in gpuix, so the link is underlined text that goes nowhere. */
-function Link(props: { children: string }) {
-	return <span style={{ textDecoration: 'underline' }}>{props.children}</span>;
-}
 
 export async function scenarios(shot: ShotContext) {
 	shot.capture('top');
@@ -86,25 +88,32 @@ export function Page(): JSX.Element {
 			<DocSection title="The scrollbar">
 				<Prose>
 					The thumb rests narrow and low-contrast, then widens and darkens on
-					hover so it stays quiet until you reach for it. Press <Code>R</Code>{' '}
-					to see the radius follow the shape system. On touch-primary devices
-					the whole thing steps aside for native overflow scrolling, where
-					platform physics beat any custom scrollbar.
+					hover so it stays quiet until you reach for it. Press{' '}
+					<Code variant="flush">R</Code> to see the radius follow the shape
+					system. On touch-primary devices the whole thing steps aside for
+					native overflow scrolling, where platform physics beat any custom
+					scrollbar.
 				</Prose>
 				<Prose>
 					Ships in Radix and Base UI flavors with the same API — switch with the
-					Primitive toggle. Scrollbar machinery adapted from <Link>Lina</Link>.
+					Primitive toggle. Scrollbar machinery adapted from{' '}
+					<Link href="https://lina.sameer.sh">Lina</Link>.
 				</Prose>
 			</DocSection>
 
 			<DocSection title="The fade">
 				<Prose>
-					The baseline edge treatment is shadcn's <Link>scroll-fade</Link>,
-					vendored as a CSS utility in <Code>globals.css</Code>. A mask
-					dissolves the content toward the edges that have more to scroll, and a
-					scroll-driven animation keeps the true start and end crisp. Drop{' '}
-					<Code>scroll-fade</Code> (or <Code>scroll-fade-x</Code>) on the
-					viewport and it rides under the scrollbar — no JavaScript.
+					The baseline edge treatment is shadcn's{' '}
+					<Link href="https://ui.shadcn.com/docs/utils/scroll-fade">
+						scroll-fade
+					</Link>
+					, vendored as a CSS utility in{' '}
+					<Code variant="flush">globals.css</Code>. A mask dissolves the content
+					toward the edges that have more to scroll, and a scroll-driven
+					animation keeps the true start and end crisp. Drop{' '}
+					<Code variant="flush">scroll-fade</Code> (or{' '}
+					<Code variant="flush">scroll-fade-x</Code>) on the viewport and it
+					rides under the scrollbar — no JavaScript.
 				</Prose>
 				<FadeDemo />
 			</DocSection>
@@ -117,8 +126,8 @@ export function Page(): JSX.Element {
 				<SubHeading>Double overflow</SubHeading>
 				<Prose>
 					A table taller and wider than its box.{' '}
-					<Code>{'orientation="both"'}</Code> adds both scrollbars and the
-					corner.
+					<Code variant="flush">{'orientation="both"'}</Code> adds both
+					scrollbars and the corner.
 				</Prose>
 				<TableDemo />
 			</DocSection>

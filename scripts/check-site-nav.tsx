@@ -172,6 +172,14 @@ check(
 );
 check('the row that left the pointer is not', fillOf('nav-skill') === UNLIT);
 
+// A prose link follows its href: Sizes' "Typography" shows the Typography page.
+renderer.clickElement(element('sizes-typography-link').id);
+await settle(600);
+check(
+	"the Sizes page's Typography link shows the Typography page",
+	renderer.getAllText().some((line) => line.includes('Markdown gets the same')),
+);
+
 // The site menu finds Changelog by its keywords.
 renderer.simulateKeystrokes('ControlOrMeta+k');
 await settle(600);

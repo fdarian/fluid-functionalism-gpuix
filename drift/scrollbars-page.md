@@ -31,16 +31,16 @@ repeating it.
 
 - **Cause:** `not ported yet` (the `R` shape shortcut and the Radix / Base UI toggle); Primitive is not ported at all (the port has Base UI behaviour only, README).
 - **Original:** "Press R to see the radius follow the shape system" and "switch with the Primitive toggle" (`app/docs/scrollbars/page.tsx:506-518`); `R` cycles the site's radius (`lib/docs/shape-shortcut.tsx`) and the toggle swaps the Radix and Base UI scroll areas.
-- **Port:** the prose is verbatim. `R` does nothing; the Radius row in the customise card changes the radius instead (the lists' frames follow it through `shape.container`), and there is no Primitive control. The `R` is a code chip, where the source's `<kbd>` is `bg-muted`, 12px mono, 4px radius.
+- **Port:** the prose is verbatim. `R` does nothing; the Radius row in the customise card changes the radius instead (the lists' frames follow it through `shape.container`), and there is no Primitive control. The `R` is a `flush` code chip (`px-1 py-0.5`, 12px mono, 4px radius, as the source's `<kbd>`) on the code chips' wash and foreground text, where the source's `<kbd>` is `bg-muted` with the paragraph's muted text (`src/pages/scrollbars.tsx`).
 - **Fidelity:** exact text, describes more than the port does.
 
-## Links are underlined text that goes nowhere
+## Links underline at the default offset
 
-- **Cause:** `gpuix gap`: an inline box takes no click, and nothing opens a URL (README "Inline text").
-- **Original:** `<a href target="_blank">` for Lina and shadcn's scroll-fade (`app/docs/scrollbars/page.tsx:516-541`).
-- **Port:** a `<span>` with `textDecoration: "underline"` in the paragraph's muted colour (`src/pages/scrollbars.tsx`, `Link`).
+- **Cause:** `gpuix gap` (an underline offset, see [`card.md`](card.md#the-link-variant-underlines-at-the-default-offset)).
+- **Original:** `<a href target="_blank" className="underline underline-offset-2">` for Lina and shadcn's scroll-fade (`app/docs/scrollbars/page.tsx:516-541`).
+- **Port:** the shared `Link` (`src/lib/doc-page.tsx:90-128`): an underlined `<span>` in the paragraph's colour with a pointer cursor, a Tab stop and a focus ring, that opens the URL in the system browser on a click or Enter (`openUrl`, as the changelog's refs do). The underline sits at the font's default offset, not 2px.
 - **Workaround:** none.
-- **Fidelity:** dropped (the click).
+- **Fidelity:** approximated (underline offset).
 
 ## "Double overflow" is the real `Table`, with fixed column widths
 

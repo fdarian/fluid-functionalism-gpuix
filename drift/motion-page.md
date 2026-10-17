@@ -50,20 +50,11 @@ repeating it.
 - **Port:** the frame's `focusWithin` border (`foreground` at 40%, 150ms) is ported, but only a focus the demo already has (a pressed track, a Tab stop) lights it. An empty-space click focuses nothing.
 - **Fidelity:** approximated.
 
-## Inline code chips are 13px, with the padding made of no-break spaces, and have square corners
-
-- **Cause:** `gpuix gap`: an inline box takes no padding, margin, border radius or `fontSize` (README "Inline text", "Not supported inside a paragraph").
-- **Original:** `<code class="mx-1 rounded bg-[light-dark(#EBEBED,#2C2C2C)] px-1 py-0.5 text-site-caption">` (`app/docs/motion/page.tsx:14-20`): 12px, 4px of margin and padding each side, a 4px radius.
-- **Port:** a nested `<span>` with the background and a Menlo run inside, a no-break space inside the wash for the padding and one outside for the margin (`src/lib/doc-page.tsx:52-74`). A no-break space in Inter is about 3.6px, so the 4px is exact to within half a pixel. The run is 13px (the paragraph's size), the corners are square, and the wash is exactly the text's line box tall instead of `py-0.5` taller.
-- **gpuix lacks:** padding, margin, radius and `fontSize` on an inline box (README "Inline text").
-- **Fidelity:** approximated.
-- **Components it hits:** every prose line with `<code>`; the `font-mono` runs in the tier headers and the demo caption are Menlo too (the browser resolves `font-mono` to `ui-monospace`).
-
 ## The Copy prompt button swaps its icon at once and copies a fixed brief
 
 - **Cause:** `port choice`.
 - **Original:** `CopyPromptButton` crossfades the copy glyph into a check (opacity, 4px blur, scale 0.6, over `spring.fast`) for 2s, with a visually hidden "Copied" read out by `aria-live`, and the brief comes from `buildInstallPrompt` (`lib/docs/copy-prompt-button.tsx:30-141`, `lib/docs/install-prompt.ts:38-95`).
-- **Port:** the button's `leadingIcon` is `copy`, then `check` for 2s (`src/lib/doc-page.tsx:129-157`), with no crossfade, blur, scale or live region (the port's `Button` takes an icon name, not a component, and gpuix has no `filter` motion target). The brief is `buildInstallPrompt({ slug: "motion", installSlug: "springs", base: "radix" })` written out in `src/pages/motion/install-prompt.ts`, not built from the page registry. It copies through `navigator.clipboard.writeText`; a failed copy logs and leaves the icon alone, as the source's does when its `execCommand` fallback fails too (minus the log).
+- **Port:** the button's `leadingIcon` is `copy`, then `check` for 2s (`src/lib/doc-page.tsx:184-216`), with no crossfade, blur, scale or live region (the port's `Button` takes an icon name, not a component, and gpuix has no `filter` motion target). The brief is `buildInstallPrompt({ slug: "motion", installSlug: "springs", base: "radix" })` written out in `src/pages/motion/install-prompt.ts`, not built from the page registry. It copies through `navigator.clipboard.writeText`; a failed copy logs and leaves the icon alone, as the source's does when its `execCommand` fallback fails too (minus the log).
 - **Fidelity:** approximated.
 - **Components it hits:** the Installation block of every docs page.
 
@@ -92,7 +83,7 @@ repeating it.
 
 - **Cause:** `port choice` (spacing); `gpuix gap` (weight).
 - **Original:** `DocSection` is `gap-4 pt-6` with a `-mb-2` title; the `h3` is `mt-8`.
-- **Port:** the same numbers as margins and padding (`src/lib/doc-page.tsx:92-125`); the page's description is tucked under `App`'s heading with `marginTop: -16`, as in `drift/introduction.md`. Titles are SemiBold 600 where the source's variable font is 550 (README variable-font rows), the `h3` is `SubHeading` on `siteType.subtitle` (14/20).
+- **Port:** the same numbers as margins and padding (`src/lib/doc-page.tsx:146-179`); the page's description is tucked under `App`'s heading with `marginTop: -16`, as in `drift/introduction.md`. Titles are SemiBold 600 where the source's variable font is 550 (README variable-font rows), the `h3` is `SubHeading` on `siteType.subtitle` (14/20).
 - **Fidelity:** exact spacing, approximated weight.
 
 ## The ⌘K row

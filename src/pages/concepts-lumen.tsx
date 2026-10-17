@@ -19,7 +19,14 @@ import {
 	ThinkingStepsHeader,
 } from '#/components/thinking-steps';
 import type { ShotContext } from '#/lib/demo';
-import { color, shadow, shape, siteType, weight } from '#/lib/theme';
+import {
+	color,
+	shadow,
+	shape,
+	siteType,
+	type as scale,
+	weight,
+} from '#/lib/theme';
 import { ConceptFrame } from '#/pages/concepts/frame';
 
 export const title = 'Lumen';
@@ -31,7 +38,6 @@ export const listed = 'none';
 /** How long a new question stays in "Writing the answer" before the canned answer lands. */
 const THINKING_MS = 1600;
 const BOLD = 700;
-const NBSP = ' ';
 
 export async function scenarios(shot: ShotContext) {
 	await shot.hover('concept-nav-concepts-beacon');
@@ -134,23 +140,26 @@ function Caption(props: { children: string }) {
 
 // ── Citation chip ───────────────────────────────────────────────────────
 
-/** An inline run: a span takes no padding, radius or font size, so the chip is the number between two no-break spaces on the accent fill. */
+/** `Badge size="sm"` (20px tall, 11px type) with `mx-0.5 px-1.5`, set inline. The span's box is the font's content area plus the 3.5px of padding that makes it 20px tall; the source's `-translate-y-px` and `align-middle` have no counterpart. */
 function Cite(props: { n: number }) {
 	return (
-		<>
-			{NBSP}
-			<span
-				style={{
-					backgroundColor: color.accent,
-					color: color.foreground,
-					fontVariantNumeric: 'tabular-nums',
-				}}
-			>
-				{NBSP}
-				{props.n}
-				{NBSP}
-			</span>
-		</>
+		<span
+			style={{
+				...scale.micro,
+				backgroundColor: color.accent,
+				color: color.foreground,
+				fontVariantNumeric: 'tabular-nums',
+				borderRadius: shape.item,
+				marginLeft: 2,
+				marginRight: 2,
+				paddingLeft: 6,
+				paddingRight: 6,
+				paddingTop: 3.5,
+				paddingBottom: 3.5,
+			}}
+		>
+			{props.n}
+		</span>
 	);
 }
 

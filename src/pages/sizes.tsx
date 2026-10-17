@@ -1,6 +1,6 @@
 import type { JSX } from 'solid-js';
 import type { ShotContext } from '#/lib/demo';
-import { Code, DocPage, DocSection, Prose } from '#/lib/doc-page';
+import { Code, DocPage, DocSection, Link, Prose } from '#/lib/doc-page';
 import { CompactRegionDemo } from '#/pages/sizes/compact-region';
 import { SIZES_INSTALL_PROMPT } from '#/pages/sizes/install-prompt';
 import { TokenInspectorDemo } from '#/pages/sizes/token-inspector';
@@ -18,11 +18,6 @@ export const listed = 'sidebar';
 const LIST_DESCRIPTION =
 	'A two-step size ladder — a 36px default and a 28px compact — shared by buttons, inputs, selects, tabs, and rows.';
 export const menuKeywords = ['sizes', ...LIST_DESCRIPTION.split(/\W+/)];
-
-/** An `<a>` in the source. An inline box takes no click in gpuix, so the link is underlined text that goes nowhere. */
-function Link(props: { children: string }) {
-	return <span style={{ textDecoration: 'underline' }}>{props.children}</span>;
-}
 
 export async function scenarios(shot: ShotContext) {
 	shot.capture('top');
@@ -85,8 +80,16 @@ export function Page(): JSX.Element {
 				<Prose>
 					Type follows the ladder. Compact drops each of the six roles one
 					notch, size and leading together, so a dense screen keeps the same
-					hierarchy at a smaller size. The full scale lives on{' '}
-					<Link>Typography</Link>.
+					hierarchy at a smaller size. The full scale lives on
+					<Link
+						href="/docs/typography"
+						testId="sizes-typography-link"
+						foreground
+						spaced
+					>
+						Typography
+					</Link>
+					.
 				</Prose>
 			</DocSection>
 

@@ -33,15 +33,6 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 - **Fidelity:** approximated.
 - **Components it hits:** every System page the latest release marks New or Updated (Skill, and Typography once its release lands).
 
-## Inline code chips have no radius or smaller type, and one can strand at a line end
-
-- **Cause:** `gpuix gap` (a `<span>` has no padding, margin, border or radius, and no per-run `fontSize`: `~/code/fdarian/gpuix/FORK.md:789-800`).
-- **Original:** `<code className="mx-1 rounded bg-[light-dark(#EBEBED,#2C2C2C)] px-1 py-0.5 text-site-caption text-foreground">` (`page.tsx:15-21`), and the same chip on the `:hover` in the comparison's caption by the global `code:not(pre code)` rule (`app/globals.css:349-355`): 12px type, 4px radius, 4px side padding, 4px side margin.
-- **Port:** the shared `Code` (`src/lib/doc-page.tsx:52-74`): a no-break space outside the chip for the margin and one inside each end for the padding, around a Menlo run at the prose's 13px, square corners. gpuix's line wrapper treats a no-break space as a break opportunity (`zed/crates/gpui/src/text_system/line_wrapper.rs:450`), so a line can end between the padding and the text: the "Reduced motion" paragraph ends its first line with an empty chip before "`<MotionConfig>`" (`screenshots/fluid-hover/use-when.png`). The page used a bare span with no padding before moving to the shared chip, which never stranded but hugged its text.
-- **Workaround:** none; the stranding depends on where the line happens to break.
-- **Fidelity:** approximated.
-- **Components it hits:** every page with inline code (motion, surfaces, typography, and the chips in the demos' captions).
-
 ## "Blink or glide": the script is a JS loop, the cursor moves on `left` / `top`
 
 - **Cause:** `port choice` (gpuix has no `requestAnimationFrame` and no keyframes on a value JS can read) plus `gpuix gap` (no transforms: README "Missing features").
@@ -54,7 +45,7 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 
 - **Cause:** `port choice` (captions).
 - **Original:** the play / pause icon button is the right end of the preview header, 40px square, through `ComponentPreview`'s `playbackButton`; `useReducedMotion()` stops the script (`demos.tsx:288-292`, `:380-400`, `lib/docs/ComponentPreview.tsx:140-170`); the two captions are flex rows whose text and `<code>` runs are separate flex items 8px apart (`demos.tsx:344-376`).
-- **Port:** the pause button is the same 40px header button, through the shared `ComponentPreview`'s `playback` option (icon, tooltip and click; `src/lib/doc-page.tsx:204-249`, `src/pages/fluid-hover/plain-vs-fluid.tsx:245-258`). Reduced motion stops the script as in the source (`createReducedMotion()`, `src/pages/fluid-hover/plain-vs-fluid.tsx:109-110`); each caption is one centred `<text>` with inline runs, so the gaps around the chip are a normal space.
+- **Port:** the pause button is the same 40px header button, through the shared `ComponentPreview`'s `playback` option (icon, tooltip and click; `src/lib/doc-page.tsx:282-320`, `src/pages/fluid-hover/plain-vs-fluid.tsx:245-258`). Reduced motion stops the script as in the source (`createReducedMotion()`, `src/pages/fluid-hover/plain-vs-fluid.tsx:109-110`); each caption is one centred `<text>` with inline runs, so the gaps around the chip are a normal space.
 - **Fidelity:** approximated.
 
 ## "Show the math": dashed rules are a gradient
@@ -106,7 +97,7 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 
 - **Cause:** `gpuix gap` (every element is laid out and painted even when a scroller clips it away: README "Missing features", culling row).
 - **Original:** no such step; the browser skips what is off screen.
-- **Port:** every `ComponentPreview` on the page passes `cull`, which keeps the preview body's height and sets its content to `display: none` when more than 25% of a viewport from the page scroller, as `DemoCard` does (`src/lib/doc-page.tsx:298-344`); the 200-row list is the reason. It is an opt-in of the shared frame, off for the other pages, and it duplicates `DemoCard`'s observer instead of sharing it, to leave `src/lib/demo-kit.tsx` alone.
+- **Port:** every `ComponentPreview` on the page passes `cull`, which keeps the preview body's height and sets its content to `display: none` when more than 25% of a viewport from the page scroller, as `DemoCard` does (`src/lib/doc-page.tsx:369-415`); the 200-row list is the reason. It is an opt-in of the shared frame, off for the other pages, and it duplicates `DemoCard`'s observer instead of sharing it, to leave `src/lib/demo-kit.tsx` alone.
 - **Workaround:** the above.
 - **Fidelity:** exact once painted.
 - **Components it hits:** every long page.
