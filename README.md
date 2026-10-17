@@ -42,6 +42,7 @@ pnpm check:type             # tsc over src/ and scripts/, base-ui-solid-gpuix's 
 pnpm check:scenarios        # every scripts/check-*, about 30 minutes
 pnpm screenshots [slug]     # headless captures of every demo and page into screenshots/<slug>/, about 25 minutes for all; or one slug
 bun scripts/live-check.tsx  # the same flow against the real window, via gpuix's automation client
+bun scripts/perf.tsx [slug...] --label name   # live frame times per page, idle and a sidebar sweep, into perf/<name>.json
 ```
 
 <details>
@@ -264,6 +265,8 @@ offer it. A count is given only where the code shows it.
 ## Harness and shared-lib notes
 
 Quirks of this repo's own code, kept apart from the gpuix gaps above.
+
+- **Frame-time harness** (`scripts/perf.tsx`, `src/lib/perf.ts`, on the real window; `FF_PERF=1 bun src/main.tsx` is its app half). Per page it mounts the app on that page (a fresh `render()`, not an in-app navigation), settles 1.5 s, then records 3 s idle and 3 s of 120 pointer moves per second sweeping the sidebar column. Columns: `draws/s` is the native draw count; `draw` is gpui's per-window-draw CPU time (build + layout + paint, not split) read from the overlay stats after each tick or injected move, so draws that share one tick are missed (`missedDraws` in the JSON; the overlay's own p90/p99/max cover all); `present/s` and `enc` are Metal frames and their encode ms from `GPUIX_RENDER_STATS`; `tick` is time inside `renderer.tick()` (the draw plus any event handler it runs); `apply` is time in `applyBatch` (the Solid mutations), `clock` time in `setInterval` callbacks (the `onFrame` subscribers); `cpu%` is whole-process CPU over wall time (above 100 means more than one thread); `nodes` is created minus destroyed elements counted from the mutation batches, since the real renderer has no element count. The numbers are only valid while the window is not occluded (a covered window gets no display link): the script retries a page that drew without presenting, and `--foreground` (focus-stealing) re-activates the window then; `--wait-visible s` sets how long it keeps trying. The addon must be a release build, which the script checks by size against cargo's artifacts. The frame loop is paced by the display (75 Hz here, 13.3 ms), so compare runs on the same machine and load.
 
 - **Focus dimming.** gpuix dims every other focusable control while one has keyboard focus, so buttons, inputs and
   the tab and card wrappers set `keyboardFocusDim: false`.

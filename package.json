@@ -11,6 +11,7 @@
 		"check:type": "tsc",
 		"check:scenarios": "bun scripts/run-scenarios.ts",
 		"screenshots": "bun scripts/run-screenshots.ts",
+		"perf": "bun scripts/perf.tsx",
 		"format": "biome check --write"
 	},
 	"dependencies": {

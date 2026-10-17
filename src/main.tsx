@@ -4,19 +4,47 @@
  * startup, so a new one shows up after a restart.
  */
 import { render } from '@gpuix/solid';
-import { loadDemos, loadPages } from '#/lib/demo';
+import { loadDemos, loadPages, SHOWCASE_SLUG } from '#/lib/demo';
 import { fonts } from '#/lib/fonts';
 import { App, WINDOW_TITLE } from './app';
 
 const demos = await loadDemos();
 const pages = await loadPages(demos);
 
-render(() => <App demos={demos} pages={pages} />, {
+const windowOptions = {
 	title: WINDOW_TITLE,
 	titlebarTransparent: true,
 	trafficLightX: 14,
 	trafficLightY: 13,
 	width: 1240,
 	height: 780,
+	focus: process.env.GPUIX_BACKGROUND !== '1',
 	fonts,
-});
+};
+
+if (process.env.FF_PERF === '1') {
+	// Opt-in harness: see scripts/perf.tsx.
+	const { startPerf } = await import('#/lib/perf');
+	startPerf({
+		windowOptions,
+		pages: [
+			{ slug: SHOWCASE_SLUG, kind: 'showcase', sidebar: true },
+			...pages.map((page) => ({
+				slug: page.slug,
+				kind: 'page' as const,
+				sidebar: page.layout === 'docs',
+			})),
+			...demos.map((demo) => ({
+				slug: demo.slug,
+				kind: 'demo' as const,
+				sidebar: true,
+			})),
+		],
+		mount: (renderer, slug) =>
+			render(() => <App demos={demos} pages={pages} initialPage={slug} />, {
+				renderer,
+			}),
+	});
+} else {
+	render(() => <App demos={demos} pages={pages} />, windowOptions);
+}

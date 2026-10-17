@@ -18,6 +18,7 @@ Solid app that draws the [Fluid Functionalism](https://fluidfunctionalism.com) c
 - `pnpm install` — from this directory only. `pnpm start` runs the app; `pnpm check:type` is `tsc`.
 - `pnpm check:scenarios` takes about 30 minutes, so run `bun scripts/check-<component>.tsx` for the component you touched and `pnpm check` before merging.
 - `pnpm screenshots [slug]` — one page, or about 25 minutes for all of them.
+- `pnpm perf [slug...] --label x` — live frame times on the real window into `perf/<label>.json` (README, "Harness and shared-lib notes"); results are not committed.
 - `pnpm format` — Biome.
 
 ## Rules
