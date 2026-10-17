@@ -241,8 +241,9 @@ export function ScrollArea(props: {
 					style={{
 						display: 'flex',
 						flexDirection: 'column',
-						// Base UI's Content: it grows past the viewport to its widest unbreakable child, which is what `onLayout` reads for the horizontal thumb.
-						minWidth: 'fit-content',
+						// Vertical-only: nothing overflows sideways and `fit-content` would grow to a truncating label's full text width (CSS does too; the source's sidebar forces `min-width: 0`, `registry/base/sidebar.tsx:293-297`).
+						// Otherwise Base UI's Content: it grows to its widest unbreakable child, which `onLayout` reads for the horizontal thumb.
+						...(horizontal() ? { minWidth: 'fit-content' } : { width: '100%' }),
 					}}
 				>
 					{props.children}

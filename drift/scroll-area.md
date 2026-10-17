@@ -14,6 +14,15 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 - **Fidelity:** exact on macOS (apart from `Math.min(fadeSize, length / 2)` at `:104`, which the CSS does not do for a viewport under 96px); no fade elsewhere. A new gradient string is built on every scroll event. A `both` area fades vertically only, as the single class does on the web.
 - **Components it hits:** any `ScrollArea` with `fade`.
 
+## A vertical area's content box is `width: 100%`, not `min-width: fit-content`
+
+- **Cause:** `port choice` (the source's sidebar override applied to every vertical area; the web and gpuix agree on `fit-content`, so it is not a gpuix gap).
+- **Original:** `Content` keeps Base UI's inline `min-width: fit-content`, which grows to a truncating label's full text width (CSS gives its `max-content`, since an `overflow: hidden` flex item still contributes its text to `min-content`); the source's `SidebarContent` forces `[&>div]:!block [&>div]:!min-w-0` on the viewport's child so rows truncate (`registry/base/sidebar.tsx:293-297`). Other vertical areas keep `fit-content`.
+- **Port:** vertical-only areas get `width: "100%"` and the horizontal and both-axis ones keep `minWidth: "fit-content"` (`src/components/scroll-area.tsx:244-246`). gpuix resolves `fit-content` as the web does (measured: a column holding a row with a truncating label came out 393px in a 200px viewport, Chrome 374px; `width: "100%"` gives 200px in both).
+- **Workaround:** n/a.
+- **Fidelity:** approximated (a vertical area whose content has an unbreakable child wider than the viewport grows on the web and is clamped here; the overflow is clipped by the viewport either way, since a vertical area draws no horizontal thumb).
+- **Components it hits:** every vertical `ScrollArea`; only the sidebar content differs visibly (truncation).
+
 ## The thumb's 2px nudge is a `left` / `top`, not a translate
 
 - **Cause:** `gpuix gap` (no transforms: [README "Missing features", first row](../README.md#missing-features)).
@@ -27,7 +36,7 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 - **Cause:** `port choice` (desktop only: the audit notes gpuix has no touch input; `useTouchPrimary` is not ported).
 - **Original:** on touch-primary devices the Base UI tree is replaced by a native-overflow `div` (`role="group"`, `aria-roledescription="scroll area"`, `tabIndex=0`) and `ScrollBar` renders nothing (`registry/base/scroll-area.tsx:49-75`, `:109-112`; `registry/default/hooks/use-touch-primary.tsx`).
-- **Port:** one path, the drawn scrollbar (`src/components/scroll-area.tsx:138-259`).
+- **Port:** one path, the drawn scrollbar (`src/components/scroll-area.tsx:138-260`).
 - **Workaround:** n/a.
 - **Fidelity:** dropped (no touch path).
 - **Components it hits:** just this one.
