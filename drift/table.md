@@ -11,7 +11,7 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 - **Cause:** `gpuix gap`.
 - **Original:** a real `<table>` with `w-full border-collapse` (`table.tsx:81`): columns auto-size to their widest cell and line up across rows; one rule is shared between adjacent rows.
 - **Port:** a column of flex rows, each cell `flexGrow: 1; flexBasis: 0` (`table.tsx:107-153`, `:162-173`), so columns are equal width. `TableHead` / `TableCell` take an optional fixed `width` (`:164-166`). Each row draws its own bottom border (`:145`); the port's rows are 36px + a 1px rule, the collapsed original's row height was not measured.
-- **gpuix lacks:** `display: table` and `border-collapse` (taffy has no table boxes, `~/code/fdarian/gpuix/FORK.md` area C; README row `README.md:245`). Grid tracks (`auto`, `max-content`, `fr`) exist and could size columns across rows if every cell sat in one grid; the port has not moved to that.
+- **gpuix lacks:** `display: table` and `border-collapse` (taffy has no table boxes, `~/code/fdarian/gpuix/FORK.md` area C; README row `README.md:243`). Grid tracks (`auto`, `max-content`, `fr`) exist and could size columns across rows if every cell sat in one grid; the port has not moved to that.
 - **Workaround:** equal columns plus the optional fixed `width`.
 - **Fidelity:** approximated (equal columns instead of content-sized ones).
 - **Components it hits:** just this one.
@@ -21,14 +21,14 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 - **Cause:** `gpuix gap`.
 - **Original:** header rows set `fontVariationSettings` to `fontWeights.semibold` (`wght 550, opsz 18`) and body rows to `fontWeights.normal` (`wght 400, opsz 14`) on the `<tr>` (`table.tsx:158-165`).
 - **Port:** `fontWeight: weight.semibold` (600) for header cells, 400 for body, on the cell `<text>` (`table.tsx:178`, `src/lib/theme.ts:375`).
-- **gpuix lacks:** variable-font axes (`StyleDesc` has `fontWeight` and `fontFeatureSettings`, no `fontVariationSettings`); `README.md:254`, `:329`.
+- **gpuix lacks:** variable-font axes (`StyleDesc` has `fontWeight` and `fontFeatureSettings`, no `fontVariationSettings`); `README.md:252`, `:329`.
 - **Workaround:** Inter's static cuts only; no `opsz`.
 - **Fidelity:** approximated (600 for 550, no optical size).
 - **Components it hits:** every component using `font-variation-settings`.
 
 ## Highlight travel runs on `top` / `left`
 
-- **Cause:** `gpuix gap` (no transforms; `README.md:238`).
+- **Cause:** `gpuix gap` (no transforms; `README.md:236`).
 - **Original:** the highlight is pinned to the corner and moved with `x` / `y` transforms on `spring.fast`, width and height as layout (`registry/default/fluid-hover-highlight.tsx:74-77`, `:130-133`).
 - **Port:** `top` / `left` / `width` / `height` on the same spring (`src/lib/fluid-highlight.tsx:6-13`, `:81-88`).
 - **gpuix lacks:** CSS transforms.
