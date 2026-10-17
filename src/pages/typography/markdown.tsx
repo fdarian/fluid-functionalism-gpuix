@@ -402,49 +402,74 @@ const TABLE: readonly (readonly string[])[] = [
 	['slow', '0.24s', 'Dialogs and drawers'],
 ];
 
-/** Column widths follow the longest cell, as an auto-layout table's do. */
-const TABLE_COLUMNS = TABLE[0].map((_, column) =>
-	Math.max(...TABLE.map((row) => row[column].length)),
-);
-
-function Table() {
-	const columns = TABLE_COLUMNS.map(
-		(length) => `minmax(max-content, ${length}fr)`,
-	).join(' ');
+/** The sheet's `th, td`: the cell padding and the one rule under each. */
+function Cell(props: { header: boolean; first: boolean; children: string }) {
 	return (
 		<div
 			style={{
-				display: 'grid',
-				gridTemplateColumns: columns,
-				fontVariantNumeric: 'tabular-nums',
+				display: 'table-cell',
+				verticalAlign: 'top',
+				fontSize: roleStyle('body').fontSize,
+				paddingTop: '0.5em',
+				paddingBottom: '0.5em',
+				paddingLeft: props.first ? 0 : '0.75em',
+				paddingRight: '0.75em',
+				borderBottomStyle: 'solid',
+				borderBottomWidth: 1,
+				borderBottomColor: color.border,
 			}}
 		>
-			<For each={TABLE}>
-				{(row, rowIndex) => (
-					<For each={row}>
-						{(cell, column) => (
-							<text
-								style={{
-									...roleStyle('body'),
-									textAlign: 'left',
-									paddingTop: '0.5em',
-									paddingBottom: '0.5em',
-									paddingLeft: column() === 0 ? 0 : '0.75em',
-									paddingRight: '0.75em',
-									borderBottomStyle: 'solid',
-									borderBottomWidth: 1,
-									borderColor: color.border,
-									...(rowIndex() === 0
-										? { fontWeight: weight.semibold, color: color.foreground }
-										: { color: color.mutedForeground }),
-								}}
-							>
-								{cell}
-							</text>
-						)}
-					</For>
+			<text
+				style={{
+					...roleStyle('body'),
+					textAlign: 'left',
+					...(props.header
+						? { fontWeight: weight.semibold, color: color.foreground }
+						: { color: color.mutedForeground }),
+				}}
+			>
+				{props.children}
+			</text>
+		</div>
+	);
+}
+
+function Row(props: { cells: readonly string[]; header: boolean }) {
+	return (
+		<div style={{ display: 'table-row' }}>
+			<For each={props.cells}>
+				{(cell, column) => (
+					<Cell header={props.header} first={column() === 0}>
+						{cell}
+					</Cell>
 				)}
 			</For>
+		</div>
+	);
+}
+
+/** The sheet's `table` inside the `.tableWrapper` that scrolls it sideways instead of squeezing the columns. */
+function Table() {
+	return (
+		<div style={{ overflowX: 'auto' }}>
+			<div
+				style={{
+					display: 'table',
+					borderCollapse: 'collapse',
+					width: '100%',
+					minWidth: 'max-content',
+					fontVariantNumeric: 'tabular-nums',
+				}}
+			>
+				<div style={{ display: 'table-header-group' }}>
+					<Row cells={TABLE[0]} header />
+				</div>
+				<div style={{ display: 'table-row-group' }}>
+					<For each={TABLE.slice(1)}>
+						{(row) => <Row cells={row} header={false} />}
+					</For>
+				</div>
+			</div>
 		</div>
 	);
 }

@@ -193,85 +193,81 @@ const cell = {
 	paddingBottom: 8,
 } as const;
 
-/** Read from the sheet's own values, styled like the PropsTable: three columns, the first flush left. */
+/** `th` / `td` of the sheet's table: `px-3 py-2 text-left`, the first column flush left. */
+function GapCell(props: {
+	first: boolean;
+	rule: string;
+	header?: boolean;
+	muted?: boolean;
+	children: string;
+}) {
+	return (
+		<div
+			style={{
+				display: 'table-cell',
+				verticalAlign: 'middle',
+				...cell,
+				...(props.first ? { paddingLeft: 0 } : {}),
+				borderBottomStyle: 'solid',
+				borderBottomWidth: 1,
+				borderBottomColor: props.rule,
+			}}
+		>
+			<text
+				style={{
+					...siteType.body,
+					textAlign: 'left',
+					fontVariantNumeric: 'tabular-nums',
+					...(props.header === true ? { fontWeight: weight.semibold } : {}),
+					color:
+						props.muted === true ? color.mutedForeground : color.foreground,
+				}}
+			>
+				{props.children}
+			</text>
+		</div>
+	);
+}
+
+/** Read from the sheet's own values, styled like the PropsTable: a `w-full` table whose columns size to their content, the first flush left. */
 export function GapTable() {
-	const columns = 'minmax(0, 3fr) minmax(0, 1fr) minmax(0, 1fr)';
-	const lead = { paddingLeft: 0 } as const;
 	return (
 		<div
 			testId="gap-table"
-			style={{ display: 'flex', flexDirection: 'column' }}
+			style={{
+				display: 'table',
+				borderCollapse: 'collapse',
+				width: '100%',
+			}}
 		>
-			<div
-				style={{
-					display: 'grid',
-					gridTemplateColumns: columns,
-					borderBottomStyle: 'solid',
-					borderBottomWidth: 1,
-					borderColor: color.border,
-				}}
-			>
-				<For each={['Gap', 'Default', 'Compact']}>
-					{(label, index) => (
-						<text
-							style={{
-								...cell,
-								...(index() === 0 ? lead : {}),
-								...siteType.body,
-								fontWeight: weight.semibold,
-								color: color.foreground,
-								fontVariantNumeric: 'tabular-nums',
-							}}
-						>
-							{label}
-						</text>
+			<div style={{ display: 'table-header-group' }}>
+				<div style={{ display: 'table-row' }}>
+					<For each={['Gap', 'Default', 'Compact']}>
+						{(label, index) => (
+							<GapCell header first={index() === 0} rule={color.border}>
+								{label}
+							</GapCell>
+						)}
+					</For>
+				</div>
+			</div>
+			<div style={{ display: 'table-row-group' }}>
+				<For each={GAPS}>
+					{(entry) => (
+						<div style={{ display: 'table-row' }}>
+							<GapCell first muted rule={borderFainter()}>
+								{entry[1]}
+							</GapCell>
+							<GapCell first={false} rule={borderFainter()}>
+								{`${TYPESET_SPACE[entry[0]].default}px`}
+							</GapCell>
+							<GapCell first={false} rule={borderFainter()}>
+								{`${TYPESET_SPACE[entry[0]].compact}px`}
+							</GapCell>
+						</div>
 					)}
 				</For>
 			</div>
-			<For each={GAPS}>
-				{(entry) => (
-					<div
-						style={{
-							display: 'grid',
-							gridTemplateColumns: columns,
-							borderBottomStyle: 'solid',
-							borderBottomWidth: 1,
-							borderColor: borderFainter(),
-						}}
-					>
-						<text
-							style={{
-								...cell,
-								...lead,
-								...siteType.body,
-								color: color.mutedForeground,
-							}}
-						>
-							{entry[1]}
-						</text>
-						<text
-							style={{
-								...cell,
-								...siteType.body,
-								color: color.foreground,
-								fontVariantNumeric: 'tabular-nums',
-							}}
-						>
-							{`${TYPESET_SPACE[entry[0]].default}px`}
-						</text>
-						<text
-							style={{
-								...cell,
-								...siteType.body,
-								color: color.foreground,
-								fontVariantNumeric: 'tabular-nums',
-							}}
-						>
-							{`${TYPESET_SPACE[entry[0]].compact}px`}
-						</text>
-					</div>
-				)}
-			</For>
 		</div>
 	);
 }

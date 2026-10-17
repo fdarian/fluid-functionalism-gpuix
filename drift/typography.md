@@ -25,14 +25,6 @@ repeating it.
 - **Fidelity:** approximated; italic dropped.
 - **Components it hits:** just this page.
 
-## The table is a grid, its column widths estimated
-
-- **Cause:** `gpuix gap` (no `display: table`, README "gpuix gaps across components", table row) and `port choice`.
-- **Original:** an auto-layout `<table width: 100%>` whose columns share the extra width in proportion to their widest cell (`generate.ts`, `el("table")`); a Tiptap `.tableWrapper` scrolls it sideways.
-- **Port:** a `display: grid` with `minmax(max-content, Nfr)` tracks, N the longest cell's character count; cells carry the `0.5em 0.75em` padding and a `border` rule each. No sideways scroll. The code block scrolls sideways (`overflowX: "auto"`) as the sheet's `pre` does, with no syntax colours (the source has none either).
-- **Fidelity:** approximated.
-- **Components it hits:** just this page; the Spacing table below uses `3fr 1fr 1fr` the same way.
-
 ## The page follows the Size row, and the source's S shortcut is missing
 
 - **Cause:** `not ported yet` (the global settings shortcuts, [site.md](site.md#theme-shortcut-tooltips-toasts)).
