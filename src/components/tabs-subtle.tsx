@@ -159,74 +159,51 @@ export function TabsSubtle(props: {
 			<div
 				testId={props.testId}
 				{...scope.tabsList.props}
-				{...hover.containerProps}
 				onMouseEnter={() => {
 					setMouseInside(true);
 					hover.handlers.onMouseEnter();
 				}}
+				onMouseMove={hover.handlers.onMouseMove}
 				onMouseLeave={() => {
 					setMouseInside(false);
 					hover.handlers.onMouseLeave();
 				}}
 				style={{
-					position: 'relative',
-					alignSelf: 'flex-start',
 					display: 'flex',
 					flexDirection: 'row',
-					alignItems: 'center',
 					userSelect: 'none',
+					overflowX: 'auto',
+					scrollbarWidth: 'none',
+					// The padding is room for the focus ring's 2px outset inside the scroller; the margins give it back, and the max width allows for them.
+					maxWidth: 'calc(100% + 8px)',
+					margin: -4,
+					padding: 4,
 				}}
 			>
-				<Show when={selectedRect()}>
-					{(rect: () => ItemRect) => (
-						<motion.div
-							testId={props.testId && `${props.testId}-selected`}
-							initial={false}
-							animate={rectStyle(rect())}
-							transition={tween.moderate}
-							style={{ position: 'absolute' }}
-						>
+				{/* The tabs and the pills sit in a box that scrolls with them: the fluid hover measures its rows against its container, so the container must move with the content, not stay at the scroller's edge. */}
+				<div
+					ref={hover.containerRef}
+					style={{
+						position: 'relative',
+						flexShrink: 0,
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
+					}}
+				>
+					<Show when={selectedRect()}>
+						{(rect: () => ItemRect) => (
 							<motion.div
+								testId={props.testId && `${props.testId}-selected`}
 								initial={false}
-								animate={{ opacity: hoveringOther() ? 0.8 : 1 }}
-								transition={{ duration: 0.08 }}
-								style={{
-									position: 'absolute',
-									top: 0,
-									left: 0,
-									right: 0,
-									bottom: 0,
-									borderRadius: shape.bg,
-									backgroundColor: color.active,
-								}}
-							/>
-						</motion.div>
-					)}
-				</Show>
-				<For each={previewMounts()}>
-					{() => {
-						// Born at the selected pill, as the source mounts it, then slides out to the hovered tab.
-						const born = untrack(selectedRect);
-						if (born === undefined)
-							throw new Error('Preview pill mounted without a selected pill');
-						const shown = () => {
-							const pill = preview();
-							if (pill === undefined)
-								throw new Error('Preview pill has no state');
-							return pill;
-						};
-						return (
-							<motion.div
-								testId={props.testId && `${props.testId}-preview`}
-								initial={rectStyle(born)}
-								animate={rectStyle(shown().rect)}
-								transition={hoveringOther() ? tween.fast : tween.moderate}
+								animate={rectStyle(rect())}
+								transition={tween.moderate}
 								style={{ position: 'absolute' }}
 							>
 								<motion.div
-									initial={{ opacity: 0 }}
-									animate={{ opacity: shown().visible ? 0.4 : 0 }}
-									transition={{ duration: shown().visible ? 0.08 : 0.06 }}
+									initial={false}
+									animate={{ opacity: hoveringOther() ? 0.8 : 1 }}
+									transition={{ duration: 0.08 }}
 									style={{
 										position: 'absolute',
 										top: 0,
@@ -238,15 +215,53 @@ export function TabsSubtle(props: {
 									}}
 								/>
 							</motion.div>
-						);
-					}}
-				</For>
-				<FocusRing
-					ring={focusRing}
-					radius={shape.focusRing}
-					testId={props.testId && `${props.testId}-focus-ring`}
-				/>
-				{props.children}
+						)}
+					</Show>
+					<For each={previewMounts()}>
+						{() => {
+							// Born at the selected pill, as the source mounts it, then slides out to the hovered tab.
+							const born = untrack(selectedRect);
+							if (born === undefined)
+								throw new Error('Preview pill mounted without a selected pill');
+							const shown = () => {
+								const pill = preview();
+								if (pill === undefined)
+									throw new Error('Preview pill has no state');
+								return pill;
+							};
+							return (
+								<motion.div
+									testId={props.testId && `${props.testId}-preview`}
+									initial={rectStyle(born)}
+									animate={rectStyle(shown().rect)}
+									transition={hoveringOther() ? tween.fast : tween.moderate}
+									style={{ position: 'absolute' }}
+								>
+									<motion.div
+										initial={{ opacity: 0 }}
+										animate={{ opacity: shown().visible ? 0.4 : 0 }}
+										transition={{ duration: shown().visible ? 0.08 : 0.06 }}
+										style={{
+											position: 'absolute',
+											top: 0,
+											left: 0,
+											right: 0,
+											bottom: 0,
+											borderRadius: shape.bg,
+											backgroundColor: color.active,
+										}}
+									/>
+								</motion.div>
+							);
+						}}
+					</For>
+					<FocusRing
+						ring={focusRing}
+						radius={shape.focusRing}
+						testId={props.testId && `${props.testId}-focus-ring`}
+					/>
+					{props.children}
+				</div>
 			</div>
 		</SubtleContext.Provider>
 	);

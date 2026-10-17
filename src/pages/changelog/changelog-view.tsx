@@ -26,7 +26,7 @@ export function ChangelogView(props: { releases: readonly Release[] }) {
 						Every change, month by month. A release lands on the first Friday.
 					</Prose>
 					{/* For an agent doing the upgrade: the skill first, then the same job by hand. */}
-					<div style={{ marginTop: 16, alignSelf: 'flex-start' }}>
+					<div style={{ marginTop: 16, width: 'fit-content' }}>
 						<CopyPromptButton
 							label="Copy upgrade prompt"
 							variant="secondary"

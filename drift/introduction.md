@@ -38,12 +38,14 @@ repeating it.
 - **Port:** `scale.title` with `lineHeight: 16` and SemiBold 600 (`src/pages/introduction.tsx:56-68`).
 - **Fidelity:** exact line height, weight approximated (README variable-font row).
 
-## Commands are `alignSelf: flex-start`, not `w-fit`
+## Commands and the code block hug through `alignSelf: flex-start`, not `w-fit`
 
-- **Cause:** `gpuix gap`: intrinsic `width` (README "Drift from the source", intrinsic-width row).
-- **Original:** `<InputCopy className="w-fit">` (`app/docs/page.tsx:151,158,164`), so the hover tint and focus ring hug the command.
-- **Port:** a wrapper with `alignSelf: "flex-start"` and `maxWidth: 100%` (`src/pages/introduction.tsx:95-100`); `InputCopy`'s own row is `width: 100%` of it. Whether the focus ring and the click target hug the text, or fill the wrapper, was not checked beyond the hover screenshot, where the tint is on the text only as in the source.
-- **Fidelity:** approximated.
+- **Cause:** `gpuix gap`: `width: "fit-content"` misbehaves in the two ways this page needs (README "Bugs", the two `fit-content` rows).
+- **Original:** `<InputCopy className="w-fit">` (`app/docs/page.tsx:151,158,164`), so the hover tint and focus ring hug the command; the code block is `w-fit max-w-full` (`:186`).
+- **Port:** a wrapper with `alignSelf: "flex-start"` and `maxWidth: 100%` (`src/pages/introduction.tsx:94-99`), and the same two on the code block (`:160-161`). In a column parent that is the width `w-fit` gives: the wrapped `InputCopy` measures 304px for the first command, its row `width: 100%` of the wrapper, and the hover tint is on the text only as in the source. `width: "fit-content"` was tried and is worse: a `width: 100%` child under it takes the parent's available width (the same `InputCopy` measured 600px, the full column), and a `maxWidth: 100%` does not clamp a box whose content cannot shrink (the code block grew to about 617px in the 600px column, with no scrollbar).
+- **gpuix bug:** the two behaviours above differ from CSS Sizing, where a percentage child of a `fit-content` box is cyclic and sizes against the hugged width, and `max-width` clamps the box.
+- **Workaround:** `alignSelf: "flex-start"`.
+- **Fidelity:** exact in a column parent.
 - **Components it hits:** just this page.
 
 ## The code block overflows the 600px column and scrolls

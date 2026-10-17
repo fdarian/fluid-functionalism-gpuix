@@ -40,9 +40,9 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `relative flex w-fit items-center`, plus `className`, a `ref` and the `div`'s HTML attributes (`carousel-dots.tsx:59-60`, `:165-176`).
-- **Port:** `alignSelf: "flex-start"` for the shrink-to-fit width (`carousel-dots.tsx:128`); only `testId` is accepted besides the documented props (`:41-51`).
+- **Port:** `width: "fit-content"` for `w-fit` (`carousel-dots.tsx:118`); only `testId` is accepted besides the documented props (`:41-51`).
 - **Workaround:** none.
-- **Fidelity:** approximated (same width in a column parent; in a row parent `flex-start` pins it to the top where `w-fit` would not).
+- **Fidelity:** exact for the width, in a column or a row parent; approximated for the props.
 - **Components it hits:** any ported component without `className` passthrough.
 
 ## Demo: the slide's border

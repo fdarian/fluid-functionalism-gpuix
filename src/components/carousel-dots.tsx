@@ -115,7 +115,7 @@ export function CarouselDots(props: {
 			{...hover.containerProps}
 			style={{
 				position: 'relative',
-				alignSelf: 'flex-start',
+				width: 'fit-content',
 				display: 'flex',
 				flexDirection: 'row',
 				alignItems: 'center',

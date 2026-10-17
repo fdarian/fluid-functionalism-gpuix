@@ -133,7 +133,7 @@ function TriggerRow(props: {
 	const highlighted = () => open() || hovered();
 	return (
 		<div
-			style={{ position: 'relative', alignSelf: 'flex-start' }}
+			style={{ position: 'relative', width: 'fit-content' }}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 		>

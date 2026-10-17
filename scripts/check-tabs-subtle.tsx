@@ -45,7 +45,20 @@ const kit = await createCheck(() => (
 				</TabsSubtle>
 			</>
 		))}
+		<div style={{ width: 120, display: 'flex', flexDirection: 'column' }}>
+			<TabsSubtle
+				testId="narrow"
+				selectedIndex={0}
+				onSelect={() => {}}
+				size="default"
+			>
+				<TabsSubtleItem testId="narrow-0" index={0} label="Teamspaces" />
+				<TabsSubtleItem testId="narrow-1" index={1} label="Recents" />
+				<TabsSubtleItem testId="narrow-2" index={2} label="Favorites" />
+			</TabsSubtle>
+		</div>
 		<TabsSubtle
+			testId="pair"
 			selectedIndex={selected()}
 			onSelect={setSelected}
 			activeLabel
@@ -71,6 +84,49 @@ for (const size of ['default', 'compact'] as const) {
 		`${margin.toFixed(2)} (want ${expected[size]})`,
 	);
 }
+
+// The list is the source's box: -mx-1 px-1 and max-w-[calc(100%+8px)] around the tabs, in a column parent as wide as the parent plus the two 4px.
+const narrow = kit.bounds('narrow');
+const narrowFirst = kit.bounds('narrow-0');
+kit.check(
+	'list: spans its parent plus the 4px outset each side',
+	Math.abs(narrow.width - 128) < 0.5 &&
+		Math.abs(narrowFirst.x - (narrow.x + 4)) < 0.5,
+	`${narrow.width} wide, first tab ${narrowFirst.x - narrow.x} in`,
+);
+kit.check(
+	'list: tabs wider than the list overflow it, scrolling',
+	kit.bounds('narrow-2').x + kit.bounds('narrow-2').width >
+		narrow.x + narrow.width,
+);
+
+// The list scrolls, and its pills scroll with the tabs they mark.
+renderer.nativeSimulateScrollWheel(narrow.x + 30, narrow.y + 10, 200, 0);
+await kit.settle(400);
+const scrolledLast = kit.bounds('narrow-2');
+await kit.hoverFor(
+	{ x: scrolledLast.x + 10, y: scrolledLast.y + scrolledLast.height / 2 },
+	500,
+);
+kit.check(
+	'list: scrolled, the hover pill is on the tab under the pointer',
+	scrolledLast.x + scrolledLast.width <= narrow.x + narrow.width &&
+		kit.exists('narrow-preview') &&
+		Math.abs(kit.bounds('narrow-preview').x - scrolledLast.x) < 1,
+	`tab ${scrolledLast.x}, pill ${kit.exists('narrow-preview') ? kit.bounds('narrow-preview').x : 'none'}`,
+);
+await kit.hoverFor({ x: 2, y: 2 }, 300);
+
+const pair = kit.bounds('pair');
+await kit.hoverFor(
+	{ x: pair.x + pair.width - 10, y: pair.y + pair.height / 2 },
+	300,
+);
+kit.check(
+	'list: the pointer in the empty space after the last tab lights it',
+	kit.exists('pair-preview'),
+);
+await kit.hoverFor({ x: 2, y: 2 }, 300);
 
 const unfolded = width('first');
 const folded = width('second');
