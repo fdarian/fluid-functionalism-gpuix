@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:6ba8495d63edfa677952fae7bdc691420d267df14dd632b158c17d734a996c0b",
+  "claims": [
+    {
+      "id": "claim_a7315f44f8af437c803bd7fb46fe717d",
+      "statement": "pnpm install must run from this repository's root; installing inside base-ui-solid-gpuix links a second @gpuix/solid and breaks the app silently.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L24-L24",
+          "version": "repo-lines-v1:sha256:49b3553973b321aeef6252a5a3f7738ce26ab4bbefaef0c10d6623636bb7c009:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDliMzU1Mzk3M2IzMjFhZWVmNjI1MmE1YTNmNzczOGNlMjZhYjRiYmVmYWVmMGMxMGQ2NjIzNjM2YmI3YzAwOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDliMzU1Mzk3M2IzMjFhZWVmNjI1MmE1YTNmNzczOGNlMjZhYjRiYmVmYWVmMGMxMGQ2NjIzNjM2YmI3YzAwOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjY1ZDNlMDEzNDAxZWNjNzljOTM2ZGZiMzU0ZWM0YjdmZjJiNzY5MzQ3MWQxOTcyMWY4MjJjODI5YTRmMTE3MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2YwMjhhNDc3Njk4YWMzNGI1YTcwNjVjNzUzNThjNmY3YmQ5NWE0ZTk0Nzk0MThiOWI3ZDczNzVkOTk5NzIyYSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_16057c77615647228f0cf3a38621096e",
+      "statement": "Screenshot diffs are noisy because playground variants use Math.random, so captures are compared by pixels, not hashes.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L28-L28",
+          "version": "repo-lines-v1:sha256:7b3c68fc24f28d238096bbb96987351b3efbce81f2f5e1ecd04b2d9ece6c8a07:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2IzYzY4ZmMyNGYyOGQyMzgwOTZiYmI5Njk4NzM1MWIzZWZiY2U4MWYyZjVlMWVjZDA0YjJkOWVjZTZjOGEwNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2IzYzY4ZmMyNGYyOGQyMzgwOTZiYmI5Njk4NzM1MWIzZWZiY2U4MWYyZjVlMWVjZDA0YjJkOWVjZTZjOGEwNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2YwMjhhNDc3Njk4YWMzNGI1YTcwNjVjNzUzNThjNmY3YmQ5NWE0ZTk0Nzk0MThiOWI3ZDczNzVkOTk5NzIyYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDZmNWNhOGNjZWUwNjA2MDE0Y2E2NTAxNzBlYThlZjM2OTg2ZDJhYmM5ODA5N2YwMzVlNGY2YTU3OGFiM2E2MiJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-17T00:13:20.113Z"
+  }
+}

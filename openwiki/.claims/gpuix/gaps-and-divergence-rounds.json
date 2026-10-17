@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:ac1110223ac6c31d9ec42b180a293a2a35fe5e2bd13f38be339f8a67cabedf65",
+  "claims": [
+    {
+      "id": "claim_8f689a7df6cd43af9e228cffa0828120",
+      "statement": "The README's gpuix gaps section is the authoritative list of gpuix bugs and missing features the port works around, each with the components it hits and the workaround.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L208-L267",
+          "version": "repo-lines-v1:sha256:1576d383783a7687f63e3ee5890d595020d33ada4b5b867c9c2094f9844e364b:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczYjM3NDBjZTRjM2RlYTIzYWUxOWQwYTY4YWU3YmYxNmY1OTkxMmZlN2U5ODMwY2EwOGJhOGFiNTdhOGM5NTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3NzUzMjllNGM4ZGZjZDZjM2RjNDhiOWYyNTViYTEyMTNlMTYxOTljMmRkN2VhMGQ0YzI3Nzk3OGI5NjE0YjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVlZDIwYmE0YmY1ZGFlOTUyZjIwNDkzODRmMDQ3MjY2YTY5ZDI3YzY0ZGM4NzQ4MzY5MWEyNzJiMGI3YjAyYjgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a19c96f777174413abd59e6a67640c54",
+      "statement": "Without CSS transforms, popups keep an opacity fade and slide but lose the scaleY entrance, and glyph turns are swapped or redrawn.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L237-L237",
+          "version": "repo-lines-v1:sha256:6a7ba0b322c62c85d39f077a60e7a69b54a43c58123a0825fa45017a59102e89:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmE3YmEwYjMyMmM2MmM4NWQzOWYwNzdhNjBlN2E2OWI1NGE0M2M1ODEyM2EwODI1ZmE0NTAxN2E1OTEwMmU4OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmE3YmEwYjMyMmM2MmM4NWQzOWYwNzdhNjBlN2E2OWI1NGE0M2M1ODEyM2EwODI1ZmE0NTAxN2E1OTEwMmU4OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDg1MWNhYzQ4ODYxY2Y1NTI4ZDEyM2EwZmNlYjY2Njg5YjY4ZDcwMWI5NzViNjU4MmY5YzU1NDZhNjIzYzNkYSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_8bb5706a64734dac9d70a073d3c56c22",
+      "statement": "Because gpuix does not cull clipped content, long demo pages hide cards far from the scroller with display none.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L248-L248",
+          "version": "repo-lines-v1:sha256:38c45eea5cb0f0ac2eec4143e6e3899be6c9b0c62c8d5c68e158ab4c95ab8e94:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzhjNDVlZWE1Y2IwZjBhYzJlZWM0MTQzZTZlMzg5OWJlNmM5YjBjNjJjOGQ1YzY4ZTE1OGFiNGM5NWFiOGU5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzhjNDVlZWE1Y2IwZjBhYzJlZWM0MTQzZTZlMzg5OWJlNmM5YjBjNjJjOGQ1YzY4ZTE1OGFiNGM5NWFiOGU5NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjQzN2VmYThhNWRiNzllMTFkMzg3ZDE4OWYxN2YxZjM2NTI0ODE1N2RjNTI0MDAwMTEzY2IxNjNjM2ZhOTdlZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWY5MGI1MDEzMmMxMGNiYTczYWZlNTBmODhiZGIwOTUyNTEwODdiMDEwZmYxYTY0MjAwOWM4NDNmZWRmMzcwNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_7c20d52dafe54e61a32759d03f1ec7ab",
+      "statement": "The app frame's title bar is a window drag region via appRegion drag.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/app-frame.tsx#L30-L36",
+          "version": "repo-lines-v1:sha256:8406f585186ed20b4c17a3f61a30eb6452274422f8d1ffbca7bf14bf57b9d306:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjk4MWMyMjJlZTFmMTBhZTU4YjUzMDc4OTFhYjI3NjQ0ZGNiZjU0MWNiMjU4OGMwYjE1NDA5MmUzN2QwZjBlMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM3YWJkY2M2Mjg1ZmViNDJlNzQyNzA3ZThkN2YwYmJmYzJjMDI3ZDY0ZDE2MTQ4MjZlODAwYjM2OTcwZGY0NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjFjNGZhNzExNTlhYmQ4ZGU0MGY2YTQxMTRlZmYxNTM3Njk1MmU2ZDllMTBkMmMyZThmMDQ0YzZhYmZhYzJkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzYwYTcwNzllNzUxMTNmNmE3MGM1M2MxNjA2MDgzZTczYjljZmRkODE3OGYxNWUyNTcwMGM0ZWMzYmZjYjk1MiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_978c36aed01b4f9a97936e8bf776c7fe",
+      "statement": "The port still ships its own navigator.clipboard declaration, so the Round 5 adoption (gpuix now declares it) has not happened yet.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L238-L238",
+          "version": "repo-lines-v1:sha256:a104b49eb9c6419b847b3e76c40a550b69dbc5d28d5eee9a8119c313d3e80cb0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTEwNGI0OWViOWM2NDE5Yjg0N2IzZTc2YzQwYTU1MGI2OWRiYzVkMjhkNWVlZTlhODExOWMzMTNkM2U4MGNiMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTEwNGI0OWViOWM2NDE5Yjg0N2IzZTc2YzQwYTU1MGI2OWRiYzVkMjhkNWVlZTlhODExOWMzMTNkM2U4MGNiMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjllMzFmZmZlYzFmZWY1ZmVkMWFjMWY4MGFkY2ZjMDBjYTViOTczMGU3MDNlNDk4NDhiZjM5OWZjNmMyNDU0YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTM3MzJhZmQ0OTkzNGQ3ZDBkMzdmNjc2ZWM5ZWE0OWVmNWNkZTlmMGZhYThiMDkyZWIyMjdkMmM0YTJmYmZkMiJ9"
+        },
+        {
+          "resource": "repo://src/navigator.d.ts",
+          "version": "repo-file-v1:sha256:07888533460b0157e48b42b87603d1f74dea4d6ba9a26699bb5644d6cd46ff5c"
+        }
+      ]
+    },
+    {
+      "id": "claim_3b0b5b6c62d54e0f975b6102acc49606",
+      "statement": "On Windows and Linux, preventDefault on mousedown arrives after native focus has moved, so a press on a command-menu tab still blurs the field; macOS applies it.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L219-L219",
+          "version": "repo-lines-v1:sha256:a487eb50fe5b1297c6fb5ae9f1bd27f057e6758d957d06cd2493c27c279c3d68:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTQ4N2ViNTBmZTViMTI5N2M2ZmI1YWU5ZjFiZDI3ZjA1N2U2NzU4ZDk1N2QwNmNkMjQ5M2MyN2MyNzljM2Q2OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTQ4N2ViNTBmZTViMTI5N2M2ZmI1YWU5ZjFiZDI3ZjA1N2U2NzU4ZDk1N2QwNmNkMjQ5M2MyN2MyNzljM2Q2OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjkyNDIxNGM1ZTY0NjNjYjhjNDNlNmQ0MzE0Mjg2YmE0NDZhNjMxYjE1N2Y0ZWE3ODg0NmRlMWQwNGEzZTMxNCJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-17T00:13:20.113Z"
+  }
+}

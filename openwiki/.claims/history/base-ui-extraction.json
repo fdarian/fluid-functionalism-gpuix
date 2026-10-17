@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:c90bf4721f3229d9beeb4892d44aad426ca083a510a3da9c22064f3b505c566a",
+  "claims": [
+    {
+      "id": "claim_fd643a2c3e614b00990f1b7fce1b8905",
+      "statement": "Components consume headless create* primitives from base-ui-solid-gpuix; Select uses createSelectRoot.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/select.tsx#L1-L3",
+          "version": "repo-lines-v1:sha256:a9270716c6c4bea8174afef539b04d484fcc2c65bd9cd4b012e54c516bf0ce8c:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyZDAyOTU3NDE1MmUxOWM5MTFlYmNiZmMzODI1MTcwODIzMGEyYTIxNmYzYzQyMTc3MmQ3NjNhM2IxZGYzOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjkzYjk0ZmMyZDAxYWE5NmIxZjc2ZjU0NzQ2MDFhNjI4OTE4Y2UyMTNkM2M1OTg4NjBkMmMzOGEzMzYzMzc4MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTc3NWY5NWJkNWU1YjMwNGFkZWE4NmM2YzI3Nzg3MjU5MDU1MDYxY2UxNmRlOWZkYmZiZTNmNmMwODZjYzUwYiJ9"
+        },
+        {
+          "resource": "repo://src/components/select.tsx#L157-L157",
+          "version": "repo-lines-v1:sha256:5e26af1f569c31efa6f4f291a4674399bca4ce78ab5874b5d4e1d52ca179990a:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWUyNmFmMWY1NjljMzFlZmE2ZjRmMjkxYTQ2NzQzOTliY2E0Y2U3OGFiNTg3NGI1ZDRlMWQ1MmNhMTc5OTkwYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWUyNmFmMWY1NjljMzFlZmE2ZjRmMjkxYTQ2NzQzOTliY2E0Y2U3OGFiNTg3NGI1ZDRlMWQ1MmNhMTc5OTkwYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDk2MzhmNWJmMTRjNWIyNGNiMDMyYThmMmUwMTc1MDQ4OTRhYTU1ZTFmM2EyNDQwZGQxMjMwMWQyNWViODc1YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDBjZDk4Y2JiYzVmMDY3Y2QwZmJhYWFlZDczY2YzODMzYTI2MDhjOTQwNDg0NDMxNzliMDI1ZTk5Y2VmNjZiOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_e50d93b2d8cb45d1ae4243bfdb180c66",
+      "statement": "The primitive's highlight is controlled by fluid hover: Select passes hover.activeIndex as highlightedIndex and releases the pointer on a keyboard highlight change.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/select.tsx#L157-L175",
+          "version": "repo-lines-v1:sha256:68877927d7f6c7b584623a864794d60b4bc606d135378e0d580ec755b402f82b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlMjZhZjFmNTY5YzMxZWZhNmY0ZjI5MWE0Njc0Mzk5YmNhNGNlNzhhYjU4NzRiNWQ0ZTFkNTJjYTE3OTk5MGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4MGVhZmFjMjIxYThlODY0MzgxNDllOGI2NzRkYzRkMzk3NjcwNjlmYjU4YTY4YjFmYmNjMDY1NWZiZmFmMjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ5NjM4ZjViZjE0YzViMjRjYjAzMmE4ZjJlMDE3NTA0ODk0YWE1NWUxZjNhMjQ0MGRkMTIzMDFkMjVlYjg3NWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyOWQ3MzM1MjA2NTJhN2M4ODAxNmVkODFmODE1NDgxZGM2NGUwOWYyNGYzMWNhMDE3OTBkNDYwNGZkNDdlOGUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fdde1afca87f4097a8b105903b5c6831",
+      "statement": "Select rows assign tabIndex and other item props explicitly because a JSX spread applies its props in a later effect, after the open has focused the row.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/select.tsx#L496-L502",
+          "version": "repo-lines-v1:sha256:395a8ed046848bdb514f8acac321a4bb5f63abee4753327c0f05aa6e2e7b0f02:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzA4MGFjM2NkNTA5ZjUxMDY3ZDBiMmYzOWExNjNiNzlkYWE3MDZjNTJkM2FiNjEzOTI4MzdhYzI4OWMyZjE0NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzMzODM2YzkzNzA5YmI4NmNhYWE5ZDNhYTc2OTdiYmU2NWZiYTc3NWQ1NjdkZDVjNmMyNTQ3MTU3MWZiZjYxNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGY5MDE0MjliMDhjMWY4MGFiZjkxNDRjOTAxNGIwNDI5MTY2NTE3M2YzYTMzYTljODJiNGM1MGM2OGZiMWZkYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2M3NjNjZGUwNDQ4NGQ1OWMwODZhYTczYWQzMjBhYTMyYTdhZDQ2N2JhNDRjOWQ3NjE1YWNmMjkwZjQxMzJlMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_3f208d624a524cf89ae5fed58c5efec9",
+      "statement": "base-ui-solid-gpuix is a pnpm workspace member of this repository so both resolve one runtime instance.",
+      "evidence": [
+        {
+          "resource": "repo://pnpm-workspace.yaml#L1-L3",
+          "version": "repo-lines-v1:sha256:ebbd86b0564aaf55706e777fec0fca98f8951d2f3c0db522bcb0d300b2f97ebc:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWRiMDc2ZWI4MGFkZTE5ZmVhM2UwYTQzMTk4NmI2NTVmNWZhNTllZDYyNjdlMTA3ZDY4OGI2MWMzZjQyMTc5NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTdlYzExNjdlMGJhMTc1NDZkZmRiYTRmYTRiZGViM2ZiMDVhZDZlMzgyZDExNDVmYjBlYTkwZDUwY2E5YWIwOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTY5ZjIxN2I0M2IwNjkxZGIzN2ZmMjg0ZTg5YmM5OGNkOWE4N2JmY2EwZmJjMDE1MTU5YTczMTA1ZjhiZGE1YSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_24701cfd855d428d922bb4b166f8625e",
+      "statement": "The Untitled UI icon data cannot be redistributed despite the package declaring MIT, so untitledui.ts and the Untitled UI option must be dropped before publishing.",
+      "evidence": [
+        {
+          "resource": "repo://THIRD_PARTY_NOTICES.md#L43-L60",
+          "version": "repo-lines-v1:sha256:625b12d97083e4a7cb9fbda47a74633ab52e5259b798754359428b4f5d25b14c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI1ZGE1OGEyYzQ4Yzc2MGFjOWE4ZGQ5YTJjYWQ3YTFiODZmNWE1OTIwN2E4OTc4ZDIyY2RjMjkzMjYwM2JmYWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBmY2NmZTgzOGExZDdkMmYzZTFjY2EwZDIzMGViMjhkZTFlYzYyODk2M2NkYmMxYWJmMmE0NmRkMWZjZDU4ZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkYzBlNzhhYjI0MWRjZDA5ODQxNjdlN2ZlOWJlMzNjN2RhNWNmYmE5MmRlYTc4YzdhZmJjNjM2ZGNhNTJkNmIifQ"
+        },
+        {
+          "resource": "repo://src/lib/icons.ts#L7-L24",
+          "version": "repo-lines-v1:sha256:15c214cf8eae3dd72a6eb9be8cbd961d93b1d8e4bde249174d9347645d4c48b2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY5Mzg1MTRlNWMyMTRmMjdjY2RhMjhjY2ZhZDE5NDE1OGNiNWE1Njg0NTdiNWM5NTM1NDk1YzQ3MTIyNjdjMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1MzcwOTBmNTAyZTIyMmUwMWZhOGU1M2Q3ZjY3NjNhN2EyODMyN2NmOGZjNzQxZDhiNDRiZWEyYWNhN2I1M2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlMjc0ZDRjNDA2NzllMGE0YmIxMDMyMTRiNjlkNmIwYjYxZDY0NTE3ZTdiOGNjNjMzNzRkMWZjOWY1NzZmMGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1NTA2NWVlM2YwMGI5ZTQ5YWIyMjE5MmFjZTFlZGExNTQyMWE0NzhlMzY1OTRjNjYwNzI1ODQ5NDRjYTYxZjgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ed02b65c62664b0587be8c17d8be53c8",
+      "statement": "noUncheckedIndexedAccess remains turned off in tsconfig as an open follow-up.",
+      "evidence": [
+        {
+          "resource": "repo://tsconfig.json#L6-L6",
+          "version": "repo-lines-v1:sha256:4a0ea90abc0b1d39c565b0e2dbd7bc0be232565ba7ab09c0e00d79e3929f21cb:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGEwZWE5MGFiYzBiMWQzOWM1NjViMGUyZGJkN2JjMGJlMjMyNTY1YmE3YWIwOWMwZTAwZDc5ZTM5MjlmMjFjYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGEwZWE5MGFiYzBiMWQzOWM1NjViMGUyZGJkN2JjMGJlMjMyNTY1YmE3YWIwOWMwZTAwZDc5ZTM5MjlmMjFjYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDg5ZGJiMTg4MjQ5YzY1NGU5NGFiMzI5MGI4NjAzZThlMzg1Y2M2YmE5NmVkNjg2OTc5NzFjN2I1NDhhYmU5YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTgyYjFkNTgxODcyY2M5MGFjYTg4YTI3YjEyM2M1YTJjYTM1MTU1N2JmM2Q5NDY2OTc5YjgzMTE3ZjJiZWZiNSJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-17T00:13:20.113Z"
+  }
+}
