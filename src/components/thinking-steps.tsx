@@ -182,6 +182,8 @@ function TriggerRow(props: {
 					heavy={open()}
 					color={highlighted() ? color.foreground : color.mutedForeground}
 					fade
+					// Shrinkable inside the `fit-content` wrapper above, the label wraps in one of gpuix's trial widths and the wrapper keeps that second line's height.
+					nowrap
 				/>
 				<Chevron
 					open={open()}
@@ -560,6 +562,8 @@ export function ThinkingStepSource(props: {
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			transition={{ ...tween.moderate, delay: props.delay ?? 0 }}
+			// A flex box, so the inline-flex Badge is a flex item and the wrapper is 20px high, with no line strut around it.
+			style={{ display: 'flex' }}
 		>
 			<Badge variant="solid" size="compact" color={props.color ?? 'gray'}>
 				{props.children}
