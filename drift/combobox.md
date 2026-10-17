@@ -21,7 +21,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Cause:** `gpuix gap`.
 - **Original:** Base UI renders hidden inputs carrying the picked value, so a `<form>` submits it under `name` and an empty `required` one blocks the submit (Base UI `combobox/root/AriaCombobox.tsx:1592-1706`; FF passes `name`, `required` at `combobox.tsx:348-349`).
 - **Port:** `FormValue` (`base-ui:src/utils/form-value.tsx`, used at `src/components/combobox.tsx:174-182`).
-- **gpuix lacks:** `type="hidden"`: `InputType` is `text | password | number | email | search | tel | url` (`packages/native/js/host.ts:1175`), and `FormData` reads only named, enabled `<input>`s.
+- **gpuix lacks:** `type="hidden"`: `InputType` is `text | password | number | email | search | tel | url` (`packages/native/js/host.ts:1336`), and `FormData` reads only named, enabled `<input>`s.
 - **Workaround:** `FormValue` is a real input kept 1px, transparent, pointer-less and out of the tab order; when an empty required one takes focus it hands it to the combobox's input.
 - **Fidelity:** exact.
 - **Components it hits:** select, color-picker (any control that is not an input and submits a value).
@@ -31,7 +31,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Cause:** `gpuix gap`.
 - **Original:** a `<button type="submit">`, or Enter in a form control, submits the form; an empty `required` control blocks it, fires `invalid` and takes focus.
 - **Port:** the demo's Submit button calls `form.requestSubmit()` (`src/demos/combobox.tsx:275-282`).
-- **gpuix lacks:** a submit button (`SubmitEvent.submitter` is always `null`, `packages/native/js/host.ts:1209`), and Enter in a form `<input>` with an empty `required` control does nothing instead of validating; only `requestSubmit()` validates. A form with two or more `<input>`s does not submit on Enter at all (gpuix `README.md:3051-3055`), and a combobox with `name` or `required` adds `FormValue` as a second input, so Enter in it never submits.
+- **gpuix lacks:** a submit button (`SubmitEvent.submitter` is always `null`, `packages/native/js/host.ts:1370`), and Enter in a form `<input>` with an empty `required` control does nothing instead of validating; only `requestSubmit()` validates. A form with two or more `<input>`s does not submit on Enter at all (gpuix `README.md:3602-3609`), and a combobox with `name` or `required` adds `FormValue` as a second input, so Enter in it never submits.
 - **Workaround:** `requestSubmit()` from a button.
 - **Fidelity:** exact for `requestSubmit()`, dropped for implicit submission.
 - **Components it hits:** select, any form in a demo.
@@ -106,7 +106,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Cause:** `not ported yet`.
 - **Original:** Base UI `disabled`: the input is disabled and unfocusable, the field is `opacity-50 pointer-events-none` (`combobox.tsx:384`).
 - **Port:** the root is `opacity: 0.5` with `pointerEvents: "none"` (`src/components/combobox.tsx:162-172`), the input is `readOnly` with `tabIndex` -1 and `aria-disabled` (`base-ui:src/combobox/root/use-combobox-root.ts:345-353`).
-- **Workaround:** the stand-in. gpuix has `<input disabled>` now (never focusable; `FORK.md:499-500`).
+- **Workaround:** the stand-in. gpuix has `<input disabled>` now (never focusable; `FORK.md:503-504`).
 - **Fidelity:** approximated (looks the same; assistive tech sees `aria-disabled`, not a disabled input).
 - **Components it hits:** just this one.
 

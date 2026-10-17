@@ -17,7 +17,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Cause:** `gpuix gap`.
 - **Original:** a swatch such as `tomato` resolves through a canvas 2D context (`fillStyle`), which accepts every CSS colour syntax (`color-picker.tsx:420-440`); the strip marks the matching swatch and a click commits it (`:1748-1758`, `:1895-1902`). `swatches` is documented as "Any CSS color" (`:103`).
 - **Port:** `parseColor` reads hex, `rgb(a)`, `hsl(a)` and `oklch` only (`src/components/color-picker-math.ts:304-306`). A named entry in `swatches` still paints (styles resolve the name natively) but is never marked selected, and clicking or pressing it does nothing (`normalizedHex` returns `undefined`, `isSelectedSwatch`; `commitColor` drops an unreadable string); the source resolves it and picks it. The prop says so (`swatches`). A typed name is rejected as in the source (the hex field prefixes `#`).
-- **gpuix lacks:** a JS-visible colour resolver. Named colours, `color-mix()` and the rest resolve natively for style values only (`~/code/fdarian/gpuix/FORK.md:661-662`), and nothing hands the resolved colour back to JS.
+- **gpuix lacks:** a JS-visible colour resolver. Named colours, `color-mix()` and the rest resolve natively for style values only (`~/code/fdarian/gpuix/FORK.md:831-832`), and nothing hands the resolved colour back to JS.
 - **Workaround:** none. A static table of the CSS colour names inside `parseColor` would close most of it without gpuix.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -82,7 +82,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** one `linear-gradient` with seven stops as the track (`color-picker.tsx:695-699`).
-- **Port:** six flex children with two stops each (`src/components/color-picker.tsx:628-652`), on the stated ground that gpuix gradients take two stops. That holds only for the object form (`LinearGradientBackground.stops`, `host.ts:389`); the CSS-string `background` and `backgroundImage` take any number of stops (`host.ts:483-491`; `FORK.md:646-647`). Sub-pixel widths (254 / 6) can leave seams between the cells.
+- **Port:** six flex children with two stops each (`src/components/color-picker.tsx:628-652`), on the stated ground that gpuix gradients take two stops. That holds only for the object form (`LinearGradientBackground.stops`, `host.ts:444-448`); the CSS-string `background` and `backgroundImage` take any number of stops (`host.ts:565-574`; `FORK.md:783-784`). Sub-pixel widths (254 / 6) can leave seams between the cells.
 - **Workaround:** the six cells.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -91,7 +91,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** one `conic-gradient` tiled at 8px (`CHECKER_BG`, `color-picker.tsx:485-489`) behind the tile, the swatch and the alpha rail (`:741`).
-- **Port:** a backing fill plus a monochrome SVG path of the other squares, rebuilt for each size (`src/components/color-picker.tsx:111-156`), on the stated ground that gpuix has no conic gradients or tiled backgrounds. It has: `backgroundImage` takes `conic-gradient()` and `backgroundSize` / `backgroundRepeat` exist (`host.ts:483-496`; `FORK.md:646-649`). The squares line up with the source's (4px, `checker-a` on the top right).
+- **Port:** a backing fill plus a monochrome SVG path of the other squares, rebuilt for each size (`src/components/color-picker.tsx:111-156`), on the stated ground that gpuix has no conic gradients or tiled backgrounds. It has: `backgroundImage` takes `conic-gradient()` and `backgroundSize` / `backgroundRepeat` exist (`host.ts:565-577`; `FORK.md:783-786`). The squares line up with the source's (4px, `checker-a` on the top right).
 - **Workaround:** the SVG.
 - **Fidelity:** exact in pixels.
 - **Components it hits:** just this one.
@@ -109,7 +109,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** `cursor-none`; the ghost ring stands in for the pointer (`color-picker.tsx:616`, `:653-669`).
-- **Port:** `cursor: "crosshair"`, so the crosshair and the ghost ring both show (`src/components/color-picker.tsx:378-379`), on the stated ground that gpuix has no `cursor: none`. It has (`host.ts:367`, `packages/native/src/style.rs:759`; `FORK.md:314`), on macOS only: Linux shows the default cursor, Windows is untested (`FORK.md:409-414`).
+- **Port:** `cursor: "crosshair"`, so the crosshair and the ghost ring both show (`src/components/color-picker.tsx:378-379`), on the stated ground that gpuix has no `cursor: none`. It has (`host.ts:426`, `packages/native/src/style.rs:1124`; `FORK.md:333-339`), on macOS only: Linux shows the default cursor, Windows is untested (`FORK.md:449-455`).
 - **Workaround:** the crosshair.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -143,17 +143,17 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 ## Channel fields: scrubbing without pointer lock
 
-- **Cause:** `not ported yet` (pointer lock is macOS only, `FORK.md:314`, `:409-414`).
+- **Cause:** `not ported yet` (pointer lock is macOS only, `FORK.md:333-339`, `:449-455`).
 - **Original:** Base UI's `NumberField.ScrubArea` locks the pointer, draws a black `<->` cursor in its place, and counts 1px of travel per step with no dead zone (`pixelSensitivity={1}`), so a drag can run past the screen edge (`color-picker.tsx:1472-1509`). A press without a drag dispatches a click that starts editing (`:1479-1487`).
 - **Port:** the pointer is captured, not locked, so the real cursor shows with an `ew-resize` shape and stops at the screen edge; a 3px dead zone separates a press from a scrub, and the first scrub step jumps by that travel (`src/components/color-picker.tsx:1151-1196`, `:1209`). No virtual cursor.
-- **gpuix lacks:** n/a on macOS (`requestPointerLock` exists, `packages/native/index.d.ts:313`; the port does not call it).
+- **gpuix lacks:** n/a on macOS (`requestPointerLock` exists, `packages/native/index.d.ts:310`; the port does not call it).
 - **Workaround:** capture plus the dead zone.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
 ## Channel fields: select-all on focus
 
-- **Cause:** `not ported yet` (`select()` exists, `FORK.md:451`).
+- **Cause:** `not ported yet` (`select()` exists, `FORK.md:503`).
 - **Original:** focusing a field, or a no-drag press, selects all its text, so typing replaces the value (`color-picker.tsx:1288-1291`, `:1485-1486`, `:1530-1534`).
 - **Port:** focus places the caret and selects nothing (`src/components/color-picker.tsx:1246-1249`, `:1183-1193`); the demo clears the hex field with eight Backspaces (`src/demos/color-picker.tsx:205-208`).
 - **Workaround:** none.
@@ -189,7 +189,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 ## Eyedropper is not ported
 
-- **Cause:** `not ported yet` (an `EyeDropper` exists on macOS only: `FORK.md:514-517`).
+- **Cause:** `not ported yet` (an `EyeDropper` exists on macOS only: `FORK.md:515`, `:577-580`).
 - **Original:** a pipette button beside the format menu where `window.EyeDropper` exists, hidden elsewhere or by `hideEyedropper`; a pick commits the colour like a swatch (`color-picker.tsx:1598-1639`, `:1983-1991`).
 - **Port:** the format menu is the only item in its row, in the same half-width column (`src/components/color-picker.tsx:1671-1679`, `:779`). No `hideEyedropper` prop; no `pipette` icon (`src/lib/icons.ts`).
 - **Workaround:** none.
@@ -225,7 +225,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 ## Demo: "+ Add fill" button and the "Current:" readout
 
-- **Cause:** `not ported yet` (`borderStyle: "dashed"` exists, `packages/native/src/style.rs:346`; the port loads Inter only, `src/lib/fonts.ts:4`).
+- **Cause:** `not ported yet` (`borderStyle: "dashed"` exists, `packages/native/src/style.rs:663`; the port loads Inter only, `src/lib/fonts.ts:4`).
 - **Original:** the add button has a dashed border, muted text that goes to foreground on hover (`app/docs/color-picker/page.tsx:153-160`); the controlled readout shows the value in a monospace span (`:135-137`).
 - **Port:** a solid border and fixed muted text (`src/demos/color-picker.tsx:64-86`); the readout is one body-text string (`:130-132`).
 - **Workaround:** none.

@@ -33,14 +33,14 @@ repeating it.
 - **Cause:** `gpuix gap`.
 - **Original:** `@max-sm/banner` (a container query at 24rem) drops the actions under the text, and `has-data-[slot=banner-description]` switches the layout when a description exists (`banner.tsx:450`, `:453`, `:597-603`).
 - **Port:** the `:has()` switch is a context flag; the narrow layout does not exist (`banner.tsx:105-118`, `:187-191`, `:433-438`).
-- **gpuix lacks:** container queries (they need a layout feedback pass that taffy and gpuix do not have) and `:has()` (no selector engine; gpuix has no stylesheet): `~/code/fdarian/gpuix/FORK.md:640-642`. README rows "Container queries" and "`:has()`".
+- **gpuix lacks:** container queries (they need a layout feedback pass that taffy and gpuix do not have) and `:has()` (no selector engine; gpuix has no stylesheet): `~/code/fdarian/gpuix/FORK.md:738-742`. README rows "Container queries" and "`:has()`".
 - **Workaround:** `BannerDescription` registers itself in a context and the content flips between a row and a column from that flag. The narrow-container layout is not ported.
 - **Fidelity:** exact for the wide layout and the `:has()` switch, dropped for `@max-sm`.
 - **Components it hits:** card (grid header), dialog footer, any part-composed layout that reacts to its own width or to a child.
 
 ## Dismiss fade is its own tween
 
-- **Cause:** `not ported yet`. gpuix has motion values and `useTransform` (`FORK.md:1142`).
+- **Cause:** `not ported yet`. gpuix has motion values and `useTransform` (`FORK.md:1146-1147`).
 - **Original:** inline, the banner's opacity is the row's progress mapped from 1 (open) to 0.6 (the row is `shrinkTo` open) onto 1 to 0, so it is gone by the time the row is 60% open and always the row's height (`banner.tsx:317-332`). The fixed bar's opacity is the row's value outright.
 - **Port:** inline, a separate 0.16s `easeOut` tween (`dismissFade`, `banner.tsx:129`, `:343-349`); the row runs 0.24s `easeInOut`. The fixed bar fades on the row's tween, as in the source.
 - **Workaround:** none.
@@ -49,7 +49,7 @@ repeating it.
 
 ## Row does not give back the parent's gap
 
-- **Cause:** `not ported yet`. `marginBottom` is animatable in `motion` (`packages/native/js/host.ts:107`).
+- **Cause:** `not ported yet`. `marginBottom` is animatable in `motion` (`packages/native/js/host.ts:143`).
 - **Original:** in a flex column with a gap, the row also takes back one gap (`marginBottom: (row - 1) * gap`), measured at mount, so nothing jumps when the banner mounts or unmounts (`banner.tsx:148-152`, `:246-256`, `:270-279`, `:344`). The playground's inline page is a `gap-3` column (`lib/docs/playgrounds/banner.tsx:359-363`).
 - **Port:** no margin. A closed banner renders nothing and an open or closing one is a row that starts at height 0, so the parent's gap appears when an appear starts and disappears when a dismiss ends: content below jumps by one gap: the playground's inline page is the same `gap: 12` column, so its lower skeleton lines step up 12px as a dismiss ends (visible between `screenshots/banner/playground-warning.png` and `playground-dismissed.png`). The "Dismissible" card's banner sits in a column without a gap.
 - **Workaround:** none.
@@ -58,7 +58,7 @@ repeating it.
 
 ## Focus after a dismiss
 
-- **Cause:** `not ported yet` (gpuix has `focus({ preventScroll })`, `FORK.md:481`).
+- **Cause:** `not ported yet` (gpuix has `focus({ preventScroll })`, `FORK.md:485`).
 - **Original:** if keyboard focus is inside the banner when it leaves, `focusNeighbour` moves it to the next focusable element after it, else the last one before it (`banner.tsx:200-213`, `:306-309`). The body is one element throughout.
 - **Port:** the body is one element throughout too (the row stays mounted from the appear to the end of the exit), so a reopen during a dismiss keeps the ✕ focused. No hand-off: a focused ✕ keeps focus while the banner fades and loses it to nothing when the exit ends and the row unmounts.
 - **Workaround:** none.
@@ -67,7 +67,7 @@ repeating it.
 
 ## Pointer events while faded
 
-- **Cause:** `not ported yet`. `pointerEvents` is a style property (`~/code/fdarian/gpuix/README.md:4918`).
+- **Cause:** `not ported yet`. `pointerEvents` is a style property (`~/code/fdarian/gpuix/README.md:5691`).
 - **Original:** `pointerEvents` is `none` while the banner's opacity is under 0.5, so an appearing banner cannot catch clicks meant for what is under it and a leaving one cannot be hit twice (`banner.tsx:258-260`).
 - **Port:** no gate. The banner is clickable at opacity 0 during an appear, and the ✕ of a closing banner calls `onDismiss` again.
 - **Workaround:** none.
@@ -85,7 +85,7 @@ repeating it.
 
 ## Action order is done by reversing the elements
 
-- **Cause:** `not ported yet`. gpuix has `order` and `flexDirection: "row-reverse"`, and `order` keeps focus order in document order, as the DOM does (`packages/native/js/host.ts:399`, `:413-415`). The port's comment that it has neither (`banner.tsx:474-478`) is out of date.
+- **Cause:** `not ported yet`. gpuix has `order` and `flexDirection: "row-reverse"`, and `order` keeps focus order in document order, as the DOM does (`packages/native/js/host.ts:458`, `:481-482`). The port's comment that it has neither (`banner.tsx:474-478`) is out of date.
 - **Original:** every `BannerAction` places itself with CSS `order` by variant, while the markup stays primary first, so Tab visits primary, then secondary, then ghost in both layouts (`banner.tsx:628-634`, `:586-610`).
 - **Port:** trailing the title, `BannerActions` reverses the resolved children (`banner.tsx:456-485`, `:460-463`), so Tab visits ghost, then secondary, then primary there. Under a description the order is as written.
 - **Workaround:** the reversal.

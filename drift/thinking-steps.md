@@ -13,7 +13,7 @@ repeating it.
 - **Cause:** `gpuix gap`.
 - **Original:** `motion.span animate={{ rotate: open ? 90 : 0 }}` with `spring.fast` (0.08s, no bounce) (`thinking-steps.tsx:112-125`).
 - **Port:** `Chevron` rotates the path's own points (`chevronPath`) from a 100ms ease-out on the shared frame clock and draws them through `Icon easeStroke` (`thinking-steps.tsx:63-114`). With reduced motion the angle is set at once (`:86-94`): the source's `rotate` is a transform Motion jumps, and this JS tween is not one of gpuix's, so `MotionConfig` does not reach it.
-- **gpuix lacks:** rotation (README "gpuix gaps", CSS transforms row; no `transform`, `~/code/fdarian/gpuix/FORK.md:1198-1209`). `motion.path` animates `d`, `strokeWidth` and the other shape attributes but not a `transform` (`packages/native/js/host.ts:292-322`).
+- **gpuix lacks:** rotation (README "gpuix gaps", CSS transforms row; no `transform`, `~/code/fdarian/gpuix/FORK.md:1198-1209`). `motion.path` animates `d`, `strokeWidth` and the other shape attributes but not a `transform` (`packages/native/js/host.ts:340-376`).
 - **Workaround:** the points are rotated in JS, whole degrees, and redrawn as shapes (no SVG source per angle). The effect reads `angle()` inside `createEffect` (`:95`), so by reading it re-subscribes after every step and restarts the tween from the current angle; the move is then closer to an exponential ease-out than to a 100ms cubic, with a final snap when the original 100ms elapses.
 - **Fidelity:** approximated. A tween rather than the critically damped spring, driven from JS.
 - **Components it hits:** any disclosure chevron (accordion, card, color-picker); file-thumbnail's spinner uses the same SVG-rewrite technique.
@@ -23,7 +23,7 @@ repeating it.
 - **Cause:** `gpuix gap`.
 - **Original:** sources enter `opacity 0, scale .85, blur(4px)` on `spring.moderate` with the blur on its own 0.12s transition (`thinking-steps.tsx:541-557`); images enter `opacity 0, blur(4px)`, opacity 0.2s `easeOut`, blur 0.15s (`:570-583`).
 - **Port:** opacity only, with the same delays and the same opacity transitions (`ThinkingStepSource`, `thinking-steps.tsx:553-569`; `ThinkingStepImage`, `:575-627`, motion at `:585-589`).
-- **gpuix lacks:** scale (the known transform gap), and an animatable `filter`: `filter: "blur(4px)"` paints as a static style, but `filter` is not among `MotionStyleTargets` (`packages/native/js/host.ts:87`), so it cannot be tweened.
+- **gpuix lacks:** scale (the known transform gap), and an animatable `filter`: `filter: "blur(4px)"` paints as a static style, but `filter` is not among `MotionStyleTargets` (`packages/native/js/host.ts:123`), so it cannot be tweened.
 - **Workaround:** none beyond opacity.
 - **Fidelity:** approximated (the blur-to-sharp reveal and the pop are dropped).
 - **Components it hits:** just this one (scale-in entrances elsewhere are listed in the README row).
@@ -58,7 +58,7 @@ repeating it.
 
 ## Closed panel is `inert`, not `hidden`
 
-- **Cause:** `not ported yet`. gpuix has `display: none` (`FORK.md:624`; `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:107`). The port's comment that gpuix has no `display: none` (`thinking-steps.tsx:187-192`) is out of date.
+- **Cause:** `not ported yet`. gpuix has `display: none` (`FORK.md:628`; `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:107`). The port's comment that gpuix has no `display: none` (`thinking-steps.tsx:187-192`) is out of date.
 - **Original:** the panel gets `hidden` once the exit animation finishes (`thinking-steps.tsx:195-218`).
 - **Port:** height 0, `overflow: hidden`, and `inert` the moment `open` goes false (`thinking-steps.tsx:209-244`). A closed panel's content is still laid out each frame, and is out of the accessibility tree from the start of the exit rather than the end.
 - **Workaround:** `inert`.
@@ -76,7 +76,7 @@ repeating it.
 
 ## Image box is sized outright
 
-- **Cause:** `not ported yet`. An `<img>` with a `%` width or `maxWidth` gets its height from its intrinsic ratio, and `onLoad` reports `naturalWidth` / `naturalHeight` (`~/code/fdarian/gpuix/FORK.md:664`, `:689`). To port: `width: "100%"` with `maxWidth: 200` and `objectFit: "cover"`. The height then comes from the file's ratio once decoded; before decode the box is empty (`~/code/fdarian/gpuix/README.md:4291-4296`), so the step's height jumps on load, which the `aspectRatio` prop avoids. Check that the jump is acceptable, or size from `onLoad`'s `naturalWidth` / `naturalHeight`.
+- **Cause:** `not ported yet`. An `<img>` with a `%` width or `maxWidth` gets its height from its intrinsic ratio, and `onLoad` reports `naturalWidth` / `naturalHeight` (`~/code/fdarian/gpuix/FORK.md:668`, `:834-835`). To port: `width: "100%"` with `maxWidth: 200` and `objectFit: "cover"`. The height then comes from the file's ratio once decoded; before decode the box is empty (`~/code/fdarian/gpuix/README.md:5012-5014`), so the step's height jumps on load, which the `aspectRatio` prop avoids. Check that the jump is acceptable, or size from `onLoad`'s `naturalWidth` / `naturalHeight`.
 - **Original:** `<img class="w-full max-w-[200px] object-cover">` takes the file's aspect ratio and shrinks in a narrow column (`thinking-steps.tsx:586-593`).
 - **Port:** a fixed 200px-wide box, height `200 / aspectRatio` with `aspectRatio` an extra prop defaulting to 2 (`thinking-steps.tsx:583-602`). The demo image is 1200x600, so the demos match. A different ratio letterboxes (`objectFit` is the default `contain`, the source is `cover`), and the box does not shrink below 200.
 - **Workaround:** the `aspectRatio` prop, so the step's measured height is stable before the image decodes.

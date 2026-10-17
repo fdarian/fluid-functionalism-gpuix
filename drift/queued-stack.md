@@ -25,7 +25,7 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:3
 
 ## No `(hover: none)` signal
 
-- **Cause:** `gpuix gap`. Listed in [README, Missing features](../README.md): `matchMedia` fixes `hover` to `hover` and `pointer` to `fine` (`FORK.md:1252-1254`).
+- **Cause:** `gpuix gap`. Listed in [README, Missing features](../README.md): `matchMedia` fixes `hover` to `hover` and `pointer` to `fine` (`FORK.md:1256-1258`).
 - **Original:** `(hover: none)` switches the stack to tap-to-expand: a tap on a collapsed card pins it open, a Collapse button (chevron, `Tooltip` "Collapse") replaces the gutter arrow, an empty queue resets the pin, and Edit and Remove are always shown instead of on hover (`:106-127`, `:215-233`, `:303-308`, `:375-377`).
 - **Port:** none of it; the stack expands on hover only, and the actions show on card hover.
 - **gpuix lacks:** an input-device signal (GPUI exposes none).
@@ -44,7 +44,7 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:3
 
 ## Shared-layout morph into the sent bubble
 
-- **Cause:** `not ported yet` (gpuix has `layoutId`, `FORK.md:1145-1146`).
+- **Cause:** `not ported yet` (gpuix has `layoutId`, `FORK.md:1149-1150`).
 - **Original:** `morphLayoutId` gives a text-only card a `layoutId` (dropped while a press is down) so the dispatched card morphs into its sent bubble (`:53-56`, `:295-301`).
 - **Port:** no such prop; a dispatched card only fades out (`queued-stack.tsx:349-352`).
 - **Workaround:** none.

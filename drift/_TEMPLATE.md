@@ -13,7 +13,7 @@ repeating it.
 - **Cause:** `gpuix gap` | `port choice` (why) | `not ported yet`.
 - **Original:** what the source does, with its `file:line`.
 - **Port:** what this port does instead, with its `file:line`.
-- **gpuix lacks:** only when the cause is `gpuix gap`: what is missing or wrong, with the gpuix `file:line` when known (e.g. `packages/native/src/motion.rs:12`).
+- **gpuix lacks:** only when the cause is `gpuix gap`: what is missing or wrong, with the gpuix `file:line` when known (e.g. `packages/native/src/events/key_names.rs:10-17`).
 - **Workaround:** what the port does to get close, or `none`.
 - **Fidelity:** `exact` | `approximated` (how) | `dropped`.
 - **Components it hits:** just this one, or any others you noticed.

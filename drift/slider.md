@@ -13,7 +13,7 @@ repeating it.
 - **Cause:** `gpuix gap`.
 - **Original:** Base UI renders a visually hidden `<input type="range">` in each thumb, which gives the platform slider semantics, keyboard handling and a form value (`slider.tsx:1052-1075`, `:1649-1657`).
 - **Port:** each thumb is a `role="slider"` div with `tabIndex`, `aria-valuenow` / `-min` / `-max` / `-orientation` / `-disabled` and an `aria-valuetext` where Base UI sets one (`base-ui:src/slider/thumb/slider-thumb.ts:113-162`); the default row has a 1px hidden thumb that carries the same (`src/components/slider.tsx:1281-1298`). `onKeyDown` does Arrow (Shift for `largeStep`), Home, End and Page with Base UI's step maths (`base-ui:src/slider/thumb/slider-thumb.ts:52-111`). There is no `name` prop and no form value.
-- **gpuix lacks:** the input type. `InputType` is `"text" | "password" | "number" | "email" | "search" | "tel" | "url"` (`packages/native/js/host.ts:1175`).
+- **gpuix lacks:** the input type. `InputType` is `"text" | "password" | "number" | "email" | "search" | "tel" | "url"` (`packages/native/js/host.ts:1336`).
 - **Workaround:** the slider div described above.
 - **Fidelity:** approximated: exact for pointer and keyboard users and the accessibility tree, absent from forms.
 - **Components it hits:** none other.
@@ -39,7 +39,7 @@ repeating it.
 
 ## Step dots and pips are hidden per item, not by a mask that follows the thumb
 
-- **Cause:** `gpuix gap`. gpuix has `maskImage` (`packages/native/js/host.ts:571`), but a gradient string cannot be a motion value, so the mask cannot follow a spring.
+- **Cause:** `gpuix gap`. gpuix has `maskImage` (`packages/native/js/host.ts:673`), but a gradient string cannot be a motion value, so the mask cannot follow a spring.
 - **Original:** compact step dots and the pips layer sit under `mask-image: linear-gradient(...)` driven by the thumb's or fill's motion value, a 2px feather that hides each dot as the edge passes it (`slider.tsx:507-522`, `:1194`; `:1370-1376`, `:1683`).
 - **Port:** each dot is its own `motion.div` whose opacity goes to 0 when it is at or under the value (`dotHidden`, `src/components/slider.tsx:542-545`, `:770-786`) and each pip sits in a wrapper whose opacity drops, at once, when `pip <= value` (`:1107-1117`). At rest it looks the same. While a press springs the thumb, every passed dot fades together over the spring instead of one by one as the edge reaches it.
 - **Workaround:** per-item opacity.
@@ -57,7 +57,7 @@ repeating it.
 
 ## Click-to-edit differs: no number field, no accessible name
 
-- **Cause:** `not ported yet`. gpuix has `type="number"` and number `min` / `max` / `step` (FORK.md:504, `packages/native/js/host.ts:1175`).
+- **Cause:** `not ported yet`. gpuix has `type="number"` and number `min` / `max` / `step` (FORK.md:503-504, `packages/native/js/host.ts:1336`).
 - **Original:** the field is `type="number"` with `min`, `max` and `step` (`step="any"` for a `steps` list), focused and selected on the next frame so typing replaces the number, `aria-label="Edit slider value (start)"` for a range (`slider.tsx:209-213`, `:258-271`), a `5ch` wide box with line height 20 and a 1px bottom border (`:255-279`).
 - **Port:** a text `<input autoFocus>` (`src/components/slider.tsx`, the edit field in `ValueDisplay`) that selects its text on focus (`onFocus` calling `select()`), so typing replaces the number; no min / max / step on the field, no `aria-label`; 40 x 18 with the same bottom border. While editing, the label, the field and, in a range, the other value are items of a flex row, not part of the text run: gpuix lays an `<input>` out as a block, and a span with `display: flex` is a block too (gpuix README "Inline text"), so there is no inline-grid slot as in the source (`:232-270`). Outside editing the value is one `<text>` run with a clickable `<span>` per number, as in the source (`:285-335`). The seed, Enter / blur commit, Escape cancel, clamp and snap match (`:190-208`, `:292-298`).
 - **Workaround:** none.

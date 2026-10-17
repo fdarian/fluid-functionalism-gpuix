@@ -60,7 +60,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 ## Layout motion for sibling messages
 
-- **Cause:** `not ported yet` (gpuix has `layout`, `FORK.md:1145`).
+- **Cause:** `not ported yet` (gpuix has `layout`, `FORK.md:1149-1150`).
 - **Original:** `layout="position"` so earlier messages slide when a message is added (`chat-message.tsx:56`).
 - **Port:** no `layout` on the message; siblings jump (`chat-message.tsx:93-99`). Invisible in the demo, where "Add message" appends at the bottom.
 - **Workaround:** none.

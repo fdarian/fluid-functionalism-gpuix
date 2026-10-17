@@ -69,7 +69,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 - **Cause:** `gpuix gap`.
 - **Original:** `Cite` is a `Badge` (`size="sm"`, `px-1.5`, `mx-0.5`, `-translate-y-px`, `align-middle`) set inline in the paragraph (`lumen/page.tsx:62-73`): an `inline-flex` box 20px tall.
 - **Port:** a `<span>` with the accent fill, 11px type, `px-1.5`, `mx-0.5` and the radius `shape.item` (`src/pages/concepts-lumen.tsx:150-171`). Its box is the font's content area plus 3.5px above and below, so about 20px tall and painted over the lines around it without moving them. There is no `-translate-y-px` or `align-middle`: the span sits on the text baseline, a pixel or two lower than the source's centred badge.
-- **gpuix lacks:** a block (the `Badge`) flowing inside a paragraph; `vertical-align` (neither README nor FORK.md lists it) and transforms on an inline box (`~/code/fdarian/gpuix/FORK.md:1081-1091` lists what an inline box can paint).
+- **gpuix lacks:** a block (the `Badge`) flowing inside a paragraph; `vertical-align` (neither README nor FORK.md lists it) and transforms on an inline box (`~/code/fdarian/gpuix/FORK.md:1085-1094` lists what an inline box can paint).
 - **Workaround:** a padded span, as the doc pages' inline code (`src/lib/doc-page.tsx`, `Code`).
 - **Fidelity:** approximated (vertical position, a pixel).
 - **Components it hits:** any inline chip in running text.

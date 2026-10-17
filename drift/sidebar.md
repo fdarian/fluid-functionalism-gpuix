@@ -129,7 +129,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `not ported yet`.
 - **Original:** the hover highlight keeps its positional spring but fades on `{ duration: 0.08 }` (`fluid-hover-highlight.tsx:resolveHighlightTransition`); the active background moves on `spring.moderate` with `opacity: { duration: 0.08 }` (`sidebar-menu.tsx:520-524`). Reduced motion keeps the fade and drops the travel.
-- **Port:** `FluidHighlight` passes one transition for both position and opacity (`src/lib/fluid-highlight.tsx:58-62,87`), so the fade runs on the spring (0.08 s hover, 0.16 s active). gpuix accepts per-property transitions (`MotionTransition` `{ [prop]: curve }`, `packages/native/js/host.ts:256-260`).
+- **Port:** `FluidHighlight` passes one transition for both position and opacity (`src/lib/fluid-highlight.tsx:58-62,87`), so the fade runs on the spring (0.08 s hover, 0.16 s active). gpuix accepts per-property transitions (`MotionTransition` `{ [prop]: curve }`, `packages/native/js/host.ts:304-308`).
 - **Workaround:** none.
 - **Fidelity:** approximated (the fade is about the same length for hover, twice as long for the active background).
 - **Components it hits:** every `FluidHighlight` user.

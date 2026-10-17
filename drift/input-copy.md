@@ -18,7 +18,7 @@ repeating it.
 - **Original:** `AnimatePresence mode="wait" initial={false}` (`input-copy.tsx:150-221,223-337`): the old glyph or label animates out (`exit` opacity 0, scale 0.8) before the new one enters, and nothing animates on the first mount.
 - **Port:** `Swap` remounts its children when `${status}-${copyCount}` changes and fades the new ones in (`input-copy.tsx:45-65`). The old glyph is gone at once, and the initial `opacity: 0` also plays when the component first mounts, so the idle copy icon fades in on page load.
 - **Workaround:** the key includes `copyCount`, so copying again while "Copied" shows replays the fade.
-- **Fidelity:** approximated. `AnimatePresence` with `mode="wait"` exists in the fork (`~/code/fdarian/gpuix/FORK.md:1145-1146`).
+- **Fidelity:** approximated. `AnimatePresence` with `mode="wait"` exists in the fork (`~/code/fdarian/gpuix/FORK.md:1149-1150`).
 - **Components it hits:** input-message (`SendButton`, see its file).
 
 ## The check and cross do not draw themselves, and are other glyphs
@@ -26,7 +26,7 @@ repeating it.
 - **Cause:** `not ported yet`.
 - **Original:** custom paths `M6 12L10 16L18 8` and `M9 9L15 15M15 9L9 15` in `viewBox="2 4 20 16"` at 14px, `pathLength` 0 to 1 in 0.08 s ease-out (`input-copy.tsx:164-208,250-262,288-300`). The scale is 0.7, so the check is about 8.4px wide, the cross 4.2px, and the idle stroke 1.5 is 1.05px (2 is 1.4px).
 - **Port:** the static `check` and `x` glyphs of the Icons row's library (lucide by default, `icons/lucide.ts:6-7`) through `Icon` at 14px of a 24 box, scale 0.583 (`input-copy.tsx:147-187`): a 9.3px check, a 7px cross, 0.875px idle stroke.
-- **Workaround:** none here. `CheckMark` (`lib/icon.tsx:41`) already draws a path with `motion.path` for select and combobox, and the fork animates `pathLength` (`FORK.md:1147-1148`).
+- **Workaround:** none here. `CheckMark` (`lib/icon.tsx:41`) already draws a path with `motion.path` for select and combobox, and the fork animates `pathLength` (`FORK.md:1151-1152`).
 - **Fidelity:** approximated (static, larger cross, thinner strokes).
 - **Components it hits:** just this one.
 
@@ -55,7 +55,7 @@ repeating it.
 
 - **Cause:** `not ported yet`.
 - **Original:** `aria-labelledby={`${buttonId} ${labelId}`}` with `aria-label` "Copy" when a label is set, so the name reads "Copy <label>" (`input-copy.tsx:371-380`).
-- **Port:** `aria-label` is "Copy to clipboard" whether or not a label is shown (`input-copy.tsx:278-284`); the label `<text>` is not referenced. gpuix accepts `aria-labelledby` (`FORK.md:504`).
+- **Port:** `aria-label` is "Copy to clipboard" whether or not a label is shown (`input-copy.tsx:278-284`); the label `<text>` is not referenced. gpuix accepts `aria-labelledby` (`FORK.md:508-509`).
 - **Fidelity:** approximated.
 
 ## A refused write has no `execCommand` fallback

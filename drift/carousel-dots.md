@@ -11,7 +11,7 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 - **Cause:** `gpuix gap` (`requestAnimationFrame` itself); driving the fill natively instead is `not ported yet`.
 - **Original:** a `requestAnimationFrame` loop advances a `MotionValue` that drives the fill's `transform`, with no re-render (`carousel-dots.tsx:134-159`, `:161-162`).
 - **Port:** one shared 16 ms `setInterval` (`src/lib/clock.ts:27`, `onFrame`) advances a signal (`carousel-dots.tsx:81-100`); stalled frames over 100 ms are dropped, like the original's stall guard (`clock.ts:15`, source `:82`). The fill's `width` is rewritten every frame (`carousel-dots.tsx:200-202`), one style mutation per frame per playing carousel.
-- **gpuix lacks:** `requestAnimationFrame`: no display-synced JS frame callback, only `setTimeout` / `setInterval` (`~/code/fdarian/gpuix/FORK.md:205-208`; README "Missing features" row "`requestAnimationFrame` itself"). gpuix does have native, JS-free motion values (`createMotionValue`, `packages/solid/src/index.ts:36`; `FORK.md:1142`), so the timer is not the only route; the port has not tried driving the fill natively.
+- **gpuix lacks:** `requestAnimationFrame`: no display-synced JS frame callback, only `setTimeout` / `setInterval` (`~/code/fdarian/gpuix/FORK.md:209-212`; README "Missing features" row "`requestAnimationFrame` itself"). gpuix does have native, JS-free motion values (`createMotionValue`, `packages/solid/src/index.ts:42`; `FORK.md:1146-1148`), so the timer is not the only route; the port has not tried driving the fill natively.
 - **Workaround:** the shared frame clock.
 - **Fidelity:** approximated (timer jitter instead of frame-locked updates).
 - **Components it hits:** every JS-driven loop: thinking-indicator, thinking-steps, file-thumbnail.
@@ -31,7 +31,7 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `progress?: number | MotionValue<number>`; a `MotionValue` moves the fill each frame without re-rendering (`carousel-dots.tsx:71-74`, `:161`).
 - **Port:** `number | (() => number)` (`carousel-dots.tsx:59`, `:72-77`).
-- **gpuix lacks:** n/a: gpuix has `createMotionValue` (`packages/solid/src/index.ts:36`), but the port does not accept it.
+- **gpuix lacks:** n/a: gpuix has `createMotionValue` (`packages/solid/src/index.ts:42`), but the port does not accept it.
 - **Workaround:** pass a signal accessor.
 - **Fidelity:** approximated (a signal write per update, not a native motion value).
 - **Components it hits:** just this one.
@@ -70,7 +70,7 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 - **Cause:** `gpuix gap` (suspected, unverified).
 - **Original:** `markByHand` sets its flag in `onPointerDownCapture` and `onKeyDownCapture` on the wrapper, before the dot handles the event (`lib/docs/slide-direction.ts:36-44`).
 - **Port:** `onMouseDown` / `onKeyDown` in the bubble phase (`src/demos/carousel-dots.tsx:20-27`). For a key, the dot's own `buttonProps` handler runs first and calls `click()`, which bubbles `onClick` to `onValueChange` along its path (`packages/native/js/host-runtime.ts:35-40`). If that delivery is synchronous, Enter on a back-pointing dot reads `picked = false` and the label moves forward. Space is safe (it clicks on key-up).
-- **gpuix lacks:** a key capture twin: `Capture` handlers exist for pointer and mouse events (`packages/native/js/host.ts:991`); no `onKeyDownCapture` was found.
+- **gpuix lacks:** a key capture twin: `Capture` handlers exist for pointer and mouse events (`packages/native/js/host.ts:1147`); no `onKeyDownCapture` was found.
 - **Workaround:** none.
 - **Fidelity:** approximated (possibly wrong direction on an Enter pick).
 - **Components it hits:** just this demo.

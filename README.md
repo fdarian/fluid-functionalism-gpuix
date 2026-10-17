@@ -48,7 +48,7 @@ bun scripts/live-check.tsx  # the same flow against the real window, via gpuix's
 <summary>How gpuix and base-ui-solid-gpuix are wired in</summary>
 
 - **gpuix.** `@gpuix/native` and `@gpuix/solid` come from the fork at `~/code/fdarian/gpuix`: native is a `link:`, solid is a
-  `file:` copy. The fork must be at `poc` a02ec23 or later: the highlights and popups use its native `motion` springs,
+  `file:` copy. The fork must be at `poc` dcfc7a0e or later: the highlights and popups use its native `motion` springs,
   so rebuild the addon and the `@gpuix/solid` dist after pulling it (see the fork's `FORK.md`, "Building"), then run
   `pnpm install` here to refresh the copy. The Solid JSX transform is a Bun preload (`bunfig.toml`), so there is no
   build step.
@@ -247,7 +247,7 @@ offer it. A count is given only where the code shows it.
 | command-menu (and every long demo page) | Culling: elements a scroller clips away are still built, laid out and painted each frame, so a page of many menus costs several times a short one (`<virtual-list>` is the only exception) | `DemoCard` hides its content with `display: none` while it is far from the page scroller (`drift/command-menu.md`) |
 | file-thumbnail | A canvas pixel path (a PDF page preview) | The caller passes a type and the thumbnail shows a glyph |
 | not counted | Effect groups (`filter`, `backdrop-filter`, `mask`, `clip`, group opacity) off macOS: the group draws flat. The Markdown sample's to-do tick is a `maskImage` of an SVG data URI on a foreground box, so off macOS it is a flat square | none |
-| carousel-dots, file-thumbnail, thinking-indicator, thinking-steps | `requestAnimationFrame` itself (only `setTimeout`, FORK.md:210-211). The animations are possible without it, through motion values and keyframes (FORK.md:1144-1148) | `lib/clock.ts`: one shared, ref-counted `setInterval` frame clock |
+| carousel-dots, file-thumbnail, thinking-indicator, thinking-steps | `requestAnimationFrame` itself (only `setTimeout`, FORK.md:209-211). The animations are possible without it, through motion values and keyframes (FORK.md:1144-1148) | `lib/clock.ts`: one shared, ref-counted `setInterval` frame clock |
 | ask-user-questions (the inline option) | An inline atom: `inline-grid` and `inline-block` in a paragraph (`display: inline-*` is not built, FORK.md:735-737). A `<span>` with `display: grid` or `block` is laid out as a block box on its own line, so `StableLabel`'s hidden semibold copy cannot sit inside the title run. Measured on the test renderer: a `display: grid` span inside a `<text>` is a 600px-wide box on its own row | The inline option is one `<text>` of two runs; selecting a title with a description moves the description by the weight's width (`drift/ask-user-questions.md`) |
 | typography (the Balanced and Pretty demos), chat-message (the user bubble), fluid-hover (the callout copy) | `text-wrap: balance` and `pretty`: lines break greedily | The copy wraps natively; the fluid-hover callouts are broken by hand where the source's balance breaks them |
 | badge | `text-box-trim` / `text-box-edge`: a label is centred by its full line box | Flex centring in a fixed-height pill (about a pixel of drift) |

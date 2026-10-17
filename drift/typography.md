@@ -84,7 +84,7 @@ repeating it.
 
 ## Steady numbers is native
 
-- **Cause:** none that matters: gpuix has `fontVariantNumeric: "tabular-nums"` (`README.md:5300`) and Inter's static cuts carry `tnum`.
+- **Cause:** none that matters: gpuix has `fontVariantNumeric: "tabular-nums"` (`README.md:6386`) and Inter's static cuts carry `tnum`.
 - **Original:** two rows count 10 to 48 in `normal-nums` and `tabular-nums` while the demo is half on screen, hold while a pointer is inside, and show the last count under reduced motion (`demos.tsx:382-540`).
 - **Port:** the same, with the widths of all 39 labels per row measured through hidden copies and `onLayout` (78 invisible texts); the proportional row drifts 6.0px where the browser measured 6.2px. The count ticks every 120ms on a timer while at least half the frame is on screen, and reduced motion shows the last count (`src/pages/typography/numbers.tsx:155-168`).
 - **Fidelity:** exact in behaviour.
@@ -101,7 +101,7 @@ repeating it.
 
 ## Balanced headings and pretty paragraphs: the good side has its break written in
 
-- **Cause:** `gpuix gap`: no `text-wrap` (`balance`, `pretty`); the style list has none (`README.md:5298`).
+- **Cause:** `gpuix gap`: no `text-wrap` (`balance`, `pretty`); the style list has none (`README.md:5683-5691`, `:6384`).
 - **Original:** the same 214px headline and paragraph, the left `text-wrap: wrap`, the right `balance` or `pretty` (`demos.tsx:652-709`).
 - **Port:** the left side wraps natively, and at 214px gpuix breaks them where the source measured Chrome ("Give every component the / same motion"; "... sits under your / cursor."). The right side is the same text with the browser's choice written in as a newline under `whiteSpace: "pre-line"` ("Give every component / the same motion"; "... sits under / your cursor."). It is a fixed result: it will not re-balance if the width, the font or the copy changes.
 - **Workaround:** the explicit break.

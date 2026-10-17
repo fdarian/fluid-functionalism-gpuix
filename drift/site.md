@@ -19,14 +19,14 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Cause:** `gpuix gap`.
 - **Original:** n/a, this is about the harness.
 - **Port:** the real window sets `titlebarTransparent` and `trafficLightX/Y` (`src/main.tsx:16-18`).
-- **gpuix lacks:** the offscreen test window has no traffic lights or titlebar: it ignores those options. Its appearance does follow `appearance` and `setAppearance` now (`~/code/fdarian/gpuix/FORK.md:1506-1507`), so the theme is no longer a gap.
+- **gpuix lacks:** the offscreen test window has no traffic lights or titlebar: it ignores those options. Its appearance does follow `appearance` and `setAppearance` now (`~/code/fdarian/gpuix/FORK.md:1277-1283`), so the theme is no longer a gap.
 - **Workaround:** none for the chrome. The screenshots create the window Dark and map `setAppearance("system")` to dark, because `System` would hand it back to the host's own setting (`scripts/screenshots.tsx:51-61`); `light.png` flips the theme through the real select, or by code on a full-layout page or one with its own rail (`:246-266`), and asserts `getAppearance()` for both.
 - **Fidelity:** approximated (captures show the frame without the traffic lights).
 - **Components it hits:** every demo capture.
 
 ## No responsive layout
 
-- **Cause:** `not ported yet` (the fork now has `matchMedia` with size queries and change events, `~/code/fdarian/gpuix/FORK.md:1149-1150`; the port uses none).
+- **Cause:** `not ported yet` (the fork now has `matchMedia` with size queries and change events, `~/code/fdarian/gpuix/FORK.md:1153-1154`, `:1256-1258`; the port uses none).
 - **Original:** the site switches at `xl` (1280px): below it the rail becomes a sheet behind a fixed top-left "Open navigation" trigger that closes on navigation, the right panel is hidden, and the settings move into the sheet's footer (`app/components/sidebar-layout.tsx:184-195`, `app/components/sidebar.tsx:130-141`, `app/globals.css:1020-1043`). Content is `max-w-[680px]` with `py-20 sm:py-28`, `mt-12` below `lg` (`app/docs/layout.tsx:1-7`). The title size follows the viewport: 22px below 640px, 28px above (`app/globals.css:416, 430-435`).
 - **Port:** one fixed three-column layout at any width: sidebar, a page column of `PAGE_WIDTH` 600, a 296px customise column (`src/app.tsx:77, 542, 576, 614`); a "full" page fills the window instead (`:575-577`). The window opens at 1240x780 (`src/main.tsx:19-20`), already under the source's `xl`.
 - **Workaround:** none.

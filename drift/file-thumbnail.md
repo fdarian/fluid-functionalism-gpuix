@@ -12,7 +12,7 @@ Ported and matching: the square with `bg-accent`, `overflow-hidden` and `shrink-
 - **Cause:** `gpuix gap`.
 - **Original:** renders page 1 of a PDF through pdfjs onto a canvas and shows it as an image, and exports `loadPdfjs` and `renderPdfFirstPage` (`file-thumbnail.tsx:7-38`, `:108-135`, `:203`). A failed render (corrupt file, blocked worker) falls back to the glyph.
 - **Port:** a PDF shows the generic document glyph (`file-thumbnail.tsx:130-137`); the two helpers are not exported.
-- **gpuix lacks:** a drawing surface. `<canvas>` is listed as "Custom drawing (planned)" (`~/code/fdarian/gpuix/README.md:4265`), so pdfjs has nothing to render into; the only pixel path is `setImagePixels` on an `<img>` (`README.md:4356-4366`), which needs a rasteriser outside gpuix. `README.md:249` is the port's row.
+- **gpuix lacks:** a drawing surface. `<canvas>` is listed as "Custom drawing (planned)" (`~/code/fdarian/gpuix/README.md:4975`), so pdfjs has nothing to render into; the only pixel path is `setImagePixels` on an `<img>` (`README.md:5066-5076`), which needs a rasteriser outside gpuix. `README.md:249` is the port's row.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one (queued-stack, chat-message and input-message show the glyph for a PDF).
@@ -22,7 +22,7 @@ Ported and matching: the square with `bg-accent`, `overflow-hidden` and `shrink-
 - **Cause:** `gpuix gap` for the rotation; the JS-driven arc is `not ported yet`.
 - **Original:** `w-6 h-6 rounded-full border-2 border-border border-t-muted-foreground animate-spin`, one turn a second, linear (`file-thumbnail.tsx:167-173`).
 - **Port:** two stacked SVGs: a static ring tinted `border`, and an arc (90 degrees, butt caps) whose source string is rewritten from the shared `onFrame` clock, 0.36 degrees a millisecond, rounded to whole degrees so the SVG cache sees at most 360 sources (`file-thumbnail.tsx:19-78`; `src/lib/clock.ts:27`, a 16 ms `setInterval`).
-- **gpuix lacks:** rotation. There is no `transform`, and `motion` cannot animate an SVG `transform` attribute (`FORK.md:1198-1209`; `README.md:238`, `:333`). It does have keyframes with `repeat: Infinity` and `motion.circle` animating `strokeDasharray` / `strokeDashoffset` / `pathOffset` (`FORK.md:1140-1141`; gpuix `README.md:1648-1676`); a circle with a 90-degree dash whose offset loops would turn the arc on the native clock with no JS and no per-frame source rewrite. The port has not tried it.
+- **gpuix lacks:** rotation. There is no `transform`, and `motion` cannot animate an SVG `transform` attribute (`FORK.md:1198-1209`; `README.md:238`, `:333`). It does have keyframes with `repeat: Infinity` and `motion.circle` animating `strokeDasharray` / `strokeDashoffset` / `pathOffset` (`FORK.md:1144-1145`, `:1151-1152`; gpuix `README.md:1709-1735`); a circle with a 90-degree dash whose offset loops would turn the arc on the native clock with no JS and no per-frame source rewrite. The port has not tried it.
 - **Workaround:** the frame clock above.
 - **Fidelity:** approximated. It stalls with the JS thread, steps in whole degrees on a 16 ms timer, and re-parses an SVG each tick. The source's arc is the top border of a circle; its ends are cut along the 45-degree diagonals, which are radial for a circle, so the butt-capped arc should match within antialiasing (not compared pixel by pixel). The earlier note called the source arc a tapered join; I could not support that from the CSS.
 - **Components it hits:** thinking-steps (the chevron, `drift/thinking-steps.md`), every JS-driven loop.
@@ -32,7 +32,7 @@ Ported and matching: the square with `bg-accent`, `overflow-hidden` and `shrink-
 - **Cause:** `port choice` (the port has no async preview to wait on; reason otherwise not stated).
 - **Original:** the spinner shows by itself while a preview is pending: an image before its object URL exists, a PDF while pdfjs renders (`file-thumbnail.tsx:132-135`, `:161-173`). It stays off for a failed PDF and an unsupported type.
 - **Port:** the caller passes `pending` (`file-thumbnail.tsx:104-109`, `:127`); an image with a `src` shows no spinner while it decodes. A `pending` thumbnail ignores the image.
-- **gpuix lacks:** n/a: `<img>` has `load` / `error` events for blob sources (`packages/native/js/blob-images.ts:22-25`).
+- **gpuix lacks:** n/a: `<img>` has `load` / `error` events for blob sources (`packages/native/js/blob-images.ts:20-24`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -42,7 +42,7 @@ Ported and matching: the square with `bg-accent`, `overflow-hidden` and `shrink-
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `file: File`; an image is shown through `URL.createObjectURL`, one blob URL per file shared by every thumbnail and revoked with the last one (`file-thumbnail.tsx:40-74`, `:94-100`).
 - **Port:** `FileLike { name, type, src? }`, `src` a filesystem path or data URL; an image without `src` shows the glyph (`file-thumbnail.tsx:11-17`, `:110-112`). Consumers map their own file to it (`src/components/input-message.tsx:312-317`).
-- **gpuix lacks:** nothing: `<img src="blob:...">` is read in-process (`packages/native/js/host.ts:1270`; `blob-images.ts`).
+- **gpuix lacks:** nothing: `<img src="blob:...">` is read in-process (`packages/native/js/host.ts:1430-1431`; `blob-images.ts`).
 - **Workaround:** pass a path.
 - **Fidelity:** approximated.
 - **Components it hits:** input-message, chat-message, queued-stack.

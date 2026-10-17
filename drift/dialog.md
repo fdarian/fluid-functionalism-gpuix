@@ -22,7 +22,7 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 - **Cause:** `gpuix gap`.
 - **Original:** Base UI focuses the first tabbable inside the popup as it opens.
 - **Port:** `FocusFirst` calls `focusNextWithin(popup.id)` in a `setTimeout(0)` (`base-ui:src/dialog/popup/focus-first.tsx:8-18`).
-- **gpuix lacks:** a first-tabbable initial focus: `DialogPopup` focuses the popup itself by default (`packages/solid/src/components/dialog.ts:162`), and native's tab order exists only once the popup has painted (gpuix README, Dialog), so `focusNextWithin` from mount finds no stop and gpuix's own focus on the popup lands after that mount (checked: calling it synchronously left focus on the popup).
+- **gpuix lacks:** a first-tabbable initial focus: `DialogPopup` focuses the popup itself by default (`packages/solid/src/components/dialog.ts:182`), and native's tab order exists only once the popup has painted (gpuix README, Dialog), so `focusNextWithin` from mount finds no stop and gpuix's own focus on the popup lands after that mount (checked: calling it synchronously left focus on the popup).
 - **Workaround:** the deferred `focusNextWithin`; for one tick the popup holds focus.
 - **Fidelity:** approximated (one tick late).
 - **Components it hits:** mobile-drawer (reuses `FocusFirst`).

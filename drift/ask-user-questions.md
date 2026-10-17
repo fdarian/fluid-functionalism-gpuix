@@ -16,7 +16,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 ## Exits and sibling motion are missing
 
-- **Cause:** `not ported yet` (gpuix has `AnimatePresence` with `mode="popLayout"` and `layout`, `FORK.md:1145-1146`).
+- **Cause:** `not ported yet` (gpuix has `AnimatePresence` with `mode="popLayout"` and `layout`, `FORK.md:1149-1150`).
 - **Original:** footer buttons sit in `AnimatePresence mode="popLayout" initial={false}` with `layout="position"`, so a leaving button fades out while its neighbours slide at the same time and nothing animates on first mount (`:1425-1429`, `:1485-1489`). The submit arrow also fades out on exit with `spring.fast.exit` (`:1702-1706`).
 - **Port:** a `Show` removes the button at once, and the others jump. `FadeIn` runs on every mount, including the first paint, which the source skips (`ask-user-questions.tsx:1037-1103`, `:1146-1157`). The arrow overlay is unmounted when `showArrow` goes false (`:159`).
 - **Workaround:** none.
@@ -69,7 +69,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 ## Arrow keys and Enter inside the Other field
 
-- **Cause:** `not ported yet` for the caret test (gpuix has `selectionStart` / `selectionEnd`, `FORK.md:499-500`); `port choice` for the rest (reason not stated).
+- **Cause:** `not ported yet` for the caret test (gpuix has `selectionStart` / `selectionEnd`, `FORK.md:503`); `port choice` for the rest (reason not stated).
 - **Original:** ↑/↓ leave the textarea only when the caret is at the very start or end (`:274-277`); plain Enter in a single-select Other field submits even with ⌘/⌃ held (`:1172-1177`); ↑ from no row goes to row `rowCount - 2` (`:316-318`).
 - **Port:** ↑/↓ leave the textarea whenever the draft has no `\n`, so a long wrapped one-liner cannot be walked with ↑/↓ (`ask-user-questions.tsx:539-543`); ⌘/⌃+Enter does nothing there (`:526-527`, `:448-450`); ↑ from no row goes to the last row (`base-ui:src/internals/composite/composite.ts:26`).
 - **Workaround:** none.

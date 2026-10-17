@@ -20,7 +20,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `not ported yet`.
 - **Original:** the overlay button has `aria-label={label}` and `aria-pressed={selected || undefined}` (`:363-365`); a disabled card gets `aria-disabled` (`:413`) and drops the overlay; `CardMedia` and `CardImage` pass `alt` (`logoAlt`, `alt`, `:752-756`, `:804-806`).
-- **Port:** the overlay gets `aria-label` and `aria-pressed` (only while selected) when the card is clickable and enabled, and the root `aria-disabled` when disabled (`src/components/card.tsx`, `Card`); `scripts/check-card.tsx` reads role `Button`, the label and `toggled` off the accessibility tree. The test renderer shows no node at all for a disabled or informational card (a plain `div`), so `aria-disabled` on the disabled root is set but not observed. The `<img>` elements get no `alt` (`:755-766`, `:799-814`) although `ImgProps` has it (`packages/native/js/host.ts:1274`).
+- **Port:** the overlay gets `aria-label` and `aria-pressed` (only while selected) when the card is clickable and enabled, and the root `aria-disabled` when disabled (`src/components/card.tsx`, `Card`); `scripts/check-card.tsx` reads role `Button`, the label and `toggled` off the accessibility tree. The test renderer shows no node at all for a disabled or informational card (a plain `div`), so `aria-disabled` on the disabled root is set but not observed. The `<img>` elements get no `alt` (`:755-766`, `:799-814`) although `ImgProps` has it (`packages/native/js/host.ts:1435`).
 - **Workaround:** none.
 - **Fidelity:** exact on the root; `alt` dropped.
 - **Components it hits:** just this one.
@@ -56,7 +56,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `not ported yet`.
 - **Original:** `bg-card/70 backdrop-blur-sm hover:bg-card` when the card has a `CardImage` (`:492-494`).
-- **Port:** the 70% alpha alone (`src/components/card.tsx:51-52`, `:559-565`). The comment says gpuix has no backdrop blur; it has `backdropFilter` (`packages/native/js/host.ts:567-570`, `FORK.md:784-786`, effect groups, macOS).
+- **Port:** the 70% alpha alone (`src/components/card.tsx:51-52`, `:559-565`). The comment says gpuix has no backdrop blur; it has `backdropFilter` (`packages/native/js/host.ts:662-665`, `FORK.md:788-789`, effect groups, macOS).
 - **Workaround:** the alpha.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -83,7 +83,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `port choice` (reason not stated; the visible title is absolutely positioned over the invisible semibold copy, which needs both on one line).
 - **Original:** the title wraps normally; a consumer's `truncate` ellipsizes it (`:569-609`).
-- **Port:** both copies are `whiteSpace: "nowrap"` (`src/components/card.tsx:630`, `:641`); a long title is clipped by a tile or runs past the column. The parts take no `className`, so there is no `truncate`. gpuix has `textOverflow: "ellipsis"` (`host.ts:620`).
+- **Port:** both copies are `whiteSpace: "nowrap"` (`src/components/card.tsx:630`, `:641`); a long title is clipped by a tile or runs past the column. The parts take no `className`, so there is no `truncate`. gpuix has `textOverflow: "ellipsis"` (`host.ts:757`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -93,7 +93,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Cause:** `gpuix gap`.
 - **Original:** `transition-[font-variation-settings]` eases the title between regular and semibold when the card is selected (`:596-605`); the site's semibold is the variable `wght 550`.
 - **Port:** the weight switches at once between 400 and the nearest static cut, SemiBold 600 (`src/components/card.tsx:620-649`); the invisible semibold copy in flow keeps the row from reflowing.
-- **gpuix lacks:** variable-font axes: fonts render only their default instance, so there is one static file per weight and nothing to interpolate (`~/code/fdarian/gpuix/README.md:756`, `:5302`; `src/lib/fonts.ts`). README "gpuix gaps", card and table row.
+- **gpuix lacks:** variable-font axes: fonts render only their default instance, so there is one static file per weight and nothing to interpolate (`~/code/fdarian/gpuix/README.md:757`, `:6388`; `src/lib/fonts.ts`). README "gpuix gaps", card and table row.
 - **Workaround:** static cuts.
 - **Fidelity:** approximated (no easing, 600 for 550).
 - **Components it hits:** every `StableLabel` (`src/lib/stable-label.tsx`): tabs, tabs-subtle, sidebar, menu rows; also `CardFeature`'s title (semibold 550 in the source, `:886`).
@@ -133,7 +133,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Cause:** `gpuix gap`.
 - **Original:** `underline-offset-4` and `hover:underline` (`:915`).
 - **Port:** `textDecoration: "underline"` on hover (`src/components/card.tsx:1003-1005`).
-- **gpuix lacks:** an underline offset: `StyleDesc` has `textDecoration`, `-Line`, `-Style`, `-Color` and nothing for the offset (`packages/native/js/host.ts:628-634`; searched `packages/native/src` and `js`).
+- **gpuix lacks:** an underline offset: `StyleDesc` has `textDecoration`, `-Line`, `-Style`, `-Color`, `-Thickness` and nothing for the offset (`packages/native/js/host.ts:766-776`; searched `packages/native/src` and `js`).
 - **Workaround:** none.
 - **Fidelity:** approximated (the line sits closer to the text).
 - **Components it hits:** any `underline-offset-*`.
