@@ -1,5 +1,13 @@
 import { For, type JSX } from 'solid-js';
 import { ScrollArea } from '#/components/scroll-area';
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '#/components/table';
 import type { DemoModule } from '#/lib/demo';
 import { DemoCard } from '#/lib/demo-kit';
 import { color, radius, type as scale } from '#/lib/theme';
@@ -46,9 +54,6 @@ const CITIES = [
 const metric = (row: number, col: number) =>
 	(((row + 3) * (col + 7) * 37) % 900) + 100;
 
-const CITY_W = 104;
-const CELL_W = 80;
-
 const box = () => ({
 	borderStyle: 'solid',
 	borderWidth: 1,
@@ -92,39 +97,6 @@ function Panel(props: { caption: string; children: JSX.Element }) {
 			{props.children}
 			<text style={{ ...scale.caption, color: color.mutedForeground }}>
 				{props.caption}
-			</text>
-		</div>
-	);
-}
-
-function Cell(props: {
-	width: number;
-	right?: boolean;
-	tabular?: boolean;
-	strong?: boolean;
-	children: string;
-}) {
-	return (
-		<div
-			style={{
-				width: props.width,
-				flexShrink: 0,
-				paddingLeft: 12,
-				paddingRight: 12,
-				display: 'flex',
-				flexDirection: 'row',
-				justifyContent: props.right ? 'flex-end' : 'flex-start',
-			}}
-		>
-			<text
-				style={{
-					...scale.body,
-					whiteSpace: 'nowrap',
-					fontVariantNumeric: props.tabular ? 'tabular-nums' : 'normal',
-					color: props.strong ? color.foreground : color.mutedForeground,
-				}}
-			>
-				{props.children}
 			</text>
 		</div>
 	);
@@ -205,64 +177,37 @@ export function Demo() {
 					<ScrollArea
 						testId="both"
 						orientation="both"
-						height={132}
-						style={box()}
+						width="100%"
+						height={320}
 					>
-						<div
-							style={{
-								display: 'flex',
-								flexDirection: 'column',
-								flexShrink: 0,
-							}}
-						>
-							<div
-								style={{
-									display: 'flex',
-									flexDirection: 'row',
-									height: 36,
-									alignItems: 'center',
-									flexShrink: 0,
-									borderBottomStyle: 'solid',
-									borderBottomWidth: 1,
-									borderColor: color.border,
-								}}
-							>
-								<Cell width={CITY_W} strong>
-									City
-								</Cell>
-								<For each={MONTHS}>
-									{(month: string) => (
-										<Cell width={CELL_W} right strong>
-											{month.slice(0, 3)}
-										</Cell>
+						<Table>
+							<TableHeader>
+								<TableRow>
+									<TableHead>City</TableHead>
+									<For each={MONTHS}>
+										{(month: string) => (
+											<TableHead alignRight>{month}</TableHead>
+										)}
+									</For>
+								</TableRow>
+							</TableHeader>
+							<TableBody>
+								<For each={CITIES}>
+									{(city: string, row: () => number) => (
+										<TableRow index={row()}>
+											<TableCell>{city}</TableCell>
+											<For each={MONTHS}>
+												{(_: string, col: () => number) => (
+													<TableCell alignRight tabularNums>
+														{String(metric(row(), col()))}
+													</TableCell>
+												)}
+											</For>
+										</TableRow>
 									)}
 								</For>
-							</div>
-							<For each={CITIES}>
-								{(city: string, row: () => number) => (
-									<div
-										style={{
-											display: 'flex',
-											flexDirection: 'row',
-											height: 36,
-											alignItems: 'center',
-											flexShrink: 0,
-										}}
-									>
-										<Cell width={CITY_W} strong>
-											{city}
-										</Cell>
-										<For each={MONTHS}>
-											{(_month: string, col: () => number) => (
-												<Cell width={CELL_W} right tabular>
-													{String(metric(row(), col()))}
-												</Cell>
-											)}
-										</For>
-									</div>
-								)}
-							</For>
-						</div>
+							</TableBody>
+						</Table>
 					</ScrollArea>
 				</div>
 			</DemoCard>

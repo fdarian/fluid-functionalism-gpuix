@@ -63,7 +63,7 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 - **Cause:** the script is `not ported yet` (the component has no way to be driven, below); the size and copy are `port choice` (reason not stated).
 - **Original:** two 256 x 224 lists (`h-56 w-64`) with a scripted fake cursor that slides in, scrolls down and back and leaves, feeding pointer events to the `ScrollArea` (`app/docs/scrollbars/page.tsx:248-262`, `:262-370`). Captions: "The native scrollbar hides until you scroll, so the list looks cut off" and "ScrollArea shows its scrollbar on hover and fades the edges", each with a leading X / check mark (`:347-366`).
-- **Port:** 256 x 168, no cursor script; captions "Plain overflow: nothing says there is more below" and "ScrollArea: scrollbar on hover, faded edges" (`src/demos/scroll-area.tsx:142-165`). The plain panel is `overflowY: "scroll"`, so it shows gpuix's overlay bar, not a hidden macOS one.
+- **Port:** 256 x 168, no cursor script; captions "Plain overflow: nothing says there is more below" and "ScrollArea: scrollbar on hover, faded edges" (`src/demos/scroll-area.tsx:114-137`). The plain panel is `overflowY: "scroll"`, so it shows gpuix's overlay bar, not a hidden macOS one.
 - **Why not in the demo:** `ScrollArea` takes its hover and scroll offset only from real pointer and wheel events: no `ref`, no hover prop, no controlled offset (`src/components/scroll-area.tsx:39-64`). A demo cannot feed it a scripted cursor the way the source dispatches `pointermove` and sets `scrollTop` (`page.tsx:283-309`), and a cursor drawn over the lists with the thumb left unshown would be fake.
 - **Workaround:** none without a component change.
 - **Fidelity:** approximated.
@@ -73,25 +73,16 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 - **Cause:** `port choice` (reason not stated; the viewport is `height: 100%` of the root, `src/components/scroll-area.tsx:234`).
 - **Original:** `className="w-full"`, no height; the strip is as tall as its tiles (80 + 24 padding, `app/docs/scrollbars/page.tsx:380-405`).
-- **Port:** `height={104}` (`src/demos/scroll-area.tsx:171`). Tiles, gap, padding, radius and the faded edges match.
+- **Port:** `height={104}` (`src/demos/scroll-area.tsx:144`). Tiles, gap, padding, radius and the faded edges match.
 - **Workaround:** the caller passes the height.
 - **Fidelity:** exact at that height; an auto-height area is not supported.
 - **Components it hits:** just this one.
-
-## Demo: the both-axis table is hand-built, shorter, and framed
-
-- **Cause:** `port choice` (reason not stated; the port's `Table` can overflow the viewport when its cells carry widths, as the Scrollbars page's "Double overflow" does, `src/pages/scrollbars/demos.tsx:251-301`, so the hand-built rows are not needed).
-- **Original:** the real `Table` / `TableRow index` / `TableCell` inside `ScrollArea orientation="both"`, `h-80 w-full` = 320px tall, no frame, full month names, `text-right tabular-nums` cells (the port has both on the numbers), row hover from the table (`app/docs/scrollbars/page.tsx:422-462`, snippet `:149-180`).
-- **Port:** flex rows of local `Cell`s (36px rows, 104 / 80px columns), 132px tall, inside a bordered 12px-radius frame, month names cut to three letters, no row hover (`src/demos/scroll-area.tsx:99-130`, `:204-264`).
-- **Workaround:** fixed column widths, `flexShrink: 0` rows.
-- **Fidelity:** approximated.
-- **Components it hits:** table (README "Missing features": `display: table`).
 
 ## Demo: variants added, and docs prose dropped
 
 - **Cause:** `port choice` (the extra cards are test fixtures; reason for dropping the prose not stated).
 - **Original:** sections The problem, The scrollbar, The fade, Examples (Horizontal, Double overflow), API reference, with code snippets and a PropsTable; no divider, rounded-clip or nested examples (`app/docs/scrollbars/page.tsx:492-580`).
-- **Port:** the first, horizontal and both-axis cards, plus "Rounded clip" (28px radius, with and without the fade), "Scroll divider" and "Nested scroll areas" (`src/demos/scroll-area.tsx:267-324`). No prose, no snippets, no API table, no `R` shape toggle hint.
+- **Port:** the first, horizontal and both-axis cards, plus "Rounded clip" (28px radius, with and without the fade), "Scroll divider" and "Nested scroll areas" (`src/demos/scroll-area.tsx:214-270`). No prose, no snippets, no API table, no `R` shape toggle hint.
 - **Workaround:** n/a.
 - **Fidelity:** all source variants present (the standalone fade is the last card, 288 x 256 as `w-72 h-64`), except the cursor script (above).
 - **Components it hits:** every demo.
