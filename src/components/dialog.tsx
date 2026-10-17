@@ -1,5 +1,4 @@
 import {
-	createWindowSize,
 	DialogBackdrop,
 	DialogPopup,
 	DialogPortal,
@@ -53,14 +52,8 @@ function isCompact(compact: boolean | undefined) {
 /** Steps above its substrate the panel sits: `DIALOG_OFFSET` in the source. */
 const DIALOG_SURFACE_OFFSET = 4;
 
-/** Space the panel keeps from the window edge: `w-[calc(100%-2rem)]`. */
-const EDGE = 16;
-
 /** The exit tween plus a buffer: `exitFallbackMs(spring.slow)`. */
 const EXIT_FALLBACK_MS = 260;
-
-/** `top-[12dvh]` */
-const TOP_OFFSET = 0.12;
 
 /** Set by `Dialog`'s `scoped` prop: the overlay draws inside the nearest positioned ancestor. */
 const DialogScopedContext = createContext<() => boolean>();
@@ -144,22 +137,19 @@ export function DialogContent(props: {
 	const scoped = useDialogScoped();
 	const popupProps = createDialogPopup(root);
 	const level = useElevatedSurface(DIALOG_SURFACE_OFFSET);
-	const windowSize = createWindowSize();
 	const maxWidth = () =>
 		widths[props.size ?? 'sm'][
 			isCompact(props.compact) ? 'compact' : 'default'
 		];
 	const top = () => (props.position ?? 'center') === 'top';
-	const topOffset = () =>
-		scoped() ? 24 : Math.round(windowSize().height * TOP_OFFSET);
+	const topOffset = () => (scoped() ? 24 : '12vh');
 
 	const layerStyle = () =>
 		({
 			display: 'flex',
+			flexDirection: 'row',
 			alignItems: top() ? 'flex-start' : 'center',
 			justifyContent: 'center',
-			paddingLeft: EDGE,
-			paddingRight: EDGE,
 			paddingTop: top() ? topOffset() : 0,
 			overflow: 'hidden',
 		}) as const;
@@ -189,7 +179,11 @@ export function DialogContent(props: {
 			</DialogBackdrop>
 			<DialogPopup
 				// Positioned so it paints and hit-tests above the absolute backdrop, which would otherwise take a press inside the dialog and close it.
-				style={{ position: 'relative', width: '100%', maxWidth: maxWidth() }}
+				style={{
+					position: 'relative',
+					width: 'calc(100% - 2rem)',
+					maxWidth: maxWidth(),
+				}}
 				testId={props.testId}
 				{...popupProps}
 				ref={(element) => {

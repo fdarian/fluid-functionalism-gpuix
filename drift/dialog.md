@@ -11,21 +11,11 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 
 - **Cause:** `gpuix gap`. [README "Missing features": CSS transforms](../README.md#missing-features).
 - **Original:** the panel springs from `scale: 0.97` on enter and back to it on exit, and `x: -50%` / `y: -50%` centre it (`registry/base/dialog.tsx:286-293`, `:271-273`).
-- **Port:** the panel only fades, on `tween.slow` in and `tween.slowExit` out (`src/components/dialog.tsx:204-210`); the scrim fades on the same pair (`:175-187`). A flex layer centres the panel, not a translation (`:156-165`).
+- **Port:** the panel only fades, on `tween.slow` in and `tween.slowExit` out (`src/components/dialog.tsx:198-204`); the scrim fades on the same pair (`:165-177`). A flex layer centres the panel, not a translation (`:147-155`).
 - **gpuix lacks:** `scale` and `translate` as styles (`~/code/fdarian/gpuix/FORK.md:1194-1205`).
 - **Workaround:** the flex layer and the fade.
 - **Fidelity:** approximated (no scale).
 - **Components it hits:** every popup that scales in.
-
-## `rem` and `dvh` units
-
-- **Cause:** `gpuix gap`.
-- **Original:** `w-[calc(100%-2rem)] max-w-[...]` and `top-[12dvh]` (`registry/base/dialog.tsx:272-273`).
-- **Port:** 16px side padding on the layer (`EDGE`, `src/components/dialog.tsx:57`, `:161-162`) and the window height read through `createWindowSize()` (`:147`, `:153-154`), which follows a resize.
-- **gpuix lacks:** `em`, `rem`, `vw`, `vh`, `vmin` and `vmax` in value strings: the parsers are handed neither the inherited font size nor the window size (`~/code/fdarian/gpuix/FORK.md:1045-1056`).
-- **Workaround:** as above.
-- **Fidelity:** exact while the root font size is 16px.
-- **Components it hits:** any component sized in `rem` or viewport units.
 
 ## Focus lands on the first tab stop one tick after open
 
@@ -47,9 +37,9 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 
 ## Scoped dialog: no portal target, and the top offset is 24px
 
-- **Cause:** `port choice` (the overlay is drawn in place because gpuix's `Dialog` renders no element of its own, `src/components/dialog.tsx:87-92`; the 24px reason is not stated).
+- **Cause:** `port choice` (the overlay is drawn in place because gpuix's `Dialog` renders no element of its own, `src/components/dialog.tsx:80-85`; the 24px reason is not stated).
 - **Original:** `container={element}` portals the overlay and panel into that element, `absolute` instead of `fixed` (`registry/base/dialog.tsx:168-173`, `:213`, `:231`, `:271`). `position="top"` still sits `12dvh` of the viewport down (`:273`).
-- **Port:** `<Dialog scoped>` draws into the nearest `position: relative` ancestor (`src/components/dialog.tsx:243-262`), and `position="top"` sits 24px down when scoped (`:153-154`). The prop is a boolean, not an element.
+- **Port:** `<Dialog scoped>` draws into the nearest `position: relative` ancestor (`src/components/dialog.tsx:236-257`), and `position="top"` sits 24px down when scoped (`:145`, `:153`). The prop is a boolean, not an element.
 - **Workaround:** n/a.
 - **Fidelity:** approximated (same layering; different API and offset).
 - **Components it hits:** just this one.
@@ -58,16 +48,16 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 
 - **Cause:** `not ported yet`.
 - **Original:** `className`, `style`, `ref` and every div attribute pass through, and the docs say `xl` is a canvas for composed layouts: `className="p-0"` plus a fixed height (`registry/base/dialog.tsx:163-166`, `:261-285`, docs `app/docs/dialog/page.tsx:70`). Header, Footer, Title and Description take `className` too (`:325-381`).
-- **Port:** the props are fixed (`size`, `compact`, `showCloseButton`, `position`, `testId`; `src/components/dialog.tsx:132-141`), padding is 24 (`:215`), and Header, Footer, Title and Description take only children (`:266-333`).
+- **Port:** the props are fixed (`size`, `compact`, `showCloseButton`, `position`, `testId`; `src/components/dialog.tsx:125-134`), padding is 24 (`:209`), and Header, Footer, Title and Description take only children (`:260-327`).
 - **Workaround:** none.
 - **Fidelity:** dropped (no zero-padding canvas, so the sidebar block cannot be built).
 - **Components it hits:** just this one.
 
 ## `DialogTrigger` and `DialogClose` take one child only
 
-- **Cause:** `port choice` (the single child becomes the control through gpuix's `asChild`; the children-as-label form has no use there; reason not stated beyond the comment at `src/components/dialog.tsx:118`).
+- **Cause:** `port choice` (the single child becomes the control through gpuix's `asChild`; the children-as-label form has no use there; reason not stated beyond the comment at `src/components/dialog.tsx:111`).
 - **Original:** `render={<Button/>}`, `asChild`, or plain children, plus any button attribute (`registry/base/dialog.tsx:118-160`).
-- **Port:** `props.children` is the control; no `render`, no `asChild`, no other props (`src/components/dialog.tsx:118-126`, `:128-130`).
+- **Port:** `props.children` is the control; no `render`, no `asChild`, no other props (`src/components/dialog.tsx:111-119`, `:121-123`).
 - **Workaround:** n/a.
 - **Fidelity:** dropped (the surface), exact for the single-child case.
 - **Components it hits:** just this one.
@@ -76,7 +66,7 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 
 - **Cause:** `gpuix gap`. [README "Missing features": variable-font axes](../README.md#missing-features).
 - **Original:** `fontWeights.semibold` through `fontVariationSettings` (`registry/base/dialog.tsx:357`).
-- **Port:** `weight.semibold` (`src/components/dialog.tsx:307`).
+- **Port:** `weight.semibold` (`src/components/dialog.tsx:301`).
 - **Fidelity:** approximated.
 
 ## Demo variants
