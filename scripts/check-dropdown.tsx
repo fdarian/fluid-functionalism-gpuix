@@ -261,10 +261,23 @@ k.expect('keys: the same letter again cycles', afterSecond, 'keys-4');
 await k.settle(800);
 await k.press('c h a r t');
 k.expect('keys: a longer query narrows the match', keysFocus(), 'keys-4');
+// Base UI's menu forgets the query after 500 ms, not the 750 of Select. Let the session above lapse, type "chart" again (it lands on Charter), then wait between the two windows: a new letter starts a fresh session (wrapping to Charlie) instead of extending "chart" into a query that matches nothing.
+await k.settle(500);
+tap('c h a r t');
+const typedAt = performance.now();
+await k.settle(600);
+const waited = performance.now() - typedAt;
+tap('c');
+k.check(
+	'keys: the wait sat between the 500 ms and 750 ms windows',
+	waited > 520 && waited < 740,
+	`${Math.round(waited)} ms`,
+);
+k.expect('keys: the query is forgotten after 500 ms', keysFocus(), 'keys-3');
 const pickedText = () =>
 	renderer.getAllText().find((line) => line.startsWith('picked:')) ?? '';
 const changesBefore = Number(pickedText().split('changes: ')[1]);
-await k.press('ArrowUp ArrowUp ArrowUp ArrowUp Enter');
+await k.press('ArrowUp ArrowUp ArrowUp Enter');
 k.expect(
 	'keys: Enter picks the focused row and closes',
 	pickedText(),
