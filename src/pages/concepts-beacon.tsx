@@ -309,13 +309,9 @@ function BodyCell(props: { width?: number; children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				flexGrow: props.width === undefined ? 1 : 0,
-				flexShrink: props.width === undefined ? 1 : 0,
-				flexBasis: props.width === undefined ? 0 : props.width,
-				minWidth: 0,
-				display: 'flex',
-				flexDirection: 'column',
-				justifyContent: 'center',
+				display: 'table-cell',
+				verticalAlign: 'middle',
+				width: props.width,
 				paddingLeft: sizeChoice() === 'compact' ? 10 : 12,
 				paddingRight: sizeChoice() === 'compact' ? 10 : 12,
 				paddingTop: sizeChoice() === 'compact' ? 5 : 8,
