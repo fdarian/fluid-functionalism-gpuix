@@ -236,11 +236,15 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	shot.capture('format-up-opens-last');
 	await shot.press('Enter');
 	shot.expectText('OKLCH', true);
-	await shot.press('ArrowDown h Enter');
+	// A keyboard open lights its row on the next tick, so the keys that follow the open are sent apart from it.
+	await shot.press('ArrowDown');
+	await shot.press('h Enter');
 	shot.expectText('OKLCH', false);
-	await shot.press('ArrowDown ArrowUp Enter');
+	await shot.press('ArrowDown');
+	await shot.press('ArrowUp Enter');
 	shot.expectText('OKLCH', true);
-	await shot.press('ArrowDown End ArrowUp Enter');
+	await shot.press('ArrowDown');
+	await shot.press('End ArrowUp Enter');
 	shot.expectText('OKLCH', false);
 	// A pointer open lights nothing until the pointer moves in.
 	await shot.moveTo(1180, 700);
