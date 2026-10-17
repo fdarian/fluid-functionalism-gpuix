@@ -12,7 +12,7 @@ repeating it. The hero's three buttons are not wired here (their `onClick`s belo
 
 - **Cause:** `not ported yet`.
 - **Original:** `animateLayout` makes every card a framer `layout` node on `spring.moderate`, so crossing 768px or 1280px FLIP-animates each card to its new slot while the preview and footer ride as `layout="position"` (`bento-card.tsx:54-62,96-129`, `bento-grid.tsx:52-71,111`).
-- **Port:** the column count (`createMediaQuery` on the window width, 3 from 1280, 2 from 768, else 1) re-flows the grid at once (`src/home/bento-grid.tsx`). gpuix has `layout` (FLIP), but the test renderer cannot resize its window, so it could not be checked and was left out.
+- **Port:** the columns are `@container` blocks on the grid and its cards (`src/home/bento-grid.tsx`: 3 from 1280px, 2 from 768px, else 1, and `2 / span 2` for `side: "right"` at three) that query `viewport`, a window-wide `inline-size` container `App` wraps the frame in (`src/app.tsx`; gpuix has no media queries). The style flips in the frame that lays the container out, so the cards re-slot at once. gpuix has `layout` (FLIP), but the test renderer cannot resize its window (`scripts/check-home-grid.tsx` mounts one window per width instead), so a flip across a breakpoint could not be checked and was left out.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.

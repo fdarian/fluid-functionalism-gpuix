@@ -1,4 +1,4 @@
-import { buttonProps, useGpuixRequired } from '@gpuix/solid';
+import { buttonProps, type StyleDesc, useGpuixRequired } from '@gpuix/solid';
 import { createContext, type JSX, Show } from 'solid-js';
 import { Badge } from '#/components/badge';
 import {
@@ -52,8 +52,8 @@ export function BentoCard(props: {
 	slug: string;
 	name: string;
 	isNew?: boolean;
-	/** Grid placement; the grid decides it from the size and the column count. */
-	placement: { gridColumn?: string; gridRow?: string };
+	/** Grid placement, as `@container` blocks the grid writes from the size and the column count. */
+	placement: StyleDesc;
 	/** Rows are pinned at 300px, so a tall preview can only be shown more fully by spending less of that on padding. */
 	previewPadding: { x: number; y: number };
 	onOpen: () => void;

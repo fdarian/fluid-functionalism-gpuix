@@ -1,5 +1,4 @@
-import { createMediaQuery } from '@gpuix/solid';
-import { type Accessor, For, type JSX, Show } from 'solid-js';
+import { For, type JSX, Show } from 'solid-js';
 import { usePageNav } from '#/lib/page-nav';
 import { BENTO_ROW, BentoCard, type BentoSize } from './bento-card';
 import { previewMap } from './bento-previews';
@@ -95,42 +94,40 @@ const TILES: readonly Tile[] = [
 const GAP = 12;
 const DEFAULT_PADDING = { x: 24, y: 64 };
 
-/** 3 columns from 1280px, 2 from 768px, else 1, off the window's width. */
-function createGridCols(): Accessor<1 | 2 | 3> {
-	const xl = createMediaQuery('(min-width: 1280px)');
-	const md = createMediaQuery('(min-width: 768px)');
-	return () => (xl() ? 3 : md() ? 2 : 1);
-}
+/** The window-wide container `App` makes (`src/app.tsx`); gpuix has no media queries, so the source's viewport breakpoints query it. */
+const MD = 'viewport (min-width: 768px)';
+const XL = 'viewport (min-width: 1280px)';
 
 /** `sizeClasses` in `bento-card.tsx:10-14`, which only apply from `md`, plus `xl:col-start-2`. */
-function placement(tile: Tile, cols: 1 | 2 | 3) {
-	if (cols === 1) return {};
-	const wide = tile.size !== 'small';
-	const column =
-		cols === 3 && tile.side === 'right'
-			? '2 / span 2'
-			: wide
-				? 'span 2'
-				: undefined;
+function placement(tile: Tile) {
 	return {
-		gridColumn: column,
-		gridRow: tile.size === 'large' ? 'span 2' : undefined,
+		'@container': {
+			[MD]: {
+				...(tile.size === 'small' ? {} : { gridColumn: 'span 2' }),
+				...(tile.size === 'large' ? { gridRow: 'span 2' } : {}),
+			},
+			...(tile.side === 'right' ? { [XL]: { gridColumn: '2 / span 2' } } : {}),
+		},
 	};
 }
 
 export function BentoGrid() {
 	const nav = usePageNav();
-	const cols = createGridCols();
 	return (
 		<div
 			testId="bento-grid"
 			style={{
 				display: 'grid',
-				gridTemplateColumns: cols(),
+				gridTemplateColumns: 1,
 				gap: GAP,
-				...(cols() === 1
-					? {}
-					: { gridAutoFlow: 'row dense', gridAutoRows: BENTO_ROW }),
+				'@container': {
+					[MD]: {
+						gridTemplateColumns: 2,
+						gridAutoFlow: 'row dense',
+						gridAutoRows: BENTO_ROW,
+					},
+					[XL]: { gridTemplateColumns: 3 },
+				},
 			}}
 		>
 			<For each={TILES}>
@@ -139,7 +136,7 @@ export function BentoGrid() {
 						slug={tile.slug}
 						name={tile.name}
 						isNew={tile.isNew}
-						placement={placement(tile, cols())}
+						placement={placement(tile)}
 						previewPadding={tile.padding ?? DEFAULT_PADDING}
 						onOpen={() => nav.navigate(tile.slug)}
 					>
