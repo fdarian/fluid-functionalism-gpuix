@@ -214,32 +214,34 @@ function ValueDisplay(props: {
 		fontVariantNumeric: 'tabular-nums',
 		whiteSpace: 'nowrap' as const,
 	});
-	// The prefix and the value are flex items, and a flex item drops a trailing collapsible space: the no-break space is content, so it stays. One `<text>` is not an option, because the value takes the click and an inline span takes no events.
-	const prefix = () =>
-		props.label === undefined ? '' : `${props.label}:\u00a0`;
-	const widest = () => {
-		const one = `${prefix()}${props.formatValue(props.max)}`;
-		return props.isRange ? `${one} — ${props.formatValue(props.max)}` : one;
-	};
+	const prefix = () => (props.label === undefined ? '' : `${props.label}: `);
+	const dashStyle = { marginLeft: 4, marginRight: 4 };
+
+	const valueSpan = (index: number) => (
+		<span
+			testId={
+				props.testId === undefined
+					? undefined
+					: `${props.testId}-value-${index}`
+			}
+			onClick={() => startEdit(index)}
+			style={{ cursor: 'text' }}
+		>
+			{props.formatValue(props.values[index])}
+		</span>
+	);
 
 	const value = (index: number) => (
 		<Show
 			when={props.editingIndex() === index}
 			fallback={
 				<text
-					testId={
-						props.testId === undefined
-							? undefined
-							: `${props.testId}-value-${index}`
-					}
-					onClick={() => startEdit(index)}
 					style={{
 						...textStyle(props.interacting()),
 						color: color.mutedForeground,
-						cursor: 'text',
 					}}
 				>
-					{props.formatValue(props.values[index])}
+					{valueSpan(index)}
 				</text>
 			}
 		>
@@ -317,7 +319,14 @@ function ValueDisplay(props: {
 	return (
 		<div style={{ position: 'relative', flexShrink: 0 }}>
 			{/* Tabular digits keep the number from changing width, but the weight shift normal -> semibold still does, so this reserves the widest value at semibold. */}
-			<text style={{ ...textStyle(true), opacity: 0 }}>{widest()}</text>
+			<text style={{ ...textStyle(true), opacity: 0 }}>
+				{prefix()}
+				{props.formatValue(props.max)}
+				<Show when={props.isRange}>
+					<span style={dashStyle}>—</span>
+					{props.formatValue(props.max)}
+				</Show>
+			</text>
 			<div
 				style={{
 					position: 'absolute',
@@ -329,29 +338,49 @@ function ValueDisplay(props: {
 					alignItems: 'center',
 				}}
 			>
-				<Show when={props.label !== undefined && props.editingIndex() === null}>
-					<text
-						testId={
-							props.testId === undefined ? undefined : `${props.testId}-label`
-						}
-						style={{ ...textStyle(false), color: color.mutedForeground }}
-					>
-						{prefix()}
-					</text>
-				</Show>
-				{value(0)}
-				<Show when={props.isRange}>
+				<Show
+					when={props.editingIndex() === null}
+					fallback={
+						<>
+							{value(0)}
+							<Show when={props.isRange}>
+								<text
+									style={{
+										...textStyle(false),
+										color: color.mutedForeground,
+										...dashStyle,
+									}}
+								>
+									—
+								</text>
+								{value(1)}
+							</Show>
+						</>
+					}
+				>
 					<text
 						style={{
-							...textStyle(false),
+							...textStyle(props.interacting()),
 							color: color.mutedForeground,
-							marginLeft: 4,
-							marginRight: 4,
 						}}
 					>
-						—
+						<Show when={props.label !== undefined}>
+							<span
+								testId={
+									props.testId === undefined
+										? undefined
+										: `${props.testId}-label`
+								}
+							>
+								{prefix()}
+							</span>
+						</Show>
+						{valueSpan(0)}
+						<Show when={props.isRange}>
+							<span style={dashStyle}>—</span>
+							{valueSpan(1)}
+						</Show>
 					</text>
-					{value(1)}
 				</Show>
 			</div>
 		</div>

@@ -12,7 +12,7 @@ const renderer = kit.renderer;
 showOnly('display');
 await kit.settle(400);
 
-// The label and the value are separate flex items, and the label keeps its trailing space: "Volume: 40", not "Volume:40".
+// The label and the value are spans of one text, and the label keeps its trailing space: "Volume: 40", not "Volume:40".
 const valueId = 'left-value-0';
 const labelBox = kit.bounds('left-label');
 const valueBox = kit.bounds(valueId);
@@ -22,11 +22,20 @@ kit.check(
 	`label ${labelBox.x}+${labelBox.width}, value ${valueBox.x}`,
 );
 
+// Only the value span starts editing: a click on the label span, in the same text, does not.
+const labelPoint = kit.center('left-label');
+renderer.nativeSimulateClick(labelPoint.x, labelPoint.y);
+await kit.settle(300);
+kit.check(
+	'clicking the label does not open the field',
+	!kit.exists('left-edit-0'),
+);
+
 // Click-to-edit selects the number, so typing replaces it.
 const point = kit.center(valueId);
 renderer.nativeSimulateClick(point.x, point.y);
 await kit.settle(600);
-kit.check('clicking the value opens the field', kit.exists('left-edit-0'));
+kit.check('clicking the value span opens the field', kit.exists('left-edit-0'));
 kit.check(
 	'the label is wider than its colon alone by a space',
 	labelBox.width - kit.bounds('left-edit-label').width > 2,
