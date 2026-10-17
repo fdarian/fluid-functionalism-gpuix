@@ -21,14 +21,14 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 - **Cause:** `gpuix gap`.
 - **Original:** header rows set `fontVariationSettings` to `fontWeights.semibold` (`wght 550, opsz 18`) and body rows to `fontWeights.normal` (`wght 400, opsz 14`) on the `<tr>` (`table.tsx:158-165`).
 - **Port:** `fontWeight: weight.semibold` (600) for header cells, 400 for body, on the cell `<text>` (`table.tsx:202`, `src/lib/theme.ts:375`).
-- **gpuix lacks:** variable-font axes (`StyleDesc` has `fontWeight` and `fontFeatureSettings`, no `fontVariationSettings`); `README.md:252`, `:329`.
+- **gpuix lacks:** variable-font axes (`StyleDesc` has `fontWeight` and `fontFeatureSettings`, no `fontVariationSettings`); `README.md:254`, `:329`.
 - **Workaround:** Inter's static cuts only; no `opsz`.
 - **Fidelity:** approximated (600 for 550, no optical size).
 - **Components it hits:** every component using `font-variation-settings`.
 
 ## Highlight travel runs on `top` / `left`
 
-- **Cause:** `gpuix gap` (no transforms; `README.md:236`).
+- **Cause:** `gpuix gap` (no transforms; `README.md:239`).
 - **Original:** the highlight is pinned to the corner and moved with `x` / `y` transforms on `spring.fast`, width and height as layout (`registry/default/fluid-hover-highlight.tsx:74-77`, `:130-133`).
 - **Port:** `top` / `left` / `width` / `height` on the same spring (`src/lib/fluid-highlight.tsx:6-13`, `:81-88`).
 - **gpuix lacks:** CSS transforms.
