@@ -16,7 +16,7 @@ Same in both (checked against the code): row height, gap and padding per size (3
 
 ## Label weight (variable fonts)
 
-- **Cause:** `gpuix gap`. See the README "Missing features" row for variable-font axes (`README.md:253`).
+- **Cause:** `gpuix gap`. See the README "Missing features" row for variable-font axes (`README.md:254`).
 - **Original:** `'wght' 400` to `'wght' 550` with `opsz` compensation, eased over 80 ms (`checkbox-group.tsx:407-411`).
 - **Port:** static Inter, SemiBold 600 for 550, switches at once (`theme.ts` `weight`); the hidden semibold copy still reserves the width (`stable-label.tsx:41`).
 - **Gpuix lacks:** `fontVariationSettings`.
@@ -26,7 +26,7 @@ Same in both (checked against the code): row height, gap and padding per size (3
 
 ## Label vertical centring (`text-box-trim`)
 
-- **Cause:** `gpuix gap`. README "Missing features" row for `text-box-trim` (`README.md:252`, filed under badge).
+- **Cause:** `gpuix gap`. README "Missing features" row for `text-box-trim` (`README.md:253`, filed under badge).
 - **Original:** both label spans carry `[text-box:trim-both_cap_alphabetic]`, so the cap height is centred in the 36 px row (`checkbox-group.tsx:391,402`).
 - **Port:** the label is centred by its full 20 px line box (`stable-label.tsx:41-57`), about a pixel off (the README's figure for badge; not measured here).
 - **Gpuix lacks:** `text-box-trim` / `text-box-edge`.
@@ -36,7 +36,7 @@ Same in both (checked against the code): row height, gap and padding per size (3
 
 ## Hover highlight travels on `left` / `top`
 
-- **Cause:** `gpuix gap`. CSS transforms are missing (README "Missing features" row for transforms, `README.md:237`; `FORK.md:1198-1209`).
+- **Cause:** `gpuix gap`. CSS transforms are missing (README "Missing features" row for transforms, `README.md:238`; `FORK.md:1198-1209`).
 - **Original:** the highlight is pinned at 0,0 and moved with an `x` / `y` transform (`registry/default/fluid-hover-highlight.tsx:74-76,126-131`).
 - **Port:** `FluidHighlight` animates `top` / `left` / `width` / `height` (`fluid-highlight.tsx:92-99`), re-laid out per frame. The look is the same.
 - **Workaround:** layout properties.

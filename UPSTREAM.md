@@ -130,19 +130,19 @@ they need list navigation, presence or pointer capture they import it from `base
 
 Each file in [`drift/`](drift) lists every place the port looks or behaves differently from upstream, with the
 source and port `file:line` and a **Cause**. The per-file counts are the table in the README's
-[Drift from the source](README.md#drift-from-the-source) (as of its last recount: 607 entries, 63 of them naming two
-causes).
+[Drift from the source](README.md#drift-from-the-source) (as of its last recount: 589 entries, 62 of them naming two
+causes; `bun scripts/drift-counts.ts` prints them).
 
-- **`gpuix gap`** (144 entries): gpuix lacks the capability or gets it wrong, so the port approximates or drops
+- **`gpuix gap`** (128 entries): gpuix lacks the capability or gets it wrong, so the port approximates or drops
   it. The recurring ones (CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, table and `inline-*` layout) are collected in
   README's [gpuix gaps across components](README.md#gpuix-gaps-across-components); the per-file entry is one line
-  linking there. Most in [combobox](drift/combobox.md), [command-menu](drift/command-menu.md),
-  [dropdown](drift/dropdown.md), [select](drift/select.md) and [site](drift/site.md).
-- **`port choice`** (202): the port differs on purpose, for a desktop window or a simpler shape. The window frame,
+  linking there. Most in [typography](drift/typography.md), [select](drift/select.md), [command-menu](drift/command-menu.md),
+  [slider](drift/slider.md), [site](drift/site.md), [combobox](drift/combobox.md) and [card](drift/card.md).
+- **`port choice`** (199): the port differs on purpose, for a desktop window or a simpler shape. The window frame,
   the single fixed layout and the Base-UI-only install live in [site](drift/site.md); the largest block is the
   Concepts screens, [concepts](drift/concepts.md).
-- **`not ported yet`** (198): nothing stops the port doing it and nobody has. The backlog: [site](drift/site.md)
+- **`not ported yet`** (200): nothing stops the port doing it and nobody has. The backlog: [site](drift/site.md)
   (responsive layout, settings persistence, the API Reference tables), [sidebar](drift/sidebar.md) (collapse, mobile
   sheet, blocks), [color-picker](drift/color-picker.md) and [input-message](drift/input-message.md).
-- **Mixed** (63): an entry that names two causes, counted separately; the cause line says which part is which.
+- **Mixed** (62): an entry that names two causes, counted separately; the cause line says which part is which.
   Entries with no cause (exact or additive notes) are not counted.

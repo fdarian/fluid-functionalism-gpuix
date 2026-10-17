@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 600 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 589 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -149,8 +149,9 @@ Presence, list navigation (`moveIndex`, `revealRow`), typeahead, pointer capture
 The source is fluidfunctionalism.com at commit `0a0377e` (mickadesign/fluidfunctionalism, "Merge pull request #69");
 a copy is kept at `~/.claude/notes/ff-source/`. Each file in [`drift/`](drift) lists every place the port looks or
 behaves differently from it, whatever the cause. A cause is one of: **gpuix gap**, gpuix lacks it or gets it wrong;
-**port choice**, the port differs on purpose; **not ported yet**, nothing stops the port doing it. An entry that
-names two causes counts as mixed; an entry with no cause (an exact or additive note) is not counted. Base UI
+**port choice**, the port differs on purpose; **not ported yet**, nothing stops the port doing it. An entry is a `## `
+section with a Cause line, counted once; one that names two causes counts as mixed; one with no cause tag (an exact
+or additive note) is not counted. `bun scripts/drift-counts.ts` prints the table below from the drift files. Base UI
 behaviour, row by row, is in [`BASE-UI-AUDIT.md`](../base-ui-solid-gpuix/BASE-UI-AUDIT.md) in the sibling repository. Files named after a component are that
 component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `concepts`, `audio-mixer`,
 `nav-menu`, `fluid-hover`, `motion-page`, `scrollbars-page`, `sizes-page`, `skill-page`, `surfaces` and
@@ -163,48 +164,48 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [audio-mixer](drift/audio-mixer.md) | 0 | 2 | 0 | 1 | 3 |
 | [badge](drift/badge.md) | 1 | 3 | 0 | 0 | 4 |
 | [banner](drift/banner.md) | 3 | 4 | 7 | 0 | 14 |
-| [button](drift/button.md) | 4 | 4 | 2 | 1 | 11 |
+| [button](drift/button.md) | 3 | 4 | 2 | 1 | 10 |
 | [card](drift/card.md) | 5 | 7 | 7 | 0 | 19 |
 | [carousel-dots](drift/carousel-dots.md) | 2 | 3 | 2 | 1 | 8 |
 | [chat-message](drift/chat-message.md) | 3 | 4 | 2 | 1 | 10 |
 | [checkbox-group](drift/checkbox-group.md) | 3 | 0 | 4 | 1 | 8 |
-| [color-picker](drift/color-picker.md) | 3 | 6 | 15 | 1 | 25 |
-| [combobox](drift/combobox.md) | 7 | 13 | 5 | 1 | 26 |
-| [command-menu](drift/command-menu.md) | 7 | 2 | 12 | 1 | 22 |
-| [compare](drift/compare.md) | 3 | 9 | 0 | 2 | 14 |
-| [concepts](drift/concepts.md) | 4 | 27 | 1 | 1 | 33 |
-| [dialog](drift/dialog.md) | 6 | 2 | 2 | 1 | 11 |
-| [dropdown](drift/dropdown.md) | 7 | 4 | 10 | 2 | 23 |
+| [color-picker](drift/color-picker.md) | 3 | 5 | 15 | 1 | 24 |
+| [combobox](drift/combobox.md) | 5 | 13 | 5 | 2 | 25 |
+| [command-menu](drift/command-menu.md) | 6 | 2 | 12 | 2 | 22 |
+| [compare](drift/compare.md) | 3 | 8 | 1 | 2 | 14 |
+| [concepts](drift/concepts.md) | 3 | 26 | 2 | 1 | 32 |
+| [dialog](drift/dialog.md) | 4 | 2 | 2 | 1 | 9 |
+| [dropdown](drift/dropdown.md) | 4 | 5 | 11 | 1 | 21 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
 | [fluid-hover](drift/fluid-hover.md) | 3 | 5 | 2 | 2 | 12 |
 | [home](drift/home.md) | 0 | 1 | 1 | 2 | 4 |
 | [input-copy](drift/input-copy.md) | 2 | 3 | 6 | 0 | 11 |
 | [input-group](drift/input-group.md) | 1 | 1 | 3 | 1 | 6 |
-| [input-message](drift/input-message.md) | 4 | 0 | 14 | 3 | 21 |
+| [input-message](drift/input-message.md) | 4 | 0 | 14 | 4 | 22 |
 | [introduction](drift/introduction.md) | 1 | 4 | 2 | 1 | 8 |
 | [mobile-drawer](drift/mobile-drawer.md) | 3 | 2 | 1 | 0 | 6 |
 | [motion-page](drift/motion-page.md) | 3 | 3 | 1 | 3 | 10 |
 | [nav-menu](drift/nav-menu.md) | 1 | 5 | 1 | 0 | 7 |
 | [queued-stack](drift/queued-stack.md) | 4 | 2 | 3 | 1 | 10 |
 | [radio-group](drift/radio-group.md) | 4 | 2 | 3 | 0 | 9 |
-| [scroll-area](drift/scroll-area.md) | 3 | 6 | 1 | 1 | 11 |
+| [scroll-area](drift/scroll-area.md) | 2 | 6 | 1 | 1 | 10 |
 | [scrollbars-page](drift/scrollbars-page.md) | 1 | 4 | 2 | 1 | 8 |
-| [select](drift/select.md) | 7 | 3 | 5 | 2 | 17 |
+| [select](drift/select.md) | 6 | 3 | 5 | 2 | 16 |
 | [sidebar](drift/sidebar.md) | 1 | 8 | 19 | 1 | 29 |
-| [site](drift/site.md) | 6 | 11 | 21 | 6 | 44 |
+| [site](drift/site.md) | 5 | 11 | 21 | 7 | 44 |
 | [sizes-page](drift/sizes-page.md) | 0 | 5 | 2 | 4 | 11 |
 | [skill-page](drift/skill-page.md) | 3 | 5 | 0 | 1 | 9 |
 | [slider](drift/slider.md) | 5 | 3 | 2 | 1 | 11 |
 | [surfaces](drift/surfaces.md) | 1 | 4 | 4 | 3 | 12 |
 | [switch](drift/switch.md) | 2 | 1 | 2 | 1 | 6 |
 | [table](drift/table.md) | 3 | 1 | 3 | 0 | 7 |
-| [tabs-subtle](drift/tabs-subtle.md) | 2 | 4 | 2 | 0 | 8 |
+| [tabs-subtle](drift/tabs-subtle.md) | 2 | 3 | 2 | 0 | 7 |
 | [tabs](drift/tabs.md) | 2 | 2 | 2 | 0 | 6 |
 | [thinking-indicator](drift/thinking-indicator.md) | 1 | 2 | 3 | 0 | 6 |
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
-| [tooltip](drift/tooltip.md) | 4 | 5 | 1 | 1 | 11 |
+| [tooltip](drift/tooltip.md) | 3 | 5 | 1 | 1 | 10 |
 | [typography](drift/typography.md) | 6 | 0 | 1 | 5 | 12 |
-| **Total** | **142** | **202** | **197** | **59** | **600** |
+| **Total** | **128** | **199** | **200** | **62** | **589** |
 
 ### gpuix gaps across components
 
