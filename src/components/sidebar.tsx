@@ -617,6 +617,8 @@ export function SidebarContent(props: { children: JSX.Element }) {
 			}}
 			divider={{ start: false }}
 			style={{ flexGrow: 1, minHeight: 0, width: '100%' }}
+			// The source's `[&>div]:!block [&>div]:!min-w-0`: without it the content grows to the longest label and rows stop truncating.
+			contentStyle={{ display: 'block', minWidth: 0 }}
 		>
 			<div
 				style={{

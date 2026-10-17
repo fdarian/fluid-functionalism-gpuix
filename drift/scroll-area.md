@@ -8,26 +8,17 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 - **Cause:** `gpuix gap` (README "Missing features": effect groups off macOS).
 - **Original:** `.scroll-fade` / `.scroll-fade-x` are a CSS `mask-image` on the viewport whose end alphas follow a scroll timeline; browsers without scroll timelines (Firefox) get no fade (`app/globals.css:1087-1093`, `:1198-1235`).
-- **Port:** `maskImage` on the viewport, a linear gradient rebuilt from the `onScroll` offset with the same ramps (alpha 1 at the true start / end, 0 once 48px lie past the edge, `src/components/scroll-area.tsx:81-111`, `:230`). The earlier overlay gradient in the surface colour is gone, so the content itself dissolves, as on the web.
+- **Port:** `maskImage` on the viewport, a linear gradient rebuilt from the `onScroll` offset with the same ramps (alpha 1 at the true start / end, 0 once 48px lie past the edge, `src/components/scroll-area.tsx:83-113`, `:230`). The earlier overlay gradient in the surface colour is gone, so the content itself dissolves, as on the web.
 - **gpuix lacks:** a mask on Windows and Linux. `maskImage` is an effect group (`FORK.md` area D), built on macOS in zed's `gpui_apple`; the WGSL and HLSL paths are unproven. There a masked viewport paints without the fade.
 - **Workaround:** none needed on macOS.
 - **Fidelity:** exact on macOS (apart from `Math.min(fadeSize, length / 2)` at `:104`, which the CSS does not do for a viewport under 96px); no fade elsewhere. A new gradient string is built on every scroll event. A `both` area fades vertically only, as the single class does on the web.
 - **Components it hits:** any `ScrollArea` with `fade`.
 
-## A vertical area's content box is `width: 100%`, not `min-width: fit-content`
-
-- **Cause:** `port choice` (the source's sidebar override applied to every vertical area; the web and gpuix agree on `fit-content`, so it is not a gpuix gap).
-- **Original:** `Content` keeps Base UI's inline `min-width: fit-content`, which grows to a truncating label's full text width (CSS gives its `max-content`, since an `overflow: hidden` flex item still contributes its text to `min-content`); the source's `SidebarContent` forces `[&>div]:!block [&>div]:!min-w-0` on the viewport's child so rows truncate (`registry/base/sidebar.tsx:293-297`). Other vertical areas keep `fit-content`.
-- **Port:** vertical-only areas get `width: "100%"` and the horizontal and both-axis ones keep `minWidth: "fit-content"` (`src/components/scroll-area.tsx:244-246`). gpuix resolves `fit-content` as the web does (measured: a column holding a row with a truncating label came out 393px in a 200px viewport, Chrome 374px; `width: "100%"` gives 200px in both).
-- **Workaround:** n/a.
-- **Fidelity:** approximated (a vertical area whose content has an unbreakable child wider than the viewport grows on the web and is clamped here; the overflow is clipped by the viewport either way, since a vertical area draws no horizontal thumb).
-- **Components it hits:** every vertical `ScrollArea`; only the sidebar content differs visibly (truncation).
-
 ## The thumb's 2px nudge is a `left` / `top`, not a translate
 
 - **Cause:** `gpuix gap` (no transforms: [README "Missing features", first row](../README.md#missing-features)).
 - **Original:** `-translate-x-0.5` / `-translate-y-0.5` on the thumb (`registry/base/scroll-area.tsx:152-155`).
-- **Port:** `left` / `top` animates 1 to 0 with the width / height (`src/components/scroll-area.tsx:181-208`), inside a `<MotionConfig reducedMotion="never">`: the source widens the thumb with a CSS `transition-[background-color,width,height]` (`registry/base/scroll-area.tsx:147`), which reduced motion does not touch, so it keeps easing there and here.
+- **Port:** `left` / `top` animates 1 to 0 with the width / height (`src/components/scroll-area.tsx:183-210`), inside a `<MotionConfig reducedMotion="never">`: the source widens the thumb with a CSS `transition-[background-color,width,height]` (`registry/base/scroll-area.tsx:147`), which reduced motion does not touch, so it keeps easing there and here.
 - **Workaround:** the same offset on a layout prop.
 - **Fidelity:** exact (end states and timing match).
 - **Components it hits:** just this one.
@@ -36,7 +27,7 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 - **Cause:** `port choice` (desktop only: the audit notes gpuix has no touch input; `useTouchPrimary` is not ported).
 - **Original:** on touch-primary devices the Base UI tree is replaced by a native-overflow `div` (`role="group"`, `aria-roledescription="scroll area"`, `tabIndex=0`) and `ScrollBar` renders nothing (`registry/base/scroll-area.tsx:49-75`, `:109-112`; `registry/default/hooks/use-touch-primary.tsx`).
-- **Port:** one path, the drawn scrollbar (`src/components/scroll-area.tsx:138-260`).
+- **Port:** one path, the drawn scrollbar (`src/components/scroll-area.tsx:140-262`).
 - **Workaround:** n/a.
 - **Fidelity:** dropped (no touch path).
 - **Components it hits:** just this one.
@@ -54,33 +45,33 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 - **Cause:** `port choice` (no CSS classes in gpuix; `fade` and `divider` stand in for `scroll-fade` / `scroll-divider`).
 - **Original:** `className`, `viewportClassName`, `ref`, any `<div>` prop, and a separately exported `ScrollBar` (`registry/base/scroll-area.tsx:29-33`, `:164`).
-- **Port:** `width`, `height`, `style` (border and radius), `testId`, `fade`, `fadeSize`, `divider`; no `ref`, `aria-*` or `ScrollBar` export (`src/components/scroll-area.tsx:39-62`).
+- **Port:** `width`, `height`, `style` (border and radius), `testId`, `fade`, `fadeSize`, `divider`; no `ref`, `aria-*` or `ScrollBar` export (`src/components/scroll-area.tsx:39-64`).
 - **Workaround:** n/a.
 - **Fidelity:** approximated (the fade is on only for the vertical axis, or the horizontal one of a horizontal area; the web picks per class).
 - **Components it hits:** just this one.
 
-## The sidebar and the command menu do not use it
+## The command menu does not use it
 
 - **Cause:** `not ported yet`.
-- **Original:** the sidebar content and the command-menu list are a `ScrollArea` with `scroll-divider` and `scroll-fade` (`registry/base/sidebar.tsx:297-301`, `registry/default/command-menu.tsx:1069-1138`).
-- **Port:** both use a bare `overflowY: "scroll"` scroller (`src/components/sidebar.tsx:608-632`, `src/components/command-menu.tsx:958`); the `divider` prop has no consumer.
-- **Workaround:** gpuix's own overlay bar; the sidebar draws fixed hairlines.
-- **Fidelity:** dropped for those two components.
-- **Components it hits:** sidebar, command-menu (see their drift files).
+- **Original:** the command-menu list is a `ScrollArea` with `scroll-divider` and `scroll-fade`, its content forced back to a shrinkable block with `[&>div[style]]:!block [&>div[style]]:!min-w-0` (`registry/default/command-menu.tsx:1069-1138`).
+- **Port:** a bare `overflowY: "scroll"` scroller (`src/components/command-menu.tsx:958`), which has no sizing wrapper to override; the `divider` prop has no consumer there. The sidebar content does use `ScrollArea`, with `contentStyle` standing in for the source's `[&>div]:!block [&>div]:!min-w-0` (`src/components/sidebar.tsx:613-620`).
+- **Workaround:** gpuix's own overlay bar.
+- **Fidelity:** dropped for the command menu.
+- **Components it hits:** command-menu (see its drift file).
 
 ## Demo: "The problem" is static and smaller
 
 - **Cause:** the script is `not ported yet` (the component has no way to be driven, below); the size and copy are `port choice` (reason not stated).
 - **Original:** two 256 x 224 lists (`h-56 w-64`) with a scripted fake cursor that slides in, scrolls down and back and leaves, feeding pointer events to the `ScrollArea` (`app/docs/scrollbars/page.tsx:248-262`, `:262-370`). Captions: "The native scrollbar hides until you scroll, so the list looks cut off" and "ScrollArea shows its scrollbar on hover and fades the edges", each with a leading X / check mark (`:347-366`).
 - **Port:** 256 x 168, no cursor script; captions "Plain overflow: nothing says there is more below" and "ScrollArea: scrollbar on hover, faded edges" (`src/demos/scroll-area.tsx:142-165`). The plain panel is `overflowY: "scroll"`, so it shows gpuix's overlay bar, not a hidden macOS one.
-- **Why not in the demo:** `ScrollArea` takes its hover and scroll offset only from real pointer and wheel events: no `ref`, no hover prop, no controlled offset (`src/components/scroll-area.tsx:39-62`). A demo cannot feed it a scripted cursor the way the source dispatches `pointermove` and sets `scrollTop` (`page.tsx:283-309`), and a cursor drawn over the lists with the thumb left unshown would be fake.
+- **Why not in the demo:** `ScrollArea` takes its hover and scroll offset only from real pointer and wheel events: no `ref`, no hover prop, no controlled offset (`src/components/scroll-area.tsx:39-64`). A demo cannot feed it a scripted cursor the way the source dispatches `pointermove` and sets `scrollTop` (`page.tsx:283-309`), and a cursor drawn over the lists with the thumb left unshown would be fake.
 - **Workaround:** none without a component change.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
 ## Demo: the horizontal strip needs an explicit height
 
-- **Cause:** `port choice` (reason not stated; the viewport is `height: 100%` of the root, `src/components/scroll-area.tsx:232`).
+- **Cause:** `port choice` (reason not stated; the viewport is `height: 100%` of the root, `src/components/scroll-area.tsx:234`).
 - **Original:** `className="w-full"`, no height; the strip is as tall as its tiles (80 + 24 padding, `app/docs/scrollbars/page.tsx:380-405`).
 - **Port:** `height={104}` (`src/demos/scroll-area.tsx:171`). Tiles, gap, padding, radius and the faded edges match.
 - **Workaround:** the caller passes the height.
