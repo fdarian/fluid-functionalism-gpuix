@@ -42,14 +42,6 @@ repeating it.
 - **Port:** a 2px outline at a 2px offset (`scRing`, `src/pages/compare/shadcn/theme.ts:73-74`); the gap shows what is behind, the page, where the source paints `--background`. The slider thumb's `ring-1` is a 1px outline at offset 0. The input shows it while it has focus.
 - **Fidelity:** approximated.
 
-## The table's columns are sized from estimated text widths
-
-- **Cause:** `gpuix gap`: no table layout (README "Missing features", the table row: columns cannot size to their widest cell).
-- **Original:** `<table class="w-full">` with auto layout: the row's width is shared in proportion to each column's longest cell.
-- **Port:** a flex row per table row whose cells `flex-grow` by (longest text length x 7.4 + 24) for the column, an estimate of Inter at 14px with the `px-3` padding (`src/pages/compare/shadcn/table.tsx:5-30`). The split is within a few pixels of the browser's for this data and would drift for other content.
-- **Workaround:** the estimate.
-- **Fidelity:** approximated.
-
 ## The inputs are gpuix `<input>`s with the field drawn around them
 
 - **Cause:** `port choice`.
