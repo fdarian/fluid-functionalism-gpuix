@@ -1,5 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import changelogFiles from 'virtual:changelog';
 import {
 	type ChangeKind,
 	ChangelogFormatError,
@@ -8,23 +7,24 @@ import {
 	releaseEntries,
 } from './parse';
 
-export const CHANGELOG_DIR = new URL(
-	'../../../content/changelog/',
-	import.meta.url,
-).pathname;
+export interface ChangelogFile {
+	/** `YYYY-MM.md` */
+	name: string;
+	text: string;
+}
+
 const FILE = /^(\d{4}-\d{2})\.md$/;
 
 /** Every release, newest month first. Throws on a malformed file. */
-export function loadReleases(dir = CHANGELOG_DIR): Release[] {
-	return readdirSync(dir)
-		.filter((name) => FILE.test(name))
-		.sort()
-		.reverse()
-		.map((name) => {
-			const release = parseRelease(
-				readFileSync(join(dir, name), 'utf8'),
-				`content/changelog/${name}`,
-			);
+export function loadReleases(
+	files: readonly ChangelogFile[] = changelogFiles,
+): Release[] {
+	return [...files]
+		.filter((file) => FILE.test(file.name))
+		.sort((a, b) => b.name.localeCompare(a.name))
+		.map((file) => {
+			const name = file.name;
+			const release = parseRelease(file.text, `content/changelog/${name}`);
 			if (release.month !== FILE.exec(name)?.[1]) {
 				throw new ChangelogFormatError(
 					`content/changelog/${name}`,

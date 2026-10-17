@@ -70,8 +70,6 @@ export interface Demo extends DemoModule {
 	slug: string;
 }
 
-const demosDir = new URL('../demos/', import.meta.url).pathname;
-
 function assertDemoModule(
 	slug: string,
 	module: unknown,
@@ -99,15 +97,14 @@ function assertDemoModule(
 	}
 }
 
-/** Imports every `src/demos/*.tsx`, sorted by title. A demo that does not match the contract throws. */
+/** Reads every `src/demos/*.tsx` through `virtual:demos`, sorted by title. A demo that does not match the contract throws. */
 export async function loadDemos(): Promise<Demo[]> {
 	const demos: Demo[] = [];
-	for await (const file of new Bun.Glob('*.tsx').scan({
-		cwd: demosDir,
-		absolute: true,
-	})) {
-		const slug = file.slice(file.lastIndexOf('/') + 1, -'.tsx'.length);
-		const module: unknown = await import(file);
+	// Imported here, not at the top: the pages import `App`, which imports this file, so a static import would run them before `SHOWCASE_SLUG` exists.
+	const demoEntries = (await import('virtual:demos')).default;
+	for (const entry of demoEntries) {
+		const slug = entry.file.slice(0, -'.tsx'.length);
+		const module = entry.module;
 		assertDemoModule(slug, module);
 		demos.push({
 			slug,
@@ -158,8 +155,6 @@ export interface Page extends PageModule {
 	/** The file name without `.tsx`. Shares one namespace with demo slugs. */
 	slug: string;
 }
-
-const pagesDir = new URL('../pages/', import.meta.url).pathname;
 
 function assertPageModule(
 	slug: string,
@@ -224,24 +219,22 @@ function assertPageModule(
 }
 
 /**
- * Imports every `src/pages/*.tsx`, sorted by `order` then title. Demos and
+ * Reads every `src/pages/*.tsx` through `virtual:pages`, sorted by `order` then title. Demos and
  * pages are routed by slug alone, so a page that shares a slug with a demo
  * (or with the showcase) throws.
  */
 export async function loadPages(demos: readonly Demo[]): Promise<Page[]> {
 	const taken = new Set([SHOWCASE_SLUG, ...demos.map((demo) => demo.slug)]);
 	const pages: Page[] = [];
-	for await (const file of new Bun.Glob('*.tsx').scan({
-		cwd: pagesDir,
-		absolute: true,
-	})) {
-		const slug = file.slice(file.lastIndexOf('/') + 1, -'.tsx'.length);
+	const pageEntries = (await import('virtual:pages')).default;
+	for (const entry of pageEntries) {
+		const slug = entry.file.slice(0, -'.tsx'.length);
 		if (taken.has(slug)) {
 			throw new Error(
 				`src/pages/${slug}.tsx has the slug "${slug}", which a demo or the showcase already uses`,
 			);
 		}
-		const module: unknown = await import(file);
+		const module = entry.module;
 		assertPageModule(slug, module);
 		pages.push({
 			slug,

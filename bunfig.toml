@@ -1,4 +1,4 @@
-preload = ["@gpuix/solid/preload"]
+preload = ["@gpuix/solid/preload", "./scripts/registry-preload.ts"]
 
 [test]
-preload = ["@gpuix/solid/preload"]
+preload = ["@gpuix/solid/preload", "./scripts/registry-preload.ts"]
