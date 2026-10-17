@@ -10,7 +10,7 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 
 - **Cause:** `gpuix gap` (`requestAnimationFrame` itself); driving the fill natively instead is `not ported yet`.
 - **Original:** a `requestAnimationFrame` loop advances a `MotionValue` that drives the fill's `transform`, with no re-render (`carousel-dots.tsx:134-159`, `:161-162`).
-- **Port:** one shared 16 ms `setInterval` (`src/lib/clock.ts:27`, `onFrame`) advances a signal (`carousel-dots.tsx:81-100`); stalled frames over 100 ms are dropped, like the original's stall guard (`clock.ts:15`, source `:82`). The fill's `width` is rewritten every frame (`carousel-dots.tsx:200-202`), one style mutation per frame per playing carousel.
+- **Port:** one shared 16 ms `setInterval` (`src/lib/clock.ts:58`, `onFrame`) advances a signal (`carousel-dots.tsx:81-100`); stalled frames over 100 ms are dropped, like the original's stall guard (`clock.ts:22`, source `:82`). The fill's `width` is rewritten every frame (`carousel-dots.tsx:200-202`), one style mutation per frame per playing carousel.
 - **gpuix lacks:** `requestAnimationFrame`: no display-synced JS frame callback, only `setTimeout` / `setInterval` (`~/code/fdarian/gpuix/FORK.md:209-212`; README "Missing features" row "`requestAnimationFrame` itself"). gpuix does have native, JS-free motion values (`createMotionValue`, `packages/solid/src/index.ts:42`; `FORK.md:1146-1148`), so the timer is not the only route; the port has not tried driving the fill natively.
 - **Workaround:** the shared frame clock.
 - **Fidelity:** approximated (timer jitter instead of frame-locked updates).

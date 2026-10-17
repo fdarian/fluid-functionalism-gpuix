@@ -133,12 +133,12 @@ column's card in place of "Make them yours"), `scenarios`, `menuIcon` and `menuK
 | `measured-height.ts` | A box whose height springs to its content's measured pixel height, as the source's do: the content box reports its size through `onLayout`, used by every collapse. gpuix animates `height: "auto"` itself; the port keeps the source's number. |
 | `popup.tsx`, `popup-timing.ts` | Popup chrome on `<anchored fit="flip">` (`PopupSurface`, which takes a `createPresence` from base-ui and keeps its reported side and available height in `createPlacementState`), and the exit durations passed to the primitives. |
 | `stable-label.tsx` | A label that gains weight without moving its neighbours: an `inline-grid` holds a hidden semibold copy and the visible one in one cell, so the label is as wide as the semibold copy and wraps like the source's; `nowrap` and `truncate` are opt-in. |
-| `clock.ts` | One shared, ref-counted frame clock for every JS-driven loop. |
+| `clock.ts` | One shared, ref-counted frame clock for every JS-driven loop; a subscriber inside a far culled region is skipped, and the timer stops when none is shown. |
 | `fonts.ts`, `app-frame.tsx` | The static Inter files passed to `render()` and the test renderer; the window frame (chrome-coloured bar, rounded page panel). |
 | `press.tsx`, `icons.ts`, `icon.tsx` | The press-shrink fill layer; lucide glyphs as SVG strings (`defineIcon` for a component's own). |
 | `site-command-menu.tsx`, `install-url.ts`, `platform.ts` | The site menu (a `CommandMenuDialog` of pages, theme, Recent and actions) and the window-wide Mod+K that toggles it, through gpuix's `window` event target; the registry URL the copy action writes; `IS_MAC` and `openUrl`. |
 | `demo.ts`, `demo-kit.tsx`, `page-nav.ts` | The demo and page contracts, the card every demo page is made of, and `navigate` / `current` for pages. |
-| `cull.ts` | The page scroller's contexts and `createCulling`, which hides a region's content while it is far from the scroller (`DemoCard`, `ComponentPreview`, home tiles). |
+| `cull.ts` | The page scroller's contexts and `createCulling`, which hides a region's content while it is far from the scroller (`DemoCard`, `ComponentPreview`, home tiles), and `OnScreenContext`, which loops read to hold still while hidden. |
 | `doc-page.tsx`, `playground.tsx` | The docs chrome (`DocPage`, `DocSection`, `ComponentPreview`, `Code`) and the playground scaffolding (`PlaygroundLayout`, `PlaygroundPanel`, the control rows, the right-rail slot). |
 | `icons.ts`, `icons/` | The Icons row: one glyph table per library, `iconSource` reads the picked one. |
 

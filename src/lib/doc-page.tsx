@@ -12,7 +12,7 @@ import {
 import { Button, type ButtonVariant } from '#/components/button';
 import { TabsSubtle, TabsSubtleItem } from '#/components/tabs-subtle';
 import { Tooltip } from '#/components/tooltip';
-import { createCulling } from './cull';
+import { createCulling, OnScreenContext } from './cull';
 import { Icon } from './icon';
 import { defineIcon, type IconRef } from './icons';
 import { openUrl } from './open-url';
@@ -498,7 +498,9 @@ export function ComponentPreview(props: {
 							}}
 						>
 							<div style={{ display: culling.far() ? 'none' : 'contents' }}>
-								{props.children}
+								<OnScreenContext.Provider value={culling.onScreen}>
+									{props.children}
+								</OnScreenContext.Provider>
 							</div>
 						</div>
 					</Show>

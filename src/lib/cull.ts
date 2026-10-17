@@ -16,6 +16,20 @@ export const PageScrollerContext =
 export const PageScrollContext =
 	createContext<(listener: () => void) => () => void>();
 
+/**
+ * Whether the subtree is shown: false inside any culled region that is far
+ * from the scroller. A hidden subtree keeps its loops mounted but builds
+ * nothing, yet every signal a loop sets still redraws the whole window, so
+ * `onFrame` and timer loops read this and hold still while it is false.
+ * Separate from `PreviewPlaybackContext`, which is the changelog's own
+ * in-view-and-not-paused rule for a preview's script.
+ */
+export const OnScreenContext = createContext<Accessor<boolean>>(() => true);
+
+export function useOnScreen(): Accessor<boolean> {
+	return useContext(OnScreenContext);
+}
+
 const OVERSCAN = '25% 0px';
 
 /**
@@ -28,7 +42,8 @@ const OVERSCAN = '25% 0px';
  *
  * Call it once per region, attach `ref` to the element whose height must hold
  * (it measures itself before `far` turns true), give that element `farHeight()`
- * while `far()`, and wrap the content in `display: far() ? 'none' : 'contents'`.
+ * while `far()`, and wrap the content in `display: far() ? 'none' : 'contents'`
+ * and in `<OnScreenContext.Provider value={culling.onScreen}>`.
  */
 export function createCulling() {
 	const scroller = useContext(PageScrollerContext);
@@ -37,6 +52,7 @@ export function createCulling() {
 			"A culled region must be inside the page's PageScrollerContext",
 		);
 	}
+	const parentOnScreen = useContext(OnScreenContext);
 	const [far, setFar] = createSignal(false);
 	const [farHeight, setFarHeight] = createSignal<number>();
 	const [observed, setObserved] = createSignal<HostElement>();
@@ -64,6 +80,8 @@ export function createCulling() {
 	return {
 		/** True while the region is outside the scroller's overscan: its content is hidden. */
 		far,
+		/** False while this region or any culled region around it is far. */
+		onScreen: () => parentOnScreen() && !far(),
 		/** The height the region had when it went far. */
 		farHeight,
 		/** A signal, so a region that remounts (a preview's Code tab and back) is observed again. */

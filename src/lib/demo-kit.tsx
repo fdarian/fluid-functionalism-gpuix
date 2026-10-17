@@ -1,5 +1,5 @@
 import type { JSX } from 'solid-js';
-import { createCulling } from './cull';
+import { createCulling, OnScreenContext } from './cull';
 import { color, type as scale } from './theme';
 
 /** The bordered surface a demo page is made of: content on top, the component's name in a footer, like the site's showcase cards. */
@@ -26,7 +26,9 @@ export function DemoCard(props: { title: string; children: JSX.Element }) {
 				}}
 			>
 				<div style={{ display: culling.far() ? 'none' : 'contents' }}>
-					{props.children}
+					<OnScreenContext.Provider value={culling.onScreen}>
+						{props.children}
+					</OnScreenContext.Provider>
 				</div>
 			</div>
 			<div

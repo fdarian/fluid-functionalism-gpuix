@@ -97,7 +97,7 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 
 - **Cause:** `gpuix gap` (every element is laid out and painted even when a scroller clips it away: README "Missing features", culling row).
 - **Original:** no such step; the browser skips what is off screen.
-- **Port:** every `ComponentPreview` hides its content while more than 25% of a viewport from the page scroller and keeps the preview body's height, through the shared `createCulling` (`src/lib/cull.ts:33-72`, used at `src/lib/doc-page.tsx:393, 492, 500`), the same as `DemoCard` and the home tiles; the 200-row list is the reason. Culling is on for every `ComponentPreview`, not only this page's.
+- **Port:** every `ComponentPreview` hides its content while more than 25% of a viewport from the page scroller and keeps the preview body's height, through the shared `createCulling` (`src/lib/cull.ts:48-90`, used at `src/lib/doc-page.tsx:393, 492, 500`), the same as `DemoCard` and the home tiles; the 200-row list is the reason. Culling is on for every `ComponentPreview`, not only this page's.
 - **Workaround:** the above.
 - **Fidelity:** exact once painted.
 - **Components it hits:** every long page.

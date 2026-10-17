@@ -1,4 +1,12 @@
-import { createSignal, For, type JSX, onCleanup, Show } from 'solid-js';
+import {
+	createEffect,
+	createSignal,
+	For,
+	type JSX,
+	onCleanup,
+	Show,
+	untrack,
+} from 'solid-js';
 import { Button } from '#/components/button';
 import {
 	type StepStatus,
@@ -11,6 +19,7 @@ import {
 	ThinkingStepsContent,
 	ThinkingStepsHeader,
 } from '#/components/thinking-steps';
+import { useOnScreen } from '#/lib/cull';
 import type { DemoModule, ShotContext } from '#/lib/demo';
 import { DemoCard } from '#/lib/demo-kit';
 
@@ -221,12 +230,18 @@ function createStreamingText(
 	active: () => boolean,
 	done: () => boolean,
 ) {
+	const onScreen = useOnScreen();
 	const [count, setCount] = createSignal(0);
-	const timer = setInterval(() => {
-		if (!active() || count() >= text.length) return;
-		setCount(Math.min(count() + 3, text.length));
-	}, 16);
-	onCleanup(() => clearInterval(timer));
+	// Typing is a timer, not `onFrame`: it advances by characters per tick, not by elapsed time.
+	createEffect(() => {
+		if (!active() || !onScreen() || untrack(count) >= text.length) return;
+		const timer = setInterval(() => {
+			const next = Math.min(count() + 3, text.length);
+			setCount(next);
+			if (next >= text.length) clearInterval(timer);
+		}, 16);
+		onCleanup(() => clearInterval(timer));
+	});
 	return () => {
 		const shown = done() ? text : text.slice(0, count());
 		return shown === '' ? undefined : shown;

@@ -80,11 +80,11 @@ export function CarouselDots(props: {
 
 	const reduced = createReducedMotion();
 	createEffect(() => {
-		// Reduced motion: no timer moves the page on the reader's behalf.
-		if (!autoplaying() || reduced()) return;
+		// Reduced motion: no timer moves the page on the reader's behalf; a paused fill holds still, so it stays unsubscribed too.
+		if (!autoplaying() || reduced() || (options()?.paused ?? false)) return;
 		onFrame((delta) => {
 			const live = untrack(options);
-			if (live === null || (live.paused ?? false) || waiting) return;
+			if (live === null || waiting) return;
 			const next =
 				untrack(clock) + delta / (live.duration ?? DEFAULT_DURATION_MS);
 			if (next < 1) {

@@ -1,7 +1,7 @@
 import { buttonProps, type StyleDesc, useGpuixRequired } from '@gpuix/solid';
 import { createContext, type JSX, Show } from 'solid-js';
 import { Badge } from '#/components/badge';
-import { createCulling } from '#/lib/cull';
+import { createCulling, OnScreenContext } from '#/lib/cull';
 import {
 	color,
 	colorFade,
@@ -99,9 +99,11 @@ export function BentoCard(props: {
 				}}
 			>
 				<div style={{ display: culling.far() ? 'none' : 'contents' }}>
-					<BentoTileContext.Provider value={true}>
-						{props.children}
-					</BentoTileContext.Provider>
+					<OnScreenContext.Provider value={culling.onScreen}>
+						<BentoTileContext.Provider value={true}>
+							{props.children}
+						</BentoTileContext.Provider>
+					</OnScreenContext.Provider>
 				</div>
 			</div>
 			<div
