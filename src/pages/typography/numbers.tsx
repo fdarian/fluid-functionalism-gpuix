@@ -7,7 +7,7 @@ import {
 	on,
 	onCleanup,
 } from 'solid-js';
-import { color, type as scale } from '#/lib/theme';
+import { color, linePx, type as scale } from '#/lib/theme';
 import { createVisibility } from '#/pages/surfaces/visibility';
 import { MARK_BLUE, MARK_RED, Specimen, TweakFrame } from './specimen';
 
@@ -90,8 +90,9 @@ function CountRow(props: {
 						position: 'absolute',
 						left: LABEL_LEFT + (rest() ?? 0),
 						width: over(),
-						top: FRAME_PAD + (ROW_HEIGHT - scale.body.lineHeight) / 2 - 3,
-						height: scale.body.lineHeight + 6,
+						top:
+							FRAME_PAD + (ROW_HEIGHT - linePx(scale.body.lineHeight)) / 2 - 3,
+						height: linePx(scale.body.lineHeight) + 6,
 						backgroundColor: MARK_RED,
 						pointerEvents: 'none',
 					}}

@@ -110,7 +110,7 @@ export function ScTabs(props: {
 							<text
 								style={{
 									fontSize: 14,
-									lineHeight: 20,
+									lineHeight: '20px',
 									fontWeight: weight.medium,
 									whiteSpace: 'nowrap',
 									color: active() ? sc.foreground : sc.mutedForeground,

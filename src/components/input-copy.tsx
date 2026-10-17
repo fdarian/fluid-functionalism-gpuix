@@ -205,7 +205,7 @@ export function InputCopy(props: {
 						<text
 							style={{
 								fontSize: step().text,
-								lineHeight: step().line,
+								lineHeight: `${step().line}px`,
 								color: color.transparent,
 							}}
 						>
@@ -215,7 +215,7 @@ export function InputCopy(props: {
 							<text
 								style={{
 									fontSize: step().text,
-									lineHeight: step().line,
+									lineHeight: `${step().line}px`,
 									fontWeight: weight.normal,
 									color: labelColor(),
 									...colorFade,
@@ -257,7 +257,7 @@ export function InputCopy(props: {
 					minWidth: 0,
 					fontFamily: MONO,
 					fontSize: step().text,
-					lineHeight: step().line,
+					lineHeight: `${step().line}px`,
 					fontWeight: weight.normal,
 					color: color.foreground,
 					whiteSpace: 'nowrap',
@@ -341,7 +341,7 @@ export function InputCopy(props: {
 						<text
 							style={{
 								fontSize: step().text,
-								lineHeight: step().line,
+								lineHeight: `${step().line}px`,
 								fontWeight: weight.normal,
 								color: color.mutedForeground,
 							}}

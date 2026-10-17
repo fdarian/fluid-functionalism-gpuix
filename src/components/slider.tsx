@@ -209,7 +209,7 @@ function ValueDisplay(props: {
 
 	const textStyle = (heavy: boolean) => ({
 		...scale.body,
-		lineHeight: scale.body.fontSize,
+		lineHeight: `${scale.body.fontSize}px`,
 		fontWeight: heavy ? weight.semibold : weight.normal,
 		fontVariantNumeric: 'tabular-nums',
 		whiteSpace: 'nowrap' as const,

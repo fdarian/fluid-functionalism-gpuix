@@ -210,7 +210,7 @@ export function PlaygroundPanel(props: {
 				<text
 					style={{
 						...scale.title,
-						lineHeight: scale.title.fontSize,
+						lineHeight: `${scale.title.fontSize}px`,
 						fontWeight: weight.semibold,
 						color: color.foreground,
 					}}

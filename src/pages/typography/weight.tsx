@@ -6,7 +6,7 @@ import {
 	on,
 	onCleanup,
 } from 'solid-js';
-import { color, fade, type as scale, shape, weight } from '#/lib/theme';
+import { color, fade, linePx, type as scale, shape, weight } from '#/lib/theme';
 import { createVisibility } from '#/pages/surfaces/visibility';
 import { MARK_BLUE, MARK_RED, Specimen, TweakFrame } from './specimen';
 
@@ -182,8 +182,9 @@ function WeightItem(props: {
 						position: 'absolute',
 						left: LABEL_LEFT + (regularWidth() ?? 0),
 						width: over(),
-						top: FRAME_PAD + (ROW_HEIGHT - scale.body.lineHeight) / 2 - 3,
-						height: scale.body.lineHeight + 6,
+						top:
+							FRAME_PAD + (ROW_HEIGHT - linePx(scale.body.lineHeight)) / 2 - 3,
+						height: linePx(scale.body.lineHeight) + 6,
 						backgroundColor: MARK_RED,
 						pointerEvents: 'none',
 					}}

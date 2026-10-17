@@ -228,7 +228,7 @@ function Step(props: {
 				<text
 					style={{
 						...siteType.body,
-						lineHeight: 18,
+						lineHeight: '18px',
 						color: color.mutedForeground,
 					}}
 				>

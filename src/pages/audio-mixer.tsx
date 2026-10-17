@@ -80,7 +80,7 @@ function Section(props: { title: string; gap: number; children: JSX.Element }) {
 			<text
 				style={{
 					fontSize: 15,
-					lineHeight: 22,
+					lineHeight: '22px',
 					fontWeight: weight.semibold,
 					color: color.foreground,
 				}}

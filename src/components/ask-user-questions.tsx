@@ -114,7 +114,9 @@ function ShortcutChip(props: { children: string }) {
 				backgroundColor: withAlpha(color.background, 0.15),
 			}}
 		>
-			<text style={{ ...scale.micro, lineHeight: 11, color: color.background }}>
+			<text
+				style={{ ...scale.micro, lineHeight: '11px', color: color.background }}
+			>
 				{props.children}
 			</text>
 		</div>

@@ -12,7 +12,7 @@ import {
 } from '#/lib/theme';
 import { type FileLike, FileThumbnail } from './file-thumbnail';
 
-const subtitle = { fontSize: 14, lineHeight: 20 } as const;
+const subtitle = { fontSize: 14, lineHeight: '20px' } as const;
 const ENTRANCE_RISE = 8;
 /** The meta row's `transition-opacity duration-150`. */
 const META_FADE = fade(['opacity'], 150);

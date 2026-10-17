@@ -41,8 +41,8 @@ const arrowUpRight = defineIcon('<path d="M7 7h10v10"/><path d="M7 17 17 7"/>');
 
 /** The title role of the type scale. */
 const subtitle = {
-	default: { fontSize: 14, lineHeight: 20 },
-	compact: { fontSize: 13, lineHeight: 18 },
+	default: { fontSize: 14, lineHeight: '20px' },
+	compact: { fontSize: 13, lineHeight: '18px' },
 } as const;
 
 /** A fixed hairline over an image: `outline-black/10`, `dark:outline-white/10`. */

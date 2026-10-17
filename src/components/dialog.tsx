@@ -301,7 +301,7 @@ export function DialogTitle(props: { compact?: boolean; children: string }) {
 			<text
 				style={{
 					...(isCompact(props.compact)
-						? { fontSize: 15, lineHeight: 20 }
+						? { fontSize: 15, lineHeight: '20px' }
 						: scale.title),
 					color: color.foreground,
 					fontWeight: weight.semibold,

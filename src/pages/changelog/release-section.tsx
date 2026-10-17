@@ -7,14 +7,14 @@ import {
 	KIND_LABEL,
 	type Release,
 } from '#/lib/changelog/parse';
-import { color, siteType, motion as tween, weight } from '#/lib/theme';
+import { color, linePx, siteType, motion as tween, weight } from '#/lib/theme';
 import { Entry, InlineProse } from './entry';
 import { activeMonth } from './release-spy';
 
 /** Where a month's dot sits from the top of its block: the middle of the title line. */
-const DOT_Y = () => siteType.title.lineHeight / 2;
+const DOT_Y = () => linePx(siteType.title.lineHeight) / 2;
 /** Below the divider: 64px + 1px + 64px, then the title line. */
-const DOT_Y_DIVIDED = () => 129 + siteType.title.lineHeight / 2;
+const DOT_Y_DIVIDED = () => 129 + linePx(siteType.title.lineHeight) / 2;
 const DOT_SIZE = 5;
 /** The month in view grows a step, on the same spring as the Releases fill in the rail. */
 const ACTIVE_DOT_SCALE = 1.3;

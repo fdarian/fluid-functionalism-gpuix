@@ -298,7 +298,7 @@ export function Page(): JSX.Element {
 						<text
 							style={{
 								...siteType.display,
-								lineHeight: siteType.display.fontSize,
+								lineHeight: `${siteType.display.fontSize}px`,
 								fontWeight: 700,
 								color: color.foreground,
 							}}

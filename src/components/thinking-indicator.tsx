@@ -10,7 +10,7 @@ import { createSignal, For, Show } from 'solid-js';
 import { onFrame } from '#/lib/clock';
 import { Icon } from '#/lib/icon';
 import { defineIcon } from '#/lib/icons';
-import { color, type as scale } from '#/lib/theme';
+import { color, linePx, type as scale } from '#/lib/theme';
 
 const FRAME_MS = 33;
 
@@ -187,7 +187,7 @@ function MorphingGlyph(props: { size: number }) {
 const words = ['Thinking', 'Moonwalking', 'Planning', 'Refining'];
 const WORD_INTERVAL_MS = 4000;
 const longestWord = words.reduce((a, b) => (a.length >= b.length ? a : b));
-const ROLL = scale.body.lineHeight * 0.8;
+const ROLL = linePx(scale.body.lineHeight) * 0.8;
 
 const enterTransition = {
 	duration: 0.24,

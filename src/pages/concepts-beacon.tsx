@@ -293,7 +293,7 @@ function Avatar(props: { initials: string }) {
 			<text
 				style={{
 					fontSize: 10,
-					lineHeight: 14,
+					lineHeight: '14px',
 					fontWeight: weight.semibold,
 					color: color.background,
 				}}
@@ -492,7 +492,7 @@ function BoardCard(props: { issue: Issue }) {
 				<text
 					style={{
 						fontSize: 11,
-						lineHeight: 14,
+						lineHeight: '14px',
 						fontFamily: MONO,
 						color: color.mutedForeground,
 					}}

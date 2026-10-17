@@ -28,14 +28,14 @@ const TOKEN_ROWS: readonly TokenRow[] = [
 		token: 'text',
 		applies: 'Labels inside controls (the body role)',
 		value: (step) =>
-			`${LADDER[step].text.fontSize}px / ${LADDER[step].text.lineHeight}px`,
+			`${LADDER[step].text.fontSize}px / ${LADDER[step].text.lineHeight}`,
 	},
 	{
 		token: 'field',
 		applies:
 			'Text in editable fields: the body role. A desktop window has no touch step to 16px',
 		value: (step) =>
-			`${LADDER[step].text.fontSize}px / ${LADDER[step].text.lineHeight}px`,
+			`${LADDER[step].text.fontSize}px / ${LADDER[step].text.lineHeight}`,
 	},
 	{
 		token: 'icon',

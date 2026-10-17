@@ -13,7 +13,7 @@ export function StableLabel(props: {
 	/** Fills the row's spare width (a menu row) instead of hugging the text. */
 	grow?: boolean;
 	/** Defaults to the body role. */
-	textStyle?: { fontSize: number; lineHeight: number };
+	textStyle?: { fontSize: number; lineHeight: string };
 	/** Ease a colour change over 80 ms (the weight still switches at once). */
 	fade?: boolean;
 	/** A label wider than its row ends in an ellipsis instead of running under what follows it. */

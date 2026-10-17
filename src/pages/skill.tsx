@@ -96,7 +96,7 @@ function Example(props: {
 				<text
 					style={{
 						...siteType.subtitle,
-						lineHeight: siteType.subtitle.fontSize,
+						lineHeight: `${siteType.subtitle.fontSize}px`,
 						fontWeight: weight.semibold,
 						color: color.foreground,
 					}}

@@ -158,7 +158,7 @@ export function TypeScaleSpecimen() {
 									{spec.sample}
 								</text>
 								<Mono>{`${roleStyle(spec.role).fontSize}px`}</Mono>
-								<Mono>{`${roleStyle(spec.role).lineHeight}px`}</Mono>
+								<Mono>{roleStyle(spec.role).lineHeight}</Mono>
 								<div style={{ display: 'flex', flexDirection: 'column' }}>
 									<Mono>{String(axes.wght)}</Mono>
 									<Mono muted>{`opsz ${axes.opsz}`}</Mono>

@@ -290,7 +290,7 @@ function SidebarPreview() {
 								<text
 									style={{
 										fontSize: 10,
-										lineHeight: 12,
+										lineHeight: '12px',
 										fontWeight: weight.semibold,
 										color: color.background,
 									}}

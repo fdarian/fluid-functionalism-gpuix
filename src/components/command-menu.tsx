@@ -209,8 +209,8 @@ function sectionRows(
 
 const CAPTION = scale.caption;
 const CAPTION_COMPACT = scale.micro;
-const SUBTITLE = { fontSize: 14, lineHeight: 20 } as const;
-const SUBTITLE_COMPACT = { fontSize: 13, lineHeight: 18 } as const;
+const SUBTITLE = { fontSize: 14, lineHeight: '20px' } as const;
+const SUBTITLE_COMPACT = { fontSize: 13, lineHeight: '18px' } as const;
 
 function metrics(compact: boolean) {
 	return compact

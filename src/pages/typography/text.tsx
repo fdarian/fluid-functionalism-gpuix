@@ -1,6 +1,6 @@
 import { For, type JSX } from 'solid-js';
 import { MONO, Prose } from '#/lib/doc-page';
-import { color, scheme, siteType, weight } from '#/lib/theme';
+import { color, linePx, scheme, siteType, weight } from '#/lib/theme';
 
 /** An Inter space at 13px; `Prose` breaks lines on it. */
 const SPACE = 3.6;
@@ -148,7 +148,7 @@ export function Rule(props: { children: JSX.Element }) {
 				style={{
 					position: 'absolute',
 					left: -15,
-					top: (siteType.body.lineHeight - 5) / 2,
+					top: (linePx(siteType.body.lineHeight) - 5) / 2,
 					width: 5,
 					height: 5,
 					borderRadius: 2.5,

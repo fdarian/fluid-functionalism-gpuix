@@ -73,13 +73,13 @@ report(
 const defaultCaption = caption('Please enter a valid email address.');
 report(
 	'default error caption is 12/16',
-	defaultCaption === '12/16',
+	defaultCaption === '12/16px',
 	defaultCaption,
 );
 const compactCaption = caption('Enter a valid email.');
 report(
 	'compact error caption is 11/14',
-	compactCaption === '11/14',
+	compactCaption === '11/14px',
 	compactCaption,
 );
 

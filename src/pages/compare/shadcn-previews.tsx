@@ -145,7 +145,7 @@ function SliderRow(props: {
 }) {
 	const text = () => ({
 		fontSize: 13,
-		lineHeight: 19.5,
+		lineHeight: '19.5px',
 		fontWeight: weight.normal,
 		color: sc.mutedForeground,
 	});

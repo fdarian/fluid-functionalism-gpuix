@@ -188,7 +188,7 @@ function Heading(props: { children: string }) {
 			style={{
 				paddingTop: 8,
 				fontSize: 18,
-				lineHeight: 28,
+				lineHeight: '28px',
 				fontWeight: weight.semibold,
 				color: color.foreground,
 			}}
@@ -335,7 +335,7 @@ function DocumentBody() {
 			<text
 				style={{
 					fontSize: 15,
-					lineHeight: 24,
+					lineHeight: '24px',
 					color: color.mutedForeground,
 				}}
 			>
@@ -345,7 +345,7 @@ function DocumentBody() {
 			</text>
 
 			<SurfaceCard padding={16} gap={12}>
-				<text style={{ fontSize: 18, lineHeight: 18 }}>💡</text>
+				<text style={{ fontSize: 18, lineHeight: '18px' }}>💡</text>
 				<text
 					style={{
 						...siteType.subtitle,
@@ -469,13 +469,13 @@ export function Page() {
 						paddingBottom: 48,
 					}}
 				>
-					<text style={{ fontSize: 40, lineHeight: 48, marginBottom: 8 }}>
+					<text style={{ fontSize: 40, lineHeight: '48px', marginBottom: 8 }}>
 						🗓️
 					</text>
 					<text
 						style={{
 							fontSize: 34,
-							lineHeight: 42,
+							lineHeight: '42px',
 							fontWeight: BOLD,
 							color: color.foreground,
 						}}
@@ -505,7 +505,11 @@ export function Page() {
 							}}
 						>
 							<text
-								style={{ fontSize: 9, lineHeight: 12, color: color.background }}
+								style={{
+									fontSize: 9,
+									lineHeight: '12px',
+									color: color.background,
+								}}
 							>
 								DK
 							</text>

@@ -13,7 +13,14 @@ import { Code, CopyPromptButton, MONO, Prose } from '#/lib/doc-page';
 import { Icon } from '#/lib/icon';
 import { openUrl } from '#/lib/open-url';
 import { usePageNav } from '#/lib/page-nav';
-import { color, colorFade, focusRing, siteType, weight } from '#/lib/theme';
+import {
+	color,
+	colorFade,
+	focusRing,
+	linePx,
+	siteType,
+	weight,
+} from '#/lib/theme';
 import { DiffBlock } from './diff-block';
 import { PreviewStage } from './preview-stage';
 import { previewFor } from './previews';
@@ -62,7 +69,7 @@ function KindDot(props: { kind: ChangeKind }) {
 			style={{
 				position: 'absolute',
 				left: -24,
-				top: (siteType.body.lineHeight - 5) / 2,
+				top: (linePx(siteType.body.lineHeight) - 5) / 2,
 				width: 5,
 				height: 5,
 				borderRadius: 2.5,

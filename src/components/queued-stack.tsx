@@ -314,7 +314,7 @@ export function QueuedStack(props: {
 												<text
 													style={{
 														...scale.microCompact,
-														lineHeight: 10,
+														lineHeight: '10px',
 														fontWeight: weight.semibold,
 														color: color.mutedForeground,
 														fontVariantNumeric: 'tabular-nums',
@@ -525,7 +525,7 @@ function QueueCard(props: {
 					<text
 						style={{
 							fontSize: 14,
-							lineHeight: 20,
+							lineHeight: '20px',
 							color: color.mutedForeground,
 							whiteSpace: 'nowrap',
 							textOverflow: 'ellipsis',

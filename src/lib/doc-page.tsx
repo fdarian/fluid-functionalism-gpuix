@@ -78,7 +78,7 @@ export function SectionTitle(props: { children: string }) {
 		<text
 			style={{
 				...siteType.title,
-				lineHeight: 16,
+				lineHeight: '16px',
 				fontWeight: weight.semibold,
 				color: color.foreground,
 			}}

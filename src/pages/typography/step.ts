@@ -3,24 +3,24 @@ import { scheme, sizeChoice } from '#/lib/theme';
 /** `typeStyles` of lib/type-scale.ts: every role at both steps, in px. */
 export const typeStyles = {
 	display: {
-		default: { fontSize: 28, lineHeight: 34 },
-		compact: { fontSize: 24, lineHeight: 30 },
+		default: { fontSize: 28, lineHeight: '34px' },
+		compact: { fontSize: 24, lineHeight: '30px' },
 	},
 	title: {
-		default: { fontSize: 16, lineHeight: 22 },
-		compact: { fontSize: 15, lineHeight: 20 },
+		default: { fontSize: 16, lineHeight: '22px' },
+		compact: { fontSize: 15, lineHeight: '20px' },
 	},
 	subtitle: {
-		default: { fontSize: 14, lineHeight: 20 },
-		compact: { fontSize: 13, lineHeight: 18 },
+		default: { fontSize: 14, lineHeight: '20px' },
+		compact: { fontSize: 13, lineHeight: '18px' },
 	},
 	body: {
-		default: { fontSize: 13, lineHeight: 20 },
-		compact: { fontSize: 12, lineHeight: 18 },
+		default: { fontSize: 13, lineHeight: '20px' },
+		compact: { fontSize: 12, lineHeight: '18px' },
 	},
 	caption: {
-		default: { fontSize: 12, lineHeight: 16 },
-		compact: { fontSize: 11, lineHeight: 14 },
+		default: { fontSize: 12, lineHeight: '16px' },
+		compact: { fontSize: 11, lineHeight: '14px' },
 	},
 } as const;
 

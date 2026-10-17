@@ -57,7 +57,7 @@ function SectionTitle(props: { children: string }) {
 		<text
 			style={{
 				...siteType.title,
-				lineHeight: 16,
+				lineHeight: '16px',
 				fontWeight: weight.semibold,
 				color: color.foreground,
 			}}
@@ -138,7 +138,7 @@ function Step(props: {
 					<text
 						style={{
 							fontSize: 11,
-							lineHeight: 14,
+							lineHeight: '14px',
 							fontWeight: weight.normal,
 							color: color.mutedForeground,
 						}}

@@ -30,7 +30,7 @@ export function ScLabel(props: {
 			<text
 				style={{
 					fontSize: props.size ?? 14,
-					lineHeight: props.size ?? 14,
+					lineHeight: `${props.size ?? 14}px`,
 					fontWeight: weight.medium,
 					color: sc.foreground,
 					whiteSpace: 'nowrap',

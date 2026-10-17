@@ -300,14 +300,14 @@ export function surface(level: number) {
 
 /** Type scale, default step: `typeStyles` in lib/type-scale.ts. */
 export const type = {
-	display: { fontSize: 28, lineHeight: 34 },
-	title: { fontSize: 16, lineHeight: 22 },
-	body: { fontSize: 13, lineHeight: 20 },
-	bodyCompact: { fontSize: 12, lineHeight: 18 },
-	caption: { fontSize: 12, lineHeight: 16 },
-	captionCompact: { fontSize: 11, lineHeight: 14 },
-	micro: { fontSize: 11, lineHeight: 14 },
-	microCompact: { fontSize: 10, lineHeight: 12 },
+	display: { fontSize: 28, lineHeight: '34px' },
+	title: { fontSize: 16, lineHeight: '22px' },
+	body: { fontSize: 13, lineHeight: '20px' },
+	bodyCompact: { fontSize: 12, lineHeight: '18px' },
+	caption: { fontSize: 12, lineHeight: '16px' },
+	captionCompact: { fontSize: 11, lineHeight: '14px' },
+	micro: { fontSize: 11, lineHeight: '14px' },
+	microCompact: { fontSize: 10, lineHeight: '12px' },
 } as const;
 
 export type SizeChoice = 'default' | 'compact';
@@ -322,28 +322,28 @@ export const [sizeChoice, setSizeChoice] = createSignal<SizeChoice>('default');
 
 const siteTypeSteps = {
 	display: {
-		default: { fontSize: 28, lineHeight: 34 },
-		compact: { fontSize: 24, lineHeight: 30 },
+		default: { fontSize: 28, lineHeight: '34px' },
+		compact: { fontSize: 24, lineHeight: '30px' },
 	},
 	title: {
-		default: { fontSize: 16, lineHeight: 22 },
-		compact: { fontSize: 15, lineHeight: 20 },
+		default: { fontSize: 16, lineHeight: '22px' },
+		compact: { fontSize: 15, lineHeight: '20px' },
 	},
 	subtitle: {
-		default: { fontSize: 14, lineHeight: 20 },
-		compact: { fontSize: 13, lineHeight: 18 },
+		default: { fontSize: 14, lineHeight: '20px' },
+		compact: { fontSize: 13, lineHeight: '18px' },
 	},
 	body: {
-		default: { fontSize: 13, lineHeight: 20 },
-		compact: { fontSize: 12, lineHeight: 18 },
+		default: { fontSize: 13, lineHeight: '20px' },
+		compact: { fontSize: 12, lineHeight: '18px' },
 	},
 	caption: {
-		default: { fontSize: 12, lineHeight: 16 },
-		compact: { fontSize: 11, lineHeight: 14 },
+		default: { fontSize: 12, lineHeight: '16px' },
+		compact: { fontSize: 11, lineHeight: '14px' },
 	},
 	micro: {
-		default: { fontSize: 11, lineHeight: 14 },
-		compact: { fontSize: 10, lineHeight: 12 },
+		default: { fontSize: 11, lineHeight: '14px' },
+		compact: { fontSize: 10, lineHeight: '12px' },
 	},
 } as const;
 
@@ -355,7 +355,7 @@ type SiteTypeRole = keyof typeof siteTypeSteps;
  */
 export const siteType = Object.defineProperties(
 	{} as {
-		readonly [Role in SiteTypeRole]: { fontSize: number; lineHeight: number };
+		readonly [Role in SiteTypeRole]: { fontSize: number; lineHeight: string };
 	},
 	Object.fromEntries(
 		(Object.keys(siteTypeSteps) as SiteTypeRole[]).map((role) => [
@@ -364,6 +364,14 @@ export const siteType = Object.defineProperties(
 		]),
 	),
 );
+
+/** A type token's line height in px. The tokens carry `'20px'` because a bare number is a multiple of the font size in gpuix, as in CSS. */
+export function linePx(lineHeight: string) {
+	if (!lineHeight.endsWith('px')) {
+		throw new Error(`Line height ${lineHeight} is not in px`);
+	}
+	return Number.parseFloat(lineHeight);
+}
 
 /** The static cuts are loaded in `lib/fonts.ts`. The site's semibold is variable `wght 550`; with static cuts only, SemiBold 600 is the nearest. */
 export const fontFamily = 'Inter';

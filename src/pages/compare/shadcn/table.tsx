@@ -42,7 +42,7 @@ export function ScTable(props: {
 			<text
 				style={{
 					fontSize: 14,
-					lineHeight: 20,
+					lineHeight: '20px',
 					fontWeight: header ? weight.medium : weight.normal,
 					color: header ? sc.mutedForeground : sc.foreground,
 					whiteSpace: 'nowrap',

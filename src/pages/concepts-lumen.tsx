@@ -302,7 +302,7 @@ function TurnView(props: { turn: Turn }) {
 			<text
 				style={{
 					fontSize: 24,
-					lineHeight: 30,
+					lineHeight: '30px',
 					fontWeight: BOLD,
 					color: color.foreground,
 				}}

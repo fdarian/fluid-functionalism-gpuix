@@ -61,7 +61,7 @@ function Panel(props: { open: boolean; children: string }) {
 					<text
 						style={{
 							fontSize: 13,
-							lineHeight: 18.57,
+							lineHeight: '18.57px',
 							fontWeight: weight.normal,
 							color: sc.foreground,
 						}}
@@ -163,7 +163,7 @@ export function ScAccordion(props: {
 								<text
 									style={{
 										fontSize: 13,
-										lineHeight: 19.5,
+										lineHeight: '19.5px',
 										fontWeight: weight.medium,
 										color: sc.foreground,
 										groupHover: { textDecoration: 'underline' },

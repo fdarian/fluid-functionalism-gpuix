@@ -91,7 +91,7 @@ export function ScDropdownMenu(props: {
 							<text
 								style={{
 									fontSize: 13,
-									lineHeight: 19.5,
+									lineHeight: '19.5px',
 									fontWeight: weight.normal,
 									whiteSpace: 'nowrap',
 									color: sc.popoverForeground,

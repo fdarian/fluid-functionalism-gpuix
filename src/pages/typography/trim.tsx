@@ -1,4 +1,4 @@
-import { color, type as scale, shape } from '#/lib/theme';
+import { color, linePx, type as scale, shape } from '#/lib/theme';
 import { MARK_BLUE, MARK_RED, Specimen, TweakFrame } from './specimen';
 
 // Inter's metrics at the body role (13px on a 20px line), from the font's
@@ -7,7 +7,7 @@ import { MARK_BLUE, MARK_RED, Specimen, TweakFrame } from './specimen';
 // the baseline, so 8px of padding reads as 13px. Trimmed, the box stops at the
 // capitals and the baseline, and 8px reads as 8px.
 const FONT_SIZE = scale.body.fontSize;
-const LINE = scale.body.lineHeight;
+const LINE = linePx(scale.body.lineHeight);
 const ASCENDER = 1984 / 2048;
 const DESCENDER = 494 / 2048;
 const CAP_HEIGHT = 1490 / 2048;

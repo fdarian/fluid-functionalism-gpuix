@@ -1,6 +1,13 @@
 import { type Accessor, createSignal, For, type JSX, Show } from 'solid-js';
 import { MONO } from '#/lib/doc-page';
-import { color, shape, sizeChoice, weight, withAlpha } from '#/lib/theme';
+import {
+	color,
+	linePx,
+	shape,
+	sizeChoice,
+	weight,
+	withAlpha,
+} from '#/lib/theme';
 import {
 	roleStyle,
 	space,
@@ -158,7 +165,7 @@ function Marker(props: {
 	index: number;
 	start: number;
 }) {
-	const lineHeight = () => roleStyle('body').lineHeight;
+	const lineHeight = () => linePx(roleStyle('body').lineHeight);
 	return (
 		<Show
 			when={props.ordered}

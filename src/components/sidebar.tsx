@@ -301,7 +301,7 @@ export function SidebarMenuButton(props: {
 	active?: boolean;
 	badge?: string;
 	/** The badge's size and line height in place of the micro step, as the source's `SidebarMenuBadge className="text-site-caption"` does. */
-	badgeType?: { fontSize: number; lineHeight: number };
+	badgeType?: { fontSize: number; lineHeight: string };
 	/** A row clipped away by a collapsed sub-menu: stays registered, never a hover target. */
 	disabled?: () => boolean;
 	trailingIcon?: () => IconRef;
