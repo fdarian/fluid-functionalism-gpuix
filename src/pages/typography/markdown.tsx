@@ -16,8 +16,8 @@ import {
 	type TypeRole,
 } from './step';
 
-/** The tick of lib/typeset/generate.ts, in a 24px grid. */
-const TICK_PATH = 'M6 12L10 16L18 8';
+/** The checked box's tick, as the sheet's `input[type=checkbox]:checked::before` masks it: the foreground shows through a 24px-grid path. */
+const TICK_MASK = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12L10 16L18 8'/%3E%3C/svg%3E")`;
 
 // ---- Inline runs ----------------------------------------------------------
 
@@ -265,7 +265,6 @@ function Checkbox(props: {
 }) {
 	const [hovered, setHovered] = createSignal(false);
 	const box = () => TYPESET_CHECK.box[sizeChoice()];
-	const inner = () => box() - 3;
 	const tick = () => box() + 2;
 	return (
 		<div
@@ -295,26 +294,20 @@ function Checkbox(props: {
 			}}
 		>
 			<Show when={props.checked}>
-				<svg
-					viewBox="0 0 24 24"
+				<div
 					style={{
 						position: 'absolute',
-						left: (inner() - tick()) / 2,
-						top: (inner() - tick()) / 2,
-						width: tick(),
-						height: tick(),
-						color: color.foreground,
+						top: 0,
+						right: 0,
+						bottom: 0,
+						left: 0,
+						backgroundColor: color.foreground,
+						maskImage: TICK_MASK,
+						maskPosition: 'center',
+						maskSize: `${tick()}px ${tick()}px`,
+						maskRepeat: 'no-repeat',
 					}}
-				>
-					<path
-						d={TICK_PATH}
-						fill="none"
-						stroke="currentColor"
-						strokeWidth={2}
-						strokeLinecap="round"
-						strokeLinejoin="round"
-					/>
-				</svg>
+				/>
 			</Show>
 		</div>
 	);
