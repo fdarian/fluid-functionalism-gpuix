@@ -5,14 +5,14 @@ Original: `registry/default/banner.tsx`, demo in `app/docs/banner/page.tsx` and 
 demo in `src/demos/banner.tsx`. Screenshots: `screenshots/banner/` (`scrolled-*.png` are the lower cards, captured with a taller scroll).
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, table and `inline-*` layout, container queries, `:has()`) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, `:has(.selector)`) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## CSS transforms (the banner scales in and out)
 
 - **Cause:** `gpuix gap`.
 - **Original:** inline, the banner inside its row scales from 0.4 to 1 on appear (slow spring, a fast tier after the row) and shrinks from 1 to 0.6 from its top edge on dismiss, `transformOrigin: "top"` (`banner.tsx:177-189`, `:245`, `:298`, `:323-332`, `:356`).
-- **Port:** the banner only fades (`banner.tsx:341-380`).
+- **Port:** the banner only fades (`banner.tsx:327-362`).
 - **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:1198-1209`; README "gpuix gaps", CSS transforms row).
 - **Workaround:** none; the row's height tween and the fade carry the motion.
 - **Fidelity:** approximated (height and fade, no scale).
@@ -28,21 +28,21 @@ repeating it.
 - **Fidelity:** exact for the visible result except that first entrance; `top` re-lays out each frame.
 - **Components it hits:** thinking-indicator, queued-stack, mobile-drawer.
 
-## Container queries and `:has()`
+## `:has()` picks the description layout
 
 - **Cause:** `gpuix gap`.
-- **Original:** `@max-sm/banner` (a container query at 24rem) drops the actions under the text, and `has-data-[slot=banner-description]` switches the layout when a description exists (`banner.tsx:450`, `:453`, `:597-603`).
-- **Port:** the `:has()` switch is a context flag; the narrow layout does not exist (`banner.tsx:105-118`, `:187-191`, `:433-438`).
-- **gpuix lacks:** container queries (they need a layout feedback pass that taffy and gpuix do not have) and `:has()` (no selector engine; gpuix has no stylesheet): `~/code/fdarian/gpuix/FORK.md:738-742`. README rows "Container queries" and "`:has()`".
-- **Workaround:** `BannerDescription` registers itself in a context and the content flips between a row and a column from that flag. The narrow-container layout is not ported.
-- **Fidelity:** exact for the wide layout and the `:has()` switch, dropped for `@max-sm`.
-- **Components it hits:** card (grid header), dialog footer, any part-composed layout that reacts to its own width or to a child.
+- **Original:** `has-data-[slot=banner-description]` on the banner and `group-has-data-[slot=banner-description]/banner` on the actions switch the layout when a description is a child: the icon and ✕ hold to the title line, and the actions move from the title row to under the text (`banner.tsx:450`, `:453`, `:597-603`). The narrow-container variant, `@max-sm/banner` (a container under 24rem, Tailwind 4.1's `sm`), drops the actions under the text too (`banner.tsx:602-603`); that part is ported.
+- **Port:** the narrow layout is a real container query: the banner is `containerType: 'inline-size'` named `banner`, and `BannerActions` carries `'@container': { 'banner (width < 24rem)': ... }` that moves it to the third grid row, column 2, with the under-text margins (`banner.tsx:247-248`, `:460`, `:501`). The banner is a grid of `auto minmax(0, 1fr) auto auto` as in the source, and the parts place themselves in it. The `:has()` switch is a context flag: `BannerDescription` registers itself and the banner's `alignItems` and the actions' placement follow it (`banner.tsx:107-118`, `:155`, `:251`, `:442-447`, `:491`).
+- **gpuix lacks:** `:has(.selector)`: only the four state forms (`hasHover`, `hasActive`, `hasFocus`, `hasFocusVisible`) exist, and a selector on an attribute or a slot needs a selector engine (`~/code/fdarian/gpuix/README.md` "Relational state"). README row "`:has()`".
+- **Workaround:** the context flag. It is set in a render effect, so the first frame already has the description layout, and it follows the description mounting and unmounting.
+- **Fidelity:** exact. The flag is only a different way to read the same fact; a description wrapped in another component still registers, where `:has()` would match it by slot as well.
+- **Components it hits:** card (grid header), dialog footer, any part-composed layout that reacts to a child.
 
 ## Dismiss fade is its own tween
 
 - **Cause:** `not ported yet`. gpuix has motion values and `useTransform` (`FORK.md:1146-1147`).
 - **Original:** inline, the banner's opacity is the row's progress mapped from 1 (open) to 0.6 (the row is `shrinkTo` open) onto 1 to 0, so it is gone by the time the row is 60% open and always the row's height (`banner.tsx:317-332`). The fixed bar's opacity is the row's value outright.
-- **Port:** inline, a separate 0.16s `easeOut` tween (`dismissFade`, `banner.tsx:129`, `:343-349`); the row runs 0.24s `easeInOut`. The fixed bar fades on the row's tween, as in the source.
+- **Port:** inline, a separate 0.16s `easeOut` tween (`dismissFade`, `banner.tsx:129`, `:343-355`); the row runs 0.24s `easeInOut`. The fixed bar fades on the row's tween, as in the source.
 - **Workaround:** none.
 - **Fidelity:** approximated (same end points, different curve).
 - **Components it hits:** just this one.
@@ -78,25 +78,25 @@ repeating it.
 
 - **Cause:** `port choice` (the comment says the cut-out "works on any banner background").
 - **Original:** the coloured statuses are a filled shape with the mark stroked in `--background`, the page colour (`banner.tsx:91-130`).
-- **Port:** the mark is cut out with an SVG `<mask>`, so what shows through it is the banner's own fill over the surface (`banner.tsx:84-103`, `:220-229`).
+- **Port:** the mark is cut out with an SVG `<mask>`, so what shows through it is the banner's own fill over the surface (`banner.tsx:83-102`, `:219-228`).
 - **Workaround:** the mask.
 - **Fidelity:** approximated. The mark is pure page colour in the source and a tinted one in the port on a high-contrast banner, and on a surface that is not the page background.
 - **Components it hits:** just this one.
 
-## Action order is done by reversing the elements
+## Action order follows the written order
 
-- **Cause:** `not ported yet`. gpuix has `order` and `flexDirection: "row-reverse"`, and `order` keeps focus order in document order, as the DOM does (`packages/native/js/host.ts:458`, `:481-482`). The port's comment that it has neither (`banner.tsx:474-478`) is out of date.
-- **Original:** every `BannerAction` places itself with CSS `order` by variant, while the markup stays primary first, so Tab visits primary, then secondary, then ghost in both layouts (`banner.tsx:628-634`, `:586-610`).
-- **Port:** trailing the title, `BannerActions` reverses the resolved children (`banner.tsx:456-485`, `:460-463`), so Tab visits ghost, then secondary, then primary there. Under a description the order is as written.
-- **Workaround:** the reversal.
-- **Fidelity:** exact visually; the keyboard order differs in the trailing layout.
+- **Cause:** `gpuix gap`. gpuix has `order`, but the Tab order follows the painted order, not the document order its README states (a bare row of three `tabIndex={0}` boxes with `order` 3, 2, 1 is visited right to left), and an `order` inside an `@container` block is not read: the parent sorts by the style it reads without the block.
+- **Original:** every `BannerAction` places itself with CSS `order` by variant, while the markup stays primary first, so Tab visits primary, then secondary, then ghost in every layout, and the order on screen follows the variant, not the order written (`banner.tsx:628-634`, `:586-610`).
+- **Port:** the actions are written primary first and stay in that DOM order. `BannerActions` is `flexDirection: "row-reverse"` trailing the title, so the strongest action sits at the edge, and `row` under the text (a description, or the container under 24rem), so it leads. Tab visits the written order in both (`banner.tsx:459-507`). Placement follows the written order, not the variant: a ghost written first would lead under the text and sit at the edge trailing the title. Trailing, a row that wraps starts from the right, so the first line holds the first actions written, where the source's first line holds the lowest `order`.
+- **Workaround:** the direction flip instead of `order`. `order` on each action would keep the placement by variant, but the Tab order would then follow it (ghost first).
+- **Fidelity:** exact for actions written primary, secondary, ghost (the documented order); the placement is by position, not variant, when written otherwise.
 - **Components it hits:** just this one.
 
 ## Ghost action colour
 
 - **Cause:** `not ported yet`. The port's `Button` has no colour override (`labelColor` is internal, `src/components/button.tsx:148-157`); a `Button` prop for it would close this.
 - **Original:** a ghost `BannerAction` adds `text-foreground`, which overrides the ghost button's muted rest colour, so it reads foreground at rest and on hover, with no colour change to ease (`banner.tsx:648-652`; its comment at `:618-619` describes "70% foreground", the code does not).
-- **Port:** the plain ghost `Button`: muted at rest, foreground on hover, eased over 80 ms like the source's other ghost buttons (`banner.tsx:490-506`; `src/components/button.tsx:128-129`).
+- **Port:** the plain ghost `Button`: muted at rest, foreground on hover, eased over 80 ms like the source's other ghost buttons (`banner.tsx:512-527`; `src/components/button.tsx:128-129`).
 - **Workaround:** none.
 - **Fidelity:** approximated (the rest colour, and the hover fade the source does not have here).
 - **Components it hits:** just this one.
@@ -104,8 +104,8 @@ repeating it.
 ## Props and parts the port does not take
 
 - **Cause:** `not ported yet`.
-- **Original:** `Banner` takes `dismissLabel` (default "Dismiss"), `motion` (a `BannerMotionConfig` that overrides the appear and dismiss values) with the exported `bannerMotion`, `role`, `className`, `style`, `ref` and HTML attributes, and wraps its children in `SizeProvider` when `size` is set (the port's omitted `size` follows the Size row, `banner.tsx:143`, but a given one scopes no children) (`banner.tsx:154-195`, `:366-393`, `:407-413`, `:525`, `:694`). `BannerAction` takes any `Button` prop, `href` (renders a link) and `external` (`banner.tsx:636-690`). The parts take `className` and HTML attributes. `useShape()` sets the radii.
-- **Port:** the ✕ label is the literal "Dismiss" (`banner.tsx:372`); the motion values are module constants (`:123-126`); the role is derived from `status` only (`:240-242`); `BannerAction` takes `variant`, `testId`, `onClick` and children (`:514-530`); the parts take children only. Radii are fixed (`radius.container` 12, `radius.item` 8, `:250`, `:414`).
+- **Original:** `Banner` takes `dismissLabel` (default "Dismiss"), `motion` (a `BannerMotionConfig` that overrides the appear and dismiss values) with the exported `bannerMotion`, `role`, `className`, `style`, `ref` and HTML attributes, and wraps its children in `SizeProvider` when `size` is set (the port's omitted `size` follows the Size row, `banner.tsx:150`, but a given one scopes no children) (`banner.tsx:154-195`, `:366-393`, `:407-413`, `:525`, `:694`). `BannerAction` takes any `Button` prop, `href` (renders a link) and `external` (`banner.tsx:636-690`). The parts take `className` and HTML attributes. `useShape()` sets the radii.
+- **Port:** the ✕ label is the literal "Dismiss" (`banner.tsx:383`); the motion values are module constants (`:126-129`); the role is derived from `status` only (`:240-242`); `BannerAction` takes `variant`, `testId`, `onClick` and children (`:512-527`); `BannerTitle` and `BannerActions` take a `testId`, the other parts children only. Radii are fixed (`radius.container` 12, `radius.item` 8, `:253`, `:401`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** every component without `className` and `ref` passthrough.
@@ -132,7 +132,7 @@ repeating it.
 
 - **Cause:** `port choice` (to exercise the controlled `open` prop and compact in the harness).
 - **Original:** no "Dismissible" card (a success, high-contrast "Changes saved" with ✕) and no compact banner.
-- **Port:** both: "Dismissible" (`src/demos/banner.tsx:478-503`) and a compact error banner with a description and two actions in "Custom icon and compact" (`:580-599`).
+- **Port:** both: "Dismissible" (`src/demos/banner.tsx:481-507`) and a compact error banner with a description and two actions in "Custom icon and compact" (`:624-634`).
 - **Workaround:** none.
-- **Fidelity:** exact (the compact metrics follow the source's `compact` branches, `banner.tsx:433`, `:479`, `:500` against `src/components/banner.tsx:37-58`).
+- **Fidelity:** exact (the compact metrics follow the source's `compact` branches, `banner.tsx:433`, `:479`, `:500` against `src/components/banner.tsx:38-59`).
 - **Components it hits:** just this one.

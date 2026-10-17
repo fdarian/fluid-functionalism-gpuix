@@ -560,22 +560,51 @@ export function Demo() {
 					}}
 				>
 					<Banner status="info">
-						<BannerTitle>Enjoying Fluid Functionalism?</BannerTitle>
-						<BannerActions>
-							<BannerAction variant="primary">Star on GitHub</BannerAction>
-							<BannerAction>Share</BannerAction>
-							<BannerAction variant="ghost">Later</BannerAction>
+						<BannerTitle testId="wide-title">
+							Enjoying Fluid Functionalism?
+						</BannerTitle>
+						<BannerActions testId="wide-actions">
+							<BannerAction variant="primary" testId="wide-primary">
+								Star on GitHub
+							</BannerAction>
+							<BannerAction testId="wide-secondary">Share</BannerAction>
+							<BannerAction variant="ghost" testId="wide-ghost">
+								Later
+							</BannerAction>
 						</BannerActions>
 					</Banner>
 					<Banner status="info">
-						<BannerTitle>The registry has new components</BannerTitle>
+						<BannerTitle testId="described-title">
+							The registry has new components
+						</BannerTitle>
 						<BannerDescription>
 							Run the install command again to pull the latest versions.
 						</BannerDescription>
-						<BannerActions>
-							<BannerAction variant="primary">Copy command</BannerAction>
+						<BannerActions testId="described-actions">
+							<BannerAction variant="primary" testId="described-primary">
+								Copy command
+							</BannerAction>
 							<BannerAction>What's new</BannerAction>
-							<BannerAction variant="ghost">Later</BannerAction>
+							<BannerAction variant="ghost" testId="described-ghost">
+								Later
+							</BannerAction>
+						</BannerActions>
+					</Banner>
+				</div>
+			</DemoCard>
+			<DemoCard title="Narrow container">
+				<div style={{ maxWidth: 360 }}>
+					<Banner status="info">
+						<BannerTitle testId="narrow-title">
+							Enjoying Fluid Functionalism?
+						</BannerTitle>
+						<BannerActions testId="narrow-actions">
+							<BannerAction variant="primary" testId="narrow-primary">
+								Star on GitHub
+							</BannerAction>
+							<BannerAction variant="ghost" testId="narrow-ghost">
+								Later
+							</BannerAction>
 						</BannerActions>
 					</Banner>
 				</div>

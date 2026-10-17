@@ -5,7 +5,7 @@
  *
  * The demo's Replay button sits under the banner, so its y is the row's height.
  */
-import { createCheck } from './check-kit';
+import { createCheck, scrollIntoView } from './check-kit';
 import { readPng } from './png-pixels';
 
 const kit = await createCheck('banner');
@@ -145,5 +145,67 @@ for (const part of ['fill', 'glyph'] as const) {
 		`rest ${restFade[part]}, 32 ms ${midFade[part]}, hover ${hoverFade[part]}`,
 	);
 }
+
+// Actions: `@max-sm/banner` (a 24rem container) and a description both put them under the title, primary first; trailing, primary is last at the edge. Tab keeps the written order.
+async function actionsAt(titleId: string, actionsId: string, parts: string[]) {
+	await scrollIntoView(renderer, titleId);
+	const title = kit.bounds(titleId);
+	const actions = kit.bounds(actionsId);
+	const x = parts.map((part) => kit.bounds(part).x);
+	return { title, actions, x };
+}
+const wide = await actionsAt('wide-title', 'wide-actions', [
+	'wide-primary',
+	'wide-secondary',
+	'wide-ghost',
+]);
+kit.check(
+	'a wide banner trails the actions on the title row, ghost first, primary at the edge',
+	wide.actions.x > wide.title.x + wide.title.width - 1 &&
+		wide.actions.y < wide.title.y + wide.title.height &&
+		wide.x[2] < wide.x[1] &&
+		wide.x[1] < wide.x[0],
+	JSON.stringify(wide),
+);
+const tabbed: string[] = [];
+const firstStop = kit.element('wide-primary');
+renderer.focusElement(firstStop.id);
+await frames(32);
+for (const next of ['wide-secondary', 'wide-ghost']) {
+	renderer.simulateKeystrokes('Tab');
+	await frames(32);
+	tabbed.push(
+		renderer.getFocusedElementId() === kit.element(next).id
+			? next
+			: `other ${renderer.getFocusedElementId()} ${kit.element(next).id}`,
+	);
+}
+kit.check(
+	'Tab visits the actions in the order written, whatever order they are laid out in',
+	tabbed.join() === 'wide-secondary,wide-ghost',
+	tabbed.join(),
+);
+const described = await actionsAt('described-title', 'described-actions', [
+	'described-primary',
+	'described-ghost',
+]);
+kit.check(
+	'a description puts the actions under the text, primary first',
+	described.actions.y > described.title.y + described.title.height &&
+		Math.abs(described.actions.x - described.title.x) < 1 &&
+		described.x[0] < described.x[1],
+	JSON.stringify(described),
+);
+const narrow = await actionsAt('narrow-title', 'narrow-actions', [
+	'narrow-primary',
+	'narrow-ghost',
+]);
+kit.check(
+	'a banner under 24rem drops the actions under the title, primary first',
+	narrow.actions.y > narrow.title.y + narrow.title.height &&
+		Math.abs(narrow.actions.x - narrow.title.x) < 1 &&
+		narrow.x[0] < narrow.x[1],
+	JSON.stringify(narrow),
+);
 
 kit.finish();

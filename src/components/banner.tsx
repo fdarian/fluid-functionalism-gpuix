@@ -13,7 +13,6 @@ import {
 	type JSX,
 	on,
 	onCleanup,
-	children as resolveChildren,
 	Show,
 	useContext,
 } from 'solid-js';
@@ -105,7 +104,7 @@ function glyphSource(status: Exclude<BannerStatus, 'default'>) {
 
 interface BannerScope {
 	compact: () => boolean;
-	/** A description puts the actions under the text instead of trailing the title. */
+	/** A description puts the actions under the text instead of trailing the title. A flag because gpuix has no `:has(.selector)`: `BannerDescription` reports in. */
 	hasDescription: () => boolean;
 	setHasDescription: (value: boolean) => void;
 }
@@ -243,9 +242,12 @@ export function Banner(props: {
 				}
 				style={{
 					position: 'relative',
-					display: 'flex',
-					flexDirection: 'row',
+					display: 'grid',
+					gridTemplateColumns: 'auto minmax(0, 1fr) auto auto',
+					containerType: 'inline-size',
+					containerName: 'banner',
 					flexShrink: 0,
+					// With a description the icon and ✕ hold to the title line instead of centring on the whole block.
 					alignItems: hasDescription() ? 'flex-start' : 'center',
 					padding: metrics().pad,
 					borderRadius: fixed() ? 0 : shape.container,
@@ -267,10 +269,11 @@ export function Banner(props: {
 				/>
 				<div
 					style={{
+						gridColumn: 1,
+						gridRow: 1,
 						display: 'flex',
 						alignItems: 'center',
 						justifyContent: 'center',
-						flexShrink: 0,
 						height: metrics().iconBox,
 						width: metrics().icon,
 						marginRight: metrics().iconGap,
@@ -278,19 +281,7 @@ export function Banner(props: {
 				>
 					{glyph()}
 				</div>
-				<div
-					style={{
-						display: 'flex',
-						flexDirection: hasDescription() ? 'column' : 'row',
-						alignItems: hasDescription() ? 'stretch' : 'center',
-						flexGrow: 1,
-						flexShrink: 1,
-						flexBasis: 0,
-						minWidth: 0,
-					}}
-				>
-					{props.children}
-				</div>
+				{props.children}
 				<Show when={props.dismissible}>
 					<DismissButton
 						compact={size() === 'compact'}
@@ -394,6 +385,8 @@ function DismissButton(props: {
 			style={{
 				// Above the fill layer, which paints over its in-flow siblings.
 				position: 'relative',
+				gridColumn: 4,
+				gridRow: 1,
 				display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
@@ -424,18 +417,14 @@ function DismissButton(props: {
 	);
 }
 
-export function BannerTitle(props: { children: JSX.Element }) {
+export function BannerTitle(props: { testId?: string; children: JSX.Element }) {
 	const scope = useBannerScope();
 	const text = () =>
 		scope.compact() ? sizes.compact.subtitle : sizes.default.subtitle;
 	return (
 		<div
-			style={{
-				flexGrow: 1,
-				flexShrink: 1,
-				flexBasis: scope.hasDescription() ? undefined : 0,
-				minWidth: 0,
-			}}
+			testId={props.testId}
+			style={{ gridColumn: 2, gridRow: 1, minWidth: 0 }}
 		>
 			<text
 				style={{
@@ -459,7 +448,7 @@ export function BannerDescription(props: { children: JSX.Element }) {
 	const text = () =>
 		scope.compact() ? sizes.compact.subtitle : sizes.default.subtitle;
 	return (
-		<div style={{ marginTop: 2, minWidth: 0 }}>
+		<div style={{ gridColumn: 2, gridRow: 2, marginTop: 2, minWidth: 0 }}>
 			<text style={{ ...text(), color: color.foreground }}>
 				{props.children}
 			</text>
@@ -467,39 +456,52 @@ export function BannerDescription(props: { children: JSX.Element }) {
 	);
 }
 
+/** `@max-sm/banner`: Tailwind's `sm` container size is 24rem, and `@max-` is a strict upper bound. */
+const NARROW = 'banner (width < 24rem)';
+
 /**
- * Write primary first (that is the tab order). Trailing the title the
- * strongest action sits at the edge, so the row is reversed; under the text
- * it leads. The DOM version places each action by `order`; gpuix has neither
- * `order` nor `row-reverse`, so the resolved children are reordered here.
+ * Write primary first, secondary, then ghost. Under the text (a description, or
+ * a banner narrower than 24rem) that is the order on screen; trailing the title
+ * the row is reversed so the strongest action sits at the edge. The Tab order
+ * stays the written one in both, because `order` would move it with the
+ * painted order in gpuix (the DOM keeps it).
  */
-export function BannerActions(props: { children: JSX.Element }) {
+export function BannerActions(props: {
+	testId?: string;
+	children: JSX.Element;
+}) {
 	const scope = useBannerScope();
 	const compact = () => scope.compact();
-	const actions = resolveChildren(() => props.children);
-	const ordered = () => {
-		const list = actions.toArray();
-		return scope.hasDescription() ? list : [...list].reverse();
-	};
+	const underText = () => ({
+		flexDirection: 'row' as const,
+		gridColumn: 2,
+		gridRow: 3,
+		marginTop: sizes[compact() ? 'compact' : 'default'].actionsTop,
+		marginBottom: 0,
+		marginLeft: 0,
+	});
 	return (
 		<div
+			testId={props.testId}
 			style={{
 				display: 'flex',
-				flexDirection: 'row',
 				flexWrap: 'wrap',
 				alignItems: 'center',
-				flexShrink: 0,
 				gap: 8,
 				...(scope.hasDescription()
-					? { marginTop: sizes[compact() ? 'compact' : 'default'].actionsTop }
+					? underText()
 					: {
+							flexDirection: 'row-reverse' as const,
+							gridColumn: 3,
+							gridRow: 1,
 							marginTop: compact() ? -5 : -4,
 							marginBottom: compact() ? -5 : -4,
 							marginLeft: compact() ? 10 : 12,
 						}),
+				'@container': { [NARROW]: underText() },
 			}}
 		>
-			{ordered()}
+			{props.children}
 		</div>
 	);
 }
