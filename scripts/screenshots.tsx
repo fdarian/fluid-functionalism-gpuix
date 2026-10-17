@@ -157,13 +157,9 @@ const shot: ShotContext = {
 		}
 	},
 	tabStopCount() {
-		// `A11yTreeDump` omits the frame header that the native dump carries.
-		const tree = renderer.getA11yTree() as {
-			frame?: { tab_stop_count?: number };
-		};
-		const count = tree.frame?.tab_stop_count;
-		if (count === undefined) throw new Error('the frame reports no tab stops');
-		return count;
+		const frame = renderer.getA11yTree().frame;
+		if (frame === undefined) throw new Error('the a11y dump has no frame');
+		return frame.tab_stop_count;
 	},
 	hasAriaNode(target) {
 		return ariaNode(target) !== undefined;
