@@ -59,7 +59,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `ChatMessage` took a string).
 - **Original:** `Answer` passes `className="max-w-full"` and a block of three paragraphs to `ChatMessage` (`lumen/page.tsx:76-111`).
-- **Port:** `ChatMessage` gained two additive props: `children` accepts any element (a string is still set in the message style) and `fullWidth` lifts the 80% cap (`src/components/chat-message.tsx:79-83`, `:143-148`). Lumen builds three `<text>` paragraphs with 12px between them (`src/pages/concepts-lumen.tsx:168-199`).
+- **Port:** `ChatMessage` gained two additive props: `children` accepts any element (a string is still set in the message style) and `fullWidth` lifts the 80% cap (`src/components/chat-message.tsx:79-83`, `:143-148`). Lumen builds three `<text>` paragraphs with 12px between them (`src/pages/concepts-lumen.tsx:175-206`).
 - **Workaround:** none needed.
 - **Fidelity:** exact for the layout.
 - **Components it hits:** chat-message (the extra props are the only change to it).
@@ -68,26 +68,26 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `gpuix gap`.
 - **Original:** `Cite` is a `Badge` (`size="sm"`, `px-1.5`, `mx-0.5`, `-translate-y-px`, `align-middle`) set inline in the paragraph (`lumen/page.tsx:62-73`): an `inline-flex` box 20px tall.
-- **Port:** a `<span>` with the accent fill, 11px type, `px-1.5`, `mx-0.5` and the radius `shape.item` (`src/pages/concepts-lumen.tsx:143-164`). Its box is the font's content area plus 3.5px above and below, so about 20px tall and painted over the lines around it without moving them. There is no `-translate-y-px` or `align-middle`: the span sits on the text baseline, a pixel or two lower than the source's centred badge.
+- **Port:** a `<span>` with the accent fill, 11px type, `px-1.5`, `mx-0.5` and the radius `shape.item` (`src/pages/concepts-lumen.tsx:150-171`). Its box is the font's content area plus 3.5px above and below, so about 20px tall and painted over the lines around it without moving them. There is no `-translate-y-px` or `align-middle`: the span sits on the text baseline, a pixel or two lower than the source's centred badge.
 - **gpuix lacks:** a block (the `Badge`) flowing inside a paragraph; `vertical-align` (neither README nor FORK.md lists it) and transforms on an inline box (`~/code/fdarian/gpuix/FORK.md:1081-1091` lists what an inline box can paint).
 - **Workaround:** a padded span, as the doc pages' inline code (`src/lib/doc-page.tsx`, `Code`).
 - **Fidelity:** approximated (vertical position, a pixel).
 - **Components it hits:** any inline chip in running text.
 
-## Image swatches are gradient boxes, not SVG data URIs through `ThinkingStepImage`
+## The Images tab draws its swatches as backgrounds, not through `ThinkingStepImage`
 
-- **Cause:** `port choice` (`<img>` takes `file://` and `blob:` URLs, not `data:`; and `ThinkingStepImage` has no way to size to its parent).
-- **Original:** `swatch()` builds a `data:image/svg+xml` gradient and the Images tab and the step both use `ThinkingStepImage` (`lumen/page.tsx:44-52`, `:201-207`, `:227-237`).
-- **Port:** `SwatchImage` is a box with `backgroundImage: linear-gradient(135deg, a, b)`, 240:150, the container radius and the same inset hairline (`src/pages/concepts-lumen.tsx:110-128`). In the thinking step it is 200px wide with the caption under it; in the Images tab four of them share the row (`:266-289`). The step image has no entrance fade and no 0.1s delay.
-- **Workaround:** none.
-- **Fidelity:** approximated (the SVG's gradient runs corner to corner in the unit box, which on 240:150 is not exactly 135deg).
+- **Cause:** `not ported yet` (`ThinkingStepImage` is a fixed 200px box, [thinking-steps.md](thinking-steps.md#image-box-is-sized-outright)).
+- **Original:** `swatch()` builds a `data:image/svg+xml` gradient, and the step and the Images tab both show it through `ThinkingStepImage`, the tab's with `!mt-0 [&_img]:max-w-full` in a grid cell (`lumen/page.tsx:44-52`, `:201-207`, `:227-237`).
+- **Port:** `swatch()` is the source's, and the step uses the ported `ThinkingStepImage` with that URI, `aspectRatio` 240 / 150 and the 0.1s delay (`src/pages/concepts-lumen.tsx:104-109`, `:363-369`). The Images tab draws each swatch as `SwatchImage`, a 240:150 box with the same URI as `backgroundImage` at `100% 100%`, the container radius and the same inset hairline, four to a row (`:121-138`, `:281-299`); it has no entrance fade.
+- **Workaround:** the background box, because the fixed-width component cannot fill a grid cell.
+- **Fidelity:** exact for the picture (the same SVG, scaled to the box); approximated (no entrance fade on the tab).
 - **Components it hits:** just this one.
 
 ## Source rows are not links and gain no 100 ms shadow transition
 
 - **Cause:** `not ported yet` for the shadow transition; `port choice` for the link.
 - **Original:** each row is `<a href="#answer">` (jumps to the question heading) with `transition-shadow duration-100 hover:shadow-surface-4` (`lumen/page.tsx:114-140`).
-- **Port:** a `div` with the `surface-2` fill and `shadow(2)`, and `hover: { boxShadow: shadow(4) }`, which switches at once (`src/pages/concepts-lumen.tsx:204-261`; `shadow` is the `--shadow-N` helper in `src/lib/theme.ts`). A click does nothing.
+- **Port:** a `div` with the `surface-2` fill and `shadow(2)`, and `hover: { boxShadow: shadow(4) }`, which switches at once (`src/pages/concepts-lumen.tsx:211-268`; `shadow` is the `--shadow-N` helper in `src/lib/theme.ts`). A click does nothing.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -96,7 +96,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `gpuix gap` (variable-font axes: README "gpuix gaps").
 - **Original:** `text-[24px] leading-tight`, `fontWeights.bold` (`lumen/page.tsx:160-168`).
-- **Port:** the static Bold cut at 24 / 30 (`src/pages/concepts-lumen.tsx:305-310`). The `semibold` run in the first paragraph is SemiBold 600.
+- **Port:** the static Bold cut at 24 / 30 (`src/pages/concepts-lumen.tsx:312-317`). The `semibold` run in the first paragraph is SemiBold 600.
 - **gpuix lacks:** variable-font axes.
 - **Workaround:** static cuts.
 - **Fidelity:** approximated. The question stays 24px when the Size row is Compact, as in the source (a fixed `text-[24px]`).
@@ -106,7 +106,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (reason not stated) for the scroller; the source has the same missing scroll-to-new-turn.
 - **Original:** `flex-1 overflow-y-auto` under an `h-screen` column, the ask bar pinned below (`lumen/page.tsx:274-300`); a new turn is appended and the page does not scroll to it.
-- **Port:** the turns sit in the port's `ScrollArea` (a drawn scrollbar), the ask bar is pinned below it (`src/pages/concepts-lumen.tsx:442-460`); a new turn lands below the fold, as in the source, and the screenshot scenario scrolls to it. The turns live in a store keyed by `id`, so the answered turn keeps its open "Searched 4 sources" steps and its tab, as in React (`:408-436`). The timer is cleared on unmount.
+- **Port:** the turns sit in the port's `ScrollArea` (a drawn scrollbar), the ask bar is pinned below it (`src/pages/concepts-lumen.tsx:445-463`); a new turn lands below the fold, as in the source, and the screenshot scenario scrolls to it. The turns live in a store keyed by `id`, so the answered turn keeps its open "Searched 4 sources" steps and its tab, as in React (`:408-436`). The timer is cleared on unmount.
 - **Workaround:** none.
 - **Fidelity:** approximated (scrollbar look); exact for the flow.
 - **Components it hits:** just this one.
@@ -115,7 +115,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `Button` has `default`, `compact`, `icon` and `icon-compact`).
 - **Original:** `<Button variant="ghost" size="sm" leadingIcon={Globe}>Web</Button>` in the left slot (`lumen/page.tsx:295-297`).
-- **Port:** `size="compact"` with `leadingIcon="globe"` (`src/pages/concepts-lumen.tsx:485`).
+- **Port:** `size="compact"` with `leadingIcon="globe"` (`src/pages/concepts-lumen.tsx:488`).
 - **Workaround:** none.
 - **Fidelity:** approximated (compact is 28px).
 - **Components it hits:** just this one.

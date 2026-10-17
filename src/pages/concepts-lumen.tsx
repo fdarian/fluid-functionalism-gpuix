@@ -12,6 +12,7 @@ import {
 } from '#/components/tabs-subtle';
 import {
 	ThinkingStep,
+	ThinkingStepImage,
 	ThinkingStepSource,
 	ThinkingStepSources,
 	ThinkingSteps,
@@ -21,10 +22,10 @@ import {
 import type { ShotContext } from '#/lib/demo';
 import {
 	color,
+	type as scale,
 	shadow,
 	shape,
 	siteType,
-	type as scale,
 	weight,
 } from '#/lib/theme';
 import { ConceptFrame } from '#/pages/concepts/frame';
@@ -100,28 +101,34 @@ const SOURCES: Source[] = [
 	},
 ];
 
-const IMAGES = [
-	{ from: '#fbbf24', to: '#b45309', caption: 'Bust of Marcus Aurelius' },
-	{ from: '#60a5fa', to: '#1e3a8a', caption: 'The Painted Porch, Athens' },
-	{ from: '#a78bfa', to: '#5b21b6', caption: 'Epictetus, engraving' },
-	{ from: '#2dd4bf', to: '#0f766e', caption: "Seneca's letters, folio" },
-];
+/** Inline SVG gradient swatches, the source's offline placeholders for the Images tab. */
+function swatch(from: string, to: string) {
+	return `data:image/svg+xml,${encodeURIComponent(
+		`<svg xmlns="http://www.w3.org/2000/svg" width="240" height="150"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient></defs><rect width="240" height="150" fill="url(#g)"/></svg>`,
+	)}`;
+}
 
-type Swatch = (typeof IMAGES)[number];
+const IMAGES = [
+	{ src: swatch('#fbbf24', '#b45309'), caption: 'Bust of Marcus Aurelius' },
+	{ src: swatch('#60a5fa', '#1e3a8a'), caption: 'The Painted Porch, Athens' },
+	{ src: swatch('#a78bfa', '#5b21b6'), caption: 'Epictetus, engraving' },
+	{ src: swatch('#2dd4bf', '#0f766e'), caption: "Seneca's letters, folio" },
+];
 
 // ── Swatches ────────────────────────────────────────────────────────────
 
-/** A 240 x 150 gradient standing in for a picture, with the hairline the library's image has. */
-function SwatchImage(props: { swatch: Swatch; width?: number }) {
+/** A swatch drawn as a picture of its own 240:150 box, with the hairline the library's image has: `ThinkingStepImage` is fixed at 200px wide, and these fill their grid cell. */
+function SwatchImage(props: { src: string }) {
 	return (
 		<div
 			style={{
 				position: 'relative',
-				width: props.width ?? '100%',
+				width: '100%',
 				aspectRatio: 240 / 150,
 				flexShrink: 0,
 				borderRadius: shape.container,
-				backgroundImage: `linear-gradient(135deg, ${props.swatch.from}, ${props.swatch.to})`,
+				backgroundImage: `url("${props.src}")`,
+				backgroundSize: '100% 100%',
 				outlineWidth: 1,
 				outlineOffset: -1,
 				outlineColor: color.border,
@@ -286,7 +293,7 @@ function ImagesPanel() {
 							gap: 4,
 						}}
 					>
-						<SwatchImage swatch={image} />
+						<SwatchImage src={image.src} />
 						<Caption>{image.caption}</Caption>
 					</div>
 				)}
@@ -353,17 +360,13 @@ function TurnView(props: { turn: Turn }) {
 						isLast
 					>
 						<Show when={!props.turn.thinking}>
-							<div
-								style={{
-									marginTop: 6,
-									display: 'flex',
-									flexDirection: 'column',
-									gap: 4,
-								}}
-							>
-								<SwatchImage swatch={IMAGES[0]} width={200} />
-								<Caption>Found 4 related images</Caption>
-							</div>
+							<ThinkingStepImage
+								src={IMAGES[0].src}
+								alt={IMAGES[0].caption}
+								caption="Found 4 related images"
+								delay={0.1}
+								aspectRatio={240 / 150}
+							/>
 						</Show>
 					</ThinkingStep>
 				</ThinkingStepsContent>
