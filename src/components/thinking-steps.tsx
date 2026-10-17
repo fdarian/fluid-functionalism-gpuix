@@ -1,4 +1,9 @@
-import { AnimatePresence, type MotionTransition, motion } from '@gpuix/solid';
+import {
+	AnimatePresence,
+	createReducedMotion,
+	type MotionTransition,
+	motion,
+} from '@gpuix/solid';
 import {
 	type CollapsibleRoot,
 	createCollapsiblePanel,
@@ -78,9 +83,15 @@ function chevronPath(degrees: number) {
  * `Icon easeStroke` ease the stroke width on the group that draws them.
  */
 function Chevron(props: { open: boolean; stroke: number; color: string }) {
+	const reduced = createReducedMotion();
 	const [angle, setAngle] = createSignal(props.open ? 90 : 0);
 	createEffect(() => {
 		const target = props.open ? 90 : 0;
+		// The source turns it with `rotate`, a transform Motion jumps under reduced motion. This tween is not one of gpuix's, so MotionConfig does not reach it.
+		if (reduced()) {
+			setAngle(target);
+			return;
+		}
 		const from = angle();
 		let elapsed = 0;
 		const stop = onFrame((dt) => {

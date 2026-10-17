@@ -155,7 +155,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 ## Atlas: the transcript does not follow a new message
 
-- **Cause:** `gpuix gap` (the port's `ScrollArea` exposes no viewport ref or scroll-to-end; the viewport is internal, `src/components/scroll-area.tsx:218-238`).
+- **Cause:** `gpuix gap` (the port's `ScrollArea` exposes no viewport ref or scroll-to-end; the viewport is internal, `src/components/scroll-area.tsx:226-246`).
 - **Original:** a `requestAnimationFrame` smooth `scrollTo` the bottom when a message is sent and again when the reply lands (`atlas/page.tsx:78-83`, `:89`, `:103`).
 - **Port:** nothing; once the transcript is taller than the column, a new message and the thinking indicator land below the fold and the user scrolls. The screenshot script scrolls to them.
 - **Workaround:** none. Needs a `ScrollArea` prop (`stickToEnd`, or an `onViewport` ref) to scroll to the end after the content grows.

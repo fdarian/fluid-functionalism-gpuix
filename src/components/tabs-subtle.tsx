@@ -180,6 +180,7 @@ export function TabsSubtle(props: {
 				<Show when={selectedRect()}>
 					{(rect: () => ItemRect) => (
 						<motion.div
+							testId={props.testId && `${props.testId}-selected`}
 							initial={false}
 							animate={rectStyle(rect())}
 							transition={tween.moderate}

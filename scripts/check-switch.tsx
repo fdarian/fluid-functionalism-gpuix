@@ -86,20 +86,18 @@ await kit.settle(500);
 kit.check('a drag past the midpoint toggles on', isOn());
 
 // While dragging only the thumb's x follows the pointer: width, height and y keep their spring, so a drag that starts mid-squash does not cut it short.
-type ThumbTransition = {
-	type?: string;
-	duration?: number;
-	left?: { duration?: number };
-	width?: unknown;
-	height?: unknown;
-	top?: unknown;
-};
-function thumbTransition() {
-	const motion = kit.element('kb-thumb').customProps?.motion as
+type ThumbTransition = { type?: string; duration?: number };
+/** The motion transition of an element: the thumb's own, or the layer that slides it (its parent). */
+function transitionOf(testId: string, slide: boolean) {
+	const found = kit.element(testId);
+	const target = slide
+		? renderer.getElement(found.parentId ?? Number.NaN)
+		: found;
+	const motion = target?.customProps?.motion as
 		| { transition?: ThumbTransition }
 		| undefined;
 	if (motion?.transition === undefined)
-		throw new Error('the thumb has no transition');
+		throw new Error('the element has no transition');
 	return motion.transition;
 }
 const dragPoint = kit.center('kb-track');
@@ -108,15 +106,12 @@ renderer.nativeSimulateMouseDown(dragPoint.x, dragPoint.y);
 await kit.settle(100);
 renderer.nativeSimulateMouseMove(dragPoint.x - 6, dragPoint.y);
 await kit.settle(100);
-const dragging = thumbTransition();
+const shape = transitionOf('kb-thumb', false);
+const slide = transitionOf('kb-thumb', true);
 kit.check(
 	'mid-drag, x snaps and width, height and y keep the spring',
-	dragging.type === 'spring' &&
-		dragging.left?.duration === 0 &&
-		dragging.width === undefined &&
-		dragging.height === undefined &&
-		dragging.top === undefined,
-	JSON.stringify(dragging),
+	shape.type === 'spring' && slide.duration === 0,
+	`thumb ${JSON.stringify(shape)}, slide ${JSON.stringify(slide)}`,
 );
 renderer.nativeSimulateMouseUp(dragPoint.x - 6, dragPoint.y);
 await kit.settle(500);

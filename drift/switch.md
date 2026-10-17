@@ -12,7 +12,7 @@ repeating it.
 
 - **Cause:** `gpuix gap`. See the CSS transforms row in [`README.md`](../README.md#missing-features).
 - **Original:** x is a motion value on a transform, y is a transform (`switch.tsx:333-340`); only width and height are layout.
-- **Port:** `left`, `top`, `width` and `height` all animate (`src/components/switch.tsx:163-168`), so the track re-lays out each frame. The motion is the same.
+- **Port:** `left`, `top`, `width` and `height` all animate (`src/components/switch.tsx:158-196`), so the track re-lays out each frame. The motion is the same. Two layers carry it, because reduced motion treats them differently on the web: the source slides x with `animate()` on a motion value, which `MotionConfig` leaves springing, while its width, height and y jump. The outer layer (`left`) sits in a `reducedMotion="never"` config and the inner one (`top`, `width`, `height`) goes back to `"user"`.
 - **Workaround:** `motion.div` on layout props.
 - **Fidelity:** exact for what is seen.
 - **Components it hits:** every spring that FF runs on `x` / `y`.
@@ -21,7 +21,7 @@ repeating it.
 
 - **Cause:** `gpuix gap`. See the `text-box-trim` row in [`README.md`](../README.md#missing-features).
 - **Original:** the label carries `[text-box:trim-both_cap_alphabetic]` (`switch.tsx:356`), so its box is about the cap height and the 16px track sets the row: 4 + 16 + 4 = 24px compact. The comment at `:354-355` says the layout does not change because the track is taller than the label.
-- **Port:** the label keeps its full line box, 18px at the compact step (`src/lib/theme.ts:306`, used at `src/components/switch.tsx:43,186`), which is taller than the 16px track, so the row is 4 + 18 + 4 = 26px. Computed from the code, not measured. The default step is unaffected: its 20px line equals the 20px track (36px both). Letters also sit about half a pixel off the cap-centred position at both steps.
+- **Port:** the label keeps its full line box, 18px at the compact step (`src/lib/theme.ts:306`, used at `src/components/switch.tsx:43,201`), which is taller than the 16px track, so the row is 4 + 18 + 4 = 26px. Computed from the code, not measured. The default step is unaffected: its 20px line equals the 20px track (36px both). Letters also sit about half a pixel off the cap-centred position at both steps.
 - **Workaround:** none.
 - **Fidelity:** approximated (compact rows are 2px taller; the stack of compact switches grows by 2px each).
 - **Components it hits:** any component whose layout relies on a trimmed label.

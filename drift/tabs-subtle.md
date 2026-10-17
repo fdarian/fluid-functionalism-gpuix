@@ -13,7 +13,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `gpuix gap`.
 - **Original:** `width` animates to `offsetWidth` read through a `ResizeObserver`, with a separate `marginLeft` (`tabs-subtle.tsx:286-296`, `:396-410`).
-- **Port:** the box holding the label reports its width through `onLayout` (`tabs-subtle.tsx:373-378`) and the outer box animates `width` to that number, with `marginLeft` 0 to 8 (6 compact) and `opacity` on the same box (`labelTarget`, `:288-293`, `:358-361`). The tab selected at mount is born unfolded: until the first report it keeps a plain `width: "auto"` style (`:367-370`), and the first measured width is placed with a snap (`labelTransition`, `:295-298`). `onMotionComplete` calls `hover.remeasure()` (`:362`) so the pill and neighbours refresh once the label settles. Width and margin ride `spring.fast` both ways with opacity on a 0.06 tween, as the source does (`:295-298`).
+- **Port:** the box holding the label reports its width through `onLayout` (`tabs-subtle.tsx:374-379`) and the outer box animates `width` to that number, with `marginLeft` 0 to 8 (6 compact) and `opacity` on the same box (`labelTarget`, `:289-294`, `:359-362`). The tab selected at mount is born unfolded: until the first report it keeps a plain `width: "auto"` style (`:368-371`), and the first measured width is placed with a snap (`labelTransition`, `:296-299`). `onMotionComplete` calls `hover.remeasure()` (`:363`) so the pill and neighbours refresh once the label settles. Width and margin ride `spring.fast` both ways with opacity on a 0.06 tween, as the source does (`:296-299`).
 - **gpuix lacks:** `width: "auto"` as a motion target (it throws; `~/code/fdarian/gpuix/FORK.md:891-899`: taffy reports a content size inside a width already decided, not a max-content width). `height: "auto"` works.
 - **Workaround:** as above.
 - **Fidelity:** exact for the label width.
@@ -41,7 +41,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `port choice` (c3ba037 follows Base UI, whose panels mount only while selected; the source's own panel is a plain `div` that does not).
 - **Original:** every panel exists, `hidden` unless selected, `tabIndex={-1}`, `outline-none`, and with an `idPrefix` every tab has `aria-controls` (`tabs-subtle.tsx:357`, `:435-453`).
-- **Port:** only the selected panel mounts, with no `tabIndex`; `aria-controls` is set on the selected tab only (`tabs-subtle.tsx:265`, `:395-412`, `base-ui:src/tabs/tab/use-tabs-tab.ts:94-96`).
+- **Port:** only the selected panel mounts, with no `tabIndex`; `aria-controls` is set on the selected tab only (`tabs-subtle.tsx:266`, `:396-413`, `base-ui:src/tabs/tab/use-tabs-tab.ts:94-96`).
 - **Workaround:** none.
 - **Fidelity:** approximated (the accessibility tree differs for unselected tabs).
 - **Components it hits:** just this one.
@@ -69,7 +69,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `TabsSubtle`, `TabsSubtleItem` and `TabsSubtlePanel` take `className`, forward refs and spread HTML attributes (`tabs-subtle.tsx:40`, `:271-278`, `:425-436`).
-- **Port:** props are only the ones in the source's table plus `testId`; no `className`, ref or passthrough (`tabs-subtle.tsx:96-105`, `:254-259`, `:395-400`).
+- **Port:** props are only the ones in the source's table plus `testId`; no `className`, ref or passthrough (`tabs-subtle.tsx:96-105`, `:255-260`, `:396-401`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** tabs, and most of the port.

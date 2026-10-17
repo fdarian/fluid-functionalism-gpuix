@@ -636,9 +636,7 @@ export function AccordionContent(props: { children: JSX.Element }) {
 			{...panel.props}
 			initial={false}
 			animate={{ height: item.isOpen() ? (contentHeight() ?? 0) : 0 }}
-			transition={
-				reduced() ? tween.snap : item.isOpen() ? tween.fast : tween.fastExit
-			}
+			transition={item.isOpen() ? tween.fast : tween.fastExit}
 			onMotionComplete={panel.onExitComplete}
 			onMouseEnter={() => {
 				const own = item.index();
@@ -659,6 +657,7 @@ export function AccordionContent(props: { children: JSX.Element }) {
 			<motion.div
 				initial={false}
 				animate={{ opacity: item.isOpen() ? 1 : 0 }}
+				// The source snaps the fade too (`registry/base/accordion.tsx:953-958`); MotionConfig reduces only the height above.
 				transition={
 					reduced()
 						? tween.snap

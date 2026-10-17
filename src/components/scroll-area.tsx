@@ -1,4 +1,9 @@
-import { type DimensionValue, motion, type StyleDesc } from '@gpuix/solid';
+import {
+	type DimensionValue,
+	MotionConfig,
+	motion,
+	type StyleDesc,
+} from '@gpuix/solid';
 import {
 	type ScrollAreaAxis as Axis,
 	createScrollAreaRoot,
@@ -173,31 +178,34 @@ export function ScrollArea(props: {
 								}),
 					}}
 				>
-					<motion.div
-						testId={
-							props.testId === undefined
-								? undefined
-								: `${props.testId}-${bar.axis}-thumb`
-						}
-						initial={false}
-						// Off the container edge by 2px (`-translate-x-0.5`) and widening from 4px to 6px on hover.
-						animate={
-							bar.axis === 'y'
-								? { left: hovered() ? 0 : 1, width: hovered() ? 6 : 4 }
-								: { top: hovered() ? 0 : 1, height: hovered() ? 6 : 4 }
-						}
-						transition={{ duration: 0.16, ease: 'easeInOut' }}
-						style={{
-							position: 'absolute',
-							borderRadius: 3,
-							backgroundColor: thumbColor(),
-							// Tailwind's `ease-in-out` is `fade`'s default curve.
-							...fade(['background-color'], 160),
-							...(bar.axis === 'y'
-								? { top: span()?.start, height: span()?.length }
-								: { left: span()?.start, width: span()?.length }),
-						}}
-					/>
+					{/* The source widens the thumb with a CSS `transition-[width,height]`, which reduced motion does not touch; the config would make this `motion.div` jump instead. */}
+					<MotionConfig reducedMotion="never">
+						<motion.div
+							testId={
+								props.testId === undefined
+									? undefined
+									: `${props.testId}-${bar.axis}-thumb`
+							}
+							initial={false}
+							// Off the container edge by 2px (`-translate-x-0.5`) and widening from 4px to 6px on hover.
+							animate={
+								bar.axis === 'y'
+									? { left: hovered() ? 0 : 1, width: hovered() ? 6 : 4 }
+									: { top: hovered() ? 0 : 1, height: hovered() ? 6 : 4 }
+							}
+							transition={{ duration: 0.16, ease: 'easeInOut' }}
+							style={{
+								position: 'absolute',
+								borderRadius: 3,
+								backgroundColor: thumbColor(),
+								// Tailwind's `ease-in-out` is `fade`'s default curve.
+								...fade(['background-color'], 160),
+								...(bar.axis === 'y'
+									? { top: span()?.start, height: span()?.length }
+									: { left: span()?.start, width: span()?.length }),
+							}}
+						/>
+					</MotionConfig>
 				</motion.div>
 			</Show>
 		);

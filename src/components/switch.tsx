@@ -1,4 +1,4 @@
-import { motion } from '@gpuix/solid';
+import { MotionConfig, motion } from '@gpuix/solid';
 import {
 	createSwitchRoot,
 	createSwitchThumb,
@@ -155,30 +155,45 @@ export function Switch(props: {
 					focusVisible: focusRing(2),
 				}}
 			>
-				<motion.div
-					initial={false}
-					testId={
-						props.testId === undefined ? undefined : `${props.testId}-thumb`
-					}
-					animate={{
-						left: thumb.dragX() ?? restX(),
-						top: thumbY(),
-						width: thumbWidth(),
-						height: thumbHeight(),
-					}}
-					// While dragging only x follows the pointer; width, height and y keep springing.
-					transition={
-						thumb.dragX() === null
-							? tween.moderate
-							: { ...tween.moderate, left: tween.snap }
-					}
-					style={{
-						position: 'absolute',
-						backgroundColor: '#FFFFFF',
-						borderRadius: 9999,
-						boxShadow: twShadow.sm,
-					}}
-				/>
+				{/* The source slides the thumb with `animate()` on a motion value, which reduced motion leaves alone, and shapes it with width, height and y, which it jumps. Two layers keep both: this one slides under a config that never reduces and the thumb inside it goes back to following the user's setting. */}
+				<MotionConfig reducedMotion="never">
+					<motion.div
+						initial={false}
+						animate={{ left: thumb.dragX() ?? restX() }}
+						// While dragging the thumb follows the pointer.
+						transition={thumb.dragX() === null ? tween.moderate : tween.snap}
+						style={{
+							position: 'absolute',
+							top: 0,
+							width: 0,
+							height: m().trackHeight,
+						}}
+					>
+						<MotionConfig reducedMotion="user">
+							<motion.div
+								initial={false}
+								testId={
+									props.testId === undefined
+										? undefined
+										: `${props.testId}-thumb`
+								}
+								animate={{
+									top: thumbY(),
+									width: thumbWidth(),
+									height: thumbHeight(),
+								}}
+								transition={tween.moderate}
+								style={{
+									position: 'absolute',
+									left: 0,
+									backgroundColor: '#FFFFFF',
+									borderRadius: 9999,
+									boxShadow: twShadow.sm,
+								}}
+							/>
+						</MotionConfig>
+					</motion.div>
+				</MotionConfig>
 			</div>
 			<text
 				id={labelId}
