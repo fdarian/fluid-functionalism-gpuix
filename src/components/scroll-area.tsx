@@ -234,14 +234,6 @@ export function ScrollArea(props: {
 					overflowX: horizontal() ? 'scroll' : 'hidden',
 					// The thumbs are drawn by this component.
 					scrollbarWidth: 'none',
-					// Base UI's Content has `min-width: fit-content`, which gpuix rejects. As a non-shrinking item of a flex row the wrapper takes its content's width instead, and its `onLayout` is where the content size comes from. As a block child it is clamped to the viewport width, `onLayout` reports that, and the area draws no horizontal thumb (the scroller itself still scrolls, since `scrollWidth` counts descendants).
-					...(horizontal()
-						? {
-								display: 'flex',
-								flexDirection: 'row',
-								alignItems: 'flex-start',
-							}
-						: {}),
 				}}
 			>
 				<div
@@ -249,9 +241,8 @@ export function ScrollArea(props: {
 					style={{
 						display: 'flex',
 						flexDirection: 'column',
-						flexShrink: 0,
-						// A vertical area wraps to its own width; the others grow with their content.
-						...(horizontal() ? {} : { width: '100%' }),
+						// Base UI's Content: it grows past the viewport to its widest unbreakable child, which is what `onLayout` reads for the horizontal thumb.
+						minWidth: 'fit-content',
 					}}
 				>
 					{props.children}

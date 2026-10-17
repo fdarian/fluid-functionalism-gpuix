@@ -4,21 +4,11 @@ Original: `registry/base/scroll-area.tsx` plus the `scroll-fade` / `scroll-divid
 
 The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track press, wheel) are tracked in `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` ("ScrollArea"); this file lists only what still looks or behaves differently.
 
-## A horizontal or both-axis scroller does not extend its scroll width from its content
-
-- **Cause:** `gpuix gap` (README "Bugs" table, scroll-area row; "Missing features", intrinsic width row).
-- **Original:** `overflow: auto` with a `w-max` child scrolls in both axes (`app/docs/scrollbars/page.tsx:393`, `:426`); `Content` keeps `min-width: fit-content`.
-- **Port:** the viewport of a horizontal or both-axis area is a flex row (`display: flex; flexDirection: row; alignItems: flex-start`, `src/components/scroll-area.tsx:238-244`) and its content box is `flexShrink: 0` (`:239-247`); a vertical area keeps `width: "100%"`.
-- **gpuix lacks:** a content-sized width. `width: "max-content"` is rejected (only grid tracks take `max-content`; `FORK.md` area E, `:739-753`: it needs a layout run with max-content available space), so there is no `min-width: fit-content` for the content wrapper. `scrollWidth` counts overflowing descendants now, but a block wrapper is still clamped to the viewport width: its `onLayout` reports the viewport's width, so the area has no content size to draw a horizontal thumb from (checked: the horizontal and both-axis demos scroll but lose the x scrollbar). Only a flex item with `flexShrink: 0` takes its content's width.
-- **Workaround:** the flex row above; callers give wide content `flexShrink: 0` or an explicit width (the demo's tiles and cells do, `src/demos/scroll-area.tsx:179`, `:190`, `:110`).
-- **Fidelity:** exact.
-- **Components it hits:** any two-axis scroller. The port's `Table` root is `width: "100%"` (`src/components/table.tsx:81`) but it does grow inside one when every cell carries a `width`, since each row's width is then the sum of its cells (the Scrollbars page's "Double overflow", `src/pages/scrollbars/demos.tsx:251-301`, `drift/scrollbars-page.md`).
-
 ## The edge fade is a mask, and masks are drawn on macOS only
 
 - **Cause:** `gpuix gap` (README "Missing features": effect groups off macOS).
 - **Original:** `.scroll-fade` / `.scroll-fade-x` are a CSS `mask-image` on the viewport whose end alphas follow a scroll timeline; browsers without scroll timelines (Firefox) get no fade (`app/globals.css:1087-1093`, `:1198-1235`).
-- **Port:** `maskImage` on the viewport, a linear gradient rebuilt from the `onScroll` offset with the same ramps (alpha 1 at the true start / end, 0 once 48px lie past the edge, `src/components/scroll-area.tsx:81-111`, `:222`). The earlier overlay gradient in the surface colour is gone, so the content itself dissolves, as on the web.
+- **Port:** `maskImage` on the viewport, a linear gradient rebuilt from the `onScroll` offset with the same ramps (alpha 1 at the true start / end, 0 once 48px lie past the edge, `src/components/scroll-area.tsx:81-111`, `:230`). The earlier overlay gradient in the surface colour is gone, so the content itself dissolves, as on the web.
 - **gpuix lacks:** a mask on Windows and Linux. `maskImage` is an effect group (`FORK.md` area D), built on macOS in zed's `gpui_apple`; the WGSL and HLSL paths are unproven. There a masked viewport paints without the fade.
 - **Workaround:** none needed on macOS.
 - **Fidelity:** exact on macOS (apart from `Math.min(fadeSize, length / 2)` at `:104`, which the CSS does not do for a viewport under 96px); no fade elsewhere. A new gradient string is built on every scroll event. A `both` area fades vertically only, as the single class does on the web.
@@ -37,7 +27,7 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 - **Cause:** `port choice` (desktop only: the audit notes gpuix has no touch input; `useTouchPrimary` is not ported).
 - **Original:** on touch-primary devices the Base UI tree is replaced by a native-overflow `div` (`role="group"`, `aria-roledescription="scroll area"`, `tabIndex=0`) and `ScrollBar` renders nothing (`registry/base/scroll-area.tsx:49-75`, `:109-112`; `registry/default/hooks/use-touch-primary.tsx`).
-- **Port:** one path, the drawn scrollbar (`src/components/scroll-area.tsx:138-268`).
+- **Port:** one path, the drawn scrollbar (`src/components/scroll-area.tsx:138-259`).
 - **Workaround:** n/a.
 - **Fidelity:** dropped (no touch path).
 - **Components it hits:** just this one.
@@ -74,7 +64,7 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 - **Cause:** the script is `not ported yet` (the component has no way to be driven, below); the size and copy are `port choice` (reason not stated).
 - **Original:** two 256 x 224 lists (`h-56 w-64`) with a scripted fake cursor that slides in, scrolls down and back and leaves, feeding pointer events to the `ScrollArea` (`app/docs/scrollbars/page.tsx:248-262`, `:262-370`). Captions: "The native scrollbar hides until you scroll, so the list looks cut off" and "ScrollArea shows its scrollbar on hover and fades the edges", each with a leading X / check mark (`:347-366`).
 - **Port:** 256 x 168, no cursor script; captions "Plain overflow: nothing says there is more below" and "ScrollArea: scrollbar on hover, faded edges" (`src/demos/scroll-area.tsx:142-165`). The plain panel is `overflowY: "scroll"`, so it shows gpuix's overlay bar, not a hidden macOS one.
-- **Why not in the demo:** `ScrollArea` takes its hover and scroll offset only from real pointer and wheel events: no `ref`, no hover prop, no controlled offset (`src/components/scroll-area.tsx:39-62`). A demo cannot feed it a scripted cursor the way the source dispatches `pointermove` and sets `scrollTop` (`page.tsx:292-318`), and a cursor drawn over the lists with the thumb left unshown would be fake.
+- **Why not in the demo:** `ScrollArea` takes its hover and scroll offset only from real pointer and wheel events: no `ref`, no hover prop, no controlled offset (`src/components/scroll-area.tsx:39-62`). A demo cannot feed it a scripted cursor the way the source dispatches `pointermove` and sets `scrollTop` (`page.tsx:283-309`), and a cursor drawn over the lists with the thumb left unshown would be fake.
 - **Workaround:** none without a component change.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
