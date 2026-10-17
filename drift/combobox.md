@@ -169,7 +169,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 ## Not ported: multiple selection, chips, `hideSelected`
 
-- **Cause:** `port choice` (single selection only, scoped out by plan; `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:567`).
+- **Cause:** `port choice` (single selection only, scoped out by plan; `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:569`).
 - **Original:** `multiple` with `ComboboxChips` (springing field height, popping chips, Backspace removes the last, ArrowLeft walks the chips), merge/split selection blocks, `hideSelected` and `ComboboxEmpty allSelected` (`combobox.tsx:152-161,552-768,899-980`, `use-merge-split.ts`).
 - **Port:** none.
 - **Fidelity:** dropped.
@@ -177,7 +177,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 ## Not ported: `onCreate` and `createLabel`
 
-- **Cause:** `port choice` (FF styling layer, not Base UI; lead decision, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:600`).
+- **Cause:** `port choice` (FF styling layer, not Base UI; lead decision, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:602`).
 - **Original:** a last "Create “query”" row when no label matches exactly, with a plus icon (`combobox.tsx:75-86,168-169,226-232,258-284,1059-1073`).
 - **Port:** none.
 - **Fidelity:** dropped.
@@ -185,7 +185,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 ## Not ported: `variant` (bordered / borderless)
 
-- **Cause:** `port choice` (FF styling layer, not Base UI; lead decision, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:601`).
+- **Cause:** `port choice` (FF styling layer, not Base UI; lead decision, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:603`).
 - **Original:** `bordered` (ring at rest) or `borderless` (ring only on hover and focus) (`combobox.tsx:380-403`).
 - **Port:** bordered only (`src/components/combobox.tsx:195-197`).
 - **Fidelity:** dropped.
@@ -193,7 +193,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 ## Not ported: `error`
 
-- **Cause:** `port choice` (FF styling layer, not Base UI; lead decision, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:601`).
+- **Cause:** `port choice` (FF styling layer, not Base UI; lead decision, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:603`).
 - **Original:** a destructive-tinted ring (`ring-destructive/50`), `aria-invalid`, and a caption below the field in `text-destructive` with `pl-3` (`combobox.tsx:508-548`).
 - **Port:** none; the root is a single 36px box with no caption slot.
 - **Fidelity:** dropped.
@@ -201,7 +201,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 ## Not ported: `size` (compact) and the ladder
 
-- **Cause:** `port choice` (FF styling layer, not Base UI; lead decision, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:601`).
+- **Cause:** `port choice` (FF styling layer, not Base UI; lead decision, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:603`).
 - **Original:** `size="compact"` or a surrounding `SizeProvider`: 28px field and rows, 12px text, 14px icons, `gap-1`, `px-2` / `px-1.5` (`combobox.tsx:488-530`, `size-context.tsx`).
 - **Port:** the default step only (`FIELD_HEIGHT` / `ROW_HEIGHT` 36, `src/components/combobox.tsx:27-28`).
 - **Fidelity:** dropped.

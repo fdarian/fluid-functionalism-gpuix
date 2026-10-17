@@ -47,7 +47,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 ## Keyboard auto-repeat of Enter
 
-- **Cause:** `port choice` (the port uses gpuix `buttonProps`; `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:187` decides to leave it).
+- **Cause:** `port choice` (the port uses gpuix `buttonProps`; `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:186` decides to leave it).
 - **Original:** a native `<button>` clicks again for each Enter key-repeat.
 - **Port:** `buttonProps` ignores repeats (`packages/solid/src/components/button.ts:54`, `!event.repeat`).
 - **Workaround:** none.

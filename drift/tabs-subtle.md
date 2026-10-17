@@ -21,7 +21,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 ## Horizontal overflow: no scroll-into-view
 
-- **Cause:** `not ported yet` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` row 144: no demo overflows; no gpuix cause).
+- **Cause:** `not ported yet` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` row 142: no demo overflows; no gpuix cause).
 - **Original:** `overflow-x-auto scrollbar-hide`, with the `-mx-1 px-1` padding giving the focus ring room, and Base UI scrolls a focused tab into view (`tabs-subtle.tsx:166-175`).
 - **Port:** the list is the same box (`overflowX: "auto"`, hidden scrollbar, `margin: -4`, `padding: 4`, `maxWidth: calc(100% + 8px)`; `src/components/tabs-subtle.tsx:159-182`), so it scrolls by wheel and the pointer in its padding or past the last tab lights the nearest tab. The tabs and pills sit in an inner box that scrolls with them, because the fluid hover measures rows against its container (`:183-193`). Arrowing to a tab outside the view does not scroll it in: measured, the focused third tab stays at x=199 in a list that ends at 104.
 - **Workaround:** none.
