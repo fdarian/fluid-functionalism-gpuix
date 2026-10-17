@@ -121,7 +121,7 @@ repeating it.
 
 ## Demo: autoplay and the playback button
 
-- **Cause:** autoplay `not ported yet` (gpuix has `IntersectionObserver`, and `src/lib/demo-kit.tsx:42` already uses it; the demo comment at `src/demos/thinking-steps.tsx:22-27` that gpuix has none is out of date). Button `port choice` (reason not stated).
+- **Cause:** autoplay `not ported yet` (gpuix has `IntersectionObserver`, and `src/lib/cull.ts:48` already uses it; the demo comment at `src/demos/thinking-steps.tsx:22-27` that gpuix has none is out of date). Button `port choice` (reason not stated).
 - **Original:** each streaming card starts paused, plays once at least half of it is visible, pauses below 10% visible (a manual pause is cleared then), and ends in a "Replay" state. The control is an icon button (pause, play, rotate-ccw, 16px) with a tooltip, in the preview frame's corner (`app/docs/thinking-steps/page.tsx:642-735`, `:654-678`, `:723`).
 - **Port:** every card starts on mount, so lower cards have finished before they are scrolled to (the scenarios note this). The control is a ghost compact `Button` reading "Pause", "Play" or "Replay", right-aligned above the steps (`src/demos/thinking-steps.tsx:28-122`, `:106-117`).
 - **Workaround:** none.

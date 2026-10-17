@@ -16,7 +16,7 @@ import {
 import { Button } from '#/components/button';
 import { Tooltip } from '#/components/tooltip';
 import { BentoTileContext, bentoFrame } from '#/home/bento-card';
-import { PageScrollerContext } from '#/lib/demo-kit';
+import { PageScrollerContext } from '#/lib/cull';
 import { PAUSE_ICON, PLAY_ICON } from '#/lib/playback-icons';
 import { PreviewPlaybackContext } from '#/lib/preview-playback';
 import { fade, shape, sizeChoice } from '#/lib/theme';

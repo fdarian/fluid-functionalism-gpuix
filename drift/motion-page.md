@@ -54,7 +54,7 @@ repeating it.
 
 - **Cause:** `port choice`.
 - **Original:** `CopyPromptButton` crossfades the copy glyph into a check (opacity, 4px blur, scale 0.6, over `spring.fast`) for 2s, with a visually hidden "Copied" read out by `aria-live`, and the brief comes from `buildInstallPrompt` (`lib/docs/copy-prompt-button.tsx:30-141`, `lib/docs/install-prompt.ts:38-95`).
-- **Port:** the button's `leadingIcon` is `copy`, then `check` for 2s (`src/lib/doc-page.tsx:184-216`), with no crossfade, blur, scale or live region (the port's `Button` takes an icon name, not a component, and gpuix has no `filter` motion target). The brief is `buildInstallPrompt({ slug: "motion", installSlug: "springs", base: "radix" })` written out in `src/pages/motion/install-prompt.ts`, not built from the page registry. It copies through `navigator.clipboard.writeText`; a failed copy logs and leaves the icon alone, as the source's does when its `execCommand` fallback fails too (minus the log).
+- **Port:** the button's `leadingIcon` is `copy`, then `check` for 2s (`src/lib/doc-page.tsx:178-210`), with no crossfade, blur, scale or live region (the port's `Button` takes an icon name, not a component, and gpuix has no `filter` motion target). The brief is `buildInstallPrompt({ slug: "motion", installSlug: "springs", base: "radix" })` written out in `src/pages/motion/install-prompt.ts`, not built from the page registry. It copies through `navigator.clipboard.writeText`; a failed copy logs and leaves the icon alone, as the source's does when its `execCommand` fallback fails too (minus the log).
 - **Fidelity:** approximated.
 - **Components it hits:** the Installation block of every docs page.
 
@@ -83,7 +83,7 @@ repeating it.
 
 - **Cause:** `port choice` (spacing); `gpuix gap` (weight).
 - **Original:** `DocSection` is `gap-4 pt-6` with a `-mb-2` title; the `h3` is `mt-8`.
-- **Port:** the same numbers as margins and padding (`src/lib/doc-page.tsx:146-179`); the page's description is tucked under `App`'s heading with `marginTop: -16`, as in `drift/introduction.md`. Titles are SemiBold 600 where the source's variable font is 550 (README variable-font rows), the `h3` is `SubHeading` on `siteType.subtitle` (14/20).
+- **Port:** the same numbers as margins and padding (`src/lib/doc-page.tsx:140-173`); the page's description is tucked under `App`'s heading with `marginTop: -16`, as in `drift/introduction.md`. Titles are SemiBold 600 where the source's variable font is 550 (README variable-font rows), the `h3` is `SubHeading` on `siteType.subtitle` (14/20).
 - **Fidelity:** exact spacing, approximated weight.
 
 ## The ⌘K row

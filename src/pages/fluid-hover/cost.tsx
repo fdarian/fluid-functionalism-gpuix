@@ -179,7 +179,7 @@ export function CostDemo() {
 	};
 
 	return (
-		<ComponentPreview testId="cost-preview" code={COST_CODE} cull>
+		<ComponentPreview testId="cost-preview" code={COST_CODE}>
 			<div
 				style={{
 					width: '100%',

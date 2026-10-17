@@ -296,12 +296,7 @@ export function ListsDemo() {
 	);
 
 	return (
-		<ComponentPreview
-			testId="lists-preview"
-			code={LISTS_CODE}
-			padding="none"
-			cull
-		>
+		<ComponentPreview testId="lists-preview" code={LISTS_CODE} padding="none">
 			<div
 				ref={(element) => {
 					canvas = element;

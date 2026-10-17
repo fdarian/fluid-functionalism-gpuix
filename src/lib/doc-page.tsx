@@ -1,10 +1,4 @@
-import {
-	buttonProps,
-	type HostElement,
-	IntersectionObserver,
-	type KeyEvent,
-	useGpuixRequired,
-} from '@gpuix/solid';
+import { buttonProps, type KeyEvent, useGpuixRequired } from '@gpuix/solid';
 import {
 	type Accessor,
 	createEffect,
@@ -18,7 +12,7 @@ import {
 import { Button, type ButtonVariant } from '#/components/button';
 import { TabsSubtle, TabsSubtleItem } from '#/components/tabs-subtle';
 import { Tooltip } from '#/components/tooltip';
-import { PageScrollerContext } from './demo-kit';
+import { createCulling } from './cull';
 import { Icon } from './icon';
 import { defineIcon, type IconRef } from './icons';
 import { openUrl } from './open-url';
@@ -366,54 +360,6 @@ function ForcedScheme(props: { scheme?: Scheme; children: JSX.Element }) {
 	);
 }
 
-const CULL_OVERSCAN = '25% 0px';
-
-/**
- * gpuix lays out and paints everything a scroller clips away, so a preview more
- * than a viewport from the page scroller hides its content with `display: none`
- * and keeps the height it had (the same rule as `DemoCard`). Call it once per
- * preview, and only where the page provides `PageScrollerContext`.
- */
-function createCulling() {
-	const scroller = useContext(PageScrollerContext);
-	if (scroller === undefined) {
-		throw new Error(
-			"A culled ComponentPreview must be inside the page's PageScrollerContext",
-		);
-	}
-	const [far, setFar] = createSignal(false);
-	const [farHeight, setFarHeight] = createSignal<number>();
-	let observed: HostElement | undefined;
-
-	createEffect(() => {
-		const root = scroller();
-		if (root === undefined || observed === undefined) return;
-		const target = observed;
-		const observer = new IntersectionObserver(
-			(entries) => {
-				const latest = entries[entries.length - 1];
-				if (latest.isIntersecting) {
-					setFar(false);
-					return;
-				}
-				setFarHeight(target.getBoundingClientRect().height);
-				setFar(true);
-			},
-			{ root, rootMargin: CULL_OVERSCAN },
-		);
-		observer.observe(target);
-		onCleanup(() => observer.disconnect());
-	});
-
-	return {
-		far,
-		farHeight,
-		ref: (element: HostElement) => {
-			observed = element;
-		},
-	};
-}
-
 const PREVIEW_PADDING = {
 	default: { x: 32, y: 48 },
 	compact: { x: 16, y: 16 },
@@ -428,9 +374,8 @@ const PREVIEW_PADDING = {
  * `scheme` draws the whole frame in that scheme (the source's `DarkPreview`);
  * `padding` is the demo's inset: `default` is `px-8 py-12`, `compact` the
  * source's `px-4 py-4`, `none` lets the demo bleed to the frame. `playback`
- * replaces the replay button with another icon button (a pause / play);
- * `cull` hides the demo while it is far from the page scroller, for pages with
- * many live previews. `cull` is read once, at mount.
+ * replaces the replay button with another icon button (a pause / play).
+ * The demo is hidden while it is far from the page scroller (`createCulling`).
  */
 export function ComponentPreview(props: {
 	testId: string;
@@ -438,7 +383,6 @@ export function ComponentPreview(props: {
 	code?: string;
 	onReplay?: () => void;
 	playback?: Playback;
-	cull?: boolean;
 	minHeight?: number;
 	scheme?: Scheme;
 	padding?: keyof typeof PREVIEW_PADDING;
@@ -446,7 +390,7 @@ export function ComponentPreview(props: {
 	hideHeader?: boolean;
 	children: JSX.Element;
 }) {
-	const culling = props.cull === true ? createCulling() : undefined;
+	const culling = createCulling();
 	const [tab, setTab] = createSignal(0);
 	const minHeight = () => props.minHeight ?? 120;
 	const padding = () => PREVIEW_PADDING[props.padding ?? 'default'];
@@ -539,13 +483,13 @@ export function ComponentPreview(props: {
 						fallback={<CodeView code={codeOf()} minHeight={minHeight()} />}
 					>
 						<div
-							ref={culling?.ref}
+							ref={culling.ref}
 							style={{
 								display: 'flex',
 								alignItems: 'center',
 								justifyContent: 'center',
 								minHeight: minHeight(),
-								height: culling?.far() ? culling.farHeight() : undefined,
+								height: culling.far() ? culling.farHeight() : undefined,
 								paddingLeft: padding().x,
 								paddingRight: padding().x,
 								paddingTop: padding().y,
@@ -553,17 +497,9 @@ export function ComponentPreview(props: {
 								backgroundColor: color.background,
 							}}
 						>
-							<Show when={culling} fallback={props.children}>
-								{(culled: Accessor<NonNullable<typeof culling>>) => (
-									<div
-										style={{
-											display: culled().far() ? 'none' : 'contents',
-										}}
-									>
-										{props.children}
-									</div>
-								)}
-							</Show>
+							<div style={{ display: culling.far() ? 'none' : 'contents' }}>
+								{props.children}
+							</div>
 						</div>
 					</Show>
 				</div>

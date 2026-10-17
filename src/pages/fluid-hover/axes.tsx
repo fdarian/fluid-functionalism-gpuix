@@ -59,7 +59,7 @@ function AxisBlock(props: {
 
 export function AxesDemo() {
 	return (
-		<ComponentPreview testId="axes-preview" code={AXES_CODE} cull>
+		<ComponentPreview testId="axes-preview" code={AXES_CODE}>
 			<div
 				style={{
 					width: '100%',

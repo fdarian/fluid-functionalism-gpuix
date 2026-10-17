@@ -1,6 +1,6 @@
 import { createReducedMotion, type HostElement } from '@gpuix/solid';
 import { createEffect, createSignal, onCleanup, useContext } from 'solid-js';
-import { PageScrollContext, PageScrollerContext } from '#/lib/demo-kit';
+import { PageScrollContext, PageScrollerContext } from '#/lib/cull';
 
 /** The line a month must cross to count as the one being read: a quarter of the way down the scroller. */
 const SPY_LINE = 0.25;

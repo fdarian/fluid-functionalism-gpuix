@@ -45,7 +45,7 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 
 - **Cause:** `port choice` (captions).
 - **Original:** the play / pause icon button is the right end of the preview header, 40px square, through `ComponentPreview`'s `playbackButton`; `useReducedMotion()` stops the script (`demos.tsx:288-292`, `:380-400`, `lib/docs/ComponentPreview.tsx:140-170`); the two captions are flex rows whose text and `<code>` runs are separate flex items 8px apart (`demos.tsx:344-376`).
-- **Port:** the pause button is the same 40px header button, through the shared `ComponentPreview`'s `playback` option (icon, tooltip and click; `src/lib/doc-page.tsx:282-320`, `src/pages/fluid-hover/plain-vs-fluid.tsx:245-258`). Reduced motion stops the script as in the source (`createReducedMotion()`, `src/pages/fluid-hover/plain-vs-fluid.tsx:109-110`); each caption is one centred `<text>` with inline runs, so the gaps around the chip are a normal space.
+- **Port:** the pause button is the same 40px header button, through the shared `ComponentPreview`'s `playback` option (icon, tooltip and click; `src/lib/doc-page.tsx:276-314`, `src/pages/fluid-hover/plain-vs-fluid.tsx:245-257`). Reduced motion stops the script as in the source (`createReducedMotion()`, `src/pages/fluid-hover/plain-vs-fluid.tsx:109-110`); each caption is one centred `<text>` with inline runs, so the gaps around the chip are a normal space.
 - **Fidelity:** approximated.
 
 ## "Show the math": the dashed rules sit in a 2px box
@@ -97,7 +97,7 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 
 - **Cause:** `gpuix gap` (every element is laid out and painted even when a scroller clips it away: README "Missing features", culling row).
 - **Original:** no such step; the browser skips what is off screen.
-- **Port:** every `ComponentPreview` on the page passes `cull`, which keeps the preview body's height and sets its content to `display: none` when more than 25% of a viewport from the page scroller, as `DemoCard` does (`src/lib/doc-page.tsx:369-415`); the 200-row list is the reason. It is an opt-in of the shared frame, off for the other pages, and it duplicates `DemoCard`'s observer instead of sharing it, to leave `src/lib/demo-kit.tsx` alone.
+- **Port:** every `ComponentPreview` hides its content while more than 25% of a viewport from the page scroller and keeps the preview body's height, through the shared `createCulling` (`src/lib/cull.ts:33-72`, used at `src/lib/doc-page.tsx:393, 492, 500`), the same as `DemoCard` and the home tiles; the 200-row list is the reason. Culling is on for every `ComponentPreview`, not only this page's.
 - **Workaround:** the above.
 - **Fidelity:** exact once painted.
 - **Components it hits:** every long page.

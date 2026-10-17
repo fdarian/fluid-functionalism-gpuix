@@ -17,7 +17,8 @@ import {
 import { Button } from '#/components/button';
 import { Select } from '#/components/select';
 import { Switch } from '#/components/switch';
-import { DemoCard, PageScrollerContext } from './demo-kit';
+import { PageScrollerContext } from './cull';
+import { DemoCard } from './demo-kit';
 import { defineIcon } from './icons';
 import { color, type as scale, motion as tween, weight } from './theme';
 

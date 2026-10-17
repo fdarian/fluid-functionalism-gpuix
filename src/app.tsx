@@ -29,8 +29,8 @@ import { BentoGrid } from '#/home/bento-grid';
 import { AppFrame, PANEL_INNER_RADIUS } from '#/lib/app-frame';
 import { kindDotColor } from '#/lib/changelog/kind-style';
 import { marks } from '#/lib/changelog/releases';
+import { PageScrollContext, PageScrollerContext } from '#/lib/cull';
 import { type Demo, type Page, SHOWCASE_SLUG } from '#/lib/demo';
-import { PageScrollContext, PageScrollerContext } from '#/lib/demo-kit';
 import { MONO } from '#/lib/doc-page';
 import {
 	ICON_LIBRARIES,

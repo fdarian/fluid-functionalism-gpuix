@@ -12,7 +12,7 @@ import {
 	useContext,
 } from 'solid-js';
 import { onFrame } from '#/lib/clock';
-import { PageScrollerContext } from '#/lib/demo-kit';
+import { PageScrollerContext } from '#/lib/cull';
 import { Code, ComponentPreview } from '#/lib/doc-page';
 import { createFluidHover } from '#/lib/fluid-hover';
 import { PAUSE_ICON, PLAY_ICON } from '#/lib/playback-icons';
@@ -244,7 +244,6 @@ export function PlainVsFluidDemo() {
 		<ComponentPreview
 			testId="plain-vs-fluid-preview"
 			code={FLUID_HOVER_CODE}
-			cull
 			playback={{
 				icon: paused() ? PLAY_ICON : PAUSE_ICON,
 				tooltip: paused() ? 'Play' : 'Pause',

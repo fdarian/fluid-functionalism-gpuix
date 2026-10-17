@@ -200,7 +200,7 @@ function MathList(props: { showMath: () => boolean }) {
 export function ShowTheMathDemo() {
 	const [showMath, setShowMath] = createSignal(true);
 	return (
-		<ComponentPreview testId="show-the-math-preview" code={MATH_CODE} cull>
+		<ComponentPreview testId="show-the-math-preview" code={MATH_CODE}>
 			<div
 				style={{
 					width: '100%',

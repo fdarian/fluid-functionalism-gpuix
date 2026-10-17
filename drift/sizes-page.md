@@ -83,7 +83,7 @@ repeating it.
 
 - **Cause:** `not ported yet` (the `S` shortcut, `drift/site.md`, "Theme: shortcut, tooltips, toasts"); `gpuix gap` for the link's underline offset ([`card.md`](card.md#the-link-variant-underlines-at-the-default-offset)).
 - **Original:** "Press `S` to toggle on the website" and an `<a href="/docs/typography" className="mx-1 text-foreground underline underline-offset-4">Typography</a>` (`app/docs/sizes/page.tsx:590-592, 616-622`).
-- **Port:** both are verbatim. `S` does nothing (the Size row in the customise card changes the step); "Typography" is the shared `Link` (`src/lib/doc-page.tsx:90-128`) with the same `mx-1` and foreground colour, and a click or Enter shows the Typography page. Its underline sits at the default offset, not 4px.
+- **Port:** both are verbatim. `S` does nothing (the Size row in the customise card changes the step); "Typography" is the shared `Link` (`src/lib/doc-page.tsx:84-122`) with the same `mx-1` and foreground colour, and a click or Enter shows the Typography page. Its underline sits at the default offset, not 4px.
 - **Fidelity:** exact text, describes more than the port does; the link is exact but for the underline offset.
 
 ## The API reference sections are left out

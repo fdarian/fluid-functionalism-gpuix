@@ -1,6 +1,7 @@
 import { buttonProps, type StyleDesc, useGpuixRequired } from '@gpuix/solid';
 import { createContext, type JSX, Show } from 'solid-js';
 import { Badge } from '#/components/badge';
+import { createCulling } from '#/lib/cull';
 import {
 	color,
 	colorFade,
@@ -60,6 +61,7 @@ export function BentoCard(props: {
 	children?: JSX.Element;
 }) {
 	const renderer = useGpuixRequired();
+	const culling = createCulling();
 	return (
 		<div
 			testId={`card-${props.slug}`}
@@ -80,9 +82,11 @@ export function BentoCard(props: {
 			}}
 		>
 			<div
+				ref={culling.ref}
 				style={{
 					flexGrow: 1,
-					flexBasis: 0,
+					// A one-column grid sizes its rows from content, which `display: none` empties.
+					flexBasis: culling.far() ? culling.farHeight() : 0,
 					minHeight: 0,
 					display: 'flex',
 					flexDirection: 'column',
@@ -94,9 +98,11 @@ export function BentoCard(props: {
 					paddingBottom: props.previewPadding.y,
 				}}
 			>
-				<BentoTileContext.Provider value={true}>
-					{props.children}
-				</BentoTileContext.Provider>
+				<div style={{ display: culling.far() ? 'none' : 'contents' }}>
+					<BentoTileContext.Provider value={true}>
+						{props.children}
+					</BentoTileContext.Provider>
+				</div>
 			</div>
 			<div
 				{...buttonProps({ onClick: props.onOpen }, renderer)}
