@@ -41,7 +41,7 @@ light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 
 - **Cause:** `gpuix gap` (README "Missing features": `text-box-trim`).
 - **Original:** both label spans carry `[text-box:trim-both_cap_alphabetic]` (`tabs.tsx:557`, `:565`).
-- **Port:** the label is centred by its 20px line box (`stable-label.tsx:52-62`). For Inter that should land within a pixel of cap-centred; not measured.
+- **Port:** the label is centred by its 20px line box (`stable-label.tsx:54-64`). For Inter that should land within a pixel of cap-centred; not measured.
 - **gpuix lacks:** `text-box-trim` / `text-box-edge`.
 - **Workaround:** flex centring in the fixed-height tab.
 - **Fidelity:** approximated.

@@ -109,12 +109,12 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 ## Label truncation
 
-- **Cause:** `not ported yet` (everywhere but the menu row).
+- **Cause:** `not ported yet` (the dotted row).
 - **Original:** the label and its ghost both `truncate`, so a long label ends in an ellipsis and never wraps the row (`sidebar-menu.tsx:864-885`).
-- **Port:** `SidebarMenuButton` passes `truncate` to `StableLabel` (an optional prop added for it: the wrapper clips, the visible text spans it and gets `textOverflow: "ellipsis"`), so a long thread title ends in an ellipsis before the badge (`src/components/sidebar.tsx`, `src/lib/stable-label.tsx`). A row with a `dot` hugs its text and does not truncate. Every other `StableLabel` user (tabs, tabs-subtle, card) still runs long text past its box.
+- **Port:** `SidebarMenuButton` passes `truncate` to `StableLabel` (an optional prop added for it: the label's grid is one `minmax(0, 1fr)` column inside a `minWidth: 0` wrapper, and both cells are `nowrap`, `overflow: hidden` and `textOverflow: "ellipsis"`), so a long thread title ends in an ellipsis before the badge (`src/components/sidebar.tsx`, `src/lib/stable-label.tsx`). A row with a `dot` hugs its text and does not truncate. Every other `StableLabel` user wraps its label inside the inline-grid like the source's `inline-grid` span, and takes `nowrap` where the source's labels never wrap (tabs, tabs-subtle).
 - **Workaround:** none.
-- **Fidelity:** exact for a plain or badged row; dropped for a dotted row and the other `StableLabel` users.
-- **Components it hits:** `StableLabel` users (tabs, tabs-subtle, card).
+- **Fidelity:** exact for a plain or badged row; dropped for a dotted row (it hugs its text and does not truncate).
+- **Components it hits:** just this one.
 
 ## Badge: `pointer-events-none`
 
@@ -250,7 +250,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `not ported yet`.
 - **Original:** `SidebarLayout` runs `SidebarProvider` with the cookie-read `defaultOpen`; `[` collapses and a `showShortcutToast("[", "Sidebar expanded" | "Sidebar collapsed")` follows a key-driven change; a `DesktopReopenTrigger` fades in at the top-left (opacity and scale 0.95 on `spring.fast`) with its own tooltip; the page's `SidebarInset` reflows (`app/components/sidebar-layout.tsx:31-90,184-198`).
-- **Port:** the sidebar is always open at 256px; no key, no toast, no trigger, no persistence (`src/app.tsx:497-655`).
+- **Port:** the sidebar is always open at 256px; no key, no toast, no trigger, no persistence (`src/app.tsx:497-666`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** app frame.
@@ -259,7 +259,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `port choice` (reason not stated; the app is a desktop window, so the breakpoint is never crossed).
 - **Original:** below 1280 the sidebar is a drawer opened by a fixed top-left `SidebarTrigger` ("Open navigation"), closing on route change, with a footer holding "Make them yours" (title, GitHub star button, settings) (`app/components/sidebar.tsx:143-160`, `sidebar-layout.tsx:93-102,184-196`).
-- **Port:** none; "Make them yours" is the right-hand `CustomizeCard` with a Theme select only (`src/app.tsx:396-495`, mounted at `:629`).
+- **Port:** none; "Make them yours" is the right-hand `CustomizeCard` with a Theme select only (`src/app.tsx:396-495`, mounted at `:640`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** app frame.

@@ -13,7 +13,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `gpuix gap`.
 - **Original:** `width` animates to `offsetWidth`, kept current by a `ResizeObserver`, with a separate `marginLeft`; framer's own `auto` misreads under a scaled ancestor, hence the measuring (`tabs-subtle.tsx:276-296`, `:396-410`). The measured number is known before the label unfolds, so the spring starts on the frame of the selection.
-- **Port:** the box holding the label animates `width` to `"auto"` with `marginLeft` 0 to 8 (6 compact) and `opacity` on the same box (`labelTarget`, `src/components/tabs-subtle.tsx:302-306`, `:371-374`); the label sits in a `flexShrink: 0` box inside it so it is not squeezed while the width is small. The tab selected at mount is born unfolded: its width is placed with a snap (`labelTransition`, `:307-310`). `onMotionComplete` calls `hover.remeasure()` (`:374`) so the pill and neighbours refresh once the label settles. Width and margin ride `spring.fast` both ways with opacity on a 0.06 tween, as the source does.
+- **Port:** the box holding the label animates `width` to `"auto"` with `marginLeft` 0 to 8 (6 compact) and `opacity` on the same box (`labelTarget`, `src/components/tabs-subtle.tsx:302-306`, `:372-375`); the label sits in a `flexShrink: 0` box inside it so it is not squeezed while the width is small. The tab selected at mount is born unfolded: its width is placed with a snap (`labelTransition`, `:307-310`). `onMotionComplete` calls `hover.remeasure()` (`:375`) so the pill and neighbours refresh once the label settles. Width and margin ride `spring.fast` both ways with opacity on a 0.06 tween, as the source does.
 - **gpuix lacks:** an `auto` width target at once: its content width needs an extra layout, so an unfold starts one frame (16 ms) after the selection. `scripts/check-tabs-subtle.tsx` reads 40, 42, 55, 72, 84 at 16 ms steps where the measured number read 40, 53, 70, 83, 89; folding is the same either way (`~/code/fdarian/gpuix/README.md:1522-1531`).
 - **Workaround:** none; the earlier port measured the label through `onLayout` and animated to that number, which had no lag but needed a signal, a second box and a first-frame `width: "auto"` style.
 - **Fidelity:** exact in the curve, the end widths and the fold; the unfold begins a frame late.
@@ -32,7 +32,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `port choice` (c3ba037 follows Base UI, whose panels mount only while selected; the source's own panel is a plain `div` that does not).
 - **Original:** every panel exists, `hidden` unless selected, `tabIndex={-1}`, `outline-none`, and with an `idPrefix` every tab has `aria-controls` (`tabs-subtle.tsx:357`, `:435-453`).
-- **Port:** only the selected panel mounts, with no `tabIndex`; `aria-controls` is set on the selected tab only (`src/components/tabs-subtle.tsx:281`, `:399-407`, `base-ui:src/tabs/tab/use-tabs-tab.ts:94-96`).
+- **Port:** only the selected panel mounts, with no `tabIndex`; `aria-controls` is set on the selected tab only (`src/components/tabs-subtle.tsx:281`, `:400-408`, `base-ui:src/tabs/tab/use-tabs-tab.ts:94-96`).
 - **Workaround:** none.
 - **Fidelity:** approximated (the accessibility tree differs for unselected tabs).
 - **Components it hits:** just this one.
@@ -60,7 +60,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `TabsSubtle`, `TabsSubtleItem` and `TabsSubtlePanel` take `className`, forward refs and spread HTML attributes (`tabs-subtle.tsx:40`, `:271-278`, `:425-436`).
-- **Port:** props are only the ones in the source's table plus `testId`; no `className`, ref or passthrough (`src/components/tabs-subtle.tsx:96-105`, `:270-275`, `:392-397`).
+- **Port:** props are only the ones in the source's table plus `testId`; no `className`, ref or passthrough (`src/components/tabs-subtle.tsx:96-105`, `:270-275`, `:393-398`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** tabs, and most of the port.

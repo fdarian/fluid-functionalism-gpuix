@@ -28,7 +28,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (the fork now has `matchMedia` with size queries and change events, `~/code/fdarian/gpuix/FORK.md:1153-1154`, `:1256-1258`; the port uses none).
 - **Original:** the site switches at `xl` (1280px): below it the rail becomes a sheet behind a fixed top-left "Open navigation" trigger that closes on navigation, the right panel is hidden, and the settings move into the sheet's footer (`app/components/sidebar-layout.tsx:184-195`, `app/components/sidebar.tsx:130-141`, `app/globals.css:1020-1043`). Content is `max-w-[680px]` with `py-20 sm:py-28`, `mt-12` below `lg` (`app/docs/layout.tsx:1-7`). The title size follows the viewport: 22px below 640px, 28px above (`app/globals.css:416, 430-435`).
-- **Port:** one fixed three-column layout at any width: sidebar, a page column of `PAGE_WIDTH` 600, a 296px customise column (`src/app.tsx:77, 542, 576, 614`); a "full" page fills the window instead (`:575-577`). The window opens at 1240x780 (`src/main.tsx:19-20`), already under the source's `xl`.
+- **Port:** one fixed three-column layout at any width: sidebar, a page column of `PAGE_WIDTH` 600, a 296px customise column (`src/app.tsx:77, 552, 586, 624`); a "full" page fills the window instead (`:575-577`). The window opens at 1240x780 (`src/main.tsx:19-20`), already under the source's `xl`.
 - **Workaround:** none.
 - **Fidelity:** dropped (no narrow layout, no sheet).
 - **Components it hits:** every page.
@@ -50,7 +50,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (arrows; the description on component pages); title weight is the shared static-font gap, see `README.md` "Variable-font axes" row.
 - **Original:** `DocPage` renders the h1 in `text-site-display` bold (`wght 700, opsz 25`) with ghost icon-button prev / next arrows on the same row (tooltips "Name ←" / "Name →", disabled at either end), then the description 8px under the title and an optional intro paragraph; page gap 32 (`lib/docs/DocPage.tsx:73-128`, `registry/default/lib/font-weight.ts:25-29`).
-- **Port:** every docs page and demo page takes `Heading`, `siteType.display` at `weight.semibold` (`src/app.tsx:80-92, 657-674`; it steps down with the Size row). The system pages put their description and optional intro under it through `DocPage` (Introduction does the same by hand), tucked up 8px by a negative margin (`src/lib/doc-page.tsx:222-272`, `:235`). A component demo page has the heading and the cards only: no description, no arrows. No docs page has arrows; only the home hero does (`src/app.tsx:317-358`). Page gap 24, top padding 40 (`src/app.tsx:582-584`) against the source's 112.
+- **Port:** every docs page and demo page takes `Heading`, `siteType.display` at `weight.semibold` (`src/app.tsx:80-92, 668-685`; it steps down with the Size row). The system pages put their description and optional intro under it through `DocPage` (Introduction does the same by hand), tucked up 8px by a negative margin (`src/lib/doc-page.tsx:222-272`, `:235`). A component demo page has the heading and the cards only: no description, no arrows. No docs page has arrows; only the home hero does (`src/app.tsx:317-358`). Page gap 24, top padding 40 (`src/app.tsx:592-594`) against the source's 112.
 - **Workaround:** none.
 - **Fidelity:** approximated (title lighter than the source's bold; arrows dropped, and the description on component pages).
 - **Components it hits:** every demo page (description, arrows); every docs page, the Changelog page included (arrows, weight).
@@ -59,7 +59,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `port choice` (the port is not a registry; reason not stated).
 - **Original:** an "Installation" heading with a note ("Base UI flavor. Switch in the right panel.", "Same source under both flavors.", or "One prompt for your coding agent: install command, usage, props.") and a copy-prompt button that writes `buildInstallPrompt(...)` to the clipboard and crossfades its icon to a check (`lib/docs/DocPage.tsx:130-170`, `lib/docs/copy-prompt-button.tsx:1-60`).
-- **Port:** the seven system pages have the block through `DocPage`: the heading, a per-page note, and a primary "Copy prompt" button that writes the page's prompt string and shows a check for 2 s (`src/lib/doc-page.tsx:184-216, 222-272`); the prompts are written out per page (`src/pages/<page>/install-prompt.ts`, or in the page file). The component demo pages have none (`src/app.tsx:657-664`).
+- **Port:** the seven system pages have the block through `DocPage`: the heading, a per-page note, and a primary "Copy prompt" button that writes the page's prompt string and shows a check for 2 s (`src/lib/doc-page.tsx:184-216, 222-272`); the prompts are written out per page (`src/pages/<page>/install-prompt.ts`, or in the page file). The component demo pages have none (`src/app.tsx:668-675`).
 - **Workaround:** none.
 - **Fidelity:** dropped (component pages).
 - **Components it hits:** every component demo page.
@@ -105,7 +105,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`.
 - **Original:** the panel is a 256px sticky column with a 16px right margin whose width, margin and opacity spring to 0 when `]` is pressed (toast "Properties panel expanded / collapsed"); a fixed top-right ghost button with the tooltip "Expand properties panel" `]` brings it back; the content scrolls in a `ScrollArea` with a scroll fade at `100svh - 2rem`; the card is `rounded-lg p-4 bg-muted` and hidden on the 404 page and on the full-screen routes (`app/components/right-panel.tsx:285-428`, `app/components/sidebar-layout.tsx:111-115, 184`).
-- **Port:** a 296px column with 16px padding, so a 264px card, in the port's `ScrollArea` with a fade, `position: sticky; top: 0` beside the page column inside the page scroller as the source's is, at the scroller's own height (measured with `onLayout`: gpuix has no `100svh`, and the source's `top-4` and `max-h` are the column's padding here); the playground rail sits under the card in the same scroller. Always visible on a docs page, hidden on a "full" page, no collapse and no key (`src/app.tsx:607-643`). The card is radius 12 on `surface2` with a 16px padding and 12px gap (`src/app.tsx:396-407`); the source's `rounded-lg` is 8px on `bg-muted`.
+- **Port:** a 296px column with 16px padding, so a 264px card, in the port's `ScrollArea` with a fade, `position: sticky; top: 0` beside the page column inside the page scroller as the source's is, at the scroller's own height (measured with `onLayout`: gpuix has no `100svh`, and the source's `top-4` and `max-h` are the column's padding here); the playground rail sits under the card in the same scroller. Always visible on a docs page, hidden on a "full" page, no collapse and no key (`src/app.tsx:617-650`). The card is radius 12 on `surface2` with a 16px padding and 12px gap (`src/app.tsx:396-407`); the source's `rounded-lg` is 8px on `bg-muted`.
 - **Workaround:** none.
 - **Fidelity:** approximated (card), dropped (collapse).
 - **Components it hits:** just the shell.
@@ -123,7 +123,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `port choice` (a page export in place of a portal and a pathname test; same result).
 - **Original:** the right panel hides "Make them yours" on `/changelog` (`showSettings = usePathname() !== "/changelog"`), and the page portals its Releases card into the rail's node (`useRightRailNode`), rendering nothing where the rail is `display: none` (`app/components/right-panel.tsx:328-330`, `app/changelog/changelog-view.tsx:538-552`, `lib/right-rail.tsx`).
-- **Port:** a "docs" page may export `Rail`, and `App` renders it in the right column in place of `CustomizeCard`; a "full" page has no right column, so exporting one there throws (`PageModule.Rail`, `src/lib/demo.ts:146,192-199`; `src/app.tsx:628-634`). The page and its rail are siblings in `App`, so they share state through the page's own module: the Changelog's month in view and its jump are module signals only the scroll-spy writes (`src/pages/changelog/release-spy.ts:16-27`). The page scroller's `onScroll` reaches the page through `PageScrollContext`, a subscribe function `App` provides (`src/app.tsx:514-518,588`, `src/lib/demo-kit.tsx:18`). The playground rail's slot (`RightRailTarget`) stays mounted under the page's rail. With no Theme, Radius, Size or Icons select on the page, `scripts/screenshots.tsx` flips the theme directly for a page with a `Rail` (`scripts/screenshots.tsx:251-256`).
+- **Port:** a "docs" page may export `Rail`, and `App` renders it in the right column in place of `CustomizeCard`; a "full" page has no right column, so exporting one there throws (`PageModule.Rail`, `src/lib/demo.ts:146,192-199`; `src/app.tsx:638-644`). The page and its rail are siblings in `App`, so they share state through the page's own module: the Changelog's month in view and its jump are module signals only the scroll-spy writes (`src/pages/changelog/release-spy.ts:16-27`). The page scroller's `onScroll` reaches the page through `PageScrollContext`, a subscribe function `App` provides (`src/app.tsx:514-518,598`, `src/lib/demo-kit.tsx:18`). The playground rail's slot (`RightRailTarget`) stays mounted under the page's rail. With no Theme, Radius, Size or Icons select on the page, `scripts/screenshots.tsx` flips the theme directly for a page with a `Rail` (`scripts/screenshots.tsx:251-256`).
 - **Workaround:** n/a.
 - **Fidelity:** exact (the card alone in the rail, as on the source's `/changelog`).
 - **Components it hits:** the Changelog page.
@@ -206,7 +206,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (unverified live; read from code only).
 - **Original:** `scrollbar-gutter: stable`, `overscroll-behavior-y: none`, a thin overlay scrollbar ramp tinted by `--overlay`, grayscale font smoothing, balanced headings, inline-code chips, and a focus-ring fallback for natively focusable elements (`app/globals.css:296-345, 326-332, 896-945, 868-891`).
-- **Port:** the page column is a plain `overflowY: "scroll"` div (`src/app.tsx:552-563`) without the scrollbar styling. The docs pages have the inline-code chip and prose through `Code` and `Prose` (`src/lib/doc-page.tsx:44-87`); the shell has no prose.
+- **Port:** the page column is a plain `overflowY: "scroll"` div (`src/app.tsx:561-574`) without the scrollbar styling. The docs pages have the inline-code chip and prose through `Code` and `Prose` (`src/lib/doc-page.tsx:44-87`); the shell has no prose.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** every page.
@@ -224,7 +224,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`.
 - **Original:** a "System" group of the seven system pages and Components rows with the description "New" or "Updated" (New covers the latest release's New entries and the pages listed ahead of the next release, Updated its Updated and Breaking ones) and keywords of the slug plus every word of the component's description (`app/components/site-command-menu.tsx:194-225`, `lib/changelog/marks.tsx`, `lib/changelog/load.ts` `latestMarks`). The same marks badge the Showcase tiles, /demo and /compare (`app/components/bento-grid.tsx:105-127`).
-- **Port:** the marks exist (`latestMarks`, `AHEAD_OF_RELEASE`, `src/lib/changelog/load.ts`) and only the nav reads them, for its New dots (`src/lib/changelog/releases.ts`, `src/app.tsx:192-243`). The System group is ported with the slug and description words as keywords and no icon (`src/lib/site-command-menu.tsx:143`, each system page's `menuKeywords`), but no "New" or "Updated" description. The Components group is the discovered demos with no description and no keywords, so the filter matches the title only (`:143-145`). The Showcase tiles' New badge is a fixed `isNew` per tile (`src/home/bento-grid.tsx:32,36,79`: CommandMenu, Combobox, CarouselDots) rather than the marks, so Banner, listed ahead of its release, has none. The port has 32 demos where the source lists 28 components; the extra four (file-thumbnail, mobile-drawer, queued-stack, scroll-area) are menu rows only (`listed: "menu"`).
+- **Port:** the marks exist (`latestMarks`, `AHEAD_OF_RELEASE`, `src/lib/changelog/load.ts`) and only the nav reads them, for its New dots (`src/lib/changelog/releases.ts`, `src/app.tsx:192-243`). The System group is ported with the slug and description words as keywords and no icon (`src/lib/site-command-menu.tsx:143`, each system page's `menuKeywords`), but no "New" or "Updated" description. The Components group is the discovered demos with no description and no keywords, so the filter matches the title only (`:143-145`). The Showcase tiles' New badge is a fixed `isNew` per tile (`src/home/bento-grid.tsx:31,35,78`: CommandMenu, Combobox, CarouselDots) rather than the marks, so Banner, listed ahead of its release, has none. The port has 32 demos where the source lists 28 components; the extra four (file-thumbnail, mobile-drawer, queued-stack, scroll-area) are menu rows only (`listed: "menu"`).
 - **Workaround:** none.
 - **Fidelity:** dropped (the menu's badges and the Components keywords); approximated (the Showcase badges).
 - **Components it hits:** just the site menu and the Showcase.
@@ -370,7 +370,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `port choice` (the window has no URL bar, history or back button).
 - **Original:** `/compare`, `/concepts` and `/slider` are unlisted routes: typed or linked, and `/compare` is a menu row; `/concepts` and `/compare` are full-screen (`app/components/sidebar-layout.tsx:111-115`). The four concept pages are linked from the concepts index and its nav.
-- **Port:** Compare, Concepts and Audio Mixer are Pages rows in the site menu (`listed: "menu"`); the concept pages are `listed: "none"`, reachable only from the index and the concept nav (`src/pages/concepts.tsx:43`, `src/pages/concepts/frame.tsx:75-96`). A "full" page (Compare, the index, the four concepts) drops the sidebar and the customise column (`src/app.tsx:542, 607`), so the way out is its own Home link, ⌘K, or on Compare the footer links; there is no back button. Audio Mixer is a "docs" page, so it keeps the sidebar and the right column.
+- **Port:** Compare, Concepts and Audio Mixer are Pages rows in the site menu (`listed: "menu"`); the concept pages are `listed: "none"`, reachable only from the index and the concept nav (`src/pages/concepts.tsx:43`, `src/pages/concepts/frame.tsx:75-96`). A "full" page (Compare, the index, the four concepts) drops the sidebar and the customise column (`src/app.tsx:552, 617`), so the way out is its own Home link, ⌘K, or on Compare the footer links; there is no back button. Audio Mixer is a "docs" page, so it keeps the sidebar and the right column.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** none directly.
@@ -379,7 +379,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (a desktop app has no unknown route, so it has no use today).
 - **Original:** `not-found.tsx`: a large "404" whose zero springs into line on hover or focus, "A little out of place.", "We couldn't find this page." and a tertiary "Back to showcase" button; the right panel is hidden on it (`app/not-found.tsx:1-74`, `app/components/sidebar-layout.tsx:184`).
-- **Port:** `App` shows nothing for an unknown page: the `Switch` has no fallback (`src/app.tsx:590-600`).
+- **Port:** `App` shows nothing for an unknown page: the `Switch` has no fallback (`src/app.tsx:600-610`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** none.

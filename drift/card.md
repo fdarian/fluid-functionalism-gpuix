@@ -72,7 +72,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 ## Titles never wrap and cannot truncate
 
-- **Cause:** `port choice` (reason not stated; the visible title is absolutely positioned over the invisible semibold copy, which needs both on one line).
+- **Cause:** `port choice` (reason not stated; the visible title is absolutely positioned over the invisible semibold copy, which needs both on one line. `CardTitle` does not use `StableLabel`, whose inline-grid wraps like the source's).
 - **Original:** the title wraps normally; a consumer's `truncate` ellipsizes it (`:569-609`).
 - **Port:** both copies are `whiteSpace: "nowrap"` (`src/components/card.tsx:630`, `:641`); a long title is clipped by a tile or runs past the column. The parts take no `className`, so there is no `truncate`. gpuix has `textOverflow: "ellipsis"` (`host.ts:757`).
 - **Workaround:** none.
@@ -87,7 +87,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **gpuix lacks:** variable-font axes: fonts render only their default instance, so there is one static file per weight and nothing to interpolate (`~/code/fdarian/gpuix/README.md:757`, `:6388`; `src/lib/fonts.ts`). README "gpuix gaps", card and table row.
 - **Workaround:** static cuts.
 - **Fidelity:** approximated (no easing, 600 for 550).
-- **Components it hits:** every `StableLabel` (`src/lib/stable-label.tsx`): tabs, tabs-subtle, sidebar, menu rows; also `CardFeature`'s title (semibold 550 in the source, `:886`).
+- **Components it hits:** every `StableLabel` (`src/lib/stable-label.tsx`): tabs, tabs-subtle, sidebar, menu rows; `CardTitle` does the same with its own pair of copies (above); also `CardFeature`'s title (semibold 550 in the source, `:886`).
 
 ## CSS transforms (the external-link arrow)
 
