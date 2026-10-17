@@ -9,7 +9,7 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:3
 - **Cause:** `gpuix gap`. Shared: CSS transforms ([README, Missing features, first row](../README.md)).
 - **Original:** each card is a `motion.div` animating `y`, `scale` and `opacity` with `transform-origin: bottom center`; drag moves `y`, a lifted card is `scale: 1.03`, an entering card starts at `y: 14, scale: .96` (`:270-280`, `:315-325`). The pile's recoil is `stackBump.set({ y: -7 })` then a spring to 0 (`:140-146`).
 - **Port:** a card is absolutely positioned and `y` is its `bottom` offset. Scaling about the bottom centre is the same card with its left and right insets widened by `(1 - scale) * cardWidth / 2` and its height multiplied, which needs the stack's painted width (`box` at `queued-stack.tsx:211`, `target` at `:221`, the width from a `ResizeObserver` at `:148`). The recoil is `top: -bump, bottom: bump` on a wrapper (`:270-281`): it jumps with `tween.snap`, and 16 ms later springs back on the source's transition (`:195-208`).
-- **gpuix lacks:** translate and scale (`~/code/fdarian/gpuix/FORK.md:1194-1204`).
+- **gpuix lacks:** translate and scale (`~/code/fdarian/gpuix/FORK.md:1198-1209`).
 - **Workaround:** the box maths above.
 - **Fidelity:** approximated. A receding card's box shrinks but its text and thumbnails do not, which only shows where a back card's content pokes into its strip: the card is 44px, a back card shows the top 9.8px, and a 28px thumbnail (26.6px scaled in the source) sits about 7px from its top, so it pokes by a couple of pixels in the collapsed pile. Five properties animate per card instead of one transform, and each re-lays out.
 - **Components it hits:** chat-message (entrance), ask-user-questions, any stacked or scaled surface.

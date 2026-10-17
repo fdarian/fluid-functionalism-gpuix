@@ -103,7 +103,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Cause:** `gpuix gap`.
 - **Original:** the link button's arrow is an arrow-right with `-rotate-45` (`:958`).
 - **Port:** the arrow-up-right glyph is drawn instead (`src/components/card.tsx:40`, `:1012-1021`).
-- **gpuix lacks:** `rotate` (no `transform`; `~/code/fdarian/gpuix/FORK.md:1194-1205`). README "gpuix gaps", CSS transforms row.
+- **gpuix lacks:** `rotate` (no `transform`; `~/code/fdarian/gpuix/FORK.md:1198-1209`). README "gpuix gaps", CSS transforms row.
 - **Workaround:** the glyph swap.
 - **Fidelity:** exact for the resting pose, no rotation tween.
 - **Components it hits:** any rotated glyph.
@@ -113,7 +113,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Cause:** `gpuix gap`.
 - **Original:** `FluidHoverHighlight` moves with `x` / `y` transforms on the compositor (`registry/default/fluid-hover-highlight.tsx:72-76`, `:120-133`).
 - **Port:** `FluidHighlight` animates `top`, `left`, `width` and `height` (`src/lib/fluid-highlight.tsx:10-17`, `:92-99`), re-laying out per frame.
-- **gpuix lacks:** transforms (`FORK.md:1194-1205`); see the CSS transforms row in README.
+- **gpuix lacks:** transforms (`FORK.md:1198-1209`); see the CSS transforms row in README.
 - **Workaround:** layout props.
 - **Fidelity:** approximated (same path and spring, more work per frame).
 - **Components it hits:** every fluid hover list.

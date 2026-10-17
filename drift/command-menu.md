@@ -59,15 +59,15 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
-## IME composition is invisible to JS
+## IME composition is not read
 
-- **Cause:** `gpuix gap`.
+- **Cause:** `not ported yet` on macOS, `gpuix gap` on Windows and Linux.
 - **Original:** keys inside an IME composition belong to the composer: Enter commits a candidate, arrows pick one (`:776`).
 - **Port:** the handler acts on every key (`src/components/command-menu.tsx:559-616`).
-- **gpuix lacks:** `isComposing` and `composition*` events (`~/code/fdarian/gpuix/FORK.md:493-496, 559-563`); see `drift/combobox.md`, README "Missing features" row "IME composition".
+- **gpuix lacks:** on Windows and Linux (TSF or IMM32, ibus), `isComposing` is always `false` and no `Process` keydown or `composition*` event is fired, and the composition keys go to the input method before GPUI sees them (`~/code/fdarian/gpuix/FORK.md:564-567`). macOS reports all three: `isComposing` on key events, a `Process` keydown for a key the input method takes first, and `compositionstart` / `compositionupdate` / `compositionend` (`FORK.md:496-499`; gpuix `README.md:3794-3820`). See `drift/combobox.md` and README "Missing features", row "IME composition". On macOS the handler could return early on `event.isComposing`; as it is, the key an input method takes first is a `Process` keydown that no `case` matches (`onKeyDown` switches on `event.key`).
 - **Workaround:** none; untested.
 - **Fidelity:** approximated.
-- **Components it hits:** combobox, dropdown-search, input-group, input-message.
+- **Components it hits:** combobox, input-message.
 
 ## A click between rows is not routed to the highlighted row
 
@@ -114,7 +114,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 - **Cause:** `gpuix gap` (the scale).
 - **Original:** the backdrop fades on `spring.slow` (240 ms, exit 160 ms tween); the panel springs from `scale: 0.97` with opacity on `spring.slow` (`registry/base/dialog.tsx:228-239`, `:286-293`).
 - **Port:** the scrim and the panel both use `slow` in / `slowExit` out (240 / 160 ms), as in the source; the panel slides 4 px down in place of the scale (`src/components/command-menu.tsx:1346-1431`). The layer unmounts when the scrim's exit completes (`onMotionComplete`, with a 260 ms timer for an exit that never animates) (`:1343`, `:1390`).
-- **gpuix lacks:** `scale` (no transforms, `~/code/fdarian/gpuix/FORK.md:1194-1205`).
+- **gpuix lacks:** `scale` (no transforms, `~/code/fdarian/gpuix/FORK.md:1198-1209`).
 - **Workaround:** the 4 px slide stands in for the scale.
 - **Fidelity:** approximated (no scale).
 - **Components it hits:** every popup that scales in.

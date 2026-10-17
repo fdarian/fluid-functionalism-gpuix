@@ -66,8 +66,8 @@ bun scripts/live-check.tsx  # the same flow against the real window, via gpuix's
 
 `scripts/screenshots.tsx <slug>` takes a file name from `src/demos/` or `src/pages/` (or `showcase`) and writes `initial.png`,
 whatever the page's `scenarios` capture, `pill.png` (Radius on Pill), `compact.png` (Size on Compact) and `light.png`
-(the page after flipping the theme through the real control). The light step currently fails on pages that have a
-right column (the click on the theme select throws, see the `DismissableLayer` row under Bugs); every capture before it is written. It runs on
+(the page after flipping the theme through the real control; a full-layout page or one with its own rail has no theme
+select, so the script sets Light in code). It runs on
 gpuix's offscreen test renderer, so it needs the native addon but no window. `live-check.tsx` drives the real window
 through the automation client and writes to `screenshots/live/`.
 
@@ -251,7 +251,7 @@ offer it. A count is given only where the code shows it.
 | typography (the Balanced and Pretty demos), chat-message (the user bubble), fluid-hover (the callout copy) | `text-wrap: balance` and `pretty`: lines break greedily | The copy wraps natively; the fluid-hover callouts are broken by hand where the source's balance breaks them |
 | badge | `text-box-trim` / `text-box-edge`: a label is centred by its full line box | Flex centring in a fixed-height pill (about a pixel of drift) |
 | card, table (every `StableLabel`: tabs, tabs-subtle, sidebar, menu rows) | Variable-font axes (`fontVariationSettings`): only a font's default instance renders, so the weight cannot ease between 400 and 550 | Static cuts; the weight switches at once, SemiBold 600 for 550 |
-| combobox (command-menu, dropdown-search, input-group, input-message) | IME composition on Windows and Linux: gpuix reports `isComposing` `false` and fires no `Process` keydown or `composition*` events there, and the composition keys go to the input method before GPUI sees them (FORK.md:564-567). macOS reports all three (FORK.md:496-499), but this port reads none of them: no Enter or arrow guard during a composition | none; IME input is untested |
+| combobox (command-menu, input-message) | IME composition on Windows and Linux: gpuix reports `isComposing` `false` and fires no `Process` keydown or `composition*` events there, and the composition keys go to the input method before GPUI sees them (FORK.md:564-567). macOS reports all three (FORK.md:496-499), but this port reads none of them: the source's `isComposing` guards on Enter and arrows (command-menu, input-message, Base UI's combobox input) have no counterpart | none; IME input is untested. On macOS a key the input method takes first is a `Process` keydown that no `Enter` or arrow case matches |
 | button (every `buttonProps` button) | A keyboard `:active` state: a held Space does not play the pressed look | none; Space still activates on key-up |
 | thinking-steps | `filter` in `motion` targets: `blur()` paints as a static style but cannot be tweened | Opacity only |
 | color-picker | A JS-visible CSS colour resolver: named colours and `color-mix()` resolve natively for styles only | `parseColor` reads hex, `rgb(a)`, `hsl(a)` and `oklch`; a name is rejected |

@@ -60,11 +60,10 @@ repeating it.
 
 ## Typing and the two cards do not share a key scope the way the DOM does
 
-- **Cause:** `port choice`: a gpuix key event names its target by id only; it carries no tag name, `role` or `closest()`.
+- **Cause:** `not ported yet`: a key event's `target` is the element a `ref` gives (a `HostElement` with `type`, `props` and `parent`; gpuix `FORK.md:393-396`), so the source's `closest()` is a walk up `parent` reading `type` and `props.get("role")` (checked on the test renderer: the target of a keydown on a `role="tab"` div has `type` `div`, `props.get("role")` `tab` and a `parent`). The port still marks the regions by hand.
 - **Original:** the window `keydown` handler skips a target in an `INPUT`, `TEXTAREA`, `SELECT`, a content-editable, or inside `[role=slider]`, `[role=tablist]`, `[role=radiogroup]`, `[role=listbox]`, `[role=menu]`, `[role=menubar]` (`app/compare/page.tsx:101-130`).
 - **Port:** `ArrowKeys` (`src/pages/compare/arrow-keys.tsx`) wraps both previews of the slides whose widget is one of those: dropdown (menu), tabs, radio-group, slider, input-group, tabs-subtle (`KEEPS_ARROWS`, `src/pages/compare.tsx:46-53`). It counts `focusin` / `focusout` inside it, and the page's window handler does nothing while the count is above zero. The other four slides (checkbox-group, accordion, switch, table) step the slide with focus on their controls, as the source does. Left / Up go back and Right / Down go forward, with Meta, Ctrl, Alt and Shift left alone. `defaultPrevented` is not checked, as in the source, so Up / Down on an accordion trigger move focus and step the slide.
-- **gpuix lacks:** the target's role or an ancestor query on `DomEvent` (`packages/native/js/events/dispatch.ts:80-98`: `target` is an element id).
-- **Workaround:** the wrapper regions.
+- **Workaround:** the wrapper regions; the page's window handler could skip a `target` by that walk instead.
 - **Fidelity:** approximated (same outcome for these ten slides; a widget added later needs wrapping by hand).
 
 ## The slide is not in the URL

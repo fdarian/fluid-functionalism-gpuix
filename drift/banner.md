@@ -13,7 +13,7 @@ repeating it.
 - **Cause:** `gpuix gap`.
 - **Original:** inline, the banner inside its row scales from 0.4 to 1 on appear (slow spring, a fast tier after the row) and shrinks from 1 to 0.6 from its top edge on dismiss, `transformOrigin: "top"` (`banner.tsx:177-189`, `:245`, `:298`, `:323-332`, `:356`).
 - **Port:** the banner only fades (`banner.tsx:341-380`).
-- **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:1194-1205`; README "gpuix gaps", CSS transforms row).
+- **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:1198-1209`; README "gpuix gaps", CSS transforms row).
 - **Workaround:** none; the row's height tween and the fade carry the motion.
 - **Fidelity:** approximated (height and fade, no scale).
 - **Components it hits:** any enter or exit that scales.
@@ -23,7 +23,7 @@ repeating it.
 - **Cause:** `gpuix gap`.
 - **Original:** a fixed bar slides with `y: (row - 1) * 100%` while the row opens or closes, opacity following the row (`banner.tsx:236-238`, `:257`, `:290-296`).
 - **Port:** `top` from 0 to minus the bar's height and back, the same springs and curve (the bar's `motion.div` in `src/components/banner.tsx`). The row's height animates between 0 and `auto`; the bar is not bottom-aligned in the row, because with `justifyContent: "flex-end"` the row's `auto` target follows the bar's offset and the row overshoots (measured on the demo: about 15px).
-- **gpuix lacks:** translate (README CSS transforms row), and `%` for insets in `motion` (`FORK.md:925-926`).
+- **gpuix lacks:** translate (README CSS transforms row): a `%` inset in `motion` now works, but it is a share of the parent's content box (`FORK.md:1237-1243`), which here is the row, so `top: "-100%"` is not the source's `y: -100%` of the bar's own height, and the row is the thing that animates between 0 and `auto`.
 - **Workaround:** the bar's measured height in pixels stands in for `100%`, read as the exit starts. A banner that is created closed has not been seen yet, so its first entrance fades in without sliding; later ones slide.
 - **Fidelity:** exact for the visible result except that first entrance; `top` re-lays out each frame.
 - **Components it hits:** thinking-indicator, queued-stack, mobile-drawer.

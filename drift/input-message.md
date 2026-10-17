@@ -127,9 +127,16 @@ repeating it.
 - **Port:** `InputMessageProps` has neither (`input-message.tsx:587-630`); the textarea's `aria-label` is fixed "Message" (`:1051`). `testId` is added.
 - **Fidelity:** dropped.
 
-## IME composition, touch, static weights
+## IME composition
 
-- **Cause:** `gpuix gap`. One line each: the `isComposing` early return (`input-message.tsx:790`; README "Missing features", IME row, which lists input-message); the touch-only always-visible × (`useIsTouch`, `:77-87,367-368`; README, the `matchMedia` input-device row); the variable-font weight (`:340,432,1218`; README variable-font row).
+- **Cause:** `not ported yet` on macOS, `gpuix gap` on Windows and Linux.
+- **Original:** the Enter handler returns early while `isComposing` (`input-message.tsx:790`).
+- **Port:** no early return; the handler acts on every key. macOS reports `isComposing` and Windows and Linux do not (`~/code/fdarian/gpuix/FORK.md:496-499`, `:564-567`; README "Missing features", IME row, which lists input-message).
+- **Fidelity:** approximated (unverified for composed input).
+
+## Touch, static weights
+
+- **Cause:** `gpuix gap`. One line each: the touch-only always-visible × (`useIsTouch`, `:77-87,367-368`; README, the `matchMedia` input-device row); the variable-font weight (`:340,432,1218`; README variable-font row).
 
 ## Demo page
 

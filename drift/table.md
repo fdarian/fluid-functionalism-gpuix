@@ -21,7 +21,7 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 - **Cause:** `gpuix gap`.
 - **Original:** header rows set `fontVariationSettings` to `fontWeights.semibold` (`wght 550, opsz 18`) and body rows to `fontWeights.normal` (`wght 400, opsz 14`) on the `<tr>` (`table.tsx:158-165`).
 - **Port:** `fontWeight: weight.semibold` (600) for header cells, 400 for body, on the cell `<text>` (`table.tsx:178`, `src/lib/theme.ts:375`).
-- **gpuix lacks:** variable-font axes (`StyleDesc` has `fontWeight` and `fontFeatureSettings`, no `fontVariationSettings`); `README.md:254`, `:334`.
+- **gpuix lacks:** variable-font axes (`StyleDesc` has `fontWeight` and `fontFeatureSettings`, no `fontVariationSettings`); `README.md:253`, `:328`.
 - **Workaround:** Inter's static cuts only; no `opsz`.
 - **Fidelity:** approximated (600 for 550, no optical size).
 - **Components it hits:** every component using `font-variation-settings`.

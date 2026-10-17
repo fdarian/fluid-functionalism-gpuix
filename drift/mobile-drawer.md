@@ -9,7 +9,7 @@ Matches the source: 256px wide, top / left / bottom edges, `aria-label="Navigati
 - **Cause:** `gpuix gap`. [README "Missing features": CSS transforms](../README.md#missing-features).
 - **Original:** `initial={{ x: "-100%" }}` and `animate={{ x: open ? 0 : "-100%" }}` on the compositor (`registry/base/mobile-drawer.tsx:149-154`).
 - **Port:** `position: absolute` in the full-window layer, `left` between `-DRAWER_WIDTH` (-256) and `0` (`src/components/mobile-drawer.tsx:78-105`), on `tween.moderate` in and `tween.moderateExit` out (`:81`). The unmount waits for `onMotionComplete`, with the 220ms timer as the fallback (`:17-18`, `:40`, `:82-84`).
-- **gpuix lacks:** translate as a style (`~/code/fdarian/gpuix/FORK.md:1194-1205`); `motion` can animate `left`, which re-lays the panel out each frame.
+- **gpuix lacks:** translate as a style (`~/code/fdarian/gpuix/FORK.md:1198-1209`); `motion` can animate `left`, which re-lays the panel out each frame.
 - **Workaround:** `left`. The content is mounted with the panel and rides along as it slides, as on the web; fluid hover's rows measured correctly mid-slide (the earlier note says it was probed with the motion clock stepped 25ms at a time; not rechecked).
 - **Fidelity:** approximated (same motion, layout cost per frame).
 - **Components it hits:** any sliding panel.

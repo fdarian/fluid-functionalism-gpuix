@@ -6,15 +6,15 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by row in `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` ("Combobox"); this file covers what looks or behaves differently. Single selection only. Dark mode: the port reads the same palette (`src/lib/theme.ts`), and no dark-only drift was found beyond the shadow and substrate entries below.
 
-## IME composition is invisible to JS
+## IME composition is not read
 
-- **Cause:** `gpuix gap`.
+- **Cause:** `not ported yet` on macOS, `gpuix gap` on Windows and Linux.
 - **Original:** Base UI's `Combobox.Input` handles composition (`compositionstart` / `compositionend`, `which === 229` on keydown), so Enter or arrows during composition do not pick or move (Base UI `combobox/input/ComboboxInput.tsx:100-101,223-233,~413`).
 - **Port:** the field filters on every `onChange` (`base-ui:src/combobox/root/use-combobox-root.ts:282-295`); Enter and arrows are handled without an IME guard (`:235-281`).
-- **gpuix lacks:** composition events and a truthful `isComposing`: a key that feeds an IME is consumed by the platform before GPUI sees it, so `keydown` cannot cancel it, `isComposing` is always `false` and no `composition*` events exist (`~/code/fdarian/gpuix/FORK.md:493-496, 559-563`).
-- **Workaround:** none; IME input is untested.
+- **gpuix lacks:** on Windows and Linux (TSF or IMM32, ibus), `isComposing` is always `false` and no `Process` keydown or `composition*` event is fired, and the composition keys go to the input method before GPUI sees them (`~/code/fdarian/gpuix/FORK.md:564-567`). macOS reports all three: `isComposing` on key events, a `Process` keydown for a key the input method takes first, and `compositionstart` / `compositionupdate` / `compositionend` (`FORK.md:496-499`; gpuix `README.md:3794-3820`). A key an input method consumes still cannot be cancelled by `keydown` on macOS, but `isComposing` tells the handler to stand aside.
+- **Workaround:** none; IME input is untested. On macOS the key an input method takes first is a `Process` keydown, which no `Enter` or arrow case matches, so a composition probably does not pick or move (reasoned from the handlers, not run against a real input method); the explicit `event.isComposing` guard would go into the primitive in `base-ui-solid-gpuix`.
 - **Fidelity:** approximated (unverified for composed input).
-- **Components it hits:** command-menu, dropdown-search, input-group, input-message: any text field that reacts to Enter or arrows.
+- **Components it hits:** command-menu and input-message, which have the source's own guard (`command-menu.tsx:776`, `input-message.tsx:790`).
 
 ## No `<input type="hidden">`
 
@@ -41,7 +41,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Cause:** `gpuix gap`.
 - **Original:** the popup enters from `opacity 0, y -4 (4 when flipped above), scaleY 0.96` with `origin-top` (`origin-bottom` above) on `spring.fast`, exits on `spring.fast.exit` (`combobox.tsx:811-824`, `popup.ts:16-23`).
 - **Port:** `PopupSurface` slides the card 4px from the reported side on `top` and fades it, no scale (`src/lib/popup.tsx:43`, `:63-71`).
-- **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:1194-1205`; README "Missing features", CSS transforms row).
+- **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:1198-1209`; README "Missing features", CSS transforms row).
 - **Workaround:** the slide.
 - **Fidelity:** approximated.
 - **Components it hits:** select, dropdown, color-picker, tooltip, dialog.

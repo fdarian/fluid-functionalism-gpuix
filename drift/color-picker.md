@@ -27,7 +27,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Cause:** `gpuix gap`.
 - **Original:** the popover and the format menu enter with `scaleY: 0.96` from the top corner and slide `y: -4` whichever side they open on (`color-picker.tsx:1005-1013`, `:2372-2382`), and the trigger's chevron rotates 180 degrees over 150ms (`:989-996`).
 - **Port:** the popup slides 4px from the side it opened on (down from above, up from below) and fades (`src/components/color-picker.tsx:705-758`, `src/lib/popup.tsx:42-92`); the chevron is swapped for a `chevron-up` icon while open, at once (`src/components/color-picker.tsx:109`, `:931`).
-- **gpuix lacks:** `scale` and `rotate` (no `transform`; `~/code/fdarian/gpuix/FORK.md:876-887`).
+- **gpuix lacks:** `scale` and `rotate` (no `transform`; `~/code/fdarian/gpuix/FORK.md:1198-1209`).
 - **Workaround:** the slide and the icon swap above. README rows: "CSS transforms".
 - **Fidelity:** approximated.
 - **Components it hits:** every popup (select, combobox, dropdown share the same slide in `src/lib/popup.tsx:42-92`) and every rotating chevron.

@@ -13,7 +13,7 @@ repeating it.
 - **Cause:** `gpuix gap`.
 - **Original:** `motion.span animate={{ rotate: open ? 90 : 0 }}` with `spring.fast` (0.08s, no bounce) (`thinking-steps.tsx:112-125`).
 - **Port:** `Chevron` rotates the path's own points (`chevronPath`) from a 100ms ease-out on the shared frame clock and draws them through `Icon easeStroke` (`thinking-steps.tsx:63-114`). With reduced motion the angle is set at once (`:86-94`): the source's `rotate` is a transform Motion jumps, and this JS tween is not one of gpuix's, so `MotionConfig` does not reach it.
-- **gpuix lacks:** rotation (README "gpuix gaps", CSS transforms row; no `transform`, `~/code/fdarian/gpuix/FORK.md:1194`). `motion.path` animates `d`, `strokeWidth` and the other shape attributes but not a `transform` (`packages/native/js/host.ts:292-322`).
+- **gpuix lacks:** rotation (README "gpuix gaps", CSS transforms row; no `transform`, `~/code/fdarian/gpuix/FORK.md:1198-1209`). `motion.path` animates `d`, `strokeWidth` and the other shape attributes but not a `transform` (`packages/native/js/host.ts:292-322`).
 - **Workaround:** the points are rotated in JS, whole degrees, and redrawn as shapes (no SVG source per angle). The effect reads `angle()` inside `createEffect` (`:95`), so by reading it re-subscribes after every step and restarts the tween from the current angle; the move is then closer to an exponential ease-out than to a 100ms cubic, with a final snap when the original 100ms elapses.
 - **Fidelity:** approximated. A tween rather than the critically damped spring, driven from JS.
 - **Components it hits:** any disclosure chevron (accordion, card, color-picker); file-thumbnail's spinner uses the same SVG-rewrite technique.

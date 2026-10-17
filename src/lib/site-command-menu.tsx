@@ -53,9 +53,9 @@ export type SiteMenu = {
 /**
  * FF's `matchesShortcut` for "mod+k": Meta or Ctrl, no Alt, Shift free. The web
  * falls back to the physical key (`code`) when `key` is not a Latin letter or Alt
- * is held. gpuix derives `code` from `key`, so it never names a different key and
- * the fallback adds nothing: on Dvorak the key that types "t" reports "t", and on
- * macOS a non-Latin layout reports its Cmd layout's letter.
+ * is held. This reads `key` only, though macOS reports the physical `code` and the
+ * fallback could be written there; off macOS gpuix derives `code` from `key`, so it
+ * never names a different key (`drift/site.md`).
  */
 function isModK(event: DomEvent): boolean {
 	if (event.altKey === true) return false;

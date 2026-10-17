@@ -18,7 +18,7 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Cause:** `gpuix gap`. README "Missing features" row "CSS transforms".
 - **Original:** every popup, submenus included, enters and exits with `scaleY: 0.96` about its side's origin (`registry/base/dropdown.tsx:622-630`); the root popup also slides 4px from the resolved side (`--popup-enter-y`, `registry/default/lib/popup.ts:17-26`), side popups (submenus) slide 0px but still scale.
 - **Port:** the root popup slides 4px from the reported side and fades (`src/lib/popup.tsx:43`, `:65-71`); a submenu only fades (`src/components/dropdown.tsx:906-912`). Timings are the source's: enter `spring.fast` (80 ms), exit 60 ms tween.
-- **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:1194-1205`).
+- **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:1198-1209`).
 - **Workaround:** the slide and fade above.
 - **Fidelity:** approximated.
 - **Components it hits:** select, combobox, color-picker.
@@ -38,14 +38,6 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Port:** the 20px line box is centred by flex (`src/components/menu-item.tsx:105-126`, `src/lib/stable-label.tsx`), about a pixel of vertical drift against the source.
 - **Fidelity:** approximated.
 - **Components it hits:** badge, every row built on `StableLabel`.
-
-## IME composition in the search field
-
-- **Cause:** `gpuix gap`. README "Missing features" row "IME composition".
-- **Original:** a native `<input>`; composition works (`registry/default/dropdown-search.tsx:337-364`).
-- **Port:** gpuix `<input>` (`src/components/dropdown-search.tsx:108-142`); no `composition*` events, so the field's Escape/Tab/arrow handling cannot tell a key an IME consumed. Untested.
-- **Fidelity:** exact for Latin input, unknown for IME.
-- **Components it hits:** combobox, command-menu, input-group, input-message.
 
 ## Submenu and inline panel colour is fixed at surface-3
 

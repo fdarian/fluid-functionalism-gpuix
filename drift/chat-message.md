@@ -7,7 +7,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 - **Cause:** `gpuix gap`. Shared: CSS transforms ([README, Missing features, first row](../README.md)).
 - **Original:** `initial {opacity 0, y 8, scale .96}` to `{1, 0, 1}` on `spring.moderate`, `transform-origin` bottom right for the user and bottom left for the assistant (`chat-message.tsx:57-60`).
 - **Port:** `initial {opacity 0, top 8}` to `{1, 0}` on `tween.moderate` (`chat-message.tsx:95-97`); `top` needs `position: relative` (`:100`).
-- **gpuix lacks:** `scale` and `transform-origin` (`~/code/fdarian/gpuix/FORK.md:1194-1205`).
+- **gpuix lacks:** `scale` and `transform-origin` (`~/code/fdarian/gpuix/FORK.md:1198-1209`).
 - **Workaround:** opacity and the 8px rise on `top`, no scale.
 - **Fidelity:** approximated.
 - **Components it hits:** banner, ask-user-questions, input-copy, input-message, queued-stack, radio-group.

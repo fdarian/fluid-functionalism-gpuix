@@ -14,14 +14,14 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** dropped (extra chrome around every page).
 - **Components it hits:** every page.
 
-## The test renderer ignores window options and appearance
+## The test renderer ignores the window options
 
 - **Cause:** `gpuix gap`.
 - **Original:** n/a, this is about the harness.
-- **Port:** the real window sets `titlebarTransparent`, `trafficLightX/Y` (`src/main.tsx:16-18`) and mirrors Light / Dark to `setAppearance` (`src/app.tsx:520-526`).
-- **gpuix lacks:** the offscreen test window has no traffic lights, and `setAppearance` validates and does nothing, so `getAppearance()` stays the machine's and `appearanceChange` never fires (`packages/native/src/test_renderer.rs:834-840`, `packages/native/js/testing.ts:902-907`).
-- **Workaround:** the screenshots pin the theme with `setThemeChoice("dark")` before rendering (`scripts/screenshots.tsx:55`) and flip it through the real select for the light capture (`:249-263`); a full page has no select, so the script sets Light directly. The select click is the step that fails today: it throws `VIEW_BUSY` from gpuix's `DismissableLayer` (README "gpuix gaps", Bugs), so every capture before `light.png` is written and the run ends with "the theme select has no Light row" (seen on `badge`).
-- **Fidelity:** approximated (captures show the frame without the traffic lights; `light.png` is not written for pages with a right column).
+- **Port:** the real window sets `titlebarTransparent` and `trafficLightX/Y` (`src/main.tsx:16-18`).
+- **gpuix lacks:** the offscreen test window has no traffic lights or titlebar: it ignores those options. Its appearance does follow `appearance` and `setAppearance` now (`~/code/fdarian/gpuix/FORK.md:1506-1507`), so the theme is no longer a gap.
+- **Workaround:** none for the chrome. The screenshots create the window Dark and map `setAppearance("system")` to dark, because `System` would hand it back to the host's own setting (`scripts/screenshots.tsx:51-61`); `light.png` flips the theme through the real select, or by code on a full-layout page or one with its own rail (`:246-266`), and asserts `getAppearance()` for both.
+- **Fidelity:** approximated (captures show the frame without the traffic lights).
 - **Components it hits:** every demo capture.
 
 ## No responsive layout
@@ -189,7 +189,7 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Original:** `color-scheme: light dark` plus `light-dark()` tokens; a `.light` / `.dark` class on `<html>` pins one (`app/globals.css:46-50, 184-225`).
 - **Port:** both columns kept as a token table, resolved by the `scheme()` signal; `bindSystemScheme(createAppearance())` feeds "system", and `renderer.setAppearance(themeChoice())` makes the native chrome follow (`src/lib/theme.ts:83-193, 200-249`, `src/app.tsx:510-526`). Token values match the source in both columns (checked: surfaces 1 to 8, foreground, muted, accent, status, checker, hover, active, tint); `--ring` and `--input` have no port token.
 - **Workaround:** n/a.
-- **Fidelity:** exact in the window; see "The test renderer ignores window options and appearance" for captures.
+- **Fidelity:** exact in the window; see "The test renderer ignores the window options" for captures.
 - **Components it hits:** every component.
 
 ## Static font weights and no `opsz`
@@ -247,14 +247,14 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** exact on macOS.
 - **Components it hits:** just the site menu.
 
-## Site menu: ⌘K has no physical-key fallback for non-Latin layouts off macOS
+## Site menu: ⌘K has no physical-key fallback for non-Latin layouts
 
-- **Cause:** `gpuix gap`.
+- **Cause:** `not ported yet` on macOS, `gpuix gap` on Windows and Linux.
 - **Original:** `matchesShortcut` reads the physical key (`code`) when `key` is not a Latin letter or digit, so Ctrl+K opens the menu on a Cyrillic or Greek layout (`registry/default/command-menu.tsx:195-230`).
 - **Port:** `isModK` reads `key` only (`src/lib/site-command-menu.tsx:60-64`).
-- **gpuix lacks:** a physical key. `code` is "derived from GPUI's `key`, which is layout-dependent on every platform", so a Cyrillic key reports `code` `""` (`~/code/fdarian/gpuix/packages/native/src/events/key_names.rs:9-12`, `:138-160`). On macOS this does not bite: GPUI reports the layout's Cmd letter, so ⌘K works on Cyrillic, Armenian and Dvorak-QWERTY (`~/code/fdarian/gpuix/zed/crates/gpui_macos/src/events.rs:425-439`). On Windows and Linux, Ctrl plus a non-Latin letter does not match (README Missing features row "site menu (`isModK`)"). Not run there.
-- **Workaround:** none; the sidebar's Search row opens the menu.
-- **Fidelity:** exact on macOS; dropped for non-Latin layouts on Windows and Linux.
+- **gpuix lacks:** on Windows and Linux, a physical key. `code` is derived from GPUI's layout-dependent `key` assuming a US layout, so a Cyrillic key reports `code` `""` (`~/code/fdarian/gpuix/FORK.md:571-573`; `packages/native/src/events/key_names.rs:10-17`, `:161-169`), and Ctrl plus a non-Latin letter does not match (README Missing features row "site menu (`isModK`)"). Not run there. macOS reports `code` as the physical key, `"KeyK"` for the K position on a Cyrillic layout (`FORK.md:553-554`), so the source's fallback can be written there; the port has not.
+- **Workaround:** none; ⌘K matches through `key` on macOS and the sidebar's Search row opens the menu.
+- **Fidelity:** approximated on macOS (non-Latin layouts rely on `key`); dropped for non-Latin layouts on Windows and Linux.
 - **Components it hits:** just the site menu.
 
 ## Site menu: Recent is kept for the session only

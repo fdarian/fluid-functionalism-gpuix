@@ -617,9 +617,9 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 // ─── Content ─────────────────────────────────────────────────────────────────
 
 /**
- * The panel's height springs between 0 and the measured content height: gpuix
- * cannot animate `height: auto`, so the inner box reports its size through
- * `onLayout` and the outer box tweens to it.
+ * The panel's height springs between 0 and the measured content height, as the
+ * source's does: the inner box reports its size through `onLayout` and the outer
+ * box tweens to that number (`lib/measured-height.ts`).
  */
 export function AccordionContent(props: { children: JSX.Element }) {
 	const root = useRoot();

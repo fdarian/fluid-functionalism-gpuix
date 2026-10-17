@@ -38,9 +38,9 @@ repeating it.
 - **Fidelity:** approximated.
 - **Components it hits:** every component with `size`.
 
-## IME composition, static weights
+## Static weights
 
-- **Cause:** `gpuix gap`. One line each: IME composition (README "Missing features", combobox row, which lists input-group), and the variable-font weight and `opsz` on the label, input and error (`input-group.tsx:206,217,270,284`; README variable-font row).
+- **Cause:** `gpuix gap`. The variable-font weight and `opsz` on the label, input and error (`input-group.tsx:206,217,270,284`; README variable-font row).
 
 ## Demo page
 

@@ -13,7 +13,7 @@ repeating it.
 - **Cause:** `gpuix gap`.
 - **Original:** words enter `y: "80%" -> 0` over 0.24s and leave `y: 0 -> "-80%"` over 0.16s, both `[0.4, 0, 0.2, 1]`, inside an `overflow-hidden` grid cell under `AnimatePresence mode="popLayout"` (`thinking-indicator.tsx:124-134`).
 - **Port:** same timings and curve, on `top` in pixels (`thinking-indicator.tsx:187-211`, `:261-265`).
-- **gpuix lacks:** translate (README "gpuix gaps", CSS transforms row), and `%` for insets in `motion` (`~/code/fdarian/gpuix/FORK.md:925-926`; README row for thinking-indicator).
+- **gpuix lacks:** translate (README "gpuix gaps", CSS transforms row), so the roll moves a layout edge. `%` insets in `motion` exist now (`~/code/fdarian/gpuix/FORK.md:1237-1243`) and `top: "80%"` would resolve against the 20px cell, the same 16px as `ROLL`; the port has not switched.
 - **Workaround:** the words are absolutely positioned in a relatively positioned, `overflow: hidden` cell and move on `top`, 80% of the 20px line (`ROLL`, `:187`; `RollingWord`, `:199-211`). `transition` is switched on `useIsPresent()` so the exiting word takes the 0.16s tween. A hidden copy of the longest word reserves the width (`:257-261`). Each word is a fresh element (`<Show keyed>`) because Solid's `AnimatePresence` tracks elements, not keys.
 - **Fidelity:** exact for the visible result. `top` re-lays out per frame where a translate would not.
 - **Components it hits:** queued-stack (a card's `y` is likewise a `bottom` offset), mobile-drawer.

@@ -16,7 +16,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 - **Cause:** `gpuix gap`.
 - **Original:** the chevron turns 90 degrees on `spring.fast` as the item opens (`registry/base/accordion.tsx:769-772`).
 - **Port:** the icon swaps between `chevron-right` and `chevron-down` at once (`src/components/accordion.tsx:604-611`).
-- **gpuix lacks:** `transform`. Only SVG and glyph sprites carry a `TransformationMatrix`; quads, images, masks and hitboxes do not (`~/code/fdarian/gpuix/FORK.md:1194-1204`). README row "CSS transforms".
+- **gpuix lacks:** `transform`. Only SVG and glyph sprites carry a `TransformationMatrix`; quads, images, masks and hitboxes do not (`~/code/fdarian/gpuix/FORK.md:1198-1209`). README row "CSS transforms".
 - **Workaround:** the glyph swap.
 - **Fidelity:** approximated (no turn, the glyph changes at once).
 - **Components it hits:** every rotating chevron (card, color-picker, thinking-steps).

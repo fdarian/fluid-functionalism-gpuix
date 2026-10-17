@@ -109,5 +109,5 @@ repeating it.
   - The Elevated demo's outer panel is `maxWidth: 480` with `width: 100%` centred by the column, where the source uses `max-w-[480px] mx-auto`.
   - The elevation stack's invisible ghost stack is `opacity: 0` with `pointerEvents: none` (`invisible` is not a gpuix style), so it takes layout but not events.
   - ⌘K: the System row has no icon, and its keywords are the slug and the description's words as the source computes them (`s.slug, ...s.description.split(/\W+/)`, `app/components/site-command-menu.tsx:206-216`), written out in `menuKeywords` without the empty string the split's trailing full stop leaves; the "New" badge does not apply to this page. The sidebar order is alphabetical like the source's `systemNavList`, so `order = 6` (after Skill).
-  - The scenario captures `problem-light`, `tokens-light` and `color-picker-light` by setting the theme in code, then back to dark; the script's own final light step through the theme select still fails (known, README / lead notes).
+  - The scenario captures `problem-light`, `tokens-light` and `color-picker-light` by setting the theme in code, then back to dark; the script's own final light step goes through the theme select.
 - **Fidelity:** approximated.

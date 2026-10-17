@@ -10,20 +10,10 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 - **Cause:** `gpuix gap`.
 - **Original:** a native `<button>` matches `:active` while Space is held, so the press-shrink (`group-active:`, `registry/base/button.tsx:115-127`) plays for a keyboard activation too.
 - **Port:** the pressed look is `style.active` (`src/components/button.tsx:234`); Space still activates on key-up through `buttonProps` (`:193-196`).
-- **gpuix lacks:** a keyboard `:active` state. `active` styles come from the pointer's press chain only (`~/code/fdarian/gpuix/FORK.md:313-314`). Rechecked on the test renderer: with a focused `buttonProps` element carrying `active: { backgroundColor }`, the capture while `nativeSimulateKeyDown(id, "space")` is held is byte-identical to the resting one.
+- **gpuix lacks:** a keyboard `:active` state. `active` styles come from the pointer's press chain only (`~/code/fdarian/gpuix/FORK.md:317-319`). Rechecked on the test renderer: with a focused `buttonProps` element carrying `active: { backgroundColor }`, the capture while `nativeSimulateKeyDown(id, "Space")` is held is byte-identical to the resting one.
 - **Workaround:** none.
 - **Fidelity:** approximated: the activation is exact, the pressed look is missing for the keyboard.
 - **Components it hits:** every `buttonProps` button.
-
-## `simulateKeystrokes("space")` delivers no key-up
-
-- **Cause:** `gpuix gap` (test harness only).
-- **Original:** n/a.
-- **Port:** `press` in `scripts/screenshots.tsx:182-185` calls `simulateKeystrokes`; `ShotContext` has no helper for `nativeSimulateKeyDown` / `nativeSimulateKeyUp`.
-- **gpuix lacks:** a key-up from `simulateKeystrokes`: it makes one native call (`packages/native/js/testing.ts:441-450`), so a focused `buttonProps` element sees a keydown for `" "` and neither `keyup` nor `click`, while `nativeSimulateKeyDown` then `nativeSimulateKeyUp` gives keydown, click, keyup. The helper also still takes GPUI key names (`space`, `cmd-shift-p`; `~/code/fdarian/gpuix/README.md:3186`).
-- **Workaround:** scenarios press Enter, which activates on key-down. `nativeSimulateKeyDown` / `nativeSimulateKeyUp` would do it.
-- **Fidelity:** exact in the real window; a harness gap only.
-- **Components it hits:** any scenario that wants Space on a Base UI-style button.
 
 ## The press-shrink steps at a pixel boundary
 

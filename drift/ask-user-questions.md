@@ -9,7 +9,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 - **Cause:** `gpuix gap`. Shared: CSS transforms ([README, Missing features, first row](../README.md)).
 - **Original:** each footer button enters and exits at `scale: .85` (`:1430-1432`, `:1490-1492`, `:1516-1518`); the single-select submit arrow overlay is `scale: .6` in and out (`:1700-1706`); the validation message rises from `y: -2` (`:1470-1471`).
 - **Port:** footer buttons fade only (`FadeIn`, `ask-user-questions.tsx:1146-1157`); the arrow overlay fades over 80 ms (`:160-166`); the error has no entrance (`:1050-1062`).
-- **gpuix lacks:** `scale` (`~/code/fdarian/gpuix/FORK.md:1194-1204`).
+- **gpuix lacks:** `scale` (`~/code/fdarian/gpuix/FORK.md:1198-1209`).
 - **Workaround:** opacity only.
 - **Fidelity:** approximated (no scale).
 - **Components it hits:** banner, chat-message, input-copy, input-message, queued-stack, radio-group.
