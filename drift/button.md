@@ -1,7 +1,7 @@
 # button
 
 Original: `registry/base/button.tsx` (Base UI `Button`; the docs page imports the Radix twin, which looks the same), demo in `app/docs/button/page.tsx` of the source
-(fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/button.tsx` (with `src/lib/press.ts`), demo in `src/demos/button.tsx`.
+(fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/button.tsx` (with `src/lib/press.tsx`), demo in `src/demos/button.tsx`.
 
 Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8 with an icon), gaps (6 / 4), type (13/20, 12/18), icon sizes (16 / 14) and stroke (1.5, 2 on hover), colours in both schemes (the `color-mix()` hovers resolve to `#292929` / `#3d3d3d` light and `#dcdcdc` / `#c3c3c3` dark, checked), the focus ring (offset 1 from the inset surface lands on the source's 1px ring outside the button), disabled (0.5 opacity, no pointer, not tabbable), loading as disabled, Enter and Space activation, and the label hover colour of ghost.
 
@@ -25,15 +25,16 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 - **Fidelity:** exact in the real window; a harness gap only.
 - **Components it hits:** any scenario that wants Space on a Base UI-style button.
 
-## Translucent fills are the shadow alone
+## The press-shrink steps at a pixel boundary
 
 - **Cause:** `gpuix gap`.
-- **Original:** surface layer inset 1px (`:211`) with `bg-[var(--btn-bg)]` plus a same-colour `shadow-[0_0_0_1px_...]` that collapses on press (`:113-128`). Secondary's `--tint` and ghost's `--hover` are translucent; an outer CSS shadow paints only outside the box, so fill and ring never double up (comment `:105-112`).
-- **Port:** the element is the inset surface (`margin: 1`, height and padding give 1px back, `:137-142`, `:217-221`) and the fill is `fill(colour, 1)`: the `backgroundColor` fills the box and a spread-1 `boxShadow` the ring around it; press sets spread 0 (`src/lib/press.ts:10-18`, `src/components/button.tsx:63-92`). Tertiary's ring is an outline, 0 offset at rest and -1 pressed (`:73-86`).
-- **gpuix lacks:** nothing now: an outer `box-shadow` is painted only outside the border box (gpuix `box-shadow-outside-border-box` changeset), so a background and a translucent shadow do not double up.
-- **Workaround:** none needed for the fill; outline for the tertiary ring. Hover and press ease like the source (`boxShadow` 180ms on `cubic-bezier(0.23,1,0.32,1)`, `backgroundColor` 80ms, both 80ms while pressed; label colour and icons over 80ms), but the tertiary ring's 1px move inward on press (`outlineOffset` 0 to -1) switches at once: a transition on `outline-offset` would also ease the focus ring's offset when the button gains keyboard focus, which the source does not.
-- **Fidelity:** exact in colour and geometry; a different mechanism. The tertiary ring's press move is instant.
-- **Components it hits:** just this one (`CardButton` fills with plain `backgroundColor`, no ring).
+- **Original:** surface layer inset 1px (`:211`) with `bg-[var(--btn-bg)]` plus a same-colour `shadow-[0_0_0_1px_...]` that collapses on press (`:113-128`). Secondary's `--tint` and ghost's `--hover` are translucent; an outer CSS shadow paints only outside the box, so fill and ring never double up (comment `:105-112`). The shadow's spread eases, so the edge moves through sub-pixel positions.
+- **Port:** the element is the inset surface (`margin: 1`, height and padding give 1px back, `src/components/button.tsx` `padLeft`) and holds a `PressFill` (`src/lib/press.tsx`): one absolutely positioned quad at `zIndex: -1`, 1px outside the surface at rest (the button's own edge) and one radius larger. `groupHover` swaps its colour and `groupActive` pulls its four edges to the surface's own and its radius back, with the source's eases (180ms on `cubic-bezier(0.23,1,0.32,1)` for the geometry, 80ms `ease` for the colour, 80ms for both while pressed; label colour and icons over 80ms). The element sets `pressSurface` (the `press` group and a stacking context, so the fill stays behind the label). Tertiary's ring is an outline, 0 offset at rest and -1 pressed.
+- **Why not a `backgroundColor` plus a spread shadow:** gpuix paints an outer `box-shadow` only outside the border box (gpuix `box-shadow-outside-border-box` changeset), so the fill had to be a background and the ring a spread: two primitives. They antialias separately at rounded edges and leave a thin grey ring on every corner and pill end (`screenshots/button/pill.png`). The single quad is seamless and a translucent fill still does not double up.
+- **gpuix lacks:** sub-pixel quad edges, and a `transform`. A quad's edges land on whole device pixels (an inset of 0.4 and 0.5 paints as 0, 0.6 as 1), so the 1px pull-in is one step, taken a few milliseconds into the ease, where the shadow spread passed through partial coverage. Checked on the test renderer (1x), so at 2x it has one half-pixel step in between. A `transform` (gpuix has none, `FORK.md` area E) would let it ease.
+- **Workaround:** none; `scripts/check-button.tsx` asserts the edge pixel is still the fill on the press frame and gone once the 80ms is over.
+- **Fidelity:** exact in colour and geometry at rest and pressed; the shrink steps instead of easing. The tertiary ring's press move is instant (a transition on `outline-offset` would also ease the focus ring's offset when the button gains keyboard focus, which the source does not).
+- **Components it hits:** every filled `Button`, the composer's send button and the Skill page's "Button press" example (`CardButton` fills with plain `backgroundColor`, no ring).
 
 ## Loading spinner is a static glyph
 

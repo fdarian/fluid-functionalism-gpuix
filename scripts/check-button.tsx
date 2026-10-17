@@ -104,8 +104,9 @@ for (const id of ['ghost', 'tertiary']) {
 }
 
 {
-	// Primary's fill is a 1px spread outside the element that the press collapses: the pixel just outside
-	// the left edge goes from the fill to the page behind it.
+	// Primary's fill reaches 1px outside the button's inset surface and the press pulls its edge in to the
+	// surface. A quad's edge lands on a whole pixel, so the edge steps instead of easing: the pixel just
+	// outside the left edge is still the fill on the press frame and is the page behind it once the 80 ms is over.
 	const point = k.center('primary');
 	renderer.nativeSimulateMouseMove(point.x - 1, point.y);
 	renderer.nativeSimulateMouseMove(point.x, point.y);
@@ -113,15 +114,20 @@ for (const id of ['ghost', 'tertiary']) {
 	const before = sum('primary', -1, 18);
 	renderer.nativeSimulateMouseDown(point.x, point.y);
 	step(0);
-	step(16);
-	const middle = sum('primary', -1, 18);
+	const first = sum('primary', -1, 18);
 	step(300);
 	const after = sum('primary', -1, 18);
 	renderer.nativeSimulateMouseUp(point.x, point.y);
 	k.check(
-		'primary press: the spread collapses over 80 ms, not at once',
-		between(before, middle, after),
-		`rest ${before}, 16 ms ${middle}, end ${after}`,
+		'primary press: the fill edge leaves the outer pixel after the press frame, not on it',
+		first === before && after < before - 2,
+		`rest ${before}, press frame ${first}, end ${after}`,
+	);
+	step(300);
+	k.check(
+		'primary release: the fill edge returns to the outer pixel',
+		sum('primary', -1, 18) === before,
+		`rest ${before}, released ${sum('primary', -1, 18)}`,
 	);
 }
 renderer.clockResume();

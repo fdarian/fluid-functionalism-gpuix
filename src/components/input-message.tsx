@@ -22,7 +22,7 @@ import { FluidHighlight } from '#/lib/fluid-highlight';
 import { createFluidHover } from '#/lib/fluid-hover';
 import { Icon } from '#/lib/icon';
 import { createMeasuredHeight } from '#/lib/measured-height';
-import { fill } from '#/lib/press';
+import { PressFill, pressSurface } from '#/lib/press';
 import {
 	color,
 	colorFade,
@@ -30,13 +30,11 @@ import {
 	focusRing,
 	height,
 	nestedRadius,
-	pressFade,
 	radius,
 	type as scale,
 	shadow,
 	shape,
 	sizeChoice,
-	surfaceFade,
 	motion as tween,
 	weight,
 	withAlpha,
@@ -199,7 +197,6 @@ function SendButton(props: {
 			testId={props.testId}
 			tabIndex={props.disabled ? -1 : 0}
 			style={{
-				position: 'relative',
 				margin: 1,
 				width: props.size - 2,
 				height: props.size - 2,
@@ -212,13 +209,15 @@ function SendButton(props: {
 				keyboardFocusDim: false,
 				opacity: props.disabled ? 0.5 : 1,
 				pointerEvents: props.disabled ? 'none' : undefined,
-				...surfaceFade,
-				...fill(color.foreground, 1),
-				hover: fill(color.primaryHover, 1),
-				active: { ...fill(color.primaryActive, 0), ...pressFade },
+				...pressSurface,
 				focusVisible: focusRing(1),
 			}}
 		>
+			<PressFill
+				rest={color.foreground}
+				hover={color.primaryHover}
+				active={color.primaryActive}
+			/>
 			<For each={[props.mode === 'stop' ? 'stop' : 'arrow']}>
 				{(glyph: string) => (
 					<motion.div

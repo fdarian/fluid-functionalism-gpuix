@@ -11,7 +11,7 @@
  *   (opacity 1 all the way up) while it has keyboard focus.
  * - The queued row's close button sits one row padding from the right edge: 10 default, 8 compact.
  * - The 80 ms fades (composer ring, queued close button, suggestion text) are mid-way 40 ms in, with the motion
- *   clock held; the send button's hover shadow eases over 180 ms.
+ *   clock held; the send button's hover fill eases over 180 ms.
  */
 import { createTestRoot } from '@gpuix/solid/testing';
 import { fileFromPath, InputMessage } from '#/components/input-message';
@@ -273,7 +273,7 @@ await settle(400);
 		glow,
 	);
 	betweenReport(
-		'send button shadow eases to the hover colour',
+		'send button fill eases to the hover colour',
 		samples.before,
 		samples.middle,
 		samples.after,

@@ -8,7 +8,7 @@ import {
 import { type Accessor, createSignal, type JSX, Show } from 'solid-js';
 import { Icon } from '#/lib/icon';
 import type { IconRef } from '#/lib/icons';
-import { fill } from '#/lib/press';
+import { PressFill, pressSurface } from '#/lib/press';
 import {
 	color,
 	colorFade,
@@ -60,47 +60,54 @@ const sizes = {
 	},
 } as const;
 
-interface Surface {
-	rest: StateStyleDesc;
-	hover: StateStyleDesc;
-	active: StateStyleDesc;
+/** The three states of a fill that press-shrinks. */
+interface Fill {
+	rest: string;
+	hover: string;
+	active: string;
 }
 
-/**
- * Tertiary's ring is an outline: at rest it hugs the outside of the surface
- * (the button's own edge), pressed it moves 1px inside, like the inset
- * shadow it replaces.
- */
-const surfaces = (): Record<ButtonVariant, Surface> => ({
+const fills = (): Record<Exclude<ButtonVariant, 'tertiary'>, Fill> => ({
 	primary: {
-		rest: fill(color.foreground, 1),
-		hover: fill(color.primaryHover, 1),
-		active: { ...fill(color.primaryActive, 0), ...pressFade },
+		rest: color.foreground,
+		hover: color.primaryHover,
+		active: color.primaryActive,
 	},
 	secondary: {
-		rest: fill(color.tint, 1),
-		hover: fill(color.tintHover, 1),
-		active: { ...fill(color.tint, 0), ...pressFade },
-	},
-	tertiary: {
-		rest: {
-			outlineWidth: 1,
-			outlineColor: color.border,
-			outlineOffset: 0,
-		},
-		hover: { backgroundColor: color.hover },
-		active: {
-			backgroundColor: color.active,
-			...pressFade,
-			outlineWidth: 1,
-			outlineColor: color.border,
-			outlineOffset: -1,
-		},
+		rest: color.tint,
+		hover: color.tintHover,
+		active: color.tint,
 	},
 	ghost: {
-		rest: fill('transparent', 1),
-		hover: fill(color.hover, 1),
-		active: { ...fill(color.active, 0), ...pressFade },
+		rest: 'transparent',
+		hover: color.hover,
+		active: color.active,
+	},
+});
+
+const fillOf = (variant: ButtonVariant) =>
+	variant === 'tertiary' ? undefined : fills()[variant];
+
+/**
+ * Tertiary has no press-shrinking fill: its ring is an outline that hugs the
+ * outside of the surface (the button's own edge) at rest and moves 1px inside
+ * when pressed.
+ */
+const ringSurface = (): StateStyleDesc & {
+	hover: StateStyleDesc;
+	active: StateStyleDesc;
+} => ({
+	...surfaceFade,
+	outlineWidth: 1,
+	outlineColor: color.border,
+	outlineOffset: 0,
+	hover: { backgroundColor: color.hover },
+	active: {
+		backgroundColor: color.active,
+		...pressFade,
+		outlineWidth: 1,
+		outlineColor: color.border,
+		outlineOffset: -1,
 	},
 });
 
@@ -235,7 +242,6 @@ export function Button(props: {
 				alignItems: 'center',
 				justifyContent: 'center',
 				flexShrink: 0,
-				position: 'relative',
 				margin: 1,
 				height: size().height - 2,
 				...(iconOnly()
@@ -249,13 +255,20 @@ export function Button(props: {
 				keyboardFocusDim: false,
 				opacity: inert() ? 0.5 : 1,
 				pointerEvents: inert() ? 'none' : 'auto',
-				...surfaceFade,
-				...surfaces()[variant()].rest,
-				hover: surfaces()[variant()].hover,
-				active: surfaces()[variant()].active,
+				...pressSurface,
+				...(variant() === 'tertiary' ? ringSurface() : {}),
 				focusVisible: focusRing(1),
 			}}
 		>
+			<Show when={fillOf(variant())}>
+				{(surface: Accessor<Fill>) => (
+					<PressFill
+						rest={surface().rest}
+						hover={surface().hover}
+						active={surface().active}
+					/>
+				)}
+			</Show>
 			<Show when={props.loading} fallback={content()}>
 				<div
 					style={{

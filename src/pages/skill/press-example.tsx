@@ -5,7 +5,6 @@ import {
 	useGpuixRequired,
 } from '@gpuix/solid';
 import { createSignal, For } from 'solid-js';
-import { fill } from '#/lib/press';
 import { color, focusRing, shape, siteType, weight } from '#/lib/theme';
 import {
 	Compare,
@@ -142,10 +141,9 @@ function GenericButton(props: { index: number; press: PressProps }) {
 }
 
 /**
- * With the skill: the Button's press. The surface sits 1px inside and a
- * same-color 1px spread fills it out; pressing collapses the spread, so the
- * surface shrinks exactly 1px per side at any size. Fast in (80ms), slow out
- * (180ms).
+ * With the skill: the Button's press. The fill sits 1px outside the surface
+ * and pressing pulls its edges to the surface's own, so it shrinks exactly 1px
+ * per side at any size. Fast in (80ms), slow out (180ms).
  */
 function SkillButton(props: { index: number; press: PressProps }) {
 	const renderer = useGpuixRequired();
@@ -159,6 +157,7 @@ function SkillButton(props: { index: number; press: PressProps }) {
 			: hovered()
 				? color.primaryHover
 				: color.foreground;
+	const inset = () => (down() ? 0 : -1);
 	return (
 		<div
 			testId={`press-skill-${props.index}`}
@@ -169,13 +168,12 @@ function SkillButton(props: { index: number; press: PressProps }) {
 				flexDirection: 'row',
 			}}
 		>
-			<motion.div
+			<div
 				{...buttonProps({}, renderer)}
 				{...pressHandlers(props.index, props.press, setHovered)}
-				initial={false}
-				animate={fill(surface(), down() ? 0 : 1)}
-				transition={{ duration: down() ? 0.08 : 0.18 }}
 				style={{
+					position: 'relative',
+					zIndex: 0,
 					flexGrow: 1,
 					margin: 1,
 					display: 'flex',
@@ -189,6 +187,19 @@ function SkillButton(props: { index: number; press: PressProps }) {
 					focusVisible: focusRing(1),
 				}}
 			>
+				<motion.div
+					initial={false}
+					animate={{
+						top: inset(),
+						right: inset(),
+						bottom: inset(),
+						left: inset(),
+						borderRadius: shape.button + (down() ? 0 : 1),
+						backgroundColor: surface(),
+					}}
+					transition={{ duration: down() ? 0.08 : 0.18 }}
+					style={{ position: 'absolute', zIndex: -1, pointerEvents: 'none' }}
+				/>
 				<text
 					style={{
 						...siteType[size.text],
@@ -199,7 +210,7 @@ function SkillButton(props: { index: number; press: PressProps }) {
 				>
 					{size.label}
 				</text>
-			</motion.div>
+			</div>
 		</div>
 	);
 }
