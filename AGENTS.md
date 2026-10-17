@@ -2,12 +2,12 @@ Solid app that draws the [Fluid Functionalism](https://fluidfunctionalism.com) c
 
 ## Stack
 - Solid JSX on `@gpuix/solid` (fork at `~/code/fdarian/gpuix`, a sibling checkout; its `README.md` and `FORK.md` are the gpuix reference). Elements are gpuix's (`<div>`, `<text>`, `<anchored>`, `motion.*`) with style objects, not HTML and CSS classes.
-- Bun runs everything, with the Solid transform as a preload (`bunfig.toml`): no build step. pnpm 12 installs. TypeScript 7 (`tsc`), Biome (tabs, single quotes), path alias `#/*` -> `src/*`.
+- Bun runs everything, with the Solid transform and the demo/page/changelog registry as preloads (`bunfig.toml`): no build step to develop. `pnpm build` compiles one binary. pnpm 12 installs. TypeScript 7 (`tsc`), Biome (tabs, single quotes), path alias `#/*` -> `src/*`.
 - Behaviour primitives (keys, selection, open state, focus, ARIA) come from `base-ui-solid-gpuix`, the sibling repo `../base-ui-solid-gpuix`. This repo keeps styling, springs and fluid hover.
 
 ## Folders
 - `src/components/` — the ported components, styled with tokens from `src/lib/theme.ts`. Each consumes its base-ui primitive where Base UI has one.
-- `src/demos/` — one file per component page (`title`, `group`, `Demo`, optional `scenarios` for screenshots); `src/lib/demo.ts` globs them at startup.
+- `src/demos/` — one file per component page (`title`, `group`, `Demo`, optional `scenarios` for screenshots); `src/lib/demo.ts` reads them through the `virtual:demos` module.
 - `src/pages/`, `src/home/` — the site's own pages (Introduction, Changelog, the System pages, Compare, Concepts, Audio Mixer) and the home bento grid; `src/app.tsx` is the shell and sidebar, `src/main.tsx` the entry.
 - `src/lib/` — shared code: `theme.ts` (tokens, springs, shadows), `fluid-hover.ts` / `fluid-highlight.tsx`, `focus-ring.tsx`, `popup.tsx`, `demo-kit.tsx`, `doc-page.tsx`, icons. The table is in README under "Shared code".
 - `scripts/` — `check-*.tsx` scenario checks (each runnable alone with `bun scripts/check-x.tsx`), `check-kit.tsx` (their harness), `screenshots.tsx`, the two runners.
@@ -19,6 +19,7 @@ Solid app that draws the [Fluid Functionalism](https://fluidfunctionalism.com) c
 - `pnpm check:scenarios` takes about 30 minutes, so run `bun scripts/check-<component>.tsx` for the component you touched and `pnpm check` before merging.
 - `pnpm screenshots [slug]` — one page, or about 25 minutes for all of them.
 - `pnpm perf [slug...] --label x` — live frame times on the real window into `perf/<label>.json` (README, "Harness and shared-lib notes"); results are not committed.
+- `pnpm build` — `dist/fluid-functionalism` (Bun compile) and `bundle/Fluid Functionalism.app`; needs `cargo install cargo-packager --locked` (README, "Build the app").
 - `pnpm format` — Biome.
 
 ## Rules
@@ -27,6 +28,7 @@ Solid app that draws the [Fluid Functionalism](https://fluidfunctionalism.com) c
 - A component adds `src/components/<name>.tsx`, `src/demos/<name>.tsx` and `drift/<name>.md` and edits no shared file. Whenever code the drift file cites moves, its `file:line` refs move with it; refs into the primitives read `base-ui:src/<path>:lines`.
 - gpuix cannot do some things the source does (transforms, variable fonts, `text-box-trim`, `text-wrap: balance`, selector `:has(.x)` and group-has, collapsed-border transitions). Record the approximation in the drift file and link the README gap row; do not paper over it.
 - Screenshot diffs are noisy: playground variants use `Math.random`, and the caret and timing demos vary run to run. Compare the content area by pixels, not hashes, and do not recommit `screenshots/` for noise.
+- The compiled binary reads nothing from the repo. A runtime asset is an embedded import (`with { type: 'file' }`); an image `src` goes through `diskPath` in `src/lib/assets.ts`, because gpuix's Rust loader cannot read `$bunfs`. Never build a path from `import.meta.url` or `import.meta.dir`, or scan a directory at runtime. Demos, pages and the changelog are found through the `virtual:*` modules of `scripts/registry-plugin.ts`, so a new demo still just adds its file.
 - Source filenames are kebab-case; `src/` imports across directories use `#/`.
 
 <!-- OPENWIKI:START -->

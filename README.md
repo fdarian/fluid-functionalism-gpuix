@@ -81,10 +81,43 @@ fine earlier, so it is not a regression in the components. I suspect the macOS d
 while the display sleeps, but that is unconfirmed. Run it with the screen awake.
 </details>
 
+## Build the app
+
+Needs `cargo install cargo-packager --locked` once, on top of what "Run it" needs.
+
+```bash
+pnpm build    # scripts/build.ts
+```
+
+| Output | Size | What |
+|---|---|---|
+| `dist/fluid-functionalism` | 99 MB | The whole app as one binary (`Bun.build` compile, minified) |
+| `bundle/Fluid Functionalism.app` | 99 MB | That binary wrapped by `cargo packager` (`packager.json`), with `dist/AppIcon.icns` made from `assets/icon/icon-1024.png`, the site's FF favicon |
+
+About 30 MB of the binary is the `@gpuix/native` addon. Launch to first window, measured: 3.2 s the first time, about
+1.4 s after.
+
+<details>
+<summary>What is embedded, and how</summary>
+
+The binary reads nothing from the repository, so each kind of runtime input has one route in:
+
+- **Demos, pages and the changelog** are the virtual modules `virtual:demos`, `virtual:pages` and `virtual:changelog`
+  from `scripts/registry-plugin.ts`, which generate static imports of every file in `src/demos/`, `src/pages/` and
+  `content/changelog/`. `bun src/main.tsx` uses the same generator, through `scripts/registry-preload.ts` in `bunfig.toml`.
+  The build passes `scenarios: false`, so the `scenarios` exports are tree-shaken out; a `process.env.FF_PERF` define
+  does the same for `src/lib/perf.ts`.
+- **Fonts** are `import ... with { type: 'file' }` (`src/lib/fonts.ts`) and are read from `$bunfs`, Bun's embedded filesystem.
+- **Images** go through `diskPath` in `src/lib/assets.ts`: gpuix's Rust image loader reads `<img src>` with `std::fs`,
+  which cannot see `$bunfs`, so the file is copied to `$TMPDIR/fluid-functionalism-assets/` once per process.
+- **The native addon** is embedded by Bun and extracted to `$TMPDIR` at launch. `@gpuix/native`'s ESM entry needs a
+  workaround for that (see "Bugs" under the gpuix gaps).
+</details>
+
 ## Adding a component
 
 A component adds `src/components/<name>.tsx`, `src/demos/<name>.tsx` and `drift/<name>.md`, and edits no shared
-file. `src/lib/demo.ts` finds every `src/demos/*.tsx` with `Bun.Glob` and a dynamic `import` at startup (restart
+file. `src/lib/demo.ts` reads every `src/demos/*.tsx` through the `virtual:demos` module (restart
 `--hot` to pick up a new file), and the sidebar lists the demos by title. A demo file exports:
 
 ```ts
@@ -135,7 +168,7 @@ column's card in place of "Make them yours"), `scenarios`, `menuIcon` and `menuK
 | `popup.tsx`, `popup-timing.ts` | Popup chrome on `<anchored fit="flip">` (`PopupSurface`, which takes a `createPresence` from base-ui and keeps its reported side and available height in `createPlacementState`), and the exit durations passed to the primitives. |
 | `stable-label.tsx` | A label that gains weight without moving its neighbours: an `inline-grid` holds a hidden semibold copy and the visible one in one cell, so the label is as wide as the semibold copy and wraps like the source's; `nowrap` and `truncate` are opt-in. |
 | `clock.ts` | One shared, ref-counted frame clock for every JS-driven loop; a subscriber inside a far culled region is skipped, and the timer stops when none is shown. |
-| `fonts.ts`, `app-frame.tsx` | The static Inter files passed to `render()` and the test renderer; the window frame (chrome-coloured bar, rounded page panel). |
+| `fonts.ts`, `assets.ts`, `app-frame.tsx` | The static Inter files passed to `render()` and the test renderer, imported as embedded files; `diskPath`, which turns an embedded file path into one on disk for `<img src>`, and the image paths (`MICKA_PNG`, `OG_PNG`) built with it; the window frame (chrome-coloured bar, rounded page panel). |
 | `press.tsx`, `icons.ts`, `icon.tsx` | The press-shrink fill layer; lucide glyphs as SVG strings (`defineIcon` for a component's own). |
 | `site-command-menu.tsx`, `install-url.ts`, `platform.ts` | The site menu (a `CommandMenuDialog` of pages, theme, Recent and actions) and the window-wide Mod+K that toggles it, through gpuix's `window` event target; the registry URL the copy action writes; `IS_MAC` and `openUrl`. |
 | `demo.ts`, `demo-kit.tsx`, `page-nav.ts` | The demo and page contracts, the card every demo page is made of, and `navigate` / `current` for pages. |
@@ -235,6 +268,7 @@ offer it. A count is given only where the code shows it.
 | any bold text in the system face (Helvetica Neue) | A bold Helvetica Neue line box is 24px in gpuix and 25px in Chrome; not measured for Inter | none |
 | screenshots, app-frame | The test renderer opens its window with the options, but a capture is the view alone: no titlebar or traffic lights (gpuix `README.md:7059-7061`) | Captures show no traffic lights |
 | screenshots | Batched keystrokes deliver an input's `onChange` after the whole batch | none |
+| the compiled binary (`pnpm build`) | `@gpuix/native`'s ESM entry loads the `.node` addon through `createRequire(import.meta.url)`, which `bun build --compile` does not follow: the binary fails with "Cannot find native binding". Its CJS entry uses a plain `require`, which Bun embeds | `nativeCjsPlugin` in `scripts/build.ts` resolves `@gpuix/native` to `index.cjs` |
 
 #### Missing features
 
