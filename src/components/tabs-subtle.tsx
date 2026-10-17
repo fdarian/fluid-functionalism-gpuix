@@ -282,7 +282,6 @@ export function TabsSubtleItem(props: {
 	});
 	const metrics = () => sizes[scope.size()];
 	let element: HostElement | undefined;
-	const [unfoldedWidth, setUnfoldedWidth] = createSignal<number>();
 	/** The tab selected at mount is born unfolded: its first measured width is placed, not tweened. */
 	const [selectionChanged, setSelectionChanged] = createSignal(false);
 	createComputed(
@@ -300,13 +299,10 @@ export function TabsSubtleItem(props: {
 		scope.hover.activeIndex() === props.index || isSelected();
 	const collapsible = () => scope.activeLabel() && props.icon !== undefined;
 	const showLabel = () => !collapsible() || isSelected();
-	// The unfolding label's width is animated to a measured number (gpuix cannot animate `auto`): the box holding the label reports it.
-	const labelTarget = () => {
-		if (!showLabel()) return { width: 0, marginLeft: 0, opacity: 0 };
-		const measured = unfoldedWidth();
-		const unfolded = { marginLeft: metrics().labelGap, opacity: 1 };
-		return measured === undefined ? unfolded : { ...unfolded, width: measured };
-	};
+	const labelTarget = () =>
+		showLabel()
+			? { width: 'auto' as const, marginLeft: metrics().labelGap, opacity: 1 }
+			: { width: 0, marginLeft: 0, opacity: 0 };
 	// Width and margin ride `spring.fast` both ways and opacity is a 0.06 tween (`registry/base/tabs-subtle.tsx:397-410`).
 	const labelTransition = () => {
 		if (!selectionChanged()) return tween.snap;
@@ -380,24 +376,9 @@ export function TabsSubtleItem(props: {
 						display: 'flex',
 						flexDirection: 'row',
 						overflow: 'hidden',
-						// Until the label is measured an unfolded label keeps its natural width.
-						...(unfoldedWidth() === undefined && showLabel()
-							? { width: 'auto' }
-							: {}),
 					}}
 				>
-					<div
-						onLayout={(event: DomEvent) => {
-							if (event.width === undefined)
-								throw new Error('onLayout reported no width');
-							setUnfoldedWidth(event.width);
-						}}
-						style={{
-							display: 'flex',
-							flexDirection: 'row',
-							flexShrink: 0,
-						}}
-					>
+					<div style={{ display: 'flex', flexDirection: 'row', flexShrink: 0 }}>
 						{label}
 					</div>
 				</motion.div>
