@@ -15,7 +15,8 @@ import type { IconRef } from './icons';
 import { installUrl } from './install-url';
 import { pageOrder } from './page-nav';
 import { IS_MAC, openUrl } from './platform';
-import { setThemeChoice, THEMES, themeChoice } from './theme';
+import { THEMES, themeChoice } from './theme';
+import { changeTheme } from './theme-fade';
 
 type Kind = 'page' | 'setting' | 'action';
 
@@ -153,7 +154,7 @@ export function SiteCommandMenu(props: {
 					icon: theme.icon,
 					keywords: ['theme', 'appearance', 'mode', theme.value],
 					group: 'Settings',
-					onSelect: () => setThemeChoice(theme.value),
+					onSelect: () => changeTheme(theme.value),
 				}),
 			),
 			...(component === undefined

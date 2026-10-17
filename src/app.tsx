@@ -63,7 +63,6 @@ import {
 	type as scale,
 	setShapeChoice,
 	setSizeChoice,
-	setThemeChoice,
 	shapeChoice,
 	siteType,
 	sizeChoice,
@@ -72,6 +71,7 @@ import {
 	themeChoice,
 	weight,
 } from '#/lib/theme';
+import { changeTheme, ThemeFade } from '#/lib/theme-fade';
 
 const SHOWCASE = SHOWCASE_SLUG;
 const PAGE_WIDTH = 600;
@@ -430,7 +430,7 @@ export function CustomizeCard() {
 					testId="theme"
 					items={THEMES}
 					value={themeChoice()}
-					onValueChange={(value: ThemeChoice) => setThemeChoice(value)}
+					onValueChange={(value: ThemeChoice) => changeTheme(value)}
 				/>
 			</div>
 			<div
@@ -526,6 +526,7 @@ export function App(props: {
 	createEffect(() => setAppearance.call(renderer, themeChoice()));
 	return (
 		<MotionConfig reducedMotion="user">
+			<ThemeFade />
 			<AppFrame title={WINDOW_TITLE}>
 				<RightRailContext.Provider value={rail}>
 					<div

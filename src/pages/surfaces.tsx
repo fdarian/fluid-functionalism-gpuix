@@ -2,6 +2,7 @@ import { createSignal, For, type JSX } from 'solid-js';
 import type { ShotContext } from '#/lib/demo';
 import { DocPage, DocSection, Prose, SubHeading } from '#/lib/doc-page';
 import { color, type Scheme, setThemeChoice, siteType } from '#/lib/theme';
+import { changeTheme } from '#/lib/theme-fade';
 import { ColorPickerDemo, InviteDialogDemo } from '#/pages/surfaces/examples';
 import { SURFACES_INSTALL_PROMPT } from '#/pages/surfaces/install-prompt';
 import { ProblemDemo } from '#/pages/surfaces/problem';
@@ -98,7 +99,7 @@ function ThemeLink(props: { theme: Scheme; children: string }) {
 		<text
 			role="button"
 			testId={`theme-${props.theme}`}
-			onClick={() => setThemeChoice(props.theme)}
+			onClick={() => changeTheme(props.theme)}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			style={{

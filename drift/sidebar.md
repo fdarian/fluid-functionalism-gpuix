@@ -250,7 +250,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `not ported yet`.
 - **Original:** `SidebarLayout` runs `SidebarProvider` with the cookie-read `defaultOpen`; `[` collapses and a `showShortcutToast("[", "Sidebar expanded" | "Sidebar collapsed")` follows a key-driven change; a `DesktopReopenTrigger` fades in at the top-left (opacity and scale 0.95 on `spring.fast`) with its own tooltip; the page's `SidebarInset` reflows (`app/components/sidebar-layout.tsx:31-90,184-198`).
-- **Port:** the sidebar is always open at 256px; no key, no toast, no trigger, no persistence (`src/app.tsx:497-654`).
+- **Port:** the sidebar is always open at 256px; no key, no toast, no trigger, no persistence (`src/app.tsx:497-655`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** app frame.
@@ -266,4 +266,4 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 ## Left / Right arrows page through the docs
 
-- **Cause:** `not ported yet`. Same drift as [site.md, "Arrow keys do not step through the pages"](site.md#arrow-keys-do-not-step-through-the-pages), where the entry lives (verified: the port's only key handler is ⌘K, `src/lib/site-command-menu.tsx:68-75`).
+- **Cause:** `not ported yet`. Same drift as [site.md, "Arrow keys do not step through the pages"](site.md#arrow-keys-do-not-step-through-the-pages), where the entry lives (verified: the port's only key handler is ⌘K, `src/lib/site-command-menu.tsx:69-76`).

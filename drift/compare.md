@@ -23,7 +23,7 @@ repeating it.
 
 - **Cause:** `port choice`.
 - **Original:** `.shadcn-theme` has the light tokens, the `prefers-color-scheme: dark` column (unless `:root.light`) and `.dark .shadcn-theme` (`app/compare/shadcn-theme.css:8-108`); a blanket `border-color: var(--border)` rule redirects Tailwind's `currentColor` borders.
-- **Port:** `sc` in `src/pages/compare/shadcn/theme.ts` resolves the same values through `scheme()`, so System, Light and Dark all work and a theme change reaches the cards at once. Every border names its token, so no redirect rule is needed. The shadcn cards do not follow the Radius or Size rows, as in the source (Tailwind's `rounded-md` / `text-sm` are fixed).
+- **Port:** `sc` in `src/pages/compare/shadcn/theme.ts` resolves the same values through `scheme()`, so System, Light and Dark all work and a theme change reaches the cards with the page-wide fade. Every border names its token, so no redirect rule is needed. The shadcn cards do not follow the Radius or Size rows, as in the source (Tailwind's `rounded-md` / `text-sm` are fixed).
 - **Fidelity:** exact.
 
 ## No Radix transitions: the chevron swaps glyph, the accordion tweens its height

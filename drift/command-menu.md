@@ -132,7 +132,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `port choice` (reason not stated; the doc comment only says opening from a key is the caller's).
 - **Original:** `CommandMenuDialog` takes `shortcut` (default `"mod+k"`, `null` binds nothing) and `shortcutScope`, and listens on `window` itself; several dialogs on one combo are arbitrated: the open one answers first, then the most recent in scope (`:1430-1447`, `:1508-1540`).
-- **Port:** no `shortcut` or `shortcutScope`; `createSiteMenu` binds Mod+K by hand for the site menu (`src/components/command-menu.tsx:1346-1350`; `src/lib/site-command-menu.tsx:59-77`). The demo's dialogs bind their combos in demo code (`matchesCombo` in `src/demos/command-menu.tsx`; see "Demo: dialog and footer sections differ in small ways"), with no arbitration between dialogs on one combo.
+- **Port:** no `shortcut` or `shortcutScope`; `createSiteMenu` binds Mod+K by hand for the site menu (`src/components/command-menu.tsx:1346-1350`; `src/lib/site-command-menu.tsx:60-78`). The demo's dialogs bind their combos in demo code (`matchesCombo` in `src/demos/command-menu.tsx`; see "Demo: dialog and footer sections differ in small ways"), with no arbitration between dialogs on one combo.
 - **Workaround:** the demo's own `window` / `onKeyDown` listeners.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -141,7 +141,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `not ported yet`.
 - **Original:** exports `parseShortcut`, `matchesShortcut` (layout-aware, falls back to the physical key), `hasModifier`, `isMacPlatform`, `useIsMac`; `formatShortcut(shortcut, mac)` accepts aliases (`command`, `win`, `super`, `control`, `opt`, `del`, `plus`, `spacebar`, `arrowup`...) and keeps a trailing `+` as the key (`:118-303`).
-- **Port:** only `formatShortcut(shortcut)` with `IS_MAC` baked in; `CAP_LABELS` knows `cmd`, `option`, `return`, `esc`, `space`, `up` / `down` / `left` / `right` but not the other aliases, so `"command+k"` draws "Command" (`src/components/command-menu.tsx:88-142`). A trailing `+` is kept as the key, as in the source (`"mod++"` draws the modifier and `+`, `shortcutTokens`, `:114-127`). The site menu carries its own `isModK` (`src/lib/site-command-menu.tsx:59-63`).
+- **Port:** only `formatShortcut(shortcut)` with `IS_MAC` baked in; `CAP_LABELS` knows `cmd`, `option`, `return`, `esc`, `space`, `up` / `down` / `left` / `right` but not the other aliases, so `"command+k"` draws "Command" (`src/components/command-menu.tsx:88-142`). A trailing `+` is kept as the key, as in the source (`"mod++"` draws the modifier and `+`, `shortcutTokens`, `:114-127`). The site menu carries its own `isModK` (`src/lib/site-command-menu.tsx:60-64`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

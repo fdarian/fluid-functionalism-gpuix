@@ -1,7 +1,7 @@
 # site
 
 Original: the site shell of fluidfunctionalism.com at 0a0377e (kept at `~/.claude/notes/ff-source/`): `app/layout.tsx`, `app/components/sidebar-layout.tsx`, `right-panel.tsx`, `site-command-menu.tsx`, `playground-menu.tsx`, `app/globals.css`, `lib/docs/DocPage.tsx` / `ComponentPreview.tsx` / `PropsTable.tsx`, the settings providers, and every route under `app/`. The sidebar itself is in `drift/sidebar.md`. The Changelog entries and the menu's rows for it read the live site (d5c3606: the Changelog page, `app/changelog/`, `lib/changelog/`, and the release-driven New and Updated marks, which 0a0377e predates), so their source `file:line` refs are d5c3606's.
-Ported in `src/main.tsx`, `src/app.tsx`, `src/lib/app-frame.tsx`, `src/lib/demo-kit.tsx`, `src/lib/doc-page.tsx`, `src/lib/playground.tsx`, `src/lib/page-nav.ts`, `src/lib/site-command-menu.tsx`, `src/lib/install-url.ts`, `src/lib/theme.ts` and `src/lib/changelog/`; the pages are the modules in `src/pages/` (each has its own `drift/<page>.md`), and there is no per-route demo for the shell.
+Ported in `src/main.tsx`, `src/app.tsx`, `src/lib/app-frame.tsx`, `src/lib/demo-kit.tsx`, `src/lib/doc-page.tsx`, `src/lib/playground.tsx`, `src/lib/page-nav.ts`, `src/lib/site-command-menu.tsx`, `src/lib/install-url.ts`, `src/lib/theme.ts`, `src/lib/theme-fade.tsx` and `src/lib/changelog/`; the pages are the modules in `src/pages/` (each has its own `drift/<page>.md`), and there is no per-route demo for the shell.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps (transforms, intrinsic width, variable fonts) get a one-line entry here that links to the README row instead of repeating it. Entries run: frame and layout, doc page, right panel and settings, site menu, the Changelog page, pages and registry items with no port.
 
@@ -28,7 +28,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (the fork now has `matchMedia` with size queries and change events, `~/code/fdarian/gpuix/FORK.md:1149-1150`; the port uses none).
 - **Original:** the site switches at `xl` (1280px): below it the rail becomes a sheet behind a fixed top-left "Open navigation" trigger that closes on navigation, the right panel is hidden, and the settings move into the sheet's footer (`app/components/sidebar-layout.tsx:184-195`, `app/components/sidebar.tsx:130-141`, `app/globals.css:1020-1043`). Content is `max-w-[680px]` with `py-20 sm:py-28`, `mt-12` below `lg` (`app/docs/layout.tsx:1-7`). The title size follows the viewport: 22px below 640px, 28px above (`app/globals.css:416, 430-435`).
-- **Port:** one fixed three-column layout at any width: sidebar, a page column of `PAGE_WIDTH` 600, a 296px customise column (`src/app.tsx:77, 541, 575, 613`); a "full" page fills the window instead (`:575-577`). The window opens at 1240x780 (`src/main.tsx:19-20`), already under the source's `xl`.
+- **Port:** one fixed three-column layout at any width: sidebar, a page column of `PAGE_WIDTH` 600, a 296px customise column (`src/app.tsx:77, 542, 576, 614`); a "full" page fills the window instead (`:575-577`). The window opens at 1240x780 (`src/main.tsx:19-20`), already under the source's `xl`.
 - **Workaround:** none.
 - **Fidelity:** dropped (no narrow layout, no sheet).
 - **Components it hits:** every page.
@@ -41,7 +41,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`.
 - **Original:** with no modifier and focus outside inputs, sliders, tablists, radiogroups, listboxes and menus, ← and → go to the previous and next page in `pageOrder` (Showcase, Introduction, Changelog, System pages, components); held keys keep advancing (`app/components/sidebar-layout.tsx:21-26, 126-170`).
-- **Port:** no key handler in the app besides ⌘K (`src/lib/site-command-menu.tsx:66-77`). The order itself exists, with Changelog after Introduction as the source has it, for the menu's Previous page and Next page rows (`pageOrder`, `src/lib/page-nav.ts:5-23`, pinned by `scripts/check-site-nav.tsx`) and the hero's next arrow.
+- **Port:** no key handler in the app besides ⌘K (`src/lib/site-command-menu.tsx:67-78`). The order itself exists, with Changelog after Introduction as the source has it, for the menu's Previous page and Next page rows (`pageOrder`, `src/lib/page-nav.ts:5-23`, pinned by `scripts/check-site-nav.tsx`) and the hero's next arrow.
 - **Workaround:** none; the menu rows and the arrow buttons do the same by pointer.
 - **Fidelity:** dropped.
 - **Components it hits:** just the shell.
@@ -50,7 +50,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (arrows; the description on component pages); title weight is the shared static-font gap, see `README.md` "Variable-font axes" row.
 - **Original:** `DocPage` renders the h1 in `text-site-display` bold (`wght 700, opsz 25`) with ghost icon-button prev / next arrows on the same row (tooltips "Name ←" / "Name →", disabled at either end), then the description 8px under the title and an optional intro paragraph; page gap 32 (`lib/docs/DocPage.tsx:73-128`, `registry/default/lib/font-weight.ts:25-29`).
-- **Port:** every docs page and demo page takes `Heading`, `siteType.display` at `weight.semibold` (`src/app.tsx:80-92, 656-673`; it steps down with the Size row). The system pages put their description and optional intro under it through `DocPage` (Introduction does the same by hand), tucked up 8px by a negative margin (`src/lib/doc-page.tsx:164-218`, `:181`). A component demo page has the heading and the cards only: no description, no arrows. No docs page has arrows; only the home hero does (`src/app.tsx:317-358`). Page gap 24, top padding 40 (`src/app.tsx:581-583`) against the source's 112.
+- **Port:** every docs page and demo page takes `Heading`, `siteType.display` at `weight.semibold` (`src/app.tsx:80-92, 657-674`; it steps down with the Size row). The system pages put their description and optional intro under it through `DocPage` (Introduction does the same by hand), tucked up 8px by a negative margin (`src/lib/doc-page.tsx:164-218`, `:181`). A component demo page has the heading and the cards only: no description, no arrows. No docs page has arrows; only the home hero does (`src/app.tsx:317-358`). Page gap 24, top padding 40 (`src/app.tsx:582-584`) against the source's 112.
 - **Workaround:** none.
 - **Fidelity:** approximated (title lighter than the source's bold; arrows dropped, and the description on component pages).
 - **Components it hits:** every demo page (description, arrows); every docs page, the Changelog page included (arrows, weight).
@@ -59,7 +59,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `port choice` (the port is not a registry; reason not stated).
 - **Original:** an "Installation" heading with a note ("Base UI flavor. Switch in the right panel.", "Same source under both flavors.", or "One prompt for your coding agent: install command, usage, props.") and a copy-prompt button that writes `buildInstallPrompt(...)` to the clipboard and crossfades its icon to a check (`lib/docs/DocPage.tsx:130-170`, `lib/docs/copy-prompt-button.tsx:1-60`).
-- **Port:** the seven system pages have the block through `DocPage`: the heading, a per-page note, and a primary "Copy prompt" button that writes the page's prompt string and shows a check for 2 s (`src/lib/doc-page.tsx:129-162, 164-218`); the prompts are written out per page (`src/pages/<page>/install-prompt.ts`, or in the page file). The component demo pages have none (`src/app.tsx:656-663`).
+- **Port:** the seven system pages have the block through `DocPage`: the heading, a per-page note, and a primary "Copy prompt" button that writes the page's prompt string and shows a check for 2 s (`src/lib/doc-page.tsx:129-162, 164-218`); the prompts are written out per page (`src/pages/<page>/install-prompt.ts`, or in the page file). The component demo pages have none (`src/app.tsx:657-664`).
 - **Workaround:** none.
 - **Fidelity:** dropped (component pages).
 - **Components it hits:** every component demo page.
@@ -105,7 +105,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`.
 - **Original:** the panel is a 256px sticky column with a 16px right margin whose width, margin and opacity spring to 0 when `]` is pressed (toast "Properties panel expanded / collapsed"); a fixed top-right ghost button with the tooltip "Expand properties panel" `]` brings it back; the content scrolls in a `ScrollArea` with a scroll fade at `100svh - 2rem`; the card is `rounded-lg p-4 bg-muted` and hidden on the 404 page and on the full-screen routes (`app/components/right-panel.tsx:285-428`, `app/components/sidebar-layout.tsx:111-115, 184`).
-- **Port:** a 296px column with 16px padding, so a 264px card, in the port's `ScrollArea` with a fade, `position: sticky; top: 0` beside the page column inside the page scroller as the source's is, at the scroller's own height (measured with `onLayout`: gpuix has no `100svh`, and the source's `top-4` and `max-h` are the column's padding here); the playground rail sits under the card in the same scroller. Always visible on a docs page, hidden on a "full" page, no collapse and no key (`src/app.tsx:606-642`). The card is radius 12 on `surface2` with a 16px padding and 12px gap (`src/app.tsx:396-407`); the source's `rounded-lg` is 8px on `bg-muted`.
+- **Port:** a 296px column with 16px padding, so a 264px card, in the port's `ScrollArea` with a fade, `position: sticky; top: 0` beside the page column inside the page scroller as the source's is, at the scroller's own height (measured with `onLayout`: gpuix has no `100svh`, and the source's `top-4` and `max-h` are the column's padding here); the playground rail sits under the card in the same scroller. Always visible on a docs page, hidden on a "full" page, no collapse and no key (`src/app.tsx:607-643`). The card is radius 12 on `surface2` with a 16px padding and 12px gap (`src/app.tsx:396-407`); the source's `rounded-lg` is 8px on `bg-muted`.
 - **Workaround:** none.
 - **Fidelity:** approximated (card), dropped (collapse).
 - **Components it hits:** just the shell.
@@ -123,7 +123,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `port choice` (a page export in place of a portal and a pathname test; same result).
 - **Original:** the right panel hides "Make them yours" on `/changelog` (`showSettings = usePathname() !== "/changelog"`), and the page portals its Releases card into the rail's node (`useRightRailNode`), rendering nothing where the rail is `display: none` (`app/components/right-panel.tsx:328-330`, `app/changelog/changelog-view.tsx:538-552`, `lib/right-rail.tsx`).
-- **Port:** a "docs" page may export `Rail`, and `App` renders it in the right column in place of `CustomizeCard`; a "full" page has no right column, so exporting one there throws (`PageModule.Rail`, `src/lib/demo.ts:146,192-199`; `src/app.tsx:627-633`). The page and its rail are siblings in `App`, so they share state through the page's own module: the Changelog's month in view and its jump are module signals only the scroll-spy writes (`src/pages/changelog/release-spy.ts:16-27`). The page scroller's `onScroll` reaches the page through `PageScrollContext`, a subscribe function `App` provides (`src/app.tsx:514-518,587`, `src/lib/demo-kit.tsx:18`). The playground rail's slot (`RightRailTarget`) stays mounted under the page's rail. With no Theme, Radius, Size or Icons select on the page, `scripts/screenshots.tsx` flips the theme directly for a page with a `Rail` (`scripts/screenshots.tsx:251-256`).
+- **Port:** a "docs" page may export `Rail`, and `App` renders it in the right column in place of `CustomizeCard`; a "full" page has no right column, so exporting one there throws (`PageModule.Rail`, `src/lib/demo.ts:146,192-199`; `src/app.tsx:628-634`). The page and its rail are siblings in `App`, so they share state through the page's own module: the Changelog's month in view and its jump are module signals only the scroll-spy writes (`src/pages/changelog/release-spy.ts:16-27`). The page scroller's `onScroll` reaches the page through `PageScrollContext`, a subscribe function `App` provides (`src/app.tsx:514-518,588`, `src/lib/demo-kit.tsx:18`). The playground rail's slot (`RightRailTarget`) stays mounted under the page's rail. With no Theme, Radius, Size or Icons select on the page, `scripts/screenshots.tsx` flips the theme directly for a page with a `Rail` (`scripts/screenshots.tsx:251-256`).
 - **Workaround:** n/a.
 - **Fidelity:** exact (the card alone in the rail, as on the source's `/changelog`).
 - **Components it hits:** the Changelog page.
@@ -164,14 +164,14 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** dropped.
 - **Components it hits:** just the shell.
 
-## Theme change is not cross-faded
+## Theme change cross-fades through a lowest-precedence layer
 
-- **Cause:** `gpuix gap`. The source puts one rule on every element; gpuix has no stylesheet or universal selector to put it on, only a `transition` per element.
-- **Original:** `ThemeProvider` adds `.transitioning` around the class swap, and `html.transitioning *` eases border-radius, background, colour, border, fill and stroke over 180ms ease-in-out on every element; the first apply is skipped (`registry/default/lib/theme-context.tsx:40-67`, `app/globals.css:856-866`).
-- **Port:** `themeChoice` flips the palette signal and every `color.*` getter re-reads (`src/lib/theme.ts:195-264`). Components that declare a `transition` (mostly 80ms) ease the swap; the chrome, panel, headings, cards, sidebar and undeclared text cut at once. A 180ms fade on only the chrome and panel was tried and removed: with the text and cards still cutting, mid-swap shows new-theme text on a part-way background.
-- **gpuix lacks:** a global transition rule (an inherited or universal `transition`).
-- **Workaround:** none.
-- **Fidelity:** approximated (declared component fades only, the rest cuts).
+- **Cause:** `gpuix gap`. gpuix has no stylesheet, no `!important` and no `html.transitioning` class to switch; its one universal rule (`<UniversalStyle>`) sits under every element's own style.
+- **Original:** `ThemeProvider` adds `.transitioning` to `<html>`, forces a reflow, swaps the `.light` / `.dark` class and removes `.transitioning` 200ms later; while it is on, `html.transitioning *` eases border-radius, background, colour, border, fill and stroke over 180ms ease-in-out on every element, with `!important`. The first apply is skipped, and the `T` key goes through the same effect. Only a change of the theme choice fires it: with System the OS flipping `prefers-color-scheme` swaps no class, so it cuts (`registry/default/lib/theme-context.tsx:40-83`, `app/globals.css:856-868`).
+- **Port:** the Theme select, the site menu's Theme rows and the Surfaces page's Light / Dark links call `changeTheme`, which mounts a `<UniversalStyle>` (background-color, color and border-color, 180ms ease-in-out), calls `setThemeChoice` 20ms later and drops the layer 200ms after that; a second change inside the window restarts both timers (`src/lib/theme-fade.tsx:27-35`, `<ThemeFade />` under the root at `src/app.tsx:529`, callers `src/app.tsx:433`, `src/lib/site-command-menu.tsx:157`, `src/pages/surfaces.tsx:102`). The layer goes in one frame ahead because an element that first gains a transition in the same change as a colour jumps; that lead is the source's forced reflow. `setThemeChoice` itself still cuts at once, which the screenshot and check scripts rely on. Nothing fades on mount, and the OS flipping under System does not fade, as in the source. `scripts/check-theme-fade.tsx` samples a surface and a border mid-fade, the end colour and the layer's removal.
+- **gpuix lacks:** a layer that beats an element's own `transition` (`!important`), a way to restyle in the same frame as the layer, and `fill` / `stroke` transitions.
+- **Workaround:** the one-frame lead above. Differences that remain: an element with its own `transition` keeps it (the 80ms `colorFade` of buttons, switches and inputs finish in 80ms while the rest take 180ms; the source forces 180ms on all of them); `border-radius` is left out of the list (a theme change moves none) and so are `fill` / `stroke` (icons follow `color`); the palette, the select's value and the native window appearance trail the pick by 20ms; going from a pinned theme to System fades only if the window reports the OS scheme within 200ms of the flip (the test renderer ignores appearance, so unchecked). The `T` shortcut is the entry above.
+- **Fidelity:** approximated (the fade runs, but elements with their own transition keep their shorter one).
 - **Components it hits:** every page.
 
 ## Theme and settings are not persisted
@@ -216,7 +216,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (unverified live; read from code only).
 - **Original:** `scrollbar-gutter: stable`, `overscroll-behavior-y: none`, a thin overlay scrollbar ramp tinted by `--overlay`, grayscale font smoothing, balanced headings, inline-code chips, and a focus-ring fallback for natively focusable elements (`app/globals.css:296-345, 326-332, 896-945, 868-891`).
-- **Port:** the page column is a plain `overflowY: "scroll"` div (`src/app.tsx:551-562`) without the scrollbar styling. The docs pages have the inline-code chip and prose through `Code` and `Prose` (`src/lib/doc-page.tsx:43-74`; the chip is 13px with no-break-space padding, `drift/motion-page.md`); the shell has no prose.
+- **Port:** the page column is a plain `overflowY: "scroll"` div (`src/app.tsx:552-563`) without the scrollbar styling. The docs pages have the inline-code chip and prose through `Code` and `Prose` (`src/lib/doc-page.tsx:43-74`; the chip is 13px with no-break-space padding, `drift/motion-page.md`); the shell has no prose.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** every page.
@@ -225,7 +225,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (Demo); `port choice` (Concepts and Audio Mixer: the window has no URL bar to reach them).
 - **Original:** Pages holds Showcase (home icon; keywords home / bento / gallery), Introduction (square-library; docs / getting started / install), Changelog (clock; releases / what's new / updates / breaking), Demo (play; slides / playground), Compare with shadcn (scaling; shadcn / side by side) (`app/components/site-command-menu.tsx:90-96, 199-213`).
-- **Port:** Showcase, Introduction, Changelog (the clock icon and the same four keywords, as the page's `menuIcon` and `menuKeywords`; pinned by `scripts/check-site-nav.tsx`), Compare with shadcn, Audio Mixer (sliders-horizontal; mixer / eq / audio / slider) and Concepts (no icon; concepts / mockups), in page-module order (`src/lib/site-command-menu.tsx:111-142`, the `menuIcon` and `menuKeywords` exports of each `src/pages/*.tsx`). No Demo row: `/demo` is not ported. Audio Mixer and Concepts are rows the source's menu does not have; there they are reachable by URL only.
+- **Port:** Showcase, Introduction, Changelog (the clock icon and the same four keywords, as the page's `menuIcon` and `menuKeywords`; pinned by `scripts/check-site-nav.tsx`), Compare with shadcn, Audio Mixer (sliders-horizontal; mixer / eq / audio / slider) and Concepts (no icon; concepts / mockups), in page-module order (`src/lib/site-command-menu.tsx:112-143`, the `menuIcon` and `menuKeywords` exports of each `src/pages/*.tsx`). No Demo row: `/demo` is not ported. Audio Mixer and Concepts are rows the source's menu does not have; there they are reachable by URL only.
 - **Workaround:** none.
 - **Fidelity:** dropped (Demo); approximated (two extra rows).
 - **Components it hits:** just the site menu.
@@ -234,7 +234,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`.
 - **Original:** a "System" group of the seven system pages and Components rows with the description "New" or "Updated" (New covers the latest release's New entries and the pages listed ahead of the next release, Updated its Updated and Breaking ones) and keywords of the slug plus every word of the component's description (`app/components/site-command-menu.tsx:194-225`, `lib/changelog/marks.tsx`, `lib/changelog/load.ts` `latestMarks`). The same marks badge the Showcase tiles, /demo and /compare (`app/components/bento-grid.tsx:105-127`).
-- **Port:** the marks exist (`latestMarks`, `AHEAD_OF_RELEASE`, `src/lib/changelog/load.ts`) and only the nav reads them, for its New dots (`src/lib/changelog/releases.ts`, `src/app.tsx:192-243`). The System group is ported with the slug and description words as keywords and no icon (`src/lib/site-command-menu.tsx:142`, each system page's `menuKeywords`), but no "New" or "Updated" description. The Components group is the discovered demos with no description and no keywords, so the filter matches the title only (`:143-145`). The Showcase tiles' New badge is a fixed `isNew` per tile (`src/home/bento-grid.tsx:32,36,79`: CommandMenu, Combobox, CarouselDots) rather than the marks, so Banner, listed ahead of its release, has none. The port has 32 demos where the source lists 28 components; the extra four (file-thumbnail, mobile-drawer, queued-stack, scroll-area) are menu rows only (`listed: "menu"`).
+- **Port:** the marks exist (`latestMarks`, `AHEAD_OF_RELEASE`, `src/lib/changelog/load.ts`) and only the nav reads them, for its New dots (`src/lib/changelog/releases.ts`, `src/app.tsx:192-243`). The System group is ported with the slug and description words as keywords and no icon (`src/lib/site-command-menu.tsx:143`, each system page's `menuKeywords`), but no "New" or "Updated" description. The Components group is the discovered demos with no description and no keywords, so the filter matches the title only (`:143-145`). The Showcase tiles' New badge is a fixed `isNew` per tile (`src/home/bento-grid.tsx:32,36,79`: CommandMenu, Combobox, CarouselDots) rather than the marks, so Banner, listed ahead of its release, has none. The port has 32 demos where the source lists 28 components; the extra four (file-thumbnail, mobile-drawer, queued-stack, scroll-area) are menu rows only (`listed: "menu"`).
 - **Workaround:** none.
 - **Fidelity:** dropped (the menu's badges and the Components keywords); approximated (the Showcase badges).
 - **Components it hits:** just the site menu and the Showcase.
@@ -243,7 +243,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`.
 - **Original:** Settings holds 3 Theme, 2 Radius, 2 Size, 5 Icons and 2 Primitive rows (14); a theme row reads "Theme: Follow system / Light / Dark", the action "Set theme to ...", description "Current" on the active one, icons monitor / sun / moon, keywords theme / appearance / mode; a pick toasts "Theme set to Light" (`app/components/site-command-menu.tsx:104-120, 227-298`).
-- **Port:** only the three Theme rows, with the label "Theme: System" (the shared `THEMES` label, `src/lib/theme.ts:185-193`) instead of "Follow system", no toast (`src/lib/site-command-menu.tsx:145-157`). The Radius, Size and Icons rows exist in the customise card now but not in the menu, so 9 rows are missing (Primitive's 2 have no setting to change).
+- **Port:** only the three Theme rows, with the label "Theme: System" (the shared `THEMES` label, `src/lib/theme.ts:185-193`) instead of "Follow system", no toast (`src/lib/site-command-menu.tsx:146-158`). The Radius, Size and Icons rows exist in the customise card now but not in the menu, so 9 rows are missing (Primitive's 2 have no setting to change).
 - **Workaround:** none.
 - **Fidelity:** dropped (11 rows); approximated (label).
 - **Components it hits:** just the site menu.
@@ -252,7 +252,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`.
 - **Original:** `CommandMenuDialog` takes `title="Site menu"` and `description="Jump to a page or change a setting."` as the dialog's accessible name, and binds `shortcut="mod+k"` itself (`app/components/site-command-menu.tsx:385-390`, `registry/default/command-menu.tsx:1425-1540`).
-- **Port:** the dialog has no title or description props (`src/components/command-menu.tsx:1346-1350`). A separate window listener toggles the menu (`src/lib/site-command-menu.tsx:67-77`); `isModK` matches Meta or Ctrl, no Alt, on `event.key` alone (`:59-63`). On Dvorak the key that types "t" does not open it: gpuix derives `code` from `key`, so there is no physical K to match (`scripts/check-command-menu.tsx` checks ⌘T and ⌘⌥K stay closed and ⌘K toggles; the layout itself needs a live check).
+- **Port:** the dialog has no title or description props (`src/components/command-menu.tsx:1346-1350`). A separate window listener toggles the menu (`src/lib/site-command-menu.tsx:68-78`); `isModK` matches Meta or Ctrl, no Alt, on `event.key` alone (`:59-63`). On Dvorak the key that types "t" does not open it: gpuix derives `code` from `key`, so there is no physical K to match (`scripts/check-command-menu.tsx` checks ⌘T and ⌘⌥K stay closed and ⌘K toggles; the layout itself needs a live check).
 - **Workaround:** none.
 - **Fidelity:** exact on macOS.
 - **Components it hits:** just the site menu.
@@ -261,7 +261,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `gpuix gap`.
 - **Original:** `matchesShortcut` reads the physical key (`code`) when `key` is not a Latin letter or digit, so Ctrl+K opens the menu on a Cyrillic or Greek layout (`registry/default/command-menu.tsx:195-230`).
-- **Port:** `isModK` reads `key` only (`src/lib/site-command-menu.tsx:59-63`).
+- **Port:** `isModK` reads `key` only (`src/lib/site-command-menu.tsx:60-64`).
 - **gpuix lacks:** a physical key. `code` is "derived from GPUI's `key`, which is layout-dependent on every platform", so a Cyrillic key reports `code` `""` (`~/code/fdarian/gpuix/packages/native/src/events/key_names.rs:9-12`, `:138-160`). On macOS this does not bite: GPUI reports the layout's Cmd letter, so ⌘K works on Cyrillic, Armenian and Dvorak-QWERTY (`~/code/fdarian/gpuix/zed/crates/gpui_macos/src/events.rs:425-439`). On Windows and Linux, Ctrl plus a non-Latin letter does not match (README Missing features row "site menu (`isModK`)"). Not run there.
 - **Workaround:** none; the sidebar's Search row opens the menu.
 - **Fidelity:** exact on macOS; dropped for non-Latin layouts on Windows and Linux.
@@ -271,7 +271,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (persistence).
 - **Original:** the last three pages opened through the menu are kept in `localStorage["ff:command-menu-recent"]`, read on open, and listed first under "Recent" while the field is empty, then dropped from their own group (`app/components/site-command-menu.tsx:51-53, 122-138, 170-188, 391`).
-- **Port:** the same list through `CommandMenu`'s `suggestions` and `suggestionsLabel` (`src/lib/site-command-menu.tsx:224-225`), held in a module-level signal of at most three slugs (`:35-42`), so it starts empty on every launch.
+- **Port:** the same list through `CommandMenu`'s `suggestions` and `suggestionsLabel` (`src/lib/site-command-menu.tsx:225-226`), held in a module-level signal of at most three slugs (`:35-42`), so it starts empty on every launch.
 - **Workaround:** none.
 - **Fidelity:** approximated (the list does not survive a restart).
 - **Components it hits:** just the site menu.
@@ -280,7 +280,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (the toast, the arrow keys); `port choice` (the install flavour: the port has no Primitive row).
 - **Original:** the Actions group offers "Copy install command" on a component page (writes `npx shadcn@latest add <url>` with the flavour the Primitive row picked, then toasts "Install command copied"), "Previous page" and "Next page" (shortcut caps `←` / `→`, which the sidebar layout's arrow keys honour), and "Open on GitHub" (`app/components/site-command-menu.tsx:299-360`, `lib/base-context.tsx:76-84`).
-- **Port:** the same four rows, with the same descriptions, keywords and order (`src/lib/site-command-menu.tsx:159-207`, tab `:25-29`). The copy writes the Base UI URL always (`src/lib/install-url.ts:1-39`) and shows no toast (the port has no toast component); a refused write logs, the source swallows it. The `←` / `→` caps are drawn but nothing binds the keys (see "Arrow keys do not step through the pages"). "Open on GitHub" hands the URL to the OS (`src/lib/platform.ts:3-5`).
+- **Port:** the same four rows, with the same descriptions, keywords and order (`src/lib/site-command-menu.tsx:160-208`, tab `:25-29`). The copy writes the Base UI URL always (`src/lib/install-url.ts:1-39`) and shows no toast (the port has no toast component); a refused write logs, the source swallows it. The `←` / `→` caps are drawn but nothing binds the keys (see "Arrow keys do not step through the pages"). "Open on GitHub" hands the URL to the OS (`src/lib/platform.ts:3-5`).
 - **Workaround:** none.
 - **Fidelity:** approximated (no confirmation after a copy; caps that promise keys that do nothing).
 - **Components it hits:** just the site menu.
@@ -380,7 +380,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `port choice` (the window has no URL bar, history or back button).
 - **Original:** `/compare`, `/concepts` and `/slider` are unlisted routes: typed or linked, and `/compare` is a menu row; `/concepts` and `/compare` are full-screen (`app/components/sidebar-layout.tsx:111-115`). The four concept pages are linked from the concepts index and its nav.
-- **Port:** Compare, Concepts and Audio Mixer are Pages rows in the site menu (`listed: "menu"`); the concept pages are `listed: "none"`, reachable only from the index and the concept nav (`src/pages/concepts.tsx:43`, `src/pages/concepts/frame.tsx:75-96`). A "full" page (Compare, the index, the four concepts) drops the sidebar and the customise column (`src/app.tsx:541, 606`), so the way out is its own Home link, ⌘K, or on Compare the footer links; there is no back button. Audio Mixer is a "docs" page, so it keeps the sidebar and the right column.
+- **Port:** Compare, Concepts and Audio Mixer are Pages rows in the site menu (`listed: "menu"`); the concept pages are `listed: "none"`, reachable only from the index and the concept nav (`src/pages/concepts.tsx:43`, `src/pages/concepts/frame.tsx:75-96`). A "full" page (Compare, the index, the four concepts) drops the sidebar and the customise column (`src/app.tsx:542, 607`), so the way out is its own Home link, ⌘K, or on Compare the footer links; there is no back button. Audio Mixer is a "docs" page, so it keeps the sidebar and the right column.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** none directly.
@@ -389,7 +389,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (a desktop app has no unknown route, so it has no use today).
 - **Original:** `not-found.tsx`: a large "404" whose zero springs into line on hover or focus, "A little out of place.", "We couldn't find this page." and a tertiary "Back to showcase" button; the right panel is hidden on it (`app/not-found.tsx:1-74`, `app/components/sidebar-layout.tsx:184`).
-- **Port:** `App` shows nothing for an unknown page: the `Switch` has no fallback (`src/app.tsx:589-599`).
+- **Port:** `App` shows nothing for an unknown page: the `Switch` has no fallback (`src/app.tsx:590-600`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** none.
