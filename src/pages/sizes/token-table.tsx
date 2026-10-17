@@ -1,4 +1,5 @@
 import { For, type JSX } from 'solid-js';
+import { ScrollArea } from '#/components/scroll-area';
 import { MONO } from '#/lib/doc-page';
 import { color, type SizeChoice, scheme, siteType, weight } from '#/lib/theme';
 import { LADDER } from './ladder';
@@ -54,32 +55,20 @@ const TOKEN_ROWS: readonly TokenRow[] = [
 	},
 ];
 
-/** The columns that do not flex; "Applies to" takes the rest. */
-const WIDTHS = { token: 188, default: 132, compact: 132 } as const;
-
-const CELL = {
-	paddingTop: 8,
-	paddingBottom: 8,
-	paddingLeft: 12,
-	paddingRight: 12,
-};
-
-function Cell(props: {
-	width?: number;
-	first?: boolean;
-	children: JSX.Element;
-}) {
+/** `th` / `td`: `px-3 py-2`, the first column flush left. */
+function Cell(props: { first?: boolean; rule: string; children: JSX.Element }) {
 	return (
 		<div
 			style={{
-				...CELL,
-				...(props.first === true ? { paddingLeft: 0 } : {}),
-				...(props.width === undefined
-					? { flexGrow: 1, flexBasis: 0, minWidth: 0 }
-					: { width: props.width, flexShrink: 0 }),
-				display: 'flex',
-				flexDirection: 'column',
-				alignItems: 'stretch',
+				display: 'table-cell',
+				verticalAlign: 'middle',
+				paddingTop: 8,
+				paddingBottom: 8,
+				paddingLeft: props.first === true ? 0 : 12,
+				paddingRight: 12,
+				borderBottomStyle: 'solid',
+				borderBottomWidth: 1,
+				borderBottomColor: props.rule,
 			}}
 		>
 			{props.children}
@@ -92,6 +81,7 @@ function HeadText(props: { children: string }) {
 		<text
 			style={{
 				...siteType.body,
+				textAlign: 'left',
 				fontWeight: weight.semibold,
 				color: color.foreground,
 			}}
@@ -106,7 +96,7 @@ function TokenChip(props: { children: string }) {
 	return (
 		<div
 			style={{
-				alignSelf: 'flex-start',
+				width: 'fit-content',
 				paddingLeft: 4,
 				paddingRight: 4,
 				paddingTop: 2,
@@ -131,76 +121,66 @@ function TokenChip(props: { children: string }) {
 
 export function TokenTable() {
 	return (
-		<div
-			testId="token-table"
-			style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
-		>
+		<ScrollArea orientation="horizontal" fade width="100%">
 			<div
+				testId="token-table"
 				style={{
-					display: 'flex',
-					flexDirection: 'row',
-					borderBottomStyle: 'solid',
-					borderBottomWidth: 1,
-					borderColor: color.border,
+					display: 'table',
+					borderCollapse: 'collapse',
+					width: '100%',
+					minWidth: 560,
 				}}
 			>
-				<Cell width={WIDTHS.token} first>
-					<HeadText>Token</HeadText>
-				</Cell>
-				<Cell>
-					<HeadText>Applies to</HeadText>
-				</Cell>
-				<Cell width={WIDTHS.default}>
-					<HeadText>Default</HeadText>
-				</Cell>
-				<Cell width={WIDTHS.compact}>
-					<HeadText>Compact</HeadText>
-				</Cell>
-			</div>
-			<For each={TOKEN_ROWS}>
-				{(row) => (
-					<div
-						style={{
-							display: 'flex',
-							flexDirection: 'row',
-							borderBottomStyle: 'solid',
-							borderBottomWidth: 1,
-							borderColor: color.borderFaint,
-						}}
-					>
-						<Cell width={WIDTHS.token} first>
-							<TokenChip>{row.token}</TokenChip>
-						</Cell>
-						<Cell>
-							<text style={{ ...siteType.body, color: color.mutedForeground }}>
-								{row.applies}
-							</text>
-						</Cell>
-						<Cell width={WIDTHS.default}>
-							<text
-								style={{
-									...siteType.body,
-									color: color.foreground,
-									whiteSpace: 'nowrap',
-								}}
-							>
-								{row.value('default')}
-							</text>
-						</Cell>
-						<Cell width={WIDTHS.compact}>
-							<text
-								style={{
-									...siteType.body,
-									color: color.foreground,
-									whiteSpace: 'nowrap',
-								}}
-							>
-								{row.value('compact')}
-							</text>
-						</Cell>
+				<div style={{ display: 'table-header-group' }}>
+					<div style={{ display: 'table-row' }}>
+						<For each={['Token', 'Applies to', 'Default', 'Compact']}>
+							{(label, index) => (
+								<Cell first={index() === 0} rule={color.border}>
+									<HeadText>{label}</HeadText>
+								</Cell>
+							)}
+						</For>
 					</div>
-				)}
-			</For>
-		</div>
+				</div>
+				<div style={{ display: 'table-row-group' }}>
+					<For each={TOKEN_ROWS}>
+						{(row) => (
+							<div style={{ display: 'table-row' }}>
+								<Cell first rule={color.borderFaint}>
+									<TokenChip>{row.token}</TokenChip>
+								</Cell>
+								<Cell rule={color.borderFaint}>
+									<text
+										style={{
+											...siteType.body,
+											textAlign: 'left',
+											color: color.mutedForeground,
+										}}
+									>
+										{row.applies}
+									</text>
+								</Cell>
+								<For each={['default', 'compact'] as const}>
+									{(step) => (
+										<Cell rule={color.borderFaint}>
+											<text
+												style={{
+													...siteType.body,
+													textAlign: 'left',
+													color: color.foreground,
+													whiteSpace: 'nowrap',
+												}}
+											>
+												{row.value(step)}
+											</text>
+										</Cell>
+									)}
+								</For>
+							</div>
+						)}
+					</For>
+				</div>
+			</div>
+		</ScrollArea>
 	);
 }
