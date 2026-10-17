@@ -731,6 +731,8 @@ export function AskUserQuestions(props: {
 					const id = () => optionKey(option, i());
 					const selected = () => selectedIds().includes(id());
 					const stacked = () => question()?.layout === 'stacked';
+					const inlineDescription = () =>
+						stacked() ? undefined : option.description;
 					return (
 						<Row
 							index={i()}
@@ -756,20 +758,35 @@ export function AskUserQuestions(props: {
 							topAlign={stacked()}
 							chipPosition={question()?.chipPosition ?? 'right'}
 						>
-							<StableLabel
-								text={option.title}
-								heavy={selected()}
-								color={color.foreground}
-							/>
-							<Show when={option.description}>
-								<text
-									style={{
-										...(stacked() ? scale.caption : scale.body),
-										color: color.mutedForeground,
-									}}
-								>
-									{option.description}
-								</text>
+							<Show
+								when={inlineDescription()}
+								fallback={
+									<>
+										<StableLabel
+											text={option.title}
+											heavy={selected()}
+											color={color.foreground}
+										/>
+										<Show when={option.description}>
+											<text
+												style={{
+													...scale.caption,
+													color: color.mutedForeground,
+												}}
+											>
+												{option.description}
+											</text>
+										</Show>
+									</>
+								}
+							>
+								{(description: () => string) => (
+									<InlineOptionText
+										title={option.title}
+										description={description()}
+										heavy={selected()}
+									/>
+								)}
 							</Show>
 						</Row>
 					);
@@ -1096,6 +1113,33 @@ export function AskUserQuestions(props: {
 				</Show>
 			</div>
 		</Show>
+	);
+}
+
+/**
+ * The inline layout's title and description: one paragraph, so a long
+ * description runs on from the title's line as in the source. A run cannot hold
+ * `StableLabel`'s hidden semibold copy (the source's `inline-grid` is an atom
+ * in the line), so a selected title's wider weight moves the description.
+ */
+function InlineOptionText(props: {
+	title: string;
+	description: string;
+	heavy: boolean;
+}) {
+	return (
+		<text style={{ ...scale.body, minWidth: 0, flexShrink: 1 }}>
+			<span
+				style={{
+					color: color.foreground,
+					fontWeight: props.heavy ? weight.semibold : weight.normal,
+					...fade(['color'], 80),
+				}}
+			>
+				{props.title}
+			</span>{' '}
+			<span style={{ color: color.mutedForeground }}>{props.description}</span>
+		</text>
 	);
 }
 

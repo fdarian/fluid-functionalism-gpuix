@@ -2,13 +2,13 @@
 
 Original: `registry/default/ask-user-questions.tsx` (1,880 lines, on Base UI `RadioGroup` / `CheckboxGroup` / `Field`) and `app/docs/ask-user-questions/page.tsx` in the source (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/ask-user-questions.tsx`, demo in `src/demos/ask-user-questions.tsx`.
 
-Checked and the same: card, row, chip and footer sizes and padding at the `sm:` step (`ask-user-questions.tsx:1214-1240`, `:1819-1849`; port `:991-1009`, `:201-297`), all spring values, the height morph (`spring.slow`, `:1259-1264`; port `:80-84`, `:948-960`), controlled / uncontrolled state, answer shapes, roving tab stop, the Other and freeText states, and light and dark colours (all through `color.*`). The demo data (questions, options, copy, the email validator) is identical to the docs page.
+Checked and the same: card, row, chip and footer sizes and padding at the `sm:` step (`ask-user-questions.tsx:1214-1240`, `:1819-1849`; port `:1008-1026`, `:201-297`), all spring values, the height morph (`spring.slow`, `:1259-1264`; port `:80-84`, `:965-977`), controlled / uncontrolled state, answer shapes, roving tab stop, the Other and freeText states, and light and dark colours (all through `color.*`). The demo data (questions, options, copy, the email validator) is identical to the docs page.
 
 ## CSS transforms (scale-ins)
 
 - **Cause:** `gpuix gap`. Shared: CSS transforms ([README, Missing features, first row](../README.md)).
 - **Original:** each footer button enters and exits at `scale: .85` (`:1430-1432`, `:1490-1492`, `:1516-1518`); the single-select submit arrow overlay is `scale: .6` in and out (`:1700-1706`); the validation message rises from `y: -2` (`:1470-1471`).
-- **Port:** footer buttons fade only (`FadeIn`, `ask-user-questions.tsx:1096-1107`); the arrow overlay fades over 80 ms (`:160-166`); the error has no entrance (`:1033-1045`).
+- **Port:** footer buttons fade only (`FadeIn`, `ask-user-questions.tsx:1146-1157`); the arrow overlay fades over 80 ms (`:160-166`); the error has no entrance (`:1050-1062`).
 - **gpuix lacks:** `scale` (`~/code/fdarian/gpuix/FORK.md:1194-1204`).
 - **Workaround:** opacity only.
 - **Fidelity:** approximated (no scale).
@@ -18,7 +18,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `not ported yet` (gpuix has `AnimatePresence` with `mode="popLayout"` and `layout`, `FORK.md:1145-1146`).
 - **Original:** footer buttons sit in `AnimatePresence mode="popLayout" initial={false}` with `layout="position"`, so a leaving button fades out while its neighbours slide at the same time and nothing animates on first mount (`:1425-1429`, `:1485-1489`). The submit arrow also fades out on exit with `spring.fast.exit` (`:1702-1706`).
-- **Port:** a `Show` removes the button at once, and the others jump. `FadeIn` runs on every mount, including the first paint, which the source skips (`ask-user-questions.tsx:1020-1086`, `:1096-1107`). The arrow overlay is unmounted when `showArrow` goes false (`:159`).
+- **Port:** a `Show` removes the button at once, and the others jump. `FadeIn` runs on every mount, including the first paint, which the source skips (`ask-user-questions.tsx:1037-1103`, `:1146-1157`). The arrow overlay is unmounted when `showArrow` goes false (`:159`).
 - **Workaround:** none.
 - **Fidelity:** dropped (exits, sibling slide); approximated (first-mount fade).
 - **Components it hits:** just this one.
@@ -27,7 +27,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `gpuix gap`. Shared: variable-font axes ([README, Missing features, variable-font row](../README.md)).
 - **Original:** option titles (through the ghost-span trick), the chip number, the heading and the textareas use `fontVariationSettings` 400 / 550, eased over 80 ms (`:1054-1058`, `:1742-1761`, `:1281`).
-- **Port:** `StableLabel` and `weight.semibold` (600), switched at once (`ask-user-questions.tsx:753-757`, `:235`, `:976`).
+- **Port:** `StableLabel` and `weight.semibold` (600), switched at once (`StableLabel` in the stacked layout and for a title with no description, `ask-user-questions.tsx:765-769`, `:235`, `:993`; a `span` run in the inline layout, `:1132-1140`).
 - **Fidelity:** approximated.
 - **Components it hits:** card, table, tabs, tabs-subtle, sidebar.
 
@@ -53,7 +53,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `port choice` (reason not stated; the port routes all keys through one `onKeyDown` on the card).
 - **Original:** `1`-`9` is a document-level listener that works with no focus in the card, answered by one instance chosen through `mountedInstances` (`:125-130`, `:174-221`). The root `<div>` is not focusable (`:1202-1223`).
-- **Port:** the keys work only while focus is inside the card, and the card has `tabIndex={0}`, an extra Tab stop before the rows (`ask-user-questions.tsx:928`).
+- **Port:** the keys work only while focus is inside the card, and the card has `tabIndex={0}`, an extra Tab stop before the rows (`ask-user-questions.tsx:945`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** any component with a global shortcut.
@@ -62,7 +62,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** when a keyboard-driven step changes the question, the new first row is focused in the same commit; a mouse step does not restore (`:394-424`).
-- **Port:** the first row is focused 48 ms later (a synchronous focus from the effect leaves focus on nothing, checked), and `keyboardDriving` turns true on any keydown and false on mousedown (`ask-user-questions.tsx:477-491`, `:525`, `:930-932`).
+- **Port:** the first row is focused 48 ms later (a synchronous focus from the effect leaves focus on nothing, checked), and `keyboardDriving` turns true on any keydown and false on mousedown (`ask-user-questions.tsx:477-491`, `:525`, `:947-949`).
 - **Workaround:** a timer.
 - **Fidelity:** approximated (a 48 ms gap).
 - **Components it hits:** just this one.
@@ -80,25 +80,25 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `not ported yet`.
 - **Original:** `isOtherMultiline` is `scrollHeight > 1.5 * lineHeight`, so a wrapped line counts (`:328-342`).
-- **Port:** `otherText().includes("\n")` (`ask-user-questions.tsx:802`), so a draft that wraps without a newline leaves the chip centred on the tall row.
+- **Port:** `otherText().includes("\n")` (`ask-user-questions.tsx:819`), so a draft that wraps without a newline leaves the chip centred on the tall row.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
-## Inline description does not flow with the title
+## Inline option: selecting a title with a description moves the description
 
-- **Cause:** `port choice` (reason not stated; `StableLabel` is a box, not an inline span).
-- **Original:** the inline layout is one `<span>` of title, a space and the description, so a long description wraps on from the title's line (`:1076-1104`).
-- **Port:** a wrapping flex row with a 4px column gap; a description wider than the room left on the title's line drops whole to the next line (`ask-user-questions.tsx:300-312`, `:753-767`).
+- **Cause:** `gpuix gap` (an inline atom to hold the reserve: the source's `inline-grid` span; gpuix lays a `display: grid` span out as a block, `README.md` "Inline text").
+- **Original:** the inline layout is one `<span>` of the title (an `inline-grid` with a hidden semibold copy that reserves the width), a space and the description, so a long description wraps on from the title's line and a selected title never moves it (`:1076-1104`).
+- **Port:** one `<text>` of two runs, the title (semibold when selected, colour eased over 80 ms) and the description, with a real space between (`InlineOptionText`, `ask-user-questions.tsx:1119-1144`; used at `:761-790`). A long description wraps on from the title's line. The run cannot hold `StableLabel`'s hidden copy, so selecting a title with a description widens it by the Regular-to-SemiBold difference and the description moves right (and may re-wrap). A title with no description, and the stacked layout, keep `StableLabel` and do not move.
 - **Workaround:** none.
-- **Fidelity:** approximated (only for long descriptions).
+- **Fidelity:** approximated (the description's position while the weight changes).
 - **Components it hits:** none other.
 
 ## Validation error: no motion, no semantics
 
 - **Cause:** `not ported yet` (the `Field` wiring is Base UI; the rest could be built).
 - **Original:** `Field.Error` renders `motion.p role="alert"`, rising from `y: -2` with a 120 ms opacity, padded `px-2 sm:px-3`, and its id lands in the textarea's `aria-describedby` and `aria-invalid` (`:1253`, `:1463-1482`).
-- **Port:** a plain `<text>` with `paddingLeft` 12, no `role`, no association with the field (`ask-user-questions.tsx:1033-1045`).
+- **Port:** a plain `<text>` with `paddingLeft` 12, no `role`, no association with the field (`ask-user-questions.tsx:1050-1062`).
 - **Workaround:** none.
 - **Fidelity:** approximated (visual); dropped (semantics).
 - **Components it hits:** just this one.
@@ -125,7 +125,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `gpuix gap` for touch (`(hover: none)` / `pointer-coarse` never match; see `drift/queued-stack.md`); `not ported yet` for the `sm:` breakpoint (gpuix has `matchMedia`).
 - **Original:** below 640px the card pads 16 not 20, Back and Skip drop their arrows, Continue drops its ⌘↵ chip (`hidden sm:contents`), and the textarea gets `pointer-coarse:py-px -my-px` (`:1180-1193`, `:1226-1236`, `:1447`, `:1549`).
-- **Port:** the ≥`sm` values only (`ask-user-questions.tsx:926-934`, `:1010-1086`).
+- **Port:** the ≥`sm` values only (`ask-user-questions.tsx:943-951`, `:1027-1103`).
 - **Workaround:** none; desktop only.
 - **Fidelity:** dropped.
 - **Components it hits:** any touch-aware component.
@@ -134,7 +134,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `not ported yet` (small details).
 - **Original:** the chip is `font-sans`, `leading-none`, and "⌘" and "↵" are two children with `gap-0.5` (`:1593-1604`, `:1551-1552`). Back, Skip and Continue are `Button size="sm"` with trimmed icon-side padding via `className` (`:1440-1450`, `:1524-1541`).
-- **Port:** one string "⌘↵", no 2px gap, `lineHeight: 11` (`ask-user-questions.tsx:97-122`); `size="compact"`, which is the source's `sm` alias, with the Button's own icon padding (`:1020-1086`; `src/components/button.tsx:40`, `:150-153`).
+- **Port:** one string "⌘↵", no 2px gap, `lineHeight: 11` (`ask-user-questions.tsx:97-122`); `size="compact"`, which is the source's `sm` alias, with the Button's own icon padding (`:1037-1103`; `src/components/button.tsx:40`, `:150-153`).
 - **Workaround:** `marginLeft: 2` to stand in for the label gap.
 - **Fidelity:** approximated (about a pixel).
 - **Components it hits:** just this one.
@@ -143,7 +143,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `port choice` (the demo page holds several flows; one stealing focus on load would be wrong).
 - **Original:** a freeText question always takes focus when it appears, with `preventScroll` (`:349-354`).
-- **Port:** same, but `autoFocus={false}` turns it off for the first question, and the demo sets it (`ask-user-questions.tsx:335`, `:890`; `src/demos/ask-user-questions.tsx:969`, `:1028`). No `preventScroll`.
+- **Port:** same, but `autoFocus={false}` turns it off for the first question, and the demo sets it (`ask-user-questions.tsx:335`, `:907`; `src/demos/ask-user-questions.tsx:969`, `:1028`). No `preventScroll`.
 - **Workaround:** n/a.
 - **Fidelity:** exact by default.
 - **Components it hits:** just this one.

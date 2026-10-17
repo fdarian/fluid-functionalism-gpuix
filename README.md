@@ -159,7 +159,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | Component or page | gpuix gap | port choice | not ported yet | mixed | total |
 |---|---:|---:|---:|---:|---:|
 | [accordion](drift/accordion.md) | 3 | 9 | 7 | 0 | 19 |
-| [ask-user-questions](drift/ask-user-questions.md) | 2 | 5 | 7 | 3 | 17 |
+| [ask-user-questions](drift/ask-user-questions.md) | 3 | 4 | 7 | 3 | 17 |
 | [audio-mixer](drift/audio-mixer.md) | 0 | 2 | 0 | 1 | 3 |
 | [badge](drift/badge.md) | 1 | 3 | 0 | 0 | 4 |
 | [banner](drift/banner.md) | 3 | 4 | 7 | 0 | 14 |
@@ -204,7 +204,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
 | [tooltip](drift/tooltip.md) | 4 | 5 | 1 | 1 | 11 |
 | [typography](drift/typography.md) | 6 | 0 | 1 | 5 | 12 |
-| **Total** | **140** | **201** | **198** | **62** | **601** |
+| **Total** | **141** | **200** | **198** | **62** | **601** |
 
 ### gpuix gaps across components
 
@@ -249,6 +249,7 @@ offer it. A count is given only where the code shows it.
 | not counted | Effect groups (`filter`, `backdrop-filter`, `mask`, `clip`, group opacity) off macOS | none |
 | carousel-dots, file-thumbnail, thinking-indicator, thinking-steps | `requestAnimationFrame` itself (only `setTimeout`, FORK.md:207). The animations are possible without it, through motion values and keyframes (FORK.md:1140-1144) | `lib/clock.ts`: one shared, ref-counted `setInterval` frame clock |
 | dropdown, select, combobox, scroll-area | Intrinsic `width`: `max-content`, `min-content` and `fit-content` are rejected outside grid tracks, so a popup cannot grow to its widest row | A fixed panel width (288px, 224px for submenus), `popupWidth`, `minWidth: "anchor-size(width)"` |
+| ask-user-questions (the inline option) | An inline atom: `inline-grid` and `inline-block` in a paragraph. A `<span>` with `display: grid` or `block` is laid out as a block, so `StableLabel`'s hidden semibold copy cannot sit inside the title run | The inline option is one `<text>` of two runs; selecting a title with a description moves the description by the weight's width (`drift/ask-user-questions.md`) |
 | badge | `text-box-trim` / `text-box-edge`: a label is centred by its full line box | Flex centring in a fixed-height pill (about a pixel of drift) |
 | card, table (every `StableLabel`: tabs, tabs-subtle, sidebar, menu rows) | Variable-font axes (`fontVariationSettings`): only a font's default instance renders, so the weight cannot ease between 400 and 550 | Static cuts; the weight switches at once, SemiBold 600 for 550 |
 | combobox (command-menu, dropdown-search, input-group, input-message) | IME composition: no `composition*` events, `isComposing` is always `false`, and `keydown` cannot cancel a key an IME consumed | none; IME input is untested |
