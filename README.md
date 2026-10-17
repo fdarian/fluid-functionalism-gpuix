@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 601 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 600 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -166,13 +166,13 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [button](drift/button.md) | 4 | 4 | 2 | 1 | 11 |
 | [card](drift/card.md) | 5 | 7 | 7 | 0 | 19 |
 | [carousel-dots](drift/carousel-dots.md) | 2 | 3 | 2 | 1 | 8 |
-| [chat-message](drift/chat-message.md) | 2 | 3 | 2 | 3 | 10 |
+| [chat-message](drift/chat-message.md) | 3 | 4 | 2 | 1 | 10 |
 | [checkbox-group](drift/checkbox-group.md) | 3 | 0 | 4 | 1 | 8 |
 | [color-picker](drift/color-picker.md) | 3 | 6 | 15 | 1 | 25 |
 | [combobox](drift/combobox.md) | 7 | 13 | 5 | 1 | 26 |
 | [command-menu](drift/command-menu.md) | 7 | 2 | 12 | 1 | 22 |
 | [compare](drift/compare.md) | 3 | 9 | 0 | 2 | 14 |
-| [concepts](drift/concepts.md) | 4 | 27 | 2 | 1 | 34 |
+| [concepts](drift/concepts.md) | 4 | 27 | 1 | 1 | 33 |
 | [dialog](drift/dialog.md) | 6 | 2 | 2 | 1 | 11 |
 | [dropdown](drift/dropdown.md) | 7 | 4 | 10 | 2 | 23 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
@@ -204,7 +204,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
 | [tooltip](drift/tooltip.md) | 4 | 5 | 1 | 1 | 11 |
 | [typography](drift/typography.md) | 6 | 0 | 1 | 5 | 12 |
-| **Total** | **141** | **200** | **198** | **62** | **601** |
+| **Total** | **142** | **201** | **197** | **60** | **600** |
 
 ### gpuix gaps across components
 

@@ -25,8 +25,6 @@ export const listed = 'none';
 
 /** `max-w-[720px]` on the transcript and the composer. */
 const CHAT_WIDTH = 720;
-/** ChatMessage's own body style (`text-[14px] leading-5`): a string child gets it, a node child does not. */
-const MESSAGE_TYPE = { fontSize: 14, lineHeight: '20px' } as const;
 /** How long the assistant is "responding" before its reply lands. */
 const REPLY_MS = 1800;
 /** The screenshot script takes seconds, not 1.8, to type a second message and scroll before the reply lands. */
@@ -96,23 +94,6 @@ const asFileLike = (file: ComposerFile): FileLike => ({
 	type: file.type,
 	src: file.path,
 });
-
-/** `whitespace-pre-wrap`: the port's ChatMessage sets a string as one collapsing run, so each line is its own block and a blank line keeps its height. */
-function Lines(props: { text: string }) {
-	return (
-		<div style={{ display: 'flex', flexDirection: 'column' }}>
-			<For each={props.text.split('\n')}>
-				{(line) => (
-					<Show when={line !== ''} fallback={<div style={{ height: 20 }} />}>
-						<text style={{ ...MESSAGE_TYPE, color: color.foreground }}>
-							{line}
-						</text>
-					</Show>
-				)}
-			</For>
-		</div>
-	);
-}
 
 function AssistantActions() {
 	return (
@@ -233,7 +214,7 @@ export function Page() {
 											) : undefined
 										}
 									>
-										<Lines text={message.text} />
+										{message.text}
 									</ChatMessage>
 								)}
 							</For>

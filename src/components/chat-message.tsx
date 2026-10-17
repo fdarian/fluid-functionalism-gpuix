@@ -123,6 +123,8 @@ export function ChatMessage(props: {
 			<Show when={props.children !== undefined && props.children !== ''}>
 				<div
 					style={{
+						whiteSpace: 'pre-wrap',
+						overflowWrap: 'break-word',
 						paddingTop: 8,
 						paddingBottom: 8,
 						...(isUser()

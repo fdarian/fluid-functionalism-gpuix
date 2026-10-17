@@ -59,7 +59,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `ChatMessage` took a string).
 - **Original:** `Answer` passes `className="max-w-full"` and a block of three paragraphs to `ChatMessage` (`lumen/page.tsx:76-111`).
-- **Port:** `ChatMessage` gained two additive props: `children` accepts any element (a string is still set in the message style) and `fullWidth` lifts the 80% cap (`src/components/chat-message.tsx:79-83`, `:141-146`). Lumen builds three `<text>` paragraphs with 12px between them (`src/pages/concepts-lumen.tsx:168-199`).
+- **Port:** `ChatMessage` gained two additive props: `children` accepts any element (a string is still set in the message style) and `fullWidth` lifts the 80% cap (`src/components/chat-message.tsx:79-83`, `:143-148`). Lumen builds three `<text>` paragraphs with 12px between them (`src/pages/concepts-lumen.tsx:168-199`).
 - **Workaround:** none needed.
 - **Fidelity:** exact for the layout.
 - **Components it hits:** chat-message (the extra props are the only change to it).
@@ -130,25 +130,16 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (gpuix reads images from paths; `ChatMessage` takes `FileLike`, not `File`: see [chat-message.md](chat-message.md)).
 - **Original:** `makeDemoFile()` builds an SVG `Blob` in a `File` named `architecture.svg` and attaches it to the first message in an effect (`atlas/page.tsx:48-53`, `:71-76`).
-- **Port:** the same SVG string is written to `os.tmpdir()/atlas-*/architecture.svg` when the page mounts, and the message carries `{ name, type, src }` (`src/pages/concepts-atlas.tsx:87-98`). A message sent from the composer maps its `ComposerFile`s the same way.
+- **Port:** the same SVG string is written to `os.tmpdir()/atlas-*/architecture.svg` when the page mounts, and the message carries `{ name, type, src }` (`src/pages/concepts-atlas.tsx:85-96`). A message sent from the composer maps its `ComposerFile`s the same way.
 - **Workaround:** n/a.
 - **Fidelity:** exact for the thumbnail.
 - **Components it hits:** file-thumbnail, input-message.
-
-## Atlas: message text keeps its line breaks through a local `Lines`
-
-- **Cause:** `not ported yet` (`ChatMessage` has no `whiteSpace: pre-wrap`; see "Message body" in [chat-message.md](chat-message.md)).
-- **Original:** the string is the child and the bubble is `whitespace-pre-wrap` (`atlas/page.tsx:147`).
-- **Port:** each `\n`-separated line is its own `<text>` in a column, and an empty line is a 20px spacer (`src/pages/concepts-atlas.tsx:101-115`). The body style is repeated as `MESSAGE_TYPE` 14 / 20 (`:29`) because a node child does not get the component's own.
-- **Workaround:** the above; closes if `ChatMessage` sets `whiteSpace: "pre-wrap"` on string children.
-- **Fidelity:** approximated (the same lines; wrap points can differ by a word).
-- **Components it hits:** chat-message.
 
 ## Atlas: the thinking indicator's padding is cancelled with a negative margin
 
 - **Cause:** `port choice` (the port's `ThinkingIndicator` has no `className`; its 12px side padding is fixed).
 - **Original:** `<ThinkingIndicator className="!px-0" />` inside `ChatMessage className="max-w-full"` (`atlas/page.tsx:151-153`).
-- **Port:** `ChatMessage fullWidth` and a wrapper with `marginLeft: -12` (`src/pages/concepts-atlas.tsx:241-244`), so the glyph lines up with the message text. The right 12px stays; nothing sits there.
+- **Port:** `ChatMessage fullWidth` and a wrapper with `marginLeft: -12` (`src/pages/concepts-atlas.tsx:222-225`), so the glyph lines up with the message text. The right 12px stays; nothing sits there.
 - **Workaround:** the margin; a padding prop on `ThinkingIndicator` would replace it.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -166,7 +157,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the source looks like a bug).
 - **Original:** `onStop` sets `responding` and `status` back to idle but the `setTimeout` is not cleared, so the reply still lands afterwards (`atlas/page.tsx:90-104`, `:169-172`).
-- **Port:** the timer is cleared on Stop and on unmount (`src/pages/concepts-atlas.tsx:154`, `:192-196`).
+- **Port:** the timer is cleared on Stop and on unmount (`src/pages/concepts-atlas.tsx:135`, `:173-177`).
 - **Workaround:** n/a.
 - **Fidelity:** approximated (Stop works).
 - **Components it hits:** just this one.
@@ -175,7 +166,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `Button` has no `sm`; the source buttons have no handlers either).
 - **Original:** `<Button variant="ghost" size="icon-sm">` with a `useIcon("copy" | "rotate-ccw" | "image")` child (`atlas/page.tsx:178-185`, `:207-212`).
-- **Port:** `size="icon-compact"` (28px) with `icon="copy"`, `"rotate-ccw"`, `"image"`, so they follow the Icons row (`src/pages/concepts-atlas.tsx:117-134`, `:276-285`). The attach button opens the platform file picker.
+- **Port:** `size="icon-compact"` (28px) with `icon="copy"`, `"rotate-ccw"`, `"image"`, so they follow the Icons row (`src/pages/concepts-atlas.tsx:98-115`, `:257-266`). The attach button opens the platform file picker.
 - **Workaround:** none.
 - **Fidelity:** approximated (button size).
 - **Components it hits:** just this one.
@@ -184,7 +175,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (as in Lumen).
 - **Original:** `h-screen` column, `flex-1 overflow-y-auto` transcript, ids from `Date.now()` (`atlas/page.tsx:94`, `:116`, `:131-133`).
-- **Port:** a `flexGrow: 1` box in the frame's column holding a `ScrollArea` (a drawn scrollbar); ids come from a counter (`src/pages/concepts-atlas.tsx:143`, `:207-211`).
+- **Port:** a `flexGrow: 1` box in the frame's column holding a `ScrollArea` (a drawn scrollbar); ids come from a counter (`src/pages/concepts-atlas.tsx:124`, `:188-192`).
 - **Workaround:** none.
 - **Fidelity:** approximated (scrollbar look).
 - **Components it hits:** just this one.
