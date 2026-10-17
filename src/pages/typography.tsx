@@ -1,12 +1,12 @@
 import type { JSX } from 'solid-js';
 import type { ShotContext } from '#/lib/demo';
-import { DocPage, DocSection, Prose } from '#/lib/doc-page';
+import { Code, DocPage, DocSection, Link, Prose } from '#/lib/doc-page';
 import { setSizeChoice, setThemeChoice } from '#/lib/theme';
 import { TYPOGRAPHY_INSTALL_PROMPT } from '#/pages/typography/install-prompt';
 import { TypesetSample } from '#/pages/typography/markdown';
 import { NumbersDemo } from '#/pages/typography/numbers';
 import { GapTable, TypeScaleSpecimen } from '#/pages/typography/scale';
-import { BulletList, H3, Rule, Sentence } from '#/pages/typography/text';
+import { BulletList, H3, Rule } from '#/pages/typography/text';
 import { TrimDemo } from '#/pages/typography/trim';
 import { WeightOpszDemo } from '#/pages/typography/weight';
 import { BalanceDemo, PrettyDemo } from '#/pages/typography/wrap';
@@ -108,16 +108,13 @@ export function Page(): JSX.Element {
 						<Prose>2 text colors: foreground and muted.</Prose>
 					</Rule>
 					<Rule>
-						<Sentence
-							parts={[
-								'1 font family: ',
-								{
-									link: 'Inter Variable 4.0',
-									href: 'https://rsms.me/inter/',
-									after: '.',
-								},
-							]}
-						/>
+						<Prose>
+							1 font family:{' '}
+							<Link href="https://rsms.me/inter/" foreground>
+								Inter Variable 4.0
+							</Link>
+							.
+						</Prose>
 					</Rule>
 					<Rule>
 						<Prose>1 paragraph style.</Prose>
@@ -154,13 +151,10 @@ export function Page(): JSX.Element {
 			</DocSection>
 
 			<DocSection title="The scale">
-				<Sentence
-					parts={[
-						'5 styles, each a size and a line height. Press',
-						{ code: 'S' },
-						'for compact.',
-					]}
-				/>
+				<Prose>
+					5 styles, each a size and a line height. Press<Code>S</Code>for
+					compact.
+				</Prose>
 				<TypeScaleSpecimen />
 			</DocSection>
 
@@ -185,61 +179,52 @@ export function Page(): JSX.Element {
 				</Prose>
 
 				<H3 marginTop={8}>Weight without reflow</H3>
-				<Sentence
-					parts={[
-						'Each weight carries its own optical size, so semibold labels keep their width. Idea from ',
-						{
-							link: '@lochieaxon',
-							href: 'https://x.com/lochieaxon/status/2061631101999968701',
-							after: '.',
-						},
-					]}
-				/>
+				<Prose>
+					Each weight carries its own optical size, so semibold labels keep
+					their width. Idea from{' '}
+					<Link
+						href="https://x.com/lochieaxon/status/2061631101999968701"
+						foreground
+					>
+						@lochieaxon
+					</Link>
+					.
+				</Prose>
 				<WeightOpszDemo />
 
 				<H3 marginTop={24}>Steady numbers</H3>
-				<Sentence
-					parts={[
-						'Changing numbers use',
-						{ code: 'tabular-nums' },
-						'so every digit is the same width and the words after them hold still.',
-					]}
-				/>
+				<Prose>
+					Changing numbers use<Code>tabular-nums</Code>so every digit is the
+					same width and the words after them hold still.
+				</Prose>
 				<NumbersDemo />
 
 				<H3 marginTop={24}>Trimmed labels</H3>
-				<Sentence
-					parts={[
-						'Labels use',
-						{ code: 'text-box: trim-both cap alphabetic' },
-						'so the padding you set is the space you see. Idea from ',
-						{
-							link: '@jakubkrehel',
-							href: 'https://interfaces.dev/magazine/issues/working-with-type',
-							after: '.',
-						},
-					]}
-				/>
+				<Prose>
+					Labels use<Code>text-box: trim-both cap alphabetic</Code>so the
+					padding you set is the space you see. Idea from{' '}
+					<Link
+						href="https://interfaces.dev/magazine/issues/working-with-type"
+						foreground
+					>
+						@jakubkrehel
+					</Link>
+					.
+				</Prose>
 				<TrimDemo />
 
 				<H3 marginTop={24}>Balanced headings</H3>
-				<Sentence
-					parts={[
-						'Headings use',
-						{ code: 'text-wrap: balance' },
-						'so their lines come out even.',
-					]}
-				/>
+				<Prose>
+					Headings use<Code>text-wrap: balance</Code>so their lines come out
+					even.
+				</Prose>
 				<BalanceDemo />
 
 				<H3 marginTop={24}>Pretty paragraphs</H3>
-				<Sentence
-					parts={[
-						'Paragraphs use',
-						{ code: 'text-wrap: pretty' },
-						'so none ends on a lone word.',
-					]}
-				/>
+				<Prose>
+					Paragraphs use<Code>text-wrap: pretty</Code>so none ends on a lone
+					word.
+				</Prose>
 				<PrettyDemo />
 			</DocSection>
 		</DocPage>

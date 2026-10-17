@@ -49,11 +49,19 @@ repeating it.
 - **Fidelity:** approximated.
 - **Components it hits:** just this page.
 
-## Paragraphs with code chips or links are a wrapping row of words, and the links shell out
+## The links underline at the default offset
 
-- **Cause:** `gpuix gap` (as the description's links in [surfaces.md](surfaces.md#the-descriptions-light-and-dark-links-are-laid-out-word-by-word-and-underlined-solid)), `port choice` (opening).
-- **Original:** `<p>` with `<Code>` chips (`mx-1 px-1 py-0.5`, 12px) and `ExternalLink` anchors (`target="_blank"`, `underline-offset-4`).
-- **Port:** `Sentence` (`src/pages/typography/text.tsx`) lays each such sentence out as a row of one item per word with a 3.6px space after it, the chips as padded `<text>` blocks (so the 12px size and the 4px padding are exact) and the links as clickable `<text>` blocks that run `open` (`xdg-open` off macOS) on the URL. Line breaks can differ from the browser's by a word, and kerning across a space is lost. The underline is solid and not offset 4px (`FORK.md:768-772`). The "5 rules" and "5 no-gos" lists draw their discs themselves (`Rule`): `list-disc pl-5` with `pl-1` items puts the text 24px in; the disc's position is an estimate.
+- **Cause:** `gpuix gap` (an underline offset, see [`card.md`](card.md#the-link-variant-underlines-at-the-default-offset)).
+- **Original:** `ExternalLink`: `<a target="_blank" className="text-foreground underline underline-offset-4">` (`app/docs/typography/page.tsx:48-60`), in the paragraphs with "Inter Variable 4.0", `@lochieaxon` and `@jakubkrehel`.
+- **Port:** the shared `Link` (`src/lib/doc-page.tsx:90-128`) with `foreground`, a run in the paragraph's one `<text>` (`src/pages/typography.tsx`); it opens the URL in the system browser on a click or Enter. The inline code chips are the shared `Code` with its default `mx-1`, so the paragraphs wrap as the browser's do. The underline sits at the font's default offset, not 4px.
+- **Fidelity:** approximated (underline offset).
+- **Components it hits:** just this page.
+
+## The rules' discs are drawn, not `list-disc`
+
+- **Cause:** `gpuix gap` (no `list-style`, `::marker`; searched gpuix `README.md`).
+- **Original:** `list-disc pl-5 marker:text-muted-foreground` with `pl-1` items, so the text sits 24px in (`app/docs/typography/page.tsx:113-132`).
+- **Port:** `Rule` (`src/pages/typography/text.tsx:13-30`) indents the text 24px and draws a 5px disc 15px left of it; the disc's position is an estimate.
 - **Fidelity:** approximated.
 - **Components it hits:** just this page.
 
