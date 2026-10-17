@@ -113,9 +113,11 @@ function MathList(props: { showMath: () => boolean }) {
 									left: 8,
 									right: 8,
 									top: y,
-									height: 1,
-									// A dashed border on a one-sided, zero-height box paints nothing, so the dashes are a gradient.
-									backgroundImage: `repeating-linear-gradient(to right, ${withAlpha(color.foreground, 0.2)} 0px, ${withAlpha(color.foreground, 0.2)} 3px, rgba(0,0,0,0) 3px, rgba(0,0,0,0) 6px)`,
+									// 2px, not the source's zero-height box: a border on a box with no content height paints nothing.
+									height: 2,
+									borderTopWidth: 1,
+									borderTopStyle: 'dashed',
+									borderTopColor: withAlpha(color.foreground, 0.2),
 								}}
 							/>
 						)}

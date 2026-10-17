@@ -48,13 +48,13 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 - **Port:** the pause button is the same 40px header button, through the shared `ComponentPreview`'s `playback` option (icon, tooltip and click; `src/lib/doc-page.tsx:282-320`, `src/pages/fluid-hover/plain-vs-fluid.tsx:245-258`). Reduced motion stops the script as in the source (`createReducedMotion()`, `src/pages/fluid-hover/plain-vs-fluid.tsx:109-110`); each caption is one centred `<text>` with inline runs, so the gaps around the chip are a normal space.
 - **Fidelity:** approximated.
 
-## "Show the math": dashed rules are a gradient
+## "Show the math": the dashed rules sit in a 2px box
 
-- **Cause:** `gpuix gap` (a dashed border on a one-sided, zero-height box paints nothing; `borderStyle` is per element, `FORK.md:779-781`).
+- **Cause:** `gpuix gap` (a one-sided border on a box with no content height paints nothing, README "Bugs").
 - **Original:** `border-t border-dashed border-foreground/20` lines at the midpoints between row centres (`app/docs/fluid-hover/demos.tsx:459`).
-- **Port:** each rule is a 1px box with a `repeating-linear-gradient` of 3px dashes and 3px gaps at 20% foreground (`src/pages/fluid-hover/show-the-math.tsx:110-120`). The distance label is right-aligned by a `right` offset (the source translates it by `-100% - 8px`). Everything else (cursor line at 70%, rail at 20px, dots 8px with their 150 ms colour fade, mono 11px label) is the source's geometry.
-- **Workaround:** the gradient.
-- **Fidelity:** approximated (dash phase differs from Chrome's).
+- **Port:** each rule is `borderTopWidth: 1`, `borderTopStyle: "dashed"` and a 20% foreground colour on a box `height: 2` (`src/pages/fluid-hover/show-the-math.tsx:110-122`); the source's box has no height, and a `height: 1` one paints no border (border-box, so its content is 0). The box is absolute and takes no pointer, so the extra pixel moves nothing. The dashes are gpuix's (two widths long with a gap of one, README "Borders"), so they read finer than the 3px / 3px the earlier gradient drew, and their phase is not checked against Chrome's. The distance label is right-aligned by a `right` offset (the source translates it by `-100% - 8px`). Everything else (cursor line at 70%, rail at 20px, dots 8px with their 150 ms colour fade, mono 11px label) is the source's geometry.
+- **Workaround:** the 2px box.
+- **Fidelity:** approximated (dash length and phase).
 - **Components it hits:** just this page.
 
 ## "3 axes": the strip, list and grid are the port's components
