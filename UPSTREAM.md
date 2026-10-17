@@ -118,6 +118,7 @@ Which part of a `registry/base/*` file is a primitive in `base-ui:src/`:
 | `checkbox-group`, `radio-group` (the choice-group engine) | `checkbox`, `checkbox-group`, `radio`, `radio-group` |
 | `switch`, `slider` | `switch`, `slider` |
 | `dropdown`, `menu-item`, `dropdown-search` | `menu` |
+| `color-picker` (the format menu and the popover; the colour maths and fields stay here) | `menu`, `popover` |
 | `select`, `combobox` | `select`, `combobox` (form value in `utils/`) |
 | `dialog`, `mobile-drawer`, `tooltip`, `scroll-area` | `dialog`, `drawer`, `tooltip`, `scroll-area` |
 
