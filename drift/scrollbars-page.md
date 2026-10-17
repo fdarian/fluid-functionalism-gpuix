@@ -42,16 +42,6 @@ repeating it.
 - **Workaround:** none.
 - **Fidelity:** approximated (underline offset).
 
-## "Double overflow" is the real `Table`, with fixed column widths
-
-- **Cause:** `gpuix gap` (README "Missing features": `display: table`, so columns do not size to their content); `port choice` for the rest.
-- **Original:** `Table className="w-max"` in `ScrollArea orientation="both"`, `h-80 w-full`; the auto table layout sizes each column to its widest cell, `whitespace-nowrap`, with the month columns and their numbers `text-right tabular-nums` (`app/docs/scrollbars/page.tsx:422-458`).
-- **Port:** the port's `Table` / `TableRow index` / `TableCell` (`src/components/table.tsx`) inside `ScrollArea orientation="both"`, 320px tall, edge to edge in the frame. Every cell gets a `width`, so each row's width is the sum of them and the area overflows both ways; the fluid row hover works. The widths are estimated from the header (8.4px a character plus 24, at least 60; 112 for the city column) and stand in for the content-sized columns, so the gaps differ a little from the source's. The month headers and numbers are right-aligned and the numbers tabular, through `TableHead` / `TableCell`'s `alignRight` and `tabularNums` (`table.tsx`, `Cell`); they take no `className`.
-- **gpuix lacks:** content-sized table columns (README "Missing features", `display: table` row).
-- **Workaround:** the fixed widths.
-- **Fidelity:** approximated.
-- **Components it hits:** table (`drift/table.md`).
-
 ## The horizontal strip is given a 104px height
 
 - **Cause:** `port choice` (the area's viewport is `height: 100%`, `drift/scroll-area.md` "Demo: the horizontal strip needs an explicit height").

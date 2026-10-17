@@ -54,12 +54,6 @@ const CITIES = [
 const metric = (row: number, col: number) =>
 	(((row + 3) * (col + 7) * 37) % 900) + 100;
 
-/** A table column is as wide as its widest cell, usually the header: about 8.4px a semibold 14px character plus the cell's 12px either side, with room for a three-digit number in the short ones. */
-const columnWidth = (heading: string) =>
-	Math.max(Math.round(heading.length * 8.4) + 24, 60);
-/** "Copenhagen" in body weight, the widest city, plus the cell's padding. */
-const CITY_COLUMN = 112;
-
 /** `h-56 w-64`. */
 const LIST_W = 256;
 const LIST_H = 224;
@@ -265,13 +259,9 @@ export function TableDemo() {
 				<Table>
 					<TableHeader>
 						<TableRow>
-							<TableHead width={CITY_COLUMN}>City</TableHead>
+							<TableHead>City</TableHead>
 							<For each={MONTHS}>
-								{(month: string) => (
-									<TableHead width={columnWidth(month)} alignRight>
-										{month}
-									</TableHead>
-								)}
+								{(month: string) => <TableHead alignRight>{month}</TableHead>}
 							</For>
 						</TableRow>
 					</TableHeader>
@@ -279,14 +269,10 @@ export function TableDemo() {
 						<For each={CITIES}>
 							{(city: string, row: () => number) => (
 								<TableRow index={row()}>
-									<TableCell width={CITY_COLUMN}>{city}</TableCell>
+									<TableCell>{city}</TableCell>
 									<For each={MONTHS}>
-										{(month: string, col: () => number) => (
-											<TableCell
-												width={columnWidth(month)}
-												alignRight
-												tabularNums
-											>
+										{(_: string, col: () => number) => (
+											<TableCell alignRight tabularNums>
 												{String(metric(row(), col()))}
 											</TableCell>
 										)}
