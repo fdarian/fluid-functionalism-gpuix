@@ -226,6 +226,7 @@ export function Entry(props: {
 			style={{
 				display: 'flex',
 				flexDirection: 'column',
+				width: '100%',
 				paddingTop: props.first ? 0 : 24,
 			}}
 		>

@@ -127,7 +127,14 @@ function MonthHeading(props: { release: Release }) {
 /** A hairline above every group, the first included, so it also closes the month's header: 40px on each side. */
 function KindGroup(props: { group: ChangeGroup; month: string }): JSX.Element {
 	return (
-		<div style={{ display: 'flex', flexDirection: 'column', paddingTop: 40 }}>
+		<div
+			style={{
+				display: 'flex',
+				flexDirection: 'column',
+				width: '100%',
+				paddingTop: 40,
+			}}
+		>
 			<div
 				style={{ height: 1, flexShrink: 0, backgroundColor: color.border }}
 			/>
@@ -160,7 +167,14 @@ function KindGroup(props: { group: ChangeGroup; month: string }): JSX.Element {
 					{String(props.group.entries.length)}
 				</text>
 			</div>
-			<div style={{ display: 'flex', flexDirection: 'column', marginTop: 8 }}>
+			<div
+				style={{
+					display: 'flex',
+					flexDirection: 'column',
+					width: '100%',
+					marginTop: 8,
+				}}
+			>
 				<For each={props.group.entries}>
 					{(entry, index) => (
 						<Entry
@@ -189,6 +203,7 @@ export function ReleaseSection(props: {
 				position: 'relative',
 				display: 'flex',
 				flexDirection: 'column',
+				width: '100%',
 				paddingLeft: 24,
 			}}
 		>
@@ -214,6 +229,7 @@ export function ReleaseSection(props: {
 				style={{
 					display: 'flex',
 					flexDirection: 'column',
+					width: '100%',
 					paddingTop: props.first ? 0 : 64,
 				}}
 			>
