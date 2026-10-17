@@ -390,7 +390,8 @@ function Quote(props: { children: string }) {
 	return (
 		<div
 			style={{
-				paddingLeft: roleStyle('body').fontSize,
+				fontSize: roleStyle('body').fontSize,
+				paddingLeft: '1em',
 				borderLeftStyle: 'solid',
 				borderLeftWidth: 2,
 				borderColor: color.border,
@@ -433,11 +434,10 @@ function Table() {
 								style={{
 									...roleStyle('body'),
 									textAlign: 'left',
-									paddingTop: roleStyle('body').fontSize * 0.5,
-									paddingBottom: roleStyle('body').fontSize * 0.5,
-									paddingLeft:
-										column() === 0 ? 0 : roleStyle('body').fontSize * 0.75,
-									paddingRight: roleStyle('body').fontSize * 0.75,
+									paddingTop: '0.5em',
+									paddingBottom: '0.5em',
+									paddingLeft: column() === 0 ? 0 : '0.75em',
+									paddingRight: '0.75em',
 									borderBottomStyle: 'solid',
 									borderBottomWidth: 1,
 									borderColor: color.border,
@@ -480,10 +480,11 @@ function CodeBlock() {
 					display: 'flex',
 					flexDirection: 'column',
 					flexShrink: 0,
-					paddingTop: size().fontSize * 0.75,
-					paddingBottom: size().fontSize * 0.75,
-					paddingLeft: size().fontSize,
-					paddingRight: size().fontSize,
+					fontSize: size().fontSize,
+					paddingTop: '0.75em',
+					paddingBottom: '0.75em',
+					paddingLeft: '1em',
+					paddingRight: '1em',
 				}}
 			>
 				<For each={CODE}>
