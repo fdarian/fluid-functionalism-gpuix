@@ -1,7 +1,14 @@
-import { createSignal, For, type JSX } from 'solid-js';
+import type { KeyEvent } from '@gpuix/solid';
+import type { JSX } from 'solid-js';
 import type { ShotContext } from '#/lib/demo';
 import { DocPage, DocSection, Prose, SubHeading } from '#/lib/doc-page';
-import { color, type Scheme, setThemeChoice, siteType } from '#/lib/theme';
+import {
+	color,
+	fade,
+	focusRing,
+	type Scheme,
+	setThemeChoice,
+} from '#/lib/theme';
 import { changeTheme } from '#/lib/theme-fade';
 import { ColorPickerDemo, InviteDialogDemo } from '#/pages/surfaces/examples';
 import { SURFACES_INSTALL_PROMPT } from '#/pages/surfaces/install-prompt';
@@ -81,64 +88,39 @@ export async function scenarios(shot: ShotContext) {
 	await inLight('color-picker-light');
 }
 
-type Word = { text: string; theme?: Scheme };
-
-const DESCRIPTION: readonly Word[] = [
-	...'Eight surface levels that nest. Components read their substrate from context and lift relative to it, so popovers, dropdowns, and dialogs stay visible at any depth — in both'
-		.split(' ')
-		.map((text) => ({ text })),
-	{ text: 'light', theme: 'light' },
-	{ text: 'and' },
-	{ text: 'dark', theme: 'dark' },
-	{ text: 'mode.' },
-];
-
+/** `underline decoration-dotted underline-offset-2 hover:text-foreground transition-colors` on a `<button>`. */
 function ThemeLink(props: { theme: Scheme; children: string }) {
-	const [hovered, setHovered] = createSignal(false);
+	const switchTheme = () => changeTheme(props.theme);
 	return (
-		<text
+		<span
 			role="button"
+			tabIndex={0}
 			testId={`theme-${props.theme}`}
-			onClick={() => changeTheme(props.theme)}
-			onMouseEnter={() => setHovered(true)}
-			onMouseLeave={() => setHovered(false)}
+			onClick={switchTheme}
+			onKeyDown={(event: KeyEvent) => {
+				if (event.key === 'Enter' || event.key === ' ') switchTheme();
+			}}
 			style={{
-				...siteType.body,
-				color: hovered() ? color.foreground : color.mutedForeground,
-				textDecoration: 'underline',
+				textDecoration: 'underline dotted',
 				cursor: 'pointer',
+				...fade(['color'], 150),
+				hover: { color: color.foreground },
+				focusVisible: focusRing(2),
 			}}
 		>
 			{props.children}
-		</text>
+		</span>
 	);
 }
 
-/**
- * The description's "light" and "dark" switch the theme. A clickable run
- * cannot sit inside a paragraph in gpuix, so the sentence is laid out word by
- * word and wraps as a row of items.
- */
 function Description() {
 	return (
-		<div
-			style={{
-				display: 'flex',
-				flexDirection: 'row',
-				flexWrap: 'wrap',
-				columnGap: 3.6,
-			}}
-		>
-			<For each={DESCRIPTION}>
-				{(word) =>
-					word.theme === undefined ? (
-						<Prose>{word.text}</Prose>
-					) : (
-						<ThemeLink theme={word.theme}>{word.text}</ThemeLink>
-					)
-				}
-			</For>
-		</div>
+		<Prose>
+			Eight surface levels that nest. Components read their substrate from
+			context and lift relative to it, so popovers, dropdowns, and dialogs stay
+			visible at any depth — in both <ThemeLink theme="light">light</ThemeLink>{' '}
+			and <ThemeLink theme="dark">dark</ThemeLink> mode.
+		</Prose>
 	);
 }
 

@@ -11,17 +11,16 @@ repeating it.
 
 - **Cause:** `not ported yet` (arrows).
 - **Original:** `DocPage` draws the title with prev / next arrows, the description, and an "Installation" block with the note "Installs the Elevated primitive plus the surface-context and surface-classes libs — the elevation ladder as code." and a copy-prompt button (`app/docs/surfaces/page.tsx:1298-1311`, `lib/docs/DocPage.tsx:73-170`).
-- **Port:** `DocPage` from `src/lib/doc-page.tsx` (`src/pages/surfaces.tsx:Page`): `App`'s heading, the description under it (a node, so the clickable words survive), the Installation block with the source's note and a Copy prompt button that copies `SURFACES_INSTALL_PROMPT`, then a 32px gap above each section like the source's. No prev / next arrows, as on [introduction.md](introduction.md#the-previous--next-arrows-are-missing); the heading weight and 8px description gap are [introduction.md's](introduction.md#the-heading-is-bold-in-the-source-semibold-here-and-sits-8px-above-the-subtitle-only-by-a-negative-margin) too (`marginTop: -16`).
+- **Port:** `DocPage` from `src/lib/doc-page.tsx` (`src/pages/surfaces.tsx:Page`): `App`'s heading, the description under it (a node), the Installation block with the source's note and a Copy prompt button that copies `SURFACES_INSTALL_PROMPT`, then a 32px gap above each section like the source's. No prev / next arrows, as on [introduction.md](introduction.md#the-previous--next-arrows-are-missing); the heading weight and 8px description gap are [introduction.md's](introduction.md#the-heading-is-bold-in-the-source-semibold-here-and-sits-8px-above-the-subtitle-only-by-a-negative-margin) too (`marginTop: -16`).
 - **Fidelity:** dropped (arrows).
 - **Components it hits:** every docs page.
 
-## The description's "light" and "dark" links are laid out word by word and underlined solid
+## The description's "light" and "dark" links underline at the default offset
 
-- **Cause:** `gpuix gap` (a clickable run cannot sit inside a paragraph; dotted underlines draw solid).
-- **Original:** `UseLightLink` / `UseDarkLink`: buttons inside the description's paragraph with `underline decoration-dotted underline-offset-2`, hover `text-foreground` (`app/docs/surfaces/page.tsx:1265-1309`).
-- **Port:** the sentence is a wrapping row of one `<text>` per word with a 3.6px column gap, and the two links are `<text onClick>` that call `setThemeChoice` with a solid underline (`src/pages/surfaces.tsx:Description`, `ThemeLink`). gpuix: "A nested `<text>` that needs to react is a block … a `<span>` has no events" (gpuix `README.md:2669-2683`), and `double`, `dotted` and `dashed` draw solid (`FORK.md:768-772`). The word gap is an Inter space at 13px, so line breaks can differ from the browser's by a word, and kerning across a space is lost.
-- **Workaround:** the word-by-word row.
-- **Fidelity:** approximated.
+- **Cause:** `gpuix gap` (an underline offset, see [`card.md`](card.md#the-link-variant-underlines-at-the-default-offset)).
+- **Original:** `UseLightLink` / `UseDarkLink`: buttons inside the description's paragraph with `underline decoration-dotted underline-offset-2`, hover `text-foreground transition-colors` (`app/docs/surfaces/page.tsx:1265-1309`).
+- **Port:** `ThemeLink` (`src/pages/surfaces.tsx:92-114`): a dotted-underlined `<span>` inside the description's one `<Prose>`, a button and Tab stop (Enter or Space switches, with a focus ring the source's button leaves to the browser), that calls `changeTheme`; hover eases the colour to foreground over 150 ms. The dots sit at the font's default offset, not 2px, and the underline does not fade with the colour (`text-decoration-color` is not transitionable, README "colour fade" row).
+- **Fidelity:** approximated (underline offset).
 - **Components it hits:** just this page.
 
 ## The preview frame has no Inspect switch and an unhighlighted Code tab
