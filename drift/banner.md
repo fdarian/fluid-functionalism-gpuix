@@ -13,7 +13,7 @@ repeating it.
 - **Cause:** `gpuix gap`.
 - **Original:** inline, the banner inside its row scales from 0.4 to 1 on appear (slow spring, a fast tier after the row) and shrinks from 1 to 0.6 from its top edge on dismiss, `transformOrigin: "top"` (`banner.tsx:177-189`, `:245`, `:298`, `:323-332`, `:356`).
 - **Port:** the banner only fades (`banner.tsx:341-380`).
-- **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:900-911`; README "gpuix gaps", CSS transforms row).
+- **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:1194-1205`; README "gpuix gaps", CSS transforms row).
 - **Workaround:** none; the row's height tween and the fade carry the motion.
 - **Fidelity:** approximated (height and fade, no scale).
 - **Components it hits:** any enter or exit that scales.
@@ -40,7 +40,7 @@ repeating it.
 
 ## Dismiss fade is its own tween
 
-- **Cause:** `not ported yet`. gpuix has motion values and `useTransform` (`FORK.md:848`).
+- **Cause:** `not ported yet`. gpuix has motion values and `useTransform` (`FORK.md:1142`).
 - **Original:** inline, the banner's opacity is the row's progress mapped from 1 (open) to 0.6 (the row is `shrinkTo` open) onto 1 to 0, so it is gone by the time the row is 60% open and always the row's height (`banner.tsx:317-332`). The fixed bar's opacity is the row's value outright.
 - **Port:** inline, a separate 0.16s `easeOut` tween (`dismissFade`, `banner.tsx:129`, `:343-349`); the row runs 0.24s `easeInOut`. The fixed bar fades on the row's tween, as in the source.
 - **Workaround:** none.
@@ -58,7 +58,7 @@ repeating it.
 
 ## Focus after a dismiss
 
-- **Cause:** `not ported yet` (gpuix has `focus({ preventScroll })`, `FORK.md:455`).
+- **Cause:** `not ported yet` (gpuix has `focus({ preventScroll })`, `FORK.md:481`).
 - **Original:** if keyboard focus is inside the banner when it leaves, `focusNeighbour` moves it to the next focusable element after it, else the last one before it (`banner.tsx:200-213`, `:306-309`). The body is one element throughout.
 - **Port:** the body is one element throughout too (the row stays mounted from the appear to the end of the exit), so a reopen during a dismiss keeps the ✕ focused. No hand-off: a focused ✕ keeps focus while the banner fades and loses it to nothing when the exit ends and the row unmounts.
 - **Workaround:** none.

@@ -9,14 +9,14 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 - **Cause:** `gpuix gap`. Shared: CSS transforms ([README, Missing features, first row](../README.md)).
 - **Original:** each footer button enters and exits at `scale: .85` (`:1430-1432`, `:1490-1492`, `:1516-1518`); the single-select submit arrow overlay is `scale: .6` in and out (`:1700-1706`); the validation message rises from `y: -2` (`:1470-1471`).
 - **Port:** footer buttons fade only (`FadeIn`, `ask-user-questions.tsx:1096-1107`); the arrow overlay fades over 80 ms (`:160-166`); the error has no entrance (`:1033-1045`).
-- **gpuix lacks:** `scale` (`~/code/fdarian/gpuix/FORK.md:900-910`).
+- **gpuix lacks:** `scale` (`~/code/fdarian/gpuix/FORK.md:1194-1204`).
 - **Workaround:** opacity only.
 - **Fidelity:** approximated (no scale).
 - **Components it hits:** banner, chat-message, input-copy, input-message, queued-stack, radio-group.
 
 ## Exits and sibling motion are missing
 
-- **Cause:** `not ported yet` (gpuix has `AnimatePresence` with `mode="popLayout"` and `layout`, `FORK.md:851-852`).
+- **Cause:** `not ported yet` (gpuix has `AnimatePresence` with `mode="popLayout"` and `layout`, `FORK.md:1145-1146`).
 - **Original:** footer buttons sit in `AnimatePresence mode="popLayout" initial={false}` with `layout="position"`, so a leaving button fades out while its neighbours slide at the same time and nothing animates on first mount (`:1425-1429`, `:1485-1489`). The submit arrow also fades out on exit with `spring.fast.exit` (`:1702-1706`).
 - **Port:** a `Show` removes the button at once, and the others jump. `FadeIn` runs on every mount, including the first paint, which the source skips (`ask-user-questions.tsx:1020-1086`, `:1096-1107`). The arrow overlay is unmounted when `showArrow` goes false (`:159`).
 - **Workaround:** none.
@@ -69,7 +69,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 ## Arrow keys and Enter inside the Other field
 
-- **Cause:** `not ported yet` for the caret test (gpuix has `selectionStart` / `selectionEnd`, `FORK.md:462-463`); `port choice` for the rest (reason not stated).
+- **Cause:** `not ported yet` for the caret test (gpuix has `selectionStart` / `selectionEnd`, `FORK.md:499-500`); `port choice` for the rest (reason not stated).
 - **Original:** ↑/↓ leave the textarea only when the caret is at the very start or end (`:274-277`); plain Enter in a single-select Other field submits even with ⌘/⌃ held (`:1172-1177`); ↑ from no row goes to row `rowCount - 2` (`:316-318`).
 - **Port:** ↑/↓ leave the textarea whenever the draft has no `\n`, so a long wrapped one-liner cannot be walked with ↑/↓ (`ask-user-questions.tsx:539-543`); ⌘/⌃+Enter does nothing there (`:526-527`, `:448-450`); ↑ from no row goes to the last row (`base-ui:src/internals/composite/composite.ts:26`).
 - **Workaround:** none.

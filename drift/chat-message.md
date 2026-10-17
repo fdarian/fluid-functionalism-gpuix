@@ -7,7 +7,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 - **Cause:** `gpuix gap`. Shared: CSS transforms ([README, Missing features, first row](../README.md)).
 - **Original:** `initial {opacity 0, y 8, scale .96}` to `{1, 0, 1}` on `spring.moderate`, `transform-origin` bottom right for the user and bottom left for the assistant (`chat-message.tsx:57-60`).
 - **Port:** `initial {opacity 0, top 8}` to `{1, 0}` on `tween.moderate` (`chat-message.tsx:95-97`); `top` needs `position: relative` (`:100`).
-- **gpuix lacks:** `scale` and `transform-origin` (`~/code/fdarian/gpuix/FORK.md:900-911`).
+- **gpuix lacks:** `scale` and `transform-origin` (`~/code/fdarian/gpuix/FORK.md:1194-1205`).
 - **Workaround:** opacity and the 8px rise on `top`, no scale.
 - **Fidelity:** approximated.
 - **Components it hits:** banner, ask-user-questions, input-copy, input-message, queued-stack, radio-group.
@@ -60,7 +60,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 ## Layout motion for sibling messages
 
-- **Cause:** `not ported yet` (gpuix has `layout`, `FORK.md:851`).
+- **Cause:** `not ported yet` (gpuix has `layout`, `FORK.md:1145`).
 - **Original:** `layout="position"` so earlier messages slide when a message is added (`chat-message.tsx:56`).
 - **Port:** no `layout` on the message; siblings jump (`chat-message.tsx:93-99`). Invisible in the demo, where "Add message" appends at the bottom.
 - **Workaround:** none.

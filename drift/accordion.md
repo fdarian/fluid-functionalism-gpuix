@@ -16,7 +16,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 - **Cause:** `gpuix gap`.
 - **Original:** the chevron turns 90 degrees on `spring.fast` as the item opens (`registry/base/accordion.tsx:769-772`).
 - **Port:** the icon swaps between `chevron-right` and `chevron-down` at once (`src/components/accordion.tsx:604-611`).
-- **gpuix lacks:** `transform`. Only SVG and glyph sprites carry a `TransformationMatrix`; quads, images, masks and hitboxes do not (`~/code/fdarian/gpuix/FORK.md:900-910`). README row "CSS transforms".
+- **gpuix lacks:** `transform`. Only SVG and glyph sprites carry a `TransformationMatrix`; quads, images, masks and hitboxes do not (`~/code/fdarian/gpuix/FORK.md:1194-1204`). README row "CSS transforms".
 - **Workaround:** the glyph swap.
 - **Fidelity:** approximated (no turn, the glyph changes at once).
 - **Components it hits:** every rotating chevron (card, color-picker, thinking-steps).
@@ -97,7 +97,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 ## Closed panel text is unmounted instead of hidden
 
-- **Cause:** `not ported yet` (the comment says gpuix has no `display: none`; it has, `FORK.md:578`, and `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:52` records it).
+- **Cause:** `not ported yet` (the comment says gpuix has no `display: none`; it has, `FORK.md:624`, and `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:52` records it).
 - **Original:** the panel stays mounted and gets `hidden` once the exit finishes (`registry/base/accordion.tsx:939`).
 - **Port:** the text is removed from the tree after the exit (`retired`, `base-ui:src/accordion/panel/use-accordion-panel.ts:9-38`, `src/components/accordion.tsx:670-690`, `:642`, `:672`); the panel box stays as a zero-height `role="region"`. A reopen re-mounts and re-lays out the text; the last measured height is cached.
 - **Workaround:** the unmount.

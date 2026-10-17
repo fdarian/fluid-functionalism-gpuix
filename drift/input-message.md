@@ -16,7 +16,7 @@ repeating it.
 
 - **Cause:** `not ported yet`.
 - **Original:** `AnimatePresence mode="wait" initial={false}` around the arrow / stop square: the old glyph exits (opacity 0, `spring.fast.exit`), then the new one enters (`input-message.tsx:1286-1320`). Nothing plays on mount.
-- **Port:** `<For each={[mode === "stop" ? "stop" : "arrow"]}>` remounts a `motion.div` that fades in on `tween.fast` (`input-message.tsx:198-228`); the old glyph is gone at once and the arrow also fades in when the composer first mounts. `mode="wait"` exists in the fork (`~/code/fdarian/gpuix/FORK.md:851-852`).
+- **Port:** `<For each={[mode === "stop" ? "stop" : "arrow"]}>` remounts a `motion.div` that fades in on `tween.fast` (`input-message.tsx:198-228`); the old glyph is gone at once and the arrow also fades in when the composer first mounts. `mode="wait"` exists in the fork (`~/code/fdarian/gpuix/FORK.md:1145-1146`).
 - **Fidelity:** approximated.
 - **Components it hits:** input-copy (`Swap`).
 
@@ -24,7 +24,7 @@ repeating it.
 
 - **Cause:** `not ported yet`.
 - **Original:** `FilePreviewTile` and `QueuedRow` carry `layout`, an `exit` (opacity 0, scale, `spring.fast.exit`), and sit in `AnimatePresence mode="popLayout"` (tiles), so a removed item animates out and its siblings slide into the gap (`input-message.tsx:230-239,301-313,1105,1143`).
-- **Port:** enter fade only; a removed tile or row vanishes at once and the rest jump (`input-message.tsx:283-287,364-368`, `<For>` at `:991,1017`). The fork has `layout` and `popLayout` (`FORK.md:851-852`).
+- **Port:** enter fade only; a removed tile or row vanishes at once and the rest jump (`input-message.tsx:283-287,364-368`, `<For>` at `:991,1017`). The fork has `layout` and `popLayout` (`FORK.md:1145-1146`).
 - **Fidelity:** approximated.
 - **Components it hits:** queued-stack.
 
@@ -32,7 +32,7 @@ repeating it.
 
 - **Cause:** `not ported yet`.
 - **Original:** `Reorder.Group` / `Reorder.Item` (axis y): the row follows the pointer while the others animate into place; the whole row is the handle (`cursor-grab`, `active:cursor-grabbing`), and a double click anywhere on it edits (`input-message.tsx:301-340,1135-1158`).
-- **Port:** pointer capture on the label region only; the row under the pointer swaps with the one it crosses by a fixed stride of `row + 4` (`dragQueued`, `input-message.tsx:788-794`), nothing follows the cursor, and the file-count icon and padding are not draggable. Double click is `clickCount === 2` on the same region (`:433-447`). The fork has a `Reorder` primitive (`FORK.md:851-852`).
+- **Port:** pointer capture on the label region only; the row under the pointer swaps with the one it crosses by a fixed stride of `row + 4` (`dragQueued`, `input-message.tsx:788-794`), nothing follows the cursor, and the file-count icon and padding are not draggable. Double click is `clickCount === 2` on the same region (`:433-447`). The fork has a `Reorder` primitive (`FORK.md:1145-1146`).
 - **Fidelity:** approximated.
 - **Components it hits:** queued-stack.
 
@@ -80,14 +80,14 @@ repeating it.
 
 ## History recalls only from a single-line draft
 
-- **Cause:** `not ported yet`. The port's comment blames gpuix (`input-message.tsx:881`: "gpuix does not report the caret"), but the fork lists `selectionStart` / `selectionEnd` (`FORK.md:462`). Not checked on a textarea.
+- **Cause:** `not ported yet`. The port's comment blames gpuix (`input-message.tsx:881`: "gpuix does not report the caret"), but the fork lists `selectionStart` / `selectionEnd` (`FORK.md:499`). Not checked on a textarea.
 - **Original:** ArrowUp recalls when the caret is on the first line, ArrowDown when it is on the last, so a multi-line draft still navigates (`input-message.tsx:846-889`).
 - **Port:** recalls only when the draft has no `\n` (`input-message.tsx:879-884`).
 - **Fidelity:** approximated.
 
 ## Arrow keys may not reach the textarea's `onKeyDown`
 
-- **Cause:** `gpuix gap`, as the port's comment states (`input-message.tsx:822-823`). Unverified here: `FORK.md:460-461` says a text editor's `keydown` runs before its built-in action. No README row covers it.
+- **Cause:** `gpuix gap`, as the port's comment states (`input-message.tsx:822-823`). Unverified here: `FORK.md:497-498` says a text editor's `keydown` runs before its built-in action. No README row covers it.
 - **Original:** plain ArrowUp / ArrowDown drive the suggestion list and history (`input-message.tsx:788-889`).
 - **Port:** the same handler also accepts Ctrl-P / Ctrl-N (`input-message.tsx:812-836`), and the demo's scenarios use `ctrl-n` / `ctrl-p` (`src/demos/input-message.tsx:644,763`). If the arrows really are swallowed, the keyboard path in the real window is Ctrl-P / Ctrl-N only.
 - **Fidelity:** approximated.
@@ -115,7 +115,7 @@ repeating it.
 
 ## Accessibility wiring
 
-- **Cause:** `not ported yet`. gpuix accepts `aria-*` (`FORK.md:465`).
+- **Cause:** `not ported yet`. gpuix accepts `aria-*` (`FORK.md:504`).
 - **Original:** `aria-activedescendant` on the textarea and an `id` on each option (`input-message.tsx:1204-1208,419`), a polite `role="status"` live region announcing "Message sent. N still queued." (`:708-710,1390-1392`), `aria-describedby` merging the ghost hint and `textareaProps` (`:1199-1203`).
 - **Port:** `role="listbox"` / `option` / `aria-selected` and `listitem` labels are there (`input-message.tsx:530-531,1194-1195,368-369`); none of the three above.
 - **Fidelity:** dropped.

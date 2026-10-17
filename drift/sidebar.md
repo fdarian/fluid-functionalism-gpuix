@@ -148,7 +148,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 - **Cause:** `gpuix gap` (CSS transforms, linked: [README row](../README.md); same drift as `drift/accordion.md`).
 - **Original:** the page composes one `chevron-right` in a 24px slot and turns it 90 degrees on `spring.fast`; while the parent is open the chevron is hidden at rest and returns on row hover or focus (`app/docs/sidebar/page.tsx:nestingCode`).
 - **Port:** `trailingIcon` swaps `chevron-down` / `chevron-right` at once and always shows it (`src/components/sidebar.tsx:441-449`, `src/demos/sidebar.tsx:98-100`).
-- **gpuix lacks:** transforms on SVG icons outside a `TransformationMatrix` sprite (`~/code/fdarian/gpuix/FORK.md:900-911`).
+- **gpuix lacks:** transforms on SVG icons outside a `TransformationMatrix` sprite (`~/code/fdarian/gpuix/FORK.md:1194-1205`).
 - **Workaround:** swap the glyph; no hover-reveal.
 - **Fidelity:** approximated.
 - **Components it hits:** accordion, card, color-picker.

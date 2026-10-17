@@ -7,7 +7,7 @@ Same in both (checked against the code): row height, gap and padding per size (3
 
 ## Merge and split of the selected background
 
-- **Cause:** `not ported yet`. `motion` animates per-corner radii and per-property transitions (`~/code/fdarian/gpuix/FORK.md:843-845`), so nothing stops it.
+- **Cause:** `not ported yet`. `motion` animates per-corner radii and per-property transitions (`~/code/fdarian/gpuix/FORK.md:1137-1139`), so nothing stops it.
 - **Original:** `useMergeSplitBlocks` (`use-merge-split.tsx:144-340`, used at `checkbox-group.tsx:98`): when one unchecked row bridges two checked runs, the two blocks glide their inner edges to the bridge row's midpoint with the facing corners straightening, then swap to one block with no visible motion. Unchecking a middle row plays it backwards. `SelectionBackgrounds` draws the blocks with per-corner radii (`use-merge-split.tsx:392-452`).
 - **Port:** one `FluidHighlight` per run, keyed by a stable run id (`createSelectionRuns`, `choice-group.tsx:63-108`; render in `ChoiceGroup`). Checking a bridge row makes the upper run spring (`moderate`) over the whole union, while the lower run's highlight fades out in place. Unchecking a middle row springs the one block shorter and a new block for the lower run appears at once.
 - **Workaround:** run ids survive a change, so a block that grows or shrinks at one end moves in place, as in FF.
@@ -36,7 +36,7 @@ Same in both (checked against the code): row height, gap and padding per size (3
 
 ## Hover highlight travels on `left` / `top`
 
-- **Cause:** `gpuix gap`. CSS transforms are missing (README "Missing features" row for transforms, `README.md:151`; `FORK.md:900-910`).
+- **Cause:** `gpuix gap`. CSS transforms are missing (README "Missing features" row for transforms, `README.md:151`; `FORK.md:1194-1204`).
 - **Original:** the highlight is pinned at 0,0 and moved with an `x` / `y` transform (`registry/default/fluid-hover-highlight.tsx:74-76,126-131`).
 - **Port:** `FluidHighlight` animates `top` / `left` / `width` / `height` (`fluid-highlight.tsx:92-99`), re-laid out per frame. The look is the same.
 - **Workaround:** layout properties.

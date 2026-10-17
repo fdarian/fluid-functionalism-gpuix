@@ -13,7 +13,7 @@ repeating it.
 - **Cause:** `gpuix gap`.
 - **Original:** `motion.span animate={{ rotate: open ? 90 : 0 }}` with `spring.fast` (0.08s, no bounce) (`thinking-steps.tsx:112-125`).
 - **Port:** `Chevron` rotates the path's own points (`chevronPath`) from a 100ms ease-out on the shared frame clock and draws them through `Icon easeStroke` (`thinking-steps.tsx:58-103`).
-- **gpuix lacks:** rotation (README "gpuix gaps", CSS transforms row; no `transform`, `~/code/fdarian/gpuix/FORK.md:900`). `motion.path` animates `d`, `strokeWidth` and the other shape attributes but not a `transform` (`packages/native/js/host.ts:292-322`).
+- **gpuix lacks:** rotation (README "gpuix gaps", CSS transforms row; no `transform`, `~/code/fdarian/gpuix/FORK.md:1194`). `motion.path` animates `d`, `strokeWidth` and the other shape attributes but not a `transform` (`packages/native/js/host.ts:292-322`).
 - **Workaround:** the points are rotated in JS, whole degrees, and redrawn as shapes (no SVG source per angle). The effect reads `angle()` inside `createEffect` (`:84`), so by reading it re-subscribes after every step and restarts the tween from the current angle; the move is then closer to an exponential ease-out than to a 100ms cubic, with a final snap when the original 100ms elapses.
 - **Fidelity:** approximated. A tween rather than the critically damped spring, driven from JS.
 - **Components it hits:** any disclosure chevron (accordion, card, color-picker); file-thumbnail's spinner uses the same SVG-rewrite technique.
@@ -58,7 +58,7 @@ repeating it.
 
 ## Closed panel is `inert`, not `hidden`
 
-- **Cause:** `not ported yet`. gpuix has `display: none` (`FORK.md:578`; `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:107`). The port's comment that gpuix has no `display: none` (`thinking-steps.tsx:187-192`) is out of date.
+- **Cause:** `not ported yet`. gpuix has `display: none` (`FORK.md:624`; `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:107`). The port's comment that gpuix has no `display: none` (`thinking-steps.tsx:187-192`) is out of date.
 - **Original:** the panel gets `hidden` once the exit animation finishes (`thinking-steps.tsx:195-218`).
 - **Port:** height 0, `overflow: hidden`, and `inert` the moment `open` goes false (`thinking-steps.tsx:198-233`). A closed panel's content is still laid out each frame, and is out of the accessibility tree from the start of the exit rather than the end.
 - **Workaround:** `inert`.
@@ -76,7 +76,7 @@ repeating it.
 
 ## Image box is sized outright
 
-- **Cause:** `not ported yet`. An `<img>` with a `%` width or `maxWidth` gets its height from its intrinsic ratio, and `onLoad` reports `naturalWidth` / `naturalHeight` (`~/code/fdarian/gpuix/FORK.md:613`, `:689`). To port: `width: "100%"` with `maxWidth: 200` and `objectFit: "cover"`. The height then comes from the file's ratio once decoded; before decode the box is empty (`~/code/fdarian/gpuix/README.md:4291-4296`), so the step's height jumps on load, which the `aspectRatio` prop avoids. Check that the jump is acceptable, or size from `onLoad`'s `naturalWidth` / `naturalHeight`.
+- **Cause:** `not ported yet`. An `<img>` with a `%` width or `maxWidth` gets its height from its intrinsic ratio, and `onLoad` reports `naturalWidth` / `naturalHeight` (`~/code/fdarian/gpuix/FORK.md:664`, `:689`). To port: `width: "100%"` with `maxWidth: 200` and `objectFit: "cover"`. The height then comes from the file's ratio once decoded; before decode the box is empty (`~/code/fdarian/gpuix/README.md:4291-4296`), so the step's height jumps on load, which the `aspectRatio` prop avoids. Check that the jump is acceptable, or size from `onLoad`'s `naturalWidth` / `naturalHeight`.
 - **Original:** `<img class="w-full max-w-[200px] object-cover">` takes the file's aspect ratio and shrinks in a narrow column (`thinking-steps.tsx:586-593`).
 - **Port:** a fixed 200px-wide box, height `200 / aspectRatio` with `aspectRatio` an extra prop defaulting to 2 (`thinking-steps.tsx:572-591`). The demo image is 1200x600, so the demos match. A different ratio letterboxes (`objectFit` is the default `contain`, the source is `cover`), and the box does not shrink below 200.
 - **Workaround:** the `aspectRatio` prop, so the step's measured height is stable before the image decodes.

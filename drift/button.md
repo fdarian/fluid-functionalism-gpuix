@@ -10,7 +10,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 - **Cause:** `gpuix gap`.
 - **Original:** a native `<button>` matches `:active` while Space is held, so the press-shrink (`group-active:`, `registry/base/button.tsx:115-127`) plays for a keyboard activation too.
 - **Port:** the pressed look is `style.active` (`src/components/button.tsx:234`); Space still activates on key-up through `buttonProps` (`:193-196`).
-- **gpuix lacks:** a keyboard `:active` state. `active` styles come from the pointer's press chain only (`~/code/fdarian/gpuix/FORK.md:309-310`). Rechecked on the test renderer: with a focused `buttonProps` element carrying `active: { backgroundColor }`, the capture while `nativeSimulateKeyDown(id, "space")` is held is byte-identical to the resting one.
+- **gpuix lacks:** a keyboard `:active` state. `active` styles come from the pointer's press chain only (`~/code/fdarian/gpuix/FORK.md:313-314`). Rechecked on the test renderer: with a focused `buttonProps` element carrying `active: { backgroundColor }`, the capture while `nativeSimulateKeyDown(id, "space")` is held is byte-identical to the resting one.
 - **Workaround:** none.
 - **Fidelity:** approximated: the activation is exact, the pressed look is missing for the keyboard.
 - **Components it hits:** every `buttonProps` button.
@@ -40,7 +40,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 - **Cause:** `not ported yet`.
 - **Original:** an infinity-shaped path in a 24 viewBox drawn at 36px (28px compact), `strokeDasharray` 15 85, `spinner-move 2s linear infinite` (dash offset to -100) and `spinner-dash 4s ease-in-out infinite` (dash 15 to 40), stroke 1.125 (`:199-201`, `:228-246`, `app/globals.css:998-1005`).
 - **Port:** the `loader` glyph of the Icons row's library (lucide spokes by default) at the icon size (16 / 14), stroke 1.5, no motion (`src/components/button.tsx:250-268`, `src/lib/icons/lucide.ts:21`).
-- **Workaround:** none. README calls this "Dropped" but it needs no transform: gpuix animates SVG `strokeDasharray` / `strokeDashoffset` with repeating keyframes (`FORK.md:853-854`, `:846-847`), and `file-thumbnail.tsx` already draws a moving arc.
+- **Workaround:** none. README calls this "Dropped" but it needs no transform: gpuix animates SVG `strokeDasharray` / `strokeDashoffset` with repeating keyframes (`FORK.md:1147-1148`, `:846-847`), and `file-thumbnail.tsx` already draws a moving arc.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
 

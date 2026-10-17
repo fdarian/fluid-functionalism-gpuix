@@ -29,7 +29,7 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Cause:** `gpuix gap`. README "Missing features" row "CSS transforms".
 - **Original:** every popup, submenus included, enters and exits with `scaleY: 0.96` about its side's origin (`registry/base/dropdown.tsx:622-630`); the root popup also slides 4px from the resolved side (`--popup-enter-y`, `registry/default/lib/popup.ts:17-26`), side popups (submenus) slide 0px but still scale.
 - **Port:** the root popup slides 4px from the reported side and fades (`src/lib/popup.tsx:43`, `:64-70`); a submenu only fades (`src/components/dropdown.tsx:904-908`). Timings are the source's: enter `spring.fast` (80 ms), exit 60 ms tween.
-- **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:900-911`).
+- **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:1194-1205`).
 - **Workaround:** the slide and fade above.
 - **Fidelity:** approximated.
 - **Components it hits:** select, combobox, color-picker.
@@ -84,7 +84,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 ## Multiple selection: merge and split morph is a plain grow/shrink
 
-- **Cause:** `not ported yet`. gpuix animates per-corner radii in `motion` (`~/code/fdarian/gpuix/FORK.md:843-845`, as `drift/checkbox-group.md` records); nothing here does.
+- **Cause:** `not ported yet`. gpuix animates per-corner radii in `motion` (`~/code/fdarian/gpuix/FORK.md:1137-1139`, as `drift/checkbox-group.md` records); nothing here does.
 - **Original:** `useMergeSplitBlocks` (`registry/default/hooks/use-merge-split.tsx`): when one unchecked row bridges two checked runs, the facing edges glide to the bridging row's midpoint with the inner corners straightening (corners trail by 70 ms), then swap to one block; deselecting a middle row plays the inverse. Spring `moderate`, corner radius 8 (`registry/base/dropdown.tsx:121-126`, `:193`).
 - **Port:** one `FluidHighlight` per run id, rect from the run's first to last row, radius 8 on all four corners (`src/components/dropdown.tsx:166-187`, `:216-228`). A merge makes the surviving block spring-grow over the whole union while the absorbed one fades out, the motion the source's comment says it avoids; a split shrinks the block and fades a new one in. `multi-merged.png` and `multi-split.png` show the end states, which match.
 - **Fidelity:** approximated (end states exact, the transition differs).
