@@ -1202,8 +1202,6 @@ function ColorInput(props: {
 				paddingLeft: 8,
 				paddingRight: 8,
 				borderRadius: shape.input,
-				// On the wrapper: an `<input>` ignores the property in its own style but inherits it.
-				fontVariantNumeric: 'tabular-nums',
 				cursor: scrub && !editing() ? 'ew-resize' : 'text',
 				userSelect: 'none',
 				outlineWidth: focused() ? 1 : 0,
@@ -1259,6 +1257,7 @@ function ColorInput(props: {
 					height: 24,
 					fontSize: scale.body.fontSize,
 					fontWeight: weight.normal,
+					fontVariantNumeric: 'tabular-nums',
 					textAlign: props.align === 'center' ? 'center' : 'left',
 					color: color.foreground,
 					backgroundColor: color.transparent,
