@@ -188,6 +188,79 @@ setThemeChoice('dark');
 	);
 }
 
+// Hover looks that are state styles: a swatch's ring and the format trigger's label ease over 100 ms and 80 ms.
+{
+	const k = await createCheck(
+		() => (
+			<div style={{ padding: 24 }}>
+				<ColorPicker
+					testId="hv"
+					defaultValue="#6B97FF"
+					swatches={['#FF0000', '#00FF00']}
+				/>
+			</div>
+		),
+		{ width: 420, height: 620, initialSettleMs: 600 },
+	);
+	const renderer = k.renderer;
+	const hoverAt = (x: number, y: number) => {
+		renderer.nativeSimulateMouseMove(x - 1, y);
+		renderer.nativeSimulateMouseMove(x, y);
+	};
+	const partway = (rest: number, middle: number, end: number) =>
+		(middle - rest) * (end - rest) > 0 &&
+		Math.abs(middle - rest) < 0.6 * Math.abs(end - rest);
+	renderer.nativeSimulateMouseMove(2, 2);
+	await k.settle(300);
+
+	const swatch = k.bounds('hv-swatch-0');
+	const ring = {
+		x: swatch.x - 4,
+		y: swatch.y + 4,
+		width: 4,
+		height: swatch.height - 8,
+	};
+	const restRing = k.ink(ring);
+	renderer.clockPause();
+	hoverAt(swatch.x + swatch.width / 2, swatch.y + swatch.height / 2);
+	k.step(0);
+	k.step(16);
+	const middleRing = k.ink(ring);
+	k.step(300);
+	const endRing = k.ink(ring);
+	renderer.clockResume();
+	check(
+		'a swatch ring eases in on hover',
+		partway(restRing, middleRing, endRing),
+		`rest ${restRing}, 16 ms ${middleRing}, end ${endRing}`,
+	);
+
+	renderer.nativeSimulateMouseMove(2, 2);
+	await k.settle(300);
+	const trigger = k.bounds('hv-format');
+	const label = {
+		x: trigger.x + 12,
+		y: trigger.y + 8,
+		width: 24,
+		height: trigger.height - 16,
+	};
+	const restLabel = k.ink(label);
+	renderer.clockPause();
+	hoverAt(trigger.x + trigger.width - 6, trigger.y + trigger.height / 2);
+	k.step(0);
+	k.step(16);
+	const middleLabel = k.ink(label);
+	k.step(300);
+	const endLabel = k.ink(label);
+	renderer.clockResume();
+	check(
+		'the format label eases to the foreground on hover',
+		partway(restLabel, middleLabel, endLabel),
+		`rest ${restLabel}, 16 ms ${middleLabel}, end ${endLabel}`,
+	);
+	k.unmount();
+}
+
 // The format menu's focus model: rows take real focus, the keys live on the popup.
 {
 	const [second, setSecond] = createSignal(false);

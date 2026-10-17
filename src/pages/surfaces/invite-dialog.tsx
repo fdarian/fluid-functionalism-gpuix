@@ -107,13 +107,10 @@ function Header() {
 }
 
 function EmailField() {
-	const [hovered, setHovered] = createSignal(false);
 	return (
 		<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
 			<FieldLabel>Email</FieldLabel>
 			<div
-				onMouseEnter={() => setHovered(true)}
-				onMouseLeave={() => setHovered(false)}
 				style={{
 					minHeight: 58,
 					paddingLeft: 12,
@@ -124,9 +121,10 @@ function EmailField() {
 					borderWidth: 1,
 					borderColor: color.border,
 					borderRadius: 12,
-					backgroundColor: hovered() ? color.hover : color.transparent,
+					backgroundColor: color.transparent,
 					cursor: 'pointer',
 					...colorFade,
+					hover: { backgroundColor: color.hover },
 				}}
 			>
 				<text style={{ ...siteType.body, color: color.mutedForeground }}>

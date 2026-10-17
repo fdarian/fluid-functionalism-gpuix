@@ -205,9 +205,8 @@ export function ColorSwatch(props: {
 }) {
 	const renderer = useGpuixRequired();
 	const size = () => props.size ?? 28;
-	const [hovered, setHovered] = createSignal(false);
-	const ringShadow = () => {
-		if (props.selected !== true && !hovered()) return undefined;
+	const ringShadow = (hovered: boolean) => {
+		if (props.selected !== true && !hovered) return undefined;
 		const ring =
 			props.selected === true ? color.focusRing : 'rgba(127,127,127,0.4)';
 		return `0 0 0 2px ${color.background}, 0 0 0 4px ${ring}`;
@@ -217,8 +216,6 @@ export function ColorSwatch(props: {
 			{...buttonProps({ onClick: props.onClick, tabIndex: 0 }, renderer)}
 			aria-label={`Select color ${props.color}`}
 			testId={props.testId}
-			onMouseEnter={() => setHovered(true)}
-			onMouseLeave={() => setHovered(false)}
 			style={{
 				position: 'relative',
 				width: size(),
@@ -226,8 +223,9 @@ export function ColorSwatch(props: {
 				flexShrink: 0,
 				borderRadius: shape.bg,
 				cursor: 'pointer',
-				boxShadow: ringShadow(),
+				boxShadow: ringShadow(false),
 				...fade(['box-shadow'], 100),
+				hover: { boxShadow: ringShadow(true) },
 			}}
 		>
 			<div
@@ -770,7 +768,6 @@ function FormatDropdown(props: {
 	const root = createMenuRoot({}, { exitMs: FORMAT_MENU_EXIT_FALLBACK_MS });
 	const presence = root.presence;
 	const hover = createFluidHover();
-	const [triggerHovered, setTriggerHovered] = createSignal(false);
 	/** Opened from the first render, so the page keeps focus until the reader reaches into the menu (the source's `openWithPageRef`). */
 	const [pageHoldsFocus, setPageHoldsFocus] = createSignal(false);
 	const placement = createPlacementState('bottom');
@@ -891,9 +888,8 @@ function FormatDropdown(props: {
 				onMouseDown={trigger.onMouseDown}
 				onClick={trigger.onClick}
 				onKeyDown={onTriggerKeyDown}
-				onMouseEnter={() => setTriggerHovered(true)}
-				onMouseLeave={() => setTriggerHovered(false)}
 				style={{
+					group: true,
 					width,
 					height: height.control,
 					display: 'flex',
@@ -918,11 +914,9 @@ function FormatDropdown(props: {
 					style={{
 						...scale.body,
 						fontWeight: weight.normal,
-						color:
-							presence.open() || triggerHovered()
-								? color.foreground
-								: color.mutedForeground,
+						color: presence.open() ? color.foreground : color.mutedForeground,
 						...colorFade,
+						groupHover: { color: color.foreground },
 					}}
 				>
 					{FORMAT_LABELS[props.value]}
