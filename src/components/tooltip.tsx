@@ -26,8 +26,6 @@ const DEFAULT_DELAY = 200;
 const SLIDE = 4;
 /** A bare tooltip's own group lasts as long as Base UI's provider default. */
 const BARE_SKIP_DELAY = 400;
-/** How long the tooltip stays after the pointer leaves, so it can cross the gap to the chip: Base UI's safe polygon, approximated with a timer. */
-const GRACE_MS = 80;
 
 /**
  * Moving from one trigger to the next within `skipDelayDuration` of a close
@@ -105,7 +103,7 @@ export function Tooltip(props: {
 		{ group, exitMs: POPUP_EXIT_FALLBACK_MS },
 	);
 	const presence = root.presence;
-	const trigger = createTooltipTrigger(root, { graceMs: GRACE_MS });
+	const trigger = createTooltipTrigger(root, { side: placement.side });
 	const popup = createTooltipPopup(trigger);
 	const [followOffset, setFollowOffset] = createSignal({ x: 0, y: 0 });
 	let wrapper: HostElement | undefined;
@@ -131,6 +129,7 @@ export function Tooltip(props: {
 		<div
 			ref={(element) => {
 				wrapper = element;
+				trigger.setTriggerElement(element);
 			}}
 			testId={props.testId}
 			onMouseEnter={trigger.onMouseEnter}
@@ -164,6 +163,7 @@ export function Tooltip(props: {
 							props.testId === undefined ? undefined : `${props.testId}-chip`
 						}
 						// The chip is hoverable, like Base UI's popup: reaching it keeps the tooltip open.
+						ref={popup.ref}
 						{...popup.props}
 						initial={{ opacity: 0, ...slideFrom(side()) }}
 						animate={

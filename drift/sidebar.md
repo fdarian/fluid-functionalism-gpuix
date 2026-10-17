@@ -28,7 +28,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 ## Mobile drawer (`SidebarSheet`)
 
-- **Cause:** `port choice` (the plan scoped it out, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:655`; the app is a fixed desktop window, which the README does not state as the reason).
+- **Cause:** `port choice` (the plan scoped it out, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:656`; the app is a fixed desktop window, which the README does not state as the reason).
 - **Original:** below `mobileBreakpoint` (768) the desktop shell fades out and `SidebarSheet` mounts: a Base UI Dialog sliding in on `spring.moderate`, scrim `bg-black/40` (`/80` dark), `initialFocus` on the panel, exit held until the spring lands, reduced motion drops the slide (`registry/base/sidebar.tsx:57-149`, `sidebar-core.tsx:512-540`).
 - **Port:** none; no breakpoint, no sheet, `openMobile` does not exist.
 - **Workaround:** none. `mobile-drawer` is a separate component with its own drift file.
@@ -211,7 +211,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 ## Blocks: workspace header, user footer, app sidebar, inset top bar, settings dialog
 
 - **Cause:** `not ported yet`.
-- **Original:** `registry/blocks/sidebar-workspace-header.tsx` (brand row with a workspace dropdown, tile / trigger cross-fade while peeking), `sidebar-user-footer.tsx` (avatar row, dropdown opening upward on the shared grid), `sidebar-app/*` (`AppSidebar`, `nav-data.ts` Platform / Workspace, `inset-topbar.tsx`, `page.tsx`), `dialog-sidebar/settings-dialog.tsx` (a dialog with the sidebar inside, a Select under `sm`). Only the search-field block is ported (folded in as `SidebarSearchField`). The dropdown's `side="top"` is also absent (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md:398`; `drift/dialog.md` for the settings dialog).
+- **Original:** `registry/blocks/sidebar-workspace-header.tsx` (brand row with a workspace dropdown, tile / trigger cross-fade while peeking), `sidebar-user-footer.tsx` (avatar row, dropdown opening upward on the shared grid), `sidebar-app/*` (`AppSidebar`, `nav-data.ts` Platform / Workspace, `inset-topbar.tsx`, `page.tsx`), `dialog-sidebar/settings-dialog.tsx` (a dialog with the sidebar inside, a Select under `sm`). Only the search-field block is ported (folded in as `SidebarSearchField`). The dropdown's `side="top"` is also absent (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md:399`; `drift/dialog.md` for the settings dialog).
 - **Port:** none of the others.
 - **Workaround:** none.
 - **Fidelity:** dropped.

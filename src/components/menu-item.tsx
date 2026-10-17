@@ -1,4 +1,4 @@
-import { motion } from '@gpuix/solid';
+import { type DomEvent, motion } from '@gpuix/solid';
 import { createMenuItem, type MenuItemHost } from 'base-ui-solid-gpuix/menu';
 import {
 	type Accessor,
@@ -85,6 +85,8 @@ export function MenuItem(props: {
 	testId?: string;
 	/** A submenu trigger: whether its popup is open and what it is called. */
 	submenu?: { open: boolean; popupId: string };
+	/** The pointer left the row, or the submenu popup anchored inside it. */
+	onMouseLeave?: (event: DomEvent) => void;
 	/** A submenu popup anchors to its trigger row, so it is the row's child. */
 	children?: JSX.Element;
 }) {

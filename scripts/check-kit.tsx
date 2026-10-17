@@ -184,6 +184,28 @@ export async function createCheck(
 		renderer.dispatchNativeEvents();
 	}
 
+	/**
+	 * Moves the pointer along a line in `steps` real-time moves, 8 ms apart, so a hover handler that reads the pointer's
+	 * speed (the safe polygon closes on under 0.1 px/ms) sees a pointer that is travelling.
+	 */
+	async function glide(
+		from: { x: number; y: number },
+		to: { x: number; y: number },
+		steps: number,
+		onStep?: (step: number) => void,
+	) {
+		for (let step = 1; step <= steps; step++) {
+			renderer.nativeSimulateMouseMove(
+				from.x + ((to.x - from.x) * step) / steps,
+				from.y + ((to.y - from.y) * step) / steps,
+			);
+			renderer.flush();
+			renderer.dispatchNativeEvents();
+			onStep?.(step);
+			await sleep(8);
+		}
+	}
+
 	setThemeChoice('dark');
 	if (isPage) {
 		const demos = await loadDemos();
@@ -207,6 +229,7 @@ export async function createCheck(
 		ink,
 		coverage,
 		hoverFor,
+		glide,
 		scrollIntoView: (testId: string) => scrollIntoView(renderer, testId),
 		exists: (testId: string) => renderer.findByTestId(testId) !== undefined,
 		async click(testId: string) {

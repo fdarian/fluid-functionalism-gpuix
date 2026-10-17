@@ -18,6 +18,7 @@ import {
 	createMenuTrigger,
 	type MenuRoot,
 	type MenuRow,
+	type MenuSubmenuHost,
 	type MenuSubmenuRoot,
 	type MenuTriggerState,
 } from 'base-ui-solid-gpuix/menu';
@@ -71,8 +72,6 @@ const SUBMENU_SIDE_OFFSET = 6;
 /** Pulls the submenu up by the popup's padding so its first row is level with the trigger. */
 const SUBMENU_ALIGN_OFFSET = -PADDING;
 const HOVER_OPEN_MS = 100;
-/** A pointer that stops on another row for this long leaves an open submenu. */
-const SUBMENU_DWELL_MS = 120;
 /** FF focuses the first row two frames after a pointer open, once Base UI's own open focus has landed on the popup. */
 const OPEN_FOCUS_MS = 32;
 
@@ -264,12 +263,7 @@ function MenuBody(props: {
 
 // ─── Keyboard and hover for one list of rows ─────────────────────────────────
 
-interface SubmenuHost {
-	openIndex: Accessor<number | null>;
-	setOpenIndex: (index: number | null) => void;
-}
-
-const SubmenuHostContext = createContext<SubmenuHost>();
+const SubmenuHostContext = createContext<MenuSubmenuHost>();
 
 /** Binds the Menu list primitive to FF's fluid hover: the hover owns the lit row, and a key moving it forgets the pointer. */
 function createDropdownList(options: {
@@ -319,7 +313,6 @@ function createDropdownList(options: {
 		revealPadding: PADDING,
 		searchHeight: SEARCH_HEIGHT,
 		pointer: hover.handlers,
-		submenuDwellMs: SUBMENU_DWELL_MS,
 		openFocusMs: OPEN_FOCUS_MS,
 		onRowsChanged: reflow.raise,
 	});
@@ -788,6 +781,7 @@ export function DropdownSubTrigger(props: {
 	if (parent === undefined || host === undefined) {
 		throw new Error('DropdownSubTrigger must be inside a DropdownContent');
 	}
+	const placement = createPlacementState('right');
 	const trigger = createMenuSubmenuTrigger({
 		sub,
 		host,
@@ -796,6 +790,8 @@ export function DropdownSubTrigger(props: {
 			pointerLit: parent.pointerLit,
 		},
 		props,
+		triggerElement: () => parent.rows.get(props.index)?.element(),
+		side: placement.side,
 		setKeyboardActive: menu.setKeyboardActive,
 		hoverOpenMs: HOVER_OPEN_MS,
 	});
@@ -812,10 +808,13 @@ export function DropdownSubTrigger(props: {
 			closeOnClick={false}
 			onSelect={trigger.onSelect}
 			onOpenSubmenu={trigger.onOpenSubmenu}
+			onMouseLeave={trigger.onMouseLeave}
 		>
 			<Show when={sub.presence.mounted()}>
 				<SubPopup
 					triggerId={parent.rowId(props.index)}
+					placement={placement}
+					popup={trigger.popup}
 					focusTrigger={() => parent.rows.get(props.index)?.focus()}
 				/>
 			</Show>
@@ -837,6 +836,9 @@ const stopPropagation = (event: HostDomEvent) => event.stopPropagation();
 
 function SubPopup(props: {
 	triggerId: string;
+	/** The side the popup landed on, which the trigger's safe polygon reads. */
+	placement: ReturnType<typeof createPlacementState>;
+	popup: ReturnType<typeof createMenuSubmenuTrigger>['popup'];
 	/** Escape and Left hand focus back to the row that opened this submenu. */
 	focusTrigger: () => void;
 }) {
@@ -875,7 +877,7 @@ function SubPopup(props: {
 			{ defer: true },
 		),
 	);
-	const placement = createPlacementState('right');
+	const placement = props.placement;
 	const maxHeight = () => placement.maxHeight(POPUP_MAX_HEIGHT);
 
 	return (
@@ -903,6 +905,8 @@ function SubPopup(props: {
 				style={{ backgroundColor: color.transparent }}
 			>
 				<motion.div
+					ref={props.popup.ref}
+					{...props.popup.props}
 					initial={{ opacity: 0 }}
 					animate={{ opacity: sub.open() ? 1 : 0 }}
 					transition={sub.open() ? tween.fast : tween.fastExit}

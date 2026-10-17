@@ -798,10 +798,10 @@ function FormatDropdown(props: {
 			hover.setActiveIndex(index);
 		},
 		rowRect: (index) => hover.rects()[index],
-		// The rows have no scroller, search field or submenus: these three are never read.
+		// The rows have no scroller, search field or submenus:
+		// these two are never read.
 		revealPadding: 0,
 		searchHeight: 0,
-		submenuDwellMs: 0,
 		pointer: hover.handlers,
 		// A pointer open lights nothing.
 		openFocusMs: null,

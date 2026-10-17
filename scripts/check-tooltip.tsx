@@ -3,7 +3,7 @@
  *
  *   bun scripts/check-tooltip.tsx
  *
- * - The exit keeps the chip mounted until its fade finishes, and releases it when the fade ends.
+ * - The safe polygon: the chip stays while the pointer crosses the gap to it, closes when the pointer leaves it sideways, leaves the trigger away from it, or stops in the gap.
  * - The slide offset follows the `side` prop, so a flipped tooltip still slides in from the side it did not land on.
  */
 import { createCheck } from './check-kit';
@@ -12,22 +12,68 @@ const kit = await createCheck('tooltip');
 const renderer = kit.renderer;
 
 const trigger = kit.center('delay-0-trigger');
+const triggerBox = kit.bounds('delay-0-trigger');
 renderer.nativeSimulateMouseMove(trigger.x, trigger.y);
 await kit.settle(400);
 kit.check('an instant tooltip opens on hover', kit.exists('delay-0-chip'));
-renderer.nativeSimulateMouseMove(2, 2);
-const leftAt = performance.now();
+
+// Base UI's safe polygon (`safePolygon()` in base-ui-solid-gpuix): the tooltip follows the pointer from the trigger to the chip instead of closing on a timer.
+const chipBox = kit.bounds('delay-0-chip');
+const chipCenter = kit.center('delay-0-chip');
+await kit.glide(trigger, chipCenter, 14);
+await kit.settle(300);
 kit.check(
-	'the chip stays mounted through the grace',
+	'the tooltip stays open while the pointer crosses the gap to the chip',
 	kit.exists('delay-0-chip'),
 );
+// Sideways out of the chip, level with it: not toward the trigger.
+await kit.glide(chipCenter, { x: chipCenter.x - 160, y: chipCenter.y }, 12);
 await kit.until(() => !kit.exists('delay-0-chip'), 'the chip to unmount');
-const goneAfter = performance.now() - leftAt;
-// A JS timer is never early: the 80 ms grace and the fade after it are a hard lower bound. Release is guaranteed by the presence fallback, so the wait above is the upper bound.
 kit.check(
-	'the chip unmounts after the grace and its fade',
-	goneAfter >= 80 + 40,
-	`${goneAfter.toFixed(0)} ms after the pointer left`,
+	'leaving the chip sideways closes the tooltip',
+	!kit.exists('delay-0-chip'),
+);
+
+// Back onto the trigger, then straight away from the chip: no polygon covers that.
+renderer.nativeSimulateMouseMove(trigger.x, trigger.y);
+await kit.settle(400);
+kit.check('it opens again on the trigger', kit.exists('delay-0-chip'));
+await kit.glide(
+	trigger,
+	{ x: trigger.x, y: triggerBox.y + triggerBox.height + 120 },
+	6,
+);
+await kit.until(() => !kit.exists('delay-0-chip'), 'the chip to unmount');
+kit.check(
+	'leaving the trigger away from the chip closes the tooltip',
+	!kit.exists('delay-0-chip'),
+);
+
+// A pointer that stops inside the polygon but off the strip between the two boxes (the 40 ms timer of `safePolygon`) lets the tooltip go. Parked in that strip it would stay.
+renderer.nativeSimulateMouseMove(trigger.x, trigger.y);
+await kit.settle(400);
+const corner = { x: triggerBox.x + 8, y: trigger.y };
+renderer.nativeSimulateMouseMove(corner.x, corner.y);
+await kit.settle(100);
+// The same diagonal, carried on into the chip, keeps it open.
+await kit.glide(corner, chipCenter, 8);
+await kit.settle(300);
+kit.check(
+	'a diagonal from the trigger corner into the chip keeps the tooltip open',
+	kit.exists('delay-0-chip'),
+);
+await kit.glide(chipCenter, corner, 8);
+await kit.glide(
+	corner,
+	{ x: chipBox.x - 3, y: chipBox.y + chipBox.height + 2 },
+	5,
+);
+const stoppedAt = performance.now();
+await kit.until(() => !kit.exists('delay-0-chip'), 'the chip to unmount');
+kit.check(
+	'a pointer that stops short of the chip closes the tooltip',
+	!kit.exists('delay-0-chip'),
+	`${(performance.now() - stoppedAt).toFixed(0)} ms after it stopped`,
 );
 
 // The collide tooltip asks for the right and flips to the left. The motion clock is held: only the rest timer that opens the chip runs in real time, and the slide is sampled at exact frame times.

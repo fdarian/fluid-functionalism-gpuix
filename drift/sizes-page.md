@@ -20,9 +20,9 @@ repeating it.
 
 ## The frozen menu in "Compact regions" does not step
 
-- **Cause:** `not ported yet` (`Dropdown` and `MenuItem` have no `size` prop and no ambient size: `src/components/menu-item.tsx:110` fixes rows at `height.control`, and the Size row leaves them out, `drift/site.md`).
+- **Cause:** `not ported yet` (`Dropdown` and `MenuItem` have no `size` prop and no ambient size: `src/components/menu-item.tsx:112` fixes rows at `height.control`, and the Size row leaves them out, `drift/site.md`).
 - **Original:** the inline `Dropdown` panel inside the provider drops to 28px rows with the bar above it, and the callout "The menu inherits the region's step" points at it (`app/docs/sizes/page.tsx:313-345`, callout `:347-402`).
-- **Port:** the real inline `Dropdown` (`src/components/dropdown.tsx:432`), which stays at 36px rows in the Compact step while the bar above it goes to 28px. The callout text is the source's, so in Compact it describes something the menu does not do. It is 288px wide (`PANEL_WIDTH`) where the source's is `!w-48` (192px), and the callout and arrow are shifted 96px right to keep their gap from its edge.
+- **Port:** the real inline `Dropdown` (`src/components/dropdown.tsx:425`), which stays at 36px rows in the Compact step while the bar above it goes to 28px. The callout text is the source's, so in Compact it describes something the menu does not do. It is 288px wide (`PANEL_WIDTH`) where the source's is `!w-48` (192px), and the callout and arrow are shifted 96px right to keep their gap from its edge.
 - **Workaround:** none without a `size` on `Dropdown` / `MenuItem`; the page does not touch those components.
 - **Fidelity:** approximated (right in Default, wrong in Compact).
 - **Components it hits:** dropdown, menu-item.

@@ -127,7 +127,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** a keyboard-focused row gets a 1px ring 2px outside it that glides between rows on `spring.fast` and fades out on `spring.fast.exit` (`color-picker.tsx:1118-1138`); it shows for `:focus-visible` only (`:1069-1072`).
-- **Port:** the keyboard-lit row gets only the hover highlight; there is no ring (`src/components/color-picker.tsx:976-982` the hover highlight, `:999-1022` the row); rows take real focus (`base-ui:src/menu/item/menu-item.ts:112-117`), so a ring could follow `focusVisible` on the focused row. The select port has the ring (recent commit "Select: the keyboard-lit row gets a focus ring").
+- **Port:** the keyboard-lit row gets only the hover highlight; there is no ring (`src/components/color-picker.tsx:976-982` the hover highlight, `:999-1022` the row); rows take real focus (`base-ui:src/menu/item/menu-item.ts:114-119`), so a ring could follow `focusVisible` on the focused row. The select port has the ring (recent commit "Select: the keyboard-lit row gets a focus ring").
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.

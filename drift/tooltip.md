@@ -4,21 +4,11 @@ Original: `registry/base/tooltip.tsx` (the docs page `app/docs/tooltip/page.tsx`
 
 The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are tracked in `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` ("Tooltip"); this file lists only what still looks or behaves differently.
 
-## The safe polygon needs pointer positions over bare window background
-
-- **Cause:** `gpuix gap`.
-- **Original:** the popup is hoverable and Base UI's `safePolygon()` keeps it open while the pointer crosses the gap between trigger and popup, whatever is under the pointer there (`registry/base/tooltip.tsx:222-233`; the polygon is Base UI's default).
-- **Port:** a grace timer. Leaving the trigger or the chip schedules a close after `GRACE_MS` (80 ms) unless the pointer reaches the chip or comes back (`src/components/tooltip.tsx:30`, `scheduleClose` `base-ui:src/tooltip/trigger/tooltip-trigger.ts:52-59`, wrapper leave `src/components/tooltip.tsx:138`, chip enter / leave `src/components/tooltip.tsx:167`, `base-ui:src/tooltip/trigger/tooltip-trigger.ts:111-119`).
-- **gpuix lacks:** pointer moves over empty space. `window` / `document` `mousemove` listeners fire only when some element on the hit path has a mousemove listener, never over the bare window background, so the polygon cannot be tracked (README "Bugs" table, tooltip row).
-- **Workaround:** the grace timer above.
-- **Fidelity:** approximated (a pointer that takes longer than 80 ms to cross the 8px gap loses the tooltip).
-- **Components it hits:** dropdown submenus (the same polygon).
-
 ## The slide and the follow-cursor offset are not transforms
 
 - **Cause:** `gpuix gap` (no transforms: [README "Missing features", first row](../README.md#missing-features)).
 - **Original:** the chip enters and exits with `x` / `y` (4px) plus opacity (`registry/base/tooltip.tsx:282-291`); `followCursor` drives a `y` / `x` motion value on the outer box (`:205-219`, `:262-269`). There is no scale on the tooltip, so the README row's "`scaleY: 0.96`" does not apply to it.
-- **Port:** the chip animates `top` / `left` (`slideFrom`, `src/components/tooltip.tsx:54-65`, chip `initial` / `animate` `:168-173`); `followCursor` passes the pointer offset to `<anchored offset>` (`:113-123`, `:155`).
+- **Port:** the chip animates `top` / `left` (`slideFrom`, `src/components/tooltip.tsx:52-63`, chip `initial` / `animate` `:168-173`); `followCursor` passes the pointer offset to `<anchored offset>` (`:111-121`, `:154`).
 - **gpuix lacks:** `transform`, so `translate` / `x` / `y` cannot animate; only layout props can.
 - **Workaround:** `top` / `left` tweens, which re-lay out per frame.
 - **Fidelity:** approximated (same distance and timing; a layout change per frame instead of a compositor transform).
@@ -45,9 +35,9 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 
 ## The trigger is wrapped in a `div`
 
-- **Cause:** `port choice` (the wrapper hears hover, press and focus through bubbling, `src/components/tooltip.tsx:69`; there is no `render={children}` / ref merging).
+- **Cause:** `port choice` (the wrapper hears hover, press and focus through bubbling, `src/components/tooltip.tsx:67`; there is no `render={children}` / ref merging).
 - **Original:** `TooltipPrimitive.Trigger render={children}` puts the handlers on the child itself, with no extra box (`registry/base/tooltip.tsx:229-233`).
-- **Port:** a `display: flex; flexShrink: 0; position: relative` wrapper around the child (`src/components/tooltip.tsx:131-143`).
+- **Port:** a `display: flex; flexShrink: 0; position: relative` wrapper around the child (`src/components/tooltip.tsx:129-142`).
 - **Workaround:** none. A trigger that relied on `flex: 1`, `width: 100%` or a parent's `gap` / `:first-child` rules sees the wrapper instead of itself.
 - **Fidelity:** approximated.
 - **Components it hits:** every tooltip trigger (queued-stack, input-copy, input-message, color-picker).
@@ -65,7 +55,7 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 
 - **Cause:** `port choice` (settled in `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` "Tooltip", the tooltip joins gpuix's dismiss-layer stack).
 - **Original:** Base UI's tooltip and dialog are separate document-level listeners, so one Escape most likely closes both (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` reading; not run).
-- **Port:** `<DismissableLayer onEscapeKeyDown={dismiss}>` while a hover-opened tooltip is open; a `forceOpen` one is not a layer (`src/components/tooltip.tsx:145-148`).
+- **Port:** `<DismissableLayer onEscapeKeyDown={dismiss}>` while a hover-opened tooltip is open; a `forceOpen` one is not a layer (`src/components/tooltip.tsx:144-147`).
 - **Workaround:** n/a.
 - **Fidelity:** approximated (two Escapes to close both).
 - **Components it hits:** dialog, mobile-drawer.
@@ -74,7 +64,7 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 
 - **Cause:** `not ported yet`.
 - **Original:** Base UI keeps a focus-opened tooltip when focus moves between elements inside one trigger (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` "Tooltip", keyboard row).
-- **Port:** `onFocusOut` closes on any focus-out (`src/components/tooltip.tsx:141`, `base-ui:src/tooltip/trigger/tooltip-trigger.ts:107-110`).
+- **Port:** `onFocusOut` closes on any focus-out (`src/components/tooltip.tsx:140`, `base-ui:src/tooltip/trigger/tooltip-trigger.ts:130-133`).
 - **Workaround:** none; every port trigger is one control.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -83,7 +73,7 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 
 - **Cause:** `port choice` (there are no class names, and an `<anchored>` layer replaces the portal).
 - **Original:** `className`, `contentClassName`, `TooltipPortalContainer`, `children: ReactElement` (`registry/base/tooltip.tsx:23-37`, `:87-107`).
-- **Port:** none of them; `testId` is added and `children` is any JSX (`src/components/tooltip.tsx:67-82`). The chip cannot be restyled by a caller.
+- **Port:** none of them; `testId` is added and `children` is any JSX (`src/components/tooltip.tsx:65-80`). The chip cannot be restyled by a caller.
 - **Workaround:** n/a.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.

@@ -14,6 +14,9 @@ import {
 	DropdownContent,
 	DropdownMenu,
 	DropdownSearch,
+	DropdownSub,
+	DropdownSubContent,
+	DropdownSubTrigger,
 	DropdownTrigger,
 	MenuItem,
 } from '#/components/dropdown';
@@ -732,6 +735,131 @@ const ease = await createCheck(
 		partway('label'),
 		`rest ${rest.label}, early ${early.label}, lit ${lit.label}`,
 	);
+}
+
+// ─── Submenu safe polygon ───────────────────────────────────────────────────
+
+// `safePolygon({ blockPointerEvents: true })`: a hover-opened submenu follows the pointer from its trigger, and the parent rows it crosses on the way stay unlit. A bare view, not the demo page: the polygon reads real time between pointer moves, and the page's frames are slower than its 40 ms.
+const poly = await createCheck(
+	() => (
+		<div style={{ display: 'flex', flexDirection: 'row', padding: 40 }}>
+			<DropdownMenu testId="poly">
+				<DropdownTrigger>
+					{(trigger) => (
+						<Button
+							testId="poly-trigger"
+							variant="ghost"
+							{...trigger.attributes}
+							onMouseDown={trigger.onMouseDown}
+							onClick={trigger.onClick}
+						>
+							Open
+						</Button>
+					)}
+				</DropdownTrigger>
+				<DropdownContent>
+					<DropdownSub>
+						<DropdownSubTrigger testId="poly-move" index={0} label="Move to" />
+						<DropdownSubContent>
+							{['Inbox', 'Design', 'Engineering', 'Marketing'].map(
+								(folder, index) => (
+									<MenuItem
+										testId={`poly-folder-${folder}`}
+										index={index}
+										label={folder}
+									/>
+								),
+							)}
+						</DropdownSubContent>
+					</DropdownSub>
+					<MenuItem testId="poly-share" index={1} label="Share" />
+					<MenuItem testId="poly-rename" index={2} label="Rename" />
+				</DropdownContent>
+			</DropdownMenu>
+		</div>
+	),
+	{ width: 900, height: 500, initialSettleMs: 600 },
+);
+{
+	const polyIds = [
+		'poly-move',
+		'poly-share',
+		'poly-rename',
+		'poly-folder-Inbox',
+		'poly-folder-Design',
+		'poly-folder-Engineering',
+	];
+	const polyFocus = () => {
+		const focused = poly.renderer.getFocusedElementId();
+		return (
+			polyIds.find(
+				(id) => poly.exists(id) && poly.element(id).id === focused,
+			) ?? null
+		);
+	};
+	const submenuOpen = () => poly.exists('poly-folder-Inbox');
+	await poly.click('poly-trigger');
+	await poly.settle(300);
+	const moveRow = poly.bounds('poly-move');
+	// Left of the row's centre, so a path to the submenu leaves the row by its bottom edge and crosses the row below.
+	const triggerPoint = {
+		x: moveRow.x + 40,
+		y: moveRow.y + moveRow.height / 2,
+	};
+	poly.renderer.nativeSimulateMouseMove(triggerPoint.x, triggerPoint.y);
+	await poly.settle(600);
+	k.check('polygon: hovering the trigger opens the submenu', submenuOpen());
+	let siblingLit = false;
+	await poly.glide(
+		triggerPoint,
+		poly.center('poly-folder-Engineering'),
+		20,
+		() => {
+			if (polyFocus() === 'poly-share') siblingLit = true;
+		},
+	);
+	await poly.settle(200);
+	k.check(
+		'polygon: a diagonal across the row below keeps the submenu open',
+		submenuOpen(),
+	);
+	k.check('polygon: the row it crossed was never lit', !siblingLit);
+
+	// Landed on the submenu, the pointer is the parent list's again: going back out across a sibling row closes it and lights that row.
+	const shareMid = poly.center('poly-share');
+	await poly.glide(
+		poly.center('poly-folder-Engineering'),
+		{ x: shareMid.x - 40, y: shareMid.y },
+		12,
+	);
+	await poly.settle(300);
+	k.check(
+		'polygon: leaving the submenu for a sibling row closes it',
+		!submenuOpen(),
+	);
+	poly.renderer.nativeSimulateMouseMove(shareMid.x - 41, shareMid.y);
+	await poly.settle(100);
+	k.expect('polygon: and lights the sibling row', polyFocus(), 'poly-share');
+
+	// Away from the submenu nothing covers the way: it closes, and the row under the pointer takes the highlight.
+	await poly.glide(poly.center('poly-share'), triggerPoint, 6);
+	await poly.settle(600);
+	k.check('polygon: the submenu opens again', submenuOpen());
+	const renameMid = poly.center('poly-rename');
+	await poly.glide(triggerPoint, { x: triggerPoint.x, y: renameMid.y }, 8);
+	await poly.settle(300);
+	k.check(
+		'polygon: moving straight down, away from the submenu, closes it',
+		!submenuOpen(),
+	);
+	poly.renderer.nativeSimulateMouseMove(triggerPoint.x + 1, renameMid.y);
+	await poly.settle(100);
+	k.expect(
+		'polygon: and lights the row it reached',
+		polyFocus(),
+		'poly-rename',
+	);
+	await poly.press('Escape');
 }
 
 k.finish();

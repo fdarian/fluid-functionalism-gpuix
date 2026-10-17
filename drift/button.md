@@ -57,7 +57,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 ## Keyboard auto-repeat of Enter
 
-- **Cause:** `port choice` (the port uses gpuix `buttonProps`; `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:188` decides to leave it).
+- **Cause:** `port choice` (the port uses gpuix `buttonProps`; `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:187` decides to leave it).
 - **Original:** a native `<button>` clicks again for each Enter key-repeat.
 - **Port:** `buttonProps` ignores repeats (`packages/solid/src/components/button.ts:48`, `!event.repeat`).
 - **Workaround:** none.
@@ -66,7 +66,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 ## `active`, `asChild` / `render` and the legacy sizes
 
-- **Cause:** `port choice` (out of scope per the lead's decision, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:178`).
+- **Cause:** `port choice` (out of scope per the lead's decision, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:177`).
 - **Original:** `active` forces the pressed look while a menu the button opened is showing (`:99-102`, `:130-141`); `asChild` / `render` make another element the root (`:86-95`, `:163-186`, `:290-302`); `sm` / `md` / `lg` / `icon-sm` / `icon-lg` resolve onto the ladder (`:61-78`).
 - **Port:** none of them (`src/components/button.tsx:94-115`). A dropdown trigger does not look engaged while its menu is open.
 - **Workaround:** none.
