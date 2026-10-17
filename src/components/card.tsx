@@ -113,26 +113,6 @@ const CardContext = createContext<CardScope>({
 /** Lets a Card find its CardImage among its resolved children. */
 const imageNodes = new WeakSet<object>();
 
-/**
- * A part that holds the footer or the actions has to stand over the overlay as
- * a whole: gpuix orders `zIndex` among siblings only, so a z-30 control inside
- * a plain wrapper would still sit under it. The wrapper lets presses fall
- * through to the overlay, and the control takes its own with `takesPresses`.
- */
-function aboveOverlay(scope: CardScope) {
-	return scope.overlaid()
-		? {
-				position: 'relative' as const,
-				zIndex: 30,
-				pointerEvents: 'none' as const,
-			}
-		: {};
-}
-
-function takesPresses(scope: CardScope) {
-	return scope.overlaid() ? { pointerEvents: 'auto' as const } : {};
-}
-
 /** Gap click: a press in the whitespace routes to the highlighted card when it lands this close. */
 const GAP_CLICK_DISTANCE = 16;
 
@@ -451,7 +431,7 @@ export function Card(props: {
 						}}
 					/>
 				</Show>
-				{/* The whole card is the click target, above the content; the footer, the actions and the dismiss chip rise over it (z-30), siblings and not descendants, so a press on them never reaches the card. A disabled card drops it, so it cannot be tabbed to. */}
+				{/* The whole card is the click target, above the content; the footer, the actions, the footer buttons and the dismiss chip rise over it (z-30), so a press on them never reaches the card. A disabled card drops it, so it cannot be tabbed to. */}
 				<Show when={overlaid()}>
 					<div
 						{...buttonProps({ onClick: props.onClick, tabIndex: 0 }, renderer)}
@@ -510,7 +490,6 @@ function CardFrame(props: { children: JSX.Element }) {
 			{image()}
 			<div
 				style={{
-					...aboveOverlay(scope),
 					display: 'flex',
 					flexDirection: 'column',
 					justifyContent: 'center',
@@ -627,7 +606,6 @@ export function CardHeader(props: { children: JSX.Element }) {
 				gap: 4,
 				minWidth: 0,
 				...padding(),
-				...aboveOverlay(scope),
 			}}
 		>
 			{props.children}
@@ -682,7 +660,6 @@ export function CardDescription(props: { children: string }) {
 
 /** Pinned to the header's top-right corner. */
 export function CardAction(props: { children: JSX.Element }) {
-	const scope = useContext(CardContext);
 	return (
 		<div
 			style={{
@@ -690,7 +667,6 @@ export function CardAction(props: { children: JSX.Element }) {
 				zIndex: 30,
 				top: 0,
 				right: 0,
-				...takesPresses(scope),
 			}}
 		>
 			{props.children}
@@ -725,7 +701,6 @@ export function CardFooter(props: { children: JSX.Element }) {
 			style={{
 				position: 'relative',
 				zIndex: 30,
-				...takesPresses(scope),
 				display: 'flex',
 				flexDirection: 'row',
 				flexWrap: 'wrap',
@@ -1057,6 +1032,8 @@ export function CardButton(props: {
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			style={{
+				position: 'relative',
+				zIndex: 30,
 				display: 'flex',
 				flexDirection: 'row',
 				alignItems: 'center',
