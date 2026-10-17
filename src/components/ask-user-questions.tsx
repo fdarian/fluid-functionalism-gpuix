@@ -227,7 +227,11 @@ function Row(props: RowProps) {
 					...(props.isMulti
 						? props.chipFilled
 							? { backgroundColor: color.foreground }
-							: { borderWidth: 1, borderColor: color.border }
+							: {
+									borderStyle: 'solid',
+									borderWidth: 1,
+									borderColor: color.border,
+								}
 						: {}),
 				}}
 			>
@@ -1128,6 +1132,7 @@ function cardStyle() {
 		overflow: 'hidden',
 		backgroundColor: color.card,
 		borderRadius: shape.container,
+		borderStyle: 'solid',
 		borderWidth: 1,
 		borderColor: color.border,
 	} as const;

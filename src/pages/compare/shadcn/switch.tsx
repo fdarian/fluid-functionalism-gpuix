@@ -41,6 +41,7 @@ export function ScSwitch(props: {
 					width: TRACK_WIDTH,
 					height: TRACK_HEIGHT,
 					borderRadius: TRACK_HEIGHT / 2,
+					borderStyle: 'solid',
 					borderWidth: 1,
 					borderColor: sc.input,
 					backgroundColor: props.checked ? sc.primary : sc.input,

@@ -93,6 +93,7 @@ export function SearchField(props: {
 				gap: 8,
 				paddingLeft: 12,
 				paddingRight: 12,
+				borderBottomStyle: 'solid',
 				borderBottomWidth: 1,
 				borderColor: separatorColor(),
 			}}

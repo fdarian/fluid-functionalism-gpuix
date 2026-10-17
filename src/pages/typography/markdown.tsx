@@ -180,7 +180,11 @@ function Marker(props: {
 						borderRadius: 2.5,
 						// `ul ul` is a circle: an outline, not a fill.
 						...(props.depth > 0
-							? { borderWidth: 1, borderColor: color.mutedForeground }
+							? {
+									borderStyle: 'solid',
+									borderWidth: 1,
+									borderColor: color.mutedForeground,
+								}
 							: { backgroundColor: color.mutedForeground }),
 					}}
 				/>
@@ -273,6 +277,7 @@ function Checkbox(props: {
 				flexShrink: 0,
 				width: box(),
 				height: box(),
+				borderStyle: 'solid',
 				borderWidth: 1.5,
 				borderRadius: TYPESET_CHECK.radius[sizeChoice()],
 				borderColor: hovered()
@@ -383,6 +388,7 @@ function Quote(props: { children: string }) {
 		<div
 			style={{
 				paddingLeft: roleStyle('body').fontSize,
+				borderLeftStyle: 'solid',
 				borderLeftWidth: 2,
 				borderColor: color.border,
 			}}
@@ -429,6 +435,7 @@ function Table() {
 									paddingLeft:
 										column() === 0 ? 0 : roleStyle('body').fontSize * 0.75,
 									paddingRight: roleStyle('body').fontSize * 0.75,
+									borderBottomStyle: 'solid',
 									borderBottomWidth: 1,
 									borderColor: color.border,
 									...(rowIndex() === 0
@@ -629,6 +636,7 @@ export function TypesetSample() {
 			style={{
 				display: 'flex',
 				flexDirection: 'column',
+				borderStyle: 'solid',
 				borderWidth: 1,
 				borderColor: color.borderFaint,
 				borderRadius: shape.container,

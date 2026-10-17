@@ -108,6 +108,7 @@ function PanelLabel(props: { children: JSX.Element }) {
 }
 
 const frame = () => ({
+	borderStyle: 'solid',
 	borderWidth: 1,
 	borderColor: color.border,
 	borderRadius: shape.container,

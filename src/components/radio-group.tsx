@@ -112,6 +112,7 @@ function Radio(props: {
 					right: 0,
 					bottom: 0,
 					borderRadius: box() / 2,
+					borderStyle: 'solid',
 					borderWidth: 1.5,
 					borderColor: indicatorBorder(props.selected, props.active),
 					...indicatorFade,

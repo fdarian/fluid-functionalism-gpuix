@@ -265,6 +265,7 @@ function SidebarPreview() {
 				maxWidth: 620,
 				overflow: 'hidden',
 				borderRadius: 12,
+				borderStyle: 'solid',
 				borderWidth: 1,
 				borderColor: color.border,
 				backgroundColor: color.background,

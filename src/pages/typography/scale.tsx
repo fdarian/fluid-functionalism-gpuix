@@ -88,6 +88,7 @@ export function TypeScaleSpecimen() {
 			testId="type-scale"
 			style={{
 				overflowX: 'auto',
+				borderStyle: 'solid',
 				borderWidth: 1,
 				borderColor: color.borderFaint,
 				borderRadius: shape.container,
@@ -106,6 +107,7 @@ export function TypeScaleSpecimen() {
 						...row,
 						paddingTop: 10,
 						paddingBottom: 10,
+						borderBottomStyle: 'solid',
 						borderBottomWidth: 1,
 						borderColor: color.borderFaint,
 					}}
@@ -129,6 +131,7 @@ export function TypeScaleSpecimen() {
 									...row,
 									paddingTop: 16,
 									paddingBottom: 16,
+									borderBottomStyle: 'solid',
 									borderBottomWidth: index() === SPEC.length - 1 ? 0 : 1,
 									borderColor: borderFainter(),
 								}}
@@ -203,6 +206,7 @@ export function GapTable() {
 				style={{
 					display: 'grid',
 					gridTemplateColumns: columns,
+					borderBottomStyle: 'solid',
 					borderBottomWidth: 1,
 					borderColor: color.border,
 				}}
@@ -230,6 +234,7 @@ export function GapTable() {
 						style={{
 							display: 'grid',
 							gridTemplateColumns: columns,
+							borderBottomStyle: 'solid',
 							borderBottomWidth: 1,
 							borderColor: borderFainter(),
 						}}

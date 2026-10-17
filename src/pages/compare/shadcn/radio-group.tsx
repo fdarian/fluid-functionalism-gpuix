@@ -91,6 +91,7 @@ export function ScRadioGroup(props: {
 								width: 16,
 								height: 16,
 								borderRadius: 8,
+								borderStyle: 'solid',
 								borderWidth: 1,
 								borderColor: sc.primary,
 								keyboardFocusDim: false,

@@ -409,6 +409,7 @@ export function ComponentPreview(props: {
 					display: 'flex',
 					flexDirection: 'column',
 					borderRadius: 12,
+					borderStyle: 'solid',
 					borderWidth: 1,
 					borderColor: color.borderFaint,
 					transitionProperty: 'border-color',
@@ -426,6 +427,7 @@ export function ComponentPreview(props: {
 							justifyContent: 'space-between',
 							minHeight: 52,
 							padding: 12,
+							borderBottomStyle: 'solid',
 							borderBottomWidth: 1,
 							borderColor: color.borderFaint,
 						}}

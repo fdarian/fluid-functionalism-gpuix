@@ -21,6 +21,7 @@ export function TweakFrame(props: {
 			ref={props.ref}
 			style={{
 				display: 'flex',
+				borderStyle: 'solid',
 				borderWidth: 1,
 				borderColor: color.borderFaint,
 				borderRadius: shape.container,
@@ -93,6 +94,7 @@ export function Specimen(props: {
 				testId={props.testId}
 				style={{
 					width: '100%',
+					borderStyle: 'solid',
 					borderWidth: 1,
 					borderColor: color.borderFaint,
 					borderRadius: shape.container,

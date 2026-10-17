@@ -64,6 +64,7 @@ export function DemoCard(props: { title: string; children: JSX.Element }) {
 				display: 'flex',
 				flexDirection: 'column',
 				borderRadius: 12,
+				borderStyle: 'solid',
 				borderWidth: 1,
 				borderColor: color.border,
 				backgroundColor: color.surface2,
@@ -85,6 +86,7 @@ export function DemoCard(props: { title: string; children: JSX.Element }) {
 					display: 'flex',
 					alignItems: 'center',
 					paddingLeft: 16,
+					borderTopStyle: 'solid',
 					borderTopWidth: 1,
 					borderColor: color.border,
 				}}

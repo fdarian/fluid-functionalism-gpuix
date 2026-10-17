@@ -25,6 +25,7 @@ export function ScDropdownMenu(props: {
 				minWidth: 224,
 				padding: 4,
 				borderRadius: scRadius.md,
+				borderStyle: 'solid',
 				borderWidth: 1,
 				borderColor: sc.border,
 				backgroundColor: sc.popover,

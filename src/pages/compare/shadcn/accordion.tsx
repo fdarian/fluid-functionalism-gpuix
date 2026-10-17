@@ -130,6 +130,7 @@ export function ScAccordion(props: {
 							style={{
 								display: 'flex',
 								flexDirection: 'column',
+								borderBottomStyle: 'solid',
 								borderBottomWidth: 1,
 								borderColor: sc.border,
 							}}

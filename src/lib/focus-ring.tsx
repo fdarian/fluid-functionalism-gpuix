@@ -100,6 +100,7 @@ export function FocusRing(props: {
 						position: 'absolute',
 						zIndex: 20,
 						borderRadius: props.radius,
+						borderStyle: 'solid',
 						borderWidth: 1,
 						borderColor: color.focusRing,
 						pointerEvents: 'none',

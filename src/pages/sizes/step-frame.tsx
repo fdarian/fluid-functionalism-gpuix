@@ -22,6 +22,7 @@ export function StepFrame(props: {
 				display: 'flex',
 				flexDirection: 'column',
 				width: '100%',
+				borderStyle: 'solid',
 				borderWidth: 1,
 				borderColor: color.borderFaint,
 				borderRadius: shape.container,
@@ -34,6 +35,7 @@ export function StepFrame(props: {
 					alignItems: 'center',
 					minHeight: 52,
 					padding: 12,
+					borderBottomStyle: 'solid',
 					borderBottomWidth: 1,
 					borderColor: color.borderFaint,
 				}}

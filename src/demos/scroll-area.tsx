@@ -50,6 +50,7 @@ const CITY_W = 104;
 const CELL_W = 80;
 
 const box = () => ({
+	borderStyle: 'solid',
 	borderWidth: 1,
 	borderColor: color.border,
 	borderRadius: radius.container,
@@ -221,6 +222,7 @@ export function Demo() {
 									height: 36,
 									alignItems: 'center',
 									flexShrink: 0,
+									borderBottomStyle: 'solid',
 									borderBottomWidth: 1,
 									borderColor: color.border,
 								}}

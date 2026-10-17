@@ -55,6 +55,7 @@ export function CompareCard(props: {
 				flexDirection: 'column',
 				overflow: 'hidden',
 				borderRadius: 12,
+				borderStyle: 'solid',
 				borderWidth: 1,
 				// Transparent in the source; gpuix paints a shadow under its element, so a see-through card would show it as a darker fill.
 				backgroundColor: color.background,
@@ -82,6 +83,7 @@ export function CompareCard(props: {
 			<div
 				style={{
 					flexShrink: 0,
+					borderTopStyle: 'solid',
 					borderTopWidth: 1,
 					borderColor: footerRule(),
 				}}

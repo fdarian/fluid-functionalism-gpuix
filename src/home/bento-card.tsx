@@ -69,6 +69,7 @@ export function BentoCard(props: {
 				flexDirection: 'column',
 				minHeight: 0,
 				borderRadius: 12,
+				borderStyle: 'solid',
 				borderWidth: 1,
 				overflow: 'hidden',
 				// A box shadow is not clipped out of the border box here, so over a transparent fill it darkens the whole card.
@@ -115,6 +116,7 @@ export function BentoCard(props: {
 					paddingRight: 16,
 					paddingTop: 12,
 					paddingBottom: 12,
+					borderTopStyle: 'solid',
 					borderTopWidth: 1,
 					borderTopColor:
 						scheme() === 'light'

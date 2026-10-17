@@ -152,6 +152,7 @@ export function TableRow(props: {
 					zIndex: 10,
 					display: 'flex',
 					flexDirection: 'row',
+					borderBottomStyle: 'solid',
 					borderBottomWidth: 1,
 					borderColor: hideBorder() ? color.transparent : color.accentFaint,
 					...fade(['border-color'], 80),

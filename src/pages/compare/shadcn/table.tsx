@@ -64,6 +64,7 @@ export function ScTable(props: {
 				style={{
 					display: 'flex',
 					flexDirection: 'row',
+					borderBottomStyle: 'solid',
 					borderBottomWidth: 1,
 					borderColor: sc.border,
 				}}
@@ -84,6 +85,7 @@ export function ScTable(props: {
 						style={{
 							display: 'flex',
 							flexDirection: 'row',
+							borderBottomStyle: 'solid',
 							borderBottomWidth: rowIndex() === props.rows.length - 1 ? 0 : 1,
 							borderColor: sc.border,
 							transitionProperty: 'background-color',

@@ -108,6 +108,7 @@ function MockPage(props: { height: number; children: unknown }) {
 				height: props.height,
 				overflow: 'hidden',
 				borderRadius: 12,
+				borderStyle: 'solid',
 				borderWidth: 1,
 				borderColor: color.borderFaint,
 				backgroundColor: color.background,
@@ -123,6 +124,7 @@ function MockPage(props: { height: number; children: unknown }) {
 					flexShrink: 0,
 					paddingLeft: 16,
 					paddingRight: 16,
+					borderBottomStyle: 'solid',
 					borderBottomWidth: 1,
 					borderColor: color.borderFaint,
 				}}

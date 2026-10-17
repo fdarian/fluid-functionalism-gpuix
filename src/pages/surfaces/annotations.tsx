@@ -123,6 +123,7 @@ export function Swatch(props: { hex: string }) {
 				height: 10,
 				flexShrink: 0,
 				borderRadius: 3,
+				borderStyle: 'solid',
 				borderWidth: 1,
 				borderColor: 'rgba(255,255,255,0.15)',
 				backgroundColor: props.hex,

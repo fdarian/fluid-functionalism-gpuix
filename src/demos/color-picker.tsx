@@ -72,6 +72,7 @@ export function Demo() {
 											display: 'flex',
 											alignItems: 'center',
 											borderRadius: 8,
+											borderStyle: 'solid',
 											borderWidth: 1,
 											borderColor: color.border,
 											cursor: 'pointer',

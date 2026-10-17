@@ -30,6 +30,7 @@ export function DiffBlock(props: { diff: string }) {
 				width: '100%',
 				overflowX: 'auto',
 				borderRadius: 8,
+				borderStyle: 'solid',
 				borderWidth: 1,
 				borderColor: color.border,
 			}}

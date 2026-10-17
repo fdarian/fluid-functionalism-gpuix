@@ -956,6 +956,7 @@ export function CommandMenuList(props: {
 				flexShrink: 1,
 				minHeight: 0,
 				overflowY: 'scroll',
+				borderTopStyle: 'solid',
 				borderTopWidth: 1,
 				borderColor: color.border,
 			}}
@@ -1274,6 +1275,7 @@ export function CommandMenuFooter(props: {
 				gap: layout().footerGap,
 				paddingLeft: layout().footerPadX,
 				paddingRight: layout().footerPadX,
+				borderTopStyle: 'solid',
 				borderTopWidth: 1,
 				borderColor: color.border,
 				overflow: 'hidden',

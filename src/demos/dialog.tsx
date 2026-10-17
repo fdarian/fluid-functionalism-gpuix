@@ -223,6 +223,7 @@ export function Demo() {
 						overflow: 'hidden',
 						height: 220,
 						borderRadius: 12,
+						borderStyle: 'solid',
 						borderWidth: 1,
 						borderColor: color.border,
 						backgroundColor: color.background,

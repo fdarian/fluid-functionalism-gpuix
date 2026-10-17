@@ -169,6 +169,7 @@ export function PreviewStage(props: { slug: string }): JSX.Element {
 				position: 'relative',
 				marginTop: 12,
 				overflow: 'hidden',
+				borderStyle: 'solid',
 				borderWidth: 1,
 				borderRadius: shape.container,
 				// A box shadow is not clipped out of the border box here, so over a transparent fill it darkens the whole stage.

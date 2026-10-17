@@ -148,6 +148,7 @@ export function ScSlider(props: {
 					width: THUMB,
 					height: THUMB,
 					borderRadius: THUMB / 2,
+					borderStyle: 'solid',
 					borderWidth: 1,
 					borderColor: withAlpha(sc.primary, 0.5),
 					backgroundColor: '#FFFFFF',

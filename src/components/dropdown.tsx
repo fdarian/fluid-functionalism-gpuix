@@ -249,6 +249,7 @@ function MenuBody(props: {
 						style={{
 							position: 'absolute',
 							borderRadius: radius.focusRing,
+							borderStyle: 'solid',
 							borderWidth: 1,
 							borderColor: color.focusRing,
 							pointerEvents: 'none',

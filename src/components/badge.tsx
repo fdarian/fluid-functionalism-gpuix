@@ -104,7 +104,13 @@ export function Badge(props: {
 				gap: size().gap,
 				borderRadius: shape.item,
 				backgroundColor: fill(),
-				...(solid() ? {} : { borderWidth: 1, borderColor: color.border }),
+				...(solid()
+					? {}
+					: {
+							borderStyle: 'solid',
+							borderWidth: 1,
+							borderColor: color.border,
+						}),
 			}}
 		>
 			{/* One fragment: a Show among siblings leaves an empty text node that eats a `gap`. */}

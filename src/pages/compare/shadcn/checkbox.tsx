@@ -34,6 +34,7 @@ export function ScCheckbox(props: {
 					width: 16,
 					height: 16,
 					borderRadius: scRadius.sm,
+					borderStyle: 'solid',
 					borderWidth: 1,
 					borderColor: sc.primary,
 					backgroundColor: props.checked ? sc.primary : 'rgba(0,0,0,0)',

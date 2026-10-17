@@ -52,6 +52,7 @@ export function Slide(props: {
 				height: props.height ?? SLIDE_SIZE,
 				overflow: 'hidden',
 				borderRadius: shape.container,
+				borderStyle: 'solid',
 				borderWidth: 1,
 				borderColor: color.border,
 				backgroundColor: color.background,

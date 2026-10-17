@@ -57,6 +57,7 @@ function GenericCopy(props: { copied: boolean; onCopy: () => void }) {
 				height: 36,
 				paddingLeft: 12,
 				paddingRight: 4,
+				borderStyle: 'solid',
 				borderWidth: 1,
 				borderColor: color.border,
 				backgroundColor: color.background,

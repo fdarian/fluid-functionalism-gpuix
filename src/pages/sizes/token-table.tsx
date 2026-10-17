@@ -139,6 +139,7 @@ export function TokenTable() {
 				style={{
 					display: 'flex',
 					flexDirection: 'row',
+					borderBottomStyle: 'solid',
 					borderBottomWidth: 1,
 					borderColor: color.border,
 				}}
@@ -162,6 +163,7 @@ export function TokenTable() {
 						style={{
 							display: 'flex',
 							flexDirection: 'row',
+							borderBottomStyle: 'solid',
 							borderBottomWidth: 1,
 							borderColor: color.borderFaint,
 						}}

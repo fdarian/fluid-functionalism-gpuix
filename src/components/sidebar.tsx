@@ -533,6 +533,7 @@ export function SidebarMenuSub(props: {
 					// A margin, not a translate, so the rows' measured rects include it. 15 + 1px border + 8 + the row's own 8 puts a sub-row label on the parent label's x (32).
 					marginLeft: 15,
 					paddingLeft: 8,
+					borderLeftStyle: 'solid',
 					borderLeftWidth: 1,
 					borderColor: color.border,
 				}}

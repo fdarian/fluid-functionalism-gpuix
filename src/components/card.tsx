@@ -241,6 +241,7 @@ export function CardGroup(props: {
 					// A shared frame clips the highlight and dividers to its rounded corners.
 					...(outlined() && !separated()
 						? {
+								borderStyle: 'solid',
 								borderWidth: 1,
 								borderColor: color.borderFaint,
 								overflow: 'hidden',
@@ -388,7 +389,11 @@ export function Card(props: {
 						? { borderRadius: shape.container, overflow: 'hidden' }
 						: {}),
 					...(framed() || (group === undefined && props.outlined)
-						? { borderWidth: 1, borderColor: color.borderFaint }
+						? {
+								borderStyle: 'solid',
+								borderWidth: 1,
+								borderColor: color.borderFaint,
+							}
 						: {}),
 					// A card that is its own tile has no group highlight, so it lights itself.
 					...(group === undefined && clickable() && !props.disabled

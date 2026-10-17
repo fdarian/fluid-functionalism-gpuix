@@ -65,6 +65,7 @@ export function AppFrame(props: { title: string; children: JSX.Element }) {
 					marginRight: MARGIN,
 					marginBottom: MARGIN,
 					borderRadius: PANEL_RADIUS,
+					borderStyle: 'solid',
 					borderWidth: PANEL_BORDER,
 					borderColor: color.border,
 					overflow: 'hidden',

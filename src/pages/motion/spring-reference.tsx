@@ -216,6 +216,7 @@ export function SpringReferenceSection() {
 							gap: 16,
 							paddingTop: 24,
 							paddingBottom: 24,
+							borderTopStyle: 'solid',
 							borderTopWidth: index() > 0 ? 1 : 0,
 							borderColor: color.border,
 						}}

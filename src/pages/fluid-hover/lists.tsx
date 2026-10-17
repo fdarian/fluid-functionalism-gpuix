@@ -344,6 +344,7 @@ export function ListsDemo() {
 						height: SIDEBAR_HEIGHT,
 						overflow: 'hidden',
 						borderRadius: radius.container,
+						borderStyle: 'solid',
 						borderWidth: 1,
 						borderColor: color.borderFaint,
 						backgroundColor: color.background,

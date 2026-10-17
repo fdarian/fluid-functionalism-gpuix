@@ -314,6 +314,7 @@ export function Select<Value extends string>(props: {
 						gap: triggerSpec().gap,
 						paddingLeft: triggerSpec().padX,
 						paddingRight: inline() ? 6 : triggerSpec().padX,
+						borderStyle: 'solid',
 						borderWidth: inline() ? 0 : 1,
 						borderColor: borderColor(),
 						borderRadius: shape.input,

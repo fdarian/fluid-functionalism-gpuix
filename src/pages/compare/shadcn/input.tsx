@@ -32,6 +32,7 @@ export function ScInputField(props: {
 					paddingLeft: 12,
 					paddingRight: 12,
 					borderRadius: scRadius.md,
+					borderStyle: 'solid',
 					borderWidth: 1,
 					borderColor: sc.input,
 					backgroundColor: sc.background,

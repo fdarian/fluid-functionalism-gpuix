@@ -71,6 +71,7 @@ function Checkbox(props: {
 					right: 0,
 					bottom: 0,
 					borderRadius: props.size === 'compact' ? 4 : 5,
+					borderStyle: 'solid',
 					borderWidth: 1.5,
 					borderColor: indicatorBorder(props.checked, props.active),
 					...indicatorFade,

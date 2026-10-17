@@ -11,6 +11,7 @@ export function ListFrame(props: { children: JSX.Element }) {
 			style={{
 				width: '100%',
 				borderRadius: radius.container,
+				borderStyle: 'solid',
 				borderWidth: 1,
 				borderColor: color.borderFaint,
 			}}
