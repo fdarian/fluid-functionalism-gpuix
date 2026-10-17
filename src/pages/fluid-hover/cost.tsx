@@ -39,7 +39,7 @@ function CostList(props: {
 		) {
 			return;
 		}
-		const box = container.getBoundingClientRect();
+		const box = hover.containerBox();
 		const started = performance.now();
 		pickNearest({
 			axis: 'y',

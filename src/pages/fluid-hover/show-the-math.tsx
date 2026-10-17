@@ -68,7 +68,7 @@ function MathList(props: { showMath: () => boolean }) {
 			onMouseMove={(event: HostMouseEvent) => {
 				hover.handlers.onMouseMove(event);
 				if (container === undefined || event.y === undefined) return;
-				setCursorY(event.y - container.getBoundingClientRect().y);
+				setCursorY(event.y - hover.containerBox().y);
 			}}
 			style={{
 				position: 'relative',

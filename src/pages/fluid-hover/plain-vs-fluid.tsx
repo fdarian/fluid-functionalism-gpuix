@@ -141,7 +141,7 @@ function Stage(props: { paused: () => boolean }) {
 			setCursorY(y);
 			setFakeIndex(rowUnder(y));
 			if (fluid === undefined || !fluid.mounted) return;
-			const box = fluid.getBoundingClientRect();
+			const box = hover.containerBox();
 			hover.handlers.onMouseMove({ x: box.x + CURSOR_X, y: box.y + y });
 		});
 	});
