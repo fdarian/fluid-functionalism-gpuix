@@ -42,15 +42,6 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Fidelity:** approximated.
 - **Components it hits:** every `StableLabel`.
 
-## Panel content sits 1px off centre
-
-- **Cause:** `port choice` (reason not stated; looks unintended, a bug).
-- **Original:** the panel is `w-[280px] p-3` with no border; the square, rails and fields are 256px wide with 12px either side (`color-picker.tsx:1955-1959`).
-- **Port:** the card is 280px with a 1px border, and the 280px panel sits inside it (`src/components/color-picker.tsx:1660-1673`, `:1584-1593`; the popover card is the same, `:691-732`, panel at `:1826`). The panel shrinks to 278px while its children stay 256px, so in `screenshots/color-picker/default.png` the left inset is 13px and the right one 11px.
-- **Workaround:** none.
-- **Fidelity:** approximated (1px).
-- **Components it hits:** just this one.
-
 ## Popover surface level is 5, not substrate + 2
 
 - **Cause:** `port choice` (reason not stated; the ladder in `src/lib/surface-context.ts` is not read here).
