@@ -71,15 +71,11 @@ export function Table(props: {
 
 	return (
 		<TableScopeContext.Provider value={scope}>
+			{/* A block wrapper like the source's: the highlight sits in it behind the table, and the rows ride above it. */}
 			<div
 				testId={props.testId}
 				{...hover.containerProps}
-				style={{
-					position: 'relative',
-					display: 'flex',
-					flexDirection: 'column',
-					width: '100%',
-				}}
+				style={{ position: 'relative' }}
 			>
 				<FluidHighlight
 					rect={hoverRect}
@@ -90,26 +86,26 @@ export function Table(props: {
 						props.testId === undefined ? undefined : `${props.testId}-highlight`
 					}
 				/>
-				{props.children}
+				<div
+					style={{
+						display: 'table',
+						borderCollapse: 'collapse',
+						width: '100%',
+					}}
+				>
+					{props.children}
+				</div>
 			</div>
 		</TableScopeContext.Provider>
 	);
 }
 
 export function TableHeader(props: { children: JSX.Element }) {
-	return (
-		<div style={{ display: 'flex', flexDirection: 'column' }}>
-			{props.children}
-		</div>
-	);
+	return <div style={{ display: 'table-header-group' }}>{props.children}</div>;
 }
 
 export function TableBody(props: { children: JSX.Element }) {
-	return (
-		<div style={{ display: 'flex', flexDirection: 'column' }}>
-			{props.children}
-		</div>
-	);
+	return <div style={{ display: 'table-row-group' }}>{props.children}</div>;
 }
 
 export function TableRow(props: {
@@ -150,11 +146,12 @@ export function TableRow(props: {
 				style={{
 					position: 'relative',
 					zIndex: 10,
-					display: 'flex',
-					flexDirection: 'row',
+					display: 'table-row',
 					borderBottomStyle: 'solid',
 					borderBottomWidth: 1,
-					borderColor: hideBorder() ? color.transparent : color.accentFaint,
+					borderBottomColor: hideBorder()
+						? color.transparent
+						: color.accentFaint,
 					...fade(['border-color'], 80),
 				}}
 			>
@@ -165,6 +162,8 @@ export function TableRow(props: {
 }
 
 interface CellOptions {
+	testId?: string;
+	/** The source's `w-[...]` on a cell: the column's preferred width in px. */
 	width?: number;
 	/** The source's `text-right`. */
 	alignRight?: boolean;
@@ -181,11 +180,12 @@ function Cell(props: CellOptions & { header: boolean }) {
 		props.header || row.lit() ? color.foreground : color.mutedForeground;
 	return (
 		<div
+			testId={props.testId}
 			style={{
-				flexGrow: props.width === undefined ? 1 : 0,
-				flexShrink: props.width === undefined ? 1 : 0,
-				flexBasis: props.width === undefined ? 0 : props.width,
-				minWidth: 0,
+				display: 'table-cell',
+				// A `tr` is `vertical-align: middle` in the user-agent sheet and its cells inherit it.
+				verticalAlign: 'middle',
+				width: props.width,
 				paddingLeft: metrics().padX,
 				paddingRight: metrics().padX,
 				paddingTop: metrics().padY,
@@ -212,6 +212,7 @@ export function TableHead(props: CellOptions) {
 	return (
 		<Cell
 			header
+			testId={props.testId}
 			width={props.width}
 			alignRight={props.alignRight}
 			tabularNums={props.tabularNums}
@@ -225,6 +226,7 @@ export function TableCell(props: CellOptions) {
 	return (
 		<Cell
 			header={false}
+			testId={props.testId}
 			width={props.width}
 			alignRight={props.alignRight}
 			tabularNums={props.tabularNums}
