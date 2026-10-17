@@ -7,7 +7,7 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 ## The dot pops in from scale 0.3
 
-- **Cause:** `gpuix gap`. CSS transforms (README "Missing features" row, `README.md:151`, which lists radio-group).
+- **Cause:** `gpuix gap`. CSS transforms (README "Missing features" row, `README.md:237`, which lists radio-group).
 - **Original:** the dot springs from `scale: 0.3, opacity: 0` to full on `spring.fast`, and shrinks out over 0.04 s (`radio-group.tsx:424-430`).
 - **Port:** `motion` animates `left` / `top` / `width` / `height` together so the dot stays centred while it grows from 30% of its size (`dotAt`, `radio-group.tsx:92-97`, `:122-126`; `DOT_FROM` `:25`; `exit` over `DOT_OUT` 40 ms `:125-126`). `AnimatePresence initial={false}` keeps a row selected at mount at full size, as FF (`:120`, source `:420`).
 - **Gpuix lacks:** transforms (`~/code/fdarian/gpuix/FORK.md:1194-1204`).
@@ -17,7 +17,7 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 ## Label weight (variable fonts)
 
-- **Cause:** `gpuix gap`. README "Missing features" row for variable-font axes (`README.md:171`).
+- **Cause:** `gpuix gap`. README "Missing features" row for variable-font axes (`README.md:254`).
 - **Original:** `'wght' 400` to `'wght' 550` with `opsz` compensation, eased over 80 ms (`radio-group.tsx:466-470`).
 - **Port:** static Inter, SemiBold 600 for 550, switches at once; the hidden semibold copy still reserves the width (`stable-label.tsx:41`).
 - **Gpuix lacks:** `fontVariationSettings`.
@@ -27,7 +27,7 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 ## Label vertical centring (`text-box-trim`)
 
-- **Cause:** `gpuix gap`. README "Missing features" row for `text-box-trim` (`README.md:170`, filed under badge).
+- **Cause:** `gpuix gap`. README "Missing features" row for `text-box-trim` (`README.md:253`, filed under badge).
 - **Original:** `[text-box:trim-both_cap_alphabetic]` on both label spans (`radio-group.tsx:450,461`).
 - **Port:** the label is centred by its full 20 px line box (`stable-label.tsx:41-57`), about a pixel off (the README's figure; not measured here).
 - **Gpuix lacks:** `text-box-trim` / `text-box-edge`.
@@ -37,7 +37,7 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 ## Hover highlight travels on `left` / `top`
 
-- **Cause:** `gpuix gap`. CSS transforms (README "Missing features" row, `README.md:151`; `FORK.md:1194-1204`).
+- **Cause:** `gpuix gap`. CSS transforms (README "Missing features" row, `README.md:237`; `FORK.md:1194-1204`).
 - **Original:** the highlight is moved with an `x` / `y` transform (`registry/default/fluid-hover-highlight.tsx:74-76,126-131`).
 - **Port:** `FluidHighlight` animates `top` / `left` / `width` / `height` (`fluid-highlight.tsx:92-99`). The look is the same.
 - **Workaround:** layout properties.
