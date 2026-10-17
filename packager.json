@@ -1,0 +1,11 @@
+{
+	"name": "fluid-functionalism",
+	"productName": "Fluid Functionalism",
+	"version": "0.1.0",
+	"identifier": "dev.fdarian.fluid-functionalism-gpuix",
+	"binariesDir": "dist",
+	"outDir": "bundle",
+	"binaries": [{ "path": "fluid-functionalism", "main": true }],
+	"icons": ["dist/AppIcon.icns"],
+	"formats": ["app"]
+}

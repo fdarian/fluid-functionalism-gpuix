@@ -7,6 +7,7 @@
 	"packageManager": "pnpm@12.11.2",
 	"scripts": {
 		"start": "bun --hot src/main.tsx",
+		"build": "bun scripts/build.ts",
 		"check": "pnpm check:type && pnpm check:scenarios",
 		"check:type": "tsc",
 		"check:scenarios": "bun scripts/run-scenarios.ts",
