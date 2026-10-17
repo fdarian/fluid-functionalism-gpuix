@@ -19,12 +19,10 @@ import {
 	ThinkingStepsContent,
 	ThinkingStepsHeader,
 } from '#/components/thinking-steps';
+import { OG_PNG } from '#/lib/assets';
 import { useOnScreen } from '#/lib/cull';
 import type { DemoModule, ShotContext } from '#/lib/demo';
 import { DemoCard } from '#/lib/demo-kit';
-
-const ogImage = new URL('../../assets/chat-ai/og.png', import.meta.url)
-	.pathname;
 
 type Playback = 'playing' | 'paused' | 'finished';
 
@@ -332,7 +330,7 @@ function WithImagesDemo(props: {
 					isLast={fired() <= 2}
 				>
 					<Show when={fired() > 2}>
-						<ThinkingStepImage src={ogImage} caption="Homepage screenshot" />
+						<ThinkingStepImage src={OG_PNG} caption="Homepage screenshot" />
 					</Show>
 				</ThinkingStep>
 				<ThinkingStep
@@ -384,7 +382,7 @@ function FullDemo(props: { sequence: ReturnType<typeof createSequence> }) {
 					isLast={fired() <= 2}
 				>
 					<Show when={fired() > 2}>
-						<ThinkingStepImage src={ogImage} caption="Profile card" />
+						<ThinkingStepImage src={OG_PNG} caption="Profile card" />
 					</Show>
 				</ThinkingStep>
 				<ThinkingStep

@@ -78,6 +78,7 @@ import {
 } from '#/components/thinking-steps';
 import { Tooltip } from '#/components/tooltip';
 import { createSlides, SLIDES, Slide } from '#/demos/carousel-dots';
+import { MICKA_PNG } from '#/lib/assets';
 import type { IconRef } from '#/lib/icons';
 import { usePreviewPlayback } from '#/lib/preview-playback';
 import { color, siteType, weight } from '#/lib/theme';
@@ -249,9 +250,6 @@ function IdentityRow(props: { avatar: JSX.Element; label: string }) {
 	);
 }
 
-const MICKA = new URL('../../assets/chat-ai/micka.png', import.meta.url)
-	.pathname;
-
 /** A whole app shell in miniature: workspace row, search, a thread list and a user row beside a blank main region. */
 function SidebarPreview() {
 	const [active, setActive] = createSignal(SIDEBAR_THREADS[0].label);
@@ -328,7 +326,7 @@ function SidebarPreview() {
 						label="Micka Touillaud"
 						avatar={
 							<img
-								src={MICKA}
+								src={MICKA_PNG}
 								style={{
 									width: 20,
 									height: 20,

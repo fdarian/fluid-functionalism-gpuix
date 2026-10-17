@@ -9,6 +9,7 @@ import {
 } from '#/components/input-message';
 import { collapsedStackHeight } from '#/components/queued-stack';
 import { Tooltip } from '#/components/tooltip';
+import { MICKA_PNG } from '#/lib/assets';
 import {
 	ComposerQueueStack,
 	ComposerStage,
@@ -36,11 +37,11 @@ const SUGGESTIONS = [
 	'Draft a short thank-you note to Micka for the library',
 ];
 
-const assets = new URL('../../assets/chat-ai/', import.meta.url).pathname;
-const MICKA = fileFromPath(`${assets}micka.png`);
+/** The embedded copy's basename can carry a hash, so the shown name is set here. */
+const MICKA: ComposerFile = { ...fileFromPath(MICKA_PNG), name: 'micka.png' };
 /** No file on disk: a PDF previews as the document glyph either way. */
 const RECEIPT: ComposerFile = {
-	path: `${assets}Receipt-2581-4039-8265.pdf`,
+	path: '/Receipt-2581-4039-8265.pdf',
 	name: 'Receipt-2581-4039-8265.pdf',
 	type: 'application/pdf',
 };

@@ -1,12 +1,13 @@
 import { For } from 'solid-js';
 import { type FileLike, FileThumbnail } from '#/components/file-thumbnail';
+import { MICKA_PNG } from '#/lib/assets';
 import type { DemoModule } from '#/lib/demo';
 import { DemoCard, DemoRow } from '#/lib/demo-kit';
 
 const photo: FileLike = {
 	name: 'micka.png',
 	type: 'image/png',
-	src: new URL('../../assets/chat-ai/micka.png', import.meta.url).pathname,
+	src: MICKA_PNG,
 };
 const pdf: FileLike = { name: 'design-notes.pdf', type: 'application/pdf' };
 const SIZES = [28, 48, 64, 96];

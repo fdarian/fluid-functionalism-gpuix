@@ -2,6 +2,7 @@ import { createSignal, For } from 'solid-js';
 import { Button } from '#/components/button';
 import { ChatMessage, ChatMessageAction } from '#/components/chat-message';
 import type { FileLike } from '#/components/file-thumbnail';
+import { MICKA_PNG } from '#/lib/assets';
 import type { DemoModule } from '#/lib/demo';
 import { DemoCard } from '#/lib/demo-kit';
 
@@ -42,7 +43,7 @@ const FOLLOW_UP: Message = {
 const avatar: FileLike = {
 	name: 'micka.png',
 	type: 'image/png',
-	src: new URL('../../assets/chat-ai/micka.png', import.meta.url).pathname,
+	src: MICKA_PNG,
 };
 
 /** Illustrative only, like the docs page: the buttons carry no behaviour. */

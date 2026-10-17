@@ -89,11 +89,11 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 - **Cause:** `not ported yet` (API table and code tabs, `max-w-xl`, curly quotes) + `port choice` (the "Add message" button, to exercise the entrance in a capture). Itemised under Port.
 - **Original:** `app/docs/chat-message/page.tsx`: Conversation (5 messages, `MessageActions` on each), Roles, Attachments (a `File` fetched from `/micka.png`), API Reference table; previews are `max-w-xl` with code tabs (`:120-189`).
-- **Port:** `src/demos/chat-message.tsx` has the same three sections with the same messages (`:14-34`, `:99-153`). Differences:
+- **Port:** `src/demos/chat-message.tsx` has the same three sections with the same messages (`:15-35`, `:100-154`). Differences:
   - `not ported yet`: the API Reference table and code tabs (docs chrome).
-  - `port choice`: an "Add message" button and a follow-up message (`:36-40`, `:107-115`), there to exercise the entrance in a capture; the source has none.
-  - `not ported yet`: the transcript is `width: 100%`, not `max-w-xl` (576px) (`:72`).
-  - `not ported yet`: the first message uses straight quotes, `"good design"`; the source has curly ones, `&ldquo;good design&rdquo;` (`page.tsx:128-129`; port `demos/chat-message.tsx:18`).
-  - Attachments use `assets/chat-ai/micka.png` by path (`:42-46`), the source's `/micka.png` fetch.
+  - `port choice`: an "Add message" button and a follow-up message (`:37-41`, `:108-116`), there to exercise the entrance in a capture; the source has none.
+  - `not ported yet`: the transcript is `width: 100%`, not `max-w-xl` (576px) (`:73`).
+  - `not ported yet`: the first message uses straight quotes, `"good design"`; the source has curly ones, `&ldquo;good design&rdquo;` (`page.tsx:128-129`; port `demos/chat-message.tsx:19`).
+  - Attachments use `assets/chat-ai/micka.png` by path (`:43-47`), the source's `/micka.png` fetch.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

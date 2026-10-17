@@ -225,7 +225,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 ## Demo: "+ Add fill" button and the "Current:" readout
 
-- **Cause:** `not ported yet` (`borderStyle: "dashed"` exists, `packages/native/src/style.rs:663`; the port loads Inter only, `src/lib/fonts.ts:4`).
+- **Cause:** `not ported yet` (`borderStyle: "dashed"` exists, `packages/native/src/style.rs:663`; the port loads Inter only, `src/lib/fonts.ts:7`).
 - **Original:** the add button has a dashed border, muted text that goes to foreground on hover (`app/docs/color-picker/page.tsx:153-160`); the controlled readout shows the value in a monospace span (`:135-137`).
 - **Port:** a solid border and fixed muted text (`src/demos/color-picker.tsx:64-86`); the readout is one body-text string (`:130-132`).
 - **Workaround:** none.

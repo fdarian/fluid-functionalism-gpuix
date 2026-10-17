@@ -12,3 +12,13 @@ declare module 'virtual:changelog' {
 	const entries: { name: string; text: string }[];
 	export default entries;
 }
+
+declare module '*.png' {
+	const path: string;
+	export default path;
+}
+
+declare module '*.ttf' {
+	const path: string;
+	export default path;
+}

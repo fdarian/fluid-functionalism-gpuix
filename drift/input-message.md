@@ -89,7 +89,7 @@ repeating it.
 
 - **Cause:** `gpuix gap`, as the port's comment states (`input-message.tsx:822-823`). Unverified here: `FORK.md:501-502` says a text editor's `keydown` runs before its built-in action. No README row covers it.
 - **Original:** plain ArrowUp / ArrowDown drive the suggestion list and history (`input-message.tsx:788-889`).
-- **Port:** the same handler also accepts Ctrl-P / Ctrl-N (`input-message.tsx:812-836`), and the demo's scenarios use `ctrl-n` / `ctrl-p` (`src/demos/input-message.tsx:644,763`). If the arrows really are swallowed, the keyboard path in the real window is Ctrl-P / Ctrl-N only.
+- **Port:** the same handler also accepts Ctrl-P / Ctrl-N (`input-message.tsx:812-836`), and the demo's scenarios use `ctrl-n` / `ctrl-p` (`src/demos/input-message.tsx:645,764`). If the arrows really are swallowed, the keyboard path in the real window is Ctrl-P / Ctrl-N only.
 - **Fidelity:** approximated.
 
 ## Slot buttons are not scaled down in compact

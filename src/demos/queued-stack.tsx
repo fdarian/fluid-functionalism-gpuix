@@ -2,23 +2,21 @@ import { createSignal } from 'solid-js';
 import { Button } from '#/components/button';
 import type { FileLike } from '#/components/file-thumbnail';
 import { type QueuedMessage, QueuedStack } from '#/components/queued-stack';
+import { MICKA_PNG, OG_PNG } from '#/lib/assets';
 import type { DemoModule } from '#/lib/demo';
 import { DemoCard } from '#/lib/demo-kit';
 import { QueuedChat } from '#/lib/queued-chat';
 import { color, radius, type as scale, shadow } from '#/lib/theme';
 
-const asset = (name: string) =>
-	new URL(`../../assets/chat-ai/${name}`, import.meta.url).pathname;
-
 const photo: FileLike = {
 	name: 'micka.png',
 	type: 'image/png',
-	src: asset('micka.png'),
+	src: MICKA_PNG,
 };
 const screenshot: FileLike = {
 	name: 'og.png',
 	type: 'image/png',
-	src: asset('og.png'),
+	src: OG_PNG,
 };
 const notes: FileLike = { name: 'design-notes.pdf', type: 'application/pdf' };
 
