@@ -186,7 +186,6 @@ const SUGGESTIONS = ['calendar', 'new-file', 'settings'];
 const PLACEHOLDER = 'Type a command or search…';
 const EMPTY = 'No results.';
 const PANEL_HEIGHT = 360;
-const FILTER_POPUP_WIDTH = 150;
 
 const TABS = [
 	{ value: 'all', label: 'All' },
@@ -263,7 +262,6 @@ function FilterSelects(props: {
 				size="compact"
 				hug
 				label="Type"
-				popupWidth={FILTER_POPUP_WIDTH}
 				items={TYPES}
 				value={props.type}
 				onValueChange={props.onType}
@@ -274,7 +272,6 @@ function FilterSelects(props: {
 				size="compact"
 				hug
 				label="Sort"
-				popupWidth={FILTER_POPUP_WIDTH}
 				items={SORTS}
 				value={props.sort}
 				onValueChange={props.onSort}

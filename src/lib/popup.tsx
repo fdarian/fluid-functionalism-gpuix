@@ -16,7 +16,7 @@ const POPUP_SURFACE_OFFSET = 2;
  * The shared popup chrome of the combobox, select and dropdown: an `<anchored>`
  * layer under its parent, with a card two surface steps above what it opens from (surface-3 on the page), the 4px slide and the fade.
  * The layer flips to the far side of the trigger when `side` has no room, and
- * the card is at least as wide as the trigger.
+ * the card is at least as wide as the trigger and as wide as its widest content.
  *
  * It sits in the logical subtree of its trigger, so an outside press is
  * judged on the element that holds both.
@@ -27,8 +27,8 @@ export function PopupSurface(props: {
 	/** The side to open on when it has room. */
 	side?: 'top' | 'bottom';
 	align: 'start' | 'end';
-	/** The card's width; it is never narrower than the trigger. */
-	width: DimensionValue;
+	/** The card's width. Omitted, it is as wide as its widest content; either way never narrower than the trigger. */
+	width?: DimensionValue;
 	/** The tallest the card gets; the room on its side caps it further. */
 	maxHeight: number;
 	/** Escape while this popup is the top layer. The popup joins gpuix's dismiss-layer stack, so a dialog around it stays open. */
@@ -54,6 +54,7 @@ export function PopupSurface(props: {
 					gap={POPUP_OFFSET}
 					fit="flip"
 					snapMargin={POPUP_MARGIN}
+					constrainToAvailable
 					onPlacement={placement.onPlacement}
 					deferred
 					priority={1}
@@ -73,8 +74,9 @@ export function PopupSurface(props: {
 						}}
 						style={{
 							position: 'relative',
-							width: props.width,
+							width: props.width ?? 'max-content',
 							minWidth: 'anchor-size(width)',
+							maxWidth: '100%',
 							display: 'flex',
 							flexDirection: 'column',
 							backgroundColor: surface(level),

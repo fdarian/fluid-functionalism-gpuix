@@ -13,21 +13,11 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** approximated (the list drops the pointer itself).
 - **Components it hits:** any popup with a nested popup.
 
-## No `width: max-content` / `fit-content`
-
-- **Cause:** `gpuix gap`. README "Missing features" row "Intrinsic width".
-- **Original:** the popup is `w-72 min-w-[var(--anchor-width)] max-w-full` (`registry/base/dropdown.tsx:708`) and grows with the trigger; the inline panel is `w-72 max-w-full` (`:187`); submenus are `w-56`.
-- **Port:** a fixed 288px panel (`PANEL_WIDTH`, `src/components/dropdown.tsx:66`, `:554`, `:704`) and 224px submenus (`SUB_WIDTH`, `:67`, `:921`), never narrower than the trigger (`minWidth: "anchor-size(width)"`, `src/lib/popup.tsx:77`). The inline panel is `flexShrink: 0` (`src/components/dropdown.tsx:555`), so it does not shrink in a narrow container, where the source's `max-w-full` does.
-- **gpuix lacks:** intrinsic sizing keywords for `width`: `max-content`, `min-content` and `fit-content` are rejected as "invalid dimension" (they exist in grid tracks only, `packages/native/js/host.ts:420-425`).
-- **Workaround:** the fixed widths above.
-- **Fidelity:** approximated. The source's popup never actually grows past `w-72` either (its width is fixed unless the trigger is wider), so the loss is the `max-w-full` clamp only.
-- **Components it hits:** select, combobox, any popup that sizes to content.
-
 ## CSS transforms (popup scaleY entrance)
 
 - **Cause:** `gpuix gap`. README "Missing features" row "CSS transforms".
 - **Original:** every popup, submenus included, enters and exits with `scaleY: 0.96` about its side's origin (`registry/base/dropdown.tsx:622-630`); the root popup also slides 4px from the resolved side (`--popup-enter-y`, `registry/default/lib/popup.ts:17-26`), side popups (submenus) slide 0px but still scale.
-- **Port:** the root popup slides 4px from the reported side and fades (`src/lib/popup.tsx:43`, `:64-70`); a submenu only fades (`src/components/dropdown.tsx:906-912`). Timings are the source's: enter `spring.fast` (80 ms), exit 60 ms tween.
+- **Port:** the root popup slides 4px from the reported side and fades (`src/lib/popup.tsx:43`, `:65-71`); a submenu only fades (`src/components/dropdown.tsx:906-912`). Timings are the source's: enter `spring.fast` (80 ms), exit 60 ms tween.
 - **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:1194-1205`).
 - **Workaround:** the slide and fade above.
 - **Fidelity:** approximated.
@@ -61,7 +51,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`. `PopupSurface` (the main popup) follows its substrate through `src/lib/surface-context.ts`; the submenu and inline panel do not read it.
 - **Original:** `Elevated offset={2}` is `min(substrate + 2, 8)`, so a dropdown opened inside a dialog or a raised card sits on a lighter surface; only its shadow level is pinned (`registry/default/lib/elevated.tsx`, `registry/base/dropdown.tsx:133-135`). The search field paints the same level (`registry/default/dropdown-search.tsx:233`).
-- **Port:** the main popup is `min(substrate + 2, 8)` (`src/lib/popup.tsx`); the submenu and inline panel are always `color.card` (surface-3, `src/components/dropdown.tsx:558`, `:924`).
+- **Port:** the main popup is `min(substrate + 2, 8)` (`src/lib/popup.tsx`); the submenu and inline panel are always `color.card` (surface-3, `src/components/dropdown.tsx:558`, `:925`).
 - **Fidelity:** exact on the page, approximated for a submenu or inline panel inside a raised surface.
 - **Components it hits:** just this one.
 
@@ -71,7 +61,7 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Original:** rows scroll inside `ScrollArea` with the hover-revealed thumb and a 32px `scroll-fade` on the viewport, dropped while a search field is mounted (`registry/base/dropdown.tsx:714`; `registry/default/lib/popup.ts:35-37`).
 - **Port:** a `div` with `overflowY: "scroll"` (`src/components/dropdown.tsx:376-387`): no custom thumb, no edge fade.
 - **Fidelity:** approximated.
-- **Components it hits:** select (`src/components/select.tsx:412`), combobox (`src/components/combobox.tsx:335`), command-menu (`src/components/command-menu.tsx:958`).
+- **Components it hits:** select (`src/components/select.tsx:409`), combobox (`src/components/combobox.tsx:334`), command-menu (`src/components/command-menu.tsx:958`).
 
 ## Checked background appears with a fade instead of already being there
 

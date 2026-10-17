@@ -26,17 +26,17 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `gpuix gap`.
 - **Original:** the popover and the format menu enter with `scaleY: 0.96` from the top corner and slide `y: -4` whichever side they open on (`color-picker.tsx:1005-1013`, `:2372-2382`), and the trigger's chevron rotates 180 degrees over 150ms (`:989-996`).
-- **Port:** the popup slides 4px from the side it opened on (down from above, up from below) and fades (`src/components/color-picker.tsx:705-755`, `src/lib/popup.tsx:42-90`); the chevron is swapped for a `chevron-up` icon while open, at once (`src/components/color-picker.tsx:109`, `:928`).
+- **Port:** the popup slides 4px from the side it opened on (down from above, up from below) and fades (`src/components/color-picker.tsx:705-758`, `src/lib/popup.tsx:42-92`); the chevron is swapped for a `chevron-up` icon while open, at once (`src/components/color-picker.tsx:109`, `:931`).
 - **gpuix lacks:** `scale` and `rotate` (no `transform`; `~/code/fdarian/gpuix/FORK.md:876-887`).
 - **Workaround:** the slide and the icon swap above. README rows: "CSS transforms".
 - **Fidelity:** approximated.
-- **Components it hits:** every popup (select, combobox, dropdown share the same slide in `src/lib/popup.tsx:42-90`) and every rotating chevron.
+- **Components it hits:** every popup (select, combobox, dropdown share the same slide in `src/lib/popup.tsx:42-92`) and every rotating chevron.
 
 ## Static font weights in the format menu
 
 - **Cause:** `gpuix gap`.
 - **Original:** the checked format row eases between weight 400 and semibold 550 over 80ms (`color-picker.tsx:860-881`).
-- **Port:** `StableLabel` switches to SemiBold 600 at once (`src/components/color-picker.tsx:1016-1021`, `src/lib/stable-label.tsx`).
+- **Port:** `StableLabel` switches to SemiBold 600 at once (`src/components/color-picker.tsx:1018-1023`, `src/lib/stable-label.tsx`).
 - **gpuix lacks:** variable-font axes; see README "Missing features", variable-font row, and `drift/site.md` "Static font weights and no `opsz`".
 - **Workaround:** static cuts.
 - **Fidelity:** approximated.
@@ -46,7 +46,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `port choice` (reason not stated; looks unintended, a bug).
 - **Original:** the panel is `w-[280px] p-3` with no border; the square, rails and fields are 256px wide with 12px either side (`color-picker.tsx:1955-1959`).
-- **Port:** the card is 280px with a 1px border, and the 280px panel sits inside it (`src/components/color-picker.tsx:1658-1671`, `:1582-1591`; the popover card is the same, `:691-731`, panel at `:1824`). The panel shrinks to 278px while its children stay 256px, so in `screenshots/color-picker/default.png` the left inset is 13px and the right one 11px.
+- **Port:** the card is 280px with a 1px border, and the 280px panel sits inside it (`src/components/color-picker.tsx:1660-1673`, `:1584-1593`; the popover card is the same, `:691-732`, panel at `:1826`). The panel shrinks to 278px while its children stay 256px, so in `screenshots/color-picker/default.png` the left inset is 13px and the right one 11px.
 - **Workaround:** none.
 - **Fidelity:** approximated (1px).
 - **Components it hits:** just this one.
@@ -55,7 +55,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `port choice` (reason not stated; the ladder in `src/lib/surface-context.ts` is not read here).
 - **Original:** the popover panel sits at `min(substrate + 2, 8)` and the format menu two above it (`color-picker.tsx:2246`, `:1025`); a standalone panel is `max(substrate, 3)` (`:1948`). On the docs page the substrate is 1, so the popover is surface 3 and its menu surface 5.
-- **Port:** the popover card and its panel are hard-coded to level 5 and the menu is 7 (`src/components/color-picker.tsx:1894`, `:1899`, `:947`); a standalone panel takes a port-only `level` prop (default 3, `:1483-1484`, `:1676`, `:1717`). In `screenshots/color-picker/popover-open.png` the popover is visibly lighter than the inline panel; select and combobox popups use surface 3 on the page (`src/lib/popup.tsx`).
+- **Port:** the popover card and its panel are hard-coded to level 5 and the menu is 7 (`src/components/color-picker.tsx:1896`, `:1901`, `:949`); a standalone panel takes a port-only `level` prop (default 3, `:1485-1486`, `:1678`, `:1719`). In `screenshots/color-picker/popover-open.png` the popover is visibly lighter than the inline panel; select and combobox popups use surface 3 on the page (`src/lib/popup.tsx`).
 - **Workaround:** none.
 - **Fidelity:** approximated (two steps lighter in the popover).
 - **Components it hits:** just this one.
@@ -127,7 +127,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** a keyboard-focused row gets a 1px ring 2px outside it that glides between rows on `spring.fast` and fades out on `spring.fast.exit` (`color-picker.tsx:1118-1138`); it shows for `:focus-visible` only (`:1069-1072`).
-- **Port:** the keyboard-lit row gets only the hover highlight; there is no ring (`src/components/color-picker.tsx:976-982` the hover highlight, `:999-1022` the row); rows take real focus (`base-ui:src/menu/item/menu-item.ts:114-119`), so a ring could follow `focusVisible` on the focused row. The select port has the ring (recent commit "Select: the keyboard-lit row gets a focus ring").
+- **Port:** the keyboard-lit row gets only the hover highlight; there is no ring (`src/components/color-picker.tsx:978-984` the hover highlight, `:1001-1024` the row); rows take real focus (`base-ui:src/menu/item/menu-item.ts:114-119`), so a ring could follow `focusVisible` on the focused row. The select port has the ring (recent commit "Select: the keyboard-lit row gets a focus ring").
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -136,7 +136,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** Base UI Popover (`modal={false}`) moves focus into the panel on open, restores it to the trigger on close, and closes on focus-out and outside press (`color-picker.tsx:2203-2213`, `:2304-2311`). The trigger is a real button with no `aria-label`, so its name is the label and value text.
-- **Port:** open and close change nothing about focus; only an outside press and Escape (from the wrapper) close it, with no focus-out handler (`base-ui:src/popover/root/popover-root.ts:46-53`, `src/components/color-picker.tsx:1788-1799`). The trigger is a `div role="button"` whose `aria-label` is `triggerLabel` or "Pick a color" (`:1801-1804`), which hides the value from its name. Read from the code, not run.
+- **Port:** open and close change nothing about focus; only an outside press and Escape (from the wrapper) close it, with no focus-out handler (`base-ui:src/popover/root/popover-root.ts:46-53`, `src/components/color-picker.tsx:1790-1801`). The trigger is a `div role="button"` whose `aria-label` is `triggerLabel` or "Pick a color" (`:1803-1806`), which hides the value from its name. Read from the code, not run.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -145,7 +145,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** a `span role="button" tabIndex={0}`; Enter and Space remove without toggling the popover (`color-picker.tsx:2342-2362`).
-- **Port:** a `div role="button"` with no `tabIndex` or key handler; a pointer click is kept off the trigger by a hover flag (`src/components/color-picker.tsx:1861-1885`, `:1749`, `:1809-1812`).
+- **Port:** a `div role="button"` with no `tabIndex` or key handler; a pointer click is kept off the trigger by a hover flag (`src/components/color-picker.tsx:1863-1887`, `:1751`, `:1811-1814`).
 - **Workaround:** none.
 - **Fidelity:** approximated (pointer only).
 - **Components it hits:** just this one.
@@ -154,7 +154,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet` (pointer lock is macOS only, `FORK.md:314`, `:409-414`).
 - **Original:** Base UI's `NumberField.ScrubArea` locks the pointer, draws a black `<->` cursor in its place, and counts 1px of travel per step with no dead zone (`pixelSensitivity={1}`), so a drag can run past the screen edge (`color-picker.tsx:1472-1509`). A press without a drag dispatches a click that starts editing (`:1479-1487`).
-- **Port:** the pointer is captured, not locked, so the real cursor shows with an `ew-resize` shape and stops at the screen edge; a 3px dead zone separates a press from a scrub, and the first scrub step jumps by that travel (`src/components/color-picker.tsx:1149-1194`, `:1207`). No virtual cursor.
+- **Port:** the pointer is captured, not locked, so the real cursor shows with an `ew-resize` shape and stops at the screen edge; a 3px dead zone separates a press from a scrub, and the first scrub step jumps by that travel (`src/components/color-picker.tsx:1151-1196`, `:1209`). No virtual cursor.
 - **gpuix lacks:** n/a on macOS (`requestPointerLock` exists, `packages/native/index.d.ts:313`; the port does not call it).
 - **Workaround:** capture plus the dead zone.
 - **Fidelity:** approximated.
@@ -164,7 +164,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet` (`select()` exists, `FORK.md:451`).
 - **Original:** focusing a field, or a no-drag press, selects all its text, so typing replaces the value (`color-picker.tsx:1288-1291`, `:1485-1486`, `:1530-1534`).
-- **Port:** focus places the caret and selects nothing (`src/components/color-picker.tsx:1244-1247`, `:1181-1191`); the demo clears the hex field with eight Backspaces (`src/demos/color-picker.tsx:205-208`).
+- **Port:** focus places the caret and selects nothing (`src/components/color-picker.tsx:1246-1249`, `:1183-1193`); the demo clears the hex field with eight Backspaces (`src/demos/color-picker.tsx:205-208`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -173,7 +173,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** `NumberField` also handles Home/End (to `min`/`max` where set), and its scrub and arrow steps read Shift for `largeStep` and Alt for `smallStep`; it blocks non-numeric characters as you type (Base UI v1.9.0, `number-field/input/NumberFieldInput.tsx:333-372`, `number-field/root/NumberFieldRoot.tsx:208-216`, `number-field/scrub-area/NumberFieldScrubArea.tsx:230`).
-- **Port:** ArrowUp/Down and Shift+arrow only; Home/End do nothing; no modifier during a scrub; any text can be typed (`src/components/color-picker.tsx:1129-1147`, `:1169-1179`, `:1240-1245`).
+- **Port:** ArrowUp/Down and Shift+arrow only; Home/End do nothing; no modifier during a scrub; any text can be typed (`src/components/color-picker.tsx:1131-1149`, `:1171-1181`, `:1242-1247`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -182,7 +182,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `port choice` (reason not stated; the port has one shared `bound` for both of the source's input kinds).
 - **Original:** the scrub field wraps only values outside the range, so 360 stays 360 (`color-picker.tsx:1411-1417`); the text field maps 360 to 0 (`:1236-1243`). Hue fields use the scrub path.
-- **Port:** `bound` takes the modulo for a field with `wrap` (the HSL and OKLCH hue fields), so a typed 360 commits 0 (`src/components/color-picker.tsx:1082-1095`, `wrap` set at `:1393`, `:1446`). The OKLCH H field then shows 0, where the source's sticky hue shows 360.
+- **Port:** `bound` takes the modulo for a field with `wrap` (the HSL and OKLCH hue fields), so a typed 360 commits 0 (`src/components/color-picker.tsx:1084-1097`, `wrap` set at `:1395`, `:1448`). The OKLCH H field then shows 0, where the source's sticky hue shows 360.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -191,7 +191,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** `size` pins the panel, the format menu and the popover trigger to the default (36px) or compact (28px) step: control height, padding, gap, 12px text, 16px tile and menu row padding (`color-picker.tsx:113-116`, `:830-831`, `:2075`, `:2242-2243`, `:2329`).
-- **Port:** fixed 36px controls (`height.control`, `src/components/color-picker.tsx:1818`), 13px text, 20px tile (`:1841`). No `size` prop and no size context.
+- **Port:** fixed 36px controls (`height.control`, `src/components/color-picker.tsx:1820`), 13px text, 20px tile (`:1843`). No `size` prop and no size context.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** any component with a `size` prop; the port has no `SizeProvider`.
@@ -200,7 +200,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet` (an `EyeDropper` exists on macOS only: `FORK.md:514-517`).
 - **Original:** a pipette button beside the format menu where `window.EyeDropper` exists, hidden elsewhere or by `hideEyedropper`; a pick commits the colour like a swatch (`color-picker.tsx:1598-1639`, `:1983-1991`).
-- **Port:** the format menu is the only item in its row, in the same half-width column (`src/components/color-picker.tsx:1669-1677`, `:776`). No `hideEyedropper` prop; no `pipette` icon (`src/lib/icons.ts`).
+- **Port:** the format menu is the only item in its row, in the same half-width column (`src/components/color-picker.tsx:1671-1679`, `:779`). No `hideEyedropper` prop; no `pipette` icon (`src/lib/icons.ts`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -209,7 +209,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet` for the behaviour props; `port choice` (gpuix takes `style`, not classes) for the class and ref ones.
 - **Original:** `ColorPicker` takes `formatOpen`, `size`, `hideEyedropper`, `className`, a forwarded `ref` and div attributes (`color-picker.tsx:89-117`); `ColorPickerPopover` adds controlled `open`, `onOpenChange` and `triggerClassName` (`:119-137`); `ColorTile` takes `className` and `style` (`:1646-1651`); `ColorSwatch` takes every button attribute and `size` (`:139-147`); `ColorPickerPortalContainer` is exported (`:2431-2439`).
-- **Port:** none of those; `ColorPickerPopover` has `defaultOpen` only and is uncontrolled for open state (`src/components/color-picker.tsx:1727-1739`; the primitive, `base-ui:src/popover/root/popover-root.ts:5-8`, takes `defaultOpen` and `onOpenChange` only). `ColorSwatch` takes `onClick` and `testId`, `ColorTile` neither class nor style (`src/components/color-picker.tsx:199-205`, `:159`). Port-only: `level` and `testId` (`:1482-1484`). No portal container: the menu and popover are `<anchored>` layers.
+- **Port:** none of those; `ColorPickerPopover` has `defaultOpen` only and is uncontrolled for open state (`src/components/color-picker.tsx:1729-1741`; the primitive, `base-ui:src/popover/root/popover-root.ts:5-8`, takes `defaultOpen` and `onOpenChange` only). `ColorSwatch` takes `onClick` and `testId`, `ColorTile` neither class nor style (`src/components/color-picker.tsx:199-205`, `:159`). Port-only: `level` and `testId` (`:1484-1486`). No portal container: the menu and popover are `<anchored>` layers.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -218,7 +218,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** the format trigger has no label, so its name is "HEX" and so on (`color-picker.tsx:974-997`); the hex field is labelled "Hex value" (`:2116`).
-- **Port:** the format trigger is "Color format" (`src/components/color-picker.tsx:885`), the hex field "Hex" (`:1367`, `:1280-1282`); the popover trigger name is covered above.
+- **Port:** the format trigger is "Color format" (`src/components/color-picker.tsx:888`), the hex field "Hex" (`:1369`, `:1282-1284`); the popover trigger name is covered above.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

@@ -24,6 +24,11 @@ const FRUITS = [
 	{ value: 'mango', label: 'Mango' },
 ];
 
+const FILTER_FRUITS = [
+	...FRUITS,
+	{ value: 'long', label: 'A fruit with a rather long name' },
+];
+
 const KEYS = [
 	{ value: 'kiwi', label: 'Kiwi' },
 	{ value: 'lemon', label: 'Lemon' },
@@ -82,9 +87,8 @@ const k = await createCheck(
 						size="compact"
 						hug
 						label="Type"
-						items={FRUITS}
+						items={FILTER_FRUITS}
 						defaultValue="banana"
-						popupWidth={150}
 					/>
 				</div>
 				<Select
@@ -159,6 +163,12 @@ k.expect(
 	'empty: Enter opens and focuses the first row',
 	fruitFocus('empty'),
 	'empty-option-apple',
+);
+await k.settle(300);
+k.check(
+	'empty: a popup of short labels is never narrower than its trigger',
+	Math.abs(k.bounds('empty-popup').width - k.bounds('empty-trigger').width) < 1,
+	`${k.bounds('empty-popup').width} vs ${k.bounds('empty-trigger').width}`,
 );
 k.check(
 	'empty: the focused row is the tab stop',
@@ -418,6 +428,13 @@ k.check(
 await k.focus('filter-trigger');
 await k.press('Enter');
 k.check('filter: opens', isOpen('filter'));
+await k.settle(300);
+const filterPopupWidth = k.bounds('filter-popup').width;
+k.check(
+	'filter: the popup is content-sized, wider than the hugging trigger',
+	filterPopupWidth > filterWidth,
+	`${filterPopupWidth} vs ${filterWidth}`,
+);
 await k.press('Escape');
 
 const invalid = renderer.findByTestId('invalid-trigger');

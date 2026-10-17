@@ -129,10 +129,8 @@ export function Select<Value extends string>(props: {
 	labelledBy?: string;
 	/** The trigger's accessible name, for a select with no visible label. */
 	label?: string;
-	/** The trigger is as wide as its content instead of the field's minimum width (a row of filters). */
+	/** The trigger is as wide as its content instead of the field's minimum width (a row of filters): the source's `w-auto min-w-0`. */
 	hug?: boolean;
-	/** The popup is as wide as the trigger, or this, whichever is larger. */
-	popupWidth?: number;
 }) {
 	const variant = () => props.variant ?? 'inline';
 	const inline = () => variant() === 'inline';
@@ -394,7 +392,6 @@ export function Select<Value extends string>(props: {
 						props.testId === undefined ? undefined : `${props.testId}-popup`
 					}
 					align={inline() ? 'end' : 'start'}
-					width={props.popupWidth ?? (inline() ? 160 : 'anchor-size(width)')}
 					maxHeight={POPUP_MAX_HEIGHT}
 					onDismiss={select.close}
 				>

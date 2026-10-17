@@ -708,7 +708,8 @@ function Popup(props: {
 	positioner: ReturnType<typeof createPopoverPopup>['positioner'];
 	popupProps?: ReturnType<typeof createPopoverPopup>['props'];
 	speed: 'fast' | 'moderate';
-	width: number;
+	/** Omitted, the card is as wide as its content and never narrower than its trigger: the source's `min-w-[var(--anchor-width)]` on the format menu. */
+	width?: number;
 	level: number;
 	children: JSX.Element;
 }) {
@@ -739,7 +740,9 @@ function Popup(props: {
 					}}
 					style={{
 						position: 'relative',
-						width: props.width,
+						width: props.width ?? 'max-content',
+						minWidth:
+							props.width === undefined ? 'anchor-size(width)' : undefined,
 						display: 'flex',
 						flexDirection: 'column',
 						backgroundColor: surface(props.level),
@@ -943,7 +946,6 @@ function FormatDropdown(props: {
 					onPlacement: placement.onPlacement,
 				}}
 				speed="fast"
-				width={width}
 				level={props.level + 2}
 			>
 				<div

@@ -553,7 +553,7 @@ export function Dropdown(props: {
 					}}
 					style={{
 						width: PANEL_WIDTH,
-						flexShrink: 0,
+						maxWidth: '100%',
 						display: 'flex',
 						flexDirection: 'column',
 						backgroundColor: color.card,
@@ -920,6 +920,7 @@ function SubPopup(props: {
 						pointerEvents: 'auto',
 						position: 'relative',
 						width: SUB_WIDTH,
+						maxWidth: '100%',
 						display: 'flex',
 						flexDirection: 'column',
 						backgroundColor: color.card,

@@ -300,7 +300,6 @@ export function Combobox(props: {
 					props.testId === undefined ? undefined : `${props.testId}-popup`
 				}
 				align="start"
-				width={width()}
 				maxHeight={POPUP_MAX_HEIGHT}
 				onDismiss={combobox.closePopup}
 			>

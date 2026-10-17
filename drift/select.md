@@ -4,21 +4,11 @@ Original: `registry/base/select.tsx` (shared: `registry/default/lib/popup.ts`, `
 (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/select.tsx`, demo in `src/demos/select.tsx`.
 Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/list-nav.ts`.
 
-## A popup cannot grow to its widest option
-
-- **Cause:** `gpuix gap`.
-- **Original:** `min-w-[var(--anchor-width)]` on the popup, which then grows to its widest option (`select.tsx:530`).
-- **Port:** the card is `popupWidth` when given, else `"anchor-size(width)"` (`select.tsx:586`, prop at `:134-135`), and never narrower than the trigger (`minWidth: "anchor-size(width)"`, `popup.tsx:77`). The inline variant is 160 wide.
-- **gpuix lacks:** an intrinsic (`max-content`) width; `width: "max-content"` is rejected (README "Missing features", intrinsic `width` row; see scroll-area.md).
-- **Workaround:** `popupWidth` is a manual width for long labels (the timezone demo passes 220, `demos/select.tsx:182`). Without it a label wider than the trigger ellipsizes. A `hug` trigger (the command menu's filters, where the source trigger is `w-auto`) is only as wide as its label, so it always needs `popupWidth`.
-- **Fidelity:** approximated.
-- **Components it hits:** combobox, dropdown, scroll-area; every popup sized to its trigger and its content.
-
 ## Popup `scaleY: 0.96` entrance
 
 - **Cause:** `gpuix gap`.
 - **Original:** enters with `opacity 0, y -4, scaleY 0.96` to rest, `spring.fast`; exits on `spring.fast.exit` (`select.tsx:470-478`, `popup.ts:16-23`).
-- **Port:** opacity plus a 4px slide on `top`, no scale (`popup.tsx:62-70`).
+- **Port:** opacity plus a 4px slide on `top`, no scale (`popup.tsx:63-71`).
 - **gpuix lacks:** CSS transforms; see README "Missing features", CSS transforms row.
 - **Workaround:** the slide.
 - **Fidelity:** approximated.
@@ -97,7 +87,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
 - **Original:** `size` wraps the select in a `SizeProvider` and `SelectTrigger` takes its own `size`, so trigger and popup follow together (`registry/base/select.tsx:99-102`, `:223`, `:278-281`).
 - **Port:** `size?: "default" | "compact"` on `Select` only; omitted, it follows the Size row (`src/components/select.tsx:94`, `:112`).
-- **Workaround:** pass `size` to each nested component. `CommandMenuFilters` in the source wraps its children in `SizeProvider size="compact"` and forces `w-auto min-w-0` on every `[role=combobox]` (`command-menu.tsx:994-1019`); the port has neither, so each filter select passes `size="compact"` and `hug` itself.
+- **Workaround:** pass `size` to each nested component. `CommandMenuFilters` in the source wraps its children in `SizeProvider size="compact"` and forces `w-auto min-w-0` on every `[role=combobox]` (`command-menu.tsx:994-1019`); the port has neither, so each filter select passes `size="compact"` and `hug` (the `w-auto min-w-0`) itself.
 - **Fidelity:** approximated.
 - **Components it hits:** every component that reads `useSize`.
 
@@ -105,7 +95,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 - **Cause:** `port choice` (data-driven `items`, not compound, per `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:497`; reason otherwise not stated).
 - **Original:** compound `Select` / `SelectTrigger` / `SelectContent` / `SelectItem index` / `SelectGroup` / `SelectLabel` / `SelectSeparator`; `variant`, `icon`, `placeholder`, `error`, `size` on the trigger; value is a string, `""` for none; `className` and `ref` forwarded (`select.tsx:91-103`, `:254-263`, `:625-630`).
-- **Port:** one `Select` taking `items` (items, `{ type: "label" }`, `{ type: "separator" }`), `variant`, `size`, `placeholder`, `icon`, `error`, `popupWidth`, `labelledBy`, `label` (the trigger's `aria-label`; the source passes it to `SelectTrigger` as a prop), `hug` (port-only: the trigger is as wide as its content); value is `Value | null`; no `className` or `ref` (`select.tsx:114-136`).
+- **Port:** one `Select` taking `items` (items, `{ type: "label" }`, `{ type: "separator" }`), `variant`, `size`, `placeholder`, `icon`, `error`, `labelledBy`, `label` (the trigger's `aria-label`; the source passes it to `SelectTrigger` as a prop), `hug` (the trigger is as wide as its content, the source's `w-auto min-w-0` on the command menu's filters, which pass it as a `className`); value is `Value | null`; no `className` or `ref` (`select.tsx:110-134`).
 - **Workaround:** none.
 - **Fidelity:** approximated (API shape; row `index` is computed, not passed).
 - **Components it hits:** combobox, dropdown.
@@ -114,7 +104,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 - **Cause:** `port choice` (serves the app frame's theme picker, `app.tsx:220`, and the site's "Make them yours" card; docstring at `select.tsx:53-57`).
 - **Original:** `variant` is `"bordered"` (default) or `"borderless"` (`select.tsx:241-249`).
-- **Port:** `variant` defaults to `"inline"` (`select.tsx:138`): borderless, compact trigger, 13px text, shows the picked item's icon, popup right-aligned at 160 wide (`select.tsx:141-150`, `:585-586`). Every demo passes `bordered` explicitly.
+- **Port:** `variant` defaults to `"inline"` (`select.tsx:135`): borderless, compact trigger, 13px text, shows the picked item's icon, popup right-aligned and content-sized like the others (`select.tsx:136-147`, `:394`). Every demo passes `bordered` explicitly.
 - **Workaround:** none.
 - **Fidelity:** exact for `bordered` and `borderless` (an `error` draws the destructive border on both, as the source does).
 - **Components it hits:** just this one.
@@ -123,7 +113,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** only `hover:bg-hover`; no pressed style (`select.tsx:243-246`).
-- **Port:** `active: { backgroundColor: color.active }` (`src/components/select.tsx:326`).
+- **Port:** `active: { backgroundColor: color.active }` (`src/components/select.tsx:324`).
 - **Workaround:** none.
 - **Fidelity:** approximated (extra state; the popup opens on mouse-down, so it shows briefly).
 - **Components it hits:** just this one.

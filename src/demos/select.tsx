@@ -173,7 +173,6 @@ export function Demo() {
 							onValueChange={setTimezone}
 							icon="globe"
 							placeholder="Select timezone…"
-							popupWidth={220}
 						/>
 					</DemoRow>
 					<DemoRow label="Error">
