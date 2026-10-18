@@ -1083,6 +1083,7 @@ function ComfortableSlider(props: ComfortableProps) {
 					overflow: 'hidden',
 					cursor: 'ew-resize',
 					outlineWidth: 1,
+					outlineStyle: 'solid',
 					outlineColor: focused() ? color.focusRing : color.transparent,
 					outlineOffset: 2,
 					...springFade(['outline-color']),

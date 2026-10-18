@@ -299,6 +299,7 @@ export function InputCopy(props: {
 				keyboardFocusDim: false,
 				// The source's `transition-all` also eases its box-shadow ring in: the port's ring is an outline that starts transparent.
 				outlineWidth: 1,
+				outlineStyle: 'solid',
 				outlineColor: color.transparent,
 				outlineOffset: 0,
 				...fade(['outline-color'], 80),

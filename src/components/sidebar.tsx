@@ -689,6 +689,7 @@ export function SidebarSearchField(props: {
 				borderRadius: shape.input,
 				backgroundColor: filled(),
 				outlineWidth: 1,
+				outlineStyle: 'solid',
 				outlineColor: hovered() || focused() ? color.border : color.transparent,
 				outlineOffset: 0,
 				// The outline stands in for the source's `ring-1` box shadow, which it transitions with the fill.

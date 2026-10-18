@@ -523,6 +523,7 @@ export const pressFade = { ...surfaceFade, transitionDuration: '80ms,80ms' };
 export function focusRing(offset: number): StateStyleDesc {
 	return {
 		outlineWidth: 1,
+		outlineStyle: 'solid',
 		outlineColor: color.focusRing,
 		outlineOffset: offset,
 	};

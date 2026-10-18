@@ -791,6 +791,7 @@ export function CardMedia(props: {
 								height: size(),
 								borderRadius: shape.bg,
 								outlineWidth: 1,
+								outlineStyle: 'solid',
 								outlineOffset: -1,
 								outlineColor: imageOutline(),
 							}}
@@ -836,6 +837,7 @@ export function CardImage(props: { src: string; height?: number }) {
 			style={{
 				...corners(),
 				outlineWidth: 1,
+				outlineStyle: 'solid',
 				outlineOffset: -1,
 				outlineColor: imageOutline(),
 				...(inline()

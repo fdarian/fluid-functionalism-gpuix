@@ -207,6 +207,7 @@ export function InputField(props: {
 						bottom: 0,
 						borderRadius: shape.input,
 						outlineWidth: 1,
+						outlineStyle: 'solid',
 						outlineColor: fill().ring,
 						outlineOffset: 0,
 						backgroundColor: fill().bg,

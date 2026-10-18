@@ -123,6 +123,7 @@ function SwatchImage(props: { src: string }) {
 				backgroundImage: `url("${props.src}")`,
 				backgroundSize: '100% 100%',
 				outlineWidth: 1,
+				outlineStyle: 'solid',
 				outlineOffset: -1,
 				outlineColor: color.border,
 			}}

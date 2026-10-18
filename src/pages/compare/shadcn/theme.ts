@@ -70,5 +70,10 @@ export const scRadius = { sm: 4, md: 6 } as const;
 
 /** `focus-visible:ring-2 ring-ring ring-offset-2`. */
 export function scRing(): StateStyleDesc {
-	return { outlineWidth: 2, outlineColor: sc.ring, outlineOffset: 2 };
+	return {
+		outlineWidth: 2,
+		outlineStyle: 'solid',
+		outlineColor: sc.ring,
+		outlineOffset: 2,
+	};
 }

@@ -99,6 +99,7 @@ const ringSurface = (): StateStyleDesc & {
 } => ({
 	...surfaceFade,
 	outlineWidth: 1,
+	outlineStyle: 'solid',
 	outlineColor: color.border,
 	outlineOffset: 0,
 	hover: { backgroundColor: color.hover },
@@ -106,6 +107,7 @@ const ringSurface = (): StateStyleDesc & {
 		backgroundColor: color.active,
 		...pressFade,
 		outlineWidth: 1,
+		outlineStyle: 'solid',
 		outlineColor: color.border,
 		outlineOffset: -1,
 	},

@@ -94,6 +94,7 @@ const HAIRLINE = 'rgba(127,127,127,0.25)';
 const BUTTON_FADE = colorFadeNoRing(80);
 const focusOutline = () => ({
 	outlineWidth: 1,
+	outlineStyle: 'solid',
 	outlineColor: color.focusRing,
 	outlineOffset: 0,
 });
@@ -1201,6 +1202,7 @@ function ColorInput(props: {
 				cursor: scrub && !editing() ? 'ew-resize' : 'text',
 				userSelect: 'none',
 				outlineWidth: focused() ? 1 : 0,
+				outlineStyle: 'solid',
 				outlineColor: color.focusRing,
 				outlineOffset: 0,
 				...BUTTON_FADE,

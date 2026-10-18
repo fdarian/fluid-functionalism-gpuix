@@ -193,6 +193,7 @@ export function Combobox(props: {
 					borderRadius: shape.input,
 					cursor: 'text',
 					outlineWidth: 1,
+					outlineStyle: 'solid',
 					outlineColor: color.border,
 					outlineOffset: 0,
 					backgroundColor: focused() ? color.card : color.transparent,

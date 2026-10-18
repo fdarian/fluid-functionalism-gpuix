@@ -105,6 +105,7 @@ export function CompareCard(props: {
 								hover: { backgroundColor: color.hover },
 								focusVisible: {
 									outlineWidth: 1,
+									outlineStyle: 'solid',
 									outlineColor: color.focusRing,
 									outlineOffset: -1,
 								},

@@ -161,6 +161,7 @@ export function FileThumbnail(props: {
 					height: props.size,
 					borderRadius: props.radius ?? shape.bg,
 					outlineWidth: 1,
+					outlineStyle: 'solid',
 					outlineOffset: -1,
 					outlineColor: withAlpha(color.overlay, 0.1),
 				}}

@@ -700,6 +700,7 @@ export function AskUserQuestions(props: {
 							borderRadius: shape.bg,
 							backgroundColor: color.card,
 							outlineWidth: 1,
+							outlineStyle: 'solid',
 							outlineOffset: -1,
 							outlineColor: color.border,
 							pointerEvents: 'none',
@@ -900,6 +901,7 @@ export function AskUserQuestions(props: {
 					...(textFocused() && otherText().length === 0
 						? {
 								outlineWidth: 1,
+								outlineStyle: 'solid',
 								outlineOffset: -1,
 								outlineColor: color.border,
 							}

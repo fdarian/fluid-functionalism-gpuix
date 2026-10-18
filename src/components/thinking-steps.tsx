@@ -604,6 +604,7 @@ export function ThinkingStepImage(props: {
 						height: height(),
 						borderRadius: shape.container,
 						outlineWidth: 1,
+						outlineStyle: 'solid',
 						outlineOffset: -1,
 						outlineColor: color.border,
 					}}
