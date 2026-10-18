@@ -82,7 +82,7 @@ function Heading(props: { children: string }) {
 		<text
 			style={{
 				...siteType.display,
-				fontVariationSettings: weight.semibold,
+				fontVariationSettings: weight.bold,
 				color: color.foreground,
 				textWrap: 'balance',
 			}}

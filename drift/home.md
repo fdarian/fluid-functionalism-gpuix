@@ -43,10 +43,10 @@ repeating it. The hero's three buttons are not wired here (their `onClick`s belo
 - **Fidelity:** approximated.
 - **Components it hits:** the tiles named.
 
-## The hero: arrows, spacing and the heading weight
+## The hero: arrows and spacing
 
-- **Cause:** `port choice` (spacing), `not ported yet` (weight: `weight.bold` exists, `Heading` sets `weight.semibold`).
+- **Cause:** `port choice` (spacing).
 - **Original:** a 680px column with `py-20 sm:py-28 px-6`, the heading at `fontWeights.bold` with `leading-none`, the two arrows at the row's right, and the grid below in a 1200px column (`app/page.tsx:20-70`). The next arrow's tooltip reads "Introduction →" with the arrow in mono at half opacity; the previous arrow is disabled, with `aria-label="No previous page"`.
-- **Port:** the same two arrows (`HeroArrows`, `src/app.tsx`; icon size follows the Size row) with the tooltip, but the previous arrow is the `arrow-left` glyph, not `arrow-right` rotated 180° (no transforms), and the page column gives 24px of top padding where the source gives 80-112px. The heading is `App`'s shared one: semibold with a 34px line (`drift/introduction.md`). The grid's column is `width: 100%`, `maxWidth: 1200`, 24px side padding, so it spans the centre column; the window is 1240px, so the grid shows two columns (the source shows three from a 1280px viewport).
+- **Port:** the same two arrows (`HeroArrows`, `src/app.tsx`; icon size follows the Size row) with the tooltip, but the previous arrow is the `arrow-left` glyph, not `arrow-right` rotated 180° (no transforms), and the page column gives 24px of top padding where the source gives 80-112px. The heading is `App`'s shared one: bold with a 34px line (`drift/introduction.md`). The grid's column is `width: 100%`, `maxWidth: 1200`, 24px side padding, so it spans the centre column; the window is 1240px, so the grid shows two columns (the source shows three from a 1280px viewport).
 - **Fidelity:** approximated.
 - **Components it hits:** just this page.

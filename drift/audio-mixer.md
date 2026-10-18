@@ -15,11 +15,11 @@ repeating it.
 - **Fidelity:** approximated (same rows, narrower tracks).
 - **Components it hits:** every `layout: "docs"` page.
 
-## The heading is 28px semibold, the source's 22px bold, and sits 4px above the subtitle only by a negative margin
+## The heading is 28px, the source's 22px, and sits 4px above the subtitle only by a negative margin
 
-- **Cause:** `not ported yet` for the weight (`weight.bold` exists, `Heading` sets `weight.semibold`) and `port choice` for the size.
+- **Cause:** `port choice`.
 - **Original:** `h1` `text-[22px]` at `fontWeights.bold`, 4px above the subtitle (`app/slider/page.tsx:68-77`); section titles are `text-[15px] leading-5.5` at `fontWeights.semibold` (`:84-87`).
-- **Port:** `App`'s shared `Heading` (`src/app.tsx:80-93`), 28px with a 34px line, a 24px column gap above the page, cancelled to 4px by `marginTop: -20` on the subtitle (`src/pages/audio-mixer.tsx:161`). Section titles are 15 / 22 at `weight.semibold` (`:78-90`).
+- **Port:** `App`'s shared `Heading` (`src/app.tsx:80-93`), bold like the source's, 28px with a 34px line, a 24px column gap above the page, cancelled to 4px by `marginTop: -20` on the subtitle (`src/pages/audio-mixer.tsx:161`). Section titles are 15 / 22 at `weight.semibold` (`:78-90`).
 - **Workaround:** the negative margin.
 - **Fidelity:** approximated.
 - **Components it hits:** every docs page.

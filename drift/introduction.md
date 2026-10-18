@@ -22,14 +22,14 @@ repeating it.
 - **Port:** the text is verbatim (`src/pages/introduction.tsx:42`). The right column has only the Theme select, and no T / R / I shortcuts exist.
 - **Fidelity:** exact text, describes more than the port offers.
 
-## The heading is bold in the source, semibold here, and sits 8px above the subtitle only by a negative margin
+## The heading sits 8px above the subtitle only by a negative margin
 
-- **Cause:** `not ported yet` for the weight (`weight.bold` exists, `Heading` sets `weight.semibold`) and `port choice` for the rest.
+- **Cause:** `port choice`.
 - **Original:** `h1` `text-site-display leading-none mb-2` at `fontWeights.bold` (`app/docs/page.tsx:23-30`): a 28px line, 8px above the subtitle.
-- **Port:** `App`'s shared `Heading` (`src/app.tsx:80-93`) is semibold with a 34px line and sits a 24px column gap above the page, which the subtitle cancels with `marginTop: -16` (`src/pages/introduction.tsx:212`), so the gap reads 8px past the taller line box.
+- **Port:** `App`'s shared `Heading` (`src/app.tsx:80-93`) is bold with a 34px line and sits a 24px column gap above the page, which the subtitle cancels with `marginTop: -16` (`src/pages/introduction.tsx:212`), so the gap reads 8px past the taller line box.
 - **Workaround:** the negative margin.
 - **Fidelity:** approximated.
-- **Components it hits:** every page and demo heading (semibold, 34px line).
+- **Components it hits:** every page and demo heading (34px line).
 
 ## Section titles use a 16px line
 

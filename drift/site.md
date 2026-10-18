@@ -46,14 +46,14 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** dropped.
 - **Components it hits:** just the shell.
 
-## Doc page header: title weight, no prev/next, no description on component pages
+## Doc page header: no prev/next, no description on component pages
 
-- **Cause:** `not ported yet` (arrows; the description on component pages; the title weight, `weight.bold` exists but `Heading` sets `weight.semibold`).
+- **Cause:** `not ported yet` (arrows; the description on component pages).
 - **Original:** `DocPage` renders the h1 in `text-site-display` bold (`wght 700, opsz 25`) with ghost icon-button prev / next arrows on the same row (tooltips "Name ←" / "Name →", disabled at either end), then the description 8px under the title and an optional intro paragraph; page gap 32 (`lib/docs/DocPage.tsx:73-128`, `registry/default/lib/font-weight.ts:25-29`).
-- **Port:** every docs page and demo page takes `Heading`, `siteType.display` at `weight.semibold` (`src/app.tsx:80-93, 669-686`; it steps down with the Size row). The system pages put their description and optional intro under it through `DocPage` (Introduction does the same by hand), tucked up 8px by a negative margin (`src/lib/doc-page.tsx:236-286`, `:240`). A component demo page has the heading and the cards only: no description, no arrows. No docs page has arrows; only the home hero does (`src/app.tsx:318-359`). Page gap 24, top padding 40 (`src/app.tsx:593-595`) against the source's 112.
+- **Port:** every docs page and demo page takes `Heading`, `siteType.display` at `weight.bold` (`src/app.tsx:80-93, 669-686`; it steps down with the Size row). The system pages put their description and optional intro under it through `DocPage` (Introduction does the same by hand), tucked up 8px by a negative margin (`src/lib/doc-page.tsx:236-286`, `:240`). A component demo page has the heading and the cards only: no description, no arrows. No docs page has arrows; only the home hero does (`src/app.tsx:318-359`). Page gap 24, top padding 40 (`src/app.tsx:593-595`) against the source's 112.
 - **Workaround:** none.
-- **Fidelity:** approximated (title lighter than the source's bold; arrows dropped, and the description on component pages).
-- **Components it hits:** every demo page (description, arrows); every docs page, the Changelog page included (arrows, weight).
+- **Fidelity:** approximated (arrows dropped, and the description on component pages).
+- **Components it hits:** every demo page (description, arrows); every docs page, the Changelog page included (arrows).
 
 ## No Installation block on component pages
 
@@ -232,7 +232,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`.
 - **Original:** `CommandMenuDialog` takes `title="Site menu"` and `description="Jump to a page or change a setting."` as the dialog's accessible name, and binds `shortcut="mod+k"` itself (`app/components/site-command-menu.tsx:385-390`, `registry/default/command-menu.tsx:1425-1540`).
-- **Port:** the dialog has no title or description props (`src/components/command-menu.tsx:1353-1357`). A separate window listener toggles the menu (`src/lib/site-command-menu.tsx:68-78`); `isModK` matches Meta or Ctrl, no Alt, on `event.key` alone (`:59-63`). On Dvorak the key that types "t" does not open it: gpuix derives `code` from `key`, so there is no physical K to match (`scripts/check-command-menu.tsx` checks ⌘T and ⌘⌥K stay closed and ⌘K toggles; the layout itself needs a live check).
+- **Port:** the dialog has no title or description props (`src/components/command-menu.tsx:1354-1358`). A separate window listener toggles the menu (`src/lib/site-command-menu.tsx:68-78`); `isModK` matches Meta or Ctrl, no Alt, on `event.key` alone (`:59-63`). On Dvorak the key that types "t" does not open it: gpuix derives `code` from `key`, so there is no physical K to match (`scripts/check-command-menu.tsx` checks ⌘T and ⌘⌥K stay closed and ⌘K toggles; the layout itself needs a live check).
 - **Workaround:** none.
 - **Fidelity:** exact on macOS.
 - **Components it hits:** just the site menu.
