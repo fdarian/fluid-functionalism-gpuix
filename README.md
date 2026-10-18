@@ -243,8 +243,6 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [typography](drift/typography.md) | 6 | 0 | 1 | 4 | 11 |
 | **Total** | **124** | **197** | **197** | **60** | **578** |
 
-578 entries
-
 ### gpuix gaps across components
 
 These are the gpuix gaps that hit several components; the per-component files link here. They are as of
