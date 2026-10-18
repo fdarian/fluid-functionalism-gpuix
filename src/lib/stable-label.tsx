@@ -10,12 +10,12 @@ import {
 } from './theme';
 
 /**
- * A label that gains weight in place. Hidden normal and semibold copies and the
- * visible copy share one grid cell, so the label is as wide as the wider copy
- * and going semibold never moves what is beside it. It wraps at that width, as
- * the source's `inline-grid` span does. The source reserves the semibold copy
- * only, so a label whose semibold is narrower (Toggle dark mode) shrinks when
- * selected; the normal copy stops that.
+ * A label that gains weight in place. A hidden semibold copy and the visible
+ * copy share one grid cell, so the label is as wide as the semibold copy and
+ * going semibold never moves what is beside it. It wraps at that width, as the
+ * source's `inline-grid` span does. A second hidden normal copy was tried and
+ * dropped: every hidden `<text>` costs draw time, and only a label narrower at
+ * semibold (rare at 13px) shrinks, by at most about 1px, as it does in the browser.
  */
 export function StableLabel(props: {
 	text: string;
@@ -76,7 +76,6 @@ export function StableLabel(props: {
 					: {}),
 			}}
 		>
-			<text style={{ ...cellStyle(false), opacity: 0 }}>{props.text}</text>
 			<text style={{ ...cellStyle(true), opacity: 0 }}>{props.text}</text>
 			<text
 				testId={props.testId}

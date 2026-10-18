@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 537 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 536 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -166,7 +166,7 @@ column's card in place of "Make them yours"), `scenarios`, `menuIcon` and `menuK
 | `focus-ring.tsx` | The shared keyboard focus ring of accordion groups, tabs, tabs-subtle, checkbox, radio, select and the sidebar menu: one outline box 2px outside the focused row that springs between the rects fluid hover measures. `createFocusRing(hover)` collects `onFocus` / `onBlur` from the rows and counts only `event.focusVisible`, so a click draws none; the ring fades out 60 ms after the last blur and appears in place, not travelling from where it was. |
 | `measured-height.ts` | A box whose height springs to its content's measured pixel height, as the source's do: the content box reports its size through `onLayout`, used by every collapse. gpuix animates `height: "auto"` itself; the port keeps the source's number. |
 | `popup.tsx`, `popup-timing.ts` | Popup chrome on `<anchored fit="flip">` (`PopupSurface`, which takes a `createPresence` from base-ui and keeps its reported side and available height in `createPlacementState`), and the exit durations passed to the primitives. |
-| `stable-label.tsx` | A label that gains weight without moving its neighbours: an `inline-grid` holds hidden normal and semibold copies and the visible one in one cell, so the label is as wide as the wider copy and wraps like the source's. The weight eases over 80 ms (`fade` adds the colour to the same transition; `snapWeight` leaves it out for a row the source draws without one); `nowrap`, `truncate` and `trim` (the cap-height `textBox` on both copies) are opt-in. |
+| `stable-label.tsx` | A label that gains weight without moving its neighbours: an `inline-grid` holds a hidden semibold copy and the visible one in one cell, so the label is as wide as the semibold copy and wraps like the source's. The weight eases over 80 ms (`fade` adds the colour to the same transition; `snapWeight` leaves it out for a row the source draws without one); `nowrap`, `truncate` and `trim` (the cap-height `textBox` on both copies) are opt-in. |
 | `clock.ts` | One shared, ref-counted frame clock for every JS-driven loop; a subscriber inside a far culled region is skipped, and the timer stops when none is shown. |
 | `fonts.ts`, `assets.ts`, `app-frame.tsx` | The Inter 4.0 variable files (upright and italic) passed to `render()` and the test renderer, imported as embedded files; `diskPath`, which turns an embedded file path into one on disk for `<img src>`, and the image paths (`MICKA_PNG`, `OG_PNG`) built with it; the window frame (chrome-coloured bar, rounded page panel). |
 | `press.tsx`, `icons.ts`, `icon.tsx` | The press-shrink fill layer; lucide glyphs as SVG strings (`defineIcon` for a component's own). |
@@ -195,7 +195,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 
 | Component or page | gpuix gap | port choice | not ported yet | mixed | total |
 |---|---:|---:|---:|---:|---:|
-| [accordion](drift/accordion.md) | 2 | 9 | 7 | 0 | 18 |
+| [accordion](drift/accordion.md) | 2 | 8 | 7 | 0 | 17 |
 | [ask-user-questions](drift/ask-user-questions.md) | 1 | 4 | 7 | 3 | 15 |
 | [audio-mixer](drift/audio-mixer.md) | 0 | 3 | 0 | 0 | 3 |
 | [badge](drift/badge.md) | 0 | 3 | 0 | 0 | 3 |
@@ -241,7 +241,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 3 | 3 | 6 | 1 | 13 |
 | [tooltip](drift/tooltip.md) | 1 | 5 | 1 | 1 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **82** | **203** | **198** | **54** | **537** |
+| **Total** | **82** | **202** | **198** | **54** | **536** |
 
 ### gpuix gaps across components
 
@@ -362,7 +362,7 @@ now does that the port has not picked up.
 | `[text-box:trim-both_cap_alphabetic]` | `textBox: capTrim` (`src/lib/theme.ts`); a label that clips adds the source's `py-1 -my-1` through `clippedCapTrim` | Exact |
 | Inter variable (`wght 550`, `opsz`) | the same two Inter 4.0 variable files (upright, italic) passed as `fonts` to `render()`, registered as the family `Inter Variable`; `weight.normal` / `.semibold` / `.bold` (`src/lib/theme.ts`) are the source's `fontWeights` strings, set as `fontVariationSettings` | Exact |
 | `transition-[color,font-variation-settings] duration-80` | `weightFade` / `colorWeightFade` (`src/lib/theme.ts`): the weight eases between two tokens that name the same axes, as on `StableLabel`, `CardTitle`, the sidebar badge, the chip digit and the typography weight specimen; the slider's value readout is the same over 100 ms | Exact |
-| ghost-span that reserves the semibold width | the same trick: `StableLabel` is an `inline-grid` with hidden normal and semibold copies and the visible label in one cell, so the cell is the wider of the two (`drift/accordion.md`, "Label cell reserves the wider of both weights") | Approximated: up to about 1px wider than the source's when the label's semibold is narrower than its normal |
+| ghost-span that reserves the semibold width | the same trick: `StableLabel` is an `inline-grid` with a hidden semibold copy and the visible label in one cell, so the cell is as wide as the semibold copy | Exact |
 | `truncate` | `whiteSpace: "nowrap"` + `textOverflow: "ellipsis"` on the combobox rows | Exact; sidebar labels are not truncated |
 | icon stroke 1.5 → 2 on hover | `<Icon easeStroke>` (`src/lib/icon.tsx`) animates `strokeWidth` on a `motion.g` over 80 ms: accordion, button, card, tabs, tabs-subtle, nav-item, sidebar, thinking-steps, input-copy, input-group, and the dropdown, dropdown-search, menu-item, select, combobox and command-menu icons. Everywhere else the SVG string is swapped | Exact where `easeStroke` is set, except with the phosphor library (filled paths, the weight switches at once); instant elsewhere |
 | `animation: spinner-move` | a static lucide `loader`: no rotation, no animation. gpuix now has keyframes and `strokeDasharray` / `strokeDashoffset` motion (FORK.md:1144, :1151-1152); not adopted yet | Dropped, now possible |

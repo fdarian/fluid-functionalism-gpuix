@@ -19,14 +19,20 @@
  *    the weight ease, the label's box and everything in its row must stay
  *    exactly where they were. `skill/menu-example` is scripted playback with no
  *    input to drive, so it is not mounted. Its `StableLabel` and the role menu's
- *    are covered by the synthetic mounts at the end, whose labels are narrower
- *    at semibold ("Toggle dark mode") and would shrink on selection if the cell
- *    reserved only the semibold width. The test window is 1x: widths at a
- *    retina display's 2x scale are not measured.
+ *    are covered by the synthetic mounts at the end. The test window is 1x:
+ *    widths at a retina display's 2x scale are not measured.
+ *
+ *    `StableLabel` reserves the semibold copy only, as the source does, so a
+ *    label narrower at semibold shrinks when selected, as in the browser. The
+ *    synthetic mount of such strings ("Toggle dark mode") therefore asserts
+ *    parity, not stillness: the heavy cell is as wide as the semibold copy and
+ *    the shrink is the normal-minus-semibold difference, within 1 px. The shrink
+ *    is logged.
  */
+import type { HostElement } from '@gpuix/solid';
 import { createSignal, For, type JSX } from 'solid-js';
 import { StableLabel } from '#/lib/stable-label';
-import { color, fontFamily, weight } from '#/lib/theme';
+import { color, fontFamily, type as scale, weight } from '#/lib/theme';
 import { ROLES, StaticRoleItem, SurfaceMenu } from '#/pages/surfaces/role-menu';
 import { createCheck } from './check-kit';
 
@@ -520,7 +526,7 @@ const popupStep =
 		if (!kit.exists(then)) throw new Error(`${open} did not open ${then}`);
 	};
 
-/** Labels whose semibold is narrower than their normal in the browser, so they only hold still if the cell reserves both. */
+/** Labels whose semibold is narrower than their normal in the browser, so they shrink on selection there too. */
 const NARROWER_AT_SEMIBOLD = [
 	'Toggle dark mode',
 	'FLUID FUNCTIONALISM REGISTRY DEPLOY',
@@ -529,70 +535,127 @@ const NARROWER_AT_SEMIBOLD = [
 	'Export as PDF',
 ] as const;
 
-function syntheticRows(): Scenario {
+const PARITY_VARIANTS = [
+	{ name: 'plain', props: {} },
+	{ name: 'nowrap', props: { nowrap: true } },
+	{ name: 'truncate', props: { truncate: true } },
+] as const;
+
+/** A whole-pixel snap of each width, so the label's shrink and the copies' difference can differ by this much. */
+const SHRINK_TOLERANCE_PX = 1;
+
+/**
+ * `StableLabel` against the source's ghost span: the cell is as wide as the
+ * semibold copy, so going heavy shrinks a label whose semibold is narrower by
+ * the normal-minus-semibold difference, and never grows one.
+ */
+async function runSyntheticParity() {
+	console.log('\nStableLabel on its own (source parity)');
 	const [selected, setSelected] = createSignal(-1);
-	const variants = [
-		{ name: 'plain', props: {} },
-		{ name: 'nowrap', props: { nowrap: true } },
-		{ name: 'truncate', props: { truncate: true } },
-	] as const;
-	return {
-		name: 'StableLabel on its own',
-		mount: () => (
-			<div
-				style={{
-					display: 'flex',
-					flexDirection: 'column',
-					gap: 6,
-					padding: 20,
-					fontFamily,
-					backgroundColor: color.background,
-				}}
-			>
-				<For each={variants}>
-					{(variant) => (
-						<For each={NARROWER_AT_SEMIBOLD}>
-							{(text, index) => (
-								<div
+	const labels = new Map<string, HostElement>();
+	const key = (variant: string, index: number) => `${variant}-${index}`;
+	const kit = await createCheck(() => (
+		<div
+			style={{
+				display: 'flex',
+				flexDirection: 'column',
+				gap: 6,
+				padding: 20,
+				fontFamily,
+				backgroundColor: color.background,
+			}}
+		>
+			<For each={PARITY_VARIANTS}>
+				{(variant) => (
+					<For each={NARROWER_AT_SEMIBOLD}>
+						{(text, index) => (
+							<div
+								style={{
+									display: 'flex',
+									flexDirection: 'row',
+									alignItems: 'center',
+									gap: 8,
+									width: 500,
+								}}
+							>
+								<StableLabel
+									text={text}
+									heavy={selected() === index()}
+									color={color.foreground}
+									fade
+									labelRef={(element) =>
+										labels.set(key(variant.name, index()), element)
+									}
+									{...variant.props}
+								/>
+								<text style={{ color: color.mutedForeground, fontSize: 13 }}>
+									after
+								</text>
+							</div>
+						)}
+					</For>
+				)}
+			</For>
+			<For each={NARROWER_AT_SEMIBOLD}>
+				{(text, index) => (
+					<div style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
+						<For each={['normal', 'semibold'] as const}>
+							{(name) => (
+								<text
+									testId={`copy-${name}-${index()}`}
 									style={{
-										display: 'flex',
-										flexDirection: 'row',
-										alignItems: 'center',
-										gap: 8,
-										width: 500,
+										...scale.body,
+										whiteSpace: 'nowrap',
+										fontVariationSettings: weight[name],
 									}}
 								>
-									<StableLabel
-										text={text}
-										heavy={selected() === index()}
-										color={color.foreground}
-										fade
-										{...variant.props}
-									/>
-									<div
-										style={{
-											width: 6,
-											height: 6,
-											borderRadius: 3,
-											backgroundColor: color.foreground,
-										}}
-									/>
-									<text style={{ color: color.mutedForeground, fontSize: 13 }}>
-										after
-									</text>
-								</div>
+									{text}
+								</text>
 							)}
 						</For>
-					)}
-				</For>
-			</div>
-		),
-		steps: () =>
-			NARROWER_AT_SEMIBOLD.map((text, index) => ({
-				name: `select ${text}`,
-				act: () => setSelected(index),
-			})),
+					</div>
+				)}
+			</For>
+		</div>
+	));
+	await kit.settle(300);
+	const widthOf = (variant: string, index: number) => {
+		const element = labels.get(key(variant, index));
+		if (element === undefined) throw new Error(`no label ${variant} ${index}`);
+		const box = kit.renderer.getElementBounds(element.id);
+		if (box === null) throw new Error(`no painted bounds ${variant} ${index}`);
+		return box.width;
 	};
+	const light = PARITY_VARIANTS.map((variant) =>
+		NARROWER_AT_SEMIBOLD.map((_, index) => widthOf(variant.name, index)),
+	);
+	for (const [variantIndex, variant] of PARITY_VARIANTS.entries()) {
+		for (const [index, text] of NARROWER_AT_SEMIBOLD.entries()) {
+			setSelected(index);
+			await kit.settle(250);
+			const heavy = widthOf(variant.name, index);
+			setSelected(-1);
+			await kit.settle(250);
+			const normal = kit.bounds(`copy-normal-${index}`).width;
+			const semibold = kit.bounds(`copy-semibold-${index}`).width;
+			const shrink = light[variantIndex][index] - heavy;
+			const expected = Math.max(0, normal - semibold);
+			console.log(
+				`  ${variant.name.padEnd(8)} shrinks ${shrink} px on going heavy (normal - semibold ${normal - semibold} px)  ${text}`,
+			);
+			kit.check(
+				`${variant.name}: heavy cell is the semibold copy's width: ${text}`,
+				heavy === semibold,
+				`cell ${heavy}, semibold copy ${semibold}`,
+			);
+			kit.check(
+				`${variant.name}: shrink is normal - semibold within ${SHRINK_TOLERANCE_PX} px: ${text}`,
+				Math.abs(shrink - expected) <= SHRINK_TOLERANCE_PX,
+				`shrink ${shrink}, normal ${normal}, semibold ${semibold}`,
+			);
+		}
+	}
+	return kit.unmount();
 }
 
 /** The check mark only exists on the checked row and takes room from the label's flexible cell, so only left edges are compared. */
@@ -795,7 +858,6 @@ const scenarios: Scenario[] = [
 		setup: popupStep('default-format', 'default-format-rgb'),
 		steps: () => [clickStep('default-format-rgb')],
 	},
-	syntheticRows(),
 	syntheticRoleMenu(),
 ];
 
@@ -804,5 +866,7 @@ for (const scenario of scenarios) {
 	console.log(`\n${scenario.name}`);
 	failures += await runScenario(scenario);
 }
+if (only === undefined || 'StableLabel on its own'.includes(only))
+	failures += await runSyntheticParity();
 console.log(failures === 0 ? '\nall passed' : `\n${failures} failed`);
 process.exit(failures === 0 ? 0 : 1);
