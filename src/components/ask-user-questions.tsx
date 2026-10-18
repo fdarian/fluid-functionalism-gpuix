@@ -309,9 +309,8 @@ function Row(props: RowProps) {
 					flexDirection: stacked() ? 'column' : 'row',
 					flexWrap: stacked() ? 'nowrap' : 'wrap',
 					alignItems: stacked() ? 'flex-start' : 'center',
-					columnGap: 4,
-					rowGap: 0,
-					gap: stacked() ? 2 : undefined,
+					columnGap: stacked() ? 2 : 4,
+					rowGap: stacked() ? 2 : 0,
 					flexGrow: 1,
 					minWidth: 0,
 				}}
