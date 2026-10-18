@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 559 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 538 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -195,53 +195,53 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 
 | Component or page | gpuix gap | port choice | not ported yet | mixed | total |
 |---|---:|---:|---:|---:|---:|
-| [accordion](drift/accordion.md) | 3 | 9 | 7 | 0 | 19 |
-| [ask-user-questions](drift/ask-user-questions.md) | 2 | 4 | 7 | 3 | 16 |
+| [accordion](drift/accordion.md) | 2 | 9 | 7 | 0 | 18 |
+| [ask-user-questions](drift/ask-user-questions.md) | 1 | 4 | 7 | 3 | 15 |
 | [audio-mixer](drift/audio-mixer.md) | 0 | 2 | 0 | 1 | 3 |
 | [badge](drift/badge.md) | 0 | 3 | 0 | 0 | 3 |
 | [banner](drift/banner.md) | 4 | 4 | 6 | 0 | 14 |
 | [button](drift/button.md) | 2 | 4 | 2 | 1 | 9 |
-| [card](drift/card.md) | 3 | 7 | 6 | 0 | 16 |
+| [card](drift/card.md) | 2 | 7 | 6 | 0 | 15 |
 | [carousel-dots](drift/carousel-dots.md) | 2 | 3 | 2 | 1 | 8 |
 | [chat-message](drift/chat-message.md) | 2 | 4 | 2 | 1 | 9 |
-| [checkbox-group](drift/checkbox-group.md) | 2 | 0 | 3 | 1 | 6 |
-| [color-picker](drift/color-picker.md) | 3 | 5 | 15 | 1 | 24 |
+| [checkbox-group](drift/checkbox-group.md) | 1 | 0 | 3 | 1 | 5 |
+| [color-picker](drift/color-picker.md) | 2 | 5 | 15 | 1 | 23 |
 | [combobox](drift/combobox.md) | 4 | 13 | 5 | 2 | 24 |
-| [command-menu](drift/command-menu.md) | 5 | 2 | 12 | 2 | 21 |
+| [command-menu](drift/command-menu.md) | 4 | 2 | 13 | 2 | 21 |
 | [compare](drift/compare.md) | 2 | 8 | 1 | 2 | 13 |
-| [concepts](drift/concepts.md) | 2 | 26 | 2 | 1 | 31 |
-| [dialog](drift/dialog.md) | 3 | 2 | 2 | 1 | 8 |
-| [dropdown](drift/dropdown.md) | 3 | 5 | 11 | 1 | 20 |
+| [concepts](drift/concepts.md) | 1 | 26 | 2 | 1 | 30 |
+| [dialog](drift/dialog.md) | 2 | 2 | 2 | 1 | 7 |
+| [dropdown](drift/dropdown.md) | 2 | 5 | 11 | 1 | 19 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
 | [fluid-hover](drift/fluid-hover.md) | 3 | 5 | 2 | 2 | 12 |
 | [home](drift/home.md) | 0 | 1 | 1 | 2 | 4 |
-| [input-copy](drift/input-copy.md) | 2 | 3 | 6 | 0 | 11 |
-| [input-group](drift/input-group.md) | 1 | 1 | 3 | 1 | 6 |
+| [input-copy](drift/input-copy.md) | 1 | 3 | 6 | 0 | 10 |
+| [input-group](drift/input-group.md) | 0 | 1 | 3 | 1 | 5 |
 | [input-message](drift/input-message.md) | 4 | 0 | 14 | 4 | 22 |
 | [introduction](drift/introduction.md) | 0 | 4 | 2 | 1 | 7 |
 | [mobile-drawer](drift/mobile-drawer.md) | 3 | 2 | 1 | 0 | 6 |
-| [motion-page](drift/motion-page.md) | 3 | 3 | 1 | 3 | 10 |
-| [nav-menu](drift/nav-menu.md) | 1 | 5 | 1 | 0 | 7 |
-| [queued-stack](drift/queued-stack.md) | 4 | 2 | 3 | 1 | 10 |
-| [radio-group](drift/radio-group.md) | 3 | 2 | 2 | 0 | 7 |
+| [motion-page](drift/motion-page.md) | 3 | 4 | 1 | 2 | 10 |
+| [nav-menu](drift/nav-menu.md) | 0 | 5 | 1 | 0 | 6 |
+| [queued-stack](drift/queued-stack.md) | 3 | 2 | 3 | 1 | 9 |
+| [radio-group](drift/radio-group.md) | 2 | 2 | 2 | 0 | 6 |
 | [scroll-area](drift/scroll-area.md) | 2 | 5 | 1 | 1 | 9 |
 | [scrollbars-page](drift/scrollbars-page.md) | 0 | 4 | 2 | 0 | 6 |
 | [select](drift/select.md) | 4 | 3 | 6 | 2 | 15 |
 | [sidebar](drift/sidebar.md) | 1 | 8 | 19 | 1 | 29 |
-| [site](drift/site.md) | 5 | 11 | 21 | 7 | 44 |
+| [site](drift/site.md) | 4 | 11 | 21 | 7 | 43 |
 | [sizes-page](drift/sizes-page.md) | 0 | 5 | 3 | 3 | 11 |
-| [skill-page](drift/skill-page.md) | 3 | 5 | 0 | 1 | 9 |
-| [slider](drift/slider.md) | 5 | 3 | 2 | 1 | 11 |
+| [skill-page](drift/skill-page.md) | 2 | 5 | 0 | 1 | 8 |
+| [slider](drift/slider.md) | 4 | 3 | 2 | 1 | 10 |
 | [surfaces](drift/surfaces.md) | 2 | 3 | 4 | 3 | 12 |
 | [switch](drift/switch.md) | 1 | 1 | 2 | 1 | 5 |
-| [table](drift/table.md) | 3 | 1 | 3 | 0 | 7 |
-| [tabs-subtle](drift/tabs-subtle.md) | 1 | 3 | 2 | 0 | 6 |
-| [tabs](drift/tabs.md) | 1 | 2 | 2 | 0 | 5 |
+| [table](drift/table.md) | 2 | 1 | 3 | 0 | 6 |
+| [tabs-subtle](drift/tabs-subtle.md) | 0 | 3 | 2 | 0 | 5 |
+| [tabs](drift/tabs.md) | 0 | 2 | 2 | 0 | 4 |
 | [thinking-indicator](drift/thinking-indicator.md) | 1 | 2 | 3 | 0 | 6 |
-| [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
-| [tooltip](drift/tooltip.md) | 2 | 5 | 1 | 1 | 9 |
-| [typography](drift/typography.md) | 3 | 0 | 1 | 4 | 8 |
-| **Total** | **105** | **197** | **198** | **59** | **559** |
+| [thinking-steps](drift/thinking-steps.md) | 3 | 3 | 6 | 1 | 13 |
+| [tooltip](drift/tooltip.md) | 1 | 5 | 1 | 1 | 8 |
+| [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
+| **Total** | **82** | **200** | **199** | **57** | **538** |
 
 ### gpuix gaps across components
 
