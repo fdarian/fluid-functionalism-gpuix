@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 538 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 537 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -197,7 +197,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 |---|---:|---:|---:|---:|---:|
 | [accordion](drift/accordion.md) | 2 | 9 | 7 | 0 | 18 |
 | [ask-user-questions](drift/ask-user-questions.md) | 1 | 4 | 7 | 3 | 15 |
-| [audio-mixer](drift/audio-mixer.md) | 0 | 2 | 0 | 1 | 3 |
+| [audio-mixer](drift/audio-mixer.md) | 0 | 3 | 0 | 0 | 3 |
 | [badge](drift/badge.md) | 0 | 3 | 0 | 0 | 3 |
 | [banner](drift/banner.md) | 4 | 4 | 6 | 0 | 14 |
 | [button](drift/button.md) | 2 | 4 | 2 | 1 | 9 |
@@ -207,18 +207,18 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [checkbox-group](drift/checkbox-group.md) | 1 | 0 | 3 | 1 | 5 |
 | [color-picker](drift/color-picker.md) | 2 | 5 | 15 | 1 | 23 |
 | [combobox](drift/combobox.md) | 4 | 13 | 5 | 2 | 24 |
-| [command-menu](drift/command-menu.md) | 4 | 2 | 13 | 2 | 21 |
+| [command-menu](drift/command-menu.md) | 4 | 2 | 12 | 2 | 20 |
 | [compare](drift/compare.md) | 2 | 8 | 1 | 2 | 13 |
 | [concepts](drift/concepts.md) | 1 | 26 | 2 | 1 | 30 |
 | [dialog](drift/dialog.md) | 2 | 2 | 2 | 1 | 7 |
 | [dropdown](drift/dropdown.md) | 2 | 5 | 11 | 1 | 19 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
 | [fluid-hover](drift/fluid-hover.md) | 3 | 5 | 2 | 2 | 12 |
-| [home](drift/home.md) | 0 | 1 | 1 | 2 | 4 |
+| [home](drift/home.md) | 0 | 2 | 1 | 1 | 4 |
 | [input-copy](drift/input-copy.md) | 1 | 3 | 6 | 0 | 10 |
 | [input-group](drift/input-group.md) | 0 | 1 | 3 | 1 | 5 |
 | [input-message](drift/input-message.md) | 4 | 0 | 14 | 4 | 22 |
-| [introduction](drift/introduction.md) | 0 | 4 | 2 | 1 | 7 |
+| [introduction](drift/introduction.md) | 0 | 5 | 2 | 0 | 7 |
 | [mobile-drawer](drift/mobile-drawer.md) | 3 | 2 | 1 | 0 | 6 |
 | [motion-page](drift/motion-page.md) | 3 | 4 | 1 | 2 | 10 |
 | [nav-menu](drift/nav-menu.md) | 0 | 5 | 1 | 0 | 6 |
@@ -241,7 +241,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 3 | 3 | 6 | 1 | 13 |
 | [tooltip](drift/tooltip.md) | 1 | 5 | 1 | 1 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **82** | **200** | **199** | **57** | **538** |
+| **Total** | **82** | **203** | **198** | **54** | **537** |
 
 ### gpuix gaps across components
 
@@ -277,7 +277,6 @@ offer it. A count is given only where the code shows it.
 | slider | `<input type="range">` (Base UI audit row 312) | A pointer-handled track and thumbs |
 | select, combobox (`FormValue`) | `<input type="hidden">` | A real input that is invisible, unreachable and `aria-hidden` |
 | banner (the description layout), surfaces (the elevation stack) | Selector `:has(.x)` and group-has. gpuix has `hasHover`, `hasActive`, `hasFocus` and `hasFocusVisible`, which restyle an element from the state of its descendants, but not a selector such as the banner's `has-data-[slot=banner-description]`, and a parent's `has*` state cannot style its children (the surfaces' stack hides a label with `[&:has([data-surface]:hover)>span]`). The result matches the web; only the wiring differs | Banner: a context flag the description registers; surfaces: a pointer signal (`drift/banner.md`, `drift/surfaces.md`) |
-| any component whose source writes `flex-1`, `flex-auto` or `flex-none` | The `flex` shorthand: `StyleDesc` has `flexGrow`, `flexShrink` and `flexBasis` only, so a source `flex: 1 1 0%` is three properties | The longhands, spelled out where the source writes `flex-1` |
 | table | Collapsed-border transitions: a table part's styles are not animatable by `motion`, a keyframe or a CSS transition, so the row rule's 80ms fade is a snap where the source eases it | none: `fade(['border-color'], 80)` is declared and inert (`drift/table.md`) |
 | not counted | `disabled` on anything but an input: other elements get `aria-disabled` only, so they stay focusable and clickable | `aria-disabled` plus the component's own guard |
 | command-menu (and every long demo page) | Culling: elements a scroller clips away are still built, laid out and painted each frame, so a page of many menus costs several times a short one (`<virtual-list>` is the only exception) | `DemoCard`, every `ComponentPreview`, `DocSection`, changelog entry and group, Audio Mixer card and each home tile hide their content with `display: none` while far from the page scroller, through `createCulling` in `src/lib/cull.ts` (`drift/command-menu.md`) |

@@ -130,7 +130,7 @@ they need list navigation, presence or pointer capture they import it from `base
 
 Each file in [`drift/`](drift) lists every place the port looks or behaves differently from upstream, with the
 source and port `file:line` and a **Cause**. The per-file counts are the table in the README's
-[Drift from the source](README.md#drift-from-the-source) (as of its last recount: 538 entries, 57 of them naming two
+[Drift from the source](README.md#drift-from-the-source) (as of its last recount: 537 entries, 54 of them naming two
 causes; `bun scripts/drift-counts.ts` prints them).
 
 - **`gpuix gap`** (82 entries): gpuix lacks the capability or gets it wrong, so the port approximates or drops
@@ -138,11 +138,11 @@ causes; `bun scripts/drift-counts.ts` prints them).
   README's [gpuix gaps across components](README.md#gpuix-gaps-across-components); the per-file entry is one line
   linking there. Most in [select](drift/select.md), [combobox](drift/combobox.md), [command-menu](drift/command-menu.md),
   [slider](drift/slider.md), [site](drift/site.md), [banner](drift/banner.md) and [input-message](drift/input-message.md).
-- **`port choice`** (200): the port differs on purpose, for a desktop window or a simpler shape. The window frame,
+- **`port choice`** (203): the port differs on purpose, for a desktop window or a simpler shape. The window frame,
   the single fixed layout and the Base-UI-only install live in [site](drift/site.md); the largest block is the
   Concepts screens, [concepts](drift/concepts.md).
-- **`not ported yet`** (199): nothing stops the port doing it and nobody has. The backlog: [site](drift/site.md)
+- **`not ported yet`** (198): nothing stops the port doing it and nobody has. The backlog: [site](drift/site.md)
   (responsive layout, settings persistence, the API Reference tables), [sidebar](drift/sidebar.md) (collapse, mobile
   sheet, blocks), [color-picker](drift/color-picker.md) and [input-message](drift/input-message.md).
-- **Mixed** (57): an entry that names two causes, counted separately; the cause line says which part is which.
+- **Mixed** (54): an entry that names two causes, counted separately; the cause line says which part is which.
   Entries with no cause (exact or additive notes) are not counted.
