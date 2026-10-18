@@ -12,7 +12,7 @@ repeating it.
 
 - **Cause:** `gpuix gap`.
 - **Original:** Base UI renders a visually hidden `<input type="range">` in each thumb, which gives the platform slider semantics, keyboard handling and a form value (`slider.tsx:1052-1075`, `:1649-1657`).
-- **Port:** each thumb is a `role="slider"` div with `tabIndex`, `aria-valuenow` / `-min` / `-max` / `-orientation` / `-disabled` and an `aria-valuetext` where Base UI sets one (`base-ui:src/slider/thumb/slider-thumb.ts:113-162`); the default row has a 1px hidden thumb that carries the same (`src/components/slider.tsx:1281-1298`). `onKeyDown` does Arrow (Shift for `largeStep`), Home, End and Page with Base UI's step maths (`base-ui:src/slider/thumb/slider-thumb.ts:52-111`). There is no `name` prop and no form value.
+- **Port:** each thumb is a `role="slider"` div with `tabIndex`, `aria-valuenow` / `-min` / `-max` / `-orientation` / `-disabled` and an `aria-valuetext` where Base UI sets one (`base-ui:src/slider/thumb/slider-thumb.ts:113-162`); the default row has a 1px hidden thumb that carries the same (`src/components/slider.tsx:1282-1299`). `onKeyDown` does Arrow (Shift for `largeStep`), Home, End and Page with Base UI's step maths (`base-ui:src/slider/thumb/slider-thumb.ts:52-111`). There is no `name` prop and no form value.
 - **gpuix lacks:** the input type. `InputType` is `"text" | "password" | "number" | "email" | "search" | "tel" | "url"` (`packages/native/js/host.ts:1336`).
 - **Workaround:** the slider div described above.
 - **Fidelity:** approximated: exact for pointer and keyboard users and the accessibility tree, absent from forms.
@@ -76,7 +76,7 @@ repeating it.
 ## Value bubbles are anchored overlays
 
 - **Cause:** `port choice` (reason not stated; the offsets were not measured against the DOM).
-- **Original:** an absolutely positioned `motion.div` at fixed `top` offsets (`-20` compact hover, `-16` thumb bubble, `-30` default row, `slider.tsx:1116`, `:365`, `:1596`), centred with `-translate-x-1/2`, radius `shape.bg` (`:373`).
+- **Original:** an absolutely positioned `motion.div` at fixed `top` offsets (`-20` compact hover, `-16` thumb bubble, `-30` default row, `slider.tsx:1117`, `:365`, `:1596`), centred with `-translate-x-1/2`, radius `shape.bg` (`:373`).
 - **Port:** a `ValueBubble` (`src/components/slider.tsx:70-122`) in an `<anchored side="top" align="center" fit="snap" deferred>` with `gap` 8 above a thumb or 0 above a zero-size marker at 4px (compact, `:794-814`) or -6px (default, `:1299-1317`); radius `shape.bg`. The anchor keeps the bubble inside the window, which the DOM bubble does not. The marker offsets reproduce the DOM's bubble bottom if the bubble is 24px tall.
 - **Workaround:** none.
 - **Fidelity:** approximated (placement unverified to the pixel).
@@ -94,8 +94,8 @@ repeating it.
 ## Default row: the label and value blocks are the card colour, sized by the max
 
 - **Cause:** `port choice` (reason not stated; `surface2` is the demo card's colour).
-- **Original:** the blocks that keep pips off the words are `bg-background` (`slider.tsx:1717`, `:1722`), and the value block is `minWidth` of `formatValue(max).length` ch around the current text (`:1721-1726`), so it grows with a longer value.
-- **Port:** `color.surface2` (`src/components/slider.tsx:1157`, `:1168`), correct on the demo card and wrong on any other surface; the value block holds `formatValue(max())` rather than the current text (`:1171-1173`), so a current value wider than the max's (a "Medium" against "Ultra") is wider than its block and a pip can show beside it.
+- **Original:** the blocks that keep pips off the words are `bg-background` (`slider.tsx:1718`, `:1722`), and the value block is `minWidth` of `formatValue(max).length` ch around the current text (`:1721-1726`), so it grows with a longer value.
+- **Port:** `color.surface2` (`src/components/slider.tsx:1158`, `:1168`), correct on the demo card and wrong on any other surface; the value block holds `formatValue(max())` rather than the current text (`:1171-1173`), so a current value wider than the max's (a "Medium" against "Ultra") is wider than its block and a pip can show beside it.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** none other.

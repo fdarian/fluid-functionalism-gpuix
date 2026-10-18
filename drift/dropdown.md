@@ -53,7 +53,7 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Original:** rows scroll inside `ScrollArea` with the hover-revealed thumb and a 32px `scroll-fade` on the viewport, dropped while a search field is mounted (`registry/base/dropdown.tsx:714`; `registry/default/lib/popup.ts:35-37`).
 - **Port:** a `div` with `overflowY: "scroll"` (`src/components/dropdown.tsx:376-387`): no custom thumb, no edge fade.
 - **Fidelity:** approximated.
-- **Components it hits:** select (`src/components/select.tsx:409`), combobox (`src/components/combobox.tsx:334`), command-menu (`src/components/command-menu.tsx:958`).
+- **Components it hits:** select (`src/components/select.tsx:409`), combobox (`src/components/combobox.tsx:335`), command-menu (`src/components/command-menu.tsx:958`).
 
 ## Checked background appears with a fade instead of already being there
 

@@ -94,9 +94,9 @@ repeating it.
 
 ## Ghost action colour
 
-- **Cause:** `not ported yet`. The port's `Button` has no colour override (`labelColor` is internal, `src/components/button.tsx:148-157`); a `Button` prop for it would close this.
+- **Cause:** `not ported yet`. The port's `Button` has no colour override (`labelColor` is internal, `src/components/button.tsx:150-159`); a `Button` prop for it would close this.
 - **Original:** a ghost `BannerAction` adds `text-foreground`, which overrides the ghost button's muted rest colour, so it reads foreground at rest and on hover, with no colour change to ease (`banner.tsx:648-652`; its comment at `:618-619` describes "70% foreground", the code does not).
-- **Port:** the plain ghost `Button`: muted at rest, foreground on hover, eased over 80 ms like the source's other ghost buttons (`banner.tsx:512-527`; `src/components/button.tsx:128-129`).
+- **Port:** the plain ghost `Button`: muted at rest, foreground on hover, eased over 80 ms like the source's other ghost buttons (`banner.tsx:512-527`; `src/components/button.tsx:130-131`).
 - **Workaround:** none.
 - **Fidelity:** approximated (the rest colour, and the hover fade the source does not have here).
 - **Components it hits:** just this one.

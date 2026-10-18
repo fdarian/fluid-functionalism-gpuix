@@ -40,7 +40,7 @@ repeating it.
 ## The monospace face is Menlo
 
 - **Cause:** `port choice` (reason not stated).
-- **Original:** Tailwind `font-mono` (`input-copy.tsx:344`): `ui-monospace, SFMono-Regular, Menlo, …`, resolved by the browser. The site sets no `--font-mono` of its own.
+- **Original:** Tailwind `font-mono` (`input-copy.tsx:345`): `ui-monospace, SFMono-Regular, Menlo, …`, resolved by the browser. The site sets no `--font-mono` of its own.
 - **Port:** `MONO = "Menlo"` (`input-copy.tsx:31,249`).
 - **Fidelity:** approximated (same face in Chrome on macOS, not in Safari, where `ui-monospace` is SF Mono).
 
@@ -54,7 +54,7 @@ repeating it.
 ## The label is not part of the accessible name
 
 - **Cause:** `not ported yet`.
-- **Original:** `aria-labelledby={`${buttonId} ${labelId}`}` with `aria-label` "Copy" when a label is set, so the name reads "Copy <label>" (`input-copy.tsx:371-380`).
+- **Original:** `aria-labelledby={`${buttonId} ${labelId}`}` with `aria-label` "Copy" when a label is set, so the name reads "Copy <label>" (`input-copy.tsx:372-381`).
 - **Port:** `aria-label` is "Copy to clipboard" whether or not a label is shown (`input-copy.tsx:278-284`); the label `<text>` is not referenced. gpuix accepts `aria-labelledby` (`FORK.md:508-509`).
 - **Fidelity:** approximated.
 
@@ -69,7 +69,7 @@ repeating it.
 ## Passthrough props
 
 - **Cause:** `not ported yet`.
-- **Original:** `...props`, `className` and `ref` go to the wrapper div (`input-copy.tsx:384`, `:396-401`).
+- **Original:** `...props`, `className` and `ref` go to the wrapper div (`input-copy.tsx:385`, `:396-401`).
 - **Port:** no `className`, `ref` or rest props. The port adds `testId`. An omitted `size` follows the Size row (`input-copy.tsx:89`).
 - **Fidelity:** dropped.
 - **Components it hits:** every component with `size` (input-group, input-message).

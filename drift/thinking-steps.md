@@ -87,7 +87,7 @@ repeating it.
 
 - **Cause:** `port choice` (the comment says it keeps a pale screenshot's edge visible; why an overlay div and not the image's own outline is not stated).
 - **Original:** `outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10` on the `<img>` (`thinking-steps.tsx:590`).
-- **Port:** an absolutely positioned overlay div with a 1px inset outline in `color.border`, `rgba(23,23,23,.12)` light and `rgba(245,245,245,.12)` dark (`thinking-steps.tsx:597-610`; `src/lib/theme.ts:94`, `:142`).
+- **Port:** an absolutely positioned overlay div with a 1px inset outline in `color.border`, `rgba(23,23,23,.12)` light and `rgba(245,245,245,.12)` dark (`thinking-steps.tsx:597-611`; `src/lib/theme.ts:94`, `:142`).
 - **Workaround:** the overlay.
 - **Fidelity:** approximated (alpha .12 against .10, base colours slightly off black and white).
 - **Components it hits:** just this one.

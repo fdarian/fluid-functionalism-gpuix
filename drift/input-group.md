@@ -11,7 +11,7 @@ repeating it.
 ## A press on the field's padding or label focuses on release
 
 - **Cause:** `not ported yet`.
-- **Original:** the field box takes `onMouseDown`, focuses the input and cancels the default, unless the target is the input itself, so the caret is left alone (`input-group.tsx:226-233`). The label is a `Field.Label` with `htmlFor` (`:193`).
+- **Original:** the field box takes `onMouseDown`, focuses the input and cancels the default, unless the target is the input itself, so the caret is left alone (`input-group.tsx:227-234`). The label is a `Field.Label` with `htmlFor` (`:193`).
 - **Port:** `onClick={focusInput}` on the label and the field box (`input-group.tsx:157,175`): the focus lands on release, and a click on the input also calls `focusElement`. Whether that disturbs the caret was not checked.
 - **Fidelity:** approximated.
 
@@ -19,7 +19,7 @@ repeating it.
 
 - **Cause:** `not ported yet`.
 - **Original:** `Field.Root` / `Label` / `Control` / `Error` give `htmlFor`, `aria-invalid`, and `aria-describedby` pointing at the error message (`input-group.tsx:173-190,258-288`).
-- **Port:** `aria-label={props.label}` only (`input-group.tsx:222`); no `aria-invalid`, no description link to the error. gpuix accepts `aria-*` and `<label htmlFor>` (`FORK.md:508-509`).
+- **Port:** `aria-label={props.label}` only (`input-group.tsx:223`); no `aria-invalid`, no description link to the error. gpuix accepts `aria-*` and `<label htmlFor>` (`FORK.md:508-509`).
 - **Fidelity:** approximated (the name is right, the error is not announced with the field).
 
 ## Props are fixed, not passed through

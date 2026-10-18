@@ -20,7 +20,7 @@ Ported and matching: the square with `bg-accent`, `overflow-hidden` and `shrink-
 ## `animate-spin`: no rotate transform, driven from a JS clock
 
 - **Cause:** `gpuix gap` for the rotation; the JS-driven arc is `not ported yet`.
-- **Original:** `w-6 h-6 rounded-full border-2 border-border border-t-muted-foreground animate-spin`, one turn a second, linear (`file-thumbnail.tsx:167-173`).
+- **Original:** `w-6 h-6 rounded-full border-2 border-border border-t-muted-foreground animate-spin`, one turn a second, linear (`file-thumbnail.tsx:168-174`).
 - **Port:** two stacked SVGs: a static ring tinted `border`, and an arc (90 degrees, butt caps) whose source string is rewritten from the shared `onFrame` clock, 0.36 degrees a millisecond, rounded to whole degrees so the SVG cache sees at most 360 sources (`file-thumbnail.tsx:19-78`; `src/lib/clock.ts:58`, a 16 ms `setInterval`).
 - **gpuix lacks:** rotation. There is no `transform`, and `motion` cannot animate an SVG `transform` attribute (`FORK.md:1198-1209`; `README.md:239`, `:333`). It does have keyframes with `repeat: Infinity` and `motion.circle` animating `strokeDasharray` / `strokeDashoffset` / `pathOffset` (`FORK.md:1144-1145`, `:1151-1152`; gpuix `README.md:1709-1735`); a circle with a 90-degree dash whose offset loops would turn the arc on the native clock with no JS and no per-frame source rewrite. The port has not tried it.
 - **Workaround:** the frame clock above.
@@ -60,7 +60,7 @@ Ported and matching: the square with `bg-accent`, `overflow-hidden` and `shrink-
 ## Accessible names
 
 - **Cause:** `port choice` (reason not stated).
-- **Original:** the image has `alt` = file name, the spinner is `role="status"` with `aria-label="Loading preview"`, the glyph is `role="img"` with the file name (`file-thumbnail.tsx:157-181`).
+- **Original:** the image has `alt` = file name, the spinner is `role="status"` with `aria-label="Loading preview"`, the glyph is `role="img"` with the file name (`file-thumbnail.tsx:157-182`).
 - **Port:** the root is always `role="img"` with the file name; the spinner has no role or label (`file-thumbnail.tsx:114-117`, `:39-77`).
 - **gpuix lacks:** nothing.
 - **Workaround:** none.

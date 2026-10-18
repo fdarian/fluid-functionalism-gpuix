@@ -123,7 +123,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `gpuix gap`.
 - **Original:** `underline-offset-4` and `hover:underline` (`:915`).
-- **Port:** `textDecoration: "underline"` on hover (`src/components/card.tsx:1003-1005`).
+- **Port:** `textDecoration: "underline"` on hover (`src/components/card.tsx:1005-1007`).
 - **gpuix lacks:** an underline offset: `StyleDesc` has `textDecoration`, `-Line`, `-Style`, `-Color`, `-Thickness` and nothing for the offset (`packages/native/js/host.ts:766-776`; searched `packages/native/src` and `js`).
 - **Workaround:** none.
 - **Fidelity:** approximated (the line sits closer to the text).

@@ -39,7 +39,7 @@ repeating it.
 
 - **Cause:** `gpuix gap`: one `outline` per element, no second ring.
 - **Original:** `focus-visible:ring-2 ring-ring ring-offset-2 ring-offset-background`: a 2px background-coloured gap, then the 2px ring.
-- **Port:** a 2px outline at a 2px offset (`scRing`, `src/pages/compare/shadcn/theme.ts:73-74`); the gap shows what is behind, the page, where the source paints `--background`. The slider thumb's `ring-1` is a 1px outline at offset 0. The input shows it while it has focus.
+- **Port:** a 2px outline at a 2px offset (`scRing`, `src/pages/compare/shadcn/theme.ts:73-79`); the gap shows what is behind, the page, where the source paints `--background`. The slider thumb's `ring-1` is a 1px outline at offset 0. The input shows it while it has focus.
 - **Fidelity:** approximated.
 
 ## The inputs are gpuix `<input>`s with the field drawn around them
