@@ -20,6 +20,8 @@ const visible = (card: 'compact' | 'display' | 'default') => () =>
 
 /** The resize rows' width: a scenario narrows it to show the thumbs and fill follow the layout. */
 const [resizeWidth, setResizeWidth] = createSignal(288);
+/** For `scripts/check-slider.tsx`. */
+export const resizeTo = setResizeWidth;
 
 export const title = 'Slider';
 export const group = 'Components';

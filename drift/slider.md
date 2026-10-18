@@ -12,7 +12,7 @@ repeating it.
 
 - **Cause:** `gpuix gap`.
 - **Original:** Base UI renders a visually hidden `<input type="range">` in each thumb, which gives the platform slider semantics, keyboard handling and a form value (`slider.tsx:1058-1081`, `:1649-1657`).
-- **Port:** each thumb is a `role="slider"` div with `tabIndex`, `aria-valuenow` / `-min` / `-max` / `-orientation` / `-disabled` and an `aria-valuetext` where Base UI sets one (`base-ui:src/slider/thumb/slider-thumb.ts:113-162`); the default row has a 1px hidden thumb that carries the same (`src/components/slider.tsx:1288-1305`). `onKeyDown` does Arrow (Shift for `largeStep`), Home, End and Page with Base UI's step maths (`base-ui:src/slider/thumb/slider-thumb.ts:52-111`). There is no `name` prop and no form value.
+- **Port:** each thumb is a `role="slider"` div with `tabIndex`, `aria-valuenow` / `-min` / `-max` / `-orientation` / `-disabled` and an `aria-valuetext` where Base UI sets one (`base-ui:src/slider/thumb/slider-thumb.ts:113-162`); the default row has a 1px hidden thumb that carries the same (`src/components/slider.tsx:1285-1302`). `onKeyDown` does Arrow (Shift for `largeStep`), Home, End and Page with Base UI's step maths (`base-ui:src/slider/thumb/slider-thumb.ts:52-111`). There is no `name` prop and no form value.
 - **gpuix lacks:** the input type. `InputType` is `"text" | "password" | "number" | "email" | "search" | "tel" | "url"` (`packages/native/js/host.ts:1336`).
 - **Workaround:** the slider div described above.
 - **Fidelity:** approximated: exact for pointer and keyboard users and the accessibility tree, absent from forms.
@@ -27,21 +27,21 @@ repeating it.
 - **Fidelity:** exact for what is seen.
 - **Components it hits:** every spring FF runs on a transform.
 
-## Derived layers trail their inputs by a frame, and the comfortable row is built in pixels
+## Layers that mix two motion values are JS-derived, a frame behind native ones
 
 - **Cause:** `gpuix gap`.
-- **Original:** the fill, handle, pips fill and masks are `useTransform` strings such as `calc(p * 100% + 20px - ...)` that mix a percentage with pixels (`slider.tsx:499-507`, `:1342-1376`), evaluated by the browser against the row's live width.
-- **Port:** a range fill's `second - first` (`src/components/slider.tsx:582-585`) and every comfortable layer (`:1013-1027`) are `createTransform` functions that multiply by a measured `widthValue` (`:996`, written from `:1005`, in turn from `onLayout` at `:1071-1073`). Function-form transforms are computed in JS and run one frame behind their inputs (FORK.md:1262-1263, README bugs table), and a resize reaches the layers a frame after layout. The fill and handle line of the comfortable row are not rendered until the first `onLayout` (`:1193`, `:1263`), so they appear one frame after the row. The single compact fill is a range-form transform of the thumb's x (`:570-575`) and does not trail.
-- **gpuix lacks:** a motion value that mixes `%` and `px`. A string held by a motion value must be a colour or a percentage: a function-form transform returning `calc(25% + 20px)` and a range-form transform with `calc()` outputs both throw "a motion value string must be a colour or a percentage" (tried against the built gpuix; README "Lengths" says the same for `motion` targets), so `calc()` works only as a static style, which does not animate. A range-form transform of percentages (`['0%', '100%']`) does work and is native-linked, but each comfortable layer adds a fixed pixel part and two animated terms (`percent` and the zero offset) in one value, and no single percentage of the row is that; a function-form transform stays one frame late.
-- **Workaround:** pixel maths from the measured width.
-- **Fidelity:** approximated: a very fast drag can show a range fill or a pips fill one frame behind its thumb or handle.
+- **Original:** the comfortable layers are `useTransform` strings of `fillPercent` and `zeroOffset`, such as `calc(p * 100% + 20px - ...)`, evaluated by the browser against the row's live width (`slider.tsx:1342-1368`); the compact fill is a px `useTransform` of the thumbs' x (`:493-501`).
+- **Port:** the same `calc()` strings, held as motion values, with the source's springs on `percent` and `zeroOffset`. The scrubber's fill and the pips' line depend on `percent` alone, so they are range-form transforms and native-linked (`src/components/slider.tsx:1015`, `:1020-1024`). The pips fill, the scrubber's line and its handle strip mix `percent` with `zeroOffset`, so they are function-form transforms returning `calc()` (`:1016-1019`, `:1025-1032`). The compact step dots are static `calc()` lefts, `10px + share * (100% - 20px)` (`:767-776`). No layer reads a measured width, so a resize reaches them in the frame that lays it out (`scripts/check-slider.tsx`, "follows a resize") and the row paints them from its first frame. The compact fill is the source's px transform too: a range-form transform of the thumb's x for a single slider (`:576-581`) and the function-form `second - first` for a range (`:582-585`). The thumbs' own x stays px, measured by `onLayout` (`:691`), as the source's is.
+- **gpuix lacks:** a native-linked transform of more than one motion value. A function-form transform is computed in JavaScript from `change` events, so it can trail its inputs by a frame (`README.md:2110-2113` of gpuix, FORK.md:1262-1263). Not seen in the test renderer: sampled every 16 ms on a held clock, the function-form fill and the range-form line agree to the pixel.
+- **Workaround:** `calc()` in function-form transforms where two values mix, range-form where one does.
+- **Fidelity:** exact at rest and under a resize; mid-spring, a two-value layer can sit a frame behind a one-value layer on a live window.
 - **Components it hits:** none other.
 
 ## Step dots and pips are hidden per item, not by a mask that follows the thumb
 
 - **Cause:** `gpuix gap`. gpuix has `maskImage` (`packages/native/js/host.ts:673`), but a gradient string cannot be a motion value, so the mask cannot follow a spring.
 - **Original:** compact step dots and the pips layer sit under `mask-image: linear-gradient(...)` driven by the thumb's or fill's motion value, a 2px feather that hides each dot as the edge passes it (`slider.tsx:513-528`, `:1194`; `:1370-1376`, `:1683`).
-- **Port:** each dot is its own `motion.div` whose opacity goes to 0 when it is at or under the value (`dotHidden`, `src/components/slider.tsx:548-551`, `:770-786`) and each pip sits in a wrapper whose opacity drops, at once, when `pip <= value` (`:1107-1117`). At rest it looks the same. While a press springs the thumb, every passed dot fades together over the spring instead of one by one as the edge reaches it.
+- **Port:** each dot is its own `motion.div` whose opacity goes to 0 when it is at or under the value (`dotHidden`, `src/components/slider.tsx:548-551`, `:767-800`) and each pip sits in a wrapper whose opacity drops, at once, when `pip <= value` (`:1113-1122`). At rest it looks the same. While a press springs the thumb, every passed dot fades together over the spring instead of one by one as the edge reaches it.
 - **Workaround:** per-item opacity.
 - **Fidelity:** approximated.
 - **Components it hits:** none other.
@@ -68,7 +68,7 @@ repeating it.
 
 - **Cause:** `not ported yet`.
 - **Original:** `hideFill`, `thumbColor`, `thumbBorderColor`, `trackClassName` / `trackStyle`, `fillClassName` / `fillStyle` (`slider.tsx:79-85`, applied at `:1134-1157`, `:935-937`), any of which forces the compact engine (`:1903-1915`); `className`, `ref` and HTML props land on the root (`:959-970`) or the comfortable row (`:1631`).
-- **Port:** `CompactProps` and `variant` / `size` only, plus a harness `testId` (`src/components/slider.tsx:397-411`, `:1324-1329`); `needsCompact` checks `size`, an array value, `steps`, `showSteps`, `showValue`, `valuePosition` (`:1333-1339`). The knob is always `#FFFFFF` (`:632`), the fill `selectedWash`, with no way to override either.
+- **Port:** `CompactProps` and `variant` / `size` only, plus a harness `testId` (`src/components/slider.tsx:397-411`, `:1321-1326`); `needsCompact` checks `size`, an array value, `steps`, `showSteps`, `showValue`, `valuePosition` (`:1340-1347`). The knob is always `#FFFFFF` (`:632`), the fill `selectedWash`, with no way to override either.
 - **Workaround:** none. Also in `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` (Slider, last bullet).
 - **Fidelity:** dropped.
 - **Components it hits:** every ported component.
@@ -77,7 +77,7 @@ repeating it.
 
 - **Cause:** `port choice` (reason not stated; the offsets were not measured against the DOM).
 - **Original:** an absolutely positioned `motion.div` at fixed `top` offsets (`-20` compact hover, `-16` thumb bubble, `-30` default row, `slider.tsx:1123`, `:365`, `:1596`), centred with `-translate-x-1/2`, radius `shape.bg` (`:373`).
-- **Port:** a `ValueBubble` (`src/components/slider.tsx:71-123`) in an `<anchored side="top" align="center" fit="snap" deferred>` with `gap` 8 above a thumb or 0 above a zero-size marker at 4px (compact, `:794-814`) or -6px (default, `:1299-1317`); radius `shape.bg`. The anchor keeps the bubble inside the window, which the DOM bubble does not. The marker offsets reproduce the DOM's bubble bottom if the bubble is 24px tall.
+- **Port:** a `ValueBubble` (`src/components/slider.tsx:71-123`) in an `<anchored side="top" align="center" fit="snap" deferred>` with `gap` 8 above a thumb or 0 above a zero-size marker at 4px (compact, `:803-824`) or -6px (default, `:1306-1325`); radius `shape.bg`. The anchor keeps the bubble inside the window, which the DOM bubble does not. The marker offsets reproduce the DOM's bubble bottom if the bubble is 24px tall.
 - **Workaround:** none.
 - **Fidelity:** approximated (placement unverified to the pixel).
 - **Components it hits:** none other.
@@ -95,7 +95,7 @@ repeating it.
 
 - **Cause:** `port choice` (reason not stated; `surface2` is the demo card's colour).
 - **Original:** the blocks that keep pips off the words are `bg-background` (`slider.tsx:1724`, `:1722`), and the value block is `minWidth` of `formatValue(max).length` ch around the current text (`:1721-1726`), so it grows with a longer value.
-- **Port:** `color.surface2` (`src/components/slider.tsx:1164`, `:1168`), correct on the demo card and wrong on any other surface; the value block holds `formatValue(max())` rather than the current text (`:1171-1173`), so a current value wider than the max's (a "Medium" against "Ultra") is wider than its block and a pip can show beside it.
+- **Port:** `color.surface2` (`src/components/slider.tsx:1163`, `:1174`), correct on the demo card and wrong on any other surface; the value block holds `formatValue(max())` rather than the current text (`:1177-1179`), so a current value wider than the max's (a "Medium" against "Ultra") is wider than its block and a pip can show beside it.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** none other.
@@ -104,7 +104,7 @@ repeating it.
 
 - **Cause:** `port choice` for the extra rows (they drive the screenshot scenarios and the resize check) and the split Steps row; `not ported yet` for the missing chrome.
 - **Original:** `app/docs/slider/page.tsx:246-419`: Compact, Range, Steps (25 and 10 together), Non-uniform, Value Display (left, right, tooltip, `gap-6`), Format, Disabled, then Default, Default - Scrubber, Default - Format, Default - Disabled, each in a `w-72` well with a code toggle, plus an API Reference table (`:126-213`, `:421`) and the description "One slider, two ladder steps ..." (`:240`).
-- **Port:** `src/demos/slider.tsx:47-259` has every one of those variants with the same values and copy (Compact, Range, Steps 25, Steps 10, Non-uniform, Left, Right, Tooltip, Format, Disabled, Pips, Scrubber, Format, Disabled), in three cards ("Slider: compact", "value display", "default"), Steps split into two rows and the value-display gap 8. Extras not in the source page: Decimal (step 0.1), and a Resize row in each of the compact and default cards (`:100-110`, `:218-230`). No code toggle, props table or description.
+- **Port:** `src/demos/slider.tsx:49-261` has every one of those variants with the same values and copy (Compact, Range, Steps 25, Steps 10, Non-uniform, Left, Right, Tooltip, Format, Disabled, Pips, Scrubber, Format, Disabled), in three cards ("Slider: compact", "value display", "default"), Steps split into two rows and the value-display gap 8. Extras not in the source page: Decimal (step 0.1), and a Resize row in each of the compact and default cards (`:102-112`, `:220-232`). No code toggle, props table or description.
 - **Workaround:** none.
 - **Fidelity:** all source variants present; extras and chrome as above.
 - **Components it hits:** every demo page.

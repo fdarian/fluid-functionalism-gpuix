@@ -764,39 +764,43 @@ function CompactSlider(props: CompactProps) {
 							}}
 						/>
 					</div>
-					<Show when={trackWidth()}>
-						{(width: Accessor<number>) => (
-							<For each={stepDots()}>
-								{(dot: number) => {
-									const percent = () =>
-										max() === min() ? 0 : (dot - min()) / (max() - min());
-									const size = () =>
-										hover.hovered() ? DOT_SIZE * 1.25 : DOT_SIZE;
-									const centre = () =>
-										THUMB_SIZE / 2 + percent() * (width() - THUMB_SIZE);
-									return (
-										<motion.div
-											initial={false}
-											animate={{
-												left: centre() - size() / 2,
-												top: PRESS_PAD + THUMB_SIZE / 2 - size() / 2,
-												width: size(),
-												height: size(),
-												opacity: dotHidden(dot) ? 0 : 0.3,
-											}}
-											transition={tween.moderate}
-											style={{
-												position: 'absolute',
-												borderRadius: 9999,
-												backgroundColor: color.mutedForeground,
-												pointerEvents: 'none',
-											}}
-										/>
-									);
-								}}
-							</For>
-						)}
-					</Show>
+					<For each={stepDots()}>
+						{(dot: number) => {
+							const share = () =>
+								max() === min() ? 0 : (dot - min()) / (max() - min());
+							const size = () => (hover.hovered() ? DOT_SIZE * 1.25 : DOT_SIZE);
+							return (
+								<div
+									style={{
+										position: 'absolute',
+										left: `calc(${THUMB_SIZE / 2}px + ${share()} * (100% - ${THUMB_SIZE}px))`,
+										top: PRESS_PAD + THUMB_SIZE / 2,
+										width: 0,
+										height: 0,
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
+										pointerEvents: 'none',
+									}}
+								>
+									<motion.div
+										initial={false}
+										animate={{
+											width: size(),
+											height: size(),
+											opacity: dotHidden(dot) ? 0 : 0.3,
+										}}
+										transition={tween.moderate}
+										style={{
+											flexShrink: 0,
+											borderRadius: 9999,
+											backgroundColor: color.mutedForeground,
+										}}
+									/>
+								</div>
+							);
+						}}
+					</For>
 					{thumb(0)}
 					<Show when={isRange()}>{thumb(1)}</Show>
 					<Show when={preview()}>
@@ -871,14 +875,8 @@ function ComfortableSlider(props: ComfortableProps) {
 		format: () => props.formatValue,
 	}).formatValue;
 
-	const [rowWidth, setRowWidth] = createSignal<number>();
-	const box = createControlBox({
-		// A press maps over the border box, like the DOM version's getBoundingClientRect.
-		onMeasure(painted) {
-			const inside = painted.width - ROW_BORDER * 2;
-			if (rowWidth() !== inside) setRowWidth(inside);
-		},
-	});
+	// A press maps over the border box, like the DOM version's getBoundingClientRect.
+	const box = createControlBox({ onMeasure() {} });
 	const hover = createHover();
 	const [focused, setFocused] = createSignal(false);
 	const [preview, setPreview] = createSignal<HoverPreview | null>(null);
@@ -895,7 +893,7 @@ function ComfortableSlider(props: ComfortableProps) {
 			? 0
 			: Math.max(0, Math.min(1, (v - min()) / (max() - min())));
 	/** Painted bounds are the border box; the absolute layers measure from inside the border. */
-	const inner = () => rowWidth();
+	const inner = () => box.width() - ROW_BORDER * 2;
 	const atMin = () => props.value === min();
 
 	const valueAtX = (x: number) => {
@@ -929,7 +927,7 @@ function ComfortableSlider(props: ComfortableProps) {
 	const computePreview = (x: number) => {
 		const width = inner();
 		const liveWidth = box.width();
-		if (width === undefined || liveWidth === 0) return;
+		if (liveWidth === 0) return;
 		const snappedValue = valueAtX(x);
 		const snappedX = percentOf(snappedValue) * width;
 		const handleX = edgeOf(props.value, width);
@@ -995,42 +993,43 @@ function ComfortableSlider(props: ComfortableProps) {
 	});
 
 	/**
-	 * The fill, the handle line and the scrubber's handle strip all read these three, so a press, a key or a drag moves them together. The fill and the line are `percent` (0..1) of the row's width plus offsets; `atMinValue` (0..1) is FF's `zeroOffset`, which keeps the line visible at min and empties the pips fill there.
+	 * The fill, the handle line and the scrubber's handle strip all read these two, so a press, a key or a drag moves them together. `percent` (0..1) is the share of the row's width; `zeroOffset` is FF's px nudge that keeps the line visible at min and empties the pips fill there.
 	 */
-	const percent = createMotionValue(0);
-	const atMinValue = createMotionValue(0);
-	const widthValue = createMotionValue(0);
+	const zeroTarget = () => (variant() === 'pips' ? 8 : 17);
+	const percent = createMotionValue(percentOf(props.value));
+	const zeroOffset = createMotionValue(atMin() ? zeroTarget() : 0);
 	let placed = false;
 	createRenderEffect(() => {
-		const width = inner();
-		if (width === undefined) return;
 		const target = percentOf(props.value);
-		const zero = atMin() ? 1 : 0;
-		const first = !placed;
-		placed = true;
-		widthValue.jump(width);
-		if (first) percent.jump(target);
+		const zero = atMin() ? zeroTarget() : 0;
+		// The values start at the first render's target.
+		if (!placed) {
+			placed = true;
+			return;
+		}
 		// `set` leaves a press spring running, which keeps overwriting it until it settles, as in the source.
-		else if (placing()) percent.set(target);
+		if (placing()) percent.set(target);
 		else percent.animate(target, tween.fast);
-		if (first) atMinValue.jump(zero);
-		else atMinValue.animate(zero, tween.fast);
+		zeroOffset.animate(zero, tween.fast);
 	});
-	const fillWidth = createTransform(
-		[percent, atMinValue, widthValue],
-		([p, zero, width]) =>
-			variant() === 'scrubber'
-				? p * width
-				: p * width + 20 - 20 * p - 20 * zero,
+	const scrubberFillWidth = createTransform(percent, [0, 1], ['0%', '100%']);
+	const pipsFillWidth = createTransform(
+		[percent, zeroOffset],
+		([p, zo]) => `calc(${p * 100}% + ${20 - 20 * p - zo * 2.5}px)`,
 	);
-	const lineLeft = createTransform(
-		[percent, atMinValue, widthValue],
-		([p, zero, width]) =>
-			variant() === 'pips'
-				? p * width + 11 - 24 * p
-				: p * width - 9 + 17 * zero,
+	const pipsLineLeft = createTransform(
+		percent,
+		[0, 1],
+		['calc(0% + 11px)', 'calc(100% - 13px)'],
 	);
-	const handleLeft = createTransform([lineLeft], ([left]) => left + 1);
+	const scrubberLineLeft = createTransform(
+		[percent, zeroOffset],
+		([p, zo]) => `calc(${p * 100}% - 9px + ${zo}px)`,
+	);
+	const handleLeft = createTransform(
+		[percent, zeroOffset],
+		([p, zo]) => `calc(${p * 100}% - 8px + ${zo}px)`,
+	);
 	const lineColor = () => {
 		if (focused()) return color.foreground;
 		return foregroundAlpha(hover.hovered() ? 0.5 : 0.25);
@@ -1074,9 +1073,6 @@ function ComfortableSlider(props: ComfortableProps) {
 			<div
 				ref={box.ref}
 				testId={props.testId === undefined ? undefined : `${props.testId}-row`}
-				onLayout={(event: DomEvent) =>
-					setRowWidth(layoutWidth(event) - ROW_BORDER * 2)
-				}
 				{...pointer}
 				style={{
 					position: 'relative',
@@ -1197,37 +1193,38 @@ function ComfortableSlider(props: ComfortableProps) {
 						backgroundColor: hoverPreviewFill(),
 					}}
 				/>
-				<Show when={inner() !== undefined}>
-					<div
-						testId={
-							props.testId === undefined ? undefined : `${props.testId}-fill`
-						}
-						style={{
-							position: 'absolute',
-							top: 0,
-							bottom: 0,
-							left: 0,
-							width: fillWidth,
-							backgroundColor: color.active,
-						}}
-					/>
-					<motion.div
-						initial={false}
-						animate={{
-							top: isActive() ? 7 : 8,
-							bottom: isActive() ? 7 : 8,
-						}}
-						transition={tween.fast}
-						style={{
-							position: 'absolute',
-							left: lineLeft,
-							width: 2,
-							borderRadius: 1,
-							backgroundColor: lineColor(),
-							...springFade(['background-color']),
-						}}
-					/>
-				</Show>
+				<div
+					testId={
+						props.testId === undefined ? undefined : `${props.testId}-fill`
+					}
+					style={{
+						position: 'absolute',
+						top: 0,
+						bottom: 0,
+						left: 0,
+						width: variant() === 'pips' ? pipsFillWidth : scrubberFillWidth,
+						backgroundColor: color.active,
+					}}
+				/>
+				<motion.div
+					testId={
+						props.testId === undefined ? undefined : `${props.testId}-line`
+					}
+					initial={false}
+					animate={{
+						top: isActive() ? 7 : 8,
+						bottom: isActive() ? 7 : 8,
+					}}
+					transition={tween.fast}
+					style={{
+						position: 'absolute',
+						left: variant() === 'pips' ? pipsLineLeft : scrubberLineLeft,
+						width: 2,
+						borderRadius: 1,
+						backgroundColor: lineColor(),
+						...springFade(['background-color']),
+					}}
+				/>
 				<div
 					style={{
 						position: 'absolute',
@@ -1267,7 +1264,7 @@ function ComfortableSlider(props: ComfortableProps) {
 						</text>
 					</div>
 				</div>
-				<Show when={variant() === 'scrubber' && inner() !== undefined}>
+				<Show when={variant() === 'scrubber'}>
 					<div
 						testId={
 							props.testId === undefined ? undefined : `${props.testId}-handle`

@@ -3,7 +3,7 @@
  *
  *   bun scripts/check-slider.tsx
  */
-import { showOnly } from '#/demos/slider';
+import { resizeTo, showOnly } from '#/demos/slider';
 import { createCheck } from './check-kit';
 import { readPng } from './png-pixels';
 
@@ -144,5 +144,32 @@ await kit.settle(400);
 	renderer.focusElement(kit.element('scrubber-thumb').id);
 	await kit.settle(100);
 }
+
+// The comfortable layers are `calc()` of the row's own width, so a resize moves them in the frame that lays it out, with no measured width to wait for.
+showOnly('default');
+await kit.settle(400);
+renderer.clockPause();
+for (const width of [160, 288, 200]) {
+	resizeTo(width);
+	renderer.flush();
+	renderer.dispatchNativeEvents();
+	const inside = kit.bounds('resize-pips-row').width - 2;
+	// Value 2 of 0..4 is half the row: the pips fill runs to p * width + 20 - 20 * p, the line sits at p * width + 11 - 24 * p.
+	const fillEdge = kit.bounds('resize-pips-fill').width;
+	const lineLeft =
+		kit.bounds('resize-pips-line').x - kit.bounds('resize-pips-fill').x;
+	kit.check(
+		`the pips fill follows a resize to ${width} in the same frame`,
+		Math.abs(fillEdge - (inside / 2 + 10)) < 1.01,
+		`fill ${fillEdge}, want ${inside / 2 + 10}`,
+	);
+	kit.check(
+		`the pips line follows a resize to ${width} in the same frame`,
+		Math.abs(lineLeft - (inside / 2 - 1)) < 1.01,
+		`line ${lineLeft}, want ${inside / 2 - 1}`,
+	);
+}
+renderer.clockResume();
+resizeTo(288);
 
 kit.finish();
