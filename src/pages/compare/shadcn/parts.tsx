@@ -2,7 +2,6 @@ import { buttonProps, type KeyEvent, useGpuixRequired } from '@gpuix/solid';
 import { Icon } from '#/lib/icon';
 import { defineIcon, type IconName } from '#/lib/icons';
 import { lucide } from '#/lib/icons/lucide';
-import { weight } from '#/lib/theme';
 import { sc } from './theme';
 
 /** shadcn imports `lucide-react` directly, so these stay Lucide whichever library the Icons row picks. */
@@ -31,7 +30,7 @@ export function ScLabel(props: {
 				style={{
 					fontSize: props.size ?? 14,
 					lineHeight: `${props.size ?? 14}px`,
-					fontWeight: weight.medium,
+					fontWeight: 500,
 					color: sc.foreground,
 					whiteSpace: 'nowrap',
 				}}

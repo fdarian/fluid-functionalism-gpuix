@@ -12,6 +12,10 @@ import { MARK_BLUE, MARK_RED, Specimen, TweakFrame } from './specimen';
 
 const MENU_LABEL = 'Open the settings dialog';
 
+/** Weight alone leaves optical size on auto: the font size, 14 at the axis floor, either way. */
+const PLAIN = ["'wght' 400", "'wght' 550"] as const;
+const PAIRED = [weight.normal, weight.semibold] as const;
+
 /** The row's inset in its frame (`p-1`) and its own padding (`px-2`): where the label starts. */
 const FRAME_PAD = 4;
 const ROW_PAD = 8;
@@ -66,6 +70,8 @@ function WeightItem(props: {
 	onToggle: () => void;
 	cursor: Cursor | null;
 	onDelta: (px: number) => void;
+	/** The label's `fontVariationSettings` off and on. */
+	settings: readonly [string, string];
 }) {
 	const [pointerOver, setPointerOver] = createSignal(false);
 	// The label at both weights, out of sight, so the line and the tint know both widths whichever one shows.
@@ -85,7 +91,7 @@ function WeightItem(props: {
 	});
 	const labelStyle = (heavy: boolean) => ({
 		...scale.body,
-		fontWeight: heavy ? weight.semibold : weight.normal,
+		fontVariationSettings: props.settings[heavy ? 1 : 0],
 		whiteSpace: 'nowrap' as const,
 	});
 
@@ -260,11 +266,6 @@ export function WeightOpszDemo() {
 	// Reduced motion leaves the item on, for the reader to toggle.
 	const scripted = () => visibility.visible() && !reduced() && !userInside();
 	const cursor = createScript(scripted, setSelected);
-	const pairedCaption = () => {
-		const px = paired();
-		const note = px === undefined ? '' : ` (${width(px)} here)`;
-		return `Weight + optical size needs variable axes${note}`;
-	};
 
 	return (
 		<TweakFrame
@@ -283,15 +284,20 @@ export function WeightOpszDemo() {
 					onToggle={() => setSelected(!selected())}
 					cursor={scripted() ? cursor : null}
 					onDelta={setPlain}
+					settings={PLAIN}
 				/>
 			</Specimen>
-			{/* gpuix renders only a font's static cuts, so the paired axes cannot be set: this side is the same cut as the left (drift/typography.md). */}
-			<Specimen good mark="⚠️" testId="weight-paired" caption={pairedCaption()}>
+			<Specimen
+				good
+				testId="weight-paired"
+				caption={`Weight + optical size${wider(paired())}`}
+			>
 				<WeightItem
 					selected={selected()}
 					onToggle={() => setSelected(!selected())}
 					cursor={scripted() ? cursor : null}
 					onDelta={setPaired}
+					settings={PAIRED}
 				/>
 			</Specimen>
 		</TweakFrame>

@@ -82,7 +82,7 @@ function HeadText(props: { children: string }) {
 			style={{
 				...siteType.body,
 				textAlign: 'left',
-				fontWeight: weight.semibold,
+				fontVariationSettings: weight.semibold,
 				color: color.foreground,
 			}}
 		>

@@ -67,7 +67,8 @@ function ReadoutText(props: { children: JSX.Element; heavy?: boolean }) {
 				fontFamily: MONO,
 				fontSize: 11,
 				lineHeight: '16px',
-				fontWeight: props.heavy === true ? weight.semibold : weight.normal,
+				fontVariationSettings:
+					props.heavy === true ? weight.semibold : weight.normal,
 				color: color.background,
 				whiteSpace: 'nowrap',
 			}}
@@ -97,7 +98,7 @@ function PaddingStrip(props: { width: number; side: 'left' | 'right' }) {
 					fontFamily: MONO,
 					fontSize: 9,
 					lineHeight: '9px',
-					fontWeight: weight.semibold,
+					fontVariationSettings: weight.semibold,
 					color: color.foreground,
 				}}
 			>

@@ -159,7 +159,7 @@ export function Callout(props: {
 			<text
 				style={{
 					...siteType.caption,
-					fontWeight: weight.semibold,
+					fontVariationSettings: weight.semibold,
 					color: color.foreground,
 				}}
 			>

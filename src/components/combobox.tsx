@@ -248,7 +248,7 @@ export function Combobox(props: {
 							minWidth: 0,
 							height: 24,
 							fontSize: scale.body.fontSize,
-							fontWeight: weight.normal,
+							fontVariationSettings: weight.normal,
 							color: color.foreground,
 							backgroundColor: color.transparent,
 							keyboardFocusDim: false,

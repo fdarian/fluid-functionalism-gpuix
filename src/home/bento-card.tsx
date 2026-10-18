@@ -140,7 +140,7 @@ export function BentoCard(props: {
 				<text
 					style={{
 						...siteType.body,
-						fontWeight: weight.normal,
+						fontVariationSettings: weight.normal,
 						color: color.mutedForeground,
 						...colorFade,
 						groupHover: { color: color.foreground },

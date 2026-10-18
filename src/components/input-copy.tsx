@@ -217,7 +217,7 @@ export function InputCopy(props: {
 								style={{
 									fontSize: step().text,
 									lineHeight: `${step().line}px`,
-									fontWeight: weight.normal,
+									fontVariationSettings: weight.normal,
 									color: labelColor(),
 									...colorFade,
 								}}
@@ -249,7 +249,7 @@ export function InputCopy(props: {
 					fontFamily: MONO,
 					fontSize: step().text,
 					lineHeight: `${step().line}px`,
-					fontWeight: weight.normal,
+					fontVariationSettings: weight.normal,
 					color: color.foreground,
 					whiteSpace: 'nowrap',
 					textOverflow: 'ellipsis',
@@ -341,7 +341,7 @@ export function InputCopy(props: {
 							style={{
 								fontSize: step().text,
 								lineHeight: `${step().line}px`,
-								fontWeight: weight.normal,
+								fontVariationSettings: weight.normal,
 								color: color.mutedForeground,
 							}}
 						>

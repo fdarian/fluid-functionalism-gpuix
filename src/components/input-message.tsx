@@ -489,7 +489,7 @@ function QueuedRow(props: {
 				<text
 					style={{
 						...step().rowText,
-						fontWeight: weight.normal,
+						fontVariationSettings: weight.normal,
 						color: color.foreground,
 						whiteSpace: 'nowrap',
 						textOverflow: 'ellipsis',
@@ -589,7 +589,7 @@ function SuggestionRow(props: {
 					...step().field,
 					flexGrow: 1,
 					minWidth: 0,
-					fontWeight: weight.normal,
+					fontVariationSettings: weight.normal,
 					color: 'currentColor',
 					whiteSpace: 'nowrap',
 					textOverflow: 'ellipsis',
@@ -1121,7 +1121,7 @@ export function InputMessage(props: InputMessageProps) {
 						paddingBottom: step().fieldPad,
 						paddingLeft: step().fieldPadX,
 						paddingRight: step().fieldPadX,
-						fontWeight: weight.normal,
+						fontVariationSettings: weight.normal,
 						color: color.foreground,
 						backgroundColor: color.transparent,
 						keyboardFocusDim: false,
@@ -1149,7 +1149,7 @@ export function InputMessage(props: InputMessageProps) {
 							style={{
 								...step().field,
 								minWidth: 0,
-								fontWeight: weight.normal,
+								fontVariationSettings: weight.normal,
 								color: color.mutedForeground,
 								whiteSpace: 'nowrap',
 								textOverflow: 'ellipsis',

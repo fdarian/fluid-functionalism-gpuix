@@ -102,7 +102,7 @@ function MonthHeading(props: { release: Release }) {
 			<text
 				style={{
 					...siteType.title,
-					fontWeight: weight.semibold,
+					fontVariationSettings: weight.semibold,
 					color: color.foreground,
 				}}
 			>
@@ -162,7 +162,7 @@ function KindGroup(props: { group: ChangeGroup; month: string }): JSX.Element {
 						<text
 							style={{
 								...siteType.subtitle,
-								fontWeight: weight.semibold,
+								fontVariationSettings: weight.semibold,
 								color: color.foreground,
 							}}
 						>
@@ -171,7 +171,7 @@ function KindGroup(props: { group: ChangeGroup; month: string }): JSX.Element {
 						<text
 							style={{
 								...siteType.caption,
-								fontWeight: weight.normal,
+								fontVariationSettings: weight.normal,
 								fontVariantNumeric: 'tabular-nums',
 								color: color.mutedForeground,
 							}}
@@ -252,7 +252,7 @@ export function ReleaseSection(props: {
 					<text
 						style={{
 							...siteType.subtitle,
-							fontWeight: weight.semibold,
+							fontVariationSettings: weight.semibold,
 							color: color.foreground,
 						}}
 					>

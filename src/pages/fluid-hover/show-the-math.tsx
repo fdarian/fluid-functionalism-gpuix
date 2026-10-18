@@ -182,7 +182,7 @@ function MathList(props: { showMath: () => boolean }) {
 									fontFamily: MONO,
 									fontSize: scale.micro.fontSize,
 									lineHeight: scale.micro.lineHeight,
-									fontWeight: weight.normal,
+									fontVariationSettings: weight.normal,
 									color: color.foreground,
 									whiteSpace: 'nowrap',
 								}}

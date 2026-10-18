@@ -118,7 +118,7 @@ function NameLink(props: { name: string; slug: string }) {
 			<text
 				style={{
 					...siteType.body,
-					fontWeight: weight.normal,
+					fontVariationSettings: weight.normal,
 					color: color.foreground,
 				}}
 			>
@@ -191,7 +191,7 @@ function RefChip(props: { gitRef: ChangeRef }) {
 					fontFamily: MONO,
 					fontSize: siteType.caption.fontSize,
 					lineHeight: siteType.caption.lineHeight,
-					fontWeight: weight.normal,
+					fontVariationSettings: weight.normal,
 					fontVariantNumeric: 'tabular-nums',
 					color: hovered() ? color.foreground : color.mutedForeground,
 				}}
@@ -254,7 +254,7 @@ export function Entry(props: {
 									<text
 										style={{
 											...siteType.body,
-											fontWeight: weight.normal,
+											fontVariationSettings: weight.normal,
 											color: color.foreground,
 										}}
 									>

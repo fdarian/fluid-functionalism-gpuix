@@ -31,7 +31,6 @@ export const listed = 'none';
 
 /** How long a new question stays in "Writing the answer" before the canned answer lands. */
 const THINKING_MS = 1600;
-const BOLD = 700;
 
 export async function scenarios(shot: ShotContext) {
 	await shot.hover('concept-nav-concepts-beacon');
@@ -178,10 +177,12 @@ function Answer() {
 			<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
 				<Paragraph>
 					The Stoics drew a sharp line between what is{' '}
-					<span style={{ fontWeight: weight.semibold }}>“up to us”</span> and
-					what is not. Our judgments, desires, and chosen actions are within our
-					power; everything else — health, reputation, wealth, the behaviour of
-					others — is not
+					<span style={{ fontVariationSettings: weight.semibold }}>
+						“up to us”
+					</span>{' '}
+					and what is not. Our judgments, desires, and chosen actions are within
+					our power; everything else — health, reputation, wealth, the behaviour
+					of others — is not
 					<Cite n={1} />
 					<Cite n={3} />.
 				</Paragraph>
@@ -242,7 +243,7 @@ function SourcesPanel() {
 							<text
 								style={{
 									...siteType.body,
-									fontWeight: weight.normal,
+									fontVariationSettings: weight.normal,
 									color: color.foreground,
 									whiteSpace: 'nowrap',
 									overflow: 'hidden',
@@ -311,7 +312,7 @@ function TurnView(props: { turn: Turn }) {
 				style={{
 					fontSize: 24,
 					lineHeight: '30px',
-					fontWeight: BOLD,
+					fontVariationSettings: weight.bold,
 					color: color.foreground,
 				}}
 			>

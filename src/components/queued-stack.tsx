@@ -315,7 +315,7 @@ export function QueuedStack(props: {
 													style={{
 														...scale.microCompact,
 														lineHeight: '10px',
-														fontWeight: weight.semibold,
+														fontVariationSettings: weight.semibold,
 														color: color.mutedForeground,
 														fontVariantNumeric: 'tabular-nums',
 													}}

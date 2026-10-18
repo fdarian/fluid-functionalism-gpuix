@@ -1,6 +1,6 @@
 import { For, Show } from 'solid-js';
 import type { IconName } from '#/lib/icons';
-import { twShadow, weight } from '#/lib/theme';
+import { twShadow } from '#/lib/theme';
 import { LUCIDE, LucideIcon, lucideGlyph, pressProps } from './parts';
 import { sc, scRadius } from './theme';
 
@@ -93,7 +93,7 @@ export function ScDropdownMenu(props: {
 								style={{
 									fontSize: 13,
 									lineHeight: '19.5px',
-									fontWeight: weight.normal,
+									fontWeight: 400,
 									whiteSpace: 'nowrap',
 									color: sc.popoverForeground,
 								}}

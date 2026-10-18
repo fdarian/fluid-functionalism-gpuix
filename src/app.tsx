@@ -82,7 +82,7 @@ function Heading(props: { children: string }) {
 		<text
 			style={{
 				...siteType.display,
-				fontWeight: weight.semibold,
+				fontVariationSettings: weight.semibold,
 				color: color.foreground,
 			}}
 		>
@@ -408,7 +408,7 @@ export function CustomizeCard() {
 			<text
 				style={{
 					...siteType.title,
-					fontWeight: weight.semibold,
+					fontVariationSettings: weight.semibold,
 					color: color.foreground,
 				}}
 			>

@@ -210,7 +210,7 @@ function ValueDisplay(props: {
 	const textStyle = (heavy: boolean) => ({
 		...scale.body,
 		lineHeight: `${scale.body.fontSize}px`,
-		fontWeight: heavy ? weight.semibold : weight.normal,
+		fontVariationSettings: heavy ? weight.semibold : weight.normal,
 		fontVariantNumeric: 'tabular-nums',
 		whiteSpace: 'nowrap' as const,
 	});
@@ -302,7 +302,7 @@ function ValueDisplay(props: {
 						width: 40,
 						height: 18,
 						fontSize: scale.body.fontSize,
-						fontWeight: weight.normal,
+						fontVariationSettings: weight.normal,
 						textAlign: 'center',
 						color: color.foreground,
 						backgroundColor: color.transparent,

@@ -44,7 +44,6 @@ export const listed = 'none';
 
 /** How long the AI block shows "Drafting with Quill AI" before the draft lands. */
 const DRAFTING_MS = 1700;
-const BOLD = 700;
 
 export async function scenarios(shot: ShotContext) {
 	shot.capture('document');
@@ -189,7 +188,7 @@ function Heading(props: { children: string }) {
 				paddingTop: 8,
 				fontSize: 18,
 				lineHeight: '28px',
-				fontWeight: weight.semibold,
+				fontVariationSettings: weight.semibold,
 				color: color.foreground,
 			}}
 		>
@@ -476,7 +475,7 @@ export function Page() {
 						style={{
 							fontSize: 34,
 							lineHeight: '42px',
-							fontWeight: BOLD,
+							fontVariationSettings: weight.bold,
 							color: color.foreground,
 						}}
 					>

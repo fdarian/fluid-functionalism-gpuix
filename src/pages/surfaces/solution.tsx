@@ -51,7 +51,8 @@ function MicroText(props: {
 			style={{
 				...scale.micro,
 				fontFamily: props.mono === true ? MONO : undefined,
-				fontWeight: props.semibold === true ? weight.semibold : undefined,
+				fontVariationSettings:
+					props.semibold === true ? weight.semibold : undefined,
 				color: props.color,
 			}}
 		>
@@ -255,7 +256,7 @@ export function SubstrateDemo() {
 								<text
 									style={{
 										...siteType.caption,
-										fontWeight: weight.semibold,
+										fontVariationSettings: weight.semibold,
 										color: color.foreground,
 									}}
 								>

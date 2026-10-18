@@ -136,7 +136,7 @@ function FooterLabel(props: { name: string; linked: boolean }) {
 			<text
 				style={{
 					...siteType.body,
-					fontWeight: weight.normal,
+					fontVariationSettings: weight.normal,
 					color: color.mutedForeground,
 					...(props.linked
 						? {

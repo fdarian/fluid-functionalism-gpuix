@@ -106,7 +106,7 @@ export function Demo() {
 											style={{
 												...scale.caption,
 												color: color.background,
-												fontWeight: weight.semibold,
+												fontVariationSettings: weight.semibold,
 											}}
 										>
 											Keyboard shortcut

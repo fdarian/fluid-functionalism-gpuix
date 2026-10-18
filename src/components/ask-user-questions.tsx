@@ -238,7 +238,9 @@ function Row(props: RowProps) {
 				<text
 					style={{
 						...scale.micro,
-						fontWeight: props.chipFilled ? weight.semibold : weight.normal,
+						fontVariationSettings: props.chipFilled
+							? weight.semibold
+							: weight.normal,
 						color: props.isMulti
 							? props.chipFilled
 								? color.background
@@ -998,7 +1000,7 @@ export function AskUserQuestions(props: {
 									<text
 										style={{
 											...scale.title,
-											fontWeight: weight.semibold,
+											fontVariationSettings: weight.semibold,
 											color: color.foreground,
 										}}
 									>

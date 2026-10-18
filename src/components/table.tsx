@@ -199,7 +199,7 @@ function Cell(props: CellOptions & { header: boolean }) {
 					...metrics().text,
 					color: textColor(),
 					...(props.header ? {} : colorFade),
-					fontWeight: props.header ? weight.semibold : weight.normal,
+					fontVariationSettings: props.header ? weight.semibold : weight.normal,
 					textAlign: props.alignRight ? 'right' : 'left',
 					fontVariantNumeric: props.tabularNums ? 'tabular-nums' : 'normal',
 				}}

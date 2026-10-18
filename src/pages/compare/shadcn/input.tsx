@@ -1,5 +1,4 @@
 import { type HostElement, useGpuixRequired } from '@gpuix/solid';
-import { weight } from '#/lib/theme';
 import { ScLabel } from './parts';
 import { sc, scRadius, scRing } from './theme';
 
@@ -66,7 +65,7 @@ export function ScInputField(props: {
 						minWidth: 0,
 						height: 24,
 						fontSize: 14,
-						fontWeight: weight.normal,
+						fontWeight: 400,
 						color: sc.foreground,
 						backgroundColor: 'rgba(0,0,0,0)',
 						keyboardFocusDim: false,

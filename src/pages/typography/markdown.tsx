@@ -22,7 +22,11 @@ const TICK_MASK = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/
 // ---- Inline runs ----------------------------------------------------------
 
 function Strong(props: { children: JSX.Element }) {
-	return <span style={{ fontWeight: weight.semibold }}>{props.children}</span>;
+	return (
+		<span style={{ fontVariationSettings: weight.semibold }}>
+			{props.children}
+		</span>
+	);
 }
 
 function Em(props: { children: JSX.Element }) {
@@ -97,7 +101,8 @@ function Heading(props: { role: TypeRole; bold?: boolean; children: string }) {
 		<text
 			style={{
 				...roleStyle(props.role),
-				fontWeight: props.bold === true ? 700 : weight.semibold,
+				fontVariationSettings:
+					props.bold === true ? weight.bold : weight.semibold,
 				color: color.foreground,
 			}}
 		>
@@ -424,7 +429,10 @@ function Cell(props: { header: boolean; first: boolean; children: string }) {
 					...roleStyle('body'),
 					textAlign: 'left',
 					...(props.header
-						? { fontWeight: weight.semibold, color: color.foreground }
+						? {
+								fontVariationSettings: weight.semibold,
+								color: color.foreground,
+							}
 						: { color: color.mutedForeground }),
 				}}
 			>

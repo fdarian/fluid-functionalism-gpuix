@@ -184,7 +184,7 @@ export function Button(props: {
 							...size().text,
 							color: labelColor(),
 							...colorFade,
-							fontWeight: weight.normal,
+							fontVariationSettings: weight.normal,
 							whiteSpace: 'nowrap',
 						}}
 					>

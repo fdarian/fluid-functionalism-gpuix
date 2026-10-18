@@ -127,7 +127,7 @@ function Stat(props: { value: string; label: string; hint: string }) {
 				style={{
 					fontFamily: MONO,
 					...siteType.body,
-					fontWeight: weight.normal,
+					fontVariationSettings: weight.normal,
 					color: color.foreground,
 					fontVariantNumeric: 'tabular-nums',
 				}}

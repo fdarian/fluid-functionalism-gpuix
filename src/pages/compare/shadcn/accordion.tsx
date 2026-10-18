@@ -6,7 +6,6 @@ import {
 	useGpuixRequired,
 } from '@gpuix/solid';
 import { createEffect, createSignal, For, on, Show } from 'solid-js';
-import { weight } from '#/lib/theme';
 import { LUCIDE, LucideIcon, pressProps } from './parts';
 import { sc, scRing } from './theme';
 
@@ -62,7 +61,7 @@ function Panel(props: { open: boolean; children: string }) {
 						style={{
 							fontSize: 13,
 							lineHeight: '18.57px',
-							fontWeight: weight.normal,
+							fontWeight: 400,
 							color: sc.foreground,
 						}}
 					>
@@ -165,7 +164,7 @@ export function ScAccordion(props: {
 									style={{
 										fontSize: 13,
 										lineHeight: '19.5px',
-										fontWeight: weight.medium,
+										fontWeight: 500,
 										color: sc.foreground,
 										groupHover: { textDecoration: 'underline' },
 									}}

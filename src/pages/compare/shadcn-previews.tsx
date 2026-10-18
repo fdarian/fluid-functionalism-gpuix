@@ -1,5 +1,4 @@
 import { createSignal, For, type JSX } from 'solid-js';
-import { weight } from '#/lib/theme';
 import { ScAccordion } from '#/pages/compare/shadcn/accordion';
 import { ScCheckbox } from '#/pages/compare/shadcn/checkbox';
 import { ScDropdownMenu } from '#/pages/compare/shadcn/dropdown-menu';
@@ -146,7 +145,7 @@ function SliderRow(props: {
 	const text = () => ({
 		fontSize: 13,
 		lineHeight: '19.5px',
-		fontWeight: weight.normal,
+		fontWeight: 400,
 		color: sc.mutedForeground,
 	});
 	return (

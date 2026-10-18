@@ -107,7 +107,7 @@ function GenericCopy(props: { copied: boolean; onCopy: () => void }) {
 				<text
 					style={{
 						...siteType.caption,
-						fontWeight: weight.normal,
+						fontVariationSettings: weight.normal,
 						color: hovered() ? color.foreground : color.mutedForeground,
 						whiteSpace: 'nowrap',
 					}}

@@ -402,7 +402,7 @@ export function ListsDemo() {
 								ref={(element) => register(callout.key, element)}
 								style={{
 									...siteType.caption,
-									fontWeight: weight.semibold,
+									fontVariationSettings: weight.semibold,
 									color: color.foreground,
 									whiteSpace: 'nowrap',
 								}}

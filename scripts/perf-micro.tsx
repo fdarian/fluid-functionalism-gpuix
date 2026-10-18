@@ -14,7 +14,7 @@ import { createRenderer, motion, render } from '@gpuix/solid';
 import { createSignal, For, type JSX } from 'solid-js';
 import { fonts } from '#/lib/fonts';
 import { Icon } from '#/lib/icon';
-import { colorFade, siteType } from '#/lib/theme';
+import { colorFade, siteType, weight } from '#/lib/theme';
 
 const args = parseArgs({
 	allowPositionals: true,
@@ -485,7 +485,7 @@ const cases: Case[] = [
 			<text
 				style={{
 					...body(),
-					fontWeight: 600,
+					fontVariationSettings: weight.semibold,
 					fontVariantNumeric: 'tabular-nums',
 				}}
 			>{`Entry name ${i}`}</text>

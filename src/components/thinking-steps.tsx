@@ -345,7 +345,7 @@ export function ThinkingStep(props: {
 }) {
 	const measured = createMeasuredHeight();
 	const status = () => props.status ?? 'complete';
-	const labelStyle = { ...scale.body, fontWeight: weight.semibold };
+	const labelStyle = { ...scale.body, fontVariationSettings: weight.semibold };
 	return (
 		<Show when={status() !== 'pending'}>
 			{/* Outer: animates height so the space opens smoothly. */}

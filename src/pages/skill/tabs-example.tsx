@@ -1,7 +1,7 @@
 import { buttonProps, useGpuixRequired } from '@gpuix/solid';
 import { createSignal, For } from 'solid-js';
 import { TabsSubtle, TabsSubtleItem } from '#/components/tabs-subtle';
-import { color, focusRing, shape, siteType, weight } from '#/lib/theme';
+import { color, focusRing, shape, siteType } from '#/lib/theme';
 import {
 	Compare,
 	clickStep,
@@ -62,7 +62,7 @@ function GenericTabs(props: {
 							style={{
 								...siteType.body,
 								// The generic version, bold on purpose to show the reflow.
-								fontWeight: props.selected === index() ? 700 : weight.normal,
+								fontWeight: props.selected === index() ? 600 : 400,
 								color:
 									props.selected === index()
 										? color.foreground

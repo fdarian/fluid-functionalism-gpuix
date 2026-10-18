@@ -15,7 +15,6 @@ import {
 	shape,
 	siteType,
 	motion as tween,
-	weight,
 } from '#/lib/theme';
 import {
 	Compare,
@@ -128,7 +127,7 @@ function GenericList(props: {
 							style={{
 								...siteType.body,
 								// The generic version, bold on purpose to show the reflow.
-								fontWeight: props.selected === index() ? 700 : weight.normal,
+								fontWeight: props.selected === index() ? 700 : 400,
 								color: color.foreground,
 								whiteSpace: 'nowrap',
 							}}

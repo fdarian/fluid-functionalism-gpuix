@@ -128,7 +128,7 @@ function GenericButton(props: { index: number; press: PressProps }) {
 				<text
 					style={{
 						...siteType[size.text],
-						fontWeight: weight.normal,
+						fontVariationSettings: weight.normal,
 						color: color.background,
 						whiteSpace: 'nowrap',
 					}}
@@ -203,7 +203,7 @@ function SkillButton(props: { index: number; press: PressProps }) {
 				<text
 					style={{
 						...siteType[size.text],
-						fontWeight: weight.normal,
+						fontVariationSettings: weight.normal,
 						color: color.background,
 						whiteSpace: 'nowrap',
 					}}

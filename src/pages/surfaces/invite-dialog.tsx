@@ -22,7 +22,7 @@ function FieldLabel(props: { children: string }) {
 		<text
 			style={{
 				...siteType.body,
-				fontWeight: weight.normal,
+				fontVariationSettings: weight.normal,
 				color: color.foreground,
 			}}
 		>
@@ -66,7 +66,7 @@ function Header() {
 					<text
 						style={{
 							...siteType.caption,
-							fontWeight: weight.semibold,
+							fontVariationSettings: weight.semibold,
 							color: color.background,
 						}}
 					>
@@ -76,7 +76,7 @@ function Header() {
 				<text
 					style={{
 						...siteType.title,
-						fontWeight: weight.semibold,
+						fontVariationSettings: weight.semibold,
 						color: color.foreground,
 					}}
 				>
@@ -197,7 +197,7 @@ function Footer() {
 				<text
 					style={{
 						...siteType.body,
-						fontWeight: weight.normal,
+						fontVariationSettings: weight.normal,
 						color: color.foreground,
 					}}
 				>
@@ -221,7 +221,7 @@ function Footer() {
 				<text
 					style={{
 						...siteType.body,
-						fontWeight: weight.semibold,
+						fontVariationSettings: weight.semibold,
 						color: color.background,
 					}}
 				>

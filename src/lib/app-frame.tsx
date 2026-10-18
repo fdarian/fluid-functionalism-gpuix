@@ -1,5 +1,5 @@
 import type { JSX } from 'solid-js';
-import { color, fontFamily, type as scale, weight } from './theme';
+import { color, fontFamily, type as scale } from './theme';
 
 const BAR_HEIGHT = 40;
 const MARGIN = 8;
@@ -49,7 +49,7 @@ export function AppFrame(props: { title: string; children: JSX.Element }) {
 					<text
 						style={{
 							...scale.body,
-							fontWeight: weight.medium,
+							fontWeight: 500,
 							color: color.mutedForeground,
 						}}
 					>

@@ -375,8 +375,12 @@ export function linePx(lineHeight: string) {
 
 /** The variable files are loaded in `lib/fonts.ts` and register as `Inter Variable`. */
 export const fontFamily = 'Inter Variable';
-
-export const weight = { normal: 400, medium: 500, semibold: 600 } as const;
+/** The source's `fontWeights` (lib/font-weight.ts): each `wght` is paired with an `opsz` so the advance width stays nearly constant when the weight changes. */
+export const weight = {
+	normal: "'wght' 400, 'opsz' 14",
+	semibold: "'wght' 550, 'opsz' 18",
+	bold: "'wght' 700, 'opsz' 25",
+} as const;
 
 /** The rounded values, for surfaces the source pins to rounded (popups, menu rows). Everything else reads `shape`. */
 export const radius = {

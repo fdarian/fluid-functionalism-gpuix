@@ -12,7 +12,7 @@ import { Button } from '#/components/button';
 import { Tooltip } from '#/components/tooltip';
 import type { ShotContext } from '#/lib/demo';
 import { usePageNav } from '#/lib/page-nav';
-import { color, type as scale, siteType, withAlpha } from '#/lib/theme';
+import { color, type as scale, siteType, weight, withAlpha } from '#/lib/theme';
 import { ArrowCaptureContext, ArrowKeys } from '#/pages/compare/arrow-keys';
 import { CompareCard } from '#/pages/compare/card';
 import { fluidPreviews } from '#/pages/compare/fluid-previews';
@@ -299,7 +299,7 @@ export function Page(): JSX.Element {
 							style={{
 								...siteType.display,
 								lineHeight: `${siteType.display.fontSize}px`,
-								fontWeight: 700,
+								fontVariationSettings: weight.bold,
 								color: color.foreground,
 							}}
 						>

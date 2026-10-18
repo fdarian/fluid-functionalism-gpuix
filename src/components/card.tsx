@@ -625,7 +625,7 @@ export function CardTitle(props: { children: string }) {
 			<text
 				style={{
 					...text(),
-					fontWeight: weight.semibold,
+					fontVariationSettings: weight.semibold,
 					opacity: 0,
 					whiteSpace: 'nowrap',
 				}}
@@ -637,7 +637,9 @@ export function CardTitle(props: { children: string }) {
 					style={{
 						...text(),
 						color: color.foreground,
-						fontWeight: scope.emphasized() ? weight.semibold : weight.normal,
+						fontVariationSettings: scope.emphasized()
+							? weight.semibold
+							: weight.normal,
 						whiteSpace: 'nowrap',
 					}}
 				>
@@ -899,7 +901,7 @@ export function CardFeature(props: {
 					style={{
 						...(scope.compact() ? scale.bodyCompact : scale.body),
 						color: color.foreground,
-						fontWeight: weight.semibold,
+						fontVariationSettings: weight.semibold,
 					}}
 				>
 					{props.title}
@@ -1000,7 +1002,7 @@ export function CardButton(props: {
 					...(scope.compact() ? scale.micro : scale.caption),
 					color: labelColor(),
 					...colorFade,
-					fontWeight: weight.normal,
+					fontVariationSettings: weight.normal,
 					whiteSpace: 'nowrap',
 					...(variant() === 'link' && hovered()
 						? { textDecoration: 'underline' }

@@ -36,7 +36,7 @@ export function H3(props: { children: string; marginTop: number }) {
 			<text
 				style={{
 					...siteType.subtitle,
-					fontWeight: weight.semibold,
+					fontVariationSettings: weight.semibold,
 					color: color.foreground,
 				}}
 			>

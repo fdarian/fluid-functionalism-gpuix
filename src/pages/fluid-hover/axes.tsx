@@ -42,7 +42,7 @@ function AxisBlock(props: {
 						fontFamily: MONO,
 						fontSize: siteType.caption.fontSize,
 						lineHeight: siteType.caption.lineHeight,
-						fontWeight: weight.semibold,
+						fontVariationSettings: weight.semibold,
 						color: color.foreground,
 					}}
 				>

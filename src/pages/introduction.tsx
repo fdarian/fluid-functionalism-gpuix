@@ -58,7 +58,7 @@ function SectionTitle(props: { children: string }) {
 			style={{
 				...siteType.title,
 				lineHeight: '16px',
-				fontWeight: weight.semibold,
+				fontVariationSettings: weight.semibold,
 				color: color.foreground,
 			}}
 		>
@@ -139,7 +139,7 @@ function Step(props: {
 						style={{
 							fontSize: 11,
 							lineHeight: '14px',
-							fontWeight: weight.normal,
+							fontVariationSettings: weight.normal,
 							color: color.mutedForeground,
 						}}
 					>
@@ -182,7 +182,7 @@ function CodeBlock(props: { lines: readonly string[] }) {
 								fontFamily: MONO,
 								fontSize: siteType.caption.fontSize,
 								lineHeight: siteType.caption.lineHeight,
-								fontWeight: weight.normal,
+								fontVariationSettings: weight.normal,
 								color: color.mutedForeground,
 								whiteSpace: 'pre',
 							}}

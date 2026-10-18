@@ -49,7 +49,7 @@ function RowLabel(props: { children: string }) {
 		<text
 			style={{
 				...siteType.body,
-				fontWeight: weight.normal,
+				fontVariationSettings: weight.normal,
 				color: color.foreground,
 				whiteSpace: 'nowrap',
 			}}

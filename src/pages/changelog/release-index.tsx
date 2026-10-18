@@ -29,7 +29,7 @@ export function ReleaseIndexCard(props: { releases: readonly Release[] }) {
 					<text
 						style={{
 							...siteType.title,
-							fontWeight: weight.semibold,
+							fontVariationSettings: weight.semibold,
 							color: color.foreground,
 						}}
 					>

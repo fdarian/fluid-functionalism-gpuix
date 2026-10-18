@@ -149,7 +149,7 @@ export function PlaySection(props: { label: string }) {
 			<text
 				style={{
 					...scale.body,
-					fontWeight: weight.semibold,
+					fontVariationSettings: weight.semibold,
 					color: color.foreground,
 				}}
 			>
@@ -212,7 +212,7 @@ export function PlaygroundPanel(props: {
 					style={{
 						...scale.title,
 						lineHeight: `${scale.title.fontSize}px`,
-						fontWeight: weight.semibold,
+						fontVariationSettings: weight.semibold,
 						color: color.foreground,
 					}}
 				>

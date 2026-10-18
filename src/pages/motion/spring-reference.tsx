@@ -225,7 +225,7 @@ export function SpringReferenceSection() {
 							<text
 								style={{
 									...siteType.body,
-									fontWeight: weight.semibold,
+									fontVariationSettings: weight.semibold,
 									color: color.foreground,
 								}}
 							>

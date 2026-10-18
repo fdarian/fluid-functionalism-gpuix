@@ -30,7 +30,7 @@ export function StableLabel(props: {
 		...(props.textStyle ?? scale.body),
 		gridColumnStart: 1,
 		gridRowStart: 1,
-		fontWeight: heavy ? weight.semibold : weight.normal,
+		fontVariationSettings: heavy ? weight.semibold : weight.normal,
 		...(singleLine() ? { whiteSpace: 'nowrap' as const } : {}),
 		...(props.truncate === true
 			? { overflow: 'hidden' as const, textOverflow: 'ellipsis' as const }

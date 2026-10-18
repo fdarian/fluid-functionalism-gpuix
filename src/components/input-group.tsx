@@ -173,7 +173,7 @@ export function InputField(props: {
 					<text
 						style={{
 							...step().text,
-							fontWeight: weight.normal,
+							fontVariationSettings: weight.normal,
 							color:
 								props.error === undefined
 									? color.mutedForeground
@@ -263,7 +263,7 @@ export function InputField(props: {
 						minWidth: 0,
 						height: 24,
 						fontSize: step().text.fontSize,
-						fontWeight: weight.normal,
+						fontVariationSettings: weight.normal,
 						color: color.foreground,
 						backgroundColor: color.transparent,
 						keyboardFocusDim: false,
@@ -276,7 +276,7 @@ export function InputField(props: {
 						<text
 							style={{
 								...step().caption,
-								fontWeight: weight.normal,
+								fontVariationSettings: weight.normal,
 								color: color.destructive,
 							}}
 						>

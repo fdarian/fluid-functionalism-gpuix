@@ -67,7 +67,7 @@ export function DiffBlock(props: { diff: string }) {
 										fontFamily: MONO,
 										fontSize: siteType.caption.fontSize,
 										lineHeight: siteType.caption.lineHeight,
-										fontWeight: weight.normal,
+										fontVariationSettings: weight.normal,
 										color:
 											line.mark === 'add'
 												? color.success
@@ -89,7 +89,7 @@ export function DiffBlock(props: { diff: string }) {
 									fontFamily: MONO,
 									fontSize: siteType.caption.fontSize,
 									lineHeight: siteType.caption.lineHeight,
-									fontWeight: weight.normal,
+									fontVariationSettings: weight.normal,
 									color: color.foreground,
 									whiteSpace: 'pre',
 								}}

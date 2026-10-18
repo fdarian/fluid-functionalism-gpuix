@@ -467,7 +467,9 @@ export function SidebarMenuButton(props: {
 						<text
 							style={{
 								...(props.badgeType ?? scale.micro),
-								fontWeight: props.active ? weight.semibold : weight.normal,
+								fontVariationSettings: props.active
+									? weight.semibold
+									: weight.normal,
 								color: props.active ? color.foreground : color.mutedForeground,
 								fontVariantNumeric: 'tabular-nums',
 								...colorFade,

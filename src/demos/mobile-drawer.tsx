@@ -57,7 +57,7 @@ export function Demo() {
 						style={{
 							...scale.title,
 							color: color.foreground,
-							fontWeight: weight.semibold,
+							fontVariationSettings: weight.semibold,
 						}}
 					>
 						Navigation

@@ -94,7 +94,7 @@ function Section(props: { title: string; gap: number; children: JSX.Element }) {
 						style={{
 							fontSize: 15,
 							lineHeight: '22px',
-							fontWeight: weight.semibold,
+							fontVariationSettings: weight.semibold,
 							color: color.foreground,
 						}}
 					>

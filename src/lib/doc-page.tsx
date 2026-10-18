@@ -125,7 +125,7 @@ export function SectionTitle(props: { children: string }) {
 			style={{
 				...siteType.title,
 				lineHeight: '16px',
-				fontWeight: weight.semibold,
+				fontVariationSettings: weight.semibold,
 				color: color.foreground,
 			}}
 		>
@@ -171,7 +171,7 @@ export function SubHeading(props: { children: string; marginTop?: number }) {
 			<text
 				style={{
 					...siteType.subtitle,
-					fontWeight: weight.semibold,
+					fontVariationSettings: weight.semibold,
 					color: color.foreground,
 				}}
 			>
@@ -340,7 +340,7 @@ function CodeView(props: { code: string; minHeight: number }) {
 							style={{
 								fontFamily: MONO,
 								...siteType.body,
-								fontWeight: weight.normal,
+								fontVariationSettings: weight.normal,
 								color: color.foreground,
 								whiteSpace: 'pre',
 							}}

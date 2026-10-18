@@ -199,7 +199,7 @@ export function Switch(props: {
 				id={labelId}
 				style={{
 					...m().text,
-					fontWeight: weight.normal,
+					fontVariationSettings: weight.normal,
 					whiteSpace: 'nowrap',
 					color: props.checked ? color.foreground : color.mutedForeground,
 					...fade(['color'], 80),

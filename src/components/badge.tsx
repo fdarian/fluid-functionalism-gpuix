@@ -84,7 +84,7 @@ export function Badge(props: {
 				style={{
 					...size().text,
 					color: color.foreground,
-					fontWeight: weight.normal,
+					fontVariationSettings: weight.normal,
 					whiteSpace: 'nowrap',
 				}}
 			>

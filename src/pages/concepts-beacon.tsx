@@ -294,7 +294,7 @@ function Avatar(props: { initials: string }) {
 				style={{
 					fontSize: 10,
 					lineHeight: '14px',
-					fontWeight: weight.semibold,
+					fontVariationSettings: weight.semibold,
 					color: color.background,
 				}}
 			>
@@ -626,7 +626,7 @@ function TriagePanel(props: {
 					<text
 						style={{
 							...siteType.subtitle,
-							fontWeight: weight.semibold,
+							fontVariationSettings: weight.semibold,
 							color: color.foreground,
 						}}
 					>

@@ -689,7 +689,7 @@ export function CommandMenuInput(props: {
 					minWidth: 0,
 					height: 24,
 					fontSize: layout().field.fontSize,
-					fontWeight: weight.normal,
+					fontVariationSettings: weight.normal,
 					color: color.foreground,
 					backgroundColor: color.transparent,
 					keyboardFocusDim: false,
@@ -706,7 +706,7 @@ const TabsRowContext = createContext(false);
 function TabLabel(props: { text: string; selected: boolean; lit: boolean }) {
 	const textStyle = (heavy: boolean) => ({
 		...scale.bodyCompact,
-		fontWeight: heavy ? weight.semibold : weight.normal,
+		fontVariationSettings: heavy ? weight.semibold : weight.normal,
 		whiteSpace: 'nowrap' as const,
 	});
 	return (

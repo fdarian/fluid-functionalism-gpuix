@@ -216,7 +216,7 @@ function Step(props: {
 				<text
 					style={{
 						...siteType.body,
-						fontWeight: weight.semibold,
+						fontVariationSettings: weight.semibold,
 						color: props.active ? color.foreground : color.mutedForeground,
 						...colorFade,
 					}}

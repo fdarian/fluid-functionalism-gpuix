@@ -430,7 +430,7 @@ export function BannerTitle(props: { testId?: string; children: JSX.Element }) {
 				style={{
 					...text(),
 					color: color.foreground,
-					fontWeight: weight.semibold,
+					fontVariationSettings: weight.semibold,
 				}}
 			>
 				{props.children}

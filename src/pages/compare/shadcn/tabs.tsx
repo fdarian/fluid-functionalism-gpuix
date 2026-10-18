@@ -4,7 +4,7 @@ import {
 	useGpuixRequired,
 } from '@gpuix/solid';
 import { For } from 'solid-js';
-import { twShadow, weight } from '#/lib/theme';
+import { twShadow } from '#/lib/theme';
 import { pressProps } from './parts';
 import { sc, scRadius, scRing } from './theme';
 
@@ -111,7 +111,7 @@ export function ScTabs(props: {
 								style={{
 									fontSize: 14,
 									lineHeight: '20px',
-									fontWeight: weight.medium,
+									fontWeight: 500,
 									whiteSpace: 'nowrap',
 									color: active() ? sc.foreground : sc.mutedForeground,
 									transitionProperty: 'color',

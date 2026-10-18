@@ -3,11 +3,11 @@ import { MONO } from '#/lib/doc-page';
 import { color, shape, siteType, weight } from '#/lib/theme';
 import { borderFainter, roleStyle, TYPESET_SPACE, type TypeRole } from './step';
 
-/** The axes `fontWeights` sets (lib/font-weight.ts); the port renders the static cut nearest each wght. */
+/** The axes `fontWeights` sets (lib/font-weight.ts), for the numbers the table prints. */
 const AXES = {
-	normal: { wght: 400, opsz: 14, cut: weight.normal },
-	semibold: { wght: 550, opsz: 18, cut: weight.semibold },
-	bold: { wght: 700, opsz: 25, cut: 700 },
+	normal: { wght: 400, opsz: 14, setting: weight.normal },
+	semibold: { wght: 550, opsz: 18, setting: weight.semibold },
+	bold: { wght: 700, opsz: 25, setting: weight.bold },
 } as const;
 
 /** The 5 styles the page counts, each with the sample it sets, its weight and its colour. */
@@ -139,7 +139,7 @@ export function TypeScaleSpecimen() {
 								<text
 									style={{
 										...siteType.body,
-										fontWeight: weight.semibold,
+										fontVariationSettings: weight.semibold,
 										color: color.foreground,
 									}}
 								>
@@ -148,7 +148,7 @@ export function TypeScaleSpecimen() {
 								<text
 									style={{
 										...roleStyle(spec.role),
-										fontWeight: axes.cut,
+										fontVariationSettings: axes.setting,
 										color: spec.muted
 											? color.mutedForeground
 											: color.foreground,
@@ -218,7 +218,9 @@ function GapCell(props: {
 					...siteType.body,
 					textAlign: 'left',
 					fontVariantNumeric: 'tabular-nums',
-					...(props.header === true ? { fontWeight: weight.semibold } : {}),
+					...(props.header === true
+						? { fontVariationSettings: weight.semibold }
+						: {}),
 					color:
 						props.muted === true ? color.mutedForeground : color.foreground,
 				}}

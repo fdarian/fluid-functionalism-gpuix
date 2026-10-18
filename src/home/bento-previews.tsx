@@ -239,7 +239,7 @@ function IdentityRow(props: { avatar: JSX.Element; label: string }) {
 			<text
 				style={{
 					...siteType.body,
-					fontWeight: weight.semibold,
+					fontVariationSettings: weight.semibold,
 					color: color.foreground,
 					whiteSpace: 'nowrap',
 				}}
@@ -290,7 +290,7 @@ function SidebarPreview() {
 									style={{
 										fontSize: 10,
 										lineHeight: '12px',
-										fontWeight: weight.semibold,
+										fontVariationSettings: weight.semibold,
 										color: color.background,
 									}}
 								>

@@ -1,5 +1,5 @@
 import { For } from 'solid-js';
-import { weight, withAlpha } from '#/lib/theme';
+import { withAlpha } from '#/lib/theme';
 import { sc } from './theme';
 
 /**
@@ -28,7 +28,7 @@ export function ScTable(props: {
 				style={{
 					fontSize: 14,
 					lineHeight: '20px',
-					fontWeight: header ? weight.medium : weight.normal,
+					fontWeight: header ? 500 : 400,
 					color: header ? sc.mutedForeground : sc.foreground,
 					whiteSpace: 'nowrap',
 				}}

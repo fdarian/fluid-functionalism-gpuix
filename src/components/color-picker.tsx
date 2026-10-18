@@ -914,7 +914,7 @@ function FormatDropdown(props: {
 				<text
 					style={{
 						...scale.body,
-						fontWeight: weight.normal,
+						fontVariationSettings: weight.normal,
 						color: presence.open() ? color.foreground : color.mutedForeground,
 						...colorFade,
 						groupHover: { color: color.foreground },
@@ -1254,7 +1254,7 @@ function ColorInput(props: {
 					minWidth: 0,
 					height: 24,
 					fontSize: scale.body.fontSize,
-					fontWeight: weight.normal,
+					fontVariationSettings: weight.normal,
 					fontVariantNumeric: 'tabular-nums',
 					textAlign: props.align === 'center' ? 'center' : 'left',
 					color: color.foreground,
@@ -1773,7 +1773,7 @@ export function ColorPickerPopover(
 			<text
 				style={{
 					...scale.body,
-					fontWeight: weight.normal,
+					fontVariationSettings: weight.normal,
 					color: color.mutedForeground,
 				}}
 			>
@@ -1840,7 +1840,7 @@ export function ColorPickerPopover(
 					<text
 						style={{
 							...scale.body,
-							fontWeight: weight.normal,
+							fontVariationSettings: weight.normal,
 							color: color.foreground,
 							fontVariantNumeric: 'tabular-nums',
 						}}

@@ -178,7 +178,7 @@ function SliderPreview() {
 	const [volume, setVolume] = createSignal<number>(SLIDER_VOLUME.initial);
 	const readout = () => ({
 		...siteType.body,
-		fontWeight: weight.normal,
+		fontVariationSettings: weight.normal,
 		color: color.mutedForeground,
 	});
 	return (

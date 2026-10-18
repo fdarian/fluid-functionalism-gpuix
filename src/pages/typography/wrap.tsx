@@ -29,7 +29,7 @@ function Heading(props: { children: string }) {
 			style={{
 				...scale.title,
 				...sample,
-				fontWeight: weight.semibold,
+				fontVariationSettings: weight.semibold,
 				color: color.foreground,
 				whiteSpace: 'pre-line',
 			}}
