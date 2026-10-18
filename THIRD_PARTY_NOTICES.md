@@ -15,9 +15,9 @@ Touillaud). File-by-file mapping is in [UPSTREAM.md](UPSTREAM.md).
 
 ## Fonts
 
-**[Inter](https://github.com/rsms/inter)**, static Regular, Medium, SemiBold and Bold cuts in `assets/fonts/`
-(SIL Open Font License 1.1, Copyright (c) 2016 The Inter Project Authors). The licence text is
-`assets/fonts/LICENSE.txt`; it travels with the font files.
+**[Inter](https://github.com/rsms/inter)** 4.0, the variable `InterVariable.ttf` and `InterVariable-Italic.ttf` in
+`assets/fonts/`, the two files the upstream site serves (SIL Open Font License 1.1, Copyright (c) 2016 The Inter
+Project Authors). The licence text is `assets/fonts/LICENSE.txt`; it travels with the font files.
 
 ## Icon glyph data
 

@@ -1,11 +1,9 @@
-import bold from '../../assets/fonts/Inter-Bold.ttf' with { type: 'file' };
-import medium from '../../assets/fonts/Inter-Medium.ttf' with { type: 'file' };
-import regular from '../../assets/fonts/Inter-Regular.ttf' with {
+import variable from '../../assets/fonts/InterVariable.ttf' with {
 	type: 'file',
 };
-import semiBold from '../../assets/fonts/Inter-SemiBold.ttf' with {
+import italic from '../../assets/fonts/InterVariable-Italic.ttf' with {
 	type: 'file',
 };
 
-/** Inter's static cuts, one file per weight: gpuix loads no variable fonts. */
-export const fonts = [regular, medium, semiBold, bold];
+/** Inter 4.0 variable, upright and italic: the same two files the source site serves. Both register as the family `Inter Variable`. */
+export const fonts = [variable, italic];

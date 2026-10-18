@@ -373,8 +373,9 @@ export function linePx(lineHeight: string) {
 	return Number.parseFloat(lineHeight);
 }
 
-/** The static cuts are loaded in `lib/fonts.ts`. The site's semibold is variable `wght 550`; with static cuts only, SemiBold 600 is the nearest. */
-export const fontFamily = 'Inter';
+/** The variable files are loaded in `lib/fonts.ts` and register as `Inter Variable`. */
+export const fontFamily = 'Inter Variable';
+
 export const weight = { normal: 400, medium: 500, semibold: 600 } as const;
 
 /** The rounded values, for surfaces the source pins to rounded (popups, menu rows). Everything else reads `shape`. */

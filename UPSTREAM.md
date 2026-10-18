@@ -91,7 +91,7 @@ lands in the matching file on the right"; the drift file's `Original:` header na
 | `registry/default/lib/{popup.ts,surface-context.tsx,elevated.tsx}` | `src/lib/{popup,surface-context}.ts*` (the chrome; placement is `base-ui:src/internals/use-anchor-positioning.ts`) |
 | `registry/default/hooks/use-keyboard-nav-gate.ts` | `base-ui:src/select/root/use-select-root.ts` (`keyboardNav`), read in `src/components/select.tsx` |
 | `registry/default/lib/icon-context.tsx`, `icons-*.tsx`, `lib/icons-*.ts` | `src/lib/icons.ts`, `src/lib/icon.tsx`, `src/lib/icons/` |
-| `public/fonts/InterVariable*.ttf` | `assets/fonts/Inter-*.ttf` (static cuts: gpuix loads no variable fonts) |
+| `public/fonts/InterVariable*.ttf` | `assets/fonts/InterVariable*.ttf` (same files) |
 | `public/{micka,og}.png` | `assets/chat-ai/` |
 | `lib/typeset/generate.ts`, `lib/docs/typeset-sample.tsx` | `src/pages/typography/` |
 
