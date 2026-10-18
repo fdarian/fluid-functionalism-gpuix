@@ -49,7 +49,7 @@ bun scripts/perf.tsx [slug...] --label name   # live frame times per page, idle 
 <summary>How gpuix and base-ui-solid-gpuix are wired in</summary>
 
 - **gpuix.** `@gpuix/native` and `@gpuix/solid` come from the fork at `~/code/fdarian/gpuix`: native is a `link:`, solid is a
-  `file:` copy. The fork must be at `poc` 20a0c327 or later: the highlights and popups use its native `motion` springs, and the table, `inline-*`, container query, `has*` and `fit-content` layouts are its features,
+  `file:` copy. The fork must be at `poc` ed4e99c3 or later: the highlights and popups use its native `motion` springs, and the table, `inline-*`, container query, `has*` and `fit-content` layouts, and the variable-font weights, `outlineStyle`, `textWrap`, `textBox` trim and `calc()` motion values are its features,
   so rebuild the addon and the `@gpuix/solid` dist after pulling it (see the fork's `FORK.md`, "Building"), then run
   `pnpm install` here to refresh the copy. The Solid JSX transform is a Bun preload (`bunfig.toml`), so there is no
   build step.
@@ -246,8 +246,8 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 ### gpuix gaps across components
 
 These are the gpuix gaps that hit several components; the per-component files link here. They are as of
-gpuix `poc` 20a0c327 (`~/code/fdarian/gpuix/FORK.md`): what the port used to work around and gpuix now does (tables,
-`inline-*`, container queries, `has*` states, `fit-content`) is gone from this list. "Bug" means gpuix does something wrong or inconsistent; "missing" means it does not
+gpuix `poc` ed4e99c3 (`~/code/fdarian/gpuix/FORK.md`): what the port used to work around and gpuix now does (tables,
+`inline-*`, container queries, `has*` states, `fit-content`, variable fonts, `text-wrap`, `text-box-trim`, `calc()` in motion) is gone from this list. "Bug" means gpuix does something wrong or inconsistent; "missing" means it does not
 offer it. A count is given only where the code shows it.
 
 #### Bugs
