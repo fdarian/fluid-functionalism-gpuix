@@ -25,7 +25,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `gpuix gap`.
 - **Original:** the label eases between `wght 400` and `550, opsz 18` over 80 ms (`:744-766`, `transition-[color,font-variation-settings] duration-80`).
-- **Port:** `StableLabel` switches at once between static 400 and SemiBold 600 (`src/components/accordion.tsx:596-603`, `src/lib/stable-label.tsx:29-38`); the hidden copy reserves the 600 width.
+- **Port:** `StableLabel` switches at once between static 400 and SemiBold 600 (`src/components/accordion.tsx:596-603`, `src/lib/stable-label.tsx:37-46`); the hidden copy reserves the 600 width.
 - **gpuix lacks:** variable-font axes. README row "Variable-font axes".
 - **Workaround:** static cuts and the hidden semibold copy.
 - **Fidelity:** approximated (no easing, 600 for 550).

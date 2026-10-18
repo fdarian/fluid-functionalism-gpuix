@@ -59,7 +59,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `ChatMessage` took a string).
 - **Original:** `Answer` passes `className="max-w-full"` and a block of three paragraphs to `ChatMessage` (`lumen/page.tsx:76-111`).
-- **Port:** `ChatMessage` gained two additive props: `children` accepts any element (a string is still set in the message style) and `fullWidth` lifts the 80% cap (`src/components/chat-message.tsx:79-83`, `:143-148`). Lumen builds three `<text>` paragraphs with 12px between them (`src/pages/concepts-lumen.tsx:167-198`).
+- **Port:** `ChatMessage` gained two additive props: `children` accepts any element (a string is still set in the message style) and `fullWidth` lifts the 80% cap (`src/components/chat-message.tsx:79-83`, `:143-148`). Lumen builds three `<text>` paragraphs with 12px between them (`src/pages/concepts-lumen.tsx:166-199`).
 - **Workaround:** none needed.
 - **Fidelity:** exact for the layout.
 - **Components it hits:** chat-message (the extra props are the only change to it).
@@ -68,7 +68,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `not ported yet` (`ThinkingStepImage` is a fixed 200px box, [thinking-steps.md](thinking-steps.md#image-box-is-sized-outright)).
 - **Original:** `swatch()` builds a `data:image/svg+xml` gradient, and the step and the Images tab both show it through `ThinkingStepImage`, the tab's with `!mt-0 [&_img]:max-w-full` in a grid cell (`lumen/page.tsx:44-52`, `:201-207`, `:227-237`).
-- **Port:** `swatch()` is the source's, and the step uses the ported `ThinkingStepImage` with that URI, `aspectRatio` 240 / 150 and the 0.1s delay (`src/pages/concepts-lumen.tsx:97-102`, `:354-360`). The Images tab draws each swatch as `SwatchImage`, a 240:150 box with the same URI as `backgroundImage` at `100% 100%`, the container radius and the same inset hairline, four to a row (`:114-131`, `:272-290`); it has no entrance fade.
+- **Port:** `swatch()` is the source's, and the step uses the ported `ThinkingStepImage` with that URI, `aspectRatio` 240 / 150 and the 0.1s delay (`src/pages/concepts-lumen.tsx:96-101`, `:354-360`). The Images tab draws each swatch as `SwatchImage`, a 240:150 box with the same URI as `backgroundImage` at `100% 100%`, the container radius and the same inset hairline, four to a row (`:114-131`, `:272-290`); it has no entrance fade.
 - **Workaround:** the background box, because the fixed-width component cannot fill a grid cell.
 - **Fidelity:** exact for the picture (the same SVG, scaled to the box); approximated (no entrance fade on the tab).
 - **Components it hits:** just this one.
@@ -77,7 +77,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `not ported yet` for the shadow transition; `port choice` for the link.
 - **Original:** each row is `<a href="#answer">` (jumps to the question heading) with `transition-shadow duration-100 hover:shadow-surface-4` (`lumen/page.tsx:114-140`).
-- **Port:** a `div` with the `surface-2` fill and `shadow(2)`, and `hover: { boxShadow: shadow(4) }`, which switches at once (`src/pages/concepts-lumen.tsx:203-260`; `shadow` is the `--shadow-N` helper in `src/lib/theme.ts`). A click does nothing.
+- **Port:** a `div` with the `surface-2` fill and `shadow(2)`, and `hover: { boxShadow: shadow(4) }`, which switches at once (`src/pages/concepts-lumen.tsx:204-261`; `shadow` is the `--shadow-N` helper in `src/lib/theme.ts`). A click does nothing.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -86,7 +86,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `gpuix gap` (variable-font axes: README "gpuix gaps").
 - **Original:** `text-[24px] leading-tight`, `fontWeights.bold` (`lumen/page.tsx:160-168`).
-- **Port:** the static Bold cut at 24 / 30 (`src/pages/concepts-lumen.tsx:304-309`). The `semibold` run in the first paragraph is SemiBold 600.
+- **Port:** the static Bold cut at 24 / 30 (`src/pages/concepts-lumen.tsx:305-310`). The `semibold` run in the first paragraph is SemiBold 600.
 - **gpuix lacks:** variable-font axes.
 - **Workaround:** static cuts.
 - **Fidelity:** approximated. The question stays 24px when the Size row is Compact, as in the source (a fixed `text-[24px]`).
@@ -96,7 +96,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (reason not stated) for the scroller; the source has the same missing scroll-to-new-turn.
 - **Original:** `flex-1 overflow-y-auto` under an `h-screen` column, the ask bar pinned below (`lumen/page.tsx:274-300`); a new turn is appended and the page does not scroll to it.
-- **Port:** the turns sit in the port's `ScrollArea` (a drawn scrollbar), the ask bar is pinned below it (`src/pages/concepts-lumen.tsx:437-455`); a new turn lands below the fold, as in the source, and the screenshot scenario scrolls to it. The turns live in a store keyed by `id`, so the answered turn keeps its open "Searched 4 sources" steps and its tab, as in React (`:399-427`). The timer is cleared on unmount.
+- **Port:** the turns sit in the port's `ScrollArea` (a drawn scrollbar), the ask bar is pinned below it (`src/pages/concepts-lumen.tsx:438-456`); a new turn lands below the fold, as in the source, and the screenshot scenario scrolls to it. The turns live in a store keyed by `id`, so the answered turn keeps its open "Searched 4 sources" steps and its tab, as in React (`:399-427`). The timer is cleared on unmount.
 - **Workaround:** none.
 - **Fidelity:** approximated (scrollbar look); exact for the flow.
 - **Components it hits:** just this one.
@@ -105,7 +105,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `Button` has `default`, `compact`, `icon` and `icon-compact`).
 - **Original:** `<Button variant="ghost" size="sm" leadingIcon={Globe}>Web</Button>` in the left slot (`lumen/page.tsx:295-297`).
-- **Port:** `size="compact"` with `leadingIcon="globe"` (`src/pages/concepts-lumen.tsx:480`).
+- **Port:** `size="compact"` with `leadingIcon="globe"` (`src/pages/concepts-lumen.tsx:481`).
 - **Workaround:** none.
 - **Fidelity:** approximated (compact is 28px).
 - **Components it hits:** just this one.
@@ -239,7 +239,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 Original: `app/concepts/quill/page.tsx`. Ported in `src/pages/concepts-quill.tsx` (group "Pages", order 34, layout "full", listed "none"), inside `ConceptFrame`.
 
 - **Checked and equal:** the copy (title, byline, intro, callout, goals, the four initiatives and their owners, statuses and targets, the three comments and activity lines, the block names, the AI block's placeholder, steps and canned draft), the 760px column, the three tabs (Document / Comments / Activity) with their icons, the dot Badge colours per status, the 1700 ms draft beat, and the new block landing above the composer.
-- **Cause:** `port choice`. The page scrolls in the port's `ScrollArea` and the side padding is 32 / 48 as `px-8 py-12` (`src/pages/concepts-quill.tsx:458-469`).
+- **Cause:** `port choice`. The page scrolls in the port's `ScrollArea` and the side padding is 32 / 48 as `px-8 py-12` (`src/pages/concepts-quill.tsx:457-468`).
 - **Fidelity:** approximated (scrollbar look); exact for the flow. The title is Inter Bold 700 at 34 / 42 and the section headings SemiBold 600 at 18 (the source's variable `wght`: `gpuix gap`, README "gpuix gaps"). The 💡 and 🗓️ are the system emoji font's glyphs.
 - **Components it hits:** just this one.
 
@@ -247,7 +247,7 @@ Original: `app/concepts/quill/page.tsx`. Ported in `src/pages/concepts-quill.tsx
 
 - **Cause:** `port choice` (the popup brings flipping, outside-press and Escape dismissal and focus return for free; the inline `Dropdown` in an absolute box would also work now, as the Beacon toolbar does: the absolute box takes `zIndex: 50`, as the source's `z-50`, so it paints over the heading and table after it, `src/pages/concepts-beacon.tsx:540-547`).
 - **Original:** the open menu is the inline `Dropdown` in an `absolute left-0 top-full z-50 mt-1.5` box under a `Button` with `active={open}`; a document `mousedown` closes it (`quill/page.tsx:73-113`).
-- **Port:** `DropdownMenu` + `DropdownTrigger` + `DropdownContent` with the same five `MenuItem` rows and the "Basic blocks" label (`src/pages/concepts-quill.tsx:149-181`). It opens on press or by Enter / Space / arrows, flips above the button when there is no room below, closes on outside press, Esc, and picking a row, and returns focus to the button. Picking a row does nothing else (the source's `onSelect` only closes). The trigger is the port's `compact` Button (no `sm`) and has no `active` prop, so it shows no pressed background while the menu is open.
+- **Port:** `DropdownMenu` + `DropdownTrigger` + `DropdownContent` with the same five `MenuItem` rows and the "Basic blocks" label (`src/pages/concepts-quill.tsx:148-180`). It opens on press or by Enter / Space / arrows, flips above the button when there is no room below, closes on outside press, Esc, and picking a row, and returns focus to the button. Picking a row does nothing else (the source's `onSelect` only closes). The trigger is the port's `compact` Button (no `sm`) and has no `active` prop, so it shows no pressed background while the menu is open.
 - **Workaround:** the popup's anchored surface.
 - **Fidelity:** approximated.
 - **Components it hits:** dropdown (`Dropdown` has no trigger, positioning or dismissal), button.
@@ -256,7 +256,7 @@ Original: `app/concepts/quill/page.tsx`. Ported in `src/pages/concepts-quill.tsx
 
 - **Cause:** `port choice` (the port's `TableCell` / `TableHead` wrap their children in one `<text>`; the cell colour is fixed: muted unless the row is lit, foreground in the header).
 - **Original:** the name cell is `text-foreground`, the owner and target `text-muted-foreground`, status a `Badge variant="dot" size="sm"` (`quill/page.tsx:228-246`).
-- **Port:** the name cell is muted like the others (lit rows go foreground). The status Badge sits in a row `div` inside the cell so it hugs its width instead of stretching (`src/pages/concepts-quill.tsx:425-444`); `size="compact"` stands for `sm`.
+- **Port:** the name cell is muted like the others (lit rows go foreground). The status Badge sits in a row `div` inside the cell so it hugs its width instead of stretching (`src/pages/concepts-quill.tsx:424-443`); `size="compact"` stands for `sm`.
 - **Components it hits:** table (a cell colour prop would close it).
 - **Fidelity:** approximated.
 
@@ -264,7 +264,7 @@ Original: `app/concepts/quill/page.tsx`. Ported in `src/pages/concepts-quill.tsx
 
 - **Cause:** `port choice` (the port's `ThinkingStep` icons are `dot`, `search`, `globe`, `brain`, `image`, `check`).
 - **Original:** `square-library`, `brain`, `pencil` for the three steps (`quill/page.tsx:150-152`).
-- **Port:** `search`, `brain`, `dot` (`src/pages/concepts-quill.tsx:283-293`). The steps are `ThinkingSteps` with `width="100%"`, as in the other concepts.
+- **Port:** `search`, `brain`, `dot` (`src/pages/concepts-quill.tsx:282-292`). The steps are `ThinkingSteps` with `width="100%"`, as in the other concepts.
 - **Fidelity:** approximated.
 - **Components it hits:** thinking-steps (a wider icon set would close it).
 
@@ -272,7 +272,7 @@ Original: `app/concepts/quill/page.tsx`. Ported in `src/pages/concepts-quill.tsx
 
 - **Cause:** `port choice`.
 - **Original:** `setTimeout` 1700 ms that appends the draft; the "Sparkle" is `useIcon("brain")` (`quill/page.tsx:117-148`).
-- **Port:** the same timer, cleared on unmount (`src/pages/concepts-quill.tsx:227-249`); the icon is the port's `brain` at 16px in the drafted block and 14px next to "Quill AI" in the composer's left slot. The page does not scroll to the new block, as in the source.
+- **Port:** the same timer, cleared on unmount (`src/pages/concepts-quill.tsx:226-248`); the icon is the port's `brain` at 16px in the drafted block and 14px next to "Quill AI" in the composer's left slot. The page does not scroll to the new block, as in the source.
 - **Fidelity:** exact for the flow.
 - **Components it hits:** just this one.
 

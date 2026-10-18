@@ -40,7 +40,7 @@ repeating it.
 
 ## Hover background exit
 
-- **Cause:** `not ported yet`. `motion.fastExit` (0.06s) exists (`src/lib/theme.ts:458`).
+- **Cause:** `not ported yet`. `motion.fastExit` (0.06s) exists (`src/lib/theme.ts:463`).
 - **Original:** the trigger's hover background fades in over 0.08s and out with `spring.fast.exit`, 0.06s (`thinking-steps.tsx:65-75`).
 - **Port:** one `transition={{ duration: 0.08 }}` serves both (`thinking-steps.tsx:140-158`, `:146`), so the exit is 20ms slower.
 - **Workaround:** none.

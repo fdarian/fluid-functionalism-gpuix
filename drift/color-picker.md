@@ -73,7 +73,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** Radix slider thumb: arrows, Shift+arrow and PageUp/PageDown move by 10, Home/End jump, and it exposes `aria-valuenow`, `-min`, `-max` (`registry/radix/slider.tsx`, primitive). The ring is a 24px circle whose opacity eases on `spring.fast` (`:940-952`), and the track has an `ew-resize` cursor only on the hit area (`:1087`).
-- **Port:** arrows, Shift (10), Home and End only; no PageUp/PageDown (`src/components/color-picker.tsx:495-518`). The thumb has `aria-valuetext` but no `aria-valuenow`/`-min`/`-max` (`:549-551`; the slider's thumb has them, `base-ui:src/slider/thumb/slider-thumb.ts:146-153`). The ring is `focusVisible` with a 2px offset, drawn about 2px wider, its colour easing over 80 ms on a spring-fitted curve (`src/components/color-picker.tsx:566-567`, `springFade`, `src/lib/theme.ts:506`).
+- **Port:** arrows, Shift (10), Home and End only; no PageUp/PageDown (`src/components/color-picker.tsx:495-518`). The thumb has `aria-valuetext` but no `aria-valuenow`/`-min`/`-max` (`:549-551`; the slider's thumb has them, `base-ui:src/slider/thumb/slider-thumb.ts:146-153`). The ring is `focusVisible` with a 2px offset, drawn about 2px wider, its colour easing over 80 ms on a spring-fitted curve (`src/components/color-picker.tsx:566-567`, `springFade`, `src/lib/theme.ts:517`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -225,7 +225,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 ## Demo: "+ Add fill" button and the "Current:" readout
 
-- **Cause:** `not ported yet` (`borderStyle: "dashed"` exists, `packages/native/src/style.rs:663`; the port loads Inter only, `src/lib/fonts.ts:7`).
+- **Cause:** `not ported yet` (`borderStyle: "dashed"` exists, `packages/native/src/style.rs:663`; the port loads Inter only, `src/lib/fonts.ts:5`).
 - **Original:** the add button has a dashed border, muted text that goes to foreground on hover (`app/docs/color-picker/page.tsx:153-160`); the controlled readout shows the value in a monospace span (`:135-137`).
 - **Port:** a solid border and fixed muted text (`src/demos/color-picker.tsx:64-86`); the readout is one body-text string (`:130-132`).
 - **Workaround:** none.
