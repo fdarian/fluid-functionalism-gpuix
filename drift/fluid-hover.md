@@ -4,7 +4,7 @@ Original: `app/docs/fluid-hover/page.tsx` and `demos.tsx` of the source (fluidfu
 Ported in `src/pages/fluid-hover.tsx` (the page, prose and scenarios) with the demos under `src/pages/fluid-hover/` (`plain-vs-fluid.tsx`, `show-the-math.tsx`, `axes.tsx`, `lists.tsx`, `cost.tsx`, the Code tab snippets in `snippets.ts`, the copy prompt in `install-prompt.ts`, the shared rows and cursor in `parts.tsx`), routed by the page registry (`src/lib/demo.ts` `loadPages`). The doc chrome (`DocPage`, `DocSection`, `Prose`, `Code`, `ComponentPreview`) is the shared `src/lib/doc-page.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it. The heading and the missing prev / next arrows are the same drift as every page; see `drift/introduction.md`
 and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose drift (no Inspect switch, no highlighting) is in
 `drift/surfaces.md`.

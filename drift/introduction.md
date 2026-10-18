@@ -4,7 +4,7 @@ Original: `app/docs/page.tsx` of the source (fluidfunctionalism.com at 0a0377e, 
 Ported in `src/pages/introduction.tsx`, routed by the page registry (`src/lib/demo.ts` `loadPages`, `src/app.tsx` `PageBody`).
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The previous / next arrows are missing

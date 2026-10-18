@@ -31,27 +31,17 @@ light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 
 - **Cause:** `gpuix gap` (README "Missing features": variable-font axes).
 - **Original:** `fontVariationSettings` `wght 550, opsz 18` for the selected label, `wght 400, opsz 14` otherwise (`registry/default/lib/font-weight.ts:19-23`, `tabs.tsx:570-574`).
-- **Port:** static cuts, 600 selected and 400 otherwise, switching at once (`theme.ts:276-278`, `stable-label.tsx:39-48`).
+- **Port:** static cuts, 600 selected and 400 otherwise, switching at once (`theme.ts:276-278`, `stable-label.tsx:43-57`).
 - **gpuix lacks:** variable axes; only a font's default instance renders.
 - **Workaround:** the hidden 600 copy still reserves the width, so nothing shifts.
 - **Fidelity:** approximated (one weight step, no `opsz`).
 - **Components it hits:** tabs-subtle, card, table, sidebar, menu rows.
 
-## No `text-box-trim` on the label
-
-- **Cause:** `gpuix gap` (README "Missing features": `text-box-trim`).
-- **Original:** both label spans carry `[text-box:trim-both_cap_alphabetic]` (`tabs.tsx:557`, `:565`).
-- **Port:** the label is centred by its 20px line box (`stable-label.tsx:70-81`). For Inter that should land within a pixel of cap-centred; not measured.
-- **gpuix lacks:** `text-box-trim` / `text-box-edge`.
-- **Workaround:** flex centring in the fixed-height tab.
-- **Fidelity:** approximated.
-- **Components it hits:** badge, tabs-subtle, anything with a trimmed label.
-
 ## API surface: index props, `className`, ref and Base UI props
 
 - **Cause:** `port choice` for `selectedIndex` / `onSelect` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md`: FF-only layer, out of scope per lead decision); reason not stated for the rest.
 - **Original:** `Tabs` takes `selectedIndex` / `onSelect` and spreads Base UI Root props (`orientation`, ...); `TabsList`, `TabItem` and `TabPanel` take `className`, forward refs and spread Base UI props, `TabItem` composes `onClick` (`tabs.tsx:66-84`, `:182-184`, `:477-490`, `:588-602`).
-- **Port:** `Tabs` takes `value`, `onValueChange`, `defaultValue`, `size`; `TabsList` and `TabItem` take `testId`; `TabItem` takes `disabled` explicitly; no `className`, ref or passthrough (`tabs.tsx:85-92`, `:149`, `:302-308`, `:429`). The list is always horizontal.
+- **Port:** `Tabs` takes `value`, `onValueChange`, `defaultValue`, `size`; `TabsList` and `TabItem` take `testId`; `TabItem` takes `disabled` explicitly; no `className`, ref or passthrough (`tabs.tsx:85-92`, `:149`, `:302-308`, `:430`). The list is always horizontal.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** tabs-subtle, and most of the port.

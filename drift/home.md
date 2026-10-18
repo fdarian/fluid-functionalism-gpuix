@@ -5,7 +5,7 @@ Original: `app/page.tsx`, `app/components/bento-grid.tsx`, `bento-card.tsx` and 
 `bento-card.tsx`, `bento-previews.tsx`) and `Showcase` / `HeroArrows` in `src/app.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it. The hero's three buttons are not wired here (their `onClick`s belong to the install-prompt / docs / demo work).
 
 ## The grid does not animate when the column count changes

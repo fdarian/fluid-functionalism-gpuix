@@ -125,7 +125,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `not ported yet` (small details).
 - **Original:** the chip is `font-sans`, `leading-none`, and "⌘" and "↵" are two children with `gap-0.5` (`:1593-1604`, `:1551-1552`). Back, Skip and Continue are `Button size="sm"` with trimmed icon-side padding via `className` (`:1440-1450`, `:1524-1541`).
-- **Port:** one string "⌘↵", no 2px gap, `lineHeight: 11` (`ask-user-questions.tsx:98-122`); `size="compact"`, which is the source's `sm` alias, with the Button's own icon padding (`:1046-1107`; `src/components/button.tsx:40`, `:150-153`).
+- **Port:** one string "⌘↵", no 2px gap, `lineHeight: 11` (`ask-user-questions.tsx:98-122`); `size="compact"`, which is the source's `sm` alias, with the Button's own icon padding (`:1046-1107`; `src/components/button.tsx:41`, `:151-154`).
 - **Workaround:** `marginLeft: 2` to stand in for the label gap.
 - **Fidelity:** approximated (about a pixel).
 - **Components it hits:** just this one.

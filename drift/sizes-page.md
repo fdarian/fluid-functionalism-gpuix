@@ -7,7 +7,7 @@ Ported in `src/pages/sizes.tsx`, with the demos in `src/pages/sizes/` (`toolbar.
 chips, Copy prompt button, `ComponentPreview` frame and the missing prev / next arrows are the same as the Motion page's: see `drift/motion-page.md`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## No `SizeProvider`: every control in a region gets `size` explicitly
@@ -36,7 +36,7 @@ repeating it.
 
 ## The sort button is not drawn pressed
 
-- **Cause:** `not ported yet` (`Button` has no `active` prop; `src/components/button.tsx:108-130`).
+- **Cause:** `not ported yet` (`Button` has no `active` prop; `src/components/button.tsx:109-131`).
 - **Original:** `<Button variant="tertiary" active trailingIcon={ChevronDown}>` shows the pressed fill that says "this opened the menu below" (`app/docs/sizes/page.tsx:316`).
 - **Port:** the plain tertiary button with the trailing chevron.
 - **Fidelity:** approximated.

@@ -9,7 +9,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `gpuix gap`.
 - **Original:** a native `<button>` matches `:active` while Space is held, so the press-shrink (`group-active:`, `registry/base/button.tsx:115-127`) plays for a keyboard activation too.
-- **Port:** the pressed look is `style.active` (`src/components/button.tsx:236`); Space still activates on key-up through `buttonProps` (`:193-196`).
+- **Port:** the pressed look is `style.active` (`src/components/button.tsx:238`); Space still activates on key-up through `buttonProps` (`:195-198`).
 - **gpuix lacks:** a keyboard `:active` state. `active` styles come from the pointer's press chain only (`~/code/fdarian/gpuix/FORK.md:317-319`). Rechecked on the test renderer: with a focused `buttonProps` element carrying `active: { backgroundColor }`, the capture while `nativeSimulateKeyDown(id, "Space")` is held is byte-identical to the resting one.
 - **Workaround:** none.
 - **Fidelity:** approximated: the activation is exact, the pressed look is missing for the keyboard.
@@ -30,20 +30,10 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `not ported yet`.
 - **Original:** an infinity-shaped path in a 24 viewBox drawn at 36px (28px compact), `strokeDasharray` 15 85, `spinner-move 2s linear infinite` (dash offset to -100) and `spinner-dash 4s ease-in-out infinite` (dash 15 to 40), stroke 1.125 (`:199-201`, `:228-246`, `app/globals.css:998-1005`).
-- **Port:** the `loader` glyph of the Icons row's library (lucide spokes by default) at the icon size (16 / 14), stroke 1.5, no motion (`src/components/button.tsx:283-316`, `src/lib/icons/lucide.ts:21`).
+- **Port:** the `loader` glyph of the Icons row's library (lucide spokes by default) at the icon size (16 / 14), stroke 1.5, no motion (`src/components/button.tsx:285-318`, `src/lib/icons/lucide.ts:21`).
 - **Workaround:** none. README calls this "Dropped" but it needs no transform: gpuix animates SVG `strokeDasharray` / `strokeDashoffset` with repeating keyframes (`FORK.md:1144-1145`, `:1151-1152`), and `file-thumbnail.tsx` already draws a moving arc.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
-
-## Label is not trimmed to cap height
-
-- **Cause:** `gpuix gap`.
-- **Original:** `[text-box:trim-both_cap_alphabetic]` on the label span (`:265`).
-- **Port:** the label keeps its 20px (18 compact) line box inside the flex-centred button (`src/components/button.tsx:160-169`).
-- **gpuix lacks:** `text-box-trim`; see the badge row in README "gpuix gaps" and `drift/badge.md`.
-- **Workaround:** none.
-- **Fidelity:** approximated (about a pixel of optical drift).
-- **Components it hits:** every trimmed label (badge, card title in inline cards, `CardButton`).
 
 ## Keyboard auto-repeat of Enter
 
@@ -58,7 +48,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `port choice` (out of scope per the lead's decision, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:177`).
 - **Original:** `active` forces the pressed look while a menu the button opened is showing (`:99-102`, `:130-141`); `asChild` / `render` make another element the root (`:86-95`, `:163-186`, `:290-302`); `sm` / `md` / `lg` / `icon-sm` / `icon-lg` resolve onto the ladder (`:61-78`).
-- **Port:** none of them (`src/components/button.tsx:94-117`). A dropdown trigger does not look engaged while its menu is open.
+- **Port:** none of them (`src/components/button.tsx:95-118`). A dropdown trigger does not look engaged while its menu is open.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** every popup trigger that is a `Button` (dropdown, select).
@@ -76,7 +66,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `size="icon"` renders `children` (any element, usually an icon) inside the label wrapper (`:248-251`).
-- **Port:** the glyph is the `icon` prop and `children` is ignored for icon sizes (`src/components/button.tsx:158-178`); `trailingContent` is a port-only slot for a keycap (`:112-113`).
+- **Port:** the glyph is the `icon` prop and `children` is ignored for icon sizes (`src/components/button.tsx:159-179`); `trailingContent` is a port-only slot for a keycap (`:113-114`).
 - **Workaround:** n/a.
 - **Fidelity:** exact in look.
 - **Components it hits:** just this one.
@@ -85,7 +75,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `port choice` (no prop to drive it).
 - **Original:** `app/docs/button/page.tsx:95-148`: Variants (four inline plus four `w-full`), With Icons (`Create` leading `plus`, secondary `Next` trailing `arrow-right`, tertiary `Search` leading `search` and trailing `arrow-right`), Loading & Disabled (a `Click me` button that loads for 2s, secondary `Saving` loading with a leading `loader`, `Disabled`).
-- **Port:** `src/demos/button.tsx`: Default and Compact rows of the four variants, a Leading icon row (`plus` on all four), a Trailing icon row (secondary `Next`, tertiary `Search` on both sides), Icon only (both sizes), Disabled and Loading rows of the four variants, and a Click to load row (the 2s button and the loading secondary `Saving` with a leading `loader`). Missing: the four `w-full` buttons (`Button` has no width prop). Added: the Compact, Icon only and per-variant Disabled / Loading rows. The icon-only buttons have no `aria-label` (the source playground sets one, `playgrounds/button.tsx:55`, `:222`). Copy matches.
+- **Port:** `src/demos/button.tsx`: Default and Compact rows of the four variants, a Leading icon row (`plus` on all four), a Trailing icon row (secondary `Next`, tertiary `Search` on both sides), Icon only (both sizes), Disabled and Loading rows of the four variants, and a Click to load row (the 2s button and the loading secondary `Saving` with a leading `loader`). Missing: the four `w-full` buttons (`Button` has no width prop). Added: the Compact, Icon only and per-variant Disabled / Loading rows. The icon-only buttons have no `aria-label` (the source playground sets one, `playgrounds/button.tsx:56`, `:224`). Copy matches.
 - **Workaround:** n/a.
 - **Fidelity:** n/a.
 - **Components it hits:** just this one.

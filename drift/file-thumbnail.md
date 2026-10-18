@@ -41,7 +41,7 @@ Ported and matching: the square with `bg-accent`, `overflow-hidden` and `shrink-
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `file: File`; an image is shown through `URL.createObjectURL`, one blob URL per file shared by every thumbnail and revoked with the last one (`file-thumbnail.tsx:40-74`, `:94-100`).
-- **Port:** `FileLike { name, type, src? }`, `src` a filesystem path or data URL; an image without `src` shows the glyph (`file-thumbnail.tsx:11-17`, `:110-112`). Consumers map their own file to it (`src/components/input-message.tsx:312-317`).
+- **Port:** `FileLike { name, type, src? }`, `src` a filesystem path or data URL; an image without `src` shows the glyph (`file-thumbnail.tsx:11-17`, `:110-112`). Consumers map their own file to it (`src/components/input-message.tsx:313-318`).
 - **gpuix lacks:** nothing: `<img src="blob:...">` is read in-process (`packages/native/js/host.ts:1430-1431`; `blob-images.ts`).
 - **Workaround:** pass a path.
 - **Fidelity:** approximated.

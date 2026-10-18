@@ -19,19 +19,9 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 - **Cause:** `gpuix gap`. README "Missing features" row for variable-font axes (`README.md:254`).
 - **Original:** `'wght' 400` to `'wght' 550` with `opsz` compensation, eased over 80 ms (`radio-group.tsx:466-470`).
-- **Port:** static Inter, SemiBold 600 for 550, switches at once; the hidden semibold copy still reserves the width (`stable-label.tsx:70-71`).
+- **Port:** static Inter, SemiBold 600 for 550, switches at once; the hidden semibold copy still reserves the width (`stable-label.tsx:79-80`).
 - **Gpuix lacks:** `fontVariationSettings`.
 - **Workaround:** static cuts.
-- **Fidelity:** approximated.
-- **Components it hits:** checkbox-group and every `StableLabel`.
-
-## Label vertical centring (`text-box-trim`)
-
-- **Cause:** `gpuix gap`. README "Missing features" row for `text-box-trim` (`README.md:253`, filed under badge).
-- **Original:** `[text-box:trim-both_cap_alphabetic]` on both label spans (`radio-group.tsx:450,461`).
-- **Port:** the label is centred by its full 20 px line box (`stable-label.tsx:70-81`), about a pixel off (the README's figure; not measured here).
-- **Gpuix lacks:** `text-box-trim` / `text-box-edge`.
-- **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** checkbox-group and every `StableLabel`.
 

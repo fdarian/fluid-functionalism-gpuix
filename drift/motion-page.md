@@ -6,7 +6,7 @@ Ported in `src/pages/motion.tsx`, with the three demos in `src/pages/motion/` (`
 `spring-reference.tsx`, `install-prompt.ts`) and the page chrome in the shared `src/lib/doc-page.tsx`, routed by the page registry (`src/lib/demo.ts` `loadPages`).
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The modal card does not scale, it grows in width and height
@@ -23,7 +23,7 @@ repeating it.
 
 - **Cause:** `gpuix gap`: `exit` takes a style target only, with no transition of its own (`packages/native/js/host.ts:310-317`, `MotionProps`).
 - **Original:** `exit={{ opacity: 0, scale: 0.95, transition: exitTransition }}` inside `<AnimatePresence>` (`app/docs/motion/page.tsx:313-331`).
-- **Port:** the frame keeps the layers mounted with `createPresence` (`src/lib/presence.ts`): `animate` flips to the closed target and `transition` swaps to the exit tween in the same render, and `onMotionComplete` (or the exit time plus 100ms) unmounts them. This is the pattern the port's popups use (`src/components/tooltip.tsx:169`).
+- **Port:** the frame keeps the layers mounted with `createPresence` (`src/lib/presence.ts`): `animate` flips to the closed target and `transition` swaps to the exit tween in the same render, and `onMotionComplete` (or the exit time plus 100ms) unmounts them. This is the pattern the port's popups use (`src/components/tooltip.tsx:175`).
 - **Workaround:** as above.
 - **Fidelity:** exact timing; the mechanism differs.
 

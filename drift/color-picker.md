@@ -5,7 +5,7 @@ Original: `registry/default/color-picker.tsx` (rails come from `registry/radix/s
 demo in `src/demos/color-picker.tsx`. Popup chrome is shared: `src/lib/popup.tsx` (the select, combobox and dropdown card; the picker has its own `Popup` for the two cards below), presence is `base-ui:src/internals/use-transition-status.ts`. The format menu runs on the Menu primitives (`base-ui:src/menu/`) and the popover on the Popover ones (`base-ui:src/popover/`); `base-ui:` paths are in `../base-ui-solid-gpuix`, whose `BASE-UI-AUDIT.md` ("Color picker format menu", "Popover") compares them to Base UI.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it. In this file, source line numbers are `color-picker.tsx:N` and port ones `src/components/color-picker.tsx:N`.
 
 The colour maths is the same code: `color-picker-math.ts` matches `color-picker.tsx:154-475` function for function (formatting and `Math.pow` to `**` aside),
@@ -73,7 +73,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** Radix slider thumb: arrows, Shift+arrow and PageUp/PageDown move by 10, Home/End jump, and it exposes `aria-valuenow`, `-min`, `-max` (`registry/radix/slider.tsx`, primitive). The ring is a 24px circle whose opacity eases on `spring.fast` (`:940-952`), and the track has an `ew-resize` cursor only on the hit area (`:1087`).
-- **Port:** arrows, Shift (10), Home and End only; no PageUp/PageDown (`src/components/color-picker.tsx:495-518`). The thumb has `aria-valuetext` but no `aria-valuenow`/`-min`/`-max` (`:549-551`; the slider's thumb has them, `base-ui:src/slider/thumb/slider-thumb.ts:146-153`). The ring is `focusVisible` with a 2px offset, drawn about 2px wider, its colour easing over 80 ms on a spring-fitted curve (`src/components/color-picker.tsx:566-567`, `springFade`, `src/lib/theme.ts:517`).
+- **Port:** arrows, Shift (10), Home and End only; no PageUp/PageDown (`src/components/color-picker.tsx:495-518`). The thumb has `aria-valuetext` but no `aria-valuenow`/`-min`/`-max` (`:549-551`; the slider's thumb has them, `base-ui:src/slider/thumb/slider-thumb.ts:146-153`). The ring is `focusVisible` with a 2px offset, drawn about 2px wider, its colour easing over 80 ms on a spring-fitted curve (`src/components/color-picker.tsx:566-567`, `springFade`, `src/lib/theme.ts:537`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

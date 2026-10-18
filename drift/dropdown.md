@@ -2,7 +2,7 @@
 
 Original: `registry/base/dropdown.tsx`, with `registry/default/menu-item.tsx`, `dropdown-search.tsx` and `dropdown-sub.tsx`; demo in `app/docs/dropdown/page.tsx` and `lib/docs/playgrounds/dropdown.tsx` of the source (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/dropdown.tsx`, `menu-item.tsx` and `dropdown-search.tsx`, demo in `src/demos/dropdown.tsx`.
 
-One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps (CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) are one line each and link to the README row.
+One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps (CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) are one line each and link to the README row.
 
 ## The parent list ignores the pointer toward a submenu instead of `pointer-events: none`
 
@@ -27,17 +27,9 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `gpuix gap`. README "Missing features" row "Variable-font axes".
 - **Original:** a lit or checked row's label eases from `wght 400` to `550` over 80 ms (`registry/default/menu-item.tsx:224-233`); 
-- **Port:** `StableLabel` switches at once to SemiBold 600 (`src/components/menu-item.tsx:139-145`, `src/lib/theme.ts:370`).
+- **Port:** `StableLabel` switches at once to SemiBold 600 (`src/components/menu-item.tsx:139-146`, `src/lib/theme.ts:390`).
 - **Fidelity:** approximated.
 - **Components it hits:** every `StableLabel` (tabs, tabs-subtle, sidebar, menu rows).
-
-## No text-box trim on row labels
-
-- **Cause:** `gpuix gap`. README "Missing features" row "text-box-trim".
-- **Original:** both stacked label spans carry `[text-box:trim-both_cap_alphabetic]` (`registry/default/menu-item.tsx:216`, `:224`), so the glyphs centre on cap height in the 36px row.
-- **Port:** the 20px line box is centred by flex (`src/components/menu-item.tsx:105-126`, `src/lib/stable-label.tsx`), about a pixel of vertical drift against the source.
-- **Fidelity:** approximated.
-- **Components it hits:** badge, every row built on `StableLabel`.
 
 ## Submenu and inline panel colour is fixed at surface-3
 
@@ -53,7 +45,7 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Original:** rows scroll inside `ScrollArea` with the hover-revealed thumb and a 32px `scroll-fade` on the viewport, dropped while a search field is mounted (`registry/base/dropdown.tsx:714`; `registry/default/lib/popup.ts:35-37`).
 - **Port:** a `div` with `overflowY: "scroll"` (`src/components/dropdown.tsx:376-387`): no custom thumb, no edge fade.
 - **Fidelity:** approximated.
-- **Components it hits:** select (`src/components/select.tsx:409`), combobox (`src/components/combobox.tsx:335`), command-menu (`src/components/command-menu.tsx:958`).
+- **Components it hits:** select (`src/components/select.tsx:411`), combobox (`src/components/combobox.tsx:336`), command-menu (`src/components/command-menu.tsx:960`).
 
 ## Checked background appears with a fade instead of already being there
 
@@ -75,7 +67,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`. `CheckMark` in `src/lib/icon.tsx:111` already draws and retracts the stroke, and select and combobox use it.
 - **Original:** the check is a `motion.path` that draws (`pathLength` 0 to 1, 80 ms ease-out) and retracts on exit (40 ms ease-in); `AnimatePresence initial={false}` shows a row checked at mount finished (`registry/default/menu-item.tsx:241-272`). The svg exists only while `checked`.
-- **Port:** a mounted-late `motion.div` fades the `check` glyph in over 80 ms ease-out; unchecking removes it at once, no retract (`src/components/menu-item.tsx:156-178`). The 16px slot, and its 8px gap, is always reserved for any row with a boolean `checked`, so an unchecked radio row's label is 24px narrower than the source's (the source only reserves it while checked); it only shows on a label long enough to clip.
+- **Port:** a mounted-late `motion.div` fades the `check` glyph in over 80 ms ease-out; unchecking removes it at once, no retract (`src/components/menu-item.tsx:157-179`). The 16px slot, and its 8px gap, is always reserved for any row with a boolean `checked`, so an unchecked radio row's label is 24px narrower than the source's (the source only reserves it while checked); it only shows on a label long enough to clip.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one (select and combobox already draw it).
 
@@ -140,7 +132,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `port choice` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` rows 475-478, lead decision: no ported consumer; the source docs never mount a `DirectionProvider`).
 - **Original:** `useDirection()` picks `side="left"` for rtl (`registry/base/dropdown.tsx:879-883`), Base UI swaps the submenu open and close keys, and the chevron mirrors with `rtl:-scale-x-100` (`registry/default/dropdown-sub.tsx:179`).
-- **Port:** the submenu is always on the right and Right opens, Left closes (`src/components/dropdown.tsx:894-899`, `base-ui:src/menu/list/menu-list.ts:271-279`); the chevron never mirrors (`src/components/menu-item.tsx:146-155`).
+- **Port:** the submenu is always on the right and Right opens, Left closes (`src/components/dropdown.tsx:894-899`, `base-ui:src/menu/list/menu-list.ts:271-279`); the chevron never mirrors (`src/components/menu-item.tsx:147-156`).
 - **Fidelity:** dropped, unreachable in the docs.
 - **Components it hits:** just this one.
 

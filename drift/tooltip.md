@@ -8,21 +8,11 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 
 - **Cause:** `gpuix gap` (no transforms: [README "Missing features", first row](../README.md#missing-features)).
 - **Original:** the chip enters and exits with `x` / `y` (4px) plus opacity (`registry/base/tooltip.tsx:282-291`); `followCursor` drives a `y` / `x` motion value on the outer box (`:205-219`, `:262-269`). There is no scale on the tooltip, so the README row's "`scaleY: 0.96`" does not apply to it.
-- **Port:** the chip animates `top` / `left` (`slideFrom`, `src/components/tooltip.tsx:52-63`, chip `initial` / `animate` `:168-173`); `followCursor` passes the pointer offset to `<anchored offset>` (`:111-121`, `:154`).
+- **Port:** the chip animates `top` / `left` (`slideFrom`, `src/components/tooltip.tsx:58-69`, chip `initial` / `animate` `:174-179`); `followCursor` passes the pointer offset to `<anchored offset>` (`:117-127`, `:160`).
 - **gpuix lacks:** `transform`, so `translate` / `x` / `y` cannot animate; only layout props can.
 - **Workaround:** `top` / `left` tweens, which re-lay out per frame.
 - **Fidelity:** approximated (same distance and timing; a layout change per frame instead of a compositor transform).
 - **Components it hits:** every popup that slides in (select, combobox, dropdown, color-picker, dialog).
-
-## The label is centred by its full line box
-
-- **Cause:** `gpuix gap` ([README, badge row](../README.md#missing-features): `text-box-trim`).
-- **Original:** `[text-box:trim-both_cap_alphabetic]` with `py-2` where supported, `py-1` elsewhere, for about 24px overall (`registry/base/tooltip.tsx:273-277`).
-- **Port:** `paddingTop` / `paddingBottom` 4 around the caption's 16px line, 24px overall (`src/components/tooltip.tsx:182-185`, `src/lib/theme.ts:307`).
-- **gpuix lacks:** `text-box-trim` / `text-box-edge`.
-- **Workaround:** the height matches; the glyphs sit about a pixel off the trimmed centre.
-- **Fidelity:** approximated.
-- **Components it hits:** badge and any trimmed label.
 
 ## Semibold in rich content is 600, not 550
 
@@ -35,9 +25,9 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 
 ## The trigger is wrapped in a `div`
 
-- **Cause:** `port choice` (the wrapper hears hover, press and focus through bubbling, `src/components/tooltip.tsx:67`; there is no `render={children}` / ref merging).
+- **Cause:** `port choice` (the wrapper hears hover, press and focus through bubbling, `src/components/tooltip.tsx:73`; there is no `render={children}` / ref merging).
 - **Original:** `TooltipPrimitive.Trigger render={children}` puts the handlers on the child itself, with no extra box (`registry/base/tooltip.tsx:229-233`).
-- **Port:** a `display: flex; flexShrink: 0; position: relative` wrapper around the child (`src/components/tooltip.tsx:129-142`).
+- **Port:** a `display: flex; flexShrink: 0; position: relative` wrapper around the child (`src/components/tooltip.tsx:135-148`).
 - **Workaround:** none. A trigger that relied on `flex: 1`, `width: 100%` or a parent's `gap` / `:first-child` rules sees the wrapper instead of itself.
 - **Fidelity:** approximated.
 - **Components it hits:** every tooltip trigger (queued-stack, input-copy, input-message, color-picker).
@@ -46,7 +36,7 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** the label wraps at the room the popup has (`registry/base/tooltip.tsx:276`, no `whitespace-nowrap`).
-- **Port:** `whiteSpace: "nowrap"` on the caption text (`src/components/tooltip.tsx:192-197`), so a long label flips to the far side (demo "Near the window edge", `src/demos/tooltip.tsx:150-167`) or runs off the window instead of wrapping.
+- **Port:** `whiteSpace: "nowrap"` on the caption text (`src/components/tooltip.tsx:199-204`), so a long label flips to the far side (demo "Near the window edge", `src/demos/tooltip.tsx:150-167`) or runs off the window instead of wrapping.
 - **Workaround:** none; rich content (JSX) wraps as its own text does.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -55,7 +45,7 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 
 - **Cause:** `port choice` (settled in `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` "Tooltip", the tooltip joins gpuix's dismiss-layer stack).
 - **Original:** Base UI's tooltip and dialog are separate document-level listeners, so one Escape most likely closes both (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` reading; not run).
-- **Port:** `<DismissableLayer onEscapeKeyDown={dismiss}>` while a hover-opened tooltip is open; a `forceOpen` one is not a layer (`src/components/tooltip.tsx:144-147`).
+- **Port:** `<DismissableLayer onEscapeKeyDown={dismiss}>` while a hover-opened tooltip is open; a `forceOpen` one is not a layer (`src/components/tooltip.tsx:150-153`).
 - **Workaround:** n/a.
 - **Fidelity:** approximated (two Escapes to close both).
 - **Components it hits:** dialog, mobile-drawer.
@@ -64,7 +54,7 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 
 - **Cause:** `not ported yet`.
 - **Original:** Base UI keeps a focus-opened tooltip when focus moves between elements inside one trigger (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` "Tooltip", keyboard row).
-- **Port:** `onFocusOut` closes on any focus-out (`src/components/tooltip.tsx:140`, `base-ui:src/tooltip/trigger/tooltip-trigger.ts:130-133`).
+- **Port:** `onFocusOut` closes on any focus-out (`src/components/tooltip.tsx:146`, `base-ui:src/tooltip/trigger/tooltip-trigger.ts:130-133`).
 - **Workaround:** none; every port trigger is one control.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -73,7 +63,7 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 
 - **Cause:** `port choice` (there are no class names, and an `<anchored>` layer replaces the portal).
 - **Original:** `className`, `contentClassName`, `TooltipPortalContainer`, `children: ReactElement` (`registry/base/tooltip.tsx:23-37`, `:87-107`).
-- **Port:** none of them; `testId` is added and `children` is any JSX (`src/components/tooltip.tsx:65-80`). The chip cannot be restyled by a caller.
+- **Port:** none of them; `testId` is added and `children` is any JSX (`src/components/tooltip.tsx:71-86`). The chip cannot be restyled by a caller.
 - **Workaround:** n/a.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.

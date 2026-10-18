@@ -5,32 +5,23 @@ Original: `registry/base/switch.tsx`, demo in `app/docs/switch/page.tsx` of the 
 demo in `src/demos/switch.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The thumb moves on `left` / `top`, not a transform
 
 - **Cause:** `gpuix gap`. See the CSS transforms row in [`README.md`](../README.md#missing-features).
 - **Original:** x is a motion value on a transform, y is a transform (`switch.tsx:333-340`); only width and height are layout.
-- **Port:** `left`, `top`, `width` and `height` all animate (`src/components/switch.tsx:158-196`), so the track re-lays out each frame. The motion is the same. Two layers carry it, because reduced motion treats them differently on the web: the source slides x with `animate()` on a motion value, which `MotionConfig` leaves springing, while its width, height and y jump. The outer layer (`left`) sits in a `reducedMotion="never"` config and the inner one (`top`, `width`, `height`) goes back to `"user"`.
+- **Port:** `left`, `top`, `width` and `height` all animate (`src/components/switch.tsx:159-197`), so the track re-lays out each frame. The motion is the same. Two layers carry it, because reduced motion treats them differently on the web: the source slides x with `animate()` on a motion value, which `MotionConfig` leaves springing, while its width, height and y jump. The outer layer (`left`) sits in a `reducedMotion="never"` config and the inner one (`top`, `width`, `height`) goes back to `"user"`.
 - **Workaround:** `motion.div` on layout props.
 - **Fidelity:** exact for what is seen.
 - **Components it hits:** every spring that FF runs on `x` / `y`.
-
-## Compact row is 2px taller
-
-- **Cause:** `gpuix gap`. See the `text-box-trim` row in [`README.md`](../README.md#missing-features).
-- **Original:** the label carries `[text-box:trim-both_cap_alphabetic]` (`switch.tsx:356`), so its box is about the cap height and the 16px track sets the row: 4 + 16 + 4 = 24px compact. The comment at `:354-355` says the layout does not change because the track is taller than the label.
-- **Port:** the label keeps its full line box, 18px at the compact step (`src/lib/theme.ts:306`, used at `src/components/switch.tsx:43,201`), which is taller than the 16px track, so the row is 4 + 18 + 4 = 26px. Computed from the code, not measured. The default step is unaffected: its 20px line equals the 20px track (36px both). Letters also sit about half a pixel off the cap-centred position at both steps.
-- **Workaround:** none.
-- **Fidelity:** approximated (compact rows are 2px taller; the stack of compact switches grows by 2px each).
-- **Components it hits:** any component whose layout relies on a trimmed label.
 
 ## Focus ring gap is not filled with the background
 
 - **Cause:** `port choice` (reason not stated; `focusRing()` is the shared outline helper).
 - **Original:** `focus-visible:ring-1 ring-[color:var(--focus-ring)] ring-offset-2 ring-offset-background` (`switch.tsx:291`): the 2px gap between track and ring is painted in the page background.
-- **Port:** a 1px outline at offset 2 (`src/components/switch.tsx:155`, `focusRing` at `src/lib/theme.ts:526`); the gap shows whatever is behind the switch. On the demo card (surface 2) that is a hair lighter than the source's page background.
+- **Port:** a 1px outline at offset 2 (`src/components/switch.tsx:156`, `focusRing` at `src/lib/theme.ts:546`); the gap shows whatever is behind the switch. On the demo card (surface 2) that is a hair lighter than the source's page background.
 - **Workaround:** none.
 - **Fidelity:** approximated (position and colour exact, the gap tint differs on non-page surfaces).
 - **Components it hits:** every port of a `ring-offset-background` ring.
@@ -39,7 +30,7 @@ repeating it.
 
 - **Cause:** `not ported yet`. `MotionValue.get()` is available, but whether it may be read inside a press handler was not tried.
 - **Original:** `originX: motionX.get()` (`switch.tsx:143-148`), so a press during a spring picks the thumb up where it is.
-- **Port:** `originX: restX()` (`base-ui:src/switch/thumb/switch-thumb.ts:37`, fed by `restX` at `src/components/switch.tsx:82-85`), the pressed-shape target. A press that starts dragging while the thumb is still springing makes it jump to that target on the first drag frame. Visible only when pressing during a spring.
+- **Port:** `originX: restX()` (`base-ui:src/switch/thumb/switch-thumb.ts:37`, fed by `restX` at `src/components/switch.tsx:83-86`), the pressed-shape target. A press that starts dragging while the thumb is still springing makes it jump to that target on the first drag frame. Visible only when pressing during a spring.
 - **Workaround:** none. Listed in `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` (Switch, "Drag starts from where the thumb is now").
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -48,7 +39,7 @@ repeating it.
 
 - **Cause:** `not ported yet`.
 - **Original:** `SwitchProps` (`switch.tsx:27-39`): `thumbTransition` overrides the spring, `className`, `ref` and the rest spread on the row (`:273`).
-- **Port:** `label`, `checked`, `onToggle`, `disabled`, `size` (`"default" | "compact"`, default the Size row) and a harness-only `testId` (`src/components/switch.tsx:52-61`). Row padding, gap and text come from `METRICS` (`:20-45`), which match `sizeMap` (px-3 / gap-2 / body 13/20 default; px-2.5 / gap-1 / 12/18 compact).
+- **Port:** `label`, `checked`, `onToggle`, `disabled`, `size` (`"default" | "compact"`, default the Size row) and a harness-only `testId` (`src/components/switch.tsx:53-62`). Row padding, gap and text come from `METRICS` (`:21-46`), which match `sizeMap` (px-3 / gap-2 / body 13/20 default; px-2.5 / gap-1 / 12/18 compact).
 - **Workaround:** none.
 - **Fidelity:** dropped for the props; exact for the two built-in sizes.
 - **Components it hits:** every ported component.

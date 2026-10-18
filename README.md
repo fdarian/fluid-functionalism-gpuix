@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 573 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 560 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -160,13 +160,13 @@ column's card in place of "Make them yours"), `scenarios`, `menuIcon` and `menuK
 
 | File | What it holds |
 |---|---|
-| `theme.ts` | Both columns of every `light-dark()` in `app/globals.css` (`color-mix()` mixed offline), type scale, radii, springs. `color.x` reads a `scheme` signal, so a JSX prop that touches it re-colours on a theme change; read tokens inside JSX or a function, never at module scope. `withAlpha`, `surface(level)`, `focusRing(offset)`. |
+| `theme.ts` | Both columns of every `light-dark()` in `app/globals.css` (`color-mix()` mixed offline), type scale, radii, springs. `color.x` reads a `scheme` signal, so a JSX prop that touches it re-colours on a theme change; read tokens inside JSX or a function, never at module scope. `withAlpha`, `surface(level)`, `focusRing(offset)`, `capTrim` and `clippedCapTrim` (the source's `text-box` trim). |
 | `theme-fade.tsx` | `changeTheme(choice)`, what the Theme select, menu rows and Surfaces links call: mounts the 180ms colour cross-fade layer (`<ThemeFade />`, a `UniversalStyle`), flips the palette a frame later and drops the layer after 200ms. `setThemeChoice` still cuts at once, for captures and checks. |
 | `fluid-hover.ts`, `fluid-highlight.tsx` | The site's `use-fluid-hover`: rows register with a `ResizeObserver`, their boxes are read with `getBoundingClientRect` when one reports, `pickNearest` (ported verbatim) resolves the pointer to a row including gaps, and one highlight glides between rows. `hover.containerProps` and `useHoverItem` wire a list. |
 | `focus-ring.tsx` | The shared keyboard focus ring of accordion groups, tabs, tabs-subtle, checkbox, radio, select and the sidebar menu: one outline box 2px outside the focused row that springs between the rects fluid hover measures. `createFocusRing(hover)` collects `onFocus` / `onBlur` from the rows and counts only `event.focusVisible`, so a click draws none; the ring fades out 60 ms after the last blur and appears in place, not travelling from where it was. |
 | `measured-height.ts` | A box whose height springs to its content's measured pixel height, as the source's do: the content box reports its size through `onLayout`, used by every collapse. gpuix animates `height: "auto"` itself; the port keeps the source's number. |
 | `popup.tsx`, `popup-timing.ts` | Popup chrome on `<anchored fit="flip">` (`PopupSurface`, which takes a `createPresence` from base-ui and keeps its reported side and available height in `createPlacementState`), and the exit durations passed to the primitives. |
-| `stable-label.tsx` | A label that gains weight without moving its neighbours: an `inline-grid` holds a hidden semibold copy and the visible one in one cell, so the label is as wide as the semibold copy and wraps like the source's; `nowrap` and `truncate` are opt-in. |
+| `stable-label.tsx` | A label that gains weight without moving its neighbours: an `inline-grid` holds a hidden semibold copy and the visible one in one cell, so the label is as wide as the semibold copy and wraps like the source's; `nowrap`, `truncate` and `trim` (the cap-height `textBox` on both copies) are opt-in. |
 | `clock.ts` | One shared, ref-counted frame clock for every JS-driven loop; a subscriber inside a far culled region is skipped, and the timer stops when none is shown. |
 | `fonts.ts`, `assets.ts`, `app-frame.tsx` | The static Inter files passed to `render()` and the test renderer, imported as embedded files; `diskPath`, which turns an embedded file path into one on disk for `<img src>`, and the image paths (`MICKA_PNG`, `OG_PNG`) built with it; the window frame (chrome-coloured bar, rounded page panel). |
 | `press.tsx`, `icons.ts`, `icon.tsx` | The press-shrink fill layer; lucide glyphs as SVG strings (`defineIcon` for a component's own). |
@@ -198,20 +198,20 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [accordion](drift/accordion.md) | 3 | 9 | 7 | 0 | 19 |
 | [ask-user-questions](drift/ask-user-questions.md) | 2 | 4 | 7 | 3 | 16 |
 | [audio-mixer](drift/audio-mixer.md) | 0 | 2 | 0 | 1 | 3 |
-| [badge](drift/badge.md) | 1 | 3 | 0 | 0 | 4 |
+| [badge](drift/badge.md) | 0 | 3 | 0 | 0 | 3 |
 | [banner](drift/banner.md) | 4 | 4 | 6 | 0 | 14 |
-| [button](drift/button.md) | 3 | 4 | 2 | 1 | 10 |
-| [card](drift/card.md) | 4 | 7 | 6 | 0 | 17 |
+| [button](drift/button.md) | 2 | 4 | 2 | 1 | 9 |
+| [card](drift/card.md) | 3 | 7 | 6 | 0 | 16 |
 | [carousel-dots](drift/carousel-dots.md) | 2 | 3 | 2 | 1 | 8 |
 | [chat-message](drift/chat-message.md) | 2 | 4 | 2 | 1 | 9 |
-| [checkbox-group](drift/checkbox-group.md) | 3 | 0 | 3 | 1 | 7 |
+| [checkbox-group](drift/checkbox-group.md) | 2 | 0 | 3 | 1 | 6 |
 | [color-picker](drift/color-picker.md) | 3 | 5 | 15 | 1 | 24 |
-| [combobox](drift/combobox.md) | 5 | 13 | 5 | 2 | 25 |
-| [command-menu](drift/command-menu.md) | 6 | 2 | 12 | 2 | 22 |
+| [combobox](drift/combobox.md) | 4 | 13 | 5 | 2 | 24 |
+| [command-menu](drift/command-menu.md) | 5 | 2 | 12 | 2 | 21 |
 | [compare](drift/compare.md) | 2 | 8 | 1 | 2 | 13 |
 | [concepts](drift/concepts.md) | 2 | 26 | 2 | 1 | 31 |
 | [dialog](drift/dialog.md) | 3 | 2 | 2 | 1 | 8 |
-| [dropdown](drift/dropdown.md) | 4 | 5 | 11 | 1 | 21 |
+| [dropdown](drift/dropdown.md) | 3 | 5 | 11 | 1 | 20 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
 | [fluid-hover](drift/fluid-hover.md) | 3 | 5 | 2 | 2 | 12 |
 | [home](drift/home.md) | 0 | 1 | 1 | 2 | 4 |
@@ -223,25 +223,25 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [motion-page](drift/motion-page.md) | 3 | 3 | 1 | 3 | 10 |
 | [nav-menu](drift/nav-menu.md) | 1 | 5 | 1 | 0 | 7 |
 | [queued-stack](drift/queued-stack.md) | 4 | 2 | 3 | 1 | 10 |
-| [radio-group](drift/radio-group.md) | 4 | 2 | 2 | 0 | 8 |
+| [radio-group](drift/radio-group.md) | 3 | 2 | 2 | 0 | 7 |
 | [scroll-area](drift/scroll-area.md) | 2 | 5 | 1 | 1 | 9 |
 | [scrollbars-page](drift/scrollbars-page.md) | 0 | 4 | 2 | 0 | 6 |
-| [select](drift/select.md) | 5 | 3 | 6 | 2 | 16 |
+| [select](drift/select.md) | 4 | 3 | 6 | 2 | 15 |
 | [sidebar](drift/sidebar.md) | 1 | 8 | 19 | 1 | 29 |
 | [site](drift/site.md) | 5 | 11 | 21 | 7 | 44 |
 | [sizes-page](drift/sizes-page.md) | 0 | 5 | 3 | 3 | 11 |
 | [skill-page](drift/skill-page.md) | 3 | 5 | 0 | 1 | 9 |
 | [slider](drift/slider.md) | 5 | 3 | 2 | 1 | 11 |
 | [surfaces](drift/surfaces.md) | 2 | 3 | 4 | 3 | 12 |
-| [switch](drift/switch.md) | 2 | 1 | 2 | 1 | 6 |
+| [switch](drift/switch.md) | 1 | 1 | 2 | 1 | 5 |
 | [table](drift/table.md) | 3 | 1 | 3 | 0 | 7 |
 | [tabs-subtle](drift/tabs-subtle.md) | 2 | 3 | 2 | 0 | 7 |
-| [tabs](drift/tabs.md) | 2 | 2 | 2 | 0 | 6 |
+| [tabs](drift/tabs.md) | 1 | 2 | 2 | 0 | 5 |
 | [thinking-indicator](drift/thinking-indicator.md) | 1 | 2 | 3 | 0 | 6 |
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
-| [tooltip](drift/tooltip.md) | 3 | 5 | 1 | 1 | 10 |
-| [typography](drift/typography.md) | 4 | 0 | 1 | 4 | 9 |
-| **Total** | **119** | **197** | **198** | **59** | **573** |
+| [tooltip](drift/tooltip.md) | 2 | 5 | 1 | 1 | 9 |
+| [typography](drift/typography.md) | 3 | 0 | 1 | 4 | 8 |
+| **Total** | **106** | **197** | **198** | **59** | **560** |
 
 ### gpuix gaps across components
 
@@ -274,7 +274,7 @@ offer it. A count is given only where the code shows it.
 
 | Used by | What | Workaround here |
 |---|---|---|
-| popups (select, combobox, dropdown, color-picker, dialog), tooltip, chevrons (accordion, card, color-picker, thinking-steps), scale-in entrances (banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack, radio-group), spinners (file-thumbnail), the changelog's month dot (scale) and entry-name arrow (translate) | CSS transforms: no scale, rotate or translate, so the popups' `scaleY: 0.96` entrance and every turn and pop is impossible (Base UI audit rows 530, 617). The tooltip has no scale in the source (`tooltip.tsx:282-291`); it only slides on x / y, which is a transform too | Popups and the tooltip slide from the reported side and fade; glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom` |
+| popups (select, combobox, dropdown, color-picker, dialog), tooltip, chevrons (accordion, card, color-picker, thinking-steps), scale-in entrances (banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack, radio-group), spinners (file-thumbnail), the changelog's month dot (scale) and entry-name arrow (translate) | CSS transforms: no scale, rotate or translate, so the popups' `scaleY: 0.96` entrance and every turn and pop is impossible (Base UI audit rows 530, 617). The tooltip has no scale in the source (`tooltip.tsx:289-298`); it only slides on x / y, which is a transform too | Popups and the tooltip slide from the reported side and fade; glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom` |
 | slider | `<input type="range">` (Base UI audit row 312) | A pointer-handled track and thumbs |
 | slider | `calc()`, or a `%` mixed with px, in a motion value: a string a motion value holds must be a colour or a percentage, so a `createTransform` that returns `calc(25% + 20px)` throws (gpuix `README.md:1531-1534`; `drift/slider.md`, "Derived layers trail their inputs"). `calc()` works as a static style, which does not animate | Pixel maths from the measured row width, in JS-derived values (one frame late, see Bugs) |
 | select, combobox (`FormValue`) | `<input type="hidden">` | A real input that is invisible, unreachable and `aria-hidden` |
@@ -288,7 +288,6 @@ offer it. A count is given only where the code shows it.
 | not counted | Effect groups (`filter`, `backdrop-filter`, `mask`, `clip`, group opacity) off macOS: the group draws flat. The Markdown sample's to-do tick is a `maskImage` of an SVG data URI on a foreground box, so off macOS it is a flat square | none |
 | carousel-dots, file-thumbnail, thinking-indicator, thinking-steps | `requestAnimationFrame` itself (only `setTimeout`, FORK.md:209-211). The animations are possible without it, through motion values and keyframes (FORK.md:1144-1148) | `lib/clock.ts`: one shared, ref-counted `setInterval` frame clock |
 | not counted | `text-wrap: balance` past 6 lines per forced-break segment, and `pretty` on a paragraph whose last line is longer than a third of the line: gpuix's breaker approximates Chromium's (`pretty` re-breaks the last four lines at most) | none; every string the port balances or prettifies (the docs' headings and prose, the Balanced and Pretty demos, the fluid-hover callouts) breaks as Chromium's does |
-| badge | `text-box-trim` / `text-box-edge`: a label is centred by its full line box | Flex centring in a fixed-height pill (about a pixel of drift) |
 | card (`CardTitle`), table, every `StableLabel` (tabs, tabs-subtle, sidebar, menu rows) | Variable-font axes (`fontVariationSettings`): only a font's default instance renders, so the weight cannot ease between 400 and 550 | Static cuts; the weight switches at once, SemiBold 600 for 550 |
 | combobox (command-menu, input-message) | IME composition on Windows and Linux: gpuix reports `isComposing` `false` and fires no `Process` keydown or `composition*` events there, and the composition keys go to the input method before GPUI sees them (FORK.md:564-567). macOS reports all three (FORK.md:496-499), but this port reads none of them: the source's `isComposing` guards on Enter and arrows (command-menu, input-message, Base UI's combobox input) have no counterpart | none; IME input is untested. On macOS a key the input method takes first is a `Process` keydown that no `Enter` or arrow case matches |
 | button (every `buttonProps` button) | A keyboard `:active` state: a held Space does not play the pressed look | none; Space still activates on key-up |
@@ -365,7 +364,7 @@ now does that the port has not picked up.
 | `getBoundingClientRect` | `element.getBoundingClientRect()`, read when needed (layout is flushed first, so it is never stale) | Native |
 | `ResizeObserver` | gpuix's `ResizeObserver` (fluid hover, slider width, queued stack) and `onLayout` (size, after the first paint and on every change) | Exact |
 | `text-[length:…] leading-[…]` | `fontSize` + `lineHeight` | Exact |
-| `[text-box:trim-both_cap_alphabetic]` | none: labels are centred by their line box | Dropped, a pixel of optical drift |
+| `[text-box:trim-both_cap_alphabetic]` | `textBox: capTrim` (`src/lib/theme.ts`); a label that clips adds the source's `py-1 -my-1` through `clippedCapTrim` | Exact |
 | Inter variable (`wght 550`, `opsz`) | static Inter TTFs (400, 500, 600, 700) passed as `fonts` to `render()`; the family is `Inter` for every weight. the site's 550 is set as SemiBold 600, there is no `opsz` | Approximated, one weight step |
 | ghost-span that reserves the semibold width | the same trick: `StableLabel` is an `inline-grid` with the hidden semibold copy and the visible label in one cell | Exact |
 | `truncate` | `whiteSpace: "nowrap"` + `textOverflow: "ellipsis"` on the combobox rows | Exact; sidebar labels are not truncated |

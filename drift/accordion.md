@@ -4,7 +4,7 @@ Original: `registry/base/accordion.tsx` (the docs page imports the Radix variant
 (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/accordion.tsx`, demo in `src/demos/accordion.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it. Includes the shared keyboard focus ring (`src/lib/focus-ring.tsx`) as an accordion group uses it.
 
 No drift found in: sizes (trigger padding, gap, icon 16/14, content padding, 288px width), type scale, light and dark
@@ -25,7 +25,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `gpuix gap`.
 - **Original:** the label eases between `wght 400` and `550, opsz 18` over 80 ms (`:744-766`, `transition-[color,font-variation-settings] duration-80`).
-- **Port:** `StableLabel` switches at once between static 400 and SemiBold 600 (`src/components/accordion.tsx:596-603`, `src/lib/stable-label.tsx:39-48`); the hidden copy reserves the 600 width.
+- **Port:** `StableLabel` switches at once between static 400 and SemiBold 600 (`src/components/accordion.tsx:596-603`, `src/lib/stable-label.tsx:43-57`); the hidden copy reserves the 600 width.
 - **gpuix lacks:** variable-font axes. README row "Variable-font axes".
 - **Workaround:** static cuts and the hidden semibold copy.
 - **Fidelity:** approximated (no easing, 600 for 550).
@@ -35,7 +35,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `port choice` (the source's cell is the semibold copy alone, so a label whose semibold is narrower than its normal shrinks when it is selected; the port keeps neighbours still).
 - **Original:** the ghost span holds only the `550, opsz 18` copy, so the cell is as wide as semibold. Chromium measuring the same Inter 4.0 file: Toggle dark mode is 0.56 px narrower at semibold, FLUID FUNCTIONALISM REGISTRY DEPLOY 1.13 px, so those labels shrink by that much on selection. The source's comment claims every corpus string within 0.4 px; 16 of the 33 strings in `scripts/check-weight-widths.tsx` are beyond that in the browser.
-- **Port:** two hidden copies, normal and semibold, and the visible one share the cell, so it is as wide as the wider of the two (`src/lib/stable-label.tsx:70-71`).
+- **Port:** two hidden copies, normal and semibold, and the visible one share the cell, so it is as wide as the wider of the two (`src/lib/stable-label.tsx:79-80`).
 - **Workaround:** none needed.
 - **Fidelity:** approximated (up to about 1 px wider than the source when the label is not selected and its semibold is narrower).
 - **Components it hits:** every `StableLabel`.

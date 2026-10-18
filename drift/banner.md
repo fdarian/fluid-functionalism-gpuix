@@ -5,7 +5,7 @@ Original: `registry/default/banner.tsx`, demo in `app/docs/banner/page.tsx` and 
 demo in `src/demos/banner.tsx`. Screenshots: `screenshots/banner/` (`scrolled-*.png` are the lower cards, captured with a taller scroll).
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## CSS transforms (the banner scales in and out)
@@ -94,9 +94,9 @@ repeating it.
 
 ## Ghost action colour
 
-- **Cause:** `not ported yet`. The port's `Button` has no colour override (`labelColor` is internal, `src/components/button.tsx:150-159`); a `Button` prop for it would close this.
+- **Cause:** `not ported yet`. The port's `Button` has no colour override (`labelColor` is internal, `src/components/button.tsx:151-160`); a `Button` prop for it would close this.
 - **Original:** a ghost `BannerAction` adds `text-foreground`, which overrides the ghost button's muted rest colour, so it reads foreground at rest and on hover, with no colour change to ease (`banner.tsx:648-652`; its comment at `:618-619` describes "70% foreground", the code does not).
-- **Port:** the plain ghost `Button`: muted at rest, foreground on hover, eased over 80 ms like the source's other ghost buttons (`banner.tsx:513-528`; `src/components/button.tsx:130-131`).
+- **Port:** the plain ghost `Button`: muted at rest, foreground on hover, eased over 80 ms like the source's other ghost buttons (`banner.tsx:513-528`; `src/components/button.tsx:131-132`).
 - **Workaround:** none.
 - **Fidelity:** approximated (the rest colour, and the hover fade the source does not have here).
 - **Components it hits:** just this one.

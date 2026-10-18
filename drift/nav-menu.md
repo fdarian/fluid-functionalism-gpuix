@@ -2,7 +2,7 @@
 
 Original: `registry/default/nav-menu.tsx` and `registry/default/nav-item.tsx` (the source's own concept screens import them from `components/ui/`), in fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`. Ported in `src/components/nav-menu.tsx` and `src/components/nav-item.tsx`. There is no demo and no docs page in the source either: only the `/concepts` screens use them (`src/pages/concepts.tsx`, `src/pages/concepts/frame.tsx`), so the port has no `src/demos/` entry.
 
-One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps (CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of repeating it.
+One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps (CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of repeating it.
 
 Checked and equal: row height 32 / 28 (compact), `px` 12, icon 16 / 14 with an 8px gap, type 13/20 and 12/18, the hover highlight born at the active route's row when the pointer enters (`from`), the active-route background on `moderate`, the hover highlight on `fast`, the travelling focus ring (2px outset, shown for keyboard focus only), arrow keys (both axes, wrapping), Home / End, roving tab stop (the active route holds it; with no active route the first item does), `aria-current="page"`, label going semibold on the active route with a hidden semibold copy reserving the width, light and dark tokens, Radius and Size following the customise card.
 
@@ -33,11 +33,11 @@ Checked and equal: row height 32 / 28 (compact), `px` 12, icon 16 / 14 with an 8
 - **Fidelity:** approximated (a 160 ms fade on mount only).
 - **Components it hits:** sidebar, dropdown (any `FluidHighlight` that is mounted already on).
 
-## Semibold is 600, no `text-box-trim`
+## Semibold is 600
 
-- **Cause:** `gpuix gap` for variable weight and `text-box-trim`. Same entry as [tabs-subtle.md, "Semibold is 600, no `text-box-trim`"](tabs-subtle.md).
-- **Original:** the label eases its weight with its colour over 80 ms, both labels trimmed (`nav-item.tsx:99`).
-- **Port:** SemiBold 600 switching at once, line-box centring in a fixed-height row (`nav-item.tsx:155-162`). The colour and stroke-width eases are ported (`fade`, `easeStroke`).
+- **Cause:** `gpuix gap` for variable weight. Same entry as [tabs-subtle.md, "Semibold is 600"](tabs-subtle.md).
+- **Original:** the label eases its weight with its colour over 80 ms (`nav-item.tsx:99`).
+- **Port:** SemiBold 600 switching at once in a fixed-height row (`nav-item.tsx:155-162`). The colour and stroke-width eases are ported (`fade`, `easeStroke`).
 - **Workaround:** the hidden semibold copy (`StableLabel`) reserves the width.
 - **Fidelity:** approximated.
 - **Components it hits:** tabs, tabs-subtle, select, sidebar.
@@ -46,7 +46,7 @@ Checked and equal: row height 32 / 28 (compact), `px` 12, icon 16 / 14 with an 8
 
 - **Cause:** `port choice` (a flex `gap` of 8 stands in for the source's `ml-2` inline dot).
 - **Original:** `isNew` / `isUpdated` render a 6px dot after the label text, inside the label's grid (`nav-item.tsx:110-119`), and a long label is not truncated.
-- **Port:** the dot is its own flex child after the label (`nav-item.tsx:166-179`); a row with a dot hugs its label, otherwise the label fills the row and ends in an ellipsis (`StableLabel` `truncate`, `nav-item.tsx:164`). `isUpdated` and `isNew` are both blue by default, as in the source; `dotColor` is `dotColorClass` as a colour (`nav-item.tsx:38`, `:69-73`).
+- **Port:** the dot is its own flex child after the label (`nav-item.tsx:167-180`); a row with a dot hugs its label, otherwise the label fills the row and ends in an ellipsis (`StableLabel` `truncate`, `nav-item.tsx:164`). `isUpdated` and `isNew` are both blue by default, as in the source; `dotColor` is `dotColorClass` as a colour (`nav-item.tsx:38`, `:69-73`).
 - **Workaround:** none.
 - **Fidelity:** approximated (the dot is no longer inline in the text).
 - **Components it hits:** just this one.

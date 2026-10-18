@@ -3,7 +3,7 @@
 Original: the site shell of fluidfunctionalism.com at 0a0377e (kept at `~/.claude/notes/ff-source/`): `app/layout.tsx`, `app/components/sidebar-layout.tsx`, `right-panel.tsx`, `site-command-menu.tsx`, `playground-menu.tsx`, `app/globals.css`, `lib/docs/DocPage.tsx` / `ComponentPreview.tsx` / `PropsTable.tsx`, the settings providers, and every route under `app/`. The sidebar itself is in `drift/sidebar.md`. The Changelog entries and the menu's rows for it read the live site (d5c3606: the Changelog page, `app/changelog/`, `lib/changelog/`, and the release-driven New and Updated marks, which 0a0377e predates), so their source `file:line` refs are d5c3606's.
 Ported in `src/main.tsx`, `src/app.tsx`, `src/lib/app-frame.tsx`, `src/lib/demo-kit.tsx`, `src/lib/doc-page.tsx`, `src/lib/playground.tsx`, `src/lib/page-nav.ts`, `src/lib/site-command-menu.tsx`, `src/lib/install-url.ts`, `src/lib/theme.ts`, `src/lib/theme-fade.tsx` and `src/lib/changelog/`; the pages are the modules in `src/pages/` (each has its own `drift/<page>.md`), and there is no per-route demo for the shell.
 
-One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps (CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of repeating it. Entries run: frame and layout, doc page, right panel and settings, site menu, the Changelog page, pages and registry items with no port.
+One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps (CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of repeating it. Entries run: frame and layout, doc page, right panel and settings, site menu, the Changelog page, pages and registry items with no port.
 
 ## Window frame
 
@@ -132,7 +132,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `port choice` (the port is Base UI only, so a row that switched nothing would be fake; reason otherwise not stated).
 - **Original:** the panel lists five borderless selects: Theme, Radius (Rounded, Pill), Size (Default, Compact), Icons (Lucide, Tabler, Phosphor, Hugeicons, Untitled UI) and Primitive (Radix, Base UI; the site's default is Base UI), each trigger at `h-7`, rows `py-3` with `gap-1.5` (`app/components/right-panel.tsx:122-259`, `lib/docs/site-settings.ts:26-31`). Primitive switches every dual-flavour page between the Radix and Base UI registries.
-- **Port:** four rows, Theme, Radius, Size and Icons, each a 28px inline `Select` (`src/app.tsx:397-496`); Radius drives the reactive `shape` tokens (`src/lib/theme.ts:384-437`), Size the ambient `sizeChoice` and the `siteType` roles (`:313-366`), Icons the per-library glyph tables (`src/lib/icons.ts`). There is no Primitive row: every component is Base UI only and the Radix registry is not ported (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md`).
+- **Port:** four rows, Theme, Radius, Size and Icons, each a 28px inline `Select` (`src/app.tsx:397-496`); Radius drives the reactive `shape` tokens (`src/lib/theme.ts:404-457`), Size the ambient `sizeChoice` and the `siteType` roles (`:333-386`), Icons the per-library glyph tables (`src/lib/icons.ts`). There is no Primitive row: every component is Base UI only and the Radix registry is not ported (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md`).
 - **Workaround:** none.
 - **Fidelity:** dropped (one of five rows).
 - **Components it hits:** the 17 dual-flavour components, in that they have no Radix build.
@@ -150,7 +150,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (component-owned glyphs); `port choice` (the Select icon: the inline variant always shows the picked row's icon).
 - **Original:** `IconProvider` swaps every glyph a component asks for by name (`registry/default/lib/icon-context.tsx`); the Icons row's trigger and its rows carry no icon (`app/components/right-panel.tsx:226-241`).
-- **Port:** the five libraries' tables cover the shared glyph names (`src/lib/icons/*.ts`); a glyph a component defines itself with `defineIcon` stays lucide whichever library is picked (`src/lib/icons.ts:34-41`; 32 calls in 16 files). The inline `Select` shows the picked item's icon (`src/components/select.tsx:204`) and the Icons items carry a `palette` glyph (`src/lib/icons.ts:19-29`), so the row's trigger and its popup rows show a palette that the source's do not.
+- **Port:** the five libraries' tables cover the shared glyph names (`src/lib/icons/*.ts`); a glyph a component defines itself with `defineIcon` stays lucide whichever library is picked (`src/lib/icons.ts:34-41`; 32 calls in 16 files). The inline `Select` shows the picked item's icon (`src/components/select.tsx:205`) and the Icons items carry a `palette` glyph (`src/lib/icons.ts:19-29`), so the row's trigger and its popup rows show a palette that the source's do not.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** every component with a `defineIcon` glyph (chevrons, close marks, checks); just the shell for the Select.
@@ -178,7 +178,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`.
 - **Original:** each setting is written to its own year-long cookie (`ff_theme`, `ff_shape`, `ff_size`, `ff_icons`, `ff_base`) and the root layout reads them back, so a reload paints the saved choice from the first frame (`lib/docs/settings-persistence.tsx`, `lib/docs/site-settings.ts:30-62`, `app/layout.tsx:58-69`).
-- **Port:** every launch starts at System, Rounded, Default and Lucide (`src/lib/theme.ts:195-196, 321, 390-391`, `src/lib/icons.ts:31-32`).
+- **Port:** every launch starts at System, Rounded, Default and Lucide (`src/lib/theme.ts:195-196, 341, 410-411`, `src/lib/icons.ts:31-32`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just the shell.
@@ -196,7 +196,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `gpuix gap`. See the README row "Variable-font axes (`fontVariationSettings`)" and the "Inter variable" row.
 - **Original:** Inter variable with semibold `wght 550 / opsz 18` and bold `wght 700 / opsz 25` (`registry/default/lib/font-weight.ts:25-29`, `app/globals.css:6-18`).
-- **Port:** static Inter cuts, semibold 600, no `opsz` (`src/lib/theme.ts:368-370`).
+- **Port:** static Inter cuts, semibold 600, no `opsz` (`src/lib/theme.ts:388-390`).
 - **gpuix lacks:** variable-font axes.
 - **Workaround:** nearest static weight.
 - **Fidelity:** approximated.
@@ -242,7 +242,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`.
 - **Original:** `CommandMenuDialog` takes `title="Site menu"` and `description="Jump to a page or change a setting."` as the dialog's accessible name, and binds `shortcut="mod+k"` itself (`app/components/site-command-menu.tsx:385-390`, `registry/default/command-menu.tsx:1425-1540`).
-- **Port:** the dialog has no title or description props (`src/components/command-menu.tsx:1346-1350`). A separate window listener toggles the menu (`src/lib/site-command-menu.tsx:68-78`); `isModK` matches Meta or Ctrl, no Alt, on `event.key` alone (`:59-63`). On Dvorak the key that types "t" does not open it: gpuix derives `code` from `key`, so there is no physical K to match (`scripts/check-command-menu.tsx` checks ⌘T and ⌘⌥K stay closed and ⌘K toggles; the layout itself needs a live check).
+- **Port:** the dialog has no title or description props (`src/components/command-menu.tsx:1353-1357`). A separate window listener toggles the menu (`src/lib/site-command-menu.tsx:68-78`); `isModK` matches Meta or Ctrl, no Alt, on `event.key` alone (`:59-63`). On Dvorak the key that types "t" does not open it: gpuix derives `code` from `key`, so there is no physical K to match (`scripts/check-command-menu.tsx` checks ⌘T and ⌘⌥K stay closed and ⌘K toggles; the layout itself needs a live check).
 - **Workaround:** none.
 - **Fidelity:** exact on macOS.
 - **Components it hits:** just the site menu.
@@ -397,7 +397,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` for each item below, unless stated.
 - **Original:** every component in `registry/base` and `registry/default` has a port except the blocks `sidebar-workspace-header`, `sidebar-user-footer`, `dialog-sidebar/settings-dialog`, and the `sidebar-app` composition (`app-sidebar`, `inset-topbar`, `nav-data`, `page`) (`registry/blocks/`). `nav-item` and `nav-menu` are ported (`src/components/nav-item.tsx`, `nav-menu.tsx`, `drift/nav-menu.md`). `search-field` is ported (`src/components/sidebar.tsx:544`); check `drift/sidebar.md` for the blocks. Ported as part of another file rather than on their own: `dropdown-sub` inside `src/components/dropdown.tsx` and `menu-item.tsx`; `fluid-hover-highlight` as `src/lib/fluid-highlight.tsx`; `sidebar-core` and `sidebar-menu` inside `src/components/sidebar.tsx`; `scroll-area` and `queued-stack` have their own files.
-- **Port:** none for the items above. The `registry/radix` flavour of all 17 dual-flavour components is not ported on purpose (`port choice`; the port is Base UI only, see `../base-ui-solid-gpuix/BASE-UI-AUDIT.md`), and the registry lib items `elevated`, `surface-classes`, `type-scale` and `typography` have no port beyond the tokens in `src/lib/theme.ts`. The context items have an app-wide stand-in rather than a provider: `shape-context` is `shapeChoice` (`src/lib/theme.ts:395-396`), `size-context` is `sizeChoice` (`:321`), `icon-context` and the four extra icon libraries are `iconLibrary` and the tables in `src/lib/icons/` (`src/lib/icons.ts`); an explicit `size` does not scope the parts inside a component (`drift/select.md`).
+- **Port:** none for the items above. The `registry/radix` flavour of all 17 dual-flavour components is not ported on purpose (`port choice`; the port is Base UI only, see `../base-ui-solid-gpuix/BASE-UI-AUDIT.md`), and the registry lib items `elevated`, `surface-classes`, `type-scale` and `typography` have no port beyond the tokens in `src/lib/theme.ts`. The context items have an app-wide stand-in rather than a provider: `shape-context` is `shapeChoice` (`src/lib/theme.ts:415-416`), `size-context` is `sizeChoice` (`:341`), `icon-context` and the four extra icon libraries are `iconLibrary` and the tables in `src/lib/icons/` (`src/lib/icons.ts`); an explicit `size` does not scope the parts inside a component (`drift/select.md`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** the sidebar demo (blocks), none for the rest.

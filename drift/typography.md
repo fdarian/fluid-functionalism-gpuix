@@ -4,7 +4,7 @@ Original: `app/docs/typography/page.tsx` and `demos.tsx` of the source (fluidfun
 Ported in `src/pages/typography.tsx` (the page) and `src/pages/typography/` (`step`, `text`, `scale`, `markdown`, `specimen`, `weight`, `numbers`, `trim`, `wrap`, `install-prompt`), routed by the page registry.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The Markdown section is a static document, not a Tiptap editor
@@ -73,15 +73,6 @@ repeating it.
 - **Port:** the same, with the widths of all 39 labels per row measured through hidden copies and `onLayout` (78 invisible texts); the proportional row drifts 6.0px where the browser measured 6.2px. The count ticks every 120ms on a timer while at least half the frame is on screen, and reduced motion shows the last count (`src/pages/typography/numbers.tsx:155-168`).
 - **Fidelity:** exact in behaviour.
 - **Components it hits:** just this page.
-
-## Trimmed labels emulate `text-box` with Inter's metrics
-
-- **Cause:** `gpuix gap`: no `text-box-trim` / `text-box-edge` (README "gpuix gaps across components", badge row).
-- **Original:** the right chip's label has `text-box: trim-both cap alphabetic`; the markers are measured from the live DOM (a baseline probe, the font size times `1490/2048`); a browser without `text-box` shows "not in this browser yet" (`demos.tsx:542-650`).
-- **Port:** the trimmed label is pulled up and down by the font's own leading (`marginTop` and `marginBottom` of 5.26px and 5.28px, from Inter's hhea ascender 1984, descender 494 and capital height 1490 per 2048 em at 13px on a 20px line), so 8px of padding reads as 8px; the blue lines and red washes are placed from the same numbers, not measured. Captured, the baseline line sits about half a pixel above the glyphs' feet. The captions read "13px above the capitals" and "8px", as the source's. The unsupported-browser branch is dropped.
-- **Workaround:** negative margins from font constants; they hold only for 13px Inter on a 20px line.
-- **Fidelity:** approximated.
-- **Components it hits:** badge (README row).
 
 ## Smaller differences
 
