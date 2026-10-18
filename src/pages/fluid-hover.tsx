@@ -118,7 +118,7 @@ function UseList(props: { title: string; items: readonly string[] }) {
 								/>
 							</div>
 							<div style={{ flexGrow: 1, minWidth: 0 }}>
-								<Prose>{item}</Prose>
+								<Prose plain>{item}</Prose>
 							</div>
 						</div>
 					)}

@@ -55,7 +55,7 @@ function InlineText(props: { inline: Inline[] }): JSX.Element {
 
 export function InlineProse(props: { inline: Inline[] }) {
 	return (
-		<Prose>
+		<Prose plain>
 			<InlineText inline={props.inline} />
 		</Prose>
 	);

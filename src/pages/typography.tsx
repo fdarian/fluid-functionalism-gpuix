@@ -95,21 +95,21 @@ export function Page(): JSX.Element {
 			<DocSection title="5 rules">
 				<BulletList>
 					<Rule>
-						<Prose>
+						<Prose plain>
 							5 styles for the whole site, from page titles to captions.
 						</Prose>
 					</Rule>
 					<Rule>
-						<Prose>
+						<Prose plain>
 							3 weights: regular for text, semibold for headings and selected
 							items, bold for page titles.
 						</Prose>
 					</Rule>
 					<Rule>
-						<Prose>2 text colors: foreground and muted.</Prose>
+						<Prose plain>2 text colors: foreground and muted.</Prose>
 					</Rule>
 					<Rule>
-						<Prose>
+						<Prose plain>
 							1 font family:{' '}
 							<Link href="https://rsms.me/inter/" offset={4} foreground>
 								Inter Variable 4.0
@@ -118,7 +118,7 @@ export function Page(): JSX.Element {
 						</Prose>
 					</Rule>
 					<Rule>
-						<Prose>1 paragraph style.</Prose>
+						<Prose plain>1 paragraph style.</Prose>
 					</Rule>
 				</BulletList>
 			</DocSection>
@@ -126,24 +126,26 @@ export function Page(): JSX.Element {
 			<DocSection title="5 no-gos">
 				<BulletList>
 					<Rule>
-						<Prose>No uppercase: hierarchy comes from size and weight.</Prose>
+						<Prose plain>
+							No uppercase: hierarchy comes from size and weight.
+						</Prose>
 					</Rule>
 					<Rule>
-						<Prose>
+						<Prose plain>
 							No letter-spacing: handled with Inter's optical sizing.
 						</Prose>
 					</Rule>
 					<Rule>
-						<Prose>No eyebrows: a section starts with its title.</Prose>
+						<Prose plain>No eyebrows: a section starts with its title.</Prose>
 					</Rule>
 					<Rule>
-						<Prose>
+						<Prose plain>
 							No difference with markdown: it uses the same styles and colors as
 							everything else.
 						</Prose>
 					</Rule>
 					<Rule>
-						<Prose>
+						<Prose plain>
 							No opacity for text: it's foreground or muted, never a faded step
 							of them.
 						</Prose>

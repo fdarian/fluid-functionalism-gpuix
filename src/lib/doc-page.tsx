@@ -33,13 +33,14 @@ const rotateCcw = defineIcon(
 	'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
 );
 
-export function Prose(props: { children: JSX.Element }) {
+/** A `<p>` (`text-site-body text-muted-foreground`), which the source's base layer sets to `text-wrap: pretty`. `plain` is for the text of an `<li>` or a `<div>`, which that rule does not reach. */
+export function Prose(props: { children: JSX.Element; plain?: boolean }) {
 	return (
 		<text
 			style={{
 				...siteType.body,
 				color: color.mutedForeground,
-				textWrap: 'pretty',
+				textWrap: props.plain === true ? 'wrap' : 'pretty',
 			}}
 		>
 			{props.children}

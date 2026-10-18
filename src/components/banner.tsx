@@ -431,6 +431,7 @@ export function BannerTitle(props: { testId?: string; children: JSX.Element }) {
 					...text(),
 					color: color.foreground,
 					fontVariationSettings: weight.semibold,
+					textWrap: 'pretty',
 				}}
 			>
 				{props.children}
@@ -449,7 +450,7 @@ export function BannerDescription(props: { children: JSX.Element }) {
 		scope.compact() ? sizes.compact.subtitle : sizes.default.subtitle;
 	return (
 		<div style={{ gridColumn: 2, gridRow: 2, marginTop: 2, minWidth: 0 }}>
-			<text style={{ ...text(), color: color.foreground }}>
+			<text style={{ ...text(), color: color.foreground, textWrap: 'pretty' }}>
 				{props.children}
 			</text>
 		</div>

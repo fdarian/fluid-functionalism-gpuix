@@ -945,7 +945,13 @@ export function AskUserQuestions(props: {
 			fallback={
 				<div style={cardStyle()}>
 					<div style={{ padding: 20 }}>
-						<text style={{ ...scale.body, color: color.mutedForeground }}>
+						<text
+							style={{
+								...scale.body,
+								color: color.mutedForeground,
+								textWrap: 'pretty',
+							}}
+						>
 							No questions.
 						</text>
 					</div>
@@ -1004,6 +1010,7 @@ export function AskUserQuestions(props: {
 											...scale.title,
 											fontVariationSettings: weight.semibold,
 											color: color.foreground,
+											textWrap: 'balance',
 										}}
 									>
 										{question()?.title}
@@ -1067,6 +1074,7 @@ export function AskUserQuestions(props: {
 											paddingLeft: 12,
 											flexShrink: 1,
 											minWidth: 0,
+											textWrap: 'pretty',
 										}}
 									>
 										{freeTextError()}

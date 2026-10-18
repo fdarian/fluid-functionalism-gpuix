@@ -656,7 +656,13 @@ export function CardDescription(props: { children: string }) {
 	const scope = useContext(CardContext);
 	const text = () => subtitle[scope.compact() ? 'compact' : 'default'];
 	return (
-		<text style={{ ...text(), color: color.mutedForeground }}>
+		<text
+			style={{
+				...text(),
+				color: color.mutedForeground,
+				textWrap: 'pretty',
+			}}
+		>
 			{props.children}
 		</text>
 	);
