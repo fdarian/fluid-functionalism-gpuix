@@ -534,7 +534,15 @@ function CodeBlock() {
 }
 
 function Rule() {
-	return <div style={{ height: 1, backgroundColor: color.border }} />;
+	return (
+		<div
+			style={{
+				borderTopWidth: 1,
+				borderTopStyle: 'solid',
+				borderTopColor: color.border,
+			}}
+		/>
+	);
 }
 
 // ---- The sample --------------------------------------------------------------

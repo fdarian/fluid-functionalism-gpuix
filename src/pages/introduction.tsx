@@ -87,11 +87,12 @@ function Rule(props: { marginTop: number; marginBottom?: number }) {
 	return (
 		<div
 			style={{
-				height: 1,
 				flexShrink: 0,
 				marginTop: props.marginTop,
 				marginBottom: props.marginBottom,
-				backgroundColor: color.borderFaint,
+				borderTopWidth: 1,
+				borderTopStyle: 'solid',
+				borderTopColor: color.borderFaint,
 			}}
 		/>
 	);

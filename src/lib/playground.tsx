@@ -164,12 +164,13 @@ export function PlayDivider() {
 	return (
 		<div
 			style={{
-				height: 1,
 				marginTop: 8,
 				marginBottom: 8,
 				marginLeft: -12,
 				marginRight: -12,
-				backgroundColor: color.borderFaint,
+				borderTopWidth: 1,
+				borderTopStyle: 'solid',
+				borderTopColor: color.borderFaint,
 			}}
 		/>
 	);

@@ -113,8 +113,6 @@ function MathList(props: { showMath: () => boolean }) {
 									left: 8,
 									right: 8,
 									top: y,
-									// 2px, not the source's zero-height box: a border on a box with no content height paints nothing.
-									height: 2,
 									borderTopWidth: 1,
 									borderTopStyle: 'dashed',
 									borderTopColor: withAlpha(color.foreground, 0.2),
