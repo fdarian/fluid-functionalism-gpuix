@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:a5847e59bb56cc4e6b8eaf8746a3604812819b55ac0a3a0a157438333ceef975",
+  "pageVersion": "sha256:5af9d39c6a1923bbdb803bd9de7dbfaa9ebbdf6aecc40010f6fbb13d9e1a49de",
   "claims": [
     {
       "id": "claim_782844f1b7454bbd8c43501708e208b1",
@@ -200,11 +200,15 @@
     },
     {
       "id": "claim_b2bb6ef185094dbaa65cf297e18ab5d2",
-      "statement": "StableLabel reserves the wider of the normal and semibold widths with two hidden copies in its grid cell, because a label whose semibold is narrower than its normal would otherwise shrink on selection; the weight eases over 80 ms unless snapWeight is set.",
+      "statement": "StableLabel holds a single hidden semibold copy beside the visible one in its grid cell, so it reserves the semibold width alone as the source does; a second hidden normal-weight copy was dropped because every hidden <text> costs draw time, so a label narrower at semibold shrinks by at most about 1px on selection, as in the browser. The weight eases over 80 ms unless snapWeight is set.",
       "evidence": [
         {
-          "resource": "repo://src/lib/stable-label.tsx#L1-L93",
-          "version": "repo-lines-v1:sha256:43e88c1891bf70ad6df90d2a2ae890e0a2ce8f5bc6062772de6511b8e1cdb15a:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlNzBjZmY4MzkyYzU3YjBmOWI2ODhhMjdkYjcwMWMyZDFhMjk1ZDQ3MzI3NjM0OTIyNzQ3YTRjOWRkYWFlOTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://src/lib/stable-label.tsx#L12-L20",
+          "version": "repo-lines-v1:sha256:a45c0ef1d0320660a0b68def5a92474c74b9f3b5824875becdddf80ef46de0b5:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGY1ODAwNWU4N2M0YTk4ZjY3N2EyNDRjYjZhOTczMjczNDEwOGMzZmU1Yjg5YjliOGVhZWE3MTFmNTNhMTUyMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzRmNzRiNGM0MTNkOGFkMGI0OWIyMzA2MWFiYjYxM2I3YTI1Zjc1NGY3ZmE2ZDlmNGYxNTk0NjQwMWVjZDdiYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWU5MTAxYzE4MzhmMzY4MzIyNGM0MjdkNWYyODZiZDlkZDY5MmQyY2JhZjJhN2M2NWI2ZjE5ZmQ2NzFiZjk0NSJ9"
+        },
+        {
+          "resource": "repo://src/lib/stable-label.tsx#L76-L80",
+          "version": "repo-lines-v1:sha256:6cc4ec1830037bf786f6f58414f91146e45ea01fcca1db10f74c81bc941a7299:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWI4MTYwZWUxZTU3ZDFkY2Y1Y2FmOWQ4YzQzMmU3ZmZhNzIxN2YxNzgwMDY5OTZmZjkxZmE2MGY3MTMzMDMzNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjRjNzAyMjNhMzI1N2U1ZDJhMTU0YTQyNDIyYzI0YTYwMjc5ZThlNTcwMmU4Zjk3NDc1YTUwMTRhMDMyNjQwYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmIyNmZiM2M4NjYwZTA1MWMzYmVlZGVjMTg1YzA3Mzk0MWE4ZjFhNzU3NTk2MDI0OWVjOGJiMGY0YmFhMmM3YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDgyMzI3ODU3MWI5MmYzYzEyYjBiNTlhNzEwNWY5M2IxMGQ5Mjc1OTk3NzYwMTFmYTVjZGIyMmJlMWFjZDA2MCJ9"
         },
         {
           "resource": "repo://src/lib/theme.ts#L512-L520",
@@ -214,17 +218,17 @@
     },
     {
       "id": "claim_6332c1420d59436dba31d4b982940ccf",
-      "statement": "scripts/check-weight-widths.tsx asserts that gpuix's weight width delta equals the browser's rather than the source's 0.4 px claim, and steps the held motion clock across the ease to assert that StableLabel users' boxes and rows do not move; it runs at 1x scale only.",
+      "statement": "scripts/check-weight-widths.tsx asserts that gpuix's weight width delta equals the browser's rather than the source's 0.4 px claim, steps the held motion clock across the ease to assert that StableLabel users' surrounding boxes do not move, and asserts for labels narrower at semibold that the shrink on selection equals the normal-minus-semibold difference within 1 px; it runs at 1x scale only.",
       "evidence": [
         {
-          "resource": "repo://scripts/check-weight-widths.tsx#L1-L30",
-          "version": "repo-lines-v1:sha256:d67eb5c3ae9bc983a9c54aea4253914790829c111dad0ec0af56ee53182b3c8f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjZDAzNTRhNjI1ZGQ4NWQxMzk2ZTUwNmZiYjNmZTIxYjI5NjQ5MmFiOWE1ZGVkOGFhMDY1MDgxOWNmMTEzYWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU3MDZjZjAwODY3ODZhY2MwYjBhOWY4OWY2NTMxYTE1Y2Y1ZWEyYzFmMjc2MTcxNzZmZTcwNmViYzQ4MzNlMjUifQ"
+          "resource": "repo://scripts/check-weight-widths.tsx#L1-L35",
+          "version": "repo-lines-v1:sha256:854e19d609150f67140afd8924f07ad506f18c3fef0d32c787d38be1fc89284c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjYmY2MmI3MDljMDE0NmQyYzY2OGMxZjhmZDgyNTgwMWE0MGY0MGVlMjg4YzA3ZTg2OWYzYTk0ZTYyYTIwOGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM5NDAyMjU2NmM3ZDE3ODY1OGU4OTNiNzNjMzQzM2RhNjE3YzZhMGVjYWMyYzNlY2E1NDBjMzUwOTRmNWRiMDMifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-18T08:02:19.231Z"
+    "at": "2026-10-18T09:53:04.224Z"
   }
 }

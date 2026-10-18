@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:d81bc9013abe56ff74f1c17962561d05ef8e8a0bb7374dd918f3a9b7fb2a48c2",
+  "pageVersion": "sha256:29e4ff3379208cffd8067de836b29f195cac67901a2faf0e93bdfc11d4fad13c",
   "claims": [
     {
       "id": "claim_8f689a7df6cd43af9e228cffa0828120",
       "statement": "The README's gpuix gaps section is the authoritative list of gpuix bugs and missing features the port works around, each with the components it hits and the workaround.",
       "evidence": [
         {
-          "resource": "repo://README.md#L246-L295",
-          "version": "repo-lines-v1:sha256:3de088415777c0b37eb2a189ba45d7ed7e20a64260c323c65af1322daa97a2c1:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZlYjY0ZWI0NGEwOThhODQ2Y2E4Yjc1ZjlhYjBkYzQxZTFlZWZlZjY2ZWE1MDE0NDk0ZTRjZThlZDdlZTA4YWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5MGQyZTdlM2VlZjk3NTM0MjU5MzM1NGY1ODFiYTRlZGMxMWNjZmI5OGZmYTFhODEzYmUzZTAwMzFmNGMzNzUifQ"
+          "resource": "repo://README.md#L246-L296",
+          "version": "repo-lines-v1:sha256:d91032f1dae331b8a818da8ff8355c22c892775d136a82ea0cf7276f37b17036:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4MzNhYjMwZmYzYWFmNTMzYjFmZTJkZDU2YTZjZTZmMTY3YjkyNThjZmE2ODE0Yjc1ZTU3MTc2YzUyZWM4MDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5MGQyZTdlM2VlZjk3NTM0MjU5MzM1NGY1ODFiYTRlZGMxMWNjZmI5OGZmYTFhODEzYmUzZTAwMzFmNGMzNzUifQ"
         }
       ]
     },
@@ -17,7 +17,7 @@
       "statement": "Without CSS transforms, popups keep an opacity fade and slide but lose the scaleY entrance, and glyph turns are swapped or redrawn.",
       "evidence": [
         {
-          "resource": "repo://README.md#L276-L276",
+          "resource": "repo://README.md#L277-L277",
           "version": "repo-lines-v1:sha256:a1fb8675018ca3e98a17c305034f4eda77f2597f30bf7da9713bbcc38149090f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTFmYjg2NzUwMThjYTNlOThhMTdjMzA1MDM0ZjRlZGE3N2YyNTk3ZjMwYmY3ZGE5NzEzYmJjYzM4MTQ5MDkwZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTFmYjg2NzUwMThjYTNlOThhMTdjMzA1MDM0ZjRlZGE3N2YyNTk3ZjMwYmY3ZGE5NzEzYmJjYzM4MTQ5MDkwZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDAwOGZiMmRjMDdjZWU4MGQ2YmVjYjY0NzFmZDVkYTViMTNhYzhlMDlmMDA0NDAxYjdmYjVhMzNhMzU3ODdmNSJ9"
         }
       ]
@@ -27,7 +27,7 @@
       "statement": "Because gpuix does not cull clipped content, long demo pages hide cards far from the scroller with display none.",
       "evidence": [
         {
-          "resource": "repo://README.md#L282-L282",
+          "resource": "repo://README.md#L283-L283",
           "version": "repo-lines-v1:sha256:50c80d7946eee5064e658246b086544176817a2e50ae0186922d4a21967c6159:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTBjODBkNzk0NmVlZTUwNjRlNjU4MjQ2YjA4NjU0NDE3NjgxN2EyZTUwYWUwMTg2OTIyZDRhMjE5NjdjNjE1OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTBjODBkNzk0NmVlZTUwNjRlNjU4MjQ2YjA4NjU0NDE3NjgxN2EyZTUwYWUwMTg2OTIyZDRhMjE5NjdjNjE1OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGJkY2U0MGY4MjFkYWE5ZWU4Y2VjOTEyOWQ5ZjgzNWQ0ZWY3ZDI5NTI0ODdmYjUwNDg4NzE5MTI4MGRlOGU2YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDY1NTY3MzQ2MWI1ZGFlZTgxZTM0ZDFmNDMwZjc3OTU3MTAxMjQxNDgyMDkwZjM5OGIwZDQ5ODUwNTY0OTI4MCJ9"
         }
       ]
@@ -102,11 +102,15 @@
     },
     {
       "id": "claim_b1cdf403661843318246f0a12ce3e099",
-      "statement": "StableLabel is a real inline-grid whose two hidden copies (normal and semibold) and visible copy share one grid cell, so it wraps like the source, with nowrap and truncate opt-in.",
+      "statement": "StableLabel is a real inline-grid whose single hidden semibold copy and visible copy share one grid cell, so it wraps like the source, with nowrap and truncate opt-in.",
       "evidence": [
         {
-          "resource": "repo://src/lib/stable-label.tsx#L4-L93",
-          "version": "repo-lines-v1:sha256:988ac53e56c64b7e8dd5457e0115f58762fd3b0bbac2c9da42d3becbbfdd1561:eyJzZWxlY3RlZExpbmVDb3VudCI6OTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5ZTk2NWZlZTRmZjUzYmY2ZGJlOTZjN2U0MzYzYThkYTgxMzViZTYyNzhiNDdlYzM2Zjc2MzVmMjliOTI4MjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjViMGEzNTUzMGRlYWU5Y2U0OWRkZTQxZTE1MDFjNzBhZDVhMjBhZWU4NTUyY2U5NDIzOWI2Mzk3M2Q3NjU3ZWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://src/lib/stable-label.tsx#L12-L20",
+          "version": "repo-lines-v1:sha256:a45c0ef1d0320660a0b68def5a92474c74b9f3b5824875becdddf80ef46de0b5:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGY1ODAwNWU4N2M0YTk4ZjY3N2EyNDRjYjZhOTczMjczNDEwOGMzZmU1Yjg5YjliOGVhZWE3MTFmNTNhMTUyMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzRmNzRiNGM0MTNkOGFkMGI0OWIyMzA2MWFiYjYxM2I3YTI1Zjc1NGY3ZmE2ZDlmNGYxNTk0NjQwMWVjZDdiYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWU5MTAxYzE4MzhmMzY4MzIyNGM0MjdkNWYyODZiZDlkZDY5MmQyY2JhZjJhN2M2NWI2ZjE5ZmQ2NzFiZjk0NSJ9"
+        },
+        {
+          "resource": "repo://src/lib/stable-label.tsx#L60-L92",
+          "version": "repo-lines-v1:sha256:9a23e770a1b5805338f5e7cbda0317ea2dfcc3fa558bb3895e4b507330cf0985:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2YjNjMjMzZTRkYzJhMWE4N2VlZjFlNGU3YjdmZDM0MjI2NTI1N2I3NTdmNDUwZWU0NTM0NjQxNGQ1Nzk0ZjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQxZmMyYWViM2I0YTBkMzI2NDE4ZTViN2FhOTBlZmM3ZTU0NWI4NTA5OWE2OTA2ZjhlMDE2ZGFiNWQ3ZjEzMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -163,10 +167,34 @@
           "version": "repo-lines-v1:sha256:10edacee8f291c75fb5f7cb2b81e3dda8f2d5daba146505b1b2723ab2fbc923e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA1M2E0NzFiNGJmNjJmOTU4MDc4ZjUwZTQ0YzQ1MTc1MDRmMGU5MjJhMDAwYjBlZmQzMWI5YTAwZTVmZWE3YWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5N2IzY2RjYTdlYmUzMTYzOWM4ZThkYWNkNTIzM2VmN2VkMzcxODZmNGVkMzQ3NTEwODM3ZjllNGQ3ODNkYjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFkZTJiZjQ4N2RiYTg5ZmFiNTAwODAzYzdmMTdiNTRlYzM4ZjBjZjUwOWVjZmVjNWIzZjlhNTRiY2YzNmRhNjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlNTE3OTBkNzQzNWUyNGU3MWIwMDcxOWY2ZTQ5ODIzNDk4OWUwMTQzZjJjZDlmYzk2MDgwMGUwNjRhYjJmMGEifQ"
         }
       ]
+    },
+    {
+      "id": "claim_703ab65bcbb849468694afa0f4f88c99",
+      "statement": "gpui rounds a textBox-trimmed leaf box up to whole device pixels, so a cap-trimmed label that its parent centres (tabs, tabs-subtle) draws up to about 0.75px high in a live 1x window; the port has no workaround.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L267-L267",
+          "version": "repo-lines-v1:sha256:15f2917195fd32ce8b2562516c71b78bd73aafc6242f928621c6e8a692476fbc:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTVmMjkxNzE5NWZkMzJjZThiMjU2MjUxNmM3MWI3OGJkNzNhYWZjNjI0MmY5Mjg2MjFjNmU4YTY5MjQ3NmZiYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTVmMjkxNzE5NWZkMzJjZThiMjU2MjUxNmM3MWI3OGJkNzNhYWZjNjI0MmY5Mjg2MjFjNmU4YTY5MjQ3NmZiYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDdjMjhmMGFmMzVhOGRjOTFlYjVhMjAxOThmNzhmZGM0OGI5YjU5ZjdjNWQ4NGMzOWZkYjFhZDIyZmE0MGUzZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2IxYjlkMDg2NTA3ODYwNjcxMjNiNzFkZjFjZmFjZGJhYjczZTMxMmIzNmU0OGYwNmZlM2IzZDIyZjRiNjQ1YSJ9"
+        },
+        {
+          "resource": "repo://drift/tabs-subtle.md#L12-L21",
+          "version": "repo-lines-v1:sha256:8691708083da55107ebaa4650ae54735a3ea8374c30c1e2f79b2b783ab1a7d96:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5YTUyNjE3ZTFjZWY2NzY3ZmZhNzk3ZDlmMGRlOTE3NzQzOWUxOTNlNzRhODE2NTZlZTY1MWJkOGFlZmE1NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0ODJkMmJiZjNhNDFhNWI2MmE0YmY4NjMzZjZlY2Q0ODliNmFkMGZiYzE0YzU2ZjcxMDdlNmUwODQ3M2UxZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0MjY3Y2EzMzdiMzA1NTZkMGFhMTEwNWMyMDZiM2M5MTQyNzYzNmE1ZTdkN2U2NTkxOWUwNzRhNTY4N2QxNzEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5caaf982c15443f9a38995a94807fa49",
+      "statement": "The thinking-steps screenshot scenario reveals the target card before centring on it, because a card far below the window is culled and has no bounds to centre on.",
+      "evidence": [
+        {
+          "resource": "repo://src/demos/thinking-steps.tsx#L484-L492",
+          "version": "repo-lines-v1:sha256:77ef87e829ed17f8d36fd8004d9f3e4ad92221412351400a69985cfc1a3c16c2:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTZhY2JkMWE4Y2JiNWRjMmRmNjQzZWRmOWZkZDM0MmRiMzk1MmNiZTE3MjhlZmFlNDU2YTM1ODYwYWFlODdiYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjViYjFhZjUyMWJlY2Q1NWQ3MDU2YThhOWEwZGQxZWJjZGExZmM3OWZmMjNmNzQ1Nzc2ZjQ5OTU4MzM1MjkyMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGY1YmVjN2EyMjgyMTBmYWI4YjcwNmI2NDhhZjRiMWVhOGIxNzVjMjQ2MmM2MTVkZDAxMTE2OWZkMzc0ZGY0MCJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-18T08:02:19.231Z"
+    "at": "2026-10-18T09:53:04.224Z"
   }
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:847d59fb5f1d31b7dd19f7ec7049e2dd07700b23ac834f31f75dff53adcc9eb2",
+  "pageVersion": "sha256:4de25bf049eb3a4260850710cc905a83b1d617e4b608ac1463221f497ac1b5aa",
   "claims": [
     {
       "id": "claim_b925fe22d5a74d5388447aa34ff4d2fd",
@@ -34,17 +34,17 @@
     },
     {
       "id": "claim_8614bcad26f8486aa463c334ea2c9505",
-      "statement": "Every place the port differs from the source is a drift entry tagged by cause, 537 entries at the 2026-10-18 recount.",
+      "statement": "Every place the port differs from the source is a drift entry tagged by cause, 538 entries after the last round 6 follow-up.",
       "evidence": [
         {
           "resource": "repo://README.md#L9-L11",
-          "version": "repo-lines-v1:sha256:eeea8ce06d80cd89033503e5cfeb6d7f4080d92d3b87658f036a2dc1598cc0b1:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I1MTk3Nzc1OTUyOTBjYmNjODI3YjE4NGQwNGQyOTEzYzc3NDdlMmZjNjNjYjI1MGM3ZGY4Y2FhZTAxZjU2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDZiMzRkZjA1ZDI2ZTZjZGRhM2E1YzUxNTFjNGE1NjQxYWEwYTZhZDA4MWExYzlhMmI2MTZjNjJmYzJmZThjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDVmMDhjNzUyMWQ1ZTcyZDI2MDM2M2E2ZGRlMmRmMjcyMzc1YzRlYWYzMzUxMjI5MjE3ODYyNzJhMDYwMDZlZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWI3YmJmNzg1NTI1MDcyMjUxNDRjZWY1MDMyOTM4MjZhZTdkYjk3ZDRjMThhMzAwODJhZDYwYjQzMzUwNWFiYiJ9"
+          "version": "repo-lines-v1:sha256:7677a4be6fab134f5733b69560bb7daf2cac9f3988ae884ded63a1e53b5f6508:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I1MTk3Nzc1OTUyOTBjYmNjODI3YjE4NGQwNGQyOTEzYzc3NDdlMmZjNjNjYjI1MGM3ZGY4Y2FhZTAxZjU2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDZiMzRkZjA1ZDI2ZTZjZGRhM2E1YzUxNTFjNGE1NjQxYWEwYTZhZDA4MWExYzlhMmI2MTZjNjJmYzJmZThjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDVmMDhjNzUyMWQ1ZTcyZDI2MDM2M2E2ZGRlMmRmMjcyMzc1YzRlYWYzMzUxMjI5MjE3ODYyNzJhMDYwMDZlZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWI3YmJmNzg1NTI1MDcyMjUxNDRjZWY1MDMyOTM4MjZhZTdkYjk3ZDRjMThhMzAwODJhZDYwYjQzMzUwNWFiYiJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-18T08:02:19.231Z"
+    "at": "2026-10-18T09:53:04.224Z"
   }
 }

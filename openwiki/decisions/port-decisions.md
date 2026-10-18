@@ -5,7 +5,7 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-18T08:02:19.231Z
+    at: 2026-10-18T09:53:04.224Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -51,7 +51,7 @@ sources:
     resource: repo://src/lib/theme.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-18T08:02:19.231Z" }
+generated: { by: "claude-code", at: "2026-10-18T09:53:04.224Z" }
 ---
 
 # Port decisions and their reasons
@@ -151,18 +151,21 @@ two Inter 4.0 variable files the source serves (upright and italic, family name 
   both). `StableLabel` does it by default; `snapWeight` is for rows the source draws without a weight transition
   (the surfaces page's role rows). Weight is not eased on a label by default merely because it can be: copy the
   source's transition list.
-- **`StableLabel` reserves the wider of the normal and the semibold width, not the semibold width alone.** The
-  source's hidden copy is semibold only, and its `font-weight.ts` claims semibold stays within 0.4 px of normal. Both
-  halves fail in practice: for some strings semibold is *narrower* (Toggle dark mode), so the source's label shrinks
-  when selected and moves its neighbours. The port keeps a second hidden copy at normal weight so the cell, and
-  everything beside it, never moves. This is a deliberate improvement on the source, not parity.
+- **`StableLabel` reserves the semibold width alone, as the source does.** The source's hidden copy is semibold only,
+  and its `font-weight.ts` claims semibold stays within 0.4 px of normal; that claim fails in the browser too, so a
+  label whose semibold is narrower (Toggle dark mode) shrinks by up to about 1 px when selected and nudges its
+  neighbours, there and here. The port first added a second hidden normal-weight copy so the cell never moved, then
+  dropped it (`6ad107a`): gpuix re-measures every `<text>` each frame, so the extra ghost cost about 1.4 ms per draw
+  for a rare, sub-pixel effect. Do not add it back to "fix" the shrink; it is parity.
 
 **The weight-width check measures against the browser, not the source's claim.** Chromium measuring the same
 `InterVariable.ttf` and tokens does not reproduce the source's 0.4 px claim (Analytics grows 1.05 px; a long all-caps
 string shrinks 1.13 px), and gpuix matches Chromium to 0.1 px. `scripts/check-weight-widths.tsx` therefore asserts
-parity with the browser's delta and only prints how many strings the source's claim misses; its second half mounts
+parity with the browser's delta and only prints how many strings the source's claim misses. Its second half mounts
 every `StableLabel` user through its demo page and steps the held motion clock across the ease, asserting exact
-boxes. It runs at 1x, so widths at a retina display's 2x scale are not measured.
+boxes for the rows around the label. Its synthetic mount of labels narrower at semibold asserts parity, not
+stillness: the shrink on selection equals the normal-minus-semibold difference within 1 px, and is logged. It runs
+at 1x, so widths at a retina display's 2x scale are not measured.
 
 ## Theme: System, Light and Dark through createAppearance
 

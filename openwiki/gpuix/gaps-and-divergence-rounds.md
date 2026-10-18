@@ -4,6 +4,8 @@ title: gpuix gaps and divergence rounds
 description: Which gpuix gaps the port works around (summary, with the README as the full list), and the history of DOM divergences this port reported to the gpuix fork, round by round, with the gpuix commits that landed and the migrations the port made in response.
 tags: [gpuix, gaps, upstream, history, migration]
 sources:
+  - id: openwiki-source-5cfc44b662eef11b303099d9
+    resource: repo://drift/tabs-subtle.md
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
   - id: openwiki-source-f870e66b983ce90f21118b51
@@ -20,6 +22,8 @@ sources:
     resource: repo://src/components/table.tsx
   - id: openwiki-source-26d9c038c2027980be5931cf
     resource: repo://src/components/tabs-subtle.tsx
+  - id: openwiki-source-a79b6ccf1548a05902eb90b6
+    resource: repo://src/demos/thinking-steps.tsx
   - id: openwiki-source-a6e7d28cb827574c90025f7b
     resource: repo://src/home/bento-grid.tsx
   - id: openwiki-source-2784d511d2f9a521edaf8bb9
@@ -32,10 +36,10 @@ sources:
     resource: repo://src/lib/theme-fade.tsx
   - id: openwiki-source-1a25dd521e50a4d59274e1c2
     resource: repo://src/lib/theme.ts
-generated: { by: "claude-code", at: "2026-10-18T08:02:19.231Z" }
+generated: { by: "claude-code", at: "2026-10-18T09:53:04.224Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-18T08:02:19.231Z
+    at: 2026-10-18T09:53:04.224Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -64,8 +68,7 @@ link to those rows rather than repeating them. The ones that shape the most code
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
 The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17) and again in the
-[round 6 pass](#round-6-adoption-pass-2026-10-18); the README still names `poc` `20a0c327` as the minimum fork, but
-the round 6 features need a fork built after it. The bugs and gaps worth knowing before touching layout code:
+[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `ed4e99c3` as the minimum fork. The bugs and gaps worth knowing before touching layout code:
 
 - A function-form `createTransform` of several motion values is computed in JS and can trail its inputs by a frame
   on a live window (not seen on the test renderer). `calc()` strings of the row's own width avoid it where the layer
@@ -75,6 +78,10 @@ the round 6 features need a fork built after it. The bugs and gaps worth knowing
 - A `fit-content` box in a column flex container with a horizontal negative margin keeps the height of a wrapped
   first pass; a block parent avoids it.
 - gpui measures text up to the next whole pixel, so a shrink-to-fit box is up to 1px wider than Chrome's.
+- A `textBox`-trimmed leaf is ceiled to whole pixels too (`zed/crates/gpui/src/taffy.rs:800-802`): Inter 13px is a
+  10px box for 9.46px of caps. The text starts at the box top, so the spare pixel sits under the caps and a label
+  its parent centres (tabs, tabs-subtle) draws up to about 0.75px high at 1x; at 2x the rounding is 0.5px and the
+  error should be small, but it was not checked. Recorded in the tabs drift files, no workaround.
 - Flex `order` is ignored inside an `@container` block, and Tab follows the painted order under `order`, not the
   document order; the banner uses `row` / `row-reverse` instead.
 - Table parts are not animatable (a collapsed-border row rule snaps where the source eases it), and gpuix has the
@@ -244,7 +251,7 @@ What the port changed, so a later reader can tell a regression from intent:
   horizontal `ScrollArea` with `min-width: 560`, as the source) and the ScrollArea demo's both-axis card, which now
   uses the real `Table`. The row highlight still follows the fluid hover's pick, not the pointer
   ([why](../decisions/port-decisions.md#hover-and-press-native-state-styles-first)).
-- **`StableLabel` is a real `inline-grid`.** The hidden copies and the visible copy share one grid cell (since round 6 two hidden copies, normal and semibold), so it
+- **`StableLabel` is a real `inline-grid`.** A hidden semibold copy (the source's ghost span) and the visible copy share one grid cell, so it
   wraps like the source, with `nowrap` and `truncate` opt-in. That lets the Ask-user inline title be an inline-grid
   atom inside a text run. `Badge` is `inline-flex` with a `style` prop, and the Lumen citation chips use it. The
   thinking-steps details wrapper is a block, as the source's, because a `fit-content` flex child with a negative
@@ -306,6 +313,9 @@ Pitfalls this pass hit:
 
 - **File:line refs in drift entries moved three times.** Each batch of edits shifted the cited lines, and the
   fix was a separate "move the refs" commit after every batch. Do the ref move once, after the last edit.
+- **A culled card has no bounds.** The thinking-steps screenshot scenario centres on a card far below the window,
+  and gpuix culls it until it is scrolled near, so `scrollTo` calls `shot.reveal` first; without it `centerOf` has
+  nothing to read.
 - **Measure against the browser, not the source's comment.** The source's `font-weight.ts` claim of at most 0.4 px
   width change fails in Chromium too; the check was rewritten to assert parity with the browser.
 - **The count table is still generated.** Totals come from `bun scripts/drift-counts.ts`, including the stale
