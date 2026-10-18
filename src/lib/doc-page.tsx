@@ -35,7 +35,13 @@ const rotateCcw = defineIcon(
 
 export function Prose(props: { children: JSX.Element }) {
 	return (
-		<text style={{ ...siteType.body, color: color.mutedForeground }}>
+		<text
+			style={{
+				...siteType.body,
+				color: color.mutedForeground,
+				textWrap: 'pretty',
+			}}
+		>
 			{props.children}
 		</text>
 	);
@@ -129,6 +135,7 @@ export function SectionTitle(props: { children: string }) {
 				lineHeight: '16px',
 				fontVariationSettings: weight.semibold,
 				color: color.foreground,
+				textWrap: 'balance',
 			}}
 		>
 			{props.children}
@@ -175,6 +182,7 @@ export function SubHeading(props: { children: string; marginTop?: number }) {
 					...siteType.subtitle,
 					fontVariationSettings: weight.semibold,
 					color: color.foreground,
+					textWrap: 'balance',
 				}}
 			>
 				{props.children}

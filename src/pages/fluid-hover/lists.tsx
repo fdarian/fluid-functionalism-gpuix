@@ -42,6 +42,7 @@ const SIDEBAR_LEFT = 179;
 const SIDEBAR_TOP = 16;
 const SIDEBAR_WIDTH = 260;
 const SIDEBAR_HEIGHT = 368;
+const LABEL_WIDTH = 140;
 /** Arrows stop this far outside the sidebar frame, never inside it. */
 const ARROW_GAP = 6;
 /** How long the arrows keep re-measuring after a sub-menu toggles: its height spring and the rows below it settle by then. */
@@ -50,8 +51,7 @@ const TRACK_MS = 600;
 interface Callout {
 	key: string;
 	title: string;
-	/** Broken by hand where `text-balance` breaks the source's copy, since gpuix has no balanced wrap. One `<text>` per line, so the measured edge is the longest line's. */
-	lines: readonly string[];
+	line: string;
 	/** Which side of the sidebar the label sits on. Its vertical position follows the target, so the arrow is short and level. */
 	side: 'left' | 'right';
 	/** Rows the arrow points at: it ends level with the mean of their centers. */
@@ -62,21 +62,21 @@ const CALLOUTS: Callout[] = [
 	{
 		key: 'one',
 		title: '1 list',
-		lines: ['Children ride with', 'their parent.'],
+		line: 'Children ride with their parent.',
 		side: 'left',
 		targets: ['Today', 'Yesterday'],
 	},
 	{
 		key: 'skip',
 		title: 'Skipped',
-		lines: ['Disabled rows', 'are passed over.'],
+		line: 'Disabled rows are passed over.',
 		side: 'right',
 		targets: ['Knowledge'],
 	},
 	{
 		key: 'two',
 		title: 'New list',
-		lines: ['A divider means a', 'different kind.'],
+		line: 'A divider means a different kind.',
 		side: 'left',
 		targets: ['Profile', 'Log out'],
 	},
@@ -409,20 +409,19 @@ export function ListsDemo() {
 							>
 								{callout.title}
 							</text>
-							<For each={callout.lines}>
-								{(line) => (
-									<text
-										ref={(element) => register(callout.key, element)}
-										style={{
-											...scale.micro,
-											color: color.mutedForeground,
-											whiteSpace: 'nowrap',
-										}}
-									>
-										{line}
-									</text>
-								)}
-							</For>
+							<text
+								style={{
+									...scale.micro,
+									color: color.mutedForeground,
+									maxWidth: LABEL_WIDTH,
+									textWrap: 'balance',
+								}}
+							>
+								{/* The text's own box is as wide as greedy wrapping makes it; a span's rect ends where its longest line's glyphs do, which is what the source reads through a `Range`. */}
+								<span ref={(element) => register(callout.key, element)}>
+									{callout.line}
+								</span>
+							</text>
 						</div>
 					)}
 				</For>

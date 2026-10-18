@@ -60,6 +60,7 @@ function SectionTitle(props: { children: string }) {
 				lineHeight: '16px',
 				fontVariationSettings: weight.semibold,
 				color: color.foreground,
+				textWrap: 'balance',
 			}}
 		>
 			{props.children}
@@ -69,7 +70,13 @@ function SectionTitle(props: { children: string }) {
 
 function Prose(props: { children: string }) {
 	return (
-		<text style={{ ...siteType.body, color: color.mutedForeground }}>
+		<text
+			style={{
+				...siteType.body,
+				color: color.mutedForeground,
+				textWrap: 'pretty',
+			}}
+		>
 			{props.children}
 		</text>
 	);

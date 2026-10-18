@@ -1,14 +1,9 @@
 import { color, type as scale, weight } from '#/lib/theme';
 import { Mono, Specimen, TweakFrame } from './specimen';
 
-// The source measured both at 214px. gpuix has no `text-wrap`, so the "good"
-// side is the same text with the break the browser picks written in as a
-// newline (`whiteSpace: "pre-line"`), and the "bad" side wraps plainly.
 const HEADLINE = 'Give every component the same motion';
-const BALANCED_HEADLINE = 'Give every component\nthe same motion';
 const PARAGRAPH =
 	'Hover glides from item to item instead of blinking, so the highlight always sits under your cursor.';
-const PRETTY_PARAGRAPH = PARAGRAPH.replace(' your cursor.', '\nyour cursor.');
 const SAMPLE_WIDTH = 214;
 
 const sample = {
@@ -23,7 +18,7 @@ const specimenFrame = {
 	paddingBottom: 20,
 } as const;
 
-function Heading(props: { children: string }) {
+function Heading(props: { wrap: 'wrap' | 'balance'; children: string }) {
 	return (
 		<text
 			style={{
@@ -31,7 +26,7 @@ function Heading(props: { children: string }) {
 				...sample,
 				fontVariationSettings: weight.semibold,
 				color: color.foreground,
-				whiteSpace: 'pre-line',
+				textWrap: props.wrap,
 			}}
 		>
 			{props.children}
@@ -39,14 +34,14 @@ function Heading(props: { children: string }) {
 	);
 }
 
-function Paragraph(props: { children: string }) {
+function Paragraph(props: { wrap: 'wrap' | 'pretty'; children: string }) {
 	return (
 		<text
 			style={{
 				...scale.body,
 				...sample,
 				color: color.mutedForeground,
-				whiteSpace: 'pre-line',
+				textWrap: props.wrap,
 			}}
 		>
 			{props.children}
@@ -67,7 +62,7 @@ export function BalanceDemo() {
 					</>
 				}
 			>
-				<Heading>{HEADLINE}</Heading>
+				<Heading wrap="wrap">{HEADLINE}</Heading>
 			</Specimen>
 			<Specimen
 				good
@@ -79,7 +74,7 @@ export function BalanceDemo() {
 					</>
 				}
 			>
-				<Heading>{BALANCED_HEADLINE}</Heading>
+				<Heading wrap="balance">{HEADLINE}</Heading>
 			</Specimen>
 		</TweakFrame>
 	);
@@ -98,7 +93,7 @@ export function PrettyDemo() {
 					</>
 				}
 			>
-				<Paragraph>{PARAGRAPH}</Paragraph>
+				<Paragraph wrap="wrap">{PARAGRAPH}</Paragraph>
 			</Specimen>
 			<Specimen
 				good
@@ -110,7 +105,7 @@ export function PrettyDemo() {
 					</>
 				}
 			>
-				<Paragraph>{PRETTY_PARAGRAPH}</Paragraph>
+				<Paragraph wrap="pretty">{PARAGRAPH}</Paragraph>
 			</Specimen>
 		</TweakFrame>
 	);

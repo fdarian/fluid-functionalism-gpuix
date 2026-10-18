@@ -38,6 +38,7 @@ export function H3(props: { children: string; marginTop: number }) {
 					...siteType.subtitle,
 					fontVariationSettings: weight.semibold,
 					color: color.foreground,
+					textWrap: 'balance',
 				}}
 			>
 				{props.children}

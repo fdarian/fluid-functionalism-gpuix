@@ -131,6 +131,8 @@ export function ChatMessage(props: {
 							? {
 									paddingLeft: 14,
 									paddingRight: 14,
+									// Not on the assistant reply: it streams, and `pretty` would re-break earlier lines as words arrive.
+									textWrap: 'pretty',
 									borderRadius: shape.bg,
 									backgroundColor: color.chatBubble,
 								}
