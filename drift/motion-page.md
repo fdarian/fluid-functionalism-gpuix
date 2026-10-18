@@ -6,7 +6,7 @@ Ported in `src/pages/motion.tsx`, with the three demos in `src/pages/motion/` (`
 `spring-reference.tsx`, `install-prompt.ts`) and the page chrome in the shared `src/lib/doc-page.tsx`, routed by the page registry (`src/lib/demo.ts` `loadPages`).
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The modal card does not scale, it grows in width and height
@@ -79,12 +79,12 @@ repeating it.
 - **Port:** `alignItems: "center"` (`src/pages/motion/spring-tokens.tsx`). With 20px, 14px and 16px line boxes the baselines land within a pixel of each other.
 - **Fidelity:** approximated.
 
-## Section spacing and heading weight
+## Section spacing
 
-- **Cause:** `port choice` (spacing); `gpuix gap` (weight).
+- **Cause:** `port choice`.
 - **Original:** `DocSection` is `gap-4 pt-6` with a `-mb-2` title; the `h3` is `mt-8`.
-- **Port:** the same numbers as margins and padding (`src/lib/doc-page.tsx:152-193`); the page's description is tucked under `App`'s heading with `marginTop: -16`, as in `drift/introduction.md`. Titles are SemiBold 600 where the source's variable font is 550 (README variable-font rows), the `h3` is `SubHeading` on `siteType.subtitle` (14/20).
-- **Fidelity:** exact spacing, approximated weight.
+- **Port:** the same numbers as margins and padding (`src/lib/doc-page.tsx:152-193`); the page's description is tucked under `App`'s heading with `marginTop: -16`, as in `drift/introduction.md`. Titles are `weight.semibold`, the source's 550, the `h3` is `SubHeading` on `siteType.subtitle` (14/20).
+- **Fidelity:** exact.
 
 ## The ⌘K row
 

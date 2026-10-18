@@ -23,14 +23,6 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 - **Fidelity:** dropped (exits, sibling slide); approximated (first-mount fade).
 - **Components it hits:** just this one.
 
-## Static font weights
-
-- **Cause:** `gpuix gap`. Shared: variable-font axes ([README, Missing features, variable-font row](../README.md)).
-- **Original:** option titles (through the ghost-span trick), the chip number, the heading and the textareas use `fontVariationSettings` 400 / 550, eased over 80 ms (`:1054-1058`, `:1742-1761`, `:1281`).
-- **Port:** `StableLabel` and `weight.semibold` (600), switched at once (`StableLabel` in the stacked layout and for a title with no description, `ask-user-questions.tsx:769-773`, `:235`, `:1000`; in the inline layout the title is a `StableLabel` atom inside the run, `:1134-1139`).
-- **Fidelity:** approximated.
-- **Components it hits:** card, table, tabs, tabs-subtle, sidebar.
-
 ## Keyboard focus ring does not travel
 
 - **Cause:** `not ported yet` (`src/lib/focus-ring.tsx` exists and select uses it).

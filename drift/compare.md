@@ -7,7 +7,7 @@ the shared copy in `data.ts` (`app/components/demo-data.ts`), the Fluid side in 
 rebuilt primitives in `src/pages/compare/shadcn/`; routed by the page registry (`src/lib/demo.ts` `loadPages`): group "Pages", order 3, layout "full", listed in the site menu only.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The shadcn side is rebuilt from gpuix primitives, not Radix
@@ -79,11 +79,11 @@ repeating it.
 - **Port:** `arrow-left` is the same drawing turned (every icon table has it). The tooltip is the port's `Tooltip` chip with the name, an en space and the key in Menlo at 50% (`src/pages/compare.tsx:121-160`); a disabled button's tooltip still opens, since the wrapper takes the hover.
 - **Fidelity:** exact (glyph), approximated (chip).
 
-## The title is the Bold cut, and the page has no breakpoints
+## The page has no breakpoints
 
 - **Cause:** `port choice`.
 - **Original:** `text-site-display` in bold (`wght 700, opsz 25`) with `leading-none`; `px-6 md:px-12`, `pt-16 sm:pt-24`, `grid-cols-1 md:grid-cols-2` (`app/compare/page.tsx:134-143, 192`).
-- **Port:** Inter Bold 700 without `opsz`, line height = font size, stepping down with the Size row (`siteType.display`); padding 48 and top 96, two columns always (the window is not made narrower than the md and sm breakpoints in practice).
+- **Port:** `weight.bold`, line height = font size, stepping down with the Size row (`siteType.display`); padding 48 and top 96, two columns always (the window is not made narrower than the md and sm breakpoints in practice).
 - **Fidelity:** approximated.
 
 ## The progress pills tween their width, no focus style of their own

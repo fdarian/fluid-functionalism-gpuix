@@ -3,7 +3,7 @@
 Original: the site shell of fluidfunctionalism.com at 0a0377e (kept at `~/.claude/notes/ff-source/`): `app/layout.tsx`, `app/components/sidebar-layout.tsx`, `right-panel.tsx`, `site-command-menu.tsx`, `playground-menu.tsx`, `app/globals.css`, `lib/docs/DocPage.tsx` / `ComponentPreview.tsx` / `PropsTable.tsx`, the settings providers, and every route under `app/`. The sidebar itself is in `drift/sidebar.md`. The Changelog entries and the menu's rows for it read the live site (d5c3606: the Changelog page, `app/changelog/`, `lib/changelog/`, and the release-driven New and Updated marks, which 0a0377e predates), so their source `file:line` refs are d5c3606's.
 Ported in `src/main.tsx`, `src/app.tsx`, `src/lib/app-frame.tsx`, `src/lib/demo-kit.tsx`, `src/lib/doc-page.tsx`, `src/lib/playground.tsx`, `src/lib/page-nav.ts`, `src/lib/site-command-menu.tsx`, `src/lib/install-url.ts`, `src/lib/theme.ts`, `src/lib/theme-fade.tsx` and `src/lib/changelog/`; the pages are the modules in `src/pages/` (each has its own `drift/<page>.md`), and there is no per-route demo for the shell.
 
-One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps (CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of repeating it. Entries run: frame and layout, doc page, right panel and settings, site menu, the Changelog page, pages and registry items with no port.
+One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps (CSS transforms, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of repeating it. Entries run: frame and layout, doc page, right panel and settings, site menu, the Changelog page, pages and registry items with no port.
 
 ## Window frame
 
@@ -48,9 +48,9 @@ One entry per place the port looks or behaves differently from the source, whate
 
 ## Doc page header: title weight, no prev/next, no description on component pages
 
-- **Cause:** `not ported yet` (arrows; the description on component pages); title weight is the shared static-font gap, see `README.md` "Variable-font axes" row.
+- **Cause:** `not ported yet` (arrows; the description on component pages; the title weight, `weight.bold` exists but `Heading` sets `weight.semibold`).
 - **Original:** `DocPage` renders the h1 in `text-site-display` bold (`wght 700, opsz 25`) with ghost icon-button prev / next arrows on the same row (tooltips "Name ←" / "Name →", disabled at either end), then the description 8px under the title and an optional intro paragraph; page gap 32 (`lib/docs/DocPage.tsx:73-128`, `registry/default/lib/font-weight.ts:25-29`).
-- **Port:** every docs page and demo page takes `Heading`, `siteType.display` at `weight.semibold` (`src/app.tsx:80-93, 668-685`; it steps down with the Size row). The system pages put their description and optional intro under it through `DocPage` (Introduction does the same by hand), tucked up 8px by a negative margin (`src/lib/doc-page.tsx:236-286`, `:240`). A component demo page has the heading and the cards only: no description, no arrows. No docs page has arrows; only the home hero does (`src/app.tsx:318-359`). Page gap 24, top padding 40 (`src/app.tsx:593-595`) against the source's 112.
+- **Port:** every docs page and demo page takes `Heading`, `siteType.display` at `weight.semibold` (`src/app.tsx:80-93, 669-686`; it steps down with the Size row). The system pages put their description and optional intro under it through `DocPage` (Introduction does the same by hand), tucked up 8px by a negative margin (`src/lib/doc-page.tsx:236-286`, `:240`). A component demo page has the heading and the cards only: no description, no arrows. No docs page has arrows; only the home hero does (`src/app.tsx:318-359`). Page gap 24, top padding 40 (`src/app.tsx:593-595`) against the source's 112.
 - **Workaround:** none.
 - **Fidelity:** approximated (title lighter than the source's bold; arrows dropped, and the description on component pages).
 - **Components it hits:** every demo page (description, arrows); every docs page, the Changelog page included (arrows, weight).
@@ -114,7 +114,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`.
 - **Original:** the heading "Make them yours" (semibold 550, title role) shares a row with a ghost GitHub-mark button showing the live star count (`15.2k` style, tabular figures, one cached fetch of the GitHub API per load, `window.open` on click); under the rows a 20px avatar and "Created by @micka_design" with a focus-ringed link (`app/components/right-panel.tsx:35-119, 261-279, 408-420`).
-- **Port:** the heading alone, `siteType.title` at semibold 600 (`src/app.tsx:409-419`); no star button, no credit.
+- **Port:** the heading alone, `siteType.title` at `weight.semibold`, the source's 550 (`src/app.tsx:409-419`); no star button, no credit.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just the shell.
@@ -191,16 +191,6 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Workaround:** n/a.
 - **Fidelity:** exact in the window; see "The test renderer's captures show no window chrome" for captures.
 - **Components it hits:** every component.
-
-## Static font weights and no `opsz`
-
-- **Cause:** `gpuix gap`. See the README row "Variable-font axes (`fontVariationSettings`)" and the "Inter variable" row.
-- **Original:** Inter variable with semibold `wght 550 / opsz 18` and bold `wght 700 / opsz 25` (`registry/default/lib/font-weight.ts:25-29`, `app/globals.css:6-18`).
-- **Port:** static Inter cuts, semibold 600, no `opsz` (`src/lib/theme.ts:388-390`).
-- **gpuix lacks:** variable-font axes.
-- **Workaround:** nearest static weight.
-- **Fidelity:** approximated.
-- **Components it hits:** every component and page heading.
 
 ## Page scroller and base styles
 

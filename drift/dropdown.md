@@ -2,7 +2,7 @@
 
 Original: `registry/base/dropdown.tsx`, with `registry/default/menu-item.tsx`, `dropdown-search.tsx` and `dropdown-sub.tsx`; demo in `app/docs/dropdown/page.tsx` and `lib/docs/playgrounds/dropdown.tsx` of the source (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/dropdown.tsx`, `menu-item.tsx` and `dropdown-search.tsx`, demo in `src/demos/dropdown.tsx`.
 
-One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps (CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) are one line each and link to the README row.
+One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps (CSS transforms, selector `:has(.x)` and group-has, collapsed-border transitions) are one line each and link to the README row.
 
 ## The parent list ignores the pointer toward a submenu instead of `pointer-events: none`
 
@@ -22,14 +22,6 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Workaround:** the slide and fade above.
 - **Fidelity:** approximated.
 - **Components it hits:** select, combobox, color-picker.
-
-## Static font weights
-
-- **Cause:** `gpuix gap`. README "Missing features" row "Variable-font axes".
-- **Original:** a lit or checked row's label eases from `wght 400` to `550` over 80 ms (`registry/default/menu-item.tsx:224-233`); 
-- **Port:** `StableLabel` switches at once to SemiBold 600 (`src/components/menu-item.tsx:139-146`, `src/lib/theme.ts:390`).
-- **Fidelity:** approximated.
-- **Components it hits:** every `StableLabel` (tabs, tabs-subtle, sidebar, menu rows).
 
 ## Submenu and inline panel colour is fixed at surface-3
 

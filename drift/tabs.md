@@ -27,16 +27,6 @@ light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 - **Fidelity:** approximated.
 - **Components it hits:** every component with a `size` variant.
 
-## Semibold is SemiBold 600, not variable 550
-
-- **Cause:** `gpuix gap` (README "Missing features": variable-font axes).
-- **Original:** `fontVariationSettings` `wght 550, opsz 18` for the selected label, `wght 400, opsz 14` otherwise (`registry/default/lib/font-weight.ts:19-23`, `tabs.tsx:570-574`).
-- **Port:** static cuts, 600 selected and 400 otherwise, switching at once (`theme.ts:276-278`, `stable-label.tsx:43-57`).
-- **gpuix lacks:** variable axes; only a font's default instance renders.
-- **Workaround:** the hidden 600 copy still reserves the width, so nothing shifts.
-- **Fidelity:** approximated (one weight step, no `opsz`).
-- **Components it hits:** tabs-subtle, card, table, sidebar, menu rows.
-
 ## API surface: index props, `className`, ref and Base UI props
 
 - **Cause:** `port choice` for `selectedIndex` / `onSelect` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md`: FF-only layer, out of scope per lead decision); reason not stated for the rest.

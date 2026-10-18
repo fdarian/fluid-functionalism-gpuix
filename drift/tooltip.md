@@ -14,15 +14,6 @@ The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are 
 - **Fidelity:** approximated (same distance and timing; a layout change per frame instead of a compositor transform).
 - **Components it hits:** every popup that slides in (select, combobox, dropdown, color-picker, dialog).
 
-## Semibold in rich content is 600, not 550
-
-- **Cause:** `gpuix gap` (static font weights: [README, variable-font row](../README.md#missing-features)).
-- **Original:** `fontWeights.semibold` (550) on the rich title (`app/docs/tooltip/page.tsx:151`).
-- **Port:** `weight.semibold` = 600 (`src/demos/tooltip.tsx:108`).
-- **Workaround:** the nearest static cut.
-- **Fidelity:** approximated (one weight step).
-- **Components it hits:** every semibold label.
-
 ## The trigger is wrapped in a `div`
 
 - **Cause:** `port choice` (the wrapper hears hover, press and focus through bubbling, `src/components/tooltip.tsx:73`; there is no `render={children}` / ref merging).

@@ -4,7 +4,7 @@ Original: `app/docs/surfaces/page.tsx` of the source (fluidfunctionalism.com at 
 Ported in `src/pages/surfaces.tsx` (the page) and `src/pages/surfaces/` (`problem`, `solution`, `examples`, `invite-dialog`, `role-menu`, `annotations`, `elevated`, `visibility`, `snippets`), routed by the page registry. The doc chrome (`DocSection`, `SubHeading`, `Prose`, `ComponentPreview`, `MONO`, `SUBTITLE`) is the shared `src/lib/doc-page.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## Page header and Installation block follow the port's doc page
@@ -103,7 +103,7 @@ repeating it.
 - **Cause:** `port choice`, `not ported yet` where noted.
 - **Original and Port:**
   - `text-site-subtitle` (14/20) is the shared `SUBTITLE` constant in `src/lib/doc-page.tsx`, the port's `type` has no such role (`app/globals.css:420`). Compact sizes follow the ambient size in the source; the port has the default step only ([site.md, "Customise rows not ported"](site.md#customise-rows-not-ported-radius-size-icons-primitive), `not ported yet`).
-  - Section titles use a 16px line, SemiBold 600 for the variable 550 / 600 (README variable-font row), as in [introduction.md](introduction.md#section-titles-use-a-16px-line).
+  - Section titles use a 16px line, as in [introduction.md](introduction.md#section-titles-use-a-16px-line).
   - `font-mono` is Menlo (`ui-monospace` in the browser; same face in Chrome on macOS).
   - Substrate demo: the three columns are 181px wide in the 566px content box (191px in the source's 598px), the `border-border/40` edge is the dark literal `rgba(245,245,245,0.048)` because `color.border` is not a hex `withAlpha` can mix (`src/pages/surfaces/solution.tsx`).
   - Tokens demo: the chip row (564px) fits the 566px `ScrollArea` here as in the source, so neither scrolls and the fade never shows; the port's `ScrollArea` takes an explicit `height={110}`.

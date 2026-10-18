@@ -4,7 +4,7 @@ Original: `app/docs/typography/page.tsx` and `demos.tsx` of the source (fluidfun
 Ported in `src/pages/typography.tsx` (the page) and `src/pages/typography/` (`step`, `text`, `scale`, `markdown`, `specimen`, `weight`, `numbers`, `trim`, `wrap`, `install-prompt`), routed by the page registry.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The Markdown section is a static document, not a Tiptap editor
@@ -33,11 +33,11 @@ repeating it.
 - **Fidelity:** approximated (shortcut dropped).
 - **Components it hits:** just this page.
 
-## The scale specimen has no scroll fade, and shows the variable-font numbers over static cuts
+## The scale specimen has no scroll fade
 
-- **Cause:** `port choice` (scroll), `gpuix gap` (variable axes, README "gpuix gaps across components", variable-font row).
+- **Cause:** `port choice`.
 - **Original:** a horizontal `ScrollArea` with `scroll-fade-x`, `min-w-[560px]` (`demos.tsx:76-138`); the Weight column reads the axes from `fontWeights`: 700 / opsz 25, 550 / opsz 18, 400 / opsz 14.
-- **Port:** a plain `overflowX: "auto"` box with the same 560px minimum (the port's `ScrollArea` clipped the last row under its scrollbar here, and the 600px column never scrolls it). The numbers shown are the source's (550, opsz 18); the glyphs are the static Bold, SemiBold 600 and Regular cuts.
+- **Port:** a plain `overflowX: "auto"` box with the same 560px minimum (the port's `ScrollArea` clipped the last row under its scrollbar here, and the 600px column never scrolls it). The Weight column and the glyphs use the same `fontWeights` tokens as the source.
 - **Fidelity:** approximated.
 - **Components it hits:** just this page.
 
@@ -57,18 +57,18 @@ repeating it.
 - **Fidelity:** dropped (arrows).
 - **Components it hits:** every docs page.
 
-## Weight without reflow: both specimens are the same static cut
+## Weight without reflow: the scripted pointer and the item's highlight
 
-- **Cause:** `gpuix gap`: variable-font axes (`fontVariationSettings`; README "gpuix gaps across components", variable-font row). gpuix renders only a font's default instance, and `lib/fonts.ts` loads four static cuts.
+- **Cause:** `port choice` (reason not stated).
 - **Original:** the left item eases `'wght' 400` to `'wght' 550` with optical size on auto and widens 2.4px; the right pairs the weight with `opsz` (`fontWeights.normal` / `.semibold`) and widens 0.1px. A scripted cursor clicks both items on and off while the demo is half on screen; a real pointer inside takes over; reduced motion leaves the item on (`demos.tsx:140-380`).
-- **Port:** both items are Regular 400 to SemiBold 600, which switches at once, so they are the same and widen 3.0px (measured by hidden copies of the label at both weights, drawn with the blue line and red wash as in the source). The right side keeps the source's text for its caption but reads "needs variable axes", with a ⚠️ where the source has ✅, so the demo does not claim a result it cannot show. The scripted cursor is a `motion.div` gliding `top` over 600ms (a timer loop: glide, rest, click on 1.4s, click off, leave); a pointer inside stops it, and it restarts from the top when the pointer leaves, where the source resumes in place. It plays while at least half the frame is in the page scroller (`createVisibility`). Reduced motion leaves the item on, as in the source (`src/pages/typography/weight.tsx:265-267`). Hover and the active background are `opacity` fades on two layers, where the source glides a `FluidHoverHighlight`.
-- **Workaround:** none for the paired axes; the port's real answer to a label that gains weight in place is `StableLabel` (README variable-font row), which this demo does not use.
-- **Fidelity:** approximated (left), dropped (right).
-- **Components it hits:** card, table and every `StableLabel`, as the README row says.
+- **Port:** both items ease the weight over 80 ms with the colour, left on `'wght'` alone and right on the paired tokens (`PLAIN` and `PAIRED`, `src/pages/typography/weight.tsx:16-17`), and print the width each gains, measured by hidden copies of the label at both weights, drawn with the blue line and red wash as in the source. The scripted cursor is a `motion.div` gliding `top` over 600ms (a timer loop: glide, rest, click on 1.4s, click off, leave); a pointer inside stops it, and it restarts from the top when the pointer leaves, where the source resumes in place. It plays while at least half the frame is in the page scroller (`createVisibility`). Reduced motion leaves the item on, as in the source (`src/pages/typography/weight.tsx:265-267`). Hover and the active background are `opacity` fades on two layers, where the source glides a `FluidHoverHighlight`.
+- **Workaround:** none.
+- **Fidelity:** approximated (the script's resume point and the highlight's glide).
+- **Components it hits:** just this page.
 
 ## Steady numbers is native
 
-- **Cause:** none that matters: gpuix has `fontVariantNumeric: "tabular-nums"` (`README.md:6386`) and Inter's static cuts carry `tnum`.
+- **Cause:** none that matters: gpuix has `fontVariantNumeric: "tabular-nums"` (`README.md:6386`) and Inter 4.0 carries `tnum`.
 - **Original:** two rows count 10 to 48 in `normal-nums` and `tabular-nums` while the demo is half on screen, hold while a pointer is inside, and show the last count under reduced motion (`demos.tsx:382-540`).
 - **Port:** the same, with the widths of all 39 labels per row measured through hidden copies and `onLayout` (78 invisible texts); the proportional row drifts 6.0px where the browser measured 6.2px. The count ticks every 120ms on a timer while at least half the frame is on screen, and reduced motion shows the last count (`src/pages/typography/numbers.tsx:155-168`).
 - **Fidelity:** exact in behaviour.

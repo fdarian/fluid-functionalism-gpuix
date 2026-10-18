@@ -4,7 +4,7 @@ Original: `app/slider/page.tsx` of the source (fluidfunctionalism.com at 0a0377e
 Ported in `src/pages/audio-mixer.tsx`, routed by the page registry (`src/lib/demo.ts` `loadPages`, `src/app.tsx` `PageBody`), listed in the site menu only.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The column is 600 wide, the source's is 720
@@ -17,9 +17,9 @@ repeating it.
 
 ## The heading is 28px semibold, the source's 22px bold, and sits 4px above the subtitle only by a negative margin
 
-- **Cause:** `gpuix gap` for the weight (variable font: README "Drift from the source", variable-font rows) and `port choice` for the size.
+- **Cause:** `not ported yet` for the weight (`weight.bold` exists, `Heading` sets `weight.semibold`) and `port choice` for the size.
 - **Original:** `h1` `text-[22px]` at `fontWeights.bold`, 4px above the subtitle (`app/slider/page.tsx:68-77`); section titles are `text-[15px] leading-5.5` at `fontWeights.semibold` (`:84-87`).
-- **Port:** `App`'s shared `Heading` (`src/app.tsx:53-66`), 28px with a 34px line, a 24px column gap above the page, cancelled to 4px by `marginTop: -20` on the subtitle (`src/pages/audio-mixer.tsx:161`). Section titles are 15 / 22 at SemiBold 600 (`:78-90`).
+- **Port:** `App`'s shared `Heading` (`src/app.tsx:80-93`), 28px with a 34px line, a 24px column gap above the page, cancelled to 4px by `marginTop: -20` on the subtitle (`src/pages/audio-mixer.tsx:161`). Section titles are 15 / 22 at `weight.semibold` (`:78-90`).
 - **Workaround:** the negative margin.
 - **Fidelity:** approximated.
 - **Components it hits:** every docs page.

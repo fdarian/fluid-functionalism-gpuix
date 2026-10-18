@@ -15,16 +15,6 @@ Same in both (checked against the code): row height, gap and padding per size, c
 - **Fidelity:** approximated (same size and timing; the layout is recomputed per frame).
 - **Components it hits:** the README row's scale-in entrances: banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack.
 
-## Label weight (variable fonts)
-
-- **Cause:** `gpuix gap`. README "Missing features" row for variable-font axes (`README.md:254`).
-- **Original:** `'wght' 400` to `'wght' 550` with `opsz` compensation, eased over 80 ms (`radio-group.tsx:466-470`).
-- **Port:** static Inter, SemiBold 600 for 550, switches at once; the hidden semibold copy still reserves the width (`stable-label.tsx:79-80`).
-- **Gpuix lacks:** `fontVariationSettings`.
-- **Workaround:** static cuts.
-- **Fidelity:** approximated.
-- **Components it hits:** checkbox-group and every `StableLabel`.
-
 ## Hover highlight travels on `left` / `top`
 
 - **Cause:** `gpuix gap`. CSS transforms (README "Missing features" row, `README.md:239`; `FORK.md:1198-1209`).

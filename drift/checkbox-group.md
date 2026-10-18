@@ -14,16 +14,6 @@ Same in both (checked against the code): row height, gap and padding per size (3
 - **Fidelity:** approximated (growing, shrinking and moving runs match; merge and split lose the meeting-in-the-middle choreography).
 - **Components it hits:** just this one (radio-group has a single run). `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` lists merge/split as out of scope only for combobox.
 
-## Label weight (variable fonts)
-
-- **Cause:** `gpuix gap`. See the README "Missing features" row for variable-font axes (`README.md:254`).
-- **Original:** `'wght' 400` to `'wght' 550` with `opsz` compensation, eased over 80 ms (`checkbox-group.tsx:407-411`).
-- **Port:** static Inter, SemiBold 600 for 550, switches at once (`theme.ts` `weight`); the hidden semibold copy still reserves the width (`stable-label.tsx:79-80`).
-- **Gpuix lacks:** `fontVariationSettings`.
-- **Workaround:** static cuts.
-- **Fidelity:** approximated (heavier by 50, no ease).
-- **Components it hits:** radio-group and every `StableLabel`.
-
 ## Hover highlight travels on `left` / `top`
 
 - **Cause:** `gpuix gap`. CSS transforms are missing (README "Missing features" row for transforms, `README.md:239`; `FORK.md:1198-1209`).

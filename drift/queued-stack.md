@@ -69,14 +69,6 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:3
 - **Fidelity:** approximated (chip tint); dropped (keyboard focus ring, longer labels).
 - **Components it hits:** none other.
 
-## Static font weight for the count
-
-- **Cause:** `gpuix gap`. Shared: variable-font axes ([README, Missing features, variable-font row](../README.md)).
-- **Original:** the count is `fontVariationSettings` 550 (`:256`).
-- **Port:** SemiBold 600 (`queued-stack.tsx:319`).
-- **Fidelity:** approximated.
-- **Components it hits:** card, table, tabs, tabs-subtle, sidebar, ask-user-questions.
-
 ## `QueuedMessage` lives here, `testId` added
 
 - **Cause:** `port choice` (reason not stated; the port has no `File` and its `InputMessage` is a separate module).

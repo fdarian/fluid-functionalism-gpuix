@@ -5,7 +5,7 @@ Original: `registry/base/slider.tsx` (the compact thumb-and-track engine: range,
 demo in `src/demos/slider.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## No `<input type="range">`
@@ -45,15 +45,6 @@ repeating it.
 - **Workaround:** per-item opacity.
 - **Fidelity:** approximated.
 - **Components it hits:** none other.
-
-## Value label weight shifts at once
-
-- **Cause:** `gpuix gap` (see the variable-font row in [`README.md`](../README.md#missing-features)).
-- **Original:** the compact value label goes normal -> semibold (`wght` 550) over 100 ms on hover or press (`slider.tsx:307-321`).
-- **Port:** the weight switches at once, SemiBold 600 for 550 (`src/components/slider.tsx:217`). The digits are `tabular-nums`, as in the source, so only the weight can change the label's width.
-- **Workaround:** a hidden copy at the heaviest weight reserves the width (`src/components/slider.tsx:327-335`), like the source's ghost span.
-- **Fidelity:** approximated (weight).
-- **Components it hits:** every `StableLabel`.
 
 ## Click-to-edit differs: no number field, no accessible name
 

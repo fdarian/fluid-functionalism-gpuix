@@ -27,16 +27,6 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 - **Fidelity:** approximated (the accessibility tree differs for unselected tabs).
 - **Components it hits:** just this one.
 
-## Semibold is 600
-
-- **Cause:** `gpuix gap` for the variable weight (README "Missing features").
-- **Original:** the label is `wght 550 / opsz 18` when selected and eases that weight with its colour over 80 ms.
-- **Port:** SemiBold 600 switching at once (`theme.ts:390`). The colour and stroke-width eases are ported (`fade` on `StableLabel` and `Icon`, `easeStroke`). Details in `drift/tabs.md`.
-- **gpuix lacks:** variable-font axes only.
-- **Workaround:** the hidden 600 copy reserves the width.
-- **Fidelity:** approximated.
-- **Components it hits:** tabs, select, sidebar, menu rows.
-
 ## An explicit `size` does not scope the parts inside
 
 - **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).

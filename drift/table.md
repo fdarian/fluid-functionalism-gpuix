@@ -16,16 +16,6 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 - **Fidelity:** approximated (the 80ms ease is a snap).
 - **Components it hits:** just this one.
 
-## Header weight: `wght 550` / `opsz 18`
-
-- **Cause:** `gpuix gap`.
-- **Original:** header rows set `fontVariationSettings` to `fontWeights.semibold` (`wght 550, opsz 18`) and body rows to `fontWeights.normal` (`wght 400, opsz 14`) on the `<tr>` (`table.tsx:158-165`).
-- **Port:** `fontWeight: weight.semibold` (600) for header cells, 400 for body, on the cell `<text>` (`table.tsx:202`, `src/lib/theme.ts:395`).
-- **gpuix lacks:** variable-font axes (`StyleDesc` has `fontWeight` and `fontFeatureSettings`, no `fontVariationSettings`); `README.md:254`, `:329`.
-- **Workaround:** Inter's static cuts only; no `opsz`.
-- **Fidelity:** approximated (600 for 550, no optical size).
-- **Components it hits:** every component using `font-variation-settings`.
-
 ## Highlight travel runs on `top` / `left`
 
 - **Cause:** `gpuix gap` (no transforms; `README.md:239`).

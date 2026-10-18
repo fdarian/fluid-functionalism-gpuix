@@ -2,7 +2,7 @@
 
 Original: `app/concepts/page.tsx`, `app/concepts/layout.tsx`, `app/concepts/_components/concept-frame.tsx` and `app/concepts/lumen/page.tsx` of the source (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/pages/concepts.tsx` (group "Pages", order 30, layout "full", listed "menu"), `src/pages/concepts/frame.tsx` (`ConceptFrame`) and `src/pages/concepts-lumen.tsx` (order 31, layout "full", listed "none"). The nav is `NavMenu` / `NavItem`: see [nav-menu.md](nav-menu.md). Atlas, Beacon and Quill are other pages (`concepts-atlas`, `concepts-beacon`, `concepts-quill`).
 
-One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps (CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of repeating it.
+One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps (CSS transforms, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of repeating it.
 
 Checked and equal: the index is four rows centred in the window at 224px (`w-56`), with no nav or card (`bare`); the frame is a 224px nav (Home, then Lumen, Atlas, Beacon, Quill), a centre column and the customise card; Lumen's copy (question, step labels, description, the four sources and their site names, the three answer paragraphs, the four image captions, "Ask a follow-up…"), its 760px column with 24px side padding and 48px top and bottom, 40px between turns, 16px inside a turn, the tab icons (brain, globe, image), the badge colours per source, the thinking to answer beat of 1600 ms, and the source rows' 14 / 12 padding, 12px radius and `surface-2` fill.
 
@@ -81,16 +81,6 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
-
-## The question is Inter Bold 700, not `wght 700 / opsz 25`
-
-- **Cause:** `gpuix gap` (variable-font axes: README "gpuix gaps").
-- **Original:** `text-[24px] leading-tight`, `fontWeights.bold` (`lumen/page.tsx:160-168`).
-- **Port:** the static Bold cut at 24 / 30 (`src/pages/concepts-lumen.tsx:305-310`). The `semibold` run in the first paragraph is SemiBold 600.
-- **gpuix lacks:** variable-font axes.
-- **Workaround:** static cuts.
-- **Fidelity:** approximated. The question stays 24px when the Size row is Compact, as in the source (a fixed `text-[24px]`).
-- **Components it hits:** every page title and weight shift.
 
 ## Scrolling and the follow-up
 
@@ -240,7 +230,7 @@ Original: `app/concepts/quill/page.tsx`. Ported in `src/pages/concepts-quill.tsx
 
 - **Checked and equal:** the copy (title, byline, intro, callout, goals, the four initiatives and their owners, statuses and targets, the three comments and activity lines, the block names, the AI block's placeholder, steps and canned draft), the 760px column, the three tabs (Document / Comments / Activity) with their icons, the dot Badge colours per status, the 1700 ms draft beat, and the new block landing above the composer.
 - **Cause:** `port choice`. The page scrolls in the port's `ScrollArea` and the side padding is 32 / 48 as `px-8 py-12` (`src/pages/concepts-quill.tsx:457-468`).
-- **Fidelity:** approximated (scrollbar look); exact for the flow. The title is Inter Bold 700 at 34 / 42 and the section headings SemiBold 600 at 18 (the source's variable `wght`: `gpuix gap`, README "gpuix gaps"). The 💡 and 🗓️ are the system emoji font's glyphs.
+- **Fidelity:** approximated (scrollbar look); exact for the flow. The 💡 and 🗓️ are the system emoji font's glyphs.
 - **Components it hits:** just this one.
 
 ## Quill: Add block is a popup `DropdownMenu`, not an absolutely placed `Dropdown`

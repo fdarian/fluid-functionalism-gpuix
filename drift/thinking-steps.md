@@ -5,7 +5,7 @@ Original: `registry/base/thinking-steps.tsx` (Base UI `Collapsible`), demo in `a
 demo in `src/demos/thinking-steps.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## Chevron rotation
@@ -27,16 +27,6 @@ repeating it.
 - **Workaround:** none beyond opacity.
 - **Fidelity:** approximated (the blur-to-sharp reveal and the pop are dropped).
 - **Components it hits:** just this one (scale-in entrances elsewhere are listed in the README row).
-
-## Variable font weight
-
-- **Cause:** `gpuix gap`.
-- **Original:** the trigger label eases between weight 400 and 550 over 80ms, and step labels are 550 (`thinking-steps.tsx:98-105`, `:444`).
-- **Port:** the weight switches at once, SemiBold 600 for 550 (`StableLabel`, `src/lib/stable-label.tsx`; `thinking-steps.tsx:180-185`, `:348`).
-- **gpuix lacks:** variable-font axes. See the README "gpuix gaps" row "Variable-font axes".
-- **Workaround:** static cuts; a hidden semibold copy reserves the width.
-- **Fidelity:** approximated.
-- **Components it hits:** every `StableLabel` (tabs, tabs-subtle, sidebar, menu rows); card's `CardTitle`, table and banner have the same gap without it.
 
 ## Hover background exit
 

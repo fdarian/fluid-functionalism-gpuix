@@ -5,7 +5,7 @@ Original: `registry/default/input-message.tsx`, demo in `app/docs/input-message/
 demo in `src/demos/input-message.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## Scale on the send glyph, tiles, queued rows
@@ -134,9 +134,9 @@ repeating it.
 - **Port:** no early return; the handler acts on every key. macOS reports `isComposing` and Windows and Linux do not (`~/code/fdarian/gpuix/FORK.md:496-499`, `:564-567`; README "Missing features", IME row, which lists input-message).
 - **Fidelity:** approximated (unverified for composed input).
 
-## Touch, static weights
+## Touch
 
-- **Cause:** `gpuix gap`. One line each: the touch-only always-visible × (`useIsTouch`, `:77-87,367-368`; README, the `matchMedia` input-device row); the variable-font weight (`:340,432,1218`; README variable-font row).
+- **Cause:** `gpuix gap`. The touch-only always-visible × (`useIsTouch`, `:77-87,367-368`; README, the `matchMedia` input-device row).
 
 ## Demo page
 

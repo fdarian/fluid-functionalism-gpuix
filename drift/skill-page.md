@@ -9,7 +9,7 @@ registry (`src/lib/demo.ts` `loadPages`). The page chrome (`DocPage`, `Component
 its drift, which this page shares (inline code chips, the Copy prompt icon swap, no Inspect switch, no prev / next arrows, section spacing).
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The scripted cursor calls handlers and `click()`, not DOM events
@@ -43,13 +43,6 @@ repeating it.
 - **Cause:** `port choice`.
 - **Original:** `bg-gradient-to-t from-muted-foreground/70 to-transparent` (`timeline.tsx:171,179`), blended in the browser's gradient space.
 - **Port:** `linear-gradient` from `mutedForeground` at 70% to the same color at 0% (`src/pages/skill/timeline.tsx`), so the fade never passes through gray.
-- **Fidelity:** approximated.
-
-## The generic side's bold is 700 and the headings are 600
-
-- **Cause:** `gpuix gap` (variable fonts, README variable-font rows).
-- **Original:** `font-bold` for the generic tab and menu row; the `semibold` role is `wght 550`.
-- **Port:** Inter Bold for the generic side's selection; SemiBold 600 for the semibold role. The skill side's `StableLabel` and the generic side's plain text widen by the real difference between the two cuts.
 - **Fidelity:** approximated.
 
 ## The copy example's skill side shows a tooltip

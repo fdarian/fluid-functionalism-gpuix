@@ -5,7 +5,7 @@ Original: `registry/default/input-group.tsx`, demo in `app/docs/input-group/page
 demo in `src/demos/input-group.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## A press on the field's padding or label focuses on release
@@ -37,10 +37,6 @@ repeating it.
 - **Workaround:** pass `size` to each nested component.
 - **Fidelity:** approximated.
 - **Components it hits:** every component with `size`.
-
-## Static weights
-
-- **Cause:** `gpuix gap`. The variable-font weight and `opsz` on the label, input and error (`input-group.tsx:206,217,270,284`; README variable-font row).
 
 ## Demo page
 

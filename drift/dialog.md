@@ -62,13 +62,6 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 - **Fidelity:** dropped (the surface), exact for the single-child case.
 - **Components it hits:** just this one.
 
-## Title weight is SemiBold 600
-
-- **Cause:** `gpuix gap`. [README "Missing features": variable-font axes](../README.md#missing-features).
-- **Original:** `fontWeights.semibold` through `fontVariationSettings` (`registry/base/dialog.tsx:357`).
-- **Port:** `weight.semibold` (`src/components/dialog.tsx:301`).
-- **Fidelity:** approximated.
-
 ## Demo variants
 
 - **Cause:** `not ported yet` (the sidebar block); `port choice` for the rest (the demos exist to exercise behaviour; reason otherwise not stated).

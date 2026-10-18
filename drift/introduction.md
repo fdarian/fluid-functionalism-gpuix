@@ -4,7 +4,7 @@ Original: `app/docs/page.tsx` of the source (fluidfunctionalism.com at 0a0377e, 
 Ported in `src/pages/introduction.tsx`, routed by the page registry (`src/lib/demo.ts` `loadPages`, `src/app.tsx` `PageBody`).
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The previous / next arrows are missing
@@ -24,9 +24,9 @@ repeating it.
 
 ## The heading is bold in the source, semibold here, and sits 8px above the subtitle only by a negative margin
 
-- **Cause:** `gpuix gap` for the weight (variable font: README "Drift from the source", variable-font rows) and `port choice` for the rest.
+- **Cause:** `not ported yet` for the weight (`weight.bold` exists, `Heading` sets `weight.semibold`) and `port choice` for the rest.
 - **Original:** `h1` `text-site-display leading-none mb-2` at `fontWeights.bold` (`app/docs/page.tsx:23-30`): a 28px line, 8px above the subtitle.
-- **Port:** `App`'s shared `Heading` (`src/app.tsx:80-93`) is semibold 600 with a 34px line and sits a 24px column gap above the page, which the subtitle cancels with `marginTop: -16` (`src/pages/introduction.tsx:212`), so the gap reads 8px past the taller line box.
+- **Port:** `App`'s shared `Heading` (`src/app.tsx:80-93`) is semibold with a 34px line and sits a 24px column gap above the page, which the subtitle cancels with `marginTop: -16` (`src/pages/introduction.tsx:212`), so the gap reads 8px past the taller line box.
 - **Workaround:** the negative margin.
 - **Fidelity:** approximated.
 - **Components it hits:** every page and demo heading (semibold, 34px line).
@@ -35,8 +35,8 @@ repeating it.
 
 - **Cause:** `port choice` (to match `leading-none`).
 - **Original:** `h2` / `h3` `text-site-title leading-none`, semibold 550 (`app/docs/page.tsx:60,139-145`): a 16px line.
-- **Port:** `scale.title` with `lineHeight: 16` and SemiBold 600 (`src/pages/introduction.tsx:56-69`).
-- **Fidelity:** exact line height, weight approximated (README variable-font row).
+- **Port:** `scale.title` with `lineHeight: 16` and `weight.semibold` (`src/pages/introduction.tsx:55-68`).
+- **Fidelity:** exact.
 
 ## The code block overflows the 600px column and scrolls
 

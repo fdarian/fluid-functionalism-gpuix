@@ -5,7 +5,7 @@ Original: `registry/default/color-picker.tsx` (rails come from `registry/radix/s
 demo in `src/demos/color-picker.tsx`. Popup chrome is shared: `src/lib/popup.tsx` (the select, combobox and dropdown card; the picker has its own `Popup` for the two cards below), presence is `base-ui:src/internals/use-transition-status.ts`. The format menu runs on the Menu primitives (`base-ui:src/menu/`) and the popover on the Popover ones (`base-ui:src/popover/`); `base-ui:` paths are in `../base-ui-solid-gpuix`, whose `BASE-UI-AUDIT.md` ("Color picker format menu", "Popover") compares them to Base UI.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it. In this file, source line numbers are `color-picker.tsx:N` and port ones `src/components/color-picker.tsx:N`.
 
 The colour maths is the same code: `color-picker-math.ts` matches `color-picker.tsx:154-475` function for function (formatting and `Math.pow` to `**` aside),
@@ -31,16 +31,6 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Workaround:** the slide and the icon swap above. README rows: "CSS transforms".
 - **Fidelity:** approximated.
 - **Components it hits:** every popup (select, combobox, dropdown share the same slide in `src/lib/popup.tsx:42-92`) and every rotating chevron.
-
-## Static font weights in the format menu
-
-- **Cause:** `gpuix gap`.
-- **Original:** the checked format row eases between weight 400 and semibold 550 over 80ms (`color-picker.tsx:861-882`).
-- **Port:** `StableLabel` switches to SemiBold 600 at once (`src/components/color-picker.tsx:1013-1018`, `src/lib/stable-label.tsx`).
-- **gpuix lacks:** variable-font axes; see README "Missing features", variable-font row, and `drift/site.md` "Static font weights and no `opsz`".
-- **Workaround:** static cuts.
-- **Fidelity:** approximated.
-- **Components it hits:** every `StableLabel`.
 
 ## Popover surface level is 5, not substrate + 2
 

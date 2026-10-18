@@ -41,14 +41,14 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 - **Fidelity:** approximated (looks the same at rest, no keyboard or semantics).
 - **Components it hits:** just this one.
 
-## Label weight 550 is a static 600 and does not ease
+## The tab label's weight snaps while its colour eases
 
-- **Cause:** `gpuix gap` (shared; variable-font axes, see the "Variable-font axes" row in `README.md` "Missing features").
-- **Original:** the selected tab's label eases between weight 400 and 550 (`registry/base/tabs-subtle.tsx:326-337`).
-- **Port:** SemiBold 600 switches at once, with a hidden semibold copy reserving the width (`src/components/command-menu.tsx:708-731`).
-- **Workaround:** static cuts.
-- **Fidelity:** approximated.
-- **Components it hits:** tabs, tabs-subtle, sidebar.
+- **Cause:** `not ported yet` (nothing stops it: `weightFade` exists in `src/lib/theme.ts`).
+- **Original:** the selected tab's label eases its colour and its `font-variation-settings` between `wght 400` and `550` together over 80 ms (`registry/base/tabs-subtle.tsx:326-337`).
+- **Port:** `TabLabel` is its own pair of copies, not a `StableLabel`. It eases the colour with `colorFade` and sets the weight at once; the hidden semibold copy reserves the width (`src/components/command-menu.tsx:708-731`, `colorFade` at `:724`).
+- **Workaround:** none.
+- **Fidelity:** approximated (the weight changes at once).
+- **Components it hits:** just this one.
 
 ## Accessibility tree is thinner
 

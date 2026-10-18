@@ -5,7 +5,7 @@ Original: `registry/default/input-copy.tsx`, demo in `app/docs/input-copy/page.t
 demo in `src/demos/input-copy.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The result glyph pops in with a scale
@@ -73,10 +73,6 @@ repeating it.
 - **Port:** no `className`, `ref` or rest props. The port adds `testId`. An omitted `size` follows the Size row (`input-copy.tsx:89`).
 - **Fidelity:** dropped.
 - **Components it hits:** every component with `size` (input-group, input-message).
-
-## Static weights
-
-- **Cause:** `gpuix gap`. Source `fontVariationSettings` 400 with `opsz` 14 on the value and the label (`input-copy.tsx:231,349,411`): see README "Missing features", variable-font row.
 
 ## Demo page
 
