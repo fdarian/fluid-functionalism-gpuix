@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 536 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 538 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -235,13 +235,13 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [surfaces](drift/surfaces.md) | 2 | 3 | 4 | 3 | 12 |
 | [switch](drift/switch.md) | 1 | 1 | 2 | 1 | 5 |
 | [table](drift/table.md) | 2 | 1 | 3 | 0 | 6 |
-| [tabs-subtle](drift/tabs-subtle.md) | 0 | 3 | 2 | 0 | 5 |
-| [tabs](drift/tabs.md) | 0 | 2 | 2 | 0 | 4 |
+| [tabs-subtle](drift/tabs-subtle.md) | 1 | 3 | 2 | 0 | 6 |
+| [tabs](drift/tabs.md) | 1 | 2 | 2 | 0 | 5 |
 | [thinking-indicator](drift/thinking-indicator.md) | 1 | 2 | 3 | 0 | 6 |
 | [thinking-steps](drift/thinking-steps.md) | 3 | 3 | 6 | 1 | 13 |
 | [tooltip](drift/tooltip.md) | 1 | 5 | 1 | 1 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **82** | **202** | **198** | **54** | **536** |
+| **Total** | **84** | **202** | **198** | **54** | **538** |
 
 ### gpuix gaps across components
 
@@ -264,6 +264,7 @@ offer it. A count is given only where the code shows it.
 | thinking-steps (the details wrapper, `drift/thinking-steps.md`) | A `width: "fit-content"` box in a column flex container with a horizontal negative margin keeps the height of a wrapped first pass: 94x40 where CSS gives 94x20 | A block parent, as the source's, or `alignSelf: "flex-start"` (`src/components/thinking-steps.tsx:484-485`) |
 | the changelog (`ChangelogView` down to `Entry`), any deep stack of auto-width columns | Nested `display: flex; flexDirection: 'column'` boxes with no definite width make layout cost grow ~1.9x per level: the changelog's chain of 8 columns drew in 121 ms. `width: '100%'` on the columns takes it to 20 ms (`Entry`'s outer column alone: 29 ms; `KindGroup`'s two alone: 23 ms). Repro: `scripts/perf-micro.tsx`, group `depth-col` | `width: '100%'` on each column wrapper in `src/pages/changelog/` (`changelog-view.tsx`, `release-section.tsx`, `entry.tsx`) |
 | any box as wide as its text (`StableLabel`, the inline `Badge`, the ask-user inline title) | gpui measures text up to the next whole pixel, so a shrink-to-fit box is up to 1px wider than Chrome's and what follows it sits that much later (gpuix `README.md:3348-3350`, `FORK.md:799-801`) | none |
+| tabs, tabs-subtle (any `textBox: capTrim` text that its parent centres) | gpui trims a text box to the exact cap height (`zed/crates/gpui/src/elements/text.rs:1003-1021`), then rounds every measured leaf up to whole device pixels (`zed/crates/gpui/src/taffy.rs:433`, `:800-802`): Inter 13px is a 10px box for 9.46px of caps, 12px a 9px box for 8.73px. The text starts at the box top, so the spare space sits under the caps and the baseline rounds down: in a live 1x window the caps are 0.75px above a centred pill's middle (`drift/tabs.md`, "Cap-trimmed label sits up to 1px above the pill centre"). At 2x the box rounds to 0.5px, so the error should be a few hundredths; not checked in a 2x window | none |
 | any bold text in the system face (Helvetica Neue) | A bold Helvetica Neue line box is 24px in gpuix and 25px in Chrome; not measured for Inter | none |
 | screenshots, app-frame | The test renderer opens its window with the options, but a capture is the view alone: no titlebar or traffic lights (gpuix `README.md:7059-7061`) | Captures show no traffic lights |
 | screenshots | Batched keystrokes deliver an input's `onChange` after the whole batch | none |

@@ -9,6 +9,16 @@ Checked and equal: item height 36 / 28, `px` 12 / 10, icon 16 / 14 and its gap, 
 travelling focus ring, manual activation (arrows move focus, Enter / Space select), wrap, Home / End, roving tab stop,
 `aria-label` on a collapsed tab, the 60 ms label fade, light and dark tokens, and the label's unfold and fold: `width: "auto"` and `marginLeft` on `spring.fast` with opacity on a 0.06 tween (`src/components/tabs-subtle.tsx:295-300`, `:362-366`), where the source animates a measured `offsetWidth` (`tabs-subtle.tsx:276-296`, `:396-410`) because framer's `auto` misreads under a scaled ancestor. gpuix starts the `auto` clock at the change, so the unfold leaves its start on the commit frame and covers the same share of its travel as the fold at every 8 ms step, and a tab selected at mount is born at its label width (`scripts/check-tabs-subtle.tsx`). Not measured under a retina 2x scale.
 
+## Cap-trimmed label sits up to 1px above the pill centre
+
+- **Cause:** `gpuix gap`: the trimmed text box rounds up to whole pixels. Full entry in [tabs](tabs.md#cap-trimmed-label-sits-up-to-1px-above-the-pill-centre), README "gpuix gaps across components".
+- **Original:** `text-box: trim-both cap alphabetic` on the label, centred as a fractional box (`tabs-subtle.tsx`, the label span).
+- **Port:** the same trim through `StableLabel` (`src/components/tabs-subtle.tsx:310`); the item is 300..336, the label box 313..323, the caps 312.5..322, 0.75px above the pill centre in the live window at 1x.
+- **gpuix lacks:** a fractional trimmed box (`zed/crates/gpui/src/taffy.rs:800-802`).
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** tabs.
+
 ## Horizontal overflow: no scroll-into-view
 
 - **Cause:** `not ported yet` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` row 142: no demo overflows; no gpuix cause).

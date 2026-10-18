@@ -36,6 +36,16 @@ light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 - **Fidelity:** dropped.
 - **Components it hits:** tabs-subtle, and most of the port.
 
+## Cap-trimmed label sits up to 1px above the pill centre
+
+- **Cause:** `gpuix gap` (README "gpuix gaps across components", Bugs: a trimmed text box rounds up to whole device pixels).
+- **Original:** `text-box: trim-both cap alphabetic` on the label (`tabs.tsx`, the label span). Chrome trims to the cap height as a fractional box (Inter 13px: 9.46px), the flex row centres that box, and the glyph baseline then snaps to a device pixel: the caps are centred on the pill to within a quarter pixel.
+- **Port:** the same `textBox: capTrim` on both `StableLabel` copies (`src/lib/stable-label.tsx:52-56`, `src/components/tabs.tsx:351`). gpuix trims to the exact cap height (`zed/crates/gpui/src/elements/text.rs:1003-1021`), then rounds the measured box up to whole device pixels (`zed/crates/gpui/src/taffy.rs:433`, `:800-802`): 13px becomes a 10px box, 12px a 9px one (8.73px). The text starts at the top of that box, so the spare 0.54px (0.27px at 12px) all lands below the caps, and the baseline (322.46) rounds down to 322. Measured in the live window at 1x (the display here is 1920x1080, scale 1): item 304..332, label box 313..323 (centred), cap rows 312.5..322, so the caps sit 0.75px above the pill centre where Chrome's arithmetic (box 313.27..322.73, baseline rounded to 323; not measured here) puts them about 0.25px below. The 1x screenshots read as a 1px gap (caps 196-205, centre 201, against a pill centre of 202).
+- **gpuix lacks:** a measured text box that keeps its fractional height. `snap_measured_size_to_device_pixels` ceils every measured leaf (`zed/crates/gpui/src/taffy.rs:800-802`), including a trimmed text whose whole point is an exact cap-height box. At 2x the box rounds to 0.5px (13px: 9.5px, 12px: 9px), so the offset should shrink to a few hundredths of a pixel; not checked in a 2x window.
+- **Workaround:** none; the label is not nudged, since the error depends on font size and scale.
+- **Fidelity:** approximated (up to 1px high at 1x).
+- **Components it hits:** tabs-subtle, and any other `capTrim` text that its parent centres (`src/lib/theme.ts:302`).
+
 ## Demo: variants, spacing and doc-page furniture
 
 - **Cause:** `port choice` (README: a demo is a `DemoCard` of live variants) for the missing page furniture; `port choice` (reason not stated) for the spacing; the extra variants are port-only.
