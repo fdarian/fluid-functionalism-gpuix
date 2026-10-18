@@ -264,7 +264,7 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 		releasePointer() {
 			pointer = undefined;
 		},
-		/** Re-reads every row's box now: for a row that resized without the observer reporting it yet (an unfolding label whose tween just settled). */
+		/** Re-reads every row's box now: for a row that resized without the observer reporting it yet. */
 		remeasure() {
 			commit();
 		},

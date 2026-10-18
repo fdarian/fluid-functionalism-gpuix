@@ -7,13 +7,11 @@ import {
 	type TabsRoot,
 } from 'base-ui-solid-gpuix/tabs';
 import {
-	createComputed,
 	createContext,
 	createEffect,
 	createSignal,
 	For,
 	type JSX,
-	on,
 	Show,
 	untrack,
 	useContext,
@@ -282,11 +280,6 @@ export function TabsSubtleItem(props: {
 	});
 	const metrics = () => sizes[scope.size()];
 	let element: HostElement | undefined;
-	/** The tab selected at mount is born unfolded: its first measured width is placed, not tweened. */
-	const [selectionChanged, setSelectionChanged] = createSignal(false);
-	createComputed(
-		on(tab.isSelected, () => setSelectionChanged(true), { defer: true }),
-	);
 
 	createEffect(() => {
 		if (element === undefined) throw new Error('Tab is not mounted');
@@ -304,10 +297,7 @@ export function TabsSubtleItem(props: {
 			? { width: 'auto' as const, marginLeft: metrics().labelGap, opacity: 1 }
 			: { width: 0, marginLeft: 0, opacity: 0 };
 	// Width and margin ride `spring.fast` both ways and opacity is a 0.06 tween (`registry/base/tabs-subtle.tsx:397-410`).
-	const labelTransition = () => {
-		if (!selectionChanged()) return tween.snap;
-		return { ...tween.fast, opacity: { duration: 0.06 } };
-	};
+	const labelTransition = { ...tween.fast, opacity: { duration: 0.06 } };
 
 	const label = (
 		<StableLabel
@@ -372,8 +362,7 @@ export function TabsSubtleItem(props: {
 				<motion.div
 					initial={false}
 					animate={labelTarget()}
-					transition={labelTransition()}
-					onMotionComplete={() => scope.hover.remeasure()}
+					transition={labelTransition}
 					style={{
 						display: 'flex',
 						flexDirection: 'row',

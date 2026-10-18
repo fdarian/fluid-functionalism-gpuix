@@ -7,23 +7,13 @@ Original: `registry/base/tabs-subtle.tsx`, demo in `app/docs/tabs-subtle/page.ts
 Checked and equal: item height 36 / 28, `px` 12 / 10, icon 16 / 14 and its gap, type 13/20 and 12/18, selected pill
 (`active`, dim 0.8, `moderate`), preview pill (`active` at 0.4, `fast`, 60 ms exit, slide back on `moderate`), the
 travelling focus ring, manual activation (arrows move focus, Enter / Space select), wrap, Home / End, roving tab stop,
-`aria-label` on a collapsed tab, the 60 ms label fade, light and dark tokens.
-
-## The unfolding label starts a frame late
-
-- **Cause:** `gpuix gap`.
-- **Original:** `width` animates to `offsetWidth`, kept current by a `ResizeObserver`, with a separate `marginLeft`; framer's own `auto` misreads under a scaled ancestor, hence the measuring (`tabs-subtle.tsx:276-296`, `:396-410`). The measured number is known before the label unfolds, so the spring starts on the frame of the selection.
-- **Port:** the box holding the label animates `width` to `"auto"` with `marginLeft` 0 to 8 (6 compact) and `opacity` on the same box (`labelTarget`, `src/components/tabs-subtle.tsx:302-306`, `:373-376`); the label sits in a `flexShrink: 0` box inside it so it is not squeezed while the width is small. The tab selected at mount is born unfolded: its width is placed with a snap (`labelTransition`, `:307-310`). `onMotionComplete` calls `hover.remeasure()` (`:376`) so the pill and neighbours refresh once the label settles. Width and margin ride `spring.fast` both ways with opacity on a 0.06 tween, as the source does.
-- **gpuix lacks:** an `auto` width target at once: its content width needs an extra layout, so an unfold starts one frame (16 ms) after the selection. `scripts/check-tabs-subtle.tsx` reads 40, 42, 55, 72, 84 at 16 ms steps where the measured number read 40, 53, 70, 83, 89; folding is the same either way (`~/code/fdarian/gpuix/README.md:1522-1531`).
-- **Workaround:** none; the earlier port measured the label through `onLayout` and animated to that number, which had no lag but needed a signal, a second box and a first-frame `width: "auto"` style.
-- **Fidelity:** exact in the curve, the end widths and the fold; the unfold begins a frame late.
-- **Components it hits:** any component that animates a width to a content size.
+`aria-label` on a collapsed tab, the 60 ms label fade, light and dark tokens, and the label's unfold and fold: `width: "auto"` and `marginLeft` on `spring.fast` with opacity on a 0.06 tween (`src/components/tabs-subtle.tsx:295-300`, `:362-366`), where the source animates a measured `offsetWidth` (`tabs-subtle.tsx:276-296`, `:396-410`) because framer's `auto` misreads under a scaled ancestor. gpuix starts the `auto` clock at the change, so the unfold leaves its start on the commit frame and covers the same share of its travel as the fold at every 8 ms step, and a tab selected at mount is born at its label width (`scripts/check-tabs-subtle.tsx`). Not measured under a retina 2x scale.
 
 ## Horizontal overflow: no scroll-into-view
 
 - **Cause:** `not ported yet` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` row 142: no demo overflows; no gpuix cause).
 - **Original:** `overflow-x-auto scrollbar-hide`, with the `-mx-1 px-1` padding giving the focus ring room, and Base UI scrolls a focused tab into view (`tabs-subtle.tsx:166-175`).
-- **Port:** the list is the same box (`overflowX: "auto"`, hidden scrollbar, `margin: -4`, `padding: 4`, `maxWidth: calc(100% + 8px)`; `src/components/tabs-subtle.tsx:159-182`), so it scrolls by wheel and the pointer in its padding or past the last tab lights the nearest tab. The tabs and pills sit in an inner box that scrolls with them, because the fluid hover measures rows against its container (`:183-193`). Arrowing to a tab outside the view does not scroll it in: measured, the focused third tab stays at x=199 in a list that ends at 104.
+- **Port:** the list is the same box (`overflowX: "auto"`, hidden scrollbar, `margin: -4`, `padding: 4`, `maxWidth: calc(100% + 8px)`; `src/components/tabs-subtle.tsx:157-180`), so it scrolls by wheel and the pointer in its padding or past the last tab lights the nearest tab. The tabs and pills sit in an inner box that scrolls with them, because the fluid hover measures rows against its container (`:181-191`). Arrowing to a tab outside the view does not scroll it in: measured, the focused third tab stays at x=199 in a list that ends at 104.
 - **Workaround:** none.
 - **Fidelity:** approximated (the scroll-into-view is dropped).
 - **Components it hits:** just this one.
@@ -32,7 +22,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `port choice` (c3ba037 follows Base UI, whose panels mount only while selected; the source's own panel is a plain `div` that does not).
 - **Original:** every panel exists, `hidden` unless selected, `tabIndex={-1}`, `outline-none`, and with an `idPrefix` every tab has `aria-controls` (`tabs-subtle.tsx:357`, `:435-453`).
-- **Port:** only the selected panel mounts, with no `tabIndex`; `aria-controls` is set on the selected tab only (`src/components/tabs-subtle.tsx:281`, `:401-409`, `base-ui:src/tabs/tab/use-tabs-tab.ts:94-96`).
+- **Port:** only the selected panel mounts, with no `tabIndex`; `aria-controls` is set on the selected tab only (`src/components/tabs-subtle.tsx:279`, `:390-398`, `base-ui:src/tabs/tab/use-tabs-tab.ts:94-96`).
 - **Workaround:** none.
 - **Fidelity:** approximated (the accessibility tree differs for unselected tabs).
 - **Components it hits:** just this one.
@@ -51,7 +41,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
 - **Original:** `size` wraps the tabs in a `SizeProvider` (`registry/base/tabs-subtle.tsx:47-50`, `:61`, `:264-265`).
-- **Port:** An omitted `size` follows the Size row (`src/components/tabs-subtle.tsx:129`).
+- **Port:** An omitted `size` follows the Size row (`src/components/tabs-subtle.tsx:127`).
 - **Workaround:** pass `size` to each nested component.
 - **Fidelity:** approximated.
 - **Components it hits:** every component with a `size` variant.
@@ -60,7 +50,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `TabsSubtle`, `TabsSubtleItem` and `TabsSubtlePanel` take `className`, forward refs and spread HTML attributes (`tabs-subtle.tsx:40`, `:271-278`, `:425-436`).
-- **Port:** props are only the ones in the source's table plus `testId`; no `className`, ref or passthrough (`src/components/tabs-subtle.tsx:96-105`, `:270-275`, `:394-399`).
+- **Port:** props are only the ones in the source's table plus `testId`; no `className`, ref or passthrough (`src/components/tabs-subtle.tsx:94-103`, `:268-273`, `:383-388`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** tabs, and most of the port.

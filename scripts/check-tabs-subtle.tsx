@@ -71,7 +71,22 @@ const kit = await createCheck(() => (
 ));
 const renderer = kit.renderer;
 const width = (testId: string) => kit.bounds(testId).width;
+
+// A tab selected at mount is born unfolded: `width: auto` is its target from the first frame, so nothing unfolds as the page appears.
+renderer.clockPause();
+const mountWidths: number[] = [];
+for (let frame = 0; frame < 6; frame++) {
+	renderer.flush();
+	mountWidths.push(width('default-active'));
+	kit.step(16);
+}
+renderer.clockResume();
 await kit.settle(800);
+kit.check(
+	'the tab selected at mount is at its label width from the first frame',
+	mountWidths.every((value) => Math.abs(value - width('default-active')) < 0.5),
+	mountWidths.map((value) => value.toFixed(1)).join(' '),
+);
 
 const expected = { default: 8, compact: 6 } as const;
 const iconGap = { default: 8, compact: 4 } as const;
@@ -134,6 +149,8 @@ const folded = width('second');
 renderer.clockPause();
 setSelected(1);
 kit.step(0);
+const firstAtCommit = width('first');
+const secondAtCommit = width('second');
 const firstWidths: number[] = [];
 const secondWidths: number[] = [];
 for (let frame = 0; frame < 40; frame++) {
@@ -171,6 +188,28 @@ kit.check(
 	secondWidths
 		.slice(0, 8)
 		.map((value) => value.toFixed(1))
+		.join(' '),
+);
+// The unfold is the fold run backwards: both leave their start on the frame after the commit and cover the same share of their travel at each step, so the `width: auto` clock started at the change, not a frame later.
+const folding = (index: number) =>
+	(unfolded - first(index)) / (unfolded - folded);
+const unfolding = (index: number) =>
+	(second(index) - folded) / (second(last) - folded);
+kit.check(
+	'the commit frame leaves both widths where they were',
+	Math.abs(firstAtCommit - unfolded) < 0.5 &&
+		Math.abs(secondAtCommit - folded) < 0.5,
+	`first ${firstAtCommit.toFixed(1)} of ${unfolded.toFixed(1)}, second ${secondAtCommit.toFixed(1)} of ${folded.toFixed(1)}`,
+);
+kit.check(
+	'the unfold covers the same share of its travel as the fold at every step',
+	[0, 1, 2, 3, 4, 5].every(
+		(index) => Math.abs(folding(index) - unfolding(index)) < 0.03,
+	),
+	[0, 1, 2, 3, 4, 5]
+		.map(
+			(index) => `${folding(index).toFixed(2)}/${unfolding(index).toFixed(2)}`,
+		)
 		.join(' '),
 );
 kit.check(
