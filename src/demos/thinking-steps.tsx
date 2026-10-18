@@ -483,6 +483,8 @@ export function Demo() {
 
 /** Scrolls the page until the element with this test id is mid-window. */
 async function scrollTo(shot: ShotContext, testId: string) {
+	// A card far below the window is culled and has no bounds to centre on yet.
+	await shot.reveal(testId);
 	for (let attempt = 0; attempt < 2; attempt++) {
 		await shot.scroll(600, 400, 0, shot.centerOf(testId).y - 380);
 		await shot.settle();
