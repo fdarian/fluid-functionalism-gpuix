@@ -14,8 +14,12 @@ sources:
     resource: repo://src/components/scroll-area.tsx
   - id: openwiki-source-b9ce445bfbcee83ede413754
     resource: repo://src/components/sidebar.tsx
+  - id: openwiki-source-63a83316feacc83e2a230285
+    resource: repo://src/components/slider.tsx
   - id: openwiki-source-94d7540365b6edfe6f6a0bbe
     resource: repo://src/components/table.tsx
+  - id: openwiki-source-26d9c038c2027980be5931cf
+    resource: repo://src/components/tabs-subtle.tsx
   - id: openwiki-source-a6e7d28cb827574c90025f7b
     resource: repo://src/home/bento-grid.tsx
   - id: openwiki-source-2784d511d2f9a521edaf8bb9
@@ -26,10 +30,12 @@ sources:
     resource: repo://src/lib/stable-label.tsx
   - id: openwiki-source-d5126066c122ba41a6591f24
     resource: repo://src/lib/theme-fade.tsx
-generated: { by: "claude-code", at: "2026-10-17T07:13:17.848Z" }
+  - id: openwiki-source-1a25dd521e50a4d59274e1c2
+    resource: repo://src/lib/theme.ts
+generated: { by: "claude-code", at: "2026-10-18T08:02:19.231Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-17T07:13:17.848Z
+    at: 2026-10-18T08:02:19.231Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -50,7 +56,6 @@ link to those rows rather than repeating them. The ones that shape the most code
   `scaleY: 0.96` entrance; chevrons and spinners swap or redraw glyphs; panels move on `top`/`left`.
 - **Layout-property motion only.** The fluid highlight glides on `top`/`left`/`width`/`height`, which re-lays out per
   frame, instead of a transform.
-- **Variable fonts.** Only a font's default instance renders, hence static Inter and SemiBold 600 for 550.
 - **No culling.** Clipped or scrolled-away content is still built, laid out and painted, so long demo pages hide far
   cards with `display: none`.
 - **Test-renderer quirks** (a capture is the view alone, with no titlebar or traffic lights; batched keystrokes deliver
@@ -58,13 +63,15 @@ link to those rows rather than repeating them. The ones that shape the most code
 - **Windows/Linux** dispatch is asynchronous, so `preventDefault()` on press arrives too late there. The fork
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
-The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17), so it is current
-against gpuix `poc` `20a0c327`. The bugs and gaps worth knowing before touching layout code:
+The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17) and again in the
+[round 6 pass](#round-6-adoption-pass-2026-10-18); the README still names `poc` `20a0c327` as the minimum fork, but
+the round 6 features need a fork built after it. The bugs and gaps worth knowing before touching layout code:
 
-- A one-sided border paints nothing on a box whose content height is 0.
-- A multi-value `padding` or `margin` string throws "invalid length"; use the longhands.
-- `calc()` inside a motion value throws (a motion value holds a colour or a percentage), so derived layers stay
-  in JS and trail their inputs by a frame.
+- A function-form `createTransform` of several motion values is computed in JS and can trail its inputs by a frame
+  on a live window (not seen on the test renderer). `calc()` strings of the row's own width avoid it where the layer
+  depends on one value.
+- `text-wrap: balance` past 6 lines per forced-break segment, and `pretty` on a paragraph whose last line is long,
+  approximate Chromium's breaker.
 - A `fit-content` box in a column flex container with a horizontal negative margin keeps the height of a wrapped
   first pass; a block parent avoids it.
 - gpui measures text up to the next whole pixel, so a shrink-to-fit box is up to 1px wider than Chrome's.
@@ -185,8 +192,8 @@ What it changed, by Round 5 item:
 - **#23, #24, #25.** The input-copy value tint is a span background that eases over 80 ms; `fontVariantNumeric` sits on
   the colour input's own style; `src/navigator.d.ts` is gone.
 - **#26 inline spans.** Sentences with code chips and links are one `<text>` with real padding, margin and radius on
-  spans, and the slider value is one run with a clickable span per number. Residual: underline offset and the
-  Cite chip's vertical offset. The Ask-user inline option stays a block: `StableLabel`'s hidden semibold copy cannot
+  spans, and the slider value is one run with a clickable span per number. Residual then: underline offset (closed by
+  [round 6](#round-6-adoption-pass-2026-10-18)) and the Cite chip's vertical offset. The Ask-user inline option stays a block: `StableLabel`'s hidden semibold copy cannot
   sit inside a text run (`display: inline-*` was not built yet; the [next pass](#table-and-container-pass-2026-10-17)
   changed this).
 - **#27 refocus after press: kept.** The mousedown refocus workaround was tried out of base-ui and put back,
@@ -237,7 +244,7 @@ What the port changed, so a later reader can tell a regression from intent:
   horizontal `ScrollArea` with `min-width: 560`, as the source) and the ScrollArea demo's both-axis card, which now
   uses the real `Table`. The row highlight still follows the fluid hover's pick, not the pointer
   ([why](../decisions/port-decisions.md#hover-and-press-native-state-styles-first)).
-- **`StableLabel` is a real `inline-grid`.** The hidden semibold copy and the visible copy share one grid cell, so it
+- **`StableLabel` is a real `inline-grid`.** The hidden copies and the visible copy share one grid cell (since round 6 two hidden copies, normal and semibold), so it
   wraps like the source, with `nowrap` and `truncate` opt-in. That lets the Ask-user inline title be an inline-grid
   atom inside a text run. `Badge` is `inline-flex` with a `style` prop, and the Lumen citation chips use it. The
   thinking-steps details wrapper is a block, as the source's, because a `fit-content` flex child with a negative
@@ -257,3 +264,49 @@ What the port changed, so a later reader can tell a regression from intent:
 - **Screenshots**: tables, banner, scroll-area, sizes, thinking-steps, ask-user-questions and the Lumen and Beacon
   concepts were regenerated; `concepts-lumen/sources.png` was kept as the old capture because it differed only by
   noise.
+
+## Round 6 adoption pass (2026-10-18)
+
+Round 6 of the fork was a batch of CSS-semantics fixes and additions. The port adopted them in the commits after
+the table and container pass, in this order: outlines, variable Inter and weight easing, `textWrap` and underline
+offsets, `textBox` trim, `calc()` motion, borders, `width: auto`, then the drift recount. The
+drift table went from 577 to 537 entries (gpuix gap 124 to 82), mostly deletions of entries whose cause was gone.
+What changed, and what a later reader should not "fix" back:
+
+- **An outline needs `outlineStyle`.** gpuix paints an outline only when it has a style, as CSS does. Until the
+  fix, every `outlineWidth` plus `outlineColor` pair (focus rings, state styles, the inline ones) was invisible;
+  `outlineStyle: 'solid'` now sits beside each. A new ring written without it draws nothing and no error says why.
+- **Longhands override `gap`.** `columnGap` and `rowGap` win over the shorthand, so the stacked rows that relied on
+  a `gap` plus a longhand lost their 2px; both longhands are set per case instead.
+- **Variable Inter and weight easing.** The static cuts and "SemiBold 600 for 550" are gone, and the weight eases
+  where the source transitions `font-variation-settings`
+  ([decision](../decisions/port-decisions.md#fonts-inter-variable-weight-through-fontvariationsettings)). The
+  page headings are bold again as the source's are, and the command menu's tab label eases its weight with its
+  colour. Two README gap rows (variable-font axes, multi-value `padding`) were deleted: `padding: "4px 8px"` and a
+  four-value `margin` lay out correctly.
+- **`textWrap`, underline offset, `textBox`.** Headings balance and paragraphs prettify where the source does
+  (`li` text stays plain), underlines take the source's `underline-offset`, and labels trim to cap height with
+  `capTrim`. A label that clips (`truncate`) adds padding and equal negative margins through `clippedCapTrim`,
+  because the clip box is the trimmed one and would shave ascenders and descenders; the source's `py-1 -my-1` does
+  the same. The typography emulation of the trim was removed. The page screenshots with wraps, underlines or
+  trimmed labels were recaptured.
+- **`calc()` in motion values.** The slider's comfortable fill, handle line and scrubber strip and the compact step
+  dots are `calc()` strings of the row's own width, as in the source, so none reads a measured width and a resize
+  reaches them in the frame that lays it out. The old "derived layers trail their inputs" workaround of pixel maths
+  from a measured width is gone; only the one-frame lag of a function-form transform of two values remains.
+- **One-sided borders on empty boxes paint.** The Show the math rules, the Introduction's `hr`, the playground
+  divider and the Markdown rule are one-sided borders on empty boxes as in the source, replacing the `height: 2`
+  workaround.
+- **`width: auto` animates from the change.** gpuix starts a `width: auto` animation at the style change rather
+  than the next measuring frame, so tabs-subtle dropped its snap-and-remeasure step: a label unfolds from the commit
+  frame as it folds, and a tab selected at mount is born at its label width. `check-tabs-subtle` samples both on a
+  held clock.
+
+Pitfalls this pass hit:
+
+- **File:line refs in drift entries moved three times.** Each batch of edits shifted the cited lines, and the
+  fix was a separate "move the refs" commit after every batch. Do the ref move once, after the last edit.
+- **Measure against the browser, not the source's comment.** The source's `font-weight.ts` claim of at most 0.4 px
+  width change fails in Chromium too; the check was rewritten to assert parity with the browser.
+- **The count table is still generated.** Totals come from `bun scripts/drift-counts.ts`, including the stale
+  counts in `UPSTREAM.md`.

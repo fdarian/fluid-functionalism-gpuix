@@ -10,10 +10,10 @@ sources:
     resource: repo://README.md
   - id: openwiki-source-ff18555ad70362de0f452788
     resource: repo://UPSTREAM.md
-generated: { by: "claude-code", at: "2026-10-17T07:13:17.848Z" }
+generated: { by: "claude-code", at: "2026-10-18T08:02:19.231Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-17T07:13:17.848Z
+    at: 2026-10-18T08:02:19.231Z
 ---
 
 # Project overview
@@ -29,7 +29,7 @@ home bento grid, the docs and System pages, Compare, Concepts, Audio Mixer, Chan
 
 It started on 2026-10-12 as an experiment answering one question: **can gpuix draw this library faithfully?** The
 answer is yes, with recorded differences. Every difference from the source is an entry in `drift/`
-with a cause (577 at the latest 2026-10-17 recount, printed by `scripts/drift-counts.ts`), so the repository doubles as a catalogue of what gpuix can and cannot do against a real, demanding
+with a cause (537 at the 2026-10-18 recount, down from 577 once variable fonts and the round 6 features closed their entries; printed by `scripts/drift-counts.ts`), so the repository doubles as a catalogue of what gpuix can and cannot do against a real, demanding
 design system. That catalogue fed the gpuix fork's work directly
 (see [gpuix gaps and divergence rounds](../gpuix/gaps-and-divergence-rounds.md)).
 
@@ -75,6 +75,7 @@ All three must resolve to one `solid-js` and one `@gpuix/solid`; see
 |---|---|
 | 2026-10-12 | Button, Combobox and Sidebar with fluid hover (`889d6eb`) |
 | 2026-10-13 | Native springs in the fork; dark scheme and theme switcher; every component ported in a six-way fan-out; shared logic extracted into `src/lib/` |
-| 2026-10-14/15 | Static Inter, System theme, browser-style window frame, Base UI audit; migration to gpuix's DOM-parity release |
+| 2026-10-14/15 | Static Inter (replaced by the variable files on 2026-10-18), System theme, browser-style window frame, Base UI audit; migration to gpuix's DOM-parity release |
 | 2026-10-16 | Drift audit by cause; the owner's [four decisions](../decisions/user-decisions-2026-10-16.md); rest of the site ported; gpuix Round 4 adopted |
 | 2026-10-17 | History extracted into this repository; Base UI primitives moved to base-ui-solid-gpuix ([details](../history/base-ui-extraction.md)); gpuix Round 5, the gap pass, then real tables, `inline-*` and container queries adopted, ending at `poc` `20a0c327` ([details](../gpuix/gaps-and-divergence-rounds.md#adoption-pass-2026-10-17)) |
+| 2026-10-18 | gpuix round 6 adopted: outline styles, Inter 4.0 variable with the source's weight tokens and easing, `textWrap`, underline offsets, cap-height `textBox` trim, `calc()` slider layers, hairline borders ([details](../gpuix/gaps-and-divergence-rounds.md#round-6-adoption-pass-2026-10-18)) |

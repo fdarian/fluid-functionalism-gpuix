@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:b351a1144c87f18219fe8430122cc3e407709317889b2e81bbc54e1b5c20d254",
+  "pageVersion": "sha256:e08f0bcb98eb71dc8b39af4a960fff71e508b530247fff30f25b0d778ba5cc4d",
   "claims": [
     {
       "id": "claim_ff785f35b52647d9a814c38dfcc9f775",
       "statement": "The command menu's list scroll travels on the highlight fill's spring so the row and the fill arrive together.",
       "evidence": [
         {
-          "resource": "repo://src/components/command-menu.tsx#L406-L406",
+          "resource": "repo://src/components/command-menu.tsx#L409-L409",
           "version": "repo-lines-v1:sha256:6787186a94a5df51e8e600b80bc43f53d802fe64016c6570ab7f42f3ba7c427b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjc4NzE4NmE5NGE1ZGY1MWU4ZTYwMGI4MGJjNDNmNTNkODAyZmU2NDAxNmM2NTcwYWI3ZjQyZjNiYTdjNDI3YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjc4NzE4NmE5NGE1ZGY1MWU4ZTYwMGI4MGJjNDNmNTNkODAyZmU2NDAxNmM2NTcwYWI3ZjQyZjNiYTdjNDI3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzI4MTQ1ODE0YTZlMmQ4MTMzNmEyYmYxNzQ0MGRlMmRhNWYwYzNlZDQ0MDRmNjUzZDUyMjUzZDU5MTgzNzlkMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDJlNTZmNWFhYzRmYzM2Yzc2NzRiMjY1NzdjMmNmZmI4NWJmZDczZWZiNGUwNGQ4NjY1OTEwNzBkNTg4NTQ4MyJ9"
         }
       ]
@@ -17,7 +17,7 @@
       "statement": "Tabs-subtle's pill width and margin ride spring.fast in both directions, matching the source.",
       "evidence": [
         {
-          "resource": "repo://src/components/tabs-subtle.tsx#L306-L306",
+          "resource": "repo://src/components/tabs-subtle.tsx#L299-L299",
           "version": "repo-lines-v1:sha256:59118830a71ce426e95bde5d553ac7fc1f7d625b10ead254d8fcc940b8a015c8:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTkxMTg4MzBhNzFjZTQyNmU5NWJkZTVkNTUzYWM3ZmMxZjdkNjI1YjEwZWFkMjU0ZDhmY2M5NDBiOGEwMTVjOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTkxMTg4MzBhNzFjZTQyNmU5NWJkZTVkNTUzYWM3ZmMxZjdkNjI1YjEwZWFkMjU0ZDhmY2M5NDBiOGEwMTVjOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjMwYTQ5YjdkOTFhNmMzNmExNjhjNTVlNmFjMWM0MDUyYTkzZGRkZmRmZDNmZjRiNDJkZWUzZmIxMDU3Y2FjOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDZlMWYzZWE5YTkyZDkwOGYwMzhiNmRlMWUzZWM4OGI0ZjE4MjA2NmM5YzU4ZDBiNWI4YzlhMWY5OGZhNDM5NCJ9"
         }
       ]
@@ -27,7 +27,7 @@
       "statement": "Select rows set tabIndex explicitly instead of spreading itemProps, because a spread applies late and the row would not be focusable when the open moves focus into it.",
       "evidence": [
         {
-          "resource": "repo://src/components/select.tsx#L496-L499",
+          "resource": "repo://src/components/select.tsx#L498-L501",
           "version": "repo-lines-v1:sha256:355087adfdcea3675e1b71c33d8f06fcaa058cdf7e620c1a799b81813b8c2133:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjE2NmE3MDAwMWNiZTU4OGM4NWFmMDAwZGE3Zjc4YmM0NTJlZmQ0NDZjZDQwNDMwNGM1YjU4ZGEzZTNiZmI4NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzMwZDg2ZGEzNTdmZDY3MTNiZmZkMDg0ZThkMDI5OWEzY2IxN2JkZDZjMmVjYTg5ZGI3NTFlZTg2ZDlkYzA3ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzMwM2I2MDEyNjU2MWQxZjljYjRkMGVhNjlkYmYwYzA0YTE1MzE3MDk1ODA2Yjc5NTA1NmE4OTA3NDg2NjQzNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTRlZDU2MmY3MzE5MWQ2NmQ0ZDk3NmYwZjQ1YzRiMTEzOGQ0Njc1M2VkMWI5OGM5OGE1YjQ1MDdhNzRiYTliZCJ9"
         }
       ]
@@ -37,7 +37,7 @@
       "statement": "Adopted gpuix features include colorFade as a real CSS colour transition, multi-layer scheme-aware shadow recipes, app-wide reduced motion through MotionConfig, sticky positioning and tabular-nums.",
       "evidence": [
         {
-          "resource": "repo://src/app.tsx#L528-L528",
+          "resource": "repo://src/app.tsx#L529-L529",
           "version": "repo-lines-v1:sha256:1e0f72e9041e5031ebf112ce965d8f4f793d4070057da8f64d68effcb3e69ca7:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWUwZjcyZTkwNDFlNTAzMWViZjExMmNlOTY1ZDhmNGY3OTNkNDA3MDA1N2RhOGY2NGQ2OGVmZmNiM2U2OWNhNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWUwZjcyZTkwNDFlNTAzMWViZjExMmNlOTY1ZDhmNGY3OTNkNDA3MDA1N2RhOGY2NGQ2OGVmZmNiM2U2OWNhNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmVmMDkzNGI5Y2FmNjI3YmNiMDQyNjVmZTdhODc0NmM1ODY1OGVhNDNiZTdiMGZiNDY5MTNiMzJkYmJkODNlYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWE1NThlNTVjZjFkNzA0ZTUyMWEwNWFhOWNjZjgyOGIyNjU2YzJjY2M3NDA2NjU1MzY4NzBkNzcyNjg3OWRlMyJ9"
         },
         {
@@ -45,15 +45,15 @@
           "version": "repo-lines-v1:sha256:55a17330eb01f03624b9a000337dc1120d7c4b6ec7e246219b5cca2951380502:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTVhMTczMzBlYjAxZjAzNjI0YjlhMDAwMzM3ZGMxMTIwZDdjNGI2ZWM3ZTI0NjIxOWI1Y2NhMjk1MTM4MDUwMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTVhMTczMzBlYjAxZjAzNjI0YjlhMDAwMzM3ZGMxMTIwZDdjNGI2ZWM3ZTI0NjIxOWI1Y2NhMjk1MTM4MDUwMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmFkOTM1YmIwODJjOGJhOTAwNGYzNTQ0MmE5ZTUzN2NlMDZhNzMwYTc2NzY2NWE5MzE5OGU2MTJmYzU2OTgwNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmMzOTkzZjliMjI2N2UzYTI4NGUwZjFiODc5ZTJlN2Y0MDMxYmY2YjBiZGJmMzVmOGM1NGU1OWQ4NzgwNWI3ZiJ9"
         },
         {
-          "resource": "repo://src/components/slider.tsx#L112-L112",
+          "resource": "repo://src/components/slider.tsx#L113-L113",
           "version": "repo-lines-v1:sha256:e785b2cf79451ebd20e56a9833cb8f977d342d0f4a1f5be5a0ac3edef879aeea:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTc4NWIyY2Y3OTQ1MWViZDIwZTU2YTk4MzNjYjhmOTc3ZDM0MmQwZjRhMWY1YmU1YTBhYzNlZGVmODc5YWVlYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTc4NWIyY2Y3OTQ1MWViZDIwZTU2YTk4MzNjYjhmOTc3ZDM0MmQwZjRhMWY1YmU1YTBhYzNlZGVmODc5YWVlYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODkwNWNmOGNlMGFhMzUwNzI0YTExMzRhYTJmNmE2NGRiNzZlZjhlMzRjZWEzZGM1NTk3YWUyNmExZjQxMjUzYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTY4YjRmNzU5NTM4YmNjMmZiNzRlNmIzZjViNzkzNjAwYmEwMmJhYzA4ODFhNDEzNGM3YzUzNjEwYmI3YWE1NyJ9"
         },
         {
-          "resource": "repo://src/lib/theme.ts#L488-L491",
-          "version": "repo-lines-v1:sha256:af79e962c6616fabcf639939e4d953a4bbf311b11f6406a9cfc6f8d9319f222d:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWEwNTkyMjQ2NzM2NjAxNTVhZjBjYjMyMGYwYzE3NzEwNGNjYmU2MGZhN2U1OTkwOGRiZjU4NzRlNGYxODYyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzA5M2E3NTRlZGUzMWQ1OWMwNWI0M2M3ZWY3NDYwMTYxZjU0N2IzNzViY2NkZTU0N2Y0ODY1MjFiODA4MWU0MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWM4N2ZkNzIyZGI4ZmMxMDdmMzFiMTkwMzYxMjVjNGU1ODM1ZTYxZTA4ZmVjNTExOGJkMzZkNTRiYzJlZWMyYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWQxOTYwMmIzNzdkMDc3YTVhYWM4YWMyMDc3MGI4OWVlYWIyZjJhMDNhMGIwZTRmODhmMDViNmZkODUwNTNmOCJ9"
+          "resource": "repo://src/lib/theme.ts#L513-L522",
+          "version": "repo-lines-v1:sha256:7401040ec0421adefd2cd2c41ca79347790639465d37bc29a97a8aac44e77994:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVhMDU5MjI0NjczNjYwMTU1YWYwY2IzMjBmMGMxNzcxMDRjY2JlNjBmYTdlNTk5MDhkYmY1ODc0ZTRmMTg2MjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwOTNhNzU0ZWRlMzFkNTljMDViNDNjN2VmNzQ2MDE2MWY1NDdiMzc1YmNjZGU1NDdmNDg2NTIxYjgwODFlNDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljODdmZDcyMmRiOGZjMTA3ZjMxYjE5MDM2MTI1YzRlNTgzNWU2MWUwOGZlYzUxMThiZDM2ZDU0YmMyZWVjMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkMTk2MDJiMzc3ZDA3N2E1YWFjOGFjMjA3NzBiODllZWFiMmYyYTAzYTBiMGU0Zjg4ZjA1YjZmZDg1MDUzZjgifQ"
         },
         {
-          "resource": "repo://src/lib/theme.ts#L555-L555",
+          "resource": "repo://src/lib/theme.ts#L587-L587",
           "version": "repo-lines-v1:sha256:6bf4fa32a7a3208cf2450b88a361aba8a77ae2a82c90918c89a132431d999ac0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmJmNGZhMzJhN2EzMjA4Y2YyNDUwYjg4YTM2MWFiYThhNzdhZTJhODJjOTA5MThjODlhMTMyNDMxZDk5OWFjMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmJmNGZhMzJhN2EzMjA4Y2YyNDUwYjg4YTM2MWFiYThhNzdhZTJhODJjOTA5MThjODlhMTMyNDMxZDk5OWFjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNThjZWZiNzVjZjg0YWQ1ZWRmNmNkZGQ3NGU4ZjM5ZGYyYjViNzQzNDBjMjk2ZjU2NzRlMTQyNzFkZjk5ZTBjZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWYyY2VjZmVkZjM4YTdiZmQyMTIyNTUwNjJjMzI0ZjUzZjMyYTc1MDFlMjUyMjk0NjQwMDRhNDdlMTM2ODZlMCJ9"
         }
       ]
@@ -68,17 +68,17 @@
         },
         {
           "resource": "repo://src/pages/audio-mixer.tsx",
-          "version": "repo-file-v1:sha256:a044e71833f6380313f7e4f2f442b94593c637bb5d59495bbbb47dbc35317d46"
+          "version": "repo-file-v1:sha256:ab8efcf7d63423205066819f6da9c5fef4a3f92e7d00a93b7e1d0bf8a2d995dd"
         },
         {
           "resource": "repo://src/pages/compare.tsx",
-          "version": "repo-file-v1:sha256:332c3b21437255646ac4b9f15c7ae0f663ada9df00ec01857ee99aa689e0e1c4"
+          "version": "repo-file-v1:sha256:76430ff4925498e57fe5b19eeb42c26067f021c27f3b445b3b5f5584f031b4fb"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-17T07:13:17.848Z"
+    "at": "2026-10-18T08:02:19.231Z"
   }
 }

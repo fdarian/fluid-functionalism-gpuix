@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:67298b8fbca643f2d34895c03498f93965818936a392cc7e2a61c9b97cb1de19",
+  "pageVersion": "sha256:d81bc9013abe56ff74f1c17962561d05ef8e8a0bb7374dd918f3a9b7fb2a48c2",
   "claims": [
     {
       "id": "claim_8f689a7df6cd43af9e228cffa0828120",
       "statement": "The README's gpuix gaps section is the authoritative list of gpuix bugs and missing features the port works around, each with the components it hits and the workaround.",
       "evidence": [
         {
-          "resource": "repo://README.md#L210-L262",
-          "version": "repo-lines-v1:sha256:50d5bf11da14471196527040213dc24477694e5ce618ecfcc92a0ea899c74aad:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4ZmE4NzlkOGU4MDk4YjU5YWY4N2ZmM2E5YmVmOTgwMjYyNzFiYmVmOTZmOTM1NDdhMjRkOGFhYzdkYWQyNDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzYzhiMzhiMDIwZGEyZTcwM2JhNDUxODQ2ZjExYWIxNWYyYjAxOThjODg5YjgwYTg4NTI1ZTY2ZjViODY3Y2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVlZDIwYmE0YmY1ZGFlOTUyZjIwNDkzODRmMDQ3MjY2YTY5ZDI3YzY0ZGM4NzQ4MzY5MWEyNzJiMGI3YjAyYjgifQ"
+          "resource": "repo://README.md#L246-L295",
+          "version": "repo-lines-v1:sha256:3de088415777c0b37eb2a189ba45d7ed7e20a64260c323c65af1322daa97a2c1:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZlYjY0ZWI0NGEwOThhODQ2Y2E4Yjc1ZjlhYjBkYzQxZTFlZWZlZjY2ZWE1MDE0NDk0ZTRjZThlZDdlZTA4YWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5MGQyZTdlM2VlZjk3NTM0MjU5MzM1NGY1ODFiYTRlZGMxMWNjZmI5OGZmYTFhODEzYmUzZTAwMzFmNGMzNzUifQ"
         }
       ]
     },
@@ -17,8 +17,8 @@
       "statement": "Without CSS transforms, popups keep an opacity fade and slide but lose the scaleY entrance, and glyph turns are swapped or redrawn.",
       "evidence": [
         {
-          "resource": "repo://README.md#L239-L239",
-          "version": "repo-lines-v1:sha256:cbd246c5db600089aef42e4e4681e787a69b782f7f30575af57c2f7c1defffd9:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2JkMjQ2YzVkYjYwMDA4OWFlZjQyZTRlNDY4MWU3ODdhNjliNzgyZjdmMzA1NzVhZjU3YzJmN2MxZGVmZmZkOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2JkMjQ2YzVkYjYwMDA4OWFlZjQyZTRlNDY4MWU3ODdhNjliNzgyZjdmMzA1NzVhZjU3YzJmN2MxZGVmZmZkOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzNmMmU1MGMzZTRiMjE2ZmFhMzU5YjZkOWUxZmRjZGU1YWVlN2ZkNDNjMzIyNjdjODUzOTc5ZGUyYTFmOGIxOSJ9"
+          "resource": "repo://README.md#L276-L276",
+          "version": "repo-lines-v1:sha256:a1fb8675018ca3e98a17c305034f4eda77f2597f30bf7da9713bbcc38149090f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTFmYjg2NzUwMThjYTNlOThhMTdjMzA1MDM0ZjRlZGE3N2YyNTk3ZjMwYmY3ZGE5NzEzYmJjYzM4MTQ5MDkwZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTFmYjg2NzUwMThjYTNlOThhMTdjMzA1MDM0ZjRlZGE3N2YyNTk3ZjMwYmY3ZGE5NzEzYmJjYzM4MTQ5MDkwZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDAwOGZiMmRjMDdjZWU4MGQ2YmVjYjY0NzFmZDVkYTViMTNhYzhlMDlmMDA0NDAxYjdmYjVhMzNhMzU3ODdmNSJ9"
         }
       ]
     },
@@ -27,8 +27,8 @@
       "statement": "Because gpuix does not cull clipped content, long demo pages hide cards far from the scroller with display none.",
       "evidence": [
         {
-          "resource": "repo://README.md#L248-L248",
-          "version": "repo-lines-v1:sha256:38c45eea5cb0f0ac2eec4143e6e3899be6c9b0c62c8d5c68e158ab4c95ab8e94:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzhjNDVlZWE1Y2IwZjBhYzJlZWM0MTQzZTZlMzg5OWJlNmM5YjBjNjJjOGQ1YzY4ZTE1OGFiNGM5NWFiOGU5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzhjNDVlZWE1Y2IwZjBhYzJlZWM0MTQzZTZlMzg5OWJlNmM5YjBjNjJjOGQ1YzY4ZTE1OGFiNGM5NWFiOGU5NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjQzN2VmYThhNWRiNzllMTFkMzg3ZDE4OWYxN2YxZjM2NTI0ODE1N2RjNTI0MDAwMTEzY2IxNjNjM2ZhOTdlZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWY5MGI1MDEzMmMxMGNiYTczYWZlNTBmODhiZGIwOTUyNTEwODdiMDEwZmYxYTY0MjAwOWM4NDNmZWRmMzcwNCJ9"
+          "resource": "repo://README.md#L282-L282",
+          "version": "repo-lines-v1:sha256:50c80d7946eee5064e658246b086544176817a2e50ae0186922d4a21967c6159:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTBjODBkNzk0NmVlZTUwNjRlNjU4MjQ2YjA4NjU0NDE3NjgxN2EyZTUwYWUwMTg2OTIyZDRhMjE5NjdjNjE1OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTBjODBkNzk0NmVlZTUwNjRlNjU4MjQ2YjA4NjU0NDE3NjgxN2EyZTUwYWUwMTg2OTIyZDRhMjE5NjdjNjE1OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGJkY2U0MGY4MjFkYWE5ZWU4Y2VjOTEyOWQ5ZjgzNWQ0ZWY3ZDI5NTI0ODdmYjUwNDg4NzE5MTI4MGRlOGU2YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDY1NTY3MzQ2MWI1ZGFlZTgxZTM0ZDFmNDMwZjc3OTU3MTAxMjQxNDgyMDkwZjM5OGIwZDQ5ODUwNTY0OTI4MCJ9"
         }
       ]
     },
@@ -47,7 +47,7 @@
       "statement": "On Windows and Linux, preventDefault on mousedown arrives after native focus has moved, so a press on a command-menu tab still blurs the field; macOS applies it.",
       "evidence": [
         {
-          "resource": "repo://README.md#L221-L221",
+          "resource": "repo://README.md#L257-L257",
           "version": "repo-lines-v1:sha256:f40c8816a7a0442c499584f02cdc1425a87cc19d68d5b05772ace28782db842f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjQwYzg4MTZhN2EwNDQyYzQ5OTU4NGYwMmNkYzE0MjVhODdjYzE5ZDY4ZDViMDU3NzJhY2UyODc4MmRiODQyZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjQwYzg4MTZhN2EwNDQyYzQ5OTU4NGYwMmNkYzE0MjVhODdjYzE5ZDY4ZDViMDU3NzJhY2UyODc4MmRiODQyZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzA0MzY4ODU2MzliODdiNWI4NjFkZGUxMGVkNjdkM2UwMTMxN2IzMDZmYThiMmU2NWYxNDhhMjA4NTllMDE0NSJ9"
         }
       ]
@@ -61,7 +61,7 @@
           "version": "repo-lines-v1:sha256:7a8cd63fc222865b86703d43145312183b32c13b619b399e2405cc4e2c7dd13a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExYjU2MGJkOTliMTI3MmE4YTQ5MDBhZDcyOWI0YjliNDk3ZjJiMzExY2U0Yjg4Zjg2ZTFlZmE4NWI4ZWYwZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxZjA0ZDYzMDE2NDc2M2E2OTNhNGFkMTY1YmE5ODY0NjI2NjU2MGUxYTE1NjA3OTY0MTNkYmE5OTA1Y2IzMzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljYzc1ODhhNDYwYzUxZGJmN2QzNzYxYzJlOWE1YjUwNTU1YmUxZmQ3YTkyODA4ODFmMTE0OTQzZGVjNjk3ZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNlYWE1MGU5YmZmZjc2Mzg1MWY2ZWE5ZjkwZjhjZmVmMjU3ZWUyNmE5MDgzMGM2NGQ1NTEzNWFiN2IzYjM0MWQifQ"
         },
         {
-          "resource": "repo://src/components/sidebar.tsx#L610-L622",
+          "resource": "repo://src/components/sidebar.tsx#L613-L625",
           "version": "repo-lines-v1:sha256:ccbb8fdce59db9fcaef6b89cae662b6ff574618d2bd51f2ebc6cf416316eebe9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyMTYwNTE4NDU2MTkxM2U4M2I3MjZiMTQ5MDYzMTA0N2NmM2E2NjM5MjFhZWY1ZWVhNWZjOWMzZGE4YWNkNmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhMWExMTg3YzRlNjcwNTgwZDYyYTg0ZjMzMWY3ODg1ZTMwNWZiZDQ5ODAwZDZlOTRmZTVlYzZmM2JkZjNmMzUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2NDQzYjY4MDUyMDM3MTljMGY2YjNkZDFhNTg4ZTljMWVmNzJjYWQyYWMxZjc0NjZlYzlmMmYwYTM3OGNmYTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdhMjJhM2YyOWI3MjgwYWEzNzdlMjRiNjY4NjczOThmZjE5ZjM5MWRkZDhkYzczY2M3ZTk4NWQxYTY2NjE4MzkifQ"
         },
         {
@@ -102,11 +102,11 @@
     },
     {
       "id": "claim_b1cdf403661843318246f0a12ce3e099",
-      "statement": "StableLabel is a real inline-grid whose hidden semibold copy and visible copy share one grid cell, so it wraps like the source, with nowrap and truncate opt-in.",
+      "statement": "StableLabel is a real inline-grid whose two hidden copies (normal and semibold) and visible copy share one grid cell, so it wraps like the source, with nowrap and truncate opt-in.",
       "evidence": [
         {
-          "resource": "repo://src/lib/stable-label.tsx#L4-L50",
-          "version": "repo-lines-v1:sha256:689091094a90b0301ca9ef7cbfce40409a5bb6348b24d91f6a3034a6f8cd7e4c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkzNjY4YWU5ZWFiYzc3NGU2MTQ0Yzk3YTA3ODM3ZGFiNzI1YzVkODVkNDhhZWE0M2UyYjhhODEyZWVhNDc5NzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg2NzA2OWQ5YWE1NzU3MTg5NDVlNTU5NTlmN2VjNTc0ZWI2NzVjY2Q1MmE1NDdlOTg4MWVkYjQ3ODAwMGFjNTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM1ODg0ZjBjN2JmMWE1NTVjM2FlNmVhODgwNzM4MWQ3ZWY1Mzk2YzNkNDMyYjM4YzA4NjAwNWZmMmZjMDE0MmIifQ"
+          "resource": "repo://src/lib/stable-label.tsx#L4-L93",
+          "version": "repo-lines-v1:sha256:988ac53e56c64b7e8dd5457e0115f58762fd3b0bbac2c9da42d3becbbfdd1561:eyJzZWxlY3RlZExpbmVDb3VudCI6OTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5ZTk2NWZlZTRmZjUzYmY2ZGJlOTZjN2U0MzYzYThkYTgxMzViZTYyNzhiNDdlYzM2Zjc2MzVmMjliOTI4MjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjViMGEzNTUzMGRlYWU5Y2U0OWRkZTQxZTE1MDFjNzBhZDVhMjBhZWU4NTUyY2U5NDIzOWI2Mzk3M2Q3NjU3ZWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -115,7 +115,7 @@
       "statement": "App wraps the window in a full-size container named viewport (containerType inline-size), and the home bento grid's 768px and 1280px breakpoints are @container blocks querying it, since gpuix has no media queries.",
       "evidence": [
         {
-          "resource": "repo://src/app.tsx#L530-L540",
+          "resource": "repo://src/app.tsx#L531-L541",
           "version": "repo-lines-v1:sha256:11233849ae50ed5265cf2928b2559725ed1e5adaf8bf2c2dd7fc052004cdf3f1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4ZGZiMDM4NzY3YTc5ZjVlNTJmZTc1NjI5NjNhMWMwMWU0ZWE0ZTdmNTA3ZTUyNGY1MTRhNmE4MGY0YjRkYjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4Yzc0Mjg0NTZmZjk3MmQ5M2I0ZTIzOWRjMGY2OGMxZGY3ZGU4ZTg1ZWFjOWNmNGUyMWU5MzQ3Nzg0MmM2ZjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzZmQ2ZGViNmZhZjk0OThlZTNmMWM1YzAyM2UxNGE2YTY5NjcyM2IxNmVkZmVlMGY1OGFiNzA1ZDBjODI5YjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNjM2YyZWVlYjg2MTg1NWYxYzUyNjI3YWI2ZmE1YjliODBhMGVhNDlkYzNhODcwNWY4ZGRhMzZkN2NhOTE1OTgifQ"
         },
         {
@@ -123,10 +123,50 @@
           "version": "repo-lines-v1:sha256:433c42e0773669b7f310c525b7d265f2fb0aafce6fb9b1d72d2f4a8a48ecefc0:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0YTRkYTgyZGMyYjY5OWM1YjIzNWE0NjE4MzUzZjI3ZmFiNWY5ZDQxNjNmNWY4OTg2ZGZmMDEwYjM1OGFiZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllNDZiNzQ3NmZjZWQwYmY3NDFmODc3NWM3ODU5ZjJjYTYyYTA3NGFlNzQzNmZiMWQyOTZlNzM3OTA1YjAzYzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM0MjFkOWI2OTllZDJmYzIxZWZhNzFmM2EwZjgzY2Y3ZTZkYTcwYjhiOTE5NDc0YjBiNThiOGMzNDE5ODQwNTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZjOTZjNDdiZGM3ZjNmOGU5MGE5ZDZhNWRjMzJhMjU5MzM0ZWI4MTY2ZDg4NDIxMmY4YTlmNDNkNjMxMjNmOWIifQ"
         }
       ]
+    },
+    {
+      "id": "claim_df1e41adc56d468ca6ff3389305f9d9b",
+      "statement": "gpuix paints an outline only when it has an outlineStyle, so every outlineWidth and outlineColor pair, such as focusRing, sets outlineStyle solid.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/theme.ts#L553-L561",
+          "version": "repo-lines-v1:sha256:6622e3585b26a346345bb051ea8ddf25b83b1fa9799eb70c04b14e6f1d057cc6:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2FlZDczMTNlNTRmNjBkZDAwY2EyNzhiODRkODE4NzFlMDJhN2E4YjlmMGNmMzA5ZTY4MmU3YzhlZDFmZGExZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjA1ZTM5YThhZWU1ZDgxMTNjYzBiMzVmMjE5MTUxZGFmOWVmMjE4OTM0MzBhMjc4NzcxMTcyZDVlMjg4ZDZiMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDZjNDY0Njc2Zjk2NjRhNjg3Y2Q4MDdlNWE4NDIxZjkzNDRhNjQ4MDk5MDliMjQ2MDdkN2Y1NGRmODc0ZjNhMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_32691fbfe412490f87ccd32d1b3f5ded",
+      "statement": "A label that clips with overflow hidden trims to cap height through clippedCapTrim, which adds equal padding and negative margins because the clip box is the trimmed box and would otherwise shave ascenders and descenders.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/theme.ts#L301-L319",
+          "version": "repo-lines-v1:sha256:6083f75c2b8309a92fd1adcb796dc3350e07b9475bb858f78314ceccf6ce6455:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2NDI3YzkyNjc3NWE5YzkzOWM0N2E0MGY1OTVjNDgwZTkwMGZjN2Q4MzdhODcwZmUyZDJlYmVkYjU5ZWVlMzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyOTY0MDc5YzNjNWM4MTUyMGVmMzNhMmI5ZDJlMTVhMWI4NGQ3MjgwZGI4NTkwZGNkNjU3NDdlM2UwMTJhNDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwZmRmZGNkYTljMWE3NjU0MGUzMjU1MTRlYmVmZTgzMzQ0ZGQwNzQ3NjViZjAzM2U4YTVlNmQ0NDliNjVmZmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_15c48247395846bf952c05105c4b0401",
+      "statement": "The slider's comfortable layers and compact step dots are calc() motion-value strings of the row's own width, so none reads a measured width.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/slider.tsx#L1015-L1033",
+          "version": "repo-lines-v1:sha256:ba09322ef3dd07a73b831e0f57378b2464738e8038830b97859898b139909c63:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzNDJlMzlhNzllYTliNGU3ZWYwZDhlNTJjODg4YzI0MTJjMzkwOTg1MTQzY2NkYzIwYTc1ZDFlYzdlNjUxMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjMDVhNDQwZjM3NTMzZGIzNWI0MjkxMTFmNTYyNDI2NGRlY2MwNTQyOWFjOTUwZmZlYjU4NzYzNmI4NmY5YjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyN2JjNTZmMjU1ZjM3MTlhZTZhNmUyYjExMTQwYjhmOWQ1OTJjODNiNDVmMzI5MGNkNGUyOGNkY2YxYjRkNTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUwNTA4NTBlMDEwNDY3NWJiZWNlMWRjZjcwMzMwZjc3MmU0MjYzZmQwZTBkMDU4N2FjNWQzNTFjOGE4MzgxMGYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5d6a8d3565a84083bfa4da146a592c22",
+      "statement": "The tabs-subtle label animates to and from width auto with no snap or remeasure step, because gpuix starts a width auto animation at the style change.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/tabs-subtle.tsx#L290-L300",
+          "version": "repo-lines-v1:sha256:10edacee8f291c75fb5f7cb2b81e3dda8f2d5daba146505b1b2723ab2fbc923e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA1M2E0NzFiNGJmNjJmOTU4MDc4ZjUwZTQ0YzQ1MTc1MDRmMGU5MjJhMDAwYjBlZmQzMWI5YTAwZTVmZWE3YWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5N2IzY2RjYTdlYmUzMTYzOWM4ZThkYWNkNTIzM2VmN2VkMzcxODZmNGVkMzQ3NTEwODM3ZjllNGQ3ODNkYjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFkZTJiZjQ4N2RiYTg5ZmFiNTAwODAzYzdmMTdiNTRlYzM4ZjBjZjUwOWVjZmVjNWIzZjlhNTRiY2YzNmRhNjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlNTE3OTBkNzQzNWUyNGU3MWIwMDcxOWY2ZTQ5ODIzNDk4OWUwMTQzZjJjZDlmYzk2MDgwMGUwNjRhYjJmMGEifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-17T07:13:17.848Z"
+    "at": "2026-10-18T08:02:19.231Z"
   }
 }

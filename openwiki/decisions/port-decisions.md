@@ -1,11 +1,11 @@
 ---
 type: decision record
 title: Port decisions and their reasons
-description: Why the Fluid Functionalism port to gpuix uses native springs, native hover states, a single fluid highlight, a single-quad press-shrink fill, static Inter, createAppearance theming with a transient cross-fade layer, Bun.Glob demo discovery, the drift/ convention, the screenshot and check-* harness, and its pnpm, tsconfig and Biome settings.
+description: Why the Fluid Functionalism port to gpuix uses native springs, native hover states, a single fluid highlight, a single-quad press-shrink fill, variable Inter with the source's weight tokens, createAppearance theming with a transient cross-fade layer, file-discovered demos, the drift/ convention, the screenshot and check-* harness, and its pnpm, tsconfig and Biome settings.
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-17T07:13:17.848Z
+    at: 2026-10-18T08:02:19.231Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -17,6 +17,10 @@ sources:
     resource: repo://pnpm-workspace.yaml
   - id: openwiki-source-dcc18690931a266c3aa8c94d
     resource: repo://scripts/check-single-instance.ts
+  - id: openwiki-source-819b237d6ed6e51fbd2028b9
+    resource: repo://scripts/check-weight-widths.tsx
+  - id: openwiki-source-edfa365c97d8e399b7824f84
+    resource: repo://scripts/registry-plugin.ts
   - id: openwiki-source-5ebe82cc5f9e383e14411602
     resource: repo://src/app.tsx
   - id: openwiki-source-456bdd1fc2b44eea01d30954
@@ -39,13 +43,15 @@ sources:
     resource: repo://src/lib/playground.tsx
   - id: openwiki-source-0f590d21e6a23d6af00e8e17
     resource: repo://src/lib/press.tsx
+  - id: openwiki-source-88a6e1849924a665249303d0
+    resource: repo://src/lib/stable-label.tsx
   - id: openwiki-source-d5126066c122ba41a6591f24
     resource: repo://src/lib/theme-fade.tsx
   - id: openwiki-source-1a25dd521e50a4d59274e1c2
     resource: repo://src/lib/theme.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-17T07:13:17.848Z" }
+generated: { by: "claude-code", at: "2026-10-18T08:02:19.231Z" }
 ---
 
 # Port decisions and their reasons
@@ -128,12 +134,35 @@ at rest, whose four edges the press pulls in to the pressable's own. The reasons
 Cost: a quad's edges land on whole device pixels, so the 1px pull-in is one step where the source's spread eases
 through partial coverage. The tertiary variant's inward-moving ring is an outline offset (0 at rest, -1 pressed).
 
-## Fonts: static Inter cuts
+## Fonts: Inter variable, weight through fontVariationSettings
 
-The source uses Inter variable (`wght 550`, `opsz`). gpuix renders only a font's default instance and cannot ease
-variable axes, so the port ships static Inter 400/500/600/700 in `assets/fonts/` and passes them to `render()` and
-the test renderer. The source's 550 is set as SemiBold 600; there is no optical sizing. A weight change therefore
-switches at once instead of easing.
+The port first shipped four static Inter cuts, because gpuix rendered only a font's default instance: the source's
+`wght 550` became SemiBold 600, there was no optical sizing, and a weight change switched at once. Round 6 of the
+gpuix fork (adopted 2026-10-18) added `fontVariationSettings` and made it animatable, so the port now ships the same
+two Inter 4.0 variable files the source serves (upright and italic, family name `Inter Variable`) and
+`theme.ts`'s `weight` tokens are the source's `fontWeights` strings, each `wght` paired with an `opsz`
+(`'wght' 550, 'opsz' 18` for semibold). Three rules came out of it:
+
+- **Use the token strings, not `fontWeight`, wherever the source uses `font-variation-settings`.** Plain
+  `fontWeight` stays only where the source uses a plain weight class (the shadcn recreations on the Compare page,
+  the skill page's generic tabs and menu, the title-bar chrome). Mixing them changes the optical size and so the
+  advance widths.
+- **Ease the weight where the source transitions it** (80 ms, with the colour when the source's transition lists
+  both). `StableLabel` does it by default; `snapWeight` is for rows the source draws without a weight transition
+  (the surfaces page's role rows). Weight is not eased on a label by default merely because it can be: copy the
+  source's transition list.
+- **`StableLabel` reserves the wider of the normal and the semibold width, not the semibold width alone.** The
+  source's hidden copy is semibold only, and its `font-weight.ts` claims semibold stays within 0.4 px of normal. Both
+  halves fail in practice: for some strings semibold is *narrower* (Toggle dark mode), so the source's label shrinks
+  when selected and moves its neighbours. The port keeps a second hidden copy at normal weight so the cell, and
+  everything beside it, never moves. This is a deliberate improvement on the source, not parity.
+
+**The weight-width check measures against the browser, not the source's claim.** Chromium measuring the same
+`InterVariable.ttf` and tokens does not reproduce the source's 0.4 px claim (Analytics grows 1.05 px; a long all-caps
+string shrinks 1.13 px), and gpuix matches Chromium to 0.1 px. `scripts/check-weight-widths.tsx` therefore asserts
+parity with the browser's delta and only prints how many strings the source's claim misses; its second half mounts
+every `StableLabel` user through its demo page and steps the held motion clock across the ease, asserting exact
+boxes. It runs at 1x, so widths at a retina display's 2x scale are not measured.
 
 ## Theme: System, Light and Dark through createAppearance
 
@@ -156,11 +185,13 @@ easy to break:
 - **Only three properties ease** (`background-color`, `color`, `border-color`): gpuix does not animate `fill` or
   `stroke`, which the source also lists.
 
-## Demo discovery through Bun.Glob
+## Demo discovery by file scan
 
 During the 2026-10-13 fan-out, six agents ported components in parallel in one tree. To keep them from colliding on
-a shared registry, demos are discovered at startup with `Bun.Glob` and a dynamic `import`, and a component adds
-only its own three files (component, demo, drift entry). Adding a demo file needs a restart of `--hot`.
+a shared registry, nothing lists the demos: `scripts/registry-plugin.ts` scans `src/demos/*.tsx` with `Bun.Glob` at
+startup and serves the result as the `virtual:demos` module (likewise pages and the changelog), which `src/lib/demo.ts`
+reads. A component adds only its own three files (component, demo, drift entry). The same plugin feeds `Bun.build`,
+because the compiled binary reads nothing from the repository; a runtime directory scan would find nothing there.
 
 ## drift/ and its Cause values
 

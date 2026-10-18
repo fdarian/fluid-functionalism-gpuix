@@ -6,10 +6,10 @@ tags: [quickstart, routing]
 sources:
   - id: openwiki-source-8037e2358a2c4f9b2c722a11
     resource: repo://AGENTS.md
-generated: { by: "claude-code", at: "2026-10-17T05:21:14.095Z" }
+generated: { by: "claude-code", at: "2026-10-18T08:02:19.231Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-17T05:21:14.095Z
+    at: 2026-10-18T08:02:19.231Z
 ---
 
 # Quickstart
@@ -25,9 +25,10 @@ the repository docs do not: reasons, decisions and history. For mechanics, go to
 | Run the app, add a component or page, run checks and screenshots | [README.md](../README.md), [AGENTS.md](../AGENTS.md) |
 | Sync with upstream, or know which upstream commit a file tracks | [UPSTREAM.md](../UPSTREAM.md) |
 | Know why springs, hover, fluid hover, press-shrink, fonts, theme or the pnpm wiring are the way they are | [Port decisions](decisions/port-decisions.md) |
+| Know why labels set weight through `fontVariationSettings` and `StableLabel` reserves two widths | [Port decisions, Fonts](decisions/port-decisions.md#fonts-inter-variable-weight-through-fontvariationsettings) |
 | Check whether a behaviour (popup focus, motion, scope) is settled before changing it | [User decisions of 2026-10-16](decisions/user-decisions-2026-10-16.md) |
 | Work around a gpuix limitation, or report one to the fork | [gpuix gaps and divergence rounds](gpuix/gaps-and-divergence-rounds.md), then the README gap rows |
-| Migrate to a newer gpuix `poc` | [gpuix gaps and divergence rounds, Adoption pass](gpuix/gaps-and-divergence-rounds.md#adoption-pass-2026-10-17): how the last one went and its pitfalls |
+| Migrate to a newer gpuix `poc` | [gpuix gaps and divergence rounds, Round 6 adoption pass](gpuix/gaps-and-divergence-rounds.md#round-6-adoption-pass-2026-10-18) for the latest, and the [2026-10-17 pass](gpuix/gaps-and-divergence-rounds.md#adoption-pass-2026-10-17): how they went and their pitfalls |
 | Change keyboard, selection, focus or ARIA behaviour | [Base UI extraction](history/base-ui-extraction.md), then `../base-ui-solid-gpuix` and its `BASE-UI-AUDIT.md` |
 | Record where the port differs from the source | [`drift/_TEMPLATE.md`](../drift/_TEMPLATE.md); the convention's reasons are in [Port decisions](decisions/port-decisions.md#drift-and-its-cause-values). `bun scripts/drift-counts.ts` prints the README count table |
 | Find what is still open before publishing | [Base UI extraction, Open follow-ups](history/base-ui-extraction.md#open-follow-ups) |
