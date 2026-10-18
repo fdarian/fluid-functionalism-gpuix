@@ -84,6 +84,7 @@ export function Page(): JSX.Element {
 					<Link
 						href="/docs/typography"
 						testId="sizes-typography-link"
+						offset={4}
 						foreground
 						spaced
 					>

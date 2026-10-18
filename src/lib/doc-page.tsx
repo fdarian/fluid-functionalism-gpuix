@@ -78,10 +78,11 @@ export function Code(props: {
 	);
 }
 
-/** A prose `<a>`: underlined, a Tab stop, Enter or a click follows it. A `/docs/<slug>` href shows that page, any other opens the system browser. `foreground` is `text-foreground` and `spaced` is `mx-1`, where the source sets them; the colour is else the paragraph's. */
+/** A prose `<a>`: underlined, a Tab stop, Enter or a click follows it. A `/docs/<slug>` href shows that page, any other opens the system browser. `offset` is the source's `underline-offset-2` or `-4`, `foreground` is `text-foreground` and `spaced` is `mx-1`, where the source sets them; the colour is else the paragraph's. */
 export function Link(props: {
 	children: string;
 	href: string;
+	offset: 2 | 4;
 	foreground?: boolean;
 	spaced?: boolean;
 	testId?: string;
@@ -108,6 +109,7 @@ export function Link(props: {
 			}}
 			style={{
 				textDecoration: 'underline',
+				textUnderlineOffset: props.offset,
 				cursor: 'pointer',
 				...(props.foreground === true ? { color: color.foreground } : {}),
 				...(props.spaced === true ? { marginLeft: 4, marginRight: 4 } : {}),

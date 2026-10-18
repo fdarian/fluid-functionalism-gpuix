@@ -111,7 +111,7 @@ export function Page(): JSX.Element {
 					<Rule>
 						<Prose>
 							1 font family:{' '}
-							<Link href="https://rsms.me/inter/" foreground>
+							<Link href="https://rsms.me/inter/" offset={4} foreground>
 								Inter Variable 4.0
 							</Link>
 							.
@@ -185,6 +185,7 @@ export function Page(): JSX.Element {
 					their width. Idea from{' '}
 					<Link
 						href="https://x.com/lochieaxon/status/2061631101999968701"
+						offset={4}
 						foreground
 					>
 						@lochieaxon
@@ -206,6 +207,7 @@ export function Page(): JSX.Element {
 					padding you set is the space you see. Idea from{' '}
 					<Link
 						href="https://interfaces.dev/magazine/issues/working-with-type"
+						offset={4}
 						foreground
 					>
 						@jakubkrehel

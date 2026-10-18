@@ -15,12 +15,12 @@ repeating it.
 - **Fidelity:** dropped (arrows).
 - **Components it hits:** every docs page.
 
-## The description's "light" and "dark" links underline at the default offset
+## The description's "light" and "dark" links' underline does not fade with the colour
 
-- **Cause:** `gpuix gap` (an underline offset, see [`card.md`](card.md#the-link-variant-underlines-at-the-default-offset)).
+- **Cause:** `gpuix gap` (`text-decoration-color` is not transitionable, README "colour fade" row).
 - **Original:** `UseLightLink` / `UseDarkLink`: buttons inside the description's paragraph with `underline decoration-dotted underline-offset-2`, hover `text-foreground transition-colors` (`app/docs/surfaces/page.tsx:1265-1309`).
-- **Port:** `ThemeLink` (`src/pages/surfaces.tsx:93-115`): a dotted-underlined `<span>` inside the description's one `<Prose>`, a button and Tab stop (Enter or Space switches, with a focus ring the source's button leaves to the browser), that calls `changeTheme`; hover eases the colour to foreground over 150 ms. The dots sit at the font's default offset, not 2px, and the underline does not fade with the colour (`text-decoration-color` is not transitionable, README "colour fade" row).
-- **Fidelity:** approximated (underline offset).
+- **Port:** `ThemeLink` (`src/pages/surfaces.tsx:93-115`): a dotted-underlined `<span>` inside the description's one `<Prose>`, a button and Tab stop (Enter or Space switches, with a focus ring the source's button leaves to the browser), that calls `changeTheme`; hover eases the colour to foreground over 150 ms. The dots sit 2px under the baseline, as in the source (`textUnderlineOffset`); the underline does not fade with the colour.
+- **Fidelity:** approximated (the underline's colour changes at once).
 - **Components it hits:** just this page.
 
 ## The preview frame has no Inspect switch and an unhighlighted Code tab

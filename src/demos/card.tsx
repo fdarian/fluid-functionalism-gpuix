@@ -195,6 +195,7 @@ function RestoreLink(props: { onClick: () => void }) {
 					...scale.body,
 					color: hovered() ? color.foreground : color.mutedForeground,
 					textDecoration: 'underline',
+					textUnderlineOffset: 4,
 				}}
 			>
 				Restore card

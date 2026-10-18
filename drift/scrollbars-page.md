@@ -34,14 +34,6 @@ repeating it.
 - **Port:** the prose is verbatim. `R` does nothing; the Radius row in the customise card changes the radius instead (the lists' frames follow it through `shape.container`), and there is no Primitive control. The `R` is a `flush` code chip (`px-1 py-0.5`, 12px mono, 4px radius, as the source's `<kbd>`) on the code chips' wash and foreground text, where the source's `<kbd>` is `bg-muted` with the paragraph's muted text (`src/pages/scrollbars.tsx`).
 - **Fidelity:** exact text, describes more than the port does.
 
-## Links underline at the default offset
-
-- **Cause:** `gpuix gap` (an underline offset, see [`card.md`](card.md#the-link-variant-underlines-at-the-default-offset)).
-- **Original:** `<a href target="_blank" className="underline underline-offset-2">` for Lina and shadcn's scroll-fade (`app/docs/scrollbars/page.tsx:516-541`).
-- **Port:** the shared `Link` (`src/lib/doc-page.tsx:82-120`): an underlined `<span>` in the paragraph's colour with a pointer cursor, a Tab stop and a focus ring, that opens the URL in the system browser on a click or Enter (`openUrl`, as the changelog's refs do). The underline sits at the font's default offset, not 2px.
-- **Workaround:** none.
-- **Fidelity:** approximated (underline offset).
-
 ## The horizontal strip is given a 104px height
 
 - **Cause:** `port choice` (the area's viewport is `height: 100%`, `drift/scroll-area.md` "Demo: the horizontal strip needs an explicit height").

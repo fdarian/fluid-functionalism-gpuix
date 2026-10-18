@@ -103,6 +103,7 @@ function ThemeLink(props: { theme: Scheme; children: string }) {
 			}}
 			style={{
 				textDecoration: 'underline dotted',
+				textUnderlineOffset: 2,
 				cursor: 'pointer',
 				...fade(['color'], 150),
 				hover: { color: color.foreground },

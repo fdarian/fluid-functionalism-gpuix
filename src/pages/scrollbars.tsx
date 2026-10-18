@@ -97,14 +97,17 @@ export function Page(): JSX.Element {
 				<Prose>
 					Ships in Radix and Base UI flavors with the same API — switch with the
 					Primitive toggle. Scrollbar machinery adapted from{' '}
-					<Link href="https://lina.sameer.sh">Lina</Link>.
+					<Link href="https://lina.sameer.sh" offset={2}>
+						Lina
+					</Link>
+					.
 				</Prose>
 			</DocSection>
 
 			<DocSection title="The fade">
 				<Prose>
 					The baseline edge treatment is shadcn's{' '}
-					<Link href="https://ui.shadcn.com/docs/utils/scroll-fade">
+					<Link href="https://ui.shadcn.com/docs/utils/scroll-fade" offset={2}>
 						scroll-fade
 					</Link>
 					, vendored as a CSS utility in{' '}

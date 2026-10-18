@@ -119,16 +119,6 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Fidelity:** approximated (about a pixel).
 - **Components it hits:** see `drift/badge.md`.
 
-## The link variant underlines at the default offset
-
-- **Cause:** `gpuix gap`.
-- **Original:** `underline-offset-4` and `hover:underline` (`:915`).
-- **Port:** `textDecoration: "underline"` on hover (`src/components/card.tsx:1009-1011`).
-- **gpuix lacks:** an underline offset: `StyleDesc` has `textDecoration`, `-Line`, `-Style`, `-Color`, `-Thickness` and nothing for the offset (`packages/native/js/host.ts:766-776`; searched `packages/native/src` and `js`).
-- **Workaround:** none.
-- **Fidelity:** approximated (the line sits closer to the text).
-- **Components it hits:** any `underline-offset-*`.
-
 ## The image rounds its own corners to the tile
 
 - **Cause:** `port choice` (reason not stated; the tile also sets `overflow: "hidden"` and a radius at `:366-367`).

@@ -68,6 +68,7 @@ function Link(props: { children: string }) {
 				color: color.foreground,
 				textDecoration: 'underline',
 				textDecorationColor: withAlpha(color.foreground, 0.35),
+				textUnderlineOffset: '0.2em',
 			}}
 		>
 			{props.children}

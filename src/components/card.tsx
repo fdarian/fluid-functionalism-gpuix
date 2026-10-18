@@ -1007,7 +1007,7 @@ export function CardButton(props: {
 					fontVariationSettings: weight.normal,
 					whiteSpace: 'nowrap',
 					...(variant() === 'link' && hovered()
-						? { textDecoration: 'underline' }
+						? { textDecoration: 'underline', textUnderlineOffset: 4 }
 						: {}),
 				}}
 			>
