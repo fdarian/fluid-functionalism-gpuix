@@ -38,6 +38,7 @@ import {
 	clippedCapTrim,
 	color,
 	colorFade,
+	colorWeightFade,
 	radius,
 	type as scale,
 	shadow,
@@ -721,7 +722,7 @@ function TabLabel(props: { text: string; selected: boolean; lit: boolean }) {
 					top: 0,
 					left: 0,
 					color: props.lit ? color.foreground : color.mutedForeground,
-					...colorFade,
+					...colorWeightFade,
 				}}
 			>
 				{props.text}
