@@ -7,7 +7,7 @@ the shared copy in `data.ts` (`app/components/demo-data.ts`), the Fluid side in 
 rebuilt primitives in `src/pages/compare/shadcn/`; routed by the page registry (`src/lib/demo.ts` `loadPages`): group "Pages", order 3, layout "full", listed in the site menu only.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The shadcn side is rebuilt from gpuix primitives, not Radix

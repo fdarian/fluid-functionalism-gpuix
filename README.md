@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 578 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 573 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -201,9 +201,9 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [badge](drift/badge.md) | 1 | 3 | 0 | 0 | 4 |
 | [banner](drift/banner.md) | 4 | 4 | 6 | 0 | 14 |
 | [button](drift/button.md) | 3 | 4 | 2 | 1 | 10 |
-| [card](drift/card.md) | 5 | 7 | 6 | 0 | 18 |
+| [card](drift/card.md) | 4 | 7 | 6 | 0 | 17 |
 | [carousel-dots](drift/carousel-dots.md) | 2 | 3 | 2 | 1 | 8 |
-| [chat-message](drift/chat-message.md) | 3 | 4 | 2 | 1 | 10 |
+| [chat-message](drift/chat-message.md) | 2 | 4 | 2 | 1 | 9 |
 | [checkbox-group](drift/checkbox-group.md) | 3 | 0 | 3 | 1 | 7 |
 | [color-picker](drift/color-picker.md) | 3 | 5 | 15 | 1 | 24 |
 | [combobox](drift/combobox.md) | 5 | 13 | 5 | 2 | 25 |
@@ -225,11 +225,11 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [queued-stack](drift/queued-stack.md) | 4 | 2 | 3 | 1 | 10 |
 | [radio-group](drift/radio-group.md) | 4 | 2 | 2 | 0 | 8 |
 | [scroll-area](drift/scroll-area.md) | 2 | 5 | 1 | 1 | 9 |
-| [scrollbars-page](drift/scrollbars-page.md) | 1 | 4 | 2 | 0 | 7 |
+| [scrollbars-page](drift/scrollbars-page.md) | 0 | 4 | 2 | 0 | 6 |
 | [select](drift/select.md) | 5 | 3 | 6 | 2 | 16 |
 | [sidebar](drift/sidebar.md) | 1 | 8 | 19 | 1 | 29 |
 | [site](drift/site.md) | 5 | 11 | 21 | 7 | 44 |
-| [sizes-page](drift/sizes-page.md) | 0 | 5 | 2 | 4 | 11 |
+| [sizes-page](drift/sizes-page.md) | 0 | 5 | 3 | 3 | 11 |
 | [skill-page](drift/skill-page.md) | 3 | 5 | 0 | 1 | 9 |
 | [slider](drift/slider.md) | 5 | 3 | 2 | 1 | 11 |
 | [surfaces](drift/surfaces.md) | 2 | 3 | 4 | 3 | 12 |
@@ -240,8 +240,8 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-indicator](drift/thinking-indicator.md) | 1 | 2 | 3 | 0 | 6 |
 | [thinking-steps](drift/thinking-steps.md) | 4 | 3 | 6 | 1 | 14 |
 | [tooltip](drift/tooltip.md) | 3 | 5 | 1 | 1 | 10 |
-| [typography](drift/typography.md) | 6 | 0 | 1 | 4 | 11 |
-| **Total** | **124** | **197** | **197** | **60** | **578** |
+| [typography](drift/typography.md) | 4 | 0 | 1 | 4 | 9 |
+| **Total** | **119** | **197** | **198** | **59** | **573** |
 
 ### gpuix gaps across components
 
@@ -260,8 +260,8 @@ offer it. A count is given only where the code shows it.
 | select, combobox | Enter in a form with two or more `<input>`s submits nothing: gpuix has no submit button, so HTML's fallback applies (gpuix `README.md:3602-3609`), and `FormValue` is a second `<input>` in every form that names a Select or Combobox. Enter in a lone `<input>` does validate and submit (an empty `required` one fires `invalid`; measured on the test renderer) | The demos submit through `requestSubmit()` |
 | any `<input>` with `textAlign: "right"` (the Button playground's Label field) | The style is accepted and does nothing in the test renderer (`drift/button.md`, "Playground: no Active switch, Label field not right-aligned"); unverified in a live window | none: left-aligned |
 | dropdown search field | A sticky box with a negative margin is held at its parent's content box, not at the border box the margin puts it (`drift/dropdown.md`, "Search field is a child of the scroller"): a `marginTop: -4` child of a `padding: 4` parent sits 4px low until the scroller moves it. Measured on the test renderer | The field is the scroller's first child, ahead of the padded list |
-| banner (the actions, `drift/banner.md`, "Action order follows the written order") | Tab order follows the painted order under flex `order`, not the document order gpuix's README states (`README.md:6084`, `packages/native/js/host.ts:487`): three `tabIndex={0}` boxes with `order` 3, 2, 1 are visited right to left, where in CSS Tab keeps the markup order | `row` and `row-reverse` instead of `order`, which keeps the written Tab order (`src/components/banner.tsx:459-507`); placement follows position, not variant |
-| banner (the actions) | `order` inside an `'@container'` block is ignored: the parent sorts its children by the style it reads without the block, so a container query cannot reorder | The narrow layout switches `flexDirection` in the block instead of `order` (`src/components/banner.tsx:501`) |
+| banner (the actions, `drift/banner.md`, "Action order follows the written order") | Tab order follows the painted order under flex `order`, not the document order gpuix's README states (`README.md:6084`, `packages/native/js/host.ts:487`): three `tabIndex={0}` boxes with `order` 3, 2, 1 are visited right to left, where in CSS Tab keeps the markup order | `row` and `row-reverse` instead of `order`, which keeps the written Tab order (`src/components/banner.tsx:460-508`); placement follows position, not variant |
+| banner (the actions) | `order` inside an `'@container'` block is ignored: the parent sorts its children by the style it reads without the block, so a container query cannot reorder | The narrow layout switches `flexDirection` in the block instead of `order` (`src/components/banner.tsx:502`) |
 | thinking-steps (the details wrapper, `drift/thinking-steps.md`) | A `width: "fit-content"` box in a column flex container with a horizontal negative margin keeps the height of a wrapped first pass: 94x40 where CSS gives 94x20 | A block parent, as the source's, or `alignSelf: "flex-start"` (`src/components/thinking-steps.tsx:484-485`) |
 | the changelog (`ChangelogView` down to `Entry`), any deep stack of auto-width columns | Nested `display: flex; flexDirection: 'column'` boxes with no definite width make layout cost grow ~1.9x per level: the changelog's chain of 8 columns drew in 121 ms. `width: '100%'` on the columns takes it to 20 ms (`Entry`'s outer column alone: 29 ms; `KindGroup`'s two alone: 23 ms). Repro: `scripts/perf-micro.tsx`, group `depth-col` | `width: '100%'` on each column wrapper in `src/pages/changelog/` (`changelog-view.tsx`, `release-section.tsx`, `entry.tsx`) |
 | any box as wide as its text (`StableLabel`, the inline `Badge`, the ask-user inline title) | gpui measures text up to the next whole pixel, so a shrink-to-fit box is up to 1px wider than Chrome's and what follows it sits that much later (gpuix `README.md:3348-3350`, `FORK.md:799-801`) | none |
@@ -287,7 +287,7 @@ offer it. A count is given only where the code shows it.
 | file-thumbnail | A canvas pixel path (a PDF page preview) | The caller passes a type and the thumbnail shows a glyph |
 | not counted | Effect groups (`filter`, `backdrop-filter`, `mask`, `clip`, group opacity) off macOS: the group draws flat. The Markdown sample's to-do tick is a `maskImage` of an SVG data URI on a foreground box, so off macOS it is a flat square | none |
 | carousel-dots, file-thumbnail, thinking-indicator, thinking-steps | `requestAnimationFrame` itself (only `setTimeout`, FORK.md:209-211). The animations are possible without it, through motion values and keyframes (FORK.md:1144-1148) | `lib/clock.ts`: one shared, ref-counted `setInterval` frame clock |
-| typography (the Balanced and Pretty demos), chat-message (the user bubble), fluid-hover (the callout copy) | `text-wrap: balance` and `pretty`: lines break greedily | The copy wraps natively; the fluid-hover callouts are broken by hand where the source's balance breaks them |
+| not counted | `text-wrap: balance` past 6 lines per forced-break segment, and `pretty` on a paragraph whose last line is longer than a third of the line: gpuix's breaker approximates Chromium's (`pretty` re-breaks the last four lines at most) | none; every string the port balances or prettifies (the docs' headings and prose, the Balanced and Pretty demos, the fluid-hover callouts) breaks as Chromium's does |
 | badge | `text-box-trim` / `text-box-edge`: a label is centred by its full line box | Flex centring in a fixed-height pill (about a pixel of drift) |
 | card (`CardTitle`), table, every `StableLabel` (tabs, tabs-subtle, sidebar, menu rows) | Variable-font axes (`fontVariationSettings`): only a font's default instance renders, so the weight cannot ease between 400 and 550 | Static cuts; the weight switches at once, SemiBold 600 for 550 |
 | combobox (command-menu, input-message) | IME composition on Windows and Linux: gpuix reports `isComposing` `false` and fires no `Process` keydown or `composition*` events there, and the composition keys go to the input method before GPUI sees them (FORK.md:564-567). macOS reports all three (FORK.md:496-499), but this port reads none of them: the source's `isComposing` guards on Enter and arrows (command-menu, input-message, Base UI's combobox input) have no counterpart | none; IME input is untested. On macOS a key the input method takes first is a `Process` keydown that no `Enter` or arrow case matches |

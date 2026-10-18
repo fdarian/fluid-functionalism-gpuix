@@ -16,7 +16,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 - **Cause:** `gpuix gap` (no input-device signal; see queued-stack's `(hover: none)` entry in `drift/queued-stack.md`).
 - **Original:** `useTouchPrimary()` keeps the row always visible on touch (`chat-message.tsx:49`, `:120`).
-- **Port:** the row is hover-only everywhere (`chat-message.tsx:157`).
+- **Port:** the row is hover-only everywhere (`chat-message.tsx:159`).
 - **gpuix lacks:** `(hover: none)` / `(pointer: coarse)` never match.
 - **Workaround:** none; the port is desktop-only.
 - **Fidelity:** dropped.
@@ -35,25 +35,16 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 - **Cause:** `not ported yet` (README: "Not ported there: ... the Size / Icons / Primitive rows").
 - **Original:** `size` prop and `SizeProvider` pick compact type (13/18 bubble, 11/14 caption), `py-1.5`, `px-3` (`chat-message.tsx:30-33`, `:46`, `:88-95`).
-- **Port:** one step only: 14/20 bubble, `py` 8, `px` 14 (`chat-message.tsx:15`, `:132-139`); no `size` prop.
+- **Port:** one step only: 14/20 bubble, `py` 8, `px` 14 (`chat-message.tsx:15`, `:132-141`); no `size` prop.
 - **Workaround:** none.
 - **Fidelity:** dropped (compact).
 - **Components it hits:** every component with a `size` variant.
-
-## Message body: no `text-pretty` on the user bubble
-
-- **Cause:** `gpuix gap` (no `text-wrap` in `FORK.md`; searched gpuix `README.md` for `balance` and `pretty`).
-- **Original:** the body is `whitespace-pre-wrap break-words`, and the user bubble adds `text-pretty` (`chat-message.tsx:87`, `:96-102`).
-- **Port:** the body `div` sets `whiteSpace: "pre-wrap"` and `overflowWrap: "break-word"`, which a string or node child inherits (`chat-message.tsx:125-127`), so newlines are kept and a long token breaks. The user bubble wraps greedily, so its last line can end on a lone word where the browser's does not.
-- **Workaround:** none.
-- **Fidelity:** approximated (line breaks of the user bubble).
-- **Components it hits:** just this one.
 
 ## Timestamp is a string
 
 - **Cause:** `port choice` (the timestamp is one `<text>`, which takes a string; the caller pre-formats).
 - **Original:** `time` is a `ReactNode` in a `tabular-nums` span (`chat-message.tsx:127`, `:24`).
-- **Port:** `time` is `string`, set in tabular digits like the source (`chat-message.tsx:168-177`, `:78`).
+- **Port:** `time` is `string`, set in tabular digits like the source (`chat-message.tsx:170-179`, `:78`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

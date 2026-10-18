@@ -4,7 +4,7 @@ Original: `app/docs/surfaces/page.tsx` of the source (fluidfunctionalism.com at 
 Ported in `src/pages/surfaces.tsx` (the page) and `src/pages/surfaces/` (`problem`, `solution`, `examples`, `invite-dialog`, `role-menu`, `annotations`, `elevated`, `visibility`, `snippets`), routed by the page registry. The doc chrome (`DocSection`, `SubHeading`, `Prose`, `ComponentPreview`, `MONO`, `SUBTITLE`) is the shared `src/lib/doc-page.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## Page header and Installation block follow the port's doc page
@@ -19,7 +19,7 @@ repeating it.
 
 - **Cause:** `gpuix gap` (`text-decoration-color` is not transitionable, README "colour fade" row).
 - **Original:** `UseLightLink` / `UseDarkLink`: buttons inside the description's paragraph with `underline decoration-dotted underline-offset-2`, hover `text-foreground transition-colors` (`app/docs/surfaces/page.tsx:1265-1309`).
-- **Port:** `ThemeLink` (`src/pages/surfaces.tsx:93-115`): a dotted-underlined `<span>` inside the description's one `<Prose>`, a button and Tab stop (Enter or Space switches, with a focus ring the source's button leaves to the browser), that calls `changeTheme`; hover eases the colour to foreground over 150 ms. The dots sit 2px under the baseline, as in the source (`textUnderlineOffset`); the underline does not fade with the colour.
+- **Port:** `ThemeLink` (`src/pages/surfaces.tsx:93-116`): a dotted-underlined `<span>` inside the description's one `<Prose>`, a button and Tab stop (Enter or Space switches, with a focus ring the source's button leaves to the browser), that calls `changeTheme`; hover eases the colour to foreground over 150 ms. The dots sit 2px under the baseline, as in the source (`textUnderlineOffset`); the underline does not fade with the colour.
 - **Fidelity:** approximated (the underline's colour changes at once).
 - **Components it hits:** just this page.
 

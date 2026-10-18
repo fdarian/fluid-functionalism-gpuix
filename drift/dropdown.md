@@ -2,7 +2,7 @@
 
 Original: `registry/base/dropdown.tsx`, with `registry/default/menu-item.tsx`, `dropdown-search.tsx` and `dropdown-sub.tsx`; demo in `app/docs/dropdown/page.tsx` and `lib/docs/playgrounds/dropdown.tsx` of the source (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/dropdown.tsx`, `menu-item.tsx` and `dropdown-search.tsx`, demo in `src/demos/dropdown.tsx`.
 
-One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps (CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, selector `:has(.x)` and group-has, collapsed-border transitions) are one line each and link to the README row.
+One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps (CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) are one line each and link to the README row.
 
 ## The parent list ignores the pointer toward a submenu instead of `pointer-events: none`
 

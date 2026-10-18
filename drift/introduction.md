@@ -4,7 +4,7 @@ Original: `app/docs/page.tsx` of the source (fluidfunctionalism.com at 0a0377e, 
 Ported in `src/pages/introduction.tsx`, routed by the page registry (`src/lib/demo.ts` `loadPages`, `src/app.tsx` `PageBody`).
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The previous / next arrows are missing
@@ -26,7 +26,7 @@ repeating it.
 
 - **Cause:** `gpuix gap` for the weight (variable font: README "Drift from the source", variable-font rows) and `port choice` for the rest.
 - **Original:** `h1` `text-site-display leading-none mb-2` at `fontWeights.bold` (`app/docs/page.tsx:23-30`): a 28px line, 8px above the subtitle.
-- **Port:** `App`'s shared `Heading` (`src/app.tsx:80-92`) is semibold 600 with a 34px line and sits a 24px column gap above the page, which the subtitle cancels with `marginTop: -16` (`src/pages/introduction.tsx:204`), so the gap reads 8px past the taller line box.
+- **Port:** `App`'s shared `Heading` (`src/app.tsx:80-93`) is semibold 600 with a 34px line and sits a 24px column gap above the page, which the subtitle cancels with `marginTop: -16` (`src/pages/introduction.tsx:211`), so the gap reads 8px past the taller line box.
 - **Workaround:** the negative margin.
 - **Fidelity:** approximated.
 - **Components it hits:** every page and demo heading (semibold, 34px line).
@@ -35,14 +35,14 @@ repeating it.
 
 - **Cause:** `port choice` (to match `leading-none`).
 - **Original:** `h2` / `h3` `text-site-title leading-none`, semibold 550 (`app/docs/page.tsx:60,139-145`): a 16px line.
-- **Port:** `scale.title` with `lineHeight: 16` and SemiBold 600 (`src/pages/introduction.tsx:56-68`).
+- **Port:** `scale.title` with `lineHeight: 16` and SemiBold 600 (`src/pages/introduction.tsx:56-69`).
 - **Fidelity:** exact line height, weight approximated (README variable-font row).
 
 ## The code block overflows the 600px column and scrolls
 
 - **Cause:** `port choice` (the page column width, `src/app.tsx:77`).
 - **Original:** `<pre class="text-site-caption bg-muted/60 rounded-lg px-4 py-3 overflow-x-auto w-fit max-w-full">` (`app/docs/page.tsx:186`), in the source's own column. Its width was not measured.
-- **Port:** the same box with `overflowX: "scroll"` (`src/pages/introduction.tsx:157-197`). The longest line is 80 characters of 12px Menlo, about 578px, plus 32px of padding, so it overflows the 600px column by about 10px: the last characters of the `IconProvider` line need a scroll, and gpuix draws the scrollbar. No syntax highlighting, as in the source.
+- **Port:** the same box with `overflowX: "scroll"` (`src/pages/introduction.tsx:164-204`). The longest line is 80 characters of 12px Menlo, about 578px, plus 32px of padding, so it overflows the 600px column by about 10px: the last characters of the `IconProvider` line need a scroll, and gpuix draws the scrollbar. No syntax highlighting, as in the source.
 - **Fidelity:** approximated.
 
 ## Smaller differences

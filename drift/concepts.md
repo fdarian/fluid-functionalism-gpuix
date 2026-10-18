@@ -2,7 +2,7 @@
 
 Original: `app/concepts/page.tsx`, `app/concepts/layout.tsx`, `app/concepts/_components/concept-frame.tsx` and `app/concepts/lumen/page.tsx` of the source (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/pages/concepts.tsx` (group "Pages", order 30, layout "full", listed "menu"), `src/pages/concepts/frame.tsx` (`ConceptFrame`) and `src/pages/concepts-lumen.tsx` (order 31, layout "full", listed "none"). The nav is `NavMenu` / `NavItem`: see [nav-menu.md](nav-menu.md). Atlas, Beacon and Quill are other pages (`concepts-atlas`, `concepts-beacon`, `concepts-quill`).
 
-One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps (CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of repeating it.
+One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps (CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of repeating it.
 
 Checked and equal: the index is four rows centred in the window at 224px (`w-56`), with no nav or card (`bare`); the frame is a 224px nav (Home, then Lumen, Atlas, Beacon, Quill), a centre column and the customise card; Lumen's copy (question, step labels, description, the four sources and their site names, the three answer paragraphs, the four image captions, "Ask a follow-up…"), its 760px column with 24px side padding and 48px top and bottom, 40px between turns, 16px inside a turn, the tab icons (brain, globe, image), the badge colours per source, the thinking to answer beat of 1600 ms, and the source rows' 14 / 12 padding, 12px radius and `surface-2` fill.
 
@@ -59,7 +59,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `ChatMessage` took a string).
 - **Original:** `Answer` passes `className="max-w-full"` and a block of three paragraphs to `ChatMessage` (`lumen/page.tsx:76-111`).
-- **Port:** `ChatMessage` gained two additive props: `children` accepts any element (a string is still set in the message style) and `fullWidth` lifts the 80% cap (`src/components/chat-message.tsx:79-83`, `:143-148`). Lumen builds three `<text>` paragraphs with 12px between them (`src/pages/concepts-lumen.tsx:166-199`).
+- **Port:** `ChatMessage` gained two additive props: `children` accepts any element (a string is still set in the message style) and `fullWidth` lifts the 80% cap (`src/components/chat-message.tsx:79-83`, `:145-150`). Lumen builds three `<text>` paragraphs with 12px between them (`src/pages/concepts-lumen.tsx:166-199`).
 - **Workaround:** none needed.
 - **Fidelity:** exact for the layout.
 - **Components it hits:** chat-message (the extra props are the only change to it).

@@ -65,7 +65,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `not ported yet`.
 - **Original:** `CardHeader` is a grid that gains a `1fr auto` template when a `card-action` is present; the action sits in column 2 spanning both rows, so the title and description make room (`:537`, `:650`).
-- **Port:** `CardAction` is `position: absolute; top: 0; right: 0` on a column flex (`src/components/card.tsx:666-679`, `:583-613`); long text runs under it. gpuix has grid. No demo uses `CardAction`.
+- **Port:** `CardAction` is `position: absolute; top: 0; right: 0` on a column flex (`src/components/card.tsx:672-685`, `:583-613`); long text runs under it. gpuix has grid. No demo uses `CardAction`.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -93,7 +93,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `gpuix gap`.
 - **Original:** the link button's arrow is an arrow-right with `-rotate-45` (`:958`).
-- **Port:** the arrow-up-right glyph is drawn instead (`src/components/card.tsx:41`, `:1012-1021`).
+- **Port:** the arrow-up-right glyph is drawn instead (`src/components/card.tsx:41`, `:1018-1027`).
 - **gpuix lacks:** `rotate` (no `transform`; `~/code/fdarian/gpuix/FORK.md:1198-1209`). README "gpuix gaps", CSS transforms row.
 - **Workaround:** the glyph swap.
 - **Fidelity:** exact for the resting pose, no rotation tween.
@@ -113,7 +113,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `gpuix gap`.
 - **Original:** `[text-box:trim-both_cap_alphabetic]` on the inline-card title, `CardFeature`'s title and `CardButton`'s label (`:564-565`, `:883`, `:965`).
-- **Port:** no trim (`src/components/card.tsx:621-653`, `:896-902`, `:996-1006`).
+- **Port:** no trim (`src/components/card.tsx:621-653`, `:902-908`, `:1002-1012`).
 - **gpuix lacks:** `text-box-trim`; README "gpuix gaps", badge row.
 - **Workaround:** none.
 - **Fidelity:** approximated (about a pixel).
@@ -123,7 +123,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `port choice` (reason not stated; the tile also sets `overflow: "hidden"` and a radius at `:366-367`).
 - **Original:** the image is `rounded-[2px]` and the tile's `overflow-hidden` + radius clips its outer corners (`:339-343`, `:813-815`).
-- **Port:** `tileCorner()` hands the tile radius (minus 1 for a frame) to the image's outer corners and keeps 2px on the rest (`src/components/card.tsx:329-333`, `:814-829`).
+- **Port:** `tileCorner()` hands the tile radius (minus 1 for a frame) to the image's outer corners and keeps 2px on the rest (`src/components/card.tsx:329-333`, `:820-835`).
 - **Workaround:** n/a.
 - **Fidelity:** exact in the cases checked by reading (stacked, inline, framed, borderless); the screenshots were not diffed.
 - **Components it hits:** just this one.
@@ -141,7 +141,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `port choice` (reason not stated; Solid components with fixed prop lists).
 - **Original:** every part forwards `className` and the HTML attributes; the promo demo gives `Card` `border border-border/60 overflow-hidden rounded-xl` and `CardContent` `flex flex-col gap-3` (`app/docs/card/page.tsx:330`, `:336`).
-- **Port:** a standalone `Card` takes `outlined` for the frame (`src/components/card.tsx:256-257`, `:368-370`) and the demo wraps `CardContent`'s children in a 12px-gap column (`src/demos/card.tsx:228-241`). Parts take `children` only; `CardMedia` has no `className`.
+- **Port:** a standalone `Card` takes `outlined` for the frame (`src/components/card.tsx:256-257`, `:368-370`) and the demo wraps `CardContent`'s children in a 12px-gap column (`src/demos/card.tsx:229-242`). Parts take `children` only; `CardMedia` has no `className`.
 - **Workaround:** `outlined`.
 - **Fidelity:** exact for the demos.
 - **Components it hits:** every ported component.

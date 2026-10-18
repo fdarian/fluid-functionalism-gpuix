@@ -4,7 +4,7 @@ Original: `app/docs/typography/page.tsx` and `demos.tsx` of the source (fluidfun
 Ported in `src/pages/typography.tsx` (the page) and `src/pages/typography/` (`step`, `text`, `scale`, `markdown`, `specimen`, `weight`, `numbers`, `trim`, `wrap`, `install-prompt`), routed by the page registry.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The Markdown section is a static document, not a Tiptap editor
@@ -21,7 +21,7 @@ repeating it.
 
 - **Cause:** `gpuix gap` (italic).
 - **Original:** `<em>` slants; bullets and numbers are `::marker`s.
-- **Port:** inline code is a span at the typeset caption size with `padding: 0.1em 0.3em`, a 4px radius and the 7% wash, and the link is underlined at 35% (`src/pages/typography/markdown.tsx:42-76`), as in the source. The link does not navigate, as in the source: its editor sets `openOnClick: false` and a link in a `contenteditable` does not follow a click. `fontStyle: "italic"` is set on "glides" but no italic cut is loaded (`src/lib/fonts.ts` has the four upright cuts), and the capture shows it upright. Bullets are 5px circles and numbers are `tabular-nums` text, both drawn absolutely 10px and 8px before the text: where Chrome puts a `::marker` is estimated, not measured.
+- **Port:** inline code is a span at the typeset caption size with `padding: 0.1em 0.3em`, a 4px radius and the 7% wash, and the link is underlined at 35% (`src/pages/typography/markdown.tsx:42-77`), as in the source. The link does not navigate, as in the source: its editor sets `openOnClick: false` and a link in a `contenteditable` does not follow a click. `fontStyle: "italic"` is set on "glides" but no italic cut is loaded (`src/lib/fonts.ts` has the four upright cuts), and the capture shows it upright. Bullets are 5px circles and numbers are `tabular-nums` text, both drawn absolutely 10px and 8px before the text: where Chrome puts a `::marker` is estimated, not measured.
 - **Fidelity:** approximated; italic dropped.
 - **Components it hits:** just this page.
 
@@ -82,15 +82,6 @@ repeating it.
 - **Workaround:** negative margins from font constants; they hold only for 13px Inter on a 20px line.
 - **Fidelity:** approximated.
 - **Components it hits:** badge (README row).
-
-## Balanced headings and pretty paragraphs: the good side has its break written in
-
-- **Cause:** `gpuix gap`: no `text-wrap` (`balance`, `pretty`); the style list has none (`README.md:5683-5691`, `:6384`).
-- **Original:** the same 214px headline and paragraph, the left `text-wrap: wrap`, the right `balance` or `pretty` (`demos.tsx:652-709`).
-- **Port:** the left side wraps natively, and at 214px gpuix breaks them where the source measured Chrome ("Give every component the / same motion"; "... sits under your / cursor."). The right side is the same text with the browser's choice written in as a newline under `whiteSpace: "pre-line"` ("Give every component / the same motion"; "... sits under / your cursor."). It is a fixed result: it will not re-balance if the width, the font or the copy changes.
-- **Workaround:** the explicit break.
-- **Fidelity:** approximated.
-- **Components it hits:** just this page.
 
 ## Smaller differences
 

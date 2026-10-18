@@ -9,7 +9,7 @@ registry (`src/lib/demo.ts` `loadPages`). The page chrome (`DocPage`, `Component
 its drift, which this page shares (inline code chips, the Copy prompt icon swap, no Inspect switch, no prev / next arrows, section spacing).
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The scripted cursor calls handlers and `click()`, not DOM events
@@ -70,7 +70,7 @@ repeating it.
 
 - **Cause:** `port choice` (heading); `not ported yet` (the menu's tag).
 - **Original:** the heading is `/fluid-functionalism skill`, the sidebar and menu say "Skill" with a New dot and tag, which follow the latest release (`app/components/sidebar.tsx:82`, `app/components/site-command-menu.tsx:194-217`).
-- **Port:** `heading` is a new optional page export read by `App`'s `PageBody` (`src/lib/demo.ts`, `src/app.tsx`); the sidebar row is "Skill" with the release-driven dot (`src/app.tsx:225-243`), and the menu row has no tag, as for every other page.
+- **Port:** `heading` is a new optional page export read by `App`'s `PageBody` (`src/lib/demo.ts`, `src/app.tsx`); the sidebar row is "Skill" with the release-driven dot (`src/app.tsx:226-244`), and the menu row has no tag, as for every other page.
 - **Fidelity:** exact heading and dot, dropped menu tag.
 
 ## The ⌘K row

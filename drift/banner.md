@@ -5,7 +5,7 @@ Original: `registry/default/banner.tsx`, demo in `app/docs/banner/page.tsx` and 
 demo in `src/demos/banner.tsx`. Screenshots: `screenshots/banner/` (`scrolled-*.png` are the lower cards, captured with a taller scroll).
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## CSS transforms (the banner scales in and out)
@@ -32,7 +32,7 @@ repeating it.
 
 - **Cause:** `gpuix gap`.
 - **Original:** `has-data-[slot=banner-description]` on the banner and `group-has-data-[slot=banner-description]/banner` on the actions switch the layout when a description is a child: the icon and ✕ hold to the title line, and the actions move from the title row to under the text (`banner.tsx:450`, `:453`, `:597-603`). The narrow-container variant, `@max-sm/banner` (a container under 24rem, Tailwind 4.1's `sm`), drops the actions under the text too (`banner.tsx:602-603`); that part is ported.
-- **Port:** the narrow layout is a real container query: the banner is `containerType: 'inline-size'` named `banner`, and `BannerActions` carries `'@container': { 'banner (width < 24rem)': ... }` that moves it to the third grid row, column 2, with the under-text margins (`banner.tsx:247-248`, `:460`, `:501`). The banner is a grid of `auto minmax(0, 1fr) auto auto` as in the source, and the parts place themselves in it. The `:has()` switch is a context flag: `BannerDescription` registers itself and the banner's `alignItems` and the actions' placement follow it (`banner.tsx:107-118`, `:155`, `:251`, `:442-447`, `:491`).
+- **Port:** the narrow layout is a real container query: the banner is `containerType: 'inline-size'` named `banner`, and `BannerActions` carries `'@container': { 'banner (width < 24rem)': ... }` that moves it to the third grid row, column 2, with the under-text margins (`banner.tsx:247-248`, `:461`, `:502`). The banner is a grid of `auto minmax(0, 1fr) auto auto` as in the source, and the parts place themselves in it. The `:has()` switch is a context flag: `BannerDescription` registers itself and the banner's `alignItems` and the actions' placement follow it (`banner.tsx:107-118`, `:155`, `:251`, `:443-448`, `:492`).
 - **gpuix lacks:** `:has(.selector)`: only the four state forms (`hasHover`, `hasActive`, `hasFocus`, `hasFocusVisible`) exist, and a selector on an attribute or a slot needs a selector engine (`~/code/fdarian/gpuix/README.md` "Relational state"). README row "Selector `:has(.x)` and group-has".
 - **Workaround:** the context flag. It is set in a render effect, so the first frame already has the description layout, and it follows the description mounting and unmounting.
 - **Fidelity:** exact. The flag is only a different way to read the same fact; a description wrapped in another component still registers, where `:has()` would match it by slot as well.
@@ -87,7 +87,7 @@ repeating it.
 
 - **Cause:** `gpuix gap`. gpuix has `order`, but the Tab order follows the painted order, not the document order its README states (a bare row of three `tabIndex={0}` boxes with `order` 3, 2, 1 is visited right to left), and an `order` inside an `@container` block is not read: the parent sorts by the style it reads without the block.
 - **Original:** every `BannerAction` places itself with CSS `order` by variant, while the markup stays primary first, so Tab visits primary, then secondary, then ghost in every layout, and the order on screen follows the variant, not the order written (`banner.tsx:628-634`, `:586-610`).
-- **Port:** the actions are written primary first and stay in that DOM order. `BannerActions` is `flexDirection: "row-reverse"` trailing the title, so the strongest action sits at the edge, and `row` under the text (a description, or the container under 24rem), so it leads. Tab visits the written order in both (`banner.tsx:459-507`). Placement follows the written order, not the variant: a ghost written first would lead under the text and sit at the edge trailing the title. Trailing, a row that wraps starts from the right, so the first line holds the first actions written, where the source's first line holds the lowest `order`.
+- **Port:** the actions are written primary first and stay in that DOM order. `BannerActions` is `flexDirection: "row-reverse"` trailing the title, so the strongest action sits at the edge, and `row` under the text (a description, or the container under 24rem), so it leads. Tab visits the written order in both (`banner.tsx:460-508`). Placement follows the written order, not the variant: a ghost written first would lead under the text and sit at the edge trailing the title. Trailing, a row that wraps starts from the right, so the first line holds the first actions written, where the source's first line holds the lowest `order`.
 - **Workaround:** the direction flip instead of `order`. `order` on each action would keep the placement by variant, but the Tab order would then follow it (ghost first).
 - **Fidelity:** exact for actions written primary, secondary, ghost (the documented order); the placement is by position, not variant, when written otherwise.
 - **Components it hits:** just this one.
@@ -96,7 +96,7 @@ repeating it.
 
 - **Cause:** `not ported yet`. The port's `Button` has no colour override (`labelColor` is internal, `src/components/button.tsx:150-159`); a `Button` prop for it would close this.
 - **Original:** a ghost `BannerAction` adds `text-foreground`, which overrides the ghost button's muted rest colour, so it reads foreground at rest and on hover, with no colour change to ease (`banner.tsx:648-652`; its comment at `:618-619` describes "70% foreground", the code does not).
-- **Port:** the plain ghost `Button`: muted at rest, foreground on hover, eased over 80 ms like the source's other ghost buttons (`banner.tsx:512-527`; `src/components/button.tsx:130-131`).
+- **Port:** the plain ghost `Button`: muted at rest, foreground on hover, eased over 80 ms like the source's other ghost buttons (`banner.tsx:513-528`; `src/components/button.tsx:130-131`).
 - **Workaround:** none.
 - **Fidelity:** approximated (the rest colour, and the hover fade the source does not have here).
 - **Components it hits:** just this one.

@@ -8,7 +8,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `gpuix gap`. Shared: CSS transforms ([README, Missing features, first row](../README.md)).
 - **Original:** each footer button enters and exits at `scale: .85` (`:1430-1432`, `:1490-1492`, `:1516-1518`); the single-select submit arrow overlay is `scale: .6` in and out (`:1700-1706`); the validation message rises from `y: -2` (`:1470-1471`).
-- **Port:** footer buttons fade only (`FadeIn`, `ask-user-questions.tsx:1152-1163`); the arrow overlay fades over 80 ms (`:160-166`); the error has no entrance (`:1051-1063`).
+- **Port:** footer buttons fade only (`FadeIn`, `ask-user-questions.tsx:1160-1171`); the arrow overlay fades over 80 ms (`:160-166`); the error has no entrance (`:1051-1063`).
 - **gpuix lacks:** `scale` (`~/code/fdarian/gpuix/FORK.md:1198-1209`).
 - **Workaround:** opacity only.
 - **Fidelity:** approximated (no scale).
@@ -18,7 +18,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `not ported yet` (gpuix has `AnimatePresence` with `mode="popLayout"` and `layout`, `FORK.md:1149-1150`).
 - **Original:** footer buttons sit in `AnimatePresence mode="popLayout" initial={false}` with `layout="position"`, so a leaving button fades out while its neighbours slide at the same time and nothing animates on first mount (`:1425-1429`, `:1485-1489`). The submit arrow also fades out on exit with `spring.fast.exit` (`:1702-1706`).
-- **Port:** a `Show` removes the button at once, and the others jump. `FadeIn` runs on every mount, including the first paint, which the source skips (`ask-user-questions.tsx:1043-1109`, `:1147-1158`). The arrow overlay is unmounted when `showArrow` goes false (`:159`).
+- **Port:** a `Show` removes the button at once, and the others jump. `FadeIn` runs on every mount, including the first paint, which the source skips (`ask-user-questions.tsx:1050-1117`, `:1155-1166`). The arrow overlay is unmounted when `showArrow` goes false (`:159`).
 - **Workaround:** none.
 - **Fidelity:** dropped (exits, sibling slide); approximated (first-mount fade).
 - **Components it hits:** just this one.
@@ -27,7 +27,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `gpuix gap`. Shared: variable-font axes ([README, Missing features, variable-font row](../README.md)).
 - **Original:** option titles (through the ghost-span trick), the chip number, the heading and the textareas use `fontVariationSettings` 400 / 550, eased over 80 ms (`:1054-1058`, `:1742-1761`, `:1281`).
-- **Port:** `StableLabel` and `weight.semibold` (600), switched at once (`StableLabel` in the stacked layout and for a title with no description, `ask-user-questions.tsx:769-773`, `:235`, `:994`; in the inline layout the title is a `StableLabel` atom inside the run, `:1134-1139`).
+- **Port:** `StableLabel` and `weight.semibold` (600), switched at once (`StableLabel` in the stacked layout and for a title with no description, `ask-user-questions.tsx:769-773`, `:235`, `:1000`; in the inline layout the title is a `StableLabel` atom inside the run, `:1134-1139`).
 - **Fidelity:** approximated.
 - **Components it hits:** card, table, tabs, tabs-subtle, sidebar.
 
@@ -53,7 +53,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `port choice` (reason not stated; the port routes all keys through one `onKeyDown` on the card).
 - **Original:** `1`-`9` is a document-level listener that works with no focus in the card, answered by one instance chosen through `mountedInstances` (`:125-130`, `:174-221`). The root `<div>` is not focusable (`:1202-1223`).
-- **Port:** the keys work only while focus is inside the card, and the card has `tabIndex={0}`, an extra Tab stop before the rows (`ask-user-questions.tsx:951`).
+- **Port:** the keys work only while focus is inside the card, and the card has `tabIndex={0}`, an extra Tab stop before the rows (`ask-user-questions.tsx:957`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** any component with a global shortcut.
@@ -62,7 +62,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** when a keyboard-driven step changes the question, the new first row is focused in the same commit; a mouse step does not restore (`:394-424`).
-- **Port:** the first row is focused 48 ms later (a synchronous focus from the effect leaves focus on nothing, checked), and `keyboardDriving` turns true on any keydown and false on mousedown (`ask-user-questions.tsx:480-494`, `:525`, `:948-950`).
+- **Port:** the first row is focused 48 ms later (a synchronous focus from the effect leaves focus on nothing, checked), and `keyboardDriving` turns true on any keydown and false on mousedown (`ask-user-questions.tsx:480-494`, `:525`, `:948-956`).
 - **Workaround:** a timer.
 - **Fidelity:** approximated (a 48 ms gap).
 - **Components it hits:** just this one.
@@ -89,7 +89,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `not ported yet` (the `Field` wiring is Base UI; the rest could be built).
 - **Original:** `Field.Error` renders `motion.p role="alert"`, rising from `y: -2` with a 120 ms opacity, padded `px-2 sm:px-3`, and its id lands in the textarea's `aria-describedby` and `aria-invalid` (`:1253`, `:1463-1482`).
-- **Port:** a plain `<text>` with `paddingLeft` 12, no `role`, no association with the field (`ask-user-questions.tsx:1056-1068`).
+- **Port:** a plain `<text>` with `paddingLeft` 12, no `role`, no association with the field (`ask-user-questions.tsx:1063-1075`).
 - **Workaround:** none.
 - **Fidelity:** approximated (visual); dropped (semantics).
 - **Components it hits:** just this one.
@@ -116,7 +116,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 - **Cause:** `gpuix gap` for touch (`(hover: none)` / `pointer-coarse` never match; see `drift/queued-stack.md`); `not ported yet` for the `sm:` breakpoint (gpuix has `matchMedia`).
 - **Original:** below 640px the card pads 16 not 20, Back and Skip drop their arrows, Continue drops its ⌘↵ chip (`hidden sm:contents`), and the textarea gets `pointer-coarse:py-px -my-px` (`:1180-1193`, `:1226-1236`, `:1447`, `:1549`).
-- **Port:** the ≥`sm` values only (`ask-user-questions.tsx:949-957`, `:1028-1104`).
+- **Port:** the ≥`sm` values only (`ask-user-questions.tsx:955-963`, `:1035-1112`).
 - **Workaround:** none; desktop only.
 - **Fidelity:** dropped.
 - **Components it hits:** any touch-aware component.

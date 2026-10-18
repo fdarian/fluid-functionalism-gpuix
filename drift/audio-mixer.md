@@ -4,14 +4,14 @@ Original: `app/slider/page.tsx` of the source (fluidfunctionalism.com at 0a0377e
 Ported in `src/pages/audio-mixer.tsx`, routed by the page registry (`src/lib/demo.ts` `loadPages`, `src/app.tsx` `PageBody`), listed in the site menu only.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The column is 600 wide, the source's is 720
 
 - **Cause:** `port choice` (the port keeps the docs layout; the page is `layout: "docs"`).
 - **Original:** `w-full max-w-[720px] mx-auto px-10 py-10`, a 640px content column, no sidebar or right column (`app/slider/page.tsx:66`).
-- **Port:** the docs column, 600 wide, with the sidebar on the left and the customise card on the right (`src/app.tsx:336-343`, `PAGE_WIDTH`). Sliders are 40px narrower, and the page sits inside the app frame rather than alone in the window.
+- **Port:** the docs column, 600 wide, with the sidebar on the left and the customise card on the right (`src/app.tsx:337-344`, `PAGE_WIDTH`). Sliders are 40px narrower, and the page sits inside the app frame rather than alone in the window.
 - **Fidelity:** approximated (same rows, narrower tracks).
 - **Components it hits:** every `layout: "docs"` page.
 

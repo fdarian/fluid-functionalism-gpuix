@@ -7,7 +7,7 @@ Ported in `src/pages/sizes.tsx`, with the demos in `src/pages/sizes/` (`toolbar.
 chips, Copy prompt button, `ComponentPreview` frame and the missing prev / next arrows are the same as the Motion page's: see `drift/motion-page.md`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, variable-font axes, `text-box-trim`, `text-wrap: balance`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, variable-font axes, `text-box-trim`, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## No `SizeProvider`: every control in a region gets `size` explicitly
@@ -83,7 +83,7 @@ repeating it.
 
 - **Cause:** `not ported yet` (the `S` shortcut, `drift/site.md`, "Theme: shortcut, tooltips, toasts").
 - **Original:** "Press `S` to toggle on the website" and an `<a href="/docs/typography" className="mx-1 text-foreground underline underline-offset-4">Typography</a>` (`app/docs/sizes/page.tsx:590-592, 616-622`).
-- **Port:** both are verbatim. `S` does nothing (the Size row in the customise card changes the step); "Typography" is the shared `Link` (`src/lib/doc-page.tsx:82-120`) with the same `mx-1` and foreground colour, and a click or Enter shows the Typography page.
+- **Port:** both are verbatim. `S` does nothing (the Size row in the customise card changes the step); "Typography" is the shared `Link` (`src/lib/doc-page.tsx:89-129`) with the same `mx-1` and foreground colour, and a click or Enter shows the Typography page.
 - **Fidelity:** exact text, describes more than the port does; the link is exact.
 
 ## The API reference sections are left out
