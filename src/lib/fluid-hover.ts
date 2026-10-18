@@ -122,7 +122,7 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 	let container: HostElement | undefined;
 	let pointer: { x: number; y: number } | undefined;
 	let sessionPending = false;
-	// Read once and kept: a bounds read in a handler forces a draw of the pending changes, and a hover spring leaves the window dirty on most frames, so reading per move cost a draw per move.
+	// Read once and kept: a bounds read in a handler forces a draw of the pending changes, and a hover spring leaves the window dirty on most frames, so reading per move cost a draw per move. `offsetX` cannot replace it: it is relative to the deepest element under the pointer, not to this container.
 	let containerBox:
 		| ReturnType<HostElement['getBoundingClientRect']>
 		| undefined;
