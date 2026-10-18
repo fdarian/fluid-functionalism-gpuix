@@ -30,6 +30,7 @@ import {
 	shape,
 	sizeChoice,
 	weight,
+	weightFade,
 	withAlpha,
 } from '#/lib/theme';
 
@@ -640,6 +641,7 @@ export function CardTitle(props: { children: string }) {
 						fontVariationSettings: scope.emphasized()
 							? weight.semibold
 							: weight.normal,
+						...weightFade,
 						whiteSpace: 'nowrap',
 					}}
 				>

@@ -38,7 +38,7 @@ import { createMeasuredHeight } from '#/lib/measured-height';
 import { StableLabel } from '#/lib/stable-label';
 import {
 	color,
-	colorFade,
+	colorWeightFade,
 	fade,
 	height,
 	type as scale,
@@ -472,7 +472,7 @@ export function SidebarMenuButton(props: {
 									: weight.normal,
 								color: props.active ? color.foreground : color.mutedForeground,
 								fontVariantNumeric: 'tabular-nums',
-								...colorFade,
+								...colorWeightFade,
 							}}
 						>
 							{text()}

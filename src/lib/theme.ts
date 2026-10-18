@@ -492,6 +492,12 @@ const COLORS = ['color', 'background-color', 'border-color', 'outline-color'];
 /** `transition-colors duration-80`, the source's usual: Tailwind's default curve over 80 ms. */
 export const colorFade = fade(COLORS, 80);
 
+/** `transition-[font-variation-settings] duration-80`: the weight eases between two tokens that name the same axes. */
+export const weightFade = fade(['font-variation-settings'], 80);
+
+/** `transition-[color,font-variation-settings] duration-80`, the source's ghost-grid label; `color` is `transition-colors`' four colours here. */
+export const colorWeightFade = fade([...COLORS, 'font-variation-settings'], 80);
+
 /** `transition-colors` with no duration class: Tailwind's default 150 ms. */
 export const colorFadeDefault = fade(COLORS, 150);
 

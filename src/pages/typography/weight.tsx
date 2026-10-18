@@ -145,7 +145,7 @@ function WeightItem(props: {
 							props.selected || hovered()
 								? color.foreground
 								: color.mutedForeground,
-						...fade(['color'], 80),
+						...fade(['color', 'font-variation-settings'], 80),
 					}}
 				>
 					{MENU_LABEL}

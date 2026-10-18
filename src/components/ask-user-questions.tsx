@@ -34,6 +34,7 @@ import {
 	shape,
 	motion as tween,
 	weight,
+	weightFade,
 	withAlpha,
 } from '#/lib/theme';
 import { Button } from './button';
@@ -241,6 +242,7 @@ function Row(props: RowProps) {
 						fontVariationSettings: props.chipFilled
 							? weight.semibold
 							: weight.normal,
+						...weightFade,
 						color: props.isMulti
 							? props.chipFilled
 								? color.background

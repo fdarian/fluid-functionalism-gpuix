@@ -67,6 +67,7 @@ function RoleText(props: { role: RoleOption; checked: boolean; lit: boolean }) {
 			<StableLabel
 				text={props.role.label}
 				heavy={props.checked}
+				snapWeight
 				color={props.lit ? color.foreground : color.mutedForeground}
 			/>
 			<text style={{ ...siteType.caption, color: color.mutedForeground }}>

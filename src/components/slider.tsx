@@ -30,6 +30,7 @@ import {
 import { POPUP_EXIT_MS } from '#/lib/popup-timing';
 import {
 	color,
+	fade,
 	focusRing,
 	type as scale,
 	shape,
@@ -160,6 +161,9 @@ function layoutWidth(event: Pick<DomEvent, 'width'>) {
 
 // ─── Value display (compact) ─────────────────────────────────────────────────
 
+/** The value readout's `transition-[font-variation-settings] duration-100`, the one slider transition that is not 80 ms. */
+const valueFade = fade(['font-variation-settings'], 100);
+
 /** The compact engine's value label. Clicking a number swaps in a field; Enter or blur commits, Escape cancels. */
 function ValueDisplay(props: {
 	values: readonly number[];
@@ -238,6 +242,7 @@ function ValueDisplay(props: {
 				<text
 					style={{
 						...textStyle(props.interacting()),
+						...valueFade,
 						color: color.mutedForeground,
 					}}
 				>
@@ -361,6 +366,7 @@ function ValueDisplay(props: {
 					<text
 						style={{
 							...textStyle(props.interacting()),
+							...valueFade,
 							color: color.mutedForeground,
 						}}
 					>

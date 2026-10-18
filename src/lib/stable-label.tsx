@@ -1,5 +1,11 @@
 import type { HostElement } from '@gpuix/solid';
-import { colorFade, type as scale, weight } from './theme';
+import {
+	colorFade,
+	colorWeightFade,
+	type as scale,
+	weight,
+	weightFade,
+} from './theme';
 
 /**
  * A label that gains weight in place. A hidden semibold copy and the visible
@@ -15,8 +21,10 @@ export function StableLabel(props: {
 	grow?: boolean;
 	/** Defaults to the body role. */
 	textStyle?: { fontSize: number; lineHeight: string };
-	/** Ease a colour change over 80 ms (the weight still switches at once). */
+	/** Ease a colour change over 80 ms too; the weight always eases unless `snapWeight`. */
 	fade?: boolean;
+	/** The weight switches at once: a row the source draws without a weight transition. */
+	snapWeight?: boolean;
 	/** A label wider than its row ends in an ellipsis instead of wrapping. */
 	truncate?: boolean;
 	/** A label that never wraps (the source's tab labels). */
@@ -36,6 +44,12 @@ export function StableLabel(props: {
 			? { overflow: 'hidden' as const, textOverflow: 'ellipsis' as const }
 			: {}),
 	});
+	const transition = () => {
+		const colors = props.fade === true;
+		const weights = props.snapWeight !== true;
+		if (colors) return weights ? colorWeightFade : colorFade;
+		return weights ? weightFade : {};
+	};
 	return (
 		<div
 			ref={props.labelRef}
@@ -57,7 +71,7 @@ export function StableLabel(props: {
 				style={{
 					...cellStyle(props.heavy),
 					color: props.color,
-					...(props.fade === true ? colorFade : {}),
+					...transition(),
 				}}
 			>
 				{props.text}
