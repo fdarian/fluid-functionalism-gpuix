@@ -34,6 +34,8 @@ import { Icon } from '#/lib/icon';
 import type { IconRef } from '#/lib/icons';
 import { IS_MAC } from '#/lib/platform';
 import {
+	capTrim,
+	clippedCapTrim,
 	color,
 	colorFade,
 	radius,
@@ -1150,6 +1152,7 @@ export function CommandMenuItem(props: {
 							display: 'flex',
 							flexDirection: 'row',
 							alignItems: 'center',
+							alignSelf: 'stretch',
 							flexGrow: 1,
 							minWidth: 0,
 							gap: 8,
@@ -1163,6 +1166,7 @@ export function CommandMenuItem(props: {
 								color: active() ? color.foreground : color.mutedForeground,
 								...colorFade,
 								whiteSpace: 'nowrap',
+								textBox: capTrim,
 							}}
 						>
 							{item().label}
@@ -1177,6 +1181,7 @@ export function CommandMenuItem(props: {
 										whiteSpace: 'nowrap',
 										textOverflow: 'ellipsis',
 										overflow: 'hidden',
+										...clippedCapTrim(),
 									}}
 								>
 									{description()}
@@ -1191,6 +1196,7 @@ export function CommandMenuItem(props: {
 						display: 'flex',
 						flexDirection: 'row',
 						alignItems: 'center',
+						alignSelf: 'stretch',
 						flexGrow: 1,
 						minWidth: 0,
 						gap: 8,
@@ -1233,6 +1239,7 @@ export function CommandMenuItemText(props: {
 				whiteSpace: 'nowrap',
 				textOverflow: 'ellipsis',
 				overflow: 'hidden',
+				...clippedCapTrim(),
 			}}
 		>
 			{props.children}

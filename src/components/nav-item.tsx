@@ -163,6 +163,7 @@ export function NavItem(props: {
 				fade
 				grow={dot() === undefined}
 				truncate
+				trim
 			/>
 			<Show when={dot()}>
 				{(fill: () => string) => (

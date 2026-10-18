@@ -317,6 +317,7 @@ export function TabsSubtleItem(props: {
 			textStyle={metrics().text}
 			fade
 			nowrap
+			trim
 		/>
 	);
 

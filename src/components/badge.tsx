@@ -1,6 +1,13 @@
 import type { StyleDesc } from '@gpuix/solid';
 import { type JSX, Show } from 'solid-js';
-import { color, type as scale, shape, sizeChoice, weight } from '#/lib/theme';
+import {
+	capTrim,
+	color,
+	type as scale,
+	shape,
+	sizeChoice,
+	weight,
+} from '#/lib/theme';
 
 export const badgeColors = {
 	gray: '#a3a3a3',
@@ -86,6 +93,7 @@ export function Badge(props: {
 					color: color.foreground,
 					fontVariationSettings: weight.normal,
 					whiteSpace: 'nowrap',
+					textBox: capTrim,
 				}}
 			>
 				{props.children}

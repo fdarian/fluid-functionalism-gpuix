@@ -22,6 +22,7 @@ import { createFluidHover } from '#/lib/fluid-hover';
 import { Icon } from '#/lib/icon';
 import { defineIcon, type IconRef } from '#/lib/icons';
 import {
+	capTrim,
 	color,
 	colorFade,
 	fade,
@@ -621,6 +622,9 @@ export function CardHeader(props: { children: JSX.Element }) {
 export function CardTitle(props: { children: string }) {
 	const scope = useContext(CardContext);
 	const text = () => subtitle[scope.compact() ? 'compact' : 'default'];
+	// Inline rows trim the title so it centres tightly against the media and actions; stacked cards keep the line box.
+	const trim = () =>
+		scope.orientation() === 'inline' ? { textBox: capTrim } : {};
 	return (
 		<div style={{ position: 'relative', minWidth: 0 }}>
 			<text
@@ -629,6 +633,7 @@ export function CardTitle(props: { children: string }) {
 					fontVariationSettings: weight.semibold,
 					opacity: 0,
 					whiteSpace: 'nowrap',
+					...trim(),
 				}}
 			>
 				{props.children}
@@ -643,6 +648,7 @@ export function CardTitle(props: { children: string }) {
 							: weight.normal,
 						...weightFade,
 						whiteSpace: 'nowrap',
+						...trim(),
 					}}
 				>
 					{props.children}
@@ -910,6 +916,7 @@ export function CardFeature(props: {
 						...(scope.compact() ? scale.bodyCompact : scale.body),
 						color: color.foreground,
 						fontVariationSettings: weight.semibold,
+						textBox: capTrim,
 					}}
 				>
 					{props.title}
@@ -1012,6 +1019,7 @@ export function CardButton(props: {
 					...colorFade,
 					fontVariationSettings: weight.normal,
 					whiteSpace: 'nowrap',
+					textBox: capTrim,
 					...(variant() === 'link' && hovered()
 						? { textDecoration: 'underline', textUnderlineOffset: 4 }
 						: {}),

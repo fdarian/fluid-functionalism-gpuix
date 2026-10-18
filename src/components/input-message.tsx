@@ -24,6 +24,7 @@ import { Icon } from '#/lib/icon';
 import { createMeasuredHeight } from '#/lib/measured-height';
 import { PressFill, pressSurface } from '#/lib/press';
 import {
+	clippedCapTrim,
 	color,
 	colorFade,
 	fade,
@@ -494,6 +495,7 @@ function QueuedRow(props: {
 						whiteSpace: 'nowrap',
 						textOverflow: 'ellipsis',
 						overflow: 'hidden',
+						...clippedCapTrim(),
 					}}
 				>
 					{label()}
@@ -594,6 +596,7 @@ function SuggestionRow(props: {
 					whiteSpace: 'nowrap',
 					textOverflow: 'ellipsis',
 					overflow: 'hidden',
+					...clippedCapTrim(),
 				}}
 			>
 				{props.text}

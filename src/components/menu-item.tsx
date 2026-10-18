@@ -142,6 +142,7 @@ export function MenuItem(props: {
 				color={lit() ? color.foreground : color.mutedForeground}
 				fade
 				grow
+				trim
 			/>
 			<Show when={props.chevron}>
 				<Icon

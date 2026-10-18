@@ -5,6 +5,7 @@ import {
 } from 'base-ui-solid-gpuix/switch';
 import { createSignal, createUniqueId } from 'solid-js';
 import {
+	capTrim,
 	color,
 	fade,
 	focusRing,
@@ -201,6 +202,7 @@ export function Switch(props: {
 					...m().text,
 					fontVariationSettings: weight.normal,
 					whiteSpace: 'nowrap',
+					textBox: capTrim,
 					color: props.checked ? color.foreground : color.mutedForeground,
 					...fade(['color'], 80),
 				}}

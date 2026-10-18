@@ -10,6 +10,7 @@ import { Icon } from '#/lib/icon';
 import type { IconRef } from '#/lib/icons';
 import { PressFill, pressSurface } from '#/lib/press';
 import {
+	capTrim,
 	color,
 	colorFade,
 	focusRing,
@@ -186,6 +187,7 @@ export function Button(props: {
 							...colorFade,
 							fontVariationSettings: weight.normal,
 							whiteSpace: 'nowrap',
+							textBox: capTrim,
 						}}
 					>
 						{props.children}

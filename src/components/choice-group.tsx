@@ -304,6 +304,7 @@ export function ChoiceRow(props: {
 						: color.mutedForeground
 				}
 				textStyle={size().text}
+				trim
 			/>
 		</div>
 	);

@@ -18,7 +18,13 @@ import {
 } from 'base-ui-solid-gpuix/tooltip';
 import { createSignal, type JSX, Show } from 'solid-js';
 import { POPUP_EXIT_FALLBACK_MS } from '#/lib/popup-timing';
-import { color, type as scale, shape, motion as tween } from '#/lib/theme';
+import {
+	capTrim,
+	color,
+	type as scale,
+	shape,
+	motion as tween,
+} from '#/lib/theme';
 
 export type TooltipSide = 'top' | 'right' | 'bottom' | 'left';
 
@@ -181,8 +187,9 @@ export function Tooltip(props: {
 							borderRadius: shape.bg,
 							paddingLeft: 8,
 							paddingRight: 8,
-							paddingTop: 4,
-							paddingBottom: 4,
+							paddingTop: 8,
+							paddingBottom: 8,
+							textBox: capTrim,
 						}}
 					>
 						<Show

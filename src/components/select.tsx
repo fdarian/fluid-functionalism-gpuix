@@ -18,6 +18,7 @@ import type { IconRef } from '#/lib/icons';
 import { PopupSurface } from '#/lib/popup';
 import { POPUP_EXIT_FALLBACK_MS } from '#/lib/popup-timing';
 import {
+	clippedCapTrim,
 	color,
 	colorFade,
 	focusRing,
@@ -360,6 +361,7 @@ export function Select<Value extends string>(props: {
 								whiteSpace: 'nowrap',
 								textOverflow: 'ellipsis',
 								overflow: 'hidden',
+								...clippedCapTrim(),
 								color:
 									selected() === undefined
 										? color.mutedForeground
@@ -545,6 +547,7 @@ function Row<Value extends string>(props: {
 					whiteSpace: 'nowrap',
 					textOverflow: 'ellipsis',
 					overflow: 'hidden',
+					...clippedCapTrim(),
 					color: props.lit ? color.foreground : color.mutedForeground,
 					...colorFade,
 				}}

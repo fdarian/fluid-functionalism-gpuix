@@ -13,6 +13,7 @@ import type { IconRef } from '#/lib/icons';
 import { PopupSurface } from '#/lib/popup';
 import { POPUP_EXIT_FALLBACK_MS } from '#/lib/popup-timing';
 import {
+	clippedCapTrim,
 	color,
 	colorFade,
 	fade,
@@ -424,6 +425,7 @@ export function Combobox(props: {
 														whiteSpace: 'nowrap',
 														textOverflow: 'ellipsis',
 														overflow: 'hidden',
+														...clippedCapTrim(),
 													}}
 												>
 													{row.label}

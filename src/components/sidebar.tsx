@@ -419,6 +419,7 @@ export function SidebarMenuButton(props: {
 				text={props.label}
 				heavy={props.active === true}
 				truncate
+				trim
 				fade
 				color={lit() ? color.foreground : color.mutedForeground}
 				grow={props.dot === undefined}

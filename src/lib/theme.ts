@@ -298,6 +298,26 @@ export function surface(level: number) {
 	}
 }
 
+/** The source's `[text-box:trim-both_cap_alphabetic]`: a label's box ends at its capitals and baseline. */
+export const capTrim = 'trim-both cap alphabetic';
+
+/**
+ * The trim for a label that clips (`overflow: hidden`). The clip box is the
+ * trimmed one, so it would shave the ascenders and descenders; padding extends
+ * it and the negative margins take that back out of the layout, as the source's
+ * `py-1 -my-1` (or `0.25em`) does.
+ */
+export function clippedCapTrim(pad: number | string = 4) {
+	const negative = typeof pad === 'number' ? -pad : `-${pad}`;
+	return {
+		textBox: capTrim,
+		paddingTop: pad,
+		paddingBottom: pad,
+		marginTop: negative,
+		marginBottom: negative,
+	};
+}
+
 /** Type scale, default step: `typeStyles` in lib/type-scale.ts. */
 export const type = {
 	display: { fontSize: 28, lineHeight: '34px' },

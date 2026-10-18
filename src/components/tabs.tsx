@@ -348,6 +348,7 @@ export function TabItem(props: {
 				textStyle={metrics().text}
 				fade
 				nowrap
+				trim
 			/>
 		</div>
 	);

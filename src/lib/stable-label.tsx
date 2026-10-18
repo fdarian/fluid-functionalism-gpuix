@@ -1,5 +1,7 @@
 import type { HostElement } from '@gpuix/solid';
 import {
+	capTrim,
+	clippedCapTrim,
 	colorFade,
 	colorWeightFade,
 	type as scale,
@@ -31,6 +33,8 @@ export function StableLabel(props: {
 	truncate?: boolean;
 	/** A label that never wraps (the source's tab labels). */
 	nowrap?: boolean;
+	/** The source's `text-box: trim-both cap alphabetic` on both copies. */
+	trim?: boolean;
 	/** The wrapper, for a caller that measures the label's width. */
 	labelRef?: (element: HostElement) => void;
 	testId?: string;
@@ -44,6 +48,11 @@ export function StableLabel(props: {
 		...(singleLine() ? { whiteSpace: 'nowrap' as const } : {}),
 		...(props.truncate === true
 			? { overflow: 'hidden' as const, textOverflow: 'ellipsis' as const }
+			: {}),
+		...(props.trim === true
+			? props.truncate === true
+				? clippedCapTrim('0.25em')
+				: { textBox: capTrim }
 			: {}),
 	});
 	const transition = () => {
