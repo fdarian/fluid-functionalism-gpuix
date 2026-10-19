@@ -1,11 +1,11 @@
 ---
 type: decision record
 title: Port decisions and their reasons
-description: Why the Fluid Functionalism port to gpuix uses native springs, native hover states, a single fluid highlight, a single-quad press-shrink fill, variable Inter with the source's weight tokens, createAppearance theming with a transient cross-fade layer, the kept off-screen culling and cached fluid-hover box with their measurements, file-discovered demos, the drift/ convention, the screenshot and check-* harness, and its pnpm, tsconfig and Biome settings.
+description: Why the Fluid Functionalism port to gpuix uses native springs, native hover states, a single fluid highlight, a single-quad press-shrink fill, variable Inter with the source's weight tokens, createAppearance theming with a transient cross-fade layer, the kept off-screen culling, cached fluid-hover box and two-ghost StableLabel with their measurements, the move of JS frame loops to native gpuix animation, file-discovered demos, the drift/ convention, the screenshot and check-* harness, and its pnpm, tsconfig and Biome settings.
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-19T04:08:14.446Z
+    at: 2026-10-19T10:45:55.491Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -27,16 +27,26 @@ sources:
     resource: repo://scripts/check-weight-widths.tsx
   - id: openwiki-source-edfa365c97d8e399b7824f84
     resource: repo://scripts/registry-plugin.ts
+  - id: openwiki-source-a29d9251e39930cd08b68b32
+    resource: repo://scripts/run-scenarios.ts
   - id: openwiki-source-5ebe82cc5f9e383e14411602
     resource: repo://src/app.tsx
   - id: openwiki-source-456bdd1fc2b44eea01d30954
     resource: repo://src/components/button.tsx
   - id: openwiki-source-d17fc045a3296520b28371ae
     resource: repo://src/components/card.tsx
+  - id: openwiki-source-52272ff1f298332dd4484482
+    resource: repo://src/components/carousel-dots.tsx
   - id: openwiki-source-acfa9c6a13d1ded9117c4665
     resource: repo://src/components/color-picker.tsx
+  - id: openwiki-source-239fd08429aaf6fcfc61fa9f
+    resource: repo://src/components/file-thumbnail.tsx
   - id: openwiki-source-94d7540365b6edfe6f6a0bbe
     resource: repo://src/components/table.tsx
+  - id: openwiki-source-a79b6ccf1548a05902eb90b6
+    resource: repo://src/demos/thinking-steps.tsx
+  - id: openwiki-source-b100b0574d7a0258fad9b8f3
+    resource: repo://src/lib/clock.ts
   - id: openwiki-source-3763179c46a618f0eea1b1ba
     resource: repo://src/lib/cull.ts
   - id: openwiki-source-d8bbfda4e9c9d1361b2fe340
@@ -61,7 +71,7 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-19T04:08:14.446Z" }
+generated: { by: "claude-code", at: "2026-10-19T10:45:55.491Z" }
 ---
 
 # Port decisions and their reasons
@@ -161,29 +171,27 @@ two Inter 4.0 variable files the source serves (upright and italic, family name 
   both). `StableLabel` does it by default; `snapWeight` is for rows the source draws without a weight transition
   (the surfaces page's role rows). Weight is not eased on a label by default merely because it can be: copy the
   source's transition list.
-- **`StableLabel` reserves the semibold width alone, as the source does.** The source's hidden copy is semibold only,
-  and its `font-weight.ts` claims semibold stays within 0.4 px of normal; that claim fails in the browser too, so a
-  label whose semibold is narrower (Toggle dark mode) shrinks by up to about 1 px when selected and nudges its
-  neighbours, there and here. The port first added a second hidden normal-weight copy so the cell never moved, then
-  dropped it (`6ad107a`) for a rare, sub-pixel effect. The cost was first put at about 1.4 ms per draw on the theory
-  that gpuix re-measures every `<text>` each frame; re-measured on gpuix `poc` `365f7c88` (three interleaved A/B
-  rounds, sidebar-sweep draw p95, one ghost to two) it is still about 1.5 ms although the text is no longer
-  re-measured: radio-group 8.1-8.5 to 10.4-11.5 ms, tabs 8.4-9.5 to 9.9-11.0, dialog 6.5-7.0 to 7.8-8.6, accordion
-  12.0-13.2 to 13.8-14.5. Do not add it
-  back to "fix" the shrink; it is parity, and not free.
+- **`StableLabel` reserves the wider of the normal and semibold widths, which is not what the source does.** The
+  source's hidden copy is semibold only, and its `font-weight.ts` claims semibold stays within 0.4 px of normal; that
+  claim fails in the browser too, so a label whose semibold is narrower (Pro plan 51 to 50 px, Toggle dark mode)
+  shrinks by up to about 1 px when selected and nudges its neighbours, there and here. The port has gone back and
+  forth: a second hidden normal-weight copy first (so the cell never moves), dropped as `6ad107a` for a rare,
+  sub-pixel effect (on the grounds of cost), then reinstated in `54405f67` (the 2026-10-19 round on gpuix
+  `5fda771a`) because the point of the label is that its box does not change width. The cell is now
+  `max(normal, semibold)`. The cost is real and accepted, and it is why the label keeps its two hidden `<text>`
+  nodes; see [StableLabel's second ghost](#stablelabels-second-ghost-what-it-costs-and-what-did-not-help).
 
 **The weight-width check measures against the browser, not the source's claim.** Chromium measuring the same
 `InterVariable.ttf` and tokens does not reproduce the source's 0.4 px claim (Analytics grows 1.05 px; a long all-caps
 string shrinks 1.13 px), and gpuix matches Chromium to 0.1 px. `scripts/check-weight-widths.tsx` therefore asserts
 parity with the browser's delta and only prints how many strings the source's claim misses. Its second half mounts
-every `StableLabel` user through its demo page and steps the held motion clock across the ease, asserting exact
-boxes for the label itself and, for the rows around it, boxes within 1 px: gpuix now measures text fractionally
-(#41) but snaps every JS bounds read to whole device pixels per edge (#45), so a neighbour's edge can read under
-1 px off without having moved (a label's own box has no such excuse, so it stays exact). Its synthetic mount of
-labels narrower at semibold asserts parity, not stillness: the heavy cell is the semibold copy's width and the
-shrink on selection equals the normal-minus-semibold difference, each within 1 px for the same reason, and the
-shrink is logged. A failure of 1 px or more is a real move; do not widen the tolerance further. It runs at 1x, so
-widths at a retina display's 2x scale are not measured.
+every `StableLabel` user through its demo page and steps the held motion clock across the ease, asserting that the
+label's box and the boxes of its row neighbours are exactly where they were. Its synthetic mount of labels that are
+narrower at semibold ("Pro plan", "Toggle dark mode") asserts the cell is identical light and heavy and equals the
+wider of the two copies, exactly. An interim version of the check (`407127fb`) allowed 1 px on neighbours and on the
+shrink, because gpuix snaps every JS bounds read to whole device pixels per edge (#45) and the semibold-only ghost
+really did shrink; with two ghosts the cell cannot move, and that loosening was reverted. A failure now is a real
+move, so do not reintroduce a tolerance. It runs at 1x, so widths at a retina display's 2x scale are not measured.
 
 ## Performance decisions on gpuix `poc` e5231304
 
@@ -223,6 +231,67 @@ The changelog's `width: '100%'` column wrappers, added on 2026-10-17 when nested
 per level (8 columns drew in 121 ms, 20 ms with the wrappers), were removed once gpuix #36 made that layout linear.
 The removal measured no change (changelog sweep draw p95 10.9 to 11.0 ms), so they are not a perf decision to
 restore.
+
+### StableLabel's second ghost: what it costs and what did not help
+
+Measured on gpuix `5fda771a` (sidebar-sweep draw p95, with and without the second hidden copy; `pnpm perf`, numbers
+not committed): **+1.0-1.7 ms p95 and about +0.1 ms p50 on every page measured.** The earlier figure of about 1.5 ms
+on `365f7c88` still holds, so it is not a stale-measurement artifact. Where it goes: a hidden `<text>` costs about
+2 us on a frame that replays its label and 15-19 us on a frame that builds it, and the slow ~19% of live sweep draws
+are the builds. So the cost is paid on frames that rebuild the tree, not on replayed ones. The decision is to pay it:
+the box must not change width when the weight changes.
+
+Two things that look like cures and are not:
+
+- **`inline-grid` to `grid` on the label wrapper was tried and reverted: no gain.** The label sits in flex rows, so
+  its items are blockified and retained either way. The cost is not an atomic-inline exclusion from retention.
+- **The text is not re-shaped** each frame, so it is not a measurement cost either. gpuix has no text-measure API,
+  so a hidden copy is the only way to hold the wider width.
+
+The numbers and a reproduction live outside the repository, in the author's notes
+`~/.claude/notes/ff-gpuix-repros/` (`r2-hidden-text-cost.md`, `r3-hidden-text-rebuilt-frames.md`); they are not
+repository files and may not exist on another machine. The reasoning also sits in `stable-label.tsx`'s doc comment.
+
+### JS frame-clock loops moved to gpuix native animation
+
+Until 2026-10-19 the file-thumbnail spinner, the thinking indicator (glyph, shimmer, word cycle), the carousel-dots
+autoplay fill and two scripted cursors (the Fluid Hover plain-versus-fluid cursor and the skill pages' script cursor)
+ran on `onFrame`, one shared 16 ms `setInterval` clock (`src/lib/clock.ts`), because gpuix has no
+`requestAnimationFrame`. gpuix does have native motion values, `repeat`, and CSS keyframes, so these now run in the
+renderer and cost no JS per frame. The reasons to prefer it, and the traps:
+
+- **What it buys.** A native frame costs about 1.8-3 ms of draw against about 7-11 ms for a JS-driven redraw, because
+  every signal a JS loop sets redraws the whole window. Idle CPU before to after, same pages: file-thumbnail
+  50.3 to 21.0%, carousel-dots 52.2/50.3 to 20.6/20.1%, plain-vs-fluid on Fluid Hover 65 to 36% (draw p50 11 to 3 ms)
+  and on the changelog 64 to 39%, thinking-indicator 29.0 to 26.4% (draw p50 8.6 to 2.4 ms), script cursors on a
+  page of examples 26 to 14.5%. Pages whose idle cost was something else did not move (changelog and showcase for the
+  carousel; thinking-steps 70.9 to 69.2%).
+- **It runs at display rate.** The old thinking indicator ran at 30 frames a second; native animations run at the
+  display's 75 Hz with no throttle, so the saving there is the cheaper draw only, not fewer frames.
+- **No pause, play or seek on a gpuix animation** (only `stop()`, `cancel()`, `complete()`). Every pause is
+  `stop()` followed by a new `animate()` from the current value for the time left. That is exact for a linear
+  animation and is how the carousel fill, the plain-vs-fluid cursor (a linear 0 to 1 progress value whose keyframes
+  live in a range-form `createTransform`) and the script cursors pause. It also fixed a bug of the JS carousel: its
+  restart effect tracked the options object, so hovering the slide reset the fill to 0, where the source holds it.
+- **CSS keyframes cannot drive every property.** The file-thumbnail spinner is a `motion.circle` sliding
+  `strokeDashoffset`, not a CSS animation, because keyframes take style properties and not SVG attributes. The
+  thinking-indicator shimmer is per-letter colour keyframes (`defineKeyframes`) because `background-position` is not
+  animatable; the glyph is a `motion.path` morphing `d`; the word cycle is still a 4 s `setInterval`. Culled
+  regions mount a still copy, and the hidden width-reserving copy plays nothing, so nothing animates off screen.
+- **Who still uses `onFrame`, and why** is recorded in the doc comment of `src/lib/clock.ts`: thinking-steps'
+  chevron (the source's `rotate` is a transform gpuix cannot animate), the fluid-hover lists demo (re-measures rows
+  while a sub-menu springs), and the cost meter (reads the clock's gaps as its stall probe). Do not add a new
+  `onFrame` loop for something a motion value or keyframe can play.
+
+Each conversion has its own check (`check-file-thumbnail`, `check-thinking-indicator`, `check-carousel-dots`,
+`check-plain-vs-fluid`, `check-script-cursor`) that holds the motion clock and reads the result, so a native loop is
+verified against the source's timing and easing rather than against a screenshot.
+
+**The thinking-steps demo cards start when half of them is in view**, as the source does (`observeVisibleRatio` in
+`src/lib/cull.ts`, an `IntersectionObserver` wrapper against the window). The four playback cards used to start on
+mount, so off-screen cards mounted steps and ran active-step shimmers and the page idled near 70% CPU. A card now
+waits paused, plays at 50% or more visible, pauses below 10% keeping its elapsed time, and a finished card stays
+finished until replayed. A culled region has no box and reports 0, so it holds.
 
 ## Theme: System, Light and Dark through createAppearance
 
@@ -268,7 +337,9 @@ table is in the README.
 
 There is no browser to compare against, so verification is two headless harnesses on gpuix's offscreen test
 renderer: `pnpm screenshots` (captures per page) and `pnpm check:scenarios` (the `scripts/check-*` files, which
-assert behaviour, ARIA and focus). The README's "Screenshots run on the test renderer" notes list the test-renderer
+assert behaviour, ARIA and focus). `check:scenarios` runs every check
+and lists all failures at the end (`b429d8ca`); it used to stop at the first one, which hid everything after it in
+a 30-minute run. Run the check for the component you touched on its own (`bun scripts/check-<name>.tsx`). The README's "Screenshots run on the test renderer" notes list the test-renderer
 quirks. One trap: **captures are not byte-stable**. The playgrounds pick variants with `Math.random`, and the caret
 and timing-driven demos differ run to run, so compare the content area by pixel diff, never by hash, and do not
 recommit `screenshots/` for noise.
@@ -296,6 +367,8 @@ full mechanics. The decisions and what forced them:
 - **`noUncheckedIndexedAccess` is off.** The `@total-typescript` base config turns it on; on 2026-10-17 it alone
   produced 244 errors, mostly in code the Base UI extraction was about to rewrite. It was turned off to land the
   extraction and is an open follow-up.
+- **Biome skips `openwiki/` and `perf/`.** `perf/` is the frame-time data `pnpm perf` writes (not committed), which
+  is not source (`14d29504`).
 - **Biome's a11y rules are off.** They misfired 209 times on gpuix JSX, which is not HTML (gpuix elements carry
   their own roles and ARIA props). Accessibility is asserted instead in the check-* scenarios through gpuix's
   accessibility tree.

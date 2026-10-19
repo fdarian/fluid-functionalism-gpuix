@@ -4,10 +4,14 @@ title: gpuix gaps and divergence rounds
 description: Which gpuix gaps the port works around (summary, with the README as the full list), and the history of DOM divergences this port reported to the gpuix fork, round by round, with the gpuix commits that landed and the migrations the port made in response.
 tags: [gpuix, gaps, upstream, history, migration]
 sources:
+  - id: openwiki-source-dbc5a68e94d7e3a15a776857
+    resource: repo://drift/fluid-hover.md
   - id: openwiki-source-5cfc44b662eef11b303099d9
     resource: repo://drift/tabs-subtle.md
   - id: openwiki-source-97d0c3fefafadab09e5e7da3
     resource: repo://drift/tabs.md
+  - id: openwiki-source-7bed81eca49ee8a9899cacc5
+    resource: repo://drift/thinking-indicator.md
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
   - id: openwiki-source-8792b0b9d5aaa145ee2ebfa4
@@ -20,6 +24,8 @@ sources:
     resource: repo://scripts/drift-counts.ts
   - id: openwiki-source-5ebe82cc5f9e383e14411602
     resource: repo://src/app.tsx
+  - id: openwiki-source-52272ff1f298332dd4484482
+    resource: repo://src/components/carousel-dots.tsx
   - id: openwiki-source-923ee25729d055f35a254df3
     resource: repo://src/components/command-menu.tsx
   - id: openwiki-source-1dd7881206b2ce896ff9b518
@@ -38,6 +44,8 @@ sources:
     resource: repo://src/home/bento-grid.tsx
   - id: openwiki-source-2784d511d2f9a521edaf8bb9
     resource: repo://src/lib/app-frame.tsx
+  - id: openwiki-source-b100b0574d7a0258fad9b8f3
+    resource: repo://src/lib/clock.ts
   - id: openwiki-source-3763179c46a618f0eea1b1ba
     resource: repo://src/lib/cull.ts
   - id: openwiki-source-ff84ac67d7a6ebc693884d4f
@@ -52,10 +60,10 @@ sources:
     resource: repo://src/pages/changelog/changelog-view.tsx
   - id: openwiki-source-81c2a5e01f16d1053272b0de
     resource: repo://src/pages/changelog/entry.tsx
-generated: { by: "claude-code", at: "2026-10-19T05:52:37.290Z" }
+generated: { by: "claude-code", at: "2026-10-19T10:45:55.491Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-19T05:52:37.290Z
+    at: 2026-10-19T10:45:55.491Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -73,7 +81,8 @@ split into Bugs and Missing features, each with the components it hits and the w
 link to those rows rather than repeating them. The ones that shape the most code:
 
 - **No CSS transforms** (scale, rotate, translate). Popups keep the opacity fade and a 4px slide but lose the
-  `scaleY: 0.96` entrance; chevrons and spinners swap or redraw glyphs; panels move on `top`/`left`.
+  `scaleY: 0.96` entrance; chevrons swap or redraw glyphs; the file-thumbnail spinner cannot rotate and slides an
+  SVG dash instead; panels move on `top`/`left`.
 - **Layout-property motion only.** The fluid highlight glides on `top`/`left`/`width`/`height`, which re-lays out per
   frame, instead of a transform.
 - **Clipped content still costs a frame** (gpuix #46: retained and clipped content is not free). Long demo pages
@@ -86,7 +95,7 @@ link to those rows rather than repeating them. The ones that shape the most code
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
 The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17) and again in the
-[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `e5231304` as the minimum fork (it said `ed4e99c3` after round 6 and `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19)). The bugs and gaps worth knowing before touching layout code:
+[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `5fda771a` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`; see the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19)). The bugs and gaps worth knowing before touching layout code:
 
 - A function-form `createTransform` of several motion values is computed in JS and can trail its inputs by a frame
   on a live window (not seen on the test renderer). `calc()` strings of the row's own width avoid it where the layer
@@ -281,8 +290,9 @@ What the port changed, so a later reader can tell a regression from intent:
   horizontal `ScrollArea` with `min-width: 560`, as the source) and the ScrollArea demo's both-axis card, which now
   uses the real `Table`. The row highlight still follows the fluid hover's pick, not the pointer
   ([why](../decisions/port-decisions.md#hover-and-press-native-state-styles-first)).
-- **`StableLabel` is a real `inline-grid`.** A hidden semibold copy (the source's ghost span) and the visible copy share one grid cell, so it
-  wraps like the source, with `nowrap` and `truncate` opt-in. That lets the Ask-user inline title be an inline-grid
+- **`StableLabel` is a real `inline-grid`.** Hidden copies (the source's ghost span, semibold; since 2026-10-19 a
+  normal-weight copy too, see the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19)) and
+  the visible copy share one grid cell, so it wraps like the source, with `nowrap` and `truncate` opt-in. That lets the Ask-user inline title be an inline-grid
   atom inside a text run. `Badge` is `inline-flex` with a `style` prop, and the Lumen citation chips use it. The
   thinking-steps details wrapper is a block, as the source's, because a `fit-content` flex child with a negative
   margin hit a layout bug.
@@ -363,12 +373,15 @@ Which ones survived is the useful part, because several look removable:
 - **Kept: fluid hover's cached container box.** A live `getBoundingClientRect` is a layout pass of about 6 ms on
   gpuix; the idle cost of reading it per pick is invisible to a sweep benchmark and shows only in idle
   frame-callback time.
-- **Kept: one `StableLabel` ghost.** A second costs about 1.5 ms of sweep draw p95 on `365f7c88`.
+- **Dropped then, restored later: the second `StableLabel` ghost.** It cost about 1.5 ms of sweep draw p95 on
+  `365f7c88`, so this round kept one. It came back on 2026-10-19 (below) because a one-ghost label whose normal copy
+  is wider shrinks on selection; the cost was re-measured and accepted.
 - **Kept: the cap-trimmed label drift entry**, re-measured (gpuix #44, above).
 - **Removed: the changelog's `width: '100%'` column wrappers.** #36 made nested flex columns linear; measured
   change on `e5231304` was nil (changelog sweep draw p95 10.9 to 11.0 ms, idle CPU 58.8 to 57.6%, sum 520 to 487 ms).
 - **Removed: the README "real window can fail to boot with the display asleep" known issue.**
-- **Adapted: `check-weight-widths`** now tolerates 1px on neighbour and shrink assertions for #45's per-edge snapping.
+- **Adapted, later reverted: `check-weight-widths`** tolerated 1px on neighbour and shrink assertions for #45's
+  per-edge snapping. With the two-ghost label the box cannot move, so the check asserts exactly again.
 - **Adapted: the changelog Releases jump** re-aims while the port's culled entries un-pin on the way
   (`drift/site.md`); a cost of keeping the cull, not a gpuix bug.
 
@@ -406,3 +419,37 @@ cannot get from the diff:
 - **Screenshots were recaptured** on `e5231304`; spacing was checked against the source rendered in Chromium
   (introduction, card, command-menu). The playground-shuffled captures were left alone because `Math.random` picks
   their variant, so compare the content area by pixels, not hashes.
+
+## Native animation round on `poc` `5fda771a` (2026-10-19)
+
+The README now names `5fda771a` as the minimum fork. It carries a retention fix: six checks had needed a workaround
+for gpuix retaining elements, and they pass plainly on this pin. The same day the port moved its JS frame-clock loops
+to gpuix's native animation. Several earlier notes here said gpuix could not animate these; that is no longer true,
+and the remaining limits are narrower.
+
+- **What moved**: the file-thumbnail spinner, the thinking indicator (glyph, shimmer, word cycle), the carousel-dots
+  fill, the Fluid Hover plain-versus-fluid cursor and the skill pages' script cursor. Costs, the pause workaround and
+  the list of remaining `onFrame` users are in
+  [Port decisions](../decisions/port-decisions.md#js-frame-clock-loops-moved-to-gpuix-native-animation).
+- **What gpuix still lacks for this** (recorded in the drift entries, README gap rows pointing at them):
+  - **Pause, play and seek on an animation.** Only `stop()`, `cancel()` and `complete()` exist, so a pause is
+    `stop()` plus a new `animate()` from the current value; exact only when the animation is linear (the cursor
+    keeps its easing in a `createTransform` of a linear progress value for that reason).
+  - **`background-position` is not animatable**, so the shimmer is per-letter colour keyframes sampled from the
+    gradient's cycle: stepped per letter, with no kerning between letters, and positioned by letter count rather
+    than glyph advance (`drift/thinking-indicator.md`). Spinning and chevron turns still need a transform, which
+    gpuix does not have (`motion` cannot animate an SVG `transform` attribute), hence the sliding-dash spinner.
+  - **`requestAnimationFrame`** does not exist (only `setTimeout`), so the leftover loops stay on the shared
+    interval clock. The README row for it now lists only thinking-steps.
+  - **CSS keyframes take style properties, not SVG attributes** such as `strokeDashoffset`; a `motion.circle` with
+    `repeat` plays the spinner instead.
+- **The second `StableLabel` ghost is back** (`54405f67`): a label whose normal copy is wider shrinks on selection
+  with a semibold-only ghost, so the cell is `max(normal, semibold)` again and `check-weight-widths` asserts it
+  exactly. The cost on `5fda771a` is +1.0-1.7 ms of sidebar-sweep draw p95, paid on frames that build rather than
+  replay. Trying `inline-grid` to `grid` gained nothing, since flex items are blockified and retained either way.
+  Reasoning and numbers: [Port decisions](../decisions/port-decisions.md#stablelabels-second-ghost-what-it-costs-and-what-did-not-help).
+- **Two non-gpuix changes from the round**: the thinking-steps demo cards start at half in view, as the source, and
+  the Customise card's rows sit 34 px apart following the source's nesting (a 44 px title row, a rows block with a 6 px
+  gap and 12 px above and below), which moved the `src/app.tsx` refs cited by `drift/site.md`.
+- **`check:scenarios` runs every check** and lists the failures at the end instead of stopping at the first, so one
+  red check no longer hides the rest of a 30-minute run.

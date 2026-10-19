@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:88fffb9a442eddacf6530638521d944a16c9b33dba6e33bcba51617abb4f4715",
+  "pageVersion": "sha256:e42c6bdb0b84120e15ace8b133f9ce9e41805a4739c3ba8e0968f748680f70bd",
   "claims": [
     {
       "id": "claim_b925fe22d5a74d5388447aa34ff4d2fd",
@@ -34,17 +34,17 @@
     },
     {
       "id": "claim_8614bcad26f8486aa463c334ea2c9505",
-      "statement": "Every place the port differs from the source is a drift entry tagged by cause, 539 entries after the 2026-10-19 line-height pass.",
+      "statement": "Every place the port differs from the source is a drift entry tagged by cause, 538 entries after the 2026-10-19 native-animation round.",
       "evidence": [
         {
           "resource": "repo://README.md#L9-L11",
-          "version": "repo-lines-v1:sha256:6dd11476bf5232ddea629b48385372c21b60e483d1469bc8e990c30b8775bec1:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I1MTk3Nzc1OTUyOTBjYmNjODI3YjE4NGQwNGQyOTEzYzc3NDdlMmZjNjNjYjI1MGM3ZGY4Y2FhZTAxZjU2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDZiMzRkZjA1ZDI2ZTZjZGRhM2E1YzUxNTFjNGE1NjQxYWEwYTZhZDA4MWExYzlhMmI2MTZjNjJmYzJmZThjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDVmMDhjNzUyMWQ1ZTcyZDI2MDM2M2E2ZGRlMmRmMjcyMzc1YzRlYWYzMzUxMjI5MjE3ODYyNzJhMDYwMDZlZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWI3YmJmNzg1NTI1MDcyMjUxNDRjZWY1MDMyOTM4MjZhZTdkYjk3ZDRjMThhMzAwODJhZDYwYjQzMzUwNWFiYiJ9"
+          "version": "repo-lines-v1:sha256:7677a4be6fab134f5733b69560bb7daf2cac9f3988ae884ded63a1e53b5f6508:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I1MTk3Nzc1OTUyOTBjYmNjODI3YjE4NGQwNGQyOTEzYzc3NDdlMmZjNjNjYjI1MGM3ZGY4Y2FhZTAxZjU2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDZiMzRkZjA1ZDI2ZTZjZGRhM2E1YzUxNTFjNGE1NjQxYWEwYTZhZDA4MWExYzlhMmI2MTZjNjJmYzJmZThjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDVmMDhjNzUyMWQ1ZTcyZDI2MDM2M2E2ZGRlMmRmMjcyMzc1YzRlYWYzMzUxMjI5MjE3ODYyNzJhMDYwMDZlZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWI3YmJmNzg1NTI1MDcyMjUxNDRjZWY1MDMyOTM4MjZhZTdkYjk3ZDRjMThhMzAwODJhZDYwYjQzMzUwNWFiYiJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-19T05:52:37.290Z"
+    "at": "2026-10-19T10:45:55.491Z"
   }
 }

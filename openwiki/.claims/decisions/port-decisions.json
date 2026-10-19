@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:702252f07c788ad1f2ac70e335a4ccfb4f59390cb8562f54d2f5c2ed858e12b7",
+  "pageVersion": "sha256:1c9669e1222467ce0d252115ed1bee04dcc8f29dc1a3768fe08cf66ee6a7482e",
   "claims": [
     {
       "id": "claim_782844f1b7454bbd8c43501708e208b1",
@@ -65,7 +65,7 @@
       "statement": "The theme is a System/Light/Dark signal defaulting to System; System is fed by gpuix createAppearance and the choice is mirrored to the renderer's setAppearance.",
       "evidence": [
         {
-          "resource": "repo://src/app.tsx#L509-L528",
+          "resource": "repo://src/app.tsx#L529-L548",
           "version": "repo-lines-v1:sha256:f0005e4c193fe6e36cb8e17bf82790efd0951188e8afa9aaf9ba052647ef74a2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjYzhmMzRjZTViZWY4NGQ0MjM1OGNhZmMwNmNkMDNjMzY5NzEwNmRlMmU5MjYwZGUzZTY0ZDhjNzU1OGZkODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwODBhYzNjZDUwOWY1MTA2N2QwYjJmMzlhMTYzYjc5ZGFhNzA2YzUyZDNhYjYxMzkyODM3YWMyODljMmYxNDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA4OWJhYzQ0NWQwMTlhMTQ4MzI0NTU3ZWQ0YTI0OWJiZTRhNWQ4MGRjMGMzNjI2MDc5NDE5MTc2MDEwN2RiNWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZhMzI0NTc3OGZmNjBhYjIwODQ5NzUyZTRjMDE2NjU5ZTcyYTgyODk5ZjZhMDg0Mjk2NzQyMzUxMzE4MjEyNTgifQ"
         },
         {
@@ -151,8 +151,8 @@
       "statement": "The theme cross-fade mounts a UniversalStyle layer, flips the palette 20 ms later and removes the layer 200 ms after the flip; captures and tests that call setThemeChoice directly skip it.",
       "evidence": [
         {
-          "resource": "repo://src/app.tsx#L434-L434",
-          "version": "repo-lines-v1:sha256:c4d5c0807122213dd58d33081297dfa01fff3a71c0df5b5a4c228912d562b3a0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzRkNWMwODA3MTIyMjEzZGQ1OGQzMzA4MTI5N2RmYTAxZmZmM2E3MWMwZGY1YjVhNGMyMjg5MTJkNTYyYjNhMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzRkNWMwODA3MTIyMjEzZGQ1OGQzMzA4MTI5N2RmYTAxZmZmM2E3MWMwZGY1YjVhNGMyMjg5MTJkNTYyYjNhMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmUxY2YzZjE5NGYwNDc3MWY4MGE3ZjhhZjVkMzIxMjM2M2E2ZDc5NzRkMGQwN2ZkZGJmY2NkNDAyZGI3NjI4YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWYxMTViZDEwNTFiMzdhM2VhZmY2ZTg3ZDAwOGU0ZjQwYmUxZjhhZjBkY2YyZWJlYWM0ODM0NmU4MTIxMmNlMCJ9"
+          "resource": "repo://src/app.tsx#L453-L453",
+          "version": "repo-lines-v1:sha256:513d68d61fc8c3dae2144cc9257e6c1875c3415de85de455e09e020823705f0e:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTEzZDY4ZDYxZmM4YzNkYWUyMTQ0Y2M5MjU3ZTZjMTg3NWMzNDE1ZGU4NWRlNDU1ZTA5ZTAyMDgyMzcwNWYwZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTEzZDY4ZDYxZmM4YzNkYWUyMTQ0Y2M5MjU3ZTZjMTg3NWMzNDE1ZGU4NWRlNDU1ZTA5ZTAyMDgyMzcwNWYwZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2MzYWMxYWNlMWMzMWE3MmNlYzVhYTQ0MDRmNGI3ZDA1NTMzMWIxMDQ0ZGI2MmM2NmVlYzA1MjFkZjM1YTRhYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWVhY2UxYTlhNjAxYTExNDhiZWNjY2U0NmJjYWI0NjJmZDA5MGI0OWFmM2Y1ODY3ZGQ5ZWFiODIzMTQ4ZjNlMiJ9"
         },
         {
           "resource": "repo://src/lib/theme-fade.tsx#L7-L44",
@@ -200,15 +200,15 @@
     },
     {
       "id": "claim_b2bb6ef185094dbaa65cf297e18ab5d2",
-      "statement": "StableLabel holds a single hidden semibold copy beside the visible one in its grid cell, so it reserves the semibold width alone as the source does; a second hidden normal-weight copy was dropped because on gpuix 365f7c88 it costs about 1.5 ms of sweep draw p95 even though its text is not re-measured, so a label narrower at semibold shrinks by at most about 1px on selection, as in the browser. The weight eases over 80 ms unless snapWeight is set.",
+      "statement": "StableLabel holds two hidden copies (normal and semibold) beside the visible one in its grid cell, so the cell is as wide as the wider of the two and does not change width with the weight, unlike the source's semibold-only ghost, which shrinks a label whose normal copy is wider. The second ghost costs +1.0-1.7 ms of sidebar-sweep draw p95 on gpuix 5fda771a, paid on frames that build the label rather than replay it, and is kept deliberately. The weight eases over 80 ms unless snapWeight is set.",
       "evidence": [
         {
-          "resource": "repo://src/lib/stable-label.tsx#L10-L24",
-          "version": "repo-lines-v1:sha256:04fac517225558ccf8c83133081e90d87f9c1ff7123b95991dee53578763e959:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiNzkzYjM1Zjc0MTNlOTE2MDE5ZTA1NWQ0NmRiNzMxM2Y4Y2VlNDNiZGRiMmNkNTNiYWY1MzI1Y2FkOGU5M2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlMGQyODk1YzMxMzIzNjFlYzEwYzQyN2YxNTllYzJiMmEwZmE2Y2YxODIxYmRjZGVmZjM1OWFkNThmNzRiZTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmYzI3ZDBkYTIxN2YwMWE0MDNjNDg4MjY3OWQ5ZTYzZGZkYjZkZjI0NzE4YjI1YzcyMWIzNGM4NWVkYTI5NDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEwZjE0MTRkYzg3ZDU2OWNlZGEwMjg2MWIzOTU3YWZiOTVmYzQ1YjNkMzllOWMxYjE3YmVkYWY3M2E3Mzg4YTcifQ"
+          "resource": "repo://src/lib/stable-label.tsx#L10-L28",
+          "version": "repo-lines-v1:sha256:8827723dc200ad6eb19967b6e70e78fb2d445a5226ea14655a4b132bbaa28b15:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiNzkzYjM1Zjc0MTNlOTE2MDE5ZTA1NWQ0NmRiNzMxM2Y4Y2VlNDNiZGRiMmNkNTNiYWY1MzI1Y2FkOGU5M2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmYzI3ZDBkYTIxN2YwMWE0MDNjNDg4MjY3OWQ5ZTYzZGZkYjZkZjI0NzE4YjI1YzcyMWIzNGM4NWVkYTI5NDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5ZWIxZWU5YTJiOThkMGFiYzlmYzdjMGIzNWZmNWEwYzQwNzVhNTdlZjUyZmEwZmFlNzMyNGVjOGYzZjYzM2YifQ"
         },
         {
-          "resource": "repo://src/lib/stable-label.tsx#L76-L82",
-          "version": "repo-lines-v1:sha256:b6f8be89c6847870e20f0a7c126a273aea9e4c0581e277eb0a2fa5408d7006ad:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmNkZGI4MDYyZWE5ZTBkMjM3NGM5ZjU5MGQyOGUxNTgwOGZmMDY5ZGQyODczMjA5YWU1MTExNjZmMGNmMDQ4ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjRjNzAyMjNhMzI1N2U1ZDJhMTU0YTQyNDIyYzI0YTYwMjc5ZThlNTcwMmU4Zjk3NDc1YTUwMTRhMDMyNjQwYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODU0Y2FhMTQyNzE5ODE0OWUwMmE4MTZmMjMwMTAzMWZkNGE1MWJiZTRmMGEwYWE1NmExYzYzZDIwMTQ4MTdmNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDgyMzI3ODU3MWI5MmYzYzEyYjBiNTlhNzEwNWY5M2IxMGQ5Mjc1OTk3NzYwMTFmYTVjZGIyMmJlMWFjZDA2MCJ9"
+          "resource": "repo://src/lib/stable-label.tsx#L86-L90",
+          "version": "repo-lines-v1:sha256:95de9856b552952e28ae22a09b0bb44e68cead24badafb61ac970658fef44bde:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWUwYWQ3MWEzYzEwZTRkNmM4NmY5MTcwYjM5YjNjY2VmNTkwMjZiZmNjNThjMjFhNmE3MDQxYjJkZTA0ZDRkNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjRjNzAyMjNhMzI1N2U1ZDJhMTU0YTQyNDIyYzI0YTYwMjc5ZThlNTcwMmU4Zjk3NDc1YTUwMTRhMDMyNjQwYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWZjZjk0OGQxMjk2MzI1YTU0NzM5NzBiYmY4MzBhM2M1OTg5NmI3ODExYTA1NjM3NzI4MGM2NTZmYzAzNGJhMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDgyMzI3ODU3MWI5MmYzYzEyYjBiNTlhNzEwNWY5M2IxMGQ5Mjc1OTk3NzYwMTFmYTVjZGIyMmJlMWFjZDA2MCJ9"
         },
         {
           "resource": "repo://src/lib/theme.ts#L512-L520",
@@ -218,19 +218,15 @@
     },
     {
       "id": "claim_6332c1420d59436dba31d4b982940ccf",
-      "statement": "scripts/check-weight-widths.tsx asserts that gpuix's weight width delta equals the browser's rather than the source's 0.4 px claim, and steps the held motion clock across the ease to assert that a StableLabel's own box stays exact and the boxes of its row neighbours stay within 1 px (because gpuix snaps JS bounds reads per edge, #45); for labels narrower at semibold it asserts that the heavy cell is the semibold copy's width and the shrink on selection equals the normal-minus-semibold difference, each within 1 px; it runs at 1x scale only.",
+      "statement": "scripts/check-weight-widths.tsx asserts that gpuix's weight width delta equals the browser's rather than the source's 0.4 px claim, and steps the held motion clock across the ease to assert that a StableLabel's box and its row neighbours' boxes are exactly where they were (no tolerance); for labels narrower at semibold it asserts the cell is identical light and heavy and equals the wider of the normal and semibold copies; it runs at 1x scale only.",
       "evidence": [
         {
           "resource": "repo://scripts/check-weight-widths.tsx#L1-L35",
-          "version": "repo-lines-v1:sha256:253e3006cc2d11ceba609316dcbfdcec05692b74fc6008a681f8d22891198b55:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjYmY2MmI3MDljMDE0NmQyYzY2OGMxZjhmZDgyNTgwMWE0MGY0MGVlMjg4YzA3ZTg2OWYzYTk0ZTYyYTIwOGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM5NDAyMjU2NmM3ZDE3ODY1OGU4OTNiNzNjMzQzM2RhNjE3YzZhMGVjYWMyYzNlY2E1NDBjMzUwOTRmNWRiMDMifQ"
+          "version": "repo-lines-v1:sha256:9ed03717875ef1f9aea39ba61e84876764bbcb0ed294063f0b68297eb7f30cdb:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjYmY2MmI3MDljMDE0NmQyYzY2OGMxZjhmZDgyNTgwMWE0MGY0MGVlMjg4YzA3ZTg2OWYzYTk0ZTYyYTIwOGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM5NDAyMjU2NmM3ZDE3ODY1OGU4OTNiNzNjMzQzM2RhNjE3YzZhMGVjYWMyYzNlY2E1NDBjMzUwOTRmNWRiMDMifQ"
         },
         {
-          "resource": "repo://scripts/check-weight-widths.tsx#L364-L368",
-          "version": "repo-lines-v1:sha256:74d9af53204250468ab3536b9c6829d3d10e3bed5173fbd12fd30935a8008dc4:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWQ2N2E3MjdhMTMyNzM2MjU3ZjRjY2FiZWM1MDUzN2I4YzRhMzA4NGMwY2Y2MjY0YTljODQ1ZWJlNTg5YThiNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjM0NTg0OTM0M2YzNTg2YjYwZmRhZjdlNzcwNzRjOGZiMWRkZjlhZjA2YmQ4MWI5NWJhMzAzMDljY2NkNDJjNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWY3YjRlOGQyNjUxMzYzZWQ0ZTk0YjMyMzdhZGI1OTYwYjAxNjBmZGYyYTVhMzdjYTI4N2M5MjFhMDhhYTcyNSJ9"
-        },
-        {
-          "resource": "repo://scripts/check-weight-widths.tsx#L552-L556",
-          "version": "repo-lines-v1:sha256:30f24b62159e870257838e79f364ea4b3b81896b2bd0781a91d53e8e44d7cb92:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDhjN2ZiOThkYjA0NGRkZDNmNGQxMWUzYmNlZDAxN2QwMGU1MTYwZGQ5NDQ5YTlhNzA2NTNhNGEzZmNhZTc0MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGZjZjdkZDRlNmZkMjYxYjZkNjAzNjQ2ZTgzY2JmYWIzZjkyM2Y5MjkzZTI5YWE0ZGIyMTMxZjU2Zjg3YjllNyJ9"
+          "resource": "repo://scripts/check-weight-widths.tsx#L636-L655",
+          "version": "repo-lines-v1:sha256:7500ee5f55986b45aaac01f41da433249d702dbbf960aa8b2b01dd3d0b9e55c5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0NGE4YzdjNWRiNmY3MDcyOWZjYTlmOWUyMWZhMzA0YTgwYjc5MTM0ZDU3NGQ3MDA1NjYyZmYzZDY3OTFiN2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0ZWZjNDk0MThkMjZkY2YxMjliMjJhNmFhMjExMDhjZWVjMzc2NzdhMzJkMDhlOWQ1ZmVlMzVkZGE2NmJiOWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgzNTdhODdlNzE2N2JmN2NjYTIzYjQyOWI1OTg5NDU2OGY1OWFjYzdjZDk5ZGUzY2E3NDI0YTA1Y2U4ZjBkNTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyMmM2YTQ2OTVhOWYwNzMxMDQ1OTVhNDMyNzIyYjViYTMzYjM2Y2I5YjNiNTgzODE3YTI0YWI0NGJiMzIzYjQifQ"
         }
       ]
     },
@@ -239,7 +235,7 @@
       "statement": "The port keeps the off-screen culling in src/lib/cull.ts because gpuix #46 still makes a frame's cost scale with off-screen content: removing it on poc e5231304 raised sidebar-sweep draw p95 on the changelog from 10.9 to 26.6 ms and command-menu from 16.7 to 37.4 ms (sum over 49 pages 520 to 670 ms) and raised idle CPU where off-screen loops would run (input-message 1.8 to 49.7%, showcase 44 to 87%).",
       "evidence": [
         {
-          "resource": "repo://README.md#L272-L272",
+          "resource": "repo://README.md#L271-L271",
           "version": "repo-lines-v1:sha256:1ca750f6b121d3487d39a343e58397d2fc0c1f242665ad2028cd9926f2d1b054:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWNhNzUwZjZiMTIxZDM0ODdkMzlhMzQzZTU4Mzk3ZDJmYzBjMWYyNDI2NjVhZDIwMjhjZDk5MjZmMmQxYjA1NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWNhNzUwZjZiMTIxZDM0ODdkMzlhMzQzZTU4Mzk3ZDJmYzBjMWYyNDI2NjVhZDIwMjhjZDk5MjZmMmQxYjA1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGJkY2U0MGY4MjFkYWE5ZWU4Y2VjOTEyOWQ5ZjgzNWQ0ZWY3ZDI5NTI0ODdmYjUwNDg4NzE5MTI4MGRlOGU2YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDY1NTY3MzQ2MWI1ZGFlZTgxZTM0ZDFmNDMwZjc3OTU3MTAxMjQxNDgyMDkwZjM5OGIwZDQ5ODUwNTY0OTI4MCJ9"
         },
         {
@@ -253,7 +249,7 @@
       "statement": "Fluid hover caches its container's bounding box and refreshes it on resize, scroll, pointer enter and page scroll instead of reading it per pick, because every getBoundingClientRect on gpuix runs a layout pass (about 6 ms); on poc e5231304 a live read raised idle JS frame-callback time on autoplaying-cursor pages from about 3 to 330-430 ms per second while sidebar-sweep draw p95 stayed unchanged.",
       "evidence": [
         {
-          "resource": "repo://drift/fluid-hover.md#L105-L113",
+          "resource": "repo://drift/fluid-hover.md#L106-L114",
           "version": "repo-lines-v1:sha256:83fb900111054b98b144a380e08a78a678befc6866437b4726288d3ac394b818:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjI1YmRiOWQxMjVmNmMyNTQ2NGM0ZDI4M2QzMDcyYjRhZTA5OTgyMTdkMzhmNTExMjdlZWJhNGU4NDE1YzIzMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmJiOTlhYTlhZDQ0NTQxNTA3YWJkMDNmMTc1ODQ1MDhlOWJiMTljODU5ZThjMGEyNjM1Zjg2M2Y2NTNhZjIyNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWRkZjYzOTllYWUyMzQ0NGRhMDcyODJiMTU4MmQ2ZTBkMWQ0YzcyMjQwNDc3YTg2YzFlZmRhNjZhYzk0ZDY2MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGU2ZWQ0YTkxZjQ0ZTU1YjNjZWMzMGRmOTViMDYzYTM1OGM0NGJkZjRhNmNlZGFjN2U5YWNjM2QwM2YxYTg4ZiJ9"
         },
         {
@@ -275,10 +271,52 @@
           "version": "repo-lines-v1:sha256:4eccab30fe4124307ccb8344ff9cd28fdbef6bb78499026c3af9520a1031e05b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0NmE4YTBlZDQzMjE4ZDFmOWE5Y2UzMTliYzEyZDJiMzdkMGJiNmEyNmE3MjRkZTFiODI4YTdkMWE2N2VhMjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2MGI4OGEwNWQ1YjUzODQ3NjAyMjliZTYwNTcyZmU2MmIxYzI5Y2RjNTdlZGI1ZTY5NTFkYWE0ZmQ0NmM4MDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIzNDQ5YjAyYmI3OGIzZTJhM2E4MzU4NzE2NjliMGIxMDg1OGQ4ZTQxMjczMzhmYTE2OTFhYmViZDU4ZDhiYjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4ZGRhMzM3MDc0NzAzN2JkODA3ODVhMjYzZTBhZmFkYmM2YTY2MDYyYTQ2MjkwOWZkMDFkNDNlMTI5YTZmNmEifQ"
         }
       ]
+    },
+    {
+      "id": "claim_09bdda71167648daa0325b642f9e3ea6",
+      "statement": "The file-thumbnail spinner, thinking indicator, carousel-dots autoplay fill and the scripted cursors run as native gpuix animations rather than on the shared 16 ms onFrame JS clock; gpuix animations have no pause or seek, so a pause is stop() followed by a new animate() from the current value, and only thinking-steps' chevron, the fluid-hover lists demo and the cost meter still subscribe to onFrame.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/carousel-dots.tsx#L91-L111",
+          "version": "repo-lines-v1:sha256:b4b70d6aeaf3ccd3719aa9879c9b7ea3cb94b0791afdb0609c9ae7968a7901c8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0NmE4YTBlZDQzMjE4ZDFmOWE5Y2UzMTliYzEyZDJiMzdkMGJiNmEyNmE3MjRkZTFiODI4YTdkMWE2N2VhMjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhNzM0OTJkODk0NmIxZDBmOWQ5YzA0YjcwNGE5MjBmMjRmODllZjdjN2Y3MzExYTg1OTlkMTBjN2Y2MzU4ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyOTExOTFmYjE5MTIxYzQ2OTViMmU0OWI0OTUyOTk5MDI3NDFkNDM0YzdjN2JjOWJjNmJjZTZhNjU2MDY4MDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk0OTNmNjNiZWU0Y2Y0NjdhMjEwYjc5MzBkZjdmZWE1YmVjY2JkYjQ0ZWU0ZGVlODM4NzFlNjA1ZjFjOWRkNTMifQ"
+        },
+        {
+          "resource": "repo://src/components/file-thumbnail.tsx#L20-L91",
+          "version": "repo-lines-v1:sha256:a9854c72e7eb7ddfb33248d9d47f5ca993d0dcbf8c0c6cec034b9fbcef29e453:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwNDI4ODdmNDljZjUzNDhmNTAyMjEyZWM5YTI1YzgwZTRiYzJiMTYxN2QxYzI3Y2I2YjgxODFiMjg0YWJjYjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI5M2NhZjFmMzk1NzU3Y2E1YjFkZDUwNmFkZjM2MjEyZjRiNWEzODRjMDRkZjUxY2U5YWUxNDczNjUzNzZjNTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAxNTZlMTcwNTFkNWU2OTY5ZTAyODkzZDA0MDA5ZDJhYmRiYTM0NzE1ZmFlOTQ4NjY4MTQyMTViOWY2NGFmNWQifQ"
+        },
+        {
+          "resource": "repo://src/lib/clock.ts#L47-L64",
+          "version": "repo-lines-v1:sha256:3ecb05ad6a93d2b287421a54b36cda4dbaeebe640c262da4c9d89ca7b04e5c35:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5NzdlZDcxMmYzZWExZTdmZjU5MGJiNjQ2M2EwMjhhOTk3NTE5ZTUxZGNiMGE3OTY5Zjg0MjU4MDczMmVkMTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxMTJiNWNhMTBkODFjZGU5MmI2YWRlZjUwNDhkZjI4MjNhMDQxMjQxODNmY2NlNDA3YzI3Y2Q3MGMwNjM3ZTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3OTI5ZTkxZTBmOTljM2U4MjVkZTY5YjQzNWZiNjQ4NGQxYjBhMWRmMmY0NjU2MWFiZjFhMjlmMDQxODhiODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNhODE5ZGYwMDU1ZTExZDUwOTQzNmYwODI4OGNhNGJhNzRhMTAxOGVjNzE1NTI4YjU4NWZlMmQ4YWE2ZGRlOTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1edd81b68c7f436d9272b36d557e8c00",
+      "statement": "The thinking-steps demo cards start paused and play once at least half of the card is in view, observed through observeVisibleRatio in cull.ts, pausing below 10% visible while keeping elapsed time.",
+      "evidence": [
+        {
+          "resource": "repo://src/demos/thinking-steps.tsx#L119-L119",
+          "version": "repo-lines-v1:sha256:d5906c8824ab2aae4363c44d275fbec938eb3d5d34cf48da31b7b6a98ef3826a:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDU5MDZjODgyNGFiMmFhZTQzNjNjNDRkMjc1ZmJlYzkzOGViM2Q1ZDM0Y2Y0OGRhMzFiN2I2YTk4ZWYzODI2YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDU5MDZjODgyNGFiMmFhZTQzNjNjNDRkMjc1ZmJlYzkzOGViM2Q1ZDM0Y2Y0OGRhMzFiN2I2YTk4ZWYzODI2YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGQxZDdkMDUyNzMwODJjNzdmZTFmODNhYTIyMTk1ZmJmNzVlNDc0NzAyMGRlMWQ4NjQ2NmYxOTdjYjlhOTFhMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjNiYjNjYWQ1ZmM0MjJjM2FlZWEwM2MyOTcwOTcyZmZmM2U2YTZkZmFhZTk3MWM5M2JlNDYyMTRiMjhlNDk0NiJ9"
+        },
+        {
+          "resource": "repo://src/lib/cull.ts#L107-L132",
+          "version": "repo-lines-v1:sha256:266a1029722fc67afc58a03026630c645d838015b4c4b45bf5736fbb3eb3e994:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0YmE3MjYzYzEwODcwMmE1NWNjOWRjZjU4MWYxMTMzMzc4Mjk3NmRlN2U2MDRkMTIxNWU2ZDhjZjUxYTA4ZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5ba592473e7b495292a5d1e84d3cdbb2",
+      "statement": "pnpm check:scenarios runs every scripts/check-* file and lists all failures at the end rather than stopping at the first failing check.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/run-scenarios.ts#L1-L30",
+          "version": "repo-lines-v1:sha256:67aa29041eaec36a83f9f242916b81695ef037a146880da74056760162d7b1bb:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2N2QzNDM3MjVlNDdkODFhYWZjNzYyZjEzOTUxZDVkNjhlMTM2MjI3MGMwMjlmNGZhN2VlOGYzMjg4YmM4ZTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5MGIxMDdlOGQ4YjcyZjBlOTQxNmM5ZTA0MTBjOGYxMzg1NGY3NTlkYTMzZGZkZjE0NGM1MzA5NTA4YzE3ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-19T04:08:14.446Z"
+    "at": "2026-10-19T10:45:55.491Z"
   }
 }
