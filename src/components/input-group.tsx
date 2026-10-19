@@ -261,7 +261,6 @@ export function InputField(props: {
 						position: 'relative',
 						flexGrow: 1,
 						minWidth: 0,
-						height: 24,
 						...step().text,
 						fontVariationSettings: weight.normal,
 						color: color.foreground,

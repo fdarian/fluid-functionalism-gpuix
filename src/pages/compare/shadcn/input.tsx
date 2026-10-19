@@ -63,7 +63,8 @@ export function ScInputField(props: {
 					style={{
 						flexGrow: 1,
 						minWidth: 0,
-						height: 24,
+						// The source input's content box: h-10 less the 1px borders and py-2.
+						height: 22,
 						fontSize: 14,
 						lineHeight: '20px',
 						fontWeight: 400,

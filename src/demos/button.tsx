@@ -121,7 +121,7 @@ function PlayText(props: {
 				style={{
 					flexGrow: 1,
 					minWidth: 0,
-					height: 24,
+					height: 28,
 					...scale.body,
 					fontVariationSettings: weight.normal,
 					textAlign: 'right',

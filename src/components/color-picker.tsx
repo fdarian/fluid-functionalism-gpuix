@@ -1252,7 +1252,6 @@ function ColorInput(props: {
 				style={{
 					flexGrow: 1,
 					minWidth: 0,
-					height: 24,
 					...scale.body,
 					fontVariationSettings: weight.normal,
 					fontVariantNumeric: 'tabular-nums',

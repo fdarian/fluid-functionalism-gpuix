@@ -36,7 +36,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `port choice` (reason not stated; the ladder in `src/lib/surface-context.ts` is not read here).
 - **Original:** the popover panel sits at `min(substrate + 2, 8)` and the format menu two above it (`color-picker.tsx:2248`, `:1025`); a standalone panel is `max(substrate, 3)` (`:1948`). On the docs page the substrate is 1, so the popover is surface 3 and its menu surface 5.
-- **Port:** the popover card and its panel are hard-coded to level 5 and the menu is 7 (`src/components/color-picker.tsx:1892`, `:1895`, `:943`); a standalone panel takes a port-only `level` prop (default 3, `:1479-1480`, `:1672`, `:1713`). In `screenshots/color-picker/popover-open.png` the popover is visibly lighter than the inline panel; select and combobox popups use surface 3 on the page (`src/lib/popup.tsx`).
+- **Port:** the popover card and its panel are hard-coded to level 5 and the menu is 7 (`src/components/color-picker.tsx:1891`, `:1894`, `:943`); a standalone panel takes a port-only `level` prop (default 3, `:1478-1479`, `:1671`, `:1712`). In `screenshots/color-picker/popover-open.png` the popover is visibly lighter than the inline panel; select and combobox popups use surface 3 on the page (`src/lib/popup.tsx`).
 - **Workaround:** none.
 - **Fidelity:** approximated (two steps lighter in the popover).
 - **Components it hits:** just this one.
@@ -117,7 +117,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** Base UI Popover (`modal={false}`) moves focus into the panel on open, restores it to the trigger on close, and closes on focus-out and outside press (`color-picker.tsx:2205-2215`, `:2304-2311`). The trigger is a real button with no `aria-label`, so its name is the label and value text.
-- **Port:** open and close change nothing about focus; only an outside press and Escape (from the wrapper) close it, with no focus-out handler (`base-ui:src/popover/root/popover-root.ts:46-53`, `src/components/color-picker.tsx:1786-1797`). The trigger is a `div role="button"` whose `aria-label` is `triggerLabel` or "Pick a color" (`:1797-1800`), which hides the value from its name. Read from the code, not run.
+- **Port:** open and close change nothing about focus; only an outside press and Escape (from the wrapper) close it, with no focus-out handler (`base-ui:src/popover/root/popover-root.ts:46-53`, `src/components/color-picker.tsx:1785-1796`). The trigger is a `div role="button"` whose `aria-label` is `triggerLabel` or "Pick a color" (`:1796-1799`), which hides the value from its name. Read from the code, not run.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -126,7 +126,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** a `span role="button" tabIndex={0}`; Enter and Space remove without toggling the popover (`color-picker.tsx:2344-2364`).
-- **Port:** a `div role="button"` with no `tabIndex` or key handler; a pointer click is kept off the trigger by a hover flag (`src/components/color-picker.tsx:1859-1883`, `:1745`, `:1805-1808`).
+- **Port:** a `div role="button"` with no `tabIndex` or key handler; a pointer click is kept off the trigger by a hover flag (`src/components/color-picker.tsx:1858-1882`, `:1744`, `:1804-1807`).
 - **Workaround:** none.
 - **Fidelity:** approximated (pointer only).
 - **Components it hits:** just this one.
@@ -172,7 +172,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** `size` pins the panel, the format menu and the popover trigger to the default (36px) or compact (28px) step: control height, padding, gap, 12px text, 16px tile and menu row padding (`color-picker.tsx:114-117`, `:830-831`, `:2075`, `:2242-2243`, `:2329`).
-- **Port:** fixed 36px controls (`height.control`, `src/components/color-picker.tsx:1816`), 13px text, 20px tile (`:1837`). No `size` prop and no size context.
+- **Port:** fixed 36px controls (`height.control`, `src/components/color-picker.tsx:1815`), 13px text, 20px tile (`:1836`). No `size` prop and no size context.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** any component with a `size` prop; the port has no `SizeProvider`.
@@ -181,7 +181,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet` (an `EyeDropper` exists on macOS only: `FORK.md:515`, `:577-580`).
 - **Original:** a pipette button beside the format menu where `window.EyeDropper` exists, hidden elsewhere or by `hideEyedropper`; a pick commits the colour like a swatch (`color-picker.tsx:1600-1641`, `:1983-1991`).
-- **Port:** the format menu is the only item in its row, in the same half-width column (`src/components/color-picker.tsx:1667-1675`, `:776`). No `hideEyedropper` prop; no `pipette` icon (`src/lib/icons.ts`).
+- **Port:** the format menu is the only item in its row, in the same half-width column (`src/components/color-picker.tsx:1666-1674`, `:776`). No `hideEyedropper` prop; no `pipette` icon (`src/lib/icons.ts`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -190,7 +190,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet` for the behaviour props; `port choice` (gpuix takes `style`, not classes) for the class and ref ones.
 - **Original:** `ColorPicker` takes `formatOpen`, `size`, `hideEyedropper`, `className`, a forwarded `ref` and div attributes (`color-picker.tsx:89-118`); `ColorPickerPopover` adds controlled `open`, `onOpenChange` and `triggerClassName` (`:119-137`); `ColorTile` takes `className` and `style` (`:1646-1651`); `ColorSwatch` takes every button attribute and `size` (`:139-147`); `ColorPickerPortalContainer` is exported (`:2431-2439`).
-- **Port:** none of those; `ColorPickerPopover` has `defaultOpen` only and is uncontrolled for open state (`src/components/color-picker.tsx:1725-1737`; the primitive, `base-ui:src/popover/root/popover-root.ts:5-8`, takes `defaultOpen` and `onOpenChange` only). `ColorSwatch` takes `onClick` and `testId`, `ColorTile` neither class nor style (`src/components/color-picker.tsx:200-206`, `:159`). Port-only: `level` and `testId` (`:1478-1480`). No portal container: the menu and popover are `<anchored>` layers.
+- **Port:** none of those; `ColorPickerPopover` has `defaultOpen` only and is uncontrolled for open state (`src/components/color-picker.tsx:1724-1736`; the primitive, `base-ui:src/popover/root/popover-root.ts:5-8`, takes `defaultOpen` and `onOpenChange` only). `ColorSwatch` takes `onClick` and `testId`, `ColorTile` neither class nor style (`src/components/color-picker.tsx:200-206`, `:159`). Port-only: `level` and `testId` (`:1477-1479`). No portal container: the menu and popover are `<anchored>` layers.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -199,7 +199,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** the format trigger has no label, so its name is "HEX" and so on (`color-picker.tsx:975-998`); the hex field is labelled "Hex value" (`:2116`).
-- **Port:** the format trigger is "Color format" (`src/components/color-picker.tsx:886`), the hex field "Hex" (`:1363`, `:1276-1278`); the popover trigger name is covered above.
+- **Port:** the format trigger is "Color format" (`src/components/color-picker.tsx:886`), the hex field "Hex" (`:1362`, `:1275-1277`); the popover trigger name is covered above.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
