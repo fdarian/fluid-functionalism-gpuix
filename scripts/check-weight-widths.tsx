@@ -16,8 +16,8 @@
  * B. In the components. Each one that renders a `StableLabel` is mounted through
  *    its demo page (so Inter Variable applies) and clicked until labels go
  *    heavy or light. With the motion clock held and stepped every 8 ms across
- *    the weight ease, the label's box and everything in its row must stay
- *    exactly where they were. `skill/menu-example` is scripted playback with no
+ *    the weight ease, the label's box must stay exactly where it was and
+ *    everything in its row within 1 px of where it was. `skill/menu-example` is scripted playback with no
  *    input to drive, so it is not mounted. Its `StableLabel` and the role menu's
  *    are covered by the synthetic mounts at the end. The test window is 1x:
  *    widths at a retina display's 2x scale are not measured.
@@ -362,15 +362,21 @@ function neighboursOf(kit: Kit, tree: Tree, label: number) {
 	});
 }
 
+/** gpuix measures text fractionally (#41) but snaps every JS bounds read to whole device pixels per edge (#45), so a neighbour's edge can read under 1 px off without having moved. */
+const NEIGHBOUR_TOLERANCE_PX = 1;
+
 function differs(
 	before: Box,
 	after: Box,
 	compare: NonNullable<Scenario['compare']>,
+	tolerance = 0,
 ) {
-	if (compare === 'left') return before.x !== after.x;
-	const sameX = before.x === after.x && before.width === after.width;
+	const off = (a: number, b: number) =>
+		tolerance === 0 ? a !== b : Math.abs(a - b) >= tolerance;
+	if (compare === 'left') return off(before.x, after.x);
+	const sameX = !off(before.x, after.x) && !off(before.width, after.width);
 	if (compare === 'horizontal') return !sameX;
-	return !sameX || before.y !== after.y || before.height !== after.height;
+	return !sameX || off(before.y, after.y) || off(before.height, after.height);
 }
 
 const describe = (box: Box) => `x${box.x} y${box.y} ${box.width}x${box.height}`;
@@ -489,7 +495,10 @@ async function runStep(kit: Kit, scenario: Scenario, step: Step) {
 				violations.add(`"${words}" ${describe(home)} -> ${describe(box)}`);
 			for (const neighbour of neighbours) {
 				const moved = shifted(frame.get(neighbour.id), slide);
-				if (moved !== undefined && differs(neighbour.box, moved, compare))
+				if (
+					moved !== undefined &&
+					differs(neighbour.box, moved, compare, NEIGHBOUR_TOLERANCE_PX)
+				)
 					violations.add(
 						`beside "${words}": ${neighbour.type} ${describe(neighbour.box)} -> ${describe(moved)}`,
 					);
@@ -644,8 +653,8 @@ async function runSyntheticParity() {
 				`  ${variant.name.padEnd(8)} shrinks ${shrink} px on going heavy (normal - semibold ${normal - semibold} px)  ${text}`,
 			);
 			kit.check(
-				`${variant.name}: heavy cell is the semibold copy's width: ${text}`,
-				heavy === semibold,
+				`${variant.name}: heavy cell is the semibold copy's width within ${SHRINK_TOLERANCE_PX} px (#41, #45): ${text}`,
+				Math.abs(heavy - semibold) <= SHRINK_TOLERANCE_PX,
 				`cell ${heavy}, semibold copy ${semibold}`,
 			);
 			kit.check(

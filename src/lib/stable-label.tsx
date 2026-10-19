@@ -14,8 +14,10 @@ import {
  * copy share one grid cell, so the label is as wide as the semibold copy and
  * going semibold never moves what is beside it. It wraps at that width, as the
  * source's `inline-grid` span does. A second hidden normal copy was tried and
- * dropped: every hidden `<text>` costs draw time, and only a label narrower at
- * semibold (rare at 13px) shrinks, by at most about 1px, as it does in the browser.
+ * dropped: on gpuix 365f7c88 it costs about 1.5 ms of sweep draw p95 on the
+ * sidebar pages (radio-group 8.1-8.5 -> 10.4-11.5 ms, tabs 8.4-9.5 -> 9.9-11.0)
+ * although its text is not re-measured. Only a label narrower at semibold (rare
+ * at 13px) shrinks, by at most about 1px, as it does in the browser.
  */
 export function StableLabel(props: {
 	text: string;
