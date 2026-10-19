@@ -283,6 +283,15 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** dropped.
 - **Components it hits:** the Changelog page.
 
+## Changelog: the rail's jump re-aims while culled entries un-pin
+
+- **Cause:** `port choice` (a consequence of the port's culling: the entries above the target are culled regions with pinned heights, which the source does not have).
+- **Original:** a click on a month in the Releases card calls one smooth `scrollIntoView` with block start, the section's `xl:scroll-mt-8` leaving it 32px under the top (`app/changelog/changelog-view.tsx`, not in the reference checkout).
+- **Port:** the jump computes its target at click time, while the culled entries above the month are pinned. They un-pin to their real heights while the smooth scroll is in flight and come out a few px taller, occasionally more, so a single scroll lands the month 4-5px low (measured 36-37 against 32, once 281 with the wrong month). On each page scroll the jump recomputes the target and scrolls again when it moved by more than 1px, until the month's top is within 1px of the margin, the page end is reached, or the user scrolls away (`src/pages/changelog/release-spy.ts:67-121`, pinned by `scripts/check-changelog-rail.tsx`).
+- **Workaround:** the re-aim itself.
+- **Fidelity:** approximated (the same landing, reached by several smooth scrolls instead of one).
+- **Components it hits:** the Changelog page.
+
 ## Changelog: Breaking diffs are plain monospace
 
 - **Cause:** `not ported yet` (nothing stops the port tinting tokens; it has no highlighter, as in "Preview frame" above).

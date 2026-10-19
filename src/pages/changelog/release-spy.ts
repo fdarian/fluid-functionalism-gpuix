@@ -7,6 +7,8 @@ const SPY_LINE = 0.25;
 /** Where an anchor jump lands a section's top: the source's `xl:scroll-mt-8`. */
 const SCROLL_MARGIN = 32;
 const BOTTOM_SLACK = 2;
+/** How close, in px, the scroll position must be to a jump's target to count as arrived. */
+const ARRIVED_WITHIN = 1;
 
 /**
  * The page and its Releases rail are siblings in `App`, so the month in view
@@ -66,23 +68,60 @@ export function createReleaseSpy(months: readonly string[]) {
 		const root = scroller();
 		if (root === undefined) return;
 		update(root);
-		const stop = onPageScroll(() => update(root));
+		let aim:
+			| { section: HostElement; top: number; distance: number }
+			| undefined;
+
+		const targetTop = (section: HostElement) =>
+			root.scrollTop +
+			section.getBoundingClientRect().top -
+			root.getBoundingClientRect().top -
+			SCROLL_MARGIN;
+
+		const scrollTo = (top: number) =>
+			root.scrollTo({ top, behavior: reduced() ? 'instant' : 'smooth' });
+
+		/** Culled entries above the month un-pin to their real heights while the jump is in flight, so the jump follows its month's top until it arrives or the user scrolls away. */
+		const reaim = () => {
+			if (aim === undefined) return;
+			const target = targetTop(aim.section);
+			const distance = Math.abs(target - root.scrollTop);
+			const atEnd =
+				root.scrollTop + root.clientHeight >= root.scrollHeight - BOTTOM_SLACK;
+			if (distance <= ARRIVED_WITHIN || (atEnd && target >= root.scrollTop)) {
+				aim = undefined;
+				return;
+			}
+			if (
+				Math.abs(target - aim.top) <= ARRIVED_WITHIN &&
+				distance > aim.distance + ARRIVED_WITHIN
+			) {
+				aim = undefined;
+				return;
+			}
+			aim.distance = distance;
+			if (Math.abs(target - aim.top) > ARRIVED_WITHIN) {
+				aim.top = target;
+				scrollTo(target);
+			}
+		};
+
+		const stop = onPageScroll(() => {
+			update(root);
+			reaim();
+		});
 		jump = (month) => {
 			const section = sections.get(month);
 			if (section === undefined) {
 				throw new Error(`The changelog has no section for ${month}`);
 			}
-			root.scrollTo({
-				top:
-					root.scrollTop +
-					section.getBoundingClientRect().top -
-					root.getBoundingClientRect().top -
-					SCROLL_MARGIN,
-				behavior: reduced() ? 'instant' : 'smooth',
-			});
+			const top = targetTop(section);
+			aim = { section, top, distance: Math.abs(top - root.scrollTop) };
+			scrollTo(top);
 		};
 		onCleanup(() => {
 			stop();
+			aim = undefined;
 			jump = undefined;
 		});
 	});
