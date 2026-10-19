@@ -49,7 +49,7 @@ bun scripts/perf.tsx [slug...] --label name   # live frame times per page, idle 
 <summary>How gpuix and base-ui-solid-gpuix are wired in</summary>
 
 - **gpuix.** `@gpuix/native` and `@gpuix/solid` come from the fork at `~/code/fdarian/gpuix`: native is a `link:`, solid is a
-  `file:` copy. The fork must be at `poc` ed4e99c3 or later: the highlights and popups use its native `motion` springs, and the table, `inline-*`, container query, `has*` and `fit-content` layouts, and the variable-font weights, `outlineStyle`, `textWrap`, `textBox` trim and `calc()` motion values are its features,
+  `file:` copy. The fork must be at `poc` 365f7c88 or later: the highlights and popups use its native `motion` springs, and the table, `inline-*`, container query, `has*` and `fit-content` layouts, and the variable-font weights, `outlineStyle`, `textWrap`, `textBox` trim and `calc()` motion values are its features,
   so rebuild the addon and the `@gpuix/solid` dist after pulling it (see the fork's `FORK.md`, "Building"), then run
   `pnpm install` here to refresh the copy. The Solid JSX transform is a Bun preload (`bunfig.toml`), so there is no
   build step.
@@ -71,15 +71,6 @@ whatever the page's `scenarios` capture, `pill.png` (Radius on Pill), `compact.p
 select, so the script sets Light in code). It runs on
 gpuix's offscreen test renderer, so it needs the native addon but no window. `live-check.tsx` drives the real window
 through the automation client and writes to `screenshots/live/`.
-
-<details>
-<summary>Known issue: the real window can fail to boot</summary>
-
-With the display asleep, `bun src/main.tsx` crashes with `Fluid hover: painted bounds still unavailable`: no frame
-is painted, so `getElementBounds` never returns a box. It reproduced at the first scaffold commit, which booted
-fine earlier, so it is not a regression in the components. I suspect the macOS display-link frame loop does not tick
-while the display sleeps, but that is unconfirmed. Run it with the screen awake.
-</details>
 
 ## Build the app
 
@@ -246,8 +237,8 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 ### gpuix gaps across components
 
 These are the gpuix gaps that hit several components; the per-component files link here. They are as of
-gpuix `poc` ed4e99c3 (`~/code/fdarian/gpuix/FORK.md`): what the port used to work around and gpuix now does (tables,
-`inline-*`, container queries, `has*` states, `fit-content`, variable fonts, `text-wrap`, `text-box-trim`, `calc()` in motion) is gone from this list. "Bug" means gpuix does something wrong or inconsistent; "missing" means it does not
+gpuix `poc` 365f7c88 (`~/code/fdarian/gpuix/FORK.md`): what the port used to work around and gpuix now does (tables,
+`inline-*`, container queries, `has*` states, `fit-content`, variable fonts, `text-wrap`, `text-box-trim`, `calc()` in motion, fractional text widths) is gone from this list. "Bug" means gpuix does something wrong or inconsistent; "missing" means it does not
 offer it. A count is given only where the code shows it.
 
 #### Bugs
@@ -262,8 +253,7 @@ offer it. A count is given only where the code shows it.
 | banner (the actions, `drift/banner.md`, "Action order follows the written order") | Tab order follows the painted order under flex `order`, not the document order gpuix's README states (`README.md:6084`, `packages/native/js/host.ts:487`): three `tabIndex={0}` boxes with `order` 3, 2, 1 are visited right to left, where in CSS Tab keeps the markup order | `row` and `row-reverse` instead of `order`, which keeps the written Tab order (`src/components/banner.tsx:460-508`); placement follows position, not variant |
 | banner (the actions) | `order` inside an `'@container'` block is ignored: the parent sorts its children by the style it reads without the block, so a container query cannot reorder | The narrow layout switches `flexDirection` in the block instead of `order` (`src/components/banner.tsx:502`) |
 | thinking-steps (the details wrapper, `drift/thinking-steps.md`) | A `width: "fit-content"` box in a column flex container with a horizontal negative margin keeps the height of a wrapped first pass: 94x40 where CSS gives 94x20 | A block parent, as the source's, or `alignSelf: "flex-start"` (`src/components/thinking-steps.tsx:484-485`) |
-| any box as wide as its text (`StableLabel`, the inline `Badge`, the ask-user inline title) | gpui measures text up to the next whole pixel, so a shrink-to-fit box is up to 1px wider than Chrome's and what follows it sits that much later (gpuix `README.md:3348-3350`, `FORK.md:799-801`) | none |
-| tabs, tabs-subtle (any `textBox: capTrim` text that its parent centres) | gpuix keeps a trimmed box at its cap height since #41 (Inter 13px: 9.45px, 12px: 8.74px; `zed/crates/gpui/src/elements/text.rs:1114-1135`) and the flex row centres it, but painting snaps the box top to a whole pixel (`zed/crates/gpui/src/taffy.rs:1420-1425`) and takes the baseline from the snapped origin, so the baseline is `round(snapped top + cap height)` where Chrome's is `round(top + cap height)`. At 1x the baseline lands a pixel from Chrome's: the 13px caps 0.9px above the pill centre, the 12px caps 0.5px below it (`drift/tabs.md`, "Cap-trimmed label baseline sits a pixel off Chrome's"). `getElementBounds` and `onLayout` report the snapped box, so a check cannot read the fraction; 2x not checked | none |
+| tabs, tabs-subtle (any `textBox: capTrim` text that its parent centres; gpuix #44) | gpuix keeps a trimmed box at its cap height since #41 (Inter 13px: 9.45px, 12px: 8.74px; `zed/crates/gpui/src/elements/text.rs:1114-1135`) and the flex row centres it, but painting snaps the box top to a whole pixel (`zed/crates/gpui/src/taffy.rs:1420-1425`) and takes the baseline from the snapped origin, so the baseline is `round(snapped top + cap height)` where Chrome's is `round(top + cap height)`. At 1x the baseline lands a pixel from Chrome's: the 13px caps 0.9px above the pill centre, the 12px caps 0.5px below it (`drift/tabs.md`, "Cap-trimmed label baseline sits a pixel off Chrome's"). `getElementBounds` and `onLayout` report the snapped box (gpuix #45), so a check cannot read the fraction; 2x not checked | none |
 | any bold text in the system face (Helvetica Neue) | A bold Helvetica Neue line box is 24px in gpuix and 25px in Chrome; not measured for Inter | none |
 | screenshots, app-frame | The test renderer opens its window with the options, but a capture is the view alone: no titlebar or traffic lights (gpuix `README.md:7059-7061`) | Captures show no traffic lights |
 | screenshots | Batched keystrokes deliver an input's `onChange` after the whole batch | none |
