@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:1c9669e1222467ce0d252115ed1bee04dcc8f29dc1a3768fe08cf66ee6a7482e",
+  "pageVersion": "sha256:da5147bfbf6acb5d634f5d65c16c12b2464d4ae4ab47044b21f2befbb07efd88",
   "claims": [
     {
       "id": "claim_782844f1b7454bbd8c43501708e208b1",
@@ -235,7 +235,7 @@
       "statement": "The port keeps the off-screen culling in src/lib/cull.ts because gpuix #46 still makes a frame's cost scale with off-screen content: removing it on poc e5231304 raised sidebar-sweep draw p95 on the changelog from 10.9 to 26.6 ms and command-menu from 16.7 to 37.4 ms (sum over 49 pages 520 to 670 ms) and raised idle CPU where off-screen loops would run (input-message 1.8 to 49.7%, showcase 44 to 87%).",
       "evidence": [
         {
-          "resource": "repo://README.md#L271-L271",
+          "resource": "repo://README.md#L273-L273",
           "version": "repo-lines-v1:sha256:1ca750f6b121d3487d39a343e58397d2fc0c1f242665ad2028cd9926f2d1b054:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWNhNzUwZjZiMTIxZDM0ODdkMzlhMzQzZTU4Mzk3ZDJmYzBjMWYyNDI2NjVhZDIwMjhjZDk5MjZmMmQxYjA1NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWNhNzUwZjZiMTIxZDM0ODdkMzlhMzQzZTU4Mzk3ZDJmYzBjMWYyNDI2NjVhZDIwMjhjZDk5MjZmMmQxYjA1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGJkY2U0MGY4MjFkYWE5ZWU4Y2VjOTEyOWQ5ZjgzNWQ0ZWY3ZDI5NTI0ODdmYjUwNDg4NzE5MTI4MGRlOGU2YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDY1NTY3MzQ2MWI1ZGFlZTgxZTM0ZDFmNDMwZjc3OTU3MTAxMjQxNDgyMDkwZjM5OGIwZDQ5ODUwNTY0OTI4MCJ9"
         },
         {
@@ -313,10 +313,28 @@
           "version": "repo-lines-v1:sha256:67aa29041eaec36a83f9f242916b81695ef037a146880da74056760162d7b1bb:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2N2QzNDM3MjVlNDdkODFhYWZjNzYyZjEzOTUxZDVkNjhlMTM2MjI3MGMwMjlmNGZhN2VlOGYzMjg4YmM4ZTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5MGIxMDdlOGQ4YjcyZjBlOTQxNmM5ZTA0MTBjOGYxMzg1NGY3NTlkYTMzZGZkZjE0NGM1MzA5NTA4YzE3ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
+    },
+    {
+      "id": "claim_3138f5db0749457eb66be23eadee5e08",
+      "statement": "The banner demo's screenshot reveal() counts consecutive attempts where the element's y did not change and throws after three, because a wheel can land without moving the page; the accordion, button, card, combobox, dropdown, select and sidebar demos still return when y equals the previous attempt.",
+      "evidence": [
+        {
+          "resource": "repo://src/demos/accordion.tsx#L327-L337",
+          "version": "repo-lines-v1:sha256:d3ac8a5ade6f9955e53aeb7933a393fa5835c7c35c807c4d5d7b51f66641d00a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmMThhZWE0ZjQ2YmVjMDNjNDk0ODY3M2YyNGU0YWJjNmFhZjA3M2MzN2JmYzU3YmFkOWUzZDI5ZGRlNmFjNzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1YmIxYWY1MjFiZWNkNTVkNzA1NmE4YTlhMGRkMWViY2RhMWZjNzlmZjIzZjc0NTc3NmY0OTk1ODMzNTI5MjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNhZmEzMTYwZTVhNDJlMmQ4ZTljY2ZjOWZkZmRmNDlkMzI4ZGM0YmYyOGIxYmYxMzEyZjk2ZmQ0ZGE5NmYzZjgifQ"
+        },
+        {
+          "resource": "repo://src/demos/banner.tsx#L640-L655",
+          "version": "repo-lines-v1:sha256:d123f449cc79880ced86fbf8f8c01582bda828b883e79cb8833b6cc01936abc7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmMThhZWE0ZjQ2YmVjMDNjNDk0ODY3M2YyNGU0YWJjNmFhZjA3M2MzN2JmYzU3YmFkOWUzZDI5ZGRlNmFjNzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1YmIxYWY1MjFiZWNkNTVkNzA1NmE4YTlhMGRkMWViY2RhMWZjNzlmZjIzZjc0NTc3NmY0OTk1ODMzNTI5MjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiNmFlNzc3NGFkMGU0OTRmYjhjMDgwY2UyZDVjZWI3YTllNGRjZWUxMzk3NjBhOTJlZDI2ZThjYjI2ZThkZWUifQ"
+        },
+        {
+          "resource": "repo://src/demos/sidebar.tsx#L134-L134",
+          "version": "repo-lines-v1:sha256:8b12ba530009082ecb12b6abdfe2fa05e17edbf18540f50f0b76e20d59b3dc79:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGIxMmJhNTMwMDA5MDgyZWNiMTJiNmFiZGZlMmZhMDVlMTdlZGJmMTg1NDBmNTBmMGI3NmUyMGQ1OWIzZGM3OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGIxMmJhNTMwMDA5MDgyZWNiMTJiNmFiZGZlMmZhMDVlMTdlZGJmMTg1NDBmNTBmMGI3NmUyMGQ1OWIzZGM3OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTM5Y2RkZDAxNzQ3MzZlMGE1NGYxZTEzNmVlYzAzY2FlOTk1MTFhMDdjOTYzMTc4MmQwMzFmODI1YTkxZDAyZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODcyNTU0ODU2MjExNGY2ZWJlNDdiMmVjMmIyMmEzODJmZWUxNTg1MTAzNzkwZWE0MzhlM2EyMDdkZjhkZDBkYiJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-19T10:45:55.491Z"
+    "at": "2026-10-19T12:54:18.407Z"
   }
 }

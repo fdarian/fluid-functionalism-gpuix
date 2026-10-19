@@ -5,7 +5,7 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-19T10:45:55.491Z
+    at: 2026-10-19T12:54:18.407Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -43,6 +43,12 @@ sources:
     resource: repo://src/components/file-thumbnail.tsx
   - id: openwiki-source-94d7540365b6edfe6f6a0bbe
     resource: repo://src/components/table.tsx
+  - id: openwiki-source-d57eba45f36de60999228636
+    resource: repo://src/demos/accordion.tsx
+  - id: openwiki-source-f3da90b05c6018726fe8899a
+    resource: repo://src/demos/banner.tsx
+  - id: openwiki-source-29fdf488e6b79f28c82660ab
+    resource: repo://src/demos/sidebar.tsx
   - id: openwiki-source-a79b6ccf1548a05902eb90b6
     resource: repo://src/demos/thinking-steps.tsx
   - id: openwiki-source-b100b0574d7a0258fad9b8f3
@@ -71,7 +77,7 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-19T10:45:55.491Z" }
+generated: { by: "claude-code", at: "2026-10-19T12:54:18.407Z" }
 ---
 
 # Port decisions and their reasons
@@ -343,6 +349,21 @@ a 30-minute run. Run the check for the component you touched on its own (`bun sc
 quirks. One trap: **captures are not byte-stable**. The playgrounds pick variants with `Math.random`, and the caret
 and timing-driven demos differ run to run, so compare the content area by pixel diff, never by hash, and do not
 recommit `screenshots/` for noise.
+
+Two things from the 2026-10-19 round (`a2eed755`, `ce7ee2b9`, `d9d2e93e`):
+
+- **Recaptures are partial on purpose.** A round recaptures the pages whose content changed (here: the Customise
+  card rows 34 px apart, the native-animation phases, `StableLabel` widths) and leaves noise-only files alone
+  (changelog, compare). The nine `playground-shuffled` captures are redone in their own commit, because their
+  random variant makes the diff noisy and their sidebar must sit at the same y as every other capture.
+- **`reveal()` in a demo's scenarios must not read "the element did not move" as "the page ended".** Each
+  tall-page demo has its own copy that scrolls an element into the upper part of the window. The old copy returned
+  when the element's y equalled the previous attempt's, but a wheel can land without moving the page, so a capture
+  could be taken with the element still off-screen and a wrong image committed. `banner.tsx` now counts
+  consecutive stalls (up to 12 attempts) and throws `scrolling did not move <testId>` on the third. Accordion,
+  button, card, combobox, dropdown, select and sidebar demos still carry the old `y === previous` shortcut, so a
+  capture of an element far down those pages can silently be taken unscrolled; when one looks wrong, suspect the
+  stall first and port the banner's version rather than rerunning.
 
 ## pnpm wiring: one solid-js, one @gpuix/solid
 

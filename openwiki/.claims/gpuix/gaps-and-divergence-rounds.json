@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:e27f50861d7fa049bd5bf61a1b24dcde1817b16122be9271637cd35c5d299f2e",
+  "pageVersion": "sha256:08a403699bddd41df1e7225846818c3f5cd1db8f9ddca89fc422ddc0d13bbeae",
   "claims": [
     {
       "id": "claim_8f689a7df6cd43af9e228cffa0828120",
       "statement": "The README's gpuix gaps section is the authoritative list of gpuix bugs and missing features the port works around, each with the components it hits and the workaround.",
       "evidence": [
         {
-          "resource": "repo://README.md#L237-L284",
-          "version": "repo-lines-v1:sha256:bebc1ecfeaeee56332f713d19f5eaa2acb85529f10c5e8b824f6b87b9ff5648a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE0YzQwNWJhZmVlOTc1MjQ3N2JhZDhhM2VhM2U4MTU0ODVlZjEwYzUyNjYyMTVjZDk0NGRhMTg5MjNmN2Y0MGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5MGQyZTdlM2VlZjk3NTM0MjU5MzM1NGY1ODFiYTRlZGMxMWNjZmI5OGZmYTFhODEzYmUzZTAwMzFmNGMzNzUifQ"
+          "resource": "repo://README.md#L237-L286",
+          "version": "repo-lines-v1:sha256:c35b99fcb423e8e0afc454252e6af2a2abcd61981e9a5de8c03f702f6ae5256a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE0YzQwNWJhZmVlOTc1MjQ3N2JhZDhhM2VhM2U4MTU0ODVlZjEwYzUyNjYyMTVjZDk0NGRhMTg5MjNmN2Y0MGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5MGQyZTdlM2VlZjk3NTM0MjU5MzM1NGY1ODFiYTRlZGMxMWNjZmI5OGZmYTFhODEzYmUzZTAwMzFmNGMzNzUifQ"
         }
       ]
     },
@@ -17,7 +17,7 @@
       "statement": "Without CSS transforms, popups keep an opacity fade and slide but lose the scaleY entrance, and glyph turns are swapped or redrawn.",
       "evidence": [
         {
-          "resource": "repo://README.md#L265-L265",
+          "resource": "repo://README.md#L267-L267",
           "version": "repo-lines-v1:sha256:a1fb8675018ca3e98a17c305034f4eda77f2597f30bf7da9713bbcc38149090f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTFmYjg2NzUwMThjYTNlOThhMTdjMzA1MDM0ZjRlZGE3N2YyNTk3ZjMwYmY3ZGE5NzEzYmJjYzM4MTQ5MDkwZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTFmYjg2NzUwMThjYTNlOThhMTdjMzA1MDM0ZjRlZGE3N2YyNTk3ZjMwYmY3ZGE5NzEzYmJjYzM4MTQ5MDkwZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDAwOGZiMmRjMDdjZWU4MGQ2YmVjYjY0NzFmZDVkYTViMTNhYzhlMDlmMDA0NDAxYjdmYjVhMzNhMzU3ODdmNSJ9"
         }
       ]
@@ -27,7 +27,7 @@
       "statement": "Because gpuix #46 still makes a frame's cost scale with clipped, off-screen content, the port hides regions far from the page scroller with display none through src/lib/cull.ts; this is a kept workaround, not a removed one.",
       "evidence": [
         {
-          "resource": "repo://README.md#L271-L271",
+          "resource": "repo://README.md#L273-L273",
           "version": "repo-lines-v1:sha256:1ca750f6b121d3487d39a343e58397d2fc0c1f242665ad2028cd9926f2d1b054:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWNhNzUwZjZiMTIxZDM0ODdkMzlhMzQzZTU4Mzk3ZDJmYzBjMWYyNDI2NjVhZDIwMjhjZDk5MjZmMmQxYjA1NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWNhNzUwZjZiMTIxZDM0ODdkMzlhMzQzZTU4Mzk3ZDJmYzBjMWYyNDI2NjVhZDIwMjhjZDk5MjZmMmQxYjA1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGJkY2U0MGY4MjFkYWE5ZWU4Y2VjOTEyOWQ5ZjgzNWQ0ZWY3ZDI5NTI0ODdmYjUwNDg4NzE5MTI4MGRlOGU2YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDY1NTY3MzQ2MWI1ZGFlZTgxZTM0ZDFmNDMwZjc3OTU3MTAxMjQxNDgyMDkwZjM5OGIwZDQ5ODUwNTY0OTI4MCJ9"
         },
         {
@@ -272,7 +272,7 @@
         },
         {
           "resource": "repo://drift/thinking-indicator.md",
-          "version": "repo-file-v1:sha256:f882b8b754d40cf1a66cd623e07bcd9045747deb3ad143b83c9142c5ca30a330"
+          "version": "repo-file-v1:sha256:45b2e8e10e3fcde771fef494316e353c82a5c5dff03def4688ec5ba86189a625"
         },
         {
           "resource": "repo://src/components/carousel-dots.tsx#L91-L111",
@@ -285,7 +285,7 @@
       "statement": "The README's gpuix gaps table now lists only thinking-steps as needing the shared setInterval frame clock because gpuix has no requestAnimationFrame.",
       "evidence": [
         {
-          "resource": "repo://README.md#L274-L274",
+          "resource": "repo://README.md#L276-L276",
           "version": "repo-lines-v1:sha256:be83225f1df06081fac4ea1ae2aec1efc3c6d9b25846a810e83736901af0fc8b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmU4MzIyNWYxZGYwNjA4MWZhYzRlYTFhZTJhZWMxZWZjM2M2ZDliMjU4NDZhODEwZTgzNzM2OTAxYWYwZmM4YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmU4MzIyNWYxZGYwNjA4MWZhYzRlYTFhZTJhZWMxZWZjM2M2ZDliMjU4NDZhODEwZTgzNzM2OTAxYWYwZmM4YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTQ1MDhjMDBjM2YxZWExMTljMTdiNTVkODNhNDE5ZTdiMWRhYjk2MWUwMGI3MmJjOWZjMGRmM2QwYzQ2ZjYzZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTAwNWM0NWExNjFjMGYyNzc2YjI2MTJlMzU4ODA1ZDg4ZTQxN2Q2Njg3YWIwMWRlZDNkYzJjM2QwNzM1NGI0OCJ9"
         },
         {
@@ -293,10 +293,30 @@
           "version": "repo-lines-v1:sha256:3ecb05ad6a93d2b287421a54b36cda4dbaeebe640c262da4c9d89ca7b04e5c35:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5NzdlZDcxMmYzZWExZTdmZjU5MGJiNjQ2M2EwMjhhOTk3NTE5ZTUxZGNiMGE3OTY5Zjg0MjU4MDczMmVkMTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxMTJiNWNhMTBkODFjZGU5MmI2YWRlZjUwNDhkZjI4MjNhMDQxMjQxODNmY2NlNDA3YzI3Y2Q3MGMwNjM3ZTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3OTI5ZTkxZTBmOTljM2U4MjVkZTY5YjQzNWZiNjQ4NGQxYjBhMWRmMmY0NjU2MWFiZjFhMjlmMDQxODhiODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNhODE5ZGYwMDU1ZTExZDUwOTQzNmYwODI4OGNhNGJhNzRhMTAxOGVjNzE1NTI4YjU4NWZlMmQ4YWE2ZGRlOTIifQ"
         }
       ]
+    },
+    {
+      "id": "claim_85cdeccb30d74e6b919b66bf91054b33",
+      "statement": "When a native animation keeps requesting frames and a draw takes longer than one display frame, gpuix's frame-wake callback is always queued when tick() returns, so Bun never runs setTimeout, setInterval or IPC; FF has no workaround and keeps the native animations.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L260-L261",
+          "version": "repo-lines-v1:sha256:e00d273fd78a8bdd1242b23cdc0fae0ac5fa655add143fee7ff4250f1a91ce67:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjM5NzY2ODM4NmQ5NmU0YmQwMDA2ZDlkYjhkM2NlZmM3ZmRmYzE0MmYwZjVhNTA3ZTQ4YzQ0NTFmNTQ1MTBlNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODJiOTAzNjY0NDdjYmUyMjRkNGU5ZTZjNGZlNDQwMjI2YzU3YTNhYzE5OWI5YTQwYzY3MDIyM2I4MDhiNjc2NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjA3M2VhMTA1MTZmMThkNWMxMzNkNjkzY2JiYzVmZjBmNWMwMmY2ODZjYThmZGJlZTQ1YmZhMjRhZmIzODdhZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWM0ZTExMTA4MzI5MTFhMWViYzA4ZjYwNTI4NWU3N2Q5NWViMGI1ZGY0ZjIwMGJlMGUxYTg4OWMwMzliOTNlOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_02c3068dc89b46dd9b5ec03d15f664c5",
+      "statement": "In gpuix a single animating text forces a full page rebuild every frame (about 28 ms on a 3000-node page), so native animation frames are cheap only on light pages; the port has no workaround for it.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L261-L262",
+          "version": "repo-lines-v1:sha256:ca2a69e6727998aac087d41b43d3c9ad31fcf66bd02b09ea68a2ca999f221c0e:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODJiOTAzNjY0NDdjYmUyMjRkNGU5ZTZjNGZlNDQwMjI2YzU3YTNhYzE5OWI5YTQwYzY3MDIyM2I4MDhiNjc2NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGQ2ZGJiODJkNDc0MzVlZWMyYThiMWVlM2I0NDYyOGMxNjhiM2Y0ZDNmMDY0NmMxMjU2NmZmYTAyM2QxNTYxNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjdlZGRjYTRlOWM1NDczNmI0NjY4MzE2MTk1OGJmOWMzM2ZjMWVhNmE3ZmM5OTYwMGQyNWRmMDlmMjc2YjkxNyJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-19T10:45:55.491Z"
+    "at": "2026-10-19T12:54:18.407Z"
   }
 }

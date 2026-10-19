@@ -60,10 +60,10 @@ sources:
     resource: repo://src/pages/changelog/changelog-view.tsx
   - id: openwiki-source-81c2a5e01f16d1053272b0de
     resource: repo://src/pages/changelog/entry.tsx
-generated: { by: "claude-code", at: "2026-10-19T10:45:55.491Z" }
+generated: { by: "claude-code", at: "2026-10-19T12:54:18.407Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-19T10:45:55.491Z
+    at: 2026-10-19T12:54:18.407Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -443,6 +443,23 @@ and the remaining limits are narrower.
     interval clock. The README row for it now lists only thinking-steps.
   - **CSS keyframes take style properties, not SVG attributes** such as `strokeDashoffset`; a `motion.circle` with
     `repeat` plays the spinner instead.
+- **Two frame-loop gaps found after adopting it** (README Bugs table, `1c7517a0`; neither has a workaround, FF keeps
+  the native animations):
+  - **A native loop can starve Bun's timers and IPC.** When an animation keeps requesting frames and one draw takes
+    longer than a display frame (about 13 ms at 75 Hz), gpuix's frame-wake callback is always already queued when
+    `tick()` returns, so Bun never gets to run `setTimeout`, `setInterval` or IPC. In the repro (a kept
+    `~/.claude/notes/ff-gpuix-repros/r7-frame-loop-starves-timers.tsx`, outside the repo) a still page gets 10 timer
+    callbacks a second, an animating one gets 0, and animating with `startFrameLoop` at `frameMs` 16 gets 8-9. It
+    only bites when a draw is slow: on the showcase page under heavy machine load (draws of 25-32 ms) the perf
+    harness's mount reply never arrived, while at normal load the page draws in about 4.6 ms and is fine. The
+    trigger was `224f89d7` (the shimmer as native keyframes); the old JS clock avoided it only by leaving gaps
+    between its 33 ms ticks. So **a perf or check run on a loaded machine can hang for this reason, not because of
+    the change under test.**
+  - **One animating text rebuilds the whole page every frame.** A single looping colour animation costs a full
+    rebuild per frame, about 28 ms on a 3000-node page, so native animation frames are cheap only on light pages
+    (file-thumbnail about 1.8 ms, showcase about 4.6 ms). It affects every native loop on a heavy page
+    (thinking-indicator, thinking-steps, file-thumbnail, carousel-dots) and feeds the first gap: the heavier the
+    page, the likelier a draw outlasts a frame.
 - **The second `StableLabel` ghost is back** (`54405f67`): a label whose normal copy is wider shrinks on selection
   with a semibold-only ghost, so the cell is `max(normal, semibold)` again and `check-weight-widths` asserts it
   exactly. The cost on `5fda771a` is +1.0-1.7 ms of sidebar-sweep draw p95, paid on frames that build rather than
