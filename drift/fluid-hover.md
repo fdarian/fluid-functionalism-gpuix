@@ -33,19 +33,20 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 - **Fidelity:** approximated.
 - **Components it hits:** every System page the latest release marks New or Updated (Skill, and Typography once its release lands).
 
-## "Blink or glide": the script is a JS loop, the cursor moves on `left` / `top`
+## "Blink or glide": the cursor moves on `left` / `top`, and a pass is a progress value
 
-- **Cause:** `port choice` (gpuix has no `requestAnimationFrame` and no keyframes on a value JS can read) plus `gpuix gap` (no transforms: README "Missing features").
-- **Original:** one framer `animate(y, keyframes, { times, ease: "easeInOut", repeat: Infinity })` on a `MotionValue`, paused and resumed in place; the cursor is a `motion.span` on `x` / `y`; the loop runs while `useInView(amount: 0.35)` and a visiting pointer pauses it (`demos.tsx:164-377`).
-- **Port:** the same three round trips (2 s, 0.8 s, 0.3 s legs) evaluated by hand with a cubic-bezier `easeInOut` from the shared 16 ms clock (`src/lib/clock.ts`), the cursor an absolutely positioned div moved by `left` / `top` each tick, and the fluid list fed the same point as a `mousemove` with window coordinates (`src/pages/fluid-hover/plain-vs-fluid.tsx:41-243`). In view is an `IntersectionObserver` at threshold 0.35 against the page scroller. A pointer inside takes over through `onMouseEnter` / `onMouseMove` / `onMouseDown` on the demo's root and the script resumes on leave. The pause button's tooltip, icon swap and hold-the-frame behaviour match.
-- **Fidelity:** approximated (the timer's 16 ms cadence instead of the display's frames).
-- **Components it hits:** just this page; the other scripted loop (thinking-steps) uses the same clock.
+- **Cause:** `gpuix gap` (no transforms: README "Missing features"; no pause / play on an animation, only `stop()`, `cancel()` and `complete()`).
+- **Original:** one framer `animate(y, keyframes, { times, ease: "easeInOut", repeat: Infinity })` on a `MotionValue`, paused and resumed in place through its controls; the cursor is a `motion.span` on `x` / `y`, and `useMotionValueEvent(y, "change")` lights the plain row and feeds the fluid list a mouse move; the loop runs while `useInView(amount: 0.35)` and a visiting pointer pauses it (`demos.tsx:164-377`).
+- **Port:** the same three round trips (2 s, 0.8 s, 0.3 s legs) with the source's keyframes, times and `easeInOut`, played natively: a `progress` motion value (0 to 1) runs a linear `animate` with `repeat: Infinity`, and the cursor's y is a range-form `createTransform` of it (`src/pages/fluid-hover/plain-vs-fluid.tsx:43-53`, `:87-90`, `:119-139`), so a playing script costs no JS frame. The cursor is an absolutely positioned div whose `top` is that value (`src/pages/fluid-hover/parts.tsx:141-169`). A change listener on y does what the source's does, lighting the plain row (the signal is written only when the row changes) and feeding the fluid list a `mousemove` with window coordinates (`plain-vs-fluid.tsx:142-148`). Pausing (the button, reduced motion, a visiting pointer, out of view) `stop()`s the animation where it is, and the next play runs on from `progress` for the share of the pass left, then returns to looping whole passes, a frame or two late at that one handover. In view is an `IntersectionObserver` at threshold 0.35 against the page scroller. A pointer inside takes over through `onMouseEnter` / `onMouseMove` / `onMouseDown` on the demo's root and the script resumes on leave. The pause button's tooltip, icon swap and hold-the-frame behaviour match.
+- **gpuix lacks:** pause / play on an animation, so the source's one paused-and-resumed animation becomes `stop()` plus a new `animate()` from the value (exact, since `progress` is linear and the keyframes live in the transform).
+- **Fidelity:** approximated (the cursor sits on `left` / `top`, not a transform; a resume is a new animation).
+- **Components it hits:** this page and the changelog's Fluid Hover preview, which renders the same stage.
 
 ## "Blink or glide": captions differ slightly
 
 - **Cause:** `port choice` (captions).
 - **Original:** the play / pause icon button is the right end of the preview header, 40px square, through `ComponentPreview`'s `playbackButton`; `useReducedMotion()` stops the script (`demos.tsx:288-292`, `:380-400`, `lib/docs/ComponentPreview.tsx:140-170`); the two captions are flex rows whose text and `<code>` runs are separate flex items 8px apart (`demos.tsx:344-376`).
-- **Port:** the pause button is the same 40px header button, through the shared `ComponentPreview`'s `playback` option (icon, tooltip and click; `src/lib/doc-page.tsx:296-334`, `src/pages/fluid-hover/plain-vs-fluid.tsx:245-257`). Reduced motion stops the script as in the source (`createReducedMotion()`, `src/pages/fluid-hover/plain-vs-fluid.tsx:109-110`); each caption is one centred `<text>` with inline runs, so the gaps around the chip are a normal space.
+- **Port:** the pause button is the same 40px header button, through the shared `ComponentPreview`'s `playback` option (icon, tooltip and click; `src/lib/doc-page.tsx:296-334`, `src/pages/fluid-hover/plain-vs-fluid.tsx:246-262`). Reduced motion stops the script as in the source (`createReducedMotion()`, `src/pages/fluid-hover/plain-vs-fluid.tsx:83-84`); each caption is one centred `<text>` with inline runs, so the gaps around the chip are a normal space.
 - **Fidelity:** approximated.
 
 ## "Show the math": dash geometry and the distance label's offset

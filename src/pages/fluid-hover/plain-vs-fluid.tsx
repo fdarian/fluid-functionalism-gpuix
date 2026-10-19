@@ -1,5 +1,8 @@
 import {
+	createMotionValue,
+	createMotionValueEvent,
 	createReducedMotion,
+	createTransform,
 	type HostElement,
 	IntersectionObserver,
 } from '@gpuix/solid';
@@ -11,7 +14,6 @@ import {
 	onCleanup,
 	useContext,
 } from 'solid-js';
-import { onFrame } from '#/lib/clock';
 import { PageScrollerContext } from '#/lib/cull';
 import { Code, ComponentPreview } from '#/lib/doc-page';
 import { createFluidHover } from '#/lib/fluid-hover';
@@ -39,38 +41,16 @@ const CURSOR_BOTTOM =
 	LIST_PADDING * 2 + ROWS.length * ROW_HEIGHT + (ROWS.length - 1) * ROW_GAP - 2;
 /** One pass is three round trips, each faster than the last: reading speed, pointing speed, then a flick. Seconds per leg. */
 const LEG_SECONDS = [2, 2, 0.8, 0.8, 0.3, 0.3];
-const PASS_MS = LEG_SECONDS.reduce((sum, leg) => sum + leg, 0) * 1000;
+const PASS_S = LEG_SECONDS.reduce((sum, leg) => sum + leg, 0);
 
-/** CSS `ease-in-out`, framer's `easeInOut`: cubic-bezier(0.42, 0, 0.58, 1). */
-function easeInOut(progress: number) {
-	const x1 = 0.42;
-	const x2 = 0.58;
-	const curve = (t: number, a: number, b: number) =>
-		3 * (1 - t) * (1 - t) * t * a + 3 * (1 - t) * t * t * b + t * t * t;
-	let low = 0;
-	let high = 1;
-	for (let step = 0; step < 24; step++) {
-		const mid = (low + high) / 2;
-		if (curve(mid, x1, x2) < progress) low = mid;
-		else high = mid;
-	}
-	return curve((low + high) / 2, 0, 1);
-}
-
-/** Where the scripted cursor is `elapsed` ms into a pass. */
-function cursorAt(elapsed: number) {
-	let start = 0;
-	for (let leg = 0; leg < LEG_SECONDS.length; leg++) {
-		const duration = LEG_SECONDS[leg] * 1000;
-		if (elapsed < start + duration) {
-			const from = leg % 2 === 0 ? CURSOR_TOP : CURSOR_BOTTOM;
-			const to = leg % 2 === 0 ? CURSOR_BOTTOM : CURSOR_TOP;
-			return from + (to - from) * easeInOut((elapsed - start) / duration);
-		}
-		start += duration;
-	}
-	return CURSOR_TOP;
-}
+/** The source's keyframes: the y the cursor is at when each leg starts, and ends. `CURSOR_TIMES` is the share of the pass each is reached at. */
+const CURSOR_KEYFRAMES = LEG_SECONDS.map((_leg, index) =>
+	index % 2 === 0 ? CURSOR_TOP : CURSOR_BOTTOM,
+).concat(CURSOR_TOP);
+const CURSOR_TIMES = LEG_SECONDS.map(
+	(_leg, index) =>
+		LEG_SECONDS.slice(0, index).reduce((sum, leg) => sum + leg, 0) / PASS_S,
+).concat(1);
 
 /** Which row a y (in list coordinates) is inside, or null in a gap or the padding: what plain :hover would report. */
 function rowUnder(y: number) {
@@ -103,11 +83,14 @@ function Stage(props: { paused: () => boolean }) {
 	const reduced = createReducedMotion();
 	const scripted = () => inView() && !reduced() && !userInside();
 	const running = () => scripted() && !props.paused();
-	const [cursorY, setCursorY] = createSignal(CURSOR_TOP);
+	/** How far into the pass the cursor is, 0 to 1: the one value that plays, so pausing keeps the pass's place. The cursor's y is mapped from it in Rust, through the source's keyframes, times and ease. */
+	const progress = createMotionValue(0);
+	const cursorY = createTransform(progress, CURSOR_TIMES, CURSOR_KEYFRAMES, {
+		ease: 'easeInOut',
+	});
 	const [fakeIndex, setFakeIndex] = createSignal<number | null>(null);
 	let root: HostElement | undefined;
 	let fluid: HostElement | undefined;
-	let elapsed = 0;
 
 	createEffect(() => {
 		const rootElement = scroller?.();
@@ -132,18 +115,36 @@ function Stage(props: { paused: () => boolean }) {
 		wasScripted = now;
 	});
 
-	// Every frame of the cursor: the plain list gets what :hover would say, the fluid list the same point as a real mouse move. Pausing ends the subscription, so both hold their last frame.
+	// Plays out what is left of the pass, then loops whole passes. gpuix has no pause on an animation, so pausing stops it where it is and this resumes from that value (linear, so exact).
 	createEffect(() => {
 		if (!running()) return;
-		onFrame((dt) => {
-			elapsed += dt;
-			const y = cursorAt(elapsed % PASS_MS);
-			setCursorY(y);
-			setFakeIndex(rowUnder(y));
-			if (fluid === undefined || !fluid.mounted) return;
-			const box = hover.containerBox();
-			hover.handlers.onMouseMove({ x: box.x + CURSOR_X, y: box.y + y });
+		let current = true;
+		let playing = progress.animate(1, {
+			duration: (1 - progress.get()) * PASS_S,
+			ease: 'linear',
 		});
+		playing.finished.then(() => {
+			if (!current) return;
+			progress.jump(0);
+			playing = progress.animate([0, 1], {
+				duration: PASS_S,
+				ease: 'linear',
+				repeat: Infinity,
+			});
+		});
+		onCleanup(() => {
+			current = false;
+			playing.stop();
+		});
+	});
+
+	// Every frame of the cursor: the plain list gets what :hover would say, the fluid list the same point as a real mouse move. The signal is only written when the row under the cursor changes.
+	createMotionValueEvent(cursorY, 'change', (y) => {
+		if (!scripted()) return;
+		setFakeIndex(rowUnder(y));
+		if (fluid === undefined || !fluid.mounted) return;
+		const box = hover.containerBox();
+		hover.handlers.onMouseMove({ x: box.x + CURSOR_X, y: box.y + y });
 	});
 
 	const listStyle = {
@@ -192,7 +193,9 @@ function Stage(props: { paused: () => boolean }) {
 								/>
 							)}
 						</For>
-						{scripted() ? <FakeCursor x={CURSOR_X} y={cursorY} /> : null}
+						{scripted() ? (
+							<FakeCursor testId="pvf-cursor-plain" x={CURSOR_X} y={cursorY} />
+						) : null}
 					</div>
 				</ListFrame>
 				<Caption mark="❌">
@@ -222,7 +225,9 @@ function Stage(props: { paused: () => boolean }) {
 								/>
 							)}
 						</For>
-						{scripted() ? <FakeCursor x={CURSOR_X} y={cursorY} /> : null}
+						{scripted() ? (
+							<FakeCursor testId="pvf-cursor-fluid" x={CURSOR_X} y={cursorY} />
+						) : null}
 					</div>
 				</ListFrame>
 				<Caption mark="✅">Fluid hover glides, one pass, one target</Caption>

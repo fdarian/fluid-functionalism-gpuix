@@ -1,4 +1,9 @@
-import { buttonProps, type HostElement, useGpuixRequired } from '@gpuix/solid';
+import {
+	buttonProps,
+	type HostElement,
+	type MotionValue,
+	useGpuixRequired,
+} from '@gpuix/solid';
 import type { JSX } from 'solid-js';
 import { FluidHighlight } from '#/lib/fluid-highlight';
 import { type FluidHover, useHoverItem } from '#/lib/fluid-hover';
@@ -134,13 +139,19 @@ export function ListHighlight(props: { hover: FluidHover }) {
 }
 
 /** A scripted pointer: its tip sits at (x, y) in the positioned parent. */
-export function FakeCursor(props: { x: number; y: () => number }) {
+export function FakeCursor(props: {
+	x: number;
+	y: MotionValue<number>;
+	testId?: string;
+}) {
 	return (
 		<div
+			testId={props.testId}
 			style={{
 				position: 'absolute',
 				left: props.x - 3,
-				top: props.y() - 3,
+				top: props.y,
+				marginTop: -3,
 				pointerEvents: 'none',
 			}}
 		>
