@@ -11,8 +11,8 @@
  */
 
 import { formatShortcut } from '#/components/command-menu';
-import { createHostElement } from '../node_modules/@gpuix/solid/dist/host.js';
 import { setSizeChoice } from '#/lib/theme';
+import { createHostElement } from '../node_modules/@gpuix/solid/dist/host.js';
 import { createCheck } from './check-kit';
 
 const kit = await createCheck('command-menu');
