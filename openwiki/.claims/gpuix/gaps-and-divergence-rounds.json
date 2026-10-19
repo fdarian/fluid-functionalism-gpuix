@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:4bf883fee1ee159c4cfd78c75289fece76867d306f0876d05ff110ee1be40f4f",
+  "pageVersion": "sha256:ce1991989f567ce9fed78b8c3289c5c201999385a2ec5ba9b90f3819d98f2f48",
   "claims": [
     {
       "id": "claim_8f689a7df6cd43af9e228cffa0828120",
       "statement": "The README's gpuix gaps section is the authoritative list of gpuix bugs and missing features the port works around, each with the components it hits and the workaround.",
       "evidence": [
         {
-          "resource": "repo://README.md#L237-L284",
-          "version": "repo-lines-v1:sha256:cc74a9348b6f4324ec846a6a86704bfdd51d5122f73e5274d6ceb572994c30dc:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4ZmE4NzlkOGU4MDk4YjU5YWY4N2ZmM2E5YmVmOTgwMjYyNzFiYmVmOTZmOTM1NDdhMjRkOGFhYzdkYWQyNDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmMWE0NTFiOWE5YTk3YzA2YTE2ZGZmNWVjOGFlYTQzNmQ3ZTE4MjUyMzMxZDhiMDdkYWU2NDBlMWVkNjAyZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVlZDIwYmE0YmY1ZGFlOTUyZjIwNDkzODRmMDQ3MjY2YTY5ZDI3YzY0ZGM4NzQ4MzY5MWEyNzJiMGI3YjAyYjgifQ"
+          "resource": "repo://README.md#L237-L283",
+          "version": "repo-lines-v1:sha256:d319ba6dd9e683395ae16d4ae0a0a0fb9480ee07cfe9f3834f44537f3799ee56:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4ZmE4NzlkOGU4MDk4YjU5YWY4N2ZmM2E5YmVmOTgwMjYyNzFiYmVmOTZmOTM1NDdhMjRkOGFhYzdkYWQyNDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA4YjQ4ZjEwYjczZGUyYjZiNTY1YjVkYjQ2YmEwMTVlZmU4YWZjNjhjMGFjZDA0MTJlNjMzODBhNTQ2ZjkzYzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVlZDIwYmE0YmY1ZGFlOTUyZjIwNDkzODRmMDQ3MjY2YTY5ZDI3YzY0ZGM4NzQ4MzY5MWEyNzJiMGI3YjAyYjgifQ"
         }
       ]
     },
@@ -17,7 +17,7 @@
       "statement": "Without CSS transforms, popups keep an opacity fade and slide but lose the scaleY entrance, and glyph turns are swapped or redrawn.",
       "evidence": [
         {
-          "resource": "repo://README.md#L266-L266",
+          "resource": "repo://README.md#L265-L265",
           "version": "repo-lines-v1:sha256:a1fb8675018ca3e98a17c305034f4eda77f2597f30bf7da9713bbcc38149090f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTFmYjg2NzUwMThjYTNlOThhMTdjMzA1MDM0ZjRlZGE3N2YyNTk3ZjMwYmY3ZGE5NzEzYmJjYzM4MTQ5MDkwZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTFmYjg2NzUwMThjYTNlOThhMTdjMzA1MDM0ZjRlZGE3N2YyNTk3ZjMwYmY3ZGE5NzEzYmJjYzM4MTQ5MDkwZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDAwOGZiMmRjMDdjZWU4MGQ2YmVjYjY0NzFmZDVkYTViMTNhYzhlMDlmMDA0NDAxYjdmYjVhMzNhMzU3ODdmNSJ9"
         }
       ]
@@ -27,7 +27,7 @@
       "statement": "Because gpuix #46 still makes a frame's cost scale with clipped, off-screen content, the port hides regions far from the page scroller with display none through src/lib/cull.ts; this is a kept workaround, not a removed one.",
       "evidence": [
         {
-          "resource": "repo://README.md#L272-L272",
+          "resource": "repo://README.md#L271-L271",
           "version": "repo-lines-v1:sha256:1ca750f6b121d3487d39a343e58397d2fc0c1f242665ad2028cd9926f2d1b054:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWNhNzUwZjZiMTIxZDM0ODdkMzlhMzQzZTU4Mzk3ZDJmYzBjMWYyNDI2NjVhZDIwMjhjZDk5MjZmMmQxYjA1NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWNhNzUwZjZiMTIxZDM0ODdkMzlhMzQzZTU4Mzk3ZDJmYzBjMWYyNDI2NjVhZDIwMjhjZDk5MjZmMmQxYjA1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGJkY2U0MGY4MjFkYWE5ZWU4Y2VjOTEyOWQ5ZjgzNWQ0ZWY3ZDI5NTI0ODdmYjUwNDg4NzE5MTI4MGRlOGU2YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDY1NTY3MzQ2MWI1ZGFlZTgxZTM0ZDFmNDMwZjc3OTU3MTAxMjQxNDgyMDkwZjM5OGIwZDQ5ODUwNTY0OTI4MCJ9"
         },
         {
@@ -123,8 +123,8 @@
       "statement": "App wraps the window in a full-size container named viewport (containerType inline-size), and the home bento grid's 768px and 1280px breakpoints are @container blocks querying it, since gpuix has no media queries.",
       "evidence": [
         {
-          "resource": "repo://src/app.tsx#L531-L541",
-          "version": "repo-lines-v1:sha256:11233849ae50ed5265cf2928b2559725ed1e5adaf8bf2c2dd7fc052004cdf3f1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4ZGZiMDM4NzY3YTc5ZjVlNTJmZTc1NjI5NjNhMWMwMWU0ZWE0ZTdmNTA3ZTUyNGY1MTRhNmE4MGY0YjRkYjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4Yzc0Mjg0NTZmZjk3MmQ5M2I0ZTIzOWRjMGY2OGMxZGY3ZGU4ZTg1ZWFjOWNmNGUyMWU5MzQ3Nzg0MmM2ZjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzZmQ2ZGViNmZhZjk0OThlZTNmMWM1YzAyM2UxNGE2YTY5NjcyM2IxNmVkZmVlMGY1OGFiNzA1ZDBjODI5YjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNjM2YyZWVlYjg2MTg1NWYxYzUyNjI3YWI2ZmE1YjliODBhMGVhNDlkYzNhODcwNWY4ZGRhMzZkN2NhOTE1OTgifQ"
+          "resource": "repo://src/app.tsx#L531-L545",
+          "version": "repo-lines-v1:sha256:d302f32074f4f34c0f00ee1959a3a1cef60c38357a5ec394d87397c680b92484:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4ZGZiMDM4NzY3YTc5ZjVlNTJmZTc1NjI5NjNhMWMwMWU0ZWE0ZTdmNTA3ZTUyNGY1MTRhNmE4MGY0YjRkYjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmOGY4MDRlOTIzNjU1N2U0ZjA3MWQ3NDI2YTMwYmIwOTRmZDE5NWQwMTFmZGUzZDIzYzcwNDBjNzY2Y2I1MGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzZmQ2ZGViNmZhZjk0OThlZTNmMWM1YzAyM2UxNGE2YTY5NjcyM2IxNmVkZmVlMGY1OGFiNzA1ZDBjODI5YjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFjNWVkYjQzZDE0OGIyMzNiZjczZDU0OWJmNDNmMDQyYzVlMzIxNWI0OGE5MzRjMWQyMzdlMTM0MGM4NTVmNzAifQ"
         },
         {
           "resource": "repo://src/home/bento-grid.tsx#L97-L130",
@@ -157,7 +157,7 @@
       "statement": "The slider's comfortable layers and compact step dots are calc() motion-value strings of the row's own width, so none reads a measured width.",
       "evidence": [
         {
-          "resource": "repo://src/components/slider.tsx#L1015-L1033",
+          "resource": "repo://src/components/slider.tsx#L1014-L1032",
           "version": "repo-lines-v1:sha256:ba09322ef3dd07a73b831e0f57378b2464738e8038830b97859898b139909c63:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzNDJlMzlhNzllYTliNGU3ZWYwZDhlNTJjODg4YzI0MTJjMzkwOTg1MTQzY2NkYzIwYTc1ZDFlYzdlNjUxMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjMDVhNDQwZjM3NTMzZGIzNWI0MjkxMTFmNTYyNDI2NGRlY2MwNTQyOWFjOTUwZmZlYjU4NzYzNmI4NmY5YjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyN2JjNTZmMjU1ZjM3MTlhZTZhNmUyYjExMTQwYjhmOWQ1OTJjODNiNDVmMzI5MGNkNGUyOGNkY2YxYjRkNTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUwNTA4NTBlMDEwNDY3NWJiZWNlMWRjZjcwMzMwZjc3MmU0MjYzZmQwZTBkMDU4N2FjNWQzNTFjOGE4MzgxMGYifQ"
         }
       ]
@@ -227,10 +227,44 @@
           "version": "repo-file-v1:sha256:12c6528e8765cdaac14f783f1e1e205361b5f9d2abcb58b4ed6a770f5c905a37"
         }
       ]
+    },
+    {
+      "id": "claim_7b975af9f90a45b9931db71fff2856c9",
+      "statement": "The same viewport container in App carries lineHeight 1.5, mirroring Tailwind preflight's html rule, because gpuix e5231304 lays out text with no line height at the font's own metrics; unset text and form controls inherit it.",
+      "evidence": [
+        {
+          "resource": "repo://src/app.tsx#L535-L541",
+          "version": "repo-lines-v1:sha256:3396d4ecbee8cd7128fd1afc0b1f2dedb41ddcabd44ced621ad58a0029ecddf2:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjFjNGEzZGYxMTc3Zjg3MTJiM2Q3YmQ5M2E2N2Q5MWFmYTM3NWMwYWJlYjc5MGM2ZGJmM2ZhNGI3M2NmZTM0OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMmQ4ZDdhMjEwMDdlZjY4MWU3YWZiYzY2YmY3ZjhiMzVkOTQ1NTM1NTg5Mzc1ZDA5YzJkZmY4MzhjMmZjOWUwYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzEyYmI5MGU5NmFiMGJjNGRlNmYyNjVjMTMzMTU5M2YxYjNlMTYxYjhhZGU0NTQ2MGQ1ZWEyMzM4MDI0NTJhNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWQ3MDIyYTA3OWExM2I1ODVjMzhlMDc0MTA5MjdjZTM1ZGNjOTFlY2U1N2FjMmUwZWM3MjIxZDE0NDQzZGEzMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_f36645c5e39f4b1b8357305e33bafbb4",
+      "statement": "Input fields take the source's line height instead of a fixed height; the command-menu field uses FIELD (14/24) and FIELD_COMPACT (13/20) so its box is its line, and check-command-menu asserts both.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-command-menu.tsx#L90-L110",
+          "version": "repo-lines-v1:sha256:47763d481b7eeb0c53062a5baa16bbe6bc436162e16c67f34a12c56ad614ae87:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmNjY2YTk0OWU4OTA2ZmIyMDhmYjU4YWUxZjRkMWYxY2M1MzJlOTQ2OTU2NzQ4MTk0Y2EyMDE2Y2Q0ZjJiZjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhmZWE4NjI1ZmI0OWY1ZWE4ZDBkM2JjYWFkNjRiODQ2NzFkODIyYTY3YWZjODNjOGQwMzZhZTY5ZjJlYmQ3MWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4NjgxODhjZDdmZjFlYzQyMjgxMjExODA3M2IwZDNkMmNlMDA2NzA1MTAxM2VjMzBhMmYwOWYzZDljNTYwYjEifQ"
+        },
+        {
+          "resource": "repo://src/components/command-menu.tsx#L214-L217",
+          "version": "repo-lines-v1:sha256:ba3b79903da9b8486e6bf9a1ec0e697a23e752336c95763aa1b9a71f18661a00:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTUwOWNjOGE5ZmIxN2RjMTk1NjQ2NjJmYjJiZWYyZGVmNWJlYjExNTQ5N2VhMzhjNzI1NDVkMGY4MTlmNjllZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2I2OTMwYjYyZTQ5ZjQ3YjJjZTA5ZDJjOTJhYjA3ZGRlMTA2YzJhYWI0ZGU0NGFjMWU1MmNhNTFiZTgxYjFmZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGY0OTgxZGVmZDFlMzYyODZkZjYwMmQ5YzAwOTA5MWQ5ZGJlOTNlYjk5OWJkZWQ0N2Q0Yzk3YTkwMjRmNjA3NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWJjMWNmYzFkYmI1OTkzYTkzNzc2NGRjMTVmZWE5YmU0MzM4NjJjZTk5ZGJlYmMxYTViNGU1ZjdhNjAwMmQ0NyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_d9b0dd06df4f405db7842415dda0ac44",
+      "statement": "check-kit renders a bare view under test inside a display:contents box with lineHeight 1.5, because only App carries the root line height.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-kit.tsx#L212-L218",
+          "version": "repo-lines-v1:sha256:883aa31e8582a85bfb435191ead95158c1656de404ad1d7cc448cba2ebee17eb:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTk2ODNhM2IwM2RhODllMTZiZGFkNzhiMTg4NmFmOTRkYjJmNzRiNWFjZTE4NDJiZjI1N2U2YWRkZTNmY2RlYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjQ3OTI0MTYyNTRmMzA5MTI5MmIxYzQ2NjlmZjVkOTk5N2VmMWM4NWMyNGFmNjQ2NjlhNTMyZGYyOTFhMGZiMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDMwMzk3OThkOGRmMWQ0M2RmODhiZDQyODQxYzc2MjRhYWZhOWNhNzFhOWZiZDE4YTUwMzA1ODMxMzJmODJhMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2VkMTFhOWI4NGM5MGY1MGQyNDQ4YjBhMmE4MTE0MjNjMDY0MjU2NzgwODRlNzY2MzAxYjAwMTQ5NGY4YjQ4NSJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-19T04:08:14.446Z"
+    "at": "2026-10-19T05:52:37.290Z"
   }
 }

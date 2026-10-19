@@ -10,12 +10,18 @@ sources:
     resource: repo://drift/tabs.md
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
+  - id: openwiki-source-8792b0b9d5aaa145ee2ebfa4
+    resource: repo://scripts/check-command-menu.tsx
+  - id: openwiki-source-fac7a3f3768fe057d1557909
+    resource: repo://scripts/check-kit.tsx
   - id: openwiki-source-819b237d6ed6e51fbd2028b9
     resource: repo://scripts/check-weight-widths.tsx
   - id: openwiki-source-f870e66b983ce90f21118b51
     resource: repo://scripts/drift-counts.ts
   - id: openwiki-source-5ebe82cc5f9e383e14411602
     resource: repo://src/app.tsx
+  - id: openwiki-source-923ee25729d055f35a254df3
+    resource: repo://src/components/command-menu.tsx
   - id: openwiki-source-1dd7881206b2ce896ff9b518
     resource: repo://src/components/scroll-area.tsx
   - id: openwiki-source-b9ce445bfbcee83ede413754
@@ -46,10 +52,10 @@ sources:
     resource: repo://src/pages/changelog/changelog-view.tsx
   - id: openwiki-source-81c2a5e01f16d1053272b0de
     resource: repo://src/pages/changelog/entry.tsx
-generated: { by: "claude-code", at: "2026-10-19T04:08:14.446Z" }
+generated: { by: "claude-code", at: "2026-10-19T05:52:37.290Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-19T04:08:14.446Z
+    at: 2026-10-19T05:52:37.290Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -87,8 +93,12 @@ The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adopt
   depends on one value.
 - `text-wrap: balance` past 6 lines per forced-break segment, and `pretty` on a paragraph whose last line is long,
   approximate Chromium's breaker.
-- A `fit-content` box in a column flex container with a horizontal negative margin keeps the height of a wrapped
-  first pass; a block parent avoids it.
+- A `fit-content` box in a column flex container with any horizontal negative margin (left or right, even -1) keeps
+  the height of a wrapped first pass (94x40 where CSS gives 94x20). A positive or vertical margin does not trigger it
+  and `alignSelf: "flex-start"` does not cure it; a block parent does.
+- A sticky box ignores the scroller's padding when it pins. At rest gpuix agrees with Chrome; after a scroll it pins at
+  the scrollport edge where Chrome holds it at the padding edge, so the dropdown search field cannot sit in a padded
+  scroller (the margin is not the cause; re-measured on 2026-10-19, it replaced an earlier "negative margin" reading).
 - gpuix measures text fractionally since #41, so shrink-to-fit boxes are no longer up to 1px wider than Chrome's
   (that README row is gone), but every JS bounds read (`getElementBounds`, `onLayout`, `getBoundingClientRect`) is
   snapped to whole device pixels per edge (#45). A check that compares two reads can therefore see under 1px of
@@ -99,10 +109,13 @@ The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adopt
   but painting snaps the box top to a whole pixel and places the baseline from the snapped origin. At 1x the 13px
   caps land 0.9px high and the 12px caps 0.5px low (offscreen captures); 2x was not checked. Recorded in the tabs
   drift files, no workaround. The old "ceil" explanation no longer holds: do not report it again.
-- Flex `order` is ignored inside an `@container` block, and Tab follows the painted order under `order`, not the
-  document order; the banner uses `row` / `row-reverse` instead.
+- Flex `order` is ignored inside an `@container` block, and Tab follows the painted order under `order` where Chrome
+  keeps the markup order (`order` 3, 2, 1 is visited c, b, a, not a, b, c). gpuix's own README and `order.rs` say
+  focus and tab order stay in document order, so the docs and the behaviour disagree; the banner uses `row` /
+  `row-reverse` instead.
 - Table parts are not animatable (a collapsed-border row rule snaps where the source eases it), and gpuix has the
-  `has*` states but neither a `:has(.x)` selector nor a parent state that styles its children.
+  `has*` states (`hasHover`, `hasActive`, `hasFocus`, `hasFocusVisible`, `hasDisabled`, `hasEnabled`) but neither a
+  `:has(.x)` selector nor a parent state that styles its children.
 
 Two earlier entries here were closed by `20a0c327` and should not be re-reported: a `width: 100%` child under a
 `fit-content` parent filling the column, and a percentage `maxWidth` not clamping a `fit-content` box.
@@ -361,3 +374,35 @@ Which ones survived is the useful part, because several look removable:
 
 The pitfall repeated here: a perf experiment on gpuix needs both the sweep draw p95 and the idle CPU or
 frame-callback time, because the two regress independently (culling shows in both; the bounds read only in idle).
+
+## Line-height pass on `poc` `e5231304` (2026-10-19)
+
+gpuix `e5231304` lays out text with no `lineHeight` at the font's own metrics, where a browser under Tailwind's
+preflight uses `html { line-height: 1.5 }`. The port followed in a few commits; the reasons are what a later reader
+cannot get from the diff:
+
+- **The root carries `lineHeight: 1.5`.** It sits on `App`'s `viewport` container, so every text with no token of its
+  own, and every form control (preflight sets them to `font: inherit`), gets the source's leading. Since
+  `e5231304`, `normal` is the font's own metrics, as in Chrome; a control that set a font size and no line height
+  matched neither the source's token nor the inherited value, which is why each input below got its own leading.
+- **An input's box is its line.** The source's inputs have no fixed height; the line box of the text is the box. The
+  ports therefore spread the type token (font size and line height) instead of fixing a height: the colour picker
+  and input-group fields, the sidebar search and the slider's edit field (line plus its 1px border, 21px; the
+  button demo's playground field is the source's `h-7`, 28px). gpuix centres text in a taller input, so rows keep
+  their height and centre. The
+  command menu's field takes `FIELD` / `FIELD_COMPACT` (14/24 and 13/20, the source's `leading-6` / `leading-5`),
+  not the subtitle step's 20 and 18, so its drift entry "Input line box in the compact step" was removed and
+  `check-command-menu` asserts both boxes. Combobox and dropdown-search fields set `24px` explicitly. The Compare
+  page's shadcn input is the source's content box (22px high at 20px leading) because that component is a replica.
+- **The check harness wraps a bare view.** `check-kit` renders the view under test inside a `display: contents`
+  box with `lineHeight: 1.5`, because only `App` carries the root rule; without the wrapper a scenario that mounts a
+  component alone measures a different box from the app. `display: contents` adds no layout of its own.
+- **README gap rows were re-measured against Chromium, not trusted.** Four rows changed: Tab order under `order`
+  (the cite is now gpuix's own contradicting docs), the dropdown sticky row (padding, not margin; see above), the
+  fit-content row (any negative margin, no `alignSelf` cure), and the `has*` list gained `hasDisabled` and
+  `hasEnabled`. The "bold Helvetica Neue line box is 24px in gpuix and 25px in Chrome" row was removed: the two are
+  equal now. A dropdown RTL drift entry now notes gpuix's inherited `direction: 'rtl'`, which a port with a direction
+  provider could use; the source has no RTL demo. The drift count went from 540 to 539.
+- **Screenshots were recaptured** on `e5231304`; spacing was checked against the source rendered in Chromium
+  (introduction, card, command-menu). The playground-shuffled captures were left alone because `Math.random` picks
+  their variant, so compare the content area by pixels, not hashes.
