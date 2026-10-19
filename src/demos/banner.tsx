@@ -639,10 +639,14 @@ export function Demo() {
 
 /** The page is taller than the window: scroll an element to the upper part of it. */
 async function reveal(shot: ShotContext, testId: string) {
+	let stalled = 0;
 	let previous = Number.NaN;
-	for (let attempt = 0; attempt < 8; attempt++) {
+	for (let attempt = 0; attempt < 12; attempt++) {
 		const y = shot.centerOf(testId).y;
-		if ((y > 120 && y < 320) || y === previous) return;
+		if (y > 120 && y < 320) return;
+		// A wheel can land without moving the page; the element is far from the page's end, so a repeat is the answer and a third miss is an error.
+		stalled = y === previous ? stalled + 1 : 0;
+		if (stalled === 3) throw new Error(`scrolling did not move ${testId}`);
 		previous = y;
 		await shot.scroll(700, 400, 0, y - 200);
 	}
