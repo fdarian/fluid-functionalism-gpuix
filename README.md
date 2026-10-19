@@ -39,7 +39,7 @@ the traffic lights, a title across the top bar, and the page in a rounded panel.
 ```bash
 pnpm check                  # check:type (tsc), then check:scenarios
 pnpm check:type             # tsc over src/ and scripts/, base-ui-solid-gpuix's source included
-pnpm check:scenarios        # every scripts/check-*, about 30 minutes
+pnpm check:scenarios        # every scripts/check-*, about 30 minutes; runs every check and lists the failures at the end
 pnpm screenshots [slug]     # headless captures of every demo and page into screenshots/<slug>/, about 25 minutes for all; or one slug
 bun scripts/live-check.tsx  # the same flow against the real window, via gpuix's automation client
 bun scripts/perf.tsx [slug...] --label name   # live frame times per page, idle and a sidebar sweep, into perf/<name>.json
