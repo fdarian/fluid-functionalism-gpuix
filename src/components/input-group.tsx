@@ -262,7 +262,7 @@ export function InputField(props: {
 						flexGrow: 1,
 						minWidth: 0,
 						height: 24,
-						fontSize: step().text.fontSize,
+						...step().text,
 						fontVariationSettings: weight.normal,
 						color: color.foreground,
 						backgroundColor: color.transparent,

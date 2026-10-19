@@ -2,13 +2,13 @@
 
 Original: `registry/default/command-menu.tsx`, demo in `app/docs/command-menu/page.tsx` and `lib/docs/playgrounds/command-menu.tsx` of the source (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/command-menu.tsx`, demo in `src/demos/command-menu.tsx`. The site's own menu (`src/lib/site-command-menu.tsx`) is covered in `drift/site.md`.
 
-Ported: items as data with groups, suggestions, filter and keywords, the fluid highlight, the keyboard (arrows with wrap and disabled skipping, Home / End, Enter, Escape, ← → across tabs), tabs, filters row, footer hints with the Enter action, custom rows, the dialog shell. Sizes, spacing and type of the field, tabs, rows, headings, caps and footer match the source in both steps (`metrics`, `command-menu.tsx:198-244`).
+Ported: items as data with groups, suggestions, filter and keywords, the fluid highlight, the keyboard (arrows with wrap and disabled skipping, Home / End, Enter, Escape, ← → across tabs), tabs, filters row, footer hints with the Enter action, custom rows, the dialog shell. Sizes, spacing and type of the field, tabs, rows, headings, caps and footer match the source in both steps (`metrics`, `command-menu.tsx:198-245`).
 
 ## The panel's height does not spring to its rows
 
 - **Cause:** `not ported yet`.
 - **Original:** the column is measured (`offsetHeight`) and the frame springs to that number on `spring.moderate`, so filtering rows, switching tabs and the empty state resize the panel smoothly; reduced motion snaps (`:692-729`).
-- **Port:** the root is a plain flex column (`src/components/command-menu.tsx:525-539`); the panel snaps to its content, capped by `maxHeight` (`:316-340`). In the dialog the top edge is fixed, so the bottom edge jumps as rows filter down.
+- **Port:** the root is a plain flex column (`src/components/command-menu.tsx:526-540`); the panel snaps to its content, capped by `maxHeight` (`:317-341`). In the dialog the top edge is fixed, so the bottom edge jumps as rows filter down.
 - **Workaround:** none. `createMeasuredHeight` (`src/lib/measured-height.ts`) is the tool the collapses use.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -45,7 +45,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `not ported yet`.
 - **Original:** rows have `id` and `aria-disabled`; sections are `role="group"` labelled by their heading; the empty state is `role="status" aria-live="polite"` (`:1105-1110`, `:1286-1289`, `:1159-1160`). The field's `role="combobox"`, `aria-expanded`, `aria-controls`, `aria-autocomplete` and `aria-activedescendant` are ported (`:858-863`).
-- **Port:** the field and the rows' `id` / `aria-selected` follow the source (`src/components/command-menu.tsx:670-675`, `:969-970`, `:1116-1118`); disabled rows carry no `aria-disabled`, sections no group role or label, and the empty state no status role. gpuix does expose these (`~/code/fdarian/gpuix/README.md:3482-3537`); the combobox port uses them (`src/components/combobox.tsx:375`, `base-ui:src/combobox/root/use-combobox-root.ts:387-400`).
+- **Port:** the field and the rows' `id` / `aria-selected` follow the source (`src/components/command-menu.tsx:671-676`, `:969-970`, `:1116-1118`); disabled rows carry no `aria-disabled`, sections no group role or label, and the empty state no status role. gpuix does expose these (`~/code/fdarian/gpuix/README.md:3482-3537`); the combobox port uses them (`src/components/combobox.tsx:376`, `base-ui:src/combobox/root/use-combobox-root.ts:387-400`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -54,7 +54,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `not ported yet` on macOS, `gpuix gap` on Windows and Linux.
 - **Original:** keys inside an IME composition belong to the composer: Enter commits a candidate, arrows pick one (`:776`).
-- **Port:** the handler acts on every key (`src/components/command-menu.tsx:562-619`).
+- **Port:** the handler acts on every key (`src/components/command-menu.tsx:563-620`).
 - **gpuix lacks:** on Windows and Linux (TSF or IMM32, ibus), `isComposing` is always `false` and no `Process` keydown or `composition*` event is fired, and the composition keys go to the input method before GPUI sees them (`~/code/fdarian/gpuix/FORK.md:564-567`). macOS reports all three: `isComposing` on key events, a `Process` keydown for a key the input method takes first, and `compositionstart` / `compositionupdate` / `compositionend` (`FORK.md:496-499`; gpuix `README.md:3794-3820`). See `drift/combobox.md` and README "Missing features", row "IME composition". On macOS the handler could return early on `event.isComposing`; as it is, the key an input method takes first is a `Process` keydown that no `case` matches (`onKeyDown` switches on `event.key`).
 - **Workaround:** none; untested.
 - **Fidelity:** approximated.
@@ -68,7 +68,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `not ported yet`.
 - **Original:** the label is `truncate` and shares the row with the description (both shrink); a disabled row is `opacity-50 pointer-events-none`, so no pointer cursor (`:1300`, `:1308`, `:1324-1334`).
-- **Port:** the label is `flexShrink: 0`, `nowrap`, so a long label pushes the description out and is clipped without an ellipsis by the wrapper's `overflow: hidden`; only the description gets an ellipsis (`src/components/command-menu.tsx:1147-1191`). A disabled row dims to 0.5 but keeps `cursor: "pointer"` (`:1131-1132`); picking and highlighting it are still refused (`:395`, `:485-486`, `select`).
+- **Port:** the label is `flexShrink: 0`, `nowrap`, so a long label pushes the description out and is clipped without an ellipsis by the wrapper's `overflow: hidden`; only the description gets an ellipsis (`src/components/command-menu.tsx:1147-1191`). A disabled row dims to 0.5 but keeps `cursor: "pointer"` (`:1131-1132`); picking and highlighting it are still refused (`:396`, `:486-487`, `select`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -77,7 +77,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `port choice` (stated in `src/lib/fluid-hover.ts:229-233`: a scroll event carries no pointer position, so the port re-picks at the last one seen).
 - **Original:** the hook has no scroll listener; rows moving under a still pointer change the highlight on the next mouse move (a browser also fires a synthetic move after a scroll).
-- **Port:** `onScroll` runs `pick()`; a keyboard move calls `releasePointer()` so the scroll it causes does not re-pick (`src/components/command-menu.tsx:479`, `:955`; `src/lib/fluid-hover.ts:229-233`, `:263-266`).
+- **Port:** `onScroll` runs `pick()`; a keyboard move calls `releasePointer()` so the scroll it causes does not re-pick (`src/components/command-menu.tsx:480`, `:955`; `src/lib/fluid-hover.ts:229-233`, `:263-266`).
 - **Workaround:** n/a.
 - **Fidelity:** exact in effect.
 - **Components it hits:** every fluid list in a scroller.
@@ -105,7 +105,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `not ported yet`.
 - **Original:** Base UI Dialog: `role="dialog"` named by a screen-reader-only `title` and `description` props, focus trapped and returned to the trigger on close, page scroll locked and the page hidden from the accessibility tree, Escape closes from anywhere, an outside press closes (a click that presses and releases on the backdrop in `drift/dialog.md`), `defaultOpen` and an uncontrolled mode, `modal`, `container` and `className` props (`:1449-1568`).
-- **Port:** its own `<anchored fill="window">` layer, not the ported `Dialog` (`src/components/command-menu.tsx:1353-1436`): no role, title or description; `HideOutside` (`base-ui:src/floating-ui-solid/utils/mark-others.ts:35`, used by `src/components/dialog.tsx:195`) is not used; no focus return; `open` and `onOpenChange` are required; the scrim closes on `mousedown` through `onMouseDownOutside` (`src/components/command-menu.tsx:1425`; the dialog port uses gpuix's `DialogBackdrop`, which closes on a click); Escape works from the field only (`src/components/command-menu.tsx:605-613`).
+- **Port:** its own `<anchored fill="window">` layer, not the ported `Dialog` (`src/components/command-menu.tsx:1353-1436`): no role, title or description; `HideOutside` (`base-ui:src/floating-ui-solid/utils/mark-others.ts:35`, used by `src/components/dialog.tsx:195`) is not used; no focus return; `open` and `onOpenChange` are required; the scrim closes on `mousedown` through `onMouseDownOutside` (`src/components/command-menu.tsx:1425`; the dialog port uses gpuix's `DialogBackdrop`, which closes on a click); Escape works from the field only (`src/components/command-menu.tsx:606-614`).
 - **Workaround:** none.
 - **Fidelity:** approximated (looks and closes the same with the pointer and the field focused).
 - **Components it hits:** just this one.
@@ -132,7 +132,7 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `not ported yet`.
 - **Original:** an omitted `size` follows the surrounding `SizeProvider`, which also gives a 480 px dialog; `CommandMenuFilters` sets its children to `compact` (`registry/default/command-menu.tsx:458-460`, `:1016`).
-- **Port:** an omitted `size` follows the Size row (`src/components/command-menu.tsx:495`), but the dialog width is always 540 (`:1348`), and filter controls are the caller's to make compact.
+- **Port:** an omitted `size` follows the Size row (`src/components/command-menu.tsx:496`), but the dialog width is always 540 (`:1348`), and filter controls are the caller's to make compact.
 - **Workaround:** pass `size` to each filter control.
 - **Fidelity:** approximated.
 - **Components it hits:** every component with a `size` prop.
@@ -141,18 +141,9 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 - **Cause:** `not ported yet`.
 - **Original:** every part forwards a ref and spreads rest props; `CommandMenuInput` takes the `<input>` props (`aria-label`, `onKeyDown`, which runs first and can `preventDefault()`), `CommandMenuEmpty` takes any children, `CommandMenuFooter` takes `children` to replace the hints, `CommandMenuItem` takes `className` and `onClick` (`:755-886`, `:1151-1171`, `:1364-1415`).
-- **Port:** typed prop lists only (`src/components/command-menu.tsx:343-357`, `:936-940`, `:1253-1256`, `:1021-1030`): `CommandMenuEmpty` takes a string, `CommandMenuFooter` has no `children`, no `className`. Port-only: required `testId` on the root, `CommandMenuPanel`, `CommandMenuItemText`, `searchIcon`, and a click on the field row that focuses the input (`:635-640`).
+- **Port:** typed prop lists only (`src/components/command-menu.tsx:344-358`, `:936-940`, `:1253-1256`, `:1021-1030`): `CommandMenuEmpty` takes a string, `CommandMenuFooter` has no `children`, no `className`. Port-only: required `testId` on the root, `CommandMenuPanel`, `CommandMenuItemText`, `searchIcon`, and a click on the field row that focuses the input (`:636-641`).
 - **Workaround:** n/a.
 - **Fidelity:** approximated.
-- **Components it hits:** just this one.
-
-## Input line box in the compact step
-
-- **Cause:** `not ported yet`.
-- **Original:** the field is 14 / 24 px (default) and 13 / 20 px (compact, `leading-5`); 16 px on a coarse pointer (`:877-878`).
-- **Port:** the field's box is a fixed 24 px high and only `fontSize` is applied, so in compact the line box is 24 where the source has 20; `SUBTITLE_COMPACT`'s 18 line height is never used (`src/components/command-menu.tsx:216`, `:693`). The touch size does not apply on desktop.
-- **Workaround:** none.
-- **Fidelity:** approximated (the caret is taller in compact).
 - **Components it hits:** just this one.
 
 ## Clipped rows are still laid out and painted

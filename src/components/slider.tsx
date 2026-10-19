@@ -306,7 +306,7 @@ function ValueDisplay(props: {
 					style={{
 						width: 40,
 						height: 18,
-						fontSize: scale.body.fontSize,
+						...scale.body,
 						fontVariationSettings: weight.normal,
 						textAlign: 'center',
 						color: color.foreground,

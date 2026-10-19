@@ -212,8 +212,9 @@ function sectionRows(
 
 const CAPTION = scale.caption;
 const CAPTION_COMPACT = scale.micro;
-const SUBTITLE = { fontSize: 14, lineHeight: '20px' } as const;
-const SUBTITLE_COMPACT = { fontSize: 13, lineHeight: '18px' } as const;
+/** The subtitle step's size with the input's own `leading-6` / `leading-5`, not the step's leading: the line box is the caret's height. */
+const FIELD = { fontSize: 14, lineHeight: '24px' } as const;
+const FIELD_COMPACT = { fontSize: 13, lineHeight: '20px' } as const;
 
 function metrics(compact: boolean) {
 	return compact
@@ -229,7 +230,7 @@ function metrics(compact: boolean) {
 				input: 40,
 				inputGap: 8,
 				inputPadX: 12,
-				field: SUBTITLE_COMPACT,
+				field: FIELD_COMPACT,
 				footer: 32,
 				footerGap: 12,
 				footerPadX: 12,
@@ -251,7 +252,7 @@ function metrics(compact: boolean) {
 				input: 48,
 				inputGap: 10,
 				inputPadX: 16,
-				field: SUBTITLE,
+				field: FIELD,
 				footer: 40,
 				footerGap: 16,
 				footerPadX: 16,
@@ -690,8 +691,7 @@ export function CommandMenuInput(props: {
 				style={{
 					flexGrow: 1,
 					minWidth: 0,
-					height: 24,
-					fontSize: layout().field.fontSize,
+					...layout().field,
 					fontVariationSettings: weight.normal,
 					color: color.foreground,
 					backgroundColor: color.transparent,

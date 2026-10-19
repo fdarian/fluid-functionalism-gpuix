@@ -715,7 +715,7 @@ export function SidebarSearchField(props: {
 					height: height.menuRow,
 					paddingLeft: 32,
 					paddingRight: 48,
-					fontSize: scale.body.fontSize,
+					...scale.body,
 					color: color.foreground,
 					backgroundColor: color.transparent,
 					keyboardFocusDim: false,

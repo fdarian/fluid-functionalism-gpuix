@@ -65,6 +65,7 @@ export function ScInputField(props: {
 						minWidth: 0,
 						height: 24,
 						fontSize: 14,
+						lineHeight: '20px',
 						fontWeight: 400,
 						color: sc.foreground,
 						backgroundColor: 'rgba(0,0,0,0)',

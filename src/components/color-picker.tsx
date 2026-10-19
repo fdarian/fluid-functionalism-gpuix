@@ -1253,7 +1253,7 @@ function ColorInput(props: {
 					flexGrow: 1,
 					minWidth: 0,
 					height: 24,
-					fontSize: scale.body.fontSize,
+					...scale.body,
 					fontVariationSettings: weight.normal,
 					fontVariantNumeric: 'tabular-nums',
 					textAlign: props.align === 'center' ? 'center' : 'left',

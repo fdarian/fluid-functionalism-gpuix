@@ -50,7 +50,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `gpuix gap`.
 - **Original:** the hover and checked pills are pinned at 0,0 and moved with `x` / `y` (`fluid-hover-highlight.tsx:121-131`; checked marker `combobox.tsx:1023-1039`).
-- **Port:** both animate `top` / `left` / `width` / `height` (`src/lib/fluid-highlight.tsx:92-99`, used at `src/components/combobox.tsx:351-366`).
+- **Port:** both animate `top` / `left` / `width` / `height` (`src/lib/fluid-highlight.tsx:92-99`, used at `src/components/combobox.tsx:352-367`).
 - **gpuix lacks:** transforms; see README "Missing features", CSS transforms row, and `drift/select.md`.
 - **Workaround:** none needed visually.
 - **Fidelity:** approximated (same path, different cost).
@@ -67,17 +67,17 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 ## Scrolling list: no `ScrollArea` thumb or scroll fade
 
-- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup list scrolls in plain `overflow`, not ScrollArea"](dropdown.md#popup-list-scrolls-in-plain-overflow-not-scrollarea), where the entry lives. Here: original `combobox.tsx:992,1077`; port `src/components/combobox.tsx:329-339`.
+- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Popup list scrolls in plain `overflow`, not ScrollArea"](dropdown.md#popup-list-scrolls-in-plain-overflow-not-scrollarea), where the entry lives. Here: original `combobox.tsx:992,1077`; port `src/components/combobox.tsx:330-340`.
 
 ## A click between rows is not routed to the highlighted row
 
-- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Clicks in the padding and between rows are not routed to the lit row"](dropdown.md#clicks-in-the-padding-and-between-rows-are-not-routed-to-the-lit-row), where the entry lives. Here: original `combobox.tsx:1004`; port list padding `src/components/combobox.tsx:341-349`.
+- **Cause:** `not ported yet`. Same drift as [dropdown.md, "Clicks in the padding and between rows are not routed to the lit row"](dropdown.md#clicks-in-the-padding-and-between-rows-are-not-routed-to-the-lit-row), where the entry lives. Here: original `combobox.tsx:1004`; port list padding `src/components/combobox.tsx:342-350`.
 
 ## Highlight opacity and lifecycle
 
 - **Cause:** `not ported yet`.
 - **Original:** the hover and checked pills fade their opacity on a fixed 0.08s tween whatever the positional spring (`fluid-hover-highlight.tsx:82-96`; checked: `combobox.tsx:1035-1041`). The checked pill mounts with `initial={false}`, so it is simply there when the popup opens. All three overlays are torn down as the close begins (`open && ...`, `combobox.tsx:1010-1046`).
-- **Port:** one transition covers position and opacity (`src/lib/fluid-highlight.tsx:69-75`), so the checked pill's fade is the 160ms `moderate` spring and it fades in from `opacity: 0` on every open (`:93`). The overlays stay mounted through the exit fade (`src/components/combobox.tsx:351-366`).
+- **Port:** one transition covers position and opacity (`src/lib/fluid-highlight.tsx:69-75`), so the checked pill's fade is the 160ms `moderate` spring and it fades in from `opacity: 0` on every open (`:93`). The overlays stay mounted through the exit fade (`src/components/combobox.tsx:352-367`).
 - **Workaround:** none; the popup's own 80ms fade covers most of it.
 - **Fidelity:** approximated.
 - **Components it hits:** select, dropdown (every `FluidHighlight` user).
@@ -86,7 +86,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `port choice` (the hover state belongs to the list container, as in `createFluidHover`).
 - **Original:** `useListNavigation` resets the highlight from each item's `onPointerLeave` unless the pointer went to another item (`floating-ui-react/hooks/useListNavigation.ts:709-743`), so moving from a row into the list's 4px padding drops it, and `autoHighlight="always"` refills row 0 (`AriaCombobox.tsx:1198-1207`). Read from source, not seen in a browser.
-- **Port:** `onMouseLeave` on the list container (`src/components/combobox.tsx:144-147`, `:340-343`, `base-ui:src/combobox/root/use-combobox-root.ts:296-299`), where the padding counts as inside, so the lit row stays while the pointer is over the padding and resets to row 0 only once it leaves the list.
+- **Port:** `onMouseLeave` on the list container (`src/components/combobox.tsx:144-147`, `:341-344`, `base-ui:src/combobox/root/use-combobox-root.ts:296-299`), where the padding counts as inside, so the lit row stays while the pointer is over the padding and resets to row 0 only once it leaves the list.
 - **Workaround:** none; a row-level leave would also need the fluid hover to ignore the padding.
 - **Fidelity:** approximated (a few pixels of padding).
 - **Components it hits:** just this one.
@@ -145,7 +145,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `ComboboxEmpty` shows its children and nothing when there are none; the docs always pass text (`combobox.tsx:1220-1240`).
-- **Port:** `emptyText` defaults to "No results found." (`src/components/combobox.tsx:324`); the views demo shows it where the source says "No view matches." (`src/demos/combobox.tsx:179-187`).
+- **Port:** `emptyText` defaults to "No results found." (`src/components/combobox.tsx:325`); the views demo shows it where the source says "No view matches." (`src/demos/combobox.tsx:179-187`).
 - **Fidelity:** exact for the layout (`px-3 py-6`, centred, body text).
 - **Components it hits:** just this one.
 
@@ -153,7 +153,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `not ported yet`.
 - **Original:** `ComboboxContent` takes `side` (bottom), `align` (start) and `sideOffset` (6) (`combobox.tsx:774-783`).
-- **Port:** `PopupSurface` is called with `align="start"` only, `side` defaults to bottom, gap 6 (`src/components/combobox.tsx:299-307`, `src/lib/popup.tsx:28,54`). No docs demo uses them (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md:633`).
+- **Port:** `PopupSurface` is called with `align="start"` only, `side` defaults to bottom, gap 6 (`src/components/combobox.tsx:300-308`, `src/lib/popup.tsx:28,54`). No docs demo uses them (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md:633`).
 - **Fidelity:** approximated.
 - **Components it hits:** select (same popup).
 

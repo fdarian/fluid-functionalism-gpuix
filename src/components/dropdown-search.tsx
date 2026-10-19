@@ -135,6 +135,7 @@ export function SearchField(props: {
 					minWidth: 0,
 					height: 24,
 					fontSize: scale.body.fontSize,
+					lineHeight: '24px',
 					fontVariationSettings: weight.normal,
 					color: color.foreground,
 					backgroundColor: color.transparent,

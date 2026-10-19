@@ -12,6 +12,7 @@
 
 import { formatShortcut } from '#/components/command-menu';
 import { createHostElement } from '../node_modules/@gpuix/solid/dist/host.js';
+import { setSizeChoice } from '#/lib/theme';
 import { createCheck } from './check-kit';
 
 const kit = await createCheck('command-menu');
@@ -86,6 +87,26 @@ const sinceMark = (from: number) =>
 
 await kit.scrollIntoView(INPUT);
 await kit.focus(INPUT);
+
+// The input's own leading is the source's `leading-6` / `leading-5`, and its box is that line.
+const fieldBox = () => {
+	const style = kit.element(INPUT).style;
+	return `${style.fontSize}/${style.lineHeight}, ${kit.bounds(INPUT).height}px high`;
+};
+kit.check(
+	'the field is 14/24 in the default step',
+	fieldBox() === '14/24px, 24px high',
+	fieldBox(),
+);
+setSizeChoice('compact');
+await kit.settle(300);
+kit.check(
+	'the field is 13/20 in the compact step',
+	fieldBox() === '13/20px, 20px high',
+	fieldBox(),
+);
+setSizeChoice('default');
+await kit.settle(300);
 // The motion clock is stepped by hand: against wall time a slow frame carries the whole travel in one step.
 const FRAME_MS = 16;
 const stepFrames = async () => {
