@@ -534,6 +534,8 @@ export function App(props: {
 				style={{
 					width: '100%',
 					height: '100%',
+					// Tailwind preflight's `html { line-height: 1.5 }`: text with no token of its own, and form controls (which preflight sets to `font: inherit`), take this. gpuix's default is the font's own metrics.
+					lineHeight: 1.5,
 					containerType: 'inline-size',
 					containerName: 'viewport',
 				}}

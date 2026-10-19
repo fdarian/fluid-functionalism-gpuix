@@ -212,7 +212,10 @@ export async function createCheck(
 		const pages = await loadPages(demos);
 		test.render(() => <App demos={demos} pages={pages} initialPage={target} />);
 	} else {
-		test.render(target);
+		// `App` carries preflight's line height on its root; a bare view gets it from a box that adds no layout of its own.
+		test.render(() => (
+			<div style={{ display: 'contents', lineHeight: 1.5 }}>{target()}</div>
+		));
 	}
 	const initialSettleMs = options.initialSettleMs ?? (isPage ? 800 : 0);
 	if (initialSettleMs > 0) await settle(initialSettleMs);
