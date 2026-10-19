@@ -1,37 +1,17 @@
 import {
 	AnimatePresence,
 	createReducedMotion,
+	defineKeyframes,
 	type MotionTransition,
 	motion,
 	type StyleDesc,
 	useIsPresent,
 } from '@gpuix/solid';
-import { createSignal, For, Show } from 'solid-js';
-import { onFrame } from '#/lib/clock';
+import { createEffect, createSignal, For, onCleanup, Show } from 'solid-js';
+import { useOnScreen } from '#/lib/cull';
 import { Icon } from '#/lib/icon';
 import { defineIcon } from '#/lib/icons';
 import { color, linePx, type as scale } from '#/lib/theme';
-
-const FRAME_MS = 33;
-
-/**
- * One timer for every looping animation in this file: gpuix has no keyframes
- * and no repeat, so a loop is a JS clock that components read. It runs only
- * while something is subscribed to it.
- */
-const [clock, setClock] = createSignal(0);
-
-/** The animation time in ms; reading it inside an effect or JSX re-runs every frame. */
-export function useClock(): () => number {
-	let sinceTick = FRAME_MS;
-	onFrame((dt, now) => {
-		sinceTick += dt;
-		if (sinceTick < FRAME_MS) return;
-		sinceTick = 0;
-		setClock(now);
-	});
-	return clock;
-}
 
 /** `cubic-bezier(x1, y1, x2, y2)` solved for `x`, the way CSS and Motion evaluate a named ease. */
 function cubicBezier(x1: number, y1: number, x2: number, y2: number) {
@@ -53,44 +33,98 @@ const easeInOut = cubicBezier(0.42, 0, 0.58, 1);
 
 // ─── Shimmer ──────────────────────────────────────────────────────────────
 
-const SHIMMER_PERIOD_MS = 1500;
+const SHIMMER_PERIOD = '1.5s';
+/** Even samples of the colour over one cycle, 2.5% (37.5 ms) apart; gpuix blends between them in Oklab. */
+const SHIMMER_SAMPLES = 40;
 
 function hexToRgb(hex: string) {
 	const value = Number.parseInt(hex.slice(1), 16);
 	return [(value >> 16) & 255, (value >> 8) & 255, value & 255];
 }
 
+/** The `easeInOut` progress `eased` was reached at, found by bisection (the curve only rises). */
+function easeInOutAt(eased: number) {
+	let low = 0;
+	let high = 1;
+	for (let step = 0; step < 24; step++) {
+		const mid = (low + high) / 2;
+		if (easeInOut(mid) < eased) low = mid;
+		else high = mid;
+	}
+	return (low + high) / 2;
+}
+
+/**
+ * Where the 300%-wide gradient of `.shimmer-text` sits over a letter: `along`
+ * is the letter's place in the gradient, `0` to `1`, and the band is the
+ * triangle from 35% to 65% peaking at 50%.
+ */
+function bandStrength(along: number) {
+	if (along <= 0.35 || along >= 0.65) return 0;
+	return along < 0.5 ? (along - 0.35) / 0.15 : (0.65 - along) / 0.15;
+}
+
+/** A letter's `along` at the sweep's `progress` (eased, `0` to `1`). */
+function alongAt(count: number, index: number, progress: number) {
+	return (index + 0.5) / count / 3 + (progress * 2) / 3;
+}
+
+const definedShimmers = new Set<string>();
+
+/**
+ * The name of the keyframes that colour letter `index` of `count` through one
+ * sweep, defined on first use. gpuix cannot animate `background-position`, so
+ * the colour the source's gradient shows at the letter is sampled over the
+ * cycle, with the source's ease-in-out already applied, and played linear. The
+ * stops include the three corners of the band, so the ramps are not rounded off.
+ */
+function shimmerKeyframes(count: number, index: number) {
+	const base = color.shimmerBase;
+	const bright = color.shimmerBright;
+	const name = `ff-shimmer-${count}-${index}-${base.slice(1)}-${bright.slice(1)}`;
+	if (definedShimmers.has(name)) return name;
+	const from = hexToRgb(base);
+	const to = hexToRgb(bright);
+	const offsets = new Set<number>();
+	for (let sample = 0; sample <= SHIMMER_SAMPLES; sample++)
+		offsets.add(sample / SHIMMER_SAMPLES);
+	for (const corner of [0.35, 0.5, 0.65]) {
+		const progress = ((corner - alongAt(count, index, 0)) * 3) / 2;
+		if (progress > 0 && progress < 1) offsets.add(easeInOutAt(progress));
+	}
+	const frames: Record<string, { color: string }> = {};
+	for (const offset of offsets) {
+		const strength = bandStrength(alongAt(count, index, easeInOut(offset)));
+		const mixed = from.map((channel, i) =>
+			Math.round(channel + (to[i] - channel) * strength),
+		);
+		frames[`${Number((offset * 100).toFixed(2))}%`] = {
+			color: `rgb(${mixed[0]}, ${mixed[1]}, ${mixed[2]})`,
+		};
+	}
+	defineKeyframes(name, frames);
+	definedShimmers.add(name);
+	return name;
+}
+
 /**
  * `.shimmer-text`: transparent text over a 300%-wide gradient clipped to the
- * letters, sweeping once per 1.5s. gpuix cannot clip a background to text, so
- * each letter is its own `<text>` and takes the gradient's colour at its
- * position, recomputed every frame. Letters sit in a flex row, so kerning
- * between them is lost.
+ * letters, sweeping once per 1.5s. gpuix has `backgroundClip: 'text'` but
+ * cannot animate `background-position`, so each letter is its own `<text>`
+ * playing its own native colour keyframes (`shimmerKeyframes`). Letters sit in
+ * a flex row, so kerning between them is lost. The loop starts when the
+ * element mounts, as in the source, and holds still while off screen. `still`
+ * leaves the letters at the base colour, for a copy that only reserves width.
  */
-export function Shimmer(props: { children: string; style?: StyleDesc }) {
-	const time = useClock();
+export function Shimmer(props: {
+	children: string;
+	style?: StyleDesc;
+	still?: boolean;
+}) {
+	const onScreen = useOnScreen();
 	// A flex item holding only a collapsible space draws nothing, so a space becomes a no-break space to keep the gap between words.
 	const letters = () =>
 		[...props.children].map((letter) => (letter === ' ' ? '\u00a0' : letter));
-	const stops = () => ({
-		base: hexToRgb(color.shimmerBase),
-		bright: hexToRgb(color.shimmerBright),
-	});
-
-	const colorAt = (index: number) => {
-		const phase = easeInOut((time() % SHIMMER_PERIOD_MS) / SHIMMER_PERIOD_MS);
-		const along = (index + 0.5) / letters().length / 3 + (phase * 2) / 3;
-		const strength =
-			along <= 0.35 || along >= 0.65
-				? 0
-				: along < 0.5
-					? (along - 0.35) / 0.15
-					: (0.65 - along) / 0.15;
-		const mixed = stops().base.map((channel, i) =>
-			Math.round(channel + (stops().bright[i] - channel) * strength),
-		);
-		return `rgb(${mixed[0]}, ${mixed[1]}, ${mixed[2]})`;
-	};
 
 	return (
 		<div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -100,7 +134,11 @@ export function Shimmer(props: { children: string; style?: StyleDesc }) {
 						style={{
 							...props.style,
 							whiteSpace: 'nowrap',
-							color: colorAt(index()),
+							color: color.shimmerBase,
+							animation:
+								props.still === true || !onScreen()
+									? 'none'
+									: `${shimmerKeyframes(letters().length, index())} ${SHIMMER_PERIOD} linear infinite`,
 						}}
 					>
 						{letter}
@@ -125,60 +163,45 @@ const infinity =
 const circleB =
 	'M 12 16 C 14.21 16 16 14.21 16 12 C 16 9.79 14.21 8 12 8 C 9.79 8 8 9.79 8 12 C 8 14.21 9.79 16 12 16 Z';
 
-const numbersOf = (path: string) => path.match(/-?\d+(\.\d+)?/g)?.map(Number);
-
-const keyframes = [circleA, infinity, circleB, infinity, circleA].map(
-	(path) => {
-		const numbers = numbersOf(path);
-		if (numbers === undefined)
-			throw new Error(`glyph path has no numbers: ${path}`);
-		return numbers;
-	},
-);
-
-const MORPH_SEGMENT_MS = 1500;
-const MORPH_PERIOD_MS = MORPH_SEGMENT_MS * (keyframes.length - 1);
-
-/** The path `time` ms into the 6s loop: easeInOut between each pair of the 5 keyframes. */
-function morphedPath(time: number) {
-	const inLoop = time % MORPH_PERIOD_MS;
-	const segment = Math.min(
-		Math.floor(inLoop / MORPH_SEGMENT_MS),
-		keyframes.length - 2,
-	);
-	const progress = easeInOut(
-		(inLoop - segment * MORPH_SEGMENT_MS) / MORPH_SEGMENT_MS,
-	);
-	const from = keyframes[segment];
-	const to = keyframes[segment + 1];
-	const n = (index: number) =>
-		(from[index] + (to[index] - from[index]) * progress).toFixed(3);
-	return (
-		`M ${n(0)} ${n(1)} ` +
-		[0, 1, 2, 3]
-			.map((curve) => {
-				const base = 2 + curve * 6;
-				return `C ${n(base)} ${n(base + 1)} ${n(base + 2)} ${n(base + 3)} ${n(base + 4)} ${n(base + 5)}`;
-			})
-			.join(' ') +
-		' Z'
-	);
-}
+const GLYPH = {
+	fill: 'none',
+	stroke: 'currentColor',
+	strokeWidth: 1.5,
+	strokeLinecap: 'round',
+	strokeLinejoin: 'round',
+} as const;
 
 const staticGlyph = defineIcon(`<path d="${infinity}"/>`);
 
+/** Runs only while the glyph is on screen; a culled one holds the first shape. */
 function MorphingGlyph(props: { size: number }) {
-	const time = useClock();
-	// GPUI caches a rasterised SVG by the hash of its bytes, so a path that varies
-	// freely would add a new atlas tile every frame. Whole frames repeat every loop.
-	const frameTime = () => Math.floor(time() / FRAME_MS) * FRAME_MS;
+	const onScreen = useOnScreen();
 	return (
-		<Icon
-			name={defineIcon(`<path d="${morphedPath(frameTime())}"/>`)}
-			size={props.size}
-			strokeWidth={1.5}
-			color={color.mutedForeground}
-		/>
+		<svg
+			viewBox="0 0 24 24"
+			style={{
+				width: props.size,
+				height: props.size,
+				flexShrink: 0,
+				color: color.mutedForeground,
+			}}
+		>
+			<Show when={onScreen()} fallback={<path {...GLYPH} d={circleA} />}>
+				<motion.path
+					{...GLYPH}
+					d={circleA}
+					animate={{ d: [circleA, infinity, circleB, infinity, circleA] }}
+					transition={{
+						d: {
+							duration: 6,
+							ease: 'easeInOut',
+							repeat: Infinity,
+							times: [0, 0.25, 0.5, 0.75, 1],
+						},
+					}}
+				/>
+			</Show>
+		</svg>
 	);
 }
 
@@ -225,13 +248,14 @@ export function ThinkingIndicator(props: {
 }) {
 	const reduced = createReducedMotion();
 	const [index, setIndex] = createSignal(0);
-	let sinceWord = 0;
-	onFrame((dt) => {
-		if (reduced()) return;
-		sinceWord += dt;
-		if (sinceWord < WORD_INTERVAL_MS) return;
-		sinceWord -= WORD_INTERVAL_MS;
-		setIndex((current) => (current + 1) % words.length);
+	const onScreen = useOnScreen();
+	createEffect(() => {
+		if (reduced() || !onScreen()) return;
+		const timer = setInterval(
+			() => setIndex((current) => (current + 1) % words.length),
+			WORD_INTERVAL_MS,
+		);
+		onCleanup(() => clearInterval(timer));
 	});
 	return (
 		<div
@@ -273,7 +297,9 @@ export function ThinkingIndicator(props: {
 			>
 				{/* Reserves the width of the longest word, so the cycle never shifts what sits next to it. Laid out as letters like the visible words: their summed advance is wider than the whole string's. */}
 				<div style={{ opacity: 0 }}>
-					<Shimmer style={scale.body}>{longestWord}</Shimmer>
+					<Shimmer style={scale.body} still>
+						{longestWord}
+					</Shimmer>
 				</div>
 				<Show
 					when={!reduced()}

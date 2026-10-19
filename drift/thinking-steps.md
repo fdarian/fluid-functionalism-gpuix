@@ -57,10 +57,10 @@ repeating it.
 
 ## Shimmer on the active step label
 
-- **Cause:** `not ported yet` (same as the indicator's shimmer; see `drift/thinking-indicator.md`).
+- **Cause:** `gpuix gap` (no animated `background-position`; see `drift/thinking-indicator.md`).
 - **Original:** the active label span is `shimmer-text` and gets `…` appended; as a flex-column child it stretches to the whole text column, so the 300%-wide gradient is laid over the column, not the text (`thinking-steps.tsx:438-447`).
-- **Port:** the shared per-letter `Shimmer`, positioned over the text only (`thinking-steps.tsx:446-455`).
-- **Workaround:** none.
+- **Port:** the shared per-letter `Shimmer`, whose letters play native colour keyframes, positioned over the text only (`thinking-steps.tsx:446-455`).
+- **Workaround:** none beyond the per-letter keyframes.
 - **Fidelity:** approximated. Letter steps, no kerning, and the band crosses the label at different positions than in the source.
 - **Components it hits:** thinking-indicator.
 

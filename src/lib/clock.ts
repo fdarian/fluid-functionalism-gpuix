@@ -45,8 +45,9 @@ function setShown(subscriber: Subscriber, shown: boolean) {
 
 /**
  * Calls `callback(dt, now)` about every 16 ms, with `dt` the ms since the last
- * frame. gpuix has no keyframes or repeat, so every JS-driven loop (a
- * shimmer, an autoplay) shares this one timer. It runs only while
+ * frame. A loop that only restyles runs natively (keyframes, `repeat`); one
+ * that needs JS state each frame (an autoplay, a tween) shares this one
+ * timer. It runs only while
  * something is subscribed and shown, and a subscription ends with the owner
  * that made it. A subscriber inside a culled region (`OnScreenContext`) is
  * skipped while that region is far: every signal a hidden loop sets would
