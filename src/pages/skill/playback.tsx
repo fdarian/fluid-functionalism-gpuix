@@ -1,4 +1,6 @@
 import {
+	createMotionValue,
+	createMotionValueEvent,
 	createReducedMotion,
 	document,
 	type HostElement,
@@ -13,7 +15,6 @@ import {
 	Show,
 	untrack,
 } from 'solid-js';
-import { onFrame } from '#/lib/clock';
 import { usePreviewPlayback } from '#/lib/preview-playback';
 import { color, shape, siteType } from '#/lib/theme';
 import {
@@ -144,9 +145,6 @@ const PRESS_MS = 120;
 const CURSOR = 18;
 const CURSOR_PRESSED = 15;
 
-const easeInOut = (t: number) =>
-	t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
-
 /**
  * A cursor that travels across a whole Compare, generic side to skill side,
  * in its root's coordinates. `goto` glides it to the center of the element
@@ -155,15 +153,13 @@ const easeInOut = (t: number) =>
  */
 export function createScriptCursor(playback: Playback) {
 	const pointer = createScriptedPointer(playback.root);
-	const [position, setPosition] = createSignal<{ x: number; y: number }>();
+	/** Where the cursor's tip is in the root: native motion values, so a glide costs no JS frame between its start and its end. */
+	const x = createMotionValue(0);
+	const y = createMotionValue(0);
+	const [placed, setPlaced] = createSignal(false);
 	const [pressed, setPressed] = createSignal(false);
-	let glide:
-		| {
-				from: { x: number; y: number };
-				to: { x: number; y: number };
-				start: number;
-		  }
-		| undefined;
+	let glides: { stop: () => void }[] = [];
+	let hovered: { x: number; y: number } | undefined;
 	let pressTimer: ReturnType<typeof setTimeout> | undefined;
 	onCleanup(() => clearTimeout(pressTimer));
 
@@ -176,36 +172,42 @@ export function createScriptCursor(playback: Playback) {
 		const box = rootBox();
 		return { x: box.x + point.x, y: box.y + point.y };
 	};
+	const tip = () => ({ x: x.get(), y: y.get() });
+	const stopGlides = () => {
+		for (const glide of glides) glide.stop();
+		glides = [];
+	};
+
+	// While playing, the cursor hovers what it passes over like a real pointer. x and y each report every frame they move; the point is the same for both, so the second report is skipped.
+	const hover = () => {
+		if (!playback.playing()) return;
+		const at = tip();
+		if (hovered !== undefined && hovered.x === at.x && hovered.y === at.y) {
+			return;
+		}
+		hovered = at;
+		pointer.moveTo(windowPoint(at));
+	};
+	createMotionValueEvent(x, 'change', hover);
+	createMotionValueEvent(y, 'change', hover);
 
 	createEffect(() => {
 		if (!playback.playing()) return;
 		// Resuming where it paused: hover what is under it again, since the script may press next without gliding first.
 		untrack(() => {
-			const resumedAt = position();
-			if (resumedAt !== undefined) pointer.moveTo(windowPoint(resumedAt));
-		});
-		onFrame((_dt, now) => {
-			const moving = glide;
-			if (moving === undefined) return;
-			const t = Math.min(1, (now - moving.start) / GLIDE_MS);
-			const eased = easeInOut(t);
-			const next = {
-				x: moving.from.x + (moving.to.x - moving.from.x) * eased,
-				y: moving.from.y + (moving.to.y - moving.from.y) * eased,
-			};
-			setPosition(next);
-			pointer.moveTo(windowPoint(next));
-			if (t === 1) glide = undefined;
+			if (placed()) hover();
 		});
 		onCleanup(() => {
-			const last = position();
-			if (last !== undefined) pointer.release(windowPoint(last));
-			glide = undefined;
+			stopGlides();
+			if (untrack(placed)) pointer.release(windowPoint(tip()));
+			hovered = undefined;
 		});
 	});
 
 	return {
-		position,
+		x,
+		y,
+		placed,
 		pressed,
 		goto(testId: string) {
 			const root = playback.root();
@@ -216,11 +218,15 @@ export function createScriptCursor(playback: Playback) {
 				x: to.x - box.x + to.width / 2,
 				y: to.y - box.y + to.height / 2,
 			};
-			const from = position() ?? {
-				x: target.x + DRIFT_IN,
-				y: target.y + DRIFT_IN,
-			};
-			glide = { from, to: target, start: performance.now() };
+			stopGlides();
+			if (!placed()) {
+				x.jump(target.x + DRIFT_IN);
+				y.jump(target.y + DRIFT_IN);
+				setPlaced(true);
+			}
+			// Framer's `easeInOut`, as the source's glide: cubic-bezier(0.42, 0, 0.58, 1).
+			const glide = { duration: GLIDE_MS / 1000, ease: 'easeInOut' } as const;
+			glides = [x.animate(target.x, glide), y.animate(target.y, glide)];
 		},
 		click() {
 			setPressed(true);
@@ -288,21 +294,22 @@ const arrow = (size: number) =>
 /** The scripted pointer, an arrow whose tip sits at the position, smaller while pressing. Shared by every example so they all point the same way. */
 function ScriptCursorArrow(props: { cursor: ScriptCursor }) {
 	return (
-		<Show when={props.cursor.position()}>
-			{(position: () => { x: number; y: number }) => (
-				<svg
-					source={arrow(props.cursor.pressed() ? CURSOR_PRESSED : CURSOR)}
-					style={{
-						position: 'absolute',
-						// The arrow's tip sits 3px in from the SVG's corner.
-						left: position().x - 3,
-						top: position().y - 3,
-						width: props.cursor.pressed() ? CURSOR_PRESSED : CURSOR,
-						height: props.cursor.pressed() ? CURSOR_PRESSED : CURSOR,
-						pointerEvents: 'none',
-					}}
-				/>
-			)}
+		<Show when={props.cursor.placed()}>
+			<svg
+				testId="script-cursor"
+				source={arrow(props.cursor.pressed() ? CURSOR_PRESSED : CURSOR)}
+				style={{
+					position: 'absolute',
+					left: props.cursor.x,
+					top: props.cursor.y,
+					// The arrow's tip sits 3px in from the SVG's corner.
+					marginLeft: -3,
+					marginTop: -3,
+					width: props.cursor.pressed() ? CURSOR_PRESSED : CURSOR,
+					height: props.cursor.pressed() ? CURSOR_PRESSED : CURSOR,
+					pointerEvents: 'none',
+				}}
+			/>
 		</Show>
 	);
 }
