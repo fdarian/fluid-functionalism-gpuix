@@ -1,5 +1,6 @@
-import { createSignal, type JSX, Show } from 'solid-js';
-import { onFrame } from '#/lib/clock';
+import { motion } from '@gpuix/solid';
+import { type JSX, Show } from 'solid-js';
+import { useOnScreen } from '#/lib/cull';
 import { Icon } from '#/lib/icon';
 import { defineIcon } from '#/lib/icons';
 import { color, shape, withAlpha } from '#/lib/theme';
@@ -17,33 +18,32 @@ export interface FileLike {
 }
 
 const SPINNER_SIZE = 24;
-/** `animate-spin` is one turn a second; gpuix cannot rotate, so a frame clock rewrites the arc. */
-const SPINNER_DEGREES_PER_MS = 0.36;
+const SPINNER_RADIUS = 11;
+const SPINNER_CIRCUMFERENCE = 2 * Math.PI * SPINNER_RADIUS;
+/** The arc of `border-t-muted-foreground`: a quarter of the ring. */
+const ARC_LENGTH = SPINNER_CIRCUMFERENCE / 4;
+/** A circle's stroke starts at 3 o'clock; the arc sits centred on 12 o'clock, 225 degrees clockwise from there. */
+const ARC_START = (SPINNER_CIRCUMFERENCE * 225) / 360;
 
-/** The arc of `border-t-muted-foreground`, a quarter of the ring, at `degrees` clockwise from the top. */
-function spinnerArc(degrees: number) {
-	const point = (angle: number) => {
-		const radians = (angle * Math.PI) / 180;
-		return `${(12 + 11 * Math.sin(radians)).toFixed(3)} ${(12 - 11 * Math.cos(radians)).toFixed(3)}`;
-	};
-	return defineIcon(
-		`<path d="M ${point(degrees - 45)} A 11 11 0 0 1 ${point(degrees + 45)}" stroke-linecap="butt"/>`,
-	);
-}
+const ARC = {
+	cx: 12,
+	cy: 12,
+	r: SPINNER_RADIUS,
+	fill: 'none',
+	stroke: 'currentColor',
+	strokeWidth: 2,
+	strokeDasharray: `${ARC_LENGTH} ${SPINNER_CIRCUMFERENCE - ARC_LENGTH}`,
+};
 
 /**
- * The thin ring with one accented quadrant. The arc is an SVG whose source is
- * rewritten on a timer, because gpuix cannot rotate an element or keyframe
- * anything.
+ * The thin ring with one accented quadrant, turning once a second like
+ * `animate-spin`. gpuix cannot rotate, and a CSS keyframe cannot reach an SVG
+ * attribute, so a native `motion.circle` slides the dash of a still circle one
+ * lap (`strokeDashoffset` over one circumference). It runs only while the
+ * spinner is on screen.
  */
 export function Spinner() {
-	const [degrees, setDegrees] = createSignal(0);
-	let angle = 0;
-	onFrame((dt) => {
-		angle = (angle + dt * SPINNER_DEGREES_PER_MS) % 360;
-		// Whole degrees, so the SVG cache sees at most 360 distinct sources.
-		setDegrees(Math.round(angle) % 360);
-	});
+	const onScreen = useOnScreen();
 	return (
 		<div
 			style={{
@@ -59,20 +59,33 @@ export function Spinner() {
 				strokeWidth={2}
 				color={color.border}
 			/>
-			<div
+			<svg
+				viewBox="0 0 24 24"
 				style={{
 					position: 'absolute',
 					top: 0,
 					left: 0,
+					width: SPINNER_SIZE,
+					height: SPINNER_SIZE,
+					color: color.mutedForeground,
 				}}
 			>
-				<Icon
-					name={spinnerArc(degrees())}
-					size={SPINNER_SIZE}
-					strokeWidth={2}
-					color={color.mutedForeground}
-				/>
-			</div>
+				<Show
+					when={onScreen()}
+					fallback={<circle {...ARC} strokeDashoffset={-ARC_START} />}
+				>
+					<motion.circle
+						{...ARC}
+						animate={{
+							strokeDashoffset: [
+								-ARC_START,
+								-(ARC_START + SPINNER_CIRCUMFERENCE),
+							],
+						}}
+						transition={{ duration: 1, ease: 'linear', repeat: Infinity }}
+					/>
+				</Show>
+			</svg>
 		</div>
 	);
 }

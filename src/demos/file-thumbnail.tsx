@@ -45,7 +45,7 @@ export function Demo() {
 }
 
 export const scenarios: DemoModule['scenarios'] = async (shot) => {
-	// The spinner arc turns on a timer: two frames show it moved.
+	// The spinner arc turns natively: two frames show it moved.
 	await shot.settle(250);
 	shot.capture('pending-a');
 	await shot.settle(310);

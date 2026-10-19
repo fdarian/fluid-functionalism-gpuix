@@ -14,7 +14,7 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 - **gpuix lacks:** `requestAnimationFrame`: no display-synced JS frame callback, only `setTimeout` / `setInterval` (`~/code/fdarian/gpuix/FORK.md:209-212`; README "Missing features" row "`requestAnimationFrame` itself"). gpuix does have native, JS-free motion values (`createMotionValue`, `packages/solid/src/index.ts:42`; `FORK.md:1146-1148`), so the timer is not the only route; the port has not tried driving the fill natively.
 - **Workaround:** the shared frame clock.
 - **Fidelity:** approximated (timer jitter instead of frame-locked updates).
-- **Components it hits:** every JS-driven loop: thinking-indicator, thinking-steps, file-thumbnail.
+- **Components it hits:** every JS-driven loop: thinking-indicator, thinking-steps.
 
 ## The fill grows instead of sliding
 
