@@ -6,8 +6,12 @@ tags: [gpuix, gaps, upstream, history, migration]
 sources:
   - id: openwiki-source-5cfc44b662eef11b303099d9
     resource: repo://drift/tabs-subtle.md
+  - id: openwiki-source-97d0c3fefafadab09e5e7da3
+    resource: repo://drift/tabs.md
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
+  - id: openwiki-source-819b237d6ed6e51fbd2028b9
+    resource: repo://scripts/check-weight-widths.tsx
   - id: openwiki-source-f870e66b983ce90f21118b51
     resource: repo://scripts/drift-counts.ts
   - id: openwiki-source-5ebe82cc5f9e383e14411602
@@ -28,6 +32,8 @@ sources:
     resource: repo://src/home/bento-grid.tsx
   - id: openwiki-source-2784d511d2f9a521edaf8bb9
     resource: repo://src/lib/app-frame.tsx
+  - id: openwiki-source-3763179c46a618f0eea1b1ba
+    resource: repo://src/lib/cull.ts
   - id: openwiki-source-ff84ac67d7a6ebc693884d4f
     resource: repo://src/lib/popup.tsx
   - id: openwiki-source-88a6e1849924a665249303d0
@@ -36,10 +42,14 @@ sources:
     resource: repo://src/lib/theme-fade.tsx
   - id: openwiki-source-1a25dd521e50a4d59274e1c2
     resource: repo://src/lib/theme.ts
-generated: { by: "claude-code", at: "2026-10-18T09:53:04.224Z" }
+  - id: openwiki-source-977d15831a92c2a09bd8801a
+    resource: repo://src/pages/changelog/changelog-view.tsx
+  - id: openwiki-source-81c2a5e01f16d1053272b0de
+    resource: repo://src/pages/changelog/entry.tsx
+generated: { by: "claude-code", at: "2026-10-19T04:08:14.446Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-18T09:53:04.224Z
+    at: 2026-10-19T04:08:14.446Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -60,15 +70,17 @@ link to those rows rather than repeating them. The ones that shape the most code
   `scaleY: 0.96` entrance; chevrons and spinners swap or redraw glyphs; panels move on `top`/`left`.
 - **Layout-property motion only.** The fluid highlight glides on `top`/`left`/`width`/`height`, which re-lays out per
   frame, instead of a transform.
-- **No culling.** Clipped or scrolled-away content is still built, laid out and painted, so long demo pages hide far
-  cards with `display: none`.
+- **Clipped content still costs a frame** (gpuix #46: retained and clipped content is not free). Long demo pages
+  therefore hide far regions with `display: none` through the port's own `src/lib/cull.ts`; this is a kept
+  workaround, not a removed one. The measurements and the condition for removing it are in
+  [Port decisions, Performance decisions](../decisions/port-decisions.md#performance-decisions-on-gpuix-poc-e5231304).
 - **Test-renderer quirks** (a capture is the view alone, with no titlebar or traffic lights; batched keystrokes deliver
   an input's `onChange` after the whole batch) that constrain the screenshot harness.
 - **Windows/Linux** dispatch is asynchronous, so `preventDefault()` on press arrives too late there. The fork
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
 The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17) and again in the
-[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `ed4e99c3` as the minimum fork. The bugs and gaps worth knowing before touching layout code:
+[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `e5231304` as the minimum fork (it said `ed4e99c3` after round 6 and `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19)). The bugs and gaps worth knowing before touching layout code:
 
 - A function-form `createTransform` of several motion values is computed in JS and can trail its inputs by a frame
   on a live window (not seen on the test renderer). `calc()` strings of the row's own width avoid it where the layer
@@ -77,11 +89,16 @@ The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adopt
   approximate Chromium's breaker.
 - A `fit-content` box in a column flex container with a horizontal negative margin keeps the height of a wrapped
   first pass; a block parent avoids it.
-- gpui measures text up to the next whole pixel, so a shrink-to-fit box is up to 1px wider than Chrome's.
-- A `textBox`-trimmed leaf is ceiled to whole pixels too (`zed/crates/gpui/src/taffy.rs:800-802`): Inter 13px is a
-  10px box for 9.46px of caps. The text starts at the box top, so the spare pixel sits under the caps and a label
-  its parent centres (tabs, tabs-subtle) draws up to about 0.75px high at 1x; at 2x the rounding is 0.5px and the
-  error should be small, but it was not checked. Recorded in the tabs drift files, no workaround.
+- gpuix measures text fractionally since #41, so shrink-to-fit boxes are no longer up to 1px wider than Chrome's
+  (that README row is gone), but every JS bounds read (`getElementBounds`, `onLayout`, `getBoundingClientRect`) is
+  snapped to whole device pixels per edge (#45). A check that compares two reads can therefore see under 1px of
+  difference without anything having moved, and cannot read a fractional box at all.
+- A cap-trimmed label that its parent centres (tabs, tabs-subtle; gpuix #44) is still a pixel off Chrome's. #41
+  replaced the old ceiling of a `textBox`-trimmed leaf (a 10px box for Inter 13px's 9.46px of caps, which drew
+  about 0.75px high) with the exact fractional box (9.45px at 13px, 8.74px at 12px) and the flex row centres it,
+  but painting snaps the box top to a whole pixel and places the baseline from the snapped origin. At 1x the 13px
+  caps land 0.9px high and the 12px caps 0.5px low (offscreen captures); 2x was not checked. Recorded in the tabs
+  drift files, no workaround. The old "ceil" explanation no longer holds: do not report it again.
 - Flex `order` is ignored inside an `@container` block, and Tab follows the painted order under `order`, not the
   document order; the banner uses `row` / `row-reverse` instead.
 - Table parts are not animatable (a collapsed-border row rule snaps where the source eases it), and gpuix has the
@@ -145,7 +162,7 @@ Items #1 to #19, found while migrating. What landed in gpuix `f28cb588` (zed `3c
 | 10 | Test renderer ignored appearance and window options, used GPUI key names, sent no key-up, GPUI wheel sign | FIXED (`f1f969b2`, `0140ddc2`, `8d687b45`, and others) |
 | 11 | Event target/relatedTarget were ids, not elements | FIXED (`7cf13991` and follow-ups) |
 | 12 | Accessibility dump did not flag `aria-hidden` descendants | FIXED |
-| 14 | Clipped content still laid out and painted (Command Menu ~57 ms/frame) | WONTFIX the cull (layout dominates); the 57 ms was three test-renderer draws per move, FIXED to ~19 ms. The port keeps `display: none` on far cards |
+| 14 | Clipped content still laid out and painted (Command Menu ~57 ms/frame) | WONTFIX the cull (layout dominates); the 57 ms was three test-renderer draws per move, FIXED to ~19 ms. The port keeps `display: none` on far regions (`cull.ts`), and as of `poc` `e5231304` still needs it (gpuix #46) |
 | 16, 17, 18 | Mask on macOS only; `preventDefault` late and no physical key on Windows/Linux | DOC (macOS-only scope); the physical key was FIXED later in the gap pass |
 | 19 | "Volume: " + "78%" rendered without the space | Not a gpuix bug: the parts were separate flex items, which CSS also strips. Fixed in the port by putting the label in one text run |
 
@@ -178,7 +195,7 @@ The fork worked through its whole gap inventory in lanes: gpuix `gaps` tip `62da
 `marker`/`pattern`/`filter`, the physical key code, and IME composition events. At that point still not built:
 container queries, `display: table`, `display: inline-*`, `:has()`, and culling of clipped subtrees. The
 [table and container pass](#table-and-container-pass-2026-10-17) adopted the first three; `:has()` selectors and
-culling remain open.
+culling remain open (culling is still open as gpuix #46 on `e5231304`).
 
 ## Adoption pass (2026-10-17)
 
@@ -314,9 +331,33 @@ Pitfalls this pass hit:
 - **File:line refs in drift entries moved three times.** Each batch of edits shifted the cited lines, and the
   fix was a separate "move the refs" commit after every batch. Do the ref move once, after the last edit.
 - **A culled card has no bounds.** The thinking-steps screenshot scenario centres on a card far below the window,
-  and gpuix culls it until it is scrolled near, so `scrollTo` calls `shot.reveal` first; without it `centerOf` has
+  and the port's `cull.ts` hides its content until it is scrolled near, so `scrollTo` calls `shot.reveal` first; without it `centerOf` has
   nothing to read.
 - **Measure against the browser, not the source's comment.** The source's `font-weight.ts` claim of at most 0.4 px
   width change fails in Chromium too; the check was rewritten to assert parity with the browser.
 - **The count table is still generated.** Totals come from `bun scripts/drift-counts.ts`, including the stale
   counts in `UPSTREAM.md`.
+
+## Perf follow-up on `poc` `365f7c88` and `e5231304` (2026-10-19)
+
+The fork landed perf and text fixes after round 6 (nested-flex layout made linear, #36; fractional text, #41;
+per-edge snapping of bounds reads, #45), and the port re-tested each workaround that depended on the old behaviour.
+Which ones survived is the useful part, because several look removable:
+
+- **Kept: off-screen culling.** gpuix #46 still bills a frame for content a scroller clips away. The removal run on
+  both pins agreed (sum of sidebar-sweep draw p95 over 49 pages 500 to 688 ms on `365f7c88`, 520 to 670 ms on
+  `e5231304`). Details and the removal condition: [Port decisions](../decisions/port-decisions.md#performance-decisions-on-gpuix-poc-e5231304).
+- **Kept: fluid hover's cached container box.** A live `getBoundingClientRect` is a layout pass of about 6 ms on
+  gpuix; the idle cost of reading it per pick is invisible to a sweep benchmark and shows only in idle
+  frame-callback time.
+- **Kept: one `StableLabel` ghost.** A second costs about 1.5 ms of sweep draw p95 on `365f7c88`.
+- **Kept: the cap-trimmed label drift entry**, re-measured (gpuix #44, above).
+- **Removed: the changelog's `width: '100%'` column wrappers.** #36 made nested flex columns linear; measured
+  change on `e5231304` was nil (changelog sweep draw p95 10.9 to 11.0 ms, idle CPU 58.8 to 57.6%, sum 520 to 487 ms).
+- **Removed: the README "real window can fail to boot with the display asleep" known issue.**
+- **Adapted: `check-weight-widths`** now tolerates 1px on neighbour and shrink assertions for #45's per-edge snapping.
+- **Adapted: the changelog Releases jump** re-aims while the port's culled entries un-pin on the way
+  (`drift/site.md`); a cost of keeping the cull, not a gpuix bug.
+
+The pitfall repeated here: a perf experiment on gpuix needs both the sweep draw p95 and the idle CPU or
+frame-callback time, because the two regress independently (culling shows in both; the bounds read only in idle).

@@ -1,20 +1,26 @@
 ---
 type: decision record
 title: Port decisions and their reasons
-description: Why the Fluid Functionalism port to gpuix uses native springs, native hover states, a single fluid highlight, a single-quad press-shrink fill, variable Inter with the source's weight tokens, createAppearance theming with a transient cross-fade layer, file-discovered demos, the drift/ convention, the screenshot and check-* harness, and its pnpm, tsconfig and Biome settings.
+description: Why the Fluid Functionalism port to gpuix uses native springs, native hover states, a single fluid highlight, a single-quad press-shrink fill, variable Inter with the source's weight tokens, createAppearance theming with a transient cross-fade layer, the kept off-screen culling and cached fluid-hover box with their measurements, file-discovered demos, the drift/ convention, the screenshot and check-* harness, and its pnpm, tsconfig and Biome settings.
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-18T09:53:04.224Z
+    at: 2026-10-19T04:08:14.446Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
   - id: openwiki-source-9156c3fc43d32433db430838
     resource: repo://drift/_TEMPLATE.md
+  - id: openwiki-source-dbc5a68e94d7e3a15a776857
+    resource: repo://drift/fluid-hover.md
+  - id: openwiki-source-385da475ebb9649b27cbd9e7
+    resource: repo://drift/site.md
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
     resource: repo://package.json
   - id: openwiki-source-40275cb92c3610938f16ade3
     resource: repo://pnpm-workspace.yaml
+  - id: openwiki-source-23775c3de52f3ab95a13cb8b
+    resource: repo://README.md
   - id: openwiki-source-dcc18690931a266c3aa8c94d
     resource: repo://scripts/check-single-instance.ts
   - id: openwiki-source-819b237d6ed6e51fbd2028b9
@@ -31,6 +37,8 @@ sources:
     resource: repo://src/components/color-picker.tsx
   - id: openwiki-source-94d7540365b6edfe6f6a0bbe
     resource: repo://src/components/table.tsx
+  - id: openwiki-source-3763179c46a618f0eea1b1ba
+    resource: repo://src/lib/cull.ts
   - id: openwiki-source-d8bbfda4e9c9d1361b2fe340
     resource: repo://src/lib/demo.ts
   - id: openwiki-source-b4238869522a9de0f81c49d7
@@ -49,9 +57,11 @@ sources:
     resource: repo://src/lib/theme-fade.tsx
   - id: openwiki-source-1a25dd521e50a4d59274e1c2
     resource: repo://src/lib/theme.ts
+  - id: openwiki-source-805db717791883f12f02d567
+    resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-18T09:53:04.224Z" }
+generated: { by: "claude-code", at: "2026-10-19T04:08:14.446Z" }
 ---
 
 # Port decisions and their reasons
@@ -155,17 +165,64 @@ two Inter 4.0 variable files the source serves (upright and italic, family name 
   and its `font-weight.ts` claims semibold stays within 0.4 px of normal; that claim fails in the browser too, so a
   label whose semibold is narrower (Toggle dark mode) shrinks by up to about 1 px when selected and nudges its
   neighbours, there and here. The port first added a second hidden normal-weight copy so the cell never moved, then
-  dropped it (`6ad107a`): gpuix re-measures every `<text>` each frame, so the extra ghost cost about 1.4 ms per draw
-  for a rare, sub-pixel effect. Do not add it back to "fix" the shrink; it is parity.
+  dropped it (`6ad107a`) for a rare, sub-pixel effect. The cost was first put at about 1.4 ms per draw on the theory
+  that gpuix re-measures every `<text>` each frame; re-measured on gpuix `poc` `365f7c88` (three interleaved A/B
+  rounds, sidebar-sweep draw p95, one ghost to two) it is still about 1.5 ms although the text is no longer
+  re-measured: radio-group 8.1-8.5 to 10.4-11.5 ms, tabs 8.4-9.5 to 9.9-11.0, dialog 6.5-7.0 to 7.8-8.6, accordion
+  12.0-13.2 to 13.8-14.5. Do not add it
+  back to "fix" the shrink; it is parity, and not free.
 
 **The weight-width check measures against the browser, not the source's claim.** Chromium measuring the same
 `InterVariable.ttf` and tokens does not reproduce the source's 0.4 px claim (Analytics grows 1.05 px; a long all-caps
 string shrinks 1.13 px), and gpuix matches Chromium to 0.1 px. `scripts/check-weight-widths.tsx` therefore asserts
 parity with the browser's delta and only prints how many strings the source's claim misses. Its second half mounts
 every `StableLabel` user through its demo page and steps the held motion clock across the ease, asserting exact
-boxes for the rows around the label. Its synthetic mount of labels narrower at semibold asserts parity, not
-stillness: the shrink on selection equals the normal-minus-semibold difference within 1 px, and is logged. It runs
-at 1x, so widths at a retina display's 2x scale are not measured.
+boxes for the label itself and, for the rows around it, boxes within 1 px: gpuix now measures text fractionally
+(#41) but snaps every JS bounds read to whole device pixels per edge (#45), so a neighbour's edge can read under
+1 px off without having moved (a label's own box has no such excuse, so it stays exact). Its synthetic mount of
+labels narrower at semibold asserts parity, not stillness: the heavy cell is the semibold copy's width and the
+shrink on selection equals the normal-minus-semibold difference, each within 1 px for the same reason, and the
+shrink is logged. A failure of 1 px or more is a real move; do not widen the tolerance further. It runs at 1x, so
+widths at a retina display's 2x scale are not measured.
+
+## Performance decisions on gpuix `poc` e5231304
+
+Three choices that look removable and are not, each re-measured on 2026-10-19 on the real window or the sweep
+harness (`pnpm perf`; the numbers are not committed, so they live here and in the README gap rows). The common cause
+is that on gpuix every element costs a frame whether or not it is visible, and every bounds read costs a layout pass.
+
+- **Off-screen culling stays (`src/lib/cull.ts`).** gpuix lays out and paints elements a scroller clips away
+  (gpuix #46: retained and clipped content is not free), so a page of many menus costs several times a short one.
+  The port hides a region's content with `display: none` while it is a quarter viewport from the page scroller,
+  keeps the region's measured height, and holds `onFrame` and timer loops still while hidden (`OnScreenContext`),
+  because any signal a loop sets redraws the whole window. gpuix's later perf fixes (#36 among them) did not make it
+  redundant; a removal experiment decided it. Sidebar-sweep draw p95 with culling to
+  without it, on `poc` `e5231304`: changelog 10.9 to 26.6 ms, command-menu 16.7 to 37.4, showcase 16.0 to 41.6,
+  fluid-hover 11.1 to 30.9, card 15.7 to 29.7; summed over 49 pages 520 to 670 ms. Idle CPU where off-screen loops
+  would run: input-message 1.8 to 49.7%, showcase 44 to 87%. The earlier `365f7c88` run agreed (sum 500 to 688). Remove
+  `cull.ts` and the paused loops only after #46 lands, and re-run that comparison first; the README "Culling" gap row
+  carries the same numbers. Costs of keeping it: a culled region has no bounds (screenshot scenarios call
+  `shot.reveal` first), and the changelog Releases jump has to re-aim, below.
+- **The changelog Releases jump re-aims while culled entries un-pin.** A jump computes its target while the entries
+  above the month are pinned at their culled heights. They un-pin to their real heights as the smooth scroll passes
+  them and come out a few px taller, so one scroll landed the month 4-5 px low (36-37 px under the top against the
+  source's 32; once 281 px, on the wrong month). `release-spy.ts` recomputes the target on each page scroll and
+  scrolls again when it moved by more than 1 px, stopping when the month is within 1 px, the page end is reached,
+  or the user scrolls away (`scripts/check-changelog-rail.tsx` pins it). It only runs while a jump is in flight, so
+  idle and sweep cost did not change. It is an approximation of the source's single `scrollIntoView`, recorded in
+  `drift/site.md`.
+- **Fluid hover keeps its cached container box (`src/lib/fluid-hover.ts`).** Every `getBoundingClientRect` on gpuix
+  runs a layout pass (about 6 ms), so the box is read on resize, scroll, pointer enter and page scroll, and `pick`
+  reads the cache. Reading it live per pick looks safe because the call is documented as never stale, and it is not:
+  on pages whose previews autoplay a cursor, idle JS frame-callback time went from about 3 to 330-430 ms per second
+  (cached to live: changelog 3.0 to 328 ms/s, fluid-hover 3.9 to 376 ms/s) while sidebar-sweep draw p95 stayed
+  unchanged and draws still matched presents, so a sweep-only benchmark would have missed it. The cache is stale only
+  if the container moves with no resize, no scroll event it receives and no page scroll ([drift entry](../../drift/fluid-hover.md)).
+
+The changelog's `width: '100%'` column wrappers, added on 2026-10-17 when nested auto-width flex columns cost ~1.9x
+per level (8 columns drew in 121 ms, 20 ms with the wrappers), were removed once gpuix #36 made that layout linear.
+The removal measured no change (changelog sweep draw p95 10.9 to 11.0 ms), so they are not a perf decision to
+restore.
 
 ## Theme: System, Light and Dark through createAppearance
 

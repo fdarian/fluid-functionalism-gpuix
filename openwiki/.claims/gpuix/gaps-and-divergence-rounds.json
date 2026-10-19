@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:29e4ff3379208cffd8067de836b29f195cac67901a2faf0e93bdfc11d4fad13c",
+  "pageVersion": "sha256:4bf883fee1ee159c4cfd78c75289fece76867d306f0876d05ff110ee1be40f4f",
   "claims": [
     {
       "id": "claim_8f689a7df6cd43af9e228cffa0828120",
       "statement": "The README's gpuix gaps section is the authoritative list of gpuix bugs and missing features the port works around, each with the components it hits and the workaround.",
       "evidence": [
         {
-          "resource": "repo://README.md#L246-L296",
-          "version": "repo-lines-v1:sha256:d91032f1dae331b8a818da8ff8355c22c892775d136a82ea0cf7276f37b17036:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4MzNhYjMwZmYzYWFmNTMzYjFmZTJkZDU2YTZjZTZmMTY3YjkyNThjZmE2ODE0Yjc1ZTU3MTc2YzUyZWM4MDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5MGQyZTdlM2VlZjk3NTM0MjU5MzM1NGY1ODFiYTRlZGMxMWNjZmI5OGZmYTFhODEzYmUzZTAwMzFmNGMzNzUifQ"
+          "resource": "repo://README.md#L237-L284",
+          "version": "repo-lines-v1:sha256:cc74a9348b6f4324ec846a6a86704bfdd51d5122f73e5274d6ceb572994c30dc:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4ZmE4NzlkOGU4MDk4YjU5YWY4N2ZmM2E5YmVmOTgwMjYyNzFiYmVmOTZmOTM1NDdhMjRkOGFhYzdkYWQyNDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmMWE0NTFiOWE5YTk3YzA2YTE2ZGZmNWVjOGFlYTQzNmQ3ZTE4MjUyMzMxZDhiMDdkYWU2NDBlMWVkNjAyZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVlZDIwYmE0YmY1ZGFlOTUyZjIwNDkzODRmMDQ3MjY2YTY5ZDI3YzY0ZGM4NzQ4MzY5MWEyNzJiMGI3YjAyYjgifQ"
         }
       ]
     },
@@ -17,18 +17,22 @@
       "statement": "Without CSS transforms, popups keep an opacity fade and slide but lose the scaleY entrance, and glyph turns are swapped or redrawn.",
       "evidence": [
         {
-          "resource": "repo://README.md#L277-L277",
+          "resource": "repo://README.md#L266-L266",
           "version": "repo-lines-v1:sha256:a1fb8675018ca3e98a17c305034f4eda77f2597f30bf7da9713bbcc38149090f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTFmYjg2NzUwMThjYTNlOThhMTdjMzA1MDM0ZjRlZGE3N2YyNTk3ZjMwYmY3ZGE5NzEzYmJjYzM4MTQ5MDkwZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTFmYjg2NzUwMThjYTNlOThhMTdjMzA1MDM0ZjRlZGE3N2YyNTk3ZjMwYmY3ZGE5NzEzYmJjYzM4MTQ5MDkwZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDAwOGZiMmRjMDdjZWU4MGQ2YmVjYjY0NzFmZDVkYTViMTNhYzhlMDlmMDA0NDAxYjdmYjVhMzNhMzU3ODdmNSJ9"
         }
       ]
     },
     {
       "id": "claim_8bb5706a64734dac9d70a073d3c56c22",
-      "statement": "Because gpuix does not cull clipped content, long demo pages hide cards far from the scroller with display none.",
+      "statement": "Because gpuix #46 still makes a frame's cost scale with clipped, off-screen content, the port hides regions far from the page scroller with display none through src/lib/cull.ts; this is a kept workaround, not a removed one.",
       "evidence": [
         {
-          "resource": "repo://README.md#L283-L283",
-          "version": "repo-lines-v1:sha256:50c80d7946eee5064e658246b086544176817a2e50ae0186922d4a21967c6159:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTBjODBkNzk0NmVlZTUwNjRlNjU4MjQ2YjA4NjU0NDE3NjgxN2EyZTUwYWUwMTg2OTIyZDRhMjE5NjdjNjE1OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTBjODBkNzk0NmVlZTUwNjRlNjU4MjQ2YjA4NjU0NDE3NjgxN2EyZTUwYWUwMTg2OTIyZDRhMjE5NjdjNjE1OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGJkY2U0MGY4MjFkYWE5ZWU4Y2VjOTEyOWQ5ZjgzNWQ0ZWY3ZDI5NTI0ODdmYjUwNDg4NzE5MTI4MGRlOGU2YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDY1NTY3MzQ2MWI1ZGFlZTgxZTM0ZDFmNDMwZjc3OTU3MTAxMjQxNDgyMDkwZjM5OGIwZDQ5ODUwNTY0OTI4MCJ9"
+          "resource": "repo://README.md#L272-L272",
+          "version": "repo-lines-v1:sha256:1ca750f6b121d3487d39a343e58397d2fc0c1f242665ad2028cd9926f2d1b054:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWNhNzUwZjZiMTIxZDM0ODdkMzlhMzQzZTU4Mzk3ZDJmYzBjMWYyNDI2NjVhZDIwMjhjZDk5MjZmMmQxYjA1NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWNhNzUwZjZiMTIxZDM0ODdkMzlhMzQzZTU4Mzk3ZDJmYzBjMWYyNDI2NjVhZDIwMjhjZDk5MjZmMmQxYjA1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGJkY2U0MGY4MjFkYWE5ZWU4Y2VjOTEyOWQ5ZjgzNWQ0ZWY3ZDI5NTI0ODdmYjUwNDg4NzE5MTI4MGRlOGU2YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDY1NTY3MzQ2MWI1ZGFlZTgxZTM0ZDFmNDMwZjc3OTU3MTAxMjQxNDgyMDkwZjM5OGIwZDQ5ODUwNTY0OTI4MCJ9"
+        },
+        {
+          "resource": "repo://src/lib/cull.ts#L30-L56",
+          "version": "repo-lines-v1:sha256:14544d474d37b61c3edb6352cfbfeec79c62e2c972cd92bffb99b967e069a6fc:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwYTI0MTY0ODE3Y2FjYTlkZjBiYjRjMDJkOTBkMmI5MjU1ZDMzNWU4NjE2MTFmYTYyNWU1MjU0MmVkMDM0YTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhmOTcxMWUzOTQ3YWUzNjI2ODdiODI0ODFlNWJkMTNlZGYzZGEwOGNkOTU5ZjM0YmIyNDc2YWQyNjQxNDQ1YWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiZjA3Mjc3OWZhMjYyNjU1MDdkYWY5YjI3OTAxN2ZlNmRlOGExYjc5YjA2ZDk3YmFkNzU5YmVjMmQ0YWNhNTcifQ"
         }
       ]
     },
@@ -47,7 +51,7 @@
       "statement": "On Windows and Linux, preventDefault on mousedown arrives after native focus has moved, so a press on a command-menu tab still blurs the field; macOS applies it.",
       "evidence": [
         {
-          "resource": "repo://README.md#L257-L257",
+          "resource": "repo://README.md#L248-L248",
           "version": "repo-lines-v1:sha256:f40c8816a7a0442c499584f02cdc1425a87cc19d68d5b05772ace28782db842f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjQwYzg4MTZhN2EwNDQyYzQ5OTU4NGYwMmNkYzE0MjVhODdjYzE5ZDY4ZDViMDU3NzJhY2UyODc4MmRiODQyZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjQwYzg4MTZhN2EwNDQyYzQ5OTU4NGYwMmNkYzE0MjVhODdjYzE5ZDY4ZDViMDU3NzJhY2UyODc4MmRiODQyZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzA0MzY4ODU2MzliODdiNWI4NjFkZGUxMGVkNjdkM2UwMTMxN2IzMDZmYThiMmU2NWYxNDhhMjA4NTllMDE0NSJ9"
         }
       ]
@@ -105,12 +109,12 @@
       "statement": "StableLabel is a real inline-grid whose single hidden semibold copy and visible copy share one grid cell, so it wraps like the source, with nowrap and truncate opt-in.",
       "evidence": [
         {
-          "resource": "repo://src/lib/stable-label.tsx#L12-L20",
-          "version": "repo-lines-v1:sha256:a45c0ef1d0320660a0b68def5a92474c74b9f3b5824875becdddf80ef46de0b5:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGY1ODAwNWU4N2M0YTk4ZjY3N2EyNDRjYjZhOTczMjczNDEwOGMzZmU1Yjg5YjliOGVhZWE3MTFmNTNhMTUyMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzRmNzRiNGM0MTNkOGFkMGI0OWIyMzA2MWFiYjYxM2I3YTI1Zjc1NGY3ZmE2ZDlmNGYxNTk0NjQwMWVjZDdiYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWU5MTAxYzE4MzhmMzY4MzIyNGM0MjdkNWYyODZiZDlkZDY5MmQyY2JhZjJhN2M2NWI2ZjE5ZmQ2NzFiZjk0NSJ9"
+          "resource": "repo://src/lib/stable-label.tsx#L10-L24",
+          "version": "repo-lines-v1:sha256:04fac517225558ccf8c83133081e90d87f9c1ff7123b95991dee53578763e959:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiNzkzYjM1Zjc0MTNlOTE2MDE5ZTA1NWQ0NmRiNzMxM2Y4Y2VlNDNiZGRiMmNkNTNiYWY1MzI1Y2FkOGU5M2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlMGQyODk1YzMxMzIzNjFlYzEwYzQyN2YxNTllYzJiMmEwZmE2Y2YxODIxYmRjZGVmZjM1OWFkNThmNzRiZTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmYzI3ZDBkYTIxN2YwMWE0MDNjNDg4MjY3OWQ5ZTYzZGZkYjZkZjI0NzE4YjI1YzcyMWIzNGM4NWVkYTI5NDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEwZjE0MTRkYzg3ZDU2OWNlZGEwMjg2MWIzOTU3YWZiOTVmYzQ1YjNkMzllOWMxYjE3YmVkYWY3M2E3Mzg4YTcifQ"
         },
         {
           "resource": "repo://src/lib/stable-label.tsx#L60-L92",
-          "version": "repo-lines-v1:sha256:9a23e770a1b5805338f5e7cbda0317ea2dfcc3fa558bb3895e4b507330cf0985:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2YjNjMjMzZTRkYzJhMWE4N2VlZjFlNGU3YjdmZDM0MjI2NTI1N2I3NTdmNDUwZWU0NTM0NjQxNGQ1Nzk0ZjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQxZmMyYWViM2I0YTBkMzI2NDE4ZTViN2FhOTBlZmM3ZTU0NWI4NTA5OWE2OTA2ZjhlMDE2ZGFiNWQ3ZjEzMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "version": "repo-lines-v1:sha256:634ffdbfe7b6a7bef189b8dba294d35d233c8e2eb6801556a37ab3097afc2be0:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIzMDk1M2ZkYmM3YWM2YjY0N2JmMzBjMzM3YTgwN2M5YzUzZDZhMTZlYjU5OThmYTM1OTliOTBlNDBhNTIxYWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0NDFhMTRmMDIxZjI2MTEyN2NhNTE0ZWQwYjNiZTlmMjUwOTczNTlhOGU1ZGRhNzEwMTNlNjRiNGE1MWQwY2YiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkYmQzMGRmZDY5YzNkMTBjZTc2NDVhNDQ4MjI2ZWUzMWQ4YmRiNDU2ODA0NjUwZDBhYTgwZTRhZDkzMjk1OWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0Y2MwYjk1NzA5ZTYzNDI4MDM1MTE3ZWE2NjhlNjY2NzY5ODBlYjg5MGM3OWRkZDQ2ZGY0ZDljNDllOWQyODIifQ"
         }
       ]
     },
@@ -170,15 +174,19 @@
     },
     {
       "id": "claim_703ab65bcbb849468694afa0f4f88c99",
-      "statement": "gpui rounds a textBox-trimmed leaf box up to whole device pixels, so a cap-trimmed label that its parent centres (tabs, tabs-subtle) draws up to about 0.75px high in a live 1x window; the port has no workaround.",
+      "statement": "A cap-trimmed label that its parent centres (tabs, tabs-subtle) still sits a pixel off Chrome's at 1x (13px caps 0.9px high, 12px caps 0.5px low): gpuix keeps the trimmed box fractional since #41 but paint snaps the box top to a whole pixel and places the baseline from the snapped origin (gpuix #44); the port has no workaround.",
       "evidence": [
         {
-          "resource": "repo://README.md#L267-L267",
-          "version": "repo-lines-v1:sha256:15f2917195fd32ce8b2562516c71b78bd73aafc6242f928621c6e8a692476fbc:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTVmMjkxNzE5NWZkMzJjZThiMjU2MjUxNmM3MWI3OGJkNzNhYWZjNjI0MmY5Mjg2MjFjNmU4YTY5MjQ3NmZiYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTVmMjkxNzE5NWZkMzJjZThiMjU2MjUxNmM3MWI3OGJkNzNhYWZjNjI0MmY5Mjg2MjFjNmU4YTY5MjQ3NmZiYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDdjMjhmMGFmMzVhOGRjOTFlYjVhMjAxOThmNzhmZGM0OGI5YjU5ZjdjNWQ4NGMzOWZkYjFhZDIyZmE0MGUzZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2IxYjlkMDg2NTA3ODYwNjcxMjNiNzFkZjFjZmFjZGJhYjczZTMxMmIzNmU0OGYwNmZlM2IzZDIyZjRiNjQ1YSJ9"
+          "resource": "repo://README.md#L256-L256",
+          "version": "repo-lines-v1:sha256:d66949847527fe5a5cde27936f661511729ad6ad6f5afaf27229a1e3947bc799:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDY2OTQ5ODQ3NTI3ZmU1YTVjZGUyNzkzNmY2NjE1MTE3MjlhZDZhZDZmNWFmYWYyNzIyOWExZTM5NDdiYzc5OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDY2OTQ5ODQ3NTI3ZmU1YTVjZGUyNzkzNmY2NjE1MTE3MjlhZDZhZDZmNWFmYWYyNzIyOWExZTM5NDdiYzc5OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWFjYTM2ZDRmY2I4ODM1OTk0OTNmZWQ5MGIyNWIwYTBjMWVkNGVhOGE3ZWZmNGVjZjliMzIwOWVjY2Q3ZjU1ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2IxYjlkMDg2NTA3ODYwNjcxMjNiNzFkZjFjZmFjZGJhYjczZTMxMmIzNmU0OGYwNmZlM2IzZDIyZjRiNjQ1YSJ9"
         },
         {
-          "resource": "repo://drift/tabs-subtle.md#L12-L21",
-          "version": "repo-lines-v1:sha256:8691708083da55107ebaa4650ae54735a3ea8374c30c1e2f79b2b783ab1a7d96:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5YTUyNjE3ZTFjZWY2NzY3ZmZhNzk3ZDlmMGRlOTE3NzQzOWUxOTNlNzRhODE2NTZlZTY1MWJkOGFlZmE1NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0ODJkMmJiZjNhNDFhNWI2MmE0YmY4NjMzZjZlY2Q0ODliNmFkMGZiYzE0YzU2ZjcxMDdlNmUwODQ3M2UxZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0MjY3Y2EzMzdiMzA1NTZkMGFhMTEwNWMyMDZiM2M5MTQyNzYzNmE1ZTdkN2U2NTkxOWUwNzRhNTY4N2QxNzEifQ"
+          "resource": "repo://drift/tabs-subtle.md",
+          "version": "repo-file-v1:sha256:d7401eb84c2e87b5e386ae5672bd6d1fad50e741c99725dcb3a83321455cc934"
+        },
+        {
+          "resource": "repo://drift/tabs.md",
+          "version": "repo-file-v1:sha256:11c180d2f076f438ba704b53e5c4907be3bc3d1f29a687db36e923c8b5c5ebcc"
         }
       ]
     },
@@ -191,10 +199,38 @@
           "version": "repo-lines-v1:sha256:77ef87e829ed17f8d36fd8004d9f3e4ad92221412351400a69985cfc1a3c16c2:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTZhY2JkMWE4Y2JiNWRjMmRmNjQzZWRmOWZkZDM0MmRiMzk1MmNiZTE3MjhlZmFlNDU2YTM1ODYwYWFlODdiYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjViYjFhZjUyMWJlY2Q1NWQ3MDU2YThhOWEwZGQxZWJjZGExZmM3OWZmMjNmNzQ1Nzc2ZjQ5OTU4MzM1MjkyMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGY1YmVjN2EyMjgyMTBmYWI4YjcwNmI2NDhhZjRiMWVhOGIxNzVjMjQ2MmM2MTVkZDAxMTE2OWZkMzc0ZGY0MCJ9"
         }
       ]
+    },
+    {
+      "id": "claim_8478bcbefc7e4202a9342134722c604a",
+      "statement": "gpuix snaps every JS bounds read (getElementBounds, onLayout) to whole device pixels per edge (#45) although it measures text fractionally (#41), so checks comparing two reads can see under 1px of difference without anything moving.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L256-L256",
+          "version": "repo-lines-v1:sha256:d66949847527fe5a5cde27936f661511729ad6ad6f5afaf27229a1e3947bc799:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDY2OTQ5ODQ3NTI3ZmU1YTVjZGUyNzkzNmY2NjE1MTE3MjlhZDZhZDZmNWFmYWYyNzIyOWExZTM5NDdiYzc5OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDY2OTQ5ODQ3NTI3ZmU1YTVjZGUyNzkzNmY2NjE1MTE3MjlhZDZhZDZmNWFmYWYyNzIyOWExZTM5NDdiYzc5OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWFjYTM2ZDRmY2I4ODM1OTk0OTNmZWQ5MGIyNWIwYTBjMWVkNGVhOGE3ZWZmNGVjZjliMzIwOWVjY2Q3ZjU1ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2IxYjlkMDg2NTA3ODYwNjcxMjNiNzFkZjFjZmFjZGJhYjczZTMxMmIzNmU0OGYwNmZlM2IzZDIyZjRiNjQ1YSJ9"
+        },
+        {
+          "resource": "repo://scripts/check-weight-widths.tsx#L364-L368",
+          "version": "repo-lines-v1:sha256:74d9af53204250468ab3536b9c6829d3d10e3bed5173fbd12fd30935a8008dc4:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWQ2N2E3MjdhMTMyNzM2MjU3ZjRjY2FiZWM1MDUzN2I4YzRhMzA4NGMwY2Y2MjY0YTljODQ1ZWJlNTg5YThiNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjM0NTg0OTM0M2YzNTg2YjYwZmRhZjdlNzcwNzRjOGZiMWRkZjlhZjA2YmQ4MWI5NWJhMzAzMDljY2NkNDJjNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWY3YjRlOGQyNjUxMzYzZWQ0ZTk0YjMyMzdhZGI1OTYwYjAxNjBmZGYyYTVhMzdjYTI4N2M5MjFhMDhhYTcyNSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_66ff96ac27be4414bb3f20051b715839",
+      "statement": "Removing the changelog's width 100% column wrappers after gpuix #36 made nested flex layout linear measured no change on poc e5231304 (changelog sweep draw p95 10.9 to 11.0 ms, idle CPU 58.8 to 57.6%).",
+      "evidence": [
+        {
+          "resource": "repo://src/pages/changelog/changelog-view.tsx",
+          "version": "repo-file-v1:sha256:46d710a611d8fffaa039f894a3a0c1754ac33442f278d1e082f6fe266413cf8b"
+        },
+        {
+          "resource": "repo://src/pages/changelog/entry.tsx",
+          "version": "repo-file-v1:sha256:12c6528e8765cdaac14f783f1e1e205361b5f9d2abcb58b4ed6a770f5c905a37"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-18T09:53:04.224Z"
+    "at": "2026-10-19T04:08:14.446Z"
   }
 }
