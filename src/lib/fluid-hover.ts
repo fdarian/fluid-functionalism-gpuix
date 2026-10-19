@@ -122,7 +122,7 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 	let container: HostElement | undefined;
 	let pointer: { x: number; y: number } | undefined;
 	let sessionPending = false;
-	// Read once and kept: a bounds read in a handler forces a draw of the pending changes, and a hover spring leaves the window dirty on most frames, so reading per move cost a draw per move. `offsetX` cannot replace it: it is relative to the deepest element under the pointer, not to this container.
+	// Cached and refreshed on resize, scroll and pointer enter: on gpuix every bounds read runs a layout pass (about 6 ms), and reading it on each pick kept the idle frame callbacks busy (drift/fluid-hover.md). `offsetX` cannot replace it: it is relative to the deepest element under the pointer, not to this container.
 	let containerBox:
 		| ReturnType<HostElement['getBoundingClientRect']>
 		| undefined;
@@ -253,7 +253,7 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 			});
 		},
 		handlers,
-		/** The container's window-coordinate box as `pick` uses it: for a handler that also needs it per move without forcing a draw. */
+		/** The container's window-coordinate box as `pick` uses it: for a handler that also needs it per move without a layout pass. */
 		containerBox() {
 			if (container === undefined || !container.mounted) {
 				throw new Error('containerBox read before the container mounted');

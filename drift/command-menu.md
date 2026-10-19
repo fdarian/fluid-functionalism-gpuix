@@ -75,9 +75,9 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 
 ## A wheel scroll re-picks the row under a stationary pointer
 
-- **Cause:** `port choice` (stated in `src/lib/fluid-hover.ts:202-206`: a scroll event carries no pointer position, so the port re-picks at the last one seen).
+- **Cause:** `port choice` (stated in `src/lib/fluid-hover.ts:229-233`: a scroll event carries no pointer position, so the port re-picks at the last one seen).
 - **Original:** the hook has no scroll listener; rows moving under a still pointer change the highlight on the next mouse move (a browser also fires a synthetic move after a scroll).
-- **Port:** `onScroll` runs `pick()`; a keyboard move calls `releasePointer()` so the scroll it causes does not re-pick (`src/components/command-menu.tsx:479`, `:955`; `src/lib/fluid-hover.ts:202-206`, `:229-231`).
+- **Port:** `onScroll` runs `pick()`; a keyboard move calls `releasePointer()` so the scroll it causes does not re-pick (`src/components/command-menu.tsx:479`, `:955`; `src/lib/fluid-hover.ts:229-233`, `:263-266`).
 - **Workaround:** n/a.
 - **Fidelity:** exact in effect.
 - **Components it hits:** every fluid list in a scroller.

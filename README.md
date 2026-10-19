@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 539 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 540 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -204,7 +204,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [dialog](drift/dialog.md) | 2 | 2 | 2 | 1 | 7 |
 | [dropdown](drift/dropdown.md) | 2 | 5 | 11 | 1 | 19 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 4 | 1 | 1 | 7 |
-| [fluid-hover](drift/fluid-hover.md) | 3 | 5 | 2 | 2 | 12 |
+| [fluid-hover](drift/fluid-hover.md) | 4 | 5 | 2 | 2 | 13 |
 | [home](drift/home.md) | 0 | 2 | 1 | 1 | 4 |
 | [input-copy](drift/input-copy.md) | 1 | 3 | 6 | 0 | 10 |
 | [input-group](drift/input-group.md) | 0 | 1 | 3 | 1 | 5 |
@@ -232,7 +232,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 3 | 3 | 6 | 1 | 13 |
 | [tooltip](drift/tooltip.md) | 1 | 5 | 1 | 1 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **84** | **203** | **198** | **54** | **539** |
+| **Total** | **85** | **203** | **198** | **54** | **540** |
 
 ### gpuix gaps across components
 
@@ -346,7 +346,7 @@ now does that the port has not picked up.
 | `prefers-reduced-motion`, `<MotionConfig reducedMotion="user">`, `useReducedMotion()` | `App` wraps the tree in gpuix's `<MotionConfig reducedMotion="user">`, which makes `width`, `height`, `top`, `right`, `bottom`, `left` and layout glides jump and leaves padding, margin, opacity, colours and radii animating: Motion's rule less the transforms the port does not have, so the tabs pills, the collapses and every other `motion.*` size and position animation land as the source's do. Where the source reads `useReducedMotion()` itself, the port reads `createReducedMotion()` at the same site: the fluid highlight, the accordion panel's fade, the banner, the carousel timer, the thinking indicator, the command-menu scroll and the scripted demos; the thinking-steps chevron too, a JS tween the config does not reach. What the source drives by CSS transition or by `animate()` on a motion value is not reduced there, so the scrollbar thumb and the switch thumb's slide sit in a nested `reducedMotion="never"` config. Pinned by `scripts/check-reduced-motion.tsx` | Exact for the properties; the OS setting is read on macOS only |
 | Base UI `Positioner` (flip, `--anchor-width`, `--available-height`) | `<anchored fit="flip" deferred>`: gpuix picks the side and reports it with the room left (`onPlacement`), and `PopupSurface` caps the card to that room, slides from the reported side and is at least the trigger's width | Equivalent |
 | `ScrollArea` (hover thumb, scroll fade) | a plain `overflowY: "scroll"` on the combobox list (Dropped); the sidebar's content is a ported `ScrollArea` with the fade and the end hairline | Dropped for the combobox; exact for the site nav |
-| `getBoundingClientRect` | `element.getBoundingClientRect()`, read when needed (layout is flushed first, so it is never stale) | Native |
+| `getBoundingClientRect` | `element.getBoundingClientRect()`, read when needed (layout is flushed first, so it is never stale). Every read runs a layout pass (about 6 ms), so the fluid hover's container box is cached and refreshed on resize, scroll and pointer enter ([drift/fluid-hover.md](drift/fluid-hover.md#fluid-hover-caches-its-containers-box)) | Native |
 | `ResizeObserver` | gpuix's `ResizeObserver` (fluid hover, slider width, queued stack) and `onLayout` (size, after the first paint and on every change) | Exact |
 | `text-[length:…] leading-[…]` | `fontSize` + `lineHeight` | Exact |
 | `[text-box:trim-both_cap_alphabetic]` | `textBox: capTrim` (`src/lib/theme.ts`); a label that clips adds the source's `py-1 -my-1` through `clippedCapTrim` | Exact |
