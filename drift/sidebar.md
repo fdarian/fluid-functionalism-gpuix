@@ -111,7 +111,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `not ported yet` (the dotted row).
 - **Original:** the label and its ghost both `truncate`, so a long label ends in an ellipsis and never wraps the row (`sidebar-menu.tsx:864-885`).
-- **Port:** `SidebarMenuButton` passes `truncate` to `StableLabel` (an optional prop added for it: the label's grid is one `minmax(0, 1fr)` column inside a `minWidth: 0` wrapper, and both cells are `nowrap`, `overflow: hidden` and `textOverflow: "ellipsis"`), so a long thread title ends in an ellipsis before the badge (`src/components/sidebar.tsx`, `src/lib/stable-label.tsx`). A row with a `dot` hugs its text and does not truncate. Every other `StableLabel` user wraps its label inside the inline-grid like the source's `inline-grid` span, and takes `nowrap` where the source's labels never wrap (tabs, tabs-subtle).
+- **Port:** `SidebarMenuButton` passes `truncate` to `StableLabel` (an optional prop added for it: the label's grid is one `minmax(0, 1fr)` column inside a `minWidth: 0` wrapper, and all three cells are `nowrap`, `overflow: hidden` and `textOverflow: "ellipsis"`), so a long thread title ends in an ellipsis before the badge (`src/components/sidebar.tsx`, `src/lib/stable-label.tsx`). A row with a `dot` hugs its text and does not truncate. Every other `StableLabel` user wraps its label inside the inline-grid like the source's `inline-grid` span, and takes `nowrap` where the source's labels never wrap (tabs, tabs-subtle).
 - **Workaround:** none.
 - **Fidelity:** exact for a plain or badged row; dropped for a dotted row (it hugs its text and does not truncate).
 - **Components it hits:** just this one.

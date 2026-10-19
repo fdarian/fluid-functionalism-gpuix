@@ -10,14 +10,13 @@ import {
 } from './theme';
 
 /**
- * A label that gains weight in place. A hidden semibold copy and the visible
- * copy share one grid cell, so the label is as wide as the semibold copy and
- * going semibold never moves what is beside it. It wraps at that width, as the
- * source's `inline-grid` span does. A second hidden normal copy was tried and
- * dropped: on gpuix 365f7c88 it costs about 1.5 ms of sweep draw p95 on the
- * sidebar pages (radio-group 8.1-8.5 -> 10.4-11.5 ms, tabs 8.4-9.5 -> 9.9-11.0)
- * although its text is not re-measured. Only a label narrower at semibold (rare
- * at 13px) shrinks, by at most about 1px, as it does in the browser.
+ * A label that gains weight in place. Hidden normal and semibold copies and the
+ * visible copy share one grid cell, so the label is as wide as the wider copy
+ * and its box keeps its width when the weight changes. It wraps at that width,
+ * as the source's `inline-grid` span does. The source reserves the semibold copy
+ * only, so a label whose normal copy is wider (Pro plan) shrinks 1px when
+ * selected; the second ghost stops that. gpuix has no text-measure API, so a
+ * hidden copy is the only way to hold the wider width, and it costs draw time.
  */
 export function StableLabel(props: {
 	text: string;
@@ -35,7 +34,7 @@ export function StableLabel(props: {
 	truncate?: boolean;
 	/** A label that never wraps (the source's tab labels). */
 	nowrap?: boolean;
-	/** The source's `text-box: trim-both cap alphabetic` on both copies. */
+	/** The source's `text-box: trim-both cap alphabetic` on every copy. */
 	trim?: boolean;
 	/** The wrapper, for a caller that measures the label's width. */
 	labelRef?: (element: HostElement) => void;
@@ -78,6 +77,7 @@ export function StableLabel(props: {
 					: {}),
 			}}
 		>
+			<text style={{ ...cellStyle(false), opacity: 0 }}>{props.text}</text>
 			<text style={{ ...cellStyle(true), opacity: 0 }}>{props.text}</text>
 			<text
 				testId={props.testId}

@@ -16,18 +16,18 @@
  * B. In the components. Each one that renders a `StableLabel` is mounted through
  *    its demo page (so Inter Variable applies) and clicked until labels go
  *    heavy or light. With the motion clock held and stepped every 8 ms across
- *    the weight ease, the label's box must stay exactly where it was and
- *    everything in its row within 1 px of where it was. `skill/menu-example` is scripted playback with no
+ *    the weight ease, the label's box and everything in its row must stay
+ *    exactly where they were. `skill/menu-example` is scripted playback with no
  *    input to drive, so it is not mounted. Its `StableLabel` and the role menu's
  *    are covered by the synthetic mounts at the end. The test window is 1x:
  *    widths at a retina display's 2x scale are not measured.
  *
- *    `StableLabel` reserves the semibold copy only, as the source does, so a
- *    label narrower at semibold shrinks when selected, as in the browser. The
- *    synthetic mount of such strings ("Toggle dark mode") therefore asserts
- *    parity, not stillness: the heavy cell is as wide as the semibold copy and
- *    the shrink is the normal-minus-semibold difference, within 1 px. The shrink
- *    is logged.
+ *    `StableLabel` reserves both the normal and the semibold copy, so its box
+ *    is as wide as the wider of the two and never changes width with the
+ *    weight, also for a label narrower at semibold (the browser's ghost span
+ *    holds the semibold copy only and shrinks there). The synthetic mount of
+ *    such strings ("Pro plan", "Toggle dark mode") asserts that the cell
+ *    equals the wider copy, light and heavy, exactly.
  */
 import type { HostElement } from '@gpuix/solid';
 import { createSignal, For, type JSX } from 'solid-js';
@@ -362,21 +362,15 @@ function neighboursOf(kit: Kit, tree: Tree, label: number) {
 	});
 }
 
-/** gpuix measures text fractionally (#41) but snaps every JS bounds read to whole device pixels per edge (#45), so a neighbour's edge can read under 1 px off without having moved. */
-const NEIGHBOUR_TOLERANCE_PX = 1;
-
 function differs(
 	before: Box,
 	after: Box,
 	compare: NonNullable<Scenario['compare']>,
-	tolerance = 0,
 ) {
-	const off = (a: number, b: number) =>
-		tolerance === 0 ? a !== b : Math.abs(a - b) >= tolerance;
-	if (compare === 'left') return off(before.x, after.x);
-	const sameX = !off(before.x, after.x) && !off(before.width, after.width);
+	if (compare === 'left') return before.x !== after.x;
+	const sameX = before.x === after.x && before.width === after.width;
 	if (compare === 'horizontal') return !sameX;
-	return !sameX || off(before.y, after.y) || off(before.height, after.height);
+	return !sameX || before.y !== after.y || before.height !== after.height;
 }
 
 const describe = (box: Box) => `x${box.x} y${box.y} ${box.width}x${box.height}`;
@@ -495,10 +489,7 @@ async function runStep(kit: Kit, scenario: Scenario, step: Step) {
 				violations.add(`"${words}" ${describe(home)} -> ${describe(box)}`);
 			for (const neighbour of neighbours) {
 				const moved = shifted(frame.get(neighbour.id), slide);
-				if (
-					moved !== undefined &&
-					differs(neighbour.box, moved, compare, NEIGHBOUR_TOLERANCE_PX)
-				)
+				if (moved !== undefined && differs(neighbour.box, moved, compare))
 					violations.add(
 						`beside "${words}": ${neighbour.type} ${describe(neighbour.box)} -> ${describe(moved)}`,
 					);
@@ -535,8 +526,9 @@ const popupStep =
 		if (!kit.exists(then)) throw new Error(`${open} did not open ${then}`);
 	};
 
-/** Labels whose semibold is narrower than their normal in the browser, so they shrink on selection there too. */
-const NARROWER_AT_SEMIBOLD = [
+/** Labels whose normal copy is as wide as or wider than the semibold one, so the semibold-only ghost would shrink them. */
+const WEIGHT_SENSITIVE_LABELS = [
+	'Pro plan',
 	'Toggle dark mode',
 	'FLUID FUNCTIONALISM REGISTRY DEPLOY',
 	'2–10 · 11–50 · 50+ people',
@@ -550,16 +542,9 @@ const PARITY_VARIANTS = [
 	{ name: 'truncate', props: { truncate: true } },
 ] as const;
 
-/** A whole-pixel snap of each width, so the label's shrink and the copies' difference can differ by this much. */
-const SHRINK_TOLERANCE_PX = 1;
-
-/**
- * `StableLabel` against the source's ghost span: the cell is as wide as the
- * semibold copy, so going heavy shrinks a label whose semibold is narrower by
- * the normal-minus-semibold difference, and never grows one.
- */
+/** `StableLabel`'s cell is as wide as the wider of the normal and semibold copies, at either weight. */
 async function runSyntheticParity() {
-	console.log('\nStableLabel on its own (source parity)');
+	console.log('\nStableLabel on its own (width never changes)');
 	const [selected, setSelected] = createSignal(-1);
 	const labels = new Map<string, HostElement>();
 	const key = (variant: string, index: number) => `${variant}-${index}`;
@@ -576,7 +561,7 @@ async function runSyntheticParity() {
 		>
 			<For each={PARITY_VARIANTS}>
 				{(variant) => (
-					<For each={NARROWER_AT_SEMIBOLD}>
+					<For each={WEIGHT_SENSITIVE_LABELS}>
 						{(text, index) => (
 							<div
 								style={{
@@ -605,7 +590,7 @@ async function runSyntheticParity() {
 					</For>
 				)}
 			</For>
-			<For each={NARROWER_AT_SEMIBOLD}>
+			<For each={WEIGHT_SENSITIVE_LABELS}>
 				{(text, index) => (
 					<div style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
 						<For each={['normal', 'semibold'] as const}>
@@ -636,10 +621,10 @@ async function runSyntheticParity() {
 		return box.width;
 	};
 	const light = PARITY_VARIANTS.map((variant) =>
-		NARROWER_AT_SEMIBOLD.map((_, index) => widthOf(variant.name, index)),
+		WEIGHT_SENSITIVE_LABELS.map((_, index) => widthOf(variant.name, index)),
 	);
 	for (const [variantIndex, variant] of PARITY_VARIANTS.entries()) {
-		for (const [index, text] of NARROWER_AT_SEMIBOLD.entries()) {
+		for (const [index, text] of WEIGHT_SENSITIVE_LABELS.entries()) {
 			setSelected(index);
 			await kit.settle(250);
 			const heavy = widthOf(variant.name, index);
@@ -647,20 +632,25 @@ async function runSyntheticParity() {
 			await kit.settle(250);
 			const normal = kit.bounds(`copy-normal-${index}`).width;
 			const semibold = kit.bounds(`copy-semibold-${index}`).width;
-			const shrink = light[variantIndex][index] - heavy;
-			const expected = Math.max(0, normal - semibold);
+			const wider = Math.max(normal, semibold);
+			const lightWidth = light[variantIndex][index];
 			console.log(
-				`  ${variant.name.padEnd(8)} shrinks ${shrink} px on going heavy (normal - semibold ${normal - semibold} px)  ${text}`,
+				`  ${variant.name.padEnd(8)} light ${lightWidth} px, heavy ${heavy} px (normal ${normal}, semibold ${semibold})  ${text}`,
 			);
 			kit.check(
-				`${variant.name}: heavy cell is the semibold copy's width within ${SHRINK_TOLERANCE_PX} px (#41, #45): ${text}`,
-				Math.abs(heavy - semibold) <= SHRINK_TOLERANCE_PX,
-				`cell ${heavy}, semibold copy ${semibold}`,
+				`${variant.name}: the cell keeps its width going heavy: ${text}`,
+				lightWidth === heavy,
+				`light ${lightWidth}, heavy ${heavy}`,
 			);
 			kit.check(
-				`${variant.name}: shrink is normal - semibold within ${SHRINK_TOLERANCE_PX} px: ${text}`,
-				Math.abs(shrink - expected) <= SHRINK_TOLERANCE_PX,
-				`shrink ${shrink}, normal ${normal}, semibold ${semibold}`,
+				`${variant.name}: light cell is the wider copy's width: ${text}`,
+				lightWidth === wider,
+				`cell ${lightWidth}, normal ${normal}, semibold ${semibold}`,
+			);
+			kit.check(
+				`${variant.name}: heavy cell is the wider copy's width: ${text}`,
+				heavy === wider,
+				`cell ${heavy}, normal ${normal}, semibold ${semibold}`,
 			);
 		}
 	}
