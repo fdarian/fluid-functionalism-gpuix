@@ -583,6 +583,7 @@ export function App(props: {
 							</Show>
 							<div
 								ref={setPageScroller}
+								testId="page-scroller"
 								onLayout={viewport.onLayout}
 								onScroll={() => {
 									for (const listener of scrollListeners) listener();

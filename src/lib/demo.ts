@@ -22,8 +22,16 @@ export interface ShotContext {
 	/** Pointer to a window position, e.g. to leave a popup or mid-drag: a button held down stays held. */
 	moveTo(x: number, y: number): Promise<void>;
 	clickAt(x: number, y: number): Promise<void>;
-	/** A wheel tick at a window position. Deltas have the DOM's sign, the same as `onWheel` sees: positive `deltaY` scrolls down, positive `deltaX` scrolls right. */
-	scroll(x: number, y: number, deltaX: number, deltaY: number): Promise<void>;
+	/**
+	 * A wheel tick at a window position. Deltas have the DOM's sign, the same as `onWheel` sees: positive `deltaY` scrolls down, positive `deltaX` scrolls right.
+	 * Reports on the page's scroller, read after the settle: `moved` is whether its scrollTop changed across the wheel; `atEnd` is whether it cannot scroll further in the direction of `deltaY`, the bottom when `deltaY` is positive or zero and the top when it is negative.
+	 */
+	scroll(
+		x: number,
+		y: number,
+		deltaX: number,
+		deltaY: number,
+	): Promise<{ moved: boolean; atEnd: boolean }>;
 	/** Wait for timers and springs. */
 	settle(ms?: number): Promise<void>;
 	/** Throws if the painted text does not (or does) contain `text`. */

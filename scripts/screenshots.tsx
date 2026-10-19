@@ -105,6 +105,21 @@ function paintedBoxAround(testId: string) {
 	}
 }
 
+const SCROLL_EDGE_TOLERANCE = 0.5;
+
+function pageScrollMetrics() {
+	const scroller = renderer.findByTestId('page-scroller');
+	if (scroller === undefined) throw new Error('no page-scroller element');
+	const metrics = renderer.getScrollMetrics(scroller.id);
+	if (metrics === null)
+		throw new Error('the page scroller has no scroll metrics');
+	return {
+		scrollTop: metrics[1],
+		scrollHeight: metrics[3],
+		clientHeight: metrics[5],
+	};
+}
+
 function capture(name: string) {
 	renderer.captureScreenshot(`${outDir}${name}.png`);
 	console.log(`captured ${slug}/${name}`);
@@ -235,8 +250,18 @@ const shot: ShotContext = {
 		await settle();
 	},
 	async scroll(x, y, deltaX, deltaY) {
+		const before = pageScrollMetrics();
 		renderer.nativeSimulateScrollWheel(x, y, deltaX, deltaY);
 		await settle();
+		const after = pageScrollMetrics();
+		const max = after.scrollHeight - after.clientHeight;
+		return {
+			moved: after.scrollTop !== before.scrollTop,
+			atEnd:
+				deltaY < 0
+					? after.scrollTop <= SCROLL_EDGE_TOLERANCE
+					: after.scrollTop >= max - SCROLL_EDGE_TOLERANCE,
+		};
 	},
 	settle,
 	expectText(text, present) {
