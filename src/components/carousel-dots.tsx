@@ -1,12 +1,15 @@
 import {
 	buttonProps,
+	createMotionValue,
 	createReducedMotion,
+	createTransform,
 	type HostElement,
+	type MotionValue,
 	motion,
 	useGpuixRequired,
 } from '@gpuix/solid';
-import { createEffect, createSignal, For, on, untrack } from 'solid-js';
-import { onFrame } from '#/lib/clock';
+import { createEffect, createMemo, For, on, onCleanup } from 'solid-js';
+import { useOnScreen } from '#/lib/cull';
 import { FluidHighlight } from '#/lib/fluid-highlight';
 import { createFluidHover } from '#/lib/fluid-hover';
 import { color, focusRing, motion as tween, withAlpha } from '#/lib/theme';
@@ -49,55 +52,64 @@ export function CarouselDots(props: {
 	testId?: string;
 }) {
 	const hover = createFluidHover({ axis: 'x' });
-	const [clock, setClock] = createSignal(0);
 
 	const options = (): CarouselDotsAutoplay | null => {
 		const autoplay = props.autoplay;
 		if (autoplay === undefined || autoplay === false) return null;
 		return autoplay === true ? {} : autoplay;
 	};
-	const autoplaying = () => options() !== null && props.progress === undefined;
-	const fill = () => {
+	// A memo, so a change to `paused` or `duration` inside the options object does not count as autoplay starting over.
+	const autoplaying = createMemo(
+		() => options() !== null && props.progress === undefined,
+	);
+	const drivenFill = () => {
 		const driven = props.progress;
-		if (typeof driven === 'function') return driven();
-		if (driven !== undefined) return driven;
-		return autoplaying() ? clock() : 1;
+		if (driven === undefined) return 1;
+		return typeof driven === 'function' ? driven() : driven;
 	};
 
-	// Autoplay restarts the fill whenever the slide changes, whoever changed
-	// it. `waiting` is set once the clock has asked for the next slide, so it
-	// asks once, not every frame, if the parent is slow to move on.
-	let waiting = false;
+	// The current dot's fill, 0 to 1, as a native motion value: autoplay plays it on gpuix's clock, so a playing carousel costs no JS frame and no redraw from this side.
+	const fill = createMotionValue(autoplaying() ? 0 : drivenFill());
+	createEffect(() => {
+		if (!autoplaying()) fill.jump(drivenFill());
+	});
+
+	// Autoplay restarts the fill whenever the slide changes, whoever changed it. This effect is created before the one that plays the fill, so on a slide change the fill is back at 0 before the next play reads it.
 	createEffect(
 		on(
 			() => [props.value, autoplaying()] as const,
 			([, playing]) => {
-				waiting = false;
-				if (playing) setClock(0);
+				if (playing) fill.jump(0);
 			},
 		),
 	);
 
 	const reduced = createReducedMotion();
+	const onScreen = useOnScreen();
+	const playing = () =>
+		autoplaying() && !reduced() && onScreen() && !(options()?.paused ?? false);
 	createEffect(() => {
-		// Reduced motion: no timer moves the page on the reader's behalf; a paused fill holds still, so it stays unsubscribed too.
-		if (!autoplaying() || reduced() || (options()?.paused ?? false)) return;
-		onFrame((delta) => {
-			const live = untrack(options);
-			if (live === null || waiting) return;
-			const next =
-				untrack(clock) + delta / (live.duration ?? DEFAULT_DURATION_MS);
-			if (next < 1) {
-				setClock(next);
-			} else if ((live.loop ?? true) || props.value < props.count - 1) {
-				setClock(1);
-				waiting = true;
-				props.onValueChange?.((props.value + 1) % props.count);
-			} else {
-				setClock(1);
-			}
+		// props.value is tracked so a new slide plays from 0 again. Reduced motion: no timer moves the page on the reader's behalf. A held fill (paused, reduced, off screen) is stopped where it is and plays on from there with the time it has left, so its progress is kept. A finished fill (1) is never replayed, so the next slide is asked for once.
+		const slide = props.value;
+		if (!playing() || fill.get() >= 1) return;
+		const duration = options()?.duration ?? DEFAULT_DURATION_MS;
+		let current = true;
+		const play = fill.animate(1, {
+			duration: ((1 - fill.get()) * duration) / 1000,
+			ease: 'linear',
+		});
+		onCleanup(() => {
+			current = false;
+			play.stop();
+		});
+		play.finished.then(() => {
+			const live = options();
+			if (!current || live === null) return;
+			if (!(live.loop ?? true) && slide >= props.count - 1) return;
+			props.onValueChange?.((slide + 1) % props.count);
 		});
 	});
+	const fillWidth = createTransform(fill, [0, 1], [DOT_PX, PILL_PX]);
 
 	const hoverRect = () => {
 		const index = hover.activeIndex();
@@ -133,7 +145,10 @@ export function CarouselDots(props: {
 						index={index}
 						label={label(index)}
 						current={index === props.value}
-						fill={fill}
+						fillTestId={
+							props.testId === undefined ? undefined : `${props.testId}-fill`
+						}
+						fillWidth={fillWidth}
 						register={hover.registerItem}
 						onSelect={() => props.onValueChange?.(index)}
 					/>
@@ -147,7 +162,8 @@ function Dot(props: {
 	index: number;
 	label: string;
 	current: boolean;
-	fill: () => number;
+	fillTestId: string | undefined;
+	fillWidth: MotionValue<number>;
 	register: (index: number, element: HostElement) => void;
 	onSelect: () => void;
 }) {
@@ -193,13 +209,12 @@ function Dot(props: {
 				{props.current && (
 					// The original slides a full-width pill in from the left behind the dot's rounded clip, so the fill always ends in a round cap. Here the fill is a pill that grows from a dot (p = 0) to the whole pill (p = 1).
 					<div
+						testId={props.fillTestId}
 						style={{
 							position: 'absolute',
 							top: 0,
 							left: 0,
-							width:
-								DOT_PX +
-								Math.min(Math.max(props.fill(), 0), 1) * (PILL_PX - DOT_PX),
+							width: props.fillWidth,
 							height: DOT_PX,
 							borderRadius: DOT_PX / 2,
 							backgroundColor: fillColor(),

@@ -39,7 +39,7 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 - **Original:** one framer `animate(y, keyframes, { times, ease: "easeInOut", repeat: Infinity })` on a `MotionValue`, paused and resumed in place; the cursor is a `motion.span` on `x` / `y`; the loop runs while `useInView(amount: 0.35)` and a visiting pointer pauses it (`demos.tsx:164-377`).
 - **Port:** the same three round trips (2 s, 0.8 s, 0.3 s legs) evaluated by hand with a cubic-bezier `easeInOut` from the shared 16 ms clock (`src/lib/clock.ts`), the cursor an absolutely positioned div moved by `left` / `top` each tick, and the fluid list fed the same point as a `mousemove` with window coordinates (`src/pages/fluid-hover/plain-vs-fluid.tsx:41-243`). In view is an `IntersectionObserver` at threshold 0.35 against the page scroller. A pointer inside takes over through `onMouseEnter` / `onMouseMove` / `onMouseDown` on the demo's root and the script resumes on leave. The pause button's tooltip, icon swap and hold-the-frame behaviour match.
 - **Fidelity:** approximated (the timer's 16 ms cadence instead of the display's frames).
-- **Components it hits:** just this page; the other scripted loops (thinking-steps, carousel-dots) use the same clock.
+- **Components it hits:** just this page; the other scripted loop (thinking-steps) uses the same clock.
 
 ## "Blink or glide": captions differ slightly
 

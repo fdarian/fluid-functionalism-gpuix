@@ -46,7 +46,7 @@ function setShown(subscriber: Subscriber, shown: boolean) {
 /**
  * Calls `callback(dt, now)` about every 16 ms, with `dt` the ms since the last
  * frame. A loop that only restyles runs natively (keyframes, `repeat`); one
- * that needs JS state each frame (an autoplay, a tween) shares this one
+ * that needs JS state each frame (a tween) shares this one
  * timer. It runs only while
  * something is subscribed and shown, and a subscription ends with the owner
  * that made it. A subscriber inside a culled region (`OnScreenContext`) is

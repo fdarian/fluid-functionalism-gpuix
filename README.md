@@ -193,7 +193,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [banner](drift/banner.md) | 4 | 4 | 6 | 0 | 14 |
 | [button](drift/button.md) | 2 | 4 | 2 | 1 | 9 |
 | [card](drift/card.md) | 2 | 7 | 6 | 0 | 15 |
-| [carousel-dots](drift/carousel-dots.md) | 2 | 3 | 2 | 1 | 8 |
+| [carousel-dots](drift/carousel-dots.md) | 2 | 4 | 2 | 0 | 8 |
 | [chat-message](drift/chat-message.md) | 2 | 4 | 2 | 1 | 9 |
 | [checkbox-group](drift/checkbox-group.md) | 1 | 0 | 3 | 1 | 5 |
 | [color-picker](drift/color-picker.md) | 2 | 5 | 15 | 1 | 23 |
@@ -232,7 +232,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 4 | 5 | 0 | 13 |
 | [tooltip](drift/tooltip.md) | 1 | 5 | 1 | 1 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **88** | **204** | **194** | **52** | **538** |
+| **Total** | **88** | **205** | **194** | **51** | **538** |
 
 ### gpuix gaps across components
 
@@ -271,7 +271,7 @@ offer it. A count is given only where the code shows it.
 | command-menu (and every long demo page) | Culling: elements a scroller clips away still cost a frame (gpuix #46: retained and clipped content is not free), so a page of many menus costs several times a short one (`<virtual-list>` is the only exception). On gpuix `poc` e5231304, removing the port's culling raised the sidebar-sweep draw p95 on the changelog from 10.9 to 26.6 ms, command-menu 16.7 to 37.4, showcase 16.0 to 41.6, fluid-hover 11.1 to 30.9 and card 15.7 to 29.7 (the sum over 49 pages 520 to 670), and idle CPU where off-screen loops would run (input-message 1.8 to 49.7%, showcase 44 to 87%) | `DemoCard`, every `ComponentPreview`, `DocSection`, changelog entry and group, Audio Mixer card and each home tile hide their content with `display: none` while far from the page scroller, through `createCulling` in `src/lib/cull.ts`, and the loops that would run in them pause; both stay until gpuix #46 (`drift/command-menu.md`) |
 | file-thumbnail | A canvas pixel path (a PDF page preview) | The caller passes a type and the thumbnail shows a glyph |
 | not counted | Effect groups (`filter`, `backdrop-filter`, `mask`, `clip`, group opacity) off macOS: the group draws flat. The Markdown sample's to-do tick is a `maskImage` of an SVG data URI on a foreground box, so off macOS it is a flat square | none |
-| carousel-dots, thinking-steps | `requestAnimationFrame` itself (only `setTimeout`, FORK.md:209-211). The animations are possible without it, through motion values and keyframes (FORK.md:1144-1148) | `lib/clock.ts`: one shared, ref-counted `setInterval` frame clock |
+| thinking-steps | `requestAnimationFrame` itself (only `setTimeout`, FORK.md:209-211). The animations are possible without it, through motion values and keyframes (FORK.md:1144-1148) | `lib/clock.ts`: one shared, ref-counted `setInterval` frame clock |
 | not counted | `text-wrap: balance` past 6 lines per forced-break segment, and `pretty` on a paragraph whose last line is longer than a third of the line: gpuix's breaker approximates Chromium's (`pretty` re-breaks the last four lines at most) | none; every string the port balances or prettifies (the docs' headings and prose, the Balanced and Pretty demos, the fluid-hover callouts) breaks as Chromium's does |
 | combobox (command-menu, input-message) | IME composition on Windows and Linux: gpuix reports `isComposing` `false` and fires no `Process` keydown or `composition*` events there, and the composition keys go to the input method before GPUI sees them (FORK.md:564-567). macOS reports all three (FORK.md:496-499), but this port reads none of them: the source's `isComposing` guards on Enter and arrows (command-menu, input-message, Base UI's combobox input) have no counterpart | none; IME input is untested. On macOS a key the input method takes first is a `Process` keydown that no `Enter` or arrow case matches |
 | button (every `buttonProps` button) | A keyboard `:active` state: a held Space does not play the pressed look | none; Space still activates on key-up |
