@@ -83,8 +83,8 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Cause:** `gpuix gap`.
 - **Original:** the field is `sticky top-0 z-20 -mx-1 -mt-1 mb-0.5` inside the padded `p-1` list, `border-b border-border/60`, painted with the surface so rows scroll underneath; `DropdownSearch` in an inline `Dropdown` is simply open (`registry/default/dropdown-search.tsx:228-231`, `:317-331`).
 - **Port:** `DropdownSearch` renders nothing and registers its props with the list around it, which draws the field as the first child of the scroller, ahead of the padded rows: `position: sticky`, `top: 0`, `zIndex: 20`, the popup's `surface(level)` fill, the rows' top padding cut to 2px (`src/components/dropdown-search.tsx:68-146`; `src/components/dropdown.tsx:388-397`). A row the keyboard reveals stops below the field (`revealRow`'s `topInset`, `base-ui:src/internals/composite/composite.ts:65-88`); the source's `scrollIntoView` lets it slide under. An inline `Dropdown` hosts `DropdownSearch` the same way and draws the field above the rows, not sticky (`dropdown.tsx:571-586`); ArrowDown and ArrowUp leave it for the first and last row.
-- **gpuix lacks:** a negative margin on a sticky box does not bleed over its parent's padding. A sticky `marginTop: -4` child of a `padding: 4` box is held at the parent's content box (y 54 where its layout slot is 50) until the scroller moves it, then pinned at 50; a CSS sticky box keeps its border box where the margin puts it. So the field cannot sit in the padded list as the source has it. Measured on the test renderer, not traced in gpuix's `sticky.rs`.
-- **Workaround:** the field is the scroller's child, where the parent has no padding.
+- **gpuix lacks:** the scroller's padding when it pins a sticky box. At rest gpuix and Chrome agree (a sticky child of a `padding: 4` scroller at y 50 sits at y 54, the negative margin or not). After scrolling, gpuix pins the box at the scrollport edge (y 50) where Chrome holds it at the scroller's padding edge (54); a sticky box with no negative margin differs the same way (270 against 274). So the field cannot sit in the padded list as the source has it: it would pin 4px above where the source's does, over the list's top padding. Measured on the test renderer and against Chrome, not traced in gpuix's `sticky.rs`.
+- **Workaround:** the scroller has no padding; the field is its first child, where the scrollport edge and the padding edge are the same line, and the rows carry the padding.
 - **Fidelity:** exact visually; the DOM structure differs.
 - **Components it hits:** command-menu draws its own field.
 
@@ -122,7 +122,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 ## RTL: submenu side, arrow keys and chevron
 
-- **Cause:** `port choice` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` rows 475-478, lead decision: no ported consumer; the source docs never mount a `DirectionProvider`).
+- **Cause:** `port choice` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` rows 475-478, lead decision: no ported consumer; the source docs never mount a `DirectionProvider` and have no rtl demo). gpuix now has `direction: 'rtl'` (inherited; it mirrors a row's main axis, grid columns and `textAlign: start`; gpuix `README.md`, "Direction"), so a port with a direction provider could mirror the submenu side and the chevron; the menu keys would still be the primitive's.
 - **Original:** `useDirection()` picks `side="left"` for rtl (`registry/base/dropdown.tsx:879-883`), Base UI swaps the submenu open and close keys, and the chevron mirrors with `rtl:-scale-x-100` (`registry/default/dropdown-sub.tsx:179`).
 - **Port:** the submenu is always on the right and Right opens, Left closes (`src/components/dropdown.tsx:894-899`, `base-ui:src/menu/list/menu-list.ts:271-279`); the chevron never mirrors (`src/components/menu-item.tsx:147-156`).
 - **Fidelity:** dropped, unreachable in the docs.
