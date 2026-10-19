@@ -9,12 +9,12 @@ Checked and equal: item height 36 / 28, `px` 12 / 10, icon 16 / 14 and its gap, 
 travelling focus ring, manual activation (arrows move focus, Enter / Space select), wrap, Home / End, roving tab stop,
 `aria-label` on a collapsed tab, the 60 ms label fade, light and dark tokens, and the label's unfold and fold: `width: "auto"` and `marginLeft` on `spring.fast` with opacity on a 0.06 tween (`src/components/tabs-subtle.tsx:295-300`, `:362-366`), where the source animates a measured `offsetWidth` (`tabs-subtle.tsx:276-296`, `:396-410`) because framer's `auto` misreads under a scaled ancestor. gpuix starts the `auto` clock at the change, so the unfold leaves its start on the commit frame and covers the same share of its travel as the fold at every 8 ms step, and a tab selected at mount is born at its label width (`scripts/check-tabs-subtle.tsx`). Not measured under a retina 2x scale.
 
-## Cap-trimmed label sits up to 1px above the pill centre
+## Cap-trimmed label baseline sits a pixel off Chrome's
 
-- **Cause:** `gpuix gap`: the trimmed text box rounds up to whole pixels. Full entry in [tabs](tabs.md#cap-trimmed-label-sits-up-to-1px-above-the-pill-centre), README "gpuix gaps across components".
+- **Cause:** `gpuix gap`: paint places the baseline from a box it has already snapped to a device pixel. Full entry in [tabs](tabs.md#cap-trimmed-label-baseline-sits-a-pixel-off-chromes), README "gpuix gaps across components".
 - **Original:** `text-box: trim-both cap alphabetic` on the label, centred as a fractional box (`tabs-subtle.tsx`, the label span).
-- **Port:** the same trim through `StableLabel` (`src/components/tabs-subtle.tsx:310`); the item is 300..336, the label box 313..323, the caps 312.5..322, 0.75px above the pill centre in the live window at 1x.
-- **gpuix lacks:** a fractional trimmed box (`zed/crates/gpui/src/taffy.rs:800-802`).
+- **Port:** the same trim through `StableLabel` (`src/components/tabs-subtle.tsx:310`). Measured in the offscreen renderer at 1x: 13px in the 36px item, the baseline is row 22 where Chrome's arithmetic gives 23 (caps 0.9px above the centre); 12px in the 28px compact item, row 19 where Chrome gives 18 (0.5px below).
+- **gpuix lacks:** a baseline placed from the unsnapped box (`zed/crates/gpui/src/taffy.rs:1665`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** tabs.
