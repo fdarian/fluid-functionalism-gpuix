@@ -45,16 +45,19 @@ function setShown(subscriber: Subscriber, shown: boolean) {
 
 /**
  * Calls `callback(dt, now)` about every 16 ms, with `dt` the ms since the last
- * frame. A loop that only restyles runs natively (keyframes, `repeat`); one
- * that needs JS state each frame (a tween) shares this one
- * timer. It runs only while
- * something is subscribed and shown, and a subscription ends with the owner
- * that made it. A subscriber inside a culled region (`OnScreenContext`) is
- * skipped while that region is far: every signal a hidden loop sets would
- * still redraw the window. It resumes as after a stall, with the next `dt`
- * counting from the resume. A stalled frame is skipped for everyone rather
- * than delivered as one huge `dt`. Returns a function that ends the
- * subscription early.
+ * frame. Loops gpuix can run natively (a motion value's `animate`, `repeat`,
+ * CSS keyframes) stay off it. Three still use it: thinking-steps' Chevron, for
+ * its 100 ms turn (the source's `rotate` is a transform gpuix cannot animate, so
+ * JS sets the chevron's points); the fluid-hover lists demo, which re-measures
+ * its rows each frame while a sub-menu's spring settles (at most `TRACK_MS`);
+ * and the cost meter, which reads this clock's gaps as its stall probe. The
+ * timer runs only while something is subscribed and shown, and a subscription
+ * ends with the owner that made it. A subscriber inside a culled region
+ * (`OnScreenContext`) is skipped while that region is far: every signal a
+ * hidden loop sets would still redraw the window. It resumes as after a stall,
+ * with the next `dt` counting from the resume. A stalled frame is skipped for
+ * everyone rather than delivered as one huge `dt`. Returns a function that ends
+ * the subscription early.
  */
 export function onFrame(callback: (dt: number, now: number) => void) {
 	const onScreen = useOnScreen();

@@ -67,7 +67,7 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 
 ## "When to split a list": narrower canvas and a hand-built sidebar
 
-- **Cause:** `port choice` (the 600px page column, `src/app.tsx:42`) and `not ported yet` (sidebar parts).
+- **Cause:** `port choice` (the 600px page column, `src/app.tsx:77`) and `not ported yet` (sidebar parts).
 - **Original:** a 640 x 400 canvas, scrolled sideways when narrower, with a 260px framed `Sidebar` (`SidebarProvider`, `SidebarGroup`, `SidebarMenuSub`, `SidebarMenuSubButton href`, a `SidebarSeparator`, a disabled `SidebarMenuButton` at 50% opacity) and three callouts whose arrows are SVG `<marker>` paths measured against the real rows with a `MutationObserver` / `ResizeObserver` and a `Range` over the glyphs' line boxes (`demos.tsx:866-1246`).
 - **Port:**
   - The frame's inner width is 598px, so the canvas is 598 wide and the sidebar sits 179px from the left (the source's 200 less 21), keeping the left labels, the arrows and the right label inside the frame (`src/pages/fluid-hover/lists.tsx:36-44`).
@@ -117,5 +117,5 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** rows are `<button>`s with `focus-visible:ring-1`; the page text is Inter and the monospace is `font-mono` (`demos.tsx:131-162`). The axes demo's padding is `responsive` (compact on mobile).
-- **Port:** rows are `buttonProps` divs with an outline offset of 0 on `focusVisible` (`src/pages/fluid-hover/parts.tsx:27-110`), no-op click; the monospace is Menlo, which the browser resolves to `ui-monospace` (same in Chrome on macOS, not Safari). The Code tab shows the source's five snippets verbatim (`src/pages/fluid-hover/snippets.ts`) in plain Menlo without highlighting, so they describe the React hook, not the port's. The axes demo has the default padding only (the page column is a fixed 600px).
+- **Port:** rows are `buttonProps` divs with an outline offset of 0 on `focusVisible` (`src/pages/fluid-hover/parts.tsx:33-115`), no-op click; the monospace is Menlo, which the browser resolves to `ui-monospace` (same in Chrome on macOS, not Safari). The Code tab shows the source's five snippets verbatim (`src/pages/fluid-hover/snippets.ts`) in plain Menlo without highlighting, so they describe the React hook, not the port's. The axes demo has the default padding only (the page column is a fixed 600px).
 - **Fidelity:** exact except the monospace face.

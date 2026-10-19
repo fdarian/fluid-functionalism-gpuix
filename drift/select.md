@@ -92,7 +92,7 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 
 ## Default variant is `inline`, a port-only variant
 
-- **Cause:** `port choice` (serves the app frame's theme picker, `app.tsx:220`, and the site's "Make them yours" card; docstring at `select.tsx:54-58`).
+- **Cause:** `port choice` (serves the app frame's theme picker, `app.tsx:449`, and the site's "Make them yours" card; docstring at `select.tsx:54-58`).
 - **Original:** `variant` is `"bordered"` (default) or `"borderless"` (`select.tsx:241-249`).
 - **Port:** `variant` defaults to `"inline"` (`select.tsx:136`): borderless, compact trigger, 13px text, shows the picked item's icon, popup right-aligned and content-sized like the others (`select.tsx:137-148`, `:396`). Every demo passes `bordered` explicitly.
 - **Workaround:** none.
