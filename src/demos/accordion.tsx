@@ -7,7 +7,7 @@ import {
 	AccordionTrigger,
 } from '#/components/accordion';
 import type { DemoModule, ShotContext } from '#/lib/demo';
-import { DemoCard } from '#/lib/demo-kit';
+import { DemoCard, scrollNearTop } from '#/lib/demo-kit';
 import {
 	PlayField,
 	PlaygroundLayout,
@@ -324,18 +324,6 @@ export function Demo() {
 	);
 }
 
-/** The page is taller than the window: scroll an element to the upper part of it. */
-async function reveal(shot: ShotContext, testId: string) {
-	let previous = Number.NaN;
-	for (let attempt = 0; attempt < 8; attempt++) {
-		const y = shot.centerOf(testId).y;
-		if ((y > 120 && y < 320) || y === previous) return;
-		previous = y;
-		await shot.scroll(700, 400, 0, y - 200);
-	}
-	throw new Error(`could not scroll ${testId} into view`);
-}
-
 /** Opens the Expand select from the keyboard and walks `steps` rows. */
 async function pickExpand(shot: ShotContext, steps: string) {
 	await shot.focus('play-expand-trigger');
@@ -364,7 +352,7 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	await shot.click('playground-shuffle');
 	shot.capture('playground-shuffled');
 
-	await reveal(shot, 'single-2');
+	await scrollNearTop(shot, 'single-2');
 	await shot.hover('single-2');
 	shot.capture('hover-closed-row');
 	await shot.click('single-2');
@@ -383,7 +371,7 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	shot.capture('keyboard-focus');
 
 	// Closed panels leave the tree once their exit is over.
-	await reveal(shot, 'kb-1');
+	await scrollNearTop(shot, 'kb-1');
 	await shot.click('kb-1');
 	shot.expectText('Alpha body', true);
 	await shot.click('kb-1');

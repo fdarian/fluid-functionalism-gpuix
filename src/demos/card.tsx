@@ -14,7 +14,7 @@ import {
 	CardTitle,
 } from '#/components/card';
 import type { DemoModule, ShotContext } from '#/lib/demo';
-import { DemoCard } from '#/lib/demo-kit';
+import { DemoCard, scrollNearTop } from '#/lib/demo-kit';
 import {
 	PlayDivider,
 	PlayField,
@@ -577,7 +577,7 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	await shot.click('playground-shuffle');
 	shot.capture('playground-shuffled');
 
-	await reveal(shot, 'basic-1');
+	await scrollNearTop(shot, 'basic-1');
 	await shot.hover('basic-1');
 	shot.capture('basic-hover');
 	await shot.hover('basic-3');
@@ -585,7 +585,7 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	await shot.hover('basic-2-connect');
 	shot.capture('basic-action-hover');
 
-	await reveal(shot, 'grid-3');
+	await scrollNearTop(shot, 'grid-3');
 	await shot.hover('grid-3');
 	shot.capture('grid-2d-hover');
 	// The gap between two tiles still resolves to the nearest one.
@@ -594,10 +594,10 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	await shot.moveTo(top.x, (top.y + bottom.y) / 2);
 	shot.capture('grid-gap-hover');
 
-	await reveal(shot, 'separated-0');
+	await scrollNearTop(shot, 'separated-0');
 	shot.capture('separated-and-outlined');
 
-	await reveal(shot, 'promo');
+	await scrollNearTop(shot, 'promo');
 	// The promo is taller than the window's upper band: bring its top (and the chip) into view.
 	await shot.scroll(700, 400, 0, -160);
 	await shot.hover('promo');
@@ -610,23 +610,11 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	shot.capture('promo-restore-hover');
 	await shot.click('promo-restore');
 
-	await reveal(shot, 'selected-3');
+	await scrollNearTop(shot, 'selected-3');
 	await shot.click('selected-3');
 	await shot.hover('selected-0');
 	shot.capture('selected-3-hover-0');
 };
-
-/** The page is taller than the window: scroll an element to the upper part of it. */
-async function reveal(shot: ShotContext, testId: string) {
-	let previous = Number.NaN;
-	for (let attempt = 0; attempt < 8; attempt++) {
-		const y = shot.centerOf(testId).y;
-		if ((y > 120 && y < 320) || y === previous) return;
-		previous = y;
-		await shot.scroll(700, 400, 0, y - 200);
-	}
-	throw new Error(`could not scroll ${testId} into view`);
-}
 
 /** Opens a playground select from the keyboard and walks `steps` rows. */
 async function pickOption(shot: ShotContext, testId: string, steps: string) {

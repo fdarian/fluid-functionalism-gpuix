@@ -4,8 +4,8 @@ import {
 	type ButtonSize,
 	type ButtonVariant,
 } from '#/components/button';
-import type { DemoModule, ShotContext } from '#/lib/demo';
-import { DemoCard, DemoRow } from '#/lib/demo-kit';
+import type { DemoModule } from '#/lib/demo';
+import { DemoCard, DemoRow, scrollNearTop } from '#/lib/demo-kit';
 import {
 	PlayDivider,
 	PlayField,
@@ -336,18 +336,6 @@ export function Demo() {
 	);
 }
 
-/** The page is taller than the window: scroll an element to the upper part of it. */
-async function reveal(shot: ShotContext, testId: string) {
-	let previous = Number.NaN;
-	for (let attempt = 0; attempt < 8; attempt++) {
-		const y = shot.centerOf(testId).y;
-		if ((y > 120 && y < 320) || y === previous) return;
-		previous = y;
-		await shot.scroll(700, 400, 0, y - 200);
-	}
-	throw new Error(`could not scroll ${testId} into view`);
-}
-
 export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	shot.capture('playground');
 	await shot.click('play-leading-track');
@@ -374,7 +362,7 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	shot.expectAria('Loading-secondary', { disabled: true });
 	shot.expectAria('Default-primary', { disabled: undefined });
 
-	await reveal(shot, 'click-to-load');
+	await scrollNearTop(shot, 'click-to-load');
 	shot.expectAria('click-to-load', { disabled: undefined });
 	await shot.click('click-to-load');
 	shot.expectAria('click-to-load', { disabled: true });

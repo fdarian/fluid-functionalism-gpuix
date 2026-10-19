@@ -2,8 +2,8 @@ import type { HostElement } from '@gpuix/solid';
 import { createSignal } from 'solid-js';
 import { Button } from '#/components/button';
 import { Combobox, type ComboboxItem } from '#/components/combobox';
-import type { DemoModule, ShotContext } from '#/lib/demo';
-import { DemoCard, DemoRow } from '#/lib/demo-kit';
+import type { DemoModule } from '#/lib/demo';
+import { DemoCard, DemoRow, scrollNearTop } from '#/lib/demo-kit';
 import {
 	PlaygroundLayout,
 	PlaygroundPanel,
@@ -289,18 +289,6 @@ export function Demo() {
 	);
 }
 
-/** The page is taller than the window: scroll an element to the upper part of it. */
-async function reveal(shot: ShotContext, testId: string) {
-	let previous = Number.NaN;
-	for (let attempt = 0; attempt < 8; attempt++) {
-		const y = shot.centerOf(testId).y;
-		if ((y > 120 && y < 320) || y === previous) return;
-		previous = y;
-		await shot.scroll(700, 400, 0, y - 200);
-	}
-	throw new Error(`could not scroll ${testId} into view`);
-}
-
 export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	// The sidebar names RadioGroup too, so the list is read by its option's node, not by the page's text.
 	const expectOption = (present: boolean) => {
@@ -331,7 +319,7 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 
 	// 25 timezones: the list scrolls and the typed query narrows it.
 	await shot.scroll(700, 400, 0, 900);
-	await reveal(shot, 'tz-input');
+	await scrollNearTop(shot, 'tz-input');
 	await shot.focus('tz-input');
 	await shot.press('ArrowDown');
 	shot.expectText('(UTC−12) Baker Island', true);
@@ -344,7 +332,7 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	await shot.press('Escape');
 
 	// Form and ARIA, opened by key: an empty required combobox blocks the submit and takes the focus; the input names its list and the lit row.
-	await reveal(shot, 'form-submit');
+	await scrollNearTop(shot, 'form-submit');
 	await shot.click('form-submit');
 	shot.expectText('submitted: stack=', false);
 	shot.expectAria('form-stack-input', {
@@ -444,7 +432,7 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	shot.capture('views-cleared');
 
 	// A custom `filter`, and the picked row scrolled into view on open.
-	await reveal(shot, 'tall-input');
+	await scrollNearTop(shot, 'tall-input');
 	await shot.click('tall-input');
 	shot.capture('tall-open');
 	await shot.press('Backspace Backspace Backspace s');

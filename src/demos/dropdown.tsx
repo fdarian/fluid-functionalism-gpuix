@@ -15,7 +15,7 @@ import {
 	MenuItem,
 } from '#/components/dropdown';
 import type { DemoModule, ShotContext } from '#/lib/demo';
-import { DemoCard } from '#/lib/demo-kit';
+import { DemoCard, scrollNearTop } from '#/lib/demo-kit';
 import type { IconName } from '#/lib/icons';
 import {
 	PlayDivider,
@@ -896,25 +896,6 @@ export function Demo() {
 	);
 }
 
-/** Wheels the page until the trigger sits near the top, where its popup has room below, or the page ends. It starts from the top and walks down: an element too far outside the window has no painted bounds to aim at. */
-async function reveal(shot: ShotContext, testId: string) {
-	await shot.scroll(700, 400, 0, -100000);
-	let previous = Number.NaN;
-	for (let attempt = 0; attempt < 30; attempt++) {
-		let y: number;
-		try {
-			y = shot.centerOf(testId).y;
-		} catch {
-			await shot.scroll(700, 400, 0, 500);
-			continue;
-		}
-		if ((y > 120 && y < 320) || y === previous) return;
-		previous = y;
-		await shot.scroll(700, 400, 0, y - 200);
-	}
-	throw new Error(`could not scroll ${testId} into view`);
-}
-
 /** Opens a playground select from the keyboard and walks `steps` rows. */
 async function pickOption(shot: ShotContext, testId: string, steps: string) {
 	await shot.focus(`${testId}-trigger`);
@@ -949,14 +930,14 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	shot.capture('playground-shuffled');
 
 	// The inline panel is a plain group: its rows take the focus, so the group names no lit row.
-	await reveal(shot, 'groups-0');
+	await scrollNearTop(shot, 'groups-0');
 	await shot.focus('groups-0');
 	shot.expectAria('groups', { role: 'Group', active_descendant: undefined });
 	await shot.press('ArrowDown');
 	await shot.press('ArrowUp');
 	shot.expectAria('groups', { active_descendant: undefined });
 	// Opened by key, which the test renderer can run: the trigger names its popup, and the focused row is not an activedescendant.
-	await reveal(shot, 'menu-trigger');
+	await scrollNearTop(shot, 'menu-trigger');
 	await shot.focus('menu-trigger');
 	shot.expectAria('menu-trigger', {
 		role: 'Button',
@@ -981,7 +962,7 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	await shot.press('Escape');
 	await shot.settle(300);
 	// Submenu: the trigger row names its popup; the keys are inside it by real focus, so no row is an activedescendant.
-	await reveal(shot, 'sub-trigger');
+	await scrollNearTop(shot, 'sub-trigger');
 	await shot.focus('sub-trigger');
 	await shot.press('Enter');
 	shot.expectAria('sub-move', { has_popup: 'Menu', expanded: false });
@@ -997,27 +978,27 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	shot.expectAria('sub-trigger', { active_descendant: undefined });
 	await shot.press('Escape Escape');
 	// Arrows land on a disabled row; it says so.
-	await reveal(shot, 'keys-trigger');
+	await scrollNearTop(shot, 'keys-trigger');
 	await shot.focus('keys-trigger');
 	await shot.press('Enter');
 	shot.expectAria('keys-1', { disabled: true });
 	await shot.press('Escape');
 
 	await shot.scroll(700, 400, 0, -5000);
-	await reveal(shot, 'basic-0');
+	await scrollNearTop(shot, 'basic-0');
 	await shot.hover('basic-2');
 	shot.capture('inline-hover');
 	await shot.click('basic-3');
 	await shot.moveTo(700, 80);
 	shot.capture('inline-checked');
-	await reveal(shot, 'groups-0');
+	await scrollNearTop(shot, 'groups-0');
 	await shot.click('groups-0');
 	await shot.press('ArrowDown ArrowDown');
 	shot.capture('inline-keyboard');
 	await shot.press('ArrowDown ArrowDown ArrowDown ArrowDown ArrowDown');
 	shot.capture('inline-disabled-lit');
 
-	await reveal(shot, 'menu-trigger');
+	await scrollNearTop(shot, 'menu-trigger');
 	await shot.click('menu-trigger');
 	shot.capture('menu-open');
 	await shot.hover('menu-3');
@@ -1030,7 +1011,7 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	shot.capture('menu-picked');
 	await shot.press('Escape');
 
-	await reveal(shot, 'sub-trigger');
+	await scrollNearTop(shot, 'sub-trigger');
 	await shot.click('sub-trigger');
 	await shot.hover('sub-move');
 	await shot.settle(300);
@@ -1066,7 +1047,7 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	shot.expectText('Copy link', true);
 	await shot.press('Escape Escape');
 
-	await reveal(shot, 'keys-trigger');
+	await scrollNearTop(shot, 'keys-trigger');
 	await shot.click('keys-trigger');
 	// The keyboard scenario above opened and closed this menu: two changes before this click opens it.
 	shot.expectText('changes: 3', true);
@@ -1094,7 +1075,7 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	await shot.up('keys-2');
 	shot.expectText('picked: Bravo', true);
 
-	await reveal(shot, 'multi-trigger');
+	await scrollNearTop(shot, 'multi-trigger');
 	await shot.click('multi-trigger');
 	shot.capture('multi-open');
 	await shot.click('multi-3');
@@ -1103,7 +1084,7 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	shot.capture('multi-split');
 	await shot.press('Escape');
 
-	await reveal(shot, 'search-trigger');
+	await scrollNearTop(shot, 'search-trigger');
 	await shot.click('search-trigger');
 	shot.capture('search-open');
 	await shot.press('ArrowDown');
@@ -1115,7 +1096,7 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	shot.capture('search-empty');
 	await shot.press('Escape');
 
-	await reveal(shot, 'labels-trigger');
+	await scrollNearTop(shot, 'labels-trigger');
 	await shot.click('labels-trigger');
 	await shot.press('ArrowDown ArrowDown');
 	shot.capture('labels-keyboard');
@@ -1123,7 +1104,7 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	shot.capture('labels-toggled');
 	await shot.press('Escape');
 
-	await reveal(shot, 'create-trigger');
+	await scrollNearTop(shot, 'create-trigger');
 	await shot.click('create-trigger');
 	await shot.press('x y z');
 	shot.expectText('Create “xyz”', true);
@@ -1131,17 +1112,17 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	await shot.press('Escape');
 
 	setThemeChoice('light');
-	await reveal(shot, 'menu-trigger');
+	await scrollNearTop(shot, 'menu-trigger');
 	await shot.click('menu-trigger');
 	await shot.hover('menu-2');
 	shot.capture('light-menu');
 	await shot.press('Escape');
-	await reveal(shot, 'sub-trigger');
+	await scrollNearTop(shot, 'sub-trigger');
 	await shot.click('sub-trigger');
 	await shot.press('ArrowRight');
 	shot.capture('light-sub');
 	await shot.press('Escape Escape');
-	await reveal(shot, 'multi-trigger');
+	await scrollNearTop(shot, 'multi-trigger');
 	await shot.click('multi-trigger');
 	shot.capture('light-multi');
 	await shot.press('Escape');

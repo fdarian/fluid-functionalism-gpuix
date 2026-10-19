@@ -11,7 +11,7 @@ import {
 } from '#/components/sidebar';
 import { SidebarPlayground } from '#/demos/sidebar/playground';
 import type { DemoModule, ShotContext } from '#/lib/demo';
-import { DemoCard } from '#/lib/demo-kit';
+import { DemoCard, scrollNearTop } from '#/lib/demo-kit';
 import { color, shape } from '#/lib/theme';
 
 // The source's blue dot is a fixed Tailwind `bg-blue-500`; its second dot is `var(--warning)`, which follows the theme, so a dot colour is read when it paints.
@@ -126,18 +126,6 @@ export function Demo() {
 	);
 }
 
-/** The page is taller than the window: scroll an element to the upper part of it. */
-async function reveal(shot: ShotContext, testId: string) {
-	let previous = Number.NaN;
-	for (let attempt = 0; attempt < 8; attempt++) {
-		const y = shot.centerOf(testId).y;
-		if ((y > 120 && y < 320) || y === previous) return;
-		previous = y;
-		await shot.scroll(700, 400, 0, y - 200);
-	}
-	throw new Error(`could not scroll ${testId} into view`);
-}
-
 /** Opens a playground select from the keyboard and walks `steps` rows from the current one. */
 async function pickOption(shot: ShotContext, testId: string, steps: string) {
 	await shot.focus(`${testId}-trigger`);
@@ -193,7 +181,7 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	await shot.click('playground-shuffle');
 	shot.capture('playground-shuffled');
 
-	await reveal(shot, 'sidebar-demo-Motion');
+	await scrollNearTop(shot, 'sidebar-demo-Motion');
 	await shot.hover('sidebar-demo-Motion');
 	shot.capture('hover');
 

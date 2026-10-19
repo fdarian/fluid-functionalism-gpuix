@@ -2,8 +2,8 @@ import type { HostElement } from '@gpuix/solid';
 import { createSignal } from 'solid-js';
 import { Button } from '#/components/button';
 import { Select, type SelectEntry } from '#/components/select';
-import type { DemoModule, ShotContext } from '#/lib/demo';
-import { DemoCard, DemoRow } from '#/lib/demo-kit';
+import type { DemoModule } from '#/lib/demo';
+import { DemoCard, DemoRow, scrollNearTop } from '#/lib/demo-kit';
 import { color, type as scale } from '#/lib/theme';
 
 const FRUITS = [
@@ -290,20 +290,8 @@ export function Demo() {
 	);
 }
 
-/** The page is taller than the window: scroll an element to the upper part of it. */
-async function reveal(shot: ShotContext, testId: string) {
-	let previous = Number.NaN;
-	for (let attempt = 0; attempt < 8; attempt++) {
-		const y = shot.centerOf(testId).y;
-		if ((y > 120 && y < 320) || y === previous) return;
-		previous = y;
-		await shot.scroll(700, 400, 0, y - 200);
-	}
-	throw new Error(`could not scroll ${testId} into view`);
-}
-
 export const scenarios: DemoModule['scenarios'] = async (shot) => {
-	await reveal(shot, 'form-submit');
+	await scrollNearTop(shot, 'form-submit');
 	// Form: an empty required select blocks the submit and hands focus to its trigger; once picked its value is submitted under its name.
 	await shot.click('form-submit');
 	shot.expectText('submitted: name=Ada', false);

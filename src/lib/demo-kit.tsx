@@ -1,5 +1,6 @@
 import type { JSX } from 'solid-js';
 import { createCulling, OnScreenContext } from './cull';
+import type { ShotContext } from './demo';
 import { color, type as scale } from './theme';
 
 /** The bordered surface a demo page is made of: content on top, the component's name in a footer, like the site's showcase cards. */
@@ -79,4 +80,20 @@ export function DemoRow(props: { label: string; children: JSX.Element }) {
 			</div>
 		</div>
 	);
+}
+
+/** Scrolls the page until the element sits in its upper part, where a popup below it has room, unless the page ends first. */
+export async function scrollNearTop(shot: ShotContext, testId: string) {
+	await shot.reveal(testId);
+	let stalled = 0;
+	for (let attempt = 0; attempt < 12; attempt++) {
+		const y = shot.centerOf(testId).y;
+		if (y > 120 && y < 320) return;
+		const wheel = await shot.scroll(700, 400, 0, y - 200);
+		if (wheel.atEnd) return;
+		// A wheel can land without moving the page: a third miss in a row is an error.
+		stalled = wheel.moved ? 0 : stalled + 1;
+		if (stalled === 3) throw new Error(`scrolling did not move ${testId}`);
+	}
+	throw new Error(`could not scroll ${testId} into view`);
 }

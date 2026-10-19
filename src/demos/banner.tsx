@@ -11,8 +11,8 @@ import {
 	type BannerVariant,
 } from '#/components/banner';
 import { Button } from '#/components/button';
-import type { DemoModule, ShotContext } from '#/lib/demo';
-import { DemoCard } from '#/lib/demo-kit';
+import type { DemoModule } from '#/lib/demo';
+import { DemoCard, scrollNearTop } from '#/lib/demo-kit';
 import {
 	PlayDivider,
 	PlayField,
@@ -637,22 +637,6 @@ export function Demo() {
 	);
 }
 
-/** The page is taller than the window: scroll an element to the upper part of it. */
-async function reveal(shot: ShotContext, testId: string) {
-	let stalled = 0;
-	let previous = Number.NaN;
-	for (let attempt = 0; attempt < 12; attempt++) {
-		const y = shot.centerOf(testId).y;
-		if (y > 120 && y < 320) return;
-		// A wheel can land without moving the page; the element is far from the page's end, so a repeat is the answer and a third miss is an error.
-		stalled = y === previous ? stalled + 1 : 0;
-		if (stalled === 3) throw new Error(`scrolling did not move ${testId}`);
-		previous = y;
-		await shot.scroll(700, 400, 0, y - 200);
-	}
-	throw new Error(`could not scroll ${testId} into view`);
-}
-
 export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	// The playground's controls sit in the right column.
 	shot.capture('playground');
@@ -681,7 +665,7 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	await shot.click('playground-shuffle');
 	shot.capture('playground-shuffled');
 
-	await reveal(shot, 'inline-banner-dismiss');
+	await scrollNearTop(shot, 'inline-banner-dismiss');
 	await shot.hover('inline-banner-dismiss');
 	shot.capture('dismiss-hover');
 	await shot.click('inline-banner-dismiss');
