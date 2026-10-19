@@ -16,7 +16,11 @@ import {
  * as the source's `inline-grid` span does. The source reserves the semibold copy
  * only, so a label whose normal copy is wider (Pro plan) shrinks 1px when
  * selected; the second ghost stops that. gpuix has no text-measure API, so a
- * hidden copy is the only way to hold the wider width, and it costs draw time.
+ * hidden copy is the only way to hold the wider width. The second ghost costs
+ * about 1.0-1.7 ms of sidebar-sweep draw p95 on gpuix 5fda771a; kept because the
+ * box must not change width. Repro: ~/.claude/notes/ff-gpuix-repros/r2-hidden-text-cost.md
+ * (an inline-grid is an atomic inline and defeats retention, so every label
+ * and ghost is rebuilt each frame).
  */
 export function StableLabel(props: {
 	text: string;
