@@ -17,13 +17,11 @@ export function ChangelogView(props: { releases: readonly Release[] }) {
 	);
 	return (
 		<PagePlaybackProvider>
-			{/* width: 100% on every column down to Entry (this file, release-section, entry): auto-width nested flex columns make gpuix's layout cost ~1.9x per level (README, Bugs); the chain of 8 drew in 121 ms, 20 ms with it. */}
 			<div
 				style={{
 					display: 'flex',
 					flexDirection: 'column',
 					gap: 32,
-					width: '100%',
 				}}
 			>
 				{/* The heading is `App`'s, a column gap above; the source sets the intro 8px under its title. */}
@@ -43,9 +41,7 @@ export function ChangelogView(props: { releases: readonly Release[] }) {
 						/>
 					</div>
 				</div>
-				<div
-					style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
-				>
+				<div style={{ display: 'flex', flexDirection: 'column' }}>
 					<For each={props.releases}>
 						{(release, index) => (
 							<ReleaseSection

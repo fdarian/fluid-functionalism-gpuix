@@ -140,7 +140,6 @@ function KindGroup(props: { group: ChangeGroup; month: string }): JSX.Element {
 			style={{
 				display: 'flex',
 				flexDirection: 'column',
-				width: '100%',
 				paddingTop: 40,
 				height: culling.far() ? culling.farHeight() : undefined,
 			}}
@@ -183,7 +182,6 @@ function KindGroup(props: { group: ChangeGroup; month: string }): JSX.Element {
 						style={{
 							display: 'flex',
 							flexDirection: 'column',
-							width: '100%',
 							marginTop: 8,
 						}}
 					>
@@ -217,7 +215,6 @@ export function ReleaseSection(props: {
 				position: 'relative',
 				display: 'flex',
 				flexDirection: 'column',
-				width: '100%',
 				paddingLeft: 24,
 			}}
 		>
@@ -243,7 +240,6 @@ export function ReleaseSection(props: {
 				style={{
 					display: 'flex',
 					flexDirection: 'column',
-					width: '100%',
 					paddingTop: props.first ? 0 : 64,
 				}}
 			>
