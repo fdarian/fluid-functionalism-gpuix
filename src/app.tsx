@@ -400,96 +400,116 @@ export function CustomizeCard() {
 			style={{
 				display: 'flex',
 				flexDirection: 'column',
-				gap: 12,
 				padding: 16,
 				borderRadius: 12,
 				backgroundColor: color.surface2,
 			}}
 		>
-			<text
-				style={{
-					...siteType.title,
-					fontVariationSettings: weight.semibold,
-					color: color.foreground,
-				}}
-			>
-				Make them yours
-			</text>
 			<div
 				style={{
 					display: 'flex',
 					flexDirection: 'row',
 					alignItems: 'center',
-					justifyContent: 'space-between',
-					height: 28,
+					height: 44,
+					paddingTop: 8,
+					paddingBottom: 8,
 				}}
 			>
-				<text style={{ ...siteType.body, color: color.mutedForeground }}>
-					Theme
+				<text
+					style={{
+						...siteType.title,
+						fontVariationSettings: weight.semibold,
+						color: color.foreground,
+					}}
+				>
+					Make them yours
 				</text>
-				<Select
-					testId="theme"
-					items={THEMES}
-					value={themeChoice()}
-					onValueChange={(value: ThemeChoice) => changeTheme(value)}
-				/>
 			</div>
 			<div
 				style={{
 					display: 'flex',
-					flexDirection: 'row',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-					height: 28,
+					flexDirection: 'column',
+					gap: 6,
+					paddingTop: 12,
+					paddingBottom: 12,
 				}}
 			>
-				<text style={{ ...siteType.body, color: color.mutedForeground }}>
-					Radius
-				</text>
-				<Select
-					testId="radius"
-					items={SHAPES}
-					value={shapeChoice()}
-					onValueChange={(value: ShapeChoice) => setShapeChoice(value)}
-				/>
-			</div>
-			<div
-				style={{
-					display: 'flex',
-					flexDirection: 'row',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-					height: 28,
-				}}
-			>
-				<text style={{ ...siteType.body, color: color.mutedForeground }}>
-					Size
-				</text>
-				<Select
-					testId="size"
-					items={SIZES}
-					value={sizeChoice()}
-					onValueChange={(value: SizeChoice) => setSizeChoice(value)}
-				/>
-			</div>
-			<div
-				style={{
-					display: 'flex',
-					flexDirection: 'row',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-					height: 28,
-				}}
-			>
-				<text style={{ ...siteType.body, color: color.mutedForeground }}>
-					Icons
-				</text>
-				<Select
-					testId="icons"
-					items={ICON_LIBRARIES}
-					value={iconLibrary()}
-					onValueChange={(value: IconLibrary) => setIconLibrary(value)}
-				/>
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
+						justifyContent: 'space-between',
+						height: 28,
+					}}
+				>
+					<text style={{ ...siteType.body, color: color.mutedForeground }}>
+						Theme
+					</text>
+					<Select
+						testId="theme"
+						items={THEMES}
+						value={themeChoice()}
+						onValueChange={(value: ThemeChoice) => changeTheme(value)}
+					/>
+				</div>
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
+						justifyContent: 'space-between',
+						height: 28,
+					}}
+				>
+					<text style={{ ...siteType.body, color: color.mutedForeground }}>
+						Radius
+					</text>
+					<Select
+						testId="radius"
+						items={SHAPES}
+						value={shapeChoice()}
+						onValueChange={(value: ShapeChoice) => setShapeChoice(value)}
+					/>
+				</div>
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
+						justifyContent: 'space-between',
+						height: 28,
+					}}
+				>
+					<text style={{ ...siteType.body, color: color.mutedForeground }}>
+						Size
+					</text>
+					<Select
+						testId="size"
+						items={SIZES}
+						value={sizeChoice()}
+						onValueChange={(value: SizeChoice) => setSizeChoice(value)}
+					/>
+				</div>
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
+						justifyContent: 'space-between',
+						height: 28,
+					}}
+				>
+					<text style={{ ...siteType.body, color: color.mutedForeground }}>
+						Icons
+					</text>
+					<Select
+						testId="icons"
+						items={ICON_LIBRARIES}
+						value={iconLibrary()}
+						onValueChange={(value: IconLibrary) => setIconLibrary(value)}
+					/>
+				</div>
 			</div>
 		</div>
 	);
