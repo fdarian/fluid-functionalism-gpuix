@@ -20,23 +20,30 @@ import {
 	ThinkingStepsHeader,
 } from '#/components/thinking-steps';
 import { OG_PNG } from '#/lib/assets';
-import { useOnScreen } from '#/lib/cull';
+import { observeVisibleRatio, useOnScreen } from '#/lib/cull';
 import type { DemoModule, ShotContext } from '#/lib/demo';
 import { DemoCard } from '#/lib/demo-kit';
 
 type Playback = 'playing' | 'paused' | 'finished';
 
+/** The docs page plays a card once this much of it is in view, and holds it below `PAUSE_BELOW`. */
+const PLAY_AT = 0.5;
+const PAUSE_BELOW = 0.1;
+
 /**
- * The docs page's `useSequencedSteps`: fires `delays` (absolute ms from the
- * start) in order, and a pause keeps the elapsed time so play resumes where it
- * stopped. The page starts it when half the card is in view; gpuix has no
- * IntersectionObserver, so these start on mount.
+ * The docs page's `useSequencedSteps` with its `AnimatedPreview` rule: fires
+ * `delays` (absolute ms from the start) in order. A card waits paused until
+ * `view` sees `PLAY_AT` of it; a pause, by the button or by scrolling away,
+ * keeps the elapsed time so play resumes where it stopped. Scrolling away
+ * clears a pause made with the button; a finished card stays finished until
+ * replayed.
  */
 function createSequence(delays: number[]) {
 	const [fired, setFired] = createSignal(0);
-	const [playback, setPlayback] = createSignal<Playback>('playing');
+	const [playback, setPlayback] = createSignal<Playback>('paused');
 	let elapsed = 0;
-	let startedAt = performance.now();
+	let startedAt = 0;
+	let pausedByButton = false;
 	let timer: ReturnType<typeof setTimeout> | undefined;
 	onCleanup(() => clearTimeout(timer));
 
@@ -56,25 +63,41 @@ function createSequence(delays: number[]) {
 			Math.max(0, target - elapsed),
 		);
 	};
-	schedule();
+	const pause = () => {
+		clearTimeout(timer);
+		elapsed += performance.now() - startedAt;
+		setPlayback('paused');
+	};
+	const resume = () => {
+		setPlayback('playing');
+		schedule();
+	};
 
 	return {
 		fired,
 		playback,
+		/** Feeds the share of the card in view; reported at `PAUSE_BELOW` and `PLAY_AT`. */
+		view(ratio: number) {
+			if (ratio >= PLAY_AT) {
+				if (playback() === 'paused' && !pausedByButton) resume();
+			} else if (ratio < PAUSE_BELOW) {
+				pausedByButton = false;
+				if (playback() === 'playing') pause();
+			}
+		},
 		/** Play / pause, or start over once finished. */
 		toggle() {
 			if (playback() === 'playing') {
-				clearTimeout(timer);
-				elapsed += performance.now() - startedAt;
-				setPlayback('paused');
+				pausedByButton = true;
+				pause();
 			} else if (playback() === 'paused') {
-				setPlayback('playing');
-				schedule();
+				pausedByButton = false;
+				resume();
 			} else {
+				pausedByButton = false;
 				elapsed = 0;
 				setFired(0);
-				setPlayback('playing');
-				schedule();
+				resume();
 			}
 		},
 		status(index: number, total: number): StepStatus {
@@ -93,6 +116,7 @@ function PlaybackCard(props: {
 	children: (sequence: ReturnType<typeof createSequence>) => JSX.Element;
 }) {
 	const sequence = createSequence(props.delays);
+	const viewRef = observeVisibleRatio([PAUSE_BELOW, PLAY_AT], sequence.view);
 	const [run, setRun] = createSignal(0);
 	const label = () =>
 		sequence.playback() === 'playing'
@@ -102,7 +126,10 @@ function PlaybackCard(props: {
 				: 'Replay';
 	return (
 		<DemoCard title={props.title}>
-			<div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+			<div
+				ref={viewRef}
+				style={{ display: 'flex', flexDirection: 'column', gap: 12 }}
+			>
 				<div
 					style={{
 						display: 'flex',
@@ -510,10 +537,12 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	await shot.click('basic-details');
 	shot.capture('basic-details-open');
 
-	// Streaming restarts from zero, so each step is caught while it is active.
+	// A card plays once half of it is in view: this one has not started until it is scrolled to.
 	await scrollTo(shot, 'streaming-playback');
-	await shot.settle(3000);
+	shot.expectText('Pause', true);
+	await shot.settle(5600);
 	shot.expectText('Replay', true);
+	// Replay restarts from zero, so each step is caught while it is active.
 	await shot.click('streaming-playback');
 	await shot.settle(900);
 	shot.capture('streaming-step-1');
@@ -524,12 +553,15 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	await shot.settle(2000);
 	shot.capture('streaming-done');
 
-	// These cards have been playing since the page opened and are further down.
+	// Each of the others starts when it is scrolled to, and is captured once its sequence has run.
 	await scrollTo(shot, 'text-playback');
+	await shot.settle(32500);
 	shot.capture('streaming-text');
 	await scrollTo(shot, 'images-playback');
+	await shot.settle(6500);
 	shot.capture('with-images');
 	await scrollTo(shot, 'full-playback');
+	await shot.settle(7700);
 	shot.capture('full');
 	await shot.click('full-details');
 	shot.capture('full-details-open');

@@ -6,6 +6,9 @@
  *
  * The basic card of the thinking-steps demo mounts open. The scenario samples its
  * panel's height frame by frame from the first render.
+ *
+ * The four playback cards start only once half of each is in view, pause below a
+ * tenth, and resume on re-entry, as the docs page does.
  */
 import { createCheck } from './check-kit';
 
@@ -55,4 +58,62 @@ kit.check(
 	`${shrank} shrinking frames`,
 );
 
-kit.finish();
+// The playback cards in page order: streaming, streaming text, with images, full.
+const labelsOf = (target: typeof kit) =>
+	target.renderer
+		.getAllText()
+		.map((line) => line.trim())
+		.filter((line) => line === 'Play' || line === 'Pause' || line === 'Replay');
+const labels = () => labelsOf(kit);
+
+kit.expect('the cards below the window wait', labels().slice(1), [
+	'Play',
+	'Play',
+	'Play',
+]);
+await kit.settle(1500);
+kit.expect('they are still waiting a moment later', labels()[3], 'Play');
+
+// Cards above the one in view grow while they play and push it down, so it is brought back to the middle as it runs.
+await kit.scrollIntoView('full-playback');
+const until = performance.now() + 9000;
+while (performance.now() < until) {
+	await kit.scrollIntoView('full-playback');
+	await kit.settle(300);
+}
+kit.expect('the full card ran to the end', labels()[3], 'Replay');
+kit.renderer.nativeSimulateScrollWheel(700, 400, 0, -8000);
+await kit.settle(600);
+kit.expect('a finished card stays finished out of view', labels()[3], 'Replay');
+const failedFirst = kit.unmount();
+
+// A fresh page: no card has run yet, so the images card is caught while it plays.
+const second = await createCheck('thinking-steps');
+const images = () => labelsOf(second)[2];
+const scrollBy = async (deltaY: number) => {
+	second.renderer.nativeSimulateScrollWheel(700, 400, 0, deltaY);
+	await second.settle(600);
+};
+await second.scrollIntoView('images-playback');
+await second.settle(600);
+second.expect('the images card plays once half of it shows', images(), 'Pause');
+await second.click('images-playback');
+second.expect('the button pauses it', images(), 'Play');
+await scrollBy(-8000);
+await second.scrollIntoView('images-playback');
+await second.settle(600);
+second.expect(
+	'leaving view clears a pause made by the button',
+	images(),
+	'Pause',
+);
+await scrollBy(-8000);
+second.expect('scrolling away pauses a playing card', images(), 'Play');
+await second.scrollIntoView('images-playback');
+await second.settle(600);
+second.expect('coming back resumes it', images(), 'Pause');
+
+const failedSecond = second.unmount();
+const failed = failedFirst + failedSecond;
+console.log(failed === 0 ? 'all passed' : `${failed} failed`);
+process.exit(failed === 0 ? 0 : 1);

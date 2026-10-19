@@ -104,25 +104,25 @@ repeating it.
 
 - **Cause:** `not ported yet`.
 - **Original:** the root is `className="w-full px-8"` (32px each side) and each description is a child `span` with `text-site-body leading-4.5`: 13px on an 18px line, `muted-foreground` (`app/docs/thinking-steps/page.tsx:426-435`, `:461`).
-- **Port:** `width="100%"` with no padding (`src/demos/thinking-steps.tsx:280-285`), and the typed text goes through `description`, which is `scale.body`, 13 on a 20px line (`thinking-steps.tsx:456-460`; `src/demos/thinking-steps.tsx:256-268`).
+- **Port:** `width="100%"` with no padding (`src/demos/thinking-steps.tsx:307-312`), and the typed text goes through `description`, which is `scale.body`, 13 on a 20px line (`thinking-steps.tsx:456-460`; `src/demos/thinking-steps.tsx:283-295`).
 - **Workaround:** none.
 - **Fidelity:** approximated (wider text, 2px taller lines).
 - **Components it hits:** just this one.
 
-## Demo: autoplay and the playback button
+## Demo: the playback button
 
-- **Cause:** autoplay `not ported yet` (gpuix has `IntersectionObserver`, and `src/lib/cull.ts:76` already uses it; the demo comment at `src/demos/thinking-steps.tsx:29-34` that gpuix has none is out of date). Button `port choice` (reason not stated).
-- **Original:** each streaming card starts paused, plays once at least half of it is visible, pauses below 10% visible (a manual pause is cleared then), and ends in a "Replay" state. The control is an icon button (pause, play, rotate-ccw, 16px) with a tooltip, in the preview frame's corner (`app/docs/thinking-steps/page.tsx:642-735`, `:654-678`, `:723`).
-- **Port:** every card starts on mount, so lower cards have finished before they are scrolled to (the scenarios note this). The control is a ghost compact `Button` reading "Pause", "Play" or "Replay", right-aligned above the steps (`src/demos/thinking-steps.tsx:35-129`, `:113-124`).
+- **Cause:** `port choice` (reason not stated).
+- **Original:** the control is an icon button (pause, play, rotate-ccw, 16px) with a tooltip, in the preview frame's corner (`app/docs/thinking-steps/page.tsx:642-735`, `:723`). The start rule is ported: a card waits paused, plays once at least half of it is visible, pauses below 10% visible (clearing a pause made by the button), resumes from where it stopped when half of it shows again, and a finished card stays finished until replayed (`:654-678`).
+- **Port:** the control is a ghost compact `Button` reading "Pause", "Play" or "Replay", right-aligned above the steps (`src/demos/thinking-steps.tsx:133-153`). The start rule is `createSequence` (`:41-109`) fed by `observeVisibleRatio` (`src/lib/cull.ts:113`) on the card's column (`src/demos/thinking-steps.tsx:119`, `:130`), which watches the window rather than a scroller, so a card inside a culled region reports 0 and holds. The ratio is of the column (button and steps), not of the whole preview frame with its code tab.
 - **Workaround:** none.
-- **Fidelity:** approximated.
+- **Fidelity:** approximated (button chrome; the visible share is of the card's column).
 - **Components it hits:** any demo with a replay control.
 
 ## Demo: sections, titles and copy
 
 - **Cause:** `port choice` (reason not stated; the port's demo pages show cards only).
 - **Original:** six sections, "Basic", "Minimal", "Streaming", "Streaming Text", "With Images", "Full Example", the last five with a lead paragraph ("The simplest usage — two dots with no children or extras.", "Steps appear sequentially as they stream in. Active steps show a shimmer effect.", "Dots with long descriptions that stream in character by character, simulating LLM output.", "Steps can include inline images with optional captions using ThinkingStepImage.", "A 6-step research agent combining sources, details, descriptions, images, and a custom header."), a code tab and an API reference (`app/docs/thinking-steps/page.tsx:745-826`).
-- **Port:** the same six demos with the same steps, labels, delays, sources and images, titled "Basic", "Minimal", "Streaming", "Streaming text", "With images", "Full", with no lead text, code tab or API tables (`src/demos/thinking-steps.tsx:439-482`).
+- **Port:** the same six demos with the same steps, labels, delays, sources and images, titled "Basic", "Minimal", "Streaming", "Streaming text", "With images", "Full", with no lead text, code tab or API tables (`src/demos/thinking-steps.tsx:466-509`).
 - **Workaround:** none.
 - **Fidelity:** exact for the content of each demo; copy and chrome dropped.
 - **Components it hits:** every demo (no lead text, code tab or API table).

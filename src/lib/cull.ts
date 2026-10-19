@@ -103,3 +103,30 @@ export function createCulling() {
 		ref: setObserved,
 	};
 }
+
+/**
+ * Calls `onRatio` with how much of the element shows each time that share
+ * crosses one of `thresholds` (0 to 1), as an `IntersectionObserver` reports it
+ * against the window, clipped by every scroller on the way. Returns the `ref`
+ * for the element; a subtree that is culled has no box and reports 0.
+ */
+export function observeVisibleRatio(
+	thresholds: number[],
+	onRatio: (ratio: number) => void,
+): (element: HostElement) => void {
+	const [target, setTarget] = createSignal<HostElement>();
+	createEffect(() => {
+		const element = target();
+		if (element === undefined) return;
+		const observer = new IntersectionObserver(
+			(entries) => {
+				const latest = entries[entries.length - 1];
+				if (latest !== undefined) onRatio(latest.intersectionRatio);
+			},
+			{ threshold: thresholds },
+		);
+		observer.observe(element);
+		onCleanup(() => observer.disconnect());
+	});
+	return setTarget;
+}
