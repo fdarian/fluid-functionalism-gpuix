@@ -134,7 +134,7 @@ for (const [id, expected] of [
 	const box = bounds(id);
 	report(
 		`${id} width`,
-		Math.round(box.width) === expected,
+		box.width === expected,
 		`${box.width} (want ${expected})`,
 	);
 }
