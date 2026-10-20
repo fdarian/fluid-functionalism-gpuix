@@ -21,7 +21,8 @@ import {
  * The second ghost is within noise on gpuix b03d4e27 (sidebar-sweep draw p95
  * -0.35..+0.30 ms over seven pages; it was +1.0-1.7 ms on 5fda771a): opacity:0
  * paints nothing and hidden labels are not re-measured (gpuix #46, #58). Kept
- * because check-weight-widths needs max(normal, semibold).
+ * because the box must not change width with the weight (pinned by
+ * check-weight-widths).
  */
 export function StableLabel(props: {
 	text: string;
