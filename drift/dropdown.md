@@ -55,13 +55,13 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** approximated (end states exact, the transition differs).
 - **Components it hits:** checkbox-group (`drift/checkbox-group.md`, same cause and wording).
 
-## Check mark fades in; the source draws it
+## The check slot is reserved on every row with a boolean `checked`
 
-- **Cause:** `not ported yet`. `CheckMark` in `src/lib/icon.tsx:111` already draws and retracts the stroke, and select and combobox use it.
-- **Original:** the check is a `motion.path` that draws (`pathLength` 0 to 1, 80 ms ease-out) and retracts on exit (40 ms ease-in); `AnimatePresence initial={false}` shows a row checked at mount finished (`registry/default/menu-item.tsx:241-272`). The svg exists only while `checked`.
-- **Port:** a mounted-late `motion.div` fades the `check` glyph in over 80 ms ease-out; unchecking removes it at once, no retract (`src/components/menu-item.tsx:157-179`). The 16px slot, and its 8px gap, is always reserved for any row with a boolean `checked`, so an unchecked radio row's label is 24px narrower than the source's (the source only reserves it while checked); it only shows on a label long enough to clip.
-- **Fidelity:** approximated.
-- **Components it hits:** just this one (select and combobox already draw it).
+- **Cause:** `not ported yet`.
+- **Original:** the check svg exists only while `checked`, inside `AnimatePresence initial={false}` (`registry/default/menu-item.tsx:241-272`), so an unchecked row has no slot. The check draws (`pathLength` 0 to 1, 80 ms ease-out) and retracts on exit (40 ms ease-in), and a row checked at mount shows it finished.
+- **Port:** the draw is ported: `CheckMark` (`src/lib/icon.tsx:98-152`, `LIST_CHECK` is the source's `M4 12L9 17L20 6`) at 16px, stroke 2, always mounted so it can retract, with the same timings and a row checked at mount finished (`src/components/menu-item.tsx:152-162`; `scripts/check-dropdown.tsx` "check mark" reads the draw and the retract from captured pixels). It sits in a 16px slot, with its 8px gap, that is reserved for any row with a boolean `checked`, so an unchecked radio row's label is 24px narrower than the source's (the source only reserves it while checked); it only shows on a label long enough to clip.
+- **Fidelity:** exact in the mark and its motion; the layout differs only by the reserved slot.
+- **Components it hits:** just this one (select and combobox draw it too, with no such slot).
 
 ## Clicks in the padding and between rows are not routed to the lit row
 
@@ -92,7 +92,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`. No size context in the port; `height.controlCompact` is passed per component (`src/components/button.tsx`, `input-group.tsx`).
 - **Original:** `size="compact"` on `Dropdown` or `DropdownMenu`, or a surrounding `SizeProvider`, gives 28px rows, 12/18 text, 14px icons, `px-1.5` and `gap-1`, 11/14 group labels, and a 10px/`leading-5` search field (`registry/base/dropdown.tsx:100-103`, `:328-332`, `:902-908`; `registry/default/lib/size-context.tsx`; `dropdown-search.tsx:226`, `:328`, `:361`).
-- **Port:** rows are always 36px, 13/20 text, 16px icons, `px 8` and `gap 8` (`src/components/menu-item.tsx:105-126`, `:36-53`; `src/components/dropdown-search.tsx:61`, `:88-98`).
+- **Port:** rows are always 36px, 13/20 text, 16px icons, `px 8` and `gap 8` (`src/components/menu-item.tsx:100-121`, `:36-53`; `src/components/dropdown-search.tsx:61`, `:88-98`).
 - **Fidelity:** dropped.
 - **Components it hits:** any component with a compact step.
 
@@ -124,7 +124,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `port choice` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` rows 475-478, lead decision: no ported consumer; the source docs never mount a `DirectionProvider` and have no rtl demo). gpuix now has `direction: 'rtl'` (inherited; it mirrors a row's main axis, grid columns and `textAlign: start`; gpuix `README.md`, "Direction"), so a port with a direction provider could mirror the submenu side and the chevron; the menu keys would still be the primitive's.
 - **Original:** `useDirection()` picks `side="left"` for rtl (`registry/base/dropdown.tsx:879-883`), Base UI swaps the submenu open and close keys, and the chevron mirrors with `rtl:-scale-x-100` (`registry/default/dropdown-sub.tsx:179`).
-- **Port:** the submenu is always on the right and Right opens, Left closes (`src/components/dropdown.tsx:894-899`, `base-ui:src/menu/list/menu-list.ts:271-279`); the chevron never mirrors (`src/components/menu-item.tsx:147-156`).
+- **Port:** the submenu is always on the right and Right opens, Left closes (`src/components/dropdown.tsx:894-899`, `base-ui:src/menu/list/menu-list.ts:271-279`); the chevron never mirrors (`src/components/menu-item.tsx:142-151`).
 - **Fidelity:** dropped, unreachable in the docs.
 - **Components it hits:** just this one.
 

@@ -8,6 +8,7 @@
  */
 import { mkdirSync } from 'node:fs';
 import { createTestRoot } from '@gpuix/solid/testing';
+import { createSignal } from 'solid-js';
 import { Button } from '#/components/button';
 import {
 	Dropdown,
@@ -747,6 +748,80 @@ const ease = await createCheck(
 		"ease: the label's colour is partway 32 ms after the row lights",
 		partway('label'),
 		`rest ${rest.label}, early ${early.label}, lit ${lit.label}`,
+	);
+}
+
+// ─── A row's check mark draws in over 80 ms and retracts over 40 ms ──────────
+
+const [drawn, setDrawn] = createSignal(false);
+const draw = await createCheck(
+	() => (
+		<div style={{ padding: 20, width: 260 }}>
+			<Dropdown>
+				<MenuItem testId="draw-0" index={0} label="Toggled" checked={drawn()} />
+				<MenuItem testId="draw-1" index={1} label="Kept" checked />
+			</Dropdown>
+		</div>
+	),
+	{ width: 400, height: 300, initialSettleMs: 600 },
+);
+{
+	const slot = (testId: string) => {
+		const row = draw.bounds(testId);
+		return {
+			x: row.x + row.width - 8 - 16,
+			y: row.y + 4,
+			width: 16,
+			height: row.height - 8,
+		};
+	};
+	const step = (ms: number) => {
+		draw.renderer.clockFastForward(ms);
+		draw.renderer.flush();
+		draw.renderer.dispatchNativeEvents();
+	};
+	const toggled = slot('draw-0');
+	const kept = draw.ink(slot('draw-1'));
+	draw.renderer.clockPause();
+	const empty = draw.ink(toggled);
+	setDrawn(true);
+	// Solid hands the update to the renderer on a microtask, so it needs a real turn before the clock is stepped.
+	await sleep(30);
+	step(0);
+	step(40);
+	const half = draw.ink(toggled);
+	step(200);
+	const full = draw.ink(toggled);
+	setDrawn(false);
+	await sleep(30);
+	step(0);
+	step(20);
+	const retracting = draw.ink(toggled);
+	step(200);
+	const gone = draw.ink(toggled);
+	draw.renderer.clockResume();
+	const partway = (mid: number, from: number, to: number) =>
+		mid > Math.min(from, to) + 0.1 * Math.abs(to - from) &&
+		mid < Math.max(from, to) - 0.1 * Math.abs(to - from);
+	k.check(
+		'check mark: a row checked at mount shows it finished',
+		Math.abs(kept - full) < 0.05 * full && full > 1000,
+		`mounted ${kept}, drawn ${full}`,
+	);
+	k.check(
+		'check mark: unchecked leaves nothing',
+		empty === 0 && gone === 0,
+		`before ${empty}, after ${gone}`,
+	);
+	k.check(
+		'check mark: partly drawn 40 ms into the 80 ms draw',
+		partway(half, empty, full),
+		`start ${empty}, 40 ms ${half}, end ${full}`,
+	);
+	k.check(
+		'check mark: partly retracted 20 ms into the 40 ms retract',
+		partway(retracting, full, gone),
+		`start ${full}, 20 ms ${retracting}, end ${gone}`,
 	);
 }
 

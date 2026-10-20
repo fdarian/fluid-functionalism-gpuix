@@ -1,16 +1,15 @@
-import { type DomEvent, motion } from '@gpuix/solid';
+import type { DomEvent } from '@gpuix/solid';
 import { createMenuItem, type MenuItemHost } from 'base-ui-solid-gpuix/menu';
 import {
 	type Accessor,
 	createContext,
 	type JSX,
-	onMount,
 	Show,
 	useContext,
 } from 'solid-js';
 import type { FluidHover } from '#/lib/fluid-hover';
 import { useHoverItem } from '#/lib/fluid-hover';
-import { Icon } from '#/lib/icon';
+import { CheckMark, Icon, LIST_CHECK } from '#/lib/icon';
 import type { IconRef } from '#/lib/icons';
 import { StableLabel } from '#/lib/stable-label';
 import { color, height, radius, type as scale } from '#/lib/theme';
@@ -92,10 +91,6 @@ export function MenuItem(props: {
 }) {
 	const context = useDropdown();
 	const item = createMenuItem(context, props);
-	let settled = false;
-	onMount(() => {
-		settled = true;
-	});
 
 	useHoverItem(context.hover, () => props.index, item.element);
 
@@ -156,25 +151,13 @@ export function MenuItem(props: {
 			</Show>
 			<Show when={props.checked !== undefined}>
 				<div style={{ width: 16, height: 16, flexShrink: 0 }}>
-					<Show when={checked()}>
-						{(() => {
-							const initial = settled ? { opacity: 0 } : (false as const);
-							return (
-								<motion.div
-									initial={initial}
-									animate={{ opacity: 1 }}
-									transition={{ duration: 0.08, ease: 'easeOut' }}
-								>
-									<Icon
-										name="check"
-										size={16}
-										strokeWidth={2}
-										color={color.foreground}
-									/>
-								</motion.div>
-							);
-						})()}
-					</Show>
+					<CheckMark
+						checked={checked()}
+						path={LIST_CHECK}
+						size={16}
+						strokeWidth={2}
+						color={color.foreground}
+					/>
 				</div>
 			</Show>
 			{props.children}
