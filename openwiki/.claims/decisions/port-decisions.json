@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:da5147bfbf6acb5d634f5d65c16c12b2464d4ae4ab47044b21f2befbb07efd88",
+  "pageVersion": "sha256:5f11d1ee851a7162898cbe36ce3955b4f8accdb843dd09873291f9ca0273d894",
   "claims": [
     {
       "id": "claim_782844f1b7454bbd8c43501708e208b1",
@@ -17,7 +17,7 @@
       "statement": "pickNearest is ported verbatim from the source's use-fluid-hover, so a pointer in a gap, padding or past the last row still resolves to the nearest row.",
       "evidence": [
         {
-          "resource": "repo://src/lib/fluid-hover.ts#L27-L33",
+          "resource": "repo://src/lib/fluid-hover.ts#L38-L44",
           "version": "repo-lines-v1:sha256:3951feb1565632e4c85d5336f6ccf2b69729b2f62da080c8960adfe77f7e884d:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWRiMjVhNDFjNDgzYTM3MGQxN2Q4ZWUyYzAxYWFiYjA1NWY2OTI4ZTQ0ZGQ5Yzg4MDRhYzBmMjdjZGIzMDE4YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGU3NGI0ODU2ZTI3ZDZiMDc3MDgxNWI0YTYzOGYyZjgzNmE3NzcwNjQ5NmZlZTVkZDM2NGI0MGJjNjE3YTYxYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDA4MTE2Y2U3ZDZjYjdiYWRmOWZkMWM0MmE5MzRjYWIyYjc4Zjg3NzRmN2ViYWJlODQ4MDI5OWNiZmY3ZjZiZSJ9"
         }
       ]
@@ -31,7 +31,7 @@
           "version": "repo-lines-v1:sha256:e74ea582b7be80b5f6a98f15ad36731db9f2ea3c79882b12e61380cf2e3a6aa5:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTViNWRkYjljYWUzNjBkZWNjZGE2Yjg2MzlkNDllMWYzYTFmNWU0ZjMwMzk1YTg5Y2U0MjE1ZjdmNWQwZjI5MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjUyNGYwZjgxNzdhOGNlYmVkNTE0YTgwMTNjODg5ZTRiNGI3NzE2OGMwNzBmYmUwODA4OWY2ZTNlYzRhNDE4MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWFkMWQ2YmQ0YzEwNWFjYzI0NmI5NWIzMWI5ODFlNDUwYWE4M2QzYjNiYjU1MzE2ODczYjI5NjNlZmVkNWIxMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTM0MzJlZDM0MjZkYjVlM2Q4M2QyYThjNTNkMDYxMWY4NGU1YmIzMWFkNTQzYTFjYzUyNjRmNzBhN2Y4OGM2ZCJ9"
         },
         {
-          "resource": "repo://src/lib/fluid-hover.ts#L197-L220",
+          "resource": "repo://src/lib/fluid-hover.ts#L177-L200",
           "version": "repo-lines-v1:sha256:ccb92e9759376c95a8220fac474c84531a3bd53255abe14c2df006e3238e7844:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlZmVmNzIxNmE0NzBhMjZlYzRjY2ZmZTk4MTU4NzM0NmVjNjJkY2JmM2U4NGRmZTFhOThhMzZlNDJiMDIyOTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2ZGU5YzliNGRiNDA2OGFjNDkzN2VmY2UyYmMzMGU5NTE4N2VkNjA5ZDA3Nzg3MTI0ZDFhNTUyMzMxOGE1MzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmMDg1YTA1OGFiZDEzNWQwMTE0YTI0NTg0NjI3YTkwYmExOWZjOWRlNWJiYzVkYjA4YmE2MjljYzcwOGVmMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ0MWNkMjMyYzNhYjU1YWYyMjdhM2JkMzE2MjlkNGYwZTA1MzE1ODliMTk0N2M0ZTIzODliNjg2ZTdhYzUwYWYifQ"
         }
       ]
@@ -41,7 +41,7 @@
       "statement": "A keyboard move calls releasePointer so the scroll it causes does not re-pick a row under a stationary pointer.",
       "evidence": [
         {
-          "resource": "repo://src/lib/fluid-hover.ts#L263-L266",
+          "resource": "repo://src/lib/fluid-hover.ts#L242-L245",
           "version": "repo-lines-v1:sha256:f29dc93070cb27c245161f1b30862b3c31c1962117eadd9d47859880f7fd0500:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDczZDY4Y2JkMTJlMTEyNDJkZTYwNjQ5NGMzNDI1Zjk3ZjA1YjI5ZmNjNjcyOTM1MTQzMzU3YWU5MDAzYmI0YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWJhZDdjYzJkZmFmYzIxNzVmYTJkOTcwNGUwMjAyZjk0MDgzYTlkYTY5YTU4NWIwYjE4YzQ4YmVhMjM2Mjc1ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjRlMWU4Yjk4Mjg2YjhjNTQ0MGQxNTA3ZjZhMmFkZDEzNTA2ZmFhZTYzYWU1MDM1YzVkOGQ4MjAzYjkzYjczMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzljNWQ0ZTQ2ZmIxMTIzOTE4OTVlNWFjYTFlNmZiYzUxMDkyYmY5ODY3N2IwNTNmMTQyNzI0OTA0OGNlNmIyNSJ9"
         }
       ]
@@ -51,7 +51,7 @@
       "statement": "Press-shrink is one absolutely positioned PressFill quad 1px outside the pressable whose four edges and radius are pulled in on press, not a spread shadow; the label is a position: relative box after the fill, with no zIndex.",
       "evidence": [
         {
-          "resource": "repo://src/components/button.tsx#L78-L104",
+          "resource": "repo://src/components/button.tsx#L80-L106",
           "version": "repo-lines-v1:sha256:79234493332395be67a4a483356ca204b9765c053047ddaeee450bb348ed94fa:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxZThiYTJhZmEwZDU4ZWI5Njg3MWI1OTI5ODliNzliYTM5ZTZlOWQzYjQ3YTJmNzZlNjBiMjUzNTM2YzJiMTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2ODk1NDdhOTBhYmNhNmVjYzA0NDM4ZTZiYWY1NmViODQxNmEwNTljOWRiNmJjMTViYzgzMDQyNDA4NzZiNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ0NTljYzJjMWJjZjUzMDM3YTNlZTZmM2I4MDBlOWNlZDZjN2UyNzZmNTU4Y2UxNWQxYmU4MjFkNjliZjUyZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM1ZDJlNWE4NDM0MjNmNzI5ZDc1MzQ1NGU0NzMxZDE5NGQxODkyODE1MDJmZDJmZWFmOWQyNGI3ZmQyN2I4YTAifQ"
         },
         {
@@ -83,7 +83,7 @@
           "version": "repo-lines-v1:sha256:2a4409391a49f8a3e22e9ef8bdf4d66492bd149fe0197db876a77e427dcfad7e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkOTRkMzY1NTY4MWQ4MjQ1OWY4MDg2MWIzYmUwOWNkNjkwZjJlZjAxYjk5ZDQ0Mjc3N2E1YmEzZTc3NGMzZjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVlOGUzZDRiMTFhYWQzN2ViYWU2MWY3NDMxMjkwNmY0MWMyZjBhNmQzZGRkOGQzNjliYmVhMWZiODY0YjBiM2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlMmJkODhiY2VhMjhkMzgzMTA0ZWUyNWU0ZDJjM2JlZTQ5OWFiNmViM2VmNjBlODlhMzAzYmQwNDA2NDIxMTMifQ"
         },
         {
-          "resource": "repo://src/lib/demo.ts#L100-L115",
+          "resource": "repo://src/lib/demo.ts#L108-L123",
           "version": "repo-lines-v1:sha256:182b5df82d937e4f4d6e8f0537ae8574888b428a11ebe84282ec50848fce1ebd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3ZTljYjMwZmQ0NjI4NzE3N2I5YTc4MDJjYThmNGE0ZjIwNjM0OWFiN2Y5MGFkMzk0YTY1NmU5OTBkZDIyNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllZTAxYjdjNjU4YzlmY2ZjZjc2ZGEyODFmNjQzY2Y0MTRiYjZjOWI0NjMyZTg1ODExOTE2Y2I1ODQ5ZjNkN2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyOTY0MDc5YzNjNWM4MTUyMGVmMzNhMmI5ZDJlMTVhMWI4NGQ3MjgwZGI4NTkwZGNkNjU3NDdlM2UwMTJhNDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdjN2I1ZWFhZDAzNjA4YjBiNDhkNTlkNzUwZDc4NjNhNmJjMmY2NmUwMDI4MzQ1NzUwNzNmYTdhOGMxNGVkMTQifQ"
         }
       ]
@@ -200,19 +200,15 @@
     },
     {
       "id": "claim_b2bb6ef185094dbaa65cf297e18ab5d2",
-      "statement": "StableLabel holds two hidden copies (normal and semibold) beside the visible one in its grid cell, so the cell is as wide as the wider of the two and does not change width with the weight, unlike the source's semibold-only ghost, which shrinks a label whose normal copy is wider. The second ghost costs +1.0-1.7 ms of sidebar-sweep draw p95 on gpuix 5fda771a, paid on frames that build the label rather than replay it, and is kept deliberately. The weight eases over 80 ms unless snapWeight is set.",
+      "statement": "StableLabel holds two hidden copies (normal and semibold) beside the visible one in its grid cell, so the cell is as wide as the wider of the two and does not change width with the weight, unlike the source's semibold-only ghost, which shrinks a label whose normal copy is wider. On gpuix b03d4e27 the second ghost's cost is within noise (sidebar-sweep draw p95 -0.35 to +0.30 ms over seven pages; it was +1.0-1.7 ms on 5fda771a), and it is kept because the box must not change width and check-weight-widths pins it.",
       "evidence": [
         {
-          "resource": "repo://src/lib/stable-label.tsx#L10-L28",
-          "version": "repo-lines-v1:sha256:8827723dc200ad6eb19967b6e70e78fb2d445a5226ea14655a4b132bbaa28b15:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiNzkzYjM1Zjc0MTNlOTE2MDE5ZTA1NWQ0NmRiNzMxM2Y4Y2VlNDNiZGRiMmNkNTNiYWY1MzI1Y2FkOGU5M2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmYzI3ZDBkYTIxN2YwMWE0MDNjNDg4MjY3OWQ5ZTYzZGZkYjZkZjI0NzE4YjI1YzcyMWIzNGM4NWVkYTI5NDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5ZWIxZWU5YTJiOThkMGFiYzlmYzdjMGIzNWZmNWEwYzQwNzVhNTdlZjUyZmEwZmFlNzMyNGVjOGYzZjYzM2YifQ"
+          "resource": "repo://src/lib/stable-label.tsx#L12-L27",
+          "version": "repo-lines-v1:sha256:8e54c5ba6568fe02954c0f5a0d164ecca62b2bdc65c2bb7a6fb2bf0fda3dea5b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmNTgwMDVlODdjNGE5OGY2NzdhMjQ0Y2I2YTk3MzI3MzQxMDhjM2ZlNWI4OWI5YjhlYWVhNzExZjUzYTE1MjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc0Zjc0YjRjNDEzZDhhZDBiNDliMjMwNjFhYmI2MTNiN2EyNWY3NTRmN2ZhNmQ5ZjRmMTU5NDY0MDFlY2Q3YmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFlOTEwMWMxODM4ZjM2ODMyMjRjNDI3ZDVmMjg2YmQ5ZGQ2OTJkMmNiYWYyYTdjNjViNmYxOWZkNjcxYmY5NDUifQ"
         },
         {
           "resource": "repo://src/lib/stable-label.tsx#L86-L90",
-          "version": "repo-lines-v1:sha256:95de9856b552952e28ae22a09b0bb44e68cead24badafb61ac970658fef44bde:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWUwYWQ3MWEzYzEwZTRkNmM4NmY5MTcwYjM5YjNjY2VmNTkwMjZiZmNjNThjMjFhNmE3MDQxYjJkZTA0ZDRkNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjRjNzAyMjNhMzI1N2U1ZDJhMTU0YTQyNDIyYzI0YTYwMjc5ZThlNTcwMmU4Zjk3NDc1YTUwMTRhMDMyNjQwYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWZjZjk0OGQxMjk2MzI1YTU0NzM5NzBiYmY4MzBhM2M1OTg5NmI3ODExYTA1NjM3NzI4MGM2NTZmYzAzNGJhMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDgyMzI3ODU3MWI5MmYzYzEyYjBiNTlhNzEwNWY5M2IxMGQ5Mjc1OTk3NzYwMTFmYTVjZGIyMmJlMWFjZDA2MCJ9"
-        },
-        {
-          "resource": "repo://src/lib/theme.ts#L512-L520",
-          "version": "repo-lines-v1:sha256:2ca95e8721de50d81ceb38a48e9dc4a02789a3912aac2707a2d2c64dc7485fa1:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTE5MzQzOGE2MDVkNzI1ZjcxNTZiOThmNTAwZGE3Y2EwYmZiM2VmMzAxM2Q1Zjg4NDZiZjMyMjRlZWI3OTJiZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTkwMDQ1MGRkODg0N2Y2OGE5NTBlNWIwY2FiYzg0ZWM4YWNhOWJmMTY5ZGYzMDdhNmE2Njk1ZGQyNjI4NjUzMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjY0ZjdjMzk4MjgwY2RlMWNlMjhmNTkzMjFlNzhiNDFhNmY3NGIyMjgwNzZiYjJkMTBiYzI0MDU4ZGQzNDU3OCJ9"
+          "version": "repo-lines-v1:sha256:61e39cc82187067f09d733566fa8e10f1b8e0bbdf405255745ce7a9a4f8158d0:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2VkNTMzNTJhMjc5ZGEyYjQ3N2VlY2YyNWM0ZDdlZGU2MDFmMDdhN2NiOGIwOTdhMTFiYzAyNzczYjg3ODIxNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzVmNjhjMjI5ZTRlMjNlMDU4MzhjOTg2ZjU1OWI4ZWFmZDU3MjQ2YjM1YzAzNzFhZGJhZGE0Mzk5ODI3YjdjOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzU4ODRmMGM3YmYxYTU1NWMzYWU2ZWE4ODA3MzgxZDdlZjUzOTZjM2Q0MzJiMzhjMDg2MDA1ZmYyZmMwMTQyYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzEyYWZiMWZlYmViOWFmNDIzODY5ZmE5Yzg1OTZmOGM5Zjc3YjJiMzA2NzIxNTE3YTE5YmZjNjY4MDA2MDIwNCJ9"
         }
       ]
     },
@@ -221,40 +217,26 @@
       "statement": "scripts/check-weight-widths.tsx asserts that gpuix's weight width delta equals the browser's rather than the source's 0.4 px claim, and steps the held motion clock across the ease to assert that a StableLabel's box and its row neighbours' boxes are exactly where they were (no tolerance); for labels narrower at semibold it asserts the cell is identical light and heavy and equals the wider of the normal and semibold copies; it runs at 1x scale only.",
       "evidence": [
         {
-          "resource": "repo://scripts/check-weight-widths.tsx#L1-L35",
-          "version": "repo-lines-v1:sha256:9ed03717875ef1f9aea39ba61e84876764bbcb0ed294063f0b68297eb7f30cdb:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjYmY2MmI3MDljMDE0NmQyYzY2OGMxZjhmZDgyNTgwMWE0MGY0MGVlMjg4YzA3ZTg2OWYzYTk0ZTYyYTIwOGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM5NDAyMjU2NmM3ZDE3ODY1OGU4OTNiNzNjMzQzM2RhNjE3YzZhMGVjYWMyYzNlY2E1NDBjMzUwOTRmNWRiMDMifQ"
+          "resource": "repo://scripts/check-weight-widths.tsx#L1-L34",
+          "version": "repo-lines-v1:sha256:d587d02b36369120fbba769f9ea4fe4b8ed567434ad77879f100dbdba84d30bd:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjYmY2MmI3MDljMDE0NmQyYzY2OGMxZjhmZDgyNTgwMWE0MGY0MGVlMjg4YzA3ZTg2OWYzYTk0ZTYyYTIwOGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM5NDAyMjU2NmM3ZDE3ODY1OGU4OTNiNzNjMzQzM2RhNjE3YzZhMGVjYWMyYzNlY2E1NDBjMzUwOTRmNWRiMDMifQ"
         },
         {
-          "resource": "repo://scripts/check-weight-widths.tsx#L636-L655",
+          "resource": "repo://scripts/check-weight-widths.tsx#L637-L656",
           "version": "repo-lines-v1:sha256:7500ee5f55986b45aaac01f41da433249d702dbbf960aa8b2b01dd3d0b9e55c5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0NGE4YzdjNWRiNmY3MDcyOWZjYTlmOWUyMWZhMzA0YTgwYjc5MTM0ZDU3NGQ3MDA1NjYyZmYzZDY3OTFiN2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0ZWZjNDk0MThkMjZkY2YxMjliMjJhNmFhMjExMDhjZWVjMzc2NzdhMzJkMDhlOWQ1ZmVlMzVkZGE2NmJiOWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgzNTdhODdlNzE2N2JmN2NjYTIzYjQyOWI1OTg5NDU2OGY1OWFjYzdjZDk5ZGUzY2E3NDI0YTA1Y2U4ZjBkNTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyMmM2YTQ2OTVhOWYwNzMxMDQ1OTVhNDMyNzIyYjViYTMzYjM2Y2I5YjNiNTgzODE3YTI0YWI0NGJiMzIzYjQifQ"
         }
       ]
     },
     {
       "id": "claim_44c7e3373a55427fbc36801e53d9ee2b",
-      "statement": "The port keeps the off-screen culling in src/lib/cull.ts because gpuix #46 still makes a frame's cost scale with off-screen content: removing it on poc e5231304 raised sidebar-sweep draw p95 on the changelog from 10.9 to 26.6 ms and command-menu from 16.7 to 37.4 ms (sum over 49 pages 520 to 670 ms) and raised idle CPU where off-screen loops would run (input-message 1.8 to 49.7%, showcase 44 to 87%).",
+      "statement": "The port keeps the off-screen culling in src/lib/cull.ts: re-measured live on gpuix poc b03d4e27 (two alternating pairs, culling on against off), turning it off was worse on 9 pages and better on none (showcase idle CPU 45 to 80%, input-message 3.3 to 51.5%, fluid-hover p95 4.1 to 7.3 ms; summed over 49 pages idle CPU 464 to 575 and p95 244 to 274 ms), so the earlier plan to remove it once gpuix #46 lands was not carried out.",
       "evidence": [
         {
-          "resource": "repo://README.md#L273-L273",
-          "version": "repo-lines-v1:sha256:1ca750f6b121d3487d39a343e58397d2fc0c1f242665ad2028cd9926f2d1b054:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWNhNzUwZjZiMTIxZDM0ODdkMzlhMzQzZTU4Mzk3ZDJmYzBjMWYyNDI2NjVhZDIwMjhjZDk5MjZmMmQxYjA1NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWNhNzUwZjZiMTIxZDM0ODdkMzlhMzQzZTU4Mzk3ZDJmYzBjMWYyNDI2NjVhZDIwMjhjZDk5MjZmMmQxYjA1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGJkY2U0MGY4MjFkYWE5ZWU4Y2VjOTEyOWQ5ZjgzNWQ0ZWY3ZDI5NTI0ODdmYjUwNDg4NzE5MTI4MGRlOGU2YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDY1NTY3MzQ2MWI1ZGFlZTgxZTM0ZDFmNDMwZjc3OTU3MTAxMjQxNDgyMDkwZjM5OGIwZDQ5ODUwNTY0OTI4MCJ9"
+          "resource": "repo://README.md#L272-L272",
+          "version": "repo-lines-v1:sha256:927cfc6f5c6ae134821a4030a789ad7b3314de2c64370b3192bd7933ff178785:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTI3Y2ZjNmY1YzZhZTEzNDgyMWE0MDMwYTc4OWFkN2IzMzE0ZGUyYzY0MzcwYjMxOTJiZDc5MzNmZjE3ODc4NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTI3Y2ZjNmY1YzZhZTEzNDgyMWE0MDMwYTc4OWFkN2IzMzE0ZGUyYzY0MzcwYjMxOTJiZDc5MzNmZjE3ODc4NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTY5Y2Y2ODQ5ODI4NWQ0YzgwMzk0YWY2NGEzZWY2MTljMTdkNzJmM2RmMGQ5MWI0ZDNmMzczOWQ1NWJmMWU2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWNmMTVkMmUzZjVlYzQxM2RkY2E2ZmQ5ZjJkNjkxZDk2YmNiZWRhNjRlZmI2MjY5N2EwMGE0NzFjYzJlZGZjZiJ9"
         },
         {
           "resource": "repo://src/lib/cull.ts#L30-L56",
           "version": "repo-lines-v1:sha256:14544d474d37b61c3edb6352cfbfeec79c62e2c972cd92bffb99b967e069a6fc:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwYTI0MTY0ODE3Y2FjYTlkZjBiYjRjMDJkOTBkMmI5MjU1ZDMzNWU4NjE2MTFmYTYyNWU1MjU0MmVkMDM0YTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhmOTcxMWUzOTQ3YWUzNjI2ODdiODI0ODFlNWJkMTNlZGYzZGEwOGNkOTU5ZjM0YmIyNDc2YWQyNjQxNDQ1YWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiZjA3Mjc3OWZhMjYyNjU1MDdkYWY5YjI3OTAxN2ZlNmRlOGExYjc5YjA2ZDk3YmFkNzU5YmVjMmQ0YWNhNTcifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_be21a6b5f32446dabab7a5d8ff59d95b",
-      "statement": "Fluid hover caches its container's bounding box and refreshes it on resize, scroll, pointer enter and page scroll instead of reading it per pick, because every getBoundingClientRect on gpuix runs a layout pass (about 6 ms); on poc e5231304 a live read raised idle JS frame-callback time on autoplaying-cursor pages from about 3 to 330-430 ms per second while sidebar-sweep draw p95 stayed unchanged.",
-      "evidence": [
-        {
-          "resource": "repo://drift/fluid-hover.md#L106-L114",
-          "version": "repo-lines-v1:sha256:83fb900111054b98b144a380e08a78a678befc6866437b4726288d3ac394b818:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjI1YmRiOWQxMjVmNmMyNTQ2NGM0ZDI4M2QzMDcyYjRhZTA5OTgyMTdkMzhmNTExMjdlZWJhNGU4NDE1YzIzMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmJiOTlhYTlhZDQ0NTQxNTA3YWJkMDNmMTc1ODQ1MDhlOWJiMTljODU5ZThjMGEyNjM1Zjg2M2Y2NTNhZjIyNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWRkZjYzOTllYWUyMzQ0NGRhMDcyODJiMTU4MmQ2ZTBkMWQ0YzcyMjQwNDc3YTg2YzFlZmRhNjZhYzk0ZDY2MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGU2ZWQ0YTkxZjQ0ZTU1YjNjZWMzMGRmOTViMDYzYTM1OGM0NGJkZjRhNmNlZGFjN2U5YWNjM2QwM2YxYTg4ZiJ9"
-        },
-        {
-          "resource": "repo://src/lib/fluid-hover.ts#L125-L176",
-          "version": "repo-lines-v1:sha256:91b8c9ccfcf9d7ed6ec112e048ad8d54834791a84c0101e4eaa8aa5240d14a43:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2OWQxNThjYjc5NDQ3NTIwZWM3MDllZWY4ZjRjOTNlY2JmNTUyZDQ5OGNhMDNiYzFmYjE1Mzg0YzIyZDVmZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjM2EyMDc3NGQ1YzJiYjRjNzkwYzE4ODkwYTljNDk0Y2NiNTEwZmM4ZThjMDllYzc0NTE5YmMxNjRmYzc4NGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2NWIxNWEzZGUxZjcwZmFkOTMyZTBjZTk2MjQwYTVhYjQ4OTdhYjI5MmFkYzNjYjNjNDE2YzIyNmYxMDM2MWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUwN2JjYjYxMGNjNWZhMThmODUyNGU4OTBmNGZlNjdiZjE1ODAxYTg0ODJlZDY1ODFkZDU3MzAyNWU2MDc5YWQifQ"
         }
       ]
     },
@@ -315,26 +297,100 @@
       ]
     },
     {
-      "id": "claim_3138f5db0749457eb66be23eadee5e08",
-      "statement": "The banner demo's screenshot reveal() counts consecutive attempts where the element's y did not change and throws after three, because a wheel can land without moving the page; the accordion, button, card, combobox, dropdown, select and sidebar demos still return when y equals the previous attempt.",
+      "id": "claim_2d02b28201154e40bbde5bb5fd8468cd",
+      "statement": "Fluid hover reads its container's bounding rect on every pick and containerBox() is a fresh read, with no cache; the earlier cached box (introduced because a live getBoundingClientRect cost a layout pass of about 6 ms on poc e5231304) was dropped on b03d4e27 when it measured within noise, since a read after a paint-only write runs no layout pass (gpuix #47).",
       "evidence": [
         {
-          "resource": "repo://src/demos/accordion.tsx#L327-L337",
-          "version": "repo-lines-v1:sha256:d3ac8a5ade6f9955e53aeb7933a393fa5835c7c35c807c4d5d7b51f66641d00a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmMThhZWE0ZjQ2YmVjMDNjNDk0ODY3M2YyNGU0YWJjNmFhZjA3M2MzN2JmYzU3YmFkOWUzZDI5ZGRlNmFjNzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1YmIxYWY1MjFiZWNkNTVkNzA1NmE4YTlhMGRkMWViY2RhMWZjNzlmZjIzZjc0NTc3NmY0OTk1ODMzNTI5MjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNhZmEzMTYwZTVhNDJlMmQ4ZTljY2ZjOWZkZmRmNDlkMzI4ZGM0YmYyOGIxYmYxMzEyZjk2ZmQ0ZGE5NmYzZjgifQ"
+          "resource": "repo://README.md#L350-L350",
+          "version": "repo-lines-v1:sha256:a0b376ac436f09820b2b4fa2b31bdd1cb6e993fce144b2f4e597c79098e53d41:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTBiMzc2YWM0MzZmMDk4MjBiMmI0ZmEyYjMxYmRkMWNiNmU5OTNmY2UxNDRiMmY0ZTU5N2M3OTA5OGU1M2Q0MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTBiMzc2YWM0MzZmMDk4MjBiMmI0ZmEyYjMxYmRkMWNiNmU5OTNmY2UxNDRiMmY0ZTU5N2M3OTA5OGU1M2Q0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjNmN2IwZjMzNzhmNDU5MmUwNjc4ZmNkZGU2NmMxMGI4MzEyMDQ0ZmM1ZmY1ZTZmMTNkM2NmMjcwMzkzODU4ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWNkZjQzNmIyMGZiNWQwNGRlMjE4NTJiZjI5MTU5ZmI2ZDk5Y2M1OWRkN2MyYWRkNjk4Y2EyNWI1OTZlOGI1MiJ9"
         },
         {
-          "resource": "repo://src/demos/banner.tsx#L640-L655",
-          "version": "repo-lines-v1:sha256:d123f449cc79880ced86fbf8f8c01582bda828b883e79cb8833b6cc01936abc7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmMThhZWE0ZjQ2YmVjMDNjNDk0ODY3M2YyNGU0YWJjNmFhZjA3M2MzN2JmYzU3YmFkOWUzZDI5ZGRlNmFjNzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1YmIxYWY1MjFiZWNkNTVkNzA1NmE4YTlhMGRkMWViY2RhMWZjNzlmZjIzZjc0NTc3NmY0OTk1ODMzNTI5MjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiNmFlNzc3NGFkMGU0OTRmYjhjMDgwY2UyZDVjZWI3YTllNGRjZWUxMzk3NjBhOTJlZDI2ZThjYjI2ZThkZWUifQ"
+          "resource": "repo://src/lib/fluid-hover.ts#L158-L165",
+          "version": "repo-lines-v1:sha256:f3ab36f4e6f7b511968980acbc8cc959bfa210c2f0f6bc3ace1d92fdaedcf52f:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmJmY2VjNzM1Y2EyNTVlMGE5NmVjMzE1ZWQ1OGFkOGQ5YzU2YTNiYzE2OGZkMzdkZDJkNjFmNDc3MjJjNDIxMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDAwMjEyMGU1YzVkOTg0YzljYTkyYzhlZjA0YzFlOTZmMTM5MmY3YTQ0OTgwNWZkYThjMWVlNGYwZGY5NGRiZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGUxNjhjMzA3YmZlNzExYzQ2ZjBjOTgzNDUxZDYwYzFjOTY4YjVhNGQ0ZTU3YWYxODQyNDA5YmE0N2E3NzEzMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWQ1OTY5ODg4M2JkMjgzOGJjODUzZjc2Yjk1NjZiZWNjYzQwODQxNmRkNDU1NWQ2ZGM2YWJmNGU2MjZmMjc0YSJ9"
         },
         {
-          "resource": "repo://src/demos/sidebar.tsx#L134-L134",
-          "version": "repo-lines-v1:sha256:8b12ba530009082ecb12b6abdfe2fa05e17edbf18540f50f0b76e20d59b3dc79:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGIxMmJhNTMwMDA5MDgyZWNiMTJiNmFiZGZlMmZhMDVlMTdlZGJmMTg1NDBmNTBmMGI3NmUyMGQ1OWIzZGM3OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGIxMmJhNTMwMDA5MDgyZWNiMTJiNmFiZGZlMmZhMDVlMTdlZGJmMTg1NDBmNTBmMGI3NmUyMGQ1OWIzZGM3OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTM5Y2RkZDAxNzQ3MzZlMGE1NGYxZTEzNmVlYzAzY2FlOTk1MTFhMDdjOTYzMTc4MmQwMzFmODI1YTkxZDAyZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODcyNTU0ODU2MjExNGY2ZWJlNDdiMmVjMmIyMmEzODJmZWUxNTg1MTAzNzkwZWE0MzhlM2EyMDdkZjhkZDBkYiJ9"
+          "resource": "repo://src/lib/fluid-hover.ts#L236-L241",
+          "version": "repo-lines-v1:sha256:37eed53926fcb1474d2316288ddec4137be28e29b09136c45b504003a2541b18:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjgwODA0MjRiNjU2NDU2NWVjMTNjZmU1NGJhNTQ4MWU5OThjMzIzNzI1NWE5NmY0MWUxNTUzNzE0OTZkZGFlMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWJhZDdjYzJkZmFmYzIxNzVmYTJkOTcwNGUwMjAyZjk0MDgzYTlkYTY5YTU4NWIwYjE4YzQ4YmVhMjM2Mjc1ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjM0M2YzYjg2NjM2NjBhMDhjZDZhYjJhMWQxYTVmOWU5YWU2NzI0ZTI2ZTc0OTlmNmQyODk2Nzc4YzBhNmZjNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODBjZmYzZDZmNjFkMmQwNDU2YjEyYjY5YjcyMzhiM2ViMzY4ODYyMDc1ODAzNWZlMDY0Y2FmM2E0YmJiZGI0NCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_058bec3fa4074767880738c990ec4a42",
+      "statement": "Fluid hover measures each row as integers relative to the container (toOffsetRect rounds top, left, width and height), like the source's offsetTop/offsetWidth reads, because gpuix reports fractional rects but lays an authored length out on a whole device pixel, so a highlight gliding to the fractional rect would end 0.5 px off its row.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L260-L260",
+          "version": "repo-lines-v1:sha256:85db6c128526988662d221923f4fb592c71458d769b4ff7a3738cc8fc2232d4d:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODVkYjZjMTI4NTI2OTg4NjYyZDIyMTkyM2Y0ZmI1OTJjNzE0NThkNzY5YjRmZjdhMzczOGNjOGZjMjIzMmQ0ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODVkYjZjMTI4NTI2OTg4NjYyZDIyMTkyM2Y0ZmI1OTJjNzE0NThkNzY5YjRmZjdhMzczOGNjOGZjMjIzMmQ0ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTJjNzA0MTBmOGEyOWJlMGJiZjAzOWQ2ZWM2NDZmNGU0NTZmODRmNjc5ZGUwZWE4Y2EyOTAxNWFkODIxNDczZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWM0ZTExMTA4MzI5MTFhMWViYzA4ZjYwNTI4NWU3N2Q5NWViMGI1ZGY0ZjIwMGJlMGUxYTg4OWMwMzliOTNlOCJ9"
+        },
+        {
+          "resource": "repo://scripts/check-reduced-motion.tsx#L44-L52",
+          "version": "repo-lines-v1:sha256:2a14de5a638e71104eaceaf1f911f9acc22a71c2c853e54c3b2d2a9bb35504b3:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2FiMWI1NjMzN2E3Y2NhYTg2YTFkNGFhNGFkZTljOGRiNDNiYTkzYmM3N2EyNDBiYWExODYzNGY1ODkwOTU1ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzAzOGM3MmRiOWM1MDhhOWY2NzBiYTRmMjAyNzg4NDJlMGE1NzcxOGZlOTM2ODU4MTYxMDk1NDY3ODYyM2MzYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGRkODVjNmQ1ZDkxYTI0ODZhMGE4Zjc4YjkyM2QxN2M5YWIzZDMxZjUwMDUxNjdjMGJmNTNmNzI1NDgwMjU2YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjc4N2VhYzg1NzI2ODE5MjE1OWQ5ZmYzMDQwOGM0YzJkYmJjMGFiOWY3ZjA4ZWJjODE1NTFlOTFlZjk0NGQ2MSJ9"
+        },
+        {
+          "resource": "repo://src/lib/fluid-hover.ts#L16-L27",
+          "version": "repo-lines-v1:sha256:0d9ffe278eaccbd08c0dbed57147f147cd2867eb14e641c4afa0a83c2abc0ac0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVmNWIwN2U5NzQ5OGY4OGRkOWQxNjJiY2M3N2RlNDUxYjc2NDQ3ZjhlYTE5MjA0Zjc0YTRjMmNhY2M3ZjA5OWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiYmNhNmNjYWFmMDcwZWYyOGJmZTg4ZjllMmY3MGIyNzhiMDY3ZmJjYWRiOWUzNTM5MzM1M2M2MGQ0YjI5NzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNiMDhhZGNmYzY3YjJlY2RmOTk3NDU2YzliOTQ1ODM2MjA3NjRmZWQ4ODk2NDY2ODk4NDg3ZGE2MjRiMDUxMmQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_91bb101355084b81994fc32e62064647",
+      "statement": "The button's loading spinner is drawn natively with the source's spinner-move and spinner-dash keyframes (strokeDashoffset and strokeDasharray on a pathLength 100 path), a culled button holds the first frame, and reduced motion is not honoured, as in the source; the file-thumbnail spinner remains a sliding motion.circle because rotation needs a transform gpuix lacks.",
+      "evidence": [
+        {
+          "resource": "repo://drift/file-thumbnail.md",
+          "version": "repo-file-v1:sha256:473a073a59a57168d0b414154f5113e5d197fe888db6d1da17224c7160fc3fb9"
+        },
+        {
+          "resource": "repo://src/components/button.tsx#L119-L160",
+          "version": "repo-lines-v1:sha256:3878c6ac39a97f7df7e622fd311aa43c0022dab10ec83c1dc6f8bf6cc9977b30:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiN2MwMDQ1MzAwZTVhMGNmYWQ2NjU5M2JiNmY5MmEwZGU5OWI0Yzk5NWZjYzllZjlmOTAzNjk3ZjA1ODIwODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlMTRjNzNjMjY1ZTE5MTg4MjY0ODEwYjQ4ZDQwM2M4NGU0ZWI2OTc0ODY5M2ZmY2MzZGYzZTNhODFhYjI1ODMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhjMzY1YmUxZWIwOWRhYWNlMWQ3NWZjM2JmMjllMjM4NWU2NmY5OTg3MjYwZDdhYWVhNWI1YWZhNTk3YjdlMmQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8ca9e99660814416afdb9ce1fcff9599",
+      "statement": "The menu-item check and the input-copy check and cross draw and retract through the shared CheckMark (motion.path on pathLength), which takes a viewBox, a drawOnMount option and a colour fade so input-copy can use the source's own paths in a 20 x 16 box.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/input-copy.tsx#L29-L34",
+          "version": "repo-lines-v1:sha256:445f03a6c85c508da384e7c48ac8b87efb23fba33ae3b1c5ce6993d68a22b7fb:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDEyMzAzYzVkNjQxYWExYWExOTNjMWJlZDk1M2E5MWE5NTcyYjViYzRmMjY0NTE3OTI1ZWE2NjYzZWM1NTQ3ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWE4ZDM0YTVlMDdlMGRmZTVlZjIwYTU2OTY4ZDVlZDczY2MyYzZlN2FkOTQ5M2NhNjVkMGZjNmY0MGUwYzI1YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzA4ZjJjZjIzMjdkNTM2MGE4MGQ3NDI3NjZlMjY2NzViMGM1ZTUyZTI5MTFhMjc4ZDU5MzUxMzA4NmUzOWY4NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTAxZjAwMzBmNGNjNTZhNDhiM2RmMWFhYmZhNmUyMGEzYTY1ODUxZjY4MGJhYjMxZjhlZGI2NzJmNGUyZWM5ZCJ9"
+        },
+        {
+          "resource": "repo://src/components/menu-item.tsx#L152-L160",
+          "version": "repo-lines-v1:sha256:a18f9d61374da4dfbd7e9e5540e541b0e1a0ab0bc76329b3bbbd9f5e44e31c67:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmZjOGZiZWQ4MjE1YmJhYTlkODI3NjU0YmI3NDA3NGNkZjBiZDc1MGUyY2IwNjI2NmIxMjUyZjk1N2NjMjk4MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWJiNDYyOTY4MDdmMWMwNzhkNjQ3ZDY5Yzk5ZDgzNjliMGI0MDE5NmMxYTQ2MjJjMGY3NDM1MzFiNDI3M2QxZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjVhZDlkOTZmY2M2YTZhZGQ2MWUzMzIzMGE4MzQyODdmM2U4NTA0ZGMxM2Y3ZWViMjVhMDU1NzQ0OGMxOTQ5MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmUyNDllYTliNjhiMzAxYjQ3YjE4MzIwMWE5YzJmMzQ1MzdmNmMzYTc2YWJhNDJmZWVhNzIwYzUwNzRmZGQ5MyJ9"
+        },
+        {
+          "resource": "repo://src/lib/icon.tsx#L98-L170",
+          "version": "repo-lines-v1:sha256:256c32d0fb988c8a631eff4ea7e19a33f441e1805d5ac2c7ec01c0eb55816a4c:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjOWQxZDRhNmVkOTI5MGQ0Nzk1MmIzYzA0ZjQxM2E4MDg4ZjBiMjlhZmVmNjRjMjNjMDdhMTE0NzY4MjFjY2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyODMxMTdlZTU0YTVmMDcyMTJmYjI2YTU1MWE4MzI1ZmMzYWY3ZjMzZjM1MDQyNjBjZDdmYmQ0MmI3MGFlNGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4d1d3bef266d4baf9c8335cbbc15dff1",
+      "statement": "check-weight-widths measures each string at the rendered 13 px using gpuix's fractional bounds and compares to the browser's delta with a parity tolerance of 0.03 px, replacing the earlier 130 px scale-up with a 0.2 px tolerance that compensated for whole-pixel bounds.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-weight-widths.tsx#L1-L30",
+          "version": "repo-lines-v1:sha256:2ea7ed0f8c5e2176e93927ab0597d6230bf8aaee3090d2913b4b6514b40a8dbc:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkyYTdjMjUxYjI3YWIyMDFlYzY0MmQ5YWQ4NzkxZmQyMDI5NDU4N2Y1YWY4OTQxNzVjMWRmMGZmYWY3ZjMyYjUifQ"
+        },
+        {
+          "resource": "repo://scripts/check-weight-widths.tsx#L114-L121",
+          "version": "repo-lines-v1:sha256:2b6a478940a9d8e24c8ad56768ff31513019e4dc6eb58e322068e54293947616:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzE0ZTc5NzY0Y2JkMTdiNDZmYThhNmM1ODVkNmYxZTU3NTJkZTNhNDNhMDEyMGM4YjE1YWE5ZmJmNThmMDQ3ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTk5ODUxM2JmNDQ3ZTRiMWFkZDlhM2E2ZWZiNjUyMGFhMDZkMWY4MjE0ZmFlNjA4MjFiZDEyNjA1ZWNhMjBjYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzdlNzJhOGIwY2MyZTZjNzZhNGVhZTMyOTk4MGFjOWI2MDJjMzUwN2JkOTIwMWNhMTU2NmJjZmIyZmM4MDBlNiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_daca88c14a50437fac3ae0f2419da8fc",
+      "statement": "Demo screenshot scenarios scroll an element into view through the shared scrollNearTop in src/lib/demo-kit.tsx, which counts consecutive wheels that moved nothing and throws on the third instead of treating an unmoved element as the page end.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/demo-kit.tsx#L85-L99",
+          "version": "repo-lines-v1:sha256:706efaf324c26f7d67f5cbc5a2ef431716b0f694083a9ae79ac21f4e781a2cc2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyNzQ4ZTJlNjRhNTQ5MzIyNmNlNWU5ZDk3NzY0Y2Q1YmJiODIwNGJmNjI3MmQzYTA2ZTgyMjYzZDc0ZTA1YTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1YmIxYWY1MjFiZWNkNTVkNzA1NmE4YTlhMGRkMWViY2RhMWZjNzlmZjIzZjc0NTc3NmY0OTk1ODMzNTI5MjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-19T12:54:18.407Z"
+    "at": "2026-10-20T23:27:40.690Z"
   }
 }

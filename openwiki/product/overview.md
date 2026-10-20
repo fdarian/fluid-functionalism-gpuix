@@ -10,10 +10,10 @@ sources:
     resource: repo://README.md
   - id: openwiki-source-ff18555ad70362de0f452788
     resource: repo://UPSTREAM.md
-generated: { by: "claude-code", at: "2026-10-19T10:45:55.491Z" }
+generated: { by: "claude-code", at: "2026-10-20T23:27:40.690Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-19T10:45:55.491Z
+    at: 2026-10-20T23:27:40.690Z
 ---
 
 # Project overview
@@ -29,7 +29,7 @@ home bento grid, the docs and System pages, Compare, Concepts, Audio Mixer, Chan
 
 It started on 2026-10-12 as an experiment answering one question: **can gpuix draw this library faithfully?** The
 answer is yes, with recorded differences. Every difference from the source is an entry in `drift/`
-with a cause (538 after the 2026-10-19 native-animation round, 539 after the line-height pass, down from 577 once variable fonts and the round 6 features closed their entries; printed by `scripts/drift-counts.ts`), so the repository doubles as a catalogue of what gpuix can and cannot do against a real, demanding
+with a cause (532 after the 2026-10-21 `b03d4e27` adoption, 538 after the 2026-10-19 native-animation round, down from 577 once variable fonts and the round 6 features closed their entries; printed by `scripts/drift-counts.ts`), so the repository doubles as a catalogue of what gpuix can and cannot do against a real, demanding
 design system. That catalogue fed the gpuix fork's work directly
 (see [gpuix gaps and divergence rounds](../gpuix/gaps-and-divergence-rounds.md)).
 
@@ -79,5 +79,6 @@ All three must resolve to one `solid-js` and one `@gpuix/solid`; see
 | 2026-10-16 | Drift audit by cause; the owner's [four decisions](../decisions/user-decisions-2026-10-16.md); rest of the site ported; gpuix Round 4 adopted |
 | 2026-10-17 | History extracted into this repository; Base UI primitives moved to base-ui-solid-gpuix ([details](../history/base-ui-extraction.md)); gpuix Round 5, the gap pass, then real tables, `inline-*` and container queries adopted, ending at `poc` `20a0c327` ([details](../gpuix/gaps-and-divergence-rounds.md#adoption-pass-2026-10-17)) |
 | 2026-10-18 | gpuix round 6 adopted: outline styles, Inter 4.0 variable with the source's weight tokens and easing, `textWrap`, underline offsets, cap-height `textBox` trim, `calc()` slider layers, hairline borders ([details](../gpuix/gaps-and-divergence-rounds.md#round-6-adoption-pass-2026-10-18)) |
-| 2026-10-19 | Pinned to gpuix `poc` `e5231304`; perf follow-up: culling and the cached fluid-hover box kept on measurement, the changelog's `width: 100%` wrappers removed ([details](../gpuix/gaps-and-divergence-rounds.md#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19)) |
+| 2026-10-19 | Pinned to gpuix `poc` `e5231304`; perf follow-up: culling and the cached fluid-hover box kept on measurement (the cache was dropped on 2026-10-21), the changelog's `width: 100%` wrappers removed ([details](../gpuix/gaps-and-divergence-rounds.md#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19)) |
 | 2026-10-19 | Pinned to gpuix `poc` `5fda771a`; JS frame-clock loops (spinner, thinking indicator, carousel fill, scripted cursors) moved to native animation, `StableLabel` back to two ghosts, `check:scenarios` lists all failures ([details](../gpuix/gaps-and-divergence-rounds.md#native-animation-round-on-poc-5fda771a-2026-10-19)) |
+| 2026-10-21 | Pinned to gpuix `poc` `b03d4e27`: fractional rects, fluid-hover rects rounded like the source's `offset*` reads and no container-box cache, culling kept on a re-run, the second `StableLabel` ghost within noise, native SVG stroke draws for the button spinner, menu-item check and input-copy; drift 538 to 532 ([details](../gpuix/gaps-and-divergence-rounds.md#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21)) |

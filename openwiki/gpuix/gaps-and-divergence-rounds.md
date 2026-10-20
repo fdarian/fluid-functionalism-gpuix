@@ -6,10 +6,6 @@ tags: [gpuix, gaps, upstream, history, migration]
 sources:
   - id: openwiki-source-dbc5a68e94d7e3a15a776857
     resource: repo://drift/fluid-hover.md
-  - id: openwiki-source-5cfc44b662eef11b303099d9
-    resource: repo://drift/tabs-subtle.md
-  - id: openwiki-source-97d0c3fefafadab09e5e7da3
-    resource: repo://drift/tabs.md
   - id: openwiki-source-7bed81eca49ee8a9899cacc5
     resource: repo://drift/thinking-indicator.md
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
@@ -18,8 +14,6 @@ sources:
     resource: repo://scripts/check-command-menu.tsx
   - id: openwiki-source-fac7a3f3768fe057d1557909
     resource: repo://scripts/check-kit.tsx
-  - id: openwiki-source-819b237d6ed6e51fbd2028b9
-    resource: repo://scripts/check-weight-widths.tsx
   - id: openwiki-source-f870e66b983ce90f21118b51
     resource: repo://scripts/drift-counts.ts
   - id: openwiki-source-5ebe82cc5f9e383e14411602
@@ -48,6 +42,8 @@ sources:
     resource: repo://src/lib/clock.ts
   - id: openwiki-source-3763179c46a618f0eea1b1ba
     resource: repo://src/lib/cull.ts
+  - id: openwiki-source-ba98ccdc6cabbcd0f3dd70c6
+    resource: repo://src/lib/fluid-hover.ts
   - id: openwiki-source-ff84ac67d7a6ebc693884d4f
     resource: repo://src/lib/popup.tsx
   - id: openwiki-source-88a6e1849924a665249303d0
@@ -60,10 +56,10 @@ sources:
     resource: repo://src/pages/changelog/changelog-view.tsx
   - id: openwiki-source-81c2a5e01f16d1053272b0de
     resource: repo://src/pages/changelog/entry.tsx
-generated: { by: "claude-code", at: "2026-10-19T12:54:18.407Z" }
+generated: { by: "claude-code", at: "2026-10-20T23:27:40.690Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-19T12:54:18.407Z
+    at: 2026-10-20T23:27:40.690Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -87,15 +83,16 @@ link to those rows rather than repeating them. The ones that shape the most code
   frame, instead of a transform.
 - **Clipped content still costs a frame** (gpuix #46: retained and clipped content is not free). Long demo pages
   therefore hide far regions with `display: none` through the port's own `src/lib/cull.ts`; this is a kept
-  workaround, not a removed one. The measurements and the condition for removing it are in
-  [Port decisions, Performance decisions](../decisions/port-decisions.md#performance-decisions-on-gpuix-poc-e5231304).
+  workaround, not a removed one: the removal comparison was re-run on `b03d4e27` and culling off was worse on 9 pages
+  and better on none. The measurements are in
+  [Port decisions, Performance decisions](../decisions/port-decisions.md#performance-decisions-on-gpuix-poc-b03d4e27).
 - **Test-renderer quirks** (a capture is the view alone, with no titlebar or traffic lights; batched keystrokes deliver
   an input's `onChange` after the whole batch) that constrain the screenshot harness.
 - **Windows/Linux** dispatch is asynchronous, so `preventDefault()` on press arrives too late there. The fork
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
 The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17) and again in the
-[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `5fda771a` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`; see the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19)). The bugs and gaps worth knowing before touching layout code:
+[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `b03d4e27` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); see the [`b03d4e27` adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21)). The bugs and gaps worth knowing before touching layout code:
 
 - A function-form `createTransform` of several motion values is computed in JS and can trail its inputs by a frame
   on a live window (not seen on the test renderer). `calc()` strings of the row's own width avoid it where the layer
@@ -108,16 +105,15 @@ The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adopt
 - A sticky box ignores the scroller's padding when it pins. At rest gpuix agrees with Chrome; after a scroll it pins at
   the scrollport edge where Chrome holds it at the padding edge, so the dropdown search field cannot sit in a padded
   scroller (the margin is not the cause; re-measured on 2026-10-19, it replaced an earlier "negative margin" reading).
-- gpuix measures text fractionally since #41, so shrink-to-fit boxes are no longer up to 1px wider than Chrome's
-  (that README row is gone), but every JS bounds read (`getElementBounds`, `onLayout`, `getBoundingClientRect`) is
-  snapped to whole device pixels per edge (#45). A check that compares two reads can therefore see under 1px of
-  difference without anything having moved, and cannot read a fractional box at all.
-- A cap-trimmed label that its parent centres (tabs, tabs-subtle; gpuix #44) is still a pixel off Chrome's. #41
-  replaced the old ceiling of a `textBox`-trimmed leaf (a 10px box for Inter 13px's 9.46px of caps, which drew
-  about 0.75px high) with the exact fractional box (9.45px at 13px, 8.74px at 12px) and the flex row centres it,
-  but painting snaps the box top to a whole pixel and places the baseline from the snapped origin. At 1x the 13px
-  caps land 0.9px high and the 12px caps 0.5px low (offscreen captures); 2x was not checked. Recorded in the tabs
-  drift files, no workaround. The old "ceil" explanation no longer holds: do not report it again.
+- gpuix rounds an authored length (inset, padding, size) to a whole device pixel, half toward zero, where Chrome lays
+  out fractional px (`top: 110.5` lands at 110), while the rects it reports have been fractional (1/64 px) since
+  `b03d4e27`: `getBoundingClientRect`, `ResizeObserver`, `IntersectionObserver` and `onLayout`; `client*` and
+  `scroll*` stay integers. A highlight or any element positioned from a measured rect can therefore sit up to 0.5 px
+  off what was measured. The port corrects only the fluid highlight, by rounding rects like the source's `offset*`
+  reads. The older whole-pixel snapping of every JS bounds read (#45) is gone, so a check can read a fractional box
+  and no longer needs a scale-up to see sub-pixel differences.
+- A looping native animation replays the whole page every tick, so it is cheap only on light pages (7 ms a tick at
+  3000 nodes, about 60 ms at 12000): see the [`b03d4e27` adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21).
 - Flex `order` is ignored inside an `@container` block, and Tab follows the painted order under `order` where Chrome
   keeps the markup order (`order` 3, 2, 1 is visited c, b, a, not a, b, c). gpuix's own README and `order.rs` say
   focus and tab order stay in document order, so the docs and the behaviour disagree; the banner uses `row` /
@@ -126,8 +122,10 @@ The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adopt
   `has*` states (`hasHover`, `hasActive`, `hasFocus`, `hasFocusVisible`, `hasDisabled`, `hasEnabled`) but neither a
   `:has(.x)` selector nor a parent state that styles its children.
 
-Two earlier entries here were closed by `20a0c327` and should not be re-reported: a `width: 100%` child under a
-`fit-content` parent filling the column, and a percentage `maxWidth` not clamping a `fit-content` box.
+Earlier entries here were closed and should not be re-reported: a `width: 100%` child under a `fit-content` parent
+filling the column and a percentage `maxWidth` not clamping a `fit-content` box (`20a0c327`); and, on `b03d4e27`, the
+cap-trimmed label that tabs and tabs-subtle centre sitting a pixel off Chrome's at 1x (gpuix #44), whose two drift
+entries were removed.
 
 ## How a round works
 
@@ -369,19 +367,20 @@ Which ones survived is the useful part, because several look removable:
 
 - **Kept: off-screen culling.** gpuix #46 still bills a frame for content a scroller clips away. The removal run on
   both pins agreed (sum of sidebar-sweep draw p95 over 49 pages 500 to 688 ms on `365f7c88`, 520 to 670 ms on
-  `e5231304`). Details and the removal condition: [Port decisions](../decisions/port-decisions.md#performance-decisions-on-gpuix-poc-e5231304).
-- **Kept: fluid hover's cached container box.** A live `getBoundingClientRect` is a layout pass of about 6 ms on
-  gpuix; the idle cost of reading it per pick is invisible to a sweep benchmark and shows only in idle
-  frame-callback time.
+  `e5231304`), and it agreed again on `b03d4e27`. Details: [Port decisions](../decisions/port-decisions.md#performance-decisions-on-gpuix-poc-b03d4e27).
+- **Kept then, dropped later: fluid hover's cached container box.** A live `getBoundingClientRect` was a layout pass of
+  about 6 ms on gpuix; the idle cost of reading it per pick is invisible to a sweep benchmark and shows only in idle
+  frame-callback time. It was removed on `b03d4e27` (below).
 - **Dropped then, restored later: the second `StableLabel` ghost.** It cost about 1.5 ms of sweep draw p95 on
   `365f7c88`, so this round kept one. It came back on 2026-10-19 (below) because a one-ghost label whose normal copy
   is wider shrinks on selection; the cost was re-measured and accepted.
-- **Kept: the cap-trimmed label drift entry**, re-measured (gpuix #44, above).
+- **Kept then, closed later: the cap-trimmed label drift entry**, re-measured (gpuix #44); the entries went when `b03d4e27` fixed it.
 - **Removed: the changelog's `width: '100%'` column wrappers.** #36 made nested flex columns linear; measured
   change on `e5231304` was nil (changelog sweep draw p95 10.9 to 11.0 ms, idle CPU 58.8 to 57.6%, sum 520 to 487 ms).
 - **Removed: the README "real window can fail to boot with the display asleep" known issue.**
 - **Adapted, later reverted: `check-weight-widths`** tolerated 1px on neighbour and shrink assertions for #45's
-  per-edge snapping. With the two-ghost label the box cannot move, so the check asserts exactly again.
+  per-edge snapping. With the two-ghost label the box cannot move, so the check asserts exactly again; on `b03d4e27`
+  it also measures at the rendered size (below).
 - **Adapted: the changelog Releases jump** re-aims while the port's culled entries un-pin on the way
   (`drift/site.md`); a cost of keeping the cull, not a gpuix bug.
 
@@ -422,7 +421,7 @@ cannot get from the diff:
 
 ## Native animation round on `poc` `5fda771a` (2026-10-19)
 
-The README now names `5fda771a` as the minimum fork. It carries a retention fix: six checks had needed a workaround
+The README named `5fda771a` as the minimum fork at the time (now `b03d4e27`). It carries a retention fix: six checks had needed a workaround
 for gpuix retaining elements, and they pass plainly on this pin. The same day the port moved its JS frame-clock loops
 to gpuix's native animation. Several earlier notes here said gpuix could not animate these; that is no longer true,
 and the remaining limits are narrower.
@@ -441,10 +440,12 @@ and the remaining limits are narrower.
     gpuix does not have (`motion` cannot animate an SVG `transform` attribute), hence the sliding-dash spinner.
   - **`requestAnimationFrame`** does not exist (only `setTimeout`), so the leftover loops stay on the shared
     interval clock. The README row for it now lists only thinking-steps.
-  - **CSS keyframes take style properties, not SVG attributes** such as `strokeDashoffset`; a `motion.circle` with
-    `repeat` plays the spinner instead.
-- **Two frame-loop gaps found after adopting it** (README Bugs table, `1c7517a0`; neither has a workaround, FF keeps
-  the native animations):
+  - **CSS keyframes took style properties, not SVG attributes** such as `strokeDashoffset`; a `motion.circle` with
+    `repeat` played the file-thumbnail spinner instead. Closed on `b03d4e27`: stroke keyframes work, and the button
+    spinner uses them.
+- **Two frame-loop gaps found after adopting it** (README Bugs table, `1c7517a0`; neither had a workaround, FF kept
+  the native animations). The timer starvation is closed on `b03d4e27` (timers run between ticks, gpuix #56) and the
+  per-tick cost is restated there; both are kept below as the history and the symptoms to recognise:
   - **A native loop can starve Bun's timers and IPC.** When an animation keeps requesting frames and one draw takes
     longer than a display frame (about 13 ms at 75 Hz), gpuix's frame-wake callback is always already queued when
     `tick()` returns, so Bun never gets to run `setTimeout`, `setInterval` or IPC. In the repro (a kept
@@ -455,18 +456,63 @@ and the remaining limits are narrower.
     trigger was `224f89d7` (the shimmer as native keyframes); the old JS clock avoided it only by leaving gaps
     between its 33 ms ticks. So **a perf or check run on a loaded machine can hang for this reason, not because of
     the change under test.**
-  - **One animating text rebuilds the whole page every frame.** A single looping colour animation costs a full
-    rebuild per frame, about 28 ms on a 3000-node page, so native animation frames are cheap only on light pages
-    (file-thumbnail about 1.8 ms, showcase about 4.6 ms). It affects every native loop on a heavy page
-    (thinking-indicator, thinking-steps, file-thumbnail, carousel-dots) and feeds the first gap: the heavier the
-    page, the likelier a draw outlasts a frame.
+  - **One animating text rebuilds the whole page every frame.** First measured as about 28 ms a frame for a single
+    looping colour animation on a 3000-node page, so native frames looked cheap only on light pages (file-thumbnail
+    about 1.8 ms, showcase about 4.6 ms). It affects every native loop on a heavy page (thinking-indicator,
+    thinking-steps, file-thumbnail, carousel-dots) and fed the first gap: the heavier the page, the likelier a draw
+    outlasts a frame. The figure was re-measured on `b03d4e27` (below): 7 ms a tick on 3000 nodes.
 - **The second `StableLabel` ghost is back** (`54405f67`): a label whose normal copy is wider shrinks on selection
   with a semibold-only ghost, so the cell is `max(normal, semibold)` again and `check-weight-widths` asserts it
-  exactly. The cost on `5fda771a` is +1.0-1.7 ms of sidebar-sweep draw p95, paid on frames that build rather than
-  replay. Trying `inline-grid` to `grid` gained nothing, since flex items are blockified and retained either way.
-  Reasoning and numbers: [Port decisions](../decisions/port-decisions.md#stablelabels-second-ghost-what-it-costs-and-what-did-not-help).
+  exactly. The cost on `5fda771a` was +1.0-1.7 ms of sidebar-sweep draw p95, paid on frames that build rather than
+  replay; on `b03d4e27` it is within noise. Trying `inline-grid` to `grid` gained nothing, since flex items are blockified and retained either way.
+  Reasoning and numbers: [Port decisions](../decisions/port-decisions.md#stablelabels-second-ghost-what-it-cost-and-what-did-not-help).
 - **Two non-gpuix changes from the round**: the thinking-steps demo cards start at half in view, as the source, and
   the Customise card's rows sit 34 px apart following the source's nesting (a 44 px title row, a rows block with a 6 px
   gap and 12 px above and below), which moved the `src/app.tsx` refs cited by `drift/site.md`.
 - **`check:scenarios` runs every check** and lists the failures at the end instead of stopping at the first, so one
   red check no longer hides the rest of a 30-minute run.
+
+## Fractional rects adoption on `poc` `b03d4e27` (2026-10-21)
+
+The README now names `b03d4e27` as the minimum fork. The reason it is a pin and not an upgrade note: since it,
+`getBoundingClientRect`, `ResizeObserver`, `IntersectionObserver` and `onLayout` return fractional 1/64 px values like
+Chrome (`client*` and `scroll*` stay integers), so code and checks written for whole-pixel reads change meaning.
+Most of the round is re-testing workarounds and deleting the ones that stopped being true; drift went from 538
+entries to 532.
+
+- **Rects are fractional, but authored lengths are still rounded.** gpuix lays out an authored inset, padding or size
+  on a whole device pixel (half toward zero), so a highlight placed from a measured fractional rect ends up to
+  0.5 px off its row. The fluid highlight now rounds each measured rect to integers like the source's `offset*` reads
+  and the table's highlight rests on the row's `offsetTop`; `check-reduced-motion` compares against that, and
+  `check-choice-group` compares the checkbox square at its measured width instead of a rounded one. The reasons:
+  [Port decisions, fluid hover](../decisions/port-decisions.md#fluid-hover-one-highlight-nearest-row-sessions).
+- **Closed upstream and removed here**: the cap-trimmed label baseline (tabs, tabs-subtle drift entries and the README
+  row), the per-edge snapping of bounds reads, timers starving behind a native loop (gpuix #56), and the layout pass on
+  a bounds read after a paint-only write (#47). The README's "gaps as of" paragraph lists them as gone.
+- **Reversed: fluid hover's container-box cache.** The cache existed to avoid a 6 ms layout pass per read. With #47 it
+  measured within noise and was dropped, so `pick` reads the rect on every pick like the source.
+- **Kept, re-measured: off-screen culling.** Off was worse on 9 pages and better on none; the plan to remove it after
+  #46 does not apply while the gap row stands. Method and numbers:
+  [Port decisions, Performance decisions](../decisions/port-decisions.md#performance-decisions-on-gpuix-poc-b03d4e27).
+- **Changed: the second `StableLabel` ghost is now within noise** (seven sidebar pages, p95 -0.35 to +0.30 ms), credited
+  to gpuix #46 and #58 (an `opacity: 0` text paints nothing and hidden labels are not re-measured). It stays for the
+  width, not for speed.
+- **Per-tick cost of a looping native animation, restated.** gpuix bills the whole page per replayed root: one looping
+  colour keyframe on one text took 7 ms a tick on 3000 nodes and about 60 ms on 12000, against 0.1 ms with nothing
+  animating, and a page with a running loop idles at 37-45% CPU (carousel-dots, file-thumbnail, thinking-indicator,
+  thinking-steps, queued-stack, showcase, fluid-hover, changelog). This replaces the earlier "28 ms" figure and the
+  starvation row. The README keeps it as a bug row with no workaround except pausing off-screen loops through culling.
+- **SVG stroke keyframes now work**, so the button's loading spinner, the menu-item check and the input-copy check and
+  cross became native draws. Their drift entries closed (button 9 to 8, input-copy 10 to 8) apart from input-copy's
+  scale-in; the file-thumbnail spinner remains a sliding dash because its only gap is the rotate transform. See
+  [Port decisions, native animation](../decisions/port-decisions.md#js-frame-clock-loops-moved-to-gpuix-native-animation).
+- **Pause on a motion value's animation** is restated precisely: `getAnimations()` covers CSS `animation` and
+  `transition` runs only, not `motion.*` or motion values, so the `stop()` plus new `animate()` workaround stays for
+  the carousel fill and the plain-vs-fluid cursor.
+- **`check-weight-widths` measures at 13 px** with fractional bounds and a 0.03 px parity tolerance, no longer at 130 px
+  divided by 10.
+
+Pitfall carried over from this round: the culling, ghost and bounds-read numbers of one pin are not evidence about
+another. They moved between `e5231304`, `5fda771a` and `b03d4e27` for reasons on gpuix's side (retention,
+re-measurement of hidden labels, layout passes on reads), so re-measure on the pin you are on before keeping or
+deleting a workaround.

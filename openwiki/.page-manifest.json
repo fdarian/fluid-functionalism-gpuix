@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "pages": {
     "/openwiki/decisions/port-decisions.md": {
-      "pageVersion": "sha256:da5147bfbf6acb5d634f5d65c16c12b2464d4ae4ab47044b21f2befbb07efd88",
+      "pageVersion": "sha256:5f11d1ee851a7162898cbe36ce3955b4f8accdb843dd09873291f9ca0273d894",
       "completedBy": "claude-code",
-      "completedRunId": "9384c7d8-9ef0-47ec-8290-a43aafc91107",
-      "gitHead": "1c7517a081efcd68490679b63c92d1801baea360",
-      "sourceFingerprint": "sha256:74d70d02f4885780c511cdde3e884380b5e07c00c96465d63c061bad735fd9f7"
+      "completedRunId": "fe5c75e1-992d-4d98-ae2d-a8d0ec7f65bc",
+      "gitHead": "0cfc2733346c47ccdd53a2f371be59770b5ff0fe",
+      "sourceFingerprint": "sha256:99e8b54282f0eae1a8b3ab26b293b4dc786bad5f7f4fe98a3231c9177a6e4582"
     },
     "/openwiki/decisions/user-decisions-2026-10-16.md": {
       "gitHead": "00396f317b59f73716790023da9dc021f18e0233",
@@ -16,11 +16,11 @@
       "completedRunId": "fd266f8e-950b-47a1-8c26-d434c4805d22"
     },
     "/openwiki/gpuix/gaps-and-divergence-rounds.md": {
-      "pageVersion": "sha256:08a403699bddd41df1e7225846818c3f5cd1db8f9ddca89fc422ddc0d13bbeae",
+      "pageVersion": "sha256:0dff4a918e7ff93a911a556bd407b4d358b2670baa418695547019d5c4e65420",
       "completedBy": "claude-code",
-      "completedRunId": "9384c7d8-9ef0-47ec-8290-a43aafc91107",
-      "gitHead": "1c7517a081efcd68490679b63c92d1801baea360",
-      "sourceFingerprint": "sha256:74d70d02f4885780c511cdde3e884380b5e07c00c96465d63c061bad735fd9f7"
+      "completedRunId": "fe5c75e1-992d-4d98-ae2d-a8d0ec7f65bc",
+      "gitHead": "0cfc2733346c47ccdd53a2f371be59770b5ff0fe",
+      "sourceFingerprint": "sha256:99e8b54282f0eae1a8b3ab26b293b4dc786bad5f7f4fe98a3231c9177a6e4582"
     },
     "/openwiki/history/base-ui-extraction.md": {
       "gitHead": "4d2c7fb328e66e74ca5350d30853512ccaf4d91f",
@@ -30,18 +30,18 @@
       "completedRunId": "c6294ebe-794d-46d3-9e40-d2f5d2113029"
     },
     "/openwiki/product/overview.md": {
-      "gitHead": "14d295046cecf3b9502ac70fee0ceba7a14860d4",
-      "sourceFingerprint": "sha256:3a4657fb67e01fcba8e9c6c7cc5557321a9d2c04c02990765e53a4e49a4af593",
-      "pageVersion": "sha256:e42c6bdb0b84120e15ace8b133f9ce9e41805a4739c3ba8e0968f748680f70bd",
+      "pageVersion": "sha256:b95d153575a589065993c4adee24038f80c6e01a6015371b86ed730cc0810a65",
       "completedBy": "claude-code",
-      "completedRunId": "04c73945-6271-4d6b-91da-cc762e396fde"
+      "completedRunId": "fe5c75e1-992d-4d98-ae2d-a8d0ec7f65bc",
+      "gitHead": "0cfc2733346c47ccdd53a2f371be59770b5ff0fe",
+      "sourceFingerprint": "sha256:99e8b54282f0eae1a8b3ab26b293b4dc786bad5f7f4fe98a3231c9177a6e4582"
     },
     "/openwiki/quickstart.md": {
-      "gitHead": "14d295046cecf3b9502ac70fee0ceba7a14860d4",
-      "sourceFingerprint": "sha256:3a4657fb67e01fcba8e9c6c7cc5557321a9d2c04c02990765e53a4e49a4af593",
-      "pageVersion": "sha256:3054abcb7c9db2b2a63821e1cd424152fa4cfa18be3ba872ae0112bce1beea73",
+      "pageVersion": "sha256:b1e09b11c6e4ddc367252f61e13535ae807b4f58d98ab0ec6ead013a9404d9f7",
       "completedBy": "claude-code",
-      "completedRunId": "04c73945-6271-4d6b-91da-cc762e396fde"
+      "completedRunId": "fe5c75e1-992d-4d98-ae2d-a8d0ec7f65bc",
+      "gitHead": "0cfc2733346c47ccdd53a2f371be59770b5ff0fe",
+      "sourceFingerprint": "sha256:99e8b54282f0eae1a8b3ab26b293b4dc786bad5f7f4fe98a3231c9177a6e4582"
     }
   }
 }

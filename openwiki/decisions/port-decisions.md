@@ -1,18 +1,18 @@
 ---
 type: decision record
 title: Port decisions and their reasons
-description: Why the Fluid Functionalism port to gpuix uses native springs, native hover states, a single fluid highlight, a single-quad press-shrink fill, variable Inter with the source's weight tokens, createAppearance theming with a transient cross-fade layer, the kept off-screen culling, cached fluid-hover box and two-ghost StableLabel with their measurements, the move of JS frame loops to native gpuix animation, file-discovered demos, the drift/ convention, the screenshot and check-* harness, and its pnpm, tsconfig and Biome settings.
+description: Why the Fluid Functionalism port to gpuix uses native springs, native hover states, a single fluid highlight, a single-quad press-shrink fill, variable Inter with the source's weight tokens, createAppearance theming with a transient cross-fade layer, the kept off-screen culling (re-measured on b03d4e27), the dropped fluid-hover box cache, integer-rounded fluid-hover rects and two-ghost StableLabel (now within noise) with their measurements, the move of JS frame loops to native gpuix animation, file-discovered demos, the drift/ convention, the screenshot and check-* harness, and its pnpm, tsconfig and Biome settings.
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-19T12:54:18.407Z
+    at: 2026-10-20T23:27:40.690Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
   - id: openwiki-source-9156c3fc43d32433db430838
     resource: repo://drift/_TEMPLATE.md
-  - id: openwiki-source-dbc5a68e94d7e3a15a776857
-    resource: repo://drift/fluid-hover.md
+  - id: openwiki-source-6305012da4c4c24b665faccd
+    resource: repo://drift/file-thumbnail.md
   - id: openwiki-source-385da475ebb9649b27cbd9e7
     resource: repo://drift/site.md
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
@@ -21,6 +21,8 @@ sources:
     resource: repo://pnpm-workspace.yaml
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
+  - id: openwiki-source-1d90d3d86ac1d41b49610f02
+    resource: repo://scripts/check-reduced-motion.tsx
   - id: openwiki-source-dcc18690931a266c3aa8c94d
     resource: repo://scripts/check-single-instance.ts
   - id: openwiki-source-819b237d6ed6e51fbd2028b9
@@ -41,20 +43,20 @@ sources:
     resource: repo://src/components/color-picker.tsx
   - id: openwiki-source-239fd08429aaf6fcfc61fa9f
     resource: repo://src/components/file-thumbnail.tsx
+  - id: openwiki-source-d16aa80995477f629b4eae12
+    resource: repo://src/components/input-copy.tsx
+  - id: openwiki-source-78d1990defa7b16135079930
+    resource: repo://src/components/menu-item.tsx
   - id: openwiki-source-94d7540365b6edfe6f6a0bbe
     resource: repo://src/components/table.tsx
-  - id: openwiki-source-d57eba45f36de60999228636
-    resource: repo://src/demos/accordion.tsx
-  - id: openwiki-source-f3da90b05c6018726fe8899a
-    resource: repo://src/demos/banner.tsx
-  - id: openwiki-source-29fdf488e6b79f28c82660ab
-    resource: repo://src/demos/sidebar.tsx
   - id: openwiki-source-a79b6ccf1548a05902eb90b6
     resource: repo://src/demos/thinking-steps.tsx
   - id: openwiki-source-b100b0574d7a0258fad9b8f3
     resource: repo://src/lib/clock.ts
   - id: openwiki-source-3763179c46a618f0eea1b1ba
     resource: repo://src/lib/cull.ts
+  - id: openwiki-source-896173aa84486fb035ca7515
+    resource: repo://src/lib/demo-kit.tsx
   - id: openwiki-source-d8bbfda4e9c9d1361b2fe340
     resource: repo://src/lib/demo.ts
   - id: openwiki-source-b4238869522a9de0f81c49d7
@@ -63,6 +65,8 @@ sources:
     resource: repo://src/lib/fluid-hover.ts
   - id: openwiki-source-34e6a24572026b7c65be92ae
     resource: repo://src/lib/fonts.ts
+  - id: openwiki-source-8595e2831e329ac0413ba7f4
+    resource: repo://src/lib/icon.tsx
   - id: openwiki-source-a69db96d312e49d2e9f03b5a
     resource: repo://src/lib/playground.tsx
   - id: openwiki-source-0f590d21e6a23d6af00e8e17
@@ -77,7 +81,7 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-19T12:54:18.407Z" }
+generated: { by: "claude-code", at: "2026-10-20T23:27:40.690Z" }
 ---
 
 # Port decisions and their reasons
@@ -133,6 +137,13 @@ The site's signature effect is one highlight that glides between rows. The port 
 - **Sessions.** Entering the container starts a new session; a new session remounts the highlight so it appears
   at the row instead of sliding in from wherever the last session left it. Inside a session it glides; on a
   reflow it snaps (see above).
+- **Rows are measured as integers, the way the source's `offsetTop` / `offsetWidth` reads are** (2026-10-21, gpuix
+  `b03d4e27`). Since that pin gpuix reports fractional rects (1/64 px), as Chrome does, but it lays an authored length
+  out on a whole device pixel (half toward zero) where Chrome would keep `top: 110.5`. A highlight that glided to the
+  measured fractional rect therefore ended 0.5 px off its row (basic-table rows sit at .5 px under collapsed borders).
+  Rounding the rect to the source's integers makes the highlight rest where the source's does, and
+  `check-reduced-motion` compares the table highlight to the row's `offsetTop` rather than its fractional y. Only the
+  highlight is corrected; other authored fractions are left (README gap row).
 
 When Base UI primitives later took over keyboard behaviour, fluid hover stayed the owner of the highlighted row:
 the primitive's highlight is controlled from `hover.activeIndex`, and a keyboard move calls `releasePointer()` so
@@ -184,8 +195,9 @@ two Inter 4.0 variable files the source serves (upright and italic, family name 
   forth: a second hidden normal-weight copy first (so the cell never moves), dropped as `6ad107a` for a rare,
   sub-pixel effect (on the grounds of cost), then reinstated in `54405f67` (the 2026-10-19 round on gpuix
   `5fda771a`) because the point of the label is that its box does not change width. The cell is now
-  `max(normal, semibold)`. The cost is real and accepted, and it is why the label keeps its two hidden `<text>`
-  nodes; see [StableLabel's second ghost](#stablelabels-second-ghost-what-it-costs-and-what-did-not-help).
+  `max(normal, semibold)`. The cost was real and accepted on `5fda771a`, and within noise on `b03d4e27`; either way
+  the label keeps its two hidden `<text>` nodes; see
+  [StableLabel's second ghost](#stablelabels-second-ghost-what-it-cost-and-what-did-not-help).
 
 **The weight-width check measures against the browser, not the source's claim.** Chromium measuring the same
 `InterVariable.ttf` and tokens does not reproduce the source's 0.4 px claim (Analytics grows 1.05 px; a long all-caps
@@ -195,28 +207,43 @@ every `StableLabel` user through its demo page and steps the held motion clock a
 label's box and the boxes of its row neighbours are exactly where they were. Its synthetic mount of labels that are
 narrower at semibold ("Pro plan", "Toggle dark mode") asserts the cell is identical light and heavy and equals the
 wider of the two copies, exactly. An interim version of the check (`407127fb`) allowed 1 px on neighbours and on the
-shrink, because gpuix snaps every JS bounds read to whole device pixels per edge (#45) and the semibold-only ghost
+shrink, because gpuix snapped every JS bounds read to whole device pixels per edge (#45) and the semibold-only ghost
 really did shrink; with two ghosts the cell cannot move, and that loosening was reverted. A failure now is a real
 move, so do not reintroduce a tolerance. It runs at 1x, so widths at a retina display's 2x scale are not measured.
 
-## Performance decisions on gpuix `poc` e5231304
+Bounds became fractional on `b03d4e27`, which changed how the browser comparison is read. The check used to lay each
+string out at 130 px and divide the width difference by 10, to get 0.1 px resolution out of whole-pixel reads
+(parity tolerance 0.2 px). It now measures at the rendered 13 px, and the parity tolerance is 0.03 px: the worst
+difference against the browser's table was 0.018 px, which is that table rounded to 0.01 px plus gpuix's 1/64 px
+(0.016) on each width of the pair. A parity failure above 0.03 px is a real width difference, not rounding.
 
-Three choices that look removable and are not, each re-measured on 2026-10-19 on the real window or the sweep
-harness (`pnpm perf`; the numbers are not committed, so they live here and in the README gap rows). The common cause
-is that on gpuix every element costs a frame whether or not it is visible, and every bounds read costs a layout pass.
+## Performance decisions on gpuix `poc` b03d4e27
+
+Three choices that looked removable, each re-measured on the real window or the sweep harness (`pnpm perf`; the numbers
+are not committed, so they live here and in the README gap rows). Their outcomes differ: culling stays, the container
+box cache is gone, and the second `StableLabel` ghost stopped costing anything. The shared lesson is that every claim
+about cost has an expiry date, because gpuix's retention and bounds-read behaviour changed between `e5231304`,
+`5fda771a` and `b03d4e27`; re-measure before leaning on a number from an older pin.
 
 - **Off-screen culling stays (`src/lib/cull.ts`).** gpuix lays out and paints elements a scroller clips away
   (gpuix #46: retained and clipped content is not free), so a page of many menus costs several times a short one.
   The port hides a region's content with `display: none` while it is a quarter viewport from the page scroller,
   keeps the region's measured height, and holds `onFrame` and timer loops still while hidden (`OnScreenContext`),
-  because any signal a loop sets redraws the whole window. gpuix's later perf fixes (#36 among them) did not make it
-  redundant; a removal experiment decided it. Sidebar-sweep draw p95 with culling to
-  without it, on `poc` `e5231304`: changelog 10.9 to 26.6 ms, command-menu 16.7 to 37.4, showcase 16.0 to 41.6,
-  fluid-hover 11.1 to 30.9, card 15.7 to 29.7; summed over 49 pages 520 to 670 ms. Idle CPU where off-screen loops
-  would run: input-message 1.8 to 49.7%, showcase 44 to 87%. The earlier `365f7c88` run agreed (sum 500 to 688). Remove
-  `cull.ts` and the paused loops only after #46 lands, and re-run that comparison first; the README "Culling" gap row
-  carries the same numbers. Costs of keeping it: a culled region has no bounds (screenshot scenarios call
-  `shot.reveal` first), and the changelog Releases jump has to re-aim, below.
+  because any signal a loop sets redraws the whole window. The earlier decision was to remove it once #46 landed
+  and to re-run the removal comparison first; that comparison was re-run on `b03d4e27` and culling stays.
+  - *Method.* Live `pnpm perf` at load average 1.4-3.1, two alternating pairs of runs, culling on against off (the
+    `IntersectionObserver` effect disabled). Idle CPU and sidebar-sweep draw p95 are both read, since they regress
+    independently.
+  - *Result.* Off was worse on 9 pages and better on none. Showcase idle CPU 45 to 80% and p95 5.5 to 11.1 ms;
+    input-message idle 3.3 to 51.5%; fluid-hover idle 37 to 55% and p95 4.1 to 7.3 ms; changelog idle 37 to 46% and
+    p95 4.2 to 6.1 ms; scrollbars p95 4.1 to 11.6; ask-user-questions 5.0 to 9.3; audio-mixer 5.0 to 8.4;
+    command-menu 4.9 to 7.2; scroll-area 10.8 to 12.0. Summed over 49 pages, idle CPU 464 to 575 and p95 244 to 274 ms.
+  - *What changed since `e5231304`.* There every page's p95 with culling was 10-25 ms and removing it took changelog
+    from 10.9 to 26.6 ms and command-menu from 16.7 to 37.4 (sum 520 to 670); now p95 is about 4-5 ms with culling and
+    the gap from removal is smaller in absolute terms (summed p95 +30 ms against +150 before) but still
+    one-directional. The old and new absolute numbers are not comparable: different pin and different load.
+  - Costs of keeping it: a culled region has no bounds (screenshot scenarios call `shot.reveal` first), and the
+    changelog Releases jump has to re-aim, below. The README "Culling" gap row carries the same numbers.
 - **The changelog Releases jump re-aims while culled entries un-pin.** A jump computes its target while the entries
   above the month are pinned at their culled heights. They un-pin to their real heights as the smooth scroll passes
   them and come out a few px taller, so one scroll landed the month 4-5 px low (36-37 px under the top against the
@@ -225,38 +252,46 @@ is that on gpuix every element costs a frame whether or not it is visible, and e
   or the user scrolls away (`scripts/check-changelog-rail.tsx` pins it). It only runs while a jump is in flight, so
   idle and sweep cost did not change. It is an approximation of the source's single `scrollIntoView`, recorded in
   `drift/site.md`.
-- **Fluid hover keeps its cached container box (`src/lib/fluid-hover.ts`).** Every `getBoundingClientRect` on gpuix
-  runs a layout pass (about 6 ms), so the box is read on resize, scroll, pointer enter and page scroll, and `pick`
-  reads the cache. Reading it live per pick looks safe because the call is documented as never stale, and it is not:
-  on pages whose previews autoplay a cursor, idle JS frame-callback time went from about 3 to 330-430 ms per second
-  (cached to live: changelog 3.0 to 328 ms/s, fluid-hover 3.9 to 376 ms/s) while sidebar-sweep draw p95 stayed
-  unchanged and draws still matched presents, so a sweep-only benchmark would have missed it. The cache is stale only
-  if the container moves with no resize, no scroll event it receives and no page scroll ([drift entry](../../drift/fluid-hover.md)).
+- **Fluid hover no longer caches its container box (reversed on `b03d4e27`, `13d7ae26`).** On `e5231304` every
+  `getBoundingClientRect` ran a layout pass of about 6 ms, and a live read per pick was not safe: on pages whose
+  previews autoplay a cursor, idle JS frame-callback time went from about 3 to 330-430 ms per second (cached to live:
+  changelog 3.0 to 328 ms/s, fluid-hover 3.9 to 376 ms/s) while sidebar-sweep draw p95 stayed unchanged, so a
+  sweep-only benchmark would have missed it. The port cached the box and refreshed it on resize, scroll, pointer
+  enter and page scroll. On `b03d4e27` a bounds read after a paint-only write runs no layout pass (gpuix #47), and
+  the cache measured within noise against a live read, so it was dropped: `pick` reads the container's rect on every
+  pick, like the source's `use-fluid-hover.ts`, and `containerBox()` is a fresh read. What it bought is gone, and what
+  it cost was a staleness window (the container moving with no resize, no scroll event it receives and no page
+  scroll). Do not reintroduce a cache on the strength of the old 6 ms figure; if a future pin makes the read slow
+  again the symptom to watch is idle frame-callback time on autoplay pages, not sweep p95.
 
 The changelog's `width: '100%'` column wrappers, added on 2026-10-17 when nested auto-width flex columns cost ~1.9x
 per level (8 columns drew in 121 ms, 20 ms with the wrappers), were removed once gpuix #36 made that layout linear.
 The removal measured no change (changelog sweep draw p95 10.9 to 11.0 ms), so they are not a perf decision to
 restore.
 
-### StableLabel's second ghost: what it costs and what did not help
+### StableLabel's second ghost: what it cost and what did not help
 
-Measured on gpuix `5fda771a` (sidebar-sweep draw p95, with and without the second hidden copy; `pnpm perf`, numbers
-not committed): **+1.0-1.7 ms p95 and about +0.1 ms p50 on every page measured.** The earlier figure of about 1.5 ms
-on `365f7c88` still holds, so it is not a stale-measurement artifact. Where it goes: a hidden `<text>` costs about
-2 us on a frame that replays its label and 15-19 us on a frame that builds it, and the slow ~19% of live sweep draws
-are the builds. So the cost is paid on frames that rebuild the tree, not on replayed ones. The decision is to pay it:
-the box must not change width when the weight changes.
+On gpuix `b03d4e27` the second hidden copy is **within noise**: seven sidebar pages, three alternating runs each, sweep
+draw p95 -0.35 to +0.30 ms and p50 at most 0.1 ms, except 0.5 ms on radio-group. On `5fda771a` the same comparison
+showed **+1.0-1.7 ms p95 and about +0.1 ms p50 on every page measured**, which is why the label once dropped to one
+ghost (`6ad107a`, measured about 1.5 ms on `365f7c88`). The README and the doc comment credit gpuix #46 and #58: an
+`opacity: 0` text paints nothing, and hidden labels are not re-measured. The decision to keep two ghosts did not
+change, because the reason was never the cost: the box must not change width when the weight changes, and
+`check-weight-widths` needs the wider of the normal and semibold copies. What changed is that nobody should drop the
+second ghost for speed any more.
 
-Two things that look like cures and are not:
+What was learned on `5fda771a` and is worth keeping in case the cost returns: a hidden `<text>` cost about 2 us on a
+frame that replays its label and 15-19 us on a frame that builds it, and the slow ~19% of live sweep draws were the
+builds, so the cost was paid on frames that rebuilt the tree. Two things looked like cures and were not:
 
 - **`inline-grid` to `grid` on the label wrapper was tried and reverted: no gain.** The label sits in flex rows, so
-  its items are blockified and retained either way. The cost is not an atomic-inline exclusion from retention.
-- **The text is not re-shaped** each frame, so it is not a measurement cost either. gpuix has no text-measure API,
+  its items are blockified and retained either way.
+- **The text is not re-shaped** each frame, so it was not a measurement cost either. gpuix has no text-measure API,
   so a hidden copy is the only way to hold the wider width.
 
 The numbers and a reproduction live outside the repository, in the author's notes
 `~/.claude/notes/ff-gpuix-repros/` (`r2-hidden-text-cost.md`, `r3-hidden-text-rebuilt-frames.md`); they are not
-repository files and may not exist on another machine. The reasoning also sits in `stable-label.tsx`'s doc comment.
+repository files and may not exist on another machine. The `b03d4e27` result is in `stable-label.tsx`'s doc comment.
 
 ### JS frame-clock loops moved to gpuix native animation
 
@@ -274,16 +309,33 @@ renderer and cost no JS per frame. The reasons to prefer it, and the traps:
   carousel; thinking-steps 70.9 to 69.2%).
 - **It runs at display rate.** The old thinking indicator ran at 30 frames a second; native animations run at the
   display's 75 Hz with no throttle, so the saving there is the cheaper draw only, not fewer frames.
-- **No pause, play or seek on a gpuix animation** (only `stop()`, `cancel()`, `complete()`). Every pause is
+- **No pause, play or seek on a motion value's animation** (only `stop()`, `cancel()`, `complete()`;
+  `getAnimations()` covers CSS `animation` and `transition` runs only, not `motion.*`). Every pause is
   `stop()` followed by a new `animate()` from the current value for the time left. That is exact for a linear
   animation and is how the carousel fill, the plain-vs-fluid cursor (a linear 0 to 1 progress value whose keyframes
   live in a range-form `createTransform`) and the script cursors pause. It also fixed a bug of the JS carousel: its
   restart effect tracked the options object, so hovering the slide reset the fill to 0, where the source holds it.
-- **CSS keyframes cannot drive every property.** The file-thumbnail spinner is a `motion.circle` sliding
-  `strokeDashoffset`, not a CSS animation, because keyframes take style properties and not SVG attributes. The
-  thinking-indicator shimmer is per-letter colour keyframes (`defineKeyframes`) because `background-position` is not
+- **Pick the animation kind by what the property is.** The file-thumbnail spinner is a `motion.circle` sliding
+  `strokeDashoffset`, because on `5fda771a` keyframes took style properties and not SVG attributes. That limit is
+  gone on `b03d4e27`: the button's loading spinner (`615fd85c`) is the source's `spinner-move` and `spinner-dash`
+  keyframes (`strokeDashoffset`, `strokeDasharray`) on a `pathLength` 100 path, drawn on the source's infinity path,
+  36 px (28 compact), stroke 1.125, and a culled button holds the first frame. The file-thumbnail spinner stayed as it
+  is because its only remaining gap is the missing rotate transform. The thinking-indicator shimmer is per-letter colour keyframes (`defineKeyframes`) because `background-position` is not
   animatable; the glyph is a `motion.path` morphing `d`; the word cycle is still a 4 s `setInterval`. Culled
   regions mount a still copy, and the hidden width-reserving copy plays nothing, so nothing animates off screen.
+- **Stroke draws use `CheckMark`, not keyframes.** Also on `b03d4e27`, the menu-item check (`1fff79c0`) and the
+  input-copy check and cross (`c3db5af1`) draw and retract through `CheckMark` (`motion.path` on `pathLength`)
+  instead of fading in. `CheckMark` gained a `viewBox`, `drawOnMount` and a colour `fade`, because input-copy draws
+  the source's own paths in a 20 x 16 box shown at 14 px, starts undrawn, and fixes the button variant's stroke at 2
+  while only the copy icon eases with hover. Drift: the menu-item entry now records only the always-reserved check
+  slot, and input-copy only the missing scale-in.
+- **A looping native animation is not free on a heavy page.** It replays the whole page per tick (gpuix's
+  per-replayed-root cost): one looping colour keyframe on one text took 7 ms a tick at 3000 nodes and about 60 ms at
+  12000, against 0.1 ms with nothing animating, so a page with a running loop idles at 37-45% CPU (carousel-dots,
+  file-thumbnail, thinking-indicator, thinking-steps, queued-stack, showcase, fluid-hover, changelog). This is why
+  culling also pauses the loops. On `5fda771a` such a loop could starve Bun's timers outright; as of `b03d4e27`
+  timers run between ticks (9-10 callbacks a second at 3000 nodes, 7-8 at 12000; gpuix #56), so a hung perf or check
+  run under load is no longer expected to be this.
 - **Who still uses `onFrame`, and why** is recorded in the doc comment of `src/lib/clock.ts`: thinking-steps'
   chevron (the source's `rotate` is a transform gpuix cannot animate), the fluid-hover lists demo (re-measures rows
   while a sub-menu springs), and the cost meter (reads the clock's gaps as its stall probe). Do not add a new
@@ -356,14 +408,12 @@ Two things from the 2026-10-19 round (`a2eed755`, `ce7ee2b9`, `d9d2e93e`):
   card rows 34 px apart, the native-animation phases, `StableLabel` widths) and leaves noise-only files alone
   (changelog, compare). The nine `playground-shuffled` captures are redone in their own commit, because their
   random variant makes the diff noisy and their sidebar must sit at the same y as every other capture.
-- **`reveal()` in a demo's scenarios must not read "the element did not move" as "the page ended".** Each
-  tall-page demo has its own copy that scrolls an element into the upper part of the window. The old copy returned
-  when the element's y equalled the previous attempt's, but a wheel can land without moving the page, so a capture
-  could be taken with the element still off-screen and a wrong image committed. `banner.tsx` now counts
-  consecutive stalls (up to 12 attempts) and throws `scrolling did not move <testId>` on the third. Accordion,
-  button, card, combobox, dropdown, select and sidebar demos still carry the old `y === previous` shortcut, so a
-  capture of an element far down those pages can silently be taken unscrolled; when one looks wrong, suspect the
-  stall first and port the banner's version rather than rerunning.
+- **A scroll helper must not read "the element did not move" as "the page ended".** The old per-demo copies
+  returned when the element's y equalled the previous attempt's, but a wheel can land without moving the page, so a
+  capture could be taken with the element still off-screen and a wrong image committed. `scrollNearTop` in
+  `src/lib/demo-kit.tsx` (`96dbbaea`, which replaced eight local copies) now counts consecutive wheels that moved
+  nothing, up to 12 attempts, and throws `scrolling did not move <testId>` on the third; reaching the page end is
+  the only legitimate early return. Use it for any demo scenario that scrolls an element into view.
 
 ## pnpm wiring: one solid-js, one @gpuix/solid
 
