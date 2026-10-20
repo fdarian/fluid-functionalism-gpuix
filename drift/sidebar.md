@@ -102,7 +102,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `not ported yet`.
 - **Original:** the container's `onClick` is the fluid-hover handler: a click on the gutter, the sub-menu's `ml-15` strip or any padding presses the row the highlight sits on (`sidebar-menu.tsx:568`, `use-fluid-hover`).
-- **Port:** the container wires `containerProps` (enter / move / leave only), so a click off a row does nothing (`src/components/sidebar.tsx:245`, `src/lib/fluid-hover.ts:271-278`). The hover can still sit on a row while the click falls through.
+- **Port:** the container wires `containerProps` (enter / move / leave only), so a click off a row does nothing (`src/components/sidebar.tsx:245`, `src/lib/fluid-hover.ts:277-284`). The hover can still sit on a row while the click falls through.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** every fluid-hover list (README lists `gapClick` as not ported).

@@ -107,7 +107,7 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 
 - **Cause:** `gpuix gap` (a bounds read runs a layout pass).
 - **Original:** `pick` reads `container.getBoundingClientRect()` on every pointer move (`registry/default/hooks/use-fluid-hover.ts:471`), which the browser answers from its already-computed layout.
-- **Port:** the container's box is cached and refreshed on resize, scroll and pointer enter, and when the page scroller moves (`src/lib/fluid-hover.ts:125-137`, `:149-153`, `:170-176`, `:230-233`); `pick` reads the cache (`:181`). Demos that need the box per move read `hover.containerBox()` (`:256-262`).
+- **Port:** the container's box is cached and refreshed on resize, scroll and pointer enter, and when the page scroller moves (`src/lib/fluid-hover.ts:137-149`, `:161-165`, `:176-182`, `:236-239`); `pick` reads the cache (`:187`). Demos that need the box per move read `hover.containerBox()` (`:262-268`).
 - **gpuix lacks:** a bounds read that costs nothing. Every `getBoundingClientRect` runs a layout pass, about 6 ms. Measured on gpuix `poc` e5231304: reading the box live made the idle JS frame-callback time on pages whose previews autoplay a cursor go from about 3 to 330-430 ms per second (changelog 3.0 to 328, fluid-hover 3.9 to 376; draws still matched presents).
 - **Workaround:** the cache. It is stale only if the container moves without a resize, a scroll event it receives or a page scroll, which the port does not see.
 - **Fidelity:** exact in effect.
