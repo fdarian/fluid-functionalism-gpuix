@@ -49,7 +49,7 @@ bun scripts/perf.tsx [slug...] --label name   # live frame times per page, idle 
 <summary>How gpuix and base-ui-solid-gpuix are wired in</summary>
 
 - **gpuix.** `@gpuix/native` and `@gpuix/solid` come from the fork at `~/code/fdarian/gpuix`: native is a `link:`, solid is a
-  `file:` copy. The fork must be at `poc` 5fda771a or later: the highlights and popups use its native `motion` springs, and the table, `inline-*`, container query, `has*` and `fit-content` layouts, and the variable-font weights, `outlineStyle`, `textWrap`, `textBox` trim and `calc()` motion values are its features,
+  `file:` copy. The fork must be at `poc` b03d4e27 or later (since it, `getBoundingClientRect`, `ResizeObserver`, `IntersectionObserver` and `onLayout` return fractional 1/64 px values, like Chrome; `client*` and `scroll*` stay integers): the highlights and popups use its native `motion` springs, and the table, `inline-*`, container query, `has*` and `fit-content` layouts, and the variable-font weights, `outlineStyle`, `textWrap`, `textBox` trim and `calc()` motion values are its features,
   so rebuild the addon and the `@gpuix/solid` dist after pulling it (see the fork's `FORK.md`, "Building"), then run
   `pnpm install` here to refresh the copy. The Solid JSX transform is a Bun preload (`bunfig.toml`), so there is no
   build step.
