@@ -102,28 +102,36 @@ const DRAW_IN = { duration: 0.08, ease: 'easeOut' } as const;
 const DRAW_OUT = { duration: 0.04, ease: 'easeIn' } as const;
 
 /**
- * A check whose stroke draws in and retracts as `checked` flips. The path is
- * always mounted and starts at its current state, so a row that is checked
- * on mount shows the finished check. Opacity only hides the zero-length dot
+ * A check, or any short stroke mark, whose stroke draws in and retracts as
+ * `checked` flips. The path is always mounted and starts at its current
+ * state, so a row that is checked on mount shows the finished check, unless
+ * `drawOnMount` starts it undrawn. Opacity only hides the zero-length dot
  * that a round cap leaves at `pathLength: 0`, switching at the end of the
- * retract and the start of the draw.
+ * retract and the start of the draw. A change of `strokeWidth` eases over 80 ms.
  */
 export function CheckMark(props: {
 	checked: boolean;
 	size: number;
 	strokeWidth: number;
 	color: string;
-	/** A path in a 24 x 24 box, drawn from its first point. */
+	/** A path in the viewBox, drawn from its first point. */
 	path: string;
+	/** Defaults to a 24 x 24 box. */
+	viewBox?: string;
+	/** Draw in when mounted instead of showing the finished mark. */
+	drawOnMount?: boolean;
+	/** Ease a colour change over 80 ms. */
+	fade?: boolean;
 }) {
 	return (
 		<svg
-			viewBox="0 0 24 24"
+			viewBox={props.viewBox ?? '0 0 24 24'}
 			style={{
 				width: props.size,
 				height: props.size,
 				flexShrink: 0,
 				color: props.color,
+				...(props.fade === true ? colorFade : {}),
 			}}
 		>
 			<motion.path
@@ -133,17 +141,27 @@ export function CheckMark(props: {
 				strokeWidth={props.strokeWidth}
 				strokeLinecap="round"
 				strokeLinejoin="round"
-				initial={false}
+				initial={
+					props.drawOnMount === true
+						? { pathLength: 0, opacity: 0, strokeWidth: props.strokeWidth }
+						: false
+				}
 				animate={{
 					pathLength: props.checked ? 1 : 0,
 					opacity: props.checked ? 1 : 0,
+					strokeWidth: props.strokeWidth,
 				}}
 				transition={
 					props.checked
-						? { pathLength: DRAW_IN, opacity: { duration: 0 } }
+						? {
+								pathLength: DRAW_IN,
+								opacity: { duration: 0 },
+								strokeWidth: STROKE_EASE,
+							}
 						: {
 								pathLength: DRAW_OUT,
 								opacity: { duration: 0, delay: DRAW_OUT.duration },
+								strokeWidth: STROKE_EASE,
 							}
 				}
 			/>

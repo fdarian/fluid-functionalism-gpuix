@@ -7,8 +7,7 @@ import {
 	onCleanup,
 	Show,
 } from 'solid-js';
-import { Icon } from '#/lib/icon';
-import type { IconRef } from '#/lib/icons';
+import { CheckMark, Icon } from '#/lib/icon';
 import {
 	color,
 	colorFade,
@@ -29,6 +28,10 @@ const TOOLTIP_DELAY_MS = 500;
 const MARK = 'rgba(107,151,255,0.2)';
 const MARK_REST = 'rgba(107,151,255,0)';
 const MONO = 'Menlo';
+/** The source draws its own check and cross, in a 20 x 16 box shown at 14px (scale 0.7). */
+const RESULT_BOX = '2 4 20 16';
+const CHECK_PATH = 'M6 12L10 16L18 8';
+const CROSS_PATH = 'M9 9L15 15M15 9L9 15';
 
 type Status = 'idle' | 'copied' | 'error';
 type TooltipMode = 'idle' | 'copied' | 'suppressed';
@@ -139,22 +142,12 @@ export function InputCopy(props: {
 		return status() === 'error' ? 'Copy failed' : 'Copied';
 	};
 
-	const glyph = (): { name: IconRef; color: string } => {
-		switch (status()) {
-			case 'error':
-				return { name: 'x', color: color.destructive };
-			case 'copied':
-				return {
-					name: 'check',
-					color: hovered() ? color.foreground : color.mutedForeground,
-				};
-			case 'idle':
-				return {
-					name: 'copy',
-					color: hovered() ? color.foreground : color.mutedForeground,
-				};
-		}
-	};
+	const glyphColor = () =>
+		status() === 'error'
+			? color.destructive
+			: hovered()
+				? color.foreground
+				: color.mutedForeground;
 	const label = () => {
 		switch (status()) {
 			case 'error':
@@ -172,16 +165,31 @@ export function InputCopy(props: {
 				? color.foreground
 				: color.mutedForeground;
 
-	const icon = () => (
-		<Icon
-			name={glyph().name}
-			size={step().icon}
-			strokeWidth={hovered() ? 2 : 1.5}
-			easeStroke
-			fade
-			color={glyph().color}
-		/>
-	);
+	/** The source fixes the button variant's check and cross at 2; only the copy icon follows the hover. */
+	const resultStroke = () => (variant() === 'button' || hovered() ? 2 : 1.5);
+
+	const icon = () =>
+		status() === 'idle' ? (
+			<Icon
+				name="copy"
+				size={step().icon}
+				strokeWidth={hovered() ? 2 : 1.5}
+				easeStroke
+				fade
+				color={glyphColor()}
+			/>
+		) : (
+			<CheckMark
+				checked
+				drawOnMount
+				fade
+				viewBox={RESULT_BOX}
+				path={status() === 'error' ? CROSS_PATH : CHECK_PATH}
+				size={step().icon}
+				strokeWidth={resultStroke()}
+				color={glyphColor()}
+			/>
+		);
 
 	const action = () => (
 		<div

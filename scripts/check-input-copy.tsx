@@ -10,6 +10,7 @@
  * - Enter while the tooltip is open from keyboard focus closes it, as the source does.
  * - The compact row is 26px tall (4 + 18 + 4), the default row 36px.
  * - Hovering the row eases the value's tint in over 80 ms.
+ * - The copied check draws in from its first point.
  * - A press writes the value to `navigator.clipboard`; a refused write shows "Failed".
  */
 import { createTestRoot } from '@gpuix/solid/testing';
@@ -304,6 +305,51 @@ report(
 		ringMiddle > ringRest &&
 		ringMiddle < ringRest + 0.6 * (ringFocused - ringRest),
 	`rest ${ringRest}, 16 ms ${ringMiddle}, end ${ringFocused}`,
+);
+
+// The check draws from its first point: 16 ms into the 80 ms draw the stroke has not reached the right half of the glyph, where the finished check has its second, longer segment. A fade alone would scale both halves alike, so the share of ink on the right tells a draw from a fade.
+await reset();
+function glyphHalves() {
+	renderer.captureScreenshot(`/tmp/check-input-copy-draw-${process.pid}.png`);
+	const pixels = readPng(`/tmp/check-input-copy-draw-${process.pid}.png`);
+	const edge = rowBox.x + rowBox.width;
+	const top = Math.round(rowBox.y + 4);
+	const bottom = Math.round(rowBox.y + rowBox.height - 4);
+	const ground = pixels.at(Math.round(edge - 36), top);
+	const half = (from: number, to: number) => {
+		let ink = 0;
+		for (let y = top; y < bottom; y++)
+			for (let x = Math.round(from); x < Math.round(to); x++) {
+				const pixel = pixels.at(x, y);
+				ink +=
+					Math.abs(pixel[0] - ground[0]) +
+					Math.abs(pixel[1] - ground[1]) +
+					Math.abs(pixel[2] - ground[2]);
+			}
+		return ink;
+	};
+	return { left: half(edge - 20, edge - 13), right: half(edge - 13, edge - 6) };
+}
+renderer.clockPause();
+renderer.nativeSimulateMouseMove(subject.x - 40, subject.y);
+renderer.nativeSimulateMouseMove(subject.x - 41, subject.y);
+step(0);
+step(400);
+renderer.nativeSimulateMouseDown(subject.x - 41, subject.y);
+renderer.nativeSimulateMouseUp(subject.x - 41, subject.y);
+// The copy settles on a promise, so it needs a real turn before the clock is stepped.
+await sleep(50);
+step(0);
+step(16);
+const drawing = glyphHalves();
+step(400);
+const drawn = glyphHalves();
+renderer.clockResume();
+report(
+	'the check draws from its first point',
+	drawn.right > 0 &&
+		drawing.right / (drawing.left + 1) < 0.3 * (drawn.right / drawn.left),
+	`16 ms left ${drawing.left} right ${drawing.right}, end left ${drawn.left} right ${drawn.right}`,
 );
 
 test.unmount();
