@@ -8,10 +8,9 @@
  *    Chromium, measuring the same `InterVariable.ttf` and tokens, does not
  *    reproduce that: Analytics grows 1.05 px, FLUID FUNCTIONALISM REGISTRY DEPLOY
  *    shrinks 1.13 px. So the assertion is that gpuix's delta equals the
- *    browser's; how many strings the source's claim misses is printed. Bounds
- *    snap to whole pixels, so each string is laid out at 130 px (the tokens set
- *    `opsz` explicitly, so advances scale linearly) and the width difference is
- *    divided by 10: 0.1 px resolution.
+ *    browser's; how many strings the source's claim misses is printed. Each
+ *    string is measured at 13 px, as rendered: gpuix's bounds are fractional
+ *    (1/64 px), like the browser's.
  *
  * B. In the components. Each one that renders a `StableLabel` is mounted through
  *    its demo page (so Inter Variable applies) and clicked until labels go
@@ -112,11 +111,13 @@ const BROWSER_DELTAS: Record<
 	'2–10 · 11–50 · 50+ people': [-0.69, -2.91],
 };
 
-/** The two whole-pixel snaps of a width each cost up to 0.5 px, divided by the 10x scale. */
-const PARITY_TOLERANCE_PX = 0.2;
+/**
+ * The worst difference measured against the browser's table is 0.018 px: the table is rounded to 0.01 px
+ * and gpuix's widths to 1/64 px (0.016), each width of the pair carrying its own rounding.
+ */
+const PARITY_TOLERANCE_PX = 0.03;
 /** What the source's font-weight.ts claims for semibold. */
 const SOURCE_CLAIM_PX = 0.4;
-const SCALE_UP = 10;
 const [probe, setProbe] = createSignal<string>(CORPUS[0]);
 const partA = await createCheck(
 	() => (
@@ -126,8 +127,8 @@ const partA = await createCheck(
 				flexDirection: 'column',
 				alignItems: 'flex-start',
 				fontFamily,
-				fontSize: 130,
-				lineHeight: '150px',
+				fontSize: 13,
+				lineHeight: '15px',
 			}}
 		>
 			{(['normal', 'semibold', 'bold'] as const).map((name) => (
@@ -144,7 +145,7 @@ const partA = await createCheck(
 			))}
 		</div>
 	),
-	{ width: 6000, height: 520 },
+	{ width: 700, height: 60 },
 );
 
 type Row = { text: string; semibold: number; bold: number };
@@ -155,8 +156,8 @@ for (const text of CORPUS) {
 	const normal = partA.bounds('probe-normal').width;
 	rows.push({
 		text,
-		semibold: (partA.bounds('probe-semibold').width - normal) / SCALE_UP,
-		bold: (partA.bounds('probe-bold').width - normal) / SCALE_UP,
+		semibold: partA.bounds('probe-semibold').width - normal,
+		bold: partA.bounds('probe-bold').width - normal,
 	});
 }
 
@@ -165,7 +166,7 @@ console.log('  semibold         bold            chars  text');
 for (const row of rows) {
 	const browser = BROWSER_DELTAS[row.text as (typeof CORPUS)[number]];
 	const cell = (gpuix: number, reference: number) =>
-		`${gpuix.toFixed(1).padStart(5)} (${reference.toFixed(2).padStart(5)})`;
+		`${gpuix.toFixed(2).padStart(5)} (${reference.toFixed(2).padStart(5)})`;
 	console.log(
 		`  ${cell(row.semibold, browser[0])}  ${cell(row.bold, browser[1])}  ${row.text.length.toString().padStart(3)}    ${row.text}`,
 	);
@@ -187,7 +188,7 @@ for (const row of rows) {
 	partA.check(
 		`semibold delta matches the browser: ${row.text}`,
 		Math.abs(row.semibold - reference) <= PARITY_TOLERANCE_PX,
-		`gpuix ${row.semibold.toFixed(1)}, browser ${reference.toFixed(2)}`,
+		`gpuix ${row.semibold.toFixed(2)}, browser ${reference.toFixed(2)}`,
 	);
 }
 let failures = partA.unmount();
