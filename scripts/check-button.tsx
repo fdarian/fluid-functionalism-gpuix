@@ -4,6 +4,8 @@
  *
  *   bun scripts/check-button.tsx
  *
+ * The loading spinner draws: its dash slides along the outline and grows and shrinks over the 4 s dash cycle.
+ *
  * The motion clock is held and stepped by hand, so a slow frame cannot skip the middle of the 80 ms.
  */
 import { Button } from '#/components/button';
@@ -23,6 +25,9 @@ const k = await createCheck(
 			</Button>
 			<Button testId="primary" variant="primary">
 				Primary
+			</Button>
+			<Button testId="loading" variant="secondary" loading>
+				Loading
 			</Button>
 		</div>
 	),
@@ -128,6 +133,63 @@ for (const id of ['ghost', 'tertiary']) {
 		'primary release: the fill edge returns to the outer pixel',
 		sum('primary', -1, 18) === before,
 		`rest ${before}, released ${sum('primary', -1, 18)}`,
+	);
+}
+
+{
+	// spinner-move runs 2 s and spinner-dash 4 s, so after 4 s both are back where they began. The dash grows from 15 to 40 of
+	// 100 in between. The animation started at mount, so the cycle is read from whatever phase the clock is in.
+	const box = k.bounds('loading');
+	// Inside the surface, so the ink is measured against the button's own fill.
+	const spinner = {
+		x: box.x + box.width / 2 - 14,
+		y: box.y + box.height / 2 - 9,
+		width: 28,
+		height: 18,
+	};
+	const frame = () => {
+		renderer.captureScreenshot(PATH);
+		return readPng(PATH);
+	};
+	const differs = (
+		a: ReturnType<typeof frame>,
+		b: ReturnType<typeof frame>,
+	) => {
+		let changed = 0;
+		for (let y = Math.round(spinner.y); y < spinner.y + spinner.height; y++)
+			for (let x = Math.round(spinner.x); x < spinner.x + spinner.width; x++)
+				if (
+					a.at(x, y).some((channel, i) => Math.abs(channel - b.at(x, y)[i]) > 8)
+				)
+					changed++;
+		return changed;
+	};
+	step(0);
+	const start = frame();
+	const inks = [k.ink(spinner)];
+	step(250);
+	const quarter = frame();
+	inks.push(k.ink(spinner));
+	for (let elapsed = 500; elapsed < 4000; elapsed += 250) {
+		step(250);
+		inks.push(k.ink(spinner));
+	}
+	step(250);
+	const cycle = frame();
+	k.check(
+		'loading spinner: the dash moves in a quarter second',
+		differs(start, quarter) > 5,
+		`${differs(start, quarter)} pixels changed`,
+	);
+	k.check(
+		'loading spinner: the dash grows and shrinks over the cycle',
+		Math.max(...inks) > Math.min(...inks) * 1.8,
+		`ink from ${Math.min(...inks)} to ${Math.max(...inks)}`,
+	);
+	k.check(
+		'loading spinner: back where it began after the 4 s cycle',
+		differs(start, cycle) < 8,
+		`${differs(start, cycle)} pixels changed`,
 	);
 }
 renderer.clockResume();

@@ -1,11 +1,13 @@
 import {
 	buttonProps,
+	defineKeyframes,
 	type HostMouseEvent,
 	type HostPointerEvent,
 	type StateStyleDesc,
 	useGpuixRequired,
 } from '@gpuix/solid';
 import { type Accessor, createSignal, type JSX, Show } from 'solid-js';
+import { useOnScreen } from '#/lib/cull';
 import { Icon } from '#/lib/icon';
 import type { IconRef } from '#/lib/icons';
 import { PressFill, pressSurface } from '#/lib/press';
@@ -113,6 +115,49 @@ const ringSurface = (): StateStyleDesc & {
 		outlineOffset: -1,
 	},
 });
+
+const SPINNER_PATH =
+	'M 12 12 C 14 8.5 19 8.5 19 12 C 19 15.5 14 15.5 12 12 C 10 8.5 5 8.5 5 12 C 5 15.5 10 15.5 12 12 Z';
+
+/** `spinner-move` and `spinner-dash` of `app/globals.css`, with the source's names; gpuix scales the dashes by the path's `pathLength`. */
+defineKeyframes('spinner-move', { to: { strokeDashoffset: -100 } });
+defineKeyframes('spinner-dash', {
+	'0%': { strokeDasharray: '15 85' },
+	'50%': { strokeDasharray: '40 60' },
+	'100%': { strokeDasharray: '15 85' },
+});
+
+/** Reduced motion is not honoured, as in the source. A culled button holds the first frame. */
+function Spinner(props: { size: number; color: string }) {
+	const onScreen = useOnScreen();
+	return (
+		<svg
+			viewBox="0 0 24 24"
+			style={{
+				width: props.size,
+				height: props.size,
+				flexShrink: 0,
+				color: props.color,
+				...colorFade,
+			}}
+		>
+			<path
+				d={SPINNER_PATH}
+				fill="none"
+				stroke="currentColor"
+				strokeWidth={1.125}
+				strokeLinecap="round"
+				pathLength={100}
+				strokeDasharray="15 85"
+				style={{
+					animation: onScreen()
+						? 'spinner-move 2s linear infinite, spinner-dash 4s ease-in-out infinite'
+						: 'none',
+				}}
+			/>
+		</svg>
+	);
+}
 
 export function Button(props: {
 	variant?: ButtonVariant;
@@ -306,13 +351,7 @@ export function Button(props: {
 							justifyContent: 'center',
 						}}
 					>
-						<Icon
-							name="loader"
-							size={size().icon}
-							strokeWidth={1.5}
-							fade
-							color={labelColor()}
-						/>
+						<Spinner size={size().height} color={labelColor()} />
 					</div>
 				</Show>
 			</div>

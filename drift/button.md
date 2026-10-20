@@ -3,13 +3,13 @@
 Original: `registry/base/button.tsx` (Base UI `Button`; the docs page imports the Radix twin, which looks the same), demo in `app/docs/button/page.tsx` of the source
 (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/button.tsx` (with `src/lib/press.tsx`), demo in `src/demos/button.tsx`.
 
-Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8 with an icon), gaps (6 / 4), type (13/20, 12/18), icon sizes (16 / 14) and stroke (1.5, 2 on hover), colours in both schemes (the `color-mix()` hovers resolve to `#292929` / `#3d3d3d` light and `#dcdcdc` / `#c3c3c3` dark, checked), the focus ring (offset 1 from the inset surface lands on the source's 1px ring outside the button), disabled (0.5 opacity, no pointer, not tabbable), loading as disabled, Enter and Space activation, and the label hover colour of ghost.
+Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8 with an icon), gaps (6 / 4), type (13/20, 12/18), icon sizes (16 / 14) and stroke (1.5, 2 on hover), colours in both schemes (the `color-mix()` hovers resolve to `#292929` / `#3d3d3d` light and `#dcdcdc` / `#c3c3c3` dark, checked), the focus ring (offset 1 from the inset surface lands on the source's 1px ring outside the button), disabled (0.5 opacity, no pointer, not tabbable), loading as disabled, the loading spinner (36 / 28 px infinity path, stroke 1.125, `spinner-move` 2s and `spinner-dash` 4s on the source's `pathLength` 100 dashes, held while the button is culled, reduced motion not honoured as in the source; `src/components/button.tsx:119-160`, `scripts/check-button.tsx`), Enter and Space activation, and the label hover colour of ghost.
 
 ## A held Space does not press the button
 
 - **Cause:** `gpuix gap`.
 - **Original:** a native `<button>` matches `:active` while Space is held, so the press-shrink (`group-active:`, `registry/base/button.tsx:115-127`) plays for a keyboard activation too.
-- **Port:** the pressed look is `style.active` (`src/components/button.tsx:238`); Space still activates on key-up through `buttonProps` (`:195-198`).
+- **Port:** the pressed look is `pressSurface` and the tertiary `ringSurface` (`src/components/button.tsx:307-308`); Space still activates on key-up through `buttonProps` (`:269-273`).
 - **gpuix lacks:** a keyboard `:active` state. `active` styles come from the pointer's press chain only (`~/code/fdarian/gpuix/FORK.md:317-319`). Rechecked on the test renderer: with a focused `buttonProps` element carrying `active: { backgroundColor }`, the capture while `nativeSimulateKeyDown(id, "Space")` is held is byte-identical to the resting one.
 - **Workaround:** none.
 - **Fidelity:** approximated: the activation is exact, the pressed look is missing for the keyboard.
@@ -26,15 +26,6 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 - **Fidelity:** exact in colour and geometry at rest and pressed; the shrink steps instead of easing. The tertiary ring's press move is instant (a transition on `outline-offset` would also ease the focus ring's offset when the button gains keyboard focus, which the source does not).
 - **Components it hits:** every filled `Button`, the composer's send button and the Skill page's "Button press" example (`CardButton` fills with plain `backgroundColor`, no ring).
 
-## Loading spinner is a static glyph
-
-- **Cause:** `not ported yet`.
-- **Original:** an infinity-shaped path in a 24 viewBox drawn at 36px (28px compact), `strokeDasharray` 15 85, `spinner-move 2s linear infinite` (dash offset to -100) and `spinner-dash 4s ease-in-out infinite` (dash 15 to 40), stroke 1.125 (`:199-201`, `:228-246`, `app/globals.css:998-1005`).
-- **Port:** the `loader` glyph of the Icons row's library (lucide spokes by default) at the icon size (16 / 14), stroke 1.5, no motion (`src/components/button.tsx:285-318`, `src/lib/icons/lucide.ts:21`).
-- **Workaround:** none. README calls this "Dropped" but it needs no transform: gpuix animates SVG `strokeDasharray` / `strokeDashoffset` with repeating keyframes (`FORK.md:1144-1145`, `:1151-1152`), and `file-thumbnail.tsx` already draws a moving arc.
-- **Fidelity:** dropped.
-- **Components it hits:** just this one.
-
 ## Keyboard auto-repeat of Enter
 
 - **Cause:** `port choice` (the port uses gpuix `buttonProps`; `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:186` decides to leave it).
@@ -48,7 +39,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `port choice` (out of scope per the lead's decision, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:177`).
 - **Original:** `active` forces the pressed look while a menu the button opened is showing (`:99-102`, `:130-141`); `asChild` / `render` make another element the root (`:86-95`, `:163-186`, `:290-302`); `sm` / `md` / `lg` / `icon-sm` / `icon-lg` resolve onto the ladder (`:61-78`).
-- **Port:** none of them (`src/components/button.tsx:95-118`). A dropdown trigger does not look engaged while its menu is open.
+- **Port:** none of them (`src/components/button.tsx:162-183`). A dropdown trigger does not look engaged while its menu is open.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** every popup trigger that is a `Button` (dropdown, select).
@@ -66,7 +57,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `size="icon"` renders `children` (any element, usually an icon) inside the label wrapper (`:248-251`).
-- **Port:** the glyph is the `icon` prop and `children` is ignored for icon sizes (`src/components/button.tsx:159-179`); `trailingContent` is a port-only slot for a keycap (`:113-114`).
+- **Port:** the glyph is the `icon` prop and `children` is ignored for icon sizes (`src/components/button.tsx:225-250`); `trailingContent` is a port-only slot for a keycap (`:181`).
 - **Workaround:** n/a.
 - **Fidelity:** exact in look.
 - **Components it hits:** just this one.
