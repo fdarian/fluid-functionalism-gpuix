@@ -35,10 +35,10 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 
 ## "Blink or glide": the cursor moves on `left` / `top`, and a pass is a progress value
 
-- **Cause:** `gpuix gap` (no transforms: README "Missing features"; no pause / play on an animation, only `stop()`, `cancel()` and `complete()`).
+- **Cause:** `gpuix gap` (no transforms: README "Missing features"; a motion value's animation has no pause / play, only `stop()`, `cancel()` and `complete()`; CSS animations do through `getAnimations()`).
 - **Original:** one framer `animate(y, keyframes, { times, ease: "easeInOut", repeat: Infinity })` on a `MotionValue`, paused and resumed in place through its controls; the cursor is a `motion.span` on `x` / `y`, and `useMotionValueEvent(y, "change")` lights the plain row and feeds the fluid list a mouse move; the loop runs while `useInView(amount: 0.35)` and a visiting pointer pauses it (`demos.tsx:164-377`).
 - **Port:** the same three round trips (2 s, 0.8 s, 0.3 s legs) with the source's keyframes, times and `easeInOut`, played natively: a `progress` motion value (0 to 1) runs a linear `animate` with `repeat: Infinity`, and the cursor's y is a range-form `createTransform` of it (`src/pages/fluid-hover/plain-vs-fluid.tsx:43-53`, `:87-90`, `:119-139`), so a playing script costs no JS frame. The cursor is an absolutely positioned div whose `top` is that value (`src/pages/fluid-hover/parts.tsx:141-169`). A change listener on y does what the source's does, lighting the plain row (the signal is written only when the row changes) and feeding the fluid list a `mousemove` with window coordinates (`plain-vs-fluid.tsx:142-148`). Pausing (the button, reduced motion, a visiting pointer, out of view) `stop()`s the animation where it is, and the next play runs on from `progress` for the share of the pass left, then returns to looping whole passes, a frame or two late at that one handover. In view is an `IntersectionObserver` at threshold 0.35 against the page scroller. A pointer inside takes over through `onMouseEnter` / `onMouseMove` / `onMouseDown` on the demo's root and the script resumes on leave. The pause button's tooltip, icon swap and hold-the-frame behaviour match.
-- **gpuix lacks:** pause / play on an animation, so the source's one paused-and-resumed animation becomes `stop()` plus a new `animate()` from the value (exact, since `progress` is linear and the keyframes live in the transform).
+- **gpuix lacks:** pause / play on a motion value's animation (`getAnimations()` covers CSS `animation` and `transition` runs only, not `motion.*` or motion values), so the source's one paused-and-resumed animation becomes `stop()` plus a new `animate()` from the value (exact, since `progress` is linear and the keyframes live in the transform).
 - **Fidelity:** approximated (the cursor sits on `left` / `top`, not a transform; a resume is a new animation).
 - **Components it hits:** this page and the changelog's Fluid Hover preview, which renders the same stage.
 
@@ -98,20 +98,10 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 
 - **Cause:** `gpuix gap` (every element is laid out and painted even when a scroller clips it away: README "Missing features", culling row).
 - **Original:** no such step; the browser skips what is off screen.
-- **Port:** every `ComponentPreview` hides its content while more than 25% of a viewport from the page scroller and keeps the preview body's height, through the shared `createCulling` (`src/lib/cull.ts:53-105`, used at `src/lib/doc-page.tsx:413, 501, 509`), the same as `DemoCard`, the home tiles and every `DocSection`; the 200-row list is the reason. Culling is on for every `ComponentPreview`, not only this page's.
+- **Port:** every `ComponentPreview` hides its content while more than 25% of a viewport from the page scroller and keeps the preview body's height, through the shared `createCulling` (`src/lib/cull.ts:53-105`, used at `src/lib/doc-page.tsx:153`, `:413`), the same as `DemoCard`, the home tiles and every `DocSection`; the 200-row list is the reason. Culling is on for every `ComponentPreview`, not only this page's.
 - **Workaround:** the above.
 - **Fidelity:** exact once painted.
 - **Components it hits:** every long page.
-
-## Fluid hover caches its container's box
-
-- **Cause:** `gpuix gap` (a bounds read runs a layout pass).
-- **Original:** `pick` reads `container.getBoundingClientRect()` on every pointer move (`registry/default/hooks/use-fluid-hover.ts:471`), which the browser answers from its already-computed layout.
-- **Port:** the container's box is cached and refreshed on resize, scroll and pointer enter, and when the page scroller moves (`src/lib/fluid-hover.ts:137-149`, `:161-165`, `:176-182`, `:236-239`); `pick` reads the cache (`:187`). Demos that need the box per move read `hover.containerBox()` (`:262-268`).
-- **gpuix lacks:** a bounds read that costs nothing. Every `getBoundingClientRect` runs a layout pass, about 6 ms. Measured on gpuix `poc` e5231304: reading the box live made the idle JS frame-callback time on pages whose previews autoplay a cursor go from about 3 to 330-430 ms per second (changelog 3.0 to 328, fluid-hover 3.9 to 376; draws still matched presents).
-- **Workaround:** the cache. It is stale only if the container moves without a resize, a scroll event it receives or a page scroll, which the port does not see.
-- **Fidelity:** exact in effect.
-- **Components it hits:** every fluid list, and the demos that read `containerBox()` per move (`src/pages/fluid-hover/cost.tsx`, `plain-vs-fluid.tsx`, `show-the-math.tsx`).
 
 ## Smaller differences
 
