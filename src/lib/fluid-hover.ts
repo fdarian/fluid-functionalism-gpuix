@@ -14,6 +14,18 @@ export interface ItemRect {
 	width: number;
 }
 
+type ElementBox = ReturnType<HostElement['getBoundingClientRect']>;
+
+/** The source reads offsetTop/offsetLeft/offsetWidth/offsetHeight, which Chrome returns as integers (half up); gpuix rects are fractional and its layout rounds an authored inset half toward zero, so an unrounded rect lands the highlight off its row. */
+function toOffsetRect(bounds: ElementBox, box: ElementBox): ItemRect {
+	return {
+		top: Math.round(bounds.y - box.y),
+		left: Math.round(bounds.x - box.x),
+		width: Math.round(bounds.width),
+		height: Math.round(bounds.height),
+	};
+}
+
 export interface PickNearestInput {
 	axis: 'x' | 'y' | 'xy';
 	point: { x: number; y: number };
@@ -154,13 +166,7 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 		const next: (ItemRect | undefined)[] = [];
 		for (const [index, element] of items) {
 			if (!element.mounted) continue;
-			const bounds = element.getBoundingClientRect();
-			next[index] = {
-				top: bounds.y - box.y,
-				left: bounds.x - box.x,
-				width: bounds.width,
-				height: bounds.height,
-			};
+			next[index] = toOffsetRect(element.getBoundingClientRect(), box);
 		}
 		setRects(next);
 		setIsMeasured(true);

@@ -44,19 +44,22 @@ async function tableHighlight() {
 	for (const reduced of [false, true]) {
 		await setReduced(kit, reduced);
 		await kit.hoverFor(kit.center('basic-row-0'), 300);
-		const target = kit.bounds('basic-row-2');
+		const wrapper = kit.bounds('basic');
+		const row = kit.bounds('basic-row-2');
+		// The source measures rows with offsetTop, an integer: the highlight rests there, not on the row's fractional y.
+		const target = wrapper.y + Math.round(row.y - wrapper.y);
 		kit.renderer.clockPause();
 		const to = kit.center('basic-row-2');
 		kit.renderer.nativeSimulateMouseMove(to.x - 1, to.y);
 		kit.renderer.nativeSimulateMouseMove(to.x, to.y);
 		await frames(kit, FRAME_MS);
-		const off = Math.abs(kit.bounds('basic-highlight').y - target.y);
+		const off = Math.abs(kit.bounds('basic-highlight').y - target);
 		kit.check(
 			reduced
-				? 'table: the highlight is on the row after one frame'
+				? "table: the highlight is on the row's offsetTop after one frame"
 				: 'table: the highlight is still travelling after one frame',
 			reduced ? off < AT_REST : off > 2,
-			`${off.toFixed(1)}px short of the row`,
+			`${off.toFixed(1)}px short of the row's offsetTop`,
 		);
 	}
 	failures += kit.unmount();
