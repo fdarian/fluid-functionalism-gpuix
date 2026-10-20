@@ -3,8 +3,7 @@ import {
 	type HostMouseEvent,
 	ResizeObserver,
 } from '@gpuix/solid';
-import { createEffect, createSignal, onCleanup, useContext } from 'solid-js';
-import { PageScrollContext } from './cull';
+import { createEffect, createSignal, onCleanup } from 'solid-js';
 
 /** A row's box relative to the container's own top-left corner. */
 export interface ItemRect {
@@ -134,21 +133,6 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 	let container: HostElement | undefined;
 	let pointer: { x: number; y: number } | undefined;
 	let sessionPending = false;
-	// Cached and refreshed on resize, scroll and pointer enter: on gpuix every bounds read runs a layout pass (about 6 ms), and reading it on each pick kept the idle frame callbacks busy (drift/fluid-hover.md). `offsetX` cannot replace it: it is relative to the deepest element under the pointer, not to this container.
-	let containerBox:
-		| ReturnType<HostElement['getBoundingClientRect']>
-		| undefined;
-	let containerBoxStale = true;
-
-	// The page scrolling moves the container under a still pointer without resizing anything, and scroll events do not bubble to it.
-	const onPageScroll = useContext(PageScrollContext);
-	if (onPageScroll !== undefined) {
-		onCleanup(
-			onPageScroll(() => {
-				containerBoxStale = true;
-			}),
-		);
-	}
 
 	const observer = new ResizeObserver(() => commit());
 	onCleanup(() => observer.disconnect());
@@ -161,8 +145,6 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 	const measureNow = () => {
 		if (container === undefined || !container.mounted) return false;
 		const box = container.getBoundingClientRect();
-		containerBox = box;
-		containerBoxStale = false;
 		const next: (ItemRect | undefined)[] = [];
 		for (const [index, element] of items) {
 			if (!element.mounted) continue;
@@ -173,18 +155,10 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 		return true;
 	};
 
-	const readContainerBox = (element: HostElement) => {
-		if (containerBox === undefined || containerBoxStale) {
-			containerBox = element.getBoundingClientRect();
-			containerBoxStale = false;
-		}
-		return containerBox;
-	};
-
 	const pick = () => {
 		if (container === undefined || !container.mounted) return;
 		if (pointer === undefined) return;
-		const box = readContainerBox(container);
+		const box = container.getBoundingClientRect();
 		const next = pickNearest({
 			axis: options.axis ?? 'y',
 			point: pointer,
@@ -234,7 +208,6 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 		},
 		/** Rows moved under a stationary pointer: a scroll event carries no pointer position, so this picks at the last one seen. */
 		onScroll() {
-			containerBoxStale = true;
 			pick();
 		},
 		onMouseLeave() {
@@ -259,12 +232,12 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 			});
 		},
 		handlers,
-		/** The container's window-coordinate box as `pick` uses it: for a handler that also needs it per move without a layout pass. */
+		/** The container's window-coordinate box, read fresh as `pick` reads it. */
 		containerBox() {
 			if (container === undefined || !container.mounted) {
 				throw new Error('containerBox read before the container mounted');
 			}
-			return readContainerBox(container);
+			return container.getBoundingClientRect();
 		},
 		/** A keyboard move owns the highlight: forgets the pointer so the scroll it causes does not re-pick under it. The next mouse move restores it. */
 		releasePointer() {
