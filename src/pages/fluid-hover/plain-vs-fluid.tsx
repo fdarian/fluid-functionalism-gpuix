@@ -115,7 +115,7 @@ function Stage(props: { paused: () => boolean }) {
 		wasScripted = now;
 	});
 
-	// Plays out what is left of the pass, then loops whole passes. gpuix has no pause on an animation, so pausing stops it where it is and this resumes from that value (linear, so exact).
+	// Plays out what is left of the pass, then loops whole passes. A motion value's animation has no pause (getAnimations covers CSS animations only), so pausing stops it where it is and this resumes from that value (linear, so exact).
 	createEffect(() => {
 		if (!running()) return;
 		let current = true;

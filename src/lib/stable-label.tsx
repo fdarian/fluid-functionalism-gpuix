@@ -18,13 +18,10 @@ import {
  * selected; the second ghost stops that. gpuix has no text-measure API, so a
  * hidden copy is the only way to hold the wider width.
  *
- * The second ghost costs +1.0-1.7 ms of sidebar-sweep draw p95 and ~0.1 ms of
- * p50 (gpuix 5fda771a). Kept because the box must not change width. A hidden
- * text is a node like any other: ~2 us on a frame that replays the label, ~15-19
- * us on one that builds it, and the slow ~19% of live sweep draws are the
- * second kind. The label is a flex item, so it is retained (the cost is not an
- * atomic-inline exclusion); text is not re-shaped. Repro and numbers:
- * ~/.claude/notes/ff-gpuix-repros/r3-hidden-text-rebuilt-frames.md
+ * The second ghost is within noise on gpuix b03d4e27 (sidebar-sweep draw p95
+ * -0.35..+0.30 ms over seven pages; it was +1.0-1.7 ms on 5fda771a): opacity:0
+ * paints nothing and hidden labels are not re-measured (gpuix #46, #58). Kept
+ * because check-weight-widths needs max(normal, semibold).
  */
 export function StableLabel(props: {
 	text: string;
