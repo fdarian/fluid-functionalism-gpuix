@@ -150,10 +150,19 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (component-owned glyphs); `port choice` (the Select icon: the inline variant always shows the picked row's icon).
 - **Original:** `IconProvider` swaps every glyph a component asks for by name (`registry/default/lib/icon-context.tsx`); the Icons row's trigger and its rows carry no icon (`app/components/right-panel.tsx:226-241`).
-- **Port:** the five libraries' tables cover the shared glyph names (`src/lib/icons/*.ts`); a glyph a component defines itself with `defineIcon` stays lucide whichever library is picked (`src/lib/icons.ts:34-41`; 32 calls in 16 files). The inline `Select` shows the picked item's icon (`src/components/select.tsx:205`) and the Icons items carry a `palette` glyph (`src/lib/icons.ts:19-29`), so the row's trigger and its popup rows show a palette that the source's do not.
+- **Port:** the four libraries' tables cover the shared glyph names (`src/lib/icons/*.ts`); a glyph a component defines itself with `defineIcon` stays lucide whichever library is picked (`src/lib/icons.ts:27-34`; 32 calls in 16 files). The inline `Select` shows the picked item's icon (`src/components/select.tsx:205`) and the Icons items carry a `palette` glyph (`src/lib/icons.ts:13-22`), so the row's trigger and its popup rows show a palette that the source's do not.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** every component with a `defineIcon` glyph (chevrons, close marks, checks); just the shell for the Select.
+
+## Icons row: no Untitled UI option
+
+- **Cause:** `port choice` (the Untitled UI icon data's licence forbids distributing the glyphs, and the repository is public).
+- **Original:** the Icons setting offers Lucide, Tabler, Phosphor, Hugeicons, Untitled UI and defaults to Untitled UI: `lib/docs/site-settings.ts:34,43`, labels `lib/docs/icon-map.tsx:19-25`, the Select `app/components/right-panel.tsx:227-240`.
+- **Port:** four options, default Lucide (`src/lib/icons.ts:13-22` for `ICON_LIBRARIES`, `:24-25` for the `iconLibrary` signal); the Icons Select is `src/app.tsx:506-511`.
+- **Workaround:** none; Lucide stands in as the default, as it already did.
+- **Fidelity:** dropped.
+- **Components it hits:** the customise card's Icons row and every component's named glyphs.
 
 ## Theme: shortcut, tooltips, toasts
 
@@ -178,7 +187,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`.
 - **Original:** each setting is written to its own year-long cookie (`ff_theme`, `ff_shape`, `ff_size`, `ff_icons`, `ff_base`) and the root layout reads them back, so a reload paints the saved choice from the first frame (`lib/docs/settings-persistence.tsx`, `lib/docs/site-settings.ts:30-62`, `app/layout.tsx:58-69`).
-- **Port:** every launch starts at System, Rounded, Default and Lucide (`src/lib/theme.ts:195-196, 341, 410-411`, `src/lib/icons.ts:31-32`).
+- **Port:** every launch starts at System, Rounded, Default and Lucide (`src/lib/theme.ts:195-196, 341, 410-411`, `src/lib/icons.ts:24-25`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just the shell.
@@ -396,7 +405,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` for each item below, unless stated.
 - **Original:** every component in `registry/base` and `registry/default` has a port except the blocks `sidebar-workspace-header`, `sidebar-user-footer`, `dialog-sidebar/settings-dialog`, and the `sidebar-app` composition (`app-sidebar`, `inset-topbar`, `nav-data`, `page`) (`registry/blocks/`). `nav-item` and `nav-menu` are ported (`src/components/nav-item.tsx`, `nav-menu.tsx`, `drift/nav-menu.md`). `search-field` is ported (`src/components/sidebar.tsx:544`); check `drift/sidebar.md` for the blocks. Ported as part of another file rather than on their own: `dropdown-sub` inside `src/components/dropdown.tsx` and `menu-item.tsx`; `fluid-hover-highlight` as `src/lib/fluid-highlight.tsx`; `sidebar-core` and `sidebar-menu` inside `src/components/sidebar.tsx`; `scroll-area` and `queued-stack` have their own files.
-- **Port:** none for the items above. The `registry/radix` flavour of all 17 dual-flavour components is not ported on purpose (`port choice`; the port is Base UI only, see `../base-ui-solid-gpuix/BASE-UI-AUDIT.md`), and the registry lib items `elevated`, `surface-classes`, `type-scale` and `typography` have no port beyond the tokens in `src/lib/theme.ts`. The context items have an app-wide stand-in rather than a provider: `shape-context` is `shapeChoice` (`src/lib/theme.ts:415-416`), `size-context` is `sizeChoice` (`:341`), `icon-context` and the four extra icon libraries are `iconLibrary` and the tables in `src/lib/icons/` (`src/lib/icons.ts`); an explicit `size` does not scope the parts inside a component (`drift/select.md`).
+- **Port:** none for the items above. The `registry/radix` flavour of all 17 dual-flavour components is not ported on purpose (`port choice`; the port is Base UI only, see `../base-ui-solid-gpuix/BASE-UI-AUDIT.md`), and the registry lib items `elevated`, `surface-classes`, `type-scale` and `typography` have no port beyond the tokens in `src/lib/theme.ts`. The context items have an app-wide stand-in rather than a provider: `shape-context` is `shapeChoice` (`src/lib/theme.ts:415-416`), `size-context` is `sizeChoice` (`:341`), `icon-context` and the three extra icon libraries are `iconLibrary` and the tables in `src/lib/icons/` (`src/lib/icons.ts`); an explicit `size` does not scope the parts inside a component (`drift/select.md`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** the sidebar demo (blocks), none for the rest.

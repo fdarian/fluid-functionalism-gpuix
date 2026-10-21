@@ -10,7 +10,7 @@ const SKILL_LINE =
 
 /**
  * The slug the source's `starterSlug` gives the port's settings: Base UI,
- * rounded, default size, lucide icons (the source's default set is Untitled UI),
+ * rounded, default size, lucide icons (the source defaults to Untitled UI, which the port drops),
  * so the icons and a non-system theme are what differ.
  */
 function starterSlug(theme: ThemeChoice): string {

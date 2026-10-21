@@ -4,16 +4,10 @@ import { lucide } from '#/lib/icons/lucide';
 import { phosphorLight } from '#/lib/icons/phosphor-light';
 import { phosphorRegular } from '#/lib/icons/phosphor-regular';
 import { tabler } from '#/lib/icons/tabler';
-import { untitledui } from '#/lib/icons/untitledui';
 
 export type IconName = keyof typeof lucide;
 
-export type IconLibrary =
-	| 'lucide'
-	| 'tabler'
-	| 'phosphor'
-	| 'hugeicons'
-	| 'untitledui';
+export type IconLibrary = 'lucide' | 'tabler' | 'phosphor' | 'hugeicons';
 
 /** The Icons row of the customise card, in the site's order and spelling. */
 export const ICON_LIBRARIES = [
@@ -21,7 +15,6 @@ export const ICON_LIBRARIES = [
 	{ value: 'tabler', label: 'Tabler', icon: 'palette' },
 	{ value: 'phosphor', label: 'Phosphor', icon: 'palette' },
 	{ value: 'hugeicons', label: 'HugeIcons', icon: 'palette' },
-	{ value: 'untitledui', label: 'Untitled UI', icon: 'palette' },
 ] as const satisfies readonly {
 	value: IconLibrary;
 	label: string;
@@ -61,7 +54,6 @@ const sources: Record<
 	tabler: (name, strokeWidth) => stroked(tabler[name], strokeWidth),
 	phosphor: phosphorSource,
 	hugeicons: (name, strokeWidth) => stroked(hugeicons[name], strokeWidth),
-	untitledui: (name, strokeWidth) => stroked(untitledui[name], strokeWidth),
 };
 
 /** Whether the glyph is stroked shapes, so `iconNodes` can draw it: phosphor's named glyphs are filled paths, a component's own `defineIcon` glyph is always stroked. */
@@ -83,8 +75,6 @@ export function iconNodes(icon: IconRef) {
 			return tabler[icon];
 		case 'hugeicons':
 			return hugeicons[icon];
-		case 'untitledui':
-			return untitledui[icon];
 		case 'phosphor':
 			throw new Error(`phosphor has no stroked nodes for "${icon}"`);
 	}
