@@ -454,10 +454,12 @@ export function CommandMenu(props: {
 
 	// The first enabled row is highlighted whenever the row set changes, so Enter always has a target.
 	createEffect(
-		on(rowsKey, () => {
+		on(rowsKey, (_key, previousKey) => {
 			const first = firstEnabled();
 			hover.setActiveIndex(first === -1 ? null : first);
 			lastActive = first === -1 ? null : first;
+			// The scrollTop setter costs a layout pass while the page is still mounting, and a fresh list is already at 0.
+			if (previousKey === undefined) return;
 			snapScroll(0);
 		}),
 	);
