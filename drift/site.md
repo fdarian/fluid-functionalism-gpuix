@@ -241,7 +241,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet`.
 - **Original:** `CommandMenuDialog` takes `title="Site menu"` and `description="Jump to a page or change a setting."` as the dialog's accessible name, and binds `shortcut="mod+k"` itself (`app/components/site-command-menu.tsx:385-390`, `registry/default/command-menu.tsx:1425-1540`).
-- **Port:** the dialog has no title or description props (`src/components/command-menu.tsx:1360-1364`). A separate window listener toggles the menu (`src/lib/site-command-menu.tsx:68-78`); `isModK` matches Meta or Ctrl, no Alt, on `event.key` alone (`:59-63`). On Dvorak the key that types "t" does not open it: gpuix derives `code` from `key`, so there is no physical K to match (`scripts/check-command-menu.tsx` checks ⌘T and ⌘⌥K stay closed and ⌘K toggles; the layout itself needs a live check).
+- **Port:** the dialog has no title or description props (`src/components/command-menu.tsx:1362-1366`). A separate window listener toggles the menu (`src/lib/site-command-menu.tsx:68-78`); `isModK` matches Meta or Ctrl, no Alt, on `event.key` alone (`:59-63`). On Dvorak the key that types "t" does not open it: gpuix derives `code` from `key`, so there is no physical K to match (`scripts/check-command-menu.tsx` checks ⌘T and ⌘⌥K stay closed and ⌘K toggles; the layout itself needs a live check).
 - **Workaround:** none.
 - **Fidelity:** exact on macOS.
 - **Components it hits:** just the site menu.

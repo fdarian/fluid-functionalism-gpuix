@@ -54,7 +54,7 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 - **Cause:** `not ported yet`.
 - **Original:** the command-menu list is a `ScrollArea` with `scroll-divider` and `scroll-fade`, its content forced back to a shrinkable block with `[&>div[style]]:!block [&>div[style]]:!min-w-0` (`registry/default/command-menu.tsx:1069-1138`).
-- **Port:** a bare `overflowY: "scroll"` scroller (`src/components/command-menu.tsx:965`), which has no sizing wrapper to override; the `divider` prop has no consumer there. The sidebar content does use `ScrollArea`, with `contentStyle` standing in for the source's `[&>div]:!block [&>div]:!min-w-0` (`src/components/sidebar.tsx:616-623`).
+- **Port:** a bare `overflowY: "scroll"` scroller (`src/components/command-menu.tsx:967`), which has no sizing wrapper to override; the `divider` prop has no consumer there. The sidebar content does use `ScrollArea`, with `contentStyle` standing in for the source's `[&>div]:!block [&>div]:!min-w-0` (`src/components/sidebar.tsx:616-623`).
 - **Workaround:** gpuix's own overlay bar.
 - **Fidelity:** dropped for the command menu.
 - **Components it hits:** command-menu (see its drift file).
