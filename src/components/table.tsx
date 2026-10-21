@@ -9,7 +9,6 @@ import {
 import {
 	color,
 	colorFade,
-	fade,
 	type as scale,
 	sizeChoice,
 	weight,
@@ -153,8 +152,7 @@ export function TableRow(props: {
 					borderBottomColor: hideBorder()
 						? color.transparent
 						: color.accentFaint,
-					// Declared as the source does, but gpuix does not animate collapsed borders: the rule changes at once.
-					...fade(['border-color'], 80),
+					// No `fade(['border-color'], 80)` as in the source: gpuix does not draw it, and the transition rebuilds the table's layout every frame (drift/table.md).
 				}}
 			>
 				{props.children}

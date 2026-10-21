@@ -6,8 +6,10 @@
  * The table is a real `display: table`: columns size to their widest cell and line up across the header and body
  * rows, the table fills its parent, a cell's `width` sets its column, and the rows are the 36px / 28px ladder
  * plus the 1px rule (37 / 29 as the grid measures them). The hover highlight sits on the row under the pointer, and the header
- * lights the first body row.
+ * lights the first body row. The hover glide, on the fixture and on the real Table page, must not rebuild more layout than the sidebar's
+ * (a border-color transition on the rows once made it rebuild the table every frame).
  */
+import { SidebarMenu, SidebarMenuButton } from '#/components/sidebar';
 import {
 	Table,
 	TableBody,
@@ -64,6 +66,13 @@ const kit = await createCheck(() => (
 		</div>
 		<div style={{ width: 600 }}>
 			<Fixture size="compact" id="k" />
+		</div>
+		<div style={{ width: 256 }}>
+			<SidebarMenu testId="sb">
+				{[0, 1, 2, 3].map((index) => (
+					<SidebarMenuButton testId={`sb-${index}`} label={`Row ${index}`} />
+				))}
+			</SidebarMenu>
 		</div>
 		<div style={{ width: 600 }}>
 			<Table testId="w">
@@ -195,4 +204,187 @@ kit.check(
 );
 
 await kit.hoverFor({ x: 2, y: 2 }, 500);
+
+type Check = typeof kit;
+type Point = { x: number; y: number };
+type TreeNode = {
+	id: number;
+	type: string;
+	testId?: string;
+	children?: TreeNode[];
+};
+
+function findNode(
+	node: TreeNode,
+	test: (node: TreeNode) => boolean,
+): TreeNode | undefined {
+	if (test(node)) return node;
+	for (const child of node.children ?? []) {
+		const hit = findNode(child, test);
+		if (hit !== undefined) return hit;
+	}
+	return undefined;
+}
+
+/** The sidebar's hover fill carries no testId: it is a childless, unnamed div among its menu's children (the other leaves are text). */
+function sidebarFills(check: Check, isMenu: (node: TreeNode) => boolean) {
+	const tree = JSON.parse(check.renderer.getAutomationTree()) as TreeNode;
+	const menu = findNode(tree, isMenu);
+	if (menu === undefined) throw new Error('no sidebar menu');
+	return (menu.children ?? [])
+		.filter(
+			(child) =>
+				child.type === 'div' &&
+				child.testId === undefined &&
+				child.children === undefined,
+		)
+		.map((child) => child.id);
+}
+const lastFill = (check: Check, isMenu: (node: TreeNode) => boolean) => {
+	const fill = sidebarFills(check, isMenu).at(-1);
+	if (fill === undefined) throw new Error('no sidebar hover fill');
+	return fill;
+};
+
+const FRAME_MS = 8;
+/**
+ * Layout subtrees rebuilt per frame of motion that the highlight's own travel costs (it animates top / left, drift/table.md
+ * "Highlight travel"), measured at 5.5 in the fixture and 64 on the page. A border-color transition on the rows adds ten times
+ * that (55 and 640) for the 80 ms after each hover change, so these allowances sit between the two.
+ */
+const HIGHLIGHT_LAYOUT_BUILDS_FIXTURE = 20;
+const HIGHLIGHT_LAYOUT_BUILDS_PAGE = 200;
+const above = (check: Check, testId: string): Point => {
+	const box = check.bounds(testId);
+	return { x: box.x + 40, y: box.y + box.height / 2 };
+};
+
+type Frame = { y: number; height: number };
+type Glide = {
+	frames: Frame[];
+	/** Layout subtrees rebuilt over the glide. */
+	layoutBuilds: number;
+};
+
+/** Holds the motion clock, moves the pointer onto `to`, and samples the highlight on each 8 ms frame. */
+function trace(check: Check, highlight: number, to: Point, count: number) {
+	const renderer = check.renderer;
+	const frames: Frame[] = [];
+	renderer.clockPause();
+	const retainedBefore = renderer.getRetainedCounters();
+	renderer.nativeSimulateMouseMove(to.x - 1, to.y);
+	renderer.nativeSimulateMouseMove(to.x, to.y);
+	for (let frame = 0; frame < count; frame++) {
+		check.step(frame === 0 ? 0 : FRAME_MS);
+		const box = renderer.getElementBounds(highlight);
+		if (box === null) throw new Error(`highlight ${highlight} not painted`);
+		frames.push({ y: box.y, height: box.height });
+	}
+	renderer.clockResume();
+	return {
+		frames,
+		layoutBuilds: renderer.getRetainedCounters().builds - retainedBefore.builds,
+	} satisfies Glide;
+}
+
+function summary(glide: Glide) {
+	const frames = glide.frames;
+	const first = frames[0] as Frame;
+	const last = frames[frames.length - 1] as Frame;
+	const direction = Math.sign(last.y - first.y);
+	let reversals = 0;
+	let stalls = 0;
+	let moving = 0;
+	for (let i = 1; i < frames.length; i++) {
+		const step =
+			((frames[i] as Frame).y - (frames[i - 1] as Frame).y) * direction;
+		if (step < -0.01) reversals++;
+		const unsettled = Math.abs((frames[i - 1] as Frame).y - last.y) > 0.5;
+		if (unsettled && Math.abs(step) < 0.01) stalls++;
+		if (Math.abs(step) >= 0.01) moving++;
+	}
+	return {
+		travel: Math.abs(last.y - first.y),
+		reversals,
+		stalls,
+		moving,
+		layoutBuilds: glide.layoutBuilds,
+		ys: frames.map((f) => f.y.toFixed(0)).join(' '),
+	};
+}
+type Summary = ReturnType<typeof summary>;
+const show = (value: Summary) =>
+	`travel ${value.travel.toFixed(0)}px over ${value.moving} frames [${value.ys}], ${value.reversals} reversals, ${value.stalls} stalls, ${value.layoutBuilds} layout builds`;
+
+/** Hovers `fromId`, then moves the pointer to `toId` with the clock held. */
+async function glideOf(
+	check: Check,
+	fromId: string,
+	toId: string,
+	highlight: () => number,
+) {
+	await check.hoverFor(above(check, fromId), 400);
+	const glide = trace(check, highlight(), above(check, toId), 24);
+	await check.settle(300);
+	return summary(glide);
+}
+
+// The fixture: a table and a sidebar menu side by side, nothing else in the window.
+const fixtureTable = await glideOf(
+	kit,
+	't-row-0',
+	't-row-2',
+	() => kit.element('t-highlight').id,
+);
+await kit.hoverFor({ x: 2, y: 2 }, 400);
+const fixtureSidebar = await glideOf(kit, 'sb-0', 'sb-2', () =>
+	lastFill(kit, (node) => node.testId === 'sb'),
+);
+kit.check(
+	'hover glide: the highlight advances without reversing or stalling',
+	fixtureTable.reversals === 0 && fixtureTable.stalls === 0,
+	`table ${show(fixtureTable)}`,
+);
+kit.check(
+	'hover glide: the glide rebuilds layout about as little as the sidebar does',
+	fixtureTable.layoutBuilds / fixtureTable.moving <=
+		fixtureSidebar.layoutBuilds / fixtureSidebar.moving +
+			HIGHLIGHT_LAYOUT_BUILDS_FIXTURE,
+	`table ${fixtureTable.layoutBuilds} over ${fixtureTable.moving} frames vs sidebar ${fixtureSidebar.layoutBuilds} over ${fixtureSidebar.moving}`,
+);
+kit.check(
+	'hover glide: as many frames in motion as the sidebar over the same distance',
+	fixtureTable.moving >= fixtureSidebar.moving,
+	`table ${fixtureTable.moving} vs sidebar ${fixtureSidebar.moving}: ${show(fixtureSidebar)}`,
+);
+
+// The real Table page: the app's sidebar and the demo's tables share one window, as in the owner's report.
+const page = await createCheck('table');
+await page.scrollIntoView('basic-row-0');
+const isNavMenu = (node: TreeNode) =>
+	(node.children ?? []).some((child) => child.testId === 'nav-button');
+
+const pageTable = await glideOf(
+	page,
+	'basic-row-0',
+	'basic-row-2',
+	() => page.element('basic-highlight').id,
+);
+await page.hoverFor({ x: 2, y: 2 }, 400);
+const pageSidebar = await glideOf(page, 'nav-button', 'nav-card', () =>
+	lastFill(page, isNavMenu),
+);
+await page.hoverFor({ x: 2, y: 2 }, 400);
+kit.check(
+	'page hover glide: the highlight advances without reversing or stalling',
+	pageTable.reversals === 0 && pageTable.stalls === 0,
+	`table ${show(pageTable)}`,
+);
+kit.check(
+	'page hover glide: the glide rebuilds layout about as little as the sidebar does',
+	pageTable.layoutBuilds / pageTable.moving <=
+		pageSidebar.layoutBuilds / pageSidebar.moving +
+			HIGHLIGHT_LAYOUT_BUILDS_PAGE,
+	`table ${pageTable.layoutBuilds} over ${pageTable.moving} frames vs sidebar ${pageSidebar.layoutBuilds} over ${pageSidebar.moving}`,
+);
 kit.finish();
