@@ -75,7 +75,10 @@ const WINDOW_WIDTH = 1280;
 const IN_FLIGHT_DRAWS = 3;
 
 type Counts = {
+	/** Every frame drawn, patched ones included. */
 	draws: number;
+	/** Frames that built and painted the whole window: `draws` less the patched ones. */
+	full: number;
 	/** Frames that reached the screen; only a real window has any. */
 	presented: number | null;
 	layouts: number | null;
@@ -243,13 +246,19 @@ function mountHeadless(): Probe {
 			drawMs = [];
 			nativeCpuMs = 0;
 		},
-		read: () => ({
-			draws: renderer.getPaintedFrameCount() - paintedStart,
-			presented: null,
-			layouts: renderer.getLayoutPassCount() - layoutStart,
-			built: renderer.getBuildCounters().elementsBuilt,
-			patch: patchDelta(renderer.getPatchCounters(), patchStart),
-		}),
+		read: () => {
+			const patch = patchDelta(renderer.getPatchCounters(), patchStart);
+			// The test renderer's painted-frame count leaves out the frames drawn by patching.
+			const full = renderer.getPaintedFrameCount() - paintedStart;
+			return {
+				draws: full + patch.patchedFrames,
+				full,
+				presented: null,
+				layouts: renderer.getLayoutPassCount() - layoutStart,
+				built: renderer.getBuildCounters().elementsBuilt,
+				patch,
+			};
+		},
 		retainedElements: () => renderer.getRetainedElementCount(),
 		presentedTotal: () => null,
 		nativeTime: () => ({ drawMs, nativeCpuMs }),
@@ -300,13 +309,19 @@ function mountWindow(): Probe {
 			drawsStart = renderer.getDebugFrameOverlayStats().frames;
 			presentedStart = countPresented(presentLog);
 		},
-		read: () => ({
-			draws: renderer.getDebugFrameOverlayStats().frames - drawsStart,
-			presented: countPresented(presentLog) - presentedStart,
-			layouts: null,
-			built: null,
-			patch: patchDelta(renderer.getPatchCounters(), patchStart),
-		}),
+		read: () => {
+			const patch = patchDelta(renderer.getPatchCounters(), patchStart);
+			// The overlay records a patched frame like any other.
+			const draws = renderer.getDebugFrameOverlayStats().frames - drawsStart;
+			return {
+				draws,
+				full: draws - patch.patchedFrames,
+				presented: countPresented(presentLog) - presentedStart,
+				layouts: null,
+				built: null,
+				patch,
+			};
+		},
 		retainedElements: () => null,
 		presentedTotal: () => countPresented(presentLog),
 		nativeTime: () => null,
@@ -407,7 +422,7 @@ console.log(
 		layoutsPerSecond: rate(counts.layouts),
 		builtPerSecond: rate(counts.built),
 		patchedPerSecond: counts.patch.patchedFrames / seconds,
-		fullPerSecond: (counts.draws - counts.patch.patchedFrames) / seconds,
+		fullPerSecond: counts.full / seconds,
 		declines: counts.patch.declines,
 		unpatchable: counts.patch.unpatchable,
 		drawMsPerFrame:

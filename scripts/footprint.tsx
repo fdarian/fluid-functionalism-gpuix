@@ -8,8 +8,8 @@
  * so Bun's transpile cost stays out of the memory numbers; `--source` runs it
  * from source. Without slugs every page is measured. Writes
  * `perf/footprint-<label>.json` and prints a table (`draw ms` is mean/p90 of the
- * painting `drawFrame()` calls, `js%` the process CPU share outside the native calls (approximate); headless only).
- * `patched/s` and `full/s` split the draws into ticks gpuix drew by patching the frame before them and
+ * painting `drawFrame()` calls (patched frames not among them), `js%` the process CPU share outside the native calls (approximate); headless only).
+ * `draws/s` counts every frame, patched ones included; `patched/s` and `full/s` split it into ticks gpuix drew by patching the frame before them and
  * frames built whole; `why` is the top two reasons for the whole ones (gpui's `declines` and gpuix's
  * `unpatchable` kinds, as `Reason:count` over the idle window; the JSON has both maps in full). The counters name
  * the reason but not the element: `Outside` does not say which id.
@@ -87,7 +87,7 @@ type PageResult = {
 	builtPerSecond: number | null;
 	/** Frames over the idle window drawn by patching the frame before them, per second. */
 	patchedPerSecond: number;
-	/** `drawsPerSecond - patchedPerSecond`: the frames that built and painted the whole window. */
+	/** Frames that built and painted the whole window: `drawsPerSecond` less the patched ones. */
 	fullPerSecond: number;
 	/** Ticks gpui drew whole after the patcher tried, by reason, counted over the idle window. */
 	declines: Record<string, number>;
