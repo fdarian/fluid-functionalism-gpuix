@@ -12,7 +12,6 @@
 
 import { formatShortcut } from '#/components/command-menu';
 import { setSizeChoice } from '#/lib/theme';
-import { createHostElement } from '../node_modules/@gpuix/solid/dist/host.js';
 import { createCheck } from './check-kit';
 
 const kit = await createCheck('command-menu');
@@ -45,29 +44,16 @@ interface ScrollWrite {
 	top: number;
 }
 const writes: ScrollWrite[] = [];
-// The list is scrolled by code only: every write to a scroller's offset passes through here, so a scenario can tell a travel from a jump.
-const hostPrototype = Object.getPrototypeOf(createHostElement('div'));
-const scrollTopSetter = Object.getOwnPropertyDescriptor(
-	hostPrototype,
-	'scrollTop',
-);
-const scrollTo = Object.getOwnPropertyDescriptor(hostPrototype, 'scrollTo');
-if (scrollTopSetter?.set === undefined || scrollTo?.value === undefined) {
-	throw new Error("The host element's scroll members moved");
+// The list is scrolled by code only: every write to a scroller's offset ends in the renderer's `scrollTo`, whether it came from the element's `scrollTop` setter, its `scrollTo` or the renderer directly, so a scenario can tell a travel from a jump.
+const rendererScrollTo = renderer.scrollTo;
+if (rendererScrollTo === undefined) {
+	throw new Error('This renderer cannot scroll');
 }
-Object.defineProperty(hostPrototype, 'scrollTop', {
-	...scrollTopSetter,
-	set(top: number) {
-		writes.push({ id: this.id, top });
-		scrollTopSetter.set?.call(this, top);
-	},
-});
-Object.defineProperty(hostPrototype, 'scrollTo', {
-	...scrollTo,
-	value(options: { top?: number }) {
-		if (options.top !== undefined)
-			writes.push({ id: this.id, top: options.top });
-		scrollTo.value.call(this, options);
+Object.defineProperty(renderer, 'scrollTo', {
+	writable: true,
+	value(id: number, left: number, top: number, behavior?: string) {
+		writes.push({ id, top });
+		rendererScrollTo.call(renderer, id, left, top, behavior);
 	},
 });
 

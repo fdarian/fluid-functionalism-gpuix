@@ -410,15 +410,23 @@ export function CommandMenu(props: {
 	// The list's scrollTop travels on the fill's spring so row and fill arrive together. The motion value only carries the animation: the scroller is the source of truth, so every run starts by jumping the value to where the wheel or the scrollbar left it.
 	const reduceMotion = createReducedMotion();
 	const scrollPosition = createMotionValue(0);
-	createMotionValueEvent(scrollPosition, 'change', (top) => {
-		if (scroller !== undefined) scroller.scrollTop = top;
+	const renderer = useGpuixRequired();
+	// `scroller.scrollTop = top` reads the metrics back, which lays out the window and samples the spring again: that emits the next `change` and a held key cascades into dozens of layout passes per drain (README, gpuix gaps: scrollTop setter layout cascade). The renderer's `scrollTo` has no read-back; the list never scrolls sideways.
+	const writeScroll = (top: number) => {
+		if (scroller === undefined) return;
+		if (renderer.scrollTo === undefined)
+			throw new Error('This renderer cannot scroll');
+		renderer.scrollTo(scroller.id, 0, top, 'instant');
+	};
+	// The payload can be older than a snap that ran after it was queued, so write the live value.
+	createMotionValueEvent(scrollPosition, 'change', () => {
+		writeScroll(scrollPosition.get());
 	});
 
 	/** Puts the list at `top` now and ends any running scroll animation. */
 	const snapScroll = (top: number) => {
-		if (scroller === undefined) return;
-		scroller.scrollTo({ top, left: 0 });
 		scrollPosition.jump(top);
+		writeScroll(top);
 	};
 
 	/** Keeps the keyboard row at the middle of the viewport, as far as the ends allow. */
