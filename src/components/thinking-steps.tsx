@@ -354,7 +354,7 @@ export function ThinkingStep(props: {
 				initial={{ height: 0 }}
 				animate={{ height: measured.height() ?? 0 }}
 				transition={slowSpring}
-				style={{ position: 'relative', overflow: 'hidden' }}
+				style={{ overflow: 'hidden' }}
 			>
 				{/* Inner: fades the content in after the space starts opening. */}
 				<motion.div
