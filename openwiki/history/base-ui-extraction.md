@@ -21,7 +21,7 @@ sources:
 generated: { by: "claude-code", at: "2026-10-21T02:32:37.460Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T02:32:37.460Z
+    at: 2026-10-21T03:34:45.604Z
 ---
 
 # Base UI extraction (2026-10-17) and open follow-ups

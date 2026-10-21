@@ -6,6 +6,10 @@ tags: [gpuix, gaps, upstream, history, migration]
 sources:
   - id: openwiki-source-dbc5a68e94d7e3a15a776857
     resource: repo://drift/fluid-hover.md
+  - id: openwiki-source-385da475ebb9649b27cbd9e7
+    resource: repo://drift/site.md
+  - id: openwiki-source-d4a4bb7ecd3d3f6e47c46abd
+    resource: repo://drift/table.md
   - id: openwiki-source-5cfc44b662eef11b303099d9
     resource: repo://drift/tabs-subtle.md
   - id: openwiki-source-7bed81eca49ee8a9899cacc5
@@ -58,10 +62,10 @@ sources:
     resource: repo://src/pages/changelog/changelog-view.tsx
   - id: openwiki-source-81c2a5e01f16d1053272b0de
     resource: repo://src/pages/changelog/entry.tsx
-generated: { by: "claude-code", at: "2026-10-21T00:57:11.792Z" }
+generated: { by: "claude-code", at: "2026-10-21T03:34:45.604Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T00:57:11.792Z
+    at: 2026-10-21T03:34:45.604Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -120,7 +124,17 @@ The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adopt
   keeps the markup order (`order` 3, 2, 1 is visited c, b, a, not a, b, c). gpuix's own README and `order.rs` say
   focus and tab order stay in document order, so the docs and the behaviour disagree; the banner uses `row` /
   `row-reverse` instead.
-- Table parts are not animatable (a collapsed-border row rule snaps where the source eases it), and gpuix has the
+- gpuix leaves CoreGraphics font smoothing on, so text is drawn heavier than the source's
+  `-webkit-font-smoothing: antialiased`: ink coverage against Chrome is +9-17% for dark text and +22-42% for light and
+  dim text on `b03d4e27`, with identical advance widths, so only the stroke weight differs and layout does not move.
+  gpuix dilates light text by luminance and never switches smoothing off for dark text; only the user preference
+  `AppleFontSmoothing` = 0 in the app's own preferences domain closes it (argv and `registerDefaults:` do not reach
+  gpuix's check), and writing that persists on disk, so the port does nothing and the README row asks gpuix for a real
+  switch. Measured on the offscreen renderer at scale factor 1, not 2x. It is a "Bugs" row and an entry in
+  `drift/site.md`, which took the drift total from 540 to 541.
+- Table parts are not animatable (a collapsed-border row rule snaps where the source eases it), and declaring the
+  transition anyway is not harmless: it rebuilt the layout of the table's siblings on each frame of the fade, so the
+  port dropped it (see [Port decisions](../decisions/port-decisions.md#the-table-rows-border-color-fade-is-dropped-not-left-inert)). gpuix has the
   `has*` states (`hasHover`, `hasActive`, `hasFocus`, `hasFocusVisible`, `hasDisabled`, `hasEnabled`) but neither a
   `:has(.x)` selector nor a parent state that styles its children.
 

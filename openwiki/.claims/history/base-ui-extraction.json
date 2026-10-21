@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:edf1d5edfc3f8d7b0556e8a654d1873cb6166698fd96f7326e17600e883f5a05",
+  "pageVersion": "sha256:b3f0a21c480dd07863263b61bc397b1a94245f87dc77732658eb19127868b009",
   "claims": [
     {
       "id": "claim_fd643a2c3e614b00990f1b7fce1b8905",
@@ -62,7 +62,7 @@
       "evidence": [
         {
           "resource": "repo://drift/site.md",
-          "version": "repo-file-v1:sha256:ef7dbc25320deff3129a88a60f56b28a8c5d6e84e71d2f58ba7f2ed79df37e2e"
+          "version": "repo-file-v1:sha256:63d460eb8211b99763014b66247c87df2dbed2da4e5dc7e09864040578cb80e3"
         },
         {
           "resource": "repo://src/lib/icons.ts#L1-L25",
@@ -87,6 +87,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-21T02:32:37.460Z"
+    "at": "2026-10-21T03:34:45.604Z"
   }
 }

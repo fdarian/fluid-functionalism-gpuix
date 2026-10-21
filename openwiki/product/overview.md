@@ -12,10 +12,10 @@ sources:
     resource: repo://THIRD_PARTY_NOTICES.md
   - id: openwiki-source-ff18555ad70362de0f452788
     resource: repo://UPSTREAM.md
-generated: { by: "claude-code", at: "2026-10-21T02:32:37.460Z" }
+generated: { by: "claude-code", at: "2026-10-21T03:34:45.604Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T02:32:37.460Z
+    at: 2026-10-21T03:34:45.604Z
 ---
 
 # Project overview
@@ -31,7 +31,7 @@ home bento grid, the docs and System pages, Compare, Concepts, Audio Mixer, Chan
 
 It started on 2026-10-12 as an experiment answering one question: **can gpuix draw this library faithfully?** The
 answer is yes, with recorded differences. Every difference from the source is an entry in `drift/`
-with a cause (540 on 2026-10-21, after the Untitled UI drop and the sample-photo replacement added a few; 532 right after the `b03d4e27` adoption, 538 after the 2026-10-19 native-animation round, down from 577 once variable fonts and the round 6 features closed their entries; printed by `scripts/drift-counts.ts`), so the repository doubles as a catalogue of what gpuix can and cannot do against a real, demanding
+with a cause (541 on 2026-10-21, the last one being the font-smoothing gap, after the Untitled UI drop and the sample-photo replacement added a few; 532 right after the `b03d4e27` adoption, 538 after the 2026-10-19 native-animation round, down from 577 once variable fonts and the round 6 features closed their entries; printed by `scripts/drift-counts.ts`), so the repository doubles as a catalogue of what gpuix can and cannot do against a real, demanding
 design system. That catalogue fed the gpuix fork's work directly
 (see [gpuix gaps and divergence rounds](../gpuix/gaps-and-divergence-rounds.md)).
 

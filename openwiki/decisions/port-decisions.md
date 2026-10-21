@@ -5,7 +5,7 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T02:32:37.460Z
+    at: 2026-10-21T03:34:45.604Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -15,6 +15,8 @@ sources:
     resource: repo://drift/file-thumbnail.md
   - id: openwiki-source-385da475ebb9649b27cbd9e7
     resource: repo://drift/site.md
+  - id: openwiki-source-d4a4bb7ecd3d3f6e47c46abd
+    resource: repo://drift/table.md
   - id: openwiki-source-5cfc44b662eef11b303099d9
     resource: repo://drift/tabs-subtle.md
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
@@ -25,8 +27,12 @@ sources:
     resource: repo://README.md
   - id: openwiki-source-1d90d3d86ac1d41b49610f02
     resource: repo://scripts/check-reduced-motion.tsx
+  - id: openwiki-source-c2ba4607c29fa723e9c49321
+    resource: repo://scripts/check-scroll-area.tsx
   - id: openwiki-source-dcc18690931a266c3aa8c94d
     resource: repo://scripts/check-single-instance.ts
+  - id: openwiki-source-3566a6dff8417d81a41732b9
+    resource: repo://scripts/check-table.tsx
   - id: openwiki-source-819b237d6ed6e51fbd2028b9
     resource: repo://scripts/check-weight-widths.tsx
   - id: openwiki-source-edfa365c97d8e399b7824f84
@@ -85,7 +91,7 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-21T00:57:11.792Z" }
+generated: { by: "claude-code", at: "2026-10-21T03:34:45.604Z" }
 ---
 
 # Port decisions and their reasons
@@ -319,6 +325,10 @@ renderer and cost no JS per frame. The reasons to prefer it, and the traps:
   animation and is how the carousel fill, the plain-vs-fluid cursor (a linear 0 to 1 progress value whose keyframes
   live in a range-form `createTransform`) and the script cursors pause. It also fixed a bug of the JS carousel: its
   restart effect tracked the options object, so hovering the slide reset the fill to 0, where the source holds it.
+  The fill's reset and its play are one effect (`7d4918bb`), not two ordered ones: Solid does not guarantee the order
+  of effects, and a play that ran before the reset read the old fill (1) and never started, or had its animation
+  ended by the reset's jump, which left the last dot's fill at 0 for good on the demo's third slide change. A stopped
+  animation also resolves `finished`, so the next slide is requested only when the fill actually reached 1.
 - **Pick the animation kind by what the property is.** The file-thumbnail spinner is a `motion.circle` sliding
   `strokeDashoffset`, because on `5fda771a` keyframes took style properties and not SVG attributes. That limit is
   gone on `b03d4e27`: the button's loading spinner (`615fd85c`) is the source's `spinner-move` and `spinner-dash`
@@ -340,7 +350,8 @@ renderer and cost no JS per frame. The reasons to prefer it, and the traps:
   page, whose native loading spinner takes the source's always-loading Saving button from 3.8% idle to 41%). This is why
   culling also pauses the loops. On `5fda771a` such a loop could starve Bun's timers outright; as of `b03d4e27`
   timers run between ticks (9-10 callbacks a second at 3000 nodes, 7-8 at 12000; gpuix #56), so a hung perf or check
-  run under load is no longer expected to be this.
+  run under load is no longer expected to be this. The README records that gpuix could fix it in principle (a tick
+  that repainted only the animating subtree would not scale with the page) and that the owner accepts the cost.
 - **Who still uses `onFrame`, and why** is recorded in the doc comment of `src/lib/clock.ts`: thinking-steps'
   chevron (the source's `rotate` is a transform gpuix cannot animate), the fluid-hover lists demo (re-measures rows
   while a sub-menu springs), and the cost meter (reads the clock's gaps as its stall probe). Do not add a new
@@ -355,6 +366,19 @@ verified against the source's timing and easing rather than against a screenshot
 mount, so off-screen cards mounted steps and ran active-step shimmers and the page idled near 70% CPU. A card now
 waits paused, plays at 50% or more visible, pauses below 10% keeping its elapsed time, and a finished card stays
 finished until replayed. A culled region has no box and reports 0, so it holds.
+
+### The table row's border-color fade is dropped, not left inert
+
+The source fades the row rule (`transition-[border-color] duration-80`). gpuix does not draw a transition on a
+collapsed border, and until `e562f840` the port still declared `fade(['border-color'], 80)` on the row on the theory
+that it would start working when gpuix did. That was not free: running the transition rebuilt layout subtrees for the
+table's container and siblings on each of its 10 frames, **5120 builds over one hover glide on the Table page against
+12 for the sidebar** and 512 without the transition, where Chrome re-lays out only the table. The row now declares no
+transition and the rule snaps (drift entry unchanged in effect: approximated). Restore the fade only when gpuix animates
+collapsed borders; `check-table` counts the glide's layout builds against the sidebar's so it cannot come back
+silently. The lesson for other "declared but inert" transitions: an inert style can still dirty layout every frame, so
+measure layout builds, not only pixels. The repro is in the author's notes (`r9-border-transition-layout.md`, not a
+repository file).
 
 ## Theme: System, Light and Dark through createAppearance
 
@@ -433,6 +457,14 @@ Two things from the 2026-10-19 round (`a2eed755`, `ce7ee2b9`, `d9d2e93e`):
   `src/lib/demo-kit.tsx` (`96dbbaea`, which replaced eight local copies) now counts consecutive wheels that moved
   nothing, up to 12 attempts, and throws `scrolling did not move <testId>` on the third; reaching the page end is
   the only legitimate early return. Use it for any demo scenario that scrolls an element into view.
+
+- **A wheel check needs fractional content.** gpuix reports `scrollHeight` and `clientHeight` rounded half up while a
+  scroller ends at its real, snapped end, so 29 rows of 19.5 px plus 16 px padding (581.5 px) leaves the real range
+  one short of `scrollHeight - clientHeight` and a wheel over the scrollbar track stuck instead of chaining to the
+  page. Whole-pixel content (28 rows) hides it. `check-scroll-area` runs both contents, reaching the end by wheel,
+  thumb drag and the End key, and also pins that a continuous wheel gesture stays latched to the area it started on
+  (gpuix holds the latch until 500 ms pass without an event, as Chrome does). The fix is in the primitive:
+  `scrollAlong` in the sibling base-ui-solid-gpuix repo reads the position back after scrolling (its `BASE-UI-AUDIT.md`).
 
 ## pnpm wiring: one solid-js, one @gpuix/solid
 
