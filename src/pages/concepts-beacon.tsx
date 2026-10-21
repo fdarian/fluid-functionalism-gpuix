@@ -323,18 +323,12 @@ function BodyCell(props: { width?: number; children: JSX.Element }) {
 	);
 }
 
-/** A badge or an avatar keeps its own width: a column cell would stretch it. */
-function Inline(props: { center?: boolean; children: JSX.Element }) {
+/** `TableCell` sets its children in a `<text>`; a badge needs that line box too (22px tall, the source's inline badge in a `td`), or the row grows to 42px. */
+function BadgeCell(props: { width: number; children: JSX.Element }) {
 	return (
-		<div
-			style={{
-				display: 'flex',
-				flexDirection: 'row',
-				justifyContent: props.center === true ? 'center' : 'flex-start',
-			}}
-		>
-			{props.children}
-		</div>
+		<BodyCell width={props.width}>
+			<text style={siteType.body}>{props.children}</text>
+		</BodyCell>
 	);
 }
 
@@ -354,17 +348,15 @@ function IssueTable(props: { rows: Issue[]; testId: string }) {
 				<For each={props.rows}>
 					{(issue, index) => (
 						<TableRow index={index()}>
-							<BodyCell width={150}>
-								<Inline>
-									<Badge
-										variant="dot"
-										size="compact"
-										color={STATUS[issue.status].color}
-									>
-										{STATUS[issue.status].label}
-									</Badge>
-								</Inline>
-							</BodyCell>
+							<BadgeCell width={150}>
+								<Badge
+									variant="dot"
+									size="compact"
+									color={STATUS[issue.status].color}
+								>
+									{STATUS[issue.status].label}
+								</Badge>
+							</BadgeCell>
 							<BodyCell width={90}>
 								<text
 									style={{
@@ -381,17 +373,21 @@ function IssueTable(props: { rows: Issue[]; testId: string }) {
 									{issue.title}
 								</text>
 							</BodyCell>
-							<BodyCell width={110}>
-								<Inline>
-									<Badge size="compact" color={PRIORITY[issue.priority].color}>
-										{PRIORITY[issue.priority].label}
-									</Badge>
-								</Inline>
-							</BodyCell>
+							<BadgeCell width={110}>
+								<Badge size="compact" color={PRIORITY[issue.priority].color}>
+									{PRIORITY[issue.priority].label}
+								</Badge>
+							</BadgeCell>
 							<BodyCell width={70}>
-								<Inline center>
+								<div
+									style={{
+										display: 'flex',
+										flexDirection: 'row',
+										justifyContent: 'center',
+									}}
+								>
 									<Avatar initials={issue.assignee} />
-								</Inline>
+								</div>
 							</BodyCell>
 						</TableRow>
 					)}
