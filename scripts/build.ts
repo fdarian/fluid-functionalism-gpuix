@@ -47,7 +47,11 @@ function run(
 async function compile() {
 	const result = await Bun.build({
 		entrypoints: [join(root, 'src/main.tsx')],
-		compile: { outfile: join(dist, 'fluid-functionalism') },
+		// Without this the binary reads the bunfig.toml of the directory it is launched from.
+		compile: {
+			outfile: join(dist, 'fluid-functionalism'),
+			autoloadBunfig: false,
+		},
 		plugins: [
 			solidPlugin,
 			nativeCjsPlugin,
