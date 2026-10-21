@@ -47,7 +47,7 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 
 - **Cause:** `port choice` (captions).
 - **Original:** the play / pause icon button is the right end of the preview header, 40px square, through `ComponentPreview`'s `playbackButton`; `useReducedMotion()` stops the script (`demos.tsx:288-292`, `:380-400`, `lib/docs/ComponentPreview.tsx:140-170`); the two captions are flex rows whose text and `<code>` runs are separate flex items 8px apart (`demos.tsx:344-376`).
-- **Port:** the pause button is the same 40px header button, through the shared `ComponentPreview`'s `playback` option (icon, tooltip and click; `src/lib/doc-page.tsx:296-334`, `src/pages/fluid-hover/plain-vs-fluid.tsx:246-262`). Reduced motion stops the script as in the source (`createReducedMotion()`, `src/pages/fluid-hover/plain-vs-fluid.tsx:84-85`); each caption is one centred `<text>` with inline runs, so the gaps around the chip are a normal space.
+- **Port:** the pause button is the same 40px header button, through the shared `ComponentPreview`'s `playback` option (icon, tooltip and click; `src/lib/doc-page.tsx:296-334`, `src/pages/fluid-hover/plain-vs-fluid.tsx:240-256`). Reduced motion stops the script as in the source (`createReducedMotion()`, `src/pages/fluid-hover/plain-vs-fluid.tsx:84-85`); each caption is one centred `<text>` with inline runs, so the gaps around the chip are a normal space.
 - **Fidelity:** approximated.
 
 ## "Show the math": dash geometry and the distance label's offset
