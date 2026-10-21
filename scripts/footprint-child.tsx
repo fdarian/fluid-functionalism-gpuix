@@ -15,6 +15,12 @@
  *
  * After the report the process keeps running its frames until the driver kills it,
  * so the driver reads the memory footprint from a process in the state it measured.
+ *
+ * With `--tour [--tour-settle ms]` the page is only the starting point: after the
+ * settle time the child visits every other page through the app's own `navigate`,
+ * each for the tour settle time, returns to the start page and settles again. At
+ * each stop it prints `STAGE <name> {json}` and waits for a line on stdin, so the
+ * driver reads the footprint of exactly that state. No CPU window is measured.
  */
 
 import { heapStats } from 'bun:jsc';
@@ -23,9 +29,16 @@ import { parseArgs } from 'node:util';
 import { startFrameLoop } from '@gpuix/native/runtime';
 import { createRenderer, render } from '@gpuix/solid';
 import { createTestRoot } from '@gpuix/solid/testing';
-import { App } from '#/app';
-import { loadDemos, loadPages } from '#/lib/demo';
+import { App, CustomizeCard } from '#/app';
+import {
+	type Demo,
+	loadDemos,
+	loadPages,
+	type Page,
+	SHOWCASE_SLUG,
+} from '#/lib/demo';
 import { fonts } from '#/lib/fonts';
+import { type PageNav, usePageNav } from '#/lib/page-nav';
 import { setThemeChoice } from '#/lib/theme';
 import { windowOptions } from '#/lib/window-options';
 
@@ -36,17 +49,21 @@ const args = parseArgs({
 		idle: { type: 'string', default: '10000' },
 		hz: { type: 'string', default: '75' },
 		window: { type: 'boolean', default: false },
+		tour: { type: 'boolean', default: false },
+		'tour-settle': { type: 'string', default: '1500' },
 	},
 });
 const slug = args.positionals[0];
 if (slug === undefined)
 	throw new Error(
-		'usage: footprint-child <slug> [--settle ms] [--idle ms] [--hz n] [--window]',
+		'usage: footprint-child <slug> [--settle ms] [--idle ms] [--hz n] [--window] [--tour] [--tour-settle ms]',
 	);
 const settleMs = Number(args.values.settle);
 const idleMs = Number(args.values.idle);
 const hz = Number(args.values.hz);
 const windowMode = args.values.window;
+const tourMode = args.values.tour;
+const tourSettleMs = Number(args.values['tour-settle']);
 
 /** The width the Electron comparison used: the site's own layout drops its sidebar below 1280. */
 const WINDOW_WIDTH = 1280;
@@ -91,8 +108,61 @@ function percentile(values: number[], fraction: number) {
 	];
 }
 
-const demos = await loadDemos();
-const pages = await loadPages(demos);
+const loadedDemos = await loadDemos();
+const loadedPages = await loadPages(loadedDemos);
+
+/** The navigator of the mounted `App`, taken from inside its tree by the start page's wrapper. */
+const tourNav: { current: PageNav | undefined } = { current: undefined };
+
+/**
+ * The tour needs the `navigate` that `App` gives the sidebar, and only a component inside the tree can read it. The start page is wrapped to keep it; the showcase, which `App` renders itself, gets a stand-in page entry whose right column keeps the same card.
+ */
+function withNavCapture(): { demos: Demo[]; pages: Page[] } {
+	const demos = loadedDemos.map((demo) =>
+		demo.slug === slug
+			? {
+					...demo,
+					Demo: () => {
+						tourNav.current = usePageNav();
+						return <demo.Demo />;
+					},
+				}
+			: demo,
+	);
+	const pages = loadedPages.map((page) =>
+		page.slug === slug
+			? {
+					...page,
+					Page: () => {
+						tourNav.current = usePageNav();
+						return <page.Page />;
+					},
+				}
+			: page,
+	);
+	if (slug === SHOWCASE_SLUG) {
+		pages.push({
+			slug: SHOWCASE_SLUG,
+			title: 'Showcase',
+			group: 'Pages',
+			order: 0,
+			layout: 'docs',
+			listed: 'none',
+			Page: () => null,
+			Rail: () => {
+				tourNav.current = usePageNav();
+				return <CustomizeCard />;
+			},
+		});
+	}
+	return { demos, pages };
+}
+
+const mounted = tourMode
+	? withNavCapture()
+	: { demos: loadedDemos, pages: loadedPages };
+const demos = mounted.demos;
+const pages = mounted.pages;
 
 function mountHeadless(): Probe {
 	const test = createTestRoot({
@@ -207,6 +277,57 @@ const probe = windowMode ? mountWindow() : mountHeadless();
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 await sleep(settleMs);
+
+function waitForDriver() {
+	// The driver reads the footprint now and answers with a line, so its own work stays out of what follows.
+	return new Promise((resolve) => process.stdin.once('data', resolve));
+}
+
+function memoryNow() {
+	const heap = heapStats();
+	const memory = process.memoryUsage();
+	return {
+		heapSizeBytes: heap.heapSize,
+		heapCapacityBytes: heap.heapCapacity,
+		extraMemoryBytes: heap.extraMemorySize,
+		heapObjectCount: heap.objectCount,
+		jsRssBytes: memory.rss,
+		jsHeapUsedBytes: memory.heapUsed,
+	};
+}
+
+async function stage(name: string) {
+	console.log(`STAGE ${name} ${JSON.stringify(memoryNow())}`);
+	await waitForDriver();
+}
+
+if (tourMode) {
+	const navigator = tourNav.current;
+	if (navigator === undefined) {
+		throw new Error(`the start page ${slug} did not mount: no navigator`);
+	}
+	await stage('fresh');
+	Bun.gc(true);
+	await stage('fresh-gc');
+	const visited = [
+		SHOWCASE_SLUG,
+		...loadedDemos.map((demo) => demo.slug),
+		...loadedPages.map((page) => page.slug),
+	].filter((other) => other !== slug);
+	for (const other of visited) {
+		navigator.navigate(other);
+		await sleep(tourSettleMs);
+		await stage(`page:${other}`);
+	}
+	navigator.navigate(slug);
+	await sleep(settleMs);
+	await stage('tour');
+	Bun.gc(true);
+	await stage('tour-gc');
+	console.log('TOUR-DONE');
+	// Frames keep running until the driver kills the process, like after a page report.
+	await new Promise(() => {});
+}
 
 let presentedBeforeIdle: number | null = null;
 if (windowMode) {

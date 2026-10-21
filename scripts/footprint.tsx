@@ -10,6 +10,13 @@
  * `perf/footprint-<label>.json` and prints a table (`draw ms` is mean/p90 of the
  * painting `drawFrame()` calls, `js%` the process CPU share outside the native calls (approximate); headless only).
  *
+ * `--tour [--tour-settle ms]` measures what a session leaves behind instead: the
+ * given start pages (default `introduction`) are each mounted in one child, which
+ * then visits every other page through the app's own `navigate`, returns, and the
+ * footprint is read fresh, after the tour, and at every stop (with and without a
+ * forced GC). It works headless and with `--window`, and writes the stops to
+ * `perf/footprint-<label>.json` under `tours`.
+ *
  * `--window` opens each page in a real 1280x780 window instead of the offscreen
  * renderer, with the protocol of the Electron comparison: footprint after the
  * settle time (10 s), then CPU over the idle window (30 s), then footprint again.
@@ -36,13 +43,17 @@ const args = parseArgs({
 		hz: { type: 'string', default: '75' },
 		source: { type: 'boolean', default: false },
 		window: { type: 'boolean', default: false },
+		tour: { type: 'boolean', default: false },
+		'tour-settle': { type: 'string', default: '1500' },
 	},
 });
 const windowMode = args.values.window;
 const settleMs = Number(args.values.settle ?? (windowMode ? 10_000 : 3000));
 const idleMs = Number(args.values.idle ?? (windowMode ? 30_000 : 10_000));
 const hz = Number(args.values.hz);
-const mode = `${args.values.source ? 'source' : 'bundle'}${windowMode ? '-window' : ''}`;
+const tourMode = args.values.tour;
+const tourSettleMs = Number(args.values['tour-settle']);
+const mode = `${args.values.source ? 'source' : 'bundle'}${windowMode ? '-window' : ''}${tourMode ? '-tour' : ''}`;
 const label =
 	args.values.label ?? new Date().toISOString().replace(/[:.]/g, '-');
 const BINARY = join(root, 'dist/footprint-child');
@@ -242,6 +253,107 @@ async function measure(slug: string): Promise<PageResult> {
 
 const mb = (bytes: number) => (bytes / 1024 ** 2).toFixed(0);
 
+type TourStop = Memory & {
+	/** `fresh`, `fresh-gc`, `page:<slug>`, `tour` (back on the start page) or `tour-gc`. */
+	stage: string;
+	heapSizeBytes: number;
+	heapCapacityBytes: number;
+	extraMemoryBytes: number;
+	heapObjectCount: number;
+};
+
+type TourResult = { slug: string; stops: TourStop[] };
+
+/** One child, one start page: the child stops at each state and the footprint is read there. */
+async function measureTour(slug: string): Promise<TourResult> {
+	const flags = [
+		'--tour',
+		'--tour-settle',
+		String(tourSettleMs),
+		'--settle',
+		String(settleMs),
+	];
+	if (windowMode) flags.push('--window');
+	else flags.push('--hz', String(hz));
+	const command = args.values.source
+		? ['bun', join(root, 'scripts/footprint-child.tsx'), slug, ...flags]
+		: [BINARY, slug, ...flags];
+	const presentLog = join(tmpdir(), `footprint-present-${process.pid}.log`);
+	rmSync(presentLog, { force: true });
+	const child = Bun.spawn(command, {
+		cwd: root,
+		stdin: 'pipe',
+		stdout: 'pipe',
+		stderr: 'inherit',
+		env: { ...process.env, GPUIX_PRESENT_LOG: presentLog },
+	});
+	const deadline = setTimeout(() => child.kill(), 30 * 60_000);
+	const stops: TourStop[] = [];
+	try {
+		for await (const line of stdoutLines(child.stdout)) {
+			if (line === 'TOUR-DONE') break;
+			if (!line.startsWith('STAGE ')) continue;
+			const rest = line.slice('STAGE '.length);
+			const space = rest.indexOf(' ');
+			const reported = JSON.parse(rest.slice(space + 1)) as Omit<
+				TourStop,
+				keyof Memory | 'stage'
+			>;
+			stops.push({
+				stage: rest.slice(0, space),
+				...reported,
+				...memory(child.pid),
+			});
+			child.stdin.write('go\n');
+			await child.stdin.flush();
+		}
+		if (!stops.some((stop) => stop.stage === 'tour-gc')) {
+			throw new Error(`${slug}: tour child exited (${child.exitCode}) early`);
+		}
+		return { slug, stops };
+	} finally {
+		clearTimeout(deadline);
+		child.kill();
+		await child.exited;
+		rmSync(presentLog, { force: true });
+	}
+}
+
+function printTour(result: TourResult) {
+	const rows = result.stops.map((stop) => [
+		stop.stage,
+		mb(stop.footprintBytes),
+		mb(stop.rssBytes),
+		mb(stop.heapSizeBytes),
+		mb(stop.extraMemoryBytes),
+		String(stop.heapObjectCount),
+		String(stop.threads),
+	]);
+	const header = [
+		'stop',
+		'footprint MB',
+		'rss MB',
+		'heap MB',
+		'extra MB',
+		'objects',
+		'threads',
+	];
+	const widths = header.map((name, column) =>
+		Math.max(name.length, ...rows.map((row) => row[column].length)),
+	);
+	const line = (row: string[]) =>
+		row
+			.map((cell, column) =>
+				column === 0
+					? cell.padEnd(widths[column])
+					: cell.padStart(widths[column]),
+			)
+			.join('  ');
+	console.log(`\nstart page ${result.slug}`);
+	console.log(line(header));
+	for (const row of rows) console.log(line(row));
+}
+
 type Column = [name: string, cell: (result: PageResult) => string];
 
 /** Counters with no window-mode source print '-'. */
@@ -311,6 +423,43 @@ for (const slug of slugs) {
 mkdirSync(join(root, 'dist'), { recursive: true });
 mkdirSync(join(root, 'perf'), { recursive: true });
 if (!args.values.source) await compileChild();
+
+if (tourMode) {
+	const starts =
+		args.positionals.length > 0 ? args.positionals : ['introduction'];
+	const tours: TourResult[] = [];
+	const uptimeSecondsAtTourStart = uptime();
+	const loadavgAtTourStart = loadavg();
+	for (const slug of starts) {
+		console.error(`touring from ${slug}`);
+		tours.push(await measureTour(slug));
+	}
+	const tourFile = join(root, `perf/footprint-${label}.json`);
+	writeFileSync(
+		tourFile,
+		`${JSON.stringify(
+			{
+				label,
+				date: new Date().toISOString(),
+				ffHead: git(root),
+				gpuixHead: git(join(root, '../gpuix')),
+				mode,
+				hz: windowMode ? null : hz,
+				settleMs,
+				tourSettleMs,
+				uptimeSecondsAtStart: uptimeSecondsAtTourStart,
+				loadavgAtStart: loadavgAtTourStart,
+				loadavgAtEnd: loadavg(),
+				tours,
+			},
+			null,
+			'\t',
+		)}\n`,
+	);
+	for (const tour of tours) printTour(tour);
+	console.log(`wrote ${tourFile}`);
+	process.exit(0);
+}
 
 const uptimeSecondsAtStart = uptime();
 const loadavgAtStart = loadavg();
