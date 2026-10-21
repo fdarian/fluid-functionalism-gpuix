@@ -6,13 +6,13 @@ demo in `src/demos/table.tsx`.
 
 The source's `app/table/page.tsx` is not the table demo: it is an unlisted stress page (excluded from the sitemap at `app/sitemap.ts:9`), see "Quotes page".
 
-## The row rule's 80ms fade does not run
+## The row rule's 80ms fade is dropped
 
 - **Cause:** `gpuix gap`.
 - **Original:** the row's `border-b` fades between `border-accent/40` and `border-transparent` with `transition-[border-color] duration-80`, so the rules around the lit row ease out as the highlight arrives (`registry/default/table.tsx:153`).
-- **Port:** the row is a `table-row` in a `borderCollapse: 'collapse'` table with the same `fade(['border-color'], 80)` declared (`src/components/table.tsx:150-157`); the rule goes at once, while the highlight and the cell text colour fade as in the source. Measured: the rule's pixel is gone on the first frame after the hover.
-- **gpuix lacks:** an animated collapsed border: the table resolves the edges from the style each part declares, and its styles are not animatable by `motion`, a keyframe or a CSS transition (gpuix `README.md` "Tables", "Differences from Chrome").
-- **Workaround:** none; the transition is still declared, so it starts working when gpuix animates collapsed borders.
+- **Port:** the row is a `table-row` in a `borderCollapse: 'collapse'` table and declares no transition (`src/components/table.tsx:146-155`); the rule goes at once, while the highlight and the cell text colour fade as in the source. Measured: the rule's pixel is gone on the first frame after the hover. The fade is dropped, not just inert: gpuix does not draw it, and running it rebuilds the layout of the table's container and siblings on each of its 10 frames (5120 layout subtree builds over one hover glide on the Table page against 12 for the sidebar, 512 without it; `~/.claude/notes/ff-gpuix-repros/r9-border-transition-layout.md`). `scripts/check-table.tsx` counts those builds.
+- **gpuix lacks:** an animated collapsed border: the table resolves the edges from the style each part declares, and its styles are not animatable by `motion`, a keyframe or a CSS transition (gpuix `README.md` "Tables", "Differences from Chrome"). A border-colour change under a transition also dirties the table's siblings, where Chrome dirties only the table.
+- **Workaround:** no `fade(['border-color'], 80)` on the row; restore it when gpuix animates collapsed borders (README gap row "Collapsed-border transitions").
 - **Fidelity:** approximated (the 80ms ease is a snap).
 - **Components it hits:** just this one.
 
@@ -30,7 +30,7 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 
 - **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
 - **Original:** `size` wraps the table in a `SizeProvider`, and its cells read the context (`registry/default/table.tsx:41-44`, `:49`, `:90-91`, `:180`, `:203`).
-- **Port:** An omitted `size` follows the Size row (`src/components/table.tsx:64`); a table inside a compact surface stays at 36px unless `size` is passed.
+- **Port:** An omitted `size` follows the Size row (`src/components/table.tsx:63`); a table inside a compact surface stays at 36px unless `size` is passed.
 - **Workaround:** pass `size` to each nested component.
 - **Fidelity:** approximated.
 - **Components it hits:** every component that reads `useSize`.
@@ -38,8 +38,8 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 ## Semantic markup and prop passthrough
 
 - **Cause:** `not ported yet`.
-- **Original:** real `<table>`, `<thead>`, `<tbody>`, `<tr>`, `<th>`, `<td>`; every part takes `className`, a `ref` and the element's HTML attributes (`table.tsx:39-47`, `:99-117`, `:125-170`, `:176-217`), which the site's pages use to align and size columns (`text-center`, `w-[180px]`, `whitespace-nowrap` in `app/table/page.tsx`).
-- **Port:** plain `<div>`s with `display: table`, `table-header-group`, `table-row-group`, `table-row` and `table-cell` (`table.tsx:91`, `:104`, `:108`, `:150`, `:187`), no `role`, only `testId`, the `width` prop (the column's preferred width) and two booleans, `alignRight` (`text-right`) and `tabularNums` (`tabular-nums`) (`table.tsx:166-175`, `:190`, `:203`). There is no other cell styling, `className` or `ref`.
+- **Original:** real `<table>`, `<thead>`, `<tbody>`, `<tr>`, `<th>`, `<td>`; every part takes `className`, a `ref` and the element's HTML attributes (`table.tsx:38-46`, `:98-116`, `:124-168`, `:174-215`), which the site's pages use to align and size columns (`text-center`, `w-[180px]`, `whitespace-nowrap` in `app/table/page.tsx`).
+- **Port:** plain `<div>`s with `display: table`, `table-header-group`, `table-row-group`, `table-row` and `table-cell` (`table.tsx:90`, `:103`, `:107`, `:149`, `:185`), no `role`, only `testId`, the `width` prop (the column's preferred width) and two booleans, `alignRight` (`text-right`) and `tabularNums` (`tabular-nums`) (`table.tsx:164-173`, `:188`, `:201`). There is no other cell styling, `className` or `ref`.
 - **gpuix lacks:** nothing: `role` and `aria-*` work on any element (`src/components/sidebar.tsx:312` sets `aria-current`; `src/components/tabs.tsx` sets `role`).
 - **Workaround:** none.
 - **Fidelity:** approximated (looks the same; the table is anonymous to assistive tech, columns cannot be centred or kept on one line, and no cell takes `colSpan` although gpuix supports it).
