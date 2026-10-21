@@ -94,8 +94,21 @@ const scrollBy = async (deltaY: number) => {
 	second.renderer.nativeSimulateScrollWheel(700, 400, 0, deltaY);
 	await second.settle(600);
 };
+// Springs move a box by fractions of a pixel through their tail, so a click needs the button's bounds to hold still first.
+const STILL_POLLS = 8;
+const settleBounds = async (testId: string) => {
+	let previous = '';
+	let still = 0;
+	await second.until(() => {
+		const box = second.renderer.getElementBounds(second.element(testId).id);
+		const key = JSON.stringify(box);
+		still = key === previous ? still + 1 : 0;
+		previous = key;
+		return box !== null && still >= STILL_POLLS;
+	}, `${testId} to stop moving`);
+};
 await second.scrollIntoView('images-playback');
-await second.settle(600);
+await settleBounds('images-playback');
 second.expect('the images card plays once half of it shows', images(), 'Pause');
 await second.click('images-playback');
 second.expect('the button pauses it', images(), 'Play');
