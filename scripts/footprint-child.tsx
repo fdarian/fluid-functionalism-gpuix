@@ -51,6 +51,9 @@ const windowMode = args.values.window;
 /** The width the Electron comparison used: the site's own layout drops its sidebar below 1280. */
 const WINDOW_WIDTH = 1280;
 
+/** A draw is counted when it runs and presented a moment later, so a few at the window's edge can be unshown without the window being covered. */
+const IN_FLIGHT_DRAWS = 3;
+
 type Counts = {
 	draws: number;
 	/** Frames that reached the screen; only a real window has any. */
@@ -199,10 +202,9 @@ console.log(
 		presentedPerSecond: rate(counts.presented),
 		layoutsPerSecond: rate(counts.layouts),
 		builtPerSecond: rate(counts.built),
-		// Nothing reached the screen: either it never presented, or it drew while idle and none of that was shown.
 		occluded: windowMode
 			? presentedBeforeIdle === 0 ||
-				(counts.draws > 0 && counts.presented === 0)
+				(counts.draws > IN_FLIGHT_DRAWS && counts.presented === 0)
 			: null,
 		retainedElements: probe.retainedElements(),
 		heapSizeBytes: heap.heapSize,

@@ -63,7 +63,7 @@ type PageResult = {
 	/** Null in window mode, where the live renderer keeps no such counter. */
 	layoutsPerSecond: number | null;
 	builtPerSecond: number | null;
-	/** Window mode only: true when nothing reached the screen, so the numbers say nothing about a visible window. */
+	/** Window mode only: nothing was presented before the idle window, or the idle window drew and none of it was shown. A window covered after its first frame, on a page that then draws nothing, looks like a visible still page: not detectable. */
 	occluded: boolean | null;
 	retainedElements: number | null;
 	heapSizeBytes: number;
