@@ -86,19 +86,14 @@ export function CarouselDots(props: {
 		if (slide !== restartedFor) fill.jump(0);
 		if (!playing() || fill.get() >= 1) return slide;
 		const duration = options()?.duration ?? DEFAULT_DURATION_MS;
-		let current = true;
 		const play = fill.animate(1, {
 			duration: ((1 - fill.get()) * duration) / 1000,
 			ease: 'linear',
 		});
-		onCleanup(() => {
-			current = false;
-			play.stop();
-		});
+		onCleanup(() => play.stop());
 		play.finished.then(() => {
 			const live = options();
-			// An animation ended by a jump or a stop also resolves `finished`; only a fill that got to 1 moves on.
-			if (!current || live === null || fill.get() < 1) return;
+			if (live === null) return;
 			if (!(live.loop ?? true) && slide >= props.count - 1) return;
 			props.onValueChange?.((slide + 1) % props.count);
 		});
