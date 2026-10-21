@@ -41,7 +41,7 @@ import {
 import { fonts } from '#/lib/fonts';
 import { type PageNav, usePageNav } from '#/lib/page-nav';
 import { setThemeChoice } from '#/lib/theme';
-import { windowOptions } from '#/lib/window-options';
+import { windowOptions, windowPlacement } from '#/lib/window-options';
 
 const args = parseArgs({
 	allowPositionals: true,
@@ -286,7 +286,11 @@ function mountWindow(): Probe {
 	// The app follows the system appearance; the headless run is dark, so this one is too.
 	setThemeChoice('dark');
 	const renderer = createRenderer();
-	renderer.init({ ...windowOptions, width: WINDOW_WIDTH });
+	renderer.init({
+		...windowOptions,
+		width: WINDOW_WIDTH,
+		...windowPlacement(WINDOW_WIDTH, windowOptions.height),
+	});
 	// The overlay's frame count is the only draw count a live renderer has; hidden, it paints nothing.
 	renderer.setDebugFrameOverlay('hidden');
 	// gpuix's own loop, paced by the window's display link (no `frameMs`).

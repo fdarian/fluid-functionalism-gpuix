@@ -15,6 +15,7 @@ import { createSignal, For, type JSX } from 'solid-js';
 import { fonts } from '#/lib/fonts';
 import { Icon } from '#/lib/icon';
 import { colorFade, siteType, weight } from '#/lib/theme';
+import { windowPlacement } from '#/lib/window-options';
 
 const args = parseArgs({
 	allowPositionals: true,
@@ -654,6 +655,7 @@ const windowOptions: WindowOptions & WindowFontsOption = {
 	title: 'perf-micro',
 	width: VIEW_W + 40,
 	height: VIEW_H + 40,
+	...windowPlacement(VIEW_W + 40, VIEW_H + 40),
 	focus: false,
 	fonts,
 };

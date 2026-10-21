@@ -29,6 +29,10 @@ pnpm install    # from this directory only; see below
 pnpm start
 ```
 
+The window opens centred in the work area of the first display that is not the primary one; with a single display gpuix centres it.
+`FF_DISPLAY=<index>` picks `getAllDisplays()[index]` instead (the order the OS lists them; the primary's index is allowed). An index that is not an
+integer in range throws, with the list of displays. `pnpm perf` and `footprint --window` place their windows the same way.
+
 The app is a sidebar (Showcase, Introduction, Changelog, a System group, then one demo page per component, with the New dots of the latest release) plus a "Make them
 yours" card with Theme (System follows the OS appearance), Radius, Size and Icons selects. The sidebar's Search row,
 or ⌘K / Ctrl+K anywhere, opens the site menu: every page, the theme, a Recent group and a few actions in one field;
@@ -49,7 +53,7 @@ bun scripts/perf.tsx [slug...] --label name   # live frame times per page, idle 
 <summary>How gpuix and base-ui-solid-gpuix are wired in</summary>
 
 - **gpuix.** `@gpuix/native` and `@gpuix/solid` come from the fork at `~/code/fdarian/gpuix`: native is a `link:`, solid is a
-  `file:` copy. The fork must be at `poc` f7b62f11 (zed da3e5b19db) or later (since b03d4e27, `getBoundingClientRect`, `ResizeObserver`, `IntersectionObserver` and `onLayout` return fractional 1/64 px values, like Chrome; `client*` and `scroll*` stay integers, rounded half up like Chrome's; since 83bab5a7 an authored length keeps its fraction instead of rounding to a device pixel, `animate()` on a motion value returns playback controls (`pause()`, `play()`, `stop()`, `cancel()`, `time`, `speed`, `state`), and its `finished` resolves only when the animation finishes or completes, never on `stop()` or a replacement): the highlights and popups use its native `motion` springs, and the table, `inline-*`, container query, `has*` and `fit-content` layouts, and the variable-font weights, `outlineStyle`, `textWrap`, `textBox` trim and `calc()` motion values are its features,
+  `file:` copy. The fork must be at `poc` f6997028 (zed 67414fd389) or later (since b03d4e27, `getBoundingClientRect`, `ResizeObserver`, `IntersectionObserver` and `onLayout` return fractional 1/64 px values, like Chrome; `client*` and `scroll*` stay integers, rounded half up like Chrome's; since 83bab5a7 an authored length keeps its fraction instead of rounding to a device pixel, `animate()` on a motion value returns playback controls (`pause()`, `play()`, `stop()`, `cancel()`, `time`, `speed`, `state`), and its `finished` resolves only when the animation finishes or completes, never on `stop()` or a replacement): the highlights and popups use its native `motion` springs, and the table, `inline-*`, container query, `has*` and `fit-content` layouts, and the variable-font weights, `outlineStyle`, `textWrap`, `textBox` trim and `calc()` motion values are its features,
   so rebuild the addon and the `@gpuix/solid` dist after pulling it (see the fork's `FORK.md`, "Building"), then run
   `pnpm install` here to refresh the copy. The Solid JSX transform is a Bun preload (`bunfig.toml`), so there is no
   build step.
