@@ -6,7 +6,6 @@ import { PageScrollContext, PageScrollerContext } from '#/lib/cull';
 const SPY_LINE = 0.25;
 /** Where an anchor jump lands a section's top: the source's `xl:scroll-mt-8`. */
 const SCROLL_MARGIN = 32;
-const BOTTOM_SLACK = 2;
 /** How close, in px, the scroll position must be to a jump's target to count as arrived. */
 const ARRIVED_WITHIN = 1;
 
@@ -44,10 +43,7 @@ export function createReleaseSpy(months: readonly string[]) {
 	const sections = new Map<string, HostElement>();
 
 	const update = (root: HostElement) => {
-		if (
-			root.scrollTop + root.clientHeight >=
-			root.scrollHeight - BOTTOM_SLACK
-		) {
+		if (root.scrollTop + root.clientHeight >= root.scrollHeight) {
 			setActiveMonth(months[months.length - 1]);
 			return;
 		}
@@ -88,8 +84,7 @@ export function createReleaseSpy(months: readonly string[]) {
 			if (aim === undefined) return;
 			const target = targetTop(aim.section);
 			const distance = Math.abs(target - root.scrollTop);
-			const atEnd =
-				root.scrollTop + root.clientHeight >= root.scrollHeight - BOTTOM_SLACK;
+			const atEnd = root.scrollTop + root.clientHeight >= root.scrollHeight;
 			if (distance <= ARRIVED_WITHIN || (atEnd && target >= root.scrollTop)) {
 				aim = undefined;
 				return;

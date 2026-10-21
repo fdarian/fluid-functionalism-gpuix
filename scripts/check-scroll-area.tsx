@@ -96,7 +96,7 @@ check.expect(
 const keyFailures = check.unmount();
 
 // ── Wheel at the end of the range ───────────────────────────────────────────
-// gpuix reports `scrollHeight` and `clientHeight` rounded half up, but the scroller ends at the snapped content end, so 29 half-pixel rows leave the real range one short of `scrollHeight - clientHeight`. The track wheel must still chain to the page once the viewport is at its real end.
+// Fractional content is its own case for the track wheel chaining: the scroll end must land exactly on `scrollHeight - clientHeight` (at scale 1) for the wheel to chain to the page there, and half-pixel content is where rounding would show.
 
 interface Content {
 	label: string;
@@ -105,14 +105,14 @@ interface Content {
 	rows: number;
 }
 
-/** 29 rows of 19.5px + 16px padding = 581.5: the real range ends at 418, `scrollHeight - clientHeight` says 419. */
+/** 29 rows of 19.5px + 16px padding = 581.5, which gpuix reports rounded up (582). */
 const HALF_PIXEL: Content = {
 	label: 'half-pixel rows',
 	fontSize: 13,
 	lineHeight: 1.5,
 	rows: 29,
 };
-/** 28 rows of 19.5px + 16px padding = 562: both agree. */
+/** 28 rows of 19.5px + 16px padding = 562, no fraction. */
 const WHOLE_PIXEL: Content = {
 	...HALF_PIXEL,
 	label: 'whole-pixel rows',
@@ -168,8 +168,7 @@ async function chainsAtEnd(run: WheelRun) {
 	};
 	const pageTop = () => metrics(pageId)[1] as number;
 	const innerTop = () => metrics(viewportId)[1] as number;
-	/** The range `scrollAlong` clamps to. */
-	const roundedMax = () =>
+	const scrollRange = () =>
 		(metrics(viewportId)[3] as number) - (metrics(viewportId)[5] as number);
 
 	const area = kit.bounds('inner');
@@ -210,7 +209,7 @@ async function chainsAtEnd(run: WheelRun) {
 	}
 	await kit.settle(700);
 	const startPage = pageTop();
-	const atEnd = `scrollTop ${innerTop()}, scrollHeight - clientHeight ${roundedMax()}`;
+	const atEnd = `scrollTop ${innerTop()}, scrollHeight - clientHeight ${scrollRange()}`;
 
 	let stuck = 0;
 	let first = '';
