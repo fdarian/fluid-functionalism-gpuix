@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:0be660a6ac9ccf0a9fd8408e029d4ade85c3fed7b203ecc8f21959ab5e7bec05",
+  "pageVersion": "sha256:3a771944f8e71e5cab2e5023260e8c15d16b2b6724396aa174115da7f3ef04f1",
   "claims": [
     {
       "id": "claim_b925fe22d5a74d5388447aa34ff4d2fd",
@@ -34,11 +34,11 @@
     },
     {
       "id": "claim_8614bcad26f8486aa463c334ea2c9505",
-      "statement": "Every place the port differs from the source is a drift entry tagged by cause, 541 entries as of 2026-10-21 (532 right after the gpuix b03d4e27 adoption).",
+      "statement": "Every place the port differs from the source is a drift entry tagged by cause, 540 entries as of 2026-10-21 after the font-smoothing entry closed (532 right after the gpuix b03d4e27 adoption).",
       "evidence": [
         {
           "resource": "repo://README.md#L9-L11",
-          "version": "repo-lines-v1:sha256:506f90793ab0f6748f572bdad8e8934b0c2072fa2bc27404ba0d1cff13342298:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I1MTk3Nzc1OTUyOTBjYmNjODI3YjE4NGQwNGQyOTEzYzc3NDdlMmZjNjNjYjI1MGM3ZGY4Y2FhZTAxZjU2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDZiMzRkZjA1ZDI2ZTZjZGRhM2E1YzUxNTFjNGE1NjQxYWEwYTZhZDA4MWExYzlhMmI2MTZjNjJmYzJmZThjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDVmMDhjNzUyMWQ1ZTcyZDI2MDM2M2E2ZGRlMmRmMjcyMzc1YzRlYWYzMzUxMjI5MjE3ODYyNzJhMDYwMDZlZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWI3YmJmNzg1NTI1MDcyMjUxNDRjZWY1MDMyOTM4MjZhZTdkYjk3ZDRjMThhMzAwODJhZDYwYjQzMzUwNWFiYiJ9"
+          "version": "repo-lines-v1:sha256:78d19798683f189d89c871d20986697c8a3430ca20ca65ba56d65539f2f17825:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I1MTk3Nzc1OTUyOTBjYmNjODI3YjE4NGQwNGQyOTEzYzc3NDdlMmZjNjNjYjI1MGM3ZGY4Y2FhZTAxZjU2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDZiMzRkZjA1ZDI2ZTZjZGRhM2E1YzUxNTFjNGE1NjQxYWEwYTZhZDA4MWExYzlhMmI2MTZjNjJmYzJmZThjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDVmMDhjNzUyMWQ1ZTcyZDI2MDM2M2E2ZGRlMmRmMjcyMzc1YzRlYWYzMzUxMjI5MjE3ODYyNzJhMDYwMDZlZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWI3YmJmNzg1NTI1MDcyMjUxNDRjZWY1MDMyOTM4MjZhZTdkYjk3ZDRjMThhMzAwODJhZDYwYjQzMzUwNWFiYiJ9"
         }
       ]
     },
@@ -57,18 +57,18 @@
       ]
     },
     {
-      "id": "claim_3479c4a6341440248853010446eff9b2",
-      "statement": "The README names gpuix poc 196d69ce as the minimum fork, which patches paint-only loop ticks, on top of the earlier fractional rects, fractional authored lengths and playback controls on a motion value's animation.",
+      "id": "claim_f8b0c6e89cbd48b598f62a18b01c9c2c",
+      "statement": "The README names gpuix poc f6997028 as the minimum fork, which includes the f7b62f11 changes (font smoothing key, cheap scrollTop writes, exact scroll end) on top of the earlier paint-only loop-tick patching, fractional rects, fractional authored lengths and playback controls on a motion value's animation.",
       "evidence": [
         {
-          "resource": "repo://README.md#L52-L52",
-          "version": "repo-lines-v1:sha256:0c21c049fa2094830cb73c28d2138906f85994f86574f7cf80f8742f0e5f737e:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGMyMWMwNDlmYTIwOTQ4MzBjYjczYzI4ZDIxMzg5MDZmODU5OTRmODY1NzRmN2NmODBmODc0MmYwZTVmNzM3ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGMyMWMwNDlmYTIwOTQ4MzBjYjczYzI4ZDIxMzg5MDZmODU5OTRmODY1NzRmN2NmODBmODc0MmYwZTVmNzM3ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "resource": "repo://README.md#L56-L56",
+          "version": "repo-lines-v1:sha256:54d12db2a23ecac584e005e7489cfae8f6098a5393677a0265a256ff5ac778ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTRkMTJkYjJhMjNlY2FjNTg0ZTAwNWU3NDg5Y2ZhZThmNjA5OGE1MzkzNjc3YTAyNjVhMjU2ZmY1YWM3NzhlZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTRkMTJkYjJhMjNlY2FjNTg0ZTAwNWU3NDg5Y2ZhZThmNjA5OGE1MzkzNjc3YTAyNjVhMjU2ZmY1YWM3NzhlZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-21T15:03:49.932Z"
+    "at": "2026-10-21T17:25:15.282Z"
   }
 }

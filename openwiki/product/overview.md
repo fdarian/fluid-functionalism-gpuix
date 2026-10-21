@@ -12,10 +12,10 @@ sources:
     resource: repo://THIRD_PARTY_NOTICES.md
   - id: openwiki-source-ff18555ad70362de0f452788
     resource: repo://UPSTREAM.md
-generated: { by: "claude-code", at: "2026-10-21T15:03:49.932Z" }
+generated: { by: "claude-code", at: "2026-10-21T17:25:15.282Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T15:03:49.932Z
+    at: 2026-10-21T17:25:15.282Z
 ---
 
 # Project overview
@@ -31,7 +31,7 @@ home bento grid, the docs and System pages, Compare, Concepts, Audio Mixer, Chan
 
 It started on 2026-10-12 as an experiment answering one question: **can gpuix draw this library faithfully?** The
 answer is yes, with recorded differences. Every difference from the source is an entry in `drift/`
-with a cause (541 on 2026-10-21, the last one being the font-smoothing gap, after the Untitled UI drop and the sample-photo replacement added a few; 532 right after the `b03d4e27` adoption, 538 after the 2026-10-19 native-animation round, down from 577 once variable fonts and the round 6 features closed their entries; printed by `scripts/drift-counts.ts`), so the repository doubles as a catalogue of what gpuix can and cannot do against a real, demanding
+with a cause (540 on 2026-10-21, after the font-smoothing entry closed on gpuix `f7b62f11`; it had been 541 since the Untitled UI drop and the sample-photo replacement added a few; 532 right after the `b03d4e27` adoption, 538 after the 2026-10-19 native-animation round, down from 577 once variable fonts and the round 6 features closed their entries; printed by `scripts/drift-counts.ts`), so the repository doubles as a catalogue of what gpuix can and cannot do against a real, demanding
 design system. That catalogue fed the gpuix fork's work directly
 (see [gpuix gaps and divergence rounds](../gpuix/gaps-and-divergence-rounds.md)).
 
@@ -87,3 +87,4 @@ All three must resolve to one `solid-js` and one `@gpuix/solid`; see
 | 2026-10-21 | Pinned to gpuix `poc` `b03d4e27`: fractional rects, fluid-hover rects rounded like the source's `offset*` reads and no container-box cache, culling kept on a re-run, the second `StableLabel` ghost within noise, native SVG stroke draws for the button spinner, menu-item check and input-copy; drift 538 to 532 ([details](../gpuix/gaps-and-divergence-rounds.md#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21)) |
 | 2026-10-21 | Pinned to gpuix `poc` `83bab5a7`: authored lengths keep their fraction (the rounding gap row closed), `animate()` on a motion value returns playback controls so plain-vs-fluid is one paused-and-played animation again, `finished` resolves only on finish, tabs-subtle's unfolding label back on the source's strut block; drift stays at 541 ([details](../gpuix/gaps-and-divergence-rounds.md#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21)) |
 | 2026-10-21 | Pinned to gpuix `poc` `196d69ce` (Round 12): paint-only loop ticks are patched instead of drawn whole unless an input, a positioned or translucent ancestor, or a motion value gets in the way; ThinkingIndicator's words stack in one grid cell and thinking-steps lost an anchorless `position: relative` so their shimmers patch; `pnpm footprint` gained `patched/s`, `full/s` and `why`; culling kept on a headless re-run; two new README gap rows for the inputs and positioned-ancestor blockers ([details](../gpuix/gaps-and-divergence-rounds.md#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21)) |
+| 2026-10-21 | Adopted gpuix `poc` `f7b62f11` (Round 13a; the README now names `f6997028`): `WebkitFontSmoothing: 'antialiased'` on the root closes the heavier-text gap, the `scrollTop` setter lays out only what is pending so the `renderer.scrollTo` workaround is reverted, and the scroll end is exact so the release spy's slack is gone; ThinkingSteps, Quill and Beacon rows match the source's heights; the window opens on the first non-primary display (`FF_DISPLAY`); drift 541 to 540 ([details](../gpuix/gaps-and-divergence-rounds.md#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21)) |

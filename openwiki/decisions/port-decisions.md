@@ -5,7 +5,7 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T15:03:49.932Z
+    at: 2026-10-21T17:25:15.282Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -123,7 +123,7 @@ sources:
     resource: repo://src/pages/skill/playback.tsx
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-21T15:03:49.932Z" }
+generated: { by: "claude-code", at: "2026-10-21T17:25:15.282Z" }
 ---
 
 # Port decisions and their reasons
@@ -242,6 +242,14 @@ two Inter 4.0 variable files the source serves (upright and italic, family name 
   `max(normal, semibold)`. The cost was real and accepted on `5fda771a`, and within noise on `b03d4e27`; either way
   the label keeps its two hidden `<text>` nodes; see
   [StableLabel's second ghost](#stablelabels-second-ghost-what-it-cost-and-what-did-not-help).
+
+**Font smoothing is one declaration on the root.** The source sets `-webkit-font-smoothing: antialiased` on html and
+body (`app/globals.css:328-332`); the app's root viewport sets `WebkitFontSmoothing: 'antialiased'`, which every text
+inherits, so no component sets it. Until gpuix `f7b62f11` the port could not: text was drawn 9-42% heavier than
+Chrome (advance widths were identical, so only the stroke weight differed), and the only switch was writing
+`AppleFontSmoothing` into the app's preferences domain, which persists on disk and was not tried. That workaround
+was never adopted, so there is nothing to remove. Screenshots captured before the pin carry the heavier strokes,
+which is why 81 of them were recaptured together on it.
 
 **The weight-width check measures against the browser, not the source's claim.** Chromium measuring the same
 `InterVariable.ttf` and tokens does not reproduce the source's 0.4 px claim (Analytics grows 1.05 px; a long all-caps
@@ -438,26 +446,29 @@ mount, so off-screen cards mounted steps and ran active-step shimmers and the pa
 waits paused, plays at 50% or more visible, pauses below 10% keeping its elapsed time, and a finished card stays
 finished until replayed. A culled region has no box and reports 0, so it holds.
 
-### Scroll writes go through `renderer.scrollTo`, and a page switch is measured by its first draw
+### Scroll writes use the plain `scrollTop` setter, and a page switch is measured by its first draw
 
 Three changes from 2026-10-21 share one cause: on gpuix, a JS write or read that touches layout while a motion
-value is running is billed as layout passes, and no frame is presented while they run. The numbers are in the README
-gap rows ("command-menu (the list's scroll travel)" for r10, "every long page on a sidebar click" for r11); this
-section keeps the decisions and the traps.
+value is running is billed as layout passes, and no frame is presented while they run. The numbers of the r10 and r11
+repros are in the [gaps rounds](../gpuix/gaps-and-divergence-rounds.md#scroll-write-and-first-layout-rows-2026-10-21-repros-r10-and-r11);
+this section keeps the decisions and the traps.
 
-- **The command menu list writes its offset with `renderer.scrollTo(id, 0, top, 'instant')`, never the `scrollTop`
-  setter.** The setter reads the scroll metrics back, which lays the window out and samples every motion value at the
-  wall clock; the sample emits the next `change` on the list's scroll spring, whose handler writes again. A held
-  ArrowDown ran 40-100 layout passes per event drain and drew nothing meanwhile, so the menu stuttered under key repeat
-  although each pass was cheap. `scrollTo` has no read-back. The `change` handler writes the motion value's live
-  value rather than the event's payload, because a payload queued before a snap (the wrap from the last row to the
-  first) would otherwise write the old bottom position back after the list was snapped to the top. Do not "tidy" this
-  back to `element.scrollTop = value`: it works, it passes a single-key check, and it is slow only under repeat.
-- **A page switch writes the page scroller to the top before the swap**, through the same call, so the new page's
-  first draw is already at the top (the source gets this from every Next App Router navigation). Without it the
-  scroller keeps the old page's offset, the new page's height clamps it, and the page appears scrolled until
-  something corrects it. The setter was ruled out for the same layout-pass reason; the write throws if the scroller is
-  not mounted or the renderer has no `scrollTo`, instead of skipping the reset.
+- **The `renderer.scrollTo` workaround came and went.** Before gpuix `f7b62f11`, `element.scrollTop = value` read the
+  scroll metrics back, which laid the window out and sampled every motion value at the wall clock; the sample emitted
+  the next `change` on the command menu list's scroll spring, whose handler wrote again. A held ArrowDown ran 40-100
+  layout passes per event drain and drew nothing meanwhile, so the menu stuttered under key repeat although each pass
+  was cheap. The port wrote through `renderer.scrollTo(id, 0, top, 'instant')`, which has no read-back, and told
+  readers not to tidy it back. `f7b62f11` (Round 13a) made the setter lay out only what is pending, so both writers are
+  the source's plain `scroller.scrollTop = top` again (`command-menu.tsx` `writeScroll`, `app.tsx` `navigate`) and the
+  README row is gone. If a gpuix pin ever brings the cascade back, `check-command-menu`'s one-pass bound is what
+  shows it, not a single key.
+- **The `change` handler still writes the motion value's live value**, not the event's payload: a payload queued
+  before a snap (the wrap from the last row to the first) would otherwise write the old bottom position back after
+  the list was snapped to the top.
+- **A page switch writes the page scroller to the top before the swap**, so the new page's first draw is already at
+  the top (the source gets this from every Next App Router navigation). Without it the scroller keeps the old page's
+  offset, the new page's height clamps it, and the page appears scrolled until something corrects it. The write
+  throws if the scroller is not mounted, instead of skipping the reset.
 - **The Changelog's release spy defers its first reading.** Its mount effect used to read the scroller, which laid out
   the whole page (about 70 ms) before the first draw. The newest month now stands in until a 0 ms timer, which
   runs after that draw, takes the real reading; the cleanup clears the timer. Until then the Releases card shows the newest
@@ -469,11 +480,12 @@ section keeps the decisions and the traps.
 
 How to check these, because the obvious checks pass:
 
-- A one-key command-menu check cannot see the cascade. `scripts/check-command-menu.tsx` holds an arrow at macOS repeat
+- A one-key command-menu check cannot see a cascade. `scripts/check-command-menu.tsx` holds an arrow at macOS repeat
   timing (initial 15, repeat 2, frames at 60 Hz) with the motion clock running, and bounds layout passes per
-  drain by a count, not a time, so a slow machine cannot move the bound. The clock must run: every pass samples the
-  spring at the wall clock, so a paused test clock would hide the cascade. It also replays the wrap with its keys back
-  to back and one draw part way, which is how the stale-payload write is provoked.
+  drain at 1 (it was 4 while the `scrollTop` setter laid out on every write; measured worst 1 over 3 runs on
+  `f7b62f11`). The bound is a count, not a time, so a slow machine cannot move it. The clock must run: every pass
+  samples the spring at the wall clock, so a paused test clock would hide a cascade. It also replays the wrap with its
+  keys back to back and one draw part way, which is how the stale-payload write is provoked.
 - `scripts/check-site-nav.tsx` scrolls the Changelog down, clicks a sidebar row and reads the scroll metrics
   immediately: the read draws what is pending, so it sees the new page's first frame. Reading after a settle would pass
   even if the page had been corrected a frame late.
@@ -526,7 +538,8 @@ the choices that make a number trustworthy or not.
   frame to the process being measured.
 - **The window is 1280 wide, not the app's 1240.** `src/lib/window-options.ts` holds what `src/main.tsx` opens, and
   the child reuses it so the measured window cannot drift from the shipped one, but it overrides the width to 1280:
-  the Electron comparison used that, and the site's own layout drops its sidebar below 1280.
+  the Electron comparison used that, and the site's own layout drops its sidebar below 1280. It recentres the
+  resized window with `windowPlacement`, so the measured window opens on the same display as the app.
 - **`--tour` exists because a per-page number misses what a session leaves behind.** One child visits every page
   through the app's own `navigate` and reads the footprint fresh at each stop and after, with and without a forced GC,
   plus the retained element count. Leaving a page returns nothing to the OS: the introduction sits at about 280 MB in a
@@ -641,13 +654,15 @@ Two things from the 2026-10-19 round (`a2eed755`, `ce7ee2b9`, `d9d2e93e`):
   nothing, up to 12 attempts, and throws `scrolling did not move <testId>` on the third; reaching the page end is
   the only legitimate early return. Use it for any demo scenario that scrolls an element into view.
 
-- **A wheel check needs fractional content.** gpuix reports `scrollHeight` and `clientHeight` rounded half up while a
-  scroller ends at its real, snapped end, so 29 rows of 19.5 px plus 16 px padding (581.5 px) leaves the real range
-  one short of `scrollHeight - clientHeight` and a wheel over the scrollbar track stuck instead of chaining to the
-  page. Whole-pixel content (28 rows) hides it. `check-scroll-area` runs both contents, reaching the end by wheel,
-  thumb drag and the End key, and also pins that a continuous wheel gesture stays latched to the area it started on
-  (gpuix holds the latch until 500 ms pass without an event, as Chrome does). The fix is in the primitive:
-  `scrollAlong` in the sibling base-ui-solid-gpuix repo reads the position back after scrolling (its `BASE-UI-AUDIT.md`).
+- **A wheel check needs fractional content, even now that the range is exact.** Until `f7b62f11` gpuix reported
+  `scrollHeight` and `clientHeight` rounded half up while a scroller ended at its real, snapped end, so 29 rows of
+  19.5 px plus 16 px padding (581.5 px) left the real range one short of `scrollHeight - clientHeight` and a wheel
+  over the scrollbar track stuck instead of chaining to the page. Whole-pixel content (28 rows) hid it. The scroll end
+  now lands exactly on `scrollHeight - clientHeight`, so the primitive's `scrollAlong` no longer reads the position
+  back and the changelog release spy compares against `scrollHeight` directly (its two-pixel `BOTTOM_SLACK` is
+  gone). `check-scroll-area` still runs both contents, reaching the end by wheel, thumb drag and the End key, because
+  half-pixel content is where a rounding regression would show; it also pins that a continuous wheel gesture stays
+  latched to the area it started on (gpuix holds the latch until 500 ms pass without an event, as Chrome does).
 
 ## pnpm wiring: one solid-js, one @gpuix/solid
 

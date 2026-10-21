@@ -6,8 +6,6 @@ tags: [gpuix, gaps, upstream, history, migration]
 sources:
   - id: openwiki-source-dbc5a68e94d7e3a15a776857
     resource: repo://drift/fluid-hover.md
-  - id: openwiki-source-385da475ebb9649b27cbd9e7
-    resource: repo://drift/site.md
   - id: openwiki-source-d4a4bb7ecd3d3f6e47c46abd
     resource: repo://drift/table.md
   - id: openwiki-source-5cfc44b662eef11b303099d9
@@ -76,10 +74,10 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-872f10458af3aae905a0ee5a
     resource: repo://src/pages/fluid-hover/plain-vs-fluid.tsx
-generated: { by: "claude-code", at: "2026-10-21T15:03:49.932Z" }
+generated: { by: "claude-code", at: "2026-10-21T17:25:15.282Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T15:03:49.932Z
+    at: 2026-10-21T17:25:15.282Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -112,7 +110,7 @@ link to those rows rather than repeating them. The ones that shape the most code
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
 The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17) and again in the
-[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `196d69ce` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), and `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21)). The bugs and gaps worth knowing before touching layout code:
+[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `f6997028` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), and `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`). The bugs and gaps worth knowing before touching layout code:
 
 - A function-form `createTransform` of several motion values is computed in JS and can trail its inputs by a frame
   on a live window (not seen on the test renderer). `calc()` strings of the row's own width avoid it where the layer
@@ -140,21 +138,6 @@ The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adopt
   keeps the markup order (`order` 3, 2, 1 is visited c, b, a, not a, b, c). gpuix's own README and `order.rs` say
   focus and tab order stay in document order, so the docs and the behaviour disagree; the banner uses `row` /
   `row-reverse` instead.
-- gpuix leaves CoreGraphics font smoothing on, so text is drawn heavier than the source's
-  `-webkit-font-smoothing: antialiased`: ink coverage against Chrome is +9-17% for dark text and +22-42% for light and
-  dim text on `b03d4e27`, with identical advance widths, so only the stroke weight differs and layout does not move.
-  gpuix dilates light text by luminance and never switches smoothing off for dark text; only the user preference
-  `AppleFontSmoothing` = 0 in the app's own preferences domain closes it (argv and `registerDefaults:` do not reach
-  gpuix's check), and writing that persists on disk, so the port does nothing and the README row asks gpuix for a real
-  switch. Measured on the offscreen renderer at scale factor 1, not 2x. It is a "Bugs" row and an entry in
-  `drift/site.md`, which took the drift total from 540 to 541.
-- Writing `scrollTop` while a motion value runs cascades into layout passes: the setter reads the scroll metrics back,
-  which lays the window out and samples every motion value at the wall clock, and the sample emits the next `change`
-  event, whose handler writes again. One event drain ran 40-100 passes (about 90 ms, with no frame presented), so a
-  held ArrowDown in the site menu stuttered; `renderer.scrollTo` has no read-back and no cascade. The port moved the
-  command menu list and the page-switch reset to `scrollTo`; any other scroller whose offset follows an animated
-  motion value should do the same. Repro r10 (outside the repo); decision and verification in
-  [Port decisions](../decisions/port-decisions.md#scroll-writes-go-through-rendererscrollto-and-a-page-switch-is-measured-by-its-first-draw).
 - The first draw of a long page is whole: a page mounts in one batch and builds, lays out and shapes every node,
   because nothing marks a region far until an `IntersectionObserver` has reported against a first layout. A 1900-node
   tree drew in 45 ms against 8 ms with all but 12 entries `display: none`. gpuix's line layout cache also ages a line
@@ -172,7 +155,7 @@ Earlier entries here were closed and should not be re-reported: a `width: 100%` 
 filling the column and a percentage `maxWidth` not clamping a `fit-content` box (`20a0c327`); on `b03d4e27`, the
 cap-trimmed label that tabs and tabs-subtle centre sitting a pixel off Chrome's at 1x (gpuix #44), whose two drift
 entries were removed; and on `83bab5a7`, the authored-length rounding, a trimmed `inline-grid` label in a block with a
-strut sitting about 5.5 px high, and the missing pause/play on a motion value's animation.
+strut sitting about 5.5 px high, and the missing pause/play on a motion value's animation; and on `f7b62f11`, the heavier text (font smoothing), the `scrollTop` setter's layout cascade and the scroll range ending one pixel short of `scrollHeight - clientHeight`.
 
 ## How a round works
 
@@ -609,10 +592,10 @@ and the carousel-dots and fluid-hover entries lost a clause, not a section.
 Two new README Bugs rows, found while chasing a stutter under a held arrow in the site menu and a hitch on sidebar
 clicks. Neither is fixed in gpuix; both are open questions for the fork, and the port worked around the first.
 
-- **r10, the `scrollTop` setter's layout cascade.** Covered in the open list above. On a held ArrowDown at 30 ms
+- **r10, the `scrollTop` setter's layout cascade (closed on `f7b62f11`, see [Round 13a](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21)).** On a held ArrowDown at 30 ms
   repeats, 32 of 34 keys were handled in 2 s with a drawn-frame gap of 109-119 ms at p90 through the setter (69-79 layout passes per drain at p90, 94 ms),
-  against 0 passes and 0.1 ms through `renderer.scrollTo`. The port's workaround is in the command menu and the page-switch reset; the reasons
-  and the trap (a single-key check passes) are in [Port decisions](../decisions/port-decisions.md#scroll-writes-go-through-rendererscrollto-and-a-page-switch-is-measured-by-its-first-draw).
+  against 0 passes and 0.1 ms through `renderer.scrollTo`. The port worked around it in the command menu and the page-switch reset until the pin
+  made the setter cheap; the reasons and the trap (a single-key check passes) are in [Port decisions](../decisions/port-decisions.md#scroll-writes-use-the-plain-scrolltop-setter-and-a-page-switch-is-measured-by-its-first-draw).
 - **r11, first-draw layout and shaping cost of a long page.** No workaround beyond the Changelog's release spy no
   longer forcing a second layout before the first draw. The README row was written first against the line cache's
   age-out (`finish_frame`) and then updated on gpuix `83bab5a7` with the shape counts of the repeat visits (Changelog
@@ -692,3 +675,42 @@ Before this round's repository changes, all nine animated pages read `patched/s`
 
 Pitfall: the footprint figures were taken at load 3-13 and the r17 and r18 repros at load 5-29 on the test renderer;
 compare CPU percentages only against a run at similar load, and read `patched/s` first, which load moves less.
+
+## Round 13a: font smoothing, scrollTop setter and exact scroll end on `poc` `f7b62f11` (2026-10-21)
+
+The port adopted `f7b62f11` (zed `da3e5b19db`); the README's pin line and gap table then moved on to `f6997028`
+(zed `67414fd389`, the commit that added window placement, `x`/`y` and `getAllDisplays()`), which is the minimum fork the
+README names today. Three open gpuix items closed, and three small look fixes the pin made possible landed with them.
+The drift total went from 541 to 540: only the font-smoothing entry in `drift/site.md` was removed (`site` 47 to 46,
+gpuix-gap column 88 to 87).
+
+- **Font smoothing is a style key now (the r8 gap).** `WebkitFontSmoothing: 'antialiased'` is inherited, so one
+  declaration on the app's root viewport matches the source's `html, body` rule; the 9-42% heavier-ink gap, its README
+  Bugs row and the `drift/site.md` entry are gone. The workaround that had been on offer (writing `AppleFontSmoothing`
+  into the app's preferences) was never taken. Because text weight changed everywhere, 81 screenshots were recaptured
+  together; files whose only other change was a `Math.random` playground variant, a caret or a timing state were left
+  alone, as the repo's screenshot-noise rule says.
+- **A `scrollTop` write lays out only what is pending (the r10 cascade).** The `renderer.scrollTo` workaround in the
+  command menu's `writeScroll` and the page-switch `navigate` was reverted to `scroller.scrollTop = top`, as the
+  source does, and the README's scroll-travel bugs row went with it. `check-command-menu`'s per-drain layout-pass
+  bound dropped from 4 to 1 (worst measured 1 over 3 runs), the same bound for the wrap replay. Decision and trap:
+  [Port decisions](../decisions/port-decisions.md#scroll-writes-use-the-plain-scrolltop-setter-and-a-page-switch-is-measured-by-its-first-draw).
+- **The scroll range ends exactly at `scrollHeight - clientHeight`.** The changelog release spy lost its two-pixel
+  `BOTTOM_SLACK` and compares against `scrollHeight` directly, and `check-scroll-area` now describes the exact end
+  rather than the one-short range (the sibling primitive repo dropped the read-back in `scrollAlong` for the same
+  reason). `check-scroll-area` keeps the half-pixel content because it is where a rounding regression would show.
+- **Three pages matched Chrome's boxes once the type was right.** ThinkingSteps puts the body type on the Collapse inner
+  div, where the source puts it, so the Sources row is 21 px with the chip at +1; Quill's status Badge sits in the cell
+  directly (the flex wrapper is gone) and its rows are the source's 39 px; Beacon's badge cells go through the cell's
+  text line box like `TableCell`, giving the source's 41 px rows with the badge at +11.5. All three were the port's own
+  nesting differing from the source's (a bare badge in a Beacon cell made the row 42 px), fixed in the port, not gpuix
+  changes.
+  Their screenshots (thinking-steps, concepts-lumen, concepts-quill, concepts-beacon, showcase grid-5 and grid-6)
+  were recaptured.
+- **Not a gpuix change but in the same stretch:** the window opens on the first non-primary display (centred in its work
+  area; `FF_DISPLAY=<index>` picks another, a bad index throws with the list of displays), using the placement API the
+  `f6997028` fork added. `pnpm perf` and `footprint --window` place their windows the same way.
+
+Pitfall carried over: a README "gpuix now does" table and a drift count are only as current as the last pin they were
+re-read against. The pin line was edited twice in one afternoon (`f7b62f11`, then `f6997028`), so read the README's
+current line rather than this page for the minimum fork.

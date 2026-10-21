@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:51bc2d0be8a62f1ab4b56e9a29aec98609dcde6ffd1061b2e8a3e5c629fe8ab0",
+  "pageVersion": "sha256:ca2ed29e8e9f47a338c00cf68cdb6412d2b5c68a7687cec715759c428b7817c6",
   "claims": [
     {
       "id": "claim_a7315f44f8af437c803bd7fb46fe717d",
@@ -24,15 +24,15 @@
     },
     {
       "id": "claim_015357aacaf041e592a158dfc0e6045d",
-      "statement": "Scroll writes that follow a running motion value should go through renderer.scrollTo rather than the scrollTop setter, and scripts/perf-page-switch.tsx measures sidebar-click page-switch hitches.",
+      "statement": "Scroll writes that follow a running motion value use the plain scrollTop setter since gpuix f7b62f11 (the command menu list and page-switch reset write scrollTop directly), and scripts/perf-page-switch.tsx measures sidebar-click page-switch hitches.",
       "evidence": [
         {
           "resource": "repo://scripts/perf-page-switch.tsx#L1-L21",
           "version": "repo-lines-v1:sha256:2656e457241fa537905fb50dbeb8a6c256b409ee88080563bc6017e565ad3c67:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhMTAxYjQ0YmNkOWEyMTg0OGI2NzRlZmE2YTIwOTY4Y2Y4ZmJlYzA0ZDU3NDk1OTE1NGQ1ZGMwNjY4YmU0YzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNkYzFkNzk4NmRmMGQ2NDlhODViOTUxZWM2MzFjYWZkNTU3OWNkYjQ1MjEwYjIzZTFjNDM1ZDI4NzgyMTkwYjUifQ"
         },
         {
-          "resource": "repo://src/components/command-menu.tsx#L410-L432",
-          "version": "repo-lines-v1:sha256:4e1f7562103dada14ed51f79e62eb47aa01a3bade43eb22a39e94ab9b2c4adcd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3ODcxODZhOTRhNWRmNTFlOGU2MDBiODBiYzQzZjUzZDgwMmZlNjQwMTZjNjU3MGFiN2Y0MmYzYmE3YzQyN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkMzg3OTk2NDFkZmI5ZDFhNjY5ZDViNWM2OGVmY2I4ODFmNWNmZWM0MzVjZDcyMGM1NmU0ZmI5YmQ5YTI1YmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyODE0NTgxNGE2ZTJkODEzMzZhMmJmMTc0NDBkZTJkYTVmMGMzZWQ0NDA0ZjY1M2Q1MjI1M2Q1OTE4Mzc5ZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNmNDliNzg5MTZhYjg5YWFlZmVjMzQ5ZjExZDU4ODI0YmFlYTI3ZTIwODc3ODcwYTY4ZjU3NTg4NDU0YThhY2MifQ"
+          "resource": "repo://src/components/command-menu.tsx#L410-L427",
+          "version": "repo-lines-v1:sha256:0aba93ccb82b8d794dab132b51d491afe10a54b5ee3bccabb90a39836bf4c760:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3ODcxODZhOTRhNWRmNTFlOGU2MDBiODBiYzQzZjUzZDgwMmZlNjQwMTZjNjU3MGFiN2Y0MmYzYmE3YzQyN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyODE0NTgxNGE2ZTJkODEzMzZhMmJmMTc0NDBkZTJkYTVmMGMzZWQ0NDA0ZjY1M2Q1MjI1M2Q1OTE4Mzc5ZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI4YmJkZTIyZTAyNWU1MjYyZjFmMDhjYzA3YzgyMWFjYzNlNGVmNDc5ZTVjNGZhMGEwYzU1OTQ1OTQyOTAzNDUifQ"
         }
       ]
     },
@@ -53,6 +53,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-21T15:03:49.932Z"
+    "at": "2026-10-21T17:25:15.282Z"
   }
 }
