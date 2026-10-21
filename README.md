@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 534 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 540 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -194,7 +194,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [button](drift/button.md) | 2 | 4 | 1 | 1 | 8 |
 | [card](drift/card.md) | 2 | 7 | 6 | 0 | 15 |
 | [carousel-dots](drift/carousel-dots.md) | 2 | 4 | 2 | 0 | 8 |
-| [chat-message](drift/chat-message.md) | 2 | 4 | 2 | 1 | 9 |
+| [chat-message](drift/chat-message.md) | 2 | 5 | 2 | 1 | 10 |
 | [checkbox-group](drift/checkbox-group.md) | 1 | 0 | 3 | 1 | 5 |
 | [color-picker](drift/color-picker.md) | 2 | 5 | 15 | 1 | 23 |
 | [combobox](drift/combobox.md) | 4 | 13 | 5 | 2 | 24 |
@@ -203,23 +203,23 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [concepts](drift/concepts.md) | 1 | 26 | 2 | 1 | 30 |
 | [dialog](drift/dialog.md) | 2 | 2 | 2 | 1 | 7 |
 | [dropdown](drift/dropdown.md) | 2 | 5 | 11 | 1 | 19 |
-| [file-thumbnail](drift/file-thumbnail.md) | 2 | 4 | 1 | 0 | 7 |
+| [file-thumbnail](drift/file-thumbnail.md) | 2 | 5 | 1 | 0 | 8 |
 | [fluid-hover](drift/fluid-hover.md) | 4 | 5 | 2 | 1 | 12 |
-| [home](drift/home.md) | 0 | 2 | 1 | 1 | 4 |
+| [home](drift/home.md) | 0 | 3 | 1 | 1 | 5 |
 | [input-copy](drift/input-copy.md) | 1 | 3 | 4 | 0 | 8 |
 | [input-group](drift/input-group.md) | 0 | 1 | 3 | 1 | 5 |
-| [input-message](drift/input-message.md) | 4 | 0 | 14 | 4 | 22 |
+| [input-message](drift/input-message.md) | 4 | 1 | 14 | 4 | 23 |
 | [introduction](drift/introduction.md) | 0 | 5 | 2 | 0 | 7 |
 | [mobile-drawer](drift/mobile-drawer.md) | 3 | 2 | 1 | 0 | 6 |
 | [motion-page](drift/motion-page.md) | 3 | 4 | 1 | 2 | 10 |
 | [nav-menu](drift/nav-menu.md) | 0 | 5 | 1 | 0 | 6 |
-| [queued-stack](drift/queued-stack.md) | 3 | 2 | 3 | 1 | 9 |
+| [queued-stack](drift/queued-stack.md) | 3 | 3 | 3 | 1 | 10 |
 | [radio-group](drift/radio-group.md) | 2 | 2 | 2 | 0 | 6 |
 | [scroll-area](drift/scroll-area.md) | 2 | 5 | 1 | 1 | 9 |
 | [scrollbars-page](drift/scrollbars-page.md) | 0 | 4 | 2 | 0 | 6 |
 | [select](drift/select.md) | 4 | 3 | 6 | 2 | 15 |
 | [sidebar](drift/sidebar.md) | 1 | 8 | 19 | 1 | 29 |
-| [site](drift/site.md) | 4 | 13 | 21 | 7 | 45 |
+| [site](drift/site.md) | 4 | 14 | 21 | 7 | 46 |
 | [sizes-page](drift/sizes-page.md) | 0 | 5 | 3 | 3 | 11 |
 | [skill-page](drift/skill-page.md) | 2 | 5 | 0 | 1 | 8 |
 | [slider](drift/slider.md) | 4 | 3 | 2 | 1 | 10 |
@@ -232,7 +232,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 4 | 5 | 0 | 13 |
 | [tooltip](drift/tooltip.md) | 1 | 5 | 1 | 1 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **87** | **206** | **191** | **50** | **534** |
+| **Total** | **87** | **212** | **191** | **50** | **540** |
 
 ### gpuix gaps across components
 

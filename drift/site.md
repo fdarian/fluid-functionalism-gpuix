@@ -409,3 +409,12 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** the sidebar demo (blocks), none for the rest.
+
+## Changelog: the Sidebar preview's photo is a different picture
+
+- **Cause:** `port choice` (the repository owner chose not to ship the source's photo).
+- **Original:** the Sidebar entry's preview is the Showcase's `SidebarPreview`, whose user row shows the source's `public/micka.png` (918x928 PNG) (`app/components/bento-previews.tsx:767`, `:868`).
+- **Port:** `assets/chat-ai/avatar.jpg` (345x345 JPEG), through the same `previewMap` entry (`src/pages/changelog/previews.tsx:2`, `:21`); see `drift/home.md`, "Sample photo".
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** the Changelog page's Sidebar entry.

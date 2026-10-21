@@ -89,7 +89,7 @@ repeating it.
 
 - **Cause:** `gpuix gap`, as the port's comment states (`input-message.tsx:825-826`). Unverified here: `FORK.md:501-502` says a text editor's `keydown` runs before its built-in action. No README row covers it.
 - **Original:** plain ArrowUp / ArrowDown drive the suggestion list and history (`input-message.tsx:788-889`).
-- **Port:** the same handler also accepts Ctrl-P / Ctrl-N (`input-message.tsx:815-839`), and the demo's scenarios use `ctrl-n` / `ctrl-p` (`src/demos/input-message.tsx:645,764`). If the arrows really are swallowed, the keyboard path in the real window is Ctrl-P / Ctrl-N only.
+- **Port:** the same handler also accepts Ctrl-P / Ctrl-N (`input-message.tsx:815-839`), and the demo's scenarios use `ctrl-n` / `ctrl-p` (`src/demos/input-message.tsx:649,767`). If the arrows really are swallowed, the keyboard path in the real window is Ctrl-P / Ctrl-N only.
 - **Fidelity:** approximated.
 
 ## Slot buttons are not scaled down in compact
@@ -158,3 +158,12 @@ repeating it.
 - **Original:** the front card morphs into its sent bubble (`morphLayoutId` on the stack and `layoutId` on `ChatMessage`); the attach and model menus open above their buttons (`bottom-full`); the buttons are lit while their menu is open (`active`) and wrapped in tooltips; editing a card puts the caret at the end of the composer.
 - **Port:** no morph: neither `QueuedStack` nor `ChatMessage` takes a layout id, so a dispatched card fades out and its bubble fades in. `DropdownContent` has no side prop, so the menus open below the composer's slot buttons. `Button` has no `active` prop. Edit refills the composer but does not focus it: `InputMessage` has no ref and gpuix has no way to find its textarea from outside. The composer's `QueuedMessage` carries `ComposerFile`s and the stack's carries `FileLike`s, so `ComposerQueueStack` (`src/lib/composer-stage.tsx`) maps between them, caching one mapped object per message because the stack keys its cards by identity.
 - **Fidelity:** approximated (morph dropped).
+
+## Sample photo: a different picture, named avatar.jpg
+
+- **Cause:** `port choice` (the repository owner chose not to ship the source's photo).
+- **Original:** the source's `public/micka.png` (918x928 PNG), fetched and attached as a `File` named `micka.png` with type `image/png` (`app/docs/input-message/page.tsx:70-72`, `:604-606`) or `blob.type || "image/png"` in the playground (`lib/docs/playgrounds/input-message.tsx:252-254`).
+- **Port:** `assets/chat-ai/avatar.jpg` (345x345 JPEG, `AVATAR_JPG` in `src/lib/assets.ts`), a `ComposerFile` by path with its `name` set to `avatar.jpg` and its type read from the extension, `image/jpeg` (`src/demos/input-message.tsx:41-44`, used at `:114` and `:330`; the queued chat's `PHOTO` is the same file, `src/lib/queued-chat.tsx:35`). The name only surfaces in the tile's `alt` and `aria-label` and the remove badge's label (`src/components/file-thumbnail.tsx:129`, `:154`; `src/components/input-message.tsx:339`).
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.

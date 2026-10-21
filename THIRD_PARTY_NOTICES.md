@@ -41,9 +41,11 @@ in Hugeicons' own packaging.
 
 ## Images
 
-`assets/chat-ai/micka.png` and `assets/chat-ai/og.png` are byte-identical to `public/micka.png` and
-`public/og.png` in the upstream repository, and are covered by its MIT licence. `micka.png` is a photograph of a person
-(used as a sample avatar); MIT covers copying the file, not the likeness.
+`assets/chat-ai/og.png` is byte-identical to `public/og.png` in the upstream repository, and is covered by its MIT
+licence.
+
+`assets/chat-ai/avatar.jpg` is a photograph supplied by the repository owner (used as a sample avatar); its origin is
+not recorded here.
 
 ## Dependencies not bundled
 

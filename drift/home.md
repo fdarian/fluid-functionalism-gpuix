@@ -50,3 +50,12 @@ repeating it. The hero's three buttons are not wired here (their `onClick`s belo
 - **Port:** the same two arrows (`HeroArrows`, `src/app.tsx`; icon size follows the Size row) with the tooltip, but the previous arrow is the `arrow-left` glyph, not `arrow-right` rotated 180° (no transforms), and the page column gives 24px of top padding where the source gives 80-112px. The heading is `App`'s shared one: bold with a 34px line (`drift/introduction.md`). The grid's column is `width: 100%`, `maxWidth: 1200`, 24px side padding, so it spans the centre column; the window is 1240px, so the grid shows two columns (the source shows three from a 1280px viewport).
 - **Fidelity:** approximated.
 - **Components it hits:** just this page.
+
+## Sample photo: a different picture
+
+- **Cause:** `port choice` (the repository owner chose not to ship the source's photo).
+- **Original:** the Sidebar tile's user row shows the source's `public/micka.png` (918x928 PNG) as a 20px avatar (`app/components/bento-previews.tsx:868`).
+- **Port:** `assets/chat-ai/avatar.jpg` (345x345 JPEG, `AVATAR_JPG` in `src/lib/assets.ts`) in the same 20px circle (`src/home/bento-previews.tsx:329`). The row's label is still "Micka Touillaud" (`:326`), the source's text.
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** the Sidebar tile; the Changelog page's Sidebar entry embeds the same preview (`drift/site.md`).

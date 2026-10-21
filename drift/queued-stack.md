@@ -84,3 +84,12 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:3
 - **Port:** two cards in `src/demos/queued-stack.tsx`. "Queued Stack": a "Queue message" / "Queue with attachment" / "Clear" row above a plain box that shows the composer text; four seeded cards, one with three files (`:52-61`). "Queued chat": `QueuedChat` from `src/lib/queued-chat.tsx`, the source's demo with a real `InputMessage`, a transcript, a Resume / Pause / Reset button, the same three seeded cards and dispatch into the transcript (the input-message page also shows its `rich` variant). Edit puts the text and files back but does not focus the composer (see `drift/input-message.md`, "Queued chat").
 - **Fidelity:** approximated (no morph).
 - **Components it hits:** input-message, chat-message, thinking-indicator.
+
+## Sample photo: a different picture, named avatar.jpg
+
+- **Cause:** `port choice` (the repository owner chose not to ship the source's photo).
+- **Original:** the source's `public/micka.png` (918x928 PNG). The component has no docs page; the queued chat demo fetches the photo and attaches it as a `File` named `photo.png` (not `micka.png`) with type `blob.type || "image/png"` (`app/docs/input-message/queued-chat-demo.tsx:229-231`).
+- **Port:** `assets/chat-ai/avatar.jpg` (345x345 JPEG, `AVATAR_JPG` in `src/lib/assets.ts`), named `avatar.jpg` and typed `image/jpeg` (`src/demos/queued-stack.tsx:11-15`, used at `:58` and `:85`); the queued chat's seeded card carries it as `PHOTO` named `avatar.jpg` (`src/lib/queued-chat.tsx:35`). The name only surfaces in the thumbnail's `alt` and `aria-label` (`src/components/file-thumbnail.tsx:129`, `:154`).
+- **Workaround:** none.
+- **Fidelity:** approximated.
+- **Components it hits:** just this one.

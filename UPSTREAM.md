@@ -92,7 +92,8 @@ lands in the matching file on the right"; the drift file's `Original:` header na
 | `registry/default/hooks/use-keyboard-nav-gate.ts` | `base-ui:src/select/root/use-select-root.ts` (`keyboardNav`), read in `src/components/select.tsx` |
 | `registry/default/lib/icon-context.tsx`, `icons-*.tsx`, `lib/icons-*.ts` | `src/lib/icons.ts`, `src/lib/icon.tsx`, `src/lib/icons/` |
 | `public/fonts/InterVariable*.ttf` | `assets/fonts/InterVariable*.ttf` (same files) |
-| `public/{micka,og}.png` | `assets/chat-ai/` |
+| `public/og.png` | `assets/chat-ai/og.png` |
+| `public/micka.png` | not ported; replaced by `assets/chat-ai/avatar.jpg` (see the "Sample photo" entries in `drift/`) |
 | `lib/typeset/generate.ts`, `lib/docs/typeset-sample.tsx` | `src/pages/typography/` |
 
 Not ported, by design: the `registry/radix/` flavour (the port is Base UI only), the shadcn registry build and
