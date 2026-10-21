@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 540 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 541 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -219,7 +219,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [scrollbars-page](drift/scrollbars-page.md) | 0 | 4 | 2 | 0 | 6 |
 | [select](drift/select.md) | 4 | 3 | 6 | 2 | 15 |
 | [sidebar](drift/sidebar.md) | 1 | 8 | 19 | 1 | 29 |
-| [site](drift/site.md) | 4 | 14 | 21 | 7 | 46 |
+| [site](drift/site.md) | 5 | 14 | 21 | 7 | 47 |
 | [sizes-page](drift/sizes-page.md) | 0 | 5 | 3 | 3 | 11 |
 | [skill-page](drift/skill-page.md) | 2 | 5 | 0 | 1 | 8 |
 | [slider](drift/slider.md) | 4 | 3 | 2 | 1 | 10 |
@@ -232,7 +232,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 4 | 5 | 0 | 13 |
 | [tooltip](drift/tooltip.md) | 1 | 5 | 1 | 1 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **87** | **212** | **191** | **50** | **540** |
+| **Total** | **88** | **212** | **191** | **50** | **541** |
 
 ### gpuix gaps across components
 
@@ -256,7 +256,8 @@ offer it. A count is given only where the code shows it.
 | screenshots, app-frame | The test renderer opens its window with the options, but a capture is the view alone: no titlebar or traffic lights (gpuix `README.md:7059-7061`) | Captures show no traffic lights |
 | screenshots | Batched keystrokes deliver an input's `onChange` after the whole batch | none |
 | the compiled binary (`pnpm build`) | `@gpuix/native`'s ESM entry loads the `.node` addon through `createRequire(import.meta.url)`, which `bun build --compile` does not follow: the binary fails with "Cannot find native binding". Its CJS entry uses a plain `require`, which Bun embeds | `nativeCjsPlugin` in `scripts/build.ts` resolves `@gpuix/native` to `index.cjs` |
-| every native loop on a page with many nodes: thinking-indicator, thinking-steps, file-thumbnail, carousel-dots, button, and the showcase, fluid-hover and changelog pages that run one | A looping native animation costs the whole page per tick (gpuix "per-replayed-root cost"): `~/.claude/notes/ff-gpuix-repros/r7-frame-loop-starves-timers.tsx` with one looping colour keyframe on one text takes 7 ms a tick on 3000 nodes and about 60 ms on 12000, against 0.1 ms with nothing animating. Timers still run between those ticks (9-10 callbacks a second at 3000 nodes, 7-8 at 12000; gpuix #56), but a page with a running loop idles at 37-45% CPU (carousel-dots, file-thumbnail, thinking-indicator, thinking-steps, queued-stack, showcase, fluid-hover, changelog, and button since its loading spinner is native: the source's always-loading Saving button takes the page from 3.8% to 41%) | none: the loops are native, and the off-screen ones pause through culling |
+| text rendering, every page (`drift/site.md`, "Text is drawn 9-42% heavier than the source's `antialiased`") | gpuix leaves CoreGraphics font smoothing on: it dilates light text by luminance (`gpui_macos/src/text_system.rs:228`, `:564-567`) and the dilation-0 branch for dark text (`:568`) never calls `set_should_smooth_fonts(false)`. Ink coverage against Chrome with `-webkit-font-smoothing: antialiased` (the source sets it site-wide, `app/globals.css:328-332`): dark text +9-17%, light and dim text +22-42%, advance widths identical. `AppleFontSmoothing` = 0 in the app's preferences domain closes it to 0%, but argv and `registerDefaults:` do not reach gpuix's check and only a persistent `CFPreferencesSetAppValue` write would. Repro and numbers: `~/.claude/notes/ff-gpuix-repros/r8-font-weight.md`. Question for gpuix: can the dilation-0 branch disable smoothing, or can an app opt out per process or window like `-webkit-font-smoothing`? | none: text stays heavier |
+| every native loop on a page with many nodes: thinking-indicator, thinking-steps, file-thumbnail, carousel-dots, button, and the showcase, fluid-hover and changelog pages that run one | A looping native animation costs the whole page per tick (gpuix "per-replayed-root cost"): `~/.claude/notes/ff-gpuix-repros/r7-frame-loop-starves-timers.tsx` with one looping colour keyframe on one text takes 7 ms a tick on 3000 nodes and about 60 ms on 12000, against 0.1 ms with nothing animating. Timers still run between those ticks (9-10 callbacks a second at 3000 nodes, 7-8 at 12000; gpuix #56), but a page with a running loop idles at 37-45% CPU (carousel-dots, file-thumbnail, thinking-indicator, thinking-steps, queued-stack, showcase, fluid-hover, changelog, and button since its loading spinner is native: the source's always-loading Saving button takes the page from 3.8% to 41%). gpuix could fix this in principle: the cost follows the page's node count, not the animated element (one animated text costs 7 ms a tick on 3000 nodes and 0.1 ms with nothing animating), so a tick that repainted only the animating subtree, instead of the whole window, would not scale with the page. The owner accepts the button's ~41% idle CPU for now | none: the loops are native, and the off-screen ones pause through culling |
 | every fluid-hover list (the table's highlight, `drift/table.md`) | gpuix rounds an authored length (inset, padding, size) to a whole device pixel, half toward zero, where Chrome lays out fractional px: `top: 110.5` lands at 110 (`zed/crates/gpui/src/taffy.rs:2250-2257`, `:2330-2334`, `round_to_device_pixel` at `zed/crates/gpui/src/util.rs:130-142`). The rects gpuix reports are fractional (basic-table rows sit at .5 px under collapsed borders), so a highlight that glided to a measured rect ended 0.5 px off its row | The fluid highlight measures like the source's `offsetTop` / `offsetWidth`, rounded integers (`toOffsetRect`, `src/lib/fluid-hover.ts:19-27`); other authored fractions are not corrected |
 | tabs-subtle (the unfolding label, `drift/tabs-subtle.md`) | A trimmed (`textBox: trim-both cap alphabetic`) `inline-grid` label in a block with a 16px / 24px strut sits 5.55px above where Chrome puts it (cap top 3px under the block's top; Chrome 8.55px). The block's own line box is the right 24px | The clip box is `height: 24` and the label is offset by `marginTop` (`labelTop`), which gpuix then rounds like any authored length |
 

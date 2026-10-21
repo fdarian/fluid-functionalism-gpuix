@@ -204,11 +204,21 @@ One entry per place the port looks or behaves differently from the source, whate
 ## Page scroller and base styles
 
 - **Cause:** `not ported yet` (unverified live; read from code only).
-- **Original:** `scrollbar-gutter: stable`, `overscroll-behavior-y: none`, a thin overlay scrollbar ramp tinted by `--overlay`, grayscale font smoothing, `h1, h2, h3 { text-wrap: balance }` and `p { text-wrap: pretty }`, inline-code chips, and a focus-ring fallback for natively focusable elements (`app/globals.css:296-345, 326-332, 896-945, 868-891`).
+- **Original:** `scrollbar-gutter: stable`, `overscroll-behavior-y: none`, a thin overlay scrollbar ramp tinted by `--overlay`, `h1, h2, h3 { text-wrap: balance }` and `p { text-wrap: pretty }`, inline-code chips, and a focus-ring fallback for natively focusable elements (`app/globals.css:296-345, 326-332, 896-945, 868-891`); the grayscale font smoothing is its own entry below.
 - **Port:** the page column is a plain `overflowY: "scroll"` div (`src/app.tsx:584-597`) without the scrollbar styling. The docs pages have the inline-code chip and prose through `Code` and `Prose` (`src/lib/doc-page.tsx:36-86`); the shell has no prose. The two `text-wrap` rules are `textWrap` set on each text primitive that stands for one of those tags, not a global rule: `Prose`, `SectionTitle` and `SubHeading` (`src/lib/doc-page.tsx`), the introduction's own pair, the app heading, `H3` of the typography page, `CardDescription`, `BannerTitle`, `BannerDescription` and the `AskUserQuestions` title, empty state and error. `<li>` text stays plain, as in the source (`Prose plain`: the Typography rules and the Fluid Hover use / skip lists), as does the markdown sample, where `.typeset` sets `text-wrap-style: auto`. The changelog entries are `Prose plain` too, because the source's changelog view is not in the reference checkout to read. Other places the source writes a `<p>` (a demo caption, a playground label, the right panel) are plain `<text>`s without it, so they wrap greedily.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** every page.
+
+## Text is drawn 9-42% heavier than the source's `antialiased`
+
+- **Cause:** `gpuix gap`.
+- **Original:** `-webkit-font-smoothing: antialiased` on html / body, which turns CoreGraphics font smoothing off on macOS: plain greyscale coverage, the same ink for dark and light text (`app/globals.css:328-332`).
+- **Port:** nothing sets it; every glyph is rasterised with gpuix's default. Measured as ink coverage against Chrome with `antialiased` (Inter, 14 and 24px, wght 400 / 550 / 700, gpuix `b03d4e27`): dark text +9 to +17%, light text +22 to +42%, dim text (`#a1a1a1` on `#0a0a0a`) +15 to +32%. Advance widths are identical, so only the stroke weight differs, and layout does not move. Measured in the offscreen renderer at scale factor 1; not at 2x. Repro and numbers: `~/.claude/notes/ff-gpuix-repros/r8-font-weight.md` (`r8-font-weight.sh`).
+- **gpuix lacks:** a way to turn CoreGraphics font smoothing off per app, window or style. `gpui_macos/src/text_system.rs` dilates light text by luminance (`glyph_dilation_for_color` :228, called from `gpui/src/window.rs:6657`; `set_should_smooth_fonts(true)` with a grey fill :564-567), and for dark text the dilation-0 branch (:568) never calls `set_should_smooth_fonts(false)`, so CG's default (on) stays. Both are skipped only when the user preference `AppleFontSmoothing` reads 0 (`font_smoothing_allowed_by_user` :242, `CFPreferencesCopyAppValue`). That setting closes the gap to 0% (dim text keeps +0.3 to +0.9%, untraced), but argv and `registerDefaults:` do not reach it; only a persistent `CFPreferencesSetAppValue` write into the app's own preferences domain does.
+- **Workaround:** none. Writing `AppleFontSmoothing` into the app's domain from `bun:ffi` before the first window would work, but it persists on disk, cannot be undone per window, and is not tried in the compiled `.app`; the README row asks gpuix for a real switch.
+- **Fidelity:** approximated (same glyphs and advances, heavier strokes).
+- **Components it hits:** every page; most visible on light text on dark surfaces and at small sizes. README gap row: "text rendering, every page".
 
 ## Site menu: Pages group has no Demo row and two rows the source lacks
 
