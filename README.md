@@ -241,7 +241,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 ### gpuix gaps across components
 
 These are the gpuix gaps that hit several components; the per-component files link here. They are as of
-gpuix `poc` f7b62f11 (zed da3e5b19db; `~/code/fdarian/gpuix/FORK.md`): what the port used to work around and gpuix now does (tables,
+gpuix `poc` f6997028 (zed 67414fd389; `~/code/fdarian/gpuix/FORK.md`): what the port used to work around and gpuix now does (tables,
 `inline-*`, container queries, `has*` states, `fit-content`, variable fonts, `text-wrap`, `text-box-trim`, `calc()` in motion, fractional text widths and rects, authored lengths that keep their fraction (a `top: 110.5` lands at 110.5), the cap-trimmed label baseline (also in a block's strut: tabs-subtle's unfolding label), timers between frames, bounds reads without a layout pass, SVG stroke keyframes, playback controls on a motion value's animation, a `scrollTop` write that lays out only what is pending, a scroll end at exactly `scrollHeight - clientHeight`, `WebkitFontSmoothing: 'antialiased'`) is gone from this list. "Bug" means gpuix does something wrong or inconsistent; "missing" means it does not
 offer it. A count is given only where the code shows it.
 
