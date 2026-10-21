@@ -545,11 +545,11 @@ kit.check(
 	reversals(held.pill).length === 0,
 	`${held.pill.length} frames, ${reversals(held.pill).length} reversals`,
 );
-// A write to `scrollTop` reads the metrics back, which lays out the window and samples the spring again: that emits the next change, so one drain was 40 to 70 passes. The bound is a count, not a time, so a slow machine cannot move it.
+// A `scrollTop` write that read the metrics back laid out the window and sampled the spring again, which emitted the next change: one drain was 40 to 70 passes. Now a drain lays out once, for the key or the frame. The bound is a count, not a time, so a slow machine cannot move it.
 const worstPasses = Math.max(...held.drains.map((entry) => entry.passes));
 kit.check(
-	'a drain runs at most 4 layout passes',
-	worstPasses <= 4,
+	'a drain runs at most 1 layout pass',
+	worstPasses <= 1,
 	`worst ${worstPasses}`,
 );
 const worstDrain = Math.max(...held.drains.map((entry) => entry.ms));
@@ -628,8 +628,8 @@ kit.check(
 	`${menuScroll().toFixed(1)} vs ${centre.toFixed(1)}`,
 );
 kit.check(
-	'a drain across the wrap runs at most 4 layout passes',
-	Math.max(...wrapped.drains.map((entry) => entry.passes)) <= 4,
+	'a drain across the wrap runs at most 1 layout pass',
+	Math.max(...wrapped.drains.map((entry) => entry.passes)) <= 1,
 	`worst ${Math.max(...wrapped.drains.map((entry) => entry.passes))}`,
 );
 
