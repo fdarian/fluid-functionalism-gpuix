@@ -19,6 +19,7 @@ Solid app that draws the [Fluid Functionalism](https://fluidfunctionalism.com) c
 - `pnpm check:scenarios` takes about 30 minutes, so run `bun scripts/check-<component>.tsx` for the component you touched and `pnpm check` before merging.
 - `pnpm screenshots [slug]` — one page, or about 25 minutes for all of them.
 - `pnpm perf [slug...] --label x` — live frame times on the real window into `perf/<label>.json` (README, "Harness and shared-lib notes"); results are not committed.
+- `pnpm footprint [slug...] --label x` — idle CPU and memory per page in a fresh compiled child, headless; `--window` for a real window, `--tour` for what a session leaves behind (README, "Harness and shared-lib notes"); results land in `perf/`.
 - `pnpm build` — `dist/fluid-functionalism` (Bun compile) and `bundle/Fluid Functionalism.app`; needs `cargo install cargo-packager --locked` (README, "Build the app").
 - `pnpm format` — Biome.
 
