@@ -527,10 +527,8 @@ export function App(props: {
 		const scroller = pageScroller();
 		if (scroller === undefined)
 			throw new Error('The page scroller is not mounted');
-		if (renderer.scrollTo === undefined)
-			throw new Error('This renderer cannot scroll');
-		// Written before the swap so the new page's first draw is at the top, as every Next App Router navigation is; the scrollTop setter would lay the window out here (README, "scrollTop setter layout cascade").
-		renderer.scrollTo(scroller.id, 0, 0, 'instant');
+		// Written before the swap so the new page's first draw is at the top, as every Next App Router navigation is.
+		scroller.scrollTop = 0;
 		setPage(slug);
 	};
 	const nav: PageNav = { navigate, current: page };
