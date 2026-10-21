@@ -164,7 +164,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `TableCell` sets only text, in the muted colour).
 - **Original:** `TableCell` takes any children and a `className`: the Status and Priority badges, the Owner avatar, the mono muted ID and the always-foreground title (`beacon/page.tsx:135-153`).
-- **Port:** the header uses `TableHead`; every body cell is a local `BodyCell` with `TableCell`'s padding (12 / 8, or 10 / 5 in Compact, read from `sizeChoice()`) and the cell text set in the page. The row is still a `TableRow` with an `index`, so the fluid hover highlight and the hidden borders work (`src/pages/concepts-beacon.tsx:309-408`). The lit row does not brighten the muted ID: `TableCell`'s lit-row colour is not reachable from a hand-drawn cell (the source's ID cell is `text-muted-foreground` throughout, so this matches it).
+- **Port:** the header uses `TableHead`; every body cell is a local `BodyCell` with `TableCell`'s padding (12 / 8, or 10 / 5 in Compact, read from `sizeChoice()`) and the cell text set in the page; the Status and Priority badges go through `BadgeCell`, which sets them in a `<text>` as `TableCell` does (a bare badge in the cell makes the row 42px, the source's is 41), and the Owner avatar sits in a centring row as the source's `flex justify-center`. The row is still a `TableRow` with an `index`, so the fluid hover highlight and the hidden borders work (`src/pages/concepts-beacon.tsx:309-404`). The lit row does not brighten the muted ID: `TableCell`'s lit-row colour is not reachable from a hand-drawn cell (the source's ID cell is `text-muted-foreground` throughout, so this matches it).
 - **gpuix lacks:** nothing.
 - **Workaround:** none. `TableCell` would need a non-text `children` and `color` / `mono` props.
 - **Fidelity:** exact in the look; the padding duplicates `cellMetrics` in `src/components/table.tsx`.
@@ -174,7 +174,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `Button` has no `active` prop).
 - **Original:** `<Button variant="tertiary" size="sm" active={open}>` (`beacon/page.tsx:228-236`).
-- **Port:** `variant="tertiary" size="compact"`; the button keeps its resting look while the panel is open (`src/pages/concepts-beacon.tsx:530-540`).
+- **Port:** `variant="tertiary" size="compact"`; the button keeps its resting look while the panel is open (`src/pages/concepts-beacon.tsx:526-536`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** `Button`.
@@ -192,7 +192,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice`.
 - **Original:** `InputGroup className="w-56"` and `SelectTrigger className="min-w-[150px]"` (`beacon/page.tsx:407-418`); the Select starts empty (`value=""`) and shows "Priority".
-- **Port:** the `InputGroup` is a fixed 288px, so it sits in a 224px wrapper and shrinks to it; `Select` has no width prop, so a wrapper gives it `minWidth: 150`. `variant="bordered"` (the port's default is `inline`) and `value={null}` for the placeholder (`src/pages/concepts-beacon.tsx:823-842`). The search matches title or key, case-insensitively, as in the source. The screenshot scenario drives the select by keyboard (a pointer press on a select crashes the test renderer).
+- **Port:** the `InputGroup` is a fixed 288px, so it sits in a 224px wrapper and shrinks to it; `Select` has no width prop, so a wrapper gives it `minWidth: 150`. `variant="bordered"` (the port's default is `inline`) and `value={null}` for the placeholder (`src/pages/concepts-beacon.tsx:819-838`). The search matches title or key, case-insensitively, as in the source. The screenshot scenario drives the select by keyboard (a pointer press on a select crashes the test renderer).
 - **Workaround:** the wrappers.
 - **Fidelity:** exact in the layout.
 - **Components it hits:** `InputGroup`, `Select`.
@@ -201,7 +201,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `ThinkingIndicator` takes no `className`).
 - **Original:** `<ThinkingIndicator className="!px-0" />` (`beacon/page.tsx:303`).
-- **Port:** `<ThinkingIndicator />` with its own horizontal padding, so the glyph sits about 16px right of the panel's title (`src/pages/concepts-beacon.tsx:646`).
+- **Port:** `<ThinkingIndicator />` with its own horizontal padding, so the glyph sits about 16px right of the panel's title (`src/pages/concepts-beacon.tsx:642`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** `ThinkingIndicator`.
@@ -210,7 +210,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the source has a latent bug).
 - **Original:** `startTriage` sets a 1500 ms `setTimeout` to "asking" that nothing clears, so a Dismiss during "analyzing" brings the panel back at the question (`beacon/page.tsx:375-378`).
-- **Port:** Dismiss and unmount clear the timer (`src/pages/concepts-beacon.tsx:714-715`, `:736-739`).
+- **Port:** Dismiss and unmount clear the timer (`src/pages/concepts-beacon.tsx:710-711`, `:736-739`).
 - **Workaround:** none needed.
 - **Fidelity:** differs on purpose.
 - **Components it hits:** just this one.
@@ -229,13 +229,13 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 Original: `app/concepts/quill/page.tsx`. Ported in `src/pages/concepts-quill.tsx` (group "Pages", order 34, layout "full", listed "none"), inside `ConceptFrame`.
 
 - **Checked and equal:** the copy (title, byline, intro, callout, goals, the four initiatives and their owners, statuses and targets, the three comments and activity lines, the block names, the AI block's placeholder, steps and canned draft), the 760px column, the three tabs (Document / Comments / Activity) with their icons, the dot Badge colours per status, the 1700 ms draft beat, and the new block landing above the composer.
-- **Cause:** `port choice`. The page scrolls in the port's `ScrollArea` and the side padding is 32 / 48 as `px-8 py-12` (`src/pages/concepts-quill.tsx:457-468`).
+- **Cause:** `port choice`. The page scrolls in the port's `ScrollArea` and the side padding is 32 / 48 as `px-8 py-12` (`src/pages/concepts-quill.tsx:455-466`).
 - **Fidelity:** approximated (scrollbar look); exact for the flow. The 💡 and 🗓️ are the system emoji font's glyphs.
 - **Components it hits:** just this one.
 
 ## Quill: Add block is a popup `DropdownMenu`, not an absolutely placed `Dropdown`
 
-- **Cause:** `port choice` (the popup brings flipping, outside-press and Escape dismissal and focus return for free; the inline `Dropdown` in an absolute box would also work now, as the Beacon toolbar does: the absolute box takes `zIndex: 50`, as the source's `z-50`, so it paints over the heading and table after it, `src/pages/concepts-beacon.tsx:540-547`).
+- **Cause:** `port choice` (the popup brings flipping, outside-press and Escape dismissal and focus return for free; the inline `Dropdown` in an absolute box would also work now, as the Beacon toolbar does: the absolute box takes `zIndex: 50`, as the source's `z-50`, so it paints over the heading and table after it, `src/pages/concepts-beacon.tsx:536-543`).
 - **Original:** the open menu is the inline `Dropdown` in an `absolute left-0 top-full z-50 mt-1.5` box under a `Button` with `active={open}`; a document `mousedown` closes it (`quill/page.tsx:73-113`).
 - **Port:** `DropdownMenu` + `DropdownTrigger` + `DropdownContent` with the same five `MenuItem` rows and the "Basic blocks" label (`src/pages/concepts-quill.tsx:148-180`). It opens on press or by Enter / Space / arrows, flips above the button when there is no room below, closes on outside press, Esc, and picking a row, and returns focus to the button. Picking a row does nothing else (the source's `onSelect` only closes). The trigger is the port's `compact` Button (no `sm`) and has no `active` prop, so it shows no pressed background while the menu is open.
 - **Workaround:** the popup's anchored surface.
@@ -246,7 +246,7 @@ Original: `app/concepts/quill/page.tsx`. Ported in `src/pages/concepts-quill.tsx
 
 - **Cause:** `port choice` (the port's `TableCell` / `TableHead` wrap their children in one `<text>`; the cell colour is fixed: muted unless the row is lit, foreground in the header).
 - **Original:** the name cell is `text-foreground`, the owner and target `text-muted-foreground`, status a `Badge variant="dot" size="sm"` (`quill/page.tsx:228-246`).
-- **Port:** the name cell is muted like the others (lit rows go foreground). The status Badge sits in a row `div` inside the cell so it hugs its width instead of stretching (`src/pages/concepts-quill.tsx:424-443`); `size="compact"` stands for `sm`.
+- **Port:** the name cell is muted like the others (lit rows go foreground). The status Badge sits in the cell directly, as in the source (`src/pages/concepts-quill.tsx:425-432`): `TableCell` sets it inside its `<text>`, so it hugs its width and the row is the source's 39px with the badge 10.5px down; `size="compact"` stands for `sm`.
 - **Components it hits:** table (a cell colour prop would close it).
 - **Fidelity:** approximated.
 
