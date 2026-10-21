@@ -8,7 +8,7 @@ import {
 	motion,
 	useGpuixRequired,
 } from '@gpuix/solid';
-import { createEffect, createMemo, For, on, onCleanup } from 'solid-js';
+import { createEffect, createMemo, For, onCleanup } from 'solid-js';
 import { useOnScreen } from '#/lib/cull';
 import { FluidHighlight } from '#/lib/fluid-highlight';
 import { createFluidHover } from '#/lib/fluid-hover';
@@ -74,24 +74,17 @@ export function CarouselDots(props: {
 		if (!autoplaying()) fill.jump(drivenFill());
 	});
 
-	// Autoplay restarts the fill whenever the slide changes, whoever changed it. This effect is created before the one that plays the fill, so on a slide change the fill is back at 0 before the next play reads it.
-	createEffect(
-		on(
-			() => [props.value, autoplaying()] as const,
-			([, playing]) => {
-				if (playing) fill.jump(0);
-			},
-		),
-	);
-
 	const reduced = createReducedMotion();
 	const onScreen = useOnScreen();
 	const playing = () =>
 		autoplaying() && !reduced() && onScreen() && !(options()?.paused ?? false);
-	createEffect(() => {
-		// props.value is tracked so a new slide plays from 0 again. Reduced motion: no timer moves the page on the reader's behalf. A held fill (paused, reduced, off screen) is stopped where it is and plays on from there with the time it has left, so its progress is kept. A finished fill (1) is never replayed, so the next slide is asked for once.
+	// One effect restarts the fill and plays it. Two effects would depend on running in order: Solid reorders observers, and a play that ran before the reset would read the old fill (1) and never start, or have its animation ended by the reset's jump.
+	createEffect((restartedFor: number | null) => {
+		// Reduced motion: no timer moves the page on the reader's behalf. A held fill (paused, reduced, off screen) is stopped where it is and plays on from there with the time it has left, so its progress is kept. A finished fill (1) is never replayed, so the next slide is asked for once.
 		const slide = props.value;
-		if (!playing() || fill.get() >= 1) return;
+		if (!autoplaying()) return null;
+		if (slide !== restartedFor) fill.jump(0);
+		if (!playing() || fill.get() >= 1) return slide;
 		const duration = options()?.duration ?? DEFAULT_DURATION_MS;
 		let current = true;
 		const play = fill.animate(1, {
@@ -104,11 +97,13 @@ export function CarouselDots(props: {
 		});
 		play.finished.then(() => {
 			const live = options();
-			if (!current || live === null) return;
+			// An animation ended by a jump or a stop also resolves `finished`; only a fill that got to 1 moves on.
+			if (!current || live === null || fill.get() < 1) return;
 			if (!(live.loop ?? true) && slide >= props.count - 1) return;
 			props.onValueChange?.((slide + 1) % props.count);
 		});
-	});
+		return slide;
+	}, null);
 	const fillWidth = createTransform(fill, [0, 1], [DOT_PX, PILL_PX]);
 
 	const hoverRect = () => {

@@ -4,13 +4,13 @@ Original: `registry/default/carousel-dots.tsx`, demo in `app/docs/carousel-dots/
 (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/carousel-dots.tsx`,
 demo in `src/demos/carousel-dots.tsx`.
 
-Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.tsx:197-207`), track and fill colours (15% and 40% of foreground, `:25-26`), the 18px round click areas and 12px between dots (`:190`), the shared hover highlight along the x axis, the focus ring (`focusRing(0)`, README row `README.md:306`), default labels ("Go to slide N"), `role="group"` / `aria-label="Slides"`, Enter on key-down and Space on key-up through `buttonProps`, autoplay (`duration`, `paused`, `loop`, restart on every slide change, one request per slide; a pause holds the progress), a driven `progress`, and the demo's sliding label with direction.
+Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.tsx:192-202`), track and fill colours (15% and 40% of foreground, `:25-26`), the 18px round click areas and 12px between dots (`:185`), the shared hover highlight along the x axis, the focus ring (`focusRing(0)`, README row `README.md:306`), default labels ("Go to slide N"), `role="group"` / `aria-label="Slides"`, Enter on key-down and Space on key-up through `buttonProps`, autoplay (`duration`, `paused`, `loop`, restart on every slide change, one request per slide; a pause holds the progress), a driven `progress`, and the demo's sliding label with direction.
 
 ## Autoplay plays a native animation on the width, not a `requestAnimationFrame` loop on a transform
 
 - **Cause:** `port choice` (cost: a JS frame loop redrew the window about 60 times a second for as long as a carousel was on screen; a native animation does not touch JS between frames).
 - **Original:** a `requestAnimationFrame` loop advances a `MotionValue` by `dt / duration` each frame, with a 100 ms stall guard, and the fill's `transform` follows it (`carousel-dots.tsx:134-159`, `:161-162`). Pausing holds the progress.
-- **Port:** the fill is a native motion value (`createMotionValue`, `carousel-dots.tsx:72`) that a `linear` `animate(1)` plays over `duration` (`:91-111`); `createTransform` maps it to the fill's `width` (`:112`, `:217`). On finishing, the animation's `finished` promise asks for the next slide, once (`:105-110`). A pause, reduced motion or a far culled region stops the animation where it is and plays on from that value with the time left, so the progress is kept; a new slide jumps the value to 0 first (`:77-85`).
+- **Port:** the fill is a native motion value (`createMotionValue`, `carousel-dots.tsx:72`) that a `linear` `animate(1)` plays over `duration` (`:82-105`); `createTransform` maps it to the fill's `width` (`:107`, `:212`). On finishing, the animation's `finished` promise asks for the next slide, once (`:98-103`). A pause, reduced motion or a far culled region stops the animation where it is and plays on from that value with the time left, so the progress is kept; a new slide jumps the value to 0 first (`:82-85`).
 - **gpuix lacks:** `requestAnimationFrame` itself (no display-synced JS frame callback, `~/code/fdarian/gpuix/FORK.md:209-212`), and a pause / resume on a motion value's animation (`getAnimations()` covers CSS animations only): `stop()` ends it where it is and a new `animate()` from the value with the remaining time (linear, so exact) stands in.
 - **Workaround:** the above.
 - **Fidelity:** exact in timing and in what pausing does. The source's 100 ms stall guard has no counterpart: the renderer's clock keeps counting through a stall, so the fill can be further along after one. The next slide is asked for when the completion reaches JS, a frame after the fill reaches 1.
@@ -20,7 +20,7 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 
 - **Cause:** `gpuix gap` (no transforms; README "Missing features" row "CSS transforms").
 - **Original:** the fill is a full-width pill slid in from the left with `translateX(calc((p - 1) * (100% - 6px)))`, never scaled, so its round end stays round and it tracks the pill's animating width (`carousel-dots.tsx:42-48`, `:236-242`).
-- **Port:** a pill whose `width` goes from 6px to the 24px target, clipped by the dot's `overflow: hidden` (`carousel-dots.tsx:209-223`).
+- **Port:** a pill whose `width` goes from 6px to the 24px target, clipped by the dot's `overflow: hidden` (`carousel-dots.tsx:204-218`).
 - **gpuix lacks:** CSS transforms.
 - **Workaround:** the same silhouette at rest and at every `p` once the dot has finished widening.
 - **Fidelity:** approximated. During the 160 ms width spring the port sizes the fill from the 24px target, not the animating width; autoplay restarts at `p = 0` there, so it is hard to see.
@@ -40,7 +40,7 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `relative flex w-fit items-center`, plus `className`, a `ref` and the `div`'s HTML attributes (`carousel-dots.tsx:59-60`, `:165-176`).
-- **Port:** `width: "fit-content"` for `w-fit` (`carousel-dots.tsx:130`); only `testId` is accepted besides the documented props (`:43-52`).
+- **Port:** `width: "fit-content"` for `w-fit` (`carousel-dots.tsx:125`); only `testId` is accepted besides the documented props (`:43-52`).
 - **Workaround:** none.
 - **Fidelity:** exact for the width, in a column or a row parent; approximated for the props.
 - **Components it hits:** any ported component without `className` passthrough.
