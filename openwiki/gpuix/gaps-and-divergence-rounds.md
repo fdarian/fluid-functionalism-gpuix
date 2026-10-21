@@ -74,10 +74,10 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-872f10458af3aae905a0ee5a
     resource: repo://src/pages/fluid-hover/plain-vs-fluid.tsx
-generated: { by: "claude-code", at: "2026-10-21T21:17:32.636Z" }
+generated: { by: "claude-code", at: "2026-10-21T22:20:46.181Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T21:17:32.636Z
+    at: 2026-10-21T22:20:46.181Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -740,7 +740,7 @@ says what headless can and cannot answer. Read the README's pin line, not this p
 
 ## Round 13b adoption on `poc` `511bebab` (2026-10-22)
 
-The README now names `511bebab` (zed `271ec25880`) as the minimum fork. Three things moved; drift went from 540 to 539
+The README now names `511bebab` (zed `271ec25880`) as the minimum fork. Three things moved at adoption, and `704af9e5` later updated the page-switch row; drift went from 540 to 539
 entries (`table` 6 to 5, only the removed fade entry).
 
 - **A `border-color` transition on a collapsed-table part is closed (#68).** It lays out nothing and patches with the
@@ -754,8 +754,20 @@ entries (`table` 6 to 5, only the removed fade entry).
   Menu, while a first visit still shapes every line (211 to 183, 293 to 237, 144 to 138) inside a whole-page layout.
   Median first-draw time, first visit / revisit, `f993d9b9` to `511bebab`, headless `scripts/perf-page-switch.tsx` on
   release builds of both commits, two alternated runs each at load 3-10: Changelog 82-83 / 58-62 to 43-50 / 29-35,
-  Showcase 47-51 / 36-38 to 41-44 / 36-37, Command Menu 57 / 48-49 to 47-51 / 41-51; the page's 370-460 ms of mount
-  JS is unchanged. What remains is the question of mounting a region culled before its first layout.
+  Showcase 47-51 / 36-38 to 41-44 / 36-37, Command Menu 57 / 48-49 to 47-51 / 41-51. The Command Menu's 340-440 ms of
+  mount JS was the same on both commits, and was not steady state: each of its 11 menus snapped its list with
+  `scrollTop = 0` on the first run of the `rowsKey` effect, one forced layout pass of ~28 ms over the whole page per
+  write. `704af9e5` skips that first snap (a fresh list is already at 0), taking mount JS to ~41 ms (median of 4 runs
+  of 4 visits, alternated on one build). What remains is the question of mounting a region culled before its first
+  layout.
+- **A new README gap row, scroll writes after a mutation.** A `scrollTop`, `scrollTo` or bounds read after a mutation
+  lays out first, one pass per write, and the pass walks the whole retained tree, `display: none` and
+  `contentVisibility: hidden` subtrees included; even a paint-only change costs the full pass at the next write. In the
+  gpuix test renderer the pass is linear (~0.4-0.5 us per element) but FF's costs ~5 us per element, about 10x, for a
+  reason the repro does not give. The question for gpuix is no pass for a paint-only change and a pass over dirty
+  subtrees only. FF's answer is to avoid the write while a page mounts; `navigate`'s own `scrollTop = 0` (~7 ms a visit)
+  stays. Reasoning in
+  [Port decisions](../decisions/port-decisions.md#scroll-writes-use-the-plain-scrolltop-setter-and-a-page-switch-is-measured-by-its-first-draw).
 - **`contentVisibility` was evaluated and not adopted.** The README culling rows now say why it does not replace
   `createCulling` (margin, scroll anchoring, containment clipping shadows and focus rings), and the command-menu and
   site drift entries carry the same note.

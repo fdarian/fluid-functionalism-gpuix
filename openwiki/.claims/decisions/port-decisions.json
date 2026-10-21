@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:72fe7050862cca769b3f4097d3d49393208ae21d19e1b8ef3dd728214b074cf6",
+  "pageVersion": "sha256:84467ed63c9275007678e5ddb3a3ab6ff5804d8b9c9477c64ccc45867a8425cb",
   "claims": [
     {
       "id": "claim_782844f1b7454bbd8c43501708e208b1",
@@ -231,7 +231,7 @@
       "statement": "The port keeps the off-screen culling in src/lib/cull.ts: re-measured on gpuix poc b03d4e27 (live, two alternating pairs) and again headless on 196d69ce with a culling-off knockout, turning it off was worse on every page that differed and better on none (b03d4e27: showcase idle CPU 45 to 80%, input-message 3.3 to 51.5%; 196d69ce: showcase 31/27 to 69/70% CPU, input-message 1.3/0.5 to 53/36%), so the earlier plan to remove it once gpuix #46 lands was not carried out.",
       "evidence": [
         {
-          "resource": "repo://README.md#L278-L279",
+          "resource": "repo://README.md#L279-L280",
           "version": "repo-lines-v1:sha256:cc64a128f4a15696095bf051e5e06083c36df35cfbb50e7db4cb51e0d41ac13a:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZlYjFjYjZmMDA0YjU1ZjEyNTdkZDc1YmZlYThkMzAxYzE4Zjc3YmNiYmQ1ZWM3OWQ0ZTBkZmRhZWNlNDlkNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTQ2YTAxOTY0NmE2YmExMjA5YWI4NDQ2MzQwNWFmNjk1M2EyMzViN2FiZjkyYzM3OGE2Zjg1OGIwMGY2ZDZhNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTMxYzhkMjgzODdjOTg1MzllMzU3NTRlNmY1ZjQ5ZWFjMjY4OTJmYmY4YmRjZTEwOTgzZTMyOGVjNzI3M2NmNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDlkZDdmMzE0NDVmOTA1MTU1MWY5Njg1ZmQ1YjU5ZGE5MTYzMjI3ZGI4NGY5YzVjY2VkNjE1NWQxNTRjMWViMCJ9"
         },
         {
@@ -309,7 +309,7 @@
       "statement": "Fluid hover reads its container's bounding rect on every pick and containerBox() is a fresh read, with no cache; the earlier cached box (introduced because a live getBoundingClientRect cost a layout pass of about 6 ms on poc e5231304) was dropped on b03d4e27 when it measured within noise, since a read after a paint-only write runs no layout pass (gpuix #47).",
       "evidence": [
         {
-          "resource": "repo://README.md#L357-L357",
+          "resource": "repo://README.md#L358-L358",
           "version": "repo-lines-v1:sha256:a0b376ac436f09820b2b4fa2b31bdd1cb6e993fce144b2f4e597c79098e53d41:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTBiMzc2YWM0MzZmMDk4MjBiMmI0ZmEyYjMxYmRkMWNiNmU5OTNmY2UxNDRiMmY0ZTU5N2M3OTA5OGU1M2Q0MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTBiMzc2YWM0MzZmMDk4MjBiMmI0ZmEyYjMxYmRkMWNiNmU5OTNmY2UxNDRiMmY0ZTU5N2M3OTA5OGU1M2Q0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjNmN2IwZjMzNzhmNDU5MmUwNjc4ZmNkZGU2NmMxMGI4MzEyMDQ0ZmM1ZmY1ZTZmMTNkM2NmMjcwMzkzODU4ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWNkZjQzNmIyMGZiNWQwNGRlMjE4NTJiZjI5MTU5ZmI2ZDk5Y2M1OWRkN2MyYWRkNjk4Y2EyNWI1OTZlOGI1MiJ9"
         },
         {
@@ -539,8 +539,8 @@
       "statement": "The first draw of a long page (Changelog, Showcase, Command Menu) still builds, lays out and shapes every node because culling only hides regions after an IntersectionObserver reports against a first layout; this is recorded as a gpuix question in the README rather than worked around, and gpuix 511bebab's 8 MiB shape store cut shapes per revisit (Changelog 215 to 8-12, Showcase 291 to 4, Command Menu 142 to 0) without changing the first visit's whole-page layout.",
       "evidence": [
         {
-          "resource": "repo://README.md#L267-L268",
-          "version": "repo-lines-v1:sha256:71cd3d5b74cdd7858a8b72ed60da92ad97d3368957e7e00dfe7b38f63dbc9772:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDk2ZmQwYzMyNjE5Zjk2NmU4Zjg4YTlhYTNlZmE1Y2JhODRiNTY4NmFkMjRlZmY5YjRlMWRkOTA0OGM4YTlkMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzRiNGM1OWM1NmU3ZGZjNDJjZjJkZTdjNDkzZDE1NWYxNGIxZTgxODM1NGRkMmJkYjc2ODkzYmI2ZTcyNTQ4ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjdlZGRjYTRlOWM1NDczNmI0NjY4MzE2MTk1OGJmOWMzM2ZjMWVhNmE3ZmM5OTYwMGQyNWRmMDlmMjc2YjkxNyJ9"
+          "resource": "repo://README.md#L267-L269",
+          "version": "repo-lines-v1:sha256:8e7d1b8dda92d3e68bbde1fec329d545cdf7eea1b0fc4b25fe8eafa4866d5ac1:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmYzMTRkMzZjY2IxMDllMGFhM2Y0OGFhYWMzNGZlMzRjYTViYTI1YjM1OTc5NzRlNzQ5N2Y4NTQwMTI1MzNhMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzRiNGM1OWM1NmU3ZGZjNDJjZjJkZTdjNDkzZDE1NWYxNGIxZTgxODM1NGRkMmJkYjc2ODkzYmI2ZTcyNTQ4ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjdlZGRjYTRlOWM1NDczNmI0NjY4MzE2MTk1OGJmOWMzM2ZjMWVhNmE3ZmM5OTYwMGQyNWRmMDlmMjc2YjkxNyJ9"
         },
         {
           "resource": "repo://src/lib/cull.ts#L53-L80",
@@ -721,7 +721,7 @@
       "statement": "The port keeps createCulling although gpuix 511bebab adds contentVisibility 'auto': its margin is fixed at 150% of the viewport where the port culls at 25%, an unmeasured region has no scroll anchoring, and its containment clips overflowing shadows and focus rings.",
       "evidence": [
         {
-          "resource": "repo://README.md#L278-L278",
+          "resource": "repo://README.md#L279-L279",
           "version": "repo-lines-v1:sha256:9feb1cb6f004b55f1257dd75bfea8d301c18f77bcbbd5ec79d4e0dfdaece49d4:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZlYjFjYjZmMDA0YjU1ZjEyNTdkZDc1YmZlYThkMzAxYzE4Zjc3YmNiYmQ1ZWM3OWQ0ZTBkZmRhZWNlNDlkNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZlYjFjYjZmMDA0YjU1ZjEyNTdkZDc1YmZlYThkMzAxYzE4Zjc3YmNiYmQ1ZWM3OWQ0ZTBkZmRhZWNlNDlkNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTMxYzhkMjgzODdjOTg1MzllMzU3NTRlNmY1ZjQ5ZWFjMjY4OTJmYmY4YmRjZTEwOTgzZTMyOGVjNzI3M2NmNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTgxNjIzN2ViNjljZDlhYzEyNjZiMjE5NTdmZjMzNDljMTQ0MTYyN2JjM2I1OWRkMmMwNGYyZmEyY2MwY2RiYyJ9"
         },
         {
@@ -733,10 +733,38 @@
           "version": "repo-lines-v1:sha256:b2cd73f12c52e63e44aa1b7be12a06efd2b58e84808d34bbae401b7ae697c535:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjJjZDczZjEyYzUyZTYzZTQ0YWExYjdiZTEyYTA2ZWZkMmI1OGU4NDgwOGQzNGJiYWU0MDFiN2FlNjk3YzUzNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjJjZDczZjEyYzUyZTYzZTQ0YWExYjdiZTEyYTA2ZWZkMmI1OGU4NDgwOGQzNGJiYWU0MDFiN2FlNjk3YzUzNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDY1MmJmNzg3YTE4YzdiYzcyOWVlZmViZmY1NTc1MDllMDJjNzMzM2ZkNmYxNmFkNzZkNTNiY2ZkNDhhYzhlNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDQ1NGE0OTI4OGZlYmQ2YzMzOWNkOTJiZWVhOWQ4OTFjM2UwY2E2OTE1NjhmNzkxMGRkN2VmZmMzNTVkMzdjNyJ9"
         }
       ]
+    },
+    {
+      "id": "claim_5922b0fed08c402c94621e3075f9a057",
+      "statement": "The command menu's rowsKey effect returns before snapScroll(0) on its first run, because a scrollTop write while the page is mounting forces a layout pass and a fresh list is already at 0; this cut the Command Menu page's mount JS from ~400 ms to ~41 ms (11 menus each paid a ~28 ms pass).",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L267-L268",
+          "version": "repo-lines-v1:sha256:fe2ac60e141af9d3edd9a54bb1d0037d80da05c2e20b76712d199392fb1f89b7:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmYzMTRkMzZjY2IxMDllMGFhM2Y0OGFhYWMzNGZlMzRjYTViYTI1YjM1OTc5NzRlNzQ5N2Y4NTQwMTI1MzNhMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTExYjc4OWQ3ZmRhMTNjZmY1MWM0MWUwYjU1MDcyMTBjN2Q3M2ZhMjViNDc0MjE2YmUyZGRhNmFhZDlmYmRjZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzRiNGM1OWM1NmU3ZGZjNDJjZjJkZTdjNDkzZDE1NWYxNGIxZTgxODM1NGRkMmJkYjc2ODkzYmI2ZTcyNTQ4ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWM0ZTExMTA4MzI5MTFhMWViYzA4ZjYwNTI4NWU3N2Q5NWViMGI1ZGY0ZjIwMGJlMGUxYTg4OWMwMzliOTNlOCJ9"
+        },
+        {
+          "resource": "repo://src/components/command-menu.tsx#L455-L466",
+          "version": "repo-lines-v1:sha256:754879860801eaf6d10af687a90e59f3f060f0354086993432cf666d6b97a909:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5N2Q3NWUyZTcwYzFmZDA5MmJhOTU5N2M5MTY1NDNkODA4ODI5MTNjZmQyNjZkNzc2NWMyNjc1ZWUwOTcwNTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYzMTIwMzMzMDM3NGRkNzRhOTU4ZjdjM2QwOGJmNjUzNDhhMzg4NjZhN2I0MjNhZmEyMWE2MzUwZWI4NDg5OWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRkYWI0ODFjYTQ5NDA3ZTExM2Q0YzI1MTFiYWVjMzc5MmVkMTI4MWRlNDk0OGVjZmRhYzUxN2ZhNjIwYWQxZmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f808d2269b764b808c6f388664a1c6e2",
+      "statement": "check-command-menu's one-pass bound counts layout passes per drain under a held key, so it cannot detect a scroll write at mount time; that shows only in perf-page-switch's mount JS.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L267-L268",
+          "version": "repo-lines-v1:sha256:fe2ac60e141af9d3edd9a54bb1d0037d80da05c2e20b76712d199392fb1f89b7:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmYzMTRkMzZjY2IxMDllMGFhM2Y0OGFhYWMzNGZlMzRjYTViYTI1YjM1OTc5NzRlNzQ5N2Y4NTQwMTI1MzNhMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTExYjc4OWQ3ZmRhMTNjZmY1MWM0MWUwYjU1MDcyMTBjN2Q3M2ZhMjViNDc0MjE2YmUyZGRhNmFhZDlmYmRjZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzRiNGM1OWM1NmU3ZGZjNDJjZjJkZTdjNDkzZDE1NWYxNGIxZTgxODM1NGRkMmJkYjc2ODkzYmI2ZTcyNTQ4ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWM0ZTExMTA4MzI5MTFhMWViYzA4ZjYwNTI4NWU3N2Q5NWViMGI1ZGY0ZjIwMGJlMGUxYTg4OWMwMzliOTNlOCJ9"
+        },
+        {
+          "resource": "repo://scripts/check-command-menu.tsx",
+          "version": "repo-file-v1:sha256:7ce2b5ad7f424099c862f31fa2428a22dc1f53cf49bf4c369b89f8e09dcac565"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-21T21:17:32.636Z"
+    "at": "2026-10-21T22:20:46.181Z"
   }
 }

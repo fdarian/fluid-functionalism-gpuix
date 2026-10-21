@@ -5,7 +5,7 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T21:17:32.636Z
+    at: 2026-10-21T22:20:46.181Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -125,7 +125,7 @@ sources:
     resource: repo://src/pages/skill/playback.tsx
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-21T21:17:32.636Z" }
+generated: { by: "claude-code", at: "2026-10-21T22:20:46.181Z" }
 ---
 
 # Port decisions and their reasons
@@ -469,7 +469,19 @@ this section keeps the decisions and the traps.
   readers not to tidy it back. `f7b62f11` (Round 13a) made the setter lay out only what is pending, so both writers are
   the source's plain `scroller.scrollTop = top` again (`command-menu.tsx` `writeScroll`, `app.tsx` `navigate`) and the
   README row is gone. If a gpuix pin ever brings the cascade back, `check-command-menu`'s one-pass bound is what
-  shows it, not a single key.
+  shows it, not a single key. "Plain" is not "free": the setter still lays out once per write that follows a
+  mutation, and that pass walks the whole retained tree (see the next bullet).
+- **The command menu skips its first `snapScroll(0)`, because a write while the page mounts costs a forced layout
+  pass.** The `rowsKey` effect snaps the list to the top whenever the row set changes, and it also ran on mount. The
+  Command Menu page mounts 11 menus, each paying one pass of ~28 ms over the whole page (about 5 us per element at
+  ~5.3k elements), so the page's mount JS was 340-440 ms on gpuix `f993d9b9` and `511bebab` alike. `704af9e5` returns
+  before the snap on the effect's first run (`command-menu.tsx`, `previousKey === undefined`): a fresh list is already
+  at 0, so the output is the same and it is not a drift entry. Mount JS median ~400 to ~41 ms (4 runs of 4 visits,
+  alternated on one build, load 7-16), settled ~780 to ~470 ms. What is left is `navigate`'s own `scrollTop = 0` pass
+  (~7 ms a visit, kept on purpose, see below), the page render and the mutation flush. The trap: this cost is not
+  visible to `check-command-menu`, whose bound is on drains per held key, so a return of the mount-time write would
+  pass every check and show only in `perf-page-switch`'s mount JS. The README gap row "scroll writes after a mutation"
+  holds the repro numbers and the question for gpuix (no pass for a paint-only change, only dirty subtrees).
 - **The `change` handler still writes the motion value's live value**, not the event's payload: a payload queued
   before a snap (the wrap from the last row to the first) would otherwise write the old bottom position back after
   the list was snapped to the top.
@@ -494,7 +506,8 @@ How to check these, because the obvious checks pass:
 - A one-key command-menu check cannot see a cascade. `scripts/check-command-menu.tsx` holds an arrow at macOS repeat
   timing (initial 15, repeat 2, frames at 60 Hz) with the motion clock running, and bounds layout passes per
   drain at 1 (it was 4 while the `scrollTop` setter laid out on every write; measured worst 1 over 3 runs on
-  `f7b62f11`). The bound is a count, not a time, so a slow machine cannot move it. The clock must run: every pass
+  `f7b62f11`). The bound is a count, not a time, so a slow machine cannot move it. It covers key drains only, not
+  mount: a scroll write at mount time is checked with `perf-page-switch`'s mount JS. The clock must run: every pass
   samples the spring at the wall clock, so a paused test clock would hide a cascade. It also replays the wrap with its
   keys back to back and one draw part way, which is how the stale-payload write is provoked.
 - `scripts/check-site-nav.tsx` scrolls the Changelog down, clicks a sidebar row and reads the scroll metrics
