@@ -221,16 +221,30 @@ const exitTransition = {
 	ease: [0.4, 0, 0.2, 1],
 } satisfies MotionTransition;
 
-/** One word, rolling in from below on mount and out through the top when removed. */
-function RollingWord(props: { word: string }) {
+const SLOT_CELL = { gridRow: 1, gridColumn: 1 } as const;
+
+/**
+ * One word, rolling in from below on mount and out through the top when
+ * removed. It is `position: relative` only while it moves: a positioned
+ * ancestor makes gpui decline the shimmer letters' colour ticks (every tick
+ * would draw the whole page), so at rest the word is static and `top: 0` is its
+ * place anyway.
+ */
+function RollingWord(props: { word: string; entersAtRest: boolean }) {
 	const present = useIsPresent();
+	const [arrived, setArrived] = createSignal(props.entersAtRest);
+	const rolling = () => !arrived() || !present();
 	return (
 		<motion.div
 			initial={{ top: ROLL, opacity: 0 }}
 			animate={{ top: 0, opacity: 1 }}
 			exit={{ top: -ROLL, opacity: 0 }}
 			transition={present() ? enterTransition : exitTransition}
-			style={{ position: 'absolute', left: 0 }}
+			onMotionComplete={() => setArrived(true)}
+			style={{
+				...SLOT_CELL,
+				position: rolling() ? 'relative' : 'static',
+			}}
 		>
 			<Shimmer style={scale.body}>{props.word}</Shimmer>
 		</motion.div>
@@ -248,13 +262,15 @@ export function ThinkingIndicator(props: {
 }) {
 	const reduced = createReducedMotion();
 	const [index, setIndex] = createSignal(0);
+	// `AnimatePresence initial={false}` skips the first word's enter and never reports it complete, so only a word that comes after a roll waits for its enter.
+	const [rolled, setRolled] = createSignal(false);
 	const onScreen = useOnScreen();
 	createEffect(() => {
 		if (reduced() || !onScreen()) return;
-		const timer = setInterval(
-			() => setIndex((current) => (current + 1) % words.length),
-			WORD_INTERVAL_MS,
-		);
+		const timer = setInterval(() => {
+			setRolled(true);
+			setIndex((current) => (current + 1) % words.length);
+		}, WORD_INTERVAL_MS);
 		onCleanup(() => clearInterval(timer));
 	});
 	return (
@@ -290,13 +306,13 @@ export function ThinkingIndicator(props: {
 			</Show>
 			<div
 				style={{
-					position: 'relative',
+					display: 'grid',
 					overflow: 'hidden',
 					height: scale.body.lineHeight,
 				}}
 			>
 				{/* Reserves the width of the longest word, so the cycle never shifts what sits next to it. Laid out as letters like the visible words: their summed advance is wider than the whole string's. */}
-				<div style={{ opacity: 0 }}>
+				<div style={{ ...SLOT_CELL, opacity: 0 }}>
 					<Shimmer style={scale.body} still>
 						{longestWord}
 					</Shimmer>
@@ -304,14 +320,16 @@ export function ThinkingIndicator(props: {
 				<Show
 					when={!reduced()}
 					fallback={
-						<div style={{ position: 'absolute', left: 0 }}>
+						<div style={SLOT_CELL}>
 							<Shimmer style={scale.body}>{words[0]}</Shimmer>
 						</div>
 					}
 				>
 					<AnimatePresence initial={false}>
 						<Show when={words[index()]} keyed>
-							{(word: string) => <RollingWord word={word} />}
+							{(word: string) => (
+								<RollingWord word={word} entersAtRest={!rolled()} />
+							)}
 						</Show>
 					</AnimatePresence>
 				</Show>
