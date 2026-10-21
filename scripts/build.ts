@@ -3,11 +3,11 @@
  * `bundle/Fluid Functionalism.app`. Needs `cargo-packager` on PATH
  * (`cargo install cargo-packager --locked`).
  */
-import { mkdirSync, realpathSync, rmSync } from 'node:fs';
+import { mkdirSync, rmSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import solidPlugin from '@gpuix/solid/bun-plugin';
-import type { BunPlugin } from 'bun';
+import { nativeCjsPlugin } from './native-cjs-plugin';
 import { registryPlugin } from './registry-plugin';
 
 const root = join(import.meta.dir, '..');
@@ -43,23 +43,6 @@ function run(
 		throw new Error(`${command.join(' ')} exited with ${result.exitCode}`);
 	}
 }
-
-/**
- * `@gpuix/native`'s ESM entry loads the `.node` addon through
- * `createRequire(import.meta.url)`, which the bundler does not follow, so a
- * compiled binary would fail with "Cannot find native binding". Its CJS entry
- * uses a plain `require`, which embeds the addon.
- */
-const nativeCjsPlugin: BunPlugin = {
-	name: 'gpuix-native-cjs',
-	setup(build) {
-		const entry = join(
-			realpathSync(join(root, 'node_modules/@gpuix/native')),
-			'index.cjs',
-		);
-		build.onResolve({ filter: /^@gpuix\/native$/ }, () => ({ path: entry }));
-	},
-};
 
 async function compile() {
 	const result = await Bun.build({

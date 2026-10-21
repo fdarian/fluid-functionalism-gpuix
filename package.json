@@ -13,6 +13,7 @@
 		"check:scenarios": "bun scripts/run-scenarios.ts",
 		"screenshots": "bun scripts/run-screenshots.ts",
 		"perf": "bun scripts/perf.tsx",
+		"footprint": "bun scripts/footprint.tsx",
 		"format": "biome check --write"
 	},
 	"dependencies": {
