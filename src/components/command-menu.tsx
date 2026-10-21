@@ -411,7 +411,7 @@ export function CommandMenu(props: {
 	const reduceMotion = createReducedMotion();
 	const scrollPosition = createMotionValue(0);
 	const renderer = useGpuixRequired();
-	// `scroller.scrollTop = top` reads the metrics back, which lays out the window and samples the spring again: that emits the next `change` and a held key cascades into dozens of layout passes per drain (README, gpuix gaps: scrollTop setter layout cascade). The renderer's `scrollTo` has no read-back; the list never scrolls sideways.
+	// `scroller.scrollTop = top` reads the metrics back, which lays out the window and samples the spring again: that emits the next `change` and a held key cascades into dozens of layout passes per drain (README, gpuix bugs: "command-menu (the list's scroll travel)"). The renderer's `scrollTo` has no read-back; the list never scrolls sideways.
 	const writeScroll = (top: number) => {
 		if (scroller === undefined) return;
 		if (renderer.scrollTo === undefined)
