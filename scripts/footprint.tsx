@@ -27,11 +27,6 @@
  * The window must be visible: an occluded one is flagged `occluded` in the table
  * and the JSON, and the run exits 1. The child runs with `GPUIX_PRESENT_LOG`,
  * which adds one small write per presented frame to the process being measured.
- * The driver also samples the frontmost app once a second over the idle window
- * and reports the share of samples where the child was it (`key`): gpui paces a
- * window that is not key at one frame per 33.3 ms (`inactive_frame_interval`,
- * window.rs), so draws/s and CPU differ between the two states; a row that is
- * neither mostly key nor mostly not is flagged `mixed`.
  */
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { loadavg, tmpdir, uptime } from 'node:os';
@@ -99,8 +94,6 @@ type PageResult = {
 	jsShare: number | null;
 	/** Window mode only: nothing was presented before the idle window, or the idle window drew and none of it was shown. A window covered after its first frame, on a page that then draws nothing, looks like a visible still page: not detectable. */
 	occluded: boolean | null;
-	/** Window mode only, set by the driver: the share of the idle window's per-second samples in which the child was the frontmost app. */
-	keyFraction: number | null;
 	retainedElements: number | null;
 	heapSizeBytes: number;
 	heapCapacityBytes: number;
@@ -206,31 +199,6 @@ function memory(pid: number): Memory {
 	};
 }
 
-function isFrontmost(pid: number) {
-	const asn = output(['lsappinfo', 'front']).trim();
-	const info = output(['lsappinfo', 'info', '-only', 'pid', asn]);
-	return new RegExp(`pid = ${pid}\\b`).test(info);
-}
-
-/** Samples once a second until `done` settles; sampling from the driver keeps its cost out of the child's CPU. */
-async function keyFractionWhile(pid: number, done: Promise<unknown>) {
-	let finished = false;
-	const stop = () => {
-		finished = true;
-	};
-	done.then(stop, stop);
-	const samples: boolean[] = [];
-	for (;;) {
-		await Bun.sleep(1000);
-		if (finished) break;
-		samples.push(isFrontmost(pid));
-	}
-	if (samples.length === 0) {
-		throw new Error('the idle window was shorter than one key sample');
-	}
-	return samples.filter(Boolean).length / samples.length;
-}
-
 /** The child's stdout, one line at a time. */
 async function* stdoutLines(stream: ReadableStream<Uint8Array>) {
 	const decoder = new TextDecoder();
@@ -277,21 +245,17 @@ async function measure(slug: string): Promise<PageResult> {
 	}
 	try {
 		let settled: Memory | null = null;
-		let keyFraction: number | null = null;
 		if (windowMode) {
 			await lineStartingWith('SETTLED');
 			settled = memory(child.pid);
 			child.stdin.write('go\n');
 			await child.stdin.flush();
 		}
-		const footprintLine = lineStartingWith('FOOTPRINT ');
-		if (windowMode)
-			keyFraction = await keyFractionWhile(child.pid, footprintLine);
-		const measured = JSON.parse(await footprintLine) as Omit<
+		const measured = JSON.parse(await lineStartingWith('FOOTPRINT ')) as Omit<
 			PageResult,
-			keyof Memory | 'settled' | 'keyFraction'
+			keyof Memory | 'settled'
 		>;
-		return { ...measured, ...memory(child.pid), settled, keyFraction };
+		return { ...measured, ...memory(child.pid), settled };
 	} finally {
 		clearTimeout(deadline);
 		child.kill();
@@ -414,14 +378,6 @@ type Column = [name: string, cell: (result: PageResult) => string];
 const perSecond = (value: number | null, digits: number) =>
 	value === null ? '-' : value.toFixed(digits);
 
-/** Neither mostly key nor mostly not: the draw rate and CPU of the row mix two frame intervals. */
-function keyCell(result: PageResult) {
-	if (result.keyFraction === null) return '-';
-	const percent = `${Math.round(result.keyFraction * 100)}%`;
-	const mixed = result.keyFraction > 0.1 && result.keyFraction < 0.9;
-	return mixed ? `${percent} mixed` : percent;
-}
-
 /** The two most frequent reasons a tick was drawn whole, as `Reason:count`. */
 function whyCell(result: PageResult) {
 	const reasons = [
@@ -471,7 +427,6 @@ function printTable(results: PageResult[]) {
 		['threads', (result) => String(result.threads)],
 		['heap MB', (result) => mb(result.heapSizeBytes)],
 		...windowOnly(['occluded', (result) => (result.occluded ? 'YES' : 'no')]),
-		...windowOnly(['key', keyCell]),
 		['why', whyCell],
 	];
 	const rows = results.map((result) => columns.map(([, cell]) => cell(result)));
