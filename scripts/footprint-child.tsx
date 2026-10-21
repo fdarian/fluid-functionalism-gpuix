@@ -18,7 +18,7 @@
  *
  * With `--tour [--tour-settle ms]` the page is only the starting point: after the
  * settle time the child visits every other page through the app's own `navigate`,
- * each for the tour settle time, returns to the start page and settles again. At
+ * each for the tour settle time (`--tour-rounds` times over), returns to the start page and settles again. At
  * each stop it prints `STAGE <name> {json}` and waits for a line on stdin, so the
  * driver reads the footprint of exactly that state. No CPU window is measured.
  */
@@ -51,12 +51,13 @@ const args = parseArgs({
 		window: { type: 'boolean', default: false },
 		tour: { type: 'boolean', default: false },
 		'tour-settle': { type: 'string', default: '1500' },
+		'tour-rounds': { type: 'string', default: '1' },
 	},
 });
 const slug = args.positionals[0];
 if (slug === undefined)
 	throw new Error(
-		'usage: footprint-child <slug> [--settle ms] [--idle ms] [--hz n] [--window] [--tour] [--tour-settle ms]',
+		'usage: footprint-child <slug> [--settle ms] [--idle ms] [--hz n] [--window] [--tour] [--tour-settle ms] [--tour-rounds n]',
 	);
 const settleMs = Number(args.values.settle);
 const idleMs = Number(args.values.idle);
@@ -64,6 +65,7 @@ const hz = Number(args.values.hz);
 const windowMode = args.values.window;
 const tourMode = args.values.tour;
 const tourSettleMs = Number(args.values['tour-settle']);
+const tourRounds = Number(args.values['tour-rounds']);
 
 /** The width the Electron comparison used: the site's own layout drops its sidebar below 1280. */
 const WINDOW_WIDTH = 1280;
@@ -293,6 +295,7 @@ function memoryNow() {
 		heapObjectCount: heap.objectCount,
 		jsRssBytes: memory.rss,
 		jsHeapUsedBytes: memory.heapUsed,
+		retainedElements: probe.retainedElements(),
 	};
 }
 
@@ -314,14 +317,17 @@ if (tourMode) {
 		...loadedDemos.map((demo) => demo.slug),
 		...loadedPages.map((page) => page.slug),
 	].filter((other) => other !== slug);
-	for (const other of visited) {
-		navigator.navigate(other);
-		await sleep(tourSettleMs);
-		await stage(`page:${other}`);
+	for (let round = 1; round <= tourRounds; round++) {
+		const prefix = round === 1 ? 'page' : `page${round}`;
+		for (const other of visited) {
+			navigator.navigate(other);
+			await sleep(tourSettleMs);
+			await stage(`${prefix}:${other}`);
+		}
+		navigator.navigate(slug);
+		await sleep(settleMs);
+		await stage(round === 1 ? 'tour' : `tour${round}`);
 	}
-	navigator.navigate(slug);
-	await sleep(settleMs);
-	await stage('tour');
 	Bun.gc(true);
 	await stage('tour-gc');
 	console.log('TOUR-DONE');

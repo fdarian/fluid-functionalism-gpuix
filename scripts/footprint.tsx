@@ -1,7 +1,7 @@
 /**
  * Idle CPU and memory per page, headless or in a real window.
  *
- *   bun scripts/footprint.tsx [slug...] [--label x] [--settle ms] [--idle ms] [--hz n] [--source] [--window]
+ *   bun scripts/footprint.tsx [slug...] [--label x] [--settle ms] [--idle ms] [--hz n] [--source] [--window] [--tour [--tour-settle ms] [--tour-rounds n]]
  *
  * One fresh `scripts/footprint-child.tsx` process per page, sequentially. By
  * default the child is compiled first (`dist/footprint-child`, built like the app)
@@ -12,7 +12,7 @@
  *
  * `--tour [--tour-settle ms]` measures what a session leaves behind instead: the
  * given start pages (default `introduction`) are each mounted in one child, which
- * then visits every other page through the app's own `navigate`, returns, and the
+ * then visits every other page (`--tour-rounds n` times) through the app's own `navigate`, returns, and the
  * footprint is read fresh, after the tour, and at every stop (with and without a
  * forced GC). It works headless and with `--window`, and writes the stops to
  * `perf/footprint-<label>.json` under `tours`.
@@ -45,6 +45,7 @@ const args = parseArgs({
 		window: { type: 'boolean', default: false },
 		tour: { type: 'boolean', default: false },
 		'tour-settle': { type: 'string', default: '1500' },
+		'tour-rounds': { type: 'string', default: '1' },
 	},
 });
 const windowMode = args.values.window;
@@ -254,12 +255,14 @@ async function measure(slug: string): Promise<PageResult> {
 const mb = (bytes: number) => (bytes / 1024 ** 2).toFixed(0);
 
 type TourStop = Memory & {
-	/** `fresh`, `fresh-gc`, `page:<slug>`, `tour` (back on the start page) or `tour-gc`. */
+	/** `fresh`, `fresh-gc`, `page:<slug>`, `tour` (back on the start page; `tour<n>` after round n, `page<n>:<slug>` in it) or `tour-gc`. */
 	stage: string;
 	heapSizeBytes: number;
 	heapCapacityBytes: number;
 	extraMemoryBytes: number;
 	heapObjectCount: number;
+	/** Headless only. */
+	retainedElements: number | null;
 };
 
 type TourResult = { slug: string; stops: TourStop[] };
@@ -270,6 +273,8 @@ async function measureTour(slug: string): Promise<TourResult> {
 		'--tour',
 		'--tour-settle',
 		String(tourSettleMs),
+		'--tour-rounds',
+		args.values['tour-rounds'],
 		'--settle',
 		String(settleMs),
 	];
@@ -327,6 +332,7 @@ function printTour(result: TourResult) {
 		mb(stop.heapSizeBytes),
 		mb(stop.extraMemoryBytes),
 		String(stop.heapObjectCount),
+		perSecond(stop.retainedElements, 0),
 		String(stop.threads),
 	]);
 	const header = [
