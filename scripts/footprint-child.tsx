@@ -26,6 +26,7 @@
 import { heapStats } from 'bun:jsc';
 import { existsSync, readFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
+import type { PatchCounters } from '@gpuix/native';
 import { startFrameLoop } from '@gpuix/native/runtime';
 import { createRenderer, render } from '@gpuix/solid';
 import { createTestRoot } from '@gpuix/solid/testing';
@@ -79,6 +80,17 @@ type Counts = {
 	presented: number | null;
 	layouts: number | null;
 	built: number | null;
+	patch: PatchDelta;
+};
+
+/** What the idle window's ticks did, from `getPatchCounters()` read at both ends. */
+type PatchDelta = {
+	/** Frames drawn by patching the frame before them. */
+	patchedFrames: number;
+	/** Ticks gpui drew whole after the patcher tried, by reason. */
+	declines: Record<string, number>;
+	/** Ticks gpuix did not try to patch, by kind. */
+	unpatchable: Record<string, number>;
 };
 
 type Probe = {
@@ -98,6 +110,26 @@ type NativeTime = {
 	/** Process CPU ms across `dispatchNativeEvents()` and `drawFrame()`, painted or not; the native side's own threads count. */
 	nativeCpuMs: number;
 };
+
+function reasonDelta(after: string, before: string) {
+	const was = JSON.parse(before) as Record<string, number>;
+	const delta: Record<string, number> = {};
+	for (const [reason, count] of Object.entries(
+		JSON.parse(after) as Record<string, number>,
+	)) {
+		const gained = count - (was[reason] ?? 0);
+		if (gained > 0) delta[reason] = gained;
+	}
+	return delta;
+}
+
+function patchDelta(after: PatchCounters, before: PatchCounters): PatchDelta {
+	return {
+		patchedFrames: after.patchedFrames - before.patchedFrames,
+		declines: reasonDelta(after.declines, before.declines),
+		unpatchable: reasonDelta(after.unpatchable, before.unpatchable),
+	};
+}
 
 function mean(values: number[]) {
 	return values.reduce((sum, value) => sum + value, 0) / values.length;
@@ -201,8 +233,10 @@ function mountHeadless(): Probe {
 
 	let paintedStart = 0;
 	let layoutStart = 0;
+	let patchStart = renderer.getPatchCounters();
 	return {
 		reset() {
+			patchStart = renderer.getPatchCounters();
 			paintedStart = renderer.getPaintedFrameCount();
 			layoutStart = renderer.getLayoutPassCount();
 			renderer.resetBuildCounters();
@@ -214,6 +248,7 @@ function mountHeadless(): Probe {
 			presented: null,
 			layouts: renderer.getLayoutPassCount() - layoutStart,
 			built: renderer.getBuildCounters().elementsBuilt,
+			patch: patchDelta(renderer.getPatchCounters(), patchStart),
 		}),
 		retainedElements: () => renderer.getRetainedElementCount(),
 		presentedTotal: () => null,
@@ -258,8 +293,10 @@ function mountWindow(): Probe {
 
 	let drawsStart = 0;
 	let presentedStart = 0;
+	let patchStart = renderer.getPatchCounters();
 	return {
 		reset() {
+			patchStart = renderer.getPatchCounters();
 			drawsStart = renderer.getDebugFrameOverlayStats().frames;
 			presentedStart = countPresented(presentLog);
 		},
@@ -268,6 +305,7 @@ function mountWindow(): Probe {
 			presented: countPresented(presentLog) - presentedStart,
 			layouts: null,
 			built: null,
+			patch: patchDelta(renderer.getPatchCounters(), patchStart),
 		}),
 		retainedElements: () => null,
 		presentedTotal: () => countPresented(presentLog),
@@ -368,6 +406,10 @@ console.log(
 		presentedPerSecond: rate(counts.presented),
 		layoutsPerSecond: rate(counts.layouts),
 		builtPerSecond: rate(counts.built),
+		patchedPerSecond: counts.patch.patchedFrames / seconds,
+		fullPerSecond: (counts.draws - counts.patch.patchedFrames) / seconds,
+		declines: counts.patch.declines,
+		unpatchable: counts.patch.unpatchable,
 		drawMsPerFrame:
 			nativeTime === null || nativeTime.drawMs.length === 0
 				? null

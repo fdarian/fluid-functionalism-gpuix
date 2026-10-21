@@ -9,6 +9,10 @@
  * from source. Without slugs every page is measured. Writes
  * `perf/footprint-<label>.json` and prints a table (`draw ms` is mean/p90 of the
  * painting `drawFrame()` calls, `js%` the process CPU share outside the native calls (approximate); headless only).
+ * `patched/s` and `full/s` split the draws into ticks gpuix drew by patching the frame before them and
+ * frames built whole; `why` is the top two reasons for the whole ones (gpui's `declines` and gpuix's
+ * `unpatchable` kinds, as `Reason:count` over the idle window; the JSON has both maps in full). The counters name
+ * the reason but not the element: `Outside` does not say which id.
  *
  * `--tour [--tour-settle ms]` measures what a session leaves behind instead: the
  * given start pages (default `introduction`) are each mounted in one child, which
@@ -81,6 +85,14 @@ type PageResult = {
 	/** Null in window mode, where the live renderer keeps no such counter. */
 	layoutsPerSecond: number | null;
 	builtPerSecond: number | null;
+	/** Frames over the idle window drawn by patching the frame before them, per second. */
+	patchedPerSecond: number;
+	/** `drawsPerSecond - patchedPerSecond`: the frames that built and painted the whole window. */
+	fullPerSecond: number;
+	/** Ticks gpui drew whole after the patcher tried, by reason, counted over the idle window. */
+	declines: Record<string, number>;
+	/** Ticks gpuix did not try to patch, by kind, counted over the idle window. */
+	unpatchable: Record<string, number>;
 	/** Headless only: wall ms of the `drawFrame()` calls that painted; null when none did. */
 	drawMsPerFrame: { mean: number; p90: number } | null;
 	/** Headless only: the share of the CPU time outside `dispatchNativeEvents()` and `drawFrame()`. */
@@ -410,6 +422,19 @@ function keyCell(result: PageResult) {
 	return mixed ? `${percent} mixed` : percent;
 }
 
+/** The two most frequent reasons a tick was drawn whole, as `Reason:count`. */
+function whyCell(result: PageResult) {
+	const reasons = [
+		...Object.entries(result.declines),
+		...Object.entries(result.unpatchable),
+	]
+		.sort((a, b) => b[1] - a[1])
+		.slice(0, 2);
+	return reasons.length === 0
+		? '-'
+		: reasons.map(([reason, count]) => `${reason}:${count}`).join(', ');
+}
+
 function printTable(results: PageResult[]) {
 	const windowOnly = (column: Column): Column[] => (windowMode ? [column] : []);
 	const columns: Column[] = [
@@ -420,6 +445,8 @@ function printTable(results: PageResult[]) {
 			'shown/s',
 			(result) => perSecond(result.presentedPerSecond, 1),
 		]),
+		['patched/s', (result) => result.patchedPerSecond.toFixed(1)],
+		['full/s', (result) => result.fullPerSecond.toFixed(1)],
 		['layouts/s', (result) => perSecond(result.layoutsPerSecond, 1)],
 		['built/s', (result) => perSecond(result.builtPerSecond, 0)],
 		[
@@ -445,6 +472,7 @@ function printTable(results: PageResult[]) {
 		['heap MB', (result) => mb(result.heapSizeBytes)],
 		...windowOnly(['occluded', (result) => (result.occluded ? 'YES' : 'no')]),
 		...windowOnly(['key', keyCell]),
+		['why', whyCell],
 	];
 	const rows = results.map((result) => columns.map(([, cell]) => cell(result)));
 	const header = columns.map(([name]) => name);
@@ -454,11 +482,12 @@ function printTable(results: PageResult[]) {
 	const line = (row: string[]) =>
 		row
 			.map((cell, column) =>
-				column === 0
+				column === 0 || column === row.length - 1
 					? cell.padEnd(widths[column])
 					: cell.padStart(widths[column]),
 			)
-			.join('  ');
+			.join('  ')
+			.trimEnd();
 	console.log(line(header));
 	for (const row of rows) console.log(line(row));
 }
