@@ -6,6 +6,8 @@ tags: [gpuix, gaps, upstream, history, migration]
 sources:
   - id: openwiki-source-dbc5a68e94d7e3a15a776857
     resource: repo://drift/fluid-hover.md
+  - id: openwiki-source-5cfc44b662eef11b303099d9
+    resource: repo://drift/tabs-subtle.md
   - id: openwiki-source-7bed81eca49ee8a9899cacc5
     resource: repo://drift/thinking-indicator.md
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
@@ -56,10 +58,10 @@ sources:
     resource: repo://src/pages/changelog/changelog-view.tsx
   - id: openwiki-source-81c2a5e01f16d1053272b0de
     resource: repo://src/pages/changelog/entry.tsx
-generated: { by: "claude-code", at: "2026-10-20T23:27:40.690Z" }
+generated: { by: "claude-code", at: "2026-10-21T00:57:11.792Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-20T23:27:40.690Z
+    at: 2026-10-21T00:57:11.792Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -489,6 +491,14 @@ entries to 532.
 - **Closed upstream and removed here**: the cap-trimmed label baseline (tabs, tabs-subtle drift entries and the README
   row), the per-edge snapping of bounds reads, timers starving behind a native loop (gpuix #56), and the layout pass on
   a bounds read after a paint-only write (#47). The README's "gaps as of" paragraph lists them as gone.
+- **New, found while closing the baseline gap: a trimmed inline-grid in a line box still sits high.** The closed gap
+  was the cap-trimmed label centred in a flex box. A `textBox: trim-both cap alphabetic` `inline-grid` label inside a
+  block that has a 16 px / 24 px strut is seated about 5.55 px above Chrome (cap top 3 px under the block's top, Chrome
+  8.55 px), although the block's own line box is the right 24 px. tabs-subtle's unfolding label is the only place hit,
+  so it sets the clip `height: 24` and offsets the label with an authored `marginTop`, which gpuix then rounds (so up
+  to 0.5 px off). It is a README "Bugs" row and an entry in `drift/tabs-subtle.md` (5 to 6 entries, gpuix-gap column 0
+  to 1), which took the drift total from 532 to 533. Do not report the earlier trimmed-label baseline as reopened:
+  that one stays closed. The reasoning: [Port decisions, drift/](../decisions/port-decisions.md#drift-and-its-cause-values).
 - **Reversed: fluid hover's container-box cache.** The cache existed to avoid a 6 ms layout pass per read. With #47 it
   measured within noise and was dropped, so `pick` reads the rect on every pick like the source.
 - **Kept, re-measured: off-screen culling.** Off was worse on 9 pages and better on none; the plan to remove it after
@@ -500,7 +510,8 @@ entries to 532.
 - **Per-tick cost of a looping native animation, restated.** gpuix bills the whole page per replayed root: one looping
   colour keyframe on one text took 7 ms a tick on 3000 nodes and about 60 ms on 12000, against 0.1 ms with nothing
   animating, and a page with a running loop idles at 37-45% CPU (carousel-dots, file-thumbnail, thinking-indicator,
-  thinking-steps, queued-stack, showcase, fluid-hover, changelog). This replaces the earlier "28 ms" figure and the
+  thinking-steps, queued-stack, showcase, fluid-hover, changelog, and the button page: its native loading spinner took
+  the source's always-loading Saving button from 3.8% idle to 41%). This replaces the earlier "28 ms" figure and the
   starvation row. The README keeps it as a bug row with no workaround except pausing off-screen loops through culling.
 - **SVG stroke keyframes now work**, so the button's loading spinner, the menu-item check and the input-copy check and
   cross became native draws. Their drift entries closed (button 9 to 8, input-copy 10 to 8) apart from input-copy's

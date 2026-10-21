@@ -5,7 +5,7 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-20T23:27:40.690Z
+    at: 2026-10-21T00:57:11.792Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -15,6 +15,8 @@ sources:
     resource: repo://drift/file-thumbnail.md
   - id: openwiki-source-385da475ebb9649b27cbd9e7
     resource: repo://drift/site.md
+  - id: openwiki-source-5cfc44b662eef11b303099d9
+    resource: repo://drift/tabs-subtle.md
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
     resource: repo://package.json
   - id: openwiki-source-40275cb92c3610938f16ade3
@@ -49,6 +51,8 @@ sources:
     resource: repo://src/components/menu-item.tsx
   - id: openwiki-source-94d7540365b6edfe6f6a0bbe
     resource: repo://src/components/table.tsx
+  - id: openwiki-source-26d9c038c2027980be5931cf
+    resource: repo://src/components/tabs-subtle.tsx
   - id: openwiki-source-a79b6ccf1548a05902eb90b6
     resource: repo://src/demos/thinking-steps.tsx
   - id: openwiki-source-b100b0574d7a0258fad9b8f3
@@ -81,7 +85,7 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-20T23:27:40.690Z" }
+generated: { by: "claude-code", at: "2026-10-21T00:57:11.792Z" }
 ---
 
 # Port decisions and their reasons
@@ -332,7 +336,8 @@ renderer and cost no JS per frame. The reasons to prefer it, and the traps:
 - **A looping native animation is not free on a heavy page.** It replays the whole page per tick (gpuix's
   per-replayed-root cost): one looping colour keyframe on one text took 7 ms a tick at 3000 nodes and about 60 ms at
   12000, against 0.1 ms with nothing animating, so a page with a running loop idles at 37-45% CPU (carousel-dots,
-  file-thumbnail, thinking-indicator, thinking-steps, queued-stack, showcase, fluid-hover, changelog). This is why
+  file-thumbnail, thinking-indicator, thinking-steps, queued-stack, showcase, fluid-hover, changelog, and the button
+  page, whose native loading spinner takes the source's always-loading Saving button from 3.8% idle to 41%). This is why
   culling also pauses the loops. On `5fda771a` such a loop could starve Bun's timers outright; as of `b03d4e27`
   timers run between ticks (9-10 callbacks a second at 3000 nodes, 7-8 at 12000; gpuix #56), so a hung perf or check
   run under load is no longer expected to be this.
@@ -391,6 +396,16 @@ what made the backlog actionable: gaps go to the gpuix fork, `not ported yet` be
 decision, and choices are left alone. The shape is [`drift/_TEMPLATE.md`](../../drift/_TEMPLATE.md); the counts
 table is in the README.
 
+When the layout engine puts a thing somewhere the source does not and no style reproduces it, the port sets the
+measurement outright and the drift entry records the residue. The tabs-subtle unfolding label is the example (the entry that took the
+drift total to 533, 2026-10-21): in the source it sits in a block whose line box takes the button's 16 px / 24 px strut, so the
+clip is 24 px tall, the baseline is 18 px down and the descender of "Teamspaces" shows. A `fontSize: 16, lineHeight:
+24px` block gave the 24 px clip but gpuix seated the cap-trimmed `inline-grid` label about 5.5 px above Chrome's
+baseline, so the clip is `height: 24` and the label gets an authored `marginTop` (`labelTop`, 18 minus the cap
+height: 8.55 default, 9.27 compact). gpuix rounds that authored length too, so the label ends up to 0.5 px off
+Chrome's; the entry records that, and the README "Bugs" row is the gpuix-side report. Do not go back to deriving it
+from a strut until the gap row closes.
+
 ## Screenshots and check-* scenarios
 
 There is no browser to compare against, so verification is two headless harnesses on gpuix's offscreen test
@@ -401,6 +416,10 @@ a 30-minute run. Run the check for the component you touched on its own (`bun sc
 quirks. One trap: **captures are not byte-stable**. The playgrounds pick variants with `Math.random`, and the caret
 and timing-driven demos differ run to run, so compare the content area by pixel diff, never by hash, and do not
 recommit `screenshots/` for noise.
+
+A pin change is the exception to the partial recaptures described next: the `b03d4e27` adoption recaptured all of `screenshots/`
+(fractional layout, trimmed-label baseline, native spinner, menu check and input-copy marks), then redid the shuffled
+playgrounds and timing demos in their own commit.
 
 Two things from the 2026-10-19 round (`a2eed755`, `ce7ee2b9`, `d9d2e93e`):
 

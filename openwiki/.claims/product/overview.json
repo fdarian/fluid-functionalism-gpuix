@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:b95d153575a589065993c4adee24038f80c6e01a6015371b86ed730cc0810a65",
+  "pageVersion": "sha256:75f72617e649afd9aa348ea9bfc0e057dd42a410c0cd79ee8e818973631d9413",
   "claims": [
     {
       "id": "claim_b925fe22d5a74d5388447aa34ff4d2fd",
@@ -34,17 +34,21 @@
     },
     {
       "id": "claim_8614bcad26f8486aa463c334ea2c9505",
-      "statement": "Every place the port differs from the source is a drift entry tagged by cause, 532 entries after the 2026-10-21 gpuix b03d4e27 adoption.",
+      "statement": "Every place the port differs from the source is a drift entry tagged by cause, 533 entries as of 2026-10-21 (532 right after the gpuix b03d4e27 adoption, plus the tabs-subtle unfolding-label entry).",
       "evidence": [
         {
           "resource": "repo://README.md#L9-L11",
-          "version": "repo-lines-v1:sha256:2923533657b1d21b3fa8a2300ed82ea99043856302bafa951e1440d67af3f9e7:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I1MTk3Nzc1OTUyOTBjYmNjODI3YjE4NGQwNGQyOTEzYzc3NDdlMmZjNjNjYjI1MGM3ZGY4Y2FhZTAxZjU2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDZiMzRkZjA1ZDI2ZTZjZGRhM2E1YzUxNTFjNGE1NjQxYWEwYTZhZDA4MWExYzlhMmI2MTZjNjJmYzJmZThjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDVmMDhjNzUyMWQ1ZTcyZDI2MDM2M2E2ZGRlMmRmMjcyMzc1YzRlYWYzMzUxMjI5MjE3ODYyNzJhMDYwMDZlZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWI3YmJmNzg1NTI1MDcyMjUxNDRjZWY1MDMyOTM4MjZhZTdkYjk3ZDRjMThhMzAwODJhZDYwYjQzMzUwNWFiYiJ9"
+          "version": "repo-lines-v1:sha256:7ada3ab79a0e806e0269473a8256f4d9d2a8a4b782f8bd91c8d643510ee4ed0b:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I1MTk3Nzc1OTUyOTBjYmNjODI3YjE4NGQwNGQyOTEzYzc3NDdlMmZjNjNjYjI1MGM3ZGY4Y2FhZTAxZjU2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDZiMzRkZjA1ZDI2ZTZjZGRhM2E1YzUxNTFjNGE1NjQxYWEwYTZhZDA4MWExYzlhMmI2MTZjNjJmYzJmZThjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDVmMDhjNzUyMWQ1ZTcyZDI2MDM2M2E2ZGRlMmRmMjcyMzc1YzRlYWYzMzUxMjI5MjE3ODYyNzJhMDYwMDZlZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWI3YmJmNzg1NTI1MDcyMjUxNDRjZWY1MDMyOTM4MjZhZTdkYjk3ZDRjMThhMzAwODJhZDYwYjQzMzUwNWFiYiJ9"
+        },
+        {
+          "resource": "repo://drift/tabs-subtle.md#L57-L64",
+          "version": "repo-lines-v1:sha256:d7fa8e6354799323b80747adbebdbc805ce45fa494ab740a810216d8d4f5f444:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZThlNTgyOWY5YzlkZGM5NGE3MDljOTQ4NmY3OTNjMWZmYmZmY2Q3NGE5ZmI3MTgyMGE2NzI3YWVhNGNiZjhmYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDdlM2E1YmQ5MTAwNjljNTM4NmQ0MGE2Yzc4NWI4ZDRhNzA5MDEyMWI2YWMxZWRjZGFmMWRhMzc5MDM1MWYyNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDJiZDUyYzQ3NWY3MTEyZTljZGYzNDhlNjI5NWViMGVjNmJjNDExOWY0YWI4ZDkyNjc2NGZkYWQxMDVhMDdkZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-20T23:27:40.690Z"
+    "at": "2026-10-21T00:57:11.792Z"
   }
 }

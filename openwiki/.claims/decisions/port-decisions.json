@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:5f11d1ee851a7162898cbe36ce3955b4f8accdb843dd09873291f9ca0273d894",
+  "pageVersion": "sha256:bf940c8c1ebb0bb0dfaa5240a1c54729f2ae511bbc8945fe0c364616cf151b78",
   "claims": [
     {
       "id": "claim_782844f1b7454bbd8c43501708e208b1",
@@ -231,7 +231,7 @@
       "statement": "The port keeps the off-screen culling in src/lib/cull.ts: re-measured live on gpuix poc b03d4e27 (two alternating pairs, culling on against off), turning it off was worse on 9 pages and better on none (showcase idle CPU 45 to 80%, input-message 3.3 to 51.5%, fluid-hover p95 4.1 to 7.3 ms; summed over 49 pages idle CPU 464 to 575 and p95 244 to 274 ms), so the earlier plan to remove it once gpuix #46 lands was not carried out.",
       "evidence": [
         {
-          "resource": "repo://README.md#L272-L272",
+          "resource": "repo://README.md#L273-L273",
           "version": "repo-lines-v1:sha256:927cfc6f5c6ae134821a4030a789ad7b3314de2c64370b3192bd7933ff178785:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTI3Y2ZjNmY1YzZhZTEzNDgyMWE0MDMwYTc4OWFkN2IzMzE0ZGUyYzY0MzcwYjMxOTJiZDc5MzNmZjE3ODc4NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTI3Y2ZjNmY1YzZhZTEzNDgyMWE0MDMwYTc4OWFkN2IzMzE0ZGUyYzY0MzcwYjMxOTJiZDc5MzNmZjE3ODc4NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTY5Y2Y2ODQ5ODI4NWQ0YzgwMzk0YWY2NGEzZWY2MTljMTdkNzJmM2RmMGQ5MWI0ZDNmMzczOWQ1NWJmMWU2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWNmMTVkMmUzZjVlYzQxM2RkY2E2ZmQ5ZjJkNjkxZDk2YmNiZWRhNjRlZmI2MjY5N2EwMGE0NzFjYzJlZGZjZiJ9"
         },
         {
@@ -301,7 +301,7 @@
       "statement": "Fluid hover reads its container's bounding rect on every pick and containerBox() is a fresh read, with no cache; the earlier cached box (introduced because a live getBoundingClientRect cost a layout pass of about 6 ms on poc e5231304) was dropped on b03d4e27 when it measured within noise, since a read after a paint-only write runs no layout pass (gpuix #47).",
       "evidence": [
         {
-          "resource": "repo://README.md#L350-L350",
+          "resource": "repo://README.md#L351-L351",
           "version": "repo-lines-v1:sha256:a0b376ac436f09820b2b4fa2b31bdd1cb6e993fce144b2f4e597c79098e53d41:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTBiMzc2YWM0MzZmMDk4MjBiMmI0ZmEyYjMxYmRkMWNiNmU5OTNmY2UxNDRiMmY0ZTU5N2M3OTA5OGU1M2Q0MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTBiMzc2YWM0MzZmMDk4MjBiMmI0ZmEyYjMxYmRkMWNiNmU5OTNmY2UxNDRiMmY0ZTU5N2M3OTA5OGU1M2Q0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjNmN2IwZjMzNzhmNDU5MmUwNjc4ZmNkZGU2NmMxMGI4MzEyMDQ0ZmM1ZmY1ZTZmMTNkM2NmMjcwMzkzODU4ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWNkZjQzNmIyMGZiNWQwNGRlMjE4NTJiZjI5MTU5ZmI2ZDk5Y2M1OWRkN2MyYWRkNjk4Y2EyNWI1OTZlOGI1MiJ9"
         },
         {
@@ -387,10 +387,38 @@
           "version": "repo-lines-v1:sha256:706efaf324c26f7d67f5cbc5a2ef431716b0f694083a9ae79ac21f4e781a2cc2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyNzQ4ZTJlNjRhNTQ5MzIyNmNlNWU5ZDk3NzY0Y2Q1YmJiODIwNGJmNjI3MmQzYTA2ZTgyMjYzZDc0ZTA1YTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1YmIxYWY1MjFiZWNkNTVkNzA1NmE4YTlhMGRkMWViY2RhMWZjNzlmZjIzZjc0NTc3NmY0OTk1ODMzNTI5MjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
+    },
+    {
+      "id": "claim_f28b5603d750453a94b625380649a918",
+      "statement": "The tabs-subtle unfolding label's clip is authored as height 24 with the label offset by an explicit marginTop (labelTop 8.55 default, 9.27 compact) because gpuix seats a cap-trimmed inline-grid label about 6px above Chrome's baseline inside a strut line box.",
+      "evidence": [
+        {
+          "resource": "repo://drift/tabs-subtle.md#L57-L64",
+          "version": "repo-lines-v1:sha256:d7fa8e6354799323b80747adbebdbc805ce45fa494ab740a810216d8d4f5f444:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZThlNTgyOWY5YzlkZGM5NGE3MDljOTQ4NmY3OTNjMWZmYmZmY2Q3NGE5ZmI3MTgyMGE2NzI3YWVhNGNiZjhmYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDdlM2E1YmQ5MTAwNjljNTM4NmQ0MGE2Yzc4NWI4ZDRhNzA5MDEyMWI2YWMxZWRjZGFmMWRhMzc5MDM1MWYyNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDJiZDUyYzQ3NWY3MTEyZTljZGYzNDhlNjI5NWViMGVjNmJjNDExOWY0YWI4ZDkyNjc2NGZkYWQxMDVhMDdkZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://src/components/tabs-subtle.tsx#L376-L392",
+          "version": "repo-lines-v1:sha256:506bd59fd5384d7456ed02b1498ff8c88ee666e25599228f98ba930358cccdba:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0MWMxOGFkNzc1ODg3NTJhOTIxZmJiMzA3MzJmOWUzMWVhMDhkOTkyZDAyYjdiMWJlNzM4MDIzYzA2NDc0OGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlNWEwYTI1NDZkZGQ0MjBkNmE0NzM3NWJjMDQ1YzIzNmFmMWRhYzMwZGMwZjE1ZGRjZTI4NDdiMjkyYzg2NTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU3MGQ1ZGQ5MGU2NmY4NzJmZmE5MjVhYjYzMjY3OGVlZjVkMzZlZDE4OTk4Yzc2ZThiNTc1YjBiZmIxZGQwYzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU1YTUxMGRiMTI4Mjc1Njk0MmVlYjlmZTFmZmEyNDZkMjYwNjFiNzVlNDdjNzI0NzcwOTE2NjlmYmQwZThkZWMifQ"
+        },
+        {
+          "resource": "repo://src/components/tabs-subtle.tsx#L66-L72",
+          "version": "repo-lines-v1:sha256:d86862aeedf60a4c6438fd188ad154a89fe5d5a627249f99a68b31180d45bbb7:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzBhM2ZmYjBmNWE5YWUzMTIwY2JhZTg5ZTQ3NmQzMjg0ZjkyMTMyMWFmYWJjNTM1M2U3MzM4MTA3YmJmNTQ3MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2VkMmNhMDEzODI2MWRkMGRiZjYwMzg3NzQ5ZTVkOTQ1MjBiMzg4ZWQxZmRmYmFmNjlhZDBjNDMwNTljODQ5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzQyMTk4NTdhMzM3MDQ2ZDc1YWJhMTIxODZhODNlMGU5YmJmMzEwOTE4OGFiNzBiYzU2ODZiZDlmYTY2MGEwOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_f71da552d06d4781858857cebc03c44f",
+      "statement": "The button page's native loading spinner makes the page a looping-native-animation page: the source's always-loading Saving button takes it from 3.8% to 41% idle CPU.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L259-L259",
+          "version": "repo-lines-v1:sha256:ee62a6f482837903f19106eee086ef1dabe785b2c54ad784fed0631b1c025ed0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWU2MmE2ZjQ4MjgzNzkwM2YxOTEwNmVlZTA4NmVmMWRhYmU3ODViMmM1NGFkNzg0ZmVkMDYzMWIxYzAyNWVkMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWU2MmE2ZjQ4MjgzNzkwM2YxOTEwNmVlZTA4NmVmMWRhYmU3ODViMmM1NGFkNzg0ZmVkMDYzMWIxYzAyNWVkMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjA3M2VhMTA1MTZmMThkNWMxMzNkNjkzY2JiYzVmZjBmNWMwMmY2ODZjYThmZGJlZTQ1YmZhMjRhZmIzODdhZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTEzNDY3NjNlZmJhZTE3ZmNjNmI0YmFjNjlmYjM0N2Y1YjFjNTU0NDZlOTJhYjIzMzI4ODI2YTg1Nzc0MjhjNSJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-20T23:27:40.690Z"
+    "at": "2026-10-21T00:57:11.792Z"
   }
 }

@@ -4,16 +4,18 @@ title: Project overview
 description: What fluid-functionalism-gpuix is (the fluidfunctionalism.com component library and site ported to Solid on the gpuix GPUI renderer), the question it answers, its upstream and licence, the mixed upstream pin, the sibling repositories it depends on, and a short dated history.
 tags: [overview, product, upstream, gpuix]
 sources:
+  - id: openwiki-source-5cfc44b662eef11b303099d9
+    resource: repo://drift/tabs-subtle.md
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
     resource: repo://package.json
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
   - id: openwiki-source-ff18555ad70362de0f452788
     resource: repo://UPSTREAM.md
-generated: { by: "claude-code", at: "2026-10-20T23:27:40.690Z" }
+generated: { by: "claude-code", at: "2026-10-21T00:57:11.792Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-20T23:27:40.690Z
+    at: 2026-10-21T00:57:11.792Z
 ---
 
 # Project overview
@@ -29,7 +31,7 @@ home bento grid, the docs and System pages, Compare, Concepts, Audio Mixer, Chan
 
 It started on 2026-10-12 as an experiment answering one question: **can gpuix draw this library faithfully?** The
 answer is yes, with recorded differences. Every difference from the source is an entry in `drift/`
-with a cause (532 after the 2026-10-21 `b03d4e27` adoption, 538 after the 2026-10-19 native-animation round, down from 577 once variable fonts and the round 6 features closed their entries; printed by `scripts/drift-counts.ts`), so the repository doubles as a catalogue of what gpuix can and cannot do against a real, demanding
+with a cause (533 after the tabs-subtle strut-clip entry on 2026-10-21, 532 right after the `b03d4e27` adoption, 538 after the 2026-10-19 native-animation round, down from 577 once variable fonts and the round 6 features closed their entries; printed by `scripts/drift-counts.ts`), so the repository doubles as a catalogue of what gpuix can and cannot do against a real, demanding
 design system. That catalogue fed the gpuix fork's work directly
 (see [gpuix gaps and divergence rounds](../gpuix/gaps-and-divergence-rounds.md)).
 
