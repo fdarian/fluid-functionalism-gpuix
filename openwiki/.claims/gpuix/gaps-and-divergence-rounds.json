@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:e921fbdd94597f5f9d1cdbd9a791800bc85f020b0de4cb79192c0f2b153adb05",
+  "pageVersion": "sha256:4eb02e92c87431ea0bcfc09ccb068ed9cebe122394429eea1d7a9b7a280b0add",
   "claims": [
     {
       "id": "claim_8f689a7df6cd43af9e228cffa0828120",
       "statement": "The README's gpuix gaps section is the authoritative list of gpuix bugs and missing features the port works around, each with the components it hits and the workaround.",
       "evidence": [
         {
-          "resource": "repo://README.md#L237-L287",
-          "version": "repo-lines-v1:sha256:7bf6cd6151442c19a57fd98f0a07b3902a3a21f23d56dbd16525d464bd9ee23f:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4ZmE4NzlkOGU4MDk4YjU5YWY4N2ZmM2E5YmVmOTgwMjYyNzFiYmVmOTZmOTM1NDdhMjRkOGFhYzdkYWQyNDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjOTZhZjlkNDVjNmEzMjU5YjIyZWY4NDFjMDNhYmM2NTdhZDlhOWFmNDg4ODU3NjI1NWMzMzU1ZDc4ZDdhZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVlZDIwYmE0YmY1ZGFlOTUyZjIwNDkzODRmMDQ3MjY2YTY5ZDI3YzY0ZGM4NzQ4MzY5MWEyNzJiMGI3YjAyYjgifQ"
+          "resource": "repo://README.md#L237-L290",
+          "version": "repo-lines-v1:sha256:7b4cd7a9be18af401fd8e373a25f0d09d5487bfbf68c75197eb1c024dbed9ff4:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjOTZhZjlkNDVjNmEzMjU5YjIyZWY4NDFjMDNhYmM2NTdhZDlhOWFmNDg4ODU3NjI1NWMzMzU1ZDc4ZDdhZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5MGQyZTdlM2VlZjk3NTM0MjU5MzM1NGY1ODFiYTRlZGMxMWNjZmI5OGZmYTFhODEzYmUzZTAwMzFmNGMzNzUifQ"
         }
       ]
     },
@@ -17,7 +17,7 @@
       "statement": "Without CSS transforms, popups keep an opacity fade and slide but lose the scaleY entrance, and glyph turns are swapped or redrawn.",
       "evidence": [
         {
-          "resource": "repo://README.md#L268-L268",
+          "resource": "repo://README.md#L270-L270",
           "version": "repo-lines-v1:sha256:a1fb8675018ca3e98a17c305034f4eda77f2597f30bf7da9713bbcc38149090f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTFmYjg2NzUwMThjYTNlOThhMTdjMzA1MDM0ZjRlZGE3N2YyNTk3ZjMwYmY3ZGE5NzEzYmJjYzM4MTQ5MDkwZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTFmYjg2NzUwMThjYTNlOThhMTdjMzA1MDM0ZjRlZGE3N2YyNTk3ZjMwYmY3ZGE5NzEzYmJjYzM4MTQ5MDkwZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDAwOGZiMmRjMDdjZWU4MGQ2YmVjYjY0NzFmZDVkYTViMTNhYzhlMDlmMDA0NDAxYjdmYjVhMzNhMzU3ODdmNSJ9"
         }
       ]
@@ -27,7 +27,7 @@
       "statement": "Because gpuix #46 still makes a frame's cost scale with clipped, off-screen content, the port hides regions far from the page scroller with display none through src/lib/cull.ts; this is a kept workaround, not a removed one, and the removal comparison re-run on gpuix poc b03d4e27 still favoured culling on every page that moved.",
       "evidence": [
         {
-          "resource": "repo://README.md#L274-L274",
+          "resource": "repo://README.md#L276-L276",
           "version": "repo-lines-v1:sha256:927cfc6f5c6ae134821a4030a789ad7b3314de2c64370b3192bd7933ff178785:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTI3Y2ZjNmY1YzZhZTEzNDgyMWE0MDMwYTc4OWFkN2IzMzE0ZGUyYzY0MzcwYjMxOTJiZDc5MzNmZjE3ODc4NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTI3Y2ZjNmY1YzZhZTEzNDgyMWE0MDMwYTc4OWFkN2IzMzE0ZGUyYzY0MzcwYjMxOTJiZDc5MzNmZjE3ODc4NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTY5Y2Y2ODQ5ODI4NWQ0YzgwMzk0YWY2NGEzZWY2MTljMTdkNzJmM2RmMGQ5MWI0ZDNmMzczOWQ1NWJmMWU2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWNmMTVkMmUzZjVlYzQxM2RkY2E2ZmQ5ZjJkNjkxZDk2YmNiZWRhNjRlZmI2MjY5N2EwMGE0NzFjYzJlZGZjZiJ9"
         },
         {
@@ -123,7 +123,7 @@
       "statement": "App wraps the window in a full-size container named viewport (containerType inline-size), and the home bento grid's 768px and 1280px breakpoints are @container blocks querying it, since gpuix has no media queries.",
       "evidence": [
         {
-          "resource": "repo://src/app.tsx#L551-L565",
+          "resource": "repo://src/app.tsx#L560-L574",
           "version": "repo-lines-v1:sha256:d302f32074f4f34c0f00ee1959a3a1cef60c38357a5ec394d87397c680b92484:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4ZGZiMDM4NzY3YTc5ZjVlNTJmZTc1NjI5NjNhMWMwMWU0ZWE0ZTdmNTA3ZTUyNGY1MTRhNmE4MGY0YjRkYjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmOGY4MDRlOTIzNjU1N2U0ZjA3MWQ3NDI2YTMwYmIwOTRmZDE5NWQwMTFmZGUzZDIzYzcwNDBjNzY2Y2I1MGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzZmQ2ZGViNmZhZjk0OThlZTNmMWM1YzAyM2UxNGE2YTY5NjcyM2IxNmVkZmVlMGY1OGFiNzA1ZDBjODI5YjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFjNWVkYjQzZDE0OGIyMzNiZjczZDU0OWJmNDNmMDQyYzVlMzIxNWI0OGE5MzRjMWQyMzdlMTM0MGM4NTVmNzAifQ"
         },
         {
@@ -201,7 +201,7 @@
       "statement": "The same viewport container in App carries lineHeight 1.5, mirroring Tailwind preflight's html rule, because gpuix e5231304 lays out text with no line height at the font's own metrics; unset text and form controls inherit it.",
       "evidence": [
         {
-          "resource": "repo://src/app.tsx#L555-L561",
+          "resource": "repo://src/app.tsx#L564-L570",
           "version": "repo-lines-v1:sha256:3396d4ecbee8cd7128fd1afc0b1f2dedb41ddcabd44ced621ad58a0029ecddf2:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjFjNGEzZGYxMTc3Zjg3MTJiM2Q3YmQ5M2E2N2Q5MWFmYTM3NWMwYWJlYjc5MGM2ZGJmM2ZhNGI3M2NmZTM0OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMmQ4ZDdhMjEwMDdlZjY4MWU3YWZiYzY2YmY3ZjhiMzVkOTQ1NTM1NTg5Mzc1ZDA5YzJkZmY4MzhjMmZjOWUwYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzEyYmI5MGU5NmFiMGJjNGRlNmYyNjVjMTMzMTU5M2YxYjNlMTYxYjhhZGU0NTQ2MGQ1ZWEyMzM4MDI0NTJhNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWQ3MDIyYTA3OWExM2I1ODVjMzhlMDc0MTA5MjdjZTM1ZGNjOTFlY2U1N2FjMmUwZWM3MjIxZDE0NDQzZGEzMiJ9"
         }
       ]
@@ -211,7 +211,7 @@
       "statement": "Input fields take the source's line height instead of a fixed height; the command-menu field uses FIELD (14/24) and FIELD_COMPACT (13/20) so its box is its line, and check-command-menu asserts both.",
       "evidence": [
         {
-          "resource": "repo://scripts/check-command-menu.tsx#L90-L110",
+          "resource": "repo://scripts/check-command-menu.tsx#L77-L97",
           "version": "repo-lines-v1:sha256:47763d481b7eeb0c53062a5baa16bbe6bc436162e16c67f34a12c56ad614ae87:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmNjY2YTk0OWU4OTA2ZmIyMDhmYjU4YWUxZjRkMWYxY2M1MzJlOTQ2OTU2NzQ4MTk0Y2EyMDE2Y2Q0ZjJiZjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhmZWE4NjI1ZmI0OWY1ZWE4ZDBkM2JjYWFkNjRiODQ2NzFkODIyYTY3YWZjODNjOGQwMzZhZTY5ZjJlYmQ3MWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4NjgxODhjZDdmZjFlYzQyMjgxMjExODA3M2IwZDNkMmNlMDA2NzA1MTAxM2VjMzBhMmYwOWYzZDljNTYwYjEifQ"
         },
         {
@@ -235,7 +235,7 @@
       "statement": "gpuix has no pause, play or seek on a motion value's animation, only stop, cancel and complete (getAnimations covers CSS animation and transition runs only), so the port pauses a native loop with stop() followed by a new animate() from the current value, which is exact only for a linear animation; background-position is not animatable, so the thinking-indicator shimmer is per-letter colour keyframes.",
       "evidence": [
         {
-          "resource": "repo://README.md#L275-L275",
+          "resource": "repo://README.md#L277-L277",
           "version": "repo-lines-v1:sha256:fc52ad9303b70754db22c80132d24a61f3a447fe7d3b50cd410955ebaa5b66e0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmM1MmFkOTMwM2I3MDc1NGRiMjJjODAxMzJkMjRhNjFmM2E0NDdmZTdkM2I1MGNkNDEwOTU1ZWJhYTViNjZlMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmM1MmFkOTMwM2I3MDc1NGRiMjJjODAxMzJkMjRhNjFmM2E0NDdmZTdkM2I1MGNkNDEwOTU1ZWJhYTViNjZlMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDk5NmU0MmIxNjdmYzhkNWIyNGE2N2Y3Yjg1MmYwMzFkNzNlMGUzNDZiZWZkNWIzYjZhMjRlODg0ODg3OThlMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTgxNjIzN2ViNjljZDlhYzEyNjZiMjE5NTdmZjMzNDljMTQ0MTYyN2JjM2I1OWRkMmMwNGYyZmEyY2MwY2RiYyJ9"
         },
         {
@@ -257,7 +257,7 @@
       "statement": "The README's gpuix gaps table now lists only thinking-steps as needing the shared setInterval frame clock because gpuix has no requestAnimationFrame.",
       "evidence": [
         {
-          "resource": "repo://README.md#L278-L278",
+          "resource": "repo://README.md#L280-L280",
           "version": "repo-lines-v1:sha256:be83225f1df06081fac4ea1ae2aec1efc3c6d9b25846a810e83736901af0fc8b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmU4MzIyNWYxZGYwNjA4MWZhYzRlYTFhZTJhZWMxZWZjM2M2ZDliMjU4NDZhODEwZTgzNzM2OTAxYWYwZmM4YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmU4MzIyNWYxZGYwNjA4MWZhYzRlYTFhZTJhZWMxZWZjM2M2ZDliMjU4NDZhODEwZTgzNzM2OTAxYWYwZmM4YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTQ1MDhjMDBjM2YxZWExMTljMTdiNTVkODNhNDE5ZTdiMWRhYjk2MWUwMGI3MmJjOWZjMGRmM2QwYzQ2ZjYzZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTAwNWM0NWExNjFjMGYyNzc2YjI2MTJlMzU4ODA1ZDg4ZTQxN2Q2Njg3YWIwMWRlZDNkYzJjM2QwNzM1NGI0OCJ9"
         },
         {
@@ -281,7 +281,7 @@
       "statement": "Since gpuix poc b03d4e27, getBoundingClientRect, ResizeObserver, IntersectionObserver and onLayout return fractional 1/64 px values like Chrome (client* and scroll* stay integers), but gpuix still lays out an authored inset, padding or size on a whole device pixel (half toward zero), so a highlight placed from a measured rect can sit 0.5 px off its row; the port corrects this only for the fluid highlight by rounding rects like the source's offset* reads.",
       "evidence": [
         {
-          "resource": "repo://README.md#L261-L261",
+          "resource": "repo://README.md#L262-L262",
           "version": "repo-lines-v1:sha256:85db6c128526988662d221923f4fb592c71458d769b4ff7a3738cc8fc2232d4d:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODVkYjZjMTI4NTI2OTg4NjYyZDIyMTkyM2Y0ZmI1OTJjNzE0NThkNzY5YjRmZjdhMzczOGNjOGZjMjIzMmQ0ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODVkYjZjMTI4NTI2OTg4NjYyZDIyMTkyM2Y0ZmI1OTJjNzE0NThkNzY5YjRmZjdhMzczOGNjOGZjMjIzMmQ0ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTJjNzA0MTBmOGEyOWJlMGJiZjAzOWQ2ZWM2NDZmNGU0NTZmODRmNjc5ZGUwZWE4Y2EyOTAxNWFkODIxNDczZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWM0ZTExMTA4MzI5MTFhMWViYzA4ZjYwNTI4NWU3N2Q5NWViMGI1ZGY0ZjIwMGJlMGUxYTg4OWMwMzliOTNlOCJ9"
         },
         {
@@ -299,8 +299,8 @@
       "statement": "A cap-trimmed (textBox trim-both cap alphabetic) inline-grid label inside a block with a 16px / 24px strut is seated about 5.55px above where Chrome puts it, although the block's own line box is the right 24px; the README records it as a gpuix Bugs row and tabs-subtle's unfolding label is the only component hit.",
       "evidence": [
         {
-          "resource": "repo://README.md#L261-L263",
-          "version": "repo-lines-v1:sha256:51346763efbae17fcc6b4bac69fb347f5b1c55446e92ab23328826a8577428c5:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODVkYjZjMTI4NTI2OTg4NjYyZDIyMTkyM2Y0ZmI1OTJjNzE0NThkNzY5YjRmZjdhMzczOGNjOGZjMjIzMmQ0ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGRmOGQzMzIyN2FmZGRjM2MyYTQwMGM0N2Q0MTNkOGQ1YjU4OGEyNjMzMjNmNjFkNGE3NTIyMjBmODU1M2JiOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjdlZGRjYTRlOWM1NDczNmI0NjY4MzE2MTk1OGJmOWMzM2ZjMWVhNmE3ZmM5OTYwMGQyNWRmMDlmMjc2YjkxNyJ9"
+          "resource": "repo://README.md#L263-L263",
+          "version": "repo-lines-v1:sha256:8e70b983887dc3587da69a94a965c6f26a6d52166c3c463fa046d49fb9be7636:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGU3MGI5ODM4ODdkYzM1ODdkYTY5YTk0YTk2NWM2ZjI2YTZkNTIxNjZjM2M0NjNmYTA0NmQ0OWZiOWJlNzYzNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGU3MGI5ODM4ODdkYzM1ODdkYTY5YTk0YTk2NWM2ZjI2YTZkNTIxNjZjM2M0NjNmYTA0NmQ0OWZiOWJlNzYzNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzQ1MzhkNzE0Nzg3MTVlNmExYWE5OTA0ZDRmOTMwNTg0MDlhNTg1M2Q5MGQyNjhlZGRlZjViNjhjZGIwYzJhMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTBlMDk4ZThmOTI3OTVhNjg5NjNmYWY0NzYzOTgyMzc4MzA0OTQ4ZDk1ODFiNzFlNTdjOGEzZjVkMTg0YmZlYSJ9"
         },
         {
           "resource": "repo://drift/tabs-subtle.md#L57-L64",
@@ -335,10 +335,52 @@
           "version": "repo-lines-v1:sha256:82324a75ee0405201b156e64364d3985571dcdc25ca4b74c7fd9aede6a962a20:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1ZjY4YzIyOWU0ZTIzZTA1ODM4Yzk4NmY1NTliOGVhZmQ1NzI0NmIzNWMwMzcxYWRiYWRhNDM5OTgyN2I3YzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkOGQ3YTIxMDA3ZWY2ODFlN2FmYmM2NmJmN2Y4YjM1ZDk0NTUzNTU4OTM3NWQwOWMyZGZmODM4YzJmYzllMGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA1NDllZjdiNjcyZDgzZGIyNjIxZTgzOGQ0YjUwNzliMDZjZTc0YjdmMWY3NWUwMjhlNWYxN2YwMmJmZDdkMDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRkYzA1ODZiODNiZDc3NzA1YjgyMDdkYjQyYmI1MTc0ODBiNWFkMWNlNTkyZTA1ZjI0YzIyODZiZDk3NjExMDcifQ"
         }
       ]
+    },
+    {
+      "id": "claim_f50e37addbf04f80bc79f5d234ba591c",
+      "statement": "Writing scrollTop while a motion value runs cascades into dozens of layout passes per event drain, because the setter reads the scroll metrics back (laying out the window and sampling every motion value at the wall clock) and the sample emits the next change event; renderer.scrollTo has no read-back, and the port uses it for the command menu list and the page-switch reset.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L264-L264",
+          "version": "repo-lines-v1:sha256:ca26f6a613cc362191e4601cadaa97e729f3622a25ab36963af5dd0f7bedf3bd:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2EyNmY2YTYxM2NjMzYyMTkxZTQ2MDFjYWRhYTk3ZTcyOWYzNjIyYTI1YWIzNjk2M2FmNWRkMGY3YmVkZjNiZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2EyNmY2YTYxM2NjMzYyMTkxZTQ2MDFjYWRhYTk3ZTcyOWYzNjIyYTI1YWIzNjk2M2FmNWRkMGY3YmVkZjNiZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGMwMGMzZDk0YjE4ZDgzODQ1NmQzZjc4YTgzMDY5MTM3YzlkOTRkNjlmOGZmYTc4OTk4MzU1YTgzODE1OTgyYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWM0ZTExMTA4MzI5MTFhMWViYzA4ZjYwNTI4NWU3N2Q5NWViMGI1ZGY0ZjIwMGJlMGUxYTg4OWMwMzliOTNlOCJ9"
+        },
+        {
+          "resource": "repo://src/components/command-menu.tsx#L410-L432",
+          "version": "repo-lines-v1:sha256:4e1f7562103dada14ed51f79e62eb47aa01a3bade43eb22a39e94ab9b2c4adcd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3ODcxODZhOTRhNWRmNTFlOGU2MDBiODBiYzQzZjUzZDgwMmZlNjQwMTZjNjU3MGFiN2Y0MmYzYmE3YzQyN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkMzg3OTk2NDFkZmI5ZDFhNjY5ZDViNWM2OGVmY2I4ODFmNWNmZWM0MzVjZDcyMGM1NmU0ZmI5YmQ5YTI1YmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyODE0NTgxNGE2ZTJkODEzMzZhMmJmMTc0NDBkZTJkYTVmMGMzZWQ0NDA0ZjY1M2Q1MjI1M2Q1OTE4Mzc5ZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNmNDliNzg5MTZhYjg5YWFlZmVjMzQ5ZjExZDU4ODI0YmFlYTI3ZTIwODc3ODcwYTY4ZjU3NTg4NDU0YThhY2MifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6bec084467c249e6b4e247988590e52f",
+      "statement": "A long page's first draw builds, lays out and shapes every node because nothing marks a region far before an IntersectionObserver reports against a first layout, and gpuix's line layout cache ages a line out after one frame that looks up other text so a revisit shapes the same lines again; the port has no workaround beyond deferring the release spy's first reading.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L261-L261",
+          "version": "repo-lines-v1:sha256:7c314ff6b9b1413a72a3f8e09ab5875c8964f4d436914d096d7f0b19108bf4e0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2MzMTRmZjZiOWIxNDEzYTcyYTNmOGUwOWFiNTg3NWM4OTY0ZjRkNDM2OTE0ZDA5NmQ3ZjBiMTkxMDhiZjRlMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2MzMTRmZjZiOWIxNDEzYTcyYTNmOGUwOWFiNTg3NWM4OTY0ZjRkNDM2OTE0ZDA5NmQ3ZjBiMTkxMDhiZjRlMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2Q4ZDQ1NDM3N2U0ZGEwMjM2YzRkYjE2Njg3NmY5NDIwZWM5YjRhOTZkMjBmNzM5NDMwZWZkOTE4MWE0NTdmOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjg4Njc1M2UwNWExMWZkMmEzYjE1NDI5MGUzZGIwM2QxYjA2ZmVlOTlmYzU4NDBjMDM3ZDYxNzg1ODA5YzZlNyJ9"
+        },
+        {
+          "resource": "repo://src/pages/changelog/release-spy.ts#L67-L72",
+          "version": "repo-lines-v1:sha256:84251a95173a44b1676b43b8993e372fe8f79b006af877de3c280d3d9d47b058:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzQ2YThhMGVkNDMyMThkMWY5YTljZTMxOWJjMTJkMmIzN2QwYmI2YTI2YTcyNGRlMWI4MjhhN2QxYTY3ZWEyNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjZmYWI1MWI0YTg5MDJhZjJjNGMxMTg2YjkwNWIzMTAzNmIwMzE5YWVhZGMwMjZjYmI3YzEwNDYzMTRkYTYzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjM0NDliMDJiYjc4YjNlMmEzYTgzNTg3MTY2OWIwYjEwODU4ZDhlNDEyNzMzOGZhMTY5MWFiZWJkNThkOGJiMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWQ0OTc2NmZmZGM5MDYyOTUxYmY4ZmMwNTRkZDM1NGM4MGI2NzAzNTQzZTg0YjNlNzU5YzVjMmZkZTg1OGJlNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_0450a39925c44e0784f0482006af5bc1",
+      "statement": "scripts/perf-page-switch.tsx is the headless harness for page-switch hitches, listed in the README's harness notes beside the real-window scripts/perf.tsx.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L291-L296",
+          "version": "repo-lines-v1:sha256:a5c281d182ee694e5c30d26157a65ccd9404405193fa63f37da966c7120416c5:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWYyYTA2ZmY5NjQ2Y2QyYTc5OGEwYWRiZjQ0MWYxMGM0MjU4MTFiYTc4ZTJiM2NlYTg1MGI1MTVkMzdjMTg5NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjAzY2U3ZTY4MGY5MTQyNTNjM2I1NGQ1MjYxOWI5ZmE3NWRkMTY1YWYxNDcwYTg4MGEzZjIzNmZmN2FlMDBjNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmUxMzQ4N2U3ZDA1ZGE4NmQzOTdiNTM1ZDIwNjg0YzNmOWVkMzliNzIzYmMwZGJkOTkxZTM0ZGExNmQ2MTY5MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmNjY2Q4ZDE2ZmE3NzZkMWMyZWYwN2I1ODQzYmNjZjI1OTcxZTRkNjJmMzI5YTkxYWZlOGU3OWZlOGNiNTVjNiJ9"
+        },
+        {
+          "resource": "repo://scripts/perf-page-switch.tsx#L1-L21",
+          "version": "repo-lines-v1:sha256:2656e457241fa537905fb50dbeb8a6c256b409ee88080563bc6017e565ad3c67:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhMTAxYjQ0YmNkOWEyMTg0OGI2NzRlZmE2YTIwOTY4Y2Y4ZmJlYzA0ZDU3NDk1OTE1NGQ1ZGMwNjY4YmU0YzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNkYzFkNzk4NmRmMGQ2NDlhODViOTUxZWM2MzFjYWZkNTU3OWNkYjQ1MjEwYjIzZTFjNDM1ZDI4NzgyMTkwYjUifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-21T03:34:45.604Z"
+    "at": "2026-10-21T06:46:50.862Z"
   }
 }

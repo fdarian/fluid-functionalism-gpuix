@@ -22,6 +22,8 @@ sources:
     resource: repo://scripts/check-kit.tsx
   - id: openwiki-source-f870e66b983ce90f21118b51
     resource: repo://scripts/drift-counts.ts
+  - id: openwiki-source-edfff899d93ec8844d1b24df
+    resource: repo://scripts/perf-page-switch.tsx
   - id: openwiki-source-5ebe82cc5f9e383e14411602
     resource: repo://src/app.tsx
   - id: openwiki-source-52272ff1f298332dd4484482
@@ -62,10 +64,12 @@ sources:
     resource: repo://src/pages/changelog/changelog-view.tsx
   - id: openwiki-source-81c2a5e01f16d1053272b0de
     resource: repo://src/pages/changelog/entry.tsx
-generated: { by: "claude-code", at: "2026-10-21T03:34:45.604Z" }
+  - id: openwiki-source-805db717791883f12f02d567
+    resource: repo://src/pages/changelog/release-spy.ts
+generated: { by: "claude-code", at: "2026-10-21T06:46:50.862Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T03:34:45.604Z
+    at: 2026-10-21T06:46:50.862Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -132,6 +136,20 @@ The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adopt
   gpuix's check), and writing that persists on disk, so the port does nothing and the README row asks gpuix for a real
   switch. Measured on the offscreen renderer at scale factor 1, not 2x. It is a "Bugs" row and an entry in
   `drift/site.md`, which took the drift total from 540 to 541.
+- Writing `scrollTop` while a motion value runs cascades into layout passes: the setter reads the scroll metrics back,
+  which lays the window out and samples every motion value at the wall clock, and the sample emits the next `change`
+  event, whose handler writes again. One event drain ran 40-100 passes (about 90 ms, with no frame presented), so a
+  held ArrowDown in the site menu stuttered; `renderer.scrollTo` has no read-back and no cascade. The port moved the
+  command menu list and the page-switch reset to `scrollTo`; any other scroller whose offset follows an animated
+  motion value should do the same. Repro r10 (outside the repo); decision and verification in
+  [Port decisions](../decisions/port-decisions.md#scroll-writes-go-through-rendererscrollto-and-a-page-switch-is-measured-by-its-first-draw).
+- The first draw of a long page is whole: a page mounts in one batch and builds, lays out and shapes every node,
+  because nothing marks a region far until an `IntersectionObserver` has reported against a first layout. A 1900-node
+  tree drew in 45 ms against 8 ms with all but 12 entries `display: none`. gpuix's line layout cache also ages a line
+  out after one frame that looks up other text, so a revisit shapes the same lines again (Changelog, Showcase). The
+  port's `createCulling` hides far regions only after its first report, so the first draw on Changelog, Showcase and
+  Command Menu stays 40-110 ms; the question to gpuix is a way to mount a region culled before its first layout, or a
+  cache that outlives a page swap. Repro r11 (outside the repo); `scripts/perf-page-switch.tsx` measures it.
 - Table parts are not animatable (a collapsed-border row rule snaps where the source eases it), and declaring the
   transition anyway is not harmless: it rebuilt the layout of the table's siblings on each frame of the fade, so the
   port dropped it (see [Port decisions](../decisions/port-decisions.md#the-table-rows-border-color-fade-is-dropped-not-left-inert)). gpuix has the
@@ -541,3 +559,19 @@ Pitfall carried over from this round: the culling, ghost and bounds-read numbers
 another. They moved between `e5231304`, `5fda771a` and `b03d4e27` for reasons on gpuix's side (retention,
 re-measurement of hidden labels, layout passes on reads), so re-measure on the pin you are on before keeping or
 deleting a workaround.
+
+## Scroll-write and first-layout rows (2026-10-21, repros r10 and r11)
+
+Two new README Bugs rows, found while chasing a stutter under a held arrow in the site menu and a hitch on sidebar
+clicks. Neither is fixed in gpuix; both are open questions for the fork, and the port worked around the first.
+
+- **r10, the `scrollTop` setter's layout cascade.** Covered in the open list above. On a held ArrowDown at 30 ms
+  repeats, 32 of 34 keys were handled in 2 s with a drawn-frame gap of 109-119 ms at p90 through the setter (69-79 layout passes per drain at p90, 94 ms),
+  against 0 passes and 0.1 ms through `renderer.scrollTo`. The port's workaround is in the command menu and the page-switch reset; the reasons
+  and the trap (a single-key check passes) are in [Port decisions](../decisions/port-decisions.md#scroll-writes-go-through-rendererscrollto-and-a-page-switch-is-measured-by-its-first-draw).
+- **r11, first-draw layout and shaping cost of a long page.** No workaround beyond the Changelog's release spy no
+  longer forcing a second layout before the first draw. The README row was written first against the line cache's
+  age-out (`finish_frame`) and then updated on gpuix `83bab5a7` with the shape counts of the repeat visits (Changelog
+  215, Showcase 286-300 on every visit).
+- **A new harness**, `scripts/perf-page-switch.tsx`, headless, measures the page-switch hitch per sidebar click (mount
+  JS, first draw, later frames); the README's harness notes list it next to the real-window `scripts/perf.tsx`.

@@ -5,7 +5,7 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T03:34:45.604Z
+    at: 2026-10-21T06:46:50.862Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -25,16 +25,22 @@ sources:
     resource: repo://pnpm-workspace.yaml
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
+  - id: openwiki-source-8792b0b9d5aaa145ee2ebfa4
+    resource: repo://scripts/check-command-menu.tsx
   - id: openwiki-source-1d90d3d86ac1d41b49610f02
     resource: repo://scripts/check-reduced-motion.tsx
   - id: openwiki-source-c2ba4607c29fa723e9c49321
     resource: repo://scripts/check-scroll-area.tsx
   - id: openwiki-source-dcc18690931a266c3aa8c94d
     resource: repo://scripts/check-single-instance.ts
+  - id: openwiki-source-4709eec06f8b6bf0c0be1ada
+    resource: repo://scripts/check-site-nav.tsx
   - id: openwiki-source-3566a6dff8417d81a41732b9
     resource: repo://scripts/check-table.tsx
   - id: openwiki-source-819b237d6ed6e51fbd2028b9
     resource: repo://scripts/check-weight-widths.tsx
+  - id: openwiki-source-edfff899d93ec8844d1b24df
+    resource: repo://scripts/perf-page-switch.tsx
   - id: openwiki-source-edfa365c97d8e399b7824f84
     resource: repo://scripts/registry-plugin.ts
   - id: openwiki-source-a29d9251e39930cd08b68b32
@@ -49,6 +55,8 @@ sources:
     resource: repo://src/components/carousel-dots.tsx
   - id: openwiki-source-acfa9c6a13d1ded9117c4665
     resource: repo://src/components/color-picker.tsx
+  - id: openwiki-source-923ee25729d055f35a254df3
+    resource: repo://src/components/command-menu.tsx
   - id: openwiki-source-239fd08429aaf6fcfc61fa9f
     resource: repo://src/components/file-thumbnail.tsx
   - id: openwiki-source-d16aa80995477f629b4eae12
@@ -91,7 +99,7 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-21T03:34:45.604Z" }
+generated: { by: "claude-code", at: "2026-10-21T06:46:50.862Z" }
 ---
 
 # Port decisions and their reasons
@@ -366,6 +374,50 @@ verified against the source's timing and easing rather than against a screenshot
 mount, so off-screen cards mounted steps and ran active-step shimmers and the page idled near 70% CPU. A card now
 waits paused, plays at 50% or more visible, pauses below 10% keeping its elapsed time, and a finished card stays
 finished until replayed. A culled region has no box and reports 0, so it holds.
+
+### Scroll writes go through `renderer.scrollTo`, and a page switch is measured by its first draw
+
+Three changes from 2026-10-21 share one cause: on gpuix, a JS write or read that touches layout while a motion
+value is running is billed as layout passes, and no frame is presented while they run. The numbers are in the README
+gap rows ("command-menu (the list's scroll travel)" for r10, "every long page on a sidebar click" for r11); this
+section keeps the decisions and the traps.
+
+- **The command menu list writes its offset with `renderer.scrollTo(id, 0, top, 'instant')`, never the `scrollTop`
+  setter.** The setter reads the scroll metrics back, which lays the window out and samples every motion value at the
+  wall clock; the sample emits the next `change` on the list's scroll spring, whose handler writes again. A held
+  ArrowDown ran 40-100 layout passes per event drain and drew nothing meanwhile, so the menu stuttered under key repeat
+  although each pass was cheap. `scrollTo` has no read-back. The `change` handler writes the motion value's live
+  value rather than the event's payload, because a payload queued before a snap (the wrap from the last row to the
+  first) would otherwise write the old bottom position back after the list was snapped to the top. Do not "tidy" this
+  back to `element.scrollTop = value`: it works, it passes a single-key check, and it is slow only under repeat.
+- **A page switch writes the page scroller to the top before the swap**, through the same call, so the new page's
+  first draw is already at the top (the source gets this from every Next App Router navigation). Without it the
+  scroller keeps the old page's offset, the new page's height clamps it, and the page appears scrolled until
+  something corrects it. The setter was ruled out for the same layout-pass reason; the write throws if the scroller is
+  not mounted or the renderer has no `scrollTo`, instead of skipping the reset.
+- **The Changelog's release spy defers its first reading.** Its mount effect used to read the scroller, which laid out
+  the whole page (about 70 ms) before the first draw. The newest month now stands in until a 0 ms timer, which
+  runs after that draw, takes the real reading; the cleanup clears the timer. Until then the Releases card shows the newest
+  month, which is the price of not laying the page out twice before it appears.
+- **What was not fixed, and why.** The first draw of a long page still builds, lays out and shapes every node (40-110 ms
+  on Changelog, Showcase and Command Menu): culling hides a region only after an `IntersectionObserver` has reported
+  against a first layout, and gpuix's line cache ages lines out after a frame that looks up other text, so a revisit
+  shapes them again. That is a gpuix question recorded in the README row, not something the port can avoid.
+
+How to check these, because the obvious checks pass:
+
+- A one-key command-menu check cannot see the cascade. `scripts/check-command-menu.tsx` holds an arrow at macOS repeat
+  timing (initial 15, repeat 2, frames at 60 Hz) with the motion clock running, and bounds layout passes per
+  drain by a count, not a time, so a slow machine cannot move the bound. The clock must run: every pass samples the
+  spring at the wall clock, so a paused test clock would hide the cascade. It also replays the wrap with its keys back
+  to back and one draw part way, which is how the stale-payload write is provoked.
+- `scripts/check-site-nav.tsx` scrolls the Changelog down, clicks a sidebar row and reads the scroll metrics
+  immediately: the read draws what is pending, so it sees the new page's first frame. Reading after a settle would pass
+  even if the page had been corrected a frame late.
+- `bun scripts/perf-page-switch.tsx <slug> --visits 4` is the tool for a page-switch hitch: it splits one sidebar click
+  into mount JS, first draw and later frames. Run one process per slug for a cold first visit (slugs in one process
+  share text-shape caches, so the first visit of the second slug is warm), and compare runs only at a similar load
+  average, which the script prints before and after.
 
 ### The table row's border-color fade is dropped, not left inert
 

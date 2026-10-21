@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:b3f0a21c480dd07863263b61bc397b1a94245f87dc77732658eb19127868b009",
+  "pageVersion": "sha256:da77c485dc9e06a24e55e8e0d86cdf26c651eda96bacb050c36a83e2796f0d62",
   "claims": [
     {
       "id": "claim_fd643a2c3e614b00990f1b7fce1b8905",
@@ -61,8 +61,8 @@
       "statement": "The Untitled UI icon set was dropped on 2026-10-21 because its licence forbids distributing the icons and the repository is public; the Icons row offers four libraries and defaults to Lucide.",
       "evidence": [
         {
-          "resource": "repo://drift/site.md",
-          "version": "repo-file-v1:sha256:63d460eb8211b99763014b66247c87df2dbed2da4e5dc7e09864040578cb80e3"
+          "resource": "repo://drift/site.md#L158-L160",
+          "version": "repo-lines-v1:sha256:b43ef7ad485e598e3764766f4b1dec1cdf0e73ecbd1a5aa16bea0a92fe3ed400:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzI4NWEwZmQ3NWFkNWZjZDg4N2I2YjhiMmE1ZGNkOGY3NGUwNGFkZWMxNzczNjg2MzIxYzEyNDEzMjAzNjc4ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMmM3NGIyZWI1MTU5OGZkY2VjMTUyYjdmMzg1NjlhNzRjNzk4ZTQyMjQ2ZjA1ODE5ZWI3M2RkNWJkOGU1YjY1NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWM3OWI2OTQzMDU1N2QxMDk4NjdkZmNmNDY4NmE2NzIzMGI5NzJjNmY5ODNkMTkxOTVmZjdiYTM0YzFkYTRhYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzVmMTIxODFiYWRkZDM2ZDM4MzQ3N2EwYjNjZmYzMjM0YTIyOGZkYmI4MzVlZTE2ZWVhNTQ1NzRjODM5NDEzYiJ9"
         },
         {
           "resource": "repo://src/lib/icons.ts#L1-L25",
@@ -87,6 +87,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-21T03:34:45.604Z"
+    "at": "2026-10-21T06:46:50.862Z"
   }
 }
