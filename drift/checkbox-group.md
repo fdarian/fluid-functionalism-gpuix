@@ -16,7 +16,7 @@ Same in both (checked against the code): row height, gap and padding per size (3
 
 ## Hover highlight travels on `left` / `top`
 
-- **Cause:** `gpuix gap`. CSS transforms are missing (README "Missing features" row for transforms, `README.md:239`; `FORK.md:1198-1209`).
+- **Cause:** `gpuix gap`. CSS transforms are missing (README "Missing features" row for transforms, `README.md:273`; `FORK.md:1198-1209`).
 - **Original:** the highlight is pinned at 0,0 and moved with an `x` / `y` transform (`registry/default/fluid-hover-highlight.tsx:74-76,126-131`).
 - **Port:** `FluidHighlight` animates `top` / `left` / `width` / `height` (`fluid-highlight.tsx:92-99`), re-laid out per frame. The look is the same.
 - **Workaround:** layout properties.

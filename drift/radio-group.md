@@ -7,7 +7,7 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 ## The dot pops in from scale 0.3
 
-- **Cause:** `gpuix gap`. CSS transforms (README "Missing features" row, `README.md:239`, which lists radio-group).
+- **Cause:** `gpuix gap`. CSS transforms (README "Missing features" row, `README.md:273`, which lists radio-group).
 - **Original:** the dot springs from `scale: 0.3, opacity: 0` to full on `spring.fast`, and shrinks out over 0.04 s (`radio-group.tsx:424-430`).
 - **Port:** `motion` animates `left` / `top` / `width` / `height` together so the dot stays centred while it grows from 30% of its size (`dotAt`, `radio-group.tsx:92-97`, `:122-126`; `DOT_FROM` `:25`; `exit` over `DOT_OUT` 40 ms `:125-126`). `AnimatePresence initial={false}` keeps a row selected at mount at full size, as FF (`:120`, source `:420`).
 - **Gpuix lacks:** transforms (`~/code/fdarian/gpuix/FORK.md:1198-1209`).
@@ -17,7 +17,7 @@ Same in both (checked against the code): row height, gap and padding per size, c
 
 ## Hover highlight travels on `left` / `top`
 
-- **Cause:** `gpuix gap`. CSS transforms (README "Missing features" row, `README.md:239`; `FORK.md:1198-1209`).
+- **Cause:** `gpuix gap`. CSS transforms (README "Missing features" row, `README.md:273`; `FORK.md:1198-1209`).
 - **Original:** the highlight is moved with an `x` / `y` transform (`registry/default/fluid-hover-highlight.tsx:74-76,126-131`).
 - **Port:** `FluidHighlight` animates `top` / `left` / `width` / `height` (`fluid-highlight.tsx:92-99`). The look is the same.
 - **Workaround:** layout properties.

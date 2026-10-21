@@ -4,7 +4,7 @@ Original: `registry/default/carousel-dots.tsx`, demo in `app/docs/carousel-dots/
 (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/carousel-dots.tsx`,
 demo in `src/demos/carousel-dots.tsx`.
 
-Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.tsx:187-197`), track and fill colours (15% and 40% of foreground, `:25-26`), the 18px round click areas and 12px between dots (`:180`), the shared hover highlight along the x axis, the focus ring (`focusRing(0)`, README row `README.md:306`), default labels ("Go to slide N"), `role="group"` / `aria-label="Slides"`, Enter on key-down and Space on key-up through `buttonProps`, autoplay (`duration`, `paused`, `loop`, restart on every slide change, one request per slide; a pause holds the progress), a driven `progress`, and the demo's sliding label with direction.
+Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.tsx:187-197`), track and fill colours (15% and 40% of foreground, `:25-26`), the 18px round click areas and 12px between dots (`:180`), the shared hover highlight along the x axis, the focus ring (`focusRing(0)`, README row `README.md:161`), default labels ("Go to slide N"), `role="group"` / `aria-label="Slides"`, Enter on key-down and Space on key-up through `buttonProps`, autoplay (`duration`, `paused`, `loop`, restart on every slide change, one request per slide; a pause holds the progress), a driven `progress`, and the demo's sliding label with direction.
 
 ## Autoplay plays a native animation on the width, not a `requestAnimationFrame` loop on a transform
 

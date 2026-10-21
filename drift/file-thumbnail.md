@@ -12,7 +12,7 @@ Ported and matching: the square with `bg-accent`, `overflow-hidden` and `shrink-
 - **Cause:** `gpuix gap`.
 - **Original:** renders page 1 of a PDF through pdfjs onto a canvas and shows it as an image, and exports `loadPdfjs` and `renderPdfFirstPage` (`file-thumbnail.tsx:7-38`, `:108-135`, `:203`). A failed render (corrupt file, blocked worker) falls back to the glyph.
 - **Port:** a PDF shows the generic document glyph (`file-thumbnail.tsx:143-150`); the two helpers are not exported.
-- **gpuix lacks:** a drawing surface. `<canvas>` is listed as "Custom drawing (planned)" (`~/code/fdarian/gpuix/README.md:4975`), so pdfjs has nothing to render into; the only pixel path is `setImagePixels` on an `<img>` (`README.md:5066-5076`), which needs a rasteriser outside gpuix. `README.md:249` is the port's row.
+- **gpuix lacks:** a drawing surface. `<canvas>` is listed as "Custom drawing (planned)" (`~/code/fdarian/gpuix/README.md:4975`), so pdfjs has nothing to render into; the only pixel path is `setImagePixels` on an `<img>` (`README.md:5066-5076`), which needs a rasteriser outside gpuix. `README.md:279` is the port's row.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one (queued-stack, chat-message and input-message show the glyph for a PDF).
@@ -22,7 +22,7 @@ Ported and matching: the square with `bg-accent`, `overflow-hidden` and `shrink-
 - **Cause:** `gpuix gap`.
 - **Original:** `w-6 h-6 rounded-full border-2 border-border border-t-muted-foreground animate-spin`, one turn a second, linear, with no `motion-reduce` variant and no reduced-motion rule for it in `app/globals.css` (`file-thumbnail.tsx:168-174`).
 - **Port:** a static ring tinted `border`, and an `<svg>` with one `motion.circle`: radius 11, stroke 2, a `strokeDasharray` of a quarter of the circumference (the 90-degree arc, butt caps) and `strokeDashoffset` going from -225 degrees' worth of length to one circumference further, `duration: 1`, `ease: 'linear'`, `repeat: Infinity`. A circle's stroke starts at 3 o'clock, so the 225-degree start puts the arc at 12 o'clock and the offset sliding along the circle is the arc turning clockwise (`file-thumbnail.tsx:20-91`). It is native: no JS timer and no SVG source per frame. While the spinner is culled (`useOnScreen`, `src/lib/cull.ts`) a still circle is mounted instead, so nothing animates off screen. Reduced motion is not honoured, as in the source.
-- **gpuix lacks:** rotation. There is no `transform`, and `motion` cannot animate an SVG `transform` attribute (`FORK.md:1198-1209`; `README.md:239`, `:333`), so the arc slides along the circle's stroke instead of turning.
+- **gpuix lacks:** rotation. There is no `transform`, and `motion` cannot animate an SVG `transform` attribute (`FORK.md:1198-1209`; `README.md:273`, `:366`), so the arc slides along the circle's stroke instead of turning.
 - **Workaround:** the sliding dash above.
 - **Fidelity:** approximated. Linear speed, direction, size, stroke and arc length match, and the arc turns at 90 degrees a quarter second (`scripts/check-file-thumbnail.tsx`, read from captured pixels). The source's arc is the top border of a circle; its ends are cut along the 45-degree diagonals, which are radial for a circle, so the butt-capped arc should match within antialiasing (not compared pixel by pixel). The `<svg>` is rasterised again every frame, as for any animated shape.
 - **Components it hits:** just this one (thinking-steps' chevron rotation is a different gap, `drift/thinking-steps.md`).
