@@ -47,7 +47,6 @@ const sizes = {
 		padX: 12,
 		gap: 8,
 		labelGap: 8,
-		labelTop: 8.55,
 		text: scale.body,
 		icon: 16,
 	},
@@ -57,19 +56,10 @@ const sizes = {
 		gap: 4,
 		// The source's own value, 2px wider than the compact icon gap.
 		labelGap: 6,
-		labelTop: 9.27,
 		text: scale.bodyCompact,
 		icon: 14,
 	},
 } as const;
-
-/**
- * The source's unfolding label clip is a block whose line box takes the button's strut (16px / 24px), so it is 24px
- * tall with the baseline 18px down and the descenders show. gpuix builds the 24px line box but
- * seats a trimmed inline-grid label about 6px above Chrome's baseline, so the clip height and the label's offset
- * (`labelTop`: 18px minus the label's cap height) are set outright.
- */
-const unfoldClipHeight = 24;
 
 interface SubtleScope {
 	root: TabsRoot<number>;
@@ -318,6 +308,7 @@ export function TabsSubtleItem(props: {
 			fade
 			nowrap
 			trim
+			testId={props.testId && `${props.testId}-label`}
 		/>
 	);
 
@@ -370,27 +361,18 @@ export function TabsSubtleItem(props: {
 			</Show>
 			{collapsible() ? (
 				<motion.div
+					testId={props.testId && `${props.testId}-clip`}
 					initial={false}
 					animate={labelTarget()}
 					transition={labelTransition}
 					style={{
-						display: 'flex',
-						flexDirection: 'row',
-						alignItems: 'flex-start',
-						height: unfoldClipHeight,
 						overflow: 'hidden',
+						// The source's button strut (the body's 16px / 24px): the clip is a block, so its line box takes it.
+						fontSize: 16,
+						lineHeight: '24px',
 					}}
 				>
-					<div
-						style={{
-							display: 'flex',
-							flexDirection: 'row',
-							flexShrink: 0,
-							marginTop: metrics().labelTop,
-						}}
-					>
-						{label}
-					</div>
+					{label}
 				</motion.div>
 			) : (
 				label

@@ -45,6 +45,16 @@ const kit = await createCheck(() => (
 				</TabsSubtle>
 			</>
 		))}
+		{(['default', 'compact'] as const).map((size) => (
+			<TabsSubtle selectedIndex={0} onSelect={() => {}} size={size} activeLabel>
+				<TabsSubtleItem
+					testId={`${size}-teamspaces`}
+					index={0}
+					icon="folder"
+					label="Teamspaces"
+				/>
+			</TabsSubtle>
+		))}
 		<div style={{ width: 120, display: 'flex', flexDirection: 'column' }}>
 			<TabsSubtle
 				testId="narrow"
@@ -97,6 +107,40 @@ for (const size of ['default', 'compact'] as const) {
 		`${size}: label margin`,
 		Math.abs(margin - expected[size]) < 0.5,
 		`${margin.toFixed(2)} (want ${expected[size]})`,
+	);
+}
+
+// The unfolded label sits in a block with the button's 16px / 24px strut, as the source's `overflow-hidden` span does, so the clip is 24px tall and the baseline 18px down it. Chrome's cap boxes inside the tab are 14.55-24.00 (36px tab) and 11.27-20.00 (28px tab); gpuix puts an atomic inline at a whole device pixel, so the baseline lands up to 0.45px off. The cap's own height differs from Chrome's by 0.28px (gpuix 0.704em, Chrome 0.727em), which is a font-metric difference, so only the baseline is compared.
+const chromeBaseline = { default: 24.0, compact: 20.0 } as const;
+for (const size of ['default', 'compact'] as const) {
+	const testId = `${size}-teamspaces`;
+	const tab = kit.bounds(testId);
+	const clip = kit.bounds(`${testId}-clip`);
+	const cap = kit.bounds(`${testId}-label`);
+	const baseline = cap.y + cap.height - tab.y;
+	kit.check(
+		`${size}: the unfolded label's baseline is within 0.5px of Chrome's`,
+		Math.abs(baseline - chromeBaseline[size]) <= 0.5,
+		`${baseline.toFixed(2)} (Chrome ${chromeBaseline[size].toFixed(2)})`,
+	);
+	kit.check(
+		`${size}: the unfolded label's clip is the strut's 24px, centred in the tab`,
+		Math.abs(clip.height - 24) < 0.01 &&
+			Math.abs(clip.y - tab.y - (tab.height - 24) / 2) < 0.5,
+		`${clip.height} tall at ${(clip.y - tab.y).toFixed(2)}`,
+	);
+	const clipBottom = clip.y + clip.height;
+	const below = clipBottom - Math.round(cap.y + cap.height) - 1;
+	kit.check(
+		`${size}: the descender of "Teamspaces" is drawn inside the clip`,
+		below >= 2 &&
+			kit.ink({
+				x: cap.x,
+				y: Math.round(cap.y + cap.height) + 1,
+				width: cap.width,
+				height: below,
+			}) > 100,
+		`${below}px of clip under the baseline`,
 	);
 }
 

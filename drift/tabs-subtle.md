@@ -7,7 +7,7 @@ Original: `registry/base/tabs-subtle.tsx`, demo in `app/docs/tabs-subtle/page.ts
 Checked and equal: item height 36 / 28, `px` 12 / 10, icon 16 / 14 and its gap, type 13/20 and 12/18, selected pill
 (`active`, dim 0.8, `moderate`), preview pill (`active` at 0.4, `fast`, 60 ms exit, slide back on `moderate`), the
 travelling focus ring, manual activation (arrows move focus, Enter / Space select), wrap, Home / End, roving tab stop,
-`aria-label` on a collapsed tab, the 60 ms label fade, light and dark tokens, and the label's unfold and fold: `width: "auto"` and `marginLeft` on `spring.fast` with opacity on a 0.06 tween (`src/components/tabs-subtle.tsx:295-300`, `:362-366`), where the source animates a measured `offsetWidth` (`tabs-subtle.tsx:276-296`, `:396-410`) because framer's `auto` misreads under a scaled ancestor. gpuix starts the `auto` clock at the change, so the unfold leaves its start on the commit frame and covers the same share of its travel as the fold at every 8 ms step, and a tab selected at mount is born at its label width (`scripts/check-tabs-subtle.tsx`). Not measured under a retina 2x scale.
+`aria-label` on a collapsed tab, the 60 ms label fade, light and dark tokens, and the label's unfold and fold: `width: "auto"` and `marginLeft` on `spring.fast` with opacity on a 0.06 tween (`src/components/tabs-subtle.tsx:295-300`, `:362-367`), where the source animates a measured `offsetWidth` (`tabs-subtle.tsx:276-296`, `:396-410`) because framer's `auto` misreads under a scaled ancestor. gpuix starts the `auto` clock at the change, so the unfold leaves its start on the commit frame and covers the same share of its travel as the fold at every 8 ms step, and a tab selected at mount is born at its label width (`scripts/check-tabs-subtle.tsx`). Not measured under a retina 2x scale.
 
 ## Horizontal overflow: no scroll-into-view
 
@@ -22,7 +22,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `port choice` (c3ba037 follows Base UI, whose panels mount only while selected; the source's own panel is a plain `div` that does not).
 - **Original:** every panel exists, `hidden` unless selected, `tabIndex={-1}`, `outline-none`, and with an `idPrefix` every tab has `aria-controls` (`tabs-subtle.tsx:357`, `:435-453`).
-- **Port:** only the selected panel mounts, with no `tabIndex`; `aria-controls` is set on the selected tab only (`src/components/tabs-subtle.tsx:279`, `:390-398`, `base-ui:src/tabs/tab/use-tabs-tab.ts:94-96`).
+- **Port:** only the selected panel mounts, with no `tabIndex`; `aria-controls` is set on the selected tab only (`src/components/tabs-subtle.tsx:279`, `:391-399`, `base-ui:src/tabs/tab/use-tabs-tab.ts:94-96`).
 - **Workaround:** none.
 - **Fidelity:** approximated (the accessibility tree differs for unselected tabs).
 - **Components it hits:** just this one.
@@ -40,7 +40,7 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `TabsSubtle`, `TabsSubtleItem` and `TabsSubtlePanel` take `className`, forward refs and spread HTML attributes (`tabs-subtle.tsx:40`, `:271-278`, `:425-436`).
-- **Port:** props are only the ones in the source's table plus `testId`; no `className`, ref or passthrough (`src/components/tabs-subtle.tsx:94-103`, `:268-273`, `:383-388`).
+- **Port:** props are only the ones in the source's table plus `testId`; no `className`, ref or passthrough (`src/components/tabs-subtle.tsx:94-103`, `:268-273`, `:384-389`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** tabs, and most of the port.
@@ -54,11 +54,12 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 - **Fidelity:** dropped (docs furniture), approximated (spacing).
 - **Components it hits:** every demo.
 
-## Unfolding label: clip box and baseline set outright, not from the button's strut
+## Unfolding label: the baseline sits up to 0.45px below Chrome's
 
-- **Cause:** `gpuix gap` (a trimmed `inline-grid` label is seated about 6px above Chrome's baseline in a block with a strut; the README "Bugs" row for the unfolding label) and the authored-length rounding row of the same table.
-- **Original:** the `motion.span.overflow-hidden` is a block holding the `inline-grid` label, so its line box takes the button's strut (16px / 24px): the clip is 24px tall and the label's baseline is 18px down, so the cap box of the 13px label starts 8.55px below the clip top (14.55-24.00 inside the 36px tab) and the descender of "Teamspaces" shows (`registry/base/tabs-subtle.tsx:392`).
-- **Port:** the clip is `height: 24` with the label offset by `marginTop` (`labelTop`: 8.55 default, 9.27 compact, which is 18 minus the cap height), because a block with `fontSize: 16, lineHeight: '24px'` gave the 24px clip but put the cap top 3px below it. gpuix rounds the authored 8.55 to 9: the cap box lands at 15.00-24.16 inside the tab (Chrome 14.55-24.00), compact at 11.00-19.45 (Chrome 11.27-20.00) (`src/components/tabs-subtle.tsx:66-72`, `:376-392`). The plain rows are unchanged (cap box 13.42-22.58; Chrome puts the unfolded label's baseline 1.28px below theirs, the port 1.58px).
-- **Workaround:** the explicit height and offset above.
-- **Fidelity:** approximated (the label sits up to 0.45px low at the top edge and 0.16px low at the baseline, 0.55px high compact; the full descender shows).
+- **Cause:** `gpuix gap` (gpuix places an atomic inline, such as the `inline-grid` label, at a whole device pixel, so its origin is up to half a device pixel off where Chrome lays it) and, for the cap's height alone, a font-metric difference.
+- **Original:** the `motion.span.overflow-hidden` is a block holding the `inline-grid` label, so its line box takes the button's strut (16px / 24px): the clip is 24px tall and the label's baseline is 18px down, so the cap box of the 13px label is 14.55-24.00 inside the 36px tab (compact 11.27-20.00 in the 28px tab) and the descender of "Teamspaces" shows (`registry/base/tabs-subtle.tsx:392`).
+- **Port:** the same structure: the clip is a block with `fontSize: 16, lineHeight: '24px'` holding the `StableLabel` directly (`src/components/tabs-subtle.tsx:362-379`). The clip is 24px tall and the full descender shows. The cap box lands at 15.00-24.16 inside the tab (Chrome 14.55-24.00), compact at 12.00-20.45 (Chrome 11.27-20.00): the baseline is 0.16px low default and 0.45px low compact, and the glyph ink's baseline row matches Chrome's (24 and 20). The cap box is 0.28px shorter than Chrome's (9.16 against 9.45 at 13px, 8.45 against 8.73 at 12px: gpuix reads 0.704em for the cap height, Chrome 0.727em), which puts the top edge at 0.45px / 0.73px low; that difference is in every trimmed label, not this one. `scripts/check-tabs-subtle.tsx` pins the baseline within 0.5px, the 24px clip and the descender.
+- **gpuix lacks:** an atomic inline at its fractional origin (gpuix 69d78296: "placed at a whole device pixel, up to half a device pixel off"); the cap-height metric of Chrome.
+- **Workaround:** none.
+- **Fidelity:** approximated (the baseline up to 0.45px low; the cap 0.28px shorter).
 - **Components it hits:** just this one.
