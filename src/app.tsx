@@ -521,7 +521,18 @@ export function App(props: {
 	initialPage?: string;
 }) {
 	const [page, setPage] = createSignal(props.initialPage ?? SHOWCASE);
-	const navigate = (slug: string) => setPage(slug);
+	const renderer = useGpuixRequired();
+	const [pageScroller, setPageScroller] = createSignal<HostElement>();
+	const navigate = (slug: string) => {
+		const scroller = pageScroller();
+		if (scroller === undefined)
+			throw new Error('The page scroller is not mounted');
+		if (renderer.scrollTo === undefined)
+			throw new Error('This renderer cannot scroll');
+		// Written before the swap so the new page's first draw is at the top, as every Next App Router navigation is; the scrollTop setter would lay the window out here (README, "scrollTop setter layout cascade").
+		renderer.scrollTo(scroller.id, 0, 0, 'instant');
+		setPage(slug);
+	};
 	const nav: PageNav = { navigate, current: page };
 	const current = (): Demo | undefined =>
 		props.demos.find((demo) => demo.slug === page());
@@ -531,14 +542,12 @@ export function App(props: {
 	bindSystemScheme(createAppearance());
 	const siteMenu = createSiteMenu();
 	const rail = createRightRail();
-	const [pageScroller, setPageScroller] = createSignal<HostElement>();
 	const scrollListeners = new Set<() => void>();
 	const onPageScroll = (listener: () => void) => {
 		scrollListeners.add(listener);
 		return () => scrollListeners.delete(listener);
 	};
 	const viewport = createMeasuredHeight();
-	const renderer = useGpuixRequired();
 	const setAppearance = renderer.setAppearance;
 	if (setAppearance === undefined) {
 		throw new Error('This renderer does not expose setAppearance');

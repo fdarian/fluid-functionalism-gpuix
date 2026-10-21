@@ -180,6 +180,42 @@ check(
 	renderer.getAllText().some((line) => line.includes('Markdown gets the same')),
 );
 
+// A page switch lands at the top, as every navigation of the source does: the scroller's offset is not carried across (and clamped by) the next page's height.
+await click('nav-changelog');
+const scroller = element('page-scroller');
+// [scrollLeft, scrollTop, scrollWidth, scrollHeight, clientWidth, clientHeight]; the call draws what is pending first.
+const metrics = () => {
+	const found = renderer.getScrollMetrics?.(scroller.id);
+	if (found === undefined || found === null)
+		throw new Error('no scroll metrics for the page scroller');
+	return found;
+};
+renderer.nativeSimulateScrollWheel(800, 400, 0, 6000);
+await settle(800);
+const scrolledTo = metrics()[1];
+check(
+	'the Changelog scrolls down before the switch',
+	scrolledTo > 1000,
+	String(scrolledTo),
+);
+const target = center('nav-fluid-hover');
+renderer.nativeSimulateMouseMove(target.x, target.y);
+await settle(100);
+renderer.nativeSimulateClick(target.x, target.y);
+// The first read draws what is pending: the new page's first frame.
+const firstFrameTop = metrics()[1];
+check(
+	"the new page's first frame is at the top",
+	firstFrameTop === 0 && metrics()[3] > metrics()[5],
+	`${scrolledTo} -> ${firstFrameTop}, scrollHeight ${metrics()[3]}`,
+);
+await settle(600);
+check(
+	'the new page stays at the top',
+	metrics()[1] === 0,
+	String(metrics()[1]),
+);
+
 // The site menu finds Changelog by its keywords.
 renderer.simulateKeystrokes('ControlOrMeta+k');
 await settle(600);
