@@ -9,6 +9,7 @@ import {
 import {
 	color,
 	colorFade,
+	fade,
 	type as scale,
 	sizeChoice,
 	weight,
@@ -152,7 +153,7 @@ export function TableRow(props: {
 					borderBottomColor: hideBorder()
 						? color.transparent
 						: color.accentFaint,
-					// No `fade(['border-color'], 80)` as in the source: gpuix does not draw it, and the transition rebuilds the table's layout every frame (drift/table.md).
+					...fade(['border-color'], 80),
 				}}
 			>
 				{props.children}

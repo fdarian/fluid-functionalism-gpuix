@@ -6,8 +6,8 @@
  * The table is a real `display: table`: columns size to their widest cell and line up across the header and body
  * rows, the table fills its parent, a cell's `width` sets its column, and the rows are the 36px / 28px ladder
  * plus the 1px rule (37 / 29 as the grid measures them). The hover highlight sits on the row under the pointer, and the header
- * lights the first body row. The hover glide, on the fixture and on the real Table page, must not rebuild more layout than the sidebar's
- * (a border-color transition on the rows once made it rebuild the table every frame).
+ * lights the first body row. The hover glide, on the fixture and on the real Table page, builds no layout and creates no
+ * layout node, while the rows' `border-color` fade is drawn (a collapsed-border colour transition is a table-unit tick, gpuix #68).
  */
 import { SidebarMenu, SidebarMenuButton } from '#/components/sidebar';
 import {
@@ -19,6 +19,7 @@ import {
 	TableRow,
 } from '#/components/table';
 import { createCheck } from './check-kit';
+import { readPng } from './png-pixels';
 
 const ROWS = [
 	['Alice', 'Engineer on the platform team', '12'],
@@ -247,13 +248,7 @@ const lastFill = (check: Check, isMenu: (node: TreeNode) => boolean) => {
 };
 
 const FRAME_MS = 8;
-/**
- * Layout subtrees rebuilt per frame of motion that the highlight's own travel costs (it animates top / left, drift/table.md
- * "Highlight travel"), measured at 5.5 in the fixture and 64 on the page. A border-color transition on the rows adds ten times
- * that (55 and 640) for the 80 ms after each hover change, so these allowances sit between the two.
- */
-const HIGHLIGHT_LAYOUT_BUILDS_FIXTURE = 20;
-const HIGHLIGHT_LAYOUT_BUILDS_PAGE = 200;
+const RULE_SHOT = `/tmp/check-table-rule-${process.pid}.png`;
 const above = (check: Check, testId: string): Point => {
 	const box = check.bounds(testId);
 	return { x: box.x + 40, y: box.y + box.height / 2 };
@@ -263,7 +258,9 @@ type Frame = { y: number; height: number };
 type Glide = {
 	frames: Frame[];
 	/** Layout subtrees rebuilt over the glide. */
-	layoutBuilds: number;
+	builds: number;
+	nodesCreated: number;
+	nodesRemoved: number;
 };
 
 /** Holds the motion clock, moves the pointer onto `to`, and samples the highlight on each 8 ms frame. */
@@ -272,6 +269,7 @@ function trace(check: Check, highlight: number, to: Point, count: number) {
 	const frames: Frame[] = [];
 	renderer.clockPause();
 	const retainedBefore = renderer.getRetainedCounters();
+	const layoutBefore = renderer.getLayoutCounters();
 	renderer.nativeSimulateMouseMove(to.x - 1, to.y);
 	renderer.nativeSimulateMouseMove(to.x, to.y);
 	for (let frame = 0; frame < count; frame++) {
@@ -281,9 +279,12 @@ function trace(check: Check, highlight: number, to: Point, count: number) {
 		frames.push({ y: box.y, height: box.height });
 	}
 	renderer.clockResume();
+	const layoutAfter = renderer.getLayoutCounters();
 	return {
 		frames,
-		layoutBuilds: renderer.getRetainedCounters().builds - retainedBefore.builds,
+		builds: renderer.getRetainedCounters().builds - retainedBefore.builds,
+		nodesCreated: layoutAfter.nodesCreated - layoutBefore.nodesCreated,
+		nodesRemoved: layoutAfter.nodesRemoved - layoutBefore.nodesRemoved,
 	} satisfies Glide;
 }
 
@@ -308,13 +309,17 @@ function summary(glide: Glide) {
 		reversals,
 		stalls,
 		moving,
-		layoutBuilds: glide.layoutBuilds,
+		builds: glide.builds,
+		nodesCreated: glide.nodesCreated,
+		nodesRemoved: glide.nodesRemoved,
 		ys: frames.map((f) => f.y.toFixed(0)).join(' '),
 	};
 }
 type Summary = ReturnType<typeof summary>;
+const noLayoutWork = (value: Summary) =>
+	value.builds === 0 && value.nodesCreated === 0 && value.nodesRemoved === 0;
 const show = (value: Summary) =>
-	`travel ${value.travel.toFixed(0)}px over ${value.moving} frames [${value.ys}], ${value.reversals} reversals, ${value.stalls} stalls, ${value.layoutBuilds} layout builds`;
+	`travel ${value.travel.toFixed(0)}px over ${value.moving} frames [${value.ys}], ${value.reversals} reversals, ${value.stalls} stalls, ${value.builds} builds, ${value.nodesCreated} nodes created, ${value.nodesRemoved} removed`;
 
 /** Hovers `fromId`, then moves the pointer to `toId` with the clock held. */
 async function glideOf(
@@ -346,11 +351,9 @@ kit.check(
 	`table ${show(fixtureTable)}`,
 );
 kit.check(
-	'hover glide: the glide rebuilds layout about as little as the sidebar does',
-	fixtureTable.layoutBuilds / fixtureTable.moving <=
-		fixtureSidebar.layoutBuilds / fixtureSidebar.moving +
-			HIGHLIGHT_LAYOUT_BUILDS_FIXTURE,
-	`table ${fixtureTable.layoutBuilds} over ${fixtureTable.moving} frames vs sidebar ${fixtureSidebar.layoutBuilds} over ${fixtureSidebar.moving}`,
+	'hover glide: the glide builds no layout and creates or removes no node',
+	noLayoutWork(fixtureTable),
+	show(fixtureTable),
 );
 kit.check(
 	'hover glide: as many frames in motion as the sidebar over the same distance',
@@ -358,11 +361,63 @@ kit.check(
 	`table ${fixtureTable.moving} vs sidebar ${fixtureSidebar.moving}: ${show(fixtureSidebar)}`,
 );
 
+// The rows' border-color fade, drawn: row 0's rule on the line under it passes through colours between its start and end.
+await kit.hoverFor(above(kit, 't-row-0'), 400);
+const ruleLines = [-2, -1, 0, 1, 2];
+const ruleShots: number[][] = [];
+let ruleGround = 0;
+const rule = kit.bounds('t-row-0');
+kit.renderer.clockPause();
+const ruleTarget = above(kit, 't-row-2');
+kit.renderer.nativeSimulateMouseMove(ruleTarget.x - 1, ruleTarget.y);
+kit.renderer.nativeSimulateMouseMove(ruleTarget.x, ruleTarget.y);
+for (let frame = 0; frame < 14; frame++) {
+	kit.step(frame === 0 ? 0 : FRAME_MS);
+	kit.renderer.captureScreenshot(RULE_SHOT);
+	const pixels = readPng(RULE_SHOT);
+	ruleGround = pixels.at(
+		Math.round(rule.x) + 3,
+		Math.round(rule.y + rule.height / 2),
+	)[0];
+	ruleShots.push(
+		ruleLines.map(
+			(dy) =>
+				pixels.at(
+					Math.round(rule.x) + 3,
+					Math.round(rule.y + rule.height) - 1 + dy,
+				)[0],
+		),
+	);
+}
+kit.renderer.clockResume();
+const ruleEnd = ruleShots[ruleShots.length - 1] as number[];
+// The rule is the line that differs most from the row's own background once the glide has settled.
+const ruleLine = ruleLines.reduce(
+	(best, _, index) =>
+		Math.abs((ruleEnd[index] as number) - ruleGround) >
+		Math.abs((ruleEnd[best] as number) - ruleGround)
+			? index
+			: best,
+	0,
+);
+const ruleTrace = ruleShots.map((shot) => shot[ruleLine] as number);
+const ruleFrom = ruleTrace[0] as number;
+const ruleTo = ruleTrace[ruleTrace.length - 1] as number;
+kit.check(
+	'hover glide: the rule under row 0 fades in, passing through colours between its two ends',
+	ruleFrom !== ruleTo &&
+		ruleTrace.some(
+			(value) =>
+				value > Math.min(ruleFrom, ruleTo) &&
+				value < Math.max(ruleFrom, ruleTo),
+		),
+	`red channel per 8 ms frame: ${ruleTrace.join(' ')}`,
+);
+await kit.hoverFor({ x: 2, y: 2 }, 400);
+
 // The real Table page: the app's sidebar and the demo's tables share one window, as in the owner's report.
 const page = await createCheck('table');
 await page.scrollIntoView('basic-row-0');
-const isNavMenu = (node: TreeNode) =>
-	(node.children ?? []).some((child) => child.testId === 'nav-button');
 
 const pageTable = await glideOf(
 	page,
@@ -370,21 +425,14 @@ const pageTable = await glideOf(
 	'basic-row-2',
 	() => page.element('basic-highlight').id,
 );
-await page.hoverFor({ x: 2, y: 2 }, 400);
-const pageSidebar = await glideOf(page, 'nav-button', 'nav-card', () =>
-	lastFill(page, isNavMenu),
-);
-await page.hoverFor({ x: 2, y: 2 }, 400);
 kit.check(
 	'page hover glide: the highlight advances without reversing or stalling',
 	pageTable.reversals === 0 && pageTable.stalls === 0,
 	`table ${show(pageTable)}`,
 );
 kit.check(
-	'page hover glide: the glide rebuilds layout about as little as the sidebar does',
-	pageTable.layoutBuilds / pageTable.moving <=
-		pageSidebar.layoutBuilds / pageSidebar.moving +
-			HIGHLIGHT_LAYOUT_BUILDS_PAGE,
-	`table ${pageTable.layoutBuilds} over ${pageTable.moving} frames vs sidebar ${pageSidebar.layoutBuilds} over ${pageSidebar.moving}`,
+	'page hover glide: the glide builds no layout and creates or removes no node',
+	noLayoutWork(pageTable),
+	show(pageTable),
 );
 kit.finish();
