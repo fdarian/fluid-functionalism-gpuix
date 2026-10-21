@@ -78,7 +78,7 @@ import {
 } from '#/components/thinking-steps';
 import { Tooltip } from '#/components/tooltip';
 import { createSlides, SLIDES, Slide } from '#/demos/carousel-dots';
-import { MICKA_PNG } from '#/lib/assets';
+import { AVATAR_JPG } from '#/lib/assets';
 import type { IconRef } from '#/lib/icons';
 import { usePreviewPlayback } from '#/lib/preview-playback';
 import { color, siteType, weight } from '#/lib/theme';
@@ -326,7 +326,7 @@ function SidebarPreview() {
 						label="Micka Touillaud"
 						avatar={
 							<img
-								src={MICKA_PNG}
+								src={AVATAR_JPG}
 								style={{
 									width: 20,
 									height: 20,

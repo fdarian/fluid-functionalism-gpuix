@@ -1,7 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
-import micka from '../../assets/chat-ai/micka.png' with { type: 'file' };
+import avatar from '../../assets/chat-ai/avatar.jpg' with { type: 'file' };
 import og from '../../assets/chat-ai/og.png' with { type: 'file' };
 
 /**
@@ -18,5 +18,5 @@ export function diskPath(embedded: string): string {
 	return target;
 }
 
-export const MICKA_PNG = diskPath(micka);
+export const AVATAR_JPG = diskPath(avatar);
 export const OG_PNG = diskPath(og);

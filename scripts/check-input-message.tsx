@@ -16,6 +16,7 @@
 import { createTestRoot } from '@gpuix/solid/testing';
 import { fileFromPath, InputMessage } from '#/components/input-message';
 import { TooltipProvider } from '#/components/tooltip';
+import { AVATAR_JPG } from '#/lib/assets';
 import { fonts } from '#/lib/fonts';
 import { color, setThemeChoice } from '#/lib/theme';
 import { readPng } from './png-pixels';
@@ -76,7 +77,6 @@ function report(name: string, ok: boolean, detail: string) {
 	console.log(`${ok ? 'PASS' : 'FAIL'} ${name}: ${detail}`);
 }
 
-const assets = new URL('../assets/chat-ai/', import.meta.url).pathname;
 const queued = (id: string) => ({ id, text: `Queued ${id}`, files: [] });
 
 setThemeChoice('dark');
@@ -96,7 +96,7 @@ test.render(() => (
 				testId="a"
 				value=""
 				onValueChange={() => {}}
-				files={[fileFromPath(`${assets}micka.png`)]}
+				files={[fileFromPath(AVATAR_JPG)]}
 				onFilesChange={() => {}}
 				status="idle"
 				queue={[queued('one')]}

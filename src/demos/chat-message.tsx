@@ -2,7 +2,7 @@ import { createSignal, For } from 'solid-js';
 import { Button } from '#/components/button';
 import { ChatMessage, ChatMessageAction } from '#/components/chat-message';
 import type { FileLike } from '#/components/file-thumbnail';
-import { MICKA_PNG } from '#/lib/assets';
+import { AVATAR_JPG } from '#/lib/assets';
 import type { DemoModule } from '#/lib/demo';
 import { DemoCard } from '#/lib/demo-kit';
 
@@ -41,9 +41,9 @@ const FOLLOW_UP: Message = {
 };
 
 const avatar: FileLike = {
-	name: 'micka.png',
-	type: 'image/png',
-	src: MICKA_PNG,
+	name: 'avatar.jpg',
+	type: 'image/jpeg',
+	src: AVATAR_JPG,
 };
 
 /** Illustrative only, like the docs page: the buttons carry no behaviour. */

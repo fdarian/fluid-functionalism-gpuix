@@ -2,16 +2,16 @@ import { createSignal } from 'solid-js';
 import { Button } from '#/components/button';
 import type { FileLike } from '#/components/file-thumbnail';
 import { type QueuedMessage, QueuedStack } from '#/components/queued-stack';
-import { MICKA_PNG, OG_PNG } from '#/lib/assets';
+import { AVATAR_JPG, OG_PNG } from '#/lib/assets';
 import type { DemoModule } from '#/lib/demo';
 import { DemoCard } from '#/lib/demo-kit';
 import { QueuedChat } from '#/lib/queued-chat';
 import { color, radius, type as scale, shadow } from '#/lib/theme';
 
 const photo: FileLike = {
-	name: 'micka.png',
-	type: 'image/png',
-	src: MICKA_PNG,
+	name: 'avatar.jpg',
+	type: 'image/jpeg',
+	src: AVATAR_JPG,
 };
 const screenshot: FileLike = {
 	name: 'og.png',

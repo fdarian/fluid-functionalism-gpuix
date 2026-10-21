@@ -15,7 +15,7 @@ import {
 } from '#/components/input-message';
 import { collapsedStackHeight } from '#/components/queued-stack';
 import { Tooltip } from '#/components/tooltip';
-import { MICKA_PNG } from './assets';
+import { AVATAR_JPG } from './assets';
 import {
 	ComposerQueueStack,
 	ComposerStage,
@@ -32,7 +32,7 @@ const THINK_MS = 4000;
 const WORD_MS = 150;
 
 /** The embedded copy's basename can carry a hash, so the shown name is set here. */
-const PHOTO: ComposerFile = { ...fileFromPath(MICKA_PNG), name: 'micka.png' };
+const PHOTO: ComposerFile = { ...fileFromPath(AVATAR_JPG), name: 'avatar.jpg' };
 /** No file on disk: a PDF previews as the document glyph either way. */
 const NOTES: ComposerFile = {
 	path: '/design-notes.pdf',

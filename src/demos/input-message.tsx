@@ -9,7 +9,7 @@ import {
 } from '#/components/input-message';
 import { collapsedStackHeight } from '#/components/queued-stack';
 import { Tooltip } from '#/components/tooltip';
-import { MICKA_PNG } from '#/lib/assets';
+import { AVATAR_JPG } from '#/lib/assets';
 import {
 	ComposerQueueStack,
 	ComposerStage,
@@ -38,7 +38,10 @@ const SUGGESTIONS = [
 ];
 
 /** The embedded copy's basename can carry a hash, so the shown name is set here. */
-const MICKA: ComposerFile = { ...fileFromPath(MICKA_PNG), name: 'micka.png' };
+const AVATAR: ComposerFile = {
+	...fileFromPath(AVATAR_JPG),
+	name: 'avatar.jpg',
+};
 /** No file on disk: a PDF previews as the document glyph either way. */
 const RECEIPT: ComposerFile = {
 	path: '/Receipt-2581-4039-8265.pdf',
@@ -108,7 +111,7 @@ function Playground() {
 	const queueOn = () => status() !== 'off';
 	const filesOn = () => leftSlotOn() || attachments();
 	createEffect(
-		on(attachments, (enabled) => setFiles(enabled ? [MICKA, RECEIPT] : [])),
+		on(attachments, (enabled) => setFiles(enabled ? [AVATAR, RECEIPT] : [])),
 	);
 
 	const edit = (item: QueuedMessage) => {
@@ -324,7 +327,7 @@ function SuggestionsCard() {
 }
 
 const ATTACHMENTS_HEIGHT = 440;
-const ATTACHMENTS = [MICKA, RECEIPT];
+const ATTACHMENTS = [AVATAR, RECEIPT];
 
 function AttachmentsCard() {
 	const [value, setValue] = createSignal('');
