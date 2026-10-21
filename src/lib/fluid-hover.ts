@@ -15,7 +15,7 @@ export interface ItemRect {
 
 type ElementBox = ReturnType<HostElement['getBoundingClientRect']>;
 
-/** The source reads offsetTop/offsetLeft/offsetWidth/offsetHeight, which Chrome returns as integers (half up); gpuix rects are fractional and its layout rounds an authored inset half toward zero, so an unrounded rect lands the highlight off its row. */
+/** The source reads offsetTop/offsetLeft/offsetWidth/offsetHeight, which Chrome returns as integers (half up) and gpuix has no `offset*`, so the rect is rounded from the fractional getBoundingClientRect. */
 function toOffsetRect(bounds: ElementBox, box: ElementBox): ItemRect {
 	return {
 		top: Math.round(bounds.y - box.y),
