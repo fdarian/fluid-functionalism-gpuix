@@ -3,10 +3,9 @@ type: history and decision record
 title: Base UI extraction (2026-10-17) and open follow-ups
 description: Why the Base UI behaviour primitives moved out of this repository into the sibling base-ui-solid-gpuix on 2026-10-17, the design decisions behind the headless primitives and how this app consumes them, how history was carried over, and the follow-ups left open.
 tags: [base-ui, extraction, architecture, history, follow-ups]
-verified:
-  - by: openwiki/0.7.2
-    at: 2026-10-17T05:25:32.423Z
 sources:
+  - id: openwiki-source-385da475ebb9649b27cbd9e7
+    resource: repo://drift/site.md
   - id: openwiki-source-40275cb92c3610938f16ade3
     resource: repo://pnpm-workspace.yaml
   - id: openwiki-source-5d68d99ffd3483c46c7aaac8
@@ -17,7 +16,12 @@ sources:
     resource: repo://THIRD_PARTY_NOTICES.md
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-17T05:25:32.423Z" }
+  - id: openwiki-source-ff18555ad70362de0f452788
+    resource: repo://UPSTREAM.md
+generated: { by: "claude-code", at: "2026-10-21T02:32:37.460Z" }
+verified:
+  - by: openwiki/0.7.2
+    at: 2026-10-21T02:32:37.460Z
 ---
 
 # Base UI extraction (2026-10-17) and open follow-ups
@@ -84,10 +88,14 @@ scenario and the screenshots had to pass after each slice.
 
 ## Open follow-ups
 
-- **Untitled UI icons cannot be redistributed.** The package declares MIT but its licence forbids distribution.
-  `src/lib/icons/untitledui.ts` and the "Untitled UI" option in the Icons row must be dropped before this
-  repository is published. Details in [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md). (Also noted there: the
-  author photo is MIT as a file, not as a likeness.)
+- **Untitled UI icons: resolved on 2026-10-21 by dropping the set.** The package declares MIT but its licence
+  forbids distributing the icons, and the repository is public. The glyph data and the Icons option are gone; the
+  Icons row offers four libraries and the port keeps its Lucide default (the source defaults to Untitled UI). The
+  drop is a `port choice` entry in `drift/site.md`.
+- **The source's sample photo is gone too.** `micka.png` was MIT as a file, not as a likeness (the earlier
+  note on this follow-up); the owner chose not to ship it and uses `assets/chat-ai/avatar.jpg`, whose origin the
+  notices do not record. The pages that show it each
+  carry a "Sample photo" drift entry; see [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md).
 - **`noUncheckedIndexedAccess` is off** (244 errors when on, measured 2026-10-17). Turn it back on and fix the
   errors now that the extraction has settled the code.
 - **FORK.md and gap-row staleness: resolved** by the gpuix adoption pass later the same day. About 130 line cites

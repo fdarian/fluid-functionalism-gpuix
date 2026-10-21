@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:75f72617e649afd9aa348ea9bfc0e057dd42a410c0cd79ee8e818973631d9413",
+  "pageVersion": "sha256:7c400419d4ae84a5a6ccc77a78a7e7787845f00d282a39f68772b549d2686d5f",
   "claims": [
     {
       "id": "claim_b925fe22d5a74d5388447aa34ff4d2fd",
@@ -34,21 +34,31 @@
     },
     {
       "id": "claim_8614bcad26f8486aa463c334ea2c9505",
-      "statement": "Every place the port differs from the source is a drift entry tagged by cause, 533 entries as of 2026-10-21 (532 right after the gpuix b03d4e27 adoption, plus the tabs-subtle unfolding-label entry).",
+      "statement": "Every place the port differs from the source is a drift entry tagged by cause, 540 entries as of 2026-10-21 (532 right after the gpuix b03d4e27 adoption).",
       "evidence": [
         {
           "resource": "repo://README.md#L9-L11",
-          "version": "repo-lines-v1:sha256:7ada3ab79a0e806e0269473a8256f4d9d2a8a4b782f8bd91c8d643510ee4ed0b:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I1MTk3Nzc1OTUyOTBjYmNjODI3YjE4NGQwNGQyOTEzYzc3NDdlMmZjNjNjYjI1MGM3ZGY4Y2FhZTAxZjU2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDZiMzRkZjA1ZDI2ZTZjZGRhM2E1YzUxNTFjNGE1NjQxYWEwYTZhZDA4MWExYzlhMmI2MTZjNjJmYzJmZThjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDVmMDhjNzUyMWQ1ZTcyZDI2MDM2M2E2ZGRlMmRmMjcyMzc1YzRlYWYzMzUxMjI5MjE3ODYyNzJhMDYwMDZlZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWI3YmJmNzg1NTI1MDcyMjUxNDRjZWY1MDMyOTM4MjZhZTdkYjk3ZDRjMThhMzAwODJhZDYwYjQzMzUwNWFiYiJ9"
+          "version": "repo-lines-v1:sha256:78d19798683f189d89c871d20986697c8a3430ca20ca65ba56d65539f2f17825:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I1MTk3Nzc1OTUyOTBjYmNjODI3YjE4NGQwNGQyOTEzYzc3NDdlMmZjNjNjYjI1MGM3ZGY4Y2FhZTAxZjU2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDZiMzRkZjA1ZDI2ZTZjZGRhM2E1YzUxNTFjNGE1NjQxYWEwYTZhZDA4MWExYzlhMmI2MTZjNjJmYzJmZThjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDVmMDhjNzUyMWQ1ZTcyZDI2MDM2M2E2ZGRlMmRmMjcyMzc1YzRlYWYzMzUxMjI5MjE3ODYyNzJhMDYwMDZlZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWI3YmJmNzg1NTI1MDcyMjUxNDRjZWY1MDMyOTM4MjZhZTdkYjk3ZDRjMThhMzAwODJhZDYwYjQzMzUwNWFiYiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_829e0f8c77ba4b21a82556b290444082",
+      "statement": "The GitHub repository is public; the Untitled UI icon set and the source's sample photo were removed instead of carried with licence caveats.",
+      "evidence": [
+        {
+          "resource": "repo://THIRD_PARTY_NOTICES.md#L21-L48",
+          "version": "repo-lines-v1:sha256:9d5e6ca87f2cffb85cb7d1e27dff1492d9f59cdd2e786d36520ff3b0c23a2902:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxZTY0MzUwMWY4ZmYyMzZkOGMwMGFjMmQyMDM0NWNlYzZlMWJiZjliOGIzYmMzZWQyZWQ1OTQzYTk1ZTBkODkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3NjgwYjM0MjBkN2JmNGQ2NGY4MDQzMzg4NWM4MDliNGRlYzM0YTY2Nzc2Y2RiN2YwMzg2NmQ0MGQ5ODlkZmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM4MTAwYjgwM2UzMTMwNmE0ZGEwMTliYzZhZjAxMmU5M2ZiOTI0MWY3ODkzZDY1OTIyMGE3ZDZlMDM5Mjc0OTUifQ"
         },
         {
-          "resource": "repo://drift/tabs-subtle.md#L57-L64",
-          "version": "repo-lines-v1:sha256:d7fa8e6354799323b80747adbebdbc805ce45fa494ab740a810216d8d4f5f444:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZThlNTgyOWY5YzlkZGM5NGE3MDljOTQ4NmY3OTNjMWZmYmZmY2Q3NGE5ZmI3MTgyMGE2NzI3YWVhNGNiZjhmYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDdlM2E1YmQ5MTAwNjljNTM4NmQ0MGE2Yzc4NWI4ZDRhNzA5MDEyMWI2YWMxZWRjZGFmMWRhMzc5MDM1MWYyNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDJiZDUyYzQ3NWY3MTEyZTljZGYzNDhlNjI5NWViMGVjNmJjNDExOWY0YWI4ZDkyNjc2NGZkYWQxMDVhMDdkZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+          "resource": "repo://UPSTREAM.md#L96-L96",
+          "version": "repo-lines-v1:sha256:e290bbffa19d949aa8ae757d7dbd57a8a89b5189877ab798f2a396b39513ee6e:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTI5MGJiZmZhMTlkOTQ5YWE4YWU3NTdkN2RiZDU3YThhODliNTE4OTg3N2FiNzk4ZjJhMzk2YjM5NTEzZWU2ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTI5MGJiZmZhMTlkOTQ5YWE4YWU3NTdkN2RiZDU3YThhODliNTE4OTg3N2FiNzk4ZjJhMzk2YjM5NTEzZWU2ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTEzNWQ0NWQ1ZTg5MjgzMTFkNmYzZThjNDk4MmYxNWMxYjU0ZDc3MmNhMWRkNzFmZDgwM2Q1YzNjMDFjMzlmMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTk5NmQ2N2Q1NTI3ZDIzNDQwNmZhYmM5OWViNjEzNDBlY2YyM2NmNTBiNGFlZmE2YmYwNDJjMzc1ZDUwNzhlNSJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-21T00:57:11.792Z"
+    "at": "2026-10-21T02:32:37.460Z"
   }
 }

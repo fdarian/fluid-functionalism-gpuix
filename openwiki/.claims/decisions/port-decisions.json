@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:bf940c8c1ebb0bb0dfaa5240a1c54729f2ae511bbc8945fe0c364616cf151b78",
+  "pageVersion": "sha256:3f429530e881a51af9c64aae5e7675cb18aaf31dce4406579dc3e98a6978463e",
   "claims": [
     {
       "id": "claim_782844f1b7454bbd8c43501708e208b1",
@@ -245,7 +245,7 @@
       "statement": "The changelog Releases jump recomputes its scroll target on each page scroll and scrolls again when the target moved by more than 1 px, until the month is within 1 px of its margin, the page end is reached or the user scrolls away, because culled entries above the month un-pin to taller real heights during a smooth scroll and a single scroll landed the month 4-5 px low.",
       "evidence": [
         {
-          "resource": "repo://drift/site.md#L286-L293",
+          "resource": "repo://drift/site.md#L295-L302",
           "version": "repo-lines-v1:sha256:1902bea043a4cfa55763c10bf81a62095aea2e27bbbbd035940bfeeacd7f7c24:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2Y4ZTUxNTViYjlhMDUwNzEzMTQzODUzOTFiMzNmODkxOGQwNTNkMmRlZDRjMjNmNTUzZDdmN2NhMDI0YmMwMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzFmNjU3ZDdkMmRhMWNiNWUyNGRjNTJmYzA1YmQ5MGFhM2M0NDljMWQyNmQ3NjI3OTkxOTdiM2UzNzA0ZWI0YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGFhMmM0MjRhNDU5YWE3MzU3MGFhMGE4NTYyZWUwMmUxYTE1ZjJiNWZiMzM5YWMwMzNiODllMGE3MWI1OGVjNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTY3MTQ0ZmYzNmNiOWU3ZmM2YjM3NWUwODQzODg4ZjFlODBhZjFhOTcyNTMxMTJhYmM1ZTJjNjA5YmMzZThmMCJ9"
         },
         {
@@ -338,7 +338,7 @@
       "evidence": [
         {
           "resource": "repo://drift/file-thumbnail.md",
-          "version": "repo-file-v1:sha256:473a073a59a57168d0b414154f5113e5d197fe888db6d1da17224c7160fc3fb9"
+          "version": "repo-file-v1:sha256:ffc32721a4b4255e8e119950094c9d8f62299be75d2bfde858833102cbbdad1b"
         },
         {
           "resource": "repo://src/components/button.tsx#L119-L160",
@@ -419,6 +419,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-21T00:57:11.792Z"
+    "at": "2026-10-21T02:32:37.460Z"
   }
 }
