@@ -1,8 +1,9 @@
 import {
+	type AnimationPlaybackControls,
+	animate,
 	createMotionValue,
 	createMotionValueEvent,
 	createReducedMotion,
-	createTransform,
 	type HostElement,
 	IntersectionObserver,
 } from '@gpuix/solid';
@@ -83,11 +84,7 @@ function Stage(props: { paused: () => boolean }) {
 	const reduced = createReducedMotion();
 	const scripted = () => inView() && !reduced() && !userInside();
 	const running = () => scripted() && !props.paused();
-	/** How far into the pass the cursor is, 0 to 1: the one value that plays, so pausing keeps the pass's place. The cursor's y is mapped from it in Rust, through the source's keyframes, times and ease. */
-	const progress = createMotionValue(0);
-	const cursorY = createTransform(progress, CURSOR_TIMES, CURSOR_KEYFRAMES, {
-		ease: 'easeInOut',
-	});
+	const cursorY = createMotionValue(CURSOR_TOP);
 	const [fakeIndex, setFakeIndex] = createSignal<number | null>(null);
 	let root: HostElement | undefined;
 	let fluid: HostElement | undefined;
@@ -115,28 +112,25 @@ function Stage(props: { paused: () => boolean }) {
 		wasScripted = now;
 	});
 
-	// Plays out what is left of the pass, then loops whole passes. A motion value's animation has no pause (getAnimations covers CSS animations only), so pausing stops it where it is and this resumes from that value (linear, so exact).
+	// The script is one animation, paused and resumed in place so the pause button and a visiting pointer both hold the current frame.
+	let controls: AnimationPlaybackControls | undefined;
 	createEffect(() => {
-		if (!running()) return;
-		let current = true;
-		let playing = progress.animate(1, {
-			duration: (1 - progress.get()) * PASS_S,
-			ease: 'linear',
-		});
-		playing.finished.then(() => {
-			if (!current) return;
-			progress.jump(0);
-			playing = progress.animate([0, 1], {
-				duration: PASS_S,
-				ease: 'linear',
-				repeat: Infinity,
-			});
-		});
-		onCleanup(() => {
-			current = false;
-			playing.stop();
+		if (!running()) {
+			controls?.pause();
+			return;
+		}
+		if (controls !== undefined) {
+			controls.play();
+			return;
+		}
+		controls = animate(cursorY, CURSOR_KEYFRAMES, {
+			duration: PASS_S,
+			times: CURSOR_TIMES,
+			ease: 'easeInOut',
+			repeat: Infinity,
 		});
 	});
+	onCleanup(() => controls?.stop());
 
 	// Every frame of the cursor: the plain list gets what :hover would say, the fluid list the same point as a real mouse move. The signal is only written when the row under the cursor changes.
 	createMotionValueEvent(cursorY, 'change', (y) => {
