@@ -5,7 +5,7 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T10:50:33.517Z
+    at: 2026-10-21T15:03:49.932Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -19,6 +19,8 @@ sources:
     resource: repo://drift/table.md
   - id: openwiki-source-5cfc44b662eef11b303099d9
     resource: repo://drift/tabs-subtle.md
+  - id: openwiki-source-7bed81eca49ee8a9899cacc5
+    resource: repo://drift/thinking-indicator.md
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
     resource: repo://package.json
   - id: openwiki-source-40275cb92c3610938f16ade3
@@ -79,6 +81,10 @@ sources:
     resource: repo://src/components/table.tsx
   - id: openwiki-source-26d9c038c2027980be5931cf
     resource: repo://src/components/tabs-subtle.tsx
+  - id: openwiki-source-1000133251cbebcd6e8f1e8a
+    resource: repo://src/components/thinking-indicator.tsx
+  - id: openwiki-source-e937d0413e1c4205eb067717
+    resource: repo://src/components/thinking-steps.tsx
   - id: openwiki-source-a79b6ccf1548a05902eb90b6
     resource: repo://src/demos/thinking-steps.tsx
   - id: openwiki-source-b100b0574d7a0258fad9b8f3
@@ -117,7 +123,7 @@ sources:
     resource: repo://src/pages/skill/playback.tsx
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-21T10:50:33.517Z" }
+generated: { by: "claude-code", at: "2026-10-21T15:03:49.932Z" }
 ---
 
 # Port decisions and their reasons
@@ -268,7 +274,8 @@ about cost has an expiry date, because gpuix's retention and bounds-read behavio
   The port hides a region's content with `display: none` while it is a quarter viewport from the page scroller,
   keeps the region's measured height, and holds `onFrame` and timer loops still while hidden (`OnScreenContext`),
   because any signal a loop sets redraws the whole window. The earlier decision was to remove it once #46 landed
-  and to re-run the removal comparison first; that comparison was re-run on `b03d4e27` and culling stays.
+  and to re-run the removal comparison first; that comparison was re-run on `b03d4e27` and again on `196d69ce`, and
+  culling stays.
   - *Method.* Live `pnpm perf` at load average 1.4-3.1, two alternating pairs of runs, culling on against off (the
     `IntersectionObserver` effect disabled). Idle CPU and sidebar-sweep draw p95 are both read, since they regress
     independently.
@@ -280,6 +287,12 @@ about cost has an expiry date, because gpuix's retention and bounds-read behavio
     from 10.9 to 26.6 ms and command-menu from 16.7 to 37.4 (sum 520 to 670); now p95 is about 4-5 ms with culling and
     the gap from removal is smaller in absolute terms (summed p95 +30 ms against +150 before) but still
     one-directional. The old and new absolute numbers are not comparable: different pin and different load.
+  - *Re-run on `196d69ce`.* Headless instead of live, since every live attempt was reported occluded:
+    `pnpm footprint` with an uncommitted culling-off knockout (`FF_CULL_OFF`), two alternating pairs at load 3-13. CPU with culling on against
+    off, off worse everywhere and better nowhere: showcase 31 / 27 to 69 / 70% (built elements 4.9k to 19-22k a
+    second), input-message 1.3 / 0.5 to 53 / 36% (its off-screen loop runs), changelog 19 / 19 to 32 / 31%,
+    fluid-hover 16 / 16 to 51 / 40%; footprint was +4-9 MB without it on card, surfaces, command-menu, changelog and
+    showcase, and static pages were equal. The live `pnpm perf` A/B did not run.
   - Costs of keeping it: a culled region has no bounds (screenshot scenarios call `shot.reveal` first), and the
     changelog Releases jump has to re-aim, below. The README "Culling" gap row carries the same numbers.
 - **The changelog Releases jump re-aims while culled entries un-pin.** A jump computes its target while the entries
@@ -389,11 +402,27 @@ renderer and cost no JS per frame. The reasons to prefer it, and the traps:
   culling also pauses the loops. On `5fda771a` such a loop could starve Bun's timers outright; as of `b03d4e27`
   timers run between ticks (9-10 callbacks a second at 3000 nodes, 7-8 at 12000; gpuix #56), so a hung perf or check
   run under load is no longer expected to be this. The README records that gpuix could fix it in principle and that
-  the owner accepts the cost. What is paid, measured on `83bab5a7` (repro r13): a layout pass on every draw, even for
+  the owner accepts the cost. What was paid on `83bab5a7` (repro r13): a layout pass on every draw, even for
   paint-only animation kinds, and the prepaint walk, 2.2 / 6.5 / 26 ms a draw at 1.3k / 5.2k / 20.8k elements for one
-  small animated element. So a tick that skipped layout for paint-only kinds would not scale with the page. FF's own
-  knockouts (`pnpm footprint`, one loop removed at a time) show one live loop is enough to keep a page drawing: the
-  showcase's ThinkingIndicator tile alone is its whole 42%, fluid-hover's cursor loop its whole 27%.
+  small animated element. FF's own knockouts (`pnpm footprint`, one loop removed at a time) showed one live loop is
+  enough to keep a page drawing: the showcase's ThinkingIndicator tile alone was its whole 42%, fluid-hover's cursor
+  loop its whole 27%.
+- **`196d69ce` patches a paint-only tick, and what the port does so a loop qualifies.** Round 12 draws a tick of a
+  colour, opacity or SVG stroke loop as a patch of its own unit (at most 256 elements) instead of a whole frame; width
+  and absolute `top` loops stay whole. A page benefits only if its loop is not declined, and three things decline it:
+  an `<input>` or `<textarea>` anywhere on the page (`Unsteady`, repro r17), a loop under a `position: relative` /
+  `absolute` or `opacity < 1` ancestor (`UnknownUnit`, r18), and active motion values. The port changed only what it
+  could without leaving the source's structure. ThinkingIndicator's words used to be absolutely positioned inside a
+  relative cell; they now share one cell of a `display: grid` slot that has no `position`, and a word is
+  `position: relative` only while it enters or exits (`cc294fcf`), which is also how the source's inline-grid slot
+  behaves. That page went from every tick whole (18% CPU) to 62 ticks a second patched and 6 whole, the rolls (10%).
+  The thinking-steps step wrapper dropped a `position: relative` that anchored nothing (`96f4e653`); the page is
+  unchanged because its draws are JS-driven, but an isolated active step went from 67 whole ticks a second to 67
+  patched. The button (press surface, spinner wrapper, inert opacity), file-thumbnail (spinner overlay), queued-stack
+  and showcase keep the blockers because the source has the same structure or inputs, and the carousel-dots fill and
+  the plain-vs-fluid cursor are motion values. Do not reintroduce a positioned wrapper around a native loop without
+  reading `patched/s` and `why` in `pnpm footprint`; the README per-tick row and its r17 and r18 rows carry the
+  numbers.
 - **Who still uses `onFrame`, and why** is recorded in the doc comment of `src/lib/clock.ts`: thinking-steps'
   chevron (the source's `rotate` is a transform gpuix cannot animate), the fluid-hover lists demo (re-measures rows
   while a sub-menu springs), and the cost meter (reads the clock's gaps as its stall probe). Do not add a new
@@ -479,7 +508,12 @@ the choices that make a number trustworthy or not.
   the mode (`bundle`, `source`, plus `-window`, `-tour`).
 - **Headless and `--window` answer different questions.** Headless (the test renderer with an emulated 75 Hz display
   link) tracks the animated-versus-static split of the real window well, and splits each wake into native and JS time
-  (`draw ms`, `js%`), which a real window cannot. It does not reproduce the absolute floor of a static page: 0.6%
+  (`draw ms`, `js%`), which a real window cannot, and it is the only mode that can say how a tick was drawn:
+  `patched/s` and `full/s` split `draws/s` into ticks gpuix drew as a patch of the frame before and frames built
+  whole, and `why` names the top two reasons for the whole ones (`Reason:count`, from gpui's `declines` and gpuix's
+  `unpatchable` maps, which the JSON keeps in full). The counters name the reason but not the element, so `Outside`
+  or `UnknownUnit` does not say which node. Read `why` before blaming a page's CPU on its loop count: a page with
+  `patched/s` 0 and a loop on it has a blocker, not a cost. `draw ms` leaves patched frames out. Headless does not reproduce the absolute floor of a static page: 0.6%
   headless against about 2% in a window, because the real display link wakes JS and pumps AppKit 120 times a second
   with nothing to draw (repro r14; the gap row is in [gpuix gaps](../gpuix/gaps-and-divergence-rounds.md)). Quote
   headless for "which page, which loop" and `--window` for "what does the user's machine pay".

@@ -44,6 +44,10 @@ sources:
     resource: repo://src/components/table.tsx
   - id: openwiki-source-26d9c038c2027980be5931cf
     resource: repo://src/components/tabs-subtle.tsx
+  - id: openwiki-source-1000133251cbebcd6e8f1e8a
+    resource: repo://src/components/thinking-indicator.tsx
+  - id: openwiki-source-e937d0413e1c4205eb067717
+    resource: repo://src/components/thinking-steps.tsx
   - id: openwiki-source-a79b6ccf1548a05902eb90b6
     resource: repo://src/demos/thinking-steps.tsx
   - id: openwiki-source-a6e7d28cb827574c90025f7b
@@ -72,10 +76,10 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-872f10458af3aae905a0ee5a
     resource: repo://src/pages/fluid-hover/plain-vs-fluid.tsx
-generated: { by: "claude-code", at: "2026-10-21T10:50:33.517Z" }
+generated: { by: "claude-code", at: "2026-10-21T15:03:49.932Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T10:50:33.517Z
+    at: 2026-10-21T15:03:49.932Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -100,7 +104,7 @@ link to those rows rather than repeating them. The ones that shape the most code
 - **Clipped content still costs a frame** (gpuix #46: retained and clipped content is not free). Long demo pages
   therefore hide far regions with `display: none` through the port's own `src/lib/cull.ts`; this is a kept
   workaround, not a removed one: the removal comparison was re-run on `b03d4e27` and culling off was worse on 9 pages
-  and better on none. The measurements are in
+  and better on none, and again headless on `196d69ce` with the same result. The measurements are in
   [Port decisions, Performance decisions](../decisions/port-decisions.md#performance-decisions-on-gpuix-poc-b03d4e27).
 - **Test-renderer quirks** (a capture is the view alone, with no titlebar or traffic lights; batched keystrokes deliver
   an input's `onChange` after the whole batch) that constrain the screenshot harness.
@@ -108,7 +112,7 @@ link to those rows rather than repeating them. The ones that shape the most code
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
 The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17) and again in the
-[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `83bab5a7` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), and `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21)). The bugs and gaps worth knowing before touching layout code:
+[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `196d69ce` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), and `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21)). The bugs and gaps worth knowing before touching layout code:
 
 - A function-form `createTransform` of several motion values is computed in JS and can trail its inputs by a frame
   on a live window (not seen on the test renderer). `calc()` strings of the row's own width avoid it where the layer
@@ -543,7 +547,7 @@ entries to 532.
 - **Reversed: fluid hover's container-box cache.** The cache existed to avoid a 6 ms layout pass per read. With #47 it
   measured within noise and was dropped, so `pick` reads the rect on every pick like the source.
 - **Kept, re-measured: off-screen culling.** Off was worse on 9 pages and better on none; the plan to remove it after
-  #46 does not apply while the gap row stands. Method and numbers:
+  #46 does not apply while the gap row stands (the `196d69ce` re-run, headless, agreed: [Round 12](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21)). Method and numbers:
   [Port decisions, Performance decisions](../decisions/port-decisions.md#performance-decisions-on-gpuix-poc-b03d4e27).
 - **Changed: the second `StableLabel` ghost is now within noise** (seven sidebar pages, p95 -0.35 to +0.30 ms), credited
   to gpuix #46 and #58 (an `opacity: 0` text paints nothing and hidden labels are not re-measured). It stays for the
@@ -553,7 +557,8 @@ entries to 532.
   animating, and a page with a running loop idles at 37-45% CPU (carousel-dots, file-thumbnail, thinking-indicator,
   thinking-steps, queued-stack, showcase, fluid-hover, changelog, and the button page: its native loading spinner took
   the source's always-loading Saving button from 3.8% idle to 41%). This replaces the earlier "28 ms" figure and the
-  starvation row. The README keeps it as a bug row with no workaround except pausing off-screen loops through culling.
+  starvation row. The README keeps it as a bug row with no workaround except pausing off-screen loops through culling
+  (restated again on `196d69ce`, where paint-only ticks are patched: [Round 12](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21)).
 - **SVG stroke keyframes now work**, so the button's loading spinner, the menu-item check and the input-copy check and
   cross became native draws. Their drift entries closed (button 9 to 8, input-copy 10 to 8) apart from input-copy's
   scale-in; the file-thumbnail spinner remains a sliding dash because its only gap is the rotate transform. See
@@ -628,7 +633,7 @@ questions for the fork; none has a workaround in this repository, and the owner 
   2.2 / 6.5 / 26 ms of CPU a draw at 1.3k / 5.2k / 20.8k elements for one 6-24 px animated element, within 5% across
   colour, SVG dash, SVG `d`, width and absolute `top`. At 20.8k elements the loop falls to 30 draws a second against the
   75 Hz clock. The ask to gpuix changed accordingly: skip layout for paint-only kinds, and relayout only from the
-  nearest fixed-size ancestor for geometry kinds. FF's knockouts add that a single live loop is enough to keep a page
+  nearest fixed-size ancestor for geometry kinds (the paint-only half landed in Round 12, below). FF's knockouts add that a single live loop is enough to keep a page
   drawing (see the [loop decision](../decisions/port-decisions.md#js-frame-clock-loops-moved-to-gpuix-native-animation)).
 - **Idle-window floor (r14), a new row.** A static page in a real window costs about 2% of a core on a 120 Hz display
   because the display link wakes JS and pumps AppKit on every vsync with 0 draws: one static text 2.3-2.7%, 3000 static
@@ -645,3 +650,45 @@ questions for the fork; none has a workaround in this repository, and the owner 
   an animated page reads about 26 draws a second whenever another app is frontmost. A window CPU figure for an
   animated page is meaningless without its key share, which the footprint driver now prints. Static pages are not
   affected, since they draw nothing either way.
+
+## Round 12: paint-only patch ticks on `poc` `196d69ce` (2026-10-21)
+
+The README now names `196d69ce` (zed `8e2114a5ca`) as the minimum fork. gpuix answered the r13 ask for the paint-only
+half: a tick of a colour, opacity or SVG stroke dash or shape loop is drawn as a patch of its own unit of at most 256
+elements (0.6-1.0 ms a tick live) instead of a whole frame. Without a blocker, r13 patches colour, SVG dash and SVG `d`
+at 0.24-0.47 ms and 2-4% CPU at every page size, while width and absolute `top` loops stay whole frames (~70% of a core
+at 20.8k elements). Whether FF's own pages benefit depends on three blockers, found with the new `patched/s`,
+`full/s` and `why` columns of `pnpm footprint` (what they mean:
+[Port decisions](../decisions/port-decisions.md#measuring-idle-cpu-and-memory-pnpm-footprint-and-what-each-mode-can-and-cannot-say)).
+Before this round's repository changes, all nine animated pages read `patched/s` 0.
+
+- **An `<input>` or `<textarea>` anywhere on the page makes every tick `Unsteady` (r17, a new row).** Even an
+  unfocused, idle or culled one does; only `display: none` spares it. One input beside one colour loop takes the page
+  from 0.4-0.6 ms and 3.9-4.5% CPU to 4.0-4.8 ms and 27.6-32.9% on 7.8k elements, while the input alone costs nothing.
+  FORK.md lists inputs as never retained, a likely source that r17 did not confirm. Hits the button (PlayText input),
+  queued-stack (composer textarea) and showcase (eight inputs). Not worked around: the inputs are the source's own. The
+  ask: `Unsteady` only for an element that follows the clock in the frame being patched, such as a focused caret.
+- **A loop under a positioned or translucent ancestor is declined as `UnknownUnit` (r18, a new row).** FORK.md says a
+  relative box is a unit and an absolute one is none; measured, a `relative`, `absolute` or `opacity: 0.5` wrapper
+  declines the loop in it (3.1-5.5 ms and 21.6-33.1% against 0.4 ms and 3.3-3.5%). When the animated element is itself
+  `absolute` nothing is recorded in `declines` or `unpatchable`, so the case looks like a harness that never ticked.
+  Hits the button (press surface, spinner wrapper, inert opacity) and file-thumbnail (spinner overlay).
+- **Active motion values stay full frames**: carousel-dots' fill and the plain-vs-fluid cursor on fluid-hover and
+  changelog, which the source animates with transforms gpuix lacks.
+- **What the repository changed.** Only two pages had a blocker the source does not have. ThinkingIndicator's words
+  were absolutely positioned inside a relative cell; they now stack in one grid cell and are positioned only while
+  they roll (`cc294fcf`), as the source's inline-grid slot works. Its page went from 18% CPU with every tick whole to
+  10% with about 62 ticks a second patched and 6 whole (the rolls). The thinking-steps step wrapper dropped a
+  `position: relative` that anchored nothing (`96f4e653`); the page is unchanged because its draws are JS-driven, but
+  an isolated active step went from 67 whole ticks a second to 67 patched. After this, eight of nine animated pages
+  still draw whole ticks. Knockouts removing every blocker read button 25 to 4.5% CPU, thinking-indicator 16.5 to
+  9.6%, queued-stack 20.5 to 7.4% and file-thumbnail 11.9 to 8.0%, which is the size of the prize if gpuix lifts them.
+  The counters name the reason but not the element, so the knockouts, not `why`, were what attributed each blocker.
+- **Culling re-measured, and stays.** Headless on `196d69ce` (an uncommitted culling-off knockout, two alternating
+  pairs, load 3-13) off was worse on showcase, input-message, changelog and fluid-hover (for example fluid-hover
+  16 / 16 to 51 / 40% CPU, input-message 1.3 / 0.5 to 53 / 36% because its off-screen loop runs) and +4-9 MB on five
+  pages, better on none. The live `pnpm perf` A/B did not run; every attempt was occluded. Numbers:
+  [Port decisions, Performance decisions](../decisions/port-decisions.md#performance-decisions-on-gpuix-poc-b03d4e27).
+
+Pitfall: the footprint figures were taken at load 3-13 and the r17 and r18 repros at load 5-29 on the test renderer;
+compare CPU percentages only against a run at similar load, and read `patched/s` first, which load moves less.
