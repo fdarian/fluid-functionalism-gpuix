@@ -74,10 +74,10 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-872f10458af3aae905a0ee5a
     resource: repo://src/pages/fluid-hover/plain-vs-fluid.tsx
-generated: { by: "claude-code", at: "2026-10-21T19:54:58.782Z" }
+generated: { by: "claude-code", at: "2026-10-21T21:17:32.636Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T19:54:58.782Z
+    at: 2026-10-21T21:17:32.636Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -102,7 +102,10 @@ link to those rows rather than repeating them. The ones that shape the most code
 - **Clipped content still costs a frame** (gpuix #46: retained and clipped content is not free). Long demo pages
   therefore hide far regions with `display: none` through the port's own `src/lib/cull.ts`; this is a kept
   workaround, not a removed one: the removal comparison was re-run on `b03d4e27` and culling off was worse on 9 pages
-  and better on none, and again headless on `196d69ce` with the same result. The measurements are in
+  and better on none, and again headless on `196d69ce` with the same result. `511bebab` added `contentVisibility:
+  'auto'` (#71, the opt-in half of #46), which does not stand in for it: its margin is a fixed 150% of the viewport
+  against the port's 25%, an unmeasured region has no scroll anchoring, and its containment clips shadows and focus
+  rings. The measurements are in
   [Port decisions, Performance decisions](../decisions/port-decisions.md#performance-decisions-on-gpuix-poc-b03d4e27).
 - **Test-renderer quirks** (a capture is the view alone, with no titlebar or traffic lights; batched keystrokes deliver
   an input's `onChange` after the whole batch) that constrain the screenshot harness.
@@ -110,7 +113,7 @@ link to those rows rather than repeating them. The ones that shape the most code
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
 The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17) and again in the
-[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `f993d9b9` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`, and `f993d9b9` in [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22)). The bugs and gaps worth knowing before touching layout code:
+[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `511bebab` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`, `f993d9b9` in [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22), and `511bebab` in [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22)). The bugs and gaps worth knowing before touching layout code:
 
 - A function-form `createTransform` of several motion values is computed in JS and can trail its inputs by a frame
   on a live window (not seen on the test renderer). `calc()` strings of the row's own width avoid it where the layer
@@ -140,22 +143,21 @@ The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adopt
   `row-reverse` instead.
 - The first draw of a long page is whole: a page mounts in one batch and builds, lays out and shapes every node,
   because nothing marks a region far until an `IntersectionObserver` has reported against a first layout. A 1900-node
-  tree drew in 45 ms against 8 ms with all but 12 entries `display: none`. gpuix's line layout cache also ages a line
-  out after one frame that looks up other text, so a revisit shapes the same lines again (Changelog, Showcase). The
-  port's `createCulling` hides far regions only after its first report, so the first draw on Changelog, Showcase and
-  Command Menu stays 40-110 ms; the question to gpuix is a way to mount a region culled before its first layout, or a
-  cache that outlives a page swap. Repro r11 (outside the repo); `scripts/perf-page-switch.tsx` measures it.
-- Table parts are not animatable (a collapsed-border row rule snaps where the source eases it), and declaring the
-  transition anyway is not harmless: it rebuilt the layout of the table's siblings on each frame of the fade, so the
-  port dropped it (see [Port decisions](../decisions/port-decisions.md#the-table-rows-border-color-fade-is-dropped-not-left-inert)). gpuix has the
-  `has*` states (`hasHover`, `hasActive`, `hasFocus`, `hasFocusVisible`, `hasDisabled`, `hasEnabled`) but neither a
-  `:has(.x)` selector nor a parent state that styles its children.
+  tree drew in 45 ms against 8 ms with all but 12 entries `display: none`. The port's `createCulling` hides far
+  regions only after its first report, so the first draw on Changelog, Showcase and Command Menu is still whole; the
+  question to gpuix is a way to mount a region culled before its first layout (`511bebab`'s `contentVisibility` is
+  its shape, but the port cannot use it yet, above). The line cache half closed on `511bebab`: its shape store cut a
+  revisit's shapes to single digits (see [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22)). Repro r11
+  (outside the repo); `scripts/perf-page-switch.tsx` measures it.
+- `has*` states exist (`hasHover`, `hasActive`, `hasFocus`, `hasFocusVisible`, `hasDisabled`, `hasEnabled`) but gpuix
+  has neither a `:has(.x)` selector nor a parent state that styles its children. Collapsed-border transitions are no
+  longer a gap: see [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22).
 
 Earlier entries here were closed and should not be re-reported: a `width: 100%` child under a `fit-content` parent
 filling the column and a percentage `maxWidth` not clamping a `fit-content` box (`20a0c327`); on `b03d4e27`, the
 cap-trimmed label that tabs and tabs-subtle centre sitting a pixel off Chrome's at 1x (gpuix #44), whose two drift
 entries were removed; and on `83bab5a7`, the authored-length rounding, a trimmed `inline-grid` label in a block with a
-strut sitting about 5.5 px high, and the missing pause/play on a motion value's animation; and on `f7b62f11`, the heavier text (font smoothing), the `scrollTop` setter's layout cascade and the scroll range ending one pixel short of `scrollHeight - clientHeight`; and on `f993d9b9`, the idle window waking JS on every vsync and the unfocused visible window drawing below the display rate.
+strut sitting about 5.5 px high, and the missing pause/play on a motion value's animation; and on `f7b62f11`, the heavier text (font smoothing), the `scrollTop` setter's layout cascade and the scroll range ending one pixel short of `scrollHeight - clientHeight`; and on `f993d9b9`, the idle window waking JS on every vsync and the unfocused visible window drawing below the display rate; and on `511bebab`, the collapsed-border colour transition that rebuilt the table's layout.
 
 ## How a round works
 
@@ -599,7 +601,7 @@ clicks. Neither is fixed in gpuix; both are open questions for the fork, and the
 - **r11, first-draw layout and shaping cost of a long page.** No workaround beyond the Changelog's release spy no
   longer forcing a second layout before the first draw. The README row was written first against the line cache's
   age-out (`finish_frame`) and then updated on gpuix `83bab5a7` with the shape counts of the repeat visits (Changelog
-  215, Showcase 286-300 on every visit).
+  215, Showcase 286-300 on every visit); `511bebab` closed that half, [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22).
 - **A new harness**, `scripts/perf-page-switch.tsx`, headless, measures the page-switch hitch per sidebar click (mount
   JS, first draw, later frames); the README's harness notes list it next to the real-window `scripts/perf.tsx`.
 
@@ -735,3 +737,30 @@ findings and shrank a third; no component or look code moved.
 
 The reading rule from the footprint harness still holds: [Port decisions](../decisions/port-decisions.md#measuring-idle-cpu-and-memory-pnpm-footprint-and-what-each-mode-can-and-cannot-say)
 says what headless can and cannot answer. Read the README's pin line, not this page, for the current minimum fork.
+
+## Round 13b adoption on `poc` `511bebab` (2026-10-22)
+
+The README now names `511bebab` (zed `271ec25880`) as the minimum fork. Three things moved; drift went from 540 to 539
+entries (`table` 6 to 5, only the removed fade entry).
+
+- **A `border-color` transition on a collapsed-table part is closed (#68).** It lays out nothing and patches with the
+  table as its unit, so the table row declares `fade(['border-color'], 80)` again, the README "Collapsed-border
+  transitions" row and the table drift entry are gone, and the other drift files no longer list collapsed-border
+  transitions among the shared gaps. `check-table` was rewritten from a relative layout-build bound to zero builds, zero
+  nodes created or removed and a drawn fade; the reasoning is in
+  [Port decisions](../decisions/port-decisions.md#the-table-rows-border-color-fade-dropped-while-it-cost-layout-restored-on-gpuix-511bebab).
+- **The page-switch row was re-measured (#71).** gpuix's shape store (8 MiB) fixes the line cache that aged lines out
+  between frames: shapes per revisit went from 215 to 8-12 on Changelog, 291 to 4 on Showcase and 142 to 0 on Command
+  Menu, while a first visit still shapes every line (211 to 183, 293 to 237, 144 to 138) inside a whole-page layout.
+  Median first-draw time, first visit / revisit, `f993d9b9` to `511bebab`, headless `scripts/perf-page-switch.tsx` on
+  release builds of both commits, two alternated runs each at load 3-10: Changelog 82-83 / 58-62 to 43-50 / 29-35,
+  Showcase 47-51 / 36-38 to 41-44 / 36-37, Command Menu 57 / 48-49 to 47-51 / 41-51; the page's 370-460 ms of mount
+  JS is unchanged. What remains is the question of mounting a region culled before its first layout.
+- **`contentVisibility` was evaluated and not adopted.** The README culling rows now say why it does not replace
+  `createCulling` (margin, scroll anchoring, containment clipping shadows and focus rings), and the command-menu and
+  site drift entries carry the same note.
+
+`check-kit` gained `kit.still`, a wall-clock bounds-stillness wait used by `check-thinking-steps` and
+`check-weight-widths` so that clicks no longer race a loaded machine; see
+[Port decisions](../decisions/port-decisions.md#screenshots-and-check--scenarios) for the
+trap. Read the README's pin line, not this page, for the current minimum fork.

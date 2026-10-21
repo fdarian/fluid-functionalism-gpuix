@@ -12,10 +12,10 @@ sources:
     resource: repo://THIRD_PARTY_NOTICES.md
   - id: openwiki-source-ff18555ad70362de0f452788
     resource: repo://UPSTREAM.md
-generated: { by: "claude-code", at: "2026-10-21T19:54:58.782Z" }
+generated: { by: "claude-code", at: "2026-10-21T21:17:32.636Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T19:54:58.782Z
+    at: 2026-10-21T21:17:32.636Z
 ---
 
 # Project overview
@@ -31,7 +31,7 @@ home bento grid, the docs and System pages, Compare, Concepts, Audio Mixer, Chan
 
 It started on 2026-10-12 as an experiment answering one question: **can gpuix draw this library faithfully?** The
 answer is yes, with recorded differences. Every difference from the source is an entry in `drift/`
-with a cause (540 on 2026-10-21, after the font-smoothing entry closed on gpuix `f7b62f11`; it had been 541 since the Untitled UI drop and the sample-photo replacement added a few; 532 right after the `b03d4e27` adoption, 538 after the 2026-10-19 native-animation round, down from 577 once variable fonts and the round 6 features closed their entries; printed by `scripts/drift-counts.ts`), so the repository doubles as a catalogue of what gpuix can and cannot do against a real, demanding
+with a cause (539 on 2026-10-22, after the table's border-color fade entry closed on gpuix `511bebab`; 540 after the font-smoothing entry closed on `f7b62f11`; it had been 541 since the Untitled UI drop and the sample-photo replacement added a few; 532 right after the `b03d4e27` adoption, 538 after the 2026-10-19 native-animation round, down from 577 once variable fonts and the round 6 features closed their entries; printed by `scripts/drift-counts.ts`), so the repository doubles as a catalogue of what gpuix can and cannot do against a real, demanding
 design system. That catalogue fed the gpuix fork's work directly
 (see [gpuix gaps and divergence rounds](../gpuix/gaps-and-divergence-rounds.md)).
 
@@ -65,7 +65,7 @@ site was the only place to see them. Which files are at which pin, and how to ca
 - **`~/code/fdarian/gpuix`**, branch `poc`: the owner's fork of [remorses/gpuix](https://github.com/remorses/gpuix),
   which follows DOM/CSS semantics wherever upstream gpuix did not. Its `README.md` and `FORK.md` are the gpuix
   reference. The port needs the fork, not upstream gpuix: native springs, the DOM event model and many fixes
-  exist only there. The README names the minimum fork commit (`f993d9b9` as of 2026-10-22); read it there, not here.
+  exist only there. The README names the minimum fork commit (`511bebab` as of 2026-10-22); read it there, not here.
 - **`~/code/fdarian/base-ui-solid-gpuix`**: headless Solid ports of the Base UI primitives (keys, selection, open
   state, focus, ARIA), split out of this repository on 2026-10-17.
 
@@ -89,3 +89,4 @@ All three must resolve to one `solid-js` and one `@gpuix/solid`; see
 | 2026-10-21 | Pinned to gpuix `poc` `196d69ce` (Round 12): paint-only loop ticks are patched instead of drawn whole unless an input, a positioned or translucent ancestor, or a motion value gets in the way; ThinkingIndicator's words stack in one grid cell and thinking-steps lost an anchorless `position: relative` so their shimmers patch; `pnpm footprint` gained `patched/s`, `full/s` and `why`; culling kept on a headless re-run; two new README gap rows for the inputs and positioned-ancestor blockers ([details](../gpuix/gaps-and-divergence-rounds.md#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21)) |
 | 2026-10-21 | Adopted gpuix `poc` `f7b62f11` (Round 13a; the README named `f6997028` after it): `WebkitFontSmoothing: 'antialiased'` on the root closes the heavier-text gap, the `scrollTop` setter lays out only what is pending so the `renderer.scrollTo` workaround is reverted, and the scroll end is exact so the release spy's slack is gone; ThinkingSteps, Quill and Beacon rows match the source's heights; the window opens on the first non-primary display (`FF_DISPLAY`); drift 541 to 540 ([details](../gpuix/gaps-and-divergence-rounds.md#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21)) |
 | 2026-10-22 | Pinned to gpuix `poc` `f993d9b9` (Round 14b): an idle window no longer wakes JS every vsync and an unfocused visible window draws at the display rate, so the README's idle-floor row is gone and `pnpm footprint` no longer samples the key window; the memory row now holds headless figures only ([details](../gpuix/gaps-and-divergence-rounds.md#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22)) |
+| 2026-10-22 | Pinned to gpuix `poc` `511bebab` (Round 13b): a `border-color` transition on a collapsed-table part costs no layout, so the table rows fade their rules again and `check-table` asserts zero layout work plus a drawn fade; the page-switch row is re-measured on gpuix's shape store; `contentVisibility` is evaluated and does not replace `createCulling`; drift 540 to 539 ([details](../gpuix/gaps-and-divergence-rounds.md#round-13b-adoption-on-poc-511bebab-2026-10-22)) |

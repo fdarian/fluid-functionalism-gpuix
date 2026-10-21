@@ -5,18 +5,18 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T19:54:58.782Z
+    at: 2026-10-21T21:17:32.636Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
   - id: openwiki-source-9156c3fc43d32433db430838
     resource: repo://drift/_TEMPLATE.md
+  - id: openwiki-source-6bebc830d03236b8df9960d7
+    resource: repo://drift/command-menu.md
   - id: openwiki-source-6305012da4c4c24b665faccd
     resource: repo://drift/file-thumbnail.md
   - id: openwiki-source-385da475ebb9649b27cbd9e7
     resource: repo://drift/site.md
-  - id: openwiki-source-d4a4bb7ecd3d3f6e47c46abd
-    resource: repo://drift/table.md
   - id: openwiki-source-5cfc44b662eef11b303099d9
     resource: repo://drift/tabs-subtle.md
   - id: openwiki-source-7bed81eca49ee8a9899cacc5
@@ -31,6 +31,8 @@ sources:
     resource: repo://scripts/build.ts
   - id: openwiki-source-8792b0b9d5aaa145ee2ebfa4
     resource: repo://scripts/check-command-menu.tsx
+  - id: openwiki-source-fac7a3f3768fe057d1557909
+    resource: repo://scripts/check-kit.tsx
   - id: openwiki-source-1d90d3d86ac1d41b49610f02
     resource: repo://scripts/check-reduced-motion.tsx
   - id: openwiki-source-c2ba4607c29fa723e9c49321
@@ -123,7 +125,7 @@ sources:
     resource: repo://src/pages/skill/playback.tsx
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-21T19:54:58.782Z" }
+generated: { by: "claude-code", at: "2026-10-21T21:17:32.636Z" }
 ---
 
 # Port decisions and their reasons
@@ -303,6 +305,12 @@ about cost has an expiry date, because gpuix's retention and bounds-read behavio
     showcase, and static pages were equal. The live `pnpm perf` A/B did not run.
   - Costs of keeping it: a culled region has no bounds (screenshot scenarios call `shot.reveal` first), and the
     changelog Releases jump has to re-aim, below. The README "Culling" gap row carries the same numbers.
+- **gpuix `511bebab`'s `contentVisibility: 'auto'` does not replace it.** It landed as the opt-in half of #46 (#71)
+  and is the shape of what the first-draw problem below asked for, but three things keep `createCulling`: the `auto`
+  margin is fixed at Chrome's 150% of the viewport where the port culls at 25% (`OVERSCAN`); a region whose size is
+  still unmeasured has no scroll anchoring, so content jumps as regions measure in; and the size and paint containment
+  it implies clips overflowing shadows and focus rings. The source site uses no `content-visibility`, so nothing was
+  adopted.
 - **The changelog Releases jump re-aims while culled entries un-pin.** A jump computes its target while the entries
   above the month are pinned at their culled heights. They un-pin to their real heights as the smooth scroll passes
   them and come out a few px taller, so one scroll landed the month 4-5 px low (36-37 px under the top against the
@@ -473,10 +481,13 @@ this section keeps the decisions and the traps.
   the whole page (about 70 ms) before the first draw. The newest month now stands in until a 0 ms timer, which
   runs after that draw, takes the real reading; the cleanup clears the timer. Until then the Releases card shows the newest
   month, which is the price of not laying the page out twice before it appears.
-- **What was not fixed, and why.** The first draw of a long page still builds, lays out and shapes every node (40-110 ms
-  on Changelog, Showcase and Command Menu): culling hides a region only after an `IntersectionObserver` has reported
-  against a first layout, and gpuix's line cache ages lines out after a frame that looks up other text, so a revisit
-  shapes them again. That is a gpuix question recorded in the README row, not something the port can avoid.
+- **What was not fixed, and why.** The first draw of a long page still builds, lays out and shapes every node:
+  culling hides a region only after an `IntersectionObserver` has reported against a first layout. gpuix `511bebab`
+  (#71) fixed the other half, the line cache that aged lines out after a frame that looked up other text: an 8 MiB shape
+  store took shapes per revisit from 215 to 8-12 on Changelog, 291 to 4 on Showcase and 142 to 0 on Command Menu, and
+  median first-draw time fell (Changelog first visit 82-83 to 43-50 ms, revisit 58-62 to 29-35; Showcase and Command
+  Menu moved less). A first visit still shapes every line inside a whole-page layout. That is a gpuix question recorded
+  in the README row (a region mounted culled before its first layout), not something the port can avoid.
 
 How to check these, because the obvious checks pass:
 
@@ -494,18 +505,25 @@ How to check these, because the obvious checks pass:
   share text-shape caches, so the first visit of the second slug is warm), and compare runs only at a similar load
   average, which the script prints before and after.
 
-### The table row's border-color fade is dropped, not left inert
+### The table row's border-color fade: dropped while it cost layout, restored on gpuix `511bebab`
 
-The source fades the row rule (`transition-[border-color] duration-80`). gpuix does not draw a transition on a
+The source fades the row rule (`transition-[border-color] duration-80`). gpuix once did not draw a transition on a
 collapsed border, and until `e562f840` the port still declared `fade(['border-color'], 80)` on the row on the theory
 that it would start working when gpuix did. That was not free: running the transition rebuilt layout subtrees for the
 table's container and siblings on each of its 10 frames, **5120 builds over one hover glide on the Table page against
-12 for the sidebar** and 512 without the transition, where Chrome re-lays out only the table. The row now declares no
-transition and the rule snaps (drift entry unchanged in effect: approximated). Restore the fade only when gpuix animates
-collapsed borders; `check-table` counts the glide's layout builds against the sidebar's so it cannot come back
-silently. The lesson for other "declared but inert" transitions: an inert style can still dirty layout every frame, so
-measure layout builds, not only pixels. The repro is in the author's notes (`r9-border-transition-layout.md`, not a
-repository file).
+12 for the sidebar** and 512 without the transition, where Chrome re-lays out only the table. The row then declared no
+transition and the rule snapped. gpuix `511bebab` (#68) made a `border-color` transition on a collapsed-table part lay
+out nothing and patch with the table as its unit, so the row declares `fade(['border-color'], 80)` again
+(`src/components/table.tsx`) and the table drift entry for the snap is gone (drift count 540 to 539).
+
+What the check asserts changed with it, because the old assertion would have passed for the wrong reason.
+`check-table` used to bound the glide's layout builds against the sidebar's plus an allowance sitting between the
+cheap and the expensive case. It now requires **zero builds, zero layout nodes created and zero removed** over the
+glide, on the fixture and on the real Table page, and it separately requires that the fade is *drawn*: with the
+motion clock held it screenshots the rule's line frame by frame and requires pixel values strictly between its two
+end colours. Both are needed, since a transition that is silently dropped also builds nothing. The lesson for other
+"declared but inert" transitions stands: an inert style can still dirty layout every frame, so measure layout work and
+pixels together. The repro is in the author's notes (`r9-border-transition-layout.md`, not a repository file).
 
 ## Measuring idle CPU and memory: `pnpm footprint`, and what each mode can and cannot say
 
@@ -635,9 +653,14 @@ steps. Most files changed by a few bytes, which is the noise the pixel compariso
 
 **A click after a spring needs still bounds, not a fixed wait.** `check-thinking-steps` scrolled a card into view,
 waited a fixed 600 ms and clicked its images button; with fractional lengths a spring's tail moves a box by
-fractions of a pixel long after it looks settled, and a click can land off the button. The check now polls the
-button's bounds and clicks after eight identical readings (`settleBounds`). Use the same shape for any check that
-clicks something a spring just moved.
+fractions of a pixel long after it looks settled, and a click can land off the button. A first fix polled the bounds
+and clicked after eight identical readings, but a count of polls is a count of frames, and a loaded machine runs fewer
+frames in the same time, so popups and rows could still be moving when the click landed. `kit.still(testIds, what)` in
+`check-kit` now waits until every id is painted and its bounds have not changed for 150 ms of wall-clock time.
+`check-thinking-steps` uses it for the images button; `check-weight-widths` uses it for the click target and its
+anchor and for a popup after the opening click, in place of a fixed settle. Use it for any check that clicks something
+a spring just moved. `check-weight-widths` also reports how many labels were unreadable at the re-read frame and
+whether the anchor was still present, so a failure there says which of the two went wrong.
 
 Two things from the 2026-10-19 round (`a2eed755`, `ce7ee2b9`, `d9d2e93e`):
 

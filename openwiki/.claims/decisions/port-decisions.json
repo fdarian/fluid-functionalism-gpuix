@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:dc48f844b52683f6d4628f38f89924d84b8c64d273447fbca5385d6c40265839",
+  "pageVersion": "sha256:72fe7050862cca769b3f4097d3d49393208ae21d19e1b8ef3dd728214b074cf6",
   "claims": [
     {
       "id": "claim_782844f1b7454bbd8c43501708e208b1",
@@ -179,7 +179,7 @@
       "statement": "The table row lights from the fluid hover's pick rather than the pointer, so it stays signal-driven and not a groupHover.",
       "evidence": [
         {
-          "resource": "repo://src/components/table.tsx#L116-L124",
+          "resource": "repo://src/components/table.tsx#L117-L125",
           "version": "repo-lines-v1:sha256:8a910919db529c5ef12cc0b6c93f4a75b0b03c42fb70d60e7700df85856cac3e:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzE4YTczMjM0ZWEwODY4OTA2YWEwMjcwMmIyOGFkNTFmOTU1YTgxNDBkYzA4MjFjN2VjOWRkYWQ5ZjcxN2VlNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE4ZDc3M2EwZWEyOGRhYzZlOTdiYTZhZjY4MDZjMDQzNDJhZmFhZjkxNjkzODQ5MzNmNDcwODkwMDNjZDJhNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmVlM2YyYmVjNzE2MGQzZTgwNzdjNmI5YzBkN2E5OGEyNWNjYmViOWRjYjg1ZjVlNWNiMzY3NmQ0MTRjNTVkZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTIzYmJmZjFjMmY2NjhkY2FjYmQxNzc3YzQxOTFkNzFkZDIyM2Y1NWQ5ODg1ZWZmZDE1NGZkNzc0MzY1ZmMyZiJ9"
         }
       ]
@@ -221,7 +221,7 @@
           "version": "repo-lines-v1:sha256:d587d02b36369120fbba769f9ea4fe4b8ed567434ad77879f100dbdba84d30bd:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjYmY2MmI3MDljMDE0NmQyYzY2OGMxZjhmZDgyNTgwMWE0MGY0MGVlMjg4YzA3ZTg2OWYzYTk0ZTYyYTIwOGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM5NDAyMjU2NmM3ZDE3ODY1OGU4OTNiNzNjMzQzM2RhNjE3YzZhMGVjYWMyYzNlY2E1NDBjMzUwOTRmNWRiMDMifQ"
         },
         {
-          "resource": "repo://scripts/check-weight-widths.tsx#L637-L656",
+          "resource": "repo://scripts/check-weight-widths.tsx#L647-L666",
           "version": "repo-lines-v1:sha256:7500ee5f55986b45aaac01f41da433249d702dbbf960aa8b2b01dd3d0b9e55c5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0NGE4YzdjNWRiNmY3MDcyOWZjYTlmOWUyMWZhMzA0YTgwYjc5MTM0ZDU3NGQ3MDA1NjYyZmYzZDY3OTFiN2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0ZWZjNDk0MThkMjZkY2YxMjliMjJhNmFhMjExMDhjZWVjMzc2NzdhMzJkMDhlOWQ1ZmVlMzVkZGE2NmJiOWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgzNTdhODdlNzE2N2JmN2NjYTIzYjQyOWI1OTg5NDU2OGY1OWFjYzdjZDk5ZGUzY2E3NDI0YTA1Y2U4ZjBkNTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyMmM2YTQ2OTVhOWYwNzMxMDQ1OTVhNDMyNzIyYjViYTMzYjM2Y2I5YjNiNTgzODE3YTI0YWI0NGJiMzIzYjQifQ"
         }
       ]
@@ -231,8 +231,8 @@
       "statement": "The port keeps the off-screen culling in src/lib/cull.ts: re-measured on gpuix poc b03d4e27 (live, two alternating pairs) and again headless on 196d69ce with a culling-off knockout, turning it off was worse on every page that differed and better on none (b03d4e27: showcase idle CPU 45 to 80%, input-message 3.3 to 51.5%; 196d69ce: showcase 31/27 to 69/70% CPU, input-message 1.3/0.5 to 53/36%), so the earlier plan to remove it once gpuix #46 lands was not carried out.",
       "evidence": [
         {
-          "resource": "repo://README.md#L279-L279",
-          "version": "repo-lines-v1:sha256:8fe854b6acc9a9f7d0d61db3aae607ff2953b008561a4db7c1386b974d594878:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGZlODU0YjZhY2M5YTlmN2QwZDYxZGIzYWFlNjA3ZmYyOTUzYjAwODU2MWE0ZGI3YzEzODZiOTc0ZDU5NDg3OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGZlODU0YjZhY2M5YTlmN2QwZDYxZGIzYWFlNjA3ZmYyOTUzYjAwODU2MWE0ZGI3YzEzODZiOTc0ZDU5NDg3OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjg1NDA0OWIwNzYxMjUzMDY2NWUzMDczYjcwY2FmYzJiM2M0YWE4NjZhYjQzNWZiMTI4YjRiNjlhZWVhNWU5NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTgxNjIzN2ViNjljZDlhYzEyNjZiMjE5NTdmZjMzNDljMTQ0MTYyN2JjM2I1OWRkMmMwNGYyZmEyY2MwY2RiYyJ9"
+          "resource": "repo://README.md#L278-L279",
+          "version": "repo-lines-v1:sha256:cc64a128f4a15696095bf051e5e06083c36df35cfbb50e7db4cb51e0d41ac13a:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZlYjFjYjZmMDA0YjU1ZjEyNTdkZDc1YmZlYThkMzAxYzE4Zjc3YmNiYmQ1ZWM3OWQ0ZTBkZmRhZWNlNDlkNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTQ2YTAxOTY0NmE2YmExMjA5YWI4NDQ2MzQwNWFmNjk1M2EyMzViN2FiZjkyYzM3OGE2Zjg1OGIwMGY2ZDZhNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTMxYzhkMjgzODdjOTg1MzllMzU3NTRlNmY1ZjQ5ZWFjMjY4OTJmYmY4YmRjZTEwOTgzZTMyOGVjNzI3M2NmNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDlkZDdmMzE0NDVmOTA1MTU1MWY5Njg1ZmQ1YjU5ZGE5MTYzMjI3ZGI4NGY5YzVjY2VkNjE1NWQxNTRjMWViMCJ9"
         },
         {
           "resource": "repo://src/lib/cull.ts#L30-L56",
@@ -309,7 +309,7 @@
       "statement": "Fluid hover reads its container's bounding rect on every pick and containerBox() is a fresh read, with no cache; the earlier cached box (introduced because a live getBoundingClientRect cost a layout pass of about 6 ms on poc e5231304) was dropped on b03d4e27 when it measured within noise, since a read after a paint-only write runs no layout pass (gpuix #47).",
       "evidence": [
         {
-          "resource": "repo://README.md#L358-L358",
+          "resource": "repo://README.md#L357-L357",
           "version": "repo-lines-v1:sha256:a0b376ac436f09820b2b4fa2b31bdd1cb6e993fce144b2f4e597c79098e53d41:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTBiMzc2YWM0MzZmMDk4MjBiMmI0ZmEyYjMxYmRkMWNiNmU5OTNmY2UxNDRiMmY0ZTU5N2M3OTA5OGU1M2Q0MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTBiMzc2YWM0MzZmMDk4MjBiMmI0ZmEyYjMxYmRkMWNiNmU5OTNmY2UxNDRiMmY0ZTU5N2M3OTA5OGU1M2Q0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjNmN2IwZjMzNzhmNDU5MmUwNjc4ZmNkZGU2NmMxMGI4MzEyMDQ0ZmM1ZmY1ZTZmMTNkM2NmMjcwMzkzODU4ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWNkZjQzNmIyMGZiNWQwNGRlMjE4NTJiZjI5MTU5ZmI2ZDk5Y2M1OWRkN2MyYWRkNjk4Y2EyNWI1OTZlOGI1MiJ9"
         },
         {
@@ -346,7 +346,7 @@
       "evidence": [
         {
           "resource": "repo://drift/file-thumbnail.md",
-          "version": "repo-file-v1:sha256:ffc32721a4b4255e8e119950094c9d8f62299be75d2bfde858833102cbbdad1b"
+          "version": "repo-file-v1:sha256:a5212e7199b357cd382509788a337d5eb0f5a32f2639cdab64cb886b5ed93547"
         },
         {
           "resource": "repo://src/components/button.tsx#L119-L160",
@@ -436,19 +436,23 @@
     },
     {
       "id": "claim_feec0ffa87744b948b1fb6a9e7b0454b",
-      "statement": "The table row declares no border-color transition: gpuix does not draw it on a collapsed border and running it rebuilt layout subtrees of the table's siblings every frame (5120 builds over a hover glide against 12 for the sidebar); check-table counts the glide's layout builds against the sidebar's.",
+      "statement": "The table row declares fade(['border-color'], 80) again: gpuix 511bebab makes a border-color transition on a collapsed-table part lay out nothing, and check-table now requires zero layout builds and zero nodes created or removed over the hover glide (fixture and real Table page) plus a drawn fade whose rule pixel passes through colours between its two ends.",
       "evidence": [
         {
-          "resource": "repo://drift/table.md#L9-L18",
-          "version": "repo-lines-v1:sha256:f8a6c3e65e15271102fda973bc75728e23b8acd779afdd2801b142587e802527:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0N2Q1YjI2NTE2MWIwOGQxMDU4MzdlZTU0M2NkZTU4MjVjNmIzODEyODBiMDcxMzBkMjFhMzZlMTY1MWE0YTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQxZTA4ZTVmMWMxOTYxODc4MjI1ZDhhNGU4NmNkMzczYjVjYTg2NjlkZDBmNGZhNzAzMzg1MjVmZDdkM2NlZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkZTA3ODdkNmZiN2U3ODk4YTgzZjEwNDBkMWRhMjVjNzk5OTY1OGExN2I1Zjg1MWM1NThjMzQ1NjI1ODU5ODAifQ"
+          "resource": "repo://scripts/check-table.tsx#L319-L321",
+          "version": "repo-lines-v1:sha256:095a8ed6503f3255fe4ee596729b7bf046e4fc7e37b276bee19a165a021aca71:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWZmYmU5ZjA2NGY5MTZhZjM0OTUxMjZhOTE5YTcyMGExYmFjZjhiNWY0ZTJhNmJhNDhhYTYyMDg3MTdmNDgxNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmJjZjNmMTIzMWIzMTU0OGJkZWIzNDY2MzY0NWVmZDhlNDY4ZDc2NDlmNTM3NDJiMjdjY2M0MDFmY2UzODZkYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWNiYThiMDlkNjAwNmEyZmNiYmY0MDMxZjRiZmFhMTM5YmRkYmQ1NDg1ZjBmYzJmNzdlZTY3YzcyMmJhZGQ4NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmE1YTg1YjIxZjgyYzM5MzcxOWFjYjBkMWUyYWUzOThhYTg5YjExYWI4NmNiMGY0ZWVjMzI3ODJjMTVlMDgyNCJ9"
         },
         {
-          "resource": "repo://scripts/check-table.tsx#L260-L315",
-          "version": "repo-lines-v1:sha256:6087186f4acde12b420c679d791c955aed03137f6eb9cf10a5e3939b3f5f1864:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyZTFlOWMwMTk3OGY3NTk1M2QzN2U0YzNhYWM1ZWRhYmU4OWU0Yjc1N2FkMzEwNjU0YzM4OWNjMjYzYTBjYzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyYWVkZDdjMjAzZTA3ZTJkZDRiYzU2Y2E5Nzk3MGMxY2NkN2U4MDZkYTcwZTk3YmExNmM0MmRmZjYyNzgyZmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZjM2NjNzMzZGE4OGQ2M2UwZjQ2NDlhMGI4ODc0YzRiY2Q2OGI5YjI0NmQyMmE1NjQ0M2ZjMmJiNWRkYjFjZWYifQ"
+          "resource": "repo://scripts/check-table.tsx#L364-L417",
+          "version": "repo-lines-v1:sha256:ce9e3e3b904fe71701a4795fda5b3f23421d4a083845629f54197a9d4813a6a8:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI4OTc5Yjg5ODYzZDg2NmU2OWI2YWY4YjNhOGQ2ZGJhNzQwNTZhZTlhMGZkMTQxY2Y2ODE5NDEzMjZjZGNlNjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzZWJmNTJiZWVjMmZiYzYzNDgzNGZiZjRmY2QyNjNmMjA4YTRmMzNjMGE0YjFjMjBmYjdmYTRhYzQxZTk0ZWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY2MmU0N2JkY2I3MWI1NzNkZWJkZTg2MjE5MGZlMDk0NmMwNDZmZjkzODE5NTlhZDFhNjk1Y2M2YTdjZThkYmQifQ"
         },
         {
-          "resource": "repo://src/components/table.tsx#L146-L156",
-          "version": "repo-lines-v1:sha256:82324a75ee0405201b156e64364d3985571dcdc25ca4b74c7fd9aede6a962a20:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1ZjY4YzIyOWU0ZTIzZTA1ODM4Yzk4NmY1NTliOGVhZmQ1NzI0NmIzNWMwMzcxYWRiYWRhNDM5OTgyN2I3YzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkOGQ3YTIxMDA3ZWY2ODFlN2FmYmM2NmJmN2Y4YjM1ZDk0NTUzNTU4OTM3NWQwOWMyZGZmODM4YzJmYzllMGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA1NDllZjdiNjcyZDgzZGIyNjIxZTgzOGQ0YjUwNzliMDZjZTc0YjdmMWY3NWUwMjhlNWYxN2YwMmJmZDdkMDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRkYzA1ODZiODNiZDc3NzA1YjgyMDdkYjQyYmI1MTc0ODBiNWFkMWNlNTkyZTA1ZjI0YzIyODZiZDk3NjExMDcifQ"
+          "resource": "repo://scripts/check-table.tsx#L432-L437",
+          "version": "repo-lines-v1:sha256:18af6000221573a483813098b2f821c72bc2903c380a0d6e7a757aae2e4c5b6d:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDk5NjdlYzFlZDM4MzZmOGViMTdhZmYxNzJiNWJmZWY3ZGU2MDQ4NWE0MzljNmNhMTFjNTkxZTE3NTU3MzlhZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDk5NjdlYzFlZDM4MzZmOGViMTdhZmYxNzJiNWJmZWY3ZGU2MDQ4NWE0MzljNmNhMTFjNTkxZTE3NTU3MzlhZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjJjZTQwY2FlYmEyMjAyNjFhZTZlMTViZjc2ODJjZTcwM2M3Y2M2MTg0MjNkZDQ2NGYzY2IyNTdmOTEwOTdiYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTcyZjgzNzRiYzNhM2VlZmU0OGZkZGExNmU2ZDA2ZmRhYjQ3N2E5OTE1NTYzZjRlNzk0YmFmMzhlZTNhY2YxZiJ9"
+        },
+        {
+          "resource": "repo://src/components/table.tsx#L150-L157",
+          "version": "repo-lines-v1:sha256:78ec2ddef388496c4671ee55a6d4db1ba6ab2b52e10b06cd9abbd10670eca7a9:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDI1NzgyMzc3ZTBlMGIwOTIzZTcyZjRlOWRjNDU5MThiZGViZTFhYTgxZjExMTc3MDFjODY4OTlmNDk1ZjNmOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMmQ4ZDdhMjEwMDdlZjY4MWU3YWZiYzY2YmY3ZjhiMzVkOTQ1NTM1NTg5Mzc1ZDA5YzJkZmY4MzhjMmZjOWUwYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzk3MWIyNTA4MzNlZDcyYTRhN2FlMzk2ZmM5NDg3NjVjM2YwZmIzOWRhZWZlNTA5ODRjMmZmNWVmZDE0ZWUxOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGRjMDU4NmI4M2JkNzc3MDViODIwN2RiNDJiYjUxNzQ4MGI1YWQxY2U1OTJlMDVmMjRjMjI4NmJkOTc2MTEwNyJ9"
         }
       ]
     },
@@ -532,25 +536,15 @@
     },
     {
       "id": "claim_9f121e326c944494802da4af0c3c786b",
-      "statement": "The first draw of a long page (Changelog, Showcase, Command Menu) still builds, lays out and shapes every node because culling only hides regions after an IntersectionObserver reports against a first layout; this is recorded as a gpuix question in the README rather than worked around.",
+      "statement": "The first draw of a long page (Changelog, Showcase, Command Menu) still builds, lays out and shapes every node because culling only hides regions after an IntersectionObserver reports against a first layout; this is recorded as a gpuix question in the README rather than worked around, and gpuix 511bebab's 8 MiB shape store cut shapes per revisit (Changelog 215 to 8-12, Showcase 291 to 4, Command Menu 142 to 0) without changing the first visit's whole-page layout.",
       "evidence": [
         {
-          "resource": "repo://README.md#L267-L267",
-          "version": "repo-lines-v1:sha256:7c314ff6b9b1413a72a3f8e09ab5875c8964f4d436914d096d7f0b19108bf4e0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2MzMTRmZjZiOWIxNDEzYTcyYTNmOGUwOWFiNTg3NWM4OTY0ZjRkNDM2OTE0ZDA5NmQ3ZjBiMTkxMDhiZjRlMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2MzMTRmZjZiOWIxNDEzYTcyYTNmOGUwOWFiNTg3NWM4OTY0ZjRkNDM2OTE0ZDA5NmQ3ZjBiMTkxMDhiZjRlMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2Q4ZDQ1NDM3N2U0ZGEwMjM2YzRkYjE2Njg3NmY5NDIwZWM5YjRhOTZkMjBmNzM5NDMwZWZkOTE4MWE0NTdmOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjg4Njc1M2UwNWExMWZkMmEzYjE1NDI5MGUzZGIwM2QxYjA2ZmVlOTlmYzU4NDBjMDM3ZDYxNzg1ODA5YzZlNyJ9"
+          "resource": "repo://README.md#L267-L268",
+          "version": "repo-lines-v1:sha256:71cd3d5b74cdd7858a8b72ed60da92ad97d3368957e7e00dfe7b38f63dbc9772:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDk2ZmQwYzMyNjE5Zjk2NmU4Zjg4YTlhYTNlZmE1Y2JhODRiNTY4NmFkMjRlZmY5YjRlMWRkOTA0OGM4YTlkMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzRiNGM1OWM1NmU3ZGZjNDJjZjJkZTdjNDkzZDE1NWYxNGIxZTgxODM1NGRkMmJkYjc2ODkzYmI2ZTcyNTQ4ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjdlZGRjYTRlOWM1NDczNmI0NjY4MzE2MTk1OGJmOWMzM2ZjMWVhNmE3ZmM5OTYwMGQyNWRmMDlmMjc2YjkxNyJ9"
         },
         {
           "resource": "repo://src/lib/cull.ts#L53-L80",
           "version": "repo-lines-v1:sha256:a4634d54f91b96d6235801b60d81a9ddb5e55eaeb02d787b13eb9fa95cb34772:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhY2JkNjMxOGJhMjVlN2ZiYWM5NDJiODBkOGFmNzBhZWY2ZmFlYjU0MzE3MzU2NjRmYzcwYjA3NmVhN2IwNDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1NjI2MzBmY2JlNmI3MGIxZTI3MWM4ODE1ZTU0NTI2YjUwYmQ3ZWNmM2I1YmY3ZmY3MTA2ODAwY2QxNzM2YzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkMDQwMzUxMGY4ZjNiNjEwODkxZDVmZmFhODAxM2UyZGM5M2ZjNDlhYjY0ZjIwNWY1ODU2ZGVmNGExZDI3ODYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRlYmQ1YmU2M2NlMTk5NDVmNDEwOWRiMzNmMjdkYTQ2NGVhNGFmODliNTRjODZkYTVjZjljMDc5YTEwYTExM2IifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_509c9cd78a074314a2a5019c04180765",
-      "statement": "check-thinking-steps clicks the images button only after its bounds have been identical for eight consecutive polls (settleBounds), instead of a fixed 600 ms wait, because a spring's tail moves a box by fractions of a pixel.",
-      "evidence": [
-        {
-          "resource": "repo://scripts/check-thinking-steps.tsx#L96-L112",
-          "version": "repo-lines-v1:sha256:0974b45dfde6b6b2c9d380b792b38dea8ee95b4fcfb6745f1711b8737c5b23b4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiMTY2ZWI4MWU2Y2I1YWQ3OWM1NzZlM2EwYjA5ZGNmMWFiYWIwMjc2NjllNmNjMDQ5M2FmYWMxNTE4NTM1Y2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlkYWEyODZkZTcwNTZjODRhNDZmNDEzZmI1YTgzYTIzODI1NDAwZDcxNmE1MmY5YTJmOWYzMjU5NmVhNjc2MDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZkYjE3NmEzYWZiZmMyYzNhMmM1YTllNDJiZjI1N2YzNzFkMmU3YzQzN2RmOGEwYWUwYWRhNWNhYTUzZGYwMTQifQ"
         }
       ]
     },
@@ -648,7 +642,7 @@
         },
         {
           "resource": "repo://drift/thinking-indicator.md",
-          "version": "repo-file-v1:sha256:12c350bbbf08503548fbacc183f866690f3d920d2835687c28a8dafb3f9030a7"
+          "version": "repo-file-v1:sha256:bbfd84954717449706b4cbb718456375e5b817e4103f7bfcba178404a758752b"
         },
         {
           "resource": "repo://src/components/thinking-indicator.tsx#L304-L336",
@@ -699,10 +693,50 @@
           "version": "repo-lines-v1:sha256:f7b4fbd0f88bab648ae79c338ef9a9b9bc3526fe26d92af6baeec889b4f3a66d:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTNmYzgxOWNhNzVlYzQzYTA3NDg3MzdlN2RhNjIyYmNlY2ZhYTE1ZTM2MWI0ZGQ1Yzc1NTUwMTdmNTMxNjQ5NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTgyMjQzMWQ3NGEwMWY3OWQ4ZTFiOTI3ZDBlY2JjZTYxZTc4Mjc3OTBkZmRlZTczOTM0N2VkMzcwYmI3NWJlZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmY1NTJjN2UzZDM2MWMyMjNmMjhhZTJhYzk1ZWUzZDgwOTA5NzFjYzY1NjExNWE4OTcyZmFkNGM1NjM0NWJlYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmNlZDAyM2U0MzI3ZWRkOWRhM2E5Y2NjNzk1ZGYwZTZlNWM1NWJhNThlNGIyYTQ0ZGJlOTQxZjYzNGQ3OTA3MiJ9"
         }
       ]
+    },
+    {
+      "id": "claim_1cd7b91b2d994eabbbcee6706b3ab08c",
+      "statement": "kit.still in check-kit waits until every given test id is painted and its bounds have not changed for 150 ms of wall-clock time; check-thinking-steps and check-weight-widths use it before clicking something a spring moved, replacing a poll count and fixed settles that a loaded machine could outrun.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-kit.tsx#L96-L117",
+          "version": "repo-lines-v1:sha256:0a2fd5faf4151356b2552832ada612ee38fa0c652b0a7125670380241c4090da:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1OGRiMWIwMmRkMzFiNGFkN2QwOTRjNDc3NzkyMWIxMzNmYWRkYTQ3YjUzMzU1NGE2MTk0MDIyNTQzZWRmNTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIyZjJmZjVmZWVjNjBmNTg3YzhmYWU0ZTg3ZjgwOWE2NjFjZmZlZDZiNDdhYWU1ZjZkNmEyNjUzYWE4OTUyZWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzMTFiYWQ3NDYyZjNmNDNiOTVhMWFkZGUzZTcyOTkzMmU4MmU5MDcwZGQwZGNjZmUyZTBjYTY0YTJjNzU5YjIifQ"
+        },
+        {
+          "resource": "repo://scripts/check-thinking-steps.tsx#L96-L99",
+          "version": "repo-lines-v1:sha256:f69e66dd8e55c6be365125617cf08d48ea923a09cafc28ead07b49948c5bccf0:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWExZDFhNjMzOTAyMjljNzk4MzQ3ZTgzYTA0MDU0NDFjOTQwMDAzNTI4NGFkMTY4YzFiZjZjZGYxZDcwYTM3MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWIxNjZlYjgxZTZjYjVhZDc5YzU3NmUzYTBiMDlkY2YxYWJhYjAyNzY2OWU2Y2MwNDkzYWZhYzE1MTg1MzVjYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWRhYTI4NmRlNzA1NmM4NGE0NmY0MTNmYjVhODNhMjM4MjU0MDBkNzE2YTUyZjlhMmY5ZjMyNTk2ZWE2NzYwMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmRiMTc2YTNhZmJmYzJjM2EyYzVhOWU0MmJmMjU3ZjM3MWQyZTdjNDM3ZGY4YTBhZTBhZGE1Y2FhNTNkZjAxNCJ9"
+        },
+        {
+          "resource": "repo://scripts/check-weight-widths.tsx#L405-L414",
+          "version": "repo-lines-v1:sha256:6a00ce12a6a09653500d65751a036575b514c4d7ca38245c6e31bed3b5833888:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0MTJkYmE1OTQ0NDE2OWEyNzRmZmNhMzlkZjQ1Yjk1OTAxZjllMTEwNjc2MTZkNTA1OWZhYjc5OTVlMTA1ZjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYzgxMjFkZDhlMDZkMjQ5NGQ5MGE4ZWRiYjQzM2I4YjE0N2Y0OWE5NWUxYzYxODIyMGQ2ZDBiYzYyYmY4OTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4ZDQ1YWYzYzY4MjQzODZkMTFjNmI1MjRiNjMzMDA1OTQ3ZGMwMGUyZmM1MjNkMmM5YmM4MWQzYmU2Yjg3ZjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyODg1MTZhYjlkM2QwMTFlZTQ4ZDQ4YmE3OGFiZTE5YTU3NWQ4ZDYyNzQ0NWQ1ZDJmZDQwYjY2NjcwYjRlN2QifQ"
+        },
+        {
+          "resource": "repo://scripts/check-weight-widths.tsx#L535-L538",
+          "version": "repo-lines-v1:sha256:f64e8e2ef4e465ce7f21e488a03ad0766f9ff13e28b2a4a3ff05bffd0bef48c4:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWJhMGMwNTliZDhkMmQyZjM5NzYyZGE3M2U0NzJhMmI2YmEzMzI1MGY0ZTcyMDMyZjY5YzBkNmE4MDEyZGVlNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2MzYTIwNzc0ZDVjMmJiNGM3OTBjMTg4OTBhOWM0OTRjY2I1MTBmYzhlOGMwOWVjNzQ1MTliYzE2NGZjNzg0YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTUyZTZmNzViZjM0MjBjYjBmZTIxZDUyNmVjOTE0MzFmN2RhNjRmNDk4MDg5MmY3NGFjMmVhNDA3ZjFmOGU5NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjFiNDgyMjFhNGVkM2EyMzQ5NDM5ZjNhNGJjZjg1MDQ3ZjBhNzRmOTVlOTdkYWE5OTBjNDJkZGFlY2E1N2UzYiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_fd2679ddca5f4696bf91cd67b1a115bc",
+      "statement": "The port keeps createCulling although gpuix 511bebab adds contentVisibility 'auto': its margin is fixed at 150% of the viewport where the port culls at 25%, an unmeasured region has no scroll anchoring, and its containment clips overflowing shadows and focus rings.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L278-L278",
+          "version": "repo-lines-v1:sha256:9feb1cb6f004b55f1257dd75bfea8d301c18f77bcbbd5ec79d4e0dfdaece49d4:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZlYjFjYjZmMDA0YjU1ZjEyNTdkZDc1YmZlYThkMzAxYzE4Zjc3YmNiYmQ1ZWM3OWQ0ZTBkZmRhZWNlNDlkNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZlYjFjYjZmMDA0YjU1ZjEyNTdkZDc1YmZlYThkMzAxYzE4Zjc3YmNiYmQ1ZWM3OWQ0ZTBkZmRhZWNlNDlkNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTMxYzhkMjgzODdjOTg1MzllMzU3NTRlNmY1ZjQ5ZWFjMjY4OTJmYmY4YmRjZTEwOTgzZTMyOGVjNzI3M2NmNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTgxNjIzN2ViNjljZDlhYzEyNjZiMjE5NTdmZjMzNDljMTQ0MTYyN2JjM2I1OWRkMmMwNGYyZmEyY2MwY2RiYyJ9"
+        },
+        {
+          "resource": "repo://drift/command-menu.md#L154-L154",
+          "version": "repo-lines-v1:sha256:ea25e3308b5092c9fb566a504cbca7dd38aca8d702d11d5626e16eb4d7cfcc78:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWEyNWUzMzA4YjUwOTJjOWZiNTY2YTUwNGNiY2E3ZGQzOGFjYThkNzAyZDExZDU2MjZlMTZlYjRkN2NmY2M3OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWEyNWUzMzA4YjUwOTJjOWZiNTY2YTUwNGNiY2E3ZGQzOGFjYThkNzAyZDExZDU2MjZlMTZlYjRkN2NmY2M3OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGJhMjIyYjhhMGVlMGZlMjRkZWQ2YTdjMDdlNTkxMzA3YzExYTU4ZDU3Yzg5YTc3Yzc1NGVjZjAyYjIwMGRjYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzEyOTc4OTVkMzRhMjliYzg4MTYyZTc1YTkxZjNhMDBlMDBhODY5Mjc2ZTk2MzViZDg0YjVjMGMxMTQ4ZTE4MyJ9"
+        },
+        {
+          "resource": "repo://src/lib/cull.ts#L35-L35",
+          "version": "repo-lines-v1:sha256:b2cd73f12c52e63e44aa1b7be12a06efd2b58e84808d34bbae401b7ae697c535:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjJjZDczZjEyYzUyZTYzZTQ0YWExYjdiZTEyYTA2ZWZkMmI1OGU4NDgwOGQzNGJiYWU0MDFiN2FlNjk3YzUzNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjJjZDczZjEyYzUyZTYzZTQ0YWExYjdiZTEyYTA2ZWZkMmI1OGU4NDgwOGQzNGJiYWU0MDFiN2FlNjk3YzUzNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDY1MmJmNzg3YTE4YzdiYzcyOWVlZmViZmY1NTc1MDllMDJjNzMzM2ZkNmYxNmFkNzZkNTNiY2ZkNDhhYzhlNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDQ1NGE0OTI4OGZlYmQ2YzMzOWNkOTJiZWVhOWQ4OTFjM2UwY2E2OTE1NjhmNzkxMGRkN2VmZmMzNTVkMzdjNyJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-21T19:54:58.782Z"
+    "at": "2026-10-21T21:17:32.636Z"
   }
 }

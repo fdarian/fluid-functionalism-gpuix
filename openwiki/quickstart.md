@@ -12,10 +12,10 @@ sources:
     resource: repo://scripts/perf-page-switch.tsx
   - id: openwiki-source-923ee25729d055f35a254df3
     resource: repo://src/components/command-menu.tsx
-generated: { by: "claude-code", at: "2026-10-21T19:54:58.782Z" }
+generated: { by: "claude-code", at: "2026-10-21T21:21:19.052Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T19:54:58.782Z
+    at: 2026-10-21T21:21:19.052Z
 ---
 
 # Quickstart
@@ -39,7 +39,7 @@ the repository docs do not: reasons, decisions and history. For mechanics, go to
 | Change how the compiled binary is built (bunfig autoload, the native addon plugin, shipped image sizes) | [Port decisions, the compiled binary](decisions/port-decisions.md#the-compiled-binary-choices-that-only-show-up-outside-bun-srcmaintsx) |
 | Check whether a behaviour (popup focus, motion, scope) is settled before changing it | [User decisions of 2026-10-16](decisions/user-decisions-2026-10-16.md) |
 | Work around a gpuix limitation, or report one to the fork | [gpuix gaps and divergence rounds](gpuix/gaps-and-divergence-rounds.md), then the README gap rows |
-| Migrate to a newer gpuix `poc` | [gpuix gaps and divergence rounds, Round 14b on `f993d9b9`](gpuix/gaps-and-divergence-rounds.md#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22) for the latest, [Round 13a on `f7b62f11`](gpuix/gaps-and-divergence-rounds.md#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21), [Round 12 on `196d69ce`](gpuix/gaps-and-divergence-rounds.md#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), the [`83bab5a7` adoption](gpuix/gaps-and-divergence-rounds.md#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), the [`b03d4e27` adoption](gpuix/gaps-and-divergence-rounds.md#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), the [native-animation round](gpuix/gaps-and-divergence-rounds.md#native-animation-round-on-poc-5fda771a-2026-10-19), the [Round 6 pass](gpuix/gaps-and-divergence-rounds.md#round-6-adoption-pass-2026-10-18) and the [2026-10-17 pass](gpuix/gaps-and-divergence-rounds.md#adoption-pass-2026-10-17): how they went and their pitfalls |
+| Migrate to a newer gpuix `poc` | [gpuix gaps and divergence rounds, Round 13b on `511bebab`](gpuix/gaps-and-divergence-rounds.md#round-13b-adoption-on-poc-511bebab-2026-10-22) for the latest, [Round 14b on `f993d9b9`](gpuix/gaps-and-divergence-rounds.md#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22), [Round 13a on `f7b62f11`](gpuix/gaps-and-divergence-rounds.md#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21), [Round 12 on `196d69ce`](gpuix/gaps-and-divergence-rounds.md#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), the [`83bab5a7` adoption](gpuix/gaps-and-divergence-rounds.md#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), the [`b03d4e27` adoption](gpuix/gaps-and-divergence-rounds.md#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), the [native-animation round](gpuix/gaps-and-divergence-rounds.md#native-animation-round-on-poc-5fda771a-2026-10-19), the [Round 6 pass](gpuix/gaps-and-divergence-rounds.md#round-6-adoption-pass-2026-10-18) and the [2026-10-17 pass](gpuix/gaps-and-divergence-rounds.md#adoption-pass-2026-10-17): how they went and their pitfalls |
 | Change keyboard, selection, focus or ARIA behaviour | [Base UI extraction](history/base-ui-extraction.md), then `../base-ui-solid-gpuix` and its `BASE-UI-AUDIT.md` |
 | Record where the port differs from the source | [`drift/_TEMPLATE.md`](../drift/_TEMPLATE.md); the convention's reasons are in [Port decisions](decisions/port-decisions.md#drift-and-its-cause-values). `bun scripts/drift-counts.ts` prints the README count table |
 | Find what is still open before publishing | [Base UI extraction, Open follow-ups](history/base-ui-extraction.md#open-follow-ups) |
