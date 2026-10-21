@@ -93,6 +93,28 @@ export async function createCheck(
 		}
 	}
 
+	/** Waits until every test id is painted and its bounds have not changed for `stillMs`, since a spring moves a box by fractions of a pixel through its tail and a click at its centre can miss. */
+	async function still(testIds: string[], what: string, stillMs = 150) {
+		let previous = '';
+		let since = performance.now();
+		await until(() => {
+			const key = JSON.stringify(
+				testIds.map((testId) => {
+					const found = renderer.findByTestId(testId);
+					return found === undefined
+						? null
+						: renderer.getElementBounds(found.id);
+				}),
+			);
+			const now = performance.now();
+			if (key !== previous) {
+				previous = key;
+				since = now;
+			}
+			return !key.includes('null') && now - since >= stillMs;
+		}, `${what} to stop moving`);
+	}
+
 	function element(testId: string) {
 		const found = renderer.findByTestId(testId);
 		if (found === undefined)
@@ -225,6 +247,7 @@ export async function createCheck(
 		settle,
 		step,
 		until,
+		still,
 		element,
 		bounds,
 		center,

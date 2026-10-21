@@ -199,7 +199,7 @@ type Box = { x: number; y: number; width: number; height: number };
 type Step = {
 	name: string;
 	/** Runs before the labels are read: scroll, hover, open a popup. */
-	prepare?: (kit: Kit) => Promise<void>;
+	prepare?: (kit: Kit, scenario: Scenario) => Promise<void>;
 	/** Runs once, synchronously, so the first sampled frame is the first frame of the change. */
 	act: (kit: Kit) => void;
 };
@@ -399,12 +399,17 @@ async function reveal(
 function clickStep(testId: string, scrollAt = { x: 700, y: 400 }): Step {
 	return {
 		name: `click ${testId}`,
-		prepare: async (kit) => {
+		prepare: async (kit, scenario) => {
 			await reveal(kit, testId, scrollAt);
 			const point = kit.center(testId);
 			kit.renderer.nativeSimulateMouseMove(point.x - 1, point.y);
 			kit.renderer.nativeSimulateMouseMove(point.x, point.y);
 			await kit.settle(250);
+			// The settle is wall-clock: a loaded machine runs fewer frames in it, so a popup or row can still be moving when the click lands.
+			await kit.still(
+				scenario.anchor === undefined ? [testId] : [testId, scenario.anchor],
+				`${testId} and its anchor`,
+			);
 		},
 		act: (kit) => {
 			const point = kit.center(testId);
@@ -433,7 +438,7 @@ function boundsOf(tree: Tree) {
 }
 
 async function runStep(kit: Kit, scenario: Scenario, step: Step) {
-	await step.prepare?.(kit);
+	await step.prepare?.(kit, scenario);
 	const before = readTree(kit);
 	const labels = findLabels(kit, before, scenario.watch);
 	const heavyBefore = labels.map((label) => isHeavy(kit, before, label));
@@ -497,7 +502,12 @@ async function runStep(kit: Kit, scenario: Scenario, step: Step) {
 			}
 		}
 	});
-	const detail = `${labels.length} labels read, ${toHeavy} went heavy, ${toLight} went light, ${frames.length} frames`;
+	const unreadAfter = again.filter((now) => now === null).length;
+	const anchorState =
+		anchorId === undefined
+			? 'no anchor'
+			: `anchor ${frames.at(-1)?.has(anchorId) ? 'present' : 'gone'} in the last frame`;
+	const detail = `${labels.length} labels read, ${toHeavy} went heavy, ${toLight} went light, ${frames.length} frames; ${unreadAfter} unreadable at frame ${READ_AGAIN_AT}, ${anchorState}`;
 	kit.check(
 		`${scenario.name}: ${step.name} moves nothing`,
 		violations.size === 0 && toHeavy + toLight > 0,
@@ -523,8 +533,8 @@ const popupStep =
 	(open: string, then: string): ((kit: Kit) => Promise<void>) =>
 	async (kit) => {
 		await kit.click(open);
-		await kit.settle(400);
-		if (!kit.exists(then)) throw new Error(`${open} did not open ${then}`);
+		// Bounds stillness replaces a fixed settle: items open on a spring, and the weight change on hover resizes labels, which shows in the bounds too.
+		await kit.still([then], `${then} after opening ${open}`);
 	};
 
 /** Labels whose normal copy is as wide as or wider than the semibold one, so the semibold-only ghost would shrink them. */
