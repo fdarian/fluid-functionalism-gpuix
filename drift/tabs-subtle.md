@@ -53,3 +53,12 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 - **Workaround:** none.
 - **Fidelity:** dropped (docs furniture), approximated (spacing).
 - **Components it hits:** every demo.
+
+## Unfolding label: clip box and baseline set outright, not from the button's strut
+
+- **Cause:** `gpuix gap` (a trimmed `inline-grid` label is seated about 6px above Chrome's baseline in a block with a strut; the README "Bugs" row for the unfolding label) and the authored-length rounding row of the same table.
+- **Original:** the `motion.span.overflow-hidden` is a block holding the `inline-grid` label, so its line box takes the button's strut (16px / 24px): the clip is 24px tall and the label's baseline is 18px down, so the cap box of the 13px label starts 8.55px below the clip top (14.55-24.00 inside the 36px tab) and the descender of "Teamspaces" shows (`registry/base/tabs-subtle.tsx:392`).
+- **Port:** the clip is `height: 24` with the label offset by `marginTop` (`labelTop`: 8.55 default, 9.27 compact, which is 18 minus the cap height), because a block with `fontSize: 16, lineHeight: '24px'` gave the 24px clip but put the cap top 3px below it. gpuix rounds the authored 8.55 to 9: the cap box lands at 15.00-24.16 inside the tab (Chrome 14.55-24.00), compact at 11.00-19.45 (Chrome 11.27-20.00) (`src/components/tabs-subtle.tsx:66-72`, `:376-392`). The plain rows are unchanged (cap box 13.42-22.58; Chrome puts the unfolded label's baseline 1.28px below theirs, the port 1.58px).
+- **Workaround:** the explicit height and offset above.
+- **Fidelity:** approximated (the label sits up to 0.45px low at the top edge and 0.16px low at the baseline, 0.55px high compact; the full descender shows).
+- **Components it hits:** just this one.

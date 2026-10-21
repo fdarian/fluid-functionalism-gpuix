@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 532 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 533 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -226,13 +226,13 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [surfaces](drift/surfaces.md) | 2 | 3 | 4 | 3 | 12 |
 | [switch](drift/switch.md) | 1 | 1 | 2 | 1 | 5 |
 | [table](drift/table.md) | 2 | 1 | 3 | 0 | 6 |
-| [tabs-subtle](drift/tabs-subtle.md) | 0 | 3 | 2 | 0 | 5 |
+| [tabs-subtle](drift/tabs-subtle.md) | 1 | 3 | 2 | 0 | 6 |
 | [tabs](drift/tabs.md) | 0 | 2 | 2 | 0 | 4 |
 | [thinking-indicator](drift/thinking-indicator.md) | 2 | 2 | 1 | 0 | 5 |
 | [thinking-steps](drift/thinking-steps.md) | 4 | 4 | 5 | 0 | 13 |
 | [tooltip](drift/tooltip.md) | 1 | 5 | 1 | 1 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **86** | **205** | **191** | **50** | **532** |
+| **Total** | **87** | **205** | **191** | **50** | **533** |
 
 ### gpuix gaps across components
 
@@ -258,6 +258,7 @@ offer it. A count is given only where the code shows it.
 | the compiled binary (`pnpm build`) | `@gpuix/native`'s ESM entry loads the `.node` addon through `createRequire(import.meta.url)`, which `bun build --compile` does not follow: the binary fails with "Cannot find native binding". Its CJS entry uses a plain `require`, which Bun embeds | `nativeCjsPlugin` in `scripts/build.ts` resolves `@gpuix/native` to `index.cjs` |
 | every native loop on a page with many nodes: thinking-indicator, thinking-steps, file-thumbnail, carousel-dots, and the showcase, fluid-hover and changelog pages that run one | A looping native animation costs the whole page per tick (gpuix "per-replayed-root cost"): `~/.claude/notes/ff-gpuix-repros/r7-frame-loop-starves-timers.tsx` with one looping colour keyframe on one text takes 7 ms a tick on 3000 nodes and about 60 ms on 12000, against 0.1 ms with nothing animating. Timers still run between those ticks (9-10 callbacks a second at 3000 nodes, 7-8 at 12000; gpuix #56), but a page with a running loop idles at 37-45% CPU (carousel-dots, file-thumbnail, thinking-indicator, thinking-steps, queued-stack, showcase, fluid-hover, changelog) | none: the loops are native, and the off-screen ones pause through culling |
 | every fluid-hover list (the table's highlight, `drift/table.md`) | gpuix rounds an authored length (inset, padding, size) to a whole device pixel, half toward zero, where Chrome lays out fractional px: `top: 110.5` lands at 110 (`zed/crates/gpui/src/taffy.rs:2250-2257`, `:2330-2334`, `round_to_device_pixel` at `zed/crates/gpui/src/util.rs:130-142`). The rects gpuix reports are fractional (basic-table rows sit at .5 px under collapsed borders), so a highlight that glided to a measured rect ended 0.5 px off its row | The fluid highlight measures like the source's `offsetTop` / `offsetWidth`, rounded integers (`toOffsetRect`, `src/lib/fluid-hover.ts:19-27`); other authored fractions are not corrected |
+| tabs-subtle (the unfolding label, `drift/tabs-subtle.md`) | A trimmed (`textBox: trim-both cap alphabetic`) `inline-grid` label in a block with a 16px / 24px strut sits 5.55px above where Chrome puts it (cap top 3px under the block's top; Chrome 8.55px). The block's own line box is the right 24px | The clip box is `height: 24` and the label is offset by `marginTop` (`labelTop`), which gpuix then rounds like any authored length |
 
 #### Missing features
 
