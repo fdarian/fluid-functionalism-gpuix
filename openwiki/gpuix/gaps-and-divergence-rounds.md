@@ -20,6 +20,8 @@ sources:
     resource: repo://scripts/check-command-menu.tsx
   - id: openwiki-source-fac7a3f3768fe057d1557909
     resource: repo://scripts/check-kit.tsx
+  - id: openwiki-source-5838b94eb489d7c269600dc3
+    resource: repo://scripts/check-tabs-subtle.tsx
   - id: openwiki-source-f870e66b983ce90f21118b51
     resource: repo://scripts/drift-counts.ts
   - id: openwiki-source-edfff899d93ec8844d1b24df
@@ -66,10 +68,12 @@ sources:
     resource: repo://src/pages/changelog/entry.tsx
   - id: openwiki-source-805db717791883f12f02d567
     resource: repo://src/pages/changelog/release-spy.ts
-generated: { by: "claude-code", at: "2026-10-21T06:46:50.862Z" }
+  - id: openwiki-source-872f10458af3aae905a0ee5a
+    resource: repo://src/pages/fluid-hover/plain-vs-fluid.tsx
+generated: { by: "claude-code", at: "2026-10-21T08:39:13.075Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T06:46:50.862Z
+    at: 2026-10-21T08:39:13.075Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -102,7 +106,7 @@ link to those rows rather than repeating them. The ones that shape the most code
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
 The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17) and again in the
-[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `b03d4e27` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); see the [`b03d4e27` adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21)). The bugs and gaps worth knowing before touching layout code:
+[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `83bab5a7` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), and `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21)). The bugs and gaps worth knowing before touching layout code:
 
 - A function-form `createTransform` of several motion values is computed in JS and can trail its inputs by a frame
   on a live window (not seen on the test renderer). `calc()` strings of the row's own width avoid it where the layer
@@ -115,13 +119,15 @@ The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adopt
 - A sticky box ignores the scroller's padding when it pins. At rest gpuix agrees with Chrome; after a scroll it pins at
   the scrollport edge where Chrome holds it at the padding edge, so the dropdown search field cannot sit in a padded
   scroller (the margin is not the cause; re-measured on 2026-10-19, it replaced an earlier "negative margin" reading).
-- gpuix rounds an authored length (inset, padding, size) to a whole device pixel, half toward zero, where Chrome lays
-  out fractional px (`top: 110.5` lands at 110), while the rects it reports have been fractional (1/64 px) since
-  `b03d4e27`: `getBoundingClientRect`, `ResizeObserver`, `IntersectionObserver` and `onLayout`; `client*` and
-  `scroll*` stay integers. A highlight or any element positioned from a measured rect can therefore sit up to 0.5 px
-  off what was measured. The port corrects only the fluid highlight, by rounding rects like the source's `offset*`
-  reads. The older whole-pixel snapping of every JS bounds read (#45) is gone, so a check can read a fractional box
-  and no longer needs a scale-up to see sub-pixel differences.
+- Rects and authored lengths are both fractional now. Since `b03d4e27`, `getBoundingClientRect`, `ResizeObserver`,
+  `IntersectionObserver` and `onLayout` return 1/64 px values (`client*` and `scroll*` stay integers), and since
+  `83bab5a7` an authored inset, padding or size keeps its fraction (`top: 110.5` lands at 110.5) where it used to round
+  to a whole device pixel, half toward zero. A highlight placed from a measured rect therefore no longer lands off
+  what was measured. The fluid highlight still rounds rects, now only to match the source's `offset*` reads, which are
+  integers and which gpuix does not have. The older whole-pixel snapping of every JS bounds read (#45) is gone, so a
+  check can read a fractional box and no longer needs a scale-up to see sub-pixel differences. One residue of
+  placement: gpuix puts an atomic inline (tabs-subtle's `inline-grid` label) at a whole device pixel, up to half a
+  pixel off Chrome, and reads the cap height as 0.704em where Chrome has 0.727em.
 - A looping native animation replays the whole page every tick, so it is cheap only on light pages (7 ms a tick at
   3000 nodes, about 60 ms at 12000): see the [`b03d4e27` adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21).
 - Flex `order` is ignored inside an `@container` block, and Tab follows the painted order under `order` where Chrome
@@ -157,9 +163,10 @@ The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adopt
   `:has(.x)` selector nor a parent state that styles its children.
 
 Earlier entries here were closed and should not be re-reported: a `width: 100%` child under a `fit-content` parent
-filling the column and a percentage `maxWidth` not clamping a `fit-content` box (`20a0c327`); and, on `b03d4e27`, the
+filling the column and a percentage `maxWidth` not clamping a `fit-content` box (`20a0c327`); on `b03d4e27`, the
 cap-trimmed label that tabs and tabs-subtle centre sitting a pixel off Chrome's at 1x (gpuix #44), whose two drift
-entries were removed.
+entries were removed; and on `83bab5a7`, the authored-length rounding, a trimmed `inline-grid` label in a block with a
+strut sitting about 5.5 px high, and the missing pause/play on a motion value's animation.
 
 ## How a round works
 
@@ -465,9 +472,9 @@ and the remaining limits are narrower.
   the list of remaining `onFrame` users are in
   [Port decisions](../decisions/port-decisions.md#js-frame-clock-loops-moved-to-gpuix-native-animation).
 - **What gpuix still lacks for this** (recorded in the drift entries, README gap rows pointing at them):
-  - **Pause, play and seek on an animation.** Only `stop()`, `cancel()` and `complete()` exist, so a pause is
-    `stop()` plus a new `animate()` from the current value; exact only when the animation is linear (the cursor
-    keeps its easing in a `createTransform` of a linear progress value for that reason).
+  - **Pause, play and seek on an animation** (closed on `83bab5a7`). Only `stop()`, `cancel()` and `complete()`
+    existed, so a pause was `stop()` plus a new `animate()` from the current value; exact only when the animation was
+    linear (the cursor kept its easing in a `createTransform` of a linear progress value for that reason).
   - **`background-position` is not animatable**, so the shimmer is per-letter colour keyframes sampled from the
     gradient's cycle: stepped per letter, with no kerning between letters, and positioned by letter count rather
     than glyph advance (`drift/thinking-indicator.md`). Spinning and chevron turns still need a transform, which
@@ -514,7 +521,7 @@ Chrome (`client*` and `scroll*` stay integers), so code and checks written for w
 Most of the round is re-testing workarounds and deleting the ones that stopped being true; drift went from 538
 entries to 532.
 
-- **Rects are fractional, but authored lengths are still rounded.** gpuix lays out an authored inset, padding or size
+- **Rects are fractional, but authored lengths are still rounded** (true on `b03d4e27`; closed on `83bab5a7`, below). gpuix lays out an authored inset, padding or size
   on a whole device pixel (half toward zero), so a highlight placed from a measured fractional rect ends up to
   0.5 px off its row. The fluid highlight now rounds each measured rect to integers like the source's `offset*` reads
   and the table's highlight rests on the row's `offsetTop`; `check-reduced-motion` compares against that, and
@@ -523,7 +530,7 @@ entries to 532.
 - **Closed upstream and removed here**: the cap-trimmed label baseline (tabs, tabs-subtle drift entries and the README
   row), the per-edge snapping of bounds reads, timers starving behind a native loop (gpuix #56), and the layout pass on
   a bounds read after a paint-only write (#47). The README's "gaps as of" paragraph lists them as gone.
-- **New, found while closing the baseline gap: a trimmed inline-grid in a line box still sits high.** The closed gap
+- **New on `b03d4e27`, closed on `83bab5a7`: a trimmed inline-grid in a line box still sits high.** The closed gap
   was the cap-trimmed label centred in a flex box. A `textBox: trim-both cap alphabetic` `inline-grid` label inside a
   block that has a 16 px / 24 px strut is seated about 5.55 px above Chrome (cap top 3 px under the block's top, Chrome
   8.55 px), although the block's own line box is the right 24 px. tabs-subtle's unfolding label is the only place hit,
@@ -549,9 +556,9 @@ entries to 532.
   cross became native draws. Their drift entries closed (button 9 to 8, input-copy 10 to 8) apart from input-copy's
   scale-in; the file-thumbnail spinner remains a sliding dash because its only gap is the rotate transform. See
   [Port decisions, native animation](../decisions/port-decisions.md#js-frame-clock-loops-moved-to-gpuix-native-animation).
-- **Pause on a motion value's animation** is restated precisely: `getAnimations()` covers CSS `animation` and
-  `transition` runs only, not `motion.*` or motion values, so the `stop()` plus new `animate()` workaround stays for
-  the carousel fill and the plain-vs-fluid cursor.
+- **Pause on a motion value's animation** was restated precisely: `getAnimations()` covers CSS `animation` and
+  `transition` runs only, not `motion.*` or motion values, so the `stop()` plus new `animate()` workaround stayed for
+  the carousel fill and the plain-vs-fluid cursor (until `83bab5a7`, below).
 - **`check-weight-widths` measures at 13 px** with fractional bounds and a 0.03 px parity tolerance, no longer at 130 px
   divided by 10.
 
@@ -559,6 +566,36 @@ Pitfall carried over from this round: the culling, ghost and bounds-read numbers
 another. They moved between `e5231304`, `5fda771a` and `b03d4e27` for reasons on gpuix's side (retention,
 re-measurement of hidden labels, layout passes on reads), so re-measure on the pin you are on before keeping or
 deleting a workaround.
+
+## Authored lengths and playback controls on `poc` `83bab5a7` (2026-10-21)
+
+The README now names `83bab5a7` as the minimum fork. Three changes on the gpuix side, each retiring something the
+`b03d4e27` round had to keep. The drift total stayed at 541: the tabs-subtle entry changed shape rather than closing,
+and the carousel-dots and fluid-hover entries lost a clause, not a section.
+
+- **An authored length keeps its fraction.** `top: 110.5` lands at 110.5, so the README's "authored lengths are
+  rounded" bug row is gone. The fluid highlight's `toOffsetRect` still rounds, but its comment now says why correctly:
+  the source reads integer `offset*` values and gpuix has no `offset*`, not that gpuix rounds on layout. Do not remove
+  the rounding when adopting this pin; it is parity with the source. Reasoning:
+  [Port decisions, fluid hover](../decisions/port-decisions.md#fluid-hover-one-highlight-nearest-row-sessions).
+- **A trimmed `inline-grid` in a strut block sits on the baseline.** tabs-subtle dropped the `height: 24` clip and the
+  authored `labelTop` offset for the source's `fontSize: 16, lineHeight: '24px'` block. What remains is half a device
+  pixel of atomic-inline placement and a 0.28 px cap-height metric difference (gpuix 0.704em, Chrome 0.727em), recorded
+  as a drift entry that was rewritten, not deleted. The README "Bugs" row for it is gone. `check-tabs-subtle` pins the
+  baseline within 0.5 px of Chrome's and compares no cap box. See
+  [Port decisions, drift/](../decisions/port-decisions.md#drift-and-its-cause-values).
+- **`animate()` on a motion value returns playback controls, and `finished` means finished.** The controls are
+  Motion's: `pause()`, `play()`, `stop()`, `cancel()`, `time`, `speed`, `state`. `finished` now resolves only when the
+  animation finishes or `complete()`s, never on `stop()` or on being replaced. Two ports changed: plain-vs-fluid's
+  cursor is again the source's single repeating `animate()` paused and played in place (its linear progress value and
+  range-form `createTransform` are gone, and the README pause row with them), and carousel-dots dropped the `current`
+  flag and the fill-reached-1 check that guarded against `finished` resolving on a stop. The carousel fill still
+  stops and restarts on pause, by choice: one effect restarts and plays it (the ordering trap is in
+  [Port decisions](../decisions/port-decisions.md#js-frame-clock-loops-moved-to-gpuix-native-animation)).
+- **Verification gotcha that fractional lengths exposed.** A fixed wait after a scroll is not enough before a click on
+  something a spring just moved, because the tail of a spring moves the box by fractions of a pixel; `check-thinking-steps`
+  now waits for the button's bounds to hold still for eight polls.
+- **Screenshots were recaptured on the pin**, by page group, in four commits; most files changed by a few bytes.
 
 ## Scroll-write and first-layout rows (2026-10-21, repros r10 and r11)
 

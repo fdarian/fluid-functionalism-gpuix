@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:147e7411e30b9abf3b7eed39b5406b071f332ebb4dad4c6824ec41843c47b06d",
+  "pageVersion": "sha256:6314d09760a48c948281258d467f185c2ff645b4d3788366ab33738341d5fa4b",
   "claims": [
     {
       "id": "claim_b925fe22d5a74d5388447aa34ff4d2fd",
@@ -55,10 +55,20 @@
           "version": "repo-lines-v1:sha256:e290bbffa19d949aa8ae757d7dbd57a8a89b5189877ab798f2a396b39513ee6e:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTI5MGJiZmZhMTlkOTQ5YWE4YWU3NTdkN2RiZDU3YThhODliNTE4OTg3N2FiNzk4ZjJhMzk2YjM5NTEzZWU2ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTI5MGJiZmZhMTlkOTQ5YWE4YWU3NTdkN2RiZDU3YThhODliNTE4OTg3N2FiNzk4ZjJhMzk2YjM5NTEzZWU2ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTEzNWQ0NWQ1ZTg5MjgzMTFkNmYzZThjNDk4MmYxNWMxYjU0ZDc3MmNhMWRkNzFmZDgwM2Q1YzNjMDFjMzlmMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTk5NmQ2N2Q1NTI3ZDIzNDQwNmZhYmM5OWViNjEzNDBlY2YyM2NmNTBiNGFlZmE2YmYwNDJjMzc1ZDUwNzhlNSJ9"
         }
       ]
+    },
+    {
+      "id": "claim_bf9248ea483340bf9ac1009bd4651780",
+      "statement": "The README names gpuix poc 83bab5a7 as the minimum fork, where authored lengths keep their fraction and animate() on a motion value returns playback controls (pause, play, stop, cancel) with finished resolving only on finish or complete.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L52-L52",
+          "version": "repo-lines-v1:sha256:ae5e6aa8bfa47eafe8a7f611a1e446ed773301372cb867a9a1c69b05079bd9e8:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWU1ZTZhYThiZmE0N2VhZmU4YTdmNjExYTFlNDQ2ZWQ3NzMzMDEzNzJjYjg2N2E5YTFjNjliMDUwNzliZDllOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWU1ZTZhYThiZmE0N2VhZmU4YTdmNjExYTFlNDQ2ZWQ3NzMzMDEzNzJjYjg2N2E5YTFjNjliMDUwNzliZDllOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-21T03:34:45.604Z"
+    "at": "2026-10-21T08:39:13.075Z"
   }
 }

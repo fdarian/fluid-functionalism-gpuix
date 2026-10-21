@@ -12,10 +12,10 @@ sources:
     resource: repo://THIRD_PARTY_NOTICES.md
   - id: openwiki-source-ff18555ad70362de0f452788
     resource: repo://UPSTREAM.md
-generated: { by: "claude-code", at: "2026-10-21T03:34:45.604Z" }
+generated: { by: "claude-code", at: "2026-10-21T08:39:13.075Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T03:34:45.604Z
+    at: 2026-10-21T08:39:13.075Z
 ---
 
 # Project overview
@@ -85,3 +85,4 @@ All three must resolve to one `solid-js` and one `@gpuix/solid`; see
 | 2026-10-19 | Pinned to gpuix `poc` `e5231304`; perf follow-up: culling and the cached fluid-hover box kept on measurement (the cache was dropped on 2026-10-21), the changelog's `width: 100%` wrappers removed ([details](../gpuix/gaps-and-divergence-rounds.md#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19)) |
 | 2026-10-19 | Pinned to gpuix `poc` `5fda771a`; JS frame-clock loops (spinner, thinking indicator, carousel fill, scripted cursors) moved to native animation, `StableLabel` back to two ghosts, `check:scenarios` lists all failures ([details](../gpuix/gaps-and-divergence-rounds.md#native-animation-round-on-poc-5fda771a-2026-10-19)) |
 | 2026-10-21 | Pinned to gpuix `poc` `b03d4e27`: fractional rects, fluid-hover rects rounded like the source's `offset*` reads and no container-box cache, culling kept on a re-run, the second `StableLabel` ghost within noise, native SVG stroke draws for the button spinner, menu-item check and input-copy; drift 538 to 532 ([details](../gpuix/gaps-and-divergence-rounds.md#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21)) |
+| 2026-10-21 | Pinned to gpuix `poc` `83bab5a7`: authored lengths keep their fraction (the rounding gap row closed), `animate()` on a motion value returns playback controls so plain-vs-fluid is one paused-and-played animation again, `finished` resolves only on finish, tabs-subtle's unfolding label back on the source's strut block; drift stays at 541 ([details](../gpuix/gaps-and-divergence-rounds.md#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21)) |

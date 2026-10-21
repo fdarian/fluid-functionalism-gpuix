@@ -5,7 +5,7 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T06:46:50.862Z
+    at: 2026-10-21T08:39:13.075Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -37,6 +37,10 @@ sources:
     resource: repo://scripts/check-site-nav.tsx
   - id: openwiki-source-3566a6dff8417d81a41732b9
     resource: repo://scripts/check-table.tsx
+  - id: openwiki-source-5838b94eb489d7c269600dc3
+    resource: repo://scripts/check-tabs-subtle.tsx
+  - id: openwiki-source-a93024d63a83cb5fbe6445a2
+    resource: repo://scripts/check-thinking-steps.tsx
   - id: openwiki-source-819b237d6ed6e51fbd2028b9
     resource: repo://scripts/check-weight-widths.tsx
   - id: openwiki-source-edfff899d93ec8844d1b24df
@@ -97,9 +101,13 @@ sources:
     resource: repo://src/lib/theme.ts
   - id: openwiki-source-805db717791883f12f02d567
     resource: repo://src/pages/changelog/release-spy.ts
+  - id: openwiki-source-872f10458af3aae905a0ee5a
+    resource: repo://src/pages/fluid-hover/plain-vs-fluid.tsx
+  - id: openwiki-source-c3b3c8dd99733ef843f5f848
+    resource: repo://src/pages/skill/playback.tsx
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-21T06:46:50.862Z" }
+generated: { by: "claude-code", at: "2026-10-21T08:39:13.075Z" }
 ---
 
 # Port decisions and their reasons
@@ -155,13 +163,15 @@ The site's signature effect is one highlight that glides between rows. The port 
 - **Sessions.** Entering the container starts a new session; a new session remounts the highlight so it appears
   at the row instead of sliding in from wherever the last session left it. Inside a session it glides; on a
   reflow it snaps (see above).
-- **Rows are measured as integers, the way the source's `offsetTop` / `offsetWidth` reads are** (2026-10-21, gpuix
-  `b03d4e27`). Since that pin gpuix reports fractional rects (1/64 px), as Chrome does, but it lays an authored length
-  out on a whole device pixel (half toward zero) where Chrome would keep `top: 110.5`. A highlight that glided to the
-  measured fractional rect therefore ended 0.5 px off its row (basic-table rows sit at .5 px under collapsed borders).
-  Rounding the rect to the source's integers makes the highlight rest where the source's does, and
-  `check-reduced-motion` compares the table highlight to the row's `offsetTop` rather than its fractional y. Only the
-  highlight is corrected; other authored fractions are left (README gap row).
+- **Rows are measured as integers, the way the source's `offsetTop` / `offsetWidth` reads are** (2026-10-21).
+  Since gpuix `b03d4e27` the rects are fractional (1/64 px), as Chrome's, and gpuix has no `offset*`. On `b03d4e27`
+  the rounding also masked a second effect: gpuix laid an authored length out on a whole device pixel (half toward
+  zero), so a highlight that glided to the fractional rect of a basic-table row (rows sit at .5 px under collapsed
+  borders) ended 0.5 px off its row. `83bab5a7` keeps an authored length's fraction (`top: 110.5` lands at 110.5),
+  so that reason is gone; the rounding stays because it is what the source does, and it makes the highlight rest on
+  the same integer pixels as the source's. `check-reduced-motion` compares the table highlight to the row's
+  `offsetTop` rather than its fractional y. Do not read `toOffsetRect`'s rounding as a workaround to remove when
+  testing a newer pin; removing it moves the highlight off the source's integers.
 
 When Base UI primitives later took over keyboard behaviour, fluid hover stayed the owner of the highlighted row:
 the primitive's highlight is controlled from `hover.activeIndex`, and a keyboard move calls `releasePointer()` so
@@ -327,16 +337,26 @@ renderer and cost no JS per frame. The reasons to prefer it, and the traps:
   carousel; thinking-steps 70.9 to 69.2%).
 - **It runs at display rate.** The old thinking indicator ran at 30 frames a second; native animations run at the
   display's 75 Hz with no throttle, so the saving there is the cheaper draw only, not fewer frames.
-- **No pause, play or seek on a motion value's animation** (only `stop()`, `cancel()`, `complete()`;
-  `getAnimations()` covers CSS `animation` and `transition` runs only, not `motion.*`). Every pause is
-  `stop()` followed by a new `animate()` from the current value for the time left. That is exact for a linear
-  animation and is how the carousel fill, the plain-vs-fluid cursor (a linear 0 to 1 progress value whose keyframes
-  live in a range-form `createTransform`) and the script cursors pause. It also fixed a bug of the JS carousel: its
-  restart effect tracked the options object, so hovering the slide reset the fill to 0, where the source holds it.
-  The fill's reset and its play are one effect (`7d4918bb`), not two ordered ones: Solid does not guarantee the order
-  of effects, and a play that ran before the reset read the old fill (1) and never started, or had its animation
-  ended by the reset's jump, which left the last dot's fill at 0 for good on the demo's third slide change. A stopped
-  animation also resolves `finished`, so the next slide is requested only when the fill actually reached 1.
+- **Pausing: playback controls arrived on `83bab5a7`.** Until then a motion value's animation had only `stop()`,
+  `cancel()` and `complete()` (`getAnimations()` covers CSS `animation` and `transition` runs only, not `motion.*`), so
+  every pause was `stop()` followed by a new `animate()` from the current value for the time left; exact for a linear
+  animation. Since `83bab5a7`, `animate()` on a motion value returns Motion's playback controls (`pause()`, `play()`,
+  `stop()`, `cancel()`, `time`, `speed`, `state`). The plain-vs-fluid cursor now uses them as the source does: one
+  `animate(cursorY, keyframes, { times, ease: 'easeInOut', repeat: Infinity })` started the first time the script
+  runs, `pause()`d when the button, reduced motion, a visiting pointer or leaving the viewport stops it, `play()`ed to
+  resume and `stop()`ped on unmount, so the old linear progress value and its range-form `createTransform` are gone.
+  The skill pages' script cursor and the carousel fill were not converted to that shape; the carousel keeps stop-and-restart as a
+  choice, not a need (below). The README's pause/play gap row was removed.
+- **Carousel-dots: one restart effect, and `finished` is trustworthy.** The fill's reset and its play are one effect
+  (`7d4918bb`), not two ordered ones: Solid does not guarantee the order of effects, and a play that ran before the
+  reset read the old fill (1) and never started, or had its animation ended by the reset's jump, which left the last
+  dot's fill at 0 for good on the demo's third slide change. That single effect is also why the fill stays
+  stop-and-restart after pause/play arrived, not a replacement of its restart logic with `pause()`/`play()`:
+  restarting from the current value is exact for a linear ease. Before `83bab5a7` a stopped or jumped animation
+  also resolved `finished`, so the code kept a `current` flag and a `fill.get() < 1` check to request the next slide
+  only when the fill really reached 1; `finished` now resolves only when the animation finishes or `complete()`s, never
+  on `stop()` or replacement, so both guards were dead and are gone (`04b90d13`). (Separately, the move off the JS
+  clock fixed the old carousel's bug of resetting the fill to 0 when hovering the slide, where the source holds it.)
 - **Pick the animation kind by what the property is.** The file-thumbnail spinner is a `motion.circle` sliding
   `strokeDashoffset`, because on `5fda771a` keyframes took style properties and not SVG attributes. That limit is
   gone on `b03d4e27`: the button's loading spinner (`615fd85c`) is the source's `spinner-move` and `spinner-dash`
@@ -473,14 +493,18 @@ decision, and choices are left alone. The shape is [`drift/_TEMPLATE.md`](../../
 table is in the README.
 
 When the layout engine puts a thing somewhere the source does not and no style reproduces it, the port sets the
-measurement outright and the drift entry records the residue. The tabs-subtle unfolding label is the example (the entry that took the
-drift total to 533, 2026-10-21): in the source it sits in a block whose line box takes the button's 16 px / 24 px strut, so the
-clip is 24 px tall, the baseline is 18 px down and the descender of "Teamspaces" shows. A `fontSize: 16, lineHeight:
-24px` block gave the 24 px clip but gpuix seated the cap-trimmed `inline-grid` label about 5.5 px above Chrome's
-baseline, so the clip is `height: 24` and the label gets an authored `marginTop` (`labelTop`, 18 minus the cap
-height: 8.55 default, 9.27 compact). gpuix rounds that authored length too, so the label ends up to 0.5 px off
-Chrome's; the entry records that, and the README "Bugs" row is the gpuix-side report. Do not go back to deriving it
-from a strut until the gap row closes.
+measurement outright and the drift entry records the residue; when the fork fixes it, the outright measurement
+goes and the source's structure comes back. The tabs-subtle unfolding label is the example, in both directions. In
+the source it sits in a block whose line box takes the button's 16 px / 24 px strut, so the clip is 24 px tall, the
+baseline is 18 px down and the descender of "Teamspaces" shows. On `b03d4e27` gpuix seated the cap-trimmed
+`inline-grid` label in that block about 5.5 px above Chrome's baseline, so the clip was `height: 24` with an
+authored `marginTop` (`labelTop`, 8.55 default, 9.27 compact) and the entry took the drift total to 533. On
+`83bab5a7` the block works: the clip is the source's `fontSize: 16, lineHeight: '24px'` block holding the label
+directly, `labelTop` and the clip-height constant are deleted, and the entry became "the baseline sits up to 0.45 px
+below Chrome's" (gpuix places an atomic inline at a whole device pixel, plus a cap-height metric of 0.704em against
+Chrome's 0.727em). `check-tabs-subtle` now pins the baseline within 0.5 px of Chrome's (24 and 20 inside the tab),
+the 24 px clip and the visible descender, and deliberately does not compare the cap box height, which is a font
+metric of every trimmed label. The drift total stayed at 541.
 
 ## Screenshots and check-* scenarios
 
@@ -495,7 +519,15 @@ recommit `screenshots/` for noise.
 
 A pin change is the exception to the partial recaptures described next: the `b03d4e27` adoption recaptured all of `screenshots/`
 (fractional layout, trimmed-label baseline, native spinner, menu check and input-copy marks), then redid the shuffled
-playgrounds and timing demos in their own commit.
+playgrounds and timing demos in their own commit. The `83bab5a7` pin (fractional authored lengths) did the same in
+four commits by page group: controls, popups/menus/chat inputs, system pages, showcase, and concepts with thinking
+steps. Most files changed by a few bytes, which is the noise the pixel comparison above is for.
+
+**A click after a spring needs still bounds, not a fixed wait.** `check-thinking-steps` scrolled a card into view,
+waited a fixed 600 ms and clicked its images button; with fractional lengths a spring's tail moves a box by
+fractions of a pixel long after it looks settled, and a click can land off the button. The check now polls the
+button's bounds and clicks after eight identical readings (`settleBounds`). Use the same shape for any check that
+clicks something a spring just moved.
 
 Two things from the 2026-10-19 round (`a2eed755`, `ce7ee2b9`, `d9d2e93e`):
 

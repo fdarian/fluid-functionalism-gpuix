@@ -10,10 +10,10 @@ sources:
     resource: repo://scripts/perf-page-switch.tsx
   - id: openwiki-source-923ee25729d055f35a254df3
     resource: repo://src/components/command-menu.tsx
-generated: { by: "claude-code", at: "2026-10-21T06:46:50.862Z" }
+generated: { by: "claude-code", at: "2026-10-21T08:39:13.075Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T06:46:50.862Z
+    at: 2026-10-21T08:39:13.075Z
 ---
 
 # Quickstart
@@ -30,12 +30,12 @@ the repository docs do not: reasons, decisions and history. For mechanics, go to
 | Sync with upstream, or know which upstream commit a file tracks | [UPSTREAM.md](../UPSTREAM.md) |
 | Know why springs, hover, fluid hover, press-shrink, fonts, theme or the pnpm wiring are the way they are | [Port decisions](decisions/port-decisions.md) |
 | Know why labels set weight through `fontVariationSettings` and `StableLabel` reserves the wider of the normal and semibold widths (two ghosts) | [Port decisions, Fonts](decisions/port-decisions.md#fonts-inter-variable-weight-through-fontvariationsettings) |
-| Know why off-screen culling stays, why fluid hover reads its container's rect on every pick (the box cache was dropped) and rounds row rects to integers, and why the two `StableLabel` ghosts stay although they now cost nothing measurable | [Port decisions, Performance decisions](decisions/port-decisions.md#performance-decisions-on-gpuix-poc-b03d4e27), [StableLabel's second ghost](decisions/port-decisions.md#stablelabels-second-ghost-what-it-cost-and-what-did-not-help) |
-| Add an animation or loop (spinner, shimmer, autoplay, scripted cursor) and keep it off the JS frame clock | [Port decisions, native animation](decisions/port-decisions.md#js-frame-clock-loops-moved-to-gpuix-native-animation); gpuix has no pause or seek on a motion value's animation, and a looping native animation costs the whole page per tick |
+| Know why off-screen culling stays, why fluid hover reads its container's rect on every pick (the box cache was dropped) and rounds row rects to integers (the source's `offset*`; no longer a workaround), and why the two `StableLabel` ghosts stay although they now cost nothing measurable | [Port decisions, Performance decisions](decisions/port-decisions.md#performance-decisions-on-gpuix-poc-b03d4e27), [StableLabel's second ghost](decisions/port-decisions.md#stablelabels-second-ghost-what-it-cost-and-what-did-not-help) |
+| Add an animation or loop (spinner, shimmer, autoplay, scripted cursor) and keep it off the JS frame clock | [Port decisions, native animation](decisions/port-decisions.md#js-frame-clock-loops-moved-to-gpuix-native-animation); `animate()` returns `pause()`/`play()` controls since `83bab5a7` (plain-vs-fluid uses them), and a looping native animation costs the whole page per tick |
 | Write a scroller's offset (a list that follows a spring, a page switch), or measure a sidebar-click hitch with `scripts/perf-page-switch.tsx` | [Port decisions, scroll writes and page switches](decisions/port-decisions.md#scroll-writes-go-through-rendererscrollto-and-a-page-switch-is-measured-by-its-first-draw): `renderer.scrollTo`, never the `scrollTop` setter, under a running motion value |
 | Check whether a behaviour (popup focus, motion, scope) is settled before changing it | [User decisions of 2026-10-16](decisions/user-decisions-2026-10-16.md) |
 | Work around a gpuix limitation, or report one to the fork | [gpuix gaps and divergence rounds](gpuix/gaps-and-divergence-rounds.md), then the README gap rows |
-| Migrate to a newer gpuix `poc` | [gpuix gaps and divergence rounds, `b03d4e27` adoption](gpuix/gaps-and-divergence-rounds.md#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21) for the latest, the [native-animation round](gpuix/gaps-and-divergence-rounds.md#native-animation-round-on-poc-5fda771a-2026-10-19), the [Round 6 pass](gpuix/gaps-and-divergence-rounds.md#round-6-adoption-pass-2026-10-18) and the [2026-10-17 pass](gpuix/gaps-and-divergence-rounds.md#adoption-pass-2026-10-17): how they went and their pitfalls |
+| Migrate to a newer gpuix `poc` | [gpuix gaps and divergence rounds, `83bab5a7` adoption](gpuix/gaps-and-divergence-rounds.md#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21) for the latest, the [`b03d4e27` adoption](gpuix/gaps-and-divergence-rounds.md#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), the [native-animation round](gpuix/gaps-and-divergence-rounds.md#native-animation-round-on-poc-5fda771a-2026-10-19), the [Round 6 pass](gpuix/gaps-and-divergence-rounds.md#round-6-adoption-pass-2026-10-18) and the [2026-10-17 pass](gpuix/gaps-and-divergence-rounds.md#adoption-pass-2026-10-17): how they went and their pitfalls |
 | Change keyboard, selection, focus or ARIA behaviour | [Base UI extraction](history/base-ui-extraction.md), then `../base-ui-solid-gpuix` and its `BASE-UI-AUDIT.md` |
 | Record where the port differs from the source | [`drift/_TEMPLATE.md`](../drift/_TEMPLATE.md); the convention's reasons are in [Port decisions](decisions/port-decisions.md#drift-and-its-cause-values). `bun scripts/drift-counts.ts` prints the README count table |
 | Find what is still open before publishing | [Base UI extraction, Open follow-ups](history/base-ui-extraction.md#open-follow-ups) |
