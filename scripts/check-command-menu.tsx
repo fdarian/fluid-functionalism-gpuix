@@ -4,7 +4,8 @@
  *   bun scripts/check-command-menu.tsx
  *
  * Prints PASS / FAIL lines and exits 1 on any FAIL. Covers: the list's scroll
- * travel (arrows animate, Home and a re-filter snap, a second arrow takes over),
+ * travel (arrows animate, Home and a re-filter snap, a second arrow takes over,
+ * a held arrow at macOS key-repeat timing, a hold across the wrap),
  * modified arrows with tabs mounted, the scrim finishing its fade, keyboard
  * focus after a tab click, the `mod++` cap, the site menu's ⌘K matching, and the
  * home hero's buttons.
@@ -376,6 +377,303 @@ kit.check('bare right switches to Pages', tabState() === 'page', tabState());
 await kit.press('ArrowLeft');
 kit.check('bare left switches back to All', tabState() === 'all', tabState());
 
+// ─── A held arrow ────────────────────────────────────────────────────────────
+
+// macOS key repeat at the owner's settings (InitialKeyRepeat 15, KeyRepeat 2), frames at 60 Hz: a repeat is a keydown with `isHeld` and the draw is a display-link `drawFrame`. The motion clock runs: the cascade this guards against exists because every layout pass samples the spring at the wall clock, so a paused clock would hide it.
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const REPEAT_FIRST_MS = 225;
+const REPEAT_MS = 30;
+const HELD_FRAME_MS = 1000 / 60;
+const native = Reflect.get(renderer, 'native') as {
+	simulateKeyDown(keystroke: string, isHeld?: boolean): void;
+	simulateKeyUp(keystroke: string): void;
+};
+const menuList = kit.element('site-menu-list');
+const menuRows: { testId: string; domId: string }[] = [];
+const collectRows = (id: number) => {
+	const node = renderer.getElement(id);
+	if (node === undefined) throw new Error(`no element ${id}`);
+	if (node.testId?.startsWith('site-menu-row-') === true)
+		menuRows.push({ testId: node.testId, domId: String(node.customProps?.id) });
+	for (const child of node.children) collectRows(child);
+};
+collectRows(menuList.id);
+const menuInputId = kit.element('site-menu-input').id;
+// `renderer.getElement` serialises the element (about 60 ms here), too slow to read on every press of a hold, so the hold follows the input's `aria-activedescendant` through the batches that set it.
+let activeDomId: unknown;
+const applyBatch = renderer.applyBatch;
+Object.defineProperty(renderer, 'applyBatch', {
+	writable: true,
+	value(json: string) {
+		for (const op of JSON.parse(json) as unknown[][]) {
+			if (
+				op[0] === 'setCustomProp' &&
+				op[1] === menuInputId &&
+				op[2] === 'aria-activedescendant'
+			)
+				activeDomId = op[3];
+		}
+		return applyBatch.call(renderer, json);
+	},
+});
+const activeRow = (domId: unknown) => {
+	const index = menuRows.findIndex((row) => row.domId === domId);
+	if (index === -1) throw new Error(`no row is active: ${String(domId)}`);
+	return index;
+};
+const menuActive = () =>
+	activeRow(
+		renderer.getElement(menuInputId)?.customProps?.['aria-activedescendant'],
+	);
+const menuScroll = () => {
+	const metrics = renderer.getScrollMetrics(menuList.id);
+	if (metrics === null) throw new Error('the menu list has no scroll metrics');
+	return metrics[1];
+};
+/** The highlight pill is the first child of the listbox, which is the scroller's first child. */
+const pillId = (() => {
+	const listbox = renderer.getElement(menuList.id)?.children[0];
+	const pill =
+		listbox === undefined
+			? undefined
+			: renderer.getElement(listbox)?.children[0];
+	if (pill === undefined) throw new Error('no highlight pill');
+	return pill;
+})();
+/** The pill's top in content coordinates. */
+const pillTop = () => {
+	const box = renderer.getElementBounds(pillId);
+	const list = renderer.getElementBounds(menuList.id);
+	if (box === null || list === null) throw new Error('no pill or list bounds');
+	return box.y - list.y + menuScroll();
+};
+const percentile = (values: number[], p: number) => {
+	const sorted = [...values].sort((a, b) => a - b);
+	return sorted[Math.min(sorted.length - 1, Math.floor(p * sorted.length))];
+};
+
+interface HeldTrace {
+	/** Layout passes and milliseconds of each event drain, a key's delivery included. */
+	drains: { passes: number; ms: number }[];
+	draws: number[];
+	keys: number;
+	handled: number[];
+	scroll: number[];
+	pill: number[];
+}
+/** Holds ArrowDown for `keys` presses on the real clock, then lets the motion settle. Every press is delivered, a late one right after the one before, as AppKit queues repeats while the thread is busy. */
+const holdArrowDown = async (keys: number): Promise<HeldTrace> => {
+	const trace: HeldTrace = {
+		drains: [],
+		draws: [],
+		keys: 0,
+		handled: [],
+		scroll: [],
+		pill: [],
+	};
+	const drain = (deliver: () => void) => {
+		const passes = renderer.getLayoutPassCount();
+		const started = performance.now();
+		deliver();
+		renderer.dispatchNativeEvents();
+		trace.drains.push({
+			passes: renderer.getLayoutPassCount() - passes,
+			ms: performance.now() - started,
+		});
+	};
+	// The test window's fake screen reader builds an accessibility tree on every draw; a real window without VoiceOver does not.
+	renderer.setA11yActive(false);
+	renderer.setInlineDraws(false);
+	const start = performance.now();
+	const end = start + REPEAT_FIRST_MS + REPEAT_MS * keys + 600;
+	let nextFrame = start;
+	while (performance.now() < end) {
+		const now = performance.now();
+		if (
+			trace.keys < keys &&
+			now >=
+				start +
+					(trace.keys === 0
+						? 0
+						: REPEAT_FIRST_MS + REPEAT_MS * (trace.keys - 1))
+		) {
+			const isHeld = trace.keys > 0;
+			drain(() => native.simulateKeyDown('ArrowDown', isHeld));
+			trace.keys++;
+			// The mutations of the key flush in a microtask.
+			await Promise.resolve();
+			trace.handled.push(activeRow(activeDomId));
+		} else if (now >= nextFrame) {
+			drain(() => {});
+			await Promise.resolve();
+			const started = performance.now();
+			renderer.drawFrame();
+			trace.draws.push(performance.now() - started);
+			trace.scroll.push(menuScroll());
+			trace.pill.push(pillTop());
+			nextFrame = Math.max(nextFrame + HELD_FRAME_MS, performance.now());
+		} else await sleep(1);
+	}
+	native.simulateKeyUp('ArrowDown');
+	renderer.setInlineDraws(true);
+	renderer.setA11yActive(true);
+	await kit.settle(300);
+	return trace;
+};
+
+await kit.focus('site-menu-input');
+await kit.press('Home');
+await kit.settle(400);
+kit.expect('the held run starts on the first row', menuActive(), 0);
+const HELD_KEYS = 40;
+const held = await holdArrowDown(HELD_KEYS);
+kit.expect('every key of a 2 s hold is sent', held.keys, HELD_KEYS);
+kit.check(
+	'every held repeat moves the highlight by one row',
+	held.handled.every((index, press) => index === press + 1),
+	`${held.handled.length} presses, last row ${held.handled.at(-1)}`,
+);
+const reversals = (values: number[]) =>
+	values.filter((value, index) => index > 0 && value < values[index - 1] - 0.5);
+kit.check(
+	'the scroll only moves forward while the key is held',
+	reversals(held.scroll).length === 0,
+	`${held.scroll.length} frames, ${reversals(held.scroll).length} reversals`,
+);
+kit.check(
+	'the highlight only moves forward while the key is held',
+	reversals(held.pill).length === 0,
+	`${held.pill.length} frames, ${reversals(held.pill).length} reversals`,
+);
+// A write to `scrollTop` reads the metrics back, which lays out the window and samples the spring again: that emits the next change, so one drain was 40 to 70 passes. The bound is a count, not a time, so a slow machine cannot move it.
+const worstPasses = Math.max(...held.drains.map((entry) => entry.passes));
+kit.check(
+	'a drain runs at most 4 layout passes',
+	worstPasses <= 4,
+	`worst ${worstPasses}`,
+);
+const worstDrain = Math.max(...held.drains.map((entry) => entry.ms));
+const worstDraw = Math.max(...held.draws);
+kit.check(
+	'a drain and a draw fit a 60 Hz frame at the 90th percentile',
+	percentile(
+		held.drains.map((entry) => entry.ms),
+		0.9,
+	) <= HELD_FRAME_MS && percentile(held.draws, 0.9) <= HELD_FRAME_MS,
+	`drain p90 ${percentile(
+		held.drains.map((entry) => entry.ms),
+		0.9,
+	).toFixed(
+		1,
+	)} ms, worst ${worstDrain.toFixed(1)} ms; draw p90 ${percentile(held.draws, 0.9).toFixed(1)} ms, worst ${worstDraw.toFixed(1)} ms`,
+);
+
+// A hold across the wrap from the last row to the first: the first row snaps the list to the top, and a change event queued before the snap must not write the old bottom position back.
+await kit.press('End');
+await kit.settle(500);
+for (let up = 0; up < 3; up++) {
+	await kit.press('ArrowUp');
+	await kit.settle(200);
+}
+kit.expect(
+	'the wrap run starts three rows above the end',
+	menuActive(),
+	menuRows.length - 4,
+);
+const wrapMark = writes.length;
+const preWrapScroll = menuScroll();
+const wrapped = await holdArrowDown(3 + 1 + 5);
+const wrapWrites = writes
+	.slice(wrapMark)
+	.filter((write) => write.id === menuList.id)
+	.map((write) => write.top);
+const snap = wrapWrites.indexOf(0);
+const finalRow = menuRows[menuActive()].testId;
+const finalBox = renderer.getElementBounds(kit.element(finalRow).id);
+const listBox = renderer.getElementBounds(menuList.id);
+const finalMetrics = renderer.getScrollMetrics(menuList.id);
+if (finalBox === null || listBox === null || finalMetrics === null)
+	throw new Error('the menu list or its row has no bounds');
+const centre = Math.max(
+	0,
+	Math.min(
+		finalBox.y -
+			listBox.y +
+			finalMetrics[1] +
+			finalBox.height / 2 -
+			finalMetrics[5] / 2,
+		finalMetrics[3] - finalMetrics[5],
+	),
+);
+const afterSnap = wrapWrites.slice(snap + 1);
+kit.expect(
+	'the hold wraps to the first row and goes on to the fifth',
+	menuActive(),
+	5,
+);
+kit.check('the wrap snaps the list to the top', snap !== -1);
+kit.check(
+	'no pre-wrap position is written after the snap',
+	snap !== -1 && afterSnap.every((top) => top <= centre + 1),
+	`before the hold ${preWrapScroll.toFixed(0)}, after the snap: ${afterSnap.map((top) => top.toFixed(0)).join(' ')}`,
+);
+kit.check(
+	'the scroll only moves forward after the snap',
+	snap !== -1 && reversals(afterSnap).length === 0,
+	afterSnap.map((top) => top.toFixed(0)).join(' '),
+);
+kit.check(
+	'the hold ends at the centre target of the row it stopped on',
+	Math.abs(menuScroll() - centre) <= 3,
+	`${menuScroll().toFixed(1)} vs ${centre.toFixed(1)}`,
+);
+kit.check(
+	'a drain across the wrap runs at most 4 layout passes',
+	Math.max(...wrapped.drains.map((entry) => entry.passes)) <= 4,
+	`worst ${Math.max(...wrapped.drains.map((entry) => entry.passes))}`,
+);
+
+// The wrap's keys back to back, with one draw part way: the draw queues change events of the travel the earlier keys started, and they reach JS after the wrap has snapped the list to the top. They must not write their older position back.
+await kit.press('Home');
+await kit.settle(400);
+for (let down = 0; down < menuRows.length - 7; down++) {
+	renderer.simulateKeystrokes('ArrowDown');
+	await sleep(20);
+}
+await kit.settle(600);
+const raceStart = menuActive();
+const raceMark = writes.length;
+renderer.setInlineDraws(false);
+for (let press = 1; press <= 7; press++) {
+	native.simulateKeyDown('ArrowDown', press > 1);
+	if (press === 3) renderer.drawFrame();
+}
+renderer.dispatchNativeEvents();
+for (let frame = 0; frame < 20; frame++) {
+	renderer.dispatchNativeEvents();
+	await Promise.resolve();
+	renderer.drawFrame();
+	await sleep(16);
+}
+native.simulateKeyUp('ArrowDown');
+renderer.setInlineDraws(true);
+await kit.settle(300);
+const raceWrites = writes
+	.slice(raceMark)
+	.filter((write) => write.id === menuList.id)
+	.map((write) => write.top);
+kit.expect(
+	'the back-to-back run wraps from the last row to the first',
+	[raceStart, menuActive()],
+	[menuRows.length - 7, 0],
+);
+kit.check(
+	'a change event queued before the wrap does not write the old position back',
+	raceWrites.length > 0 &&
+		raceWrites.slice(raceWrites.indexOf(0)).every((top) => top === 0),
+	raceWrites.map((top) => top.toFixed(0)).join(' '),
+);
+
 // ─── A tab click keeps the keyboard in the field ─────────────────────────────
 
 await kit.click('site-menu-tab-page');
@@ -395,7 +693,6 @@ kit.check(
 
 // ─── The scrim finishes its fade ─────────────────────────────────────────────
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 await kit.press('Escape');
 await kit.settle(400);
 kit.check('escape closes the menu', !isOpen());
