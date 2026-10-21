@@ -6,7 +6,7 @@ Ported in `src/pages/motion.tsx`, with the three demos in `src/pages/motion/` (`
 `spring-reference.tsx`, `install-prompt.ts`) and the page chrome in the shared `src/lib/doc-page.tsx`, routed by the page registry (`src/lib/demo.ts` `loadPages`).
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, selector `:has(.x)` and group-has, collapsed-border transitions) get a one-line entry here that links to the README row instead of
+(CSS transforms, selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The modal card does not scale, it grows in width and height

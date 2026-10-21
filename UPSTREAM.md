@@ -135,7 +135,7 @@ source and port `file:line` and a **Cause**. The per-file counts are the table i
 causes; `bun scripts/drift-counts.ts` prints them).
 
 - **`gpuix gap`** (85 entries): gpuix lacks the capability or gets it wrong, so the port approximates or drops
-  it. The recurring ones (CSS transforms, selector `:has(.x)` and group-has, collapsed-border transitions) are collected in
+  it. The recurring ones (CSS transforms, selector `:has(.x)` and group-has) are collected in
   README's [gpuix gaps across components](README.md#gpuix-gaps-across-components); the per-file entry is one line
   linking there. Most in [select](drift/select.md), [combobox](drift/combobox.md), [command-menu](drift/command-menu.md),
   [slider](drift/slider.md), [site](drift/site.md), [banner](drift/banner.md) and [input-message](drift/input-message.md).

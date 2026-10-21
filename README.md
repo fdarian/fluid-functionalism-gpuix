@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 540 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 539 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -53,7 +53,7 @@ bun scripts/perf.tsx [slug...] --label name   # live frame times per page, idle 
 <summary>How gpuix and base-ui-solid-gpuix are wired in</summary>
 
 - **gpuix.** `@gpuix/native` and `@gpuix/solid` come from the fork at `~/code/fdarian/gpuix`: native is a `link:`, solid is a
-  `file:` copy. The fork must be at `poc` f993d9b9 (zed 9686aee204) or later (since b03d4e27, `getBoundingClientRect`, `ResizeObserver`, `IntersectionObserver` and `onLayout` return fractional 1/64 px values, like Chrome; `client*` and `scroll*` stay integers, rounded half up like Chrome's; since 83bab5a7 an authored length keeps its fraction instead of rounding to a device pixel, `animate()` on a motion value returns playback controls (`pause()`, `play()`, `stop()`, `cancel()`, `time`, `speed`, `state`), and its `finished` resolves only when the animation finishes or completes, never on `stop()` or a replacement): the highlights and popups use its native `motion` springs, and the table, `inline-*`, container query, `has*` and `fit-content` layouts, and the variable-font weights, `outlineStyle`, `textWrap`, `textBox` trim and `calc()` motion values are its features,
+  `file:` copy. The fork must be at `poc` 511bebab (zed 271ec25880) or later (since b03d4e27, `getBoundingClientRect`, `ResizeObserver`, `IntersectionObserver` and `onLayout` return fractional 1/64 px values, like Chrome; `client*` and `scroll*` stay integers, rounded half up like Chrome's; since 83bab5a7 an authored length keeps its fraction instead of rounding to a device pixel, `animate()` on a motion value returns playback controls (`pause()`, `play()`, `stop()`, `cancel()`, `time`, `speed`, `state`), and its `finished` resolves only when the animation finishes or completes, never on `stop()` or a replacement): the highlights and popups use its native `motion` springs, and the table, `inline-*`, container query, `has*` and `fit-content` layouts, and the variable-font weights, `outlineStyle`, `textWrap`, `textBox` trim and `calc()` motion values are its features,
   so rebuild the addon and the `@gpuix/solid` dist after pulling it (see the fork's `FORK.md`, "Building"), then run
   `pnpm install` here to refresh the copy. The Solid JSX transform is a Bun preload (`bunfig.toml`), so there is no
   build step.
@@ -229,20 +229,20 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [slider](drift/slider.md) | 4 | 3 | 2 | 1 | 10 |
 | [surfaces](drift/surfaces.md) | 2 | 3 | 4 | 3 | 12 |
 | [switch](drift/switch.md) | 1 | 1 | 2 | 1 | 5 |
-| [table](drift/table.md) | 2 | 1 | 3 | 0 | 6 |
+| [table](drift/table.md) | 1 | 1 | 3 | 0 | 5 |
 | [tabs-subtle](drift/tabs-subtle.md) | 1 | 3 | 2 | 0 | 6 |
 | [tabs](drift/tabs.md) | 0 | 2 | 2 | 0 | 4 |
 | [thinking-indicator](drift/thinking-indicator.md) | 2 | 2 | 1 | 0 | 5 |
 | [thinking-steps](drift/thinking-steps.md) | 4 | 4 | 5 | 0 | 13 |
 | [tooltip](drift/tooltip.md) | 1 | 5 | 1 | 1 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **87** | **212** | **191** | **50** | **540** |
+| **Total** | **86** | **212** | **191** | **50** | **539** |
 
 ### gpuix gaps across components
 
 These are the gpuix gaps that hit several components; the per-component files link here. They are as of
-gpuix `poc` f993d9b9 (zed 9686aee204; `~/code/fdarian/gpuix/FORK.md`): what the port used to work around and gpuix now does (tables,
-`inline-*`, container queries, `has*` states, `fit-content`, variable fonts, `text-wrap`, `text-box-trim`, `calc()` in motion, fractional text widths and rects, authored lengths that keep their fraction (a `top: 110.5` lands at 110.5), the cap-trimmed label baseline (also in a block's strut: tabs-subtle's unfolding label), timers between frames, bounds reads without a layout pass, SVG stroke keyframes, playback controls on a motion value's animation, a `scrollTop` write that lays out only what is pending, a scroll end at exactly `scrollHeight - clientHeight`, `WebkitFontSmoothing: 'antialiased'`, an idle window that wakes 0 times a second, an unfocused visible window at the display rate) is gone from this list. "Bug" means gpuix does something wrong or inconsistent; "missing" means it does not
+gpuix `poc` 511bebab (zed 271ec25880; `~/code/fdarian/gpuix/FORK.md`): what the port used to work around and gpuix now does (tables,
+`inline-*`, container queries, `has*` states, `fit-content`, variable fonts, `text-wrap`, `text-box-trim`, `calc()` in motion, fractional text widths and rects, authored lengths that keep their fraction (a `top: 110.5` lands at 110.5), the cap-trimmed label baseline (also in a block's strut: tabs-subtle's unfolding label), timers between frames, bounds reads without a layout pass, SVG stroke keyframes, playback controls on a motion value's animation, a `scrollTop` write that lays out only what is pending, a scroll end at exactly `scrollHeight - clientHeight`, `WebkitFontSmoothing: 'antialiased'`, an idle window that wakes 0 times a second, an unfocused visible window at the display rate, a `border-color` transition on a collapsed-table part, which lays out nothing and patches with the table as its unit) is gone from this list. "Bug" means gpuix does something wrong or inconsistent; "missing" means it does not
 offer it. A count is given only where the code shows it.
 
 #### Bugs
@@ -274,7 +274,6 @@ offer it. A count is given only where the code shows it.
 | slider | `<input type="range">` (Base UI audit row 312) | A pointer-handled track and thumbs |
 | select, combobox (`FormValue`) | `<input type="hidden">` | A real input that is invisible, unreachable and `aria-hidden` |
 | banner (the description layout), surfaces (the elevation stack) | Selector `:has(.x)` and group-has. gpuix has `hasHover`, `hasActive`, `hasFocus`, `hasFocusVisible`, `hasDisabled` and `hasEnabled`, which restyle an element from the state of its descendants, but not a selector such as the banner's `has-data-[slot=banner-description]`, and a parent's `has*` state cannot style its children (the surfaces' stack hides a label with `[&:has([data-surface]:hover)>span]`). The result matches the web; only the wiring differs | Banner: a context flag the description registers; surfaces: a pointer signal (`drift/banner.md`, `drift/surfaces.md`) |
-| table | Collapsed-border transitions: a table part's styles are not animatable by `motion`, a keyframe or a CSS transition, so the row rule's 80ms fade is a snap where the source eases it. Declaring the transition is not harmless either: each of its 10 frames rebuilds the layout of the table's siblings (`~/.claude/notes/ff-gpuix-repros/r9-border-transition-layout.md`: 4 builds per sibling row per frame, 5120 builds over a hover glide on the Table page against 12 for the sidebar), where Chrome re-lays out only the table | the row declares no `border-color` transition and the rule changes at once (`drift/table.md`); `scripts/check-table.tsx` counts the glide's layout builds |
 | not counted | `disabled` on anything but an input: other elements get `aria-disabled` only, so they stay focusable and clickable | `aria-disabled` plus the component's own guard |
 | command-menu (and every long demo page) | Culling: elements a scroller clips away still cost a frame (gpuix #46: retained and clipped content is not free), so a page of many menus costs several times a short one (`<virtual-list>` is the only exception). On gpuix `poc` b03d4e27, measured live with `pnpm perf` at load average 1.4-3.1 in two alternating pairs, culling on against off (the `IntersectionObserver` effect disabled), off was worse on 9 pages and better on none: showcase idle CPU 45 to 80% and sidebar-sweep draw p95 5.5 to 11.1 ms, input-message idle 3.3 to 51.5%, fluid-hover idle 37 to 55% and p95 4.1 to 7.3 ms, changelog idle 37 to 46% and p95 4.2 to 6.1 ms, scrollbars p95 4.1 to 11.6, ask-user-questions 5.0 to 9.3, audio-mixer 5.0 to 8.4, command-menu 4.9 to 7.2, scroll-area 10.8 to 12.0 (summed over 49 pages, idle CPU 464 to 575 and p95 244 to 274 ms; on e5231304 every page's p95 was 10-25 ms, now about 4-5 ms with culling). On 196d69ce, headless (`pnpm footprint`, the `FF_CULL_OFF` knockout, two alternating pairs at load 3-13, `perf/footprint-g196-{cullv,nocullv}-{1,2}.json`), CPU with culling on against off was worse off: showcase 31 / 27 to 69 / 70% (built elements 4.9k to 19-22k a second), input-message 1.3 / 0.5 to 53 / 36% (its off-screen loop runs: 0 to 68 draws a second), changelog 19 / 19 to 32 / 31%, fluid-hover 16 / 16 to 51 / 40%; footprint was +4-9 MB without it on card, surfaces, command-menu, changelog and showcase; static pages were equal and no page was better. Culling stays. The live `pnpm perf` A/B did not run: every attempt was reported occluded | `DemoCard`, every `ComponentPreview`, `DocSection`, changelog entry and group, Audio Mixer card and each home tile hide their content with `display: none` while far from the page scroller, through `createCulling` in `src/lib/cull.ts`, and the loops that would run in them pause; both stay until gpuix #46 (`drift/command-menu.md`) |
 | file-thumbnail | A canvas pixel path (a PDF page preview) | The caller passes a type and the thumbnail shows a glyph |
