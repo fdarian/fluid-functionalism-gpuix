@@ -423,15 +423,13 @@ function DocumentBody() {
 								<TableCell>{initiative.name}</TableCell>
 								<TableCell width={110}>{initiative.owner}</TableCell>
 								<TableCell width={130}>
-									<div style={{ display: 'flex', flexDirection: 'row' }}>
-										<Badge
-											variant="dot"
-											size="compact"
-											color={initiative.status.color}
-										>
-											{initiative.status.label}
-										</Badge>
-									</div>
+									<Badge
+										variant="dot"
+										size="compact"
+										color={initiative.status.color}
+									>
+										{initiative.status.label}
+									</Badge>
 								</TableCell>
 								<TableCell width={110} tabularNums>
 									{initiative.target}
