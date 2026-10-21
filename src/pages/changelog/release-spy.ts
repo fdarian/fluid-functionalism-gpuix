@@ -67,7 +67,9 @@ export function createReleaseSpy(months: readonly string[]) {
 	createEffect(() => {
 		const root = scroller();
 		if (root === undefined) return;
-		update(root);
+		// Reading the scroller here lays out the whole page before its first draw (~70 ms): the newest month stands in until the timer, which runs after that draw.
+		setActiveMonth(months[0]);
+		const firstReading = setTimeout(() => update(root), 0);
 		let aim:
 			| { section: HostElement; top: number; distance: number }
 			| undefined;
@@ -120,6 +122,7 @@ export function createReleaseSpy(months: readonly string[]) {
 			scrollTo(top);
 		};
 		onCleanup(() => {
+			clearTimeout(firstReading);
 			stop();
 			aim = undefined;
 			jump = undefined;
