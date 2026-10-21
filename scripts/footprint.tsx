@@ -1,16 +1,23 @@
 /**
- * Headless idle CPU and memory per page.
+ * Idle CPU and memory per page, headless or in a real window.
  *
- *   bun scripts/footprint.tsx [slug...] [--label x] [--settle ms] [--idle ms] [--hz n] [--source]
+ *   bun scripts/footprint.tsx [slug...] [--label x] [--settle ms] [--idle ms] [--hz n] [--source] [--window]
  *
  * One fresh `scripts/footprint-child.tsx` process per page, sequentially. By
  * default the child is compiled first (`dist/footprint-child`, built like the app)
  * so Bun's transpile cost stays out of the memory numbers; `--source` runs it
  * from source. Without slugs every page is measured. Writes
  * `perf/footprint-<label>.json` and prints a table.
+ *
+ * `--window` opens each page in a real 1280x780 window instead of the offscreen
+ * renderer, with the protocol of the Electron comparison: footprint after the
+ * settle time (10 s), then CPU over the idle window (30 s), then footprint again.
+ * The window must be visible: an occluded one is flagged `occluded` in the table
+ * and the JSON, and the run exits 1. The child runs with `GPUIX_PRESENT_LOG`,
+ * which adds one small write per presented frame to the process being measured.
  */
-import { mkdirSync, writeFileSync } from 'node:fs';
-import { loadavg } from 'node:os';
+import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { loadavg, tmpdir, uptime } from 'node:os';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import solidPlugin from '@gpuix/solid/bun-plugin';
@@ -23,29 +30,42 @@ const args = parseArgs({
 	allowPositionals: true,
 	options: {
 		label: { type: 'string' },
-		settle: { type: 'string', default: '3000' },
-		idle: { type: 'string', default: '10000' },
+		settle: { type: 'string' },
+		idle: { type: 'string' },
 		hz: { type: 'string', default: '75' },
 		source: { type: 'boolean', default: false },
+		window: { type: 'boolean', default: false },
 	},
 });
-const settleMs = Number(args.values.settle);
-const idleMs = Number(args.values.idle);
+const windowMode = args.values.window;
+const settleMs = Number(args.values.settle ?? (windowMode ? 10_000 : 3000));
+const idleMs = Number(args.values.idle ?? (windowMode ? 30_000 : 10_000));
 const hz = Number(args.values.hz);
-const mode = args.values.source ? 'source' : 'bundle';
+const mode = `${args.values.source ? 'source' : 'bundle'}${windowMode ? '-window' : ''}`;
 const label =
 	args.values.label ?? new Date().toISOString().replace(/[:.]/g, '-');
 const BINARY = join(root, 'dist/footprint-child');
 const CHILD_SLACK_MS = 60_000;
+
+type Memory = {
+	footprintBytes: number;
+	rssBytes: number;
+	threads: number;
+};
 
 type PageResult = {
 	slug: string;
 	windowMs: number;
 	cpuPercent: number;
 	drawsPerSecond: number;
-	layoutsPerSecond: number;
-	builtPerSecond: number;
-	retainedElements: number;
+	/** Window mode only: frames that reached the screen. */
+	presentedPerSecond: number | null;
+	/** Null in window mode, where the live renderer keeps no such counter. */
+	layoutsPerSecond: number | null;
+	builtPerSecond: number | null;
+	/** Window mode only: true when nothing reached the screen, so the numbers say nothing about a visible window. */
+	occluded: boolean | null;
+	retainedElements: number | null;
 	heapSizeBytes: number;
 	heapCapacityBytes: number;
 	heapObjectCount: number;
@@ -54,6 +74,8 @@ type PageResult = {
 	footprintBytes: number;
 	rssBytes: number;
 	threads: number;
+	/** Window mode only: the same three, read after the settle time and before the CPU window. */
+	settled: Memory | null;
 };
 
 function output(command: string[]) {
@@ -140,87 +162,112 @@ function threadCount(pid: number) {
 	);
 }
 
+function memory(pid: number): Memory {
+	return {
+		footprintBytes: physFootprintBytes(pid),
+		rssBytes: rssBytes(pid),
+		threads: threadCount(pid),
+	};
+}
+
+/** The child's stdout, one line at a time. */
+async function* stdoutLines(stream: ReadableStream<Uint8Array>) {
+	const decoder = new TextDecoder();
+	let pending = '';
+	for await (const chunk of stream) {
+		pending += decoder.decode(chunk, { stream: true });
+		const lines = pending.split('\n');
+		pending = lines.pop() ?? '';
+		yield* lines;
+	}
+}
+
 async function measure(slug: string): Promise<PageResult> {
-	const flags = [
-		'--settle',
-		String(settleMs),
-		'--idle',
-		String(idleMs),
-		'--hz',
-		String(hz),
-	];
-	const command =
-		mode === 'bundle'
-			? [BINARY, slug, ...flags]
-			: ['bun', join(root, 'scripts/footprint-child.tsx'), slug, ...flags];
+	const flags = ['--settle', String(settleMs), '--idle', String(idleMs)];
+	if (windowMode) flags.push('--window');
+	else flags.push('--hz', String(hz));
+	const command = args.values.source
+		? ['bun', join(root, 'scripts/footprint-child.tsx'), slug, ...flags]
+		: [BINARY, slug, ...flags];
+	const presentLog = join(tmpdir(), `footprint-present-${process.pid}.log`);
+	rmSync(presentLog, { force: true });
 	const child = Bun.spawn(command, {
 		cwd: root,
+		stdin: 'pipe',
 		stdout: 'pipe',
 		stderr: 'inherit',
+		env: { ...process.env, GPUIX_PRESENT_LOG: presentLog },
 	});
 	const deadline = setTimeout(
 		() => child.kill(),
 		settleMs + idleMs + CHILD_SLACK_MS,
 	);
-	try {
-		const reader = child.stdout.getReader();
-		const decoder = new TextDecoder();
-		let pending = '';
+	const lines = stdoutLines(child.stdout);
+	async function lineStartingWith(prefix: string) {
 		for (;;) {
-			const chunk = await reader.read();
-			if (chunk.done) {
+			const next = await lines.next();
+			if (next.done) {
 				throw new Error(
-					`${slug}: child exited (${child.exitCode}) without a report`,
+					`${slug}: child exited (${child.exitCode}) without a ${prefix.trim()} line`,
 				);
 			}
-			pending += decoder.decode(chunk.value, { stream: true });
-			const lines = pending.split('\n');
-			pending = lines.pop() ?? '';
-			const report = lines.find((line) => line.startsWith('FOOTPRINT '));
-			if (report === undefined) continue;
-			const measured = JSON.parse(report.slice('FOOTPRINT '.length)) as Omit<
-				PageResult,
-				'footprintBytes' | 'rssBytes' | 'threads'
-			>;
-			return {
-				...measured,
-				footprintBytes: physFootprintBytes(child.pid),
-				rssBytes: rssBytes(child.pid),
-				threads: threadCount(child.pid),
-			};
+			if (next.value.startsWith(prefix)) return next.value.slice(prefix.length);
 		}
+	}
+	try {
+		let settled: Memory | null = null;
+		if (windowMode) {
+			await lineStartingWith('SETTLED');
+			settled = memory(child.pid);
+			child.stdin.write('go\n');
+			await child.stdin.flush();
+		}
+		const measured = JSON.parse(await lineStartingWith('FOOTPRINT ')) as Omit<
+			PageResult,
+			keyof Memory | 'settled'
+		>;
+		return { ...measured, ...memory(child.pid), settled };
 	} finally {
 		clearTimeout(deadline);
 		child.kill();
 		await child.exited;
+		rmSync(presentLog, { force: true });
 	}
 }
 
 const mb = (bytes: number) => (bytes / 1024 ** 2).toFixed(0);
 
+type Column = [name: string, cell: (result: PageResult) => string];
+
+/** Counters with no window-mode source print '-'. */
+const perSecond = (value: number | null, digits: number) =>
+	value === null ? '-' : value.toFixed(digits);
+
 function printTable(results: PageResult[]) {
-	const rows = results.map((result) => [
-		result.slug,
-		result.cpuPercent.toFixed(1),
-		result.drawsPerSecond.toFixed(1),
-		result.layoutsPerSecond.toFixed(1),
-		result.builtPerSecond.toFixed(0),
-		mb(result.footprintBytes),
-		mb(result.rssBytes),
-		String(result.threads),
-		mb(result.heapSizeBytes),
-	]);
-	const header = [
-		'slug',
-		'cpu%',
-		'draws/s',
-		'layouts/s',
-		'built/s',
-		'footprint MB',
-		'rss MB',
-		'threads',
-		'heap MB',
+	const windowOnly = (column: Column): Column[] => (windowMode ? [column] : []);
+	const columns: Column[] = [
+		['slug', (result) => result.slug],
+		['cpu%', (result) => result.cpuPercent.toFixed(1)],
+		['draws/s', (result) => result.drawsPerSecond.toFixed(1)],
+		...windowOnly([
+			'shown/s',
+			(result) => perSecond(result.presentedPerSecond, 1),
+		]),
+		['layouts/s', (result) => perSecond(result.layoutsPerSecond, 1)],
+		['built/s', (result) => perSecond(result.builtPerSecond, 0)],
+		...windowOnly([
+			'settled MB',
+			(result) =>
+				result.settled === null ? '-' : mb(result.settled.footprintBytes),
+		]),
+		['footprint MB', (result) => mb(result.footprintBytes)],
+		['rss MB', (result) => mb(result.rssBytes)],
+		['threads', (result) => String(result.threads)],
+		['heap MB', (result) => mb(result.heapSizeBytes)],
+		...windowOnly(['occluded', (result) => (result.occluded ? 'YES' : 'no')]),
 	];
+	const rows = results.map((result) => columns.map(([, cell]) => cell(result)));
+	const header = columns.map(([name]) => name);
 	const widths = header.map((name, column) =>
 		Math.max(name.length, ...rows.map((row) => row[column].length)),
 	);
@@ -246,8 +293,9 @@ for (const slug of slugs) {
 
 mkdirSync(join(root, 'dist'), { recursive: true });
 mkdirSync(join(root, 'perf'), { recursive: true });
-if (mode === 'bundle') await compileChild();
+if (!args.values.source) await compileChild();
 
+const uptimeSecondsAtStart = uptime();
 const loadavgAtStart = loadavg();
 const results: PageResult[] = [];
 for (const slug of slugs) {
@@ -265,9 +313,10 @@ writeFileSync(
 			ffHead: git(root),
 			gpuixHead: git(join(root, '../gpuix')),
 			mode,
-			hz,
+			hz: windowMode ? null : hz,
 			settleMs,
 			idleMs,
+			uptimeSecondsAtStart,
 			loadavgAtStart,
 			loadavgAtEnd: loadavg(),
 			pages: results,
@@ -278,3 +327,10 @@ writeFileSync(
 );
 printTable(results);
 console.log(`wrote ${file}`);
+const occluded = results.filter((result) => result.occluded);
+if (occluded.length > 0) {
+	console.error(
+		`occluded, numbers not valid: ${occluded.map((result) => result.slug).join(', ')}. Uncover the window (or the display is off) and rerun.`,
+	);
+	process.exitCode = 1;
+}

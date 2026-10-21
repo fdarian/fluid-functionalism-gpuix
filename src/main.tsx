@@ -5,22 +5,11 @@
  */
 import { render } from '@gpuix/solid';
 import { loadDemos, loadPages, SHOWCASE_SLUG } from '#/lib/demo';
-import { fonts } from '#/lib/fonts';
-import { App, WINDOW_TITLE } from './app';
+import { windowOptions } from '#/lib/window-options';
+import { App } from './app';
 
 const demos = await loadDemos();
 const pages = await loadPages(demos);
-
-const windowOptions = {
-	title: WINDOW_TITLE,
-	titlebarTransparent: true,
-	trafficLightX: 14,
-	trafficLightY: 13,
-	width: 1240,
-	height: 780,
-	focus: process.env.GPUIX_BACKGROUND !== '1',
-	fonts,
-};
 
 if (process.env.FF_PERF === '1') {
 	// Opt-in harness: see scripts/perf.tsx.
