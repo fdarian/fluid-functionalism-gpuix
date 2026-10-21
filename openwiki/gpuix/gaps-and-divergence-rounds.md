@@ -74,10 +74,10 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-872f10458af3aae905a0ee5a
     resource: repo://src/pages/fluid-hover/plain-vs-fluid.tsx
-generated: { by: "claude-code", at: "2026-10-21T17:25:15.282Z" }
+generated: { by: "claude-code", at: "2026-10-21T19:54:58.782Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T17:25:15.282Z
+    at: 2026-10-21T19:54:58.782Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -110,7 +110,7 @@ link to those rows rather than repeating them. The ones that shape the most code
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
 The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17) and again in the
-[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `f6997028` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), and `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`). The bugs and gaps worth knowing before touching layout code:
+[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `f993d9b9` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`, and `f993d9b9` in [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22)). The bugs and gaps worth knowing before touching layout code:
 
 - A function-form `createTransform` of several motion values is computed in JS and can trail its inputs by a frame
   on a live window (not seen on the test renderer). `calc()` strings of the row's own width avoid it where the layer
@@ -155,7 +155,7 @@ Earlier entries here were closed and should not be re-reported: a `width: 100%` 
 filling the column and a percentage `maxWidth` not clamping a `fit-content` box (`20a0c327`); on `b03d4e27`, the
 cap-trimmed label that tabs and tabs-subtle centre sitting a pixel off Chrome's at 1x (gpuix #44), whose two drift
 entries were removed; and on `83bab5a7`, the authored-length rounding, a trimmed `inline-grid` label in a block with a
-strut sitting about 5.5 px high, and the missing pause/play on a motion value's animation; and on `f7b62f11`, the heavier text (font smoothing), the `scrollTop` setter's layout cascade and the scroll range ending one pixel short of `scrollHeight - clientHeight`.
+strut sitting about 5.5 px high, and the missing pause/play on a motion value's animation; and on `f7b62f11`, the heavier text (font smoothing), the `scrollTop` setter's layout cascade and the scroll range ending one pixel short of `scrollHeight - clientHeight`; and on `f993d9b9`, the idle window waking JS on every vsync and the unfocused visible window drawing below the display rate.
 
 ## How a round works
 
@@ -618,21 +618,19 @@ questions for the fork; none has a workaround in this repository, and the owner 
   75 Hz clock. The ask to gpuix changed accordingly: skip layout for paint-only kinds, and relayout only from the
   nearest fixed-size ancestor for geometry kinds (the paint-only half landed in Round 12, below). FF's knockouts add that a single live loop is enough to keep a page
   drawing (see the [loop decision](../decisions/port-decisions.md#js-frame-clock-loops-moved-to-gpuix-native-animation)).
-- **Idle-window floor (r14), a new row.** A static page in a real window costs about 2% of a core on a 120 Hz display
-  because the display link wakes JS and pumps AppKit on every vsync with 0 draws: one static text 2.3-2.7%, 3000 static
-  nodes 2.2-2.3%, FF's introduction, command-menu and typography 1.9-2.6%. An empty one-text window costs the same, so
-  the floor is gpuix's, not the port's (FF arms no timer while idle). Headless has no display link or AppKit and reads
-  0.6%, which is why headless numbers cannot stand in for the window's floor. Roughly 1.1% is `pump_events`, 0.5% the
-  JS and N-API around it. The ask: gate the wake on a requested frame or a live animation.
-- **Memory high-water (r15), a new row.** A one-text gpuix window is 94-104 MB (IOSurface 30, Malloc Small 22,
-  App-Specific Tag 1 12-22 MB), so the window is about two thirds of the introduction's 131-137 MB; the showcase is
-  221 MB and a retained element is about 27.6 KB. After a `--tour` the footprint stays high (about 280 MB in a window)
-  with the retained element count back at its start, so it is allocator and CoreText high-water, not a leak. The
-  only repository-side lever was the images: `avatar.jpg` and `og.png` now ship at 2x their largest displayed size.
-- **A measurement trap found on the way (r16).** gpui paces a non-key window's animation frames at one per 33.3 ms, so
-  an animated page reads about 26 draws a second whenever another app is frontmost. A window CPU figure for an
-  animated page is meaningless without its key share, which the footprint driver now prints. Static pages are not
-  affected, since they draw nothing either way.
+- **Idle-window floor (r14), a new row; removed in [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22).**
+  On `83bab5a7` the display link woke JS and pumped AppKit on every vsync of a real window with 0 draws, which
+  showed up as a floor under every static page. It was the fork's and not the port's (an empty one-text window cost
+  the same, and FF arms no timer while idle), and the ask was to gate the wake on a requested frame or a live
+  animation. gpuix did, and the row and its figures are gone from the README.
+- **Memory high-water (r15), a new row; rewritten in Round 14b.** A one-text gpuix window was most of the
+  introduction's footprint, the showcase was much larger, and after a `--tour` the footprint stayed high with the
+  retained element count back at its start, so it is allocator and CoreText high-water, not a leak. The only
+  repository-side lever was the images: `avatar.jpg` and `og.png` now ship at 2x their largest displayed size. The
+  window figures of this round were measured on `83bab5a7` and are not carried forward.
+- **A measurement trap found on the way (r16); gone in Round 14b.** The footprint driver learned to report which
+  app was frontmost, because a window CPU figure for an animated page depended on it. gpuix removed the dependence
+  and the driver's sampling went with it.
 
 ## Round 12: paint-only patch ticks on `poc` `196d69ce` (2026-10-21)
 
@@ -679,8 +677,8 @@ compare CPU percentages only against a run at similar load, and read `patched/s`
 ## Round 13a: font smoothing, scrollTop setter and exact scroll end on `poc` `f7b62f11` (2026-10-21)
 
 The port adopted `f7b62f11` (zed `da3e5b19db`); the README's pin line and gap table then moved on to `f6997028`
-(zed `67414fd389`, the commit that added window placement, `x`/`y` and `getAllDisplays()`), which is the minimum fork the
-README names today. Three open gpuix items closed, and three small look fixes the pin made possible landed with them.
+(zed `67414fd389`, the commit that added window placement, `x`/`y` and `getAllDisplays()`), which was the minimum fork the
+README named until [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22). Three open gpuix items closed, and three small look fixes the pin made possible landed with them.
 The drift total went from 541 to 540: only the font-smoothing entry in `drift/site.md` was removed (`site` 47 to 46,
 gpuix-gap column 88 to 87).
 
@@ -714,3 +712,26 @@ gpuix-gap column 88 to 87).
 Pitfall carried over: a README "gpuix now does" table and a drift count are only as current as the last pin they were
 re-read against. The pin line was edited twice in one afternoon (`f7b62f11`, then `f6997028`), so read the README's
 current line rather than this page for the minimum fork.
+
+## Round 14b: idle window and unfocused-window pacing on `poc` `f993d9b9` (2026-10-22)
+
+The README now names `f993d9b9` (zed `9686aee204`) as the minimum fork. It closed two of the footprint round's
+findings and shrank a third; no component or look code moved.
+
+- **An idle window wakes 0 times a second.** The README's idle-floor Bugs row (the display link waking JS on every
+  vsync of a real window, a floor under any static page) was removed, and the "gone from this list"
+  sentence now names the idle window with the other things gpuix does. The row's figures are not carried over: the
+  repository holds no in-window idle number until a window run is made on this pin.
+- **An unfocused visible window draws at the display rate.** The earlier cap on a non-key window made animated
+  window figures depend on which app was frontmost. With it gone, `scripts/footprint.tsx` stopped sampling the
+  frontmost app and lost its `key` column, its mixed-state flag and its `keyFraction` JSON field; only the occlusion
+  check remains. Footprint JSON written before this change carries `keyFraction` and was taken under the cap.
+- **The memory row was rewritten on headless figures only.** gpuix #79 cut 5 MB of per-process cost (frame buffers,
+  JS heap, AppKit colour tables). Headless `pnpm footprint` on `f993d9b9`: the introduction is 65 MB (JS heap
+  8 MB), the showcase 131 MB (heap 18 MB); after one `--tour` the introduction sits at 192 MB, peak 194 MB, up from
+  67 MB fresh, and a forced GC does not lower it, with the retained element count back at 744. The in-window floor
+  and the cost of one retained element are explicitly left to be re-measured on the next bench, so the row no
+  longer states a window figure; the earlier window figures (measured on `83bab5a7`) were dropped, not updated.
+
+The reading rule from the footprint harness still holds: [Port decisions](../decisions/port-decisions.md#measuring-idle-cpu-and-memory-pnpm-footprint-and-what-each-mode-can-and-cannot-say)
+says what headless can and cannot answer. Read the README's pin line, not this page, for the current minimum fork.

@@ -5,7 +5,7 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T17:25:15.282Z
+    at: 2026-10-21T19:54:58.782Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -123,7 +123,7 @@ sources:
     resource: repo://src/pages/skill/playback.tsx
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-21T17:25:15.282Z" }
+generated: { by: "claude-code", at: "2026-10-21T19:54:58.782Z" }
 ---
 
 # Port decisions and their reasons
@@ -525,25 +525,23 @@ the choices that make a number trustworthy or not.
   whole, and `why` names the top two reasons for the whole ones (`Reason:count`, from gpui's `declines` and gpuix's
   `unpatchable` maps, which the JSON keeps in full). The counters name the reason but not the element, so `Outside`
   or `UnknownUnit` does not say which node. Read `why` before blaming a page's CPU on its loop count: a page with
-  `patched/s` 0 and a loop on it has a blocker, not a cost. `draw ms` leaves patched frames out. Headless does not reproduce the absolute floor of a static page: 0.6%
-  headless against about 2% in a window, because the real display link wakes JS and pumps AppKit 120 times a second
-  with nothing to draw (repro r14; the gap row is in [gpuix gaps](../gpuix/gaps-and-divergence-rounds.md)). Quote
-  headless for "which page, which loop" and `--window` for "what does the user's machine pay".
-- **A window run is only valid for a visible window, and comparable only at one key state.** A covered window gets no
-  display link, so the driver reads `GPUIX_PRESENT_LOG` and flags the row `occluded` (exit 1) instead of printing a
-  low CPU. gpui also paces a window that is not the key window at one frame per 33.3 ms, so an animated page reads
-  about 26 draws a second whenever another app is frontmost (repro r16). The driver samples the frontmost app once a
-  second and prints the key share (`key`); a row that is neither mostly key nor mostly not is flagged `mixed`.
-  Compare animated pages across runs only at the same key state. The present log adds one small write per presented
-  frame to the process being measured.
+  `patched/s` 0 and a loop on it has a blocker, not a cost. `draw ms` leaves patched frames out. Headless has no display link or AppKit, so it says nothing about what the
+  window itself costs: the repository records no in-window idle floor since gpuix `f993d9b9`, which wakes an idle
+  window 0 times a second (the README row for it was removed; a window run measures it). Quote headless for "which page,
+  which loop" and `--window` for "what does the user's machine pay".
+- **A window run is only valid for a visible window.** A covered window gets no display link, so the driver reads
+  `GPUIX_PRESENT_LOG` and flags the row `occluded` (exit 1) instead of printing a low CPU. The present log adds one
+  small write per presented frame to the process being measured. There is no key-window bookkeeping: on
+  `f993d9b9` an unfocused visible window draws at the display rate, so a window run does not depend on which app is
+  frontmost, and the driver no longer samples it.
 - **The window is 1280 wide, not the app's 1240.** `src/lib/window-options.ts` holds what `src/main.tsx` opens, and
   the child reuses it so the measured window cannot drift from the shipped one, but it overrides the width to 1280:
   the Electron comparison used that, and the site's own layout drops its sidebar below 1280. It recentres the
   resized window with `windowPlacement`, so the measured window opens on the same display as the app.
 - **`--tour` exists because a per-page number misses what a session leaves behind.** One child visits every page
   through the app's own `navigate` and reads the footprint fresh at each stop and after, with and without a forced GC,
-  plus the retained element count. Leaving a page returns nothing to the OS: the introduction sits at about 280 MB in a
-  window (220-266 MB headless) after the tour, against 131-137 MB fresh. It is a high-water mark of malloc, JS heap
+  plus the retained element count. Leaving a page returns nothing to the OS, and a forced GC does not lower it: on `f993d9b9`, headless, the
+  introduction sits at 192 MB after the tour (peak 194 MB), up from 67 MB fresh. It is a high-water mark of malloc, JS heap
   garbage and CoreText instances, not a leak: the retained element count returns to its starting value (744) and a
   second `--tour-rounds` round does not grow it. Read the element count, not the footprint, to tell the two apart.
 - **Load moves the numbers.** The same rule as `pnpm perf`: write the load average next to every figure and compare

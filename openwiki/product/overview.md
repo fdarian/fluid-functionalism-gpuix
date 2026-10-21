@@ -12,10 +12,10 @@ sources:
     resource: repo://THIRD_PARTY_NOTICES.md
   - id: openwiki-source-ff18555ad70362de0f452788
     resource: repo://UPSTREAM.md
-generated: { by: "claude-code", at: "2026-10-21T17:25:15.282Z" }
+generated: { by: "claude-code", at: "2026-10-21T19:54:58.782Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T17:25:15.282Z
+    at: 2026-10-21T19:54:58.782Z
 ---
 
 # Project overview
@@ -65,7 +65,7 @@ site was the only place to see them. Which files are at which pin, and how to ca
 - **`~/code/fdarian/gpuix`**, branch `poc`: the owner's fork of [remorses/gpuix](https://github.com/remorses/gpuix),
   which follows DOM/CSS semantics wherever upstream gpuix did not. Its `README.md` and `FORK.md` are the gpuix
   reference. The port needs the fork, not upstream gpuix: native springs, the DOM event model and many fixes
-  exist only there.
+  exist only there. The README names the minimum fork commit (`f993d9b9` as of 2026-10-22); read it there, not here.
 - **`~/code/fdarian/base-ui-solid-gpuix`**: headless Solid ports of the Base UI primitives (keys, selection, open
   state, focus, ARIA), split out of this repository on 2026-10-17.
 
@@ -87,4 +87,5 @@ All three must resolve to one `solid-js` and one `@gpuix/solid`; see
 | 2026-10-21 | Pinned to gpuix `poc` `b03d4e27`: fractional rects, fluid-hover rects rounded like the source's `offset*` reads and no container-box cache, culling kept on a re-run, the second `StableLabel` ghost within noise, native SVG stroke draws for the button spinner, menu-item check and input-copy; drift 538 to 532 ([details](../gpuix/gaps-and-divergence-rounds.md#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21)) |
 | 2026-10-21 | Pinned to gpuix `poc` `83bab5a7`: authored lengths keep their fraction (the rounding gap row closed), `animate()` on a motion value returns playback controls so plain-vs-fluid is one paused-and-played animation again, `finished` resolves only on finish, tabs-subtle's unfolding label back on the source's strut block; drift stays at 541 ([details](../gpuix/gaps-and-divergence-rounds.md#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21)) |
 | 2026-10-21 | Pinned to gpuix `poc` `196d69ce` (Round 12): paint-only loop ticks are patched instead of drawn whole unless an input, a positioned or translucent ancestor, or a motion value gets in the way; ThinkingIndicator's words stack in one grid cell and thinking-steps lost an anchorless `position: relative` so their shimmers patch; `pnpm footprint` gained `patched/s`, `full/s` and `why`; culling kept on a headless re-run; two new README gap rows for the inputs and positioned-ancestor blockers ([details](../gpuix/gaps-and-divergence-rounds.md#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21)) |
-| 2026-10-21 | Adopted gpuix `poc` `f7b62f11` (Round 13a; the README now names `f6997028`): `WebkitFontSmoothing: 'antialiased'` on the root closes the heavier-text gap, the `scrollTop` setter lays out only what is pending so the `renderer.scrollTo` workaround is reverted, and the scroll end is exact so the release spy's slack is gone; ThinkingSteps, Quill and Beacon rows match the source's heights; the window opens on the first non-primary display (`FF_DISPLAY`); drift 541 to 540 ([details](../gpuix/gaps-and-divergence-rounds.md#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21)) |
+| 2026-10-21 | Adopted gpuix `poc` `f7b62f11` (Round 13a; the README named `f6997028` after it): `WebkitFontSmoothing: 'antialiased'` on the root closes the heavier-text gap, the `scrollTop` setter lays out only what is pending so the `renderer.scrollTo` workaround is reverted, and the scroll end is exact so the release spy's slack is gone; ThinkingSteps, Quill and Beacon rows match the source's heights; the window opens on the first non-primary display (`FF_DISPLAY`); drift 541 to 540 ([details](../gpuix/gaps-and-divergence-rounds.md#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21)) |
+| 2026-10-22 | Pinned to gpuix `poc` `f993d9b9` (Round 14b): an idle window no longer wakes JS every vsync and an unfocused visible window draws at the display rate, so the README's idle-floor row is gone and `pnpm footprint` no longer samples the key window; the memory row now holds headless figures only ([details](../gpuix/gaps-and-divergence-rounds.md#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22)) |

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:3a771944f8e71e5cab2e5023260e8c15d16b2b6724396aa174115da7f3ef04f1",
+  "pageVersion": "sha256:23f2d602a3cd68d6a5f3b97d0809044316db331b2ea2b13ad13c70c17d3a5139",
   "claims": [
     {
       "id": "claim_b925fe22d5a74d5388447aa34ff4d2fd",
@@ -58,17 +58,21 @@
     },
     {
       "id": "claim_f8b0c6e89cbd48b598f62a18b01c9c2c",
-      "statement": "The README names gpuix poc f6997028 as the minimum fork, which includes the f7b62f11 changes (font smoothing key, cheap scrollTop writes, exact scroll end) on top of the earlier paint-only loop-tick patching, fractional rects, fractional authored lengths and playback controls on a motion value's animation.",
+      "statement": "The README names gpuix poc f993d9b9 as the minimum fork, which includes the f7b62f11 changes (font smoothing key, cheap scrollTop writes, exact scroll end) on top of the earlier paint-only loop-tick patching, fractional rects, fractional authored lengths and playback controls on a motion value's animation, and adds an idle window that wakes 0 times a second.",
       "evidence": [
         {
+          "resource": "repo://README.md#L243-L245",
+          "version": "repo-lines-v1:sha256:133e7840616568ca0bc28e975e464e2cea288cb9ebf54e2d85d37c10272bd401:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTZjNjYwNzFmNWFkMTAzMDA2NjBlMmE5ODU5ZWNiMTZmNzVjNGUyZTVjYWQ5MTBhZmYzNmJmN2U5Nzc4NjllYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM2YTJlMjQ5NjI1MTQyODA1ZDJhM2NhMjM3YjlhNjAxYmY1OTQ4YjVlZGI1YmE4MmE4MGFkNzZkZDVlODg4MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDgyZjg5MWE0M2ZjZDYwZDY3YTA4NDkzM2IxMmE0ZjlmOGM4ZDQ0NmZjY2FjZmNmZThiZDdiMWE4MTYxODUzMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGNjY2QxN2Y5NzdhZmE1NTJhOTliNzIwMzI2MjRhNTIzNzBkZTU4NGMyNDIxNTg5YjBlNWM0MzBhMTQ4MjY2YyJ9"
+        },
+        {
           "resource": "repo://README.md#L56-L56",
-          "version": "repo-lines-v1:sha256:54d12db2a23ecac584e005e7489cfae8f6098a5393677a0265a256ff5ac778ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTRkMTJkYjJhMjNlY2FjNTg0ZTAwNWU3NDg5Y2ZhZThmNjA5OGE1MzkzNjc3YTAyNjVhMjU2ZmY1YWM3NzhlZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTRkMTJkYjJhMjNlY2FjNTg0ZTAwNWU3NDg5Y2ZhZThmNjA5OGE1MzkzNjc3YTAyNjVhMjU2ZmY1YWM3NzhlZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "version": "repo-lines-v1:sha256:8fdb23a3f140514d6c6455606aeebec099c9b4f847c0410d57d0ac1786dae0f4:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGZkYjIzYTNmMTQwNTE0ZDZjNjQ1NTYwNmFlZWJlYzA5OWM5YjRmODQ3YzA0MTBkNTdkMGFjMTc4NmRhZTBmNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGZkYjIzYTNmMTQwNTE0ZDZjNjQ1NTYwNmFlZWJlYzA5OWM5YjRmODQ3YzA0MTBkNTdkMGFjMTc4NmRhZTBmNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-21T17:25:15.282Z"
+    "at": "2026-10-21T19:54:58.782Z"
   }
 }
