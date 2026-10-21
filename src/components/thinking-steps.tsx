@@ -30,6 +30,7 @@ import {
 	focusRing,
 	type as scale,
 	shape,
+	siteType,
 	motion as tween,
 	weight,
 } from '#/lib/theme';
@@ -236,7 +237,7 @@ function Collapse(props: {
 			<div
 				inert={panel.inert()}
 				onLayout={measured.onLayout}
-				style={{ flexShrink: 0 }}
+				style={{ flexShrink: 0, ...siteType.body }}
 			>
 				{props.children}
 			</div>
