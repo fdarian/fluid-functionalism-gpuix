@@ -7,7 +7,8 @@
  * default the child is compiled first (`dist/footprint-child`, built like the app)
  * so Bun's transpile cost stays out of the memory numbers; `--source` runs it
  * from source. Without slugs every page is measured. Writes
- * `perf/footprint-<label>.json` and prints a table.
+ * `perf/footprint-<label>.json` and prints a table (`draw ms` is mean/p90 of the
+ * painting `drawFrame()` calls, `js%` the process CPU share outside the native calls (approximate); headless only).
  *
  * `--window` opens each page in a real 1280x780 window instead of the offscreen
  * renderer, with the protocol of the Electron comparison: footprint after the
@@ -63,6 +64,10 @@ type PageResult = {
 	/** Null in window mode, where the live renderer keeps no such counter. */
 	layoutsPerSecond: number | null;
 	builtPerSecond: number | null;
+	/** Headless only: wall ms of the `drawFrame()` calls that painted; null when none did. */
+	drawMsPerFrame: { mean: number; p90: number } | null;
+	/** Headless only: the share of the CPU time outside `dispatchNativeEvents()` and `drawFrame()`. */
+	jsShare: number | null;
 	/** Window mode only: nothing was presented before the idle window, or the idle window drew and none of it was shown. A window covered after its first frame, on a page that then draws nothing, looks like a visible still page: not detectable. */
 	occluded: boolean | null;
 	retainedElements: number | null;
@@ -255,6 +260,18 @@ function printTable(results: PageResult[]) {
 		]),
 		['layouts/s', (result) => perSecond(result.layoutsPerSecond, 1)],
 		['built/s', (result) => perSecond(result.builtPerSecond, 0)],
+		[
+			'draw ms',
+			(result) =>
+				result.drawMsPerFrame === null
+					? '-'
+					: `${result.drawMsPerFrame.mean.toFixed(1)}/${result.drawMsPerFrame.p90.toFixed(1)}`,
+		],
+		[
+			'js%',
+			(result) =>
+				perSecond(result.jsShare === null ? null : result.jsShare * 100, 0),
+		],
 		...windowOnly([
 			'settled MB',
 			(result) =>

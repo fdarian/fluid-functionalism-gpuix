@@ -69,7 +69,27 @@ type Probe = {
 	retainedElements(): number | null;
 	/** Frames presented since the process started. */
 	presentedTotal(): number | null;
+	/** Time spent inside native calls since `reset`; only the emulated display link can time them. */
+	nativeTime(): NativeTime | null;
 };
+
+type NativeTime = {
+	/** Wall ms of each `drawFrame()` that painted. */
+	drawMs: number[];
+	/** Process CPU ms across `dispatchNativeEvents()` and `drawFrame()`, painted or not; the native side's own threads count. */
+	nativeCpuMs: number;
+};
+
+function mean(values: number[]) {
+	return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+function percentile(values: number[], fraction: number) {
+	const sorted = [...values].sort((a, b) => a - b);
+	return sorted[
+		Math.min(sorted.length - 1, Math.floor(sorted.length * fraction))
+	];
+}
 
 const demos = await loadDemos();
 const pages = await loadPages(demos);
@@ -86,10 +106,22 @@ function mountHeadless(): Probe {
 	renderer.setA11yActive(false);
 	renderer.setInlineDraws(false);
 
+	let drawMs: number[] = [];
+	let nativeCpuMs = 0;
+
 	/** One display-link wake: events reach JS, then the window draws if something is dirty. */
 	function wake() {
+		const cpuBefore = process.cpuUsage();
 		renderer.dispatchNativeEvents();
+		const dispatched = performance.now();
+		const paintedBefore = renderer.getPaintedFrameCount();
 		renderer.drawFrame();
+		const end = performance.now();
+		const cpuInNative = process.cpuUsage(cpuBefore);
+		nativeCpuMs += (cpuInNative.user + cpuInNative.system) / 1000;
+		if (renderer.getPaintedFrameCount() > paintedBefore) {
+			drawMs.push(end - dispatched);
+		}
 	}
 
 	test.render(() => <App demos={demos} pages={pages} initialPage={slug} />);
@@ -102,6 +134,8 @@ function mountHeadless(): Probe {
 			paintedStart = renderer.getPaintedFrameCount();
 			layoutStart = renderer.getLayoutPassCount();
 			renderer.resetBuildCounters();
+			drawMs = [];
+			nativeCpuMs = 0;
 		},
 		read: () => ({
 			draws: renderer.getPaintedFrameCount() - paintedStart,
@@ -111,6 +145,7 @@ function mountHeadless(): Probe {
 		}),
 		retainedElements: () => renderer.getRetainedElementCount(),
 		presentedTotal: () => null,
+		nativeTime: () => ({ drawMs, nativeCpuMs }),
 	};
 }
 
@@ -164,6 +199,7 @@ function mountWindow(): Probe {
 		}),
 		retainedElements: () => null,
 		presentedTotal: () => countPresented(presentLog),
+		nativeTime: () => null,
 	};
 }
 
@@ -188,6 +224,9 @@ const wallMs = performance.now() - wallStart;
 const cpu = process.cpuUsage(cpuStart);
 const counts = probe.read();
 
+const cpuMs = (cpu.user + cpu.system) / 1000;
+const nativeTime = probe.nativeTime();
+
 const seconds = wallMs / 1000;
 const rate = (count: number | null) =>
 	count === null ? null : count / seconds;
@@ -197,11 +236,20 @@ console.log(
 	`FOOTPRINT ${JSON.stringify({
 		slug,
 		windowMs: wallMs,
-		cpuPercent: ((cpu.user + cpu.system) / 1000 / wallMs) * 100,
+		cpuPercent: (cpuMs / wallMs) * 100,
 		drawsPerSecond: rate(counts.draws),
 		presentedPerSecond: rate(counts.presented),
 		layoutsPerSecond: rate(counts.layouts),
 		builtPerSecond: rate(counts.built),
+		drawMsPerFrame:
+			nativeTime === null || nativeTime.drawMs.length === 0
+				? null
+				: {
+						mean: mean(nativeTime.drawMs),
+						p90: percentile(nativeTime.drawMs, 0.9),
+					},
+		jsShare:
+			nativeTime === null ? null : (cpuMs - nativeTime.nativeCpuMs) / cpuMs,
 		occluded: windowMode
 			? presentedBeforeIdle === 0 ||
 				(counts.draws > IN_FLIGHT_DRAWS && counts.presented === 0)
