@@ -5,7 +5,7 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T08:39:13.075Z
+    at: 2026-10-21T10:50:33.517Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -25,6 +25,8 @@ sources:
     resource: repo://pnpm-workspace.yaml
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
+  - id: openwiki-source-44abbdddc8e661cfb941f953
+    resource: repo://scripts/build.ts
   - id: openwiki-source-8792b0b9d5aaa145ee2ebfa4
     resource: repo://scripts/check-command-menu.tsx
   - id: openwiki-source-1d90d3d86ac1d41b49610f02
@@ -43,6 +45,12 @@ sources:
     resource: repo://scripts/check-thinking-steps.tsx
   - id: openwiki-source-819b237d6ed6e51fbd2028b9
     resource: repo://scripts/check-weight-widths.tsx
+  - id: openwiki-source-aaea0e5a8481e42cfaa107a5
+    resource: repo://scripts/footprint-child.tsx
+  - id: openwiki-source-092597adc6c8ddcc5594efb5
+    resource: repo://scripts/footprint.tsx
+  - id: openwiki-source-0b5ab2f600a0c34e3a887a8e
+    resource: repo://scripts/native-cjs-plugin.ts
   - id: openwiki-source-edfff899d93ec8844d1b24df
     resource: repo://scripts/perf-page-switch.tsx
   - id: openwiki-source-edfa365c97d8e399b7824f84
@@ -99,6 +107,8 @@ sources:
     resource: repo://src/lib/theme-fade.tsx
   - id: openwiki-source-1a25dd521e50a4d59274e1c2
     resource: repo://src/lib/theme.ts
+  - id: openwiki-source-91cd31b976f86a6db97b9fbc
+    resource: repo://src/lib/window-options.ts
   - id: openwiki-source-805db717791883f12f02d567
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-872f10458af3aae905a0ee5a
@@ -107,7 +117,7 @@ sources:
     resource: repo://src/pages/skill/playback.tsx
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-21T08:39:13.075Z" }
+generated: { by: "claude-code", at: "2026-10-21T10:50:33.517Z" }
 ---
 
 # Port decisions and their reasons
@@ -378,8 +388,12 @@ renderer and cost no JS per frame. The reasons to prefer it, and the traps:
   page, whose native loading spinner takes the source's always-loading Saving button from 3.8% idle to 41%). This is why
   culling also pauses the loops. On `5fda771a` such a loop could starve Bun's timers outright; as of `b03d4e27`
   timers run between ticks (9-10 callbacks a second at 3000 nodes, 7-8 at 12000; gpuix #56), so a hung perf or check
-  run under load is no longer expected to be this. The README records that gpuix could fix it in principle (a tick
-  that repainted only the animating subtree would not scale with the page) and that the owner accepts the cost.
+  run under load is no longer expected to be this. The README records that gpuix could fix it in principle and that
+  the owner accepts the cost. What is paid, measured on `83bab5a7` (repro r13): a layout pass on every draw, even for
+  paint-only animation kinds, and the prepaint walk, 2.2 / 6.5 / 26 ms a draw at 1.3k / 5.2k / 20.8k elements for one
+  small animated element. So a tick that skipped layout for paint-only kinds would not scale with the page. FF's own
+  knockouts (`pnpm footprint`, one loop removed at a time) show one live loop is enough to keep a page drawing: the
+  showcase's ThinkingIndicator tile alone is its whole 42%, fluid-hover's cursor loop its whole 27%.
 - **Who still uses `onFrame`, and why** is recorded in the doc comment of `src/lib/clock.ts`: thinking-steps'
   chevron (the source's `rotate` is a transform gpuix cannot animate), the fluid-hover lists demo (re-measures rows
   while a sub-menu springs), and the cost meter (reads the clock's gaps as its stall probe). Do not add a new
@@ -451,6 +465,57 @@ collapsed borders; `check-table` counts the glide's layout builds against the si
 silently. The lesson for other "declared but inert" transitions: an inert style can still dirty layout every frame, so
 measure layout builds, not only pixels. The repro is in the author's notes (`r9-border-transition-layout.md`, not a
 repository file).
+
+## Measuring idle CPU and memory: `pnpm footprint`, and what each mode can and cannot say
+
+`pnpm perf` answers "how long does a frame take while the pointer sweeps"; it cannot say what a still page costs a
+laptop, which is what the Electron comparison asked. `pnpm footprint` (`scripts/footprint.tsx`, one child process per
+page in `scripts/footprint-child.tsx`) was added on 2026-10-21 for that. The flags are in the script header; this keeps
+the choices that make a number trustworthy or not.
+
+- **The child is compiled, not run from source, unless `--source`.** Bun's transpile of the app's TSX lands in the
+  process's memory and CPU if it is run from source; the footprint then reads like a dev server's, not the app's.
+  `--source` exists to show that difference, so a source row is never compared with a bundle row. The label records
+  the mode (`bundle`, `source`, plus `-window`, `-tour`).
+- **Headless and `--window` answer different questions.** Headless (the test renderer with an emulated 75 Hz display
+  link) tracks the animated-versus-static split of the real window well, and splits each wake into native and JS time
+  (`draw ms`, `js%`), which a real window cannot. It does not reproduce the absolute floor of a static page: 0.6%
+  headless against about 2% in a window, because the real display link wakes JS and pumps AppKit 120 times a second
+  with nothing to draw (repro r14; the gap row is in [gpuix gaps](../gpuix/gaps-and-divergence-rounds.md)). Quote
+  headless for "which page, which loop" and `--window` for "what does the user's machine pay".
+- **A window run is only valid for a visible window, and comparable only at one key state.** A covered window gets no
+  display link, so the driver reads `GPUIX_PRESENT_LOG` and flags the row `occluded` (exit 1) instead of printing a
+  low CPU. gpui also paces a window that is not the key window at one frame per 33.3 ms, so an animated page reads
+  about 26 draws a second whenever another app is frontmost (repro r16). The driver samples the frontmost app once a
+  second and prints the key share (`key`); a row that is neither mostly key nor mostly not is flagged `mixed`.
+  Compare animated pages across runs only at the same key state. The present log adds one small write per presented
+  frame to the process being measured.
+- **The window is 1280 wide, not the app's 1240.** `src/lib/window-options.ts` holds what `src/main.tsx` opens, and
+  the child reuses it so the measured window cannot drift from the shipped one, but it overrides the width to 1280:
+  the Electron comparison used that, and the site's own layout drops its sidebar below 1280.
+- **`--tour` exists because a per-page number misses what a session leaves behind.** One child visits every page
+  through the app's own `navigate` and reads the footprint fresh at each stop and after, with and without a forced GC,
+  plus the retained element count. Leaving a page returns nothing to the OS: the introduction sits at about 280 MB in a
+  window (220-266 MB headless) after the tour, against 131-137 MB fresh. It is a high-water mark of malloc, JS heap
+  garbage and CoreText instances, not a leak: the retained element count returns to its starting value (744) and a
+  second `--tour-rounds` round does not grow it. Read the element count, not the footprint, to tell the two apart.
+- **Load moves the numbers.** The same rule as `pnpm perf`: write the load average next to every figure and compare
+  runs only at a similar load. The driver records `loadavg` and uptime in the JSON for that.
+
+### The compiled binary: choices that only show up outside `bun src/main.tsx`
+
+- **`autoloadBunfig: false` in `scripts/build.ts` and in the footprint child's build.** A compiled Bun binary reads the
+  `bunfig.toml` of the directory it is launched from, and this repo's own `bunfig.toml` carries the Solid transform
+  and registry preloads. Launched from a checkout (or from anywhere with a stray `bunfig.toml`), the binary
+  would pick up that config (or a stranger's) from wherever it happens to start. Everything it needs is embedded, so it
+  must read none.
+- **`nativeCjsPlugin` moved to `scripts/native-cjs-plugin.ts`** because the app build and the footprint build both need
+  it. The footprint child imports the gpuix test renderer, whose `dist/*.js` reach the addon through `../index.js`,
+  the ESM entry the plugin exists to avoid; the shared plugin redirects that import too (only when the importer is
+  inside the package's `dist`). Without the redirect the compiled child cannot embed the addon, the same failure the app build had.
+- **Image assets ship at twice their largest displayed size** (`9a0e00d9`): `avatar.jpg` is 192 px (77 to 10 KB) and
+  `og.png` 400x200 (19 to 11 KB; the 1200x600 original decoded to about 2.9 MB). Source resolution costs memory once decoded,
+  not just disk, so do not replace them with the originals.
 
 ## Theme: System, Light and Dark through createAppearance
 

@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:9ee13ac03ba540e611c3c2d8eba9112058d8cfe24efa19c53f87853dc2cafae4",
+  "pageVersion": "sha256:b0826231416d76c28cebf44d144717b78ba0b53490722cf84efb7d498222dd7e",
   "claims": [
     {
       "id": "claim_a7315f44f8af437c803bd7fb46fe717d",
       "statement": "pnpm install must run from this repository's root; installing inside base-ui-solid-gpuix links a second @gpuix/solid and breaks the app silently.",
       "evidence": [
         {
-          "resource": "repo://AGENTS.md#L26-L26",
+          "resource": "repo://AGENTS.md#L27-L27",
           "version": "repo-lines-v1:sha256:49b3553973b321aeef6252a5a3f7738ce26ab4bbefaef0c10d6623636bb7c009:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDliMzU1Mzk3M2IzMjFhZWVmNjI1MmE1YTNmNzczOGNlMjZhYjRiYmVmYWVmMGMxMGQ2NjIzNjM2YmI3YzAwOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDliMzU1Mzk3M2IzMjFhZWVmNjI1MmE1YTNmNzczOGNlMjZhYjRiYmVmYWVmMGMxMGQ2NjIzNjM2YmI3YzAwOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjY1ZDNlMDEzNDAxZWNjNzljOTM2ZGZiMzU0ZWM0YjdmZjJiNzY5MzQ3MWQxOTcyMWY4MjJjODI5YTRmMTE3MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2YwMjhhNDc3Njk4YWMzNGI1YTcwNjVjNzUzNThjNmY3YmQ5NWE0ZTk0Nzk0MThiOWI3ZDczNzVkOTk5NzIyYSJ9"
         }
       ]
@@ -17,7 +17,7 @@
       "statement": "Screenshot diffs are noisy because playground variants use Math.random, so captures are compared by pixels, not hashes.",
       "evidence": [
         {
-          "resource": "repo://AGENTS.md#L30-L30",
+          "resource": "repo://AGENTS.md#L31-L31",
           "version": "repo-lines-v1:sha256:7b3c68fc24f28d238096bbb96987351b3efbce81f2f5e1ecd04b2d9ece6c8a07:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2IzYzY4ZmMyNGYyOGQyMzgwOTZiYmI5Njk4NzM1MWIzZWZiY2U4MWYyZjVlMWVjZDA0YjJkOWVjZTZjOGEwNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2IzYzY4ZmMyNGYyOGQyMzgwOTZiYmI5Njk4NzM1MWIzZWZiY2U4MWYyZjVlMWVjZDA0YjJkOWVjZTZjOGEwNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2YwMjhhNDc3Njk4YWMzNGI1YTcwNjVjNzUzNThjNmY3YmQ5NWE0ZTk0Nzk0MThiOWI3ZDczNzVkOTk5NzIyYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDZmNWNhOGNjZWUwNjA2MDE0Y2E2NTAxNzBlYThlZjM2OTg2ZDJhYmM5ODA5N2YwMzVlNGY2YTU3OGFiM2E2MiJ9"
         }
       ]
@@ -35,10 +35,24 @@
           "version": "repo-lines-v1:sha256:4e1f7562103dada14ed51f79e62eb47aa01a3bade43eb22a39e94ab9b2c4adcd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3ODcxODZhOTRhNWRmNTFlOGU2MDBiODBiYzQzZjUzZDgwMmZlNjQwMTZjNjU3MGFiN2Y0MmYzYmE3YzQyN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkMzg3OTk2NDFkZmI5ZDFhNjY5ZDViNWM2OGVmY2I4ODFmNWNmZWM0MzVjZDcyMGM1NmU0ZmI5YmQ5YTI1YmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyODE0NTgxNGE2ZTJkODEzMzZhMmJmMTc0NDBkZTJkYTVmMGMzZWQ0NDA0ZjY1M2Q1MjI1M2Q1OTE4Mzc5ZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNmNDliNzg5MTZhYjg5YWFlZmVjMzQ5ZjExZDU4ODI0YmFlYTI3ZTIwODc3ODcwYTY4ZjU3NTg4NDU0YThhY2MifQ"
         }
       ]
+    },
+    {
+      "id": "claim_04b981e916a542c586d5cc494cbd1439",
+      "statement": "pnpm footprint is the project's idle CPU and memory tool, with headless, --window and --tour modes, and it writes its results under perf/.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L22-L22",
+          "version": "repo-lines-v1:sha256:c652b8e8ca67ca2d10a1f2840cb93555522990c4ee9b4da8f39e8aa89cd3dcc0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzY1MmI4ZThjYTY3Y2EyZDEwYTFmMjg0MGNiOTM1NTU1MjI5OTBjNGVlOWI0ZGE4ZjM5ZThhYTg5Y2QzZGNjMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzY1MmI4ZThjYTY3Y2EyZDEwYTFmMjg0MGNiOTM1NTU1MjI5OTBjNGVlOWI0ZGE4ZjM5ZThhYTg5Y2QzZGNjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTllYWQ5ZTEyNzI4ZDJmNmU1MDhjZDgyM2I5MzRjN2Q0YTE0OTY1MzE3ZjVlN2IwZTQ2YjRmYzRiMDJlYWZiOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2UzNzI2YmQ5MGJlMWI4NTliZjNkYTE0Zjg5MDI0OGFlMDRmNDYzNzYwNWI0Mzc5OTBlMjc3MzU5MDI1MDZjNyJ9"
+        },
+        {
+          "resource": "repo://package.json#L16-L16",
+          "version": "repo-lines-v1:sha256:b91634d9fbabe6dd60c421aad71d2d49828ee111c07111683ed35b1545aa9ba1:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjkxNjM0ZDlmYmFiZTZkZDYwYzQyMWFhZDcxZDJkNDk4MjhlZTExMWMwNzExMTY4M2VkMzViMTU0NWFhOWJhMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjkxNjM0ZDlmYmFiZTZkZDYwYzQyMWFhZDcxZDJkNDk4MjhlZTExMWMwNzExMTY4M2VkMzViMTU0NWFhOWJhMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGE0MWQwOWE5YzJhYTcwYmJmZWY2ODBiZDg4ZmM2N2JkNjc5Yzg5OWI3NDAxMDQ0M2JmYjg3M2Y0YzVlOWVmNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzc1YzhkYWE4OGIzNzRmMWFmMjEwMjc3ZGU2NWZhNDYwOGY1OWYwYWE5YWFkN2U2Zjc3MGRmYzkxZjI0Nzc2MCJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-21T08:39:13.075Z"
+    "at": "2026-10-21T10:50:33.517Z"
   }
 }

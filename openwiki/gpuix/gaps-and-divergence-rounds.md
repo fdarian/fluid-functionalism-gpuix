@@ -24,6 +24,8 @@ sources:
     resource: repo://scripts/check-tabs-subtle.tsx
   - id: openwiki-source-f870e66b983ce90f21118b51
     resource: repo://scripts/drift-counts.ts
+  - id: openwiki-source-092597adc6c8ddcc5594efb5
+    resource: repo://scripts/footprint.tsx
   - id: openwiki-source-edfff899d93ec8844d1b24df
     resource: repo://scripts/perf-page-switch.tsx
   - id: openwiki-source-5ebe82cc5f9e383e14411602
@@ -70,10 +72,10 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-872f10458af3aae905a0ee5a
     resource: repo://src/pages/fluid-hover/plain-vs-fluid.tsx
-generated: { by: "claude-code", at: "2026-10-21T08:39:13.075Z" }
+generated: { by: "claude-code", at: "2026-10-21T10:50:33.517Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T08:39:13.075Z
+    at: 2026-10-21T10:50:33.517Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -612,3 +614,34 @@ clicks. Neither is fixed in gpuix; both are open questions for the fork, and the
   215, Showcase 286-300 on every visit).
 - **A new harness**, `scripts/perf-page-switch.tsx`, headless, measures the page-switch hitch per sidebar click (mount
   JS, first draw, later frames); the README's harness notes list it next to the real-window `scripts/perf.tsx`.
+
+## Footprint round on `poc` `83bab5a7` (2026-10-21, repros r13 to r16)
+
+Not an adoption: no code moved to gpuix features. `pnpm footprint` (reasons and caveats in
+[Port decisions](../decisions/port-decisions.md#measuring-idle-cpu-and-memory-pnpm-footprint-and-what-each-mode-can-and-cannot-say))
+measured what a still window costs, and three README Bugs rows were written or rewritten from it. All three are
+questions for the fork; none has a workaround in this repository, and the owner accepts the costs for now.
+
+- **Per-draw cost, restated (r13).** The earlier "7 ms a tick on 3000 nodes" row said only that the page is replayed.
+  With a test renderer on `83bab5a7` the cost is the layout pass that runs on every draw (even for paint-only kinds:
+  `layouts/s` equals `draws/s`) plus the prepaint walk, since retention already holds the build to 3 elements a frame:
+  2.2 / 6.5 / 26 ms of CPU a draw at 1.3k / 5.2k / 20.8k elements for one 6-24 px animated element, within 5% across
+  colour, SVG dash, SVG `d`, width and absolute `top`. At 20.8k elements the loop falls to 30 draws a second against the
+  75 Hz clock. The ask to gpuix changed accordingly: skip layout for paint-only kinds, and relayout only from the
+  nearest fixed-size ancestor for geometry kinds. FF's knockouts add that a single live loop is enough to keep a page
+  drawing (see the [loop decision](../decisions/port-decisions.md#js-frame-clock-loops-moved-to-gpuix-native-animation)).
+- **Idle-window floor (r14), a new row.** A static page in a real window costs about 2% of a core on a 120 Hz display
+  because the display link wakes JS and pumps AppKit on every vsync with 0 draws: one static text 2.3-2.7%, 3000 static
+  nodes 2.2-2.3%, FF's introduction, command-menu and typography 1.9-2.6%. An empty one-text window costs the same, so
+  the floor is gpuix's, not the port's (FF arms no timer while idle). Headless has no display link or AppKit and reads
+  0.6%, which is why headless numbers cannot stand in for the window's floor. Roughly 1.1% is `pump_events`, 0.5% the
+  JS and N-API around it. The ask: gate the wake on a requested frame or a live animation.
+- **Memory high-water (r15), a new row.** A one-text gpuix window is 94-104 MB (IOSurface 30, Malloc Small 22,
+  App-Specific Tag 1 12-22 MB), so the window is about two thirds of the introduction's 131-137 MB; the showcase is
+  221 MB and a retained element is about 27.6 KB. After a `--tour` the footprint stays high (about 280 MB in a window)
+  with the retained element count back at its start, so it is allocator and CoreText high-water, not a leak. The
+  only repository-side lever was the images: `avatar.jpg` and `og.png` now ship at 2x their largest displayed size.
+- **A measurement trap found on the way (r16).** gpui paces a non-key window's animation frames at one per 33.3 ms, so
+  an animated page reads about 26 draws a second whenever another app is frontmost. A window CPU figure for an
+  animated page is meaningless without its key share, which the footprint driver now prints. Static pages are not
+  affected, since they draw nothing either way.

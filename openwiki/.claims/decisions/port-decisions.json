@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:01be45641d52e1ab9c43df87c675998d4ed39c93ed82afdf13843330f7b8e3d4",
+  "pageVersion": "sha256:db1fb1ff82227eb0014647acf983f2d0519d40600a348f2d5745705802441477",
   "claims": [
     {
       "id": "claim_782844f1b7454bbd8c43501708e208b1",
@@ -103,7 +103,7 @@
       "statement": "@gpuix/solid is installed as a file: copy so its solid-js peer resolves from the app, @gpuix/native stays a link with a workspace override, and base-ui-solid-gpuix is a workspace member.",
       "evidence": [
         {
-          "resource": "repo://package.json#L18-L23",
+          "resource": "repo://package.json#L19-L24",
           "version": "repo-lines-v1:sha256:87565382a3ffa8177a84ae24684cdcfe855aabdab4ab51339f17af1c107d16f3:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODY2Y2QyMTE5Mjc5YjM2Y2E0MWQyZWQ3OGYwYmM3ZjFiNmU5MGY1YjJjOTc5MjhmYzk4MWU3M2I1NzAxYmM4YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmU1MDMyNDk2MjU2NTY4NWE1OWMzOTc1ZTFhNTQyNGE4MTc1YmE0MGY3ZGZhM2EwOTY1NzkxOWIyMWNkOTI2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWI1YTllZjljMDI2NTE0YmQyMzk2NjBmZTg4ZDAyMjlmMWE0ZGEzOGE1ZTZlYjY4YTdhOTQwN2JkMzA2ZTQ3YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTI0OGYxMTk0NDg1MmY4Yzc4Y2VmOTYwZmI0MTAxNjExYWI2NGJiMWFiNjE3YWYxZWVjZDgxMGFjMGIxMWJmNCJ9"
         },
         {
@@ -231,7 +231,7 @@
       "statement": "The port keeps the off-screen culling in src/lib/cull.ts: re-measured live on gpuix poc b03d4e27 (two alternating pairs, culling on against off), turning it off was worse on 9 pages and better on none (showcase idle CPU 45 to 80%, input-message 3.3 to 51.5%, fluid-hover p95 4.1 to 7.3 ms; summed over 49 pages idle CPU 464 to 575 and p95 244 to 274 ms), so the earlier plan to remove it once gpuix #46 lands was not carried out.",
       "evidence": [
         {
-          "resource": "repo://README.md#L274-L274",
+          "resource": "repo://README.md#L276-L276",
           "version": "repo-lines-v1:sha256:927cfc6f5c6ae134821a4030a789ad7b3314de2c64370b3192bd7933ff178785:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTI3Y2ZjNmY1YzZhZTEzNDgyMWE0MDMwYTc4OWFkN2IzMzE0ZGUyYzY0MzcwYjMxOTJiZDc5MzNmZjE3ODc4NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTI3Y2ZjNmY1YzZhZTEzNDgyMWE0MDMwYTc4OWFkN2IzMzE0ZGUyYzY0MzcwYjMxOTJiZDc5MzNmZjE3ODc4NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTY5Y2Y2ODQ5ODI4NWQ0YzgwMzk0YWY2NGEzZWY2MTljMTdkNzJmM2RmMGQ5MWI0ZDNmMzczOWQ1NWJmMWU2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWNmMTVkMmUzZjVlYzQxM2RkY2E2ZmQ5ZjJkNjkxZDk2YmNiZWRhNjRlZmI2MjY5N2EwMGE0NzFjYzJlZGZjZiJ9"
         },
         {
@@ -309,7 +309,7 @@
       "statement": "Fluid hover reads its container's bounding rect on every pick and containerBox() is a fresh read, with no cache; the earlier cached box (introduced because a live getBoundingClientRect cost a layout pass of about 6 ms on poc e5231304) was dropped on b03d4e27 when it measured within noise, since a read after a paint-only write runs no layout pass (gpuix #47).",
       "evidence": [
         {
-          "resource": "repo://README.md#L352-L352",
+          "resource": "repo://README.md#L355-L355",
           "version": "repo-lines-v1:sha256:a0b376ac436f09820b2b4fa2b31bdd1cb6e993fce144b2f4e597c79098e53d41:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTBiMzc2YWM0MzZmMDk4MjBiMmI0ZmEyYjMxYmRkMWNiNmU5OTNmY2UxNDRiMmY0ZTU5N2M3OTA5OGU1M2Q0MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTBiMzc2YWM0MzZmMDk4MjBiMmI0ZmEyYjMxYmRkMWNiNmU5OTNmY2UxNDRiMmY0ZTU5N2M3OTA5OGU1M2Q0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjNmN2IwZjMzNzhmNDU5MmUwNjc4ZmNkZGU2NmMxMGI4MzEyMDQ0ZmM1ZmY1ZTZmMTNkM2NmMjcwMzkzODU4ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWNkZjQzNmIyMGZiNWQwNGRlMjE4NTJiZjI5MTU5ZmI2ZDk5Y2M1OWRkN2MyYWRkNjk4Y2EyNWI1OTZlOGI1MiJ9"
         },
         {
@@ -419,8 +419,8 @@
       "statement": "The button page's native loading spinner makes the page a looping-native-animation page: the source's always-loading Saving button takes it from 3.8% to 41% idle CPU.",
       "evidence": [
         {
-          "resource": "repo://README.md#L260-L260",
-          "version": "repo-lines-v1:sha256:e98d9c585bcd081fa9fc886dda3283d7773aa0103acf570e71a414c94b29a43d:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTk4ZDljNTg1YmNkMDgxZmE5ZmM4ODZkZGEzMjgzZDc3NzNhYTAxMDNhY2Y1NzBlNzFhNDE0Yzk0YjI5YTQzZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTk4ZDljNTg1YmNkMDgxZmE5ZmM4ODZkZGEzMjgzZDc3NzNhYTAxMDNhY2Y1NzBlNzFhNDE0Yzk0YjI5YTQzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjQ2MjdhMGE5ZTRkODBjY2RiNTBkOTliYjdhYjE5ZmY5ODgwN2YzZWJiOWI1OTIzN2Q5MDY1YjUyY2NlNjExMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTEzNDY3NjNlZmJhZTE3ZmNjNmI0YmFjNjlmYjM0N2Y1YjFjNTU0NDZlOTJhYjIzMzI4ODI2YTg1Nzc0MjhjNSJ9"
+          "resource": "repo://README.md#L260-L261",
+          "version": "repo-lines-v1:sha256:58cfac73898a6772066ed9d21b23cbd856c0fd2f1e10ec6c2baeb92f9b85b317:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjYyYWY0NTExYTRmMmJkYWJiZjY1YWRiMjQxYTZmNDZmNDFmM2FjNjBiMzBkYWViNDhiNTgzZTkzMjE2NGMzYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTBkYTYyMjg0NzE3YzViMzA3YWNhMzg3NjZhYWM3NjA1YmE4ODZiYmY4NGQyMzI5MWNhY2UzYjU4NDZhOTZiZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjQ2MjdhMGE5ZTRkODBjY2RiNTBkOTliYjdhYjE5ZmY5ODgwN2YzZWJiOWI1OTIzN2Q5MDY1YjUyY2NlNjExMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmY5OTI1NTliNTE3NmQ1ODMxOTMyMmY3N2MyYmU3YTVmODc5ZTlhZmU2NDY4NTI1YzQ2Y2JlNTJmMGMxZmRiZSJ9"
         }
       ]
     },
@@ -535,7 +535,7 @@
       "statement": "The first draw of a long page (Changelog, Showcase, Command Menu) still builds, lays out and shapes every node because culling only hides regions after an IntersectionObserver reports against a first layout; this is recorded as a gpuix question in the README rather than worked around.",
       "evidence": [
         {
-          "resource": "repo://README.md#L261-L261",
+          "resource": "repo://README.md#L263-L263",
           "version": "repo-lines-v1:sha256:7c314ff6b9b1413a72a3f8e09ab5875c8964f4d436914d096d7f0b19108bf4e0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2MzMTRmZjZiOWIxNDEzYTcyYTNmOGUwOWFiNTg3NWM4OTY0ZjRkNDM2OTE0ZDA5NmQ3ZjBiMTkxMDhiZjRlMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2MzMTRmZjZiOWIxNDEzYTcyYTNmOGUwOWFiNTg3NWM4OTY0ZjRkNDM2OTE0ZDA5NmQ3ZjBiMTkxMDhiZjRlMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2Q4ZDQ1NDM3N2U0ZGEwMjM2YzRkYjE2Njg3NmY5NDIwZWM5YjRhOTZkMjBmNzM5NDMwZWZkOTE4MWE0NTdmOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjg4Njc1M2UwNWExMWZkMmEzYjE1NDI5MGUzZGIwM2QxYjA2ZmVlOTlmYzU4NDBjMDM3ZDYxNzg1ODA5YzZlNyJ9"
         },
         {
@@ -553,10 +553,94 @@
           "version": "repo-lines-v1:sha256:0974b45dfde6b6b2c9d380b792b38dea8ee95b4fcfb6745f1711b8737c5b23b4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiMTY2ZWI4MWU2Y2I1YWQ3OWM1NzZlM2EwYjA5ZGNmMWFiYWIwMjc2NjllNmNjMDQ5M2FmYWMxNTE4NTM1Y2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlkYWEyODZkZTcwNTZjODRhNDZmNDEzZmI1YTgzYTIzODI1NDAwZDcxNmE1MmY5YTJmOWYzMjU5NmVhNjc2MDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZkYjE3NmEzYWZiZmMyYzNhMmM1YTllNDJiZjI1N2YzNzFkMmU3YzQzN2RmOGEwYWUwYWRhNWNhYTUzZGYwMTQifQ"
         }
       ]
+    },
+    {
+      "id": "claim_02276e6fb05c436bbc4ba9877a95851d",
+      "statement": "pnpm footprint runs one fresh child process per page and compiles the child first so Bun's transpile cost stays out of memory numbers; --source runs it from source instead.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/footprint.tsx#L141-L146",
+          "version": "repo-lines-v1:sha256:fc89f20a882f0d9ee4c8d8f153c1a70dd748f78bc98fdbeb5d572133b3547317:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWYyZTBhYjhiNDMzNmQyZDhjYjZlMTIzODkwZDUyOTVlYTRhZTE4NTlmNjZjZDQ3MmMyODdlMjUwMjcxOGUyNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDI2NzNhODdhZGQ2YWRjYzk4ZGI5ZDkyMzdmMGM2M2MzMzc1Y2YzNzY2MmE2YWRmODQ4YjlkZTJhYjc0NjYxZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjJiM2VkMWJmY2QxMjkzZmJlZDE5Y2M2ZTNhY2QyYmIxMDVmZDcwNmE2OWQwY2ZlOTdkZWI1MDQ4M2M3Y2NhNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDY2YTMwMDAwYTFkNWM3NzBlNTAwZWZiNWM1YzFhZmE0MzI2ZGNmMzkwODRiOTIzNWY1YjFmMWFlMjhlODFhOCJ9"
+        },
+        {
+          "resource": "repo://scripts/footprint.tsx#L4-L9",
+          "version": "repo-lines-v1:sha256:64379a33a99d73d72047b12c9c452d8b6fad1f04a3ab565e04e6fdde8a1eeac6:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTMyMzY5OTEwNTA0YTYzNzZmOWQwMWMzMmU4NzllOWM0MGE0Y2Y3MmQ5MDJiY2IxMTNjZTIwYjdlNTUzZjhkNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTE1MjE4NzljNmQ0ZjlkZGU4MDBkNTg4ZDIwMWI2NWZlMTA5MjJlODZjMzIyMTFiMTE4OGI1NWZiOWEyNGYwNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWZmNmFjZGIyMGEwOTNlYzc2Y2RjM2VkYTY0NmE5NDI0OWY4YTNhNTM5N2Y5YzVmNDE5MTk1MmQ0NDg5MWI2ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDJjYWQ0ZDMyZGYzYzczMWM1NzlkYjcyYTFiM2JhNDdiOGM5Y2RhZDUzMTk5ZTZjZGZiZjUwMTA2MmJjMjVjMyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_194f564a619743faa1be26b9ef4c5aed",
+      "statement": "In --window mode the footprint driver flags an occluded page and exits 1, and samples the frontmost app each second to report the key share, flagging rows that are neither mostly key nor mostly not as mixed, because gpui paces a non-key window at one frame per 33.3 ms.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/footprint.tsx#L19-L30",
+          "version": "repo-lines-v1:sha256:f4adf714cc8cb3b73e0f0377adf5ad494b54913f439d46e26fe25057cee7921b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyM2NiNGMxM2Q2Nzc1OWQ1NGY3NjcxZDQ0MDM0OTcyZDA5MDNhMzlkMDhhZmFlNzNiYjk4MWViOWFiMGRjZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmMWE0YWYxZDRhNTE4ZWUwZTE0NzNmNmY4YjI2ZTJlNDY1YWYyZTdjZDQ5YjU2OGU2OGRiYjJhMTI2YzUyMjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ2YTMyODc0MzczNTk1ZTc1ZWFlZTc4NTUyYTAyY2Y5MjliMDZkZjhiN2U3NjdlYzVlZDEzN2ExNTE0ODNmNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU5ZDA0NDUzZmY5MTAzNzRlZWMyZWFkODk0YWE1OTEyZGU2MTc0OWU2MjQwZjc5NWMxNjE0N2Q4Yzg4MTI0MjgifQ"
+        },
+        {
+          "resource": "repo://scripts/footprint.tsx#L405-L407",
+          "version": "repo-lines-v1:sha256:9c221782c0940b6fbc6d6eb3bc69875353a6d8baa1e6e412e28963d8965f2d6c:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2RiNmRiY2JjZGQ3ZjJmNGVhODc5ZGM4ZDBmYzQ1ZWRkNDVmYTYxOTE0ZmUyYzBkZDIxNDA5YWEzZTA5NWY5YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2QwYzVhNWUzYzhiYzdmNjRjY2MwZjI5ZjNmNjNkZmZlOGViZTBkZmQ2NDJjZmQ0NzAzYWQ0ZmRiNTc3YWExMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmJkZTk4NWQzMTFkYmQwMzg1MjQyNDQyMTEyOTIxYTkxNmJhOWFjNWVkNDc0ZTA1OWU5ODYyNGNkMWY5MGM0NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmE4N2JkZWQ5MzBmNjA3ZDllMjM3Y2RhNWNmYzEwZGE1MjE4YTU4MTFhZDdkNTA1OTBkZTdmZGM0NGZiNmUxOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_cdb7556a0290479b9237b1867b731f14",
+      "statement": "The footprint window child reuses the shipped windowOptions from src/lib/window-options.ts but overrides the width to 1280, the width of the Electron comparison, since the site's layout drops its sidebar below 1280.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/footprint-child.tsx#L245-L245",
+          "version": "repo-lines-v1:sha256:3b9d3d3d0eddb53440c7024c759d78c8745d8c0f09e534988a5fd4e92ebad6b8:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I5ZDNkM2QwZWRkYjUzNDQwYzcwMjRjNzU5ZDc4Yzg3NDVkOGMwZjA5ZTUzNDk4OGE1ZmQ0ZTkyZWJhZDZiOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I5ZDNkM2QwZWRkYjUzNDQwYzcwMjRjNzU5ZDc4Yzg3NDVkOGMwZjA5ZTUzNDk4OGE1ZmQ0ZTkyZWJhZDZiOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjExNDZhZjFkODdmNzBiZGRiMzM4OWNkNjVhYzYyYjBlMjIyMmMxZGRkMDA2YmNiNjQ3MzU2N2NlMzM5NWI4MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTRiZjJiZjYyMmQ0NTRiMDQxNWZmYTJjY2Q0NjJjNTYwZDIzN2IyMDk5ZTBjMDdmOTY2YTQwNDFlZmI2NzY1YyJ9"
+        },
+        {
+          "resource": "repo://scripts/footprint-child.tsx#L70-L71",
+          "version": "repo-lines-v1:sha256:a1dbb18d45c5f068d73289b08140364242b0b9af1f4172e802771fd6eec65385:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGNlODI3ZWI4NjMzNGY0MmQ3M2U4NzU2ZThkMTFjMWU3NmQ1NzA1MjE0ZDc0NTIxYjM4ZTk2YzgyMzBhZWU2OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTFlYzRjOWQxYzA2YTIyNDNkOTg0YTU2N2MxYjg5NDRiZTUyMmI3MmJiMWQ1NDBlZjZlYTUwMjU1YzA5MjYwYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjBlYjlhMWQ4NzRhZDNkOWFhNmEzOGRjMTYwZTUyMmMwMTkyMDViZTU3YTRiYTA0YTkxZGVjOWNiOGU2YmM1YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDE5MGU3MzcxNWViMGQ3MmE2YjVmOTQzM2I0NzJlYWJlZWNjZTg3NDQxZWJhZWNlMzYxZDcxZWJmNGY1OGRkOSJ9"
+        },
+        {
+          "resource": "repo://src/lib/window-options.ts#L1-L14",
+          "version": "repo-lines-v1:sha256:2b11fbed0e4d5eae0b0fb0e5c2f739e5739e8113bebd7f13d028f66b3bf7260c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzYjcwZmQ5YjY2YzA5YWIxZDAxZGRhNmUzYjVhYjAxMDJmNjMzNzkzNzk3OTM0YTI5NGVlMmU1Yjk3N2I3NzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bfd9ecbe648a4f97805d762e9fcf98f3",
+      "statement": "--tour mounts one child, visits every other page through the app's own navigate (optionally several rounds), and reads the footprint fresh at each stop and afterward, so session retention is measured separately from per-page cost.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/footprint-child.tsx#L16-L24",
+          "version": "repo-lines-v1:sha256:df00ccb62b3a4f421e30c320da66f148937b5746f9b3a8e421760c1ba92b49f6:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWJhMDg1ZDUyZjE2Y2M0ZDk1OGUwOTE2MGFlNmY5OGFkMzBhZWZjOTM0MjJlMTVhOWExOTgzODA1OTUwMDFhMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTcyYTQyOTM4MmIyZTE0NzE4ZTBlMzdiMDU3MGE4YTE3MDI5OTFmY2Q4NDk4Y2Q4NDA2MGE4YmY0ZjA1MDE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2I1NmExMDJjOTg0YWQyY2ExYzIyNGYxNTMxYWVkNjkwMzYxZjZmZjFlZGYxMmMzNDY5OTI1MTQ1OThlMzgzNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWY1YzU5OTk2NTJmNmFiNjFjMTQwMWE0ZjA3ZWJhYjgwMDhhMGI3Njc4MWEzYTkzMTc5MTk4YzFjNTU5NWMzNyJ9"
+        },
+        {
+          "resource": "repo://scripts/footprint.tsx#L11-L17",
+          "version": "repo-lines-v1:sha256:a0cfbbb3e96e93b9e338a78462b7f51c830365acd9316a500665365728deb13c:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2NjMTc5ZGFhODJiZDJjMGEwMTg1YTA1Njc2ZWJmMTViNDNlOTg2YWNmNjQzMDBlNGU1NGEwYzMxZDA5NjliNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGI0ZmJhNTA1OTk1NDNhM2UxNTQyZjZiZjI4ZTdkNTMzMTZkMzc3MmIzYjEzOTE5ZjlkZTIzMmE4ZmRkMTg3OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjQ2MGJhNDY3NGQwODllNDQ4YWFhNGIwODZlZjNlNTI0NjRhMTVkOGJkMzI3M2EzM2Q2NzA1YTczNjlhY2ZiNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmMwMzNhYTNmNjI4OWYwNDljZGMwYjdlMWQzZmI3MGFkNzRiZGVhZGM3YzA1MTJhMTc1ODc2NzAxNjQ1Y2FhOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_7ff7dda63f63443998fc7fe1f2499b71",
+      "statement": "The app build and the footprint child build compile with autoloadBunfig: false so the compiled binary does not read the bunfig.toml of the directory it is launched from.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/build.ts#L47-L55",
+          "version": "repo-lines-v1:sha256:45ccafcf7975685d9ab4d477e873b90b53f6762ecc2401d1934256ed3f5e0b56:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTM3NjYwMTQwY2Q5NTgzMGJiZDIyODM2MjY3NjYyYThlYTRjZDY5NjM3YzkzZjAxOTA3ODIxMWRiMmU3OWFiMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTMyMjQ0NDA2OWUxOTFhMTg3OTc0YzFlODJmMTNhZDBkMDM1M2IwY2Y2OTNlOGRlYmQ2YzI3OTljODRmOGRmNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjI5NjQwNzljM2M1YzgxNTIwZWYzM2EyYjlkMmUxNWExYjg0ZDcyODBkYjg1OTBkY2Q2NTc0N2UzZTAxMmE0MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzliMDNlYTNlYWRlN2IxMzVjNzY0OWFkMWMwYzhlNjdkOTUzYjIxYjlmOGNlMGQyOGJjNzZiNjdkZDI3ZWFkNiJ9"
+        },
+        {
+          "resource": "repo://scripts/footprint.tsx#L141-L146",
+          "version": "repo-lines-v1:sha256:fc89f20a882f0d9ee4c8d8f153c1a70dd748f78bc98fdbeb5d572133b3547317:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWYyZTBhYjhiNDMzNmQyZDhjYjZlMTIzODkwZDUyOTVlYTRhZTE4NTlmNjZjZDQ3MmMyODdlMjUwMjcxOGUyNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDI2NzNhODdhZGQ2YWRjYzk4ZGI5ZDkyMzdmMGM2M2MzMzc1Y2YzNzY2MmE2YWRmODQ4YjlkZTJhYjc0NjYxZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjJiM2VkMWJmY2QxMjkzZmJlZDE5Y2M2ZTNhY2QyYmIxMDVmZDcwNmE2OWQwY2ZlOTdkZWI1MDQ4M2M3Y2NhNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDY2YTMwMDAwYTFkNWM3NzBlNTAwZWZiNWM1YzFhZmE0MzI2ZGNmMzkwODRiOTIzNWY1YjFmMWFlMjhlODFhOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_3874e6fecaef49f8b09b36176bf4f2c0",
+      "statement": "nativeCjsPlugin is shared in scripts/native-cjs-plugin.ts and redirects both the @gpuix/native import and the ../index.js import made from the package's own dist files (the test renderer) to the CJS entry, so compiled headless children can embed the native addon.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/native-cjs-plugin.ts#L1-L27",
+          "version": "repo-lines-v1:sha256:ed704f48594669e5c09911bbcbb4fe51ebf384526d266a818498569ca99a86d8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkNzJmOTg2MzM2MWVhY2M2MGE3NGU5MjMyZGZlNWZkYzQ3Y2FkMGYxNDAzMTBhZjlhYmQ2ZGJmZjY3MGZlZWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-21T08:39:13.075Z"
+    "at": "2026-10-21T10:50:33.517Z"
   }
 }
