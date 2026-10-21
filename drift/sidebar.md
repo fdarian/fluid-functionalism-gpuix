@@ -250,7 +250,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `not ported yet`.
 - **Original:** `SidebarLayout` runs `SidebarProvider` with the cookie-read `defaultOpen`; `[` collapses and a `showShortcutToast("[", "Sidebar expanded" | "Sidebar collapsed")` follows a key-driven change; a `DesktopReopenTrigger` fades in at the top-left (opacity and scale 0.95 on `spring.fast`) with its own tooltip; the page's `SidebarInset` reflows (`app/components/sidebar-layout.tsx:31-90,184-198`).
-- **Port:** the sidebar is always open at 256px; no key, no toast, no trigger, no persistence (`src/app.tsx:518-698`).
+- **Port:** the sidebar is always open at 256px; no key, no toast, no trigger, no persistence (`src/app.tsx:518-700`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** app frame.
