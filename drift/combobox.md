@@ -10,7 +10,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `not ported yet` on macOS, `gpuix gap` on Windows and Linux.
 - **Original:** Base UI's `Combobox.Input` handles composition (`compositionstart` / `compositionend`, `which === 229` on keydown), so Enter or arrows during composition do not pick or move (Base UI `combobox/input/ComboboxInput.tsx:100-101,223-233,~413`).
-- **Port:** the field filters on every `onChange` (`base-ui:src/combobox/root/use-combobox-root.ts:282-295`); Enter and arrows are handled without an IME guard (`:235-281`).
+- **Port:** the field filters on every `onChange` (`base-ui:src/combobox/root/use-combobox-root.ts:284-297`); Enter and arrows are handled without an IME guard (`:237-283`).
 - **gpuix lacks:** on Windows and Linux (TSF or IMM32, ibus), `isComposing` is always `false` and no `Process` keydown or `composition*` event is fired, and the composition keys go to the input method before GPUI sees them (`~/code/fdarian/gpuix/FORK.md:564-567`). macOS reports all three: `isComposing` on key events, a `Process` keydown for a key the input method takes first, and `compositionstart` / `compositionupdate` / `compositionend` (`FORK.md:496-499`; gpuix `README.md:3794-3820`). A key an input method consumes still cannot be cancelled by `keydown` on macOS, but `isComposing` tells the handler to stand aside.
 - **Workaround:** none; IME input is untested. On macOS the key an input method takes first is a `Process` keydown, which no `Enter` or arrow case matches, so a composition probably does not pick or move (reasoned from the handlers, not run against a real input method); the explicit `event.isComposing` guard would go into the primitive in `base-ui-solid-gpuix`.
 - **Fidelity:** approximated (unverified for composed input).
@@ -86,7 +86,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `port choice` (the hover state belongs to the list container, as in `createFluidHover`).
 - **Original:** `useListNavigation` resets the highlight from each item's `onPointerLeave` unless the pointer went to another item (`floating-ui-react/hooks/useListNavigation.ts:709-743`), so moving from a row into the list's 4px padding drops it, and `autoHighlight="always"` refills row 0 (`AriaCombobox.tsx:1198-1207`). Read from source, not seen in a browser.
-- **Port:** `onMouseLeave` on the list container (`src/components/combobox.tsx:144-147`, `:341-344`, `base-ui:src/combobox/root/use-combobox-root.ts:296-299`), where the padding counts as inside, so the lit row stays while the pointer is over the padding and resets to row 0 only once it leaves the list.
+- **Port:** `onMouseLeave` on the list container (`src/components/combobox.tsx:144-147`, `:341-344`, `base-ui:src/combobox/root/use-combobox-root.ts:298-301`), where the padding counts as inside, so the lit row stays while the pointer is over the padding and resets to row 0 only once it leaves the list.
 - **Workaround:** none; a row-level leave would also need the fluid hover to ignore the padding.
 - **Fidelity:** approximated (a few pixels of padding).
 - **Components it hits:** just this one.
@@ -95,7 +95,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `not ported yet`.
 - **Original:** Base UI `disabled`: the input is disabled and unfocusable, the field is `opacity-50 pointer-events-none` (`combobox.tsx:385`).
-- **Port:** the root is `opacity: 0.5` with `pointerEvents: "none"` (`src/components/combobox.tsx:163-173`), the input is `readOnly` with `tabIndex` -1 and `aria-disabled` (`base-ui:src/combobox/root/use-combobox-root.ts:345-353`).
+- **Port:** the root is `opacity: 0.5` with `pointerEvents: "none"` (`src/components/combobox.tsx:163-173`), the input is `readOnly` with `tabIndex` -1 and `aria-disabled` (`base-ui:src/combobox/root/use-combobox-root.ts:347-355`).
 - **Workaround:** the stand-in. gpuix has `<input disabled>` now (never focusable; `FORK.md:503-504`).
 - **Fidelity:** approximated (looks the same; assistive tech sees `aria-disabled`, not a disabled input).
 - **Components it hits:** just this one.
@@ -104,7 +104,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** only the `<input>` opens the popup on press (`openOnInputClick`); the icon and padding do nothing (`ComboboxInput.tsx:188-207`).
-- **Port:** the icon plus input box also focuses the input and opens the popup (`src/components/combobox.tsx:207-208`, `base-ui:src/combobox/root/use-combobox-root.ts:316-321`).
+- **Port:** the icon plus input box also focuses the input and opens the popup (`src/components/combobox.tsx:207-208`, `base-ui:src/combobox/root/use-combobox-root.ts:318-323`).
 - **Workaround:** n/a.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -121,7 +121,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `port choice` (reason not stated; `LIST_PADDING` is the list's own padding).
 - **Original:** Base UI scrolls the highlighted row into view, nearest edge (`useListNavigation.ts` `scrollIntoView`), which in a `p-1` list lands flush with the viewport edge.
-- **Port:** `revealRow(..., "nearest", LIST_PADDING)` leaves 4px beyond the row (`src/components/combobox.tsx:32,138`, `base-ui:src/combobox/root/use-combobox-root.ts:217-222`, `base-ui:src/internals/composite/composite.ts:65-88`).
+- **Port:** `revealRow(..., "nearest", LIST_PADDING)` leaves 4px beyond the row (`src/components/combobox.tsx:32,138`, `base-ui:src/combobox/root/use-combobox-root.ts:219-224`, `base-ui:src/internals/composite/composite.ts:65-88`).
 - **Fidelity:** approximated (unverified against the browser).
 - **Components it hits:** select.
 
