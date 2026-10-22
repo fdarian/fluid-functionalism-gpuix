@@ -78,10 +78,10 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-872f10458af3aae905a0ee5a
     resource: repo://src/pages/fluid-hover/plain-vs-fluid.tsx
-generated: { by: "claude-code", at: "2026-10-22T04:45:37.258Z" }
+generated: { by: "claude-code", at: "2026-10-22T19:59:58.154Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-22T04:45:37.258Z
+    at: 2026-10-22T19:59:58.154Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -106,10 +106,10 @@ link to those rows rather than repeating them. The ones that shape the most code
 - **Clipped content still costs a frame** (gpuix #46: retained and clipped content is not free). Long demo pages
   therefore hide far regions with `display: none` through the port's own `src/lib/cull.ts`; this is a kept
   workaround, not a removed one: the removal comparison was re-run on `b03d4e27` and culling off was worse on 9 pages
-  and better on none, and again headless on `196d69ce` with the same result. `511bebab` added `contentVisibility:
-  'auto'` (#71, the opt-in half of #46), which does not stand in for it: its margin is a fixed 150% of the viewport
-  against the port's 25%, an unmeasured region has no scroll anchoring, and its containment clips shadows and focus
-  rings. The measurements are in
+  and better on none, and again headless on `196d69ce` with the same result. `511bebab` added `contentVisibility`
+  (#71, the opt-in half of #46) and Round 16 (`e591681e`) answered the three objections to it, but an observer-toggled
+  `contentVisibility: 'hidden'` still lost the A/B to `createCulling` on entry layout passes, forced reads and bento
+  layout, so it does not stand in for it ([Round 16](#round-16-the-contentvisibility-ab-on-poc-e591681e-2026-10-23)). The measurements are in
   [Port decisions, Performance decisions](../decisions/port-decisions.md#performance-decisions-on-gpuix-poc-b03d4e27).
 - **Test-renderer quirks** (a capture is the view alone, with no titlebar or traffic lights; batched keystrokes deliver
   an input's `onChange` after the whole batch) that constrain the screenshot harness.
@@ -117,7 +117,7 @@ link to those rows rather than repeating them. The ones that shape the most code
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
 The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17) and again in the
-[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `8352e66c` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`, `f993d9b9` in [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22), `511bebab` in [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22), and `8352e66c` in [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22)). The bugs and gaps worth knowing before touching layout code:
+[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `e591681e` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`, `f993d9b9` in [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22), `511bebab` in [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22), `8352e66c` in [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22), and `e591681e` in [Round 16](#round-16-the-contentvisibility-ab-on-poc-e591681e-2026-10-23)). The bugs and gaps worth knowing before touching layout code:
 
 - A function-form `createTransform` of several motion values is computed in JS and can trail its inputs by a frame
   on a live window (not seen on the test renderer). `calc()` strings of the row's own width avoid it where the layer
@@ -678,7 +678,7 @@ Before this round's repository changes, all nine animated pages read `patched/s`
   still draw whole ticks. Knockouts removing every blocker read button 25 to 4.5% CPU, thinking-indicator 16.5 to
   9.6%, queued-stack 20.5 to 7.4% and file-thumbnail 11.9 to 8.0%, which is the size of the prize if gpuix lifts them.
   The counters name the reason but not the element, so the knockouts, not `why`, were what attributed each blocker.
-- **Culling re-measured, and stays.** Headless on `196d69ce` (an uncommitted culling-off knockout, two alternating
+- **Culling re-measured, and stays.** Headless on `196d69ce` (a one-off culling-off knockout, not in the tree, two alternating
   pairs, load 3-13) off was worse on showcase, input-message, changelog and fluid-hover (for example fluid-hover
   16 / 16 to 51 / 40% CPU, input-message 1.3 / 0.5 to 53 / 36% because its off-screen loop runs) and +4-9 MB on five
   pages, better on none. The live `pnpm perf` A/B did not run; every attempt was occluded. Numbers:
@@ -774,14 +774,14 @@ entries (`table` 6 to 5, only the removed fade entry).
 - **A new README gap row, scroll writes after a mutation.** A `scrollTop`, `scrollTo` or bounds read after a mutation
   lays out first, one pass per write, and the pass walks the whole retained tree, `display: none` and
   `contentVisibility: hidden` subtrees included; even a paint-only change costs the full pass at the next write. In the
-  gpuix test renderer the pass is linear (~0.4-0.5 us per element) but FF's costs ~5 us per element, about 10x, for a
-  reason the repro does not give. The question for gpuix is no pass for a paint-only change and a pass over dirty
-  subtrees only. FF's answer is to avoid the write while a page mounts; `navigate`'s own `scrollTop = 0` (~7 ms a visit)
+  gpuix test renderer the pass is linear (~0.4-0.5 us per element) but FF's cost ~5 us per element on `511bebab`,
+  about 10x, for a reason the repro does not give. The question for gpuix was no pass for a paint-only change and a
+  pass over dirty subtrees only; Round 16 closed the per-element half (below). FF's answer is to avoid the write while a page mounts; `navigate`'s own `scrollTop = 0` (~7 ms a visit)
   stays. Reasoning in
   [Port decisions](../decisions/port-decisions.md#scroll-writes-use-the-plain-scrolltop-setter-and-a-page-switch-is-measured-by-its-first-draw).
-- **`contentVisibility` was evaluated and not adopted.** The README culling rows now say why it does not replace
-  `createCulling` (margin, scroll anchoring, containment clipping shadows and focus rings), and the command-menu and
-  site drift entries carry the same note.
+- **`contentVisibility` was evaluated and not adopted on `511bebab`.** The README culling rows first gave three
+  reasons (margin, scroll anchoring, containment clipping shadows and focus rings); Round 16 removed those and
+  replaced them with a measured loss.
 
 `check-kit` gained `kit.still`, a wall-clock bounds-stillness wait used by `check-thinking-steps` and
 `check-weight-widths` so that clicks no longer race a loaded machine; see
@@ -827,3 +827,27 @@ Right after 15a the drift total went from 540 to 541 with no gpuix change: the b
 was renamed "Com Truise" to go with the replacement photo (a `port choice` entry in `drift/home.md`, "Sample person"),
 and the Command Menu demo lost the three cards the source page has no section for (Tabs and filters, Compact, the
 footer's custom-hints panel), which closed no entry and only reworded two in `drift/command-menu.md`.
+
+## Round 16: the `contentVisibility` A/B on `poc` `e591681e` (2026-10-23)
+
+The README now names `e591681e` (zed `af631a39c7`) as the minimum fork (its old pin `8352e66c` was rewritten out of
+the poc history). The round changed no component's look; its two results are a closed gap and a measured rejection.
+
+- **The scroll-write pass is no longer 10x too slow (#83).** `check-command-menu`'s new probe (a 1 px height toggle on a
+  leaf, then one `getElementBounds` read, 20 reps) costs 1 pass and 2.87 ms median on the Command Menu page, which is
+  the repro's ~0.4-0.5 us per element and not the ~5 us measured on `511bebab`; a paint-only write costs no pass (0.05
+  per read, 0.02 ms). The README row's question for gpuix is now a pass that costs what changed, not the tree. The
+  `navigate` write and the skipped first `snapScroll(0)` stay as they were.
+- **`createCulling` stays, after a real A/B instead of the three-reason argument.** Round 16 made `contentVisibility`
+  plausible: scroll anchoring landed, `visible` applies no clip, and FF's own 25% `IntersectionObserver` can drive
+  `hidden` with a `containIntrinsicSize` from the report rect. The `cull-cv` branch (kept, unmerged) lost: 8 entry
+  passes against 2 on the Command Menu page, a forced read at 2 passes and 6.24 ms where `createCulling` costs 1 and 2.87
+  (and 1.05 passes on a paint-only write where it costs 0.05), and one-column bento tiles that lay out
+  wrong without the dropped `flexBasis` pin. The mechanism is gpuix's: a geometry read builds the whole hidden subtree,
+  while a `display: none` box answers empty. Page switches measured equal, so it was not a trade. Numbers and the
+  harness traps (`getBuiltElementBounds` for "is it hidden", `containIntrinsicSize: 'auto none'` while visible) are in
+  [Port decisions, performance decisions](../decisions/port-decisions.md#performance-decisions-on-gpuix-poc-b03d4e27).
+- **The `196d69ce` culling-off run cannot be re-run from the repository.** Its knockout (`FF_CULL_OFF`) was a one-off
+  working-copy change, never committed; the Round 12 section says so too.
+- **Checks added.** `check-command-menu` prints the forced-read probe without asserting; `check-site-nav` asserts that
+  a switch back to the Changelog from a scrolled page lands at the top.

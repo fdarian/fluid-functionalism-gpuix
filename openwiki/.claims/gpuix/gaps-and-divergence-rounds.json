@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:343ff4baad49ff2c3bbad036ca3d435e0619cefd3601b61f5783eee792ecd030",
+  "pageVersion": "sha256:8231ab2f03d70f6905131e6c766248d09ca7eecc675601970f0851ea15aecea6",
   "claims": [
     {
       "id": "claim_8f689a7df6cd43af9e228cffa0828120",
       "statement": "The README's gpuix gaps section is the authoritative list of gpuix bugs and missing features the port works around, each with the components it hits and the workaround.",
       "evidence": [
         {
-          "resource": "repo://README.md#L242-L293",
-          "version": "repo-lines-v1:sha256:995ef7781ef010101629bad131c60e18e5487d9b501dd1e171147e60e06a68e8:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4ZmE4NzlkOGU4MDk4YjU5YWY4N2ZmM2E5YmVmOTgwMjYyNzFiYmVmOTZmOTM1NDdhMjRkOGFhYzdkYWQyNDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE2MWM3ZDU1MDU3MjQzYTM3NTg4OTdlYmU2NThmMTM4ZjEwOTkyN2JlOTU3OWJmZDhlNzRmMzZkOWIxZTY1ODEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVlZDIwYmE0YmY1ZGFlOTUyZjIwNDkzODRmMDQ3MjY2YTY5ZDI3YzY0ZGM4NzQ4MzY5MWEyNzJiMGI3YjAyYjgifQ"
+          "resource": "repo://README.md#L242-L294",
+          "version": "repo-lines-v1:sha256:8ca4e6c31c08f99a4ce913f8cee2a43ac7e6ed2bcbc4ec32353d456980e55d8a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5YzlhOTlmZWMzYzFmNTYyYWQ1N2RiNDM1YmIxZDgzN2Y4YTY2NjBkODAyNWJmN2NkOTc0NGY1ZDMzNTVmOTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5MGQyZTdlM2VlZjk3NTM0MjU5MzM1NGY1ODFiYTRlZGMxMWNjZmI5OGZmYTFhODEzYmUzZTAwMzFmNGMzNzUifQ"
         }
       ]
     },
@@ -24,11 +24,11 @@
     },
     {
       "id": "claim_8bb5706a64734dac9d70a073d3c56c22",
-      "statement": "Because gpuix #46 still makes a frame's cost scale with clipped, off-screen content, the port hides regions far from the page scroller with display none through src/lib/cull.ts; this is a kept workaround, not a removed one, the removal comparison re-run on gpuix poc b03d4e27 and again headless on 196d69ce still favoured culling on every page that moved, and gpuix 511bebab's contentVisibility 'auto' does not replace it.",
+      "statement": "Because gpuix #46 still makes a frame's cost scale with clipped, off-screen content, the port hides regions far from the page scroller with display none through src/lib/cull.ts; this is a kept workaround: the removal comparison re-run on gpuix poc b03d4e27 and headless on 196d69ce favoured culling on every page that moved, and an observer-toggled contentVisibility 'hidden' variant on gpuix e591681e (round 16) lost to it on entry layout passes, forced reads and bento layout.",
       "evidence": [
         {
           "resource": "repo://README.md#L281-L282",
-          "version": "repo-lines-v1:sha256:cc64a128f4a15696095bf051e5e06083c36df35cfbb50e7db4cb51e0d41ac13a:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZlYjFjYjZmMDA0YjU1ZjEyNTdkZDc1YmZlYThkMzAxYzE4Zjc3YmNiYmQ1ZWM3OWQ0ZTBkZmRhZWNlNDlkNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTQ2YTAxOTY0NmE2YmExMjA5YWI4NDQ2MzQwNWFmNjk1M2EyMzViN2FiZjkyYzM3OGE2Zjg1OGIwMGY2ZDZhNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTMxYzhkMjgzODdjOTg1MzllMzU3NTRlNmY1ZjQ5ZWFjMjY4OTJmYmY4YmRjZTEwOTgzZTMyOGVjNzI3M2NmNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDlkZDdmMzE0NDVmOTA1MTU1MWY5Njg1ZmQ1YjU5ZGE5MTYzMjI3ZGI4NGY5YzVjY2VkNjE1NWQxNTRjMWViMCJ9"
+          "version": "repo-lines-v1:sha256:b41d57b80541b140107e5152bd6640ed27b39888248b62f6b08ff0263da34302:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTYzZDUwODU5OWZhOTk3MDFiNDZjOThhZGZhYWUyMjc5MjE3OWVmNTg5MTEwZTNkZGU3NjI4ODY2N2UwYzJhNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTQ2YTAxOTY0NmE2YmExMjA5YWI4NDQ2MzQwNWFmNjk1M2EyMzViN2FiZjkyYzM3OGE2Zjg1OGIwMGY2ZDZhNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTMxYzhkMjgzODdjOTg1MzllMzU3NTRlNmY1ZjQ5ZWFjMjY4OTJmYmY4YmRjZTEwOTgzZTMyOGVjNzI3M2NmNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDlkZDdmMzE0NDVmOTA1MTU1MWY5Njg1ZmQ1YjU5ZGE5MTYzMjI3ZGI4NGY5YzVjY2VkNjE1NWQxNTRjMWViMCJ9"
         },
         {
           "resource": "repo://src/lib/cull.ts#L30-L56",
@@ -211,7 +211,7 @@
       "statement": "Input fields take the source's line height instead of a fixed height; the command-menu field uses FIELD (14/24) and FIELD_COMPACT (13/20) so its box is its line, and check-command-menu asserts both.",
       "evidence": [
         {
-          "resource": "repo://scripts/check-command-menu.tsx#L77-L97",
+          "resource": "repo://scripts/check-command-menu.tsx#L78-L98",
           "version": "repo-lines-v1:sha256:47763d481b7eeb0c53062a5baa16bbe6bc436162e16c67f34a12c56ad614ae87:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmNjY2YTk0OWU4OTA2ZmIyMDhmYjU4YWUxZjRkMWYxY2M1MzJlOTQ2OTU2NzQ4MTk0Y2EyMDE2Y2Q0ZjJiZjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhmZWE4NjI1ZmI0OWY1ZWE4ZDBkM2JjYWFkNjRiODQ2NzFkODIyYTY3YWZjODNjOGQwMzZhZTY5ZjJlYmQ3MWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4NjgxODhjZDdmZjFlYzQyMjgxMjExODA3M2IwZDNkMmNlMDA2NzA1MTAxM2VjMzBhMmYwOWYzZDljNTYwYjEifQ"
         },
         {
@@ -236,7 +236,7 @@
       "evidence": [
         {
           "resource": "repo://README.md#L56-L56",
-          "version": "repo-lines-v1:sha256:b08a87ecd1a8048ded293053ba8d37b3fb18040952b5f048872ae11cb86b464d:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjA4YTg3ZWNkMWE4MDQ4ZGVkMjkzMDUzYmE4ZDM3YjNmYjE4MDQwOTUyYjVmMDQ4ODcyYWUxMWNiODZiNDY0ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjA4YTg3ZWNkMWE4MDQ4ZGVkMjkzMDUzYmE4ZDM3YjNmYjE4MDQwOTUyYjVmMDQ4ODcyYWUxMWNiODZiNDY0ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "version": "repo-lines-v1:sha256:0c8a6dc7b1ba30d5808b29bd0bdf76aa846c7ae687902126fcadab56725ff579:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM4YTZkYzdiMWJhMzBkNTgwOGIyOWJkMGJkZjc2YWE4NDZjN2FlNjg3OTAyMTI2ZmNhZGFiNTY3MjVmZjU3OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM4YTZkYzdiMWJhMzBkNTgwOGIyOWJkMGJkZjc2YWE4NDZjN2FlNjg3OTAyMTI2ZmNhZGFiNTY3MjVmZjU3OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         },
         {
           "resource": "repo://drift/fluid-hover.md#L36-L43",
@@ -272,7 +272,7 @@
       "evidence": [
         {
           "resource": "repo://README.md#L56-L56",
-          "version": "repo-lines-v1:sha256:b08a87ecd1a8048ded293053ba8d37b3fb18040952b5f048872ae11cb86b464d:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjA4YTg3ZWNkMWE4MDQ4ZGVkMjkzMDUzYmE4ZDM3YjNmYjE4MDQwOTUyYjVmMDQ4ODcyYWUxMWNiODZiNDY0ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjA4YTg3ZWNkMWE4MDQ4ZGVkMjkzMDUzYmE4ZDM3YjNmYjE4MDQwOTUyYjVmMDQ4ODcyYWUxMWNiODZiNDY0ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "version": "repo-lines-v1:sha256:0c8a6dc7b1ba30d5808b29bd0bdf76aa846c7ae687902126fcadab56725ff579:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM4YTZkYzdiMWJhMzBkNTgwOGIyOWJkMGJkZjc2YWE4NDZjN2FlNjg3OTAyMTI2ZmNhZGFiNTY3MjVmZjU3OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM4YTZkYzdiMWJhMzBkNTgwOGIyOWJkMGJkZjc2YWE4NDZjN2FlNjg3OTAyMTI2ZmNhZGFiNTY3MjVmZjU3OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         },
         {
           "resource": "repo://src/lib/fluid-hover.ts#L17-L28",
@@ -286,7 +286,7 @@
       "evidence": [
         {
           "resource": "repo://README.md#L269-L270",
-          "version": "repo-lines-v1:sha256:fe2ac60e141af9d3edd9a54bb1d0037d80da05c2e20b76712d199392fb1f89b7:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmYzMTRkMzZjY2IxMDllMGFhM2Y0OGFhYWMzNGZlMzRjYTViYTI1YjM1OTc5NzRlNzQ5N2Y4NTQwMTI1MzNhMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTExYjc4OWQ3ZmRhMTNjZmY1MWM0MWUwYjU1MDcyMTBjN2Q3M2ZhMjViNDc0MjE2YmUyZGRhNmFhZDlmYmRjZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzRiNGM1OWM1NmU3ZGZjNDJjZjJkZTdjNDkzZDE1NWYxNGIxZTgxODM1NGRkMmJkYjc2ODkzYmI2ZTcyNTQ4ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWM0ZTExMTA4MzI5MTFhMWViYzA4ZjYwNTI4NWU3N2Q5NWViMGI1ZGY0ZjIwMGJlMGUxYTg4OWMwMzliOTNlOCJ9"
+          "version": "repo-lines-v1:sha256:ca5e63a372d333c5645b5868bd3e994bdeb11c3a2b1a093dd0a6ffea47903175:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTkzNTZkZDgwODgyYmQ5OTU3ODczMTM3OTg4MDBmM2FkYjQ1YmUwYjc2NGYyMjE1NTcyM2Q3MzA4NmZjMDBhNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzNkNzY0YTZmZjVjYmQ3YjJhZTQxMzkwOTU1M2E2OTRlNjM4M2YyYjRhMjBkMzQ5ZGRkNGFkYjUwYWRhODE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzRiNGM1OWM1NmU3ZGZjNDJjZjJkZTdjNDkzZDE1NWYxNGIxZTgxODM1NGRkMmJkYjc2ODkzYmI2ZTcyNTQ4ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWM0ZTExMTA4MzI5MTFhMWViYzA4ZjYwNTI4NWU3N2Q5NWViMGI1ZGY0ZjIwMGJlMGUxYTg4OWMwMzliOTNlOCJ9"
         },
         {
           "resource": "repo://src/components/command-menu.tsx#L455-L466",
@@ -318,7 +318,7 @@
       "evidence": [
         {
           "resource": "repo://README.md#L56-L56",
-          "version": "repo-lines-v1:sha256:b08a87ecd1a8048ded293053ba8d37b3fb18040952b5f048872ae11cb86b464d:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjA4YTg3ZWNkMWE4MDQ4ZGVkMjkzMDUzYmE4ZDM3YjNmYjE4MDQwOTUyYjVmMDQ4ODcyYWUxMWNiODZiNDY0ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjA4YTg3ZWNkMWE4MDQ4ZGVkMjkzMDUzYmE4ZDM3YjNmYjE4MDQwOTUyYjVmMDQ4ODcyYWUxMWNiODZiNDY0ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "version": "repo-lines-v1:sha256:0c8a6dc7b1ba30d5808b29bd0bdf76aa846c7ae687902126fcadab56725ff579:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM4YTZkYzdiMWJhMzBkNTgwOGIyOWJkMGJkZjc2YWE4NDZjN2FlNjg3OTAyMTI2ZmNhZGFiNTY3MjVmZjU3OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM4YTZkYzdiMWJhMzBkNTgwOGIyOWJkMGJkZjc2YWE4NDZjN2FlNjg3OTAyMTI2ZmNhZGFiNTY3MjVmZjU3OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         },
         {
           "resource": "repo://src/components/carousel-dots.tsx#L77-L100",
@@ -411,7 +411,7 @@
       "statement": "After gpuix f7b62f11 made the scrollTop setter lay out only what is pending, the command menu list and the page-switch reset write scrollTop directly again (the renderer.scrollTo workaround was reverted), and check-command-menu bounds a drain at one layout pass.",
       "evidence": [
         {
-          "resource": "repo://scripts/check-command-menu.tsx#L545-L555",
+          "resource": "repo://scripts/check-command-menu.tsx#L546-L556",
           "version": "repo-lines-v1:sha256:e5427494e887ccb75efe57c273038383dc4db4b21bff07c980a6a855cc50caa7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3ZjVlYjAzMzI5ZDUxNDFjZmU5MmEzNWU4NGM3ZjgyZjkzMDkzMTI1MDlhMjk3MGQyNjdkYTAyZjkzMTI3MTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2MGMxMmJkNzIwNzc2MDNlNGU3ZDJhOWQzZWUyY2UwMDg5ZWY0NGIxYWE0MmViMmUzMGViMDJlYzZhNzVlZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyMDY1NDQyNjBkMDU2MDI3YjQ2ZDE5YjY5NTRiZjc5ZjdjNTkxYzE0ZWUxZTU5NjZjNjMwMDdiYmJiMWYzODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg2YzgzYWMwMjBmMmIwYmM4YmJlNjlmNzQzMGYwZjU4N2I5OWNhNGQ1YjcxZGY4ZWU5NDA3ZThkNGFkZjI5ZTkifQ"
         },
         {
@@ -426,15 +426,15 @@
     },
     {
       "id": "claim_2e0172db0321439ab6373e8886d072cf",
-      "statement": "The README names gpuix poc 8352e66c (zed d382e6e5cb) as the minimum fork, and its closed-gap list counts an idle window that wakes 0 times a second, an unfocused visible window at the display rate, a border-color transition on a collapsed-table part that lays out nothing, an atomic inline at its fractional origin, and a forced layout that delivers no onLayout or ResizeObserver report among the things gpuix now does.",
+      "statement": "The README names gpuix poc e591681e (zed af631a39c7) as the minimum fork, and its closed-gap list counts an atomic inline at its fractional origin and a forced layout that delivers no onLayout or ResizeObserver report before the next painted frame among the things gpuix now does.",
       "evidence": [
         {
           "resource": "repo://README.md#L245-L246",
-          "version": "repo-lines-v1:sha256:904198700b5c2ac106cf7e1cf09fb7a6ca66536e1bbd3e199206f3a5715f3152:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWMyYWE0NWFkYWQwNDNhNTA5MDE5OGM0YTg4Zjg5YjQ1OGNkMGE0N2UyMDk2MGM3Mjg3ZTNkMmEzOGNlZmIwZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTA1ZjI3YTAzNWFiOTdmNTRlNThiZjU2OTQ3MTkxNjdjNmUxNjMxYTBhYjExYjVlN2I1ZTk1YTc3MTM3OTVjYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTZmZGM0NmVkZjE4ZDhhYjgzZjI4MDdhY2MwZTU4MWI2YjY2MzQ2OTEwNTU3MGNhZTkyMjA2ZTY3MmY1NjkyNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGNjY2QxN2Y5NzdhZmE1NTJhOTliNzIwMzI2MjRhNTIzNzBkZTU4NGMyNDIxNTg5YjBlNWM0MzBhMTQ4MjY2YyJ9"
+          "version": "repo-lines-v1:sha256:6fb3df577788239906feb3501fbb8c85af5ba8a716b7a25420eaa5a21340ebab:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjU0ZWNjYWU0MWQxNDYzMzEzNzkxYWM5NzQ1ZTE5NjIyODc4ZTI4ZDFmYjEzNmUyYzY5YWEzZDkwZWJlMzc5OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTA1ZjI3YTAzNWFiOTdmNTRlNThiZjU2OTQ3MTkxNjdjNmUxNjMxYTBhYjExYjVlN2I1ZTk1YTc3MTM3OTVjYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTZmZGM0NmVkZjE4ZDhhYjgzZjI4MDdhY2MwZTU4MWI2YjY2MzQ2OTEwNTU3MGNhZTkyMjA2ZTY3MmY1NjkyNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGNjY2QxN2Y5NzdhZmE1NTJhOTliNzIwMzI2MjRhNTIzNzBkZTU4NGMyNDIxNTg5YjBlNWM0MzBhMTQ4MjY2YyJ9"
         },
         {
           "resource": "repo://README.md#L56-L56",
-          "version": "repo-lines-v1:sha256:b08a87ecd1a8048ded293053ba8d37b3fb18040952b5f048872ae11cb86b464d:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjA4YTg3ZWNkMWE4MDQ4ZGVkMjkzMDUzYmE4ZDM3YjNmYjE4MDQwOTUyYjVmMDQ4ODcyYWUxMWNiODZiNDY0ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjA4YTg3ZWNkMWE4MDQ4ZGVkMjkzMDUzYmE4ZDM3YjNmYjE4MDQwOTUyYjVmMDQ4ODcyYWUxMWNiODZiNDY0ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "version": "repo-lines-v1:sha256:0c8a6dc7b1ba30d5808b29bd0bdf76aa846c7ae687902126fcadab56725ff579:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM4YTZkYzdiMWJhMzBkNTgwOGIyOWJkMGJkZjc2YWE4NDZjN2FlNjg3OTAyMTI2ZmNhZGFiNTY3MjVmZjU3OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM4YTZkYzdiMWJhMzBkNTgwOGIyOWJkMGJkZjc2YWE4NDZjN2FlNjg3OTAyMTI2ZmNhZGFiNTY3MjVmZjU3OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         }
       ]
     },
@@ -482,11 +482,15 @@
     },
     {
       "id": "claim_f5e184284cb9459697e60217f23649cc",
-      "statement": "A scroll write (scrollTop, scrollTo or a bounds read) after a mutation forces a layout pass over the whole retained tree, display: none subtrees included, even for a paint-only change; FF's pass costs ~5 us per element, about 10x the gpuix test-renderer repro, so the port avoids writes during mount.",
+      "statement": "A scroll write (scrollTop, scrollTo or a bounds read) after a mutation forces a layout pass over the whole retained tree, display: none subtrees included; on gpuix 511bebab FF's pass cost ~5 us per element, about 10x the test-renderer repro, but on e591681e (round 16, #83) a layout-dirtying read costs 1 pass at 2.87 ms median on the Command Menu page and a paint-only write costs no pass, so the port still avoids writes during mount without relying on the old figure.",
       "evidence": [
         {
           "resource": "repo://README.md#L270-L270",
-          "version": "repo-lines-v1:sha256:111b789d7fda13cff51c41e0b5507210c7d73fa25b474216be2dda6aad9fbdcd:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTExYjc4OWQ3ZmRhMTNjZmY1MWM0MWUwYjU1MDcyMTBjN2Q3M2ZhMjViNDc0MjE2YmUyZGRhNmFhZDlmYmRjZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTExYjc4OWQ3ZmRhMTNjZmY1MWM0MWUwYjU1MDcyMTBjN2Q3M2ZhMjViNDc0MjE2YmUyZGRhNmFhZDlmYmRjZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmUxZTUzMDgxZDc1MDlhMmUxN2RiZjVlN2EzMTVkNTAyNzIxZGZjNDZmM2NjOTY3YjY0MDY5MWFiMjhmYWExYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWM0ZTExMTA4MzI5MTFhMWViYzA4ZjYwNTI4NWU3N2Q5NWViMGI1ZGY0ZjIwMGJlMGUxYTg4OWMwMzliOTNlOCJ9"
+          "version": "repo-lines-v1:sha256:c3d764a6ff5cbd7b2ae413909553a694e6383f2b4a20d349ddd4adb50ada817b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzNkNzY0YTZmZjVjYmQ3YjJhZTQxMzkwOTU1M2E2OTRlNjM4M2YyYjRhMjBkMzQ5ZGRkNGFkYjUwYWRhODE3YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzNkNzY0YTZmZjVjYmQ3YjJhZTQxMzkwOTU1M2E2OTRlNjM4M2YyYjRhMjBkMzQ5ZGRkNGFkYjUwYWRhODE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDg3YTcwZWMyYjJkOWQ5MTI3ZjY2NTM0OWRkNWEyOTFjMjFmMzBlMmUzYmIwYjU4NTA2ZWQ3Y2I2Zjk1YTU1OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWM0ZTExMTA4MzI5MTFhMWViYzA4ZjYwNTI4NWU3N2Q5NWViMGI1ZGY0ZjIwMGJlMGUxYTg4OWMwMzliOTNlOCJ9"
+        },
+        {
+          "resource": "repo://scripts/check-command-menu.tsx#L853-L927",
+          "version": "repo-lines-v1:sha256:3088afec2ff66775e54824c823baeeb7edd1e39f1e41396712ccd46eaa7f43a4:eyJzZWxlY3RlZExpbmVDb3VudCI6NzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlZjkwNTdjMTNmNDZhZmE2ZDIxZjE5YzhhZmEyMDJlN2RjZjBkYzc4MDZlNTA5ZWZkOWRjYzYzZmU2OTUwOGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE2NWViZDczZjA2MjI3NjMyZWIwNDkxMTcyMWRmNzgwODAwN2ZlYWM3ZmE1ODE1NDIyMzY1MzAzMmEzMjk4ZGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzMGEwYjU1OTlhZWFkNjliNTNkMGQxNjM2M2E0MzEzNjZmMzI0MTI0ODhjMzY0YTdmYmE0M2JlYzQzYmJlY2QifQ"
         }
       ]
     },
@@ -535,10 +539,24 @@
           "version": "repo-lines-v1:sha256:5470b8360b870bd90cb7ef774172e864338a4066825ad8208a2090d142f8d87c:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDIzMDhhOGMxOWJjNjc3MWNlZjIyMDA0MDU1ZDNlZTc5MmQ5ZTQxNmZhZjM3NTg2OGQyYjRiMjFjYjYxZTkzNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzY4OGMxYWUwN2E1MGFhY2Q0ZjJlZWQ5ZDkyMDI2ZmI0YzZmZGZlNGViZjczOGNjMmE2MDc0OGZkMWRkOTNiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDVlZDhiMmZhMjJhMDc3M2U1Y2EwNzAyMjliY2FhYjdhYWMwYjVmYThiYzBiMGZjNmY2ZTIyNWViMjk1ZGI0MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTIwYWMwYmU5NDVjZDY1NDRiOWNiOGFhODQzYWQ0ZWY0NmJhNGQwZjg2M2Y1NDE3MzMwN2EwZjI2ZTgzOTEwYiJ9"
         }
       ]
+    },
+    {
+      "id": "claim_5a37817ec4744e7693d8601b42119491",
+      "statement": "The round-16 contentVisibility variant (branch cull-cv) was rejected, not merged: entering the Command Menu page took 8 layout passes against 2, and gpuix builds a hidden subtree for any geometry read, where a display: none box answers empty.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L281-L281",
+          "version": "repo-lines-v1:sha256:e63d508599fa99701b46c98adfaae22792179ef589110e3dde76288667e0c2a5:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTYzZDUwODU5OWZhOTk3MDFiNDZjOThhZGZhYWUyMjc5MjE3OWVmNTg5MTEwZTNkZGU3NjI4ODY2N2UwYzJhNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTYzZDUwODU5OWZhOTk3MDFiNDZjOThhZGZhYWUyMjc5MjE3OWVmNTg5MTEwZTNkZGU3NjI4ODY2N2UwYzJhNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTMxYzhkMjgzODdjOTg1MzllMzU3NTRlNmY1ZjQ5ZWFjMjY4OTJmYmY4YmRjZTEwOTgzZTMyOGVjNzI3M2NmNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTgxNjIzN2ViNjljZDlhYzEyNjZiMjE5NTdmZjMzNDljMTQ0MTYyN2JjM2I1OWRkMmMwNGYyZmEyY2MwY2RiYyJ9"
+        },
+        {
+          "resource": "repo://src/lib/fluid-hover.ts#L155-L174",
+          "version": "repo-lines-v1:sha256:769604b02b731567f8c6821a2274c6a16b9322667cf45d4658d8244b8c491832:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzZTg5ZDA0NzM4ODBkZDkwYjkyZTA3ZjUxNDlkMTE4ODNiZTQ1NjNkZjZmNjY5NTYxZGY5OTZhY2I0ZGY0MTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxN2JkNTY4ZjlhODNiMDY3MDNmNzc4YTg3ZWE1NGYwMjNlZTkzN2ZhNDRjNGNmZWFhYzQyYzNlNzRlYTZjNWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI0YTYxM2VkNjU0MWQzNzM0MGFhOWZiMjkxNzZlYjYzMjQ5NTAwZDk1ZjdiMWQ2YTdmM2FhMjU4Njc0ZWUxNjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxMmNjZThiNGQ2NzYyNDM0Y2VhMmJkZWFlMTY2OTkxMWQ0MjgxZTgxMzY2YjM2MzYzMWRkMjNmZWJkODBhNmMifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-22T04:45:37.258Z"
+    "at": "2026-10-22T19:59:58.154Z"
   }
 }

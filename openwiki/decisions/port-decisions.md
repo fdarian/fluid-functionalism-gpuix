@@ -5,7 +5,7 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-22T08:28:28.895Z
+    at: 2026-10-22T19:59:58.154Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -131,7 +131,7 @@ sources:
     resource: repo://src/pages/skill/playback.tsx
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-22T08:28:28.895Z" }
+generated: { by: "claude-code", at: "2026-10-22T19:59:58.154Z" }
 ---
 
 # Port decisions and their reasons
@@ -310,19 +310,39 @@ about cost has an expiry date, because gpuix's retention and bounds-read behavio
     the gap from removal is smaller in absolute terms (summed p95 +30 ms against +150 before) but still
     one-directional. The old and new absolute numbers are not comparable: different pin and different load.
   - *Re-run on `196d69ce`.* Headless instead of live, since every live attempt was reported occluded:
-    `pnpm footprint` with an uncommitted culling-off knockout (`FF_CULL_OFF`), two alternating pairs at load 3-13. CPU with culling on against
+    `pnpm footprint` with a one-off knockout of the observer effect (an environment flag, `FF_CULL_OFF`, in a
+    working copy; it was never committed and is not in the tree, so do not look for it), two alternating pairs at load 3-13. CPU with culling on against
     off, off worse everywhere and better nowhere: showcase 31 / 27 to 69 / 70% (built elements 4.9k to 19-22k a
     second), input-message 1.3 / 0.5 to 53 / 36% (its off-screen loop runs), changelog 19 / 19 to 32 / 31%,
     fluid-hover 16 / 16 to 51 / 40%; footprint was +4-9 MB without it on card, surfaces, command-menu, changelog and
     showcase, and static pages were equal. The live `pnpm perf` A/B did not run.
   - Costs of keeping it: a culled region has no bounds (screenshot scenarios call `shot.reveal` first), and the
     changelog Releases jump has to re-aim, below. The README "Culling" gap row carries the same numbers.
-- **gpuix `511bebab`'s `contentVisibility: 'auto'` does not replace it.** It landed as the opt-in half of #46 (#71)
-  and is the shape of what the first-draw problem below asked for, but three things keep `createCulling`: the `auto`
-  margin is fixed at Chrome's 150% of the viewport where the port culls at 25% (`OVERSCAN`); a region whose size is
-  still unmeasured has no scroll anchoring, so content jumps as regions measure in; and the size and paint containment
-  it implies clips overflowing shadows and focus rings. The source site uses no `content-visibility`, so nothing was
-  adopted.
+- **`contentVisibility` does not replace it: the round-16 A/B lost (gpuix `511bebab`, then `e591681e`).**
+  `511bebab` added `contentVisibility: 'auto' | 'hidden'` as the opt-in half of #46 (#71). It was first rejected for
+  three reasons: the `auto` margin is fixed at Chrome's 150% of the viewport where the port culls at 25%
+  (`OVERSCAN`); a region whose size is unmeasured has no scroll anchoring; and the containment clips overflowing
+  shadows and focus rings. Round 16 answered all three, so the comparison was run instead of argued: FF's own
+  `IntersectionObserver` at 25% toggles `contentVisibility: 'hidden'` itself, with `containIntrinsicSize: auto <w>px
+  auto <h>px` from the report rect (both axes, because a single value would also set the width), anchoring landed, and
+  `visible` applies no clip. The branch (`cull-cv`, kept, not merged) dropped the `display` wrapper, the height pin and
+  the forced-read path. It lost on the same build (`e591681e`, headless, scale-1 windows):
+  - *Entry.* Entering the Command Menu page cost 8 layout passes against 2; the check's budget is 4. The cause is that
+    fluid-hover's `ResizeObserver` callback reads a container box, and gpuix builds a skipped (`hidden`) subtree for
+    any geometry read, 1-2 passes per hidden region, each followed by an invalidation. A `display: none` box answers
+    such a read empty at no cost. This is the read-after-write trap of the fluid-hover bullet above, reached through a different door.
+  - *Forced reads.* One `getElementBounds` after a layout write cost 2 passes / 6.24 ms against 1 / 2.87 ms; after a
+    paint-only write 1.05 passes / 6.61 ms against 0.05 / 0.02 ms, so the cheap paint-only read is lost too.
+  - *Layout.* The one-column bento tiles laid out wrong without the `flexBasis` pin (card-ask-user-questions 921 px
+    against 305).
+  - *Page switches were equal* (settled, median of visits #2-#4, changelog / showcase / command-menu / button: 98 / 223 /
+    128 / 59 ms against 103 / 221 / 136 / 60), so it wins nothing either. Harness traps it surfaced: `getElementBounds`
+    now forces a skipped subtree, so an "is it hidden" assert must use `getBuiltElementBounds`; and gpuix remembers a
+    laid-out size only for an element whose style says `containIntrinsicSize: 'auto'` while it shows, so the visible
+    style must carry `'auto none'` or a hidden region falls back to the report rect and comes out 24 px (its
+    padding-top) too tall.
+  The source site uses no `content-visibility`, so nothing was adopted. Reopen only if gpuix stops building a skipped
+  subtree for a geometry read.
 - **A far region pins the height its observer report carries, not a fresh read (`a6fd00ed`).** The pin used to be
   `getBoundingClientRect().height` inside the `IntersectionObserver` callback. Every region that reports far on a
   page's first frames forced its own layout pass there, so entering a page cost a pass per region (the entry budget
@@ -509,7 +529,9 @@ this section keeps the decisions and the traps.
   (~7 ms a visit, kept on purpose, see below), the page render and the mutation flush. The trap: this cost is not
   visible to `check-command-menu`, whose bound is on drains per held key, so a return of the mount-time write would
   pass every check and show only in `perf-page-switch`'s mount JS. The README gap row "scroll writes after a mutation"
-  holds the repro numbers and the question for gpuix (no pass for a paint-only change, only dirty subtrees).
+  holds the repro numbers and the question for gpuix (a pass for a layout write that costs what changed, not the
+  tree). Round 16 (`e591681e`, #83) closed the per-element gap: a pass is now about 2.9 ms on the Command Menu page,
+  in line with the repro's ~0.4-0.5 us per element rather than the ~5 us above, and a paint-only write costs no pass.
 - **The `change` handler still writes the motion value's live value**, not the event's payload: a payload queued
   before a snap (the wrap from the last row to the first) would otherwise write the old bottom position back after
   the list was snapped to the top.
@@ -546,6 +568,13 @@ How to check these, because the obvious checks pass:
   nothing. Bounds: entry at most 4 passes (measured 2), one ArrowDown in the palette at most 1, and a further 2 s
   of idle with no pass and no drawn frame. The draw mode is part of the check: the default test window draws inline
   on each event, which is not how a real window schedules its draws.
+- `check-command-menu` also prints, without asserting, what one forced read costs on the settled page, because the
+  entry count alone did not separate the culling variants' per-read cost. It writes a style on a small painted leaf (a
+  1 px height toggle for a layout write, a background toggle for a paint-only write), times one `getElementBounds` on
+  the details list, 20 reps each. Reference on `e591681e` with `createCulling`: layout write 1.00 passes per read,
+  2.87 ms median; paint-only write 0.05 passes, 0.02 ms. gpuix has no per-pass timer, so the time is taken on the JS
+  side with `performance.now`, and it moves with load: compare passes per read first, milliseconds only at a similar
+  load average.
 - Every check window opens at scale factor 1 (`scripts/test-window.ts`, used by `check-kit` and the checks that
   build their own window). The test platform gives a window the scale of the machine's displays, so with a Retina
   secondary display attached a check samples captured pixels at 2x while reading logical coordinates, and its result
@@ -553,6 +582,9 @@ How to check these, because the obvious checks pass:
 - `scripts/check-site-nav.tsx` scrolls the Changelog down, clicks a sidebar row and reads the scroll metrics
   immediately: the read draws what is pending, so it sees the new page's first frame. Reading after a settle would pass
   even if the page had been corrected a frame late.
+  It also scrolls the page it switched to, clicks back to the Changelog and asserts it lands at scroll 0 with a
+  scroll height that is more than the page's viewport: neither the Changelog nor the page left half-way carries an
+  offset across a switch.
 - `bun scripts/perf-page-switch.tsx <slug> --visits 4` is the tool for a page-switch hitch: it splits one sidebar click
   into mount JS, first draw and later frames. Run one process per slug for a cold first visit (slugs in one process
   share text-shape caches, so the first visit of the second slug is warm), and compare runs only at a similar load
