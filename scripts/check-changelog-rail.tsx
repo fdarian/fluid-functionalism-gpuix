@@ -34,7 +34,7 @@ const painted = (testId: string) =>
 		.some(
 			(element) =>
 				element.testId === testId &&
-				kit.renderer.getElementBounds(element.id) !== null,
+				kit.renderer.getBuiltElementBounds(element.id) !== null,
 		);
 
 const top = pageScrollerTop();
