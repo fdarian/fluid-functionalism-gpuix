@@ -732,7 +732,7 @@ kit.check(
 // ─── Entering the Command Menu page ──────────────────────────────────────────
 
 // Forced full-tree layout passes on page entry blocked the real window 1 to 1.5 s.
-const ENTRY_PASS_BUDGET = 30;
+const ENTRY_PASS_BUDGET = 21;
 const QUIET_FRAMES = 30;
 const MAX_FRAMES = 300;
 const framesDrawn = () =>

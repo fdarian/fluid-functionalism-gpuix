@@ -62,9 +62,18 @@ export function createCulling() {
 	const [farHeight, setFarHeight] = createSignal<number>();
 	const [observed, setObserved] = createSignal<HostElement>();
 
+	// A report made right after a far region is shown again carries the rect from before the content laid out: it still has the old pinned height. That one report reads the laid-out height instead, a forced layout pass that only an element or Size change pays.
+	let measureLive = false;
 	// A far region's pinned height belongs to its old element and its old Size. Showing it lets the new element lay out at its own, and the observer made below reports it again and re-pins the height.
 	createEffect(
-		on([observed, sizeChoice], () => setFar(false), { defer: true }),
+		on(
+			[observed, sizeChoice],
+			() => {
+				measureLive = far();
+				setFar(false);
+			},
+			{ defer: true },
+		),
 	);
 
 	createEffect(() => {
@@ -76,12 +85,16 @@ export function createCulling() {
 		const observer = new IntersectionObserver(
 			(entries) => {
 				const latest = entries[entries.length - 1];
+				const live = measureLive;
+				measureLive = false;
 				if (latest.isIntersecting) {
 					setFar(false);
 					return;
 				}
-				// A target that was removed (a preview's tab swapped away), or has no box yet, reports as not intersecting too: pinning its zero height would collapse the region.
-				const height = target.getBoundingClientRect().height;
+				// A target that was removed (a preview's tab swapped away), or has no box yet, reports as not intersecting too: pinning its zero height would collapse the region. The report's rect comes from the frame's own registry, so reading it forces no layout pass.
+				const height = live
+					? target.getBoundingClientRect().height
+					: latest.boundingClientRect.height;
 				if (!target.mounted || height === 0) return;
 				setFarHeight(height);
 				setFar(true);
