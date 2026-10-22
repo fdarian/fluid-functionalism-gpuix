@@ -18,10 +18,10 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 
 ## The fill grows instead of sliding
 
-- **Cause:** `gpuix gap` (no transforms; README "Missing features" row "CSS transforms").
+- **Cause:** `gpuix gap` (no transforms; README "Missing features" row [CSS transforms](../README.md#missing-features)).
 - **Original:** the fill is a full-width pill slid in from the left with `translateX(calc((p - 1) * (100% - 6px)))`, never scaled, so its round end stays round and it tracks the pill's animating width (`carousel-dots.tsx:42-48`, `:236-242`).
 - **Port:** a pill whose `width` goes from 6px to the 24px target, clipped by the dot's `overflow: hidden` (`carousel-dots.tsx:199-213`).
-- **gpuix lacks:** CSS transforms.
+- **gpuix lacks:** CSS transforms. A `width` loop is a layout tick, which gpuix draws whole: ~66 whole frames a second on the carousel-dots page (headless on gpuix c6475390, `carousel-dots.tsx:102`, `:207`; README transforms row).
 - **Workaround:** the same silhouette at rest and at every `p` once the dot has finished widening.
 - **Fidelity:** approximated. During the 160 ms width spring the port sizes the fill from the 24px target, not the animating width; autoplay restarts at `p = 0` there, so it is hard to see.
 - **Components it hits:** just this one.
@@ -60,7 +60,7 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 - **Cause:** `not ported yet`.
 - **Original:** `slideVariants`: enter at `x = dir * 24` with opacity 0, centre on `spring.moderate`, exit to `x = -dir * 24` on `spring.moderate.exit` (a 120 ms tween), `AnimatePresence mode="popLayout"` (`lib/docs/slide-direction.ts:16-18`; `page.tsx:55-64`).
 - **Port:** one `transition={tween.moderate}` (the 160 ms spring) for enter and exit, with the offset moved on `left` / `right` instead of `x` (`src/demos/carousel-dots.tsx:60-89`). No `popLayout`: both labels are absolutely positioned.
-- **gpuix lacks:** transforms (the `left` / `right` offset; README "Missing features" row "CSS transforms"). A per-target transition inside `exit` is not used (`tween.moderateExit` exists at `src/lib/theme.ts:476`); whether gpuix accepts one there was not checked.
+- **gpuix lacks:** transforms (the `left` / `right` offset, `src/demos/carousel-dots.tsx:67-74`; README "Missing features" row [CSS transforms](../README.md#missing-features)). A per-target transition inside `exit` is not used (`tween.moderateExit` exists at `src/lib/theme.ts:476`); whether gpuix accepts one there was not checked.
 - **Workaround:** `left` / `right` offsets.
 - **Fidelity:** approximated (the leaving label is slower than the source's 120 ms).
 - **Components it hits:** just this demo.
