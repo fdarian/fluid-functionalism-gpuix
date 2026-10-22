@@ -4,6 +4,8 @@ title: gpuix gaps and divergence rounds
 description: Which gpuix gaps the port works around (summary, with the README as the full list), and the history of DOM divergences this port reported to the gpuix fork, round by round, with the gpuix commits that landed and the migrations the port made in response.
 tags: [gpuix, gaps, upstream, history, migration]
 sources:
+  - id: openwiki-source-6bebc830d03236b8df9960d7
+    resource: repo://drift/command-menu.md
   - id: openwiki-source-dbc5a68e94d7e3a15a776857
     resource: repo://drift/fluid-hover.md
   - id: openwiki-source-52df002f39d8608aefccfdde
@@ -76,10 +78,10 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-872f10458af3aae905a0ee5a
     resource: repo://src/pages/fluid-hover/plain-vs-fluid.tsx
-generated: { by: "claude-code", at: "2026-10-22T04:24:54.591Z" }
+generated: { by: "claude-code", at: "2026-10-22T04:45:37.258Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-22T04:24:54.591Z
+    at: 2026-10-22T04:45:37.258Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -820,3 +822,8 @@ The README now names `8352e66c` (zed `d382e6e5cb`) as the minimum fork. Two gpui
 Pitfall: when a screenshot moves 1 px after a pin, tell the cause apart before recapturing. Boxes and fills that moved
 toward Chrome are the atomic-inline fix; glyph rows that sit above Chrome's on a half-pixel top are the open
 `split_glyph_origin` gap. Read the README's pin line, not this page, for the current minimum fork.
+
+Right after 15a the drift total went from 540 to 541 with no gpuix change: the bento Sidebar preview's sample person
+was renamed "Com Truise" to go with the replacement photo (a `port choice` entry in `drift/home.md`, "Sample person"),
+and the Command Menu demo lost the three cards the source page has no section for (Tabs and filters, Compact, the
+footer's custom-hints panel), which closed no entry and only reworded two in `drift/command-menu.md`.
