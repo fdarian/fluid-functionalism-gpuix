@@ -113,15 +113,14 @@ function shimmerKeyframes(count: number, index: number) {
  * cannot animate `background-position`, so each letter is its own `<text>`
  * playing its own native colour keyframes (`shimmerKeyframes`). Letters sit in
  * a flex row, so kerning between them is lost. The loop starts when the
- * element mounts, as in the source, and holds still while off screen. `still`
- * leaves the letters at the base colour, for a copy that only reserves width.
+ * element mounts, as in the source. `still` leaves the letters at the base
+ * colour, for a copy that only reserves width.
  */
 export function Shimmer(props: {
 	children: string;
 	style?: StyleDesc;
 	still?: boolean;
 }) {
-	const onScreen = useOnScreen();
 	// A flex item holding only a collapsible space draws nothing, so a space becomes a no-break space to keep the gap between words.
 	const letters = () =>
 		[...props.children].map((letter) => (letter === ' ' ? '\u00a0' : letter));
@@ -136,7 +135,7 @@ export function Shimmer(props: {
 							whiteSpace: 'nowrap',
 							color: color.shimmerBase,
 							animation:
-								props.still === true || !onScreen()
+								props.still === true
 									? 'none'
 									: `${shimmerKeyframes(letters().length, index())} ${SHIMMER_PERIOD} linear infinite`,
 						}}
