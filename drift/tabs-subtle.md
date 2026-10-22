@@ -54,12 +54,12 @@ travelling focus ring, manual activation (arrows move focus, Enter / Space selec
 - **Fidelity:** dropped (docs furniture), approximated (spacing).
 - **Components it hits:** every demo.
 
-## Unfolding label: the baseline sits up to 0.45px below Chrome's
+## Unfolding label: the cap box is 0.28px shorter than Chrome's
 
-- **Cause:** `gpuix gap` (gpuix places an atomic inline, such as the `inline-grid` label, at a whole device pixel, so its origin is up to half a device pixel off where Chrome lays it) and, for the cap's height alone, a font-metric difference.
+- **Cause:** `gpuix gap`, a font-metric difference in the cap's height.
 - **Original:** the `motion.span.overflow-hidden` is a block holding the `inline-grid` label, so its line box takes the button's strut (16px / 24px): the clip is 24px tall and the label's baseline is 18px down, so the cap box of the 13px label is 14.55-24.00 inside the 36px tab (compact 11.27-20.00 in the 28px tab) and the descender of "Teamspaces" shows (`registry/base/tabs-subtle.tsx:392`).
-- **Port:** the same structure: the clip is a block with `fontSize: 16, lineHeight: '24px'` holding the `StableLabel` directly (`src/components/tabs-subtle.tsx:362-379`). The clip is 24px tall and the full descender shows. The cap box lands at 15.00-24.16 inside the tab (Chrome 14.55-24.00), compact at 12.00-20.45 (Chrome 11.27-20.00): the baseline is 0.16px low default and 0.45px low compact, and the glyph ink's baseline row matches Chrome's (24 and 20). The cap box is 0.28px shorter than Chrome's (9.16 against 9.45 at 13px, 8.45 against 8.73 at 12px: gpuix reads 0.704em for the cap height, Chrome 0.727em), which puts the top edge at 0.45px / 0.73px low; that difference is in every trimmed label, not this one. `scripts/check-tabs-subtle.tsx` pins the baseline within 0.5px, the 24px clip and the descender.
-- **gpuix lacks:** an atomic inline at its fractional origin (gpuix 69d78296: "placed at a whole device pixel, up to half a device pixel off"); the cap-height metric of Chrome.
+- **Port:** the same structure: the clip is a block with `fontSize: 16, lineHeight: '24px'` holding the `StableLabel` directly (`src/components/tabs-subtle.tsx:362-379`). The clip is 24px tall and the full descender shows. The baseline is Chrome's (24.00 and 20.00 inside the tab); the cap box lands at 14.84-24.00 (Chrome 14.55-24.00), compact at 11.55-20.00 (Chrome 11.27-20.00). The cap box is 0.28px shorter than Chrome's (9.16 against 9.45 at 13px, 8.45 against 8.73 at 12px: gpuix reads 0.704em for the cap height, Chrome 0.727em), which puts the top edge at 0.29px / 0.28px low; that difference is in every trimmed label, not this one. `scripts/check-tabs-subtle.tsx` pins the baseline to Chrome's, the 24px clip and the descender.
+- **gpuix lacks:** the cap-height metric of Chrome.
 - **Workaround:** none.
-- **Fidelity:** approximated (the baseline up to 0.45px low; the cap 0.28px shorter).
+- **Fidelity:** approximated (the cap 0.28px shorter).
 - **Components it hits:** just this one.

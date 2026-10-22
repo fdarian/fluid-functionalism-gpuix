@@ -110,7 +110,7 @@ for (const size of ['default', 'compact'] as const) {
 	);
 }
 
-// The unfolded label sits in a block with the button's 16px / 24px strut, as the source's `overflow-hidden` span does, so the clip is 24px tall and the baseline 18px down it. Chrome's cap boxes inside the tab are 14.55-24.00 (36px tab) and 11.27-20.00 (28px tab); gpuix puts an atomic inline at a whole device pixel, so the baseline lands up to 0.45px off. The cap's own height differs from Chrome's by 0.28px (gpuix 0.704em, Chrome 0.727em), which is a font-metric difference, so only the baseline is compared.
+// The unfolded label sits in a block with the button's 16px / 24px strut, as the source's `overflow-hidden` span does, so the clip is 24px tall and the baseline 18px down it. Chrome's cap boxes inside the tab are 14.55-24.00 (36px tab) and 11.27-20.00 (28px tab); gpuix keeps an atomic inline's fractional origin since round 15a, so the baseline is Chrome's. The cap's own height differs from Chrome's by 0.28px (gpuix 0.704em, Chrome 0.727em), which is a font-metric difference, so only the baseline is compared.
 const chromeBaseline = { default: 24.0, compact: 20.0 } as const;
 for (const size of ['default', 'compact'] as const) {
 	const testId = `${size}-teamspaces`;
@@ -119,9 +119,9 @@ for (const size of ['default', 'compact'] as const) {
 	const cap = kit.bounds(`${testId}-label`);
 	const baseline = cap.y + cap.height - tab.y;
 	kit.check(
-		`${size}: the unfolded label's baseline is within 0.5px of Chrome's`,
-		Math.abs(baseline - chromeBaseline[size]) <= 0.5,
-		`${baseline.toFixed(2)} (Chrome ${chromeBaseline[size].toFixed(2)})`,
+		`${size}: the unfolded label's baseline is Chrome's`,
+		Math.abs(baseline - chromeBaseline[size]) <= 0.01,
+		`${baseline.toFixed(2)} cap ${cap.height.toFixed(2)} (Chrome ${chromeBaseline[size].toFixed(2)})`,
 	);
 	kit.check(
 		`${size}: the unfolded label's clip is the strut's 24px, centred in the tab`,
