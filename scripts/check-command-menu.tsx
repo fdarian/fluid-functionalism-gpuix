@@ -7,8 +7,9 @@
  * travel (arrows animate, Home and a re-filter snap, a second arrow takes over,
  * a held arrow at macOS key-repeat timing, a hold across the wrap),
  * modified arrows with tabs mounted, the scrim finishing its fade, keyboard
- * focus after a tab click, the `mod++` cap, the site menu's ⌘K matching, and the
- * home hero's buttons.
+ * focus after a tab click, the `mod++` cap, the site menu's ⌘K matching, the
+ * home hero's buttons, and the layout passes and drawn frames of entering this
+ * page from the palette, of one ArrowDown, and of an idle window.
  */
 
 import { formatShortcut } from '#/components/command-menu';
@@ -727,5 +728,129 @@ kit.check(
 	copied.startsWith('Start a new React app with Fluid Functionalism'),
 	JSON.stringify(copied.slice(0, 50)),
 );
+
+// ─── Entering the Command Menu page ──────────────────────────────────────────
+
+// Forced full-tree layout passes on page entry blocked the real window 1 to 1.5 s.
+const ENTRY_PASS_BUDGET = 30;
+const QUIET_FRAMES = 30;
+const MAX_FRAMES = 300;
+const framesDrawn = () =>
+	renderer.getPaintedFrameCount() + renderer.getPatchCounters().patchedFrames;
+/** One display-link wake of a real window: events reach JS, then it draws if something is dirty. */
+const wake = async () => {
+	await sleep(HELD_FRAME_MS);
+	renderer.dispatchNativeEvents();
+	renderer.drawFrame();
+};
+/** Wakes until `QUIET_FRAMES` in a row draw nothing, and returns what that cost. The motion clock runs: held, every frame is dirty. */
+const runUntilQuiet = async (what: string) => {
+	const passes = renderer.getLayoutPassCount();
+	const drawn = framesDrawn();
+	let quiet = 0;
+	let wakes = 0;
+	let last = drawn;
+	while (quiet < QUIET_FRAMES) {
+		if (wakes === MAX_FRAMES)
+			throw new Error(`the window never settled ${what}`);
+		await wake();
+		wakes++;
+		const now = framesDrawn();
+		quiet = now === last ? quiet + 1 : 0;
+		last = now;
+	}
+	return {
+		passes: renderer.getLayoutPassCount() - passes,
+		drawn: framesDrawn() - drawn,
+	};
+};
+/** The showcase animates without end, so a scenario that starts there cannot wait for quiet. */
+const wakeFor = async (ms: number) => {
+	for (const end = performance.now() + ms; performance.now() < end; )
+		await wake();
+};
+const pressKey = async (name: string) => {
+	native.simulateKeyDown(name);
+	renderer.dispatchNativeEvents();
+	native.simulateKeyUp(name);
+	await Promise.resolve();
+};
+/** Opens the site menu, filters to `query` and returns with the window in a real window's draw mode: no screen reader, draws only on a display-link wake. */
+const openMenuOn = async (query: string) => {
+	renderer.setInlineDraws(true);
+	renderer.setA11yActive(true);
+	renderer.simulateKeystrokes(`${mod}+k`);
+	await kit.settle(400);
+	// The checks above leave the menu on its Settings tab.
+	await kit.click('site-menu-tab-all');
+	for (const letter of query) renderer.simulateKeystrokes(letter);
+	await kit.settle(300);
+	renderer.setA11yActive(false);
+	renderer.setInlineDraws(false);
+	await wakeFor(400);
+};
+
+await kit.click('nav-introduction');
+renderer.setA11yActive(false);
+renderer.setInlineDraws(false);
+await runUntilQuiet('after opening Introduction');
+kit.check(
+	'the entry scenario starts off the Command Menu page',
+	!kit.exists('details-list'),
+);
+
+await openMenuOn('command');
+kit.check(
+	'the Command Menu row is listed',
+	kit.exists('site-menu-row-command-menu'),
+);
+await pressKey('Enter');
+const entry = await runUntilQuiet('after entering the Command Menu');
+console.log(
+	`entry: ${entry.passes} layout passes, ${entry.drawn} frames drawn`,
+);
+kit.check(
+	'the Command Menu page is on screen after Enter',
+	kit.exists('details-list'),
+);
+kit.check(
+	`entering the page costs at most ${ENTRY_PASS_BUDGET} layout passes`,
+	entry.passes <= ENTRY_PASS_BUDGET,
+	`${entry.passes} passes`,
+);
+
+// Nothing runs after the page has settled.
+const idleMark = {
+	passes: renderer.getLayoutPassCount(),
+	drawn: framesDrawn(),
+};
+await wakeFor(2000);
+const idlePasses = renderer.getLayoutPassCount() - idleMark.passes;
+const idleDrawn = framesDrawn() - idleMark.drawn;
+console.log(`idle: ${idlePasses} layout passes, ${idleDrawn} frames drawn`);
+kit.check(
+	'2 s without input run no layout pass',
+	idlePasses === 0,
+	`${idlePasses} passes`,
+);
+kit.check(
+	'2 s without input draw no frame',
+	idleDrawn === 0,
+	`${idleDrawn} frames`,
+);
+
+await openMenuOn('');
+await pressKey('ArrowDown');
+const arrow = await runUntilQuiet('after ArrowDown');
+console.log(
+	`arrow: ${arrow.passes} layout passes, ${arrow.drawn} frames drawn`,
+);
+kit.check(
+	'one ArrowDown in the palette costs at most 1 layout pass',
+	arrow.passes <= 1,
+	`${arrow.passes} passes`,
+);
+renderer.setInlineDraws(true);
+renderer.setA11yActive(true);
 
 kit.finish();
