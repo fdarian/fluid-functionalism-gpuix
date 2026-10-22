@@ -1,6 +1,5 @@
 import { motion } from '@gpuix/solid';
 import { type JSX, Show } from 'solid-js';
-import { useOnScreen } from '#/lib/cull';
 import { Icon } from '#/lib/icon';
 import { defineIcon } from '#/lib/icons';
 import { color, shape, withAlpha } from '#/lib/theme';
@@ -39,11 +38,9 @@ const ARC = {
  * The thin ring with one accented quadrant, turning once a second like
  * `animate-spin`. gpuix cannot rotate, and a CSS keyframe cannot reach an SVG
  * attribute, so a native `motion.circle` slides the dash of a still circle one
- * lap (`strokeDashoffset` over one circumference). It runs only while the
- * spinner is on screen.
+ * lap (`strokeDashoffset` over one circumference).
  */
 export function Spinner() {
-	const onScreen = useOnScreen();
 	return (
 		<div
 			style={{
@@ -70,21 +67,16 @@ export function Spinner() {
 					color: color.mutedForeground,
 				}}
 			>
-				<Show
-					when={onScreen()}
-					fallback={<circle {...ARC} strokeDashoffset={-ARC_START} />}
-				>
-					<motion.circle
-						{...ARC}
-						animate={{
-							strokeDashoffset: [
-								-ARC_START,
-								-(ARC_START + SPINNER_CIRCUMFERENCE),
-							],
-						}}
-						transition={{ duration: 1, ease: 'linear', repeat: Infinity }}
-					/>
-				</Show>
+				<motion.circle
+					{...ARC}
+					animate={{
+						strokeDashoffset: [
+							-ARC_START,
+							-(ARC_START + SPINNER_CIRCUMFERENCE),
+						],
+					}}
+					transition={{ duration: 1, ease: 'linear', repeat: Infinity }}
+				/>
 			</svg>
 		</div>
 	);
