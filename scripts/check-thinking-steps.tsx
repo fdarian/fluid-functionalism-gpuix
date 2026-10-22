@@ -114,6 +114,30 @@ await second.settle(600);
 second.expect('coming back resumes it', images(), 'Pause');
 
 const failedSecond = second.unmount();
-const failed = failedFirst + failedSecond;
+
+// The source animates a step to its `offsetHeight`, an integer. At scale 2 the showcase's "Searching profiles" step lays out 60.5px tall; Chrome's is 61, and "Reading portfolio" sits that far below its label.
+const retina = await createCheck('showcase', { width: 1240, height: 780 });
+retina.renderer.setWindowScaleFactor(2);
+await retina.settle(800);
+await retina.scrollIntoView('card-thinking-steps');
+await retina.settle(1500);
+const labelTop = (text: string) => {
+	const node = retina.renderer.findByText(text);
+	if (node === undefined || node.parentId === null)
+		throw new Error(`no text ${text}`);
+	const box = retina.renderer.getElementBounds(node.parentId);
+	if (box === null) throw new Error(`no painted bounds for ${text}`);
+	return box.y;
+};
+const stepDistance =
+	labelTop('Reading portfolio') - labelTop('Searching profiles');
+console.log(`scale 2: Searching profiles -> Reading portfolio ${stepDistance}`);
+retina.expect(
+	'at scale 2 a step is an integer height, as offsetHeight',
+	stepDistance,
+	61,
+);
+const failedRetina = retina.unmount();
+const failed = failedFirst + failedSecond + failedRetina;
 console.log(failed === 0 ? 'all passed' : `${failed} failed`);
 process.exit(failed === 0 ? 0 : 1);

@@ -21,6 +21,7 @@ import {
 	useContext,
 } from 'solid-js';
 import { onFrame } from '#/lib/clock';
+import { toOffsetPx } from '#/lib/fluid-hover';
 import { Icon } from '#/lib/icon';
 import { defineIcon, type IconName } from '#/lib/icons';
 import { createMeasuredHeight } from '#/lib/measured-height';
@@ -345,6 +346,11 @@ export function ThinkingStep(props: {
 	children?: JSX.Element;
 }) {
 	const measured = createMeasuredHeight();
+	// The source animates to `offsetHeight`, which Chrome rounds to an integer.
+	const stepHeight = () => {
+		const height = measured.height();
+		return height === undefined ? 0 : toOffsetPx(height);
+	};
 	const status = () => props.status ?? 'complete';
 	const labelStyle = { ...scale.body, fontVariationSettings: weight.semibold };
 	return (
@@ -353,7 +359,7 @@ export function ThinkingStep(props: {
 			<motion.div
 				testId={props.testId}
 				initial={{ height: 0 }}
-				animate={{ height: measured.height() ?? 0 }}
+				animate={{ height: stepHeight() }}
 				transition={slowSpring}
 				style={{ overflow: 'hidden' }}
 			>

@@ -15,13 +15,18 @@ export interface ItemRect {
 
 type ElementBox = ReturnType<HostElement['getBoundingClientRect']>;
 
-/** The source reads offsetTop/offsetLeft/offsetWidth/offsetHeight, which Chrome returns as integers (half up) and gpuix has no `offset*`, so the rect is rounded from the fractional getBoundingClientRect. */
+/** Chrome returns `offset*` as integers, half up; gpuix has no `offset*`, only fractional layout sizes. */
+export function toOffsetPx(value: number): number {
+	return Math.round(value);
+}
+
+/** The source reads offsetTop/offsetLeft/offsetWidth/offsetHeight, so the rect is rounded from the fractional getBoundingClientRect. */
 function toOffsetRect(bounds: ElementBox, box: ElementBox): ItemRect {
 	return {
-		top: Math.round(bounds.y - box.y),
-		left: Math.round(bounds.x - box.x),
-		width: Math.round(bounds.width),
-		height: Math.round(bounds.height),
+		top: toOffsetPx(bounds.y - box.y),
+		left: toOffsetPx(bounds.x - box.x),
+		width: toOffsetPx(bounds.width),
+		height: toOffsetPx(bounds.height),
 	};
 }
 
