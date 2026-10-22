@@ -4,6 +4,7 @@ import {
 	ResizeObserver,
 } from '@gpuix/solid';
 import { createEffect, createSignal, onCleanup } from 'solid-js';
+import { toOffsetPx } from '#/lib/offset';
 
 /** A row's box relative to the container's own top-left corner. */
 export interface ItemRect {
@@ -14,11 +15,6 @@ export interface ItemRect {
 }
 
 type ElementBox = ReturnType<HostElement['getBoundingClientRect']>;
-
-/** Chrome returns `offset*` as integers, half up; gpuix has no `offset*`, only fractional layout sizes. */
-export function toOffsetPx(value: number): number {
-	return Math.round(value);
-}
 
 /** The source reads offsetTop/offsetLeft/offsetWidth/offsetHeight, so the rect is rounded from the fractional getBoundingClientRect. */
 function toOffsetRect(bounds: ElementBox, box: ElementBox): ItemRect {
