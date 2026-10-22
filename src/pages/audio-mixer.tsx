@@ -85,32 +85,30 @@ function Section(props: { title: string; gap: number; children: JSX.Element }) {
 				display: 'flex',
 				flexDirection: 'column',
 				gap: 16,
-				height: culling.far() ? culling.farHeight() : undefined,
+				...culling.style(),
 			}}
 		>
-			<div style={{ display: culling.far() ? 'none' : 'contents' }}>
-				<OnScreenContext.Provider value={culling.onScreen}>
-					<text
-						style={{
-							fontSize: 15,
-							lineHeight: '22px',
-							fontVariationSettings: weight.semibold,
-							color: color.foreground,
-						}}
-					>
-						{props.title}
-					</text>
-					<div
-						style={{
-							display: 'flex',
-							flexDirection: 'column',
-							gap: props.gap,
-						}}
-					>
-						{props.children}
-					</div>
-				</OnScreenContext.Provider>
-			</div>
+			<OnScreenContext.Provider value={culling.onScreen}>
+				<text
+					style={{
+						fontSize: 15,
+						lineHeight: '22px',
+						fontVariationSettings: weight.semibold,
+						color: color.foreground,
+					}}
+				>
+					{props.title}
+				</text>
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						gap: props.gap,
+					}}
+				>
+					{props.children}
+				</div>
+			</OnScreenContext.Provider>
 		</div>
 	);
 }

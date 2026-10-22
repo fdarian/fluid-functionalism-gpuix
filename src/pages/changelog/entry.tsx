@@ -230,88 +230,86 @@ export function Entry(props: {
 				display: 'flex',
 				flexDirection: 'column',
 				paddingTop: props.first ? 0 : 24,
-				height: culling.far() ? culling.farHeight() : undefined,
+				...culling.style(),
 			}}
 		>
-			<div style={{ display: culling.far() ? 'none' : 'contents' }}>
-				<OnScreenContext.Provider value={culling.onScreen}>
+			<OnScreenContext.Provider value={culling.onScreen}>
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
+						justifyContent: 'space-between',
+						gap: 16,
+						paddingTop: 8,
+					}}
+				>
+					<div style={{ position: 'relative', display: 'flex' }}>
+						<KindDot kind={entry().kind} />
+						<Show
+							when={entry().href}
+							fallback={
+								<text
+									style={{
+										...siteType.body,
+										fontVariationSettings: weight.normal,
+										color: color.foreground,
+									}}
+								>
+									{entry().name}
+								</text>
+							}
+						>
+							{(href: Accessor<string>) => (
+								<NameLink name={entry().name} slug={pageSlug(href())} />
+							)}
+						</Show>
+					</div>
 					<div
 						style={{
 							display: 'flex',
 							flexDirection: 'row',
 							alignItems: 'center',
-							justifyContent: 'space-between',
-							gap: 16,
-							paddingTop: 8,
+							marginRight: -6,
 						}}
 					>
-						<div style={{ position: 'relative', display: 'flex' }}>
-							<KindDot kind={entry().kind} />
-							<Show
-								when={entry().href}
-								fallback={
-									<text
-										style={{
-											...siteType.body,
-											fontVariationSettings: weight.normal,
-											color: color.foreground,
-										}}
-									>
-										{entry().name}
-									</text>
-								}
-							>
-								{(href: Accessor<string>) => (
-									<NameLink name={entry().name} slug={pageSlug(href())} />
-								)}
-							</Show>
-						</div>
+						<For each={entry().refs}>
+							{(gitRef) => <RefChip gitRef={gitRef} />}
+						</For>
+					</div>
+				</div>
+				<div style={{ marginTop: 4 }}>
+					<InlineProse inline={entry().text} />
+				</div>
+				<Show when={entry().diff}>
+					{(diff: Accessor<string>) => (
 						<div
 							style={{
+								marginTop: 12,
 								display: 'flex',
-								flexDirection: 'row',
-								alignItems: 'center',
-								marginRight: -6,
+								flexDirection: 'column',
+								alignItems: 'flex-start',
+								gap: 12,
 							}}
 						>
-							<For each={entry().refs}>
-								{(gitRef) => <RefChip gitRef={gitRef} />}
-							</For>
+							<DiffBlock diff={diff()} />
+							<CopyPromptButton
+								label="Copy migration prompt"
+								variant="ghost"
+								testId={`copy-migration-${props.id}`}
+								prompt={buildMigrationPrompt({
+									entry: entry(),
+									month: props.month,
+									install: entryInstall(entry()),
+								})}
+							/>
 						</div>
-					</div>
-					<div style={{ marginTop: 4 }}>
-						<InlineProse inline={entry().text} />
-					</div>
-					<Show when={entry().diff}>
-						{(diff: Accessor<string>) => (
-							<div
-								style={{
-									marginTop: 12,
-									display: 'flex',
-									flexDirection: 'column',
-									alignItems: 'flex-start',
-									gap: 12,
-								}}
-							>
-								<DiffBlock diff={diff()} />
-								<CopyPromptButton
-									label="Copy migration prompt"
-									variant="ghost"
-									testId={`copy-migration-${props.id}`}
-									prompt={buildMigrationPrompt({
-										entry: entry(),
-										month: props.month,
-										install: entryInstall(entry()),
-									})}
-								/>
-							</div>
-						)}
-					</Show>
-					<Show when={stagedSlug()}>
-						{(slug: Accessor<string>) => <PreviewStage slug={slug()} />}
-					</Show>
-				</OnScreenContext.Provider>
-			</div>
+					)}
+				</Show>
+				<Show when={stagedSlug()}>
+					{(slug: Accessor<string>) => <PreviewStage slug={slug()} />}
+				</Show>
+			</OnScreenContext.Provider>
 		</div>
 	);
 }

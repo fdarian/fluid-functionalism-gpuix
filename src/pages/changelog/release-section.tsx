@@ -141,63 +141,61 @@ function KindGroup(props: { group: ChangeGroup; month: string }): JSX.Element {
 				display: 'flex',
 				flexDirection: 'column',
 				paddingTop: 40,
-				height: culling.far() ? culling.farHeight() : undefined,
+				...culling.style(),
 			}}
 		>
-			<div style={{ display: culling.far() ? 'none' : 'contents' }}>
-				<OnScreenContext.Provider value={culling.onScreen}>
-					<div
-						style={{ height: 1, flexShrink: 0, backgroundColor: color.border }}
-					/>
-					<div
+			<OnScreenContext.Provider value={culling.onScreen}>
+				<div
+					style={{ height: 1, flexShrink: 0, backgroundColor: color.border }}
+				/>
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'baseline',
+						gap: 8,
+						paddingTop: 40,
+					}}
+				>
+					<text
 						style={{
-							display: 'flex',
-							flexDirection: 'row',
-							alignItems: 'baseline',
-							gap: 8,
-							paddingTop: 40,
+							...siteType.subtitle,
+							fontVariationSettings: weight.semibold,
+							color: color.foreground,
 						}}
 					>
-						<text
-							style={{
-								...siteType.subtitle,
-								fontVariationSettings: weight.semibold,
-								color: color.foreground,
-							}}
-						>
-							{KIND_LABEL[props.group.kind]}
-						</text>
-						<text
-							style={{
-								...siteType.caption,
-								fontVariationSettings: weight.normal,
-								fontVariantNumeric: 'tabular-nums',
-								color: color.mutedForeground,
-							}}
-						>
-							{String(props.group.entries.length)}
-						</text>
-					</div>
-					<div
+						{KIND_LABEL[props.group.kind]}
+					</text>
+					<text
 						style={{
-							display: 'flex',
-							flexDirection: 'column',
-							marginTop: 8,
+							...siteType.caption,
+							fontVariationSettings: weight.normal,
+							fontVariantNumeric: 'tabular-nums',
+							color: color.mutedForeground,
 						}}
 					>
-						<For each={props.group.entries}>
-							{(entry, index) => (
-								<Entry
-									id={`${props.month}-${props.group.kind}-${index()}`}
-									entry={entry}
-									month={props.month}
-									first={index() === 0}
-								/>
-							)}
-						</For>
-					</div>
-				</OnScreenContext.Provider>
-			</div>
+						{String(props.group.entries.length)}
+					</text>
+				</div>
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						marginTop: 8,
+					}}
+				>
+					<For each={props.group.entries}>
+						{(entry, index) => (
+							<Entry
+								id={`${props.month}-${props.group.kind}-${index()}`}
+								entry={entry}
+								month={props.month}
+								first={index() === 0}
+							/>
+						)}
+					</For>
+				</div>
+			</OnScreenContext.Provider>
 		</div>
 	);
 }

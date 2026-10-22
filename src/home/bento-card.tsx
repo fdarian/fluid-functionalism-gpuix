@@ -85,8 +85,9 @@ export function BentoCard(props: {
 				ref={culling.ref}
 				style={{
 					flexGrow: 1,
-					// A one-column grid sizes its rows from content, which `display: none` empties. `'0%'` is the source's `flex-1`; `0` would hit gpuix #96.
-					flexBasis: culling.far() ? culling.farHeight() : '0%',
+					// `'0%'` is the source's `flex-1`; `0` would hit gpuix #96.
+					flexBasis: '0%',
+					...culling.style(),
 					minHeight: 0,
 					display: 'flex',
 					flexDirection: 'column',
@@ -98,13 +99,11 @@ export function BentoCard(props: {
 					paddingBottom: props.previewPadding.y,
 				}}
 			>
-				<div style={{ display: culling.far() ? 'none' : 'contents' }}>
-					<OnScreenContext.Provider value={culling.onScreen}>
-						<BentoTileContext.Provider value={true}>
-							{props.children}
-						</BentoTileContext.Provider>
-					</OnScreenContext.Provider>
-				</div>
+				<OnScreenContext.Provider value={culling.onScreen}>
+					<BentoTileContext.Provider value={true}>
+						{props.children}
+					</BentoTileContext.Provider>
+				</OnScreenContext.Provider>
 			</div>
 			<div
 				{...buttonProps({ onClick: props.onOpen }, renderer)}

@@ -159,17 +159,15 @@ export function DocSection(props: { title: string; children: JSX.Element }) {
 				flexDirection: 'column',
 				gap: 16,
 				paddingTop: 24,
-				height: culling.far() ? culling.farHeight() : undefined,
+				...culling.style(),
 			}}
 		>
-			<div style={{ display: culling.far() ? 'none' : 'contents' }}>
-				<OnScreenContext.Provider value={culling.onScreen}>
-					<div style={{ marginBottom: -8 }}>
-						<SectionTitle>{props.title}</SectionTitle>
-					</div>
-					{props.children}
-				</OnScreenContext.Provider>
-			</div>
+			<OnScreenContext.Provider value={culling.onScreen}>
+				<div style={{ marginBottom: -8 }}>
+					<SectionTitle>{props.title}</SectionTitle>
+				</div>
+				{props.children}
+			</OnScreenContext.Provider>
 		</div>
 	);
 }
@@ -509,7 +507,7 @@ export function ComponentPreview(props: {
 								alignItems: 'center',
 								justifyContent: 'center',
 								minHeight: minHeight(),
-								height: culling.far() ? culling.farHeight() : undefined,
+								...culling.style(),
 								paddingLeft: padding().x,
 								paddingRight: padding().x,
 								paddingTop: padding().y,
@@ -517,11 +515,9 @@ export function ComponentPreview(props: {
 								backgroundColor: color.background,
 							}}
 						>
-							<div style={{ display: culling.far() ? 'none' : 'contents' }}>
-								<OnScreenContext.Provider value={culling.onScreen}>
-									{props.children}
-								</OnScreenContext.Provider>
-							</div>
+							<OnScreenContext.Provider value={culling.onScreen}>
+								{props.children}
+							</OnScreenContext.Provider>
 						</div>
 					</Show>
 				</div>

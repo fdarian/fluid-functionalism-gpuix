@@ -23,14 +23,12 @@ export function DemoCard(props: { title: string; children: JSX.Element }) {
 				ref={culling.ref}
 				style={{
 					padding: 20,
-					height: culling.far() ? culling.farHeight() : undefined,
+					...culling.style(),
 				}}
 			>
-				<div style={{ display: culling.far() ? 'none' : 'contents' }}>
-					<OnScreenContext.Provider value={culling.onScreen}>
-						{props.children}
-					</OnScreenContext.Provider>
-				</div>
+				<OnScreenContext.Provider value={culling.onScreen}>
+					{props.children}
+				</OnScreenContext.Provider>
 			</div>
 			<div
 				style={{

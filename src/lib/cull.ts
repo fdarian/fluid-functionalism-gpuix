@@ -1,4 +1,8 @@
-import { type HostElement, IntersectionObserver } from '@gpuix/solid';
+import {
+	type HostElement,
+	IntersectionObserver,
+	type StyleDesc,
+} from '@gpuix/solid';
 import {
 	type Accessor,
 	createContext,
@@ -34,21 +38,26 @@ export function useOnScreen(): Accessor<boolean> {
 
 const OVERSCAN = '25% 0px';
 
+type FarSize = { width: number; height: number };
+
 /**
  * gpuix lays out and paints every element, including those a scroller clips
  * away, so a long page costs a frame several times a short page's. A region
- * more than a quarter viewport from the page scroller hides its content with
- * `display: none` (no box built for it or anything inside) and keeps the height
- * it had, so nothing shifts. The content stays mounted, so typed text and
+ * more than a quarter viewport from the page scroller gets
+ * `content-visibility: hidden`: gpuix builds none of its content, and the
+ * region keeps the size it was last laid out at (`contain-intrinsic-size:
+ * auto`), so nothing shifts. The content stays mounted, so typed text and
  * selections survive a scroll away and back.
  *
  * Regions nest: a region inside a far one stops observing until the outer
- * one shows again, and keeps its own measured height meanwhile.
+ * one shows again, and keeps its own remembered size meanwhile.
  *
- * Call it once per region, attach `ref` to the element whose height must hold
- * (it measures itself before `far` turns true), give that element `farHeight()`
- * while `far()`, and wrap the content in `display: far() ? 'none' : 'contents'`
- * and in `<OnScreenContext.Provider value={culling.onScreen}>`.
+ * Call it once per region and attach `ref` to the `div` that holds the region
+ * (gpuix skips the content of `div`, `text`, `label`, `form` and block `span`
+ * only), spread `style()` into its style, and wrap the content in
+ * `<OnScreenContext.Provider value={culling.onScreen}>`. `hidden` and
+ * `visible` bring the element's own padding and border into its size, so the
+ * element's layout (padding, gap) stays on it.
  */
 export function createCulling() {
 	const scroller = useContext(PageScrollerContext);
@@ -59,17 +68,14 @@ export function createCulling() {
 	}
 	const parentOnScreen = useContext(OnScreenContext);
 	const [far, setFar] = createSignal(false);
-	const [farHeight, setFarHeight] = createSignal<number>();
+	const [farSize, setFarSize] = createSignal<FarSize>();
 	const [observed, setObserved] = createSignal<HostElement>();
 
-	// A report made right after a far region is shown again carries the rect from before the content laid out: it still has the old pinned height. That one report reads the laid-out height instead, a forced layout pass that only an element or Size change pays.
-	let measureLive = false;
-	// A far region's pinned height belongs to its old element and its old Size. Showing it lets the new element lay out at its own, and the observer made below reports it again and re-pins the height.
+	// A far region's remembered size belongs to its old element and its old Size. Showing it lets the new element lay out at its own, and the observer made below reports it again and hides it.
 	createEffect(
 		on(
 			[observed, sizeChoice],
 			() => {
-				measureLive = far();
 				setFar(false);
 			},
 			{ defer: true },
@@ -80,23 +86,19 @@ export function createCulling() {
 		sizeChoice();
 		const root = scroller();
 		const target = observed();
-		// Inside a culled ancestor the target has no box and reports "not intersecting", which would overwrite its measured height with 0. Observing again once the ancestor shows gives a fresh first report.
+		// Inside a culled ancestor the target has no box and reports "not intersecting", which would hide it at a size of 0. Observing again once the ancestor shows gives a fresh first report.
 		if (root === undefined || target === undefined || !parentOnScreen()) return;
 		const observer = new IntersectionObserver(
 			(entries) => {
 				const latest = entries[entries.length - 1];
-				const live = measureLive;
-				measureLive = false;
 				if (latest.isIntersecting) {
 					setFar(false);
 					return;
 				}
-				// A target that was removed (a preview's tab swapped away), or has no box yet, reports as not intersecting too: pinning its zero height would collapse the region. The report's rect comes from the frame's own registry, so reading it forces no layout pass.
-				const height = live
-					? target.getBoundingClientRect().height
-					: latest.boundingClientRect.height;
-				if (!target.mounted || height === 0) return;
-				setFarHeight(height);
+				// A target that was removed (a preview's tab swapped away), or has no box yet, reports as not intersecting too: hiding it at a zero size would collapse the region. The report's rect comes from the frame's own registry, so reading it forces no layout pass.
+				const rect = latest.boundingClientRect;
+				if (!target.mounted || rect.height === 0) return;
+				setFarSize({ width: rect.width, height: rect.height });
 				setFar(true);
 			},
 			{ root, rootMargin: OVERSCAN },
@@ -110,8 +112,17 @@ export function createCulling() {
 		far,
 		/** False while this region or any culled region around it is far. */
 		onScreen: () => parentOnScreen() && !far(),
-		/** The height the region had when it went far. */
-		farHeight,
+		/**
+		 * The style that hides the region while it is far. Both axes of `containIntrinsicSize` are written (one value would also set the width); `auto` makes the size the region was last laid out at win over the report's border-box rect, which only stands in for a region never laid out, and gpuix adds the padding and border to it.
+		 */
+		style: (): StyleDesc => {
+			const size = farSize();
+			if (!far() || size === undefined) return { contentVisibility: 'visible' };
+			return {
+				contentVisibility: 'hidden',
+				containIntrinsicSize: `auto ${size.width}px auto ${size.height}px`,
+			};
+		},
 		/** A signal, so a region that remounts (a preview's Code tab and back) is observed again. */
 		ref: setObserved,
 	};
