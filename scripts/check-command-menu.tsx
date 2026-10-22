@@ -850,6 +850,81 @@ kit.check(
 	arrow.passes <= 1,
 	`${arrow.passes} passes`,
 );
+// ─── What one forced read costs on the settled page ──────────────────────────
+
+// Printed, not asserted: gpuix has no per-pass timer, so each read is timed from JS.
+await pressKey('Escape');
+await runUntilQuiet('after closing the palette');
+const PROBE_REPS = 20;
+/** A small painted leaf: writing its style moves little, so a pass costs the tree and not the change. */
+const findProbeTarget = (id: number): number | undefined => {
+	const node = renderer.getElement(id);
+	if (node === undefined) throw new Error(`no element ${id}`);
+	const style = node.style;
+	if (
+		node.type === 'div' &&
+		node.children.length === 0 &&
+		typeof style.width === 'number' &&
+		typeof style.height === 'number' &&
+		style.width <= 24 &&
+		style.height <= 24 &&
+		typeof style.backgroundColor === 'string' &&
+		renderer.getElementBounds(id) !== null
+	)
+		return id;
+	for (const child of node.children) {
+		const found = findProbeTarget(child);
+		if (found !== undefined) return found;
+	}
+	return undefined;
+};
+const probeRoot = renderer.getRoot();
+if (probeRoot === undefined) throw new Error('no root element');
+const probeId = findProbeTarget(probeRoot.id);
+if (probeId === undefined) throw new Error('no small painted div to probe');
+const probeStyle = renderer.getElement(probeId)?.style;
+if (probeStyle === undefined) throw new Error('the probe target vanished');
+const readId = kit.element('details-list').id;
+const writeStyle = (style: Record<string, unknown>) =>
+	renderer.applyBatch(JSON.stringify([['setStyle', probeId, style]]));
+const median = (values: number[]) =>
+	[...values].sort((a, b) => a - b)[Math.floor(values.length / 2)];
+/** Writes `changed`, times one `getElementBounds`, restores, and draws so the next rep starts clean. */
+const probeRead = async (changed: Record<string, unknown>) => {
+	const times: number[] = [];
+	let passes = 0;
+	for (let rep = 0; rep < PROBE_REPS; rep++) {
+		writeStyle(changed);
+		const before = renderer.getLayoutPassCount();
+		const start = performance.now();
+		renderer.getElementBounds(readId);
+		times.push(performance.now() - start);
+		passes += renderer.getLayoutPassCount() - before;
+		writeStyle(probeStyle);
+		await wake();
+		await wake();
+	}
+	return { median: median(times), max: Math.max(...times), passes };
+};
+const layoutRead = await probeRead({
+	...probeStyle,
+	height: Number(probeStyle.height) + 1,
+});
+const layoutPerPass = layoutRead.median / (layoutRead.passes / PROBE_REPS);
+console.log(
+	`probe layout write: ${(layoutRead.passes / PROBE_REPS).toFixed(2)} passes per read, read median ${layoutRead.median.toFixed(2)} ms, max ${layoutRead.max.toFixed(2)} ms, ${layoutPerPass.toFixed(2)} ms per pass`,
+);
+const paintRead = await probeRead({
+	...probeStyle,
+	backgroundColor:
+		probeStyle.backgroundColor === '#ff0000' ? '#00ff00' : '#ff0000',
+});
+console.log(
+	`probe paint write: ${(paintRead.passes / PROBE_REPS).toFixed(2)} passes per read, read median ${paintRead.median.toFixed(2)} ms, max ${paintRead.max.toFixed(2)} ms`,
+);
+writeStyle(probeStyle);
+await wake();
+
 renderer.setInlineDraws(true);
 renderer.setA11yActive(true);
 
