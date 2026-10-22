@@ -203,7 +203,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [checkbox-group](drift/checkbox-group.md) | 1 | 0 | 3 | 1 | 5 |
 | [color-picker](drift/color-picker.md) | 2 | 5 | 15 | 1 | 23 |
 | [combobox](drift/combobox.md) | 4 | 13 | 5 | 2 | 24 |
-| [command-menu](drift/command-menu.md) | 4 | 2 | 11 | 2 | 19 |
+| [command-menu](drift/command-menu.md) | 4 | 2 | 12 | 1 | 19 |
 | [compare](drift/compare.md) | 2 | 8 | 1 | 2 | 13 |
 | [concepts](drift/concepts.md) | 1 | 26 | 2 | 1 | 30 |
 | [dialog](drift/dialog.md) | 2 | 2 | 2 | 1 | 7 |
@@ -237,7 +237,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 4 | 5 | 0 | 13 |
 | [tooltip](drift/tooltip.md) | 1 | 5 | 1 | 1 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **87** | **212** | **191** | **50** | **540** |
+| **Total** | **87** | **212** | **192** | **49** | **540** |
 
 ### gpuix gaps across components
 

@@ -232,20 +232,6 @@ function Section(props: { id: string; title: string; children: JSX.Element }) {
 	);
 }
 
-/** The rows once the tab, the type filter and the sort have had their say. */
-function scoped(
-	tab: string,
-	type: string,
-	sort: string,
-): CommandMenuItemData[] {
-	let rows = FULL;
-	if (tab !== 'all') rows = rows.filter((item) => item.group === tab);
-	if (type !== 'all') rows = rows.filter((item) => item.group === type);
-	return sort === 'az'
-		? [...rows].sort((a, b) => a.label.localeCompare(b.label))
-		: [...rows];
-}
-
 /** The two borderless selects of the filter row, which the playground and the Filters sections share. */
 function FilterSelects(props: {
 	testId: string;
@@ -595,75 +581,6 @@ function Filters() {
 	);
 }
 
-function TabsAndFilters() {
-	const [tab, setTab] = createSignal('all');
-	const [type, setType] = createSignal('all');
-	const [sort, setSort] = createSignal('default');
-	const visible = createMemo(() => scoped(tab(), type(), sort()));
-	return (
-		<Section id="tabs-filters" title="Tabs and filters">
-			<CommandMenuPanel maxHeight={PANEL_HEIGHT}>
-				<CommandMenu testId="tabs-filters" items={visible()}>
-					<CommandMenuInput
-						testId="tabs-filters-input"
-						placeholder={PLACEHOLDER}
-					/>
-					<CommandMenuTabs tabs={TABS} value={tab()} onValueChange={setTab}>
-						<CommandMenuFilters>
-							<FilterSelects
-								testId="tabs-filters"
-								type={type()}
-								onType={setType}
-								sort={sort()}
-								onSort={setSort}
-							/>
-						</CommandMenuFilters>
-					</CommandMenuTabs>
-					<CommandMenuList>
-						<CommandMenuEmpty>{EMPTY}</CommandMenuEmpty>
-					</CommandMenuList>
-				</CommandMenu>
-			</CommandMenuPanel>
-		</Section>
-	);
-}
-
-function Compact() {
-	const [tab, setTab] = createSignal('all');
-	const [type, setType] = createSignal('all');
-	const [sort, setSort] = createSignal('default');
-	const visible = createMemo(() => scoped(tab(), type(), sort()));
-	return (
-		<Section id="compact" title="Compact">
-			<CommandMenuPanel maxHeight={PANEL_HEIGHT}>
-				<CommandMenu
-					testId="compact"
-					size="compact"
-					items={visible()}
-					suggestions={SUGGESTIONS}
-				>
-					<CommandMenuInput testId="compact-input" placeholder={PLACEHOLDER} />
-					<CommandMenuTabs tabs={TABS} value={tab()} onValueChange={setTab}>
-						<CommandMenuFilters>
-							<FilterSelects
-								testId="compact"
-								type={type()}
-								onType={setType}
-								sort={sort()}
-								onSort={setSort}
-							/>
-						</CommandMenuFilters>
-					</CommandMenuTabs>
-					<CommandMenuList>
-						<CommandMenuEmpty>{EMPTY}</CommandMenuEmpty>
-					</CommandMenuList>
-					<CommandMenuFooter />
-				</CommandMenu>
-			</CommandMenuPanel>
-		</Section>
-	);
-}
-
 function DialogSection() {
 	const [open, setOpen] = createSignal(false);
 	const [openWithoutKey, setOpenWithoutKey] = createSignal(false);
@@ -747,35 +664,20 @@ function FooterSection() {
 	);
 	return (
 		<Section id="footer" title="Footer hints">
-			<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-				<CommandMenuPanel maxHeight={PANEL_HEIGHT}>
-					<CommandMenu
-						testId="footer"
-						items={visible()}
-						suggestions={SUGGESTIONS}
-					>
-						<CommandMenuInput testId="footer-input" placeholder={PLACEHOLDER} />
-						<CommandMenuTabs tabs={TABS} value={tab()} onValueChange={setTab} />
-						<CommandMenuList>
-							<CommandMenuEmpty>{EMPTY}</CommandMenuEmpty>
-						</CommandMenuList>
-						<CommandMenuFooter />
-					</CommandMenu>
-				</CommandMenuPanel>
-				<CommandMenuPanel>
-					<CommandMenu testId="footer-custom" items={FULL.slice(0, 2)}>
-						<CommandMenuInput placeholder={PLACEHOLDER} />
-						<CommandMenuList />
-						<CommandMenuFooter
-							hints={[
-								{ label: 'Select', keys: ['up', 'down'] },
-								{ label: 'Open', keys: 'enter' },
-								{ label: 'Open menu', keys: 'mod+k' },
-							]}
-						/>
-					</CommandMenu>
-				</CommandMenuPanel>
-			</div>
+			<CommandMenuPanel maxHeight={PANEL_HEIGHT}>
+				<CommandMenu
+					testId="footer"
+					items={visible()}
+					suggestions={SUGGESTIONS}
+				>
+					<CommandMenuInput testId="footer-input" placeholder={PLACEHOLDER} />
+					<CommandMenuTabs tabs={TABS} value={tab()} onValueChange={setTab} />
+					<CommandMenuList>
+						<CommandMenuEmpty>{EMPTY}</CommandMenuEmpty>
+					</CommandMenuList>
+					<CommandMenuFooter />
+				</CommandMenu>
+			</CommandMenuPanel>
 		</Section>
 	);
 }
@@ -820,8 +722,6 @@ export function Demo() {
 			<Suggestions />
 			<Tabs />
 			<Filters />
-			<TabsAndFilters />
-			<Compact />
 			<DialogSection />
 			<FooterSection />
 			<CustomRows />
@@ -903,13 +803,6 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	await shot.press('ArrowDown Enter');
 	await shot.settle(500);
 	shot.capture('filters-sorted');
-
-	await reveal(shot, 'tabs-filters');
-	shot.capture('tabs-and-filters');
-
-	await reveal(shot, 'compact');
-	await shot.click('compact-input');
-	shot.capture('compact');
 
 	await reveal(shot, 'footer');
 	await shot.click('footer-input');
