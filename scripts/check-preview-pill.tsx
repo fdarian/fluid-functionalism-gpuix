@@ -10,14 +10,15 @@
  * and stepped 16 ms a frame, so the samples are the same on every run: only a
  * start left of tab 2's own edge is asserted.
  */
-import { createTestRoot } from '@gpuix/solid/testing';
+
 import { App } from '#/app';
 import { loadDemos, loadPages } from '#/lib/demo';
 import { fonts } from '#/lib/fonts';
 import { setThemeChoice } from '#/lib/theme';
+import { createTestWindow } from './test-window';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-const test = createTestRoot({ width: 1240, height: 780, fonts });
+const test = createTestWindow({ width: 1240, height: 780, fonts });
 const renderer = test.renderer;
 
 function frame() {

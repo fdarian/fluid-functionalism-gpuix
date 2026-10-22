@@ -6,14 +6,15 @@
  * The meta row (timestamp and actions) is revealed by hover and by keyboard focus on an action.
  * The reveal is the row's opacity, eased by a CSS transition; a screenshot with the focused action lands in /tmp/check-chat-message-focus-<pid>.png.
  */
-import { createTestRoot } from '@gpuix/solid/testing';
+
 import { ChatMessage, ChatMessageAction } from '#/components/chat-message';
 import { fonts } from '#/lib/fonts';
 import { color, setThemeChoice } from '#/lib/theme';
 import { readPng } from './png-pixels';
+import { createTestWindow } from './test-window';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-const test = createTestRoot({ width: 500, height: 200, fonts });
+const test = createTestWindow({ width: 500, height: 200, fonts });
 const renderer = test.renderer;
 
 async function settle(ms: number) {

@@ -7,7 +7,6 @@
  * presses the trigger for real.
  */
 import { mkdirSync } from 'node:fs';
-import { createTestRoot } from '@gpuix/solid/testing';
 import { createSignal } from 'solid-js';
 import { Button } from '#/components/button';
 import {
@@ -23,6 +22,7 @@ import {
 } from '#/components/dropdown';
 import { fonts } from '#/lib/fonts';
 import { createCheck } from './check-kit';
+import { createTestWindow } from './test-window';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -526,7 +526,7 @@ async function openBare(
 	testId: string,
 	rows: readonly { label: string; disabled?: boolean }[],
 ) {
-	const root = createTestRoot({ width: 600, height: 400, fonts });
+	const root = createTestWindow({ width: 600, height: 400, fonts });
 	root.render(() => (
 		<DropdownMenu testId={testId}>
 			<DropdownTrigger>

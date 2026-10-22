@@ -7,16 +7,17 @@
  * - The error caption is 12/16 at the default step and 11/14 at the compact one.
  * - Hovering a field eases its ring in over 80 ms instead of switching it.
  */
-import { createTestRoot } from '@gpuix/solid/testing';
+
 import { App } from '#/app';
 import { loadDemos, loadPages } from '#/lib/demo';
 import { fonts } from '#/lib/fonts';
 import { setThemeChoice } from '#/lib/theme';
 import { scrollIntoView } from './check-kit';
 import { readPng } from './png-pixels';
+import { createTestWindow } from './test-window';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-const test = createTestRoot({ width: 1240, height: 780, fonts });
+const test = createTestWindow({ width: 1240, height: 780, fonts });
 const renderer = test.renderer;
 
 async function settle(ms: number) {

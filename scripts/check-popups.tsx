@@ -4,7 +4,7 @@
  *
  *   bun scripts/check-popups.tsx
  */
-import { createTestRoot, type TestElement } from '@gpuix/solid/testing';
+import type { TestElement } from '@gpuix/solid/testing';
 import { createSignal } from 'solid-js';
 import { App } from '#/app';
 import { Combobox } from '#/components/combobox';
@@ -12,6 +12,7 @@ import { Select } from '#/components/select';
 import { loadDemos, loadPages } from '#/lib/demo';
 import { fonts } from '#/lib/fonts';
 import { color, setThemeChoice } from '#/lib/theme';
+import { createTestWindow } from './test-window';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 let failures = 0;
@@ -20,10 +21,10 @@ function report(ok: boolean, label: string, detail: string) {
 	console.log(`${ok ? 'PASS' : 'FAIL'} ${label}: ${detail}`);
 }
 
-const sessions: ReturnType<typeof createTestRoot>[] = [];
+const sessions: ReturnType<typeof createTestWindow>[] = [];
 
 function session() {
-	const test = createTestRoot({ width: 1240, height: 780, fonts });
+	const test = createTestWindow({ width: 1240, height: 780, fonts });
 	sessions.push(test);
 	const renderer = test.renderer;
 	const frame = () => {
