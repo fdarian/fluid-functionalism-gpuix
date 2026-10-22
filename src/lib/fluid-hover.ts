@@ -3,7 +3,7 @@ import {
 	type HostMouseEvent,
 	ResizeObserver,
 } from '@gpuix/solid';
-import { createEffect, createSignal, onCleanup } from 'solid-js';
+import { batch, createEffect, createSignal, onCleanup } from 'solid-js';
 import { toOffsetPx } from '#/lib/offset';
 
 /** A row's box relative to the container's own top-left corner. */
@@ -118,6 +118,22 @@ export interface FluidHoverOptions {
 	axis?: 'x' | 'y' | 'xy';
 }
 
+type Measured = { box: ElementBox; rects: (ItemRect | undefined)[] };
+
+const deferredApplies: (() => void)[] = [];
+
+/** Writes wait for the end of a ResizeObserver delivery: gpuix runs every callback in one loop, and a write between two hovers' reads would make each next read a fresh layout pass. */
+function deferApply(apply: () => void) {
+	if (deferredApplies.push(apply) === 1) {
+		queueMicrotask(() => {
+			const run = deferredApplies.splice(0);
+			batch(() => {
+				for (const queued of run) queued();
+			});
+		});
+	}
+}
+
 /**
  * Port of use-fluid-hover.ts. The DOM version measures with
  * getBoundingClientRect when a ResizeObserver reports; this one does the same
@@ -134,35 +150,40 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 	let container: HostElement | undefined;
 	let pointer: { x: number; y: number } | undefined;
 	let sessionPending = false;
+	let disposed = false;
 
-	const observer = new ResizeObserver(() => commit());
-	onCleanup(() => observer.disconnect());
+	const observer = new ResizeObserver(() => {
+		const measured = measure();
+		if (measured === undefined) return;
+		deferApply(() => {
+			if (!disposed) apply(measured);
+		});
+	});
+	onCleanup(() => {
+		disposed = true;
+		observer.disconnect();
+	});
 
 	const [activeIndex, setActiveIndex] = createSignal<number | null>(null);
 	const [rects, setRects] = createSignal<readonly (ItemRect | undefined)[]>([]);
 	const [session, setSession] = createSignal(0);
 	const [isMeasured, setIsMeasured] = createSignal(false);
 
-	const measureNow = () => {
-		if (container === undefined || !container.mounted) return false;
+	const measure = (): Measured | undefined => {
+		if (container === undefined || !container.mounted) return undefined;
 		const box = container.getBoundingClientRect();
 		const next: (ItemRect | undefined)[] = [];
 		for (const [index, element] of items) {
 			if (!element.mounted) continue;
 			next[index] = toOffsetRect(element.getBoundingClientRect(), box);
 		}
-		setRects(next);
-		setIsMeasured(true);
-		return true;
+		return { box, rects: next };
 	};
 
-	const pick = () => {
-		if (container === undefined || !container.mounted) return;
-		if (pointer === undefined) return;
-		const box = container.getBoundingClientRect();
+	const pick = (box: ElementBox, point: { x: number; y: number }) => {
 		const next = pickNearest({
 			axis: options.axis ?? 'y',
-			point: pointer,
+			point,
 			rects: rects(),
 			containerRect: {
 				left: box.x,
@@ -182,10 +203,22 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 		setActiveIndex(next);
 	};
 
+	const pickAtContainer = () => {
+		if (pointer === undefined) return;
+		if (container === undefined || !container.mounted) return;
+		pick(container.getBoundingClientRect(), pointer);
+	};
+
+	const apply = (measured: Measured) => {
+		setRects(measured.rects);
+		setIsMeasured(true);
+		if (pointer !== undefined && activeIndex() !== null)
+			pick(measured.box, pointer);
+	};
+
 	const commit = () => {
-		if (!measureNow()) return false;
-		if (pointer !== undefined && activeIndex() !== null) pick();
-		return true;
+		const measured = measure();
+		if (measured !== undefined) apply(measured);
 	};
 
 	const setContainer = (element: HostElement) => {
@@ -205,11 +238,11 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 				throw new Error('mouseMove without coordinates');
 			}
 			pointer = { x: event.x, y: event.y };
-			pick();
+			pickAtContainer();
 		},
 		/** Rows moved under a stationary pointer: a scroll event carries no pointer position, so this picks at the last one seen. */
 		onScroll() {
-			pick();
+			pickAtContainer();
 		},
 		onMouseLeave() {
 			pointer = undefined;

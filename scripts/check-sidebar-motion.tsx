@@ -46,7 +46,7 @@ const renderer = kit.renderer;
  * frame after its row moves, so it sits on the row's previous position; `behind`
  * is how far the ring falls short of that, `lag` its distance from the row now.
  */
-function sample(testId: string, frames: number, trigger: () => void) {
+async function sample(testId: string, frames: number, trigger: () => void) {
 	let behind = 0;
 	let lag = 0;
 	let travel = 0;
@@ -56,6 +56,8 @@ function sample(testId: string, frames: number, trigger: () => void) {
 	trigger();
 	for (let frame = 0; frame < frames; frame++) {
 		kit.step(frame === 0 ? 0 : 8);
+		// A real window delivers the observers in a task of their own, so the hover's queued writes land before the next frame.
+		await Promise.resolve();
 		const row = kit.bounds(testId).y;
 		const ring = kit.bounds('menu-focus-ring').y + 2;
 		travel = Math.max(travel, Math.abs(row - start));
@@ -79,7 +81,7 @@ kit.check(
 );
 
 const parentBottom = kit.bounds('parent').y + kit.bounds('parent').height;
-const opening = sample('last', 40, () => setOpen(true));
+const opening = await sample('last', 40, () => setOpen(true));
 kit.check(
 	'the row moved under the ring',
 	opening.travel > 20,
@@ -97,7 +99,7 @@ kit.expect(
 	56,
 );
 
-const moving = sample('sub-2', 12, () =>
+const moving = await sample('sub-2', 12, () =>
 	renderer.simulateKeystrokes('ArrowUp'),
 );
 kit.check(

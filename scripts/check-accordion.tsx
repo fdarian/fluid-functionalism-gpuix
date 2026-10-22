@@ -111,6 +111,8 @@ for (let frame = 0; frame < 40; frame++) {
 	renderer.clockFastForward(FRAME_MS);
 	renderer.flush();
 	renderer.dispatchNativeEvents();
+	// A real window delivers the observers in a task of their own, so the hover's queued writes land before the next frame.
+	await Promise.resolve();
 	const rowNow = bounds('single-2');
 	const ringNow = bounds('single-focus-ring');
 	// Frame 0 only shows how late the first re-measure lands; a snapping ring is on the row from frame 1.
@@ -121,6 +123,7 @@ for (let step = 0; step < 4; step++) {
 	renderer.clockFastForward(100);
 	renderer.flush();
 	renderer.dispatchNativeEvents();
+	await Promise.resolve();
 }
 kit.check(
 	'row moved under the ring',
