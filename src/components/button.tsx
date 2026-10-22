@@ -7,7 +7,6 @@ import {
 	useGpuixRequired,
 } from '@gpuix/solid';
 import { type Accessor, createSignal, type JSX, Show } from 'solid-js';
-import { useOnScreen } from '#/lib/cull';
 import { Icon } from '#/lib/icon';
 import type { IconRef } from '#/lib/icons';
 import { PressFill, pressSurface } from '#/lib/press';
@@ -127,9 +126,8 @@ defineKeyframes('spinner-dash', {
 	'100%': { strokeDasharray: '15 85' },
 });
 
-/** Reduced motion is not honoured, as in the source. A culled button holds the first frame. */
+/** Reduced motion is not honoured, as in the source. */
 function Spinner(props: { size: number; color: string }) {
-	const onScreen = useOnScreen();
 	return (
 		<svg
 			viewBox="0 0 24 24"
@@ -150,9 +148,8 @@ function Spinner(props: { size: number; color: string }) {
 				pathLength={100}
 				strokeDasharray="15 85"
 				style={{
-					animation: onScreen()
-						? 'spinner-move 2s linear infinite, spinner-dash 4s ease-in-out infinite'
-						: 'none',
+					animation:
+						'spinner-move 2s linear infinite, spinner-dash 4s ease-in-out infinite',
 				}}
 			/>
 		</svg>
