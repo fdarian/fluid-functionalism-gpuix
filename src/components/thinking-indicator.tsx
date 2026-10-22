@@ -172,9 +172,7 @@ const GLYPH = {
 
 const staticGlyph = defineIcon(`<path d="${infinity}"/>`);
 
-/** Runs only while the glyph is on screen; a culled one holds the first shape. */
 function MorphingGlyph(props: { size: number }) {
-	const onScreen = useOnScreen();
 	return (
 		<svg
 			viewBox="0 0 24 24"
@@ -185,21 +183,19 @@ function MorphingGlyph(props: { size: number }) {
 				color: color.mutedForeground,
 			}}
 		>
-			<Show when={onScreen()} fallback={<path {...GLYPH} d={circleA} />}>
-				<motion.path
-					{...GLYPH}
-					d={circleA}
-					animate={{ d: [circleA, infinity, circleB, infinity, circleA] }}
-					transition={{
-						d: {
-							duration: 6,
-							ease: 'easeInOut',
-							repeat: Infinity,
-							times: [0, 0.25, 0.5, 0.75, 1],
-						},
-					}}
-				/>
-			</Show>
+			<motion.path
+				{...GLYPH}
+				d={circleA}
+				animate={{ d: [circleA, infinity, circleB, infinity, circleA] }}
+				transition={{
+					d: {
+						duration: 6,
+						ease: 'easeInOut',
+						repeat: Infinity,
+						times: [0, 0.25, 0.5, 0.75, 1],
+					},
+				}}
+			/>
 		</svg>
 	);
 }
