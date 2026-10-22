@@ -223,28 +223,16 @@ const exitTransition = {
 
 const SLOT_CELL = { gridRow: 1, gridColumn: 1 } as const;
 
-/**
- * One word, rolling in from below on mount and out through the top when
- * removed. It is `position: relative` only while it moves: a positioned
- * ancestor makes gpui decline the shimmer letters' colour ticks (every tick
- * would draw the whole page), so at rest the word is static and `top: 0` is its
- * place anyway.
- */
-function RollingWord(props: { word: string; entersAtRest: boolean }) {
+/** One word, rolling in from below on mount and out through the top when removed. */
+function RollingWord(props: { word: string }) {
 	const present = useIsPresent();
-	const [arrived, setArrived] = createSignal(props.entersAtRest);
-	const rolling = () => !arrived() || !present();
 	return (
 		<motion.div
 			initial={{ top: ROLL, opacity: 0 }}
 			animate={{ top: 0, opacity: 1 }}
 			exit={{ top: -ROLL, opacity: 0 }}
 			transition={present() ? enterTransition : exitTransition}
-			onMotionComplete={() => setArrived(true)}
-			style={{
-				...SLOT_CELL,
-				position: rolling() ? 'relative' : 'static',
-			}}
+			style={{ ...SLOT_CELL, position: 'relative' }}
 		>
 			<Shimmer style={scale.body}>{props.word}</Shimmer>
 		</motion.div>
@@ -262,13 +250,10 @@ export function ThinkingIndicator(props: {
 }) {
 	const reduced = createReducedMotion();
 	const [index, setIndex] = createSignal(0);
-	// `AnimatePresence initial={false}` skips the first word's enter and never reports it complete, so only a word that comes after a roll waits for its enter.
-	const [rolled, setRolled] = createSignal(false);
 	const onScreen = useOnScreen();
 	createEffect(() => {
 		if (reduced() || !onScreen()) return;
 		const timer = setInterval(() => {
-			setRolled(true);
 			setIndex((current) => (current + 1) % words.length);
 		}, WORD_INTERVAL_MS);
 		onCleanup(() => clearInterval(timer));
@@ -327,9 +312,7 @@ export function ThinkingIndicator(props: {
 				>
 					<AnimatePresence initial={false}>
 						<Show when={words[index()]} keyed>
-							{(word: string) => (
-								<RollingWord word={word} entersAtRest={!rolled()} />
-							)}
+							{(word: string) => <RollingWord word={word} />}
 						</Show>
 					</AnimatePresence>
 				</Show>
