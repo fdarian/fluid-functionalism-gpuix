@@ -5,7 +5,7 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-22T19:59:58.154Z
+    at: 2026-10-22T22:22:08.524Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -131,7 +131,7 @@ sources:
     resource: repo://src/pages/skill/playback.tsx
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-22T19:59:58.154Z" }
+generated: { by: "claude-code", at: "2026-10-22T22:22:08.524Z" }
 ---
 
 # Port decisions and their reasons
@@ -448,10 +448,16 @@ renderer and cost no JS per frame. The reasons to prefer it, and the traps:
   `strokeDashoffset`, because on `5fda771a` keyframes took style properties and not SVG attributes. That limit is
   gone on `b03d4e27`: the button's loading spinner (`615fd85c`) is the source's `spinner-move` and `spinner-dash`
   keyframes (`strokeDashoffset`, `strokeDasharray`) on a `pathLength` 100 path, drawn on the source's infinity path,
-  36 px (28 compact), stroke 1.125, and a culled button holds the first frame. The file-thumbnail spinner stayed as it
+  36 px (28 compact), stroke 1.125. The file-thumbnail spinner stayed as it
   is because its only remaining gap is the missing rotate transform. The thinking-indicator shimmer is per-letter colour keyframes (`defineKeyframes`) because `background-position` is not
-  animatable; the glyph is a `motion.path` morphing `d`; the word cycle is still a 4 s `setInterval`. Culled
-  regions mount a still copy, and the hidden width-reserving copy plays nothing, so nothing animates off screen.
+  animatable; the glyph is a `motion.path` morphing `d`; the word cycle is still a 4 s `setInterval`. Since
+  `c6475390` (Round 14a) none of these swaps a still copy in or gates its animation on `useOnScreen` any more (the
+  button `Spinner`, file-thumbnail `Spinner`, `MorphingGlyph` and `Shimmer` always render the animated element; only
+  the hidden width-reserving copy is `still`): a culled region is `display: none`, which gpuix already stops. The
+  word timer and the carousel-dots `playing()` still pause off screen. Removing the gates cost nothing measurable
+  (alternated headless A/B on `c6475390`, gated `9726e334` against removed: thinking-indicator 19.9/21.5 against
+  21.2/20.1% idle CPU, file-thumbnail 8.9/7.2 against 9.4/8.7, button 3.3/3.6 against 3.6/3.5), and a gate does not
+  remove the dormant-tick floor an off-screen loop still pays (gpuix gaps page, Round 14a).
 - **Stroke draws use `CheckMark`, not keyframes.** Also on `b03d4e27`, the menu-item check (`1fff79c0`) and the
   input-copy check and cross (`c3db5af1`) draw and retract through `CheckMark` (`motion.path` on `pathLength`)
   instead of fading in. `CheckMark` gained a `viewBox`, `drawOnMount` and a colour `fade`, because input-copy draws
@@ -478,15 +484,23 @@ renderer and cost no JS per frame. The reasons to prefer it, and the traps:
   `absolute` or `opacity < 1` ancestor (`UnknownUnit`, r18), and active motion values. The port changed only what it
   could without leaving the source's structure. ThinkingIndicator's words used to be absolutely positioned inside a
   relative cell; they now share one cell of a `display: grid` slot that has no `position`, and a word is
-  `position: relative` only while it enters or exits (`cc294fcf`), which is also how the source's inline-grid slot
+  `position: relative` only while it enters or exits (`cc294fcf`; always relative again since `c6475390`, next bullet), which is also how the source's inline-grid slot
   behaves. That page went from every tick whole (18% CPU) to 62 ticks a second patched and 6 whole, the rolls (10%).
   The thinking-steps step wrapper dropped a `position: relative` that anchored nothing (`96f4e653`); the page is
   unchanged because its draws are JS-driven, but an isolated active step went from 67 whole ticks a second to 67
   patched. The button (press surface, spinner wrapper, inert opacity), file-thumbnail (spinner overlay), queued-stack
-  and showcase keep the blockers because the source has the same structure or inputs, and the carousel-dots fill and
-  the plain-vs-fluid cursor are motion values. Do not reintroduce a positioned wrapper around a native loop without
-  reading `patched/s` and `why` in `pnpm footprint`; the README per-tick row and its r17 and r18 rows carry the
+  and showcase kept the blockers on `196d69ce` because the source has the same structure or inputs, and the carousel-dots fill and
+  the plain-vs-fluid cursor are motion values (all three lifted on `c6475390`, next bullet). On that pin, do not reintroduce a positioned wrapper around a native loop without
+  reading `patched/s` and `why` in `pnpm footprint` (a rule that `c6475390` relaxed, but the read is still the check); the README per-tick row and its r17 and r18 rows carry the
   numbers.
+- **`c6475390` (Round 14a) lifted the three blockers, and the conditional `position: relative` went with them.** An
+  unfocused input (#74), a positioned or translucent ancestor, an absolute element (#75) and a motion value (#76) no
+  longer decline a patch, and a culled `<svg>`'s shapes sleep. A rolling word in ThinkingIndicator is therefore
+  `position: relative` always, which `top` needs anyway (`RollingWord`, `e99b0655`; the `onMotionComplete` /
+  `entersAtRest` / `rolled` bookkeeping that toggled it is deleted), and its shimmer still patches at about 62 ticks a
+  second under it. What stays whole is a layout loop (`LayoutAnimation`): the word roll on `top`, the fluid-hover
+  cursor and the carousel-dots fill on `width` are the same transform gap as before, now with a whole-frame cost
+  recorded in the README transforms row; they are gpuix's, not the port's, to close.
 - **Who still uses `onFrame`, and why** is recorded in the doc comment of `src/lib/clock.ts`: thinking-steps'
   chevron (the source's `rotate` is a transform gpuix cannot animate), the fluid-hover lists demo (re-measures rows
   while a sub-menu springs), and the cost meter (reads the clock's gaps as its stall probe). Do not add a new

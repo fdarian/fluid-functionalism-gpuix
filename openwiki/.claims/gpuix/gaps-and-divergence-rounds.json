@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:8231ab2f03d70f6905131e6c766248d09ca7eecc675601970f0851ea15aecea6",
+  "pageVersion": "sha256:2a74822f0e975f030b41ee03c63bf2204e779d0d8a2236f563dc98e0dae11e5c",
   "claims": [
     {
       "id": "claim_8f689a7df6cd43af9e228cffa0828120",
       "statement": "The README's gpuix gaps section is the authoritative list of gpuix bugs and missing features the port works around, each with the components it hits and the workaround.",
       "evidence": [
         {
-          "resource": "repo://README.md#L242-L294",
-          "version": "repo-lines-v1:sha256:8ca4e6c31c08f99a4ce913f8cee2a43ac7e6ed2bcbc4ec32353d456980e55d8a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5YzlhOTlmZWMzYzFmNTYyYWQ1N2RiNDM1YmIxZDgzN2Y4YTY2NjBkODAyNWJmN2NkOTc0NGY1ZDMzNTVmOTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5MGQyZTdlM2VlZjk3NTM0MjU5MzM1NGY1ODFiYTRlZGMxMWNjZmI5OGZmYTFhODEzYmUzZTAwMzFmNGMzNzUifQ"
+          "resource": "repo://README.md#L242-L295",
+          "version": "repo-lines-v1:sha256:534bec3372c51413320755247cab75c33b358193d1d58b3d19754b88a96843c0:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5YzlhOTlmZWMzYzFmNTYyYWQ1N2RiNDM1YmIxZDgzN2Y4YTY2NjBkODAyNWJmN2NkOTc0NGY1ZDMzNTVmOTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5MGQyZTdlM2VlZjk3NTM0MjU5MzM1NGY1ODFiYTRlZGMxMWNjZmI5OGZmYTFhODEzYmUzZTAwMzFmNGMzNzUifQ"
         }
       ]
     },
@@ -17,8 +17,8 @@
       "statement": "Without CSS transforms, popups keep an opacity fade and slide but lose the scaleY entrance, and glyph turns are swapped or redrawn.",
       "evidence": [
         {
-          "resource": "repo://README.md#L276-L276",
-          "version": "repo-lines-v1:sha256:a1fb8675018ca3e98a17c305034f4eda77f2597f30bf7da9713bbcc38149090f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTFmYjg2NzUwMThjYTNlOThhMTdjMzA1MDM0ZjRlZGE3N2YyNTk3ZjMwYmY3ZGE5NzEzYmJjYzM4MTQ5MDkwZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTFmYjg2NzUwMThjYTNlOThhMTdjMzA1MDM0ZjRlZGE3N2YyNTk3ZjMwYmY3ZGE5NzEzYmJjYzM4MTQ5MDkwZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDAwOGZiMmRjMDdjZWU4MGQ2YmVjYjY0NzFmZDVkYTViMTNhYzhlMDlmMDA0NDAxYjdmYjVhMzNhMzU3ODdmNSJ9"
+          "resource": "repo://README.md#L277-L278",
+          "version": "repo-lines-v1:sha256:ba41070d641694b64cbc85a25ce67e6523b0493ef399ba419551fecf00e0c63a:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjcwMDYxMmRkNDA3YTc1YmU0ZTdkNDJjZGRkMGQ1MjllNmUzYTFjODNmYTUyODc0NmQyOWUzZmQ0ODcxNzBlOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDJhNWM3NmJiMWI0NmQwNzkzMmM5MmQ0OTdmNjY1MmRhMDQ2YjlhMDdjZTAxZjc2NzM5ZjQ3YzNkYzU2Mzg1ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTMxYzhkMjgzODdjOTg1MzllMzU3NTRlNmY1ZjQ5ZWFjMjY4OTJmYmY4YmRjZTEwOTgzZTMyOGVjNzI3M2NmNiJ9"
         }
       ]
     },
@@ -27,7 +27,7 @@
       "statement": "Because gpuix #46 still makes a frame's cost scale with clipped, off-screen content, the port hides regions far from the page scroller with display none through src/lib/cull.ts; this is a kept workaround: the removal comparison re-run on gpuix poc b03d4e27 and headless on 196d69ce favoured culling on every page that moved, and an observer-toggled contentVisibility 'hidden' variant on gpuix e591681e (round 16) lost to it on entry layout passes, forced reads and bento layout.",
       "evidence": [
         {
-          "resource": "repo://README.md#L281-L282",
+          "resource": "repo://README.md#L282-L283",
           "version": "repo-lines-v1:sha256:b41d57b80541b140107e5152bd6640ed27b39888248b62f6b08ff0263da34302:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTYzZDUwODU5OWZhOTk3MDFiNDZjOThhZGZhYWUyMjc5MjE3OWVmNTg5MTEwZTNkZGU3NjI4ODY2N2UwYzJhNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTQ2YTAxOTY0NmE2YmExMjA5YWI4NDQ2MzQwNWFmNjk1M2EyMzViN2FiZjkyYzM3OGE2Zjg1OGIwMGY2ZDZhNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTMxYzhkMjgzODdjOTg1MzllMzU3NTRlNmY1ZjQ5ZWFjMjY4OTJmYmY4YmRjZTEwOTgzZTMyOGVjNzI3M2NmNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDlkZDdmMzE0NDVmOTA1MTU1MWY5Njg1ZmQ1YjU5ZGE5MTYzMjI3ZGI4NGY5YzVjY2VkNjE1NWQxNTRjMWViMCJ9"
         },
         {
@@ -236,15 +236,15 @@
       "evidence": [
         {
           "resource": "repo://README.md#L56-L56",
-          "version": "repo-lines-v1:sha256:0c8a6dc7b1ba30d5808b29bd0bdf76aa846c7ae687902126fcadab56725ff579:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM4YTZkYzdiMWJhMzBkNTgwOGIyOWJkMGJkZjc2YWE4NDZjN2FlNjg3OTAyMTI2ZmNhZGFiNTY3MjVmZjU3OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM4YTZkYzdiMWJhMzBkNTgwOGIyOWJkMGJkZjc2YWE4NDZjN2FlNjg3OTAyMTI2ZmNhZGFiNTY3MjVmZjU3OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "version": "repo-lines-v1:sha256:292dcb05a8ca9038bd7d4251de3029608bdb12936d4d1d4eba272b76a8cb6d24:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjkyZGNiMDVhOGNhOTAzOGJkN2Q0MjUxZGUzMDI5NjA4YmRiMTI5MzZkNGQxZDRlYmEyNzJiNzZhOGNiNmQyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjkyZGNiMDVhOGNhOTAzOGJkN2Q0MjUxZGUzMDI5NjA4YmRiMTI5MzZkNGQxZDRlYmEyNzJiNzZhOGNiNmQyNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         },
         {
           "resource": "repo://drift/fluid-hover.md#L36-L43",
-          "version": "repo-lines-v1:sha256:d8a494ed16ac203198919b111431572d93714a18f9bfc11841e57ecac3302d40:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzRkMmM5MWQ4NTIwOGM4Mzg1NmI0MTZkZjFhYjc4NmVjNjlkOTFlYjIzMDk5OWVjYjNiZjg3MTJlMzAwY2E5MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjdkNzZlYmRkZTU5NDhkZWIyZmY0ODBhMjE5ZWM1ZTdkOTNlMzhjZTUyODM5MWMwMmE5NjdjNzczZmZmMmJhYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmZkMTc3NjJkMWQ5MGQ4MDE1ZjA4ZWIwZGIyZDJmZDAxNWQ5MGMxYWE3MGY3YjNmMmRhNzUxNWYyY2FkZmY2YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTk1ZTJkMTNkYzY2MzUzY2RhMzIwNTdlOWQzMzJiOWNhMjI1YTMwOTQ3NWE5YTNmMzBmNzY2NDg1ZjJiMzhlZSJ9"
+          "version": "repo-lines-v1:sha256:b66aa1fd869dda2e46799e5862a12df97ad7d0a0ce6c711b6b16ef752bdea987:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzRkMmM5MWQ4NTIwOGM4Mzg1NmI0MTZkZjFhYjc4NmVjNjlkOTFlYjIzMDk5OWVjYjNiZjg3MTJlMzAwY2E5MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjdkNzZlYmRkZTU5NDhkZWIyZmY0ODBhMjE5ZWM1ZTdkOTNlMzhjZTUyODM5MWMwMmE5NjdjNzczZmZmMmJhYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmZkMTc3NjJkMWQ5MGQ4MDE1ZjA4ZWIwZGIyZDJmZDAxNWQ5MGMxYWE3MGY3YjNmMmRhNzUxNWYyY2FkZmY2YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTk1ZTJkMTNkYzY2MzUzY2RhMzIwNTdlOWQzMzJiOWNhMjI1YTMwOTQ3NWE5YTNmMzBmNzY2NDg1ZjJiMzhlZSJ9"
         },
         {
           "resource": "repo://drift/thinking-indicator.md",
-          "version": "repo-file-v1:sha256:bbfd84954717449706b4cbb718456375e5b817e4103f7bfcba178404a758752b"
+          "version": "repo-file-v1:sha256:b1661f5cdc4435b79742d486ee51c66b5b232bd6ff2d57778beeaa7e9d117712"
         },
         {
           "resource": "repo://src/pages/fluid-hover/plain-vs-fluid.tsx#L115-L133",
@@ -257,7 +257,7 @@
       "statement": "The README's gpuix gaps table now lists only thinking-steps as needing the shared setInterval frame clock because gpuix has no requestAnimationFrame.",
       "evidence": [
         {
-          "resource": "repo://README.md#L284-L284",
+          "resource": "repo://README.md#L285-L285",
           "version": "repo-lines-v1:sha256:be83225f1df06081fac4ea1ae2aec1efc3c6d9b25846a810e83736901af0fc8b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmU4MzIyNWYxZGYwNjA4MWZhYzRlYTFhZTJhZWMxZWZjM2M2ZDliMjU4NDZhODEwZTgzNzM2OTAxYWYwZmM4YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmU4MzIyNWYxZGYwNjA4MWZhYzRlYTFhZTJhZWMxZWZjM2M2ZDliMjU4NDZhODEwZTgzNzM2OTAxYWYwZmM4YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTQ1MDhjMDBjM2YxZWExMTljMTdiNTVkODNhNDE5ZTdiMWRhYjk2MWUwMGI3MmJjOWZjMGRmM2QwYzQ2ZjYzZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTAwNWM0NWExNjFjMGYyNzc2YjI2MTJlMzU4ODA1ZDg4ZTQxN2Q2Njg3YWIwMWRlZDNkYzJjM2QwNzM1NGI0OCJ9"
         },
         {
@@ -272,7 +272,7 @@
       "evidence": [
         {
           "resource": "repo://README.md#L56-L56",
-          "version": "repo-lines-v1:sha256:0c8a6dc7b1ba30d5808b29bd0bdf76aa846c7ae687902126fcadab56725ff579:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM4YTZkYzdiMWJhMzBkNTgwOGIyOWJkMGJkZjc2YWE4NDZjN2FlNjg3OTAyMTI2ZmNhZGFiNTY3MjVmZjU3OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM4YTZkYzdiMWJhMzBkNTgwOGIyOWJkMGJkZjc2YWE4NDZjN2FlNjg3OTAyMTI2ZmNhZGFiNTY3MjVmZjU3OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "version": "repo-lines-v1:sha256:292dcb05a8ca9038bd7d4251de3029608bdb12936d4d1d4eba272b76a8cb6d24:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjkyZGNiMDVhOGNhOTAzOGJkN2Q0MjUxZGUzMDI5NjA4YmRiMTI5MzZkNGQxZDRlYmEyNzJiNzZhOGNiNmQyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjkyZGNiMDVhOGNhOTAzOGJkN2Q0MjUxZGUzMDI5NjA4YmRiMTI5MzZkNGQxZDRlYmEyNzJiNzZhOGNiNmQyNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         },
         {
           "resource": "repo://src/lib/fluid-hover.ts#L17-L28",
@@ -285,7 +285,7 @@
       "statement": "A long page's first draw still builds, lays out and shapes every node because nothing marks a region far before an IntersectionObserver reports against a first layout; gpuix 511bebab's shape store fixed the revisit half (shapes per revisit 215 to 8-12 on Changelog, 291 to 4 on Showcase, 142 to 0 on Command Menu) and the port has no workaround beyond deferring the release spy's first reading. The Command Menu's 340-440 ms mount JS was not part of that and not steady state: it came from each menu's first scrollTop write, removed by 704af9e5.",
       "evidence": [
         {
-          "resource": "repo://README.md#L269-L270",
+          "resource": "repo://README.md#L270-L271",
           "version": "repo-lines-v1:sha256:ca5e63a372d333c5645b5868bd3e994bdeb11c3a2b1a093dd0a6ffea47903175:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTkzNTZkZDgwODgyYmQ5OTU3ODczMTM3OTg4MDBmM2FkYjQ1YmUwYjc2NGYyMjE1NTcyM2Q3MzA4NmZjMDBhNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzNkNzY0YTZmZjVjYmQ3YjJhZTQxMzkwOTU1M2E2OTRlNjM4M2YyYjRhMjBkMzQ5ZGRkNGFkYjUwYWRhODE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzRiNGM1OWM1NmU3ZGZjNDJjZjJkZTdjNDkzZDE1NWYxNGIxZTgxODM1NGRkMmJkYjc2ODkzYmI2ZTcyNTQ4ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWM0ZTExMTA4MzI5MTFhMWViYzA4ZjYwNTI4NWU3N2Q5NWViMGI1ZGY0ZjIwMGJlMGUxYTg4OWMwMzliOTNlOCJ9"
         },
         {
@@ -303,7 +303,7 @@
       "statement": "scripts/perf-page-switch.tsx is the headless harness for page-switch hitches, listed in the README's harness notes beside the real-window scripts/perf.tsx.",
       "evidence": [
         {
-          "resource": "repo://README.md#L299-L301",
+          "resource": "repo://README.md#L300-L302",
           "version": "repo-lines-v1:sha256:35f6a0670b93c293c35d6f09fe0f43cf6c20d03b27bcb6c13de8a1809a8ccdba:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTFmOWM4ZjM1ZmExZjg5OTBkODY0YjdmMmU2NzVlYzhjMzg4NWFhMjYwYjY3NGJiZDY4YTlhODJhMDJhYWI1MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjAzY2U3ZTY4MGY5MTQyNTNjM2I1NGQ1MjYxOWI5ZmE3NWRkMTY1YWYxNDcwYTg4MGEzZjIzNmZmN2FlMDBjNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjkzYjZhNmY4ZjgyMGVmZjQzMzc4N2IwNDBiNTE5YzZlYzkyNzJmYmE2ODQ1OTA3MDcwYTQ0Y2RjM2M4Yzg1YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmNjY2Q4ZDE2ZmE3NzZkMWMyZWYwN2I1ODQzYmNjZjI1OTcxZTRkNjJmMzI5YTkxYWZlOGU3OWZlOGNiNTVjNiJ9"
         },
         {
@@ -318,7 +318,7 @@
       "evidence": [
         {
           "resource": "repo://README.md#L56-L56",
-          "version": "repo-lines-v1:sha256:0c8a6dc7b1ba30d5808b29bd0bdf76aa846c7ae687902126fcadab56725ff579:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM4YTZkYzdiMWJhMzBkNTgwOGIyOWJkMGJkZjc2YWE4NDZjN2FlNjg3OTAyMTI2ZmNhZGFiNTY3MjVmZjU3OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM4YTZkYzdiMWJhMzBkNTgwOGIyOWJkMGJkZjc2YWE4NDZjN2FlNjg3OTAyMTI2ZmNhZGFiNTY3MjVmZjU3OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "version": "repo-lines-v1:sha256:292dcb05a8ca9038bd7d4251de3029608bdb12936d4d1d4eba272b76a8cb6d24:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjkyZGNiMDVhOGNhOTAzOGJkN2Q0MjUxZGUzMDI5NjA4YmRiMTI5MzZkNGQxZDRlYmEyNzJiNzZhOGNiNmQyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjkyZGNiMDVhOGNhOTAzOGJkN2Q0MjUxZGUzMDI5NjA4YmRiMTI5MzZkNGQxZDRlYmEyNzJiNzZhOGNiNmQyNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         },
         {
           "resource": "repo://src/components/carousel-dots.tsx#L77-L100",
@@ -346,45 +346,45 @@
     },
     {
       "id": "claim_687e164c7fe1424f9f0196838a4e9556",
-      "statement": "In gpuix a looping native animation used to cost the whole page per tick (one looping colour keyframe on one text took 7 ms a tick on 3000 nodes and about 60 ms on 12000), so a page with a running loop idles at 37-45% CPU; since 196d69ce a paint-only tick (colour, opacity, SVG stroke dash or shape) is patched in its own unit of at most 256 elements, while width and absolute top loops remain whole frames.",
+      "statement": "In gpuix a looping native animation used to cost the whole page per tick (one looping colour keyframe on one text took 7 ms a tick on 3000 nodes and about 60 ms on 12000), so a page with a running loop idles at 37-45% CPU; since 196d69ce a paint-only tick (colour, opacity, SVG stroke dash or shape) is patched in its own unit of at most 256 elements, while layout loops (width, top) remain whole frames.",
       "evidence": [
         {
-          "resource": "repo://README.md#L265-L265",
-          "version": "repo-lines-v1:sha256:fe37fbf229e82121850f85b5deeb64903ef73f65639711ab5bd22109139d55cf:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmUzN2ZiZjIyOWU4MjEyMTg1MGY4NWI1ZGVlYjY0OTAzZWY3M2Y2NTYzOTcxMWFiNWJkMjIxMDkxMzlkNTVjZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmUzN2ZiZjIyOWU4MjEyMTg1MGY4NWI1ZGVlYjY0OTAzZWY3M2Y2NTYzOTcxMWFiNWJkMjIxMDkxMzlkNTVjZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjQ2MjdhMGE5ZTRkODBjY2RiNTBkOTliYjdhYjE5ZmY5ODgwN2YzZWJiOWI1OTIzN2Q5MDY1YjUyY2NlNjExMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmNkNDIyYTJmYjA4NmQxODc5MjM0MzY4NzJlYTVlMGQ1MjA2MTBmNmJhYmZmMjFjYjQzZmRjNDQwYWU5NzRjOCJ9"
+          "resource": "repo://README.md#L264-L265",
+          "version": "repo-lines-v1:sha256:08f4b747a1de28db474ad43091bb835cbc10f22723a5ed73846c3258360a6b4f:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzdlYzMyNTE2NTRkYTg4MGI4NDFjNjdlZDU5MmI1NjUzZjYwMWQyYzAyNDhmZTMwOTNkMWNlMTQwOGYwZjY3ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWRkMDYyMGZlZjZhOGJmOTllOTVjYjFmNWU2YzQxZjU2NWM2OTljNTdkNDM5OTRhZTVkYTQ0MDg2YjRjYzQ4MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjkxNzRiMGEyMDkxOTM2NDcwYWY5OWM5MmU4MDYwYjAzMDJhNTM5YTYzNWJmNjgzNTQ2ZmJjM2U3ZTJkYmQyZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmVlNjkzMjhjNTc5ODQyNWM4Yjk3Y2M2ZmUyMzFmYmQ0NzdmYzk5MWRkZTIxMjhjOGQ2MTM1ZjBmYWQ3YjY2YyJ9"
         }
       ]
     },
     {
       "id": "claim_27ea1eeb561243f2abb663361ccdcfc4",
-      "statement": "On gpuix 196d69ce an input or textarea anywhere on the page, even unfocused or culled, makes every tick of a loop elsewhere Unsteady and drawn whole; only display none spares it. The port does not work around it because the inputs are the source's own; it hits button, queued-stack and showcase.",
+      "statement": "On gpuix 196d69ce an input or textarea anywhere on the page, even unfocused or culled, made every tick of a loop elsewhere Unsteady and drawn whole; gpuix c6475390 (#74) retains the editor so an unfocused input no longer does. The port did not work around it because the inputs are the source's own; it hit button, queued-stack and showcase.",
       "evidence": [
         {
-          "resource": "repo://README.md#L266-L266",
-          "version": "repo-lines-v1:sha256:64eecb572a83aacc90ddf66c0ebbe3256551bf88c009e07afd0907352af58d0a:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjRlZWNiNTcyYTgzYWFjYzkwZGRmNjZjMGViYmUzMjU2NTUxYmY4OGMwMDllMDdhZmQwOTA3MzUyYWY1OGQwYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjRlZWNiNTcyYTgzYWFjYzkwZGRmNjZjMGViYmUzMjU2NTUxYmY4OGMwMDllMDdhZmQwOTA3MzUyYWY1OGQwYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTA5ODcxNDA1NTBjZTk1MjhmYjNiZGFlOWE3M2ZlNDNlOGZiZDA5YTkzN2NlZDY1ZjFiN2FlMjNhMmUwYjYxNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDU1ODIwYzdlMjAzNDBlNzU0ZjE1MzFkNzYzN2NjZTMzYjRkNzM3OGM5YTQ3NjY0NzM4YWU0MjQ5ZTUzNWEwNCJ9"
+          "resource": "repo://README.md#L265-L266",
+          "version": "repo-lines-v1:sha256:ed29487c69daea6b04085c91d60d74f90d21c8bb6f07723c3249657b7b857694:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWRkMDYyMGZlZjZhOGJmOTllOTVjYjFmNWU2YzQxZjU2NWM2OTljNTdkNDM5OTRhZTVkYTQ0MDg2YjRjYzQ4MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTdmMDI2YjkwMTU1NGJiYWM1ZDAxMjgxZTY1N2U4NmYzZjJhMjYyYjYxNzI1MjFkMmIzMGQ4NDYzZTUzZGE4OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjA3M2VhMTA1MTZmMThkNWMxMzNkNjkzY2JiYzVmZjBmNWMwMmY2ODZjYThmZGJlZTQ1YmZhMjRhZmIzODdhZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTI3MGRlODZmMjA5ZTZjNTMwZjExMDFiYzg1YTM2NzA1MWZiOTljMDJhOTA0Y2ZmYjIxNjkwZTQ4MWVkMDUzZiJ9"
         }
       ]
     },
     {
       "id": "claim_1dabd9c2159e4c0eb16735ade524d3a1",
-      "statement": "On gpuix 196d69ce a loop in a descendant of a relative, absolute or opacity-below-1 box is declined as UnknownUnit on every tick, and an animated element that is itself absolute records no decline at all; this hits the button's press surface, spinner wrapper and inert opacity and file-thumbnail's spinner overlay.",
+      "statement": "On gpuix 196d69ce a loop in a descendant of a relative, absolute or opacity-below-1 box was declined as UnknownUnit on every tick, and an animated element that was itself absolute recorded no decline at all; this hit the button's press surface, spinner wrapper and inert opacity and file-thumbnail's spinner overlay. gpuix c6475390 (#75) patches these.",
       "evidence": [
         {
-          "resource": "repo://README.md#L267-L267",
-          "version": "repo-lines-v1:sha256:9f92959f70adef6e2a99ebf028a0499ee701f19e1bcb8af3cd8b0729aab88609:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY5Mjk1OWY3MGFkZWY2ZTJhOTllYmYwMjhhMDQ5OWVlNzAxZjE5ZTFiY2I4YWYzY2Q4YjA3MjlhYWI4ODYwOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY5Mjk1OWY3MGFkZWY2ZTJhOTllYmYwMjhhMDQ5OWVlNzAxZjE5ZTFiY2I4YWYzY2Q4YjA3MjlhYWI4ODYwOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmYxZjgxYjYzZmI2ZDVmMzE0MjRkZTFmNmFlNTg0N2M1OTQ1ODQzNGQzMmM1MTY5OTFlZGEwYjdkNjY5ZGFmNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGY4ZDM0Yzc1ZTkyODA3OGIxZThmYjViNzY1OGQ2YmJkNjhmOTIzOTJiYzU2MzU0Mzc0MjAxMmNlOTMyNTkwZiJ9"
+          "resource": "repo://README.md#L266-L267",
+          "version": "repo-lines-v1:sha256:328352d0ca29177ad814cc7c7107dc1628fc605d7093208087a6ab46e195a52a:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTdmMDI2YjkwMTU1NGJiYWM1ZDAxMjgxZTY1N2U4NmYzZjJhMjYyYjYxNzI1MjFkMmIzMGQ4NDYzZTUzZGE4OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTQ3M2EyY2RmNzQ3YjU3MzEzZjA1Yzg0YWJiOGVjOTk5MDBhNWNkYTVkNDg4ZTMxN2NlZTQzNDJiM2I4MDljMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2FlODI2NjkyY2NlYzJjYjFlODkwM2Q2Mzc0ZmIzMWU3ZTg1MmQ4MDMxYTEzNGQ3NzQ3MDJhNzEzMTUxYWQ2MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGZhYjY1OTUyYWE0YzcyNWQ1NWYxOWJkZTFlZTkzMmI5ZTgyYWEzOGFkNmEyYWNkM2ViMjUxNjk3M2JlZjI4MiJ9"
         }
       ]
     },
     {
       "id": "claim_fb1e3804e58e44b4bde11de2861e2a30",
-      "statement": "ThinkingIndicator stacks its words in one cell of a position-less grid slot and positions a word only while it rolls (cc294fcf), which turned its page from every shimmer tick drawn whole into about 62 patched ticks a second; thinking-steps' step wrapper dropped an anchorless position: relative (96f4e653).",
+      "statement": "ThinkingIndicator stacks its words in one cell of a position-less grid slot, which with the word positioned only while it rolled (cc294fcf) turned its page from every shimmer tick drawn whole into about 62 patched ticks a second; since gpuix c6475390 the word is always position: relative and its shimmer still patches. thinking-steps' step wrapper dropped an anchorless position: relative (96f4e653).",
       "evidence": [
         {
           "resource": "repo://drift/thinking-indicator.md",
-          "version": "repo-file-v1:sha256:bbfd84954717449706b4cbb718456375e5b817e4103f7bfcba178404a758752b"
+          "version": "repo-file-v1:sha256:b1661f5cdc4435b79742d486ee51c66b5b232bd6ff2d57778beeaa7e9d117712"
         },
         {
-          "resource": "repo://src/components/thinking-indicator.tsx#L304-L336",
-          "version": "repo-lines-v1:sha256:e9429ea941f914986d760e61551c17057fc6c08100231cc0d2fcceee03315123:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5NmJiMzZkODY2OGMxYmFmYmFhOWNkYmVjMjBjYjk2Njg2Nzk5NzI0NDRjODFmYTBhMGM5MTMzMzUwNWE4NjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4NTQwOWVhNjA5OWI4YzhmMDYwMmM3OTM0ZjZkNTlkMWM5ZjQ4ODA5OWRhY2JjZTI3MTk5ZTBlNmVjYTU0NDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc4OWRjMjVlNGQyZjZhZjNkMjM2OTY4MDE0M2ZjNGIzY2FiNDdhNzViYzRmZTVjNmMwYjgxNjg5OTdlMzQyNTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk1ZTE0MzVmMDE4YTgwYTU1YTYxNmMxNjliNmM0ODRiMjkxZjUxMjgwNmYzZThjM2JjZjU5MDVhZjIzNzBhNTkifQ"
+          "resource": "repo://src/components/thinking-indicator.tsx#L219-L235",
+          "version": "repo-lines-v1:sha256:675a178f19b7b29d941d19c7936aa17a031924c2f9a9b2266b9ca1e4099eade4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhZThiNjNmNjY5YWM4ZmVjYjExZWJlZmFhNTUwZDhjMWRhZmZhNGNjZDI5NTY1YzQwMTI5ZTY0YjBkMDlkMTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE0OWM1MmFmYTUyMTMzM2I5MWQzYzJjYjVlYWMyMDAyNDIzMzEzNzM0ODdiMDRmOTUwNzU3ODA4MzUxOTlhYzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBmZWFiZGFlY2RhOGJmZjBiNmIzMWNkZGY1MTY0ZWY5OTZiOWE2NmFkN2UzODAyOWE1MjJmYWVmNzZmYzhiOWUifQ"
         },
         {
           "resource": "repo://src/components/thinking-steps.tsx#L355-L359",
@@ -426,15 +426,15 @@
     },
     {
       "id": "claim_2e0172db0321439ab6373e8886d072cf",
-      "statement": "The README names gpuix poc e591681e (zed af631a39c7) as the minimum fork, and its closed-gap list counts an atomic inline at its fractional origin and a forced layout that delivers no onLayout or ResizeObserver report before the next painted frame among the things gpuix now does.",
+      "statement": "The README names gpuix poc c6475390 (zed 5a7b70d193) as the minimum fork, and its closed-gap list counts an atomic inline at its fractional origin, a forced layout that delivers no onLayout or ResizeObserver report before the next painted frame, and from Round 14a paint patching next to an input, under a positioned or translucent ancestor, on a motion value and on an svg among the things gpuix now does.",
       "evidence": [
         {
           "resource": "repo://README.md#L245-L246",
-          "version": "repo-lines-v1:sha256:6fb3df577788239906feb3501fbb8c85af5ba8a716b7a25420eaa5a21340ebab:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjU0ZWNjYWU0MWQxNDYzMzEzNzkxYWM5NzQ1ZTE5NjIyODc4ZTI4ZDFmYjEzNmUyYzY5YWEzZDkwZWJlMzc5OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTA1ZjI3YTAzNWFiOTdmNTRlNThiZjU2OTQ3MTkxNjdjNmUxNjMxYTBhYjExYjVlN2I1ZTk1YTc3MTM3OTVjYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTZmZGM0NmVkZjE4ZDhhYjgzZjI4MDdhY2MwZTU4MWI2YjY2MzQ2OTEwNTU3MGNhZTkyMjA2ZTY3MmY1NjkyNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGNjY2QxN2Y5NzdhZmE1NTJhOTliNzIwMzI2MjRhNTIzNzBkZTU4NGMyNDIxNTg5YjBlNWM0MzBhMTQ4MjY2YyJ9"
+          "version": "repo-lines-v1:sha256:80039bb8e47802d458d00f6a4e4d048fce4f03f49d7c079047d7228ec65bce39:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTM0MzI5MjRlYjFhOTY2MTU5MWNjOWM0NmRkYmFlYmFmZmM4NjI2NzUwZDIyYThmNDQ3OWMyOGYwMjhkNjExZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTdhNDgwNDIxYWEwMzUzMmI1OWNiNDg2MjA5YTlhZmM1MDNlMDFlOGNmNDIxMDk2YjJkMWNiMmFhY2FjOTg3ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTZmZGM0NmVkZjE4ZDhhYjgzZjI4MDdhY2MwZTU4MWI2YjY2MzQ2OTEwNTU3MGNhZTkyMjA2ZTY3MmY1NjkyNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGNjY2QxN2Y5NzdhZmE1NTJhOTliNzIwMzI2MjRhNTIzNzBkZTU4NGMyNDIxNTg5YjBlNWM0MzBhMTQ4MjY2YyJ9"
         },
         {
           "resource": "repo://README.md#L56-L56",
-          "version": "repo-lines-v1:sha256:0c8a6dc7b1ba30d5808b29bd0bdf76aa846c7ae687902126fcadab56725ff579:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM4YTZkYzdiMWJhMzBkNTgwOGIyOWJkMGJkZjc2YWE4NDZjN2FlNjg3OTAyMTI2ZmNhZGFiNTY3MjVmZjU3OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM4YTZkYzdiMWJhMzBkNTgwOGIyOWJkMGJkZjc2YWE4NDZjN2FlNjg3OTAyMTI2ZmNhZGFiNTY3MjVmZjU3OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "version": "repo-lines-v1:sha256:292dcb05a8ca9038bd7d4251de3029608bdb12936d4d1d4eba272b76a8cb6d24:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjkyZGNiMDVhOGNhOTAzOGJkN2Q0MjUxZGUzMDI5NjA4YmRiMTI5MzZkNGQxZDRlYmEyNzJiNzZhOGNiNmQyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjkyZGNiMDVhOGNhOTAzOGJkN2Q0MjUxZGUzMDI5NjA4YmRiMTI5MzZkNGQxZDRlYmEyNzJiNzZhOGNiNmQyNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         }
       ]
     },
@@ -457,7 +457,7 @@
       "statement": "The README memory row records headless f993d9b9 footprints only (introduction 65 MB, showcase 131 MB, introduction 192 MB after one tour with a peak of 194 MB up from 67 MB fresh, retained elements back at 744) and leaves the in-window floor and per-element cost to the next bench.",
       "evidence": [
         {
-          "resource": "repo://README.md#L268-L268",
+          "resource": "repo://README.md#L269-L269",
           "version": "repo-lines-v1:sha256:5b2e249cdd7a686594fc35cb7110f53352d6591241682528dff08b11d9bf24a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWIyZTI0OWNkZDdhNjg2NTk0ZmMzNWNiNzExMGY1MzM1MmQ2NTkxMjQxNjgyNTI4ZGZmMDhiMTFkOWJmMjRhNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWIyZTI0OWNkZDdhNjg2NTk0ZmMzNWNiNzExMGY1MzM1MmQ2NTkxMjQxNjgyNTI4ZGZmMDhiMTFkOWJmMjRhNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2ViZWI3ZjhlYTY5NjEzYWQ3NDRjNDNjZWRjYzU1Yjk2M2I5YTI4ZWNlMjA1NGVmMzczYzRkY2NkZjdmZmU0NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODc2ZmVkODA0MDA3NWNhODA0MWY5YWVjYzQyMmQ4NTBhZjVkNWQwMjI3MTYyNWRlMDRjZjRhMDA0ZjAxOGMyMiJ9"
         }
       ]
@@ -485,7 +485,7 @@
       "statement": "A scroll write (scrollTop, scrollTo or a bounds read) after a mutation forces a layout pass over the whole retained tree, display: none subtrees included; on gpuix 511bebab FF's pass cost ~5 us per element, about 10x the test-renderer repro, but on e591681e (round 16, #83) a layout-dirtying read costs 1 pass at 2.87 ms median on the Command Menu page and a paint-only write costs no pass, so the port still avoids writes during mount without relying on the old figure.",
       "evidence": [
         {
-          "resource": "repo://README.md#L270-L270",
+          "resource": "repo://README.md#L271-L271",
           "version": "repo-lines-v1:sha256:c3d764a6ff5cbd7b2ae413909553a694e6383f2b4a20d349ddd4adb50ada817b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzNkNzY0YTZmZjVjYmQ3YjJhZTQxMzkwOTU1M2E2OTRlNjM4M2YyYjRhMjBkMzQ5ZGRkNGFkYjUwYWRhODE3YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzNkNzY0YTZmZjVjYmQ3YjJhZTQxMzkwOTU1M2E2OTRlNjM4M2YyYjRhMjBkMzQ5ZGRkNGFkYjUwYWRhODE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDg3YTcwZWMyYjJkOWQ5MTI3ZjY2NTM0OWRkNWEyOTFjMjFmMzBlMmUzYmIwYjU4NTA2ZWQ3Y2I2Zjk1YTU1OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWM0ZTExMTA4MzI5MTFhMWViYzA4ZjYwNTI4NWU3N2Q5NWViMGI1ZGY0ZjIwMGJlMGUxYTg4OWMwMzliOTNlOCJ9"
         },
         {
@@ -499,12 +499,12 @@
       "statement": "Since gpuix 8352e66c a forced layout (a bounds read or a scrollTop write) no longer delivers onLayout or ResizeObserver reports; they arrive with the next painted frame after its scroll events, as in Chrome, so base-ui-solid-gpuix's scroll-area and combobox were adapted and fluid hover's pick and the composer stage's pin are one frame late exactly as the source is in Chrome.",
       "evidence": [
         {
-          "resource": "repo://README.md#L246-L246",
-          "version": "repo-lines-v1:sha256:e05f27a035ab97f54e58bf5694719167c6e1631a0ab11b5e7b5e95a7713795ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTA1ZjI3YTAzNWFiOTdmNTRlNThiZjU2OTQ3MTkxNjdjNmUxNjMxYTBhYjExYjVlN2I1ZTk1YTc3MTM3OTVjYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTA1ZjI3YTAzNWFiOTdmNTRlNThiZjU2OTQ3MTkxNjdjNmUxNjMxYTBhYjExYjVlN2I1ZTk1YTc3MTM3OTVjYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWNmZTAyNTAyYzY2NzRmNmQxOWUzNGYxYWVkNmFiZGI0OTBiY2NhYWNhNWE1YzM5ZGI0MTBhNTQxZDFkNzQ2OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGNjY2QxN2Y5NzdhZmE1NTJhOTliNzIwMzI2MjRhNTIzNzBkZTU4NGMyNDIxNTg5YjBlNWM0MzBhMTQ4MjY2YyJ9"
+          "resource": "repo://README.md#L245-L246",
+          "version": "repo-lines-v1:sha256:80039bb8e47802d458d00f6a4e4d048fce4f03f49d7c079047d7228ec65bce39:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTM0MzI5MjRlYjFhOTY2MTU5MWNjOWM0NmRkYmFlYmFmZmM4NjI2NzUwZDIyYThmNDQ3OWMyOGYwMjhkNjExZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTdhNDgwNDIxYWEwMzUzMmI1OWNiNDg2MjA5YTlhZmM1MDNlMDFlOGNmNDIxMDk2YjJkMWNiMmFhY2FjOTg3ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTZmZGM0NmVkZjE4ZDhhYjgzZjI4MDdhY2MwZTU4MWI2YjY2MzQ2OTEwNTU3MGNhZTkyMjA2ZTY3MmY1NjkyNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGNjY2QxN2Y5NzdhZmE1NTJhOTliNzIwMzI2MjRhNTIzNzBkZTU4NGMyNDIxNTg5YjBlNWM0MzBhMTQ4MjY2YyJ9"
         },
         {
-          "resource": "repo://README.md#L361-L361",
-          "version": "repo-lines-v1:sha256:0a51dad9b622ce4e16f2055440687f7c36dfa3cbb7d1adedd90f73f2ecf5dc6c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGE1MWRhZDliNjIyY2U0ZTE2ZjIwNTU0NDA2ODdmN2MzNmRmYTNjYmI3ZDFhZGVkZDkwZjczZjJlY2Y1ZGM2YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGE1MWRhZDliNjIyY2U0ZTE2ZjIwNTU0NDA2ODdmN2MzNmRmYTNjYmI3ZDFhZGVkZDkwZjczZjJlY2Y1ZGM2YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWQ2YTIzZjdkODNlYTM3YTVmMmRlYjMyMzZhZGEzYzNmM2Q2NTkzNzFlMTMxNzgwZmI3YjEwY2M2MTNhOTJlYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjVlYTU5YjdkMDEyMzVlNDFhZjAyNWFlYzgwYmIzOWE0YmZmODE0MWJiYTI2NWQ0ZjYxMTBkZDM4MTNjNDYyMiJ9"
+          "resource": "repo://README.md#L361-L362",
+          "version": "repo-lines-v1:sha256:6438b11ede85c7feeb64c93e591c1025e7dbf6c73fe6328e47eec0b384851bf9:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTBiMzc2YWM0MzZmMDk4MjBiMmI0ZmEyYjMxYmRkMWNiNmU5OTNmY2UxNDRiMmY0ZTU5N2M3OTA5OGU1M2Q0MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGE1MWRhZDliNjIyY2U0ZTE2ZjIwNTU0NDA2ODdmN2MzNmRmYTNjYmI3ZDFhZGVkZDkwZjczZjJlY2Y1ZGM2YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjNmN2IwZjMzNzhmNDU5MmUwNjc4ZmNkZGU2NmMxMGI4MzEyMDQ0ZmM1ZmY1ZTZmMTNkM2NmMjcwMzkzODU4ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjVlYTU5YjdkMDEyMzVlNDFhZjAyNWFlYzgwYmIzOWE0YmZmODE0MWJiYTI2NWQ0ZjYxMTBkZDM4MTNjNDYyMiJ9"
         }
       ]
     },
@@ -545,7 +545,7 @@
       "statement": "The round-16 contentVisibility variant (branch cull-cv) was rejected, not merged: entering the Command Menu page took 8 layout passes against 2, and gpuix builds a hidden subtree for any geometry read, where a display: none box answers empty.",
       "evidence": [
         {
-          "resource": "repo://README.md#L281-L281",
+          "resource": "repo://README.md#L282-L282",
           "version": "repo-lines-v1:sha256:e63d508599fa99701b46c98adfaae22792179ef589110e3dde76288667e0c2a5:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTYzZDUwODU5OWZhOTk3MDFiNDZjOThhZGZhYWUyMjc5MjE3OWVmNTg5MTEwZTNkZGU3NjI4ODY2N2UwYzJhNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTYzZDUwODU5OWZhOTk3MDFiNDZjOThhZGZhYWUyMjc5MjE3OWVmNTg5MTEwZTNkZGU3NjI4ODY2N2UwYzJhNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTMxYzhkMjgzODdjOTg1MzllMzU3NTRlNmY1ZjQ5ZWFjMjY4OTJmYmY4YmRjZTEwOTgzZTMyOGVjNzI3M2NmNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTgxNjIzN2ViNjljZDlhYzEyNjZiMjE5NTdmZjMzNDljMTQ0MTYyN2JjM2I1OWRkMmMwNGYyZmEyY2MwY2RiYyJ9"
         },
         {
@@ -553,10 +553,28 @@
           "version": "repo-lines-v1:sha256:769604b02b731567f8c6821a2274c6a16b9322667cf45d4658d8244b8c491832:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzZTg5ZDA0NzM4ODBkZDkwYjkyZTA3ZjUxNDlkMTE4ODNiZTQ1NjNkZjZmNjY5NTYxZGY5OTZhY2I0ZGY0MTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxN2JkNTY4ZjlhODNiMDY3MDNmNzc4YTg3ZWE1NGYwMjNlZTkzN2ZhNDRjNGNmZWFhYzQyYzNlNzRlYTZjNWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI0YTYxM2VkNjU0MWQzNzM0MGFhOWZiMjkxNzZlYjYzMjQ5NTAwZDk1ZjdiMWQ2YTdmM2FhMjU4Njc0ZWUxNjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxMmNjZThiNGQ2NzYyNDM0Y2VhMmJkZWFlMTY2OTkxMWQ0MjgxZTgxMzY2YjM2MzYzMWRkMjNmZWJkODBhNmMifQ"
         }
       ]
+    },
+    {
+      "id": "claim_b5fd510522d6449ea943652849c62558",
+      "statement": "gpuix c6475390 (Round 14a) leaves a looping animation that draws nothing (off screen, display none or stopped) costing about 3.5% CPU per loop through GpuixView::dormant_tick, which the port cannot remove; the port's onScreen gates did not help and were deleted, and layout loops (the word roll on top, the fluid-hover cursor, the carousel-dots fill on width) remain whole frames.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L267-L268",
+          "version": "repo-lines-v1:sha256:9c6024841ca4ecde4a205de0a9da9e8d610e7fb478b1d8d4eb1a355141e10daa:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTQ3M2EyY2RmNzQ3YjU3MzEzZjA1Yzg0YWJiOGVjOTk5MDBhNWNkYTVkNDg4ZTMxN2NlZTQzNDJiM2I4MDljMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTQzNWU2MmU2OGE4Y2RiNTc0YzU1YjBkMThkMzhhNzg2Mzc3MzlhODIxZjZjZGUxMjVmMWQ3MjJkYTc4MmI4MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzcyYjY0N2ZhYzhlNDBlZjg3ZDQ4Y2RiMjQyNDg2YTgxNGUzYWQxMzdhNGZhMjgxNzBhN2FiOGNiZDI1ODRiMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDY5Yjk4MGMwNGYwY2FmMWMxMjBmYTI5NGZmYjcyOTdlZGY4MjhmY2IyZWU1OWU4ODVmZTgwY2FhN2I4YzIyYSJ9"
+        },
+        {
+          "resource": "repo://README.md#L277-L278",
+          "version": "repo-lines-v1:sha256:ba41070d641694b64cbc85a25ce67e6523b0493ef399ba419551fecf00e0c63a:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjcwMDYxMmRkNDA3YTc1YmU0ZTdkNDJjZGRkMGQ1MjllNmUzYTFjODNmYTUyODc0NmQyOWUzZmQ0ODcxNzBlOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDJhNWM3NmJiMWI0NmQwNzkzMmM5MmQ0OTdmNjY1MmRhMDQ2YjlhMDdjZTAxZjc2NzM5ZjQ3YzNkYzU2Mzg1ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTMxYzhkMjgzODdjOTg1MzllMzU3NTRlNmY1ZjQ5ZWFjMjY4OTJmYmY4YmRjZTEwOTgzZTMyOGVjNzI3M2NmNiJ9"
+        },
+        {
+          "resource": "repo://src/components/thinking-indicator.tsx#L110-L196",
+          "version": "repo-lines-v1:sha256:5f9586091b255d0695196741c33e0d2d0d4ac86f78ab329ed1d2e70b22824b15:eyJzZWxlY3RlZExpbmVDb3VudCI6ODcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMxOWNmNjIxYTZhMzkxOWE3NWZhYWY0OTM1YmY2NTlmZWZlMmFjZTVkNzRjZDhmZDE0MjAyNjg0YjZlYWQ3NDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE3MjA5MGViZTZmYWJlYTM3YjRkODI5NDYwYTU3ZGYzNGFmMDIxYzdlYjYxYmYxYTM4Zjg1YjkyMjM2MjliMjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwODc3M2NjNmQwMDcwYWUzZjM0ZGJlNTgwZDkxMzJmYWQ4MzM1YzQxOWI2YjNlYTk5YjliZDRiZmVlODJhNTEifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-22T19:59:58.154Z"
+    "at": "2026-10-22T22:22:08.524Z"
   }
 }

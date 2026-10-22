@@ -14,10 +14,10 @@ sources:
     resource: repo://THIRD_PARTY_NOTICES.md
   - id: openwiki-source-ff18555ad70362de0f452788
     resource: repo://UPSTREAM.md
-generated: { by: "claude-code", at: "2026-10-22T19:59:58.154Z" }
+generated: { by: "claude-code", at: "2026-10-22T22:22:08.524Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-22T19:59:58.154Z
+    at: 2026-10-22T22:22:08.524Z
 ---
 
 # Project overview
@@ -67,7 +67,7 @@ site was the only place to see them. Which files are at which pin, and how to ca
 - **`~/code/fdarian/gpuix`**, branch `poc`: the owner's fork of [remorses/gpuix](https://github.com/remorses/gpuix),
   which follows DOM/CSS semantics wherever upstream gpuix did not. Its `README.md` and `FORK.md` are the gpuix
   reference. The port needs the fork, not upstream gpuix: native springs, the DOM event model and many fixes
-  exist only there. The README names the minimum fork commit (`e591681e` as of 2026-10-23); read it there, not here.
+  exist only there. The README names the minimum fork commit (`c6475390` as of 2026-10-23); read it there, not here.
 - **`~/code/fdarian/base-ui-solid-gpuix`**: headless Solid ports of the Base UI primitives (keys, selection, open
   state, focus, ARIA), split out of this repository on 2026-10-17.
 
@@ -95,3 +95,4 @@ All three must resolve to one `solid-js` and one `@gpuix/solid`; see
 | 2026-10-22 | Pinned to gpuix `poc` `8352e66c` (Round 15a): an atomic inline keeps its fractional origin, so tabs-subtle's unfolded label baseline and Beacon's Priority pills match Chrome exactly; a forced layout no longer delivers `onLayout` / `ResizeObserver`; measured heights round like `offsetHeight` through `toOffsetPx`; a new gap, glyphs at a half-pixel origin paint 1px above Chrome; drift 539 to 540 ([details](../gpuix/gaps-and-divergence-rounds.md#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22)) |
 | 2026-10-22 | Command Menu demo drops the three cards the source page has no section for (Tabs and filters, Compact, the footer's custom-hints panel); the bento Sidebar preview's sample person is renamed "Com Truise" to go with the replacement photo; drift 540 to 541 ([`drift/home.md`](../../drift/home.md), [`drift/command-menu.md`](../../drift/command-menu.md)) |
 | 2026-10-23 | Pinned to gpuix `poc` `e591681e` (Round 16): a forced bounds read after a layout write costs one pass (about 2.9 ms on the Command Menu page) and none after a paint-only write; an observer-toggled `contentVisibility: 'hidden'` was A/B-tested against `createCulling` and lost, so culling stays; `check-command-menu` prints the forced-read probe and `check-site-nav` asserts a switch back to the Changelog lands at the top ([details](../gpuix/gaps-and-divergence-rounds.md#round-16-the-contentvisibility-ab-on-poc-e591681e-2026-10-23)) |
+| 2026-10-23 | Pinned to gpuix `poc` `c6475390` (Round 14a): paint patching now reaches loops next to an input, under a positioned or translucent ancestor, on a motion value and in an `<svg>`, so the port deleted its off-screen `onScreen` gates and `Show` swaps on the button, file-thumbnail and thinking-indicator loops and ThinkingIndicator's conditional `position: relative` (no measurable cost); a loop that draws nothing still costs about 3.5% CPU in gpuix's dormant tick, and the word roll, fluid-hover cursor and carousel fill stay whole-frame layout loops ([details](../gpuix/gaps-and-divergence-rounds.md#round-14a-paint-patching-reaches-inputs-positioned-ancestors-and-motion-values-on-poc-c6475390-2026-10-23)) |

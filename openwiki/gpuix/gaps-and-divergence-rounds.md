@@ -78,10 +78,10 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-872f10458af3aae905a0ee5a
     resource: repo://src/pages/fluid-hover/plain-vs-fluid.tsx
-generated: { by: "claude-code", at: "2026-10-22T19:59:58.154Z" }
+generated: { by: "claude-code", at: "2026-10-22T22:22:08.524Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-22T19:59:58.154Z
+    at: 2026-10-22T22:22:08.524Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -117,7 +117,7 @@ link to those rows rather than repeating them. The ones that shape the most code
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
 The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17) and again in the
-[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `e591681e` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`, `f993d9b9` in [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22), `511bebab` in [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22), `8352e66c` in [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22), and `e591681e` in [Round 16](#round-16-the-contentvisibility-ab-on-poc-e591681e-2026-10-23)). The bugs and gaps worth knowing before touching layout code:
+[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `c6475390` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`, `f993d9b9` in [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22), `511bebab` in [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22), `8352e66c` in [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22), `e591681e` in [Round 16](#round-16-the-contentvisibility-ab-on-poc-e591681e-2026-10-23), and `c6475390` in [Round 14a](#round-14a-paint-patching-reaches-inputs-positioned-ancestors-and-motion-values-on-poc-c6475390-2026-10-23)). The bugs and gaps worth knowing before touching layout code:
 
 - A function-form `createTransform` of several motion values is computed in JS and can trail its inputs by a frame
   on a live window (not seen on the test renderer). `calc()` strings of the row's own width avoid it where the layer
@@ -147,7 +147,10 @@ The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adopt
   nudged in the port; a drift entry in `drift/home.md` and a README gap row. See
   [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22).
 - A looping native animation replays the whole page every tick, so it is cheap only on light pages (7 ms a tick at
-  3000 nodes, about 60 ms at 12000): see the [`b03d4e27` adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21).
+  3000 nodes, about 60 ms at 12000): see the [`b03d4e27` adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21). Paint-only ticks are patched since
+  `196d69ce` and, past the input, positioned-ancestor and motion-value blockers, since `c6475390`
+  ([Round 14a](#round-14a-paint-patching-reaches-inputs-positioned-ancestors-and-motion-values-on-poc-c6475390-2026-10-23));
+  a layout loop (`width`, `top`) is still drawn whole.
 - Flex `order` is ignored inside an `@container` block, and Tab follows the painted order under `order` where Chrome
   keeps the markup order (`order` 3, 2, 1 is visited c, b, a, not a, b, c). gpuix's own README and `order.rs` say
   focus and tab order stay in document order, so the docs and the behaviour disagree; the banner uses `row` /
@@ -684,6 +687,9 @@ Before this round's repository changes, all nine animated pages read `patched/s`
   pages, better on none. The live `pnpm perf` A/B did not run; every attempt was occluded. Numbers:
   [Port decisions, Performance decisions](../decisions/port-decisions.md#performance-decisions-on-gpuix-poc-b03d4e27).
 
+Round 14a lifted the input, positioned-ancestor and motion-value blockers named above
+([Round 14a](#round-14a-paint-patching-reaches-inputs-positioned-ancestors-and-motion-values-on-poc-c6475390-2026-10-23)).
+
 Pitfall: the footprint figures were taken at load 3-13 and the r17 and r18 repros at load 5-29 on the test renderer;
 compare CPU percentages only against a run at similar load, and read `patched/s` first, which load moves less.
 
@@ -851,3 +857,51 @@ the poc history). The round changed no component's look; its two results are a c
   working-copy change, never committed; the Round 12 section says so too.
 - **Checks added.** `check-command-menu` prints the forced-read probe without asserting; `check-site-nav` asserts that
   a switch back to the Changelog from a scrolled page lands at the top.
+
+## Round 14a: paint patching reaches inputs, positioned ancestors and motion values on `poc` `c6475390` (2026-10-23)
+
+The README now names `c6475390` (zed `5a7b70d193`) as the minimum fork. It answers the two Round 12 questions (r17,
+r18) and the motion-value blocker, so most of what [Round 12](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21)
+recorded as declined is now patched. The port's response was to delete code, not add it.
+
+- **What gpuix lifted.** #74: an unfocused input is retained and its caret is the clock's only source, so it is no
+  longer `Unsteady` (showcase 670 to 0 `Unsteady` with 62.0 patched ticks a second, queued-stack 714 to 0 with 62.3,
+  button 668 to 0 because it draws nothing). #75: a root under an open lift or an absolute root is a unit, so a colour
+  or stroke loop under a `relative`, `absolute` or `opacity < 1` wrapper patches (r18: 3.1-3.9 to 0.2-0.4 ms a draw;
+  file-thumbnail's spinner overlay patches 67.9 ticks a second and draws none whole). #76: motion values patch. SVG
+  patches too, and a culled `<svg>`'s shapes sleep. The two README Bugs rows keep their question text with the answer appended.
+- **What the port deleted** (`e99b0655`, `111cbc78`, `9ff46094`, `b62ed145`, `cdf48232`). The `RollingWord`
+  relative/static toggle; the button `Spinner`'s `onScreen` gate; the `!onScreen()` half of the `Shimmer` animation; the
+  `Show` swaps that mounted a still glyph or circle off screen in `MorphingGlyph` and file-thumbnail's `Spinner`. The
+  gates were tried as a way to stop an off-screen loop and did not (see the dormant tick below); culling's
+  `display: none` already pauses the loop. Kept on purpose: `cull.ts`, `clock.ts` `onFrame`, the word-cycle timer
+  (it still pauses off screen) and carousel-dots' `playing()`. The Show swaps were removed on trial, "keep only if the
+  footprint says needed"; it said not.
+- **The removals cost nothing, by an alternated A/B** on `c6475390` (headless `pnpm footprint`, gated `9726e334`
+  against removed, two pairs): thinking-indicator 19.9 / 21.5 against 21.2 / 20.1% idle CPU, file-thumbnail 8.9 / 7.2
+  against 9.4 / 8.7, button 3.3 / 3.6 against 3.6 / 3.5, with `patched/s` and `built/s` equal. Showcase went 19.7 to
+  18.0 across the whole round. Pitfall: the same figures against a `196d69ce` baseline would credit the removals with
+  gpuix's gains; the A/B must hold the pin fixed.
+- **Still drawn whole, and gpuix's.** Three of the stand-ins for the missing transforms are layout loops
+  (`LayoutAnimation`), which no patch covers: ThinkingIndicator's word roll on `top` (about 5 whole frames a second on
+  showcase, queued-stack and thinking-indicator; the source animates `y`), the fluid-hover cursor on `top` (about 51 a
+  second on fluid-hover and on changelog, which mounts the same stage) and carousel-dots' fill on `width` (about 66 a
+  second; the source uses `translateX`). Their cost now sits in the README transforms row, which is where a reader
+  deciding whether to chase them should look. Whole ticks that are not the port's to remove: the word timer's text
+  commit (about 0.5-0.9 a second; the source changes the word too), the fluid-hover row-hit commits driven by the cursor
+  motion value (about 10 a second; the source does the same per-frame work), thinking-steps' step `height` spring and its
+  playback card's commits.
+- **New gpuix finding: a loop that draws nothing still costs about 3.5% CPU (the dormant tick).** A page with a looping
+  animation that is off screen (culled, `display: none`) or finished idles at about 3.5% per such loop with 0 draws a
+  second: input-message went from 0.5-2.3% on `196d69ce` to 5.3-5.8% on `c6475390`, and button 3.5%, file-thumbnail
+  6-9% and thinking-steps 5% idle show no visible draws. A profile puts the time in `GpuixView::dormant_tick`,
+  `sync_motions` and `renderer::parent_inherited`, which clones a font-context map per motion element per frame;
+  patched ticks got the cheaper `step_motions` and `dormant_tick` did not. Knockouts: input-message 5.3 to 0.9% without
+  its cards; each seeded `QueuedChat` ThinkingIndicator is about 3.5%; a shimmer or a glyph loop alone keeps it armed.
+  The port cannot fix it, which is why the `onScreen` gates were not kept (a gated build read 4.3-4.8%); the README row
+  asks gpuix to step motions with `step_motions` and disarm when no dormant run advances. Static pages' median CPU
+  moved 0.6 to 1.2% and was not chased.
+- **Per-frame draw time is also about 1.4 ms higher on `c6475390`** for the same frames (thinking-indicator's patched
+  tick 2.4-3.2 to 3.4-4.6 ms, carousel-dots' 1.3-2.8 to 2.9-3.6 ms, six runs), unattributed: gpuix cannot be A/B'd from
+  this repository and its FORK.md documents only a first draw 15% dearer.
+- **Not done:** no screenshots were recaptured (gpuix #86 was still pending), and every figure is headless.

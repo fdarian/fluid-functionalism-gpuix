@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:ee5b640b8dc24a59cba4aa1502fcdcd85200d49499caf78cf481799e18deafa9",
+  "pageVersion": "sha256:241367700b93ebbbf0f0575ab2605b9b6e71ca872002ed887b40402374d0b620",
   "claims": [
     {
       "id": "claim_b925fe22d5a74d5388447aa34ff4d2fd",
@@ -62,21 +62,21 @@
     },
     {
       "id": "claim_f8b0c6e89cbd48b598f62a18b01c9c2c",
-      "statement": "The README names gpuix poc e591681e as the minimum fork, which includes the 511bebab collapsed-table border-color transition, the f993d9b9 idle-window and unfocused-window pacing and the f7b62f11 changes (font smoothing key, cheap scrollTop writes, exact scroll end) on top of the earlier paint-only loop-tick patching, fractional rects, fractional authored lengths and playback controls, the 8352e66c atomic inline at its fractional origin and a forced layout that delivers no onLayout or ResizeObserver report.",
+      "statement": "The README names gpuix poc c6475390 as the minimum fork, which includes the Round 14a paint patching of loops next to an input, under a positioned or translucent ancestor, on a motion value and in an svg, on top of the 511bebab collapsed-table border-color transition, the f993d9b9 idle-window and unfocused-window pacing, the f7b62f11 changes (font smoothing key, cheap scrollTop writes, exact scroll end), the earlier paint-only loop-tick patching, fractional rects, fractional authored lengths and playback controls, and the 8352e66c atomic inline at its fractional origin and forced layout that delivers no onLayout or ResizeObserver report.",
       "evidence": [
         {
           "resource": "repo://README.md#L245-L246",
-          "version": "repo-lines-v1:sha256:6fb3df577788239906feb3501fbb8c85af5ba8a716b7a25420eaa5a21340ebab:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjU0ZWNjYWU0MWQxNDYzMzEzNzkxYWM5NzQ1ZTE5NjIyODc4ZTI4ZDFmYjEzNmUyYzY5YWEzZDkwZWJlMzc5OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTA1ZjI3YTAzNWFiOTdmNTRlNThiZjU2OTQ3MTkxNjdjNmUxNjMxYTBhYjExYjVlN2I1ZTk1YTc3MTM3OTVjYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTZmZGM0NmVkZjE4ZDhhYjgzZjI4MDdhY2MwZTU4MWI2YjY2MzQ2OTEwNTU3MGNhZTkyMjA2ZTY3MmY1NjkyNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGNjY2QxN2Y5NzdhZmE1NTJhOTliNzIwMzI2MjRhNTIzNzBkZTU4NGMyNDIxNTg5YjBlNWM0MzBhMTQ4MjY2YyJ9"
+          "version": "repo-lines-v1:sha256:80039bb8e47802d458d00f6a4e4d048fce4f03f49d7c079047d7228ec65bce39:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTM0MzI5MjRlYjFhOTY2MTU5MWNjOWM0NmRkYmFlYmFmZmM4NjI2NzUwZDIyYThmNDQ3OWMyOGYwMjhkNjExZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTdhNDgwNDIxYWEwMzUzMmI1OWNiNDg2MjA5YTlhZmM1MDNlMDFlOGNmNDIxMDk2YjJkMWNiMmFhY2FjOTg3ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTZmZGM0NmVkZjE4ZDhhYjgzZjI4MDdhY2MwZTU4MWI2YjY2MzQ2OTEwNTU3MGNhZTkyMjA2ZTY3MmY1NjkyNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGNjY2QxN2Y5NzdhZmE1NTJhOTliNzIwMzI2MjRhNTIzNzBkZTU4NGMyNDIxNTg5YjBlNWM0MzBhMTQ4MjY2YyJ9"
         },
         {
           "resource": "repo://README.md#L56-L56",
-          "version": "repo-lines-v1:sha256:0c8a6dc7b1ba30d5808b29bd0bdf76aa846c7ae687902126fcadab56725ff579:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM4YTZkYzdiMWJhMzBkNTgwOGIyOWJkMGJkZjc2YWE4NDZjN2FlNjg3OTAyMTI2ZmNhZGFiNTY3MjVmZjU3OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGM4YTZkYzdiMWJhMzBkNTgwOGIyOWJkMGJkZjc2YWE4NDZjN2FlNjg3OTAyMTI2ZmNhZGFiNTY3MjVmZjU3OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "version": "repo-lines-v1:sha256:292dcb05a8ca9038bd7d4251de3029608bdb12936d4d1d4eba272b76a8cb6d24:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjkyZGNiMDVhOGNhOTAzOGJkN2Q0MjUxZGUzMDI5NjA4YmRiMTI5MzZkNGQxZDRlYmEyNzJiNzZhOGNiNmQyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjkyZGNiMDVhOGNhOTAzOGJkN2Q0MjUxZGUzMDI5NjA4YmRiMTI5MzZkNGQxZDRlYmEyNzJiNzZhOGNiNmQyNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-22T19:59:58.154Z"
+    "at": "2026-10-22T22:22:08.524Z"
   }
 }
