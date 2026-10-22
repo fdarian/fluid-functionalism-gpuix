@@ -55,9 +55,18 @@ repeating it. The hero's three buttons are not wired here (their `onClick`s belo
 
 - **Cause:** `port choice` (the repository owner chose not to ship the source's photo).
 - **Original:** the Sidebar tile's user row shows the source's `public/micka.png` (918x928 PNG) as a 20px avatar (`app/components/bento-previews.tsx:868`).
-- **Port:** `assets/chat-ai/avatar.jpg` (345x345 JPEG, `AVATAR_JPG` in `src/lib/assets.ts`) in the same 20px circle (`src/home/bento-previews.tsx:329`). The row's label is still "Micka Touillaud" (`:326`), the source's text.
+- **Port:** `assets/chat-ai/avatar.jpg` (345x345 JPEG, `AVATAR_JPG` in `src/lib/assets.ts`) in the same 20px circle (`src/home/bento-previews.tsx:329`). The row's label is renamed to go with it (next entry).
 - **Workaround:** none.
 - **Fidelity:** approximated.
+- **Components it hits:** the Sidebar tile; the Changelog page's Sidebar entry embeds the same preview (`drift/site.md`).
+
+## Sample person: a different name
+
+- **Cause:** `port choice` (the repository owner renamed the sample person to go with the replacement photo).
+- **Original:** the Sidebar tile's user row labels the photo `public/micka.png` with the source author's name, "Micka Touillaud" (`app/components/bento-previews.tsx:868-874`).
+- **Port:** the label reads "Com Truise" (`src/home/bento-previews.tsx:326`), next to the photo in the previous entry.
+- **Workaround:** none.
+- **Fidelity:** approximated (the label text differs; its style and position are the source's).
 - **Components it hits:** the Sidebar tile; the Changelog page's Sidebar entry embeds the same preview (`drift/site.md`).
 
 ## Text at a half-pixel origin paints its glyphs 1px above Chrome's

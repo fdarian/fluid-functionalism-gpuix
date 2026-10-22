@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 540 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 541 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -210,7 +210,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [dropdown](drift/dropdown.md) | 2 | 5 | 11 | 1 | 19 |
 | [file-thumbnail](drift/file-thumbnail.md) | 2 | 5 | 1 | 0 | 8 |
 | [fluid-hover](drift/fluid-hover.md) | 4 | 5 | 2 | 1 | 12 |
-| [home](drift/home.md) | 1 | 3 | 1 | 1 | 6 |
+| [home](drift/home.md) | 1 | 4 | 1 | 1 | 7 |
 | [input-copy](drift/input-copy.md) | 1 | 3 | 4 | 0 | 8 |
 | [input-group](drift/input-group.md) | 0 | 1 | 3 | 1 | 5 |
 | [input-message](drift/input-message.md) | 4 | 1 | 14 | 4 | 23 |
@@ -237,7 +237,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 4 | 5 | 0 | 13 |
 | [tooltip](drift/tooltip.md) | 1 | 5 | 1 | 1 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **87** | **212** | **192** | **49** | **540** |
+| **Total** | **87** | **213** | **192** | **49** | **541** |
 
 ### gpuix gaps across components
 

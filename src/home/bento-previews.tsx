@@ -323,7 +323,7 @@ function SidebarPreview() {
 				</SidebarContent>
 				<SidebarFooter>
 					<IdentityRow
-						label="Micka Touillaud"
+						label="Com Truise"
 						avatar={
 							<img
 								src={AVATAR_JPG}
