@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:fce109d1a13caa326bb4106ffb13ebb36b51cbd1847f7c61375e1ffce1f7b32f",
+  "pageVersion": "sha256:614d39545a7565378769ec95ba7dda1e9bdefab8691d544123b38e2b02ba6877",
   "claims": [
     {
       "id": "claim_782844f1b7454bbd8c43501708e208b1",
@@ -27,12 +27,16 @@
       "statement": "Entering the hover container starts a new session, and a new session remounts the highlight so it appears at the row instead of sliding from the previous one; a reflow snaps rather than glides.",
       "evidence": [
         {
-          "resource": "repo://src/lib/fluid-highlight.tsx#L36-L42",
-          "version": "repo-lines-v1:sha256:e74ea582b7be80b5f6a98f15ad36731db9f2ea3c79882b12e61380cf2e3a6aa5:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTViNWRkYjljYWUzNjBkZWNjZGE2Yjg2MzlkNDllMWYzYTFmNWU0ZjMwMzk1YTg5Y2U0MjE1ZjdmNWQwZjI5MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjUyNGYwZjgxNzdhOGNlYmVkNTE0YTgwMTNjODg5ZTRiNGI3NzE2OGMwNzBmYmUwODA4OWY2ZTNlYzRhNDE4MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWFkMWQ2YmQ0YzEwNWFjYzI0NmI5NWIzMWI5ODFlNDUwYWE4M2QzYjNiYjU1MzE2ODczYjI5NjNlZmVkNWIxMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTM0MzJlZDM0MjZkYjVlM2Q4M2QyYThjNTNkMDYxMWY4NGU1YmIzMWFkNTQzYTFjYzUyNjRmNzBhN2Y4OGM2ZCJ9"
+          "resource": "repo://src/lib/fluid-highlight.tsx#L34-L42",
+          "version": "repo-lines-v1:sha256:96dca6e7496deeb76ea58a3f58870d39c8124e0fbd608cbdab0a49fa4a509ff8:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWE4YmI3NzM2ZjQ0Mjc3YzFlNjkxNmRjN2U3NmEyYzAzNjMzYTFiYmFhM2ZjYjA4Y2QzMWRlMjhhNWQ0NzI1OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjUyNGYwZjgxNzdhOGNlYmVkNTE0YTgwMTNjODg5ZTRiNGI3NzE2OGMwNzBmYmUwODA4OWY2ZTNlYzRhNDE4MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2FhMjkyYzljMjZmYTk4MWRmNTM5ODYyODdhYWZlZGVkZTk1ZGYxYmJmOGIxZjFiZTYyYmNmNTMxMDUzNzEzZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTM0MzJlZDM0MjZkYjVlM2Q4M2QyYThjNTNkMDYxMWY4NGU1YmIzMWFkNTQzYTFjYzUyNjRmNzBhN2Y4OGM2ZCJ9"
         },
         {
-          "resource": "repo://src/lib/fluid-hover.ts#L178-L201",
-          "version": "repo-lines-v1:sha256:ccb92e9759376c95a8220fac474c84531a3bd53255abe14c2df006e3238e7844:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlZmVmNzIxNmE0NzBhMjZlYzRjY2ZmZTk4MTU4NzM0NmVjNjJkY2JmM2U4NGRmZTFhOThhMzZlNDJiMDIyOTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2ZGU5YzliNGRiNDA2OGFjNDkzN2VmY2UyYmMzMGU5NTE4N2VkNjA5ZDA3Nzg3MTI0ZDFhNTUyMzMxOGE1MzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmMDg1YTA1OGFiZDEzNWQwMTE0YTI0NTg0NjI3YTkwYmExOWZjOWRlNWJiYzVkYjA4YmE2MjljYzcwOGVmMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ0MWNkMjMyYzNhYjU1YWYyMjdhM2JkMzE2MjlkNGYwZTA1MzE1ODliMTk0N2M0ZTIzODliNjg2ZTdhYzUwYWYifQ"
+          "resource": "repo://src/lib/fluid-hover.ts#L197-L203",
+          "version": "repo-lines-v1:sha256:346a0ca754e6d11119394acf2add6fbc1ff7b5783f6bc53901e28d2320d69607:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzMxOGEwNTAyOWEyMmJhOGEyNTUzNGMxMTc3MWEyOGY0OWFiYWMyYWE4MjAyOTQ2M2VjYWIxZjU0ZDU2ZWRkMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I1ZjMwNmRmOTlmMzk5ZDRkNTc4ZDVmNDA1ODk1NWZjNzhiYzQ0NjkwNzEyNzZjYjFjMjUxNTdhMjA2MzBmNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWU4ZDlhNTA1ZjRmMGUxOWMzOTQzN2JhYzU3NGUzN2FlZTJlYjY2NzhlZGUwNjMyODBmY2Q4MDczY2E0ZGUzOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWM1MGEzOWI4NDAzMWRiOGNkZjA2NjcwNDRhYTMxMzkyNDAzNmM0N2RkMWY2ZmE2NjQ1NTNmMzY0ZGZiNTQ4NSJ9"
+        },
+        {
+          "resource": "repo://src/lib/fluid-hover.ts#L231-L235",
+          "version": "repo-lines-v1:sha256:878864be678a96fdb80693952a6d11262879fa295c0d1221d9830594bf13c42c:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWVjM2U4N2FlMGJlNGE0ZmIyYjA0NjAwMmNiNDVmNTRlZmZlMzdjNGEyNWY2NzVlMDVjZDM0NjJkNGY2ZTgxNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWJhZDdjYzJkZmFmYzIxNzVmYTJkOTcwNGUwMjAyZjk0MDgzYTlkYTY5YTU4NWIwYjE4YzQ4YmVhMjM2Mjc1ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzg3ZDY0Njk0NzBhNWI0MWYxYmNkMjgyYTgyYzI1ODEyODY4MDJmZmYzOWU4N2IyNjQ4ZTFlYmFlODU0NjExMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmQ1NDFjMDY2MzJlMjQyNTcwNTBlZTkwZDMyOWUxMmE5MDZhYTQ4ZDdjNzE3MDNmMDU1OTBjYzMxZGUxMGJiMSJ9"
         }
       ]
     },
@@ -41,7 +45,7 @@
       "statement": "A keyboard move calls releasePointer so the scroll it causes does not re-pick a row under a stationary pointer.",
       "evidence": [
         {
-          "resource": "repo://src/lib/fluid-hover.ts#L243-L246",
+          "resource": "repo://src/lib/fluid-hover.ts#L276-L279",
           "version": "repo-lines-v1:sha256:f29dc93070cb27c245161f1b30862b3c31c1962117eadd9d47859880f7fd0500:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDczZDY4Y2JkMTJlMTEyNDJkZTYwNjQ5NGMzNDI1Zjk3ZjA1YjI5ZmNjNjcyOTM1MTQzMzU3YWU5MDAzYmI0YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWJhZDdjYzJkZmFmYzIxNzVmYTJkOTcwNGUwMjAyZjk0MDgzYTlkYTY5YTU4NWIwYjE4YzQ4YmVhMjM2Mjc1ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjRlMWU4Yjk4Mjg2YjhjNTQ0MGQxNTA3ZjZhMmFkZDEzNTA2ZmFhZTYzYWU1MDM1YzVkOGQ4MjAzYjkzYjczMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzljNWQ0ZTQ2ZmIxMTIzOTE4OTVlNWFjYTFlNmZiYzUxMDkyYmY5ODY3N2IwNTNmMTQyNzI0OTA0OGNlNmIyNSJ9"
         }
       ]
@@ -289,7 +293,7 @@
           "version": "repo-lines-v1:sha256:d5906c8824ab2aae4363c44d275fbec938eb3d5d34cf48da31b7b6a98ef3826a:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDU5MDZjODgyNGFiMmFhZTQzNjNjNDRkMjc1ZmJlYzkzOGViM2Q1ZDM0Y2Y0OGRhMzFiN2I2YTk4ZWYzODI2YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDU5MDZjODgyNGFiMmFhZTQzNjNjNDRkMjc1ZmJlYzkzOGViM2Q1ZDM0Y2Y0OGRhMzFiN2I2YTk4ZWYzODI2YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGQxZDdkMDUyNzMwODJjNzdmZTFmODNhYTIyMTk1ZmJmNzVlNDc0NzAyMGRlMWQ4NjQ2NmYxOTdjYjlhOTFhMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjNiYjNjYWQ1ZmM0MjJjM2FlZWEwM2MyOTcwOTcyZmZmM2U2YTZkZmFhZTk3MWM5M2JlNDYyMTRiMjhlNDk0NiJ9"
         },
         {
-          "resource": "repo://src/lib/cull.ts#L107-L132",
+          "resource": "repo://src/lib/cull.ts#L120-L145",
           "version": "repo-lines-v1:sha256:266a1029722fc67afc58a03026630c645d838015b4c4b45bf5736fbb3eb3e994:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0YmE3MjYzYzEwODcwMmE1NWNjOWRjZjU4MWYxMTMzMzc4Mjk3NmRlN2U2MDRkMTIxNWU2ZDhjZjUxYTA4ZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
@@ -310,15 +314,15 @@
       "evidence": [
         {
           "resource": "repo://README.md#L360-L360",
-          "version": "repo-lines-v1:sha256:a0b376ac436f09820b2b4fa2b31bdd1cb6e993fce144b2f4e597c79098e53d41:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTBiMzc2YWM0MzZmMDk4MjBiMmI0ZmEyYjMxYmRkMWNiNmU5OTNmY2UxNDRiMmY0ZTU5N2M3OTA5OGU1M2Q0MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTBiMzc2YWM0MzZmMDk4MjBiMmI0ZmEyYjMxYmRkMWNiNmU5OTNmY2UxNDRiMmY0ZTU5N2M3OTA5OGU1M2Q0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjNmN2IwZjMzNzhmNDU5MmUwNjc4ZmNkZGU2NmMxMGI4MzEyMDQ0ZmM1ZmY1ZTZmMTNkM2NmMjcwMzkzODU4ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWNkZjQzNmIyMGZiNWQwNGRlMjE4NTJiZjI5MTU5ZmI2ZDk5Y2M1OWRkN2MyYWRkNjk4Y2EyNWI1OTZlOGI1MiJ9"
+          "version": "repo-lines-v1:sha256:a0b376ac436f09820b2b4fa2b31bdd1cb6e993fce144b2f4e597c79098e53d41:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTBiMzc2YWM0MzZmMDk4MjBiMmI0ZmEyYjMxYmRkMWNiNmU5OTNmY2UxNDRiMmY0ZTU5N2M3OTA5OGU1M2Q0MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTBiMzc2YWM0MzZmMDk4MjBiMmI0ZmEyYjMxYmRkMWNiNmU5OTNmY2UxNDRiMmY0ZTU5N2M3OTA5OGU1M2Q0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjNmN2IwZjMzNzhmNDU5MmUwNjc4ZmNkZGU2NmMxMGI4MzEyMDQ0ZmM1ZmY1ZTZmMTNkM2NmMjcwMzkzODU4ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjhiODg3OTM0ZDliYjQ1ODgzYjZhY2UzOTUyYjQwMWQ1NjAyNmRlYWFlMjE2ZTNmZTNkM2IzMWQ5OTI2MzljNCJ9"
         },
         {
-          "resource": "repo://src/lib/fluid-hover.ts#L159-L166",
-          "version": "repo-lines-v1:sha256:f3ab36f4e6f7b511968980acbc8cc959bfa210c2f0f6bc3ace1d92fdaedcf52f:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmJmY2VjNzM1Y2EyNTVlMGE5NmVjMzE1ZWQ1OGFkOGQ5YzU2YTNiYzE2OGZkMzdkZDJkNjFmNDc3MjJjNDIxMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDAwMjEyMGU1YzVkOTg0YzljYTkyYzhlZjA0YzFlOTZmMTM5MmY3YTQ0OTgwNWZkYThjMWVlNGYwZGY5NGRiZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGUxNjhjMzA3YmZlNzExYzQ2ZjBjOTgzNDUxZDYwYzFjOTY4YjVhNGQ0ZTU3YWYxODQyNDA5YmE0N2E3NzEzMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWQ1OTY5ODg4M2JkMjgzOGJjODUzZjc2Yjk1NjZiZWNjYzQwODQxNmRkNDU1NWQ2ZGM2YWJmNGU2MjZmMjc0YSJ9"
+          "resource": "repo://src/lib/fluid-hover.ts#L205-L209",
+          "version": "repo-lines-v1:sha256:e7aef12c363b43db44e624d329a18c8f9a2a4ca63279c63931071ae42e2fa9b5:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODYzN2FjMjQ4YzVmODEwZmRhMGE3Y2M5N2Q5MjFjMjZlMWVlZDE1MWZjZTRjNDBmYjNjOGJiMGUzNDhmOGJiMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDNkMjZjZTNhYzU0MTExNWVhY2I4ZGI2Yjg4YjNiZWNlYzMzNWFlMWU5N2Q5M2M0MWY3YjAwNDAyNTllOThkMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmEyNmFkZTY4NzBmZWExNGJlMmE0N2YwNjgyZmM0NTc3MDNjMGY1NjdkNmM5M2JlYTNjYWQ2ZDg3NWRkOTQ4YyJ9"
         },
         {
-          "resource": "repo://src/lib/fluid-hover.ts#L237-L242",
-          "version": "repo-lines-v1:sha256:37eed53926fcb1474d2316288ddec4137be28e29b09136c45b504003a2541b18:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjgwODA0MjRiNjU2NDU2NWVjMTNjZmU1NGJhNTQ4MWU5OThjMzIzNzI1NWE5NmY0MWUxNTUzNzE0OTZkZGFlMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWJhZDdjYzJkZmFmYzIxNzVmYTJkOTcwNGUwMjAyZjk0MDgzYTlkYTY5YTU4NWIwYjE4YzQ4YmVhMjM2Mjc1ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjM0M2YzYjg2NjM2NjBhMDhjZDZhYjJhMWQxYTVmOWU5YWU2NzI0ZTI2ZTc0OTlmNmQyODk2Nzc4YzBhNmZjNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODBjZmYzZDZmNjFkMmQwNDU2YjEyYjY5YjcyMzhiM2ViMzY4ODYyMDc1ODAzNWZlMDY0Y2FmM2E0YmJiZGI0NCJ9"
+          "resource": "repo://src/lib/fluid-hover.ts#L237-L248",
+          "version": "repo-lines-v1:sha256:37328612a5ee74c9da7e14e1760f877d1af8a5ec9c1e3d312f5751a44c51011d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhYmViYTNiNmIyZGE0NTdkNmZjOWY0NmM4MTEzZWRlZmY1ZmFjMTUxMzRiMjU3ZjFmYjVhMmY3ZTZlY2UyZDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhZTQyYjA2MjVkMjVkMzk2NDc1MDhkZmFmODNkM2I2NjU3MjlhYThhZjU0N2NmMWRlODM3NjM0ZjA1MWUxNzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5Y2NmZWI4YmJiYjhjMDgxZWFlZTgzYjk0NjVlODM4YWUyOTRlZjc0MDJhOGFkMGE2YWE5Yjk4YTdmZTU2NmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZhYjQyODRmNTViNjQ5Mjc2NDZmYmFmZDkwNzE3MTRhYzBjYzUyNzdkZWZmOTkyYzAzMTFhZWUyMzc3MmYwNWIifQ"
         }
       ]
     },
@@ -328,7 +332,7 @@
       "evidence": [
         {
           "resource": "repo://README.md#L160-L160",
-          "version": "repo-lines-v1:sha256:5e4ae817a9fc600a316901ea7f7a2ac9f6143ff52cbfa9c2d05af1aa88bfbd6a:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWU0YWU4MTdhOWZjNjAwYTMxNjkwMWVhN2Y3YTJhYzlmNjE0M2ZmNTJjYmZhOWMyZDA1YWYxYWE4OGJmYmQ2YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWU0YWU4MTdhOWZjNjAwYTMxNjkwMWVhN2Y3YTJhYzlmNjE0M2ZmNTJjYmZhOWMyZDA1YWYxYWE4OGJmYmQ2YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODYxMTJkM2M2NDY3OTVlOGM1Yjc5YTIyMmI3Mjk3MTY1MTU2N2NiMzliZmRmNjRlYmU4ZTFjMWQyZGQyYWNkYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTNlMDA1MzJiZDYyMzFkOWVkOTNiNmFiMTAzZjg1ODlmYmQ2ZmEwODQ0ODU5MjUwZGY0MDEwMDUzOWM2NWY4NCJ9"
+          "version": "repo-lines-v1:sha256:6434a85d9496ebbd5bd725b19bf9b2c22fdc9715390840bf3114e0c257e182a2:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjQzNGE4NWQ5NDk2ZWJiZDViZDcyNWIxOWJmOWIyYzIyZmRjOTcxNTM5MDg0MGJmMzExNGUwYzI1N2UxODJhMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjQzNGE4NWQ5NDk2ZWJiZDViZDcyNWIxOWJmOWIyYzIyZmRjOTcxNTM5MDg0MGJmMzExNGUwYzI1N2UxODJhMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODYxMTJkM2M2NDY3OTVlOGM1Yjc5YTIyMmI3Mjk3MTY1MTU2N2NiMzliZmRmNjRlYmU4ZTFjMWQyZGQyYWNkYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTNlMDA1MzJiZDYyMzFkOWVkOTNiNmFiMTAzZjg1ODlmYmQ2ZmEwODQ0ODU5MjUwZGY0MDEwMDUzOWM2NWY4NCJ9"
         },
         {
           "resource": "repo://scripts/check-reduced-motion.tsx#L44-L52",
@@ -513,7 +517,7 @@
       "statement": "check-site-nav verifies a page switch lands at the top by reading scroll metrics right after the click, which draws the pending frame, so it asserts the new page's first frame rather than a settled state.",
       "evidence": [
         {
-          "resource": "repo://scripts/check-site-nav.tsx#L183-L217",
+          "resource": "repo://scripts/check-site-nav.tsx#L184-L218",
           "version": "repo-lines-v1:sha256:f6215243675f44bdac622b6265da807adad58e0a6ce2034c535a151f1cc2f55f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyYWI2NmFkNTY3MDFiNmEyMzUyOGU3YmJjZGU2Y2U2MDM0ZmNkYjRmNjBlOTY2M2NhYzI0M2M0OGI4MWY0OGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OTY3ZWMxZWQzODM2ZjhlYjE3YWZmMTcyYjViZmVmN2RlNjA0ODVhNDM5YzZjYTExYzU5MWUxNzU1NzM5YWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5N2ExYjIzM2IwNzJiNWUzZDRjNzQ2NGM2NmQzYTAzNjAxZjkzNGJlNDc5NTg4YTU4ODBhM2ZkZmIzMzQ1YWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxYzgyZDNjYzYxMTY2Y2VkNjUzZTRkZGYxNTZmMDMxZjk4ZjJmN2I4Mzc3YTU4YTYzZmExNmU5N2ZjNWNiMTUifQ"
         }
       ]
@@ -524,7 +528,7 @@
       "evidence": [
         {
           "resource": "repo://scripts/check-command-menu.tsx",
-          "version": "repo-file-v1:sha256:7ce2b5ad7f424099c862f31fa2428a22dc1f53cf49bf4c369b89f8e09dcac565"
+          "version": "repo-file-v1:sha256:03425acd3f120d6e0e4a7310e24c80873dddb367f9c292579fbbecd252e3f627"
         }
       ]
     },
@@ -547,8 +551,8 @@
           "version": "repo-lines-v1:sha256:8e7d1b8dda92d3e68bbde1fec329d545cdf7eea1b0fc4b25fe8eafa4866d5ac1:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmYzMTRkMzZjY2IxMDllMGFhM2Y0OGFhYWMzNGZlMzRjYTViYTI1YjM1OTc5NzRlNzQ5N2Y4NTQwMTI1MzNhMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzRiNGM1OWM1NmU3ZGZjNDJjZjJkZTdjNDkzZDE1NWYxNGIxZTgxODM1NGRkMmJkYjc2ODkzYmI2ZTcyNTQ4ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjdlZGRjYTRlOWM1NDczNmI0NjY4MzE2MTk1OGJmOWMzM2ZjMWVhNmE3ZmM5OTYwMGQyNWRmMDlmMjc2YjkxNyJ9"
         },
         {
-          "resource": "repo://src/lib/cull.ts#L53-L80",
-          "version": "repo-lines-v1:sha256:a4634d54f91b96d6235801b60d81a9ddb5e55eaeb02d787b13eb9fa95cb34772:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhY2JkNjMxOGJhMjVlN2ZiYWM5NDJiODBkOGFmNzBhZWY2ZmFlYjU0MzE3MzU2NjRmYzcwYjA3NmVhN2IwNDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1NjI2MzBmY2JlNmI3MGIxZTI3MWM4ODE1ZTU0NTI2YjUwYmQ3ZWNmM2I1YmY3ZmY3MTA2ODAwY2QxNzM2YzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkMDQwMzUxMGY4ZjNiNjEwODkxZDVmZmFhODAxM2UyZGM5M2ZjNDlhYjY0ZjIwNWY1ODU2ZGVmNGExZDI3ODYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRlYmQ1YmU2M2NlMTk5NDVmNDEwOWRiMzNmMjdkYTQ2NGVhNGFmODliNTRjODZkYTVjZjljMDc5YTEwYTExM2IifQ"
+          "resource": "repo://src/lib/cull.ts#L85-L103",
+          "version": "repo-lines-v1:sha256:ae39d8ee0ab7bf58d0be45183f28908a3710f839675a411cbf5cde3097283247:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhYjA1ZDY4MDdmN2UxOGY3YWQyYjA5NTY1YThkNWUwMzNiZTcxN2RhNDg2YmIxYzUzMWI4MmI0MTVkYTVkZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5N2M1MDBjOTRlOTc2Yzk4MjNiMDU3NDcwNGVlOWRiNDc2Y2VkNGRmYzdiMDJkNjdlMzY2ZjNlZWE2NmE2ZTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkZTRmOTA5NmRmZTBhYTc0YTBmZmJkZjY1Y2VjNTU5YzMyMzBhMGQ5ZjMxY2UwNjgzMjg2ZjEyZDhhMDM0ODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyY2NiMzdkMzJiOTUzMzY5YTIzODMxNWI1YmI4NGY5ZGIzNWUzNGU1NGM1ZTJmYzc4ZTI1Yzg0ZDQzZDEyN2MifQ"
         }
       ]
     },
@@ -754,15 +758,19 @@
     },
     {
       "id": "claim_f808d2269b764b808c6f388664a1c6e2",
-      "statement": "check-command-menu's one-pass bound counts layout passes per drain under a held key, so it cannot detect a scroll write at mount time; that shows only in perf-page-switch's mount JS.",
+      "statement": "check-command-menu's one-pass bound counts layout passes per drain under a held key, so it cannot detect a scroll write at mount time; that shows in perf-page-switch's mount JS, while the separate entry check counts the layout passes of the whole page arrival.",
       "evidence": [
         {
           "resource": "repo://README.md#L269-L270",
           "version": "repo-lines-v1:sha256:fe2ac60e141af9d3edd9a54bb1d0037d80da05c2e20b76712d199392fb1f89b7:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmYzMTRkMzZjY2IxMDllMGFhM2Y0OGFhYWMzNGZlMzRjYTViYTI1YjM1OTc5NzRlNzQ5N2Y4NTQwMTI1MzNhMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTExYjc4OWQ3ZmRhMTNjZmY1MWM0MWUwYjU1MDcyMTBjN2Q3M2ZhMjViNDc0MjE2YmUyZGRhNmFhZDlmYmRjZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzRiNGM1OWM1NmU3ZGZjNDJjZjJkZTdjNDkzZDE1NWYxNGIxZTgxODM1NGRkMmJkYjc2ODkzYmI2ZTcyNTQ4ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWM0ZTExMTA4MzI5MTFhMWViYzA4ZjYwNTI4NWU3N2Q5NWViMGI1ZGY0ZjIwMGJlMGUxYTg4OWMwMzliOTNlOCJ9"
         },
         {
-          "resource": "repo://scripts/check-command-menu.tsx",
-          "version": "repo-file-v1:sha256:7ce2b5ad7f424099c862f31fa2428a22dc1f53cf49bf4c369b89f8e09dcac565"
+          "resource": "repo://scripts/check-command-menu.tsx#L545-L556",
+          "version": "repo-lines-v1:sha256:14d4a4d93cffd5c048305ee0bd231c69c705f5095078a9e3dced61f55327b2cb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkMjExMGFiMGMwYzI4MThlZmQxNzM1MTcwY2M4NTI5ZGIxMTEwOTRmMzA2MDBkNzFlZTdkN2E2YzViYjMyN2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2MGMxMmJkNzIwNzc2MDNlNGU3ZDJhOWQzZWUyY2UwMDg5ZWY0NGIxYWE0MmViMmUzMGViMDJlYzZhNzVlZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIxNjFlYzMyOTE5YzlkNGZiMTU0MTE3ZTJhNDU3MjI1MDFiNjYzM2I2MDgwYWQ5NDE4YWY3MTM3MTU4YTUwMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg2YzgzYWMwMjBmMmIwYmM4YmJlNjlmNzQzMGYwZjU4N2I5OWNhNGQ1YjcxZGY4ZWU5NDA3ZThkNGFkZjI5ZTkifQ"
+        },
+        {
+          "resource": "repo://scripts/check-command-menu.tsx#L732-L821",
+          "version": "repo-lines-v1:sha256:9b97c67dce11986896341939e7a0a71294e1499ed81f771b0a7cb820f9db3bb3:eyJzZWxlY3RlZExpbmVDb3VudCI6OTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlNGE4NzMxYmQ4M2I1ZjkzOGMyM2Y5NDc3YWM5ZTVkMjI1MDQzZDg3NWFkZjc1NDllNTk4M2I0NmIyMDc1ODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlhYWNjMDAzNTc2OTA3ZjE5MmI1MGI0Y2RkZDhmZTM0ZmZlNTllZTVmYmUzMjFlNTM5NDE3NmJhOGQyM2U2NGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQwYzZiZWU2YWRjOGM4YWIxYWFjZjZmMDhmZjM2YzlhYWM5NDZlNzk4YWFjMTM1ZDgxMDFmMmQ3ZTJhMjY1NDMifQ"
         }
       ]
     },
@@ -783,10 +791,58 @@
           "version": "repo-lines-v1:sha256:84d8e202f028574f95709434daa7e80cc4657b7cd85865472fd5ad0e68bb8acf:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmM1ZmNjYzY4OTZjMGQ5YWZmOWNlZjljZWI2ZTczYzUxNjc1NDkyYTRhZTM0OTk0N2Y1NmZiODk2NDBjM2FmYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
         }
       ]
+    },
+    {
+      "id": "claim_0e74e8ebb9bb46e3a0bdbd4820dd7b6f",
+      "statement": "A far culled region pins the height carried by its IntersectionObserver report (read from the frame's registry, no layout pass); only the first report after a far region is shown again reads the live laid-out height, because that report's rect still carries the old pinned height.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/cull.ts#L62-L103",
+          "version": "repo-lines-v1:sha256:f39359568382c12dbdc1ea06247b28f8feeb715ee73edd6836e1f01d1cb98bbf:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwYjFjZDlkYWFjNjU1ZmQxMjI0NGY5ZDViYmFhNTM2Yzg4N2U4M2U2NjZiYzQ5NzAzZDUwODY1OGFmOTQ1YTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5N2M1MDBjOTRlOTc2Yzk4MjNiMDU3NDcwNGVlOWRiNDc2Y2VkNGRmYzdiMDJkNjdlMzY2ZjNlZWE2NmE2ZTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFhZjFkM2IyNDc0YjAyYmEzMGIxNTU5NDdiNzhhZjBhNjIzNDM4N2MxNTczMGU5MDMwZGM2ZmQ3OGU4NTZjMjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyY2NiMzdkMzJiOTUzMzY5YTIzODMxNWI1YmI4NGY5ZGIzNWUzNGU1NGM1ZTJmYzc4ZTI1Yzg0ZDQzZDEyN2MifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_91e43f2763054eabaaba122d2cec6b4c",
+      "statement": "Fluid hover's ResizeObserver callback only measures the container and row boxes and queues its write on a module-level list flushed once per delivery in a microtask inside batch, because gpuix runs every observer callback in one loop and a write between two hovers' reads makes each next read a forced layout pass; onMouseEnter and remeasure stay synchronous.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/fluid-hover.ts#L121-L165",
+          "version": "repo-lines-v1:sha256:38b26d70d60ed6d3508b9cd41f2c9609b1488d673859004ce2eb77473f2c5ca8:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyZTQ1YzY3ZTE5NTk1OThiYTFiZTBkNDQwOGY2ZmI1ZDQ4MDU1ODIwMzhhYTg2YmIxYTE2ZWViNGE5ZTIyNTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhNzM0OTJkODk0NmIxZDBmOWQ5YzA0YjcwNGE5MjBmMjRmODllZjdjN2Y3MzExYTg1OTlkMTBjN2Y2MzU4ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUxMjkzNzNiNWQxMzk5YmM5MWRmYzU5MjlhYTc0OGRmNTZjMmE4MDEyOGNhNTAyYWQ3YjI5ZTk2NjNjN2I4NWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1ZTU5OGEzM2ZkZTllM2JiMGMwMzc5YzZmZDJmOWQ1YmM1ZWIyOWQ0OWE4NTdhYmU0YTM4YzA1YmE1ODE5NzMifQ"
+        },
+        {
+          "resource": "repo://src/lib/fluid-hover.ts#L205-L222",
+          "version": "repo-lines-v1:sha256:6de952a79b21896ff66c00742418eed1a696d608990087e758fe9c3257083b1c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjM2EyMDc3NGQ1YzJiYjRjNzkwYzE4ODkwYTljNDk0Y2NiNTEwZmM4ZThjMDllYzc0NTE5YmMxNjRmYzc4NGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQzZDI2Y2UzYWM1NDExMTVlYWNiOGRiNmI4OGIzYmVjZWMzMzVhZTFlOTdkOTNjNDFmN2IwMDQwMjU5ZTk4ZDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExZDg0ZjI4MWI0OTZmNGQ5ZTEzYTRmOWZlOWFjYTg1MGZiZTRlMjUyNTgxMmU2NzJkOTEwYzViNDczNjRkMGUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ff6397862ad94bf6aad3affc0d81df68",
+      "statement": "check-command-menu bounds page entry from the palette at 4 layout passes, one ArrowDown in the palette at 1 pass, and 2 s of idle at no layout pass and no drawn frame, in a window that draws only on a simulated display-link wake with the screen reader off.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-command-menu.tsx#L732-L855",
+          "version": "repo-lines-v1:sha256:6714b81a8a57506e02fe445179cec2750c456fed17ee56deb9f241f940afad4f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyZTRhODczMWJkODNiNWY5MzhjMjNmOTQ3N2FjOWU1ZDIyNTA0M2Q4NzVhZGY3NTQ5ZTU5ODNiNDZiMjA3NTg5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI5YWFjYzAwMzU3NjkwN2YxOTJiNTBiNGNkZGQ4ZmUzNGZmZTU5ZWU1ZmJlMzIxZTUzOTQxNzZiYThkMjNlNjRiIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1NzJmODM3NGJjM2EzZWVmZTQ4ZmRkYTE2ZTZkMDZmZGFiNDc3YTk5MTU1NjNmNGU3OTRiYWYzOGVlM2FjZjFmIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_3d69f6250c4845869c2fe8320849b92f",
+      "statement": "Every check window is opened through createTestWindow, which sets the window scale factor to 1 before the first frame, because the test platform otherwise uses the machine displays' scale while the checks sample captured pixels at logical coordinates.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-kit.tsx#L58-L62",
+          "version": "repo-lines-v1:sha256:8bc58f9a834c6e9a33219ccbff35184d012b49a9e703933ea0875f6d97cd8bc1:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjc2MTQ3NTIzZTljNzRmYTI0NzRhYjA1NmZlZWZkYWFjY2I5ZDJjMDQ2MWM0MTM4ZjhmZWIzZmM3NGM5OTVkNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGE3MzQ5MmQ4OTQ2YjFkMGY5ZDljMDRiNzA0YTkyMGYyNGY4OWVmN2M3ZjczMTFhODU5OWQxMGM3ZjYzNThkMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTk2NDFjYTYwOTQwMDY3NTM4YjQ0NDQ0ZTBmYjU2ZDYzNzdkZjIwNmNiNTBjM2FiOTgxZGQ0OTQ5ZGNhNGQyYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGIwYzhkZDc1ODJlN2Y0YWE4ODRjOTU4MjI4OWZiMzQ5NDUyZDk3Mzk3YjI1OGNhNTFhM2MwODAwZmNlNTJmOSJ9"
+        },
+        {
+          "resource": "repo://scripts/test-window.ts#L1-L14",
+          "version": "repo-lines-v1:sha256:da8c8895fab6abb7695ddc3d62df289bc6350420dd1e84f80c2e691abb6ba97a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3NGU2NGJjNmEyNjhkYjI4NmQyMTA2ZDI5OWFhNWI0YjFmYzAyYzVmZmY5MjJmYzQwZjA4MDFhMjhlODM5NjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-22T04:24:54.591Z"
+    "at": "2026-10-22T08:28:28.895Z"
   }
 }

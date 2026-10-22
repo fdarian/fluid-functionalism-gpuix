@@ -5,7 +5,7 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-22T04:24:54.591Z
+    at: 2026-10-22T08:28:28.895Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -61,6 +61,8 @@ sources:
     resource: repo://scripts/registry-plugin.ts
   - id: openwiki-source-a29d9251e39930cd08b68b32
     resource: repo://scripts/run-scenarios.ts
+  - id: openwiki-source-e7819e481ddba2ac4134b389
+    resource: repo://scripts/test-window.ts
   - id: openwiki-source-5ebe82cc5f9e383e14411602
     resource: repo://src/app.tsx
   - id: openwiki-source-456bdd1fc2b44eea01d30954
@@ -129,7 +131,7 @@ sources:
     resource: repo://src/pages/skill/playback.tsx
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-22T04:24:54.591Z" }
+generated: { by: "claude-code", at: "2026-10-22T08:28:28.895Z" }
 ---
 
 # Port decisions and their reasons
@@ -321,6 +323,13 @@ about cost has an expiry date, because gpuix's retention and bounds-read behavio
   still unmeasured has no scroll anchoring, so content jumps as regions measure in; and the size and paint containment
   it implies clips overflowing shadows and focus rings. The source site uses no `content-visibility`, so nothing was
   adopted.
+- **A far region pins the height its observer report carries, not a fresh read (`a6fd00ed`).** The pin used to be
+  `getBoundingClientRect().height` inside the `IntersectionObserver` callback. Every region that reports far on a
+  page's first frames forced its own layout pass there, so entering a page cost a pass per region (the entry budget
+  on the Command Menu page went from 26 to 21 passes with this change, and to 4 with the fluid-hover change above).
+  The report's own rect comes from the frame's registry and costs nothing. The one exception is the report that follows a far region being shown again
+  (its element or Size changed): that rect still carries the old pinned height, so that single report reads the laid-out
+  height, a forced pass paid only by an element or Size change.
 - **The changelog Releases jump re-aims while culled entries un-pin.** A jump computes its target while the entries
   above the month are pinned at their culled heights. They un-pin to their real heights as the smooth scroll passes
   them and come out a few px taller, so one scroll landed the month 4-5 px low (36-37 px under the top against the
@@ -340,6 +349,15 @@ about cost has an expiry date, because gpuix's retention and bounds-read behavio
   it cost was a staleness window (the container moving with no resize, no scroll event it receives and no page
   scroll). Do not reintroduce a cache on the strength of the old 6 ms figure; if a future pin makes the read slow
   again the symptom to watch is idle frame-callback time on autoplay pages, not sweep p95.
+- **Fluid hover reads every list's boxes before any list writes (`60b5bfa1`).** A read after a paint-only write is
+  free, but a read after a write that dirties layout is a forced pass over the whole retained tree. gpuix delivers
+  every `ResizeObserver` callback in one loop, and each hover used to measure and then write its rects and highlight
+  in its own callback, so the next hover's first read hit a dirty tree: one pass per hover. A page of many lists paid
+  that on entry (the Command Menu page, 19 passes). The observer callback now only measures and queues its write on a
+  module-level list that one microtask flushes inside `batch`; `pick` takes the container box it was handed instead of
+  reading it. `onMouseEnter` and the explicit remeasure stay synchronous. Entering the Command Menu page from
+  the palette went from 19 passes to 2, and `check-command-menu` fails the old code. A caller that adds a read after a
+  write inside an observer callback brings the per-list pass back, and no single-list check shows it.
 
 The changelog's `width: '100%'` column wrappers, added on 2026-10-17 when nested auto-width flex columns cost ~1.9x
 per level (8 columns drew in 121 ms, 20 ms with the wrappers), were removed once gpuix #36 made that layout linear.
@@ -517,9 +535,21 @@ How to check these, because the obvious checks pass:
   timing (initial 15, repeat 2, frames at 60 Hz) with the motion clock running, and bounds layout passes per
   drain at 1 (it was 4 while the `scrollTop` setter laid out on every write; measured worst 1 over 3 runs on
   `f7b62f11`). The bound is a count, not a time, so a slow machine cannot move it. It covers key drains only, not
-  mount: a scroll write at mount time is checked with `perf-page-switch`'s mount JS. The clock must run: every pass
+  mount: a scroll write at mount time is checked with `perf-page-switch`'s mount JS, and the entry check below counts
+  the passes of the whole page arrival. The clock must run: every pass
   samples the spring at the wall clock, so a paused test clock would hide a cascade. It also replays the wrap with its
   keys back to back and one draw part way, which is how the stale-payload write is provoked.
+- Page entry is checked as a count of layout passes in a window drawn like a real one, because the real window
+  blocked 1 to 1.5 s on forced passes that a test window drawing on every event never separates from the rest.
+  `check-command-menu` turns the screen reader off and draws only on a simulated display-link wake, opens the site
+  menu on the Introduction page, filters to Command Menu, presses Enter and runs wakes until 30 in a row draw
+  nothing. Bounds: entry at most 4 passes (measured 2), one ArrowDown in the palette at most 1, and a further 2 s
+  of idle with no pass and no drawn frame. The draw mode is part of the check: the default test window draws inline
+  on each event, which is not how a real window schedules its draws.
+- Every check window opens at scale factor 1 (`scripts/test-window.ts`, used by `check-kit` and the checks that
+  build their own window). The test platform gives a window the scale of the machine's displays, so with a Retina
+  secondary display attached a check samples captured pixels at 2x while reading logical coordinates, and its result
+  depends on the machine. A check of another scale sets it itself after the first frame.
 - `scripts/check-site-nav.tsx` scrolls the Changelog down, clicks a sidebar row and reads the scroll metrics
   immediately: the read draws what is pending, so it sees the new page's first frame. Reading after a settle would pass
   even if the page had been corrected a frame late.
