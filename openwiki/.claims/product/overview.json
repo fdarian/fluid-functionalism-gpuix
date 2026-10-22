@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:4bd074aed07a54150b0bcce0be65df35598128a051f01dc9ed6073cd72599ff4",
+  "pageVersion": "sha256:eec0ab786627808be88ddfa7554de3f1965980b0dfac2998a453d9b92fd41d8c",
   "claims": [
     {
       "id": "claim_b925fe22d5a74d5388447aa34ff4d2fd",
@@ -34,11 +34,15 @@
     },
     {
       "id": "claim_8614bcad26f8486aa463c334ea2c9505",
-      "statement": "Every place the port differs from the source is a drift entry tagged by cause, 539 entries as of 2026-10-22 after the table's border-color fade entry closed on gpuix 511bebab.",
+      "statement": "Every place the port differs from the source is a drift entry tagged by cause, 540 entries as of 2026-10-22 after Round 15a on gpuix 8352e66c added the half-pixel glyph-origin entry.",
       "evidence": [
         {
           "resource": "repo://README.md#L9-L11",
-          "version": "repo-lines-v1:sha256:6dd11476bf5232ddea629b48385372c21b60e483d1469bc8e990c30b8775bec1:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I1MTk3Nzc1OTUyOTBjYmNjODI3YjE4NGQwNGQyOTEzYzc3NDdlMmZjNjNjYjI1MGM3ZGY4Y2FhZTAxZjU2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDZiMzRkZjA1ZDI2ZTZjZGRhM2E1YzUxNTFjNGE1NjQxYWEwYTZhZDA4MWExYzlhMmI2MTZjNjJmYzJmZThjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDVmMDhjNzUyMWQ1ZTcyZDI2MDM2M2E2ZGRlMmRmMjcyMzc1YzRlYWYzMzUxMjI5MjE3ODYyNzJhMDYwMDZlZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWI3YmJmNzg1NTI1MDcyMjUxNDRjZWY1MDMyOTM4MjZhZTdkYjk3ZDRjMThhMzAwODJhZDYwYjQzMzUwNWFiYiJ9"
+          "version": "repo-lines-v1:sha256:78d19798683f189d89c871d20986697c8a3430ca20ca65ba56d65539f2f17825:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I1MTk3Nzc1OTUyOTBjYmNjODI3YjE4NGQwNGQyOTEzYzc3NDdlMmZjNjNjYjI1MGM3ZGY4Y2FhZTAxZjU2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDZiMzRkZjA1ZDI2ZTZjZGRhM2E1YzUxNTFjNGE1NjQxYWEwYTZhZDA4MWExYzlhMmI2MTZjNjJmYzJmZThjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDVmMDhjNzUyMWQ1ZTcyZDI2MDM2M2E2ZGRlMmRmMjcyMzc1YzRlYWYzMzUxMjI5MjE3ODYyNzJhMDYwMDZlZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWI3YmJmNzg1NTI1MDcyMjUxNDRjZWY1MDMyOTM4MjZhZTdkYjk3ZDRjMThhMzAwODJhZDYwYjQzMzUwNWFiYiJ9"
+        },
+        {
+          "resource": "repo://drift/home.md#L62-L71",
+          "version": "repo-lines-v1:sha256:db942ecc34c698652d25ed88d1f2ba5dd056813d02ad5d6fda556a955f83b9ba:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4ODdmYTBhYjcwZDg3MzA0YTc1ZjQ1OWQ4YWVmMmZjMzM3YWYyMWYzNzNiMWU4MWZlYjM1MmVmM2Y0NWM3YmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3YjFhMGFlYTcwMTQ0NWNiYWYzNjM3ZTI4YzIzNDA2Zjc2N2ZkMDUyODliYTk2NDMxNWIzMzIwYjQ1MWI3ODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -58,21 +62,21 @@
     },
     {
       "id": "claim_f8b0c6e89cbd48b598f62a18b01c9c2c",
-      "statement": "The README names gpuix poc 511bebab as the minimum fork, which includes the f993d9b9 idle-window and unfocused-window pacing and the f7b62f11 changes (font smoothing key, cheap scrollTop writes, exact scroll end) on top of the earlier paint-only loop-tick patching, fractional rects, fractional authored lengths and playback controls, and adds a collapsed-table border-color transition that lays out nothing.",
+      "statement": "The README names gpuix poc 8352e66c as the minimum fork, which includes the 511bebab collapsed-table border-color transition, the f993d9b9 idle-window and unfocused-window pacing and the f7b62f11 changes (font smoothing key, cheap scrollTop writes, exact scroll end) on top of the earlier paint-only loop-tick patching, fractional rects, fractional authored lengths and playback controls, and adds an atomic inline at its fractional origin and a forced layout that delivers no onLayout or ResizeObserver report.",
       "evidence": [
         {
-          "resource": "repo://README.md#L243-L245",
-          "version": "repo-lines-v1:sha256:6e17d43176a409cc3380696343e1d40323ceda5ec3ddc60601ba3fa50aa578bb:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTZjNjYwNzFmNWFkMTAzMDA2NjBlMmE5ODU5ZWNiMTZmNzVjNGUyZTVjYWQ5MTBhZmYzNmJmN2U5Nzc4NjllYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjMzOTExMjhlM2ZkNTY1NmE0ZDI1ODZmMmI0YWI4NTljY2FkODBjMDEzYzA2NzA2ZDVhMTNlNTYwMGQ1YzJkNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDgyZjg5MWE0M2ZjZDYwZDY3YTA4NDkzM2IxMmE0ZjlmOGM4ZDQ0NmZjY2FjZmNmZThiZDdiMWE4MTYxODUzMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGNjY2QxN2Y5NzdhZmE1NTJhOTliNzIwMzI2MjRhNTIzNzBkZTU4NGMyNDIxNTg5YjBlNWM0MzBhMTQ4MjY2YyJ9"
+          "resource": "repo://README.md#L245-L246",
+          "version": "repo-lines-v1:sha256:904198700b5c2ac106cf7e1cf09fb7a6ca66536e1bbd3e199206f3a5715f3152:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWMyYWE0NWFkYWQwNDNhNTA5MDE5OGM0YTg4Zjg5YjQ1OGNkMGE0N2UyMDk2MGM3Mjg3ZTNkMmEzOGNlZmIwZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTA1ZjI3YTAzNWFiOTdmNTRlNThiZjU2OTQ3MTkxNjdjNmUxNjMxYTBhYjExYjVlN2I1ZTk1YTc3MTM3OTVjYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTZmZGM0NmVkZjE4ZDhhYjgzZjI4MDdhY2MwZTU4MWI2YjY2MzQ2OTEwNTU3MGNhZTkyMjA2ZTY3MmY1NjkyNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGNjY2QxN2Y5NzdhZmE1NTJhOTliNzIwMzI2MjRhNTIzNzBkZTU4NGMyNDIxNTg5YjBlNWM0MzBhMTQ4MjY2YyJ9"
         },
         {
-          "resource": "repo://README.md#L55-L57",
-          "version": "repo-lines-v1:sha256:7fe670a6ea794e8da8819839dd1f3d3ea61fa197a58c3ceeceb26f026a1167cc:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGUzOWRjZWRmMzBkM2M5OWYxM2YzZDlmOTIzNjViOWMxMzBlODAyOTY0ZDNjNjVkZDBkOWNjN2RmZGFmNDE3OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQxYzY4NDAwYmUzOTQ2NGY1ZGM4NjcxYzJjZjdjYmJlYmYxYjUxNzdiZTdmNmE5NjZkM2EzNjM5ZmM3OTM0MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjE3ODgzYmY1OTMwNDllZTc5ZDJkNjAzN2NhZDJhZTM1MmMxMWIyNzI4YTRjN2NiOGI3NDViMzIzNzZiMGQ1ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDYyNDFkNGE0MDIwZTMyZTY5Y2FmM2NhNzBmMzlmNjIxOGU4YjYyZDZhMzc5MjA0ZTdlZjI1NmNhNDkzZTdiNiJ9"
+          "resource": "repo://README.md#L56-L56",
+          "version": "repo-lines-v1:sha256:b08a87ecd1a8048ded293053ba8d37b3fb18040952b5f048872ae11cb86b464d:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjA4YTg3ZWNkMWE4MDQ4ZGVkMjkzMDUzYmE4ZDM3YjNmYjE4MDQwOTUyYjVmMDQ4ODcyYWUxMWNiODZiNDY0ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjA4YTg3ZWNkMWE4MDQ4ZGVkMjkzMDUzYmE4ZDM3YjNmYjE4MDQwOTUyYjVmMDQ4ODcyYWUxMWNiODZiNDY0ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-21T21:17:32.636Z"
+    "at": "2026-10-22T04:24:54.591Z"
   }
 }

@@ -6,6 +6,8 @@ tags: [gpuix, gaps, upstream, history, migration]
 sources:
   - id: openwiki-source-dbc5a68e94d7e3a15a776857
     resource: repo://drift/fluid-hover.md
+  - id: openwiki-source-52df002f39d8608aefccfdde
+    resource: repo://drift/home.md
   - id: openwiki-source-d4a4bb7ecd3d3f6e47c46abd
     resource: repo://drift/table.md
   - id: openwiki-source-5cfc44b662eef11b303099d9
@@ -74,10 +76,10 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-872f10458af3aae905a0ee5a
     resource: repo://src/pages/fluid-hover/plain-vs-fluid.tsx
-generated: { by: "claude-code", at: "2026-10-21T22:20:46.181Z" }
+generated: { by: "claude-code", at: "2026-10-22T04:24:54.591Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T22:20:46.181Z
+    at: 2026-10-22T04:24:54.591Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -113,7 +115,7 @@ link to those rows rather than repeating them. The ones that shape the most code
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
 The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17) and again in the
-[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `511bebab` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`, `f993d9b9` in [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22), and `511bebab` in [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22)). The bugs and gaps worth knowing before touching layout code:
+[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `8352e66c` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`, `f993d9b9` in [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22), `511bebab` in [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22), and `8352e66c` in [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22)). The bugs and gaps worth knowing before touching layout code:
 
 - A function-form `createTransform` of several motion values is computed in JS and can trail its inputs by a frame
   on a live window (not seen on the test renderer). `calc()` strings of the row's own width avoid it where the layer
@@ -132,9 +134,16 @@ The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adopt
   to a whole device pixel, half toward zero. A highlight placed from a measured rect therefore no longer lands off
   what was measured. The fluid highlight still rounds rects, now only to match the source's `offset*` reads, which are
   integers and which gpuix does not have. The older whole-pixel snapping of every JS bounds read (#45) is gone, so a
-  check can read a fractional box and no longer needs a scale-up to see sub-pixel differences. One residue of
-  placement: gpuix puts an atomic inline (tabs-subtle's `inline-grid` label) at a whole device pixel, up to half a
-  pixel off Chrome, and reads the cap height as 0.704em where Chrome has 0.727em.
+  check can read a fractional box and no longer needs a scale-up to see sub-pixel differences. Since `8352e66c` an
+  atomic inline (tabs-subtle's `inline-grid` label, Beacon's badges, a URL chip) also keeps its fractional origin and a
+  half-pixel one rounds up like Chrome, where it used to sit at a whole device pixel, up to half a pixel off. The
+  residue is the cap height, read as 0.704em where Chrome has 0.727em, and the glyph rows in the next item.
+- Text whose top lands exactly on a half device pixel (.5 at scale 1, .25 or .75 at scale 2) paints its glyphs one
+  row above Chrome's, because gpuix rounds a glyph origin half down in `split_glyph_origin` and Chrome rounds a text
+  baseline half up. Boxes, fills and positions are exact; only the glyph row differs, and only on exact ties. The
+  showcase's ThinkingSteps tile is the known instance (an odd-height box centres the Research Agent card at y.5). Not
+  nudged in the port; a drift entry in `drift/home.md` and a README gap row. See
+  [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22).
 - A looping native animation replays the whole page every tick, so it is cheap only on light pages (7 ms a tick at
   3000 nodes, about 60 ms at 12000): see the [`b03d4e27` adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21).
 - Flex `order` is ignored inside an `@container` block, and Tab follows the painted order under `order` where Chrome
@@ -157,7 +166,7 @@ Earlier entries here were closed and should not be re-reported: a `width: 100%` 
 filling the column and a percentage `maxWidth` not clamping a `fit-content` box (`20a0c327`); on `b03d4e27`, the
 cap-trimmed label that tabs and tabs-subtle centre sitting a pixel off Chrome's at 1x (gpuix #44), whose two drift
 entries were removed; and on `83bab5a7`, the authored-length rounding, a trimmed `inline-grid` label in a block with a
-strut sitting about 5.5 px high, and the missing pause/play on a motion value's animation; and on `f7b62f11`, the heavier text (font smoothing), the `scrollTop` setter's layout cascade and the scroll range ending one pixel short of `scrollHeight - clientHeight`; and on `f993d9b9`, the idle window waking JS on every vsync and the unfocused visible window drawing below the display rate; and on `511bebab`, the collapsed-border colour transition that rebuilt the table's layout.
+strut sitting about 5.5 px high, and the missing pause/play on a motion value's animation; and on `f7b62f11`, the heavier text (font smoothing), the `scrollTop` setter's layout cascade and the scroll range ending one pixel short of `scrollHeight - clientHeight`; and on `f993d9b9`, the idle window waking JS on every vsync and the unfocused visible window drawing below the display rate; and on `511bebab`, the collapsed-border colour transition that rebuilt the table's layout; and on `8352e66c`, an atomic inline placed at a whole device pixel (the tabs-subtle baseline and Beacon pill drift, gpuix #80) and a forced layout delivering `onLayout` and `ResizeObserver` reports.
 
 ## How a round works
 
@@ -526,7 +535,7 @@ entries to 532.
   block that has a 16 px / 24 px strut is seated about 5.55 px above Chrome (cap top 3 px under the block's top, Chrome
   8.55 px), although the block's own line box is the right 24 px. tabs-subtle's unfolding label is the only place hit,
   so it sets the clip `height: 24` and offsets the label with an authored `marginTop`, which gpuix then rounds (so up
-  to 0.5 px off). It is a README "Bugs" row and an entry in `drift/tabs-subtle.md` (5 to 6 entries, gpuix-gap column 0
+  to 0.5 px off). (The atomic-inline half of that residue closed on `8352e66c`, [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22).) It is a README "Bugs" row and an entry in `drift/tabs-subtle.md` (5 to 6 entries, gpuix-gap column 0
   to 1), which took the drift total from 532 to 533. Do not report the earlier trimmed-label baseline as reopened:
   that one stays closed. The reasoning: [Port decisions, drift/](../decisions/port-decisions.md#drift-and-its-cause-values).
 - **Reversed: fluid hover's container-box cache.** The cache existed to avoid a 6 ms layout pass per read. With #47 it
@@ -571,10 +580,10 @@ and the carousel-dots and fluid-hover entries lost a clause, not a section.
   the rounding when adopting this pin; it is parity with the source. Reasoning:
   [Port decisions, fluid hover](../decisions/port-decisions.md#fluid-hover-one-highlight-nearest-row-sessions).
 - **A trimmed `inline-grid` in a strut block sits on the baseline.** tabs-subtle dropped the `height: 24` clip and the
-  authored `labelTop` offset for the source's `fontSize: 16, lineHeight: '24px'` block. What remains is half a device
-  pixel of atomic-inline placement and a 0.28 px cap-height metric difference (gpuix 0.704em, Chrome 0.727em), recorded
-  as a drift entry that was rewritten, not deleted. The README "Bugs" row for it is gone. `check-tabs-subtle` pins the
-  baseline within 0.5 px of Chrome's and compares no cap box. See
+  authored `labelTop` offset for the source's `fontSize: 16, lineHeight: '24px'` block. What remained on this pin was
+  half a device pixel of atomic-inline placement (closed on `8352e66c`) and a 0.28 px cap-height metric difference (gpuix
+  0.704em, Chrome 0.727em), recorded as a drift entry that was rewritten, not deleted. The README "Bugs" row for it is gone. `check-tabs-subtle` then pinned the
+  baseline within 0.5 px of Chrome's (0.01 px since `8352e66c`) and compares no cap box. See
   [Port decisions, drift/](../decisions/port-decisions.md#drift-and-its-cause-values).
 - **`animate()` on a motion value returns playback controls, and `finished` means finished.** The controls are
   Motion's: `pause()`, `play()`, `stop()`, `cancel()`, `time`, `speed`, `state`. `finished` now resolves only when the
@@ -776,3 +785,38 @@ entries (`table` 6 to 5, only the removed fade entry).
 `check-weight-widths` so that clicks no longer race a loaded machine; see
 [Port decisions](../decisions/port-decisions.md#screenshots-and-check--scenarios) for the
 trap. Read the README's pin line, not this page, for the current minimum fork.
+
+## Round 15a: atomic inline origin and forced layout on `poc` `8352e66c` (2026-10-22)
+
+The README now names `8352e66c` (zed `d382e6e5cb`) as the minimum fork. Two gpuix changes landed, one gap was found on the new pin, and no component's look code moved apart from a rounding helper. The drift total went from 539 to 540: one entry added (`home`, gpuix-gap column 0 to 1), none closed outright, since the tabs-subtle entry was rewritten.
+
+- **An atomic inline keeps its fractional origin and rounds a half pixel up like Chrome (gpuix #80 closed).** tabs-subtle's
+  unfolded label baseline is now exactly Chrome's (24.00 and 20.00 inside the tab) and `check-tabs-subtle` tightened
+  from 0.5 px to 0.01 px; the drift entry now names only the 0.28 px cap-height metric (gpuix 0.704em, Chrome 0.727em),
+  which stays. Beacon's Priority pills are level with the Status pill as in Chrome, at 1x and 2x, so the
+  `concepts-beacon` screenshots moved 1 px and the showcase `grid-5` / `grid-6` Sources URL chips sit 1 px lower;
+  those captures were recaptured. The chip-to-text distance had matched Chrome only by coincidence before this pin.
+- **A forced layout no longer delivers `onLayout` or `ResizeObserver` reports.** A bounds read or a `scrollTop` write
+  used to run observers inside the call; now the reports arrive with the next painted frame, after that frame's scroll
+  events, as in Chrome. `base-ui-solid-gpuix` adapted (`bce5ba1` scroll-area, `a20251f` combobox), which is why the
+  drift files' `base-ui:` line refs into `use-scroll-area-root.ts` (-1) and `use-combobox-root.ts` (+2) moved. Two
+  consumers in this repository are one frame late, exactly as the source is in Chrome, and were left unchanged:
+  fluid hover's pick after a scroll and the composer stage's pin. Read the README's `onLayout` / `ResizeObserver`
+  row for the timing, not an older note that a size arrives "after the first paint".
+- **Smaller 15a rows in the README's "gone from this list".** A non-finite `scrollTop` is read as 0 and a scroll-only
+  write on a `<virtual-list>` works.
+- **The measured height is rounded once, in the shared hook.** At scale 2 a ThinkingSteps step laid out 60.5 px where
+  Chrome's `offsetHeight` is 61, so the next step sat 0.5 px high. The first fix rounded in ThinkingSteps alone and was
+  then moved into `createMeasuredHeight` (`src/lib/offset.ts`, `toOffsetPx`), shared with fluid hover's `toOffsetRect`.
+  Why, and the check that pins it: [Port decisions, fluid hover](../decisions/port-decisions.md#fluid-hover-one-highlight-nearest-row-sessions).
+- **New gap found on this pin: glyphs at a half-pixel origin paint 1 px above Chrome.** Layout is exact, so a text box
+  at y.5 is at y.5 in both; the difference is the paint step. `split_glyph_origin` rounds half down where Chrome
+  rounds a text baseline half up, so on the showcase ThinkingSteps tile label tops are 348 / 409 / 477 against Chrome's
+  349 / 410 / 478 while the chip fill rows match. It is recorded in `drift/home.md` and a README Bugs row, with no
+  workaround: the card is not nudged because its layout is Chrome's. The repro and run script are outside the repo
+  (`~/.claude/notes/ff-gpuix-repros/r15a-chip-half-pixel/`). Do not file it as an atomic-inline regression; the
+  inline itself is right.
+
+Pitfall: when a screenshot moves 1 px after a pin, tell the cause apart before recapturing. Boxes and fills that moved
+toward Chrome are the atomic-inline fix; glyph rows that sit above Chrome's on a half-pixel top are the open
+`split_glyph_origin` gap. Read the README's pin line, not this page, for the current minimum fork.

@@ -5,7 +5,7 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-21T22:20:46.181Z
+    at: 2026-10-22T04:24:54.591Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -105,6 +105,10 @@ sources:
     resource: repo://src/lib/fonts.ts
   - id: openwiki-source-8595e2831e329ac0413ba7f4
     resource: repo://src/lib/icon.tsx
+  - id: openwiki-source-293d92aa92d19fc7c672fcd1
+    resource: repo://src/lib/measured-height.ts
+  - id: openwiki-source-b80bbe24251ddd98da870eee
+    resource: repo://src/lib/offset.ts
   - id: openwiki-source-a69db96d312e49d2e9f03b5a
     resource: repo://src/lib/playground.tsx
   - id: openwiki-source-0f590d21e6a23d6af00e8e17
@@ -125,7 +129,7 @@ sources:
     resource: repo://src/pages/skill/playback.tsx
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-21T22:20:46.181Z" }
+generated: { by: "claude-code", at: "2026-10-22T04:24:54.591Z" }
 ---
 
 # Port decisions and their reasons
@@ -189,7 +193,13 @@ The site's signature effect is one highlight that glides between rows. The port 
   so that reason is gone; the rounding stays because it is what the source does, and it makes the highlight rest on
   the same integer pixels as the source's. `check-reduced-motion` compares the table highlight to the row's
   `offsetTop` rather than its fractional y. Do not read `toOffsetRect`'s rounding as a workaround to remove when
-  testing a newer pin; removing it moves the highlight off the source's integers.
+  testing a newer pin; removing it moves the highlight off the source's integers. The same rule is shared code since
+  gpuix `8352e66c` (Round 15a): `toOffsetPx` in `src/lib/offset.ts` (half up, like Chrome) serves both `toOffsetRect`
+  and `createMeasuredHeight`, so every collapse, the sidebar, ask-user-questions and the viewport height spring to a
+  whole-pixel `offsetHeight` and not to the fractional `onLayout` height. The case that showed it: at scale 2 the
+  showcase's "Searching profiles" step lays out 60.5 px where Chrome's `offsetHeight` is 61, which left the next step
+  0.5 px high; `check-thinking-steps` pins the 61 px distance at scale 2. The first fix rounded inside
+  ThinkingSteps alone; it moved to the shared hook because every consumer ports an `offsetHeight` read.
 
 When Base UI primitives later took over keyboard behaviour, fluid hover stayed the owner of the highlighted row:
 the primitive's highlight is controlled from `hover.activeIndex`, and a keyboard move calls `releasePointer()` so
@@ -642,10 +652,12 @@ baseline is 18 px down and the descender of "Teamspaces" shows. On `b03d4e27` gp
 authored `marginTop` (`labelTop`, 8.55 default, 9.27 compact) and the entry took the drift total to 533. On
 `83bab5a7` the block works: the clip is the source's `fontSize: 16, lineHeight: '24px'` block holding the label
 directly, `labelTop` and the clip-height constant are deleted, and the entry became "the baseline sits up to 0.45 px
-below Chrome's" (gpuix places an atomic inline at a whole device pixel, plus a cap-height metric of 0.704em against
-Chrome's 0.727em). `check-tabs-subtle` now pins the baseline within 0.5 px of Chrome's (24 and 20 inside the tab),
-the 24 px clip and the visible descender, and deliberately does not compare the cap box height, which is a font
-metric of every trimmed label. The drift total stayed at 541.
+below Chrome's" (gpuix placed an atomic inline at a whole device pixel, plus a cap-height metric of 0.704em against
+Chrome's 0.727em). The drift total stayed at 541. On `8352e66c` (Round 15a) gpuix keeps an atomic inline's fractional
+origin, so the baseline is exactly Chrome's (24.00 and 20.00 inside the tab); the entry now reads "the cap box is 0.28
+px shorter than Chrome's" and is a font-metric residue only. `check-tabs-subtle` pins the baseline within 0.01 px
+(it was 0.5 px), the 24 px clip and the visible descender, and still does not compare the cap box height, which is a
+font metric of every trimmed label.
 
 ## Screenshots and check-* scenarios
 
