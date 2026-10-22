@@ -217,6 +217,23 @@ check(
 	String(metrics()[1]),
 );
 
+// Switching back lands at the top as well: the Changelog does not return to where it was left, and the page left half-way does not carry its offset either.
+renderer.nativeSimulateScrollWheel(800, 400, 0, 300);
+await settle(600);
+const leftAt = metrics()[1];
+check(
+	'the page switched to scrolls down before the switch back',
+	leftAt > 0,
+	String(leftAt),
+);
+await click('nav-changelog');
+await settle(600);
+check(
+	'switching back to the Changelog lands at the top',
+	metrics()[1] === 0 && metrics()[3] > metrics()[5],
+	`${scrolledTo} -> ${metrics()[1]}, scrollHeight ${metrics()[3]}`,
+);
+
 // The site menu finds Changelog by its keywords.
 renderer.simulateKeystrokes('ControlOrMeta+k');
 await settle(600);
