@@ -113,11 +113,16 @@ export function createCulling() {
 		/** False while this region or any culled region around it is far. */
 		onScreen: () => parentOnScreen() && !far(),
 		/**
-		 * The style that hides the region while it is far. Both axes of `containIntrinsicSize` are written (one value would also set the width); `auto` makes the size the region was last laid out at win over the report's border-box rect, which only stands in for a region never laid out, and gpuix adds the padding and border to it.
+		 * The style that hides the region while it is far. Both axes of `containIntrinsicSize` are written (one value would also set the width). `auto` makes the content box the region was last laid out at win over the report's border-box rect, which gpuix would add the padding and border to. gpuix only remembers that size for an element whose style says `auto` while it shows, so the visible style carries `auto none` too, and the rect only stands in for a region never laid out.
 		 */
 		style: (): StyleDesc => {
 			const size = farSize();
-			if (!far() || size === undefined) return { contentVisibility: 'visible' };
+			if (!far() || size === undefined) {
+				return {
+					contentVisibility: 'visible',
+					containIntrinsicSize: 'auto none',
+				};
+			}
 			return {
 				contentVisibility: 'hidden',
 				containIntrinsicSize: `auto ${size.width}px auto ${size.height}px`,

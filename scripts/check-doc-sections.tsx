@@ -35,7 +35,7 @@ async function openSizes() {
 			await kit.settle(500);
 		},
 		painted: (testId: string) =>
-			kit.renderer.getElementBounds(kit.element(testId).id) !== null,
+			kit.renderer.getBuiltElementBounds(kit.element(testId).id) !== null,
 	};
 }
 
