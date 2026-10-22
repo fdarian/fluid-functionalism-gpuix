@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 539 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 540 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -210,7 +210,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [dropdown](drift/dropdown.md) | 2 | 5 | 11 | 1 | 19 |
 | [file-thumbnail](drift/file-thumbnail.md) | 2 | 5 | 1 | 0 | 8 |
 | [fluid-hover](drift/fluid-hover.md) | 4 | 5 | 2 | 1 | 12 |
-| [home](drift/home.md) | 0 | 3 | 1 | 1 | 5 |
+| [home](drift/home.md) | 1 | 3 | 1 | 1 | 6 |
 | [input-copy](drift/input-copy.md) | 1 | 3 | 4 | 0 | 8 |
 | [input-group](drift/input-group.md) | 0 | 1 | 3 | 1 | 5 |
 | [input-message](drift/input-message.md) | 4 | 1 | 14 | 4 | 23 |
@@ -237,7 +237,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 4 | 5 | 0 | 13 |
 | [tooltip](drift/tooltip.md) | 1 | 5 | 1 | 1 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **86** | **212** | **191** | **50** | **539** |
+| **Total** | **87** | **212** | **191** | **50** | **540** |
 
 ### gpuix gaps across components
 
@@ -258,6 +258,7 @@ offer it. A count is given only where the code shows it.
 | banner (the actions, `drift/banner.md`, "Action order follows the written order") | Tab order follows the painted order under flex `order`: three `tabIndex={0}` boxes with `order` 3, 2, 1 are visited c, b, a, where Chrome (and CSS) keeps the markup order a, b, c. gpuix's own docs say otherwise: tab order "stays in document order" (gpuix `README.md:6503`, `:6533`; the `order` style comment, `packages/native/js/host.ts:561-562`; `packages/native/src/layout/order.rs:6-11`, whose sort is at `:22`, says focus and tab order never read the sorted list) | `row` and `row-reverse` instead of `order`, which keeps the written Tab order (`src/components/banner.tsx:460-508`); placement follows position, not variant |
 | banner (the actions) | `order` inside an `'@container'` block is ignored: the parent sorts its children by the style it reads without the block, so a container query cannot reorder | The narrow layout switches `flexDirection` in the block instead of `order` (`src/components/banner.tsx:502`) |
 | thinking-steps (the details wrapper, `drift/thinking-steps.md`) | A `width: "fit-content"` box in a column flex container with any negative horizontal margin (left or right, even -1) keeps the height of a wrapped first pass: 94x40 where CSS gives 94x20. A positive or vertical margin does not trigger it, and `alignSelf: "flex-start"` does not cure it | The details wrapper is a block `div` with `marginLeft: -12`, as the source's `mt-1 -ml-3` (`src/components/thinking-steps.tsx:485-486`) |
+| any text whose top lands on a tie: a half device pixel (.5 at scale 1, .25 or .75 at scale 2). Known instance: the showcase's ThinkingSteps tile (the Research Agent card, centred in an odd-height box, sits at y.5; `drift/home.md`, "Text at a half-pixel origin paints its glyphs 1px above Chrome's") | `paint_glyph` (`zed/crates/gpui/src/window.rs:6791`) rounds the glyph origin through `split_glyph_origin` (`zed/crates/gpui/src/util.rs:177`, `round_half_down`), where Chrome rounds a text baseline half up: the glyphs paint one row above Chrome's (label tops 348 / 409 / 477 against 349 / 410 / 478 in `screenshots/showcase/grid-5`, `grid-6`). Layout boxes are identical to Chrome to the 1/64, and since 15a an atomic inline at a half pixel (the chip) rounds up like Chrome, so only the text differs. Only exact ties differ. `~/.claude/notes/ff-gpuix-repros/r15a-chip-half-pixel/` (README; gpuix 8352e66c) | none: the card is not nudged, its layout is Chrome's |
 | screenshots, app-frame | The test renderer opens its window with the options, but a capture is the view alone: no titlebar or traffic lights (gpuix `README.md:7059-7061`) | Captures show no traffic lights |
 | screenshots | Batched keystrokes deliver an input's `onChange` after the whole batch | none |
 | the compiled binary (`pnpm build`) | `@gpuix/native`'s ESM entry loads the `.node` addon through `createRequire(import.meta.url)`, which `bun build --compile` does not follow: the binary fails with "Cannot find native binding". Its CJS entry uses a plain `require`, which Bun embeds | `nativeCjsPlugin` in `scripts/build.ts` resolves `@gpuix/native` to `index.cjs` |
