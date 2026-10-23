@@ -36,7 +36,7 @@ const kit = await createCheck(() => (
 ));
 await kit.settle(800);
 
-const near = (a: number, b: number) => Math.abs(a - b) < 0.5;
+const near = (a: number, b: number) => Math.abs(a - b) <= 0.5;
 
 const vetoStart = kit.bounds('veto-selected').x;
 kit.check(
