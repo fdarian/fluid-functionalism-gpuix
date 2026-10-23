@@ -85,8 +85,8 @@ export function BentoCard(props: {
 				ref={culling.ref}
 				style={{
 					flexGrow: 1,
-					// A one-column grid sizes its rows from content, which `display: none` empties.
-					flexBasis: culling.far() ? culling.farHeight() : 0,
+					// A one-column grid sizes its rows from content, which `display: none` empties. `'0%'` is the source's `flex-1`; `0` would hit gpuix #96.
+					flexBasis: culling.far() ? culling.farHeight() : '0%',
 					minHeight: 0,
 					display: 'flex',
 					flexDirection: 'column',
