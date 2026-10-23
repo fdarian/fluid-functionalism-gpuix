@@ -78,10 +78,10 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-872f10458af3aae905a0ee5a
     resource: repo://src/pages/fluid-hover/plain-vs-fluid.tsx
-generated: { by: "claude-code", at: "2026-10-22T22:22:08.524Z" }
+generated: { by: "claude-code", at: "2026-10-23T07:48:28.410Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-22T22:22:08.524Z
+    at: 2026-10-23T07:48:28.410Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -117,7 +117,7 @@ link to those rows rather than repeating them. The ones that shape the most code
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
 The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17) and again in the
-[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `c6475390` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`, `f993d9b9` in [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22), `511bebab` in [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22), `8352e66c` in [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22), `e591681e` in [Round 16](#round-16-the-contentvisibility-ab-on-poc-e591681e-2026-10-23), and `c6475390` in [Round 14a](#round-14a-paint-patching-reaches-inputs-positioned-ancestors-and-motion-values-on-poc-c6475390-2026-10-23)). The bugs and gaps worth knowing before touching layout code:
+[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `6f2a72d3` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`, `f993d9b9` in [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22), `511bebab` in [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22), `8352e66c` in [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22), `e591681e` in [Round 16](#round-16-the-contentvisibility-ab-on-poc-e591681e-2026-10-23), `c6475390` in [Round 14a](#round-14a-paint-patching-reaches-inputs-positioned-ancestors-and-motion-values-on-poc-c6475390-2026-10-23), and `6f2a72d3` in [Round 14c](#round-14c-input-to-an-idle-window-wakes-the-frame-loop-on-poc-6f2a72d3-2026-10-23)). The bugs and gaps worth knowing before touching layout code:
 
 - A function-form `createTransform` of several motion values is computed in JS and can trail its inputs by a frame
   on a live window (not seen on the test renderer). `calc()` strings of the row's own width avoid it where the layer
@@ -905,3 +905,28 @@ recorded as declined is now patched. The port's response was to delete code, not
   tick 2.4-3.2 to 3.4-4.6 ms, carousel-dots' 1.3-2.8 to 2.9-3.6 ms, six runs), unattributed: gpuix cannot be A/B'd from
   this repository and its FORK.md documents only a first draw 15% dearer.
 - **Not done:** no screenshots were recaptured (gpuix #86 was still pending), and every figure is headless.
+
+## Round 14c: input to an idle window wakes the frame loop on `poc` `6f2a72d3` (2026-10-23)
+
+The README now names `6f2a72d3` (zed `bf26cbb68a`) as the minimum fork and carries a new Bugs row, "any page that goes
+fully idle (0 ticks a second)", with gpuix's answer (#93) appended. Nothing in the port changed: the row says "none: FF
+needs gpuix `6f2a72d3` or later".
+
+- **The bug (gpuix #77).** The owner saw lag after opening the Command Menu with Cmd-K until Cmd-Tab away and back. A
+  page that stops ticking (Command Menu about 4 s after entry) leaves the frame loop wake-driven, and on `c6475390` input
+  to the idle window did not wake JS. AppKit's event thread hands each WindowServer event to the main thread with a
+  run-loop block, but under the embedder the main run loop is not running (main sits in Bun's kqueue), so only `tick()`
+  and `pump_events` drain it. A page that keeps ticking (showcase, about 100 ticks a second) hides the bug, which is
+  why only the quiet pages showed it.
+- **gpuix's repro and fix.** 15 of 15 injected events (shift, mouse move, click, scroll; `CGEventPostToPid` from a
+  separate process) sat in AppKit's queue with no wake in 600 ms, while a main-queue block woke JS in 0.1 ms 6 of 6
+  times. #93 (Round 14c in gpuix's `FORK.md`) adds a `kCFRunLoopBeforeWaiting` observer on the event thread's run loop
+  that posts a no-op block to the main queue. gpuix's numbers: input wakes JS in 0.1-1.4 ms and reaches the handler in
+  0.4-7.7 ms, and an idle window still makes 0 wakes. `postEvent:` from a non-main thread still does not wake, but real
+  input never takes that path.
+- **Not verified in this repository.** FF's own after-fix numbers wait on the owner's real-input check (no non-main
+  display is available for the windowed repro). No headless regression check is possible: the test renderer has no way
+  to post a native event or register a frame-wake callback, and its window is not on AppKit's run loop, so the repro
+  script in the notes folder is the check. This is the same limit as the idle-floor figures in
+  [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22): a window run, not
+  headless, is what measures it.

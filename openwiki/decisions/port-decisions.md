@@ -5,7 +5,7 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-22T22:22:08.524Z
+    at: 2026-10-23T07:48:28.410Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -131,7 +131,7 @@ sources:
     resource: repo://src/pages/skill/playback.tsx
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-22T22:22:08.524Z" }
+generated: { by: "claude-code", at: "2026-10-23T07:48:28.410Z" }
 ---
 
 # Port decisions and their reasons
@@ -646,6 +646,9 @@ the choices that make a number trustworthy or not.
   window itself costs: the repository records no in-window idle floor since gpuix `f993d9b9`, which wakes an idle
   window 0 times a second (the README row for it was removed; a window run measures it). Quote headless for "which page,
   which loop" and `--window` for "what does the user's machine pay".
+  Headless also cannot test whether input reaches an idle window: `TestGpuixRenderer` has no `postNativeEvent` or
+  `setFrameWakeCallback` and its window is not on AppKit's run loop, so the README row for gpuix #77 (wake on idle input,
+  answered by `6f2a72d3`) has no regression check here; a window run with real input is the only one.
 - **A window run is only valid for a visible window.** A covered window gets no display link, so the driver reads
   `GPUIX_PRESENT_LOG` and flags the row `occluded` (exit 1) instead of printing a low CPU. The present log adds one
   small write per presented frame to the process being measured. There is no key-window bookkeeping: on
