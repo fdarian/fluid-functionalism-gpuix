@@ -7,6 +7,7 @@
  * scenarios open it from the keyboard, then "pressing the trigger" presses it.
  */
 
+import { createTestRoot } from '@gpuix/solid/testing';
 import { createSignal, Show } from 'solid-js';
 import { App } from '#/app';
 import { ColorPicker } from '#/components/color-picker';
@@ -14,7 +15,6 @@ import { loadDemos, loadPages } from '#/lib/demo';
 import { fonts } from '#/lib/fonts';
 import { setThemeChoice } from '#/lib/theme';
 import { createCheck } from './check-kit';
-import { createTestWindow } from './test-window';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 let failed = false;
@@ -26,10 +26,10 @@ function check(name: string, ok: boolean, detail = '') {
 	if (!ok) failed = true;
 }
 
-const harnesses: ReturnType<typeof createTestWindow>[] = [];
+const harnesses: ReturnType<typeof createTestRoot>[] = [];
 
 function harness() {
-	const test = createTestWindow({ width: 1240, height: 780, fonts });
+	const test = createTestRoot({ width: 1240, height: 780, fonts });
 	harnesses.push(test);
 	const renderer = test.renderer;
 	const frame = () => {

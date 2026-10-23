@@ -6,15 +6,15 @@
  * Prints PASS / FAIL lines and exits non-zero on any FAIL.
  */
 
+import { createTestRoot } from '@gpuix/solid/testing';
 import { App } from '#/app';
 import { loadDemos, loadPages } from '#/lib/demo';
 import { fonts } from '#/lib/fonts';
 import { setThemeChoice } from '#/lib/theme';
 import { readPng } from './png-pixels';
-import { createTestWindow } from './test-window';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-const test = createTestWindow({ width: 1240, height: 780, fonts });
+const test = createTestRoot({ width: 1240, height: 780, fonts });
 const renderer = test.renderer;
 let failed = false;
 

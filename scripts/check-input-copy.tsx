@@ -14,15 +14,15 @@
  * - A press writes the value to `navigator.clipboard`; a refused write shows "Failed".
  */
 
+import { createTestRoot } from '@gpuix/solid/testing';
 import { InputCopy } from '#/components/input-copy';
 import { TooltipProvider } from '#/components/tooltip';
 import { fonts } from '#/lib/fonts';
 import { color, setThemeChoice } from '#/lib/theme';
 import { readPng } from './png-pixels';
-import { createTestWindow } from './test-window';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-const test = createTestWindow({ width: 600, height: 300, fonts });
+const test = createTestRoot({ width: 600, height: 300, fonts });
 const renderer = test.renderer;
 
 async function settle(ms: number) {

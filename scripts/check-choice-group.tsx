@@ -9,17 +9,17 @@
  *  - the indicator border and the label colour ease over 80 ms on hover.
  */
 import { mkdirSync } from 'node:fs';
+import { createTestRoot } from '@gpuix/solid/testing';
 import { App } from '#/app';
 import { loadDemos, loadPages } from '#/lib/demo';
 import { fonts } from '#/lib/fonts';
 import { setThemeChoice } from '#/lib/theme';
 import { readPng } from './png-pixels';
-import { createTestWindow } from './test-window';
 
 const outDir = `/tmp/check-choice-group-${process.pid}/`;
 mkdirSync(outDir, { recursive: true });
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-const test = createTestWindow({ width: 1000, height: 400, fonts });
+const test = createTestRoot({ width: 1000, height: 400, fonts });
 const renderer = test.renderer;
 
 function frame() {

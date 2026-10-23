@@ -3,13 +3,14 @@
  * a demo page of the app or one component tree in the offscreen renderer and
  * drives it in real time.
  */
+
+import { createTestRoot } from '@gpuix/solid/testing';
 import type { JSX } from 'solid-js';
 import { App } from '#/app';
 import { loadDemos, loadPages } from '#/lib/demo';
 import { fonts } from '#/lib/fonts';
 import { setThemeChoice } from '#/lib/theme';
 import { readPng } from './png-pixels';
-import { createTestWindow } from './test-window';
 
 const INK_PATH = `/tmp/check-kit-ink-${process.pid}.png`;
 
@@ -22,7 +23,7 @@ type CheckOptions = {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-type Renderer = ReturnType<typeof createTestWindow>['renderer'];
+type Renderer = ReturnType<typeof createTestRoot>['renderer'];
 
 /** The ported pages put a playground above the demos: scroll the page until the element is on screen. */
 export async function scrollIntoView(renderer: Renderer, testId: string) {
@@ -55,7 +56,7 @@ export async function createCheck(
 	options: CheckOptions = {},
 ) {
 	const isPage = typeof target === 'string';
-	const test = createTestWindow({
+	const test = createTestRoot({
 		width: options.width ?? (isPage ? 1240 : 800),
 		height: options.height ?? (isPage ? 780 : 600),
 		fonts,

@@ -14,16 +14,16 @@
  *   clock held; the send button's hover fill eases over 180 ms.
  */
 
+import { createTestRoot } from '@gpuix/solid/testing';
 import { fileFromPath, InputMessage } from '#/components/input-message';
 import { TooltipProvider } from '#/components/tooltip';
 import { AVATAR_JPG } from '#/lib/assets';
 import { fonts } from '#/lib/fonts';
 import { color, setThemeChoice } from '#/lib/theme';
 import { readPng } from './png-pixels';
-import { createTestWindow } from './test-window';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-const test = createTestWindow({ width: 700, height: 900, fonts });
+const test = createTestRoot({ width: 700, height: 900, fonts });
 const renderer = test.renderer;
 
 async function settle(ms: number) {
