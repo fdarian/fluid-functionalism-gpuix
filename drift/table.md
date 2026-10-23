@@ -8,7 +8,7 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 
 ## Highlight travel runs on `top` / `left`
 
-- **Cause:** `gpuix gap` (no transforms; `README.md:273`).
+- **Cause:** `gpuix gap` (no transforms; `README.md:279`).
 - **Original:** the highlight is pinned to the corner and moved with `x` / `y` transforms on `spring.fast`, width and height as layout (`registry/default/fluid-hover-highlight.tsx:74-77`, `:130-133`).
 - **Port:** `top` / `left` / `width` / `height` on the same spring (`src/lib/fluid-highlight.tsx:6-13`, `:81-88`).
 - **gpuix lacks:** CSS transforms.
