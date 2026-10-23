@@ -9,7 +9,7 @@ import type { JSX } from 'solid-js';
 import { App } from '#/app';
 import { loadDemos, loadPages } from '#/lib/demo';
 import { fonts } from '#/lib/fonts';
-import { setThemeChoice } from '#/lib/theme';
+import { fontFamily, setThemeChoice } from '#/lib/theme';
 import { readPng } from './png-pixels';
 
 const INK_PATH = `/tmp/check-kit-ink-${process.pid}.png`;
@@ -235,9 +235,11 @@ export async function createCheck(
 		const pages = await loadPages(demos);
 		test.render(() => <App demos={demos} pages={pages} initialPage={target} />);
 	} else {
-		// `App` carries preflight's line height on its root; a bare view gets it from a box that adds no layout of its own.
+		// `App` carries preflight's line height and the font on its root; a bare view gets them from a box that adds no layout of its own.
 		test.render(() => (
-			<div style={{ display: 'contents', lineHeight: 1.5 }}>{target()}</div>
+			<div style={{ display: 'contents', lineHeight: 1.5, fontFamily }}>
+				{target()}
+			</div>
 		));
 	}
 	const initialSettleMs = options.initialSettleMs ?? (isPage ? 800 : 0);
