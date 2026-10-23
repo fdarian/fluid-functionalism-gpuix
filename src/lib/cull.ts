@@ -41,15 +41,13 @@ export function useOnScreen(): Accessor<boolean> {
 
 const OVERSCAN = '25% 0px';
 
-type FarSize = { width: number; height: number };
-
 /**
  * gpuix lays out and paints every element, including those a scroller clips
  * away, so a long page costs a frame several times a short page's. A region
  * more than a quarter viewport from the page scroller gets
  * `content-visibility: hidden`: gpuix builds none of its content, and the
- * region keeps the size it was last laid out at (`contain-intrinsic-size:
- * auto`), so nothing shifts. The content stays mounted, so typed text and
+ * region keeps the size it was last laid out at and no other
+ * (`contain-intrinsic-size: auto none`), so nothing shifts. The content stays mounted, so typed text and
  * selections survive a scroll away and back.
  *
  * Regions nest: a region inside a far one stops observing until the outer
@@ -71,7 +69,6 @@ export function createCulling() {
 	}
 	const parentOnScreen = useContext(OnScreenContext);
 	const [far, setFar] = createSignal(false);
-	const [farSize, setFarSize] = createSignal<FarSize>();
 	const [observed, setObserved] = createSignal<HostElement>();
 
 	// A far region's remembered size belongs to its old element and its old Size. Showing it lets the new element lay out at its own, and the observer made below reports it again and hides it.
@@ -98,10 +95,8 @@ export function createCulling() {
 					setFar(false);
 					return;
 				}
-				// A target that was removed (a preview's tab swapped away), or has no box yet, reports as not intersecting too: hiding it at a zero size would collapse the region. The report's rect comes from the frame's own registry, so reading it forces no layout pass.
-				const rect = latest.boundingClientRect;
-				if (!target.mounted || rect.height === 0) return;
-				setFarSize({ width: rect.width, height: rect.height });
+				// A target that was removed (a preview's tab swapped away), or has no box yet, reports as not intersecting too: hiding it at a zero size would collapse the region.
+				if (!target.mounted || latest.boundingClientRect.height === 0) return;
 				setFar(true);
 			},
 			{ root, rootMargin: OVERSCAN },
@@ -116,21 +111,12 @@ export function createCulling() {
 		/** False while this region or any culled region around it is far. */
 		onScreen: () => parentOnScreen() && !far(),
 		/**
-		 * The style that hides the region while it is far. Both axes of `containIntrinsicSize` are written (one value would also set the width). `auto` makes the content box the region was last laid out at win over the report's border-box rect, which gpuix would add the padding and border to. gpuix only remembers that size for an element whose style says `auto` while it shows, so the visible style carries `auto none` too, and the rect only stands in for a region never laid out.
+		 * The style that hides the region while it is far. The size it keeps is the one it was last laid out at, nothing else: `containIntrinsicSize` is `auto none` on both axes (one value would also set the width). gpuix only remembers that size for an element whose style says `auto` while it shows, so the visible style carries `auto none` too.
 		 */
-		style: (): StyleDesc => {
-			const size = farSize();
-			if (!far() || size === undefined) {
-				return {
-					contentVisibility: 'visible',
-					containIntrinsicSize: 'auto none',
-				};
-			}
-			return {
-				contentVisibility: 'hidden',
-				containIntrinsicSize: `auto ${size.width}px auto ${size.height}px`,
-			};
-		},
+		style: (): StyleDesc => ({
+			contentVisibility: far() ? 'hidden' : 'visible',
+			containIntrinsicSize: 'auto none',
+		}),
 		/** A signal, so a region that remounts (a preview's Code tab and back) is observed again. */
 		ref: setObserved,
 	};
