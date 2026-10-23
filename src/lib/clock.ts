@@ -55,7 +55,9 @@ function setShown(subscriber: Subscriber, shown: boolean) {
  * ends with the owner that made it. A subscriber inside a culled region
  * (`OnScreenContext`) is skipped while that region is far: every signal a
  * hidden loop sets would still redraw the window. It resumes as after a stall,
- * with the next `dt` counting from the resume. A stalled frame is skipped for
+ * with the next `dt` counting from the resume. Warning: the native loops above
+ * do not read `OnScreenContext` and keep running inside a hidden region (gpuix
+ * #97); only this and timers that read `useOnScreen()` hold still. A stalled frame is skipped for
  * everyone rather than delivered as one huge `dt`. Returns a function that ends
  * the subscription early.
  */

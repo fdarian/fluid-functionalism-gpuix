@@ -24,9 +24,12 @@ export const PageScrollContext =
 
 /**
  * Whether the subtree is shown: false inside any culled region that is far
- * from the scroller. A hidden subtree keeps its loops mounted but builds
- * nothing, yet every signal a loop sets still redraws the whole window, so
- * `onFrame` and timer loops read this and hold still while it is false.
+ * from the scroller. A hidden subtree builds nothing, but its loops are not
+ * paused: every signal a loop sets still redraws the whole window. Only
+ * `onFrame` and timer loops that read this hold still while it is false.
+ * gpuix-native loops (motion values and `motion.*` `animate` with repeat, CSS
+ * `animation` and transitions) do not read it and keep scheduling whole frames
+ * inside a hidden region (gpuix #97); Chrome neither advances nor renders them.
  * Separate from `PreviewPlaybackContext`, which is the changelog's own
  * in-view-and-not-paused rule for a preview's script.
  */
