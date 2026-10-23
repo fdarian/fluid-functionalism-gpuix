@@ -108,8 +108,10 @@ type Probe = {
 };
 
 type NativeTime = {
-	/** Wall ms of each `drawFrame()` that painted. */
+	/** Wall ms of each `drawFrame()` that painted a whole frame. */
 	drawMs: number[];
+	/** Wall ms of each `drawFrame()` that drew anything, patched frames included. */
+	allDrawMs: number[];
 	/** Process CPU ms across `dispatchNativeEvents()` and `drawFrame()`, painted or not; the native side's own threads count. */
 	nativeCpuMs: number;
 };
@@ -214,6 +216,7 @@ function mountHeadless(): Probe {
 	renderer.setInlineDraws(false);
 
 	let drawMs: number[] = [];
+	let allDrawMs: number[] = [];
 	let nativeCpuMs = 0;
 
 	/** One display-link wake: events reach JS, then the window draws if something is dirty. */
@@ -222,12 +225,17 @@ function mountHeadless(): Probe {
 		renderer.dispatchNativeEvents();
 		const dispatched = performance.now();
 		const paintedBefore = renderer.getPaintedFrameCount();
+		const patchedBefore = renderer.getPatchCounters().patchedFrames;
 		renderer.drawFrame();
 		const end = performance.now();
 		const cpuInNative = process.cpuUsage(cpuBefore);
 		nativeCpuMs += (cpuInNative.user + cpuInNative.system) / 1000;
-		if (renderer.getPaintedFrameCount() > paintedBefore) {
+		const painted = renderer.getPaintedFrameCount() > paintedBefore;
+		if (painted) {
 			drawMs.push(end - dispatched);
+		}
+		if (painted || renderer.getPatchCounters().patchedFrames > patchedBefore) {
+			allDrawMs.push(end - dispatched);
 		}
 	}
 
@@ -244,6 +252,7 @@ function mountHeadless(): Probe {
 			layoutStart = renderer.getLayoutPassCount();
 			renderer.resetBuildCounters();
 			drawMs = [];
+			allDrawMs = [];
 			nativeCpuMs = 0;
 		},
 		read: () => {
@@ -261,7 +270,7 @@ function mountHeadless(): Probe {
 		},
 		retainedElements: () => renderer.getRetainedElementCount(),
 		presentedTotal: () => null,
-		nativeTime: () => ({ drawMs, nativeCpuMs }),
+		nativeTime: () => ({ drawMs, allDrawMs, nativeCpuMs }),
 	};
 }
 
@@ -435,6 +444,13 @@ console.log(
 				: {
 						mean: mean(nativeTime.drawMs),
 						p90: percentile(nativeTime.drawMs, 0.9),
+					},
+		allDrawMsPerFrame:
+			nativeTime === null || nativeTime.allDrawMs.length === 0
+				? null
+				: {
+						mean: mean(nativeTime.allDrawMs),
+						p90: percentile(nativeTime.allDrawMs, 0.9),
 					},
 		jsShare:
 			nativeTime === null ? null : (cpuMs - nativeTime.nativeCpuMs) / cpuMs,

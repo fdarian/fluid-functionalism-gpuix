@@ -8,7 +8,8 @@
  * so Bun's transpile cost stays out of the memory numbers; `--source` runs it
  * from source. Without slugs every page is measured. Writes
  * `perf/footprint-<label>.json` and prints a table (`draw ms` is mean/p90 of the
- * painting `drawFrame()` calls (patched frames not among them), `js%` the process CPU share outside the native calls (approximate); headless only).
+ * `drawFrame()` calls that built a whole frame, patched frames not among them; `all draw ms` is mean/p90 of every
+ * `drawFrame()` call that drew, patched ones included, so it falls when patching replaces whole frames while `draw ms` rises; `js%` the process CPU share outside the native calls (approximate); headless only).
  * `draws/s` counts every frame, patched ones included; `patched/s` and `full/s` split it into ticks gpuix drew by patching the frame before them and
  * frames built whole; `why` is the top two reasons for the whole ones (gpui's `declines` and gpuix's
  * `unpatchable` kinds, as `Reason:count` over the idle window; the JSON has both maps in full). The counters name
@@ -88,8 +89,10 @@ type PageResult = {
 	declines: Record<string, number>;
 	/** Ticks gpuix did not try to patch, by kind, counted over the idle window. */
 	unpatchable: Record<string, number>;
-	/** Headless only: wall ms of the `drawFrame()` calls that painted; null when none did. */
+	/** Headless only: wall ms of the `drawFrame()` calls that painted a whole frame; null when none did. */
 	drawMsPerFrame: { mean: number; p90: number } | null;
+	/** Headless only: wall ms of every `drawFrame()` call that drew, patched frames included; null when none did. */
+	allDrawMsPerFrame: { mean: number; p90: number } | null;
 	/** Headless only: the share of the CPU time outside `dispatchNativeEvents()` and `drawFrame()`. */
 	jsShare: number | null;
 	/** Window mode only: nothing was presented before the idle window, or the idle window drew and none of it was shown. A window covered after its first frame, on a page that then draws nothing, looks like a visible still page: not detectable. */
@@ -411,6 +414,13 @@ function printTable(results: PageResult[]) {
 				result.drawMsPerFrame === null
 					? '-'
 					: `${result.drawMsPerFrame.mean.toFixed(1)}/${result.drawMsPerFrame.p90.toFixed(1)}`,
+		],
+		[
+			'all draw ms',
+			(result) =>
+				result.allDrawMsPerFrame === null
+					? '-'
+					: `${result.allDrawMsPerFrame.mean.toFixed(1)}/${result.allDrawMsPerFrame.p90.toFixed(1)}`,
 		],
 		[
 			'js%',
