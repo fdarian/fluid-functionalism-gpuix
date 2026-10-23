@@ -5,7 +5,7 @@ description: Why the Fluid Functionalism port to gpuix uses native springs, nati
 tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-23T07:48:28.410Z
+    at: 2026-10-23T19:28:25.041Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -17,8 +17,6 @@ sources:
     resource: repo://drift/file-thumbnail.md
   - id: openwiki-source-385da475ebb9649b27cbd9e7
     resource: repo://drift/site.md
-  - id: openwiki-source-5cfc44b662eef11b303099d9
-    resource: repo://drift/tabs-subtle.md
   - id: openwiki-source-7bed81eca49ee8a9899cacc5
     resource: repo://drift/thinking-indicator.md
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
@@ -61,8 +59,6 @@ sources:
     resource: repo://scripts/registry-plugin.ts
   - id: openwiki-source-a29d9251e39930cd08b68b32
     resource: repo://scripts/run-scenarios.ts
-  - id: openwiki-source-e7819e481ddba2ac4134b389
-    resource: repo://scripts/test-window.ts
   - id: openwiki-source-5ebe82cc5f9e383e14411602
     resource: repo://src/app.tsx
   - id: openwiki-source-456bdd1fc2b44eea01d30954
@@ -131,7 +127,7 @@ sources:
     resource: repo://src/pages/skill/playback.tsx
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-23T07:48:28.410Z" }
+generated: { by: "claude-code", at: "2026-10-23T19:28:25.041Z" }
 ---
 
 # Port decisions and their reasons
@@ -589,10 +585,13 @@ How to check these, because the obvious checks pass:
   2.87 ms median; paint-only write 0.05 passes, 0.02 ms. gpuix has no per-pass timer, so the time is taken on the JS
   side with `performance.now`, and it moves with load: compare passes per read first, milliseconds only at a similar
   load average.
-- Every check window opens at scale factor 1 (`scripts/test-window.ts`, used by `check-kit` and the checks that
-  build their own window). The test platform gives a window the scale of the machine's displays, so with a Retina
-  secondary display attached a check samples captured pixels at 2x while reading logical coordinates, and its result
-  depends on the machine. A check of another scale sets it itself after the first frame.
+- Every check window opens at scale factor 1, which is `createTestRoot`'s default since gpuix `f6f09d95` (#86), so the
+  checks call it directly and `scripts/test-window.ts` is gone. Before that the test platform gave a window the scale
+  of the machine's displays, so with a Retina secondary display attached a check sampled captured pixels at 2x while
+  reading logical coordinates, and its result depended on the machine; the wrapper set the scale to 1 before the first
+  frame. A check of another scale sets it itself after the first frame. A bare-view check (`createCheck` with a
+  function target) also carries the Inter `fontFamily` on its root, as `App` does: without it the view is measured in
+  the default font and cap and x heights come out of the wrong face.
 - `scripts/check-site-nav.tsx` scrolls the Changelog down, clicks a sidebar row and reads the scroll metrics
   immediately: the read draws what is pending, so it sees the new page's first frame. Reading after a settle would pass
   even if the page had been corrected a frame late.
@@ -733,10 +732,11 @@ authored `marginTop` (`labelTop`, 8.55 default, 9.27 compact) and the entry took
 directly, `labelTop` and the clip-height constant are deleted, and the entry became "the baseline sits up to 0.45 px
 below Chrome's" (gpuix placed an atomic inline at a whole device pixel, plus a cap-height metric of 0.704em against
 Chrome's 0.727em). The drift total stayed at 541. On `8352e66c` (Round 15a) gpuix keeps an atomic inline's fractional
-origin, so the baseline is exactly Chrome's (24.00 and 20.00 inside the tab); the entry now reads "the cap box is 0.28
-px shorter than Chrome's" and is a font-metric residue only. `check-tabs-subtle` pins the baseline within 0.01 px
-(it was 0.5 px), the 24 px clip and the visible descender, and still does not compare the cap box height, which is a
-font metric of every trimmed label.
+origin, so the baseline is exactly Chrome's (24.00 and 20.00 inside the tab); the entry then read "the cap box is 0.28
+px shorter than Chrome's", a font-metric residue only. On `f6f09d95` (Round 15c, #85) gpuix reads cap and x heights
+from the font's OS/2 table like Chrome, and the entry is deleted (drift 541 to 539 with the half-pixel glyph entry).
+`check-tabs-subtle` pins the baseline within 0.01 px, the cap top within 0.02 px of Chrome's (14.55 default, 11.27
+compact), the 24 px clip and the visible descender.
 
 ## Screenshots and check-* scenarios
 

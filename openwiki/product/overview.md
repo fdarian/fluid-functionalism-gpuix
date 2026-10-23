@@ -14,10 +14,10 @@ sources:
     resource: repo://THIRD_PARTY_NOTICES.md
   - id: openwiki-source-ff18555ad70362de0f452788
     resource: repo://UPSTREAM.md
-generated: { by: "claude-code", at: "2026-10-23T07:48:28.410Z" }
+generated: { by: "claude-code", at: "2026-10-23T19:28:25.041Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-23T07:48:28.410Z
+    at: 2026-10-23T19:28:25.041Z
 ---
 
 # Project overview
@@ -33,7 +33,7 @@ home bento grid, the docs and System pages, Compare, Concepts, Audio Mixer, Chan
 
 It started on 2026-10-12 as an experiment answering one question: **can gpuix draw this library faithfully?** The
 answer is yes, with recorded differences. Every difference from the source is an entry in `drift/`
-with a cause (541 on 2026-10-22 after the bento Sidebar sample person was renamed "Com Truise" (a port-choice entry); 540 after Round 15a on gpuix `8352e66c` added the half-pixel glyph-origin entry; 539 earlier that day, after the table's border-color fade entry closed on gpuix `511bebab`; 540 after the font-smoothing entry closed on `f7b62f11`; it had been 541 since the Untitled UI drop and the sample-photo replacement added a few; 532 right after the `b03d4e27` adoption, 538 after the 2026-10-19 native-animation round, down from 577 once variable fonts and the round 6 features closed their entries; printed by `scripts/drift-counts.ts`), so the repository doubles as a catalogue of what gpuix can and cannot do against a real, demanding
+with a cause (539 on 2026-10-23 after Round 15c on gpuix `f6f09d95` closed the half-pixel glyph-origin and tabs-subtle cap-box entries; 541 on 2026-10-22 after the bento Sidebar sample person was renamed "Com Truise" (a port-choice entry); 540 after Round 15a on gpuix `8352e66c` added the half-pixel glyph-origin entry; 539 earlier that day, after the table's border-color fade entry closed on gpuix `511bebab`; 540 after the font-smoothing entry closed on `f7b62f11`; it had been 541 since the Untitled UI drop and the sample-photo replacement added a few; 532 right after the `b03d4e27` adoption, 538 after the 2026-10-19 native-animation round, down from 577 once variable fonts and the round 6 features closed their entries; printed by `scripts/drift-counts.ts`), so the repository doubles as a catalogue of what gpuix can and cannot do against a real, demanding
 design system. That catalogue fed the gpuix fork's work directly
 (see [gpuix gaps and divergence rounds](../gpuix/gaps-and-divergence-rounds.md)).
 
@@ -67,7 +67,7 @@ site was the only place to see them. Which files are at which pin, and how to ca
 - **`~/code/fdarian/gpuix`**, branch `poc`: the owner's fork of [remorses/gpuix](https://github.com/remorses/gpuix),
   which follows DOM/CSS semantics wherever upstream gpuix did not. Its `README.md` and `FORK.md` are the gpuix
   reference. The port needs the fork, not upstream gpuix: native springs, the DOM event model and many fixes
-  exist only there. The README names the minimum fork commit (`6f2a72d3` as of 2026-10-23); read it there, not here.
+  exist only there. The README names the minimum fork commit (`f6f09d95` as of 2026-10-23); read it there, not here.
 - **`~/code/fdarian/base-ui-solid-gpuix`**: headless Solid ports of the Base UI primitives (keys, selection, open
   state, focus, ARIA), split out of this repository on 2026-10-17.
 
@@ -97,3 +97,4 @@ All three must resolve to one `solid-js` and one `@gpuix/solid`; see
 | 2026-10-23 | Pinned to gpuix `poc` `e591681e` (Round 16): a forced bounds read after a layout write costs one pass (about 2.9 ms on the Command Menu page) and none after a paint-only write; an observer-toggled `contentVisibility: 'hidden'` was A/B-tested against `createCulling` and lost, so culling stays; `check-command-menu` prints the forced-read probe and `check-site-nav` asserts a switch back to the Changelog lands at the top ([details](../gpuix/gaps-and-divergence-rounds.md#round-16-the-contentvisibility-ab-on-poc-e591681e-2026-10-23)) |
 | 2026-10-23 | Pinned to gpuix `poc` `c6475390` (Round 14a): paint patching now reaches loops next to an input, under a positioned or translucent ancestor, on a motion value and in an `<svg>`, so the port deleted its off-screen `onScreen` gates and `Show` swaps on the button, file-thumbnail and thinking-indicator loops and ThinkingIndicator's conditional `position: relative` (no measurable cost); a loop that draws nothing still costs about 3.5% CPU in gpuix's dormant tick, and the word roll, fluid-hover cursor and carousel fill stay whole-frame layout loops ([details](../gpuix/gaps-and-divergence-rounds.md#round-14a-paint-patching-reaches-inputs-positioned-ancestors-and-motion-values-on-poc-c6475390-2026-10-23)) |
 | 2026-10-23 | Pinned to gpuix `poc` `6f2a72d3` (Round 14c): input to an idle window wakes the frame loop, which fixes the lag after Cmd-K into the Command Menu once the page had stopped ticking (gpuix #77, answered by #93); no port change, and no headless regression check exists because the test renderer cannot post a native event ([details](../gpuix/gaps-and-divergence-rounds.md#round-14c-input-to-an-idle-window-wakes-the-frame-loop-on-poc-6f2a72d3-2026-10-23)) |
+| 2026-10-23 | Pinned to gpuix `poc` `f6f09d95` (Round 15c): the test renderer defaults to scale 1 and offscreen windows keep their size, so `scripts/test-window.ts` is gone; glyph origins round half up and cap and x heights come from OS/2, so the half-pixel text entry in `drift/home.md` and the tabs-subtle cap-box entry are deleted (drift 541 to 539); the bento card pins `flexBasis: '0%'`, so FF no longer depends on gpuix #96; screenshots recaptured, 1 px label and row shifts on almost every page ([details](../gpuix/gaps-and-divergence-rounds.md#round-15c-scale-1-test-windows-half-up-glyph-origins-and-os2-cap-heights-on-poc-f6f09d95-2026-10-23)) |

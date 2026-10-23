@@ -12,8 +12,6 @@ sources:
     resource: repo://drift/home.md
   - id: openwiki-source-d4a4bb7ecd3d3f6e47c46abd
     resource: repo://drift/table.md
-  - id: openwiki-source-5cfc44b662eef11b303099d9
-    resource: repo://drift/tabs-subtle.md
   - id: openwiki-source-7bed81eca49ee8a9899cacc5
     resource: repo://drift/thinking-indicator.md
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
@@ -52,6 +50,8 @@ sources:
     resource: repo://src/components/thinking-steps.tsx
   - id: openwiki-source-a79b6ccf1548a05902eb90b6
     resource: repo://src/demos/thinking-steps.tsx
+  - id: openwiki-source-b75d96422f6e56f4bc16d490
+    resource: repo://src/home/bento-card.tsx
   - id: openwiki-source-a6e7d28cb827574c90025f7b
     resource: repo://src/home/bento-grid.tsx
   - id: openwiki-source-2784d511d2f9a521edaf8bb9
@@ -78,10 +78,10 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-872f10458af3aae905a0ee5a
     resource: repo://src/pages/fluid-hover/plain-vs-fluid.tsx
-generated: { by: "claude-code", at: "2026-10-23T07:48:28.410Z" }
+generated: { by: "claude-code", at: "2026-10-23T19:28:25.041Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-23T07:48:28.410Z
+    at: 2026-10-23T19:28:25.041Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -117,7 +117,7 @@ link to those rows rather than repeating them. The ones that shape the most code
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
 The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17) and again in the
-[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `6f2a72d3` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`, `f993d9b9` in [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22), `511bebab` in [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22), `8352e66c` in [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22), `e591681e` in [Round 16](#round-16-the-contentvisibility-ab-on-poc-e591681e-2026-10-23), `c6475390` in [Round 14a](#round-14a-paint-patching-reaches-inputs-positioned-ancestors-and-motion-values-on-poc-c6475390-2026-10-23), and `6f2a72d3` in [Round 14c](#round-14c-input-to-an-idle-window-wakes-the-frame-loop-on-poc-6f2a72d3-2026-10-23)). The bugs and gaps worth knowing before touching layout code:
+[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `f6f09d95` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`, `f993d9b9` in [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22), `511bebab` in [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22), `8352e66c` in [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22), `e591681e` in [Round 16](#round-16-the-contentvisibility-ab-on-poc-e591681e-2026-10-23), `c6475390` in [Round 14a](#round-14a-paint-patching-reaches-inputs-positioned-ancestors-and-motion-values-on-poc-c6475390-2026-10-23), `6f2a72d3` in [Round 14c](#round-14c-input-to-an-idle-window-wakes-the-frame-loop-on-poc-6f2a72d3-2026-10-23), and `f6f09d95` in [Round 15c](#round-15c-scale-1-test-windows-half-up-glyph-origins-and-os2-cap-heights-on-poc-f6f09d95-2026-10-23)). The bugs and gaps worth knowing before touching layout code:
 
 - A function-form `createTransform` of several motion values is computed in JS and can trail its inputs by a frame
   on a live window (not seen on the test renderer). `calc()` strings of the row's own width avoid it where the layer
@@ -139,13 +139,13 @@ The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adopt
   check can read a fractional box and no longer needs a scale-up to see sub-pixel differences. Since `8352e66c` an
   atomic inline (tabs-subtle's `inline-grid` label, Beacon's badges, a URL chip) also keeps its fractional origin and a
   half-pixel one rounds up like Chrome, where it used to sit at a whole device pixel, up to half a pixel off. The
-  residue is the cap height, read as 0.704em where Chrome has 0.727em, and the glyph rows in the next item.
-- Text whose top lands exactly on a half device pixel (.5 at scale 1, .25 or .75 at scale 2) paints its glyphs one
-  row above Chrome's, because gpuix rounds a glyph origin half down in `split_glyph_origin` and Chrome rounds a text
-  baseline half up. Boxes, fills and positions are exact; only the glyph row differs, and only on exact ties. The
-  showcase's ThinkingSteps tile is the known instance (an odd-height box centres the Research Agent card at y.5). Not
-  nudged in the port; a drift entry in `drift/home.md` and a README gap row. See
-  [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22).
+  residue was the cap height, read as 0.704em where Chrome has 0.727em, and the glyph rows in the next item; both
+  closed on `f6f09d95` ([Round 15c](#round-15c-scale-1-test-windows-half-up-glyph-origins-and-os2-cap-heights-on-poc-f6f09d95-2026-10-23)).
+- Text whose top lands exactly on a half device pixel (.5 at scale 1, .25 or .75 at scale 2) used to paint its glyphs
+  one row above Chrome's, because gpuix rounded a glyph origin half down in `split_glyph_origin` where Chrome rounds a
+  text baseline half up (the showcase ThinkingSteps tile was the known instance). Closed on `f6f09d95` (#84): the
+  `drift/home.md` entry and the README gap row are gone. See [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22)
+  for how it was found and [Round 15c](#round-15c-scale-1-test-windows-half-up-glyph-origins-and-os2-cap-heights-on-poc-f6f09d95-2026-10-23) for the close.
 - A looping native animation replays the whole page every tick, so it is cheap only on light pages (7 ms a tick at
   3000 nodes, about 60 ms at 12000): see the [`b03d4e27` adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21). Paint-only ticks are patched since
   `196d69ce` and, past the input, positioned-ancestor and motion-value blockers, since `c6475390`
@@ -453,8 +453,9 @@ cannot get from the diff:
   `check-command-menu` asserts both boxes. Combobox and dropdown-search fields set `24px` explicitly. The Compare
   page's shadcn input is the source's content box (22px high at 20px leading) because that component is a replica.
 - **The check harness wraps a bare view.** `check-kit` renders the view under test inside a `display: contents`
-  box with `lineHeight: 1.5`, because only `App` carries the root rule; without the wrapper a scenario that mounts a
-  component alone measures a different box from the app. `display: contents` adds no layout of its own.
+  box with `lineHeight: 1.5` and, since `f6f09d95`, the Inter `fontFamily`, because only `App` carries the root rule
+  and font; without the wrapper a scenario that mounts a component alone measures a different box from the app.
+  `display: contents` adds no layout of its own.
 - **README gap rows were re-measured against Chromium, not trusted.** Four rows changed: Tab order under `order`
   (the cite is now gpuix's own contradicting docs), the dropdown sticky row (padding, not margin; see above), the
   fit-content row (any negative margin, no `alignSelf` cure), and the `has*` list gained `hasDisabled` and
@@ -587,7 +588,7 @@ and the carousel-dots and fluid-hover entries lost a clause, not a section.
 - **A trimmed `inline-grid` in a strut block sits on the baseline.** tabs-subtle dropped the `height: 24` clip and the
   authored `labelTop` offset for the source's `fontSize: 16, lineHeight: '24px'` block. What remained on this pin was
   half a device pixel of atomic-inline placement (closed on `8352e66c`) and a 0.28 px cap-height metric difference (gpuix
-  0.704em, Chrome 0.727em), recorded as a drift entry that was rewritten, not deleted. The README "Bugs" row for it is gone. `check-tabs-subtle` then pinned the
+  0.704em, Chrome 0.727em; closed on `f6f09d95`, which deleted the drift entry), recorded as a drift entry that was rewritten, not deleted. The README "Bugs" row for it is gone. `check-tabs-subtle` then pinned the
   baseline within 0.5 px of Chrome's (0.01 px since `8352e66c`) and compares no cap box. See
   [Port decisions, drift/](../decisions/port-decisions.md#drift-and-its-cause-values).
 - **`animate()` on a motion value returns playback controls, and `finished` means finished.** The controls are
@@ -904,7 +905,7 @@ recorded as declined is now patched. The port's response was to delete code, not
 - **Per-frame draw time is also about 1.4 ms higher on `c6475390`** for the same frames (thinking-indicator's patched
   tick 2.4-3.2 to 3.4-4.6 ms, carousel-dots' 1.3-2.8 to 2.9-3.6 ms, six runs), unattributed: gpuix cannot be A/B'd from
   this repository and its FORK.md documents only a first draw 15% dearer.
-- **Not done:** no screenshots were recaptured (gpuix #86 was still pending), and every figure is headless.
+- **Not done:** no screenshots were recaptured (gpuix #86, the test renderer's scale, was still pending; it landed in [Round 15c](#round-15c-scale-1-test-windows-half-up-glyph-origins-and-os2-cap-heights-on-poc-f6f09d95-2026-10-23), which recaptured them), and every figure is headless.
 
 ## Round 14c: input to an idle window wakes the frame loop on `poc` `6f2a72d3` (2026-10-23)
 
@@ -930,3 +931,31 @@ needs gpuix `6f2a72d3` or later".
   script in the notes folder is the check. This is the same limit as the idle-floor figures in
   [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22): a window run, not
   headless, is what measures it.
+
+## Round 15c: scale-1 test windows, half-up glyph origins and OS/2 cap heights on `poc` `f6f09d95` (2026-10-23)
+
+The README now names `f6f09d95` (zed `bf338a3ab6`) as the minimum fork. Four gpuix changes landed, two README rows and
+two drift entries closed (drift 541 to 539), and one dependency was dropped.
+
+- **The test renderer defaults to scale 1 (#86), and offscreen windows keep the size asked (#94).** `createTestRoot`
+  no longer follows the machine's displays, so `scripts/test-window.ts` (a wrapper that set the scale to 1 before the
+  first frame) was deleted and every check calls `createTestRoot` directly. A capture keeps its requested 1240x780.
+- **Glyph origins round half up (#84).** The "text at a half-pixel origin paints 1 px above Chrome" gap found in
+  [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22) is closed: the README Bugs
+  row and the `drift/home.md` entry were removed, and the repro (`r15a-chip-half-pixel`) now matches 26-38 / 26-38 at
+  the .5 tie.
+- **Cap and x heights come from the font's OS/2 table (#85).** The tabs-subtle unfolding label's cap box is Chrome's
+  (14.55 default, 11.27 compact), so its 0.28 px drift entry was deleted and `check-tabs-subtle` pins the cap top
+  within 0.02 px. `createCheck` now also sets the Inter `fontFamily` on a bare view: without it the view is measured
+  in the default font and the new metrics read the wrong face. `check-tabs`' `near` helper allows 0.5 px
+  (`<= 0.5`), because with Inter set the pill sits on a whole pixel next to a tab at .5.
+- **FF no longer depends on gpuix #96.** The bento card's preview box pins `flexBasis: '0%'`, the source's `flex-1`,
+  instead of `0`. `flexBasis: 0` on an auto-height column item collapses in Chrome and not in gpuix (#96, still open),
+  so once gpuix matched Chrome the one-column tiles would have collapsed; `'0%'` matches Chrome in gpuix today. Every
+  tile's height at 700 / 1240 / 1600 px is unchanged to 1/64 px, and the README rows for #89 and #96 say so.
+- **Screenshots were recaptured (618 files over 49 pages)** and the diff is large and not noise: text widths, table row
+  distribution, `fr` remainders and centring follow Blink at 1/64, so labels and rows move 1 px on almost every page
+  and pages change height, which changes where a scenario's scroll position lands (concepts-quill `light.png` now ends
+  on the composer; command-menu `compact.png` shows different cards). 131 files that differ by at most 2 px in the
+  content area, and ten pages whose `Math.random` playground variant differs, were not recommitted. When a capture
+  moves after this pin, check the pin before suspecting the page.
