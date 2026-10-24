@@ -6,9 +6,9 @@ import type { IconRef } from './icons';
  * UI afterwards, so a scenario reads as a script of what a person would do.
  */
 export interface ShotContext {
-	/** Window-space centre of the element with this `testId`; throws when it is not painted (inside a region culled for being far from the scroller). */
+	/** Window-space centre of the element with this `testId`; throws when it has no box (not mounted). An element in a culled region reports where it lays out, which can be off the window: `reveal` it before a pointer event. */
 	centerOf(testId: string): { x: number; y: number };
-	/** Wheels the page 300px at a time, toward where the element's nearest painted ancestor sits, until the element is painted. A scenario that scrolls in 300px steps toward an element takes the same steps with or without it. */
+	/** Wheels the page 300px at a time, toward where the element lays out, until the element is built (outside every culled region). A scenario that scrolls in 300px steps toward an element takes the same steps with or without it. */
 	reveal(testId: string): Promise<void>;
 	/** Focus the element, as a keyboard user would arrive at it. */
 	focus(testId: string): Promise<void>;

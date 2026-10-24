@@ -261,8 +261,6 @@ export function ListsDemo() {
 	const measure = () => {
 		if (canvas === undefined || !canvas.mounted) return;
 		const box = canvas.getBoundingClientRect();
-		// A culled demo (display: none) reports an empty box: keep the last measure.
-		if (box.width === 0) return;
 		const next: Ends = {};
 		for (const callout of CALLOUTS) {
 			const targets = callout.targets.map((label) => rows.get(label));

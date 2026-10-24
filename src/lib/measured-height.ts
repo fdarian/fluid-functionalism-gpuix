@@ -14,8 +14,9 @@ import { toOffsetPx } from '#/lib/offset';
  * paint and on every size change: put `onLayout={measured.onLayout}` on the
  * content box.
  *
- * `onLayout` is silent while the box is not painted (display: none), so the
- * last height stays known until it paints again.
+ * `onLayout` is silent while the box sits in culled content
+ * (`content-visibility: hidden`, `createCulling`), even as a forced read lays
+ * it out, so the last height stays known until the region shows again.
  */
 export function createMeasuredHeight() {
 	const [height, setHeight] = createSignal<number>();
