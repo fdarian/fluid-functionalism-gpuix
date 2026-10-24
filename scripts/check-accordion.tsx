@@ -11,6 +11,10 @@
  *
  * Then a toggle moves the focused row: the ring keeps its spring.fast glide
  * (no snap window) and settles on the row.
+ *
+ * Last, a closed panel (closed at mount, and closed again once its exit is over)
+ * is `display: none`: no region and no text in the accessibility tree, and Tab
+ * from its trigger lands on the next trigger. An open one is in the tree.
  */
 import { mkdirSync } from 'node:fs';
 import { setThemeChoice } from '#/lib/theme';
@@ -142,6 +146,59 @@ kit.check(
 	'ring settles on the row',
 	Math.abs(settledRing.y + 2 - settledRow.y) < 0.5,
 	`off by ${(settledRing.y + 2 - settledRow.y).toFixed(2)}px`,
+);
+
+const nodes = () => Object.values(renderer.getA11yTree().nodes ?? {});
+const regionCount = () =>
+	nodes().filter((node) => node.aria?.role === 'Region').length;
+const hasText = (text: string) =>
+	nodes().some((node) => node.aria?.value === text);
+const triggerControls = (testId: string) => {
+	const id = kit.element(testId).customProps?.id;
+	const trigger = nodes().find((node) => node.aria?.author_id === id);
+	return trigger?.aria?.controls;
+};
+const tabLandsOn = async (from: string, to: string) => {
+	await kit.focus(from);
+	await kit.press('Tab');
+	return renderer.getFocusedElementId() === kit.element(to).id;
+};
+
+await kit.scrollIntoView('kb-1');
+await settle(500);
+const regionsClosed = regionCount();
+kit.check('closed at mount: no text in the tree', !hasText('Alpha body'));
+kit.check(
+	'closed at mount: Tab from the trigger lands on the next trigger',
+	await tabLandsOn('kb-1', 'kb-2'),
+);
+
+await kit.click('kb-1');
+await settle(500);
+const controls = triggerControls('kb-1');
+kit.check('open: the text is in the tree', hasText('Alpha body'));
+kit.check(
+	'open: the panel is one more region than the closed page had',
+	regionCount() === regionsClosed + 1,
+	`${regionsClosed} closed, ${regionCount()} open`,
+);
+kit.check(
+	'open: the trigger controls the panel',
+	controls?.length === 1,
+	`controls ${JSON.stringify(controls)}`,
+);
+
+await kit.click('kb-1');
+await settle(500);
+kit.check('closed after a cycle: no text in the tree', !hasText('Alpha body'));
+kit.check(
+	'closed after a cycle: no region',
+	regionCount() === regionsClosed,
+	`${regionsClosed} at mount, ${regionCount()} now`,
+);
+kit.check(
+	'closed after a cycle: Tab from the trigger lands on the next trigger',
+	await tabLandsOn('kb-1', 'kb-2'),
 );
 
 kit.finish();
