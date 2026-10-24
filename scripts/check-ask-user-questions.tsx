@@ -51,7 +51,7 @@ function maybeBounds(testId: string) {
 	if (found === undefined) return undefined;
 	return renderer.getElementBounds(found.id) ?? undefined;
 }
-/** Scrolls the page until the element is mid-window. Elements far off-screen have no painted bounds, so it scrolls blind in `blindStep` pixels (negative: up) until they have. */
+/** Scrolls the page until the element is mid-window. An element in a culled region reports where it lays out, so the offset aims at it; only an element with no box scrolls blind, in `blindStep` pixels (negative: up). */
 async function scrollTo(testId: string, blindStep = 500) {
 	for (let attempt = 0; attempt < 40; attempt++) {
 		const box = maybeBounds(testId);

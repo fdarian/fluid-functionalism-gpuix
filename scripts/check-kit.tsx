@@ -31,7 +31,7 @@ export async function scrollIntoView(renderer: Renderer, testId: string) {
 		const element = renderer.findByTestId(testId);
 		if (element === undefined) throw new Error(`no element ${testId}`);
 		const box = renderer.getElementBounds(element.id);
-		// An element far below the fold is not painted yet: scroll blind until it is.
+		// An element in a culled region reports where it lays out, so it is scrolled toward like any other; a null box means no layout at all, and the scroll goes blind.
 		const center = box === null ? null : box.y + box.height / 2;
 		if (center !== null && center > 120 && center < 600) return;
 		renderer.nativeSimulateScrollWheel(

@@ -84,7 +84,7 @@ export function createCulling() {
 		sizeChoice();
 		const root = scroller();
 		const target = observed();
-		// Inside a culled ancestor the target has no box and reports "not intersecting", which would hide it at a size of 0. Observing again once the ancestor shows gives a fresh first report.
+		// Inside a culled ancestor the target is not built and reports "not intersecting", which would hide it at a size of 0. Observing again once the ancestor shows gives a fresh first report.
 		if (root === undefined || target === undefined || !parentOnScreen()) return;
 		const observer = new IntersectionObserver(
 			(entries) => {
@@ -124,7 +124,7 @@ export function createCulling() {
  * Calls `onRatio` with how much of the element shows each time that share
  * crosses one of `thresholds` (0 to 1), as an `IntersectionObserver` reports it
  * against the window, clipped by every scroller on the way. Returns the `ref`
- * for the element; a subtree that is culled has no box and reports 0.
+ * for the element; a subtree that is culled is not built and reports 0.
  */
 export function observeVisibleRatio(
 	thresholds: number[],
