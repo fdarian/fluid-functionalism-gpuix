@@ -191,7 +191,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 
 | Component or page | gpuix gap | port choice | not ported yet | mixed | total |
 |---|---:|---:|---:|---:|---:|
-| [accordion](drift/accordion.md) | 2 | 8 | 7 | 0 | 17 |
+| [accordion](drift/accordion.md) | 2 | 9 | 6 | 0 | 17 |
 | [ask-user-questions](drift/ask-user-questions.md) | 1 | 4 | 7 | 3 | 15 |
 | [audio-mixer](drift/audio-mixer.md) | 0 | 3 | 0 | 0 | 3 |
 | [badge](drift/badge.md) | 0 | 3 | 0 | 0 | 3 |
@@ -237,7 +237,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 4 | 5 | 0 | 13 |
 | [tooltip](drift/tooltip.md) | 1 | 5 | 1 | 1 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **85** | **213** | **192** | **49** | **539** |
+| **Total** | **85** | **214** | **191** | **49** | **539** |
 
 ### gpuix gaps across components
 

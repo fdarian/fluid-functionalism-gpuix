@@ -30,7 +30,7 @@ repeating it.
 
 - **Cause:** `gpuix gap`: no transforms (README "Drift from the source", the CSS-transforms row).
 - **Original:** the accordion chevron turns 180 degrees over 200ms (`[&[data-state=open]>svg]:rotate-180`, `components/shadcn/accordion.tsx:34`); the content runs the `accordion-down` / `accordion-up` keyframes (`:55`).
-- **Port:** the chevron is `chevron-down` closed and `chevron-up` open, swapped at once. The panel measures its content and tweens `height` over 0.2s `easeOut`, then unmounts once closed so its text leaves the accessibility tree (`src/pages/compare/shadcn/accordion.tsx:13-62`).
+- **Port:** the chevron is `chevron-down` closed and `chevron-up` open, swapped at once. The panel measures its content and tweens `height` over 0.2s `easeOut`, then, once closed, unmounts its text and sets the region `display: none`, as Radix's `hidden` does (`src/pages/compare/shadcn/accordion.tsx:13-74`).
 - **gpuix lacks:** `transform: rotate` (FORK.md area E).
 - **Fidelity:** approximated.
 - **Components it hits:** every glyph FF turns with a transform.

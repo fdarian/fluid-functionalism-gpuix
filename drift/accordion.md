@@ -34,7 +34,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** every mouse move tests the pointer's y against each open item's panel band (trigger bottom to item bottom) and clears the hover when it is inside (`registry/base/accordion.tsx:358-378`).
-- **Port:** `onMouseEnter` / `onMouseLeave` on the panel call `overContent`, which clears the hover and mutes the group's mouse move until the panel is left (`src/components/accordion.tsx:267-270`, `:294-298`, `:643-648`). A panel that is closing counts as no panel at once (`item.isOpen()` guard).
+- **Port:** `onMouseEnter` / `onMouseLeave` on the panel call `overContent`, which clears the hover and mutes the group's mouse move until the panel is left (`src/components/accordion.tsx:267-270`, `:294-298`, `:641-646`). A panel that is closing counts as no panel at once (`item.isOpen()` guard).
 - **Workaround:** none.
 - **Fidelity:** approximated (the same result except while a panel animates under a still pointer).
 - **Components it hits:** just this one.
@@ -76,13 +76,13 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 - **Fidelity:** dropped for standalone.
 - **Components it hits:** just this one.
 
-## Closed panel text is unmounted instead of hidden
+## A panel closed at mount hides after its text first lays out
 
-- **Cause:** `not ported yet` (the comment says gpuix has no `display: none`; it has, `FORK.md:628`, and `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:50` records it).
-- **Original:** the panel stays mounted and gets `hidden` once the exit finishes (`registry/base/accordion.tsx:939`).
-- **Port:** the text is removed from the tree after the exit (`retired`, `base-ui:src/accordion/panel/use-accordion-panel.ts:9-38`, `src/components/accordion.tsx:669-689`, `:642`, `:672`); the panel box stays as a zero-height `role="region"`. A reopen re-mounts and re-lays out the text; the last measured height is cached.
-- **Workaround:** the unmount.
-- **Fidelity:** approximated (same tab order and accessibility tree).
+- **Cause:** `port choice` (the first open springs to a measured height, which a hidden box cannot report).
+- **Original:** Base UI hides a closed-at-mount panel from its first render: `keepMounted` with `hidden` (`registry/base/accordion.tsx:923-939`).
+- **Port:** the closed panel stays mounted and goes `display: none` after the exit (`createAccordionPanel(…, { keepMounted: true })`, `hidden()` and `onExitComplete`, `base-ui:src/accordion/panel/use-accordion-panel.ts:16-47`, `src/components/accordion.tsx:632`, `:640`, `:648-650`). A panel closed at mount stays a zero-height `role="region"` until its text's first `onLayout`, one frame after paint, so the first open has a height to spring to; the measured height stays cached across the hide.
+- **Workaround:** `display: none` only once `contentHeight()` is known.
+- **Fidelity:** approximated (tab order identical; the accessibility tree differs only for that first frame).
 - **Components it hits:** none other (thinking-steps uses `inert`).
 
 ## Height always springs; the source snaps when the panel did not toggle
@@ -90,7 +90,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 - **Cause:** `not ported yet`.
 - **Original:** the height springs only while this panel toggles; a size change from nested content, and the hand-off from `height: auto` for an item open at mount, snap (`toggling`, `registry/base/accordion.tsx:872-876`, `:953-958`).
 - **Port:** the transition depends only on `item.isOpen()` (`src/components/accordion.tsx:638-639`). Content that changes height while open (a nested accordion, a re-wrap) springs and chases. Whether an item open at mount plays a grow on its first measure was not run.
-- **Workaround:** `height: "auto"` until the first measure (`src/components/accordion.tsx:651-654`).
+- **Workaround:** `height: "auto"` until the first measure (`src/components/accordion.tsx:653-656`).
 - **Fidelity:** approximated.
 - **Components it hits:** any panel holding collapsibles (thinking-steps, sidebar).
 
