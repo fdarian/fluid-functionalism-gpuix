@@ -36,6 +36,8 @@ export interface ShotContext {
 	settle(ms?: number): Promise<void>;
 	/** Throws if the painted text does not (or does) contain `text`. */
 	expectText(text: string, present: boolean): void;
+	/** Like `expectText`, but reads the accessibility tree: a `display: none` box still has text in the layout, not in the tree. */
+	expectAccessibleText(text: string, present: boolean): void;
 	/** Writes `screenshots/<demo>/<name>.png`. */
 	capture(name: string): void;
 	/** The DOM `id` of the element with this `testId`; throws when it has none. */

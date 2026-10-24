@@ -259,6 +259,17 @@ const shot: ShotContext = {
 			);
 		}
 	},
+	expectAccessibleText(text, present) {
+		const found = Object.values(renderer.getA11yTree().nodes ?? {}).some(
+			(node) =>
+				typeof node.aria?.value === 'string' && node.aria.value.includes(text),
+		);
+		if (found !== present) {
+			throw new Error(
+				`expected "${text}" to be ${present ? 'present' : 'absent'} in the accessibility tree`,
+			);
+		}
+	},
 	capture,
 };
 

@@ -336,18 +336,18 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	shot.capture('playground');
 	await pickExpand(shot, 'ArrowDown');
 	await shot.click('play-item-2');
-	shot.expectText(PLAY_ITEMS[1].content, true);
-	shot.expectText(PLAY_ITEMS[0].content, true);
+	shot.expectAccessibleText(PLAY_ITEMS[1].content, true);
+	shot.expectAccessibleText(PLAY_ITEMS[0].content, true);
 	await shot.click('play-highlight-track');
 	shot.capture('playground-any-trigger-highlight');
 	await pickExpand(shot, 'ArrowUp ArrowUp');
 	await shot.click('play-item-1');
-	shot.expectText(PLAY_ITEMS[0].content, true);
+	shot.expectAccessibleText(PLAY_ITEMS[0].content, true);
 	await shot.click('play-item-1');
-	shot.expectText(PLAY_ITEMS[0].content, true);
+	shot.expectAccessibleText(PLAY_ITEMS[0].content, true);
 	await shot.click('play-item-3');
 	await shot.settle(300);
-	shot.expectText(PLAY_ITEMS[0].content, false);
+	shot.expectAccessibleText(PLAY_ITEMS[0].content, false);
 	shot.capture('playground-one-at-a-time');
 	await shot.click('playground-shuffle');
 	shot.capture('playground-shuffled');
@@ -370,17 +370,17 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	await shot.press('ArrowDown');
 	shot.capture('keyboard-focus');
 
-	// Closed panels leave the tree once their exit is over.
+	// Closed panels go display: none once their exit is over: the text stays in layout but leaves the accessibility tree.
 	await scrollNearTop(shot, 'kb-1');
 	await shot.click('kb-1');
-	shot.expectText('Alpha body', true);
+	shot.expectAccessibleText('Alpha body', true);
 	await shot.click('kb-1');
 	await shot.settle(300);
-	shot.expectText('Alpha body', false);
+	shot.expectAccessibleText('Alpha body', false);
 	// Focus is on kb-1: Tab walks to the next trigger and Enter opens it.
 	await shot.press('Tab');
 	await shot.press('Enter');
-	shot.expectText('Beta body', true);
+	shot.expectAccessibleText('Beta body', true);
 	shot.capture('keyboard-tab');
 	// Open: the trigger controls its region, which the trigger names. Closed: no controls.
 	const controls = shot.aria('kb-2').controls;
@@ -394,7 +394,7 @@ export const scenarios: DemoModule['scenarios'] = async (shot) => {
 	shot.expectAria('kb-1', { expanded: false, controls: undefined });
 	shot.expectAria('kb-3', { disabled: true });
 	await shot.click('kb-3');
-	shot.expectText('Gamma body', false);
+	shot.expectAccessibleText('Gamma body', false);
 	await shot.press('Enter');
-	shot.expectText('Gamma body', false);
+	shot.expectAccessibleText('Gamma body', false);
 };
