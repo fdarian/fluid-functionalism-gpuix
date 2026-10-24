@@ -1,11 +1,10 @@
 ---
-type: decision record
-title: Port decisions and their reasons
-description: Why the Fluid Functionalism port to gpuix uses native springs, native hover states, a single fluid highlight, a single-quad press-shrink fill, variable Inter with the source's weight tokens, createAppearance theming with a transient cross-fade layer, the kept off-screen culling (re-measured on b03d4e27), the dropped fluid-hover box cache, integer-rounded fluid-hover rects and two-ghost StableLabel (now within noise) with their measurements, the move of JS frame loops to native gpuix animation, file-discovered demos, the drift/ convention, the screenshot and check-* harness, and its pnpm, tsconfig and Biome settings.
-tags: [decisions, gpuix, fluid-hover, motion, tooling, pnpm]
+type: "Reference"
+title: "Port decisions and their reasons"
+openwiki_generated: true
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-23T19:28:25.041Z
+    at: 2026-10-24T01:38:18.068Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
@@ -127,8 +126,9 @@ sources:
     resource: repo://src/pages/skill/playback.tsx
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-23T19:28:25.041Z" }
+generated: { by: "claude-code", at: "2026-10-24T01:38:18.068Z" }
 ---
+
 
 # Port decisions and their reasons
 
@@ -289,11 +289,13 @@ about cost has an expiry date, because gpuix's retention and bounds-read behavio
 
 - **Off-screen culling stays (`src/lib/cull.ts`).** gpuix lays out and paints elements a scroller clips away
   (gpuix #46: retained and clipped content is not free), so a page of many menus costs several times a short one.
-  The port hides a region's content with `display: none` while it is a quarter viewport from the page scroller,
-  keeps the region's measured height, and holds `onFrame` and timer loops still while hidden (`OnScreenContext`),
-  because any signal a loop sets redraws the whole window. The earlier decision was to remove it once #46 landed
-  and to re-run the removal comparison first; that comparison was re-run on `b03d4e27` and again on `196d69ce`, and
-  culling stays.
+  The port hides a region's content while it is a quarter viewport from the page scroller and holds `onFrame` and
+  timer loops still while hidden (`OnScreenContext`), because any signal a JS loop sets redraws the whole window. How it
+  hides changed on 2026-10-24 (below): it was a `display: none` wrapper that pinned the region's height, and is now
+  `content-visibility: hidden` with `containIntrinsicSize: 'auto none'`. The earlier decision was to remove culling
+  once #46 landed and to re-run the removal comparison first; that comparison was re-run on `b03d4e27` and again on
+  `196d69ce`, and culling stays. The numbers below were taken with the `display: none` wrapper and compare culling
+  against none, so they still say that culling is worth having; they do not rank the two ways of hiding.
   - *Method.* Live `pnpm perf` at load average 1.4-3.1, two alternating pairs of runs, culling on against off (the
     `IntersectionObserver` effect disabled). Idle CPU and sidebar-sweep draw p95 are both read, since they regress
     independently.
@@ -314,42 +316,55 @@ about cost has an expiry date, because gpuix's retention and bounds-read behavio
     showcase, and static pages were equal. The live `pnpm perf` A/B did not run.
   - Costs of keeping it: a culled region has no bounds (screenshot scenarios call `shot.reveal` first), and the
     changelog Releases jump has to re-aim, below. The README "Culling" gap row carries the same numbers.
-- **`contentVisibility` does not replace it: the round-16 A/B lost (gpuix `511bebab`, then `e591681e`).**
-  `511bebab` added `contentVisibility: 'auto' | 'hidden'` as the opt-in half of #46 (#71). It was first rejected for
-  three reasons: the `auto` margin is fixed at Chrome's 150% of the viewport where the port culls at 25%
-  (`OVERSCAN`); a region whose size is unmeasured has no scroll anchoring; and the containment clips overflowing
-  shadows and focus rings. Round 16 answered all three, so the comparison was run instead of argued: FF's own
-  `IntersectionObserver` at 25% toggles `contentVisibility: 'hidden'` itself, with `containIntrinsicSize: auto <w>px
-  auto <h>px` from the report rect (both axes, because a single value would also set the width), anchoring landed, and
-  `visible` applies no clip. The branch (`cull-cv`, kept, not merged) dropped the `display` wrapper, the height pin and
-  the forced-read path. It lost on the same build (`e591681e`, headless, scale-1 windows):
-  - *Entry.* Entering the Command Menu page cost 8 layout passes against 2; the check's budget is 4. The cause is that
-    fluid-hover's `ResizeObserver` callback reads a container box, and gpuix builds a skipped (`hidden`) subtree for
-    any geometry read, 1-2 passes per hidden region, each followed by an invalidation. A `display: none` box answers
-    such a read empty at no cost. This is the read-after-write trap of the fluid-hover bullet above, reached through a different door.
+- **`content-visibility: hidden` lost the Round 16 A/B and won the Round 18 one, so it is the culling now (merged
+  as `5c7b3f44`..`b8b4d20b`, gpuix `a92b4f7f`).** `511bebab` added `contentVisibility: 'auto' | 'hidden'` as the opt-in
+  half of #46 (#71). It was first rejected for three reasons: the `auto` margin is fixed at Chrome's 150% of the
+  viewport where the port culls at 25% (`OVERSCAN`); a region whose size is unmeasured has no scroll anchoring; and the
+  containment clips overflowing shadows and focus rings. Round 16 answered all three, so the comparison was run instead
+  of argued: FF's own `IntersectionObserver` at 25% toggles `contentVisibility: 'hidden'` itself (branch `cull-cv`),
+  anchoring landed, and `visible` applies no clip. On `e591681e` (headless, scale-1 windows) it still lost:
+  - *Entry.* Entering the Command Menu page cost 8 layout passes against 2; the check's budget is 4. Fluid-hover's
+    `ResizeObserver` callback reads a container box, and gpuix builds a skipped (`hidden`) subtree for any geometry read,
+    1-2 passes per hidden region, each followed by an invalidation. A `display: none` box answers such a read empty at no
+    cost. This is the read-after-write trap of the fluid-hover bullet above, reached through a different door.
   - *Forced reads.* One `getElementBounds` after a layout write cost 2 passes / 6.24 ms against 1 / 2.87 ms; after a
-    paint-only write 1.05 passes / 6.61 ms against 0.05 / 0.02 ms, so the cheap paint-only read is lost too.
-  - *Layout.* The one-column bento tiles laid out wrong without the `flexBasis` pin (card-ask-user-questions 921 px
-    against 305).
-  - *Page switches were equal* (settled, median of visits #2-#4, changelog / showcase / command-menu / button: 98 / 223 /
-    128 / 59 ms against 103 / 221 / 136 / 60), so it wins nothing either. Harness traps it surfaced: `getElementBounds`
-    now forces a skipped subtree, so an "is it hidden" assert must use `getBuiltElementBounds`; and gpuix remembers a
-    laid-out size only for an element whose style says `containIntrinsicSize: 'auto'` while it shows, so the visible
-    style must carry `'auto none'` or a hidden region falls back to the report rect and comes out 24 px (its
-    padding-top) too tall.
-  The source site uses no `content-visibility`, so nothing was adopted. Reopen only if gpuix stops building a skipped
-  subtree for a geometry read.
-- **A far region pins the height its observer report carries, not a fresh read (`a6fd00ed`).** The pin used to be
-  `getBoundingClientRect().height` inside the `IntersectionObserver` callback. Every region that reports far on a
-  page's first frames forced its own layout pass there, so entering a page cost a pass per region (the entry budget
-  on the Command Menu page went from 26 to 21 passes with this change, and to 4 with the fluid-hover change above).
-  The report's own rect comes from the frame's registry and costs nothing. The one exception is the report that follows a far region being shown again
-  (its element or Size changed): that rect still carries the old pinned height, so that single report reads the laid-out
-  height, a forced pass paid only by an element or Size change.
-- **The changelog Releases jump re-aims while culled entries un-pin.** A jump computes its target while the entries
-  above the month are pinned at their culled heights. They un-pin to their real heights as the smooth scroll passes
-  them and come out a few px taller, so one scroll landed the month 4-5 px low (36-37 px under the top against the
-  source's 32; once 281 px, on the wrong month). `release-spy.ts` recomputes the target on each page scroll and
+    paint-only write 1.05 passes / 6.61 ms against 0.05 / 0.02 ms.
+  - *Layout.* The one-column bento tiles looked wrong without a `flexBasis` pin (card-ask-user-questions 921 px against
+    305). gpuix #89 (Round 17) showed that is not a gpuix bug: under `containIntrinsicSize: auto` the remembered size
+    is the last laid-out content box and the declared size until then, and the 305 was FF's own pin reading an
+    `IntersectionObserver` rect sampled mid-spring. The pin, the `display` wrapper and the forced measure went with
+    `5c7b3f44`.
+  On `a92b4f7f` (Round 18: #88 fixed the forced read on skipped content in Round 17, #97 and #90 let animations in it
+  sleep) the A/B ran again, `cull-cv` `b8b4d20b` against `main` `74e0033c`, five commits, headless at load 1.4-4.3, and
+  `content-visibility` won. Ahead: entry to the Command Menu page is 1 layout pass against 2, and the one-column home
+  tiles are at their final height right after settle (grid 10935 px against 9503 collapsed). Equal: page switches
+  (changelog / showcase / command-menu / button, 88 / 211 / 136 / 54-59 ms against 93 / 218-223 / 132 / 62-64), idle CPU
+  over the 49 pages (sum 198.4 against 194.4%) and footprint (3975 against 3989 MB). Behind, and still open as gpuix
+  #98: a read after a paint-only write costs one pass and 2.4-3.4 ms against 0.02 ms, and a read after a layout write
+  about 0.7 ms more. The source site uses no `content-visibility`, so this is a port-only mechanism either way.
+  - *What `cull.ts` must do for it to work.* gpuix remembers a laid-out size only for an element whose style says
+    `containIntrinsicSize: 'auto'` while it shows, so the visible style carries `'auto none'` too: without it a hidden
+    region has no size to keep. The size is `auto none` on both axes, because a single value would also set the width.
+    A hidden region keeps only that remembered size: the earlier fallback to the report rect (the first version of
+    this branch) was dropped in `b8b4d20b`, and a report from a target with no box yet (height 0) is ignored, since
+    hiding it would collapse the region to nothing.
+  - *Harness traps.* `getElementBounds` now forces a skipped subtree and answers, so it cannot tell hidden from shown:
+    an "is it hidden" assert uses `getBuiltElementBounds` (`check-doc-sections`, `check-changelog-rail`), and a
+    scenario that scrolls toward an element `shot.reveal`s it first.
+  - *Reopening it.* A browser pays nothing for a read after a paint-only write; if #98 closes, the remaining cost of
+    this choice is gone. If instead a pin makes the hidden-subtree build per read worse, the `display: none` wrapper
+    is the known fallback (commit `74e0033c` is its last state).
+- **A hidden region keeps the size it was last laid out at, not a height read from its observer report.** Before
+  `5c7b3f44` a far region pinned the height of its `IntersectionObserver` report (`a6fd00ed`: the report's rect comes
+  from the frame's registry, where `getBoundingClientRect()` inside the callback forced a layout pass per region; the
+  Command Menu page's entry budget went from 26 to 21 passes with that change). Remembering the laid-out size makes both the pin and that exception
+  (the report after a far region is shown again carried the old pinned height) unnecessary; a region whose element or
+  Size changes shows again and is measured on the next report.
+- **The changelog Releases jump re-aims while culled entries come back to their real heights.** A jump computes its
+  target while the entries above the month hold a remembered size. They are laid out again as the smooth scroll passes
+  them, and when one comes out taller than it was remembered the month moves: with the earlier pinned heights one scroll
+  landed the month 4-5 px low (36-37 px under the top against the source's 32; once 281 px, on the wrong month). That
+  was not re-measured on `content-visibility`, whose remembered size is the last laid-out one, so the re-aim stays. `release-spy.ts` recomputes the target on each page scroll and
   scrolls again when it moved by more than 1 px, stopping when the month is within 1 px, the page end is reached,
   or the user scrolls away (`scripts/check-changelog-rail.tsx` pins it). It only runs while a jump is in flight, so
   idle and sweep cost did not change. It is an approximation of the source's single `scrollIntoView`, recorded in
@@ -449,11 +464,12 @@ renderer and cost no JS per frame. The reasons to prefer it, and the traps:
   animatable; the glyph is a `motion.path` morphing `d`; the word cycle is still a 4 s `setInterval`. Since
   `c6475390` (Round 14a) none of these swaps a still copy in or gates its animation on `useOnScreen` any more (the
   button `Spinner`, file-thumbnail `Spinner`, `MorphingGlyph` and `Shimmer` always render the animated element; only
-  the hidden width-reserving copy is `still`): a culled region is `display: none`, which gpuix already stops. The
-  word timer and the carousel-dots `playing()` still pause off screen. Removing the gates cost nothing measurable
+  the hidden width-reserving copy is `still`): a hidden region's native loops sleep in gpuix (`content-visibility: hidden` since 2026-10-24; `display: none` before it). The
+  word timer and the carousel-dots `playing()` still pause off screen, because they are JS. Removing the gates cost nothing measurable
   (alternated headless A/B on `c6475390`, gated `9726e334` against removed: thinking-indicator 19.9/21.5 against
   21.2/20.1% idle CPU, file-thumbnail 8.9/7.2 against 9.4/8.7, button 3.3/3.6 against 3.6/3.5), and a gate does not
-  remove the dormant-tick floor an off-screen loop still pays (gpuix gaps page, Round 14a).
+  remove the dormant-tick floor an off-screen loop still pays (gpuix gaps page, Round 14a); that floor is what gpuix #90
+  cut in Round 18 (input-message, whose looping cards are all culled, idles at 1.3-1.6% CPU against 5.3-5.8%).
 - **Stroke draws use `CheckMark`, not keyframes.** Also on `b03d4e27`, the menu-item check (`1fff79c0`) and the
   input-copy check and cross (`c3db5af1`) draw and retract through `CheckMark` (`motion.path` on `pathLength`)
   instead of fading in. `CheckMark` gained a `viewBox`, `drawOnMount` and a colour `fade`, because input-copy draws
@@ -465,7 +481,8 @@ renderer and cost no JS per frame. The reasons to prefer it, and the traps:
   12000, against 0.1 ms with nothing animating, so a page with a running loop idles at 37-45% CPU (carousel-dots,
   file-thumbnail, thinking-indicator, thinking-steps, queued-stack, showcase, fluid-hover, changelog, and the button
   page, whose native loading spinner takes the source's always-loading Saving button from 3.8% idle to 41%). This is why
-  culling also pauses the loops. On `5fda771a` such a loop could starve Bun's timers outright; as of `b03d4e27`
+  culling also pauses the loops; since gpuix `a92b4f7f` (Round 18, #97 and #90) it is gpuix that lets a native loop in a
+  hidden region sleep, at about the 1.3-1.8% idle floor, and culling's own job there is the content it would build. On `5fda771a` such a loop could starve Bun's timers outright; as of `b03d4e27`
   timers run between ticks (9-10 callbacks a second at 3000 nodes, 7-8 at 12000; gpuix #56), so a hung perf or check
   run under load is no longer expected to be this. The README records that gpuix could fix it in principle and that
   the owner accepts the cost. What was paid on `83bab5a7` (repro r13): a layout pass on every draw, even for
@@ -581,8 +598,9 @@ How to check these, because the obvious checks pass:
 - `check-command-menu` also prints, without asserting, what one forced read costs on the settled page, because the
   entry count alone did not separate the culling variants' per-read cost. It writes a style on a small painted leaf (a
   1 px height toggle for a layout write, a background toggle for a paint-only write), times one `getElementBounds` on
-  the details list, 20 reps each. Reference on `e591681e` with `createCulling`: layout write 1.00 passes per read,
-  2.87 ms median; paint-only write 0.05 passes, 0.02 ms. gpuix has no per-pass timer, so the time is taken on the JS
+  the details list, 20 reps each. Reference on `e591681e` with the `display: none` wrapper: layout write 1.00 passes per
+  read, 2.87 ms median; paint-only write 0.05 passes, 0.02 ms. With `content-visibility: hidden` (`a92b4f7f`) a
+  paint-only write also costs 1.00 passes and 2.4-3.4 ms median per read, which is the standing cost of gpuix #98. gpuix has no per-pass timer, so the time is taken on the JS
   side with `performance.now`, and it moves with load: compare passes per read first, milliseconds only at a similar
   load average.
 - Every check window opens at scale factor 1, which is `createTestRoot`'s default since gpuix `f6f09d95` (#86), so the
@@ -641,7 +659,9 @@ the choices that make a number trustworthy or not.
   whole, and `why` names the top two reasons for the whole ones (`Reason:count`, from gpui's `declines` and gpuix's
   `unpatchable` maps, which the JSON keeps in full). The counters name the reason but not the element, so `Outside`
   or `UnknownUnit` does not say which node. Read `why` before blaming a page's CPU on its loop count: a page with
-  `patched/s` 0 and a loop on it has a blocker, not a cost. `draw ms` leaves patched frames out. Headless has no display link or AppKit, so it says nothing about what the
+  `patched/s` 0 and a loop on it has a blocker, not a cost. `draw ms` is the mean/p90 of the draws that built a whole frame and leaves patched frames out, so it rises when
+  patching replaces cheap whole frames; `all draw ms` is the same over every draw that drew, patched ones included, and
+  is the one to compare across pins that patch differently (gpuix #91). Headless has no display link or AppKit, so it says nothing about what the
   window itself costs: the repository records no in-window idle floor since gpuix `f993d9b9`, which wakes an idle
   window 0 times a second (the README row for it was removed; a window run measures it). Quote headless for "which page,
   which loop" and `--window` for "what does the user's machine pay".

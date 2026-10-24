@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:a0144c6ace77366a9dc30748b0a6e3add060e5cb2ec1bc2b29f2f4eeff599425",
+  "pageVersion": "sha256:b20f6212e5cc7034f2b47a09c36ad8d6b3764f1fd1b3807d8037b510468ba9a4",
   "claims": [
     {
       "id": "claim_b925fe22d5a74d5388447aa34ff4d2fd",
@@ -62,21 +62,21 @@
     },
     {
       "id": "claim_f8b0c6e89cbd48b598f62a18b01c9c2c",
-      "statement": "The README names gpuix poc f6f09d95 as the minimum fork, which includes the Round 15c scale-1 test renderer, half-up glyph origins and OS/2 cap heights, the 6f2a72d3 wake of the frame loop on input to an idle window, the Round 14a paint patching of loops next to an input, under a positioned or translucent ancestor, on a motion value and in an svg, on top of the 511bebab collapsed-table border-color transition, the f993d9b9 idle-window and unfocused-window pacing, the f7b62f11 changes (font smoothing key, cheap scrollTop writes, exact scroll end), the earlier paint-only loop-tick patching, fractional rects, fractional authored lengths and playback controls, and the 8352e66c atomic inline at its fractional origin and forced layout that delivers no onLayout or ResizeObserver report.",
+      "statement": "The README names gpuix poc a92b4f7f as the minimum fork, which includes the Round 18 sleep of animations in content-visibility-skipped content (#97, #90), the Round 15c scale-1 test renderer, half-up glyph origins and OS/2 cap heights, the 6f2a72d3 wake of the frame loop on input to an idle window, the Round 14a paint patching of loops next to an input, under a positioned or translucent ancestor, on a motion value and in an svg, on top of the 511bebab collapsed-table border-color transition, the f993d9b9 idle-window and unfocused-window pacing, the f7b62f11 changes (font smoothing key, cheap scrollTop writes, exact scroll end), the earlier paint-only loop-tick patching, fractional rects, fractional authored lengths and playback controls, and the 8352e66c atomic inline at its fractional origin and forced layout that delivers no onLayout or ResizeObserver report.",
       "evidence": [
         {
-          "resource": "repo://README.md#L242-L247",
-          "version": "repo-lines-v1:sha256:147ef3be8571feccc4ec81710ec498ce132f79f149d02c587d9d95705405911a:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQ1MmU4NDc2ZDA3Yzg4N2ZlZTVjN2Q1NGZhZTMxYjFmN2E3ZjEyZDI5ODExNTMwODkxY2M1YTFiMjIzNDg2NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGFmY2NiZjcwZGQ0NjRjMTJhZDJmZDg0MDA3OTYxYjIxY2VlNjVlZDYyMTA3ZGQ0MTdiNjRmYjc3ZWY3Nzg1MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGUzMGY5MzRkZGU0OTNmMDc0OTc4NzY2MGY3Yjc4MzU5ZTA2Y2Y0MTdiNDI2MDdjZGZkZDU3OThhM2JlZTliNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiZWIxNmI3NDM1M2Q0OTkwNzAxNzk3MjdlMDNkZGIzNTc4ZmRjNmM1ZWY1NmE0NWNkNjkxYTgwYjM3ZWE3MyJ9"
+          "resource": "repo://README.md#L244-L248",
+          "version": "repo-lines-v1:sha256:fbfb0b3ad80696f975e5688fe3599951e8b03b8d15631dd5e1f500e594820dda:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTZjNjYwNzFmNWFkMTAzMDA2NjBlMmE5ODU5ZWNiMTZmNzVjNGUyZTVjYWQ5MTBhZmYzNmJmN2U5Nzc4NjllYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDgyZjg5MWE0M2ZjZDYwZDY3YTA4NDkzM2IxMmE0ZjlmOGM4ZDQ0NmZjY2FjZmNmZThiZDdiMWE4MTYxODUzMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2E5OTNmYzQ3OGNlMzg1NzZjYzIxZmM1YTAwMzhkZWE2OGY2NDljMzM0MzRlZThiNzk4N2JlMjZhNTI4YWU5ZCJ9"
         },
         {
           "resource": "repo://README.md#L56-L56",
-          "version": "repo-lines-v1:sha256:aa940ec7d9a1b2360dc46f4cc68625671436d46e12e9af9a20fa83a71813f87f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE5NDBlYzdkOWExYjIzNjBkYzQ2ZjRjYzY4NjI1NjcxNDM2ZDQ2ZTEyZTlhZjlhMjBmYTgzYTcxODEzZjg3ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE5NDBlYzdkOWExYjIzNjBkYzQ2ZjRjYzY4NjI1NjcxNDM2ZDQ2ZTEyZTlhZjlhMjBmYTgzYTcxODEzZjg3ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "version": "repo-lines-v1:sha256:9f6735961960068fbe8edec4f7d68493c0dfe354d395ceac7615057cc3f52435:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY2NzM1OTYxOTYwMDY4ZmJlOGVkZWM0ZjdkNjg0OTNjMGRmZTM1NGQzOTVjZWFjNzYxNTA1N2NjM2Y1MjQzNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY2NzM1OTYxOTYwMDY4ZmJlOGVkZWM0ZjdkNjg0OTNjMGRmZTM1NGQzOTVjZWFjNzYxNTA1N2NjM2Y1MjQzNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-23T19:28:25.041Z"
+    "at": "2026-10-24T01:38:18.068Z"
   }
 }

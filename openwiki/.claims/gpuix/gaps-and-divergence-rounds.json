@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:862cbc3bb2bfff494c3941fcc8823b8d018745ddeff362c3e688d741e2c184d1",
+  "pageVersion": "sha256:516eabbd2a1b4a0ede7452fc7c302b2f66b7a6a90ac9d8b77c356cb77ed9e9f4",
   "claims": [
     {
       "id": "claim_8f689a7df6cd43af9e228cffa0828120",
       "statement": "The README's gpuix gaps section is the authoritative list of gpuix bugs and missing features the port works around, each with the components it hits and the workaround.",
       "evidence": [
         {
-          "resource": "repo://README.md#L242-L297",
-          "version": "repo-lines-v1:sha256:faf3294788d8e6380fe332dfda7bbe94469207090ad690125f3e0db736eefdeb:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NTJlODQ3NmQwN2M4ODdmZWU1YzdkNTRmYWUzMWIxZjdhN2YxMmQyOTgxMTUzMDg5MWNjNWExYjIyMzQ4NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlMzBmOTM0ZGRlNDkzZjA3NDk3ODc2NjBmN2I3ODM1OWUwNmNmNDE3YjQyNjA3Y2RmZGQ1Nzk4YTNiZWU5YjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5MGQyZTdlM2VlZjk3NTM0MjU5MzM1NGY1ODFiYTRlZGMxMWNjZmI5OGZmYTFhODEzYmUzZTAwMzFmNGMzNzUifQ"
+          "resource": "repo://README.md#L242-L249",
+          "version": "repo-lines-v1:sha256:a35f28178a563d6b74897d3d53a27d6b8a9dc0801ac0340c4e26e4cc89fe6742:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQ1MmU4NDc2ZDA3Yzg4N2ZlZTVjN2Q1NGZhZTMxYjFmN2E3ZjEyZDI5ODExNTMwODkxY2M1YTFiMjIzNDg2NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2ViNjBlOTEzODhlNjhhMmViMDg1MjkzYzA1YWU3MmM0OTY4YWQ0YjU4MjhiYzBiNjM3MDgwMDE1ODZlMjc3ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGUzMGY5MzRkZGU0OTNmMDc0OTc4NzY2MGY3Yjc4MzU5ZTA2Y2Y0MTdiNDI2MDdjZGZkZDU3OThhM2JlZTliNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyJ9"
         }
       ]
     },
@@ -17,22 +17,22 @@
       "statement": "Without CSS transforms, popups keep an opacity fade and slide but lose the scaleY entrance, and glyph turns are swapped or redrawn.",
       "evidence": [
         {
-          "resource": "repo://README.md#L279-L280",
+          "resource": "repo://README.md#L282-L283",
           "version": "repo-lines-v1:sha256:ba41070d641694b64cbc85a25ce67e6523b0493ef399ba419551fecf00e0c63a:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjcwMDYxMmRkNDA3YTc1YmU0ZTdkNDJjZGRkMGQ1MjllNmUzYTFjODNmYTUyODc0NmQyOWUzZmQ0ODcxNzBlOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDJhNWM3NmJiMWI0NmQwNzkzMmM5MmQ0OTdmNjY1MmRhMDQ2YjlhMDdjZTAxZjc2NzM5ZjQ3YzNkYzU2Mzg1ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTMxYzhkMjgzODdjOTg1MzllMzU3NTRlNmY1ZjQ5ZWFjMjY4OTJmYmY4YmRjZTEwOTgzZTMyOGVjNzI3M2NmNiJ9"
         }
       ]
     },
     {
       "id": "claim_8bb5706a64734dac9d70a073d3c56c22",
-      "statement": "Because gpuix #46 still makes a frame's cost scale with clipped, off-screen content, the port hides regions far from the page scroller with display none through src/lib/cull.ts; this is a kept workaround: the removal comparison re-run on gpuix poc b03d4e27 and headless on 196d69ce favoured culling on every page that moved, and an observer-toggled contentVisibility 'hidden' variant on gpuix e591681e (round 16) lost to it on entry layout passes, forced reads and bento layout.",
+      "statement": "Because gpuix #46 still makes a frame's cost scale with clipped, off-screen content, the port hides regions far from the page scroller through src/lib/cull.ts; this is a kept workaround: the removal comparison re-run on gpuix poc b03d4e27 and headless on 196d69ce favoured culling on every page that moved, and an observer-toggled contentVisibility 'hidden' variant lost the round 16 A/B on gpuix e591681e (entry layout passes, forced reads, bento layout) to the display none wrapper but won the Round 18 re-run on a92b4f7f, so createCulling now uses content-visibility: hidden.",
       "evidence": [
         {
-          "resource": "repo://README.md#L284-L284",
-          "version": "repo-lines-v1:sha256:0aeeaa1227ca07bb12a51b8b83f1a548db8bb062d112337aa167db2b17c66053:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGFlZWFhMTIyN2NhMDdiYjEyYTUxYjhiODNmMWE1NDhkYjhiYjA2MmQxMTIzMzdhYTE2N2RiMmIxN2M2NjA1MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGFlZWFhMTIyN2NhMDdiYjEyYTUxYjhiODNmMWE1NDhkYjhiYjA2MmQxMTIzMzdhYTE2N2RiMmIxN2M2NjA1MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTMxYzhkMjgzODdjOTg1MzllMzU3NTRlNmY1ZjQ5ZWFjMjY4OTJmYmY4YmRjZTEwOTgzZTMyOGVjNzI3M2NmNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTgxNjIzN2ViNjljZDlhYzEyNjZiMjE5NTdmZjMzNDljMTQ0MTYyN2JjM2I1OWRkMmMwNGYyZmEyY2MwY2RiYyJ9"
+          "resource": "repo://README.md#L287-L287",
+          "version": "repo-lines-v1:sha256:a2b35782ecdd1ec08f020718b5197a7adc04d51d14f19c85c5b1fa55a078ca1c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTJiMzU3ODJlY2RkMWVjMDhmMDIwNzE4YjUxOTdhN2FkYzA0ZDUxZDE0ZjE5Yzg1YzViMWZhNTVhMDc4Y2ExYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTJiMzU3ODJlY2RkMWVjMDhmMDIwNzE4YjUxOTdhN2FkYzA0ZDUxZDE0ZjE5Yzg1YzViMWZhNTVhMDc4Y2ExYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTMxYzhkMjgzODdjOTg1MzllMzU3NTRlNmY1ZjQ5ZWFjMjY4OTJmYmY4YmRjZTEwOTgzZTMyOGVjNzI3M2NmNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTgxNjIzN2ViNjljZDlhYzEyNjZiMjE5NTdmZjMzNDljMTQ0MTYyN2JjM2I1OWRkMmMwNGYyZmEyY2MwY2RiYyJ9"
         },
         {
-          "resource": "repo://src/lib/cull.ts#L30-L56",
-          "version": "repo-lines-v1:sha256:14544d474d37b61c3edb6352cfbfeec79c62e2c972cd92bffb99b967e069a6fc:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwYTI0MTY0ODE3Y2FjYTlkZjBiYjRjMDJkOTBkMmI5MjU1ZDMzNWU4NjE2MTFmYTYyNWU1MjU0MmVkMDM0YTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhmOTcxMWUzOTQ3YWUzNjI2ODdiODI0ODFlNWJkMTNlZGYzZGEwOGNkOTU5ZjM0YmIyNDc2YWQyNjQxNDQ1YWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiZjA3Mjc3OWZhMjYyNjU1MDdkYWY5YjI3OTAxN2ZlNmRlOGExYjc5YjA2ZDk3YmFkNzU5YmVjMmQ0YWNhNTcifQ"
+          "resource": "repo://src/lib/cull.ts#L38-L123",
+          "version": "repo-lines-v1:sha256:3ff11b930a00bf3f1bccbdfff5d2e15ea2b59648c96a5cb73d64a8c82b886a81:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY3YjAzYmI5NmEzOGY4MDQ4NDBmNDEyOGI5M2M5MWEwNjAzZjIxMTRlYmViZGZlZDM0OTQzNWZiNTc4MWMxNjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZiY2EyZDkzZDU5ZGQyNjk0ZGMyMTJhNTQwNDQ4NTAwYmFhMTRmZWRjN2E2NDU0MGYzYmMwMjg0MWM4NDczNjEifQ"
         }
       ]
     },
@@ -191,8 +191,8 @@
           "version": "repo-file-v1:sha256:46d710a611d8fffaa039f894a3a0c1754ac33442f278d1e082f6fe266413cf8b"
         },
         {
-          "resource": "repo://src/pages/changelog/entry.tsx",
-          "version": "repo-file-v1:sha256:12c6528e8765cdaac14f783f1e1e205361b5f9d2abcb58b4ed6a770f5c905a37"
+          "resource": "repo://src/pages/changelog/entry.tsx#L225-L236",
+          "version": "repo-lines-v1:sha256:d705ebab22d3121b91bbd2529e4c168389f334b305f53b140f92ff44f137c21c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ODRjNjQ0YTg2NWJlYTlmY2RmZDA2N2VlMTI4NzM4N2I4ZDBhNzg3MWRiYTBlOWI1Nzc0OWFkNDgzYjQxNzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhMDhmMTRjZmNjOGZiNzU3NzY3YWQ3YTVlMjQ2NDIxNTVhZDdjYjhjZWU1ZWFjYjI4NTIwNzU1Y2M5MzJhM2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU2NmEwMmVhYzNjYTY1YTRmNjcyZjhjM2I3Mzg2MjBkZjVkMGQ5MmY5NWMyNThmOGE0YThkZGViYjc4NDYyY2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4MjYzMmUyYzI3MmRlMTdkNWVmYWVmNzk1ODE5ZDJjMzAwNDZlNjA4YzE2OTQwZWZiNjhmNjJkYmNkOWU3YWEifQ"
         }
       ]
     },
@@ -236,7 +236,7 @@
       "evidence": [
         {
           "resource": "repo://README.md#L56-L56",
-          "version": "repo-lines-v1:sha256:aa940ec7d9a1b2360dc46f4cc68625671436d46e12e9af9a20fa83a71813f87f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE5NDBlYzdkOWExYjIzNjBkYzQ2ZjRjYzY4NjI1NjcxNDM2ZDQ2ZTEyZTlhZjlhMjBmYTgzYTcxODEzZjg3ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE5NDBlYzdkOWExYjIzNjBkYzQ2ZjRjYzY4NjI1NjcxNDM2ZDQ2ZTEyZTlhZjlhMjBmYTgzYTcxODEzZjg3ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "version": "repo-lines-v1:sha256:9f6735961960068fbe8edec4f7d68493c0dfe354d395ceac7615057cc3f52435:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY2NzM1OTYxOTYwMDY4ZmJlOGVkZWM0ZjdkNjg0OTNjMGRmZTM1NGQzOTVjZWFjNzYxNTA1N2NjM2Y1MjQzNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY2NzM1OTYxOTYwMDY4ZmJlOGVkZWM0ZjdkNjg0OTNjMGRmZTM1NGQzOTVjZWFjNzYxNTA1N2NjM2Y1MjQzNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         },
         {
           "resource": "repo://drift/fluid-hover.md#L36-L43",
@@ -244,7 +244,7 @@
         },
         {
           "resource": "repo://drift/thinking-indicator.md",
-          "version": "repo-file-v1:sha256:b1661f5cdc4435b79742d486ee51c66b5b232bd6ff2d57778beeaa7e9d117712"
+          "version": "repo-file-v1:sha256:97aef2a303ea65299fe96f36c811d4d69f77c3c116deb440ab80bd6a58c86339"
         },
         {
           "resource": "repo://src/pages/fluid-hover/plain-vs-fluid.tsx#L115-L133",
@@ -257,7 +257,7 @@
       "statement": "The README's gpuix gaps table now lists only thinking-steps as needing the shared setInterval frame clock because gpuix has no requestAnimationFrame.",
       "evidence": [
         {
-          "resource": "repo://README.md#L287-L287",
+          "resource": "repo://README.md#L290-L290",
           "version": "repo-lines-v1:sha256:be83225f1df06081fac4ea1ae2aec1efc3c6d9b25846a810e83736901af0fc8b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmU4MzIyNWYxZGYwNjA4MWZhYzRlYTFhZTJhZWMxZWZjM2M2ZDliMjU4NDZhODEwZTgzNzM2OTAxYWYwZmM4YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmU4MzIyNWYxZGYwNjA4MWZhYzRlYTFhZTJhZWMxZWZjM2M2ZDliMjU4NDZhODEwZTgzNzM2OTAxYWYwZmM4YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTQ1MDhjMDBjM2YxZWExMTljMTdiNTVkODNhNDE5ZTdiMWRhYjk2MWUwMGI3MmJjOWZjMGRmM2QwYzQ2ZjYzZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTAwNWM0NWExNjFjMGYyNzc2YjI2MTJlMzU4ODA1ZDg4ZTQxN2Q2Njg3YWIwMWRlZDNkYzJjM2QwNzM1NGI0OCJ9"
         },
         {
@@ -272,7 +272,7 @@
       "evidence": [
         {
           "resource": "repo://README.md#L56-L56",
-          "version": "repo-lines-v1:sha256:aa940ec7d9a1b2360dc46f4cc68625671436d46e12e9af9a20fa83a71813f87f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE5NDBlYzdkOWExYjIzNjBkYzQ2ZjRjYzY4NjI1NjcxNDM2ZDQ2ZTEyZTlhZjlhMjBmYTgzYTcxODEzZjg3ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE5NDBlYzdkOWExYjIzNjBkYzQ2ZjRjYzY4NjI1NjcxNDM2ZDQ2ZTEyZTlhZjlhMjBmYTgzYTcxODEzZjg3ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "version": "repo-lines-v1:sha256:9f6735961960068fbe8edec4f7d68493c0dfe354d395ceac7615057cc3f52435:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY2NzM1OTYxOTYwMDY4ZmJlOGVkZWM0ZjdkNjg0OTNjMGRmZTM1NGQzOTVjZWFjNzYxNTA1N2NjM2Y1MjQzNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY2NzM1OTYxOTYwMDY4ZmJlOGVkZWM0ZjdkNjg0OTNjMGRmZTM1NGQzOTVjZWFjNzYxNTA1N2NjM2Y1MjQzNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         },
         {
           "resource": "repo://src/lib/fluid-hover.ts#L17-L28",
@@ -285,8 +285,8 @@
       "statement": "A long page's first draw still builds, lays out and shapes every node because nothing marks a region far before an IntersectionObserver reports against a first layout; gpuix 511bebab's shape store fixed the revisit half (shapes per revisit 215 to 8-12 on Changelog, 291 to 4 on Showcase, 142 to 0 on Command Menu) and the port has no workaround beyond deferring the release spy's first reading. The Command Menu's 340-440 ms mount JS was not part of that and not steady state: it came from each menu's first scrollTop write, removed by 704af9e5.",
       "evidence": [
         {
-          "resource": "repo://README.md#L269-L270",
-          "version": "repo-lines-v1:sha256:ca5e63a372d333c5645b5868bd3e994bdeb11c3a2b1a093dd0a6ffea47903175:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTkzNTZkZDgwODgyYmQ5OTU3ODczMTM3OTg4MDBmM2FkYjQ1YmUwYjc2NGYyMjE1NTcyM2Q3MzA4NmZjMDBhNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzNkNzY0YTZmZjVjYmQ3YjJhZTQxMzkwOTU1M2E2OTRlNjM4M2YyYjRhMjBkMzQ5ZGRkNGFkYjUwYWRhODE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzRiNGM1OWM1NmU3ZGZjNDJjZjJkZTdjNDkzZDE1NWYxNGIxZTgxODM1NGRkMmJkYjc2ODkzYmI2ZTcyNTQ4ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWM0ZTExMTA4MzI5MTFhMWViYzA4ZjYwNTI4NWU3N2Q5NWViMGI1ZGY0ZjIwMGJlMGUxYTg4OWMwMzliOTNlOCJ9"
+          "resource": "repo://README.md#L271-L272",
+          "version": "repo-lines-v1:sha256:7052c0519348b1907fe6c2abf69c1491baf978b68726a9b78616b2ad58fb9a28:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTA0NjZkZGYzZWJlNzMzYTg5NjczMjk4MWQ1N2Y0MTJkNTJkMjgwN2ZjMDhlMzc0YWRjN2Q0MTEwZTk1YmU5YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODUzMDMxYWMwZjUyZDMyNGY2MWQ4ZDhjODI1NTE1ZmVlYzdmYzE2MzVmYTQ3YjczMjI2YjdhNjgyYTYzMDMwNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWYzOWU4ZjE0MmQ5ZWQ1MGY1NzMwMmU4NTM5OThiNjRlNTQ4YzQ3NDdhYWYxMGI2NWQ5MzllOGYyN2M4MzQ3MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjhiZjRiOTBiZGFmYzliMDFkMWNjODIyYWQ5MzljMjY5MzFiM2I3ZWU5ZTI5M2I1ZGMyMDUwMDRmNmUwNzE5ZSJ9"
         },
         {
           "resource": "repo://src/components/command-menu.tsx#L455-L466",
@@ -303,8 +303,8 @@
       "statement": "scripts/perf-page-switch.tsx is the headless harness for page-switch hitches, listed in the README's harness notes beside the real-window scripts/perf.tsx.",
       "evidence": [
         {
-          "resource": "repo://README.md#L302-L304",
-          "version": "repo-lines-v1:sha256:35f6a0670b93c293c35d6f09fe0f43cf6c20d03b27bcb6c13de8a1809a8ccdba:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTFmOWM4ZjM1ZmExZjg5OTBkODY0YjdmMmU2NzVlYzhjMzg4NWFhMjYwYjY3NGJiZDY4YTlhODJhMDJhYWI1MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjAzY2U3ZTY4MGY5MTQyNTNjM2I1NGQ1MjYxOWI5ZmE3NWRkMTY1YWYxNDcwYTg4MGEzZjIzNmZmN2FlMDBjNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjkzYjZhNmY4ZjgyMGVmZjQzMzc4N2IwNDBiNTE5YzZlYzkyNzJmYmE2ODQ1OTA3MDcwYTQ0Y2RjM2M4Yzg1YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmNjY2Q4ZDE2ZmE3NzZkMWMyZWYwN2I1ODQzYmNjZjI1OTcxZTRkNjJmMzI5YTkxYWZlOGU3OWZlOGNiNTVjNiJ9"
+          "resource": "repo://README.md#L305-L307",
+          "version": "repo-lines-v1:sha256:bc90c991c4bcdc9e8bf0ba5ea1fc7252b92650f21697b4c78ab56116b8c19ec0:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTFmOWM4ZjM1ZmExZjg5OTBkODY0YjdmMmU2NzVlYzhjMzg4NWFhMjYwYjY3NGJiZDY4YTlhODJhMDJhYWI1MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjAzY2U3ZTY4MGY5MTQyNTNjM2I1NGQ1MjYxOWI5ZmE3NWRkMTY1YWYxNDcwYTg4MGEzZjIzNmZmN2FlMDBjNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjkzYjZhNmY4ZjgyMGVmZjQzMzc4N2IwNDBiNTE5YzZlYzkyNzJmYmE2ODQ1OTA3MDcwYTQ0Y2RjM2M4Yzg1YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmNjY2Q4ZDE2ZmE3NzZkMWMyZWYwN2I1ODQzYmNjZjI1OTcxZTRkNjJmMzI5YTkxYWZlOGU3OWZlOGNiNTVjNiJ9"
         },
         {
           "resource": "repo://scripts/perf-page-switch.tsx#L1-L21",
@@ -318,7 +318,7 @@
       "evidence": [
         {
           "resource": "repo://README.md#L56-L56",
-          "version": "repo-lines-v1:sha256:aa940ec7d9a1b2360dc46f4cc68625671436d46e12e9af9a20fa83a71813f87f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE5NDBlYzdkOWExYjIzNjBkYzQ2ZjRjYzY4NjI1NjcxNDM2ZDQ2ZTEyZTlhZjlhMjBmYTgzYTcxODEzZjg3ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE5NDBlYzdkOWExYjIzNjBkYzQ2ZjRjYzY4NjI1NjcxNDM2ZDQ2ZTEyZTlhZjlhMjBmYTgzYTcxODEzZjg3ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "version": "repo-lines-v1:sha256:9f6735961960068fbe8edec4f7d68493c0dfe354d395ceac7615057cc3f52435:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY2NzM1OTYxOTYwMDY4ZmJlOGVkZWM0ZjdkNjg0OTNjMGRmZTM1NGQzOTVjZWFjNzYxNTA1N2NjM2Y1MjQzNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY2NzM1OTYxOTYwMDY4ZmJlOGVkZWM0ZjdkNjg0OTNjMGRmZTM1NGQzOTVjZWFjNzYxNTA1N2NjM2Y1MjQzNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         },
         {
           "resource": "repo://src/components/carousel-dots.tsx#L77-L100",
@@ -376,7 +376,7 @@
       "evidence": [
         {
           "resource": "repo://drift/thinking-indicator.md",
-          "version": "repo-file-v1:sha256:b1661f5cdc4435b79742d486ee51c66b5b232bd6ff2d57778beeaa7e9d117712"
+          "version": "repo-file-v1:sha256:97aef2a303ea65299fe96f36c811d4d69f77c3c116deb440ab80bd6a58c86339"
         },
         {
           "resource": "repo://src/components/thinking-indicator.tsx#L219-L235",
@@ -422,15 +422,15 @@
     },
     {
       "id": "claim_2e0172db0321439ab6373e8886d072cf",
-      "statement": "The README names gpuix poc f6f09d95 (zed bf338a3ab6) as the minimum fork, and its closed-gap list counts an atomic inline at its fractional origin, a forced layout that delivers no onLayout or ResizeObserver report before the next painted frame, and from Round 14a paint patching next to an input, under a positioned or translucent ancestor, on a motion value and on an svg among the things gpuix now does.",
+      "statement": "The README names gpuix poc a92b4f7f (zed fffe30fd66) as the minimum fork, and its closed-gap list counts an atomic inline at its fractional origin, a forced layout that delivers no onLayout or ResizeObserver report before the next painted frame, and from Round 14a paint patching next to an input, under a positioned or translucent ancestor, on a motion value and on an svg among the things gpuix now does.",
       "evidence": [
         {
-          "resource": "repo://README.md#L242-L247",
-          "version": "repo-lines-v1:sha256:147ef3be8571feccc4ec81710ec498ce132f79f149d02c587d9d95705405911a:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQ1MmU4NDc2ZDA3Yzg4N2ZlZTVjN2Q1NGZhZTMxYjFmN2E3ZjEyZDI5ODExNTMwODkxY2M1YTFiMjIzNDg2NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGFmY2NiZjcwZGQ0NjRjMTJhZDJmZDg0MDA3OTYxYjIxY2VlNjVlZDYyMTA3ZGQ0MTdiNjRmYjc3ZWY3Nzg1MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGUzMGY5MzRkZGU0OTNmMDc0OTc4NzY2MGY3Yjc4MzU5ZTA2Y2Y0MTdiNDI2MDdjZGZkZDU3OThhM2JlZTliNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiZWIxNmI3NDM1M2Q0OTkwNzAxNzk3MjdlMDNkZGIzNTc4ZmRjNmM1ZWY1NmE0NWNkNjkxYTgwYjM3ZWE3MyJ9"
+          "resource": "repo://README.md#L244-L248",
+          "version": "repo-lines-v1:sha256:fbfb0b3ad80696f975e5688fe3599951e8b03b8d15631dd5e1f500e594820dda:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTZjNjYwNzFmNWFkMTAzMDA2NjBlMmE5ODU5ZWNiMTZmNzVjNGUyZTVjYWQ5MTBhZmYzNmJmN2U5Nzc4NjllYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDgyZjg5MWE0M2ZjZDYwZDY3YTA4NDkzM2IxMmE0ZjlmOGM4ZDQ0NmZjY2FjZmNmZThiZDdiMWE4MTYxODUzMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2E5OTNmYzQ3OGNlMzg1NzZjYzIxZmM1YTAwMzhkZWE2OGY2NDljMzM0MzRlZThiNzk4N2JlMjZhNTI4YWU5ZCJ9"
         },
         {
           "resource": "repo://README.md#L56-L56",
-          "version": "repo-lines-v1:sha256:aa940ec7d9a1b2360dc46f4cc68625671436d46e12e9af9a20fa83a71813f87f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE5NDBlYzdkOWExYjIzNjBkYzQ2ZjRjYzY4NjI1NjcxNDM2ZDQ2ZTEyZTlhZjlhMjBmYTgzYTcxODEzZjg3ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE5NDBlYzdkOWExYjIzNjBkYzQ2ZjRjYzY4NjI1NjcxNDM2ZDQ2ZTEyZTlhZjlhMjBmYTgzYTcxODEzZjg3ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "version": "repo-lines-v1:sha256:9f6735961960068fbe8edec4f7d68493c0dfe354d395ceac7615057cc3f52435:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY2NzM1OTYxOTYwMDY4ZmJlOGVkZWM0ZjdkNjg0OTNjMGRmZTM1NGQzOTVjZWFjNzYxNTA1N2NjM2Y1MjQzNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY2NzM1OTYxOTYwMDY4ZmJlOGVkZWM0ZjdkNjg0OTNjMGRmZTM1NGQzOTVjZWFjNzYxNTA1N2NjM2Y1MjQzNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         }
       ]
     },
@@ -439,11 +439,11 @@
       "statement": "scripts/footprint.tsx no longer samples the frontmost app or reports a key share: in --window mode the only validity check it keeps is the occluded flag.",
       "evidence": [
         {
-          "resource": "repo://scripts/footprint.tsx#L24-L30",
+          "resource": "repo://scripts/footprint.tsx#L25-L31",
           "version": "repo-lines-v1:sha256:9f90a9fe00d58a5321cb7f0c4c7c330e8adb6a3ecd8331f2bda1c3b188bd9bae:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWVkOWRjMDJlZmJiNDIxYjJmMzZhODE5NGJiZmM3MWU3N2RlZWJkNDNiZTNlNTU1MDMzODNmY2I4YjY2NmEzYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTcyYTQyOTM4MmIyZTE0NzE4ZTBlMzdiMDU3MGE4YTE3MDI5OTFmY2Q4NDk4Y2Q4NDA2MGE4YmY0ZjA1MDE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTcxNTc2NWU4YzMzY2U4NGU0OWExN2I2NWRhNDA5YjQzODI3OWE2YTkwZDFjYzU0YTlmYmRmNzNiOTk3NDBjOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjAyMDIxZjJiZDBkZGZmZTFhODYxNDkwMjY1MDljNTQ4MTg0YzMwOTc4Nzk0ZjMxN2ZlYTBmMzMzN2QwY2NlYiJ9"
         },
         {
-          "resource": "repo://scripts/footprint.tsx#L531-L534",
+          "resource": "repo://scripts/footprint.tsx#L541-L544",
           "version": "repo-lines-v1:sha256:aa34d3edcb439bc9bb2fc1ac9081a3c6eaf983a82e1609c14488228fe7a42e9b:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDZlODI0ZDhkZGMyN2EzNGI2ZTIzMTNlNDFmNWJmMmQwZDg3YmUxZWM4NzJlYmQ1ZTQwZDNiYTQwZjk3Y2E4NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjVkYzMyZmNmOTcyYzJhNmNlZjY2NTY5MTk3YTEwNTE0MzlkZDJlYjU1YmQwNzYyMzEzMmMwM2JhNzQxMzBkYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjUyMGNmNGI4NGZiNzkyODI2YWIzYTNjM2Q0MTI3M2NmYjJlYThhNmFkNDI4M2M0NDgxMGE3YTkyZDNmOTNmYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjhhNzhlMTA2YWUyMDQ1NjI5M2ViMjA4YmZjOTc1OGMwYTFiOGQxYTUxZmFmM2I3ZmYyMDE5Njg2NzI4NzFmYyJ9"
         }
       ]
@@ -453,7 +453,7 @@
       "statement": "The README memory row records headless f993d9b9 footprints only (introduction 65 MB, showcase 131 MB, introduction 192 MB after one tour with a peak of 194 MB up from 67 MB fresh, retained elements back at 744) and leaves the in-window floor and per-element cost to the next bench.",
       "evidence": [
         {
-          "resource": "repo://README.md#L268-L268",
+          "resource": "repo://README.md#L270-L270",
           "version": "repo-lines-v1:sha256:5b2e249cdd7a686594fc35cb7110f53352d6591241682528dff08b11d9bf24a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWIyZTI0OWNkZDdhNjg2NTk0ZmMzNWNiNzExMGY1MzM1MmQ2NTkxMjQxNjgyNTI4ZGZmMDhiMTFkOWJmMjRhNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWIyZTI0OWNkZDdhNjg2NTk0ZmMzNWNiNzExMGY1MzM1MmQ2NTkxMjQxNjgyNTI4ZGZmMDhiMTFkOWJmMjRhNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2ViZWI3ZjhlYTY5NjEzYWQ3NDRjNDNjZWRjYzU1Yjk2M2I5YTI4ZWNlMjA1NGVmMzczYzRkY2NkZjdmZmU0NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODc2ZmVkODA0MDA3NWNhODA0MWY5YWVjYzQyMmQ4NTBhZjVkNWQwMjI3MTYyNWRlMDRjZjRhMDA0ZjAxOGMyMiJ9"
         }
       ]
@@ -481,8 +481,8 @@
       "statement": "A scroll write (scrollTop, scrollTo or a bounds read) after a mutation forces a layout pass over the whole retained tree, display: none subtrees included; on gpuix 511bebab FF's pass cost ~5 us per element, about 10x the test-renderer repro, but on e591681e (round 16, #83) a layout-dirtying read costs 1 pass at 2.87 ms median on the Command Menu page and a paint-only write costs no pass, so the port still avoids writes during mount without relying on the old figure.",
       "evidence": [
         {
-          "resource": "repo://README.md#L270-L270",
-          "version": "repo-lines-v1:sha256:c3d764a6ff5cbd7b2ae413909553a694e6383f2b4a20d349ddd4adb50ada817b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzNkNzY0YTZmZjVjYmQ3YjJhZTQxMzkwOTU1M2E2OTRlNjM4M2YyYjRhMjBkMzQ5ZGRkNGFkYjUwYWRhODE3YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzNkNzY0YTZmZjVjYmQ3YjJhZTQxMzkwOTU1M2E2OTRlNjM4M2YyYjRhMjBkMzQ5ZGRkNGFkYjUwYWRhODE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDg3YTcwZWMyYjJkOWQ5MTI3ZjY2NTM0OWRkNWEyOTFjMjFmMzBlMmUzYmIwYjU4NTA2ZWQ3Y2I2Zjk1YTU1OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWM0ZTExMTA4MzI5MTFhMWViYzA4ZjYwNTI4NWU3N2Q5NWViMGI1ZGY0ZjIwMGJlMGUxYTg4OWMwMzliOTNlOCJ9"
+          "resource": "repo://README.md#L272-L272",
+          "version": "repo-lines-v1:sha256:853031ac0f52d324f61d8d8c825515feec7fc1635fa47b73226b7a682a630305:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODUzMDMxYWMwZjUyZDMyNGY2MWQ4ZDhjODI1NTE1ZmVlYzdmYzE2MzVmYTQ3YjczMjI2YjdhNjgyYTYzMDMwNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODUzMDMxYWMwZjUyZDMyNGY2MWQ4ZDhjODI1NTE1ZmVlYzdmYzE2MzVmYTQ3YjczMjI2YjdhNjgyYTYzMDMwNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjBmZjgxYTQ4YTdkMTM0ZmJhYjE1MTdiZjkxMDk0Y2NlYmNiOTUwNjg3MDQ2OWIyYzcyZTQwMzk4YTE5OWUyMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjhiZjRiOTBiZGFmYzliMDFkMWNjODIyYWQ5MzljMjY5MzFiM2I3ZWU5ZTI5M2I1ZGMyMDUwMDRmNmUwNzE5ZSJ9"
         },
         {
           "resource": "repo://scripts/check-command-menu.tsx#L853-L927",
@@ -495,12 +495,8 @@
       "statement": "Since gpuix 8352e66c a forced layout (a bounds read or a scrollTop write) no longer delivers onLayout or ResizeObserver reports; they arrive with the next painted frame after its scroll events, as in Chrome, so base-ui-solid-gpuix's scroll-area and combobox were adapted and fluid hover's pick and the composer stage's pin are one frame late exactly as the source is in Chrome.",
       "evidence": [
         {
-          "resource": "repo://README.md#L242-L247",
-          "version": "repo-lines-v1:sha256:147ef3be8571feccc4ec81710ec498ce132f79f149d02c587d9d95705405911a:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQ1MmU4NDc2ZDA3Yzg4N2ZlZTVjN2Q1NGZhZTMxYjFmN2E3ZjEyZDI5ODExNTMwODkxY2M1YTFiMjIzNDg2NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGFmY2NiZjcwZGQ0NjRjMTJhZDJmZDg0MDA3OTYxYjIxY2VlNjVlZDYyMTA3ZGQ0MTdiNjRmYjc3ZWY3Nzg1MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGUzMGY5MzRkZGU0OTNmMDc0OTc4NzY2MGY3Yjc4MzU5ZTA2Y2Y0MTdiNDI2MDdjZGZkZDU3OThhM2JlZTliNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiZWIxNmI3NDM1M2Q0OTkwNzAxNzk3MjdlMDNkZGIzNTc4ZmRjNmM1ZWY1NmE0NWNkNjkxYTgwYjM3ZWE3MyJ9"
-        },
-        {
-          "resource": "repo://README.md#L364-L364",
-          "version": "repo-lines-v1:sha256:0a51dad9b622ce4e16f2055440687f7c36dfa3cbb7d1adedd90f73f2ecf5dc6c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGE1MWRhZDliNjIyY2U0ZTE2ZjIwNTU0NDA2ODdmN2MzNmRmYTNjYmI3ZDFhZGVkZDkwZjczZjJlY2Y1ZGM2YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGE1MWRhZDliNjIyY2U0ZTE2ZjIwNTU0NDA2ODdmN2MzNmRmYTNjYmI3ZDFhZGVkZDkwZjczZjJlY2Y1ZGM2YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWQ2YTIzZjdkODNlYTM3YTVmMmRlYjMyMzZhZGEzYzNmM2Q2NTkzNzFlMTMxNzgwZmI3YjEwY2M2MTNhOTJlYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjVlYTU5YjdkMDEyMzVlNDFhZjAyNWFlYzgwYmIzOWE0YmZmODE0MWJiYTI2NWQ0ZjYxMTBkZDM4MTNjNDYyMiJ9"
+          "resource": "repo://README.md#L244-L248",
+          "version": "repo-lines-v1:sha256:fbfb0b3ad80696f975e5688fe3599951e8b03b8d15631dd5e1f500e594820dda:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTZjNjYwNzFmNWFkMTAzMDA2NjBlMmE5ODU5ZWNiMTZmNzVjNGUyZTVjYWQ5MTBhZmYzNmJmN2U5Nzc4NjllYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDgyZjg5MWE0M2ZjZDYwZDY3YTA4NDkzM2IxMmE0ZjlmOGM4ZDQ0NmZjY2FjZmNmZThiZDdiMWE4MTYxODUzMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2E5OTNmYzQ3OGNlMzg1NzZjYzIxZmM1YTAwMzhkZWE2OGY2NDljMzM0MzRlZThiNzk4N2JlMjZhNTI4YWU5ZCJ9"
         }
       ]
     },
@@ -524,11 +520,11 @@
     },
     {
       "id": "claim_5a37817ec4744e7693d8601b42119491",
-      "statement": "The round-16 contentVisibility variant (branch cull-cv) was rejected, not merged: entering the Command Menu page took 8 layout passes against 2, and gpuix builds a hidden subtree for any geometry read, where a display: none box answers empty.",
+      "statement": "The round-16 contentVisibility variant (branch cull-cv) was first rejected, not merged: entering the Command Menu page took 8 layout passes against 2, and gpuix builds a hidden subtree for any geometry read, where a display: none box answers empty; the Round 18 re-run on a92b4f7f reversed it and cull-cv was merged.",
       "evidence": [
         {
-          "resource": "repo://README.md#L284-L284",
-          "version": "repo-lines-v1:sha256:0aeeaa1227ca07bb12a51b8b83f1a548db8bb062d112337aa167db2b17c66053:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGFlZWFhMTIyN2NhMDdiYjEyYTUxYjhiODNmMWE1NDhkYjhiYjA2MmQxMTIzMzdhYTE2N2RiMmIxN2M2NjA1MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGFlZWFhMTIyN2NhMDdiYjEyYTUxYjhiODNmMWE1NDhkYjhiYjA2MmQxMTIzMzdhYTE2N2RiMmIxN2M2NjA1MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTMxYzhkMjgzODdjOTg1MzllMzU3NTRlNmY1ZjQ5ZWFjMjY4OTJmYmY4YmRjZTEwOTgzZTMyOGVjNzI3M2NmNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTgxNjIzN2ViNjljZDlhYzEyNjZiMjE5NTdmZjMzNDljMTQ0MTYyN2JjM2I1OWRkMmMwNGYyZmEyY2MwY2RiYyJ9"
+          "resource": "repo://README.md#L287-L287",
+          "version": "repo-lines-v1:sha256:a2b35782ecdd1ec08f020718b5197a7adc04d51d14f19c85c5b1fa55a078ca1c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTJiMzU3ODJlY2RkMWVjMDhmMDIwNzE4YjUxOTdhN2FkYzA0ZDUxZDE0ZjE5Yzg1YzViMWZhNTVhMDc4Y2ExYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTJiMzU3ODJlY2RkMWVjMDhmMDIwNzE4YjUxOTdhN2FkYzA0ZDUxZDE0ZjE5Yzg1YzViMWZhNTVhMDc4Y2ExYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTMxYzhkMjgzODdjOTg1MzllMzU3NTRlNmY1ZjQ5ZWFjMjY4OTJmYmY4YmRjZTEwOTgzZTMyOGVjNzI3M2NmNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTgxNjIzN2ViNjljZDlhYzEyNjZiMjE5NTdmZjMzNDljMTQ0MTYyN2JjM2I1OWRkMmMwNGYyZmEyY2MwY2RiYyJ9"
         },
         {
           "resource": "repo://src/lib/fluid-hover.ts#L155-L174",
@@ -538,15 +534,11 @@
     },
     {
       "id": "claim_b5fd510522d6449ea943652849c62558",
-      "statement": "gpuix c6475390 (Round 14a) leaves a looping animation that draws nothing (off screen, display none or stopped) costing about 3.5% CPU per loop through GpuixView::dormant_tick, which the port cannot remove; the port's onScreen gates did not help and were deleted, and layout loops (the word roll on top, the fluid-hover cursor, the carousel-dots fill on width) remain whole frames.",
+      "statement": "gpuix c6475390 (Round 14a) left a looping animation that draws nothing (off screen, display none or stopped) costing about 3.5% CPU per loop through GpuixView::dormant_tick, which the port could not remove and its onScreen gates did not help, so they were deleted; gpuix #90 (Round 18, a92b4f7f) removed the cost by waking each dormant animation only when it has something to tell (input-message 1.3-1.6% idle, button 1.4-1.8%); layout loops (the word roll on top, the fluid-hover cursor, the carousel-dots fill on width) remain whole frames.",
       "evidence": [
         {
-          "resource": "repo://README.md#L266-L267",
-          "version": "repo-lines-v1:sha256:9c6024841ca4ecde4a205de0a9da9e8d610e7fb478b1d8d4eb1a355141e10daa:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTQ3M2EyY2RmNzQ3YjU3MzEzZjA1Yzg0YWJiOGVjOTk5MDBhNWNkYTVkNDg4ZTMxN2NlZTQzNDJiM2I4MDljMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTQzNWU2MmU2OGE4Y2RiNTc0YzU1YjBkMThkMzhhNzg2Mzc3MzlhODIxZjZjZGUxMjVmMWQ3MjJkYTc4MmI4MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzcyYjY0N2ZhYzhlNDBlZjg3ZDQ4Y2RiMjQyNDg2YTgxNGUzYWQxMzdhNGZhMjgxNzBhN2FiOGNiZDI1ODRiMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDY5Yjk4MGMwNGYwY2FmMWMxMjBmYTI5NGZmYjcyOTdlZGY4MjhmY2IyZWU1OWU4ODVmZTgwY2FhN2I4YzIyYSJ9"
-        },
-        {
-          "resource": "repo://README.md#L279-L280",
-          "version": "repo-lines-v1:sha256:ba41070d641694b64cbc85a25ce67e6523b0493ef399ba419551fecf00e0c63a:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjcwMDYxMmRkNDA3YTc1YmU0ZTdkNDJjZGRkMGQ1MjllNmUzYTFjODNmYTUyODc0NmQyOWUzZmQ0ODcxNzBlOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDJhNWM3NmJiMWI0NmQwNzkzMmM5MmQ0OTdmNjY1MmRhMDQ2YjlhMDdjZTAxZjc2NzM5ZjQ3YzNkYzU2Mzg1ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTMxYzhkMjgzODdjOTg1MzllMzU3NTRlNmY1ZjQ5ZWFjMjY4OTJmYmY4YmRjZTEwOTgzZTMyOGVjNzI3M2NmNiJ9"
+          "resource": "repo://README.md#L267-L267",
+          "version": "repo-lines-v1:sha256:4f29c958f9da3acc7696d9917f2fb20af4e12fcf47dd1c6df51c4c2846e931ac:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGYyOWM5NThmOWRhM2FjYzc2OTZkOTkxN2YyZmIyMGFmNGUxMmZjZjQ3ZGQxYzZkZjUxYzRjMjg0NmU5MzFhYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGYyOWM5NThmOWRhM2FjYzc2OTZkOTkxN2YyZmIyMGFmNGUxMmZjZjQ3ZGQxYzZkZjUxYzRjMjg0NmU5MzFhYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTcxMTE0NjgxNzMzZDBjNDU5NGQwNjA1YTZkMWEwZTNjNjNhZmU4ZmFkYmFlYmUzZmVlZjU0ZDE4YWE5ZjYzYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWYzOWU4ZjE0MmQ5ZWQ1MGY1NzMwMmU4NTM5OThiNjRlNTQ4YzQ3NDdhYWYxMGI2NWQ5MzllOGYyN2M4MzQ3MyJ9"
         },
         {
           "resource": "repo://src/components/thinking-indicator.tsx#L110-L196",
@@ -559,12 +551,12 @@
       "statement": "Input to an idle window did not wake JS on the wake-driven frame loop on gpuix c6475390 (gpuix #77), so a page that stops ticking, such as the Command Menu about 4 s after entry, lagged until the app was switched away and back; gpuix 6f2a72d3 (#93) fixes it with a kCFRunLoopBeforeWaiting observer on the event thread that posts a no-op block to the main queue, and FF changed nothing but the pin.",
       "evidence": [
         {
-          "resource": "repo://README.md#L271-L271",
-          "version": "repo-lines-v1:sha256:b8245d4105bf4166c5208af09f3f07678678016a9d5ec9e9a3063e23146f199d:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjgyNDVkNDEwNWJmNDE2NmM1MjA4YWYwOWYzZjA3Njc4Njc4MDE2YTlkNWVjOWU5YTMwNjNlMjMxNDZmMTk5ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjgyNDVkNDEwNWJmNDE2NmM1MjA4YWYwOWYzZjA3Njc4Njc4MDE2YTlkNWVjOWU5YTMwNjNlMjMxNDZmMTk5ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDY5Yjk4MGMwNGYwY2FmMWMxMjBmYTI5NGZmYjcyOTdlZGY4MjhmY2IyZWU1OWU4ODVmZTgwY2FhN2I4YzIyYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWM0ZTExMTA4MzI5MTFhMWViYzA4ZjYwNTI4NWU3N2Q5NWViMGI1ZGY0ZjIwMGJlMGUxYTg4OWMwMzliOTNlOCJ9"
+          "resource": "repo://README.md#L274-L274",
+          "version": "repo-lines-v1:sha256:b8245d4105bf4166c5208af09f3f07678678016a9d5ec9e9a3063e23146f199d:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjgyNDVkNDEwNWJmNDE2NmM1MjA4YWYwOWYzZjA3Njc4Njc4MDE2YTlkNWVjOWU5YTMwNjNlMjMxNDZmMTk5ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjgyNDVkNDEwNWJmNDE2NmM1MjA4YWYwOWYzZjA3Njc4Njc4MDE2YTlkNWVjOWU5YTMwNjNlMjMxNDZmMTk5ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjYyMzk2ZjRjZjcwMWY5ZDQwMzQwMDNkYzBmN2MzNmQ5YTFhM2Q5MDI4YWFjMTlhNWFhNGMzNzIwM2M2ZGQ3ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzdjNjY1MmJkMTVkYjIyZWY3YjNiOGQ1YWRlZWYxYmVmZDlhZWEyMTQ1OWFlNTc0NWIwNjVkNGMzZGQ5ZGY2NiJ9"
         },
         {
           "resource": "repo://README.md#L56-L56",
-          "version": "repo-lines-v1:sha256:aa940ec7d9a1b2360dc46f4cc68625671436d46e12e9af9a20fa83a71813f87f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE5NDBlYzdkOWExYjIzNjBkYzQ2ZjRjYzY4NjI1NjcxNDM2ZDQ2ZTEyZTlhZjlhMjBmYTgzYTcxODEzZjg3ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE5NDBlYzdkOWExYjIzNjBkYzQ2ZjRjYzY4NjI1NjcxNDM2ZDQ2ZTEyZTlhZjlhMjBmYTgzYTcxODEzZjg3ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "version": "repo-lines-v1:sha256:9f6735961960068fbe8edec4f7d68493c0dfe354d395ceac7615057cc3f52435:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY2NzM1OTYxOTYwMDY4ZmJlOGVkZWM0ZjdkNjg0OTNjMGRmZTM1NGQzOTVjZWFjNzYxNTA1N2NjM2Y1MjQzNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY2NzM1OTYxOTYwMDY4ZmJlOGVkZWM0ZjdkNjg0OTNjMGRmZTM1NGQzOTVjZWFjNzYxNTA1N2NjM2Y1MjQzNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         }
       ]
     },
@@ -574,7 +566,7 @@
       "evidence": [
         {
           "resource": "repo://README.md#L56-L56",
-          "version": "repo-lines-v1:sha256:aa940ec7d9a1b2360dc46f4cc68625671436d46e12e9af9a20fa83a71813f87f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE5NDBlYzdkOWExYjIzNjBkYzQ2ZjRjYzY4NjI1NjcxNDM2ZDQ2ZTEyZTlhZjlhMjBmYTgzYTcxODEzZjg3ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE5NDBlYzdkOWExYjIzNjBkYzQ2ZjRjYzY4NjI1NjcxNDM2ZDQ2ZTEyZTlhZjlhMjBmYTgzYTcxODEzZjg3ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "version": "repo-lines-v1:sha256:9f6735961960068fbe8edec4f7d68493c0dfe354d395ceac7615057cc3f52435:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY2NzM1OTYxOTYwMDY4ZmJlOGVkZWM0ZjdkNjg0OTNjMGRmZTM1NGQzOTVjZWFjNzYxNTA1N2NjM2Y1MjQzNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY2NzM1OTYxOTYwMDY4ZmJlOGVkZWM0ZjdkNjg0OTNjMGRmZTM1NGQzOTVjZWFjNzYxNTA1N2NjM2Y1MjQzNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
         },
         {
           "resource": "repo://drift/home.md#L60-L70",
@@ -591,18 +583,56 @@
       "statement": "The bento card's preview box pins flexBasis '0%' (the source's flex-1) instead of 0, so FF no longer depends on gpuix #96, where flexBasis 0 on an auto-height column item is sized from content in gpuix but collapses in Chrome.",
       "evidence": [
         {
-          "resource": "repo://README.md#L273-L273",
-          "version": "repo-lines-v1:sha256:7b51a6a27192f96e49ee75495f06033af1de049c174f66bbe57294e213fae320:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2I1MWE2YTI3MTkyZjk2ZTQ5ZWU3NTQ5NWYwNjAzM2FmMWRlMDQ5YzE3NGY2NmJiZTU3Mjk0ZTIxM2ZhZTMyMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2I1MWE2YTI3MTkyZjk2ZTQ5ZWU3NTQ5NWYwNjAzM2FmMWRlMDQ5YzE3NGY2NmJiZTU3Mjk0ZTIxM2ZhZTMyMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjUwZmJkNjQ2NTk2Yjc1ZDQzNzM0Mzg4MzM3MDBmNTcwNTYwYzgwYmM3ZDc1YjMyODg5NDZmMjIwOWY5MzEyOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWM0ZTExMTA4MzI5MTFhMWViYzA4ZjYwNTI4NWU3N2Q5NWViMGI1ZGY0ZjIwMGJlMGUxYTg4OWMwMzliOTNlOCJ9"
+          "resource": "repo://README.md#L275-L275",
+          "version": "repo-lines-v1:sha256:2ef64e54541053c72bd1e2883230ae16c13c4e9077f0b725c2c05da71a0ccdf4:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmVmNjRlNTQ1NDEwNTNjNzJiZDFlMjg4MzIzMGFlMTZjMTNjNGU5MDc3ZjBiNzI1YzJjMDVkYTcxYTBjY2RmNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMmVmNjRlNTQ1NDEwNTNjNzJiZDFlMjg4MzIzMGFlMTZjMTNjNGU5MDc3ZjBiNzI1YzJjMDVkYTcxYTBjY2RmNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzM3OTkwY2YzZmY0NWY4NjUyMmFhNmE5M2U5ZmEwM2FjYjE5OTFkOGE4ZjE3NGM1Y2M0YzI2MGViMGUxNjZkZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjgxNjllOTI4YzU4YjQwZmJmNGNiNjg3MjViNGQ4YjA5MzFkZGQwNGUzMDU2NTZhN2NmNTUwMzAwNzA2NDFiYiJ9"
         },
         {
-          "resource": "repo://src/home/bento-card.tsx#L84-L93",
-          "version": "repo-lines-v1:sha256:69891821c155ad52cd1732199aabe6471d46b8dbcedfed20207f3ea776250691:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0MTVkODAxMTVjZDJlODFhZjdjM2FiZDU1YmI5YmFjMTU5ZTgzMzNlZWFhMzJiMTZiZjUyYjJmNzY2NDkxZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmZDQ2YWU1NmM3ZjQxOWI4NzkxODFhNmFmMDE3YmI5YjJhMzU4MzAwNzdhNmIzZTE2MzhjYjRkOWNmNzE0ZTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyYWZhODc5ZDlhZjQ4NDYyNTdlYWYzYmVhODZhZGQzZmM2MmUyNWQ0Y2FlZDg4ZDZhZWYzNTJhYzQzYWY1NDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxYjNiNjViZGZhMTk1ZjQ1MjZhMDE0Yjg2YTc3M2ViYzEwMjVjZmVkZjIxMDc0OGM4NjU4ZmYxZjNhODgyZTcifQ"
+          "resource": "repo://src/home/bento-card.tsx#L84-L107",
+          "version": "repo-lines-v1:sha256:d89bf6f38fa767a45b0924501a57e645bff13e4272a26d574510313ec6a2776a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0MTVkODAxMTVjZDJlODFhZjdjM2FiZDU1YmI5YmFjMTU5ZTgzMzNlZWFhMzJiMTZiZjUyYjJmNzY2NDkxZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4NTQwOWVhNjA5OWI4YzhmMDYwMmM3OTM0ZjZkNTlkMWM5ZjQ4ODA5OWRhY2JjZTI3MTk5ZTBlNmVjYTU0NDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyYWZhODc5ZDlhZjQ4NDYyNTdlYWYzYmVhODZhZGQzZmM2MmUyNWQ0Y2FlZDg4ZDZhZWYzNTJhYzQzYWY1NDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyYjcyMTljZDJiY2Y5MmNlZDY4ZGIxNTU3NTJkMjE2YWE1MGM4ODg1MjhkZGMxMzhmNDhiMzNkZDk1NTUyODYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_821a01d927a2430ba74db419d32449f0",
+      "statement": "Since gpuix a92b4f7f (Round 18) createCulling hides a far region with content-visibility: hidden and the size it last laid out at instead of a display none wrapper with a pinned height: the A/B of cull-cv b8b4d20b against main 74e0033c (headless, load 1.4-4.3) gave 1 entry layout pass against 2 on the Command Menu page and final one-column bento tile heights right after settle, with page switches, idle CPU and footprint equal, and a read after a paint-only write costing a layout pass (gpuix #98, open).",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L287-L287",
+          "version": "repo-lines-v1:sha256:a2b35782ecdd1ec08f020718b5197a7adc04d51d14f19c85c5b1fa55a078ca1c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTJiMzU3ODJlY2RkMWVjMDhmMDIwNzE4YjUxOTdhN2FkYzA0ZDUxZDE0ZjE5Yzg1YzViMWZhNTVhMDc4Y2ExYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTJiMzU3ODJlY2RkMWVjMDhmMDIwNzE4YjUxOTdhN2FkYzA0ZDUxZDE0ZjE5Yzg1YzViMWZhNTVhMDc4Y2ExYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTMxYzhkMjgzODdjOTg1MzllMzU3NTRlNmY1ZjQ5ZWFjMjY4OTJmYmY4YmRjZTEwOTgzZTMyOGVjNzI3M2NmNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTgxNjIzN2ViNjljZDlhYzEyNjZiMjE5NTdmZjMzNDljMTQ0MTYyN2JjM2I1OWRkMmMwNGYyZmEyY2MwY2RiYyJ9"
+        },
+        {
+          "resource": "repo://src/lib/cull.ts#L38-L123",
+          "version": "repo-lines-v1:sha256:3ff11b930a00bf3f1bccbdfff5d2e15ea2b59648c96a5cb73d64a8c82b886a81:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY3YjAzYmI5NmEzOGY4MDQ4NDBmNDEyOGI5M2M5MWEwNjAzZjIxMTRlYmViZGZlZDM0OTQzNWZiNTc4MWMxNjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZiY2EyZDkzZDU5ZGQyNjk0ZGMyMTJhNTQwNDQ4NTAwYmFhMTRmZWRjN2E2NDU0MGYzYmMwMjg0MWM4NDczNjEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_340b0b2a7b2e4e8998d40af1da69f0d1",
+      "statement": "gpuix #97 and #90 (Round 18) let animations and motion values in content that content-visibility skips sleep and wake per animation, so a looping card in a culled region no longer keeps the window drawing: input-message idles at 1.3-1.6% CPU with 0 whole frames a second against 19.8-22.7% and 71.6 a second on the Round 17 cull-cv branch; a spring still wakes every frame until it settles but draws nothing.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L267-L269",
+          "version": "repo-lines-v1:sha256:13f23f1ea37b51545268f7ca08895e46a0e867f6a8cd821af0dde29b9e223293:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGYyOWM5NThmOWRhM2FjYzc2OTZkOTkxN2YyZmIyMGFmNGUxMmZjZjQ3ZGQxYzZkZjUxYzRjMjg0NmU5MzFhYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODMxODQ0MzJkOWNlNjBiMTlhNTEwZjE4NmE0NDlkN2YzZDA0MmEzYWQzZjBiMTk5NDcxYWY1ZjhhMjlhYTEyZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTcxMTE0NjgxNzMzZDBjNDU5NGQwNjA1YTZkMWEwZTNjNjNhZmU4ZmFkYmFlYmUzZmVlZjU0ZDE4YWE5ZjYzYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODNhMTI4ODU0ZDBhYjAyNzM2ZTcxN2I5OTMwYjU0ODY2ZTkxYjI2YWI1ZGE1NjZmZjJmMGY4NDUzNGY1Y2ZkOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9fc072b11e0a457d95b07df6ba3b9bb5",
+      "statement": "pnpm footprint prints an all draw ms column, the mean/p90 of every drawFrame that drew, patched frames included, beside draw ms, which averages only whole-frame draws and so rises when patching replaces whole frames.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/footprint-child.tsx#L225-L240",
+          "version": "repo-lines-v1:sha256:0a414355a17f812e7db3c5991f3cc6eafa1042bebab791db0c299820cb96a481:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3NzhiNTRkNTcwMTZjNmM5Mjk1OTM2ZjUxMWM4MmNmMWQ5YzQxNjM0ODI1YjlmYzU0ODg4MjZhMDg4M2ZkNDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3Y2RhODJkYTYwNjIzOGUwNWU2MjM5OTU2OWM1ZWUwMzk5MzQxOTY0OGFlNWQ0M2EyYmY4Y2Q2MzQ3ZjgyNjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUxMWE3NGFkYjBiMDc1MWRhYjgzMmU5YTlhYTdmOTFkODNhOWJkNWJlZGQ1ZjFlYzQ5MWM0MDVjODYyN2FkNjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRlNzJiOGMyMmFlYjAwMzEyYjU3NDdiMDdkZGFmNmE2NWU3OGYyZDgwY2M0ZWNmMjU5ZDE5ODYyYjc4MjYxYzkifQ"
+        },
+        {
+          "resource": "repo://scripts/footprint.tsx#L10-L14",
+          "version": "repo-lines-v1:sha256:40182cb070fd481dd3ef3f01c705380881a725cba7295cf549e82efb77b47377:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzE1ZDFiYjI3YmNkNTk0NjcyZDgxZjY1MTFmZGNlYjc0NTQxYjI2Yjk3MWYxZDc3OGNhMjdmNjljZDliNjUyMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjU3MTliNmI0YTIwNzVhMmUxMzYzMTMxYjA3OWI1OWY3OGQzNGU4NjVkNzFmODk3OGJkNTk0MjAxOWJiNmVlMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTA3MjMwYTM5ZDM3NzhhZmFhNDdmNjhhY2Q1ZDQ0MzRkNzI1Mzg1NmY4M2NjM2NmMDRhZmNkNDIzNGI1MmU1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGM1MjA2M2I1M2RjMWEzOTQ1NmEzYTk2ZTMxZWY2NGU3Y2Y2NGM0NjI0Y2M2YzIxMGM4ZmQ4OGRmMDk2YmZhMyJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-23T19:28:25.041Z"
+    "at": "2026-10-24T01:38:18.068Z"
   }
 }

@@ -14,10 +14,10 @@ sources:
     resource: repo://THIRD_PARTY_NOTICES.md
   - id: openwiki-source-ff18555ad70362de0f452788
     resource: repo://UPSTREAM.md
-generated: { by: "claude-code", at: "2026-10-23T19:28:25.041Z" }
+generated: { by: "claude-code", at: "2026-10-24T01:38:18.068Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-23T19:28:25.041Z
+    at: 2026-10-24T01:38:18.068Z
 ---
 
 # Project overview
@@ -67,7 +67,7 @@ site was the only place to see them. Which files are at which pin, and how to ca
 - **`~/code/fdarian/gpuix`**, branch `poc`: the owner's fork of [remorses/gpuix](https://github.com/remorses/gpuix),
   which follows DOM/CSS semantics wherever upstream gpuix did not. Its `README.md` and `FORK.md` are the gpuix
   reference. The port needs the fork, not upstream gpuix: native springs, the DOM event model and many fixes
-  exist only there. The README names the minimum fork commit (`f6f09d95` as of 2026-10-23); read it there, not here.
+  exist only there. The README names the minimum fork commit (`a92b4f7f` as of 2026-10-24); read it there, not here.
 - **`~/code/fdarian/base-ui-solid-gpuix`**: headless Solid ports of the Base UI primitives (keys, selection, open
   state, focus, ARIA), split out of this repository on 2026-10-17.
 
@@ -98,3 +98,4 @@ All three must resolve to one `solid-js` and one `@gpuix/solid`; see
 | 2026-10-23 | Pinned to gpuix `poc` `c6475390` (Round 14a): paint patching now reaches loops next to an input, under a positioned or translucent ancestor, on a motion value and in an `<svg>`, so the port deleted its off-screen `onScreen` gates and `Show` swaps on the button, file-thumbnail and thinking-indicator loops and ThinkingIndicator's conditional `position: relative` (no measurable cost); a loop that draws nothing still costs about 3.5% CPU in gpuix's dormant tick, and the word roll, fluid-hover cursor and carousel fill stay whole-frame layout loops ([details](../gpuix/gaps-and-divergence-rounds.md#round-14a-paint-patching-reaches-inputs-positioned-ancestors-and-motion-values-on-poc-c6475390-2026-10-23)) |
 | 2026-10-23 | Pinned to gpuix `poc` `6f2a72d3` (Round 14c): input to an idle window wakes the frame loop, which fixes the lag after Cmd-K into the Command Menu once the page had stopped ticking (gpuix #77, answered by #93); no port change, and no headless regression check exists because the test renderer cannot post a native event ([details](../gpuix/gaps-and-divergence-rounds.md#round-14c-input-to-an-idle-window-wakes-the-frame-loop-on-poc-6f2a72d3-2026-10-23)) |
 | 2026-10-23 | Pinned to gpuix `poc` `f6f09d95` (Round 15c): the test renderer defaults to scale 1 and offscreen windows keep their size, so `scripts/test-window.ts` is gone; glyph origins round half up and cap and x heights come from OS/2, so the half-pixel text entry in `drift/home.md` and the tabs-subtle cap-box entry are deleted (drift 541 to 539); the bento card pins `flexBasis: '0%'`, so FF no longer depends on gpuix #96; screenshots recaptured, 1 px label and row shifts on almost every page ([details](../gpuix/gaps-and-divergence-rounds.md#round-15c-scale-1-test-windows-half-up-glyph-origins-and-os2-cap-heights-on-poc-f6f09d95-2026-10-23)) |
+| 2026-10-24 | Pinned to gpuix `poc` `a92b4f7f` (Round 18): animations and motion values in `content-visibility`-skipped content sleep and wake per animation (#97, #90), so the port's `createCulling` moved from a `display: none` wrapper with a pinned height to `content-visibility: hidden` with `containIntrinsicSize: 'auto none'` (the `cull-cv` branch won its re-run: one entry layout pass on the Command Menu page against two, one-column bento tiles at their final height after settle, everything else equal); a read after a paint-only write is dearer under it (gpuix #98, open); `pnpm footprint` gained an `all draw ms` column; drift stays at 539 ([details](../gpuix/gaps-and-divergence-rounds.md#round-18-animations-in-skipped-content-sleep-and-culling-moves-to-content-visibility-on-poc-a92b4f7f-2026-10-24)) |

@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:e08f0bcb98eb71dc8b39af4a960fff71e508b530247fff30f25b0d778ba5cc4d",
+  "pageVersion": "sha256:5b67f1d478191a7213ce82ef74ee16a8c054a9a1ea5cea148b713558fd8b963b",
   "claims": [
     {
       "id": "claim_ff785f35b52647d9a814c38dfcc9f775",
       "statement": "The command menu's list scroll travels on the highlight fill's spring so the row and the fill arrive together.",
       "evidence": [
         {
-          "resource": "repo://src/components/command-menu.tsx#L409-L409",
+          "resource": "repo://src/components/command-menu.tsx#L410-L410",
           "version": "repo-lines-v1:sha256:6787186a94a5df51e8e600b80bc43f53d802fe64016c6570ab7f42f3ba7c427b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjc4NzE4NmE5NGE1ZGY1MWU4ZTYwMGI4MGJjNDNmNTNkODAyZmU2NDAxNmM2NTcwYWI3ZjQyZjNiYTdjNDI3YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjc4NzE4NmE5NGE1ZGY1MWU4ZTYwMGI4MGJjNDNmNTNkODAyZmU2NDAxNmM2NTcwYWI3ZjQyZjNiYTdjNDI3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzI4MTQ1ODE0YTZlMmQ4MTMzNmEyYmYxNzQ0MGRlMmRhNWYwYzNlZDQ0MDRmNjUzZDUyMjUzZDU5MTgzNzlkMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDJlNTZmNWFhYzRmYzM2Yzc2NzRiMjY1NzdjMmNmZmI4NWJmZDczZWZiNGUwNGQ4NjY1OTEwNzBkNTg4NTQ4MyJ9"
         }
       ]
@@ -37,7 +37,7 @@
       "statement": "Adopted gpuix features include colorFade as a real CSS colour transition, multi-layer scheme-aware shadow recipes, app-wide reduced motion through MotionConfig, sticky positioning and tabular-nums.",
       "evidence": [
         {
-          "resource": "repo://src/app.tsx#L529-L529",
+          "resource": "repo://src/app.tsx#L556-L556",
           "version": "repo-lines-v1:sha256:1e0f72e9041e5031ebf112ce965d8f4f793d4070057da8f64d68effcb3e69ca7:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWUwZjcyZTkwNDFlNTAzMWViZjExMmNlOTY1ZDhmNGY3OTNkNDA3MDA1N2RhOGY2NGQ2OGVmZmNiM2U2OWNhNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWUwZjcyZTkwNDFlNTAzMWViZjExMmNlOTY1ZDhmNGY3OTNkNDA3MDA1N2RhOGY2NGQ2OGVmZmNiM2U2OWNhNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmVmMDkzNGI5Y2FmNjI3YmNiMDQyNjVmZTdhODc0NmM1ODY1OGVhNDNiZTdiMGZiNDY5MTNiMzJkYmJkODNlYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWE1NThlNTVjZjFkNzA0ZTUyMWEwNWFhOWNjZjgyOGIyNjU2YzJjY2M3NDA2NjU1MzY4NzBkNzcyNjg3OWRlMyJ9"
         },
         {
@@ -68,7 +68,7 @@
         },
         {
           "resource": "repo://src/pages/audio-mixer.tsx",
-          "version": "repo-file-v1:sha256:ab8efcf7d63423205066819f6da9c5fef4a3f92e7d00a93b7e1d0bf8a2d995dd"
+          "version": "repo-file-v1:sha256:8480044b5015dfa6b094fe35c9bf2dacb6ba9a06df5d0c4fe46d3640d1cacce8"
         },
         {
           "resource": "repo://src/pages/compare.tsx",
@@ -79,6 +79,6 @@
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-18T08:02:19.231Z"
+    "at": "2026-10-24T01:38:18.068Z"
   }
 }

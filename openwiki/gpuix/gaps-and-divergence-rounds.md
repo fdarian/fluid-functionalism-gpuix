@@ -24,6 +24,8 @@ sources:
     resource: repo://scripts/check-tabs-subtle.tsx
   - id: openwiki-source-f870e66b983ce90f21118b51
     resource: repo://scripts/drift-counts.ts
+  - id: openwiki-source-aaea0e5a8481e42cfaa107a5
+    resource: repo://scripts/footprint-child.tsx
   - id: openwiki-source-092597adc6c8ddcc5594efb5
     resource: repo://scripts/footprint.tsx
   - id: openwiki-source-edfff899d93ec8844d1b24df
@@ -78,10 +80,10 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-872f10458af3aae905a0ee5a
     resource: repo://src/pages/fluid-hover/plain-vs-fluid.tsx
-generated: { by: "claude-code", at: "2026-10-23T19:28:25.041Z" }
+generated: { by: "claude-code", at: "2026-10-24T01:38:18.068Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-23T19:28:25.041Z
+    at: 2026-10-24T01:38:18.068Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -104,12 +106,13 @@ link to those rows rather than repeating them. The ones that shape the most code
 - **Layout-property motion only.** The fluid highlight glides on `top`/`left`/`width`/`height`, which re-lays out per
   frame, instead of a transform.
 - **Clipped content still costs a frame** (gpuix #46: retained and clipped content is not free). Long demo pages
-  therefore hide far regions with `display: none` through the port's own `src/lib/cull.ts`; this is a kept
-  workaround, not a removed one: the removal comparison was re-run on `b03d4e27` and culling off was worse on 9 pages
-  and better on none, and again headless on `196d69ce` with the same result. `511bebab` added `contentVisibility`
-  (#71, the opt-in half of #46) and Round 16 (`e591681e`) answered the three objections to it, but an observer-toggled
-  `contentVisibility: 'hidden'` still lost the A/B to `createCulling` on entry layout passes, forced reads and bento
-  layout, so it does not stand in for it ([Round 16](#round-16-the-contentvisibility-ab-on-poc-e591681e-2026-10-23)). The measurements are in
+  therefore hide far regions through the port's own `src/lib/cull.ts`; this is a kept workaround, not a removed one:
+  the removal comparison was re-run on `b03d4e27` and culling off was worse on 9 pages and better on none, and again
+  headless on `196d69ce` with the same result. `511bebab` added `contentVisibility` (#71, the opt-in half of #46).
+  Round 16 (`e591681e`) answered the three objections to it but an observer-toggled `contentVisibility: 'hidden'` still
+  lost the A/B to the `display: none` wrapper `createCulling` then used ([Round 16](#round-16-the-contentvisibility-ab-on-poc-e591681e-2026-10-23)),
+  and it won the re-run on `a92b4f7f`, so `createCulling` now hides with `content-visibility: hidden`
+  ([Round 18](#round-18-animations-in-skipped-content-sleep-and-culling-moves-to-content-visibility-on-poc-a92b4f7f-2026-10-24)). The measurements are in
   [Port decisions, Performance decisions](../decisions/port-decisions.md#performance-decisions-on-gpuix-poc-b03d4e27).
 - **Test-renderer quirks** (a capture is the view alone, with no titlebar or traffic lights; batched keystrokes deliver
   an input's `onChange` after the whole batch) that constrain the screenshot harness.
@@ -117,7 +120,7 @@ link to those rows rather than repeating them. The ones that shape the most code
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
 The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17) and again in the
-[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `f6f09d95` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`, `f993d9b9` in [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22), `511bebab` in [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22), `8352e66c` in [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22), `e591681e` in [Round 16](#round-16-the-contentvisibility-ab-on-poc-e591681e-2026-10-23), `c6475390` in [Round 14a](#round-14a-paint-patching-reaches-inputs-positioned-ancestors-and-motion-values-on-poc-c6475390-2026-10-23), `6f2a72d3` in [Round 14c](#round-14c-input-to-an-idle-window-wakes-the-frame-loop-on-poc-6f2a72d3-2026-10-23), and `f6f09d95` in [Round 15c](#round-15c-scale-1-test-windows-half-up-glyph-origins-and-os2-cap-heights-on-poc-f6f09d95-2026-10-23)). The bugs and gaps worth knowing before touching layout code:
+[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `a92b4f7f` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`, `f993d9b9` in [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22), `511bebab` in [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22), `8352e66c` in [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22), `e591681e` in [Round 16](#round-16-the-contentvisibility-ab-on-poc-e591681e-2026-10-23), `c6475390` in [Round 14a](#round-14a-paint-patching-reaches-inputs-positioned-ancestors-and-motion-values-on-poc-c6475390-2026-10-23), `6f2a72d3` in [Round 14c](#round-14c-input-to-an-idle-window-wakes-the-frame-loop-on-poc-6f2a72d3-2026-10-23), `f6f09d95` in [Round 15c](#round-15c-scale-1-test-windows-half-up-glyph-origins-and-os2-cap-heights-on-poc-f6f09d95-2026-10-23), and `a92b4f7f` in [Round 18](#round-18-animations-in-skipped-content-sleep-and-culling-moves-to-content-visibility-on-poc-a92b4f7f-2026-10-24)). The bugs and gaps worth knowing before touching layout code:
 
 - A function-form `createTransform` of several motion values is computed in JS and can trail its inputs by a frame
   on a live window (not seen on the test renderer). `calc()` strings of the row's own width avoid it where the layer
@@ -159,8 +162,8 @@ The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adopt
   because nothing marks a region far until an `IntersectionObserver` has reported against a first layout. A 1900-node
   tree drew in 45 ms against 8 ms with all but 12 entries `display: none`. The port's `createCulling` hides far
   regions only after its first report, so the first draw on Changelog, Showcase and Command Menu is still whole; the
-  question to gpuix is a way to mount a region culled before its first layout (`511bebab`'s `contentVisibility` is
-  its shape, but the port cannot use it yet, above). The line cache half closed on `511bebab`: its shape store cut a
+  question to gpuix is a way to mount a region culled before its first layout (`contentVisibility` with
+  `containIntrinsicSize` is its shape, and the port uses both since Round 18, but only after that first report). The line cache half closed on `511bebab`: its shape store cut a
   revisit's shapes to single digits (see [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22)). Repro r11
   (outside the repo); `scripts/perf-page-switch.tsx` measures it.
 - `has*` states exist (`hasHover`, `hasActive`, `hasFocus`, `hasFocusVisible`, `hasDisabled`, `hasEnabled`) but gpuix
@@ -228,7 +231,7 @@ Items #1 to #19, found while migrating. What landed in gpuix `f28cb588` (zed `3c
 | 10 | Test renderer ignored appearance and window options, used GPUI key names, sent no key-up, GPUI wheel sign | FIXED (`f1f969b2`, `0140ddc2`, `8d687b45`, and others) |
 | 11 | Event target/relatedTarget were ids, not elements | FIXED (`7cf13991` and follow-ups) |
 | 12 | Accessibility dump did not flag `aria-hidden` descendants | FIXED |
-| 14 | Clipped content still laid out and painted (Command Menu ~57 ms/frame) | WONTFIX the cull (layout dominates); the 57 ms was three test-renderer draws per move, FIXED to ~19 ms. The port keeps `display: none` on far regions (`cull.ts`), and as of `poc` `e5231304` still needs it (gpuix #46) |
+| 14 | Clipped content still laid out and painted (Command Menu ~57 ms/frame) | WONTFIX the cull (layout dominates); the 57 ms was three test-renderer draws per move, FIXED to ~19 ms. The port hid far regions with `display: none` (`cull.ts`), and as of `poc` `e5231304` still needed it (gpuix #46); since `a92b4f7f` it hides them with `content-visibility: hidden` and still needs the cull |
 | 16, 17, 18 | Mask on macOS only; `preventDefault` late and no physical key on Windows/Linux | DOC (macOS-only scope); the physical key was FIXED later in the gap pass |
 | 19 | "Volume: " + "78%" rendered without the space | Not a gpuix bug: the parts were separate flex items, which CSS also strips. Fixed in the port by putting the label in one text run |
 
@@ -845,7 +848,9 @@ the poc history). The round changed no component's look; its two results are a c
   the repro's ~0.4-0.5 us per element and not the ~5 us measured on `511bebab`; a paint-only write costs no pass (0.05
   per read, 0.02 ms). The README row's question for gpuix is now a pass that costs what changed, not the tree. The
   `navigate` write and the skipped first `snapScroll(0)` stay as they were.
-- **`createCulling` stays, after a real A/B instead of the three-reason argument.** Round 16 made `contentVisibility`
+- **`createCulling` stays, after a real A/B instead of the three-reason argument** (the `display: none` wrapper stayed
+  here; [Round 18](#round-18-animations-in-skipped-content-sleep-and-culling-moves-to-content-visibility-on-poc-a92b4f7f-2026-10-24)
+  re-ran the A/B and moved the culling to `content-visibility`). Round 16 made `contentVisibility`
   plausible: scroll anchoring landed, `visible` applies no clip, and FF's own 25% `IntersectionObserver` can drive
   `hidden` with a `containIntrinsicSize` from the report rect. The `cull-cv` branch (kept, unmerged) lost: 8 entry
   passes against 2 on the Command Menu page, a forced read at 2 passes and 6.24 ms where `createCulling` costs 1 and 2.87
@@ -875,7 +880,7 @@ recorded as declined is now patched. The port's response was to delete code, not
   relative/static toggle; the button `Spinner`'s `onScreen` gate; the `!onScreen()` half of the `Shimmer` animation; the
   `Show` swaps that mounted a still glyph or circle off screen in `MorphingGlyph` and file-thumbnail's `Spinner`. The
   gates were tried as a way to stop an off-screen loop and did not (see the dormant tick below); culling's
-  `display: none` already pauses the loop. Kept on purpose: `cull.ts`, `clock.ts` `onFrame`, the word-cycle timer
+  `display: none` already paused the loop. Kept on purpose: `cull.ts`, `clock.ts` `onFrame`, the word-cycle timer
   (it still pauses off screen) and carousel-dots' `playing()`. The Show swaps were removed on trial, "keep only if the
   footprint says needed"; it said not.
 - **The removals cost nothing, by an alternated A/B** on `c6475390` (headless `pnpm footprint`, gated `9726e334`
@@ -900,8 +905,9 @@ recorded as declined is now patched. The port's response was to delete code, not
   patched ticks got the cheaper `step_motions` and `dormant_tick` did not. Knockouts: input-message 5.3 to 0.9% without
   its cards; each seeded `QueuedChat` ThinkingIndicator is about 3.5%; a shimmer or a glyph loop alone keeps it armed.
   The port cannot fix it, which is why the `onScreen` gates were not kept (a gated build read 4.3-4.8%); the README row
-  asks gpuix to step motions with `step_motions` and disarm when no dormant run advances. Static pages' median CPU
-  moved 0.6 to 1.2% and was not chased.
+  asks gpuix to step motions with `step_motions` and disarm when no dormant run advances (answered by #90 in
+  [Round 18](#round-18-animations-in-skipped-content-sleep-and-culling-moves-to-content-visibility-on-poc-a92b4f7f-2026-10-24)).
+  Static pages' median CPU moved 0.6 to 1.2% and was not chased.
 - **Per-frame draw time is also about 1.4 ms higher on `c6475390`** for the same frames (thinking-indicator's patched
   tick 2.4-3.2 to 3.4-4.6 ms, carousel-dots' 1.3-2.8 to 2.9-3.6 ms, six runs), unattributed: gpuix cannot be A/B'd from
   this repository and its FORK.md documents only a first draw 15% dearer.
@@ -959,3 +965,50 @@ two drift entries closed (drift 541 to 539), and one dependency was dropped.
   on the composer; command-menu `compact.png` shows different cards). 131 files that differ by at most 2 px in the
   content area, and ten pages whose `Math.random` playground variant differs, were not recommitted. When a capture
   moves after this pin, check the pin before suspecting the page.
+
+## Round 18: animations in skipped content sleep, and culling moves to `content-visibility` on `poc` `a92b4f7f` (2026-10-24)
+
+The README now names `a92b4f7f` (zed `fffe30fd66`) as the minimum fork. Two gpuix changes answered two open README Bugs
+rows, the port's culling was rebuilt on a feature it had rejected, and three new rows were written. No look code moved.
+Round 17 (`55ece39b`, no section of its own here) is the context: it fixed a forced read on `content-visibility: auto`
+(#88a, #88b), made `ResizeObserver` quiet while content is skipped and `IntersectionObserver` report not-intersecting
+for a target in hidden content, both like Chrome, and showed that the one-column bento tiles' 305 px was FF's own
+`flexBasis` pin, not a gpuix bug (#89).
+
+- **Animations in skipped content sleep (#97), and each one wakes for itself (#90).** On `55ece39b` the `cull-cv`
+  branch idled input-message at 19.8-22.7% CPU with 71.6-71.8 whole frames a second, because a motion in
+  `content-visibility`-skipped content kept the window drawing, against 4.1-6.0% and 0 with `display: none` on `main`.
+  #97 makes a motion whose host has no box no running source: a hover frame no longer rebuilds the path to every skipped
+  host, and a tick that only changes skipped content builds, lays out and presents nothing (`emptyTicks` in
+  `getPatchCounters()`, in neither the patched nor the whole frames). #90 makes a dormant animation say when it next has
+  something to tell, so the window asks for no more, replacing the dormant tick at every frame that [Round 14a](#round-14a-paint-patching-reaches-inputs-positioned-ancestors-and-motion-values-on-poc-c6475390-2026-10-23)
+  found at about 3.5% CPU a loop. gpuix did not reproduce the 72 a second in its test renderer, so FF's own figure is
+  what closes it: input-message on `b8b4d20b` reads 1.3-1.6% CPU and 0 whole frames a second in three runs, the same as
+  `main`, and button 1.4-1.8% against 3.5% on `c6475390`. The dormant-tick row keeps its question text with the answer
+  appended; the #97 row is new and written with its answer.
+- **Culling is `content-visibility: hidden` now.** The A/B that lost in [Round 16](#round-16-the-contentvisibility-ab-on-poc-e591681e-2026-10-23)
+  was re-run: `cull-cv` `b8b4d20b` against `main` `74e0033c`, five commits, headless, load 1.4-4.3. It won and was
+  merged (`5c7b3f44` to `b8b4d20b`): entry to the Command Menu page is 1 layout pass against 2, the one-column home tiles
+  sit at their final height right after settle (grid 10935 px against 9503 collapsed at 700 px), and page switches, idle
+  CPU over the 49 pages (sum 198.4 against 194.4%) and footprint (3975 against 3989 MB) are equal. The wrapper, the
+  pinned height, the `flexBasis` pin and the forced measure are gone, and so is the report-rect fallback for a hidden
+  region's size. The decision record, the `'auto none'` requirement and the harness traps are in
+  [Port decisions](../decisions/port-decisions.md#performance-decisions-on-gpuix-poc-b03d4e27).
+- **New row, gpuix #98 (open): a read after a paint-only write costs a layout pass under `content-visibility`.** On the
+  `check-command-menu` probe it is 1.00 passes and 2.4-3.4 ms median per read, against 0.05 passes and 0.02 ms with
+  `display: none`; after a layout write it is about 0.7 ms dearer. Round 16's reading of the cause (gpuix builds a hidden
+  subtree for any geometry read, and fluid-hover's `ResizeObserver` `measure()` reads a box) was not re-checked on
+  this pin. It is a read cost, not a frame cost, and the entry and arrow passes stay 1 and 0. This is the one place
+  `content-visibility` is behind the wrapper it replaced.
+- **New row: a `motion` spring running when its region is hidden wakes gpuix at the display rate until it settles**
+  (#97's open item 3: a spring's wake is `NextFrame`, where a timed tween wakes once at its end and a loop with no
+  listener never). The tick draws no frame, so the page stays at 0 whole and patched frames. No FF page was found where
+  it matters and the row asks for no workaround.
+- **`pnpm footprint` gained `all draw ms`** (gpuix #91, `74e0033c`): the mean/p90 over every `drawFrame()` that drew,
+  patched ones included, beside `draw ms`, which averages only whole-frame draws and so rises when patching replaces
+  cheap whole frames. Compare pins that patch differently by `all draw ms`.
+- **Docs followed.** The README's culling rows and the drift entries that said `display: none` pauses a native loop
+  (button, file-thumbnail, thinking-indicator, fluid-hover, site, command-menu) now say culling lets gpuix put it to
+  sleep. `OnScreenContext` and `onFrame`, the word-cycle timer and carousel-dots' `playing()` stay, because they are JS.
+- **Not done.** No page was recaptured: the screenshots are those of [Round 15c](#round-15c-scale-1-test-windows-half-up-glyph-origins-and-os2-cap-heights-on-poc-f6f09d95-2026-10-23),
+  less 13 stale captures that no scenario writes any more (`06645c5a`). Every figure is headless, at load 1.4-4.3.
