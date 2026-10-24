@@ -629,7 +629,7 @@ export function AccordionContent(props: { children: JSX.Element }) {
 	const measured = createMeasuredHeight();
 	const contentHeight = measured.height;
 	const reduced = createReducedMotion();
-	const panel = createAccordionPanel(item.accordion);
+	const panel = createAccordionPanel(item.accordion, { keepMounted: true });
 
 	return (
 		<motion.div
@@ -645,7 +645,9 @@ export function AccordionContent(props: { children: JSX.Element }) {
 			}}
 			onMouseLeave={() => group?.overContent(null)}
 			style={{
-				display: 'flex',
+				// A panel closed at mount stays displayed until its text lays out once: a hidden box lays nothing out, and the first open needs a height to spring to.
+				display:
+					panel.hidden() && contentHeight() !== undefined ? 'none' : 'flex',
 				flexDirection: 'column',
 				overflow: 'hidden',
 				// Until the content is measured an open panel keeps its natural height.
@@ -666,27 +668,22 @@ export function AccordionContent(props: { children: JSX.Element }) {
 							: { duration: 0.04 }
 				}
 			>
-				<Show when={!panel.retired()}>
-					<div
-						onLayout={(event: DomEvent) => {
-							measured.onLayout(event);
-							panel.onContentLayout();
-						}}
-						style={{
-							display: 'flex',
-							flexDirection: 'column',
-							flexShrink: 0,
-							paddingTop: 4,
-							paddingLeft: metrics().padX,
-							paddingRight: metrics().padX,
-							paddingBottom: metrics().contentBottom,
-						}}
-					>
-						<text style={{ ...metrics().text, color: color.mutedForeground }}>
-							{props.children}
-						</text>
-					</div>
-				</Show>
+				<div
+					onLayout={measured.onLayout}
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						flexShrink: 0,
+						paddingTop: 4,
+						paddingLeft: metrics().padX,
+						paddingRight: metrics().padX,
+						paddingBottom: metrics().contentBottom,
+					}}
+				>
+					<text style={{ ...metrics().text, color: color.mutedForeground }}>
+						{props.children}
+					</text>
+				</div>
 			</motion.div>
 		</motion.div>
 	);
