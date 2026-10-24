@@ -75,7 +75,7 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
   - The sidebar is a plain column of `SidebarContent`, `SidebarGroupLabel` and two `SidebarMenu` scopes; the sub rows are level-1 `SidebarMenuButton`s, not link buttons; the divider is a local 1px `color.border` box with 8px side margins; "Knowledge" is `disabled` (the hover skips it) inside a wrapper at 50% opacity, because `SidebarMenuButton`'s `disabled` hides a row from the hover without dimming it (`drift/sidebar.md`, "Disabled rows").
   - The parent's chevron swaps between `chevron-down` and `chevron-right` (`trailingIcon`); the source turns one chevron 90 degrees with a spring and shows it only on hover while open (transforms: README "Missing features").
   - The arrows are a path with the source's `<marker>` chevron (`ArrowMarker`, `src/pages/surfaces/annotations.tsx`), as in the source. The target rows are measured through wrappers around them (`onLayout` plus a per-frame loop for 600 ms after the Chat row toggles, since the sub-menu's height springs), and the callout copy is the source's `text-balance` at `maxWidth: 140` (`demos.tsx:1198-1214`). A `<text>`'s box is as wide as greedy wrapping makes it, where the source reads the glyphs' line boxes through a `Range`; the port wraps the string in a `<span>`, whose rect ends where its longest line's glyphs do, and measures that.
-  - The arrows stay hidden until the rows are painted, and keep their last position while the demo is culled to `display: none`.
+  - The arrows stay hidden until the rows are painted, and stay where they were while the demo is culled.
 - **Fidelity:** approximated.
 - **Components it hits:** just this page; the sidebar drift is in `drift/sidebar.md`.
 
@@ -99,7 +99,7 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 
 - **Cause:** `gpuix gap` (every element is laid out and painted even when a scroller clips it away: README "Missing features", culling row).
 - **Original:** no such step; the browser skips what is off screen.
-- **Port:** every `ComponentPreview` hides its content while more than 25% of a viewport from the page scroller and keeps the preview body's height, through the shared `createCulling` (`src/lib/cull.ts:53-118`, used at `src/lib/doc-page.tsx:153`, `:413`), the same as `DemoCard`, the home tiles and every `DocSection`; the 200-row list is the reason. Culling is on for every `ComponentPreview`, not only this page's.
+- **Port:** every `ComponentPreview` hides its content while more than 25% of a viewport from the page scroller and keeps the size it was last laid out at (`content-visibility: hidden`), through the shared `createCulling` (`src/lib/cull.ts:63-123`, used at `src/lib/doc-page.tsx:153`, `:411`), the same as `DemoCard`, the home tiles and every `DocSection`; the 200-row list is the reason. Culling is on for every `ComponentPreview`, not only this page's.
 - **Workaround:** the above.
 - **Fidelity:** exact once painted.
 - **Components it hits:** every long page.

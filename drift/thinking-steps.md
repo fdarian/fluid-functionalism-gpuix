@@ -113,7 +113,7 @@ repeating it.
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** the control is an icon button (pause, play, rotate-ccw, 16px) with a tooltip, in the preview frame's corner (`app/docs/thinking-steps/page.tsx:642-735`, `:723`). The start rule is ported: a card waits paused, plays once at least half of it is visible, pauses below 10% visible (clearing a pause made by the button), resumes from where it stopped when half of it shows again, and a finished card stays finished until replayed (`:654-678`).
-- **Port:** the control is a ghost compact `Button` reading "Pause", "Play" or "Replay", right-aligned above the steps (`src/demos/thinking-steps.tsx:133-153`). The start rule is `createSequence` (`:41-109`) fed by `observeVisibleRatio` (`src/lib/cull.ts:126`) on the card's column (`src/demos/thinking-steps.tsx:119`, `:130`), which watches the window rather than a scroller, so a card inside a culled region reports 0 and holds. The ratio is of the column (button and steps), not of the whole preview frame with its code tab.
+- **Port:** the control is a ghost compact `Button` reading "Pause", "Play" or "Replay", right-aligned above the steps (`src/demos/thinking-steps.tsx:133-153`). The start rule is `createSequence` (`:41-109`) fed by `observeVisibleRatio` (`src/lib/cull.ts:131`) on the card's column (`src/demos/thinking-steps.tsx:119`, `:130`), which watches the window rather than a scroller, so a card inside a culled region reports 0 and holds. The ratio is of the column (button and steps), not of the whole preview frame with its code tab.
 - **Workaround:** none.
 - **Fidelity:** approximated (button chrome; the visible share is of the card's column).
 - **Components it hits:** any demo with a replay control.

@@ -79,7 +79,7 @@ export function createReleaseSpy(months: readonly string[]) {
 		const scrollTo = (top: number) =>
 			root.scrollTo({ top, behavior: reduced() ? 'instant' : 'smooth' });
 
-		/** Culled entries above the month un-pin to their real heights while the jump is in flight, so the jump follows its month's top until it arrives or the user scrolls away. */
+		/** Culled entries above the month are laid out again as the jump brings them in and can come out at another height than they were remembered at, so the jump follows its month's top until it arrives or the user scrolls away. */
 		const reaim = () => {
 			if (aim === undefined) return;
 			const target = targetTop(aim.section);
