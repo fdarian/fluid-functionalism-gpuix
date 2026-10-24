@@ -14,7 +14,7 @@ const SLIDE = { duration: 0.2, ease: 'easeOut' } as const;
 
 function Panel(props: { open: boolean; children: string }) {
 	const [height, setHeight] = createSignal<number>();
-	// gpuix has no `display: none`: a closed panel leaves the accessibility tree by unmounting once its exit is over.
+	// Radix's `CollapsibleContentImpl` renders `isOpen && children` inside a div with `hidden={!isOpen}`: the text unmounts and the region goes `display: none`.
 	const [retired, setRetired] = createSignal(!props.open);
 	createEffect(
 		on(
@@ -35,7 +35,7 @@ function Panel(props: { open: boolean; children: string }) {
 				if (!props.open) setRetired(true);
 			}}
 			style={{
-				display: 'flex',
+				display: retired() ? 'none' : 'flex',
 				flexDirection: 'column',
 				overflow: 'hidden',
 				...(height() === undefined && props.open ? { height: 'auto' } : {}),
