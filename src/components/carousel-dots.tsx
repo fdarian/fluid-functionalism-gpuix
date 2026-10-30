@@ -1,4 +1,5 @@
 import {
+	type AnimationPlaybackControls,
 	buttonProps,
 	createMotionValue,
 	createReducedMotion,
@@ -21,6 +22,9 @@ const PILL_PX = 24;
 /** Every dot sits in an equal 6px padding: an 18px round click area. */
 const CLICK_PAD = 6;
 const DEFAULT_DURATION_MS = 3000;
+/** A full-width pill slid in from the left, never scaled, so its round end stays round. At 0 a full dot shows, at 1 the fill covers the pill. */
+const fillAt = (progress: number) =>
+	`translateX(calc(${progress - 1} * (100% - ${DOT_PX}px)))`;
 /** `color-mix(in oklab, var(--foreground), transparent 85% / 60%)`. */
 const trackColor = () => withAlpha(color.foreground, 0.15);
 const fillColor = () => withAlpha(color.foreground, 0.4);
@@ -78,20 +82,43 @@ export function CarouselDots(props: {
 	const onScreen = useOnScreen();
 	const playing = () =>
 		autoplaying() && !reduced() && onScreen() && !(options()?.paused ?? false);
-	// One effect restarts the fill and plays it. Two effects would depend on running in order: Solid reorders observers, and a play that ran before the reset would read the old fill (1) and never start, or have its animation ended by the reset's jump.
+	// The fill plays 0 to 1 once per slide and is held with `pause()` and resumed with `play()`, so its progress is kept. `speed` carries a `duration` that changes mid-slide, as the source reads it live each frame.
+	let play: AnimationPlaybackControls | undefined;
+	let playDuration = DEFAULT_DURATION_MS;
+	onCleanup(() => play?.stop());
+	// One effect owns the animation. Two would depend on running in order: Solid reorders observers, and a play that ran before the reset would read the old fill (1) and never start, or have its animation ended by the reset's jump (`7d4918bb`).
 	createEffect((restartedFor: number | null) => {
-		// Reduced motion: no timer moves the page on the reader's behalf. A held fill (paused, reduced, off screen) is stopped where it is and plays on from there with the time it has left, so its progress is kept. A finished fill (1) is never replayed, so the next slide is asked for once.
 		const slide = props.value;
-		if (!autoplaying()) return null;
-		if (slide !== restartedFor) fill.jump(0);
-		if (!playing() || fill.get() >= 1) return slide;
+		if (!autoplaying()) {
+			play?.stop();
+			play = undefined;
+			return null;
+		}
+		if (slide !== restartedFor) {
+			play?.stop();
+			play = undefined;
+			fill.jump(0);
+		}
+		// A finished fill (1) is never replayed, so the next slide is asked for once.
+		if (fill.get() >= 1) return slide;
+		// Reduced motion: no timer moves the page on the reader's behalf.
+		if (!playing()) {
+			play?.pause();
+			return slide;
+		}
 		const duration = options()?.duration ?? DEFAULT_DURATION_MS;
-		const play = fill.animate(1, {
-			duration: ((1 - fill.get()) * duration) / 1000,
+		if (play !== undefined) {
+			play.speed = playDuration / duration;
+			play.play();
+			return slide;
+		}
+		playDuration = duration;
+		const started = fill.animate(1, {
+			duration: duration / 1000,
 			ease: 'linear',
 		});
-		onCleanup(() => play.stop());
-		play.finished.then(() => {
+		play = started;
+		started.finished.then(() => {
 			const live = options();
 			if (live === null) return;
 			if (!(live.loop ?? true) && slide >= props.count - 1) return;
@@ -99,7 +126,7 @@ export function CarouselDots(props: {
 		});
 		return slide;
 	}, null);
-	const fillWidth = createTransform(fill, [0, 1], [DOT_PX, PILL_PX]);
+	const fillTransform = createTransform(fill, [0, 1], [fillAt(0), fillAt(1)]);
 
 	const hoverRect = () => {
 		const index = hover.activeIndex();
@@ -135,10 +162,8 @@ export function CarouselDots(props: {
 						index={index}
 						label={label(index)}
 						current={index === props.value}
-						fillTestId={
-							props.testId === undefined ? undefined : `${props.testId}-fill`
-						}
-						fillWidth={fillWidth}
+						testId={props.testId}
+						fillTransform={fillTransform}
 						register={hover.registerItem}
 						onSelect={() => props.onValueChange?.(index)}
 					/>
@@ -152,8 +177,8 @@ function Dot(props: {
 	index: number;
 	label: string;
 	current: boolean;
-	fillTestId: string | undefined;
-	fillWidth: MotionValue<number>;
+	testId: string | undefined;
+	fillTransform: MotionValue<string>;
 	register: (index: number, element: HostElement) => void;
 	onSelect: () => void;
 }) {
@@ -185,6 +210,11 @@ function Dot(props: {
 			}}
 		>
 			<motion.div
+				testId={
+					props.current && props.testId !== undefined
+						? `${props.testId}-track`
+						: undefined
+				}
 				initial={false}
 				animate={{ width: props.current ? PILL_PX : DOT_PX }}
 				transition={tween.moderate}
@@ -197,17 +227,19 @@ function Dot(props: {
 				}}
 			>
 				{props.current && (
-					// The original slides a full-width pill in from the left behind the dot's rounded clip, so the fill always ends in a round cap. Here the fill is a pill that grows from a dot (p = 0) to the whole pill (p = 1).
-					<div
-						testId={props.fillTestId}
+					<motion.div
+						testId={
+							props.testId === undefined ? undefined : `${props.testId}-fill`
+						}
 						style={{
 							position: 'absolute',
 							top: 0,
 							left: 0,
-							width: props.fillWidth,
-							height: DOT_PX,
+							right: 0,
+							bottom: 0,
 							borderRadius: DOT_PX / 2,
 							backgroundColor: fillColor(),
+							transform: props.fillTransform,
 						}}
 					/>
 				)}

@@ -70,15 +70,30 @@ setValue(2);
 await check.settle();
 expectCurrent('value 2', 2);
 
-// The motion clock is held and stepped by hand; the fill's width is the dot's 6px plus its progress of the 18px the pill grows.
+/**
+ * The fill is the track's width, slid left by `(1 - p) * (width - 6)`: p is how far its transformed box has come back. While the
+ * track is still 6px wide (a slide's first frame) the fill is not offset at any p, so it reads as 0.
+ */
+function fillProgress(
+	prefix: string,
+	read: (testId: string) => { x: number; width: number },
+) {
+	const track = read(`${prefix}-track`);
+	const travel = track.width - 6;
+	if (travel < 1) return 0;
+	return 1 + (read(`${prefix}-fill`).x - track.x) / travel;
+}
+
+// The motion clock is held and stepped by hand.
 const renderer = check.renderer;
 renderer.clockPause();
+const progress = () => fillProgress('auto', check.bounds);
 check.check(
 	'a carousel mounted paused sits at 0',
-	check.bounds('auto-fill').width === 6,
+	Math.abs(progress()) < 0.01,
+	`${progress()}`,
 );
 setPaused(false);
-const progress = () => (check.bounds('auto-fill').width - 6) / 18;
 const near = (actual: number, expected: number) =>
 	Math.abs(actual - expected) < 0.03;
 async function advance(ms: number) {
@@ -205,8 +220,8 @@ async function openDemo() {
 	await demo.scrollIntoView('autoplay');
 	const root = demo.bounds('autoplay');
 	demo.renderer.clockPause();
-	const fillProgress = () =>
-		Number(((demo.bounds('autoplay-fill').width - 6) / 18).toFixed(3));
+	const progressOf = () =>
+		Number(fillProgress('autoplay', demo.bounds).toFixed(3));
 	// The page's static carousel (never clicked here) marks 'Show Inbox' too, so that label counts twice when autoplay is on dot 0. The fill's position cannot say: it moves while the previous pill shrinks.
 	const dotOf = () => {
 		const nodes = Object.values(demo.renderer.getA11yTree().nodes ?? {});
@@ -233,7 +248,7 @@ async function openDemo() {
 		const seen: number[] = [];
 		for (let i = 0; i < steps; i++) {
 			await advanceFrame(250);
-			seen.push(fillProgress());
+			seen.push(progressOf());
 		}
 		return seen;
 	}
@@ -243,7 +258,7 @@ async function openDemo() {
 	}
 	return {
 		demo,
-		fillProgress,
+		progressOf,
 		dotOf,
 		dotPoint,
 		advanceFrame,
