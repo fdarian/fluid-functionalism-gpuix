@@ -4,6 +4,7 @@
  *   bun scripts/check-chat-message.tsx
  *
  * The meta row (timestamp and actions) is revealed by hover and by keyboard focus on an action.
+ * The message enters on y 8 and scale .96 about its bottom outer corner (right for the user, left for the assistant), like the source.
  * The reveal is the row's opacity, eased by a CSS transition; a screenshot with the focused action lands in /tmp/check-chat-message-focus-<pid>.png.
  */
 
@@ -82,6 +83,22 @@ test.render(() => (
 		<div testId="after" tabIndex={0} style={{ height: 20 }} />
 	</div>
 ));
+renderer.clockPause();
+step(0);
+step(0);
+step(40);
+const entering = bounds('message');
+step(600);
+step(0);
+const entered = bounds('message');
+renderer.clockResume();
+report(
+	'the user message enters smaller than it rests, about its bottom right corner',
+	entering.width < entered.width - 0.2 &&
+		Math.abs(entering.x + entering.width - (entered.x + entered.width)) < 0.5 &&
+		entering.y + entering.height > entered.y + entered.height + 0.2,
+	`${entering.width.toFixed(2)} wide, right ${(entering.x + entering.width).toFixed(2)}, bottom ${(entering.y + entering.height).toFixed(2)} -> ${entered.width.toFixed(2)}, ${(entered.x + entered.width).toFixed(2)}, ${(entered.y + entered.height).toFixed(2)}`,
+);
 await settle(800);
 
 const resting = metaOpacity();

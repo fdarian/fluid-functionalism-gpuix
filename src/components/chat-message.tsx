@@ -14,6 +14,7 @@ import { type FileLike, FileThumbnail } from './file-thumbnail';
 
 const subtitle = { fontSize: 14, lineHeight: '20px' } as const;
 const ENTRANCE_RISE = 8;
+const ENTRANCE_SCALE = 0.96;
 /** The meta row's `transition-opacity duration-150`. */
 const META_FADE = fade(['opacity'], 150);
 /** The action buttons' `transition-colors duration-100` without `outline-color`: the source's focus ring is a box-shadow ring, which does not ease. */
@@ -88,15 +89,15 @@ export function ChatMessage(props: {
 	return (
 		<motion.div
 			testId={props.testId}
-			initial={{ opacity: 0, top: ENTRANCE_RISE }}
-			animate={{ opacity: 1, top: 0 }}
+			initial={{ opacity: 0, y: ENTRANCE_RISE, scale: ENTRANCE_SCALE }}
+			animate={{ opacity: 1, y: 0, scale: 1 }}
 			transition={tween.moderate}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			onFocusIn={() => setFocusWithin(true)}
 			onFocusOut={() => setFocusWithin(false)}
 			style={{
-				position: 'relative',
+				transformOrigin: isUser() ? 'bottom right' : 'bottom left',
 				display: 'flex',
 				flexDirection: 'column',
 				gap: 6,
