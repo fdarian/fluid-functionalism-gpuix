@@ -33,16 +33,6 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 - **Fidelity:** approximated.
 - **Components it hits:** every System page the latest release marks New or Updated (Skill, and Typography once its release lands).
 
-## "Blink or glide": the cursor moves on `left` / `top`
-
-- **Cause:** `gpuix gap` (no transforms: README "Missing features", [CSS transforms](../README.md#missing-features) row).
-- **Original:** one framer `animate(y, keyframes, { times, ease: "easeInOut", repeat: Infinity })` on a `MotionValue`, paused and resumed in place through its controls; the cursor is a `motion.span` on `x` / `y`, and `useMotionValueEvent(y, "change")` lights the plain row and feeds the fluid list a mouse move; the loop runs while `useInView(amount: 0.35)` and a visiting pointer pauses it (`demos.tsx:164-377`).
-- **Port:** the same structure and the same call: a `createMotionValue(CURSOR_TOP)` for the cursor's y, driven by one `animate(cursorY, CURSOR_KEYFRAMES, { duration, times: CURSOR_TIMES, ease: 'easeInOut', repeat: Infinity })` started the first time the script runs, `pause()`d when it stops (the button, reduced motion, a visiting pointer, out of view), `play()`ed when it runs again, and `stop()`ped on unmount (`src/pages/fluid-hover/plain-vs-fluid.tsx:44-54`, `:87`, `:115-133`). The three round trips (2 s, 0.8 s, 0.3 s legs) are the source's, played natively, so a playing script costs no JS frame. The cursor is an absolutely positioned div whose `top` is that value (`src/pages/fluid-hover/parts.tsx:141-169`). A change listener on y does what the source's does, lighting the plain row (the signal is written only when the row changes) and feeding the fluid list a `mousemove` with window coordinates (`plain-vs-fluid.tsx:135-142`). In view is an `IntersectionObserver` at threshold 0.35 against the page scroller. A pointer inside takes over through `onMouseEnter` / `onMouseMove` / `onMouseDown` on the demo's root and the script resumes on leave. The pause button's tooltip, icon swap and hold-the-frame behaviour match.
-- **gpuix lacks:** CSS transforms: the cursor's position is a layout property, where the source moves a `transform` (`x` / `y`, `lib/docs/fake-cursor.tsx:15-20`). Only `top` is animated (`FakeCursor`, `src/pages/fluid-hover/parts.tsx:146-156`); `left` is fixed. gpuix draws a layout tick whole, so the cursor costs ~51 whole frames a second on this page and on the changelog (headless on gpuix c6475390, README transforms row).
-- **Workaround:** the cursor's `top` is the animated value.
-- **Fidelity:** approximated (the cursor sits on `left` / `top`, not a transform; the animation, its pause and resume are the source's).
-- **Components it hits:** this page and the changelog's Fluid Hover preview, which renders the same stage.
-
 ## "Blink or glide": captions differ slightly
 
 - **Cause:** `port choice` (captions).

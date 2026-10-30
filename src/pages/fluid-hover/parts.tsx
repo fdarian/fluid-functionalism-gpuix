@@ -2,6 +2,7 @@ import {
 	buttonProps,
 	type HostElement,
 	type MotionValue,
+	motion,
 	useGpuixRequired,
 } from '@gpuix/solid';
 import type { JSX } from 'solid-js';
@@ -145,13 +146,15 @@ export function FakeCursor(props: {
 	testId?: string;
 }) {
 	return (
-		<div
+		<motion.div
 			testId={props.testId}
 			style={{
 				position: 'absolute',
-				left: props.x - 3,
-				top: props.y,
-				marginTop: -3,
+				left: -3,
+				top: -3,
+				zIndex: 30,
+				x: props.x,
+				y: props.y,
 				pointerEvents: 'none',
 			}}
 		>
@@ -164,6 +167,6 @@ export function FakeCursor(props: {
 					strokeLinejoin="round"
 				/>
 			</svg>
-		</div>
+		</motion.div>
 	);
 }
