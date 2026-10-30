@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 519 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 517 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -211,7 +211,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 5 | 1 | 0 | 7 |
 | [fluid-hover](drift/fluid-hover.md) | 4 | 5 | 2 | 1 | 12 |
 | [home](drift/home.md) | 0 | 4 | 1 | 1 | 6 |
-| [input-copy](drift/input-copy.md) | 1 | 3 | 4 | 0 | 8 |
+| [input-copy](drift/input-copy.md) | 0 | 3 | 3 | 0 | 6 |
 | [input-group](drift/input-group.md) | 0 | 1 | 3 | 1 | 5 |
 | [input-message](drift/input-message.md) | 4 | 1 | 14 | 4 | 23 |
 | [introduction](drift/introduction.md) | 0 | 5 | 2 | 0 | 7 |
@@ -237,7 +237,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 3 | 4 | 5 | 0 | 12 |
 | [tooltip](drift/tooltip.md) | 0 | 6 | 2 | 0 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **63** | **218** | **192** | **46** | **519** |
+| **Total** | **62** | **218** | **191** | **46** | **517** |
 
 ### gpuix gaps across components
 
@@ -276,7 +276,7 @@ offer it. A count is given only where the code shows it.
 
 | Used by | What | Workaround here |
 |---|---|---|
-| scale-in entrances (banner, ask-user-questions, input-copy, input-message, queued-stack, radio-group), the changelog's month dot (scale) and entry-name arrow (translate) | CSS transforms: no scale, rotate or translate, so every turn and pop is impossible (Base UI audit rows 530, 617). | Glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom`. Three stand-ins are layout loops, which gpuix draws whole (`LayoutAnimation`, FORK.md:3613-3614) where the source's transforms would patch; headless on c6475390 (`perf/footprint-c647-after-{1,2}.json`): ThinkingIndicator's word roll on `top` (`src/components/thinking-indicator.tsx:226-228`; the source animates `y`, `registry/default/thinking-indicator.tsx:128-130`) costs ~5 whole frames a second on showcase, queued-stack and thinking-indicator (pages at 18.0, 17.6 and 20.6% CPU); the fluid-hover cursor, a `FakeCursor` whose `top` is a motion value (`left` is fixed; `src/pages/fluid-hover/parts.tsx:146-156`, driven by `src/pages/fluid-hover/plain-vs-fluid.tsx:126-131`; the source's `x` / `y`, `lib/docs/fake-cursor.tsx:15-20`), ~51 a second on fluid-hover and on changelog, which mounts the same stage (`src/pages/changelog/previews.tsx:15`; 25.9 and 29.4% CPU); and carousel-dots' autoplay fill on `width` (`src/components/carousel-dots.tsx:102`, `:207`; the source slides it with `translateX`, `registry/default/carousel-dots.tsx:42-48`, `:240`), ~66 a second (24.9%). The demo's label slides on `left` / `right` (`src/demos/carousel-dots.tsx:67-74`; the source's `x`, `lib/docs/slide-direction.ts:16-18`), the same gap. |
+| scale-in entrances (banner, ask-user-questions, input-message, queued-stack, radio-group), the changelog's month dot (scale) and entry-name arrow (translate) | CSS transforms: no scale, rotate or translate, so every turn and pop is impossible (Base UI audit rows 530, 617). | Glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom`. Three stand-ins are layout loops, which gpuix draws whole (`LayoutAnimation`, FORK.md:3613-3614) where the source's transforms would patch; headless on c6475390 (`perf/footprint-c647-after-{1,2}.json`): ThinkingIndicator's word roll on `top` (`src/components/thinking-indicator.tsx:226-228`; the source animates `y`, `registry/default/thinking-indicator.tsx:128-130`) costs ~5 whole frames a second on showcase, queued-stack and thinking-indicator (pages at 18.0, 17.6 and 20.6% CPU); the fluid-hover cursor, a `FakeCursor` whose `top` is a motion value (`left` is fixed; `src/pages/fluid-hover/parts.tsx:146-156`, driven by `src/pages/fluid-hover/plain-vs-fluid.tsx:126-131`; the source's `x` / `y`, `lib/docs/fake-cursor.tsx:15-20`), ~51 a second on fluid-hover and on changelog, which mounts the same stage (`src/pages/changelog/previews.tsx:15`; 25.9 and 29.4% CPU); and carousel-dots' autoplay fill on `width` (`src/components/carousel-dots.tsx:102`, `:207`; the source slides it with `translateX`, `registry/default/carousel-dots.tsx:42-48`, `:240`), ~66 a second (24.9%). The demo's label slides on `left` / `right` (`src/demos/carousel-dots.tsx:67-74`; the source's `x`, `lib/docs/slide-direction.ts:16-18`), the same gap. |
 | slider | `<input type="range">` (Base UI audit row 312) | A pointer-handled track and thumbs |
 | select, combobox (`FormValue`) | `<input type="hidden">` | A real input that is invisible, unreachable and `aria-hidden` |
 | banner (the description layout), surfaces (the elevation stack) | Selector `:has(.x)` and group-has. gpuix has `hasHover`, `hasActive`, `hasFocus`, `hasFocusVisible`, `hasDisabled` and `hasEnabled`, which restyle an element from the state of its descendants, but not a selector such as the banner's `has-data-[slot=banner-description]`, and a parent's `has*` state cannot style its children (the surfaces' stack hides a label with `[&:has([data-surface]:hover)>span]`). The result matches the web; only the wiring differs | Banner: a context flag the description registers; surfaces: a pointer signal (`drift/banner.md`, `drift/surfaces.md`) |

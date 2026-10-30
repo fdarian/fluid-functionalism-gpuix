@@ -1,8 +1,14 @@
-import { buttonProps, motion, useGpuixRequired } from '@gpuix/solid';
+import {
+	AnimatePresence,
+	buttonProps,
+	motion,
+	useGpuixRequired,
+} from '@gpuix/solid';
 import {
 	type Accessor,
+	batch,
+	createMemo,
 	createSignal,
-	For,
 	type JSX,
 	onCleanup,
 	Show,
@@ -34,6 +40,7 @@ const CHECK_PATH = 'M6 12L10 16L18 8';
 const CROSS_PATH = 'M9 9L15 15M15 9L9 15';
 
 type Status = 'idle' | 'copied' | 'error';
+type Result = { status: Status; count: number };
 type TooltipMode = 'idle' | 'copied' | 'suppressed';
 
 /** The row is its padded line: `py-2` around 20 (36), `py-1` around 18 (26, not the 28 the source's comment claims). */
@@ -42,26 +49,39 @@ const steps = {
 	compact: { height: 4 + 18 + 4, text: 12, line: 18, icon: 14 },
 } as const;
 
-/** Remounts on a new `key`, so the fade replays when the glyph is the same one as before. */
-function Swap(props: { key: string; children: JSX.Element }) {
+/** A result grows in from 0.6 and the copy icon from 0.8; whatever leaves shrinks to 0.8. */
+const SCALE_IN: Record<Status, number> = { idle: 0.8, copied: 0.6, error: 0.6 };
+const SCALE_OUT = 0.8;
+
+/**
+ * Shows one glyph (and label) per result. A new `result` shrinks the old one out before the new one grows in.
+ * `children` gets the status its glyph was made for, so a leaving glyph keeps its own look.
+ */
+function Swap(props: {
+	result: Accessor<Result>;
+	children: (status: Status) => JSX.Element;
+}) {
 	return (
-		<For each={[props.key]}>
-			{() => (
-				<motion.div
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					transition={tween.fast}
-					style={{
-						display: 'flex',
-						flexDirection: 'row',
-						alignItems: 'center',
-						gap: 6,
-					}}
-				>
-					{props.children}
-				</motion.div>
-			)}
-		</For>
+		<AnimatePresence mode="wait" initial={false}>
+			<Show when={props.result()} keyed>
+				{(result: Result) => (
+					<motion.div
+						initial={{ opacity: 0, scale: SCALE_IN[result.status] }}
+						animate={{ opacity: 1, scale: 1 }}
+						exit={{ opacity: 0, scale: SCALE_OUT }}
+						transition={tween.fast}
+						style={{
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'center',
+							gap: 6,
+						}}
+					>
+						{props.children(result.status)}
+					</motion.div>
+				)}
+			</Show>
+		</AnimatePresence>
 	);
 }
 
@@ -106,8 +126,10 @@ export function InputCopy(props: {
 		} catch {
 			ok = false;
 		}
-		setStatus(ok ? 'copied' : 'error');
-		setCopyCount(copyCount() + 1);
+		batch(() => {
+			setStatus(ok ? 'copied' : 'error');
+			setCopyCount(copyCount() + 1);
+		});
 		// The tooltip says "Copied" only if it was already showing at the press.
 		setTooltipMode(tooltipOpenAtPress ? 'copied' : 'suppressed');
 		if (ok) props.onCopy?.();
@@ -142,14 +164,18 @@ export function InputCopy(props: {
 		return status() === 'error' ? 'Copy failed' : 'Copied';
 	};
 
-	const glyphColor = () =>
-		status() === 'error'
+	const result = createMemo(() => ({
+		status: status(),
+		count: copyCount(),
+	}));
+	const glyphColor = (shown: Status) =>
+		shown === 'error'
 			? color.destructive
 			: hovered()
 				? color.foreground
 				: color.mutedForeground;
-	const label = () => {
-		switch (status()) {
+	const label = (shown: Status) => {
+		switch (shown) {
 			case 'error':
 				return 'Failed';
 			case 'copied':
@@ -158,25 +184,19 @@ export function InputCopy(props: {
 				return 'Copy';
 		}
 	};
-	const labelColor = () =>
-		status() === 'error'
-			? color.destructive
-			: hovered()
-				? color.foreground
-				: color.mutedForeground;
 
 	/** The source fixes the button variant's check and cross at 2; only the copy icon follows the hover. */
 	const resultStroke = () => (variant() === 'button' || hovered() ? 2 : 1.5);
 
-	const icon = () =>
-		status() === 'idle' ? (
+	const icon = (shown: Status) =>
+		shown === 'idle' ? (
 			<Icon
 				name="copy"
 				size={step().icon}
 				strokeWidth={hovered() ? 2 : 1.5}
 				easeStroke
 				fade
-				color={glyphColor()}
+				color={glyphColor(shown)}
 			/>
 		) : (
 			<CheckMark
@@ -184,10 +204,10 @@ export function InputCopy(props: {
 				drawOnMount
 				fade
 				viewBox={RESULT_BOX}
-				path={status() === 'error' ? CROSS_PATH : CHECK_PATH}
+				path={shown === 'error' ? CROSS_PATH : CHECK_PATH}
 				size={step().icon}
 				strokeWidth={resultStroke()}
-				color={glyphColor()}
+				color={glyphColor(shown)}
 			/>
 		);
 
@@ -205,35 +225,39 @@ export function InputCopy(props: {
 		>
 			<Show
 				when={variant() === 'button'}
-				fallback={<Swap key={`${status()}-${copyCount()}`}>{icon()}</Swap>}
+				fallback={<Swap result={result}>{icon}</Swap>}
 			>
-				<Swap key={`${status()}-${copyCount()}`}>
-					{icon()}
-					{/* A hidden "Copied" in flow reserves the widest label, so the swap never resizes the row. */}
-					<div style={{ position: 'relative' }}>
-						<text
-							style={{
-								fontSize: step().text,
-								lineHeight: `${step().line}px`,
-								color: color.transparent,
-							}}
-						>
-							Copied
-						</text>
-						<div style={{ position: 'absolute', top: 0, left: 0 }}>
-							<text
-								style={{
-									fontSize: step().text,
-									lineHeight: `${step().line}px`,
-									fontVariationSettings: weight.normal,
-									color: labelColor(),
-									...colorFade,
-								}}
-							>
-								{label()}
-							</text>
-						</div>
-					</div>
+				<Swap result={result}>
+					{(shown) => (
+						<>
+							{icon(shown)}
+							{/* A hidden "Copied" in flow reserves the widest label, so the swap never resizes the row. */}
+							<div style={{ position: 'relative' }}>
+								<text
+									style={{
+										fontSize: step().text,
+										lineHeight: `${step().line}px`,
+										color: color.transparent,
+									}}
+								>
+									Copied
+								</text>
+								<div style={{ position: 'absolute', top: 0, left: 0 }}>
+									<text
+										style={{
+											fontSize: step().text,
+											lineHeight: `${step().line}px`,
+											fontVariationSettings: weight.normal,
+											color: glyphColor(shown),
+											...colorFade,
+										}}
+									>
+										{label(shown)}
+									</text>
+								</div>
+							</div>
+						</>
+					)}
 				</Swap>
 			</Show>
 		</div>

@@ -11,6 +11,7 @@
  * - The compact row is 26px tall (4 + 18 + 4), the default row 36px.
  * - Hovering the row eases the value's tint in over 80 ms.
  * - The copied check draws in from its first point.
+ * - The glyph swap is `mode="wait"`: the copy icon shrinks out to 0.8, the check grows in from 0.6, and nothing plays on the first mount.
  * - A press writes the value to `navigator.clipboard`; a refused write shows "Failed".
  */
 
@@ -74,6 +75,7 @@ async function reset() {
 }
 
 setThemeChoice('dark');
+renderer.clockPause();
 test.render(() => (
 	<TooltipProvider>
 		<div
@@ -96,6 +98,26 @@ test.render(() => (
 		</div>
 	</TooltipProvider>
 ));
+// The first mount plays nothing (`AnimatePresence initial={false}`): the copy icon is at full size on the first frame.
+step(0);
+const mountedGlyph = (() => {
+	const action = renderer
+		.getElement(renderer.findByTestId('subject')?.id ?? -1)
+		?.children.map((id) => renderer.getElement(id))
+		.at(-1);
+	const glyph = action?.children[0];
+	if (glyph === undefined) throw new Error('the action has no glyph');
+	return {
+		box: renderer.getElementBounds(glyph),
+		element: renderer.getElement(glyph),
+	};
+})();
+report(
+	'the first mount shows the copy icon at full size and opacity',
+	mountedGlyph.box?.width === 14 && mountedGlyph.element?.style.opacity !== '0',
+	`${mountedGlyph.box?.width}, opacity ${mountedGlyph.element?.style.opacity}`,
+);
+renderer.clockResume();
 await settle(600);
 
 const subject = centerOf('subject');
@@ -106,6 +128,7 @@ report('compact row is 26px', compact.height === 26, `${compact.height}`);
 // Keyboard focus opens the tooltip; Enter copies. The source's snapshot is taken on pointer press only, so this does not show "Copied".
 const row = renderer.findByTestId('subject');
 if (row === undefined) throw new Error('no subject');
+const rowId = row.id;
 renderer.simulateKeystrokes('Tab');
 await settle(500);
 if (renderer.getFocusedElementId() !== row.id)
@@ -341,6 +364,9 @@ renderer.nativeSimulateMouseUp(subject.x - 41, subject.y);
 // The copy settles on a promise, so it needs a real turn before the clock is stepped.
 await sleep(50);
 step(0);
+// The copy icon shrinks out first (`mode="wait"`); the check mounts once it is gone.
+step(300);
+step(0);
 step(16);
 const drawing = glyphHalves();
 step(400);
@@ -351,6 +377,54 @@ report(
 	drawn.right > 0 &&
 		drawing.right / (drawing.left + 1) < 0.3 * (drawn.right / drawn.left),
 	`16 ms left ${drawing.left} right ${drawing.right}, end left ${drawn.left} right ${drawn.right}`,
+);
+
+// The glyph swap scales like the source's `spring.fast` swap: the copy icon shrinks out to 0.8, then the check grows in from 0.6, both about the glyph's centre.
+await reset();
+/** The box of the glyph being swapped: the action's only child, by its transformed bounds. */
+function glyphBox() {
+	const action = renderer
+		.getElement(rowId)
+		?.children.map((id) => renderer.getElement(id))
+		.at(-1);
+	const glyph = action?.children[0];
+	if (glyph === undefined) throw new Error('the action has no glyph');
+	const box = renderer.getElementBounds(glyph);
+	if (box === null) throw new Error('the glyph has no bounds');
+	return box;
+}
+const swapRest = glyphBox();
+renderer.clockPause();
+renderer.nativeSimulateMouseMove(subject.x - 40, subject.y);
+renderer.nativeSimulateMouseMove(subject.x - 41, subject.y);
+step(0);
+step(400);
+renderer.nativeSimulateMouseDown(subject.x - 41, subject.y);
+renderer.nativeSimulateMouseUp(subject.x - 41, subject.y);
+await sleep(50);
+step(0);
+step(16);
+const leaving = glyphBox();
+step(300);
+step(0);
+step(0);
+step(8);
+const arriving = glyphBox();
+step(600);
+const arrived = glyphBox();
+renderer.clockResume();
+report(
+	'the copy icon shrinks out before the check grows in',
+	leaving.width < swapRest.width - 0.2 && leaving.width > swapRest.width * 0.8,
+	`rest ${swapRest.width.toFixed(2)}, leaving ${leaving.width.toFixed(2)}`,
+);
+report(
+	'the check grows in from a smaller scale about the glyph centre',
+	arriving.width < arrived.width * 0.9 &&
+		Math.abs(
+			arriving.x + arriving.width / 2 - (arrived.x + arrived.width / 2),
+		) < 0.5,
+	`arriving ${arriving.width.toFixed(2)}, arrived ${arrived.width.toFixed(2)}`,
 );
 
 test.unmount();
