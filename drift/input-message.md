@@ -10,7 +10,7 @@ repeating it.
 
 ## Scale on the send glyph, tiles, queued rows
 
-- **Cause:** `gpuix gap`. No transforms (README "Missing features", scale-in entrances row, which lists input-message): source `scale` 0.6 (`input-message.tsx:1295-1301`), 0.9 (`:237-239`) and 0.97 (`:307-312`), and the Tab keycap's `-translate-y-px` (`:1250`). Port fades only (`input-message.tsx:208-216,291,371`); the keycap sits 1px low.
+- **Cause:** `gpuix gap`. No transforms (README "Missing features", scale-in entrances row, which lists input-message): source `scale` 0.6 (`input-message.tsx:1295-1301`), 0.9 (`:237-239`) and 0.97 (`:307-312`). Port fades only (`input-message.tsx:208-216,291,371`).
 
 ## The send button swap has no exit, and the first mount fades in
 

@@ -1149,6 +1149,7 @@ export function InputMessage(props: InputMessageProps) {
 						}}
 					>
 						<text
+							testId={props.testId && `${props.testId}-ghost`}
 							style={{
 								...step().field,
 								minWidth: 0,
@@ -1162,6 +1163,7 @@ export function InputMessage(props: InputMessageProps) {
 							{props.placeholderSuggestion}
 						</text>
 						<div
+							testId={props.testId && `${props.testId}-ghost-keycap`}
 							style={{
 								height: step().keycap.height,
 								flexShrink: 0,
@@ -1174,6 +1176,7 @@ export function InputMessage(props: InputMessageProps) {
 								borderWidth: 1,
 								borderColor: color.border,
 								backgroundColor: color.background,
+								transform: 'translateY(-1px)',
 							}}
 						>
 							<text

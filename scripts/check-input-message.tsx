@@ -118,11 +118,24 @@ test.render(() => (
 				value=""
 				onValueChange={() => {}}
 				suggestions={['Draft a reply', 'Summarise the thread']}
+				placeholderSuggestion="Why is every other input box so stiff?"
 			/>
 		</div>
 	</TooltipProvider>
 ));
 await settle(1200);
+
+// The Tab keycap is one flex-centred line with the suggestion, then `-translate-y-px`: a pixel above the text's centre.
+{
+	const text = bounds('d-ghost');
+	const keycap = bounds('d-ghost-keycap');
+	const offset = keycap.y + keycap.height / 2 - (text.y + text.height / 2);
+	report(
+		"the Tab keycap sits a pixel above the suggestion's centre",
+		Math.abs(offset + 1) < 0.3,
+		`offset ${offset.toFixed(2)}`,
+	);
+}
 
 await tabTo('a-file-0-remove');
 const badge = paintedOpacity('a-file-0-remove');
