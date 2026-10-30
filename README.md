@@ -276,7 +276,7 @@ offer it. A count is given only where the code shows it.
 
 | Used by | What | Workaround here |
 |---|---|---|
-| the carousel-dots demo's label | CSS transforms: no scale, rotate or translate, so every turn and pop is impossible (Base UI audit rows 530, 617). | Glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom`. The demo's label slides on `left` / `right` (`src/demos/carousel-dots.tsx:67-74`; the source's `x`, `lib/docs/slide-direction.ts:16-18`), the same gap. |
+| the carousel-dots demo's label | CSS transforms: no scale, rotate or translate, so every turn and pop is impossible (Base UI audit rows 530, 617). | Glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom`. |
 | slider | `<input type="range">` (Base UI audit row 312) | A pointer-handled track and thumbs |
 | select, combobox (`FormValue`) | `<input type="hidden">` | A real input that is invisible, unreachable and `aria-hidden` |
 | banner (the description layout), surfaces (the elevation stack) | Selector `:has(.x)` and group-has. gpuix has `hasHover`, `hasActive`, `hasFocus`, `hasFocusVisible`, `hasDisabled` and `hasEnabled`, which restyle an element from the state of its descendants, but not a selector such as the banner's `has-data-[slot=banner-description]`, and a parent's `has*` state cannot style its children (the surfaces' stack hides a label with `[&:has([data-surface]:hover)>span]`). The result matches the web; only the wiring differs | Banner: a context flag the description registers; surfaces: a pointer signal (`drift/banner.md`, `drift/surfaces.md`) |

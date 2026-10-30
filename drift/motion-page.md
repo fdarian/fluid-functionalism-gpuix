@@ -8,14 +8,6 @@ Ported in `src/pages/motion.tsx`, with the three demos in `src/pages/motion/` (`
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
 (selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of repeating it.
 
-## An exit is the demo's own transition swap, not `AnimatePresence`'s `exit` transition
-
-- **Cause:** `gpuix gap`: `exit` takes a style target only, with no transition of its own (`packages/native/js/host.ts:410`, `MotionProps`).
-- **Original:** `exit={{ opacity: 0, scale: 0.95, transition: exitTransition }}` inside `<AnimatePresence>` (`app/docs/motion/page.tsx:313-331`).
-- **Port:** the frame keeps the layers mounted with `createPresence` (`src/lib/presence.ts`): `animate` flips to the closed target and `transition` swaps to the exit tween in the same render, and `onMotionComplete` (or the exit time plus 100ms) unmounts them. This is the pattern the port's popups use (`src/components/tooltip.tsx:175`).
-- **Workaround:** as above.
-- **Fidelity:** exact timing; the mechanism differs.
-
 ## `ComponentPreview` has no Inspect switch and no highlighted Code tab
 
 - **Cause:** `not ported yet` (the Inspect overlay: pixel rulers and box-model inspector); `port choice` for the Code tab (no highlighter).

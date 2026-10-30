@@ -6,7 +6,6 @@ import {
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
-	useIsPresent,
 } from '@gpuix/solid';
 import { isChord, moveIndex } from 'base-ui-solid-gpuix/internals/composite';
 import {
@@ -152,18 +151,13 @@ interface RowProps {
 
 /** The submit arrow that covers a row's chip; it grows from 0.6 and shrinks back to it. */
 function ArrowOverlay(props: { testId?: string; onClick?: () => void }) {
-	const present = useIsPresent();
 	return (
 		<motion.div
 			testId={props.testId === undefined ? undefined : `${props.testId}-arrow`}
 			initial={{ opacity: 0, scale: 0.6 }}
 			animate={{ opacity: 1, scale: 1 }}
-			exit={{ opacity: 0, scale: 0.6 }}
-			transition={
-				present()
-					? { ...tween.fast, opacity: { duration: 0.08 } }
-					: tween.fastExit
-			}
+			exit={{ opacity: 0, scale: 0.6, transition: tween.fastExit }}
+			transition={{ ...tween.fast, opacity: { duration: 0.08 } }}
 			{...(props.onClick
 				? {
 						role: 'button',

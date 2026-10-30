@@ -75,17 +75,16 @@ kit.check(
 	`start ${startCentre.x.toFixed(2)},${startCentre.y.toFixed(2)}, 16 ms ${growingCentre.x.toFixed(2)},${growingCentre.y.toFixed(2)}, end ${endCentre.x.toFixed(2)},${endCentre.y.toFixed(2)}`,
 );
 kit.check(
-	'the old dot shrinks out to 0.3 within 0.04 s and is then removed',
+	'the old dot shrinks toward 0.3 and is removed as its own 0.04 s exit ends',
 	leaving !== undefined &&
 		leaving.width < 16 &&
 		leaving.width > 16 * 0.3 &&
 		leavingLater !== undefined &&
 		leavingLater.width < leaving.width &&
-		shrunk !== undefined &&
-		shrunk.width < 16 * 0.3 + 0.5 &&
+		shrunk === undefined &&
 		goneAt160 &&
 		gone,
-	`16 ms ${leaving?.width.toFixed(2)}, 32 ms ${leavingLater?.width.toFixed(2)}, 48 ms ${shrunk?.width.toFixed(2)}, gone at 160 ms ${goneAt160}`,
+	`16 ms ${leaving?.width.toFixed(2)}, 32 ms ${leavingLater?.width.toFixed(2)}, 48 ms ${shrunk === undefined ? 'gone' : shrunk.width.toFixed(2)}, gone at 160 ms ${goneAt160}`,
 );
 
 await kit.finish();

@@ -62,22 +62,20 @@ export function Slide(props: {
 				<For each={[props.index]}>
 					{(index: number) => (
 						<motion.div
-							initial={{
-								opacity: 0,
-								left: props.direction * SLIDE_SHIFT,
-								right: -props.direction * SLIDE_SHIFT,
-							}}
-							animate={{ opacity: 1, left: 0, right: 0 }}
+							initial={{ opacity: 0, x: props.direction * SLIDE_SHIFT }}
+							animate={{ opacity: 1, x: 0 }}
 							exit={{
 								opacity: 0,
-								left: -props.direction * SLIDE_SHIFT,
-								right: props.direction * SLIDE_SHIFT,
+								x: -props.direction * SLIDE_SHIFT,
+								transition: tween.moderateExit,
 							}}
 							transition={tween.moderate}
 							style={{
 								position: 'absolute',
 								top: 0,
 								bottom: 0,
+								left: 0,
+								right: 0,
 								display: 'flex',
 								alignItems: 'center',
 								justifyContent: 'center',

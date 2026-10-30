@@ -6,7 +6,6 @@ import {
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
-	useIsPresent,
 } from '@gpuix/solid';
 import { createPresence } from 'base-ui-solid-gpuix/internals';
 import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
@@ -185,13 +184,12 @@ function Collapse(props: { open: boolean; children: JSX.Element }) {
 }
 
 function SendGlyph(props: { glyph: 'stop' | 'arrow'; arrowSize: number }) {
-	const present = useIsPresent();
 	return (
 		<motion.div
 			initial={{ opacity: 0, scale: GLYPH_SCALE }}
 			animate={{ opacity: 1, scale: 1 }}
-			exit={{ opacity: 0, scale: GLYPH_SCALE }}
-			transition={present() ? tween.fast : tween.fastExit}
+			exit={{ opacity: 0, scale: GLYPH_SCALE, transition: tween.fastExit }}
+			transition={tween.fast}
 			style={{
 				position: 'relative',
 				display: 'flex',
@@ -322,15 +320,14 @@ function FilePreviewTile(props: {
 	onRemove: () => void;
 	testId?: string;
 }) {
-	const present = useIsPresent();
 	const [tileHovered, setTileHovered] = createSignal(false);
 	const [badgeHovered, setBadgeHovered] = createSignal(false);
 	return (
 		<motion.div
 			initial={{ opacity: 0, scale: TILE_SCALE }}
 			animate={{ opacity: 1, scale: 1 }}
-			exit={{ opacity: 0, scale: TILE_SCALE }}
-			transition={present() ? tween.fast : tween.fastExit}
+			exit={{ opacity: 0, scale: TILE_SCALE, transition: tween.fastExit }}
+			transition={tween.fast}
 			testId={props.testId}
 			onMouseEnter={() => setTileHovered(true)}
 			onMouseLeave={() => setTileHovered(false)}
@@ -379,7 +376,6 @@ function QueuedRow(props: {
 	testId?: string;
 }) {
 	const renderer = useGpuixRequired();
-	const present = useIsPresent();
 	const step = () => steps[props.size];
 	const [hovered, setHovered] = createSignal(false);
 	const [closeHovered, setCloseHovered] = createSignal(false);
@@ -412,8 +408,8 @@ function QueuedRow(props: {
 		<motion.div
 			initial={{ opacity: 0, scale: ROW_SCALE }}
 			animate={{ opacity: 1, scale: 1 }}
-			exit={{ opacity: 0, scale: ROW_SCALE }}
-			transition={present() ? tween.fast : tween.fastExit}
+			exit={{ opacity: 0, scale: ROW_SCALE, transition: tween.fastExit }}
+			transition={tween.fast}
 			role="listitem"
 			aria-label={`Queued message ${props.index + 1} of ${props.total}: ${label()}`}
 			testId={props.testId}

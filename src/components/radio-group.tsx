@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, useIsPresent } from '@gpuix/solid';
+import { AnimatePresence, motion } from '@gpuix/solid';
 import { createRadioRoot } from 'base-ui-solid-gpuix/radio';
 import {
 	createRadioGroup,
@@ -82,14 +82,13 @@ export function RadioGroup(props: {
 }
 
 function RadioDot(props: { size: number; testId?: string }) {
-	const present = useIsPresent();
 	return (
 		<motion.div
 			testId={props.testId}
 			initial={{ opacity: 0, scale: DOT_FROM }}
 			animate={{ opacity: 1, scale: 1 }}
-			exit={{ opacity: 0, scale: DOT_FROM }}
-			transition={present() ? tween.fast : DOT_OUT}
+			exit={{ opacity: 0, scale: DOT_FROM, transition: DOT_OUT }}
+			transition={tween.fast}
 			style={{
 				position: 'absolute',
 				top: 0,

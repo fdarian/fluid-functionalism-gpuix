@@ -131,7 +131,7 @@ k.check(
 	`${delay} of ${SAMPLES} samples later`,
 );
 
-// The word roll: the next word comes up from 80% of its own height (16 of the 20px line) over 0.24 s, and the old one leaves through the top to -80% in 0.16 s.
+// The word roll: the next word comes up from 80% of its own height (16 of the 20px line) over 0.24 s, and the old one leaves through the top to -80% in 0.16 s and is removed as that exit ends.
 const SLOT_TOP = k.bounds('thinking').y + 8;
 const ROLL = 16;
 const presentWord = () =>
@@ -157,13 +157,13 @@ k.check(
 	near(wordY(arriving), ROLL),
 	`${wordY(arriving)}`,
 );
-k.step(180);
+k.step(150);
 k.check(
 	'the old word has left through the top, to -80% of its height',
 	k.exists(`thinking-word-${leaving}`) && wordY(leaving) < -ROLL + 1.5,
 	`${wordY(leaving)}`,
 );
-k.step(60);
+k.step(90);
 k.check(
 	'the old word is gone and the new one rests in the slot at 0.24 s',
 	!k.exists(`thinking-word-${leaving}`) && near(wordY(arriving), 0),

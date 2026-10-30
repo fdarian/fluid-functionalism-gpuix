@@ -7,7 +7,6 @@ import {
 	type HostPointerEvent,
 	type MotionTransition,
 	motion,
-	useIsPresent,
 } from '@gpuix/solid';
 import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
 import { createEffect, createSignal, For, onCleanup, Show } from 'solid-js';
@@ -349,7 +348,6 @@ function QueueCard(props: {
 }) {
 	const [hovered, setHovered] = createSignal(false);
 	const region = createPointerCapture('QueueCard');
-	const present = useIsPresent();
 	const files = () => props.item.files;
 	const label = () =>
 		props.item.text ||
@@ -359,15 +357,8 @@ function QueueCard(props: {
 			testId={`queued-${props.item.id}`}
 			initial={{ opacity: 0, y: 14, scale: 0.96 }}
 			animate={props.target()}
-			exit={{ opacity: 0, scale: 0.9 }}
-			transition={
-				props.dragging()
-					? tween.snap
-					: present()
-						? settle
-						: // The source's exit is a plain 0.12s tween.
-							tween.moderateExit
-			}
+			exit={{ opacity: 0, scale: 0.9, transition: tween.moderateExit }}
+			transition={props.dragging() ? tween.snap : settle}
 			onMouseEnter={() => {
 				setHovered(true);
 			}}

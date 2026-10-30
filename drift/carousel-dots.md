@@ -45,14 +45,13 @@ Ported and matching: the 6px dots and 24px pill on `moderate` (`carousel-dots.ts
 - **Fidelity:** approximated (a stronger edge).
 - **Components it hits:** just this demo.
 
-## Demo: the label's exit uses the enter spring
+## Demo: the label is not popped out of layout
 
-- **Cause:** `not ported yet`.
+- **Cause:** `port choice`.
 - **Original:** `slideVariants`: enter at `x = dir * 24` with opacity 0, centre on `spring.moderate`, exit to `x = -dir * 24` on `spring.moderate.exit` (a 120 ms tween), `AnimatePresence mode="popLayout"` (`lib/docs/slide-direction.ts:16-18`; `page.tsx:55-64`).
-- **Port:** one `transition={tween.moderate}` (the 160 ms spring) for enter and exit, with the offset moved on `left` / `right` instead of `x` (`src/demos/carousel-dots.tsx:60-89`). No `popLayout`: both labels are absolutely positioned.
-- **gpuix lacks:** transforms (the `left` / `right` offset, `src/demos/carousel-dots.tsx:67-74`; README "Missing features" row [CSS transforms](../README.md#missing-features)). A per-target transition inside `exit` is not used (`tween.moderateExit` exists at `src/lib/theme.ts:476`); whether gpuix accepts one there was not checked.
-- **Workaround:** `left` / `right` offsets.
-- **Fidelity:** approximated (the leaving label is slower than the source's 120 ms).
+- **Port:** the same `x` and `exit` transition (`src/demos/carousel-dots.tsx:63-77`). No `popLayout`: both labels are absolutely positioned over the whole frame.
+- **Workaround:** absolute positioning.
+- **Fidelity:** exact.
 - **Components it hits:** just this demo.
 
 ## Demo: direction marker listens in the bubble phase

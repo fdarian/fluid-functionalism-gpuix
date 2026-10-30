@@ -5,7 +5,6 @@ import {
 	type MotionTransition,
 	motion,
 	type StyleDesc,
-	useIsPresent,
 } from '@gpuix/solid';
 import { createEffect, createSignal, For, onCleanup, Show } from 'solid-js';
 import { useOnScreen } from '#/lib/cull';
@@ -219,14 +218,12 @@ const SLOT_CELL = { gridRow: 1, gridColumn: 1 } as const;
 
 /** One word, rolling in from below on mount and out through the top when removed. */
 function RollingWord(props: { word: string }) {
-	const present = useIsPresent();
 	return (
 		<motion.div
 			testId={`thinking-word-${props.word}`}
 			initial={{ y: '80%', opacity: 0 }}
-			animate={{ y: 0, opacity: 1 }}
-			exit={{ y: '-80%', opacity: 0 }}
-			transition={present() ? enterTransition : exitTransition}
+			animate={{ y: 0, opacity: 1, transition: enterTransition }}
+			exit={{ y: '-80%', opacity: 0, transition: exitTransition }}
 			style={SLOT_CELL}
 		>
 			<Shimmer style={scale.body}>{props.word}</Shimmer>

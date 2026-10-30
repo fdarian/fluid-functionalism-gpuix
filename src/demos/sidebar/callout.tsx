@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, useIsPresent } from '@gpuix/solid';
+import { AnimatePresence, motion } from '@gpuix/solid';
 import { createSignal, For, type JSX, onCleanup } from 'solid-js';
 import {
 	Card,
@@ -162,15 +162,13 @@ function StackedCard(props: {
 	onHeight: (height: number) => void;
 	onDismiss: () => void;
 }) {
-	const present = useIsPresent();
 	const measured = createMeasuredHeight();
 	return (
 		<motion.div
 			initial={{ opacity: 0, y: 14, scale: 0.96 }}
 			animate={props.target()}
-			exit={{ opacity: 0, scale: 0.9 }}
-			// The source's exit is a plain 0.12s tween.
-			transition={present() ? tween.moderate : tween.moderateExit}
+			exit={{ opacity: 0, scale: 0.9, transition: tween.moderateExit }}
+			transition={tween.moderate}
 			style={{
 				position: 'absolute',
 				left: 0,

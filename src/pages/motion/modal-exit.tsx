@@ -1,5 +1,9 @@
-import { type MotionTransition, motion, type StyleDesc } from '@gpuix/solid';
-import { createPresence } from 'base-ui-solid-gpuix/internals';
+import {
+	AnimatePresence,
+	type MotionTransition,
+	motion,
+	type StyleDesc,
+} from '@gpuix/solid';
 import { createSignal, Show } from 'solid-js';
 import { Button } from '#/components/button';
 import { ComponentPreview, MONO } from '#/lib/doc-page';
@@ -32,12 +36,6 @@ const MODAL_CODE = `// Both modals open on spring.slow. Only the exit differs.
 /** The slow exit `{ duration: 0.4 }`: as long as the enter. */
 const SAME_EXIT = { duration: 0.4 } satisfies MotionTransition;
 
-const CARD_AT = { opacity: 1, scale: 1 } as const;
-const CARD_AWAY = { opacity: 0, scale: 0.95 } as const;
-
-/** Buffer after the exit tween, like FF's `exitFallbackMs`. */
-const EXIT_BUFFER_MS = 100;
-
 function Bar(props: { style: StyleDesc }) {
 	return (
 		<div
@@ -54,15 +52,7 @@ function ModalFrame(props: {
 	testId: string;
 	open: boolean;
 	exitTransition: MotionTransition;
-	exitMs: number;
 }) {
-	const presence = createPresence(props.exitMs + EXIT_BUFFER_MS);
-	presence.follow(() => props.open);
-	const transition = () =>
-		presence.open() ? tween.slow : props.exitTransition;
-	const release = () => {
-		if (!presence.open()) presence.release();
-	};
 	const faint = (alpha: number) => withAlpha(color.foreground, alpha);
 
 	return (
@@ -83,97 +73,100 @@ function ModalFrame(props: {
 				backgroundColor: color.background,
 			}}
 		>
-			<Show when={presence.mounted()}>
-				<motion.div
-					initial={{ opacity: 0 }}
-					animate={{ opacity: presence.open() ? 1 : 0 }}
-					transition={transition()}
-					style={{
-						position: 'absolute',
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						backgroundColor: faint(0.05),
-					}}
-				/>
-				<motion.div
-					onMotionComplete={release}
-					initial={CARD_AWAY}
-					animate={presence.open() ? CARD_AT : CARD_AWAY}
-					transition={transition()}
-					style={{
-						position: 'relative',
-						width: '80%',
-						display: 'flex',
-						flexDirection: 'column',
-						gap: 10,
-						padding: 16,
-						borderRadius: 12,
-						borderStyle: 'solid',
-						borderWidth: 1,
-						borderColor: color.border,
-						backgroundColor: color.card,
-						boxShadow: twShadow.xl,
-					}}
-				>
-					<Bar
+			<AnimatePresence>
+				<Show when={props.open}>
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0, transition: props.exitTransition }}
+						transition={tween.slow}
 						style={{
 							position: 'absolute',
-							top: 12,
-							right: 12,
-							width: 16,
-							height: 16,
-							backgroundColor: faint(0.1),
+							top: 0,
+							left: 0,
+							right: 0,
+							bottom: 0,
+							backgroundColor: faint(0.05),
 						}}
 					/>
-					<Bar
-						style={{ width: '50%', height: 12, backgroundColor: faint(0.1) }}
-					/>
-					<Bar
+					<motion.div
+						initial={{ opacity: 0, scale: 0.95 }}
+						animate={{ opacity: 1, scale: 1 }}
+						exit={{ opacity: 0, scale: 0.95, transition: props.exitTransition }}
+						transition={tween.slow}
 						style={{
-							marginTop: 4,
-							width: '100%',
-							height: 8,
-							backgroundColor: faint(0.06),
-						}}
-					/>
-					<Bar
-						style={{ width: '100%', height: 8, backgroundColor: faint(0.06) }}
-					/>
-					<Bar
-						style={{ width: '40%', height: 8, backgroundColor: faint(0.06) }}
-					/>
-					<div
-						style={{
+							position: 'relative',
+							width: '80%',
 							display: 'flex',
-							flexDirection: 'row',
-							justifyContent: 'flex-end',
-							gap: 8,
-							marginTop: 12,
+							flexDirection: 'column',
+							gap: 10,
+							padding: 16,
+							borderRadius: 12,
+							borderStyle: 'solid',
+							borderWidth: 1,
+							borderColor: color.border,
+							backgroundColor: color.card,
+							boxShadow: twShadow.xl,
 						}}
 					>
-						<div
+						<Bar
 							style={{
-								flexShrink: 0,
-								width: 64,
-								height: 24,
-								borderRadius: 6,
+								position: 'absolute',
+								top: 12,
+								right: 12,
+								width: 16,
+								height: 16,
 								backgroundColor: faint(0.1),
 							}}
 						/>
-						<div
+						<Bar
+							style={{ width: '50%', height: 12, backgroundColor: faint(0.1) }}
+						/>
+						<Bar
 							style={{
-								flexShrink: 0,
-								width: 64,
-								height: 24,
-								borderRadius: 6,
-								backgroundColor: faint(0.1),
+								marginTop: 4,
+								width: '100%',
+								height: 8,
+								backgroundColor: faint(0.06),
 							}}
 						/>
-					</div>
-				</motion.div>
-			</Show>
+						<Bar
+							style={{ width: '100%', height: 8, backgroundColor: faint(0.06) }}
+						/>
+						<Bar
+							style={{ width: '40%', height: 8, backgroundColor: faint(0.06) }}
+						/>
+						<div
+							style={{
+								display: 'flex',
+								flexDirection: 'row',
+								justifyContent: 'flex-end',
+								gap: 8,
+								marginTop: 12,
+							}}
+						>
+							<div
+								style={{
+									flexShrink: 0,
+									width: 64,
+									height: 24,
+									borderRadius: 6,
+									backgroundColor: faint(0.1),
+								}}
+							/>
+							<div
+								style={{
+									flexShrink: 0,
+									width: 64,
+									height: 24,
+									borderRadius: 6,
+									backgroundColor: faint(0.1),
+								}}
+							/>
+						</div>
+					</motion.div>
+				</Show>
+			</AnimatePresence>
 		</div>
 	);
 }
@@ -181,7 +174,6 @@ function ModalFrame(props: {
 function Side(props: {
 	slug: 'same' | 'faster';
 	exitTransition: MotionTransition;
-	exitMs: number;
 	mark: string;
 	caption: string;
 	toggleLabel: string;
@@ -203,7 +195,6 @@ function Side(props: {
 				testId={`modal-${props.slug}-frame`}
 				open={open()}
 				exitTransition={props.exitTransition}
-				exitMs={props.exitMs}
 			/>
 			<Button
 				testId={`modal-${props.slug}-toggle`}
@@ -252,7 +243,6 @@ export function ModalExitDemo() {
 					<Side
 						slug="same"
 						exitTransition={SAME_EXIT}
-						exitMs={400}
 						mark="❌"
 						caption="Same exit time — drags on the way out"
 						toggleLabel="Toggle the modal with the same exit speed"
@@ -260,7 +250,6 @@ export function ModalExitDemo() {
 					<Side
 						slug="faster"
 						exitTransition={tween.slowExit}
-						exitMs={160}
 						mark="✅"
 						caption="Faster exit — gone a tier quicker"
 						toggleLabel="Toggle the modal with the faster exit speed"
