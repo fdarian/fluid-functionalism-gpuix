@@ -1,4 +1,10 @@
-import { buttonProps, type KeyEvent, useGpuixRequired } from '@gpuix/solid';
+import {
+	buttonProps,
+	createReducedMotion,
+	type KeyEvent,
+	motion,
+	useGpuixRequired,
+} from '@gpuix/solid';
 import {
 	type Accessor,
 	createSignal,
@@ -7,7 +13,11 @@ import {
 	onCleanup,
 	Show,
 } from 'solid-js';
-import { Button, type ButtonVariant } from '#/components/button';
+import {
+	Button,
+	type ButtonGlyphProps,
+	type ButtonVariant,
+} from '#/components/button';
 import { TabsSubtle, TabsSubtleItem } from '#/components/tabs-subtle';
 import { Tooltip } from '#/components/tooltip';
 import { createCulling, OnScreenContext } from './cull';
@@ -22,6 +32,7 @@ import {
 	SchemeScope,
 	scheme,
 	siteType,
+	motion as tween,
 	weight,
 	withAlpha,
 } from './theme';
@@ -192,6 +203,66 @@ export function SubHeading(props: { children: string; marginTop?: number }) {
 
 const COPIED_MS = 2000;
 
+const COPY_SHOWN = { opacity: 1, scale: 1 };
+const COPY_HIDDEN = { opacity: 0, scale: 0.6 };
+/** The glyph arriving takes the tier's full duration eased out, the one leaving its exit token eased in, so an appear outlasts a disappear (0.08 s against 0.06 s). */
+const COPY_ENTER = { duration: 0.08, ease: 'easeOut' } as const;
+const COPY_LEAVE = { ...tween.fastExit, ease: 'easeIn' } as const;
+const COPY_CELL = { gridColumn: 1, gridRow: 1, display: 'flex' } as const;
+
+/** The Copy prompt button's glyph: the copy mark crossfading to a check, both in one cell the size of the icon so the slot never changes. */
+function CopyPromptGlyph(props: {
+	copied: Accessor<boolean>;
+	glyph: ButtonGlyphProps;
+}) {
+	const reduced = createReducedMotion();
+	const enter = () => (reduced() ? tween.snap : COPY_ENTER);
+	const leave = () => (reduced() ? tween.snap : COPY_LEAVE);
+	return (
+		<div
+			style={{
+				display: 'grid',
+				flexShrink: 0,
+				width: props.glyph.size,
+				height: props.glyph.size,
+			}}
+		>
+			<motion.div
+				testId="copy-prompt-copy"
+				initial={false}
+				animate={props.copied() ? COPY_HIDDEN : COPY_SHOWN}
+				transition={props.copied() ? leave() : enter()}
+				style={COPY_CELL}
+			>
+				<Icon
+					name="copy"
+					size={props.glyph.size}
+					strokeWidth={props.glyph.strokeWidth}
+					color={props.glyph.color}
+					easeStroke
+					fade
+				/>
+			</motion.div>
+			<motion.div
+				testId="copy-prompt-check"
+				initial={false}
+				animate={props.copied() ? COPY_SHOWN : COPY_HIDDEN}
+				transition={props.copied() ? enter() : leave()}
+				style={COPY_CELL}
+			>
+				<Icon
+					name="check"
+					size={props.glyph.size}
+					strokeWidth={props.glyph.strokeWidth}
+					color={props.glyph.color}
+					easeStroke
+					fade
+				/>
+			</motion.div>
+		</div>
+	);
+}
+
 /** The docs pages' Copy prompt button; `label` and `variant` serve the changelog's own prompts. */
 export function CopyPromptButton(props: {
 	prompt: string;
@@ -219,7 +290,7 @@ export function CopyPromptButton(props: {
 		<Button
 			testId={props.testId ?? 'copy-prompt'}
 			variant={props.variant ?? 'primary'}
-			leadingIcon={copied() ? 'check' : 'copy'}
+			leadingIcon={(glyph) => <CopyPromptGlyph copied={copied} glyph={glyph} />}
 			onClick={copy}
 		>
 			{props.label ?? 'Copy prompt'}

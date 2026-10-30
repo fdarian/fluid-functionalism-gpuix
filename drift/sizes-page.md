@@ -83,7 +83,7 @@ repeating it.
 
 - **Cause:** `not ported yet` (the `S` shortcut, `drift/site.md`, "Theme: shortcut, tooltips, toasts").
 - **Original:** "Press `S` to toggle on the website" and an `<a href="/docs/typography" className="mx-1 text-foreground underline underline-offset-4">Typography</a>` (`app/docs/sizes/page.tsx:590-592, 616-622`).
-- **Port:** both are verbatim. `S` does nothing (the Size row in the customise card changes the step); "Typography" is the shared `Link` (`src/lib/doc-page.tsx:89-129`) with the same `mx-1` and foreground colour, and a click or Enter shows the Typography page.
+- **Port:** both are verbatim. `S` does nothing (the Size row in the customise card changes the step); "Typography" is the shared `Link` (`src/lib/doc-page.tsx:100-140`) with the same `mx-1` and foreground colour, and a click or Enter shows the Typography page.
 - **Fidelity:** exact text, describes more than the port does; the link is exact.
 
 ## The API reference sections are left out

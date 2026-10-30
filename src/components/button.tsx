@@ -156,10 +156,18 @@ function Spinner(props: { size: number; color: string }) {
 	);
 }
 
+/** What a glyph is drawn with: the source's `leadingIcon` component receives the same size and stroke, and the colour its `className` carries. Read the getters inside JSX so a size, a hover stroke or a variant change reaches the glyph. */
+export type ButtonGlyphProps = {
+	readonly size: number;
+	readonly strokeWidth: number;
+	readonly color: string;
+};
+
 export function Button(props: {
 	variant?: ButtonVariant;
 	size?: ButtonSize;
-	leadingIcon?: IconRef;
+	/** A glyph by name, or a function that draws one (the source's component type), for a glyph that animates. */
+	leadingIcon?: IconRef | ((glyph: ButtonGlyphProps) => JSX.Element);
 	trailingIcon?: IconRef;
 	loading?: boolean;
 	disabled?: boolean;
@@ -210,16 +218,32 @@ export function Button(props: {
 	const content = () => (
 		<>
 			<Show when={props.leadingIcon}>
-				{(name: Accessor<IconRef>) => (
-					<Icon
-						name={name()}
-						size={size().icon}
-						strokeWidth={iconStroke()}
-						easeStroke
-						fade
-						color={labelColor()}
-					/>
-				)}
+				{(leading: Accessor<NonNullable<typeof props.leadingIcon>>) => {
+					const icon = leading();
+					if (typeof icon === 'function') {
+						return icon({
+							get size() {
+								return size().icon;
+							},
+							get strokeWidth() {
+								return iconStroke();
+							},
+							get color() {
+								return labelColor();
+							},
+						});
+					}
+					return (
+						<Icon
+							name={icon}
+							size={size().icon}
+							strokeWidth={iconStroke()}
+							easeStroke
+							fade
+							color={labelColor()}
+						/>
+					);
+				}}
 			</Show>
 			<Show
 				when={iconOnly() && props.icon !== undefined}

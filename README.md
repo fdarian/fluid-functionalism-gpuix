@@ -216,7 +216,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [input-message](drift/input-message.md) | 3 | 1 | 13 | 4 | 21 |
 | [introduction](drift/introduction.md) | 0 | 5 | 2 | 0 | 7 |
 | [mobile-drawer](drift/mobile-drawer.md) | 2 | 2 | 1 | 0 | 5 |
-| [motion-page](drift/motion-page.md) | 1 | 3 | 1 | 2 | 7 |
+| [motion-page](drift/motion-page.md) | 1 | 2 | 1 | 3 | 7 |
 | [nav-menu](drift/nav-menu.md) | 0 | 5 | 1 | 0 | 6 |
 | [queued-stack](drift/queued-stack.md) | 1 | 3 | 3 | 1 | 8 |
 | [radio-group](drift/radio-group.md) | 0 | 2 | 2 | 0 | 4 |
@@ -237,7 +237,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 3 | 4 | 5 | 0 | 12 |
 | [tooltip](drift/tooltip.md) | 0 | 6 | 1 | 0 | 7 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **47** | **218** | **189** | **46** | **500** |
+| **Total** | **47** | **217** | **189** | **47** | **500** |
 
 ### gpuix gaps across components
 
