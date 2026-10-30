@@ -177,6 +177,8 @@ export function Button(props: {
 	/** Anything after the label, e.g. a keycap. Takes the trailing icon's tighter padding. */
 	trailingContent?: JSX.Element;
 	icon?: IconRef;
+	/** A static turn of the icon of an icon-only button, the source's `<ArrowRight className="rotate-180" />`. */
+	iconRotate?: string;
 }) {
 	const renderer = useGpuixRequired();
 	const variant = () => props.variant ?? 'primary';
@@ -242,6 +244,7 @@ export function Button(props: {
 					strokeWidth={iconStroke()}
 					easeStroke
 					fade
+					rotate={props.iconRotate}
 					color={labelColor()}
 				/>
 			</Show>

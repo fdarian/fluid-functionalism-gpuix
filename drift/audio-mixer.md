@@ -11,7 +11,7 @@ repeating it.
 
 - **Cause:** `port choice` (the port keeps the docs layout; the page is `layout: "docs"`).
 - **Original:** `w-full max-w-[720px] mx-auto px-10 py-10`, a 640px content column, no sidebar or right column (`app/slider/page.tsx:66`).
-- **Port:** the docs column, 600 wide, with the sidebar on the left and the customise card on the right (`src/app.tsx:77`, `PAGE_WIDTH`; the sidebar at `:584`, the card at `:649-682`). Sliders are 40px narrower, and the page sits inside the app frame rather than alone in the window.
+- **Port:** the docs column, 600 wide, with the sidebar on the left and the customise card on the right (`src/app.tsx:77`, `PAGE_WIDTH`; the sidebar at `:585`, the card at `:650-683`). Sliders are 40px narrower, and the page sits inside the app frame rather than alone in the window.
 - **Fidelity:** approximated (same rows, narrower tracks).
 - **Components it hits:** every `layout: "docs"` page.
 

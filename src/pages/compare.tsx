@@ -153,7 +153,8 @@ function SlideArrow(props: {
 			<Button
 				variant="ghost"
 				size="icon"
-				icon={previous() ? 'arrow-left' : 'arrow-right'}
+				icon="arrow-right"
+				iconRotate={previous() ? '180deg' : undefined}
 				disabled={props.neighbour === undefined}
 				aria-label={previous() ? 'Previous slide' : 'Next slide'}
 				testId={previous() ? 'compare-prev' : 'compare-next'}

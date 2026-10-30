@@ -9,7 +9,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `gpuix gap`.
 - **Original:** a native `<button>` matches `:active` while Space is held, so the press-shrink (`group-active:`, `registry/base/button.tsx:115-127`) plays for a keyboard activation too.
-- **Port:** the pressed look is `pressSurface` and the tertiary `ringSurface` (`src/components/button.tsx:304-305`); Space still activates on key-up through `buttonProps` (`:266-272`).
+- **Port:** the pressed look is `pressSurface` and the tertiary `ringSurface` (`src/components/button.tsx:307-308`); Space still activates on key-up through `buttonProps` (`:269-275`).
 - **gpuix lacks:** a keyboard `:active` state. `active` styles come from the pointer's press chain only (`~/code/fdarian/gpuix/FORK.md:317-319`). Rechecked on the test renderer: with a focused `buttonProps` element carrying `active: { backgroundColor }`, the capture while `nativeSimulateKeyDown(id, "Space")` is held is byte-identical to the resting one.
 - **Workaround:** none.
 - **Fidelity:** approximated: the activation is exact, the pressed look is missing for the keyboard.
@@ -39,7 +39,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `port choice` (out of scope per the lead's decision, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:177`).
 - **Original:** `active` forces the pressed look while a menu the button opened is showing (`:99-102`, `:130-141`); `asChild` / `render` make another element the root (`:86-95`, `:163-186`, `:290-302`); `sm` / `md` / `lg` / `icon-sm` / `icon-lg` resolve onto the ladder (`:61-78`).
-- **Port:** none of them (`src/components/button.tsx:159-180`). A dropdown trigger does not look engaged while its menu is open.
+- **Port:** none of them (`src/components/button.tsx:159-182`). A dropdown trigger does not look engaged while its menu is open.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** every popup trigger that is a `Button` (dropdown, select).
@@ -57,7 +57,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** `size="icon"` renders `children` (any element, usually an icon) inside the label wrapper (`:248-251`).
-- **Port:** the glyph is the `icon` prop and `children` is ignored for icon sizes (`src/components/button.tsx:222-247`); `trailingContent` is a port-only slot for a keycap (`:178`).
+- **Port:** the glyph is the `icon` prop and `children` is ignored for icon sizes (`src/components/button.tsx:224-250`); `trailingContent` is a port-only slot for a keycap (`:178`).
 - **Workaround:** n/a.
 - **Fidelity:** exact in look.
 - **Components it hits:** just this one.

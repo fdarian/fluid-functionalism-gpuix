@@ -26,15 +26,6 @@ repeating it.
 - **Port:** `sc` in `src/pages/compare/shadcn/theme.ts` resolves the same values through `scheme()`, so System, Light and Dark all work and a theme change reaches the cards with the page-wide fade. Every border names its token, so no redirect rule is needed. The shadcn cards do not follow the Radius or Size rows, as in the source (Tailwind's `rounded-md` / `text-sm` are fixed).
 - **Fidelity:** exact.
 
-## No Radix transitions: the chevron swaps glyph, the accordion tweens its height
-
-- **Cause:** `gpuix gap`: no transforms (README "Drift from the source", the CSS-transforms row).
-- **Original:** the accordion chevron turns 180 degrees over 200ms (`[&[data-state=open]>svg]:rotate-180`, `components/shadcn/accordion.tsx:34`); the content runs the `accordion-down` / `accordion-up` keyframes (`:55`).
-- **Port:** the chevron is `chevron-down` closed and `chevron-up` open, swapped at once. The panel measures its content and tweens `height` over 0.2s `easeOut`, then, once closed, unmounts its text and sets the region `display: none`, as Radix's `hidden` does (`src/pages/compare/shadcn/accordion.tsx:13-74`).
-- **gpuix lacks:** `transform: rotate` (FORK.md area E).
-- **Fidelity:** approximated.
-- **Components it hits:** every glyph FF turns with a transform.
-
 ## The focus ring leaves its offset gap transparent
 
 - **Cause:** `gpuix gap`: one `outline` per element, no second ring.
@@ -69,15 +60,15 @@ repeating it.
 
 - **Cause:** `not ported yet` (`/demo`); `port choice` (`/docs`).
 - **Original:** "Learn more" links to `/docs`, "See demo" to `/demo` (`app/compare/page.tsx:155-161`).
-- **Port:** "Learn more" calls `navigate("introduction")`, the page `/docs` serves. "See demo" is the tertiary button, disabled (`src/pages/compare.tsx:322-337`). The footer link under the Fluid card opens the component's demo page (`/docs/<slug>` in the source).
+- **Port:** "Learn more" calls `navigate("introduction")`, the page `/docs` serves. "See demo" is the tertiary button, disabled (`src/pages/compare.tsx:323-338`). The footer link under the Fluid card opens the component's demo page (`/docs/<slug>` in the source).
 - **Fidelity:** approximated.
 
-## The arrow buttons use `arrow-left`, and the tooltips are the port's chip
+## The arrow tooltips are the port's chip
 
-- **Cause:** `gpuix gap` (no transforms) for the glyph; `port choice` for the chip.
+- **Cause:** `port choice` (the chip).
 - **Original:** the previous arrow is `ArrowRight` with `rotate-180`; the tooltips hold `{name} &ensp;<kbd class="font-mono opacity-50">←</kbd>`, or "No previous" / "No next" when disabled (`app/compare/page.tsx:166-186`).
-- **Port:** `arrow-left` is the same drawing turned (every icon table has it). The tooltip is the port's `Tooltip` chip with the name, an en space and the key in Menlo at 50% (`src/pages/compare.tsx:121-160`); a disabled button's tooltip still opens, since the wrapper takes the hover.
-- **Fidelity:** exact (glyph), approximated (chip).
+- **Port:** the previous arrow is `arrow-right` with `iconRotate="180deg"`, as the source. The tooltip is the port's `Tooltip` chip with the name, an en space and the key in Menlo at 50% (`src/pages/compare.tsx:121-162`); a disabled button's tooltip still opens, since the wrapper takes the hover.
+- **Fidelity:** approximated (chip).
 
 ## The page has no breakpoints
 
@@ -90,7 +81,7 @@ repeating it.
 
 - **Cause:** `port choice`.
 - **Original:** `<button class="h-1.5 rounded-full transition-all duration-150">`, 24px wide current and 6px others, `foreground` at 40% (`app/compare/page.tsx:217-234`).
-- **Port:** a pressable `div` (Enter, Space, a click) holding a `motion.div` that animates `width` over 0.15s (`src/pages/compare.tsx:166-194`). The 6px-tall hit area is the source's.
+- **Port:** a pressable `div` (Enter, Space, a click) holding a `motion.div` that animates `width` over 0.15s (`src/pages/compare.tsx:167-195`). The 6px-tall hit area is the source's.
 - **Fidelity:** approximated.
 
 ## Fluid side: the port's component widths and Slider engine

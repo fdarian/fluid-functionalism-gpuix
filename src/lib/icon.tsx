@@ -66,12 +66,15 @@ export function Icon(props: {
 	 * Ease a stroke-width change over 80 ms. `Icon` otherwise bakes the width into its SVG source and can only switch; this draws the glyph as shapes inside one animated group that they inherit the width from. Phosphor's glyphs are filled paths whose weight is picked by the width, so there the weight switches at once.
 	 */
 	easeStroke?: boolean;
+	/** A static turn, the source's `rotate-180` on the svg. */
+	rotate?: string;
 }) {
 	const style = () => ({
 		width: props.size,
 		height: props.size,
 		flexShrink: 0,
 		color: props.color,
+		...(props.rotate === undefined ? {} : { rotate: props.rotate }),
 		...(props.fade === true ? colorFade : {}),
 	});
 	const shapes = () => parseShapes(iconNodes(props.name));

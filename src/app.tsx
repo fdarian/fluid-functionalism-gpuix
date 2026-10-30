@@ -333,7 +333,8 @@ function HeroArrows() {
 				testId="hero-prev"
 				variant="ghost"
 				size={iconSize()}
-				icon="arrow-left"
+				icon="arrow-right"
+				iconRotate="180deg"
 				disabled
 				aria-label="No previous page"
 			/>

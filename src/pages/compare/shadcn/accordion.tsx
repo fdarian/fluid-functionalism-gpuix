@@ -6,6 +6,7 @@ import {
 	useGpuixRequired,
 } from '@gpuix/solid';
 import { createEffect, createSignal, For, on, Show } from 'solid-js';
+import { transformFade } from '#/lib/theme';
 import { LUCIDE, LucideIcon, pressProps } from './parts';
 import { sc, scRing } from './theme';
 
@@ -75,7 +76,7 @@ function Panel(props: { open: boolean; children: string }) {
 
 /**
  * `components/shadcn/accordion.tsx` as `type="single" collapsible`: one item open at a time, a click on the open
- * one closes it, a hover underlines the title, and the chevron flips when open. Up / Down / Home / End move
+ * one closes it, a hover underlines the title, and the chevron turns when open. Up / Down / Home / End move
  * between triggers.
  */
 export function ScAccordion(props: {
@@ -171,12 +172,26 @@ export function ScAccordion(props: {
 								>
 									{item.title}
 								</text>
-								<LucideIcon
-									name={isOpen() ? LUCIDE.chevronUp : LUCIDE.chevronDown}
-									size={16}
-									strokeWidth={2}
-									color={sc.foreground}
-								/>
+								<div
+									testId={
+										props.testId === undefined
+											? undefined
+											: `${props.testId}-${item.value}-chevron`
+									}
+									style={{
+										display: 'flex',
+										flexShrink: 0,
+										rotate: isOpen() ? '180deg' : '0deg',
+										...transformFade(200),
+									}}
+								>
+									<LucideIcon
+										name={LUCIDE.chevronDown}
+										size={16}
+										strokeWidth={2}
+										color={sc.foreground}
+									/>
+								</div>
 							</div>
 							<Panel open={isOpen()}>{item.content}</Panel>
 						</div>

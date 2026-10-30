@@ -36,7 +36,7 @@ repeating it.
 
 ## The sort button is not drawn pressed
 
-- **Cause:** `not ported yet` (`Button` has no `active` prop; `src/components/button.tsx:159-180`).
+- **Cause:** `not ported yet` (`Button` has no `active` prop; `src/components/button.tsx:159-182`).
 - **Original:** `<Button variant="tertiary" active trailingIcon={ChevronDown}>` shows the pressed fill that says "this opened the menu below" (`app/docs/sizes/page.tsx:316`).
 - **Port:** the plain tertiary button with the trailing chevron.
 - **Fidelity:** approximated.

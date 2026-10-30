@@ -1,13 +1,12 @@
-import { motion } from '@gpuix/solid';
 import { createUniqueId } from 'solid-js';
-import { twShadow } from '#/lib/theme';
+import { transformFade, twShadow } from '#/lib/theme';
 import { pressProps, ScLabel } from './parts';
 import { sc, scRing } from './theme';
 
 const TRACK_WIDTH = 36;
 const TRACK_HEIGHT = 20;
 const THUMB = 16;
-/** `translate-x-px` and `translate-x-[17px]` inside the 1px border. */
+/** `translate-x-px` and `translate-x-[17px]` from the thumb's flex position inside the 1px border. */
 const OFF_X = 1;
 const ON_X = 17;
 
@@ -37,6 +36,9 @@ export function ScSwitch(props: {
 				testId={props.testId}
 				style={{
 					position: 'relative',
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
 					flexShrink: 0,
 					width: TRACK_WIDTH,
 					height: TRACK_HEIGHT,
@@ -51,19 +53,18 @@ export function ScSwitch(props: {
 					focusVisible: scRing(),
 				}}
 			>
-				<motion.div
-					initial={false}
-					animate={{ left: props.checked ? ON_X : OFF_X }}
-					transition={{ duration: 0.15 }}
+				<div
+					testId={props.testId && `${props.testId}-thumb`}
 					style={{
-						position: 'absolute',
-						top: 1,
+						flexShrink: 0,
 						width: THUMB,
 						height: THUMB,
 						borderRadius: THUMB / 2,
 						backgroundColor: props.checked ? sc.primaryForeground : '#FFFFFF',
 						boxShadow: twShadow.lg,
 						pointerEvents: 'none',
+						transform: `translateX(${props.checked ? ON_X : OFF_X}px)`,
+						...transformFade(150),
 					}}
 				/>
 			</div>

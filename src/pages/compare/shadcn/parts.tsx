@@ -8,7 +8,6 @@ import { sc } from './theme';
 export const LUCIDE = {
 	check: defineIcon(lucide.check),
 	chevronDown: defineIcon(lucide['chevron-down']),
-	chevronUp: defineIcon('<path d="m18 15-6-6-6 6"/>'),
 	circle: defineIcon('<circle cx="12" cy="12" r="10" fill="currentColor"/>'),
 };
 
