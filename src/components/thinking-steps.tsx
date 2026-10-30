@@ -509,8 +509,8 @@ export function ThinkingStepSource(props: {
 }) {
 	return (
 		<motion.div
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
+			initial={{ opacity: 0, scale: 0.85 }}
+			animate={{ opacity: 1, scale: 1 }}
 			transition={{ ...tween.moderate, delay: props.delay ?? 0 }}
 		>
 			<Badge variant="solid" size="compact" color={props.color ?? 'gray'}>

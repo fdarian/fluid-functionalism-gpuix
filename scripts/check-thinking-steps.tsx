@@ -10,6 +10,10 @@
  * The four playback cards start only once half of each is in view, pause below a
  * tenth, and resume on re-entry, as the docs page does.
  */
+import {
+	ThinkingStepSource,
+	ThinkingStepSources,
+} from '#/components/thinking-steps';
 import { createCheck } from './check-kit';
 
 const kit = await createCheck('thinking-steps', { initialSettleMs: 0 });
@@ -138,6 +142,44 @@ retina.expect(
 	61,
 );
 const failedRetina = retina.unmount();
-const failed = failedFirst + failedSecond + failedRetina;
+// A source chip enters on scale .85 about its centre with opacity (the source's blur(4px) is not animatable in gpuix: see drift/thinking-steps.md).
+const chip = await createCheck(
+	() => (
+		<div style={{ padding: 20 }}>
+			<ThinkingStepSources>
+				<ThinkingStepSource>x.com</ThinkingStepSource>
+			</ThinkingStepSources>
+		</div>
+	),
+	{ width: 300, height: 100 },
+);
+{
+	const label = chip.renderer.findByText('x.com');
+	if (label === undefined || label.parentId === null)
+		throw new Error('no source chip');
+	const badge = label.parentId;
+	const at = () => {
+		const box = chip.renderer.getElementBounds(badge);
+		if (box === null) throw new Error('the chip has no bounds');
+		return box;
+	};
+	chip.renderer.clockPause();
+	chip.step(0);
+	at();
+	chip.step(8);
+	const entering = at();
+	chip.step(600);
+	const rest = at();
+	chip.renderer.clockResume();
+	chip.check(
+		'a source chip grows in from a smaller scale about its centre',
+		entering.width < rest.width * 0.97 &&
+			Math.abs(entering.x + entering.width / 2 - (rest.x + rest.width / 2)) <
+				0.5,
+		`${entering.width.toFixed(2)} -> ${rest.width.toFixed(2)}`,
+	);
+}
+const failedChip = chip.unmount();
+const failed = failedFirst + failedSecond + failedRetina + failedChip;
 console.log(failed === 0 ? 'all passed' : `${failed} failed`);
 process.exit(failed === 0 ? 0 : 1);

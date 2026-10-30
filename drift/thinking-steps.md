@@ -8,15 +8,15 @@ One entry per place the port looks or behaves differently from the source, whate
 (CSS transforms, selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
 repeating it.
 
-## `scale` and `filter: blur` entrances
+## `filter: blur` entrances
 
 - **Cause:** `gpuix gap`.
 - **Original:** sources enter `opacity 0, scale .85, blur(4px)` on `spring.moderate` with the blur on its own 0.12s transition (`thinking-steps.tsx:541-557`); images enter `opacity 0, blur(4px)`, opacity 0.2s `easeOut`, blur 0.15s (`:570-583`).
-- **Port:** opacity only, with the same delays and the same opacity transitions (`ThinkingStepSource`, `thinking-steps.tsx:506-522`; `ThinkingStepImage`, `:526-580`, motion at `:538-542`).
-- **gpuix lacks:** scale (the known transform gap), and an animatable `filter`: `filter: "blur(4px)"` paints as a static style, but `filter` is not among `MotionStyleTargets` (`packages/native/js/host.ts:123`), so it cannot be tweened.
-- **Workaround:** none beyond opacity.
-- **Fidelity:** approximated (the blur-to-sharp reveal and the pop are dropped).
-- **Components it hits:** just this one (scale-in entrances elsewhere are listed in the README row).
+- **Port:** sources enter on `scale` .85 and opacity on `tween.moderate`, with the same delay (`ThinkingStepSource`, `thinking-steps.tsx:505-523`); images enter on opacity only, same delay and transition (`ThinkingStepImage`, `:527-575`, motion at `:538-542`). The blur-to-sharp reveal is dropped.
+- **gpuix lacks:** an animatable `filter`. `filter: "blur(4px)"` paints as a static style, but `filter` is not among `MotionStyleTargets` (`packages/native/js/host.ts:153`): a `filter` in `initial` / `animate` is dropped, and a CSS `transition: filter` flips at once (probed on poc 746e6bd1, a black square on white sampled mid-way). Under a scale the static blur would follow the matrix, as in Chrome (gpuix README, "Transforms"), so a blur that could be tweened would not need tuning.
+- **Workaround:** none beyond opacity and scale.
+- **Fidelity:** approximated (the blur-to-sharp reveal is dropped).
+- **Components it hits:** just this one.
 
 ## Hover background exit
 
