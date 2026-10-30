@@ -73,6 +73,7 @@ function ValueBubble(props: {
 	text: Accessor<string>;
 	visible: Accessor<boolean>;
 	gap: number;
+	testId?: string;
 }) {
 	const presence = createPresence(POPUP_EXIT_MS);
 	createEffect(() => {
@@ -91,9 +92,10 @@ function ValueBubble(props: {
 				style={{ backgroundColor: color.transparent, pointerEvents: 'none' }}
 			>
 				<motion.div
-					initial={{ opacity: 0, top: 4 }}
+					testId={props.testId}
+					initial={{ opacity: 0, y: 4 }}
 					animate={
-						presence.open() ? { opacity: 1, top: 0 } : { opacity: 0, top: 4 }
+						presence.open() ? { opacity: 1, y: 0 } : { opacity: 0, y: 4 }
 					}
 					transition={presence.open() ? tween.fast : tween.fastExit}
 					style={{
@@ -607,7 +609,7 @@ function CompactSlider(props: CompactProps) {
 
 	const thumb = (index: number) => (
 		<Show when={trackWidth() !== undefined}>
-			<div
+			<motion.div
 				{...thumbs[index].thumbProps}
 				testId={
 					props.testId === undefined
@@ -616,7 +618,8 @@ function CompactSlider(props: CompactProps) {
 				}
 				style={{
 					position: 'absolute',
-					left: thumbX[index],
+					left: 0,
+					x: thumbX[index],
 					top: PRESS_PAD,
 					width: THUMB_SIZE,
 					height: THUMB_SIZE,
@@ -644,9 +647,14 @@ function CompactSlider(props: CompactProps) {
 						text={() => formatValue(values()[index])}
 						visible={interacting}
 						gap={PRESS_PAD}
+						testId={
+							props.testId === undefined
+								? undefined
+								: `${props.testId}-bubble-${index}`
+						}
 					/>
 				</Show>
-			</div>
+			</motion.div>
 		</Show>
 	);
 
@@ -818,6 +826,11 @@ function CompactSlider(props: CompactProps) {
 										text={() => formatValue(shown().snappedValue)}
 										visible={() => hover.tooltipReady() && !pressed()}
 										gap={0}
+										testId={
+											props.testId === undefined
+												? undefined
+												: `${props.testId}-hover-bubble`
+										}
 									/>
 								</div>
 							</Show>
@@ -1317,6 +1330,11 @@ function ComfortableSlider(props: ComfortableProps) {
 							text={() => formatValue(shown().snappedValue)}
 							visible={() => hover.tooltipReady() && !pressed()}
 							gap={0}
+							testId={
+								props.testId === undefined
+									? undefined
+									: `${props.testId}-hover-bubble`
+							}
 						/>
 					</div>
 				)}

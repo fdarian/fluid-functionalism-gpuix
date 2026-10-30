@@ -145,6 +145,70 @@ await kit.settle(400);
 	await kit.settle(100);
 }
 
+// The tooltip bubble settles from y 4 to 0 (`registry/base/slider.tsx:362-369`) and goes back down as it leaves, read off its transformed box; the thumb it rides is placed by an x transform (`:925`), so the thumb's box is at its value too.
+showOnly('display');
+await kit.settle(400);
+renderer.nativeSimulateMouseMove(2, 2);
+await kit.settle(500);
+{
+	const track = kit.bounds('tooltip-track');
+	const thumbBox = kit.bounds('tooltip-thumb-0');
+	kit.check(
+		'the thumb at 50 sits on the middle of the track',
+		Math.abs(thumbBox.x + thumbBox.width / 2 - (track.x + track.width / 2)) < 1,
+		`thumb centre ${(thumbBox.x + thumbBox.width / 2).toFixed(2)}, track centre ${(track.x + track.width / 2).toFixed(2)}`,
+	);
+	renderer.clockPause();
+	renderer.nativeSimulateMouseMove(
+		thumbBox.x + thumbBox.width / 2,
+		thumbBox.y + thumbBox.height / 2,
+	);
+	renderer.flush();
+	renderer.dispatchNativeEvents();
+	await kit.settle(250);
+	const frames: number[] = [];
+	for (let frame = 0; frame < 20; frame++) {
+		step(16);
+		if (kit.exists('tooltip-bubble-0'))
+			frames.push(kit.bounds('tooltip-bubble-0').y);
+	}
+	const rest = frames[frames.length - 1] as number;
+	kit.check(
+		'the bubble rises 4px into place and rests there',
+		frames.length > 4 &&
+			(frames[0] as number) > rest + 0.5 &&
+			(frames[0] as number) < rest + 4 &&
+			frames.every(
+				(y, index) => index === 0 || y <= (frames[index - 1] as number) + 0.01,
+			) &&
+			Math.abs(
+				(frames[frames.length - 1] as number) -
+					(frames[frames.length - 2] as number),
+			) < 0.01,
+		`rest ${rest.toFixed(2)}, first frame ${(frames[0] as number).toFixed(2)}, ${frames.length} frames`,
+	);
+	renderer.nativeSimulateMouseMove(2, 2);
+	renderer.flush();
+	renderer.dispatchNativeEvents();
+	const leaving: number[] = [];
+	for (let frame = 0; frame < 20; frame++) {
+		step(16);
+		if (kit.exists('tooltip-bubble-0'))
+			leaving.push(kit.bounds('tooltip-bubble-0').y);
+	}
+	kit.check(
+		'the bubble sinks 4px back down as it leaves',
+		leaving.length > 1 &&
+			(leaving[0] as number) > rest &&
+			leaving.every(
+				(y, index) => index === 0 || y >= (leaving[index - 1] as number) - 0.01,
+			) &&
+			Math.abs((leaving[leaving.length - 1] as number) - rest - 4) < 0.05,
+		`${leaving.length} frames, ${(leaving[0] as number).toFixed(2)} to ${(leaving[leaving.length - 1] as number).toFixed(2)} (rest ${rest.toFixed(2)})`,
+	);
+	renderer.clockResume();
+}
+
 // The comfortable layers are `calc()` of the row's own width, so a resize moves them in the frame that lays it out, with no measured width to wait for.
 showOnly('default');
 await kit.settle(400);
