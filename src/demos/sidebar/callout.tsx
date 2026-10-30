@@ -9,7 +9,6 @@ import {
 	CardMedia,
 	CardTitle,
 } from '#/components/card';
-import { SIDEBAR_WIDTH } from '#/components/sidebar';
 import { defineIcon, type IconRef } from '#/lib/icons';
 import { createMeasuredHeight } from '#/lib/measured-height';
 import { shape, surface, motion as tween } from '#/lib/theme';
@@ -51,8 +50,6 @@ const CARDS: readonly CalloutCard[] = [
 	},
 ];
 
-/** The footer is the sidebar less its 8px padding either side. */
-const FOOTER_WIDTH = SIDEBAR_WIDTH - 16;
 const PEEK = 12;
 const PEEK_SCALE = 0.05;
 const GAP = 4;
@@ -78,13 +75,17 @@ function mesh(intensity: number) {
 	return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }
 
-/** A card resting one step above the rail: the sidebar sits on surface 1. */
-function Resting(props: { children: JSX.Element }) {
+/**
+ * A card resting one step above the rail: the sidebar sits on surface 1. `clipped` is the source's `overflow-hidden`; the fanned
+ * inline pile goes without it, because a clip inside a transformed card makes gpuix drop the card's text once it is moved far
+ * enough (`drift/sidebar.md`, "Callout"), and nothing of an inline card reaches past its rounded fill.
+ */
+function Resting(props: { clipped: boolean; children: JSX.Element }) {
 	return (
 		<div
 			style={{
 				borderRadius: shape.container,
-				overflow: 'hidden',
+				overflow: props.clipped ? 'hidden' : 'visible',
 				backgroundColor: surface(2),
 			}}
 		>
@@ -97,6 +98,8 @@ function CalloutCardBody(props: {
 	card: CalloutCard;
 	variant: CalloutVariant;
 	step: number;
+	/** Whether the card is clipped to its rounded corners; see `Resting`. */
+	clipped?: boolean;
 	onDismiss: () => void;
 	testId: string;
 }) {
@@ -121,7 +124,7 @@ function CalloutCardBody(props: {
 		</Card>
 	);
 	return (
-		<Resting>
+		<Resting clipped={props.clipped ?? true}>
 			{props.variant === 'inline' ? (
 				<CardGroup orientation="inline" fluidHover={false}>
 					{body()}
@@ -155,37 +158,25 @@ function StackedCard(props: {
 	index: () => number;
 	variant: CalloutVariant;
 	step: number;
-	target: () => { bottom: number; scale: number; opacity: number };
-	cardHeight: () => number;
+	target: () => { y: number; scale: number; opacity: number };
 	onHeight: (height: number) => void;
 	onDismiss: () => void;
 }) {
 	const present = useIsPresent();
 	const measured = createMeasuredHeight();
-	const box = (bottom: number, scaleBy: number, opacity: number) => {
-		const inset = ((1 - scaleBy) * FOOTER_WIDTH) / 2;
-		return {
-			opacity,
-			bottom,
-			left: inset,
-			right: inset,
-			height: props.cardHeight() * scaleBy,
-		};
-	};
-	const target = () => {
-		const next = props.target();
-		return box(next.bottom, next.scale, next.opacity);
-	};
 	return (
 		<motion.div
-			initial={box(props.target().bottom - 14, 0.96, 0)}
-			animate={target()}
-			exit={box(props.target().bottom, 0.9, 0)}
+			initial={{ opacity: 0, y: 14, scale: 0.96 }}
+			animate={props.target()}
+			exit={{ opacity: 0, scale: 0.9 }}
 			// The source's exit is a plain 0.12s tween.
 			transition={present() ? tween.moderate : tween.moderateExit}
 			style={{
 				position: 'absolute',
-				overflow: 'hidden',
+				left: 0,
+				right: 0,
+				bottom: 0,
+				transformOrigin: 'bottom center',
 				zIndex: 100 - props.index(),
 			}}
 		>
@@ -200,6 +191,7 @@ function StackedCard(props: {
 					card={props.card}
 					variant={props.variant}
 					step={props.step}
+					clipped={props.variant === 'banner'}
 					onDismiss={props.onDismiss}
 					testId={`callout-${props.card.id}`}
 				/>
@@ -212,8 +204,7 @@ function StackedCard(props: {
  * Sonner-style pile on the queued-message stack's geometry: cards peek out
  * 12px apiece behind the front one, a step smaller each, capped at two peeks.
  * Only the inline pile fans out on hover, a hover-expanded pile of banners
- * would swallow the whole rail. gpuix has no transforms, so a card's `y` is
- * its `bottom` offset and its `scale` the insets and height of its box.
+ * would swallow the whole rail.
  */
 export function FooterCalloutStack(props: {
 	variant: CalloutVariant;
@@ -246,14 +237,14 @@ export function FooterCalloutStack(props: {
 		const index = cards().findIndex((card) => card.id === id);
 		if (expanded()) {
 			return {
-				bottom: index * (frontHeight() + GAP),
+				y: -index * (frontHeight() + GAP),
 				scale: 1,
 				opacity: 1,
 			};
 		}
 		const peek = Math.min(index, MAX_PEEK);
 		return {
-			bottom: peek * PEEK,
+			y: -peek * PEEK,
 			scale: 1 - peek * PEEK_SCALE,
 			opacity: index <= MAX_PEEK ? 1 : 0,
 		};
@@ -284,7 +275,6 @@ export function FooterCalloutStack(props: {
 							variant={props.variant}
 							step={CARDS.findIndex((other) => other.id === card.id)}
 							target={targetOf(card.id)}
-							cardHeight={frontHeight}
 							onHeight={(height) =>
 								setHeights({
 									...heights(),
