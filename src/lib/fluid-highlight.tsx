@@ -7,10 +7,11 @@ import { createComputed, createSignal, For, untrack } from 'solid-js';
 import type { ItemRect } from './fluid-hover';
 import { motion as tween } from './theme';
 
+/** Position is a transform, size is layout, as in the source: the fill is pinned at the padding corner. */
 function target(rect: ItemRect) {
 	return {
-		top: rect.top,
-		left: rect.left,
+		x: rect.left,
+		y: rect.top,
 		width: rect.width,
 		height: rect.height,
 	};
@@ -24,7 +25,7 @@ const REDUCED: MotionTransition = {
 
 /**
  * The one hover highlight every fluid list renders: an absolutely positioned
- * fill that glides between the rects `createFluidHover` measures.
+ * fill, pinned at 0,0 and moved by `x` / `y`, that glides between the rects `createFluidHover` measures.
  *
  * Like the source's, it has no `z-index`: the rows over it are `relative z-10`
  * there and `position: relative` with `zIndex: 10` here, and keep transparent
@@ -85,6 +86,8 @@ export function FluidHighlight(props: {
 						testId={props.testId}
 						style={{
 							position: 'absolute',
+							top: 0,
+							left: 0,
 							backgroundColor: props.background,
 							borderRadius: props.radius,
 							pointerEvents: 'none',
