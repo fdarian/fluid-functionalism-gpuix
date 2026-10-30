@@ -76,8 +76,8 @@ export function MobileDrawer(props: {
 				>
 					<HideOutside popup={() => popup} />
 					<motion.div
-						initial={{ left: -DRAWER_WIDTH }}
-						animate={{ left: props.open ? 0 : -DRAWER_WIDTH }}
+						initial={{ x: '-100%' }}
+						animate={{ x: props.open ? 0 : '-100%' }}
 						transition={props.open ? tween.moderate : tween.moderateExit}
 						onMotionComplete={() => {
 							if (!props.open) root.finish();
@@ -85,6 +85,7 @@ export function MobileDrawer(props: {
 						style={{
 							position: 'absolute',
 							top: 0,
+							left: 0,
 							bottom: 0,
 							width: DRAWER_WIDTH,
 							display: 'flex',
