@@ -56,11 +56,11 @@ repeating it.
 - **Fidelity:** approximated (look and hover exact, behaviour dropped).
 - **Components it hits:** just this page.
 
-## The invite dialog is a plain panel, its email field a static box, its chevron a different glyph
+## The invite dialog is a plain panel and its email field a static box
 
-- **Cause:** `port choice` (a panel, as in the source), `gpuix gap` (transforms) for the chevron.
-- **Original:** both dialogs are `div`s at `surfaceClasses(5)`, not the `Dialog` component; the email field is a `readOnly` `<textarea rows={2}>`; the role trigger's chevron is `rotate-180` (`app/docs/surfaces/page.tsx:502-612,1139-1248`).
-- **Port:** the same panels in `src/pages/surfaces/invite-dialog.tsx`; the email field is a 58px bordered box with the placeholder text and a hover tint, no input; the chevron is a page-local `chevron-up` glyph because gpuix has no transforms (README "gpuix gaps across components", CSS transforms row). The "Send invites" button is `opacity: 0.5` as `disabled:opacity-50`; no element takes focus.
+- **Cause:** `port choice` (a panel, as in the source).
+- **Original:** both dialogs are `div`s at `surfaceClasses(5)`, not the `Dialog` component; the email field is a `readOnly` `<textarea rows={2}>`; the role trigger's chevron is `ChevronDown` with `rotate-180` (`app/docs/surfaces/page.tsx:502-612,1139-1248`).
+- **Port:** the same panels in `src/pages/surfaces/invite-dialog.tsx`; the email field is a 58px bordered box with the placeholder text and a hover tint, no input; the chevron is `chevron-down` with `rotate="180deg"` (`src/pages/surfaces/invite-dialog.tsx`, `scripts/check-surfaces.tsx`). The "Send invites" button is `opacity: 0.5` as `disabled:opacity-50`; no element takes focus. The solution dialog is centred by flex, as in the source (`flex items-center justify-center`).
 - **Fidelity:** approximated.
 - **Components it hits:** just this page.
 
@@ -68,7 +68,7 @@ repeating it.
 
 - **Cause:** `port choice` (canvas).
 - **Original:** the Problem canvas is a fixed 600 x 640 centred in the frame, which is 632px wide in the source's 680px column (`app/docs/surfaces/page.tsx:413-445`, `lib/docs/DocPage.tsx`, `app/docs/layout.tsx:3`).
-- **Port:** the page column is 600px, so the frame's inner width is 598 and the 600px canvas sits at `marginLeft: -1` under the frame's clip; the dialog is at an explicit `left: 140`, not `left-1/2 -translate-x-1/2` (no transforms). The arrows end in the source's SVG `<marker>` chevron with `context-stroke` (`ArrowMarker`, `src/pages/surfaces/annotations.tsx`). Callouts, dial values and anchors are the source's.
+- **Port:** the page column is 600px, so the frame's inner width is 598 and the 600px canvas sits at `marginLeft: -1` under the frame's clip; the dialog is on `left: 50%` and `translateX(-50%)`, as `left-1/2 -translate-x-1/2`. The arrows end in the source's SVG `<marker>` chevron with `context-stroke` (`ArrowMarker`, `src/pages/surfaces/annotations.tsx`). Callouts, dial values and anchors are the source's.
 - **Fidelity:** exact but for the canvas width.
 - **Components it hits:** just this page.
 

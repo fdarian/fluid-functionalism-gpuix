@@ -10,12 +10,7 @@ import {
 	weight,
 } from '#/lib/theme';
 import { SurfaceProvider } from './elevated';
-import {
-	CHEVRON_UP_ICON,
-	ROLES,
-	StaticRoleItem,
-	SurfaceMenu,
-} from './role-menu';
+import { ROLES, StaticRoleItem, SurfaceMenu } from './role-menu';
 
 function FieldLabel(props: { children: string }) {
 	return (
@@ -135,10 +130,11 @@ function EmailField() {
 	);
 }
 
-function RoleTrigger() {
+function RoleTrigger(props: { testId?: string }) {
 	return (
 		<div
 			role="button"
+			testId={props.testId}
 			aria-expanded
 			style={{
 				height: 40,
@@ -159,7 +155,8 @@ function RoleTrigger() {
 		>
 			<text style={{ ...siteType.body, color: color.foreground }}>Member</text>
 			<Icon
-				name={CHEVRON_UP_ICON}
+				name="chevron-down"
+				rotate="180deg"
 				size={14}
 				strokeWidth={1.5}
 				color={color.mutedForeground}
@@ -240,6 +237,7 @@ function Footer() {
 export function InviteDialog(props: {
 	variant: 'problem' | 'solution';
 	style: StyleDesc;
+	testId?: string;
 	ref?: (element: HostElement) => void;
 	menuRef?: (element: HostElement) => void;
 }): JSX.Element {
@@ -247,6 +245,7 @@ export function InviteDialog(props: {
 		<SurfaceProvider value={5}>
 			<div
 				ref={props.ref}
+				testId={props.testId}
 				style={{
 					display: 'flex',
 					flexDirection: 'column',
@@ -262,7 +261,9 @@ export function InviteDialog(props: {
 				<EmailField />
 				<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
 					<FieldLabel>Select role</FieldLabel>
-					<RoleTrigger />
+					<RoleTrigger
+						testId={props.testId && `${props.testId}-role-trigger`}
+					/>
 					<div style={{ marginTop: -1 }}>
 						<Show
 							when={props.variant === 'solution'}

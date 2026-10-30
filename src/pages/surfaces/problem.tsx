@@ -100,6 +100,7 @@ export function ProblemDemo() {
 			>
 				{/* The canvas is 600px, two more than the 1px-bordered frame holds. */}
 				<div
+					testId="problem-canvas"
 					style={{
 						position: 'relative',
 						width: CANVAS_WIDTH,
@@ -110,10 +111,12 @@ export function ProblemDemo() {
 					}}
 				>
 					<InviteDialog
+						testId="problem-dialog"
 						variant="problem"
 						style={{
 							position: 'absolute',
-							left: (CANVAS_WIDTH - DIALOG_WIDTH) / 2,
+							left: '50%',
+							transform: 'translateX(-50%)',
 							top: 32,
 							width: DIALOG_WIDTH,
 						}}

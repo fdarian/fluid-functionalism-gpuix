@@ -184,6 +184,7 @@ export function InviteDialogDemo() {
 				}}
 			>
 				<InviteDialog
+					testId="invite-dialog"
 					variant="solution"
 					ref={setDialog}
 					menuRef={setDropdown}

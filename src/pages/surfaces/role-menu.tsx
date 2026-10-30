@@ -17,7 +17,6 @@ import { Elevated } from './elevated';
 export const LOCK_ICON = defineIcon(
 	'<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
 );
-export const CHEVRON_UP_ICON = defineIcon('<path d="m18 15-6-6-6 6"/>');
 
 export interface RoleOption {
 	icon: IconRef;
