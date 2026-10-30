@@ -1,10 +1,12 @@
 import {
+	AnimatePresence,
 	buttonProps,
 	type HostElement,
 	type HostMouseEvent,
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
+	useIsPresent,
 } from '@gpuix/solid';
 import { createPresence } from 'base-ui-solid-gpuix/internals';
 import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
@@ -145,6 +147,10 @@ const focusEdge = () => withAlpha(color.foreground, 0.2);
 
 /** The collapse's exit tween (`tween.moderateExit`, 120 ms) plus a frame. */
 const COLLAPSE_EXIT_MS = 130;
+/** The send glyph, a file tile and a queued row grow from (and shrink to) these. */
+const GLYPH_SCALE = 0.6;
+const TILE_SCALE = 0.9;
+const ROW_SCALE = 0.97;
 
 /**
  * A region that opens and closes by height. gpuix animates `height` to a
@@ -175,6 +181,44 @@ function Collapse(props: { open: boolean; children: JSX.Element }) {
 				</div>
 			</motion.div>
 		</Show>
+	);
+}
+
+function SendGlyph(props: { glyph: 'stop' | 'arrow'; arrowSize: number }) {
+	const present = useIsPresent();
+	return (
+		<motion.div
+			initial={{ opacity: 0, scale: GLYPH_SCALE }}
+			animate={{ opacity: 1, scale: 1 }}
+			exit={{ opacity: 0, scale: GLYPH_SCALE }}
+			transition={present() ? tween.fast : tween.fastExit}
+			style={{
+				position: 'relative',
+				display: 'flex',
+				alignItems: 'center',
+			}}
+		>
+			<Show
+				when={props.glyph === 'stop'}
+				fallback={
+					<Icon
+						name="arrow-up"
+						size={props.arrowSize}
+						strokeWidth={2}
+						color={color.background}
+					/>
+				}
+			>
+				<div
+					style={{
+						width: 12,
+						height: 12,
+						borderRadius: 3,
+						backgroundColor: color.background,
+					}}
+				/>
+			</Show>
+		</motion.div>
 	);
 }
 
@@ -219,41 +263,13 @@ function SendButton(props: {
 				hover={color.primaryHover}
 				active={color.primaryActive}
 			/>
-			<For each={[props.mode === 'stop' ? 'stop' : 'arrow']}>
-				{(glyph: string) => (
-					<motion.div
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						transition={tween.fast}
-						style={{
-							position: 'relative',
-							display: 'flex',
-							alignItems: 'center',
-						}}
-					>
-						<Show
-							when={glyph === 'stop'}
-							fallback={
-								<Icon
-									name="arrow-up"
-									size={props.arrowSize}
-									strokeWidth={2}
-									color={color.background}
-								/>
-							}
-						>
-							<div
-								style={{
-									width: 12,
-									height: 12,
-									borderRadius: 3,
-									backgroundColor: color.background,
-								}}
-							/>
-						</Show>
-					</motion.div>
-				)}
-			</For>
+			<AnimatePresence mode="wait" initial={false}>
+				<Show when={props.mode === 'stop' ? 'stop' : 'arrow'} keyed>
+					{(glyph: 'stop' | 'arrow') => (
+						<SendGlyph glyph={glyph} arrowSize={props.arrowSize} />
+					)}
+				</Show>
+			</AnimatePresence>
 		</div>
 	);
 }
@@ -306,13 +322,15 @@ function FilePreviewTile(props: {
 	onRemove: () => void;
 	testId?: string;
 }) {
+	const present = useIsPresent();
 	const [tileHovered, setTileHovered] = createSignal(false);
 	const [badgeHovered, setBadgeHovered] = createSignal(false);
 	return (
 		<motion.div
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			transition={tween.fast}
+			initial={{ opacity: 0, scale: TILE_SCALE }}
+			animate={{ opacity: 1, scale: 1 }}
+			exit={{ opacity: 0, scale: TILE_SCALE }}
+			transition={present() ? tween.fast : tween.fastExit}
 			testId={props.testId}
 			onMouseEnter={() => setTileHovered(true)}
 			onMouseLeave={() => setTileHovered(false)}
@@ -361,6 +379,7 @@ function QueuedRow(props: {
 	testId?: string;
 }) {
 	const renderer = useGpuixRequired();
+	const present = useIsPresent();
 	const step = () => steps[props.size];
 	const [hovered, setHovered] = createSignal(false);
 	const [closeHovered, setCloseHovered] = createSignal(false);
@@ -391,9 +410,10 @@ function QueuedRow(props: {
 
 	return (
 		<motion.div
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			transition={tween.fast}
+			initial={{ opacity: 0, scale: ROW_SCALE }}
+			animate={{ opacity: 1, scale: 1 }}
+			exit={{ opacity: 0, scale: ROW_SCALE }}
+			transition={present() ? tween.fast : tween.fastExit}
 			role="listitem"
 			aria-label={`Queued message ${props.index + 1} of ${props.total}: ${label()}`}
 			testId={props.testId}
@@ -1028,16 +1048,18 @@ export function InputMessage(props: InputMessageProps) {
 						paddingBottom: 8,
 					}}
 				>
-					<For each={files()}>
-						{(file: ComposerFile, index: Accessor<number>) => (
-							<FilePreviewTile
-								file={file}
-								size={props.filePreviewSize ?? 80}
-								onRemove={() => removeFile(file.path)}
-								testId={`${testId()}-file-${index()}`}
-							/>
-						)}
-					</For>
+					<AnimatePresence initial={false} mode="popLayout">
+						<For each={files()}>
+							{(file: ComposerFile, index: Accessor<number>) => (
+								<FilePreviewTile
+									file={file}
+									size={props.filePreviewSize ?? 80}
+									onRemove={() => removeFile(file.path)}
+									testId={`${testId()}-file-${index()}`}
+								/>
+							)}
+						</For>
+					</AnimatePresence>
 				</div>
 			</Collapse>
 
@@ -1054,21 +1076,23 @@ export function InputMessage(props: InputMessageProps) {
 							paddingBottom: 8,
 						}}
 					>
-						<For each={queue()}>
-							{(item: QueuedMessage, index: Accessor<number>) => (
-								<QueuedRow
-									item={item}
-									index={index()}
-									total={queue().length}
-									size={size()}
-									onEdit={editQueued}
-									onRemove={removeQueued}
-									onMove={moveQueued}
-									onDragMove={dragQueued}
-									testId={`${testId()}-queued-${index()}`}
-								/>
-							)}
-						</For>
+						<AnimatePresence initial={false}>
+							<For each={queue()}>
+								{(item: QueuedMessage, index: Accessor<number>) => (
+									<QueuedRow
+										item={item}
+										index={index()}
+										total={queue().length}
+										size={size()}
+										onEdit={editQueued}
+										onRemove={removeQueued}
+										onMove={moveQueued}
+										onDragMove={dragQueued}
+										testId={`${testId()}-queued-${index()}`}
+									/>
+								)}
+							</For>
+						</AnimatePresence>
 					</div>
 				</Collapse>
 			</Show>

@@ -8,23 +8,11 @@ One entry per place the port looks or behaves differently from the source, whate
 (CSS transforms, selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
 repeating it.
 
-## Scale on the send glyph, tiles, queued rows
-
-- **Cause:** `gpuix gap`. No transforms (README "Missing features", scale-in entrances row, which lists input-message): source `scale` 0.6 (`input-message.tsx:1295-1301`), 0.9 (`:237-239`) and 0.97 (`:307-312`). Port fades only (`input-message.tsx:208-216,291,371`).
-
-## The send button swap has no exit, and the first mount fades in
+## Siblings of a removed tile or row jump
 
 - **Cause:** `not ported yet`.
-- **Original:** `AnimatePresence mode="wait" initial={false}` around the arrow / stop square: the old glyph exits (opacity 0, `spring.fast.exit`), then the new one enters (`input-message.tsx:1286-1320`). Nothing plays on mount.
-- **Port:** `<For each={[mode === "stop" ? "stop" : "arrow"]}>` remounts a `motion.div` that fades in on `tween.fast` (`input-message.tsx:199-229`); the old glyph is gone at once and the arrow also fades in when the composer first mounts. `mode="wait"` exists in the fork (`~/code/fdarian/gpuix/FORK.md:1149-1150`).
-- **Fidelity:** approximated.
-- **Components it hits:** input-copy (`Swap`).
-
-## Tiles and queued rows: no exit, no sibling slide
-
-- **Cause:** `not ported yet`.
-- **Original:** `FilePreviewTile` and `QueuedRow` carry `layout`, an `exit` (opacity 0, scale, `spring.fast.exit`), and sit in `AnimatePresence mode="popLayout"` (tiles), so a removed item animates out and its siblings slide into the gap (`input-message.tsx:230-239,301-313,1105,1143`).
-- **Port:** enter fade only; a removed tile or row vanishes at once and the rest jump (`input-message.tsx:284-288,365-369`, `<For>` at `:994,1020`). The fork has `layout` and `popLayout` (`FORK.md:1149-1150`).
+- **Original:** `FilePreviewTile` and `QueuedRow` carry `layout`, so when one leaves its siblings slide into the gap; tiles sit in `AnimatePresence mode="popLayout"` (`input-message.tsx:230-239,301-313,1105,1143`).
+- **Port:** the send glyph, tiles and rows enter and leave on the source's scales (.6, .9, .97) with opacity, the exit on the 60 ms tween (`input-message.tsx:187-203`, `:330-334`, `:413-417`; the lists in `AnimatePresence` at `:1051`, `:1079`, the glyph `mode="wait"` at `:266`). There is no `layout`, so a removed tile's neighbours jump to its place at once (`popLayout`) and a removed row's follow when its 60 ms exit ends. The fork has `layout` and `popLayout` (`FORK.md:1149-1150`).
 - **Fidelity:** approximated.
 - **Components it hits:** queued-stack.
 

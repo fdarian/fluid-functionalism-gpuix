@@ -10,11 +10,14 @@
  * - A tab stop on the tile's remove badge and on the queued row's close button is painted
  *   (opacity 1 all the way up) while it has keyboard focus.
  * - The queued row's close button sits one row padding from the right edge: 10 default, 8 compact.
+ * - The send glyph swaps on `mode="wait"` (scale .6 in and out), a file tile enters and leaves on scale .9 and a queued row on .97,
+ *   about their centres, the exits on the 60 ms tween.
  * - The 80 ms fades (composer ring, queued close button, suggestion text) are mid-way 40 ms in, with the motion
  *   clock held; the send button's hover fill eases over 180 ms.
  */
 
 import { createTestRoot } from '@gpuix/solid/testing';
+import { createSignal } from 'solid-js';
 import { fileFromPath, InputMessage } from '#/components/input-message';
 import { TooltipProvider } from '#/components/tooltip';
 import { AVATAR_JPG } from '#/lib/assets';
@@ -338,6 +341,130 @@ await settle(400);
 	);
 }
 
-// Unmount before exiting: with the tree alive, Bun aborts at exit ("Thread Local Storage", exit 134) after every check passed.
+// Unmount before building the next tree: with the tree alive, Bun aborts at exit ("Thread Local Storage", exit 134) after every check passed.
 test.unmount();
+
+// The scale entrances and exits, sampled on the held motion clock.
+{
+	const motionTest = createTestRoot({ width: 700, height: 600, fonts });
+	const motionRenderer = motionTest.renderer;
+	const [status, setStatus] = createSignal<'idle' | 'streaming'>('idle');
+	const [files, setFiles] = createSignal([
+		fileFromPath(AVATAR_JPG),
+		fileFromPath(AVATAR_JPG),
+	]);
+	const [queue, setQueue] = createSignal([queued('one'), queued('two')]);
+	const advance = (ms: number) => {
+		motionRenderer.clockFastForward(ms);
+		motionRenderer.flush();
+		motionRenderer.dispatchNativeEvents();
+	};
+	motionTest.render(() => (
+		<TooltipProvider>
+			<div
+				style={{ padding: 20, width: 560, backgroundColor: color.background }}
+			>
+				<InputMessage
+					testId="e"
+					value=""
+					onValueChange={() => {}}
+					files={files()}
+					onFilesChange={setFiles}
+					status={status()}
+					onStop={() => {}}
+					queue={queue()}
+					onQueueChange={setQueue}
+				/>
+			</div>
+		</TooltipProvider>
+	));
+	for (let frame = 0; frame < 60; frame++) {
+		motionRenderer.flush();
+		motionRenderer.dispatchNativeEvents();
+		await sleep(16);
+	}
+	const find = (testId: string) => {
+		const found = motionRenderer.findByTestId(testId);
+		if (found === undefined) throw new Error(`no element ${testId}`);
+		return found.id;
+	};
+	const box = (id: number) => {
+		const found = motionRenderer.getElementBounds(id);
+		if (found === null) throw new Error(`no bounds for element ${id}`);
+		return found;
+	};
+	/** The send button's glyph: its last child, after the press fill. */
+	const glyph = () => {
+		const children = motionRenderer.getElement(find('e-send'))?.children ?? [];
+		const last = children.at(-1);
+		if (last === undefined) throw new Error('the send button has no glyph');
+		return last;
+	};
+	const centreX = (b: { x: number; width: number }) => b.x + b.width / 2;
+	const centreY = (b: { y: number; height: number }) => b.y + b.height / 2;
+
+	const arrow = box(glyph());
+	const leavingId = find('e-file-1');
+	const leavingRowId = find('e-queued-1');
+	const tileRest = box(leavingId);
+	const rowRest = box(leavingRowId);
+	motionRenderer.clockPause();
+	setFiles(files().slice(0, 1));
+	setQueue(queue().slice(0, 1));
+	advance(0);
+	advance(0);
+	// Reading a box draws the frame the motion starts on.
+	box(leavingId);
+	advance(16);
+	const tileLeaving = box(leavingId);
+	const rowLeaving = box(leavingRowId);
+	advance(600);
+	advance(0);
+
+	// With nothing to send, a streaming composer shows the stop square.
+	setFiles([]);
+	setStatus('streaming');
+	advance(0);
+	advance(0);
+	box(glyph());
+	advance(16);
+	const arrowLeaving = box(glyph());
+	advance(400);
+	advance(0);
+	advance(0);
+	box(glyph());
+	advance(8);
+	const stopEntering = box(glyph());
+	advance(600);
+	const stop = box(glyph());
+	motionRenderer.clockResume();
+	report(
+		'the send arrow shrinks out about its centre before the stop square grows in',
+		arrowLeaving.width < arrow.width - 0.2 &&
+			Math.abs(centreX(arrowLeaving) - centreX(arrow)) < 0.5,
+		`rest ${arrow.width.toFixed(2)}, leaving ${arrowLeaving.width.toFixed(2)}`,
+	);
+	report(
+		'the stop square grows in from a smaller scale about its centre',
+		stopEntering.width < stop.width * 0.9 &&
+			Math.abs(centreX(stopEntering) - centreX(stop)) < 0.5 &&
+			Math.abs(centreY(stopEntering) - centreY(stop)) < 0.5,
+		`entering ${stopEntering.width.toFixed(2)}, rest ${stop.width.toFixed(2)}`,
+	);
+	report(
+		'a removed file tile shrinks out about its centre',
+		tileLeaving.width < tileRest.width - 0.2 &&
+			Math.abs(centreX(tileLeaving) - centreX(tileRest)) < 0.5 &&
+			Math.abs(centreY(tileLeaving) - centreY(tileRest)) < 0.5,
+		`rest ${tileRest.width.toFixed(2)}, leaving ${tileLeaving.width.toFixed(2)}`,
+	);
+	report(
+		'a removed queued row shrinks out about its centre',
+		rowLeaving.width < rowRest.width - 0.2 &&
+			Math.abs(centreX(rowLeaving) - centreX(rowRest)) < 0.5 &&
+			Math.abs(centreY(rowLeaving) - centreY(rowRest)) < 0.5,
+		`rest ${rowRest.width.toFixed(2)}, leaving ${rowLeaving.width.toFixed(2)}`,
+	);
+	motionTest.unmount();
+}
 process.exit(failed ? 1 : 0);
