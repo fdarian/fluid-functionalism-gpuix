@@ -1,5 +1,11 @@
-import { type HostElement, motion } from '@gpuix/solid';
-import { createMemo, createSignal, For } from 'solid-js';
+import { createMotionValue, type HostElement, motion } from '@gpuix/solid';
+import {
+	createMemo,
+	createRenderEffect,
+	createSignal,
+	For,
+	onCleanup,
+} from 'solid-js';
 import {
 	createFluidHover,
 	type ItemRect,
@@ -30,6 +36,9 @@ const TITLE_TOP = TITLE_CENTER - 8;
 const AXIS = 4;
 const LINE_LEFT = AXIS - 0.5;
 const DOT_LEFT = AXIS - DOT / 2;
+
+/** The highlight lines are drawn at this height and scaled to length, so the spring moves a transform, never layout. */
+const LINE_BASE = 100;
 
 const dotCenter = (rect: ItemRect) => rect.top + TITLE_CENTER;
 
@@ -62,27 +71,51 @@ export function Timeline(props: { steps: { title: string; body: string }[] }) {
 		return last === undefined ? 0 : last.top + last.height;
 	};
 	const center = () => centers()[index()];
+	// A stretch of the line between two y positions.
+	const segment = (from: number, to: number) => ({
+		y: from,
+		scaleY: Math.max(to - from, 0) / LINE_BASE,
+	});
 	// The highlight runs from the hovered dot's edge to the neighbor dots' centers, over the one continuous line.
 	const above = () => {
 		const at = center();
-		if (at === undefined) return { top: 0, height: 0 };
-		const from = centers()[index() - 1] ?? lineStart();
-		return { top: from, height: Math.max(at - DOT / 2 - from, 0) };
+		if (at === undefined) return { y: 0, scaleY: 0 };
+		return segment(centers()[index() - 1] ?? lineStart(), at - DOT / 2);
 	};
 	const below = () => {
 		const at = center();
-		if (at === undefined) return { top: 0, height: 0 };
-		const to = centers()[index() + 1] ?? lineEnd();
-		return { top: at + DOT / 2, height: Math.max(to - (at + DOT / 2), 0) };
+		if (at === undefined) return { y: 0, scaleY: 0 };
+		return segment(at + DOT / 2, centers()[index() + 1] ?? lineEnd());
 	};
+	const dotTop = () => (center() ?? 0) - DOT / 2;
 
-	// Positions jump while the highlight is hidden (it appears on the step you enter and fades out where you left it) and glide on the fast spring while it shows.
+	// Positions live in motion values so they can jump or glide: while the highlight is hidden they jump (it appears on the step you enter and fades out where you left it) and while it shows they glide on the fast spring.
+	const dotY = createMotionValue(dotTop());
+	const aboveY = createMotionValue(above().y);
+	const aboveScale = createMotionValue(above().scaleY);
+	const belowY = createMotionValue(below().y);
+	const belowScale = createMotionValue(below().scaleY);
 	let wasShown = false;
-	const move = createMemo(() => {
-		index();
+	createRenderEffect(() => {
 		const gliding = wasShown && shown();
 		wasShown = shown();
-		return gliding ? tween.fast : tween.snap;
+		const moves = [
+			[dotY, dotTop()],
+			[aboveY, above().y],
+			[aboveScale, above().scaleY],
+			[belowY, below().y],
+			[belowScale, below().scaleY],
+		] as const;
+		const controls = moves.map(([value, to]) => {
+			if (!gliding) {
+				value.jump(to);
+				return undefined;
+			}
+			return value.animate(to, tween.fast);
+		});
+		onCleanup(() => {
+			for (const control of controls) control?.stop();
+		});
 	});
 
 	const gradient = (direction: 'to top' | 'to bottom') =>
@@ -115,65 +148,62 @@ export function Timeline(props: { steps: { title: string; body: string }[] }) {
 				/>
 				{/* The gliding highlight: lines above and below the dot, then the dot. It is positioned, so it paints over the in-flow rows, as the source's `z-10` lines and dot do. */}
 				<motion.div
+					testId="timeline-above"
 					initial={false}
-					animate={{
-						...above(),
-						opacity: shown() && above().height > 0 ? 1 : 0,
-					}}
-					transition={move()}
+					animate={{ opacity: shown() && above().scaleY > 0 ? 1 : 0 }}
+					transition={tween.fast}
 					style={{
 						position: 'absolute',
+						top: 0,
 						left: LINE_LEFT,
 						width: 1,
+						height: LINE_BASE,
+						transformOrigin: 'top',
+						y: aboveY,
+						scaleY: aboveScale,
 						backgroundImage: gradient('to top'),
 						pointerEvents: 'none',
 					}}
 				/>
 				<motion.div
+					testId="timeline-below"
 					initial={false}
-					animate={{
-						...below(),
-						opacity: shown() && below().height > 0 ? 1 : 0,
-					}}
-					transition={move()}
+					animate={{ opacity: shown() && below().scaleY > 0 ? 1 : 0 }}
+					transition={tween.fast}
 					style={{
 						position: 'absolute',
+						top: 0,
 						left: LINE_LEFT,
 						width: 1,
+						height: LINE_BASE,
+						transformOrigin: 'top',
+						y: belowY,
+						scaleY: belowScale,
 						backgroundImage: gradient('to bottom'),
 						pointerEvents: 'none',
 					}}
 				/>
+				{/* Grows from nothing as it fades in and shrinks back to nothing as it fades out; leaving, the fade waits half the spring so the shrink reads first. */}
 				<motion.div
-					initial={false}
-					animate={{ top: (center() ?? 0) - DOT / 2 }}
-					transition={move()}
+					testId="timeline-dot"
+					initial={{ opacity: 0, scale: 0 }}
+					animate={{ opacity: shown() ? 1 : 0, scale: shown() ? 1 : 0 }}
+					transition={{
+						scale: tween.fast,
+						opacity: shown() ? tween.fast : { ...tween.fast, delay: 0.04 },
+					}}
 					style={{
 						position: 'absolute',
+						top: 0,
 						left: DOT_LEFT,
 						width: DOT,
 						height: DOT,
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
+						borderRadius: DOT / 2,
+						backgroundColor: color.foreground,
+						y: dotY,
 						pointerEvents: 'none',
 					}}
-				>
-					{/* Grows from nothing as it fades in and shrinks back to nothing as it fades out; leaving, the fade waits half the spring so the shrink reads first. */}
-					<motion.div
-						initial={false}
-						animate={{
-							width: shown() ? DOT : 0,
-							height: shown() ? DOT : 0,
-							opacity: shown() ? 1 : 0,
-						}}
-						transition={{
-							default: tween.fast,
-							opacity: shown() ? tween.fast : { ...tween.fast, delay: 0.04 },
-						}}
-						style={{ borderRadius: DOT / 2, backgroundColor: color.foreground }}
-					/>
-				</motion.div>
+				/>
 				<For each={props.steps}>
 					{(step, position) => (
 						<Step
@@ -205,6 +235,7 @@ function Step(props: {
 	return (
 		<div
 			ref={setElement}
+			testId={`timeline-step-${props.index}`}
 			style={{
 				display: 'flex',
 				flexDirection: 'column',

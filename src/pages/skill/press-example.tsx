@@ -1,11 +1,6 @@
-import {
-	buttonProps,
-	type DomEvent,
-	motion,
-	useGpuixRequired,
-} from '@gpuix/solid';
+import { buttonProps, motion, useGpuixRequired } from '@gpuix/solid';
 import { createSignal, For } from 'solid-js';
-import { color, focusRing, shape, siteType, weight } from '#/lib/theme';
+import { color, fade, focusRing, shape, siteType, weight } from '#/lib/theme';
 import {
 	Compare,
 	clickStep,
@@ -36,7 +31,8 @@ const SIZES = [
 
 /** The scale the generic side presses to. */
 const GENERIC_SCALE = 0.9;
-const PRESS_IN_S = 0.15;
+/** Tailwind's `ease-out`. */
+const EASE_OUT = 'cubic-bezier(0, 0, 0.2, 1)';
 
 interface PressProps {
 	pressed: number | null;
@@ -64,78 +60,50 @@ function pressHandlers(
  * Generic: scale(0.9) takes 10% of each button, not a fixed amount. The 28px
  * button loses about 1.4px a side; the 256px one loses about 13px a side but
  * under 2px top and bottom, so it squashes. It takes the same pressed color as
- * the skill side, so the geometry is the only difference. gpuix has no
- * transform, so the shrunk box is the button with a margin of 5% of each
- * dimension.
+ * the skill side, so the geometry is the only difference.
  */
 function GenericButton(props: { index: number; press: PressProps }) {
 	const renderer = useGpuixRequired();
 	const size = SIZES[props.index];
 	if (size === undefined) throw new Error(`no size ${props.index}`);
 	const [hovered, setHovered] = createSignal(false);
-	const [measured, setMeasured] = createSignal<number>();
 	const down = () => props.press.pressed === props.index;
-	const insetX = () => {
-		const width = measured();
-		return down() && width !== undefined
-			? (width * (1 - GENERIC_SCALE)) / 2
-			: 0;
-	};
-	const insetY = () => (down() ? (size.height * (1 - GENERIC_SCALE)) / 2 : 0);
 	return (
 		<div
 			{...buttonProps({}, renderer)}
 			testId={`press-generic-${props.index}`}
 			{...pressHandlers(props.index, props.press, setHovered)}
-			onLayout={(event: DomEvent) => {
-				if (event.width === undefined)
-					throw new Error('onLayout reported no width');
-				setMeasured(event.width);
-			}}
 			style={{
 				height: size.height,
 				...('width' in size ? { width: size.width, maxWidth: '100%' } : {}),
 				display: 'flex',
 				flexDirection: 'row',
+				alignItems: 'center',
+				justifyContent: 'center',
+				paddingLeft: size.padX,
+				paddingRight: size.padX,
+				borderRadius: shape.button,
 				cursor: 'pointer',
 				keyboardFocusDim: false,
+				backgroundColor: down()
+					? color.primaryActive
+					: hovered()
+						? color.primaryHover
+						: color.foreground,
+				scale: down() ? GENERIC_SCALE : 1,
+				...fade(['scale', 'background-color'], 150, EASE_OUT),
 			}}
 		>
-			<motion.div
-				initial={false}
-				animate={{
-					marginLeft: insetX(),
-					marginRight: insetX(),
-					marginTop: insetY(),
-					marginBottom: insetY(),
-					backgroundColor: down()
-						? color.primaryActive
-						: hovered()
-							? color.primaryHover
-							: color.foreground,
-				}}
-				transition={{ duration: PRESS_IN_S }}
+			<text
 				style={{
-					flexGrow: 1,
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-					paddingLeft: size.padX,
-					paddingRight: size.padX,
-					borderRadius: shape.button,
+					...siteType[size.text],
+					fontVariationSettings: weight.normal,
+					color: color.background,
+					whiteSpace: 'nowrap',
 				}}
 			>
-				<text
-					style={{
-						...siteType[size.text],
-						fontVariationSettings: weight.normal,
-						color: color.background,
-						whiteSpace: 'nowrap',
-					}}
-				>
-					{size.label}
-				</text>
-			</motion.div>
+				{size.label}
+			</text>
 		</div>
 	);
 }

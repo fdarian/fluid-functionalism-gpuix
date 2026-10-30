@@ -1,4 +1,6 @@
 import {
+	type AnimationPlaybackControls,
+	animate,
 	createMotionValue,
 	createMotionValueEvent,
 	createReducedMotion,
@@ -6,6 +8,7 @@ import {
 	type HostElement,
 	type HostMouseEvent,
 	IntersectionObserver,
+	motion,
 } from '@gpuix/solid';
 import {
 	createEffect,
@@ -141,9 +144,7 @@ const GLIDE_MS = 500;
 const HOVER_MS = 450;
 /** The cursor lands from this far below and right of its first target. */
 const DRIFT_IN = 24;
-const PRESS_MS = 120;
 const CURSOR = 18;
-const CURSOR_PRESSED = 15;
 
 /**
  * A cursor that travels across a whole Compare, generic side to skill side,
@@ -157,11 +158,11 @@ export function createScriptCursor(playback: Playback) {
 	const x = createMotionValue(0);
 	const y = createMotionValue(0);
 	const [placed, setPlaced] = createSignal(false);
-	const [pressed, setPressed] = createSignal(false);
+	const scale = createMotionValue(1);
 	let glides: { stop: () => void }[] = [];
 	let hovered: { x: number; y: number } | undefined;
-	let pressTimer: ReturnType<typeof setTimeout> | undefined;
-	onCleanup(() => clearTimeout(pressTimer));
+	let press: AnimationPlaybackControls | undefined;
+	onCleanup(() => press?.stop());
 
 	const rootBox = () => {
 		const root = playback.root();
@@ -208,7 +209,7 @@ export function createScriptCursor(playback: Playback) {
 		x,
 		y,
 		placed,
-		pressed,
+		scale,
 		goto(testId: string) {
 			const root = playback.root();
 			if (root === undefined) throw new Error('the example has no root');
@@ -229,9 +230,8 @@ export function createScriptCursor(playback: Playback) {
 			glides = [x.animate(target.x, glide), y.animate(target.y, glide)];
 		},
 		click() {
-			setPressed(true);
-			clearTimeout(pressTimer);
-			pressTimer = setTimeout(() => setPressed(false), PRESS_MS);
+			press?.stop();
+			press = animate(scale, [1, 0.8, 1], { duration: 0.2 });
 			pointer.click();
 		},
 	};
@@ -291,25 +291,27 @@ export function turns(
 const arrow = (size: number) =>
 	`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24"><path d="m4 4 7.07 17 2.51-7.39L21 11.07z" fill="${color.foreground}" stroke="${color.background}" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
 
-/** The scripted pointer, an arrow whose tip sits at the position, smaller while pressing. Shared by every example so they all point the same way. */
+/** The scripted pointer, an arrow whose tip sits at the position, scaling about its top-left corner as it presses. Shared by every example so they all point the same way. */
 function ScriptCursorArrow(props: { cursor: ScriptCursor }) {
 	return (
 		<Show when={props.cursor.placed()}>
-			<svg
+			<motion.div
 				testId="script-cursor"
-				source={arrow(props.cursor.pressed() ? CURSOR_PRESSED : CURSOR)}
 				style={{
 					position: 'absolute',
-					left: props.cursor.x,
-					top: props.cursor.y,
 					// The arrow's tip sits 3px in from the SVG's corner.
-					marginLeft: -3,
-					marginTop: -3,
-					width: props.cursor.pressed() ? CURSOR_PRESSED : CURSOR,
-					height: props.cursor.pressed() ? CURSOR_PRESSED : CURSOR,
+					left: -3,
+					top: -3,
+					zIndex: 30,
+					transformOrigin: 'top left',
+					x: props.cursor.x,
+					y: props.cursor.y,
+					scale: props.cursor.scale,
 					pointerEvents: 'none',
 				}}
-			/>
+			>
+				<svg source={arrow(CURSOR)} style={{ width: CURSOR, height: CURSOR }} />
+			</motion.div>
 		</Show>
 	);
 }
