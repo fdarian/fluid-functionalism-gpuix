@@ -14,6 +14,7 @@ import { readPng } from './png-pixels';
 
 const SHOT = `/tmp/check-thinking-indicator-${process.pid}.png`;
 const GLYPH = 20;
+const WORD_WAIT_MS = 6000;
 const GLYPH_X = 12;
 const WORD_X = GLYPH_X + GLYPH + 8;
 
@@ -129,4 +130,44 @@ k.check(
 	delay >= 3 && delay <= 9,
 	`${delay} of ${SAMPLES} samples later`,
 );
+
+// The word roll: the next word comes up from 80% of its own height (16 of the 20px line) over 0.24 s, and the old one leaves through the top to -80% in 0.16 s.
+const SLOT_TOP = k.bounds('thinking').y + 8;
+const ROLL = 16;
+const presentWord = () =>
+	['Thinking', 'Moonwalking', 'Planning', 'Refining'].filter((word) =>
+		k.exists(`thinking-word-${word}`),
+	);
+await k.until(() => presentWord().length === 1, 'one word in the slot');
+renderer.clockPause();
+const leaving = presentWord()[0];
+if (leaving === undefined) throw new Error('no word is showing');
+await k.until(
+	() => presentWord().some((word) => word !== leaving),
+	'the next word to be asked for',
+	WORD_WAIT_MS,
+);
+const arriving = presentWord().find((word) => word !== leaving);
+if (arriving === undefined) throw new Error('no next word');
+const wordY = (word: string) => k.bounds(`thinking-word-${word}`).y - SLOT_TOP;
+const near = (a: number, b: number) => Math.abs(a - b) < 0.5;
+k.step(0);
+k.check(
+	'the arriving word starts 80% of its height below the slot',
+	near(wordY(arriving), ROLL),
+	`${wordY(arriving)}`,
+);
+k.step(180);
+k.check(
+	'the old word has left through the top, to -80% of its height',
+	k.exists(`thinking-word-${leaving}`) && wordY(leaving) < -ROLL + 1.5,
+	`${wordY(leaving)}`,
+);
+k.step(60);
+k.check(
+	'the old word is gone and the new one rests in the slot at 0.24 s',
+	!k.exists(`thinking-word-${leaving}`) && near(wordY(arriving), 0),
+	`${wordY(arriving)}`,
+);
+renderer.clockResume();
 k.finish();

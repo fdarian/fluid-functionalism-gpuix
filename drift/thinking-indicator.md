@@ -8,16 +8,6 @@ One entry per place the port looks or behaves differently from the source, whate
 (CSS transforms, selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
 repeating it.
 
-## `y: "80%"` words roll on `top`
-
-- **Cause:** `gpuix gap`.
-- **Original:** words enter `y: "80%" -> 0` over 0.24s and leave `y: 0 -> "-80%"` over 0.16s, both `[0.4, 0, 0.2, 1]`, inside an `overflow-hidden` grid cell under `AnimatePresence mode="popLayout"` (`thinking-indicator.tsx:124-134`).
-- **Port:** same timings and curve, on `top` in pixels (`thinking-indicator.tsx:208-235`, `:287-314`).
-- **gpuix lacks:** translate (README "gpuix gaps", CSS transforms row), so the roll moves a layout edge. `%` insets in `motion` exist now (`~/code/fdarian/gpuix/FORK.md:1237-1243`) and `top: "80%"` would resolve against the 20px cell, the same 16px as `ROLL`; the port has not switched.
-- **Workaround:** the words and a hidden copy of the longest word, which reserves the width (`:294-299`), share one cell of a `display: grid`, `overflow: hidden` slot with no `position` of its own (`:287-292`). A word moves on `top`, 80% of the 20px line (`ROLL`, `:208`; `RollingWord`, `:221-235`), and is always `position: relative`, which `top` needs to move it. It used to be `relative` only while it entered or exited (`onMotionComplete`, `useIsPresent()`, an `entersAtRest` flag), because a positioned ancestor made gpui decline the shimmer letters' colour ticks and draw the whole page on every tick (`~/.claude/notes/ff-gpuix-repros/r18-positioned-ancestor-declines-unit.md`); gpuix #75 (c6475390, `~/code/fdarian/gpuix/FORK.md:3559`) patches a loop under a positioned ancestor, so the toggle is gone (e99b0655) and the page patches 62.0 shimmer ticks a second with the word `relative` at rest. `transition` is switched on `useIsPresent()` (`:229`) so the exiting word takes the 0.16s tween. Each word is a fresh element (`<Show keyed>`, `:309`) because Solid's `AnimatePresence` tracks elements, not keys.
-- **Fidelity:** exact for the visible result. `top` re-lays out per frame where a translate would not, and gpuix draws a layout tick whole (`LayoutAnimation`, `~/code/fdarian/gpuix/FORK.md:3613-3614`): the roll is ~5 whole frames a second on showcase, queued-stack and thinking-indicator (headless on c6475390, README "Missing features", [CSS transforms](../README.md#missing-features) row), while the shimmer ticks around it are patches.
-- **Components it hits:** queued-stack (a card's `y` is likewise a `bottom` offset), mobile-drawer.
-
 ## Shimmer is painted one letter at a time
 
 - **Cause:** `gpuix gap`. gpuix has `backgroundClip: "text"` over a gradient on a block (`~/code/fdarian/gpuix/README.md:6105-6112`, `FORK.md:786`), but no animated `background-position`: it is not in `MotionStyleTargets` (`packages/native/js/host.ts:123`), and a position string rewritten from JS would be a redraw per tick.

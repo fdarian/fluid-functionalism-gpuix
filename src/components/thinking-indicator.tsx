@@ -11,7 +11,7 @@ import { createEffect, createSignal, For, onCleanup, Show } from 'solid-js';
 import { useOnScreen } from '#/lib/cull';
 import { Icon } from '#/lib/icon';
 import { defineIcon } from '#/lib/icons';
-import { color, linePx, type as scale } from '#/lib/theme';
+import { color, type as scale } from '#/lib/theme';
 
 /** `cubic-bezier(x1, y1, x2, y2)` solved for `x`, the way CSS and Motion evaluate a named ease. */
 function cubicBezier(x1: number, y1: number, x2: number, y2: number) {
@@ -205,7 +205,6 @@ function MorphingGlyph(props: { size: number }) {
 const words = ['Thinking', 'Moonwalking', 'Planning', 'Refining'];
 const WORD_INTERVAL_MS = 4000;
 const longestWord = words.reduce((a, b) => (a.length >= b.length ? a : b));
-const ROLL = linePx(scale.body.lineHeight) * 0.8;
 
 const enterTransition = {
 	duration: 0.24,
@@ -223,11 +222,12 @@ function RollingWord(props: { word: string }) {
 	const present = useIsPresent();
 	return (
 		<motion.div
-			initial={{ top: ROLL, opacity: 0 }}
-			animate={{ top: 0, opacity: 1 }}
-			exit={{ top: -ROLL, opacity: 0 }}
+			testId={`thinking-word-${props.word}`}
+			initial={{ y: '80%', opacity: 0 }}
+			animate={{ y: 0, opacity: 1 }}
+			exit={{ y: '-80%', opacity: 0 }}
 			transition={present() ? enterTransition : exitTransition}
-			style={{ ...SLOT_CELL, position: 'relative' }}
+			style={SLOT_CELL}
 		>
 			<Shimmer style={scale.body}>{props.word}</Shimmer>
 		</motion.div>
