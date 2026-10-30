@@ -5,7 +5,7 @@ Original: `registry/default/input-message.tsx`, demo in `app/docs/input-message/
 demo in `src/demos/input-message.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
+(selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## A queued row trails the region that moves it

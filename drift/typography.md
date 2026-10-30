@@ -4,7 +4,7 @@ Original: `app/docs/typography/page.tsx` and `demos.tsx` of the source (fluidfun
 Ported in `src/pages/typography.tsx` (the page) and `src/pages/typography/` (`step`, `text`, `scale`, `markdown`, `specimen`, `weight`, `numbers`, `trim`, `wrap`, `install-prompt`), routed by the page registry.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
+(selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## The Markdown section is a static document, not a Tiptap editor

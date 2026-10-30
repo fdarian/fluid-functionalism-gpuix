@@ -5,7 +5,7 @@ Original: `registry/base/switch.tsx`, demo in `app/docs/switch/page.tsx` of the 
 demo in `src/demos/switch.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
+(selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## Focus ring gap is not filled with the background

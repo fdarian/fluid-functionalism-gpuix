@@ -5,7 +5,7 @@ Original: `registry/default/thinking-indicator.tsx` plus `.shimmer-text` in `app
 demo in `src/demos/thinking-indicator.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
+(selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## Shimmer is painted one letter at a time

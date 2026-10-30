@@ -6,7 +6,7 @@ The site's own navigation sidebar is covered at the end: source `app/components/
 
 The port is the menu only: `SidebarMenu` (one fluid-hover scope with a hover, an active-per-level and a focus-ring overlay), `SidebarMenuButton` (`label`, `icon`, `dot`, `badge`, `expanded`), `SidebarMenuSub`, and a fixed 256px `Sidebar` with `SidebarHeader`, `SidebarContent`, `SidebarGroupLabel` and `SidebarSearchField`. Everything else in the source is absent. Numbers that match (row 32 / sub-row 28 / label 32 high, 8px gap and left pad, radius 8, 16px icons, sub-menu `ml 15 + 1px border + pl 8`, badge slot 24 at right 8 with a 36px reserved pad, 256px width, header `p 8 gap 8`, hover / active tokens) are not listed.
 
-Shared gpuix gaps that hit this component, each in its README row and not repeated here: [CSS transforms](../README.md) (the mobile sheet slide, the peek card), [`createMeasuredHeight`](../README.md) (the sub-menu height tween runs on `onLayout`, `src/components/sidebar.tsx:564`).
+Shared gpuix gaps that hit this component, each in its README row and not repeated here: [a clip inside a transformed box drops its text](../README.md) (the callout pile's inline cards stay unclipped), [`createMeasuredHeight`](../README.md) (the sub-menu height tween runs on `onLayout`, `src/components/sidebar.tsx:564`).
 
 ## Collapse, `SidebarProvider`, shell, trigger and shortcut
 

@@ -8,7 +8,7 @@ Copy prompt button, `ComponentPreview` frame and the missing prev / next arrows 
 The scrollbar, fade and `ScrollArea` behaviour is `drift/scroll-area.md`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
+(selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## "The problem" has no scripted cursor

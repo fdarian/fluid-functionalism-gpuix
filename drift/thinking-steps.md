@@ -5,7 +5,7 @@ Original: `registry/base/thinking-steps.tsx` (Base UI `Collapsible`), demo in `a
 demo in `src/demos/thinking-steps.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
+(selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## Hover background exit

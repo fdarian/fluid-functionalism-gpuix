@@ -5,7 +5,7 @@ Original: `app/page.tsx`, `app/components/bento-grid.tsx`, `bento-card.tsx` and 
 `bento-card.tsx`, `bento-previews.tsx`) and `Showcase` / `HeroArrows` in `src/app.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
+(selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
 repeating it. The hero's three buttons are not wired here (their `onClick`s belong to the install-prompt / docs / demo work).
 
 ## The grid does not animate when the column count changes
@@ -36,7 +36,7 @@ repeating it. The hero's three buttons are not wired here (their `onClick`s belo
   - **command-menu:** the source wraps the menu in `Elevated` (`offset=2`, `shadowLevel=3`); the port's `CommandMenuPanel` is the `surface-3` card with `shadow(3)`, the whole `--shadow-3` recipe (`drift/command-menu.md`). The data is the same rows and suggestions.
   - **dropdown:** the inline panel is a fixed 288px with `flexShrink: 0` (`drift/dropdown.md`), where the source's is `max-w-full` and shrinks to the 255px a two-column stage leaves; the tile's horizontal padding is 8px instead of 24 so the panel fits whole.
   - **input-group:** a fixed 288px column that shrinks (`minWidth: 0`), inside the source's `max-w-[320px]`; at wide windows the group stays 288px where the source grows to 320 (`drift/input-group.md`).
-  - **carousel-dots:** the slide is the demo's `Slide` at 192 x 64 (`src/demos/carousel-dots.tsx`), which moves on `left` / `right`, not a transform; the label is at the port's body size, the border is `color.border` where the source uses `border-border/60`.
+  - **carousel-dots:** the slide is the demo's `Slide` at 192 x 64 (`src/demos/carousel-dots.tsx`), whose label slides on `x` like the source's; the label is at the port's body size, the border is `color.border` where the source uses `border-border/60`.
   - **accordion:** the open first row plus four closed ones are about as tall as the stage, so the first row touches the card's top edge.
   - **slider, tabs, input-copy, button, table, dialog, color-picker, tooltip, badge:** the same content and layout as the source. The buttons are pinned to `size="compact"` (the source's `sm`) and the table shows four rows inside a tile (`BentoTileContext`). The dialog is the full-window one, as in the source.
   - **select, switch, radio-group, checkbox-group, tabs-subtle, thinking-indicator, thinking-steps, input-message, ask-user-questions:** the same content and layout as the source. The checkbox, radio, switch and select carry the differences listed in their own drift files; `tabs-subtle` has no `aria-label` prop.

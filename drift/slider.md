@@ -5,7 +5,7 @@ Original: `registry/base/slider.tsx` (the compact thumb-and-track engine: range,
 demo in `src/demos/slider.tsx`.
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
+(selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
 repeating it.
 
 ## No `<input type="range">`
