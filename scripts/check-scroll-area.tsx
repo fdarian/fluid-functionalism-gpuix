@@ -211,25 +211,22 @@ async function chainsAtEnd(run: WheelRun) {
 	const startPage = pageTop();
 	const atEnd = `scrollTop ${innerTop()}, scrollHeight - clientHeight ${scrollRange()}`;
 
-	let stuck = 0;
-	let first = '';
+	// scrollTop is whole device pixels, rounded half up, so a 0.5px event can read the same page position as the one before it (Chrome does too). What must hold is the running total: every delta reaches the page, and the net movement is the delta sum to the nearest pixel.
+	let sent = 0;
+	let backwards = 0;
 	for (let tick = 0; tick < run.events; tick++) {
 		const dy = run.deltas[tick % run.deltas.length] as number;
 		const before = pageTop();
-		const innerBefore = innerTop();
 		kit.renderer.nativeSimulateScrollWheel(pointer.x, pointer.y, 0, dy);
 		await kit.settle(20);
-		if (pageTop() <= before && stuck === 0) {
-			first = `event ${tick} (${dy}px): page ${before} -> ${pageTop()}, inner ${innerBefore} -> ${innerTop()}`;
-		}
-		if (pageTop() <= before) stuck++;
+		sent += dy;
+		if (pageTop() < before) backwards++;
 	}
+	const moved = pageTop() - startPage;
 	kit.check(
-		`${label}: all ${run.events} events reach the page`,
-		stuck === 0,
-		stuck === 0
-			? `page ${startPage} -> ${pageTop()}`
-			: `${stuck} stuck, first ${first}; ${atEnd}`,
+		`${label}: the page moves by the sum of the ${run.events} deltas`,
+		backwards === 0 && Math.abs(moved - sent) <= 0.5,
+		`page ${startPage} -> ${pageTop()} (moved ${moved}, sent ${sent}, ${backwards} backwards); ${atEnd}`,
 	);
 	return kit.unmount();
 }
