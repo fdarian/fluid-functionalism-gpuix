@@ -11,7 +11,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `not ported yet`.
 - **Original:** `Card` with `href` renders a stretched `<Link>` (new tab for `external`); `CardButton` with `href` renders a `<Link>` (`:226-232`, `:350-359`, `:981-993`).
-- **Port:** no `href` or `external` on `Card` (`src/components/card.tsx:249-263`); `CardButton` has `external` only for the arrow glyph (`:937`, `:1019-1029`).
+- **Port:** no `href` or `external` on `Card` (`src/components/card.tsx:247-261`); `CardButton` has `external` only for the arrow glyph (`:935`, `:1017-1027`).
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -47,7 +47,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `not ported yet`.
 - **Original:** `bg-card/70 backdrop-blur-sm hover:bg-card` when the card has a `CardImage` (`:492-494`).
-- **Port:** the 70% alpha alone (`src/components/card.tsx:53-54`, `:561-566`). The comment says gpuix has no backdrop blur; it has `backdropFilter` (`packages/native/js/host.ts:662-665`, `FORK.md:788-789`, effect groups, macOS).
+- **Port:** the 70% alpha alone (`src/components/card.tsx:51-52`, `:559-564`). The comment says gpuix has no backdrop blur; it has `backdropFilter` (`packages/native/js/host.ts:662-665`, `FORK.md:788-789`, effect groups, macOS).
 - **Workaround:** the alpha.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -56,7 +56,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `not ported yet`.
 - **Original:** inline cards with `dismissible` give `card-header` `pr-10` (while the chip is revealed, or always with `dismissOnHover={false}`) so the single-line title does not run under it (`:430-438`).
-- **Port:** `CardHeader` knows nothing of the chip (`src/components/card.tsx:585-615`); the chip overlays the text. No demo uses an inline dismissible card.
+- **Port:** `CardHeader` knows nothing of the chip (`src/components/card.tsx:583-613`); the chip overlays the text. No demo uses an inline dismissible card.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -65,7 +65,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `not ported yet`.
 - **Original:** `CardHeader` is a grid that gains a `1fr auto` template when a `card-action` is present; the action sits in column 2 spanning both rows, so the title and description make room (`:537`, `:650`).
-- **Port:** `CardAction` is `position: absolute; top: 0; right: 0` on a column flex (`src/components/card.tsx:678-691`, `:584-614`); long text runs under it. gpuix has grid. No demo uses `CardAction`.
+- **Port:** `CardAction` is `position: absolute; top: 0; right: 0` on a column flex (`src/components/card.tsx:676-689`, `:582-612`); long text runs under it. gpuix has grid. No demo uses `CardAction`.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -74,26 +74,16 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `port choice` (reason not stated; the visible title is absolutely positioned over the invisible semibold copy, which needs both on one line. `CardTitle` does not use `StableLabel`, whose inline-grid wraps like the source's).
 - **Original:** the title wraps normally; a consumer's `truncate` ellipsizes it (`:569-609`).
-- **Port:** both copies are `whiteSpace: "nowrap"` (`src/components/card.tsx:635`, `:646`); a long title is clipped by a tile or runs past the column. The parts take no `className`, so there is no `truncate`. gpuix has `textOverflow: "ellipsis"` (`host.ts:757`).
+- **Port:** both copies are `whiteSpace: "nowrap"` (`src/components/card.tsx:633`, `:644`); a long title is clipped by a tile or runs past the column. The parts take no `className`, so there is no `truncate`. gpuix has `textOverflow: "ellipsis"` (`host.ts:757`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
-
-## CSS transforms (the external-link arrow)
-
-- **Cause:** `gpuix gap`.
-- **Original:** the link button's arrow is an arrow-right with `-rotate-45` (`:958`).
-- **Port:** the arrow-up-right glyph is drawn instead (`src/components/card.tsx:42`, `:1026-1035`).
-- **gpuix lacks:** `rotate` (no `transform`; `~/code/fdarian/gpuix/FORK.md:1198-1209`). README "gpuix gaps", CSS transforms row.
-- **Workaround:** the glyph swap.
-- **Fidelity:** exact for the resting pose, no rotation tween.
-- **Components it hits:** any rotated glyph.
 
 ## The image rounds its own corners to the tile
 
 - **Cause:** `port choice` (reason not stated; the tile also sets `overflow: "hidden"` and a radius at `:366-367`).
 - **Original:** the image is `rounded-[2px]` and the tile's `overflow-hidden` + radius clips its outer corners (`:339-343`, `:813-815`).
-- **Port:** `tileCorner()` hands the tile radius (minus 1 for a frame) to the image's outer corners and keeps 2px on the rest (`src/components/card.tsx:330-334`, `:826-841`).
+- **Port:** `tileCorner()` hands the tile radius (minus 1 for a frame) to the image's outer corners and keeps 2px on the rest (`src/components/card.tsx:328-332`, `:824-839`).
 - **Workaround:** n/a.
 - **Fidelity:** exact in the cases checked by reading (stacked, inline, framed, borderless); the screenshots were not diffed.
 - **Components it hits:** just this one.
@@ -102,7 +92,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).
 - **Original:** `size` wraps the card in a `SizeProvider`, so a nested `Button`, `Badge` and the rest follow (`registry/default/card.tsx:244-247`, `:276`, `:515`).
-- **Port:** An omitted `size` follows the Size row (`src/components/card.tsx:269`); `compact` covers the card's own parts only, and nothing is provided to children.
+- **Port:** An omitted `size` follows the Size row (`src/components/card.tsx:267`); `compact` covers the card's own parts only, and nothing is provided to children.
 - **Workaround:** pass `size` to each nested component.
 - **Fidelity:** approximated.
 - **Components it hits:** every component with a `size` prop.
@@ -111,7 +101,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `port choice` (reason not stated; Solid components with fixed prop lists).
 - **Original:** every part forwards `className` and the HTML attributes; the promo demo gives `Card` `border border-border/60 overflow-hidden rounded-xl` and `CardContent` `flex flex-col gap-3` (`app/docs/card/page.tsx:330`, `:336`).
-- **Port:** a standalone `Card` takes `outlined` for the frame (`src/components/card.tsx:257-258`, `:369-371`) and the demo wraps `CardContent`'s children in a 12px-gap column (`src/demos/card.tsx:229-242`). Parts take `children` only; `CardMedia` has no `className`.
+- **Port:** a standalone `Card` takes `outlined` for the frame (`src/components/card.tsx:255-256`, `:367-369`) and the demo wraps `CardContent`'s children in a 12px-gap column (`src/demos/card.tsx:229-242`). Parts take `children` only; `CardMedia` has no `className`.
 - **Workaround:** `outlined`.
 - **Fidelity:** exact for the demos.
 - **Components it hits:** every ported component.

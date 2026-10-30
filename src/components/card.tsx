@@ -20,7 +20,7 @@ import {
 import { FluidHighlight } from '#/lib/fluid-highlight';
 import { createFluidHover } from '#/lib/fluid-hover';
 import { Icon } from '#/lib/icon';
-import { defineIcon, type IconRef } from '#/lib/icons';
+import type { IconRef } from '#/lib/icons';
 import {
 	capTrim,
 	color,
@@ -38,8 +38,6 @@ import {
 export type CardOrientation = 'card' | 'inline';
 export type CardBorder = 'none' | 'outlined';
 export type CardSize = 'default' | 'compact';
-
-const arrowUpRight = defineIcon('<path d="M7 7h10v10"/><path d="M7 17 17 7"/>');
 
 /** The title role of the type scale. */
 const subtitle = {
@@ -1028,10 +1026,10 @@ export function CardButton(props: {
 				{props.children}
 			</text>
 			<Show when={position() === 'end'}>{glyph()}</Show>
-			{/* The original rotates an arrow-right -45deg; there are no transforms, so the glyph is arrow-up-right. */}
 			<Show when={props.external}>
 				<Icon
-					name={arrowUpRight}
+					name="arrow-right"
+					rotate="-45deg"
 					size={13}
 					strokeWidth={stroke()}
 					easeStroke

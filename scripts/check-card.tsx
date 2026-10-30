@@ -78,6 +78,9 @@ const check = await createCheck(
 				</CardHeader>
 				<CardFooter>
 					<CardButton testId="act-button">Go</CardButton>
+					<CardButton testId="act-link" variant="link" external>
+						Docs
+					</CardButton>
 				</CardFooter>
 			</Card>
 			<Card testId="dismissable" dismissible onDismiss={() => {}}>
@@ -253,6 +256,38 @@ await park();
 		'CardButton hover fill eases',
 		partway(rest, middle, end),
 		`rest ${rest}, 16 ms ${middle}, end ${end}`,
+	);
+}
+
+await park();
+{
+	// The external arrow is an arrow-right turned -45 degrees: its head is at the top right of its 13px box.
+	const box = check.bounds('act-link');
+	const ARROW = 13;
+	const left = Math.round(box.x + box.width - ARROW);
+	const top = Math.round(box.y + (box.height - ARROW) / 2);
+	const shot = `/tmp/check-card-arrow-${process.pid}.png`;
+	renderer.captureScreenshot(shot);
+	const pixels = readPng(shot);
+	const ground = pixels.at(left - 3, top);
+	let mass = 0;
+	let momentX = 0;
+	let momentY = 0;
+	for (let y = top; y < top + ARROW; y++)
+		for (let x = left; x < left + ARROW; x++) {
+			const pixel = pixels.at(x, y);
+			const weight =
+				Math.abs(pixel[0] - ground[0]) +
+				Math.abs(pixel[1] - ground[1]) +
+				Math.abs(pixel[2] - ground[2]);
+			mass += weight;
+			momentX += weight * (x + 0.5 - (left + ARROW / 2));
+			momentY += weight * (y + 0.5 - (top + ARROW / 2));
+		}
+	check.check(
+		'the external arrow points up and to the right',
+		mass > 0 && momentX / mass > 0.3 && momentY / mass < -0.3,
+		`ink skew ${(momentX / mass).toFixed(2)} across, ${(momentY / mass).toFixed(2)} down`,
 	);
 }
 
