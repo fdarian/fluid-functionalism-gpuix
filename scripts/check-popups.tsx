@@ -8,7 +8,14 @@ import type { TestElement } from '@gpuix/solid/testing';
 import { createTestRoot } from '@gpuix/solid/testing';
 import { createSignal } from 'solid-js';
 import { App } from '#/app';
+import { Button } from '#/components/button';
 import { Combobox } from '#/components/combobox';
+import {
+	DropdownContent,
+	DropdownMenu,
+	DropdownTrigger,
+	MenuItem,
+} from '#/components/dropdown';
 import { Select } from '#/components/select';
 import { loadDemos, loadPages } from '#/lib/demo';
 import { fonts } from '#/lib/fonts';
@@ -244,6 +251,133 @@ async function comboboxEnter() {
 	);
 }
 
+/** `root` and every element below it, depth first. */
+function subtree(
+	ui: ReturnType<typeof session>,
+	root: TestElement,
+): TestElement[] {
+	return [
+		root,
+		...root.children.flatMap((id) => {
+			const child = ui.renderer.getElement(id) as TestElement | undefined;
+			return child === undefined ? [] : subtree(ui, child);
+		}),
+	];
+}
+
+/**
+ * The popup scales while it enters, and `getBoundingClientRect` is the scaled box. A hover that lands mid-entrance
+ * measures the rows then, and nothing measures them again when the scale settles (a transform is no resize): the
+ * highlight has to be placed in layout space, or it rests off its row by the scale it was measured at.
+ */
+async function hoverMidEntrance() {
+	setThemeChoice('light');
+	const rows = ['a', 'b', 'c', 'd'];
+	const cases = [
+		{
+			name: 'select',
+			trigger: 's-trigger',
+			popup: 's-popup',
+			row: 's-option-c',
+			ui: () => (
+				<Select
+					testId="s"
+					items={rows.map((value) => ({ value, label: `Row ${value}` }))}
+					value={null}
+					placeholder="Pick"
+				/>
+			),
+		},
+		{
+			name: 'dropdown',
+			trigger: 'm-trigger',
+			popup: 'm-popup',
+			row: 'm-row-c',
+			ui: () => (
+				<DropdownMenu testId="m">
+					<DropdownTrigger>
+						{(trigger) => (
+							<Button
+								testId="m-trigger"
+								{...trigger.attributes}
+								onMouseDown={trigger.onMouseDown}
+								onClick={trigger.onClick}
+							>
+								Open
+							</Button>
+						)}
+					</DropdownTrigger>
+					<DropdownContent>
+						{rows.map((value, index) => (
+							<MenuItem
+								index={index}
+								label={`Row ${value}`}
+								testId={`m-row-${value}`}
+							/>
+						))}
+					</DropdownContent>
+				</DropdownMenu>
+			),
+		},
+	];
+	for (const entry of cases) {
+		const ui = session();
+		ui.test.render(() => <div style={{ padding: 40 }}>{entry.ui()}</div>);
+		await ui.settle(500);
+		const point = ui.centre(entry.trigger);
+		ui.renderer.clockPause();
+		try {
+			ui.renderer.nativeSimulateClick(point.x, point.y);
+			ui.frame();
+			ui.renderer.clockFastForward(4);
+			ui.frame();
+			const popup = ui.need(entry.popup);
+			const row = ui.centre(entry.row);
+			ui.renderer.nativeSimulateMouseMove(row.x - 1, row.y);
+			ui.renderer.nativeSimulateMouseMove(row.x, row.y);
+			ui.frame();
+			ui.renderer.clockFastForward(4);
+			ui.frame();
+			const entering = ui.renderer.getElementBounds(popup.id);
+			ui.renderer.clockFastForward(600);
+			ui.frame();
+			ui.frame();
+			const settled = ui.renderer.getElementBounds(popup.id);
+			const rowBox = ui.renderer.getElementBounds(ui.need(entry.row).id);
+			const lit = subtree(ui, ui.need(entry.popup)).filter(
+				(element) => element.style.backgroundColor === color.hover,
+			);
+			report(
+				entering !== null &&
+					settled !== null &&
+					entering.height < settled.height - 0.5,
+				`${entry.name}: the hover landed while the popup was still scaling`,
+				`${entering?.height} -> ${settled?.height}`,
+			);
+			const box =
+				lit.length === 1 ? ui.renderer.getElementBounds(lit[0].id) : null;
+			const off =
+				box === null || rowBox === null
+					? null
+					: [
+							box.x - rowBox.x,
+							box.y - rowBox.y,
+							box.width - rowBox.width,
+							box.height - rowBox.height,
+						];
+			report(
+				off?.every((value) => Math.abs(value) <= 0.5) === true,
+				`${entry.name}: after the entrance the highlight sits on its row`,
+				off === null
+					? `${lit.length} hover fills`
+					: `x/y/w/h off by ${off.map((value) => value.toFixed(2)).join(' / ')}`,
+			);
+		} finally {
+			ui.renderer.clockResume();
+		}
+	}
+}
+
 /** A popup that flips above its trigger slides up and grows from its bottom edge, so that edge never dips below where it rests. The first open starts from the side it asked for (`initial` is read at mount); the reopen knows the side. */
 async function flippedEntrance() {
 	setThemeChoice('light');
@@ -298,6 +432,7 @@ async function flippedEntrance() {
 }
 
 await popupExit();
+await hoverMidEntrance();
 await flippedEntrance();
 await dialogSurface();
 await disabledError();

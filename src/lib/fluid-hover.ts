@@ -6,7 +6,7 @@ import {
 import { batch, createEffect, createSignal, onCleanup } from 'solid-js';
 import { toOffsetPx } from '#/lib/offset';
 
-/** A row's box relative to the container's own top-left corner. */
+/** A row's box relative to the container's own top-left corner, in the container's layout pixels: the unit the source reads from `offsetTop` and friends, whatever transform the container or an ancestor carries. */
 export interface ItemRect {
 	top: number;
 	height: number;
@@ -16,13 +16,28 @@ export interface ItemRect {
 
 type ElementBox = ReturnType<HostElement['getBoundingClientRect']>;
 
-/** The source reads offsetTop/offsetLeft/offsetWidth/offsetHeight, so the rect is rounded from the fractional getBoundingClientRect. */
-function toOffsetRect(bounds: ElementBox, box: ElementBox): ItemRect {
+interface LayoutSize {
+	width: number;
+	height: number;
+}
+
+/**
+ * The source reads offsetTop/offsetLeft/offsetWidth/offsetHeight, so the rect is rounded from the fractional
+ * getBoundingClientRect. That one is the transformed box and the offsets are not: dividing by what the container's
+ * transforms scale it to (its box over its layout size) gives the offsets back.
+ */
+function toOffsetRect(
+	bounds: ElementBox,
+	box: ElementBox,
+	layout: LayoutSize,
+): ItemRect {
+	const scaleX = layout.width > 0 ? box.width / layout.width : 1;
+	const scaleY = layout.height > 0 ? box.height / layout.height : 1;
 	return {
-		top: toOffsetPx(bounds.y - box.y),
-		left: toOffsetPx(bounds.x - box.x),
-		width: toOffsetPx(bounds.width),
-		height: toOffsetPx(bounds.height),
+		top: toOffsetPx((bounds.y - box.y) / scaleY),
+		left: toOffsetPx((bounds.x - box.x) / scaleX),
+		width: toOffsetPx(bounds.width / scaleX),
+		height: toOffsetPx(bounds.height / scaleY),
 	};
 }
 
@@ -118,7 +133,11 @@ export interface FluidHoverOptions {
 	axis?: 'x' | 'y' | 'xy';
 }
 
-type Measured = { box: ElementBox; rects: (ItemRect | undefined)[] };
+type Measured = {
+	box: ElementBox;
+	layout: LayoutSize;
+	rects: (ItemRect | undefined)[];
+};
 
 const deferredApplies: (() => void)[] = [];
 
@@ -152,7 +171,15 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 	let sessionPending = false;
 	let disposed = false;
 
-	const observer = new ResizeObserver(() => {
+	/** The container's layout border box, as the observer last reported it: `getBoundingClientRect` cannot say it once a transform scales the box. */
+	let containerLayout: LayoutSize | undefined;
+
+	const observer = new ResizeObserver((entries) => {
+		for (const entry of entries) {
+			if (entry.target !== container) continue;
+			const size = entry.borderBoxSize[0];
+			containerLayout = { width: size.inlineSize, height: size.blockSize };
+		}
 		const measured = measure();
 		if (measured === undefined) return;
 		deferApply(() => {
@@ -171,16 +198,25 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 
 	const measure = (): Measured | undefined => {
 		if (container === undefined || !container.mounted) return undefined;
+		if (containerLayout === undefined) return undefined;
 		const box = container.getBoundingClientRect();
 		const next: (ItemRect | undefined)[] = [];
 		for (const [index, element] of items) {
 			if (!element.mounted) continue;
-			next[index] = toOffsetRect(element.getBoundingClientRect(), box);
+			next[index] = toOffsetRect(
+				element.getBoundingClientRect(),
+				box,
+				containerLayout,
+			);
 		}
-		return { box, rects: next };
+		return { box, layout: containerLayout, rects: next };
 	};
 
-	const pick = (box: ElementBox, point: { x: number; y: number }) => {
+	const pick = (
+		box: ElementBox,
+		layout: LayoutSize,
+		point: { x: number; y: number },
+	) => {
 		const next = pickNearest({
 			axis: options.axis ?? 'y',
 			point,
@@ -193,7 +229,7 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 			},
 			scroll: { x: 0, y: 0 },
 			border: { x: 0, y: 0 },
-			layoutSize: { width: box.width, height: box.height },
+			layoutSize: layout,
 			isDisabled: options.isItemDisabled,
 		});
 		if (sessionPending) {
@@ -206,14 +242,15 @@ export function createFluidHover(options: FluidHoverOptions = {}) {
 	const pickAtContainer = () => {
 		if (pointer === undefined) return;
 		if (container === undefined || !container.mounted) return;
-		pick(container.getBoundingClientRect(), pointer);
+		if (containerLayout === undefined) return;
+		pick(container.getBoundingClientRect(), containerLayout, pointer);
 	};
 
 	const apply = (measured: Measured) => {
 		setRects(measured.rects);
 		setIsMeasured(true);
 		if (pointer !== undefined && activeIndex() !== null)
-			pick(measured.box, pointer);
+			pick(measured.box, measured.layout, pointer);
 	};
 
 	const commit = () => {
