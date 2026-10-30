@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 505 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 503 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -218,7 +218,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [mobile-drawer](drift/mobile-drawer.md) | 2 | 2 | 1 | 0 | 5 |
 | [motion-page](drift/motion-page.md) | 2 | 3 | 1 | 2 | 8 |
 | [nav-menu](drift/nav-menu.md) | 0 | 5 | 1 | 0 | 6 |
-| [queued-stack](drift/queued-stack.md) | 3 | 3 | 3 | 1 | 10 |
+| [queued-stack](drift/queued-stack.md) | 1 | 3 | 3 | 1 | 8 |
 | [radio-group](drift/radio-group.md) | 0 | 2 | 2 | 0 | 4 |
 | [scroll-area](drift/scroll-area.md) | 1 | 5 | 1 | 1 | 8 |
 | [scrollbars-page](drift/scrollbars-page.md) | 0 | 4 | 2 | 0 | 6 |
@@ -237,7 +237,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 3 | 4 | 5 | 0 | 12 |
 | [tooltip](drift/tooltip.md) | 0 | 6 | 1 | 0 | 7 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **52** | **218** | **189** | **46** | **505** |
+| **Total** | **50** | **218** | **189** | **46** | **503** |
 
 ### gpuix gaps across components
 
@@ -276,7 +276,7 @@ offer it. A count is given only where the code shows it.
 
 | Used by | What | Workaround here |
 |---|---|---|
-| scale-in entrances (queued-stack), the changelog's month dot (scale) and entry-name arrow (translate) | CSS transforms: no scale, rotate or translate, so every turn and pop is impossible (Base UI audit rows 530, 617). | Glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom`. The demo's label slides on `left` / `right` (`src/demos/carousel-dots.tsx:67-74`; the source's `x`, `lib/docs/slide-direction.ts:16-18`), the same gap. |
+| the changelog's month dot (scale) and entry-name arrow (translate) | CSS transforms: no scale, rotate or translate, so every turn and pop is impossible (Base UI audit rows 530, 617). | Glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom`. The demo's label slides on `left` / `right` (`src/demos/carousel-dots.tsx:67-74`; the source's `x`, `lib/docs/slide-direction.ts:16-18`), the same gap. |
 | slider | `<input type="range">` (Base UI audit row 312) | A pointer-handled track and thumbs |
 | select, combobox (`FormValue`) | `<input type="hidden">` | A real input that is invisible, unreachable and `aria-hidden` |
 | banner (the description layout), surfaces (the elevation stack) | Selector `:has(.x)` and group-has. gpuix has `hasHover`, `hasActive`, `hasFocus`, `hasFocusVisible`, `hasDisabled` and `hasEnabled`, which restyle an element from the state of its descendants, but not a selector such as the banner's `has-data-[slot=banner-description]`, and a parent's `has*` state cannot style its children (the surfaces' stack hides a label with `[&:has([data-surface]:hover)>span]`). The result matches the web; only the wiring differs | Banner: a context flag the description registers; surfaces: a pointer signal (`drift/banner.md`, `drift/surfaces.md`) |
@@ -361,7 +361,7 @@ now does that the port has not picked up.
 | Base UI `Positioner` (flip, `--anchor-width`, `--available-height`) | `<anchored fit="flip" deferred>`: gpuix picks the side and reports it with the room left (`onPlacement`), and `PopupSurface` caps the card to that room, slides from the reported side and is at least the trigger's width | Equivalent |
 | `ScrollArea` (hover thumb, scroll fade) | a plain `overflowY: "scroll"` on the combobox list (Dropped); the sidebar's content is a ported `ScrollArea` with the fade and the end hairline | Dropped for the combobox; exact for the site nav |
 | `getBoundingClientRect` | `element.getBoundingClientRect()`, read when needed (layout is flushed first, so it is never stale; a read after a paint-only write runs no layout pass, gpuix #47). The fluid hover reads its container's rect on every pick, like the source; a cache of it measured within noise and was dropped | Native |
-| `ResizeObserver` | gpuix's `ResizeObserver` (fluid hover, slider width, queued stack) and `onLayout` (size, after the first paint and on every change, delivered with the painted frame after its scroll events, never from a bounds read or a `scrollTop` write) | Exact |
+| `ResizeObserver` | gpuix's `ResizeObserver` (fluid hover, slider width) and `onLayout` (size, after the first paint and on every change, delivered with the painted frame after its scroll events, never from a bounds read or a `scrollTop` write) | Exact |
 | `text-[length:…] leading-[…]` | `fontSize` + `lineHeight` | Exact |
 | `[text-box:trim-both_cap_alphabetic]` | `textBox: capTrim` (`src/lib/theme.ts`); a label that clips adds the source's `py-1 -my-1` through `clippedCapTrim` | Exact |
 | Inter variable (`wght 550`, `opsz`) | the same two Inter 4.0 variable files (upright, italic) passed as `fonts` to `render()`, registered as the family `Inter Variable`; `weight.normal` / `.semibold` / `.bold` (`src/lib/theme.ts`) are the source's `fontWeights` strings, set as `fontVariationSettings` | Exact |

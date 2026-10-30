@@ -1,11 +1,12 @@
 import {
 	AnimatePresence,
+	type AnimationPlaybackControls,
+	createMotionValue,
 	type HostElement,
 	type HostMouseEvent,
 	type HostPointerEvent,
 	type MotionTransition,
 	motion,
-	ResizeObserver,
 	useIsPresent,
 } from '@gpuix/solid';
 import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
@@ -106,10 +107,6 @@ function CardAction(props: {
  * the front one; hovering fans them out, and while expanded a card can be
  * dragged to reorder. The pencil (or a double click) takes a card back to the
  * composer, and the cross removes it.
- *
- * gpuix has no transforms, so a card's `y` is its `bottom` offset and its
- * `scale` is the insets and height of its box; that is why a card's contents
- * stay full-size while it recedes.
  */
 export function QueuedStack(props: {
 	queue: QueuedMessage[];
@@ -128,13 +125,13 @@ export function QueuedStack(props: {
 	// ── Drag to reorder (expanded only).
 	const [pointerDownId, setPointerDownId] = createSignal<string | null>(null);
 	const [draggingId, setDraggingId] = createSignal<string | null>(null);
-	const [dragBottom, setDragBottom] = createSignal(0);
+	const [dragY, setDragY] = createSignal(0);
 	let dragStartY = 0;
 	let stackElement: HostElement | undefined;
 
 	const expanded = () =>
 		overStack() || pointerDownId() !== null || draggingId() !== null;
-	const slotBottom = (index: number) => index * (QUEUE_CARD_H + STACK_GAP);
+	const slotY = (index: number) => -index * (QUEUE_CARD_H + STACK_GAP);
 
 	const stackBox = () => {
 		if (stackElement === undefined || !stackElement.mounted) {
@@ -142,13 +139,6 @@ export function QueuedStack(props: {
 		}
 		return stackElement.getBoundingClientRect();
 	};
-
-	const [stackWidth, setStackWidth] = createSignal<number>();
-	const widthObserver = new ResizeObserver((entries) => {
-		setStackWidth(entries[entries.length - 1].borderBoxSize[0].inlineSize);
-	});
-	onCleanup(() => widthObserver.disconnect());
-	const cardWidth = () => Math.max(0, (stackWidth() ?? 0) - GUTTER * 2);
 
 	const onDragMove = (event: HostMouseEvent) => {
 		const downId = pointerDownId();
@@ -175,9 +165,9 @@ export function QueuedStack(props: {
 			next.splice(slot, 0, moved);
 			props.onQueueChange(next);
 		}
-		const maxBottom = (queue.length - 1) * (QUEUE_CARD_H + STACK_GAP);
-		setDragBottom(
-			Math.max(0, Math.min(maxBottom, bottomEdge - event.y - QUEUE_CARD_H / 2)),
+		const minY = -(queue.length - 1) * (QUEUE_CARD_H + STACK_GAP);
+		setDragY(
+			Math.max(minY, Math.min(0, event.y - bottomEdge + QUEUE_CARD_H / 2)),
 		);
 	};
 	const endDrag = () => {
@@ -187,35 +177,20 @@ export function QueuedStack(props: {
 
 	// ── Enqueue feedback: once the pile hits its peek cap a new message lands
 	// out of sight, so the whole stack recoils on every growth.
-	const [bump, setBump] = createSignal(0);
-	const [bumpTransition, setBumpTransition] =
-		createSignal<MotionTransition>(recoil);
+	const bumpY = createMotionValue(0);
+	let recoilControls: AnimationPlaybackControls | undefined;
+	onCleanup(() => recoilControls?.stop());
 	let previousCount = count();
 	createEffect(() => {
 		const now = count();
 		const before = previousCount;
 		previousCount = now;
 		if (now > before && before > 0 && !expanded()) {
-			setBumpTransition(tween.snap);
-			setBump(RECOIL_DISTANCE);
-			const timer = setTimeout(() => {
-				setBumpTransition(recoil);
-				setBump(0);
-			}, 16);
-			onCleanup(() => clearTimeout(timer));
+			recoilControls?.stop();
+			bumpY.jump(-RECOIL_DISTANCE);
+			recoilControls = bumpY.animate(0, recoil);
 		}
 	});
-
-	/** `y` and `scale` of the source, as a box: translating up is `bottom`, scaling about the bottom centre is insets and height. */
-	const box = (bottom: number, scaleBy: number) => {
-		const inset = GUTTER + ((1 - scaleBy) * cardWidth()) / 2;
-		return {
-			bottom,
-			left: inset,
-			right: inset,
-			height: QUEUE_CARD_H * scaleBy,
-		};
-	};
 
 	const target = (item: QueuedMessage) => {
 		const index = props.queue.indexOf(item);
@@ -223,16 +198,15 @@ export function QueuedStack(props: {
 			const dragging = draggingId() === item.id;
 			return {
 				opacity: 1,
-				...box(
-					dragging ? dragBottom() : slotBottom(index),
-					dragging ? DRAG_SCALE : 1,
-				),
+				y: dragging ? dragY() : slotY(index),
+				scale: dragging ? DRAG_SCALE : 1,
 			};
 		}
 		const peek = Math.min(index, STACK_MAX_PEEK);
 		return {
 			opacity: index <= STACK_MAX_PEEK ? 1 : 0,
-			...box(peek * STACK_PEEK, 1 - peek * STACK_SCALE),
+			y: -peek * STACK_PEEK,
+			scale: 1 - peek * STACK_SCALE,
 		};
 	};
 
@@ -242,10 +216,7 @@ export function QueuedStack(props: {
 				<motion.div
 					testId={props.testId}
 					ref={(element: HostElement) => {
-						if (stackElement !== undefined)
-							widthObserver.unobserve(stackElement);
 						stackElement = element;
-						widthObserver.observe(element, { box: 'border-box' });
 					}}
 					initial={{ opacity: 0 }}
 					animate={{
@@ -267,15 +238,13 @@ export function QueuedStack(props: {
 				>
 					{/* Recoils as a whole on enqueue: the pile is shifted up and springs back. */}
 					<motion.div
-						initial={false}
-						animate={{ top: -bump(), bottom: bump() }}
-						transition={bumpTransition()}
 						style={{
 							position: 'absolute',
 							left: 0,
 							right: 0,
 							top: 0,
 							bottom: 0,
+							y: bumpY,
 						}}
 					>
 						<div
@@ -306,9 +275,9 @@ export function QueuedStack(props: {
 									<AnimatePresence>
 										<Show when={hiddenCount() > 0}>
 											<motion.div
-												initial={{ opacity: 0 }}
-												animate={{ opacity: 1 }}
-												exit={{ opacity: 0 }}
+												initial={{ opacity: 0, scale: 0.6 }}
+												animate={{ opacity: 1, scale: 1 }}
+												exit={{ opacity: 0, scale: 0.6 }}
 												transition={tween.fast}
 											>
 												<text
@@ -341,14 +310,6 @@ export function QueuedStack(props: {
 										item={item}
 										index={index}
 										target={() => target(item)}
-										entering={() => ({
-											opacity: 0,
-											...box(target(item).bottom - 14, 0.96),
-										})}
-										leaving={() => ({
-											opacity: 0,
-											...box(target(item).bottom, 0.9),
-										})}
 										dragging={() => draggingId() === item.id}
 										expanded={expanded}
 										onPress={(event) => {
@@ -356,7 +317,7 @@ export function QueuedStack(props: {
 												throw new Error('mouseDown without coordinates');
 											}
 											dragStartY = event.y;
-											setDragBottom(slotBottom(props.queue.indexOf(item)));
+											setDragY(slotY(props.queue.indexOf(item)));
 											setPointerDownId(item.id);
 										}}
 										onDragMove={onDragMove}
@@ -377,27 +338,7 @@ export function QueuedStack(props: {
 function QueueCard(props: {
 	item: QueuedMessage;
 	index: () => number;
-	target: () => {
-		opacity: number;
-		bottom: number;
-		left: number;
-		right: number;
-		height: number;
-	};
-	entering: () => {
-		opacity: number;
-		bottom: number;
-		left: number;
-		right: number;
-		height: number;
-	};
-	leaving: () => {
-		opacity: number;
-		bottom: number;
-		left: number;
-		right: number;
-		height: number;
-	};
+	target: () => { opacity: number; y: number; scale: number };
 	dragging: () => boolean;
 	expanded: () => boolean;
 	onPress: (event: HostMouseEvent) => void;
@@ -416,9 +357,9 @@ function QueueCard(props: {
 	return (
 		<motion.div
 			testId={`queued-${props.item.id}`}
-			initial={props.entering()}
+			initial={{ opacity: 0, y: 14, scale: 0.96 }}
 			animate={props.target()}
-			exit={props.leaving()}
+			exit={{ opacity: 0, scale: 0.9 }}
 			transition={
 				props.dragging()
 					? tween.snap
@@ -435,6 +376,11 @@ function QueueCard(props: {
 			}}
 			style={{
 				position: 'absolute',
+				bottom: 0,
+				left: GUTTER,
+				right: GUTTER,
+				height: QUEUE_CARD_H,
+				transformOrigin: 'bottom center',
 				zIndex: props.dragging() ? 200 : 100 - props.index(),
 				display: 'flex',
 				flexDirection: 'row',
@@ -442,7 +388,7 @@ function QueueCard(props: {
 				gap: 8,
 				paddingLeft: files().length > 0 ? 8 : 14,
 				paddingRight: 6,
-				overflow: 'hidden',
+				// No `overflow: hidden`, as in the source: a clip inside a transformed box makes gpuix drop the text of a card moved far up the pile.
 				borderRadius: shape.bg,
 				boxShadow: shadow(3),
 				backgroundColor: color.queuedCard,
