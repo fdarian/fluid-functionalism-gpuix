@@ -7,7 +7,6 @@ import {
 	useGpuixRequired,
 } from '@gpuix/solid';
 import {
-	createPlacementState,
 	type createPresence,
 	POPUP_MARGIN,
 } from 'base-ui-solid-gpuix/internals';
@@ -700,19 +699,25 @@ function AlphaRail(props: {
 const POPOVER_EXIT_FALLBACK_MS = 150;
 const FORMAT_MENU_EXIT_FALLBACK_MS = 120;
 
-/** An anchored card of a given surface level that slides and fades like the shared popup, at the speed the source gives it: the popover is `moderate`, the format menu `fast`. Opens below its trigger, or above when there is no room. */
+/** An anchored card of a given surface level that enters like the source's: from `y` -4 and `scaleY` .96 about `origin`, whichever side it opens on, at the speed the source gives it: the popover is `moderate`, the format menu `fast`. Opens below its trigger, or above when there is no room. */
 function Popup(props: {
 	presence: ReturnType<typeof createPresence>;
-	placement: ReturnType<typeof createPlacementState>;
-	positioner: ReturnType<typeof createPopoverPopup>['positioner'];
+	positioner: Omit<
+		ReturnType<typeof createPopoverPopup>['positioner'],
+		'onPlacement'
+	> &
+		Partial<
+			Pick<ReturnType<typeof createPopoverPopup>['positioner'], 'onPlacement'>
+		>;
 	popupProps?: ReturnType<typeof createPopoverPopup>['props'];
 	speed: 'fast' | 'moderate';
+	/** The popover unfolds from the trigger's corner (`top left`), the format menu from `top center`. */
+	origin: 'top left' | 'top center';
 	/** Omitted, the card is as wide as its content and never narrower than its trigger: the source's `min-w-[var(--anchor-width)]` on the format menu. */
 	width?: number;
 	level: number;
 	children: JSX.Element;
 }) {
-	const slide = () => (props.placement.side() === 'top' ? 4 : -4);
 	return (
 		<Show when={props.presence.mounted()}>
 			<anchored
@@ -723,11 +728,11 @@ function Popup(props: {
 			>
 				<motion.div
 					{...props.popupProps}
-					initial={{ opacity: 0, top: slide() }}
+					initial={{ opacity: 0, y: -4, scaleY: 0.96 }}
 					animate={
 						props.presence.open()
-							? { opacity: 1, top: 0 }
-							: { opacity: 0, top: slide() }
+							? { opacity: 1, y: 0, scaleY: 1 }
+							: { opacity: 0, y: -4, scaleY: 0.96 }
 					}
 					transition={
 						props.presence.open()
@@ -739,6 +744,7 @@ function Popup(props: {
 					}}
 					style={{
 						position: 'relative',
+						transformOrigin: props.origin,
 						width: props.width ?? 'max-content',
 						minWidth:
 							props.width === undefined ? 'anchor-size(width)' : undefined,
@@ -771,7 +777,6 @@ function FormatDropdown(props: {
 	const hover = createFluidHover();
 	/** Opened from the first render, so the page keeps focus until the reader reaches into the menu (the source's `openWithPageRef`). */
 	const [pageHoldsFocus, setPageHoldsFocus] = createSignal(false);
-	const placement = createPlacementState('bottom');
 	let button: HostElement | undefined;
 	const checkedIndex = () => FORMATS.indexOf(props.value);
 	const width = (INNER_WIDTH - 8) / 2;
@@ -931,16 +936,15 @@ function FormatDropdown(props: {
 			</div>
 			<Popup
 				presence={presence}
-				placement={placement}
 				positioner={{
 					side: 'bottom',
 					align: 'start',
 					gap: POPUP_OFFSET,
 					fit: 'flip',
 					snapMargin: POPUP_MARGIN,
-					onPlacement: placement.onPlacement,
 				}}
 				speed="fast"
+				origin="top center"
 				level={props.level + 2}
 			>
 				<div
@@ -1883,10 +1887,10 @@ export function ColorPickerPopover(
 			</div>
 			<Popup
 				presence={popover.presence}
-				placement={popup.placement}
 				positioner={popup.positioner}
 				popupProps={popup.props}
 				speed="moderate"
+				origin="top left"
 				width={PANEL_WIDTH}
 				level={5}
 			>

@@ -14,7 +14,7 @@ const POPUP_SURFACE_OFFSET = 2;
 
 /**
  * The shared popup chrome of the combobox, select and dropdown: an `<anchored>`
- * layer under its parent, with a card two surface steps above what it opens from (surface-3 on the page), the 4px slide and the fade.
+ * layer under its parent, with a card two surface steps above what it opens from (surface-3 on the page), the 4px slide, the `scaleY` .96 and the fade.
  * The layer flips to the far side of the trigger when `side` has no room, and
  * the card is at least as wide as the trigger and as wide as its widest content.
  *
@@ -39,8 +39,9 @@ export function PopupSurface(props: {
 	const level = useElevatedSurface(POPUP_SURFACE_OFFSET);
 	const placement = createPlacementState(props.side ?? 'bottom');
 	const maxHeight = () => placement.maxHeight(props.maxHeight);
-	/** The popup slides in from the trigger: down from above, up from below. */
-	const slide = () => (placement.side() === 'top' ? 4 : -4);
+	/** The popup grows from the trigger's edge: down from above, up from below (`popupMotionClass`). `initial` reads the side once, at mount: the first open of a popup that flips starts from the side it asked for. */
+	const flipped = () => placement.side() === 'top';
+	const slide = () => (flipped() ? 4 : -4);
 	return (
 		<>
 			{/* A layer only while open, not while the exit fade plays: a second Escape in that window belongs to the dialog behind. It is a sibling because the layer needs no children, only its place in the stack. */}
@@ -62,11 +63,11 @@ export function PopupSurface(props: {
 				>
 					<motion.div
 						testId={props.testId}
-						initial={{ opacity: 0, top: slide() }}
+						initial={{ opacity: 0, y: slide(), scaleY: 0.96 }}
 						animate={
 							props.presence.open()
-								? { opacity: 1, top: 0 }
-								: { opacity: 0, top: slide() }
+								? { opacity: 1, y: 0, scaleY: 1 }
+								: { opacity: 0, y: slide(), scaleY: 0.96 }
 						}
 						transition={props.presence.open() ? tween.fast : tween.fastExit}
 						onMotionComplete={() => {
@@ -74,6 +75,7 @@ export function PopupSurface(props: {
 						}}
 						style={{
 							position: 'relative',
+							transformOrigin: flipped() ? 'bottom' : 'top',
 							width: props.width ?? 'max-content',
 							minWidth: 'anchor-size(width)',
 							maxWidth: '100%',

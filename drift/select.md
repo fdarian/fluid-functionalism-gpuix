@@ -4,15 +4,15 @@ Original: `registry/base/select.tsx` (shared: `registry/default/lib/popup.ts`, `
 (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/select.tsx`, demo in `src/demos/select.tsx`.
 Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/list-nav.ts`.
 
-## Popup `scaleY: 0.96` entrance
+## The first open of a popup that flips starts from the wrong side
 
 - **Cause:** `gpuix gap`.
-- **Original:** enters with `opacity 0, y -4, scaleY 0.96` to rest, `spring.fast`; exits on `spring.fast.exit` (`select.tsx:470-478`, `popup.ts:16-23`).
-- **Port:** opacity plus a 4px slide on `top`, no scale (`popup.tsx:63-71`).
-- **gpuix lacks:** CSS transforms; see README "Missing features", CSS transforms row.
-- **Workaround:** the slide.
-- **Fidelity:** approximated.
-- **Components it hits:** dropdown, combobox, color-picker, tooltip, dialog.
+- **Original:** the slide is `y: var(--popup-enter-y)`, set by the resolved `data-side` and read by Motion when the tween starts, after the positioner has landed (`registry/base/select.tsx:470-478`, `registry/default/lib/popup.ts:16-23`).
+- **Port:** the popup enters on `y` ±4, `scaleY` .96 and opacity on `spring.fast`, about `top` or, once flipped, `bottom` (`src/lib/popup.tsx:43-44`, `:66-70`, `:78`). `initial` is read once, at mount, when the side is still the one asked for: a popup that then flips above its trigger starts that first open with the slide of the wrong side (its origin follows at once). From the second open the reported side is already known.
+- **gpuix lacks:** `var()` in a Motion key (only the transform style properties substitute it, `docs/fork/paint-and-transforms.md:148`), and an `initial` that follows a signal.
+- **Workaround:** none.
+- **Fidelity:** approximated (the first open of a flipped popup only, 4 px of travel at opacity 0 to 1 over 80 ms).
+- **Components it hits:** combobox, dropdown.
 
 ## Form value is a real, invisible input
 

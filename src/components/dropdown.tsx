@@ -907,8 +907,12 @@ function SubPopup(props: {
 				<motion.div
 					ref={props.popup.ref}
 					{...props.popup.props}
-					initial={{ opacity: 0 }}
-					animate={{ opacity: sub.open() ? 1 : 0 }}
+					initial={{ opacity: 0, scaleY: 0.96 }}
+					animate={
+						sub.open()
+							? { opacity: 1, scaleY: 1 }
+							: { opacity: 0, scaleY: 0.96 }
+					}
 					transition={sub.open() ? tween.fast : tween.fastExit}
 					// The panel is a child of the trigger row, so its events would bubble into the row and the parent menu behind it.
 					onMouseDown={stopPropagation}
@@ -919,6 +923,7 @@ function SubPopup(props: {
 						// The layer around the anchored popup is `none`, which inherits.
 						pointerEvents: 'auto',
 						position: 'relative',
+						transformOrigin: placement.side() === 'left' ? 'right' : 'left',
 						width: SUB_WIDTH,
 						maxWidth: '100%',
 						display: 'flex',

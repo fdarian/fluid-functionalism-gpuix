@@ -36,16 +36,6 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Fidelity:** exact for `requestSubmit()`, dropped for implicit submission.
 - **Components it hits:** select, any form in a demo.
 
-## CSS transforms (popup scale)
-
-- **Cause:** `gpuix gap`.
-- **Original:** the popup enters from `opacity 0, y -4 (4 when flipped above), scaleY 0.96` with `origin-top` (`origin-bottom` above) on `spring.fast`, exits on `spring.fast.exit` (`combobox.tsx:812-825`, `popup.ts:16-23`).
-- **Port:** `PopupSurface` slides the card 4px from the reported side on `top` and fades it, no scale (`src/lib/popup.tsx:43`, `:63-71`).
-- **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:1198-1209`; README "Missing features", CSS transforms row).
-- **Workaround:** the slide.
-- **Fidelity:** approximated.
-- **Components it hits:** select, dropdown, color-picker, tooltip, dialog.
-
 ## Hovering a focused field
 
 - **Cause:** `port choice` (reason not stated).
@@ -143,7 +133,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `not ported yet`.
 - **Original:** `ComboboxContent` takes `side` (bottom), `align` (start) and `sideOffset` (6) (`combobox.tsx:774-783`).
-- **Port:** `PopupSurface` is called with `align="start"` only, `side` defaults to bottom, gap 6 (`src/components/combobox.tsx:300-308`, `src/lib/popup.tsx:28,54`). No docs demo uses them (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md:633`).
+- **Port:** `PopupSurface` is called with `align="start"` only, `side` defaults to bottom, gap 6 (`src/components/combobox.tsx:300-308`, `src/lib/popup.tsx:28,55`). No docs demo uses them (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md:633`).
 - **Fidelity:** approximated.
 - **Components it hits:** select (same popup).
 

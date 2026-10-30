@@ -13,21 +13,11 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** approximated (the list drops the pointer itself).
 - **Components it hits:** any popup with a nested popup.
 
-## CSS transforms (popup scaleY entrance)
-
-- **Cause:** `gpuix gap`. README "Missing features" row "CSS transforms".
-- **Original:** every popup, submenus included, enters and exits with `scaleY: 0.96` about its side's origin (`registry/base/dropdown.tsx:622-630`); the root popup also slides 4px from the resolved side (`--popup-enter-y`, `registry/default/lib/popup.ts:17-26`), side popups (submenus) slide 0px but still scale.
-- **Port:** the root popup slides 4px from the reported side and fades (`src/lib/popup.tsx:43`, `:65-71`); a submenu only fades (`src/components/dropdown.tsx:906-912`). Timings are the source's: enter `spring.fast` (80 ms), exit 60 ms tween.
-- **gpuix lacks:** `scale` (no `transform`; `~/code/fdarian/gpuix/FORK.md:1198-1209`).
-- **Workaround:** the slide and fade above.
-- **Fidelity:** approximated.
-- **Components it hits:** select, combobox, color-picker.
-
 ## Submenu and inline panel colour is fixed at surface-3
 
 - **Cause:** `not ported yet`. `PopupSurface` (the main popup) follows its substrate through `src/lib/surface-context.ts`; the submenu and inline panel do not read it.
 - **Original:** `Elevated offset={2}` is `min(substrate + 2, 8)`, so a dropdown opened inside a dialog or a raised card sits on a lighter surface; only its shadow level is pinned (`registry/default/lib/elevated.tsx`, `registry/base/dropdown.tsx:133-135`). The search field paints the same level (`registry/default/dropdown-search.tsx:233`).
-- **Port:** the main popup is `min(substrate + 2, 8)` (`src/lib/popup.tsx`); the submenu and inline panel are always `color.card` (surface-3, `src/components/dropdown.tsx:558`, `:925`).
+- **Port:** the main popup is `min(substrate + 2, 8)` (`src/lib/popup.tsx`); the submenu and inline panel are always `color.card` (surface-3, `src/components/dropdown.tsx:558`, `:930`).
 - **Fidelity:** exact on the page, approximated for a submenu or inline panel inside a raised surface.
 - **Components it hits:** just this one.
 

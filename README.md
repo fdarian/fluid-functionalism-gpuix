@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 530 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 528 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -201,13 +201,13 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [carousel-dots](drift/carousel-dots.md) | 2 | 4 | 2 | 0 | 8 |
 | [chat-message](drift/chat-message.md) | 2 | 5 | 2 | 1 | 10 |
 | [checkbox-group](drift/checkbox-group.md) | 0 | 0 | 3 | 1 | 4 |
-| [color-picker](drift/color-picker.md) | 2 | 5 | 15 | 1 | 23 |
-| [combobox](drift/combobox.md) | 3 | 13 | 5 | 2 | 23 |
+| [color-picker](drift/color-picker.md) | 1 | 5 | 16 | 1 | 23 |
+| [combobox](drift/combobox.md) | 2 | 13 | 5 | 2 | 22 |
 | [command-menu](drift/command-menu.md) | 3 | 2 | 12 | 1 | 18 |
 | [compare](drift/compare.md) | 2 | 8 | 1 | 2 | 13 |
 | [concepts](drift/concepts.md) | 1 | 26 | 2 | 1 | 30 |
 | [dialog](drift/dialog.md) | 2 | 2 | 2 | 1 | 7 |
-| [dropdown](drift/dropdown.md) | 2 | 5 | 11 | 1 | 19 |
+| [dropdown](drift/dropdown.md) | 1 | 5 | 11 | 1 | 18 |
 | [file-thumbnail](drift/file-thumbnail.md) | 2 | 5 | 1 | 0 | 8 |
 | [fluid-hover](drift/fluid-hover.md) | 4 | 5 | 2 | 1 | 12 |
 | [home](drift/home.md) | 0 | 4 | 1 | 1 | 6 |
@@ -237,7 +237,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 4 | 4 | 5 | 0 | 13 |
 | [tooltip](drift/tooltip.md) | 1 | 5 | 1 | 1 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **77** | **213** | **191** | **49** | **530** |
+| **Total** | **74** | **213** | **192** | **49** | **528** |
 
 ### gpuix gaps across components
 
@@ -276,7 +276,7 @@ offer it. A count is given only where the code shows it.
 
 | Used by | What | Workaround here |
 |---|---|---|
-| popups (select, combobox, dropdown, color-picker, dialog), tooltip, chevrons (accordion, card, color-picker, thinking-steps), scale-in entrances (banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack, radio-group), spinners (file-thumbnail), the changelog's month dot (scale) and entry-name arrow (translate) | CSS transforms: no scale, rotate or translate, so the popups' `scaleY: 0.96` entrance and every turn and pop is impossible (Base UI audit rows 530, 617). The tooltip has no scale in the source (`tooltip.tsx:289-298`); it only slides on x / y, which is a transform too | Popups and the tooltip slide from the reported side and fade; glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom`. Three stand-ins are layout loops, which gpuix draws whole (`LayoutAnimation`, FORK.md:3613-3614) where the source's transforms would patch; headless on c6475390 (`perf/footprint-c647-after-{1,2}.json`): ThinkingIndicator's word roll on `top` (`src/components/thinking-indicator.tsx:226-228`; the source animates `y`, `registry/default/thinking-indicator.tsx:128-130`) costs ~5 whole frames a second on showcase, queued-stack and thinking-indicator (pages at 18.0, 17.6 and 20.6% CPU); the fluid-hover cursor, a `FakeCursor` whose `top` is a motion value (`left` is fixed; `src/pages/fluid-hover/parts.tsx:146-156`, driven by `src/pages/fluid-hover/plain-vs-fluid.tsx:126-131`; the source's `x` / `y`, `lib/docs/fake-cursor.tsx:15-20`), ~51 a second on fluid-hover and on changelog, which mounts the same stage (`src/pages/changelog/previews.tsx:15`; 25.9 and 29.4% CPU); and carousel-dots' autoplay fill on `width` (`src/components/carousel-dots.tsx:102`, `:207`; the source slides it with `translateX`, `registry/default/carousel-dots.tsx:42-48`, `:240`), ~66 a second (24.9%). The demo's label slides on `left` / `right` (`src/demos/carousel-dots.tsx:67-74`; the source's `x`, `lib/docs/slide-direction.ts:16-18`), the same gap. |
+| dialog, tooltip, chevrons (accordion, card, color-picker, thinking-steps), scale-in entrances (banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack, radio-group), spinners (file-thumbnail), the changelog's month dot (scale) and entry-name arrow (translate) | CSS transforms: no scale, rotate or translate, so every turn and pop is impossible (Base UI audit rows 530, 617). The tooltip has no scale in the source (`tooltip.tsx:289-298`); it only slides on x / y, which is a transform too | The dialog fades and the tooltip slides from the reported side; glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom`. Three stand-ins are layout loops, which gpuix draws whole (`LayoutAnimation`, FORK.md:3613-3614) where the source's transforms would patch; headless on c6475390 (`perf/footprint-c647-after-{1,2}.json`): ThinkingIndicator's word roll on `top` (`src/components/thinking-indicator.tsx:226-228`; the source animates `y`, `registry/default/thinking-indicator.tsx:128-130`) costs ~5 whole frames a second on showcase, queued-stack and thinking-indicator (pages at 18.0, 17.6 and 20.6% CPU); the fluid-hover cursor, a `FakeCursor` whose `top` is a motion value (`left` is fixed; `src/pages/fluid-hover/parts.tsx:146-156`, driven by `src/pages/fluid-hover/plain-vs-fluid.tsx:126-131`; the source's `x` / `y`, `lib/docs/fake-cursor.tsx:15-20`), ~51 a second on fluid-hover and on changelog, which mounts the same stage (`src/pages/changelog/previews.tsx:15`; 25.9 and 29.4% CPU); and carousel-dots' autoplay fill on `width` (`src/components/carousel-dots.tsx:102`, `:207`; the source slides it with `translateX`, `registry/default/carousel-dots.tsx:42-48`, `:240`), ~66 a second (24.9%). The demo's label slides on `left` / `right` (`src/demos/carousel-dots.tsx:67-74`; the source's `x`, `lib/docs/slide-direction.ts:16-18`), the same gap. |
 | slider | `<input type="range">` (Base UI audit row 312) | A pointer-handled track and thumbs |
 | select, combobox (`FormValue`) | `<input type="hidden">` | A real input that is invisible, unreachable and `aria-hidden` |
 | banner (the description layout), surfaces (the elevation stack) | Selector `:has(.x)` and group-has. gpuix has `hasHover`, `hasActive`, `hasFocus`, `hasFocusVisible`, `hasDisabled` and `hasEnabled`, which restyle an element from the state of its descendants, but not a selector such as the banner's `has-data-[slot=banner-description]`, and a parent's `has*` state cannot style its children (the surfaces' stack hides a label with `[&:has([data-surface]:hover)>span]`). The result matches the web; only the wiring differs | Banner: a context flag the description registers; surfaces: a pointer signal (`drift/banner.md`, `drift/surfaces.md`) |
@@ -348,7 +348,7 @@ now does that the port has not picked up.
 | exits (`spring.fast.exit` …) | plain tweens, 60 ms / 120 ms, like the source | Exact |
 | "snap, don't spring" on a reflow | a zero-length tween | Exact |
 | `translate` / `x`,`y` travel of the highlight | `motion` on `x` / `y` with `width` / `height` as box properties, pinned at `top: 0; left: 0` (`src/lib/fluid-highlight.tsx:10-18`) | Exact |
-| `scaleY: 0.96` on popup enter | not possible, no transforms. Opacity plus the 4px slide stay (`top` −4 → 0) | Partly dropped |
+| `scaleY: 0.96` and `y` ±4 on popup enter (select, combobox, dropdown, color-picker) | `motion` on `y` and `scaleY` with opacity on `spring.fast` (the popover `moderate`), about the source's origin: `top`, or `bottom` once the layer flips (`src/lib/popup.tsx:43-44`, `:66-78`); the submenu scales about its near side (`src/components/dropdown.tsx:910-926`) | Exact; the first open of a popup that flips starts from the side it asked for |
 | `z-index` (`z-10` rows over the highlights, `z-20` rings, `z-30` card actions, `-z-10` fills, `z-50` the Beacon popover) | `zIndex` on the element the source puts it on, positioned or a flex or grid item. gpuix orders it across stacking contexts as CSS 2 Appendix E (FORK.md Area C, "`zIndex` across stacking contexts"), so a control takes its `zIndex` inside a plain wrapper and a popover in a positioned box rises over a later sibling. An element that sets only `opacity`, `filter`, `mask` or `clip-path` forms a context as in CSS. Residuals: `getElementsAt` reads declared styles, so a `zIndex` a state style or a motion value sets is not seen there; the children of a custom element take no `zIndex` without a `position` | Exact |
 | press-shrink: inset-px layer plus same-colour `box-shadow` spread | the element carries `margin: 1` and holds a `PressFill`: an absolutely positioned quad 1px outside it, with no `zIndex` and no stacking context, whose edges `groupActive` pulls to the element's own. The label is a `position: relative` box after the fill, so it paints over it as the source's `relative` label span does | Exact at rest and pressed; the edge steps at a pixel boundary instead of easing (quads snap to device pixels), over the same 80 / 180 ms |
 | translucent fill (`--tint`, `bg-hover`) over that shadow | the same single quad: one primitive, so a translucent fill does not double up and a rounded edge has no seam (a `backgroundColor` plus a spread shadow are two primitives that antialias separately, a grey ring on every corner) | Exact |

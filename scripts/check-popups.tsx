@@ -100,6 +100,7 @@ function session() {
 		settle,
 		find,
 		need,
+		centre,
 		focus,
 		click,
 		press,
@@ -243,7 +244,61 @@ async function comboboxEnter() {
 	);
 }
 
+/** A popup that flips above its trigger slides up and grows from its bottom edge, so that edge never dips below where it rests. The first open starts from the side it asked for (`initial` is read at mount); the reopen knows the side. */
+async function flippedEntrance() {
+	setThemeChoice('light');
+	const ui = session();
+	ui.test.render(() => (
+		<div style={{ paddingTop: 690, paddingLeft: 40 }}>
+			<Select
+				testId="f"
+				items={['a', 'b', 'c', 'd'].map((value) => ({
+					value,
+					label: `Row ${value}`,
+				}))}
+				value={null}
+				placeholder="Pick"
+			/>
+		</div>
+	));
+	await ui.settle(500);
+	await ui.click('f-trigger');
+	await ui.press('Escape');
+	await ui.settle(300);
+	const point = ui.centre('f-trigger');
+	ui.renderer.clockPause();
+	try {
+		ui.renderer.nativeSimulateClick(point.x, point.y);
+		ui.frame();
+		ui.renderer.clockFastForward(4);
+		ui.frame();
+		const popup = ui.need('f-popup');
+		const entering = ui.renderer.getElementBounds(popup.id);
+		ui.renderer.clockFastForward(600);
+		ui.frame();
+		ui.frame();
+		const settled = ui.renderer.getElementBounds(popup.id);
+		const trigger = ui.renderer.getElementBounds(ui.need('f-trigger').id);
+		if (entering === null || settled === null || trigger === null)
+			throw new Error('the flipped popup has no box');
+		report(
+			settled.y + settled.height <= trigger.y,
+			'the popup opened above its trigger',
+			`popup bottom ${settled.y + settled.height}, trigger top ${trigger.y}`,
+		);
+		const dip = entering.y + entering.height - (settled.y + settled.height);
+		report(
+			dip >= 0 && dip <= 4,
+			'above the trigger it grows from its bottom edge',
+			`bottom edge ${dip.toFixed(2)} px below rest`,
+		);
+	} finally {
+		ui.renderer.clockResume();
+	}
+}
+
 await popupExit();
+await flippedEntrance();
 await dialogSurface();
 await disabledError();
 await comboboxEnter();
