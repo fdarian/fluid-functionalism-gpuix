@@ -3,17 +3,7 @@
 Original: `registry/base/radio-group.tsx`, demo in `app/docs/radio-group/page.tsx` of the source
 (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/radio-group.tsx` (row, group and hover machinery shared with checkbox-group in `src/components/choice-group.tsx`), demo in `src/demos/radio-group.tsx`.
 
-Same in both (checked against the code): row height, gap and padding per size, circle 16/14, dot 8/7, 1.5px border, group width 288, the one selected fill springing between rows on `moderate` (`radio-group.tsx:58-62` / `ChoiceGroup` in `choice-group.tsx:206-222`), no selected fill for the per-item API, selection precedence (value, then item `selected`, then `selectedIndex`), roving tab stop with the first row as fallback, all four arrows move and select and wrap, Home/End select, Space/Enter on keydown, the shared focus ring, dark-mode tokens. The three selection APIs all exist.
-
-## The dot pops in from scale 0.3
-
-- **Cause:** `gpuix gap`. CSS transforms (README "Missing features" row, `README.md:279`, which lists radio-group).
-- **Original:** the dot springs from `scale: 0.3, opacity: 0` to full on `spring.fast`, and shrinks out over 0.04 s (`radio-group.tsx:424-430`).
-- **Port:** `motion` animates `left` / `top` / `width` / `height` together so the dot stays centred while it grows from 30% of its size (`dotAt`, `radio-group.tsx:92-97`, `:122-126`; `DOT_FROM` `:25`; `exit` over `DOT_OUT` 40 ms `:125-126`). `AnimatePresence initial={false}` keeps a row selected at mount at full size, as FF (`:120`, source `:420`).
-- **Gpuix lacks:** transforms (`~/code/fdarian/gpuix/FORK.md:1198-1209`).
-- **Workaround:** layout properties instead of a compositor scale.
-- **Fidelity:** approximated (same size and timing; the layout is recomputed per frame).
-- **Components it hits:** the README row's scale-in entrances: banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack.
+Same in both (checked against the code): row height, gap and padding per size, circle 16/14, dot 8/7, 1.5px border, group width 288, the one selected fill springing between rows on `moderate` (`radio-group.tsx:58-62` / `ChoiceGroup` in `choice-group.tsx:206-222`), the dot popping in from scale 0.3 and opacity 0 on `spring.fast` and out over 0.04 s (`RadioDot`), no selected fill for the per-item API, selection precedence (value, then item `selected`, then `selectedIndex`), roving tab stop with the first row as fallback, all four arrows move and select and wrap, Home/End select, Space/Enter on keydown, the shared focus ring, dark-mode tokens. The three selection APIs all exist.
 
 ## An explicit `size` does not scope the parts inside
 

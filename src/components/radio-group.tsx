@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from '@gpuix/solid';
+import { AnimatePresence, motion, useIsPresent } from '@gpuix/solid';
 import { createRadioRoot } from 'base-ui-solid-gpuix/radio';
 import {
 	createRadioGroup,
@@ -81,20 +81,47 @@ export function RadioGroup(props: {
 	);
 }
 
+function RadioDot(props: { size: number; testId?: string }) {
+	const present = useIsPresent();
+	return (
+		<motion.div
+			testId={props.testId}
+			initial={{ opacity: 0, scale: DOT_FROM }}
+			animate={{ opacity: 1, scale: 1 }}
+			exit={{ opacity: 0, scale: DOT_FROM }}
+			transition={present() ? tween.fast : DOT_OUT}
+			style={{
+				position: 'absolute',
+				top: 0,
+				left: 0,
+				right: 0,
+				bottom: 0,
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+			}}
+		>
+			<div
+				style={{
+					width: props.size,
+					height: props.size,
+					borderRadius: 9999,
+					backgroundColor: color.foreground,
+				}}
+			/>
+		</motion.div>
+	);
+}
+
 /** The circle and its dot. */
 function Radio(props: {
 	selected: boolean;
 	active: boolean;
 	size: ChoiceSize;
+	testId?: string;
 }) {
 	const box = () => ROW[props.size].box;
 	const dot = () => (props.size === 'compact' ? 7 : 8);
-	const dotAt = (size: number) => ({
-		left: (box() - size) / 2,
-		top: (box() - size) / 2,
-		width: size,
-		height: size,
-	});
 	return (
 		<div
 			style={{
@@ -120,17 +147,7 @@ function Radio(props: {
 			/>
 			<AnimatePresence initial={false}>
 				<Show when={props.selected}>
-					<motion.div
-						initial={{ opacity: 0, ...dotAt(dot() * DOT_FROM) }}
-						animate={{ opacity: 1, ...dotAt(dot()) }}
-						exit={{ opacity: 0, ...dotAt(dot() * DOT_FROM) }}
-						transition={props.selected ? tween.fast : DOT_OUT}
-						style={{
-							position: 'absolute',
-							borderRadius: 9999,
-							backgroundColor: color.foreground,
-						}}
-					/>
+					<RadioDot size={dot()} testId={props.testId} />
 				</Show>
 			</AnimatePresence>
 		</div>
@@ -165,6 +182,9 @@ export function RadioItem(props: {
 					selected={item.checked()}
 					active={active()}
 					size={radio.size()}
+					testId={
+						props.testId === undefined ? undefined : `${props.testId}-dot`
+					}
 				/>
 			)}
 		/>
