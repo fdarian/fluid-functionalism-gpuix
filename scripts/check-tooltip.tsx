@@ -102,4 +102,19 @@ kit.check(
 	partway > first && partway < rest,
 	`${first.toFixed(1)} -> ${partway.toFixed(1)} -> ${rest.toFixed(1)}`,
 );
+// The follow-cursor demo's y area turns its label a quarter, as `rotate-90` does: the transformed box is tall and thin, the x one wide and flat.
+await kit.scrollIntoView('follow-y-label');
+const turned = kit.bounds('follow-y-label');
+const flat = kit.bounds('follow-x-label');
+kit.check(
+	'the y area label is rotated 90 degrees',
+	turned.height > turned.width * 3 && flat.width > flat.height * 3,
+	`y label ${turned.width.toFixed(1)} x ${turned.height.toFixed(1)}, x label ${flat.width.toFixed(1)} x ${flat.height.toFixed(1)}`,
+);
+const area = kit.bounds('follow-y');
+kit.check(
+	'the turned label stays inside its area',
+	turned.y >= area.y && turned.y + turned.height <= area.y + area.height,
+	`label ${turned.y.toFixed(1)}-${(turned.y + turned.height).toFixed(1)}, area ${area.y.toFixed(1)}-${(area.y + area.height).toFixed(1)}`,
+);
 kit.finish();

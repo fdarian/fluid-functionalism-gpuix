@@ -235,9 +235,9 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [tabs](drift/tabs.md) | 0 | 2 | 2 | 0 | 4 |
 | [thinking-indicator](drift/thinking-indicator.md) | 2 | 2 | 1 | 0 | 5 |
 | [thinking-steps](drift/thinking-steps.md) | 3 | 4 | 5 | 0 | 12 |
-| [tooltip](drift/tooltip.md) | 0 | 5 | 2 | 1 | 8 |
+| [tooltip](drift/tooltip.md) | 0 | 6 | 2 | 0 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **64** | **217** | **192** | **47** | **520** |
+| **Total** | **64** | **218** | **192** | **46** | **520** |
 
 ### gpuix gaps across components
 

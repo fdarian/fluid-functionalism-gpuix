@@ -1,4 +1,4 @@
-import { createSignal, For } from 'solid-js';
+import { createSignal } from 'solid-js';
 import { Button } from '#/components/button';
 import {
 	Tooltip,
@@ -43,23 +43,16 @@ function FollowArea(props: {
 				}}
 			>
 				<div
+					testId={`follow-${props.axis}-label`}
 					style={{
-						display: 'flex',
-						flexDirection: 'column',
-						alignItems: 'center',
+						flexShrink: 0,
+						whiteSpace: 'nowrap',
+						...(props.axis === 'y' ? { rotate: '90deg' } : {}),
 					}}
 				>
-					<For
-						each={
-							props.axis === 'x' ? ['Move along me'] : ['Move', 'along', 'me']
-						}
-					>
-						{(word) => (
-							<text style={{ ...scale.caption, color: color.mutedForeground }}>
-								{word}
-							</text>
-						)}
-					</For>
+					<text style={{ ...scale.caption, color: color.mutedForeground }}>
+						Move along me
+					</text>
 				</div>
 			</div>
 		</Tooltip>
