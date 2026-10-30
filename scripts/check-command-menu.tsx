@@ -714,6 +714,36 @@ kit.check(
 	`${unmountMs.toFixed(0)} ms`,
 );
 
+// ─── The panel scales in about its centre ───────────────────────────────────
+
+await kit.settle(300);
+renderer.clockPause();
+try {
+	renderer.simulateKeystrokes(`${mod}+k`);
+	kit.step(0);
+	kit.step(0);
+	kit.step(8);
+	const entering = kit.bounds('site-menu-input');
+	kit.step(600);
+	kit.step(0);
+	const rest = kit.bounds('site-menu-input');
+	kit.check(
+		'the panel enters smaller than it rests, about its centre',
+		entering.width < rest.width - 0.5 &&
+			Math.abs(entering.x + entering.width / 2 - (rest.x + rest.width / 2)) <
+				0.5,
+		`${entering.width.toFixed(2)} -> ${rest.width}`,
+	);
+	renderer.simulateKeystrokes('Escape');
+	kit.step(0);
+	kit.step(600);
+	kit.step(0);
+} finally {
+	renderer.clockResume();
+}
+await kit.settle(300);
+kit.check('the panel scale leaves the menu closed after Escape', !isOpen());
+
 // ─── The home hero ───────────────────────────────────────────────────────────
 
 await kit.click('nav-showcase');

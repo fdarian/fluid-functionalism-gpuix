@@ -66,5 +66,62 @@ for (const position of ['center', 'top'] as const) {
 		);
 	failures += ui.unmount();
 }
+
+// The panel springs from `scale` .97 about its centre, in and out, and the flex centring leaves it on the source's pixels at rest.
+{
+	const ui = await createCheck(() => <Opener position="center" />, {
+		width: 800,
+		height: 600,
+		initialSettleMs: 300,
+	});
+	const panel = () => {
+		const popup = ui.element('popup');
+		for (const id of ui.renderer.getElement(popup.id)?.children ?? []) {
+			const box = ui.renderer.getElementBounds(id);
+			if (box !== null && box.height > 0) return box;
+		}
+		throw new Error('the dialog has no panel');
+	};
+	const open = ui.center('open');
+	ui.renderer.clockPause();
+	try {
+		ui.renderer.nativeSimulateClick(open.x, open.y);
+		ui.step(0);
+		ui.step(0);
+		ui.step(8);
+		const entering = panel();
+		ui.step(600);
+		ui.step(0);
+		const rest = panel();
+		ui.check(
+			'the panel enters smaller than it rests, about its centre',
+			entering.width < rest.width - 0.5 &&
+				entering.height < rest.height - 0.5 &&
+				Math.abs(entering.x + entering.width / 2 - (rest.x + rest.width / 2)) <
+					0.5 &&
+				Math.abs(
+					entering.y + entering.height / 2 - (rest.y + rest.height / 2),
+				) < 0.5,
+			`${entering.width.toFixed(2)} x ${entering.height.toFixed(2)} -> ${rest.width} x ${rest.height}`,
+		);
+		ui.expect(
+			'at rest the panel is 400 wide, centred in 800 x 600',
+			[rest.x, rest.width, rest.y + rest.height / 2],
+			[200, 400, 300],
+		);
+		ui.renderer.simulateKeystrokes('Escape');
+		ui.step(0);
+		ui.step(20);
+		const leaving = panel();
+		ui.check(
+			'closing, the panel shrinks back',
+			leaving.width < rest.width - 0.5,
+			`${leaving.width.toFixed(2)}`,
+		);
+	} finally {
+		ui.renderer.clockResume();
+	}
+	failures += ui.unmount();
+}
 console.log(failures === 0 ? 'all passed' : `${failures} failed`);
 process.exit(failures === 0 ? 0 : 1);

@@ -1416,9 +1416,11 @@ export function CommandMenuDialog(props: {
 					}}
 				/>
 				<motion.div
-					initial={{ opacity: 0, top: -4 }}
+					initial={{ opacity: 0, scale: 0.97 }}
 					animate={
-						presence.open() ? { opacity: 1, top: 0 } : { opacity: 0, top: -4 }
+						presence.open()
+							? { opacity: 1, scale: 1 }
+							: { opacity: 0, scale: 0.97 }
 					}
 					transition={presence.open() ? tween.slow : tween.slowExit}
 					style={{

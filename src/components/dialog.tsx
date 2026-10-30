@@ -194,10 +194,14 @@ export function DialogContent(props: {
 				<Show when={root.modal()}>
 					<HideOutside popup={() => popup} />
 				</Show>
-				{/* The original also scales 0.97 to 1; gpuix has no transforms, so the panel only fades. */}
+				{/* The source centres with `x: -50%` / `y: -50%`; the layer's flex centring puts this box on the same pixels, and `scale` runs about its centre either way. */}
 				<motion.div
-					initial={{ opacity: 0 }}
-					animate={{ opacity: root.shown() ? 1 : 0 }}
+					initial={{ opacity: 0, scale: 0.97 }}
+					animate={
+						root.shown()
+							? { opacity: 1, scale: 1 }
+							: { opacity: 0, scale: 0.97 }
+					}
 					transition={root.shown() ? tween.slow : tween.slowExit}
 					onMotionComplete={() => {
 						if (!root.shown()) root.finish();

@@ -7,15 +7,14 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 
 `modal={false}` matches the source too. Base UI still renders the Backdrop (`fixed inset-0`, no `pointer-events: none`) and counts a press on it as outside, so the scrim takes the press, the page control under it is not pressed, and a press on the trigger lands on the scrim and closes the dialog. The port's `DialogBackdrop` sets `pointerEvents: "auto"` because gpuix's `DialogPortal` sets `"none"` on a non-modal layer; gpuix's own backdrop click then closes it. No drift.
 
-## CSS transforms (scale 0.97 to 1, and the centring)
+## The panel is centred by a flex layer, not `x: -50%` / `y: -50%`
 
-- **Cause:** `gpuix gap`. [README "Missing features": CSS transforms](../README.md#missing-features).
-- **Original:** the panel springs from `scale: 0.97` on enter and back to it on exit, and `x: -50%` / `y: -50%` centre it (`registry/base/dialog.tsx:286-293`, `:271-273`).
-- **Port:** the panel only fades, on `tween.slow` in and `tween.slowExit` out (`src/components/dialog.tsx:198-204`); the scrim fades on the same pair (`:165-177`). A flex layer centres the panel, not a translation (`:147-155`).
-- **gpuix lacks:** `scale` and `translate` as styles (`~/code/fdarian/gpuix/FORK.md:1198-1209`).
-- **Workaround:** the flex layer and the fade.
-- **Fidelity:** approximated (no scale).
-- **Components it hits:** every popup that scales in.
+- **Cause:** `port choice` (gpuix's `Dialog` renders a full-window layer to place the popup in, and the flex centring puts the box on the same pixels).
+- **Original:** the panel is `left-1/2 top-1/2` with `x: "-50%"` / `y: "-50%"` on the Motion element, and springs from `scale: 0.97` with opacity on `spring.slow`, back on `spring.slow.exit` (`registry/base/dialog.tsx:271-273`, `:286-293`).
+- **Port:** the panel springs from `scale: 0.97` and opacity on `tween.slow` in and `tween.slowExit` out, about its own centre (`src/components/dialog.tsx:198-208`); the layer centres it with flex (`:147-155`), `paddingTop` 12vh for `position="top"`. `scripts/check-dialog.tsx` reads the panel at 400 x 70 centred in 800 x 600 at rest.
+- **Workaround:** none needed; the scrim fades on the same pair (`:165-177`).
+- **Fidelity:** exact (the same box and the same origin; only the way it is centred differs).
+- **Components it hits:** just this one; the command menu's dialog centres its panel the same way.
 
 ## Focus lands on the first tab stop one tick after open
 
@@ -39,7 +38,7 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 
 - **Cause:** `port choice` (the overlay is drawn in place because gpuix's `Dialog` renders no element of its own, `src/components/dialog.tsx:80-85`; the 24px reason is not stated).
 - **Original:** `container={element}` portals the overlay and panel into that element, `absolute` instead of `fixed` (`registry/base/dialog.tsx:168-173`, `:213`, `:231`, `:271`). `position="top"` still sits `12dvh` of the viewport down (`:273`).
-- **Port:** `<Dialog scoped>` draws into the nearest `position: relative` ancestor (`src/components/dialog.tsx:236-257`), and `position="top"` sits 24px down when scoped (`:145`, `:153`). The prop is a boolean, not an element.
+- **Port:** `<Dialog scoped>` draws into the nearest `position: relative` ancestor (`src/components/dialog.tsx:240-261`), and `position="top"` sits 24px down when scoped (`:145`, `:153`). The prop is a boolean, not an element.
 - **Workaround:** n/a.
 - **Fidelity:** approximated (same layering; different API and offset).
 - **Components it hits:** just this one.
@@ -48,7 +47,7 @@ Dialog, DialogTrigger, DialogContent (`sm` / `lg` / `xl`, compact, `position`, `
 
 - **Cause:** `not ported yet`.
 - **Original:** `className`, `style`, `ref` and every div attribute pass through, and the docs say `xl` is a canvas for composed layouts: `className="p-0"` plus a fixed height (`registry/base/dialog.tsx:163-166`, `:261-285`, docs `app/docs/dialog/page.tsx:70`). Header, Footer, Title and Description take `className` too (`:325-381`).
-- **Port:** the props are fixed (`size`, `compact`, `showCloseButton`, `position`, `testId`; `src/components/dialog.tsx:125-134`), padding is 24 (`:209`), and Header, Footer, Title and Description take only children (`:260-327`).
+- **Port:** the props are fixed (`size`, `compact`, `showCloseButton`, `position`, `testId`; `src/components/dialog.tsx:125-134`), padding is 24 (`:213`), and Header, Footer, Title and Description take only children (`:264-331`).
 - **Workaround:** none.
 - **Fidelity:** dropped (no zero-padding canvas, so the sidebar block cannot be built).
 - **Components it hits:** just this one.

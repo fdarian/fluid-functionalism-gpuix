@@ -82,21 +82,20 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 - **Fidelity:** exact in effect.
 - **Components it hits:** every fluid list in a scroller.
 
-## Dialog enter and exit
+## Dialog unmounts on the scrim's exit
 
-- **Cause:** `gpuix gap` (the scale).
-- **Original:** the backdrop fades on `spring.slow` (240 ms, exit 160 ms tween); the panel springs from `scale: 0.97` with opacity on `spring.slow` (`registry/base/dialog.tsx:228-239`, `:286-293`).
-- **Port:** the scrim and the panel both use `slow` in / `slowExit` out (240 / 160 ms), as in the source; the panel slides 4 px down in place of the scale (`src/components/command-menu.tsx:1361-1446`). The layer unmounts when the scrim's exit completes (`onMotionComplete`, with a 260 ms timer for an exit that never animates) (`:1359`, `:1406`).
-- **gpuix lacks:** `scale` (no transforms, `~/code/fdarian/gpuix/FORK.md:1198-1209`).
-- **Workaround:** the 4 px slide stands in for the scale.
-- **Fidelity:** approximated (no scale).
-- **Components it hits:** every popup that scales in.
+- **Cause:** `port choice` (the shell is its own `<anchored>` layer, not Base UI's Dialog; see below).
+- **Original:** the backdrop fades on `spring.slow` (240 ms, exit 160 ms tween); the panel springs from `scale: 0.97` with opacity on `spring.slow`, and its `onAnimationComplete` unmounts the dialog (`registry/base/dialog.tsx:228-239`, `:286-293`).
+- **Port:** the scrim and the panel both use `slow` in / `slowExit` out (240 / 160 ms) and the panel scales from `scale: 0.97` about its centre (`src/components/command-menu.tsx:1361-1448`). The layer unmounts when the scrim's exit completes (`onMotionComplete`, with a 260 ms timer for an exit that never animates) (`:1359`, `:1406`); the two exits run together, so it is the same moment.
+- **Workaround:** none needed.
+- **Fidelity:** exact.
+- **Components it hits:** just this one.
 
 ## Dialog shell: no modal semantics, closes on mousedown, thinner props
 
 - **Cause:** `not ported yet`.
 - **Original:** Base UI Dialog: `role="dialog"` named by a screen-reader-only `title` and `description` props, focus trapped and returned to the trigger on close, page scroll locked and the page hidden from the accessibility tree, Escape closes from anywhere, an outside press closes (a click that presses and releases on the backdrop in `drift/dialog.md`), `defaultOpen` and an uncontrolled mode, `modal`, `container` and `className` props (`:1449-1568`).
-- **Port:** its own `<anchored fill="window">` layer, not the ported `Dialog` (`src/components/command-menu.tsx:1361-1446`): no role, title or description; `HideOutside` (`base-ui:src/floating-ui-solid/utils/mark-others.ts:35`, used by `src/components/dialog.tsx:195`) is not used; no focus return; `open` and `onOpenChange` are required; the scrim closes on `mousedown` through `onMouseDownOutside` (`src/components/command-menu.tsx:1433`; the dialog port uses gpuix's `DialogBackdrop`, which closes on a click); Escape works from the field only (`src/components/command-menu.tsx:612-620`).
+- **Port:** its own `<anchored fill="window">` layer, not the ported `Dialog` (`src/components/command-menu.tsx:1361-1448`): no role, title or description; `HideOutside` (`base-ui:src/floating-ui-solid/utils/mark-others.ts:35`, used by `src/components/dialog.tsx:195`) is not used; no focus return; `open` and `onOpenChange` are required; the scrim closes on `mousedown` through `onMouseDownOutside` (`src/components/command-menu.tsx:1435`; the dialog port uses gpuix's `DialogBackdrop`, which closes on a click); Escape works from the field only (`src/components/command-menu.tsx:612-620`).
 - **Workaround:** none.
 - **Fidelity:** approximated (looks and closes the same with the pointer and the field focused).
 - **Components it hits:** just this one.
