@@ -553,8 +553,9 @@ test.unmount();
 	const tile = slides(tileX, tileRest.x, tileEnd);
 	const row = slides(rowY, rowRest.y, rowEnd);
 	report(
-		'the sibling of a removed tile slides into its place',
+		'the sibling of a removed tile slides into its place, from the frame the tile leaves flow',
 		tileRest.x - tileEnd > 20 &&
+			tileX[0] < tileRest.x - 1 &&
 			tile.monotone &&
 			tile.mid >= 1 &&
 			Math.abs(tile.ends - 1) < 0.01,

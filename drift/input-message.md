@@ -8,11 +8,20 @@ One entry per place the port looks or behaves differently from the source, whate
 (CSS transforms, selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
 repeating it.
 
+## A queued row trails the region that moves it
+
+- **Cause:** `gpuix gap` (`~/code/fdarian/gpuix/README.md` "Layout animations": "Layout animations start automatically").
+- **Original:** `QueuedRow` is a `layout` node (a `Reorder.Item`). Motion measures a `layout` box at a React commit, so a row that the files region above it pushes down (a file attached while rows are queued) has not moved at that commit and rides the region's height spring (`input-message.tsx:301-313`, `:1098-1132`).
+- **Port:** `QueuedRow` has `layout` (`input-message.tsx:413`), and gpuix glides every move of a box in layout space, whatever moved it, so the same row starts from where it was last drawn and trails the region. With two rows queued and a file attached the second row's top is at 64.0, 63.9, 65.8 and 71.5 px at 8, 16, 24 and 32 ms, against 70.9, 84.8, 99.5 and 112.5 px without `layout`; both rest at 152 px by about 170 ms. The file tiles do not show it (they sit at the top of their region), and a row that a removal or a reorder moves glides as the source's does (`scripts/check-input-message.tsx`). The probe is `~/.claude/notes/ff-gpuix-repros/layout-ancestor-height/zz-probe-layout.tsx`.
+- **Workaround:** none; dropping `layout` would lose the slide on removal.
+- **Fidelity:** approximated (a 1 to 3 frame lag, only while the files region animates over queued rows).
+- **Components it hits:** queued-stack, chat-message (a message below an animating ancestor).
+
 ## Queue drag-reorder does not follow the pointer
 
 - **Cause:** `not ported yet`.
 - **Original:** `Reorder.Group` / `Reorder.Item` (axis y): the row follows the pointer while the others animate into place; the whole row is the handle (`cursor-grab`, `active:cursor-grabbing`), and a double click anywhere on it edits (`input-message.tsx:301-340,1135-1158`).
-- **Port:** pointer capture on the label region only; the row under the pointer swaps with the one it crosses by a fixed stride of `row + 4` (`dragQueued`, `input-message.tsx:791-797`), nothing follows the cursor, and the file-count icon and padding are not draggable. Double click is `clickCount === 2` on the same region (`:434-448`). The fork has a `Reorder` primitive (`FORK.md:1149-1150`).
+- **Port:** pointer capture on the label region only; the row under the pointer swaps with the one it crosses by a fixed stride of `row + 4` (`dragQueued`, `input-message.tsx:791-797`), nothing follows the cursor (the row it swaps past glides on `layout`, as the source's `Reorder.Item` does), and the file-count icon and padding are not draggable. Double click is `clickCount === 2` on the same region (`:434-448`). The fork has a `Reorder` primitive (`FORK.md:1149-1150`).
 - **Fidelity:** approximated.
 - **Components it hits:** queued-stack.
 
