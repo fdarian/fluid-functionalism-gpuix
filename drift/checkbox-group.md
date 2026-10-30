@@ -14,15 +14,6 @@ Same in both (checked against the code): row height, gap and padding per size (3
 - **Fidelity:** approximated (growing, shrinking and moving runs match; merge and split lose the meeting-in-the-middle choreography).
 - **Components it hits:** just this one (radio-group has a single run). `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` lists merge/split as out of scope only for combobox.
 
-## Hover highlight travels on `left` / `top`
-
-- **Cause:** `gpuix gap`. CSS transforms are missing (README "Missing features" row for transforms, `README.md:279`; `FORK.md:1198-1209`).
-- **Original:** the highlight is pinned at 0,0 and moved with an `x` / `y` transform (`registry/default/fluid-hover-highlight.tsx:74-76,126-131`).
-- **Port:** `FluidHighlight` animates `top` / `left` / `width` / `height` (`fluid-highlight.tsx:92-99`), re-laid out per frame. The look is the same.
-- **Workaround:** layout properties.
-- **Fidelity:** exact in look.
-- **Components it hits:** every `FluidHighlight` list.
-
 ## A surrounding `SizeProvider` is not read
 
 - **Cause:** `not ported yet`.

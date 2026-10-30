@@ -15,15 +15,6 @@ Same in both (checked against the code): row height, gap and padding per size, c
 - **Fidelity:** approximated (same size and timing; the layout is recomputed per frame).
 - **Components it hits:** the README row's scale-in entrances: banner, ask-user-questions, chat-message, input-copy, input-message, queued-stack.
 
-## Hover highlight travels on `left` / `top`
-
-- **Cause:** `gpuix gap`. CSS transforms (README "Missing features" row, `README.md:279`; `FORK.md:1198-1209`).
-- **Original:** the highlight is moved with an `x` / `y` transform (`registry/default/fluid-hover-highlight.tsx:74-76,126-131`).
-- **Port:** `FluidHighlight` animates `top` / `left` / `width` / `height` (`fluid-highlight.tsx:92-99`). The look is the same.
-- **Workaround:** layout properties.
-- **Fidelity:** exact in look.
-- **Components it hits:** every `FluidHighlight` list.
-
 ## An explicit `size` does not scope the parts inside
 
 - **Cause:** `not ported yet` (the port has no provider; the ambient size is the Size row, `sizeChoice()` in `src/lib/theme.ts`).

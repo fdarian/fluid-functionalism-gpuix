@@ -82,15 +82,6 @@ Ported: items as data with groups, suggestions, filter and keywords, the fluid h
 - **Fidelity:** exact in effect.
 - **Components it hits:** every fluid list in a scroller.
 
-## Highlight travel animates `top` / `left`, not a transform
-
-- **Cause:** `gpuix gap` (shared; transforms, see README "Missing features" row "CSS transforms").
-- **Original:** the fill is pinned to the padding corner and moved with `x` / `y` on the compositor (`registry/default/fluid-hover-highlight.tsx:74-76`, `:128-134`).
-- **Port:** `motion` on `top` / `left` / `width` / `height`, re-laying out per frame (`src/lib/fluid-highlight.tsx:83-100`).
-- **Workaround:** n/a.
-- **Fidelity:** approximated.
-- **Components it hits:** every fluid list.
-
 ## Dialog enter and exit
 
 - **Cause:** `gpuix gap` (the scale).

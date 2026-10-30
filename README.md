@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 537 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 530 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -197,13 +197,13 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [badge](drift/badge.md) | 0 | 3 | 0 | 0 | 3 |
 | [banner](drift/banner.md) | 4 | 4 | 6 | 0 | 14 |
 | [button](drift/button.md) | 2 | 4 | 1 | 1 | 8 |
-| [card](drift/card.md) | 2 | 7 | 6 | 0 | 15 |
+| [card](drift/card.md) | 1 | 7 | 6 | 0 | 14 |
 | [carousel-dots](drift/carousel-dots.md) | 2 | 4 | 2 | 0 | 8 |
 | [chat-message](drift/chat-message.md) | 2 | 5 | 2 | 1 | 10 |
-| [checkbox-group](drift/checkbox-group.md) | 1 | 0 | 3 | 1 | 5 |
+| [checkbox-group](drift/checkbox-group.md) | 0 | 0 | 3 | 1 | 4 |
 | [color-picker](drift/color-picker.md) | 2 | 5 | 15 | 1 | 23 |
-| [combobox](drift/combobox.md) | 4 | 13 | 5 | 2 | 24 |
-| [command-menu](drift/command-menu.md) | 4 | 2 | 12 | 1 | 19 |
+| [combobox](drift/combobox.md) | 3 | 13 | 5 | 2 | 23 |
+| [command-menu](drift/command-menu.md) | 3 | 2 | 12 | 1 | 18 |
 | [compare](drift/compare.md) | 2 | 8 | 1 | 2 | 13 |
 | [concepts](drift/concepts.md) | 1 | 26 | 2 | 1 | 30 |
 | [dialog](drift/dialog.md) | 2 | 2 | 2 | 1 | 7 |
@@ -219,10 +219,10 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [motion-page](drift/motion-page.md) | 2 | 3 | 1 | 2 | 8 |
 | [nav-menu](drift/nav-menu.md) | 0 | 5 | 1 | 0 | 6 |
 | [queued-stack](drift/queued-stack.md) | 3 | 3 | 3 | 1 | 10 |
-| [radio-group](drift/radio-group.md) | 2 | 2 | 2 | 0 | 6 |
+| [radio-group](drift/radio-group.md) | 1 | 2 | 2 | 0 | 5 |
 | [scroll-area](drift/scroll-area.md) | 2 | 5 | 1 | 1 | 9 |
 | [scrollbars-page](drift/scrollbars-page.md) | 0 | 4 | 2 | 0 | 6 |
-| [select](drift/select.md) | 4 | 3 | 6 | 2 | 15 |
+| [select](drift/select.md) | 3 | 3 | 6 | 2 | 14 |
 | [sidebar](drift/sidebar.md) | 1 | 8 | 19 | 1 | 29 |
 | [site](drift/site.md) | 4 | 14 | 21 | 7 | 46 |
 | [sizes-page](drift/sizes-page.md) | 0 | 5 | 3 | 3 | 11 |
@@ -230,14 +230,14 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [slider](drift/slider.md) | 4 | 3 | 2 | 1 | 10 |
 | [surfaces](drift/surfaces.md) | 2 | 3 | 4 | 3 | 12 |
 | [switch](drift/switch.md) | 1 | 1 | 2 | 1 | 5 |
-| [table](drift/table.md) | 1 | 1 | 3 | 0 | 5 |
+| [table](drift/table.md) | 0 | 1 | 3 | 0 | 4 |
 | [tabs-subtle](drift/tabs-subtle.md) | 0 | 3 | 2 | 0 | 5 |
 | [tabs](drift/tabs.md) | 0 | 2 | 2 | 0 | 4 |
 | [thinking-indicator](drift/thinking-indicator.md) | 2 | 2 | 1 | 0 | 5 |
 | [thinking-steps](drift/thinking-steps.md) | 4 | 4 | 5 | 0 | 13 |
 | [tooltip](drift/tooltip.md) | 1 | 5 | 1 | 1 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **84** | **213** | **191** | **49** | **537** |
+| **Total** | **77** | **213** | **191** | **49** | **530** |
 
 ### gpuix gaps across components
 
@@ -347,7 +347,7 @@ now does that the port has not picked up.
 | spring `fast` / `moderate` (`motion/react`) | native `motion` spring, `{ type: "spring", duration: 0.08 / 0.16, bounce: 0 }`, velocity kept when the target changes mid-flight | Exact; `slow` (bounce 0.12, the exit 160 ms) drives the command menu's dialog and the banner |
 | exits (`spring.fast.exit` …) | plain tweens, 60 ms / 120 ms, like the source | Exact |
 | "snap, don't spring" on a reflow | a zero-length tween | Exact |
-| `translate` / `x`,`y` travel of the highlight | `motion` on `top` / `left` / `width` / `height` (the only layout props it animates) | Equivalent, but it re-lays out per frame |
+| `translate` / `x`,`y` travel of the highlight | `motion` on `x` / `y` with `width` / `height` as box properties, pinned at `top: 0; left: 0` (`src/lib/fluid-highlight.tsx:10-18`) | Exact |
 | `scaleY: 0.96` on popup enter | not possible, no transforms. Opacity plus the 4px slide stay (`top` −4 → 0) | Partly dropped |
 | `z-index` (`z-10` rows over the highlights, `z-20` rings, `z-30` card actions, `-z-10` fills, `z-50` the Beacon popover) | `zIndex` on the element the source puts it on, positioned or a flex or grid item. gpuix orders it across stacking contexts as CSS 2 Appendix E (FORK.md Area C, "`zIndex` across stacking contexts"), so a control takes its `zIndex` inside a plain wrapper and a popover in a positioned box rises over a later sibling. An element that sets only `opacity`, `filter`, `mask` or `clip-path` forms a context as in CSS. Residuals: `getElementsAt` reads declared styles, so a `zIndex` a state style or a motion value sets is not seen there; the children of a custom element take no `zIndex` without a `position` | Exact |
 | press-shrink: inset-px layer plus same-colour `box-shadow` spread | the element carries `margin: 1` and holds a `PressFill`: an absolutely positioned quad 1px outside it, with no `zIndex` and no stacking context, whose edges `groupActive` pulls to the element's own. The label is a `position: relative` box after the fill, so it paints over it as the source's `relative` label span does | Exact at rest and pressed; the edge steps at a pixel boundary instead of easing (quads snap to device pixels), over the same 80 / 180 ms |

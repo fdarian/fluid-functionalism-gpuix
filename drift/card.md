@@ -89,16 +89,6 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 - **Fidelity:** exact for the resting pose, no rotation tween.
 - **Components it hits:** any rotated glyph.
 
-## The highlight travels on `top` / `left`, not a transform
-
-- **Cause:** `gpuix gap`.
-- **Original:** `FluidHoverHighlight` moves with `x` / `y` transforms on the compositor (`registry/default/fluid-hover-highlight.tsx:72-76`, `:120-133`).
-- **Port:** `FluidHighlight` animates `top`, `left`, `width` and `height` (`src/lib/fluid-highlight.tsx:10-17`, `:92-99`), re-laying out per frame.
-- **gpuix lacks:** transforms (`FORK.md:1198-1209`); see the CSS transforms row in README.
-- **Workaround:** layout props.
-- **Fidelity:** approximated (same path and spring, more work per frame).
-- **Components it hits:** every fluid hover list.
-
 ## The image rounds its own corners to the tile
 
 - **Cause:** `port choice` (reason not stated; the tile also sets `overflow: "hidden"` and a radius at `:366-367`).

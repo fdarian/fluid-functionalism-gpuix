@@ -14,16 +14,6 @@ Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/lis
 - **Fidelity:** approximated.
 - **Components it hits:** dropdown, combobox, color-picker, tooltip, dialog.
 
-## Highlights travel on `top` / `left`, not a transform
-
-- **Cause:** `gpuix gap`.
-- **Original:** the hover pill is pinned at 0,0 and moved with `x` / `y` transforms, so travel stays on the compositor (`fluid-hover-highlight.tsx:121-131`).
-- **Port:** the pill animates `top` / `left` / `width` / `height`, which re-lays out per frame (`fluid-highlight.tsx:81-88`).
-- **gpuix lacks:** transforms (README, CSS transforms row; translation table "translate / x,y travel").
-- **Workaround:** none needed visually.
-- **Fidelity:** approximated (same path, different cost).
-- **Components it hits:** every fluid hover list.
-
 ## Form value is a real, invisible input
 
 - **Cause:** `gpuix gap`.

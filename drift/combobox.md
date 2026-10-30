@@ -46,16 +46,6 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Fidelity:** approximated.
 - **Components it hits:** select, dropdown, color-picker, tooltip, dialog.
 
-## Highlights travel on `top` / `left`, not a transform
-
-- **Cause:** `gpuix gap`.
-- **Original:** the hover and checked pills are pinned at 0,0 and moved with `x` / `y` (`fluid-hover-highlight.tsx:121-131`; checked marker `combobox.tsx:1023-1039`).
-- **Port:** both animate `top` / `left` / `width` / `height` (`src/lib/fluid-highlight.tsx:92-99`, used at `src/components/combobox.tsx:352-367`).
-- **gpuix lacks:** transforms; see README "Missing features", CSS transforms row, and `drift/select.md`.
-- **Workaround:** none needed visually.
-- **Fidelity:** approximated (same path, different cost).
-- **Components it hits:** every fluid hover list.
-
 ## Hovering a focused field
 
 - **Cause:** `port choice` (reason not stated).
@@ -77,7 +67,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `not ported yet`.
 - **Original:** the hover and checked pills fade their opacity on a fixed 0.08s tween whatever the positional spring (`fluid-hover-highlight.tsx:82-96`; checked: `combobox.tsx:1035-1041`). The checked pill mounts with `initial={false}`, so it is simply there when the popup opens. All three overlays are torn down as the close begins (`open && ...`, `combobox.tsx:1010-1046`).
-- **Port:** one transition covers position and opacity (`src/lib/fluid-highlight.tsx:69-75`), so the checked pill's fade is the 160ms `moderate` spring and it fades in from `opacity: 0` on every open (`:93`). The overlays stay mounted through the exit fade (`src/components/combobox.tsx:352-367`).
+- **Port:** one transition covers position and opacity (`src/lib/fluid-highlight.tsx:70-76`), so the checked pill's fade is the 160ms `moderate` spring and it fades in from `opacity: 0` on every open (`:93`). The overlays stay mounted through the exit fade (`src/components/combobox.tsx:352-367`).
 - **Workaround:** none; the popup's own 80ms fade covers most of it.
 - **Fidelity:** approximated.
 - **Components it hits:** select, dropdown (every `FluidHighlight` user).

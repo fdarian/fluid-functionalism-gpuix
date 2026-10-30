@@ -28,7 +28,7 @@ Checked and equal: row height 32 / 28 (compact), `px` 12, icon 16 / 14 with an 8
 
 - **Cause:** `not ported yet` (`FluidHighlight` always starts at opacity 0).
 - **Original:** the active-route background has `initial={false}`, so it is on the first frame at its row, and only later route changes glide it (`nav-menu.tsx:159-171`).
-- **Port:** `FluidHighlight` mounts at opacity 0 and the spring brings it to 1 (`src/lib/fluid-highlight.tsx:51-67`), so a frame mounted on a concept page shows the active row's fill coming in over about 160 ms.
+- **Port:** `FluidHighlight` mounts at opacity 0 and the spring brings it to 1 (`src/lib/fluid-highlight.tsx:52-68`), so a frame mounted on a concept page shows the active row's fill coming in over about 160 ms.
 - **Workaround:** none.
 - **Fidelity:** approximated (a 160 ms fade on mount only).
 - **Components it hits:** sidebar, dropdown (any `FluidHighlight` that is mounted already on).
