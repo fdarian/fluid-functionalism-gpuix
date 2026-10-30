@@ -85,7 +85,6 @@ export function BentoCard(props: {
 				ref={culling.ref}
 				style={{
 					flexGrow: 1,
-					// `'0%'` is the source's `flex-1`; `0` would hit gpuix #96.
 					flexBasis: '0%',
 					...culling.style(),
 					minHeight: 0,

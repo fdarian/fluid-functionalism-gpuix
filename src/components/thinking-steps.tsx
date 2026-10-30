@@ -482,7 +482,6 @@ export function ThinkingStepDetails(props: {
 		defaultOpen: props.defaultOpen ?? false,
 	});
 	return (
-		// A block, as the source's `mt-1 -ml-3`. A column flex container with a negative horizontal margin makes gpuix keep a wrapped first pass's height for a `fit-content` child (the trigger wrapper), +20px.
 		<div style={{ marginTop: 4, marginLeft: -12 }}>
 			<TriggerRow
 				collapsible={collapsible}
