@@ -32,25 +32,8 @@ const MODAL_CODE = `// Both modals open on spring.slow. Only the exit differs.
 /** The slow exit `{ duration: 0.4 }`: as long as the enter. */
 const SAME_EXIT = { duration: 0.4 } satisfies MotionTransition;
 
-/**
- * `w-4/5` and the card's natural height (a 1px border, 16px of padding, a 12px
- * title, three 8px lines, a 24px footer, 4 + 12px of extra margin and four
- * 10px gaps). There is no `scale`, so the card grows 95% to 100% in both
- * dimensions instead.
- */
-const CARD_WIDTH = 80;
-const CARD_HEIGHT = 150;
-const CARD_SCALE = 0.95;
-const CARD_AT = {
-	opacity: 1,
-	width: `${CARD_WIDTH}%`,
-	height: CARD_HEIGHT,
-} as const;
-const CARD_AWAY = {
-	opacity: 0,
-	width: `${CARD_WIDTH * CARD_SCALE}%`,
-	height: CARD_HEIGHT * CARD_SCALE,
-} as const;
+const CARD_AT = { opacity: 1, scale: 1 } as const;
+const CARD_AWAY = { opacity: 0, scale: 0.95 } as const;
 
 /** Buffer after the exit tween, like FF's `exitFallbackMs`. */
 const EXIT_BUFFER_MS = 100;
@@ -121,11 +104,11 @@ function ModalFrame(props: {
 					transition={transition()}
 					style={{
 						position: 'relative',
+						width: '80%',
 						display: 'flex',
 						flexDirection: 'column',
 						gap: 10,
 						padding: 16,
-						overflow: 'hidden',
 						borderRadius: 12,
 						borderStyle: 'solid',
 						borderWidth: 1,

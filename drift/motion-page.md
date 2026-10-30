@@ -6,18 +6,7 @@ Ported in `src/pages/motion.tsx`, with the three demos in `src/pages/motion/` (`
 `spring-reference.tsx`, `install-prompt.ts`) and the page chrome in the shared `src/lib/doc-page.tsx`, routed by the page registry (`src/lib/demo.ts` `loadPages`).
 
 One entry per place the port looks or behaves differently from the source, whatever the cause. Shared gpuix gaps
-(CSS transforms, selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
-repeating it.
-
-## The modal card does not scale, it grows in width and height
-
-- **Cause:** `gpuix gap`: no transforms (README "Drift from the source", the CSS-transforms row; `FORK.md` area E, "Not built: size morphs, scale and rotate").
-- **Original:** the card enters and leaves with `scale: 0.95` to `1` plus opacity, on `spring.slow` in and the tier's exit tween out (`app/docs/motion/page.tsx:327-330`).
-- **Port:** `width` animates `76%` to `80%` and `height` `142.5` to `150` (95% of each) with the opacity, on the same transitions (`src/pages/motion/modal-exit.tsx:40-55`). The card is centered, so it grows from its middle like a scale about the center. The card clips its content (`overflow: hidden`), so the footer is cut by up to 7px at the smallest size, where the card is transparent. The inner lines and padding stay full size instead of shrinking with the card.
-- **gpuix lacks:** `transform` / `scale` on quads, shadows and hitboxes (`FORK.md` area E "Not built: size morphs, scale and rotate").
-- **Workaround:** the width and height animation above.
-- **Fidelity:** approximated.
-- **Components it hits:** every enter that scales in the source (dialog, popups).
+(selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of repeating it.
 
 ## An exit is the demo's own transition swap, not `AnimatePresence`'s `exit` transition
 
