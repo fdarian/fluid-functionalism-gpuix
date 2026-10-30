@@ -1,4 +1,5 @@
 import {
+	createMotionValue,
 	DismissableLayer,
 	type HostElement,
 	type HostMouseEvent,
@@ -16,7 +17,7 @@ import {
 	TooltipProviderContext,
 	useTooltipProvider,
 } from 'base-ui-solid-gpuix/tooltip';
-import { createSignal, type JSX, Show } from 'solid-js';
+import { createEffect, type JSX, Show } from 'solid-js';
 import { POPUP_EXIT_FALLBACK_MS } from '#/lib/popup-timing';
 import {
 	capTrim,
@@ -111,7 +112,14 @@ export function Tooltip(props: {
 	const presence = root.presence;
 	const trigger = createTooltipTrigger(root, { side: placement.side });
 	const popup = createTooltipPopup(trigger);
-	const [followOffset, setFollowOffset] = createSignal({ x: 0, y: 0 });
+	// The cursor's offset from the trigger's centre, on the box around the chip so it does not fight the chip's own slide.
+	const followOffset = createMotionValue(0);
+	// A force-opened tooltip has no cursor to follow: it rests centred until a real pointer takes over.
+	createEffect(() => {
+		if (props.forceOpen === true && props.followCursor !== undefined) {
+			followOffset.set(0);
+		}
+	});
 	let wrapper: HostElement | undefined;
 
 	const followPointer = (event: HostMouseEvent) => {
@@ -119,10 +127,10 @@ export function Tooltip(props: {
 		if (wrapper === undefined) throw new Error('Tooltip is not mounted');
 		const bounds = wrapper.getBoundingClientRect();
 		if (event.x === undefined || event.y === undefined) return;
-		setFollowOffset(
+		followOffset.set(
 			props.followCursor === 'x'
-				? { x: event.x - (bounds.x + bounds.width / 2), y: 0 }
-				: { x: 0, y: event.y - (bounds.y + bounds.height / 2) },
+				? event.x - (bounds.x + bounds.width / 2)
+				: event.y - (bounds.y + bounds.height / 2),
 		);
 	};
 
@@ -157,7 +165,6 @@ export function Tooltip(props: {
 					align="center"
 					fit="flip"
 					gap={props.sideOffset ?? 8}
-					offset={props.forceOpen === true ? undefined : followOffset()}
 					snapMargin={POPUP_MARGIN}
 					onPlacement={placement.onPlacement}
 					deferred
@@ -165,47 +172,57 @@ export function Tooltip(props: {
 					style={{ backgroundColor: color.transparent }}
 				>
 					<motion.div
-						testId={
-							props.testId === undefined ? undefined : `${props.testId}-chip`
+						style={
+							props.followCursor === 'x'
+								? { x: followOffset }
+								: props.followCursor === 'y'
+									? { y: followOffset }
+									: {}
 						}
-						// The chip is hoverable, like Base UI's popup: reaching it keeps the tooltip open.
-						ref={popup.ref}
-						{...popup.props}
-						initial={{ opacity: 0, ...slideFrom(side()) }}
-						animate={
-							presence.open()
-								? { opacity: 1, x: 0, y: 0 }
-								: { opacity: 0, ...slideFrom(side()) }
-						}
-						transition={presence.open() ? tween.fast : tween.fastExit}
-						onMotionComplete={() => {
-							if (!presence.open()) presence.release();
-						}}
-						style={{
-							position: 'relative',
-							backgroundColor: color.foreground,
-							borderRadius: shape.bg,
-							paddingLeft: 8,
-							paddingRight: 8,
-							paddingTop: 8,
-							paddingBottom: 8,
-							textBox: capTrim,
-						}}
 					>
-						<Show
-							when={typeof props.content === 'string'}
-							fallback={props.content}
+						<motion.div
+							testId={
+								props.testId === undefined ? undefined : `${props.testId}-chip`
+							}
+							// The chip is hoverable, like Base UI's popup: reaching it keeps the tooltip open.
+							ref={popup.ref}
+							{...popup.props}
+							initial={{ opacity: 0, ...slideFrom(side()) }}
+							animate={
+								presence.open()
+									? { opacity: 1, x: 0, y: 0 }
+									: { opacity: 0, ...slideFrom(side()) }
+							}
+							transition={presence.open() ? tween.fast : tween.fastExit}
+							onMotionComplete={() => {
+								if (!presence.open()) presence.release();
+							}}
+							style={{
+								position: 'relative',
+								backgroundColor: color.foreground,
+								borderRadius: shape.bg,
+								paddingLeft: 8,
+								paddingRight: 8,
+								paddingTop: 8,
+								paddingBottom: 8,
+								textBox: capTrim,
+							}}
 						>
-							<text
-								style={{
-									...scale.caption,
-									color: color.background,
-									whiteSpace: 'nowrap',
-								}}
+							<Show
+								when={typeof props.content === 'string'}
+								fallback={props.content}
 							>
-								{props.content as string}
-							</text>
-						</Show>
+								<text
+									style={{
+										...scale.caption,
+										color: color.background,
+										whiteSpace: 'nowrap',
+									}}
+								>
+									{props.content as string}
+								</text>
+							</Show>
+						</motion.div>
 					</motion.div>
 				</anchored>
 			</Show>
