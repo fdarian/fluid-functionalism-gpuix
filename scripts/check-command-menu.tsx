@@ -13,7 +13,7 @@
  */
 
 import { formatShortcut } from '#/components/command-menu';
-import { setSizeChoice } from '#/lib/theme';
+import { color, setSizeChoice } from '#/lib/theme';
 import { createCheck } from './check-kit';
 
 const kit = await createCheck('command-menu');
@@ -716,6 +716,23 @@ kit.check(
 
 // ─── The panel scales in about its centre ───────────────────────────────────
 
+/** The id of the first row below the site menu's list, by test id. */
+const firstRowId = () => {
+	const walk = (id: number): number | undefined => {
+		const node = renderer.getElement(id);
+		if (node === undefined) throw new Error(`no element ${id}`);
+		if (node.testId?.startsWith('site-menu-row-') === true) return node.id;
+		for (const child of node.children) {
+			const found = walk(child);
+			if (found !== undefined) return found;
+		}
+		return undefined;
+	};
+	const found = walk(kit.element('site-menu-list').id);
+	if (found === undefined) throw new Error('the site menu has no rows');
+	return found;
+};
+
 await kit.settle(300);
 renderer.clockPause();
 try {
@@ -724,9 +741,43 @@ try {
 	kit.step(0);
 	kit.step(8);
 	const entering = kit.bounds('site-menu-input');
+	const hoveredRow = firstRowId();
+	const rowBox = renderer.getElementBounds(hoveredRow);
+	if (rowBox === null) throw new Error('the first row has no box');
+	const rowPoint = {
+		x: rowBox.x + rowBox.width / 2,
+		y: rowBox.y + rowBox.height / 2,
+	};
+	renderer.nativeSimulateMouseMove(rowPoint.x - 1, rowPoint.y);
+	renderer.nativeSimulateMouseMove(rowPoint.x, rowPoint.y);
+	kit.step(0);
+	kit.step(4);
 	kit.step(600);
 	kit.step(0);
 	const rest = kit.bounds('site-menu-input');
+	const litBoxes: number[] = [];
+	const collect = (id: number) => {
+		const node = renderer.getElement(id);
+		if (node === undefined) return;
+		if (node.style.backgroundColor === color.hover) litBoxes.push(id);
+		for (const child of node.children) collect(child);
+	};
+	collect(kit.element('site-menu-list').id);
+	const row = renderer.getElementBounds(hoveredRow);
+	if (row === null) throw new Error('the first row has no box');
+	const lit =
+		litBoxes.length === 1 ? renderer.getElementBounds(litBoxes[0]) : null;
+	kit.check(
+		'a hover that landed while the panel scaled in leaves the highlight on its row',
+		lit !== null &&
+			Math.abs(lit.x - row.x) <= 0.5 &&
+			Math.abs(lit.y - row.y) <= 0.5 &&
+			Math.abs(lit.width - row.width) <= 0.5 &&
+			Math.abs(lit.height - row.height) <= 0.5,
+		lit === null
+			? `${litBoxes.length} hover fills`
+			: `fill ${lit.x},${lit.y} ${lit.width}x${lit.height}, row ${row.x},${row.y} ${row.width}x${row.height}`,
+	);
 	kit.check(
 		'the panel enters smaller than it rests, about its centre',
 		entering.width < rest.width - 0.5 &&
