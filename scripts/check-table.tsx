@@ -257,8 +257,8 @@ const above = (check: Check, testId: string): Point => {
 type Frame = { y: number; height: number };
 type Glide = {
 	frames: Frame[];
-	/** Layout subtrees rebuilt over the glide. */
-	builds: number;
+	/** Nodes the layout pass computed over the glide: the highlight moves by a transform, so none. The retained builds of the paint unit (the collapsed table) are not layout work and are not counted. */
+	nodesLaidOut: number;
 	nodesCreated: number;
 	nodesRemoved: number;
 };
@@ -268,7 +268,6 @@ function trace(check: Check, highlight: number, to: Point, count: number) {
 	const renderer = check.renderer;
 	const frames: Frame[] = [];
 	renderer.clockPause();
-	const retainedBefore = renderer.getRetainedCounters();
 	const layoutBefore = renderer.getLayoutCounters();
 	renderer.nativeSimulateMouseMove(to.x - 1, to.y);
 	renderer.nativeSimulateMouseMove(to.x, to.y);
@@ -282,7 +281,7 @@ function trace(check: Check, highlight: number, to: Point, count: number) {
 	const layoutAfter = renderer.getLayoutCounters();
 	return {
 		frames,
-		builds: renderer.getRetainedCounters().builds - retainedBefore.builds,
+		nodesLaidOut: layoutAfter.nodesLaidOut - layoutBefore.nodesLaidOut,
 		nodesCreated: layoutAfter.nodesCreated - layoutBefore.nodesCreated,
 		nodesRemoved: layoutAfter.nodesRemoved - layoutBefore.nodesRemoved,
 	} satisfies Glide;
@@ -309,7 +308,7 @@ function summary(glide: Glide) {
 		reversals,
 		stalls,
 		moving,
-		builds: glide.builds,
+		nodesLaidOut: glide.nodesLaidOut,
 		nodesCreated: glide.nodesCreated,
 		nodesRemoved: glide.nodesRemoved,
 		ys: frames.map((f) => f.y.toFixed(0)).join(' '),
@@ -317,9 +316,11 @@ function summary(glide: Glide) {
 }
 type Summary = ReturnType<typeof summary>;
 const noLayoutWork = (value: Summary) =>
-	value.builds === 0 && value.nodesCreated === 0 && value.nodesRemoved === 0;
+	value.nodesLaidOut === 0 &&
+	value.nodesCreated === 0 &&
+	value.nodesRemoved === 0;
 const show = (value: Summary) =>
-	`travel ${value.travel.toFixed(0)}px over ${value.moving} frames [${value.ys}], ${value.reversals} reversals, ${value.stalls} stalls, ${value.builds} builds, ${value.nodesCreated} nodes created, ${value.nodesRemoved} removed`;
+	`travel ${value.travel.toFixed(0)}px over ${value.moving} frames [${value.ys}], ${value.reversals} reversals, ${value.stalls} stalls, ${value.nodesLaidOut} nodes laid out, ${value.nodesCreated} nodes created, ${value.nodesRemoved} removed`;
 
 /** Hovers `fromId`, then moves the pointer to `toId` with the clock held. */
 async function glideOf(
