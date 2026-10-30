@@ -310,16 +310,6 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Fidelity:** approximated (the diff structure, without syntax colours).
 - **Components it hits:** the Changelog page's Breaking entries.
 
-## Changelog: transforms are drawn by size and margin
-
-- **Cause:** `gpuix gap` (CSS transforms; see the README row).
-- **Original:** the month in view grows its timeline dot with `animate={{ scale: 1.3 }}` on `spring.moderate`, held centred by `-translate-y-1/2`; an entry's name has an arrow that nudges `translate-x-0.5` on hover (`app/changelog/changelog-view.tsx:181-206,336-345`).
-- **Port:** the dot animates its box: width and height, the offset that keeps it centred, the radius and the ring's spread, each moved by the same 1.3 on `tween.moderate`, so it stays one `motion.div` (`src/pages/changelog/release-section.tsx:15-45, 61-89`). The arrow's nudge is a 2px `marginLeft` (`src/pages/changelog/entry.tsx:86-133`).
-- **gpuix lacks:** CSS transforms: no scale or translate (README "CSS transforms" row).
-- **Workaround:** the size animation and the margin.
-- **Fidelity:** approximated (the same ends and spring; the dot is redrawn at each size, so its ring and radius move with it).
-- **Components it hits:** the Changelog page; the README row lists the rest.
-
 ## Changelog: the Sizes preview stage has no horizontal padding
 
 - **Cause:** `port choice` (the preview itself is wider in the port: its Select trigger is 16px wider than the source's, see `drift/select.md`).

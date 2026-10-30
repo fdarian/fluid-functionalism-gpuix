@@ -49,6 +49,29 @@ kit.check(
 	painted('changelog-link-fluid-hover'),
 );
 
+// The month in view grows its dot to 1.3 about its centre (`scale`, held on the title line's middle by `translate: 0 -50%`).
+const dotOf = (month: string) => {
+	const box = kit.bounds(`changelog-dot-${month}`);
+	return {
+		size: box.width,
+		centreX: box.x + box.width / 2,
+		centreY: box.y + box.height / 2,
+	};
+};
+const grown = dotOf('2026-09');
+const resting = dotOf('2026-08');
+kit.check(
+	'the month in view has its dot at 1.3 times the others',
+	Math.abs(grown.size - 6.5) < 0.1 && Math.abs(resting.size - 5) < 0.1,
+	`${grown.size} and ${resting.size}`,
+);
+const headingBox = kit.bounds('changelog-heading-2026-09');
+kit.check(
+	'the grown dot stays centred on its title line',
+	Math.abs(grown.centreY - (headingBox.y + headingBox.height / 2)) < 1.5,
+	`${grown.centreY} against ${headingBox.y + headingBox.height / 2}`,
+);
+
 await kit.click('release-row-2026-08');
 await kit.settle(2500);
 kit.expect('the clicked month is the one in view', activeMonth(), '2026-08');

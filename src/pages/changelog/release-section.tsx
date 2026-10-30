@@ -21,29 +21,6 @@ const DOT_SIZE = 5;
 const ACTIVE_DOT_SCALE = 1.3;
 const DOT_RING = 3;
 
-/**
- * The dot at `scale` about its centre. gpuix animates no transform, so the
- * scale is the box's size, its offset to stay centred, its radius and the ring
- * that cuts the timeline's line, each moved by the same factor.
- */
-function dot(scale: number, centreY: number) {
-	const size = DOT_SIZE * scale;
-	return {
-		left: DOT_SIZE / 2 - size / 2,
-		top: centreY - size / 2,
-		width: size,
-		height: size,
-		borderRadius: size / 2,
-		boxShadow: {
-			offsetX: 0,
-			offsetY: 0,
-			blurRadius: 0,
-			spreadRadius: DOT_RING * scale,
-			color: color.background,
-		},
-	};
-}
-
 function releasedLabel(day: string): string {
 	return new Date(
 		Date.UTC(
@@ -63,7 +40,11 @@ function releasedLabel(day: string): string {
  * Each month draws its own stretch of the line: the first starts at its dot,
  * and the last runs on to the end of the page.
  */
-function TimelineMark(props: { first: boolean; active: boolean }) {
+function TimelineMark(props: {
+	month: string;
+	first: boolean;
+	active: boolean;
+}) {
 	const reduced = createReducedMotion();
 	const dotY = () => (props.first ? DOT_Y() : DOT_Y_DIVIDED());
 	return (
@@ -79,9 +60,26 @@ function TimelineMark(props: { first: boolean; active: boolean }) {
 				}}
 			/>
 			<motion.div
-				style={{ position: 'absolute', backgroundColor: color.foreground }}
+				testId={`changelog-dot-${props.month}`}
+				style={{
+					position: 'absolute',
+					left: 0,
+					top: dotY(),
+					width: DOT_SIZE,
+					height: DOT_SIZE,
+					borderRadius: DOT_SIZE / 2,
+					translate: '0 -50%',
+					backgroundColor: color.foreground,
+					boxShadow: {
+						offsetX: 0,
+						offsetY: 0,
+						blurRadius: 0,
+						spreadRadius: DOT_RING,
+						color: color.background,
+					},
+				}}
 				initial={false}
-				animate={dot(props.active ? ACTIVE_DOT_SCALE : 1, dotY())}
+				animate={{ scale: props.active ? ACTIVE_DOT_SCALE : 1 }}
 				transition={reduced() ? tween.snap : tween.moderate}
 			/>
 		</>
@@ -217,6 +215,7 @@ export function ReleaseSection(props: {
 			}}
 		>
 			<TimelineMark
+				month={props.release.month}
 				first={props.first}
 				active={activeMonth() === props.release.month}
 			/>

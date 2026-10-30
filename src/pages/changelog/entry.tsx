@@ -126,8 +126,8 @@ function NameLink(props: { name: string; slug: string }) {
 			</text>
 			<div
 				style={{
-					marginLeft: hovered() ? 2 : 0,
-					transitionProperty: 'margin-left',
+					translate: hovered() ? '2px 0' : '0 0',
+					transitionProperty: 'translate',
 					transitionDuration: '80ms',
 				}}
 			>

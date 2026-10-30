@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 502 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 501 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -224,7 +224,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [scrollbars-page](drift/scrollbars-page.md) | 0 | 4 | 2 | 0 | 6 |
 | [select](drift/select.md) | 3 | 3 | 6 | 2 | 14 |
 | [sidebar](drift/sidebar.md) | 0 | 8 | 19 | 1 | 28 |
-| [site](drift/site.md) | 4 | 14 | 21 | 7 | 46 |
+| [site](drift/site.md) | 3 | 14 | 21 | 7 | 45 |
 | [sizes-page](drift/sizes-page.md) | 0 | 5 | 3 | 3 | 11 |
 | [skill-page](drift/skill-page.md) | 2 | 5 | 0 | 1 | 8 |
 | [slider](drift/slider.md) | 3 | 3 | 2 | 1 | 9 |
@@ -237,7 +237,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 3 | 4 | 5 | 0 | 12 |
 | [tooltip](drift/tooltip.md) | 0 | 6 | 1 | 0 | 7 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **49** | **218** | **189** | **46** | **502** |
+| **Total** | **48** | **218** | **189** | **46** | **501** |
 
 ### gpuix gaps across components
 
@@ -276,7 +276,7 @@ offer it. A count is given only where the code shows it.
 
 | Used by | What | Workaround here |
 |---|---|---|
-| the changelog's month dot (scale) and entry-name arrow (translate) | CSS transforms: no scale, rotate or translate, so every turn and pop is impossible (Base UI audit rows 530, 617). | Glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom`. The demo's label slides on `left` / `right` (`src/demos/carousel-dots.tsx:67-74`; the source's `x`, `lib/docs/slide-direction.ts:16-18`), the same gap. |
+| the carousel-dots demo's label | CSS transforms: no scale, rotate or translate, so every turn and pop is impossible (Base UI audit rows 530, 617). | Glyphs swap, fade or are redrawn in SVG; panels move on `top` / `left` / `bottom`. The demo's label slides on `left` / `right` (`src/demos/carousel-dots.tsx:67-74`; the source's `x`, `lib/docs/slide-direction.ts:16-18`), the same gap. |
 | slider | `<input type="range">` (Base UI audit row 312) | A pointer-handled track and thumbs |
 | select, combobox (`FormValue`) | `<input type="hidden">` | A real input that is invisible, unreachable and `aria-hidden` |
 | banner (the description layout), surfaces (the elevation stack) | Selector `:has(.x)` and group-has. gpuix has `hasHover`, `hasActive`, `hasFocus`, `hasFocusVisible`, `hasDisabled` and `hasEnabled`, which restyle an element from the state of its descendants, but not a selector such as the banner's `has-data-[slot=banner-description]`, and a parent's `has*` state cannot style its children (the surfaces' stack hides a label with `[&:has([data-surface]:hover)>span]`). The result matches the web; only the wiring differs | Banner: a context flag the description registers; surfaces: a pointer signal (`drift/banner.md`, `drift/surfaces.md`) |
