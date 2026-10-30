@@ -203,8 +203,8 @@ export function SubHeading(props: { children: string; marginTop?: number }) {
 
 const COPIED_MS = 2000;
 
-const COPY_SHOWN = { opacity: 1, scale: 1 };
-const COPY_HIDDEN = { opacity: 0, scale: 0.6 };
+const COPY_SHOWN = { opacity: 1, scale: 1, filter: 'blur(0px)' };
+const COPY_HIDDEN = { opacity: 0, scale: 0.6, filter: 'blur(4px)' };
 /** The glyph arriving takes the tier's full duration eased out, the one leaving its exit token eased in, so an appear outlasts a disappear (0.08 s against 0.06 s). */
 const COPY_ENTER = { duration: 0.08, ease: 'easeOut' } as const;
 const COPY_LEAVE = { ...tween.fastExit, ease: 'easeIn' } as const;

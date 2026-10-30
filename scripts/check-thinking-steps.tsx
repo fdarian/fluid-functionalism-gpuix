@@ -15,6 +15,9 @@ import {
 	ThinkingStepSources,
 } from '#/components/thinking-steps';
 import { createCheck } from './check-kit';
+import { readPng } from './png-pixels';
+
+const HALO_PATH = `/tmp/check-thinking-steps-halo-${process.pid}.png`;
 
 const kit = await createCheck('thinking-steps', { initialSettleMs: 0 });
 const renderer = kit.renderer;
@@ -142,7 +145,7 @@ retina.expect(
 	61,
 );
 const failedRetina = retina.unmount();
-// A source chip enters on scale .85 about its centre with opacity (the source's blur(4px) is not animatable in gpuix: see drift/thinking-steps.md).
+// A source chip enters on scale .85 about its centre with opacity and a blur(4px) that sharpens over 0.12 s.
 const chip = await createCheck(
 	() => (
 		<div style={{ padding: 20 }}>
@@ -154,22 +157,49 @@ const chip = await createCheck(
 	{ width: 300, height: 100 },
 );
 {
-	const label = chip.renderer.findByText('x.com');
-	if (label === undefined || label.parentId === null)
-		throw new Error('no source chip');
-	const badge = label.parentId;
 	const at = () => {
-		const box = chip.renderer.getElementBounds(badge);
-		if (box === null) throw new Error('the chip has no bounds');
-		return box;
+		return chip.bounds('thinking-step-source');
 	};
 	chip.renderer.clockPause();
 	chip.step(0);
 	at();
-	chip.step(8);
+	// The ink just outside the badge's box: a blur leaks it past the edge, a sharp chip leaves none.
+	const halo = (box: {
+		x: number;
+		y: number;
+		width: number;
+		height: number;
+	}) => {
+		chip.renderer.captureScreenshot(HALO_PATH);
+		const pixels = readPng(HALO_PATH);
+		const left = Math.round(box.x) - 6;
+		const top = Math.round(box.y) - 6;
+		const right = Math.round(box.x + box.width) + 6;
+		const bottom = Math.round(box.y + box.height) + 6;
+		const ground = pixels.at(left, top);
+		let total = 0;
+		for (let y = top; y < bottom; y++)
+			for (let x = left; x < right; x++) {
+				const inside =
+					x >= Math.round(box.x) &&
+					x < Math.round(box.x + box.width) &&
+					y >= Math.round(box.y) &&
+					y < Math.round(box.y + box.height);
+				if (inside) continue;
+				const pixel = pixels.at(x, y);
+				total +=
+					Math.abs(pixel[0] - ground[0]) +
+					Math.abs(pixel[1] - ground[1]) +
+					Math.abs(pixel[2] - ground[2]);
+			}
+		return total;
+	};
+	chip.step(40);
 	const entering = at();
+	const blurredHalo = halo(entering);
 	chip.step(600);
 	const rest = at();
+	const sharpHalo = halo(rest);
 	chip.renderer.clockResume();
 	chip.check(
 		'a source chip grows in from a smaller scale about its centre',
@@ -177,6 +207,11 @@ const chip = await createCheck(
 			Math.abs(entering.x + entering.width / 2 - (rest.x + rest.width / 2)) <
 				0.5,
 		`${entering.width.toFixed(2)} -> ${rest.width.toFixed(2)}`,
+	);
+	chip.check(
+		'a source chip enters blurred: ink spills past its edge, and none at rest',
+		blurredHalo > sharpHalo * 3 + 100,
+		`${blurredHalo} -> ${sharpHalo}`,
 	);
 }
 const failedChip = chip.unmount();

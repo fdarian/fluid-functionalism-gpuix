@@ -8,16 +8,6 @@ One entry per place the port looks or behaves differently from the source, whate
 (CSS transforms, selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
 repeating it.
 
-## `filter: blur` entrances
-
-- **Cause:** `gpuix gap`.
-- **Original:** sources enter `opacity 0, scale .85, blur(4px)` on `spring.moderate` with the blur on its own 0.12s transition (`thinking-steps.tsx:541-557`); images enter `opacity 0, blur(4px)`, opacity 0.2s `easeOut`, blur 0.15s (`:570-583`).
-- **Port:** sources enter on `scale` .85 and opacity on `tween.moderate`, with the same delay (`ThinkingStepSource`, `thinking-steps.tsx:505-523`); images enter on opacity only, same delay and transition (`ThinkingStepImage`, `:527-575`, motion at `:538-542`). The blur-to-sharp reveal is dropped.
-- **gpuix lacks:** an animatable `filter`. `filter: "blur(4px)"` paints as a static style, but `filter` is not among `MotionStyleTargets` (`packages/native/js/host.ts:153`): a `filter` in `initial` / `animate` is dropped, and a CSS `transition: filter` flips at once (probed on poc 746e6bd1, a black square on white sampled mid-way). Under a scale the static blur would follow the matrix, as in Chrome (gpuix README, "Transforms"), so a blur that could be tweened would not need tuning.
-- **Workaround:** none beyond opacity and scale.
-- **Fidelity:** approximated (the blur-to-sharp reveal is dropped).
-- **Components it hits:** just this one.
-
 ## Hover background exit
 
 - **Cause:** `not ported yet`. `motion.fastExit` (0.06s) exists (`src/lib/theme.ts:483`).
@@ -58,7 +48,7 @@ repeating it.
 
 - **Cause:** `not ported yet`. An `<img>` with a `%` width or `maxWidth` gets its height from its intrinsic ratio, and `onLoad` reports `naturalWidth` / `naturalHeight` (`~/code/fdarian/gpuix/FORK.md:668`, `:834-835`). To port: `width: "100%"` with `maxWidth: 200` and `objectFit: "cover"`. The height then comes from the file's ratio once decoded; before decode the box is empty (`~/code/fdarian/gpuix/README.md:5012-5014`), so the step's height jumps on load, which the `aspectRatio` prop avoids. Check that the jump is acceptable, or size from `onLoad`'s `naturalWidth` / `naturalHeight`.
 - **Original:** `<img class="w-full max-w-[200px] object-cover">` takes the file's aspect ratio and shrinks in a narrow column (`thinking-steps.tsx:586-593`).
-- **Port:** a fixed 200px-wide box, height `200 / aspectRatio` with `aspectRatio` an extra prop defaulting to 2 (`thinking-steps.tsx:526-555`). The demo image is 1200x600, so the demos match. A different ratio letterboxes (`objectFit` is the default `contain`, the source is `cover`), and the box does not shrink below 200.
+- **Port:** a fixed 200px-wide box, height `200 / aspectRatio` with `aspectRatio` an extra prop defaulting to 2 (`thinking-steps.tsx:539-568`). The demo image is 1200x600, so the demos match. A different ratio letterboxes (`objectFit` is the default `contain`, the source is `cover`), and the box does not shrink below 200.
 - **Workaround:** the `aspectRatio` prop, so the step's measured height is stable before the image decodes.
 - **Fidelity:** approximated.
 - **Components it hits:** card (image), file-thumbnail.
@@ -67,7 +57,7 @@ repeating it.
 
 - **Cause:** `port choice` (the comment says it keeps a pale screenshot's edge visible; why an overlay div and not the image's own outline is not stated).
 - **Original:** `outline-1 -outline-offset-1 outline-black/10 dark:outline-white/10` on the `<img>` (`thinking-steps.tsx:590`).
-- **Port:** an absolutely positioned overlay div with a 1px inset outline in `color.border`, `rgba(23,23,23,.12)` light and `rgba(245,245,245,.12)` dark (`thinking-steps.tsx:556-570`; `src/lib/theme.ts:94`, `:142`).
+- **Port:** an absolutely positioned overlay div with a 1px inset outline in `color.border`, `rgba(23,23,23,.12)` light and `rgba(245,245,245,.12)` dark (`thinking-steps.tsx:570-585`; `src/lib/theme.ts:94`, `:142`).
 - **Workaround:** the overlay.
 - **Fidelity:** approximated (alpha .12 against .10, base colours slightly off black and white).
 - **Components it hits:** just this one.

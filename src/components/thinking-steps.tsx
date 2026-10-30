@@ -516,9 +516,14 @@ export function ThinkingStepSource(props: {
 }) {
 	return (
 		<motion.div
-			initial={{ opacity: 0, scale: 0.85 }}
-			animate={{ opacity: 1, scale: 1 }}
-			transition={{ ...tween.moderate, delay: props.delay ?? 0 }}
+			testId="thinking-step-source"
+			initial={{ opacity: 0, scale: 0.85, filter: 'blur(4px)' }}
+			animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+			transition={{
+				...tween.moderate,
+				delay: props.delay ?? 0,
+				filter: { duration: 0.12, delay: props.delay ?? 0 },
+			}}
 		>
 			<Badge variant="solid" size="compact" color={props.color ?? 'gray'}>
 				{props.children}
@@ -542,9 +547,12 @@ export function ThinkingStepImage(props: {
 	const height = () => IMAGE_WIDTH / (props.aspectRatio ?? 2);
 	return (
 		<motion.div
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			transition={{ duration: 0.2, delay: props.delay ?? 0, ease: 'easeOut' }}
+			initial={{ opacity: 0, filter: 'blur(4px)' }}
+			animate={{ opacity: 1, filter: 'blur(0px)' }}
+			transition={{
+				opacity: { duration: 0.2, delay: props.delay ?? 0, ease: 'easeOut' },
+				filter: { duration: 0.15, delay: props.delay ?? 0 },
+			}}
 			style={{ marginTop: 6 }}
 		>
 			<div

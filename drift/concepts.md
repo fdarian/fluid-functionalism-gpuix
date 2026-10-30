@@ -102,7 +102,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 ## The thinking step's header and tabs follow the port's `ThinkingSteps` and `TabsSubtle`
 
-- **Cause:** `port choice`. See [thinking-steps.md](thinking-steps.md) and [tabs-subtle.md](tabs-subtle.md): only the selected panel mounts (the source's panels mount hidden), the source entrances' blur and scale are opacity only, and `ThinkingSteps width="100%"` stands for `className="w-full max-w-full"`.
+- **Cause:** `port choice`. See [thinking-steps.md](thinking-steps.md) and [tabs-subtle.md](tabs-subtle.md): only the selected panel mounts (the source's panels mount hidden), and `ThinkingSteps width="100%"` stands for `className="w-full max-w-full"`.
 - **Fidelity:** approximated.
 - **Components it hits:** those two.
 
