@@ -75,17 +75,13 @@ function mesh(intensity: number) {
 	return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }
 
-/**
- * A card resting one step above the rail: the sidebar sits on surface 1. `clipped` is the source's `overflow-hidden`; the fanned
- * inline pile goes without it, because a clip inside a transformed card makes gpuix drop the card's text once it is moved far
- * enough (`drift/sidebar.md`, "Callout"), and nothing of an inline card reaches past its rounded fill.
- */
-function Resting(props: { clipped: boolean; children: JSX.Element }) {
+/** A card resting one step above the rail: the sidebar sits on surface 1. */
+function Resting(props: { children: JSX.Element }) {
 	return (
 		<div
 			style={{
 				borderRadius: shape.container,
-				overflow: props.clipped ? 'hidden' : 'visible',
+				overflow: 'hidden',
 				backgroundColor: surface(2),
 			}}
 		>
@@ -98,8 +94,6 @@ function CalloutCardBody(props: {
 	card: CalloutCard;
 	variant: CalloutVariant;
 	step: number;
-	/** Whether the card is clipped to its rounded corners; see `Resting`. */
-	clipped?: boolean;
 	onDismiss: () => void;
 	testId: string;
 }) {
@@ -124,7 +118,7 @@ function CalloutCardBody(props: {
 		</Card>
 	);
 	return (
-		<Resting clipped={props.clipped ?? true}>
+		<Resting>
 			{props.variant === 'inline' ? (
 				<CardGroup orientation="inline" fluidHover={false}>
 					{body()}
@@ -189,7 +183,6 @@ function StackedCard(props: {
 					card={props.card}
 					variant={props.variant}
 					step={props.step}
-					clipped={props.variant === 'banner'}
 					onDismiss={props.onDismiss}
 					testId={`callout-${props.card.id}`}
 				/>
