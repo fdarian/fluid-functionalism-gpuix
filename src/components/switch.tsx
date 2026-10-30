@@ -1,9 +1,9 @@
-import { MotionConfig, motion } from '@gpuix/solid';
+import { animate, createMotionValue, motion } from '@gpuix/solid';
 import {
 	createSwitchRoot,
 	createSwitchThumb,
 } from 'base-ui-solid-gpuix/switch';
-import { createSignal, createUniqueId } from 'solid-js';
+import { createEffect, createSignal, createUniqueId, on } from 'solid-js';
 import {
 	capTrim,
 	color,
@@ -101,6 +101,23 @@ export function Switch(props: {
 		deadZone: DRAG_DEAD_ZONE,
 	});
 
+	// The thumb's x is a motion value the pointer writes on every move; a spring picks up from wherever it was left. Bound to a transform it is not reduced, which is what the source's `animate()` on a motion value does too.
+	const thumbX = createMotionValue(restX());
+	createEffect(
+		on(
+			[restX, thumb.dragX],
+			([rest, dragged]) => {
+				if (dragged !== null) {
+					thumbX.stop();
+					thumbX.set(dragged);
+					return;
+				}
+				animate(thumbX, rest, tween.moderate);
+			},
+			{ defer: true },
+		),
+	);
+
 	const hoverHandlers = {
 		onMouseEnter: () => setOverCount(overCount() + 1),
 		onMouseLeave: () => setOverCount(overCount() - 1),
@@ -156,45 +173,27 @@ export function Switch(props: {
 					focusVisible: focusRing(2),
 				}}
 			>
-				{/* The source slides the thumb with `animate()` on a motion value, which reduced motion leaves alone, and shapes it with width, height and y, which it jumps. Two layers keep both: this one slides under a config that never reduces and the thumb inside it goes back to following the user's setting. */}
-				<MotionConfig reducedMotion="never">
-					<motion.div
-						initial={false}
-						animate={{ left: thumb.dragX() ?? restX() }}
-						// While dragging the thumb follows the pointer.
-						transition={thumb.dragX() === null ? tween.moderate : tween.snap}
-						style={{
-							position: 'absolute',
-							top: 0,
-							width: 0,
-							height: m().trackHeight,
-						}}
-					>
-						<MotionConfig reducedMotion="user">
-							<motion.div
-								initial={false}
-								testId={
-									props.testId === undefined
-										? undefined
-										: `${props.testId}-thumb`
-								}
-								animate={{
-									top: thumbY(),
-									width: thumbWidth(),
-									height: thumbHeight(),
-								}}
-								transition={tween.moderate}
-								style={{
-									position: 'absolute',
-									left: 0,
-									backgroundColor: '#FFFFFF',
-									borderRadius: 9999,
-									boxShadow: twShadow.sm,
-								}}
-							/>
-						</MotionConfig>
-					</motion.div>
-				</MotionConfig>
+				<motion.div
+					initial={false}
+					testId={
+						props.testId === undefined ? undefined : `${props.testId}-thumb`
+					}
+					animate={{
+						y: thumbY(),
+						width: thumbWidth(),
+						height: thumbHeight(),
+					}}
+					transition={tween.moderate}
+					style={{
+						position: 'absolute',
+						top: 0,
+						left: 0,
+						x: thumbX,
+						backgroundColor: '#FFFFFF',
+						borderRadius: 9999,
+						boxShadow: twShadow.sm,
+					}}
+				/>
 			</div>
 			<text
 				id={labelId}

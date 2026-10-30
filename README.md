@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 511 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 510 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -229,7 +229,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [skill-page](drift/skill-page.md) | 2 | 5 | 0 | 1 | 8 |
 | [slider](drift/slider.md) | 4 | 3 | 2 | 1 | 10 |
 | [surfaces](drift/surfaces.md) | 2 | 4 | 4 | 2 | 12 |
-| [switch](drift/switch.md) | 1 | 1 | 2 | 1 | 5 |
+| [switch](drift/switch.md) | 0 | 1 | 2 | 1 | 4 |
 | [table](drift/table.md) | 0 | 1 | 3 | 0 | 4 |
 | [tabs-subtle](drift/tabs-subtle.md) | 0 | 3 | 2 | 0 | 5 |
 | [tabs](drift/tabs.md) | 0 | 2 | 2 | 0 | 4 |
@@ -237,7 +237,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 3 | 4 | 5 | 0 | 12 |
 | [tooltip](drift/tooltip.md) | 0 | 6 | 2 | 0 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **57** | **218** | **190** | **46** | **511** |
+| **Total** | **56** | **218** | **190** | **46** | **510** |
 
 ### gpuix gaps across components
 
@@ -357,7 +357,7 @@ now does that the port has not picked up.
 | Tailwind `shadow-sm` to `shadow-xl` | `twShadow` (`src/lib/theme.ts`): both drops of each, as the CSS strings | Exact |
 | `color-mix(in oklab, …)`, `light-dark()` | both columns kept as a token table; the scheme is a signal | Exact |
 | `prefers-color-scheme` ("System" theme) | `createAppearance()` reads the OS appearance and `bindSystemScheme` feeds it to the `scheme` token. System / Light / Dark are one `themeChoice` signal, and `renderer.setAppearance` mirrors Light / Dark so the native chrome follows | Exact in the window and on the test renderer, which honours `appearance` and `setAppearance` |
-| `prefers-reduced-motion`, `<MotionConfig reducedMotion="user">`, `useReducedMotion()` | `App` wraps the tree in gpuix's `<MotionConfig reducedMotion="user">`, which makes `width`, `height`, `top`, `right`, `bottom`, `left` and layout glides jump and leaves padding, margin, opacity, colours and radii animating: Motion's rule less the transforms the port does not have, so the tabs pills, the collapses and every other `motion.*` size and position animation land as the source's do. Where the source reads `useReducedMotion()` itself, the port reads `createReducedMotion()` at the same site: the fluid highlight, the accordion panel's fade, the banner, the carousel timer, the thinking indicator, the command-menu scroll and the scripted demos. What the source drives by CSS transition or by `animate()` on a motion value is not reduced there, so the scrollbar thumb and the switch thumb's slide sit in a nested `reducedMotion="never"` config. Pinned by `scripts/check-reduced-motion.tsx` | Exact for the properties; the OS setting is read on macOS only |
+| `prefers-reduced-motion`, `<MotionConfig reducedMotion="user">`, `useReducedMotion()` | `App` wraps the tree in gpuix's `<MotionConfig reducedMotion="user">`, which makes `width`, `height`, `top`, `right`, `bottom`, `left` and layout glides jump and leaves padding, margin, opacity, colours and radii animating: Motion's rule less the transforms the port does not have, so the tabs pills, the collapses and every other `motion.*` size and position animation land as the source's do. Where the source reads `useReducedMotion()` itself, the port reads `createReducedMotion()` at the same site: the fluid highlight, the accordion panel's fade, the banner, the carousel timer, the thinking indicator, the command-menu scroll and the scripted demos. What the source drives by CSS transition or by `animate()` on a motion value is not reduced there, so the scrollbar thumb's widening sits in a nested `reducedMotion="never"` config, and the switch thumb's `x` is a motion value that `animate()` drives, which `MotionConfig` does not reduce. Pinned by `scripts/check-reduced-motion.tsx` | Exact for the properties; the OS setting is read on macOS only |
 | Base UI `Positioner` (flip, `--anchor-width`, `--available-height`) | `<anchored fit="flip" deferred>`: gpuix picks the side and reports it with the room left (`onPlacement`), and `PopupSurface` caps the card to that room, slides from the reported side and is at least the trigger's width | Equivalent |
 | `ScrollArea` (hover thumb, scroll fade) | a plain `overflowY: "scroll"` on the combobox list (Dropped); the sidebar's content is a ported `ScrollArea` with the fade and the end hairline | Dropped for the combobox; exact for the site nav |
 | `getBoundingClientRect` | `element.getBoundingClientRect()`, read when needed (layout is flushed first, so it is never stale; a read after a paint-only write runs no layout pass, gpuix #47). The fluid hover reads its container's rect on every pick, like the source; a cache of it measured within noise and was dropped | Native |

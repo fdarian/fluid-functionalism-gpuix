@@ -85,19 +85,14 @@ renderer.nativeSimulateMouseUp(point.x + 20, point.y);
 await kit.settle(500);
 kit.check('a drag past the midpoint toggles on', isOn());
 
-// While dragging only the thumb's x follows the pointer: width, height and y keep their spring, so a drag that starts mid-squash does not cut it short.
+// While dragging only the thumb's x follows the pointer, 1:1 with no spring on it: width, height and y keep theirs, so a drag that starts mid-squash does not cut it short.
 type ThumbTransition = { type?: string; duration?: number };
-/** The motion transition of an element: the thumb's own, or the layer that slides it (its parent). */
-function transitionOf(testId: string, slide: boolean) {
-	const found = kit.element(testId);
-	const target = slide
-		? renderer.getElement(found.parentId ?? Number.NaN)
-		: found;
-	const motion = target?.customProps?.motion as
+function thumbTransition() {
+	const motion = kit.element('kb-thumb').customProps?.motion as
 		| { transition?: ThumbTransition }
 		| undefined;
 	if (motion?.transition === undefined)
-		throw new Error('the element has no transition');
+		throw new Error('the thumb has no transition');
 	return motion.transition;
 }
 const dragPoint = kit.center('kb-track');
@@ -106,13 +101,20 @@ renderer.nativeSimulateMouseDown(dragPoint.x, dragPoint.y);
 await kit.settle(100);
 renderer.nativeSimulateMouseMove(dragPoint.x - 6, dragPoint.y);
 await kit.settle(100);
-const shape = transitionOf('kb-thumb', false);
-const slide = transitionOf('kb-thumb', true);
+const shape = thumbTransition();
+renderer.clockPause();
+const beforeMove = kit.bounds('kb-thumb').x;
+renderer.nativeSimulateMouseMove(dragPoint.x - 2, dragPoint.y);
+kit.step(0);
+const afterMove = kit.bounds('kb-thumb').x;
+renderer.clockResume();
 kit.check(
-	'mid-drag, x snaps and width, height and y keep the spring',
-	shape.type === 'spring' && slide.duration === 0,
-	`thumb ${JSON.stringify(shape)}, slide ${JSON.stringify(slide)}`,
+	'mid-drag, x follows the pointer in the frame it moves and width, height and y keep the spring',
+	shape.type === 'spring' && Math.abs(afterMove - beforeMove - 4) < 0.01,
+	`thumb ${JSON.stringify(shape)}, 4px pointer move gave ${(afterMove - beforeMove).toFixed(3)}px`,
 );
+renderer.nativeSimulateMouseMove(dragPoint.x - 6, dragPoint.y);
+await kit.settle(100);
 renderer.nativeSimulateMouseUp(dragPoint.x - 6, dragPoint.y);
 await kit.settle(500);
 
