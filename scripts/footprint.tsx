@@ -110,8 +110,21 @@ type PageResult = {
 	settled: Memory | null;
 };
 
+/** `/usr/bin/footprint` has hung on a child for 38 minutes with the shared lock held, and a synchronous spawn blocks the child deadline timers, so every spawn has its own limit. */
+const SPAWN_LIMIT_MS = 30_000;
+
 function output(command: string[]) {
-	const result = Bun.spawnSync(command, { stdout: 'pipe', stderr: 'pipe' });
+	const result = Bun.spawnSync(command, {
+		stdout: 'pipe',
+		stderr: 'pipe',
+		timeout: SPAWN_LIMIT_MS,
+		killSignal: 'SIGKILL',
+	});
+	if (result.exitedDueToTimeout) {
+		throw new Error(
+			`${command.join(' ')} did not finish in ${SPAWN_LIMIT_MS} ms and was killed`,
+		);
+	}
 	if (result.exitCode !== 0) {
 		throw new Error(
 			`${command.join(' ')} exited with ${result.exitCode}: ${result.stderr.toString()}`,
@@ -194,7 +207,15 @@ function threadCount(pid: number) {
 	);
 }
 
-function memory(pid: number): Memory {
+function memory(pid: number, slug: string): Memory {
+	try {
+		return readMemory(pid);
+	} catch (error) {
+		throw new Error(`${slug}: ${(error as Error).message}`);
+	}
+}
+
+function readMemory(pid: number): Memory {
 	return {
 		footprintBytes: physFootprintBytes(pid),
 		rssBytes: rssBytes(pid),
@@ -250,7 +271,7 @@ async function measure(slug: string): Promise<PageResult> {
 		let settled: Memory | null = null;
 		if (windowMode) {
 			await lineStartingWith('SETTLED');
-			settled = memory(child.pid);
+			settled = memory(child.pid, slug);
 			child.stdin.write('go\n');
 			await child.stdin.flush();
 		}
@@ -258,7 +279,7 @@ async function measure(slug: string): Promise<PageResult> {
 			PageResult,
 			keyof Memory | 'settled'
 		>;
-		return { ...measured, ...memory(child.pid), settled };
+		return { ...measured, ...memory(child.pid, slug), settled };
 	} finally {
 		clearTimeout(deadline);
 		child.kill();
@@ -322,7 +343,7 @@ async function measureTour(slug: string): Promise<TourResult> {
 			stops.push({
 				stage: rest.slice(0, space),
 				...reported,
-				...memory(child.pid),
+				...memory(child.pid, slug),
 			});
 			child.stdin.write('go\n');
 			await child.stdin.flush();
