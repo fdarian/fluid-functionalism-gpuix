@@ -452,6 +452,7 @@ function QueuedRow(props: {
 			<Show when={files() > 0}>
 				<div
 					style={{
+						// The box `popLayout` pins a leaving tile against.
 						position: 'relative',
 						display: 'flex',
 						flexDirection: 'row',
