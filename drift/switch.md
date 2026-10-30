@@ -21,7 +21,7 @@ repeating it.
 
 - **Cause:** `port choice` (reason not stated; `focusRing()` is the shared outline helper).
 - **Original:** `focus-visible:ring-1 ring-[color:var(--focus-ring)] ring-offset-2 ring-offset-background` (`switch.tsx:291`): the 2px gap between track and ring is painted in the page background.
-- **Port:** a 1px outline at offset 2 (`src/components/switch.tsx:156`, `focusRing` at `src/lib/theme.ts:546`); the gap shows whatever is behind the switch. On the demo card (surface 2) that is a hair lighter than the source's page background.
+- **Port:** a 1px outline at offset 2 (`src/components/switch.tsx:156`, `focusRing` at `src/lib/theme.ts:562`); the gap shows whatever is behind the switch. On the demo card (surface 2) that is a hair lighter than the source's page background.
 - **Workaround:** none.
 - **Fidelity:** approximated (position and colour exact, the gap tint differs on non-page surfaces).
 - **Components it hits:** every port of a `ring-offset-background` ring.

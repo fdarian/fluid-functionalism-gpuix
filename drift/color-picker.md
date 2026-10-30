@@ -63,7 +63,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 
 - **Cause:** `not ported yet`.
 - **Original:** Radix slider thumb: arrows, Shift+arrow and PageUp/PageDown move by 10, Home/End jump, and it exposes `aria-valuenow`, `-min`, `-max` (`registry/radix/slider.tsx`, primitive). The ring is a 24px circle whose opacity eases on `spring.fast` (`:940-952`), and the track has an `ew-resize` cursor only on the hit area (`:1087`).
-- **Port:** arrows, Shift (10), Home and End only; no PageUp/PageDown (`src/components/color-picker.tsx:495-518`). The thumb has `aria-valuetext` but no `aria-valuenow`/`-min`/`-max` (`:549-551`; the slider's thumb has them, `base-ui:src/slider/thumb/slider-thumb.ts:146-153`). The ring is `focusVisible` with a 2px offset, drawn about 2px wider, its colour easing over 80 ms on a spring-fitted curve (`src/components/color-picker.tsx:566-567`, `springFade`, `src/lib/theme.ts:537`).
+- **Port:** arrows, Shift (10), Home and End only; no PageUp/PageDown (`src/components/color-picker.tsx:495-518`). The thumb has `aria-valuetext` but no `aria-valuenow`/`-min`/`-max` (`:549-551`; the slider's thumb has them, `base-ui:src/slider/thumb/slider-thumb.ts:146-153`). The ring is `focusVisible` with a 2px offset, drawn about 2px wider, its colour easing over 80 ms on a spring-fitted curve (`src/components/color-picker.tsx:566-567`, `springFade`, `src/lib/theme.ts:545`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

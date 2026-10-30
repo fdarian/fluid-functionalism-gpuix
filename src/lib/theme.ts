@@ -503,11 +503,15 @@ export function fade(
 	};
 }
 
-/**
- * Tailwind v4's `transition-colors` list. `text-decoration-color`, `fill` and `stroke` are left out: gpuix's CSS
- * transitions do not animate them, and an icon's strokes follow `color` through `currentColor`.
- */
-const COLORS = ['color', 'background-color', 'border-color', 'outline-color'];
+/** Tailwind v4's `transition-colors` list. `text-decoration-color` is left out: gpuix's CSS transitions do not animate it. */
+const COLORS = [
+	'color',
+	'background-color',
+	'border-color',
+	'outline-color',
+	'fill',
+	'stroke',
+];
 
 /** `transition-colors duration-80`, the source's usual: Tailwind's default curve over 80 ms. */
 export const colorFade = fade(COLORS, 80);
@@ -526,7 +530,11 @@ export const colorFadeDefault = fade(COLORS, 150);
  * and so must not fade in with the colours. Default curve unless `ease` is given.
  */
 export function colorFadeNoRing(ms: number, ease?: string) {
-	return fade(['color', 'background-color', 'border-color'], ms, ease);
+	return fade(
+		['color', 'background-color', 'border-color', 'fill', 'stroke'],
+		ms,
+		ease,
+	);
 }
 
 /**
