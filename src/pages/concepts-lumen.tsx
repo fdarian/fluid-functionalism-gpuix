@@ -140,14 +140,13 @@ function Caption(props: { children: string }) {
 
 // ── Citation chip ───────────────────────────────────────────────────────
 
-/** The source's `Badge size="sm"` with `mx-0.5 -translate-y-px px-1.5 align-middle tabular-nums`; `top: -1` is the translate. */
+/** The source's `Badge size="sm"` with `mx-0.5 -translate-y-px px-1.5 align-middle tabular-nums`. */
 function Cite(props: { n: number }) {
 	return (
 		<Badge
 			size="compact"
 			style={{
-				position: 'relative',
-				top: -1,
+				transform: 'translateY(-1px)',
 				verticalAlign: 'middle',
 				marginLeft: 2,
 				marginRight: 2,

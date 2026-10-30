@@ -59,7 +59,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `ChatMessage` took a string).
 - **Original:** `Answer` passes `className="max-w-full"` and a block of three paragraphs to `ChatMessage` (`lumen/page.tsx:76-111`).
-- **Port:** `ChatMessage` gained two additive props: `children` accepts any element (a string is still set in the message style) and `fullWidth` lifts the 80% cap (`src/components/chat-message.tsx:79-83`, `:145-150`). Lumen builds three `<text>` paragraphs with 12px between them (`src/pages/concepts-lumen.tsx:166-199`).
+- **Port:** `ChatMessage` gained two additive props: `children` accepts any element (a string is still set in the message style) and `fullWidth` lifts the 80% cap (`src/components/chat-message.tsx:79-83`, `:145-150`). Lumen builds three `<text>` paragraphs with 12px between them (`src/pages/concepts-lumen.tsx:165-198`).
 - **Workaround:** none needed.
 - **Fidelity:** exact for the layout.
 - **Components it hits:** chat-message (the extra props are the only change to it).
@@ -68,7 +68,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `not ported yet` (`ThinkingStepImage` is a fixed 200px box, [thinking-steps.md](thinking-steps.md#image-box-is-sized-outright)).
 - **Original:** `swatch()` builds a `data:image/svg+xml` gradient, and the step and the Images tab both show it through `ThinkingStepImage`, the tab's with `!mt-0 [&_img]:max-w-full` in a grid cell (`lumen/page.tsx:44-52`, `:201-207`, `:227-237`).
-- **Port:** `swatch()` is the source's, and the step uses the ported `ThinkingStepImage` with that URI, `aspectRatio` 240 / 150 and the 0.1s delay (`src/pages/concepts-lumen.tsx:96-101`, `:354-360`). The Images tab draws each swatch as `SwatchImage`, a 240:150 box with the same URI as `backgroundImage` at `100% 100%`, the container radius and the same inset hairline, four to a row (`:114-131`, `:272-290`); it has no entrance fade.
+- **Port:** `swatch()` is the source's, and the step uses the ported `ThinkingStepImage` with that URI, `aspectRatio` 240 / 150 and the 0.1s delay (`src/pages/concepts-lumen.tsx:96-101`, `:353-359`). The Images tab draws each swatch as `SwatchImage`, a 240:150 box with the same URI as `backgroundImage` at `100% 100%`, the container radius and the same inset hairline, four to a row (`:114-131`, `:271-289`); it has no entrance fade.
 - **Workaround:** the background box, because the fixed-width component cannot fill a grid cell.
 - **Fidelity:** exact for the picture (the same SVG, scaled to the box); approximated (no entrance fade on the tab).
 - **Components it hits:** just this one.
@@ -77,7 +77,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `not ported yet` for the shadow transition; `port choice` for the link.
 - **Original:** each row is `<a href="#answer">` (jumps to the question heading) with `transition-shadow duration-100 hover:shadow-surface-4` (`lumen/page.tsx:114-140`).
-- **Port:** a `div` with the `surface-2` fill and `shadow(2)`, and `hover: { boxShadow: shadow(4) }`, which switches at once (`src/pages/concepts-lumen.tsx:204-261`; `shadow` is the `--shadow-N` helper in `src/lib/theme.ts`). A click does nothing.
+- **Port:** a `div` with the `surface-2` fill and `shadow(2)`, and `hover: { boxShadow: shadow(4) }`, which switches at once (`src/pages/concepts-lumen.tsx:203-260`; `shadow` is the `--shadow-N` helper in `src/lib/theme.ts`). A click does nothing.
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -86,7 +86,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (reason not stated) for the scroller; the source has the same missing scroll-to-new-turn.
 - **Original:** `flex-1 overflow-y-auto` under an `h-screen` column, the ask bar pinned below (`lumen/page.tsx:274-300`); a new turn is appended and the page does not scroll to it.
-- **Port:** the turns sit in the port's `ScrollArea` (a drawn scrollbar), the ask bar is pinned below it (`src/pages/concepts-lumen.tsx:438-456`); a new turn lands below the fold, as in the source, and the screenshot scenario scrolls to it. The turns live in a store keyed by `id`, so the answered turn keeps its open "Searched 4 sources" steps and its tab, as in React (`:399-427`). The timer is cleared on unmount.
+- **Port:** the turns sit in the port's `ScrollArea` (a drawn scrollbar), the ask bar is pinned below it (`src/pages/concepts-lumen.tsx:437-455`); a new turn lands below the fold, as in the source, and the screenshot scenario scrolls to it. The turns live in a store keyed by `id`, so the answered turn keeps its open "Searched 4 sources" steps and its tab, as in React (`:398-426`). The timer is cleared on unmount.
 - **Workaround:** none.
 - **Fidelity:** approximated (scrollbar look); exact for the flow.
 - **Components it hits:** just this one.
@@ -95,7 +95,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `Button` has `default`, `compact`, `icon` and `icon-compact`).
 - **Original:** `<Button variant="ghost" size="sm" leadingIcon={Globe}>Web</Button>` in the left slot (`lumen/page.tsx:295-297`).
-- **Port:** `size="compact"` with `leadingIcon="globe"` (`src/pages/concepts-lumen.tsx:481`).
+- **Port:** `size="compact"` with `leadingIcon="globe"` (`src/pages/concepts-lumen.tsx:480`).
 - **Workaround:** none.
 - **Fidelity:** approximated (compact is 28px).
 - **Components it hits:** just this one.
