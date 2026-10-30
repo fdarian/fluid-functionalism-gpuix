@@ -15,7 +15,7 @@ repeating it.
 - **Port:** `QueuedRow` has `layout` (`input-message.tsx:413`), and gpuix glides every move of a box in layout space, whatever moved it, so the same row starts from where it was last drawn and trails the region. With two rows queued and a file attached the second row's top is at 64.0, 63.9, 65.8 and 71.5 px at 8, 16, 24 and 32 ms, against 70.9, 84.8, 99.5 and 112.5 px without `layout`; both rest at 152 px by about 170 ms. The file tiles do not show it (they sit at the top of their region), and a row that a removal or a reorder moves glides as the source's does (`scripts/check-input-message.tsx`). The probe is `~/.claude/notes/ff-gpuix-repros/layout-ancestor-height/zz-probe-layout.tsx`.
 - **Workaround:** none; dropping `layout` would lose the slide on removal.
 - **Fidelity:** approximated (a 1 to 3 frame lag, only while the files region animates over queued rows).
-- **Components it hits:** queued-stack, chat-message (a message below an animating ancestor).
+- **Components it hits:** just this one; the ask-user-questions footer has the stronger form (`drift/ask-user-questions.md`).
 
 ## Queue drag-reorder does not follow the pointer
 
@@ -143,9 +143,9 @@ repeating it.
 
 ## Queued chat: what differs
 
-- **Cause:** `not ported yet` (morph, menu placement, edit focus); `gpuix gap` (queue types).
+- **Cause:** `gpuix gap` (the morph is a size morph, see `drift/queued-stack.md` "Shared-layout morph into the sent bubble"; queue types); `not ported yet` (menu placement, edit focus).
 - **Original:** the front card morphs into its sent bubble (`morphLayoutId` on the stack and `layoutId` on `ChatMessage`); the attach and model menus open above their buttons (`bottom-full`); the buttons are lit while their menu is open (`active`) and wrapped in tooltips; editing a card puts the caret at the end of the composer.
-- **Port:** no morph: neither `QueuedStack` nor `ChatMessage` takes a layout id, so a dispatched card fades out and its bubble fades in. `DropdownContent` has no side prop, so the menus open below the composer's slot buttons. `Button` has no `active` prop. Edit refills the composer but does not focus it: `InputMessage` has no ref and gpuix has no way to find its textarea from outside. The composer's `QueuedMessage` carries `ComposerFile`s and the stack's carries `FileLike`s, so `ComposerQueueStack` (`src/lib/composer-stage.tsx`) maps between them, caching one mapped object per message because the stack keys its cards by identity.
+- **Port:** no morph: neither `QueuedStack` nor `ChatMessage` takes a layout id, so a dispatched card fades out and its bubble fades in. gpuix's `layoutId` glides a position and snaps the size, and the card and the bubble differ in size, so it was not wired. `DropdownContent` has no side prop, so the menus open below the composer's slot buttons. `Button` has no `active` prop. Edit refills the composer but does not focus it: `InputMessage` has no ref and gpuix has no way to find its textarea from outside. The composer's `QueuedMessage` carries `ComposerFile`s and the stack's carries `FileLike`s, so `ComposerQueueStack` (`src/lib/composer-stage.tsx`) maps between them, caching one mapped object per message because the stack keys its cards by identity.
 - **Fidelity:** approximated (morph dropped).
 
 ## Sample photo: a different picture, named avatar.jpg

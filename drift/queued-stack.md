@@ -25,9 +25,9 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:3
 
 ## Shared-layout morph into the sent bubble
 
-- **Cause:** `not ported yet` (gpuix has `layoutId`, `FORK.md:1149-1150`).
-- **Original:** `morphLayoutId` gives a text-only card a `layoutId` (dropped while a press is down) so the dispatched card morphs into its sent bubble (`:53-56`, `:295-301`).
-- **Port:** no such prop; a dispatched card only fades out (`queued-stack.tsx:360-362`).
+- **Cause:** `gpuix gap` (a size morph: `~/code/fdarian/gpuix/docs/fork/deviations.md` "Size morphs are not built", `README.md` "Layout animations").
+- **Original:** `morphLayoutId` gives a text-only card a `layoutId` (dropped while a press is down) so the dispatched card morphs into its sent bubble: the bubble carries the same `layoutId` and `layout`, and its text a `motion.span layout` that Motion counter-scales so it does not stretch (`:53-56`, `:295-301`; `app/docs/input-message/queued-chat-demo.tsx:365-392`).
+- **Port:** no such prop; a dispatched card only fades out (`queued-stack.tsx:360-362`). gpuix has `layoutId`, but its glide moves a box's position and snaps its size: the card is the composer's full width and one row tall, the bubble is content-sized, right-aligned and as tall as its wrapped text, so the bubble would appear at the card's top-left corner at its own size and slide, where the source scales one box into the other. `layout="size"` does nothing on its own and `"preserve-aspect"` is not supported, so there is nothing to ask for; a position-only glide would be a different animation, and was not built.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** input-message, chat-message.
