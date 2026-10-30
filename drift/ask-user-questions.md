@@ -4,15 +4,6 @@ Original: `registry/default/ask-user-questions.tsx` (1,880 lines, on Base UI `Ra
 
 Checked and the same: card, row, chip and footer sizes and padding at the `sm:` step (`ask-user-questions.tsx:1219-1245`, `:1819-1849`; port `:1009-1027`, `:201-297`), all spring values, the height morph (`spring.slow`, `:1259-1264`; port `:80-84`, `:966-978`), controlled / uncontrolled state, answer shapes, roving tab stop, the Other and freeText states, and light and dark colours (all through `color.*`). The demo data (questions, options, copy, the email validator) is identical to the docs page.
 
-## Footer neighbours jump instead of sliding
-
-- **Cause:** `not ported yet` (gpuix has `layout`, `FORK.md:1149-1150`).
-- **Original:** footer buttons sit in `AnimatePresence mode="popLayout" initial={false}` with `layout="position"`, so a leaving button fades and scales out while its neighbours slide at the same time (`:1425-1429`, `:1485-1489`).
-- **Port:** the same `AnimatePresence mode="popLayout" initial={false}` around each cluster, a button entering and leaving on `scale` .85 and opacity (`ask-user-questions.tsx:1072`, `:1115`, `:1186-1198`); the submit arrow on .6, leaving on the 60 ms tween (`:154-200`, `:211-217`); the validation message rising from `y` -2 (`:1088-1094`). There is no `layout`, so the neighbours of a leaving button jump to its place at once.
-- **Workaround:** none.
-- **Fidelity:** approximated (sibling slide).
-- **Components it hits:** just this one.
-
 ## Keyboard focus ring does not travel
 
 - **Cause:** `not ported yet` (`src/lib/focus-ring.tsx` exists and select uses it).
