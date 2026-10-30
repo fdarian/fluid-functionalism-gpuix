@@ -50,12 +50,12 @@ and `drift/site.md`. The preview frame is the shared `ComponentPreview`, whose d
 - **Port:** the pause button is the same 40px header button, through the shared `ComponentPreview`'s `playback` option (icon, tooltip and click; `src/lib/doc-page.tsx:296-334`, `src/pages/fluid-hover/plain-vs-fluid.tsx:240-256`). Reduced motion stops the script as in the source (`createReducedMotion()`, `src/pages/fluid-hover/plain-vs-fluid.tsx:84-85`); each caption is one centred `<text>` with inline runs, so the gaps around the chip are a normal space.
 - **Fidelity:** approximated.
 
-## "Show the math": dash geometry and the distance label's offset
+## "Show the math": dash geometry
 
-- **Cause:** `gpuix gap` (dash geometry; the label's translate is the CSS transforms row in [`README.md`](../README.md#missing-features)).
-- **Original:** `border-t border-dashed border-foreground/20` on an empty absolute box at each midpoint between row centres (`app/docs/fluid-hover/demos.tsx:459`); the distance label is translated by `-100% - 8px`.
-- **Port:** the same, a `borderTopWidth: 1`, `borderTopStyle: "dashed"` border in 20% foreground on an empty absolute box (`src/pages/fluid-hover/show-the-math.tsx:110-118`). The dashes are gpuix's (two widths long with a gap of one, README "Borders"), so they read finer than the 3px / 3px the earlier gradient drew, and their phase is not checked against Chrome's. The distance label is right-aligned by a `right` offset. Everything else (cursor line at 70%, rail at 20px, dots 8px with their 150 ms colour fade, mono 11px label) is the source's geometry.
-- **Workaround:** none for the dashes; the `right` offset for the label.
+- **Cause:** `gpuix gap` (dash geometry).
+- **Original:** `border-t border-dashed border-foreground/20` on an empty absolute box at each midpoint between row centres (`app/docs/fluid-hover/demos.tsx:459`); the distance label hangs off a zero-width rail and is translated by `-100% - 8px` and `-50%` (`:496`).
+- **Port:** the same, a `borderTopWidth: 1`, `borderTopStyle: "dashed"` border in 20% foreground on an empty absolute box; the label is on `translate(calc(-100% - 8px), -50%)` from a zero-width rail 20px in (`src/pages/fluid-hover/show-the-math.tsx:110-118`, `:171-202`, `scripts/check-show-the-math.tsx`). The dashes are gpuix's (two widths long with a gap of one, README "Borders"), so they read finer than the 3px / 3px the earlier gradient drew, and their phase is not checked against Chrome's. Everything else (cursor line at 70%, rail at 20px, dots 8px with their 150 ms colour fade, mono 11px label) is the source's geometry.
+- **Workaround:** none for the dashes.
 - **Fidelity:** approximated (dash length and phase).
 - **Components it hits:** just this page.
 

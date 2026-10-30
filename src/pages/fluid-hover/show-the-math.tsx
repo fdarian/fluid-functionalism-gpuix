@@ -171,22 +171,34 @@ function MathList(props: { showMath: () => boolean }) {
 						<div
 							style={{
 								position: 'absolute',
-								right: 28,
-								top: (cursorNow() + winnerNow()) / 2 - 7,
+								top: 0,
+								bottom: 0,
+								right: 20,
+								width: 0,
 							}}
 						>
-							<text
+							<div
+								testId="math-distance"
 								style={{
-									fontFamily: MONO,
-									fontSize: scale.micro.fontSize,
-									lineHeight: scale.micro.lineHeight,
-									fontVariationSettings: weight.normal,
-									color: color.foreground,
-									whiteSpace: 'nowrap',
+									position: 'absolute',
+									left: 0,
+									top: (cursorNow() + winnerNow()) / 2,
+									transform: 'translate(calc(-100% - 8px), -50%)',
 								}}
 							>
-								{`${Math.round(Math.abs(cursorNow() - winnerNow()))}px`}
-							</text>
+								<text
+									style={{
+										fontFamily: MONO,
+										fontSize: scale.micro.fontSize,
+										lineHeight: scale.micro.lineHeight,
+										fontVariationSettings: weight.normal,
+										color: color.foreground,
+										whiteSpace: 'nowrap',
+									}}
+								>
+									{`${Math.round(Math.abs(cursorNow() - winnerNow()))}px`}
+								</text>
+							</div>
 						</div>
 					</Show>
 				</div>
