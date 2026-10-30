@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 500 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 498 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -198,7 +198,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [banner](drift/banner.md) | 3 | 4 | 6 | 0 | 13 |
 | [button](drift/button.md) | 2 | 4 | 1 | 1 | 8 |
 | [card](drift/card.md) | 0 | 7 | 6 | 0 | 13 |
-| [carousel-dots](drift/carousel-dots.md) | 1 | 4 | 2 | 0 | 7 |
+| [carousel-dots](drift/carousel-dots.md) | 1 | 5 | 1 | 0 | 7 |
 | [chat-message](drift/chat-message.md) | 1 | 5 | 2 | 1 | 9 |
 | [checkbox-group](drift/checkbox-group.md) | 0 | 0 | 3 | 1 | 4 |
 | [color-picker](drift/color-picker.md) | 1 | 5 | 15 | 1 | 22 |
@@ -216,7 +216,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [input-message](drift/input-message.md) | 3 | 1 | 13 | 4 | 21 |
 | [introduction](drift/introduction.md) | 0 | 5 | 2 | 0 | 7 |
 | [mobile-drawer](drift/mobile-drawer.md) | 2 | 2 | 1 | 0 | 5 |
-| [motion-page](drift/motion-page.md) | 1 | 2 | 1 | 3 | 7 |
+| [motion-page](drift/motion-page.md) | 0 | 3 | 1 | 2 | 6 |
 | [nav-menu](drift/nav-menu.md) | 0 | 5 | 1 | 0 | 6 |
 | [queued-stack](drift/queued-stack.md) | 1 | 3 | 3 | 1 | 8 |
 | [radio-group](drift/radio-group.md) | 0 | 2 | 2 | 0 | 4 |
@@ -234,10 +234,10 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [tabs-subtle](drift/tabs-subtle.md) | 0 | 3 | 2 | 0 | 5 |
 | [tabs](drift/tabs.md) | 0 | 2 | 2 | 0 | 4 |
 | [thinking-indicator](drift/thinking-indicator.md) | 1 | 2 | 1 | 0 | 4 |
-| [thinking-steps](drift/thinking-steps.md) | 3 | 4 | 5 | 0 | 12 |
+| [thinking-steps](drift/thinking-steps.md) | 2 | 4 | 5 | 0 | 11 |
 | [tooltip](drift/tooltip.md) | 0 | 6 | 1 | 0 | 7 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **47** | **217** | **189** | **47** | **500** |
+| **Total** | **45** | **219** | **188** | **46** | **498** |
 
 ### gpuix gaps across components
 
