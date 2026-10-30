@@ -64,6 +64,14 @@ export async function createCheck(
 	const renderer = test.renderer;
 	let failures = 0;
 
+	// A script that keeps this check as its report sink while it mounts a newer root unmounts this one first, since the test renderer is one per thread: a newer root replaces it, and unmounting a replaced tree later releases its motion values against the newer renderer ("unknown motion value").
+	let mounted = true;
+	function unmountOnce() {
+		if (!mounted) return;
+		mounted = false;
+		test.unmount();
+	}
+
 	async function settle(ms = 300) {
 		const until = performance.now() + ms;
 		do {
@@ -293,12 +301,12 @@ export async function createCheck(
 		},
 		/** Ends this check's tree and renderer without exiting, for a script that runs several; returns how many checks failed. */
 		unmount() {
-			test.unmount();
+			unmountOnce();
 			return failures;
 		},
 		async finish() {
 			// Unmount first: with the tree alive, Bun can abort at exit ("Thread Local Storage", exit 134) after every check passed. TestRoot.unmount also disposes the renderer.
-			test.unmount();
+			unmountOnce();
 			console.log(failures === 0 ? 'all passed' : `${failures} failed`);
 			process.exit(failures === 0 ? 0 : 1);
 		},

@@ -519,6 +519,9 @@ k.expect(
 	'search-trigger',
 );
 
+// The scenarios below mount their own roots, which replace this page's; `k` only reports from here on.
+k.unmount();
+
 // ─── A menu opened with a pointer press ──────────────────────────────────────
 
 // A real press on the trigger: no keyboard, nothing focused before.

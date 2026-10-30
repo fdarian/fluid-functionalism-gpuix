@@ -26,11 +26,8 @@ function check(name: string, ok: boolean, detail = '') {
 	if (!ok) failed = true;
 }
 
-const harnesses: ReturnType<typeof createTestRoot>[] = [];
-
 function harness() {
 	const test = createTestRoot({ width: 1240, height: 780, fonts });
-	harnesses.push(test);
 	const renderer = test.renderer;
 	const frame = () => {
 		renderer.flush();
@@ -165,6 +162,9 @@ setThemeChoice('dark');
 		'a second Escape closes the popover',
 		page.find('popover-square') === undefined,
 	);
+
+	// The test renderer is one per thread and a newer one replaces this one, so its tree is unmounted before the next block mounts.
+	page.test.unmount();
 }
 
 // A named swatch must not take the panel down.
@@ -187,6 +187,8 @@ setThemeChoice('dark');
 		'clicking a named swatch leaves the colour alone',
 		page.find('named-square') !== undefined,
 	);
+
+	page.test.unmount();
 }
 
 // Hover looks that are state styles: a swatch's ring and the format trigger's label ease over 100 ms and 80 ms.
@@ -476,6 +478,5 @@ setThemeChoice('dark');
 	k.check('Escape returns focus to the trigger', focusedIs('op-format'));
 
 	if (failed) console.log('FAILED');
-	for (const test of harnesses) test.unmount();
 	k.finish();
 }

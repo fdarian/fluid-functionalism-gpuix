@@ -28,11 +28,13 @@ function report(ok: boolean, label: string, detail: string) {
 	console.log(`${ok ? 'PASS' : 'FAIL'} ${label}: ${detail}`);
 }
 
-const sessions: ReturnType<typeof createTestRoot>[] = [];
+// The test renderer is one per thread: a newer one replaces the older, whose tree must be unmounted before that, not after.
+let live: ReturnType<typeof createTestRoot> | undefined;
 
 function session() {
+	live?.unmount();
 	const test = createTestRoot({ width: 1240, height: 780, fonts });
-	sessions.push(test);
+	live = test;
 	const renderer = test.renderer;
 	const frame = () => {
 		renderer.flush();
@@ -438,5 +440,5 @@ await dialogSurface();
 await disabledError();
 await comboboxEnter();
 console.log(failures === 0 ? 'ALL PASS' : `${failures} FAIL`);
-for (const test of sessions) test.unmount();
+live?.unmount();
 process.exit(failures === 0 ? 0 : 1);
