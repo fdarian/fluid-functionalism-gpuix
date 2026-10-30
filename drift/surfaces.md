@@ -17,7 +17,7 @@ repeating it.
 
 ## The description's "light" and "dark" links' underline does not fade with the colour
 
-- **Cause:** `gpuix gap` (`text-decoration-color` is not transitionable, README "colour fade" row).
+- **Cause:** `gpuix gap` (`text-decoration-color` is the one colour property not transitionable, README "colour fade" row).
 - **Original:** `UseLightLink` / `UseDarkLink`: buttons inside the description's paragraph with `underline decoration-dotted underline-offset-2`, hover `text-foreground transition-colors` (`app/docs/surfaces/page.tsx:1265-1309`).
 - **Port:** `ThemeLink` (`src/pages/surfaces.tsx:93-116`): a dotted-underlined `<span>` inside the description's one `<Prose>`, a button and Tab stop (Enter or Space switches, with a focus ring the source's button leaves to the browser), that calls `changeTheme`; hover eases the colour to foreground over 150 ms. The dots sit 2px under the baseline, as in the source (`textUnderlineOffset`); the underline does not fade with the colour.
 - **Fidelity:** approximated (the underline's colour changes at once).

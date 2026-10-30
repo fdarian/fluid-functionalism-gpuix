@@ -6,14 +6,15 @@ const [fading, setFading] = createSignal(false);
 let flipTimer: ReturnType<typeof setTimeout> | undefined;
 let endTimer: ReturnType<typeof setTimeout> | undefined;
 
-/** The source's 180ms ease-in-out, on the three properties a theme change moves (gpuix does not animate `fill` / `stroke`). */
+/** The source's 180ms ease-in-out, on the properties its `html.transitioning *` rule lists (`app/globals.css:859-868`). */
 const FADE_MS = 180;
 /** The source removes `.transitioning` 200ms after the class swap. */
 const HOLD_MS = 200;
 /** One frame. An element that first gains a `transition` in the same change as a colour jumps, so the layer has to be in before the palette moves: the source's forced reflow. */
 const LEAD_MS = 20;
 const fadeStyle = {
-	transitionProperty: 'background-color,color,border-color',
+	transitionProperty:
+		'border-radius,background-color,color,border-color,fill,stroke',
 	transitionDuration: `${FADE_MS}ms`,
 	transitionTimingFunction: 'ease-in-out',
 };

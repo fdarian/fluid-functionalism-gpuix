@@ -1,7 +1,7 @@
 /**
  * A theme change cross-fades: `changeTheme` mounts a `* { transition }` layer, the palette flips a frame later, and
- * the layer goes 200 ms after. Samples a surface and a border mid-fade, the end colour, an element with its own
- * (shorter) transition, and that the layer is gone afterwards.
+ * the layer goes 200 ms after. Samples a surface, a border, an svg fill and an svg stroke mid-fade, the end colour, an
+ * element with its own (shorter) transition, and that the layer is gone afterwards.
  *
  *   bun scripts/check-theme-fade.tsx
  *
@@ -35,6 +35,24 @@ const k = await createCheck(
 					borderColor: color.background,
 				}}
 			/>
+			<svg testId="fill" viewBox="0 0 40 40" style={{ width: 40, height: 40 }}>
+				<rect width="40" height="40" fill={color.background} />
+			</svg>
+			<svg
+				testId="stroke"
+				viewBox="0 0 40 40"
+				style={{ width: 40, height: 40 }}
+			>
+				<rect
+					x="5"
+					y="5"
+					width="30"
+					height="30"
+					fill="none"
+					stroke={color.background}
+					strokeWidth="10"
+				/>
+			</svg>
 			<div
 				testId="own"
 				style={{
@@ -70,6 +88,8 @@ function red(testId: string, dx: number, dy: number) {
 const probes = [
 	{ id: 'surface', dx: 20, dy: 20 },
 	{ id: 'border', dx: 5, dy: 20 },
+	{ id: 'fill', dx: 20, dy: 20 },
+	{ id: 'stroke', dx: 5, dy: 20 },
 	{ id: 'own', dx: 20, dy: 20 },
 ];
 
@@ -101,7 +121,7 @@ for (const [index, probe] of probes.entries()) {
 		`before ${before[index]}, end ${after[index]}`,
 	);
 }
-for (const index of [0, 1]) {
+for (const index of [0, 1, 2, 3]) {
 	k.check(
 		`${probes[index].id}: 86 ms in, between dark and light`,
 		middle[index] > early[index] + 2 && middle[index] < after[index] - 2,
@@ -110,8 +130,8 @@ for (const index of [0, 1]) {
 }
 k.check(
 	'own: its 80 ms transition wins over the layer',
-	middle[2] > middle[0] + 2,
-	`own ${middle[2]}, layer ${middle[0]}`,
+	middle[4] > middle[0] + 2,
+	`own ${middle[4]}, layer ${middle[0]}`,
 );
 
 // The layer is dropped 200 ms after the flip, so a plain element cuts again.
