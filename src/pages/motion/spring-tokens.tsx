@@ -77,9 +77,7 @@ export function SpringTokensDemo() {
 								style={{
 									display: 'flex',
 									flexDirection: 'row',
-									// gpuix's baseline alignment sits a <text> box on its bottom edge, so
-									// the three runs are centered instead: within a pixel of a shared baseline.
-									alignItems: 'center',
+									alignItems: 'baseline',
 									gap: 8,
 								}}
 							>
@@ -101,16 +99,15 @@ export function SpringTokensDemo() {
 								>
 									{tier.meta}
 								</text>
-								<div style={{ marginLeft: 'auto' }}>
-									<text
-										style={{
-											...siteType.caption,
-											color: color.mutedForeground,
-										}}
-									>
-										{tier.usage}
-									</text>
-								</div>
+								<text
+									style={{
+										...siteType.caption,
+										marginLeft: 'auto',
+										color: color.mutedForeground,
+									}}
+								>
+									{tier.usage}
+								</text>
 							</div>
 							<div
 								{...buttonProps({ onClick: toggle }, renderer)}

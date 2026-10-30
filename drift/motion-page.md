@@ -21,19 +21,11 @@ repeating it.
 
 ## An exit is the demo's own transition swap, not `AnimatePresence`'s `exit` transition
 
-- **Cause:** `gpuix gap`: `exit` takes a style target only, with no transition of its own (`packages/native/js/host.ts:310-317`, `MotionProps`).
+- **Cause:** `gpuix gap`: `exit` takes a style target only, with no transition of its own (`packages/native/js/host.ts:410`, `MotionProps`).
 - **Original:** `exit={{ opacity: 0, scale: 0.95, transition: exitTransition }}` inside `<AnimatePresence>` (`app/docs/motion/page.tsx:313-331`).
 - **Port:** the frame keeps the layers mounted with `createPresence` (`src/lib/presence.ts`): `animate` flips to the closed target and `transition` swaps to the exit tween in the same render, and `onMotionComplete` (or the exit time plus 100ms) unmounts them. This is the pattern the port's popups use (`src/components/tooltip.tsx:175`).
 - **Workaround:** as above.
 - **Fidelity:** exact timing; the mechanism differs.
-
-## Tweens ease out where the source's default tween uses a bezier
-
-- **Cause:** `port choice`: the tokens in `src/lib/theme.ts` (`slowExit`, `moderateExit`, `fastExit`) carry no `ease`, as everywhere in the port.
-- **Original:** `{ duration: 0.4 }` and `spring.slow.exit` (`{ duration: 0.16 }`) are Motion tweens with its default `cubic-bezier(0.25, 0.1, 0.35, 1)` (`app/docs/motion/page.tsx:290,367`; `registry/default/lib/springs.ts:15-36`).
-- **Port:** gpuix's default `easeOut` (README "Targets and timing", `ease`). `SAME_EXIT` is `{ duration: 0.4 }` (`src/pages/motion/modal-exit.tsx:32`), so both sides use the same curve and the 0.4s against 0.16s comparison holds.
-- **Fidelity:** approximated (same durations, a slightly different curve).
-- **Components it hits:** every exit tween.
 
 ## `ComponentPreview` has no Inspect switch and no highlighted Code tab
 
@@ -71,13 +63,6 @@ repeating it.
 - **Original:** `<Link href="/docs/<slug>">` for a component with a page, plain text for the others (`app/docs/motion/page.tsx:182-198`).
 - **Port:** a `role="link"` div calling `usePageNav().navigate(slug)` (`src/pages/motion/spring-reference.tsx`); Space activates it too, which a link does not do in a browser (it comes from `buttonProps`). "Mobile drawer" is plain text as in the source, though the port has a `mobile-drawer` demo. The "Fluid hover" chip links to a `fluid-hover` page that lands in a parallel branch: until it merges, it navigates to an empty column. The hover color eases over 150ms like `transition-colors`.
 - **Fidelity:** exact for links to existing pages.
-
-## Text baselines
-
-- **Cause:** `gpuix gap` (as observed; not traced in gpuix): `alignItems: "baseline"` puts a `<text>` box on its bottom edge in a flex row, where the DOM aligns the first baselines.
-- **Original:** `flex items-baseline gap-2` for a tier's name, meta and usage (`app/docs/motion/page.tsx:242`).
-- **Port:** `alignItems: "center"` (`src/pages/motion/spring-tokens.tsx`). With 20px, 14px and 16px line boxes the baselines land within a pixel of each other.
-- **Fidelity:** approximated.
 
 ## Section spacing
 
