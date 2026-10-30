@@ -68,7 +68,7 @@ repeating it.
 
 - **Cause:** `port choice` (reason not stated; the offsets were not measured against the DOM).
 - **Original:** an absolutely positioned `motion.div` at fixed `top` offsets (`-20` compact hover, `-16` thumb bubble, `-30` default row, `slider.tsx:1123`, `:365`, `:1596`), centred with `-translate-x-1/2`, radius `shape.bg` (`:373`).
-- **Port:** a `ValueBubble` (`src/components/slider.tsx:71-123`) in an `<anchored side="top" align="center" fit="snap" deferred>` with `gap` 8 above a thumb or 0 above a zero-size marker at 4px (compact, `:802-823`) or -6px (default, `:1305-1324`); radius `shape.bg`. The anchor keeps the bubble inside the window, which the DOM bubble does not. The marker offsets reproduce the DOM's bubble bottom if the bubble is 24px tall.
+- **Port:** a `ValueBubble` (`src/components/slider.tsx:71-123`) in an `<anchored side="top" align="center" fit="snap" deferred>` with `gap` 8 above a thumb or 0 above a zero-size marker at 4px (compact, `:802-823`) or -6px (default, `:1305-1324`); radius `shape.bg`. `align="center"` is the source's `-translate-x-1/2` over a box that follows the thumb or the cursor, so the bubble is `<anchored>` and not an absolute box with a transform. The anchor keeps the bubble inside the window, which the DOM bubble does not. The marker offsets reproduce the DOM's bubble bottom if the bubble is 24px tall.
 - **Workaround:** none.
 - **Fidelity:** approximated (placement unverified to the pixel).
 - **Components it hits:** none other.

@@ -112,9 +112,9 @@ One entry per place the port looks or behaves differently from the source, whate
 
 ## RTL: submenu side, arrow keys and chevron
 
-- **Cause:** `port choice` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` rows 475-478, lead decision: no ported consumer; the source docs never mount a `DirectionProvider` and have no rtl demo). gpuix now has `direction: 'rtl'` (inherited; it mirrors a row's main axis, grid columns and `textAlign: start`; gpuix `README.md`, "Direction"), so a port with a direction provider could mirror the submenu side and the chevron; the menu keys would still be the primitive's.
+- **Cause:** `port choice` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` rows 475-478, lead decision: no ported consumer; the source docs never mount a `DirectionProvider` and have no rtl demo). gpuix now has `direction: 'rtl'` (inherited; it mirrors a row's main axis, grid columns and `textAlign: start`; gpuix `README.md`, "Direction"), so a port with a direction provider could mirror the submenu side and the chevron (`scale: '-1 1'` on the chevron, now that gpuix has transforms); the menu keys would still be the primitive's.
 - **Original:** `useDirection()` picks `side="left"` for rtl (`registry/base/dropdown.tsx:879-883`), Base UI swaps the submenu open and close keys, and the chevron mirrors with `rtl:-scale-x-100` (`registry/default/dropdown-sub.tsx:179`).
-- **Port:** the submenu is always on the right and Right opens, Left closes (`src/components/dropdown.tsx:894-899`, `base-ui:src/menu/list/menu-list.ts:271-279`); the chevron never mirrors (`src/components/menu-item.tsx:142-151`).
+- **Port:** the submenu is always on the right and Right opens, Left closes (`src/components/dropdown.tsx:894-899`, `base-ui:src/menu/list/menu-list.ts:271-279`); the chevron never mirrors, because the port has no direction context for `rtl:-scale-x-100` to read (`src/components/menu-item.tsx:142-151`).
 - **Fidelity:** dropped, unreachable in the docs.
 - **Components it hits:** just this one.
 
