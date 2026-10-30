@@ -4,6 +4,7 @@
  *   bun scripts/check-banner.tsx
  *
  * The demo's Replay button sits under the banner, so its y is the row's height.
+ * The inline banner scales about its top edge: from 0.4 as it appears, and down to 0.6 while its row closes (`registry/default/banner.tsx:176-195`, `:323-332`). The scale is read off the transformed box of the banner against its rest width.
  */
 import { createCheck, scrollIntoView } from './check-kit';
 import { readPng } from './png-pixels';
@@ -36,16 +37,70 @@ async function press(testId: string) {
 const openY = replayY();
 kit.check('starts open', bannerShown());
 
+// The scale of the banner as it closes and as it opens again.
+const bannerBox = () => kit.bounds('inline-banner');
+const restWidth = bannerBox().width;
+const restTop = bannerBox().y;
+const scaleNow = () =>
+	kit.exists('inline-banner') ? bannerBox().width / restWidth : undefined;
+const closing: number[] = [];
+await press('inline-banner-dismiss');
+await frames(600, () => {
+	const scale = scaleNow();
+	if (scale !== undefined) closing.push(scale);
+});
+const settledScale = closing[closing.length - 1] as number;
+kit.check(
+	'the closing banner shrinks to 0.6 and no further',
+	Math.abs(settledScale - 0.6) < 0.005 &&
+		Math.min(...closing) > 0.6 - 0.005 &&
+		closing.every(
+			(scale, index) => index === 0 || scale <= closing[index - 1] + 0.001,
+		),
+	`${closing.length} frames, first ${closing[0]?.toFixed(3)}, last ${settledScale.toFixed(3)}, min ${Math.min(...closing).toFixed(3)}`,
+);
+const opening: number[] = [];
+const tops: number[] = [];
+await press('inline-replay');
+await frames(1500, () => {
+	const scale = scaleNow();
+	if (scale !== undefined) opening.push(scale);
+	if (kit.exists('inline-banner')) tops.push(bannerBox().y);
+});
+kit.check(
+	'the opening banner grows from 0.4 to 1',
+	Math.abs((opening[0] as number) - 0.4) < 0.02 &&
+		Math.abs((opening[opening.length - 1] as number) - 1) < 0.002,
+	`first ${opening[0]?.toFixed(3)}, last ${opening[opening.length - 1]?.toFixed(3)}, max ${Math.max(...opening).toFixed(3)}`,
+);
+kit.check(
+	'the banner scales about its top edge',
+	tops.every((top) => Math.abs(top - restTop) < 0.01),
+	`top ${Math.min(...tops).toFixed(2)} to ${Math.max(...tops).toFixed(2)} (rest ${restTop.toFixed(2)})`,
+);
+
 // Closing while it is still opening must end closed, not throw and leave the banner up.
 await press('inline-banner-dismiss');
 await frames(600);
 kit.check('dismissing removes the banner', !bannerShown());
 const closedY = replayY();
 await press('inline-replay');
-await frames(80);
+await frames(112);
+const scaleAtDismiss = scaleNow() as number;
+const midOpen: number[] = [];
 await press('inline-banner-dismiss');
-await frames(900);
+await frames(900, () => {
+	const scale = scaleNow();
+	if (scale !== undefined) midOpen.push(scale);
+});
 kit.check('closing mid-open removes the banner', !bannerShown());
+kit.check(
+	'closing mid-open shrinks on from the scale it had, never back up',
+	scaleAtDismiss > 0.45 &&
+		scaleAtDismiss < 0.95 &&
+		midOpen.every((scale) => scale <= scaleAtDismiss + 0.02),
+	`at the dismiss ${scaleAtDismiss.toFixed(3)}, max after ${Math.max(...midOpen).toFixed(3)}, min ${Math.min(...midOpen).toFixed(3)}`,
+);
 kit.check(
 	'closing mid-open ends collapsed',
 	Math.abs(replayY() - closedY) < 0.5,
@@ -145,6 +200,43 @@ for (const part of ['fill', 'glyph'] as const) {
 		`rest ${restFade[part]}, 32 ms ${midFade[part]}, hover ${hoverFade[part]}`,
 	);
 }
+
+// The fixed bar rides its row on `y`, a share of its own height (`registry/default/banner.tsx:236-238`): it leaves upward by exactly its height and comes back, whether the page has seen it before or not.
+await scrollIntoView(renderer, 'fixed-banner');
+await frames(300);
+const fixedRestY = kit.bounds('fixed-banner').y;
+const fixedHeight = kit.bounds('fixed-banner').height;
+const fixedClosing: number[] = [];
+await press('fixed-banner-dismiss');
+await frames(600, () => {
+	if (kit.exists('fixed-banner'))
+		fixedClosing.push(kit.bounds('fixed-banner').y);
+});
+const fixedClosed = fixedClosing[fixedClosing.length - 1] as number;
+kit.check(
+	'the closing fixed bar slides up by its own height and is then removed',
+	fixedClosing.every(
+		(y, index) =>
+			index === 0 || y <= (fixedClosing[index - 1] as number) + 0.01,
+	) &&
+		Math.abs(fixedRestY - fixedClosed - fixedHeight) < 6 &&
+		!kit.exists('fixed-banner'),
+	`rest ${fixedRestY.toFixed(1)}, last seen ${fixedClosed.toFixed(1)}, height ${fixedHeight}`,
+);
+const fixedOpening: number[] = [];
+await press('fixed-replay');
+await frames(900, () => {
+	if (kit.exists('fixed-banner'))
+		fixedOpening.push(kit.bounds('fixed-banner').y);
+});
+kit.check(
+	'the fixed bar slides back in from above its place',
+	(fixedOpening[0] as number) >= fixedRestY - fixedHeight - 0.01 &&
+		(fixedOpening[0] as number) < fixedRestY - fixedHeight * 0.5 &&
+		Math.abs((fixedOpening[fixedOpening.length - 1] as number) - fixedRestY) <
+			0.05,
+	`first ${(fixedOpening[0] as number).toFixed(1)}, last ${(fixedOpening[fixedOpening.length - 1] as number).toFixed(1)}, rest ${fixedRestY.toFixed(1)}`,
+);
 
 // Actions: `@max-sm/banner` (a 24rem container) and a description both put them under the title, primary first; trailing, primary is last at the edge. Tab keeps the written order.
 async function actionsAt(titleId: string, actionsId: string, parts: string[]) {

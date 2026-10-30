@@ -1,5 +1,8 @@
 import {
+	animate,
 	buttonProps,
+	createMotionValue,
+	createMotionValueEvent,
 	createReducedMotion,
 	type HostElement,
 	motion,
@@ -125,8 +128,17 @@ function useBannerScope() {
  */
 const appearRow = { type: 'spring', duration: 0.32, bounce: 0 } as const;
 const appearBanner = { ...tween.slow, delay: 0.08 } as const;
+/** `animate()` on a bare motion value settles a spring at the default 0.005 without snapping to the target, so the scale would rest at 1.0017; a `scale` key on a `motion` element snaps. */
+const appearScale = {
+	...appearBanner,
+	restDelta: 0.0005,
+	restSpeed: 0.0005,
+} as const;
 const dismissRow = { duration: 0.24, ease: 'easeInOut' } as const;
 const dismissFade = { duration: 0.16, ease: 'easeOut' } as const;
+/** An inline banner grows from this scale as it appears, and shrinks toward `SHRINK_TO` while its row closes. */
+const FROM_SCALE = 0.4;
+const SHRINK_TO = 0.6;
 
 export function Banner(props: {
 	status?: BannerStatus;
@@ -147,6 +159,7 @@ export function Banner(props: {
 	const reduced = createReducedMotion();
 	// A fixed bar rides its row both ways; reduced, it fades in place like the inline one.
 	const slides = () => fixed() && !reduced();
+	const scaled = () => !fixed() && !reduced();
 	const size = () => props.size ?? sizeChoice();
 	const metrics = () => sizes[size()];
 
@@ -160,14 +173,27 @@ export function Banner(props: {
 	let arrivesInPlace = open();
 	let rowElement: HostElement | undefined;
 	let barElement: HostElement | undefined;
-	// A fixed bar leaves upward by its own height, measured as the exit starts; 0 until it has been seen.
-	const [exitOffset, setExitOffset] = createSignal(0);
+	// The inline banner's scale. On dismiss it follows `rowProgress`, a copy of the row's height tween, the way the source ties the scale to its row value: it tracks the row down to SHRINK_TO and stays there.
+	const barScale = createMotionValue(1);
+	const rowProgress = createMotionValue(1);
+	let dismissing = false;
+	let scaleFrom = 1;
+	createMotionValueEvent(rowProgress, 'change', (progress: number) => {
+		if (!dismissing) return;
+		barScale.set(Math.min(scaleFrom, Math.max(progress, SHRINK_TO)));
+	});
 	createEffect(
 		on(
 			open,
 			(isOpen) => {
 				if (isOpen) {
+					const rowStillMounted = mounted();
 					setMounted(true);
+					if (scaled() && rowStillMounted) {
+						dismissing = false;
+						rowProgress.stop();
+						animate(barScale, 1, appearScale);
+					}
 					return;
 				}
 				if (
@@ -181,7 +207,17 @@ export function Banner(props: {
 					setMounted(false);
 					return;
 				}
-				setExitOffset(-barElement.getBoundingClientRect().height);
+				if (scaled()) {
+					scaleFrom = barScale.get();
+					barScale.stop();
+					const barHeight =
+						barElement.getBoundingClientRect().height / scaleFrom;
+					rowProgress.jump(
+						Math.min(1, rowElement.getBoundingClientRect().height / barHeight),
+					);
+					dismissing = true;
+					animate(rowProgress, 0, dismissRow);
+				}
 			},
 			{ defer: true },
 		),
@@ -304,6 +340,15 @@ export function Banner(props: {
 	const row = () => {
 		const inPlace = arrivesInPlace;
 		arrivesInPlace = false;
+		if (scaled()) {
+			dismissing = false;
+			if (inPlace) {
+				barScale.jump(1);
+			} else {
+				barScale.jump(FROM_SCALE);
+				animate(barScale, 1, appearScale);
+			}
+		}
 		return (
 			<motion.div
 				ref={(element: HostElement) => {
@@ -332,12 +377,12 @@ export function Banner(props: {
 						inPlace
 							? false
 							: slides()
-								? { opacity: 0, top: exitOffset() }
+								? { opacity: 0, y: '-100%' }
 								: { opacity: 0 }
 					}
 					animate={
 						slides()
-							? { opacity: open() ? 1 : 0, top: open() ? 0 : exitOffset() }
+							? { opacity: open() ? 1 : 0, y: open() ? 0 : '-100%' }
 							: { opacity: open() ? 1 : 0 }
 					}
 					transition={
@@ -356,7 +401,12 @@ export function Banner(props: {
 					onMotionComplete={() => {
 						if (reduced() && !open()) setMounted(false);
 					}}
-					style={{ ...rowStyle, position: 'relative', flexShrink: 0 }}
+					style={{
+						...rowStyle,
+						position: 'relative',
+						flexShrink: 0,
+						...(scaled() ? { scale: barScale, transformOrigin: 'top' } : {}),
+					}}
 				>
 					{body()}
 				</motion.div>
