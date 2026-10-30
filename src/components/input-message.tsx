@@ -12,7 +12,6 @@ import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
 import {
 	type Accessor,
 	createEffect,
-	createMemo,
 	createSignal,
 	For,
 	type JSX,
@@ -323,14 +322,6 @@ function FilePreviewTile(props: {
 }) {
 	const [tileHovered, setTileHovered] = createSignal(false);
 	const [badgeHovered, setBadgeHovered] = createSignal(false);
-	// One object per size: a fresh one on each read would reset the box `popLayout` pins a leaving tile to.
-	const style = createMemo(() => ({
-		position: 'relative' as const,
-		flexShrink: 0,
-		width: props.size,
-		height: props.size,
-		cursor: 'default' as const,
-	}));
 	return (
 		<motion.div
 			layout
@@ -341,7 +332,13 @@ function FilePreviewTile(props: {
 			testId={props.testId}
 			onMouseEnter={() => setTileHovered(true)}
 			onMouseLeave={() => setTileHovered(false)}
-			style={style()}
+			style={{
+				position: 'relative',
+				flexShrink: 0,
+				width: props.size,
+				height: props.size,
+				cursor: 'default',
+			}}
 		>
 			<FileThumbnail
 				file={{
