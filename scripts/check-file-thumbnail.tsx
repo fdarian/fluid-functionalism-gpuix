@@ -4,7 +4,8 @@
  *   bun scripts/check-file-thumbnail.tsx
  *
  * The motion clock is held and stepped by hand, and the arc's angle is read from
- * captured pixels: the centroid of the pixels brighter than the ring.
+ * captured pixels: the centroid of the pixels brighter than the ring. Then the spinner
+ * runs on a 75 Hz timer for 2 s, and its ticks are patches of the frame, none drawn whole.
  */
 import { Spinner } from '#/components/file-thumbnail';
 import { createCheck } from './check-kit';
@@ -68,4 +69,23 @@ k.check('half a turn at 500 ms', near(turned(2), 180));
 k.check('three quarters at 750 ms', near(turned(3), 270));
 k.check('one turn at 1000 ms', near(turned(4), 0));
 renderer.clockResume();
+
+renderer.setA11yActive(false);
+renderer.setInlineDraws(false);
+const wake = setInterval(() => {
+	renderer.dispatchNativeEvents();
+	renderer.drawFrame();
+}, 1000 / 75);
+await new Promise((resolve) => setTimeout(resolve, 600));
+const patchedBefore = renderer.getPatchCounters().patchedFrames;
+const paintedBefore = renderer.getPaintedFrameCount();
+await new Promise((resolve) => setTimeout(resolve, 2000));
+clearInterval(wake);
+const patched = renderer.getPatchCounters().patchedFrames - patchedBefore;
+const whole = renderer.getPaintedFrameCount() - paintedBefore;
+k.check(
+	"the spinner's ticks are patches, none drawn whole",
+	patched / 2 > 30 && whole === 0,
+	`${patched / 2} patched and ${whole / 2} whole a second`,
+);
 k.finish();

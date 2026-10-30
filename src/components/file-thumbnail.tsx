@@ -1,4 +1,4 @@
-import { motion } from '@gpuix/solid';
+import { defineKeyframes } from '@gpuix/solid';
 import { type JSX, Show } from 'solid-js';
 import { Icon } from '#/lib/icon';
 import { defineIcon } from '#/lib/icons';
@@ -16,69 +16,25 @@ export interface FileLike {
 	src?: string;
 }
 
-const SPINNER_SIZE = 24;
-const SPINNER_RADIUS = 11;
-const SPINNER_CIRCUMFERENCE = 2 * Math.PI * SPINNER_RADIUS;
-/** The arc of `border-t-muted-foreground`: a quarter of the ring. */
-const ARC_LENGTH = SPINNER_CIRCUMFERENCE / 4;
-/** A circle's stroke starts at 3 o'clock; the arc sits centred on 12 o'clock, 225 degrees clockwise from there. */
-const ARC_START = (SPINNER_CIRCUMFERENCE * 225) / 360;
+/** Tailwind's `animate-spin` keyframes. */
+defineKeyframes('spin', { to: { transform: 'rotate(360deg)' } });
 
-const ARC = {
-	cx: 12,
-	cy: 12,
-	r: SPINNER_RADIUS,
-	fill: 'none',
-	stroke: 'currentColor',
-	strokeWidth: 2,
-	strokeDasharray: `${ARC_LENGTH} ${SPINNER_CIRCUMFERENCE - ARC_LENGTH}`,
-};
-
-/**
- * The thin ring with one accented quadrant, turning once a second like
- * `animate-spin`. gpuix cannot rotate, and a CSS keyframe cannot reach an SVG
- * attribute, so a native `motion.circle` slides the dash of a still circle one
- * lap (`strokeDashoffset` over one circumference).
- */
+/** `w-6 h-6 rounded-full border-2 border-border border-t-muted-foreground animate-spin`. */
 export function Spinner() {
 	return (
 		<div
 			style={{
-				width: SPINNER_SIZE,
-				height: SPINNER_SIZE,
-				position: 'relative',
+				width: 24,
+				height: 24,
 				flexShrink: 0,
+				borderRadius: 12,
+				borderStyle: 'solid',
+				borderWidth: 2,
+				borderColor: color.border,
+				borderTopColor: color.mutedForeground,
+				animation: 'spin 1s linear infinite',
 			}}
-		>
-			<Icon
-				name={defineIcon('<circle cx="12" cy="12" r="11"/>')}
-				size={SPINNER_SIZE}
-				strokeWidth={2}
-				color={color.border}
-			/>
-			<svg
-				viewBox="0 0 24 24"
-				style={{
-					position: 'absolute',
-					top: 0,
-					left: 0,
-					width: SPINNER_SIZE,
-					height: SPINNER_SIZE,
-					color: color.mutedForeground,
-				}}
-			>
-				<motion.circle
-					{...ARC}
-					animate={{
-						strokeDashoffset: [
-							-ARC_START,
-							-(ARC_START + SPINNER_CIRCUMFERENCE),
-						],
-					}}
-					transition={{ duration: 1, ease: 'linear', repeat: Infinity }}
-				/>
-			</svg>
-		</div>
+		/>
 	);
 }
 

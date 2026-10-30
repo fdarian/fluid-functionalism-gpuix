@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 522 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 521 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -208,7 +208,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [concepts](drift/concepts.md) | 1 | 26 | 2 | 1 | 30 |
 | [dialog](drift/dialog.md) | 1 | 3 | 2 | 1 | 7 |
 | [dropdown](drift/dropdown.md) | 1 | 5 | 11 | 1 | 18 |
-| [file-thumbnail](drift/file-thumbnail.md) | 2 | 5 | 1 | 0 | 8 |
+| [file-thumbnail](drift/file-thumbnail.md) | 1 | 5 | 1 | 0 | 7 |
 | [fluid-hover](drift/fluid-hover.md) | 4 | 5 | 2 | 1 | 12 |
 | [home](drift/home.md) | 0 | 4 | 1 | 1 | 6 |
 | [input-copy](drift/input-copy.md) | 1 | 3 | 4 | 0 | 8 |
@@ -237,7 +237,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 3 | 4 | 5 | 0 | 12 |
 | [tooltip](drift/tooltip.md) | 0 | 5 | 2 | 1 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **66** | **217** | **192** | **47** | **522** |
+| **Total** | **65** | **217** | **192** | **47** | **521** |
 
 ### gpuix gaps across components
 
@@ -369,7 +369,7 @@ now does that the port has not picked up.
 | ghost-span that reserves the semibold width | the same trick, plus a second hidden copy at normal weight: `StableLabel` is an `inline-grid` with both hidden copies and the visible label in one cell, so the cell is as wide as the wider of the two and never changes width with the weight. Gpuix has no text-measure API, so a hidden `<text>` is the only way to hold the wider width. On gpuix b03d4e27 the second copy is within noise (seven sidebar pages, three alternating runs each: sweep draw p95 -0.35 to +0.30 ms, p50 at most 0.1 ms but for 0.5 on radio-group); it was +1.0-1.7 ms p95 on 5fda771a, before gpuix #46 and #58 (an `opacity: 0` text paints nothing and hidden labels are not re-measured). Kept because the box must not change width and `check-weight-widths` needs the wider of normal and semibold | Exact |
 | `truncate` | `whiteSpace: "nowrap"` + `textOverflow: "ellipsis"` on the combobox rows | Exact; sidebar labels are not truncated |
 | icon stroke 1.5 → 2 on hover | `<Icon easeStroke>` (`src/lib/icon.tsx`) animates `strokeWidth` on a `motion.g` over 80 ms: accordion, button, card, tabs, tabs-subtle, nav-item, sidebar, thinking-steps, input-copy, input-group, and the dropdown, dropdown-search, menu-item, select, combobox and command-menu icons. Everywhere else the SVG string is swapped | Exact where `easeStroke` is set, except with the phosphor library (filled paths, the weight switches at once); instant elsewhere |
-| `animation: spinner-move`, the button's loader dash | a lucide `loader` turning once a second. The button's spinner draws its dash natively (`spinner-move` and `spinner-dash` keyframes on a `pathLength` 100 path, 615fd85c). gpuix cannot rotate, so the file-thumbnail spinner is a still ring and a `motion.circle` whose `strokeDashoffset` slides a quarter-ring arc one lap (`src/components/file-thumbnail.tsx`; gpuix animates SVG dashes, FORK.md:1144, :1151-1152) | Exact for the button; file-thumbnail approximated: the arc turns by sliding, not a rotation, the only gap being the missing rotate transform (`drift/file-thumbnail.md`) |
+| `animation: spinner-move`, the button's loader dash; `animate-spin` | a lucide `loader` turning once a second. The button's spinner draws its dash natively (`spinner-move` and `spinner-dash` keyframes on a `pathLength` 100 path, 615fd85c). The file-thumbnail spinner is the source's own box, `border-2` with a `border-t` accent and `rounded-full`, turned by a `spin` keyframe (`transform: rotate(360deg)`, 1 s linear, `src/components/file-thumbnail.tsx`); its ticks are patches (68 a second, none drawn whole, headless on b3f3306f) | Exact for both |
 | `AnimatePresence` exit of the popup | the popup stays mounted for 60 ms while its opacity fades | Approximated |
 
 Not ported there (pill shape and the Radius, Size and Icons rows have landed since; Primitive is not ported):
