@@ -6,12 +6,12 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 ## Footer neighbours jump instead of sliding
 
-- **Cause:** `not ported yet` (gpuix has `layout`, `FORK.md:1149-1150`).
-- **Original:** footer buttons sit in `AnimatePresence mode="popLayout" initial={false}` with `layout="position"`, so a leaving button fades and scales out while its neighbours slide at the same time (`:1425-1429`, `:1485-1489`).
-- **Port:** the same `AnimatePresence mode="popLayout" initial={false}` around each cluster, a button entering and leaving on `scale` .85 and opacity (`ask-user-questions.tsx:1072`, `:1115`, `:1186-1198`); the submit arrow on .6, leaving on the 60 ms tween (`:154-200`, `:211-217`); the validation message rising from `y` -2 (`:1088-1094`). There is no `layout`, so the neighbours of a leaving button jump to its place at once.
-- **Workaround:** none.
-- **Fidelity:** approximated (sibling slide).
-- **Components it hits:** just this one.
+- **Cause:** `gpuix gap` (a `layout` glide also runs for a box that an animating ancestor moves; `~/code/fdarian/gpuix/README.md` "Layout animations": "Layout animations start automatically").
+- **Original:** footer buttons sit in `AnimatePresence mode="popLayout" initial={false}` with `layout="position"`, so a leaving button fades and scales out while its neighbours slide at the same time (`:1425-1429`, `:1485-1489`). Motion measures a `layout` box at a React commit, and the footer sits below the card's morphing height, so at that commit it has not moved yet and rides the height spring with the card.
+- **Port:** the same `AnimatePresence mode="popLayout" initial={false}` around each cluster, a button entering and leaving on `scale` .85 and opacity (`ask-user-questions.tsx:1072`, `:1115`, `:1186-1198`); the submit arrow on .6, leaving on the 60 ms tween (`:154-200`, `:211-217`); the validation message rising from `y` -2 (`:1088-1094`). `FooterButton` has no `layout`, so the neighbours of a leaving button jump to its place at once (Skip moves right by Continue's width as Continue leaves). `layout="position"` was tried and slides them, but gpuix runs the glide for every move in layout space, and every footer change comes with a question change, whose card morph moves the footer. In the docs page's scroller the footer then leaves the place scroll anchoring holds it at: on "Stacked layout", answering by Skip from the first question, Skip's top stays at its rest value (0 px, sampled every 8 ms for 500 ms) without `layout`, and with it goes +4, +15, +26, +34, +36, +38 px (the peak at 48 ms) and is back by about 180 ms. With scroll anchoring off the footer rides the card's morph up 132 px: without `layout` it is at -63 px at 40 ms and -110 px at 80 ms and at rest by about 104 ms, with it at -25 px, -91 px and about 200 ms. The probe is `~/.claude/notes/ff-gpuix-repros/layout-ancestor-height/zz-probe-ask.tsx`.
+- **Workaround:** none. The glide cannot be armed only for a membership change, since a membership change and the card's height morph start in the same commit.
+- **Fidelity:** approximated (the neighbour jumps).
+- **Components it hits:** just this one; `input-message` has the milder form of the same gap ("A queued row trails the region that moves it").
 
 ## Keyboard focus ring does not travel
 
