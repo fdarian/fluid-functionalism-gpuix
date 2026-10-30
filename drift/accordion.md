@@ -11,16 +11,6 @@ No drift found in: sizes (trigger padding, gap, icon 16/14, content padding, 288
 tokens (`accentWash`, `hover`, `focusRing`, `mutedForeground`), single and multiple value semantics, the 0.7 dim of the
 open tints while a closed row is hovered, the height and opacity timings of the panel, ARIA, disabled looks.
 
-## CSS transforms (the chevron's rotation)
-
-- **Cause:** `gpuix gap`.
-- **Original:** the chevron turns 90 degrees on `spring.fast` as the item opens (`registry/base/accordion.tsx:769-772`).
-- **Port:** the icon swaps between `chevron-right` and `chevron-down` at once (`src/components/accordion.tsx:604-611`).
-- **gpuix lacks:** `transform`. Only SVG and glyph sprites carry a `TransformationMatrix`; quads, images, masks and hitboxes do not (`~/code/fdarian/gpuix/FORK.md:1198-1209`). README row "CSS transforms".
-- **Workaround:** the glyph swap.
-- **Fidelity:** approximated (no turn, the glyph changes at once).
-- **Components it hits:** every rotating chevron (card, color-picker, thinking-steps).
-
 ## Standalone hover fill fades in 20 ms faster
 
 - **Cause:** `not ported yet` (a plain mismatch; nothing stops it).
@@ -34,7 +24,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** every mouse move tests the pointer's y against each open item's panel band (trigger bottom to item bottom) and clears the hover when it is inside (`registry/base/accordion.tsx:358-378`).
-- **Port:** `onMouseEnter` / `onMouseLeave` on the panel call `overContent`, which clears the hover and mutes the group's mouse move until the panel is left (`src/components/accordion.tsx:267-270`, `:294-298`, `:641-646`). A panel that is closing counts as no panel at once (`item.isOpen()` guard).
+- **Port:** `onMouseEnter` / `onMouseLeave` on the panel call `overContent`, which clears the hover and mutes the group's mouse move until the panel is left (`src/components/accordion.tsx:267-270`, `:294-298`, `:648-653`). A panel that is closing counts as no panel at once (`item.isOpen()` guard).
 - **Workaround:** none.
 - **Fidelity:** approximated (the same result except while a panel animates under a still pointer).
 - **Components it hits:** just this one.
@@ -80,7 +70,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `port choice` (the first open springs to a measured height, which a hidden box cannot report).
 - **Original:** Base UI hides a closed-at-mount panel from its first render: `keepMounted` with `hidden` (`registry/base/accordion.tsx:923-939`).
-- **Port:** the closed panel stays mounted and goes `display: none` after the exit (`createAccordionPanel(…, { keepMounted: true })`, `hidden()` and `onExitComplete`, `base-ui:src/accordion/panel/use-accordion-panel.ts:16-47`, `src/components/accordion.tsx:632`, `:640`, `:648-650`). A panel closed at mount stays a zero-height `role="region"` until its text's first `onLayout`, one frame after paint, so the first open has a height to spring to; the measured height stays cached across the hide.
+- **Port:** the closed panel stays mounted and goes `display: none` after the exit (`createAccordionPanel(…, { keepMounted: true })`, `hidden()` and `onExitComplete`, `base-ui:src/accordion/panel/use-accordion-panel.ts:16-47`, `src/components/accordion.tsx:639`, `:647`, `:655-657`). A panel closed at mount stays a zero-height `role="region"` until its text's first `onLayout`, one frame after paint, so the first open has a height to spring to; the measured height stays cached across the hide.
 - **Workaround:** `display: none` only once `contentHeight()` is known.
 - **Fidelity:** approximated (tab order identical; the accessibility tree differs only for that first frame).
 - **Components it hits:** none other (thinking-steps uses `inert`).
@@ -89,8 +79,8 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 - **Cause:** `not ported yet`.
 - **Original:** the height springs only while this panel toggles; a size change from nested content, and the hand-off from `height: auto` for an item open at mount, snap (`toggling`, `registry/base/accordion.tsx:872-876`, `:953-958`).
-- **Port:** the transition depends only on `item.isOpen()` (`src/components/accordion.tsx:638-639`). Content that changes height while open (a nested accordion, a re-wrap) springs and chases. Whether an item open at mount plays a grow on its first measure was not run.
-- **Workaround:** `height: "auto"` until the first measure (`src/components/accordion.tsx:653-656`).
+- **Port:** the transition depends only on `item.isOpen()` (`src/components/accordion.tsx:645-646`). Content that changes height while open (a nested accordion, a re-wrap) springs and chases. Whether an item open at mount plays a grow on its first measure was not run.
+- **Workaround:** `height: "auto"` until the first measure (`src/components/accordion.tsx:660-663`).
 - **Fidelity:** approximated.
 - **Components it hits:** any panel holding collapsibles (thinking-steps, sidebar).
 

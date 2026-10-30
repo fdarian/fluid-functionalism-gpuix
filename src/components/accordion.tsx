@@ -601,14 +601,21 @@ export function AccordionTrigger(props: { children: string; testId?: string }) {
 					grow
 					fade
 				/>
-				<Icon
-					name={item.isOpen() ? 'chevron-down' : 'chevron-right'}
-					size={metrics().icon}
-					strokeWidth={lit() ? 2 : 1.5}
-					easeStroke
-					fade
-					color={lit() ? color.foreground : color.mutedForeground}
-				/>
+				<motion.div
+					testId={props.testId && `${props.testId}-chevron`}
+					style={{ display: 'flex', flexShrink: 0 }}
+					animate={{ rotate: item.isOpen() ? 90 : 0 }}
+					transition={tween.fast}
+				>
+					<Icon
+						name="chevron-right"
+						size={metrics().icon}
+						strokeWidth={lit() ? 2 : 1.5}
+						easeStroke
+						fade
+						color={lit() ? color.foreground : color.mutedForeground}
+					/>
+				</motion.div>
 			</div>
 		</div>
 	);

@@ -201,4 +201,29 @@ kit.check(
 	await tabLandsOn('kb-1', 'kb-2'),
 );
 
+// The chevron turns a quarter on spring.fast: a square at 45 degrees is wider than at rest, and the box it measures is the transformed one.
+const chevronRest = bounds('kb-1-chevron');
+renderer.clockPause();
+try {
+	await kit.click('kb-1');
+	let widest = chevronRest.width;
+	for (let frame = 0; frame < 6; frame++) {
+		kit.step(12);
+		widest = Math.max(widest, bounds('kb-1-chevron').width);
+	}
+	kit.check(
+		'the chevron turns while the row opens',
+		widest > chevronRest.width + 2,
+		`widest ${widest.toFixed(2)} against ${chevronRest.width.toFixed(2)} at rest`,
+	);
+	kit.step(600);
+	kit.check(
+		'the chevron rests square after the quarter turn',
+		Math.abs(bounds('kb-1-chevron').width - chevronRest.width) < 0.1,
+		`${bounds('kb-1-chevron').width.toFixed(2)} against ${chevronRest.width.toFixed(2)}`,
+	);
+} finally {
+	renderer.clockResume();
+}
+
 kit.finish();
