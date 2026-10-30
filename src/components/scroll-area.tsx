@@ -182,31 +182,52 @@ export function ScrollArea(props: {
 				>
 					{/* The source widens the thumb with a CSS `transition-[width,height]`, which reduced motion does not touch; the config would make this `motion.div` jump instead. */}
 					<MotionConfig reducedMotion="never">
-						<motion.div
-							testId={
-								props.testId === undefined
-									? undefined
-									: `${props.testId}-${bar.axis}-thumb`
-							}
-							initial={false}
-							// Off the container edge by 2px (`-translate-x-0.5`) and widening from 4px to 6px on hover.
-							animate={
-								bar.axis === 'y'
-									? { left: hovered() ? 0 : 1, width: hovered() ? 6 : 4 }
-									: { top: hovered() ? 0 : 1, height: hovered() ? 6 : 4 }
-							}
-							transition={{ duration: 0.16, ease: 'easeInOut' }}
+						{/* The source's `mx-auto` / `my-auto`: the thumb stays centred in the track while it widens. */}
+						<div
 							style={{
 								position: 'absolute',
-								borderRadius: 3,
-								backgroundColor: thumbColor(),
-								// Tailwind's `ease-in-out` is `fade`'s default curve.
-								...fade(['background-color'], 160),
+								display: 'flex',
+								flexDirection: bar.axis === 'y' ? 'row' : 'column',
+								justifyContent: 'center',
 								...(bar.axis === 'y'
-									? { top: span()?.start, height: span()?.length }
-									: { left: span()?.start, width: span()?.length }),
+									? {
+											left: 0,
+											right: 0,
+											top: span()?.start,
+											height: span()?.length,
+										}
+									: {
+											top: 0,
+											bottom: 0,
+											left: span()?.start,
+											width: span()?.length,
+										}),
 							}}
-						/>
+						>
+							<motion.div
+								testId={
+									props.testId === undefined
+										? undefined
+										: `${props.testId}-${bar.axis}-thumb`
+								}
+								initial={false}
+								animate={
+									bar.axis === 'y'
+										? { width: hovered() ? 6 : 4 }
+										: { height: hovered() ? 6 : 4 }
+								}
+								transition={{ duration: 0.16, ease: 'easeInOut' }}
+								style={{
+									borderRadius: 3,
+									backgroundColor: thumbColor(),
+									// Off the track's edge by 2px (`-translate-x-0.5`); the track keeps its 10px hit target flush.
+									transform:
+										bar.axis === 'y' ? 'translateX(-2px)' : 'translateY(-2px)',
+									// Tailwind's `ease-in-out` is `fade`'s default curve.
+									...fade(['background-color'], 160),
+								}}
+							/>
+						</div>
 					</MotionConfig>
 				</motion.div>
 			</Show>

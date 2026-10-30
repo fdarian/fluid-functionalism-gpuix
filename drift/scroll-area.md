@@ -14,20 +14,11 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 - **Fidelity:** exact on macOS (apart from `Math.min(fadeSize, length / 2)` at `:104`, which the CSS does not do for a viewport under 96px); no fade elsewhere. A new gradient string is built on every scroll event. A `both` area fades vertically only, as the single class does on the web.
 - **Components it hits:** any `ScrollArea` with `fade`.
 
-## The thumb's 2px nudge is a `left` / `top`, not a translate
-
-- **Cause:** `gpuix gap` (no transforms: [README "Missing features", first row](../README.md#missing-features)).
-- **Original:** `-translate-x-0.5` / `-translate-y-0.5` on the thumb (`registry/base/scroll-area.tsx:152-155`).
-- **Port:** `left` / `top` animates 1 to 0 with the width / height (`src/components/scroll-area.tsx:183-210`), inside a `<MotionConfig reducedMotion="never">`: the source widens the thumb with a CSS `transition-[background-color,width,height]` (`registry/base/scroll-area.tsx:147`), which reduced motion does not touch, so it keeps easing there and here.
-- **Workaround:** the same offset on a layout prop.
-- **Fidelity:** exact (end states and timing match).
-- **Components it hits:** just this one.
-
 ## Touch-primary devices keep the custom scrollbar
 
 - **Cause:** `port choice` (desktop only: the audit notes gpuix has no touch input; `useTouchPrimary` is not ported).
 - **Original:** on touch-primary devices the Base UI tree is replaced by a native-overflow `div` (`role="group"`, `aria-roledescription="scroll area"`, `tabIndex=0`) and `ScrollBar` renders nothing (`registry/base/scroll-area.tsx:49-75`, `:109-112`; `registry/default/hooks/use-touch-primary.tsx`).
-- **Port:** one path, the drawn scrollbar (`src/components/scroll-area.tsx:140-262`).
+- **Port:** one path, the drawn scrollbar (`src/components/scroll-area.tsx:140-283`).
 - **Workaround:** n/a.
 - **Fidelity:** dropped (no touch path).
 - **Components it hits:** just this one.
@@ -71,7 +62,7 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 ## Demo: the horizontal strip needs an explicit height
 
-- **Cause:** `port choice` (reason not stated; the viewport is `height: 100%` of the root, `src/components/scroll-area.tsx:234`).
+- **Cause:** `port choice` (reason not stated; the viewport is `height: 100%` of the root, `src/components/scroll-area.tsx:255`).
 - **Original:** `className="w-full"`, no height; the strip is as tall as its tiles (80 + 24 padding, `app/docs/scrollbars/page.tsx:380-405`).
 - **Port:** `height={104}` (`src/demos/scroll-area.tsx:144`). Tiles, gap, padding, radius and the faded edges match.
 - **Workaround:** the caller passes the height.

@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 512 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 511 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -220,7 +220,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [nav-menu](drift/nav-menu.md) | 0 | 5 | 1 | 0 | 6 |
 | [queued-stack](drift/queued-stack.md) | 3 | 3 | 3 | 1 | 10 |
 | [radio-group](drift/radio-group.md) | 0 | 2 | 2 | 0 | 4 |
-| [scroll-area](drift/scroll-area.md) | 2 | 5 | 1 | 1 | 9 |
+| [scroll-area](drift/scroll-area.md) | 1 | 5 | 1 | 1 | 8 |
 | [scrollbars-page](drift/scrollbars-page.md) | 0 | 4 | 2 | 0 | 6 |
 | [select](drift/select.md) | 3 | 3 | 6 | 2 | 14 |
 | [sidebar](drift/sidebar.md) | 0 | 8 | 19 | 1 | 28 |
@@ -237,7 +237,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 3 | 4 | 5 | 0 | 12 |
 | [tooltip](drift/tooltip.md) | 0 | 6 | 2 | 0 | 8 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **58** | **218** | **190** | **46** | **512** |
+| **Total** | **57** | **218** | **190** | **46** | **511** |
 
 ### gpuix gaps across components
 

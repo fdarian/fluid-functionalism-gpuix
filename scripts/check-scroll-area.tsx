@@ -93,6 +93,50 @@ check.expect(
 	start,
 );
 
+// The thumb sits 2px off the track's right edge (`-translate-x-0.5`) and widens from 4px to 6px on hover about the track's centre (`mx-auto`), read off the transformed box.
+{
+	const track = check.bounds('area-y-track');
+	const trackCentre = track.x + track.width / 2;
+	const thumbOffset = () => {
+		const thumb = check.bounds('area-y-thumb');
+		return {
+			width: thumb.width,
+			centre: thumb.x + thumb.width / 2 - trackCentre,
+			left: thumb.x - track.x,
+		};
+	};
+	check.renderer.nativeSimulateMouseMove(track.x - 60, track.y + 40);
+	await check.settle(400);
+	const resting = thumbOffset();
+	check.renderer.clockPause();
+	check.renderer.nativeSimulateMouseMove(track.x + 5, track.y + 40);
+	check.step(0);
+	check.step(32);
+	const widening = thumbOffset();
+	check.step(400);
+	const hovering = thumbOffset();
+	check.renderer.clockResume();
+	check.expect(
+		'the thumb rests 4px wide, 1px from the track edge',
+		[resting.width, resting.left],
+		[4, 1],
+	);
+	check.expect(
+		'the thumb is 6px wide and flush with the track edge on hover',
+		[hovering.width, hovering.left],
+		[6, 0],
+	);
+	check.check(
+		'the thumb widens about a centre 2px left of the track centre',
+		widening.width > 4.05 &&
+			widening.width < 5.95 &&
+			[resting, widening, hovering].every(
+				(thumb) => Math.abs(thumb.centre + 2) < 0.02,
+			),
+		`width ${widening.width.toFixed(2)} at 32 ms, centres ${resting.centre.toFixed(3)} ${widening.centre.toFixed(3)} ${hovering.centre.toFixed(3)}`,
+	);
+}
+
 const keyFailures = check.unmount();
 
 // ── Wheel at the end of the range ───────────────────────────────────────────
