@@ -37,7 +37,6 @@ import {
 import { FluidHighlight } from '#/lib/fluid-highlight';
 import { createFluidHover, useHoverItem } from '#/lib/fluid-hover';
 import { Icon } from '#/lib/icon';
-import { defineIcon } from '#/lib/icons';
 import { POPUP_OFFSET } from '#/lib/popup';
 import { StableLabel } from '#/lib/stable-label';
 import {
@@ -54,6 +53,7 @@ import {
 	shape,
 	springFade,
 	surface,
+	transformFade,
 	motion as tween,
 	weight,
 } from '#/lib/theme';
@@ -105,8 +105,6 @@ const FORMAT_LABELS: Record<ColorFormat, string> = {
 	hsl: 'HSL',
 	oklch: 'OKLCH',
 };
-
-const chevronUp = defineIcon('<path d="m18 15-6-6-6 6"/>');
 
 /** The squares of a 4px checkerboard that take `--checker-a`, as one path. */
 function checkerSource(width: number, size: number) {
@@ -927,12 +925,22 @@ function FormatDropdown(props: {
 				>
 					{FORMAT_LABELS[props.value]}
 				</text>
-				<Icon
-					name={presence.open() ? chevronUp : 'chevron-down'}
-					size={14}
-					strokeWidth={1.5}
-					color={color.mutedForeground}
-				/>
+				<div
+					testId={props.testId && `${props.testId}-chevron`}
+					style={{
+						display: 'flex',
+						flexShrink: 0,
+						rotate: presence.open() ? '180deg' : '0deg',
+						...transformFade(150),
+					}}
+				>
+					<Icon
+						name="chevron-down"
+						size={14}
+						strokeWidth={1.5}
+						color={color.mutedForeground}
+					/>
+				</div>
 			</div>
 			<Popup
 				presence={presence}

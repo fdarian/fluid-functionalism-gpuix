@@ -413,6 +413,26 @@ setThemeChoice('dark');
 	);
 	await k.press('Escape');
 
+	// The chevron turns half a turn over 150 ms; a square at 45 degrees is wider than at rest, and the box measured is the transformed one.
+	const chevronRest = k.bounds('cp-format-chevron').width;
+	renderer.clockPause();
+	const trigger = k.center('cp-format');
+	renderer.nativeSimulateClick(trigger.x, trigger.y);
+	let widest = chevronRest;
+	for (let frame = 0; frame < 8; frame++) {
+		k.step(16);
+		widest = Math.max(widest, k.bounds('cp-format-chevron').width);
+	}
+	k.check(
+		'the chevron turns while the menu opens',
+		widest > chevronRest + 2,
+		`widest ${widest.toFixed(2)} against ${chevronRest.toFixed(2)} at rest`,
+	);
+	k.step(300);
+	renderer.clockResume();
+	await k.press('Escape');
+	await k.settle(300);
+
 	// Pressing the trigger for real.
 	const press = (testId: string) =>
 		k.clickAt(k.center(testId).x, k.center(testId).y);

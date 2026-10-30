@@ -503,6 +503,11 @@ export function fade(
 	};
 }
 
+/** Tailwind v4's `transition-transform`: the four transform properties ease on the default curve. */
+export function transformFade(ms: number) {
+	return fade(['transform', 'translate', 'scale', 'rotate'], ms);
+}
+
 /** Tailwind v4's `transition-colors` list. `text-decoration-color` is left out: gpuix's CSS transitions do not animate it. */
 const COLORS = [
 	'color',
