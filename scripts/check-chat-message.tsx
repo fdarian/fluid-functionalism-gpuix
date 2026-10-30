@@ -5,10 +5,12 @@
  *
  * The meta row (timestamp and actions) is revealed by hover and by keyboard focus on an action.
  * The message enters on y 8 and scale .96 about its bottom outer corner (right for the user, left for the assistant), like the source.
+ * An earlier message slides up when one is appended below it (`layout="position"`), sampled mid-glide.
  * The reveal is the row's opacity, eased by a CSS transition; a screenshot with the focused action lands in /tmp/check-chat-message-focus-<pid>.png.
  */
 
 import { createTestRoot } from '@gpuix/solid/testing';
+import { createSignal, For } from 'solid-js';
 import { ChatMessage, ChatMessageAction } from '#/components/chat-message';
 import { fonts } from '#/lib/fonts';
 import { color, setThemeChoice } from '#/lib/theme';
@@ -215,4 +217,75 @@ report(
 );
 
 test.unmount();
+
+// A message appended to a column that keeps its end in view pushes the earlier ones up; they glide.
+{
+	const slideTest = createTestRoot({ width: 500, height: 400, fonts });
+	const slideRenderer = slideTest.renderer;
+	const [messages, setMessages] = createSignal([0]);
+	slideTest.render(() => (
+		<div
+			style={{
+				display: 'flex',
+				flexDirection: 'column',
+				justifyContent: 'flex-end',
+				height: 360,
+				padding: 20,
+				width: 460,
+				backgroundColor: color.background,
+			}}
+		>
+			<For each={messages()}>
+				{(message) => (
+					<ChatMessage testId={`slide-${message}`} from="assistant">
+						{`Message ${message}`}
+					</ChatMessage>
+				)}
+			</For>
+		</div>
+	));
+	const advance = (ms: number) => {
+		slideRenderer.clockFastForward(ms);
+		slideRenderer.flush();
+		slideRenderer.dispatchNativeEvents();
+	};
+	for (let frame = 0; frame < 40; frame++) {
+		slideRenderer.flush();
+		slideRenderer.dispatchNativeEvents();
+		await sleep(16);
+	}
+	const firstId = slideRenderer.findByTestId('slide-0')?.id;
+	if (firstId === undefined) throw new Error('no first message');
+	const y = () => {
+		const box = slideRenderer.getElementBounds(firstId);
+		if (box === null) throw new Error('the first message has no bounds');
+		return box.y;
+	};
+	const rest = y();
+	slideRenderer.clockPause();
+	setMessages([0, 1]);
+	advance(0);
+	advance(0);
+	y();
+	const samples: number[] = [];
+	for (let elapsed = 0; elapsed < 400; elapsed += 8) {
+		advance(8);
+		samples.push(y());
+	}
+	slideRenderer.clockResume();
+	const end = samples.at(-1) ?? rest;
+	const travel = rest - end;
+	const progress = samples.map((value) => (rest - value) / travel);
+	const between = progress.filter((value) => value > 0.15 && value < 0.85);
+	report(
+		'an earlier message slides up when one is appended',
+		travel > 20 &&
+			between.length >= 1 &&
+			progress.every(
+				(value, index) => index === 0 || value >= progress[index - 1] - 0.01,
+			),
+		`${rest.toFixed(1)} -> ${end.toFixed(1)}, ${between.length} samples between`,
+	);
+	slideTest.unmount();
+}
 process.exit(failed ? 1 : 0);

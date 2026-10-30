@@ -59,7 +59,7 @@ Checked and equal: the three seeded messages and their text, the "Just now" time
 
 - **Cause:** `port choice` (the port's `ChatMessage` took a string).
 - **Original:** `Answer` passes `className="max-w-full"` and a block of three paragraphs to `ChatMessage` (`lumen/page.tsx:76-111`).
-- **Port:** `ChatMessage` gained two additive props: `children` accepts any element (a string is still set in the message style) and `fullWidth` lifts the 80% cap (`src/components/chat-message.tsx:79-83`, `:145-150`). Lumen builds three `<text>` paragraphs with 12px between them (`src/pages/concepts-lumen.tsx:165-198`).
+- **Port:** `ChatMessage` gained two additive props: `children` accepts any element (a string is still set in the message style) and `fullWidth` lifts the 80% cap (`src/components/chat-message.tsx:79-83`, `:146-151`). Lumen builds three `<text>` paragraphs with 12px between them (`src/pages/concepts-lumen.tsx:165-198`).
 - **Workaround:** none needed.
 - **Fidelity:** exact for the layout.
 - **Components it hits:** chat-message (the extra props are the only change to it).

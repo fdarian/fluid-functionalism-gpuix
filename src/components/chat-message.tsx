@@ -89,6 +89,7 @@ export function ChatMessage(props: {
 	return (
 		<motion.div
 			testId={props.testId}
+			layout="position"
 			initial={{ opacity: 0, y: ENTRANCE_RISE, scale: ENTRANCE_SCALE }}
 			animate={{ opacity: 1, y: 0, scale: 1 }}
 			transition={tween.moderate}

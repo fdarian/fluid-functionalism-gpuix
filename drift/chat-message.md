@@ -6,7 +6,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 - **Cause:** `gpuix gap` (no input-device signal; see queued-stack's `(hover: none)` entry in `drift/queued-stack.md`).
 - **Original:** `useTouchPrimary()` keeps the row always visible on touch (`chat-message.tsx:49`, `:120`).
-- **Port:** the row is hover-only everywhere (`chat-message.tsx:154-167`).
+- **Port:** the row is hover-only everywhere (`chat-message.tsx:155-168`).
 - **gpuix lacks:** `(hover: none)` / `(pointer: coarse)` never match.
 - **Workaround:** none; the port is desktop-only.
 - **Fidelity:** dropped.
@@ -25,7 +25,7 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 - **Cause:** `not ported yet` (README: "Not ported there: ... the Size / Icons / Primitive rows").
 - **Original:** `size` prop and `SizeProvider` pick compact type (13/18 bubble, 11/14 caption), `py-1.5`, `px-3` (`chat-message.tsx:30-33`, `:46`, `:88-95`).
-- **Port:** one step only: 14/20 bubble, `py` 8, `px` 14 (`chat-message.tsx:15`, `:129-141`); no `size` prop.
+- **Port:** one step only: 14/20 bubble, `py` 8, `px` 14 (`chat-message.tsx:15`, `:130-142`); no `size` prop.
 - **Workaround:** none.
 - **Fidelity:** dropped (compact).
 - **Components it hits:** every component with a `size` variant.
@@ -34,25 +34,16 @@ Original: `registry/default/chat-message.tsx` and `app/docs/chat-message/page.ts
 
 - **Cause:** `port choice` (the timestamp is one `<text>`, which takes a string; the caller pre-formats).
 - **Original:** `time` is a `ReactNode` in a `tabular-nums` span (`chat-message.tsx:127`, `:24`).
-- **Port:** `time` is `string`, set in tabular digits like the source (`chat-message.tsx:169-177`, `:75`).
+- **Port:** `time` is `string`, set in tabular digits like the source (`chat-message.tsx:170-178`, `:75`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
-- **Components it hits:** just this one.
-
-## Layout motion for sibling messages
-
-- **Cause:** `not ported yet` (gpuix has `layout`, `FORK.md:1149-1150`).
-- **Original:** `layout="position"` so earlier messages slide when a message is added (`chat-message.tsx:56`).
-- **Port:** no `layout` on the message; siblings jump (`chat-message.tsx:90-98`). Invisible in the demo, where "Add message" appends at the bottom.
-- **Workaround:** none.
-- **Fidelity:** dropped.
 - **Components it hits:** just this one.
 
 ## Attachments take plain objects
 
 - **Cause:** `port choice` (the thumbnail needs a type and a path, not a `File`; PDF preview is a gpuix gap, see `drift/file-thumbnail.md`).
 - **Original:** `files?: File[]`, keyed by name, size, mtime and index (`chat-message.tsx:18`, `:77`).
-- **Port:** `FileLike[]` with `{ name, type, src }`, no key (`chat-message.tsx:72`, `:119-121`).
+- **Port:** `FileLike[]` with `{ name, type, src }`, no key (`chat-message.tsx:72`, `:120-122`).
 - **Workaround:** n/a.
 - **Fidelity:** exact for images.
 - **Components it hits:** file-thumbnail, input-message.
