@@ -53,9 +53,15 @@ export type StepStatus = 'complete' | 'active' | 'pending';
 
 // ─── Chevron ──────────────────────────────────────────────────────────────
 
-function Chevron(props: { open: boolean; stroke: number; color: string }) {
+function Chevron(props: {
+	open: boolean;
+	stroke: number;
+	color: string;
+	testId?: string;
+}) {
 	return (
 		<motion.div
+			testId={props.testId}
 			style={{ display: 'flex', flexShrink: 0 }}
 			animate={{ rotate: props.open ? 90 : 0 }}
 			transition={tween.fast}
@@ -143,6 +149,7 @@ function TriggerRow(props: {
 					fade
 				/>
 				<Chevron
+					testId={props.testId && `${props.testId}-chevron`}
 					open={open()}
 					stroke={highlighted() ? 2 : 1.5}
 					color={highlighted() ? color.foreground : color.mutedForeground}

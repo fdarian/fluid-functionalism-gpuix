@@ -363,16 +363,46 @@ function neighboursOf(kit: Kit, tree: Tree, label: number) {
 	});
 }
 
+/**
+ * The tree reports a transformed element's box as the bounding box of its corners, so a box read through a
+ * turning chevron or a scaling popup is not the layout box. Two reads cannot be told apart by equality there:
+ * they agree to within what a float read of a transform gives, which is held to a 64th of a pixel, the unit of layout.
+ */
+const TRANSFORM_READ_PX = 1 / 64;
+
 function differs(
 	before: Box,
 	after: Box,
 	compare: NonNullable<Scenario['compare']>,
+	tolerance: number,
 ) {
-	if (compare === 'left') return before.x !== after.x;
-	const sameX = before.x === after.x && before.width === after.width;
+	const apart = (a: number, b: number) => Math.abs(a - b) > tolerance;
+	if (compare === 'left') return apart(before.x, after.x);
+	const sameX = !apart(before.x, after.x) && !apart(before.width, after.width);
 	if (compare === 'horizontal') return !sameX;
-	return !sameX || before.y !== after.y || before.height !== after.height;
+	return (
+		!sameX || apart(before.y, after.y) || apart(before.height, after.height)
+	);
 }
+
+/**
+ * A rotation or scale about the centre keeps the box's centre where the layout box's centre is, so a turning
+ * element is held to its centre. A layout change moves it: the row grows or shrinks beside it, or the element resizes with a fixed edge.
+ */
+function centreDiffers(
+	before: Box,
+	after: Box,
+	compare: NonNullable<Scenario['compare']>,
+) {
+	const apart = (a: number, b: number) => Math.abs(a - b) > TRANSFORM_READ_PX;
+	const x = apart(before.x + before.width / 2, after.x + after.width / 2);
+	if (compare !== 'box') return x;
+	return x || apart(before.y + before.height / 2, after.y + after.height / 2);
+}
+
+/** A chevron that turns with its row's state: the tree gives its rotated bounding box. */
+const isTurning = (node: TreeNode) =>
+	node.testId?.endsWith('-chevron') === true;
 
 const describe = (box: Box) => `x${box.x} y${box.y} ${box.width}x${box.height}`;
 
@@ -425,9 +455,28 @@ function anchorOf(tree: Tree, testId: string | undefined) {
 	throw new Error(`no anchor ${testId}`);
 }
 
-function shifted(box: Box | undefined, slide: { x: number; y: number } | null) {
+type Slide = { now: Box; home: Box; scaled: boolean };
+
+/**
+ * A box expressed in the anchor's home frame. An anchor that scales (a popup entering or leaving) carries
+ * its content's boxes with it, so they are mapped back through the anchor's own scale.
+ */
+function shifted(box: Box | undefined, slide: Slide | null) {
 	if (box === undefined || slide === null) return undefined;
-	return { ...box, x: box.x - slide.x, y: box.y - slide.y };
+	if (!slide.scaled)
+		return {
+			...box,
+			x: box.x - (slide.now.x - slide.home.x),
+			y: box.y - (slide.now.y - slide.home.y),
+		};
+	const scaleX = slide.now.width / slide.home.width;
+	const scaleY = slide.now.height / slide.home.height;
+	return {
+		x: slide.home.x + (box.x - slide.now.x) / scaleX,
+		y: slide.home.y + (box.y - slide.now.y) / scaleY,
+		width: box.width / scaleX,
+		height: box.height / scaleY,
+	};
 }
 
 function boundsOf(tree: Tree) {
@@ -463,13 +512,19 @@ async function runStep(kit: Kit, scenario: Scenario, step: Step) {
 	const anchorHome =
 		anchorId === undefined ? undefined : nodeOf(before, anchorId).bounds;
 	/** How far the anchor has moved from where it was, or null when the frame has lost it. */
-	const slideOf = (frame: Map<number, Box>) => {
-		if (anchorId === undefined || anchorHome === undefined)
-			return { x: 0, y: 0 };
+	const slideOf = (frame: Map<number, Box>): Slide | null => {
+		if (anchorId === undefined || anchorHome === undefined) {
+			const none = { x: 0, y: 0, width: 1, height: 1 };
+			return { now: none, home: none, scaled: false };
+		}
 		const now = frame.get(anchorId);
-		return now === undefined
-			? null
-			: { x: now.x - anchorHome.x, y: now.y - anchorHome.y };
+		if (now === undefined) return null;
+		return {
+			now,
+			home: anchorHome,
+			scaled:
+				now.width !== anchorHome.width || now.height !== anchorHome.height,
+		};
 	};
 	const violations = new Set<string>();
 	let toHeavy = 0;
@@ -487,15 +542,21 @@ async function runStep(kit: Kit, scenario: Scenario, step: Step) {
 			id,
 			type: nodeOf(before, id).type,
 			box: nodeOf(before, id).bounds as Box,
+			turning: isTurning(nodeOf(before, id)),
 		}));
 		for (const frame of frames) {
 			const slide = slideOf(frame);
+			const tolerance = slide?.scaled ? TRANSFORM_READ_PX : 0;
 			const box = shifted(frame.get(label), slide);
-			if (box !== undefined && differs(home, box, compare))
+			if (box !== undefined && differs(home, box, compare, tolerance))
 				violations.add(`"${words}" ${describe(home)} -> ${describe(box)}`);
 			for (const neighbour of neighbours) {
 				const moved = shifted(frame.get(neighbour.id), slide);
-				if (moved !== undefined && differs(neighbour.box, moved, compare))
+				if (moved === undefined) continue;
+				const apart = neighbour.turning
+					? centreDiffers(neighbour.box, moved, compare)
+					: differs(neighbour.box, moved, compare, tolerance);
+				if (apart)
 					violations.add(
 						`beside "${words}": ${neighbour.type} ${describe(neighbour.box)} -> ${describe(moved)}`,
 					);
