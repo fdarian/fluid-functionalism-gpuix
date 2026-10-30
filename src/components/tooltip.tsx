@@ -58,13 +58,13 @@ export function TooltipProvider(props: {
 function slideFrom(side: TooltipSide) {
 	switch (side) {
 		case 'top':
-			return { top: SLIDE, left: 0 };
+			return { x: 0, y: SLIDE };
 		case 'bottom':
-			return { top: -SLIDE, left: 0 };
+			return { x: 0, y: -SLIDE };
 		case 'left':
-			return { top: 0, left: SLIDE };
+			return { x: SLIDE, y: 0 };
 		case 'right':
-			return { top: 0, left: -SLIDE };
+			return { x: -SLIDE, y: 0 };
 	}
 }
 
@@ -174,7 +174,7 @@ export function Tooltip(props: {
 						initial={{ opacity: 0, ...slideFrom(side()) }}
 						animate={
 							presence.open()
-								? { opacity: 1, top: 0, left: 0 }
+								? { opacity: 1, x: 0, y: 0 }
 								: { opacity: 0, ...slideFrom(side()) }
 						}
 						transition={presence.open() ? tween.fast : tween.fastExit}

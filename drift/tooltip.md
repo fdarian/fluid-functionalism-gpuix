@@ -4,15 +4,14 @@ Original: `registry/base/tooltip.tsx` (the docs page `app/docs/tooltip/page.tsx`
 
 The Base UI behaviour rows (hover intent, skip delay, focus, press, Escape) are tracked in `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` ("Tooltip"); this file lists only what still looks or behaves differently.
 
-## The slide and the follow-cursor offset are not transforms
+## The follow-cursor offset moves the placement, not a transform
 
-- **Cause:** `gpuix gap` (no transforms: [README "Missing features", first row](../README.md#missing-features)).
-- **Original:** the chip enters and exits with `x` / `y` (4px) plus opacity (`registry/base/tooltip.tsx:282-291`); `followCursor` drives a `y` / `x` motion value on the outer box (`:205-219`, `:262-269`). There is no scale on the tooltip, so the README row's "`scaleY: 0.96`" does not apply to it.
-- **Port:** the chip animates `top` / `left` (`slideFrom`, `src/components/tooltip.tsx:58-69`, chip `initial` / `animate` `:174-179`); `followCursor` passes the pointer offset to `<anchored offset>` (`:117-127`, `:160`).
-- **gpuix lacks:** `transform`, so `translate` / `x` / `y` cannot animate; only layout props can.
-- **Workaround:** `top` / `left` tweens, which re-lay out per frame.
-- **Fidelity:** approximated (same distance and timing; a layout change per frame instead of a compositor transform).
-- **Components it hits:** every popup that slides in (select, combobox, dropdown, color-picker, dialog).
+- **Cause:** `not ported yet` (gpuix draws `x` / `y` since #92; the slide uses them).
+- **Original:** `followCursor` drives a `y` / `x` motion value on an outer box inside the positioner, so the chip is placed first and the transform moves it (`registry/base/tooltip.tsx:205-219`, `:262-269`).
+- **Port:** the pointer offset goes to `<anchored offset>` (`src/components/tooltip.tsx:117-127`, `:160`), so each move re-places the layer, and the flip decision sees the offset.
+- **Workaround:** the offset.
+- **Fidelity:** approximated (same travel; the placement is redone per move).
+- **Components it hits:** just this one.
 
 ## The trigger is wrapped in a `div`
 
