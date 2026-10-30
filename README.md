@@ -7,7 +7,7 @@ Yes. 32 demo pages cover every component of the library (37 component files, cou
 choice-group and menu-item), in the light and dark schemes, with the site's fluid hover, springs and keyboard
 behaviour. Around them sit the site's own pages: the home bento grid, Introduction, the seven system pages, Compare
 with shadcn, the Concepts mockups, Audio Mixer, and ten doc-page playgrounds. Every place the port looks or behaves
-differently from the source is recorded in [Drift from the source](#drift-from-the-source): 498 entries, each tagged
+differently from the source is recorded in [Drift from the source](#drift-from-the-source): 497 entries, each tagged
 by cause (gpuix gap, port choice or not ported yet).
 
 The components do not carry their own keyboard, selection, open-state and ARIA logic. That comes from
@@ -192,14 +192,14 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | Component or page | gpuix gap | port choice | not ported yet | mixed | total |
 |---|---:|---:|---:|---:|---:|
 | [accordion](drift/accordion.md) | 1 | 9 | 6 | 0 | 16 |
-| [ask-user-questions](drift/ask-user-questions.md) | 0 | 4 | 7 | 3 | 14 |
+| [ask-user-questions](drift/ask-user-questions.md) | 1 | 4 | 6 | 3 | 14 |
 | [audio-mixer](drift/audio-mixer.md) | 0 | 3 | 0 | 0 | 3 |
 | [badge](drift/badge.md) | 0 | 3 | 0 | 0 | 3 |
 | [banner](drift/banner.md) | 3 | 4 | 6 | 0 | 13 |
 | [button](drift/button.md) | 2 | 4 | 1 | 1 | 8 |
 | [card](drift/card.md) | 0 | 7 | 6 | 0 | 13 |
 | [carousel-dots](drift/carousel-dots.md) | 1 | 5 | 1 | 0 | 7 |
-| [chat-message](drift/chat-message.md) | 1 | 5 | 2 | 1 | 9 |
+| [chat-message](drift/chat-message.md) | 1 | 5 | 1 | 1 | 8 |
 | [checkbox-group](drift/checkbox-group.md) | 0 | 0 | 3 | 1 | 4 |
 | [color-picker](drift/color-picker.md) | 1 | 5 | 15 | 1 | 22 |
 | [combobox](drift/combobox.md) | 2 | 13 | 5 | 2 | 22 |
@@ -210,15 +210,15 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [dropdown](drift/dropdown.md) | 1 | 5 | 11 | 1 | 18 |
 | [file-thumbnail](drift/file-thumbnail.md) | 1 | 5 | 1 | 0 | 7 |
 | [fluid-hover](drift/fluid-hover.md) | 3 | 5 | 2 | 1 | 11 |
-| [home](drift/home.md) | 0 | 4 | 1 | 1 | 6 |
+| [home](drift/home.md) | 1 | 4 | 0 | 1 | 6 |
 | [input-copy](drift/input-copy.md) | 0 | 3 | 3 | 0 | 6 |
 | [input-group](drift/input-group.md) | 0 | 1 | 3 | 1 | 5 |
-| [input-message](drift/input-message.md) | 3 | 1 | 13 | 4 | 21 |
+| [input-message](drift/input-message.md) | 4 | 1 | 12 | 4 | 21 |
 | [introduction](drift/introduction.md) | 0 | 5 | 2 | 0 | 7 |
 | [mobile-drawer](drift/mobile-drawer.md) | 2 | 2 | 1 | 0 | 5 |
 | [motion-page](drift/motion-page.md) | 0 | 3 | 1 | 2 | 6 |
 | [nav-menu](drift/nav-menu.md) | 0 | 5 | 1 | 0 | 6 |
-| [queued-stack](drift/queued-stack.md) | 1 | 3 | 3 | 1 | 8 |
+| [queued-stack](drift/queued-stack.md) | 2 | 3 | 2 | 1 | 8 |
 | [radio-group](drift/radio-group.md) | 0 | 2 | 2 | 0 | 4 |
 | [scroll-area](drift/scroll-area.md) | 1 | 5 | 1 | 1 | 8 |
 | [scrollbars-page](drift/scrollbars-page.md) | 0 | 4 | 2 | 0 | 6 |
@@ -237,7 +237,7 @@ component's drift; `site` is the shell, and `home`, `introduction`, `compare`, `
 | [thinking-steps](drift/thinking-steps.md) | 2 | 4 | 5 | 0 | 11 |
 | [tooltip](drift/tooltip.md) | 0 | 6 | 1 | 0 | 7 |
 | [typography](drift/typography.md) | 2 | 2 | 1 | 3 | 8 |
-| **Total** | **45** | **219** | **188** | **46** | **498** |
+| **Total** | **49** | **219** | **183** | **46** | **497** |
 
 ### gpuix gaps across components
 
@@ -271,6 +271,8 @@ offer it. A count is given only where the code shows it.
 | any page that goes fully idle (0 ticks a second), notably Command Menu about 4 s after entry | Input to an idle window did not wake JS on the wake-driven frame loop (gpuix #77): the owner saw lag after ⌘K into the Command Menu until ⌘-Tab away and back. On c6475390 AppKit's NSEventThread hands each WindowServer event to the main thread with `CFRunLoopPerformBlock` + `CFRunLoopWakeUp`, but under the embedder the main run loop is not running (main sits in Bun's kqueue), so no mach message reaches the ports the run-loop wake watches (`zed/crates/gpui_macos/src/run_loop_wake.rs`) and `tick()` / `pump_events` is the only drain. A page that keeps ticking (the showcase, ~100 ticks a second) hides it. `~/.claude/notes/ff-gpuix-repros/f2-idle-input-wake/` (README; gpuix c6475390, `CGEventPostToPid` from a separate process): 15 of 15 events (shift, mouse move, click, scroll) sat in AppKit's queue with no wake in 600 ms, while a main-queue block woke JS in 0.1 ms 6 of 6 times. Answered by gpuix #93 / Round 14c (poc 6f2a72d3, zed bf26cbb68a; FORK.md:4105-4118): a `kCFRunLoopBeforeWaiting` observer on NSEventThread's run loop posts a no-op block to the main queue. gpuix's numbers: input wakes JS in 0.1-1.4 ms and reaches the handler in 0.4-7.7 ms, and an idle window still makes 0 wakes; `postEvent:` from a non-main thread still does not wake, but real input never takes that path. FF's own after-fix numbers are pending the owner's real-input check (no non-main display is available for the windowed repro). Since gpuix Round 21 (#95) the test renderer has the live wake surface (`postNativeEvent`, `setFrameWakeCallback`, `requiresTick`, `tick`; gpuix `docs/fork/testing.md`, "Waking JS for input (#95)"), so the regression is a headless check: `scripts/check-idle-input.tsx` (part of `pnpm check:scenarios`) mounts the Command Menu page, runs `startFrameLoop` on the wake path with no timer, waits until the window makes no wake (0 wakes over 2 s, after the startup bursts), then posts a click on the input, a key down, a mouse move over a row and a wheel over the list through AppKit's queue, each after another idle wait. Each must wake JS (0.1-1.7 ms) and show its effect without any other wake (input focused, the list filtered, the row highlighted, the list scrolled; 65-130 ms, the hover and scroll springs included). A final control stops the loop and posts again: the event stays queued. With the wake never reaching JS, as without the NSEventThread observer, all four fail (run with the callback not forwarded: 8 FAIL) | none: FF needs gpuix 6f2a72d3 or later, pinned in 752e0b30; `scripts/check-idle-input.tsx` guards it |
 | home bento tiles in a one-column window (`src/home/bento-card.tsx:88`) | Not a gpuix bug (gpuix #89, Round 17, poc 55ece39b): Chrome's oracle matches gpuix, so under `containIntrinsicSize: auto` the remembered size is the content box of the last rendered layout, and the declared size until then. 921 px is the ask-user-questions tile's settled height at a one-column 700 px window (FF main with culling off is 921 too). The 305 on the `cull-cv` branch's A/B (the "Culling" row) was FF's own `flexBasis` pin, `culling.farHeight()` while far, which read an `IntersectionObserver` rect sampled mid-spring; 5c7b3f44 dropped it with the `display: none` wrapper. Headless (Round 17 and again on a92b4f7f, 700x780 window, one sample each): with the pin, unseen tiles started at 305 / 595 / 247 (ask-user-questions / accordion / thinking-steps) and the grid grew 9503 to 10935 as you scrolled; with `content-visibility: hidden` every tile holds 921 / 931 / 727 and the grid 10935 px right after settle. Unchanged on 667084d0 (Round 26, #96 fixed; headless, 700 px window, `'0%'` basis): card-ask-user-questions 921, card-accordion 931, card-thinking-steps 727, the grid 10935 | none needed from gpuix; the home grid's scroll height is the final one from the first settled frame, no longer an estimate |
 | home bento tiles, the card's preview box (`src/home/bento-card.tsx:88`) | Fixed in gpuix Round 26 (667084d0, #96). `flexBasis: 0` or `0px` on an item of an auto-height column flex container collapses to its padding in Chrome (173 px in gpuix's repro), and gpuix sized it from content (305 px); an auto-height flex column is now the sum of its items' hypothetical sizes, and the repro reads 173. Measured in FF (headless test renderer, 700x780 window, one column): with `flexBasis: 0` every tile collapses, to 175 px (command-menu 111 px) and the grid to 4637 px; with `'0%'`, the source's `flex-1` (source `app/components/bento-card.tsx:100`), the tiles keep their content height (card-ask-user-questions 921, card-accordion 931, card-thinking-steps 727, card-thinking-indicator 211, card-input-message 259, card-command-menu 551; the grid 10935 px) | none: the preview box writes `flexBasis: '0%'`, and the tiles read as in Chrome |
+| ask-user-questions (the footer buttons), input-message (queued rows under the files region) | A `layout` glide runs for every move of a box in layout space, whatever moved it, where Motion measures at a React commit. A box that an animating ancestor's height moves therefore starts from where it was drawn and trails it; in a scroller, scroll anchoring compensates the same move, and the box excurses (the footer's Skip +38 px at 48 ms, back by 180 ms; `drift/ask-user-questions.md`, `drift/input-message.md`) | `layout` stays off the footer buttons (their neighbours jump); the queued rows keep it and trail the files region by 1 to 3 frames |
+| input-message (file tiles) | `AnimatePresence mode="popLayout"` pins a leaving child by writing a popped style to the host; a later run of the child's prop spread (it re-runs when `isPresent` flips) writes the child's own `style` back if the component builds a fresh object on each read, as a JSX literal with a reactive value does. The leaving child then stays in flow until its exit ends. Repro: `~/.claude/notes/ff-gpuix-repros/popLayout-style-reset/zz-pop.tsx` (b.x 58 against 0) | The tile's `style` is one `createMemo` object, so the pin holds |
 
 #### Missing features
 
@@ -293,6 +295,7 @@ offer it. A count is given only where the code shows it.
 | combobox, select (any form) | A submit button: `SubmitEvent.submitter` is always `null` | The demos call `form.requestSubmit()` |
 | skill page (the scripted-cursor examples) | Dispatching a synthetic pointer event, or setting `:hover`, on one element: the native simulate calls move the window's one pointer | The page calls the elements' `onMouseEnter` / `onMouseLeave` / `onMouseMove` props and `click()` directly (`drift/skill-page.md`, `src/pages/skill/scripted-pointer.ts`) |
 | site menu (`isModK`) | A physical key on Windows and Linux: `code` there comes from GPUI's layout-dependent `key` assuming a US layout, so a non-Latin letter reports `code` `""` (`packages/native/src/events/key_names.rs:10-17`, `:161-169`; FORK.md:571-573). Ctrl plus a Cyrillic or Greek letter cannot match a shortcut through `code`, as the source's `matchesShortcut` does. macOS reports the physical key (FORK.md:553-554), but `isModK` reads `key` only, and ⌘K works there through the layout's Cmd letter | none; the sidebar's Search row opens the menu (`drift/site.md`). Not run on Windows or Linux |
+| home (the bento grid's re-slot), queued-stack and input-message (the queued-to-sent morph) | A size morph: `layout` and `layoutId` glide a box's position and snap its size (`layout="size"` does nothing on its own, `"preserve-aspect"` is not supported; gpuix `docs/fork/deviations.md` "Size morphs are not built"). The source scales one box into another and counter-scales its text | none; the grid re-slots at once and a dispatched card fades out |
 
 ## Harness and shared-lib notes
 
