@@ -46,11 +46,10 @@ function setShown(subscriber: Subscriber, shown: boolean) {
 /**
  * Calls `callback(dt, now)` about every 16 ms, with `dt` the ms since the last
  * frame. Loops gpuix can run natively (a motion value's `animate`, `repeat`,
- * CSS keyframes) stay off it. Three still use it: thinking-steps' Chevron, for
- * its 100 ms turn (the source's `rotate` is a transform gpuix cannot animate, so
- * JS sets the chevron's points); the fluid-hover lists demo, which re-measures
- * its rows each frame while a sub-menu's spring settles (at most `TRACK_MS`);
- * and the cost meter, which reads this clock's gaps as its stall probe. The
+ * CSS keyframes) stay off it. Two still use it: the fluid-hover lists demo,
+ * which re-measures its rows each frame while a sub-menu's spring settles (at
+ * most `TRACK_MS`); and the cost meter, which reads this clock's gaps as its
+ * stall probe. The
  * timer runs only while something is subscribed and shown, and a subscription
  * ends with the owner that made it. A subscriber inside a culled region
  * (`OnScreenContext`) is skipped while that region is far: every signal a

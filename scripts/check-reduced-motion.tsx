@@ -399,7 +399,7 @@ async function thinkingStepsPanel() {
 		kit.renderer.nativeSimulateClick(point.x, point.y);
 		await frames(kit, FRAME_MS);
 		const height = kit.bounds('basic-panel').height;
-		// The chevron turns on a JS timer, which the clock held above does not reach: no tick has run yet, so it is where it started unless the turn is skipped.
+		// One frame into the spring, the chevron is part of the way round unless the turn is skipped.
 		const turning = strokes(kit, chevron);
 		kit.renderer.clockResume();
 		kit.check(
@@ -419,7 +419,7 @@ async function thinkingStepsPanel() {
 			travel > 20 &&
 				(reduced
 					? mismatch(turning, turned) < travel * 0.25
-					: mismatch(turning, before) < travel * 0.25),
+					: mismatch(turning, turned) > travel * 0.5),
 			`${mismatch(turning, turned)} pixels from the end pose and ${mismatch(turning, before)} from the start one, of ${travel}`,
 		);
 		await kit.click('basic-header');

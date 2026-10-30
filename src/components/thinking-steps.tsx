@@ -1,9 +1,4 @@
-import {
-	AnimatePresence,
-	createReducedMotion,
-	type MotionTransition,
-	motion,
-} from '@gpuix/solid';
+import { AnimatePresence, type MotionTransition, motion } from '@gpuix/solid';
 import {
 	type CollapsibleRoot,
 	createCollapsiblePanel,
@@ -20,9 +15,8 @@ import {
 	Show,
 	useContext,
 } from 'solid-js';
-import { onFrame } from '#/lib/clock';
 import { Icon } from '#/lib/icon';
-import { defineIcon, type IconName } from '#/lib/icons';
+import type { IconName } from '#/lib/icons';
 import { createMeasuredHeight } from '#/lib/measured-height';
 import { StableLabel } from '#/lib/stable-label';
 import {
@@ -59,58 +53,22 @@ export type StepStatus = 'complete' | 'active' | 'pending';
 
 // ─── Chevron ──────────────────────────────────────────────────────────────
 
-const TURN_MS = 100;
-
-/** Lucide's `chevron-right` points, rotated about the 24 x 24 centre. */
-function chevronPath(degrees: number) {
-	const radians = (degrees * Math.PI) / 180;
-	const cos = Math.cos(radians);
-	const sin = Math.sin(radians);
-	const points = [
-		{ x: 9, y: 18 },
-		{ x: 15, y: 12 },
-		{ x: 9, y: 6 },
-	].map((point) => {
-		const dx = point.x - 12;
-		const dy = point.y - 12;
-		return `${(12 + dx * cos - dy * sin).toFixed(2)} ${(12 + dx * sin + dy * cos).toFixed(2)}`;
-	});
-	return `M${points.join('L')}`;
-}
-
-/**
- * Right when collapsed, rotated 90 degrees down when open. gpuix cannot rotate
- * an element, so a short JS tween turns the path's own points, which lets
- * `Icon easeStroke` ease the stroke width on the group that draws them.
- */
 function Chevron(props: { open: boolean; stroke: number; color: string }) {
-	const reduced = createReducedMotion();
-	const [angle, setAngle] = createSignal(props.open ? 90 : 0);
-	createEffect(() => {
-		const target = props.open ? 90 : 0;
-		// The source turns it with `rotate`, a transform Motion jumps under reduced motion. This tween is not one of gpuix's, so MotionConfig does not reach it.
-		if (reduced()) {
-			setAngle(target);
-			return;
-		}
-		const from = angle();
-		let elapsed = 0;
-		const stop = onFrame((dt) => {
-			elapsed += dt;
-			const progress = Math.min(elapsed / TURN_MS, 1);
-			setAngle(Math.round(from + (target - from) * (1 - (1 - progress) ** 3)));
-			if (progress === 1) stop();
-		});
-	});
 	return (
-		<Icon
-			name={defineIcon(`<path d="${chevronPath(angle())}"/>`)}
-			size={16}
-			strokeWidth={props.stroke}
-			easeStroke
-			fade
-			color={props.color}
-		/>
+		<motion.div
+			style={{ display: 'flex', flexShrink: 0 }}
+			animate={{ rotate: props.open ? 90 : 0 }}
+			transition={tween.fast}
+		>
+			<Icon
+				name="chevron-right"
+				size={16}
+				strokeWidth={props.stroke}
+				easeStroke
+				fade
+				color={props.color}
+			/>
+		</motion.div>
 	);
 }
 
