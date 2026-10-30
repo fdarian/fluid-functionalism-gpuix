@@ -239,6 +239,121 @@ await settle(300);
 	);
 }
 
+// The footer buttons grow in from scale .85, the validation message rises from y -2 and the row arrow grows in from .6, all on spring.fast; the Back button and the arrow shrink back out.
+// A read of a box draws the frame the motion starts on.
+function boxOf(testId: string) {
+	const box = renderer.getElementBounds(element(testId).id);
+	if (box === null) throw new Error(`no bounds for ${testId}`);
+	return box;
+}
+await scrollTo('multiple-option-0', -500);
+renderer.nativeSimulateMouseMove(2, 2);
+renderer.focusElement(element('multiple').id);
+await settle(400);
+renderer.clockPause();
+renderer.focusElement(element('multiple-option-0').id);
+step(0);
+step(0);
+boxOf('multiple-option-0-arrow');
+step(8);
+const arrowEntering = boxOf('multiple-option-0-arrow');
+step(600);
+const arrowRest = boxOf('multiple-option-0-arrow');
+renderer.clockResume();
+check(
+	'the row arrow grows in from a smaller scale about its centre',
+	arrowEntering.width < arrowRest.width * 0.9 &&
+		Math.abs(
+			arrowEntering.x +
+				arrowEntering.width / 2 -
+				(arrowRest.x + arrowRest.width / 2),
+		) < 0.5,
+	`${arrowEntering.width.toFixed(2)} -> ${arrowRest.width.toFixed(2)}`,
+);
+
+// Choosing an answer moves to the next question, where Back appears on a scale of .85; going back shrinks it out of the footer.
+{
+	const option = boxOf('multiple-option-0');
+	renderer.clockPause();
+	renderer.nativeSimulateClick(
+		option.x + option.width / 2,
+		option.y + option.height / 2,
+	);
+	await sleep(50);
+	for (let frames = 0; frames < 90; frames++) {
+		if (renderer.findByTestId('multiple-back') !== undefined) break;
+		step(16);
+		await sleep(4);
+	}
+	boxOf('multiple-back');
+	step(0);
+	step(8);
+	const entering = boxOf('multiple-back');
+	step(600);
+	const rest = boxOf('multiple-back');
+	check(
+		'Back grows in from a smaller scale about its centre',
+		entering.width < rest.width * 0.95 &&
+			Math.abs(entering.x + entering.width / 2 - (rest.x + rest.width / 2)) <
+				0.5,
+		`${entering.width.toFixed(2)} -> ${rest.width.toFixed(2)}`,
+	);
+	const back = element('multiple-back').id;
+	renderer.nativeSimulateClick(
+		rest.x + rest.width / 2,
+		rest.y + rest.height / 2,
+	);
+	await sleep(50);
+	step(0);
+	step(0);
+	renderer.getElementBounds(back);
+	step(16);
+	const leaving = renderer.getElementBounds(back);
+	check(
+		'Back shrinks out about its centre',
+		leaving !== null &&
+			leaving.width < rest.width - 0.5 &&
+			Math.abs(leaving.x + leaving.width / 2 - (rest.x + rest.width / 2)) < 0.5,
+		`${rest.width.toFixed(2)} -> ${leaving?.width.toFixed(2)}`,
+	);
+	renderer.clockResume();
+}
+
+// A message that fails validation settles 2px down into place as it fades in (`y` -2 to 0).
+{
+	await scrollTo('validate-free-input', -500);
+	renderer.focusElement(element('validate-free-input').id);
+	await settle(300);
+	renderer.simulateKeystrokes('a b c');
+	await settle(200);
+	renderer.clockPause();
+	renderer.simulateKeystrokes('Enter');
+	step(0);
+	step(0);
+	const text = renderer.findByText(
+		'Please enter a valid email so we can reach out.',
+	);
+	if (text === undefined || text.parentId === null)
+		throw new Error('the validation message did not show');
+	const wrapper = text.parentId;
+	const at = () => {
+		const box = renderer.getElementBounds(wrapper);
+		if (box === null) throw new Error('the validation message has no bounds');
+		return box;
+	};
+	at();
+	step(8);
+	const entering = at();
+	step(600);
+	const rest = at();
+	renderer.clockResume();
+	check(
+		'the validation message enters 2px above its place',
+		entering.y < rest.y - 0.1 && entering.y > rest.y - 2.01,
+		`${(rest.y - entering.y).toFixed(2)} px above rest`,
+	);
+}
+
 console.log(failed ? 'FAILED' : 'ALL PASSED');
 test.unmount();
 process.exit(failed ? 1 : 0);

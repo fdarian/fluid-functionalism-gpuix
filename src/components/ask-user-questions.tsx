@@ -1,10 +1,12 @@
 import {
+	AnimatePresence,
 	type DomEvent,
 	type HostElement,
 	type HostPointerEvent,
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
+	useIsPresent,
 } from '@gpuix/solid';
 import { isChord, moveIndex } from 'base-ui-solid-gpuix/internals/composite';
 import {
@@ -148,6 +150,54 @@ interface RowProps {
 	children: JSX.Element;
 }
 
+/** The submit arrow that covers a row's chip; it grows from 0.6 and shrinks back to it. */
+function ArrowOverlay(props: { testId?: string; onClick?: () => void }) {
+	const present = useIsPresent();
+	return (
+		<motion.div
+			testId={props.testId === undefined ? undefined : `${props.testId}-arrow`}
+			initial={{ opacity: 0, scale: 0.6 }}
+			animate={{ opacity: 1, scale: 1 }}
+			exit={{ opacity: 0, scale: 0.6 }}
+			transition={
+				present()
+					? { ...tween.fast, opacity: { duration: 0.08 } }
+					: tween.fastExit
+			}
+			{...(props.onClick
+				? {
+						role: 'button',
+						onClick: (event: HostPointerEvent) => {
+							// The row behind the arrow handles clicks too.
+							event.stopPropagation();
+							props.onClick?.();
+						},
+					}
+				: {})}
+			style={{
+				position: 'absolute',
+				top: 0,
+				left: 0,
+				right: 0,
+				bottom: 0,
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				borderRadius: shape.bg,
+				backgroundColor: color.foreground,
+				cursor: props.onClick ? 'pointer' : 'default',
+			}}
+		>
+			<Icon
+				name="arrow-right"
+				size={14}
+				strokeWidth={2}
+				color={color.background}
+			/>
+		</motion.div>
+	);
+}
+
 function Row(props: RowProps) {
 	let rowElement: HostElement | undefined;
 	createEffect(() => {
@@ -159,46 +209,11 @@ function Row(props: RowProps) {
 	const chipNudge = () => (props.topAlign ? (stacked() ? -1 : -5) : 0);
 
 	const arrowOverlay = () => (
-		<Show when={props.showArrow}>
-			<motion.div
-				testId={
-					props.testId === undefined ? undefined : `${props.testId}-arrow`
-				}
-				initial={{ opacity: 0 }}
-				animate={{ opacity: 1 }}
-				transition={{ duration: 0.08 }}
-				{...(props.onArrowClick
-					? {
-							role: 'button',
-							onClick: (event: HostPointerEvent) => {
-								// The row behind the arrow handles clicks too.
-								event.stopPropagation();
-								props.onArrowClick?.();
-							},
-						}
-					: {})}
-				style={{
-					position: 'absolute',
-					top: 0,
-					left: 0,
-					right: 0,
-					bottom: 0,
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-					borderRadius: shape.bg,
-					backgroundColor: color.foreground,
-					cursor: props.onArrowClick ? 'pointer' : 'default',
-				}}
-			>
-				<Icon
-					name="arrow-right"
-					size={14}
-					strokeWidth={2}
-					color={color.background}
-				/>
-			</motion.div>
-		</Show>
+		<AnimatePresence>
+			<Show when={props.showArrow}>
+				<ArrowOverlay testId={props.testId} onClick={props.onArrowClick} />
+			</Show>
+		</AnimatePresence>
 	);
 
 	const chipSlot = () => (
@@ -1048,79 +1063,89 @@ export function AskUserQuestions(props: {
 									display: 'flex',
 									flexDirection: 'row',
 									alignItems: 'center',
+									position: 'relative',
 									flexGrow: 1,
 									minWidth: 0,
 									gap: 8,
 								}}
 							>
-								<Show when={showBack()}>
-									<FadeIn>
-										<Button
-											size="compact"
-											variant="ghost"
-											leadingIcon="arrow-left"
-											testId={`${props.testId ?? 'ask'}-back`}
-											onClick={back}
-										>
-											Back
-										</Button>
-									</FadeIn>
-								</Show>
+								<AnimatePresence mode="popLayout" initial={false}>
+									<Show when={showBack()}>
+										<FooterButton>
+											<Button
+												size="compact"
+												variant="ghost"
+												leadingIcon="arrow-left"
+												testId={`${props.testId ?? 'ask'}-back`}
+												onClick={back}
+											>
+												Back
+											</Button>
+										</FooterButton>
+									</Show>
+								</AnimatePresence>
 								<Show when={freeTextError()}>
-									<text
-										style={{
-											...scale.caption,
-											color: color.destructive,
-											paddingLeft: 12,
-											flexShrink: 1,
-											minWidth: 0,
-											textWrap: 'pretty',
-										}}
+									<motion.div
+										initial={{ opacity: 0, y: -2 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{ ...tween.fast, opacity: { duration: 0.12 } }}
+										style={{ paddingLeft: 12, flexShrink: 1, minWidth: 0 }}
 									>
-										{freeTextError()}
-									</text>
+										<text
+											style={{
+												...scale.caption,
+												color: color.destructive,
+												textWrap: 'pretty',
+											}}
+										>
+											{freeTextError()}
+										</text>
+									</motion.div>
 								</Show>
 							</div>
 							<div
 								style={{
+									position: 'relative',
 									display: 'flex',
 									flexDirection: 'row',
 									alignItems: 'center',
 									gap: 8,
 								}}
 							>
-								<Show when={showSkip()}>
-									<FadeIn>
-										<Button
-											size="compact"
-											variant="ghost"
-											trailingIcon="arrow-right"
-											testId={`${props.testId ?? 'ask'}-skip`}
-											onClick={skip}
-										>
-											{props.skipLabel ?? 'Skip'}
-										</Button>
-									</FadeIn>
-								</Show>
-								<Show when={showSubmit()}>
-									<FadeIn>
-										<Button
-											size="compact"
-											testId={`${props.testId ?? 'ask'}-continue`}
-											disabled={
-												isFreeText()
-													? otherText().trim().length === 0
-													: !hasAnswer()
-											}
-											onClick={isFreeText() ? submitOther : commitMulti}
-											trailingContent={
-												<ShortcutChip>{SHORTCUT_GLYPH}</ShortcutChip>
-											}
-										>
-											{continueLabel()}
-										</Button>
-									</FadeIn>
-								</Show>
+								<AnimatePresence mode="popLayout" initial={false}>
+									<Show when={showSkip()}>
+										<FooterButton>
+											<Button
+												size="compact"
+												variant="ghost"
+												trailingIcon="arrow-right"
+												testId={`${props.testId ?? 'ask'}-skip`}
+												onClick={skip}
+											>
+												{props.skipLabel ?? 'Skip'}
+											</Button>
+										</FooterButton>
+									</Show>
+									<Show when={showSubmit()}>
+										<FooterButton>
+											<Button
+												size="compact"
+												testId={`${props.testId ?? 'ask'}-continue`}
+												disabled={
+													isFreeText()
+														? otherText().trim().length === 0
+														: !hasAnswer()
+												}
+												onClick={isFreeText() ? submitOther : commitMulti}
+												trailingContent={
+													<ShortcutChip>{SHORTCUT_GLYPH}</ShortcutChip>
+												}
+											>
+												{continueLabel()}
+											</Button>
+										</FooterButton>
+									</Show>
+								</AnimatePresence>
 							</div>
 						</div>
 					</div>
@@ -1157,13 +1182,14 @@ function InlineOptionText(props: {
 	);
 }
 
-/** Footer buttons fade in when they appear; the source also scales them from 0.85 and animates them out. */
-function FadeIn(props: { children: JSX.Element }) {
+/** A footer button grows in from 0.85 and shrinks back out; the opacity runs on its own 0.1 s tween. */
+function FooterButton(props: { children: JSX.Element }) {
 	return (
 		<motion.div
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			transition={{ duration: 0.1 }}
+			initial={{ opacity: 0, scale: 0.85 }}
+			animate={{ opacity: 1, scale: 1 }}
+			exit={{ opacity: 0, scale: 0.85 }}
+			transition={{ ...tween.fast, opacity: { duration: 0.1 } }}
 		>
 			{props.children}
 		</motion.div>

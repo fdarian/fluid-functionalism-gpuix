@@ -4,23 +4,13 @@ Original: `registry/default/ask-user-questions.tsx` (1,880 lines, on Base UI `Ra
 
 Checked and the same: card, row, chip and footer sizes and padding at the `sm:` step (`ask-user-questions.tsx:1219-1245`, `:1819-1849`; port `:1009-1027`, `:201-297`), all spring values, the height morph (`spring.slow`, `:1259-1264`; port `:80-84`, `:966-978`), controlled / uncontrolled state, answer shapes, roving tab stop, the Other and freeText states, and light and dark colours (all through `color.*`). The demo data (questions, options, copy, the email validator) is identical to the docs page.
 
-## CSS transforms (scale-ins)
+## Footer neighbours jump instead of sliding
 
-- **Cause:** `gpuix gap`. Shared: CSS transforms ([README, Missing features, first row](../README.md)).
-- **Original:** each footer button enters and exits at `scale: .85` (`:1430-1432`, `:1490-1492`, `:1516-1518`); the single-select submit arrow overlay is `scale: .6` in and out (`:1700-1706`); the validation message rises from `y: -2` (`:1470-1471`).
-- **Port:** footer buttons fade only (`FadeIn`, `ask-user-questions.tsx:1160-1171`); the arrow overlay fades over 80 ms (`:160-166`); the error has no entrance (`:1051-1063`).
-- **gpuix lacks:** `scale` (`~/code/fdarian/gpuix/FORK.md:1198-1209`).
-- **Workaround:** opacity only.
-- **Fidelity:** approximated (no scale).
-- **Components it hits:** banner, chat-message, input-copy, input-message, queued-stack, radio-group.
-
-## Exits and sibling motion are missing
-
-- **Cause:** `not ported yet` (gpuix has `AnimatePresence` with `mode="popLayout"` and `layout`, `FORK.md:1149-1150`).
-- **Original:** footer buttons sit in `AnimatePresence mode="popLayout" initial={false}` with `layout="position"`, so a leaving button fades out while its neighbours slide at the same time and nothing animates on first mount (`:1425-1429`, `:1485-1489`). The submit arrow also fades out on exit with `spring.fast.exit` (`:1702-1706`).
-- **Port:** a `Show` removes the button at once, and the others jump. `FadeIn` runs on every mount, including the first paint, which the source skips (`ask-user-questions.tsx:1050-1117`, `:1155-1166`). The arrow overlay is unmounted when `showArrow` goes false (`:159`).
+- **Cause:** `not ported yet` (gpuix has `layout`, `FORK.md:1149-1150`).
+- **Original:** footer buttons sit in `AnimatePresence mode="popLayout" initial={false}` with `layout="position"`, so a leaving button fades and scales out while its neighbours slide at the same time (`:1425-1429`, `:1485-1489`).
+- **Port:** the same `AnimatePresence mode="popLayout" initial={false}` around each cluster, a button entering and leaving on `scale` .85 and opacity (`ask-user-questions.tsx:1072`, `:1115`, `:1186-1198`); the submit arrow on .6, leaving on the 60 ms tween (`:154-200`, `:211-217`); the validation message rising from `y` -2 (`:1088-1094`). There is no `layout`, so the neighbours of a leaving button jump to its place at once.
 - **Workaround:** none.
-- **Fidelity:** dropped (exits, sibling slide); approximated (first-mount fade).
+- **Fidelity:** approximated (sibling slide).
 - **Components it hits:** just this one.
 
 ## Keyboard focus ring does not travel
