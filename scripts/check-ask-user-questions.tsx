@@ -3,8 +3,6 @@
  *
  *   bun scripts/check-ask-user-questions.tsx
  *
- * A footer button's neighbour slides while the button leaves (sampled mid-glide).
- *
  * Prints PASS / FAIL lines and exits non-zero on any FAIL.
  */
 
@@ -353,63 +351,6 @@ check(
 		'the validation message enters 2px above its place',
 		entering.y < rest.y - 0.1 && entering.y > rest.y - 2.01,
 		`${(rest.y - entering.y).toFixed(2)} px above rest`,
-	);
-}
-
-// The right-hand cluster is right-aligned, so when Continue leaves (a single-choice question follows the multi-select one) Skip slides right into its place on `layout="position"`.
-{
-	const hasContinue = () =>
-		renderer.findByTestId('stacked-continue') !== undefined;
-	for (let questions = 0; questions < 2 && !hasContinue(); questions++) {
-		await scrollTo('stacked-skip', -500);
-		const skip = boxOf('stacked-skip');
-		renderer.nativeSimulateClick(
-			skip.x + skip.width / 2,
-			skip.y + skip.height / 2,
-		);
-		await settle(900);
-	}
-	if (!hasContinue()) {
-		throw new Error(
-			'the Stacked layout never reached its multi-select question',
-		);
-	}
-	await scrollTo('stacked-skip', -500);
-	const skipId = element('stacked-skip').id;
-	const skipRest = boxOf('stacked-skip');
-	renderer.clockPause();
-	renderer.nativeSimulateClick(
-		skipRest.x + skipRest.width / 2,
-		skipRest.y + skipRest.height / 2,
-	);
-	await sleep(50);
-	step(0);
-	step(0);
-	const at = () => {
-		const box = renderer.getElementBounds(skipId);
-		if (box === null) throw new Error('Skip has no bounds');
-		return box;
-	};
-	at();
-	const samples: number[] = [];
-	for (let elapsed = 0; elapsed < 400; elapsed += 8) {
-		step(8);
-		samples.push(at().x);
-	}
-	renderer.clockResume();
-	const end = samples.at(-1) ?? skipRest.x;
-	const travel = end - skipRest.x;
-	const progress = samples.map((x) => (x - skipRest.x) / travel);
-	const between = progress.filter((value) => value > 0.15 && value < 0.85);
-	check(
-		'Skip slides right when Continue leaves',
-		!hasContinue() &&
-			travel > 20 &&
-			between.length >= 1 &&
-			progress.every(
-				(value, index) => index === 0 || value >= progress[index - 1] - 0.01,
-			),
-		`${skipRest.x.toFixed(1)} -> ${end.toFixed(1)}, ${between.length} samples between`,
 	);
 }
 

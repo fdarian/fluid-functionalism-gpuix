@@ -1176,11 +1176,10 @@ function InlineOptionText(props: {
 	);
 }
 
-/** A footer button grows in from 0.85 and shrinks back out; the opacity runs on its own 0.1 s tween. `layout="position"` glides it to its place when a neighbour comes or goes. */
+/** A footer button grows in from 0.85 and shrinks back out; the opacity runs on its own 0.1 s tween. */
 function FooterButton(props: { children: JSX.Element }) {
 	return (
 		<motion.div
-			layout="position"
 			initial={{ opacity: 0, scale: 0.85 }}
 			animate={{ opacity: 1, scale: 1 }}
 			exit={{ opacity: 0, scale: 0.85 }}
