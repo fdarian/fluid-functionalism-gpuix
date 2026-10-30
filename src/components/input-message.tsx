@@ -324,6 +324,7 @@ function FilePreviewTile(props: {
 	const [badgeHovered, setBadgeHovered] = createSignal(false);
 	return (
 		<motion.div
+			layout
 			initial={{ opacity: 0, scale: TILE_SCALE }}
 			animate={{ opacity: 1, scale: 1 }}
 			exit={{ opacity: 0, scale: TILE_SCALE, transition: tween.fastExit }}
@@ -406,6 +407,7 @@ function QueuedRow(props: {
 
 	return (
 		<motion.div
+			layout
 			initial={{ opacity: 0, scale: ROW_SCALE }}
 			animate={{ opacity: 1, scale: 1 }}
 			exit={{ opacity: 0, scale: ROW_SCALE, transition: tween.fastExit }}
@@ -421,7 +423,6 @@ function QueuedRow(props: {
 				position: 'relative',
 				height: step().row,
 				flexShrink: 0,
-				marginTop: props.index > 0 ? 4 : 0,
 				display: 'flex',
 				flexDirection: 'row',
 				alignItems: 'center',
@@ -1069,6 +1070,7 @@ export function InputMessage(props: InputMessageProps) {
 						style={{
 							display: 'flex',
 							flexDirection: 'column',
+							gap: 4,
 							paddingBottom: 8,
 						}}
 					>

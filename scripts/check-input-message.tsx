@@ -12,6 +12,7 @@
  * - The queued row's close button sits one row padding from the right edge: 10 default, 8 compact.
  * - The send glyph swaps on `mode="wait"` (scale .6 in and out), a file tile enters and leaves on scale .9 and a queued row on .97,
  *   about their centres, the exits on the 60 ms tween.
+ * - A removed tile's or row's siblings slide into the gap on `layout` (a sibling sampled mid-glide), and a reordered row glides.
  * - The 80 ms fades (composer ring, queued close button, suggestion text) are mid-way 40 ms in, with the motion
  *   clock held; the send button's hover fill eases over 180 ms.
  */
@@ -20,7 +21,7 @@ import { createTestRoot } from '@gpuix/solid/testing';
 import { createSignal } from 'solid-js';
 import { fileFromPath, InputMessage } from '#/components/input-message';
 import { TooltipProvider } from '#/components/tooltip';
-import { AVATAR_JPG } from '#/lib/assets';
+import { AVATAR_JPG, OG_PNG } from '#/lib/assets';
 import { fonts } from '#/lib/fonts';
 import { color, setThemeChoice } from '#/lib/theme';
 import { readPng } from './png-pixels';
@@ -466,5 +467,130 @@ test.unmount();
 		`rest ${rowRest.width.toFixed(2)}, leaving ${rowLeaving.width.toFixed(2)}`,
 	);
 	motionTest.unmount();
+}
+// A removed tile's or row's siblings slide into the gap on `layout`; sampled on the held motion clock.
+{
+	const slideTest = createTestRoot({ width: 700, height: 700, fonts });
+	const slideRenderer = slideTest.renderer;
+	const [files, setFiles] = createSignal([
+		fileFromPath(AVATAR_JPG),
+		fileFromPath(OG_PNG),
+	]);
+	const [queue, setQueue] = createSignal([
+		queued('one'),
+		queued('two'),
+		queued('three'),
+	]);
+	const advance = (ms: number) => {
+		slideRenderer.clockFastForward(ms);
+		slideRenderer.flush();
+		slideRenderer.dispatchNativeEvents();
+	};
+	slideTest.render(() => (
+		<TooltipProvider>
+			<div
+				style={{ padding: 20, width: 560, backgroundColor: color.background }}
+			>
+				<InputMessage
+					testId="s"
+					value=""
+					onValueChange={() => {}}
+					files={files()}
+					onFilesChange={setFiles}
+					status="idle"
+					queue={queue()}
+					onQueueChange={setQueue}
+				/>
+			</div>
+		</TooltipProvider>
+	));
+	for (let frame = 0; frame < 60; frame++) {
+		slideRenderer.flush();
+		slideRenderer.dispatchNativeEvents();
+		await sleep(16);
+	}
+	const find = (testId: string) => {
+		const found = slideRenderer.findByTestId(testId);
+		if (found === undefined) throw new Error(`no element ${testId}`);
+		return found.id;
+	};
+	const box = (id: number) => {
+		const found = slideRenderer.getElementBounds(id);
+		if (found === null) throw new Error(`no bounds for element ${id}`);
+		return found;
+	};
+	const tileId = find('s-file-1');
+	const rowId = find('s-queued-1');
+	const tileRest = box(tileId);
+	const rowRest = box(rowId);
+	const rowFirst = box(find('s-queued-0'));
+	const tileFirst = box(find('s-file-0'));
+	slideRenderer.clockPause();
+	setFiles(files().slice(1));
+	setQueue(queue().slice(1));
+	advance(0);
+	advance(0);
+	box(tileId);
+	const tileX: number[] = [];
+	const rowY: number[] = [];
+	for (let elapsed = 0; elapsed < 400; elapsed += 8) {
+		advance(8);
+		tileX.push(box(tileId).x);
+		rowY.push(box(rowId).y);
+	}
+	slideRenderer.clockResume();
+	const slides = (samples: number[], from: number, to: number) => {
+		const travel = Math.abs(to - from);
+		const progress = samples.map((value) => Math.abs(value - from) / travel);
+		const monotone = progress.every(
+			(value, index) => index === 0 || value >= progress[index - 1] - 0.01,
+		);
+		const mid = progress.filter((value) => value > 0.15 && value < 0.85).length;
+		return { monotone, mid, ends: progress.at(-1) ?? 0 };
+	};
+	const tileEnd = tileFirst.x;
+	const rowEnd = rowFirst.y;
+	const tile = slides(tileX, tileRest.x, tileEnd);
+	const row = slides(rowY, rowRest.y, rowEnd);
+	report(
+		'the sibling of a removed tile slides into its place',
+		tileRest.x - tileEnd > 20 &&
+			tile.monotone &&
+			tile.mid >= 1 &&
+			Math.abs(tile.ends - 1) < 0.01,
+		`from ${tileRest.x.toFixed(1)} to ${tileEnd.toFixed(1)}, ${tile.mid} samples between, ends at ${tile.ends.toFixed(3)}`,
+	);
+	report(
+		'the sibling of a removed queued row slides into its place',
+		rowRest.y - rowEnd > 20 &&
+			row.monotone &&
+			row.mid >= 1 &&
+			Math.abs(row.ends - 1) < 0.01,
+		`from ${rowRest.y.toFixed(1)} to ${rowEnd.toFixed(1)}, ${row.mid} samples between, ends at ${row.ends.toFixed(3)}`,
+	);
+	// A reorder (Alt+arrow moves a row the same way) glides the row it swaps past.
+	const swapFrom = box(rowId).y;
+	slideRenderer.clockPause();
+	setQueue([...queue()].reverse());
+	advance(0);
+	advance(0);
+	box(rowId);
+	const swapY: number[] = [];
+	for (let elapsed = 0; elapsed < 400; elapsed += 8) {
+		advance(8);
+		swapY.push(box(rowId).y);
+	}
+	slideRenderer.clockResume();
+	const swapTo = box(rowId).y;
+	const swap = slides(swapY, swapFrom, swapTo);
+	report(
+		'a row that a reorder moves glides to its new place',
+		swapTo - swapFrom > 20 &&
+			swap.monotone &&
+			swap.mid >= 1 &&
+			Math.abs(swap.ends - 1) < 0.01,
+		`from ${swapFrom.toFixed(1)} to ${swapTo.toFixed(1)}, ${swap.mid} samples between`,
+	);
+	slideTest.unmount();
 }
 process.exit(failed ? 1 : 0);

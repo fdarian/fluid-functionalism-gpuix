@@ -8,14 +8,6 @@ One entry per place the port looks or behaves differently from the source, whate
 (CSS transforms, selector `:has(.x)` and group-has) get a one-line entry here that links to the README row instead of
 repeating it.
 
-## Siblings of a removed tile or row jump
-
-- **Cause:** `not ported yet`.
-- **Original:** `FilePreviewTile` and `QueuedRow` carry `layout`, so when one leaves its siblings slide into the gap; tiles sit in `AnimatePresence mode="popLayout"` (`input-message.tsx:230-239,301-313,1105,1143`).
-- **Port:** the send glyph, tiles and rows enter and leave on the source's scales (.6, .9, .97) with opacity, the exit on the 60 ms tween (`input-message.tsx:187-203`, `:330-334`, `:413-417`; the lists in `AnimatePresence` at `:1051`, `:1079`, the glyph `mode="wait"` at `:266`). There is no `layout`, so a removed tile's neighbours jump to its place at once (`popLayout`) and a removed row's follow when its 60 ms exit ends. The fork has `layout` and `popLayout` (`FORK.md:1149-1150`).
-- **Fidelity:** approximated.
-- **Components it hits:** queued-stack.
-
 ## Queue drag-reorder does not follow the pointer
 
 - **Cause:** `not ported yet`.
