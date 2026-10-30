@@ -12,6 +12,7 @@ import { loadDemos, loadPages } from '#/lib/demo';
 import { fonts } from '#/lib/fonts';
 import { setThemeChoice } from '#/lib/theme';
 import { scrollIntoView } from './check-kit';
+import { readPng } from './png-pixels';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const test = createTestRoot({ width: 1240, height: 780, fonts });
@@ -259,6 +260,87 @@ check(
 	focusedRow() === 'sidebar-demo-Button',
 	String(focusedRow()),
 );
+
+// The chevron rides a 24px slot and turns a quarter on a click; an open row hides it until the row is hovered or focused.
+{
+	const ROW = 'sidebar-demo-Button';
+	await scrollIntoView(renderer, ROW);
+	const slot = bounds(`${ROW}-chevron`);
+	const width = () => bounds(`${ROW}-chevron-turn`).width;
+	const ink = () => {
+		const path = `/tmp/check-sidebar-ink-${process.pid}.png`;
+		renderer.captureScreenshot(path);
+		const pixels = readPng(path);
+		const left = Math.round(slot.x);
+		const top = Math.round(slot.y);
+		const ground = pixels.at(left, top);
+		let total = 0;
+		for (let y = top; y < top + 24; y++)
+			for (let x = left; x < left + 24; x++) {
+				const pixel = pixels.at(x, y);
+				total +=
+					Math.abs(pixel[0] - ground[0]) +
+					Math.abs(pixel[1] - ground[1]) +
+					Math.abs(pixel[2] - ground[2]);
+			}
+		return total;
+	};
+	const row = bounds(ROW);
+	const onRow = { x: row.x + row.width / 2, y: row.y + row.height / 2 };
+	const rested: number[] = [];
+	const hovered: number[] = [];
+	for (let state = 0; state < 2; state++) {
+		// A click leaves focus on the row, which `group-focus-within` reveals the chevron for: press on bare background first.
+		await clickAt(780, 400);
+		renderer.nativeSimulateMouseMove(2, 2);
+		await settle(400);
+		rested.push(ink());
+		renderer.nativeSimulateMouseMove(onRow.x - 1, onRow.y);
+		renderer.nativeSimulateMouseMove(onRow.x, onRow.y);
+		await settle(400);
+		hovered.push(ink());
+		if (state === 0) {
+			const resting = width();
+			renderer.clockPause();
+			renderer.nativeSimulateClick(onRow.x, onRow.y);
+			let widest = resting;
+			for (let frame = 0; frame < 6; frame++) {
+				renderer.clockFastForward(12);
+				renderer.flush();
+				renderer.dispatchNativeEvents();
+				widest = Math.max(widest, width());
+			}
+			check(
+				'the chevron turns while the row toggles',
+				widest > resting + 2,
+				`widest ${widest.toFixed(2)} against ${resting.toFixed(2)} at rest`,
+			);
+			renderer.clockFastForward(400);
+			renderer.flush();
+			renderer.dispatchNativeEvents();
+			renderer.clockResume();
+		}
+	}
+	const openState = rested[0] < rested[1] ? 0 : 1;
+	const closedState = 1 - openState;
+	check(
+		'an open row hides its chevron at rest',
+		rested[openState] < rested[closedState] * 0.25,
+		`open ${rested[openState]}, closed ${rested[closedState]}`,
+	);
+	check(
+		"hover brings an open row's chevron back",
+		hovered[openState] > rested[closedState] * 0.8,
+		`open and hovered ${hovered[openState]}, closed ${rested[closedState]}`,
+	);
+	check(
+		'a closed row shows its chevron at rest and on hover',
+		rested[closedState] > 50 &&
+			Math.abs(hovered[closedState] - rested[closedState]) <
+				rested[closedState] * 0.3,
+		`rest ${rested[closedState]}, hover ${hovered[closedState]}`,
+	);
+}
 
 // A pointer click shows no ring.
 await click('sidebar-demo-Motion');

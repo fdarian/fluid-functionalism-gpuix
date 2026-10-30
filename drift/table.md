@@ -20,7 +20,7 @@ The source's `app/table/page.tsx` is not the table demo: it is an unlisted stres
 - **Cause:** `not ported yet`.
 - **Original:** real `<table>`, `<thead>`, `<tbody>`, `<tr>`, `<th>`, `<td>`; every part takes `className`, a `ref` and the element's HTML attributes (`table.tsx:38-46`, `:98-116`, `:124-168`, `:174-215`), which the site's pages use to align and size columns (`text-center`, `w-[180px]`, `whitespace-nowrap` in `app/table/page.tsx`).
 - **Port:** plain `<div>`s with `display: table`, `table-header-group`, `table-row-group`, `table-row` and `table-cell` (`table.tsx:91`, `:104`, `:108`, `:150`, `:186`), no `role`, only `testId`, the `width` prop (the column's preferred width) and two booleans, `alignRight` (`text-right`) and `tabularNums` (`tabular-nums`) (`table.tsx:165-174`, `:189`, `:202`). There is no other cell styling, `className` or `ref`.
-- **gpuix lacks:** nothing: `role` and `aria-*` work on any element (`src/components/sidebar.tsx:312` sets `aria-current`; `src/components/tabs.tsx` sets `role`).
+- **gpuix lacks:** nothing: `role` and `aria-*` work on any element (`src/components/sidebar.tsx:313` sets `aria-current`; `src/components/tabs.tsx` sets `role`).
 - **Workaround:** none.
 - **Fidelity:** approximated (looks the same; the table is anonymous to assistive tech, columns cannot be centred or kept on one line, and no cell takes `colSpan` although gpuix supports it).
 - **Components it hits:** any ported component that dropped `className` passthrough.

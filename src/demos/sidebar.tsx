@@ -95,9 +95,7 @@ export function Demo() {
 									testId="sidebar-demo-Button"
 									label="Button"
 									active={BUTTON_PAGES.includes(active())}
-									trailingIcon={() =>
-										buttonOpen() ? 'chevron-down' : 'chevron-right'
-									}
+									expanded={buttonOpen}
 									onClick={() => setButtonOpen(!buttonOpen())}
 								/>
 								<SidebarMenuSub open={buttonOpen()}>

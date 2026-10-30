@@ -4,9 +4,9 @@ Original: `registry/base/sidebar.tsx` over `registry/default/sidebar-core.tsx` a
 (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/sidebar.tsx`, demo in `src/demos/sidebar.tsx`.
 The site's own navigation sidebar is covered at the end: source `app/components/sidebar.tsx` and `sidebar-layout.tsx`, port `NavGroup` and `AppSidebar` in `src/app.tsx:102-254`. That section reads the live site (fluidfunctionalism.com at d5c3606: it has the Changelog page and the release-driven New dots, which 0a0377e predates), so its source `file:line` refs are d5c3606's.
 
-The port is the menu only: `SidebarMenu` (one fluid-hover scope with a hover, an active-per-level and a focus-ring overlay), `SidebarMenuButton` (`label`, `icon`, `dot`, `badge`, `trailingIcon`), `SidebarMenuSub`, and a fixed 256px `Sidebar` with `SidebarHeader`, `SidebarContent`, `SidebarGroupLabel` and `SidebarSearchField`. Everything else in the source is absent. Numbers that match (row 32 / sub-row 28 / label 32 high, 8px gap and left pad, radius 8, 16px icons, sub-menu `ml 15 + 1px border + pl 8`, badge slot 24 at right 8 with a 36px reserved pad, 256px width, header `p 8 gap 8`, hover / active tokens) are not listed.
+The port is the menu only: `SidebarMenu` (one fluid-hover scope with a hover, an active-per-level and a focus-ring overlay), `SidebarMenuButton` (`label`, `icon`, `dot`, `badge`, `expanded`), `SidebarMenuSub`, and a fixed 256px `Sidebar` with `SidebarHeader`, `SidebarContent`, `SidebarGroupLabel` and `SidebarSearchField`. Everything else in the source is absent. Numbers that match (row 32 / sub-row 28 / label 32 high, 8px gap and left pad, radius 8, 16px icons, sub-menu `ml 15 + 1px border + pl 8`, badge slot 24 at right 8 with a 36px reserved pad, 256px width, header `p 8 gap 8`, hover / active tokens) are not listed.
 
-Shared gpuix gaps that hit this component, each in its README row and not repeated here: [CSS transforms](../README.md) (the sub-menu chevron, the mobile sheet slide, the peek card), [`createMeasuredHeight`](../README.md) (the sub-menu height tween runs on `onLayout`, `src/components/sidebar.tsx:532`).
+Shared gpuix gaps that hit this component, each in its README row and not repeated here: [CSS transforms](../README.md) (the mobile sheet slide, the peek card), [`createMeasuredHeight`](../README.md) (the sub-menu height tween runs on `onLayout`, `src/components/sidebar.tsx:564`).
 
 ## Collapse, `SidebarProvider`, shell, trigger and shortcut
 
@@ -39,7 +39,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `not ported yet`.
 - **Original:** `variant="sidebar" | "floating" | "inset"` (floating is a rounded `surface-3` card in a `p-2` gutter, inset a `py-2` rail beside a rounded `SidebarInset`), `side="left" | "right"` (mirrors the rail, key and slide), `collapsible="none"`, and `bordered` (default: a 1px `border-border` on the inner edge) (`registry/base/sidebar.tsx:157-263`, `sidebar-core.tsx:760-905`, `:1132-1160`).
-- **Port:** one layout: left, no border, `color.background` fill, optional `leftCornerRadius` for the app frame (`src/components/sidebar.tsx:551-572`). The site's own sidebar uses `bordered={false}` (`app/components/sidebar.tsx:90`), so the borderless look matches the site but not the docs' default `Sidebar` layout.
+- **Port:** one layout: left, no border, `color.background` fill, optional `leftCornerRadius` for the app frame (`src/components/sidebar.tsx:583-604`). The site's own sidebar uses `bordered={false}` (`app/components/sidebar.tsx:90`), so the borderless look matches the site but not the docs' default `Sidebar` layout.
 - **Workaround:** none.
 - **Fidelity:** dropped for floating, inset and right; approximated for the default (no border).
 - **Components it hits:** just this one.
@@ -57,7 +57,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `not ported yet`.
 - **Original:** actions sit at `right-1.5` (left of a badge at `right-8.5`), reveal on the row's own button hover or focus, and the row reserves `rowGutter(actionCount, hasBadge)` of right padding that widens on reveal (`sidebar-menu.tsx:733-760,904`). Hover tracking freezes while an action popup is open (`:363`).
-- **Port:** a fixed right pad: 8px, or 36px when a badge is set (`src/components/sidebar.tsx:353-354`). No actions, no gutter maths, no popup freeze.
+- **Port:** a fixed right pad: 8px, or 36px when a badge is set (`src/components/sidebar.tsx:354-355`). No actions, no gutter maths, no popup freeze.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -66,7 +66,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `not ported yet`.
 - **Original:** `SidebarMenuButton size="default" | "sm" | "lg"` (32 or 28 compact, 28, 48), `variant="outline"` (1px border, `bg-background`), `SidebarMenu size="default" | "compact"` follows the `SizeProvider` (`sidebar-menu.tsx:935-1010`, `:1279`). `sm` also drops the label to the compact body step.
-- **Port:** two fixed heights from level: `height.menuRow` 32 and `height.menuSubRow` 28 (`src/components/sidebar.tsx:352`); text always `scale.body` (13/20). No compact ladder, no `lg`, no outline.
+- **Port:** two fixed heights from level: `height.menuRow` 32 and `height.menuSubRow` 28 (`src/components/sidebar.tsx:353`); text always `scale.body` (13/20). No compact ladder, no `lg`, no outline.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.
@@ -84,7 +84,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `not ported yet`.
 - **Original:** `ul` / `li` lists with `aria-label` on each menu ("Main navigation", "System navigation", ...), the row is a `button` (or `a` through `render`), `aria-current="page"` only while active (the attribute is absent otherwise), sub-menu `aria-hidden` and `data-state` while closed (`sidebar-menu.tsx:1062,1385`, `app/components/sidebar.tsx:75,99`).
-- **Port:** a `div` with `buttonProps` (role `button`) and `aria-current="page"` only while active, absent otherwise (`src/components/sidebar.tsx:359-377`). No `aria-label` on menus, no list roles, a collapsed sub-menu stays in the tree (its rows are `disabled`: skipped by hover, Tab, the arrows and activation, but still exposed to assistive tech).
+- **Port:** a `div` with `buttonProps` (role `button`) and `aria-current="page"` only while active, absent otherwise (`src/components/sidebar.tsx:360-378`). No `aria-label` on menus, no list roles, a collapsed sub-menu stays in the tree (its rows are `disabled`: skipped by hover, Tab, the arrows and activation, but still exposed to assistive tech).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -120,7 +120,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `port choice` (decorative `pointerEvents: none` was dropped on purpose, see the README).
 - **Original:** the badge is `pointer-events-none`, its digits `tabular-nums` (`sidebar-menu.tsx:1239`).
-- **Port:** the digits are tabular too (`src/components/sidebar.tsx:452-486`); the badge box is a normal hit target (the README says decorative `pointerEvents: none` was dropped on purpose).
+- **Port:** the digits are tabular too (`src/components/sidebar.tsx:484-518`); the badge box is a normal hit target (the README says decorative `pointerEvents: none` was dropped on purpose).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -143,21 +143,11 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
-## Sub-menu chevron
-
-- **Cause:** `gpuix gap` (CSS transforms, linked: [README row](../README.md); same drift as `drift/accordion.md`).
-- **Original:** the page composes one `chevron-right` in a 24px slot and turns it 90 degrees on `spring.fast`; while the parent is open the chevron is hidden at rest and returns on row hover or focus (`app/docs/sidebar/page.tsx:nestingCode`).
-- **Port:** `trailingIcon` swaps `chevron-down` / `chevron-right` at once and always shows it (`src/components/sidebar.tsx:442-450`, `src/demos/sidebar.tsx:98-100`).
-- **gpuix lacks:** transforms on SVG icons outside a `TransformationMatrix` sprite (`~/code/fdarian/gpuix/FORK.md:1198-1209`).
-- **Workaround:** swap the glyph; no hover-reveal.
-- **Fidelity:** approximated.
-- **Components it hits:** accordion, card, color-picker.
-
 ## Group label: the library label is not the site's header
 
 - **Cause:** `port choice` (the site's header is built in the app, as `NavGroup`; the library `SidebarGroupLabel` keeps its own plainer look).
 - **Original:** the site's count is a `h-5 min-w-5 px-1` centred box in the label row, `tabular-nums`, `text-site-caption` (12/16), so its digits share the badge column (centre 18px from the right edge); the name is `text-foreground`; a `h-px bg-border` hairline (`ml-2 mr-3 mb-1`) sits under both, and a labelled `SidebarGroup` is `p-2 pt-4`, so groups are 16px apart below the first (`app/components/sidebar.tsx:55-74`).
-- **Port:** the site nav is exact: `NavGroup` has the foreground name, the 20px count box, the hairline and the 16px top padding (`src/app.tsx:102-178`). The library `SidebarGroupLabel` (the demo page's) keeps its `count` prop as a bare `caption` text right-aligned at 8px, so a two-digit count ends 4px right of the badge column; it has no hairline, and its groups touch (`src/components/sidebar.tsx:641-672`).
+- **Port:** the site nav is exact: `NavGroup` has the foreground name, the 20px count box, the hairline and the 16px top padding (`src/app.tsx:102-178`). The library `SidebarGroupLabel` (the demo page's) keeps its `count` prop as a bare `caption` text right-aligned at 8px, so a two-digit count ends 4px right of the badge column; it has no hairline, and its groups touch (`src/components/sidebar.tsx:673-704`).
 - **Workaround:** none.
 - **Fidelity:** exact in the site nav; approximated in the library label.
 - **Components it hits:** just this one.
@@ -166,7 +156,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `not ported yet`.
 - **Original:** `SidebarInput` is `h-8` (`h-7` compact), `px-3`, `bg-transparent` with `ring-1 ring-transparent`; hover `bg-muted/50` + `ring-border`; focus `bg-card` + `ring-border`; and `focus-visible:ring-[--focus-ring]` (a text input matches `:focus-visible` on any focus, so a focused field shows the blue ring). Fill and ring ease over 80 ms (`sidebar-core.tsx:1165-1195`). The block adds the icon at `left-2`, `pl-8 pr-12`, `aria-label="Search"`, default placeholder `Search…` and a chip `⌘K` that fades in on hover or focus over 80 ms, or `shortcut={null}` to drop it (`registry/blocks/sidebar-app/search-field.tsx`).
-- **Port:** hover fill `mutedHalf`, focus fill `card`, and the outline is `color.border` for both hover and focus, never the focus-ring colour (`src/components/sidebar.tsx:675-755`). Fill, outline and chip ease over 80 ms (the outline stands in for the source's `ring-1` box shadow). No `aria-label`; the demo passes `placeholder="Search"` without the ellipsis (`src/demos/sidebar.tsx:73`); the chip cannot be dropped (`shortcut` is required). Size is fixed at 32 (`height.menuRow`).
+- **Port:** hover fill `mutedHalf`, focus fill `card`, and the outline is `color.border` for both hover and focus, never the focus-ring colour (`src/components/sidebar.tsx:707-787`). Fill, outline and chip ease over 80 ms (the outline stands in for the source's `ring-1` box shadow). No `aria-label`; the demo passes `placeholder="Search"` without the ellipsis (`src/demos/sidebar.tsx:73`); the chip cannot be dropped (`shortcut` is required). Size is fixed at 32 (`height.menuRow`).
 - **Workaround:** none.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
@@ -175,7 +165,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `not ported yet`.
 - **Original:** `SidebarContent` is a `ScrollArea` with `scroll-fade` (48px edge mask) and `scroll-divider` hairlines inset 8px at the top and bottom edges while there is more to scroll (`registry/base/sidebar.tsx:276-304`, `app/globals.css:1128-1196`). `.scroll-divider:first-child::before` hides the top one when nothing sits above the scroller, which is the site nav's case (its Search row scrolls inside it) but not a sidebar with a `SidebarHeader` over its content (`app/globals.css:1184`).
-- **Port:** `SidebarContent` is a `ScrollArea` with `fade` and `divider={{ start: false }}`: the 48px fade follows the scroll, and the end hairline fades in over the last 48px (`src/components/sidebar.tsx:612-639`). The start hairline is dropped for every use, so the demo page's sidebar, which has a header above its content, lacks the top one the source draws there. The site nav matches the source, Search row inside the scroller (`src/app.tsx:206-218`).
+- **Port:** `SidebarContent` is a `ScrollArea` with `fade` and `divider={{ start: false }}`: the 48px fade follows the scroll, and the end hairline fades in over the last 48px (`src/components/sidebar.tsx:644-671`). The start hairline is dropped for every use, so the demo page's sidebar, which has a header above its content, lacks the top one the source draws there. The site nav matches the source, Search row inside the scroller (`src/app.tsx:206-218`).
 - **Workaround:** none.
 - **Fidelity:** exact for the site nav; approximated for the demo's sidebar.
 - **Components it hits:** just this one.
@@ -241,7 +231,7 @@ Shared gpuix gaps that hit this component, each in its README row and not repeat
 
 - **Cause:** `port choice` (the sidebar sits inside the app frame's rounded panel; reason for the fill not stated).
 - **Original:** `Sidebar className="ml-2"`, `rail={false}`, no fill of its own, sticky `h-svh`, content `py-2` (`app/components/sidebar.tsx:98-99`).
-- **Port:** no left margin; the column paints `color.background` and takes `leftCornerRadius={PANEL_INNER_RADIUS}` (9) so the fill follows the panel's corner (`src/app.tsx:205`, `src/components/sidebar.tsx:551-572`); content padding is `py-2` as the source's, made of the content's 8px sides and bottom and an 8px spacer above the first group (`src/app.tsx:208`). The column is a sibling of the page scroller, not inside it, so it needs no `sticky h-svh` to stay put.
+- **Port:** no left margin; the column paints `color.background` and takes `leftCornerRadius={PANEL_INNER_RADIUS}` (9) so the fill follows the panel's corner (`src/app.tsx:205`, `src/components/sidebar.tsx:583-604`); content padding is `py-2` as the source's, made of the content's 8px sides and bottom and an 8px spacer above the first group (`src/app.tsx:208`). The column is a sibling of the page scroller, not inside it, so it needs no `sticky h-svh` to stay put.
 - **Workaround:** n/a.
 - **Fidelity:** approximated.
 - **Components it hits:** app frame.

@@ -165,9 +165,7 @@ function ListsSidebar(props: {
 						testId="lists-Chat"
 						icon={MESSAGE_CIRCLE}
 						label="Chat"
-						trailingIcon={() =>
-							props.open() ? 'chevron-down' : 'chevron-right'
-						}
+						expanded={props.open}
 						onClick={() => props.setOpen(!props.open())}
 					/>
 					<SidebarMenuSub open={props.open()}>

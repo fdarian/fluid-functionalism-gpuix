@@ -304,7 +304,8 @@ export function SidebarMenuButton(props: {
 	badgeType?: { fontSize: number; lineHeight: string };
 	/** A row clipped away by a collapsed sub-menu: stays registered, never a hover target. */
 	disabled?: () => boolean;
-	trailingIcon?: () => IconRef;
+	/** The row owns a sub-menu: a chevron at its end points right, and down while this is true. */
+	expanded?: () => boolean;
 	onClick?: (event: HostPointerEvent) => void;
 	testId?: string;
 }) {
@@ -398,6 +399,7 @@ export function SidebarMenuButton(props: {
 				userSelect: 'none',
 				// The menu's one shared ring is drawn by SidebarMenu.
 				keyboardFocusDim: false,
+				group: true,
 			}}
 		>
 			<Show when={props.icon}>
@@ -439,14 +441,44 @@ export function SidebarMenuButton(props: {
 					/>
 				)}
 			</Show>
-			<Show when={props.trailingIcon}>
-				{(name: Accessor<() => IconRef>) => (
-					<Icon
-						name={name()()}
-						size={16}
-						strokeWidth={1.5}
-						color={color.mutedForeground}
-					/>
+			<Show when={props.expanded}>
+				{(expanded: Accessor<() => boolean>) => (
+					<div
+						testId={props.testId && `${props.testId}-chevron`}
+						style={{
+							width: 24,
+							height: 24,
+							marginLeft: 'auto',
+							marginRight: -2,
+							flexShrink: 0,
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							// An open row hides its chevron at rest; hover or focus on the row brings it back.
+							opacity: expanded()() ? 0 : 1,
+							...(expanded()()
+								? {
+										groupHover: { opacity: 1 },
+										groupFocusWithin: { opacity: 1 },
+									}
+								: {}),
+							...fade(['opacity'], 80),
+						}}
+					>
+						<motion.div
+							testId={props.testId && `${props.testId}-chevron-turn`}
+							style={{ display: 'flex' }}
+							animate={{ rotate: expanded()() ? 90 : 0 }}
+							transition={tween.fast}
+						>
+							<Icon
+								name="chevron-right"
+								size={16}
+								strokeWidth={1.5}
+								color={color.mutedForeground}
+							/>
+						</motion.div>
+					</div>
 				)}
 			</Show>
 			<Show when={props.badge}>

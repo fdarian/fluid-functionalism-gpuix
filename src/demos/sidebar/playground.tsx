@@ -224,12 +224,7 @@ export function SidebarPlayground() {
 									label={row.label}
 									badge={state.l1Badges ? row.badge : undefined}
 									active={active()}
-									trailingIcon={
-										nests()
-											? () =>
-													isRowOpen(key) ? 'chevron-down' : 'chevron-right'
-											: undefined
-									}
+									expanded={nests() ? () => isRowOpen(key) : undefined}
 									onClick={() => (nests() ? toggleRow(key) : setSelected(key))}
 								/>
 								<Show when={nests()}>
