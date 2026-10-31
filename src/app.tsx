@@ -556,7 +556,6 @@ export function App(props: {
 	return (
 		<MotionConfig reducedMotion="user">
 			<ThemeFade />
-			{/* The viewport the source's breakpoints read (home grid columns): gpuix has no media queries, so this container is as wide as the window. */}
 			<div
 				testId="viewport"
 				style={{
@@ -566,8 +565,6 @@ export function App(props: {
 					lineHeight: 1.5,
 					// The source's `html, body { -webkit-font-smoothing: antialiased }` (`app/globals.css:328-332`), inherited by every text below.
 					WebkitFontSmoothing: 'antialiased',
-					containerType: 'inline-size',
-					containerName: 'viewport',
 				}}
 			>
 				<AppFrame title={WINDOW_TITLE}>

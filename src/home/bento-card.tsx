@@ -1,4 +1,9 @@
-import { buttonProps, type StyleDesc, useGpuixRequired } from '@gpuix/solid';
+import {
+	buttonProps,
+	motion,
+	type StyleDesc,
+	useGpuixRequired,
+} from '@gpuix/solid';
 import { createContext, type JSX, Show } from 'solid-js';
 import { Badge } from '#/components/badge';
 import { createCulling, OnScreenContext } from '#/lib/cull';
@@ -9,6 +14,7 @@ import {
 	focusRing,
 	scheme,
 	siteType,
+	motion as tween,
 	weight,
 } from '#/lib/theme';
 
@@ -48,23 +54,27 @@ export function bentoFrame(state: 'rest' | 'hover' | 'focus') {
 	};
 }
 
-/** A preview on top, the component's name below it as a link to its demo. */
+/** A preview on top, the component's name below it as a link to its demo. When the grid re-slots the card, the box scales into its new slot while the preview and the name slide to theirs (`animateLayout` in the source). */
 export function BentoCard(props: {
 	slug: string;
 	name: string;
 	isNew?: boolean;
-	/** Grid placement, as `@container` blocks the grid writes from the size and the column count. */
+	/** Grid placement from the tile's size and the grid's column count. */
 	placement: StyleDesc;
 	/** Rows are pinned at 300px, so a tall preview can only be shown more fully by spending less of that on padding. */
 	previewPadding: { x: number; y: number };
+	/** The source's `animateLayout`: the card's box, preview and name glide to a new slot. */
+	animateLayout: boolean;
 	onOpen: () => void;
 	children?: JSX.Element;
 }) {
 	const renderer = useGpuixRequired();
 	const culling = createCulling();
 	return (
-		<div
+		<motion.div
 			testId={`card-${props.slug}`}
+			layout={props.animateLayout}
+			transition={tween.moderate}
 			style={{
 				...props.placement,
 				display: 'flex',
@@ -81,8 +91,11 @@ export function BentoCard(props: {
 				focusWithin: bentoFrame('focus'),
 			}}
 		>
-			<div
+			<motion.div
 				ref={culling.ref}
+				testId={`card-${props.slug}-preview`}
+				layout={props.animateLayout ? 'position' : false}
+				transition={tween.moderate}
 				style={{
 					flexGrow: 1,
 					flexBasis: '0%',
@@ -103,7 +116,7 @@ export function BentoCard(props: {
 						{props.children}
 					</BentoTileContext.Provider>
 				</OnScreenContext.Provider>
-			</div>
+			</motion.div>
 			<div
 				{...buttonProps({ onClick: props.onOpen }, renderer)}
 				testId={`card-${props.slug}-open`}
@@ -135,23 +148,35 @@ export function BentoCard(props: {
 					focusVisible: focusRing(-1),
 				}}
 			>
-				<text
+				<motion.div
+					testId={`card-${props.slug}-name`}
+					layout={props.animateLayout ? 'position' : false}
+					transition={tween.moderate}
 					style={{
-						...siteType.body,
-						fontVariationSettings: weight.normal,
-						color: color.mutedForeground,
-						...colorFade,
-						groupHover: { color: color.foreground },
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
+						gap: 8,
 					}}
 				>
-					{props.name}
-				</text>
-				<Show when={props.isNew}>
-					<Badge variant="dot" color="blue" size="compact">
-						New
-					</Badge>
-				</Show>
+					<text
+						style={{
+							...siteType.body,
+							fontVariationSettings: weight.normal,
+							color: color.mutedForeground,
+							...colorFade,
+							groupHover: { color: color.foreground },
+						}}
+					>
+						{props.name}
+					</text>
+					<Show when={props.isNew}>
+						<Badge variant="dot" color="blue" size="compact">
+							New
+						</Badge>
+					</Show>
+				</motion.div>
 			</div>
-		</div>
+		</motion.div>
 	);
 }

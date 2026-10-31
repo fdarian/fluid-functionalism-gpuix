@@ -1,4 +1,10 @@
-import { For, type JSX, Show } from 'solid-js';
+import {
+	createMediaQuery,
+	type HostElement,
+	ResizeObserver,
+	type StyleDesc,
+} from '@gpuix/solid';
+import { createSignal, For, type JSX, onCleanup, Show } from 'solid-js';
 import { usePageNav } from '#/lib/page-nav';
 import { BENTO_ROW, BentoCard, type BentoSize } from './bento-card';
 import { previewMap } from './bento-previews';
@@ -94,40 +100,67 @@ const TILES: readonly Tile[] = [
 const GAP = 12;
 const DEFAULT_PADDING = { x: 24, y: 64 };
 
-/** The window-wide container `App` makes (`src/app.tsx`); gpuix has no media queries, so the source's viewport breakpoints query it. */
-const MD = 'viewport (min-width: 768px)';
-const XL = 'viewport (min-width: 1280px)';
+/** How long the cards keep `layout` after the grid last changed width: the glide is `spring.moderate`, 0.16 s. */
+const GLIDE_MS = 600;
+
+/** `useGridCols` in `app/components/bento-grid.tsx:67-90`: the column count is state, so the re-slot is part of a commit and the cards' `layout` glides see it. */
+function createGridColumns() {
+	const md = createMediaQuery('(min-width: 768px)');
+	const xl = createMediaQuery('(min-width: 1280px)');
+	return () => (xl() ? 3 : md() ? 2 : 1);
+}
+
+/**
+ * Whether the cards carry `layout`. The source leaves it on every card, but gpuix draws every tick of a page whole
+ * while a `layout` box is on screen (`Unsteady`: the showcase's 22% idle CPU becomes 36%), so the cards take it only
+ * while the grid is being resized. A box glides from the box it was shown as at the commit that gave it `layout`, so
+ * this has to come from the resize itself, in the frame before the media query flips the columns: giving `layout` in
+ * the same commit as the new columns glides nothing.
+ */
+function createResizeGlide() {
+	const [gliding, setGliding] = createSignal(false);
+	let timer: ReturnType<typeof setTimeout> | undefined;
+	const observer = new ResizeObserver(() => {
+		setGliding(true);
+		clearTimeout(timer);
+		timer = setTimeout(() => setGliding(false), GLIDE_MS);
+	});
+	onCleanup(() => {
+		clearTimeout(timer);
+		observer.disconnect();
+	});
+	return {
+		gliding,
+		observe: (element: HostElement) => observer.observe(element),
+	};
+}
 
 /** `sizeClasses` in `bento-card.tsx:10-14`, which only apply from `md`, plus `xl:col-start-2`. */
-function placement(tile: Tile) {
+function placement(tile: Tile, columns: number): StyleDesc {
 	return {
-		'@container': {
-			[MD]: {
-				...(tile.size === 'small' ? {} : { gridColumn: 'span 2' }),
-				...(tile.size === 'large' ? { gridRow: 'span 2' } : {}),
-			},
-			...(tile.side === 'right' ? { [XL]: { gridColumn: '2 / span 2' } } : {}),
-		},
+		...(columns >= 2 && tile.size !== 'small' ? { gridColumn: 'span 2' } : {}),
+		...(columns >= 2 && tile.size === 'large' ? { gridRow: 'span 2' } : {}),
+		...(columns === 3 && tile.side === 'right'
+			? { gridColumn: '2 / span 2' }
+			: {}),
 	};
 }
 
 export function BentoGrid() {
 	const nav = usePageNav();
+	const columns = createGridColumns();
+	const resize = createResizeGlide();
 	return (
 		<div
 			testId="bento-grid"
+			ref={resize.observe}
 			style={{
 				display: 'grid',
-				gridTemplateColumns: 1,
+				gridTemplateColumns: columns(),
 				gap: GAP,
-				'@container': {
-					[MD]: {
-						gridTemplateColumns: 2,
-						gridAutoFlow: 'row dense',
-						gridAutoRows: BENTO_ROW,
-					},
-					[XL]: { gridTemplateColumns: 3 },
-				},
+				...(columns() >= 2
+					? { gridAutoFlow: 'row dense', gridAutoRows: BENTO_ROW }
+					: {}),
 			}}
 		>
 			<For each={TILES}>
@@ -136,7 +169,8 @@ export function BentoGrid() {
 						slug={tile.slug}
 						name={tile.name}
 						isNew={tile.isNew}
-						placement={placement(tile)}
+						placement={placement(tile, columns())}
+						animateLayout={resize.gliding()}
 						previewPadding={tile.padding ?? DEFAULT_PADDING}
 						onOpen={() => nav.navigate(tile.slug)}
 					>
