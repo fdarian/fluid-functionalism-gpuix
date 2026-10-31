@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:4ee585418503e920d9fd26b64f8ce1ed5dc775e7953cc8ed6c60af2320a82143",
+  "claims": [
+    {
+      "id": "claim_ab85a1ccd46a4ea0bea34ea0d17a1ebe",
+      "statement": "Fluid hover reads a row in the container's layout pixels (the container's transformed box over its ResizeObserver-reported layout size), because getBoundingClientRect is the transformed box and nothing re-measures when a scale settles, so a hover that landed while a popup was still scaling in would otherwise leave the highlight off its row.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/fluid-hover.ts#L158-L171",
+          "version": "repo-lines-v1:sha256:3a9d1a8f2b53daaea6d41406156d81e4c8d79139adde6eda0b0f2511d7f00270:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4MmY5ZTBhOTc2MzFlYmM5YmNjZTY1MDljZDM0YWY0NjdlMmQ0MWY5OWY1Mzc1ZDE0NmJiZWI0MzNkMTI2YTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwOWUzNmMxYjQ1YjRkNjdhMjY5ODJjMGYxNTA0NjA4ZGU2MjVhNjU3YTU3NWNmOGRhYWVhYTE1OTIzYzliMWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyZjkzMTdkYmZlMTlmYmUxNWQwNmU5NTg2YTdmMzc2MDIwNTU0YjM1NmQ0ZTFmNGRiZGU4N2M4NmMyODE2YTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM1ZWQzNzQ3ZWY3ZmYyMzg3MTU4ODZhNzAyNjIyZmZjNTE3NTVhMDY0ZDJjN2E0ODJhNGJiYzliNWZkMWM0NTIifQ"
+        },
+        {
+          "resource": "repo://src/lib/fluid-hover.ts#L7-L33",
+          "version": "repo-lines-v1:sha256:e01d04d4c87e4482e6e09a86998aa1d0c9d72bbbdc6a32e4dcad6f1b20fc3310:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhNzUwY2VhMTA1ODY3YWY2NmE4OTRhOWE5ZjE2OGExZTg2ZTE3NTI5M2ZlMGM2N2M0ZGU3NzgzY2NhNzYyZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4NTQzNDc3NmU3MmE3M2YwYTNiYTFhMWUyZWFkNzhiNDRiNzExMDM2NzhkMDVmZThmYzJjOWFmNjc2OTFiNTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwYzVlZTExMzAwZDdhZTUxMzY1NTNiNjVkNzRmYTk0NThmZjMyMjQ5M2IzN2Y0MjY5YmJmMGViZGNjMGZhNzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2NmM1YTI2OWFjOGU5ODFkOGExYmIxOGE0MGFkOWEzYWI3MGZiNDA5ZWE4ODAxMGQ3OTA4MDY2ZjY5ZjlmNDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d4b47804822b483195b664e9e16eb51f",
+      "statement": "Popups enter on y and scaleY (0.96) with opacity, about the origin of the resolved side (top, or bottom once the layer flips), where before the 2026-10-30 adoption they kept only the opacity fade and a 4 px slide.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/popup.tsx#L56-L90",
+          "version": "repo-lines-v1:sha256:6f89cace9beb08db366700cb700d297824994cc2fda41b3df3f4c44f29577db4:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxYWQ0MDNkMjAwN2IwODEzNjYyOWYxYTZkZjU4MzM4N2E4NjI3ODQ5YjNlYmU4MGU4MmU1YzZjM2QyZTgwMjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhZDMxZDMwOTRhYTRiNWM3MWRiYzZiMmFlZGJjODBhYjU4NzM4MDI2YTY1ODQwNzFkNjcxOTRlZDRlYjllM2YiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk1NzQ1NmJkMjhiZTkyMTE0ZTIwYjNiYzdiMmZmZDZmYzI2N2E1ODY5MWIyYjY4NjI5MDNkNWI3NTg1YzI4YTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE1YjQ3MjIxZGQ5YjJlZDcyMDVkOTJjNzBmZDk4OTAxYTE0NmQ5ZWQyMjJjNTZmY2Q1NjZjYWIwYTczYWM5ZjMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_278c015fca6b4578bfb2a57fddbbe0a4",
+      "statement": "The carousel-dots fill is one native animation held with pause() and resumed with play() and drawn through a translateX of a native range map, so a playing carousel costs no JS frame and its tick is a patch rather than a width layout loop.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/carousel-dots.tsx#L26-L27",
+          "version": "repo-lines-v1:sha256:85d57724337cc08b7f850b6c1a6e6d8cd32fd17e40947955cccfed8f31d9d2d7:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjhmYjUxM2JjODRmYTA0YzE5YTlmZWRjNGE4NDFkYjQwMjA3ZjhiYTA1Yjc4M2MzYWZhYzk0ZDYwMGYyNzU2YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGE0YzcxNDdhNzBmNTBhMzE3YWJiMmMzYzIxZWFmOWMxMzEzZDkyODZlNzU5NmRiY2Q4MGU4ZDQ5ZTRmOGQyOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjE3Nzk1YjI2ODU3YzIzMzE4NGNlZjI2YzhkOGNhYzUyMjRlNGFlNmQyOTgxNGNhNDU4ZDUyM2Y3YTNlZWI4MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDVhYWQ5OWRhZjA5ZDkzZWRhYzA3ZGMwM2FmMTRlMmNkYjNmZWJmZjIwMzZmNDRmNzNmZDI1ZTMwYjg5MWI5YSJ9"
+        },
+        {
+          "resource": "repo://src/components/carousel-dots.tsx#L76-L129",
+          "version": "repo-lines-v1:sha256:e74fc7d9cd273e7a673799f7440f169abe491bdc481015bd02bad5574109bc9b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1ZjlhM2Q5Nzg4YmRlZGFiNGIzZTE2MmIzN2NmZjJiZmYwMTliYjM4NmQ1MmMyNmY2OGFiMmQ4ZjZkNjJmNDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyOGQwZmM3MTg5MGJmZTY3ZTAzNjVmN2NhZmE1NDI3NWI0Y2YwYjllY2YwOTFmOWU3NjMyOTQyZjIzMmQyOGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEwZWMyMDUyZDcwYjY5MWYxZWRmYzY5M2E1MjRlNzhmZTVmOGMwYWE5M2MzMzkxYzJjZmU2NTIxYTA2MzU2NmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwOWQ5Yjc3MTg3NGY3MDc1YjcyMjMyOTcxNzM4ZGEyNjA2OTdkYmM1NDI1NTNmZTA3YTc2MjI5YmM2MGViOTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f1a6a41497bc4c5faa07615d49baa4da",
+      "statement": "A target's own exit.transition replaces the component's transition for its exit (gpuix #107), so components such as radio-group no longer choose a transition by reading useIsPresent.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/radio-group.tsx#L88-L92",
+          "version": "repo-lines-v1:sha256:f6cdb4633e4616d8f2b1e60ba062813a92b775c92302ec9fd79f6af55bc40307:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWIzMGEyYThlY2ViMTVhMjJhZjliMDc2ZDZiZTA5ZTY3ZWJiODc4ZTYyZGYwNjJmZTQxNTFkZTRhYTRjNzNlOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTRmZThlZDhmNThiY2Q1N2ZlNGQ5MDhhMTM4MGJiYTRmMjIwZDk5M2RiNTRmNTFiNzQ2ZDI4ODE1ZDlhMWJkNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODQ1NWZkZWMwYWY5Mjg5YTBjNWZlYzA4NGVjNmUzZWY0OTljMWM4YTI1YTAyMDVhOWNhNzA0ZGIwYTk3MTQ4YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGQ2MzFlN2ZhNzk4Zjk4ODU3MzM1YmU3NzljMGRlMzA4MDJjNmZiNGM1YmYxNGZmN2JhMmQ4NTUzMmI3NDAwNSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_746a0c6368bc44e89c11b17e41e084c4",
+      "statement": "Thinking-steps chips and images enter on a blur(4px) filter animation like the source, since gpuix #106 makes filter animatable.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/thinking-steps.tsx#L520-L552",
+          "version": "repo-lines-v1:sha256:bfd095fa407689e544d0a7ff932c28d7fbe0eea1e5ec009eebb9e7f4ac52bb54:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0YmFkYzcwYjAzZmU2NGVlMmI1YTE1ZWNiNWIyODBhMDFmMGRiNTlkZTEwNzkzZmViOTc1OWFjMGRlMmU5OTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlZjQwZTMwOWVlYjkyZWM4YmVjY2U0NzAwNGQ5MWFhYzVkN2IxZjBhNWNlZDM2ZWM4ZWNkODYyN2JhODU3YTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYxZTMzODJmMmI0MzQ0MDRkNWE2YTg0NzU5MjY5ODU2OWIxMzFhZDljZTk5MTQzNzE2MzlmNjRiNzljNTVmNTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhmMzFlMGRmNzFkN2I1YmRlMGU0MmZjY2RhMDFkNjMyYjZmMmUzNTUxOTI2ZTUwYjUwNDQyYTI3Nzg2ZmRkZGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_08b64f8b00cf4a4eb5e06d7ed9b7096b",
+      "statement": "The home bento grid's cards carry layout only while a ResizeObserver reports the grid resizing, switched on before the media query flips the columns, because an always-on on-screen layout box makes every tick of a looping page a whole frame (the showcase's idle CPU 22% to 36%) and a layout given in the same commit as the new columns glides nothing.",
+      "evidence": [
+        {
+          "resource": "repo://drift/home.md#L11-L18",
+          "version": "repo-lines-v1:sha256:e671169acc2e76a5512033734a37a991557f8ac1ad5071df90d79c8b8400d1ac:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjY1ZTRkZjA0NjE1Mzg3ZDY5YjVmZGFmMmUyYjY2OTY4NjYyNWYxYTJiYjg2YmJlOTYxZTRhZGJiMmIyMDI1NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDdlM2E1YmQ5MTAwNjljNTM4NmQ0MGE2Yzc4NWI4ZDRhNzA5MDEyMWI2YWMxZWRjZGFmMWRhMzc5MDM1MWYyNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODFkNDgyNTdiMzVmYmNlZDEzNDZiNGE2ZThjMzA2MGYzNjY5ZmZiNWE0ZDk0YmM4YTNjZmZhOGY1MWNiYzBjMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWNhZWE0ODZmYmYzODcxMGY2MjYxMWU5NTNlODAzZGRmMDY5ODQzMTYyY2U1Zjg5ZjU3OTMyMjZmZjcyMzljOCJ9"
+        },
+        {
+          "resource": "repo://src/home/bento-grid.tsx#L105-L136",
+          "version": "repo-lines-v1:sha256:67ee1f0d1b03b366caaa5afd56587e7ca0153ef47aa0a8c48d83b8ad9d973973:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI0MTQwYjUyMjVhMDkxMGE5MWY5MzkwNWQzNjU3MDM5MTczNDFmYWRjYmZiODk5ZWMwZWI2ODkwNWY3YTY3YzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkwODdmN2I5N2Y1YWQ4MjY2MDgxZDA4MGQ5ZTgxNzFjODI4NjY5OGE0Y2QxNzJjMDkzZWExM2JhYzIzMTVlZjEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d4ff625090594ced811e074cf82bf5f3",
+      "statement": "Input-message's file tile row is the positioned parent that a popLayout AnimatePresence pins a leaving tile against, so a removed tile leaves flow at once and its siblings glide into place.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/input-message.tsx#L1050-L1050",
+          "version": "repo-lines-v1:sha256:d3b54ca16ba38b62aa961bb40d87fe6bf4dfecc01e4253a15c9d9f4ad5ea2063:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDNiNTRjYTE2YmEzOGI2MmFhOTYxYmI0MGQ4N2ZlNmJmNGRmZWNjMDFlNDI1M2ExNWM5ZDlmNGFkNWVhMjA2MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDNiNTRjYTE2YmEzOGI2MmFhOTYxYmI0MGQ4N2ZlNmJmNGRmZWNjMDFlNDI1M2ExNWM5ZDlmNGFkNWVhMjA2MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmM4YjVlY2RiMWU0NmNlYmJiN2FjZTM1YzQ3ZTk0MzBjMzk0MWE2NTU5ZTVkMGRlMGMyYTY0MGYyNjYwMzhiNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWM2NGI2MTgzMGY4ZjNlYThlNGVkYzQ5YTM5Nzg2YjI5YjU2OWUyY2ZjZjg3YTkwMjZkYWQyNDhmYzI1YTEyMSJ9"
+        },
+        {
+          "resource": "repo://src/components/input-message.tsx#L445-L456",
+          "version": "repo-lines-v1:sha256:9b0a0b5169bb7bdc90287de6ba457b486aef44b03c715a93a5b5ddbc954cd946:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlNDE3YmE4ZDVjM2Y4MTBlNjIyOTBiOTk3ZDAxNjFlMzM1NTBjOWRkOTliMzQzOGE0NTU2ZWIzYWU3NTVhOTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkzNjhkMTNjYjRkYTUyMmViYzYwYWIyMWNmNmNlNTE2OTFlOTFkYmRhMTFlNTc3MmIxYjhiY2YxZjI4YmFlZmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2MGMyNTBiN2JjMWQ5NzYwODI1NzJmODFhY2YxYmFmNDlhNjE2YmUyYjI1ZWQxNjJkMmJkYTc1ZDFhYTFmODciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2M2MzOTI0NmY2MzZmZTMzNzU4NWU1ZGRkMzM3MTZiYjdjY2I3MjExNWFjMjMwZDBmOTQ1YTZmMDU1N2Q1NzQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_efc75fe367074809a54bd24a6163bdc1",
+      "statement": "The queued card's shared-layout morph into its sent bubble is ported on layout and layoutId with its text as a layout='position' box, but has no crossfade and no radius mix, so the bubble is opaque from its first frame while the card plays its own exit under it, and a scroll between the commit and the glide's first frame shifts the start by the distance scrolled.",
+      "evidence": [
+        {
+          "resource": "repo://drift/queued-stack.md#L26-L36",
+          "version": "repo-lines-v1:sha256:2a753ff133895ec830a270415a324e27ee19ea0ba232be7d14f83093835f1591:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxN2MxYmZmNTZmZjNmM2Q4NjU2YWZiZTJkZjI2ZjlkMmVhODY4NjFhODU0MTk0NmQzOGUwYTczZTZiMTJkOTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmNzViMjVkMzZmMjNkMmNmYTMzZGZmNGQ3NmIyNmIwNzdlZTk3YTRiODZkMGM4MjEwOWQzNWUzNjUwNmY5YWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc0MmFmNjc2MjQ3M2Q3MzQ1NWY4MTA3ODNkOTI1YzhkOTdhYzgwODMwOTM5NzI4MWRjNDAxNzYwZThmNDFjYWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4NDYyMmFhZTRiMTc3ZTVkNzk1MGM1ZjZjN2E3OWE5YTAyMmVmMzY2ODM4ODEyYzcxNjI0YTQ1OGY2MjI0YmMifQ"
+        },
+        {
+          "resource": "repo://src/components/chat-message.tsx#L153-L170",
+          "version": "repo-lines-v1:sha256:bd5b1bc8133a98896504d3f0e36162a13ae014e66ac5ff05ddacfa88fd6e6bc5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlNjIyOTk0ZGJjOWY0M2UwZTgzZjMwMzUwZmJiOTRiZTFiZDgwM2M5ZWEyZDUwNzI0ZjJmYzdjZjAyNzM3NGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0Y2JiZmRlN2QwYjYyOTlhNTgwYjVmNDM3MjhjYmNjNDU0ZGJiYjVmODRkZDMxNGM4OTU3Y2I0NjIxOGUwZjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1NGM5YmFhZWUzNTNiMDFmMzZkNzMxMWJhMDRlNWExODgwODY3MWU1ZDJmNTQ1NWJiNmJhM2Q2NDFjMzFiNGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVmMmEwYzA1ZmRiOWUwMWI5MWQzOGMwZTFjZjlkYjlmZjU2ZTg2YzYyOGE3ZTdlYTA1NzkzMjkwZWZjNWVmZmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_77808e2542d14fb2b58ce60fde769979",
+      "statement": "Chat-message carries layout='position' so earlier messages slide up when one is appended, and ask-user-questions' footer buttons carry layout='position' so the button beside a leaving one slides into its place; the footer version had been reverted once because a glide also ran for a box an animating ancestor moved, and returned after gpuix #113 limited glides to moves measured at a commit.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/ask-user-questions.tsx#L1179-L1185",
+          "version": "repo-lines-v1:sha256:d5f745eb98af8111a0c10080cc1d3404869c1ba4796228946516179dc51c0a05:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTMyZjJlMGY2NDc5ZjNhNzYxOGU0Y2FmMDM5MjEwYjg1OGZmYzQxY2E2OWJhN2FkMGFlMzQ3Yjk0ZTE1MzgyMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTFiZDdiMjJmZjc2Zjk1N2NjNWViZTcxM2RlNmJhMzFmMDczYWJkYjFlZGE5ZGVkOWM1NGYzNDY2N2M3MGJlYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjViYjFhZjUyMWJlY2Q1NWQ3MDU2YThhOWEwZGQxZWJjZGExZmM3OWZmMjNmNzQ1Nzc2ZjQ5OTU4MzM1MjkyMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjUzMDUyZWE3MGMxYWE5MGM1NzllMzhjNWY2MjdmY2E0ZGIxZmZkOTMyM2YxMjJlOTRmZWYzYzVjZmY3NDMzNCJ9"
+        },
+        {
+          "resource": "repo://src/components/chat-message.tsx#L160-L165",
+          "version": "repo-lines-v1:sha256:f5557e8fd6dfa188796142cfc7f17618c2846738d135da59e4593f2fe9d25149:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODBhZGUzNjY2NmFmZDM3N2FjMmU1MTYyYTc4ZmZjN2U3MjA4OWFmNjE5MTMxYzEwMDRkMGFjYjBiNDg2OTY3MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjE4MDhjYTcyOTlmMDUyZGRjNzEyZjUyMTc1OGIwZmZhYzgzZDEwOTI3NjU0MzBjYzhhY2U1MmMwYzg4YzE3ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjA4MGYwNThjMTUyYjZjZTc0ODEzODEwNzRkZDgxMjMxN2YyMjcyOWQxOTdlZmUwMTgxNGZjNzI1NmE4YjU3ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjYzYmY0YTIyNDA5MDVlZTI3M2NmM2M0YjhjMjZmNTBkODRiMGE3MzkzODJhZDg5NzVjOWNkNWQwNDA1NzMxMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a44d0432321e477f91f1b020116b3ad6",
+      "statement": "createCheck's unmount is idempotent and a script that mounts a newer root unmounts the older one first, because the test renderer is one per thread and unmounting a replaced tree later releases its motion values against the newer renderer ('unknown motion value').",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-kit.tsx#L300-L312",
+          "version": "repo-lines-v1:sha256:d78a2219207e8ea7e4616b77d519aeadb5b31b6ff5061b8082a74fe2c459f779:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmYWQxMjFmZGRlZGRmNGU0NzJmYzUyZDgxNDU3Y2VmMThjYmU2ZDg0MzNiMjQ0Y2NmMmYxMjYyNmRmNjc5YzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViYWQ3Y2MyZGZhZmMyMTc1ZmEyZDk3MDRlMDIwMmY5NDA4M2E5ZGE2OWE1ODViMGIxOGM0OGJlYTIzNjI3NWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlkYWRlOTNhYzQxNThmNzczZWUzMDUzMTA4YjA5MmFiZTgzYTFkN2RiZmNhZDg5NGQ3YTIzODZjMDBjYjdlZTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdhMGFhNTU0OTdmYjRmMzE1ZTBiYTVkNjUyZDNlMmY1MTM0YmY5NDliNDEzZTQxNGIxOTQzN2M4YTgxNDgwNjIifQ"
+        },
+        {
+          "resource": "repo://scripts/check-kit.tsx#L64-L75",
+          "version": "repo-lines-v1:sha256:4d58330ebd06fcf98604683dbbbc305d922651fff3b6223b84585bb00aaddcb5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2MDFhMTU2N2M2OTNiZDYxMGZhZGNhZGNhZGM1ZGQyMjMyNGZiOGY1Mjg4Njc0MTc5MWFkNDc0ODE0ZjkyOTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2Y2M0MzRlODAxYTZiZDNkMTEyOGUwZmU2MmY3MmUzODIzOGIwNzcxYTkwZGRmOWNlMTEzMWIzYjgwNWY5ZjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUxZjU5OWU3YjcxMDNmYzM1MjRjMGRjZDA5MTg4ZjhiNjgzYmRmZDQwMWU4OTVlNDJmNThjYzRhMmE0ZWYyMzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1ZDkxNzVhZDQ3NGViOGQyMmNiNzBjZWM0MzkyYmVlOTI4MDA4MjhkYjA2OWRhZjIzOTMzMDE3ODkyYzBkMGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ff9f910d288e4cc891f67aaa0c48f61d",
+      "statement": "What remains an approximation after the adoption is recorded as README Missing-features rows: var() in a Motion key (a flipped popup's first open starts on the other side's slide), text resampled under an animating transform, and layoutId's missing crossfade and radius mix; the transforms row says no transform the source uses is missing.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L279-L281",
+          "version": "repo-lines-v1:sha256:62e011a6558faf01bc8577187b9c59ff8f5834ac36ea953d3a7cd1f1735bb790:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzExODA3NDU1NzJlZjg3ODZmZDc1ZDI1M2RjZDc4OTRkNDQwZGZjZjM4NzNjZGJiOTExOWRjZjIxOGM0MmRjYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTFlYjcxYmNkOTI5N2YyZGY1MmFkNjE3NWU4YTIzYTJjNGY2YmJmYjZlOWExYmY1ZDVjZGIzMTM5ZGE0NTkxYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTc2NzA2N2YzYTQ4MTcxZjIzMGM4ZWM5ZjEzODEzNDBhOTNiNmEwYWEwZjFiZTVjOTZmMmU1YmZkMDA4Njc1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzJmZWU1NzNkNDNiNTE1NzkyNTBmOTgyMGNjODhiYzA4ZmI4N2VmNzhiOGNkYWM5MmJjNDA1ZjFiYThlOGE2MCJ9"
+        },
+        {
+          "resource": "repo://README.md#L298-L298",
+          "version": "repo-lines-v1:sha256:9d8ddeac5530b17b4935a4ec7eba5fc4d3903f7e774bb5da936d42f97ca3c4a1:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWQ4ZGRlYWM1NTMwYjE3YjQ5MzVhNGVjN2ViYTVmYzRkMzkwM2Y3ZTc3NGJiNWRhOTM2ZDQyZjk3Y2EzYzRhMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWQ4ZGRlYWM1NTMwYjE3YjQ5MzVhNGVjN2ViYTVmYzRkMzkwM2Y3ZTc3NGJiNWRhOTM2ZDQyZjk3Y2EzYzRhMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2UxZmJkZTViYjQ5MWJlNmE1NTYxMDY4YWMzMzZmNTc3NjBmMDNiZjgzZDg3YjBmYzRhNmFhMmU2MGNiMmQxMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWVkMjBiYTRiZjVkYWU5NTJmMjA0OTM4NGYwNDcyNjZhNjlkMjdjNjRkYzg3NDgzNjkxYTI3MmIwYjdiMDJiOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_942affeef82342f2a917079f3b9c3d5d",
+      "statement": "The README records queued-stack idling at 29.4% and 24.8% CPU with 0 patched and about 67.5 whole frames a second on gpuix e31ec048 (Unsteady), because layout='position' on the chat message leaves a box that follows the clock, and gpuix #113 did not change it.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L263-L263",
+          "version": "repo-lines-v1:sha256:b007c79bbce286060fb93618003c69d3a55eeeef67362b47e53002adfe9e8f45:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjAwN2M3OWJiY2UyODYwNjBmYjkzNjE4MDAzYzY5ZDNhNTVlZWVlZjY3MzYyYjQ3ZTUzMDAyYWRmZTllOGY0NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjAwN2M3OWJiY2UyODYwNjBmYjkzNjE4MDAzYzY5ZDNhNTVlZWVlZjY3MzYyYjQ3ZTUzMDAyYWRmZTllOGY0NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjA3M2VhMTA1MTZmMThkNWMxMzNkNjkzY2JiYzVmZjBmNWMwMmY2ODZjYThmZGJlZTQ1YmZhMjRhZmIzODdhZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTc5YzE5YmZmNzIxNDBlMzU0Y2IyOTJkYTFkY2JiYTgzYWY5MWZkMWUwZTc5OGQ2OTBlZjRmNjk5YjZmOGM4NCJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-31T01:58:44.003Z"
+  }
+}

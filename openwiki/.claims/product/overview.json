@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:b20f6212e5cc7034f2b47a09c36ad8d6b3764f1fd1b3807d8037b510468ba9a4",
+  "pageVersion": "sha256:80bc7263ccd32e9fab68a4f792ce9fec4d1ecb3bd2b24808e7d0a12ac05dc5db",
   "claims": [
     {
       "id": "claim_b925fe22d5a74d5388447aa34ff4d2fd",
@@ -34,15 +34,15 @@
     },
     {
       "id": "claim_8614bcad26f8486aa463c334ea2c9505",
-      "statement": "Every place the port differs from the source is a drift entry tagged by cause, 539 entries as of 2026-10-23 after gpuix f6f09d95 (Round 15c) closed the half-pixel glyph-origin and tabs-subtle cap-box entries, from 541 after the bento Sidebar sample person was renamed 'Com Truise' (a port-choice entry).",
+      "statement": "Every place the port differs from the source is a drift entry tagged by cause, 495 entries as of 2026-10-31 (47 gpuix gap, 219 port choice, 183 not ported yet, 46 mixed) after the transform adoption on gpuix 5f7a9af9 deleted the stand-in entries along with the stand-ins, down from 539 on 2026-10-23.",
       "evidence": [
         {
-          "resource": "repo://README.md#L10-L11",
-          "version": "repo-lines-v1:sha256:6b85c61c5385187762f0302764482b8634af776e3331084da15cca7df8e9fc51:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjk4NTIwYTkyNWIxYWQ0ZWYzZmIwYWI2ZGQ5ZmUwZTkzYzMyMGFlNTZmMTE1MTI4Y2VhODI5NDVlNTI4Y2QwNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDZiMzRkZjA1ZDI2ZTZjZGRhM2E1YzUxNTFjNGE1NjQxYWEwYTZhZDA4MWExYzlhMmI2MTZjNjJmYzJmZThjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjc2YzJmMzYzYzI2ZjBjY2IxZjI1OTJkZDE2ZmYzNDY5ZTEwZTczZGM3MzI0YTdkZTYyMzM3ZWJlZTIyYjVhYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWI3YmJmNzg1NTI1MDcyMjUxNDRjZWY1MDMyOTM4MjZhZTdkYjk3ZDRjMThhMzAwODJhZDYwYjQzMzUwNWFiYiJ9"
+          "resource": "repo://README.md#L10-L12",
+          "version": "repo-lines-v1:sha256:1f61ee967e5414233930219ac88c1ec590cf6d897b8896d275b33f63e4eceb0c:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjQ5MWMxMjRkODk1ODI3NjRhY2ViZjRiZGU1NmUyZWUwMmRlZjBiYzU2NjcyYWRlYmM0YzU1ZjI1ZGEzZjQwZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjc2YzJmMzYzYzI2ZjBjY2IxZjI1OTJkZDE2ZmYzNDY5ZTEwZTczZGM3MzI0YTdkZTYyMzM3ZWJlZTIyYjVhYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTQ3N2EzZTMwYjYzNTJkYzRlZDQwYjUxY2ZmYWZlM2Q1NTVhNTM0ZjkxYTRjZjEyYzAzMzBmY2IyNGM4MGFkYSJ9"
         },
         {
-          "resource": "repo://drift/home.md#L63-L70",
-          "version": "repo-lines-v1:sha256:5470b8360b870bd90cb7ef774172e864338a4066825ad8208a2090d142f8d87c:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDIzMDhhOGMxOWJjNjc3MWNlZjIyMDA0MDU1ZDNlZTc5MmQ5ZTQxNmZhZjM3NTg2OGQyYjRiMjFjYjYxZTkzNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzY4OGMxYWUwN2E1MGFhY2Q0ZjJlZWQ5ZDkyMDI2ZmI0YzZmZGZlNGViZjczOGNjMmE2MDc0OGZkMWRkOTNiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDVlZDhiMmZhMjJhMDc3M2U1Y2EwNzAyMjliY2FhYjdhYWMwYjVmYThiYzBiMGZjNmY2ZTIyNWViMjk1ZGI0MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTIwYWMwYmU5NDVjZDY1NDRiOWNiOGFhODQzYWQ0ZWY0NmJhNGQwZjg2M2Y1NDE3MzMwN2EwZjI2ZTgzOTEwYiJ9"
+          "resource": "repo://README.md#L240-L240",
+          "version": "repo-lines-v1:sha256:b37fca73d20970703366a5f29b0eff1a841b208d764c54418eed7c928f20fbd8:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjM3ZmNhNzNkMjA5NzA3MDMzNjZhNWYyOWIwZWZmMWE4NDFiMjA4ZDc2NGM1NDQxOGVlZDdjOTI4ZjIwZmJkOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjM3ZmNhNzNkMjA5NzA3MDMzNjZhNWYyOWIwZWZmMWE4NDFiMjA4ZDc2NGM1NDQxOGVlZDdjOTI4ZjIwZmJkOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjgyYzg3OTljM2Y1MWRkNjgyOTMxMjQ2MWVhZGRiZDI1ODhmNjRiMDQ3OTM4ZjliMTk0OTY4NGNkN2EwNDQzOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDgyZjg5MWE0M2ZjZDYwZDY3YTA4NDkzM2IxMmE0ZjlmOGM4ZDQ0NmZjY2FjZmNmZThiZDdiMWE4MTYxODUzMyJ9"
         }
       ]
     },
@@ -62,21 +62,35 @@
     },
     {
       "id": "claim_f8b0c6e89cbd48b598f62a18b01c9c2c",
-      "statement": "The README names gpuix poc a92b4f7f as the minimum fork, which includes the Round 18 sleep of animations in content-visibility-skipped content (#97, #90), the Round 15c scale-1 test renderer, half-up glyph origins and OS/2 cap heights, the 6f2a72d3 wake of the frame loop on input to an idle window, the Round 14a paint patching of loops next to an input, under a positioned or translucent ancestor, on a motion value and in an svg, on top of the 511bebab collapsed-table border-color transition, the f993d9b9 idle-window and unfocused-window pacing, the f7b62f11 changes (font smoothing key, cheap scrollTop writes, exact scroll end), the earlier paint-only loop-tick patching, fractional rects, fractional authored lengths and playback controls, and the 8352e66c atomic inline at its fractional origin and forced layout that delivers no onLayout or ResizeObserver report.",
+      "statement": "The README names gpuix poc 5f7a9af9 (zed a8c56f06bd) as the minimum fork, which includes the transforms of Round 25, filter animation, per-target exit transitions, layout glides that animate size and start only for a move measured at a commit, the Round 18 sleep of animations in content-visibility-skipped content, the Round 15c scale-1 test renderer, the 6f2a72d3 wake of the frame loop on input to an idle window, the Round 14a paint patching of loops, fractional rects and authored lengths, and the 8352e66c atomic inline at its fractional origin.",
       "evidence": [
         {
-          "resource": "repo://README.md#L244-L248",
-          "version": "repo-lines-v1:sha256:fbfb0b3ad80696f975e5688fe3599951e8b03b8d15631dd5e1f500e594820dda:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTZjNjYwNzFmNWFkMTAzMDA2NjBlMmE5ODU5ZWNiMTZmNzVjNGUyZTVjYWQ5MTBhZmYzNmJmN2U5Nzc4NjllYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDgyZjg5MWE0M2ZjZDYwZDY3YTA4NDkzM2IxMmE0ZjlmOGM4ZDQ0NmZjY2FjZmNmZThiZDdiMWE4MTYxODUzMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2E5OTNmYzQ3OGNlMzg1NzZjYzIxZmM1YTAwMzhkZWE2OGY2NDljMzM0MzRlZThiNzk4N2JlMjZhNTI4YWU5ZCJ9"
+          "resource": "repo://README.md#L244-L246",
+          "version": "repo-lines-v1:sha256:baa457ed860aaafcec9d82115ad8d1ef82736d1645972f1d52a4e840b04d1ace:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTZjNjYwNzFmNWFkMTAzMDA2NjBlMmE5ODU5ZWNiMTZmNzVjNGUyZTVjYWQ5MTBhZmYzNmJmN2U5Nzc4NjllYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTdhNDgwNDIxYWEwMzUzMmI1OWNiNDg2MjA5YTlhZmM1MDNlMDFlOGNmNDIxMDk2YjJkMWNiMmFhY2FjOTg3ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDgyZjg5MWE0M2ZjZDYwZDY3YTA4NDkzM2IxMmE0ZjlmOGM4ZDQ0NmZjY2FjZmNmZThiZDdiMWE4MTYxODUzMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGNjY2QxN2Y5NzdhZmE1NTJhOTliNzIwMzI2MjRhNTIzNzBkZTU4NGMyNDIxNTg5YjBlNWM0MzBhMTQ4MjY2YyJ9"
         },
         {
           "resource": "repo://README.md#L56-L56",
-          "version": "repo-lines-v1:sha256:9f6735961960068fbe8edec4f7d68493c0dfe354d395ceac7615057cc3f52435:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY2NzM1OTYxOTYwMDY4ZmJlOGVkZWM0ZjdkNjg0OTNjMGRmZTM1NGQzOTVjZWFjNzYxNTA1N2NjM2Y1MjQzNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWY2NzM1OTYxOTYwMDY4ZmJlOGVkZWM0ZjdkNjg0OTNjMGRmZTM1NGQzOTVjZWFjNzYxNTA1N2NjM2Y1MjQzNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+          "version": "repo-lines-v1:sha256:1ee311cb80e8e8f834cab72cf049aecd1419a381efae07190ce0f703e58fd3f5:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWVlMzExY2I4MGU4ZThmODM0Y2FiNzJjZjA0OWFlY2QxNDE5YTM4MWVmYWUwNzE5MGNlMGY3MDNlNThmZDNmNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWVlMzExY2I4MGU4ZThmODM0Y2FiNzJjZjA0OWFlY2QxNDE5YTM4MWVmYWUwNzE5MGNlMGY3MDNlNThmZDNmNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ1MDg5MDE5NjYwNzkwYTc2ODgwYjFlMTQxMjQ3YjQ4MmM1OThmMWE3ZDVmYzBlM2I3YmU3MjBiMTQyYmE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyZjVhYmQ1ZjZkYTc0MDQzZjZhYTA0NzUzZmYyZDIwN2ZkYzJlNTA3MDM0MzE3YTU2ZGFjYzQ3NzBlN2E4MCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_6a91ded02a724948b117dcd6895a4cfa",
+      "statement": "scripts/check-idle-input.tsx is a headless regression check, part of the scenario checks, for input waking a fully idle Command Menu window, built on the test renderer's postNativeEvent and setFrameWakeCallback; the owner confirmed the underlying fix with real input on 2026-10-24.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L271-L271",
+          "version": "repo-lines-v1:sha256:d1e067951d88d6822d0156ab1043f0b767690f4df650b92a8def4d5393760f31:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDFlMDY3OTUxZDg4ZDY4MjJkMDE1NmFiMTA0M2YwYjc2NzY5MGY0ZGY2NTBiOTJhOGRlZjRkNTM5Mzc2MGYzMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDFlMDY3OTUxZDg4ZDY4MjJkMDE1NmFiMTA0M2YwYjc2NzY5MGY0ZGY2NTBiOTJhOGRlZjRkNTM5Mzc2MGYzMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGQzMjI1MDE1ZjQzYjU4MWNkZGEyOWJkNDQ5OWM2OWVhNDFjYTJhZDE4YmMzMDhkNTY4NTUwNTY4MGYzZTkxNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmE2MmI2ZmYyYzQ3OWE5ZWNmMTFlZDliNjhmYzRhM2RhYjFhNTc4M2FiMDA5MWVmZTU5MjQwNjAzMTZjOTBiMyJ9"
+        },
+        {
+          "resource": "repo://scripts/check-idle-input.tsx#L1-L60",
+          "version": "repo-lines-v1:sha256:c59f4c0ab58b026709f39ca2e30c2b98a9ade4880bdab13d7e2ae6585b13eb0e:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzZTMzYzFmYjVkY2Q4OTdkOTJhZjAwMzg1ZGNiODhkMDU2M2UwZTRmYzFhZDJhYmZjZjkwNDBkM2Y3OTM1ZTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFmMzYxYmNlNmI5ZTNjOGEyYjY0M2Q4NzczNzg3MmRmZjMzMmE5ZmM4MGM0MTg2NjNkZWJiY2Q2M2FjZjBlNzMifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-24T01:38:18.068Z"
+    "at": "2026-10-31T01:58:44.003Z"
   }
 }

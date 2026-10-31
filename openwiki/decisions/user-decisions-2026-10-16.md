@@ -10,6 +10,8 @@ sources:
     resource: repo://src/components/command-menu.tsx
   - id: openwiki-source-8cffcceccd160fa6e065925b
     resource: repo://src/components/dropdown-search.tsx
+  - id: openwiki-source-b2339f18f5ebd00b96967bf6
+    resource: repo://src/components/queued-stack.tsx
   - id: openwiki-source-5d68d99ffd3483c46c7aaac8
     resource: repo://src/components/select.tsx
   - id: openwiki-source-63a83316feacc83e2a230285
@@ -18,16 +20,20 @@ sources:
     resource: repo://src/components/tabs-subtle.tsx
   - id: openwiki-source-a6e7d28cb827574c90025f7b
     resource: repo://src/home/bento-grid.tsx
+  - id: openwiki-source-b4238869522a9de0f81c49d7
+    resource: repo://src/lib/fluid-highlight.tsx
+  - id: openwiki-source-ff84ac67d7a6ebc693884d4f
+    resource: repo://src/lib/popup.tsx
   - id: openwiki-source-1a25dd521e50a4d59274e1c2
     resource: repo://src/lib/theme.ts
   - id: openwiki-source-49cf2fce7c8c4bae61263360
     resource: repo://src/pages/audio-mixer.tsx
   - id: openwiki-source-f8fd84e93d4dd9789aeddba9
     resource: repo://src/pages/compare.tsx
-generated: { by: "claude-code", at: "2026-10-17T07:13:17.848Z" }
+generated: { by: "claude-code", at: "2026-10-31T01:58:44.003Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-24T01:38:18.068Z
+    at: 2026-10-31T01:58:44.003Z
 ---
 
 # User decisions of 2026-10-16
@@ -74,6 +80,13 @@ gpuix round produces a new adoption pass, and the Round 5 / gap-pass adoption on
 `display: table`, `inline-*`, container queries, `fit-content`, group hover states) the third. The home grid's
 columns now come from a container query rather than a media query; see
 [the table and container pass](../gpuix/gaps-and-divergence-rounds.md#table-and-container-pass-2026-10-17).
+
+The largest later pass applied this decision together with decision 2 on 2026-10-30 and 31, when gpuix gained
+transforms, layout and shared-layout glides and animated `filter`: box-property stand-ins (chevrons, popup entrances,
+the fluid highlight, switch and slider thumbs, spinners, the scripted cursors) became the source's own transforms and
+the queued-to-sent and bento re-slot morphs were ported. See
+[Transforms, layout glides and filter](../gpuix/transforms-and-layout-adoption.md); what stayed an approximation (size
+morphs, `var()` in a Motion key) is recorded there and in the README gap rows, not papered over.
 
 ## 4. Port everything not ported
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:5b67f1d478191a7213ce82ef74ee16a8c054a9a1ea5cea148b713558fd8b963b",
+  "pageVersion": "sha256:371780d1b02d9e3be71839b6e9e6381c01d3140776bfe5acf174327c9f39b87b",
   "claims": [
     {
       "id": "claim_ff785f35b52647d9a814c38dfcc9f775",
@@ -37,7 +37,7 @@
       "statement": "Adopted gpuix features include colorFade as a real CSS colour transition, multi-layer scheme-aware shadow recipes, app-wide reduced motion through MotionConfig, sticky positioning and tabular-nums.",
       "evidence": [
         {
-          "resource": "repo://src/app.tsx#L556-L556",
+          "resource": "repo://src/app.tsx#L557-L557",
           "version": "repo-lines-v1:sha256:1e0f72e9041e5031ebf112ce965d8f4f793d4070057da8f64d68effcb3e69ca7:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWUwZjcyZTkwNDFlNTAzMWViZjExMmNlOTY1ZDhmNGY3OTNkNDA3MDA1N2RhOGY2NGQ2OGVmZmNiM2U2OWNhNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWUwZjcyZTkwNDFlNTAzMWViZjExMmNlOTY1ZDhmNGY3OTNkNDA3MDA1N2RhOGY2NGQ2OGVmZmNiM2U2OWNhNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmVmMDkzNGI5Y2FmNjI3YmNiMDQyNjVmZTdhODc0NmM1ODY1OGVhNDNiZTdiMGZiNDY5MTNiMzJkYmJkODNlYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWE1NThlNTVjZjFkNzA0ZTUyMWEwNWFhOWNjZjgyOGIyNjU2YzJjY2M3NDA2NjU1MzY4NzBkNzcyNjg3OWRlMyJ9"
         },
         {
@@ -45,15 +45,15 @@
           "version": "repo-lines-v1:sha256:55a17330eb01f03624b9a000337dc1120d7c4b6ec7e246219b5cca2951380502:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTVhMTczMzBlYjAxZjAzNjI0YjlhMDAwMzM3ZGMxMTIwZDdjNGI2ZWM3ZTI0NjIxOWI1Y2NhMjk1MTM4MDUwMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTVhMTczMzBlYjAxZjAzNjI0YjlhMDAwMzM3ZGMxMTIwZDdjNGI2ZWM3ZTI0NjIxOWI1Y2NhMjk1MTM4MDUwMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmFkOTM1YmIwODJjOGJhOTAwNGYzNTQ0MmE5ZTUzN2NlMDZhNzMwYTc2NzY2NWE5MzE5OGU2MTJmYzU2OTgwNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmMzOTkzZjliMjI2N2UzYTI4NGUwZjFiODc5ZTJlN2Y0MDMxYmY2YjBiZGJmMzVmOGM1NGU1OWQ4NzgwNWI3ZiJ9"
         },
         {
-          "resource": "repo://src/components/slider.tsx#L113-L113",
+          "resource": "repo://src/components/slider.tsx#L115-L115",
           "version": "repo-lines-v1:sha256:e785b2cf79451ebd20e56a9833cb8f977d342d0f4a1f5be5a0ac3edef879aeea:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTc4NWIyY2Y3OTQ1MWViZDIwZTU2YTk4MzNjYjhmOTc3ZDM0MmQwZjRhMWY1YmU1YTBhYzNlZGVmODc5YWVlYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTc4NWIyY2Y3OTQ1MWViZDIwZTU2YTk4MzNjYjhmOTc3ZDM0MmQwZjRhMWY1YmU1YTBhYzNlZGVmODc5YWVlYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODkwNWNmOGNlMGFhMzUwNzI0YTExMzRhYTJmNmE2NGRiNzZlZjhlMzRjZWEzZGM1NTk3YWUyNmExZjQxMjUzYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTY4YjRmNzU5NTM4YmNjMmZiNzRlNmIzZjViNzkzNjAwYmEwMmJhYzA4ODFhNDEzNGM3YzUzNjEwYmI3YWE1NyJ9"
         },
         {
-          "resource": "repo://src/lib/theme.ts#L513-L522",
+          "resource": "repo://src/lib/theme.ts#L522-L531",
           "version": "repo-lines-v1:sha256:7401040ec0421adefd2cd2c41ca79347790639465d37bc29a97a8aac44e77994:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVhMDU5MjI0NjczNjYwMTU1YWYwY2IzMjBmMGMxNzcxMDRjY2JlNjBmYTdlNTk5MDhkYmY1ODc0ZTRmMTg2MjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwOTNhNzU0ZWRlMzFkNTljMDViNDNjN2VmNzQ2MDE2MWY1NDdiMzc1YmNjZGU1NDdmNDg2NTIxYjgwODFlNDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljODdmZDcyMmRiOGZjMTA3ZjMxYjE5MDM2MTI1YzRlNTgzNWU2MWUwOGZlYzUxMThiZDM2ZDU0YmMyZWVjMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkMTk2MDJiMzc3ZDA3N2E1YWFjOGFjMjA3NzBiODllZWFiMmYyYTAzYTBiMGU0Zjg4ZjA1YjZmZDg1MDUzZjgifQ"
         },
         {
-          "resource": "repo://src/lib/theme.ts#L587-L587",
+          "resource": "repo://src/lib/theme.ts#L600-L600",
           "version": "repo-lines-v1:sha256:6bf4fa32a7a3208cf2450b88a361aba8a77ae2a82c90918c89a132431d999ac0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmJmNGZhMzJhN2EzMjA4Y2YyNDUwYjg4YTM2MWFiYThhNzdhZTJhODJjOTA5MThjODlhMTMyNDMxZDk5OWFjMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmJmNGZhMzJhN2EzMjA4Y2YyNDUwYjg4YTM2MWFiYThhNzdhZTJhODJjOTA5MThjODlhMTMyNDMxZDk5OWFjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNThjZWZiNzVjZjg0YWQ1ZWRmNmNkZGQ3NGU4ZjM5ZGYyYjViNzQzNDBjMjk2ZjU2NzRlMTQyNzFkZjk5ZTBjZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWYyY2VjZmVkZjM4YTdiZmQyMTIyNTUwNjJjMzI0ZjUzZjMyYTc1MDFlMjUyMjk0NjQwMDRhNDdlMTM2ODZlMCJ9"
         }
       ]
@@ -64,7 +64,7 @@
       "evidence": [
         {
           "resource": "repo://src/home/bento-grid.tsx",
-          "version": "repo-file-v1:sha256:b3069506fb0ad8b16ad53171b12fbd68eb64ad66b85469ee57705645112236e6"
+          "version": "repo-file-v1:sha256:e12e4bb752ab07e6a2722488b5b9c4109c3508027f9ec4725f4be4fe047a8ef9"
         },
         {
           "resource": "repo://src/pages/audio-mixer.tsx",
@@ -72,13 +72,35 @@
         },
         {
           "resource": "repo://src/pages/compare.tsx",
-          "version": "repo-file-v1:sha256:76430ff4925498e57fe5b19eeb42c26067f021c27f3b445b3b5f5584f031b4fb"
+          "version": "repo-file-v1:sha256:5c911838ff7d85106c4797f7af8435ca8d20cc7be8b51b1cb99dd5dc8aaef166"
+        }
+      ]
+    },
+    {
+      "id": "claim_50f8a48a9cde4156a1807d868cb192f1",
+      "statement": "The 2026-10-30 to 31 adoption pass replaced box-property stand-ins with the source's transforms (chevrons, popup entrances, the fluid highlight, switch and slider thumbs, spinners, scripted cursors) and ported the queued-to-sent shared-layout morph and the home grid's re-slot on gpuix layout and layoutId.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/queued-stack.tsx",
+          "version": "repo-file-v1:sha256:dd263512bea50e64fdda41fd60d6b2109ed1e3f16d9c52e48c8e53beef4eff45"
+        },
+        {
+          "resource": "repo://src/home/bento-grid.tsx",
+          "version": "repo-file-v1:sha256:e12e4bb752ab07e6a2722488b5b9c4109c3508027f9ec4725f4be4fe047a8ef9"
+        },
+        {
+          "resource": "repo://src/lib/fluid-highlight.tsx",
+          "version": "repo-file-v1:sha256:589bd89fb38966e402a03c19cc4a6507b904a946f106af8d0b2a8c3101b1fe10"
+        },
+        {
+          "resource": "repo://src/lib/popup.tsx",
+          "version": "repo-file-v1:sha256:c4f965b36585c3e0abfd9db3a43f3ac11cd56fb857fcc2b09d9f5938ad0c2134"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-24T01:38:18.068Z"
+    "at": "2026-10-31T01:58:44.003Z"
   }
 }

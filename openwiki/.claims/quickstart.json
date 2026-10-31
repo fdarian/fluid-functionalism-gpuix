@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:2f2b98873948e1588f0caef7b0839d853566659160bc39dbe0c2033fb55b714e",
+  "pageVersion": "sha256:a4f2dad995341b759c7cdbe1667d56e7bb5e83aac4d862155c24ccc9547f5e0c",
   "claims": [
     {
       "id": "claim_a7315f44f8af437c803bd7fb46fe717d",
@@ -49,10 +49,20 @@
           "version": "repo-lines-v1:sha256:b91634d9fbabe6dd60c421aad71d2d49828ee111c07111683ed35b1545aa9ba1:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjkxNjM0ZDlmYmFiZTZkZDYwYzQyMWFhZDcxZDJkNDk4MjhlZTExMWMwNzExMTY4M2VkMzViMTU0NWFhOWJhMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjkxNjM0ZDlmYmFiZTZkZDYwYzQyMWFhZDcxZDJkNDk4MjhlZTExMWMwNzExMTY4M2VkMzViMTU0NWFhOWJhMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGE0MWQwOWE5YzJhYTcwYmJmZWY2ODBiZDg4ZmM2N2JkNjc5Yzg5OWI3NDAxMDQ0M2JmYjg3M2Y0YzVlOWVmNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzc1YzhkYWE4OGIzNzRmMWFmMjEwMjc3ZGU2NWZhNDYwOGY1OWYwYWE5YWFkN2U2Zjc3MGRmYzkxZjI0Nzc2MCJ9"
         }
       ]
+    },
+    {
+      "id": "claim_02ac47970c6741ddb8fa14f08054b1a9",
+      "statement": "scripts/check-idle-input.tsx is runnable on its own with bun and checks headlessly, through the test renderer's postNativeEvent and setFrameWakeCallback on the Command Menu page, that input to an idle window wakes JS and reaches its handler.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-idle-input.tsx#L1-L60",
+          "version": "repo-lines-v1:sha256:c59f4c0ab58b026709f39ca2e30c2b98a9ade4880bdab13d7e2ae6585b13eb0e:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzZTMzYzFmYjVkY2Q4OTdkOTJhZjAwMzg1ZGNiODhkMDU2M2UwZTRmYzFhZDJhYmZjZjkwNDBkM2Y3OTM1ZTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFmMzYxYmNlNmI5ZTNjOGEyYjY0M2Q4NzczNzg3MmRmZjMzMmE5ZmM4MGM0MTg2NjNkZWJiY2Q2M2FjZjBlNzMifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.2",
-    "at": "2026-10-24T01:38:18.068Z"
+    "at": "2026-10-31T01:58:44.003Z"
   }
 }

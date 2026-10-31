@@ -4,20 +4,20 @@ title: Project overview
 description: What fluid-functionalism-gpuix is (the fluidfunctionalism.com component library and site ported to Solid on the gpuix GPUI renderer), the question it answers, its upstream and licence, the mixed upstream pin, the sibling repositories it depends on, and a short dated history.
 tags: [overview, product, upstream, gpuix]
 sources:
-  - id: openwiki-source-52df002f39d8608aefccfdde
-    resource: repo://drift/home.md
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
     resource: repo://package.json
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
+  - id: openwiki-source-37e23bbd30830cb88f82931f
+    resource: repo://scripts/check-idle-input.tsx
   - id: openwiki-source-2aee0d3ec729fdf1999ccc89
     resource: repo://THIRD_PARTY_NOTICES.md
   - id: openwiki-source-ff18555ad70362de0f452788
     resource: repo://UPSTREAM.md
-generated: { by: "claude-code", at: "2026-10-24T01:38:18.068Z" }
+generated: { by: "claude-code", at: "2026-10-31T01:58:44.003Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-24T01:38:18.068Z
+    at: 2026-10-31T01:58:44.003Z
 ---
 
 # Project overview
@@ -33,7 +33,7 @@ home bento grid, the docs and System pages, Compare, Concepts, Audio Mixer, Chan
 
 It started on 2026-10-12 as an experiment answering one question: **can gpuix draw this library faithfully?** The
 answer is yes, with recorded differences. Every difference from the source is an entry in `drift/`
-with a cause (539 on 2026-10-23 after Round 15c on gpuix `f6f09d95` closed the half-pixel glyph-origin and tabs-subtle cap-box entries; 541 on 2026-10-22 after the bento Sidebar sample person was renamed "Com Truise" (a port-choice entry); 540 after Round 15a on gpuix `8352e66c` added the half-pixel glyph-origin entry; 539 earlier that day, after the table's border-color fade entry closed on gpuix `511bebab`; 540 after the font-smoothing entry closed on `f7b62f11`; it had been 541 since the Untitled UI drop and the sample-photo replacement added a few; 532 right after the `b03d4e27` adoption, 538 after the 2026-10-19 native-animation round, down from 577 once variable fonts and the round 6 features closed their entries; printed by `scripts/drift-counts.ts`), so the repository doubles as a catalogue of what gpuix can and cannot do against a real, demanding
+with a cause (495 on 2026-10-31 after the transform adoption on gpuix `5f7a9af9`, which deleted the stand-in entries along with the stand-ins: 47 gpuix gap, 219 port choice, 183 not ported yet, 46 mixed; 539 on 2026-10-23 after Round 15c on gpuix `f6f09d95` closed the half-pixel glyph-origin and tabs-subtle cap-box entries; 541 on 2026-10-22 after the bento Sidebar sample person was renamed "Com Truise" (a port-choice entry); 540 after Round 15a on gpuix `8352e66c` added the half-pixel glyph-origin entry; 539 earlier that day, after the table's border-color fade entry closed on gpuix `511bebab`; 540 after the font-smoothing entry closed on `f7b62f11`; it had been 541 since the Untitled UI drop and the sample-photo replacement added a few; 532 right after the `b03d4e27` adoption, 538 after the 2026-10-19 native-animation round, down from 577 once variable fonts and the round 6 features closed their entries; printed by `scripts/drift-counts.ts`), so the repository doubles as a catalogue of what gpuix can and cannot do against a real, demanding
 design system. That catalogue fed the gpuix fork's work directly
 (see [gpuix gaps and divergence rounds](../gpuix/gaps-and-divergence-rounds.md)).
 
@@ -52,6 +52,7 @@ dropping assets rather than documenting caveats: the Untitled UI icon set and th
 | Where a behaviour primitive differs from Base UI | `BASE-UI-AUDIT.md` in the sibling repository `../base-ui-solid-gpuix` |
 | Rules for working in the repository | [AGENTS.md](../../AGENTS.md) |
 | Why it is built this way | [Port decisions](../decisions/port-decisions.md), [User decisions of 2026-10-16](../decisions/user-decisions-2026-10-16.md) |
+| Why a motion is a transform, a layout glide or a deliberate approximation | [Transforms, layout glides and filter](../gpuix/transforms-and-layout-adoption.md) |
 
 ## The upstream pin is mixed
 
@@ -67,7 +68,7 @@ site was the only place to see them. Which files are at which pin, and how to ca
 - **`~/code/fdarian/gpuix`**, branch `poc`: the owner's fork of [remorses/gpuix](https://github.com/remorses/gpuix),
   which follows DOM/CSS semantics wherever upstream gpuix did not. Its `README.md` and `FORK.md` are the gpuix
   reference. The port needs the fork, not upstream gpuix: native springs, the DOM event model and many fixes
-  exist only there. The README names the minimum fork commit (`a92b4f7f` as of 2026-10-24); read it there, not here.
+  exist only there. The README names the minimum fork commit (`5f7a9af9` as of 2026-10-31); read it there, not here.
 - **`~/code/fdarian/base-ui-solid-gpuix`**: headless Solid ports of the Base UI primitives (keys, selection, open
   state, focus, ARIA), split out of this repository on 2026-10-17.
 
@@ -96,6 +97,10 @@ All three must resolve to one `solid-js` and one `@gpuix/solid`; see
 | 2026-10-22 | Command Menu demo drops the three cards the source page has no section for (Tabs and filters, Compact, the footer's custom-hints panel); the bento Sidebar preview's sample person is renamed "Com Truise" to go with the replacement photo; drift 540 to 541 ([`drift/home.md`](../../drift/home.md), [`drift/command-menu.md`](../../drift/command-menu.md)) |
 | 2026-10-23 | Pinned to gpuix `poc` `e591681e` (Round 16): a forced bounds read after a layout write costs one pass (about 2.9 ms on the Command Menu page) and none after a paint-only write; an observer-toggled `contentVisibility: 'hidden'` was A/B-tested against `createCulling` and lost, so culling stays; `check-command-menu` prints the forced-read probe and `check-site-nav` asserts a switch back to the Changelog lands at the top ([details](../gpuix/gaps-and-divergence-rounds.md#round-16-the-contentvisibility-ab-on-poc-e591681e-2026-10-23)) |
 | 2026-10-23 | Pinned to gpuix `poc` `c6475390` (Round 14a): paint patching now reaches loops next to an input, under a positioned or translucent ancestor, on a motion value and in an `<svg>`, so the port deleted its off-screen `onScreen` gates and `Show` swaps on the button, file-thumbnail and thinking-indicator loops and ThinkingIndicator's conditional `position: relative` (no measurable cost); a loop that draws nothing still costs about 3.5% CPU in gpuix's dormant tick, and the word roll, fluid-hover cursor and carousel fill stay whole-frame layout loops ([details](../gpuix/gaps-and-divergence-rounds.md#round-14a-paint-patching-reaches-inputs-positioned-ancestors-and-motion-values-on-poc-c6475390-2026-10-23)) |
-| 2026-10-23 | Pinned to gpuix `poc` `6f2a72d3` (Round 14c): input to an idle window wakes the frame loop, which fixes the lag after Cmd-K into the Command Menu once the page had stopped ticking (gpuix #77, answered by #93); no port change, and no headless regression check exists because the test renderer cannot post a native event ([details](../gpuix/gaps-and-divergence-rounds.md#round-14c-input-to-an-idle-window-wakes-the-frame-loop-on-poc-6f2a72d3-2026-10-23)) |
+| 2026-10-23 | Pinned to gpuix `poc` `6f2a72d3` (Round 14c): input to an idle window wakes the frame loop, which fixes the lag after Cmd-K into the Command Menu once the page had stopped ticking (gpuix #77, answered by #93); no port change at the time; the owner confirmed the fix with real input on 2026-10-24 and `scripts/check-idle-input.tsx` is now its headless regression check on the test renderer's `postNativeEvent` and `setFrameWakeCallback` ([details](../gpuix/gaps-and-divergence-rounds.md#round-14c-input-to-an-idle-window-wakes-the-frame-loop-on-poc-6f2a72d3-2026-10-23)) |
 | 2026-10-23 | Pinned to gpuix `poc` `f6f09d95` (Round 15c): the test renderer defaults to scale 1 and offscreen windows keep their size, so `scripts/test-window.ts` is gone; glyph origins round half up and cap and x heights come from OS/2, so the half-pixel text entry in `drift/home.md` and the tabs-subtle cap-box entry are deleted (drift 541 to 539); the bento card pins `flexBasis: '0%'`, so FF no longer depends on gpuix #96; screenshots recaptured, 1 px label and row shifts on almost every page ([details](../gpuix/gaps-and-divergence-rounds.md#round-15c-scale-1-test-windows-half-up-glyph-origins-and-os2-cap-heights-on-poc-f6f09d95-2026-10-23)) |
 | 2026-10-24 | Pinned to gpuix `poc` `a92b4f7f` (Round 18): animations and motion values in `content-visibility`-skipped content sleep and wake per animation (#97, #90), so the port's `createCulling` moved from a `display: none` wrapper with a pinned height to `content-visibility: hidden` with `containIntrinsicSize: 'auto none'` (the `cull-cv` branch won its re-run: one entry layout pass on the Command Menu page against two, one-column bento tiles at their final height after settle, everything else equal); a read after a paint-only write is dearer under it (gpuix #98, open); `pnpm footprint` gained an `all draw ms` column; drift stays at 539 ([details](../gpuix/gaps-and-divergence-rounds.md#round-18-animations-in-skipped-content-sleep-and-culling-moves-to-content-visibility-on-poc-a92b4f7f-2026-10-24)) |
+| 2026-10-24 | Accordion's closed panel keeps its text mounted and goes `display: none` once closed (out of the accessibility tree and the Tab order), as Radix's `hidden`; the shadcn accordion on Compare too; the changelog rail's landing on `content-visibility` measured (35 of 38 single scrolls exact, the re-aim stays for the first jump) |
+| 2026-10-30 | Pinned to gpuix `poc` `667084d0` and then `ae559246`: transforms (Round 25), SVG transitions and Motion controls (15b), animated `filter` (#106), per-target `exit.transition` (#107). The port replaces every box-property stand-in with the source's transforms, springs and origins, moves exits onto their own transition, adds fill and stroke to the colour fades, and recaptures screenshots; drift 539 to 495 ([details](../gpuix/transforms-and-layout-adoption.md)) |
+| 2026-10-30 | `scripts/check-idle-input.tsx` added: a headless regression check for input waking an idle window (gpuix #93, #95) |
+| 2026-10-31 | Pinned to gpuix `poc` `e31ec048` and `5f7a9af9` (#110, #113 to #116): layout glides on chat-message, input-message tiles and queued rows, ask-user-questions' footer buttons, the queued-to-sent `layoutId` morph and the bento grid's re-slot (cards carry `layout` only while the grid resizes); size morphs are still approximate; the whole `screenshots/` set is recaptured on `5f7a9af9` ([details](../gpuix/transforms-and-layout-adoption.md)) |

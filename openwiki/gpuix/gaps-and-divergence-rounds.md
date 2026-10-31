@@ -4,22 +4,20 @@ title: gpuix gaps and divergence rounds
 description: Which gpuix gaps the port works around (summary, with the README as the full list), and the history of DOM divergences this port reported to the gpuix fork, round by round, with the gpuix commits that landed and the migrations the port made in response.
 tags: [gpuix, gaps, upstream, history, migration]
 sources:
-  - id: openwiki-source-6bebc830d03236b8df9960d7
-    resource: repo://drift/command-menu.md
-  - id: openwiki-source-dbc5a68e94d7e3a15a776857
-    resource: repo://drift/fluid-hover.md
   - id: openwiki-source-52df002f39d8608aefccfdde
     resource: repo://drift/home.md
-  - id: openwiki-source-d4a4bb7ecd3d3f6e47c46abd
-    resource: repo://drift/table.md
   - id: openwiki-source-7bed81eca49ee8a9899cacc5
     resource: repo://drift/thinking-indicator.md
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
   - id: openwiki-source-8792b0b9d5aaa145ee2ebfa4
     resource: repo://scripts/check-command-menu.tsx
+  - id: openwiki-source-37e23bbd30830cb88f82931f
+    resource: repo://scripts/check-idle-input.tsx
   - id: openwiki-source-fac7a3f3768fe057d1557909
     resource: repo://scripts/check-kit.tsx
+  - id: openwiki-source-3566a6dff8417d81a41732b9
+    resource: repo://scripts/check-table.tsx
   - id: openwiki-source-5838b94eb489d7c269600dc3
     resource: repo://scripts/check-tabs-subtle.tsx
   - id: openwiki-source-f870e66b983ce90f21118b51
@@ -48,8 +46,6 @@ sources:
     resource: repo://src/components/tabs-subtle.tsx
   - id: openwiki-source-1000133251cbebcd6e8f1e8a
     resource: repo://src/components/thinking-indicator.tsx
-  - id: openwiki-source-e937d0413e1c4205eb067717
-    resource: repo://src/components/thinking-steps.tsx
   - id: openwiki-source-a79b6ccf1548a05902eb90b6
     resource: repo://src/demos/thinking-steps.tsx
   - id: openwiki-source-b75d96422f6e56f4bc16d490
@@ -64,6 +60,8 @@ sources:
     resource: repo://src/lib/cull.ts
   - id: openwiki-source-ba98ccdc6cabbcd0f3dd70c6
     resource: repo://src/lib/fluid-hover.ts
+  - id: openwiki-source-b80bbe24251ddd98da870eee
+    resource: repo://src/lib/offset.ts
   - id: openwiki-source-ff84ac67d7a6ebc693884d4f
     resource: repo://src/lib/popup.tsx
   - id: openwiki-source-88a6e1849924a665249303d0
@@ -80,10 +78,10 @@ sources:
     resource: repo://src/pages/changelog/release-spy.ts
   - id: openwiki-source-872f10458af3aae905a0ee5a
     resource: repo://src/pages/fluid-hover/plain-vs-fluid.tsx
-generated: { by: "claude-code", at: "2026-10-24T01:38:18.068Z" }
+generated: { by: "claude-code", at: "2026-10-31T01:58:44.003Z" }
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-24T01:38:18.068Z
+    at: 2026-10-31T01:58:44.003Z
 ---
 
 # gpuix gaps and divergence rounds
@@ -100,11 +98,18 @@ The authoritative, row-by-row list is [README.md, "gpuix gaps across components"
 split into Bugs and Missing features, each with the components it hits and the workaround. Per-component drift files
 link to those rows rather than repeating them. The ones that shape the most code:
 
-- **No CSS transforms** (scale, rotate, translate). Popups keep the opacity fade and a 4px slide but lose the
-  `scaleY: 0.96` entrance; chevrons swap or redraw glyphs; the file-thumbnail spinner cannot rotate and slides an
-  SVG dash instead; panels move on `top`/`left`.
-- **Layout-property motion only.** The fluid highlight glides on `top`/`left`/`width`/`height`, which re-lays out per
-  frame, instead of a transform.
+- **Transforms are no longer a gap** (gpuix Round 25, `667084d0`; the port adopted them on 2026-10-30, see
+  [Transforms, layout glides and filter](transforms-and-layout-adoption.md)). Popups enter on `y` and `scaleY`,
+  chevrons rotate, the fluid highlight and thumbs move by `x`/`y`, spinners turn, and loops that used to animate `top`
+  or `width` patch like paint-only ticks. Until then popups kept only the opacity fade and a 4px slide, chevrons swapped
+  glyphs and panels moved on `top`/`left`. What remains is narrow: `var()` in a Motion key, text resampled under an
+  animating transform, and the size half of layout glides (below and in the README Missing features table).
+- **Layout glides are partial.** `layout`, `layoutId` and `"position"` glide position, and since #115 size as a
+  scale about the box centre; a `layoutId` has no crossfade and no radius mix, so the queued-to-sent bubble is opaque
+  from its first frame, and any on-screen `layout` box keeps a page with a running loop `Unsteady` (whole frames), which
+  is why the home grid's cards carry `layout` only while it is resized.
+- **`filter` animates** since #106; thinking-steps chips and the copy-prompt glyphs reveal on `blur(4px)` like the
+  source.
 - **Clipped content still costs a frame** (gpuix #46: retained and clipped content is not free). Long demo pages
   therefore hide far regions through the port's own `src/lib/cull.ts`; this is a kept workaround, not a removed one:
   the removal comparison was re-run on `b03d4e27` and culling off was worse on 9 pages and better on none, and again
@@ -120,7 +125,7 @@ link to those rows rather than repeating them. The ones that shape the most code
   scoped itself to macOS only on 2026-10-16, so these are not reported as open.
 
 The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adoption-pass-2026-10-17) and again in the
-[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `a92b4f7f` as the minimum fork (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`, `f993d9b9` in [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22), `511bebab` in [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22), `8352e66c` in [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22), `e591681e` in [Round 16](#round-16-the-contentvisibility-ab-on-poc-e591681e-2026-10-23), `c6475390` in [Round 14a](#round-14a-paint-patching-reaches-inputs-positioned-ancestors-and-motion-values-on-poc-c6475390-2026-10-23), `6f2a72d3` in [Round 14c](#round-14c-input-to-an-idle-window-wakes-the-frame-loop-on-poc-6f2a72d3-2026-10-23), `f6f09d95` in [Round 15c](#round-15c-scale-1-test-windows-half-up-glyph-origins-and-os2-cap-heights-on-poc-f6f09d95-2026-10-23), and `a92b4f7f` in [Round 18](#round-18-animations-in-skipped-content-sleep-and-culling-moves-to-content-visibility-on-poc-a92b4f7f-2026-10-24)). The bugs and gaps worth knowing before touching layout code:
+[round 6 pass](#round-6-adoption-pass-2026-10-18); the README names `poc` `5f7a9af9` as the minimum fork (it said `a92b4f7f` after Round 18, then `667084d0`, `ae559246` and `e31ec048` in the [transform adoption](transforms-and-layout-adoption.md)) (it said `ed4e99c3` after round 6, `365f7c88` briefly in the 2026-10-19 [follow-up](#perf-follow-up-on-poc-365f7c88-and-e5231304-2026-10-19), then `e5231304`, then `5fda771a` in the [native-animation round](#native-animation-round-on-poc-5fda771a-2026-10-19); then `b03d4e27` in the [fractional-rects adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21), `83bab5a7` in the [authored-lengths adoption](#authored-lengths-and-playback-controls-on-poc-83bab5a7-2026-10-21), `196d69ce` in the [Round 12 pass](#round-12-paint-only-patch-ticks-on-poc-196d69ce-2026-10-21), `f6997028` after the [Round 13a adoption](#round-13a-font-smoothing-scrolltop-setter-and-exact-scroll-end-on-poc-f7b62f11-2026-10-21) of `f7b62f11`, `f993d9b9` in [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22), `511bebab` in [Round 13b](#round-13b-adoption-on-poc-511bebab-2026-10-22), `8352e66c` in [Round 15a](#round-15a-atomic-inline-origin-and-forced-layout-on-poc-8352e66c-2026-10-22), `e591681e` in [Round 16](#round-16-the-contentvisibility-ab-on-poc-e591681e-2026-10-23), `c6475390` in [Round 14a](#round-14a-paint-patching-reaches-inputs-positioned-ancestors-and-motion-values-on-poc-c6475390-2026-10-23), `6f2a72d3` in [Round 14c](#round-14c-input-to-an-idle-window-wakes-the-frame-loop-on-poc-6f2a72d3-2026-10-23), `f6f09d95` in [Round 15c](#round-15c-scale-1-test-windows-half-up-glyph-origins-and-os2-cap-heights-on-poc-f6f09d95-2026-10-23), and `a92b4f7f` in [Round 18](#round-18-animations-in-skipped-content-sleep-and-culling-moves-to-content-visibility-on-poc-a92b4f7f-2026-10-24)). The bugs and gaps worth knowing before touching layout code:
 
 - A function-form `createTransform` of several motion values is computed in JS and can trail its inputs by a frame
   on a live window (not seen on the test renderer). `calc()` strings of the row's own width avoid it where the layer
@@ -153,7 +158,10 @@ The list was recounted and rewritten in both 2026-10-17 [adoption passes](#adopt
   3000 nodes, about 60 ms at 12000): see the [`b03d4e27` adoption](#fractional-rects-adoption-on-poc-b03d4e27-2026-10-21). Paint-only ticks are patched since
   `196d69ce` and, past the input, positioned-ancestor and motion-value blockers, since `c6475390`
   ([Round 14a](#round-14a-paint-patching-reaches-inputs-positioned-ancestors-and-motion-values-on-poc-c6475390-2026-10-23));
-  a layout loop (`width`, `top`) is still drawn whole.
+  a layout loop (`width`, `top`) was still drawn whole then, which is why the port's loops moved onto transforms once
+  they existed. What stays whole on `ae559246` is in the README per-tick row: a box-size spring (thinking-steps'
+  `height`, carousel-dots' track width), commits from JS, and a page with an on-screen `layout` box
+  (queued-stack, 25-29% CPU, `Unsteady` with the box at rest; #113 did not change it).
 - Flex `order` is ignored inside an `@container` block, and Tab follows the painted order under `order` where Chrome
   keeps the markup order (`order` 3, 2, 1 is visited c, b, a, not a, b, c). gpuix's own README and `order.rs` say
   focus and tab order stay in document order, so the docs and the behaviour disagree; the banner uses `row` /
@@ -343,10 +351,12 @@ What the port changed, so a later reader can tell a regression from intent:
   atom inside a text run. `Badge` is `inline-flex` with a `style` prop, and the Lumen citation chips use it. The
   thinking-steps details wrapper is a block, as the source's, because a `fit-content` flex child with a negative
   margin hit a layout bug.
-- **Container queries replace `createMediaQuery`.** `App` wraps the window in a full-size `viewport` container
-  (`containerType: inline-size`), so the home bento grid's 768px and 1280px breakpoints are `@container` blocks
-  that query it. gpuix has no media queries, so a source viewport breakpoint is a query on this container.
-  `check-home-grid` mounts one window per breakpoint. The banner's `@max-sm/banner` layout is a real container
+- **Container queries replaced `createMediaQuery`, and were reversed on 2026-10-31.** `App` wrapped the window in a
+  full-size `viewport` container (`containerType: inline-size`) so the home bento grid's 768px and 1280px breakpoints
+  were `@container` blocks. The columns are `createMediaQuery` state again (the source's `useGridCols`) and the wrapper
+  is gone: the column count must change inside a commit for the cards' `layout` glide to see the re-slot, which a
+  container query's style swap does not give (commit `562938d5`). `check-home-grid` now resizes one window across the
+  breakpoints and reads the transformed boxes. The banner's `@max-sm/banner` layout is a real container
   query on a grid. `fit-content` is used for the Introduction's command rows and code block.
 - **Group states replace hover signals** in the card's dismiss chip and the colour picker, plus state styles for the
   colour picker's swatch ring, format label and the invite dialog's email field.
@@ -931,12 +941,22 @@ needs gpuix `6f2a72d3` or later".
   that posts a no-op block to the main queue. gpuix's numbers: input wakes JS in 0.1-1.4 ms and reaches the handler in
   0.4-7.7 ms, and an idle window still makes 0 wakes. `postEvent:` from a non-main thread still does not wake, but real
   input never takes that path.
-- **Not verified in this repository.** FF's own after-fix numbers wait on the owner's real-input check (no non-main
-  display is available for the windowed repro). No headless regression check is possible: the test renderer has no way
-  to post a native event or register a frame-wake callback, and its window is not on AppKit's run loop, so the repro
-  script in the notes folder is the check. This is the same limit as the idle-floor figures in
-  [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22): a window run, not
-  headless, is what measures it.
+- **Verification, at the time and since.** On the day, FF could not check it: no non-main display was available for
+  the windowed repro, and the test renderer could neither post a native event nor register a frame-wake callback, so
+  the repro script in the notes folder was the only check (the same limit as the idle-floor figures in
+  [Round 14b](#round-14b-idle-window-and-unfocused-window-pacing-on-poc-f993d9b9-2026-10-22)). Both halves have since
+  closed:
+  - **The owner confirmed the fix with real input on 2026-10-24** ("no noticeable lag" after Cmd-K into the Command
+    Menu once the page had gone idle), so the real-input check is done and the README row no longer waits on it.
+  - **It is a headless regression check now.** gpuix Round 21 (#95) gave the test renderer the live wake surface
+    (`postNativeEvent`, `setFrameWakeCallback`, `requiresTick`, `tick`), and `scripts/check-idle-input.tsx` (part of
+    `pnpm check:scenarios`; runnable alone with `bun scripts/check-idle-input.tsx`) uses it. It mounts the Command Menu
+    page, runs `startFrameLoop` on the wake path with no timer, waits until the window makes no wake (0 over 2 s, after
+    about 5 s of startup bursts), then posts a click on the input, a key down, a mouse move over a row and a wheel over
+    the list through AppKit's queue, each after another idle wait. Each must wake JS (0.1-1.7 ms) and show its effect
+    with no other wake (65-130 ms, the hover and scroll springs included). A final control stops the loop and posts
+    again: the event stays queued, so the passes are the wake's and not a pump hidden in the harness. With the wake
+    never reaching JS, as without gpuix's NSEventThread observer, all four fail.
 
 ## Round 15c: scale-1 test windows, half-up glyph origins and OS/2 cap heights on `poc` `f6f09d95` (2026-10-23)
 
@@ -994,7 +1014,7 @@ for a target in hidden content, both like Chrome, and showed that the one-column
   pinned height, the `flexBasis` pin and the forced measure are gone, and so is the report-rect fallback for a hidden
   region's size. The decision record, the `'auto none'` requirement and the harness traps are in
   [Port decisions](../decisions/port-decisions.md#performance-decisions-on-gpuix-poc-b03d4e27).
-- **New row, gpuix #98 (open): a read after a paint-only write costs a layout pass under `content-visibility`.** On the
+- **New row, gpuix #98: a read after a paint-only write costs a layout pass under `content-visibility`** (the README later records it as fixed in gpuix Round 21). On the
   `check-command-menu` probe it is 1.00 passes and 2.4-3.4 ms median per read, against 0.05 passes and 0.02 ms with
   `display: none`; after a layout write it is about 0.7 ms dearer. Round 16's reading of the cause (gpuix builds a hidden
   subtree for any geometry read, and fluid-hover's `ResizeObserver` `measure()` reads a box) was not re-checked on
@@ -1003,7 +1023,7 @@ for a target in hidden content, both like Chrome, and showed that the one-column
 - **New row: a `motion` spring running when its region is hidden wakes gpuix at the display rate until it settles**
   (#97's open item 3: a spring's wake is `NextFrame`, where a timed tween wakes once at its end and a loop with no
   listener never). The tick draws no frame, so the page stays at 0 whole and patched frames. No FF page was found where
-  it matters and the row asks for no workaround.
+  it matters and the row asks for no workaround; the README later records the spring wake as fixed in gpuix Round 24.
 - **`pnpm footprint` gained `all draw ms`** (gpuix #91, `74e0033c`): the mean/p90 over every `drawFrame()` that drew,
   patched ones included, beside `draw ms`, which averages only whole-frame draws and so rises when patching replaces
   cheap whole frames. Compare pins that patch differently by `all draw ms`.
@@ -1012,3 +1032,21 @@ for a target in hidden content, both like Chrome, and showed that the one-column
   sleep. `OnScreenContext` and `onFrame`, the word-cycle timer and carousel-dots' `playing()` stay, because they are JS.
 - **Not done.** No page was recaptured: the screenshots are those of [Round 15c](#round-15c-scale-1-test-windows-half-up-glyph-origins-and-os2-cap-heights-on-poc-f6f09d95-2026-10-23),
   less 13 stale captures that no scenario writes any more (`06645c5a`). Every figure is headless, at load 1.4-4.3.
+
+## Rounds 24 to 38: transforms, layout glides and filter on `poc` `667084d0` to `5f7a9af9` (2026-10-30 to 31)
+
+Four pins in two days, summarised here and written up on [Transforms, layout glides and filter](transforms-and-layout-adoption.md):
+`667084d0` (Round 25 transforms, Round 15b SVG transitions and Motion controls, Round 28 Motion's default transition
+per key, Round 26 text and layout; `scrollTop` is whole pixels since Round 20, as Chrome, and `check-scroll-area` asserts running totals for sub-pixel wheel cases), `ae559246` (#104 to #109: filter animates, a
+target's own `transition` for `exit`, value springs end on their target, a translated box is the rounded layout position
+plus the exact translation), `e31ec048` (#110, #113, #114, #115: clip under a transform, layout glides measured at a
+commit, popLayout's pin survives a fresh style object, layout animates size) and `5f7a9af9` (Round 38, #116: a
+`content-visibility: auto` box and an input caret are judged where the box's transform puts them). The README names
+`5f7a9af9` as the minimum fork. Drift is 495 entries (47 gpuix gap, 219 port choice, 183 not ported yet, 46 mixed), down
+from 539 because the stand-in entries left with the stand-ins.
+
+The gap table after the pass, in one line each: the transforms row says none is left that the source uses; what remains
+is `var()` in a Motion key (a popup that flips starts its first open on the other side's slide), text resampled under an
+animating transform, and the `layout` row, whose size half is partial because `layoutId` has no crossfade and no radius
+mix; the culling row lists #98 as fixed in Round 21 and the hidden-spring wake as fixed in Round 24; the idle-input row
+is closed by a headless check ([Round 14c](#round-14c-input-to-an-idle-window-wakes-the-frame-loop-on-poc-6f2a72d3-2026-10-23)).

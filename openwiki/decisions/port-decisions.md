@@ -4,16 +4,12 @@ title: "Port decisions and their reasons"
 openwiki_generated: true
 verified:
   - by: openwiki/0.7.2
-    at: 2026-10-24T01:38:18.068Z
+    at: 2026-10-31T01:58:44.003Z
 sources:
   - id: openwiki-source-da7929b6e2478aead956fb3c
     resource: repo://biome.jsonc
   - id: openwiki-source-9156c3fc43d32433db430838
     resource: repo://drift/_TEMPLATE.md
-  - id: openwiki-source-6bebc830d03236b8df9960d7
-    resource: repo://drift/command-menu.md
-  - id: openwiki-source-6305012da4c4c24b665faccd
-    resource: repo://drift/file-thumbnail.md
   - id: openwiki-source-385da475ebb9649b27cbd9e7
     resource: repo://drift/site.md
   - id: openwiki-source-7bed81eca49ee8a9899cacc5
@@ -28,6 +24,8 @@ sources:
     resource: repo://scripts/build.ts
   - id: openwiki-source-8792b0b9d5aaa145ee2ebfa4
     resource: repo://scripts/check-command-menu.tsx
+  - id: openwiki-source-37e23bbd30830cb88f82931f
+    resource: repo://scripts/check-idle-input.tsx
   - id: openwiki-source-fac7a3f3768fe057d1557909
     resource: repo://scripts/check-kit.tsx
   - id: openwiki-source-1d90d3d86ac1d41b49610f02
@@ -76,6 +74,8 @@ sources:
     resource: repo://src/components/input-copy.tsx
   - id: openwiki-source-78d1990defa7b16135079930
     resource: repo://src/components/menu-item.tsx
+  - id: openwiki-source-888ed3b6a5a52622b4afcbfe
+    resource: repo://src/components/radio-group.tsx
   - id: openwiki-source-94d7540365b6edfe6f6a0bbe
     resource: repo://src/components/table.tsx
   - id: openwiki-source-26d9c038c2027980be5931cf
@@ -120,13 +120,15 @@ sources:
     resource: repo://src/lib/window-options.ts
   - id: openwiki-source-805db717791883f12f02d567
     resource: repo://src/pages/changelog/release-spy.ts
-  - id: openwiki-source-872f10458af3aae905a0ee5a
-    resource: repo://src/pages/fluid-hover/plain-vs-fluid.tsx
+  - id: openwiki-source-7c69ab1377f1c6d7ffaa38bc
+    resource: repo://src/pages/fluid-hover/cost.tsx
+  - id: openwiki-source-a9e96a07da54229ab4572abc
+    resource: repo://src/pages/fluid-hover/lists.tsx
   - id: openwiki-source-c3b3c8dd99733ef843f5f848
     resource: repo://src/pages/skill/playback.tsx
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "claude-code", at: "2026-10-24T01:38:18.068Z" }
+generated: { by: "claude-code", at: "2026-10-31T01:58:44.003Z" }
 ---
 
 
@@ -149,7 +151,11 @@ That is why the README says the fork must be at `poc` `a02ec23` or later.
 
 Two rules from the source were kept deliberately and are easy to lose in a refactor:
 
-- **Exits stay tweens** (60 ms / 120 ms), as in the source.
+- **Exits stay tweens** (60 ms / 120 ms), as in the source. Since gpuix #107 (2026-10-30) an exit says so itself:
+  the target's own `exit.transition` (`exit={{ opacity: 0, scale: .3, transition: DOT_OUT }}`) replaces the component's
+  `transition` for the exit, so queued-stack, input-message, ask-user-questions, radio-group, thinking-indicator, the
+  sidebar callout pile and the carousel label no longer pick a transition by reading `useIsPresent`. Checks sample the
+  exit's real end, not a fixed wait.
 - **Snap, don't spring, on a reflow.** When a row moved because the layout changed (a filter, a collapse), the
   highlight jumps; only pointer movement glides. A zero-length tween does the snap.
 
@@ -198,6 +204,16 @@ The site's signature effect is one highlight that glides between rows. The port 
   showcase's "Searching profiles" step lays out 60.5 px where Chrome's `offsetHeight` is 61, which left the next step
   0.5 px high; `check-thinking-steps` pins the 61 px distance at scale 2. The first fix rounded inside
   ThinkingSteps alone; it moved to the shared hook because every consumer ports an `offsetHeight` read.
+
+- **The highlight glides on `x` / `y` from 0,0, and rows are read in the container's layout pixels** (2026-10-30). The
+  highlight used to move on `top` / `left`, which re-laid-out per frame; it now moves by a transform like the source's
+  `translate`, with `width` and `height` still box properties (`src/lib/fluid-highlight.tsx`). A transform changes what
+  a measurement means: `getBoundingClientRect` is the transformed box, and nothing re-measures when a scale settles,
+  so a hover that landed while a popup was still scaling in (select, dropdown) left the highlight off its row by the
+  scale it was measured at. `toOffsetRect` therefore divides a row's offset by its container's box over the
+  container's observed layout size (`ResizeObserver` border box), which is what the source's `offset*` reads give, and
+  `pick` takes that layout size too. `check-popups` hovers a row mid-entrance and reads the highlight against the row
+  after the entrance. Do not "simplify" the division away: it is invisible at rest and wrong only mid-animation.
 
 When Base UI primitives later took over keyboard behaviour, fluid hover stayed the owner of the highlighted row:
 the primitive's highlight is controlled from `hover.activeIndex`, and a keyboard move calls `releasePointer()` so
@@ -271,7 +287,8 @@ narrower at semibold ("Pro plan", "Toggle dark mode") asserts the cell is identi
 wider of the two copies, exactly. An interim version of the check (`407127fb`) allowed 1 px on neighbours and on the
 shrink, because gpuix snapped every JS bounds read to whole device pixels per edge (#45) and the semibold-only ghost
 really did shrink; with two ghosts the cell cannot move, and that loosening was reverted. A failure now is a real
-move, so do not reintroduce a tolerance. It runs at 1x, so widths at a retina display's 2x scale are not measured.
+move, so do not reintroduce a tolerance. Since transforms the check also holds a turning chevron to its centre and maps a scaling popup's content back through
+the popup's scale, because the tree reports transformed boxes. It runs at 1x, so widths at a retina display's 2x scale are not measured.
 
 Bounds became fractional on `b03d4e27`, which changed how the browser comparison is read. The check used to lay each
 string out at 130 px and divide the width difference by 10, to get 0.1 px resolution out of whole-pixel reads
@@ -339,9 +356,12 @@ about cost has an expiry date, because gpuix's retention and bounds-read behavio
   `content-visibility` won. Ahead: entry to the Command Menu page is 1 layout pass against 2, and the one-column home
   tiles are at their final height right after settle (grid 10935 px against 9503 collapsed). Equal: page switches
   (changelog / showcase / command-menu / button, 88 / 211 / 136 / 54-59 ms against 93 / 218-223 / 132 / 62-64), idle CPU
-  over the 49 pages (sum 198.4 against 194.4%) and footprint (3975 against 3989 MB). Behind, and still open as gpuix
-  #98: a read after a paint-only write costs one pass and 2.4-3.4 ms against 0.02 ms, and a read after a layout write
-  about 0.7 ms more. The source site uses no `content-visibility`, so this is a port-only mechanism either way.
+  over the 49 pages (sum 198.4 against 194.4%) and footprint (3975 against 3989 MB). Behind on that pin, and
+  filed as gpuix #98: a read after a paint-only write cost one pass and 2.4-3.4 ms against 0.02 ms, and a read after a
+  layout write about 0.7 ms more. The README now says #98 was fixed in gpuix Round 21 and that a spring in hidden
+  content waking every frame was fixed in Round 24; FF has not re-read the probe numbers below on the current pin (the
+  probe still prints them, so the next `check-command-menu` run does). The source site uses no `content-visibility`, so
+  this is a port-only mechanism either way.
   - *What `cull.ts` must do for it to work.* gpuix remembers a laid-out size only for an element whose style says
     `containIntrinsicSize: 'auto'` while it shows, so the visible style carries `'auto none'` too: without it a hidden
     region has no size to keep. The size is `auto none` on both axes, because a single value would also set the width.
@@ -351,9 +371,9 @@ about cost has an expiry date, because gpuix's retention and bounds-read behavio
   - *Harness traps.* `getElementBounds` now forces a skipped subtree and answers, so it cannot tell hidden from shown:
     an "is it hidden" assert uses `getBuiltElementBounds` (`check-doc-sections`, `check-changelog-rail`), and a
     scenario that scrolls toward an element `shot.reveal`s it first.
-  - *Reopening it.* A browser pays nothing for a read after a paint-only write; if #98 closes, the remaining cost of
-    this choice is gone. If instead a pin makes the hidden-subtree build per read worse, the `display: none` wrapper
-    is the known fallback (commit `74e0033c` is its last state).
+  - *Reopening it.* A browser pays nothing for a read after a paint-only write; with #98 fixed upstream the remaining
+    cost of this choice should be gone, which the probe's printed numbers would show. If a pin makes the hidden-subtree
+    build per read worse, the `display: none` wrapper is the known fallback (commit `74e0033c` is its last state).
 - **A hidden region keeps the size it was last laid out at, not a height read from its observer report.** Before
   `5c7b3f44` a far region pinned the height of its `IntersectionObserver` report (`a6fd00ed`: the report's rect comes
   from the frame's registry, where `getBoundingClientRect()` inside the callback forced a layout pass per region; the
@@ -363,8 +383,11 @@ about cost has an expiry date, because gpuix's retention and bounds-read behavio
 - **The changelog Releases jump re-aims while culled entries come back to their real heights.** A jump computes its
   target while the entries above the month hold a remembered size. They are laid out again as the smooth scroll passes
   them, and when one comes out taller than it was remembered the month moves: with the earlier pinned heights one scroll
-  landed the month 4-5 px low (36-37 px under the top against the source's 32; once 281 px, on the wrong month). That
-  was not re-measured on `content-visibility`, whose remembered size is the last laid-out one, so the re-aim stays. `release-spy.ts` recomputes the target on each page scroll and
+  landed the month 4-5 px low (36-37 px under the top against the source's 32; once 281 px, on the wrong month). On
+  `content-visibility` (headless, `a92b4f7f`) the 4-5 px is gone: with the re-aim off a single scroll landed the month
+  exactly on 35 of 38 jumps in 5 runs, and each run's first jump from the page top, 3 of 38, stopped 244 px short on the
+  wrong month; with it on, all 24 jumps in 3 runs landed. The cause of the short first jump is not isolated, so the
+  re-aim stays for that jump. `release-spy.ts` recomputes the target on each page scroll and
   scrolls again when it moved by more than 1 px, stopping when the month is within 1 px, the page end is reached,
   or the user scrolls away (`scripts/check-changelog-rail.tsx` pins it). It only runs while a jump is in flight, so
   idle and sweep cost did not change. It is an approximation of the source's single `scrollIntoView`, recorded in
@@ -443,24 +466,30 @@ renderer and cost no JS per frame. The reasons to prefer it, and the traps:
   `animate(cursorY, keyframes, { times, ease: 'easeInOut', repeat: Infinity })` started the first time the script
   runs, `pause()`d when the button, reduced motion, a visiting pointer or leaving the viewport stops it, `play()`ed to
   resume and `stop()`ped on unmount, so the old linear progress value and its range-form `createTransform` are gone.
-  The skill pages' script cursor and the carousel fill were not converted to that shape; the carousel keeps stop-and-restart as a
-  choice, not a need (below). The README's pause/play gap row was removed.
+  The skill pages' script cursor was not converted to that shape (it stops its glides and restarts them). The carousel
+  fill was converted later (`4051a6fd`, 2026-10-30): it is one animation held with `pause()` and resumed with
+  `play()`, as the source does, and a `duration` that changes mid-slide is carried by `play.speed`. The README's
+  pause/play gap row was removed.
 - **Carousel-dots: one restart effect, and `finished` is trustworthy.** The fill's reset and its play are one effect
   (`7d4918bb`), not two ordered ones: Solid does not guarantee the order of effects, and a play that ran before the
   reset read the old fill (1) and never started, or had its animation ended by the reset's jump, which left the last
-  dot's fill at 0 for good on the demo's third slide change. That single effect is also why the fill stays
-  stop-and-restart after pause/play arrived, not a replacement of its restart logic with `pause()`/`play()`:
-  restarting from the current value is exact for a linear ease. Before `83bab5a7` a stopped or jumped animation
-  also resolved `finished`, so the code kept a `current` flag and a `fill.get() < 1` check to request the next slide
-  only when the fill really reached 1; `finished` now resolves only when the animation finishes or `complete()`s, never
-  on `stop()` or replacement, so both guards were dead and are gone (`04b90d13`). (Separately, the move off the JS
-  clock fixed the old carousel's bug of resetting the fill to 0 when hovering the slide, where the source holds it.)
-- **Pick the animation kind by what the property is.** The file-thumbnail spinner is a `motion.circle` sliding
+  dot's fill at 0 for good on the demo's third slide change. The fill stayed stop-and-restart after pause/play first
+  arrived (restarting from the current value is exact for a linear ease) and moved to pause and resume on
+  2026-10-30; the single effect is what makes that safe. Before `83bab5a7` a stopped or jumped animation also resolved
+  `finished`, so the code kept a `current` flag to request the next slide only when the fill really reached 1;
+  `finished` now resolves only when the animation finishes or `complete()`s, never on `stop()` or replacement, so
+  that flag is gone (`04b90d13`). A finished fill is still never replayed (`fill.get() >= 1` returns before the play
+  branch), so the next slide is asked for once. (Separately, the move off the JS clock fixed the old carousel's bug of
+  resetting the fill to 0 when hovering the slide, where the source holds it.) The fill is slid by
+  `translateX(calc((p - 1) * (100% - 6px)))` from a native range map, so it is a patched tick, not a `width` layout
+  loop.
+- **Pick the animation kind by what the property is.** The file-thumbnail spinner was a `motion.circle` sliding
   `strokeDashoffset`, because on `5fda771a` keyframes took style properties and not SVG attributes. That limit is
   gone on `b03d4e27`: the button's loading spinner (`615fd85c`) is the source's `spinner-move` and `spinner-dash`
   keyframes (`strokeDashoffset`, `strokeDasharray`) on a `pathLength` 100 path, drawn on the source's infinity path,
-  36 px (28 compact), stroke 1.125. The file-thumbnail spinner stayed as it
-  is because its only remaining gap is the missing rotate transform. The thinking-indicator shimmer is per-letter colour keyframes (`defineKeyframes`) because `background-position` is not
+  36 px (28 compact), stroke 1.125. The file-thumbnail spinner stayed a
+  dash slide until transforms arrived and is now the source's own bordered ring turned by a 1 s linear `spin` keyframe
+  (`b18d27d5`, 2026-10-30). The thinking-indicator shimmer is per-letter colour keyframes (`defineKeyframes`) because `background-position` is not
   animatable; the glyph is a `motion.path` morphing `d`; the word cycle is still a 4 s `setInterval`. Since
   `c6475390` (Round 14a) none of these swaps a still copy in or gates its animation on `useOnScreen` any more (the
   button `Spinner`, file-thumbnail `Spinner`, `MorphingGlyph` and `Shimmer` always render the animated element; only
@@ -511,12 +540,14 @@ renderer and cost no JS per frame. The reasons to prefer it, and the traps:
   longer decline a patch, and a culled `<svg>`'s shapes sleep. A rolling word in ThinkingIndicator is therefore
   `position: relative` always, which `top` needs anyway (`RollingWord`, `e99b0655`; the `onMotionComplete` /
   `entersAtRest` / `rolled` bookkeeping that toggled it is deleted), and its shimmer still patches at about 62 ticks a
-  second under it. What stays whole is a layout loop (`LayoutAnimation`): the word roll on `top`, the fluid-hover
-  cursor and the carousel-dots fill on `width` are the same transform gap as before, now with a whole-frame cost
-  recorded in the README transforms row; they are gpuix's, not the port's, to close.
-- **Who still uses `onFrame`, and why** is recorded in the doc comment of `src/lib/clock.ts`: thinking-steps'
-  chevron (the source's `rotate` is a transform gpuix cannot animate), the fluid-hover lists demo (re-measures rows
-  while a sub-menu springs), and the cost meter (reads the clock's gaps as its stall probe). Do not add a new
+  second under it. What stayed whole on `c6475390` was a layout loop (`LayoutAnimation`): the word roll on `top`, the fluid-hover
+  cursor and the carousel-dots fill on `width`, all the missing-transforms gap. They are placed by `y`, `x` and a
+  `translateX` since `667084d0`/`ae559246` (2026-10-30) and patch like any paint-only tick; what whole frames remain
+  are listed in the README per-tick row (the word timer's text commit, the cursor's row-hit commits, thinking-steps'
+  and carousel-dots' own box-size springs, which the source springs too).
+- **Who still uses `onFrame`, and why** is recorded in the doc comment of `src/lib/clock.ts`: the fluid-hover lists
+  demo (re-measures rows while a sub-menu springs) and the cost meter (reads the clock's gaps as its stall probe).
+  ThinkingSteps' chevron left the list when it moved to a rotate transform on `spring.fast`. Do not add a new
   `onFrame` loop for something a motion value or keyframe can play.
 
 Each conversion has its own check (`check-file-thumbnail`, `check-thinking-indicator`, `check-carousel-dots`,
@@ -600,7 +631,8 @@ How to check these, because the obvious checks pass:
   1 px height toggle for a layout write, a background toggle for a paint-only write), times one `getElementBounds` on
   the details list, 20 reps each. Reference on `e591681e` with the `display: none` wrapper: layout write 1.00 passes per
   read, 2.87 ms median; paint-only write 0.05 passes, 0.02 ms. With `content-visibility: hidden` (`a92b4f7f`) a
-  paint-only write also costs 1.00 passes and 2.4-3.4 ms median per read, which is the standing cost of gpuix #98. gpuix has no per-pass timer, so the time is taken on the JS
+  paint-only write also cost 1.00 passes and 2.4-3.4 ms median per read, the cost gpuix #98 was filed for and the README
+  says Round 21 fixed (not re-read by FF). gpuix has no per-pass timer, so the time is taken on the JS
   side with `performance.now`, and it moves with load: compare passes per read first, milliseconds only at a similar
   load average.
 - Every check window opens at scale factor 1, which is `createTestRoot`'s default since gpuix `f6f09d95` (#86), so the
@@ -634,8 +666,9 @@ out nothing and patch with the table as its unit, so the row declares `fade(['bo
 
 What the check asserts changed with it, because the old assertion would have passed for the wrong reason.
 `check-table` used to bound the glide's layout builds against the sidebar's plus an allowance sitting between the
-cheap and the expensive case. It now requires **zero builds, zero layout nodes created and zero removed** over the
-glide, on the fixture and on the real Table page, and it separately requires that the fade is *drawn*: with the
+cheap and the expensive case. It now requires **zero layout nodes computed, zero created and zero removed** over the
+glide (the first version counted retained builds; since the highlight moves by a transform, the collapsed table's paint
+unit counts a retained build on every tick, which is not layout work, so the check reads the layout counters), on the fixture and on the real Table page, and it separately requires that the fade is *drawn*: with the
 motion clock held it screenshots the rule's line frame by frame and requires pixel values strictly between its two
 end colours. Both are needed, since a transition that is silently dropped also builds nothing. The lesson for other
 "declared but inert" transitions stands: an inert style can still dirty layout every frame, so measure layout work and
@@ -665,9 +698,14 @@ the choices that make a number trustworthy or not.
   window itself costs: the repository records no in-window idle floor since gpuix `f993d9b9`, which wakes an idle
   window 0 times a second (the README row for it was removed; a window run measures it). Quote headless for "which page,
   which loop" and `--window` for "what does the user's machine pay".
-  Headless also cannot test whether input reaches an idle window: `TestGpuixRenderer` has no `postNativeEvent` or
-  `setFrameWakeCallback` and its window is not on AppKit's run loop, so the README row for gpuix #77 (wake on idle input,
-  answered by `6f2a72d3`) has no regression check here; a window run with real input is the only one.
+  Whether input reaches an idle window is now a headless check: since gpuix Round 21 (#95) the test renderer has the
+  live wake surface (`postNativeEvent`, `setFrameWakeCallback`, `requiresTick`, `tick`), and
+  `scripts/check-idle-input.tsx` uses it as the regression check for gpuix #77 (answered by `6f2a72d3`, #93); see
+  [Round 14c](../gpuix/gaps-and-divergence-rounds.md#round-14c-input-to-an-idle-window-wakes-the-frame-loop-on-poc-6f2a72d3-2026-10-23).
+  `pnpm footprint` itself still cannot say what an idle window costs; that is the window run's job.
+- **Every spawn has a 30 s limit and a timeout names the command and the page** (`74c85685`): a synchronous
+  `/usr/bin/footprint` that hangs also blocks the child's own deadline, and on this machine it hung for every pid on
+  ae559246, so a footprint run reads memory from the child's RSS instead; say which when quoting a figure.
 - **A window run is only valid for a visible window.** A covered window gets no display link, so the driver reads
   `GPUIX_PRESENT_LOG` and flags the row `occluded` (exit 1) instead of printing a low CPU. The present log adds one
   small write per presented frame to the process being measured. There is no key-window bookkeeping: on
@@ -719,8 +757,11 @@ easy to break:
   reason).
 - **Only user actions fade.** `changeTheme` is the user path; captures and tests call `setThemeChoice` directly and
   cut at once. The layer exists only during a change, so first paint never fades.
-- **Only three properties ease** (`background-color`, `color`, `border-color`): gpuix does not animate `fill` or
-  `stroke`, which the source also lists.
+- **The layer lists the source's six properties** (`border-radius`, `background-color`, `color`, `border-color`,
+  `fill`, `stroke`; the source's `html.transitioning` rule). Until 2026-10-30 only the first four could ease, because
+  gpuix did not animate `fill` or `stroke`; it does since Round 15b, so SVG icons and shapes cross-fade with the page
+  and `check-theme-fade` samples an SVG fill and stroke mid-fade. What drift still records is the source's `!important`
+  and a same-frame start the layer cannot reproduce (`drift/site.md`).
 
 ## Demo discovery by file scan
 
@@ -774,6 +815,15 @@ A pin change is the exception to the partial recaptures described next: the `b03
 playgrounds and timing demos in their own commit. The `83bab5a7` pin (fractional authored lengths) did the same in
 four commits by page group: controls, popups/menus/chat inputs, system pages, showcase, and concepts with thinking
 steps. Most files changed by a few bytes, which is the noise the pixel comparison above is for.
+
+Two traps from the transform adoption (2026-10-30 to 31). A check that mounts a second root must unmount the first
+before it: the test renderer is one per thread, so a root a newer one replaced released its Switch thumb's motion
+value against the newer renderer and died with "unknown motion value" after every PASS (color-picker, dropdown,
+popups); `createCheck`'s unmount is idempotent for that reason. And a transformed box is drawn at its rounded layout
+position plus the exact translation, antialiased (gpuix #109), so the recaptures moved slider and switch thumbs by up
+to half a pixel while nothing else changed, and the last recapture (all 49 pages on `5f7a9af9`) left a file as it was
+when its noise dominated: the tooltip's rotated label, the switch and slider thumbs, text drawn through the matrix and
+the layout morphs at rest.
 
 **A click after a spring needs still bounds, not a fixed wait.** `check-thinking-steps` scrolled a card into view,
 waited a fixed 600 ms and clicked its images button; with fractional lengths a spring's tail moves a box by
