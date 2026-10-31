@@ -23,20 +23,23 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:3
 - **Fidelity:** dropped (compact).
 - **Components it hits:** every component with a `size` prop.
 
-## Shared-layout morph into the sent bubble
+## Shared-layout morph into the sent bubble: no crossfade, and the start follows a scroll
 
-- **Cause:** `gpuix gap` (a size morph: `~/code/fdarian/gpuix/docs/fork/deviations.md` "Size morphs are not built", `README.md` "Layout animations").
-- **Original:** `morphLayoutId` gives a text-only card a `layoutId` (dropped while a press is down) so the dispatched card morphs into its sent bubble: the bubble carries the same `layoutId` and `layout`, and its text a `motion.span layout` that Motion counter-scales so it does not stretch (`:53-56`, `:295-301`; `app/docs/input-message/queued-chat-demo.tsx:365-392`).
-- **Port:** no such prop; a dispatched card only fades out (`queued-stack.tsx:360-362`). gpuix has `layoutId`, but its glide moves a box's position and snaps its size: the card is the composer's full width and one row tall, the bubble is content-sized, right-aligned and as tall as its wrapped text, so the bubble would appear at the card's top-left corner at its own size and slide, where the source scales one box into the other. `layout="size"` does nothing on its own and `"preserve-aspect"` is not supported, so there is nothing to ask for; a position-only glide would be a different animation, and was not built.
-- **Workaround:** none.
-- **Fidelity:** dropped.
+- **Cause:** `gpuix gap` (no `layoutId` crossfade or radius mix, `~/code/fdarian/gpuix/docs/fork/deviations.md` "Layout size glides differ from Motion's projection in five places" (2); a scroll between the commit and the first glide frame, below).
+- **Original:** `morphLayoutId` gives a text-only card a `layoutId` (dropped while a press is down) so the dispatched card morphs into its sent bubble: the bubble carries the same `layoutId` and `layout` with `initial={false}`, and its text a `motion.span layout` that Motion counter-scales so it does not stretch (`:53-56`, `:295-301`; `app/docs/input-message/queued-chat-demo.tsx:365-392`). The demo holds the morph props on the bubble for 450 ms and drops them, so a later reflow does not replay the layout animation.
+- **Port:** the same, on gpuix's `layout` (`queued-stack.tsx:118-119`, `:315-322`, `:368`, `:473-474`; `chat-message.tsx:82-83`, `:94-100`, `:153-170`; `src/lib/composer-stage.tsx:30-52`, `:153-154`, `:193`; `src/lib/queued-chat.tsx:109-112`, `:134-140`, `:245`, `:259`). The queued chat passes the stack `morph`, the transcript a `morphingId` for 450 ms, and the dispatched turn keeps its queued id. The bubble starts as the card's last drawn box (position and size, measured 361,530 478x44 against the card's 361,530 478x44) and glides to its own box on `spring.moderate`, its size a scale about its centre with the radius and shadow corrected; `scripts/check-queued-morph.tsx` reads the transformed box mid-morph (a bubble 303 wide between 479 and 159, 40 tall between 44 and 36). The text is a `layout="position"` box of its own, paired through a second `layoutId` with a `layout="position"` box around the card's text, so the words travel from the card's text to the bubble's, inside the bubble, at their own size; `motion.span layout` does nothing in gpuix, hence the `motion.div`. A card with attachments does not morph, as in the source. What differs:
+  - there is no crossfade: the bubble is the old box from its first frame, opaque, in the bubble's fill (`chatBubble`, 45% accent) where the card is 68%, and the card plays its own exit (`opacity 0, scale .9`, 0.12 s) under it, where Motion fades the bubble in over the first half of the glide and the card out in the second;
+  - a scroll between the dispatch's commit and the glide's first frame moves the start box by the distance scrolled: the transcript pins to its end in an effect (`composer-stage.tsx`), and a `scrollTo` lays out the pending tree before it writes the offset, so the glide's start is measured against the layout before the scroll. A transcript that has not scrolled yet starts exactly at the card (the check); the second dispatch of the seeded demo, which scrolls the transcript by 76 px, starts 110 px above the card. Motion measures after the effect, so its start is the card whatever the scroll;
+  - the card's own text box (`layout="position"`) snaps when the hover buttons narrow it, since `"position"` moves a corner only.
+- **Workaround:** none for the scroll; reported to gpuix with the measurement.
+- **Fidelity:** approximated.
 - **Components it hits:** input-message, chat-message.
 
 ## Drag and double-click start from the text region only
 
-- **Cause:** `port choice` (stated at `queued-stack.tsx:400-403`: a press on the buttons must not start a drag, and gpuix captures the pointer only when asked, `base-ui:src/utils/pointer-capture.ts:3-9`).
+- **Cause:** `port choice` (stated at `queued-stack.tsx:402-405`: a press on the buttons must not start a drag, and gpuix captures the pointer only when asked, `base-ui:src/utils/pointer-capture.ts:3-9`).
 - **Original:** `onPointerDown` and `onDoubleClick` are on the whole card, with window `pointermove` / `pointerup` listeners; the buttons stop their own pointer-down (`:302-314`, `:185-187`, `:382`).
-- **Port:** the press, move, release and double click are on an inner region with pointer capture (`queued-stack.tsx:404-418`), so a press or double click on the card's 14px (or 8px) left padding, its 6px right padding or its border does nothing. The drag position is the same maths.
+- **Port:** the press, move, release and double click are on an inner region with pointer capture (`queued-stack.tsx:406-420`), so a press or double click on the card's 14px (or 8px) left padding, its 6px right padding or its border does nothing. The drag position is the same maths.
 - **Workaround:** pointer capture.
 - **Fidelity:** approximated (the card edge is not part of the grip).
 - **Components it hits:** none other.
@@ -45,7 +48,7 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:3
 
 - **Cause:** `not ported yet`.
 - **Original:** the "+n" chip is `bg-background/40`, radius `attachmentRadius` (`:355-360`); Edit and Remove are focusable buttons with a `focus-visible:ring-1` ring and labels `Edit queued message: <text>` / `Remove queued message: <text>` (`:387-388`, `:401-402`).
-- **Port:** the chip is `color.hover` (a 4% black wash, not 40% of the background), tabular digits as in the source (`queued-stack.tsx:454`, `:460`, `:315-325`); Edit and Remove are `role="button"` divs with no `tabIndex`, no focus ring, and the labels `Edit` / `Remove` (`:76-78`, `:65-103`).
+- **Port:** the chip is `color.hover` (a 4% black wash, not 40% of the background), tabular digits as in the source (`queued-stack.tsx:456`, `:463`, `:315-325`); Edit and Remove are `role="button"` divs with no `tabIndex`, no focus ring, and the labels `Edit` / `Remove` (`:76-78`, `:65-103`).
 - **Workaround:** none.
 - **Fidelity:** approximated (chip tint); dropped (keyboard focus ring, longer labels).
 - **Components it hits:** none other.
@@ -60,10 +63,10 @@ Checked and the same: the peek, scale, gap and cap constants (`:28-31`; port `:3
 
 ## Demo page
 
-- **Cause:** `port choice` (reason not stated; the real composer is the input-message port); `not ported yet` for the morph.
+- **Cause:** `port choice` (reason not stated; the real composer is the input-message port); `gpuix gap` for the morph (above).
 - **Original:** `queued-chat-demo.tsx`: a real `InputMessage` over a transcript with a paused, thinking reply (`ChatMessage`, `ThinkingIndicator`), a play and pause button that steps the stream word by word, a Reset, three seeded cards (two attachments, "Tighten the spacing", and a long text that truncates), queued messages that dispatch into the transcript with the layout morph, and a "rich" variant with an attach dropdown and a model picker (`:55-120`, `:243-300`). Edit pulls text and files back into the composer.
-- **Port:** two cards in `src/demos/queued-stack.tsx`. "Queued Stack": a "Queue message" / "Queue with attachment" / "Clear" row above a plain box that shows the composer text; four seeded cards, one with three files (`:52-61`). "Queued chat": `QueuedChat` from `src/lib/queued-chat.tsx`, the source's demo with a real `InputMessage`, a transcript, a Resume / Pause / Reset button, the same three seeded cards and dispatch into the transcript (the input-message page also shows its `rich` variant). Edit puts the text and files back but does not focus the composer (see `drift/input-message.md`, "Queued chat").
-- **Fidelity:** approximated (no morph).
+- **Port:** two cards in `src/demos/queued-stack.tsx`. "Queued Stack": a "Queue message" / "Queue with attachment" / "Clear" row above a plain box that shows the composer text; four seeded cards, one with three files (`:52-61`). "Queued chat": `QueuedChat` from `src/lib/queued-chat.tsx`, the source's demo with a real `InputMessage`, a transcript, a Resume / Pause / Reset button, the same three seeded cards and dispatch into the transcript with the morph (the input-message page also shows its `rich` variant). Edit puts the text and files back but does not focus the composer (see `drift/input-message.md`, "Queued chat").
+- **Fidelity:** approximated.
 - **Components it hits:** input-message, chat-message, thinking-indicator.
 
 ## Sample photo: a different picture, named avatar.jpg

@@ -79,6 +79,8 @@ export function ChatMessage(props: {
 	children?: JSX.Element;
 	/** Lets the message use the whole row instead of 80% of it. */
 	fullWidth?: boolean;
+	/** The `layoutId` of the queued card this message was sent from: the bubble starts as that card and glides into place. Set it for the morph only, since every later reflow would replay the layout animation on a settled bubble. */
+	morphId?: string;
 }) {
 	const [hovered, setHovered] = createSignal(false);
 	const [focusWithin, setFocusWithin] = createSignal(false);
@@ -89,8 +91,13 @@ export function ChatMessage(props: {
 	return (
 		<motion.div
 			testId={props.testId}
-			layout="position"
-			initial={{ opacity: 0, y: ENTRANCE_RISE, scale: ENTRANCE_SCALE }}
+			layout={props.morphId === undefined ? 'position' : true}
+			layoutId={props.morphId}
+			initial={
+				props.morphId === undefined
+					? { opacity: 0, y: ENTRANCE_RISE, scale: ENTRANCE_SCALE }
+					: false
+			}
 			animate={{ opacity: 1, y: 0, scale: 1 }}
 			transition={tween.moderate}
 			onMouseEnter={() => setHovered(true)}
@@ -141,12 +148,26 @@ export function ChatMessage(props: {
 							: {}),
 					}}
 				>
-					{typeof props.children === 'string' ? (
+					{typeof props.children !== 'string' ? (
+						props.children
+					) : props.morphId === undefined ? (
 						<text style={{ ...subtitle, color: color.foreground }}>
 							{props.children}
 						</text>
 					) : (
-						props.children
+						// A `layout` box is not stretched by the bubble's scale, so the words keep their size while the bubble grows around them.
+						<motion.div
+							testId={
+								props.testId === undefined ? undefined : `${props.testId}-text`
+							}
+							layout="position"
+							layoutId={`${props.morphId}-text`}
+							transition={tween.moderate}
+						>
+							<text style={{ ...subtitle, color: color.foreground }}>
+								{props.children}
+							</text>
+						</motion.div>
 					)}
 				</div>
 			</Show>

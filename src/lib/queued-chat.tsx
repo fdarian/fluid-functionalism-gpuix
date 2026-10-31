@@ -30,6 +30,8 @@ const STAGE_HEIGHT = 440;
 const PLACEHOLDER = 'Send while I’m responding to queue a message…';
 const THINK_MS = 4000;
 const WORD_MS = 150;
+/** How long the morph's props stay on the bubble: the card's glide, `spring.moderate`, has settled by then. */
+const MORPH_MS = 450;
 
 /** The embedded copy's basename can carry a hash, so the shown name is set here. */
 const PHOTO: ComposerFile = { ...fileFromPath(AVATAR_JPG), name: 'avatar.jpg' };
@@ -104,6 +106,10 @@ export function QueuedChat(props: { testId: string; rich?: boolean }) {
 	const [status, setStatus] = createSignal<'idle' | 'streaming'>('idle');
 	const [chat, setChat] = createSignal<Turn[]>([]);
 	const [model, setModel] = createSignal<(typeof MODELS)[number]>(MODELS[0]);
+	// The morph's props apply to one bubble and only for the transition: a settled bubble that kept them would replay its layout animation on every reflow of the transcript.
+	const [morphingId, setMorphingId] = createSignal<string>();
+	let morphTimer: ReturnType<typeof setTimeout> | undefined;
+	onCleanup(() => clearTimeout(morphTimer));
 
 	const patchAssistant = (patch: Partial<Turn>) =>
 		setChat((turns) => {
@@ -117,15 +123,21 @@ export function QueuedChat(props: { testId: string; rich?: boolean }) {
 			return next;
 		});
 
-	const respond = (text: string, files: ComposerFile[]) => {
+	const respond = (text: string, files: ComposerFile[], queuedId?: string) => {
 		const reply = `Replying to “${text}”. Here's a fuller answer that streams in a word at a time so you can watch the queue release the next message.`;
 		const words = reply.split(' ');
 		setChat((turns) => [
 			...turns,
-			{ from: 'user', text, files },
+			{ from: 'user', text, files, id: queuedId },
 			{ from: 'assistant', text: '', thinking: true },
 		]);
 		setStatus('streaming');
+		// Attachments lay out inline on the card and stacked in the bubble, which a box scale would squash, so those dispatches fade as before.
+		if (queuedId !== undefined && files.length === 0) {
+			setMorphingId(queuedId);
+			clearTimeout(morphTimer);
+			morphTimer = setTimeout(() => setMorphingId(undefined), MORPH_MS);
+		}
 		const reveal = (index: number) => {
 			patchAssistant({
 				text: words.slice(0, index + 1).join(' '),
@@ -230,7 +242,7 @@ export function QueuedChat(props: { testId: string; rich?: boolean }) {
 			</div>
 			<ComposerStage
 				height={STAGE_HEIGHT}
-				transcript={<Transcript turns={chat()} />}
+				transcript={<Transcript turns={chat()} morphingId={morphingId()} />}
 				pin={() => [chat(), queue()]}
 				reserve={(composerHeight) =>
 					composerHeight +
@@ -244,6 +256,7 @@ export function QueuedChat(props: { testId: string; rich?: boolean }) {
 						onQueueChange={setQueue}
 						onEdit={edit}
 						bottom={composerHeight() + 8}
+						morph
 					/>
 				)}
 			>
@@ -261,7 +274,7 @@ export function QueuedChat(props: { testId: string; rich?: boolean }) {
 					files={props.rich === true ? composerFiles() : undefined}
 					onFilesChange={props.rich === true ? setComposerFiles : undefined}
 					onSend={(text, files, meta) => {
-						if (text !== '') respond(text, files);
+						if (text !== '') respond(text, files, meta?.queuedId);
 						// A queued dispatch carries its own text and files: it must leave the draft being typed alone.
 						if (meta?.queuedId === undefined) {
 							setValue('');

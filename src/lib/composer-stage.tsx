@@ -18,14 +18,23 @@ import {
 import { ThinkingIndicator } from '#/components/thinking-indicator';
 
 export type Turn = {
+	/** The queued message this turn was dispatched from, which the morph pairs with its card. */
+	id?: string;
 	from: 'user' | 'assistant';
 	text: string;
 	files?: ComposerFile[];
 	thinking?: boolean;
 };
 
+/** The `layoutId` a queued card and its sent bubble share. */
+export const morphLayoutId = (item: { id?: string }) => `qm-${item.id}`;
+
 /** The docs' transcript: user bubbles, assistant text, a thinking indicator for a reply not yet started. Items update in place, so a streaming reply does not replay the entrance per word. */
-export function Transcript(props: { turns: Turn[] }) {
+export function Transcript(props: {
+	turns: Turn[];
+	/** The dispatched turn playing its queued-to-sent morph; set only for the transition, then cleared. */
+	morphingId?: string;
+}) {
 	return (
 		<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
 			<Index each={props.turns}>
@@ -35,6 +44,12 @@ export function Transcript(props: { turns: Turn[] }) {
 						fallback={<ThinkingIndicator />}
 					>
 						<ChatMessage
+							testId={turn().id === undefined ? undefined : `sent-${turn().id}`}
+							morphId={
+								turn().id !== undefined && turn().id === props.morphingId
+									? morphLayoutId(turn())
+									: undefined
+							}
 							from={turn().from}
 							files={turn().files?.map((file) => ({
 								name: file.name,
@@ -135,6 +150,8 @@ export function ComposerQueueStack(props: {
 	onEdit: (item: QueuedMessage) => void;
 	bottom: number;
 	testId?: string;
+	/** Give the cards the `layoutId`s the transcript's morphing bubble pairs with. */
+	morph?: boolean;
 }) {
 	const byId = (id: string) => {
 		const found = props.queue.find((item) => item.id === id);
@@ -173,6 +190,7 @@ export function ComposerQueueStack(props: {
 				)
 			}
 			bottom={props.bottom}
+			morphLayoutId={props.morph === true ? morphLayoutId : undefined}
 		/>
 	);
 }

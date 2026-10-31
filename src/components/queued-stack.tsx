@@ -115,6 +115,8 @@ export function QueuedStack(props: {
 	/** Distance from the container's bottom edge, usually the composer's height plus 8. */
 	bottom: number;
 	testId?: string;
+	/** A `layoutId` per card, so a text-only card that leaves the queue hands its box to the sent bubble that carries the same id. Dropped while a card is pressed: a layout glide fights the drag's animated `y`. */
+	morphLayoutId?: (item: QueuedMessage) => string;
 }) {
 	const count = () => props.queue.length;
 	const hiddenCount = () => Math.max(0, count() - (STACK_MAX_PEEK + 1));
@@ -310,6 +312,13 @@ export function QueuedStack(props: {
 										index={index}
 										target={() => target(item)}
 										dragging={() => draggingId() === item.id}
+										morphId={() =>
+											props.morphLayoutId !== undefined &&
+											pointerDownId() === null &&
+											item.files.length === 0
+												? props.morphLayoutId(item)
+												: undefined
+										}
 										expanded={expanded}
 										onPress={(event) => {
 											if (event.y === undefined) {
@@ -339,6 +348,7 @@ function QueueCard(props: {
 	index: () => number;
 	target: () => { opacity: number; y: number; scale: number };
 	dragging: () => boolean;
+	morphId: () => string | undefined;
 	expanded: () => boolean;
 	onPress: (event: HostMouseEvent) => void;
 	onDragMove: (event: HostMouseEvent) => void;
@@ -355,6 +365,7 @@ function QueueCard(props: {
 	return (
 		<motion.div
 			testId={`queued-${props.item.id}`}
+			layoutId={props.morphId()}
 			initial={{ opacity: 0, y: 14, scale: 0.96 }}
 			animate={props.target()}
 			exit={{ opacity: 0, scale: 0.9, transition: tween.moderateExit }}
@@ -458,7 +469,11 @@ function QueueCard(props: {
 						</Show>
 					</div>
 				</Show>
-				<div style={{ flexGrow: 1, minWidth: 0 }}>
+				<motion.div
+					layout="position"
+					layoutId={props.morphId() && `${props.morphId()}-text`}
+					style={{ flexGrow: 1, minWidth: 0 }}
+				>
 					<text
 						style={{
 							fontSize: 14,
@@ -470,7 +485,7 @@ function QueueCard(props: {
 					>
 						{label()}
 					</text>
-				</div>
+				</motion.div>
 			</div>
 			{/* Out of layout until the card is hovered, so the text has the full width meanwhile. */}
 			<Show when={hovered()}>

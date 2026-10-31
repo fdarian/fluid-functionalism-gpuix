@@ -61,7 +61,7 @@ Ported and matching: the square with `bg-accent`, `overflow-hidden` and `shrink-
 
 - **Cause:** `port choice` (reason not stated).
 - **Original:** no standalone demo. The component appears inside other pages: thumbnails at size 28 and radius 12 on the queued cards (`app/docs/input-message/page.tsx:446-450`).
-- **Port:** its own page: Image, No preview, Pending and Radius rows at 28, 48, 64 and 96px (`src/demos/file-thumbnail.tsx:19-43`). The source has no counterpart; the queued-stack port passes `nestedRadius(shape.bg, 8)` to its 28px tiles (`src/components/queued-stack.tsx:496`), as the source's `attachmentRadius` is also a `nestedRadius` (`registry/blocks/queued-stack.tsx:73-76`, `:351`), so the radius 12 above is the input-message page's own tiles; that belongs to the queued-stack file.
+- **Port:** its own page: Image, No preview, Pending and Radius rows at 28, 48, 64 and 96px (`src/demos/file-thumbnail.tsx:19-43`). The source has no counterpart; the queued-stack port passes `nestedRadius(shape.bg, 8)` to its 28px tiles (`src/components/queued-stack.tsx:444`), as the source's `attachmentRadius` is also a `nestedRadius` (`registry/blocks/queued-stack.tsx:73-76`, `:351`), so the radius 12 above is the input-message page's own tiles; that belongs to the queued-stack file.
 - **Workaround:** n/a.
 - **Fidelity:** n/a (an addition).
 - **Components it hits:** queued-stack, chat-message, input-message.
