@@ -3,7 +3,7 @@ import {
 	MotionConfig,
 	motion,
 	type StyleDesc,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import {
 	type ScrollAreaAxis as Axis,
 	createScrollAreaRoot,

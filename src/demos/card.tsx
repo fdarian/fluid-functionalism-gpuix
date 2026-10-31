@@ -1,4 +1,4 @@
-import { buttonProps, useGpuixRequired } from '@gpuix/solid';
+import { buttonProps, useGpuixRequired } from '@ghia/solid';
 import { createSignal, For, type JSX, Show } from 'solid-js';
 import {
 	Card,

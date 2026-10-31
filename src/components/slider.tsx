@@ -5,7 +5,7 @@ import {
 	type HostElement,
 	type KeyEvent,
 	motion,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { createPresence } from 'base-ui-solid-gpuix/internals';
 import {
 	createControlBox,

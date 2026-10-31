@@ -3,7 +3,7 @@
 	"private": true,
 	"version": "0.1.0",
 	"type": "module",
-	"description": "Experiment: fluidfunctionalism.com's Button, Combobox and Sidebar (with fluid hover) ported to @gpuix/solid.",
+	"description": "Experiment: fluidfunctionalism.com's Button, Combobox and Sidebar (with fluid hover) ported to @ghia/solid.",
 	"packageManager": "pnpm@12.11.2",
 	"scripts": {
 		"start": "bun --hot src/main.tsx",
@@ -17,8 +17,8 @@
 		"format": "biome check --write"
 	},
 	"dependencies": {
-		"@gpuix/native": "link:../gpuix/packages/native",
-		"@gpuix/solid": "file:../gpuix/packages/solid",
+		"@ghia/native": "link:../gpuix/packages/native",
+		"@ghia/solid": "file:../gpuix/packages/solid",
 		"base-ui-solid-gpuix": "link:../base-ui-solid-gpuix",
 		"solid-js": "1.9.15"
 	},

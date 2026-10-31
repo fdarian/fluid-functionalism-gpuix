@@ -104,5 +104,5 @@ scenario and the screenshots had to pass after each slice.
   rounds](../gpuix/gaps-and-divergence-rounds.md#adoption-pass-2026-10-17). Line cites rot whenever the fork's
   `FORK.md` reflows, so expect a re-point after each fork rebase.
 - Minor: twelve Biome warnings (such as `useOptionalChain`) left unfixed; `scripts/check-command-menu.tsx`
-  deep-imports `@gpuix/solid/dist/host.js` because the package exports no path for it; `clamp` is duplicated between
+  deep-imports `@ghia/solid/dist/host.js` because the package exports no path for it; `clamp` is duplicated between
   this repository's scroll area and base-ui's scroll maths.

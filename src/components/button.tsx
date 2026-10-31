@@ -5,7 +5,7 @@ import {
 	type HostPointerEvent,
 	type StateStyleDesc,
 	useGpuixRequired,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { type Accessor, createSignal, type JSX, Show } from 'solid-js';
 import { Icon } from '#/lib/icon';
 import type { IconRef } from '#/lib/icons';

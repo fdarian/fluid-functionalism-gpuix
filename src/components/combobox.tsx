@@ -1,4 +1,4 @@
-import type { HostElement } from '@gpuix/solid';
+import type { HostElement } from '@ghia/solid';
 import { createComboboxRoot } from 'base-ui-solid-gpuix/combobox';
 import { FormValue } from 'base-ui-solid-gpuix/utils';
 import { type Accessor, createMemo, createSignal, For, Show } from 'solid-js';

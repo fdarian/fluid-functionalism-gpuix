@@ -1,4 +1,4 @@
-import { type DomEvent, type HostElement, motion } from '@gpuix/solid';
+import { type DomEvent, type HostElement, motion } from '@ghia/solid';
 import {
 	createTabsList,
 	createTabsPanel,

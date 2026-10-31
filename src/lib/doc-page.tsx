@@ -4,7 +4,7 @@ import {
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import {
 	type Accessor,
 	createSignal,

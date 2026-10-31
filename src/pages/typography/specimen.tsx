@@ -1,4 +1,4 @@
-import type { HostElement, StyleDesc } from '@gpuix/solid';
+import type { HostElement, StyleDesc } from '@ghia/solid';
 import type { JSX } from 'solid-js';
 import { MONO } from '#/lib/doc-page';
 import { color, shape, siteType } from '#/lib/theme';

@@ -4,8 +4,8 @@
  *
  *   bun scripts/check-popups.tsx
  */
-import type { TestElement } from '@gpuix/solid/testing';
-import { createTestRoot } from '@gpuix/solid/testing';
+import type { TestElement } from '@ghia/solid/testing';
+import { createTestRoot } from '@ghia/solid/testing';
 import { createSignal } from 'solid-js';
 import { App } from '#/app';
 import { Button } from '#/components/button';

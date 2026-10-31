@@ -1,4 +1,4 @@
-import { buttonProps, type KeyEvent, useGpuixRequired } from '@gpuix/solid';
+import { buttonProps, type KeyEvent, useGpuixRequired } from '@ghia/solid';
 import { Icon } from '#/lib/icon';
 import { defineIcon, type IconName } from '#/lib/icons';
 import { lucide } from '#/lib/icons/lucide';

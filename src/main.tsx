@@ -3,7 +3,7 @@
  * is a Bun preload (see bunfig.toml). Demos in `src/demos/` are discovered at
  * startup, so a new one shows up after a restart.
  */
-import { render } from '@gpuix/solid';
+import { render } from '@ghia/solid';
 import { loadDemos, loadPages, SHOWCASE_SLUG } from '#/lib/demo';
 import { windowOptions } from '#/lib/window-options';
 import { App } from './app';

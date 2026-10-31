@@ -5,7 +5,7 @@ import {
 	type HostMouseEvent,
 	type KeyEvent,
 	motion,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import {
 	createPlacementState,
 	POPUP_MARGIN,

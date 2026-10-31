@@ -5,7 +5,7 @@ import {
 	Dialog as GpuixDialog,
 	type HostElement,
 	motion,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { FocusFirst } from 'base-ui-solid-gpuix/dialog';
 import { createDrawerRoot } from 'base-ui-solid-gpuix/drawer';
 import { HideOutside } from 'base-ui-solid-gpuix/floating-ui-solid/utils';

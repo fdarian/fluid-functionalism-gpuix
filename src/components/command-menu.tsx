@@ -7,7 +7,7 @@ import {
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { createPresence } from 'base-ui-solid-gpuix/internals';
 import { moveIndex } from 'base-ui-solid-gpuix/internals/composite';
 import {

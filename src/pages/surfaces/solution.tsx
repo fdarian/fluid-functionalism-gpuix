@@ -1,4 +1,4 @@
-import type { HostMouseEvent } from '@gpuix/solid';
+import type { HostMouseEvent } from '@ghia/solid';
 import { createSignal, For, type JSX, Show } from 'solid-js';
 import { ScrollArea } from '#/components/scroll-area';
 import { Slider, type SliderValue } from '#/components/slider';

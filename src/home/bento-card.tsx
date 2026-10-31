@@ -3,7 +3,7 @@ import {
 	motion,
 	type StyleDesc,
 	useGpuixRequired,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { createContext, type JSX, Show } from 'solid-js';
 import { Badge } from '#/components/badge';
 import { createCulling, OnScreenContext } from '#/lib/cull';

@@ -9,7 +9,7 @@ import {
 	DialogTrigger as GpuixDialogTrigger,
 	type HostElement,
 	motion,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import {
 	createDialogDescription,
 	createDialogPopup,

@@ -1,4 +1,4 @@
-import type { HostElement } from '@gpuix/solid';
+import type { HostElement } from '@ghia/solid';
 import { createSignal } from 'solid-js';
 import { Button } from '#/components/button';
 import { Combobox, type ComboboxItem } from '#/components/combobox';

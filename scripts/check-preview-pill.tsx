@@ -11,7 +11,7 @@
  * start left of tab 2's own edge is asserted.
  */
 
-import { createTestRoot } from '@gpuix/solid/testing';
+import { createTestRoot } from '@ghia/solid/testing';
 import { App } from '#/app';
 import { loadDemos, loadPages } from '#/lib/demo';
 import { fonts } from '#/lib/fonts';

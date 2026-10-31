@@ -1,4 +1,4 @@
-import type { DomEvent } from '@gpuix/solid';
+import type { DomEvent } from '@ghia/solid';
 import { type Accessor, createSignal, For, type JSX, Show } from 'solid-js';
 import { Button } from '#/components/button';
 import { CheckboxGroup, CheckboxItem } from '#/components/checkbox-group';

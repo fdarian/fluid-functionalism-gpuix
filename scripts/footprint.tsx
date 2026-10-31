@@ -33,7 +33,7 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { loadavg, tmpdir, uptime } from 'node:os';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
-import solidPlugin from '@gpuix/solid/bun-plugin';
+import solidPlugin from '@ghia/solid/bun-plugin';
 import { nativeCjsPlugin } from './native-cjs-plugin';
 import { registryPlugin } from './registry-plugin';
 

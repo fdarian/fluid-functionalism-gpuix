@@ -1,4 +1,4 @@
-import { buttonProps, motion, useGpuixRequired } from '@gpuix/solid';
+import { buttonProps, motion, useGpuixRequired } from '@ghia/solid';
 import { createSignal, type JSX, Show } from 'solid-js';
 import { Icon } from '#/lib/icon';
 import type { IconName } from '#/lib/icons';

@@ -1,4 +1,4 @@
-import type { DomEvent, HostElement } from '@gpuix/solid';
+import type { DomEvent, HostElement } from '@ghia/solid';
 import type { MenuSearchHost, MenuSearchProps } from 'base-ui-solid-gpuix/menu';
 import {
 	createContext,

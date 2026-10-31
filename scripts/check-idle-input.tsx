@@ -12,7 +12,7 @@
  * Without the NSEventThread observer in gpuix (the #93 fix) the first post never wakes and this fails.
  */
 
-import { startFrameLoop } from '@gpuix/native/runtime';
+import { startFrameLoop } from '@ghia/native/runtime';
 import { createCheck } from './check-kit';
 
 const kit = await createCheck('command-menu');

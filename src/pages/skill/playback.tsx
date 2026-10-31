@@ -9,7 +9,7 @@ import {
 	type HostMouseEvent,
 	IntersectionObserver,
 	motion,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import {
 	createEffect,
 	createSignal,

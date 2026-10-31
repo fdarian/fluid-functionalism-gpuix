@@ -1,4 +1,4 @@
-import type { StyleDesc } from '@gpuix/solid';
+import type { StyleDesc } from '@ghia/solid';
 import { type JSX, Show } from 'solid-js';
 import {
 	capTrim,

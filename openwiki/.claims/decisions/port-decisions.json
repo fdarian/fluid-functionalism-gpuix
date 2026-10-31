@@ -104,7 +104,7 @@
     },
     {
       "id": "claim_6a31e32b868e4e0e9b4d7f457807eb92",
-      "statement": "@gpuix/solid is installed as a file: copy so its solid-js peer resolves from the app, @gpuix/native stays a link with a workspace override, and base-ui-solid-gpuix is a workspace member.",
+      "statement": "@ghia/solid is installed as a file: copy so its solid-js peer resolves from the app, @ghia/native stays a link with a workspace override, and base-ui-solid-gpuix is a workspace member.",
       "evidence": [
         {
           "resource": "repo://package.json#L19-L24",
@@ -118,7 +118,7 @@
     },
     {
       "id": "claim_92ef8990897c4ad2a06599203bda93a6",
-      "statement": "scripts/check-single-instance.ts fails when solid-js or @gpuix/solid resolves to more than one copy across the app and base-ui-solid-gpuix.",
+      "statement": "scripts/check-single-instance.ts fails when solid-js or @ghia/solid resolves to more than one copy across the app and base-ui-solid-gpuix.",
       "evidence": [
         {
           "resource": "repo://scripts/check-single-instance.ts#L4-L20",
@@ -620,7 +620,7 @@
     },
     {
       "id": "claim_3874e6fecaef49f8b09b36176bf4f2c0",
-      "statement": "nativeCjsPlugin is shared in scripts/native-cjs-plugin.ts and redirects both the @gpuix/native import and the ../index.js import made from the package's own dist files (the test renderer) to the CJS entry, so compiled headless children can embed the native addon.",
+      "statement": "nativeCjsPlugin is shared in scripts/native-cjs-plugin.ts and redirects both the @ghia/native import and the ../index.js import made from the package's own dist files (the test renderer) to the CJS entry, so compiled headless children can embed the native addon.",
       "evidence": [
         {
           "resource": "repo://scripts/native-cjs-plugin.ts#L1-L27",

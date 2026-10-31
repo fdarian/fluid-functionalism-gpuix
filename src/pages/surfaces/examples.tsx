@@ -1,4 +1,4 @@
-import { type HostElement, ResizeObserver } from '@gpuix/solid';
+import { type HostElement, ResizeObserver } from '@ghia/solid';
 import {
 	type Accessor,
 	createSignal,

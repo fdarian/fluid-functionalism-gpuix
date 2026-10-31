@@ -189,7 +189,7 @@ strut sitting about 5.5 px high, and the missing pause/play on a motion value's 
 The port records a gap in its drift file, then the batch is sent to the gpuix fork session with numbered items
 (`#N`, numbered continuously across rounds). The fork replies per item with **FIXED** (and a commit),
 **WONTFIX** (with a reason), **DOC** (documented deviation), or **PUSHBACK** (the claim was wrong). When a round
-lands, the port runs one migration pass: rebuild the native addon and the `@gpuix/solid` dist, `pnpm install` to
+lands, the port runs one migration pass: rebuild the native addon and the `@ghia/solid` dist, `pnpm install` to
 refresh the `file:` copy, apply the breaking changes, drop the workarounds the fix made unnecessary, and update
 drift and the README. Since the 2026-10-16 decision to [adopt newly possible gpuix
 features](../decisions/user-decisions-2026-10-16.md#3-adopt-newly-possible-gpuix-features), each pass also adopts
@@ -279,7 +279,7 @@ culling remain open (culling is still open as gpuix #46 on `e5231304`).
 Done against gpuix `poc` `dcfc7a0e`, the fork after it rebased. **Every gpuix SHA in the Round 5 table and the
 gap-closing section above is pre-rebase**; they identify the fixes but no longer resolve on `poc`. The pass ran in
 slices, one checkout at a time, because the check-* scenarios load base-ui-solid-gpuix live. This repository's
-dist copy of `@gpuix/solid` was byte-identical to the fork's, so no rebuild was needed.
+dist copy of `@ghia/solid` was byte-identical to the fork's, so no rebuild was needed.
 
 What it changed, by Round 5 item:
 

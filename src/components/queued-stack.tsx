@@ -7,7 +7,7 @@ import {
 	type HostPointerEvent,
 	type MotionTransition,
 	motion,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
 import { createEffect, createSignal, For, onCleanup, Show } from 'solid-js';
 import { Icon } from '#/lib/icon';

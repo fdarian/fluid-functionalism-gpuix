@@ -1,4 +1,4 @@
-import { animate, createMotionValue, motion } from '@gpuix/solid';
+import { animate, createMotionValue, motion } from '@ghia/solid';
 import {
 	createSwitchRoot,
 	createSwitchThumb,

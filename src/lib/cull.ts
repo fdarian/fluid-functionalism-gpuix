@@ -2,7 +2,7 @@ import {
 	type HostElement,
 	IntersectionObserver,
 	type StyleDesc,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import {
 	type Accessor,
 	createContext,

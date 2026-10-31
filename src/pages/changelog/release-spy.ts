@@ -1,4 +1,4 @@
-import { createReducedMotion, type HostElement } from '@gpuix/solid';
+import { createReducedMotion, type HostElement } from '@ghia/solid';
 import { createEffect, createSignal, onCleanup, useContext } from 'solid-js';
 import { PageScrollContext, PageScrollerContext } from '#/lib/cull';
 

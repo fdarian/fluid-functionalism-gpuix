@@ -1,4 +1,4 @@
-import type { DomEvent } from '@gpuix/solid';
+import type { DomEvent } from '@ghia/solid';
 import { createSignal } from 'solid-js';
 import { toOffsetPx } from '#/lib/offset';
 

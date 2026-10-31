@@ -1,4 +1,4 @@
-import { type HostElement, IntersectionObserver } from '@gpuix/solid';
+import { type HostElement, IntersectionObserver } from '@ghia/solid';
 import {
 	type Accessor,
 	createEffect,

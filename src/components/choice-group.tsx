@@ -1,4 +1,4 @@
-import type { DomEvent, HostElement } from '@gpuix/solid';
+import type { DomEvent, HostElement } from '@ghia/solid';
 import type { RowItem } from 'base-ui-solid-gpuix/internals/composite';
 import {
 	type Accessor,

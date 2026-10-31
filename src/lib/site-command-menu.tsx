@@ -1,4 +1,4 @@
-import { window as appWindow, type DomEvent } from '@gpuix/solid';
+import { window as appWindow, type DomEvent } from '@ghia/solid';
 import { createMemo, createSignal, onCleanup } from 'solid-js';
 import {
 	CommandMenu,

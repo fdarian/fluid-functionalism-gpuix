@@ -28,7 +28,7 @@
  *    such strings ("Pro plan", "Toggle dark mode") asserts that the cell
  *    equals the wider copy, light and heavy, exactly.
  */
-import type { HostElement } from '@gpuix/solid';
+import type { HostElement } from '@ghia/solid';
 import { createSignal, For, type JSX } from 'solid-js';
 import { StableLabel } from '#/lib/stable-label';
 import { color, fontFamily, type as scale, weight } from '#/lib/theme';

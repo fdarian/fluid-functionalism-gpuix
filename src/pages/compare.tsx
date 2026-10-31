@@ -1,4 +1,4 @@
-import { window as appWindow, type DomEvent, motion } from '@gpuix/solid';
+import { window as appWindow, type DomEvent, motion } from '@ghia/solid';
 import {
 	createEffect,
 	createSignal,

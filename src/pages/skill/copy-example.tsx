@@ -1,4 +1,4 @@
-import { buttonProps, useGpuixRequired } from '@gpuix/solid';
+import { buttonProps, useGpuixRequired } from '@ghia/solid';
 import { createSignal } from 'solid-js';
 import { InputCopy } from '#/components/input-copy';
 import { MONO } from '#/lib/doc-page';

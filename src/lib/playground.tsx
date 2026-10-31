@@ -3,7 +3,7 @@ import {
 	type HostElement,
 	IntersectionObserver,
 	motion,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import {
 	type Accessor,
 	children,

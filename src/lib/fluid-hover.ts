@@ -2,7 +2,7 @@ import {
 	type HostElement,
 	type HostMouseEvent,
 	ResizeObserver,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { batch, createEffect, createSignal, onCleanup } from 'solid-js';
 import { toOffsetPx } from '#/lib/offset';
 

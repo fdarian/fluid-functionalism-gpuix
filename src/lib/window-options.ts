@@ -1,4 +1,4 @@
-import { type Display, screen } from '@gpuix/solid';
+import { type Display, screen } from '@ghia/solid';
 import { WINDOW_TITLE } from '#/app';
 import { fonts } from '#/lib/fonts';
 

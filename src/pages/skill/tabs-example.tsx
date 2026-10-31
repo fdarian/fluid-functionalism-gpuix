@@ -1,4 +1,4 @@
-import { buttonProps, useGpuixRequired } from '@gpuix/solid';
+import { buttonProps, useGpuixRequired } from '@ghia/solid';
 import { createSignal, For } from 'solid-js';
 import { TabsSubtle, TabsSubtleItem } from '#/components/tabs-subtle';
 import { color, focusRing, shape, siteType } from '#/lib/theme';

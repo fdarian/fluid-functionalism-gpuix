@@ -1,4 +1,4 @@
-import type { DomEvent } from '@gpuix/solid';
+import type { DomEvent } from '@ghia/solid';
 import { createMenuItem, type MenuItemHost } from 'base-ui-solid-gpuix/menu';
 import {
 	type Accessor,

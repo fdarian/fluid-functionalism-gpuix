@@ -10,7 +10,7 @@
  * Prints PASS / FAIL lines; exits 1 on any FAIL.
  */
 
-import { createTestRoot } from '@gpuix/solid/testing';
+import { createTestRoot } from '@ghia/solid/testing';
 import { App } from '#/app';
 import { marks } from '#/lib/changelog/releases';
 import { loadDemos, loadPages } from '#/lib/demo';

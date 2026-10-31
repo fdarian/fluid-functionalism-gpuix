@@ -4,7 +4,7 @@
   "claims": [
     {
       "id": "claim_a7315f44f8af437c803bd7fb46fe717d",
-      "statement": "pnpm install must run from this repository's root; installing inside base-ui-solid-gpuix links a second @gpuix/solid and breaks the app silently.",
+      "statement": "pnpm install must run from this repository's root; installing inside base-ui-solid-gpuix links a second @ghia/solid and breaks the app silently.",
       "evidence": [
         {
           "resource": "repo://AGENTS.md#L27-L27",

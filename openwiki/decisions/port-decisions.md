@@ -859,19 +859,19 @@ Two things from the 2026-10-19 round (`a2eed755`, `ce7ee2b9`, `d9d2e93e`):
   half-pixel content is where a rounding regression would show; it also pins that a continuous wheel gesture stays
   latched to the area it started on (gpuix holds the latch until 500 ms pass without an event, as Chrome does).
 
-## pnpm wiring: one solid-js, one @gpuix/solid
+## pnpm wiring: one solid-js, one @ghia/solid
 
 This is the most fragile part of the setup; the README's "How gpuix and base-ui-solid-gpuix are wired in" has the
 full mechanics. The decisions and what forced them:
 
-- **`@gpuix/solid` is a `file:` copy, not a `link:`.** A link resolves `solid-js` from the fork's own
+- **`@ghia/solid` is a `file:` copy, not a `link:`.** A link resolves `solid-js` from the fork's own
   `node_modules`, giving two `solid-js` instances: two reactive systems, and nothing updates, silently. A copy
   resolves its peer from this app. Cost: run `pnpm install` here after rebuilding gpuix's dist.
   `packageImportMethod: clone-or-copy` keeps a gpuix rebuild from mutating the store.
-- **`@gpuix/native` stays a `link:`**, and the workspace override points the copy's native dependency back at the
+- **`@ghia/native` stays a `link:`**, and the workspace override points the copy's native dependency back at the
   fork.
 - **base-ui-solid-gpuix is a workspace member** linked with `link:`. A plain link failed because a `file:`
-  dependency gets a store path per project directory, so the sibling would get its own second `@gpuix/solid`.
+  dependency gets a store path per project directory, so the sibling would get its own second `@ghia/solid`.
 - **Install only from this repository's root.** A bare `pnpm install` inside the sibling links a second copy, and
   pnpm 12 auto-installs before running scripts there too, so the sibling sets `verifyDepsBeforeRun: false`.
 - **A guard catches it.** `scripts/check-single-instance.ts` (run by `check:scenarios`) fails when either package

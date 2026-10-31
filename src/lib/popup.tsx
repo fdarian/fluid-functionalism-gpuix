@@ -1,4 +1,4 @@
-import { type DimensionValue, DismissableLayer, motion } from '@gpuix/solid';
+import { type DimensionValue, DismissableLayer, motion } from '@ghia/solid';
 import {
 	createPlacementState,
 	type createPresence,

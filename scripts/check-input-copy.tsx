@@ -15,7 +15,7 @@
  * - A press writes the value to `navigator.clipboard`; a refused write shows "Failed".
  */
 
-import { createTestRoot } from '@gpuix/solid/testing';
+import { createTestRoot } from '@ghia/solid/testing';
 import { InputCopy } from '#/components/input-copy';
 import { TooltipProvider } from '#/components/tooltip';
 import { fonts } from '#/lib/fonts';

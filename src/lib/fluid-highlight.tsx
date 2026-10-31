@@ -2,7 +2,7 @@ import {
 	createReducedMotion,
 	type MotionTransition,
 	motion,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { createComputed, createSignal, For, untrack } from 'solid-js';
 import type { ItemRect } from './fluid-hover';
 import { motion as tween } from './theme';

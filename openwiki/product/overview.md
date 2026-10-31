@@ -72,7 +72,7 @@ site was the only place to see them. Which files are at which pin, and how to ca
 - **`~/code/fdarian/base-ui-solid-gpuix`**: headless Solid ports of the Base UI primitives (keys, selection, open
   state, focus, ARIA), split out of this repository on 2026-10-17.
 
-All three must resolve to one `solid-js` and one `@gpuix/solid`; see
+All three must resolve to one `solid-js` and one `@ghia/solid`; see
 [Port decisions, pnpm wiring](../decisions/port-decisions.md#pnpm-wiring-one-solid-js-one-gpuixsolid).
 
 ## History in brief

@@ -49,4 +49,4 @@ the repository docs do not: reasons, decisions and history. For mechanics, go to
 | Find what is still open before publishing | [Base UI extraction, Open follow-ups](history/base-ui-extraction.md#open-follow-ups) |
 
 Two traps worth knowing before anything else: run `pnpm install` only from this repository's root (a second
-`@gpuix/solid` breaks the app silently), and do not trust screenshot hashes (playgrounds use `Math.random`).
+`@ghia/solid` breaks the app silently), and do not trust screenshot hashes (playgrounds use `Math.random`).

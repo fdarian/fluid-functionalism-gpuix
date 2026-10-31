@@ -17,7 +17,7 @@
  *   clock held; the send button's hover fill eases over 180 ms.
  */
 
-import { createTestRoot } from '@gpuix/solid/testing';
+import { createTestRoot } from '@ghia/solid/testing';
 import { createSignal } from 'solid-js';
 import { fileFromPath, InputMessage } from '#/components/input-message';
 import { TooltipProvider } from '#/components/tooltip';

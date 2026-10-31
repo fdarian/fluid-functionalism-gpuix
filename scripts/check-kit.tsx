@@ -4,7 +4,7 @@
  * drives it in real time.
  */
 
-import { createTestRoot } from '@gpuix/solid/testing';
+import { createTestRoot } from '@ghia/solid/testing';
 import type { JSX } from 'solid-js';
 import { App } from '#/app';
 import { loadDemos, loadPages } from '#/lib/demo';

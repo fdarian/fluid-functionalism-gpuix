@@ -6,7 +6,7 @@ import {
 	createReducedMotion,
 	type HostElement,
 	IntersectionObserver,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import {
 	createEffect,
 	createSignal,

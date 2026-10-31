@@ -7,7 +7,7 @@ import {
 	type HostElement,
 	motion,
 	useGpuixRequired,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import {
 	createContext,
 	createEffect,

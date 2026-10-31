@@ -8,7 +8,7 @@ import {
 	type MotionValue,
 	motion,
 	useGpuixRequired,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { createEffect, createMemo, For, onCleanup } from 'solid-js';
 import { useOnScreen } from '#/lib/cull';
 import { FluidHighlight } from '#/lib/fluid-highlight';
