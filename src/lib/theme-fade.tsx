@@ -1,4 +1,4 @@
-import { UniversalStyle } from '@gpuix/solid';
+import { UniversalStyle } from '@ghia/solid';
 import { createSignal, type JSX, Show } from 'solid-js';
 import { setThemeChoice, type ThemeChoice } from './theme';
 

@@ -3,7 +3,7 @@ import {
 	type MotionTransition,
 	motion,
 	type StyleDesc,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { createSignal, Show } from 'solid-js';
 import { Button } from '#/components/button';
 import { ComponentPreview, MONO } from '#/lib/doc-page';

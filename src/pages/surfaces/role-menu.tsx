@@ -1,4 +1,4 @@
-import type { HostElement } from '@gpuix/solid';
+import type { HostElement } from '@ghia/solid';
 import { createSignal, For, Show } from 'solid-js';
 import { FluidHighlight } from '#/lib/fluid-highlight';
 import { createFluidHover, useHoverItem } from '#/lib/fluid-hover';

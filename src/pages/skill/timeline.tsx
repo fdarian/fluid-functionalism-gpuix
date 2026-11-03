@@ -1,4 +1,4 @@
-import { createMotionValue, type HostElement, motion } from '@gpuix/solid';
+import { createMotionValue, type HostElement, motion } from '@ghia/solid';
 import {
 	createMemo,
 	createRenderEffect,

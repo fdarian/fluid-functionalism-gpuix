@@ -3,7 +3,7 @@ import {
 	type HostElement,
 	motion,
 	useGpuixRequired,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { createSignal, For } from 'solid-js';
 import { FluidHighlight } from '#/lib/fluid-highlight';
 import { createFluidHover, useHoverItem } from '#/lib/fluid-hover';

@@ -1,4 +1,4 @@
-import { createReducedMotion, type HostElement, motion } from '@gpuix/solid';
+import { createReducedMotion, type HostElement, motion } from '@ghia/solid';
 import { type Accessor, For, type JSX, Show } from 'solid-js';
 import { monthLabel } from '#/lib/changelog/migration-prompt';
 import {

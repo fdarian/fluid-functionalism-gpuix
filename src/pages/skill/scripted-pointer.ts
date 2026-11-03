@@ -2,7 +2,7 @@ import {
 	type HostElement,
 	type HostMouseEvent,
 	useGpuixRequired,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 
 type HostNode = HostElement['children'][number];
 

@@ -4,7 +4,7 @@ import {
 	type HostElement,
 	type KeyEvent,
 	useGpuixRequired,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { moveIndex } from 'base-ui-solid-gpuix/internals/composite';
 import { createEffect, onCleanup, Show } from 'solid-js';
 import { Icon } from '#/lib/icon';

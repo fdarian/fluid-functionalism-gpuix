@@ -39,7 +39,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 ## Multiple selection: merge and split morph is a plain grow/shrink
 
-- **Cause:** `not ported yet`. gpuix animates per-corner radii in `motion` (`~/code/fdarian/gpuix/FORK.md:1141-1143`, as `drift/checkbox-group.md` records); nothing here does.
+- **Cause:** `not ported yet`. gpuix animates per-corner radii in `motion` (`~/code/fdarian/ghia/FORK.md:1141-1143`, as `drift/checkbox-group.md` records); nothing here does.
 - **Original:** `useMergeSplitBlocks` (`registry/default/hooks/use-merge-split.tsx`): when one unchecked row bridges two checked runs, the facing edges glide to the bridging row's midpoint with the inner corners straightening (corners trail by 70 ms), then swap to one block; deselecting a middle row plays the inverse. Spring `moderate`, corner radius 8 (`registry/base/dropdown.tsx:121-126`, `:193`).
 - **Port:** one `FluidHighlight` per run id, rect from the run's first to last row, radius 8 on all four corners (`src/components/dropdown.tsx:165-186`, `:215-227`). A merge makes the surviving block spring-grow over the whole union while the absorbed one fades out, the motion the source's comment says it avoids; a split shrinks the block and fades a new one in. `multi-merged.png` and `multi-split.png` show the end states, which match.
 - **Fidelity:** approximated (end states exact, the transition differs).

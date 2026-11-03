@@ -111,7 +111,7 @@ repeating it.
 
 - **Cause:** `not ported yet` on macOS, `gpuix gap` on Windows and Linux.
 - **Original:** the Enter handler returns early while `isComposing` (`input-message.tsx:790`).
-- **Port:** no early return; the handler acts on every key. macOS reports `isComposing` and Windows and Linux do not (`~/code/fdarian/gpuix/FORK.md:496-499`, `:564-567`; README "Missing features", IME row, which lists input-message).
+- **Port:** no early return; the handler acts on every key. macOS reports `isComposing` and Windows and Linux do not (`~/code/fdarian/ghia/FORK.md:496-499`, `:564-567`; README "Missing features", IME row, which lists input-message).
 - **Fidelity:** approximated (unverified for composed input).
 
 ## Touch

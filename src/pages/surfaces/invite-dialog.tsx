@@ -1,4 +1,4 @@
-import type { HostElement, StyleDesc } from '@gpuix/solid';
+import type { HostElement, StyleDesc } from '@ghia/solid';
 import { createSignal, type JSX, Show } from 'solid-js';
 import { Icon } from '#/lib/icon';
 import {

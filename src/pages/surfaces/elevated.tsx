@@ -1,4 +1,4 @@
-import type { HostElement, HostMouseEvent, StyleDesc } from '@gpuix/solid';
+import type { HostElement, HostMouseEvent, StyleDesc } from '@ghia/solid';
 import { type Accessor, createContext, type JSX, useContext } from 'solid-js';
 import { shadow, surface } from '#/lib/theme';
 

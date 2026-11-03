@@ -2,7 +2,7 @@ import {
 	type HostElement,
 	type KeyEvent,
 	useGpuixRequired,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { For } from 'solid-js';
 import { twShadow } from '#/lib/theme';
 import { pressProps } from './parts';

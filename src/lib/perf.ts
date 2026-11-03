@@ -5,9 +5,9 @@
  * input into the live window. Nothing here loads unless FF_PERF=1.
  */
 import { writeSync } from 'node:fs';
-import type { GpuixRenderer, WindowOptions } from '@gpuix/native';
-import { startFrameLoop, type WindowFontsOption } from '@gpuix/native/runtime';
-import { createRenderer } from '@gpuix/solid';
+import type { GpuixRenderer, WindowOptions } from '@ghia/native';
+import { startFrameLoop, type WindowFontsOption } from '@ghia/native/runtime';
+import { createRenderer } from '@ghia/solid';
 
 /** Page sweeps run over this column of x; the sidebar is 256 wide. */
 const SWEEP_X = 128;

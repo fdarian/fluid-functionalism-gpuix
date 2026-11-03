@@ -3,7 +3,7 @@ import {
 	type HostElement,
 	type HostPointerEvent,
 	useGpuixRequired,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import {
 	type Accessor,
 	createContext,

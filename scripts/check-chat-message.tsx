@@ -9,7 +9,7 @@
  * The reveal is the row's opacity, eased by a CSS transition; a screenshot with the focused action lands in /tmp/check-chat-message-focus-<pid>.png.
  */
 
-import { createTestRoot } from '@gpuix/solid/testing';
+import { createTestRoot } from '@ghia/solid/testing';
 import { createSignal, For } from 'solid-js';
 import { ChatMessage, ChatMessageAction } from '#/components/chat-message';
 import { fonts } from '#/lib/fonts';

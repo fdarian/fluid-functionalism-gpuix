@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from '@gpuix/solid';
+import { AnimatePresence, motion } from '@ghia/solid';
 import { createSignal, For, type JSX, onCleanup } from 'solid-js';
 import {
 	Card,

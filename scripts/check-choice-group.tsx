@@ -9,7 +9,7 @@
  *  - the indicator border and the label colour ease over 80 ms on hover.
  */
 import { mkdirSync } from 'node:fs';
-import { createTestRoot } from '@gpuix/solid/testing';
+import { createTestRoot } from '@ghia/solid/testing';
 import { App } from '#/app';
 import { loadDemos, loadPages } from '#/lib/demo';
 import { fonts } from '#/lib/fonts';

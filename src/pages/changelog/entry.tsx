@@ -1,4 +1,4 @@
-import { buttonProps, useGpuixRequired } from '@gpuix/solid';
+import { buttonProps, useGpuixRequired } from '@ghia/solid';
 import { type Accessor, createSignal, For, type JSX, Show } from 'solid-js';
 import { entryInstall } from '#/lib/changelog/install';
 import { kindDotColor } from '#/lib/changelog/kind-style';

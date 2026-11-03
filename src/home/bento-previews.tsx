@@ -1,4 +1,4 @@
-import type { DomEvent } from '@gpuix/solid';
+import type { DomEvent } from '@ghia/solid';
 import { createSignal, For, type JSX, useContext } from 'solid-js';
 import {
 	AccordionContent,

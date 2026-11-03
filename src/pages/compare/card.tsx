@@ -1,4 +1,4 @@
-import { buttonProps, useGpuixRequired } from '@gpuix/solid';
+import { buttonProps, useGpuixRequired } from '@ghia/solid';
 import { type JSX, Show } from 'solid-js';
 import { color, fade, scheme, siteType, weight, withAlpha } from '#/lib/theme';
 

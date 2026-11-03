@@ -4,7 +4,7 @@ import {
 	type HostElement,
 	type KeyEvent,
 	useGpuixRequired,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { createMemo, createSignal, type JSX, onCleanup, Show } from 'solid-js';
 import { Button } from '#/components/button';
 import {

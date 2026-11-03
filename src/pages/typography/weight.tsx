@@ -1,4 +1,4 @@
-import { createReducedMotion, motion } from '@gpuix/solid';
+import { createReducedMotion, motion } from '@ghia/solid';
 import {
 	type Accessor,
 	createEffect,

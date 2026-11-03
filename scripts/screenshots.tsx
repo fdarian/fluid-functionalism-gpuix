@@ -14,7 +14,7 @@
  * samples a wall clock, so each step runs frames until they settle.
  */
 import { mkdirSync } from 'node:fs';
-import { createTestRoot } from '@gpuix/solid/testing';
+import { createTestRoot } from '@ghia/solid/testing';
 import { App } from '#/app';
 import { showcaseScenarios } from '#/home/scenarios';
 import {

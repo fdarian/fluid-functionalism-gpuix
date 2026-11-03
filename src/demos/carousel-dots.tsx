@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from '@gpuix/solid';
+import { AnimatePresence, motion } from '@ghia/solid';
 import { createSignal, For, type JSX } from 'solid-js';
 import { CarouselDots } from '#/components/carousel-dots';
 import type { DemoModule } from '#/lib/demo';

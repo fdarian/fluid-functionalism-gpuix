@@ -1,4 +1,4 @@
-import { buttonProps, motion, useGpuixRequired } from '@gpuix/solid';
+import { buttonProps, motion, useGpuixRequired } from '@ghia/solid';
 import { createSignal, For } from 'solid-js';
 import { ComponentPreview, MONO } from '#/lib/doc-page';
 import {

@@ -5,7 +5,7 @@
 		"noErrorTruncation": true,
 		"noUncheckedIndexedAccess": false,
 		"jsx": "preserve",
-		"jsxImportSource": "@gpuix/solid",
+		"jsxImportSource": "@ghia/solid",
 		"types": ["bun"],
 		"paths": { "#/*": ["./src/*"] }
 	},

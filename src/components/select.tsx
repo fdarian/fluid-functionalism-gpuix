@@ -1,4 +1,4 @@
-import type { DomEvent, HostElement } from '@gpuix/solid';
+import type { DomEvent, HostElement } from '@ghia/solid';
 import { createSelectRoot } from 'base-ui-solid-gpuix/select';
 import { FormValue } from 'base-ui-solid-gpuix/utils';
 import {

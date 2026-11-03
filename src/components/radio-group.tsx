@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from '@gpuix/solid';
+import { AnimatePresence, motion } from '@ghia/solid';
 import { createRadioRoot } from 'base-ui-solid-gpuix/radio';
 import {
 	createRadioGroup,

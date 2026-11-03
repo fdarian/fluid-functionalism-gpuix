@@ -2,7 +2,7 @@ import {
 	type HostElement,
 	type KeyEvent,
 	useGpuixRequired,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { For, Show } from 'solid-js';
 import { LUCIDE, LucideIcon, pressProps, ScLabel } from './parts';
 import { sc, scRing } from './theme';

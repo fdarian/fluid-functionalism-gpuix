@@ -49,7 +49,7 @@ not recorded here.
 
 ## Dependencies not bundled
 
-- **[GPUIX](https://github.com/fdarian/gpuix)** (`@gpuix/solid`, `@gpuix/native`), the renderer; see its
+- **[GPUIX](https://github.com/fdarian/ghia)** (`@ghia/solid`, `@ghia/native`), the renderer; see its
   `THIRD_PARTY_NOTICES.md`.
 - **Base UI**: not bundled here. The primitives come from `base-ui-solid-gpuix` (a sibling repository, linked), a
   Solid port of [Base UI](https://github.com/mui/base-ui) (MIT), which carries its own notices.

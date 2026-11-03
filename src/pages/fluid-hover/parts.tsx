@@ -4,7 +4,7 @@ import {
 	type MotionValue,
 	motion,
 	useGpuixRequired,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import type { JSX } from 'solid-js';
 import { FluidHighlight } from '#/lib/fluid-highlight';
 import { type FluidHover, useHoverItem } from '#/lib/fluid-hover';

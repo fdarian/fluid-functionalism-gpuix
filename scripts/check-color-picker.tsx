@@ -7,7 +7,7 @@
  * scenarios open it from the keyboard, then "pressing the trigger" presses it.
  */
 
-import { createTestRoot } from '@gpuix/solid/testing';
+import { createTestRoot } from '@ghia/solid/testing';
 import { createSignal, Show } from 'solid-js';
 import { App } from '#/app';
 import { ColorPicker } from '#/components/color-picker';

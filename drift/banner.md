@@ -23,7 +23,7 @@ repeating it.
 - **Cause:** `gpuix gap`.
 - **Original:** `has-data-[slot=banner-description]` on the banner and `group-has-data-[slot=banner-description]/banner` on the actions switch the layout when a description is a child: the icon and ✕ hold to the title line, and the actions move from the title row to under the text (`banner.tsx:450`, `:453`, `:597-603`). The narrow-container variant, `@max-sm/banner` (a container under 24rem, Tailwind 4.1's `sm`), drops the actions under the text too (`banner.tsx:602-603`); that part is ported.
 - **Port:** the narrow layout is a real container query: the banner is `containerType: 'inline-size'` named `banner`, and `BannerActions` carries `'@container': { 'banner (width < 24rem)': ... }` that moves it to the third grid row, column 2, with the under-text margins (`banner.tsx:283-284`, `:511`, `:552`). The banner is a grid of `auto minmax(0, 1fr) auto auto` as in the source, and the parts place themselves in it. The `:has()` switch is a context flag: `BannerDescription` registers itself and the banner's `alignItems` and the actions' placement follow it (`banner.tsx:110-121`, `:168`, `:287`, `:493-498`, `:542`).
-- **gpuix lacks:** `:has(.selector)`: only the state forms (`hasHover`, `hasActive`, `hasFocus`, `hasFocusVisible`, `hasDisabled`, `hasEnabled`) exist, and a selector on an attribute or a slot needs a selector engine (`~/code/fdarian/gpuix/README.md` "Relational state"). README row "Selector `:has(.x)` and group-has".
+- **gpuix lacks:** `:has(.selector)`: only the state forms (`hasHover`, `hasActive`, `hasFocus`, `hasFocusVisible`, `hasDisabled`, `hasEnabled`) exist, and a selector on an attribute or a slot needs a selector engine (`~/code/fdarian/ghia/README.md` "Relational state"). README row "Selector `:has(.x)` and group-has".
 - **Workaround:** the context flag. It is set in a render effect, so the first frame already has the description layout, and it follows the description mounting and unmounting.
 - **Fidelity:** exact. The flag is only a different way to read the same fact; a description wrapped in another component still registers, where `:has()` would match it by slot as well.
 - **Components it hits:** card (grid header), dialog footer, any part-composed layout that reacts to a child.
@@ -57,7 +57,7 @@ repeating it.
 
 ## Pointer events while faded
 
-- **Cause:** `not ported yet`. `pointerEvents` is a style property (`~/code/fdarian/gpuix/README.md:5691`).
+- **Cause:** `not ported yet`. `pointerEvents` is a style property (`~/code/fdarian/ghia/README.md:5691`).
 - **Original:** `pointerEvents` is `none` while the banner's opacity is under 0.5, so an appearing banner cannot catch clicks meant for what is under it and a leaving one cannot be hit twice (`banner.tsx:258-260`).
 - **Port:** no gate. The banner is clickable at opacity 0 during an appear, and the ✕ of a closing banner calls `onDismiss` again.
 - **Workaround:** none.

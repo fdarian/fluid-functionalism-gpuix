@@ -1,4 +1,4 @@
-import type { MotionTransition, StateStyleDesc } from '@gpuix/solid';
+import type { MotionTransition, StateStyleDesc } from '@ghia/solid';
 import {
 	type Accessor,
 	createComponent,

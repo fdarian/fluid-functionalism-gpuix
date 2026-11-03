@@ -1,4 +1,4 @@
-import { type DomEvent, motion } from '@gpuix/solid';
+import { type DomEvent, motion } from '@ghia/solid';
 import { createPresence } from 'base-ui-solid-gpuix/internals';
 import { createComputed, createSignal, Show } from 'solid-js';
 import type { FluidHover, ItemRect } from './fluid-hover';

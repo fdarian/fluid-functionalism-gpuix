@@ -3,7 +3,7 @@ import type {
 	HostElement,
 	HostMouseEvent,
 	KeyEvent,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
 import { createSignal } from 'solid-js';
 import { twShadow, withAlpha } from '#/lib/theme';

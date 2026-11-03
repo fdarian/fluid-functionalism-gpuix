@@ -26,10 +26,10 @@
 import { heapStats } from 'bun:jsc';
 import { existsSync, readFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
-import type { PatchCounters } from '@gpuix/native';
-import { startFrameLoop } from '@gpuix/native/runtime';
-import { createRenderer, render } from '@gpuix/solid';
-import { createTestRoot } from '@gpuix/solid/testing';
+import type { PatchCounters } from '@ghia/native';
+import { startFrameLoop } from '@ghia/native/runtime';
+import { createRenderer, render } from '@ghia/solid';
+import { createTestRoot } from '@ghia/solid/testing';
 import { App, CustomizeCard } from '#/app';
 import {
 	type Demo,

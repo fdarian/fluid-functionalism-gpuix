@@ -1,4 +1,4 @@
-import { createReducedMotion } from '@gpuix/solid';
+import { createReducedMotion } from '@ghia/solid';
 import {
 	createEffect,
 	createMemo,

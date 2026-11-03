@@ -19,14 +19,14 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Cause:** `gpuix gap`.
 - **Original:** n/a, this is about the harness.
 - **Port:** the real window sets `titlebarTransparent` and `trafficLightX/Y` (`src/main.tsx:16-18`).
-- **gpuix lacks:** the offscreen test window is opened with those options (`titlebarTransparent` makes it frameless, the traffic-light position is set on the native window and cannot be read back: gpuix `README.md:7059-7061`), but a capture is the view alone, with no titlebar or traffic lights. Its appearance does follow `appearance` and `setAppearance` now (`~/code/fdarian/gpuix/FORK.md:1277-1283`), so the theme is no longer a gap.
+- **gpuix lacks:** the offscreen test window is opened with those options (`titlebarTransparent` makes it frameless, the traffic-light position is set on the native window and cannot be read back: gpuix `README.md:7059-7061`), but a capture is the view alone, with no titlebar or traffic lights. Its appearance does follow `appearance` and `setAppearance` now (`~/code/fdarian/ghia/FORK.md:1277-1283`), so the theme is no longer a gap.
 - **Workaround:** none for the chrome. The screenshots create the window Dark and map `setAppearance("system")` to dark, because `System` would hand it back to the host's own setting (`scripts/screenshots.tsx:52-62`); `light.png` flips the theme through the real select, or by code on a full-layout page or one with its own rail (`:246-266`), and asserts `getAppearance()` for both.
 - **Fidelity:** approximated (captures show the frame without the traffic lights).
 - **Components it hits:** every demo capture.
 
 ## No responsive layout
 
-- **Cause:** `not ported yet` (the fork now has `matchMedia` with size queries and change events, `~/code/fdarian/gpuix/FORK.md:1153-1154`, `:1256-1258`; the port uses none).
+- **Cause:** `not ported yet` (the fork now has `matchMedia` with size queries and change events, `~/code/fdarian/ghia/FORK.md:1153-1154`, `:1256-1258`; the port uses none).
 - **Original:** the site switches at `xl` (1280px): below it the rail becomes a sheet behind a fixed top-left "Open navigation" trigger that closes on navigation, the right panel is hidden, and the settings move into the sheet's footer (`app/components/sidebar-layout.tsx:184-195`, `app/components/sidebar.tsx:130-141`, `app/globals.css:1020-1043`). Content is `max-w-[680px]` with `py-20 sm:py-28`, `mt-12` below `lg` (`app/docs/layout.tsx:1-7`). The title size follows the viewport: 22px below 640px, 28px above (`app/globals.css:416, 430-435`).
 - **Port:** one fixed three-column layout at any width: sidebar, a page column of `PAGE_WIDTH` 600, a 296px customise column (`src/app.tsx:77, 619-620, 657`); a "full" page fills the window instead (`:620-622`). The window opens at 1240x780 (`src/main.tsx:19-20`), already under the source's `xl`.
 - **Workaround:** none.
@@ -251,7 +251,7 @@ One entry per place the port looks or behaves differently from the source, whate
 - **Cause:** `not ported yet` on macOS, `gpuix gap` on Windows and Linux.
 - **Original:** `matchesShortcut` reads the physical key (`code`) when `key` is not a Latin letter or digit, so Ctrl+K opens the menu on a Cyrillic or Greek layout (`registry/default/command-menu.tsx:195-230`).
 - **Port:** `isModK` reads `key` only (`src/lib/site-command-menu.tsx:60-64`).
-- **gpuix lacks:** on Windows and Linux, a physical key. `code` is derived from GPUI's layout-dependent `key` assuming a US layout, so a Cyrillic key reports `code` `""` (`~/code/fdarian/gpuix/FORK.md:571-573`; `packages/native/src/events/key_names.rs:10-17`, `:161-169`), and Ctrl plus a non-Latin letter does not match (README Missing features row "site menu (`isModK`)"). Not run there. macOS reports `code` as the physical key, `"KeyK"` for the K position on a Cyrillic layout (`FORK.md:553-554`), so the source's fallback can be written there; the port has not.
+- **gpuix lacks:** on Windows and Linux, a physical key. `code` is derived from GPUI's layout-dependent `key` assuming a US layout, so a Cyrillic key reports `code` `""` (`~/code/fdarian/ghia/FORK.md:571-573`; `packages/native/src/events/key_names.rs:10-17`, `:161-169`), and Ctrl plus a non-Latin letter does not match (README Missing features row "site menu (`isModK`)"). Not run there. macOS reports `code` as the physical key, `"KeyK"` for the K position on a Cyrillic layout (`FORK.md:553-554`), so the source's fallback can be written there; the port has not.
 - **Workaround:** none; ⌘K matches through `key` on macOS and the sidebar's Search row opens the menu.
 - **Fidelity:** approximated on macOS (non-Latin layouts rely on `key`); dropped for non-Latin layouts on Windows and Linux.
 - **Components it hits:** just the site menu.

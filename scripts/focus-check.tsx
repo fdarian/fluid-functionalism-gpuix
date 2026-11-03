@@ -9,7 +9,7 @@
  * clear the ring. Captures land in `/tmp/focus-check/<demo>/`; set TAB=1 to enter the group with Tab instead of a click, FOCUS=1 to Tab until the first id has focus, POINT=<id> to end with a pointer move there.
  */
 import { mkdirSync } from 'node:fs';
-import { createTestRoot } from '@gpuix/solid/testing';
+import { createTestRoot } from '@ghia/solid/testing';
 import { App } from '#/app';
 import { loadDemos, loadPages } from '#/lib/demo';
 import { fonts } from '#/lib/fonts';

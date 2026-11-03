@@ -1,4 +1,4 @@
-import { type MotionTransition, motion } from '@gpuix/solid';
+import { type MotionTransition, motion } from '@ghia/solid';
 import { For } from 'solid-js';
 import { hasStrokeNodes, type IconRef, iconNodes, iconSource } from './icons';
 import { colorFade } from './theme';

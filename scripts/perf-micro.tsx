@@ -8,9 +8,9 @@
  * Only one perf run at a time: it takes over a real window.
  */
 import { parseArgs } from 'node:util';
-import type { GpuixRenderer, WindowOptions } from '@gpuix/native';
-import { startFrameLoop, type WindowFontsOption } from '@gpuix/native/runtime';
-import { createRenderer, motion, render } from '@gpuix/solid';
+import type { GpuixRenderer, WindowOptions } from '@ghia/native';
+import { startFrameLoop, type WindowFontsOption } from '@ghia/native/runtime';
+import { createRenderer, motion, render } from '@ghia/solid';
 import { createSignal, For, type JSX } from 'solid-js';
 import { fonts } from '#/lib/fonts';
 import { Icon } from '#/lib/icon';

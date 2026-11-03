@@ -5,7 +5,7 @@ import type { BunPlugin } from 'bun';
 const root = join(import.meta.dir, '..');
 
 /**
- * `@gpuix/native`'s ESM entry loads the `.node` addon through
+ * `@ghia/native`'s ESM entry loads the `.node` addon through
  * `createRequire(import.meta.url)`, which the bundler does not follow, so a
  * compiled binary would fail with "Cannot find native binding". Its CJS entry
  * uses a plain `require`, which embeds the addon. The package's own
@@ -13,11 +13,11 @@ const root = join(import.meta.dir, '..');
  * import is redirected too.
  */
 export const nativeCjsPlugin: BunPlugin = {
-	name: 'gpuix-native-cjs',
+	name: 'ghia-native-cjs',
 	setup(build) {
-		const directory = realpathSync(join(root, 'node_modules/@gpuix/native'));
+		const directory = realpathSync(join(root, 'node_modules/@ghia/native'));
 		const entry = join(directory, 'index.cjs');
-		build.onResolve({ filter: /^@gpuix\/native$/ }, () => ({ path: entry }));
+		build.onResolve({ filter: /^@ghia\/native$/ }, () => ({ path: entry }));
 		build.onResolve({ filter: /^\.\.\/index\.js$/ }, (resolving) =>
 			resolving.importer.startsWith(join(directory, 'dist'))
 				? { path: entry }

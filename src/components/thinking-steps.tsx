@@ -1,4 +1,4 @@
-import { AnimatePresence, type MotionTransition, motion } from '@gpuix/solid';
+import { AnimatePresence, type MotionTransition, motion } from '@ghia/solid';
 import {
 	type CollapsibleRoot,
 	createCollapsiblePanel,

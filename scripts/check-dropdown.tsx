@@ -7,7 +7,7 @@
  * presses the trigger for real.
  */
 import { mkdirSync } from 'node:fs';
-import { createTestRoot } from '@gpuix/solid/testing';
+import { createTestRoot } from '@ghia/solid/testing';
 import { createSignal } from 'solid-js';
 import { Button } from '#/components/button';
 import {

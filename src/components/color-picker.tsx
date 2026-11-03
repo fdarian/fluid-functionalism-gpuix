@@ -5,7 +5,7 @@ import {
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import {
 	type createPresence,
 	POPUP_MARGIN,

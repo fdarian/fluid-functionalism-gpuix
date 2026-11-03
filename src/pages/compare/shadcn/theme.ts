@@ -1,4 +1,4 @@
-import type { StateStyleDesc } from '@gpuix/solid';
+import type { StateStyleDesc } from '@ghia/solid';
 import { type Scheme, scheme } from '#/lib/theme';
 
 /** `app/compare/shadcn-theme.css`: the canonical shadcn "default" style, "neutral" base colour, in both schemes. */

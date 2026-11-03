@@ -5,7 +5,7 @@ import {
 	type MotionTransition,
 	motion,
 	type StyleDesc,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { createEffect, createSignal, For, onCleanup, Show } from 'solid-js';
 import { useOnScreen } from '#/lib/cull';
 import { Icon } from '#/lib/icon';

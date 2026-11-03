@@ -6,7 +6,7 @@ import {
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { isChord, moveIndex } from 'base-ui-solid-gpuix/internals/composite';
 import {
 	createEffect,

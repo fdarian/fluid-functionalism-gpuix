@@ -6,7 +6,7 @@ import {
 	type KeyEvent,
 	motion,
 	ResizeObserver,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import {
 	type AccordionItem as AccordionItemPrimitive,
 	type AccordionRoot,

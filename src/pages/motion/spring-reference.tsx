@@ -3,7 +3,7 @@ import {
 	type MotionTransition,
 	motion,
 	useGpuixRequired,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { type Accessor, createSignal, For, onCleanup, Show } from 'solid-js';
 import { MONO } from '#/lib/doc-page';
 import { usePageNav } from '#/lib/page-nav';

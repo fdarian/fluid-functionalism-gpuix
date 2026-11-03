@@ -1,4 +1,4 @@
-import { type HostElement, ResizeObserver } from '@gpuix/solid';
+import { type HostElement, ResizeObserver } from '@ghia/solid';
 import { createEffect, createSignal, For, on, onCleanup, Show } from 'solid-js';
 import {
 	Banner,

@@ -12,7 +12,7 @@ Ported and matching: the square with `bg-accent`, `overflow-hidden` and `shrink-
 - **Cause:** `gpuix gap`.
 - **Original:** renders page 1 of a PDF through pdfjs onto a canvas and shows it as an image, and exports `loadPdfjs` and `renderPdfFirstPage` (`file-thumbnail.tsx:7-38`, `:108-135`, `:203`). A failed render (corrupt file, blocked worker) falls back to the glyph.
 - **Port:** a PDF shows the generic document glyph (`file-thumbnail.tsx:91-98`); the two helpers are not exported.
-- **gpuix lacks:** a drawing surface. `<canvas>` is listed as "Custom drawing (planned)" (`~/code/fdarian/gpuix/README.md:4975`), so pdfjs has nothing to render into; the only pixel path is `setImagePixels` on an `<img>` (`README.md:5066-5076`), which needs a rasteriser outside gpuix. README's file-thumbnail row ("Missing features") is the port's row.
+- **gpuix lacks:** a drawing surface. `<canvas>` is listed as "Custom drawing (planned)" (`~/code/fdarian/ghia/README.md:4975`), so pdfjs has nothing to render into; the only pixel path is `setImagePixels` on an `<img>` (`README.md:5066-5076`), which needs a rasteriser outside gpuix. README's file-thumbnail row ("Missing features") is the port's row.
 - **Workaround:** none.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one (queued-stack, chat-message and input-message show the glyph for a PDF).

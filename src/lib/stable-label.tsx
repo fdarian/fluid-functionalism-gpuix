@@ -1,4 +1,4 @@
-import type { HostElement } from '@gpuix/solid';
+import type { HostElement } from '@ghia/solid';
 import {
 	capTrim,
 	clippedCapTrim,

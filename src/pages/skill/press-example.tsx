@@ -1,4 +1,4 @@
-import { buttonProps, motion, useGpuixRequired } from '@gpuix/solid';
+import { buttonProps, motion, useGpuixRequired } from '@ghia/solid';
 import { createSignal, For } from 'solid-js';
 import { color, fade, focusRing, shape, siteType, weight } from '#/lib/theme';
 import {

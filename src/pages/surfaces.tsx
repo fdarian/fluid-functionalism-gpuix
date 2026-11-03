@@ -1,4 +1,4 @@
-import type { KeyEvent } from '@gpuix/solid';
+import type { KeyEvent } from '@ghia/solid';
 import type { JSX } from 'solid-js';
 import type { ShotContext } from '#/lib/demo';
 import { DocPage, DocSection, Prose, SubHeading } from '#/lib/doc-page';

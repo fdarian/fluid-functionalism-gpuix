@@ -3,7 +3,7 @@
  * automation client, to check that painted bounds and fluid hover also work
  * in a live GPUI app. `bun scripts/live-check.tsx`
  */
-import { launch } from '@gpuix/solid/automation';
+import { launch } from '@ghia/solid/automation';
 
 const outDir = new URL('../screenshots/live/', import.meta.url).pathname;
 const root = new URL('..', import.meta.url).pathname;

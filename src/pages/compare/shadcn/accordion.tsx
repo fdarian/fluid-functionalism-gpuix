@@ -4,7 +4,7 @@ import {
 	type KeyEvent,
 	motion,
 	useGpuixRequired,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { createEffect, createSignal, For, on, Show } from 'solid-js';
 import { transformFade } from '#/lib/theme';
 import { LUCIDE, LucideIcon, pressProps } from './parts';

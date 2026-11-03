@@ -17,7 +17,7 @@ The square, hex and channel commit rules, and the alpha rail snap to whole perce
 - **Cause:** `gpuix gap`.
 - **Original:** a swatch such as `tomato` resolves through a canvas 2D context (`fillStyle`), which accepts every CSS colour syntax (`color-picker.tsx:421-441`); the strip marks the matching swatch and a click commits it (`:1748-1758`, `:1895-1902`). `swatches` is documented as "Any CSS color" (`:103`).
 - **Port:** `parseColor` reads hex, `rgb(a)`, `hsl(a)` and `oklch` only (`src/components/color-picker-math.ts:304-306`). A named entry in `swatches` still paints (styles resolve the name natively) but is never marked selected, and clicking or pressing it does nothing (`normalizedHex` returns `undefined`, `isSelectedSwatch`; `commitColor` drops an unreadable string); the source resolves it and picks it. The prop says so (`swatches`). A typed name is rejected as in the source (the hex field prefixes `#`).
-- **gpuix lacks:** a JS-visible colour resolver. Named colours, `color-mix()` and the rest resolve natively for style values only (`~/code/fdarian/gpuix/FORK.md:831-832`), and nothing hands the resolved colour back to JS.
+- **gpuix lacks:** a JS-visible colour resolver. Named colours, `color-mix()` and the rest resolve natively for style values only (`~/code/fdarian/ghia/FORK.md:831-832`), and nothing hands the resolved colour back to JS.
 - **Workaround:** none. A static table of the CSS colour names inside `parseColor` would close most of it without gpuix.
 - **Fidelity:** dropped.
 - **Components it hits:** just this one.

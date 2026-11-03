@@ -3,7 +3,7 @@ import {
 	type HostElement,
 	ResizeObserver,
 	type StyleDesc,
-} from '@gpuix/solid';
+} from '@ghia/solid';
 import { createSignal, For, type JSX, onCleanup, Show } from 'solid-js';
 import { usePageNav } from '#/lib/page-nav';
 import { BENTO_ROW, BentoCard, type BentoSize } from './bento-card';

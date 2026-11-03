@@ -44,7 +44,7 @@ const label =
 const REQUEST_TIMEOUT_MS = 60_000;
 
 function releaseAddon(): string {
-	const native = resolve(root, 'node_modules/@gpuix/native');
+	const native = resolve(root, 'node_modules/@ghia/native');
 	const addon = readdirSync(native).find((file) => file.endsWith('.node'));
 	if (addon === undefined) throw new Error(`no .node addon in ${native}`);
 	const size = statSync(join(native, addon)).size;

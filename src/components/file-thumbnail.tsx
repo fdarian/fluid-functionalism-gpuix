@@ -1,4 +1,4 @@
-import { defineKeyframes } from '@gpuix/solid';
+import { defineKeyframes } from '@ghia/solid';
 import { type JSX, Show } from 'solid-js';
 import { Icon } from '#/lib/icon';
 import { defineIcon } from '#/lib/icons';

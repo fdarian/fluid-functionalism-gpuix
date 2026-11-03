@@ -1,4 +1,4 @@
-import type { HostElement, HostMouseEvent } from '@gpuix/solid';
+import type { HostElement, HostMouseEvent } from '@ghia/solid';
 import { type Accessor, createSignal, For, Show } from 'solid-js';
 import { Switch } from '#/components/switch';
 import { ComponentPreview, MONO } from '#/lib/doc-page';

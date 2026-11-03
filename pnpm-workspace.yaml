@@ -4,4 +4,4 @@ packages:
 enableGlobalVirtualStore: true
 packageImportMethod: clone-or-copy
 overrides:
-  "@gpuix/native": link:../gpuix/packages/native
+  "@ghia/native": link:../ghia/packages/native
