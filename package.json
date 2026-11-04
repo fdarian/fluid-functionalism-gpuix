@@ -1,6 +1,6 @@
 {
 	"name": "ghia-fluid-functionalism",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"type": "module",
 	"description": "Fluid Functionalism's components, demos and pages drawn natively on ghia (Solid on GPUI), run with npx.",
 	"repository": {
