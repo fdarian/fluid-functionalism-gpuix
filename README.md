@@ -1,4 +1,4 @@
-# gpuix + fluid functionalism
+# ghia-fluid-functionalism
 
 Can [gpuix](https://github.com/remorses/gpuix), a GPUI-backed renderer with no DOM and no CSS engine, draw the
 [fluidfunctionalism.com](https://fluidfunctionalism.com) component library?
