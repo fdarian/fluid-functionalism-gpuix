@@ -1,9 +1,13 @@
 {
 	"name": "ghia-fluid-functionalism",
-	"private": true,
-	"version": "0.1.0",
+	"version": "0.0.0",
 	"type": "module",
-	"description": "Experiment: fluidfunctionalism.com's Button, Combobox and Sidebar (with fluid hover) ported to @ghia/solid.",
+	"description": "Fluid Functionalism's components, demos and pages drawn natively on ghia (Solid on GPUI), run with npx.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/fdarian/ghia-fluid-functionalism.git"
+	},
+	"license": "MIT",
 	"packageManager": "pnpm@12.16.1",
 	"scripts": {
 		"start": "bun --hot src/main.tsx",
@@ -14,18 +18,31 @@
 		"screenshots": "bun scripts/run-screenshots.ts",
 		"perf": "bun scripts/perf.tsx",
 		"footprint": "bun scripts/footprint.tsx",
-		"format": "biome check --write"
+		"format": "biome check --write",
+		"ci:version": "changeset version",
+		"ci:release": "bun scripts/release-build.ts && changeset publish"
 	},
-	"dependencies": {
-		"@ghia/native": "0.11.1",
-		"@ghia/solid": "0.11.1",
-		"ghia-base-ui": "0.1.0",
-		"solid-js": "1.9.15"
+	"files": [
+		"dist/cli.js",
+		"dist/checksums.json",
+		"README.md",
+		"LICENSE",
+		"THIRD_PARTY_NOTICES.md"
+	],
+	"publishConfig": {
+		"bin": {
+			"ghia-fluid-functionalism": "./dist/cli.js"
+		}
 	},
 	"devDependencies": {
 		"@biomejs/biome": "latest",
+		"@changesets/cli": "3.0.3",
+		"@ghia/native": "0.11.1",
+		"@ghia/solid": "0.11.1",
 		"@total-typescript/tsconfig": "latest",
 		"@types/bun": "^1.4.2",
+		"ghia-base-ui": "0.1.0",
+		"solid-js": "1.9.15",
 		"typescript": "^7.0.2"
 	}
 }
