@@ -1,5 +1,5 @@
-import solidPlugin from '@ghia/solid/bun-plugin';
 import { join } from 'node:path';
+import solidPlugin from '@ghia/solid/bun-plugin';
 import { nativeCjsPlugin } from './native-cjs-plugin';
 import { registryPlugin } from './registry-plugin';
 
