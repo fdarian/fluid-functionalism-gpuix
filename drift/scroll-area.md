@@ -2,14 +2,14 @@
 
 Original: `registry/base/scroll-area.tsx` plus the `scroll-fade` / `scroll-divider` utilities in `app/globals.css:1087-1236`, demo in `app/docs/scrollbars/page.tsx` of the source (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/scroll-area.tsx`, demo in `src/demos/scroll-area.tsx`.
 
-The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track press, wheel) are tracked in `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` ("ScrollArea"); this file lists only what still looks or behaves differently.
+The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track press, wheel) are tracked in `base-ui:BASE-UI-AUDIT.md` ("ScrollArea"); this file lists only what still looks or behaves differently.
 
 ## The edge fade is a mask, and masks are drawn on macOS only
 
 - **Cause:** `gpuix gap` (README "Missing features": effect groups off macOS).
 - **Original:** `.scroll-fade` / `.scroll-fade-x` are a CSS `mask-image` on the viewport whose end alphas follow a scroll timeline; browsers without scroll timelines (Firefox) get no fade (`app/globals.css:1087-1093`, `:1198-1235`).
 - **Port:** `maskImage` on the viewport, a linear gradient rebuilt from the `onScroll` offset with the same ramps (alpha 1 at the true start / end, 0 once 48px lie past the edge, `src/components/scroll-area.tsx:83-113`, `:230`). The earlier overlay gradient in the surface colour is gone, so the content itself dissolves, as on the web.
-- **gpuix lacks:** a mask on Windows and Linux. `maskImage` is an effect group (`FORK.md` area D), built on macOS in zed's `gpui_apple`; the WGSL and HLSL paths are unproven. There a masked viewport paints without the fade.
+- **gpuix lacks:** a mask on Windows and Linux. `maskImage` is an effect group (`ghia:docs/fork/paint-and-transforms.md:23`, `ghia:docs/fork/deviations.md:289`), built on macOS in zed's `gpui_apple`; the WGSL and HLSL paths are unproven. There a masked viewport paints without the fade.
 - **Workaround:** none needed on macOS.
 - **Fidelity:** exact on macOS (apart from `Math.min(fadeSize, length / 2)` at `:104`, which the CSS does not do for a viewport under 96px); no fade elsewhere. A new gradient string is built on every scroll event. A `both` area fades vertically only, as the single class does on the web.
 - **Components it hits:** any `ScrollArea` with `fade`.
@@ -25,7 +25,7 @@ The Base UI behaviour rows (thumb maths, hover / scrolling state, drag, track pr
 
 ## Keyboard scrolling is re-implemented
 
-- **Cause:** `port choice` (reason not stated). gpuix already scrolls the nearest scroller on arrows, Page, Home, End and Space unless `preventDefault`ed (`FORK.md:653-654`), so the handler duplicates a default.
+- **Cause:** `port choice` (reason not stated). gpuix already scrolls the nearest scroller on arrows, Page, Home, End and Space unless `preventDefault`ed (`ghia:docs/fork/scroll.md:42`), so the handler duplicates a default.
 - **Original:** the viewport is a tab stop while it overflows and the browser scrolls it with the keys (Base UI `Viewport:367-369`; FF sets no `tabIndex` of its own on the Base UI path, `registry/base/scroll-area.tsx:83-92`); keys typed in a descendant input or listbox do not scroll it.
 - **Port:** `onKeyDown` on the viewport maps arrows (40px), Page keys and Space (87.5% of the view), Home and End to `scrollTo`, and calls `preventDefault` (`base-ui:src/scroll-area/root/use-scroll-area-root.ts:188-203`, `onKeyDown`). It acts only when the viewport itself is the focused element and the key is not already `defaultPrevented`, so an input inside keeps Space, arrows and Home / End, and a child that handles arrows itself does not also scroll the area (`scripts/check-scroll-area.tsx`).
 - **Workaround:** n/a.

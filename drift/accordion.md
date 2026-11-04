@@ -50,9 +50,9 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 ## Up/Down/Home/End between triggers (group)
 
-- **Cause:** `port choice` (Base UI 1.9 has no arrow navigation; the Radix variant the docs page imports does; `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:67`).
+- **Cause:** `port choice` (Base UI 1.9 has no arrow navigation; the Radix variant the docs page imports does; `base-ui:BASE-UI-AUDIT.md:66`).
 - **Original:** `registry/base` has none; the docs page runs the Radix accordion, which moves focus with Up/Down/Home/End and wraps.
-- **Port:** Up/Down/Home/End focus the previous, next, first or last enabled trigger, wrapping; any modifier key opts out (`base-ui:src/internals/composite/root/use-composite-root.ts:49-60`, `:93-112`).
+- **Port:** Up/Down/Home/End focus the previous, next, first or last enabled trigger, wrapping; any modifier key opts out (`base-ui:src/internals/composite/root/use-composite-root.ts:45-56`, `:89-108`).
 - **Workaround:** none.
 - **Fidelity:** exact against the Radix site, an addition against `registry/base`.
 - **Components it hits:** just this one.
@@ -95,7 +95,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 ## Items index by mount order
 
-- **Cause:** `not ported yet` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md:78`).
+- **Cause:** `not ported yet` (`base-ui:BASE-UI-AUDIT.md:77`).
 - **Original:** `AccordionItem` takes an explicit `index`, required in a group (`registry/base/accordion.tsx:58`, `:616`).
 - **Port:** the trigger registers with a counter (`nextIndex++`, `src/components/accordion.tsx:193`, `:245-257`) and never reuses an index, so an item inserted mid-list or re-added gets a new index and the order of the rects no longer matches the document. The demo lists are static.
 - **Workaround:** none.
@@ -113,7 +113,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 ## No DOM props
 
-- **Cause:** `port choice` (gpuix has no classes, refs or HTML attributes; reason for `collapsible` is the audit note that Base UI single mode is always collapsible, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:84`).
+- **Cause:** `port choice` (gpuix has no classes, refs or HTML attributes; reason for `collapsible` is the audit note that Base UI single mode is always collapsible, `base-ui:BASE-UI-AUDIT.md:83`).
 - **Original:** `className`, a forwarded `ref`, every HTML attribute, and `collapsible` on the roots (`registry/base/accordion.tsx:73-100`, `:490-503`).
 - **Port:** `testId` and `children` only (`src/components/accordion.tsx:179-184`, `:484`).
 - **Workaround:** none.
@@ -122,7 +122,7 @@ open tints while a closed row is hovered, the height and opacity timings of the 
 
 ## Playground: "One at a time" is a controlled value
 
-- **Cause:** `port choice` (the port's single mode is always collapsible, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:84`, so there is no `collapsible` prop to turn off).
+- **Cause:** `port choice` (the port's single mode is always collapsible, `base-ui:BASE-UI-AUDIT.md:83`, so there is no `collapsible` prop to turn off).
 - **Original:** the Expand select maps to `type` and `collapsible`; "One at a time" is a non-collapsible single group (`lib/docs/playgrounds/accordion.tsx:28-34`, `:78-92`).
 - **Port:** the playground controls the group's value and drops the close of the open item while "One at a time" is chosen (`src/demos/accordion.tsx`, `Playground`). Switching Expand resets the open set to the first item, as the source's `key` remount does.
 - **Workaround:** the controlled value.

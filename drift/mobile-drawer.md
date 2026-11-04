@@ -36,7 +36,7 @@ Matches the source: 256px wide, top / left / bottom edges, `aria-label="Navigati
 
 - **Cause:** `gpuix gap`. Same as [dialog](dialog.md).
 - **Original:** Base UI focuses the first tabbable as the drawer opens.
-- **Port:** `FocusFirst` from `dialog.tsx` runs `focusNextWithin` in a `setTimeout(0)` (`src/components/mobile-drawer.tsx:103`, `base-ui:src/dialog/popup/focus-first.tsx:8-18`), while the panel is still sliding in.
+- **Port:** `FocusFirst` from `dialog.tsx` runs `focusNextWithin` in a `setTimeout(0)` (`src/components/mobile-drawer.tsx:103`, `base-ui:src/dialog/popup/focus-first.ts:8-18`), while the panel is still sliding in.
 - **Workaround:** the deferred call.
 - **Fidelity:** approximated.
 - **Components it hits:** dialog.

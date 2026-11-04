@@ -23,7 +23,7 @@ repeating it.
 - **Cause:** `gpuix gap`.
 - **Original:** the comfortable layers are `useTransform` strings of `fillPercent` and `zeroOffset`, such as `calc(p * 100% + 20px - ...)`, evaluated by the browser against the row's live width (`slider.tsx:1342-1368`); the compact fill is a px `useTransform` of the thumbs' x (`:493-501`).
 - **Port:** the same `calc()` strings, held as motion values, with the source's springs on `percent` and `zeroOffset`. The scrubber's fill and the pips' line depend on `percent` alone, so they are range-form transforms and native-linked (`src/components/slider.tsx:1027`, `:1032-1036`). The pips fill, the scrubber's line and its handle strip mix `percent` with `zeroOffset`, so they are function-form transforms returning `calc()` (`:1028-1031`, `:1037-1044`). The compact step dots are static `calc()` lefts, `10px + share * (100% - 20px)` (`:774-783`). No layer reads a measured width, so a resize reaches them in the frame that lays it out (`scripts/check-slider.tsx`, "follows a resize") and the row paints them from its first frame. The compact fill is the source's px transform too: a range-form transform of the thumb's x for a single slider (`:577-582`) and the function-form `second - first` for a range (`:583-586`). The thumbs' own x stays px, measured by `onLayout` (`:698`), as the source's is.
-- **gpuix lacks:** a native-linked transform of more than one motion value. A function-form transform is computed in JavaScript from `change` events, so it can trail its inputs by a frame (`README.md:2110-2113` of gpuix, FORK.md:1262-1263). Not seen in the test renderer: sampled every 16 ms on a held clock, the function-form fill and the range-form line agree to the pixel.
+- **gpuix lacks:** a native-linked transform of more than one motion value. A function-form transform is computed in JavaScript from `change` events, so it can trail its inputs by a frame (`ghia:docs/reference.md:2469-2472`, `ghia:docs/fork/deviations.md:166`). Not seen in the test renderer: sampled every 16 ms on a held clock, the function-form fill and the range-form line agree to the pixel.
 - **Workaround:** `calc()` in function-form transforms where two values mix, range-form where one does.
 - **Fidelity:** exact at rest and under a resize; mid-spring, a two-value layer can sit a frame behind a one-value layer on a live window.
 - **Components it hits:** none other.
@@ -39,7 +39,7 @@ repeating it.
 
 ## Click-to-edit differs: no number field, no accessible name
 
-- **Cause:** `not ported yet`. gpuix has `type="number"` and number `min` / `max` / `step` (FORK.md:503-504, `packages/native/js/host.ts:1336`).
+- **Cause:** `not ported yet`. gpuix has `type="number"` and number `min` / `max` / `step` (`ghia:docs/fork/events-and-input.md:117`, `packages/native/js/host.ts:1336`).
 - **Original:** the field is `type="number"` with `min`, `max` and `step` (`step="any"` for a `steps` list), focused and selected on the next frame so typing replaces the number, `aria-label="Edit slider value (start)"` for a range (`slider.tsx:213-217`, `:258-271`), a `5ch` wide box with line height 20 and a 1px bottom border (`:255-279`).
 - **Port:** a text `<input autoFocus>` (`src/components/slider.tsx`, the edit field in `ValueDisplay`) that selects its text on focus (`onFocus` calling `select()`), so typing replaces the number; no min / max / step on the field, no `aria-label`; 40 wide with the same bottom border, no fixed height: the box is the 20px line plus the 1px border, 21px as in the source. While editing, the label, the field and, in a range, the other value are items of a flex row, not part of the text run: gpuix lays an `<input>` out as a block, and a span with `display: flex` is a block too (gpuix README "Inline text"), so there is no inline-grid slot as in the source (`:232-270`). Outside editing the value is one `<text>` run with a clickable `<span>` per number, as in the source (`:285-335`). The seed, Enter / blur commit, Escape cancel, clamp and snap match (`:190-208`, `:292-298`).
 - **Workaround:** none.
@@ -51,7 +51,7 @@ repeating it.
 - **Cause:** `not ported yet`.
 - **Original:** `hideFill`, `thumbColor`, `thumbBorderColor`, `trackClassName` / `trackStyle`, `fillClassName` / `fillStyle` (`slider.tsx:79-85`, applied at `:1134-1157`, `:935-937`), any of which forces the compact engine (`:1903-1915`); `className`, `ref` and HTML props land on the root (`:959-970`) or the comfortable row (`:1631`).
 - **Port:** `CompactProps` and `variant` / `size` only, plus a harness `testId` (`src/components/slider.tsx:398-412`, `:1338-1343`); `needsCompact` checks `size`, an array value, `steps`, `showSteps`, `showValue`, `valuePosition` (`:1357-1364`). The knob is always `#FFFFFF` (`:634`), the fill `selectedWash`, with no way to override either.
-- **Workaround:** none. Also in `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` (Slider, last bullet).
+- **Workaround:** none. Also in `base-ui:BASE-UI-AUDIT.md` (Slider, last bullet).
 - **Fidelity:** dropped.
 - **Components it hits:** every ported component.
 
@@ -66,7 +66,7 @@ repeating it.
 
 ## `onChange` fires only when the value changes
 
-- **Cause:** `port choice` (the audit row "Emits only on change", `../base-ui-solid-gpuix/BASE-UI-AUDIT.md`).
+- **Cause:** `port choice` (the audit row "Emits only on change", `base-ui:BASE-UI-AUDIT.md`).
 - **Original:** every pointer move and press calls `onChange` with the snapped value, changed or not (`slider.tsx:741`, `:788`, `:1473`).
 - **Port:** `emitChange` returns when `next === values()[thumb]` (`base-ui:src/slider/root/slider-root.ts:53-64`); the comfortable `emit` does the same (`base-ui:src/slider/root/slider-root.ts:54-55`).
 - **Workaround:** none.

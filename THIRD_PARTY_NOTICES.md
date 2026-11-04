@@ -51,6 +51,6 @@ not recorded here.
 
 - **[GPUIX](https://github.com/fdarian/ghia)** (`@ghia/solid`, `@ghia/native`), the renderer; see its
   `THIRD_PARTY_NOTICES.md`.
-- **Base UI**: not bundled here. The primitives come from `base-ui-solid-gpuix` (a sibling repository, linked), a
+- **Base UI**: not bundled here. The primitives come from `ghia-base-ui` (npm), a
   Solid port of [Base UI](https://github.com/mui/base-ui) (MIT), which carries its own notices.
 - **[Solid](https://github.com/solidjs/solid)** (MIT).

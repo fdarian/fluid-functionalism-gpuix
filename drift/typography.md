@@ -43,7 +43,7 @@ repeating it.
 
 ## The rules' discs are drawn, not `list-disc`
 
-- **Cause:** `gpuix gap` (no `list-style`, `::marker`; searched gpuix `README.md`).
+- **Cause:** `gpuix gap` (no `list-style`, `::marker`; searched `ghia:docs/reference.md`).
 - **Original:** `list-disc pl-5 marker:text-muted-foreground` with `pl-1` items, so the text sits 24px in (`app/docs/typography/page.tsx:113-132`).
 - **Port:** `Rule` (`src/pages/typography/text.tsx:13-30`) indents the text 24px and draws a 5px disc 15px left of it; the disc's position is an estimate.
 - **Fidelity:** approximated.
@@ -68,7 +68,7 @@ repeating it.
 
 ## Steady numbers is native
 
-- **Cause:** none that matters: gpuix has `fontVariantNumeric: "tabular-nums"` (`README.md:6386`) and Inter 4.0 carries `tnum`.
+- **Cause:** none that matters: gpuix has `fontVariantNumeric: "tabular-nums"` (`ghia:docs/reference.md:8116`) and Inter 4.0 carries `tnum`.
 - **Original:** two rows count 10 to 48 in `normal-nums` and `tabular-nums` while the demo is half on screen, hold while a pointer is inside, and show the last count under reduced motion (`demos.tsx:382-540`).
 - **Port:** the same, with the widths of all 39 labels per row measured through hidden copies and `onLayout` (78 invisible texts); the proportional row drifts 6.0px where the browser measured 6.2px. The count ticks every 120ms on a timer while at least half the frame is on screen, and reduced motion shows the last count (`src/pages/typography/numbers.tsx:155-168`).
 - **Fidelity:** exact in behaviour.

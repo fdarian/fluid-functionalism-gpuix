@@ -4,15 +4,15 @@ Original: `registry/base/combobox.tsx` (shared: `registry/default/lib/popup.ts`,
 (fluidfunctionalism.com at 0a0377e, kept at `~/.claude/notes/ff-source/`). Ported in `src/components/combobox.tsx`, demo in `src/demos/combobox.tsx`.
 Popup chrome is shared: `src/lib/popup.tsx`, `src/lib/presence.ts`, `src/lib/list-nav.ts`.
 
-Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by row in `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` ("Combobox"); this file covers what looks or behaves differently. Single selection only. Dark mode: the port reads the same palette (`src/lib/theme.ts`), and no dark-only drift was found beyond the shadow and substrate entries below.
+Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by row in `base-ui:BASE-UI-AUDIT.md` ("Combobox"); this file covers what looks or behaves differently. Single selection only. Dark mode: the port reads the same palette (`src/lib/theme.ts`), and no dark-only drift was found beyond the shadow and substrate entries below.
 
 ## IME composition is not read
 
 - **Cause:** `not ported yet` on macOS, `gpuix gap` on Windows and Linux.
 - **Original:** Base UI's `Combobox.Input` handles composition (`compositionstart` / `compositionend`, `which === 229` on keydown), so Enter or arrows during composition do not pick or move (Base UI `combobox/input/ComboboxInput.tsx:100-101,223-233,~413`).
 - **Port:** the field filters on every `onChange` (`base-ui:src/combobox/root/use-combobox-root.ts:284-297`); Enter and arrows are handled without an IME guard (`:237-283`).
-- **gpuix lacks:** on Windows and Linux (TSF or IMM32, ibus), `isComposing` is always `false` and no `Process` keydown or `composition*` event is fired, and the composition keys go to the input method before GPUI sees them (`~/code/fdarian/ghia/FORK.md:564-567`). macOS reports all three: `isComposing` on key events, a `Process` keydown for a key the input method takes first, and `compositionstart` / `compositionupdate` / `compositionend` (`FORK.md:496-499`; gpuix `README.md:3794-3820`). A key an input method consumes still cannot be cancelled by `keydown` on macOS, but `isComposing` tells the handler to stand aside.
-- **Workaround:** none; IME input is untested. On macOS the key an input method takes first is a `Process` keydown, which no `Enter` or arrow case matches, so a composition probably does not pick or move (reasoned from the handlers, not run against a real input method); the explicit `event.isComposing` guard would go into the primitive in `base-ui-solid-gpuix`.
+- **gpuix lacks:** on Windows and Linux (TSF or IMM32, ibus), `isComposing` is always `false` and no `Process` keydown or `composition*` event is fired, and the composition keys go to the input method before GPUI sees them (`ghia:docs/fork/deviations.md:275`). macOS reports all three: `isComposing` on key events, a `Process` keydown for a key the input method takes first, and `compositionstart` / `compositionupdate` / `compositionend` (`ghia:docs/fork/events-and-input.md:111`; `ghia:docs/reference.md:4680-4703`). A key an input method consumes still cannot be cancelled by `keydown` on macOS, but `isComposing` tells the handler to stand aside.
+- **Workaround:** none; IME input is untested. On macOS the key an input method takes first is a `Process` keydown, which no `Enter` or arrow case matches, so a composition probably does not pick or move (reasoned from the handlers, not run against a real input method); the explicit `event.isComposing` guard would go into the primitive in `ghia-base-ui`.
 - **Fidelity:** approximated (unverified for composed input).
 - **Components it hits:** command-menu and input-message, which have the source's own guard (`command-menu.tsx:778`, `input-message.tsx:793`).
 
@@ -20,7 +20,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `gpuix gap`.
 - **Original:** Base UI renders hidden inputs carrying the picked value, so a `<form>` submits it under `name` and an empty `required` one blocks the submit (Base UI `combobox/root/AriaCombobox.tsx:1592-1706`; FF passes `name`, `required` at `combobox.tsx:349-350`).
-- **Port:** `FormValue` (`base-ui:src/utils/form-value.tsx`, used at `src/components/combobox.tsx:175-183`).
+- **Port:** `FormValue` (`base-ui:src/utils/form-value.ts`, used at `src/components/combobox.tsx:175-183`).
 - **gpuix lacks:** `type="hidden"`: `InputType` is `text | password | number | email | search | tel | url` (`packages/native/js/host.ts:1336`), and `FormData` reads only named, enabled `<input>`s.
 - **Workaround:** `FormValue` is a real input kept 1px, transparent, pointer-less and out of the tab order; when an empty required one takes focus it hands it to the combobox's input.
 - **Fidelity:** exact.
@@ -31,7 +31,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Cause:** `gpuix gap`.
 - **Original:** a `<button type="submit">`, or Enter in a form control, submits the form; an empty `required` control blocks it, fires `invalid` and takes focus.
 - **Port:** the demo's Submit button calls `form.requestSubmit()` (`src/demos/combobox.tsx:275-282`).
-- **gpuix lacks:** a submit button (`SubmitEvent.submitter` is always `null`, `packages/native/js/host.ts:1370`), so HTML's fallback applies: a form with two or more `<input>`s does not submit on Enter at all (gpuix `README.md:3602-3609`). Enter in a lone `<input>` does validate and submit now (measured on the test renderer: an empty `required` one fires `invalid`, a filled one submits). A combobox with `name` or `required` adds `FormValue` as a second input, so Enter in it never submits.
+- **gpuix lacks:** a submit button (`SubmitEvent.submitter` is always `null`, `packages/native/js/host.ts:1370`), so HTML's fallback applies: a form with two or more `<input>`s does not submit on Enter at all (`ghia:docs/reference.md:4485-4492`). Enter in a lone `<input>` does validate and submit now (measured on the test renderer: an empty `required` one fires `invalid`, a filled one submits). A combobox with `name` or `required` adds `FormValue` as a second input, so Enter in it never submits.
 - **Workaround:** `requestSubmit()` from a button.
 - **Fidelity:** exact for `requestSubmit()`, dropped for implicit submission.
 - **Components it hits:** select, any form in a demo.
@@ -76,7 +76,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 - **Cause:** `not ported yet`.
 - **Original:** Base UI `disabled`: the input is disabled and unfocusable, the field is `opacity-50 pointer-events-none` (`combobox.tsx:385`).
 - **Port:** the root is `opacity: 0.5` with `pointerEvents: "none"` (`src/components/combobox.tsx:163-173`), the input is `readOnly` with `tabIndex` -1 and `aria-disabled` (`base-ui:src/combobox/root/use-combobox-root.ts:347-355`).
-- **Workaround:** the stand-in. gpuix has `<input disabled>` now (never focusable; `FORK.md:503-504`).
+- **Workaround:** the stand-in. gpuix has `<input disabled>` now (never focusable; `ghia:docs/fork/events-and-input.md:117`).
 - **Fidelity:** approximated (looks the same; assistive tech sees `aria-disabled`, not a disabled input).
 - **Components it hits:** just this one.
 
@@ -91,7 +91,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 ## The field's text reverts when the close starts
 
-- **Cause:** `port choice` (judgement call 2, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:631`: "visually minor, left").
+- **Cause:** `port choice` (judgement call 2, `base-ui:BASE-UI-AUDIT.md:642`: "visually minor, left").
 - **Original:** the typed text reverts to the picked label after the popup unmounts; a frozen `closeQuery` keeps the list steady during the exit (Base UI `AriaCombobox.tsx:800-831`).
 - **Port:** `closePopup` resets the text at once (`base-ui:src/combobox/root/use-combobox-root.ts:147-151`); the list keeps its old query through the fade, so only the input text differs.
 - **Fidelity:** approximated.
@@ -133,13 +133,13 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 - **Cause:** `not ported yet`.
 - **Original:** `ComboboxContent` takes `side` (bottom), `align` (start) and `sideOffset` (6) (`combobox.tsx:774-783`).
-- **Port:** `PopupSurface` is called with `align="start"` only, `side` defaults to bottom, gap 6 (`src/components/combobox.tsx:300-308`, `src/lib/popup.tsx:28,55`). No docs demo uses them (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md:633`).
+- **Port:** `PopupSurface` is called with `align="start"` only, `side` defaults to bottom, gap 6 (`src/components/combobox.tsx:300-308`, `src/lib/popup.tsx:28,55`). No docs demo uses them (`base-ui:BASE-UI-AUDIT.md:644`).
 - **Fidelity:** approximated.
 - **Components it hits:** select (same popup).
 
 ## Not ported: multiple selection, chips, `hideSelected`
 
-- **Cause:** `port choice` (single selection only, scoped out by plan; `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:569`).
+- **Cause:** `port choice` (single selection only, scoped out by plan; `base-ui:BASE-UI-AUDIT.md:578`).
 - **Original:** `multiple` with `ComboboxChips` (springing field height, popping chips, Backspace removes the last, ArrowLeft walks the chips), merge/split selection blocks, `hideSelected` and `ComboboxEmpty allSelected` (`combobox.tsx:152-161,552-768,899-980`, `use-merge-split.ts`).
 - **Port:** none.
 - **Fidelity:** dropped.
@@ -147,7 +147,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 ## Not ported: `onCreate` and `createLabel`
 
-- **Cause:** `port choice` (FF styling layer, not Base UI; lead decision, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:602`).
+- **Cause:** `port choice` (FF styling layer, not Base UI; lead decision, `base-ui:BASE-UI-AUDIT.md:611`).
 - **Original:** a last "Create “query”" row when no label matches exactly, with a plus icon (`combobox.tsx:75-86,168-169,226-232,258-284,1059-1073`).
 - **Port:** none.
 - **Fidelity:** dropped.
@@ -155,7 +155,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 ## Not ported: `variant` (bordered / borderless)
 
-- **Cause:** `port choice` (FF styling layer, not Base UI; lead decision, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:603`).
+- **Cause:** `port choice` (FF styling layer, not Base UI; lead decision, `base-ui:BASE-UI-AUDIT.md:612`).
 - **Original:** `bordered` (ring at rest) or `borderless` (ring only on hover and focus) (`combobox.tsx:381-404`).
 - **Port:** bordered only (`src/components/combobox.tsx:196-199`).
 - **Fidelity:** dropped.
@@ -163,7 +163,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 ## Not ported: `error`
 
-- **Cause:** `port choice` (FF styling layer, not Base UI; lead decision, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:603`).
+- **Cause:** `port choice` (FF styling layer, not Base UI; lead decision, `base-ui:BASE-UI-AUDIT.md:612`).
 - **Original:** a destructive-tinted ring (`ring-destructive/50`), `aria-invalid`, and a caption below the field in `text-destructive` with `pl-3` (`combobox.tsx:509-549`).
 - **Port:** none; the root is a single 36px box with no caption slot.
 - **Fidelity:** dropped.
@@ -171,7 +171,7 @@ Base UI behaviour (filtering, highlight, Enter, Escape, ARIA) is tracked row by 
 
 ## Not ported: `size` (compact) and the ladder
 
-- **Cause:** `port choice` (FF styling layer, not Base UI; lead decision, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:603`).
+- **Cause:** `port choice` (FF styling layer, not Base UI; lead decision, `base-ui:BASE-UI-AUDIT.md:612`).
 - **Original:** `size="compact"` or a surrounding `SizeProvider`: 28px field and rows, 12px text, 14px icons, `gap-1`, `px-2` / `px-1.5` (`combobox.tsx:489-531`, `size-context.tsx`).
 - **Port:** the default step only (`FIELD_HEIGHT` / `ROW_HEIGHT` 36, `src/components/combobox.tsx:28-29`).
 - **Fidelity:** dropped.

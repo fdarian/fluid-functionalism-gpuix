@@ -39,7 +39,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 ## Multiple selection: merge and split morph is a plain grow/shrink
 
-- **Cause:** `not ported yet`. gpuix animates per-corner radii in `motion` (`~/code/fdarian/ghia/FORK.md:1141-1143`, as `drift/checkbox-group.md` records); nothing here does.
+- **Cause:** `not ported yet`. gpuix animates per-corner radii in `motion` (`ghia:docs/fork/motion.md:56`, as `drift/checkbox-group.md` records); nothing here does.
 - **Original:** `useMergeSplitBlocks` (`registry/default/hooks/use-merge-split.tsx`): when one unchecked row bridges two checked runs, the facing edges glide to the bridging row's midpoint with the inner corners straightening (corners trail by 70 ms), then swap to one block; deselecting a middle row plays the inverse. Spring `moderate`, corner radius 8 (`registry/base/dropdown.tsx:121-126`, `:193`).
 - **Port:** one `FluidHighlight` per run id, rect from the run's first to last row, radius 8 on all four corners (`src/components/dropdown.tsx:165-186`, `:215-227`). A merge makes the surviving block spring-grow over the whole union while the absorbed one fades out, the motion the source's comment says it avoids; a split shrinks the block and fades a new one in. `multi-merged.png` and `multi-split.png` show the end states, which match.
 - **Fidelity:** approximated (end states exact, the transition differs).
@@ -90,7 +90,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 - **Cause:** `not ported yet` (nothing in gpuix prevents them) except where noted.
 - **Original:** `Dropdown` takes `size`, `aria-label`, `className` and `ref` (`registry/base/dropdown.tsx:94-107`); `DropdownMenu` takes `size` (`:328-332`); `DropdownContent` takes `className`, `ref`, `side`, `align` (`start | center | end`), `sideOffset`, `alignOffset` (`:400-415`); `DropdownSubContent` takes `sideOffset` and `alignOffset` (`:863-891`); `MenuItem` takes `className` and any `div` prop, `onClick` included (`registry/default/menu-item.tsx:121-136`); `DropdownSearch` takes any `input` prop (`dropdown-search.tsx:193-207`); `DropdownLabel`, `DropdownSeparator` and `DropdownEmpty` take `className`.
-- **Port:** `Dropdown` takes `checkedIndex`, `checkedIndices`, `testId` (`src/components/dropdown.tsx:425-431`); `DropdownContent` takes `align` (`start | end`) only (`:676-683`), with the side fixed at the bottom and a 6px gap (`src/lib/popup.tsx:11`); the submenu offsets are the constants `SUBMENU_SIDE_OFFSET` and `SUBMENU_ALIGN_OFFSET` (`src/components/dropdown.tsx:70-73`, `:894-899`); `MenuItem` has `chevron`, `submenu`, `onOpenSubmenu` and `testId` (`src/components/menu-item.tsx:71-92`). `DropdownLabel` and `DropdownEmpty` take a string child only (`menu-item.tsx:36`, `dropdown-search.tsx:41`). `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` row 398 records `side`, `sideOffset` and `alignOffset` as a lead decision: no ported consumer.
+- **Port:** `Dropdown` takes `checkedIndex`, `checkedIndices`, `testId` (`src/components/dropdown.tsx:425-431`); `DropdownContent` takes `align` (`start | end`) only (`:676-683`), with the side fixed at the bottom and a 6px gap (`src/lib/popup.tsx:11`); the submenu offsets are the constants `SUBMENU_SIDE_OFFSET` and `SUBMENU_ALIGN_OFFSET` (`src/components/dropdown.tsx:70-73`, `:894-899`); `MenuItem` has `chevron`, `submenu`, `onOpenSubmenu` and `testId` (`src/components/menu-item.tsx:71-92`). `DropdownLabel` and `DropdownEmpty` take a string child only (`menu-item.tsx:36`, `dropdown-search.tsx:41`). `base-ui:BASE-UI-AUDIT.md` row 405 records `side`, `sideOffset` and `alignOffset` as a lead decision: no ported consumer.
 - **Fidelity:** dropped for the missing props.
 - **Components it hits:** just this one.
 
@@ -104,7 +104,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 ## DropdownMenu adds a wrapper element and dims on `disabled`
 
-- **Cause:** `port choice` (reason from the code comments: the wrapper hosts the closed-state key handler (open on Enter, Space, ArrowDown, ArrowUp), the outside-press handler and the trigger and popup's shared logical subtree, `src/components/dropdown.tsx:633-667`; the dimming is the port's own, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` row 357).
+- **Cause:** `port choice` (reason from the code comments: the wrapper hosts the closed-state key handler (open on Enter, Space, ArrowDown, ArrowUp), the outside-press handler and the trigger and popup's shared logical subtree, `src/components/dropdown.tsx:633-667`; the dimming is the port's own, `base-ui:BASE-UI-AUDIT.md` row 364).
 - **Original:** `Menu.Root` renders no DOM; a disabled menu styles nothing, the consumer's `render` element decides (`registry/base/dropdown.tsx:354-364`).
 - **Port:** a `relative flex` `div` wraps the trigger and the popup, and `disabled` sets `opacity: 0.5` on all of it (`:659-669`). A trigger that relies on its parent's layout (a flex row, an `inline` flow) sees the extra box.
 - **Fidelity:** approximated.
@@ -112,7 +112,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 ## RTL: submenu side, arrow keys and chevron
 
-- **Cause:** `port choice` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` rows 475-478, lead decision: no ported consumer; the source docs never mount a `DirectionProvider` and have no rtl demo). gpuix now has `direction: 'rtl'` (inherited; it mirrors a row's main axis, grid columns and `textAlign: start`; gpuix `README.md`, "Direction"), so a port with a direction provider could mirror the submenu side and the chevron (`scale: '-1 1'` on the chevron, now that gpuix has transforms); the menu keys would still be the primitive's.
+- **Cause:** `port choice` (`base-ui:BASE-UI-AUDIT.md` rows 482-485, lead decision: no ported consumer; the source docs never mount a `DirectionProvider` and have no rtl demo). gpuix now has `direction: 'rtl'` (inherited; it mirrors a row's main axis, grid columns and `textAlign: start`; `ghia:docs/reference.md`, "Direction"), so a port with a direction provider could mirror the submenu side and the chevron (`scale: '-1 1'` on the chevron, now that gpuix has transforms); the menu keys would still be the primitive's.
 - **Original:** `useDirection()` picks `side="left"` for rtl (`registry/base/dropdown.tsx:879-883`), Base UI swaps the submenu open and close keys, and the chevron mirrors with `rtl:-scale-x-100` (`registry/default/dropdown-sub.tsx:179`).
 - **Port:** the submenu is always on the right and Right opens, Left closes (`src/components/dropdown.tsx:894-899`, `base-ui:src/menu/list/menu-list.ts:271-279`); the chevron never mirrors, because the port has no direction context for `rtl:-scale-x-100` to read (`src/components/menu-item.tsx:142-151`).
 - **Fidelity:** dropped, unreachable in the docs.
@@ -120,7 +120,7 @@ One entry per place the port looks or behaves differently from the source, whate
 
 ## A click on a submenu trigger opens it at once
 
-- **Cause:** `port choice` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md` row 387: "deliberate improvement; keep").
+- **Cause:** `port choice` (`base-ui:BASE-UI-AUDIT.md` row 394: "deliberate improvement; keep").
 - **Original:** a mouse press on a submenu trigger is ignored in hover mode; hover opens after 100 ms and Enter, Space and Right open from the keyboard (`menu/submenu-trigger/MenuSubmenuTrigger.tsx:192-203`, per the audit).
 - **Port:** `onSelect` opens on click before the 100 ms hover timer (`src/components/dropdown.tsx:809`, `base-ui:src/menu/submenu-trigger/menu-submenu-trigger.ts:106-110`); a mouse click counts as a hover open, so the submenu's polygon follows it.
 - **Fidelity:** approximated.

@@ -12,7 +12,7 @@ repeating it.
 
 - **Cause:** `not ported yet`.
 - **Original:** `Reorder.Group` / `Reorder.Item` (axis y): the row follows the pointer while the others animate into place; the whole row is the handle (`cursor-grab`, `active:cursor-grabbing`), and a double click anywhere on it edits (`input-message.tsx:301-340,1135-1158`).
-- **Port:** pointer capture on the label region only; the row under the pointer swaps with the one it crosses by a fixed stride of `row + 4` (`dragQueued`, `input-message.tsx:788-794`), nothing follows the cursor (the row it swaps past glides on `layout`, as the source's `Reorder.Item` does), and the file-count icon and padding are not draggable. Double click is `clickCount === 2` on the same region (`:431-445`). The fork has a `Reorder` primitive (`FORK.md:1149-1150`).
+- **Port:** pointer capture on the label region only; the row under the pointer swaps with the one it crosses by a fixed stride of `row + 4` (`dragQueued`, `input-message.tsx:788-794`), nothing follows the cursor (the row it swaps past glides on `layout`, as the source's `Reorder.Item` does), and the file-count icon and padding are not draggable. Double click is `clickCount === 2` on the same region (`:431-445`). The fork has a `Reorder` primitive (`ghia:docs/fork/motion.md:92`).
 - **Fidelity:** approximated.
 - **Components it hits:** queued-stack.
 
@@ -42,7 +42,7 @@ repeating it.
 
 - **Cause:** `not ported yet`.
 - **Original:** a hidden `<input type="file" accept multiple>`; `openFilePicker(acceptOverride)` narrows `accept` for one call, so the OS dialog only offers those types (`input-message.tsx:977-996,1074-1083`).
-- **Port:** `renderer.promptForPaths({ files, multiple })` shows every file; the result is filtered afterwards (`input-message.tsx:698-716`). The fork lists file-picker `accept` filters (`FORK.md:515`, `:573-575`).
+- **Port:** `renderer.promptForPaths({ files, multiple })` shows every file; the result is filtered afterwards (`input-message.tsx:698-716`). The fork lists file-picker `accept` filters (`ghia:docs/fork/events-and-input.md:131`, `ghia:docs/fork/deviations.md:277`).
 - **Fidelity:** approximated.
 
 ## Clicking the composer's padding does not focus the textarea
@@ -60,14 +60,14 @@ repeating it.
 
 ## History recalls only from a single-line draft
 
-- **Cause:** `not ported yet`. The port's comment blames gpuix (`input-message.tsx:884`: "gpuix does not report the caret"), but the fork lists `selectionStart` / `selectionEnd` (`FORK.md:503`). Not checked on a textarea.
+- **Cause:** `not ported yet`. The port's comment blames gpuix (`input-message.tsx:884`: "gpuix does not report the caret"), but the fork lists `selectionStart` / `selectionEnd` (`ghia:docs/fork/events-and-input.md:117`). Not checked on a textarea.
 - **Original:** ArrowUp recalls when the caret is on the first line, ArrowDown when it is on the last, so a multi-line draft still navigates (`input-message.tsx:846-889`).
 - **Port:** recalls only when the draft has no `\n` (`input-message.tsx:879-884`).
 - **Fidelity:** approximated.
 
 ## Arrow keys may not reach the textarea's `onKeyDown`
 
-- **Cause:** `gpuix gap`, as the port's comment states (`input-message.tsx:825-826`). Unverified here: `FORK.md:501-502` says a text editor's `keydown` runs before its built-in action. No README row covers it.
+- **Cause:** `gpuix gap`, as the port's comment states (`input-message.tsx:825-826`). Unverified here: `ghia:docs/fork/events-and-input.md:113` says a text editor's `keydown` runs before its built-in action. No README row covers it.
 - **Original:** plain ArrowUp / ArrowDown drive the suggestion list and history (`input-message.tsx:788-889`).
 - **Port:** the same handler also accepts Ctrl-P / Ctrl-N (`input-message.tsx:812-836`), and the demo's scenarios use `ctrl-n` / `ctrl-p` (`src/demos/input-message.tsx:646,764`). If the arrows really are swallowed, the keyboard path in the real window is Ctrl-P / Ctrl-N only.
 - **Fidelity:** approximated.
@@ -95,7 +95,7 @@ repeating it.
 
 ## Accessibility wiring
 
-- **Cause:** `not ported yet`. gpuix accepts `aria-*` (`FORK.md:508-509`).
+- **Cause:** `not ported yet`. gpuix accepts `aria-*` (`ghia:docs/fork/events-and-input.md:124`).
 - **Original:** `aria-activedescendant` on the textarea and an `id` on each option (`input-message.tsx:1204-1208,419`), a polite `role="status"` live region announcing "Message sent. N still queued." (`:708-710,1390-1392`), `aria-describedby` merging the ghost hint and `textareaProps` (`:1199-1203`).
 - **Port:** `role="listbox"` / `option` / `aria-selected` and `listitem` labels are there (`input-message.tsx:529-530,1194-1195,366-367`); none of the three above.
 - **Fidelity:** dropped.
@@ -111,7 +111,7 @@ repeating it.
 
 - **Cause:** `not ported yet` on macOS, `gpuix gap` on Windows and Linux.
 - **Original:** the Enter handler returns early while `isComposing` (`input-message.tsx:790`).
-- **Port:** no early return; the handler acts on every key. macOS reports `isComposing` and Windows and Linux do not (`~/code/fdarian/ghia/FORK.md:496-499`, `:564-567`; README "Missing features", IME row, which lists input-message).
+- **Port:** no early return; the handler acts on every key. macOS reports `isComposing` and Windows and Linux do not (`ghia:docs/fork/events-and-input.md:111`, `ghia:docs/fork/deviations.md:275`; README "Missing features", IME row, which lists input-message).
 - **Fidelity:** approximated (unverified for composed input).
 
 ## Touch

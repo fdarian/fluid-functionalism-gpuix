@@ -10,7 +10,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 - **Cause:** `gpuix gap`.
 - **Original:** a native `<button>` matches `:active` while Space is held, so the press-shrink (`group-active:`, `registry/base/button.tsx:115-127`) plays for a keyboard activation too.
 - **Port:** the pressed look is `pressSurface` and the tertiary `ringSurface` (`src/components/button.tsx:307-308`); Space still activates on key-up through `buttonProps` (`:269-275`).
-- **gpuix lacks:** a keyboard `:active` state. `active` styles come from the pointer's press chain only (`~/code/fdarian/ghia/FORK.md:317-319`). Rechecked on the test renderer: with a focused `buttonProps` element carrying `active: { backgroundColor }`, the capture while `nativeSimulateKeyDown(id, "Space")` is held is byte-identical to the resting one.
+- **gpuix lacks:** a keyboard `:active` state. `active` styles come from the pointer's press chain only (`ghia:docs/fork/events-and-input.md:140`). Rechecked on the test renderer: with a focused `buttonProps` element carrying `active: { backgroundColor }`, the capture while `nativeSimulateKeyDown(id, "Space")` is held is byte-identical to the resting one.
 - **Workaround:** none.
 - **Fidelity:** approximated: the activation is exact, the pressed look is missing for the keyboard.
 - **Components it hits:** every `buttonProps` button.
@@ -28,7 +28,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 ## Keyboard auto-repeat of Enter
 
-- **Cause:** `port choice` (the port uses gpuix `buttonProps`; `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:186` decides to leave it).
+- **Cause:** `port choice` (the port uses gpuix `buttonProps`; `base-ui:BASE-UI-AUDIT.md:185` decides to leave it).
 - **Original:** a native `<button>` clicks again for each Enter key-repeat.
 - **Port:** `buttonProps` ignores repeats (`packages/solid/src/components/button.ts:54`, `!event.repeat`).
 - **Workaround:** none.
@@ -37,7 +37,7 @@ Checked with no drift: sizes (36 / 28 / icon squares), paddings (16 / 12, 12 / 8
 
 ## `active`, `asChild` / `render` and the legacy sizes
 
-- **Cause:** `port choice` (out of scope per the lead's decision, `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:177`).
+- **Cause:** `port choice` (out of scope per the lead's decision, `base-ui:BASE-UI-AUDIT.md:176`).
 - **Original:** `active` forces the pressed look while a menu the button opened is showing (`:99-102`, `:130-141`); `asChild` / `render` make another element the root (`:86-95`, `:163-186`, `:290-302`); `sm` / `md` / `lg` / `icon-sm` / `icon-lg` resolve onto the ladder (`:61-78`).
 - **Port:** none of them (`src/components/button.tsx:159-182`). A dropdown trigger does not look engaged while its menu is open.
 - **Workaround:** none.

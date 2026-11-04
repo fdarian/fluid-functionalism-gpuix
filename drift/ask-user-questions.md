@@ -42,7 +42,7 @@ Checked and the same: card, row, chip and footer sizes and padding at the `sm:` 
 
 ## Arrow keys and Enter inside the Other field
 
-- **Cause:** `not ported yet` for the caret test (gpuix has `selectionStart` / `selectionEnd`, `FORK.md:503`); `port choice` for the rest (reason not stated).
+- **Cause:** `not ported yet` for the caret test (gpuix has `selectionStart` / `selectionEnd`, `ghia:docs/fork/events-and-input.md:117`); `port choice` for the rest (reason not stated).
 - **Original:** ↑/↓ leave the textarea only when the caret is at the very start or end (`:274-277`); plain Enter in a single-select Other field submits even with ⌘/⌃ held (`:1172-1177`); ↑ from no row goes to row `rowCount - 2` (`:316-318`).
 - **Port:** ↑/↓ leave the textarea whenever the draft has no `\n`, so a long wrapped one-liner cannot be walked with ↑/↓ (`ask-user-questions.tsx:542-546`); ⌘/⌃+Enter does nothing there (`:526-527`, `:448-450`); ↑ from no row goes to the last row (`base-ui:src/internals/composite/composite.ts:26`).
 - **Workaround:** none.

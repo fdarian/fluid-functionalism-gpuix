@@ -47,7 +47,7 @@ Checked with no drift: paddings and gaps of Card, CardHeader, CardContent, CardF
 
 - **Cause:** `not ported yet`.
 - **Original:** `bg-card/70 backdrop-blur-sm hover:bg-card` when the card has a `CardImage` (`:492-494`).
-- **Port:** the 70% alpha alone (`src/components/card.tsx:51-52`, `:559-564`). The comment says gpuix has no backdrop blur; it has `backdropFilter` (`packages/native/js/host.ts:662-665`, `FORK.md:788-789`, effect groups, macOS).
+- **Port:** the 70% alpha alone (`src/components/card.tsx:51-52`, `:559-564`). The comment says gpuix has no backdrop blur; it has `backdropFilter` (`packages/native/js/host.ts:662-665`, `ghia:docs/fork/paint-and-transforms.md:23`, effect groups, macOS).
 - **Workaround:** the alpha.
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.

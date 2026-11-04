@@ -26,7 +26,7 @@ repeating it.
 
 - **Cause:** `not ported yet`.
 - **Original:** `aria-labelledby={`${buttonId} ${labelId}`}` with `aria-label` "Copy" when a label is set, so the name reads "Copy <label>" (`input-copy.tsx:372-381`).
-- **Port:** `aria-label` is "Copy to clipboard" whether or not a label is shown (`input-copy.tsx:310-316`); the label `<text>` is not referenced. gpuix accepts `aria-labelledby` (`FORK.md:508-509`).
+- **Port:** `aria-label` is "Copy to clipboard" whether or not a label is shown (`input-copy.tsx:310-316`); the label `<text>` is not referenced. gpuix accepts `aria-labelledby` (`ghia:docs/fork/events-and-input.md:124`).
 - **Fidelity:** approximated.
 
 ## A refused write has no `execCommand` fallback

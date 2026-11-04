@@ -29,7 +29,7 @@ light and dark tokens (`muted`, `hover`, `surface4`, `foreground`).
 
 ## API surface: index props, `className`, ref and Base UI props
 
-- **Cause:** `port choice` for `selectedIndex` / `onSelect` (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md`: FF-only layer, out of scope per lead decision); reason not stated for the rest.
+- **Cause:** `port choice` for `selectedIndex` / `onSelect` (`base-ui:BASE-UI-AUDIT.md`: FF-only layer, out of scope per lead decision); reason not stated for the rest.
 - **Original:** `Tabs` takes `selectedIndex` / `onSelect` and spreads Base UI Root props (`orientation`, ...); `TabsList`, `TabItem` and `TabPanel` take `className`, forward refs and spread Base UI props, `TabItem` composes `onClick` (`tabs.tsx:66-84`, `:182-184`, `:477-490`, `:588-602`).
 - **Port:** `Tabs` takes `value`, `onValueChange`, `defaultValue`, `size`; `TabsList` and `TabItem` take `testId`; `TabItem` takes `disabled` explicitly; no `className`, ref or passthrough (`tabs.tsx:85-92`, `:149`, `:302-308`, `:430`). The list is always horizontal.
 - **Workaround:** none.

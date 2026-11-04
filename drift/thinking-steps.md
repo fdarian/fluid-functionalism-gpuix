@@ -28,12 +28,12 @@ repeating it.
 
 ## Closed panel is `inert`, not `hidden`
 
-- **Cause:** `not ported yet`. gpuix has `display: none` (`FORK.md:629`; `../base-ui-solid-gpuix/BASE-UI-AUDIT.md:104`).
+- **Cause:** `not ported yet`. gpuix has `display: none` (`ghia:docs/reference.md:6938`; `base-ui:BASE-UI-AUDIT.md:104`).
 - **Original:** the panel gets `hidden` once the exit animation finishes (`thinking-steps.tsx:195-218`).
 - **Port:** height 0, `overflow: hidden`, and `inert` the moment `open` goes false (`thinking-steps.tsx:183-202`, `inert` at `:196`). A closed panel's content is still laid out each frame, and is out of the accessibility tree from the start of the exit rather than the end.
 - **Workaround:** `inert`.
 - **Fidelity:** exact visually; the accessibility tree changes sooner.
-- **Components it hits:** accordion (`../base-ui-solid-gpuix/BASE-UI-AUDIT.md:73`).
+- **Components it hits:** accordion (`base-ui:BASE-UI-AUDIT.md:73`).
 
 ## Shimmer on the active step label
 
@@ -46,7 +46,7 @@ repeating it.
 
 ## Image box is sized outright
 
-- **Cause:** `not ported yet`. An `<img>` with a `%` width or `maxWidth` gets its height from its intrinsic ratio, and `onLoad` reports `naturalWidth` / `naturalHeight` (`~/code/fdarian/ghia/FORK.md:668`, `:834-835`). To port: `width: "100%"` with `maxWidth: 200` and `objectFit: "cover"`. The height then comes from the file's ratio once decoded; before decode the box is empty (`~/code/fdarian/ghia/README.md:5012-5014`), so the step's height jumps on load, which the `aspectRatio` prop avoids. Check that the jump is acceptable, or size from `onLoad`'s `naturalWidth` / `naturalHeight`.
+- **Cause:** `not ported yet`. An `<img>` with a `%` width or `maxWidth` gets its height from its intrinsic ratio, and `onLoad` reports `naturalWidth` / `naturalHeight` (`ghia:docs/fork/layout.md:294`, `ghia:docs/fork/paint-and-transforms.md:56`). To port: `width: "100%"` with `maxWidth: 200` and `objectFit: "cover"`. The height then comes from the file's ratio once decoded; before decode the box is empty (`ghia:docs/reference.md:5999-6001`), so the step's height jumps on load, which the `aspectRatio` prop avoids. Check that the jump is acceptable, or size from `onLoad`'s `naturalWidth` / `naturalHeight`.
 - **Original:** `<img class="w-full max-w-[200px] object-cover">` takes the file's aspect ratio and shrinks in a narrow column (`thinking-steps.tsx:586-593`).
 - **Port:** a fixed 200px-wide box, height `200 / aspectRatio` with `aspectRatio` an extra prop defaulting to 2 (`thinking-steps.tsx:539-568`). The demo image is 1200x600, so the demos match. A different ratio letterboxes (`objectFit` is the default `contain`, the source is `cover`), and the box does not shrink below 200.
 - **Workaround:** the `aspectRatio` prop, so the step's measured height is stable before the image decodes.

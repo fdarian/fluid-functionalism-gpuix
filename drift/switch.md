@@ -22,7 +22,7 @@ repeating it.
 - **Cause:** `not ported yet`. The thumb's x is a motion value now (`thumbX`, `src/components/switch.tsx:105`), so `restX: () => thumbX.get()` would read where it is. It was tried and left out: the primitive reads `restX` after the press shape applies, the source reads x before it, so the pressed-shape origin (12 checked) and the live one (14 at rest) end `check-switch`'s drag of 6px from the track centre on opposite sides of the midpoint, and this slice keeps the drag outcomes as they were.
 - **Original:** `originX: motionX.get()` (`switch.tsx:143-148`), so a press during a spring picks the thumb up where it is.
 - **Port:** `originX: restX()` (`base-ui:src/switch/thumb/switch-thumb.ts:37`, fed by `restX` at `src/components/switch.tsx:83-86`), the pressed-shape target. A press that starts dragging while the thumb is still springing makes it jump to that target on the first drag frame. Visible only when pressing during a spring.
-- **Workaround:** none. Listed in `../base-ui-solid-gpuix/BASE-UI-AUDIT.md` (Switch, "Drag starts from where the thumb is now").
+- **Workaround:** none. Listed in `base-ui:BASE-UI-AUDIT.md` (Switch, "Drag starts from where the thumb is now").
 - **Fidelity:** approximated.
 - **Components it hits:** just this one.
 
