@@ -3,7 +3,7 @@ import {
 	createPlacementState,
 	type createPresence,
 	POPUP_MARGIN,
-} from 'base-ui-solid-gpuix/internals';
+} from 'ghia-base-ui/internals';
 import { type Accessor, type JSX, Show } from 'solid-js';
 import { SurfaceContext, useElevatedSurface } from './surface-context';
 import { color, radius, shadow, surface, motion as tween } from './theme';

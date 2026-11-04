@@ -4,7 +4,7 @@ import type {
 	HostMouseEvent,
 	KeyEvent,
 } from '@ghia/solid';
-import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
+import { createPointerCapture } from 'ghia-base-ui/utils';
 import { createSignal } from 'solid-js';
 import { twShadow, withAlpha } from '#/lib/theme';
 import { sc, scRing } from './theme';

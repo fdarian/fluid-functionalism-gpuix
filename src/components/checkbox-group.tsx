@@ -1,8 +1,8 @@
-import { createCheckboxRoot } from 'base-ui-solid-gpuix/checkbox';
+import { createCheckboxRoot } from 'ghia-base-ui/checkbox';
 import {
 	type CheckboxGroup as CheckboxGroupState,
 	createCheckboxGroup,
-} from 'base-ui-solid-gpuix/checkbox-group';
+} from 'ghia-base-ui/checkbox-group';
 import { createContext, type JSX, useContext } from 'solid-js';
 import { CheckMark } from '#/lib/icon';
 import { color } from '#/lib/theme';

@@ -5,7 +5,7 @@ import {
 	type KeyEvent,
 	useGpuixRequired,
 } from '@ghia/solid';
-import { moveIndex } from 'base-ui-solid-gpuix/internals/composite';
+import { moveIndex } from 'ghia-base-ui/internals/composite';
 import { createEffect, onCleanup, Show } from 'solid-js';
 import { Icon } from '#/lib/icon';
 import type { IconRef } from '#/lib/icons';

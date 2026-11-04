@@ -1,6 +1,6 @@
 import type { HostElement } from '@ghia/solid';
-import { createComboboxRoot } from 'base-ui-solid-gpuix/combobox';
-import { FormValue } from 'base-ui-solid-gpuix/utils';
+import { createComboboxRoot } from 'ghia-base-ui/combobox';
+import { FormValue } from 'ghia-base-ui/utils';
 import { type Accessor, createMemo, createSignal, For, Show } from 'solid-js';
 import { FluidHighlight } from '#/lib/fluid-highlight';
 import {

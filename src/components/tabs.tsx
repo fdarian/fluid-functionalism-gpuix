@@ -6,7 +6,7 @@ import {
 	createTabsTab,
 	type TabsList as TabsListPrimitive,
 	type TabsRoot,
-} from 'base-ui-solid-gpuix/tabs';
+} from 'ghia-base-ui/tabs';
 import {
 	createComputed,
 	createContext,

@@ -14,8 +14,8 @@ import {
 	createAccordionPanel,
 	createAccordionRoot,
 	createAccordionTrigger,
-} from 'base-ui-solid-gpuix/accordion';
-import { createCompositeRoot } from 'base-ui-solid-gpuix/internals/composite';
+} from 'ghia-base-ui/accordion';
+import { createCompositeRoot } from 'ghia-base-ui/internals/composite';
 import {
 	createContext,
 	createEffect,

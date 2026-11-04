@@ -1,8 +1,5 @@
 import { animate, createMotionValue, motion } from '@ghia/solid';
-import {
-	createSwitchRoot,
-	createSwitchThumb,
-} from 'base-ui-solid-gpuix/switch';
+import { createSwitchRoot, createSwitchThumb } from 'ghia-base-ui/switch';
 import { createEffect, createSignal, createUniqueId, on } from 'solid-js';
 import {
 	capTrim,

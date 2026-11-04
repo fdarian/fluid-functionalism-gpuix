@@ -6,23 +6,20 @@ import {
 	motion,
 	useGpuixRequired,
 } from '@ghia/solid';
-import {
-	type createPresence,
-	POPUP_MARGIN,
-} from 'base-ui-solid-gpuix/internals';
-import { edgeIndex, isChord } from 'base-ui-solid-gpuix/internals/composite';
+import { type createPresence, POPUP_MARGIN } from 'ghia-base-ui/internals';
+import { edgeIndex, isChord } from 'ghia-base-ui/internals/composite';
 import {
 	createMenuItem,
 	createMenuList,
 	createMenuRoot,
 	createMenuTrigger,
-} from 'base-ui-solid-gpuix/menu';
+} from 'ghia-base-ui/menu';
 import {
 	createPopoverPopup,
 	createPopoverRoot,
 	createPopoverTrigger,
-} from 'base-ui-solid-gpuix/popover';
-import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
+} from 'ghia-base-ui/popover';
+import { createPointerCapture } from 'ghia-base-ui/utils';
 import {
 	type Accessor,
 	createEffect,

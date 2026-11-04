@@ -4,7 +4,7 @@ import {
 	createCollapsiblePanel,
 	createCollapsibleRoot,
 	createCollapsibleTrigger,
-} from 'base-ui-solid-gpuix/collapsible';
+} from 'ghia-base-ui/collapsible';
 import {
 	createContext,
 	createEffect,

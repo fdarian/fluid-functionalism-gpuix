@@ -7,8 +7,8 @@ import {
 	motion,
 	useGpuixRequired,
 } from '@ghia/solid';
-import { createPresence } from 'base-ui-solid-gpuix/internals';
-import { createPointerCapture } from 'base-ui-solid-gpuix/utils';
+import { createPresence } from 'ghia-base-ui/internals';
+import { createPointerCapture } from 'ghia-base-ui/utils';
 import {
 	type Accessor,
 	createEffect,

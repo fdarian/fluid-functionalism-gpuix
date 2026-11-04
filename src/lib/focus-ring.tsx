@@ -1,5 +1,5 @@
 import { type DomEvent, motion } from '@ghia/solid';
-import { createPresence } from 'base-ui-solid-gpuix/internals';
+import { createPresence } from 'ghia-base-ui/internals';
 import { createComputed, createSignal, Show } from 'solid-js';
 import type { FluidHover, ItemRect } from './fluid-hover';
 import { POPUP_EXIT_MS } from './popup-timing';

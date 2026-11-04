@@ -8,7 +8,7 @@
  * over the sidebar. Without slugs it measures every page. Writes
  * `perf/<label>.json` and prints a table ranked by sweep draw p95.
  */
-import { mkdirSync, readdirSync, statSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { loadavg } from 'node:os';
 import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -43,31 +43,16 @@ const label =
 	args.values.label ?? new Date().toISOString().replace(/[:.]/g, '-');
 const REQUEST_TIMEOUT_MS = 60_000;
 
+/** The npm package ships the addon built with `--release`; there is no cargo target directory here to compare it with. */
 function releaseAddon(): string {
 	const native = resolve(root, 'node_modules/@ghia/native');
 	const addon = readdirSync(native).find((file) => file.endsWith('.node'));
 	if (addon === undefined) throw new Error(`no .node addon in ${native}`);
 	const size = statSync(join(native, addon)).size;
-	const targets = resolve(native, 'target');
-	const matches: string[] = [];
-	for (const file of new Bun.Glob('**/libgpuix_native.{dylib,so}').scanSync({
-		cwd: targets,
-	})) {
-		if (statSync(join(targets, file)).size === size) {
-			matches.push(file.includes('/debug/') ? 'debug' : 'release');
-		}
-	}
-	if (matches.includes('debug') && !matches.includes('release')) {
-		throw new Error(
-			`${addon} is a debug build (same size as target/**/debug): frame times would be meaningless. Rebuild gpuix with build:release.`,
-		);
-	}
-	if (!matches.includes('release')) {
-		throw new Error(
-			`${addon} matches no cargo release artifact by size; cannot confirm it is a release build`,
-		);
-	}
-	return `${addon} (${size} bytes, same size as the cargo release artifact)`;
+	const version = JSON.parse(
+		readFileSync(join(native, 'package.json'), 'utf8'),
+	).version;
+	return `${addon} (${size} bytes, @ghia/native ${version})`;
 }
 
 const addon = releaseAddon();

@@ -5,10 +5,7 @@ import {
 	type HostMouseEvent,
 	motion,
 } from '@ghia/solid';
-import {
-	createPlacementState,
-	POPUP_MARGIN,
-} from 'base-ui-solid-gpuix/internals';
+import { createPlacementState, POPUP_MARGIN } from 'ghia-base-ui/internals';
 import {
 	createTooltipPopup,
 	createTooltipProvider,
@@ -16,7 +13,7 @@ import {
 	createTooltipTrigger,
 	TooltipProviderContext,
 	useTooltipProvider,
-} from 'base-ui-solid-gpuix/tooltip';
+} from 'ghia-base-ui/tooltip';
 import { createEffect, type JSX, Show } from 'solid-js';
 import { POPUP_EXIT_FALLBACK_MS } from '#/lib/popup-timing';
 import {

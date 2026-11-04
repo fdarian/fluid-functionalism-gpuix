@@ -1,9 +1,9 @@
 import { AnimatePresence, motion } from '@ghia/solid';
-import { createRadioRoot } from 'base-ui-solid-gpuix/radio';
+import { createRadioRoot } from 'ghia-base-ui/radio';
 import {
 	createRadioGroup,
 	type RadioGroup as RadioGroupState,
-} from 'base-ui-solid-gpuix/radio-group';
+} from 'ghia-base-ui/radio-group';
 import {
 	createContext,
 	createMemo,

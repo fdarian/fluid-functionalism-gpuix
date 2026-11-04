@@ -1,5 +1,5 @@
 import type { DomEvent, HostElement } from '@ghia/solid';
-import type { MenuSearchHost, MenuSearchProps } from 'base-ui-solid-gpuix/menu';
+import type { MenuSearchHost, MenuSearchProps } from 'ghia-base-ui/menu';
 import {
 	createContext,
 	createEffect,

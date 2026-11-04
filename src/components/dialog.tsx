@@ -19,8 +19,8 @@ import {
 	DialogRootContext,
 	FocusFirst,
 	useDialogRootContext,
-} from 'base-ui-solid-gpuix/dialog';
-import { HideOutside } from 'base-ui-solid-gpuix/floating-ui-solid/utils';
+} from 'ghia-base-ui/dialog';
+import { HideOutside } from 'ghia-base-ui/floating-ui-solid/utils';
 import { createContext, type JSX, Show, useContext } from 'solid-js';
 import { SurfaceContext, useElevatedSurface } from '#/lib/surface-context';
 import {

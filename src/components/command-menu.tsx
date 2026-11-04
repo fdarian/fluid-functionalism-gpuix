@@ -8,8 +8,8 @@ import {
 	motion,
 	useGpuixRequired,
 } from '@ghia/solid';
-import { createPresence } from 'base-ui-solid-gpuix/internals';
-import { moveIndex } from 'base-ui-solid-gpuix/internals/composite';
+import { createPresence } from 'ghia-base-ui/internals';
+import { moveIndex } from 'ghia-base-ui/internals/composite';
 import {
 	type Accessor,
 	createContext,

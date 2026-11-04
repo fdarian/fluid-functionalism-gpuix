@@ -6,7 +6,7 @@ import {
 	type KeyEvent,
 	motion,
 } from '@ghia/solid';
-import { createPresence } from 'base-ui-solid-gpuix/internals';
+import { createPresence } from 'ghia-base-ui/internals';
 import {
 	createControlBox,
 	createSliderControl,
@@ -15,7 +15,7 @@ import {
 	createSliderValue,
 	pixelToValue,
 	valueToPixel,
-} from 'base-ui-solid-gpuix/slider';
+} from 'ghia-base-ui/slider';
 import {
 	type Accessor,
 	createEffect,

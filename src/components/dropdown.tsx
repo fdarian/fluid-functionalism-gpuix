@@ -6,10 +6,7 @@ import {
 	type KeyEvent,
 	motion,
 } from '@ghia/solid';
-import {
-	createPlacementState,
-	POPUP_MARGIN,
-} from 'base-ui-solid-gpuix/internals';
+import { createPlacementState, POPUP_MARGIN } from 'ghia-base-ui/internals';
 import {
 	createMenuList,
 	createMenuRoot,
@@ -21,7 +18,7 @@ import {
 	type MenuSubmenuHost,
 	type MenuSubmenuRoot,
 	type MenuTriggerState,
-} from 'base-ui-solid-gpuix/menu';
+} from 'ghia-base-ui/menu';
 import {
 	type Accessor,
 	createContext,

@@ -9,7 +9,7 @@ import {
 	createScrollAreaRoot,
 	createScrollAreaScrollbar,
 	type ScrollAreaOrientation,
-} from 'base-ui-solid-gpuix/scroll-area';
+} from 'ghia-base-ui/scroll-area';
 import type { JSX } from 'solid-js';
 import { Show } from 'solid-js';
 import { color, fade, withAlpha } from '#/lib/theme';

@@ -1,5 +1,5 @@
 import type { DomEvent } from '@ghia/solid';
-import { createMenuItem, type MenuItemHost } from 'base-ui-solid-gpuix/menu';
+import { createMenuItem, type MenuItemHost } from 'ghia-base-ui/menu';
 import {
 	type Accessor,
 	createContext,

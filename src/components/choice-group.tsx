@@ -1,5 +1,5 @@
 import type { DomEvent, HostElement } from '@ghia/solid';
-import type { RowItem } from 'base-ui-solid-gpuix/internals/composite';
+import type { RowItem } from 'ghia-base-ui/internals/composite';
 import {
 	type Accessor,
 	createComputed,

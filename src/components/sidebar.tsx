@@ -7,7 +7,7 @@ import {
 	motion,
 	useGpuixRequired,
 } from '@ghia/solid';
-import { edgeIndex, moveIndex } from 'base-ui-solid-gpuix/internals/composite';
+import { edgeIndex, moveIndex } from 'ghia-base-ui/internals/composite';
 import {
 	type Accessor,
 	createComputed,

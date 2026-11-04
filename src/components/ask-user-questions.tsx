@@ -7,7 +7,7 @@ import {
 	motion,
 	useGpuixRequired,
 } from '@ghia/solid';
-import { isChord, moveIndex } from 'base-ui-solid-gpuix/internals/composite';
+import { isChord, moveIndex } from 'ghia-base-ui/internals/composite';
 import {
 	createEffect,
 	createMemo,

@@ -18,7 +18,7 @@ renderer.nativeSimulateMouseMove(trigger.x, trigger.y);
 await kit.settle(400);
 kit.check('an instant tooltip opens on hover', kit.exists('delay-0-chip'));
 
-// Base UI's safe polygon (`safePolygon()` in base-ui-solid-gpuix): the tooltip follows the pointer from the trigger to the chip instead of closing on a timer.
+// Base UI's safe polygon (`safePolygon()` in ghia-base-ui): the tooltip follows the pointer from the trigger to the chip instead of closing on a timer.
 const chipBox = kit.bounds('delay-0-chip');
 const chipCenter = kit.center('delay-0-chip');
 await kit.glide(trigger, chipCenter, 14);

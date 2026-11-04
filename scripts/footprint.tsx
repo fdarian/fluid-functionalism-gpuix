@@ -29,7 +29,7 @@
  * and the JSON, and the run exits 1. The child runs with `GPUIX_PRESENT_LOG`,
  * which adds one small write per presented frame to the process being measured.
  */
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { loadavg, tmpdir, uptime } from 'node:os';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -142,6 +142,12 @@ function git(directory: string) {
 		'--short',
 		'HEAD',
 	]).trim();
+}
+
+function ghiaNativeVersion() {
+	return JSON.parse(
+		readFileSync(join(root, 'node_modules/@ghia/native/package.json'), 'utf8'),
+	).version;
 }
 
 /** Every page the app has: the showcase, the demos and the pages, named by their files as the registry reads them. */
@@ -508,7 +514,7 @@ if (tourMode) {
 				label,
 				date: new Date().toISOString(),
 				ffHead: git(root),
-				gpuixHead: git(join(root, '../ghia')),
+				ghiaNative: ghiaNativeVersion(),
 				mode,
 				hz: windowMode ? null : hz,
 				settleMs,
@@ -543,7 +549,7 @@ writeFileSync(
 			label,
 			date: new Date().toISOString(),
 			ffHead: git(root),
-			gpuixHead: git(join(root, '../ghia')),
+			ghiaNative: ghiaNativeVersion(),
 			mode,
 			hz: windowMode ? null : hz,
 			settleMs,

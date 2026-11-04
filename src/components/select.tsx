@@ -1,6 +1,6 @@
 import type { DomEvent, HostElement } from '@ghia/solid';
-import { createSelectRoot } from 'base-ui-solid-gpuix/select';
-import { FormValue } from 'base-ui-solid-gpuix/utils';
+import { createSelectRoot } from 'ghia-base-ui/select';
+import { FormValue } from 'ghia-base-ui/utils';
 import {
 	type Accessor,
 	createEffect,

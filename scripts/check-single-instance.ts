@@ -3,20 +3,19 @@ import { dirname } from 'node:path';
 
 /**
  * One runtime instance of solid-js and @ghia/solid across this app and
- * base-ui-solid-gpuix: a second copy of either gives a second reactive graph
- * or renderer registry, and nothing fails loudly. `file:` deps get a store
- * path per project directory, so this holds only while the base-ui folder is a
- * member of this pnpm workspace and installs from here.
+ * ghia-base-ui: a second copy of either gives a second reactive graph or
+ * renderer registry, and nothing fails loudly. ghia-base-ui peer-depends on
+ * both, so a version range here that it does not accept installs a second copy.
  */
 const root = `${import.meta.dir}/..`;
-const baseUi = realpathSync(`${root}/node_modules/base-ui-solid-gpuix`);
+const baseUi = realpathSync(`${root}/node_modules/ghia-base-ui`);
 const gpuixSolid = dirname(
 	realpathSync(Bun.resolveSync('@ghia/solid/package.json', root)),
 );
 
 const importers = [
 	['app', realpathSync(root)],
-	['base-ui-solid-gpuix', baseUi],
+	['ghia-base-ui', baseUi],
 	['@ghia/solid', gpuixSolid],
 ] as const;
 

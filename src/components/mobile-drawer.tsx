@@ -6,9 +6,9 @@ import {
 	type HostElement,
 	motion,
 } from '@ghia/solid';
-import { FocusFirst } from 'base-ui-solid-gpuix/dialog';
-import { createDrawerRoot } from 'base-ui-solid-gpuix/drawer';
-import { HideOutside } from 'base-ui-solid-gpuix/floating-ui-solid/utils';
+import { FocusFirst } from 'ghia-base-ui/dialog';
+import { createDrawerRoot } from 'ghia-base-ui/drawer';
+import { HideOutside } from 'ghia-base-ui/floating-ui-solid/utils';
 import type { JSX } from 'solid-js';
 import { color, shadow, motion as tween } from '#/lib/theme';
 
