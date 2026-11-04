@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths: [".changeset/**"]
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  release:
+    # The binary embeds the darwin-arm64 addon and is signed with codesign.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      # No cache: a release job must not restore a cache an untrusted run wrote.
+      - uses: ./.github/actions/setup
+        with: { registry-url: "https://registry.npmjs.org" }
+
+      - id: changesets
+        uses: changesets/action@v2
+        with:
+          version-script: bun run ci:version
+          publish-script: bun run ci:release
+          create-github-releases: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - if: steps.changesets.outputs.published == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ fromJSON(steps.changesets.outputs.published-packages)[0].version }}
+        run: |
+          TAG="ghia-fluid-functionalism@$VERSION"
+          gh release view "$TAG" || gh release create "$TAG"
+          gh release upload "$TAG" dist/releases/ghia-fluid-functionalism-darwin-arm64.tar.gz --clobber
