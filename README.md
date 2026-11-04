@@ -21,7 +21,15 @@ consumes from npm. This repository keeps the styling, the springs and the fluid 
 
 ## Run it
 
-Needs Bun and pnpm. The renderer and the primitives come from npm (`@ghia/solid`, `@ghia/native`, `ghia-base-ui`); no
+```bash
+npx ghia-fluid-functionalism
+```
+
+Apple Silicon macOS only. The first run downloads the app (about 56 MB) from the GitHub Release, checks its sha256 and
+caches it under `~/Library/Caches/ghia-fluid-functionalism/`; later runs start from the cache.
+`GHIA_FLUID_FUNCTIONALISM_BINARY_PATH` runs a binary you built yourself instead.
+
+To work on the code, you need Bun and pnpm. The renderer and the primitives come from npm (`@ghia/solid`, `@ghia/native`, `ghia-base-ui`); no
 other checkout is needed.
 
 ```bash
@@ -106,6 +114,12 @@ The binary reads nothing from the repository, so each kind of runtime input has 
 - **The native addon** is embedded by Bun and extracted to `$TMPDIR` at launch. `@ghia/native`'s ESM entry needs a
   workaround for that (`scripts/native-cjs-plugin.ts`; see "Bugs" under the gpuix gaps).
 </details>
+
+## Releasing
+
+`pnpm changeset` describes a change; merge the "Version Packages" PR it produces. `.github/workflows/release.yml` then
+builds the signed binary (`scripts/release-build.ts`), publishes the `src/cli.ts` shim to npm and uploads the tarball
+to the `ghia-fluid-functionalism@<version>` GitHub Release.
 
 ## Adding a component
 

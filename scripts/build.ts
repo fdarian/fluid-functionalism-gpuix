@@ -6,9 +6,7 @@
 import { mkdirSync, rmSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import solidPlugin from '@ghia/solid/bun-plugin';
-import { nativeCjsPlugin } from './native-cjs-plugin';
-import { registryPlugin } from './registry-plugin';
+import { compileApp } from './compile-app';
 
 const root = join(import.meta.dir, '..');
 const dist = join(root, 'dist');
@@ -42,30 +40,6 @@ function run(
 	if (result.exitCode !== 0) {
 		throw new Error(`${command.join(' ')} exited with ${result.exitCode}`);
 	}
-}
-
-async function compile() {
-	const result = await Bun.build({
-		entrypoints: [join(root, 'src/main.tsx')],
-		// Without this the binary reads the bunfig.toml of the directory it is launched from.
-		compile: {
-			outfile: join(dist, 'fluid-functionalism'),
-			autoloadBunfig: false,
-		},
-		plugins: [
-			solidPlugin,
-			nativeCjsPlugin,
-			registryPlugin({ scenarios: false }),
-		],
-		minify: true,
-		// Makes the FF_PERF branch in src/main.tsx dead, so src/lib/perf.ts is not bundled.
-		define: { 'process.env.FF_PERF': '"0"' },
-	});
-	for (const log of result.logs) {
-		// The registry names every optional export; the ones a module lacks are expected.
-		if (!log.message.includes('will always be undefined')) console.log(log);
-	}
-	if (!result.success) throw new Error('Bun.build failed');
 }
 
 function makeIcns() {
@@ -110,6 +84,6 @@ function pack() {
 }
 
 mkdirSync(dist, { recursive: true });
-await compile();
+await compileApp(join(dist, 'fluid-functionalism'));
 makeIcns();
 pack();
