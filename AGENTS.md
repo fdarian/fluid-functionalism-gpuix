@@ -29,24 +29,18 @@ Solid app that draws the [Fluid Functionalism](https://fluidfunctionalism.com) c
 - `@ghia/solid`, `@ghia/native` and `ghia-base-ui` are pinned to exact versions in `package.json`. `ghia-base-ui` peer-depends on `@ghia/solid` and `solid-js`; a second copy of either gives two renderers or reactive graphs and silent breakage. `scripts/check-single-instance.ts` catches it.
 - A behaviour change (keys, selection, ARIA, open state, typeahead, presence) goes into the primitive in `ghia-base-ui`, not into a component here (release it, then bump the pin). A look change (tokens, motion, fluid hover) stays here. Its `BASE-UI-AUDIT.md` (in the repo, not the npm package) records where the primitives differ from Base UI.
 - A component adds `src/components/<name>.tsx`, `src/demos/<name>.tsx` and `drift/<name>.md` and edits no shared file. Whenever code the drift file cites moves, its `file:line` refs move with it; refs into the primitives read `base-ui:src/<path>:lines`.
-- gpuix cannot do some things the source does (transforms, selector `:has(.x)` and group-has). Record the approximation in the drift file and link the README gap row; do not paper over it.
+- gpuix cannot do some things the source does (selector `:has(.x)` and group-has, `var()` in a Motion key, a `layoutId` crossfade). Record the approximation in the drift file and link the README gap row; do not paper over it.
 - Screenshot diffs are noisy: playground variants use `Math.random`, and the caret and timing demos vary run to run. Compare the content area by pixels, not hashes, and do not recommit `screenshots/` for noise.
 - The compiled binary reads nothing from the repo. A runtime asset is an embedded import (`with { type: 'file' }`); an image `src` goes through `diskPath` in `src/lib/assets.ts`, because gpuix's Rust loader cannot read `$bunfs`. Never build a path from `import.meta.url` or `import.meta.dir`, or scan a directory at runtime. Demos, pages and the changelog are found through the `virtual:*` modules of `scripts/registry-plugin.ts`, so a new demo still just adds its file.
 - Source filenames are kebab-case; `src/` imports across directories use `#/`.
 
-<!-- OPENWIKI:START -->
-
-## OpenWiki
-
-This repository has a generated `openwiki/` evidence index. It is optional just-in-time context, not required startup reading.
-
-- Do not enumerate, preload, or search wikis at task start. Use retrieval when the user asks for it, when unfamiliar architecture or dependency behavior materially affects the task, or when source inspection leaves an important uncertainty. Stop once the question is grounded.
-- When those conditions apply and OpenWiki retrieval tools are available, use `openwiki_search` for just-in-time context and `openwiki_read` for the relevant complete sections. If search returns `workspace_required`, ask which listed workspace to use and retry with its ID.
-- Use `openwiki_list_workspaces` or `openwiki_list_wikis` when workspace membership itself needs to be discovered.
-- If the retrieval tools are unavailable, read `openwiki/quickstart.md` and follow its links to the relevant pages.
-- Treat source code and tests as authoritative. A brief's unknowns and review items are verification gaps, not automatic requirements.
-- Prefer the narrowest quiet validation that proves the changed behavior. Preserve complete failure output.
-
-Do not hand-edit generated OpenWiki pages unless explicitly asked; update source code/docs and regenerate the wiki with the OpenWiki agent.
-
-<!-- OPENWIKI:END -->
+## Notes
+Open on demand; each says what it covers first.
+- [Product and owner decisions](./.agents/notes/product.md) — what question the port answers, the four standing decisions from 2026-10-16, what is deliberately not shipped (icons, sample photo); read before reopening scope
+- [Motion and fluid hover](./.agents/notes/motion-and-fluid-hover.md) — springs, exits, native hover, press-shrink, the fluid-hover rules (integer rows, container-pixel reads, batched reads), native animation loops; read before touching `src/lib/fluid-hover.ts` or a component's motion
+- [Transforms and layout glides](./.agents/notes/transforms-and-layout-glides.md) — where the source's transforms are used, the traps (measurements under a transform, glides only at a commit, `Unsteady` layout boxes), remaining approximations
+- [Fonts and theme](./.agents/notes/fonts-and-theme.md) — variable-font weight tokens, why `StableLabel` keeps two ghosts, the theme cross-fade layer
+- [Performance](./.agents/notes/performance.md) — culling, scroll-write and page-switch decisions, and the protocols that make `pnpm perf` / `pnpm footprint` / check budgets trustworthy
+- [Verification](./.agents/notes/verification.md) — check and screenshot traps (still bounds, fractional content, noisy captures)
+- [Tooling and build](./.agents/notes/tooling-and-build.md) — compile flags, registry plugin, drift causes, why `noUncheckedIndexedAccess` and Biome a11y are off
+- [Base UI seam](./.agents/notes/base-ui-seam.md) — controllable highlight, refs, `tabIndex` mechanics when moving behaviour between a component and a `ghia-base-ui` primitive

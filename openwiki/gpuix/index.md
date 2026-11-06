@@ -1,4 +1,0 @@
-# Files
-
-- [gpuix gaps and divergence rounds](gaps-and-divergence-rounds.md) - Which gpuix gaps the port works around (summary, with the README as the full list), and the history of DOM divergences this port reported to the gpuix fork, round by round, with the gpuix commits that landed and the migrations the port made in response.
-- [Transforms, layout glides and filter: the 2026-10-30 adoption of gpuix 667084d0 to 5f7a9af9](transforms-and-layout-adoption.md) - Why and how the port replaced box-property stand-ins with the source's transforms, adopted layout and layoutId glides, animated filter and per-target exit transitions on gpuix 667084d0 to 5f7a9af9, the traps found on the way (rect space, popLayout pins, glides measured at a commit, Unsteady layout boxes), and what is still an approximation.
