@@ -82,6 +82,40 @@ select, so the script sets Light in code). It runs on
 gpuix's offscreen test renderer, so it needs the native addon but no window. `live-check.tsx` drives the real window
 through the automation client and writes to `screenshots/live/`.
 
+## Use the components in your own app
+
+The styled Solid components install from git, with no npm publish. Pin a commit:
+
+```json
+{
+	"dependencies": {
+		"ghia-fluid-functionalism": "github:fdarian/ghia-fluid-functionalism#<commit sha>",
+		"@ghia/native": "0.11.1",
+		"@ghia/solid": "0.11.1",
+		"ghia-base-ui": "0.1.1",
+		"solid-js": "1.9.15"
+	}
+}
+```
+
+```ts
+import { Button } from 'ghia-fluid-functionalism/button';
+import { Card, CardContent } from 'ghia-fluid-functionalism/card';
+import { bindSystemScheme, color } from 'ghia-fluid-functionalism/theme';
+```
+
+Every `src/components/<name>.tsx` is a subpath (`/scroll-area`, `/tooltip`, `/sidebar`, ...), next to `/theme` (tokens, scheme, springs), `/icon` and `/icons`. The files in `lib/` are compiled Solid output (`generate: 'universal'`, imports from `@ghia/solid`) plus `.d.ts`, so the consumer needs no Solid transform for them. The four packages above are peer dependencies; keep exactly one copy of each in the consumer. Call `bindSystemScheme(createAppearance())` in the root component (or `setThemeChoice('light')`) before rendering, and load Inter Variable as the app does in `src/lib/fonts.ts`.
+
+pnpm builds the package on install (`prepare` runs `tsdown`) but only for git dependencies you allow, and the key holds the commit, so change it with every bump:
+
+```yaml
+# pnpm-workspace.yaml
+allowBuilds:
+  "ghia-fluid-functionalism@https://codeload.github.com/fdarian/ghia-fluid-functionalism/tar.gz/<commit sha>": true
+```
+
+`pnpm build:lib` builds `lib/` by hand.
+
 ## Build the app
 
 Needs `cargo install cargo-packager --locked` once, on top of what "Run it" needs.
