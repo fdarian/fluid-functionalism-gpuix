@@ -8,6 +8,13 @@
 		"url": "git+https://github.com/fdarian/ghia-fluid-functionalism.git"
 	},
 	"license": "MIT",
+	"exports": {
+		"./package.json": "./package.json",
+		"./*": {
+			"types": "./lib/*.d.ts",
+			"import": "./lib/*.js"
+		}
+	},
 	"packageManager": "pnpm@12.16.1",
 	"scripts": {
 		"start": "bun --hot src/main.tsx",
@@ -20,11 +27,14 @@
 		"footprint": "bun scripts/footprint.tsx",
 		"format": "biome check --write",
 		"ci:version": "changeset version",
-		"ci:release": "bun scripts/release-build.ts && changeset publish"
+		"ci:release": "bun scripts/release-build.ts && changeset publish",
+		"prepare": "tsdown",
+		"build:lib": "tsdown"
 	},
 	"files": [
 		"dist/cli.js",
 		"dist/checksums.json",
+		"lib",
 		"README.md",
 		"LICENSE",
 		"THIRD_PARTY_NOTICES.md"
@@ -41,8 +51,16 @@
 		"@ghia/solid": "0.11.1",
 		"@total-typescript/tsconfig": "latest",
 		"@types/bun": "^1.4.2",
-		"ghia-base-ui": "0.1.0",
+		"ghia-base-ui": "0.1.1",
+		"rolldown-plugin-solid": "0.2.1",
 		"solid-js": "1.9.15",
+		"tsdown": "0.23.5",
 		"typescript": "^7.0.2"
+	},
+	"peerDependencies": {
+		"@ghia/native": "0.11.1",
+		"@ghia/solid": "0.11.1",
+		"ghia-base-ui": "0.1.1",
+		"solid-js": "1.9.15"
 	}
 }
