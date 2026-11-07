@@ -84,18 +84,10 @@ through the automation client and writes to `screenshots/live/`.
 
 ## Use the components in your own app
 
-The styled Solid components install from git, with no npm publish. Pin a commit:
+The styled Solid components install from npm, next to the four peer dependencies (exact versions, one copy of each in your app):
 
-```json
-{
-	"dependencies": {
-		"ghia-fluid-functionalism": "github:fdarian/ghia-fluid-functionalism#<commit sha>",
-		"@ghia/native": "0.11.1",
-		"@ghia/solid": "0.11.1",
-		"ghia-base-ui": "0.1.1",
-		"solid-js": "1.9.15"
-	}
-}
+```bash
+pnpm add ghia-fluid-functionalism @ghia/native@0.11.1 @ghia/solid@0.11.1 ghia-base-ui@0.1.1 solid-js@1.9.15
 ```
 
 ```ts
@@ -104,17 +96,9 @@ import { Card, CardContent } from 'ghia-fluid-functionalism/card';
 import { bindSystemScheme, color } from 'ghia-fluid-functionalism/theme';
 ```
 
-Every `src/components/<name>.tsx` is a subpath (`/scroll-area`, `/tooltip`, `/sidebar`, ...), next to `/theme` (tokens, scheme, springs), `/icon` and `/icons`. The files in `lib/` are compiled Solid output (`generate: 'universal'`, imports from `@ghia/solid`) plus `.d.ts`, so the consumer needs no Solid transform for them. The four packages above are peer dependencies; keep exactly one copy of each in the consumer. Call `bindSystemScheme(createAppearance())` in the root component (or `setThemeChoice('light')`) before rendering, and load Inter Variable as the app does in `src/lib/fonts.ts`.
+Every `src/components/<name>.tsx` is a subpath (`/scroll-area`, `/tooltip`, `/sidebar`, ...), next to `/theme` (tokens, scheme, springs), `/icon` and `/icons`. The files in `lib/` are compiled Solid output (`generate: 'universal'`, imports from `@ghia/solid`) plus `.d.ts`, so the consumer needs no Solid transform for them. Call `bindSystemScheme(createAppearance())` in the root component (or `setThemeChoice('light')`) before rendering, and load Inter Variable as the app does in `src/lib/fonts.ts`.
 
-pnpm builds the package on install (`prepare` runs `tsdown`) but only for git dependencies you allow, and the key holds the commit, so change it with every bump:
-
-```yaml
-# pnpm-workspace.yaml
-allowBuilds:
-  "ghia-fluid-functionalism@https://codeload.github.com/fdarian/ghia-fluid-functionalism/tar.gz/<commit sha>": true
-```
-
-`pnpm build:lib` builds `lib/` by hand.
+`pnpm build:lib` builds `lib/` by hand; `ci:release` builds it before `changeset publish`.
 
 ## Build the app
 
@@ -152,8 +136,10 @@ The binary reads nothing from the repository, so each kind of runtime input has 
 ## Releasing
 
 `pnpm changeset` describes a change; merge the "Version Packages" PR it produces. `.github/workflows/release.yml` then
-builds the signed binary (`scripts/release-build.ts`), publishes the `src/cli.ts` shim to npm and uploads the tarball
-to the `ghia-fluid-functionalism@<version>` GitHub Release.
+builds `lib/` and the signed binary (`scripts/release-build.ts`), publishes the package to npm (the `lib/` components and the
+`src/cli.ts` shim) and uploads the tarball to the `ghia-fluid-functionalism@<version>` GitHub Release. npm authenticates the
+workflow by OIDC trusted publishing (`id-token: write`, no token secret), so the package's trusted publisher on npmjs.com must name
+`fdarian/ghia-fluid-functionalism` and `release.yml`. `prepublishOnly` refuses a publish outside CI.
 
 ## Adding a component
 

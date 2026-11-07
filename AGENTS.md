@@ -11,7 +11,7 @@ Solid app that draws the [Fluid Functionalism](https://fluidfunctionalism.com) c
 - `src/pages/`, `src/home/` — the site's own pages (Introduction, Changelog, the System pages, Compare, Concepts, Audio Mixer) and the home bento grid; `src/app.tsx` is the shell and sidebar, `src/main.tsx` the entry.
 - `src/lib/` — shared code: `theme.ts` (tokens, springs, shadows), `fluid-hover.ts` / `fluid-highlight.tsx`, `focus-ring.tsx`, `popup.tsx`, `demo-kit.tsx`, `doc-page.tsx`, icons. The table is in README under "Shared code".
 - `src/cli.ts` — the npx shim (`dist/cli.js`): downloads, verifies and runs the darwin-arm64 binary from the GitHub Release. It imports nothing from the app.
-- `tsdown.config.ts` — builds `lib/` (gitignored), the library other repos install over `github:`: one entry per `src/components/*` file plus `theme`, `icon`, `icons`, compiled to Solid universal output with `#/` resolved. `prepare` runs it, which is what makes a git install usable; README's "Use the components in your own app" has the consumer side.
+- `tsdown.config.ts` — builds `lib/` (gitignored), the library other repos install from npm: one entry per `src/components/*` file plus `theme`, `icon`, `icons`, compiled to Solid universal output with `#/` resolved. `ci:release` runs it (`pnpm build:lib`) before `changeset publish`, so the published package ships `lib/`; README's "Use the components in your own app" has the consumer side.
 - `scripts/` — `check-*.tsx` scenario checks (each runnable alone with `bun scripts/check-x.tsx`), `check-kit.tsx` (their harness), `screenshots.tsx`, the two runners.
 - `drift/` — one markdown file per component or page listing every place the port differs from the source, with a Cause. [`drift/_TEMPLATE.md`](drift/_TEMPLATE.md) is the shape; README's table counts the entries.
 - `screenshots/`, `content/changelog/`, `assets/` — captures per page, the verbatim upstream changelog, fonts and images.
@@ -24,7 +24,7 @@ Solid app that draws the [Fluid Functionalism](https://fluidfunctionalism.com) c
 - `pnpm footprint [slug...] --label x` — idle CPU and memory per page in a fresh compiled child, headless; `--window` for a real window, `--tour` for what a session leaves behind (README, "Harness and shared-lib notes"); results land in `perf/`.
 - `pnpm build` — `dist/fluid-functionalism` (Bun compile) and `bundle/Fluid Functionalism.app`; needs `cargo install cargo-packager --locked` (README, "Build the app").
 - `pnpm format` — Biome.
-- `pnpm changeset` — describe a change; merging the Version Packages PR runs `.github/workflows/release.yml`. `ci:release` (`bun scripts/release-build.ts`, then `changeset publish`) writes `dist/cli.js`, `dist/checksums.json` and `dist/releases/*.tar.gz`; run it only in CI. `ci.yml` runs `scripts/check-single-instance.ts`.
+- `pnpm changeset` — describe a change; merging the Version Packages PR runs `.github/workflows/release.yml`. `ci:release` (`pnpm build:lib`, `bun scripts/release-build.ts`, then `changeset publish`) writes `dist/cli.js`, `dist/checksums.json` and `dist/releases/*.tar.gz`; run it only in CI. `ci.yml` runs `scripts/check-single-instance.ts`.
 
 ## Rules
 - `@ghia/solid`, `@ghia/native`, `ghia-base-ui` and `solid-js` are pinned to exact versions in `package.json`, as dev dependencies for the app and as peer dependencies for library consumers; keep the two in step. `ghia-base-ui` peer-depends on `@ghia/solid` and `solid-js`; a second copy of either gives two renderers or reactive graphs and silent breakage. `scripts/check-single-instance.ts` catches it.

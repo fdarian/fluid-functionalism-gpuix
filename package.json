@@ -27,9 +27,9 @@
 		"footprint": "bun scripts/footprint.tsx",
 		"format": "biome check --write",
 		"ci:version": "changeset version",
-		"ci:release": "bun scripts/release-build.ts && changeset publish",
-		"prepare": "tsdown",
-		"build:lib": "tsdown"
+		"ci:release": "pnpm run build:lib && bun scripts/release-build.ts && changeset publish",
+		"build:lib": "tsdown",
+		"prepublishOnly": "node -e \"if (!process.env.CI) { console.error('Never publish ghia-fluid-functionalism locally. CI is the only release path.'); process.exit(1) }\""
 	},
 	"files": [
 		"dist/cli.js",
@@ -40,6 +40,7 @@
 		"THIRD_PARTY_NOTICES.md"
 	],
 	"publishConfig": {
+		"access": "public",
 		"bin": {
 			"ghia-fluid-functionalism": "./dist/cli.js"
 		}
