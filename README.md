@@ -82,6 +82,24 @@ select, so the script sets Light in code). It runs on
 gpuix's offscreen test renderer, so it needs the native addon but no window. `live-check.tsx` drives the real window
 through the automation client and writes to `screenshots/live/`.
 
+## Use the components in your own app
+
+The styled Solid components install from npm, next to the four peer dependencies (exact versions, one copy of each in your app):
+
+```bash
+pnpm add ghia-fluid-functionalism @ghia/native@0.11.1 @ghia/solid@0.11.1 ghia-base-ui@0.1.1 solid-js@1.9.15
+```
+
+```ts
+import { Button } from 'ghia-fluid-functionalism/button';
+import { Card, CardContent } from 'ghia-fluid-functionalism/card';
+import { bindSystemScheme, color } from 'ghia-fluid-functionalism/theme';
+```
+
+Every `src/components/<name>.tsx` is a subpath (`/scroll-area`, `/tooltip`, `/sidebar`, ...), next to `/theme` (tokens, scheme, springs), `/icon` and `/icons`. The files in `lib/` are compiled Solid output (`generate: 'universal'`, imports from `@ghia/solid`) plus `.d.ts`, so the consumer needs no Solid transform for them. Call `bindSystemScheme(createAppearance())` in the root component (or `setThemeChoice('light')`) before rendering, and load Inter Variable as the app does in `src/lib/fonts.ts`.
+
+`pnpm build:lib` builds `lib/` by hand; `ci:release` builds it before `changeset publish`.
+
 ## Build the app
 
 Needs `cargo install cargo-packager --locked` once, on top of what "Run it" needs.
@@ -118,8 +136,10 @@ The binary reads nothing from the repository, so each kind of runtime input has 
 ## Releasing
 
 `pnpm changeset` describes a change; merge the "Version Packages" PR it produces. `.github/workflows/release.yml` then
-builds the signed binary (`scripts/release-build.ts`), publishes the `src/cli.ts` shim to npm and uploads the tarball
-to the `ghia-fluid-functionalism@<version>` GitHub Release.
+builds `lib/` and the signed binary (`scripts/release-build.ts`), publishes the package to npm (the `lib/` components and the
+`src/cli.ts` shim) and uploads the tarball to the `ghia-fluid-functionalism@<version>` GitHub Release. npm authenticates the
+workflow by OIDC trusted publishing (`id-token: write`, no token secret), so the package's trusted publisher on npmjs.com must name
+`fdarian/ghia-fluid-functionalism` and `release.yml`. `prepublishOnly` refuses a publish outside CI.
 
 ## Adding a component
 
